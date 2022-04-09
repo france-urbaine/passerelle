@@ -32,3 +32,104 @@ ImportEpcisDepartementsJob.perform_now("https://www.insee.fr/fr/statistiques/fic
 # Import communes
 # ----------------------------------------------------------------------------
 ImportCommunesJob.perform_now("https://www.insee.fr/fr/statistiques/fichier/2028028/table-appartenance-geo-communes-21.zip")
+
+# Create organizations
+# ----------------------------------------------------------------------------
+DDFIP.insert_all([
+  { code_departement: "13", name: "DDFIP des Bouches-du-Rhône" },
+  { code_departement: "18", name: "DDFIP du Cher" },
+  { code_departement: "51", name: "DDFIP de la Marne" },
+  { code_departement: "59", name: "DDFIP du Nord" },
+  { code_departement: "64", name: "DDFIP des Pyrénées-Atlantiques" },
+  { code_departement: "91", name: "DDFIP de l'Essonne" }
+])
+
+fiscalite_territoire = Publisher.where(siren: "511022394").first_or_create(
+  name:  "Fiscalité & Territoire",
+  email: "contact@ft.fr"
+)
+
+[
+  "CA du Pays Basque",
+  "Métropole Européenne de Lille",
+  "Métropole d'Aix-Marseille-Provence"
+].map do |epci_name|
+  epci = EPCI.find_by!(name: epci_name)
+
+  Collectivity.where(siren: epci.siren).first_or_create(
+    name:             epci_name,
+    territory:        epci,
+    publisher:        fiscalite_territoire,
+    approved_at:      Time.current
+  )
+end
+
+# Users organizations
+# ----------------------------------------------------------------------------
+pays_basque = Collectivity.find_by!(name: "CA du Pays Basque")
+ddfip64     = DDFIP.find_by(name: "DDFIP des Pyrénées-Atlantiques")
+
+User.insert_all([
+  {
+    email:              "mdebomy@ft.fr",
+    last_name:          "Debomy",
+    first_name:         "Marc",
+    organization_type:  "Publisher",
+    organization_id:    fiscalite_territoire.id,
+    organization_admin: true,
+    super_admin:        true
+  }, {
+    email:              "ssavater@ft.fr",
+    last_name:          "Savater",
+    first_name:         "Sebastien",
+    organization_type:  "Publisher",
+    organization_id:    fiscalite_territoire.id,
+    organization_admin: true,
+    super_admin:        true
+  },
+  {
+    email:              "admin@pays-basque.example.org",
+    first_name:         "Admin",
+    last_name:          "Pays Basque",
+    organization_type:  "Collectivity",
+    organization_id:    pays_basque.id,
+    organization_admin: true,
+    super_admin:        false
+  },
+  {
+    email:              "user@pays-basque.example.org",
+    first_name:         "User",
+    last_name:          "Pays Basque",
+    organization_type:  "Collectivity",
+    organization_id:    pays_basque.id,
+    organization_admin: false,
+    super_admin:        false
+  },
+  {
+    email:              "admin@ddfip-64.example.org",
+    first_name:         "Admin",
+    last_name:          "DDFIP 64",
+    organization_type:  "DDFIP",
+    organization_id:    ddfip64.id,
+    organization_admin: true,
+    super_admin:        false
+  },
+  {
+    email:              "pelp@ddfip-64.example.org",
+    first_name:         "PELP",
+    last_name:          "DDFIP 64",
+    organization_type:  "DDFIP",
+    organization_id:    ddfip64.id,
+    organization_admin: false,
+    super_admin:        false
+  },
+  {
+    email:              "bayonne@ddfip-64.example.org",
+    first_name:         "Bayonne",
+    last_name:          "DDFIP 64",
+    organization_type:  "DDFIP",
+    organization_id:    ddfip64.id,
+    organization_admin: false,
+    super_admin:        false
+  }
+])
