@@ -47,6 +47,7 @@ end
 
 group :development do
   gem "annotate"
+  gem "foreman"
   gem "rack-mini-profiler"
   gem "web-console"
 
