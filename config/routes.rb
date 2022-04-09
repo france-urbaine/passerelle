@@ -7,4 +7,8 @@ Rails.application.routes.draw do
   # root "articles#index"
 
   devise_for :user
+
+  resources :communes, only: %i[index show edit update]
+
+  root to: redirect("/communes")
 end

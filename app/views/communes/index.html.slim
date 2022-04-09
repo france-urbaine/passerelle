@@ -1,0 +1,9 @@
+h1 Communes
+
+table#communes
+  tbody
+    - @communes.each do |commune|
+      tr
+        td= link_to commune.name, commune
+
+

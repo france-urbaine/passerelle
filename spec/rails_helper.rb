@@ -73,6 +73,8 @@ RSpec.configure do |config|
   # config.filter_gems_from_backtrace("gem name")
 
   config.include FactoryBot::Syntax::Methods
+  config.include Matchers::HaveBody
+  config.include Matchers::HaveContentType
   config.include Matchers::HaveSentEmails
 
   config.before type: :system do
@@ -83,6 +85,8 @@ RSpec.configure do |config|
     ActionMailer::Base.deliveries.clear
   end
 end
+
+RSpec::Matchers.define_negated_matcher :maintain, :change
 
 Shoulda::Matchers.configure do |config|
   config.integrate do |with|

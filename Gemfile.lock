@@ -393,6 +393,7 @@ DEPENDENCIES
   rails (~> 7.0.2, >= 7.0.2.3)
   rails-i18n
   redis (~> 4.0)
+  responders
   roo
   rspec
   rspec-collection_matchers

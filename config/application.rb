@@ -27,5 +27,8 @@ module Fiscahub
 
     # Default (and only) locale
     config.i18n.default_locale = :fr
+
+    # Enable strict loading by default
+    config.active_record.strict_loading_by_default = true
   end
 end

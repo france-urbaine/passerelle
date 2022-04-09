@@ -82,6 +82,12 @@ Rails/SkipsModelValidations:
 RSpec/DescribedClass:
   Enabled: false
 
+RSpec/ExampleLength:
+  CountAsOne: ['array', 'heredoc']
+
+RSpec/NestedGroups:
+  Enabled: false
+
 # Style ------------------------------------------------------------------------
 Style/BlockDelimiters:
   EnforcedStyle: braces_for_chaining
