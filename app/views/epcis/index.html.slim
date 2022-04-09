@@ -1,0 +1,9 @@
+h1 EPCIs
+
+table#epcis
+  tbody
+    - @epcis.each do |epci|
+      tr
+        td= link_to epci.name, epci
+
+
