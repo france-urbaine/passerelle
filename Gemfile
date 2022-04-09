@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
@@ -37,6 +39,11 @@ end
 group :development do
   gem "rack-mini-profiler"
   gem "web-console"
+
+  gem "rubocop",             require: false
+  gem "rubocop-performance", require: false
+  gem "rubocop-rails",       require: false
+  gem "rubocop-rspec",       require: false
 
   # Speed up commands on slow machines / big apps [https://github.com/rails/spring]
   # gem "spring"

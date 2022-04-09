@@ -1,0 +1,84 @@
+inherit_from: .rubocop_todo.yml
+
+require:
+  - rubocop-performance
+  - rubocop-rails
+  - rubocop-rspec
+
+AllCops:
+  NewCops:           enable
+  DisplayCopNames:   true
+  DisplayStyleGuide: true
+  TargetRubyVersion: 3.1
+  Exclude:
+    - 'db/schema.rb'
+    - 'tmp/**/*'
+
+# Layout -----------------------------------------------------------------------
+Layout/ArgumentAlignment:
+  EnforcedStyle: with_fixed_indentation
+
+Layout/FirstArrayElementIndentation:
+  EnforcedStyle: consistent
+
+Layout/HashAlignment:
+  Enabled: false
+  EnforcedHashRocketStyle: table
+  EnforcedColonStyle:      table
+
+Layout/LineLength:
+  Exclude:
+    - 'spec/**/*'
+  IgnoredPatterns:
+    - '^\s*belongs_to'
+    - '^\s*has_many'
+    - '^\s*has_one'
+
+Layout/SpaceAroundMethodCallOperator:
+  Exclude:
+    - 'spec/**/*'
+
+Layout/SpaceBeforeBlockBraces:
+  Exclude:
+    - 'spec/**/*'
+
+# Lint -------------------------------------------------------------------------
+Lint/AmbiguousBlockAssociation:
+  IgnoredMethods:
+    # These are usual methods in RSpec fluent syntax
+    - change
+    - satisfy
+
+# Metric -----------------------------------------------------------------------
+Metrics/AbcSize:
+  Enabled: false
+
+Metrics/BlockLength:
+  Enabled: false
+
+Metrics/ClassLength:
+  Enabled: false
+
+Metrics/MethodLength:
+  Enabled: false
+
+Metrics/ModuleLength:
+  Enabled: false
+
+# Style ------------------------------------------------------------------------
+Style/BlockDelimiters:
+  EnforcedStyle: braces_for_chaining
+
+Style/Documentation:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Exclude:
+    - 'bin/*'
+
+Style/HashSyntax:
+  EnforcedShorthandSyntax: either
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+  ConsistentQuotesInMultiline: false
