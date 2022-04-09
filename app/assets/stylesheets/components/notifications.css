@@ -1,0 +1,40 @@
+@layer components {
+  .notifications {
+    position: fixed;
+    top: 0;
+    right: 0;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+
+    @apply p-6
+  }
+
+  .notification {
+    pointer-events: auto;
+    display: flex;
+    align-items: flex-start;
+
+    @apply p-4 rounded-md ring-1 shadow-lg;
+    @apply bg-white ring-gray-300;
+    @apply dark:bg-black dark:ring-gray-700;
+  }
+
+  .notification__icon {
+    @apply mr-4;
+  }
+
+  .notification__title {
+    @apply font-semibold;
+  }
+
+  .notification__actions {
+    @apply ml-6;
+
+    & .icon-button {
+      @apply -m-2 text-gray-500;
+    }
+  }
+}
