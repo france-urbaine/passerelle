@@ -1,6 +1,6 @@
 .content__header
   .breadcrumbs
-    a.breadcrumbs__path( href=regions_path ) Regions
+    a.breadcrumbs__path( href=regions_path(extract_params(:page, :order, :search)) ) Regions
     = svg_icon("chevron-right-icon", class: "breadcrumbs__separator")
     h1.breadcrumbs__path= region.name
 

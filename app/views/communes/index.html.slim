@@ -42,7 +42,9 @@ main.content
               span.tooltip Modifier cette commune
 
           td.w-px= commune.code_insee
-          td( id=dom_id(commune, :title) )= link_to(commune.name, commune)
+          td( id=dom_id(commune, :title) )
+            = link_to commune_path(commune, extract_params(:page, :order, :search)) do
+              = commune.name
 
           - if commune.code_departement?
             td.w-px= commune.code_departement

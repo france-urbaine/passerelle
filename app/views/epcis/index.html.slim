@@ -38,7 +38,9 @@ main.content
               span.tooltip Modifier cet EPCI
 
           td.w-px= epci.siren
-          td( id=dom_id(epci, :title) )= link_to(epci.name, epci)
+          td( id=dom_id(epci, :title) )
+            = link_to epci_path(epci, extract_params(:page, :order, :search)) do
+              = epci.name
 
           - if epci.code_departement?
             td.w-px= epci.code_departement

@@ -3,4 +3,5 @@
 module ApplicationHelper
   include ComponentsHelper
   include FormatHelper
+  include RequestHelper
 end

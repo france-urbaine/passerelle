@@ -38,7 +38,9 @@ main.content
               span.tooltip Modifier ce département
 
           td.w-px= departement.code_departement
-          td( id=dom_id(departement, :title) )= link_to(departement.name, departement)
+          td( id=dom_id(departement, :title) )
+            = link_to departement_path(departement, extract_params(:page, :order, :search)) do
+              = departement.name
           
           - if departement.code_region?
             td.w-px= departement.code_region
