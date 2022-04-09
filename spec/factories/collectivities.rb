@@ -3,10 +3,7 @@
 FactoryBot.define do
   factory :collectivity do
     association :publisher
-
-    # TODO: use a proper association
-    territory_id   { Faker::Internet.uuid }
-    territory_type { %w[Commune EPCI Departement].sample }
+    territory { association %i[commune epci departement].sample }
 
     name do
       loop do
@@ -27,15 +24,15 @@ FactoryBot.define do
     end
 
     trait :commune do
-      territory_type { "Commune" }
+      association :territory, factory: :commune
     end
 
     trait :epci do
-      territory_type { "EPCI" }
+      association :territory, factory: :epci
     end
 
     trait :departement do
-      territory_type { "Departement" }
+      association :territory, factory: :departement
     end
   end
 end
