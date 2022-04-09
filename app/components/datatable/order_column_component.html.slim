@@ -1,0 +1,25 @@
+- css_class = %w[icon-button datatable-row__order-button]
+
+- if current_asc?
+  a.icon-button.datatable-row__order-button.datatable-row__order-button--current(
+    aria-label="Trier par ordre décroissant"
+    href=order_url(:desc)
+  )
+    = helpers.svg_icon("arrow-sm-down-icon", "Trier par ordre décroissant")
+    span.tooltip Trier par ordre décroissant
+
+- elsif current_desc?
+  a.icon-button.datatable-row__order-button.datatable-row__order-button--current(
+    aria-label="Trier par ordre croissant"
+    href=order_url(:asc)
+  )
+    = helpers.svg_icon("arrow-sm-up-icon", "Trier par ordre croissant")
+    span.tooltip Trier par ordre croissant
+
+- else
+  a.icon-button.datatable-row__order-button(
+    aria-label="Trier par ordre croissant"
+    href=order_url(:asc)
+  )
+    = helpers.svg_icon("arrow-sm-up-icon", "Trier par ordre croissant")
+    span.tooltip Trier par ordre croissant

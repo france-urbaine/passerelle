@@ -13,6 +13,10 @@ module ComponentsHelper
     render(Datatable::PaginationFooterComponent.new(...))
   end
 
+  def order_column(...)
+    render(Datatable::OrderColumnComponent.new(...))
+  end
+
   def svg_icon(name, title = nil, height: 20, width: 20, **options)
     options[:"aria-hidden"] = true if title.nil?
 

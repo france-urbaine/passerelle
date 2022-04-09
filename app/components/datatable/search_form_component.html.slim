@@ -4,3 +4,6 @@ form.datatable-header__search
     .form-block__input
       .form-block__input-icon= helpers.svg_icon("search-icon")
       input( type="search" name="search" value=params[:search] placeholder=label )
+
+  - if params.key?(:order)
+    input( type="hidden" name="order" value=params[:order] )

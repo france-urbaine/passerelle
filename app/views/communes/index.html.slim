@@ -13,9 +13,18 @@ main.content
           span.tooltip Tout sélectionner
 
         th( aria-label="Actions" )
-        th( colspan="2" ) Commune
-        th( colspan="2" ) Département
-        th( colspan="2" ) EPCI
+
+        th( colspan="2" )
+          | Commune
+          = order_column(:commune)
+
+        th( colspan="2" )
+          | Département
+          = order_column(:departement)
+
+        th( colspan="2" )
+          | EPCI
+          = order_column(:epci)
 
     tbody
       - @communes.includes(:departement, :epci).each do |commune|

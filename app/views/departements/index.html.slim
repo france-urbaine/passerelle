@@ -13,8 +13,14 @@ main.content
           span.tooltip Tout sélectionner
 
         th( aria-label="Actions" )
-        th( colspan="2" ) Département
-        th( colspan="2" ) Region
+        
+        th( colspan="2" )
+          | Département
+          = order_column(:departement)
+        
+        th( colspan="2" )
+          | Region
+          = order_column(:region)
 
     tbody
       - @departements.preload(:region).each do |departement|
