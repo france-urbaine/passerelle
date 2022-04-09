@@ -6,6 +6,7 @@ class DepartementsController < ApplicationController
 
   def index
     @departements = Departement.all
+    @departements = search(@departements)
     @pagy, @departements = pagy(@departements)
   end
 

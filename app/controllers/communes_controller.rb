@@ -6,6 +6,7 @@ class CommunesController < ApplicationController
 
   def index
     @communes = Commune.all
+    @communes = search(@communes)
     @pagy, @communes = pagy(@communes)
   end
 
