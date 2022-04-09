@@ -31,3 +31,7 @@ main.content
 
           td.w-px= region.code_region
           td( id=dom_id(region, :title) )= link_to(region.name, region)
+
+  .datatable-footer
+    .flex-auto
+    = datatable_footer_pagination(@pagy)

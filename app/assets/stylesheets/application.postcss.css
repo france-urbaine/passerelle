@@ -6,11 +6,17 @@
 @import "./tags/body";
 @import "./tags/main";
 @import "./tags/links";
+@import "./tags/inputs";
+@import "./tags/buttons";
 @import "./tags/tables";
 
 /* Interactive components */
+@import "./components/button";
 @import "./components/icon_button";
 @import "./components/tooltip";
+
+/* Forms */
+@import "./components/form_block";
 
 /* Layouts */
 @import "./components/sidebar";

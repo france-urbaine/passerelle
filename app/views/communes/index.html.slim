@@ -45,3 +45,7 @@ main.content
             td= link_to(commune.epci.name, commune.epci) if commune.epci
           - else
             td( colspan="2" )
+
+  .datatable-footer
+    .flex-auto
+    = datatable_footer_pagination(@pagy)

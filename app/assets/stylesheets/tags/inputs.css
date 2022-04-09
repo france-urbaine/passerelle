@@ -1,4 +1,53 @@
 @layer base {
+  [type="text"],
+  [type="email"],
+  [type="url"],
+  [type="password"],
+  [type="number"],
+  [type="date"],
+  [type="datetime-local"],
+  [type="month"],
+  [type="search"],
+  [type="tel"],
+  [type="time"],
+  [type="week"],
+  [multiple],
+  textarea,
+  select {
+    @apply py-2 px-3 rounded-md border outline-none outline-offset-0;
+
+    @apply bg-white border-gray-300 text-gray-900;
+    @apply dark:bg-black dark:border-gray-700 dark:text-gray-100;
+
+    &[disabled] {
+      @apply opacity-30
+    }
+
+    &:not([disabled]) {
+      &:is(:hover, :active, :focus, :focus-visible) {
+        outline-style: solid;
+        outline-width: 0px;
+
+        @apply border-blue-500;
+        @apply dark:border-sky-500;
+      }
+
+      &:is(:focus, :focus-visible) {
+        outline-width: 1px;
+        outline-offset: 0px;
+
+        @apply outline-blue-500;
+        @apply dark:outline-sky-400;
+      }
+    }
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    opacity: 1;
+    @apply text-gray-400;
+  }
+
   [type="checkbox"],
   [type='radio'] {
     appearance: none;

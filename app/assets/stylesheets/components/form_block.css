@@ -1,0 +1,58 @@
+@layer components {
+  .form-block {
+    display: block;
+
+    & + .form-block {
+      @apply mt-4;
+    }
+
+    & label {
+      display: block;
+      @apply mb-1;
+    }
+
+    & input,
+    & select,
+    & textarea {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    & .field_with_errors {
+      & input,
+      & select,
+      & textarea {
+        @apply border-red-500;
+      }
+    }
+  }
+
+  .form-block__label--hiden {
+    display: none;
+  }
+
+  .form-block__input {
+    display: flex;
+    position: relative;
+  }
+
+  .form-block__input-icon {
+    position: absolute;
+    top:  1px;
+    left: 1px;
+    user-select: none;
+
+    @apply py-2 px-3;
+    @apply text-gray-500;
+
+    & + input {
+      @apply pl-12;
+    }
+  }
+
+  .form-block__errors {
+    @apply mt-1;
+    @apply text-red-700;
+  }
+}

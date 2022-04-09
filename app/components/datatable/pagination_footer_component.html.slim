@@ -1,0 +1,19 @@
+form.datatable-footer__pagination-selector
+  span.mr-4 Afficher :
+
+  label.form-block.w-20
+    .form-block__label--hiden Selectionner le nombre d'éléments à afficher
+    .form-block__input
+      select( name="items" id="footer-page-items" )
+        option( value="10"  selected=(pagy.items == 10)) 10
+        option( value="20"  selected=(pagy.items == 20)) 20
+        option( value="50"  selected=(pagy.items == 50)) 50
+        option( value="100" selected=(pagy.items == 100)) 100
+
+  label.form-block.w-40
+    .form-block__label--hiden Entrer le numéro de page
+    .form-block__input
+      = number_field_tag :page, nil, id: "footer-page-input", placeholder: placeholder
+
+  button.button.button__contained( type="submit" ) Valider
+

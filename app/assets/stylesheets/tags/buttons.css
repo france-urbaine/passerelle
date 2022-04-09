@@ -1,0 +1,8 @@
+@layer base {
+  [type="button"],
+  [type="reset"],
+  [type="submit"],
+  button {
+    @apply button;
+  }
+}

@@ -38,3 +38,7 @@ main.content
             td= link_to(epci.departement&.name, epci.departement) if epci.departement
           - else
             td( colspan="2" )
+
+  .datatable-footer
+    .flex-auto
+    = datatable_footer_pagination(@pagy)

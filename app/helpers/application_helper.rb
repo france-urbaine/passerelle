@@ -2,4 +2,5 @@
 
 module ApplicationHelper
   include ComponentsHelper
+  include FormatHelper
 end
