@@ -7,6 +7,7 @@ class RegionsController < ApplicationController
   def index
     @regions = Region.all
     @regions = search(@regions)
+    @regions = order(@regions)
     @pagy, @regions = pagy(@regions)
   end
 

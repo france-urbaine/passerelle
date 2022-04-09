@@ -7,6 +7,7 @@ class EpcisController < ApplicationController
   def index
     @epcis = EPCI.all
     @epcis = search(@epcis)
+    @epcis = order(@epcis)
     @pagy, @epcis = pagy(@epcis)
   end
 

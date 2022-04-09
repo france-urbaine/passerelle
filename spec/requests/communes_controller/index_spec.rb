@@ -24,4 +24,42 @@ RSpec.describe "CommunesController#index", type: :request do
     it { expect(response).to have_content_type(:json) }
     it { expect(response).to have_empty_body }
   end
+
+  describe "filtering collection" do
+    context "with proper parameters" do
+      let(:params) { { search: "C*", order: "-departement", page: 2, items: 5 } }
+
+      before do
+        create(:commune, name: "Conand")
+        create(:commune, name: "Condamine")
+        create(:commune, name: "Condeissiat")
+        create(:commune, name: "Confort")
+        create(:commune, name: "Confrançon")
+        create(:commune, name: "Contrevoz")
+        create(:commune, name: "Conzieu")
+        request
+      end
+
+      it { expect(response).to have_http_status(:success) }
+      it { expect(response).to have_content_type(:html) }
+    end
+
+    context "with overflowing pages" do
+      let(:params) { { page: 999_999 } }
+
+      before { request }
+
+      it { expect(response).to have_http_status(:success) }
+      it { expect(response).to have_content_type(:html) }
+    end
+
+    context "with unknown order parameter" do
+      let(:params) { { order: "dgfqjhsdf" } }
+
+      before { request }
+
+      it { expect(response).to have_http_status(:success) }
+      it { expect(response).to have_content_type(:html) }
+    end
+  end
 end

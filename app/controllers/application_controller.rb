@@ -3,6 +3,7 @@
 class ApplicationController < ActionController::Base
   include Pagy::Backend
   include ControllerItems
+  include ControllerOrder
   include ControllerSearch
 
   before_action :verify_requested_format!
