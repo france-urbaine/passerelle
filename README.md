@@ -95,3 +95,22 @@ The suite might be running in parallel on multiple CPU cores:
 $ bundle exec rails parallel:prepare
 $ bundle exec rails parallel:spec
 ```
+
+## Preview & catch mails in development
+
+You can preview mail views at http://localhost:3000/rails/mailers
+
+Mails can be catched with `mailcatcher`.
+The gem should not be part of of the bundle.
+You should install it manually and follow instructions:
+
+```shell
+$ gem install mailcatcher
+$ mailcatcher
+$ open http://localhost:1080/
+```
+
+If you experiment installation issue on MacOS:
+* https://github.com/sj26/mailcatcher#rvm
+* https://github.com/sj26/mailcatcher#ruby
+* https://github.com/eventmachine/eventmachine/issues/936
