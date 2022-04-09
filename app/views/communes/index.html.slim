@@ -3,6 +3,7 @@ main.content
     h1.content__header-title Base de données des communes
     .flex-auto
     = datatable_header_pagination(@pagy, "commune")
+    = datatable_search_form("Rechercher des communes")
 
   table
     thead

@@ -11,7 +11,10 @@ module Datatable
     end
 
     def page_url(page)
-      helpers.url_for(page: page)
+      new_params = params.slice(:search).permit!
+      new_params[:page] = page
+
+      helpers.url_for(new_params)
     end
   end
 end

@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 module ComponentsHelper
+  def datatable_search_form(...)
+    render(Datatable::SearchFormComponent.new(...))
+  end
+
   def datatable_header_pagination(...)
     render(Datatable::PaginationHeaderComponent.new(...))
   end

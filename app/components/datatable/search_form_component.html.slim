@@ -1,0 +1,6 @@
+form.datatable-header__search
+  label.form-block
+    .form-block__label--hiden= label
+    .form-block__input
+      .form-block__input-icon= helpers.svg_icon("search-icon")
+      input( type="search" name="search" value=params[:search] placeholder=label )

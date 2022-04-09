@@ -15,5 +15,8 @@ form.datatable-footer__pagination-selector
     .form-block__input
       = number_field_tag :page, nil, id: "footer-page-input", placeholder: placeholder
 
+  - if params.key?(:search)
+    input( type="hidden" name="search" value=params[:search] )
+
   button.button.button__contained( type="submit" ) Valider
 

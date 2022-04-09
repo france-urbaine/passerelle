@@ -3,6 +3,7 @@ main.content
     h1.content__header-title Base de données des départements
     .flex-auto
     = datatable_header_pagination(@pagy, "département")
+    = datatable_search_form("Rechercher des départements")
 
   table
     thead

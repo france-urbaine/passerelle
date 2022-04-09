@@ -3,6 +3,7 @@ main.content
     h1.content__header-title Base de données des régions
     .flex-auto
     = datatable_header_pagination(@pagy, "region", plural: "regions")
+    = datatable_search_form("Rechercher des regions")
 
   table
     thead

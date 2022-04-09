@@ -3,6 +3,7 @@ main.content
     h1.content__header-title Base de données des EPCI
     .flex-auto
     = datatable_header_pagination(@pagy, "EPCI", plural: "EPCI")
+    = datatable_search_form("Rechercher des EPCI")
 
   table
     thead
