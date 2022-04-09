@@ -28,4 +28,19 @@ RSpec.describe DDFIP, type: :model do
 
     it { is_expected.to validate_uniqueness_of(:name).case_insensitive }
   end
+
+  # Search
+  # ----------------------------------------------------------------------------
+  describe ".search" do
+    it do
+      expect{
+        described_class.search("Hello").load
+      }.to perform_sql_query(<<~SQL.squish)
+        SELECT "ddfips".*
+        FROM   "ddfips"
+        WHERE (LOWER(UNACCENT("ddfips"."name")) LIKE LOWER(UNACCENT('%Hello%'))
+          OR "ddfips"."code_departement" = 'Hello')
+      SQL
+    end
+  end
 end

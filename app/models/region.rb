@@ -33,4 +33,14 @@ class Region < ApplicationRecord
 
   validates :code_region, format: { allow_blank: true, with: CODE_REGION_REGEXP }
   validates :code_region, uniqueness: { unless: :skip_uniqueness_validation_of_code_region? }
+
+  # Scopes
+  # ----------------------------------------------------------------------------
+  scope :search, lambda { |input|
+    advanced_search(
+      input,
+      name:        ->(value) { match(:name, value) },
+      code_region: ->(value) { where(code_region: value) }
+    )
+  }
 end

@@ -21,6 +21,52 @@ RSpec.describe User, type: :model do
     it { is_expected.to validate_uniqueness_of(:email).case_insensitive }
   end
 
+  # Search
+  # ----------------------------------------------------------------------------
+  describe ".search" do
+    it do
+      expect{
+        described_class.search("Hello").load
+      }.to perform_sql_query(<<~SQL.squish)
+        SELECT "users".*
+        FROM   "users"
+        WHERE (LOWER(UNACCENT("users"."last_name")) LIKE LOWER(UNACCENT('%Hello%'))
+          OR LOWER(UNACCENT("users"."first_name")) LIKE LOWER(UNACCENT('%Hello%')))
+      SQL
+    end
+
+    it do
+      expect{
+        described_class.search("Louis Funes").load
+      }.to perform_sql_query(<<~SQL.squish)
+        SELECT "users".*
+        FROM   "users"
+        WHERE (LOWER(UNACCENT(CONCAT("users"."last_name", ' ', "users"."first_name"))) LIKE LOWER(UNACCENT('%Louis% %Funes%'))
+          OR LOWER(UNACCENT(CONCAT("users"."first_name", ' ', "users"."last_name"))) LIKE LOWER(UNACCENT('%Louis% %Funes%')))
+      SQL
+    end
+
+    it do
+      expect{
+        described_class.search("ddfip-64@finances.gouv.fr").load
+      }.to perform_sql_query(<<~SQL.squish)
+        SELECT "users".*
+        FROM   "users"
+        WHERE ("users"."email" = 'ddfip-64@finances.gouv.fr' OR "users"."unconfirmed_email" = 'ddfip-64@finances.gouv.fr')
+      SQL
+    end
+
+    it do
+      expect{
+        described_class.search("@finances.gouv.fr").load
+      }.to perform_sql_query(<<~SQL.squish)
+        SELECT "users".*
+        FROM   "users"
+        WHERE ("users"."email" LIKE '%@finances.gouv.fr' OR "users"."unconfirmed_email" LIKE '%@finances.gouv.fr')
+      SQL
+    end
+  end
+
   # Registration process
   # ----------------------------------------------------------------------------
   describe "registration process" do

@@ -59,6 +59,15 @@ class Collectivity < ApplicationRecord
   scope :epcis,        -> { where(territory_type: "EPCI") }
   scope :departements, -> { where(territory_type: "Departement") }
 
+  scope :search, lambda { |input|
+    advanced_search(
+      input,
+      name:           ->(value) { match(:name, value) },
+      siren:          ->(value) { where(siren: value) },
+      publisher_name: ->(value) { left_joins(:publisher).merge(Publisher.where(name: value)) }
+    )
+  }
+
   # Callbacks
   # ----------------------------------------------------------------------------
   before_validation :clean_attributes

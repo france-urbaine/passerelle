@@ -35,4 +35,14 @@ class DDFIP < ApplicationRecord
   # FYI: About uniqueness validations, case insensitivity and accents:
   # You should read ./docs/uniqueness_validations_and_accents.md
   validates :name, uniqueness: { case_sensitive: false, unless: :skip_uniqueness_validation_of_name? }
+
+  # Scopes
+  # ----------------------------------------------------------------------------
+  scope :search, lambda { |input|
+    advanced_search(
+      input,
+      name:             ->(value) { match(:name, value) },
+      code_departement: ->(value) { where(code_departement: value) }
+    )
+  }
 end

@@ -66,6 +66,52 @@ class User < ApplicationRecord
   validates :first_name, presence: true
   validates :organization_type, inclusion: { in: %w[Publisher Collectivity DDFIP] }
 
+  # Search
+  # ----------------------------------------------------------------------------
+  scope :search, lambda { |input|
+    scopes = {
+      first_name:        ->(value) { match(:first_name, value) },
+      last_name:         ->(value) { match(:first_name, value) },
+      full_name:         ->(value) { search_by_full_name(value) },
+      email:             ->(value) { search_with_email_attribute(:email, value) },
+      unconfirmed_email: ->(value) { search_with_email_attribute(:unconfirmed_email, value) }
+    }
+
+    case input
+    when /@/    then advanced_search(input, scopes.slice(:email, :unconfirmed_email))
+    when String then advanced_search(input, scopes.slice(:full_name))
+    else             advanced_search(input, scopes)
+    end
+  }
+
+  scope :search_by_full_name, lambda { |value|
+    words = sanitize_sql_like(value).squish.split.map { |s| "%#{s}%" }
+
+    if words.size == 1
+      value = words[0]
+      where(<<~SQL.squish, value:)
+        LOWER(UNACCENT("users"."last_name")) LIKE LOWER(UNACCENT(:value))
+        OR
+        LOWER(UNACCENT("users"."first_name")) LIKE LOWER(UNACCENT(:value))
+      SQL
+    else
+      value = words.join(" ")
+      where(<<~SQL.squish, value:)
+        LOWER(UNACCENT(CONCAT("users"."last_name", ' ', "users"."first_name"))) LIKE LOWER(UNACCENT(:value))
+        OR
+        LOWER(UNACCENT(CONCAT("users"."first_name", ' ', "users"."last_name"))) LIKE LOWER(UNACCENT(:value))
+      SQL
+    end
+  }
+
+  scope :search_with_email_attribute, lambda { |attribute, value|
+    if value.start_with?("@")
+      where(arel_table[attribute].matches("%#{sanitize_sql_like(value)}", nil, true))
+    else
+      where(attribute => value)
+    end
+  }
+
   # Invitation process
   # ----------------------------------------------------------------------------
   def invite(from: nil)

@@ -28,4 +28,19 @@ RSpec.describe Publisher, type: :model do
     it { is_expected.to validate_uniqueness_of(:name).case_insensitive }
     it { is_expected.to validate_uniqueness_of(:siren).case_insensitive }
   end
+
+  # Search
+  # ----------------------------------------------------------------------------
+  describe ".search" do
+    it do
+      expect{
+        described_class.search("Hello").load
+      }.to perform_sql_query(<<~SQL.squish)
+        SELECT "publishers".*
+        FROM   "publishers"
+        WHERE (LOWER(UNACCENT("publishers"."name")) LIKE LOWER(UNACCENT('%Hello%'))
+          OR "publishers"."siren" = 'Hello')
+      SQL
+    end
+  end
 end

@@ -2,6 +2,7 @@
 
 class ApplicationRecord < ActiveRecord::Base
   include Discard::Model
+  include AdvancedSearch
   include SkipUniquenessValidation
 
   primary_abstract_class

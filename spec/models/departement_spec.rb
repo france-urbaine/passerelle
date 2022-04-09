@@ -26,4 +26,31 @@ RSpec.describe Departement, type: :model do
 
   it { is_expected.to     allow_value("12")  .for(:code_region) }
   it { is_expected.not_to allow_value("12AB").for(:code_region) }
+
+  # Search
+  # ----------------------------------------------------------------------------
+  describe ".search" do
+    it do
+      expect{
+        described_class.search(name: "Hello").load
+      }.to perform_sql_query(<<~SQL.squish)
+        SELECT "departements".*
+        FROM   "departements"
+        WHERE  (LOWER(UNACCENT("departements"."name")) LIKE LOWER(UNACCENT('%Hello%')))
+      SQL
+    end
+
+    it do
+      expect{
+        described_class.search("Hello").load
+      }.to perform_sql_query(<<~SQL.squish)
+        SELECT "departements".*
+        FROM   "departements"
+        LEFT OUTER JOIN "regions" ON "regions"."code_region" = "departements"."code_region"
+        WHERE (LOWER(UNACCENT("departements"."name")) LIKE LOWER(UNACCENT('%Hello%'))
+          OR "departements"."code_departement" = 'Hello'
+          OR LOWER(UNACCENT(\"regions\".\"name\")) LIKE LOWER(UNACCENT('%Hello%')))
+      SQL
+    end
+  end
 end

@@ -36,4 +36,14 @@ class Publisher < ApplicationRecord
   # You should read ./docs/uniqueness_validations_and_accents.md
   validates :name,  uniqueness: { case_sensitive: false, unless: :skip_uniqueness_validation_of_name? }
   validates :siren, uniqueness: { case_sensitive: false, unless: :skip_uniqueness_validation_of_siren? }
+
+  # Scopes
+  # ----------------------------------------------------------------------------
+  scope :search, lambda { |input|
+    advanced_search(
+      input,
+      name:  ->(value) { match(:name, value) },
+      siren: ->(value) { where(siren: value) }
+    )
+  }
 end

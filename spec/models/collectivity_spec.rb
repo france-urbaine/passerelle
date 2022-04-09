@@ -52,4 +52,21 @@ RSpec.describe Collectivity, type: :model do
   it { expect(create(:collectivity, contact_phone: "+33 1 23 45 67 89")).to have_attributes(contact_phone: "+33123456789") }
   it { expect(create(:collectivity, contact_phone: "")).to                  have_attributes(contact_phone: "") }
   it { expect(create(:collectivity, contact_phone: nil)).to                 have_attributes(contact_phone: nil) }
+
+  # Search
+  # ----------------------------------------------------------------------------
+  describe ".search" do
+    it do
+      expect{
+        described_class.search("Hello").load
+      }.to perform_sql_query(<<~SQL.squish)
+        SELECT "collectivities".*
+        FROM   "collectivities"
+        LEFT OUTER JOIN "publishers" ON "publishers"."id" = "collectivities"."publisher_id"
+        WHERE (LOWER(UNACCENT("collectivities"."name")) LIKE LOWER(UNACCENT('%Hello%'))
+          OR "collectivities"."siren" = 'Hello'
+          OR "publishers"."name" = 'Hello')
+      SQL
+    end
+  end
 end

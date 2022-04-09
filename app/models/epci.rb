@@ -39,6 +39,19 @@ class EPCI < ApplicationRecord
 
   validates :siren, uniqueness: { unless: :skip_uniqueness_validation_of_siren? }
 
+  # Scopes
+  # ----------------------------------------------------------------------------
+  scope :search, lambda { |input|
+    advanced_search(
+      input,
+      name:             ->(value) { match(:name, value) },
+      siren:            ->(value) { where(siren: value) },
+      code_departement: ->(value) { where(code_departement: value) },
+      departement_name: ->(value) { left_joins(:departement).merge(Departement.match(:name, value)) },
+      region_name:      ->(value) { left_joins(:region).merge(Region.match(:name, value)) }
+    )
+  }
+
   # Callbacks
   # ----------------------------------------------------------------------------
   before_validation :clean_empty_code_departement

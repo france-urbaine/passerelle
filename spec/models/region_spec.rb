@@ -25,4 +25,29 @@ RSpec.describe Region, type: :model do
 
     it { is_expected.to validate_uniqueness_of(:code_region).case_insensitive }
   end
+
+  # Search
+  # ----------------------------------------------------------------------------
+  describe ".search" do
+    it do
+      expect{
+        described_class.search(name: "Hello").load
+      }.to perform_sql_query(<<~SQL.squish)
+        SELECT "regions".*
+        FROM   "regions"
+        WHERE  (LOWER(UNACCENT("regions"."name")) LIKE LOWER(UNACCENT('%Hello%')))
+      SQL
+    end
+
+    it do
+      expect{
+        described_class.search("Hello").load
+      }.to perform_sql_query(<<~SQL.squish)
+        SELECT "regions".*
+        FROM   "regions"
+        WHERE (LOWER(UNACCENT("regions"."name")) LIKE LOWER(UNACCENT('%Hello%'))
+          OR "regions"."code_region" = 'Hello')
+      SQL
+    end
+  end
 end

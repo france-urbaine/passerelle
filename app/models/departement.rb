@@ -39,4 +39,15 @@ class Departement < ApplicationRecord
   validates :code_region,      format: { allow_blank: true, with: CODE_REGION_REGEXP }
 
   validates :code_departement, uniqueness: { unless: :skip_uniqueness_validation_of_code_departement? }
+
+  # Scopes
+  # ----------------------------------------------------------------------------
+  scope :search, lambda { |input|
+    advanced_search(
+      input,
+      name:             ->(value) { match(:name, value) },
+      code_departement: ->(value) { where(code_departement: value) },
+      region_name:      ->(value) { left_joins(:region).merge(Region.match(:name, value)) }
+    )
+  }
 end

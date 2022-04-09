@@ -42,6 +42,21 @@ class Commune < ApplicationRecord
 
   validates :code_insee, uniqueness: { unless: :skip_uniqueness_validation_of_code_insee? }
 
+  # Scopes
+  # ----------------------------------------------------------------------------
+  scope :search, lambda { |input|
+    advanced_search(
+      input,
+      name:             ->(value) { match(:name, value) },
+      code_insee:       ->(value) { where(code_insee: value) },
+      siren_epci:       ->(value) { where(siren_epci: value) },
+      code_departement: ->(value) { where(code_departement: value) },
+      epci_name:        ->(value) { left_joins(:epci).merge(EPCI.match(:name, value)) },
+      departement_name: ->(value) { left_joins(:departement).merge(Departement.match(:name, value)) },
+      region_name:      ->(value) { left_joins(:region).merge(Region.match(:name, value)) }
+    )
+  }
+
   # Callbacks
   # ----------------------------------------------------------------------------
   before_validation :clean_attributes
