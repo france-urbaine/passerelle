@@ -34,6 +34,14 @@ group :development, :test do
   gem "awesome_print"
   gem "dead_end"
   gem "debug", platforms: %i[mri mingw x64_mingw]
+
+  gem "factory_bot"
+  gem "factory_bot-awesome_linter"
+  gem "factory_bot_rails"
+  gem "faker"
+  gem "parallel_tests"
+  gem "rspec"
+  gem "rspec-rails"
 end
 
 group :development do
@@ -52,5 +60,7 @@ end
 group :test do
   gem "capybara"
   gem "selenium-webdriver"
+  gem "shoulda-matchers"
+  gem "simplecov"
   gem "webdrivers"
 end

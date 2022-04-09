@@ -92,8 +92,20 @@ GEM
     debug (1.5.0)
       irb (>= 1.3.6)
       reline (>= 0.2.7)
+    diff-lcs (1.5.0)
     digest (3.1.0)
+    docile (1.4.0)
     erubi (1.10.0)
+    factory_bot (6.2.1)
+      activesupport (>= 5.0.0)
+    factory_bot-awesome_linter (1.0.3)
+      factory_bot (>= 6.1.0)
+      ruby-progressbar (>= 1.11.0)
+    factory_bot_rails (6.2.0)
+      factory_bot (~> 6.2.0)
+      railties (>= 5.0.0)
+    faker (2.20.0)
+      i18n (>= 1.8.11, < 2)
     globalid (1.0.0)
       activesupport (>= 5.0)
     i18n (1.10.0)
@@ -136,6 +148,8 @@ GEM
     nokogiri (1.13.3-x86_64-darwin)
       racc (~> 1.4)
     parallel (1.22.1)
+    parallel_tests (3.8.1)
+      parallel
     parser (3.1.1.0)
       ast (~> 2.4.1)
     pg (1.3.5)
@@ -184,6 +198,27 @@ GEM
     reline (0.3.1)
       io-console (~> 0.5)
     rexml (3.2.5)
+    rspec (3.11.0)
+      rspec-core (~> 3.11.0)
+      rspec-expectations (~> 3.11.0)
+      rspec-mocks (~> 3.11.0)
+    rspec-core (3.11.0)
+      rspec-support (~> 3.11.0)
+    rspec-expectations (3.11.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.11.0)
+    rspec-mocks (3.11.1)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.11.0)
+    rspec-rails (5.1.1)
+      actionpack (>= 5.2)
+      activesupport (>= 5.2)
+      railties (>= 5.2)
+      rspec-core (~> 3.10)
+      rspec-expectations (~> 3.10)
+      rspec-mocks (~> 3.10)
+      rspec-support (~> 3.10)
+    rspec-support (3.11.0)
     rubocop (1.27.0)
       parallel (~> 1.10)
       parser (>= 3.1.0.0)
@@ -210,6 +245,14 @@ GEM
       childprocess (>= 0.5, < 5.0)
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2)
+    shoulda-matchers (5.1.0)
+      activesupport (>= 5.2.0)
+    simplecov (0.21.2)
+      docile (~> 1.1)
+      simplecov-html (~> 0.11)
+      simplecov_json_formatter (~> 0.1)
+    simplecov-html (0.12.3)
+    simplecov_json_formatter (0.1.4)
     slim (4.1.0)
       temple (>= 0.7.6, < 0.9)
       tilt (>= 2.0.6, < 2.1)
@@ -262,19 +305,28 @@ DEPENDENCIES
   cssbundling-rails
   dead_end
   debug
+  factory_bot
+  factory_bot-awesome_linter
+  factory_bot_rails
+  faker
   importmap-rails
   jbuilder
+  parallel_tests
   pg (~> 1.1)
   puma (~> 5.0)
   rack-mini-profiler
   rails (~> 7.0.2, >= 7.0.2.3)
   rails-i18n
   redis (~> 4.0)
+  rspec
+  rspec-rails
   rubocop
   rubocop-performance
   rubocop-rails
   rubocop-rspec
   selenium-webdriver
+  shoulda-matchers
+  simplecov
   slim
   sprockets-rails
   stimulus-rails

@@ -3,22 +3,40 @@
 This README would normally document whatever steps are necessary to get the
 application up and running.
 
-Things you may want to cover:
+## Requirements
 
-* Ruby version
+* Ruby 3.1.0
+* Bundler >= 2.x
+* PostgreSQL
 
-* System dependencies
+## Setup project
 
-* Configuration
+The setup script should bundle dependencies, prepare the development and test databases.
 
-* Database creation
+```
+bin/setup
+```
 
-* Database initialization
+## Code linting & formating
 
-* How to run the test suite
+This project use Rubocop to lint and format Ruby code :
 
-* Services (job queues, cache servers, search engines, etc.)
+```
+bundle exec rubocop
+```
 
-* Deployment instructions
+## Tests
 
-* ...
+The
+
+Test suite is running with Rspec.
+
+```
+bundle exec rspec
+```
+
+The suite might be running in parallel on multiple CPU cores:
+
+```
+bundle exec rails parallel:spec
+```
