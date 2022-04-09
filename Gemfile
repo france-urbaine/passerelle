@@ -69,6 +69,7 @@ end
 
 group :test do
   gem "capybara"
+  gem "rspec-collection_matchers"
   gem "selenium-webdriver"
   gem "shoulda-matchers"
   gem "simplecov"

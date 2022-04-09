@@ -66,9 +66,18 @@ Metrics/ModuleLength:
   Enabled: false
 
 # Rails ------------------------------------------------------------------------
+Rails/DynamicFindBy:
+  AllowedMethods:
+    # Method defined as User.find_by_invitation_token
+    - find_by_invitation_token
+
 Rails/Output:
   Exclude:
     - 'config/dotenv.rb'
+
+# RSpec ------------------------------------------------------------------------
+RSpec/DescribedClass:
+  Enabled: false
 
 # Style ------------------------------------------------------------------------
 Style/BlockDelimiters:

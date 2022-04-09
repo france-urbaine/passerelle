@@ -20,5 +20,12 @@ module Fiscahub
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+
+    # Avoid generating useless files with controllers
+    config.generators.helper = false
+    config.generators.assets = false
+
+    # Default (and only) locale
+    config.i18n.default_locale = :fr
   end
 end
