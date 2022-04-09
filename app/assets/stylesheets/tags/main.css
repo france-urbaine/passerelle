@@ -1,0 +1,8 @@
+@layer base {
+  main {
+    &:focus,
+    &:focus-visible {
+      @apply outline-none;
+    }
+  }
+}

@@ -1,0 +1,36 @@
+@layer base {
+  a {
+    text-decoration: none;
+
+    @apply text-blue-700;
+    @apply dark:text-sky-300;
+  }
+
+  a[disabled] {
+    @apply text-gray-500;
+    @apply dark:text-gray-500;
+  }
+
+  a:not([disabled]) {
+    &:is(:hover, :active, :focus, :focus-visible) {
+      outline-style: solid;
+      outline-width: 0px;
+
+      @apply text-blue-500;
+      @apply dark:text-sky-500;
+    }
+
+    &:focus-visible {
+      outline-width: 2px;
+      outline-offset: 4px;
+
+      @apply outline-blue-500;
+      @apply dark:outline-sky-500;
+    }
+
+    &:active {
+      @apply text-blue-700 outline-blue-700;
+      @apply dark:text-sky-300 dark:outline-sky-300;
+    }
+  }
+}

@@ -1,4 +1,12 @@
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
-@import "./generic/tags";
+
+/* Tags */
+@import "./tags/body";
+@import "./tags/main";
+@import "./tags/links";
+
+/* Layouts */
+@import "./components/sidebar";
+@import "./components/content";

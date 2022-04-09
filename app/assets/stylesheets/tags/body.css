@@ -1,0 +1,15 @@
+@layer base {
+  body {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+
+    @apply bg-gray-100 text-gray-900;
+    @apply dark:bg-gray-900 dark:text-gray-100;
+  }
+
+  body, table, button, input, optgroup, select, textarea {
+    @apply text-sm antialiased;
+    @apply dark:subpixel-antialiased;
+  }
+}
