@@ -55,6 +55,10 @@ group :development do
   gem "rubocop-rails",       require: false
   gem "rubocop-rspec",       require: false
 
+  gem "guard"
+  gem "guard-rspec",   require: false
+  gem "guard-rubocop", require: false
+
   # Speed up commands on slow machines / big apps [https://github.com/rails/spring]
   # gem "spring"
 end

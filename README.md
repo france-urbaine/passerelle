@@ -75,10 +75,19 @@ $ bin/setup
 
 ## Code linting & formating
 
-This project use Rubocop to lint and format Ruby code :
+This project use Rubocop to lint and format Ruby code:
 
 ```shell
 $ bundle exec rubocop
+```
+
+Alternatively, you can use guard to perform rubocop on code changes:
+
+```shell
+$ guard
+```
+```shell
+$ guard -P rubocop
 ```
 
 ## Tests
@@ -94,6 +103,15 @@ The suite might be running in parallel on multiple CPU cores:
 ```shell
 $ bundle exec rails parallel:prepare
 $ bundle exec rails parallel:spec
+```
+
+Alternatively, you can use guard to perform rubocop on code changes:
+
+```shell
+$ guard
+```
+```shell
+$ guard -P rspec
 ```
 
 ## Preview & catch mails in development
