@@ -11,5 +11,9 @@ FactoryBot.define do
 
     code_insee       { Faker::Address.zip_code }
     code_departement { code_insee[0..1] }
+
+    trait :with_epci do
+      association :epci
+    end
   end
 end

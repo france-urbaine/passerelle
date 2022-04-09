@@ -19,4 +19,5 @@
 
 ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.acronym "DDFIP"
+  inflect.acronym "EPCI"
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_04_09_140526) do
+ActiveRecord::Schema[7.0].define(version: 2022_04_09_140800) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -60,6 +60,17 @@ ActiveRecord::Schema[7.0].define(version: 2022_04_09_140526) do
     t.index ["code_departement"], name: "index_ddfips_on_code_departement"
     t.index ["discarded_at"], name: "index_ddfips_on_discarded_at"
     t.index ["name"], name: "index_ddfips_on_name", unique: true, where: "(discarded_at IS NULL)"
+  end
+
+  create_table "epcis", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name", null: false
+    t.string "siren", null: false
+    t.string "code_departement"
+    t.string "nature"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["code_departement"], name: "index_epcis_on_code_departement"
+    t.index ["siren"], name: "index_epcis_on_siren", unique: true
   end
 
   create_table "publishers", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
