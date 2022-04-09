@@ -77,4 +77,18 @@ RSpec.describe Departement, type: :model do
       SQL
     end
   end
+
+  describe ".order_by_score" do
+    it do
+      expect{
+        described_class.order_by_score("Hello").load
+      }.to perform_sql_query(<<~SQL.squish)
+        SELECT "departements".*
+        FROM   "departements"
+        ORDER BY
+          ts_rank_cd(to_tsvector('french', "departements"."name"), to_tsquery('french', 'Hello')) DESC,
+          "departements"."code_departement" ASC
+      SQL
+    end
+  end
 end

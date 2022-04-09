@@ -50,4 +50,18 @@ RSpec.describe Region, type: :model do
       SQL
     end
   end
+
+  describe ".order_by_score" do
+    it do
+      expect{
+        described_class.order_by_score("Hello").load
+      }.to perform_sql_query(<<~SQL.squish)
+        SELECT "regions".*
+        FROM   "regions"
+        ORDER BY
+          ts_rank_cd(to_tsvector('french', "regions"."name"), to_tsquery('french', 'Hello')) DESC,
+          "regions"."code_region" ASC
+      SQL
+    end
+  end
 end

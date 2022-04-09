@@ -60,6 +60,10 @@ class EPCI < ApplicationRecord
     )
   }
 
+  scope :order_by_score, lambda { |input|
+    scored_order(:name, input)
+  }
+
   # Callbacks
   # ----------------------------------------------------------------------------
   before_validation :clean_empty_code_departement

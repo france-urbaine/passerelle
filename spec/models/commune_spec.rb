@@ -115,4 +115,18 @@ RSpec.describe Commune, type: :model do
       SQL
     end
   end
+
+  describe ".order_by_score" do
+    it do
+      expect{
+        described_class.order_by_score("Hello").load
+      }.to perform_sql_query(<<~SQL.squish)
+        SELECT "communes".*
+        FROM   "communes"
+        ORDER BY
+          ts_rank_cd(to_tsvector('french', "communes"."name"), to_tsquery('french', 'Hello')) DESC,
+          "communes"."code_insee" ASC
+      SQL
+    end
+  end
 end

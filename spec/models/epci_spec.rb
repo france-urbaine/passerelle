@@ -90,4 +90,18 @@ RSpec.describe EPCI, type: :model do
       SQL
     end
   end
+
+  describe ".order_by_score" do
+    it do
+      expect{
+        described_class.order_by_score("Hello").load
+      }.to perform_sql_query(<<~SQL.squish)
+        SELECT "epcis".*
+        FROM   "epcis"
+        ORDER BY
+          ts_rank_cd(to_tsvector('french', "epcis"."name"), to_tsquery('french', 'Hello')) DESC,
+          "epcis"."name" ASC
+      SQL
+    end
+  end
 end

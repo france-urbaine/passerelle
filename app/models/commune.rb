@@ -66,6 +66,10 @@ class Commune < ApplicationRecord
     )
   }
 
+  scope :order_by_score, lambda { |input|
+    scored_order(:name, input)
+  }
+
   # Callbacks
   # ----------------------------------------------------------------------------
   before_validation :clean_attributes

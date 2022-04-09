@@ -50,4 +50,8 @@ class Region < ApplicationRecord
       region: ->(direction) { order(code_region: direction) }
     )
   }
+
+  scope :order_by_score, lambda { |input|
+    scored_order(:name, input)
+  }
 end
