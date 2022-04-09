@@ -27,6 +27,7 @@ class DepartementsController < ApplicationController
 
   def set_departement
     @departement = Departement.find(params[:id])
+    @departement.strict_loading!(false)
   end
 
   def departement_params

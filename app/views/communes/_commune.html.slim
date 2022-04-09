@@ -1,1 +1,28 @@
-h1= @commune.name
+.content__header
+  .breadcrumbs
+    a.breadcrumbs__path( href=communes_path ) Communes
+    = svg_icon("chevron-right-icon", class: "breadcrumbs__separator")
+    h1.breadcrumbs__path= commune.name
+
+  .flex-auto
+  a.button( href=edit_commune_path(commune) )
+    = svg_icon("pencil-alt-icon")
+    | Modifier
+
+.card
+  dl.description-list
+    .description-list__row
+      dt Code INSEE de la commune
+      dd= commune.code_insee
+
+    .description-list__row
+      dt Région
+      dd= link_to(commune.region.name, commune.region) if commune.region
+
+    .description-list__row
+      dt Département
+      dd= link_to(commune.departement.name, commune.departement) if commune.departement
+
+    .description-list__row
+      dt EPCI
+      dd= link_to(commune.epci.name, commune.epci) if commune.epci

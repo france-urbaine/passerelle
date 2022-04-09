@@ -27,6 +27,7 @@ class EpcisController < ApplicationController
 
   def set_epci
     @epci = EPCI.find(params[:id])
+    @epci.strict_loading!(false)
   end
 
   def epci_params

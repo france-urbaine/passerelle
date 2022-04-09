@@ -1,0 +1,22 @@
+@layer components {
+  .breadcrumbs {
+    display: flex;
+    flex: 1 1 0%;
+    min-width: 0px;
+    align-items: center;
+
+    @apply text-2xl;
+  }
+
+  .breadcrumbs__separator {
+    @apply mx-2 text-gray-400;
+  }
+
+  .breadcrumbs__path {
+    @apply text-gray-500;
+  }
+
+  .breadcrumbs__path:last-child {
+    @apply text-gray-900;
+  }
+}

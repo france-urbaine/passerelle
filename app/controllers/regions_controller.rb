@@ -27,6 +27,7 @@ class RegionsController < ApplicationController
 
   def set_region
     @region = Region.find(params[:id])
+    @region.strict_loading!(false)
   end
 
   def region_params

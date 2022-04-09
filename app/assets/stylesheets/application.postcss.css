@@ -21,8 +21,11 @@
 /* Layouts */
 @import "./components/sidebar";
 @import "./components/content";
+@import "./components/card";
+@import "./components/breadcrumbs";
 
 /* Data display */
 @import "./components/datatable_row";
 @import "./components/datatable_header";
 @import "./components/datatable_footer";
+@import "./components/description_list";

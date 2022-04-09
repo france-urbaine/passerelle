@@ -1,1 +1,34 @@
-h1= @epci.name
+.content__header
+  .breadcrumbs
+    a.breadcrumbs__path( href=epcis_path ) EPCI
+    = svg_icon("chevron-right-icon", class: "breadcrumbs__separator")
+    h1.breadcrumbs__path= epci.name
+
+  .flex-auto
+  a.button( href=edit_epci_path(epci) )
+    = svg_icon("pencil-alt-icon")
+    | Modifier
+
+.card
+  dl.description-list
+    .description-list__row
+      dt Numéro SIREN de l'EPCI
+      dd= display_siren(epci.siren)
+
+    .description-list__row
+      dt Région
+      dd= link_to(epci.region.name, epci.region) if epci.region
+
+    .description-list__row
+      dt Département
+      dd= link_to(epci.departement.name, epci.departement) if epci.departement
+
+    .description-list__row
+      dt Communes
+      dd.flex.justify-between
+        - if epci.communes.count.positive?
+          div= count(epci.communes.count, "commune")
+
+          a.button.-my-2( href=communes_path(search: epci.siren) )
+            = svg_icon("search-icon")
+            | Voir les communes

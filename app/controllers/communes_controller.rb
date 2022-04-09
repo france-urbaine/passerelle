@@ -27,6 +27,7 @@ class CommunesController < ApplicationController
 
   def set_commune
     @commune = Commune.find(params[:id])
+    @commune.strict_loading!(false)
   end
 
   def commune_params

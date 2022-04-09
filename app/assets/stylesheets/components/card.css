@@ -1,0 +1,7 @@
+@layer components {
+  .card {
+    @apply rounded-md ring-1;
+    @apply bg-white ring-gray-300;
+    @apply dark:bg-black dark:ring-gray-700;
+  }
+}

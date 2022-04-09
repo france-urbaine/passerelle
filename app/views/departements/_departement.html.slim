@@ -1,1 +1,48 @@
-h1= @departement.name
+.content__header
+  .breadcrumbs
+    a.breadcrumbs__path( href=departements_path ) Départements
+    = svg_icon("chevron-right-icon", class: "breadcrumbs__separator")
+    h1.breadcrumbs__path= departement.name
+
+  .flex-auto
+  a.button( href=edit_departement_path(departement) )
+    = svg_icon("pencil-alt-icon")
+    | Modifier
+
+.card
+  dl.description-list
+    .description-list__row
+      dt Code INSEE du département
+      dd= departement.code_departement
+
+    .description-list__row
+      dt Région
+      dd= link_to(departement.region.name, departement.region) if departement.region
+
+    .description-list__row
+      dt EPCI
+      dd.flex.justify-between
+        - if departement.epcis.count.positive?
+          div= count(departement.epcis.count, "EPCI")
+
+          a.button.-my-2( href=epcis_path(search: departement.code_departement) )
+            = svg_icon("search-icon")
+            | Voir les EPCI
+
+    .description-list__row
+      dt Communes
+      dd.flex.justify-between
+        - if departement.communes.count.positive?
+          div= count(departement.communes.count, "commune")
+
+          a.button.-my-2( href=communes_path(search: departement.code_departement) )
+            = svg_icon("search-icon")
+            | Voir les communes
+
+    .description-list__row
+      dt DDFIP enregistrées
+      dd
+
+    .description-list__row
+      dt Collectivités enregistrées
+      dd

@@ -1,0 +1,30 @@
+
+@layer components {
+  .description-list__row {
+    display: grid;
+    grid-template-columns: repeat(3,minmax(0,1fr));
+
+    @apply px-6 py-4 gap-4 border-b;
+    @apply border-gray-200;
+    @apply dark:border-gray-800;
+
+    &:last-child {
+      @apply border-none;
+    }
+
+    & dt {
+      @apply font-medium;
+      @apply text-gray-600;
+      @apply dark:text-gray-300;
+    }
+
+    & dd {
+      grid-column: span 2/span 2;
+    }
+
+    & dd:empty:before {
+      content: "-";
+      @apply text-gray-500;
+    }
+  }
+}
