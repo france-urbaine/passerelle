@@ -33,4 +33,12 @@ module FormatHelper
       concat tag.span(parts[-1])
     end
   end
+
+  def display_errors(record, attribute)
+    capture do
+      record.errors.full_messages_for(attribute).each do |error|
+        concat tag.div(error, class: "form-block__errors")
+      end
+    end
+  end
 end

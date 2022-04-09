@@ -1,15 +1,25 @@
-= form_with(model: epci) do |form|
-  div
-    = form.label :name
-    = form.text_field :name
+.dialog( role="dialog" aria-labelledby="dialog-title" )
+  .dialog__container
+    .dialog__header
+      h1#dialog-title.dialog__title Modification de l'EPCI
 
-  div
-    = form.label :siren
-    = form.text_field :siren
+    = form_with(model: epci) do |form|
+      .dialog__content
+        .form-block
+          = form.label :name, "Nom de l'EPCI"
+          = form.text_field :name, autofocus: true
+          = display_errors epci, :name
 
-  div
-    = form.label :code_departement
-    = form.text_field :code_departement
+        .form-block
+          = form.label :siren, "Numéro SIREN de l'EPCI"
+          = form.text_field :siren
+          = display_errors epci, :siren
 
-  div
-    = form.submit
+        .form-block
+          = form.label :code_departement, "Code INSEE du département"
+          = form.text_field :code_departement
+          = display_errors epci, :code_departement
+
+      .dialog__actions
+        button.button.button__primary( type="submit" ) Enregistrer
+        a.button( href=epci_path(epci) ) Annuler

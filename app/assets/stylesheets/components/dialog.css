@@ -1,0 +1,45 @@
+@layer components {
+  .dialog {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+    overflow-x: hidden;
+    overflow-y: auto;
+    outline: 0;
+
+    @apply bg-black/50;
+    @apply dark:bg-black/30;
+  }
+
+  .dialog__container {
+    position: absolute;
+    top: theme('spacing.12');
+    left: 50%;
+    transform: translate(-50%, 0);
+    min-width: 500px;
+    max-width: calc(100vw - theme('spacing.12'));
+    max-height: calc(100vh - theme('spacing.12'));
+
+    @apply rounded shadow-lg p-6;
+    @apply bg-white;
+    @apply dark:bg-black dark:border dark:border-gray-700 dark:shadow-gray-500/50;
+  }
+
+  .dialog__title {
+    display: block;
+
+    @apply pb-6;
+    @apply text-lg;
+  }
+
+  .dialog__actions {
+    @apply pt-6;
+
+    & .button {
+      @apply mr-4;
+    }
+  }
+}

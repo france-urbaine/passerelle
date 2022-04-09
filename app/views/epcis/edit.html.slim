@@ -1,8 +1,3 @@
-h1 Editing EPCI
-
-= render "form", epci: @epci
-
-div
-  = link_to "Show this EPCI", @epci 
-  |  | 
-  = link_to "Back to EPCIs", epcis_path
+main.content
+  = render "form", epci: @epci
+  = render "form_background", epci: @epci

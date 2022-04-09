@@ -1,19 +1,30 @@
-= form_with(model: commune) do |form|
-  div
-    = form.label :name
-    = form.text_field :name
+.dialog( role="dialog" aria-labelledby="dialog-title" )
+  .dialog__container
+    .dialog__header
+      h1#dialog-title.dialog__title Modification de la commune
 
-  div
-    = form.label :code_insee
-    = form.text_field :code_insee
+    = form_with(model: commune) do |form|
+      .dialog__content
+        .form-block
+          = form.label :name, "Nom de la commune"
+          = form.text_field :name, autofocus: true
+          = display_errors commune, :name
 
-  div
-    = form.label :code_departement
-    = form.text_field :code_departement
+        .form-block
+          = form.label :code_insee, "Code INSEE"
+          = form.text_field :code_insee
+          = display_errors commune, :code_insee
 
-  div
-    = form.label :siren_epci
-    = form.text_field :siren_epci
+        .form-block
+          = form.label :code_departement, "Code INSEE du département"
+          = form.text_field :code_departement
+          = display_errors commune, :code_departement
 
-  div
-    = form.submit
+        .form-block
+          = form.label :siren_epci, "Numéro SIREN de l'EPCI"
+          = form.text_field :siren_epci
+          = display_errors commune, :siren_epci
+
+      .dialog__actions
+        button.button.button__primary( type="submit" ) Enregistrer
+        a.button( href=commune_path(commune) ) Annuler
