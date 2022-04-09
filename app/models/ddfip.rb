@@ -20,7 +20,7 @@
 class DDFIP < ApplicationRecord
   # Associations
   # ----------------------------------------------------------------------------
-  belongs_to :departement, primary_key: :code_departement, foreign_key: :code_departement, inverse_of: :ddfips, optional: true
+  belongs_to :departement, primary_key: :code_departement, foreign_key: :code_departement, inverse_of: :ddfips
 
   has_many :users, as: :organization, dependent: :delete_all
 

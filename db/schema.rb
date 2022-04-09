@@ -62,6 +62,16 @@ ActiveRecord::Schema[7.0].define(version: 2022_04_09_140800) do
     t.index ["name"], name: "index_ddfips_on_name", unique: true, where: "(discarded_at IS NULL)"
   end
 
+  create_table "departements", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name", null: false
+    t.string "code_departement", null: false
+    t.string "code_region", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["code_departement"], name: "index_departements_on_code_departement", unique: true
+    t.index ["code_region"], name: "index_departements_on_code_region"
+  end
+
   create_table "epcis", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name", null: false
     t.string "siren", null: false

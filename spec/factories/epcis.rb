@@ -9,7 +9,10 @@ FactoryBot.define do
       end
     end
 
-    siren            { Faker::Company.french_siren_number }
-    code_departement { Faker::Address.zip_code[0..1] }
+    siren { Faker::Company.french_siren_number }
+
+    trait :with_departement do
+      association :departement
+    end
   end
 end

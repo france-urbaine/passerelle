@@ -2,6 +2,8 @@
 
 FactoryBot.define do
   factory :commune do
+    association :departement
+
     name do
       loop do
         value = Faker::Address.city
@@ -9,8 +11,13 @@ FactoryBot.define do
       end
     end
 
-    code_insee       { Faker::Address.zip_code }
-    code_departement { code_insee[0..1] }
+    code_insee do
+      case departement&.code_departement&.size
+      when 2 then "#{departement.code_departement}#{Faker::Number.number(digits: 3)}"
+      when 3 then "#{departement.code_departement}#{Faker::Number.number(digits: 2)}"
+      else Faker::Address.zip_code
+      end
+    end
 
     trait :with_epci do
       association :epci

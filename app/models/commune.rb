@@ -23,7 +23,7 @@ class Commune < ApplicationRecord
 
   # Associations
   # ----------------------------------------------------------------------------
-  belongs_to :departement, primary_key: :code_departement, foreign_key: :code_departement, inverse_of: :communes, optional: true
+  belongs_to :departement, primary_key: :code_departement, foreign_key: :code_departement, inverse_of: :communes
   belongs_to :epci, primary_key: :siren, foreign_key: :siren_epci, inverse_of: :communes, optional: true
 
   has_many :collectivities, as: :territory, dependent: false
