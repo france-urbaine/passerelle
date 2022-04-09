@@ -2,9 +2,7 @@
 
 FactoryBot.define do
   factory :user do
-    # TODO: use a proper association
-    organization_id   { Faker::Internet.uuid }
-    organization_type { %w[Publisher Collectivity DDFIP].sample }
+    organization { association %i[publisher collectivity ddfip].sample }
 
     first_name   { Faker::Name.first_name }
     last_name    { Faker::Name.last_name }
@@ -31,15 +29,15 @@ FactoryBot.define do
     end
 
     trait :publisher do
-      organization_type { "Publisher" }
+      organization factory: :publisher
     end
 
     trait :collectivity do
-      organization_type { "Collectivity" }
+      organization factory: :collectivity
     end
 
     trait :ddfip do
-      organization_type { "DDFIP" }
+      organization factory: :ddfip
     end
   end
 end
