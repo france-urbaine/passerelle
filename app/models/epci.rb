@@ -23,8 +23,11 @@ class EPCI < ApplicationRecord
   # Associations
   # ----------------------------------------------------------------------------
   belongs_to :departement, primary_key: :code_departement, foreign_key: :code_departement, inverse_of: :epcis, optional: true
+
   has_many :communes, primary_key: :siren, foreign_key: :siren_epci, inverse_of: :epci, dependent: false
   has_many :collectivities, as: :territory, dependent: false
+
+  has_one :region, through: :departement
 
   # Validations
   # ----------------------------------------------------------------------------

@@ -24,6 +24,8 @@ class DDFIP < ApplicationRecord
 
   has_many :users, as: :organization, dependent: :delete_all
 
+  has_one :region, through: :departement
+
   # Validations
   # ----------------------------------------------------------------------------
   validates :name,             presence: true

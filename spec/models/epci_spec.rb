@@ -8,6 +8,7 @@ RSpec.describe EPCI, type: :model do
   it { is_expected.to belong_to(:departement).optional }
   it { is_expected.to have_many(:communes) }
   it { is_expected.to have_many(:collectivities) }
+  it { is_expected.to have_one(:region) }
 
   # Validations
   # ----------------------------------------------------------------------------

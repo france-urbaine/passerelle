@@ -28,6 +28,8 @@ class Commune < ApplicationRecord
 
   has_many :collectivities, as: :territory, dependent: false
 
+  has_one :region, through: :departement
+
   # Validations
   # ----------------------------------------------------------------------------
   validates :name,             presence: true

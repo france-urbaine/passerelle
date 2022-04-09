@@ -7,6 +7,7 @@ RSpec.describe DDFIP, type: :model do
   # ----------------------------------------------------------------------------
   it { is_expected.to belong_to(:departement).required }
   it { is_expected.to have_many(:users) }
+  it { is_expected.to have_one(:region) }
 
   # Validations
   # ----------------------------------------------------------------------------

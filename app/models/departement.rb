@@ -21,6 +21,8 @@ class Departement < ApplicationRecord
 
   # Associations
   # ----------------------------------------------------------------------------
+  belongs_to :region, primary_key: :code_region, foreign_key: :code_region, inverse_of: :departements
+
   has_many :communes, primary_key: :code_departement, foreign_key: :code_departement, inverse_of: :departement, dependent: false
   has_many :epcis,    primary_key: :code_departement, foreign_key: :code_departement, inverse_of: :departement, dependent: false
   has_many :ddfips,   primary_key: :code_departement, foreign_key: :code_departement, inverse_of: :departement, dependent: false

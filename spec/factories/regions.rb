@@ -1,20 +1,18 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :departement do
-    association :region
-
+  factory :region do
     name do
       loop do
         value = Faker::Address.state
-        break value unless Departement.exists?(name: value)
+        break value unless Region.exists?(name: value)
       end
     end
 
-    code_departement do
+    code_region do
       loop do
         value = Faker::Address.zip_code[0..1]
-        break value unless Departement.exists?(code_departement: value)
+        break value unless Region.exists?(code_region: value)
       end
     end
   end
