@@ -6,6 +6,7 @@ class DepartementsController < ApplicationController
 
   def index
     @departements = Departement.all
+    @pagy, @departements = pagy(@departements)
   end
 
   def show; end

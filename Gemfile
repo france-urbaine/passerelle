@@ -19,6 +19,7 @@ gem "devise"
 gem "discard"
 
 # Controllers
+gem "pagy"
 gem "responders"
 
 # Assets

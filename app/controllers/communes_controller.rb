@@ -5,7 +5,8 @@ class CommunesController < ApplicationController
   before_action :set_commune, only: %i[show edit update]
 
   def index
-    @communes = Commune.all.limit(50)
+    @communes = Commune.all
+    @pagy, @communes = pagy(@communes)
   end
 
   def show; end

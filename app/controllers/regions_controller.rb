@@ -6,6 +6,7 @@ class RegionsController < ApplicationController
 
   def index
     @regions = Region.all
+    @pagy, @regions = pagy(@regions)
   end
 
   def show; end

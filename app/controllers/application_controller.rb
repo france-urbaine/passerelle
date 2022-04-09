@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class ApplicationController < ActionController::Base
+  include Pagy::Backend
+
   before_action :verify_requested_format!
 
   # Statuses

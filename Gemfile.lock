@@ -193,6 +193,8 @@ GEM
       nenv (~> 0.1)
       shellany (~> 0.0)
     orm_adapter (0.5.0)
+    pagy (5.10.1)
+      activesupport
     parallel (1.22.1)
     parallel_tests (3.8.1)
       parallel
@@ -386,6 +388,7 @@ DEPENDENCIES
   guard-rubocop
   importmap-rails
   jbuilder
+  pagy
   parallel_tests
   pg (~> 1.1)
   puma (~> 5.0)

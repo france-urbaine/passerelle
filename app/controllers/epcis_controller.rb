@@ -5,7 +5,8 @@ class EpcisController < ApplicationController
   before_action :set_epci, only: %i[show edit update]
 
   def index
-    @epcis = EPCI.all.limit(50)
+    @epcis = EPCI.all
+    @pagy, @epcis = pagy(@epcis)
   end
 
   def show; end
