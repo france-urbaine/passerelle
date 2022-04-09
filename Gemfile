@@ -31,6 +31,10 @@ gem "rails-i18n"
 gem "slim"
 gem "view_component"
 
+# Import utilities
+gem "roo"
+gem "rubyzip"
+
 # Windows compatibility
 gem "tzinfo-data", platforms: %i[mingw mswin x64_mingw jruby]
 
@@ -75,4 +79,5 @@ group :test do
   gem "shoulda-matchers"
   gem "simplecov"
   gem "webdrivers"
+  gem "webmock"
 end
