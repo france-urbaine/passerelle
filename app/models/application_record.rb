@@ -11,4 +11,5 @@ class ApplicationRecord < ActiveRecord::Base
 
   SIREN_REGEXP = /\A[0-9]{9}\Z/
   EMAIL_REGEXP = URI::MailTo::EMAIL_REGEXP
+  PHONE_REGEXP = /\A(0|\+(33|590|594|596|262|269))?[0-9]{9}\Z/
 end

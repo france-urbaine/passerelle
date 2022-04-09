@@ -10,11 +10,34 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_04_09_135456) do
+ActiveRecord::Schema[7.0].define(version: 2022_04_09_135852) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
   enable_extension "unaccent"
+
+  create_table "collectivities", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "territory_type", null: false
+    t.uuid "territory_id", null: false
+    t.uuid "publisher_id"
+    t.string "name", null: false
+    t.string "siren", null: false
+    t.string "contact_first_name"
+    t.string "contact_last_name"
+    t.string "contact_email"
+    t.string "contact_phone"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "approved_at"
+    t.datetime "disapproved_at"
+    t.datetime "desactivated_at"
+    t.datetime "discarded_at"
+    t.index ["discarded_at"], name: "index_collectivities_on_discarded_at"
+    t.index ["name"], name: "index_collectivities_on_name", unique: true, where: "(discarded_at IS NULL)"
+    t.index ["publisher_id"], name: "index_collectivities_on_publisher_id"
+    t.index ["siren"], name: "index_collectivities_on_siren", unique: true, where: "(discarded_at IS NULL)"
+    t.index ["territory_type", "territory_id"], name: "index_collectivities_on_territory"
+  end
 
   create_table "publishers", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name", null: false
