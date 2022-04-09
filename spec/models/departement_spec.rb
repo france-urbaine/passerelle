@@ -27,7 +27,7 @@ RSpec.describe Departement, type: :model do
   it { is_expected.to     allow_value("12")  .for(:code_region) }
   it { is_expected.not_to allow_value("12AB").for(:code_region) }
 
-  # Search
+  # Search scope
   # ----------------------------------------------------------------------------
   describe ".search" do
     it do
@@ -50,6 +50,30 @@ RSpec.describe Departement, type: :model do
         WHERE (LOWER(UNACCENT("departements"."name")) LIKE LOWER(UNACCENT('%Hello%'))
           OR "departements"."code_departement" = 'Hello'
           OR LOWER(UNACCENT(\"regions\".\"name\")) LIKE LOWER(UNACCENT('%Hello%')))
+      SQL
+    end
+  end
+
+  # Order scope
+  # ----------------------------------------------------------------------------
+  describe ".order_by_param" do
+    it do
+      expect{
+        described_class.order_by_param("departement").load
+      }.to perform_sql_query(<<~SQL.squish)
+        SELECT "departements".*
+        FROM   "departements"
+        ORDER BY "departements"."code_departement" ASC
+      SQL
+    end
+
+    it do
+      expect{
+        described_class.order_by_param("-departement").load
+      }.to perform_sql_query(<<~SQL.squish)
+        SELECT "departements".*
+        FROM   "departements"
+        ORDER BY "departements"."code_departement" DESC
       SQL
     end
   end

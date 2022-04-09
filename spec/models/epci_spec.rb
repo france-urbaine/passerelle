@@ -27,7 +27,7 @@ RSpec.describe EPCI, type: :model do
   it { is_expected.not_to allow_value("123").for(:code_departement) }
   it { is_expected.not_to allow_value("3C").for(:code_departement) }
 
-  # Search
+  # Search scope
   # ----------------------------------------------------------------------------
   describe ".search" do
     it do
@@ -53,6 +53,40 @@ RSpec.describe EPCI, type: :model do
           OR "epcis"."code_departement" = 'Hello'
           OR LOWER(UNACCENT("departements"."name")) LIKE LOWER(UNACCENT('%Hello%'))
           OR LOWER(UNACCENT(\"regions\".\"name\")) LIKE LOWER(UNACCENT('%Hello%')))
+      SQL
+    end
+  end
+
+  # Order scope
+  # ----------------------------------------------------------------------------
+  describe ".order_by_param" do
+    it do
+      expect{
+        described_class.order_by_param("epci").load
+      }.to perform_sql_query(<<~SQL.squish)
+        SELECT "epcis".*
+        FROM   "epcis"
+        ORDER BY UNACCENT("epcis"."name") ASC, "epcis"."name" ASC
+      SQL
+    end
+
+    it do
+      expect{
+        described_class.order_by_param("departement").load
+      }.to perform_sql_query(<<~SQL.squish)
+        SELECT "epcis".*
+        FROM   "epcis"
+        ORDER BY "epcis"."code_departement" ASC, "epcis"."name" ASC
+      SQL
+    end
+
+    it do
+      expect{
+        described_class.order_by_param("-departement").load
+      }.to perform_sql_query(<<~SQL.squish)
+        SELECT "epcis".*
+        FROM   "epcis"
+        ORDER BY "epcis"."code_departement" DESC, "epcis"."name" DESC
       SQL
     end
   end

@@ -57,6 +57,15 @@ class Commune < ApplicationRecord
     )
   }
 
+  scope :order_by_param, lambda { |input|
+    advanced_order(
+      input,
+      commune:      ->(direction) { unaccent_order(:name, direction) },
+      departement:  ->(direction) { order(code_departement: direction) },
+      epci:         ->(direction) { left_joins(:epci).merge(EPCI.unaccent_order(:name, direction)) }
+    )
+  }
+
   # Callbacks
   # ----------------------------------------------------------------------------
   before_validation :clean_attributes

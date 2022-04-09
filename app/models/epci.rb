@@ -18,7 +18,7 @@
 #  index_epcis_on_siren             (siren) UNIQUE
 #
 class EPCI < ApplicationRecord
-  self.implicit_order_column = :siren
+  self.implicit_order_column = :name
 
   # Associations
   # ----------------------------------------------------------------------------
@@ -49,6 +49,14 @@ class EPCI < ApplicationRecord
       code_departement: ->(value) { where(code_departement: value) },
       departement_name: ->(value) { left_joins(:departement).merge(Departement.match(:name, value)) },
       region_name:      ->(value) { left_joins(:region).merge(Region.match(:name, value)) }
+    )
+  }
+
+  scope :order_by_param, lambda { |input|
+    advanced_order(
+      input,
+      epci:         ->(direction) { unaccent_order(:name, direction) },
+      departement:  ->(direction) { order(code_departement: direction) }
     )
   }
 

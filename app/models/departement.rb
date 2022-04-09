@@ -50,4 +50,12 @@ class Departement < ApplicationRecord
       region_name:      ->(value) { left_joins(:region).merge(Region.match(:name, value)) }
     )
   }
+
+  scope :order_by_param, lambda { |input|
+    advanced_order(
+      input,
+      departement: ->(direction) { order(code_departement: direction) },
+      region:      ->(direction) { order(code_region: direction) }
+    )
+  }
 end

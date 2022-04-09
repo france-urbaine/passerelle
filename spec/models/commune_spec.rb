@@ -37,7 +37,7 @@ RSpec.describe Commune, type: :model do
   # ----------------------------------------------------------------------------
   it { expect(create(:commune, siren_epci: "")).to have_attributes(siren_epci: nil) }
 
-  # Search
+  # Search scope
   # ----------------------------------------------------------------------------
   describe ".search" do
     it do
@@ -66,6 +66,52 @@ RSpec.describe Commune, type: :model do
           OR LOWER(UNACCENT("epcis"."name")) LIKE LOWER(UNACCENT('%Hello%'))
           OR LOWER(UNACCENT("departements"."name")) LIKE LOWER(UNACCENT('%Hello%'))
           OR LOWER(UNACCENT(\"regions\".\"name\")) LIKE LOWER(UNACCENT('%Hello%')))
+      SQL
+    end
+  end
+
+  # Order scope
+  # ----------------------------------------------------------------------------
+  describe ".order_by_param" do
+    it do
+      expect{
+        described_class.order_by_param("commune").load
+      }.to perform_sql_query(<<~SQL.squish)
+        SELECT "communes".*
+        FROM   "communes"
+        ORDER BY UNACCENT("communes"."name") ASC, "communes"."code_insee" ASC
+      SQL
+    end
+
+    it do
+      expect{
+        described_class.order_by_param("departement").load
+      }.to perform_sql_query(<<~SQL.squish)
+        SELECT "communes".*
+        FROM   "communes"
+        ORDER BY "communes"."code_departement" ASC, "communes"."code_insee" ASC
+      SQL
+    end
+
+    it do
+      expect{
+        described_class.order_by_param("epci").load
+      }.to perform_sql_query(<<~SQL.squish)
+        SELECT "communes".*
+        FROM   "communes"
+        LEFT OUTER JOIN "epcis" ON "epcis"."siren" = "communes"."siren_epci"
+        ORDER BY UNACCENT("epcis"."name") ASC, "communes"."code_insee" ASC
+      SQL
+    end
+
+    it do
+      expect{
+        described_class.order_by_param("-epci").load
+      }.to perform_sql_query(<<~SQL.squish)
+        SELECT "communes".*
+        FROM   "communes"
+        LEFT OUTER JOIN "epcis" ON "epcis"."siren" = "communes"."siren_epci"
+        ORDER BY UNACCENT("epcis"."name") DESC, "communes"."code_insee" DESC
       SQL
     end
   end

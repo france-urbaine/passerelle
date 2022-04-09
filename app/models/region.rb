@@ -43,4 +43,11 @@ class Region < ApplicationRecord
       code_region: ->(value) { where(code_region: value) }
     )
   }
+
+  scope :order_by_param, lambda { |input|
+    advanced_order(
+      input,
+      region: ->(direction) { order(code_region: direction) }
+    )
+  }
 end
