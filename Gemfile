@@ -82,6 +82,7 @@ group :test do
   gem "selenium-webdriver"
   gem "shoulda-matchers"
   gem "simplecov"
+  gem "super_diff"
   gem "webdrivers"
   gem "webmock"
 end

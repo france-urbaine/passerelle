@@ -1,9 +1,40 @@
-h1 Departements
+main.content
+  .datatable-header
+    h1.content__header-title Base de données des départements
+    .flex-auto
+    = datatable_header_pagination(@pagy, "département")
 
-table#departements
-  tbody
-    - @departements.each do |departement|
-      tr
-        td= link_to departement.name, departement
+  table
+    thead
+      tr.datatable-row
+        th.datatable-row__actions
+          input( type="checkbox" aria-label="Tout sélectionner" )
+          span.tooltip Tout sélectionner
 
-== pagy_nav(@pagy)
+        th( aria-label="Actions" )
+        th( colspan="2" ) Département
+        th( colspan="2" ) Region
+
+    tbody
+      - @departements.preload(:region).each do |departement|
+        tr.datatable-row( id=dom_id(departement) )
+          td.datatable-row__actions
+            input( type="checkbox" aria-labelledby=dom_id(departement, :title) )
+            span.tooltip Sélectionner ce département
+
+          td.datatable-row__actions
+            a.icon-button(
+              href=edit_departement_path(departement)
+              aria-label="Modifier ce département"
+            )
+              = svg_icon("pencil-alt-icon", "Modifier ce département")
+              span.tooltip Modifier ce département
+
+          td.w-px= departement.code_departement
+          td( id=dom_id(departement, :title) )= link_to(departement.name, departement)
+          
+          - if departement.code_region?
+            td.w-px= departement.code_region
+            td= link_to(departement.region&.name, departement.region) if departement.region
+          - else
+            td( colspan="2" )

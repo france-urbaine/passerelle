@@ -1,9 +1,33 @@
-h1 Regions
+main.content
+  .datatable-header
+    h1.content__header-title Base de données des régions
+    .flex-auto
+    = datatable_header_pagination(@pagy, "region", plural: "regions")
 
-table#regions
-  tbody
-    - @regions.each do |region|
-      tr
-        td= link_to region.name, region
+  table
+    thead
+      tr.datatable-row
+        th.datatable-row__actions
+          input( type="checkbox" aria-label="Tout sélectionner" )
+          span.tooltip Tout sélectionner
 
-== pagy_nav(@pagy)
+        th( aria-label="Actions" )
+        th( colspan="2" ) Région
+
+    tbody
+      - @regions.each do |region|
+        tr.datatable-row( id=dom_id(region) )
+          td.datatable-row__actions
+            input( type="checkbox" aria-labelledby=dom_id(region, :title) )
+            span.tooltip Sélectionner cette région
+
+          td.datatable-row__actions
+            a.icon-button(
+              href=edit_region_path(region)
+              aria-label="Modifier cette région"
+            )
+              = svg_icon("pencil-alt-icon", "Modifier cette région")
+              span.tooltip Modifier cette région
+
+          td.w-px= region.code_region
+          td( id=dom_id(region, :title) )= link_to(region.name, region)

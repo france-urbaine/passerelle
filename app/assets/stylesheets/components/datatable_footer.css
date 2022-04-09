@@ -1,0 +1,17 @@
+@layer components {
+  .datatable-footer {
+    display: flex;
+    @apply mt-4;
+  }
+
+  .datatable-footer__pagination-selector,
+  .datatable-footer__pagination {
+    flex: none;
+    display: flex;
+    align-items: center;
+
+    & .form-block {
+      @apply mt-0 mr-2;
+    }
+  }
+}

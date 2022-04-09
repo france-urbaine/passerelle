@@ -6,7 +6,17 @@
 @import "./tags/body";
 @import "./tags/main";
 @import "./tags/links";
+@import "./tags/tables";
+
+/* Interactive components */
+@import "./components/icon_button";
+@import "./components/tooltip";
 
 /* Layouts */
 @import "./components/sidebar";
 @import "./components/content";
+
+/* Data display */
+@import "./components/datatable_row";
+@import "./components/datatable_header";
+@import "./components/datatable_footer";

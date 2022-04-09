@@ -1,0 +1,55 @@
+@layer base {
+  table {
+    width: 100%;
+    table-layout: auto;
+    white-space: nowrap;
+    overflow: hidden;
+
+    @apply rounded-md ring-1;
+    @apply bg-white ring-gray-300;
+    @apply dark:bg-black dark:ring-gray-700;
+  }
+
+  td, th {
+    text-align: left;
+
+    @apply p-2 border-b;
+    @apply border-gray-200;
+    @apply dark:border-gray-700;
+
+    &:first-child {
+      @apply pl-4;
+    }
+
+    &:last-child {
+      @apply pr-4;
+    }
+  }
+
+  tbody tr {
+    transition: all 200ms linear;
+
+    @apply bg-white;
+    @apply dark:bg-black;
+
+    &:hover {
+      @apply bg-gray-100;
+      @apply dark:bg-gray-900;
+    }
+  }
+
+  thead th {
+    @apply py-3 border-b font-semibold uppercase;
+    @apply bg-gray-50 border-gray-300 text-gray-700;
+    @apply dark:bg-black dark:border-gray-700 dark:text-gray-300;
+  }
+
+  thead:last tr:last,
+  tbody:last tr:last,
+  tfoot:last tr:last {
+    & td,
+    & th {
+      @apply border-none;
+    }
+  }
+}

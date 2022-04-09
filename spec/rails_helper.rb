@@ -13,6 +13,12 @@ require File.expand_path("../config/environment", __dir__)
 abort("The Rails environment is running in production mode!") if Rails.env.production?
 require "rspec/rails"
 require "webmock/rspec"
+require "view_component/test_helpers"
+
+if ENV["SUPER_DIFF"] == "true"
+  require "super_diff/rspec"
+  require "super_diff/rails"
+end
 
 # Add additional requires below this line. Rails is not loaded until this point!
 
@@ -76,6 +82,9 @@ RSpec.configure do |config|
   config.include Matchers::HaveBody
   config.include Matchers::HaveContentType
   config.include Matchers::HaveSentEmails
+
+  config.include ViewComponent::TestHelpers, type: :component
+  config.include Capybara::RSpecMatchers, type: :component
 
   config.before type: :system do
     driven_by :selenium, using: :chrome, screen_size: [1400, 1400]

@@ -1,9 +1,40 @@
-h1 EPCIs
+main.content
+  .datatable-header
+    h1.content__header-title Base de données des EPCI
+    .flex-auto
+    = datatable_header_pagination(@pagy, "EPCI", plural: "EPCI")
 
-table#epcis
-  tbody
-    - @epcis.each do |epci|
-      tr
-        td= link_to epci.name, epci
+  table
+    thead
+      tr.datatable-row
+        th.datatable-row__actions
+          input( type="checkbox" aria-label="Tout sélectionner" )
+          span.tooltip Tout sélectionner
 
-== pagy_nav(@pagy)
+        th( aria-label="Actions" )
+        th( colspan="2" ) EPCI
+        th( colspan="2" ) Département
+
+    tbody
+      - @epcis.preload(:departement).each do |epci|
+        tr.datatable-row( id=dom_id(epci) )
+          td.datatable-row__actions
+            input( type="checkbox" aria-labelledby=dom_id(epci, :title) )
+            span.tooltip Sélectionner cet EPCI
+
+          td.datatable-row__actions
+            a.icon-button(
+              href=edit_epci_path(epci)
+              aria-label="Modifier cet EPCI"
+            )
+              = svg_icon("pencil-alt-icon", "Modifier cet EPCI")
+              span.tooltip Modifier cet EPCI
+
+          td.w-px= epci.siren
+          td( id=dom_id(epci, :title) )= link_to(epci.name, epci)
+
+          - if epci.code_departement?
+            td.w-px= epci.code_departement
+            td= link_to(epci.departement&.name, epci.departement) if epci.departement
+          - else
+            td( colspan="2" )

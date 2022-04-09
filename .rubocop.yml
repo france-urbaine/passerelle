@@ -49,6 +49,11 @@ Lint/AmbiguousBlockAssociation:
     - change
     - satisfy
 
+Lint/MissingSuper:
+  # https://github.com/rubocop/rubocop/pull/8376#ref-issue-676211644
+  Exclude:
+    - 'app/components/**/*'
+
 # Metric -----------------------------------------------------------------------
 Metrics/AbcSize:
   Enabled: false

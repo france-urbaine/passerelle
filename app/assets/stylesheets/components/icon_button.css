@@ -1,0 +1,47 @@
+@layer components {
+  .icon-button {
+    display: inline-block;
+    box-sizing: border-box;
+    text-align: center;
+    vertical-align: middle;
+    position: relative;
+    cursor: pointer;
+
+    @apply h-9 w-9 p-2 leading-5 rounded-full;
+
+    & svg {
+      position: relative;
+      @apply h-5 w-5;
+    }
+
+    &[disabled] {
+      @apply opacity-30
+    }
+
+    &:not([disabled]) {
+      @apply text-gray-900;
+      @apply dark:text-gray-100;
+
+      &:is(:hover, :active, :focus, :focus-visible) {
+        outline-style: solid;
+        outline-width: 0px;
+
+        @apply text-blue-500;
+        @apply dark:text-sky-500;
+      }
+
+      &:is(:focus, :focus-visible) {
+        outline-width: 2px;
+        outline-offset: 0px;
+
+        @apply outline-blue-500;
+        @apply dark:outline-sky-500;
+      }
+
+      &:active {
+        @apply text-blue-700 outline-blue-700;
+        @apply dark:text-sky-300 dark:outline-sky-300;
+      }
+    }
+  }
+}

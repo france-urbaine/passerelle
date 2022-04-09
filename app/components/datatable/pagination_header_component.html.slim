@@ -1,0 +1,19 @@
+span.datatable-header__counts.mr-2
+  = pluralize(number_with_delimiter(pagy.count), singular, plural: plural)
+  span.mx-4= " | "
+  | Page #{number_with_delimiter(pagy.page)} sur #{number_with_delimiter(pagy.pages)}
+
+span.datatable-header__pagination.mr-2
+  - if pagy.prev
+    a.icon-button( aria-label="Page précédente" rel="prev" href=page_url(pagy.prev) )
+      = helpers.svg_icon("chevron-left-icon", "Page précédente")
+  - else
+    span.icon-button( aria-hidden="true" disabled="true" )
+      = helpers.svg_icon("chevron-left-icon")
+
+  - if pagy.next
+    a.icon-button( aria-label="Page suivante"  rel="next" href=page_url(pagy.next) )
+      = helpers.svg_icon("chevron-right-icon", "Page suivante")
+  - else
+    span.icon-button( aria-hidden="true" disabled="true" )
+      = helpers.svg_icon("chevron-right-icon")
