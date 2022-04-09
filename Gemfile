@@ -34,6 +34,7 @@ group :development, :test do
   gem "awesome_print"
   gem "dead_end"
   gem "debug", platforms: %i[mri mingw x64_mingw]
+  gem "dotenv"
 
   gem "factory_bot"
   gem "factory_bot-awesome_linter"

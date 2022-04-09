@@ -1,7 +1,6 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+This README would normally document whatever steps are necessary to get the application up and running.
 
 ## Requirements
 
@@ -9,35 +8,80 @@ application up and running.
 * Bundler >= 2.x
 * PostgreSQL
 
+### Configuration
+
+This project uses environnement variables.
+
+In production, environnement variables are defined through the cloud provider API.
+
+In development & test, environnement variables may be defined through `.env` file:
+
+```
+CUSTOM_KEY=fiscalite
+```
+
+You can define per-environment variables files: `.env.{development}`.
+
+To load a given Rails environnement, use `RAILS_ENV` variable:
+
+```shell
+$ RAILS_ENV=production rails c
+Loading production environment variables
+ - load /Users/ink/dev/fiscahub/.env.production
+ - load /Users/ink/dev/fiscahub/.env
+Loading production environment (Rails 7.0.1)
+>
+```
+
+To load an environment file, independent of Rails environnement, use `DOTENV` variable:
+
+```shell
+$ DOTENV=production rails c
+Loading production environment variables
+ - load /Users/ink/dev/fiscahub/.env.production
+ - load /Users/ink/dev/fiscahub/.env
+Loading development environment (Rails 7.0.1)
+>
+```
+
+### Database configuration
+
+If the default database configuration doesn't suit you, use the `.env` file:
+
+```
+POSTGRESQL_DATABASE=fiscahub
+POSTGRESQL_HOST=0.0.0.0
+POSTGRESQL_PORT=1234
+POSTGRESQL_USER=marc
+```
+
 ## Setup project
 
 The setup script should bundle dependencies, prepare the development and test databases.
 
-```
-bin/setup
+```shell
+$ bin/setup
 ```
 
 ## Code linting & formating
 
 This project use Rubocop to lint and format Ruby code :
 
-```
-bundle exec rubocop
+```shell
+$ bundle exec rubocop
 ```
 
 ## Tests
 
-The
+The test suite is running with Rspec.
 
-Test suite is running with Rspec.
-
-```
-bundle exec rspec
+```shell
+$ bundle exec rspec
 ```
 
 The suite might be running in parallel on multiple CPU cores:
 
-```
-bundle exec rails parallel:prepare
-bundle exec rails parallel:spec
+```shell
+$ bundle exec rails parallel:prepare
+$ bundle exec rails parallel:spec
 ```

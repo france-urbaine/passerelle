@@ -98,6 +98,7 @@ GEM
     diff-lcs (1.5.0)
     digest (3.1.0)
     docile (1.4.0)
+    dotenv (2.7.6)
     erubi (1.10.0)
     factory_bot (6.2.1)
       activesupport (>= 5.0.0)
@@ -309,6 +310,7 @@ DEPENDENCIES
   cssbundling-rails
   dead_end
   debug
+  dotenv
   factory_bot
   factory_bot-awesome_linter
   factory_bot_rails

@@ -65,6 +65,11 @@ Metrics/MethodLength:
 Metrics/ModuleLength:
   Enabled: false
 
+# Rails ------------------------------------------------------------------------
+Rails/Output:
+  Exclude:
+    - 'config/dotenv.rb'
+
 # Style ------------------------------------------------------------------------
 Style/BlockDelimiters:
   EnforcedStyle: braces_for_chaining
