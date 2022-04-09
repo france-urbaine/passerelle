@@ -6,17 +6,17 @@
     = form_with(model: epci) do |form|
       .dialog__content
         .form-block
-          = form.label :name, "Nom de l'EPCI"
+          = form.label :name
           = form.text_field :name, autofocus: true
           = display_errors epci, :name
 
         .form-block
-          = form.label :siren, "Numéro SIREN de l'EPCI"
+          = form.label :siren
           = form.text_field :siren
           = display_errors epci, :siren
 
         .form-block
-          = form.label :code_departement, "Code INSEE du département"
+          = form.label :code_departement
           = form.text_field :code_departement
           = display_errors epci, :code_departement
 

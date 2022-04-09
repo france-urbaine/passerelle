@@ -1,0 +1,78 @@
+fr:
+  activerecord:
+    attributes:
+      commune:
+        name:             Nom de la commune
+        code_insee:       Code INSEE
+        code_departement: Code INSEE du département
+        siren_epci:       Numéro SIREN de l'EPCI
+
+      epci:
+        name:             Nom de l'EPCI
+        siren:            Numéro SIREN de l'EPCI
+        code_departement: Code INSEE du département
+
+      departement:
+        name:             Nom du département
+        code_departement: Code INSEE du département
+        code_region:      Code INSEE de la région
+
+      region:
+        name:             Nom de la région
+        code_region:      Code INSEE de la région
+
+    errors:
+      models:
+        commune:
+          attributes:
+            name:
+              blank:     Un nom est requis
+
+            code_insee:
+              blank:     Un code INSEE est requis
+              invalid:   Ce code INSEE n 'est pas valide
+              taken:     Ce code INSEE est déjà attribué à une autre commune
+
+            code_departement:
+              blank:     Un code de département est requis
+              invalid:   Ce code de département n'est pas valide
+
+            siren_epci:
+              invalid:   Ce numéro SIREN n'est pas valide
+
+        epci:
+          attributes:
+            name:
+              blank:     Un nom est requis
+
+            siren:
+              blank:     Un numéro SIREN est requis
+              invalid:   Ce numéro SIREN n'est pas valide
+              taken:     Ce numéro SIREN est déjà attribué à un autre EPCI
+
+            code_departement:
+              invalid:   Ce code de département n'est pas valide
+
+        departement:
+          attributes:
+            name:
+              blank:     Un nom est requis
+
+            code_departement:
+              blank:     Un numéro de département est requis
+              invalid:   Ce numéro de département n'est pas valide
+              taken:     Ce numéro de département est déjà attribué à un autre département
+
+            code_region:
+              blank:     Un numéro de region est requis
+              invalid:   Ce numéro de region n'est pas valide
+
+        region:
+          attributes:
+            name:
+              blank:     Un nom est requis
+
+            code_region:
+              blank:     Un numéro de region est requis
+              invalid:   Ce numéro de region n'est pas valide
+              taken:     Ce numéro de région est déjà attribué à une autre région

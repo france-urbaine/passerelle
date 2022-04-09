@@ -36,7 +36,7 @@ module FormatHelper
 
   def display_errors(record, attribute)
     capture do
-      record.errors.full_messages_for(attribute).each do |error|
+      record.errors.messages_for(attribute).each do |error|
         concat tag.div(error, class: "form-block__errors")
       end
     end

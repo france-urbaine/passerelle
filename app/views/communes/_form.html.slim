@@ -6,22 +6,22 @@
     = form_with(model: commune) do |form|
       .dialog__content
         .form-block
-          = form.label :name, "Nom de la commune"
+          = form.label :name
           = form.text_field :name, autofocus: true
           = display_errors commune, :name
 
         .form-block
-          = form.label :code_insee, "Code INSEE"
+          = form.label :code_insee
           = form.text_field :code_insee
           = display_errors commune, :code_insee
 
         .form-block
-          = form.label :code_departement, "Code INSEE du département"
+          = form.label :code_departement
           = form.text_field :code_departement
           = display_errors commune, :code_departement
 
         .form-block
-          = form.label :siren_epci, "Numéro SIREN de l'EPCI"
+          = form.label :siren_epci
           = form.text_field :siren_epci
           = display_errors commune, :siren_epci
 
