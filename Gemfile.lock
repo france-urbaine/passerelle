@@ -105,6 +105,8 @@ GEM
       warden (~> 1.2.3)
     diff-lcs (1.5.0)
     digest (3.1.0)
+    discard (1.2.1)
+      activerecord (>= 4.2, < 8)
     docile (1.4.0)
     dotenv (2.7.6)
     erubi (1.10.0)
@@ -362,6 +364,7 @@ DEPENDENCIES
   dead_end
   debug
   devise
+  discard
   dotenv
   factory_bot
   factory_bot-awesome_linter

@@ -10,11 +10,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_04_09_135150) do
+ActiveRecord::Schema[7.0].define(version: 2022_04_09_135456) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
   enable_extension "unaccent"
+
+  create_table "publishers", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name", null: false
+    t.string "siren", null: false
+    t.string "email"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "discarded_at"
+    t.index ["discarded_at"], name: "index_publishers_on_discarded_at"
+    t.index ["name"], name: "index_publishers_on_name", unique: true, where: "(discarded_at IS NULL)"
+    t.index ["siren"], name: "index_publishers_on_siren", unique: true, where: "(discarded_at IS NULL)"
+  end
 
   create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "organization_type", null: false

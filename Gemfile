@@ -14,8 +14,9 @@ gem "rails", "~> 7.0.2", ">= 7.0.2.3"
 gem "pg", "~> 1.1"
 gem "redis", "~> 4.0"
 
-# Controllers & authentications
+# Model extensions
 gem "devise"
+gem "discard"
 
 # Assets
 gem "cssbundling-rails"
