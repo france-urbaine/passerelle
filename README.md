@@ -55,6 +55,16 @@ POSTGRESQL_PORT=1234
 POSTGRESQL_USER=marc
 ```
 
+## Credentials
+
+Credentials shared by all environnements are stored using the Rails feature.
+You need the master key (shared on Dashlane) to get access.
+You can put the key in `config/mast.key` or using `.env` file
+
+```
+RAILS_MASTER_KEY="<the_right_master_key>"
+```
+
 ## Setup project
 
 The setup script should bundle dependencies, prepare the development and test databases.

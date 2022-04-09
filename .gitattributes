@@ -5,3 +5,20 @@ db/schema.rb linguist-generated
 
 # Mark any vendored files as having been vendored.
 vendor/* linguist-vendored
+
+# Rails provides `bin/rails credentials:diff --enroll` to instruct Git to call
+# `bin/rails credentials:diff` when `git diff` is run on a credentials file.
+
+# Running the command enrolls the project such that all credentials files use the
+# "rails_credentials" diff driver in .gitattributes.
+
+# Additionally since Git requires the driver itself to be set up in a config file
+# that isn't tracked Rails automatically ensures it's configured when running
+# `credentials:edit`.
+
+# Otherwise each co-worker would have to run enable manually, including on each new
+# repo clone.
+
+# To disenroll from this feature, run `bin/rails credentials:diff --disenroll`.
+config/credentials/*.yml.enc diff=rails_credentials
+config/credentials.yml.enc diff=rails_credentials
