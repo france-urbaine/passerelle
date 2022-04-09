@@ -1,0 +1,9 @@
+h1 Regions
+
+table#regions
+  tbody
+    - @regions.each do |region|
+      tr
+        td= link_to region.name, region
+
+

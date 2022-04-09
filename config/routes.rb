@@ -8,6 +8,7 @@ Rails.application.routes.draw do
 
   devise_for :user
 
+  resources :regions,      only: %i[index show edit update]
   resources :departements, only: %i[index show edit update]
   resources :epcis,        only: %i[index show edit update]
   resources :communes,     only: %i[index show edit update]
