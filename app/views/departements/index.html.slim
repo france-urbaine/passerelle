@@ -1,0 +1,9 @@
+h1 Departements
+
+table#departements
+  tbody
+    - @departements.each do |departement|
+      tr
+        td= link_to departement.name, departement
+
+

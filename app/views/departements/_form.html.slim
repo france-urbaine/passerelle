@@ -1,0 +1,15 @@
+= form_with(model: departement) do |form|
+  div
+    = form.label :name
+    = form.text_field :name
+
+  div
+    = form.label :code_departement
+    = form.text_field :code_departement
+
+  div
+    = form.label :code_region
+    = form.text_field :code_region
+
+  div
+    = form.submit
