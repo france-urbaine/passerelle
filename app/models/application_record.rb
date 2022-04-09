@@ -14,4 +14,5 @@ class ApplicationRecord < ActiveRecord::Base
   PHONE_REGEXP = /\A(0|\+(33|590|594|596|262|269))?[0-9]{9}\Z/
 
   CODE_DEPARTEMENT_REGEXP = /\A(2[AB]|[0-9]{2}|9[0-9]{2})\Z/
+  CODE_INSEE_REGEXP       = /\A(2[AB]|[0-9]{2})[0-9]{3}\Z/
 end
