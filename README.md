@@ -38,5 +38,6 @@ bundle exec rspec
 The suite might be running in parallel on multiple CPU cores:
 
 ```
+bundle exec rails parallel:prepare
 bundle exec rails parallel:spec
 ```
