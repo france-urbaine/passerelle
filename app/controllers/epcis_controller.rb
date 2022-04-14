@@ -5,7 +5,7 @@ class EpcisController < ApplicationController
   before_action :set_epci, only: %i[show edit update]
 
   def index
-    @epcis = EPCI.all
+    @epcis = EPCI.strict_loading
     @epcis = search(@epcis)
     @epcis = order(@epcis)
     @pagy, @epcis = pagy(@epcis)
@@ -27,7 +27,6 @@ class EpcisController < ApplicationController
 
   def set_epci
     @epci = EPCI.find(params[:id])
-    @epci.strict_loading!(false)
   end
 
   def epci_params

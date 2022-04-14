@@ -5,7 +5,7 @@ class RegionsController < ApplicationController
   before_action :set_region, only: %i[show edit update]
 
   def index
-    @regions = Region.all
+    @regions = Region.strict_loading
     @regions = search(@regions)
     @regions = order(@regions)
     @pagy, @regions = pagy(@regions)
@@ -27,7 +27,6 @@ class RegionsController < ApplicationController
 
   def set_region
     @region = Region.find(params[:id])
-    @region.strict_loading!(false)
   end
 
   def region_params

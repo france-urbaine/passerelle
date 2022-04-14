@@ -5,7 +5,7 @@ class DepartementsController < ApplicationController
   before_action :set_departement, only: %i[show edit update]
 
   def index
-    @departements = Departement.all
+    @departements = Departement.strict_loading
     @departements = search(@departements)
     @departements = order(@departements)
     @pagy, @departements = pagy(@departements)
@@ -27,7 +27,6 @@ class DepartementsController < ApplicationController
 
   def set_departement
     @departement = Departement.find(params[:id])
-    @departement.strict_loading!(false)
   end
 
   def departement_params

@@ -5,7 +5,7 @@ class CommunesController < ApplicationController
   before_action :set_commune, only: %i[show edit update]
 
   def index
-    @communes = Commune.all
+    @communes = Commune.strict_loading
     @communes = search(@communes)
     @communes = order(@communes)
     @pagy, @communes = pagy(@communes)
@@ -27,7 +27,6 @@ class CommunesController < ApplicationController
 
   def set_commune
     @commune = Commune.find(params[:id])
-    @commune.strict_loading!(false)
   end
 
   def commune_params
