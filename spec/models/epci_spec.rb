@@ -7,8 +7,9 @@ RSpec.describe EPCI, type: :model do
   # ----------------------------------------------------------------------------
   it { is_expected.to belong_to(:departement).optional }
   it { is_expected.to have_many(:communes) }
-  it { is_expected.to have_many(:collectivities) }
   it { is_expected.to have_one(:region) }
+  it { is_expected.to have_one(:registered_collectivity) }
+  it { is_expected.to respond_to(:on_territory_collectivities) }
 
   # Validations
   # ----------------------------------------------------------------------------
@@ -101,6 +102,35 @@ RSpec.describe EPCI, type: :model do
         ORDER BY
           ts_rank_cd(to_tsvector('french', "epcis"."name"), to_tsquery('french', 'Hello')) DESC,
           "epcis"."name" ASC
+      SQL
+    end
+  end
+
+  # Other associations
+  # ----------------------------------------------------------------------------
+  describe "on_territory_collectivities" do
+    let(:epci) { create(:epci) }
+
+    it do
+      expect{
+        epci.on_territory_collectivities.load
+      }.to perform_sql_query(<<~SQL.squish)
+        SELECT "collectivities".*
+        FROM   "collectivities"
+        WHERE "collectivities"."discarded_at" IS NULL
+          AND ("collectivities"."territory_type" = 'EPCI'
+          AND  "collectivities"."territory_id" = '#{epci.id}'
+          OR   "collectivities"."territory_type" = 'Commune'
+          AND  "collectivities"."territory_id" IN
+                 (SELECT "communes"."id"
+                  FROM "communes"
+                  WHERE "communes"."siren_epci" = '#{epci.siren}')
+          OR  "collectivities"."territory_type" = 'Departement'
+          AND "collectivities"."territory_id" IN
+                 (SELECT "departements"."id"
+                  FROM "departements"
+                  INNER JOIN "communes" ON "communes"."code_departement" = "departements"."code_departement"
+                  WHERE "communes"."siren_epci" = '#{epci.siren}'))
       SQL
     end
   end

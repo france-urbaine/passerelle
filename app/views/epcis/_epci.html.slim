@@ -9,7 +9,7 @@
     = svg_icon("pencil-alt-icon")
     | Modifier
 
-.card
+.card.mb-6
   dl.description-list
     .description-list__row
       dt Numéro SIREN de l'EPCI
@@ -32,3 +32,18 @@
           a.button.-my-2( href=communes_path(search: epci.siren) )
             = svg_icon("search-icon")
             | Voir les communes
+
+    .description-list__row
+      dt Collectivités enregistrées
+      dd= count(epci.on_territory_collectivities.count, "collectivité") if epci.on_territory_collectivities.count.positive?
+
+- if epci.on_territory_collectivities.any?
+  table
+    thead
+      tr.datatable-row
+        th Collectivités enregistrées
+
+    tbody
+      - epci.on_territory_collectivities.each do |collectivite|
+        tr.datatable-row
+          td.w-px= collectivite.name

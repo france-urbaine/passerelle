@@ -27,7 +27,7 @@ class Departement < ApplicationRecord
   has_many :epcis,    primary_key: :code_departement, foreign_key: :code_departement, inverse_of: :departement, dependent: false
   has_many :ddfips,   primary_key: :code_departement, foreign_key: :code_departement, inverse_of: :departement, dependent: false
 
-  has_many :collectivities, as: :territory, dependent: false
+  has_one :registered_collectivity, class_name: "Collectivity", as: :territory, dependent: false
 
   # Validations
   # ----------------------------------------------------------------------------
@@ -62,4 +62,14 @@ class Departement < ApplicationRecord
   scope :order_by_score, lambda { |input|
     scored_order(:name, input)
   }
+
+  # Other associations
+  # ----------------------------------------------------------------------------
+  def on_territory_collectivities
+    territories = [self]
+    territories << communes
+    territories << EPCI.joins(:communes).merge(communes)
+
+    Collectivity.kept.where(territory: territories)
+  end
 end

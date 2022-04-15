@@ -26,9 +26,9 @@ class Commune < ApplicationRecord
   belongs_to :departement, primary_key: :code_departement, foreign_key: :code_departement, inverse_of: :communes
   belongs_to :epci, primary_key: :siren, foreign_key: :siren_epci, inverse_of: :communes, optional: true
 
-  has_many :collectivities, as: :territory, dependent: false
-
   has_one :region, through: :departement
+
+  has_one :registered_collectivity, class_name: "Collectivity", as: :territory, dependent: false
 
   # Validations
   # ----------------------------------------------------------------------------
@@ -76,5 +76,15 @@ class Commune < ApplicationRecord
 
   def clean_attributes
     self.siren_epci = nil if siren_epci.blank?
+  end
+
+  # Other associations
+  # ----------------------------------------------------------------------------
+  def on_territory_collectivities
+    territories = [self]
+    territories << Departement.where(code_departement: code_departement)
+    territories << EPCI.where(siren: siren_epci) if siren_epci
+
+    Collectivity.kept.where(territory: territories)
   end
 end

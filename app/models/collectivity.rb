@@ -32,7 +32,7 @@
 class Collectivity < ApplicationRecord
   # Associations
   # ----------------------------------------------------------------------------
-  belongs_to :territory, polymorphic: true, inverse_of: :collectivities
+  belongs_to :territory, polymorphic: true, inverse_of: :registered_collectivity
   belongs_to :publisher, optional: true
 
   has_many :users, as: :organization, dependent: :delete_all

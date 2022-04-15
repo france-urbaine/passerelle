@@ -21,10 +21,9 @@ class Region < ApplicationRecord
   # ----------------------------------------------------------------------------
   has_many :departements, primary_key: :code_region, foreign_key: :code_region, inverse_of: :region, dependent: false
 
-  has_many :communes,       through: :departements
-  has_many :epcis,          through: :departements
-  has_many :ddfips,         through: :departements
-  has_many :collectivities, through: :departements
+  has_many :communes, through: :departements
+  has_many :epcis,    through: :departements
+  has_many :ddfips,   through: :departements
 
   # Validations
   # ----------------------------------------------------------------------------
@@ -54,4 +53,15 @@ class Region < ApplicationRecord
   scope :order_by_score, lambda { |input|
     scored_order(:name, input)
   }
+
+  # Other associations
+  # ----------------------------------------------------------------------------
+  def on_territory_collectivities
+    territories = []
+    territories << departements
+    territories << communes
+    territories << EPCI.joins(:communes).merge(communes)
+
+    Collectivity.kept.where(territory: territories)
+  end
 end

@@ -24,10 +24,10 @@ class EPCI < ApplicationRecord
   # ----------------------------------------------------------------------------
   belongs_to :departement, primary_key: :code_departement, foreign_key: :code_departement, inverse_of: :epcis, optional: true
 
-  has_many :communes, primary_key: :siren, foreign_key: :siren_epci, inverse_of: :epci, dependent: false
-  has_many :collectivities, as: :territory, dependent: false
-
   has_one :region, through: :departement
+  has_many :communes, primary_key: :siren, foreign_key: :siren_epci, inverse_of: :epci, dependent: false
+
+  has_one :registered_collectivity, class_name: "Collectivity", as: :territory, dependent: false
 
   # Validations
   # ----------------------------------------------------------------------------
@@ -70,5 +70,15 @@ class EPCI < ApplicationRecord
 
   def clean_empty_code_departement
     self.code_departement = nil if code_departement.blank?
+  end
+
+  # Other associations
+  # ----------------------------------------------------------------------------
+  def on_territory_collectivities
+    territories = [self]
+    territories << communes
+    territories << Departement.joins(:communes).merge(communes)
+
+    Collectivity.kept.where(territory: territories)
   end
 end

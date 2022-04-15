@@ -7,7 +7,8 @@ RSpec.describe Commune, type: :model do
   # ----------------------------------------------------------------------------
   it { is_expected.to belong_to(:departement).required }
   it { is_expected.to belong_to(:epci).optional }
-  it { is_expected.to have_many(:collectivities) }
+  it { is_expected.to have_one(:registered_collectivity) }
+  it { is_expected.to respond_to(:on_territory_collectivities) }
 
   # Validations
   # ----------------------------------------------------------------------------
@@ -123,10 +124,60 @@ RSpec.describe Commune, type: :model do
       }.to perform_sql_query(<<~SQL.squish)
         SELECT "communes".*
         FROM   "communes"
-        ORDER BY
-          ts_rank_cd(to_tsvector('french', "communes"."name"), to_tsquery('french', 'Hello')) DESC,
-          "communes"."code_insee" ASC
+        ORDER BY ts_rank_cd(to_tsvector('french', "communes"."name"), to_tsquery('french', 'Hello')) DESC,
+                 "communes"."code_insee" ASC
       SQL
+    end
+  end
+
+  # Other associations
+  # ----------------------------------------------------------------------------
+  describe "on_territory_collectivities" do
+    context "without EPCI attached" do
+      let(:commune) { create(:commune) }
+
+      it do
+        expect{
+          commune.on_territory_collectivities.load
+        }.to perform_sql_query(<<~SQL.squish)
+          SELECT "collectivities".*
+          FROM   "collectivities"
+          WHERE "collectivities"."discarded_at" IS NULL
+            AND ("collectivities"."territory_type" = 'Commune'
+            AND  "collectivities"."territory_id" = '#{commune.id}'
+            OR   "collectivities"."territory_type" = 'Departement'
+            AND  "collectivities"."territory_id" IN
+                   (SELECT "departements"."id"
+                    FROM "departements"
+                    WHERE "departements"."code_departement" = '#{commune.code_departement}'))
+        SQL
+      end
+    end
+
+    context "with an EPCI attached" do
+      let(:commune) { create(:commune, :with_epci) }
+
+      it do
+        expect{
+          commune.on_territory_collectivities.load
+        }.to perform_sql_query(<<~SQL.squish)
+          SELECT "collectivities".*
+          FROM   "collectivities"
+          WHERE "collectivities"."discarded_at" IS NULL
+            AND ("collectivities"."territory_type" = 'Commune'
+            AND  "collectivities"."territory_id" = '#{commune.id}'
+            OR   "collectivities"."territory_type" = 'Departement'
+            AND  "collectivities"."territory_id" IN
+                   (SELECT "departements"."id"
+                    FROM "departements"
+                    WHERE "departements"."code_departement" = '#{commune.code_departement}')
+            OR   "collectivities"."territory_type" = 'EPCI'
+            AND  "collectivities"."territory_id" IN
+                   (SELECT "epcis"."id"
+                    FROM "epcis"
+                    WHERE "epcis"."siren" = '#{commune.siren_epci}'))
+        SQL
+      end
     end
   end
 end

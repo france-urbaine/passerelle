@@ -9,7 +9,7 @@
     = svg_icon("pencil-alt-icon")
     | Modifier
 
-.card
+.card.mb-6
   dl.description-list
     .description-list__row
       dt Code INSEE de la région
@@ -51,4 +51,15 @@
 
     .description-list__row
       dt Collectivités enregistrées
-      dd
+      dd= count(region.on_territory_collectivities.count, "collectivité") if region.on_territory_collectivities.count.positive?
+
+- if region.on_territory_collectivities.any?
+  table
+    thead
+      tr.datatable-row
+        th Collectivités enregistrées
+
+    tbody
+      - region.on_territory_collectivities.each do |collectivite|
+        tr.datatable-row
+          td.w-px= collectivite.name
