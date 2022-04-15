@@ -1,0 +1,14 @@
+paris:
+  name:             Paris
+  code_departement: 75
+  code_region:      11
+
+pyrenees_atlantiques:
+  name:             Pyrénées-Atlantiques
+  code_departement: 64
+  code_region:      75
+
+nord:
+  name:             Nord
+  code_departement: 59
+  code_region:      32

@@ -4,12 +4,7 @@ FactoryBot.define do
   factory :departement do
     association :region
 
-    name do
-      loop do
-        value = Faker::Address.state
-        break value unless Departement.exists?(name: value)
-      end
-    end
+    name { Faker::Address.state }
 
     code_departement do
       loop do

@@ -2,13 +2,7 @@
 
 FactoryBot.define do
   factory :publisher do
-    name do
-      loop do
-        value = Faker::Company.name
-        break value unless Publisher.exists?(name: value)
-      end
-    end
-
+    name  { Faker::Company.name }
     siren { Faker::Company.french_siren_number }
   end
 end

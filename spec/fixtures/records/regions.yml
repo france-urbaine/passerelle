@@ -1,0 +1,11 @@
+ile_de_france:
+  name:         Ile-de-France
+  code_region:  11
+
+nouvelle_aquitaine:
+  name:         Nouvelle-Aquitaine
+  code_region:  75
+
+hauts_de_france:
+  name:         Hauts-de-France
+  code_region:  32

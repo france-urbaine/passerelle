@@ -1,0 +1,41 @@
+pays_basque:
+  name:         CA du Pays Basque
+  siren:        200067106
+  publisher:    fiscalite_territoire
+  territory:    pays_basque (EPCI)
+
+metropole_lille:
+  name:         Métropole Européenne de Lille
+  siren:        200093201
+  publisher:    fiscalite_territoire
+  territory:    metropole_lille (EPCI)
+
+metropole_grand_paris:
+  name:         Métropole du Grand Paris
+  siren:        200054781
+  publisher:    fiscalite_territoire
+  territory:    metropole_grand_paris (EPCI)
+
+lille:
+  name:         Lille
+  siren:        215903501
+  publisher:    fiscalite_territoire
+  territory:    lille (Commune)
+
+bayonne:
+  name:         Bayonne
+  siren:        216401026
+  publisher:    fiscalite_territoire
+  territory:    bayonne (Commune)
+
+paris:
+  name:         Paris
+  siren:        217500016
+  publisher:    fiscalite_territoire
+  territory:    paris (Commune)
+
+nord:
+  name:         Département du Nord
+  siren:        225900018
+  publisher:    fiscalite_territoire
+  territory:    nord (Departement)

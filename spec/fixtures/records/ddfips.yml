@@ -1,0 +1,15 @@
+bouches_du_rhone:
+  name:             DDFIP des Bouches-du-Rhône
+  code_departement: 13
+
+cher:
+  name:             DDFIP du Nord
+  code_departement: 59
+
+bouches_du_rhone:
+  name:             DDFIP des Pyrénées-Atlantiques
+  code_departement: 64
+
+paris:
+  name:             DDFIP de Paris
+  code_departement: 75

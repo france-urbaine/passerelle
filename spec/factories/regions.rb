@@ -2,13 +2,7 @@
 
 FactoryBot.define do
   factory :region do
-    name do
-      loop do
-        value = Faker::Address.state
-        break value unless Region.exists?(name: value)
-      end
-    end
-
+    name        { Faker::Address.state }
     code_region do
       loop do
         value = Faker::Address.zip_code[0..1]

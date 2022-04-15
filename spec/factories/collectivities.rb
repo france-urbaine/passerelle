@@ -4,23 +4,22 @@ FactoryBot.define do
   factory :collectivity do
     association :publisher
     territory { association %i[commune epci departement].sample }
-
-    name do
-      loop do
-        value = Faker::Address.city
-        break value unless Collectivity.exists?(name: value)
-      end
-    end
-
-    siren { Faker::Company.french_siren_number }
-
-    contact_first_name  { Faker::Name.first_name }
-    contact_last_name   { Faker::Name.last_name }
-    contact_email       { Faker::Internet.email }
-    contact_phone       { Faker::PhoneNumber.phone_number }
+    name      { territory.name }
+    siren     { Faker::Company.french_siren_number }
 
     trait :orphan do
       publisher { nil }
+    end
+
+    trait :approved do
+      approved_at { Time.current }
+    end
+
+    trait :with_contact do
+      contact_first_name  { Faker::Name.first_name }
+      contact_last_name   { Faker::Name.last_name }
+      contact_email       { Faker::Internet.email }
+      contact_phone       { Faker::PhoneNumber.phone_number }
     end
 
     trait :commune do

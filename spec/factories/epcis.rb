@@ -2,13 +2,7 @@
 
 FactoryBot.define do
   factory :epci do
-    name do
-      loop do
-        value = Faker::Address.city
-        break value unless EPCI.exists?(name: value)
-      end
-    end
-
+    name  { "Agglomération de #{Faker::Address.city}" }
     siren { Faker::Company.french_siren_number }
 
     trait :with_departement do

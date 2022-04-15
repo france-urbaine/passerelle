@@ -114,6 +114,12 @@ $ guard
 $ guard -P rspec
 ```
 
+The factories allow linting:
+
+```shell
+$ bundle exec rails factory_bot:lint RAILS_ENV='test'
+```
+
 ## Preview & catch mails in development
 
 You can preview mail views at http://localhost:3000/rails/mailers

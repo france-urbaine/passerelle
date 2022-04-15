@@ -1,0 +1,16 @@
+bayonne:
+  name:             Bayonne
+  code_insee:       64102
+  code_departement: 64
+  siren_epci:       200067106
+
+lille:
+  name:             Lille
+  code_insee:       59350
+  code_departement: 59
+  siren_epci:       200093201
+
+paris:
+  name:             Paris
+  code_insee:       75056
+  code_departement: 75
