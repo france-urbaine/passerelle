@@ -22,8 +22,8 @@
     .description-list__row
       dt EPCI
       dd.flex.justify-between
-        - if departement.epcis.count.positive?
-          div= count(departement.epcis.count, "EPCI")
+        - if departement.epcis_count.positive?
+          div= count(departement.epcis_count, "EPCI")
 
           a.button.-my-2( href=epcis_path(search: departement.code_departement) )
             = svg_icon("search-icon")
@@ -32,8 +32,8 @@
     .description-list__row
       dt Communes
       dd.flex.justify-between
-        - if departement.communes.count.positive?
-          div= count(departement.communes.count, "commune")
+        - if departement.communes_count.positive?
+          div= count(departement.communes_count, "commune")
 
           a.button.-my-2( href=communes_path(search: departement.code_departement) )
             = svg_icon("search-icon")
@@ -41,14 +41,25 @@
 
     .description-list__row
       dt DDFIP enregistrées
-      dd
+      dd= count(departement.ddfips_count, "DDFIP") if departement.ddfips_count.positive?
 
     .description-list__row
       dt Collectivités enregistrées
-      dd= count(departement.on_territory_collectivities.count, "collectivité") if departement.on_territory_collectivities.count.positive?
+      dd= count(departement.collectivities_count, "collectivité") if departement.collectivities_count.positive?
 
-- if departement.on_territory_collectivities.any?
-  table
+- if departement.ddfips_count.positive?
+  table.mb-6
+    thead
+      tr.datatable-row
+        th DDFIP enregistrées
+
+    tbody
+      - departement.ddfips.each do |ddfip|
+        tr.datatable-row
+          td= ddfip.name
+
+- if departement.collectivities_count.positive?
+  table.mb-6
     thead
       tr.datatable-row
         th Collectivités enregistrées
@@ -56,4 +67,4 @@
     tbody
       - departement.on_territory_collectivities.each do |collectivite|
         tr.datatable-row
-          td.w-px= collectivite.name
+          td= collectivite.name

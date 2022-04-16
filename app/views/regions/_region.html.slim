@@ -18,8 +18,8 @@
     .description-list__row
       dt Départements
       dd.flex.justify-between
-        - if region.departements.count.positive?
-          div= count(region.departements.count, "département")
+        - if region.departements_count.positive?
+          div= count(region.departements_count, "département")
 
           a.button.-my-2( href=departements_path(search: region.name) )
             = svg_icon("search-icon")
@@ -28,33 +28,44 @@
     .description-list__row
       dt EPCI
       dd.flex.justify-between
-        - if region.epcis.count.positive?
-          div= count(region.epcis.count, "EPCI")
+        - if region.epcis_count.positive?
+          div= count(region.epcis_count, "EPCI")
 
-          a.button.-my-2( href=epcis_path(search: region.code_region) )
+          a.button.-my-2( href=epcis_path(search: region.name) )
             = svg_icon("search-icon")
             | Voir les EPCI
 
     .description-list__row
       dt Communes
       dd.flex.justify-between
-        - if region.communes.count.positive?
-          div= count(region.communes.count, "commune")
+        - if region.communes_count.positive?
+          div= count(region.communes_count, "commune")
 
-          a.button.-my-2( href=communes_path(search: region.code_region) )
+          a.button.-my-2( href=communes_path(search: region.name) )
             = svg_icon("search-icon")
             | Voir les communes
 
     .description-list__row
       dt DDFIP enregistrées
-      dd
+      dd= count(region.ddfips_count, "DDFIP") if region.ddfips_count.positive?
 
     .description-list__row
       dt Collectivités enregistrées
-      dd= count(region.on_territory_collectivities.count, "collectivité") if region.on_territory_collectivities.count.positive?
+      dd= count(region.collectivities_count, "collectivité") if region.collectivities_count.positive?
 
-- if region.on_territory_collectivities.any?
-  table
+- if region.ddfips_count.positive?
+  table.mb-6
+    thead
+      tr.datatable-row
+        th DDFIP enregistrées
+
+    tbody
+      - region.ddfips.each do |ddfip|
+        tr.datatable-row
+          td= ddfip.name
+
+- if region.collectivities_count.positive?
+  table.mb-6
     thead
       tr.datatable-row
         th Collectivités enregistrées
@@ -62,4 +73,4 @@
     tbody
       - region.on_territory_collectivities.each do |collectivite|
         tr.datatable-row
-          td.w-px= collectivite.name
+          td= collectivite.name

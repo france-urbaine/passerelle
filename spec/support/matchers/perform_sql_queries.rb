@@ -12,8 +12,9 @@ module Matchers
       supports_block_expectations
 
       chain :including do |expected|
+        # https://rubular.com/r/7l4NUpa8HwBbfR
         @expected_queries ||= []
-        @expected_queries << expected
+        @expected_queries << expected.squish.gsub(/((?<=\()\s+|\s+(?=\)))/, "")
       end
 
       chain :to_the_number_of do |expected|

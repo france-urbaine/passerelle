@@ -20,6 +20,7 @@
 #  disapproved_at     :datetime
 #  desactivated_at    :datetime
 #  discarded_at       :datetime
+#  users_count        :integer          default(0), not null
 #
 # Indexes
 #
@@ -32,8 +33,8 @@
 class Collectivity < ApplicationRecord
   # Associations
   # ----------------------------------------------------------------------------
-  belongs_to :territory, polymorphic: true, inverse_of: :registered_collectivity
-  belongs_to :publisher, optional: true
+  belongs_to :territory, polymorphic: true, inverse_of: :registered_collectivity, counter_cache: true
+  belongs_to :publisher, optional: true, counter_cache: true
 
   has_many :users, as: :organization, dependent: :delete_all
 
@@ -92,5 +93,15 @@ class Collectivity < ApplicationRecord
 
   def departement?
     territory_type == "Departement"
+  end
+
+  # Counters cached
+  # ----------------------------------------------------------------------------
+  def self.reset_all_counters
+    users = User.where(<<~SQL.squish)
+      "users"."organization_type" = 'Collectivity' AND "users"."organization_id" = "collectivities"."id"
+    SQL
+
+    update_all_counters(users_count: users)
   end
 end

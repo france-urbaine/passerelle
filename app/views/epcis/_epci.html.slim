@@ -26,8 +26,8 @@
     .description-list__row
       dt Communes
       dd.flex.justify-between
-        - if epci.communes.count.positive?
-          div= count(epci.communes.count, "commune")
+        - if epci.communes_count.positive?
+          div= count(epci.communes_count, "commune")
 
           a.button.-my-2( href=communes_path(search: epci.siren) )
             = svg_icon("search-icon")
@@ -35,9 +35,9 @@
 
     .description-list__row
       dt Collectivités enregistrées
-      dd= count(epci.on_territory_collectivities.count, "collectivité") if epci.on_territory_collectivities.count.positive?
+      dd= count(epci.collectivities_count, "collectivité") if epci.collectivities_count.positive?
 
-- if epci.on_territory_collectivities.any?
+- if epci.collectivities_count.positive?
   table
     thead
       tr.datatable-row

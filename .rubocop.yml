@@ -83,6 +83,11 @@ Rails/Output:
 Rails/SkipsModelValidations:
   Enabled: false
 
+Rails/SquishedSQLHeredocs:
+  Exclude:
+    # SQL queries passed to perform_sql_query matcher are squished by default
+    - 'spec/**/*'
+
 # RSpec ------------------------------------------------------------------------
 RSpec/DescribedClass:
   Enabled: false

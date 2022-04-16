@@ -29,10 +29,10 @@
 
     .description-list__row
       dt Collectivités enregistrées
-      dd= count(commune.on_territory_collectivities.count, "collectivité") if commune.on_territory_collectivities.count.positive?
+      dd= count(commune.collectivities_count, "collectivité") if commune.collectivities_count.positive?
 
-- if commune.on_territory_collectivities.any?
-  table
+- if commune.collectivities_count.positive?
+  table.mb-6
     thead
       tr.datatable-row
         th Collectivités enregistrées
@@ -40,4 +40,4 @@
     tbody
       - commune.on_territory_collectivities.each do |collectivite|
         tr.datatable-row
-          td.w-px= collectivite.name
+          td= collectivite.name

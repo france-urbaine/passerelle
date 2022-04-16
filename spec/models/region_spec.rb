@@ -31,7 +31,7 @@ RSpec.describe Region, type: :model do
     it do
       expect{
         described_class.search(name: "Hello").load
-      }.to perform_sql_query(<<~SQL.squish)
+      }.to perform_sql_query(<<~SQL)
         SELECT "regions".*
         FROM   "regions"
         WHERE  (LOWER(UNACCENT("regions"."name")) LIKE LOWER(UNACCENT('%Hello%')))
@@ -41,7 +41,7 @@ RSpec.describe Region, type: :model do
     it do
       expect{
         described_class.search("Hello").load
-      }.to perform_sql_query(<<~SQL.squish)
+      }.to perform_sql_query(<<~SQL)
         SELECT "regions".*
         FROM   "regions"
         WHERE (LOWER(UNACCENT("regions"."name")) LIKE LOWER(UNACCENT('%Hello%'))
@@ -54,7 +54,7 @@ RSpec.describe Region, type: :model do
     it do
       expect{
         described_class.order_by_score("Hello").load
-      }.to perform_sql_query(<<~SQL.squish)
+      }.to perform_sql_query(<<~SQL)
         SELECT "regions".*
         FROM   "regions"
         ORDER BY
@@ -72,28 +72,96 @@ RSpec.describe Region, type: :model do
     it do
       expect{
         region.on_territory_collectivities.load
-      }.to perform_sql_query(<<~SQL.squish)
+      }.to perform_sql_query(<<~SQL)
         SELECT "collectivities".*
         FROM   "collectivities"
-        WHERE "collectivities"."discarded_at" IS NULL
-          AND ("collectivities"."territory_type" = 'Departement'
-          AND  "collectivities"."territory_id" IN
-                 (SELECT "departements"."id"
+        WHERE  "collectivities"."discarded_at" IS NULL
+          AND (
+                "collectivities"."territory_type" = 'Departement'
+            AND "collectivities"."territory_id" IN (
+                  SELECT "departements"."id"
                   FROM "departements"
-                  WHERE "departements"."code_region" = '#{region.code_region}')
-          OR   "collectivities"."territory_type" = 'Commune'
-          AND  "collectivities"."territory_id" IN
-                 (SELECT "communes"."id"
+                  WHERE "departements"."code_region" = '#{region.code_region}'
+            )
+            OR  "collectivities"."territory_type" = 'Commune'
+            AND "collectivities"."territory_id" IN (
+                  SELECT "communes"."id"
                   FROM "communes"
                   INNER JOIN "departements" ON "communes"."code_departement" = "departements"."code_departement"
-                  WHERE "departements"."code_region" = '#{region.code_region}')
-          OR  "collectivities"."territory_type" = 'EPCI'
-          AND "collectivities"."territory_id" IN
-                 (SELECT "epcis"."id"
+                  WHERE "departements"."code_region" = '#{region.code_region}'
+            )
+            OR  "collectivities"."territory_type" = 'EPCI'
+            AND "collectivities"."territory_id" IN (
+                  SELECT "epcis"."id"
                   FROM "epcis"
                   INNER JOIN "communes" ON "communes"."siren_epci" = "epcis"."siren"
                   INNER JOIN "departements" ON "communes"."code_departement" = "departements"."code_departement"
-                  WHERE "departements"."code_region" = '#{region.code_region}'))
+                  WHERE "departements"."code_region" = '#{region.code_region}'
+            )
+          )
+      SQL
+    end
+  end
+
+  # Counters
+  # ----------------------------------------------------------------------------
+  describe ".reset_all_counters" do
+    it do
+      expect{
+        described_class.reset_all_counters
+      }.to perform_sql_query(<<~SQL)
+        UPDATE "regions"
+        SET "departements_count" = (
+              SELECT COUNT(*)
+              FROM "departements"
+              WHERE ("departements"."code_region" = "regions"."code_region")
+            ),
+            "epcis_count" = (
+              SELECT COUNT(*)
+              FROM "epcis"
+              INNER JOIN "departements" ON "departements"."code_departement" = "epcis"."code_departement"
+              WHERE ("departements"."code_region" = "regions"."code_region")
+            ),
+            "communes_count" = (
+              SELECT COUNT(*)
+              FROM "communes"
+              INNER JOIN "departements" ON "departements"."code_departement" = "communes"."code_departement"
+              WHERE ("departements"."code_region" = "regions"."code_region")
+            ),
+            "ddfips_count" = (
+              SELECT COUNT(*)
+              FROM "ddfips"
+              INNER JOIN "departements" ON "departements"."code_departement" = "ddfips"."code_departement"
+              WHERE ("departements"."code_region" = "regions"."code_region")
+            ),
+            "collectivities_count" = (
+              SELECT COUNT(*)
+              FROM  "collectivities"
+              WHERE "collectivities"."discarded_at" IS NULL
+                AND (
+                      "collectivities"."territory_type" = 'Commune'
+                  AND "collectivities"."territory_id" IN (
+                        SELECT "communes"."id"
+                        FROM "communes"
+                        INNER JOIN "departements" ON "departements"."code_departement" = "communes"."code_departement"
+                        WHERE ("departements"."code_region" = "regions"."code_region")
+                  )
+                  OR  "collectivities"."territory_type" = 'EPCI'
+                  AND "collectivities"."territory_id" IN (
+                        SELECT "epcis"."id"
+                        FROM "epcis"
+                        INNER JOIN "communes" ON "communes"."siren_epci" = "epcis"."siren"
+                        INNER JOIN "departements" ON "departements"."code_departement" = "communes"."code_departement"
+                        WHERE ("departements"."code_region" = "regions"."code_region")
+                  )
+                  OR  "collectivities"."territory_type" = 'Departement'
+                  AND "collectivities"."territory_id" IN (
+                        SELECT "departements"."id"
+                        FROM   "departements"
+                        WHERE ("departements"."code_region" = "regions"."code_region")
+                  )
+                )
+            )
       SQL
     end
   end

@@ -17,7 +17,7 @@ RSpec.describe Commune, type: :model do
   it { is_expected.to validate_presence_of(:code_departement) }
   it { is_expected.not_to validate_presence_of(:siren_epci) }
 
-  it { is_expected.to     allow_value("64102").for(:code_insee) }
+  it { is_expected.to     allow_value("74123").for(:code_insee) }
   it { is_expected.to     allow_value("2A013").for(:code_insee) }
   it { is_expected.to     allow_value("97102").for(:code_insee) }
   it { is_expected.not_to allow_value("1A674").for(:code_insee) }
@@ -44,7 +44,7 @@ RSpec.describe Commune, type: :model do
     it do
       expect{
         described_class.search(name: "Hello").load
-      }.to perform_sql_query(<<~SQL.squish)
+      }.to perform_sql_query(<<~SQL)
         SELECT "communes".*
         FROM   "communes"
         WHERE  (LOWER(UNACCENT("communes"."name")) LIKE LOWER(UNACCENT('%Hello%')))
@@ -54,7 +54,7 @@ RSpec.describe Commune, type: :model do
     it do
       expect{
         described_class.search("Hello").load
-      }.to perform_sql_query(<<~SQL.squish)
+      }.to perform_sql_query(<<~SQL)
         SELECT "communes".*
         FROM   "communes"
         LEFT OUTER JOIN "epcis" ON "epcis"."siren" = "communes"."siren_epci"
@@ -66,7 +66,7 @@ RSpec.describe Commune, type: :model do
           OR "communes"."code_departement" = 'Hello'
           OR LOWER(UNACCENT("epcis"."name")) LIKE LOWER(UNACCENT('%Hello%'))
           OR LOWER(UNACCENT("departements"."name")) LIKE LOWER(UNACCENT('%Hello%'))
-          OR LOWER(UNACCENT(\"regions\".\"name\")) LIKE LOWER(UNACCENT('%Hello%')))
+          OR LOWER(UNACCENT("regions"."name")) LIKE LOWER(UNACCENT('%Hello%')))
       SQL
     end
   end
@@ -77,7 +77,7 @@ RSpec.describe Commune, type: :model do
     it do
       expect{
         described_class.order_by_param("commune").load
-      }.to perform_sql_query(<<~SQL.squish)
+      }.to perform_sql_query(<<~SQL)
         SELECT "communes".*
         FROM   "communes"
         ORDER BY UNACCENT("communes"."name") ASC, "communes"."code_insee" ASC
@@ -87,7 +87,7 @@ RSpec.describe Commune, type: :model do
     it do
       expect{
         described_class.order_by_param("departement").load
-      }.to perform_sql_query(<<~SQL.squish)
+      }.to perform_sql_query(<<~SQL)
         SELECT "communes".*
         FROM   "communes"
         ORDER BY "communes"."code_departement" ASC, "communes"."code_insee" ASC
@@ -97,7 +97,7 @@ RSpec.describe Commune, type: :model do
     it do
       expect{
         described_class.order_by_param("epci").load
-      }.to perform_sql_query(<<~SQL.squish)
+      }.to perform_sql_query(<<~SQL)
         SELECT "communes".*
         FROM   "communes"
         LEFT OUTER JOIN "epcis" ON "epcis"."siren" = "communes"."siren_epci"
@@ -108,7 +108,7 @@ RSpec.describe Commune, type: :model do
     it do
       expect{
         described_class.order_by_param("-epci").load
-      }.to perform_sql_query(<<~SQL.squish)
+      }.to perform_sql_query(<<~SQL)
         SELECT "communes".*
         FROM   "communes"
         LEFT OUTER JOIN "epcis" ON "epcis"."siren" = "communes"."siren_epci"
@@ -121,7 +121,7 @@ RSpec.describe Commune, type: :model do
     it do
       expect{
         described_class.order_by_score("Hello").load
-      }.to perform_sql_query(<<~SQL.squish)
+      }.to perform_sql_query(<<~SQL)
         SELECT "communes".*
         FROM   "communes"
         ORDER BY ts_rank_cd(to_tsvector('french', "communes"."name"), to_tsquery('french', 'Hello')) DESC,
@@ -132,24 +132,27 @@ RSpec.describe Commune, type: :model do
 
   # Other associations
   # ----------------------------------------------------------------------------
-  describe "on_territory_collectivities" do
+  describe "#on_territory_collectivities" do
     context "without EPCI attached" do
       let(:commune) { create(:commune) }
 
       it do
         expect{
           commune.on_territory_collectivities.load
-        }.to perform_sql_query(<<~SQL.squish)
+        }.to perform_sql_query(<<~SQL)
           SELECT "collectivities".*
           FROM   "collectivities"
-          WHERE "collectivities"."discarded_at" IS NULL
-            AND ("collectivities"."territory_type" = 'Commune'
-            AND  "collectivities"."territory_id" = '#{commune.id}'
-            OR   "collectivities"."territory_type" = 'Departement'
-            AND  "collectivities"."territory_id" IN
-                   (SELECT "departements"."id"
-                    FROM "departements"
-                    WHERE "departements"."code_departement" = '#{commune.code_departement}'))
+          WHERE  "collectivities"."discarded_at" IS NULL
+            AND  (
+                    "collectivities"."territory_type" = 'Commune'
+                AND "collectivities"."territory_id"   = '#{commune.id}'
+                OR  "collectivities"."territory_type" = 'Departement'
+                AND "collectivities"."territory_id" IN (
+                      SELECT "departements"."id"
+                      FROM "departements"
+                      WHERE "departements"."code_departement" = '#{commune.code_departement}'
+                )
+            )
         SQL
       end
     end
@@ -160,24 +163,61 @@ RSpec.describe Commune, type: :model do
       it do
         expect{
           commune.on_territory_collectivities.load
-        }.to perform_sql_query(<<~SQL.squish)
+        }.to perform_sql_query(<<~SQL)
           SELECT "collectivities".*
           FROM   "collectivities"
-          WHERE "collectivities"."discarded_at" IS NULL
-            AND ("collectivities"."territory_type" = 'Commune'
-            AND  "collectivities"."territory_id" = '#{commune.id}'
-            OR   "collectivities"."territory_type" = 'Departement'
-            AND  "collectivities"."territory_id" IN
-                   (SELECT "departements"."id"
-                    FROM "departements"
-                    WHERE "departements"."code_departement" = '#{commune.code_departement}')
-            OR   "collectivities"."territory_type" = 'EPCI'
-            AND  "collectivities"."territory_id" IN
-                   (SELECT "epcis"."id"
-                    FROM "epcis"
-                    WHERE "epcis"."siren" = '#{commune.siren_epci}'))
+          WHERE  "collectivities"."discarded_at" IS NULL
+            AND (
+                    "collectivities"."territory_type" = 'Commune'
+                AND "collectivities"."territory_id"   = '#{commune.id}'
+                OR  "collectivities"."territory_type" = 'EPCI'
+                AND "collectivities"."territory_id" IN (
+                      SELECT "epcis"."id"
+                      FROM "epcis"
+                      WHERE "epcis"."siren" = '#{commune.siren_epci}'
+                )
+                OR  "collectivities"."territory_type" = 'Departement'
+                AND "collectivities"."territory_id" IN (
+                      SELECT "departements"."id"
+                      FROM "departements"
+                      WHERE "departements"."code_departement" = '#{commune.code_departement}'
+                )
+            )
         SQL
       end
+    end
+  end
+
+  # Counters
+  # ----------------------------------------------------------------------------
+  describe ".reset_all_counters" do
+    it do
+      expect{
+        described_class.reset_all_counters
+      }.to perform_sql_query(<<~SQL)
+        UPDATE  "communes"
+        SET     "collectivities_count" = (
+                  SELECT COUNT(*)
+                  FROM   "collectivities"
+                  WHERE  "collectivities"."discarded_at" IS NULL
+                    AND (
+                          "collectivities"."territory_type" = 'Commune'
+                      AND "collectivities"."territory_id"   = "communes"."id"
+                      OR  "collectivities"."territory_type" = 'EPCI'
+                      AND "collectivities"."territory_id" IN (
+                            SELECT "epcis"."id"
+                            FROM   "epcis"
+                            WHERE  ("epcis"."siren" = "communes"."siren_epci")
+                      )
+                      OR  "collectivities"."territory_type" = 'Departement'
+                      AND "collectivities"."territory_id" IN (
+                            SELECT "departements"."id"
+                            FROM   "departements"
+                            WHERE  ("departements"."code_departement" = "communes"."code_departement")
+                      )
+                    )
+                )
+      SQL
     end
   end
 end

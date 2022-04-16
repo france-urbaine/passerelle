@@ -17,7 +17,10 @@
 
   .datatable-header__counts,
   .datatable-header__pagination {
-    flex: none;
+    flex: none
+  }
+
+  .datatable-header__pagination {
     display: flex;
     align-items: center;
   }

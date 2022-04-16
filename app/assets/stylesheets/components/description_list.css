@@ -4,7 +4,7 @@
     display: grid;
     grid-template-columns: repeat(3,minmax(0,1fr));
 
-    @apply px-6 py-4 gap-4 border-b;
+    @apply px-4 py-3 gap-2 border-b;
     @apply border-gray-200;
     @apply dark:border-gray-800;
 
@@ -25,6 +25,11 @@
     & dd:empty:before {
       content: "-";
       @apply text-gray-500;
+    }
+
+    &:hover {
+      @apply bg-gray-100;
+      @apply dark:bg-gray-900;
     }
   }
 }

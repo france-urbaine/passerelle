@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_04_09_141626) do
+ActiveRecord::Schema[7.0].define(version: 2022_04_10_102705) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -32,6 +32,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_04_09_141626) do
     t.datetime "disapproved_at"
     t.datetime "desactivated_at"
     t.datetime "discarded_at"
+    t.integer "users_count", default: 0, null: false
     t.index ["discarded_at"], name: "index_collectivities_on_discarded_at"
     t.index ["name"], name: "index_collectivities_on_name", unique: true, where: "(discarded_at IS NULL)"
     t.index ["publisher_id"], name: "index_collectivities_on_publisher_id"
@@ -46,6 +47,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_04_09_141626) do
     t.string "siren_epci"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "collectivities_count", default: 0, null: false
     t.index ["code_departement"], name: "index_communes_on_code_departement"
     t.index ["code_insee"], name: "index_communes_on_code_insee", unique: true
     t.index ["siren_epci"], name: "index_communes_on_siren_epci"
@@ -57,6 +59,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_04_09_141626) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "discarded_at"
+    t.integer "users_count", default: 0, null: false
+    t.integer "collectivities_count", default: 0, null: false
     t.index ["code_departement"], name: "index_ddfips_on_code_departement"
     t.index ["discarded_at"], name: "index_ddfips_on_discarded_at"
     t.index ["name"], name: "index_ddfips_on_name", unique: true, where: "(discarded_at IS NULL)"
@@ -68,6 +72,10 @@ ActiveRecord::Schema[7.0].define(version: 2022_04_09_141626) do
     t.string "code_region", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "epcis_count", default: 0, null: false
+    t.integer "communes_count", default: 0, null: false
+    t.integer "ddfips_count", default: 0, null: false
+    t.integer "collectivities_count", default: 0, null: false
     t.index ["code_departement"], name: "index_departements_on_code_departement", unique: true
     t.index ["code_region"], name: "index_departements_on_code_region"
   end
@@ -79,6 +87,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_04_09_141626) do
     t.string "nature"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "communes_count", default: 0, null: false
+    t.integer "collectivities_count", default: 0, null: false
     t.index ["code_departement"], name: "index_epcis_on_code_departement"
     t.index ["siren"], name: "index_epcis_on_siren", unique: true
   end
@@ -90,6 +100,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_04_09_141626) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "discarded_at"
+    t.integer "users_count", default: 0, null: false
+    t.integer "collectivities_count", default: 0, null: false
     t.index ["discarded_at"], name: "index_publishers_on_discarded_at"
     t.index ["name"], name: "index_publishers_on_name", unique: true, where: "(discarded_at IS NULL)"
     t.index ["siren"], name: "index_publishers_on_siren", unique: true, where: "(discarded_at IS NULL)"
@@ -100,6 +112,11 @@ ActiveRecord::Schema[7.0].define(version: 2022_04_09_141626) do
     t.string "code_region", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "departements_count", default: 0, null: false
+    t.integer "epcis_count", default: 0, null: false
+    t.integer "communes_count", default: 0, null: false
+    t.integer "ddfips_count", default: 0, null: false
+    t.integer "collectivities_count", default: 0, null: false
     t.index ["code_region"], name: "index_regions_on_code_region", unique: true
   end
 

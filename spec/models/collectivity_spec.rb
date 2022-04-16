@@ -69,4 +69,24 @@ RSpec.describe Collectivity, type: :model do
       SQL
     end
   end
+
+  # Counters
+  # ----------------------------------------------------------------------------
+  describe ".reset_all_counters" do
+    it do
+      expect{
+        described_class.reset_all_counters
+      }.to perform_sql_query(<<~SQL)
+        UPDATE "collectivities"
+        SET "users_count" = (
+              SELECT COUNT(*)
+              FROM   "users"
+              WHERE  (
+                    "users"."organization_type" = 'Collectivity'
+                AND "users"."organization_id" = "collectivities"."id"
+              )
+            )
+      SQL
+    end
+  end
 end

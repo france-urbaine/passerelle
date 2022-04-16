@@ -34,7 +34,7 @@ RSpec.describe EPCI, type: :model do
     it do
       expect{
         described_class.search(name: "Hello").load
-      }.to perform_sql_query(<<~SQL.squish)
+      }.to perform_sql_query(<<~SQL)
         SELECT "epcis".*
         FROM   "epcis"
         WHERE  (LOWER(UNACCENT("epcis"."name")) LIKE LOWER(UNACCENT('%Hello%')))
@@ -44,7 +44,7 @@ RSpec.describe EPCI, type: :model do
     it do
       expect{
         described_class.search("Hello").load
-      }.to perform_sql_query(<<~SQL.squish)
+      }.to perform_sql_query(<<~SQL)
         SELECT "epcis".*
         FROM   "epcis"
         LEFT OUTER JOIN "departements" ON "departements"."code_departement" = "epcis"."code_departement"
@@ -64,7 +64,7 @@ RSpec.describe EPCI, type: :model do
     it do
       expect{
         described_class.order_by_param("epci").load
-      }.to perform_sql_query(<<~SQL.squish)
+      }.to perform_sql_query(<<~SQL)
         SELECT "epcis".*
         FROM   "epcis"
         ORDER BY UNACCENT("epcis"."name") ASC, "epcis"."name" ASC
@@ -74,7 +74,7 @@ RSpec.describe EPCI, type: :model do
     it do
       expect{
         described_class.order_by_param("departement").load
-      }.to perform_sql_query(<<~SQL.squish)
+      }.to perform_sql_query(<<~SQL)
         SELECT "epcis".*
         FROM   "epcis"
         ORDER BY "epcis"."code_departement" ASC, "epcis"."name" ASC
@@ -84,7 +84,7 @@ RSpec.describe EPCI, type: :model do
     it do
       expect{
         described_class.order_by_param("-departement").load
-      }.to perform_sql_query(<<~SQL.squish)
+      }.to perform_sql_query(<<~SQL)
         SELECT "epcis".*
         FROM   "epcis"
         ORDER BY "epcis"."code_departement" DESC, "epcis"."name" DESC
@@ -96,41 +96,83 @@ RSpec.describe EPCI, type: :model do
     it do
       expect{
         described_class.order_by_score("Hello").load
-      }.to perform_sql_query(<<~SQL.squish)
+      }.to perform_sql_query(<<~SQL)
         SELECT "epcis".*
         FROM   "epcis"
-        ORDER BY
-          ts_rank_cd(to_tsvector('french', "epcis"."name"), to_tsquery('french', 'Hello')) DESC,
-          "epcis"."name" ASC
+        ORDER BY ts_rank_cd(to_tsvector('french', "epcis"."name"), to_tsquery('french', 'Hello')) DESC,
+                 "epcis"."name" ASC
       SQL
     end
   end
 
   # Other associations
   # ----------------------------------------------------------------------------
-  describe "on_territory_collectivities" do
+  describe "#on_territory_collectivities" do
     let(:epci) { create(:epci) }
 
     it do
       expect{
         epci.on_territory_collectivities.load
-      }.to perform_sql_query(<<~SQL.squish)
+      }.to perform_sql_query(<<~SQL)
         SELECT "collectivities".*
         FROM   "collectivities"
-        WHERE "collectivities"."discarded_at" IS NULL
-          AND ("collectivities"."territory_type" = 'EPCI'
-          AND  "collectivities"."territory_id" = '#{epci.id}'
-          OR   "collectivities"."territory_type" = 'Commune'
-          AND  "collectivities"."territory_id" IN
-                 (SELECT "communes"."id"
+        WHERE  "collectivities"."discarded_at" IS NULL
+          AND (
+                "collectivities"."territory_type" = 'EPCI'
+            AND "collectivities"."territory_id"   = '#{epci.id}'
+            OR  "collectivities"."territory_type" = 'Commune'
+            AND "collectivities"."territory_id" IN (
+                  SELECT "communes"."id"
                   FROM "communes"
-                  WHERE "communes"."siren_epci" = '#{epci.siren}')
-          OR  "collectivities"."territory_type" = 'Departement'
-          AND "collectivities"."territory_id" IN
-                 (SELECT "departements"."id"
+                  WHERE "communes"."siren_epci" = '#{epci.siren}'
+            )
+            OR  "collectivities"."territory_type" = 'Departement'
+            AND "collectivities"."territory_id" IN (
+                  SELECT "departements"."id"
                   FROM "departements"
                   INNER JOIN "communes" ON "communes"."code_departement" = "departements"."code_departement"
-                  WHERE "communes"."siren_epci" = '#{epci.siren}'))
+                  WHERE "communes"."siren_epci" = '#{epci.siren}'
+            )
+          )
+      SQL
+    end
+  end
+
+  # Counters
+  # ----------------------------------------------------------------------------
+  describe ".reset_all_counters" do
+    it do
+      expect{
+        described_class.reset_all_counters
+      }.to perform_sql_query(<<~SQL)
+        UPDATE "epcis"
+        SET "communes_count" = (
+              SELECT COUNT(*)
+              FROM "communes"
+              WHERE ("communes"."siren_epci" = "epcis"."siren")
+            ),
+            "collectivities_count" = (
+              SELECT COUNT(*)
+              FROM   "collectivities"
+              WHERE  "collectivities"."discarded_at" IS NULL
+                AND (
+                      "collectivities"."territory_type" = 'EPCI'
+                  AND "collectivities"."territory_id"   = "epcis"."id"
+                  OR  "collectivities"."territory_type" = 'Commune'
+                  AND "collectivities"."territory_id" IN (
+                        SELECT "communes"."id"
+                        FROM "communes"
+                        WHERE ("communes"."siren_epci" = "epcis"."siren")
+                  )
+                  OR  "collectivities"."territory_type" = 'Departement'
+                  AND "collectivities"."territory_id" IN (
+                        SELECT "departements"."id"
+                        FROM "departements"
+                        INNER JOIN "communes" ON "communes"."code_departement" = "departements"."code_departement"
+                        WHERE ("communes"."siren_epci" = "epcis"."siren")
+                  )
+                )
+            )
       SQL
     end
   end
