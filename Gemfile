@@ -24,7 +24,7 @@ gem "responders"
 
 # Assets
 gem "cssbundling-rails"
-gem "importmap-rails"
+gem "jsbundling-rails"
 gem "sprockets-rails"
 gem "stimulus-rails"
 gem "turbo-rails"
