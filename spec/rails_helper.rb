@@ -15,7 +15,7 @@ require "rspec/rails"
 require "webmock/rspec"
 require "view_component/test_helpers"
 
-if ENV["SUPER_DIFF"] == "true"
+if ENV.fetch("SUPER_DIFF", nil) == "true"
   require "super_diff/rspec"
   require "super_diff/rails"
 end

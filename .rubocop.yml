@@ -29,10 +29,11 @@ Layout/HashAlignment:
 Layout/LineLength:
   Exclude:
     - 'spec/**/*'
-  IgnoredPatterns:
-    - '^\s*belongs_to'
-    - '^\s*has_many'
-    - '^\s*has_one'
+  AllowedPatterns:
+    - !ruby/regexp /\A\s*belongs_to/
+    - !ruby/regexp /\A\s*belongs_to/
+    - !ruby/regexp /\A\s*has_many/
+    - !ruby/regexp /\A\s*has_one/
 
 Layout/SpaceAroundMethodCallOperator:
   Exclude:
@@ -104,6 +105,11 @@ Style/BlockDelimiters:
 
 Style/Documentation:
   Enabled: false
+
+Style/FetchEnvVar:
+  AllowedVars:
+    - BUNDLE_GEMFILE
+    - RAILS_ENV
 
 Style/FrozenStringLiteralComment:
   Exclude:

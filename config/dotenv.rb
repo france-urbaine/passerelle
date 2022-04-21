@@ -21,7 +21,7 @@ end
 default_env = "development"
 default_env = "test" if ENV["RAILS_ENV"] == "test"
 
-env = ENV["DOTENV"] || default_env
+env = ENV.fetch("DOTENV", default_env)
 
 puts "Loading #{env} environment variables"
 
