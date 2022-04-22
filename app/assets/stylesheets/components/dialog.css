@@ -1,11 +1,11 @@
 @layer components {
   .dialog {
     position: fixed;
+    z-index: 100;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    z-index: 1000;
     overflow-x: hidden;
     overflow-y: auto;
     outline: 0;
@@ -21,7 +21,6 @@
     transform: translate(-50%, 0);
     min-width: 500px;
     max-width: calc(100vw - theme('spacing.12'));
-    max-height: calc(100vh - theme('spacing.12'));
 
     @apply rounded shadow-lg p-6;
     @apply bg-white;

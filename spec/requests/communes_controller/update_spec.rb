@@ -13,7 +13,7 @@ RSpec.describe "CommunesController#update", type: :request do
     before { request }
 
     it { expect(response).to have_http_status(:found) }
-    it { expect(response).to redirect_to("/communes/#{commune.id}") }
+    it { expect(response).to redirect_to("/communes") }
 
     it "updates the requested commune" do
       commune.reload

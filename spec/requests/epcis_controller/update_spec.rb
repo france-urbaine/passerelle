@@ -13,7 +13,7 @@ RSpec.describe "EpcisController#update", type: :request do
     before { request }
 
     it { expect(response).to have_http_status(:found) }
-    it { expect(response).to redirect_to("/epcis/#{epci.id}") }
+    it { expect(response).to redirect_to("/epcis") }
 
     it "updates the requested epci" do
       epci.reload

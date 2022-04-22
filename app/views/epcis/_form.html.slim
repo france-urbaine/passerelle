@@ -4,6 +4,7 @@
       h1#dialog-title.dialog__title Modification de l'EPCI
 
     = form_with(model: epci) do |form|
+      = back_param_input
       .dialog__content
         .form-block
           = form.label :name
@@ -21,5 +22,5 @@
           = display_errors epci, :code_departement
 
       .dialog__actions
-        button.button.button__primary( type="submit" ) Enregistrer
-        a.button( href=epci_path(epci) ) Annuler
+        button.button.button--primary( type="submit" ) Enregistrer
+        a.button( href=params.fetch(:back, epcis_path) ) Annuler

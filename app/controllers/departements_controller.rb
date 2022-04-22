@@ -16,8 +16,8 @@ class DepartementsController < ApplicationController
 
   def update
     if @departement.update(departement_params)
-      flash[:success] = t("flash.departements.update.success")
-      redirect_to departement_path(@departement)
+      path = params.fetch(:back, departements_path)
+      redirect_to path, notice: t(".success")
     else
       render :edit, status: :unprocessable_entity
     end

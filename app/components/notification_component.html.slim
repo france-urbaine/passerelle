@@ -1,16 +1,16 @@
 .notification( role="alert" aria-live="polite" )
   - case type
   - when "success"
-    = helpers.svg_icon("check-circle-icon", "Succés", class: "notification__icon text-green-500")
-  - when "alert", "error"
-    = helpers.svg_icon("exclamation-circle-icon", "Alerte", class: "notification__icon text-red-500")
+    = helpers.svg_icon("check-circle-icon", "Succés", class: "notification__icon notification__icon--success")
+  - when "error"
+    = helpers.svg_icon("exclamation-circle-icon", "Alerte", class: "notification__icon notification__icon--error")
   - else
-    = helpers.svg_icon("information-circle", "Information", class: "notification__icon text-blue-500")
+    = helpers.svg_icon("information-circle-icon", "Information", class: "notification__icon")
 
   .notification__message
     .notification__title= title
     = simple_format(description)
   
   .notification__actions
-    .icon-button
+    button.icon-button( disabled )
       = helpers.svg_icon("x-icon", "Cacher cette notifications")

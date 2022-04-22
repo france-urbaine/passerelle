@@ -5,7 +5,7 @@
     overflow: auto;
     width: 100%;
 
-    @apply p-6
+    @apply p-6;
   }
 
   .content__header {

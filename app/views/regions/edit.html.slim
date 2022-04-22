@@ -1,3 +1,5 @@
-main.content
+main.content( aria-hidden="true" tabindex="-1" )
+  = render @region
+
+= modal do
   = render "form", region: @region
-  = render "form_background", region: @region

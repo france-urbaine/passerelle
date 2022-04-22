@@ -1,6 +1,7 @@
 @layer components {
   .notifications {
     position: fixed;
+    z-index: 200;
     top: 0;
     right: 0;
     pointer-events: none;
@@ -9,7 +10,7 @@
     align-items: flex-end;
     justify-content: center;
 
-    @apply p-6
+    @apply p-4;
   }
 
   .notification {
@@ -23,7 +24,15 @@
   }
 
   .notification__icon {
-    @apply mr-4;
+    @apply mr-4 text-blue-500;
+  }
+
+  .notification__icon--success {
+    @apply text-green-500;
+  }
+
+  .notification__icon--error {
+    @apply text-red-500;
   }
 
   .notification__title {

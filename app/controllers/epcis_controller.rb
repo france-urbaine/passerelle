@@ -16,8 +16,8 @@ class EpcisController < ApplicationController
 
   def update
     if @epci.update(epci_params)
-      flash[:success] = t("flash.epcis.update.success")
-      redirect_to epci_path(@epci)
+      path = params.fetch(:back, epcis_path)
+      redirect_to path, notice: t(".success")
     else
       render :edit, status: :unprocessable_entity
     end

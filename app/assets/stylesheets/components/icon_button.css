@@ -7,11 +7,12 @@
     position: relative;
     cursor: pointer;
 
-    @apply h-9 w-9 p-2 leading-5 rounded-full;
+    @apply h-9 w-9 p-2 leading-5 rounded-full border-none;
 
     & svg {
       position: relative;
-      @apply h-5 w-5;
+      display: block;
+      @apply h-5 w-5 m-0;
     }
 
     &[disabled] {

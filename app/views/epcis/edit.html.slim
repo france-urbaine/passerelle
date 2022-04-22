@@ -1,3 +1,5 @@
-main.content
+main.content( aria-hidden="true" tabindex="-1" )
+  = render @epci
+
+= modal do
   = render "form", epci: @epci
-  = render "form_background", epci: @epci

@@ -1,18 +1,30 @@
 # frozen_string_literal: true
 
 class NotificationComponent < ViewComponent::Base
-  attr_reader :type, :data
+  attr_reader :data
 
-  def initialize(type, data)
-    @type = type
-    @data = data
+  def initialize(data)
+    case data
+    when Hash   then @data = data.stringify_keys
+    when String then @data = { "title" => data }
+    else
+      raise TypeError, "unexpected argument: #{data.inspect}"
+    end
   end
 
   def title
-    data.is_a?(Hash) ? data[:title] : data
+    data["title"]
+  end
+
+  def type
+    data.fetch("type", "info")
+  end
+
+  def delay
+    data["delay"]
   end
 
   def description
-    data[:description] if data.is_a?(Hash)
+    data["description"]
   end
 end

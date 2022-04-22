@@ -19,7 +19,8 @@
 
     & th:hover > .datatable-row__order-button,
     & td:hover > .datatable-row__order-button,
-    & .datatable-row__order-button--current {
+    & .datatable-row__order-button--current,
+    & .datatable-row__order-button:focus {
       @apply opacity-100;
     }
 
@@ -27,7 +28,8 @@
       transform: rotate(180deg);
     }
 
-    & .datatable-row__order-button--current:hover {
+    & .datatable-row__order-button--current:hover,
+    & .datatable-row__order-button--current:focus {
       transform: rotate(0deg);
     }
 

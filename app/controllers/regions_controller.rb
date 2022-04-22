@@ -16,8 +16,8 @@ class RegionsController < ApplicationController
 
   def update
     if @region.update(region_params)
-      flash[:success] = t("flash.regions.update.success")
-      redirect_to region_path(@region)
+      path = params.fetch(:back, regions_path)
+      redirect_to path, notice: t(".success")
     else
       render :edit, status: :unprocessable_entity
     end

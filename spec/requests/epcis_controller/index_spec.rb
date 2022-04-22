@@ -28,10 +28,10 @@ RSpec.describe "EpcisController#index", type: :request do
 
   describe "filtering collection" do
     context "with proper parameters" do
-      let(:params) { { search: "64", order: "-epci", page: 2, items: 5 } }
+      let(:params) { { search: "65", order: "-epci", page: 2, items: 5 } }
 
       before do
-        departement = create(:departement, code_departement: "64")
+        departement = create(:departement, code_departement: "65")
         create_list(:epci, 7, departement:)
         create_list(:epci, 3)
 

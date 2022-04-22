@@ -2,7 +2,16 @@
 
 module RequestHelper
   def extract_params(*keys)
-    keys = keys.flatten
-    params.slice(*keys).permit!
+    params.slice(*keys.flatten).permit!
+  end
+
+  def current_path
+    request.fullpath
+  end
+
+  def back_param_input
+    return unless params.key?(:back)
+
+    tag.input(type: "hidden", name: "back", value: params[:back])
   end
 end

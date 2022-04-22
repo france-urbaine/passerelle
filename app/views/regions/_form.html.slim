@@ -4,6 +4,7 @@
       h1#dialog-title.dialog__title Modification de la région
 
     = form_with(model: region) do |form|
+      = back_param_input
       .dialog__content
         .form-block
           = form.label :name
@@ -16,5 +17,5 @@
           = display_errors region, :code_region
 
       .dialog__actions
-        button.button.button__primary( type="submit" ) Enregistrer
-        a.button( href=region_path(region) ) Annuler
+        button.button.button--primary( type="submit" ) Enregistrer
+        a.button( href=params.fetch(:back, regions_path) ) Annuler

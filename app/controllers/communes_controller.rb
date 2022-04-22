@@ -16,8 +16,8 @@ class CommunesController < ApplicationController
 
   def update
     if @commune.update(commune_params)
-      flash[:success] = t("flash.communes.update.success")
-      redirect_to commune_path(@commune)
+      path = params.fetch(:back, communes_path)
+      redirect_to path, notice: t(".success")
     else
       render :edit, status: :unprocessable_entity
     end

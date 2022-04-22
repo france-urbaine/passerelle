@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
 module ComponentsHelper
+  # WIP: unifiy modal calls
+  def modal(&)
+    capture(&)
+  end
+
   def datatable_search_form(...)
     render(Datatable::SearchFormComponent.new(...))
   end

@@ -8,9 +8,9 @@ html
     = csp_meta_tag
 
     = stylesheet_link_tag "application", "data-turbo-track": "reload"
-    = render "layouts/icons"
+    = render "shared/icons"
 
   body
-    = render "layouts/sidebar"
-    = render "layouts/notifications"
+    = render "shared/sidebar"
+    = render "shared/notifications"
     = yield

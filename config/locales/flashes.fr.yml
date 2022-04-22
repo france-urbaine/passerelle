@@ -1,0 +1,28 @@
+fr:
+  communes:
+    update:
+      success:
+        type:  "success"
+        title: "La commune a été modifiée avec succés."
+        delay: 3000
+
+  epcis:
+    update:
+      success:
+        type:  "success"
+        title: "L'EPCI a été modifié avec succés."
+        delay: 3000
+
+  departements:
+    update:
+      success:
+        type:  "success"
+        title: "Le département a été modifié avec succés."
+        delay: 3000
+
+  regions:
+    update:
+      success:
+        type:  "success"
+        title: "La région a été modifiée avec succés."
+        delay: 3000

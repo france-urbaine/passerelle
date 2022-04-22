@@ -13,7 +13,7 @@ RSpec.describe "DepartementsController#update", type: :request do
     before { request }
 
     it { expect(response).to have_http_status(:found) }
-    it { expect(response).to redirect_to("/departements/#{departement.id}") }
+    it { expect(response).to redirect_to("/departements") }
 
     it "updates the requested departement" do
       departement.reload

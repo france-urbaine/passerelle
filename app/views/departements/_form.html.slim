@@ -4,6 +4,7 @@
       h1#dialog-title.dialog__title Modification du département
 
     = form_with(model: departement) do |form|
+      = back_param_input
       .dialog__content
         .form-block
           = form.label :name
@@ -21,5 +22,5 @@
           = display_errors departement, :code_region
 
       .dialog__actions
-        button.button.button__primary( type="submit" ) Enregistrer
-        a.button( href=departement_path(departement) ) Annuler
+        button.button.button--primary( type="submit" ) Enregistrer
+        a.button( href=params.fetch(:back, departements_path) ) Annuler
