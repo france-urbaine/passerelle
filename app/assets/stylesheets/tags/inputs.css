@@ -96,20 +96,47 @@
         @apply dark:border-sky-300 dark:outline-sky-300;
       }
 
-      &:checked {
+      @svg checked {
+        @path {
+          d: M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z;
+          fill: var(--color, black);
+        }
+      }
+
+      @svg indeterminate {
+        @path {
+          d: M4 8h8;
+          stroke: var(--color, black);
+          stroke-linecap: round;
+          stroke-linejoin: round;
+          stroke-width: 2;
+        }
+      }
+
+      &:checked,
+      &:indeterminate {
         background-size: 100% 100%;
         background-position: center;
         background-repeat: no-repeat;
-        background-image: url("data:image/svg+xml,%3csvg fill='white' viewBox='0 0 16 16' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
+        background-image: svg(checked param(--color theme('colors.white')));
 
         @apply bg-blue-500 border-blue-500;
         @apply dark:bg-sky-500 dark:border-sky-500;
 
         @media (prefers-color-scheme: dark) {
-          background-image: url("data:image/svg+xml,%3csvg fill='black' viewBox='0 0 16 16' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
+          background-image: svg(checked param(--color theme('colors.black')));
         }
       }
 
+      &:indeterminate {
+        background-image: svg(indeterminate param(--color theme('colors.white')));
+
+        @media (prefers-color-scheme: dark) {
+          background-image: svg(indeterminate param(--color theme('colors.black')));
+        }
+      }
+
+      &:indeterminate:active,
       &:checked:active {
         @apply bg-blue-700 border-blue-700 outline-blue-700;
         @apply dark:bg-sky-300 dark:border-sky-300 dark:outline-blue-300;

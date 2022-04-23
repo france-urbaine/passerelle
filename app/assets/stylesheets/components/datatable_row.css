@@ -40,6 +40,11 @@
     }
   }
 
+  .datatable-row--selected {
+    @apply bg-blue-50;
+    @apply dark:bg-blue-900/50;
+  }
+
   .datatable-row__actions {
     @apply w-px px-6;
 

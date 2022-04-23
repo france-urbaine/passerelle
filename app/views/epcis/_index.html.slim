@@ -4,11 +4,15 @@
   = datatable_header_pagination(@pagy, "EPCI", plural: "EPCI")
   = datatable_search_form("Rechercher des EPCI")
 
-table
+table( data-controller="selection" )
   thead
     tr.datatable-row
       th.datatable-row__actions
-        input( type="checkbox" aria-label="Tout sélectionner" )
+        input(
+          type="checkbox"
+          aria-label="Tout sélectionner"
+          data-selection-target="checkall"
+        )
         span.tooltip Tout sélectionner
 
       th( aria-label="Actions" )
@@ -23,9 +27,19 @@ table
 
   tbody
     - @epcis.preload(:departement).each do |epci|
-      tr.datatable-row( id=dom_id(epci) )
+      tr.datatable-row(
+        id=dom_id(epci)
+        data-controller="selection-row"
+        data-selection-row-selected-class="datatable-row--selected"
+      )
         td.datatable-row__actions
-          input( type="checkbox" aria-labelledby=dom_id(epci, :title) )
+          input(
+            type="checkbox"
+            aria-labelledby=dom_id(epci, :title)
+            data-selection-target="checkbox"
+            data-selection-row-target="checkbox"
+            value=epci.id
+          )
           span.tooltip Sélectionner cet EPCI
 
         td.datatable-row__actions

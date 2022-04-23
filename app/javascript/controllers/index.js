@@ -9,3 +9,9 @@ application.register("dialog", DialogController)
 
 import NotificationController from "./notification_controller.js"
 application.register("notification", NotificationController)
+
+import SelectionController from "./selection_controller.js"
+application.register("selection", SelectionController)
+
+import SelectionRowController from "./selection_row_controller.js"
+application.register("selection-row", SelectionRowController)

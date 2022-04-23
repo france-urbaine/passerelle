@@ -4,7 +4,7 @@ import { useTransition } from "stimulus-use"
 export default class extends Controller {
   static values = { delay: Number }
 
-  connect() {
+  connect () {
     useTransition(this)
     this.enter()
     if (this.delayValue) this.timeout = setTimeout(this.hide.bind(this), this.delayValue)

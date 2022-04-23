@@ -6,7 +6,7 @@ export default class extends Controller {
   static targets = ["container"]
   static values = { backUrl: String }
 
-  connect() {
+  connect () {
     useTransition(this)
     useClickOutside(this, { element: this.containerTarget })
     useHotkeys(this, {
@@ -20,11 +20,12 @@ export default class extends Controller {
     this.clickOutside = this.close
   }
 
-  async close(event) {
+  async close (event) {
     if (event) event.preventDefault()
-    await this.leave()
 
+    await this.leave()
     this.element.remove()
+
     if (this.backUrlValue) {
       Turbo.visit(this.backUrlValue, { action: "restore" })
     }
