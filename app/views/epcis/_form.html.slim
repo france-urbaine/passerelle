@@ -1,29 +1,29 @@
-.dialog( role="dialog" aria-labelledby="dialog-title" )
-  .dialog__container
-    .dialog__header
-      h1#dialog-title.dialog__title Modification de l'EPCI
+= dialog(back_url: params.fetch(:back, epcis_path)) do
+  .dialog__header
+    h1#dialog-title.dialog__title Modification de l'EPCI
 
-    = form_with(model: epci) do |form|
-      = back_param_input
-      .dialog__content
-        .form-block
-          = form.label :name
-          = form.text_field :name, autofocus: true
-          = display_errors epci, :name
+  = form_with(model: epci) do |form|
+    = back_param_input
+    .dialog__content
+      .form-block
+        = form.label :name
+        = form.text_field :name, autofocus: true
+        = display_errors epci, :name
 
-        .form-block
-          = form.label :siren
-          = form.text_field :siren
-          = display_errors epci, :siren
+      .form-block
+        = form.label :siren
+        = form.text_field :siren
+        = display_errors epci, :siren
 
-        .form-block
-          = form.label :code_departement
-          = form.text_field :code_departement
-          = display_errors epci, :code_departement
+      .form-block
+        = form.label :code_departement
+        = form.text_field :code_departement
+        = display_errors epci, :code_departement
 
-      .dialog__actions
-        button.button.button--primary( type="submit" ) Enregistrer
-        a.button(
-          href=params.fetch(:back, epcis_path)
-          data-turbo-action="restore"
-        ) Annuler
+    .dialog__actions
+      button.button.button--primary( type="submit" ) Enregistrer
+      a.button(
+        href=params.fetch(:back, epcis_path)
+        data-turbo-action="restore"
+        data-action="dialog#close"
+      ) Annuler

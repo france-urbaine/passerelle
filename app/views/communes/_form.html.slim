@@ -1,34 +1,34 @@
-.dialog( role="dialog" aria-labelledby="dialog-title" )
-  .dialog__container
-    .dialog__header
-      h1#dialog-title.dialog__title Modification de la commune
+= dialog(back_url: params.fetch(:back, communes_path)) do
+  .dialog__header
+    h1#dialog-title.dialog__title Modification de la commune
 
-    = form_with(model: commune) do |form|
-      = back_param_input
-      .dialog__content
-        .form-block
-          = form.label :name
-          = form.text_field :name, autofocus: true
-          = display_errors commune, :name
+  = form_with(model: commune) do |form|
+    = back_param_input
+    .dialog__content
+      .form-block
+        = form.label :name
+        = form.text_field :name, autofocus: true
+        = display_errors commune, :name
 
-        .form-block
-          = form.label :code_insee
-          = form.text_field :code_insee
-          = display_errors commune, :code_insee
+      .form-block
+        = form.label :code_insee
+        = form.text_field :code_insee
+        = display_errors commune, :code_insee
 
-        .form-block
-          = form.label :code_departement
-          = form.text_field :code_departement
-          = display_errors commune, :code_departement
+      .form-block
+        = form.label :code_departement
+        = form.text_field :code_departement
+        = display_errors commune, :code_departement
 
-        .form-block
-          = form.label :siren_epci
-          = form.text_field :siren_epci
-          = display_errors commune, :siren_epci
+      .form-block
+        = form.label :siren_epci
+        = form.text_field :siren_epci
+        = display_errors commune, :siren_epci
 
-      .dialog__actions
-        button.button.button--primary( type="submit" ) Enregistrer
-        a.button(
-          href=params.fetch(:back, communes_path)
-          data-turbo-action="restore"
-        ) Annuler
+    .dialog__actions
+      button.button.button--primary( type="submit" ) Enregistrer
+      a.button(
+        href=params.fetch(:back, communes_path)
+        data-turbo-action="restore"
+        data-action="dialog#close"
+      ) Annuler

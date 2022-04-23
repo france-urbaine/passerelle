@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 module ComponentsHelper
+  def dialog(**options, &)
+    render(DialogComponent.new(**options), &)
+  end
+
   def datatable_search_form(...)
     render(Datatable::SearchFormComponent.new(...))
   end

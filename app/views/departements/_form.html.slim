@@ -1,29 +1,29 @@
-.dialog( role="dialog" aria-labelledby="dialog-title" )
-  .dialog__container
-    .dialog__header
-      h1#dialog-title.dialog__title Modification du département
+= dialog(back_url: params.fetch(:back, departements_path)) do
+  .dialog__header
+    h1#dialog-title.dialog__title Modification du département
 
-    = form_with(model: departement) do |form|
-      = back_param_input
-      .dialog__content
-        .form-block
-          = form.label :name
-          = form.text_field :name, autofocus: true
-          = display_errors departement, :name
+  = form_with(model: departement) do |form|
+    = back_param_input
+    .dialog__content
+      .form-block
+        = form.label :name
+        = form.text_field :name, autofocus: true
+        = display_errors departement, :name
 
-        .form-block
-          = form.label :code_departement
-          = form.text_field :code_departement
-          = display_errors departement, :code_departement
+      .form-block
+        = form.label :code_departement
+        = form.text_field :code_departement
+        = display_errors departement, :code_departement
 
-        .form-block
-          = form.label :code_region
-          = form.text_field :code_region
-          = display_errors departement, :code_region
+      .form-block
+        = form.label :code_region
+        = form.text_field :code_region
+        = display_errors departement, :code_region
 
-      .dialog__actions
-        button.button.button--primary( type="submit" ) Enregistrer
-        a.button(
-          href=params.fetch(:back, departements_path)
-          data-turbo-action="restore"
-        ) Annuler
+    .dialog__actions
+      button.button.button--primary( type="submit" ) Enregistrer
+      a.button(
+        href=params.fetch(:back, departements_path)
+        data-turbo-action="restore"
+        data-action="dialog#close"
+      ) Annuler

@@ -4,5 +4,8 @@
 
 import { application } from "./application"
 
+import DialogController from "./dialog_controller.js"
+application.register("dialog", DialogController)
+
 import NotificationController from "./notification_controller.js"
 application.register("notification", NotificationController)

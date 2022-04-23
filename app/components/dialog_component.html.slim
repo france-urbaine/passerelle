@@ -1,0 +1,13 @@
+.dialog(
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="dialog-title"
+  data-controller="dialog"
+  data-dialog-back-url-value=back_url
+  data-transition-enter-from="dialog--transition-enter-from"
+  data-transition-enter-to="dialog--transition-enter-to"
+  data-transition-leave-from="dialog--transition-leave-from"
+  data-transition-leave-to="dialog--transition-leave-to"
+) 
+  .dialog__container( data-dialog-target="container" )
+    = content
