@@ -18,6 +18,7 @@
     display: flex;
     align-items: flex-start;
 
+    @apply transition transform duration-1000;
     @apply p-4 rounded-md ring-1 shadow-lg;
     @apply bg-white ring-gray-300;
     @apply dark:bg-black dark:ring-gray-700;
@@ -45,5 +46,15 @@
     & .icon-button {
       @apply -m-2 text-gray-500;
     }
+  }
+
+  .notification--transition-enter-from,
+  .notification--transition-leave-to {
+    @apply opacity-0 translate-x-6
+  }
+
+  .notification--transition-enter-to,
+  .notification--transition-leave-from {
+    @apply opacity-100 translate-x-0;
   }
 }

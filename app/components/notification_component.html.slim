@@ -1,4 +1,13 @@
-.notification( role="alert" aria-live="polite" )
+.notification.hidden(
+  role="alert"
+  aria-live="polite"
+  data-controller="notification"
+  data-notification-delay-value=delay
+  data-transition-enter-from="notification--transition-enter-from"
+  data-transition-enter-to="notification--transition-enter-to"
+  data-transition-leave-from="notification--transition-leave-from"
+  data-transition-leave-to="notification--transition-leave-to"
+)
   - case type
   - when "success"
     = helpers.svg_icon("check-circle-icon", "Succés", class: "notification__icon notification__icon--success")
@@ -12,5 +21,5 @@
     = simple_format(description)
   
   .notification__actions
-    button.icon-button( disabled )
+    button.icon-button( data-action="notification#hide" )
       = helpers.svg_icon("x-icon", "Cacher cette notifications")

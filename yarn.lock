@@ -455,6 +455,11 @@ has@^1.0.3:
   dependencies:
     function-bind "^1.1.1"
 
+hotkeys-js@>=3:
+  version "3.8.9"
+  resolved "https://registry.yarnpkg.com/hotkeys-js/-/hotkeys-js-3.8.9.tgz#47b10fef2f4fc6fa74b09646d2014dae1fa64472"
+  integrity sha512-R73wV21xjHq+sJcBhh+LJGvfZO5+p1vGFtEwCc6sCj5nnTyiZKBa1knge6LNBxHmlRe55PVBXNNM/4lJOIVAwQ==
+
 ignore@^5.1.9:
   version "5.2.0"
   resolved "https://registry.yarnpkg.com/ignore/-/ignore-5.2.0.tgz#6d3bac8fa7fe0d45d9f9be7bac2fc279577e345a"
@@ -721,6 +726,13 @@ source-map-js@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/source-map-js/-/source-map-js-1.0.2.tgz#adbc361d9c62df380125e7f161f71c826f1e490c"
   integrity sha512-R0XvVJ9WusLiqTCEiGCmICCMplcCkIwwR11mOSD9CR5u+IXYdiseeEuXCVAjS54zqwkLcPNnmU4OeJ6tUrWhDw==
+
+stimulus-use@^0.50.0-2:
+  version "0.50.0-2"
+  resolved "https://registry.yarnpkg.com/stimulus-use/-/stimulus-use-0.50.0-2.tgz#7b019fa7618133f42b41bb5d4275fe2e92649819"
+  integrity sha512-vnYifIYeiRe2J0PlQ34mYHdOkLB7HVF55RdDErgOBkgHBAqC05vEIwt3xNuyayuhT5YboVmV0eJCfRN1sxumKg==
+  dependencies:
+    hotkeys-js ">=3"
 
 string-width@^4.1.0, string-width@^4.2.0, string-width@^4.2.3:
   version "4.2.3"
