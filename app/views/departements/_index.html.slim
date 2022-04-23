@@ -32,6 +32,7 @@ table
           a.icon-button(
             href=edit_departement_path(departement, back: current_path)
             aria-label="Modifier ce département"
+            data-turbo-frame="modal"
           )
             = svg_icon("pencil-alt-icon", "Modifier ce département")
             span.tooltip Modifier ce département

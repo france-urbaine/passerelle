@@ -1,2 +1,5 @@
 main.content
-  = render @commune
+  = turbo_frame_tag :content do
+    = render @commune
+
+= turbo_frame_tag :modal

@@ -28,6 +28,7 @@ table
           a.icon-button(
             href=edit_region_path(region, back: current_path)
             aria-label="Modifier cette région"
+            data-turbo-frame="modal"
           )
             = svg_icon("pencil-alt-icon", "Modifier cette région")
             span.tooltip Modifier cette région

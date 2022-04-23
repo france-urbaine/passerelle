@@ -2,6 +2,7 @@
 
 module ApplicationHelper
   include ComponentsHelper
+  include TurboHelper
   include FormatHelper
   include RequestHelper
 end

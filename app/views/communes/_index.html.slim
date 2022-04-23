@@ -36,6 +36,7 @@ table
           a.icon-button(
             href=edit_commune_path(commune, back: current_path)
             aria-label="Modifier cette commune"
+            data-turbo-frame="modal"
           )
             = svg_icon("pencil-alt-icon", "Modifier cette commune")
             span.tooltip Modifier cette commune

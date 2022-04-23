@@ -32,6 +32,7 @@ table
           a.icon-button(
             href=edit_epci_path(epci, back: current_path)
             aria-label="Modifier cet EPCI"
+            data-turbo-frame="modal"
           )
             = svg_icon("pencil-alt-icon", "Modifier cet EPCI")
             span.tooltip Modifier cet EPCI

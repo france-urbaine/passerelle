@@ -1,2 +1,5 @@
 main.content
-  = render @epci
+  = turbo_frame_tag :content do
+    = render @epci
+
+= turbo_frame_tag :modal

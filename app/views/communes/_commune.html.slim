@@ -1,13 +1,19 @@
 .content__header
   .breadcrumbs
-    a.breadcrumbs__path( href=params.fetch(:back, communes_path) )
+    a.breadcrumbs__path(
+      href=params.fetch(:back, communes_path)
+      data-turbo-frame="_top"
+    )
       | Communes
 
     = svg_icon("chevron-right-icon", class: "breadcrumbs__separator")
     h1.breadcrumbs__path= commune.name
 
   .flex-auto
-  a.button( href=edit_commune_path(commune, back: current_path) )
+  a.button(
+    href=edit_commune_path(commune, back: current_path)
+    data-turbo-frame="modal"
+  )
     = svg_icon("pencil-alt-icon")
     | Modifier
 

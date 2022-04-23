@@ -1,2 +1,5 @@
 main.content
-  = render "index", epcis: @epcis, pagy: @pagy
+  = turbo_frame_tag :content, data: { turbo_action: "advance" } do
+    = render "index", epcis: @epcis, pagy: @pagy
+
+= turbo_frame_tag :modal

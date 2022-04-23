@@ -1,5 +1,5 @@
-main.content( aria-hidden="true" tabindex="-1" )
-  = render @epci
+main.content
+  = turbo_frame_tag :content, src: params[:back]
 
-= modal do
+= turbo_frame_tag :modal do
   = render "form", epci: @epci

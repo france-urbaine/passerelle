@@ -13,5 +13,7 @@ html
 
   body
     = render "shared/sidebar"
-    = render "shared/notifications"
     = yield
+
+    #notifications
+      = render "shared/notifications"

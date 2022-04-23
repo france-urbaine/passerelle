@@ -28,4 +28,7 @@
 
       .dialog__actions
         button.button.button--primary( type="submit" ) Enregistrer
-        a.button( href=params.fetch(:back, communes_path) ) Annuler
+        a.button(
+          href=params.fetch(:back, communes_path)
+          data-turbo-action="restore"
+        ) Annuler

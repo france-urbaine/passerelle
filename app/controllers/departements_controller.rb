@@ -16,8 +16,13 @@ class DepartementsController < ApplicationController
 
   def update
     if @departement.update(departement_params)
-      path = params.fetch(:back, departements_path)
-      redirect_to path, notice: t(".success")
+      path   = params.fetch(:back, departements_path)
+      notice = t(".success")
+
+      respond_to do |format|
+        format.turbo_stream { flash.now.notice = notice }
+        format.html         { redirect_to path, notice: notice }
+      end
     else
       render :edit, status: :unprocessable_entity
     end
