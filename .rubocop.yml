@@ -95,6 +95,12 @@ RSpec/DescribedClass:
 
 RSpec/ExampleLength:
   CountAsOne: ['array', 'heredoc']
+  Exclude:
+    - 'spec/system/**/*'
+
+RSpec/MultipleExpectations:
+  Exclude:
+    - 'spec/system/**/*'
 
 RSpec/NestedGroups:
   Enabled: false

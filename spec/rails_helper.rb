@@ -88,7 +88,8 @@ RSpec.configure do |config|
   config.include Capybara::RSpecMatchers, type: :component
 
   config.before type: :system do
-    driven_by :selenium, using: :chrome, screen_size: [1400, 1400]
+    WebMock.disable_net_connect!(allow_localhost: true)
+    driven_by :selenium, using: :headless_firefox, screen_size: [1400, 1400]
   end
 
   config.after do
