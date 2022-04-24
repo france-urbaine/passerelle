@@ -16,12 +16,11 @@ class CommunesController < ApplicationController
 
   def update
     if @commune.update(commune_params)
-      path   = params.fetch(:back, communes_path)
-      notice = t(".success")
-
       respond_to do |format|
-        format.turbo_stream { flash.now.notice = notice }
-        format.html         { redirect_to path, notice: notice }
+        format.turbo_stream
+        format.html do
+          redirect_to params.fetch(:back, :communes), notice: t(".success")
+        end
       end
     else
       render :edit, status: :unprocessable_entity
@@ -35,8 +34,7 @@ class CommunesController < ApplicationController
   end
 
   def commune_params
-    params
-      .fetch(:commune, {})
-      .permit(:name, :code_insee, :code_departement, :siren_epci)
+    params.fetch(:commune, {})
+          .permit(:name, :code_insee, :code_departement, :siren_epci)
   end
 end

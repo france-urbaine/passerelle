@@ -30,7 +30,7 @@ RSpec.describe "Regions", type: :system do
     click_on "Enregistrer"
 
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to have_selector("[role=alert]", text: "La région a été modifiée avec succés.")
+    expect(page).to have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
 
     expect(page).to have_selector("h1", text: "Base de données des régions")
     expect(page).to have_link("Nouvelle Aquitaine")
@@ -47,7 +47,7 @@ RSpec.describe "Regions", type: :system do
     click_on "Enregistrer"
 
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to have_selector("[role=alert]", text: "La région a été modifiée avec succés.")
+    expect(page).to have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
 
     expect(page).to have_selector("h1", text: "Nouvelle Aquitaine")
   end

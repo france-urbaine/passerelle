@@ -11,19 +11,53 @@
       @apply mb-1;
     }
 
-    & input,
-    & select,
-    & textarea {
+    & [type="text"],
+    & [type="email"],
+    & [type="url"],
+    & [type="password"],
+    & [type="number"],
+    & [type="date"],
+    & [type="datetime-local"],
+    & [type="month"],
+    & [type="search"],
+    & [type="tel"],
+    & [type="time"],
+    & [type="week"],
+    & [multiple],
+    & textarea,
+    & select {
       display: block;
       width: 100%;
       max-width: 100%;
     }
+  }
 
-    & .field_with_errors {
-      & input,
-      & select,
-      & textarea {
+  .form-block--invalid {
+    & [type="text"],
+    & [type="email"],
+    & [type="url"],
+    & [type="password"],
+    & [type="number"],
+    & [type="date"],
+    & [type="datetime-local"],
+    & [type="month"],
+    & [type="search"],
+    & [type="tel"],
+    & [type="time"],
+    & [type="week"],
+    & [multiple],
+    & textarea,
+    & select {
+      @apply border-red-500;
+
+      &:is(:hover, :active, :focus, :focus-visible) {
         @apply border-red-500;
+        @apply dark:border-red-500;
+      }
+
+      &:is(:focus, :focus-visible) {
+        @apply outline-red-500;
+        @apply dark:outline-red-400;
       }
     }
   }

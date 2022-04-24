@@ -31,7 +31,7 @@ RSpec.describe "EPCIs", type: :system do
     click_on "Enregistrer"
 
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to have_selector("[role=alert]", text: "L'EPCI a été modifié avec succés.")
+    expect(page).to have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
 
     expect(page).to have_selector("h1", text: "Base de données des EPCI")
     expect(page).to have_link("CA du Pays Basque")
@@ -50,7 +50,7 @@ RSpec.describe "EPCIs", type: :system do
     click_on "Enregistrer"
 
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to have_selector("[role=alert]", text: "L'EPCI a été modifié avec succés.")
+    expect(page).to have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
 
     expect(page).to have_selector("h1", text: "CA du Pays Basque")
   end

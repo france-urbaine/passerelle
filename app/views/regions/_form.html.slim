@@ -1,24 +1,23 @@
 = dialog(back_url: params.fetch(:back, regions_path)) do
-  .dialog__header
-    h1#dialog-title.dialog__title Modification de la région
+  = turbo_frame_tag :form do
+    .dialog__header
+      h1#dialog-title.dialog__title Modification de la région
 
-  = form_with(model: region) do |form|
-    = back_param_input
-    .dialog__content
-      .form-block
-        = form.label :name
-        = form.text_field :name, autofocus: true
-        = display_errors region, :name
+    = form_with(model: region) do |form|
+      = back_param_input
+      .dialog__content
+        = form_block region, :name do
+          = form.label :name
+          = form.text_field :name, autofocus: true
 
-      .form-block
-        = form.label :code_region
-        = form.text_field :code_region
-        = display_errors region, :code_region
+        = form_block region, :code_region do
+          = form.label :code_region
+          = form.text_field :code_region
 
-    .dialog__actions
-      button.button.button--primary( type="submit" ) Enregistrer
-      a.button(
-        href=params.fetch(:back, regions_path)
-        data-turbo-action="restore"
-        data-action="dialog#close"
-      ) Annuler
+      .dialog__actions
+        button.button.button--primary( type="submit" ) Enregistrer
+        a.button(
+          href=params.fetch(:back, regions_path)
+          data-turbo-action="restore"
+          data-action="dialog#close"
+        ) Annuler

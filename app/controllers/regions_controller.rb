@@ -16,12 +16,11 @@ class RegionsController < ApplicationController
 
   def update
     if @region.update(region_params)
-      path   = params.fetch(:back, regions_path)
-      notice = t(".success")
-
       respond_to do |format|
-        format.turbo_stream { flash.now.notice = notice }
-        format.html         { redirect_to path, notice: notice }
+        format.turbo_stream
+        format.html do
+          redirect_to params.fetch(:back, :regions), notice: t(".success")
+        end
       end
     else
       render :edit, status: :unprocessable_entity
@@ -35,8 +34,7 @@ class RegionsController < ApplicationController
   end
 
   def region_params
-    params
-      .fetch(:region, {})
-      .permit(:name, :code_region)
+    params.fetch(:region, {})
+          .permit(:name, :code_region)
   end
 end

@@ -78,6 +78,7 @@ end
 
 group :test do
   gem "capybara"
+  gem "fuubar"
   gem "rspec-collection_matchers"
   gem "selenium-webdriver"
   gem "shoulda-matchers"

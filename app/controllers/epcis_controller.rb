@@ -16,12 +16,11 @@ class EpcisController < ApplicationController
 
   def update
     if @epci.update(epci_params)
-      path   = params.fetch(:back, epcis_path)
-      notice = t(".success")
-
       respond_to do |format|
-        format.turbo_stream { flash.now.notice = notice }
-        format.html         { redirect_to path, notice: notice }
+        format.turbo_stream
+        format.html do
+          redirect_to params.fetch(:back, :epcis), notice: t(".success")
+        end
       end
     else
       render :edit, status: :unprocessable_entity
@@ -35,8 +34,7 @@ class EpcisController < ApplicationController
   end
 
   def epci_params
-    params
-      .fetch(:epci, {})
-      .permit(:name, :siren, :code_departement)
+    params.fetch(:epci, {})
+          .permit(:name, :siren, :code_departement)
   end
 end

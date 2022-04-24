@@ -31,7 +31,7 @@ RSpec.describe "Communes", type: :system do
     click_on "Enregistrer"
 
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to have_selector("[role=alert]", text: "La commune a été modifiée avec succés.")
+    expect(page).to have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
 
     expect(page).to have_selector("h1", text: "Base de données des communes")
     expect(page).to have_link("Biarritz-Anglet")
@@ -50,7 +50,7 @@ RSpec.describe "Communes", type: :system do
     click_on "Enregistrer"
 
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to have_selector("[role=alert]", text: "La commune a été modifiée avec succés.")
+    expect(page).to have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
 
     expect(page).to have_selector("h1", text: "Biarritz-Anglet")
   end

@@ -1,3 +1,2 @@
-- if flash[:notice]
-  .notifications
-    = render NotificationComponent.new(flash[:notice])
+#notifications.notifications
+  = render NotificationComponent.new(flash[:notice]) if flash[:notice]

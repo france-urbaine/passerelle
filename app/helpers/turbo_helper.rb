@@ -14,7 +14,9 @@ module TurboHelper
     turbo_stream.update :modal, ""
   end
 
-  def render_turbo_stream_notifications
-    turbo_stream.prepend :notifications, partial: "shared/notifications"
+  def render_turbo_stream_notifications(notification)
+    turbo_stream.prepend :notifications do
+      render(NotificationComponent.new(notification))
+    end
   end
 end
