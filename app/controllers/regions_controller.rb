@@ -8,7 +8,13 @@ class RegionsController < ApplicationController
     @regions = Region.strict_loading
     @regions = search(@regions)
     @regions = order(@regions)
-    @pagy, @regions = pagy(@regions)
+
+    if request_variant == "autocomplete"
+      @regions = @regions.limit(50)
+      render layout: false, variant: :autocomplete
+    else
+      @pagy, @regions = pagy(@regions)
+    end
   end
 
   def show; end

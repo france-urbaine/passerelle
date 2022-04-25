@@ -8,7 +8,13 @@ class EpcisController < ApplicationController
     @epcis = EPCI.strict_loading
     @epcis = search(@epcis)
     @epcis = order(@epcis)
-    @pagy, @epcis = pagy(@epcis)
+
+    if request_variant == "autocomplete"
+      @epcis = @epcis.limit(50)
+      render layout: false, variant: :autocomplete
+    else
+      @pagy, @epcis = pagy(@epcis)
+    end
   end
 
   def show; end

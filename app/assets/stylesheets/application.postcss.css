@@ -18,6 +18,7 @@
 
 /* Forms */
 @import "./components/form_block";
+@import "./components/autocomplete";
 
 /* Layouts */
 @import "./components/sidebar";

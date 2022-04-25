@@ -4,8 +4,14 @@
 
 import { application } from "./application"
 
+import AutocompleteController from "./autocomplete_controller.js"
+application.register("autocomplete", AutocompleteController)
+
 import DialogController from "./dialog_controller.js"
 application.register("dialog", DialogController)
+
+import NoscriptController from "./noscript_controller.js"
+application.register("noscript", NoscriptController)
 
 import NotificationController from "./notification_controller.js"
 application.register("notification", NotificationController)

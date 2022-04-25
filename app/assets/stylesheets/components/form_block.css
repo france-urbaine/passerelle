@@ -2,7 +2,7 @@
   .form-block {
     display: block;
 
-    & + .form-block {
+    &--margin {
       @apply mt-4;
     }
 

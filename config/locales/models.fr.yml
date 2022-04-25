@@ -6,16 +6,20 @@ fr:
         code_insee:       Code INSEE
         code_departement: Code INSEE du département
         siren_epci:       Numéro SIREN de l'EPCI
+        departement:      Département
+        epci:             EPCI
 
       epci:
         name:             Nom de l'EPCI
         siren:            Numéro SIREN de l'EPCI
         code_departement: Code INSEE du département
+        departement:      Département
 
       departement:
         name:             Nom du département
         code_departement: Code INSEE du département
         code_region:      Code INSEE de la région
+        region:           Région
 
       region:
         name:             Nom de la région
@@ -40,6 +44,10 @@ fr:
             siren_epci:
               invalid:   Ce numéro SIREN n'est pas valide
 
+            departement:
+              required:  Un département est requis
+
+
         epci:
           attributes:
             name:
@@ -52,6 +60,9 @@ fr:
 
             code_departement:
               invalid:   Ce code de département n'est pas valide
+
+            departement:
+              required:  Un département est requis
 
         departement:
           attributes:
@@ -66,6 +77,9 @@ fr:
             code_region:
               blank:     Un numéro de region est requis
               invalid:   Ce numéro de region n'est pas valide
+
+            region:
+              required:  Une région est requise
 
         region:
           attributes:

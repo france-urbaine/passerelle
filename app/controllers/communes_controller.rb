@@ -8,7 +8,13 @@ class CommunesController < ApplicationController
     @communes = Commune.strict_loading
     @communes = search(@communes)
     @communes = order(@communes)
-    @pagy, @communes = pagy(@communes)
+
+    if request_variant == "autocomplete"
+      @communes = @communes.limit(50)
+      render layout: false, variant: :autocomplete
+    else
+      @pagy, @communes = pagy(@communes)
+    end
   end
 
   def show; end

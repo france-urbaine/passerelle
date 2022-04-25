@@ -30,4 +30,10 @@ class ApplicationController < ActionController::Base
       end
     end
   end
+
+  # Variant
+  # ----------------------------------------------------------------------------
+  def request_variant
+    request.headers["Accept-Variant"]&.downcase
+  end
 end

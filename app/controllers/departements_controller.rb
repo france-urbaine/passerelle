@@ -8,7 +8,13 @@ class DepartementsController < ApplicationController
     @departements = Departement.strict_loading
     @departements = search(@departements)
     @departements = order(@departements)
-    @pagy, @departements = pagy(@departements)
+
+    if request_variant == "autocomplete"
+      @departements = @departements.limit(50)
+      render layout: false, variant: :autocomplete
+    else
+      @pagy, @departements = pagy(@departements)
+    end
   end
 
   def show; end
