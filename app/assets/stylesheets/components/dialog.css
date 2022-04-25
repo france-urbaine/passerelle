@@ -11,12 +11,23 @@
     outline: 0;
 
     @apply transition duration-200;
+  }
+
+  .dialog__overlay {
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
     @apply bg-black/50;
     @apply dark:bg-black/30;
   }
 
   .dialog__container {
     position: absolute;
+    z-index: 2;
     top: theme('spacing.12');
     left: 50%;
     transform: translate(-50%, 0);

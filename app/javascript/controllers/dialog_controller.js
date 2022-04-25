@@ -1,5 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
-import { useTransition, useClickOutside, useHotkeys } from 'stimulus-use'
+import { useTransition } from 'stimulus-use'
 import { Turbo } from "@hotwired/turbo-rails"
 
 export default class extends Controller {
@@ -8,16 +8,11 @@ export default class extends Controller {
 
   connect () {
     useTransition(this)
-    useClickOutside(this, { element: this.containerTarget })
-    useHotkeys(this, {
-      hotkeys: {
-        "esc": { handler: this.close }
-      },
-      filter: () => true
-    })
-
     this.enter()
-    this.clickOutside = this.close
+  }
+
+  keydown (event) {
+    if (event.key == "Escape") this.close(event)
   }
 
   async close (event) {
