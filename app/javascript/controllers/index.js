@@ -10,6 +10,9 @@ application.register("autocomplete", AutocompleteController)
 import DialogController from "./dialog_controller.js"
 application.register("dialog", DialogController)
 
+import DropdownController from "./dropdown_controller.js"
+application.register("dropdown", DropdownController)
+
 import NoscriptController from "./noscript_controller.js"
 application.register("noscript", NoscriptController)
 

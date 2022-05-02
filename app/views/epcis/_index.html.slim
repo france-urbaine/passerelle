@@ -21,7 +21,7 @@
 .header-bar
   = search("Rechercher")
   .flex-auto
-  = index_options(pagy, "EPCI", plural: "EPCI")
+  = index_options(pagy, "EPCI", plural: "EPCI", order: { epci: "EPCI", departement: "département" })
 
 table.datatable( data-controller="selection" )
   thead

@@ -24,6 +24,7 @@ module Fiscahub
     # Avoid generating useless files with controllers
     config.generators.helper = false
     config.generators.assets = false
+    config.generators.template_engine = :slim
 
     # Default (and only) locale
     config.i18n.default_locale = :fr

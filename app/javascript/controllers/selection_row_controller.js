@@ -8,7 +8,7 @@ export default class extends Controller {
     this.toggle = this.toggle.bind(this)
   }
 
-  connect() {
+  connect () {
     this.checkboxTarget.addEventListener("change", this.toggle)
     this.checkboxTarget.addEventListener("input", this.toggle)
     this.toggle()

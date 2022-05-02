@@ -24,6 +24,99 @@
         = helpers.svg_icon("chevron-right-icon", "Page suivante")
 
   .header-bar__action
-    button.icon-button( aria-label="Options d'affichage du tableau" )
-      = helpers.svg_icon("adjustments-icon", "Options d'affichage")
-      span.tooltip Options d'affichage
+    .dropdown(
+      data-controller="dropdown"
+      data-transition-enter-from="dropdown--enter-from"
+      data-transition-enter-to="dropdown--enter-to"
+      data-transition-leave-from="dropdown--leave-from"
+      data-transition-leave-to="dropdown--leave-to"
+    )
+      button.icon-button(
+        id="index-options-button"
+        aria-label="Options d'affichage du tableau"
+        aria-haspopup="true"
+        aria-expanded="false"
+        data-action="dropdown#toggle click@window->dropdown#clickOutside"
+        data-dropdown-target="button"
+      )
+        = helpers.svg_icon("adjustments-icon", "Options d'affichage")
+        span.tooltip Options d'affichage
+
+      .dropdown__menu.dropdown__menu--above-left(
+        aria-labelledby="index-options-button"
+        data-dropdown-target="menu"
+        role="menu"
+      )
+        .dropdown(
+          data-controller="dropdown"
+          data-transition-enter-from="dropdown--enter-from"
+          data-transition-enter-to="dropdown--enter-to"
+          data-transition-leave-from="dropdown--leave-from"
+          data-transition-leave-to="dropdown--leave-to"
+        )
+          button.dropdown__menu-item(
+            id="index-options-items-button"
+            aria-haspopup="true"
+            aria-expanded="false"
+            data-action="dropdown#toggle click@window->dropdown#clickOutside"
+            data-dropdown-target="button"
+            role="menuitem"
+          )
+            = helpers.svg_icon("chevron-left-small-icon")
+            | Afficher #{pagy.items} lignes par page
+
+          .dropdown__menu.dropdown__menu--side-left(
+            aria-labelledby="index-options-items-button"
+            data-dropdown-target="menu"
+            role="menu"
+          )
+            a.dropdown__menu-item( role="menuitem" href=items_url(10) ) Afficher 10 lignes
+            a.dropdown__menu-item( role="menuitem" href=items_url(20) ) Afficher 20 lignes
+            a.dropdown__menu-item( role="menuitem" href=items_url(50) ) Afficher 50 lignes
+            a.dropdown__menu-item( role="menuitem" href=items_url(100) ) Afficher 100 lignes
+
+        - if order_hash.any?
+          .dropdown(
+            data-controller="dropdown"
+            data-transition-enter-from="dropdown--enter-from"
+            data-transition-enter-to="dropdown--enter-to"
+            data-transition-leave-from="dropdown--leave-from"
+            data-transition-leave-to="dropdown--leave-to"
+          )
+            button.dropdown__menu-item(
+              id="index-options-sort-button"
+              aria-haspopup="true"
+              aria-expanded="false"
+              data-action="dropdown#toggle click@window->dropdown#clickOutside"
+              data-dropdown-target="button"
+              role="menuitem"
+            )
+              = helpers.svg_icon("chevron-left-small-icon")
+              | Trier par #{order_hash.fetch(current_order_key, "défaut")}
+              - if current_order_direction == :desc
+                |  (desc.)
+
+            .dropdown__menu.dropdown__menu--side-left(
+              aria-labelledby="index-options-sort-button"
+              data-dropdown-target="menu"
+              role="menu"
+            )
+              - order_hash.each do |(key, name)|
+                .dropdown__menu-item.flex
+                  span.order-last Trier par #{name}
+
+                  a.icon-button(
+                    aria-label="Trier par #{name}, par ordre croissant"
+                    href=order_url(key, :asc)
+                    role="menuitem" 
+                  )
+                    = helpers.svg_icon("sort-ascending-icon", "Trier par ordre croissant")
+                    span.tooltip Trier par ordre croissant
+
+                  a.icon-button(
+                    aria-label="Trier par #{name}, par ordre décroissant"
+                    href=order_url(key, :desc)
+                    role="menuitem" 
+                  )
+                    = helpers.svg_icon("sort-descending-icon", "Trier par ordre décroissant")
+                    span.tooltip Trier par ordre décroissant

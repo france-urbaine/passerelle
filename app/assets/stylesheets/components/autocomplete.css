@@ -15,7 +15,7 @@
   }
 
   .autocomplete__list-item {
-    @apply px-4 py-3 border-b;
+    @apply px-4 py-3 border-none;
     @apply border-gray-200;
     @apply dark:border-gray-800;
 

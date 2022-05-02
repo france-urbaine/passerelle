@@ -7,7 +7,7 @@ export default class extends Autocomplete {
     this.element.classList.remove("hidden")
   }
 
-  optionsForFetch() {
+  optionsForFetch () {
     return {
       headers: {
         "Accept-Variant": "Autocomplete",

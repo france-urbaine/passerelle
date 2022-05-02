@@ -28,6 +28,7 @@
 @import "./components/card";
 @import "./components/dialog";
 @import "./components/breadcrumbs";
+@import "./components/dropdown";
 
 /* Data display */
 @import "./components/datatable";

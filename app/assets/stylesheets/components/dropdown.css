@@ -1,0 +1,96 @@
+@layer components {
+  .dropdown {
+    position: relative;
+    z-index: 10;
+  }
+
+  .dropdown__menu {
+    position: absolute;
+
+    @apply shadow-lg rounded-sm border;
+    @apply bg-white border-gray-200;
+    @apply dark:bg-black dark:border-gray-800;
+
+    &--above-left {
+      top: 100%;
+      right: 0;
+    }
+
+    .icon-button + &--above-left {
+      top: calc(100% + 2px);
+    }
+
+    &--side-left {
+      top: 0;
+      right: 100%;
+    }
+
+    .icon-button + &--side-left {
+      right: calc(100% + 2px);
+    }
+  }
+
+  .dropdown__menu-item {
+    display: flex;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: left;
+    text-decoration: none;
+    vertical-align: middle;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    background-color: transparent;
+    white-space: nowrap;
+
+    @apply py-3 px-4 bg-transparent border-none rounded;
+    @apply bg-white text-gray-900;
+    @apply dark:bg-black dark:text-gray-100;
+
+    & > svg {
+      display: inline;
+      @apply -ml-1 mr-2 h-5 w-5;
+    }
+
+    & > .icon-button {
+      @apply -my-2;
+
+      &:first-child {
+        @apply -ml-2;
+      }
+
+      &:last-child {
+        @apply mr-2;
+      }
+    }
+
+    &[disabled] {
+      cursor: default;
+
+      @apply bg-transparent text-gray-400;
+    }
+
+    &:not([disabled]) {
+      &, &:is(:hover, :active, :focus, :focus-visible) {
+        outline-style: solid;
+        outline-width: 0px;
+
+        @apply text-gray-900;
+        @apply dark:text-gray-100;
+      }
+
+      &:is(:focus, :focus-visible) {
+        @apply bg-blue-50;
+      }
+
+      &:hover {
+        @apply bg-blue-50;
+      }
+
+      &:active {
+        @apply text-blue-700;
+        @apply dark:text-sky-300;
+      }
+    }
+  }
+}

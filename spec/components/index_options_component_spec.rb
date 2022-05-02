@@ -21,6 +21,12 @@ RSpec.describe IndexOptionsComponent, type: :component do
   end
 
   it do
+    expect(rendered_component).to have_selector(
+      %(button[aria-label="Options d'affichage du tableau"])
+    )
+  end
+
+  it do
     expect(rendered_component).to include(clean_template(<<~HTML))
       <span aria-hidden="true" class="icon-button" disabled="true">
         <svg>
@@ -35,18 +41,6 @@ RSpec.describe IndexOptionsComponent, type: :component do
         </svg>
         <span class="tooltip">Page suivante</span>
       </a>
-    HTML
-  end
-
-  it do
-    expect(rendered_component).to include(clean_template(<<~HTML))
-      <button aria-label="Options d&#39;affichage du tableau" class="icon-button">
-        <svg>
-          <title>Options d&#39;affichage</title>
-          <use href="#adjustments-icon">
-        </svg>
-        <span class="tooltip">Options d'affichage</span>
-      </button>
     HTML
   end
 
@@ -118,6 +112,40 @@ RSpec.describe IndexOptionsComponent, type: :component do
       let(:pagy) { Pagy.new(count: 0, page: 1) }
 
       it { expect(rendered_component).to include("0 établissement publique") }
+    end
+  end
+
+  context "with order argument" do
+    subject(:component) do
+      described_class.new(pagy, "commune", order: { commune: "commune" })
+    end
+
+    it do
+      expect(rendered_component).to include(clean_template(<<~HTML))
+        <span class="order-last">Trier par commune</span>
+        <a aria-label="Trier par commune, par ordre croissant"
+          class="icon-button"
+          href="/communes?order=commune"
+          role="menuitem"
+        >
+          <svg>
+            <title>Trier par ordre croissant</title>
+            <use href="#sort-ascending-icon">
+          </svg>
+          <span class="tooltip">Trier par ordre croissant</span>
+        </a>
+        <a aria-label="Trier par commune, par ordre décroissant"
+          class="icon-button"
+          href="/communes?order=-commune"
+          role="menuitem"
+        >
+          <svg>
+            <title>Trier par ordre décroissant</title>
+            <use href="#sort-descending-icon">
+          </svg>
+          <span class="tooltip">Trier par ordre décroissant</span>
+        </a>
+      HTML
     end
   end
 end

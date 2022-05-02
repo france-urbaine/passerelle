@@ -14,7 +14,7 @@
 .header-bar
   = search("Rechercher")
   .flex-auto
-  = index_options(pagy, "département")
+  = index_options(pagy, "département", order: { departement: "département", region: "région" })
 
 table.datatable( data-controller="selection" )
   thead
