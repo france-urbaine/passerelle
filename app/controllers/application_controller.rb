@@ -2,6 +2,7 @@
 
 class ApplicationController < ActionController::Base
   include Pagy::Backend
+  include ControllerAutocomplete
   include ControllerItems
   include ControllerOrder
   include ControllerSearch
@@ -35,5 +36,9 @@ class ApplicationController < ActionController::Base
   # ----------------------------------------------------------------------------
   def request_variant
     request.headers["Accept-Variant"]&.downcase
+  end
+
+  def accept_autocomplete
+    request.variant = :autocomplete if request_variant == "autocomplete"
   end
 end

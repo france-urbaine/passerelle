@@ -2,18 +2,23 @@
 
 class EpcisController < ApplicationController
   respond_to :html
+  before_action :accept_autocomplete, only: :index
   before_action :set_epci, only: %i[show edit update]
 
   def index
     @epcis = EPCI.strict_loading
-    @epcis = search(@epcis)
-    @epcis = order(@epcis)
 
-    if request_variant == "autocomplete"
-      @epcis = @epcis.limit(50)
-      render layout: false, variant: :autocomplete
-    else
-      @pagy, @epcis = pagy(@epcis)
+    respond_to do |format|
+      format.html.any do
+        @epcis = search(@epcis)
+        @epcis = order(@epcis)
+        @pagy, @epcis = pagy(@epcis)
+      end
+
+      format.html.autocomplete do
+        @epcis = autocomplete(@epcis)
+        render layout: false
+      end
     end
   end
 

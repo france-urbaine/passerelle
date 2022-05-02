@@ -5,7 +5,9 @@ ENV["RAILS_ENV"] ||= "test"
 require "spec_helper"
 require "simplecov"
 
-SimpleCov.start "rails"
+SimpleCov.start "rails" do
+  add_group "Components", "app/components"
+end
 
 require File.expand_path("../config/environment", __dir__)
 
@@ -86,6 +88,9 @@ RSpec.configure do |config|
 
   config.include ViewComponent::TestHelpers, type: :component
   config.include Capybara::RSpecMatchers, type: :component
+  config.include CleanTemplate, type: :component
+
+  config.include ImplicitResponse, type: :request
 
   config.before type: :system do
     WebMock.disable_net_connect!(
@@ -102,6 +107,7 @@ RSpec.configure do |config|
 end
 
 RSpec::Matchers.define_negated_matcher :maintain, :change
+RSpec::Matchers.define_negated_matcher :run_without_error, :raise_error
 
 Shoulda::Matchers.configure do |config|
   config.integrate do |with|

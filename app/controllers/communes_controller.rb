@@ -2,18 +2,23 @@
 
 class CommunesController < ApplicationController
   respond_to :html
+  before_action :accept_autocomplete, only: :index
   before_action :set_commune, only: %i[show edit update]
 
   def index
     @communes = Commune.strict_loading
-    @communes = search(@communes)
-    @communes = order(@communes)
 
-    if request_variant == "autocomplete"
-      @communes = @communes.limit(50)
-      render layout: false, variant: :autocomplete
-    else
-      @pagy, @communes = pagy(@communes)
+    respond_to do |format|
+      format.html.any do
+        @communes = search(@communes)
+        @communes = order(@communes)
+        @pagy, @communes = pagy(@communes)
+      end
+
+      format.html.autocomplete do
+        @communes = autocomplete(@communes)
+        render layout: false
+      end
     end
   end
 

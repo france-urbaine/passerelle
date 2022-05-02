@@ -1,0 +1,27 @@
+@layer components {
+  .header-bar {
+    display: flex;
+    flex-wrap: wrap;
+    min-height: calc(theme("height.10") + 2px);
+
+    @apply mb-6;
+  }
+
+  .header-bar__actions {
+    display: flex;
+    flex: none;
+    flex-wrap: wrap;
+    align-items: center;
+    max-width: 100%;
+
+    @apply -m-1;
+  }
+
+  .header-bar__action {
+    @apply m-1;
+  }
+
+  .header-bar__text {
+    @apply leading-10 my-1 mx-2;
+  }
+}

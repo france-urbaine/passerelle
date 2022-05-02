@@ -97,6 +97,7 @@
       }
 
       @svg checked {
+        viewBox: 0 0 16 16;
         @path {
           d: M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z;
           fill: var(--color, black);
@@ -104,6 +105,7 @@
       }
 
       @svg indeterminate {
+        viewBox: 0 0 16 16;
         @path {
           d: M4 8h8;
           stroke: var(--color, black);

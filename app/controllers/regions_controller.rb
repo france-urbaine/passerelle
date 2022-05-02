@@ -2,18 +2,23 @@
 
 class RegionsController < ApplicationController
   respond_to :html
+  before_action :accept_autocomplete, only: :index
   before_action :set_region, only: %i[show edit update]
 
   def index
     @regions = Region.strict_loading
-    @regions = search(@regions)
-    @regions = order(@regions)
 
-    if request_variant == "autocomplete"
-      @regions = @regions.limit(50)
-      render layout: false, variant: :autocomplete
-    else
-      @pagy, @regions = pagy(@regions)
+    respond_to do |format|
+      format.html.any do
+        @regions = search(@regions)
+        @regions = order(@regions)
+        @pagy, @regions = pagy(@regions)
+      end
+
+      format.html.autocomplete do
+        @regions = autocomplete(@regions)
+        render layout: false
+      end
     end
   end
 

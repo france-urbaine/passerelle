@@ -7,15 +7,4 @@
 
     @apply p-6;
   }
-
-  .content__header {
-    display: flex;
-    align-items: center;
-
-    @apply mb-6;
-  }
-
-  .content__header-title {
-    @apply text-2xl leading-7
-  }
 }

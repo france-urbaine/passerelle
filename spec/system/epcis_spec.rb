@@ -8,7 +8,7 @@ RSpec.describe "EPCIs", type: :system do
   it "visits index & show pages" do
     visit epcis_path
 
-    expect(page).to have_selector("h1", text: "Base de données des EPCI")
+    expect(page).to have_selector("h1", text: "EPCI")
     expect(page).to have_link("CA Pays Basque")
 
     click_on "CA Pays Basque"
@@ -20,7 +20,7 @@ RSpec.describe "EPCIs", type: :system do
   it "updates an EPCI from index page" do
     visit epcis_path
 
-    expect(page).to have_selector("h1", text: "Base de données des EPCI")
+    expect(page).to have_selector("h1", text: "EPCI")
     expect(page).to have_link("CA Pays Basque")
 
     click_on "Modifier cet EPCI", match: :first
@@ -33,7 +33,7 @@ RSpec.describe "EPCIs", type: :system do
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
 
-    expect(page).to have_selector("h1", text: "Base de données des EPCI")
+    expect(page).to have_selector("h1", text: "EPCI")
     expect(page).to have_link("CA du Pays Basque")
   end
 

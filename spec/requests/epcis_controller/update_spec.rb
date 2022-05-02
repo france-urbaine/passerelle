@@ -5,43 +5,52 @@ require "rails_helper"
 RSpec.describe "EpcisController#update", type: :request do
   subject(:request) { patch "/epcis/#{epci.id}", headers:, params: }
 
-  let(:epci)    { create(:epci, name: "CA d'Agen") }
-  let(:params)  { { epci: { name: "Agglomération d'Agen" } } }
   let(:headers) { {} }
+  let(:params)  { { epci: { name: "Agglomération d'Agen" } } }
+  let(:epci)    { create(:epci, name: "CA d'Agen") }
 
-  context "when requesting HTML with valid parameters" do
-    before { request }
-
+  context "when requesting HTML" do
     it { expect(response).to have_http_status(:found) }
     it { expect(response).to redirect_to("/epcis") }
 
-    it "updates the requested epci" do
-      epci.reload
-      expect(epci).to have_attributes(name: "Agglomération d'Agen")
+    it "is expected to update the record" do
+      expect {
+        request
+        epci.reload
+      } .to  change(epci, :updated_at)
+        .and change(epci, :name).to("Agglomération d'Agen")
+    end
+
+    context "with invalid parameters" do
+      let(:params) { { epci: { name: "" } } }
+
+      it { expect(response).to have_http_status(:unprocessable_entity) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
+
+      it "is expected to not update the record" do
+        expect {
+          request
+          epci.reload
+        } .to  maintain(epci, :updated_at)
+          .and maintain(epci, :name)
+      end
     end
   end
 
-  context "when requesting HTML with invalid parameters" do
-    let(:params) { { epci: { name: "" } } }
-
-    before { request }
-
-    it { expect(response).to have_http_status(:unprocessable_entity) }
-    it { expect(response).to have_content_type(:html) }
-    it { expect(response).to have_html_body }
-
-    it "didn't update the requested epci" do
-      expect{ epci.reload }.not_to change(epci, :updated_at)
-    end
-  end
-
-  describe "when requesting JSON" do
+  describe "rejected request as JSON" do
     let(:headers) { { "Accept" => "application/json" } }
-
-    before { request }
 
     it { expect(response).to have_http_status(:not_acceptable) }
     it { expect(response).to have_content_type(:json) }
     it { expect(response).to have_empty_body }
+
+    it "is expected to not update the record" do
+      expect {
+        request
+        epci.reload
+      } .to  maintain(epci, :updated_at)
+        .and maintain(epci, :name)
+    end
   end
 end

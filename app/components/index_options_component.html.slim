@@ -1,0 +1,29 @@
+.header-bar__actions
+  .header-bar__text
+    = helpers.count(pagy.count, singular, plural: plural)
+    = " "
+    span.mx-4 |
+    = " "
+    = helpers.page_count(pagy)
+
+  .header-bar__action
+    - if pagy.prev
+      a.icon-button( aria-label="Page précédente" rel="prev" href=page_url(pagy.prev) )
+        = helpers.svg_icon("chevron-left-icon", "Page précédente")
+        span.tooltip Page précédente
+    - else
+      span.icon-button( aria-hidden="true" disabled="true" )
+        = helpers.svg_icon("chevron-left-icon", "Page précédente")
+
+    - if pagy.next
+      a.icon-button( aria-label="Page suivante"  rel="next" href=page_url(pagy.next) )
+        = helpers.svg_icon("chevron-right-icon", "Page suivante")
+        span.tooltip Page suivante
+    - else
+      span.icon-button( aria-hidden="true" disabled="true" )
+        = helpers.svg_icon("chevron-right-icon", "Page suivante")
+
+  .header-bar__action
+    button.icon-button( aria-label="Options d'affichage du tableau" )
+      = helpers.svg_icon("adjustments-icon", "Options d'affichage")
+      span.tooltip Options d'affichage

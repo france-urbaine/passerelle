@@ -1,0 +1,6 @@
+@layer components {
+  .search {
+    flex: 0 1 400px;
+    max-width: 100%;
+  }
+}

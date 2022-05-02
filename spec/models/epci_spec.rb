@@ -32,7 +32,7 @@ RSpec.describe EPCI, type: :model do
   # ----------------------------------------------------------------------------
   describe ".search" do
     it do
-      expect{
+      expect {
         described_class.search(name: "Hello").load
       }.to perform_sql_query(<<~SQL)
         SELECT "epcis".*
@@ -42,7 +42,7 @@ RSpec.describe EPCI, type: :model do
     end
 
     it do
-      expect{
+      expect {
         described_class.search("Hello").load
       }.to perform_sql_query(<<~SQL)
         SELECT "epcis".*
@@ -62,7 +62,7 @@ RSpec.describe EPCI, type: :model do
   # ----------------------------------------------------------------------------
   describe ".order_by_param" do
     it do
-      expect{
+      expect {
         described_class.order_by_param("epci").load
       }.to perform_sql_query(<<~SQL)
         SELECT "epcis".*
@@ -72,7 +72,7 @@ RSpec.describe EPCI, type: :model do
     end
 
     it do
-      expect{
+      expect {
         described_class.order_by_param("departement").load
       }.to perform_sql_query(<<~SQL)
         SELECT "epcis".*
@@ -82,7 +82,7 @@ RSpec.describe EPCI, type: :model do
     end
 
     it do
-      expect{
+      expect {
         described_class.order_by_param("-departement").load
       }.to perform_sql_query(<<~SQL)
         SELECT "epcis".*
@@ -94,7 +94,7 @@ RSpec.describe EPCI, type: :model do
 
   describe ".order_by_score" do
     it do
-      expect{
+      expect {
         described_class.order_by_score("Hello").load
       }.to perform_sql_query(<<~SQL)
         SELECT "epcis".*
@@ -111,7 +111,7 @@ RSpec.describe EPCI, type: :model do
     let(:epci) { create(:epci) }
 
     it do
-      expect{
+      expect {
         epci.on_territory_collectivities.load
       }.to perform_sql_query(<<~SQL)
         SELECT "collectivities".*
@@ -142,7 +142,7 @@ RSpec.describe EPCI, type: :model do
   # ----------------------------------------------------------------------------
   describe ".reset_all_counters" do
     it do
-      expect{
+      expect {
         described_class.reset_all_counters
       }.to perform_sql_query(<<~SQL)
         UPDATE "epcis"

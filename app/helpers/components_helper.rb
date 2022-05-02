@@ -5,28 +5,24 @@ module ComponentsHelper
     render(DialogComponent.new(**options), &)
   end
 
-  def datatable_search_form(...)
-    render(Datatable::SearchFormComponent.new(...))
+  def search(...)
+    render(SearchComponent.new(...))
   end
 
-  def datatable_header_pagination(...)
-    render(Datatable::PaginationHeaderComponent.new(...))
-  end
-
-  def datatable_footer_pagination(...)
-    render(Datatable::PaginationFooterComponent.new(...))
+  def index_options(...)
+    render(IndexOptionsComponent.new(...))
   end
 
   def order_column(...)
-    render(Datatable::OrderColumnComponent.new(...))
+    render(OrderColumnComponent.new(...))
   end
 
-  def svg_icon(name, title = nil, height: 20, width: 20, **options)
+  def svg_icon(name, title = nil, **options)
     options[:"aria-hidden"] = true if title.nil?
 
-    tag.svg(height:, width:, **options) do
+    tag.svg(**options) do
       concat(tag.title(title)) if title
-      concat(tag.use(href: "##{name}"))
+      concat(tag.use(href: "##{name}", open: false))
     end
   end
 end

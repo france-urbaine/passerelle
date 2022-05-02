@@ -8,7 +8,7 @@ RSpec.describe "Communes", type: :system do
   it "visits index & show pages" do
     visit communes_path
 
-    expect(page).to have_selector("h1", text: "Base de données des communes")
+    expect(page).to have_selector("h1", text: "Communes")
     expect(page).to have_link("Biarritz")
 
     click_on "Biarritz"
@@ -20,7 +20,7 @@ RSpec.describe "Communes", type: :system do
   it "updates a commune from index page" do
     visit communes_path
 
-    expect(page).to have_selector("h1", text: "Base de données des communes")
+    expect(page).to have_selector("h1", text: "Communes")
     expect(page).to have_link("Biarritz")
 
     click_on "Modifier cette commune", match: :first
@@ -33,7 +33,7 @@ RSpec.describe "Communes", type: :system do
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
 
-    expect(page).to have_selector("h1", text: "Base de données des communes")
+    expect(page).to have_selector("h1", text: "Communes")
     expect(page).to have_link("Biarritz-Anglet")
   end
 

@@ -1,4 +1,8 @@
 @layer base {
+  html {
+    font-size: 12px;
+  }
+
   body {
     display: flex;
     height: 100vh;
@@ -9,7 +13,7 @@
   }
 
   body, table, button, input, optgroup, select, textarea {
-    @apply text-sm antialiased;
+    @apply text-base antialiased;
     @apply dark:subpixel-antialiased;
   }
 }

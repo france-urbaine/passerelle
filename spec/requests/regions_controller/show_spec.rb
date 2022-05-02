@@ -5,21 +5,46 @@ require "rails_helper"
 RSpec.describe "RegionsController#show", type: :request do
   subject(:request) { get "/departements/#{departement.id}", headers: }
 
-  let(:departement) { create(:departement) }
   let(:headers)     { {} }
+  let(:departement) { create(:departement) }
 
-  describe "successful response when requesting HTML" do
-    before { request }
-
+  context "when requesting HTML" do
     it { expect(response).to have_http_status(:success) }
     it { expect(response).to have_content_type(:html) }
     it { expect(response).to have_html_body }
+
+    context "when filtering with multiple parameters" do
+      let(:params) { { search: "C*", order: "-departement", page: 2, items: 5 } }
+
+      it { expect(response).to have_http_status(:success) }
+      it { expect(response).to have_content_type(:html) }
+    end
+
+    context "with overflowing pages" do
+      let(:params) { { page: 999_999 } }
+
+      it { expect(response).to have_http_status(:success) }
+      it { expect(response).to have_content_type(:html) }
+    end
+
+    context "with unknown order parameter" do
+      let(:params) { { order: "dgfqjhsdf" } }
+
+      it { expect(response).to have_http_status(:success) }
+      it { expect(response).to have_content_type(:html) }
+    end
+
+    context "with autocompletion" do
+      let(:headers) { { "Accept-Variant" => "autocomplete" } }
+      let(:params)  { { q: "C" } }
+
+      it { expect(response).to have_http_status(:success) }
+      it { expect(response).to have_content_type(:html) }
+    end
   end
 
-  describe "unacceptable response when requesting JSON" do
+  context "when requesting JSON" do
     let(:headers) { { "Accept" => "application/json" } }
-
-    before { request }
 
     it { expect(response).to have_http_status(:not_acceptable) }
     it { expect(response).to have_content_type(:json) }

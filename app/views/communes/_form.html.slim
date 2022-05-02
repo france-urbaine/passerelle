@@ -1,11 +1,15 @@
-= dialog(back_url: params.fetch(:back, communes_path)) do
+= dialog(back_url: params.fetch(:back, communes_path)) do |dialog|
   = turbo_frame_tag :form do
-    .dialog__header
-      h1#dialog-title.dialog__title Modification de la commune
-
     = form_with(model: commune) do |form|
-      = back_param_input
+      .dialog__header
+        h1#dialog-title.dialog__title
+          | Modification de la commune
+
+        .dialog__header-toolbar
+          = dialog.close_button
+
       .dialog__content
+        = back_param_input
         = form_block commune, :name, first: true do
           = form.label :name
           = form.text_field :name, autofocus: true
@@ -35,8 +39,4 @@
 
       .dialog__actions
         button.button.button--primary( type="submit" ) Enregistrer
-        a.button(
-          href=params.fetch(:back, communes_path)
-          data-turbo-action="restore"
-          data-action="dialog#close"
-        ) Annuler
+        = dialog.cancel_button "Annuler"

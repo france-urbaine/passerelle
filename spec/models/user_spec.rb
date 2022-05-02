@@ -25,7 +25,7 @@ RSpec.describe User, type: :model do
   # ----------------------------------------------------------------------------
   describe ".search" do
     it do
-      expect{
+      expect {
         described_class.search("Hello").load
       }.to perform_sql_query(<<~SQL.squish)
         SELECT "users".*
@@ -36,7 +36,7 @@ RSpec.describe User, type: :model do
     end
 
     it do
-      expect{
+      expect {
         described_class.search("Louis Funes").load
       }.to perform_sql_query(<<~SQL.squish)
         SELECT "users".*
@@ -47,7 +47,7 @@ RSpec.describe User, type: :model do
     end
 
     it do
-      expect{
+      expect {
         described_class.search("ddfip-64@finances.gouv.fr").load
       }.to perform_sql_query(<<~SQL.squish)
         SELECT "users".*
@@ -57,7 +57,7 @@ RSpec.describe User, type: :model do
     end
 
     it do
-      expect{
+      expect {
         described_class.search("@finances.gouv.fr").load
       }.to perform_sql_query(<<~SQL.squish)
         SELECT "users".*
@@ -85,9 +85,9 @@ RSpec.describe User, type: :model do
   describe "confirmation process" do
     let!(:user) { create(:user, :unconfirmed) }
 
-    it { expect{ user.confirm }.to change(user, :confirmed?).to(true) }
-    it { expect{ user.confirm }.to change(user, :active_for_authentication?).to(true) }
-    it { expect{ user.confirm }.not_to have_sent_emails }
+    it { expect { user.confirm }.to change(user, :confirmed?).to(true) }
+    it { expect { user.confirm }.to change(user, :active_for_authentication?).to(true) }
+    it { expect { user.confirm }.not_to have_sent_emails }
   end
 
   # Invitation process
@@ -110,18 +110,17 @@ RSpec.describe User, type: :model do
 
       it { is_expected.not_to have_sent_emails }
 
-      it { expect{ user.save }.to have_sent_emails.by(1) }
-      it { expect{ user.save }.to have_sent_email.to(user.email).with_subject("Instructions de confirmation") }
+      it { expect { user.save }.to have_sent_emails.by(1) }
+      it { expect { user.save }.to have_sent_email.to(user.email).with_subject("Instructions de confirmation") }
     end
 
     describe "#accept_invitation" do
       let!(:user) { create(:user, :invited, :unconfirmed) }
 
-      it { expect{ user.accept_invitation }.to change(user, :invited?).to(false) }
-      it { expect{ user.accept_invitation }.to change(user, :confirmed?).to(true) }
-      it { expect{ user.accept_invitation }.to change(user, :active_for_authentication?).to(true) }
-
-      it { expect{ user.accept_invitation }.not_to have_sent_emails }
+      it { expect { user.accept_invitation }.to change(user, :invited?).to(false) }
+      it { expect { user.accept_invitation }.to change(user, :confirmed?).to(true) }
+      it { expect { user.accept_invitation }.to change(user, :active_for_authentication?).to(true) }
+      it { expect { user.accept_invitation }.not_to have_sent_emails }
     end
 
     describe ".find_by_invitation_token" do

@@ -3,12 +3,7 @@
     display: block;
 
     &--margin {
-      @apply mt-4;
-    }
-
-    & label {
-      display: block;
-      @apply mb-1;
+      @apply mt-6;
     }
 
     & [type="text"],
@@ -30,24 +25,22 @@
       width: 100%;
       max-width: 100%;
     }
-  }
 
-  .form-block--invalid {
-    & [type="text"],
-    & [type="email"],
-    & [type="url"],
-    & [type="password"],
-    & [type="number"],
-    & [type="date"],
-    & [type="datetime-local"],
-    & [type="month"],
-    & [type="search"],
-    & [type="tel"],
-    & [type="time"],
-    & [type="week"],
-    & [multiple],
-    & textarea,
-    & select {
+    &--invalid [type="text"],
+    &--invalid [type="email"],
+    &--invalid [type="url"],
+    &--invalid [type="password"],
+    &--invalid [type="number"],
+    &--invalid [type="date"],
+    &--invalid [type="datetime-local"],
+    &--invalid [type="month"],
+    &--invalid [type="search"],
+    &--invalid [type="tel"],
+    &--invalid [type="time"],
+    &--invalid [type="week"],
+    &--invalid [multiple],
+    &--invalid textarea,
+    &--invalid select {
       @apply border-red-500;
 
       &:is(:hover, :active, :focus, :focus-visible) {
@@ -62,13 +55,39 @@
     }
   }
 
-  .form-block__label--hiden {
-    display: none;
+  .form-block label {
+    display: block;
+    @apply mb-1;
+  }
+
+  .form-block__label {
+    display: block;
+    @apply mb-1;
+
+    label {
+      @apply mb-0;
+    }
+
+    &--hiden {
+      display: none;
+    }
   }
 
   .form-block__input {
     display: flex;
     position: relative;
+  }
+
+  .form-block__input-prefix {
+    display: inline-flex;
+    align-items: center;
+
+    @apply py-2 px-3 rounded-l-md border border-r-0;
+    @apply border-gray-300 bg-gray-50 text-gray-500;
+
+    & + input {
+      @apply rounded-l-none;
+    }
   }
 
   .form-block__input-icon {
@@ -79,6 +98,10 @@
 
     @apply py-2 px-3;
     @apply text-gray-500;
+
+    & svg {
+      @apply h-6 w-6;
+    }
 
     & + input {
       @apply pl-12;

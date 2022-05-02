@@ -1,0 +1,76 @@
+@layer components {
+  .datatable {
+    /* Noop */
+  }
+
+  .datatable__row {
+    & .icon-button,
+    & .checkbox {
+      @apply h-8 w-8 p-1.5 -my-2;
+    }
+
+    & .icon-button svg {
+      @apply h-5 w-5;
+    }
+
+    & .checkbox input {
+      @apply m-0.5;
+    }
+
+    tbody & th:empty:before,
+    tbody & td:empty:before {
+      content: "-";
+      @apply text-gray-500;
+    }
+
+    &--selected {
+      @apply bg-blue-50;
+      @apply dark:bg-blue-900/50;
+    }
+  }
+
+  .datatable__order-button {
+    @apply ml-2 opacity-0 transition;
+
+    th:hover > &,
+    td:hover > &,
+    &:focus,
+    &:hover,
+    &--current {
+      @apply opacity-100;
+    }
+
+    &--current {
+      transform: rotate(180deg);
+    }
+
+    &--current:hover,
+    &--current:focus {
+      transform: rotate(0deg);
+    }
+  }
+
+  .datatable__row-actions {
+    @apply w-px px-6;
+
+    &:first-child {
+      @apply pl-6;
+    }
+
+    & + & {
+      @apply pl-0;
+    }
+
+    & [type="checkbox"] {
+      display: block;
+    }
+
+    & .icon-button {
+      display: block;
+    }
+
+    & .icon-button:only-child {
+      @apply -mx-2;
+    }
+  }
+}

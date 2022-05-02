@@ -5,45 +5,52 @@ require "rails_helper"
 RSpec.describe "CommunesController#update", type: :request do
   subject(:request) { patch "/communes/#{commune.id}", headers:, params: }
 
-  let(:commune) { create(:commune, name: "L'AEbergement-ClÉmenciat") }
-  let(:params)  { { commune: { name: "L'Abergement-Clémenciat" } } }
   let(:headers) { {} }
+  let(:params)  { { commune: { name: "L'Abergement-Clémenciat" } } }
+  let(:commune) { create(:commune, name: "L'AEbergement-ClÉmenciat") }
 
-  context "when requesting HTML with valid parameters" do
-    before { request }
-
+  context "when requesting HTML" do
     it { expect(response).to have_http_status(:found) }
     it { expect(response).to redirect_to("/communes") }
 
-    it "updates the requested commune" do
-      commune.reload
-      expect(commune).to have_attributes(name: "L'Abergement-Clémenciat")
+    it "is expected to update the record" do
+      expect {
+        request
+        commune.reload
+      } .to  change(commune, :updated_at)
+        .and change(commune, :name).to("L'Abergement-Clémenciat")
+    end
+
+    context "with invalid parameters" do
+      let(:params) { { commune: { name: "" } } }
+
+      it { expect(response).to have_http_status(:unprocessable_entity) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
+
+      it "is expected to not update the record" do
+        expect {
+          request
+          commune.reload
+        } .to  maintain(commune, :updated_at)
+          .and maintain(commune, :name)
+      end
     end
   end
 
-  context "when requesting HTML with invalid parameters" do
-    let(:params) { { commune: { name: "" } } }
-
-    before { request }
-
-    it { expect(response).to have_http_status(:unprocessable_entity) }
-    it { expect(response).to have_content_type(:html) }
-    it { expect(response).to have_html_body }
-
-    it "didn't update the requested commune" do
-      expect{ commune.reload }
-        .to  maintain(commune, :updated_at)
-        .and maintain(commune, :name).from("L'AEbergement-ClÉmenciat")
-    end
-  end
-
-  describe "when requesting JSON" do
+  describe "rejected request as JSON" do
     let(:headers) { { "Accept" => "application/json" } }
-
-    before { request }
 
     it { expect(response).to have_http_status(:not_acceptable) }
     it { expect(response).to have_content_type(:json) }
     it { expect(response).to have_empty_body }
+
+    it "is expected to not update the record" do
+      expect {
+        request
+        commune.reload
+      } .to  maintain(commune, :updated_at)
+        .and maintain(commune, :name)
+    end
   end
 end

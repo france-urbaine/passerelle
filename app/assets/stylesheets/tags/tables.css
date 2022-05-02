@@ -13,7 +13,7 @@
   td, th {
     text-align: left;
 
-    @apply px-2 py-3 border-b;
+    @apply px-2 py-2 border-b;
     @apply border-gray-200;
     @apply dark:border-gray-700;
 

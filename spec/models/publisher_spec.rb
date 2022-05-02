@@ -33,7 +33,7 @@ RSpec.describe Publisher, type: :model do
   # ----------------------------------------------------------------------------
   describe ".search" do
     it do
-      expect{
+      expect {
         described_class.search("Hello").load
       }.to perform_sql_query(<<~SQL.squish)
         SELECT "publishers".*
@@ -48,7 +48,7 @@ RSpec.describe Publisher, type: :model do
   # ----------------------------------------------------------------------------
   describe ".reset_all_counters" do
     it do
-      expect{
+      expect {
         described_class.reset_all_counters
       }.to perform_sql_query(<<~SQL)
         UPDATE "publishers"

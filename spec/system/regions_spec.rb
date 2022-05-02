@@ -8,7 +8,7 @@ RSpec.describe "Regions", type: :system do
   it "visits index & show pages" do
     visit regions_path
 
-    expect(page).to have_selector("h1", text: "Base de données des régions")
+    expect(page).to have_selector("h1", text: "Régions")
     expect(page).to have_link("Aquitaine")
 
     click_on "Aquitaine"
@@ -20,7 +20,7 @@ RSpec.describe "Regions", type: :system do
   it "updates a region from index page" do
     visit regions_path
 
-    expect(page).to have_selector("h1", text: "Base de données des régions")
+    expect(page).to have_selector("h1", text: "Régions")
     expect(page).to have_link("Aquitaine")
 
     click_on "Modifier cette région", match: :first
@@ -32,7 +32,7 @@ RSpec.describe "Regions", type: :system do
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
 
-    expect(page).to have_selector("h1", text: "Base de données des régions")
+    expect(page).to have_selector("h1", text: "Régions")
     expect(page).to have_link("Nouvelle Aquitaine")
   end
 

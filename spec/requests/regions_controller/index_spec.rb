@@ -8,18 +8,22 @@ RSpec.describe "RegionsController#index", type: :request do
   let(:headers) { {} }
   let(:params)  { {} }
 
-  describe "successful response when requesting HTML" do
-    before { request }
-
+  describe "successful request as HTML" do
     it { expect(response).to have_http_status(:success) }
     it { expect(response).to have_content_type(:html) }
     it { expect(response).to have_html_body }
   end
 
-  describe "unacceptable response when requesting JSON" do
-    let(:headers) { { "Accept" => "application/json" } }
+  describe "successful request to autocomplete as HTML" do
+    let(:headers) { { "Accept-Variant" => "autocomplete" } }
+    let(:params)  { { q: "C" } }
 
-    before { request }
+    it { expect(response).to have_http_status(:success) }
+    it { expect(response).to have_content_type(:html) }
+  end
+
+  describe "rejected request as JSON" do
+    let(:headers) { { "Accept" => "application/json" } }
 
     it { expect(response).to have_http_status(:not_acceptable) }
     it { expect(response).to have_content_type(:json) }

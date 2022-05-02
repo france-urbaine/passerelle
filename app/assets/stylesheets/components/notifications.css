@@ -25,7 +25,7 @@
   }
 
   .notification__icon {
-    @apply mr-4 text-blue-500;
+    @apply mr-4 w-10 h-10 text-blue-500;
   }
 
   .notification__icon--success {
@@ -36,25 +36,32 @@
     @apply text-red-500;
   }
 
+  .notification__message {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: theme("spacing.10");
+  }
+
   .notification__title {
-    @apply font-semibold;
+    @apply text-lg leading-6 font-semibold;
   }
 
   .notification__actions {
     @apply ml-6;
-
-    & .icon-button {
-      @apply -m-2 text-gray-500;
-    }
   }
 
-  .notification--transition-enter-from,
-  .notification--transition-leave-to {
+  .notification__close-button svg {
+    @apply text-gray-500;
+  }
+
+  .notification--enter-from,
+  .notification--leave-to {
     @apply opacity-0 translate-x-6
   }
 
-  .notification--transition-enter-to,
-  .notification--transition-leave-from {
+  .notification--enter-to,
+  .notification--leave-from {
     @apply opacity-100 translate-x-0;
   }
 }

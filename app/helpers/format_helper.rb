@@ -23,6 +23,10 @@ module FormatHelper
     end
   end
 
+  def page_count(pagy)
+    "Page #{number_with_delimiter(pagy.page)} sur #{number_with_delimiter(pagy.pages)}"
+  end
+
   def display_siren(siren)
     capture do
       parts = siren.scan(/\d{3}/)

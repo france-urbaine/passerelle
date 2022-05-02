@@ -1,13 +1,32 @@
-.datatable-header
-  h1.content__header-title Base de données des communes
-  .flex-auto
-  = datatable_header_pagination(pagy, "commune")
-  = datatable_search_form("Rechercher des communes")
+.header-bar
+  .breadcrumbs
+    .breadcrumbs__path
+      a.icon-button( href="/" )= svg_icon("home-icon", "Retour à la page d'accueil")
 
-table( data-controller="selection" )
+    .breadcrumbs__separator="/"
+    .breadcrumbs__path
+      | Territoires
+
+    .breadcrumbs__separator="/"
+    .breadcrumbs__path
+      h1 Communes
+
+  .flex-auto
+  .header-bar__actions
+    .header-bar__action
+      button.button
+        = svg_icon("cloud-download-icon")
+        | Mettre à jour
+
+.header-bar
+  = search("Rechercher")
+  .flex-auto
+  = index_options(pagy, "commune")
+
+table.datatable( data-controller="selection" )
   thead
-    tr.datatable-row
-      th.datatable-row__actions
+    tr.datatable__row
+      th.datatable__row-actions
         input(
           type="checkbox"
           aria-label="Tout sélectionner"
@@ -31,12 +50,12 @@ table( data-controller="selection" )
 
   tbody
     - communes.includes(:departement, :epci).each do |commune|
-      tr.datatable-row(
+      tr.datatable__row(
         id=dom_id(commune)
         data-controller="selection-row"
-        data-selection-row-selected-class="datatable-row--selected"
+        data-selection-row-selected-class="datatable__row--selected"
       )
-        td.datatable-row__actions
+        td.datatable__row-actions
           input(
             type="checkbox"
             aria-labelledby=dom_id(commune, :title)
@@ -46,7 +65,7 @@ table( data-controller="selection" )
           )
           span.tooltip Sélectionner cette commune
 
-        td.datatable-row__actions
+        td.datatable__row-actions
           a.icon-button(
             href=edit_commune_path(commune, back: current_path)
             aria-label="Modifier cette commune"
@@ -79,7 +98,3 @@ table( data-controller="selection" )
 
         - else
           td( colspan="2" )
-
-.datatable-footer
-  .flex-auto
-  = datatable_footer_pagination(pagy)

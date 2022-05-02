@@ -1,7 +1,7 @@
-- css_class = %w[icon-button datatable-row__order-button]
+- css_class = %w[icon-button datatable__order-button]
 
 - if current_asc?
-  a.icon-button.datatable-row__order-button.datatable-row__order-button--current(
+  a.icon-button.datatable__order-button.datatable__order-button--current(
     aria-label="Trier par ordre décroissant"
     href=order_url(:desc)
   )
@@ -9,7 +9,7 @@
     span.tooltip Trier par ordre décroissant
 
 - elsif current_desc?
-  a.icon-button.datatable-row__order-button.datatable-row__order-button--current(
+  a.icon-button.datatable__order-button.datatable__order-button--current(
     aria-label="Trier par ordre croissant"
     href=order_url(:asc)
   )
@@ -17,7 +17,7 @@
     span.tooltip Trier par ordre croissant
 
 - else
-  a.icon-button.datatable-row__order-button(
+  a.icon-button.datatable__order-button(
     aria-label="Trier par ordre croissant"
     href=order_url(:asc)
   )

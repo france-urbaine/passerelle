@@ -14,7 +14,7 @@
   }
 
   .dialog__overlay {
-    position: absolute;
+    position: fixed;
     z-index: 1;
     top: 0;
     left: 0;
@@ -32,31 +32,47 @@
     left: 50%;
     transform: translate(-50%, 0);
     min-width: 500px;
-    max-width: calc(100vw - theme('spacing.12'));
 
     @apply rounded shadow-lg p-6;
     @apply transition duration-200;
     @apply bg-white;
     @apply dark:bg-black dark:border dark:border-gray-700 dark:shadow-gray-500/50;
+
+    @media (max-width: 500px) {
+      min-width: 100vw;
+    }
   }
 
-  .dialog__title {
-    display: block;
+  .dialog__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
 
-    @apply pb-6;
-    @apply text-lg;
+    @apply pb-8;
+  }
+
+  .dialog__header-toolbar {
+    @apply -m-1;
+  }
+
+  .dialog__close-button svg {
+    @apply text-gray-500;
   }
 
   .dialog__actions {
-    @apply pt-6;
+    @apply pt-8;
 
     & .button {
       @apply mr-4;
     }
   }
 
-  .dialog--transition-enter-from,
-  .dialog--transition-leave-to {
+  .dialog__title {
+    @apply text-xl;
+  }
+
+  .dialog--enter-from,
+  .dialog--leave-to {
     @apply opacity-0;
 
     & .dialog__container {
@@ -64,8 +80,8 @@
     }
   }
 
-  .dialog--transition-enter-to,
-  .dialog--transition-leave-from {
+  .dialog--enter-to,
+  .dialog--leave-from {
     @apply opacity-100;
 
     & .dialog__container {

@@ -42,7 +42,7 @@ RSpec.describe Commune, type: :model do
   # ----------------------------------------------------------------------------
   describe ".search" do
     it do
-      expect{
+      expect {
         described_class.search(name: "Hello").load
       }.to perform_sql_query(<<~SQL)
         SELECT "communes".*
@@ -52,7 +52,7 @@ RSpec.describe Commune, type: :model do
     end
 
     it do
-      expect{
+      expect {
         described_class.search("Hello").load
       }.to perform_sql_query(<<~SQL)
         SELECT "communes".*
@@ -75,7 +75,7 @@ RSpec.describe Commune, type: :model do
   # ----------------------------------------------------------------------------
   describe ".order_by_param" do
     it do
-      expect{
+      expect {
         described_class.order_by_param("commune").load
       }.to perform_sql_query(<<~SQL)
         SELECT "communes".*
@@ -85,7 +85,7 @@ RSpec.describe Commune, type: :model do
     end
 
     it do
-      expect{
+      expect {
         described_class.order_by_param("departement").load
       }.to perform_sql_query(<<~SQL)
         SELECT "communes".*
@@ -95,7 +95,7 @@ RSpec.describe Commune, type: :model do
     end
 
     it do
-      expect{
+      expect {
         described_class.order_by_param("epci").load
       }.to perform_sql_query(<<~SQL)
         SELECT "communes".*
@@ -106,7 +106,7 @@ RSpec.describe Commune, type: :model do
     end
 
     it do
-      expect{
+      expect {
         described_class.order_by_param("-epci").load
       }.to perform_sql_query(<<~SQL)
         SELECT "communes".*
@@ -119,7 +119,7 @@ RSpec.describe Commune, type: :model do
 
   describe ".order_by_score" do
     it do
-      expect{
+      expect {
         described_class.order_by_score("Hello").load
       }.to perform_sql_query(<<~SQL)
         SELECT "communes".*
@@ -137,7 +137,7 @@ RSpec.describe Commune, type: :model do
       let(:commune) { create(:commune) }
 
       it do
-        expect{
+        expect {
           commune.on_territory_collectivities.load
         }.to perform_sql_query(<<~SQL)
           SELECT "collectivities".*
@@ -161,7 +161,7 @@ RSpec.describe Commune, type: :model do
       let(:commune) { create(:commune, :with_epci) }
 
       it do
-        expect{
+        expect {
           commune.on_territory_collectivities.load
         }.to perform_sql_query(<<~SQL)
           SELECT "collectivities".*
@@ -192,7 +192,7 @@ RSpec.describe Commune, type: :model do
   # ----------------------------------------------------------------------------
   describe ".reset_all_counters" do
     it do
-      expect{
+      expect {
         described_class.reset_all_counters
       }.to perform_sql_query(<<~SQL)
         UPDATE  "communes"

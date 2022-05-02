@@ -8,7 +8,7 @@ RSpec.describe "Departements", type: :system do
   it "visits index & show pages" do
     visit departements_path
 
-    expect(page).to have_selector("h1", text: "Base de données des départements")
+    expect(page).to have_selector("h1", text: "Départements")
     expect(page).to have_link("Nord")
 
     click_on "Nord"
@@ -20,7 +20,7 @@ RSpec.describe "Departements", type: :system do
   it "updates a departement from index page" do
     visit departements_path
 
-    expect(page).to have_selector("h1", text: "Base de données des départements")
+    expect(page).to have_selector("h1", text: "Départements")
     expect(page).to have_link("Nord")
 
     click_on "Modifier ce département", match: :first
@@ -33,7 +33,7 @@ RSpec.describe "Departements", type: :system do
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
 
-    expect(page).to have_selector("h1", text: "Base de données des départements")
+    expect(page).to have_selector("h1", text: "Départements")
     expect(page).to have_link("Département du Nord")
   end
 

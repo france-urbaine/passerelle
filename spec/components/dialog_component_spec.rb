@@ -3,13 +3,14 @@
 require "rails_helper"
 
 RSpec.describe DialogComponent, type: :component do
-  pending "add some examples to (or delete) #{__FILE__}"
+  subject(:component) { described_class.new }
 
-  # it "renders something useful" do
-  #   expect(
-  #     render_inline(described_class.new(attr: "value")) { "Hello, components!" }.css("p").to_html
-  #   ).to include(
-  #     "Hello, components!"
-  #   )
-  # end
+  before do
+    render_inline(component) do
+      %(<div class="dialog__content">Hello World!</div>).html_safe
+    end
+  end
+
+  it { expect(rendered_component).to have_selector(%(.dialog[role="dialog"][aria-modal="true"])) }
+  it { expect(rendered_component).to include(%(<div class="dialog__content">Hello World!</div>)) }
 end
