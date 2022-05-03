@@ -15,7 +15,7 @@ RSpec.describe Unarchiver do
     FileUtils.cp(fixture, path)
   end
 
-  it { expect{ call }.to change(target, :exist?).to(true) }
+  it { expect { call }.to change(target, :exist?).to(true) }
   it { expect(call).to eq(target) }
   it { expect(call.size).to be_positive }
 end

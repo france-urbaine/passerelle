@@ -4,7 +4,7 @@
 #   https://www.insee.fr/fr/information/2028028
 #
 # You can launch the job using :
-#   ImportCommunesJob.perform_now("https://www.insee.fr/fr/statistiques/fichier/2028028/table-appartenance-geo-communes-21.zip")
+#   ImportCommunesJob.perform_now("https://www.insee.fr/fr/statistiques/fichier/2028028/table-appartenance-geo-communes-22.zip")
 #
 # This job is called when seeding Data :
 #   rails db:seed
@@ -17,17 +17,17 @@ class ImportCommunesJob < ApplicationJob
     path = Unarchiver.call(path, "*.xlsx")
 
     XLSXParser.call(path, "COM", offset: 5) do |row|
-      enqueue(row)
+      enqueue_row(row)
     end
 
     XLSXParser.call(path, "ARM", offset: 5) do |row|
-      enqueue(row)
+      enqueue_row(row)
     end
 
     flush
   end
 
-  def enqueue(row)
+  def enqueue_row(row)
     return if row["CODGEO"].blank?
     return if row["LIBGEO"].blank?
     return unless row["CODGEO"].match?(Commune::CODE_INSEE_REGEXP)

@@ -4,7 +4,7 @@
 #   https://www.insee.fr/fr/information/2510634
 #
 # You can launch the job using :
-#   ImportEpcisJob.perform_now("https://www.insee.fr/fr/statistiques/fichier/2510634/Intercommunalite_Metropole_au_01-01-2021.zip")
+#   ImportEpcisJob.perform_now("https://www.insee.fr/fr/statistiques/fichier/2510634/Intercommunalite_Metropole_au_01-01-2022.zip")
 #
 # This job is called when seeding Data :
 #   rails db:seed
@@ -17,13 +17,15 @@ class ImportEpcisJob < ApplicationJob
     path = Unarchiver.call(path, "*.xlsx")
 
     XLSXParser.call(path, "EPCI", offset: 5) do |row|
-      enqueue(row)
+      enqueue_row(row)
     end
 
     flush
+
+    ImportEpcisDepartementsJob.perform_later(url)
   end
 
-  def enqueue(row)
+  def enqueue_row(row)
     return if row["EPCI"].blank?
     return if row["LIBEPCI"].blank?
     return unless row["EPCI"].match?(EPCI::SIREN_REGEXP)
