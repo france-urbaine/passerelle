@@ -2,23 +2,22 @@
 
 class DepartementsController < ApplicationController
   respond_to :html
-  before_action :accept_autocomplete, only: :index
   before_action :set_departement, only: %i[show edit update]
 
   def index
     @departements = Departement.strict_loading
 
-    respond_to do |format|
-      format.html.any do
-        @departements = search(@departements)
-        @departements = order(@departements)
-        @pagy, @departements = pagy(@departements)
-      end
+    if autocomplete_request?
+      @departements = autocomplete(@departements)
+    else
+      @departements = search(@departements)
+      @departements = order(@departements)
+      @pagy, @departements = pagy(@departements)
+    end
 
-      format.html.autocomplete do
-        @departements = autocomplete(@departements)
-        render layout: false
-      end
+    respond_to do |format|
+      format.html.any
+      format.html.autocomplete { render layout: false }
     end
   end
 

@@ -1,65 +1,8 @@
-.header-bar
-  .breadcrumbs
-    .breadcrumbs__path
-      a.icon-button( href="/" )= svg_icon("home-icon", "Retour à la page d'accueil")
+= render "index_breadcrumbs"
 
-    .breadcrumbs__separator="/"
-    .breadcrumbs__path
-      | Territoires
+div( data-controller="selection" )
+  = turbo_frame_tag :index_header, data: { selection_target: "frame" } do
+    = render "index_header", regions: regions, pagy: pagy
 
-    .breadcrumbs__separator="/"
-    .breadcrumbs__path
-      h1 Régions
-
-.header-bar
-  = search("Rechercher")
-  .flex-auto
-  = index_options(pagy, "région", order: { region: "région" })
-
-table.datatable( data-controller="selection" )
-  thead
-    tr.datatable__row
-      th.datatable__row-actions
-        input(
-          type="checkbox"
-          aria-label="Tout sélectionner"
-          data-selection-target="checkall"
-        )
-        span.tooltip Tout sélectionner
-
-      th( aria-label="Actions" )
-      
-      th( colspan="2" )
-        | Region
-        = order_column(:region)
-
-  tbody
-    - @regions.each do |region|
-      tr.datatable__row(
-        id=dom_id(region)
-        data-controller="selection-row"
-        data-selection-row-selected-class="datatable__row--selected"
-      )
-        td.datatable__row-actions
-          input(
-            type="checkbox"
-            aria-labelledby=dom_id(region, :title)
-            data-selection-target="checkbox"
-            data-selection-row-target="checkbox"
-            value=region.id
-          )
-          span.tooltip Sélectionner cette région
-
-        td.datatable__row-actions
-          a.icon-button(
-            href=edit_region_path(region, back: current_path)
-            aria-label="Modifier cette région"
-            data-turbo-frame="modal"
-          )
-            = svg_icon("pencil-alt-icon", "Modifier cette région")
-            span.tooltip Modifier cette région
-
-        td.w-px= region.code_region
-        td( id=dom_id(region, :title) )
-          = link_to region_path(region, back: current_path) do
-            = region.name
+  = turbo_frame_tag :index_table do
+    = render "index_table", regions: regions, pagy: pagy

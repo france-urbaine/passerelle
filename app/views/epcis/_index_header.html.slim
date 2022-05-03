@@ -1,0 +1,35 @@
+- if params[:ids].present?
+  .header-bar.header-bar--selection
+    .header-bar__actions
+      .header-bar__action
+        button.icon-button.selection-bar__close-button(
+          data-action="selection#uncheckAll"
+        )
+          = svg_icon("x-icon", "Réinitialiser la sélection")
+          span.tooltip Réinitialiser la sélection
+
+      .header-bar__text
+        - if params[:ids] == "all"
+          = count(@pagy.count, "EPCI sélectionné", plural: "EPCI sélectionnés")
+        - else
+          = count(params[:ids].size, "EPCI sélectionné", plural: "EPCI sélectionnés")
+
+          - if params[:ids].size == epcis.length && epcis.length < @pagy.count
+            |  (
+            a(
+              data-action="selection#checkAll"
+              href=epcis_path(extract_params(:search).merge(ids: "all"))
+            ) Sélectionner les #{count(@pagy.count, "EPCI")}
+            | )
+
+    .flex-auto
+    .header-bar__actions
+      .header-bar__action
+        .button.button--under-selection( disabled="true" )
+          | Aucun action disponible
+
+- else
+  .header-bar
+    = search("Rechercher")
+    .flex-auto
+    = index_options(pagy, "EPCI", plural: "EPCI", order: { epci: "EPCI", departement: "département" })

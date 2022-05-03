@@ -8,6 +8,7 @@ class ApplicationController < ActionController::Base
   include ControllerSearch
 
   before_action :verify_requested_format!
+  before_action :accept_request_variant
 
   # Statuses
   # ----------------------------------------------------------------------------
@@ -34,11 +35,14 @@ class ApplicationController < ActionController::Base
 
   # Variant
   # ----------------------------------------------------------------------------
-  def request_variant
-    request.headers["Accept-Variant"]&.downcase
+  helper_method :turbo_frame_request_id
+
+  def autocomplete_request?
+    request.headers["Accept-Variant"]&.downcase == "autocomplete"
   end
 
-  def accept_autocomplete
-    request.variant = :autocomplete if request_variant == "autocomplete"
+  def accept_request_variant
+    request.variant = :turbo_frame  if turbo_frame_request?
+    request.variant = :autocomplete if autocomplete_request?
   end
 end

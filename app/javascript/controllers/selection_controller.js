@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 import { useHotkeys } from 'stimulus-use'
 
 export default class extends Controller {
-  static targets = ["checkall", "checkbox"]
+  static targets = ["checkall", "checkbox", "frame"]
 
   initialize () {
     this.toggleAll = this.toggleAll.bind(this)
@@ -33,8 +33,23 @@ export default class extends Controller {
   toggleAll (event) {
     if (event) event.preventDefault()
 
+    this.switchAll(event.target.checked)
+    this.refresh()
+  }
+
+  checkAll () {
+    this.switchAll(true)
+    this.refresh()
+  }
+
+  uncheckAll () {
+    this.switchAll(false)
+    this.refresh()
+  }
+
+  switchAll (checked) {
     this.checkboxTargets.forEach((checkbox) => {
-      checkbox.checked = event.target.checked
+      checkbox.checked = checked
       this.triggerInputEvent(checkbox)
     })
   }
@@ -65,11 +80,29 @@ export default class extends Controller {
   }
 
   refresh () {
-    const checkboxCount   = this.checkboxTargets.length
-    const checkedboxCount = this.checkboxTargets.filter(checkbox => checkbox.checked).length
+    const checkboxes = this.checkboxTargets
+    const checkedIds = this.checkboxTargets
+      .filter(checkbox => checkbox.checked)
+      .map(checkbox => checkbox.value)
 
-    this.checkallTarget.checked       = checkedboxCount > 0
-    this.checkallTarget.indeterminate = checkedboxCount > 0 && checkedboxCount < checkboxCount
+    this.checkallTarget.checked       = checkedIds.length > 0
+    this.checkallTarget.indeterminate = checkedIds.length > 0 && checkedIds.length < checkboxes.length
+
+    this.dispatch(checkedIds.length > 0 ? "checked" : "unchecked")
+
+    if (this.hasFrameTarget) {
+      const frameHref = this.frameTarget.src || window.location.href
+      const parsedUrl = new URL(frameHref)
+
+      parsedUrl.searchParams.delete("ids")
+      parsedUrl.searchParams.delete("ids[]")
+      checkedIds.forEach(id => parsedUrl.searchParams.append("ids[]", id))
+
+      if (frameHref != parsedUrl.href) {
+        this.frameTarget.src = parsedUrl.href
+        this.frameTarget.reload()
+      }
+    }
   }
 
   triggerInputEvent (checkbox) {

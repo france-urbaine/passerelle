@@ -1,0 +1,35 @@
+- if params[:ids].present?
+  .header-bar.header-bar--selection
+    .header-bar__actions
+      .header-bar__action
+        button.icon-button.selection-bar__close-button(
+          data-action="selection#uncheckAll"
+        )
+          = svg_icon("x-icon", "Réinitialiser la sélection")
+          span.tooltip Réinitialiser la sélection
+
+      .header-bar__text
+        - if params[:ids] == "all"
+          = count(@pagy.count, "région sélectionnée", plural: "région sélectionnées")
+        - else
+          = count(params[:ids].size, "région sélectionnée", plural: "région sélectionnées")
+
+          - if params[:ids].size == regions.length && regions.length < @pagy.count
+            |  (
+            a(
+              data-action="selection#checkAll"
+              href=regions_path(extract_params(:search).merge(ids: "all"))
+            ) Sélectionner les #{count(@pagy.count, "région")}
+            | )
+
+    .flex-auto
+    .header-bar__actions
+      .header-bar__action
+        .button.button--under-selection( disabled="true" )
+          | Aucun action disponible
+
+- else
+  .header-bar
+    = search("Rechercher")
+    .flex-auto
+    = index_options(pagy, "région", order: { region: "région" })

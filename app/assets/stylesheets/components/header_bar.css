@@ -4,7 +4,17 @@
     flex-wrap: wrap;
     min-height: calc(theme("height.10") + 2px);
 
-    @apply mb-6;
+    @apply mb-6 rounded-md;
+
+    &--selection {
+      @apply p-2 pl-3;
+      @apply bg-blue-100;
+      @apply dark:bg-blue-900;
+    }
+  }
+
+  .header-bar__text {
+    @apply leading-10 my-1 mx-2;
   }
 
   .header-bar__actions {
@@ -19,9 +29,5 @@
 
   .header-bar__action {
     @apply m-1;
-  }
-
-  .header-bar__text {
-    @apply leading-10 my-1 mx-2;
   }
 }

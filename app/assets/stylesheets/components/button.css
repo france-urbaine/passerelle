@@ -57,6 +57,21 @@
       }
     }
 
+    &--under-selection[disabled] {
+      @apply bg-transparent
+    }
+
+    &--under-selection:not([disabled]) {
+      &, &:is(:hover, :active, :focus, :focus-visible) {
+        @apply bg-blue-200;
+        @apply dark:bg-blue-900;
+      }
+
+      &:not(:hover, :active, :focus, :focus-visible) {
+        @apply border-blue-300;
+      }
+    }
+
     &--primary:not([disabled]) {
       @apply subpixel-antialiased;
 

@@ -34,7 +34,12 @@ RSpec.describe IndexOptionsComponent, type: :component do
           <use href="#chevron-left-icon">
         </svg>
       </span>
-      <a aria-label="Page suivante" class="icon-button" href="/communes?page=2" rel="next">
+      <a aria-label="Page suivante"
+         class="icon-button"
+         data-turbo-frame="content"
+         href="/communes?page=2"
+         rel="next"
+      >
         <svg>
           <title>Page suivante</title>
           <use href="#chevron-right-icon">
@@ -51,14 +56,24 @@ RSpec.describe IndexOptionsComponent, type: :component do
 
     it do
       expect(rendered_component).to include(clean_template(<<~HTML))
-        <a aria-label="Page précédente" class="icon-button" href="/communes?page=2" rel="prev">
+        <a aria-label="Page précédente"
+           class="icon-button"
+           data-turbo-frame="content"
+           href="/communes?page=2"
+           rel="prev"
+        >
           <svg>
             <title>Page précédente</title>
             <use href="#chevron-left-icon">
           </svg>
           <span class="tooltip">Page précédente</span>
         </a>
-        <a aria-label="Page suivante" class="icon-button" href="/communes?page=4" rel="next">
+        <a aria-label="Page suivante"
+           class="icon-button"
+           data-turbo-frame="content"
+           href="/communes?page=4"
+           rel="next"
+        >
           <svg>
             <title>Page suivante</title>
             <use href="#chevron-right-icon">
@@ -76,7 +91,12 @@ RSpec.describe IndexOptionsComponent, type: :component do
 
     it do
       expect(rendered_component).to include(clean_template(<<~HTML))
-        <a aria-label="Page précédente" class="icon-button" href="/communes?page=23" rel="prev">
+        <a aria-label="Page précédente"
+           class="icon-button"
+           data-turbo-frame="content"
+           href="/communes?page=23"
+           rel="prev"
+        >
           <svg>
             <title>Page précédente</title>
             <use href="#chevron-left-icon">
@@ -124,9 +144,10 @@ RSpec.describe IndexOptionsComponent, type: :component do
       expect(rendered_component).to include(clean_template(<<~HTML))
         <span class="order-last">Trier par commune</span>
         <a aria-label="Trier par commune, par ordre croissant"
-          class="icon-button"
-          href="/communes?order=commune"
-          role="menuitem"
+           class="icon-button"
+           data-turbo-frame="content"
+           href="/communes?order=commune"
+           role="menuitem"
         >
           <svg>
             <title>Trier par ordre croissant</title>
@@ -135,9 +156,10 @@ RSpec.describe IndexOptionsComponent, type: :component do
           <span class="tooltip">Trier par ordre croissant</span>
         </a>
         <a aria-label="Trier par commune, par ordre décroissant"
-          class="icon-button"
-          href="/communes?order=-commune"
-          role="menuitem"
+           class="icon-button"
+           data-turbo-frame="content"
+           href="/communes?order=-commune"
+           role="menuitem"
         >
           <svg>
             <title>Trier par ordre décroissant</title>
