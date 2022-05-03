@@ -26,3 +26,11 @@ fr:
         type:  "success"
         title: "Les modifications ont été enregistrées avec succés."
         delay: 3000
+
+  territories_updates:
+    create:
+      success:
+        type:         "success"
+        title:        "La mise à jour a été lancée."
+        description:  "La tâche peut prendre quelques minutes."
+        delay:        3000

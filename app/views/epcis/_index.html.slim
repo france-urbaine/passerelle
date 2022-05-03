@@ -14,7 +14,10 @@
   .flex-auto
   .header-bar__actions
     .header-bar__action
-      button.button
+      a.button(
+        href=territories_updates_path(back: current_path)
+        data-turbo-frame="modal"
+      )
         = svg_icon("cloud-download-icon")
         | Mettre à jour
 

@@ -47,7 +47,6 @@ fr:
             departement:
               required:  Un département est requis
 
-
         epci:
           attributes:
             name:
@@ -90,3 +89,12 @@ fr:
               blank:     Un numéro de region est requis
               invalid:   Ce numéro de region n'est pas valide
               taken:     Ce numéro de région est déjà attribué à une autre région
+
+  activemodel:
+    errors:
+      models:
+        territories_update:
+          blank:             Une URL est requise
+          invalid_url:       Cette URL n'est pas valide
+          invalid_extension: Le fichier cible doit être un fichier ZIP
+          dead_link:         Le fichier cible n'existe pas

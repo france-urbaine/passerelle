@@ -13,5 +13,7 @@ Rails.application.routes.draw do
   resources :epcis,        only: %i[index show edit update]
   resources :communes,     only: %i[index show edit update]
 
+  resource :territories_updates, only: %i[show create], path: "/territoires"
+
   root to: redirect("/communes")
 end

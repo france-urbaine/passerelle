@@ -30,11 +30,15 @@ module Downloader
 
   def follow_redirections(url)
     loop do
-      response = connect(url) { |http, path| http.head(path) }
+      response = head(url)
       break url unless response["location"]
 
       url = response["location"]
     end
+  end
+
+  def head(url)
+    connect(url) { |http, path| http.head(path) }
   end
 
   def connect(url)
