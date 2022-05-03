@@ -83,7 +83,8 @@
     align-items: center;
 
     @apply py-2 px-3 rounded-l-md border border-r-0;
-    @apply border-gray-300 bg-gray-50 text-gray-500;
+    @apply bg-gray-50 border-gray-300 text-gray-500;
+    @apply dark:bg-gray-900/50 dark:border-gray-700;
 
     & + input {
       @apply rounded-l-none;

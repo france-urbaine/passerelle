@@ -22,7 +22,6 @@
     bottom: 0;
 
     @apply bg-black/50;
-    @apply dark:bg-black/30;
   }
 
   .dialog__container {

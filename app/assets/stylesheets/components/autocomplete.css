@@ -26,6 +26,7 @@
     &:hover,
     &--active {
       @apply bg-blue-50;
+      @apply dark:bg-blue-900/50;
     }
   }
 }
