@@ -7,22 +7,22 @@ nav.sidebar
   .sidebar__links
     a( 
       href=communes_path
-      class=("sidebar__link--current" if current_page?(controller: "communes"))
+      class=("sidebar__link--current" if controller.controller_name == "communes")
     ) Communes 
 
     a( 
       href=epcis_path
-      class=("sidebar__link--current" if current_page?(controller: "epcis"))
+      class=("sidebar__link--current" if controller.controller_name == "epcis")
     ) EPCI
 
     a( 
       href=departements_path
-      class=("sidebar__link--current" if current_page?(controller: "departements"))
+      class=("sidebar__link--current" if controller.controller_name == "departements")
     ) Départements
 
     a( 
       href=regions_path
-      class=("sidebar__link--current" if current_page?(controller: "regions"))
+      class=("sidebar__link--current" if controller.controller_name == "regions")
     ) Régions
   
   .flex-auto
