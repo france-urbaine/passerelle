@@ -1,7 +1,11 @@
 .header-bar
   .breadcrumbs
     .breadcrumbs__path
-      a.icon-button( href="/" )= svg_icon("home-icon", "Retour à la page d'accueil")
+      a.icon-button(
+        aria-label="Retour à la page d'accueil"
+        data-turbo-frame="_top"
+        href="/"
+      )= svg_icon("home-icon", "Retour à la page d'accueil")
 
     .breadcrumbs__separator="/"
     .breadcrumbs__path
@@ -11,12 +15,12 @@
     .breadcrumbs__path
       h1 Communes
 
-    .flex-auto
-    .header-bar__actions
-      .header-bar__action
-        a.button(
-          href=territories_updates_path(back: current_path)
-          data-turbo-frame="modal"
-        )
-          = svg_icon("cloud-download-icon")
-          | Mettre à jour
+  .flex-auto
+  .header-bar__actions
+    .header-bar__action
+      a.button(
+        data-turbo-frame="modal"
+        href=territories_updates_path(back: current_path)
+      )
+        = svg_icon("cloud-download-icon")
+        | Mettre à jour

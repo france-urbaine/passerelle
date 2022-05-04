@@ -1,7 +1,11 @@
 .header-bar
   .breadcrumbs
     .breadcrumbs__path
-      a.icon-button( href="/" )= svg_icon("home-icon", "Retour à la page d'accueil")
+      a.icon-button(
+        aria-label="Retour à la page d'accueil"
+        data-turbo-frame="_top"
+        href="/"
+      )= svg_icon("home-icon", "Retour à la page d'accueil")
 
     .breadcrumbs__separator="/"
     .breadcrumbs__path
@@ -10,8 +14,9 @@
     .breadcrumbs__separator="/"
     .breadcrumbs__path
       a(
+        data-turbo-action="advance"
+        data-turbo-frame="content"
         href=params.fetch(:back, epcis_path)
-        data-turbo-frame="_top"
       ) EPCI
 
     .breadcrumbs__separator="/"
@@ -22,8 +27,8 @@
   .header-bar__actions
     .header-bar__action
       a.button(
-        href=edit_epci_path(epci, back: current_path)
         data-turbo-frame="modal"
+        href=edit_epci_path(epci, back: current_path)
       )
         = svg_icon("pencil-alt-icon")
         | Modifier
@@ -36,7 +41,12 @@
 
     .description-list__row
       dt Région
-      dd= link_to(epci.region.name, epci.region) if epci.region
+      dd
+        - if epci.region
+          a(
+            data-turbo-frame="_top"
+            href=region_path(epci.region)
+          )= epci.region.name
 
     .description-list__row
       dt Département
@@ -44,11 +54,14 @@
 
     .description-list__row
       dt Communes
-      dd.flex.justify-between
+      dd.flex.justify-between.items-start
         - if epci.communes_count.positive?
-          div= count(epci.communes_count, "commune")
+          span= count(epci.communes_count, "commune")
 
-          a.button.-my-2( href=communes_path(search: epci.siren) )
+          a.button(
+            data-turbo-frame="_top"
+            href=communes_path(search: epci.siren)
+          )
             = svg_icon("search-icon")
             | Voir les communes
 

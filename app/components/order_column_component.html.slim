@@ -3,6 +3,8 @@
 - if current_asc?
   a.icon-button.datatable__order-button.datatable__order-button--current(
     aria-label="Trier par ordre décroissant"
+    data-turbo-action="advance"
+    data-turbo-frame="content"
     href=order_url(:desc)
   )
     = helpers.svg_icon("arrow-sm-down-icon", "Trier par ordre décroissant")
@@ -11,6 +13,8 @@
 - elsif current_desc?
   a.icon-button.datatable__order-button.datatable__order-button--current(
     aria-label="Trier par ordre croissant"
+    data-turbo-action="advance"
+    data-turbo-frame="content"
     href=order_url(:asc)
   )
     = helpers.svg_icon("arrow-sm-up-icon", "Trier par ordre croissant")
@@ -19,6 +23,8 @@
 - else
   a.icon-button.datatable__order-button(
     aria-label="Trier par ordre croissant"
+    data-turbo-action="advance"
+    data-turbo-frame="content"
     href=order_url(:asc)
   )
     = helpers.svg_icon("arrow-sm-up-icon", "Trier par ordre croissant")

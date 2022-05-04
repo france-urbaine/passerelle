@@ -15,7 +15,7 @@ RSpec.describe SearchComponent, type: :component do
 
   it do
     expect(rendered_component).to eq(clean_template(<<~HTML))
-      <form class="search" data-turbo-frame="content">
+      <form class="search" data-turbo-action="advance" data-turbo-frame="content">
         <label class="form-block">
           <div class="form-block__label--hiden">Rechercher...</div>
           <div class="form-block__input">
@@ -36,7 +36,7 @@ RSpec.describe SearchComponent, type: :component do
 
     it do
       expect(rendered_component).to eq(clean_template(<<~HTML))
-        <form class="search" data-turbo-frame="content">
+        <form class="search" data-turbo-action="advance" data-turbo-frame="content">
           <label class="form-block">
             <div class="form-block__label--hiden">Rechercher...</div>
             <div class="form-block__input">

@@ -10,7 +10,7 @@ table.datatable
         span.tooltip Tout sélectionner
 
       th( aria-label="Actions" )
-      
+
       th( colspan="2" )
         | Region
         = order_column(:region)
@@ -44,5 +44,8 @@ table.datatable
 
         td.w-px= region.code_region
         td( id=dom_id(region, :title) )
-          = link_to region_path(region, back: current_path) do
-            = region.name
+          a(
+            data-turbo-action="advance"
+            data-turbo-frame="content"
+            href=region_path(region, back: current_path)
+          )= region.name

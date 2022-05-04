@@ -1,7 +1,11 @@
 .header-bar
   .breadcrumbs
     .breadcrumbs__path
-      a.icon-button( href="/" )= svg_icon("home-icon", "Retour à la page d'accueil")
+      a.icon-button(
+        aria-label="Retour à la page d'accueil"
+        data-turbo-frame="_top"
+        href="/"
+      )= svg_icon("home-icon", "Retour à la page d'accueil")
 
     .breadcrumbs__separator="/"
     .breadcrumbs__path

@@ -10,9 +10,10 @@
     - if pagy.prev
       a.icon-button(
         aria-label="Page précédente"
+        data-turbo-action="advance"
         data-turbo-frame="content"
         href=page_url(pagy.prev)
-        rel="prev"q
+        rel="prev"
       )
         = helpers.svg_icon("chevron-left-icon", "Page précédente")
         span.tooltip Page précédente
@@ -26,6 +27,7 @@
     - if pagy.next
       a.icon-button(
         aria-label="Page suivante"
+        data-turbo-action="advance"
         data-turbo-frame="content"
         href=page_url(pagy.next)
         rel="next"
@@ -71,6 +73,7 @@
             id="index-options-items-button"
             aria-haspopup="true"
             aria-expanded="false"
+            aria-label="Sélectionner le nombre de lignes à afficher"
             data-action="dropdown#toggle click@window->dropdown#clickOutside"
             data-dropdown-target="button"
             role="menuitem"
@@ -85,6 +88,7 @@
           )
             - [10, 20, 50, 100].each do |items|
               a.dropdown__menu-item(
+                aria-label="Afficher #{items} lignes"
                 data-turbo-frame="content"
                 role="menuitem"
                 href=items_url(items)
@@ -102,6 +106,7 @@
               id="index-options-sort-button"
               aria-haspopup="true"
               aria-expanded="false"
+              aria-label="Trier les données"
               data-action="dropdown#toggle click@window->dropdown#clickOutside"
               data-dropdown-target="button"
               role="menuitem"
@@ -122,6 +127,7 @@
 
                   a.icon-button(
                     aria-label="Trier par #{name}, par ordre croissant"
+                    data-turbo-action="advance"
                     data-turbo-frame="content"
                     href=order_url(key, :asc)
                     role="menuitem" 
@@ -131,6 +137,7 @@
 
                   a.icon-button(
                     aria-label="Trier par #{name}, par ordre décroissant"
+                    data-turbo-action="advance"
                     data-turbo-frame="content"
                     href=order_url(key, :desc)
                     role="menuitem" 

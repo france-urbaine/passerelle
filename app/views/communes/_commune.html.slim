@@ -1,7 +1,11 @@
 .header-bar
   .breadcrumbs
     .breadcrumbs__path
-      a.icon-button( href="/" )= svg_icon("home-icon", "Retour à la page d'accueil")
+      a.icon-button(
+        aria-label="Retour à la page d'accueil"
+        data-turbo-frame="_top"
+        href="/"
+      )= svg_icon("home-icon", "Retour à la page d'accueil")
 
     .breadcrumbs__separator="/"
     .breadcrumbs__path
@@ -9,8 +13,11 @@
 
     .breadcrumbs__separator="/"
     .breadcrumbs__path
-      a( href=params.fetch(:back, communes_path) )
-        | Communes
+      a(
+        data-turbo-action="advance"
+        data-turbo-frame="content"
+        href=params.fetch(:back, communes_path)
+      ) Communes
 
     .breadcrumbs__separator="/"
     .breadcrumbs__path
@@ -20,8 +27,8 @@
   .header-bar__actions
     .header-bar__action
       a.button(
-        href=edit_commune_path(commune, back: current_path)
         data-turbo-frame="modal"
+        href=edit_commune_path(commune, back: current_path)
       )
         = svg_icon("pencil-alt-icon")
         | Modifier
@@ -34,15 +41,30 @@
 
     .description-list__row
       dt Région
-      dd= link_to(commune.region.name, commune.region) if commune.region
+      dd
+        - if commune.region
+          a(
+            data-turbo-frame="_top"
+            href=region_path(commune.region)
+          )= commune.region.name
 
     .description-list__row
       dt Département
-      dd= link_to(commune.departement.name, commune.departement) if commune.departement
+      dd
+        - if commune.departement
+          a(
+            data-turbo-frame="_top"
+            href=departement_path(commune.departement)
+          )= commune.departement.name
 
     .description-list__row
       dt EPCI
-      dd= link_to(commune.epci.name, commune.epci) if commune.epci
+      dd
+        - if commune.epci
+          a(
+            data-turbo-frame="_top"
+            href=epci_path(commune.epci)
+          )= commune.epci.name
 
     .description-list__row
       dt Collectivités enregistrées

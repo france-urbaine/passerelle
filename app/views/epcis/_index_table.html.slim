@@ -48,15 +48,20 @@ table.datatable
 
         td.w-px= epci.siren
         td( id=dom_id(epci, :title) )
-          = link_to epci_path(epci, back: current_path) do
-            = epci.name
+          a(
+            data-turbo-action="advance"
+            data-turbo-frame="content"
+            href=epci_path(epci, back: current_path)
+          )= epci.name
 
         - if epci.code_departement?
           td.w-px= epci.code_departement
           td
             - if epci.departement
-              = link_to epci.departement do
-                = epci.departement.name
+              a(
+                data-turbo-frame="_top"
+                href=departement_path(epci.departement)
+              )= epci.departement.name
 
         - else
           td( colspan="2" )

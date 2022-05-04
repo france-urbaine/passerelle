@@ -1,7 +1,11 @@
 .header-bar
   .breadcrumbs
     .breadcrumbs__path
-      a.icon-button( href="/" )= svg_icon("home-icon", "Retour à la page d'accueil")
+      a.icon-button(
+        aria-label="Retour à la page d'accueil"
+        data-turbo-frame="_top"
+        href="/"
+      )= svg_icon("home-icon", "Retour à la page d'accueil")
 
     .breadcrumbs__separator="/"
     .breadcrumbs__path
@@ -9,7 +13,11 @@
 
     .breadcrumbs__separator="/"
     .breadcrumbs__path
-      = link_to "Départements", params.fetch(:back, departements_path)
+      a(
+        data-turbo-action="advance"
+        data-turbo-frame="content"
+        href=params.fetch(:back, departements_path)
+      ) Départements
 
     .breadcrumbs__separator="/"
     .breadcrumbs__path
@@ -19,8 +27,8 @@
   .header-bar__actions
     .header-bar__action
       a.button(
-        href=edit_departement_path(departement, back: current_path)
         data-turbo-frame="modal"
+        href=edit_departement_path(departement, back: current_path)
       )
         = svg_icon("pencil-alt-icon")
         | Modifier
@@ -33,25 +41,36 @@
 
     .description-list__row
       dt Région
-      dd= link_to(departement.region.name, departement.region) if departement.region
+      dd
+        - if departement.region
+          a(
+            data-turbo-frame="_top"
+            href=region_path(departement.region)
+          )= departement.region.name
 
     .description-list__row
       dt EPCI
-      dd.flex.justify-between
+      dd.flex.justify-between.items-start
         - if departement.epcis_count.positive?
-          div= count(departement.epcis_count, "EPCI")
+          span= count(departement.epcis_count, "EPCI")
 
-          a.button.-my-2( href=epcis_path(search: departement.code_departement) )
+          a.button(
+            data-turbo-frame="_top"
+            href=epcis_path(search: departement.code_departement)
+          )
             = svg_icon("search-icon")
             | Voir les EPCI
 
     .description-list__row
       dt Communes
-      dd.flex.justify-between
+      dd.flex.justify-between.items-start
         - if departement.communes_count.positive?
-          div= count(departement.communes_count, "commune")
+          span= count(departement.communes_count, "commune")
 
-          a.button.-my-2( href=communes_path(search: departement.code_departement) )
+          a.button(
+            data-turbo-frame="_top"
+            href=communes_path(search: departement.code_departement)
+          )
             = svg_icon("search-icon")
             | Voir les communes
 

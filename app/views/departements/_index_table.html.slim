@@ -48,15 +48,20 @@ table.datatable
 
         td.w-px= departement.code_departement
         td( id=dom_id(departement, :title) )
-          = link_to departement_path(departement, back: current_path) do
-            = departement.name
+          a(
+            data-turbo-action="advance"
+            data-turbo-frame="content"
+            href=departement_path(departement, back: current_path)
+          )= departement.name
         
         - if departement.code_region?
           td.w-px= departement.code_region
           td
             - if departement.region
-              = link_to region_path(departement.region) do
-                = departement.region.name
+              a(
+                data-turbo-frame="_top"
+                href=region_path(departement.region)
+              )= departement.region.name
 
         - else
           td( colspan="2" )

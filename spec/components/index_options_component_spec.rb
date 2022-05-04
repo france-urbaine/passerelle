@@ -36,6 +36,7 @@ RSpec.describe IndexOptionsComponent, type: :component do
       </span>
       <a aria-label="Page suivante"
          class="icon-button"
+         data-turbo-action="advance"
          data-turbo-frame="content"
          href="/communes?page=2"
          rel="next"
@@ -58,6 +59,7 @@ RSpec.describe IndexOptionsComponent, type: :component do
       expect(rendered_component).to include(clean_template(<<~HTML))
         <a aria-label="Page précédente"
            class="icon-button"
+           data-turbo-action="advance"
            data-turbo-frame="content"
            href="/communes?page=2"
            rel="prev"
@@ -70,6 +72,7 @@ RSpec.describe IndexOptionsComponent, type: :component do
         </a>
         <a aria-label="Page suivante"
            class="icon-button"
+           data-turbo-action="advance"
            data-turbo-frame="content"
            href="/communes?page=4"
            rel="next"
@@ -93,6 +96,7 @@ RSpec.describe IndexOptionsComponent, type: :component do
       expect(rendered_component).to include(clean_template(<<~HTML))
         <a aria-label="Page précédente"
            class="icon-button"
+           data-turbo-action="advance"
            data-turbo-frame="content"
            href="/communes?page=23"
            rel="prev"
@@ -145,6 +149,7 @@ RSpec.describe IndexOptionsComponent, type: :component do
         <span class="order-last">Trier par commune</span>
         <a aria-label="Trier par commune, par ordre croissant"
            class="icon-button"
+           data-turbo-action="advance"
            data-turbo-frame="content"
            href="/communes?order=commune"
            role="menuitem"
@@ -157,6 +162,7 @@ RSpec.describe IndexOptionsComponent, type: :component do
         </a>
         <a aria-label="Trier par commune, par ordre décroissant"
            class="icon-button"
+           data-turbo-action="advance"
            data-turbo-frame="content"
            href="/communes?order=-commune"
            role="menuitem"

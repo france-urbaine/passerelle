@@ -17,6 +17,8 @@ RSpec.describe OrderColumnComponent, type: :component do
     expect(rendered_component).to eq(clean_template(<<~HTML))
       <a aria-label="Trier par ordre croissant"
          class="icon-button datatable__order-button"
+         data-turbo-action="advance"
+         data-turbo-frame="content"
          href="/communes?order=commune"
       >
         <svg>
@@ -35,6 +37,8 @@ RSpec.describe OrderColumnComponent, type: :component do
       expect(rendered_component).to eq(clean_template(<<~HTML))
         <a aria-label="Trier par ordre décroissant"
            class="icon-button datatable__order-button datatable__order-button--current"
+           data-turbo-action="advance"
+           data-turbo-frame="content"
            href="/communes?order=-commune"
         >
           <svg>
@@ -54,6 +58,8 @@ RSpec.describe OrderColumnComponent, type: :component do
       expect(rendered_component).to eq(clean_template(<<~HTML))
         <a aria-label="Trier par ordre croissant"
            class="icon-button datatable__order-button datatable__order-button--current"
+           data-turbo-action="advance"
+           data-turbo-frame="content"
            href="/communes?order=commune"
         >
           <svg>
