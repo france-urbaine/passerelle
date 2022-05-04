@@ -2,7 +2,7 @@
   .header-bar {
     display: flex;
     flex-wrap: wrap;
-    min-height: calc(theme("height.10") + 2px);
+    min-height: theme("height.10");
 
     @apply mb-6 rounded-md;
 

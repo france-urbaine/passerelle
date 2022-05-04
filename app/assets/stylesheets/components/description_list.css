@@ -22,6 +22,10 @@
       grid-column: span 2/span 2;
     }
 
+    & dd .button {
+      @apply -my-2;
+    }
+
     & dd:empty:before {
       content: "-";
       @apply text-gray-500;

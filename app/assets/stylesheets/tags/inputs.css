@@ -14,7 +14,7 @@
   [multiple],
   textarea,
   select {
-    @apply py-2 px-3 rounded-md border outline-none outline-offset-0;
+    @apply py-2 px-3 h-10 rounded-md border outline-none outline-offset-0;
 
     @apply bg-white border-gray-300 text-gray-900;
     @apply dark:bg-black dark:border-gray-700 dark:text-gray-100;

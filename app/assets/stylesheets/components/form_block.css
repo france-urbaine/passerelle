@@ -82,7 +82,7 @@
     display: inline-flex;
     align-items: center;
 
-    @apply py-2 px-3 rounded-l-md border border-r-0;
+    @apply py-2 px-3 h-10 rounded-l-md border border-r-0;
     @apply bg-gray-50 border-gray-300 text-gray-500;
     @apply dark:bg-gray-900/50 dark:border-gray-700;
 
@@ -97,7 +97,7 @@
     left: 1px;
     user-select: none;
 
-    @apply py-2 px-3;
+    @apply py-2 px-3 h-10;
     @apply text-gray-500;
 
     & svg {
