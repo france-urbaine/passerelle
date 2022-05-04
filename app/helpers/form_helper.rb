@@ -1,6 +1,16 @@
 # frozen_string_literal: true
 
 module FormHelper
+  class FormBuilder < ActionView::Helpers::FormBuilder
+    def block(method, **options, &)
+      @template.form_block(@object, method, **options, &)
+    end
+
+    def errors(method)
+      @template.form_block(@object, method)
+    end
+  end
+
   def back_param_input
     return unless params.key?(:back)
 

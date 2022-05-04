@@ -10,21 +10,21 @@
 
       .dialog__content
         = back_param_input
-        = form_block departement, :name, first: true do
+        = form.block :name, first: true do
           = form.label :name
           = form.text_field :name, autofocus: true
 
-        = form_block departement, :code_departement do
+        = form.block :code_departement do
           = form.label :code_departement
           = form.text_field :code_departement
 
-        = form_block departement, :region, autocomplete: regions_path do
+        = form.block :region, autocomplete: regions_path do
           = form.label :region
           = form.search_field :region, value: departement.region&.name, data: { autocomplete_target: "input" }
           = form.hidden_field :code_region, data: { autocomplete_target: "hidden" }
 
         = noscript do
-          = form_block departement, :code_region do
+          = form.block :code_region do
             = form.label :code_region
             = form.text_field :code_region
 
