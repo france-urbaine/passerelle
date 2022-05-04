@@ -37,8 +37,24 @@ class ApplicationController < ActionController::Base
   # ----------------------------------------------------------------------------
   helper_method :turbo_frame_request_id
 
+  def accept_variant
+    request.headers["Accept-Variant"]&.downcase
+  end
+
   def autocomplete_request?
-    request.headers["Accept-Variant"]&.downcase == "autocomplete"
+    accept_variant == "autocomplete"
+  end
+
+  # FIXME: Turbo send the wrong Turbo-Frame header from forms
+  # See https://github.com/hotwired/turbo/issues/577
+  # Until this is fixed, we'll send a parameters to catch the good target frame
+  #
+  def turbo_frame_request?
+    request.headers["Turbo-Frame"].present?
+  end
+
+  def turbo_frame_request_id
+    params.fetch("Turbo-Frame", request.headers["Turbo-Frame"]) if turbo_frame_request?
   end
 
   def accept_request_variant

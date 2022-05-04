@@ -9,18 +9,17 @@
           span.tooltip Réinitialiser la sélection
 
       .header-bar__text
-        - if params[:ids] == "all"
-          = count(@pagy.count, "commune sélectionnée", plural: "communes sélectionnées")
-        - else
-          = count(params[:ids].size, "commune sélectionnée", plural: "communes sélectionnées")
+        - selected_count = params[:ids] == "all" ? @pagy.count : params[:ids].size
 
-          - if params[:ids].size == communes.length && communes.length < @pagy.count
-            |  (
-            a(
-              data-action="selection#checkAll"
-              href=communes_path(extract_params(:search).merge(ids: "all"))
-            ) Sélectionner les #{count(@pagy.count, "commune")}
-            | )
+        = count(selected_count, "commune sélectionnée", plural: "communes sélectionnées")
+
+        - if selected_count == pagy.items && selected_count < @pagy.count
+          |  (
+          a(
+            data-action="selection#checkAll"
+            href=communes_path(extract_params(:search).merge(ids: "all"))
+          ) Sélectionner les #{count(@pagy.count, "commune")}
+          | )
 
     .flex-auto
     .header-bar__actions

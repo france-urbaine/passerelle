@@ -27,6 +27,7 @@ RSpec.describe SearchComponent, type: :component do
             <input name="search" placeholder="Rechercher..." type="search" />
           </div>
         </label>
+        <input name="Turbo-Frame" type="hidden" value="content" />
       </form>
     HTML
   end
@@ -48,6 +49,7 @@ RSpec.describe SearchComponent, type: :component do
               <input name="search" placeholder="Rechercher..." type="search" value="Pyrénées" />
             </div>
           </label>
+          <input name="Turbo-Frame" type="hidden" value="content" />
           <input name="order" type="hidden" value="-departement" />
         </form>
       HTML

@@ -9,18 +9,17 @@
           span.tooltip Réinitialiser la sélection
 
       .header-bar__text
-        - if params[:ids] == "all"
-          = count(@pagy.count, "EPCI sélectionné", plural: "EPCI sélectionnés")
-        - else
-          = count(params[:ids].size, "EPCI sélectionné", plural: "EPCI sélectionnés")
+        - selected_count = params[:ids] == "all" ? @pagy.count : params[:ids].size
 
-          - if params[:ids].size == epcis.length && epcis.length < @pagy.count
-            |  (
-            a(
-              data-action="selection#checkAll"
-              href=epcis_path(extract_params(:search).merge(ids: "all"))
-            ) Sélectionner les #{count(@pagy.count, "EPCI")}
-            | )
+        = count(selected_count, "EPCI sélectionné", plural: "EPCI sélectionnés")
+
+        - if selected_count == pagy.items && selected_count < @pagy.count
+          |  (
+          a(
+            data-action="selection#checkAll"
+            href=epcis_path(extract_params(:search).merge(ids: "all"))
+          ) Sélectionner les #{count(@pagy.count, "commune")}
+          | )
 
     .flex-auto
     .header-bar__actions

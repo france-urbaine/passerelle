@@ -5,5 +5,10 @@ form.search( data-turbo-frame="content" data-turbo-action="advance" )
       .form-block__input-icon= helpers.svg_icon("search-icon")
       input( type="search" name="search" value=params[:search] placeholder=label )
 
+  / FIXME: Turbo send the wrong Turbo-Frame ID,
+  / See https://github.com/hotwired/turbo/issues/577
+  / Until this is fixed, we'll send a parameters to catch the good target frame
+
+  input( type="hidden" name="Turbo-Frame" value="content" )
   - if params.key?(:order)
     input( type="hidden" name="order" value=params[:order] )
