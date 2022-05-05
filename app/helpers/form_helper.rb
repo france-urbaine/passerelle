@@ -12,9 +12,13 @@ module FormHelper
   end
 
   def back_param_input
-    return unless params.key?(:back)
+    hidden_param_input(:back)
+  end
 
-    tag.input(type: "hidden", name: "back", value: params[:back])
+  def hidden_param_input(key)
+    return unless params.key?(key)
+
+    tag.input(type: "hidden", name: key, value: params[key])
   end
 
   def form_block(record, attribute, first: false, autocomplete: false, **options, &block)

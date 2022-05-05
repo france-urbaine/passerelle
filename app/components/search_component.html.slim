@@ -10,5 +10,4 @@ form.search( data-turbo-frame="content" data-turbo-action="advance" )
   / Until this is fixed, we'll send a parameters to catch the good target frame
 
   input( type="hidden" name="Turbo-Frame" value="content" )
-  - if params.key?(:order)
-    input( type="hidden" name="order" value=params[:order] )
+  = helpers.hidden_param_input(:order)
