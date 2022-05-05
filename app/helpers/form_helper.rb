@@ -18,7 +18,7 @@ module FormHelper
   def hidden_param_input(key)
     return unless params.key?(key)
 
-    tag.input(type: "hidden", name: key, value: params[key])
+    tag.input(type: "hidden", name: key, value: params[key], autocomplete: "off")
   end
 
   def form_block(record, attribute, first: false, autocomplete: false, **options, &block)

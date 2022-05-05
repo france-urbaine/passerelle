@@ -6,6 +6,7 @@ table.datatable
           type="checkbox"
           aria-label="Tout sélectionner"
           data-selection-target="checkall"
+          autocomplete="off"
         )
         span.tooltip Tout sélectionner
 
@@ -36,6 +37,7 @@ table.datatable
             aria-labelledby=dom_id(commune, :title)
             data-selection-target="checkbox"
             data-selection-row-target="checkbox"
+            autocomplete="off"
             value=commune.id
             checked=(params[:ids].is_a?(Array) && params[:ids].include?(commune.id))
           )

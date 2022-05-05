@@ -6,6 +6,7 @@ table.datatable
           type="checkbox"
           aria-label="Tout sélectionner"
           data-selection-target="checkall"
+          autocomplete="off"
         )
         span.tooltip Tout sélectionner
 
@@ -32,6 +33,7 @@ table.datatable
             aria-labelledby=dom_id(epci, :title)
             data-selection-target="checkbox"
             data-selection-row-target="checkbox"
+            autocomplete="off"
             value=epci.id
             checked=(params[:ids].is_a?(Array) && params[:ids].include?(epci.id))
           )
