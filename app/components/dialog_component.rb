@@ -11,6 +11,7 @@ class DialogComponent < ViewComponent::Base
     tag.a(
       href:  back_url,
       class: "icon-button dialog__close-button",
+      aria:  { label: "Fermer la fenêtre de dialogue" },
       data:  { turbo_action: "restore", action: "dialog#close" }
     ) do
       helpers.svg_icon("x-icon", "Fermer cette fenêtre")

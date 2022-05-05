@@ -29,6 +29,7 @@
     & dd:empty:before {
       content: "-";
       @apply text-gray-500;
+      @apply dark:text-gray-400;
     }
 
     &:hover {

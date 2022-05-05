@@ -13,7 +13,9 @@
     flex: 0 0 theme("spacing.6");
     text-align: center;
 
-    @apply mx-1 text-gray-400;
+    @apply mx-1;
+    @apply text-gray-600;
+    @apply dark:text-gray-400;
 
     & svg {
       @apply h-6 w-6;
@@ -21,7 +23,8 @@
   }
 
   .breadcrumbs__path {
-    @apply text-gray-500;
+    @apply text-gray-600;
+    @apply dark:text-gray-400;
 
     &:last-child {
       color: unset;
@@ -30,7 +33,8 @@
 
     & a:not([disabled]):not(:hover, :active, :focus, :focus-visible),
     & .icon-button:not([disabled]):not(:hover, :active, :focus, :focus-visible) {
-      @apply text-gray-500;
+      @apply text-gray-600;
+      @apply dark:text-gray-400;
     }
 
     & .icon-button {
