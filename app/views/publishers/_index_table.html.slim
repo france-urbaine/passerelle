@@ -1,0 +1,66 @@
+table.datatable
+  thead
+    tr.datatable__row
+      th.datatable__row-actions
+        input(
+          type="checkbox"
+          aria-label="Tout sélectionner"
+          data-selection-target="checkall"
+        )
+        span.tooltip Tout sélectionner
+
+      th( aria-label="Actions" )
+
+      th
+        | Editeur
+        = order_column(:name)
+      th
+        | SIREN
+        = order_column(:siren)
+
+  tbody
+    - publishers.each do |publisher|
+      tr.datatable__row(
+        id=dom_id(publisher)
+        data-controller="selection-row"
+        data-selection-row-selected-class="datatable__row--selected"
+      )
+        td.datatable__row-actions
+          input(
+            type="checkbox"
+            aria-labelledby=dom_id(publisher, :title)
+            data-selection-target="checkbox"
+            data-selection-row-target="checkbox"
+            value=publisher.id
+            checked=(params[:ids].is_a?(Array) && params[:ids].include?(publisher.id))
+          )
+          span.tooltip Sélectionner cet éditeur
+
+        td.datatable__row-actions
+          .flex
+            a.icon-button(
+              aria-label="Modifier cet éditeur"
+              data-turbo-frame="modal"
+              href=edit_publisher_path(publisher, back: current_path)
+            )
+              = svg_icon("pencil-alt-icon", "Modifier cet éditeur")
+              span.tooltip Modifier cet éditeur
+    
+            = form_with(url: publisher_path(publisher), method: "delete", data: { turbo_confirm: "Supprimer cet éditeur ?" }) do
+              input( type="hidden" name="back" value=current_path)
+
+              button.icon-button(
+                aria-label="Supprimer cet éditeur"
+                type="submit"
+              )
+                = svg_icon("trash-icon", "Supprimer cet éditeur")
+                span.tooltip Supprimer cet éditeur
+
+        td( id=dom_id(publisher, :title) )
+          a(
+            data-turbo-action="advance"
+            data-turbo-frame="content"
+            href=publisher_path(publisher, back: current_path)
+          )= publisher.name
+
+        td= display_siren(publisher.siren)

@@ -49,6 +49,18 @@ class Publisher < ApplicationRecord
     )
   }
 
+  scope :order_by_param, lambda { |input|
+    advanced_order(
+      input,
+      name:  ->(direction) { unaccent_order(:name, direction) },
+      siren: ->(direction) { order(siren: direction) }
+    )
+  }
+
+  scope :order_by_score, lambda { |input|
+    scored_order(:name, input)
+  }
+
   # Counters cached
   # ----------------------------------------------------------------------------
   def self.reset_all_counters

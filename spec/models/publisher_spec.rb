@@ -44,6 +44,43 @@ RSpec.describe Publisher, type: :model do
     end
   end
 
+  # Order scope
+  # ----------------------------------------------------------------------------
+  describe ".order_by_param" do
+    it do
+      expect {
+        described_class.order_by_param("name").load
+      }.to perform_sql_query(<<~SQL)
+        SELECT "publishers".*
+        FROM   "publishers"
+        ORDER BY UNACCENT("publishers"."name") ASC, "publishers"."created_at" ASC
+      SQL
+    end
+
+    it do
+      expect {
+        described_class.order_by_param("-name").load
+      }.to perform_sql_query(<<~SQL)
+        SELECT "publishers".*
+        FROM   "publishers"
+        ORDER BY UNACCENT("publishers"."name") DESC, "publishers"."created_at" DESC
+      SQL
+    end
+  end
+
+  describe ".order_by_score" do
+    it do
+      expect {
+        described_class.order_by_score("Hello").load
+      }.to perform_sql_query(<<~SQL)
+        SELECT "publishers".*
+        FROM   "publishers"
+        ORDER BY ts_rank_cd(to_tsvector('french', "publishers"."name"), to_tsquery('french', 'Hello')) DESC,
+                 "publishers"."created_at" ASC
+      SQL
+    end
+  end
+
   # Counters
   # ----------------------------------------------------------------------------
   describe ".reset_all_counters" do

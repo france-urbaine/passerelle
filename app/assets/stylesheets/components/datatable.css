@@ -67,10 +67,14 @@
 
     & .icon-button {
       display: block;
-    }
 
-    & .icon-button:only-child {
-      @apply -mx-2;
+      &:first-child {
+        @apply -ml-2;
+      }
+
+      &:last-child {
+        @apply -mr-2;
+      }
     }
   }
 }

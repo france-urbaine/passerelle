@@ -1,0 +1,26 @@
+.header-bar
+  .breadcrumbs
+    .breadcrumbs__path
+      a.icon-button(
+        aria-label="Retour à la page d'accueil"
+        data-turbo-frame="_top"
+        href="/"
+      )= svg_icon("home-icon", "Retour à la page d'accueil")
+
+    .breadcrumbs__separator="/"
+    .breadcrumbs__path
+      | Organisations
+
+    .breadcrumbs__separator="/"
+    .breadcrumbs__path
+      h1 Editeurs
+
+  .flex-auto
+  .header-bar__actions
+    .header-bar__action
+      a.button.button--primary(
+        data-turbo-frame="modal"
+        href=new_publisher_path(back: current_path)
+      )
+        = svg_icon("plus-icon")
+        | Ajouter un éditeur

@@ -3,24 +3,31 @@ nav.sidebar
     = image_tag("fh.svg", alt: "Logo de FiscaHub")
     | FiscaHub
 
+  .sidebar__header Organisations
+  .sidebar__links
+    a(
+      href=publishers_path
+      class=("sidebar__link--current" if controller.controller_name == "publishers")
+    ) Editeurs
+
   .sidebar__header Territoires
   .sidebar__links
-    a( 
+    a(
       href=communes_path
       class=("sidebar__link--current" if controller.controller_name == "communes")
-    ) Communes 
+    ) Communes
 
-    a( 
+    a(
       href=epcis_path
       class=("sidebar__link--current" if controller.controller_name == "epcis")
     ) EPCI
 
-    a( 
+    a(
       href=departements_path
       class=("sidebar__link--current" if controller.controller_name == "departements")
     ) Départements
 
-    a( 
+    a(
       href=regions_path
       class=("sidebar__link--current" if controller.controller_name == "regions")
     ) Régions

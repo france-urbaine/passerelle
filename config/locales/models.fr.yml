@@ -1,6 +1,11 @@
 fr:
   activerecord:
     attributes:
+      publisher:
+        name:             Nom de l'éditeur
+        siren:            Numéro SIREN de l'éditeur
+        email:            Adresse mail de contact
+
       commune:
         name:             Nom de la commune
         code_insee:       Code INSEE
@@ -27,6 +32,20 @@ fr:
 
     errors:
       models:
+        publisher:
+          attributes:
+            name:
+              blank:     Un nom est requis
+              taken:     Ce nom est déjà attribué
+
+            siren:
+              blank:     Un numéro SIREN est requis
+              invalid:   Ce numéro SIREN n'est pas valide
+              taken:     Ce numéro SIREN est déjà attribué
+
+            email:
+              invalid:   Une adresse mail valide est requise
+
         commune:
           attributes:
             name:
@@ -35,7 +54,7 @@ fr:
             code_insee:
               blank:     Un code INSEE est requis
               invalid:   Ce code INSEE n 'est pas valide
-              taken:     Ce code INSEE est déjà attribué à une autre commune
+              taken:     Ce code INSEE est déjà attribué
 
             code_departement:
               blank:     Un code de département est requis
@@ -55,7 +74,7 @@ fr:
             siren:
               blank:     Un numéro SIREN est requis
               invalid:   Ce numéro SIREN n'est pas valide
-              taken:     Ce numéro SIREN est déjà attribué à un autre EPCI
+              taken:     Ce numéro SIREN est déjà attribué
 
             code_departement:
               invalid:   Ce code de département n'est pas valide
@@ -71,7 +90,7 @@ fr:
             code_departement:
               blank:     Un numéro de département est requis
               invalid:   Ce numéro de département n'est pas valide
-              taken:     Ce numéro de département est déjà attribué à un autre département
+              taken:     Ce numéro de département est déjà attribué
 
             code_region:
               blank:     Un numéro de region est requis
@@ -88,7 +107,7 @@ fr:
             code_region:
               blank:     Un numéro de region est requis
               invalid:   Ce numéro de region n'est pas valide
-              taken:     Ce numéro de région est déjà attribué à une autre région
+              taken:     Ce numéro de région est déjà attribué
 
   activemodel:
     errors:

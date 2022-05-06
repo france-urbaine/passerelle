@@ -1,0 +1,55 @@
+.header-bar
+  .breadcrumbs
+    .breadcrumbs__path
+      a.icon-button(
+        aria-label="Retour à la page d'accueil"
+        data-turbo-frame="_top"
+        href="/"
+      )= svg_icon("home-icon", "Retour à la page d'accueil")
+
+    .breadcrumbs__separator="/"
+    .breadcrumbs__path
+      | Organisations
+
+    .breadcrumbs__separator="/"
+    .breadcrumbs__path
+      a(
+        data-turbo-action="advance"
+        data-turbo-frame="content"
+        href=params.fetch(:back, publishers_path)
+      ) Editeurs
+
+    .breadcrumbs__separator="/"
+    .breadcrumbs__path
+      h1= publisher.name
+
+  .flex-auto
+  .header-bar__actions
+    .header-bar__action
+      a.button(
+        data-turbo-frame="modal"
+        href=edit_publisher_path(publisher, back: current_path)
+      )
+        = svg_icon("pencil-alt-icon")
+        | Modifier
+
+.card.mb-6
+  dl.description-list
+    .description-list__row
+      dt Numéro SIREN de l'éditeur
+      dd= display_siren(publisher.siren)
+
+    .description-list__row
+      dt Collectivités enregistrées
+      dd= count(publisher.collectivities_count, "collectivité") if publisher.collectivities_count.positive?
+
+- if publisher.collectivities_count.positive?
+  table.mb-6
+    thead
+      tr.datatable-row
+        th Collectivités enregistrées
+
+    tbody
+      - publisher.collectivities.each do |collectivite|
+        tr.datatable-row
+          td= collectivite.name

@@ -1,31 +1,36 @@
 fr:
-  communes:
+  default: &default
     update:
       success:
         type:  "success"
         title: "Les modifications ont été enregistrées avec succés."
         delay: 3000
+
+  publishers:
+    <<: *default
+    create:
+      success:
+        type:  "success"
+        title: "Un nouvel éditeur a été ajouté avec succés."
+        delay: 3000
+
+    destroy:
+      success:
+        type:         "success"
+        title:        "Le compte de l'éditeur a été archivé."
+        description:  "La suppression de l'éditeur sera définitive dans 30 jours."
+
+  communes:
+    <<: *default
 
   epcis:
-    update:
-      success:
-        type:  "success"
-        title: "Les modifications ont été enregistrées avec succés."
-        delay: 3000
+    <<: *default
 
   departements:
-    update:
-      success:
-        type:  "success"
-        title: "Les modifications ont été enregistrées avec succés."
-        delay: 3000
+    <<: *default
 
   regions:
-    update:
-      success:
-        type:  "success"
-        title: "Les modifications ont été enregistrées avec succés."
-        delay: 3000
+    <<: *default
 
   territories_updates:
     create:

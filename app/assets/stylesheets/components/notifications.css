@@ -19,7 +19,7 @@
     align-items: flex-start;
 
     @apply transition transform duration-500;
-    @apply p-4 rounded-md ring-1 shadow-lg;
+    @apply p-4 mb-4 rounded-md ring-1 shadow-lg;
     @apply bg-white ring-gray-300;
     @apply dark:bg-black dark:ring-gray-700;
   }

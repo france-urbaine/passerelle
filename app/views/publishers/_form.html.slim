@@ -1,0 +1,30 @@
+= dialog(back_url: params.fetch(:back, publishers_path)) do |dialog|
+  = turbo_frame_tag :form do
+    = form_with(model: publisher) do |form|
+      .dialog__header
+        h1#dialog-title.dialog__title
+          - if publisher.persisted?
+            | Modification de l'éditeur
+          - else
+            | Création d'un nouvel éditeur
+
+        .dialog__header-toolbar
+          = dialog.close_button
+
+      .dialog__content
+        = back_param_input
+        = form.block :name, first: true do
+          = form.label :name
+          = form.text_field :name, autofocus: true
+
+        = form.block :siren do
+          = form.label :siren
+          = form.text_field :siren
+
+        = form.block :email do
+          = form.label :email
+          = form.email_field :email
+
+      .dialog__actions
+        button.button.button--primary( type="submit" ) Enregistrer
+        = dialog.cancel_button "Annuler"

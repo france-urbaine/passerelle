@@ -1,0 +1,34 @@
+- if params[:ids].present?
+  .header-bar.header-bar--selection
+    .header-bar__actions
+      .header-bar__action
+        button.icon-button.selection-bar__close-button(
+          data-action="selection#uncheckAll"
+        )
+          = svg_icon("x-icon", "Réinitialiser la sélection")
+          span.tooltip Réinitialiser la sélection
+
+      .header-bar__text
+        - if params[:ids] == "all"
+          = count(@pagy.count, "éditeur sélectionné", plural: "éditeurs sélectionnés")
+        - else
+          = count(params[:ids].size, "éditeur sélectionné", plural: "éditeurs sélectionnés")
+
+          - if params[:ids].size == pagy.items && publishers.length < @pagy.count
+            |  (
+            a(
+              data-action="selection#checkAll"
+              href=publishers_path(extract_params(:search).merge(ids: "all"))
+            ) Sélectionner les #{count(@pagy.count, "commune")}
+            | )
+
+    .flex-auto
+    .header-bar__actions
+      .header-bar__action
+        .button( disabled="true" ) Supprimer la sélection
+
+- else
+  .header-bar
+    = search("Rechercher")
+    .flex-auto
+    = index_options(pagy, "éditeur", order: { name: "nom", siren: "SIREN" })
