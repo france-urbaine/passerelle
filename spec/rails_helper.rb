@@ -15,6 +15,7 @@ require File.expand_path("../config/environment", __dir__)
 abort("The Rails environment is running in production mode!") if Rails.env.production?
 require "rspec/rails"
 require "webmock/rspec"
+require "database_cleaner/active_record"
 require "view_component/test_helpers"
 
 if ENV.fetch("SUPER_DIFF", nil) == "true"
@@ -92,11 +93,18 @@ RSpec.configure do |config|
 
   config.include ImplicitResponse, type: :request
 
+  config.before :context, use_fixtures: true do
+    self.use_transactional_tests = false
+    DatabaseCleaner.strategy = :truncation
+    DatabaseCleaner.start
+  end
+
+  config.after :context, use_fixtures: true do
+    DatabaseCleaner.clean
+  end
+
   config.before type: :system do
-    WebMock.disable_net_connect!(
-      allow_localhost: true,
-      allow: /geckodriver/
-    )
+    WebMock.disable_net_connect!(allow_localhost: true, allow: /geckodriver/)
 
     driven_by :selenium, using: :headless_firefox, screen_size: [1400, 1400]
   end

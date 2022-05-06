@@ -1,6 +1,6 @@
 default: &default
   adapter:  postgresql
-  encoding: unicode
+  encoding: utf8
   pool:     <%= ENV.fetch("RAILS_MAX_THREADS", 5) %>
   host:     <%= ENV["POSTGRESQL_HOST"] %>
   port:     <%= ENV["POSTGRESQL_PORT"] %>
