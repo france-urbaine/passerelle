@@ -37,12 +37,19 @@ RSpec.describe Collectivity, type: :model do
   it { is_expected.not_to allow_value("DDFIP")      .for(:territory_type) }
 
   context "with an existing collectivity" do
-    # FYI: About uniqueness validations, case insensitivity and accents:
-    # You should read ./docs/uniqueness_validations_and_accents.md
-    before { create(:collectivity, name: "Saint-Medard") }
+    # FYI: If you're experimenting errors due to accents,
+    # you should read ./docs/uniqueness_validations_and_accents.md
+    before { create(:collectivity) }
 
     it { is_expected.to validate_uniqueness_of(:name).case_insensitive }
     it { is_expected.to validate_uniqueness_of(:siren).case_insensitive }
+  end
+
+  context "when existing collectivity is discarded" do
+    before { create(:collectivity, :discarded) }
+
+    it { is_expected.not_to validate_uniqueness_of(:name).case_insensitive }
+    it { is_expected.not_to validate_uniqueness_of(:siren).case_insensitive }
   end
 
   # Formatting before save

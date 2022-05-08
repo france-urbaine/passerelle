@@ -48,10 +48,17 @@ class Collectivity < ApplicationRecord
   validates :contact_phone, format: { allow_blank: true, with: PHONE_REGEXP }
   validates :territory_type, inclusion: { in: %w[Commune EPCI Departement] }
 
-  # FYI: About uniqueness validations, case insensitivity and accents:
-  # You should read ./docs/uniqueness_validations_and_accents.md
-  validates :name,  uniqueness: { case_sensitive: false, unless: :skip_uniqueness_validation_of_name? }
-  validates :siren, uniqueness: { case_sensitive: false, unless: :skip_uniqueness_validation_of_siren? }
+  validates :name,  uniqueness: {
+    case_sensitive: false,
+    conditions: -> { kept },
+    unless: :skip_uniqueness_validation_of_name?
+  }
+
+  validates :siren, uniqueness: {
+    case_sensitive: false,
+    conditions: -> { kept },
+    unless: :skip_uniqueness_validation_of_siren?
+  }
 
   # Scopes
   # ----------------------------------------------------------------------------

@@ -23,10 +23,19 @@ RSpec.describe Publisher, type: :model do
   it { is_expected.not_to allow_value("foo.bar.com")        .for(:email) }
 
   context "with an existing publisher" do
+    # FYI: About uniqueness validations, case insensitivity and accents:
+    # You should read ./docs/uniqueness_validations_and_accents.md
     before { create(:publisher) }
 
     it { is_expected.to validate_uniqueness_of(:name).case_insensitive }
     it { is_expected.to validate_uniqueness_of(:siren).case_insensitive }
+  end
+
+  context "when existing publisher is discarded" do
+    before { create(:publisher, :discarded) }
+
+    it { is_expected.not_to validate_uniqueness_of(:name).case_insensitive }
+    it { is_expected.not_to validate_uniqueness_of(:siren).case_insensitive }
   end
 
   # Search

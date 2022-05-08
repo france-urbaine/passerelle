@@ -15,6 +15,10 @@ FactoryBot.define do
       approved_at { Time.current }
     end
 
+    trait :discarded do
+      discarded_at { Time.current }
+    end
+
     trait :with_contact do
       contact_first_name  { Faker::Name.first_name }
       contact_last_name   { Faker::Name.last_name }

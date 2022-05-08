@@ -36,9 +36,11 @@ class DDFIP < ApplicationRecord
   validates :code_departement, presence: true
   validates :code_departement, format: { allow_blank: true, with: CODE_DEPARTEMENT_REGEXP }
 
-  # FYI: About uniqueness validations, case insensitivity and accents:
-  # You should read ./docs/uniqueness_validations_and_accents.md
-  validates :name, uniqueness: { case_sensitive: false, unless: :skip_uniqueness_validation_of_name? }
+  validates :name, uniqueness: {
+    case_sensitive: false,
+    conditions: -> { kept },
+    unless: :skip_uniqueness_validation_of_name?
+  }
 
   # Scopes
   # ----------------------------------------------------------------------------

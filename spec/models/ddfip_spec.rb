@@ -26,9 +26,15 @@ RSpec.describe DDFIP, type: :model do
   context "with an existing DDFIP" do
     # FYI: About uniqueness validations, case insensitivity and accents:
     # You should read ./docs/uniqueness_validations_and_accents.md
-    before { create(:ddfip, name: "Vendee") }
+    before { create(:ddfip) }
 
     it { is_expected.to validate_uniqueness_of(:name).case_insensitive }
+  end
+
+  context "when existing collectivity is discarded" do
+    before { create(:ddfip, :discarded) }
+
+    it { is_expected.not_to validate_uniqueness_of(:name).case_insensitive }
   end
 
   # Search
