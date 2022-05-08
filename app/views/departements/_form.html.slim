@@ -12,21 +12,21 @@
         = back_param_input
         = form.block :name, first: true do
           = form.label :name
-          = form.text_field :name, autofocus: true
+          = form.text_field :name, autofocus: true, required: true
 
         = form.block :code_departement do
           = form.label :code_departement
-          = form.text_field :code_departement
+          = form.text_field :code_departement, required: true
 
         = form.block :region, autocomplete: regions_path do
           = form.label :region
-          = form.search_field :region, value: departement.region&.name, data: { autocomplete_target: "input" }
+          = form.search_field :region, value: departement.region&.name, required: true, data: { autocomplete_target: "input" }
           = form.hidden_field :code_region, data: { autocomplete_target: "hidden" }
 
         = noscript do
           = form.block :code_region do
             = form.label :code_region
-            = form.text_field :code_region
+            = form.text_field :code_region, required: true
 
       .dialog__actions
         button.button.button--primary( type="submit" ) Enregistrer

@@ -12,15 +12,15 @@
         = back_param_input
         = form.block :name, first: true do
           = form.label :name
-          = form.text_field :name, autofocus: true
+          = form.text_field :name, autofocus: true, required: true
 
         = form.block :code_insee do
           = form.label :code_insee
-          = form.text_field :code_insee
+          = form.text_field :code_insee, required: true
 
         = form.block :departement, autocomplete: departements_path do
           = form.label :departement
-          = form.search_field :departement, value: commune.departement&.name, data: { autocomplete_target: "input" }
+          = form.search_field :departement, value: commune.departement&.name, required: true, data: { autocomplete_target: "input" }
           = form.hidden_field :code_departement, data: { autocomplete_target: "hidden" }
 
         = form.block :epci, autocomplete: epcis_path do
@@ -31,7 +31,7 @@
         = noscript do
           = form.block :code_departement do
             = form.label :code_departement
-            = form.text_field :code_departement
+            = form.text_field :code_departement, required: true
 
           = form.block :siren_epci do
             = form.label :siren_epci

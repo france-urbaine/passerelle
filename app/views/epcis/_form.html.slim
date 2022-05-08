@@ -12,11 +12,11 @@
         = back_param_input
         = form.block :name, first: true do
           = form.label :name
-          = form.text_field :name, autofocus: true
+          = form.text_field :name, autofocus: true, required: true
 
         = form.block :siren do
           = form.label :siren
-          = form.text_field :siren
+          = form.text_field :siren, required: true
 
         = form.block :departement, autocomplete: departements_path do
           = form.label :departement
