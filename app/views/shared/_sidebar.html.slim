@@ -1,4 +1,4 @@
-nav.sidebar 
+nav.sidebar
   .sidebar__brand
     = image_tag("fh.svg", alt: "Logo de FiscaHub")
     | FiscaHub
@@ -31,7 +31,7 @@ nav.sidebar
       href=regions_path
       class=("sidebar__link--current" if controller.controller_name == "regions")
     ) Régions
-  
+
   .flex-auto
   .sidebar__user
     .sidebar__user-avatar

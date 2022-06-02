@@ -5,7 +5,9 @@ require "net/http"
 module Downloader
   module_function
 
-  DOWNLOAD_PATH = ENV.fetch("DOWNLOAD_PATH", "tmp/download")
+  DOWNLOAD_PATH = ENV.fetch("DOWNLOAD_PATH") do
+    Rails.env.test? ? "tmp/test/download" : "tmp/download"
+  end
 
   def call(url)
     url        = follow_redirections(url)

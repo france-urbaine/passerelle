@@ -18,7 +18,7 @@ require "webmock/rspec"
 require "database_cleaner/active_record"
 require "view_component/test_helpers"
 
-if ENV.fetch("SUPER_DIFF", nil) == "true"
+unless ENV.fetch("SUPER_DIFF", nil) == "false"
   require "super_diff/rspec"
   require "super_diff/rails"
 end
@@ -104,7 +104,11 @@ RSpec.configure do |config|
   end
 
   config.before type: :system do
-    WebMock.disable_net_connect!(allow_localhost: true, allow: /geckodriver/)
+    WebMock.disable_net_connect!(
+      net_http_connect_on_start: true,
+      allow_localhost:           true,
+      allow:                     /geckodriver/
+    )
 
     driven_by :selenium, using: :headless_firefox, screen_size: [1400, 1400]
   end

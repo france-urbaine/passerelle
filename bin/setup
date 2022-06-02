@@ -17,6 +17,7 @@ FileUtils.chdir APP_ROOT do
   puts "== Installing dependencies =="
   system! "gem install bundler --conservative"
   system("bundle check") || system!("bundle install")
+  system! "yarn"
 
   # puts "\n== Copying sample files =="
   # unless File.exist?("config/database.yml")
@@ -28,6 +29,12 @@ FileUtils.chdir APP_ROOT do
 
   puts "\n== Setup test environment =="
   system! "bin/rails parallel:prepare"
+
+  # Compile assets in case they were missing.
+  # They are required to start the test suite
+  puts "\n== Compile assets =="
+  system! "yarn build:css"
+  system! "yarn build:js"
 
   puts "\n== Removing old logs and tempfiles =="
   system! "bin/rails log:clear tmp:clear"

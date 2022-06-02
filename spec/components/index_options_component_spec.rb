@@ -31,7 +31,7 @@ RSpec.describe IndexOptionsComponent, type: :component do
       <span aria-hidden="true" class="icon-button" disabled="true">
         <svg>
           <title>Page précédente</title>
-          <use href="#chevron-left-icon">
+          <use href="#chevron-left-icon" />
         </svg>
       </span>
       <a aria-label="Page suivante"
@@ -43,7 +43,7 @@ RSpec.describe IndexOptionsComponent, type: :component do
       >
         <svg>
           <title>Page suivante</title>
-          <use href="#chevron-right-icon">
+          <use href="#chevron-right-icon" />
         </svg>
         <span class="tooltip">Page suivante</span>
       </a>
@@ -66,7 +66,7 @@ RSpec.describe IndexOptionsComponent, type: :component do
         >
           <svg>
             <title>Page précédente</title>
-            <use href="#chevron-left-icon">
+            <use href="#chevron-left-icon" />
           </svg>
           <span class="tooltip">Page précédente</span>
         </a>
@@ -79,7 +79,7 @@ RSpec.describe IndexOptionsComponent, type: :component do
         >
           <svg>
             <title>Page suivante</title>
-            <use href="#chevron-right-icon">
+            <use href="#chevron-right-icon" />
           </svg>
           <span class="tooltip">Page suivante</span>
         </a>
@@ -103,14 +103,14 @@ RSpec.describe IndexOptionsComponent, type: :component do
         >
           <svg>
             <title>Page précédente</title>
-            <use href="#chevron-left-icon">
+            <use href="#chevron-left-icon" />
           </svg>
           <span class="tooltip">Page précédente</span>
         </a>
         <span aria-hidden="true" class="icon-button" disabled="true">
           <svg>
             <title>Page suivante</title>
-            <use href="#chevron-right-icon">
+            <use href="#chevron-right-icon" />
           </svg>
         </span>
       HTML
@@ -156,7 +156,7 @@ RSpec.describe IndexOptionsComponent, type: :component do
         >
           <svg>
             <title>Trier par ordre croissant</title>
-            <use href="#sort-ascending-icon">
+            <use href="#sort-ascending-icon" />
           </svg>
           <span class="tooltip">Trier par ordre croissant</span>
         </a>
@@ -169,7 +169,7 @@ RSpec.describe IndexOptionsComponent, type: :component do
         >
           <svg>
             <title>Trier par ordre décroissant</title>
-            <use href="#sort-descending-icon">
+            <use href="#sort-descending-icon" />
           </svg>
           <span class="tooltip">Trier par ordre décroissant</span>
         </a>

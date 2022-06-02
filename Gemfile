@@ -83,7 +83,7 @@ group :test do
   gem "rspec-collection_matchers"
   gem "selenium-webdriver"
   gem "shoulda-matchers"
-  gem "simplecov"
+  gem "simplecov", require: false
   gem "super_diff"
   gem "webdrivers"
   gem "webmock"

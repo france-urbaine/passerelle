@@ -22,7 +22,7 @@ module ComponentsHelper
 
     tag.svg(**options) do
       concat(tag.title(title)) if title
-      concat(tag.use(href: "##{name}", open: false))
+      concat(tag.use(href: "##{name}"))
     end
   end
 end

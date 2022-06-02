@@ -60,7 +60,7 @@
     transition: none;
     vertical-align: middle;
     flex-shrink: 0;
-    color-adjust: exact;
+    print-color-adjust: exact;
     background-origin: border-box;
     user-select: none;
 

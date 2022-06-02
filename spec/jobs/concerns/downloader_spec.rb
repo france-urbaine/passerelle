@@ -7,7 +7,7 @@ RSpec.describe Downloader do
 
   let(:url)      { "http://example.com/some/path" }
   let(:location) { "http://example.com/redirection/downloader_test.zip" }
-  let(:target)   { Rails.root.join("tmp/test/downloader_test.zip") }
+  let(:target)   { Rails.root.join("tmp/test/download/downloader_test.zip") }
   let(:fixture)  { file_fixture("communes.zip") }
 
   before do
