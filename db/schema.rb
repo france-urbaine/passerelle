@@ -10,14 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_04_10_102705) do
+ActiveRecord::Schema[7.0].define(version: 2022_06_02_130101) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
   enable_extension "unaccent"
 
+  # Custom types defined in this database.
+  # Note that some types may not work with other database engines. Be careful if changing database.
+  create_enum "epci_nature", ["ME", "CC", "CA", "CU"]
+  create_enum "organization_type", ["Collectivity", "Publisher", "DDFIP"]
+  create_enum "territory_type", ["Commune", "EPCI", "Departement", "Region"]
+
   create_table "collectivities", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.string "territory_type", null: false
+    t.enum "territory_type", null: false, enum_type: "territory_type"
     t.uuid "territory_id", null: false
     t.uuid "publisher_id"
     t.string "name", null: false
@@ -84,7 +90,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_04_10_102705) do
     t.string "name", null: false
     t.string "siren", null: false
     t.string "code_departement"
-    t.string "nature"
+    t.enum "nature", enum_type: "epci_nature"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "communes_count", default: 0, null: false
@@ -121,7 +127,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_04_10_102705) do
   end
 
   create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.string "organization_type", null: false
+    t.enum "organization_type", null: false, enum_type: "organization_type"
     t.uuid "organization_id", null: false
     t.uuid "inviter_id"
     t.string "first_name", default: "", null: false

@@ -5,7 +5,7 @@
 # Table name: users
 #
 #  id                     :uuid             not null, primary key
-#  organization_type      :string           not null
+#  organization_type      :enum             not null
 #  organization_id        :uuid             not null
 #  inviter_id             :uuid
 #  first_name             :string           default(""), not null

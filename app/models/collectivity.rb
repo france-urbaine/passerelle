@@ -5,7 +5,7 @@
 # Table name: collectivities
 #
 #  id                 :uuid             not null, primary key
-#  territory_type     :string           not null
+#  territory_type     :enum             not null
 #  territory_id       :uuid             not null
 #  publisher_id       :uuid
 #  name               :string           not null
@@ -46,7 +46,7 @@ class Collectivity < ApplicationRecord
   validates :siren,         format: { allow_blank: true, with: SIREN_REGEXP }
   validates :contact_email, format: { allow_blank: true, with: EMAIL_REGEXP }
   validates :contact_phone, format: { allow_blank: true, with: PHONE_REGEXP }
-  validates :territory_type, inclusion: { in: %w[Commune EPCI Departement] }
+  validates :territory_type, inclusion: { in: %w[Commune EPCI Departement Region] }
 
   validates :name,  uniqueness: {
     case_sensitive: false,
@@ -66,6 +66,7 @@ class Collectivity < ApplicationRecord
   scope :communes,     -> { where(territory_type: "Commune") }
   scope :epcis,        -> { where(territory_type: "EPCI") }
   scope :departements, -> { where(territory_type: "Departement") }
+  scope :regions,      -> { where(territory_type: "Region") }
 
   scope :search, lambda { |input|
     advanced_search(
@@ -100,6 +101,10 @@ class Collectivity < ApplicationRecord
 
   def departement?
     territory_type == "Departement"
+  end
+
+  def region?
+    territory_type == "Region"
   end
 
   # Counters cached

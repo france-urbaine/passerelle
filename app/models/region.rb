@@ -30,6 +30,8 @@ class Region < ApplicationRecord
   has_many :epcis,    through: :departements
   has_many :ddfips,   through: :departements
 
+  has_one :registered_collectivity, class_name: "Collectivity", as: :territory, dependent: false
+
   # Validations
   # ----------------------------------------------------------------------------
   validates :name,        presence: true

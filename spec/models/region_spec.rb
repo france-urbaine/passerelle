@@ -6,10 +6,11 @@ RSpec.describe Region, type: :model do
   # Associations
   # ----------------------------------------------------------------------------
   it { is_expected.to have_many(:departements) }
-
   it { is_expected.to have_many(:communes) }
   it { is_expected.to have_many(:epcis) }
   it { is_expected.to have_many(:ddfips) }
+  it { is_expected.to have_one(:registered_collectivity) }
+  it { is_expected.to respond_to(:on_territory_collectivities) }
 
   # Validations
   # ----------------------------------------------------------------------------

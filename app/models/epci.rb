@@ -8,7 +8,7 @@
 #  name                 :string           not null
 #  siren                :string           not null
 #  code_departement     :string
-#  nature               :string
+#  nature               :enum
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
 #  communes_count       :integer          default(0), not null

@@ -37,5 +37,9 @@ FactoryBot.define do
     trait :departement do
       association :territory, factory: :departement
     end
+
+    trait :region do
+      association :territory, factory: :region
+    end
   end
 end
