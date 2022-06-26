@@ -11,6 +11,6 @@ RSpec.describe DialogComponent, type: :component do
     end
   end
 
-  it { expect(rendered_component).to have_selector(%(.dialog[role="dialog"][aria-modal="true"])) }
-  it { expect(rendered_component).to include(%(<div class="dialog__content">Hello World!</div>)) }
+  it { expect(page).to have_selector(%(.dialog[role="dialog"][aria-modal="true"])) }
+  it { expect(page).to have_selector(%(.dialog__content), text: "Hello World!") }
 end

@@ -11,9 +11,9 @@ RSpec.describe NotificationComponent, type: :component do
     render_inline(component)
   end
 
-  it { expect(rendered_component).to have_selector(%(.notification[role="alert"][aria-live="polite"])) }
-  it { expect(rendered_component).to include(%(<svg class="notification__icon">)) }
-  it { expect(rendered_component).to include(%(<div class="notification__title">Hello world !</div>)) }
+  it { expect(page).to have_selector(%(.notification[role="alert"][aria-live="polite"])) }
+  it { expect(rendered_content).to include(%(<svg class="notification__icon">)) }
+  it { expect(rendered_content).to include(%(<div class="notification__title">Hello world !</div>)) }
 
   context "with a hash argument" do
     let(:data) do
@@ -25,9 +25,9 @@ RSpec.describe NotificationComponent, type: :component do
       }
     end
 
-    it { expect(rendered_component).to have_selector(%(.notification[role="alert"][aria-live="polite"])) }
-    it { expect(rendered_component).to include(%(<svg class="notification__icon notification__icon--error">)) }
-    it { expect(rendered_component).to include(%(<div class="notification__title">Une erreur s&#39;est produite.</div>)) }
-    it { expect(rendered_component).to include(%(<p>Notre équipe a été notifiée.\n<br />Veuillez rééssayer plus tard !</p>)) }
+    it { expect(page).to have_selector(%(.notification[role="alert"][aria-live="polite"])) }
+    it { expect(rendered_content).to include(%(<svg class="notification__icon notification__icon--error">)) }
+    it { expect(rendered_content).to include(%(<div class="notification__title">Une erreur s&#39;est produite.</div>)) }
+    it { expect(rendered_content).to include(%(<p>Notre équipe a été notifiée.\n<br />Veuillez rééssayer plus tard !</p>)) }
   end
 end

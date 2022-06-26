@@ -15,19 +15,19 @@ RSpec.describe IndexOptionsComponent, type: :component do
   end
 
   it do
-    expect(rendered_component).to include(
+    expect(rendered_content).to include(
       %(<b>1 200</b> communes <span class="mx-4">|</span> Page 1 sur 24)
     )
   end
 
   it do
-    expect(rendered_component).to have_selector(
+    expect(page).to have_selector(
       %(button[aria-label="Options d'affichage du tableau"])
     )
   end
 
   it do
-    expect(rendered_component).to include(clean_template(<<~HTML))
+    expect(rendered_content).to include(clean_template(<<~HTML))
       <span aria-hidden="true" class="icon-button" disabled="true">
         <svg>
           <title>Page précédente</title>
@@ -53,10 +53,10 @@ RSpec.describe IndexOptionsComponent, type: :component do
   context "when the current page is in the middle" do
     let(:pagy) { Pagy.new(count: 1200, page: 3) }
 
-    it { expect(rendered_component).to include("Page 3 sur 24") }
+    it { expect(rendered_content).to include("Page 3 sur 24") }
 
     it do
-      expect(rendered_component).to include(clean_template(<<~HTML))
+      expect(rendered_content).to include(clean_template(<<~HTML))
         <a aria-label="Page précédente"
            class="icon-button"
            data-turbo-action="advance"
@@ -90,10 +90,10 @@ RSpec.describe IndexOptionsComponent, type: :component do
   context "when the current page is in the last" do
     let(:pagy) { Pagy.new(count: 1200, page: 24) }
 
-    it { expect(rendered_component).to include("Page 24 sur 24") }
+    it { expect(rendered_content).to include("Page 24 sur 24") }
 
     it do
-      expect(rendered_component).to include(clean_template(<<~HTML))
+      expect(rendered_content).to include(clean_template(<<~HTML))
         <a aria-label="Page précédente"
            class="icon-button"
            data-turbo-action="advance"
@@ -123,19 +123,19 @@ RSpec.describe IndexOptionsComponent, type: :component do
     end
 
     context "with plural resources" do
-      it { expect(rendered_component).to include("<b>1 200</b> établissements publiques") }
+      it { expect(rendered_content).to include("<b>1 200</b> établissements publiques") }
     end
 
     context "with singular resource" do
       let(:pagy) { Pagy.new(count: 1, page: 1) }
 
-      it { expect(rendered_component).to include("<b>1</b> établissement publique") }
+      it { expect(rendered_content).to include("<b>1</b> établissement publique") }
     end
 
     context "without resources" do
       let(:pagy) { Pagy.new(count: 0, page: 1) }
 
-      it { expect(rendered_component).to include("0 établissement publique") }
+      it { expect(rendered_content).to include("0 établissement publique") }
     end
   end
 
@@ -145,7 +145,7 @@ RSpec.describe IndexOptionsComponent, type: :component do
     end
 
     it do
-      expect(rendered_component).to include(clean_template(<<~HTML))
+      expect(rendered_content).to include(clean_template(<<~HTML))
         <span class="order-last">Trier par commune</span>
         <a aria-label="Trier par commune, par ordre croissant"
            class="icon-button"

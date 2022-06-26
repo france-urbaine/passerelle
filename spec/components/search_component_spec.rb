@@ -14,7 +14,7 @@ RSpec.describe SearchComponent, type: :component do
   end
 
   it do
-    expect(rendered_component).to eq(clean_template(<<~HTML))
+    expect(rendered_content).to eq(clean_template(<<~HTML))
       <form autocomplete="off" class="search" data-turbo-action="advance" data-turbo-frame="content">
         <label class="form-block">
           <div class="form-block__label--hiden">Rechercher...</div>
@@ -36,7 +36,7 @@ RSpec.describe SearchComponent, type: :component do
     let(:current_path) { "/communes?search=Pyr%C3%A9n%C3%A9es&order=-departement&page=2" }
 
     it do
-      expect(rendered_component).to eq(clean_template(<<~HTML))
+      expect(rendered_content).to eq(clean_template(<<~HTML))
         <form autocomplete="off" class="search" data-turbo-action="advance" data-turbo-frame="content">
           <label class="form-block">
             <div class="form-block__label--hiden">Rechercher...</div>
