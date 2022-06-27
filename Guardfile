@@ -3,8 +3,10 @@
 all_on_start    = ENV.fetch("ALL_ON_START", nil) == "true"
 parallel_rspec  = ENV.fetch("PARALLEL", nil) == "true"
 
+Guard::UI.info "No guard called on start: use ALL_ON_START=true next time" unless all_on_start
+
 rspec_options   = { all_on_start:, cmd: "bundle exec rspec" }
-rubocop_options = { all_on_start:, cli: %w[--display-cop-names] }
+rubocop_options = { all_on_start:, cli: %w[--display-cop-names --server] }
 
 if parallel_rspec
   rspec_options[:run_all] = {
