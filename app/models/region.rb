@@ -75,19 +75,6 @@ class Region < ApplicationRecord
   # Counters cached
   # ----------------------------------------------------------------------------
   def self.reset_all_counters
-    departements   = Departement.where(%("departements"."code_region" = "regions"."code_region"))
-    epcis          = EPCI.joins(:departement).merge(departements)
-    communes       = Commune.joins(:departement).merge(departements)
-    ddfips         = DDFIP.joins(:departement).merge(departements)
-    communes_epcis = EPCI.joins(communes: :departement).merge(departements)
-    collectivities = Collectivity.kept.where(territory: [communes, communes_epcis, departements])
-
-    update_all_counters(
-      departements_count:   departements,
-      epcis_count:          epcis,
-      communes_count:       communes,
-      ddfips_count:         ddfips,
-      collectivities_count: collectivities
-    )
+    connection.select_value("SELECT reset_all_regions_counters()")
   end
 end

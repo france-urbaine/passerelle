@@ -89,49 +89,53 @@ RSpec.describe DDFIP, type: :model do
     end
   end
 
-  # Counters
+  # Reset counters
   # ----------------------------------------------------------------------------
   describe ".reset_all_counters" do
-    it do
-      expect {
-        described_class.reset_all_counters
-      }.to perform_sql_query(<<~SQL)
-        UPDATE "ddfips"
-        SET "users_count" = (
-              SELECT COUNT(*)
-              FROM   "users"
-              WHERE  (
-                    "users"."organization_type" = 'DDFIP'
-                AND "users"."organization_id" = "ddfips"."id"
-              )
-            ),
-            "collectivities_count" = (
-              SELECT COUNT(*)
-              FROM   "collectivities"
-              WHERE  "collectivities"."discarded_at" IS NULL
-                AND (
-                      "collectivities"."territory_type" = 'Commune'
-                  AND "collectivities"."territory_id" IN (
-                        SELECT "communes"."id"
-                        FROM "communes"
-                        WHERE ("communes"."code_departement" = "ddfips"."code_departement")
-                  )
-                  OR  "collectivities"."territory_type" = 'EPCI'
-                  AND "collectivities"."territory_id" IN (
-                        SELECT "epcis"."id"
-                        FROM "epcis"
-                        INNER JOIN "communes" ON "communes"."siren_epci" = "epcis"."siren"
-                        WHERE ("communes"."code_departement" = "ddfips"."code_departement")
-                  )
-                  OR  "collectivities"."territory_type" = 'Departement'
-                  AND "collectivities"."territory_id" IN (
-                    SELECT "departements"."id"
-                    FROM "departements"
-                    WHERE ("departements"."code_departement" = "ddfips"."code_departement")
-                  )
-                )
-            )
-      SQL
+    subject { described_class.reset_all_counters }
+
+    let!(:ddfip1) { create(:ddfip) }
+    let!(:ddfip2) { create(:ddfip) }
+
+    describe "on users_count" do
+      before do
+        create_list(:user, 4, organization: ddfip1)
+        create_list(:user, 2, organization: ddfip2)
+        create_list(:user, 1, :publisher)
+        create_list(:user, 1, :collectivity)
+
+        DDFIP.update_all(users_count: 0)
+      end
+
+      its_block { is_expected.to change { ddfip1.reload.users_count }.from(0).to(4) }
+      its_block { is_expected.to change { ddfip2.reload.users_count }.from(0).to(2) }
+    end
+
+    describe "on collectivities_count" do
+      before do
+        epcis    = create_list(:epci, 3)
+        communes =
+          create_list(:commune, 3, epci: epcis[0], departement: ddfip1.departement) +
+          create_list(:commune, 2, epci: epcis[1], departement: ddfip1.departement)
+
+        create(:collectivity, territory: communes[0])
+        create(:collectivity, territory: communes[1])
+        create(:collectivity, territory: communes[3])
+        create(:collectivity, :discarded, territory: communes[2])
+        create(:collectivity, :discarded, territory: communes[4])
+        create(:collectivity, :commune)
+        create(:collectivity, territory: epcis[0])
+        create(:collectivity, territory: epcis[1])
+        create(:collectivity, territory: epcis[2])
+        create(:collectivity, territory: ddfip1.departement)
+        create(:collectivity, territory: ddfip2.departement.region)
+
+        DDFIP.update_all(collectivities_count: 0)
+      end
+
+      it        { is_expected.to eq(2) }
+      its_block { is_expected.to change { ddfip1.reload.collectivities_count }.from(0).to(6) }
+      its_block { is_expected.to change { ddfip2.reload.collectivities_count }.from(0).to(1) }
     end
   end
 end

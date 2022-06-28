@@ -77,23 +77,25 @@ RSpec.describe Collectivity, type: :model do
     end
   end
 
-  # Counters
+  # Reset counters
   # ----------------------------------------------------------------------------
   describe ".reset_all_counters" do
-    it do
-      expect {
-        described_class.reset_all_counters
-      }.to perform_sql_query(<<~SQL)
-        UPDATE "collectivities"
-        SET "users_count" = (
-              SELECT COUNT(*)
-              FROM   "users"
-              WHERE  (
-                    "users"."organization_type" = 'Collectivity'
-                AND "users"."organization_id" = "collectivities"."id"
-              )
-            )
-      SQL
+    subject { described_class.reset_all_counters }
+
+    let!(:collectivity1) { create(:collectivity) }
+    let!(:collectivity2) { create(:collectivity) }
+
+    before do
+      create_list(:user, 4, organization: collectivity1)
+      create_list(:user, 2, organization: collectivity2)
+      create_list(:user, 1, :publisher)
+      create_list(:user, 1, :ddfip)
+
+      Collectivity.update_all(users_count: 0)
     end
+
+    it        { is_expected.to eq(2) }
+    its_block { is_expected.to change { collectivity1.reload.users_count }.from(0).to(4) }
+    its_block { is_expected.to change { collectivity2.reload.users_count }.from(0).to(2) }
   end
 end

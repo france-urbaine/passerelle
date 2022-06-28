@@ -141,39 +141,10 @@ RSpec.describe EPCI, type: :model do
   # Counters
   # ----------------------------------------------------------------------------
   describe ".reset_all_counters" do
-    it do
-      expect {
-        described_class.reset_all_counters
-      }.to perform_sql_query(<<~SQL)
-        UPDATE "epcis"
-        SET "communes_count" = (
-              SELECT COUNT(*)
-              FROM "communes"
-              WHERE ("communes"."siren_epci" = "epcis"."siren")
-            ),
-            "collectivities_count" = (
-              SELECT COUNT(*)
-              FROM   "collectivities"
-              WHERE  "collectivities"."discarded_at" IS NULL
-                AND (
-                      "collectivities"."territory_type" = 'EPCI'
-                  AND "collectivities"."territory_id"   = "epcis"."id"
-                  OR  "collectivities"."territory_type" = 'Commune'
-                  AND "collectivities"."territory_id" IN (
-                        SELECT "communes"."id"
-                        FROM "communes"
-                        WHERE ("communes"."siren_epci" = "epcis"."siren")
-                  )
-                  OR  "collectivities"."territory_type" = 'Departement'
-                  AND "collectivities"."territory_id" IN (
-                        SELECT "departements"."id"
-                        FROM "departements"
-                        INNER JOIN "communes" ON "communes"."code_departement" = "departements"."code_departement"
-                        WHERE ("communes"."siren_epci" = "epcis"."siren")
-                  )
-                )
-            )
-      SQL
-    end
+    subject { described_class.reset_all_counters }
+
+    its_block { is_expected.to run_without_error }
+    its_block { is_expected.to perform_sql_query("SELECT reset_all_epcis_counters()") }
+    it        { is_expected.to be_an(Integer) }
   end
 end

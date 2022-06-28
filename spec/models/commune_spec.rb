@@ -188,36 +188,29 @@ RSpec.describe Commune, type: :model do
     end
   end
 
-  # Counters
+  # Reset counters
   # ----------------------------------------------------------------------------
   describe ".reset_all_counters" do
-    it do
-      expect {
-        described_class.reset_all_counters
-      }.to perform_sql_query(<<~SQL)
-        UPDATE  "communes"
-        SET     "collectivities_count" = (
-                  SELECT COUNT(*)
-                  FROM   "collectivities"
-                  WHERE  "collectivities"."discarded_at" IS NULL
-                    AND (
-                          "collectivities"."territory_type" = 'Commune'
-                      AND "collectivities"."territory_id"   = "communes"."id"
-                      OR  "collectivities"."territory_type" = 'EPCI'
-                      AND "collectivities"."territory_id" IN (
-                            SELECT "epcis"."id"
-                            FROM   "epcis"
-                            WHERE  ("epcis"."siren" = "communes"."siren_epci")
-                      )
-                      OR  "collectivities"."territory_type" = 'Departement'
-                      AND "collectivities"."territory_id" IN (
-                            SELECT "departements"."id"
-                            FROM   "departements"
-                            WHERE  ("departements"."code_departement" = "communes"."code_departement")
-                      )
-                    )
-                )
-      SQL
+    subject { described_class.reset_all_counters }
+
+    let!(:commune1) { create(:commune) }
+    let!(:commune2) { create(:commune, :with_epci) }
+
+    before do
+      create(:collectivity, territory: commune1)
+      create(:collectivity, territory: commune2)
+      create(:collectivity, territory: commune2.epci)
+      create(:collectivity, territory: commune2.departement)
+      create(:collectivity, territory: commune2.region)
+
+      create(:collectivity, :discarded, territory: commune1)
+      create(:collectivity, :discarded, territory: commune2.departement)
+
+      Commune.update_all(collectivities_count: 0)
     end
+
+    it        { is_expected.to eq(2) }
+    its_block { is_expected.to change { commune1.reload.collectivities_count }.from(0).to(1) }
+    its_block { is_expected.to change { commune2.reload.collectivities_count }.from(0).to(4) }
   end
 end

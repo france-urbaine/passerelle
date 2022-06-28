@@ -11,6 +11,7 @@ gem "puma", "~> 5.0"
 gem "rails", "~> 7.0.2", ">= 7.0.2.3"
 
 # Database
+gem "fx"
 gem "pg", "~> 1.1"
 gem "redis", "~> 4.0"
 
@@ -81,6 +82,7 @@ group :test do
   gem "database_cleaner-active_record"
   gem "fuubar"
   gem "rspec-collection_matchers"
+  gem "saharspec", github: "inkstak/saharspec", branch: "proper_rubocop_linting"
   gem "selenium-webdriver"
   gem "shoulda-matchers"
   gem "simplecov", require: false

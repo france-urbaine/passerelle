@@ -4,7 +4,6 @@ class ApplicationRecord < ActiveRecord::Base
   include Discard::Model
   include AdvancedOrder
   include AdvancedSearch
-  include ResetCounters
   include ScoredOrder
   include SkipUniquenessValidation
 

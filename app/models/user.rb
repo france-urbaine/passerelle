@@ -56,7 +56,7 @@ class User < ApplicationRecord
 
   # Associations
   # ----------------------------------------------------------------------------
-  belongs_to :organization, polymorphic: true, inverse_of: :users, counter_cache: true
+  belongs_to :organization, polymorphic: true, inverse_of: :users
   belongs_to :inviter, class_name: "User", optional: true, inverse_of: :invitees
   has_many :invitees, class_name: "User", foreign_key: :inviter_id, inverse_of: :inviter, dependent: :nullify
 

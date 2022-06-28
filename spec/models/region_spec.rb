@@ -107,63 +107,10 @@ RSpec.describe Region, type: :model do
   # Counters
   # ----------------------------------------------------------------------------
   describe ".reset_all_counters" do
-    it do
-      expect {
-        described_class.reset_all_counters
-      }.to perform_sql_query(<<~SQL)
-        UPDATE "regions"
-        SET "departements_count" = (
-              SELECT COUNT(*)
-              FROM "departements"
-              WHERE ("departements"."code_region" = "regions"."code_region")
-            ),
-            "epcis_count" = (
-              SELECT COUNT(*)
-              FROM "epcis"
-              INNER JOIN "departements" ON "departements"."code_departement" = "epcis"."code_departement"
-              WHERE ("departements"."code_region" = "regions"."code_region")
-            ),
-            "communes_count" = (
-              SELECT COUNT(*)
-              FROM "communes"
-              INNER JOIN "departements" ON "departements"."code_departement" = "communes"."code_departement"
-              WHERE ("departements"."code_region" = "regions"."code_region")
-            ),
-            "ddfips_count" = (
-              SELECT COUNT(*)
-              FROM "ddfips"
-              INNER JOIN "departements" ON "departements"."code_departement" = "ddfips"."code_departement"
-              WHERE ("departements"."code_region" = "regions"."code_region")
-            ),
-            "collectivities_count" = (
-              SELECT COUNT(*)
-              FROM  "collectivities"
-              WHERE "collectivities"."discarded_at" IS NULL
-                AND (
-                      "collectivities"."territory_type" = 'Commune'
-                  AND "collectivities"."territory_id" IN (
-                        SELECT "communes"."id"
-                        FROM "communes"
-                        INNER JOIN "departements" ON "departements"."code_departement" = "communes"."code_departement"
-                        WHERE ("departements"."code_region" = "regions"."code_region")
-                  )
-                  OR  "collectivities"."territory_type" = 'EPCI'
-                  AND "collectivities"."territory_id" IN (
-                        SELECT "epcis"."id"
-                        FROM "epcis"
-                        INNER JOIN "communes" ON "communes"."siren_epci" = "epcis"."siren"
-                        INNER JOIN "departements" ON "departements"."code_departement" = "communes"."code_departement"
-                        WHERE ("departements"."code_region" = "regions"."code_region")
-                  )
-                  OR  "collectivities"."territory_type" = 'Departement'
-                  AND "collectivities"."territory_id" IN (
-                        SELECT "departements"."id"
-                        FROM   "departements"
-                        WHERE ("departements"."code_region" = "regions"."code_region")
-                  )
-                )
-            )
-      SQL
-    end
+    subject { described_class.reset_all_counters }
+
+    its_block { is_expected.to run_without_error }
+    its_block { is_expected.to perform_sql_query("SELECT reset_all_regions_counters()") }
+    it        { is_expected.to be_an(Integer) }
   end
 end

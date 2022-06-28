@@ -24,7 +24,7 @@ class EPCI < ApplicationRecord
 
   # Associations
   # ----------------------------------------------------------------------------
-  belongs_to :departement, primary_key: :code_departement, foreign_key: :code_departement, inverse_of: :epcis, optional: true, counter_cache: true
+  belongs_to :departement, primary_key: :code_departement, foreign_key: :code_departement, inverse_of: :epcis, optional: true
 
   has_one :region, through: :departement
   has_many :communes, primary_key: :siren, foreign_key: :siren_epci, inverse_of: :epci, dependent: false
@@ -87,18 +87,6 @@ class EPCI < ApplicationRecord
   # Counters cached
   # ----------------------------------------------------------------------------
   def self.reset_all_counters
-    communes       = Commune.where(%("communes"."siren_epci" = "epcis"."siren"))
-    departements   = Departement.joins(:communes).merge(communes)
-
-    collectivities = Collectivity.kept.where(<<~SQL.squish, communes.select(:id), departements.select(:id))
-      "collectivities"."territory_type" = 'EPCI'        AND "collectivities"."territory_id" = "epcis"."id" OR
-      "collectivities"."territory_type" = 'Commune'     AND "collectivities"."territory_id" IN (?) OR
-      "collectivities"."territory_type" = 'Departement' AND "collectivities"."territory_id" IN (?)
-    SQL
-
-    update_all_counters(
-      communes_count:       communes,
-      collectivities_count: collectivities
-    )
+    connection.select_value("SELECT reset_all_epcis_counters()")
   end
 end

@@ -37,3 +37,7 @@
 !/app/assets/builds/.keep
 
 /node_modules
+
+# Doesn't ignore SQL functions & triggers
+!/db/functions/*.sql
+!/db/triggers/*.sql

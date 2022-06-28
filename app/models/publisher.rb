@@ -71,17 +71,6 @@ class Publisher < ApplicationRecord
   # Counters cached
   # ----------------------------------------------------------------------------
   def self.reset_all_counters
-    users = User.where(<<~SQL.squish)
-      "users"."organization_type" = 'Publisher' AND "users"."organization_id" = "publishers"."id"
-    SQL
-
-    collectivities = Collectivity.where(<<~SQL.squish)
-      "collectivities"."publisher_id" = "publishers"."id"
-    SQL
-
-    update_all_counters(
-      users_count:          users,
-      collectivities_count: collectivities
-    )
+    connection.select_value("SELECT reset_all_publishers_counters()")
   end
 end

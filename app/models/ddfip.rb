@@ -22,7 +22,7 @@
 class DDFIP < ApplicationRecord
   # Associations
   # ----------------------------------------------------------------------------
-  belongs_to :departement, primary_key: :code_departement, foreign_key: :code_departement, inverse_of: :ddfips, counter_cache: true
+  belongs_to :departement, primary_key: :code_departement, foreign_key: :code_departement, inverse_of: :ddfips
 
   has_many :epcis,    primary_key: :code_departement, foreign_key: :code_departement, inverse_of: false, dependent: false
   has_many :communes, primary_key: :code_departement, foreign_key: :code_departement, inverse_of: false, dependent: false
@@ -66,24 +66,6 @@ class DDFIP < ApplicationRecord
   # Counters cached
   # ----------------------------------------------------------------------------
   def self.reset_all_counters
-    users = User.where(<<~SQL.squish)
-      "users"."organization_type" = 'DDFIP' AND "users"."organization_id" = "ddfips"."id"
-    SQL
-
-    communes     = Commune.where(%("communes"."code_departement" = "ddfips"."code_departement"))
-    departements = Departement.where(%("departements"."code_departement" = "ddfips"."code_departement"))
-    epcis        = EPCI.joins(:communes).merge(communes)
-
-    territory_ids  = [communes.select(:id), epcis.select(:id), departements.select(:id)]
-    collectivities = Collectivity.kept.where(<<~SQL.squish, *territory_ids)
-      "collectivities"."territory_type" = 'Commune'     AND "collectivities"."territory_id" IN (?) OR
-      "collectivities"."territory_type" = 'EPCI'        AND "collectivities"."territory_id" IN (?) OR
-      "collectivities"."territory_type" = 'Departement' AND "collectivities"."territory_id" IN (?)
-    SQL
-
-    update_all_counters(
-      users_count:          users,
-      collectivities_count: collectivities
-    )
+    connection.select_value("SELECT reset_all_ddfips_counters()")
   end
 end

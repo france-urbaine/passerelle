@@ -90,28 +90,41 @@ RSpec.describe Publisher, type: :model do
     end
   end
 
-  # Counters
+  # Reset counters
   # ----------------------------------------------------------------------------
   describe ".reset_all_counters" do
-    it do
-      expect {
-        described_class.reset_all_counters
-      }.to perform_sql_query(<<~SQL)
-        UPDATE "publishers"
-        SET "users_count" = (
-              SELECT COUNT(*)
-              FROM   "users"
-              WHERE  (
-                    "users"."organization_type" = 'Publisher'
-                AND "users"."organization_id" = "publishers"."id"
-              )
-            ),
-            "collectivities_count" = (
-              SELECT COUNT(*)
-              FROM   "collectivities"
-              WHERE  ("collectivities"."publisher_id" = "publishers"."id")
-            )
-      SQL
+    subject { described_class.reset_all_counters }
+
+    let!(:publisher1) { create(:publisher) }
+    let!(:publisher2) { create(:publisher) }
+
+    describe "on users_count" do
+      before do
+        create_list(:user, 4, organization: publisher1)
+        create_list(:user, 2, organization: publisher2)
+        create_list(:user, 1, :publisher)
+        create_list(:user, 1, :collectivity)
+
+        Publisher.update_all(users_count: 0)
+      end
+
+      its_block { is_expected.to change { publisher1.reload.users_count }.from(0).to(4) }
+      its_block { is_expected.to change { publisher2.reload.users_count }.from(0).to(2) }
+    end
+
+    describe "on collectivities_count" do
+      before do
+        create_list(:collectivity, 3, publisher: publisher1)
+        create_list(:collectivity, 2, publisher: publisher2)
+        create_list(:collectivity, 2, :discarded, publisher: publisher2)
+        create_list(:collectivity, 1)
+
+        Publisher.update_all(collectivities_count: 0)
+      end
+
+      it        { is_expected.to eq(2) }
+      its_block { is_expected.to change { publisher1.reload.collectivities_count }.from(0).to(3) }
+      its_block { is_expected.to change { publisher2.reload.collectivities_count }.from(0).to(2) }
     end
   end
 end

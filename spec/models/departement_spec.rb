@@ -128,49 +128,10 @@ RSpec.describe Departement, type: :model do
   # Counters
   # ----------------------------------------------------------------------------
   describe ".reset_all_counters" do
-    it do
-      expect {
-        described_class.reset_all_counters
-      }.to perform_sql_query(<<~SQL)
-        UPDATE "departements"
-        SET "epcis_count" = (
-              SELECT COUNT(*)
-              FROM "epcis"
-              WHERE ("epcis"."code_departement" = "departements"."code_departement")
-            ),
-            "communes_count" = (
-              SELECT COUNT(*)
-              FROM "communes"
-              WHERE ("communes"."code_departement" = "departements"."code_departement")
-            ),
-            "ddfips_count" = (
-              SELECT COUNT(*)
-              FROM "ddfips"
-              WHERE ("ddfips"."code_departement" = "departements"."code_departement")
-            ),
-            "collectivities_count" = (
-              SELECT COUNT(*)
-              FROM   "collectivities"
-              WHERE  "collectivities"."discarded_at" IS NULL
-                AND (
-                      "collectivities"."territory_type" = 'Departement'
-                  AND "collectivities"."territory_id"   = "departements"."id"
-                  OR  "collectivities"."territory_type" = 'Commune'
-                  AND "collectivities"."territory_id" IN (
-                        SELECT "communes"."id"
-                        FROM "communes"
-                        WHERE ("communes"."code_departement" = "departements"."code_departement")
-                  )
-                  OR  "collectivities"."territory_type" = 'EPCI'
-                  AND "collectivities"."territory_id" IN (
-                        SELECT "epcis"."id"
-                        FROM "epcis"
-                        INNER JOIN "communes" ON "communes"."siren_epci" = "epcis"."siren"
-                        WHERE ("communes"."code_departement" = "departements"."code_departement")
-                  )
-                )
-            )
-      SQL
-    end
+    subject { described_class.reset_all_counters }
+
+    its_block { is_expected.to run_without_error }
+    its_block { is_expected.to perform_sql_query("SELECT reset_all_departements_counters()") }
+    it        { is_expected.to be_an(Integer) }
   end
 end
