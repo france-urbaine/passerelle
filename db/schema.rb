@@ -162,427 +162,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_26_164636) do
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
   end
 
-  create_function :count_collectivities_in_communes, sql_definition: <<-'SQL'
-      CREATE OR REPLACE FUNCTION public.count_collectivities_in_communes(communes)
-       RETURNS integer
-       LANGUAGE plpgsql
-      AS $function$
-        DECLARE
-          total integer DEFAULT 0;
-        BEGIN
-          SELECT COUNT(*) INTO total
-          FROM   "collectivities"
-          WHERE  "collectivities"."discarded_at" IS NULL AND (
-            (
-              "collectivities"."territory_type" = 'Commune' AND
-              "collectivities"."territory_id"   = $1."id"
-            ) OR (
-              "collectivities"."territory_type" = 'EPCI' AND
-              "collectivities"."territory_id" IN (
-                SELECT "epcis"."id"
-                FROM   "epcis"
-                WHERE  "epcis"."siren" = $1."siren_epci"
-              )
-            ) OR (
-              "collectivities"."territory_type" = 'Departement' AND
-              "collectivities"."territory_id" IN (
-                SELECT "departements"."id"
-                FROM   "departements"
-                WHERE  "departements"."code_departement" = $1."code_departement"
-              )
-            ) OR (
-              "collectivities"."territory_type" = 'Region' AND
-              "collectivities"."territory_id" IN (
-                SELECT     "regions"."id"
-                FROM       "regions"
-                INNER JOIN "departements" ON "departements"."code_region" = "regions"."code_region"
-                WHERE      "departements"."code_departement" = $1."code_departement"
-              )
-            )
-          );
-
-          RETURN total;
-        END;
-      $function$
-  SQL
-  create_function :count_collectivities_in_epcis, sql_definition: <<-'SQL'
-      CREATE OR REPLACE FUNCTION public.count_collectivities_in_epcis(epcis)
-       RETURNS integer
-       LANGUAGE plpgsql
-      AS $function$
-        DECLARE
-          total integer DEFAULT 0;
-        BEGIN
-          SELECT COUNT(*) INTO total
-          FROM   "collectivities"
-          WHERE  "collectivities"."discarded_at" IS NULL AND (
-            (
-              "collectivities"."territory_type" = 'EPCI' AND
-              "collectivities"."territory_id"   = $1."id"
-            ) OR (
-              "collectivities"."territory_type" = 'Commune' AND
-              "collectivities"."territory_id" IN (
-                SELECT "communes"."id"
-                FROM   "communes"
-                WHERE  "communes"."siren_epci" = $1."siren"
-              )
-            ) OR (
-              "collectivities"."territory_type" = 'Departement' AND
-              "collectivities"."territory_id" IN (
-                SELECT     "departements"."id"
-                FROM       "departements"
-                INNER JOIN "communes" ON "communes"."code_departement" = "departements"."code_departement"
-                WHERE      "communes"."siren_epci" = $1."siren"
-              )
-            ) OR (
-              "collectivities"."territory_type" = 'Region' AND
-              "collectivities"."territory_id" IN (
-                SELECT     "regions"."id"
-                FROM       "regions"
-                INNER JOIN "departements" ON "departements"."code_region" = "regions"."code_region"
-                INNER JOIN "communes"     ON "communes"."code_departement" = "departements"."code_departement"
-                WHERE      "communes"."siren_epci" = $1."siren"
-              )
-            )
-          );
-
-          RETURN total;
-        END;
-      $function$
-  SQL
-  create_function :count_collectivities_in_departements, sql_definition: <<-'SQL'
-      CREATE OR REPLACE FUNCTION public.count_collectivities_in_departements(departements)
-       RETURNS integer
-       LANGUAGE plpgsql
-      AS $function$
-        DECLARE
-          total integer DEFAULT 0;
-        BEGIN
-          SELECT COUNT(*) INTO total
-          FROM   "collectivities"
-          WHERE  "collectivities"."discarded_at" IS NULL AND (
-            (
-              "collectivities"."territory_type" = 'Departement' AND
-              "collectivities"."territory_id"   = $1."id"
-            ) OR (
-              "collectivities"."territory_type" = 'Commune' AND
-              "collectivities"."territory_id" IN (
-                SELECT "communes"."id"
-                FROM   "communes"
-                WHERE  "communes"."code_departement" = $1."code_departement"
-              )
-            ) OR (
-              "collectivities"."territory_type" = 'EPCI' AND
-              "collectivities"."territory_id" IN (
-                SELECT     "epcis"."id"
-                FROM       "epcis"
-                INNER JOIN "communes" ON "communes"."siren_epci" = "epcis"."siren"
-                WHERE      "communes"."code_departement" = $1."code_departement"
-              )
-            ) OR (
-              "collectivities"."territory_type" = 'Region' AND
-              "collectivities"."territory_id" IN (
-                SELECT     "regions"."id"
-                FROM       "regions"
-                WHERE      "regions"."code_region" = $1."code_region"
-              )
-            )
-          );
-
-          RETURN total;
-        END;
-      $function$
-  SQL
-  create_function :count_collectivities_in_regions, sql_definition: <<-'SQL'
-      CREATE OR REPLACE FUNCTION public.count_collectivities_in_regions(regions)
-       RETURNS integer
-       LANGUAGE plpgsql
-      AS $function$
-        DECLARE
-          total integer DEFAULT 0;
-        BEGIN
-          SELECT COUNT(*) INTO total
-          FROM   "collectivities"
-          WHERE  "collectivities"."discarded_at" IS NULL AND (
-            (
-              "collectivities"."territory_type" = 'Region' AND
-              "collectivities"."territory_id"   = $1."id"
-            ) OR (
-              "collectivities"."territory_type" = 'Commune' AND
-              "collectivities"."territory_id" IN (
-                SELECT     "communes"."id"
-                FROM       "communes"
-                INNER JOIN "departements" ON "departements"."code_departement" = "communes"."code_departement"
-                WHERE      "departements"."code_region" = $1."code_region"
-              )
-            ) OR (
-              "collectivities"."territory_type" = 'EPCI' AND
-              "collectivities"."territory_id" IN (
-                SELECT     "epcis"."id"
-                FROM       "epcis"
-                INNER JOIN "communes" ON "communes"."siren_epci" = "epcis"."siren"
-                INNER JOIN "departements" ON "departements"."code_departement" = "communes"."code_departement"
-                WHERE      "departements"."code_region" = $1."code_region"
-              )
-            ) OR (
-              "collectivities"."territory_type" = 'Departement' AND
-              "collectivities"."territory_id" IN (
-                SELECT "departements"."id"
-                FROM   "departements"
-                WHERE  "departements"."code_region" = $1."code_region"
-              )
-            )
-          );
-
-          RETURN total;
-        END;
-      $function$
-  SQL
-  create_function :count_collectivities_in_ddfips, sql_definition: <<-'SQL'
-      CREATE OR REPLACE FUNCTION public.count_collectivities_in_ddfips(ddfips)
-       RETURNS integer
-       LANGUAGE plpgsql
-      AS $function$
-        DECLARE
-          total integer DEFAULT 0;
-        BEGIN
-          SELECT COUNT(*) INTO total
-          FROM   "collectivities"
-          WHERE  "collectivities"."discarded_at" IS NULL AND (
-            (
-              "collectivities"."territory_type" = 'Commune' AND
-              "collectivities"."territory_id" IN (
-                SELECT "communes"."id"
-                FROM   "communes"
-                WHERE  "communes"."code_departement" = $1."code_departement"
-              )
-            ) OR (
-              "collectivities"."territory_type" = 'EPCI' AND
-              "collectivities"."territory_id" IN (
-                SELECT     "epcis"."id"
-                FROM       "epcis"
-                INNER JOIN "communes" ON "communes"."siren_epci" = "epcis"."siren"
-                WHERE      "communes"."code_departement" = $1."code_departement"
-              )
-            ) OR (
-              "collectivities"."territory_type" = 'Departement' AND
-              "collectivities"."territory_id" IN (
-                SELECT "departements"."id"
-                FROM   "departements"
-                WHERE  "departements"."code_departement" = $1."code_departement"
-              )
-            ) OR (
-              "collectivities"."territory_type" = 'Region' AND
-              "collectivities"."territory_id" IN (
-                SELECT     "regions"."id"
-                FROM       "regions"
-                INNER JOIN "departements" ON "departements"."code_region" = "regions"."code_region"
-                WHERE      "departements"."code_departement" = $1."code_departement"
-              )
-            )
-          );
-
-          RETURN total;
-        END;
-      $function$
-  SQL
-  create_function :count_collectivities_in_publishers, sql_definition: <<-'SQL'
-      CREATE OR REPLACE FUNCTION public.count_collectivities_in_publishers(publishers)
-       RETURNS integer
-       LANGUAGE plpgsql
-      AS $function$
-        DECLARE
-          total integer DEFAULT 0;
-        BEGIN
-          SELECT COUNT(*) INTO total
-          FROM   "collectivities"
-          WHERE  "collectivities"."publisher_id" = $1."id";
-
-          RETURN total;
-        END;
-      $function$
-  SQL
-  create_function :count_users_in_ddfips, sql_definition: <<-'SQL'
-      CREATE OR REPLACE FUNCTION public.count_users_in_ddfips(ddfips)
-       RETURNS integer
-       LANGUAGE plpgsql
-      AS $function$
-        DECLARE
-          total integer DEFAULT 0;
-        BEGIN
-          SELECT COUNT(*) INTO total
-          FROM   "users"
-          WHERE  "users"."organization_type" = 'DDFIP'
-            AND  "users"."organization_id"   = $1."id";
-
-          RETURN total;
-        END;
-      $function$
-  SQL
-  create_function :count_users_in_publishers, sql_definition: <<-'SQL'
-      CREATE OR REPLACE FUNCTION public.count_users_in_publishers(publishers)
-       RETURNS integer
-       LANGUAGE plpgsql
-      AS $function$
-        DECLARE
-          total integer DEFAULT 0;
-        BEGIN
-          SELECT COUNT(*) INTO total
-          FROM   "users"
-          WHERE  "users"."organization_type" = 'Publisher'
-            AND  "users"."organization_id"   = $1."id";
-
-          RETURN total;
-        END;
-      $function$
-  SQL
-  create_function :count_users_in_collectivities, sql_definition: <<-'SQL'
-      CREATE OR REPLACE FUNCTION public.count_users_in_collectivities(collectivities)
-       RETURNS integer
-       LANGUAGE plpgsql
-      AS $function$
-        DECLARE
-          total integer DEFAULT 0;
-        BEGIN
-          SELECT COUNT(*) INTO total
-          FROM   "users"
-          WHERE  "users"."organization_type" = 'Collectivity'
-            AND  "users"."organization_id"   = $1."id";
-
-          RETURN total;
-        END;
-      $function$
-  SQL
-  create_function :count_communes_in_epcis, sql_definition: <<-'SQL'
-      CREATE OR REPLACE FUNCTION public.count_communes_in_epcis(epcis)
-       RETURNS integer
-       LANGUAGE plpgsql
-      AS $function$
-        DECLARE
-          total integer DEFAULT 0;
-        BEGIN
-          SELECT COUNT(*) INTO TOTAL
-          FROM   "communes"
-          WHERE  "communes"."siren_epci" = $1."siren";
-
-          RETURN total;
-        END;
-      $function$
-  SQL
-  create_function :count_communes_in_departements, sql_definition: <<-'SQL'
-      CREATE OR REPLACE FUNCTION public.count_communes_in_departements(departements)
-       RETURNS integer
-       LANGUAGE plpgsql
-      AS $function$
-        DECLARE
-          total integer DEFAULT 0;
-        BEGIN
-          SELECT COUNT(*) INTO TOTAL
-          FROM   "communes"
-          WHERE  "communes"."code_departement" = $1."code_departement";
-
-          RETURN total;
-        END;
-      $function$
-  SQL
-  create_function :count_communes_in_regions, sql_definition: <<-'SQL'
-      CREATE OR REPLACE FUNCTION public.count_communes_in_regions(regions)
-       RETURNS integer
-       LANGUAGE plpgsql
-      AS $function$
-        DECLARE
-          total integer DEFAULT 0;
-        BEGIN
-          SELECT     COUNT(*) INTO TOTAL
-          FROM       "communes"
-          INNER JOIN "departements" ON "departements"."code_departement" = "communes"."code_departement"
-          WHERE      "departements"."code_region" = $1."code_region";
-
-          RETURN total;
-        END;
-      $function$
-  SQL
-  create_function :count_epcis_in_departements, sql_definition: <<-'SQL'
-      CREATE OR REPLACE FUNCTION public.count_epcis_in_departements(departements)
-       RETURNS integer
-       LANGUAGE plpgsql
-      AS $function$
-        DECLARE
-          total integer DEFAULT 0;
-        BEGIN
-          SELECT COUNT(*) INTO TOTAL
-          FROM   "epcis"
-          WHERE  "epcis"."code_departement" = $1."code_departement";
-
-          RETURN total;
-        END;
-      $function$
-  SQL
-  create_function :count_epcis_in_regions, sql_definition: <<-'SQL'
-      CREATE OR REPLACE FUNCTION public.count_epcis_in_regions(regions)
-       RETURNS integer
-       LANGUAGE plpgsql
-      AS $function$
-        DECLARE
-          total integer DEFAULT 0;
-        BEGIN
-          SELECT     COUNT(*) INTO TOTAL
-          FROM       "epcis"
-          INNER JOIN "departements" ON "departements"."code_departement" = "epcis"."code_departement"
-          WHERE      "departements"."code_region" = $1."code_region";
-
-          RETURN total;
-        END;
-      $function$
-  SQL
-  create_function :count_departements_in_regions, sql_definition: <<-'SQL'
-      CREATE OR REPLACE FUNCTION public.count_departements_in_regions(regions)
-       RETURNS integer
-       LANGUAGE plpgsql
-      AS $function$
-        DECLARE
-          total integer DEFAULT 0;
-        BEGIN
-          SELECT COUNT(*) INTO TOTAL
-          FROM   "departements"
-          WHERE  "departements"."code_region" = $1."code_region";
-
-          RETURN total;
-        END;
-      $function$
-  SQL
-  create_function :count_ddfips_in_departements, sql_definition: <<-'SQL'
-      CREATE OR REPLACE FUNCTION public.count_ddfips_in_departements(departements)
-       RETURNS integer
-       LANGUAGE plpgsql
-      AS $function$
-        DECLARE
-          total integer DEFAULT 0;
-        BEGIN
-          SELECT COUNT(*) INTO TOTAL
-          FROM   "ddfips"
-          WHERE  "ddfips"."code_departement" = $1."code_departement";
-
-          RETURN total;
-        END;
-      $function$
-  SQL
-  create_function :count_ddfips_in_regions, sql_definition: <<-'SQL'
-      CREATE OR REPLACE FUNCTION public.count_ddfips_in_regions(regions)
-       RETURNS integer
-       LANGUAGE plpgsql
-      AS $function$
-        DECLARE
-          total integer DEFAULT 0;
-        BEGIN
-          SELECT COUNT(*) INTO TOTAL
-          FROM   "epcis"
-          WHERE  "epcis"."code_departement" = $1."code_departement";
-
-          RETURN total;
-        END;
-      $function$
-  SQL
   create_function :reset_all_communes_counters, sql_definition: <<-'SQL'
       CREATE OR REPLACE FUNCTION public.reset_all_communes_counters()
        RETURNS integer
@@ -592,7 +171,39 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_26_164636) do
           affected_rows integer;
         BEGIN
           UPDATE "communes"
-          SET    "collectivities_count" = count_collectivities_in_communes("communes".*);
+          SET
+            "collectivities_count" = (
+              SELECT COUNT(*)
+              FROM   "collectivities"
+              WHERE  "collectivities"."discarded_at" IS NULL AND (
+                (
+                  "collectivities"."territory_type" = 'Commune' AND
+                  "collectivities"."territory_id"   = "communes"."id"
+                ) OR (
+                  "collectivities"."territory_type" = 'EPCI' AND
+                  "collectivities"."territory_id" IN (
+                    SELECT "epcis"."id"
+                    FROM   "epcis"
+                    WHERE  "epcis"."siren" = "communes"."siren_epci"
+                  )
+                ) OR (
+                  "collectivities"."territory_type" = 'Departement' AND
+                  "collectivities"."territory_id" IN (
+                    SELECT "departements"."id"
+                    FROM   "departements"
+                    WHERE  "departements"."code_departement" = "communes"."code_departement"
+                  )
+                ) OR (
+                  "collectivities"."territory_type" = 'Region' AND
+                  "collectivities"."territory_id" IN (
+                    SELECT     "regions"."id"
+                    FROM       "regions"
+                    INNER JOIN "departements" ON "departements"."code_region" = "regions"."code_region"
+                    WHERE      "departements"."code_departement" = "communes"."code_departement"
+                  )
+                )
+              )
+            );
 
           GET DIAGNOSTICS affected_rows = ROW_COUNT;
           RAISE NOTICE 'UPDATE %', affected_rows;
@@ -610,8 +221,46 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_26_164636) do
           affected_rows integer;
         BEGIN
           UPDATE "epcis"
-          SET    "communes_count"       = count_communes_in_epcis("epcis".*),
-                 "collectivities_count" = count_collectivities_in_epcis("epcis".*);
+          SET
+            "communes_count" = (
+              SELECT COUNT(*)
+              FROM   "communes"
+              WHERE  "communes"."siren_epci" = "epcis"."siren"
+            ),
+            "collectivities_count" = (
+              SELECT COUNT(*)
+              FROM   "collectivities"
+              WHERE  "collectivities"."discarded_at" IS NULL AND (
+                (
+                  "collectivities"."territory_type" = 'EPCI' AND
+                  "collectivities"."territory_id"   = "epcis"."id"
+                ) OR (
+                  "collectivities"."territory_type" = 'Commune' AND
+                  "collectivities"."territory_id" IN (
+                    SELECT "communes"."id"
+                    FROM   "communes"
+                    WHERE  "communes"."siren_epci" = "epcis"."siren"
+                  )
+                ) OR (
+                  "collectivities"."territory_type" = 'Departement' AND
+                  "collectivities"."territory_id" IN (
+                    SELECT     "departements"."id"
+                    FROM       "departements"
+                    INNER JOIN "communes" ON "communes"."code_departement" = "departements"."code_departement"
+                    WHERE      "communes"."siren_epci" = "epcis"."siren"
+                  )
+                ) OR (
+                  "collectivities"."territory_type" = 'Region' AND
+                  "collectivities"."territory_id" IN (
+                    SELECT     "regions"."id"
+                    FROM       "regions"
+                    INNER JOIN "departements" ON "departements"."code_region" = "regions"."code_region"
+                    INNER JOIN "communes"     ON "communes"."code_departement" = "departements"."code_departement"
+                    WHERE      "communes"."siren_epci" = "epcis"."siren"
+                  )
+                )
+              )
+            );
 
           GET DIAGNOSTICS affected_rows = ROW_COUNT;
           RAISE NOTICE 'UPDATE %', affected_rows;
@@ -629,10 +278,54 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_26_164636) do
           affected_rows integer;
         BEGIN
           UPDATE "departements"
-          SET    "communes_count"       = count_communes_in_departements("departements".*),
-                 "epcis_count"          = count_epcis_in_departements("departements".*),
-                 "ddfips_count"         = count_ddfips_in_departements("departements".*),
-                 "collectivities_count" = count_collectivities_in_departements("departements".*);
+          SET
+            "communes_count" = (
+              SELECT COUNT(*)
+              FROM   "communes"
+              WHERE  "communes"."code_departement" = "departements"."code_departement"
+            ),
+            "epcis_count" = (
+              SELECT COUNT(*)
+              FROM   "epcis"
+              WHERE  "epcis"."code_departement" = "departements"."code_departement"
+            ),
+            "ddfips_count" = (
+              SELECT COUNT(*)
+              FROM   "ddfips"
+              WHERE  "ddfips"."code_departement" = "departements"."code_departement"
+            ),
+            "collectivities_count" = (
+              SELECT COUNT(*)
+              FROM   "collectivities"
+              WHERE  "collectivities"."discarded_at" IS NULL AND (
+                (
+                  "collectivities"."territory_type" = 'Departement' AND
+                  "collectivities"."territory_id"   = "departements"."id"
+                ) OR (
+                  "collectivities"."territory_type" = 'Commune' AND
+                  "collectivities"."territory_id" IN (
+                    SELECT "communes"."id"
+                    FROM   "communes"
+                    WHERE  "communes"."code_departement" = "departements"."code_departement"
+                  )
+                ) OR (
+                  "collectivities"."territory_type" = 'EPCI' AND
+                  "collectivities"."territory_id" IN (
+                    SELECT     "epcis"."id"
+                    FROM       "epcis"
+                    INNER JOIN "communes" ON "communes"."siren_epci" = "epcis"."siren"
+                    WHERE      "communes"."code_departement" = "departements"."code_departement"
+                  )
+                ) OR (
+                  "collectivities"."territory_type" = 'Region' AND
+                  "collectivities"."territory_id" IN (
+                    SELECT     "regions"."id"
+                    FROM       "regions"
+                    WHERE      "regions"."code_region" = "departements"."code_region"
+                  )
+                )
+              )
+            );
 
           GET DIAGNOSTICS affected_rows = ROW_COUNT;
           RAISE NOTICE 'UPDATE %', affected_rows;
@@ -650,11 +343,64 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_26_164636) do
           affected_rows integer;
         BEGIN
           UPDATE "regions"
-          SET    "communes_count"       = count_communes_in_regions("regions".*),
-                 "epcis_count"          = count_epcis_in_regions("regions".*),
-                 "departements_count"   = count_departements_in_regions("regions".*),
-                 "ddfips_count"         = count_ddfips_in_regions("regions".*),
-                 "collectivities_count" = count_collectivities_in_regions("regions".*);
+          SET
+            "communes_count" = (
+              SELECT     COUNT(*)
+              FROM       "communes"
+              INNER JOIN "departements" ON "departements"."code_departement" = "communes"."code_departement"
+              WHERE      "departements"."code_region" = "regions"."code_region"
+            ),
+            "epcis_count" = (
+              SELECT     COUNT(*)
+              FROM       "epcis"
+              INNER JOIN "departements" ON "departements"."code_departement" = "epcis"."code_departement"
+              WHERE      "departements"."code_region" = "regions"."code_region"
+            ),
+            "departements_count" = (
+              SELECT COUNT(*)
+              FROM   "departements"
+              WHERE  "departements"."code_region" = "regions"."code_region"
+            ),
+            "ddfips_count" = (
+              SELECT     COUNT(*)
+              FROM       "ddfips"
+              INNER JOIN "departements" ON "departements"."code_departement" = "ddfips"."code_departement"
+              WHERE      "departements"."code_region" = "regions"."code_region"
+            ),
+            "collectivities_count" = (
+              SELECT COUNT(*)
+              FROM   "collectivities"
+              WHERE  "collectivities"."discarded_at" IS NULL AND (
+                (
+                  "collectivities"."territory_type" = 'Region' AND
+                  "collectivities"."territory_id"   = "regions"."id"
+                ) OR (
+                  "collectivities"."territory_type" = 'Commune' AND
+                  "collectivities"."territory_id" IN (
+                    SELECT     "communes"."id"
+                    FROM       "communes"
+                    INNER JOIN "departements" ON "departements"."code_departement" = "communes"."code_departement"
+                    WHERE      "departements"."code_region" = "regions"."code_region"
+                  )
+                ) OR (
+                  "collectivities"."territory_type" = 'EPCI' AND
+                  "collectivities"."territory_id" IN (
+                    SELECT     "epcis"."id"
+                    FROM       "epcis"
+                    INNER JOIN "communes" ON "communes"."siren_epci" = "epcis"."siren"
+                    INNER JOIN "departements" ON "departements"."code_departement" = "communes"."code_departement"
+                    WHERE      "departements"."code_region" = "regions"."code_region"
+                  )
+                ) OR (
+                  "collectivities"."territory_type" = 'Departement' AND
+                  "collectivities"."territory_id" IN (
+                    SELECT "departements"."id"
+                    FROM   "departements"
+                    WHERE  "departements"."code_region" = "regions"."code_region"
+                  )
+                )
+              )
+            );
 
           GET DIAGNOSTICS affected_rows = ROW_COUNT;
           RAISE NOTICE 'UPDATE %', affected_rows;
@@ -672,7 +418,13 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_26_164636) do
           affected_rows integer;
         BEGIN
           UPDATE "collectivities"
-          SET    "users_count" = count_users_in_collectivities("collectivities".*);
+          SET
+            "users_count" = (
+              SELECT COUNT(*)
+              FROM   "users"
+              WHERE  "users"."organization_type" = 'Collectivity'
+                AND  "users"."organization_id"   = "collectivities"."id"
+            );
 
           GET DIAGNOSTICS affected_rows = ROW_COUNT;
           RAISE NOTICE 'UPDATE %', affected_rows;
@@ -690,8 +442,50 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_26_164636) do
           affected_rows integer;
         BEGIN
           UPDATE "ddfips"
-          SET    "users_count"          = count_users_in_ddfips("ddfips".*),
-                 "collectivities_count" = count_collectivities_in_ddfips("ddfips".*);
+          SET
+            "users_count" = (
+              SELECT COUNT(*)
+              FROM   "users"
+              WHERE  "users"."organization_type" = 'DDFIP'
+                AND  "users"."organization_id"   = "ddfips"."id"
+            ),
+            "collectivities_count" = (
+              SELECT COUNT(*)
+              FROM   "collectivities"
+              WHERE  "collectivities"."discarded_at" IS NULL AND (
+                (
+                  "collectivities"."territory_type" = 'Commune' AND
+                  "collectivities"."territory_id" IN (
+                    SELECT "communes"."id"
+                    FROM   "communes"
+                    WHERE  "communes"."code_departement" = "ddfips"."code_departement"
+                  )
+                ) OR (
+                  "collectivities"."territory_type" = 'EPCI' AND
+                  "collectivities"."territory_id" IN (
+                    SELECT     "epcis"."id"
+                    FROM       "epcis"
+                    INNER JOIN "communes" ON "communes"."siren_epci" = "epcis"."siren"
+                    WHERE      "communes"."code_departement" = "ddfips"."code_departement"
+                  )
+                ) OR (
+                  "collectivities"."territory_type" = 'Departement' AND
+                  "collectivities"."territory_id" IN (
+                    SELECT "departements"."id"
+                    FROM   "departements"
+                    WHERE  "departements"."code_departement" = "ddfips"."code_departement"
+                  )
+                ) OR (
+                  "collectivities"."territory_type" = 'Region' AND
+                  "collectivities"."territory_id" IN (
+                    SELECT     "regions"."id"
+                    FROM       "regions"
+                    INNER JOIN "departements" ON "departements"."code_region" = "regions"."code_region"
+                    WHERE      "departements"."code_departement" = "ddfips"."code_departement"
+                  )
+                )
+              )
+            );
 
           GET DIAGNOSTICS affected_rows = ROW_COUNT;
           RAISE NOTICE 'UPDATE %', affected_rows;
@@ -709,8 +503,18 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_26_164636) do
           affected_rows integer;
         BEGIN
           UPDATE "publishers"
-          SET    "users_count"          = count_users_in_publishers("publishers".*),
-                 "collectivities_count" = count_collectivities_in_publishers("publishers".*);
+          SET "users_count" = (
+                SELECT COUNT(*)
+                FROM   "users"
+                WHERE  "users"."organization_type" = 'Publisher'
+                  AND  "users"."organization_id"   = "publishers"."id"
+              ),
+              "collectivities_count" = (
+                SELECT COUNT(*)
+                FROM   "collectivities"
+                WHERE  "collectivities"."publisher_id" = "publishers"."id"
+                  AND  "collectivities"."discarded_at" IS NULL
+              );
 
           GET DIAGNOSTICS affected_rows = ROW_COUNT;
           RAISE NOTICE 'UPDATE %', affected_rows;
