@@ -11,11 +11,11 @@ table.datatable
         span.tooltip Tout sélectionner
 
       th( aria-label="Actions" )
-      
+
       th( colspan="2" )
         | Département
         = order_column(:departement)
-      
+
       th( colspan="2" )
         | Region
         = order_column(:region)
@@ -55,7 +55,7 @@ table.datatable
             data-turbo-frame="content"
             href=departement_path(departement, back: current_path)
           )= departement.name
-        
+
         - if departement.code_region?
           td.w-px= departement.code_region
           td

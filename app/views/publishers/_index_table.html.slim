@@ -17,6 +17,8 @@ table.datatable
       th
         | SIREN
         = order_column(:siren)
+      th.text-right Collectivités
+      th.text-right Utilisateurs
 
   tbody
     - publishers.each do |publisher|
@@ -45,7 +47,7 @@ table.datatable
             )
               = svg_icon("pencil-alt-icon", "Modifier cet éditeur")
               span.tooltip Modifier cet éditeur
-    
+
             = form_with(url: publisher_path(publisher), method: "delete", data: { turbo_confirm: "Supprimer cet éditeur ?" }) do
               input( type="hidden" name="back" value=current_path)
 
@@ -64,3 +66,5 @@ table.datatable
           )= publisher.name
 
         td= display_siren(publisher.siren)
+        td.text-right= number_with_delimiter(publisher.collectivities_count) if publisher.collectivities_count.positive?
+        td.text-right= number_with_delimiter(publisher.users_count)          if publisher.users_count.positive?

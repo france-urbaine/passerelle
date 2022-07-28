@@ -48,8 +48,23 @@ class DDFIP < ApplicationRecord
     advanced_search(
       input,
       name:             ->(value) { match(:name, value) },
-      code_departement: ->(value) { where(code_departement: value) }
+      code_departement: ->(value) { where(code_departement: value) },
+      departement_name: ->(value) { left_joins(:departement).merge(Departement.match(:name, value)) },
+      region_name:      ->(value) { left_joins(:region).merge(Region.match(:name, value)) }
     )
+  }
+
+  scope :order_by_param, lambda { |input|
+    advanced_order(
+      input,
+      name:        ->(direction) { unaccent_order(:name, direction) },
+      departement: ->(direction) { order(code_departement: direction) },
+      region:      ->(direction) { left_joins(:departement).order(code_region: direction) }
+    )
+  }
+
+  scope :order_by_score, lambda { |input|
+    scored_order(:name, input)
   }
 
   # Other associations

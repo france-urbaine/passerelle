@@ -146,7 +146,7 @@ RSpec.describe IndexOptionsComponent, type: :component do
 
     it do
       expect(rendered_content).to include(clean_template(<<~HTML))
-        <span class="order-last">Trier par commune</span>
+        <span class="grow">Trier par commune :</span>
         <a aria-label="Trier par commune, par ordre croissant"
            class="icon-button"
            data-turbo-action="advance"

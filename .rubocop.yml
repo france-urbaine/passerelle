@@ -101,6 +101,9 @@ RSpec/ExampleLength:
   Exclude:
     - 'spec/system/**/*'
 
+RSpec/ImplicitSubject:
+  EnforcedStyle: single_statement_only
+
 RSpec/MultipleExpectations:
   Exclude:
     - 'spec/system/**/*'

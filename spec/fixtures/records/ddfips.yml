@@ -2,11 +2,11 @@ bouches_du_rhone:
   name:             DDFIP des Bouches-du-Rhône
   code_departement: 13
 
-cher:
+nord:
   name:             DDFIP du Nord
   code_departement: 59
 
-bouches_du_rhone:
+pyreness_atlantiques:
   name:             DDFIP des Pyrénées-Atlantiques
   code_departement: 64
 

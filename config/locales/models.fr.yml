@@ -6,6 +6,11 @@ fr:
         siren:            Numéro SIREN de l'éditeur
         email:            Adresse mail de contact
 
+      ddfip:
+        name:             Nom de la DDFIP
+        code_departement: Code INSEE du département
+        departement:      Département
+
       commune:
         name:             Nom de la commune
         code_insee:       Code INSEE
@@ -45,6 +50,20 @@ fr:
 
             email:
               invalid:   Une adresse mail valide est requise
+
+        ddfip:
+          attributes:
+            name:
+              blank:     Un nom est requis
+              taken:     Ce nom est déjà attribué
+
+            code_departement:
+              blank:     Un code de département est requis
+              invalid:   Ce code de département n'est pas valide
+
+            departement:
+              required:  Un département est requis
+
 
         commune:
           attributes:

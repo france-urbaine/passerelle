@@ -5,8 +5,8 @@ require "rails_helper"
 RSpec.describe "DepartementsController#update", type: :request do
   subject(:request) { patch "/departements/#{departement.id}", headers:, params: }
 
-  let(:headers) { {} }
-  let(:params)  { { departement: { name: "Vendée" } } }
+  let(:headers)     { {} }
+  let(:params)      { { departement: { name: "Vendée" } } }
   let(:departement) { create(:departement, name: "VendÉe") }
 
   context "when requesting HTML" do

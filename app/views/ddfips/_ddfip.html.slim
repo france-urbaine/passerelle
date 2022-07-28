@@ -16,19 +16,19 @@
       a(
         data-turbo-action="advance"
         data-turbo-frame="content"
-        href=params.fetch(:back, publishers_path)
-      ) Editeurs
+        href=params.fetch(:back, ddfips_path)
+      ) DDFIP
 
     .breadcrumbs__separator="/"
     .breadcrumbs__path
-      h1= publisher.name
+      h1= ddfip.name
 
   .flex-auto
   .header-bar__actions
     .header-bar__action
       a.button(
         data-turbo-frame="modal"
-        href=edit_publisher_path(publisher, back: current_path)
+        href=edit_ddfip_path(ddfip, back: current_path)
       )
         = svg_icon("pencil-alt-icon")
         | Modifier
@@ -36,39 +36,43 @@
 .card.mb-6
   dl.description-list
     .description-list__row
-      dt Numéro SIREN de l'éditeur
-      dd= display_siren(publisher.siren)
+      dt Département
+      dd
+        - if ddfip.departement
+          a(
+            data-turbo-frame="_top"
+            href=departement_path(ddfip.departement)
+          )= ddfip.departement.name
 
     .description-list__row
       dt Utilisateurs
-      dd= count(publisher.users_count, "utilisateur") if publisher.users_count.positive?
+      dd= count(ddfip.users_count, "utilisateur") if ddfip.users_count.positive?
 
     .description-list__row
       dt Collectivités enregistrées
-      dd= count(publisher.collectivities_count, "collectivité") if publisher.collectivities_count.positive?
+      dd= count(ddfip.collectivities_count, "collectivité") if ddfip.collectivities_count.positive?
 
-
-- if publisher.users_count.positive?
+- if ddfip.users_count.positive?
   table.mb-6
     thead
       tr.datatable-row
         th Utilisateurs
 
     tbody
-      - publisher.users.each do |user|
+      - ddfip.users.each do |user|
         tr.datatable-row
           td
             = user.first_name
             |
             = user.last_name
 
-- if publisher.collectivities_count.positive?
+- if ddfip.collectivities_count.positive?
   table.mb-6
     thead
       tr.datatable-row
         th Collectivités enregistrées
 
     tbody
-      - publisher.collectivities.each do |collectivite|
+      - ddfip.on_territory_collectivities.each do |collectivite|
         tr.datatable-row
           td= collectivite.name

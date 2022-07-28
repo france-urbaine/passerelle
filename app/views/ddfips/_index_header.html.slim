@@ -10,16 +10,16 @@
 
       .header-bar__text
         - if params[:ids] == "all"
-          = count(@pagy.count, "éditeur sélectionné", plural: "éditeurs sélectionnés")
+          = count(@pagy.count, "DDFIP sélectionnée", plural: "DDFIP sélectionnées")
         - else
-          = count(params[:ids].size, "éditeur sélectionné", plural: "éditeurs sélectionnés")
+          = count(params[:ids].size, "DDFIP sélectionnée", plural: "DDFIP sélectionnées")
 
-          - if params[:ids].size == pagy.items && publishers.length < @pagy.count
+          - if params[:ids].size == pagy.items && ddfips.length < @pagy.count
             |  (
             a(
               data-action="selection#checkAll"
-              href=publishers_path(extract_params(:search).merge(ids: "all"))
-            ) Sélectionner les #{count(@pagy.count, "éditeurs")}
+              href=ddfips_path(extract_params(:search).merge(ids: "all"))
+            ) Sélectionner les #{count(@pagy.count, "DDFIP")}
             | )
 
     .flex-auto
@@ -31,4 +31,4 @@
   .header-bar
     = search("Rechercher")
     .flex-auto
-    = index_options(pagy, "éditeur", order: { name: "nom", siren: "SIREN" })
+    = index_options(pagy, "DDFIP", plural: "DDFIP", order: { name: "nom", departement: "département", region: "région" })

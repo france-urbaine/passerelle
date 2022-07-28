@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   devise_for :user
 
   resources :publishers
+  resources :ddfips
 
   resources :communes,     only: %i[index show edit update]
   resources :epcis,        only: %i[index show edit update]

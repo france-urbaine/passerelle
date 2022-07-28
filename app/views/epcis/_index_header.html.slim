@@ -18,7 +18,7 @@
           a(
             data-action="selection#checkAll"
             href=epcis_path(extract_params(:search).merge(ids: "all"))
-          ) Sélectionner les #{count(@pagy.count, "commune")}
+          ) Sélectionner les #{count(@pagy.count, "EPCI")}
           | )
 
     .flex-auto

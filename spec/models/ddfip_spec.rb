@@ -40,14 +40,58 @@ RSpec.describe DDFIP, type: :model do
   # Search
   # ----------------------------------------------------------------------------
   describe ".search" do
+    let(:nord)                 { create(:ddfip, code_departement: 59, name: "DDFIP du Nord") }
+    let(:pyreness_atlantiques) { create(:ddfip, code_departement: 64, name: "DDFIP des PA") }
+    let(:paris)                { create(:ddfip, code_departement: 75, name: "DDFIP de Paris") }
+
+    before do
+      create(:region, code_region: 11, name: "Ile-de-France")
+      create(:region, code_region: 75, name: "Nouvelle-Aquitaine")
+      create(:region, code_region: 32, name: "Hauts-de-France")
+
+      create(:departement, code_departement: 75, code_region: 11, name: "Paris")
+      create(:departement, code_departement: 64, code_region: 75, name: "Pyrénées-Atlantiques")
+      create(:departement, code_departement: 59, code_region: 32, name: "Nord")
+    end
+
     it do
-      expect {
-        described_class.search("Hello").load
-      }.to perform_sql_query(<<~SQL.squish)
-        SELECT "ddfips".*
-        FROM   "ddfips"
+      expect(described_class.search("DDFIP du Nord"))
+        .to  include(nord)
+        .and exclude(pyreness_atlantiques)
+        .and exclude(paris)
+    end
+
+    it do
+      expect(described_class.search("Pyrénées"))
+        .to  include(pyreness_atlantiques)
+        .and exclude(nord)
+        .and exclude(paris)
+    end
+
+    it do
+      expect(described_class.search("Aquitaine"))
+        .to  include(pyreness_atlantiques)
+        .and exclude(nord)
+        .and exclude(paris)
+    end
+
+    it do
+      expect(described_class.search("75"))
+        .to  include(paris)
+        .and exclude(nord)
+        .and exclude(pyreness_atlantiques)
+    end
+
+    it do
+      expect { described_class.search("Hello").load }.to perform_sql_query(<<~SQL.squish)
+        SELECT          "ddfips".*
+        FROM            "ddfips"
+        LEFT OUTER JOIN "departements" ON "departements"."code_departement" = "ddfips"."code_departement"
+        LEFT OUTER JOIN "regions" ON "regions"."code_region" = "departements"."code_region"
         WHERE (LOWER(UNACCENT("ddfips"."name")) LIKE LOWER(UNACCENT('%Hello%'))
-          OR "ddfips"."code_departement" = 'Hello')
+          OR "ddfips"."code_departement" = 'Hello'
+          OR LOWER(UNACCENT("departements"."name")) LIKE LOWER(UNACCENT('%Hello%'))
+          OR LOWER(UNACCENT("regions"."name"))      LIKE LOWER(UNACCENT('%Hello%')))
       SQL
     end
   end
@@ -58,9 +102,7 @@ RSpec.describe DDFIP, type: :model do
     let(:ddfip) { create(:ddfip) }
 
     it do
-      expect {
-        ddfip.on_territory_collectivities.load
-      }.to perform_sql_query(<<~SQL)
+      expect { ddfip.on_territory_collectivities.load }.to perform_sql_query(<<~SQL)
         SELECT "collectivities".*
         FROM   "collectivities"
         WHERE  "collectivities"."discarded_at" IS NULL
@@ -274,6 +316,12 @@ RSpec.describe DDFIP, type: :model do
       it        { is_expected.to eq(2) }
       its_block { is_expected.to change { ddfip1.reload.collectivities_count }.from(0).to(6) }
       its_block { is_expected.to change { ddfip2.reload.collectivities_count }.from(0).to(1) }
+    end
+
+    its_block do
+      is_expected.to perform_sql_query(<<~SQL.squish)
+        SELECT reset_all_ddfips_counters()
+      SQL
     end
   end
 end
