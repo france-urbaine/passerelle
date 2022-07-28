@@ -2,23 +2,37 @@ fr:
   default: &default
     update:
       success:
-        type:  "success"
-        title: "Les modifications ont été enregistrées avec succés."
-        delay: 3000
+        type:         "success"
+        title:        "Les modifications ont été enregistrées avec succés."
+        delay:        3000
 
   publishers:
     <<: *default
     create:
       success:
-        type:  "success"
-        title: "Un nouvel éditeur a été ajouté avec succés."
-        delay: 3000
+        type:         "success"
+        title:        "Un nouvel éditeur a été ajouté avec succés."
+        delay:        3000
 
     destroy:
       success:
         type:         "success"
         title:        "Le compte de l'éditeur a été archivé."
         description:  "La suppression de l'éditeur sera définitive dans 30 jours."
+
+  ddfips:
+    <<: *default
+    create:
+      success:
+        type:         "success"
+        title:        "Une nouvelle DDFIP a été ajoutée avec succés."
+        delay:        3000
+
+    destroy:
+      success:
+        type:         "success"
+        title:        "Le compte de la DDFIP a été archivé."
+        description:  "La suppression de la DDFIP sera définitive dans 30 jours."
 
   communes:
     <<: *default

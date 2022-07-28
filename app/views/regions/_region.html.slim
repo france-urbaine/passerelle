@@ -33,6 +33,10 @@
         = svg_icon("pencil-alt-icon")
         | Modifier
 
+h2.subheader
+  = svg_icon("bookmark", "Nouvelle section")
+  | Description
+
 .card.mb-6
   dl.description-list
     .description-list__row
@@ -86,24 +90,109 @@
       dt Collectivités enregistrées
       dd= count(region.collectivities_count, "collectivité") if region.collectivities_count.positive?
 
-- if region.ddfips_count.positive?
-  table.mb-6
+h2.subheader
+  = svg_icon("bookmark", "Nouvelle section")
+  | Départements
+
+- if region.departements_count.zero?
+  .mb-6
+    p.italic Aucune département disponible
+- else
+  table.datatable.mb-6
     thead
-      tr.datatable-row
-        th DDFIP enregistrées
+      tr.datatable__row
+        th( aria-label="Actions" )
+        th( colspan="2" ) Département
+        th.w-48.text-right Communes
+        th.w-48.text-right EPCI
+        th.w-48.text-right Collectivité
+        th.w-48.text-right DDFIP
+
+    tbody
+      - region.departements.each do |departement|
+        tr.datatable__row
+          td.datatable__row-actions
+            a.icon-button(
+              href=edit_departement_path(departement, back: current_path)
+              aria-label="Modifier ce département"
+              data-turbo-frame="modal"
+            )
+              = svg_icon("pencil-alt-icon", "Modifier ce département")
+              span.tooltip Modifier ce département
+
+          td.w-px= departement.code_departement
+          td
+            a(
+              data-turbo-action="advance"
+              data-turbo-frame="content"
+              href=departement_path(departement, back: current_path)
+            )= departement.name
+
+          td.text-right= number_with_delimiter(departement.communes_count)        if departement.communes_count.positive?
+          td.text-right= number_with_delimiter(departement.epcis_count)           if departement.epcis_count.positive?
+          td.text-right= number_with_delimiter(departement.ddfips_count)          if departement.ddfips_count.positive?
+          td.text-right= number_with_delimiter(departement.collectivities_count)  if departement.collectivities_count.positive?
+
+h2.subheader
+  = svg_icon("bookmark", "Nouvelle section")
+  | DDFIP enregistrées
+
+- if region.ddfips_count.zero?
+  .mb-6
+    p.italic Aucune DDFIP enregistrée dans cette région.
+- else
+  table.datatable.mb-6
+    thead
+      tr.datatable__row
+        th( aria-label="Actions" )
+        th DDFIP
+        th.w-48.text-right Collectivités
+        th.w-48.text-right Utilisateurs
 
     tbody
       - region.ddfips.each do |ddfip|
-        tr.datatable-row
-          td= ddfip.name
+        tr.datatable__row
+          td.datatable__row-actions
+            a.icon-button(
+              href=edit_ddfip_path(ddfip, back: current_path)
+              aria-label="Modifier cette DDFIP"
+              data-turbo-frame="modal"
+            )
+              = svg_icon("pencil-alt-icon", "Modifier cette DDFIP")
+              span.tooltip Modifier cette DDFIP
 
-- if region.collectivities_count.positive?
-  table.mb-6
+          td
+            a(
+              data-turbo-action="advance"
+              data-turbo-frame="content"
+              href=ddfip_path(ddfip, back: current_path)
+            )= ddfip.name
+
+          td.text-right= number_with_delimiter(ddfip.collectivities_count) if ddfip.collectivities_count.positive?
+          td.text-right= number_with_delimiter(ddfip.users_count)          if ddfip.users_count.positive?
+
+
+h2.subheader
+  = svg_icon("bookmark", "Nouvelle section")
+  | Collectivités enregistrées
+
+- if region.collectivities_count.zero?
+  .mb-6
+    p.italic Aucune collectivité enregistrée dans cette région.
+- else
+  table.datatable.mb-6
     thead
-      tr.datatable-row
-        th Collectivités enregistrées
+      tr.datatable__row
+        th( aria-label="Actions" )
+        th Collectivité
+        th.w-48.text-right Utilisateurs
 
     tbody
       - region.on_territory_collectivities.each do |collectivite|
-        tr.datatable-row
+        tr.datatable__row
+          td.datatable__row-actions
+            button.icon-button( disabled="true" )
+              = svg_icon("pencil-alt-icon", "Modifier cette collectivité")
+
           td= collectivite.name
+          td.text-right= number_with_delimiter(collectivite.users_count) if collectivite.users_count.positive?

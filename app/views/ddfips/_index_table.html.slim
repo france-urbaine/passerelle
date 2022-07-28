@@ -23,8 +23,8 @@ table.datatable
         | Region
         = order_column(:region)
 
-      th.text-right Collectivités
-      th.text-right Utilisateurs
+      th.w-48.text-right Collectivités
+      th.w-48.text-right Utilisateurs
 
   tbody
     - ddfips.preload(departement: :region).each do |ddfip|

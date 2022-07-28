@@ -16,6 +16,12 @@ table.datatable
         | Region
         = order_column(:region)
 
+      th.w-48.text-right Communes
+      th.w-48.text-right EPCI
+      th.w-48.text-right Département
+      th.w-48.text-right Collectivité
+      th.w-48.text-right DDFIP
+
   tbody
     - @regions.each do |region|
       tr.datatable__row(
@@ -51,3 +57,10 @@ table.datatable
             data-turbo-frame="content"
             href=region_path(region, back: current_path)
           )= region.name
+
+
+        td.text-right= number_with_delimiter(region.communes_count)        if region.communes_count.positive?
+        td.text-right= number_with_delimiter(region.epcis_count)           if region.epcis_count.positive?
+        td.text-right= number_with_delimiter(region.departements_count)    if region.departements_count.positive?
+        td.text-right= number_with_delimiter(region.ddfips_count)          if region.ddfips_count.positive?
+        td.text-right= number_with_delimiter(region.collectivities_count)  if region.collectivities_count.positive?

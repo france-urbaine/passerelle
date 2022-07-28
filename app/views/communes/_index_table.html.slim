@@ -24,6 +24,8 @@ table.datatable
         | EPCI
         = order_column(:epci)
 
+      th.w-48.text-right Collectivité
+
   tbody
     - communes.includes(:departement, :epci).each do |commune|
       tr.datatable__row(
@@ -83,3 +85,5 @@ table.datatable
 
         - else
           td( colspan="2" )
+
+        td.text-right= number_with_delimiter(commune.collectivities_count) if commune.collectivities_count.positive?

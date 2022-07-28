@@ -6,7 +6,7 @@
     box-sizing: content-box;
     min-width: 0px;
 
-    @apply text-xl h-10;
+    @apply text-2xl h-10;
   }
 
   .breadcrumbs__separator {

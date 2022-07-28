@@ -33,6 +33,10 @@
         = svg_icon("pencil-alt-icon")
         | Modifier
 
+h2.subheader
+  = svg_icon("bookmark", "Nouvelle section")
+  | Description
+
 .card.mb-6
   dl.description-list
     .description-list__row
@@ -52,27 +56,50 @@
       dt Collectivités enregistrées
       dd= count(ddfip.collectivities_count, "collectivité") if ddfip.collectivities_count.positive?
 
-- if ddfip.users_count.positive?
-  table.mb-6
+h2.subheader
+  = svg_icon("bookmark", "Nouvelle section")
+  | Utilisateurs de l'organisation
+
+- if ddfip.users_count.zero?
+  .mb-6
+    p.italic Aucun utilisateur enregistré sur ce compte.
+- else
+  table.datatable.mb-6
     thead
-      tr.datatable-row
+      tr.datatable__row
+        th( aria-label="Actions" )
         th Utilisateurs
 
     tbody
       - ddfip.users.each do |user|
-        tr.datatable-row
-          td
-            = user.first_name
-            |
-            = user.last_name
+        tr.datatable__row
+          td.datatable__row-actions
+            button.icon-button( disabled="true" )
+              = svg_icon("pencil-alt-icon", "Modifier cette collectivité")
 
-- if ddfip.collectivities_count.positive?
-  table.mb-6
+          td= "#{user.first_name} #{user.last_name}"
+
+h2.subheader
+  = svg_icon("bookmark", "Nouvelle section")
+  | Collectivités enregistrées
+
+- if ddfip.collectivities_count.zero?
+  .mb-6
+    p.italic Aucune collectivité enregistrée dans cet EPCI.
+- else
+  table.datatable.mb-6
     thead
-      tr.datatable-row
-        th Collectivités enregistrées
+      tr.datatable__row
+        th( aria-label="Actions" )
+        th Collectivité
+        th.w-48.text-right Utilisateurs
 
     tbody
       - ddfip.on_territory_collectivities.each do |collectivite|
-        tr.datatable-row
+        tr.datatable__row
+          td.datatable__row-actions
+            button.icon-button( disabled="true" )
+              = svg_icon("pencil-alt-icon", "Modifier cette collectivité")
+
           td= collectivite.name
+          td.text-right= number_with_delimiter(collectivite.users_count) if collectivite.users_count.positive?

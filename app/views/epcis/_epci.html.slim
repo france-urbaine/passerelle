@@ -33,6 +33,10 @@
         = svg_icon("pencil-alt-icon")
         | Modifier
 
+h2.subheader
+  = svg_icon("bookmark", "Nouvelle section")
+  | Description
+
 .card.mb-6
   dl.description-list
     .description-list__row
@@ -50,7 +54,12 @@
 
     .description-list__row
       dt Département
-      dd= link_to(epci.departement.name, epci.departement) if epci.departement
+      dd
+        - if epci.departement
+          a(
+            data-turbo-frame="_top"
+            href=departement_path(epci.departement)
+          )= epci.departement.name
 
     .description-list__row
       dt Communes
@@ -69,13 +78,27 @@
       dt Collectivités enregistrées
       dd= count(epci.collectivities_count, "collectivité") if epci.collectivities_count.positive?
 
-- if epci.collectivities_count.positive?
-  table
+h2.subheader
+  = svg_icon("bookmark", "Nouvelle section")
+  | Collectivités enregistrées
+
+- if epci.collectivities_count.zero?
+  .mb-6
+    p.italic Aucune collectivité enregistrée dans cet EPCI.
+- else
+  table.datatable.mb-6
     thead
-      tr.datatable-row
-        th Collectivités enregistrées
+      tr.datatable__row
+        th( aria-label="Actions" )
+        th Collectivité
+        th.w-48.text-right Utilisateurs
 
     tbody
       - epci.on_territory_collectivities.each do |collectivite|
-        tr.datatable-row
-          td.w-px= collectivite.name
+        tr.datatable__row
+          td.datatable__row-actions
+            button.icon-button( disabled="true" )
+              = svg_icon("pencil-alt-icon", "Modifier cette collectivité")
+
+          td= collectivite.name
+          td.text-right= number_with_delimiter(collectivite.users_count) if collectivite.users_count.positive?

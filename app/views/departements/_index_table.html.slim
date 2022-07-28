@@ -20,6 +20,11 @@ table.datatable
         | Region
         = order_column(:region)
 
+      th.w-48.text-right Communes
+      th.w-48.text-right EPCI
+      th.w-48.text-right Collectivité
+      th.w-48.text-right DDFIP
+
   tbody
     - @departements.preload(:region).each do |departement|
       tr.datatable__row(
@@ -67,3 +72,8 @@ table.datatable
 
         - else
           td( colspan="2" )
+
+        td.text-right= number_with_delimiter(departement.communes_count)        if departement.communes_count.positive?
+        td.text-right= number_with_delimiter(departement.epcis_count)           if departement.epcis_count.positive?
+        td.text-right= number_with_delimiter(departement.ddfips_count)          if departement.ddfips_count.positive?
+        td.text-right= number_with_delimiter(departement.collectivities_count)  if departement.collectivities_count.positive?
