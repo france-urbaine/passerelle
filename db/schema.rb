@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_06_26_164636) do
+ActiveRecord::Schema[7.0].define(version: 2022_07_16_065809) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -523,5 +523,224 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_26_164636) do
         END;
       $function$
   SQL
+  create_function :trigger_communes_changes, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.trigger_communes_changes()
+       RETURNS trigger
+       LANGUAGE plpgsql
+      AS $function$
+        BEGIN
+          -- Reset all communes_count & collectivities_count
+          -- * on creation
+          -- * on deletion
+          -- * when code_departement changed
+          -- * when siren_epci changed
 
+          IF (TG_OP = 'INSERT')
+          OR (TG_OP = 'DELETE')
+          OR (TG_OP = 'UPDATE' AND NEW."code_departement" <> OLD."code_departement")
+          OR (TG_OP = 'UPDATE' AND NEW."siren_epci" <> OLD."siren_epci")
+          OR (TG_OP = 'UPDATE' AND (NEW."siren_epci" IS NULL) <> (OLD."siren_epci" IS NULL))
+          THEN
+
+            PERFORM reset_all_epcis_counters();
+            PERFORM reset_all_departements_counters();
+            PERFORM reset_all_regions_counters();
+            PERFORM reset_all_ddfips_counters();
+
+          END IF;
+
+          -- result is ignored since this is an AFTER trigger
+          RETURN NULL;
+        END;
+      $function$
+  SQL
+  create_function :trigger_epcis_changes, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.trigger_epcis_changes()
+       RETURNS trigger
+       LANGUAGE plpgsql
+      AS $function$
+        BEGIN
+          -- Reset all departements_count & collectivities_count
+          -- * on creation
+          -- * on deletion
+          -- * when siren changed
+          -- * when code_departement changed
+
+          IF (TG_OP = 'INSERT')
+          OR (TG_OP = 'DELETE')
+          OR (TG_OP = 'UPDATE' AND NEW."siren" <> OLD."siren")
+          OR (TG_OP = 'UPDATE' AND NEW."code_departement" <> OLD."code_departement")
+          OR (TG_OP = 'UPDATE' AND (NEW."code_departement" IS NULL) <> (OLD."code_departement"  IS NULL))
+          THEN
+
+            PERFORM reset_all_communes_counters();
+            PERFORM reset_all_epcis_counters();
+            PERFORM reset_all_departements_counters();
+            PERFORM reset_all_regions_counters();
+            PERFORM reset_all_ddfips_counters();
+
+          END IF;
+
+          -- result is ignored since this is an AFTER trigger
+          RETURN NULL;
+        END;
+      $function$
+  SQL
+  create_function :trigger_departements_changes, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.trigger_departements_changes()
+       RETURNS trigger
+       LANGUAGE plpgsql
+      AS $function$
+        BEGIN
+          -- Reset all departements_count & collectivities_count
+          -- * on creation
+          -- * on deletion
+          -- * when code_region changed
+          -- * when code_departement changed
+
+          IF (TG_OP = 'INSERT')
+          OR (TG_OP = 'DELETE')
+          OR (TG_OP = 'UPDATE' AND NEW."code_region" <> OLD."code_region")
+          OR (TG_OP = 'UPDATE' AND NEW."code_departement" <> OLD."code_departement")
+          THEN
+
+            PERFORM reset_all_communes_counters();
+            PERFORM reset_all_epcis_counters();
+            PERFORM reset_all_departements_counters();
+            PERFORM reset_all_regions_counters();
+            PERFORM reset_all_ddfips_counters();
+
+          END IF;
+
+          -- result is ignored since this is an AFTER trigger
+          RETURN NULL;
+        END;
+      $function$
+  SQL
+  create_function :trigger_collectivities_changes, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.trigger_collectivities_changes()
+       RETURNS trigger
+       LANGUAGE plpgsql
+      AS $function$
+        BEGIN
+          -- Reset all collectivities_count
+          -- * on creation
+          -- * on deletion
+          -- * when territory_id changed
+          -- * when discarded_at changed from NULL
+          -- * when discarded_at changed to NULL
+
+          IF (TG_OP = 'INSERT')
+          OR (TG_OP = 'DELETE')
+          OR (TG_OP = 'UPDATE' AND NEW."territory_id" <> OLD."territory_id")
+          OR (TG_OP = 'UPDATE' AND (NEW."discarded_at" IS NULL) <> (OLD."discarded_at" IS NULL))
+          THEN
+
+            PERFORM reset_all_communes_counters();
+            PERFORM reset_all_epcis_counters();
+            PERFORM reset_all_departements_counters();
+            PERFORM reset_all_regions_counters();
+            PERFORM reset_all_ddfips_counters();
+            PERFORM reset_all_publishers_counters();
+
+          END IF;
+
+          -- Reset publishers#collectivities_count
+          -- * on creation
+          -- * on deletion
+          -- * when publisher_id changed
+          -- * when discarded_at changed from NULL
+          -- * when discarded_at changed to NULL
+
+          IF (TG_OP = 'INSERT')
+          OR (TG_OP = 'DELETE')
+          OR (TG_OP = 'UPDATE' AND NEW."publisher_id" <> OLD."publisher_id")
+          OR (TG_OP = 'UPDATE' AND (NEW."discarded_at" IS NULL) <> (OLD."discarded_at" IS NULL))
+          THEN
+
+            PERFORM reset_all_publishers_counters();
+
+          END IF;
+
+          -- result is ignored since this is an AFTER trigger
+          RETURN NULL;
+        END;
+      $function$
+  SQL
+  create_function :trigger_ddfips_changes, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.trigger_ddfips_changes()
+       RETURNS trigger
+       LANGUAGE plpgsql
+      AS $function$
+        BEGIN
+          -- Reset all ddfips_count
+          -- * on creation
+          -- * on deletion
+          -- * when code_departement changed
+          -- * when discarded_at changed from NULL
+          -- * when discarded_at changed to NULL
+
+          IF (TG_OP = 'INSERT')
+          OR (TG_OP = 'DELETE')
+          OR (TG_OP = 'UPDATE' AND NEW."code_departement" <> OLD."code_departement")
+          OR (TG_OP = 'UPDATE' AND (NEW."discarded_at" IS NULL) <> (OLD."discarded_at" IS NULL))
+          THEN
+
+            PERFORM reset_all_departements_counters();
+            PERFORM reset_all_regions_counters();
+
+          END IF;
+
+          -- result is ignored since this is an AFTER trigger
+          RETURN NULL;
+        END;
+      $function$
+  SQL
+  create_function :trigger_users_changes, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.trigger_users_changes()
+       RETURNS trigger
+       LANGUAGE plpgsql
+      AS $function$
+        BEGIN
+          -- Reset all departements_count & collectivities_count
+          -- * on creation
+          -- * on deletion
+          -- * when organization_id changed
+
+          IF (TG_OP = 'INSERT')
+          OR (TG_OP = 'DELETE')
+          OR (TG_OP = 'UPDATE' AND NEW."organization_id" <> OLD."organization_id")
+          THEN
+
+            PERFORM reset_all_publishers_counters();
+            PERFORM reset_all_collectivities_counters();
+            PERFORM reset_all_ddfips_counters();
+
+          END IF;
+
+          -- result is ignored since this is an AFTER trigger
+          RETURN NULL;
+        END;
+      $function$
+  SQL
+
+
+  create_trigger :trigger_collectivities_changes, sql_definition: <<-SQL
+      CREATE TRIGGER trigger_collectivities_changes AFTER INSERT OR DELETE OR UPDATE ON public.collectivities FOR EACH ROW EXECUTE FUNCTION trigger_collectivities_changes()
+  SQL
+  create_trigger :trigger_communes_changes, sql_definition: <<-SQL
+      CREATE TRIGGER trigger_communes_changes AFTER INSERT OR DELETE OR UPDATE ON public.communes FOR EACH ROW EXECUTE FUNCTION trigger_communes_changes()
+  SQL
+  create_trigger :trigger_ddfips_changes, sql_definition: <<-SQL
+      CREATE TRIGGER trigger_ddfips_changes AFTER INSERT OR DELETE OR UPDATE ON public.ddfips FOR EACH ROW EXECUTE FUNCTION trigger_ddfips_changes()
+  SQL
+  create_trigger :trigger_departements_changes, sql_definition: <<-SQL
+      CREATE TRIGGER trigger_departements_changes AFTER INSERT OR DELETE OR UPDATE ON public.departements FOR EACH ROW EXECUTE FUNCTION trigger_departements_changes()
+  SQL
+  create_trigger :trigger_epcis_changes, sql_definition: <<-SQL
+      CREATE TRIGGER trigger_epcis_changes AFTER INSERT OR DELETE OR UPDATE ON public.epcis FOR EACH ROW EXECUTE FUNCTION trigger_epcis_changes()
+  SQL
+  create_trigger :trigger_users_changes, sql_definition: <<-SQL
+      CREATE TRIGGER trigger_users_changes AFTER INSERT OR DELETE OR UPDATE ON public.users FOR EACH ROW EXECUTE FUNCTION trigger_users_changes()
+  SQL
 end

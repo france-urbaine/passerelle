@@ -188,6 +188,112 @@ RSpec.describe Commune, type: :model do
     end
   end
 
+  # Counter caches
+  # ----------------------------------------------------------------------------
+  describe "counter caches" do
+    let!(:commune1) { create(:commune) }
+    let!(:commune2) { create(:commune) }
+
+    describe "#collectivities_count" do
+      shared_examples "trigger changes" do
+        let(:collectivity) { create(:collectivity, territory: territory1) }
+
+        it "changes on creation" do
+          expect { collectivity }
+            .to      change { commune1.reload.collectivities_count }.from(0).to(1)
+            .and not_change { commune2.reload.collectivities_count }.from(0)
+        end
+
+        it "changes on discarding" do
+          collectivity
+          expect { collectivity.discard }
+            .to      change { commune1.reload.collectivities_count }.from(1).to(0)
+            .and not_change { commune2.reload.collectivities_count }.from(0)
+        end
+
+        it "changes on undiscarding" do
+          collectivity.discard
+          expect { collectivity.undiscard }
+            .to      change { commune1.reload.collectivities_count }.from(0).to(1)
+            .and not_change { commune2.reload.collectivities_count }.from(0)
+        end
+
+        it "changes on deletion" do
+          collectivity
+          expect { collectivity.destroy }
+            .to      change { commune1.reload.collectivities_count }.from(1).to(0)
+            .and not_change { commune2.reload.collectivities_count }.from(0)
+        end
+
+        it "doesn't change when deleting a discarded collectivity" do
+          collectivity.discard
+          expect { collectivity.destroy }
+            .to  not_change { commune1.reload.collectivities_count }.from(0)
+            .and not_change { commune2.reload.collectivities_count }.from(0)
+        end
+
+        it "changes when updating territory" do
+          collectivity
+          expect { collectivity.update(territory: territory2) }
+            .to  change { commune1.reload.collectivities_count }.from(1).to(0)
+            .and change { commune2.reload.collectivities_count }.from(0).to(1)
+        end
+
+        it "doesn't change when updating territory of a discarded collectivity" do
+          collectivity.discard
+          expect { collectivity.update(territory: territory2) }
+            .to  not_change { commune1.reload.collectivities_count }.from(0)
+            .and not_change { commune2.reload.collectivities_count }.from(0)
+        end
+
+        it "changes when combining updating territory and discarding" do
+          collectivity
+          expect { collectivity.update(territory: territory2, discarded_at: Time.current) }
+            .to      change { commune1.reload.collectivities_count }.from(1).to(0)
+            .and not_change { commune2.reload.collectivities_count }.from(0)
+        end
+
+        it "changes when combining updating territory and undiscarding" do
+          collectivity.discard
+          expect { collectivity.update(territory: territory2, discarded_at: nil) }
+            .to  not_change { commune1.reload.collectivities_count }.from(0)
+            .and     change { commune2.reload.collectivities_count }.from(0).to(1)
+        end
+      end
+
+      context "with a commune" do
+        let(:territory1) { commune1 }
+        let(:territory2) { commune2 }
+
+        include_examples "trigger changes"
+      end
+
+      context "with an EPCI" do
+        let!(:commune1) { create(:commune, :with_epci) }
+        let!(:commune2) { create(:commune, :with_epci) }
+
+        let(:territory1) { commune1.epci }
+        let(:territory2) { commune2.epci }
+
+        include_examples "trigger changes"
+      end
+
+      context "with a departement" do
+        let(:territory1) { commune1.departement }
+        let(:territory2) { commune2.departement }
+
+        include_examples "trigger changes"
+      end
+
+      context "with a region" do
+        let(:territory1) { commune1.departement.region }
+        let(:territory2) { commune2.departement.region }
+
+        include_examples "trigger changes"
+      end
+    end
+  end
+
   # Reset counters
   # ----------------------------------------------------------------------------
   describe ".reset_all_counters" do

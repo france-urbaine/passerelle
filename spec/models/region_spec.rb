@@ -104,7 +104,113 @@ RSpec.describe Region, type: :model do
     end
   end
 
-  # Counters
+  # Counter caches
+  # ----------------------------------------------------------------------------
+  describe "counter caches" do
+    let!(:region1)     { create(:region) }
+    let!(:region2)     { create(:region) }
+    let(:departement1) { create(:departement, region: region1) }
+    let(:departement2) { create(:departement, region: region2) }
+
+    describe "#communes_count" do
+      let(:commune) { create(:commune, departement: departement1) }
+
+      it "changes on creation" do
+        expect { commune }
+          .to      change { region1.reload.communes_count }.from(0).to(1)
+          .and not_change { region2.reload.communes_count }.from(0)
+      end
+
+      it "changes on deletion" do
+        commune
+        expect { commune.destroy }
+          .to      change { region1.reload.communes_count }.from(1).to(0)
+          .and not_change { region2.reload.communes_count }.from(0)
+      end
+
+      it "changes on updating departement" do
+        commune
+        expect { commune.update(departement: departement2) }
+          .to  change { departement1.reload.communes_count }.from(1).to(0)
+          .and change { departement2.reload.communes_count }.from(0).to(1)
+      end
+    end
+
+    describe ".communes_count" do
+      it do
+        expect { create(:commune, departement: departement1) }
+          .to      change { region1.reload.communes_count }.from(0).to(1)
+          .and not_change { region2.reload.communes_count }.from(0)
+      end
+    end
+
+    describe ".epcis_count" do
+      it do
+        expect { create(:epci, departement: departement1) }
+          .to      change { region1.reload.epcis_count }.from(0).to(1)
+          .and not_change { region2.reload.epcis_count }.from(0)
+      end
+
+      it do
+        expect { create(:commune, :with_epci, departement: departement1) }
+          .to  not_change { region1.reload.epcis_count }.from(0)
+          .and not_change { region2.reload.epcis_count }.from(0)
+      end
+    end
+
+    describe ".departements_count" do
+      it do
+        expect { departement1 }
+          .to      change { region1.reload.departements_count }.from(0).to(1)
+          .and not_change { region2.reload.departements_count }.from(0)
+      end
+    end
+
+    describe ".ddfips_count" do
+      it do
+        expect { create(:ddfip, departement: departement1) }
+          .to      change { region1.reload.ddfips_count }.from(0).to(1)
+          .and not_change { region2.reload.ddfips_count }.from(0)
+      end
+    end
+
+    describe ".collectivities_count" do
+      it do
+        commune = create(:commune, departement: departement1)
+        expect { create(:collectivity, :commune, territory: commune) }
+          .to      change { region1.reload.collectivities_count }.from(0).to(1)
+          .and not_change { region2.reload.collectivities_count }.from(0)
+      end
+
+      it do
+        epci = create(:commune, :with_epci, departement: departement1).epci
+        expect { create(:collectivity, :epci, territory: epci) }
+          .to      change { region1.reload.collectivities_count }.from(0).to(1)
+          .and not_change { region2.reload.collectivities_count }.from(0)
+      end
+
+      it do
+        epci = create(:epci, departement: departement1)
+        expect { create(:collectivity, :epci, territory: epci) }
+          .to  not_change { region1.reload.collectivities_count }.from(0)
+          .and not_change { region2.reload.collectivities_count }.from(0)
+      end
+
+      it do
+        expect { create(:collectivity, :departement, territory: departement1) }
+          .to      change { region1.reload.collectivities_count }.from(0).to(1)
+          .and not_change { region2.reload.collectivities_count }.from(0)
+      end
+
+      it do
+        expect { create(:collectivity, :region, territory: departement1.region) }
+          .to      change { region1.reload.collectivities_count }.from(0).to(1)
+          .and not_change { region2.reload.collectivities_count }.from(0)
+      end
+    end
+  end
+
+  # Reset counters
   # ----------------------------------------------------------------------------
   describe ".reset_all_counters" do
     subject { described_class.reset_all_counters }

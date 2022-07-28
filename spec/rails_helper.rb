@@ -118,8 +118,10 @@ RSpec.configure do |config|
   end
 end
 
-RSpec::Matchers.define_negated_matcher :maintain, :change
+RSpec::Matchers.define_negated_matcher :maintain,   :change
+RSpec::Matchers.define_negated_matcher :not_change, :change
 RSpec::Matchers.define_negated_matcher :run_without_error, :raise_error
+RSpec::Matchers.define_negated_matcher :not_raise_error,   :raise_error
 
 Shoulda::Matchers.configure do |config|
   config.integrate do |with|

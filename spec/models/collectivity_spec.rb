@@ -77,6 +77,37 @@ RSpec.describe Collectivity, type: :model do
     end
   end
 
+  # Counter caches
+  # ----------------------------------------------------------------------------
+  describe "counter caches" do
+    let!(:collectivity1) { create(:collectivity) }
+    let!(:collectivity2) { create(:collectivity) }
+
+    describe "#users_count" do
+      let(:user) { create(:user, organization: collectivity1) }
+
+      it "changes on creation" do
+        expect { user }
+          .to      change { collectivity1.reload.users_count }.from(0).to(1)
+          .and not_change { collectivity2.reload.users_count }.from(0)
+      end
+
+      it "changes on deletion" do
+        user
+        expect { user.destroy }
+          .to      change { collectivity1.reload.users_count }.from(1).to(0)
+          .and not_change { collectivity2.reload.users_count }.from(0)
+      end
+
+      it "changes on updating" do
+        user
+        expect { user.update(organization: collectivity2) }
+          .to  change { collectivity1.reload.users_count }.from(1).to(0)
+          .and change { collectivity2.reload.users_count }.from(0).to(1)
+      end
+    end
+  end
+
   # Reset counters
   # ----------------------------------------------------------------------------
   describe ".reset_all_counters" do

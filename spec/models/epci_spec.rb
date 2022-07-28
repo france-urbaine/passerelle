@@ -138,7 +138,149 @@ RSpec.describe EPCI, type: :model do
     end
   end
 
-  # Counters
+  # Counter caches
+  # ----------------------------------------------------------------------------
+  describe "counter caches" do
+    let!(:epci1) { create(:epci) }
+    let!(:epci2) { create(:epci) }
+
+    describe "#communes_count" do
+      let(:commune) { create(:commune, epci: epci1) }
+
+      it "changes on creation" do
+        expect { commune }
+          .to      change { epci1.reload.communes_count }.from(0).to(1)
+          .and not_change { epci2.reload.communes_count }.from(0)
+      end
+
+      it "changes on deletion" do
+        commune
+        expect { commune.destroy }
+          .to      change { epci1.reload.communes_count }.from(1).to(0)
+          .and not_change { epci2.reload.communes_count }.from(0)
+      end
+
+      it "changes on updating EPCI" do
+        commune
+        expect { commune.update(epci: epci2) }
+          .to  change { epci1.reload.communes_count }.from(1).to(0)
+          .and change { epci2.reload.communes_count }.from(0).to(1)
+      end
+
+      it "changes on updating to remove the EPCI" do
+        commune
+        expect { commune.update(epci: nil) }
+          .to      change { epci1.reload.communes_count }.from(1).to(0)
+          .and not_change { epci2.reload.communes_count }.from(0)
+      end
+
+      it "changes on updating to add the EPCI" do
+        commune = create(:commune)
+
+        expect { commune.update(epci: epci2) }
+          .to  not_change { epci1.reload.communes_count }.from(0)
+          .and     change { epci2.reload.communes_count }.from(0).to(1)
+      end
+    end
+
+    describe "#collectivities_count" do
+      shared_examples "trigger changes" do
+        let(:collectivity) { create(:collectivity, territory: territory1) }
+
+        it "changes on creation" do
+          expect { collectivity }
+            .to      change { epci1.reload.collectivities_count }.from(0).to(1)
+            .and not_change { epci2.reload.collectivities_count }.from(0)
+        end
+
+        it "changes on discarding" do
+          collectivity
+          expect { collectivity.discard }
+            .to      change { epci1.reload.collectivities_count }.from(1).to(0)
+            .and not_change { epci2.reload.collectivities_count }.from(0)
+        end
+
+        it "changes on undiscarding" do
+          collectivity.discard
+          expect { collectivity.undiscard }
+            .to      change { epci1.reload.collectivities_count }.from(0).to(1)
+            .and not_change { epci2.reload.collectivities_count }.from(0)
+        end
+
+        it "changes on deletion" do
+          collectivity
+          expect { collectivity.destroy }
+            .to      change { epci1.reload.collectivities_count }.from(1).to(0)
+            .and not_change { epci2.reload.collectivities_count }.from(0)
+        end
+
+        it "doesn't change when deleting a discarded collectivity" do
+          collectivity.discard
+          expect { collectivity.destroy }
+            .to  not_change { epci1.reload.collectivities_count }.from(0)
+            .and not_change { epci2.reload.collectivities_count }.from(0)
+        end
+
+        it "changes when updating territory" do
+          collectivity
+          expect { collectivity.update(territory: territory2) }
+            .to  change { epci1.reload.collectivities_count }.from(1).to(0)
+            .and change { epci2.reload.collectivities_count }.from(0).to(1)
+        end
+
+        it "doesn't change when updating territory of a discarded collectivity" do
+          collectivity.discard
+          expect { collectivity.update(territory: territory2) }
+            .to  not_change { epci1.reload.collectivities_count }.from(0)
+            .and not_change { epci2.reload.collectivities_count }.from(0)
+        end
+
+        it "changes when combining updating territory and discarding" do
+          collectivity
+          expect { collectivity.update(territory: territory2, discarded_at: Time.current) }
+            .to      change { epci1.reload.collectivities_count }.from(1).to(0)
+            .and not_change { epci2.reload.collectivities_count }.from(0)
+        end
+
+        it "changes when combining updating territory and undiscarding" do
+          collectivity.discard
+          expect { collectivity.update(territory: territory2, discarded_at: nil) }
+            .to  not_change { epci1.reload.collectivities_count }.from(0)
+            .and     change { epci2.reload.collectivities_count }.from(0).to(1)
+        end
+      end
+
+      context "with a commune" do
+        let(:territory1) { create(:commune, epci: epci1) }
+        let(:territory2) { create(:commune, epci: epci2) }
+
+        include_examples "trigger changes"
+      end
+
+      context "with an EPCI" do
+        let(:territory1) { create(:commune, epci: epci1).epci }
+        let(:territory2) { create(:commune, epci: epci2).epci }
+
+        include_examples "trigger changes"
+      end
+
+      context "with a departement" do
+        let(:territory1) { create(:commune, epci: epci1).departement }
+        let(:territory2) { create(:commune, epci: epci2).departement }
+
+        include_examples "trigger changes"
+      end
+
+      context "with a region" do
+        let(:territory1) { create(:commune, epci: epci1).departement.region }
+        let(:territory2) { create(:commune, epci: epci2).departement.region }
+
+        include_examples "trigger changes"
+      end
+    end
+  end
+
+  # Reset counters
   # ----------------------------------------------------------------------------
   describe ".reset_all_counters" do
     subject { described_class.reset_all_counters }

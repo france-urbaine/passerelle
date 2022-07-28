@@ -89,6 +89,144 @@ RSpec.describe DDFIP, type: :model do
     end
   end
 
+  # Counter caches
+  # ----------------------------------------------------------------------------
+  describe "counter caches" do
+    let!(:ddfip1) { create(:ddfip) }
+    let!(:ddfip2) { create(:ddfip) }
+
+    describe "#users_count" do
+      let(:user) { create(:user, organization: ddfip1) }
+
+      it "changes on creation" do
+        expect { user }
+          .to      change { ddfip1.reload.users_count }.from(0).to(1)
+          .and not_change { ddfip2.reload.users_count }.from(0)
+      end
+
+      it "changes on deletion" do
+        user
+        expect { user.destroy }
+          .to      change { ddfip1.reload.users_count }.from(1).to(0)
+          .and not_change { ddfip2.reload.users_count }.from(0)
+      end
+
+      it "changes on updating" do
+        user
+        expect { user.update(organization: ddfip2) }
+          .to  change { ddfip1.reload.users_count }.from(1).to(0)
+          .and change { ddfip2.reload.users_count }.from(0).to(1)
+      end
+    end
+
+    describe "#collectivities_count" do
+      shared_examples "trigger changes" do
+        let(:collectivity) { create(:collectivity, territory: territory1) }
+
+        it "changes on creation" do
+          expect { collectivity }
+            .to      change { ddfip1.reload.collectivities_count }.from(0).to(1)
+            .and not_change { ddfip2.reload.collectivities_count }.from(0)
+        end
+
+        it "changes on discarding" do
+          collectivity
+          expect { collectivity.discard }
+            .to      change { ddfip1.reload.collectivities_count }.from(1).to(0)
+            .and not_change { ddfip2.reload.collectivities_count }.from(0)
+        end
+
+        it "changes on undiscarding" do
+          collectivity.discard
+          expect { collectivity.undiscard }
+            .to      change { ddfip1.reload.collectivities_count }.from(0).to(1)
+            .and not_change { ddfip2.reload.collectivities_count }.from(0)
+        end
+
+        it "changes on deletion" do
+          collectivity
+          expect { collectivity.destroy }
+            .to      change { ddfip1.reload.collectivities_count }.from(1).to(0)
+            .and not_change { ddfip2.reload.collectivities_count }.from(0)
+        end
+
+        it "doesn't change when deleting a discarded collectivity" do
+          collectivity.discard
+          expect { collectivity.destroy }
+            .to  not_change { ddfip1.reload.collectivities_count }.from(0)
+            .and not_change { ddfip2.reload.collectivities_count }.from(0)
+        end
+
+        it "changes when updating territory" do
+          collectivity
+          expect { collectivity.update(territory: territory2) }
+            .to  change { ddfip1.reload.collectivities_count }.from(1).to(0)
+            .and change { ddfip2.reload.collectivities_count }.from(0).to(1)
+        end
+
+        it "doesn't change when updating territory of a discarded collectivity" do
+          collectivity.discard
+          expect { collectivity.update(territory: territory2) }
+            .to  not_change { ddfip1.reload.collectivities_count }.from(0)
+            .and not_change { ddfip2.reload.collectivities_count }.from(0)
+        end
+
+        it "changes when combining updating territory and discarding" do
+          collectivity
+          expect { collectivity.update(territory: territory2, discarded_at: Time.current) }
+            .to      change { ddfip1.reload.collectivities_count }.from(1).to(0)
+            .and not_change { ddfip2.reload.collectivities_count }.from(0)
+        end
+
+        it "changes when combining updating territory and undiscarding" do
+          collectivity.discard
+          expect { collectivity.update(territory: territory2, discarded_at: nil) }
+            .to  not_change { ddfip1.reload.collectivities_count }.from(0)
+            .and     change { ddfip2.reload.collectivities_count }.from(0).to(1)
+        end
+      end
+
+      context "with a commune" do
+        let(:territory1) { create(:commune, departement: ddfip1.departement) }
+        let(:territory2) { create(:commune, departement: ddfip2.departement) }
+
+        include_examples "trigger changes"
+      end
+
+      context "with an EPCI having a commune in departement" do
+        let(:territory1) { create(:commune, :with_epci, departement: ddfip1.departement).epci }
+        let(:territory2) { create(:commune, :with_epci, departement: ddfip2.departement).epci }
+
+        include_examples "trigger changes"
+      end
+
+      context "with an EPCI belonging to departement, without communes in it" do
+        let(:territory)    { create(:epci, departement: ddfip1.departement) }
+        let(:collectivity) { create(:collectivity, territory: territory) }
+
+        it do
+          expect { collectivity }
+            .to  not_change { ddfip1.reload.collectivities_count }.from(0)
+            .and not_change { ddfip2.reload.collectivities_count }.from(0)
+        end
+      end
+
+      context "with a departement" do
+        let(:territory1) { ddfip1.departement }
+        let(:territory2) { ddfip2.departement }
+
+        include_examples "trigger changes"
+      end
+
+      context "with a region" do
+        let(:territory1) { ddfip1.departement.region }
+        let(:territory2) { ddfip2.departement.region }
+
+        include_examples "trigger changes"
+      end
+    end
+  end
+
   # Reset counters
   # ----------------------------------------------------------------------------
   describe ".reset_all_counters" do
