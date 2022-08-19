@@ -3,7 +3,7 @@
 require "rails_helper"
 
 RSpec.describe "PublishersController#index", type: :request do
-  subject(:request) { get "/publishers", headers: }
+  subject(:request) { get "/editeurs", headers: }
 
   let(:headers) { {} }
 

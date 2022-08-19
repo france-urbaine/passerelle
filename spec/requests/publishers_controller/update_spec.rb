@@ -3,7 +3,7 @@
 require "rails_helper"
 
 RSpec.describe "PublishersController#update", type: :request do
-  subject(:request) { patch "/publishers/#{publisher.id}", headers:, params: }
+  subject(:request) { patch "/editeurs/#{publisher.id}", headers:, params: }
 
   let(:headers)   { {} }
   let(:params)    { { publisher: { name: "DDFIP de Paris" } } }
@@ -11,7 +11,7 @@ RSpec.describe "PublishersController#update", type: :request do
 
   context "when requesting HTML with valid parameters" do
     it { expect(response).to have_http_status(:found) }
-    it { expect(response).to redirect_to("/publishers") }
+    it { expect(response).to redirect_to("/editeurs") }
 
     it "is expected to update the record" do
       expect {

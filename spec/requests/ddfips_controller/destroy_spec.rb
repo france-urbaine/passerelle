@@ -6,7 +6,7 @@ RSpec.describe "DdfipsController#destroy", type: :request do
   subject(:request) { delete "/ddfips/#{ddfip.id}", headers: }
 
   let(:headers) { {} }
-  let(:ddfip) { create(:ddfip) }
+  let(:ddfip)   { create(:ddfip) }
 
   context "when requesting HTML" do
     it { expect(response).to have_http_status(:found) }

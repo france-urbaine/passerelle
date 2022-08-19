@@ -8,7 +8,7 @@ Rails.application.routes.draw do
 
   devise_for :user
 
-  resources :publishers
+  resources :publishers, path: "/editeurs"
   resources :ddfips
 
   resources :communes,     only: %i[index show edit update]
@@ -18,5 +18,5 @@ Rails.application.routes.draw do
 
   resource :territories_updates, only: %i[show create], path: "/territoires"
 
-  root to: redirect("/publishers")
+  root to: redirect("/editeurs")
 end

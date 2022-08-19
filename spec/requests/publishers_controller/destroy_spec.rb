@@ -3,14 +3,14 @@
 require "rails_helper"
 
 RSpec.describe "PublishersController#destroy", type: :request do
-  subject(:request) { delete "/publishers/#{publisher.id}", headers: }
+  subject(:request) { delete "/editeurs/#{publisher.id}", headers: }
 
   let(:headers)   { {} }
   let(:publisher) { create(:publisher) }
 
   context "when requesting HTML" do
     it { expect(response).to have_http_status(:found) }
-    it { expect(response).to redirect_to("/publishers") }
+    it { expect(response).to redirect_to("/editeurs") }
 
     it "is expected to discard the record" do
       expect {

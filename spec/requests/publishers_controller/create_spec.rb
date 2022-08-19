@@ -3,7 +3,7 @@
 require "rails_helper"
 
 RSpec.describe "PublishersController#create", type: :request do
-  subject(:request) { post "/publishers", headers:, params: }
+  subject(:request) { post "/editeurs", headers:, params: }
 
   let(:headers) { {} }
   let(:params)  { { publisher: attributes } }
@@ -17,7 +17,7 @@ RSpec.describe "PublishersController#create", type: :request do
 
   context "when requesting HTML with valid parameters" do
     it { expect(response).to have_http_status(:found) }
-    it { expect(response).to redirect_to("/publishers") }
+    it { expect(response).to redirect_to("/editeurs") }
 
     it "is expected to create a record" do
       expect { request }.to change(Publisher, :count).by(1)

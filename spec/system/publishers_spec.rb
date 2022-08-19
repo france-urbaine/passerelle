@@ -13,7 +13,7 @@ RSpec.describe "Publishers", type: :system, use_fixtures: true do
 
     click_on "Fiscalité & Territoire"
 
-    expect(page).to have_current_path(%r{^/publishers/.{36}})
+    expect(page).to have_current_path(%r{^/editeurs/.{36}})
     expect(page).to have_selector("h1", text: "Fiscalité & Territoire")
   end
 
