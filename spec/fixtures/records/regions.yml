@@ -1,11 +1,26 @@
 ile_de_france:
-  name:         Ile-de-France
-  code_region:  11
+  name:                 Ile-de-France
+  code_region:          11
+  communes_count:       1
+  epcis_count:          1
+  departements_count:   1
+  ddfips_count:         1
+  collectivities_count: 2
 
 nouvelle_aquitaine:
-  name:         Nouvelle-Aquitaine
-  code_region:  75
+  name:                 Nouvelle-Aquitaine
+  code_region:          75
+  communes_count:       1
+  epcis_count:          1
+  departements_count:   2
+  ddfips_count:         1
+  collectivities_count: 2
 
 hauts_de_france:
-  name:         Hauts-de-France
-  code_region:  32
+  name:                 Hauts-de-France
+  code_region:          32
+  communes_count:       1
+  epcis_count:          1
+  departements_count:   1
+  ddfips_count:         1
+  collectivities_count: 3

@@ -41,7 +41,7 @@ RSpec.describe DDFIP, type: :model do
   # ----------------------------------------------------------------------------
   describe ".search" do
     let(:nord)                 { create(:ddfip, code_departement: 59, name: "DDFIP du Nord") }
-    let(:pyreness_atlantiques) { create(:ddfip, code_departement: 64, name: "DDFIP des PA") }
+    let(:pyrenees_atlantiques) { create(:ddfip, code_departement: 64, name: "DDFIP des PA") }
     let(:paris)                { create(:ddfip, code_departement: 75, name: "DDFIP de Paris") }
 
     before do
@@ -57,20 +57,20 @@ RSpec.describe DDFIP, type: :model do
     it do
       expect(described_class.search("DDFIP du Nord"))
         .to  include(nord)
-        .and exclude(pyreness_atlantiques)
+        .and exclude(pyrenees_atlantiques)
         .and exclude(paris)
     end
 
     it do
       expect(described_class.search("Pyrénées"))
-        .to  include(pyreness_atlantiques)
+        .to  include(pyrenees_atlantiques)
         .and exclude(nord)
         .and exclude(paris)
     end
 
     it do
       expect(described_class.search("Aquitaine"))
-        .to  include(pyreness_atlantiques)
+        .to  include(pyrenees_atlantiques)
         .and exclude(nord)
         .and exclude(paris)
     end
@@ -79,7 +79,7 @@ RSpec.describe DDFIP, type: :model do
       expect(described_class.search("75"))
         .to  include(paris)
         .and exclude(nord)
-        .and exclude(pyreness_atlantiques)
+        .and exclude(pyrenees_atlantiques)
     end
 
     it do

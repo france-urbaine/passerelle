@@ -6,15 +6,15 @@ FactoryBot.define do
 
     name do
       loop do
-        value = Faker::Address.city
-        break value unless Departement.exists?(name: value)
+        value = Faker::Address.unique.city
+        break value unless Commune.exists?(name: value)
       end
     end
 
     code_insee do
       loop do
-        value = Faker::Address.zip_code
-        break value unless Departement.exists?(name: value)
+        value = Faker::Address.unique.zip_code
+        break value unless Commune.exists?(name: value)
       end
     end
 

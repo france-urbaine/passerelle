@@ -14,14 +14,5 @@ FactoryBot.define do
     trait :with_departement do
       association :departement
     end
-
-    trait :with_unique_name do
-      name do
-        loop do
-          value = Faker::Address.state
-          break value unless Departement.exists?(name: value)
-        end
-      end
-    end
   end
 end

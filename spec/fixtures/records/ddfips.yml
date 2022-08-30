@@ -1,15 +1,19 @@
 bouches_du_rhone:
-  name:             DDFIP des Bouches-du-Rhône
-  code_departement: 13
+  name:                 DDFIP des Bouches-du-Rhône
+  code_departement:     13
+  collectivities_count: 0
 
 nord:
-  name:             DDFIP du Nord
-  code_departement: 59
+  name:                 DDFIP du Nord
+  code_departement:     59
+  collectivities_count: 3
 
-pyreness_atlantiques:
-  name:             DDFIP des Pyrénées-Atlantiques
-  code_departement: 64
+pyrenees_atlantiques:
+  name:                 DDFIP des Pyrénées-Atlantiques
+  code_departement:     64
+  collectivities_count: 2
 
 paris:
-  name:             DDFIP de Paris
-  code_departement: 75
+  name:                 DDFIP de Paris
+  code_departement:     75
+  collectivities_count: 2

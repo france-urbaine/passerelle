@@ -1,14 +1,35 @@
 paris:
-  name:             Paris
-  code_departement: 75
-  code_region:      11
+  name:                 Paris
+  code_departement:     75
+  code_region:          11
+  epcis_count:          1
+  communes_count:       1
+  ddfips_count:         1
+  collectivities_count: 2
 
 pyrenees_atlantiques:
-  name:             Pyrénées-Atlantiques
-  code_departement: 64
-  code_region:      75
+  name:                 Pyrénées-Atlantiques
+  code_departement:     64
+  code_region:          75
+  epcis_count:          1
+  communes_count:       1
+  ddfips_count:         1
+  collectivities_count: 2
+
+gironde:
+  name:                 Gironde
+  code_departement:     33
+  code_region:          75
+  epcis_count:          0
+  communes_count:       0
+  ddfips_count:         0
+  collectivities_count: 0
 
 nord:
-  name:             Nord
-  code_departement: 59
-  code_region:      32
+  name:                 Nord
+  code_departement:     59
+  code_region:          32
+  epcis_count:          1
+  communes_count:       1
+  ddfips_count:         1
+  collectivities_count: 3

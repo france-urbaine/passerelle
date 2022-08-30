@@ -1,13 +1,19 @@
 pays_basque:
-  name:             CA du Pays Basque
-  siren:            200067106
-  code_departement: 64
+  name:                 CA du Pays Basque
+  siren:                200067106
+  code_departement:     64
+  communes_count:       1
+  collectivities_count: 2
 
 metropole_lille:
-  name:             Métropole Européenne de Lille
-  siren:            200093201
-  code_departement: 59
+  name:                 Métropole Européenne de Lille
+  siren:                200093201
+  code_departement:     59
+  communes_count:       1
+  collectivities_count: 2
 
 metropole_grand_paris:
-  name:             Métropole du Grand Paris
-  siren:            200054781
+  name:                 Métropole du Grand Paris
+  siren:                200054781
+  communes_count:       1
+  collectivities_count: 2

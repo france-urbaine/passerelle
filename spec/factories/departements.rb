@@ -14,7 +14,7 @@ FactoryBot.define do
     name do
       loop do
         value = Faker::Address.state
-        break value unless Departement.exists?(name: value)
+        break value unless Departement.exists?(name: value) || Region.exists?(name: value)
       end
     end
   end
