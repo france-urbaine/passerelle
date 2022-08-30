@@ -77,6 +77,19 @@ class Collectivity < ApplicationRecord
     )
   }
 
+  scope :order_by_param, lambda { |input|
+    advanced_order(
+      input,
+      name:         ->(direction) { unaccent_order(:name, direction) },
+      siren:        ->(direction) { order(siren: direction) },
+      publisher:    ->(direction) { left_joins(:publisher).merge(Publisher.unaccent_order(:name, direction)) }
+    )
+  }
+
+  scope :order_by_score, lambda { |input|
+    scored_order(:name, input)
+  }
+
   # Callbacks
   # ----------------------------------------------------------------------------
   before_validation :clean_attributes

@@ -34,6 +34,20 @@ fr:
         title:        "Le compte de la DDFIP a été archivé."
         description:  "La suppression de la DDFIP sera définitive dans 30 jours."
 
+  collectivities:
+    <<: *default
+    create:
+      success:
+        type:         "success"
+        title:        "Une nouvelle collectivité a été ajoutée avec succés."
+        delay:        3000
+
+    destroy:
+      success:
+        type:         "success"
+        title:        "Le compte de la collectivité a été archivé."
+        description:  "La suppression de la collectivité sera définitive dans 30 jours."
+
   communes:
     <<: *default
 

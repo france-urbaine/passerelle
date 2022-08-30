@@ -1,5 +1,14 @@
 fr:
   activerecord:
+    models:
+      publisher:    Editeur
+      ddfip:        DDFIP
+      collectivity: Collectivité
+      commune:      Commune
+      epci:         EPCI
+      departement:  Département
+      region:       Région
+
     attributes:
       publisher:
         name:             Nom de l'éditeur
@@ -10,6 +19,19 @@ fr:
         name:             Nom de la DDFIP
         code_departement: Code INSEE du département
         departement:      Département
+
+      collectivity:
+        name:                 Nom de la collectivité
+        siren:                Numéro SIREN de la collectivité
+        territory_type:       Type de territoire
+        territory_id:         ID du territoire
+        territory:            Territoire de la collectivité
+        publisher_id:         ID de l'éditeur
+        publisher:            Editeur
+        contact_first_name:   Prénom du contact
+        contact_last_name :   Nom du contact
+        contact_email:        Adresse mail de contact
+        contact_phone:        Numéro de téléphone
 
       commune:
         name:             Nom de la commune
@@ -64,6 +86,32 @@ fr:
             departement:
               required:  Un département est requis
 
+        collectivity:
+          attributes:
+            name:
+              blank:     Un nom est requis
+              taken:     Ce nom est déjà attribué
+
+            siren:
+              blank:     Un numéro SIREN est requis
+              invalid:   Ce numéro SIREN n'est pas valide
+              taken:     Ce numéro SIREN est déjà attribué
+
+            territory_type:
+              blank:     Un type de territoire est requis
+              inclusion: Ce type de territoire n'est pas inclus dans la liste
+
+            territory_id:
+              blank:     Un identifiant de territoire est requis
+
+            territory:
+              required:  Un territoire est requis
+
+            contact_email:
+              invalid:   Une adresse mail valide est requise
+
+            contact_phone:
+              invalid:   Un numéro de téléphone valide est requise
 
         commune:
           attributes:

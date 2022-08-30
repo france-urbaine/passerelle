@@ -15,6 +15,11 @@ nav.sidebar
       class=("sidebar__link--current" if controller.controller_name == "ddfips")
     ) DDFIP
 
+    a(
+      href=collectivities_path
+      class=("sidebar__link--current" if controller.controller_name == "collectivities")
+    ) Collectivitiés
+
   .sidebar__header Territoires
   .sidebar__links
     a(

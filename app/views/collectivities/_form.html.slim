@@ -1,0 +1,60 @@
+= dialog(back_url: params.fetch(:back, collectivities_path)) do |dialog|
+  = turbo_frame_tag :form do
+    = form_with(model: collectivity) do |form|
+      .dialog__header
+        h1#dialog-title.dialog__title
+          - if collectivity.persisted?
+            | Modification de la collectivité
+          - else
+            | Création d'une nouvelle collectivité
+
+        .dialog__header-toolbar
+          = dialog.close_button
+
+      .dialog__content
+        = back_param_input
+
+        = form.block :territory_type, first: true do
+          - models  = [Commune, EPCI, Departement, Region]
+          - options = models.map { |m| [m.model_name.human, m.name] }
+
+          = form.label :territory_type
+          = form.select :territory_type, options, autofocus: true, required: true
+
+        = form.block :territory_id do
+          = form.label :territory_id
+          = form.text_field :territory_id, required: true
+
+        = form.block :publisher_id do
+          - options = Publisher.all.map { |o| [o.name, o.id ] }
+
+          = form.label :publisher_id, Collectivity.human_attribute_name(:publisher)
+          = form.select :publisher_id, options, required: true, include_blank: "Aucun éditeur"
+
+        = form.block :name do
+          = form.label :name
+          = form.text_field :name, required: true
+
+        = form.block :siren do
+          = form.label :siren
+          = form.text_field :siren, required: true
+
+        = form.block :contact_first_name do
+          = form.label :contact_first_name
+          = form.text_field :contact_first_name
+
+        = form.block :contact_last_name do
+          = form.label :contact_last_name
+          = form.text_field :contact_last_name
+
+        = form.block :contact_email do
+          = form.label :contact_email
+          = form.email_field :contact_email
+
+        = form.block :contact_phone do
+          = form.label :contact_phone
+          = form.text_field :contact_phone
+
+      .dialog__actions
+        button.button.button--primary( type="submit" ) Enregistrer
+        = dialog.cancel_button "Annuler"

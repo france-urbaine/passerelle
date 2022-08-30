@@ -1,0 +1,5 @@
+main.content
+  = turbo_frame_tag :content do
+    = render "index", collectivities: @collectivities, pagy: @pagy
+
+= turbo_frame_tag :modal

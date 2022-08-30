@@ -95,8 +95,9 @@ h2.subheader
   | Départements
 
 - if region.departements_count.zero?
-  .mb-6
-    p.italic Aucune département disponible
+  .card.mb-6
+    .card__content
+      p.italic.text-gray-500 Aucune département disponible
 - else
   table.datatable.mb-6
     thead
@@ -138,8 +139,9 @@ h2.subheader
   | DDFIP enregistrées
 
 - if region.ddfips_count.zero?
-  .mb-6
-    p.italic Aucune DDFIP enregistrée dans cette région.
+  .card.mb-6
+    .card__content
+      p.italic.text-gray-500 Aucune DDFIP enregistrée dans cette région.
 - else
   table.datatable.mb-6
     thead
@@ -150,7 +152,7 @@ h2.subheader
         th.w-48.text-right Utilisateurs
 
     tbody
-      - region.ddfips.each do |ddfip|
+      - region.ddfips.kept.each do |ddfip|
         tr.datatable__row
           td.datatable__row-actions
             a.icon-button(
@@ -177,22 +179,45 @@ h2.subheader
   | Collectivités enregistrées
 
 - if region.collectivities_count.zero?
-  .mb-6
-    p.italic Aucune collectivité enregistrée dans cette région.
+  .card.mb-6
+    .card__content
+      p.italic.text-gray-500 Aucune collectivité enregistrée dans cette région.
 - else
   table.datatable.mb-6
     thead
       tr.datatable__row
         th( aria-label="Actions" )
+        th.w-36 SIREN
         th Collectivité
+        th Editeur
         th.w-48.text-right Utilisateurs
 
     tbody
-      - region.on_territory_collectivities.each do |collectivite|
+      - region.on_territory_collectivities.kept.preload(:publisher).each do |collectivity|
         tr.datatable__row
           td.datatable__row-actions
-            button.icon-button( disabled="true" )
+            a.icon-button(
+              href=edit_collectivity_path(collectivity, back: current_path)
+              aria-label="Modifier cette collectivité"
+              data-turbo-frame="modal"
+            )
               = svg_icon("pencil-alt-icon", "Modifier cette collectivité")
+              span.tooltip Modifier cette collectivité
 
-          td= collectivite.name
-          td.text-right= number_with_delimiter(collectivite.users_count) if collectivite.users_count.positive?
+          td= display_siren(collectivity.siren)
+          td
+            a(
+              data-turbo-action="advance"
+              data-turbo-frame="content"
+              href=collectivity_path(collectivity, back: current_path)
+            )= collectivity.name
+
+          td
+            - if collectivity.publisher
+              a(
+                data-turbo-action="advance"
+                data-turbo-frame="content"
+                href=publisher_path(collectivity.publisher, back: current_path)
+              )= collectivity.publisher.name
+
+          td.text-right= number_with_delimiter(collectivity.users_count) if collectivity.users_count.positive?

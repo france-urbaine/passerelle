@@ -17,3 +17,9 @@ metropole_grand_paris:
   siren:                200054781
   communes_count:       1
   collectivities_count: 2
+
+metropole_aix_marseille:
+  name:                 Métropole d'Aix-Marseille-Provence
+  siren:                200054807
+  communes_count:       0
+  collectivities_count: 0

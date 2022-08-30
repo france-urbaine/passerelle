@@ -1,0 +1,82 @@
+table.datatable
+  thead
+    tr.datatable__row
+      th.datatable__row-actions
+        input(
+          type="checkbox"
+          aria-label="Tout sélectionner"
+          data-selection-target="checkall"
+        )
+        span.tooltip Tout sélectionner
+
+      th( aria-label="Actions" )
+
+      th.w-36
+        | SIREN
+        = order_column(:siren)
+
+      th
+        | Collectivité
+        = order_column(:name)
+
+      th
+        | Editeur
+        = order_column(:publisher)
+
+      th.w-48.text-right Utilisateurs
+
+  tbody
+    - collectivities.preload(:publisher).each do |collectivity|
+      tr.datatable__row(
+        id=dom_id(collectivity)
+        data-controller="selection-row"
+        data-selection-row-selected-class="datatable__row--selected"
+      )
+        td.datatable__row-actions
+          input(
+            type="checkbox"
+            aria-labelledby=dom_id(collectivity, :title)
+            data-selection-target="checkbox"
+            data-selection-row-target="checkbox"
+            value=collectivity.id
+            checked=(params[:ids].is_a?(Array) && params[:ids].include?(collectivity.id))
+          )
+          span.tooltip Sélectionner cette collectivité
+
+        td.datatable__row-actions
+          .flex
+            a.icon-button(
+              aria-label="Modifier cette collectivité"
+              data-turbo-frame="modal"
+              href=edit_collectivity_path(collectivity, back: current_path)
+            )
+              = svg_icon("pencil-alt-icon", "Modifier cette collectivité")
+              span.tooltip Modifier cette collectivité
+
+            = form_with(url: collectivity_path(collectivity), method: "delete", data: { turbo_confirm: "Supprimer cette collectivité ?" }) do
+              input( type="hidden" name="back" value=current_path)
+
+              button.icon-button(
+                aria-label="Supprimer cette collectivité"
+                type="submit"
+              )
+                = svg_icon("trash-icon", "Supprimer cette collectivité")
+                span.tooltip Supprimer cette collectivité
+
+        td= display_siren(collectivity.siren)
+        td( id=dom_id(collectivity, :title) )
+          a(
+            data-turbo-action="advance"
+            data-turbo-frame="content"
+            href=collectivity_path(collectivity, back: current_path)
+          )= collectivity.name
+
+        td
+          - if collectivity.publisher
+            a(
+              data-turbo-action="advance"
+              data-turbo-frame="content"
+              href=publisher_path(collectivity.publisher, back: current_path)
+            )= collectivity.publisher.name
+
+        td.text-right= number_with_delimiter(collectivity.users_count) if collectivity.users_count.positive?
