@@ -5,7 +5,7 @@ main.content
     = turbo_frame_tag :form do
       - @territories_update.strip_domain_urls
 
-      = form_with(model: @territories_update) do |form|
+      = form_with(model: @territories_update, url: territories_path) do |form|
         .dialog__header
           h1#dialog-title.dialog__title
             | Mise à jour des territoires
@@ -18,24 +18,29 @@ main.content
             )
               = svg_icon("x-icon", "Fermer cette fenêtre")
 
-        .dialog__content
+        .dialog__content( class="w-[640px]" )
           = back_param_input
           = form_block @territories_update, :communes_url, first: true do
             .form-block__label
               = form.label :communes_url do
-                | URL du fichier de découpage communal sur le site de l'INSEE : 
+                | URL du fichier de découpage communal sur le site de l'INSEE :
+                br
+                = "(consultez "
                 = link_to "https://www.insee.fr/fr/information/2028028", "https://www.insee.fr/fr/information/2028028", target: "_blank"
+                |  pour plus d'informations)
 
             .form-block__input
               span.form-block__input-prefix https://www.insee.fr/
               = form.text_field :communes_url, autofocus: true
 
-
           = form_block @territories_update, :epcis_url do
             .form-block__label
               = form.label :epcis_url do
-                | URL du fichier des intercommunalités sur le site de l'INSEE : 
+                | URL du fichier des intercommunalités sur le site de l'INSEE :
+                br
+                = "(consultez "
                 = link_to "https://www.insee.fr/fr/information/2510634", "https://www.insee.fr/fr/information/2510634", target: "_blank"
+                |  pour plus d'informations)
 
             .form-block__input
               span.form-block__input-prefix https://www.insee.fr/

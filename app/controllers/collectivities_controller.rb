@@ -64,9 +64,17 @@ class CollectivitiesController < ApplicationController
   end
 
   def collectivity_params
-    params.fetch(:collectivity, {}).permit(
-      :territory_type, :territory_id, :publisher_id,
-      :name, :siren,
+    input          = params.fetch(:collectivity, {})
+    territory_data = input.delete(:territory_data)
+
+    if territory_data.present?
+      territory_data = JSON.parse(territory_data)
+      input[:territory_type] = territory_data["type"]
+      input[:territory_id]   = territory_data["id"]
+    end
+
+    input.permit(
+      :territory_type, :territory_id, :publisher_id, :name, :siren,
       :contact_first_name, :contact_last_name, :contact_email, :contact_phone
     )
   end

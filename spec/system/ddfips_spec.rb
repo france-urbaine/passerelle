@@ -47,7 +47,6 @@ RSpec.describe "Communes", type: :system, use_fixtures: true do
       fill_in  "Nom de la DDFIP", with: "DDFIP de la Gironde"
       fill_in  "Département",     with: "33"
 
-      expect(page).to have_selector("[role=option]", text: "Gironde")
       find("[role=option]", text: "Gironde").click
 
       click_on "Enregistrer"

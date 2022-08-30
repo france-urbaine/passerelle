@@ -52,12 +52,16 @@ RSpec.describe "Collectivities", type: :system, use_fixtures: true do
     expect(page).to have_selector("[role=dialog]", text: "Création d'une nouvelle collectivité")
 
     within "[role=dialog]" do
-      select "Fiscalité & Territoire", from: "Editeur"
-      select "EPCI",                   from: "Type de territoire"
+      fill_in "Territoire", with: "Aix-Marseille"
+      find("[role=option]", text: "Métropole d'Aix-Marseille-Provence").click
 
-      fill_in "ID du territoire",                with: epcis(:metropole_aix_marseille).id
-      fill_in "Nom de la collectivité",          with: epcis(:metropole_aix_marseille).name
-      fill_in "Numéro SIREN de la collectivité", with: epcis(:metropole_aix_marseille).siren
+      expect(page).to have_field("Territoire",                  with: "Métropole d'Aix-Marseille-Provence")
+      expect(page).to have_field("collectivity_territory_data", type: :hidden, with: { type: "EPCI", id: epcis(:metropole_aix_marseille).id }.to_json)
+
+      select "Fiscalité & Territoire", from: "Editeur"
+
+      fill_in "Nom de la collectivité",          with: "Métropole d'Aix-Marseille-Provence"
+      fill_in "Numéro SIREN de la collectivité", with: "200054807"
 
       click_on "Enregistrer"
     end
@@ -79,9 +83,10 @@ RSpec.describe "Collectivities", type: :system, use_fixtures: true do
     expect(page).to have_selector("[role=dialog]", text: "Modification de la collectivité")
 
     within "[role=dialog]" do
-      expect(page).to have_select("Editeur",            selected: "Fiscalité & Territoire")
-      expect(page).to have_select("Type de territoire", selected: "EPCI")
-      expect(page).to have_field("ID du territoire",                with: epcis(:pays_basque).id)
+      expect(page).to have_field("Territoire",                  with: "CA du Pays Basque")
+      expect(page).to have_field("collectivity_territory_data", type: :hidden, with: { type: "EPCI", id: epcis(:pays_basque).id }.to_json)
+
+      expect(page).to have_select("Editeur", selected: "Fiscalité & Territoire")
       expect(page).to have_field("Nom de la collectivité",          with: "CA du Pays Basque")
       expect(page).to have_field("Numéro SIREN de la collectivité", with: "200067106")
 
@@ -104,9 +109,10 @@ RSpec.describe "Collectivities", type: :system, use_fixtures: true do
     expect(page).to have_selector("[role=dialog]", text: "Modification de la collectivité")
 
     within "[role=dialog]" do
-      expect(page).to have_select("Editeur",            selected: "Fiscalité & Territoire")
-      expect(page).to have_select("Type de territoire", selected: "EPCI")
-      expect(page).to have_field("ID du territoire",                with: epcis(:pays_basque).id)
+      expect(page).to have_field("Territoire",                  with: "CA du Pays Basque")
+      expect(page).to have_field("collectivity_territory_data", type: :hidden, with: { type: "EPCI", id: epcis(:pays_basque).id }.to_json)
+
+      expect(page).to have_select("Editeur", selected: "Fiscalité & Territoire")
       expect(page).to have_field("Nom de la collectivité",          with: "CA du Pays Basque")
       expect(page).to have_field("Numéro SIREN de la collectivité", with: "200067106")
 

@@ -2,8 +2,8 @@
 
 require "rails_helper"
 
-RSpec.describe "TerritoriesUpdatesController#create", type: :request do
-  subject(:request) { post "/territoires", headers:, params: }
+RSpec.describe "TerritoriesController#update", type: :request do
+  subject(:request) { patch "/territoires", headers:, params: }
 
   let(:headers) { {} }
   let(:params)  { { territories_update: { communes_url: url, epcis_url: url } } }

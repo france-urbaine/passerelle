@@ -14,22 +14,34 @@
       .dialog__content
         = back_param_input
 
-        = form.block :territory_type, first: true do
-          - models  = [Commune, EPCI, Departement, Region]
-          - options = models.map { |m| [m.model_name.human, m.name] }
+        = form.block :territory, first: true, autocomplete: territories_path do
+          ruby:
+            if collectivity.territory
+              territory_data = { type: collectivity.territory_type, id: collectivity.territory_id }.to_json
+              territory_name = collectivity.territory.name
+            end
 
-          = form.label :territory_type
-          = form.select :territory_type, options, autofocus: true, required: true
+          = form.label :territory
+          = form.search_field :territory, required: true, data: { autocomplete_target: "input" }, value: territory_name
+          = form.hidden_field :territory_data, data: { autocomplete_target: "hidden" }, value: territory_data
 
-        = form.block :territory_id do
-          = form.label :territory_id
-          = form.text_field :territory_id, required: true
+        = noscript do
+          = form.block :territory_type, first: true do
+            - models  = [Commune, EPCI, Departement, Region]
+            - options = models.map { |m| [m.model_name.human, m.name] }
+
+            = form.label :territory_type
+            = form.select :territory_type, options, autofocus: true, required: true
+
+          = form.block :territory_id do
+            = form.label :territory_id
+            = form.text_field :territory_id, required: true
 
         = form.block :publisher_id do
           - options = Publisher.all.map { |o| [o.name, o.id ] }
 
           = form.label :publisher_id, Collectivity.human_attribute_name(:publisher)
-          = form.select :publisher_id, options, required: true, include_blank: "Aucun éditeur"
+          = form.select :publisher_id, options, include_blank: true
 
         = form.block :name do
           = form.label :name

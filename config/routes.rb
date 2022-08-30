@@ -17,7 +17,8 @@ Rails.application.routes.draw do
   resources :departements, only: %i[index show edit update]
   resources :regions,      only: %i[index show edit update]
 
-  resource :territories_updates, only: %i[show create], path: "/territoires"
+  resources :territories, only: %i[index],       path: "/territoires"
+  resource  :territories, only: %i[edit update], path: "/territoires"
 
   root to: redirect("/editeurs")
 end
