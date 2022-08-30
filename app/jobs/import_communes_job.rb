@@ -39,7 +39,8 @@ class ImportCommunesJob < ApplicationJob
       code_insee:       row["CODGEO"],
       name:             row["LIBGEO"],
       code_departement: row["DEP"],
-      siren_epci:       row["EPCI"]
+      siren_epci:       row["EPCI"],
+      qualified_name:   Commune.generate_qualified_name(row["LIBGEO"])
     }
 
     flush if queue.size >= 100

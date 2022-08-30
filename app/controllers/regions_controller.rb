@@ -45,6 +45,6 @@ class RegionsController < ApplicationController
 
   def region_params
     params.fetch(:region, {})
-          .permit(:name, :code_region)
+          .permit(:name, :code_region, :qualified_name)
   end
 end

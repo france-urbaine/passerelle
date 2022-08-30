@@ -37,6 +37,10 @@
             = form.label :siren_epci
             = form.text_field :siren_epci
 
+        = form.block :qualified_name do
+          = form.label :qualified_name
+          = form.text_field :qualified_name
+
       .dialog__actions
         button.button.button--primary( type="submit" ) Enregistrer
         = dialog.cancel_button "Annuler"

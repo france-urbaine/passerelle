@@ -31,6 +31,10 @@ class EPCI < ApplicationRecord
 
   has_one :registered_collectivity, class_name: "Collectivity", as: :territory, dependent: false
 
+  # Attributes
+  # ----------------------------------------------------------------------------
+  alias_attribute :qualified_name, :name
+
   # Validations
   # ----------------------------------------------------------------------------
   validates :name,  presence: true

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_07_16_065809) do
+ActiveRecord::Schema[7.0].define(version: 2022_08_30_144022) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -54,6 +54,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_16_065809) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "collectivities_count", default: 0, null: false
+    t.string "qualified_name"
     t.index ["code_departement"], name: "index_communes_on_code_departement"
     t.index ["code_insee"], name: "index_communes_on_code_insee", unique: true
     t.index ["siren_epci"], name: "index_communes_on_siren_epci"
@@ -82,6 +83,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_16_065809) do
     t.integer "communes_count", default: 0, null: false
     t.integer "ddfips_count", default: 0, null: false
     t.integer "collectivities_count", default: 0, null: false
+    t.string "qualified_name"
     t.index ["code_departement"], name: "index_departements_on_code_departement", unique: true
     t.index ["code_region"], name: "index_departements_on_code_region"
   end
@@ -123,6 +125,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_16_065809) do
     t.integer "communes_count", default: 0, null: false
     t.integer "ddfips_count", default: 0, null: false
     t.integer "collectivities_count", default: 0, null: false
+    t.string "qualified_name"
     t.index ["code_region"], name: "index_regions_on_code_region", unique: true
   end
 

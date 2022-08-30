@@ -14,6 +14,7 @@
 #  communes_count       :integer          default(0), not null
 #  ddfips_count         :integer          default(0), not null
 #  collectivities_count :integer          default(0), not null
+#  qualified_name       :string
 #
 # Indexes
 #
@@ -39,6 +40,18 @@ class Region < ApplicationRecord
 
   validates :code_region, format: { allow_blank: true, with: CODE_REGION_REGEXP }
   validates :code_region, uniqueness: { unless: :skip_uniqueness_validation_of_code_region? }
+
+  # Callbacks
+  # ----------------------------------------------------------------------------
+  before_save :generate_qualified_name, if: :qualified_name_need_to_be_regenerated?
+
+  def qualified_name_need_to_be_regenerated?
+    qualified_name.blank? || (name_changed? && !qualified_name_changed?)
+  end
+
+  def generate_qualified_name
+    self.qualified_name = "Département de #{name}"
+  end
 
   # Scopes
   # ----------------------------------------------------------------------------

@@ -12,6 +12,7 @@
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
 #  collectivities_count :integer          default(0), not null
+#  qualified_name       :string
 #
 # Indexes
 #
@@ -43,6 +44,32 @@ class Commune < ApplicationRecord
 
   validates :code_insee, uniqueness: { unless: :skip_uniqueness_validation_of_code_insee? }
 
+  # Callbacks
+  # ----------------------------------------------------------------------------
+  before_validation :clean_attributes
+  before_save       :generate_qualified_name, if: :qualified_name_need_to_be_regenerated?
+
+  def clean_attributes
+    self.siren_epci = nil if siren_epci.blank?
+  end
+
+  def qualified_name_need_to_be_regenerated?
+    qualified_name.blank? || (name_changed? && !qualified_name_changed?)
+  end
+
+  def generate_qualified_name
+    self.qualified_name = self.class.generate_qualified_name(name)
+  end
+
+  def self.generate_qualified_name(name)
+    "Commune de #{name}"
+      .gsub(/\bde Les\b/, "des")
+      .gsub(/\bde Le\b/,  "du")
+      .gsub(/\bde La\b/,  "de la")
+      .gsub(/\bde La\b/,  "de la")
+      .gsub(/\bde (?=[AEÉÈIÎOÔUY])/, "d'")
+  end
+
   # Scopes
   # ----------------------------------------------------------------------------
   scope :search, lambda { |input|
@@ -70,14 +97,6 @@ class Commune < ApplicationRecord
   scope :order_by_score, lambda { |input|
     scored_order(:name, input)
   }
-
-  # Callbacks
-  # ----------------------------------------------------------------------------
-  before_validation :clean_attributes
-
-  def clean_attributes
-    self.siren_epci = nil if siren_epci.blank?
-  end
 
   # Other associations
   # ----------------------------------------------------------------------------

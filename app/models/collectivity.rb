@@ -60,6 +60,14 @@ class Collectivity < ApplicationRecord
     unless: :skip_uniqueness_validation_of_siren?
   }
 
+  # Callbacks
+  # ----------------------------------------------------------------------------
+  before_validation :clean_attributes
+
+  def clean_attributes
+    self.contact_phone = contact_phone&.delete(" ")
+  end
+
   # Scopes
   # ----------------------------------------------------------------------------
   scope :orphans,      -> { where(publisher_id: nil) }
@@ -89,14 +97,6 @@ class Collectivity < ApplicationRecord
   scope :order_by_score, lambda { |input|
     scored_order(:name, input)
   }
-
-  # Callbacks
-  # ----------------------------------------------------------------------------
-  before_validation :clean_attributes
-
-  def clean_attributes
-    self.contact_phone = contact_phone&.delete(" ")
-  end
 
   # Predicates
   # ----------------------------------------------------------------------------

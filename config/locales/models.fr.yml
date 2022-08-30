@@ -40,6 +40,7 @@ fr:
         siren_epci:       Numéro SIREN de l'EPCI
         departement:      Département
         epci:             EPCI
+        qualified_name:   Nom qualifié (Commune de ?)
 
       epci:
         name:             Nom de l'EPCI
@@ -52,10 +53,12 @@ fr:
         code_departement: Code INSEE du département
         code_region:      Code INSEE de la région
         region:           Région
+        qualified_name:   Nom qualifié (Département de ?)
 
       region:
         name:             Nom de la région
         code_region:      Code INSEE de la région
+        qualified_name:   Nom qualifié (Région de ?)
 
     errors:
       models:

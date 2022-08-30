@@ -18,7 +18,7 @@
           ruby:
             if collectivity.territory
               territory_data = { type: collectivity.territory_type, id: collectivity.territory_id }.to_json
-              territory_name = collectivity.territory.name
+              territory_name = collectivity.territory.qualified_name
             end
 
           = form.label :territory

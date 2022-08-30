@@ -45,6 +45,6 @@ class DepartementsController < ApplicationController
 
   def departement_params
     params.fetch(:departement, {})
-          .permit(:name, :code_departement, :code_region)
+          .permit(:name, :code_departement, :code_region, :qualified_name)
   end
 end
