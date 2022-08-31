@@ -3,7 +3,7 @@
 require "rails_helper"
 
 RSpec.describe "Publishers", type: :system, use_fixtures: true do
-  fixtures :publishers
+  fixtures :publishers, :collectivities
 
   let(:fiscalite_territoire) { publishers(:fiscalite_territoire) }
   let(:pays_basque)          { collectivities(:pays_basque) }
@@ -20,16 +20,16 @@ RSpec.describe "Publishers", type: :system, use_fixtures: true do
     expect(page).to have_selector("h1", text: "Fiscalité & Territoire")
   end
 
-  pending "visits links from the show page & comes back" do
+  it "visits links from the show page & comes back" do
     visit publisher_path(fiscalite_territoire)
 
     expect(page).to have_selector("h1", text: "Fiscalité & Territoire")
-    expect(page).to have_link("Ca du Pays Basque")
+    expect(page).to have_link("CA du Pays Basque")
     expect(page).to have_link("Bayonne")
 
-    click_on "Ca du Pays Basque"
+    click_on "CA du Pays Basque"
 
-    expect(page).to have_current_path(collectivity_path(pays_basque))
+    expect(page).to have_current_path(collectivity_path(pays_basque, back: publisher_path(fiscalite_territoire)))
 
     go_back
 

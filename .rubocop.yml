@@ -48,15 +48,10 @@ Layout/SpaceBeforeBlockBraces:
 
 # Lint -------------------------------------------------------------------------
 Lint/AmbiguousBlockAssociation:
-  IgnoredMethods:
+  AllowedMethods:
     # These are usual methods in RSpec fluent syntax
     - change
     - satisfy
-
-Lint/MissingSuper:
-  # https://github.com/rubocop/rubocop/pull/8376#ref-issue-676211644
-  Exclude:
-    - 'app/components/**/*'
 
 # Metric -----------------------------------------------------------------------
 Metrics/AbcSize:

@@ -54,7 +54,7 @@ h2.subheader
         - if collectivity.territory
           a(
             data-turbo-frame="_top"
-            href=url_for(collectivity.territory)
+            href=polymorphic_path(collectivity.territory)
           )= collectivity.territory.qualified_name
 
     .description-list__row

@@ -26,8 +26,8 @@ Departement.upsert_all(departements_data, unique_by: %i[code_departement])
 
 # Import EPCI & communes
 # ----------------------------------------------------------------------------
-ImportEpcisJob.perform_now("https://www.insee.fr/fr/statistiques/fichier/2510634/Intercommunalite_Metropole_au_01-01-2021.zip")
-ImportCommunesJob.perform_now("https://www.insee.fr/fr/statistiques/fichier/2028028/table-appartenance-geo-communes-21.zip")
+ImportEpcisJob.perform_now("https://www.insee.fr/fr/statistiques/fichier/2510634/Intercommunalite_Metropole_au_01-01-2022.zip")
+ImportCommunesJob.perform_now("https://www.insee.fr/fr/statistiques/fichier/2028028/table-appartenance-geo-communes-22.zip")
 
 # Create organizations
 # ----------------------------------------------------------------------------

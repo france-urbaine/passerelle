@@ -133,25 +133,25 @@ RSpec.describe User, type: :model do
 
       it do
         expect(User.find_by_invitation_token(valid_token))
-          .to eq(unconfimed_user)
+          .to  eq(unconfimed_user)
           .and satisfy { |user| user.errors.empty? }
       end
 
       it do
         expect(User.find_by_invitation_token(expired_token))
-          .to eq(confimed_user)
+          .to  eq(confimed_user)
           .and satisfy { |user| user.errors.added?(:email, :already_confirmed) }
       end
 
       it do
         expect(User.find_by_invitation_token(unknown_token))
-          .to be_a_new(User)
+          .to  be_a_new(User)
           .and satisfy { |user| user.errors.added?(:confirmation_token, :invalid) }
       end
 
       it do
         expect(User.find_by_invitation_token(""))
-          .to be_a_new(User)
+          .to  be_a_new(User)
           .and satisfy { |user| user.errors.added?(:confirmation_token, :blank) }
       end
     end

@@ -13,7 +13,7 @@ gem "rails", "~> 7.0.2", ">= 7.0.2.3"
 # Database
 gem "fx"
 gem "pg", "~> 1.1"
-gem "redis", "~> 4.0"
+gem "redis", "~> 5.0"
 
 # Models
 gem "devise"

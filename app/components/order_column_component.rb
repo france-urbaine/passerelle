@@ -5,6 +5,7 @@ class OrderColumnComponent < ViewComponent::Base
 
   def initialize(key)
     @key = key
+    super()
   end
 
   def current?

@@ -4,23 +4,35 @@ This README would normally document whatever steps are necessary to get the appl
 
 ## Requirements
 
-* Ruby 3.1.0
+* Ruby 3.1.2
 * Bundler >= 2.x
 * PostgreSQL
+* Redis
+* Yarn
 
-### Configuration
+## Configuration
 
-This project uses environnement variables.
+This project uses environnement variables.  
+In production, environnement variables must be defined through the cloud provider API.
 
-In production, environnement variables are defined through the cloud provider API.
-
-In development & test, environnement variables may be defined through `.env` file:
+In development & test, environnement variables may be optionnaly defined through `.env` file:
 
 ```
+# .env
 CUSTOM_KEY=fiscalite
 ```
 
-You can define per-environment variables files: `.env.{development}`.
+You can define per-environment variables files: `.env.{development}`.  
+Per-environment variables will overwrite those defined in `.env`.
+
+```
+# .env.development
+CUSTOM_KEY=fiscahub_dev
+```
+```
+# .env.test
+CUSTOM_KEY=fiscahub_test
+```
 
 To load a given Rails environnement, use `RAILS_ENV` variable:
 
@@ -49,48 +61,46 @@ Loading development environment (Rails 7.0.1)
 If the default database configuration doesn't suit you, use the `.env` file:
 
 ```
+# .env
 POSTGRESQL_DATABASE=fiscahub
 POSTGRESQL_HOST=0.0.0.0
 POSTGRESQL_PORT=1234
 POSTGRESQL_USER=marc
 ```
 
-## Credentials
+### Credentials
 
-Credentials shared by all environnements are stored using the Rails feature.
-You need the master key (shared on Dashlane) to get access.
-You can put the key in `config/mast.key` or using `.env` file
+Credentials shared by all environnements are stored using Rails credentials feature.  
+You need the master key (shared on Dashlane) to get access.  
+You can put the key in `config/master.key` or using `.env` file
 
 ```
+# .env
 RAILS_MASTER_KEY="<the_right_master_key>"
 ```
 
-## Setup project
+## Development
 
-The setup script should bundle dependencies, prepare the development and test databases.
+### Setup project
+
+The `bin/setup` script will download Ruby & JS dependencies, prepare the development and test databases.
 
 ```shell
 $ bin/setup
 ```
 
-## Code linting & formating
-
-This project use Rubocop to lint and format Ruby code:
-
+Optional but recommended: seed the database with communes, departments, collectivities, users & more:
 ```shell
-$ bundle exec rubocop
+$ rails db:seed
 ```
 
-Alternatively, you can use guard to perform rubocop on code changes:
+Then, start the development server (including JS & CSS builds) with:
 
 ```shell
-$ guard
-```
-```shell
-$ guard -P rubocop
+$ bin/dev
 ```
 
-## Tests
+### Code linting & tests
 
 The test suite is running with Rspec.
 
@@ -98,35 +108,37 @@ The test suite is running with Rspec.
 $ bundle exec rspec
 ```
 
-The suite might be running in parallel on multiple CPU cores:
+You can run the test suite in parallel with multiple CPU cores:
 
 ```shell
-$ bundle exec rails parallel:prepare
 $ bundle exec rails parallel:spec
 ```
 
-Alternatively, you can use guard to perform rubocop on code changes:
+This project uses Rubocop to lint and format Ruby code:
 
 ```shell
-$ guard
-```
-```shell
-$ guard -P rspec
+$ bundle exec rubocop
 ```
 
-The factories allow linting:
+The test factories could also be linted:
 
 ```shell
 $ bundle exec rails factory_bot:lint RAILS_ENV='test'
 ```
 
-## Preview & catch mails in development
+Alternatively, you can use guard to perform these tasks on code changes:
+
+```shell
+$ guard
+```
+
+### Preview & catch mails in development
 
 You can preview mail views at http://localhost:3000/rails/mailers
 
-Mails can be catched with `mailcatcher`.
-The gem should not be part of of the bundle.
-You should install it manually and follow instructions:
+Mails can be catched with `mailcatcher`.  
+The gem is not part of the bundle.
+You should install and start it manually:
 
 ```shell
 $ gem install mailcatcher

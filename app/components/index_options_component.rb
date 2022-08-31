@@ -8,6 +8,7 @@ class IndexOptionsComponent < ViewComponent::Base
     @singular   = singular
     @plural     = plural || singular.pluralize
     @order_hash = order.stringify_keys
+    super()
   end
 
   def page_url(page)

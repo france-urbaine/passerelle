@@ -5,6 +5,7 @@ class DialogComponent < ViewComponent::Base
 
   def initialize(back_url: nil)
     @back_url = back_url
+    super()
   end
 
   def close_button

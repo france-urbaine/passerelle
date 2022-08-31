@@ -10,6 +10,7 @@ class NotificationComponent < ViewComponent::Base
     else
       raise TypeError, "unexpected argument: #{data.inspect}"
     end
+    super()
   end
 
   def title
