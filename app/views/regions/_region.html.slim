@@ -184,8 +184,8 @@ h2.subheader
     thead
       tr.datatable__row
         th( aria-label="Actions" )
-        th.w-36 SIREN
         th Collectivité
+        th SIREN
         th Editeur
         th.w-48.text-right Utilisateurs
 
@@ -201,13 +201,13 @@ h2.subheader
               = svg_icon("pencil-alt-icon", "Modifier cette collectivité")
               span.tooltip Modifier cette collectivité
 
-          td= display_siren(collectivity.siren)
           td
             a(
               data-turbo-frame="_top"
               href=collectivity_path(collectivity)
             )= collectivity.name
 
+          td= display_siren(collectivity.siren)
           td
             - if collectivity.publisher
               a(

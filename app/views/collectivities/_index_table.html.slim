@@ -11,13 +11,13 @@ table.datatable
 
       th( aria-label="Actions" )
 
-      th.w-36
-        | SIREN
-        = order_column(:siren)
-
       th
         | Collectivité
         = order_column(:name)
+
+      th
+        | SIREN
+        = order_column(:siren)
 
       th
         | Editeur
@@ -63,13 +63,13 @@ table.datatable
                 = svg_icon("trash-icon", "Supprimer cette collectivité")
                 span.tooltip Supprimer cette collectivité
 
-        td= display_siren(collectivity.siren)
         td( id=dom_id(collectivity, :title) )
           a(
             data-turbo-frame="_top"
             href=collectivity_path(collectivity, current_index_back_params)
           )= collectivity.name
 
+        td= display_siren(collectivity.siren)
         td
           - if collectivity.publisher
             a(
