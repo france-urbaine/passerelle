@@ -1,0 +1,5 @@
+- @organizations.each do |organization|
+  - value = { type: organization.class.name, id: organization.id }.to_json
+
+  li.autocomplete__list-item( role="option" data-autocomplete-value=value )
+    = organization.name

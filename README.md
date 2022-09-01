@@ -89,11 +89,6 @@ The `bin/setup` script will download Ruby & JS dependencies, prepare the develop
 $ bin/setup
 ```
 
-Optional but recommended: seed the database with communes, departments, collectivities, users & more:
-```shell
-$ rails db:seed
-```
-
 Then, start the development server (including JS & CSS builds) with:
 
 ```shell

@@ -1,0 +1,72 @@
+= dialog_component do |dialog|
+  = turbo_frame_tag :modal_form do
+    = form_with(model: user) do |form|
+      .dialog__header
+        h1#dialog-title.dialog__title
+          - if user.persisted?
+            | Modification de l'utilisateur
+          - else
+            | Invitation d'un nouvel utilisateur
+
+        .dialog__header-toolbar
+          = dialog.close_button href: params.fetch(:form_back, users_path)
+
+      .dialog__content
+        = form_back_param_input
+
+        = form.block :organization, first: true, autocomplete: organizations_path do
+          ruby:
+            if user.organization
+              organization_data = { type: user.organization_type, id: user.organization_id }.to_json
+              organization_name = user.organization.name
+            end
+
+          = form.label :organization
+          = form.search_field :organization, required: true, data: { autocomplete_target: "input" }, value: organization_name
+          = form.hidden_field :organization_data, data: { autocomplete_target: "hidden" }, value: organization_data
+
+        = noscript do
+          = form.block :organization_type, first: true do
+            - models  = [Publisher, DDFIP, Collectivity]
+            - options = models.map { |m| [m.model_name.human, m.name] }
+
+            = form.label :organization_type
+            = form.select :organization_type, options, autofocus: true, required: true
+
+          = form.block :organization_id do
+            = form.label :organization_id
+            = form.text_field :organization_id, required: true
+
+        = form.block :first_name do
+          = form.label :first_name
+          = form.text_field :first_name, required: true
+
+        = form.block :last_name do
+          = form.label :last_name
+          = form.text_field :last_name, required: true
+
+        = form.block :email do
+          = form.label :email
+          = form.email_field :email
+
+        = form.block :organization_admin do
+          = form.check_box :organization_admin
+          = form.label :organization_admin
+
+          p.italic.text-gray-500
+            | Un administrateur bénéficie de tout les droits sur son organisation.
+            br
+            | Il peut notamment créer, gérer ou supprimer d'autres utilisateurs au sein de cette organisation.
+
+        = form.block :super_admin do
+          = form.check_box :super_admin
+          = form.label :super_admin
+
+          p.italic.text-gray-500
+            | Un administrateur de FiscaHub a accés à toutes les informations de la plateforme, sans restrictions.
+            br
+            | Il peut notamment créer, gérer et supprimer n'importe quelle organisation ou utilisateur.
+
+      .dialog__actions
+        button.button.button--primary( type="submit" ) Enregistrer
+        = dialog.cancel_button "Annuler",  href: params.fetch(:form_back, users_path)

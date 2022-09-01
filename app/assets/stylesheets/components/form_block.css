@@ -53,6 +53,18 @@
         @apply dark:outline-red-400;
       }
     }
+
+    & [type="checkbox"],
+    & [type='radio'] {
+      display: inline-block;
+
+      @apply mr-4;
+    }
+
+    & [type="checkbox"] + label,
+    & [type='radio'] + label {
+      display: inline-block;
+    }
   }
 
   .form-block label {

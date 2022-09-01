@@ -40,6 +40,10 @@ DDFIP.insert_all([
   { code_departement: "91", name: "DDFIP de l'Essonne" }
 ])
 
+Publisher.insert_all([
+  { name: "Fiscalité & Territoire", siren: "511022394", email: "contact@fiscalite-territoire.fr" }
+])
+
 fiscalite_territoire = Publisher.where(siren: "511022394").first_or_create(
   name:  "Fiscalité & Territoire",
   email: "contact@ft.fr"
@@ -67,7 +71,7 @@ ddfip64     = DDFIP.find_by(name: "DDFIP des Pyrénées-Atlantiques")
 
 User.insert_all([
   {
-    email:              "mdebomy@ft.fr",
+    email:              "mdebomy@fiscalite-territoire.fr",
     last_name:          "Debomy",
     first_name:         "Marc",
     organization_type:  "Publisher",
@@ -75,7 +79,7 @@ User.insert_all([
     organization_admin: true,
     super_admin:        true
   }, {
-    email:              "ssavater@ft.fr",
+    email:              "ssavater@fiscalite-territoire.fr",
     last_name:          "Savater",
     first_name:         "Sebastien",
     organization_type:  "Publisher",

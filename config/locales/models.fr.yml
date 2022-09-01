@@ -4,6 +4,7 @@ fr:
       publisher:    Editeur
       ddfip:        DDFIP
       collectivity: Collectivité
+      user:         Utilisateur
       commune:      Commune
       epci:         EPCI
       departement:  Département
@@ -21,17 +22,27 @@ fr:
         departement:      Département
 
       collectivity:
-        name:                 Nom de la collectivité
-        siren:                Numéro SIREN de la collectivité
+        territory:            Territoire de la collectivité
         territory_type:       Type de territoire
         territory_id:         ID du territoire
-        territory:            Territoire de la collectivité
-        publisher_id:         ID de l'éditeur
         publisher:            Editeur
+        publisher_id:         ID de l'éditeur
+        name:                 Nom de la collectivité
+        siren:                Numéro SIREN de la collectivité
         contact_first_name:   Prénom du contact
         contact_last_name :   Nom du contact
         contact_email:        Adresse mail de contact
         contact_phone:        Numéro de téléphone
+
+      user:
+        organization:         Organisation
+        organization_type:    Type d'organisation
+        organization_id:      ID de l'organisation
+        first_name:           Prénom
+        last_name :           Nom
+        email:                Adresse mail
+        organization_admin:   Administrateur de l'organisation
+        super_admin:          Administrateur de la plateforme FiscaHub
 
       commune:
         name:             Nom de la commune

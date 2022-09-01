@@ -112,6 +112,10 @@ class User < ApplicationRecord
     end
   }
 
+  scope :order_by_score, lambda { |input|
+    scored_order("CONCAT(users.first_name, ' ', users.last_name)", input)
+  }
+
   # Invitation process
   # ----------------------------------------------------------------------------
   def invite(from: nil)

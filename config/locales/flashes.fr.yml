@@ -48,6 +48,20 @@ fr:
         title:        "Le compte de la collectivité a été archivé."
         description:  "La suppression de la collectivité sera définitive dans 30 jours."
 
+  users:
+    <<: *default
+    create:
+      success:
+        type:         "success"
+        title:        "Un nouvel utilisateur a été ajouté avec succés."
+        description:  "Un mail d'invitation a été envoyée avec les instructions nécessaires pour valider le compte."
+
+    destroy:
+      success:
+        type:         "success"
+        title:        "Le compte de l'utilisateur a été supprimé définitivement."
+        delay:        3000
+
   communes:
     <<: *default
 

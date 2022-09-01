@@ -1,0 +1,8 @@
+marc:
+  organization:       fiscalite_territoire (Publisher)
+  first_name:         Marc
+  last_name:          Debomy
+  super_admin:        true
+  organization_admin: false
+  email:              mdebomy@fiscalite-territoire.fr
+  confirmed_at:       <%= Time.current %>

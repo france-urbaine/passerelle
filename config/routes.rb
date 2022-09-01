@@ -8,17 +8,19 @@ Rails.application.routes.draw do
 
   devise_for :user
 
-  resources :publishers, path: "/editeurs"
   resources :ddfips
+  resources :publishers,     path: "/editeurs"
   resources :collectivities, path: "/collectivites"
+  resources :users,          path: "/utilisateurs"
 
   resources :communes,     only: %i[index show edit update]
   resources :epcis,        only: %i[index show edit update]
   resources :departements, only: %i[index show edit update]
   resources :regions,      only: %i[index show edit update]
 
-  resources :territories, only: %i[index],       path: "/territoires"
-  resource  :territories, only: %i[edit update], path: "/territoires"
+  resources :organizations, only: %i[index],       path: "/organisations"
+  resources :territories,   only: %i[index],       path: "/territoires"
+  resource  :territories,   only: %i[edit update], path: "/territoires"
 
   root to: redirect("/editeurs")
 end

@@ -1,0 +1,34 @@
+- if params[:ids].present?
+  .header-bar.header-bar--selection
+    .header-bar__actions
+      .header-bar__action
+        button.icon-button.selection-bar__close-button(
+          data-action="selection#uncheckAll"
+        )
+          = svg_icon("x-icon", "Réinitialiser la sélection")
+          span.tooltip Réinitialiser la sélection
+
+      .header-bar__text
+        - if params[:ids] == "all"
+          = count(pagy.count, "utilisateur sélectionné", plural: "utilisateurs sélectionnés")
+        - else
+          = count(params[:ids].size, "utilisateur sélectionné", plural: "utilisateurs sélectionnés")
+
+          - if params[:ids].size == pagy.items && users.length < pagy.count
+            |  (
+            a(
+              data-action="selection#checkAll"
+              href=users_path(extract_params(:search).merge(ids: "all"))
+            ) Sélectionner les #{count(pagy.count, "utilisateur")}
+            | )
+
+    .flex-auto
+    .header-bar__actions
+      .header-bar__action
+        .button( disabled="true" ) Supprimer la sélection
+
+- else
+  .header-bar
+    = search_component("Rechercher")
+    .flex-auto
+    = index_options_component(pagy, "utilisateur", order: { name: "nom", organisation: "organisation" })

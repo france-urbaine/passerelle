@@ -5,8 +5,9 @@ module ScoredOrder
 
   class_methods do
     def scored_order(column, input)
+      column  = %(\"#{table_name}\".\"#{column}\") unless column.is_a?(String)
       ts_rank = Arel.sql(sanitize_sql([
-        "ts_rank_cd(to_tsvector('french', \"#{table_name}\".\"#{column}\"), to_tsquery('french', ?))",
+        "ts_rank_cd(to_tsvector('french', #{column}), to_tsquery('french', ?))",
         input.delete("'()|&!:><").split.join(" | ")
       ]))
 

@@ -20,6 +20,11 @@ nav.sidebar
       class=("sidebar__link--current" if controller.controller_name == "collectivities")
     ) Collectivitiés
 
+    a(
+      href=users_path
+      class=("sidebar__link--current" if controller.controller_name == "user")
+    ) Utilisateurs
+
   .sidebar__header Territoires
   .sidebar__links
     a(

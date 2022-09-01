@@ -19,7 +19,7 @@
   .notification__message
     .notification__title= title
     = simple_format(description) if description.present?
-  
+
   .notification__actions
     button.icon-button.notification__close-button( data-action="notification#hide" )
       = helpers.svg_icon("x-icon", "Masquer cette notification")

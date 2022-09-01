@@ -2,8 +2,8 @@
 
 require "rails_helper"
 
-RSpec.describe "TerritoriesController#index", type: :request do
-  subject(:request) { get "/territoires", headers:, params: }
+RSpec.describe "OrganizationsController#index", type: :request do
+  subject(:request) { get "/organisations", headers:, params: }
 
   let(:headers) { {} }
   let(:params)  { { q: "" } }
@@ -22,10 +22,10 @@ RSpec.describe "TerritoriesController#index", type: :request do
     it { expect(response).to have_empty_body }
 
     context "with results" do
-      let(:params) { { q: "Alp" } }
+      let(:params) { { q: "Fis" } }
 
       before do
-        create(:region, name: "Provence-Alpes-Côte d'Azur")
+        create(:publisher, name: "Fiscalité & Territoire")
       end
 
       it { expect(response).to have_body }
