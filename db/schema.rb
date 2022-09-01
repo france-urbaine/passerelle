@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_08_30_175809) do
+ActiveRecord::Schema[7.0].define(version: 2022_09_01_135804) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -18,6 +18,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_30_175809) do
 
   # Custom types defined in this database.
   # Note that some types may not work with other database engines. Be careful if changing database.
+  create_enum "action", ["evaluation_hab", "evaluation_eco", "occupation_hab", "occupation_eco"]
   create_enum "epci_nature", ["ME", "CC", "CA", "CU"]
   create_enum "organization_type", ["Collectivity", "Publisher", "DDFIP"]
   create_enum "territory_type", ["Commune", "EPCI", "Departement", "Region"]
@@ -55,6 +56,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_30_175809) do
     t.datetime "updated_at", null: false
     t.integer "collectivities_count", default: 0, null: false
     t.string "qualified_name"
+    t.integer "services_count", default: 0, null: false
     t.index ["code_departement"], name: "index_communes_on_code_departement"
     t.index ["code_insee"], name: "index_communes_on_code_insee", unique: true
     t.index ["siren_epci"], name: "index_communes_on_siren_epci"
@@ -68,6 +70,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_30_175809) do
     t.datetime "discarded_at"
     t.integer "users_count", default: 0, null: false
     t.integer "collectivities_count", default: 0, null: false
+    t.integer "services_count", default: 0, null: false
     t.index ["code_departement"], name: "index_ddfips_on_code_departement"
     t.index ["discarded_at"], name: "index_ddfips_on_discarded_at"
     t.index ["name"], name: "index_ddfips_on_name", unique: true, where: "(discarded_at IS NULL)"
@@ -129,6 +132,39 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_30_175809) do
     t.index ["code_region"], name: "index_regions_on_code_region", unique: true
   end
 
+  create_table "service_communes", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "service_id", null: false
+    t.string "code_insee", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["code_insee"], name: "index_service_communes_on_code_insee"
+    t.index ["service_id", "code_insee"], name: "index_service_communes_on_service_id_and_code_insee", unique: true
+    t.index ["service_id"], name: "index_service_communes_on_service_id"
+  end
+
+  create_table "services", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "ddfip_id"
+    t.string "name", null: false
+    t.enum "action", null: false, enum_type: "action"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "discarded_at"
+    t.integer "users_count", default: 0, null: false
+    t.integer "communes_count", default: 0, null: false
+    t.index ["ddfip_id"], name: "index_services_on_ddfip_id"
+    t.index ["discarded_at"], name: "index_services_on_discarded_at"
+  end
+
+  create_table "user_services", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "user_id", null: false
+    t.uuid "service_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["service_id", "user_id"], name: "index_user_services_on_service_id_and_user_id", unique: true
+    t.index ["service_id"], name: "index_user_services_on_service_id"
+    t.index ["user_id"], name: "index_user_services_on_user_id"
+  end
+
   create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.enum "organization_type", null: false, enum_type: "organization_type"
     t.uuid "organization_id", null: false
@@ -157,6 +193,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_30_175809) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "invited_at"
+    t.integer "services_count", default: 0, null: false
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["inviter_id"], name: "index_users_on_inviter_id"
@@ -165,6 +202,9 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_30_175809) do
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
   end
 
+  add_foreign_key "service_communes", "services", on_delete: :cascade
+  add_foreign_key "user_services", "services", on_delete: :cascade
+  add_foreign_key "user_services", "users", on_delete: :cascade
   create_function :get_collectivities_users_count, sql_definition: <<-'SQL'
       CREATE OR REPLACE FUNCTION public.get_collectivities_users_count(collectivities collectivities)
        RETURNS integer

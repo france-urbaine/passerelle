@@ -9,6 +9,9 @@ RSpec.describe User, type: :model do
   it { is_expected.to belong_to(:inviter).optional }
   it { is_expected.to have_many(:invitees) }
 
+  it { is_expected.to have_many(:user_services) }
+  it { is_expected.to have_many(:services).through(:user_services) }
+
   # Validations
   # ----------------------------------------------------------------------------
   it { is_expected.to validate_presence_of(:first_name) }

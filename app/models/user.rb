@@ -32,6 +32,7 @@
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #  invited_at             :datetime
+#  services_count         :integer          default(0), not null
 #
 # Indexes
 #
@@ -59,6 +60,9 @@ class User < ApplicationRecord
   belongs_to :organization, polymorphic: true, inverse_of: :users
   belongs_to :inviter, class_name: "User", optional: true, inverse_of: :invitees
   has_many :invitees, class_name: "User", foreign_key: :inviter_id, inverse_of: :inviter, dependent: :nullify
+
+  has_many :user_services, dependent: :delete_all
+  has_many :services, through: :user_services
 
   # Validations
   # ----------------------------------------------------------------------------

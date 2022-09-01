@@ -10,6 +10,7 @@ RSpec.describe DDFIP, type: :model do
   it { is_expected.to have_many(:communes) }
   it { is_expected.to have_one(:region) }
   it { is_expected.to have_many(:users) }
+  it { is_expected.to have_many(:services) }
 
   # Validations
   # ----------------------------------------------------------------------------

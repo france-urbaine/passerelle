@@ -12,6 +12,7 @@
 #  discarded_at         :datetime
 #  users_count          :integer          default(0), not null
 #  collectivities_count :integer          default(0), not null
+#  services_count       :integer          default(0), not null
 #
 # Indexes
 #
@@ -29,6 +30,8 @@ class DDFIP < ApplicationRecord
   has_one  :region, through: :departement
 
   has_many :users, as: :organization, dependent: :delete_all
+
+  has_many :services, dependent: :destroy_async
 
   # Validations
   # ----------------------------------------------------------------------------

@@ -13,6 +13,7 @@
 #  updated_at           :datetime         not null
 #  collectivities_count :integer          default(0), not null
 #  qualified_name       :string
+#  services_count       :integer          default(0), not null
 #
 # Indexes
 #
@@ -31,6 +32,9 @@ class Commune < ApplicationRecord
   has_one :region, through: :departement
 
   has_one :registered_collectivity, class_name: "Collectivity", as: :territory, dependent: false
+
+  has_many :service_communes, primary_key: :code_insee, foreign_key: :code_insee, inverse_of: :commune, dependent: false
+  has_many :services, through: :service_communes
 
   # Validations
   # ----------------------------------------------------------------------------

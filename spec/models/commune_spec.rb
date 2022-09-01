@@ -9,6 +9,8 @@ RSpec.describe Commune, type: :model do
   it { is_expected.to belong_to(:epci).optional }
   it { is_expected.to have_one(:registered_collectivity) }
   it { is_expected.to respond_to(:on_territory_collectivities) }
+  it { is_expected.to have_many(:service_communes) }
+  it { is_expected.to have_many(:services).through(:service_communes) }
 
   # Validations
   # ----------------------------------------------------------------------------
