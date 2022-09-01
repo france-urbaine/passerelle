@@ -18,8 +18,8 @@ RSpec.describe "Communes", type: :system, use_fixtures: true do
 
     click_on "Bayonne"
 
-    expect(page).to have_current_path(commune_path(bayonne))
     expect(page).to have_selector("h1", text: "Bayonne")
+    expect(page).to have_current_path(commune_path(bayonne))
   end
 
   it "visits links from the show page & comes back" do
@@ -32,20 +32,32 @@ RSpec.describe "Communes", type: :system, use_fixtures: true do
 
     click_on "CA du Pays Basque"
 
+    expect(page).to have_selector("h1", text: "CA du Pays Basque")
     expect(page).to have_current_path(epci_path(pays_basque))
 
     go_back
+
+    expect(page).to have_selector("h1", text: "Bayonne")
+    expect(page).to have_current_path(commune_path(bayonne))
+
     click_on "Pyrénées-Atlantiques"
 
+    expect(page).to have_selector("h1", text: "Pyrénées-Atlantiques")
     expect(page).to have_current_path(departement_path(pyrenees_atlantiques))
 
     go_back
+
+    expect(page).to have_selector("h1", text: "Bayonne")
+    expect(page).to have_current_path(commune_path(bayonne))
+
     click_on "Nouvelle-Aquitaine"
 
+    expect(page).to have_selector("h1", text: "Nouvelle-Aquitaine")
     expect(page).to have_current_path(region_path(nouvelle_aquitaine))
 
     go_back
 
+    expect(page).to have_selector("h1", text: "Bayonne")
     expect(page).to have_current_path(commune_path(bayonne))
   end
 

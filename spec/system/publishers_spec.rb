@@ -16,8 +16,8 @@ RSpec.describe "Publishers", type: :system, use_fixtures: true do
 
     click_on "Fiscalité & Territoire"
 
-    expect(page).to have_current_path(publisher_path(fiscalite_territoire))
     expect(page).to have_selector("h1", text: "Fiscalité & Territoire")
+    expect(page).to have_current_path(publisher_path(fiscalite_territoire))
   end
 
   it "visits links from the show page & comes back" do
@@ -29,10 +29,12 @@ RSpec.describe "Publishers", type: :system, use_fixtures: true do
 
     click_on "CA du Pays Basque"
 
+    expect(page).to have_selector("h1", text: "CA du Pays Basque")
     expect(page).to have_current_path(collectivity_path(pays_basque))
 
     go_back
 
+    expect(page).to have_selector("h1", text: "Fiscalité & Territoire")
     expect(page).to have_current_path(publisher_path(fiscalite_territoire))
   end
 

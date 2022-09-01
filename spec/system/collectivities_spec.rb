@@ -19,8 +19,8 @@ RSpec.describe "Collectivities", type: :system, use_fixtures: true do
 
     click_on "CA du Pays Basque"
 
-    expect(page).to have_current_path(collectivity_path(pays_basque))
     expect(page).to have_selector("h1", text: "CA du Pays Basque")
+    expect(page).to have_current_path(collectivity_path(pays_basque))
   end
 
   it "visits links from the show page & comes back" do
@@ -32,15 +32,22 @@ RSpec.describe "Collectivities", type: :system, use_fixtures: true do
 
     click_on "Fiscalité & Territoire"
 
+    expect(page).to have_selector("h1", text: "Fiscalité & Territoire")
     expect(page).to have_current_path(publisher_path(publisher))
 
     go_back
+
+    expect(page).to have_selector("h1", text: "CA du Pays Basque")
+    expect(page).to have_current_path(collectivity_path(pays_basque))
+
     click_on "CA du Pays Basque"
 
+    expect(page).to have_selector("h1", text: "CA du Pays Basque")
     expect(page).to have_current_path(epci_path(territoire))
 
     go_back
 
+    expect(page).to have_selector("h1", text: "CA du Pays Basque")
     expect(page).to have_current_path(collectivity_path(pays_basque))
   end
 

@@ -16,8 +16,8 @@ RSpec.describe "EPCIs", type: :system, use_fixtures: true do
 
     click_on "CA du Pays Basque"
 
-    expect(page).to have_current_path(epci_path(pays_basque))
     expect(page).to have_selector("h1", text: "CA du Pays Basque")
+    expect(page).to have_current_path(epci_path(pays_basque))
   end
 
   it "visits links from the show page & comes back" do
@@ -29,16 +29,23 @@ RSpec.describe "EPCIs", type: :system, use_fixtures: true do
 
     click_on "Pyrénées-Atlantiques"
 
+    expect(page).to have_selector("h1", text: "Pyrénées-Atlantiques")
     expect(page).to have_current_path(departement_path(pyrenees_atlantiques))
 
     go_back
+
+    expect(page).to have_selector("h1", text: "CA du Pays Basque")
+    expect(page).to have_current_path(epci_path(pays_basque))
+
     click_on "Voir les communes"
 
-    expect(page).to have_current_path(communes_path(search: "200067106"))
+    expect(page).to have_selector("h1", text: "Communes")
     expect(page).to have_selector("tr", text: "Bayonne")
+    expect(page).to have_current_path(communes_path(search: "200067106"))
 
     go_back
 
+    expect(page).to have_selector("h1", text: "CA du Pays Basque")
     expect(page).to have_current_path(epci_path(pays_basque))
   end
 

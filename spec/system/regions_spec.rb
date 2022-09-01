@@ -17,8 +17,8 @@ RSpec.describe "Regions", type: :system, use_fixtures: true do
 
     click_on "Nouvelle-Aquitaine"
 
-    expect(page).to have_current_path(region_path(nouvelle_aquitaine))
     expect(page).to have_selector("h1", text: "Nouvelle-Aquitaine")
+    expect(page).to have_current_path(region_path(nouvelle_aquitaine))
   end
 
   it "visits links from the show page & comes back" do
@@ -32,27 +32,44 @@ RSpec.describe "Regions", type: :system, use_fixtures: true do
 
     click_on "Pyrénées-Atlantiques"
 
+    expect(page).to have_selector("h1", text: "Pyrénées-Atlantiques")
     expect(page).to have_current_path(departement_path(pyrenees_atlantiques))
 
     go_back
+
+    expect(page).to have_selector("h1", text: "Nouvelle-Aquitaine")
+    expect(page).to have_current_path(region_path(nouvelle_aquitaine))
+
     click_on "Voir les EPCI"
 
-    expect(page).to have_current_path(epcis_path(search: "Nouvelle-Aquitaine"))
+    expect(page).to have_selector("h1", text: "EPCI")
     expect(page).to have_selector("tr", text: "CA du Pays Basque")
+    expect(page).to have_current_path(epcis_path(search: "Nouvelle-Aquitaine"))
 
     go_back
+
+    expect(page).to have_selector("h1", text: "Nouvelle-Aquitaine")
+    expect(page).to have_current_path(region_path(nouvelle_aquitaine))
+
     click_on "Voir les communes"
 
-    expect(page).to have_current_path(communes_path(search: "Nouvelle-Aquitaine"))
+    expect(page).to have_selector("h1", text: "Communes")
     expect(page).to have_selector("tr", text: "Bayonne")
+    expect(page).to have_current_path(communes_path(search: "Nouvelle-Aquitaine"))
 
     go_back
+
+    expect(page).to have_selector("h1", text: "Nouvelle-Aquitaine")
+    expect(page).to have_current_path(region_path(nouvelle_aquitaine))
+
     click_on "DDFIP des Pyrénées-Atlantiques"
 
+    expect(page).to have_selector("h1", text: "DDFIP des Pyrénées-Atlantiques")
     expect(page).to have_current_path(ddfip_path(ddfip64))
 
     go_back
 
+    expect(page).to have_selector("h1", text: "Nouvelle-Aquitaine")
     expect(page).to have_current_path(region_path(nouvelle_aquitaine))
   end
 

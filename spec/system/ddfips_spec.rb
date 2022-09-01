@@ -17,8 +17,8 @@ RSpec.describe "Communes", type: :system, use_fixtures: true do
 
     click_on "DDFIP des Pyrénées-Atlantiques"
 
-    expect(page).to have_current_path(ddfip_path(ddifp64))
     expect(page).to have_selector("h1", text: "DDFIP des Pyrénées-Atlantiques")
+    expect(page).to have_current_path(ddfip_path(ddifp64))
   end
 
   it "visits links from the show page & comes back" do
@@ -29,10 +29,12 @@ RSpec.describe "Communes", type: :system, use_fixtures: true do
 
     click_on "Pyrénées-Atlantiques"
 
+    expect(page).to have_selector("h1", text: "Pyrénées-Atlantiques")
     expect(page).to have_current_path(departement_path(pyrenees_atlantiques))
 
     go_back
 
+    expect(page).to have_selector("h1", text: "DDFIP des Pyrénées-Atlantiques")
     expect(page).to have_current_path(ddfip_path(ddifp64))
   end
 

@@ -16,8 +16,8 @@ RSpec.describe "Users", type: :system, use_fixtures: true do
 
     click_on "Marc Debomy"
 
-    expect(page).to have_current_path(user_path(marc))
     expect(page).to have_selector("h1", text: "Marc Debomy")
+    expect(page).to have_current_path(user_path(marc))
   end
 
   it "visits links from the show page & comes back" do
@@ -28,10 +28,12 @@ RSpec.describe "Users", type: :system, use_fixtures: true do
 
     click_on "Fiscalité & Territoire"
 
+    expect(page).to have_selector("h1", text: "Fiscalité & Territoire")
     expect(page).to have_current_path(publisher_path(organization))
 
     go_back
 
+    expect(page).to have_selector("h1", text: "Marc Debomy")
     expect(page).to have_current_path(user_path(marc))
   end
 

@@ -17,8 +17,8 @@ RSpec.describe "Departements", type: :system, use_fixtures: true do
 
     click_on "Nord"
 
-    expect(page).to have_current_path(departement_path(nord))
     expect(page).to have_selector("h1", text: "Nord")
+    expect(page).to have_current_path(departement_path(nord))
   end
 
   it "visits links from the show page & comes back" do
@@ -32,27 +32,44 @@ RSpec.describe "Departements", type: :system, use_fixtures: true do
 
     click_on "Hauts-de-France"
 
+    expect(page).to have_selector("h1", text: "Hauts-de-France")
     expect(page).to have_current_path(region_path(hauts_de_france))
 
     go_back
+
+    expect(page).to have_selector("h1", text: "Nord")
+    expect(page).to have_current_path(departement_path(nord))
+
     click_on "Voir les EPCI"
 
-    expect(page).to have_current_path(epcis_path(search: "59"))
+    expect(page).to have_selector("h1", text: "EPCI")
     expect(page).to have_selector("tr", text: "Métropole Européenne de Lille")
+    expect(page).to have_current_path(epcis_path(search: "59"))
 
     go_back
+
+    expect(page).to have_selector("h1", text: "Nord")
+    expect(page).to have_current_path(departement_path(nord))
+
     click_on "Voir les communes"
 
-    expect(page).to have_current_path(communes_path(search: "59"))
+    expect(page).to have_selector("h1", text: "Communes")
     expect(page).to have_selector("tr", text: "Lille")
+    expect(page).to have_current_path(communes_path(search: "59"))
 
     go_back
+
+    expect(page).to have_selector("h1", text: "Nord")
+    expect(page).to have_current_path(departement_path(nord))
+
     click_on "DDFIP du Nord"
 
+    expect(page).to have_selector("h1", text: "DDFIP du Nord")
     expect(page).to have_current_path(ddfip_path(ddfip59))
 
     go_back
 
+    expect(page).to have_selector("h1", text: "Nord")
     expect(page).to have_current_path(departement_path(nord))
   end
 
