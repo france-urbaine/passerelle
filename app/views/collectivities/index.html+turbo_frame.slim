@@ -1,0 +1,11 @@
+- case turbo_frame_request_id
+- when "index_header"
+  = turbo_frame_tag :index_header do
+    = render "index_header", collectivities: @collectivities, pagy: @pagy
+
+- else
+  = turbo_frame_tag :content do
+    = turbo_frame_tag :index_header do
+      = render "index_header", collectivities: @collectivities, pagy: @pagy
+
+    = render "index_table", collectivities: @collectivities, pagy: @pagy

@@ -11,8 +11,8 @@ module FormHelper
     end
   end
 
-  def back_param_input
-    hidden_param_input(:back)
+  def form_back_param_input
+    hidden_param_input(:form_back)
   end
 
   def hidden_param_input(key)

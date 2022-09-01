@@ -1,5 +1,5 @@
 main.content
-  = turbo_frame_tag :content, src: params[:back]
+  = turbo_frame_tag :content, src: params[:form_back]
 
 = turbo_frame_tag :modal do
   = render "form", publisher: @publisher

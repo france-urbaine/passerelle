@@ -17,7 +17,7 @@ RSpec.describe "Departements", type: :system, use_fixtures: true do
 
     click_on "Nord"
 
-    expect(page).to have_current_path(departement_path(nord, back: departements_path))
+    expect(page).to have_current_path(departement_path(nord))
     expect(page).to have_selector("h1", text: "Nord")
   end
 
@@ -49,7 +49,7 @@ RSpec.describe "Departements", type: :system, use_fixtures: true do
     go_back
     click_on "DDFIP du Nord"
 
-    expect(page).to have_current_path(ddfip_path(ddfip59, back: departement_path(nord)))
+    expect(page).to have_current_path(ddfip_path(ddfip59))
 
     go_back
 

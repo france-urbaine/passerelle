@@ -44,7 +44,7 @@ table.datatable
             a.icon-button(
               aria-label="Modifier cet éditeur"
               data-turbo-frame="modal"
-              href=edit_publisher_path(publisher, back: current_path)
+              href=edit_publisher_path(publisher, form_back: current_path)
             )
               = svg_icon("pencil-alt-icon", "Modifier cet éditeur")
               span.tooltip Modifier cet éditeur
@@ -61,9 +61,8 @@ table.datatable
 
         td( id=dom_id(publisher, :title) )
           a(
-            data-turbo-action="advance"
-            data-turbo-frame="content"
-            href=publisher_path(publisher, back: current_path)
+            data-turbo-frame="_top"
+            href=publisher_path(publisher, current_index_back_params)
           )= publisher.name
 
         td= display_siren(publisher.siren)

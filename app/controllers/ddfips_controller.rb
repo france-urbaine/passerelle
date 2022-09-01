@@ -22,11 +22,12 @@ class DdfipsController < ApplicationController
     @ddfip = DDFIP.new(ddfip_params)
 
     if @ddfip.save
+      @notice   = t(".success")
+      @location = params.fetch(:form_back, ddfips_path)
+
       respond_to do |format|
         format.turbo_stream
-        format.html do
-          redirect_to params.fetch(:back, :ddfips), notice: t(".success")
-        end
+        format.html { redirect_to @location, notice: @notice }
       end
     else
       render :new, status: :unprocessable_entity
@@ -35,11 +36,12 @@ class DdfipsController < ApplicationController
 
   def update
     if @ddfip.update(ddfip_params)
+      @notice   = t(".success")
+      @location = params.fetch(:form_back, ddfips_path)
+
       respond_to do |format|
         format.turbo_stream
-        format.html do
-          redirect_to params.fetch(:back, :ddfips), notice: t(".success")
-        end
+        format.html { redirect_to @location, notice: @notice }
       end
     else
       render :edit, status: :unprocessable_entity
@@ -49,11 +51,12 @@ class DdfipsController < ApplicationController
   def destroy
     @ddfip.discard
 
+    @notice   = t(".success")
+    @location = params.fetch(:form_back, ddfips_path)
+
     respond_to do |format|
       format.turbo_stream
-      format.html do
-        redirect_to params.fetch(:back, :ddfips), notice: t(".success")
-      end
+      format.html { redirect_to @location, notice: @notice }
     end
   end
 

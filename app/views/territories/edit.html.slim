@@ -1,25 +1,22 @@
 main.content
+  = turbo_frame_tag :content, src: params[:form_back]
 
 = turbo_frame_tag :modal do
-  = dialog(back_url: params.fetch(:back, communes_path)) do
-    = turbo_frame_tag :form do
+  = dialog_component do |dialog|
+    = turbo_frame_tag :modal_form do
       - @territories_update.strip_domain_urls
 
-      = form_with(model: @territories_update, url: territories_path) do |form|
+      = form_with(model: @territories_update, url: territories_path, method: :patch) do |form|
         .dialog__header
           h1#dialog-title.dialog__title
             | Mise à jour des territoires
 
           .dialog__header-toolbar
-            a.icon-button(
-              href=params.fetch(:back, communes_path)
-              data-turbo-action="restore"
-              data-action="dialog#close"
-            )
-              = svg_icon("x-icon", "Fermer cette fenêtre")
+            = dialog.close_button href: params.fetch(:form_back, communes_path)
 
         .dialog__content( class="w-[640px]" )
-          = back_param_input
+          = form_back_param_input
+
           = form_block @territories_update, :communes_url, first: true do
             .form-block__label
               = form.label :communes_url do
@@ -48,9 +45,4 @@ main.content
 
         .dialog__actions
           button.button.button--primary( type="submit" ) Enregistrer
-          a.button(
-            href=params.fetch(:back, communes_path)
-            data-turbo-action="restore"
-            data-action="dialog#close"
-          ) Annuler
-
+          = dialog.cancel_button "Annuler", href: params.fetch(:form_back, communes_path)

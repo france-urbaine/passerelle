@@ -49,7 +49,7 @@ table.datatable
           a.icon-button(
             aria-label="Modifier cette commune"
             data-turbo-frame="modal"
-            href=edit_commune_path(commune, back: current_path)
+            href=edit_commune_path(commune, form_back: current_path)
           )
             = svg_icon("pencil-alt-icon", "Modifier cette commune")
             span.tooltip Modifier cette commune
@@ -57,9 +57,8 @@ table.datatable
         td.w-px= commune.code_insee
         td( id=dom_id(commune, :title) )
           a(
-            data-turbo-action="advance"
-            data-turbo-frame="content"
-            href=commune_path(commune, back: current_path)
+            data-turbo-frame="_top"
+            href=commune_path(commune, current_index_back_params)
           )= commune.name
 
         - if commune.code_departement?

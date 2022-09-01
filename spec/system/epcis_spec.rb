@@ -16,7 +16,7 @@ RSpec.describe "EPCIs", type: :system, use_fixtures: true do
 
     click_on "CA du Pays Basque"
 
-    expect(page).to have_current_path(epci_path(pays_basque, back: epcis_path))
+    expect(page).to have_current_path(epci_path(pays_basque))
     expect(page).to have_selector("h1", text: "CA du Pays Basque")
   end
 

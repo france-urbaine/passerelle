@@ -9,17 +9,18 @@
           span.tooltip Réinitialiser la sélection
 
       .header-bar__text
-        - selected_count = params[:ids] == "all" ? @pagy.count : params[:ids].size
+        - if params[:ids] == "all"
+          = count(pagy.count, "département sélectionné", plural: "départements sélectionnés")
+        - else
+          = count(params[:ids].size, "département sélectionné", plural: "départements sélectionnés")
 
-        = count(selected_count, "département sélectionné", plural: "départements sélectionnés")
-
-        - if selected_count == pagy.items && selected_count < @pagy.count
-          |  (
-          a(
-            data-action="selection#checkAll"
-            href=departements_path(extract_params(:search).merge(ids: "all"))
-          ) Sélectionner les #{count(@pagy.count, "départements")}
-          | )
+          - if params[:ids].size == pagy.items && departements.length < pagy.count
+            |  (
+            a(
+              data-action="selection#checkAll"
+              href=departements_path(extract_params(:search).merge(ids: "all"))
+            ) Sélectionner les #{count(pagy.count, "département")}
+            | )
 
     .flex-auto
     .header-bar__actions
@@ -29,6 +30,6 @@
 
 - else
   .header-bar
-    = search("Rechercher")
+    = search_component("Rechercher")
     .flex-auto
-    = index_options(pagy, "département", order: { departement: "département", region: "région" })
+    = index_options_component(pagy, "département", order: { departement: "département", region: "région" })

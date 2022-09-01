@@ -10,16 +10,16 @@
 
       .header-bar__text
         - if params[:ids] == "all"
-          = count(@pagy.count, "DDFIP sélectionnée", plural: "DDFIP sélectionnées")
+          = count(pagy.count, "DDFIP sélectionnée", plural: "DDFIP sélectionnées")
         - else
           = count(params[:ids].size, "DDFIP sélectionnée", plural: "DDFIP sélectionnées")
 
-          - if params[:ids].size == pagy.items && ddfips.length < @pagy.count
+          - if params[:ids].size == pagy.items && ddfips.length < pagy.count
             |  (
             a(
               data-action="selection#checkAll"
               href=ddfips_path(extract_params(:search).merge(ids: "all"))
-            ) Sélectionner les #{count(@pagy.count, "DDFIP")}
+            ) Sélectionner les #{count(pagy.count, "DDFIP", plural: "DDFIP")}
             | )
 
     .flex-auto
@@ -29,6 +29,6 @@
 
 - else
   .header-bar
-    = search("Rechercher")
+    = search_component("Rechercher")
     .flex-auto
-    = index_options(pagy, "DDFIP", plural: "DDFIP", order: { name: "nom", departement: "département", region: "région" })
+    = index_options_component(pagy, "DDFIP", plural: "DDFIP", order: { name: "nom", departement: "département", region: "région" })

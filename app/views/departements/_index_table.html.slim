@@ -46,7 +46,7 @@ table.datatable
 
         td.datatable__row-actions
           a.icon-button(
-            href=edit_departement_path(departement, back: current_path)
+            href=edit_departement_path(departement, form_back: current_path)
             aria-label="Modifier ce département"
             data-turbo-frame="modal"
           )
@@ -56,9 +56,8 @@ table.datatable
         td.w-px= departement.code_departement
         td( id=dom_id(departement, :title) )
           a(
-            data-turbo-action="advance"
-            data-turbo-frame="content"
-            href=departement_path(departement, back: current_path)
+            data-turbo-frame="_top"
+            href=departement_path(departement, current_index_back_params)
           )= departement.name
 
         - if departement.code_region?

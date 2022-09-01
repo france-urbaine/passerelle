@@ -10,16 +10,16 @@
 
       .header-bar__text
         - if params[:ids] == "all"
-          = count(@pagy.count, "éditeur sélectionné", plural: "éditeurs sélectionnés")
+          = count(pagy.count, "éditeur sélectionné", plural: "éditeurs sélectionnés")
         - else
           = count(params[:ids].size, "éditeur sélectionné", plural: "éditeurs sélectionnés")
 
-          - if params[:ids].size == pagy.items && publishers.length < @pagy.count
+          - if params[:ids].size == pagy.items && publishers.length < pagy.count
             |  (
             a(
               data-action="selection#checkAll"
               href=publishers_path(extract_params(:search).merge(ids: "all"))
-            ) Sélectionner les #{count(@pagy.count, "éditeurs")}
+            ) Sélectionner les #{count(pagy.count, "éditeur")}
             | )
 
     .flex-auto
@@ -29,6 +29,6 @@
 
 - else
   .header-bar
-    = search("Rechercher")
+    = search_component("Rechercher")
     .flex-auto
-    = index_options(pagy, "éditeur", order: { name: "nom", siren: "SIREN" })
+    = index_options_component(pagy, "éditeur", order: { name: "nom", siren: "SIREN" })

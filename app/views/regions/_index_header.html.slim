@@ -9,17 +9,18 @@
           span.tooltip Réinitialiser la sélection
 
       .header-bar__text
-        - selected_count = params[:ids] == "all" ? @pagy.count : params[:ids].size
+        - if params[:ids] == "all"
+          = count(pagy.count, "région sélectionnée", plural: "régions sélectionnées")
+        - else
+          = count(params[:ids].size, "région sélectionnée", plural: "régions sélectionnées")
 
-        = count(selected_count, "région sélectionnée", plural: "régions sélectionnées")
-
-        - if selected_count == pagy.items && selected_count < @pagy.count
-          |  (
-          a(
-            data-action="selection#checkAll"
-            href=regions_path(extract_params(:search).merge(ids: "all"))
-          ) Sélectionner les #{count(@pagy.count, "régions")}
-          | )
+          - if params[:ids].size == pagy.items && regions.length < pagy.count
+            |  (
+            a(
+              data-action="selection#checkAll"
+              href=regions_path(extract_params(:search).merge(ids: "all"))
+            ) Sélectionner les #{count(pagy.count, "région")}
+            | )
 
     .flex-auto
     .header-bar__actions
@@ -29,6 +30,6 @@
 
 - else
   .header-bar
-    = search("Rechercher")
+    = search_component("Rechercher")
     .flex-auto
-    = index_options(pagy, "région", order: { region: "région" })
+    = index_options_component(pagy, "région", order: { region: "région" })

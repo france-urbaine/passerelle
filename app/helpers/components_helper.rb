@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
 module ComponentsHelper
-  def dialog(**options, &)
-    render(DialogComponent.new(**options), &)
+  def dialog_component(&)
+    render(DialogComponent.new, &)
   end
 
-  def search(...)
+  def search_component(...)
     render(SearchComponent.new(...))
   end
 
-  def index_options(...)
+  def index_options_component(...)
     render(IndexOptionsComponent.new(...))
   end
 

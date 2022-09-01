@@ -15,7 +15,7 @@ RSpec.describe SearchComponent, type: :component do
 
   it do
     expect(rendered_content).to eq(clean_template(<<~HTML))
-      <form autocomplete="off" class="search" data-turbo-action="advance" data-turbo-frame="content">
+      <form autocomplete="off" class="search" data-turbo-frame="_top">
         <label class="form-block">
           <div class="form-block__label--hiden">Rechercher...</div>
           <div class="form-block__input">
@@ -27,7 +27,6 @@ RSpec.describe SearchComponent, type: :component do
             <input name="search" placeholder="Rechercher..." type="search" />
           </div>
         </label>
-        <input name="Turbo-Frame" type="hidden" value="content" />
       </form>
     HTML
   end
@@ -37,7 +36,7 @@ RSpec.describe SearchComponent, type: :component do
 
     it do
       expect(rendered_content).to eq(clean_template(<<~HTML))
-        <form autocomplete="off" class="search" data-turbo-action="advance" data-turbo-frame="content">
+        <form autocomplete="off" class="search" data-turbo-frame="_top">
           <label class="form-block">
             <div class="form-block__label--hiden">Rechercher...</div>
             <div class="form-block__input">
@@ -49,7 +48,6 @@ RSpec.describe SearchComponent, type: :component do
               <input name="search" placeholder="Rechercher..." type="search" value="Pyrénées" />
             </div>
           </label>
-          <input name="Turbo-Frame" type="hidden" value="content" />
           <input type="hidden" name="order" value="-departement" autocomplete="off">
         </form>
       HTML

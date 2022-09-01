@@ -14,9 +14,8 @@
     .breadcrumbs__separator="/"
     .breadcrumbs__path
       a(
-        data-turbo-action="advance"
-        data-turbo-frame="content"
-        href=params.fetch(:back, collectivities_path)
+        data-turbo-frame="_top"
+        href=collectivities_path(retrieve_index_back_params)
       ) Collectivités
 
     .breadcrumbs__separator="/"
@@ -28,7 +27,7 @@
     .header-bar__action
       a.button(
         data-turbo-frame="modal"
-        href=edit_collectivity_path(collectivity, back: current_path)
+        href=edit_collectivity_path(collectivity, form_back: current_path)
       )
         = svg_icon("pencil-alt-icon")
         | Modifier

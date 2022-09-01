@@ -22,11 +22,12 @@ class PublishersController < ApplicationController
     @publisher = Publisher.new(publisher_params)
 
     if @publisher.save
+      @notice   = t(".success")
+      @location = params.fetch(:form_back, publishers_path)
+
       respond_to do |format|
         format.turbo_stream
-        format.html do
-          redirect_to params.fetch(:back, :publishers), notice: t(".success")
-        end
+        format.html { redirect_to @location, notice: @notice }
       end
     else
       render :new, status: :unprocessable_entity
@@ -35,11 +36,12 @@ class PublishersController < ApplicationController
 
   def update
     if @publisher.update(publisher_params)
+      @notice   = t(".success")
+      @location = params.fetch(:form_back, publishers_path)
+
       respond_to do |format|
         format.turbo_stream
-        format.html do
-          redirect_to params.fetch(:back, :publishers), notice: t(".success")
-        end
+        format.html { redirect_to @location, notice: @notice }
       end
     else
       render :edit, status: :unprocessable_entity
@@ -49,11 +51,12 @@ class PublishersController < ApplicationController
   def destroy
     @publisher.discard
 
+    @notice   = t(".success")
+    @location = params.fetch(:form_back, publishers_path)
+
     respond_to do |format|
       format.turbo_stream
-      format.html do
-        redirect_to params.fetch(:back, :publishers), notice: t(".success")
-      end
+      format.html { redirect_to @location, notice: @notice }
     end
   end
 

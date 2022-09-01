@@ -43,7 +43,7 @@ table.datatable
 
         td.datatable__row-actions
           a.icon-button(
-            href=edit_region_path(region, back: current_path)
+            href=edit_region_path(region, form_back: current_path)
             aria-label="Modifier cette région"
             data-turbo-frame="modal"
           )
@@ -53,9 +53,8 @@ table.datatable
         td.w-px= region.code_region
         td( id=dom_id(region, :title) )
           a(
-            data-turbo-action="advance"
-            data-turbo-frame="content"
-            href=region_path(region, back: current_path)
+            data-turbo-frame="_top"
+            href=region_path(region, current_index_back_params)
           )= region.name
 
 

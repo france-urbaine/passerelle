@@ -19,7 +19,7 @@ RSpec.describe "Collectivities", type: :system, use_fixtures: true do
 
     click_on "CA du Pays Basque"
 
-    expect(page).to have_current_path(collectivity_path(pays_basque, back: collectivities_path))
+    expect(page).to have_current_path(collectivity_path(pays_basque))
     expect(page).to have_selector("h1", text: "CA du Pays Basque")
   end
 

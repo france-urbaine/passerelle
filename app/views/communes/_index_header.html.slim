@@ -9,17 +9,18 @@
           span.tooltip Réinitialiser la sélection
 
       .header-bar__text
-        - selected_count = params[:ids] == "all" ? @pagy.count : params[:ids].size
+        - if params[:ids] == "all"
+          = count(pagy.count, "commune sélectionnée", plural: "communes sélectionnées")
+        - else
+          = count(params[:ids].size, "commune sélectionnée", plural: "communes sélectionnées")
 
-        = count(selected_count, "commune sélectionnée", plural: "communes sélectionnées")
-
-        - if selected_count == pagy.items && selected_count < @pagy.count
-          |  (
-          a(
-            data-action="selection#checkAll"
-            href=communes_path(extract_params(:search).merge(ids: "all"))
-          ) Sélectionner les #{count(@pagy.count, "commune")}
-          | )
+          - if params[:ids].size == pagy.items && communes.length < pagy.count
+            |  (
+            a(
+              data-action="selection#checkAll"
+              href=communes_path(extract_params(:search).merge(ids: "all"))
+            ) Sélectionner les #{count(pagy.count, "commune")}
+            | )
 
     .flex-auto
     .header-bar__actions
@@ -29,6 +30,6 @@
 
 - else
   .header-bar
-    = search("Rechercher")
+    = search_component("Rechercher")
     .flex-auto
-    = index_options(pagy, "commune", order: { commune: "commune", departement: "département", epci: "EPCI" })
+    = index_options_component(pagy, "commune", order: { commune: "commune", departement: "département", epci: "EPCI" })

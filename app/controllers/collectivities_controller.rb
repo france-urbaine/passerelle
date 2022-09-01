@@ -22,11 +22,12 @@ class CollectivitiesController < ApplicationController
     @collectivity = Collectivity.new(collectivity_params)
 
     if @collectivity.save
+      @notice   = t(".success")
+      @location = params.fetch(:form_back, collectivities_path)
+
       respond_to do |format|
         format.turbo_stream
-        format.html do
-          redirect_to params.fetch(:back, :collectivities), notice: t(".success")
-        end
+        format.html { redirect_to @location, notice: @notice }
       end
     else
       render :new, status: :unprocessable_entity
@@ -35,11 +36,12 @@ class CollectivitiesController < ApplicationController
 
   def update
     if @collectivity.update(collectivity_params)
+      @notice   = t(".success")
+      @location = params.fetch(:form_back, collectivities_path)
+
       respond_to do |format|
         format.turbo_stream
-        format.html do
-          redirect_to params.fetch(:back, :collectivities), notice: t(".success")
-        end
+        format.html { redirect_to @location, notice: @notice }
       end
     else
       render :edit, status: :unprocessable_entity
@@ -49,11 +51,12 @@ class CollectivitiesController < ApplicationController
   def destroy
     @collectivity.discard
 
+    @notice   = t(".success")
+    @location = params.fetch(:form_back, collectivities_path)
+
     respond_to do |format|
       format.turbo_stream
-      format.html do
-        redirect_to params.fetch(:back, :collectivities), notice: t(".success")
-      end
+      format.html { redirect_to @location, notice: @notice }
     end
   end
 

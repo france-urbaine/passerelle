@@ -17,7 +17,7 @@ RSpec.describe "Regions", type: :system, use_fixtures: true do
 
     click_on "Nouvelle-Aquitaine"
 
-    expect(page).to have_current_path(region_path(nouvelle_aquitaine, back: regions_path))
+    expect(page).to have_current_path(region_path(nouvelle_aquitaine))
     expect(page).to have_selector("h1", text: "Nouvelle-Aquitaine")
   end
 
@@ -32,7 +32,7 @@ RSpec.describe "Regions", type: :system, use_fixtures: true do
 
     click_on "Pyrénées-Atlantiques"
 
-    expect(page).to have_current_path(departement_path(pyrenees_atlantiques, back: region_path(nouvelle_aquitaine)))
+    expect(page).to have_current_path(departement_path(pyrenees_atlantiques))
 
     go_back
     click_on "Voir les EPCI"
@@ -49,7 +49,7 @@ RSpec.describe "Regions", type: :system, use_fixtures: true do
     go_back
     click_on "DDFIP des Pyrénées-Atlantiques"
 
-    expect(page).to have_current_path(ddfip_path(ddfip64, back: region_path(nouvelle_aquitaine)))
+    expect(page).to have_current_path(ddfip_path(ddfip64))
 
     go_back
 

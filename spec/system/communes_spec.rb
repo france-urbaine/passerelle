@@ -18,7 +18,7 @@ RSpec.describe "Communes", type: :system, use_fixtures: true do
 
     click_on "Bayonne"
 
-    expect(page).to have_current_path(commune_path(bayonne, back: communes_path))
+    expect(page).to have_current_path(commune_path(bayonne))
     expect(page).to have_selector("h1", text: "Bayonne")
   end
 

@@ -1,5 +1,5 @@
-= dialog(back_url: params.fetch(:back, ddfips_path)) do |dialog|
-  = turbo_frame_tag :form do
+= dialog_component do |dialog|
+  = turbo_frame_tag :modal_form do
     = form_with(model: ddfip) do |form|
       .dialog__header
         h1#dialog-title.dialog__title
@@ -9,10 +9,11 @@
             | Création d'une nouvelle DDFIP
 
         .dialog__header-toolbar
-          = dialog.close_button
+          = dialog.close_button href: params.fetch(:form_back, ddfips_path)
 
       .dialog__content
-        = back_param_input
+        = form_back_param_input
+
         = form.block :name, first: true do
           = form.label :name
           = form.text_field :name, autofocus: true, required: true
@@ -29,4 +30,4 @@
 
       .dialog__actions
         button.button.button--primary( type="submit" ) Enregistrer
-        = dialog.cancel_button "Annuler"
+        = dialog.cancel_button "Annuler", href: params.fetch(:form_back, ddfips_path)

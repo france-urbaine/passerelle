@@ -4,7 +4,6 @@ import { Turbo } from "@hotwired/turbo-rails"
 
 export default class extends Controller {
   static targets = ["container"]
-  static values = { backUrl: String }
 
   connect () {
     useTransition(this)
@@ -21,8 +20,8 @@ export default class extends Controller {
     await this.leave()
     this.element.remove()
 
-    if (this.backUrlValue) {
-      Turbo.visit(this.backUrlValue, { action: "restore" })
-    }
+    // When modal will use data-turbo-action="advance",
+    // we'll need to go back when closing it.
+    // history.back()
   }
 }

@@ -14,9 +14,8 @@
     .breadcrumbs__separator="/"
     .breadcrumbs__path
       a.icon-button(
-        data-turbo-action="advance"
-        data-turbo-frame="content"
-        href=params.fetch(:back, regions_path)
+        data-turbo-frame="_top"
+        href=regions_path(retrieve_index_back_params)
       ) Régions
 
     .breadcrumbs__separator="/"
@@ -28,7 +27,7 @@
     .header-bar__action
       a.button(
         data-turbo-frame="modal"
-        href=edit_region_path(region, back: current_path)
+        href=edit_region_path(region, form_back: current_path)
       )
         = svg_icon("pencil-alt-icon")
         | Modifier
@@ -114,7 +113,7 @@ h2.subheader
         tr.datatable__row
           td.datatable__row-actions
             a.icon-button(
-              href=edit_departement_path(departement, back: current_path)
+              href=edit_departement_path(departement, form_back: current_path)
               aria-label="Modifier ce département"
               data-turbo-frame="modal"
             )
@@ -124,9 +123,8 @@ h2.subheader
           td.w-px= departement.code_departement
           td
             a(
-              data-turbo-action="advance"
-              data-turbo-frame="content"
-              href=departement_path(departement, back: current_path)
+              data-turbo-frame="_top"
+              href=departement_path(departement)
             )= departement.name
 
           td.text-right= number_with_delimiter(departement.communes_count)        if departement.communes_count.positive?
@@ -156,7 +154,7 @@ h2.subheader
         tr.datatable__row
           td.datatable__row-actions
             a.icon-button(
-              href=edit_ddfip_path(ddfip, back: current_path)
+              href=edit_ddfip_path(ddfip, form_back: current_path)
               aria-label="Modifier cette DDFIP"
               data-turbo-frame="modal"
             )
@@ -165,9 +163,8 @@ h2.subheader
 
           td
             a(
-              data-turbo-action="advance"
-              data-turbo-frame="content"
-              href=ddfip_path(ddfip, back: current_path)
+              data-turbo-frame="_top"
+              href=ddfip_path(ddfip)
             )= ddfip.name
 
           td.text-right= number_with_delimiter(ddfip.collectivities_count) if ddfip.collectivities_count.positive?
@@ -197,7 +194,7 @@ h2.subheader
         tr.datatable__row
           td.datatable__row-actions
             a.icon-button(
-              href=edit_collectivity_path(collectivity, back: current_path)
+              href=edit_collectivity_path(collectivity, form_back: current_path)
               aria-label="Modifier cette collectivité"
               data-turbo-frame="modal"
             )
@@ -207,17 +204,15 @@ h2.subheader
           td= display_siren(collectivity.siren)
           td
             a(
-              data-turbo-action="advance"
-              data-turbo-frame="content"
-              href=collectivity_path(collectivity, back: current_path)
+              data-turbo-frame="_top"
+              href=collectivity_path(collectivity)
             )= collectivity.name
 
           td
             - if collectivity.publisher
               a(
-                data-turbo-action="advance"
-                data-turbo-frame="content"
-                href=publisher_path(collectivity.publisher, back: current_path)
+                data-turbo-frame="_top"
+                href=publisher_path(collectivity.publisher)
               )= collectivity.publisher.name
 
           td.text-right= number_with_delimiter(collectivity.users_count) if collectivity.users_count.positive?

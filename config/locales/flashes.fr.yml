@@ -60,10 +60,10 @@ fr:
   regions:
     <<: *default
 
-  territories_updates:
-    create:
+  territories:
+    update:
       success:
         type:         "success"
-        title:        "La mise à jour a été lancée."
-        description:  "La tâche peut prendre quelques minutes."
+        title:        "La mise à jour a été lancée en arrière-plan."
+        description:  "Les données seront disponibles dans quelques minutes."
         delay:        3000

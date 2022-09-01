@@ -1,8 +1,0 @@
-= render "index_breadcrumbs"
-
-div( data-controller="selection" )
-  = turbo_frame_tag :index_header, data: { selection_target: "frame" } do
-    = render "index_header", ddfips: ddfips, pagy: pagy
-
-  = turbo_frame_tag :index_table do
-    = render "index_table", ddfips: ddfips, pagy: pagy

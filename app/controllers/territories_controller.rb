@@ -33,11 +33,12 @@ class TerritoriesController < ApplicationController
     if @territories_update.valid?
       @territories_update.perform_later
 
+      @notice   = t(".success")
+      @location = params.fetch(:form_back, communes_path)
+
       respond_to do |format|
         format.turbo_stream
-        format.html do
-          redirect_to params.fetch(:back, :communes), notice: t(".success")
-        end
+        format.html { redirect_to @location, notice: @notice }
       end
     else
       render :edit, status: :unprocessable_entity

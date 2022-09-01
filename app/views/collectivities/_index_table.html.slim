@@ -48,7 +48,7 @@ table.datatable
             a.icon-button(
               aria-label="Modifier cette collectivité"
               data-turbo-frame="modal"
-              href=edit_collectivity_path(collectivity, back: current_path)
+              href=edit_collectivity_path(collectivity, form_back: current_path)
             )
               = svg_icon("pencil-alt-icon", "Modifier cette collectivité")
               span.tooltip Modifier cette collectivité
@@ -66,17 +66,15 @@ table.datatable
         td= display_siren(collectivity.siren)
         td( id=dom_id(collectivity, :title) )
           a(
-            data-turbo-action="advance"
-            data-turbo-frame="content"
-            href=collectivity_path(collectivity, back: current_path)
+            data-turbo-frame="_top"
+            href=collectivity_path(collectivity, current_index_back_params)
           )= collectivity.name
 
         td
           - if collectivity.publisher
             a(
-              data-turbo-action="advance"
-              data-turbo-frame="content"
-              href=publisher_path(collectivity.publisher, back: current_path)
+              data-turbo-frame="_top"
+              href=publisher_path(collectivity.publisher)
             )= collectivity.publisher.name
 
         td.text-right= number_with_delimiter(collectivity.users_count) if collectivity.users_count.positive?

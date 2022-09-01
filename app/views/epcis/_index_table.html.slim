@@ -44,7 +44,7 @@ table.datatable
 
         td.datatable__row-actions
           a.icon-button(
-            href=edit_epci_path(epci, back: current_path)
+            href=edit_epci_path(epci, form_back: current_path)
             aria-label="Modifier cet EPCI"
             data-turbo-frame="modal"
           )
@@ -54,9 +54,8 @@ table.datatable
         td.w-px= epci.siren
         td( id=dom_id(epci, :title) )
           a(
-            data-turbo-action="advance"
-            data-turbo-frame="content"
-            href=epci_path(epci, back: current_path)
+            data-turbo-frame="_top"
+            href=epci_path(epci, current_index_back_params)
           )= epci.name
 
         - if epci.code_departement?

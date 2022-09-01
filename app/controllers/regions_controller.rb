@@ -26,11 +26,12 @@ class RegionsController < ApplicationController
 
   def update
     if @region.update(region_params)
+      @notice   = t(".success")
+      @location = params.fetch(:form_back, regions_path)
+
       respond_to do |format|
         format.turbo_stream
-        format.html do
-          redirect_to params.fetch(:back, :regions), notice: t(".success")
-        end
+        format.html { redirect_to @location, notice: @notice }
       end
     else
       render :edit, status: :unprocessable_entity

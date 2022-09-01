@@ -10,16 +10,16 @@
 
       .header-bar__text
         - if params[:ids] == "all"
-          = count(@pagy.count, "collectivité sélectionnée", plural: "collectivités sélectionnées")
+          = count(pagy.count, "collectivité sélectionnée", plural: "collectivités sélectionnées")
         - else
           = count(params[:ids].size, "collectivité sélectionnée", plural: "collectivités sélectionnées")
 
-          - if params[:ids].size == pagy.items && publishers.length < @pagy.count
+          - if params[:ids].size == pagy.items && collectivities.length < pagy.count
             |  (
             a(
               data-action="selection#checkAll"
-              href=publishers_path(extract_params(:search).merge(ids: "all"))
-            ) Sélectionner les #{count(@pagy.count, "collectivités")}
+              href=collectivities_path(extract_params(:search).merge(ids: "all"))
+            ) Sélectionner les #{count(pagy.count, "collectivité")}
             | )
 
     .flex-auto
@@ -29,6 +29,6 @@
 
 - else
   .header-bar
-    = search("Rechercher")
+    = search_component("Rechercher")
     .flex-auto
-    = index_options(pagy, "collectivité", order: { name: "nom", siren: "SIREN", publisher: "éditeur" })
+    = index_options_component(pagy, "collectivité", order: { name: "nom", siren: "SIREN", publisher: "éditeur" })

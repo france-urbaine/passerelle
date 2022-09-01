@@ -26,11 +26,12 @@ class DepartementsController < ApplicationController
 
   def update
     if @departement.update(departement_params)
+      @notice   = t(".success")
+      @location = params.fetch(:form_back, departements_path)
+
       respond_to do |format|
         format.turbo_stream
-        format.html do
-          redirect_to params.fetch(:back, :departements), notice: t(".success")
-        end
+        format.html { redirect_to @location, notice: @notice }
       end
     else
       render :edit, status: :unprocessable_entity
