@@ -12,6 +12,7 @@ Rails.application.routes.draw do
   resources :publishers,     path: "/editeurs"
   resources :collectivities, path: "/collectivites"
   resources :users,          path: "/utilisateurs"
+  resources :services,       path: "/guichets"
 
   resources :communes,     only: %i[index show edit update]
   resources :epcis,        only: %i[index show edit update]

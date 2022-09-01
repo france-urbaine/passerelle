@@ -23,7 +23,11 @@
   }
 
   .sidebar__header {
-    @apply px-4 py-2 mt-2 text-xl;
+    border-bottom: 1px solid transparent;
+
+    @apply px-4 py-2 mt-4 text-xl;
+    @apply border-gray-300;
+    @apply dark:border-gray-700;
   }
 
   .sidebar__links {
@@ -42,8 +46,8 @@
       @apply dark:bg-black dark:text-gray-100 dark:border-black;
 
       &.sidebar__link--current {
-        @apply bg-gray-100 border-gray-100;
-        @apply dark:bg-gray-800 dark:border-gray-900;
+        @apply bg-gray-200 border-gray-200;
+        @apply dark:bg-gray-800 dark:border-gray-800;
       }
 
       &, &:is(:hover, :active, :focus, :focus-visible) {

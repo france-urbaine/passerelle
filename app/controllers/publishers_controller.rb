@@ -22,7 +22,7 @@ class PublishersController < ApplicationController
     @publisher = Publisher.new(publisher_params)
 
     if @publisher.save
-      @notice   = t(".success")
+      @notice   = translate(".success")
       @location = params.fetch(:form_back, publishers_path)
 
       respond_to do |format|
@@ -36,7 +36,7 @@ class PublishersController < ApplicationController
 
   def update
     if @publisher.update(publisher_params)
-      @notice   = t(".success")
+      @notice   = translate(".success")
       @location = params.fetch(:form_back, publishers_path)
 
       respond_to do |format|
@@ -51,7 +51,7 @@ class PublishersController < ApplicationController
   def destroy
     @publisher.discard
 
-    @notice   = t(".success")
+    @notice   = translate(".success")
     @location = params.fetch(:form_back, publishers_path)
 
     respond_to do |format|

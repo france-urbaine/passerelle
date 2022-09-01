@@ -1,0 +1,7 @@
+fr:
+  enum:
+    action:
+      evaluation_hab: "Évaluation de locaux d'habitation"
+      evaluation_eco: "Évaluation de locaux économique"
+      occupation_hab: "Occupation de locaux d'habitation"
+      occupation_eco: "Occupation de locaux économique"

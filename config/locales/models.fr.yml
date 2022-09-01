@@ -3,6 +3,7 @@ fr:
     models:
       publisher:    Editeur
       ddfip:        DDFIP
+      service:      Guichet
       collectivity: Collectivité
       user:         Utilisateur
       commune:      Commune
@@ -20,6 +21,13 @@ fr:
         name:             Nom de la DDFIP
         code_departement: Code INSEE du département
         departement:      Département
+
+      service:
+        name:             Nom du guichet
+        action:           Action
+        ddfip:            DDFIP
+        ddfip_id:         ID de la DDFIP
+        ddfip_name:       Nom de la DDFIP
 
       collectivity:
         territory:            Territoire de la collectivité
@@ -102,6 +110,22 @@ fr:
 
             departement:
               required:  Un département est requis
+
+        service:
+          attributes:
+            name:
+              blank:     Un nom est requis
+              taken:     Ce nom est déjà attribué
+
+            action:
+              blank:     Une action est requise
+              inclusion: Cette action n'est pas incluse dans la liste
+
+            ddfip:
+              required:  Une DDFIP est requise
+
+            ddfip_id:
+              blank:     Un identifiant de DDFIP est requis
 
         collectivity:
           attributes:

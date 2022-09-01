@@ -26,7 +26,7 @@ class CommunesController < ApplicationController
 
   def update
     if @commune.update(commune_params)
-      @notice   = t(".success")
+      @notice   = translate(".success")
       @location = params.fetch(:form_back, communes_path)
 
       respond_to do |format|

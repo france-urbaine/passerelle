@@ -57,6 +57,47 @@ h2.subheader
 
 h2.subheader
   = svg_icon("bookmark", "Nouvelle section")
+  | Guichets de la DDFIP
+
+- if ddfip.services.none?
+  .card.mb-6
+    .card__content
+      p.italic.text-gray-500 Aucun guichet disponible pour ce compte.
+- else
+  table.datatable.mb-6
+    thead
+      tr.datatable__row
+        th( aria-label="Actions" )
+        th Guichet
+        th Action
+        th.w-48.text-right Utilisateurs
+        th.w-48.text-right Communes
+
+    tbody
+      - ddfip.services.kept.each do |service|
+        tr.datatable__row
+          td.datatable__row-actions
+            a.icon-button(
+              href=edit_service_path(service, form_back: current_path)
+              aria-label="Modifier ce guichet"
+              data-turbo-frame="modal"
+            )
+              = svg_icon("pencil-alt-icon", "Modifier ce guichet")
+              span.tooltip Modifier ce guichet
+
+          td
+            a(
+              data-turbo-frame="_top"
+              href=service_path(service)
+            )= service.name
+
+          td= translate(service.action, scope: "enum.action")
+          td.text-right= number_with_delimiter(service.users_count)    if service.users_count.positive?
+          td.text-right= number_with_delimiter(service.communes_count) if service.communes_count.positive?
+
+
+h2.subheader
+  = svg_icon("bookmark", "Nouvelle section")
   | Utilisateurs de l'organisation
 
 - if ddfip.users_count.zero?
@@ -96,7 +137,6 @@ h2.subheader
               = svg_icon("check-badge-icon", "Administrateur", class: "h-6 w-6")
             - else
               = " "
-
 
 h2.subheader
   = svg_icon("bookmark", "Nouvelle section")

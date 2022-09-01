@@ -44,11 +44,6 @@ Publisher.insert_all([
   { name: "Fiscalité & Territoire", siren: "511022394", email: "contact@fiscalite-territoire.fr" }
 ])
 
-fiscalite_territoire = Publisher.where(siren: "511022394").first_or_create(
-  name:  "Fiscalité & Territoire",
-  email: "contact@ft.fr"
-)
-
 [
   "CA du Pays Basque",
   "Métropole Européenne de Lille",

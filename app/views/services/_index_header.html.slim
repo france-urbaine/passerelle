@@ -1,0 +1,34 @@
+- if params[:ids].present?
+  .header-bar.header-bar--selection
+    .header-bar__actions
+      .header-bar__action
+        button.icon-button.selection-bar__close-button(
+          data-action="selection#uncheckAll"
+        )
+          = svg_icon("x-icon", "Réinitialiser la sélection")
+          span.tooltip Réinitialiser la sélection
+
+      .header-bar__text
+        - if params[:ids] == "all"
+          = count(pagy.count, "guichet sélectionné", plural: "guichets sélectionnés")
+        - else
+          = count(params[:ids].size, "guichet sélectionné", plural: "guichets sélectionnés")
+
+          - if params[:ids].size == pagy.items && services.length < pagy.count
+            |  (
+            a(
+              data-action="selection#checkAll"
+              href=services_path(extract_params(:search).merge(ids: "all"))
+            ) Sélectionner les #{count(pagy.count, "guichet")}
+            | )
+
+    .flex-auto
+    .header-bar__actions
+      .header-bar__action
+        .button( disabled="true" ) Supprimer la sélection
+
+- else
+  .header-bar
+    = search_component("Rechercher")
+    .flex-auto
+    = index_options_component(pagy, "guichet", order: { name: "guichet", ddfip: "DDFIP", action: "action" })

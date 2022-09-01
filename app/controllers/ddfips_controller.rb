@@ -6,9 +6,19 @@ class DdfipsController < ApplicationController
 
   def index
     @ddfips = DDFIP.kept.strict_loading
-    @ddfips = search(@ddfips)
-    @ddfips = order(@ddfips)
-    @pagy, @ddfips = pagy(@ddfips)
+
+    if autocomplete_request?
+      @ddfips = autocomplete(@ddfips)
+    else
+      @ddfips = search(@ddfips)
+      @ddfips = order(@ddfips)
+      @pagy, @ddfips = pagy(@ddfips)
+    end
+
+    respond_to do |format|
+      format.html.any
+      format.html.autocomplete { render layout: false }
+    end
   end
 
   def new
@@ -22,7 +32,7 @@ class DdfipsController < ApplicationController
     @ddfip = DDFIP.new(ddfip_params)
 
     if @ddfip.save
-      @notice   = t(".success")
+      @notice   = translate(".success")
       @location = params.fetch(:form_back, ddfips_path)
 
       respond_to do |format|
@@ -36,7 +46,7 @@ class DdfipsController < ApplicationController
 
   def update
     if @ddfip.update(ddfip_params)
-      @notice   = t(".success")
+      @notice   = translate(".success")
       @location = params.fetch(:form_back, ddfips_path)
 
       respond_to do |format|
@@ -51,7 +61,7 @@ class DdfipsController < ApplicationController
   def destroy
     @ddfip.discard
 
-    @notice   = t(".success")
+    @notice   = translate(".success")
     @location = params.fetch(:form_back, ddfips_path)
 
     respond_to do |format|

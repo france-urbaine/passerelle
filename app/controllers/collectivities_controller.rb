@@ -22,7 +22,7 @@ class CollectivitiesController < ApplicationController
     @collectivity = Collectivity.new(collectivity_params)
 
     if @collectivity.save
-      @notice   = t(".success")
+      @notice   = translate(".success")
       @location = params.fetch(:form_back, collectivities_path)
 
       respond_to do |format|
@@ -36,7 +36,7 @@ class CollectivitiesController < ApplicationController
 
   def update
     if @collectivity.update(collectivity_params)
-      @notice   = t(".success")
+      @notice   = translate(".success")
       @location = params.fetch(:form_back, collectivities_path)
 
       respond_to do |format|
@@ -51,7 +51,7 @@ class CollectivitiesController < ApplicationController
   def destroy
     @collectivity.discard
 
-    @notice   = t(".success")
+    @notice   = translate(".success")
     @location = params.fetch(:form_back, collectivities_path)
 
     respond_to do |format|

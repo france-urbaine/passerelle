@@ -33,7 +33,7 @@ class TerritoriesController < ApplicationController
     if @territories_update.valid?
       @territories_update.perform_later
 
-      @notice   = t(".success")
+      @notice   = translate(".success")
       @location = params.fetch(:form_back, communes_path)
 
       respond_to do |format|

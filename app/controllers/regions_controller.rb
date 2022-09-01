@@ -26,7 +26,7 @@ class RegionsController < ApplicationController
 
   def update
     if @region.update(region_params)
-      @notice   = t(".success")
+      @notice   = translate(".success")
       @location = params.fetch(:form_back, regions_path)
 
       respond_to do |format|

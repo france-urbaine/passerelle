@@ -26,7 +26,7 @@ class DepartementsController < ApplicationController
 
   def update
     if @departement.update(departement_params)
-      @notice   = t(".success")
+      @notice   = translate(".success")
       @location = params.fetch(:form_back, departements_path)
 
       respond_to do |format|

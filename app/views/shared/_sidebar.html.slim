@@ -16,6 +16,11 @@ nav.sidebar
     ) DDFIP
 
     a(
+      href=services_path
+      class=("sidebar__link--current" if controller.controller_name == "services")
+    ) Guichets
+
+    a(
       href=collectivities_path
       class=("sidebar__link--current" if controller.controller_name == "collectivities")
     ) Collectivitiés

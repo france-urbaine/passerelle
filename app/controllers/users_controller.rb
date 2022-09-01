@@ -23,7 +23,7 @@ class UsersController < ApplicationController
     @user.invite(from: current_user)
 
     if @user.save
-      @notice   = t(".success")
+      @notice   = translate(".success")
       @location = params.fetch(:form_back, users_path)
 
       respond_to do |format|
@@ -37,7 +37,7 @@ class UsersController < ApplicationController
 
   def update
     if @user.update(user_params)
-      @notice   = t(".success")
+      @notice   = translate(".success")
       @location = params.fetch(:form_back, users_path)
 
       respond_to do |format|
@@ -52,7 +52,7 @@ class UsersController < ApplicationController
   def destroy
     @user.destroy
 
-    @notice   = t(".success")
+    @notice   = translate(".success")
     @location = params.fetch(:form_back, users_path)
 
     respond_to do |format|

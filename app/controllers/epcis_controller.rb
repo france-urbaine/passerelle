@@ -26,7 +26,7 @@ class EpcisController < ApplicationController
 
   def update
     if @epci.update(epci_params)
-      @notice   = t(".success")
+      @notice   = translate(".success")
       @location = params.fetch(:form_back, epcis_path)
 
       respond_to do |format|

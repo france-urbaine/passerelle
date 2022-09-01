@@ -32,6 +32,8 @@ class Service < ApplicationRecord
 
   # Validations
   # ----------------------------------------------------------------------------
+  ACTIONS = %w[evaluation_hab evaluation_eco occupation_hab occupation_eco].freeze
+
   validates :name,   presence: true
-  validates :action, presence: true, inclusion: { in: %w[evaluation_hab evaluation_eco occupation_hab occupation_eco] }
+  validates :action, presence: true, inclusion: { in: ACTIONS }
 end
