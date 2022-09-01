@@ -19,8 +19,16 @@
           = form.text_field :name, autofocus: true, required: true
 
         = form.block :departement, autocomplete: departements_path do
+          ruby:
+            # Do not add required attribute to make this form submittable in noscript mode
+            html_options = {
+              value:        ddfip.departement&.name,
+              placeholder:  "Commnencez à taper pour sélectionner des départements",
+              data:         { autocomplete_target: "input" }
+            }
+
           = form.label :departement
-          = form.search_field :departement, value: ddfip.departement&.name, required: true, data: { autocomplete_target: "input" }
+          = form.search_field :departement, **html_options
           = form.hidden_field :code_departement, data: { autocomplete_target: "hidden" }
 
         = noscript do

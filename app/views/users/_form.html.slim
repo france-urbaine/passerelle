@@ -21,21 +21,29 @@
               organization_name = user.organization.name
             end
 
+            # Do not add required attribute to make this form submittable in noscript mode
+            html_options = {
+              value:        organization_name,
+              placeholder:  "Commnencez à taper pour sélectionner des organisations",
+              data:         { autocomplete_target: "input" }
+            }
+
           = form.label :organization
-          = form.search_field :organization, required: true, data: { autocomplete_target: "input" }, value: organization_name
+          = form.search_field :organization, **html_options
           = form.hidden_field :organization_data, data: { autocomplete_target: "hidden" }, value: organization_data
 
         = noscript do
           = form.block :organization_type, first: true do
-            - models  = [Publisher, DDFIP, Collectivity]
-            - options = models.map { |m| [m.model_name.human, m.name] }
+            ruby:
+              models  = [Publisher, DDFIP, Collectivity]
+              options = models.map { |m| [m.model_name.human, m.name] }
 
             = form.label :organization_type
             = form.select :organization_type, options, autofocus: true, required: true
 
-          = form.block :organization_id do
-            = form.label :organization_id
-            = form.text_field :organization_id, required: true
+          = form.block :organization do
+            = form.label :organization_name
+            = form.text_field :organization_name, value: user.organization&.name, required: true
 
         = form.block :first_name do
           = form.label :first_name

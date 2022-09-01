@@ -69,11 +69,22 @@ class CollectivitiesController < ApplicationController
   def collectivity_params
     input          = params.fetch(:collectivity, {})
     territory_data = input.delete(:territory_data)
+    territory_code = input.delete(:territory_code)
 
     if territory_data.present?
       territory_data = JSON.parse(territory_data)
       input[:territory_type] = territory_data["type"]
       input[:territory_id]   = territory_data["id"]
+    end
+
+    if territory_code.present?
+      input[:territory_id] =
+        case input[:territory_type]
+        when "Commune"     then Commune.where(code_insee: territory_code).pick(:id)
+        when "EPCI"        then EPCI.where(siren: territory_code).pick(:id)
+        when "Departement" then Departement.where(code_departement: territory_code).pick(:id)
+        when "Region"      then Region.where(code_region: territory_code).pick(:id)
+        end
     end
 
     input.permit(

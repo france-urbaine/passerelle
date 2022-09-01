@@ -7,7 +7,7 @@ module FormHelper
     end
 
     def errors(method)
-      @template.form_block(@object, method)
+      @template.display_errors(@object, method)
     end
   end
 

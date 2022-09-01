@@ -25,8 +25,10 @@ fr:
         territory:            Territoire de la collectivité
         territory_type:       Type de territoire
         territory_id:         ID du territoire
+        territory_code:       Code du territoire (code INSEE ou SIREN)
         publisher:            Editeur
         publisher_id:         ID de l'éditeur
+        publisher_name:       Nom de l'éditeur
         name:                 Nom de la collectivité
         siren:                Numéro SIREN de la collectivité
         contact_first_name:   Prénom du contact
@@ -38,6 +40,7 @@ fr:
         organization:         Organisation
         organization_type:    Type d'organisation
         organization_id:      ID de l'organisation
+        organization_name:    Nom de l'organisation
         first_name:           Prénom
         last_name :           Nom
         email:                Adresse mail
@@ -111,6 +114,9 @@ fr:
               invalid:   Ce numéro SIREN n'est pas valide
               taken:     Ce numéro SIREN est déjà attribué
 
+            territory:
+              required:  Un territoire est requis
+
             territory_type:
               blank:     Un type de territoire est requis
               inclusion: Ce type de territoire n'est pas inclus dans la liste
@@ -118,14 +124,33 @@ fr:
             territory_id:
               blank:     Un identifiant de territoire est requis
 
-            territory:
-              required:  Un territoire est requis
-
             contact_email:
               invalid:   Une adresse mail valide est requise
 
             contact_phone:
               invalid:   Un numéro de téléphone valide est requise
+
+        user:
+          attributes:
+            organization:
+                required:  Une organisation est requise
+
+            organization_type:
+              blank:     Un type d'organisation est requis
+              inclusion: Ce type d'organisation n'est pas inclus dans la liste
+
+            organization_id:
+              blank:     Un identifiant d'organisation est requis
+
+            first_name:
+              blank:     Un prénom est requis
+
+            last_name:
+              blank:     Un nom est requis
+
+            email:
+              blank:     Une adresse mail est requise
+              invalid:   Une adresse mail valide est requise
 
         commune:
           attributes:

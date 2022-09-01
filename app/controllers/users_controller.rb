@@ -70,11 +70,21 @@ class UsersController < ApplicationController
   def user_params
     input             = params.fetch(:user, {})
     organization_data = input.delete(:organization_data)
+    organization_name = input.delete(:organization_name)
 
     if organization_data.present?
       organization_data         = JSON.parse(organization_data)
       input[:organization_type] = organization_data["type"]
       input[:organization_id]   = organization_data["id"]
+    end
+
+    if organization_name.present?
+      input[:organization_id] =
+        case input[:organization_type]
+        when "Publisher"    then Publisher   .kept.search(name: organization_name).pick(:id)
+        when "DDFIP"        then DDFIP       .kept.search(name: organization_name).pick(:id)
+        when "Collectivity" then Collectivity.kept.search(name: organization_name).pick(:id)
+        end
     end
 
     input.permit(

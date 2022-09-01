@@ -20,8 +20,16 @@
           = form.text_field :siren, required: true
 
         = form.block :departement, autocomplete: departements_path do
+          ruby:
+            # Do not add required attribute to make this form submittable in noscript mode
+            html_options = {
+              value:        epci.departement&.name,
+              placeholder:  "Commnencez à taper pour sélectionner des départements",
+              data:         { autocomplete_target: "input" }
+            }
+
           = form.label :departement
-          = form.search_field :departement, value: epci.departement&.name, data: { autocomplete_target: "input" }
+          = form.search_field :departement, **html_options
           = form.hidden_field :code_departement, data: { autocomplete_target: "hidden" }
 
         = noscript do
