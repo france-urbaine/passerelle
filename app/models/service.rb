@@ -36,4 +36,10 @@ class Service < ApplicationRecord
 
   validates :name,   presence: true
   validates :action, presence: true, inclusion: { in: ACTIONS }
+
+  # Counters cached
+  # ----------------------------------------------------------------------------
+  def self.reset_all_counters
+    connection.select_value("SELECT reset_all_services_counters()")
+  end
 end

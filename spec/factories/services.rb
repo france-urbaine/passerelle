@@ -4,7 +4,7 @@ FactoryBot.define do
   factory :service do
     association :ddfip
 
-    title  { Faker::Book.title }
+    name   { Faker::Book.title }
     action { Service::ACTIONS.sample }
 
     trait :occupation_hab do
@@ -22,6 +22,5 @@ FactoryBot.define do
     trait :evaluation_hab do
       action { "evaluation_hab" }
     end
-
   end
 end

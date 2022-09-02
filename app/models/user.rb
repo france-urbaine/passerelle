@@ -153,4 +153,10 @@ class User < ApplicationRecord
     confirmable.errors.add(:email, :already_confirmed) if confirmable.confirmed?
     confirmable
   end
+
+  # Counters cached
+  # ----------------------------------------------------------------------------
+  def self.reset_all_counters
+    connection.select_value("SELECT reset_all_users_counters()")
+  end
 end

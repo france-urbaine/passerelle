@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_09_01_135804) do
+ActiveRecord::Schema[7.0].define(version: 2022_09_01_204326) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -612,43 +612,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_01_135804) do
         END;
       $function$
   SQL
-  create_function :reset_all_communes_counters, sql_definition: <<-'SQL'
-      CREATE OR REPLACE FUNCTION public.reset_all_communes_counters()
-       RETURNS integer
-       LANGUAGE plpgsql
-      AS $function$
-        DECLARE
-          affected_rows integer;
-        BEGIN
-          UPDATE "communes"
-          SET    "collectivities_count" = get_communes_collectivities_count("communes".*);
-
-          GET DIAGNOSTICS affected_rows = ROW_COUNT;
-          RAISE NOTICE 'UPDATE %', affected_rows;
-
-          RETURN affected_rows;
-        END;
-      $function$
-  SQL
-  create_function :reset_all_ddfips_counters, sql_definition: <<-'SQL'
-      CREATE OR REPLACE FUNCTION public.reset_all_ddfips_counters()
-       RETURNS integer
-       LANGUAGE plpgsql
-      AS $function$
-        DECLARE
-          affected_rows integer;
-        BEGIN
-          UPDATE "ddfips"
-          SET    "users_count"          = get_ddfips_users_count("ddfips".*),
-                 "collectivities_count" = get_ddfips_collectivities_count("ddfips".*);
-
-          GET DIAGNOSTICS affected_rows = ROW_COUNT;
-          RAISE NOTICE 'UPDATE %', affected_rows;
-
-          RETURN affected_rows;
-        END;
-      $function$
-  SQL
   create_function :reset_all_departements_counters, sql_definition: <<-'SQL'
       CREATE OR REPLACE FUNCTION public.reset_all_departements_counters()
        RETURNS integer
@@ -823,72 +786,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_01_135804) do
               OR    (OLD."territory_type" = 'Departement' AND "ddfips"."code_departement" IN (SELECT "departements"."code_departement" FROM "departements" WHERE  "departements"."id" = OLD."territory_id"))
               OR    (NEW."territory_type" = 'Region'      AND "ddfips"."code_departement" IN (SELECT "departements"."code_departement" FROM "departements" INNER JOIN "regions" ON "regions"."code_region" = "departements"."code_region" WHERE  "regions"."id" = NEW."territory_id"))
               OR    (OLD."territory_type" = 'Region'      AND "ddfips"."code_departement" IN (SELECT "departements"."code_departement" FROM "departements" INNER JOIN "regions" ON "regions"."code_region" = "departements"."code_region" WHERE  "regions"."id" = OLD."territory_id"));
-
-          END IF;
-
-          -- result is ignored since this is an AFTER trigger
-          RETURN NULL;
-        END;
-      $function$
-  SQL
-  create_function :trigger_communes_changes, sql_definition: <<-'SQL'
-      CREATE OR REPLACE FUNCTION public.trigger_communes_changes()
-       RETURNS trigger
-       LANGUAGE plpgsql
-      AS $function$
-        BEGIN
-          -- Reset self communes#collectivities_count
-          -- * on creation
-          -- * when code_departement changed
-          -- * when siren_epci changed (could be NULL)
-
-          IF (TG_OP = 'INSERT')
-          OR (TG_OP = 'UPDATE' AND NEW."code_departement" <> OLD."code_departement")
-          OR (TG_OP = 'UPDATE' AND NEW."siren_epci" <> OLD."siren_epci")
-          OR (TG_OP = 'UPDATE' AND (NEW."siren_epci" IS NULL) <> (OLD."siren_epci" IS NULL))
-          THEN
-
-            UPDATE "communes"
-            SET    "collectivities_count" = get_communes_collectivities_count("communes".*)
-            WHERE  "communes"."id" = NEW."id";
-
-          END IF;
-
-          -- Reset all communes_count & collectivities_count
-          -- * on creation
-          -- * on deletion
-          -- * when code_departement changed
-          -- * when siren_epci changed (could be NULL)
-
-          IF (TG_OP = 'INSERT')
-          OR (TG_OP = 'DELETE')
-          OR (TG_OP = 'UPDATE' AND NEW."code_departement" <> OLD."code_departement")
-          OR (TG_OP = 'UPDATE' AND NEW."siren_epci" <> OLD."siren_epci")
-          OR (TG_OP = 'UPDATE' AND (NEW."siren_epci" IS NULL) <> (OLD."siren_epci" IS NULL))
-          THEN
-
-            UPDATE  "epcis"
-            SET     "communes_count"       = get_epcis_communes_count("epcis".*),
-                    "collectivities_count" = get_epcis_collectivities_count("epcis".*)
-            WHERE   "epcis"."siren" IN (NEW."siren_epci", OLD."siren_epci");
-
-            UPDATE  "departements"
-            SET     "communes_count"       = get_departements_communes_count("departements".*),
-                    "collectivities_count" = get_departements_collectivities_count("departements".*)
-            WHERE   "departements"."code_departement" IN (NEW."code_departement", OLD."code_departement");
-
-            UPDATE  "regions"
-            SET     "communes_count"       = get_regions_communes_count("regions".*),
-                    "collectivities_count" = get_regions_collectivities_count("regions".*)
-            WHERE   "regions"."code_region" IN (
-                      SELECT "departements"."code_region"
-                      FROM   "departements"
-                      WHERE  "departements"."code_departement" IN (NEW."code_departement", OLD."code_departement")
-                    );
-
-            UPDATE  "ddfips"
-            SET     "collectivities_count" = get_ddfips_collectivities_count("ddfips".*)
-            WHERE   "ddfips"."code_departement" IN (NEW."code_departement", OLD."code_departement");
 
           END IF;
 
@@ -1137,6 +1034,323 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_01_135804) do
         END;
       $function$
   SQL
+  create_function :get_services_users_count, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.get_services_users_count(services services)
+       RETURNS integer
+       LANGUAGE plpgsql
+      AS $function$
+        BEGIN
+          RETURN (
+            SELECT      COUNT(*)
+            FROM        "users"
+            INNER JOIN  "user_services" ON "user_services"."user_id" = "users"."id"
+            WHERE       "user_services"."service_id" = services."id"
+          );
+        END;
+      $function$
+  SQL
+  create_function :get_services_communes_count, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.get_services_communes_count(services services)
+       RETURNS integer
+       LANGUAGE plpgsql
+      AS $function$
+        BEGIN
+          RETURN (
+            SELECT      COUNT(*)
+            FROM        "communes"
+            INNER JOIN  "service_communes" ON "service_communes"."code_insee" = "communes"."code_insee"
+            WHERE       "service_communes"."service_id" = services."id"
+          );
+        END;
+      $function$
+  SQL
+  create_function :reset_all_services_counters, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.reset_all_services_counters()
+       RETURNS integer
+       LANGUAGE plpgsql
+      AS $function$
+        DECLARE
+          affected_rows integer;
+        BEGIN
+          UPDATE "services"
+          SET    "users_count"    = get_services_users_count("services".*),
+                 "communes_count" = get_services_communes_count("services".*);
+
+          GET DIAGNOSTICS affected_rows = ROW_COUNT;
+          RAISE NOTICE 'UPDATE %', affected_rows;
+
+          RETURN affected_rows;
+        END;
+      $function$
+  SQL
+  create_function :get_ddfips_services_count, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.get_ddfips_services_count(ddfips ddfips)
+       RETURNS integer
+       LANGUAGE plpgsql
+      AS $function$
+        BEGIN
+          RETURN (
+            SELECT COUNT(*)
+            FROM   "services"
+            WHERE  "services"."ddfip_id" = ddfips."id"
+          );
+        END;
+      $function$
+  SQL
+  create_function :reset_all_ddfips_counters, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.reset_all_ddfips_counters()
+       RETURNS integer
+       LANGUAGE plpgsql
+      AS $function$
+        DECLARE
+          affected_rows integer;
+        BEGIN
+          UPDATE "ddfips"
+          SET    "users_count"          = get_ddfips_users_count("ddfips".*),
+                 "collectivities_count" = get_ddfips_collectivities_count("ddfips".*),
+                 "services_count"       = get_ddfips_services_count("ddfips".*);
+
+          GET DIAGNOSTICS affected_rows = ROW_COUNT;
+          RAISE NOTICE 'UPDATE %', affected_rows;
+
+          RETURN affected_rows;
+        END;
+      $function$
+  SQL
+  create_function :get_communes_services_count, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.get_communes_services_count(communes communes)
+       RETURNS integer
+       LANGUAGE plpgsql
+      AS $function$
+        BEGIN
+          RETURN (
+            SELECT      COUNT(*)
+            FROM        "services"
+            INNER JOIN  "service_communes" ON "service_communes"."service_id" = "services"."id"
+            WHERE       "service_communes"."code_insee" = communes."code_insee"
+          );
+        END;
+      $function$
+  SQL
+  create_function :reset_all_communes_counters, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.reset_all_communes_counters()
+       RETURNS integer
+       LANGUAGE plpgsql
+      AS $function$
+        DECLARE
+          affected_rows integer;
+        BEGIN
+          UPDATE "communes"
+          SET    "collectivities_count" = get_communes_collectivities_count("communes".*),
+                 "services_count"       = get_communes_services_count("communes".*);
+
+          GET DIAGNOSTICS affected_rows = ROW_COUNT;
+          RAISE NOTICE 'UPDATE %', affected_rows;
+
+          RETURN affected_rows;
+        END;
+      $function$
+  SQL
+  create_function :get_users_services_count, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.get_users_services_count(users users)
+       RETURNS integer
+       LANGUAGE plpgsql
+      AS $function$
+        BEGIN
+          RETURN (
+            SELECT      COUNT(*)
+            FROM        "services"
+            INNER JOIN  "user_services" ON "user_services"."service_id" = "services"."id"
+            WHERE       "user_services"."user_id" = users."id"
+          );
+        END;
+      $function$
+  SQL
+  create_function :reset_all_users_counters, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.reset_all_users_counters()
+       RETURNS integer
+       LANGUAGE plpgsql
+      AS $function$
+        DECLARE
+          affected_rows integer;
+        BEGIN
+          UPDATE "users"
+          SET    "services_count" = get_users_services_count("users".*);
+
+          GET DIAGNOSTICS affected_rows = ROW_COUNT;
+          RAISE NOTICE 'UPDATE %', affected_rows;
+
+          RETURN affected_rows;
+        END;
+      $function$
+  SQL
+  create_function :trigger_services_changes, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.trigger_services_changes()
+       RETURNS trigger
+       LANGUAGE plpgsql
+      AS $function$
+        BEGIN
+          -- Reset all services_count
+          -- * on creation
+          -- * on deletion
+          -- * when ddfip changed
+
+          IF (TG_OP = 'INSERT')
+          OR (TG_OP = 'DELETE')
+          OR (TG_OP = 'UPDATE' AND NEW."ddfip_id" <> OLD."ddfip_id")
+          THEN
+
+            UPDATE  "ddfips"
+            SET     "services_count" = get_ddfips_services_count("ddfips".*)
+            WHERE   "ddfips"."id" IN (NEW."ddfip_id", OLD."ddfip_id");
+
+          END IF;
+
+          -- result is ignored since this is an AFTER trigger
+          RETURN NULL;
+        END;
+      $function$
+  SQL
+  create_function :trigger_service_communes_changes, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.trigger_service_communes_changes()
+       RETURNS trigger
+       LANGUAGE plpgsql
+      AS $function$
+        BEGIN
+
+          UPDATE  "services"
+          SET     "communes_count" = get_services_communes_count("services".*)
+          WHERE   "services"."id" IN (NEW."service_id", OLD."service_id");
+
+          UPDATE  "communes"
+          SET     "services_count" = get_communes_services_count("communes".*)
+          WHERE   "communes"."code_insee" IN (NEW."code_insee", OLD."code_insee");
+
+          -- result is ignored since this is an AFTER trigger
+          RETURN NULL;
+        END;
+      $function$
+  SQL
+  create_function :trigger_user_services_changes, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.trigger_user_services_changes()
+       RETURNS trigger
+       LANGUAGE plpgsql
+      AS $function$
+        BEGIN
+
+          UPDATE  "services"
+          SET     "users_count" = get_services_users_count("services".*)
+          WHERE   "services"."id" IN (NEW."service_id", OLD."service_id");
+
+          UPDATE  "users"
+          SET     "services_count" = get_users_services_count("users".*)
+          WHERE   "users"."id" IN (NEW."user_id", OLD."user_id");
+
+          -- result is ignored since this is an AFTER trigger
+          RETURN NULL;
+        END;
+      $function$
+  SQL
+  create_function :trigger_communes_changes, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.trigger_communes_changes()
+       RETURNS trigger
+       LANGUAGE plpgsql
+      AS $function$
+        BEGIN
+          -- Reset communes#collectivities_count
+          -- * on creation
+          -- * when code_departement changed
+          -- * when siren_epci changed (could be NULL)
+
+          IF (TG_OP = 'INSERT')
+          OR (TG_OP = 'UPDATE' AND NEW."code_departement" <> OLD."code_departement")
+          OR (TG_OP = 'UPDATE' AND NEW."siren_epci" <> OLD."siren_epci")
+          OR (TG_OP = 'UPDATE' AND (NEW."siren_epci" IS NULL) <> (OLD."siren_epci" IS NULL))
+          THEN
+
+            UPDATE "communes"
+            SET    "collectivities_count" = get_communes_collectivities_count("communes".*)
+            WHERE  "communes"."id" = NEW."id";
+
+          END IF;
+
+          -- Reset communes#services_count
+          -- * on creation
+          -- * when code_insee changed (it shouldn't)
+
+          IF (TG_OP = 'INSERT')
+          OR (TG_OP = 'UPDATE' AND NEW."code_insee" <> OLD."code_insee")
+          THEN
+
+            UPDATE  "communes"
+            SET     "services_count" = get_communes_services_count("communes".*)
+            WHERE   "communes"."id" = NEW."id";
+
+          END IF;
+
+          -- Reset services#communes_count
+          -- * on creation
+          -- * on deletion
+          -- * when code_insee changed (it shouldn't)
+
+          IF (TG_OP = 'INSERT')
+          OR (TG_OP = 'DELETE')
+          OR (TG_OP = 'UPDATE' AND NEW."code_insee" <> OLD."code_insee")
+          THEN
+
+            UPDATE  "services"
+            SET     "communes_count" = get_services_communes_count("services".*)
+            WHERE   "services"."id" IN (
+              SELECT "service_communes"."service_id"
+              FROM   "service_communes"
+              WHERE  "service_communes"."code_insee" IN (NEW."code_insee", OLD."code_insee")
+            );
+
+          END IF;
+
+          -- Reset all communes_count & collectivities_count
+          -- * on creation
+          -- * on deletion
+          -- * when code_departement changed
+          -- * when siren_epci changed (could be NULL)
+
+          IF (TG_OP = 'INSERT')
+          OR (TG_OP = 'DELETE')
+          OR (TG_OP = 'UPDATE' AND NEW."code_departement" <> OLD."code_departement")
+          OR (TG_OP = 'UPDATE' AND NEW."siren_epci" <> OLD."siren_epci")
+          OR (TG_OP = 'UPDATE' AND (NEW."siren_epci" IS NULL) <> (OLD."siren_epci" IS NULL))
+          THEN
+
+            UPDATE  "epcis"
+            SET     "communes_count"       = get_epcis_communes_count("epcis".*),
+                    "collectivities_count" = get_epcis_collectivities_count("epcis".*)
+            WHERE   "epcis"."siren" IN (NEW."siren_epci", OLD."siren_epci");
+
+            UPDATE  "departements"
+            SET     "communes_count"       = get_departements_communes_count("departements".*),
+                    "collectivities_count" = get_departements_collectivities_count("departements".*)
+            WHERE   "departements"."code_departement" IN (NEW."code_departement", OLD."code_departement");
+
+            UPDATE  "regions"
+            SET     "communes_count"       = get_regions_communes_count("regions".*),
+                    "collectivities_count" = get_regions_collectivities_count("regions".*)
+            WHERE   "regions"."code_region" IN (
+                      SELECT "departements"."code_region"
+                      FROM   "departements"
+                      WHERE  "departements"."code_departement" IN (NEW."code_departement", OLD."code_departement")
+                    );
+
+            UPDATE  "ddfips"
+            SET     "collectivities_count" = get_ddfips_collectivities_count("ddfips".*)
+            WHERE   "ddfips"."code_departement" IN (NEW."code_departement", OLD."code_departement");
+
+          END IF;
+
+          -- result is ignored since this is an AFTER trigger
+          RETURN NULL;
+        END;
+      $function$
+  SQL
 
 
   create_trigger :trigger_collectivities_changes, sql_definition: <<-SQL
@@ -1156,5 +1370,14 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_01_135804) do
   SQL
   create_trigger :trigger_users_changes, sql_definition: <<-SQL
       CREATE TRIGGER trigger_users_changes AFTER INSERT OR DELETE OR UPDATE ON public.users FOR EACH ROW EXECUTE FUNCTION trigger_users_changes()
+  SQL
+  create_trigger :trigger_services_changes, sql_definition: <<-SQL
+      CREATE TRIGGER trigger_services_changes AFTER INSERT OR DELETE OR UPDATE ON public.services FOR EACH ROW EXECUTE FUNCTION trigger_services_changes()
+  SQL
+  create_trigger :trigger_user_services_changes, sql_definition: <<-SQL
+      CREATE TRIGGER trigger_user_services_changes AFTER INSERT OR DELETE ON public.user_services FOR EACH ROW EXECUTE FUNCTION trigger_user_services_changes()
+  SQL
+  create_trigger :trigger_service_communes_changes, sql_definition: <<-SQL
+      CREATE TRIGGER trigger_service_communes_changes AFTER INSERT OR DELETE ON public.service_communes FOR EACH ROW EXECUTE FUNCTION trigger_service_communes_changes()
   SQL
 end

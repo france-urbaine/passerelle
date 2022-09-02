@@ -326,7 +326,7 @@ RSpec.describe Departement, type: :model do
     subject { described_class.reset_all_counters }
 
     its_block { is_expected.to run_without_error }
+    its_block { is_expected.to ret(Integer) }
     its_block { is_expected.to perform_sql_query("SELECT reset_all_departements_counters()") }
-    it        { is_expected.to be_an(Integer) }
   end
 end

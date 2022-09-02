@@ -70,9 +70,7 @@ class ServicesController < ApplicationController
     input      = params.fetch(:service, {})
     ddfip_name = input.delete(:ddfip_name)
 
-    if ddfip_name.present?
-      input[:ddfip_id] = DDFIP.kept.search(name: ddfip_name).pick(:id)
-    end
+    input[:ddfip_id] = DDFIP.kept.search(name: ddfip_name).pick(:id) if ddfip_name.present?
 
     input.permit(:ddfip_id, :name, :action)
   end

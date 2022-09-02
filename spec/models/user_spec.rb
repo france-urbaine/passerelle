@@ -159,4 +159,63 @@ RSpec.describe User, type: :model do
       end
     end
   end
+
+  # Counter caches
+  # ----------------------------------------------------------------------------
+  describe "counter caches" do
+    let!(:user1) { create(:user) }
+    let!(:user2) { create(:user) }
+
+    describe "#services_count" do
+      let(:service) { create(:service) }
+
+      it "changes when users is assigned to the service" do
+        expect { service.users << user1 }
+          .to      change { user1.reload.services_count }.from(0).to(1)
+          .and not_change { user2.reload.services_count }.from(0)
+      end
+
+      it "changes when users is removed from the service" do
+        service.users << user1
+
+        expect { service.users.delete(user1) }
+          .to      change { user1.reload.services_count }.from(1).to(0)
+          .and not_change { user2.reload.services_count }.from(0)
+      end
+
+      it "doesn't changes when another user is added" do
+        service.users << user1
+
+        expect { service.users << user2 }
+          .to  not_change { user1.reload.services_count }.from(1)
+          .and     change { user2.reload.services_count }.from(0).to(1)
+      end
+    end
+  end
+
+  # Reset counters
+  # ----------------------------------------------------------------------------
+  describe ".reset_all_counters" do
+    subject { described_class.reset_all_counters }
+
+    let!(:user1) { create(:user) }
+    let!(:user2) { create(:user) }
+
+    its_block { is_expected.to ret(2) }
+    its_block { is_expected.to perform_sql_query("SELECT reset_all_users_counters()") }
+
+    describe "on services_count" do
+      before do
+        services = create_list(:service, 6)
+
+        user1.services = services.shuffle.take(4)
+        user2.services = services.shuffle.take(2)
+
+        User.update_all(services_count: 0)
+      end
+
+      its_block { is_expected.to change { user1.reload.services_count }.from(0).to(4) }
+      its_block { is_expected.to change { user2.reload.services_count }.from(0).to(2) }
+    end
+  end
 end

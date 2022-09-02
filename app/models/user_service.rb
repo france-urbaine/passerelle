@@ -23,5 +23,5 @@
 #
 class UserService < ApplicationRecord
   belongs_to :user
-  belongs_to :service, counter_cache: :users_count
+  belongs_to :service
 end

@@ -81,8 +81,8 @@ class UsersController < ApplicationController
     if organization_name.present?
       input[:organization_id] =
         case input[:organization_type]
-        when "Publisher"    then Publisher   .kept.search(name: organization_name).pick(:id)
-        when "DDFIP"        then DDFIP       .kept.search(name: organization_name).pick(:id)
+        when "Publisher"    then Publisher.kept.search(name: organization_name).pick(:id)
+        when "DDFIP"        then DDFIP.kept.search(name: organization_name).pick(:id)
         when "Collectivity" then Collectivity.kept.search(name: organization_name).pick(:id)
         end
     end

@@ -195,6 +195,9 @@ RSpec.describe Publisher, type: :model do
     let!(:publisher1) { create(:publisher) }
     let!(:publisher2) { create(:publisher) }
 
+    its_block { is_expected.to ret(2) }
+    its_block { is_expected.to perform_sql_query("SELECT reset_all_publishers_counters()") }
+
     describe "on users_count" do
       before do
         create_list(:user, 4, organization: publisher1)
@@ -218,7 +221,6 @@ RSpec.describe Publisher, type: :model do
         Publisher.update_all(collectivities_count: 0)
       end
 
-      it        { is_expected.to eq(2) }
       its_block { is_expected.to change { publisher1.reload.collectivities_count }.from(0).to(3) }
       its_block { is_expected.to change { publisher2.reload.collectivities_count }.from(0).to(2) }
     end

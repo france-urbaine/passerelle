@@ -116,6 +116,9 @@ RSpec.describe Collectivity, type: :model do
     let!(:collectivity1) { create(:collectivity) }
     let!(:collectivity2) { create(:collectivity) }
 
+    its_block { is_expected.to ret(2) }
+    its_block { is_expected.to perform_sql_query("SELECT reset_all_collectivities_counters()") }
+
     before do
       create_list(:user, 4, organization: collectivity1)
       create_list(:user, 2, organization: collectivity2)
@@ -125,7 +128,6 @@ RSpec.describe Collectivity, type: :model do
       Collectivity.update_all(users_count: 0)
     end
 
-    it        { is_expected.to eq(2) }
     its_block { is_expected.to change { collectivity1.reload.users_count }.from(0).to(4) }
     its_block { is_expected.to change { collectivity2.reload.users_count }.from(0).to(2) }
   end

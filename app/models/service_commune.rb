@@ -23,6 +23,6 @@
 class ServiceCommune < ApplicationRecord
   # Associations
   # ----------------------------------------------------------------------------
-  belongs_to :service, counter_cache: :users_count
+  belongs_to :service
   belongs_to :commune, primary_key: :code_insee, foreign_key: :code_insee, inverse_of: :service_communes, optional: true
 end

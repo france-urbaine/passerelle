@@ -193,8 +193,8 @@ RSpec.describe Commune, type: :model do
   # Counter caches
   # ----------------------------------------------------------------------------
   describe "counter caches" do
-    let!(:commune1) { create(:commune) }
-    let!(:commune2) { create(:commune) }
+    let!(:commune1) { create(:commune, code_insee: "64102") }
+    let!(:commune2) { create(:commune, code_insee: "64125") }
 
     describe "#collectivities_count" do
       shared_examples "trigger changes" do
@@ -294,6 +294,52 @@ RSpec.describe Commune, type: :model do
         include_examples "trigger changes"
       end
     end
+
+    describe "#services_count" do
+      let(:service) { create(:service) }
+
+      it "changes when commune is assigned to the service" do
+        expect { service.communes << commune1 }
+          .to      change { commune1.reload.services_count }.from(0).to(1)
+          .and not_change { commune2.reload.services_count }.from(0)
+      end
+
+      it "changes when an existing code_insee is assigned to the service" do
+        expect { service.service_communes.create(code_insee: "64102") }
+          .to      change { commune1.reload.services_count }.from(0).to(1)
+          .and not_change { commune2.reload.services_count }.from(0)
+      end
+
+      it "doesn't change when an unknown code_insee is assigned to the service" do
+        expect { service.service_communes.create(code_insee: "64024") }
+          .to  not_change { commune1.reload.services_count }.from(0)
+          .and not_change { commune2.reload.services_count }.from(0)
+      end
+
+      it "changes when commune is removed from the service" do
+        service.communes << commune1
+
+        expect { service.communes.delete(commune1) }
+          .to      change { commune1.reload.services_count }.from(1).to(0)
+          .and not_change { commune2.reload.services_count }.from(0)
+      end
+
+      it "changes when commune updates its code_insee" do
+        service.communes << commune1
+
+        expect { commune1.update(code_insee: "64024") }
+          .to      change { commune1.reload.services_count }.from(1).to(0)
+          .and not_change { commune2.reload.services_count }.from(0)
+      end
+
+      it "doesn't changes when another commune is assigned to the service" do
+        service.communes << commune1
+
+        expect { service.communes << commune2 }
+          .to  not_change { commune1.reload.services_count }.from(1)
+          .and     change { commune2.reload.services_count }.from(0).to(1)
+      end
+    end
   end
 
   # Reset counters
@@ -304,21 +350,40 @@ RSpec.describe Commune, type: :model do
     let!(:commune1) { create(:commune) }
     let!(:commune2) { create(:commune, :with_epci) }
 
-    before do
-      create(:collectivity, territory: commune1)
-      create(:collectivity, territory: commune2)
-      create(:collectivity, territory: commune2.epci)
-      create(:collectivity, territory: commune2.departement)
-      create(:collectivity, territory: commune2.region)
+    its_block { is_expected.to ret(2) }
+    its_block { is_expected.to perform_sql_query("SELECT reset_all_communes_counters()") }
 
-      create(:collectivity, :discarded, territory: commune1)
-      create(:collectivity, :discarded, territory: commune2.departement)
+    describe "on collectivities_count" do
+      before do
+        create(:collectivity, territory: commune1)
+        create(:collectivity, territory: commune2)
+        create(:collectivity, territory: commune2.epci)
+        create(:collectivity, territory: commune2.departement)
+        create(:collectivity, territory: commune2.region)
 
-      Commune.update_all(collectivities_count: 0)
+        create(:collectivity, :discarded, territory: commune1)
+        create(:collectivity, :discarded, territory: commune2.departement)
+
+        Commune.update_all(collectivities_count: 0)
+      end
+
+
+      its_block { is_expected.to change { commune1.reload.collectivities_count }.from(0).to(1) }
+      its_block { is_expected.to change { commune2.reload.collectivities_count }.from(0).to(4) }
     end
 
-    it        { is_expected.to eq(2) }
-    its_block { is_expected.to change { commune1.reload.collectivities_count }.from(0).to(1) }
-    its_block { is_expected.to change { commune2.reload.collectivities_count }.from(0).to(4) }
+    describe "on services_count" do
+      before do
+        services = create_list(:service, 6)
+
+        commune1.services = services.shuffle.take(4)
+        commune2.services = services.shuffle.take(2)
+
+        Commune.update_all(services_count: 0)
+      end
+
+      its_block { is_expected.to change { commune1.reload.services_count }.from(0).to(4) }
+      its_block { is_expected.to change { commune2.reload.services_count }.from(0).to(2) }
+    end
   end
 end

@@ -268,6 +268,30 @@ RSpec.describe DDFIP, type: :model do
         include_examples "trigger changes"
       end
     end
+
+    describe "#services_count" do
+      let(:service) { create(:service, ddfip: ddfip1) }
+
+      it "changes on creation" do
+        expect { service }
+          .to      change { ddfip1.reload.services_count }.from(0).to(1)
+          .and not_change { ddfip2.reload.services_count }.from(0)
+      end
+
+      it "changes on deletion" do
+        service
+        expect { service.destroy }
+          .to      change { ddfip1.reload.services_count }.from(1).to(0)
+          .and not_change { ddfip2.reload.services_count }.from(0)
+      end
+
+      it "changes on updating" do
+        service
+        expect { service.update(ddfip: ddfip2) }
+          .to  change { ddfip1.reload.services_count }.from(1).to(0)
+          .and change { ddfip2.reload.services_count }.from(0).to(1)
+      end
+    end
   end
 
   # Reset counters
@@ -277,6 +301,9 @@ RSpec.describe DDFIP, type: :model do
 
     let!(:ddfip1) { create(:ddfip) }
     let!(:ddfip2) { create(:ddfip) }
+
+    its_block { is_expected.to ret(2) }
+    its_block { is_expected.to perform_sql_query("SELECT reset_all_ddfips_counters()") }
 
     describe "on users_count" do
       before do
@@ -314,15 +341,21 @@ RSpec.describe DDFIP, type: :model do
         DDFIP.update_all(collectivities_count: 0)
       end
 
-      it        { is_expected.to eq(2) }
       its_block { is_expected.to change { ddfip1.reload.collectivities_count }.from(0).to(6) }
       its_block { is_expected.to change { ddfip2.reload.collectivities_count }.from(0).to(1) }
     end
 
-    its_block do
-      is_expected.to perform_sql_query(<<~SQL.squish)
-        SELECT reset_all_ddfips_counters()
-      SQL
+    describe "on services_count" do
+      before do
+        create_list(:service, 4, ddfip: ddfip1)
+        create_list(:service, 2, ddfip: ddfip2)
+        create_list(:service, 1)
+
+        DDFIP.update_all(services_count: 0)
+      end
+
+      its_block { is_expected.to change { ddfip1.reload.services_count }.from(0).to(4) }
+      its_block { is_expected.to change { ddfip2.reload.services_count }.from(0).to(2) }
     end
   end
 end
