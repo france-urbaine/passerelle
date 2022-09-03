@@ -14,7 +14,7 @@
         - else
           = count(params[:ids].size, "commune sélectionnée", plural: "communes sélectionnées")
 
-          - if params[:ids].size == pagy.items && communes.length < pagy.count
+          - if params[:ids].size == communes.length && communes.length < pagy.count
             |  (
             a(
               data-action="selection#checkAll"

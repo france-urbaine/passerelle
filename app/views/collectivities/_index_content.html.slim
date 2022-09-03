@@ -1,0 +1,5 @@
+div( data-controller="selection" )
+  = turbo_frame_tag :index_header, data: { selection_target: "frame" } do
+    = render "index_header", collectivities: collectivities, pagy: pagy
+
+  = render "index_table", collectivities: collectivities, pagy: pagy

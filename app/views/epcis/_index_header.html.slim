@@ -14,7 +14,7 @@
         - else
           = count(params[:ids].size, "EPCI sélectionné", plural: "EPCI sélectionnés")
 
-          - if params[:ids].size == pagy.items && epcis.length < pagy.count
+          - if params[:ids].size == epcis.length && epcis.length < pagy.count
             |  (
             a(
               data-action="selection#checkAll"

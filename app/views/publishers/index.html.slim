@@ -1,10 +1,7 @@
-main.content( data-controller="selection" )
-  = render "index_breadcrumbs"
+main.content
+  = render "index_breadcrumbs", publishers: @publishers, pagy: @pagy
 
   = turbo_frame_tag :content do
-    = turbo_frame_tag :index_header, data: { selection_target: "frame" } do
-      = render "index_header", publishers: @publishers, pagy: @pagy
-
-    = render "index_table", publishers: @publishers, pagy: @pagy
+    = render "index_content", publishers: @publishers, pagy: @pagy
 
 = turbo_frame_tag :modal

@@ -5,7 +5,4 @@
 
 - else
   = turbo_frame_tag :content do
-    = turbo_frame_tag :index_header do
-      = render "index_header", epcis: @epcis, pagy: @pagy
-
-    = render "index_table", epcis: @epcis, pagy: @pagy
+    = render "index_content", epcis: @epcis, pagy: @pagy

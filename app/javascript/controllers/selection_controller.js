@@ -22,7 +22,6 @@ export default class extends Controller {
 
     this.checkallTarget.addEventListener("change", this.toggleAll)
     this.checkboxTargets.forEach(checkbox => checkbox.addEventListener("change", this.toggleBox))
-    this.refresh()
   }
 
   disconnect () {
@@ -91,17 +90,14 @@ export default class extends Controller {
     this.dispatch(checkedIds.length > 0 ? "checked" : "unchecked")
 
     if (this.hasFrameTarget) {
-      const frameHref = this.frameTarget.src || window.location.href
+      const frameHref = window.location.href
       const parsedUrl = new URL(frameHref)
 
       parsedUrl.searchParams.delete("ids")
       parsedUrl.searchParams.delete("ids[]")
       checkedIds.forEach(id => parsedUrl.searchParams.append("ids[]", id))
 
-      if (frameHref != parsedUrl.href) {
-        this.frameTarget.src = parsedUrl.href
-        this.frameTarget.reload()
-      }
+      this.frameTarget.src = parsedUrl.href
     }
   }
 

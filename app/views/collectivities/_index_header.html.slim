@@ -14,7 +14,7 @@
         - else
           = count(params[:ids].size, "collectivité sélectionnée", plural: "collectivités sélectionnées")
 
-          - if params[:ids].size == pagy.items && collectivities.length < pagy.count
+          - if params[:ids].size == collectivities.length && collectivities.length < pagy.count
             |  (
             a(
               data-action="selection#checkAll"

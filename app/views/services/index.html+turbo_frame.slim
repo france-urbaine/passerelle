@@ -5,7 +5,4 @@
 
 - else
   = turbo_frame_tag :content do
-    = turbo_frame_tag :index_header do
-      = render "index_header", services: @services, pagy: @pagy
-
-    = render "index_table", services: @services, pagy: @pagy
+    = render "index_content", services: @services, pagy: @pagy
