@@ -154,7 +154,7 @@ h2.subheader
         tr.datatable__row
           td.datatable__row-actions
             a.icon-button(
-              href=edit_ddfip_path(ddfip, form_back: current_path)
+              href=edit_ddfip_path(ddfip, content: current_path, redirect: current_path)
               aria-label="Modifier cette DDFIP"
               data-turbo-frame="modal"
             )

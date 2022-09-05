@@ -57,8 +57,9 @@ RSpec.describe "Communes", type: :system, use_fixtures: true do
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=alert]", text: "Une nouvelle DDFIP a été ajoutée avec succés.")
 
-    expect(page).to have_current_path(ddfips_path)
+    expect(page).to have_selector("h1", text: "DDFIP")
     expect(page).to have_selector("tr", text: "DDFIP de la Gironde")
+    expect(page).to have_current_path(ddfips_path)
   end
 
   it "updates a DDFIP from the index page" do
@@ -81,8 +82,9 @@ RSpec.describe "Communes", type: :system, use_fixtures: true do
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
 
-    expect(page).to have_current_path(ddfips_path)
+    expect(page).to have_selector("h1", text: "DDFIP")
     expect(page).to have_selector("tr", text: "DDFIP du 64")
+    expect(page).to have_current_path(ddfips_path)
   end
 
   it "updates a DDFIP from the show page" do
@@ -103,8 +105,8 @@ RSpec.describe "Communes", type: :system, use_fixtures: true do
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
 
-    expect(page).to have_current_path(ddfip_path(ddifp64))
     expect(page).to have_selector("h1", text: "DDFIP du 64")
+    expect(page).to have_current_path(ddfip_path(ddifp64))
   end
 
   it "removes a DDFIP from the index page" do
@@ -114,11 +116,53 @@ RSpec.describe "Communes", type: :system, use_fixtures: true do
       click_on "Supprimer cette DDFIP"
     end
 
-    accept_confirm "Supprimer cette DDFIP ?"
+    within "[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer ce compte ?" do
+      click_on "Continuer"
+    end
 
-    expect(page).to have_current_path(ddfips_path)
     expect(page).to have_selector("[role=alert]", text: "Le compte de la DDFIP a été archivé.")
 
+    expect(page).to     have_selector("h1", text: "DDFIP")
     expect(page).not_to have_selector("tr", text: "DDFIP des Pyrénées-Atlantiques")
+    expect(page).to     have_current_path(ddfips_path)
+  end
+
+  it "removes a DDFIP from the show page" do
+    visit ddfip_path(ddifp64)
+
+    click_on "Supprimer"
+
+    within "[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer ce compte ?" do
+      click_on "Continuer"
+    end
+
+    expect(page).to have_selector("[role=alert]", text: "Le compte de la DDFIP a été archivé.")
+
+    expect(page).to     have_selector("h1", text: "DDFIP")
+    expect(page).not_to have_selector("tr", text: "Fiscalité & Territoire")
+    expect(page).to     have_current_path(ddfips_path)
+  end
+
+  it "removes a selection of publisher from the index page" do
+    visit ddfips_path
+
+    within "tr", text: "DDFIP des Pyrénées-Atlantiques" do
+      find("input[type=checkbox]").check
+    end
+
+    within "#index_header", text: "1 DDFIP sélectionnée" do
+      click_on "Supprimer la sélection"
+    end
+
+    within "[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer la DDFIP sélectionnée ?" do
+      click_on "Continuer"
+    end
+
+    expect(page).to have_selector("[role=alert]", text: "Les comptes des DDFIP sélectionnées ont été archivés.")
+
+    expect(page).to     have_selector("h1", text: "DDFIP")
+    expect(page).not_to have_selector("tr", text: "DDFIP des Pyrénées-Atlantiques")
+    expect(page).not_to have_selector("#index_header", text: "1 DDFIP sélectionnée")
+    expect(page).to     have_current_path(ddfips_path)
   end
 end

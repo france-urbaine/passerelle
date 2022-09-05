@@ -85,9 +85,19 @@ h2.subheader
       dt Collectivités enregistrées
       dd= count(departement.collectivities_count, "collectivité") if departement.collectivities_count.positive?
 
-h2.subheader
-  = svg_icon("bookmark", "Nouvelle section")
-  | DDFIP enregistrées
+.flex.justify-between
+  h2.subheader
+    = svg_icon("bookmark", "Nouvelle section")
+    | DDFIP enregistrées
+
+  div
+    a.button.button--primary(
+      data-turbo-frame="modal"
+      href=new_ddfip_path(content: current_path, redirect: current_path, ddfip: { code_departement: departement.code_departement })
+    )
+      = svg_icon("plus-icon")
+      | Ajouter une DDFIP
+
 
 - if departement.ddfips_count.zero?
   .card.mb-6
@@ -106,13 +116,22 @@ h2.subheader
       - departement.ddfips.kept.each do |ddfip|
         tr.datatable__row
           td.datatable__row-actions
-            a.icon-button(
-              href=edit_ddfip_path(ddfip, form_back: current_path)
-              aria-label="Modifier cette DDFIP"
-              data-turbo-frame="modal"
-            )
-              = svg_icon("pencil-alt-icon", "Modifier cette DDFIP")
-              span.tooltip Modifier cette DDFIP
+            .flex
+              a.icon-button(
+                href=edit_ddfip_path(ddfip, content: current_path, redirect: current_path)
+                aria-label="Modifier cette DDFIP"
+                data-turbo-frame="modal"
+              )
+                = svg_icon("pencil-alt-icon", "Modifier cette DDFIP")
+                span.tooltip Modifier cette DDFIP
+
+              a.icon-button(
+                aria-label="Supprimer cette DDFIP"
+                data-turbo-frame="modal"
+                href=remove_ddfip_path(ddfip, content: current_path, redirect: current_path)
+              )
+                = svg_icon("trash-icon", "Supprimer cette DDFIP")
+                span.tooltip Supprimer cette DDFIP
 
           td
             a(

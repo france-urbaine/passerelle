@@ -108,7 +108,9 @@ class PublishersController < ApplicationController
 
   def undiscard
     @publisher.undiscard
+
     @location = safe_location_param(:redirect, publishers_path)
+    @notice   = translate(".success")
 
     respond_to do |format|
       format.turbo_stream { redirect_to @location, notice: @notice }
@@ -123,6 +125,7 @@ class PublishersController < ApplicationController
     @publishers.update_all(discarded_at: nil)
 
     @location = safe_location_param(:redirect, publishers_path)
+    @notice   = translate(".success")
 
     respond_to do |format|
       format.turbo_stream { redirect_to @location, notice: @notice }

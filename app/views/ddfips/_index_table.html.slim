@@ -49,20 +49,18 @@ table.datatable
             a.icon-button(
               aria-label="Modifier cette DDFIP"
               data-turbo-frame="modal"
-              href=edit_ddfip_path(ddfip, form_back: current_path)
+              href=edit_ddfip_path(ddfip, content: current_path, redirect: current_path)
             )
               = svg_icon("pencil-alt-icon", "Modifier cette DDFIP")
               span.tooltip Modifier cette DDFIP
 
-            = form_with(url: ddfip_path(ddfip), method: "delete", data: { turbo_confirm: "Supprimer cette DDFIP ?" }) do
-              input( type="hidden" name="back" value=current_path)
-
-              button.icon-button(
-                aria-label="Supprimer cette DDFIP"
-                type="submit"
-              )
-                = svg_icon("trash-icon", "Supprimer cette DDFIP")
-                span.tooltip Supprimer cette DDFIP
+            a.icon-button(
+              aria-label="Supprimer cette DDFIP"
+              data-turbo-frame="modal"
+              href=remove_ddfip_path(ddfip, content: current_path, redirect: current_path)
+            )
+              = svg_icon("trash-icon", "Supprimer cette DDFIP")
+              span.tooltip Supprimer cette DDFIP
 
         td( id=dom_id(ddfip, :title) )
           a(
@@ -94,3 +92,6 @@ table.datatable
 
         td.text-right= number_with_delimiter(ddfip.collectivities_count) if ddfip.collectivities_count.positive?
         td.text-right= number_with_delimiter(ddfip.users_count)          if ddfip.users_count.positive?
+
+  - if ddfips.empty?
+    caption.datatable__empty-caption Aucune DDFIP disponible.

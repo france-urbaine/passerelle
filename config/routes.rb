@@ -19,7 +19,7 @@ Rails.application.routes.draw do
 
   devise_for :user
 
-  resources :ddfips
+  resources :ddfips,         concerns: %i[removable undiscardable]
   resources :publishers,     concerns: %i[removable undiscardable], path: "/editeurs"
   resources :collectivities, path: "/collectivites"
   resources :users,          path: "/utilisateurs"
