@@ -54,8 +54,9 @@ RSpec.describe "Publishers", type: :system, use_fixtures: true do
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=alert]", text: "Un nouvel éditeur a été ajouté avec succés.")
 
-    expect(page).to have_current_path(publishers_path)
+    expect(page).to have_selector("h1", text: "Editeurs")
     expect(page).to have_selector("tr", text: "Mon Territoire")
+    expect(page).to have_current_path(publishers_path)
   end
 
   it "updates a publisher from the index page" do
@@ -78,8 +79,9 @@ RSpec.describe "Publishers", type: :system, use_fixtures: true do
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
 
-    expect(page).to have_current_path(publishers_path)
+    expect(page).to have_selector("h1", text: "Editeurs")
     expect(page).to have_selector("tr", text: "Mon Territoire")
+    expect(page).to have_current_path(publishers_path)
   end
 
   it "updates a publisher from the show page" do
@@ -100,8 +102,8 @@ RSpec.describe "Publishers", type: :system, use_fixtures: true do
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
 
-    expect(page).to have_current_path(publisher_path(fiscalite_territoire))
     expect(page).to have_selector("h1", text: "Mon Territoire")
+    expect(page).to have_current_path(publisher_path(fiscalite_territoire))
   end
 
   it "removes a publisher from the index page" do
@@ -111,11 +113,53 @@ RSpec.describe "Publishers", type: :system, use_fixtures: true do
       click_on "Supprimer cet éditeur"
     end
 
-    accept_confirm "Supprimer cet éditeur ?"
+    within "[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer ce compte ?" do
+      click_on "Continuer"
+    end
 
-    expect(page).to have_current_path(publishers_path)
     expect(page).to have_selector("[role=alert]", text: "Le compte de l'éditeur a été archivé.")
 
+    expect(page).to     have_selector("h1", text: "Editeurs")
     expect(page).not_to have_selector("tr", text: "Fiscalité & Territoire")
+    expect(page).to     have_current_path(publishers_path)
+  end
+
+  it "removes a publisher from the show page" do
+    visit publisher_path(fiscalite_territoire)
+
+    click_on "Supprimer"
+
+    within "[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer ce compte ?" do
+      click_on "Continuer"
+    end
+
+    expect(page).to have_selector("[role=alert]", text: "Le compte de l'éditeur a été archivé.")
+
+    expect(page).to     have_selector("h1", text: "Editeurs")
+    expect(page).not_to have_selector("tr", text: "Fiscalité & Territoire")
+    expect(page).to     have_current_path(publishers_path)
+  end
+
+  it "removes a selection of publisher from the index page" do
+    visit publishers_path
+
+    within "tr", text: "Fiscalité & Territoire" do
+      find("input[type=checkbox]").check
+    end
+
+    within "#index_header", text: "1 éditeur sélectionné" do
+      click_on "Supprimer la sélection"
+    end
+
+    within "[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer l'éditeur sélectionné ?" do
+      click_on "Continuer"
+    end
+
+    expect(page).to have_selector("[role=alert]", text: "Les comptes des éditeurs sélectionnés ont été archivés.")
+
+    expect(page).to     have_selector("h1", text: "Editeurs")
+    expect(page).not_to have_selector("tr", text: "Fiscalité & Territoire")
+    expect(page).not_to have_selector("#index_header", text: "1 éditeur sélectionné")
+    expect(page).to     have_current_path(publishers_path)
   end
 end

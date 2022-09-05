@@ -15,8 +15,6 @@
 
   .notification {
     pointer-events: auto;
-    display: flex;
-    align-items: flex-start;
 
     @apply transition transform duration-500;
     @apply p-4 mb-4 rounded-md ring-1 shadow-lg;
@@ -47,12 +45,16 @@
     @apply text-lg leading-6 font-semibold;
   }
 
-  .notification__actions {
+  .notification__closing {
     @apply ml-6;
   }
 
-  .notification__close-button svg {
+  .notification__closing-button svg {
     @apply text-gray-500;
+  }
+
+  .notification__actions {
+    @apply pt-4;
   }
 
   .notification--enter-from,

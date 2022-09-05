@@ -367,7 +367,6 @@ RSpec.describe Commune, type: :model do
         Commune.update_all(collectivities_count: 0)
       end
 
-
       its_block { is_expected.to change { commune1.reload.collectivities_count }.from(0).to(1) }
       its_block { is_expected.to change { commune2.reload.collectivities_count }.from(0).to(4) }
     end

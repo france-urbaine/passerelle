@@ -22,6 +22,12 @@ export default class extends Controller {
 
     this.checkallTarget.addEventListener("change", this.toggleAll)
     this.checkboxTargets.forEach(checkbox => checkbox.addEventListener("change", this.toggleBox))
+
+    const checkboxes   = this.checkboxTargets
+    const checkedboxes = this.checkboxTargets.filter(checkbox => checkbox.checked)
+
+    this.checkallTarget.checked       = checkedboxes.length > 0
+    this.checkallTarget.indeterminate = checkedboxes.length > 0 && checkedboxes.length < checkboxes.length
   }
 
   disconnect () {

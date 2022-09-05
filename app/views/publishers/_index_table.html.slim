@@ -44,20 +44,18 @@ table.datatable
             a.icon-button(
               aria-label="Modifier cet éditeur"
               data-turbo-frame="modal"
-              href=edit_publisher_path(publisher, form_back: current_path)
+              href=edit_publisher_path(publisher, content: current_path, redirect: current_path)
             )
               = svg_icon("pencil-alt-icon", "Modifier cet éditeur")
               span.tooltip Modifier cet éditeur
 
-            = form_with(url: publisher_path(publisher), method: "delete", data: { turbo_confirm: "Supprimer cet éditeur ?" }) do
-              input( type="hidden" name="back" value=current_path)
-
-              button.icon-button(
-                aria-label="Supprimer cet éditeur"
-                type="submit"
-              )
-                = svg_icon("trash-icon", "Supprimer cet éditeur")
-                span.tooltip Supprimer cet éditeur
+            a.icon-button(
+              aria-label="Supprimer cet éditeur"
+              data-turbo-frame="modal"
+              href=remove_publisher_path(publisher, content: current_path, redirect: current_path)
+            )
+              = svg_icon("trash-icon", "Supprimer cet éditeur")
+              span.tooltip Supprimer cet éditeur
 
         td( id=dom_id(publisher, :title) )
           a(
@@ -68,3 +66,6 @@ table.datatable
         td= display_siren(publisher.siren)
         td.text-right= number_with_delimiter(publisher.collectivities_count) if publisher.collectivities_count.positive?
         td.text-right= number_with_delimiter(publisher.users_count)          if publisher.users_count.positive?
+
+  - if publishers.empty?
+    caption.datatable__empty-caption Aucun éditeur disponible.

@@ -25,7 +25,10 @@
     .flex-auto
     .header-bar__actions
       .header-bar__action
-        .button( disabled="true" ) Supprimer la sélection
+        a.button(
+          data-turbo-frame="modal"
+          href=remove_all_publishers_path(**current_selection_params)
+        ) Supprimer la sélection
 
 - else
   .header-bar

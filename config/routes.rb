@@ -6,10 +6,21 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   # root "articles#index"
 
+  concern :removable do
+    get    :remove,      on: :member
+    get    :remove_all,  on: :collection, path: "remove"
+    delete :destroy_all, on: :collection, path: "/", as: nil
+  end
+
+  concern :undiscardable do
+    patch  :undiscard,      on: :member
+    patch  :undiscard_all,  on: :collection, path: "undiscard"
+  end
+
   devise_for :user
 
   resources :ddfips
-  resources :publishers,     path: "/editeurs"
+  resources :publishers,     concerns: %i[removable undiscardable], path: "/editeurs"
   resources :collectivities, path: "/collectivites"
   resources :users,          path: "/utilisateurs"
   resources :services,       path: "/guichets"

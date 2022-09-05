@@ -6,7 +6,10 @@ class DialogComponent < ViewComponent::Base
       **options,
       class: "icon-button dialog__close-button",
       aria:  { label: "Fermer la fenêtre de dialogue" },
-      data:  { action: "dialog#close" }
+      data:  {
+        turbo_frame: "content",
+        action:      "dialog#close"
+      }
     ) do
       helpers.svg_icon("x-icon", "Fermer cette fenêtre")
     end
@@ -16,7 +19,10 @@ class DialogComponent < ViewComponent::Base
     tag.a(
       **options,
       class: "button",
-      data:  { action: "dialog#close" }
+      data:  {
+        turbo_frame: "content",
+        action:      "dialog#close"
+      }
     ) do
       label
     end

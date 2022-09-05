@@ -15,13 +15,7 @@ export default class extends Controller {
   }
 
   async close (event) {
-    if (event) event.preventDefault()
-
     await this.leave()
     this.element.remove()
-
-    // When modal will use data-turbo-action="advance",
-    // we'll need to go back when closing it.
-    // history.back()
   }
 }

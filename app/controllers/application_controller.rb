@@ -6,6 +6,8 @@ class ApplicationController < ActionController::Base
   include ControllerItems
   include ControllerOrder
   include ControllerSearch
+  include ControllerSelection
+  include SafeLocationParam
 
   before_action :verify_requested_format!
   before_action :accept_request_variant

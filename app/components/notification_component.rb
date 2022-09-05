@@ -28,4 +28,8 @@ class NotificationComponent < ViewComponent::Base
   def description
     data["description"]
   end
+
+  def actions
+    @actions ||= Array.wrap(data["actions"]).map(&:symbolize_keys)
+  end
 end

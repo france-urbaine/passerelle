@@ -1,0 +1,21 @@
+main.content
+  = turbo_frame_tag :content, target: "_top", data: { turbo_action: "advance" }, src: @content_location
+
+= turbo_frame_tag :modal, target: "_top" do
+  = dialog_component do |dialog|
+    = form_with(model: @publisher, method: :delete) do |form|
+      .dialog__header
+        h1#dialog-title.dialog__title
+          | Suppression de l'éditeur : #{@publisher.name}
+
+      .dialog__content
+        = hidden_param_input(:redirect)
+
+        p
+          | Êtes-vous sûrs de vouloir supprimer ce compte ?
+          br
+          | Le compte de l'éditeur sera archivé pendant 30 jours avant d'être définitivement supprimé.
+
+      .dialog__actions
+        button.button.button--primary( type="submit" autofocus ) Continuer
+        = dialog.cancel_button "Annuler", href: @content_location

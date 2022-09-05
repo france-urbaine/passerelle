@@ -8,18 +8,33 @@
   data-transition-leave-from="notification--leave-from"
   data-transition-leave-to="notification--leave-to"
 )
-  - case type
-  - when "success"
-    = helpers.svg_icon("check-circle-icon", "Succés", class: "notification__icon notification__icon--success")
-  - when "error"
-    = helpers.svg_icon("exclamation-circle-icon", "Erreur", class: "notification__icon notification__icon--error")
-  - else
-    = helpers.svg_icon("information-circle-icon", "Information", class: "notification__icon")
+  .flex.items-start
+    - case type
+    - when "success"
+      = helpers.svg_icon("check-circle-icon", "Succés", class: "notification__icon notification__icon--success")
+    - when "error"
+      = helpers.svg_icon("exclamation-circle-icon", "Erreur", class: "notification__icon notification__icon--error")
+    - else
+      = helpers.svg_icon("information-circle-icon", "Information", class: "notification__icon")
 
-  .notification__message
-    .notification__title= title
-    = simple_format(description) if description.present?
+    .flex.flex-col
+      .flex.items-start
+        .notification__message
+          .notification__title= title
+          = simple_format(description) if description.present?
 
-  .notification__actions
-    button.icon-button.notification__close-button( data-action="notification#hide" )
-      = helpers.svg_icon("x-icon", "Masquer cette notification")
+        .notification__closing
+          button.icon-button.notification__closing-button( data-action="notification#hide" )
+            = helpers.svg_icon("x-icon", "Masquer cette notification")
+
+      - if actions.any?
+        .notification__actions
+          - actions.each do |action|
+            = form_with(**action.slice(:url, :method)) do |form|
+              - action[:inputs]&.each do |key, value|
+                - helpers.each_hidden_param_field_tag(key, value) do |input|
+                  = input
+
+              button.button( type="submit" )= action[:label]
+
+

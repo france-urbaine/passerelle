@@ -27,10 +27,27 @@
     .header-bar__action
       a.button(
         data-turbo-frame="modal"
-        href=edit_publisher_path(publisher, form_back: current_path)
+        href=edit_publisher_path(publisher, content: current_path, redirect: current_path)
       )
         = svg_icon("pencil-alt-icon")
         | Modifier
+
+    .header-bar__action
+      a.button(
+        data-turbo-frame="modal"
+        href=remove_publisher_path(publisher, content: current_path)
+      )
+        = svg_icon("trash-icon")
+        | Supprimer
+
+- if publisher.discarded?
+  .card.mb-6
+    .card__content.bg-yellow-100.text-yellow-700( role="alert" )
+      b Compte en cours de suppression.
+      br
+      |  Ce compte a été archivé le #{localize(publisher.discarded_at.to_date)}.
+      br
+      |  Il sera définitivement supprimé le #{localize(30.days.after(publisher.discarded_at.to_date))}.
 
 h2.subheader
   = svg_icon("bookmark", "Nouvelle section")

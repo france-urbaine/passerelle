@@ -19,6 +19,14 @@ fr:
         type:         "success"
         title:        "Le compte de l'éditeur a été archivé."
         description:  "La suppression de l'éditeur sera définitive dans 30 jours."
+        delay:        5000
+
+    destroy_all:
+      success:
+        type:         "success"
+        title:        "Les comptes des éditeurs sélectionnés ont été archivés."
+        description:  "Leur suppression sera définitive dans 30 jours."
+        delay:        5000
 
   ddfips:
     <<: *default

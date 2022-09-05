@@ -7,7 +7,7 @@ module ControllerItems
     options[:items] = session[:items] if session[:items] && !params.key?(:items)
 
     pagy, relation = super(collection, options)
-    session[:items] = pagy.items
+    session[:items] = pagy.items unless pagy.items.zero?
 
     [pagy, relation]
   end

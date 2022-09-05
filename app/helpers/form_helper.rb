@@ -15,10 +15,34 @@ module FormHelper
     hidden_param_input(:form_back)
   end
 
-  def hidden_param_input(key)
+  def hidden_param_input(key, &)
     return unless params.key?(key)
 
-    tag.input(type: "hidden", name: key, value: params[key], autocomplete: "off")
+    if block_given?
+      each_hidden_param_field_tag(key, params[key], &)
+    else
+      each_hidden_param_field_tag(key, params[key]) do |input|
+        concat input
+      end
+      ""
+    end
+  end
+
+  def each_hidden_param_field_tag(name, value, &)
+    return to_enum(:each_hidden_param_field_tag, name, value) unless block_given?
+
+    case value
+    when Array
+      value.each do |item|
+        each_hidden_param_field_tag("#{name}[]", item, &)
+      end
+    when Hash, ActionController::Parameters
+      value.each do |key, item|
+        each_hidden_param_field_tag("#{name}[#{key}]", item, &)
+      end
+    else
+      yield tag.input(type: "hidden", name: name, value: value, autocomplete: "off")
+    end
   end
 
   def form_block(record, attribute, first: false, autocomplete: false, **options, &block)

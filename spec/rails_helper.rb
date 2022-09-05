@@ -115,6 +115,7 @@ RSpec.configure do |config|
 
   config.after do
     ActionMailer::Base.deliveries.clear
+    Faker::UniqueGenerator.clear
   end
 end
 
