@@ -121,6 +121,26 @@ fr:
         type:         "success"
         title:        "Le compte de la collectivité a été archivé."
         description:  "La suppression de la collectivité sera définitive dans 30 jours."
+        delay:        5000
+
+    destroy_all:
+      success:
+        type:         "success"
+        title:        "Les comptes des collectivités sélectionnées ont été archivés."
+        description:  "Leur suppression sera définitive dans 30 jours."
+        delay:        5000
+
+    undiscard:
+      success:
+        type:         "info"
+        title:        "La suppression de la collectivité a été annulée."
+        delay:        3000
+
+    undiscard_all:
+      success:
+        type:         "info"
+        title:        "La suppression des collectivités sélectionnées a été annulée."
+        delay:        3000
 
   users:
     <<: *default

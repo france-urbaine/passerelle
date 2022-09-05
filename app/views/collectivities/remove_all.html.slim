@@ -1,0 +1,35 @@
+main.content
+  = turbo_frame_tag :content, target: "_top", data: { turbo_action: "advance" }, src: @content_location
+
+= turbo_frame_tag :modal, target: "_top" do
+  = dialog_component do |dialog|
+    = form_with(url: collectivities_path, method: :delete) do |form|
+      - count = @collectivities.count
+
+      .dialog__header
+        h1#dialog-title.dialog__title
+          - if count > 1
+            | Suppression des collectivités sélectionnées
+          - else
+            | Suppression de la collectivité sélectionnée
+
+      .dialog__content
+        = hidden_param_input(:ids)
+        = hidden_param_input(:search)
+        = hidden_param_input(:order)
+        = hidden_param_input(:page)
+
+        - if count > 1
+          p
+            | Êtes-vous sûrs de vouloir supprimer les <b>#{count}</b> collectivités sélectionnées ?
+            br
+            | Les comptes seront archivés pendant 30 jours avant d'être définitivement supprimés.
+        - else
+          p
+            | Êtes-vous sûrs de vouloir supprimer la collectivité sélectionnée ?
+            br
+            | Le compte sera archivé pendant 30 jours avant d'être définitivement supprimé.
+
+      .dialog__actions
+        button.button.button--primary( type="submit" autofocus ) Continuer
+        = dialog.cancel_button "Annuler", href: @return_location

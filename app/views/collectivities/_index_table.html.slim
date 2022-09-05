@@ -48,20 +48,18 @@ table.datatable
             a.icon-button(
               aria-label="Modifier cette collectivité"
               data-turbo-frame="modal"
-              href=edit_collectivity_path(collectivity, form_back: current_path)
+              href=edit_collectivity_path(collectivity, content: current_path, redirect: current_path)
             )
               = svg_icon("pencil-alt-icon", "Modifier cette collectivité")
               span.tooltip Modifier cette collectivité
 
-            = form_with(url: collectivity_path(collectivity), method: "delete", data: { turbo_confirm: "Supprimer cette collectivité ?" }) do
-              input( type="hidden" name="back" value=current_path)
-
-              button.icon-button(
-                aria-label="Supprimer cette collectivité"
-                type="submit"
-              )
-                = svg_icon("trash-icon", "Supprimer cette collectivité")
-                span.tooltip Supprimer cette collectivité
+            a.icon-button(
+              aria-label="Supprimer cette collectivité"
+              data-turbo-frame="modal"
+              href=remove_collectivity_path(collectivity, content: current_path, redirect: current_path)
+            )
+              = svg_icon("trash-icon", "Supprimer cette collectivité")
+              span.tooltip Supprimer cette collectivité
 
         td( id=dom_id(collectivity, :title) )
           a(
@@ -78,3 +76,6 @@ table.datatable
             )= collectivity.publisher.name
 
         td.text-right= number_with_delimiter(collectivity.users_count) if collectivity.users_count.positive?
+
+  - if collectivities.empty?
+    caption.datatable__empty-caption Aucune collectivité disponible.

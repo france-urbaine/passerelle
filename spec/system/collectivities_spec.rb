@@ -76,8 +76,9 @@ RSpec.describe "Collectivities", type: :system, use_fixtures: true do
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=alert]", text: "Une nouvelle collectivité a été ajoutée avec succés.")
 
-    expect(page).to have_current_path(collectivities_path)
+    expect(page).to have_selector("h1", text: "Collectivités")
     expect(page).to have_selector("tr", text: "Métropole d'Aix-Marseille-Provence")
+    expect(page).to have_current_path(collectivities_path)
   end
 
   it "updates a collectivity from the index page" do
@@ -104,8 +105,9 @@ RSpec.describe "Collectivities", type: :system, use_fixtures: true do
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
 
-    expect(page).to have_current_path(collectivities_path)
+    expect(page).to have_selector("h1", text: "Collectivités")
     expect(page).to have_selector("tr", text: "Agglomération du Pays Basque")
+    expect(page).to have_current_path(collectivities_path)
   end
 
   it "updates a collectivity from the show page" do
@@ -130,8 +132,8 @@ RSpec.describe "Collectivities", type: :system, use_fixtures: true do
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
 
-    expect(page).to have_current_path(collectivity_path(pays_basque))
     expect(page).to have_selector("h1", text: "Agglomération du Pays Basque")
+    expect(page).to have_current_path(collectivity_path(pays_basque))
   end
 
   it "removes a collectivity from the index page" do
@@ -141,11 +143,53 @@ RSpec.describe "Collectivities", type: :system, use_fixtures: true do
       click_on "Supprimer cette collectivité"
     end
 
-    accept_confirm "Supprimer cette collectivité ?"
+    within "[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer ce compte ?" do
+      click_on "Continuer"
+    end
 
-    expect(page).to have_current_path(collectivities_path)
     expect(page).to have_selector("[role=alert]", text: "Le compte de la collectivité a été archivé.")
 
+    expect(page).to     have_selector("h1", text: "Collectivités")
     expect(page).not_to have_selector("tr", text: "CA du Pays Basque")
+    expect(page).to     have_current_path(collectivities_path)
+  end
+
+  it "removes a collectivity from the show page" do
+    visit collectivity_path(pays_basque)
+
+    click_on "Supprimer"
+
+    within "[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer ce compte ?" do
+      click_on "Continuer"
+    end
+
+    expect(page).to have_selector("[role=alert]", text: "Le compte de la collectivité a été archivé.")
+
+    expect(page).to     have_selector("h1", text: "Collectivités")
+    expect(page).not_to have_selector("tr", text: "CA du Pays Basque")
+    expect(page).to     have_current_path(collectivities_path)
+  end
+
+  it "removes a selection of collectivities from the index page" do
+    visit collectivities_path
+
+    within "tr", text: "CA du Pays Basque" do
+      find("input[type=checkbox]").check
+    end
+
+    within "#index_header", text: "1 collectivité sélectionnée" do
+      click_on "Supprimer la sélection"
+    end
+
+    within "[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer la collectivité sélectionnée ?" do
+      click_on "Continuer"
+    end
+
+    expect(page).to have_selector("[role=alert]", text: "Les comptes des collectivités sélectionnées ont été archivés.")
+
+    expect(page).to     have_selector("h1", text: "Collectivités")
+    expect(page).not_to have_selector("tr", text: "CA du Pays Basque")
+    expect(page).not_to have_selector("#index_header", text: "1 collectivité sélectionnée")
+    expect(page).to     have_current_path(collectivities_path)
   end
 end

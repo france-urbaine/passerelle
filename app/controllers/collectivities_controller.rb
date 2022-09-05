@@ -2,7 +2,9 @@
 
 class CollectivitiesController < ApplicationController
   respond_to :html
-  before_action :set_collectivity, only: %i[show edit update destroy]
+
+  before_action :set_collectivity,     only: %i[show edit update remove destroy undiscard]
+  before_action :set_content_location, only: %i[new edit remove]
 
   def index
     @collectivities = Collectivity.kept.strict_loading
@@ -12,22 +14,23 @@ class CollectivitiesController < ApplicationController
   end
 
   def new
-    @collectivity = Collectivity.new
+    @collectivity = Collectivity.new(collectivity_params)
   end
 
   def show; end
   def edit; end
+  def remove; end
 
   def create
     @collectivity = Collectivity.new(collectivity_params)
 
     if @collectivity.save
+      @location = safe_location_param(:redirect, collectivities_path)
       @notice   = translate(".success")
-      @location = params.fetch(:form_back, collectivities_path)
 
       respond_to do |format|
-        format.turbo_stream
-        format.html { redirect_to @location, notice: @notice }
+        format.turbo_stream { redirect_to @location, notice: @notice }
+        format.html         { redirect_to @location, notice: @notice }
       end
     else
       render :new, status: :unprocessable_entity
@@ -36,12 +39,12 @@ class CollectivitiesController < ApplicationController
 
   def update
     if @collectivity.update(collectivity_params)
+      @location = safe_location_param(:redirect, collectivities_path)
       @notice   = translate(".success")
-      @location = params.fetch(:form_back, collectivities_path)
 
       respond_to do |format|
-        format.turbo_stream
-        format.html { redirect_to @location, notice: @notice }
+        format.turbo_stream { redirect_to @location, notice: @notice }
+        format.html         { redirect_to @location, notice: @notice }
       end
     else
       render :edit, status: :unprocessable_entity
@@ -51,12 +54,82 @@ class CollectivitiesController < ApplicationController
   def destroy
     @collectivity.discard
 
-    @notice   = translate(".success")
-    @location = params.fetch(:form_back, collectivities_path)
+    @location = safe_location_param(:redirect, collectivities_path)
+    @notice   = translate(".success").merge(
+      actions: {
+        label:  "Annuler",
+        url:    undiscard_collectivity_path(@collectivity),
+        method: :patch,
+        inputs: { redirect: @location }
+      }
+    )
 
     respond_to do |format|
-      format.turbo_stream
-      format.html { redirect_to @location, notice: @notice }
+      format.turbo_stream { redirect_to @location, notice: @notice }
+      format.html         { redirect_to @location, notice: @notice }
+    end
+  end
+
+  def remove_all
+    @collectivities = Collectivity.kept.strict_loading
+    @collectivities = search(@collectivities)
+    @collectivities = select(@collectivities)
+
+    @content_location = collectivities_path(ids: params[:ids], **index_params)
+    @return_location  = collectivities_path(**index_params)
+  end
+
+  def destroy_all
+    @collectivities = Collectivity.kept.strict_loading
+    @collectivities = search(@collectivities)
+    @collectivities = select(@collectivities)
+    @collectivities.update_all(discarded_at: Time.current)
+
+    @location   = collectivities_path if params[:ids] == "all"
+    @location ||= collectivities_path(**index_params)
+    @notice     = translate(".success").merge(
+      actions: {
+        label:  "Annuler",
+        url:    undiscard_all_collectivities_path,
+        method: :patch,
+        inputs: {
+          ids:      params[:ids],
+          redirect: @location,
+          **index_params
+        }
+      }
+    )
+
+    respond_to do |format|
+      format.turbo_stream  { redirect_to @location, notice: @notice }
+      format.html          { redirect_to @location, notice: @notice }
+    end
+  end
+
+  def undiscard
+    @collectivity.undiscard
+
+    @location = safe_location_param(:redirect, collectivities_path)
+    @notice   = translate(".success")
+
+    respond_to do |format|
+      format.turbo_stream { redirect_to @location, notice: @notice }
+      format.html         { redirect_to @location, notice: @notice }
+    end
+  end
+
+  def undiscard_all
+    @collectivities = Collectivity.discarded.strict_loading
+    @collectivities = search(@collectivities)
+    @collectivities = select(@collectivities)
+    @collectivities.update_all(discarded_at: nil)
+
+    @location = safe_location_param(:redirect, collectivities_path)
+    @notice   = translate(".success")
+
+    respond_to do |format|
+      format.turbo_stream { redirect_to @location, notice: @notice }
+      format.html         { redirect_to @location, notice: @notice }
     end
   end
 
@@ -64,6 +137,13 @@ class CollectivitiesController < ApplicationController
 
   def set_collectivity
     @collectivity = Collectivity.find(params[:id])
+  end
+
+  def set_content_location
+    default = collectivities_path
+    default = collectivity_path(@collectivity) if @collectivity&.persisted?
+
+    @content_location = safe_location_param(:content, default)
   end
 
   def collectivity_params
@@ -91,5 +171,11 @@ class CollectivitiesController < ApplicationController
       :territory_type, :territory_id, :publisher_id, :name, :siren,
       :contact_first_name, :contact_last_name, :contact_email, :contact_phone
     )
+  end
+
+  def index_params
+    params
+      .slice(:search, :order, :page)
+      .permit(:search, :order, :page)
   end
 end
