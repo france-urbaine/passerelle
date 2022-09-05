@@ -72,9 +72,18 @@ h2.subheader
       dt Collectivités enregistrées
       dd= count(ddfip.collectivities_count, "collectivité") if ddfip.collectivities_count.positive?
 
-h2.subheader
-  = svg_icon("bookmark", "Nouvelle section")
-  | Guichets de la DDFIP
+.flex.justify-between
+  h2.subheader
+    = svg_icon("bookmark", "Nouvelle section")
+    | Guichets de la DDFIP
+
+  div
+    a.button.button--primary(
+      data-turbo-frame="modal"
+      href=new_service_path(content: current_path, redirect: current_path, service: { ddfip_id: ddfip.id })
+    )
+      = svg_icon("plus-icon")
+      | Ajouter un guichet
 
 - if ddfip.services.none?
   .card.mb-6
@@ -94,13 +103,22 @@ h2.subheader
       - ddfip.services.kept.each do |service|
         tr.datatable__row
           td.datatable__row-actions
-            a.icon-button(
-              href=edit_service_path(service, form_back: current_path)
-              aria-label="Modifier ce guichet"
-              data-turbo-frame="modal"
-            )
-              = svg_icon("pencil-alt-icon", "Modifier ce guichet")
-              span.tooltip Modifier ce guichet
+            .flex
+              a.icon-button(
+                aria-label="Modifier ce guichet"
+                data-turbo-frame="modal"
+                href=edit_service_path(service, content: current_path, redirect: current_path)
+              )
+                = svg_icon("pencil-alt-icon", "Modifier ce guichet")
+                span.tooltip Modifier ce guichet
+
+              a.icon-button(
+                aria-label="Supprimer ce guichet"
+                data-turbo-frame="modal"
+                href=remove_service_path(service, content: current_path, redirect: current_path)
+              )
+                = svg_icon("trash-icon", "Supprimer ce guichet")
+                span.tooltip Supprimer ce guichet
 
           td
             a(

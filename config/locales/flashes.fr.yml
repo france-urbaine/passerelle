@@ -30,13 +30,13 @@ fr:
 
     undiscard:
       success:
-        type:         "success"
+        type:         "info"
         title:        "La suppression de l'éditeur a été annulée."
         delay:        3000
 
     undiscard_all:
       success:
-        type:         "success"
+        type:         "info"
         title:        "La suppression des éditeurs sélectionnés a été annulée."
         delay:        3000
 
@@ -64,13 +64,13 @@ fr:
 
     undiscard:
       success:
-        type:         "success"
+        type:         "info"
         title:        "La suppression de la DDFIP a été annulée."
         delay:        3000
 
     undiscard_all:
       success:
-        type:         "success"
+        type:         "info"
         title:        "La suppression des DDFIP sélectionnées a été annulée."
         delay:        3000
 
@@ -79,14 +79,34 @@ fr:
     create:
       success:
         type:         "success"
-        title:        "Un nouveeau guichet a été ajouté avec succés."
+        title:        "Un nouveau guichet a été ajouté avec succés."
         delay:        3000
 
     destroy:
       success:
         type:         "success"
-        title:        "Le guichet de la DDFIP a été archivé."
+        title:        "Le guichet a été archivé."
         description:  "La suppression de ce guichet sera définitive dans 30 jours."
+        delay:        5000
+
+    destroy_all:
+      success:
+        type:         "success"
+        title:        "Les guichets sélectionnés ont été archivés."
+        description:  "Leur suppression sera définitive dans 30 jours."
+        delay:        5000
+
+    undiscard:
+      success:
+        type:         "info"
+        title:        "La suppression du guichet a été annulée."
+        delay:        3000
+
+    undiscard_all:
+      success:
+        type:         "info"
+        title:        "La suppression des guichets sélectionnés a été annulée."
+        delay:        3000
 
   collectivities:
     <<: *default

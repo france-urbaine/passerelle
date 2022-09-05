@@ -1,18 +1,18 @@
 = dialog_component do |dialog|
-  = turbo_frame_tag :modal_form do
+  = turbo_frame_tag :modal_form, target: "_top" do
     = form_with(model: service) do |form|
       .dialog__header
         h1#dialog-title.dialog__title
           - if service.persisted?
-            | Modification d'un guichet
+            | Modification du guichet
           - else
             | Création d'un nouveau guichet
 
         .dialog__header-toolbar
-          = dialog.close_button href: params.fetch(:form_back, services_path)
+          = dialog.close_button href: @content_location
 
       .dialog__content
-        = form_back_param_input
+        = hidden_param_input(:redirect)
 
         = form.block :ddfip, first: true, autocomplete: ddfips_path do
           ruby:
@@ -42,7 +42,6 @@
           = form.label :action
           = form.select :action, options, required: true, prompt: true
 
-
       .dialog__actions
         button.button.button--primary( type="submit" ) Enregistrer
-        = dialog.cancel_button "Annuler", href: params.fetch(:form_back, services_path)
+        = dialog.cancel_button "Annuler", href: @content_location

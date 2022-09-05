@@ -2,7 +2,9 @@
 
 class ServicesController < ApplicationController
   respond_to :html
-  before_action :set_service, only: %i[show edit update destroy]
+
+  before_action :set_service,          only: %i[show edit update remove destroy undiscard]
+  before_action :set_content_location, only: %i[new edit remove]
 
   def index
     @services = Service.kept.strict_loading
@@ -12,22 +14,23 @@ class ServicesController < ApplicationController
   end
 
   def new
-    @service = Service.new
+    @service = Service.new(service_params)
   end
 
   def show; end
   def edit; end
+  def remove; end
 
   def create
     @service = Service.new(service_params)
 
     if @service.save
+      @location = safe_location_param(:redirect, services_path)
       @notice   = translate(".success")
-      @location = params.fetch(:form_back, services_path)
 
       respond_to do |format|
-        format.turbo_stream
-        format.html { redirect_to @location, notice: @notice }
+        format.turbo_stream { redirect_to @location, notice: @notice }
+        format.html         { redirect_to @location, notice: @notice }
       end
     else
       render :new, status: :unprocessable_entity
@@ -36,12 +39,12 @@ class ServicesController < ApplicationController
 
   def update
     if @service.update(service_params)
+      @location = safe_location_param(:redirect, services_path)
       @notice   = translate(".success")
-      @location = params.fetch(:form_back, services_path)
 
       respond_to do |format|
-        format.turbo_stream
-        format.html { redirect_to @location, notice: @notice }
+        format.turbo_stream { redirect_to @location, notice: @notice }
+        format.html         { redirect_to @location, notice: @notice }
       end
     else
       render :edit, status: :unprocessable_entity
@@ -51,12 +54,82 @@ class ServicesController < ApplicationController
   def destroy
     @service.discard
 
-    @notice   = translate(".success")
-    @location = params.fetch(:form_back, services_path)
+    @location = safe_location_param(:redirect, services_path)
+    @notice   = translate(".success").merge(
+      actions: {
+        label:  "Annuler",
+        url:    undiscard_service_path(@service),
+        method: :patch,
+        inputs: { redirect: @location }
+      }
+    )
 
     respond_to do |format|
-      format.turbo_stream
-      format.html { redirect_to @location, notice: @notice }
+      format.turbo_stream { redirect_to @location, notice: @notice }
+      format.html         { redirect_to @location, notice: @notice }
+    end
+  end
+
+  def remove_all
+    @services = Service.kept.strict_loading
+    @services = search(@services)
+    @services = select(@services)
+
+    @content_location = services_path(ids: params[:ids], **index_params)
+    @return_location  = services_path(**index_params)
+  end
+
+  def destroy_all
+    @services = Service.kept.strict_loading
+    @services = search(@services)
+    @services = select(@services)
+    @services.update_all(discarded_at: Time.current)
+
+    @location   = services_path if params[:ids] == "all"
+    @location ||= services_path(**index_params)
+    @notice     = translate(".success").merge(
+      actions: {
+        label:  "Annuler",
+        url:    undiscard_all_services_path,
+        method: :patch,
+        inputs: {
+          ids:      params[:ids],
+          redirect: @location,
+          **index_params
+        }
+      }
+    )
+
+    respond_to do |format|
+      format.turbo_stream  { redirect_to @location, notice: @notice }
+      format.html          { redirect_to @location, notice: @notice }
+    end
+  end
+
+  def undiscard
+    @service.undiscard
+
+    @location = safe_location_param(:redirect, services_path)
+    @notice   = translate(".success")
+
+    respond_to do |format|
+      format.turbo_stream { redirect_to @location, notice: @notice }
+      format.html         { redirect_to @location, notice: @notice }
+    end
+  end
+
+  def undiscard_all
+    @services = Service.discarded.strict_loading
+    @services = search(@services)
+    @services = select(@services)
+    @services.update_all(discarded_at: nil)
+
+    @location = safe_location_param(:redirect, services_path)
+    @notice   = translate(".success")
+
+    respond_to do |format|
+      format.turbo_stream { redirect_to @location, notice: @notice }
+      format.html         { redirect_to @location, notice: @notice }
     end
   end
 
@@ -66,6 +139,13 @@ class ServicesController < ApplicationController
     @service = Service.find(params[:id])
   end
 
+  def set_content_location
+    default = services_path
+    default = service_path(@service) if @service&.persisted?
+
+    @content_location = safe_location_param(:content, default)
+  end
+
   def service_params
     input      = params.fetch(:service, {})
     ddfip_name = input.delete(:ddfip_name)
@@ -73,5 +153,11 @@ class ServicesController < ApplicationController
     input[:ddfip_id] = DDFIP.kept.search(name: ddfip_name).pick(:id) if ddfip_name.present?
 
     input.permit(:ddfip_id, :name, :action)
+  end
+
+  def index_params
+    params
+      .slice(:search, :order, :page)
+      .permit(:search, :order, :page)
   end
 end

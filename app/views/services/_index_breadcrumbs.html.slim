@@ -20,7 +20,7 @@
     .header-bar__action
       a.button.button--primary(
         data-turbo-frame="modal"
-        href=new_service_path(form_back: current_path)
+        href=new_service_path(content: current_path)
       )
         = svg_icon("plus-icon")
         | Ajouter un guichet

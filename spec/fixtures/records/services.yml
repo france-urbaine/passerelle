@@ -1,0 +1,14 @@
+pelp_bayonne:
+  ddfip:    pyrenees_atlantiques
+  name:     PELP de Bayonne
+  action:   evaluation_eco
+
+pelh_bayonne:
+  ddfip:    pyrenees_atlantiques
+  name:     PELH de Bayonne
+  action:   evaluation_hab
+
+sip_bayonne:
+  ddfip:    pyrenees_atlantiques
+  name:     SIP de Bayonne
+  action:   occupation_hab

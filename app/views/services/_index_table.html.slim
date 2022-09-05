@@ -49,20 +49,18 @@ table.datatable
             a.icon-button(
               aria-label="Modifier ce guichet"
               data-turbo-frame="modal"
-              href=edit_service_path(service, form_back: current_path)
+              href=edit_service_path(service, content: current_path, redirect: current_path)
             )
               = svg_icon("pencil-alt-icon", "Modifier ce guichet")
               span.tooltip Modifier ce guichet
 
-            = form_with(url: service_path(service), method: "delete", data: { turbo_confirm: "Supprimer ce guichet ?" }) do
-              input( type="hidden" name="back" value=current_path)
-
-              button.icon-button(
-                aria-label="Supprimer ce guichet"
-                type="submit"
-              )
-                = svg_icon("trash-icon", "Supprimer ce guichet")
-                span.tooltip Supprimer ce guichet
+            a.icon-button(
+              aria-label="Supprimer ce guichet"
+              data-turbo-frame="modal"
+              href=remove_service_path(service, content: current_path, redirect: current_path)
+            )
+              = svg_icon("trash-icon", "Supprimer ce guichet")
+              span.tooltip Supprimer ce guichet
 
         td( id=dom_id(service, :title) )
           a(
@@ -80,3 +78,6 @@ table.datatable
 
         td.text-right= number_with_delimiter(service.users_count)    if service.users_count.positive?
         td.text-right= number_with_delimiter(service.communes_count) if service.communes_count.positive?
+
+  - if services.empty?
+    caption.datatable__empty-caption Aucun guichet disponible.

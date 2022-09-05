@@ -2,12 +2,13 @@
 
 require "rails_helper"
 
-RSpec.describe "Communes", type: :system, use_fixtures: true do
-  fixtures :ddfips, :departements, :regions
+RSpec.describe "DDFIPs", type: :system, use_fixtures: true do
+  fixtures :ddfips, :departements, :regions, :services
 
-  let(:ddifp64)              { ddfips(:pyrenees_atlantiques) }
+  let(:ddfip64)              { ddfips(:pyrenees_atlantiques) }
   let(:pyrenees_atlantiques) { departements(:pyrenees_atlantiques) }
   let(:nouvelle_aquitaine)   { regions(:nouvelle_aquitaine) }
+  let(:pelp_bayonne)         { services(:pelp_bayonne) }
 
   it "visits index & show pages" do
     visit ddfips_path
@@ -18,14 +19,15 @@ RSpec.describe "Communes", type: :system, use_fixtures: true do
     click_on "DDFIP des Pyrénées-Atlantiques"
 
     expect(page).to have_selector("h1", text: "DDFIP des Pyrénées-Atlantiques")
-    expect(page).to have_current_path(ddfip_path(ddifp64))
+    expect(page).to have_current_path(ddfip_path(ddfip64))
   end
 
   it "visits links from the show page & comes back" do
-    visit ddfip_path(ddifp64)
+    visit ddfip_path(ddfip64)
 
     expect(page).to have_selector("h1", text: "DDFIP des Pyrénées-Atlantiques")
     expect(page).to have_link("Pyrénées-Atlantiques")
+    expect(page).to have_link("PELP de Bayonne")
 
     click_on "Pyrénées-Atlantiques"
 
@@ -35,7 +37,17 @@ RSpec.describe "Communes", type: :system, use_fixtures: true do
     go_back
 
     expect(page).to have_selector("h1", text: "DDFIP des Pyrénées-Atlantiques")
-    expect(page).to have_current_path(ddfip_path(ddifp64))
+    expect(page).to have_current_path(ddfip_path(ddfip64))
+
+    click_on "PELP de Bayonne"
+
+    expect(page).to have_selector("h1", text: "PELP de Bayonne")
+    expect(page).to have_current_path(service_path(pelp_bayonne))
+
+    go_back
+
+    expect(page).to have_selector("h1", text: "DDFIP des Pyrénées-Atlantiques")
+    expect(page).to have_current_path(ddfip_path(ddfip64))
   end
 
   it "creates a DDFIP from the index page" do
@@ -46,8 +58,8 @@ RSpec.describe "Communes", type: :system, use_fixtures: true do
     expect(page).to have_selector("[role=dialog]", text: "Création d'une nouvelle DDFIP")
 
     within "[role=dialog]" do
-      fill_in  "Nom de la DDFIP", with: "DDFIP de la Gironde"
-      fill_in  "Département",     with: "33"
+      fill_in "Nom de la DDFIP", with: "DDFIP de la Gironde"
+      fill_in "Département",     with: "33"
 
       find("[role=option]", text: "Gironde").click
 
@@ -88,7 +100,7 @@ RSpec.describe "Communes", type: :system, use_fixtures: true do
   end
 
   it "updates a DDFIP from the show page" do
-    visit ddfip_path(ddifp64)
+    visit ddfip_path(ddfip64)
 
     click_on "Modifier"
 
@@ -106,7 +118,7 @@ RSpec.describe "Communes", type: :system, use_fixtures: true do
     expect(page).to     have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
 
     expect(page).to have_selector("h1", text: "DDFIP du 64")
-    expect(page).to have_current_path(ddfip_path(ddifp64))
+    expect(page).to have_current_path(ddfip_path(ddfip64))
   end
 
   it "removes a DDFIP from the index page" do
@@ -128,7 +140,7 @@ RSpec.describe "Communes", type: :system, use_fixtures: true do
   end
 
   it "removes a DDFIP from the show page" do
-    visit ddfip_path(ddifp64)
+    visit ddfip_path(ddfip64)
 
     click_on "Supprimer"
 
@@ -139,7 +151,7 @@ RSpec.describe "Communes", type: :system, use_fixtures: true do
     expect(page).to have_selector("[role=alert]", text: "Le compte de la DDFIP a été archivé.")
 
     expect(page).to     have_selector("h1", text: "DDFIP")
-    expect(page).not_to have_selector("tr", text: "Fiscalité & Territoire")
+    expect(page).not_to have_selector("tr", text: "DDFIP des Pyrénées-Atlantiques")
     expect(page).to     have_current_path(ddfips_path)
   end
 

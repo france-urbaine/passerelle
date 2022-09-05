@@ -15,13 +15,15 @@ if parallel_rspec
   }
 end
 
-guard :rspec, rspec_options do
-  watch("spec/spec_helper.rb") { "spec" }
-  watch(%r{^spec/.+_spec\.rb$})
-  watch(%r{^app/(.+)\.rb$}) { |m| "spec/#{m[1]}_spec.rb" }
-end
+group :red_green_refactor, halt_on_fail: true do
+  guard :rspec, rspec_options do
+    watch("spec/spec_helper.rb") { "spec" }
+    watch(%r{^spec/.+_spec\.rb$})
+    watch(%r{^app/(.+)\.rb$}) { |m| "spec/#{m[1]}_spec.rb" }
+  end
 
-guard :rubocop, rubocop_options do
-  watch(/.+\.rb$/)
-  watch(%r{(?:.+/)?\.rubocop(?:_todo)?\.yml$}) { |m| File.dirname(m[0]) }
+  guard :rubocop, rubocop_options do
+    watch(/.+\.rb$/)
+    watch(%r{(?:.+/)?\.rubocop(?:_todo)?\.yml$}) { |m| File.dirname(m[0]) }
+  end
 end
