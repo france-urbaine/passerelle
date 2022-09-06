@@ -27,10 +27,25 @@
     .header-bar__action
       a.button(
         data-turbo-frame="modal"
-        href=edit_user_path(user, form_back: current_path)
+        href=edit_user_path(user, content: current_path, redirect: current_path)
       )
         = svg_icon("pencil-alt-icon")
         | Modifier
+
+    .header-bar__action
+      a.button(
+        data-turbo-frame="modal"
+        href=remove_user_path(user, content: current_path)
+      )
+        = svg_icon("trash-icon")
+        | Supprimer
+
+- if user.discarded?
+  .card.mb-6
+    .card__content.bg-red-100.text-red-700( role="alert" )
+      b Uitilisateur en cours de suppression.
+      br
+      | Cet utilisateur va être supprimé dans quelques minutes.
 
 h2.subheader
   = svg_icon("bookmark", "Nouvelle section")

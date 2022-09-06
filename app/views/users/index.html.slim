@@ -1,7 +1,5 @@
 main.content
-  = render "index_breadcrumbs", users: @users, pagy: @pagy
-
-  = turbo_frame_tag :content do
+  = turbo_frame_tag :content, target: "_top", data: { turbo_action: "advance" } do
     = render "index_content", users: @users, pagy: @pagy
 
-= turbo_frame_tag :modal
+= turbo_frame_tag :modal, target: "_top"

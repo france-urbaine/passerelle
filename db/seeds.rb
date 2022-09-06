@@ -44,6 +44,8 @@ Publisher.insert_all([
   { name: "Fiscalité & Territoire", siren: "511022394", email: "contact@fiscalite-territoire.fr" }
 ])
 
+fiscalite_territoire = Publisher.find_by(name: "Fiscalité & Territoire")
+
 [
   "CA du Pays Basque",
   "Métropole Européenne de Lille",

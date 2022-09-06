@@ -99,7 +99,21 @@ RSpec.describe Collectivity, type: :model do
           .and not_change { collectivity2.reload.users_count }.from(0)
       end
 
-      it "changes on updating" do
+      it "changes when discarding" do
+        user
+        expect { user.discard }
+          .to      change { collectivity1.reload.users_count }.from(1).to(0)
+          .and not_change { collectivity2.reload.users_count }.from(0)
+      end
+
+      it "changes when undiscarding" do
+        user.discard
+        expect { user.undiscard }
+          .to      change { collectivity1.reload.users_count }.from(0).to(1)
+          .and not_change { collectivity2.reload.users_count }.from(0)
+      end
+
+      it "changes when updating organization" do
         user
         expect { user.update(organization: collectivity2) }
           .to  change { collectivity1.reload.users_count }.from(1).to(0)

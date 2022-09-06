@@ -2,11 +2,11 @@
 
 require "rails_helper"
 
-RSpec.describe "UsersController#destroy", type: :request do
-  subject(:request) { delete "/utilisateurs/#{user.id}", headers: }
+RSpec.describe "UsersController#undiscard", type: :request do
+  subject(:request) { patch "/utilisateurs/#{user.id}/undiscard", headers: }
 
   let(:headers) { {} }
-  let(:user)    { create(:user) }
+  let(:user)    { create(:user, :discarded) }
 
   context "when requesting HTML" do
     it { expect(response).to have_http_status(:found) }
@@ -16,7 +16,7 @@ RSpec.describe "UsersController#destroy", type: :request do
       expect {
         request
         user.reload
-      }.to change(user, :discarded_at).from(nil)
+      }.to change(user, :discarded_at).from(be_a(ActiveSupport::TimeWithZone)).to(nil)
     end
   end
 
@@ -31,8 +31,7 @@ RSpec.describe "UsersController#destroy", type: :request do
       expect {
         request
         user.reload
-      }.to  not_raise_error
-       .and not_change(user, :discarded_at).from(nil)
+      }.to maintain(user, :discarded_at).from(be_a(ActiveSupport::TimeWithZone))
     end
   end
 end

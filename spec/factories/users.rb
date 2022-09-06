@@ -20,6 +20,10 @@ FactoryBot.define do
       invited_at { Time.current }
     end
 
+    trait :discarded do
+      discarded_at { Time.current }
+    end
+
     trait :super_admin do
       super_admin { true }
     end

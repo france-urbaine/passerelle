@@ -153,7 +153,25 @@ fr:
     destroy:
       success:
         type:         "success"
-        title:        "Le compte de l'utilisateur a été supprimé définitivement."
+        title:        "Le compte de l'utilisateur a été supprimé."
+        delay:        5000
+
+    destroy_all:
+      success:
+        type:         "success"
+        title:        "Les comptes des utilisateurs sélectionnés ont été supprimé."
+        delay:        5000
+
+    undiscard:
+      success:
+        type:         "info"
+        title:        "La suppression de l'utilisateur a été annulée."
+        delay:        3000
+
+    undiscard_all:
+      success:
+        type:         "info"
+        title:        "La suppression des utilisateurs sélectionnés a été annulée."
         delay:        3000
 
   communes:

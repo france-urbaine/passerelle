@@ -1,5 +1,5 @@
 main.content
-  = turbo_frame_tag :content, src: params[:form_back]
+  = turbo_frame_tag :content, target: "_top", data: { turbo_action: "advance" }, src: @content_location
 
 = turbo_frame_tag :modal do
   = render "form", user: @user

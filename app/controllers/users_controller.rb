@@ -2,33 +2,36 @@
 
 class UsersController < ApplicationController
   respond_to :html
-  before_action :set_user, only: %i[show edit update destroy]
+
+  before_action :set_user,             only: %i[show edit update remove destroy undiscard]
+  before_action :set_content_location, only: %i[new edit remove]
 
   def index
-    @users = User.strict_loading
+    @users = User.kept.strict_loading
     @users = search(@users)
     @users = order(@users)
     @pagy, @users = pagy(@users)
   end
 
   def new
-    @user = User.new
+    @user = User.new(user_params)
   end
 
   def show; end
   def edit; end
+  def remove; end
 
   def create
     @user = User.new(user_params)
     @user.invite(from: current_user)
 
     if @user.save
+      @location = safe_location_param(:redirect, users_path)
       @notice   = translate(".success")
-      @location = params.fetch(:form_back, users_path)
 
       respond_to do |format|
-        format.turbo_stream
-        format.html { redirect_to @location, notice: @notice }
+        format.turbo_stream { redirect_to @location, notice: @notice }
+        format.html         { redirect_to @location, notice: @notice }
       end
     else
       render :new, status: :unprocessable_entity
@@ -37,12 +40,12 @@ class UsersController < ApplicationController
 
   def update
     if @user.update(user_params)
+      @location = safe_location_param(:redirect, users_path)
       @notice   = translate(".success")
-      @location = params.fetch(:form_back, users_path)
 
       respond_to do |format|
-        format.turbo_stream
-        format.html { redirect_to @location, notice: @notice }
+        format.turbo_stream { redirect_to @location, notice: @notice }
+        format.html         { redirect_to @location, notice: @notice }
       end
     else
       render :edit, status: :unprocessable_entity
@@ -50,14 +53,84 @@ class UsersController < ApplicationController
   end
 
   def destroy
-    @user.destroy
+    @user.discard
 
-    @notice   = translate(".success")
-    @location = params.fetch(:form_back, users_path)
+    @location = safe_location_param(:redirect, users_path)
+    @notice   = translate(".success").merge(
+      actions: {
+        label:  "Annuler",
+        url:    undiscard_user_path(@user),
+        method: :patch,
+        inputs: { redirect: @location }
+      }
+    )
 
     respond_to do |format|
-      format.turbo_stream
-      format.html { redirect_to @location, notice: @notice }
+      format.turbo_stream { redirect_to @location, notice: @notice }
+      format.html         { redirect_to @location, notice: @notice }
+    end
+  end
+
+  def remove_all
+    @users = User.kept.strict_loading
+    @users = search(@users)
+    @users = select(@users)
+
+    @content_location = users_path(ids: params[:ids], **index_params)
+    @return_location  = users_path(**index_params)
+  end
+
+  def destroy_all
+    @users = User.kept.strict_loading
+    @users = search(@users)
+    @users = select(@users)
+    @users.update_all(discarded_at: Time.current)
+
+    @location   = users_path if params[:ids] == "all"
+    @location ||= users_path(**index_params)
+    @notice     = translate(".success").merge(
+      actions: {
+        label:  "Annuler",
+        url:    undiscard_all_users_path,
+        method: :patch,
+        inputs: {
+          ids:      params[:ids],
+          redirect: @location,
+          **index_params
+        }
+      }
+    )
+
+    respond_to do |format|
+      format.turbo_stream  { redirect_to @location, notice: @notice }
+      format.html          { redirect_to @location, notice: @notice }
+    end
+  end
+
+  def undiscard
+    @user.undiscard
+
+    @location = safe_location_param(:redirect, users_path)
+    @notice   = translate(".success")
+
+    respond_to do |format|
+      format.turbo_stream { redirect_to @location, notice: @notice }
+      format.html         { redirect_to @location, notice: @notice }
+    end
+  end
+
+  def undiscard_all
+    @users = User.discarded.strict_loading
+    @users = search(@users)
+    @users = select(@users)
+    @users.update_all(discarded_at: nil)
+
+    @location = safe_location_param(:redirect, users_path)
+    @notice   = translate(".success")
+
+    respond_to do |format|
+      format.turbo_stream { redirect_to @location, notice: @notice }
+      format.html         { redirect_to @location, notice: @notice }
     end
   end
 
@@ -65,6 +138,13 @@ class UsersController < ApplicationController
 
   def set_user
     @user = User.find(params[:id])
+  end
+
+  def set_content_location
+    default = users_path
+    default = user_path(@user) if @user&.persisted?
+
+    @content_location = safe_location_param(:content, default)
   end
 
   def user_params
@@ -92,5 +172,11 @@ class UsersController < ApplicationController
       :first_name, :last_name, :email,
       :organization_admin, :super_admin
     )
+  end
+
+  def index_params
+    params
+      .slice(:search, :order, :page)
+      .permit(:search, :order, :page)
   end
 end

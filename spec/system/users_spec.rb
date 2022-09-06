@@ -61,8 +61,9 @@ RSpec.describe "Users", type: :system, use_fixtures: true do
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=alert]", text: "Un nouvel utilisateur a été ajouté avec succés.")
 
-    expect(page).to have_current_path(users_path)
+    expect(page).to have_selector("h1", text: "Utilisateurs")
     expect(page).to have_selector("tr", text: "Elliot Alderson")
+    expect(page).to have_current_path(users_path)
   end
 
   it "updates an user from the index page" do
@@ -89,8 +90,9 @@ RSpec.describe "Users", type: :system, use_fixtures: true do
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
 
-    expect(page).to have_current_path(users_path)
+    expect(page).to have_selector("h1", text: "Utilisateurs")
     expect(page).to have_selector("tr", text: "Marc-André Debomy")
+    expect(page).to have_current_path(users_path)
   end
 
   it "updates a publisher from the show page" do
@@ -115,8 +117,8 @@ RSpec.describe "Users", type: :system, use_fixtures: true do
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
 
-    expect(page).to have_current_path(user_path(marc))
     expect(page).to have_selector("h1", text: "Marc-André Debomy")
+    expect(page).to have_current_path(user_path(marc))
   end
 
   it "removes an user from the index page" do
@@ -126,11 +128,59 @@ RSpec.describe "Users", type: :system, use_fixtures: true do
       click_on "Supprimer cet utilisateur"
     end
 
-    accept_confirm "Supprimer cet utilisateur ?"
+    within "[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer cet utilisateur ?" do
+      click_on "Continuer"
+    end
 
     expect(page).to have_current_path(users_path)
-    expect(page).to have_selector("[role=alert]", text: "Le compte de l'utilisateur a été supprimé définitivement.")
+    expect(page).to have_selector("[role=alert]", text: "Le compte de l'utilisateur a été supprimé.")
 
     expect(page).not_to have_selector("tr", text: "Marc Debomy")
+
+    expect(page).to     have_selector("h1", text: "Utilisateurs")
+    expect(page).not_to have_selector("tr", text: "Marc Debomy")
+    expect(page).to     have_current_path(users_path)
+  end
+
+  it "removes an user from the show page" do
+    visit user_path(marc)
+
+    click_on "Supprimer"
+
+    within "[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer cet utilisateur ?" do
+      click_on "Continuer"
+    end
+
+    expect(page).to have_current_path(users_path)
+    expect(page).to have_selector("[role=alert]", text: "Le compte de l'utilisateur a été supprimé.")
+
+    expect(page).not_to have_selector("tr", text: "Marc Debomy")
+
+    expect(page).to     have_selector("h1", text: "Utilisateurs")
+    expect(page).not_to have_selector("tr", text: "Marc Debomy")
+    expect(page).to     have_current_path(users_path)
+  end
+
+  it "removes a selection of publisher from the index page" do
+    visit users_path
+
+    within "tr", text: "Marc Debomy" do
+      find("input[type=checkbox]").check
+    end
+
+    within "#index_header", text: "1 utilisateur sélectionné" do
+      click_on "Supprimer la sélection"
+    end
+
+    within "[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer l'utilisateur sélectionné ?" do
+      click_on "Continuer"
+    end
+
+    expect(page).to have_selector("[role=alert]", text: "Les comptes des utilisateurs sélectionnés ont été supprimé.")
+
+    expect(page).to     have_selector("h1", text: "Utilisateurs")
+    expect(page).not_to have_selector("tr", text: "Marc Debomy")
+    expect(page).not_to have_selector("#index_header", text: "1 utilisateur sélectionné")
+    expect(page).to     have_current_path(users_path)
   end
 end

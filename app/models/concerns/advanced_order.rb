@@ -24,9 +24,10 @@ module AdvancedOrder
       relation
     end
 
-    def unaccent_order(attribute, direction)
-      sql  = "UNACCENT(\"#{table_name}\".\"#{attribute}\") "
-      sql += direction == :asc ? "ASC" : "DESC"
+    def unaccent_order(column, direction)
+      column = %(\"#{table_name}\".\"#{column}\") unless column.is_a?(String)
+      sql    = "UNACCENT(#{column}) "
+      sql   += direction == :asc ? "ASC" : "DESC"
 
       order(Arel.sql(sql))
     end

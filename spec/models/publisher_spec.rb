@@ -112,7 +112,21 @@ RSpec.describe Publisher, type: :model do
           .and not_change { publisher2.reload.users_count }.from(0)
       end
 
-      it "changes on updating" do
+      it "changes when discarding" do
+        user
+        expect { user.discard }
+          .to      change { publisher1.reload.users_count }.from(1).to(0)
+          .and not_change { publisher2.reload.users_count }.from(0)
+      end
+
+      it "changes when undiscarding" do
+        user.discard
+        expect { user.undiscard }
+          .to      change { publisher1.reload.users_count }.from(0).to(1)
+          .and not_change { publisher2.reload.users_count }.from(0)
+      end
+
+      it "changes when updating organization" do
         user
         expect { user.update(organization: publisher2) }
           .to  change { publisher1.reload.users_count }.from(1).to(0)

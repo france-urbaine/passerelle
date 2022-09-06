@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_09_01_204326) do
+ActiveRecord::Schema[7.0].define(version: 2022_09_05_163741) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -194,7 +194,9 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_01_204326) do
     t.datetime "updated_at", null: false
     t.datetime "invited_at"
     t.integer "services_count", default: 0, null: false
+    t.datetime "discarded_at"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
+    t.index ["discarded_at"], name: "index_users_on_discarded_at"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["inviter_id"], name: "index_users_on_inviter_id"
     t.index ["organization_type", "organization_id"], name: "index_users_on_organization"
@@ -205,21 +207,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_01_204326) do
   add_foreign_key "service_communes", "services", on_delete: :cascade
   add_foreign_key "user_services", "services", on_delete: :cascade
   add_foreign_key "user_services", "users", on_delete: :cascade
-  create_function :get_collectivities_users_count, sql_definition: <<-'SQL'
-      CREATE OR REPLACE FUNCTION public.get_collectivities_users_count(collectivities collectivities)
-       RETURNS integer
-       LANGUAGE plpgsql
-      AS $function$
-        BEGIN
-          RETURN (
-            SELECT COUNT(*)
-            FROM   "users"
-            WHERE  "users"."organization_type" = 'Collectivity'
-              AND  "users"."organization_id"   = collectivities."id"
-          );
-        END;
-      $function$
-  SQL
   create_function :get_communes_collectivities_count, sql_definition: <<-'SQL'
       CREATE OR REPLACE FUNCTION public.get_communes_collectivities_count(communes communes)
        RETURNS integer
@@ -303,21 +290,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_01_204326) do
                 )
               )
             )
-          );
-        END;
-      $function$
-  SQL
-  create_function :get_ddfips_users_count, sql_definition: <<-'SQL'
-      CREATE OR REPLACE FUNCTION public.get_ddfips_users_count(ddfips ddfips)
-       RETURNS integer
-       LANGUAGE plpgsql
-      AS $function$
-        BEGIN
-          RETURN (
-            SELECT COUNT(*)
-            FROM   "users"
-            WHERE  "users"."organization_type" = 'DDFIP'
-              AND  "users"."organization_id"   = ddfips."id"
           );
         END;
       $function$
@@ -473,21 +445,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_01_204326) do
             FROM   "collectivities"
             WHERE  "collectivities"."discarded_at" IS NULL
               AND  "collectivities"."publisher_id" = publishers."id"
-          );
-        END;
-      $function$
-  SQL
-  create_function :get_publishers_users_count, sql_definition: <<-'SQL'
-      CREATE OR REPLACE FUNCTION public.get_publishers_users_count(publishers publishers)
-       RETURNS integer
-       LANGUAGE plpgsql
-      AS $function$
-        BEGIN
-          RETURN (
-            SELECT COUNT(*)
-            FROM   "users"
-            WHERE  "users"."organization_type" = 'Publisher'
-              AND  "users"."organization_id"   = publishers."id"
           );
         END;
       $function$
@@ -996,59 +953,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_01_204326) do
         END;
       $function$
   SQL
-  create_function :trigger_users_changes, sql_definition: <<-'SQL'
-      CREATE OR REPLACE FUNCTION public.trigger_users_changes()
-       RETURNS trigger
-       LANGUAGE plpgsql
-      AS $function$
-        BEGIN
-          -- Reset all users_count
-          -- * on creation
-          -- * on deletion
-          -- * when organization_id changed
-
-          IF (TG_OP = 'INSERT')
-          OR (TG_OP = 'DELETE')
-          OR (TG_OP = 'UPDATE' AND NEW."organization_id" <> OLD."organization_id")
-          THEN
-
-            UPDATE "publishers"
-            SET    "users_count" = get_publishers_users_count("publishers".*)
-            WHERE  (NEW."organization_type" = 'Publisher' AND "publishers"."id" = NEW."organization_id")
-              OR   (OLD."organization_type" = 'Publisher' AND "publishers"."id" = OLD."organization_id");
-
-            UPDATE "collectivities"
-            SET    "users_count" = get_collectivities_users_count("collectivities".*)
-            WHERE  (NEW."organization_type" = 'Collectivity' AND "collectivities"."id" = NEW."organization_id")
-              OR   (OLD."organization_type" = 'Collectivity' AND "collectivities"."id" = OLD."organization_id");
-
-            UPDATE "ddfips"
-            SET    "users_count" = get_ddfips_users_count("ddfips".*)
-            WHERE  (NEW."organization_type" = 'DDFIP' AND "ddfips"."id" = NEW."organization_id")
-              OR   (OLD."organization_type" = 'DDFIP' AND "ddfips"."id" = OLD."organization_id");
-
-          END IF;
-
-          -- result is ignored since this is an AFTER trigger
-          RETURN NULL;
-        END;
-      $function$
-  SQL
-  create_function :get_services_users_count, sql_definition: <<-'SQL'
-      CREATE OR REPLACE FUNCTION public.get_services_users_count(services services)
-       RETURNS integer
-       LANGUAGE plpgsql
-      AS $function$
-        BEGIN
-          RETURN (
-            SELECT      COUNT(*)
-            FROM        "users"
-            INNER JOIN  "user_services" ON "user_services"."user_id" = "users"."id"
-            WHERE       "user_services"."service_id" = services."id"
-          );
-        END;
-      $function$
-  SQL
   create_function :get_services_communes_count, sql_definition: <<-'SQL'
       CREATE OR REPLACE FUNCTION public.get_services_communes_count(services services)
        RETURNS integer
@@ -1343,6 +1247,119 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_01_204326) do
             UPDATE  "ddfips"
             SET     "collectivities_count" = get_ddfips_collectivities_count("ddfips".*)
             WHERE   "ddfips"."code_departement" IN (NEW."code_departement", OLD."code_departement");
+
+          END IF;
+
+          -- result is ignored since this is an AFTER trigger
+          RETURN NULL;
+        END;
+      $function$
+  SQL
+  create_function :get_collectivities_users_count, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.get_collectivities_users_count(collectivities collectivities)
+       RETURNS integer
+       LANGUAGE plpgsql
+      AS $function$
+        BEGIN
+          RETURN (
+            SELECT COUNT(*)
+            FROM   "users"
+            WHERE  "users"."organization_type" = 'Collectivity'
+              AND  "users"."organization_id"   = collectivities."id"
+              AND  "users"."discarded_at" IS NULL
+          );
+        END;
+      $function$
+  SQL
+  create_function :get_ddfips_users_count, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.get_ddfips_users_count(ddfips ddfips)
+       RETURNS integer
+       LANGUAGE plpgsql
+      AS $function$
+        BEGIN
+          RETURN (
+            SELECT COUNT(*)
+            FROM   "users"
+            WHERE  "users"."organization_type" = 'DDFIP'
+              AND  "users"."organization_id"   = ddfips."id"
+              AND  "users"."discarded_at" IS NULL
+          );
+        END;
+      $function$
+  SQL
+  create_function :get_publishers_users_count, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.get_publishers_users_count(publishers publishers)
+       RETURNS integer
+       LANGUAGE plpgsql
+      AS $function$
+        BEGIN
+          RETURN (
+            SELECT COUNT(*)
+            FROM   "users"
+            WHERE  "users"."organization_type" = 'Publisher'
+              AND  "users"."organization_id"   = publishers."id"
+              AND  "users"."discarded_at" IS NULL
+          );
+        END;
+      $function$
+  SQL
+  create_function :get_services_users_count, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.get_services_users_count(services services)
+       RETURNS integer
+       LANGUAGE plpgsql
+      AS $function$
+        BEGIN
+          RETURN (
+            SELECT      COUNT(*)
+            FROM        "users"
+            INNER JOIN  "user_services" ON "user_services"."user_id" = "users"."id"
+            WHERE       "user_services"."service_id" = services."id"
+              AND       "users"."discarded_at" IS NULL
+          );
+        END;
+      $function$
+  SQL
+  create_function :trigger_users_changes, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.trigger_users_changes()
+       RETURNS trigger
+       LANGUAGE plpgsql
+      AS $function$
+        BEGIN
+          -- Reset all users_count
+          -- * on creation
+          -- * on deletion
+          -- * when organization_id changed
+          -- * when discarded_at changed from NULL
+          -- * when discarded_at changed to NULL
+
+          IF (TG_OP = 'INSERT')
+          OR (TG_OP = 'DELETE')
+          OR (TG_OP = 'UPDATE' AND NEW."organization_id" <> OLD."organization_id")
+          OR (TG_OP = 'UPDATE' AND (NEW."discarded_at" IS NULL) <> (OLD."discarded_at" IS NULL))
+          THEN
+
+            UPDATE "publishers"
+            SET    "users_count" = get_publishers_users_count("publishers".*)
+            WHERE  (NEW."organization_type" = 'Publisher' AND "publishers"."id" = NEW."organization_id")
+              OR   (OLD."organization_type" = 'Publisher' AND "publishers"."id" = OLD."organization_id");
+
+            UPDATE "collectivities"
+            SET    "users_count" = get_collectivities_users_count("collectivities".*)
+            WHERE  (NEW."organization_type" = 'Collectivity' AND "collectivities"."id" = NEW."organization_id")
+              OR   (OLD."organization_type" = 'Collectivity' AND "collectivities"."id" = OLD."organization_id");
+
+            UPDATE "ddfips"
+            SET    "users_count" = get_ddfips_users_count("ddfips".*)
+            WHERE  (NEW."organization_type" = 'DDFIP' AND "ddfips"."id" = NEW."organization_id")
+              OR   (OLD."organization_type" = 'DDFIP' AND "ddfips"."id" = OLD."organization_id");
+
+            UPDATE "services"
+            SET    "users_count" = get_services_users_count("services".*)
+            WHERE  "services"."id" IN (
+              SELECT "user_services"."service_id"
+              FROM   "user_services"
+              WHERE  "user_services"."user_id" IN (NEW."id", OLD."id")
+            );
 
           END IF;
 

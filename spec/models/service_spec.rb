@@ -53,6 +53,22 @@ RSpec.describe Service, type: :model do
           .to      change { service1.reload.users_count }.from(1).to(0)
           .and not_change { service2.reload.users_count }.from(0)
       end
+
+      it "changes when discarding" do
+        service1.users << user
+        expect { user.discard }
+          .to      change { service1.reload.users_count }.from(1).to(0)
+          .and not_change { service2.reload.users_count }.from(0)
+      end
+
+      it "changes when undiscarding" do
+        user.discard
+        service1.users << user
+
+        expect { user.undiscard }
+          .to      change { service1.reload.users_count }.from(0).to(1)
+          .and not_change { service2.reload.users_count }.from(0)
+      end
     end
 
     describe "#communes_count" do

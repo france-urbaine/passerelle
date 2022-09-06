@@ -2,10 +2,11 @@
 
 require "rails_helper"
 
-RSpec.describe "UsersController#destroy", type: :request do
-  subject(:request) { delete "/utilisateurs/#{user.id}", headers: }
+RSpec.describe "UsersController#destroy_all", type: :request do
+  subject(:request) { delete "/utilisateurs", headers:, params: }
 
   let(:headers) { {} }
+  let(:params)  { { ids: [user.id] } }
   let(:user)    { create(:user) }
 
   context "when requesting HTML" do
@@ -31,8 +32,7 @@ RSpec.describe "UsersController#destroy", type: :request do
       expect {
         request
         user.reload
-      }.to  not_raise_error
-       .and not_change(user, :discarded_at).from(nil)
+      }.to maintain(user, :discarded_at).from(nil)
     end
   end
 end

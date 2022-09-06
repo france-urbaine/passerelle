@@ -47,20 +47,18 @@ table.datatable
             a.icon-button(
               aria-label="Modifier cet utilisateur"
               data-turbo-frame="modal"
-              href=edit_user_path(user, form_back: current_path)
+              href=edit_user_path(user, content: current_path, redirect: current_path)
             )
               = svg_icon("pencil-alt-icon", "Modifier cet utilisateur")
               span.tooltip Modifier cet utilisateur
 
-            = form_with(url: user_path(user), method: "delete", data: { turbo_confirm: "Supprimer cet utilisateur ?" }) do
-              input( type="hidden" name="back" value=current_path)
-
-              button.icon-button(
-                aria-label="Supprimer cet utilisateur"
-                type="submit"
-              )
-                = svg_icon("trash-icon", "Supprimer cet utilisateur")
-                span.tooltip Supprimer cet utilisateur
+            a.icon-button(
+              aria-label="Supprimer cet utilisateur"
+              data-turbo-frame="modal"
+              href=remove_user_path(user, content: current_path, redirect: current_path)
+            )
+              = svg_icon("trash-icon", "Supprimer cet utilisateur")
+              span.tooltip Supprimer cet utilisateur
 
         td( id=dom_id(user, :title) )
           a(
@@ -90,3 +88,6 @@ table.datatable
             = svg_icon("check-badge-icon", "Super Administrateur", class: "h-6 w-6")
           - else
             = " "
+
+  - if users.empty?
+    caption.datatable__empty-caption Aucun utilisateur disponible.

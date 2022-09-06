@@ -67,9 +67,18 @@ h2.subheader
       dt Collectivités enregistrées
       dd= count(publisher.collectivities_count, "collectivité") if publisher.collectivities_count.positive?
 
-h2.subheader
-  = svg_icon("bookmark", "Nouvelle section")
-  | Utilisateurs de l'organisation
+.flex.justify-between
+  h2.subheader
+    = svg_icon("bookmark", "Nouvelle section")
+    | Utilisateurs de l'organisation
+
+  div
+    a.button.button--primary(
+      data-turbo-frame="modal"
+      href=new_user_path(content: current_path, redirect: current_path, user: { organization_type: "Publisher", organization_id: publisher.id })
+    )
+      = svg_icon("plus-icon")
+      | Ajouter un utilisateur
 
 - if publisher.users_count.zero?
   .card.mb-6
@@ -85,16 +94,25 @@ h2.subheader
         th Administrateur
 
     tbody
-      - publisher.users.each do |user|
+      - publisher.users.kept.order(:created_at).each do |user|
         tr.datatable__row
           td.datatable__row-actions
-            a.icon-button(
-              href=edit_user_path(user, form_back: current_path)
-              aria-label="Modifier cet utilisateur"
-              data-turbo-frame="modal"
-            )
-              = svg_icon("pencil-alt-icon", "Modifier cet utilisateur")
-              span.tooltip Modifier cet utilisateur
+            .flex
+              a.icon-button(
+                href=edit_user_path(user, content: current_path, redirect: current_path)
+                aria-label="Modifier cet utilisateur"
+                data-turbo-frame="modal"
+              )
+                = svg_icon("pencil-alt-icon", "Modifier cet utilisateur")
+                span.tooltip Modifier cet utilisateur
+
+              a.icon-button(
+                aria-label="Supprimer cet utilisateur"
+                data-turbo-frame="modal"
+                href=remove_user_path(user, content: current_path, redirect: current_path)
+              )
+                = svg_icon("trash-icon", "Supprimer cet utilisateur")
+                span.tooltip Supprimer cet utilisateur
 
           td
             a(

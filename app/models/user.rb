@@ -33,10 +33,12 @@
 #  updated_at             :datetime         not null
 #  invited_at             :datetime
 #  services_count         :integer          default(0), not null
+#  discarded_at           :datetime
 #
 # Indexes
 #
 #  index_users_on_confirmation_token    (confirmation_token) UNIQUE
+#  index_users_on_discarded_at          (discarded_at)
 #  index_users_on_email                 (email) UNIQUE
 #  index_users_on_inviter_id            (inviter_id)
 #  index_users_on_organization          (organization_type,organization_id)
@@ -114,6 +116,21 @@ class User < ApplicationRecord
     else
       where(attribute => value)
     end
+  }
+
+  scope :order_by_param, lambda { |input|
+    advanced_order(
+      input,
+      name:         ->(direction) { unaccent_order(:first_name, direction).unaccent_order(:last_name, direction) },
+      organisation: lambda { |direction|
+        joins(<<~SQL.squish)
+          LEFT JOIN publishers     ON users.organization_type = 'Publisher'    AND users.organization_id = publishers.id
+          LEFT JOIN collectivities ON users.organization_type = 'Collectivity' AND users.organization_id = collectivities.id
+          LEFT JOIN ddfips         ON users.organization_type = 'DDFIP'        AND users.organization_id = ddfips.id
+        SQL
+        .unaccent_order("COALESCE(publishers.name, collectivities.name, ddfips.name)", direction)
+      }
+    )
   }
 
   scope :order_by_score, lambda { |input|

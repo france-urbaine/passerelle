@@ -22,8 +22,8 @@ Rails.application.routes.draw do
   resources :ddfips,         concerns: %i[removable undiscardable]
   resources :publishers,     concerns: %i[removable undiscardable], path: "/editeurs"
   resources :collectivities, concerns: %i[removable undiscardable], path: "/collectivites"
-  resources :users,          path: "/utilisateurs"
   resources :services,       concerns: %i[removable undiscardable], path: "/guichets"
+  resources :users,          concerns: %i[removable undiscardable], path: "/utilisateurs"
 
   resources :communes,     only: %i[index show edit update]
   resources :epcis,        only: %i[index show edit update]
