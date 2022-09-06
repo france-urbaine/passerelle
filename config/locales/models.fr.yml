@@ -54,6 +54,7 @@ fr:
         email:                Adresse mail
         organization_admin:   Administrateur de l'organisation
         super_admin:          Administrateur de la plateforme FiscaHub
+        service_ids:          Guichets
 
       commune:
         name:             Nom de la commune

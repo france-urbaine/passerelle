@@ -11,7 +11,7 @@
         .dialog__header-toolbar
           = dialog.close_button href: @content_location
 
-      .dialog__content
+      .dialog__content( data-controller="user-form" data-user-form-services-url-value=user_services_path(user_id: user.id) )
         = hidden_param_input(:redirect)
 
         = form.block :organization, first: true, autocomplete: organizations_path do
@@ -25,12 +25,22 @@
             html_options = {
               value:        organization_name,
               placeholder:  "Commnencez à taper pour sélectionner des organisations",
-              data:         { autocomplete_target: "input" }
+              data:         {
+                autocomplete_target: "input"
+              }
+            }
+
+            hidden_html_options = {
+              value:        organization_data,
+              data:         {
+                autocomplete_target: "hidden",
+                action:              "user-form#updateServices"
+              }
             }
 
           = form.label :organization
           = form.search_field :organization, **html_options
-          = form.hidden_field :organization_data, data: { autocomplete_target: "hidden" }, value: organization_data
+          = form.hidden_field :organization_data, **hidden_html_options
 
         = noscript do
           = form.block :organization_type, first: true do
@@ -56,6 +66,22 @@
         = form.block :email do
           = form.label :email
           = form.email_field :email
+
+
+        ruby:
+          services_block_options = { data: { user_form_target: "servicesFormBlock" } }
+          services_frame_options = { data: { user_form_target: "servicesCheckboxesFrame" } }
+
+          if user.organization.is_a?(DDFIP)
+            services_frame_options[:src] = user_services_path(user_id: user.id, ddfip_id: user.organization_id)
+          else
+            services_block_options[:class] = "hidden"
+          end
+
+        = form.block :service_ids, **services_block_options do
+          = form.label :service_ids
+          .checkboxes-collection
+            = turbo_frame_tag :user_services_checkboxes, **services_frame_options
 
         = form.block :organization_admin do
           = form.check_box :organization_admin

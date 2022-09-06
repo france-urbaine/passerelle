@@ -4,23 +4,26 @@
 
 import { application } from "./application"
 
-import AutocompleteController from "./autocomplete_controller.js"
+import AutocompleteController from "./components/autocomplete_controller"
 application.register("autocomplete", AutocompleteController)
 
-import DialogController from "./dialog_controller.js"
+import DialogController from "./components/dialog_controller"
 application.register("dialog", DialogController)
 
-import DropdownController from "./dropdown_controller.js"
+import DropdownController from "./components/dropdown_controller"
 application.register("dropdown", DropdownController)
 
-import NoscriptController from "./noscript_controller.js"
+import NoscriptController from "./components/noscript_controller"
 application.register("noscript", NoscriptController)
 
-import NotificationController from "./notification_controller.js"
+import NotificationController from "./components/notification_controller"
 application.register("notification", NotificationController)
 
-import SelectionController from "./selection_controller.js"
+import SelectionController from "./components/selection_controller"
 application.register("selection", SelectionController)
 
-import SelectionRowController from "./selection_row_controller.js"
+import SelectionRowController from "./components/selection_row_controller"
 application.register("selection-row", SelectionRowController)
+
+import UserFormController from "./forms/user_form_controller"
+application.register("user-form", UserFormController)

@@ -1,0 +1,16 @@
+@layer components {
+  .checkboxes-collection {
+    @apply py-2 px-3 rounded-md border;
+
+    @apply bg-white border-gray-300;
+    @apply dark:bg-black dark:border-gray-700;
+  }
+
+  .checkboxes-collection__checkbox {
+    display: block;
+
+    &:last-child label {
+      margin: 0;
+    }
+  }
+}

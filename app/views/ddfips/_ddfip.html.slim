@@ -156,9 +156,10 @@ h2.subheader
         th Utilisateurs
         th Adresse mail
         th Administrateur
+        th Guichets
 
     tbody
-      - ddfip.users.kept.order(:created_at).each do |user|
+      - ddfip.users.kept.preload(:services).order(:created_at).each do |user|
         tr.datatable__row
           td.datatable__row-actions
             .flex
@@ -190,6 +191,19 @@ h2.subheader
               = svg_icon("check-badge-icon", "Administrateur", class: "h-6 w-6")
             - else
               = " "
+
+          td
+            - services = user.services.select { |service| service.kept? && service.ddfip_id == ddfip.id }
+            - services.each.with_index do |service, index|
+              a(
+                data-turbo-frame="_top"
+                href=service_path(service)
+              )= service.name
+
+              - if services[index + 2]
+                = ", "
+              - elsif services[index + 1]
+                = " et "
 
 h2.subheader
   = svg_icon("bookmark", "Nouvelle section")

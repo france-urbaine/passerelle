@@ -20,6 +20,7 @@
 @import "./components/form_block";
 @import "./components/autocomplete";
 @import "./components/search";
+@import "./components/checkboxes_collection";
 
 /* Layouts */
 @import "./components/sidebar";

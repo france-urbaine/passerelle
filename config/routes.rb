@@ -34,5 +34,7 @@ Rails.application.routes.draw do
   resources :territories,   only: %i[index],       path: "/territoires"
   resource  :territories,   only: %i[edit update], path: "/territoires"
 
+  resources :user_services, only: %i[index]
+
   root to: redirect("/editeurs")
 end
