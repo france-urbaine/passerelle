@@ -25,7 +25,7 @@ class PublishersController < ApplicationController
     @publisher = Publisher.new(publisher_params)
 
     if @publisher.save
-      @location = safe_location_param(:redirect, publishers_path)
+      @location = publisher_path(@publisher)
       @notice   = translate(".success")
 
       respond_to do |format|

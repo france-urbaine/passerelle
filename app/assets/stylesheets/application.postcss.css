@@ -35,3 +35,4 @@
 /* Data display */
 @import "./components/datatable";
 @import "./components/description_list";
+@import "./components/typography";

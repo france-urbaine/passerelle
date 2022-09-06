@@ -24,7 +24,7 @@ table.datatable
         | EPCI
         = order_column(:epci)
 
-      th.w-48.text-right Collectivité
+      th.w-48.text-right Collectivités
 
   tbody
     - communes.includes(:departement, :epci).each do |commune|

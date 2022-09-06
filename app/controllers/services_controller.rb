@@ -25,7 +25,7 @@ class ServicesController < ApplicationController
     @service = Service.new(service_params)
 
     if @service.save
-      @location = safe_location_param(:redirect, services_path)
+      @location = service_path(@service)
       @notice   = translate(".success")
 
       respond_to do |format|

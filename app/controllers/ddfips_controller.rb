@@ -35,7 +35,7 @@ class DdfipsController < ApplicationController
     @ddfip = DDFIP.new(ddfip_params)
 
     if @ddfip.save
-      @location = safe_location_param(:redirect, ddfips_path)
+      @location = ddfip_path(@ddfip)
       @notice   = translate(".success")
 
       respond_to do |format|

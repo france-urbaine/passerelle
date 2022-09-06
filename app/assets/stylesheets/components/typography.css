@@ -1,0 +1,10 @@
+@layer components {
+  .text-disabled {
+    @apply italic text-gray-500;
+  }
+
+  .small-icon {
+    display: inline-block;
+    @apply h-6 w-6;
+  }
+}

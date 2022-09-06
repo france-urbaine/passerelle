@@ -67,15 +67,22 @@ h2.subheader
 
     .description-list__row
       dt Adresse mail de contact
-      dd= mail_to(user.email) if user.email?
+      dd
+        - if user.confirmed?
+          = mail_to user.email
+        - else
+          .text-disabled( title="Cet utilisateur n'a pas encore validé son inscription" )
+            = svg_icon("exclamation-triangle", class: "small-icon mr-2")
+            = user.email
+            span.tooltip Cet utilisateur n'a pas encore validé son inscription
 
     .description-list__row
       dt Administrateur de l'organisation
-      dd= svg_icon("check-badge-icon", "Administrateur", class: "h-6 w-6") if user.organization_admin?
+      dd= svg_icon("check-badge-icon", "Administrateur", class: "small-icon") if user.organization_admin?
 
     .description-list__row
       dt Administrateur de FiscaHub
-      dd= svg_icon("check-badge-icon", "Administrateur", class: "h-6 w-6") if user.super_admin?
+      dd= svg_icon("check-badge-icon", "Administrateur", class: "small-icon") if user.super_admin?
 
 h2.subheader
   = svg_icon("bookmark", "Nouvelle section")

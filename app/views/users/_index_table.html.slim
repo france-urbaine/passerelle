@@ -64,9 +64,18 @@ table.datatable
           a(
             data-turbo-frame="_top"
             href=user_path(user, current_index_back_params)
-          )= "#{user.first_name} #{user.last_name}".strip
+          )
+            = "#{user.first_name} #{user.last_name}".strip
 
-        td= mail_to user.email
+        td
+          - if user.confirmed?
+            = mail_to user.email
+          - else
+            .text-disabled( title="Cet utilisateur n'a pas encore validé son inscription" )
+              = svg_icon("exclamation-triangle", class: "small-icon mr-2")
+              = user.email
+              span.tooltip Cet utilisateur n'a pas encore validé son inscription
+
         td
           - if user.organization
             - if user.organization.discarded?
@@ -79,13 +88,13 @@ table.datatable
 
         td
           - if user.organization_admin?
-            = svg_icon("check-badge-icon", "Administrateur", class: "h-6 w-6")
+            = svg_icon("check-badge-icon", "Administrateur de l'organisation", class: "small-icon")
           - else
             = " "
 
         td
           - if user.super_admin?
-            = svg_icon("check-badge-icon", "Super Administrateur", class: "h-6 w-6")
+            = svg_icon("check-badge-icon", "Administrateur de FiscaHub", class: "small-icon")
           - else
             = " "
 

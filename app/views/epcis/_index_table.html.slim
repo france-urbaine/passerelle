@@ -21,7 +21,7 @@ table.datatable
         = order_column(:departement)
 
       th.w-48.text-right Communes
-      th.w-48.text-right Collectivité
+      th.w-48.text-right Collectivités
 
   tbody
     - @epcis.preload(:departement).each do |epci|
