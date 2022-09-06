@@ -111,7 +111,7 @@ h2.subheader
         tr.datatable__row
           td.datatable__row-actions
             a.icon-button(
-              href=edit_user_path(user, form_back: current_path)
+              href=edit_user_path(user, content: current_path, redirect: current_path)
               aria-label="Modifier cet utilisateur"
               data-turbo-frame="modal"
             )

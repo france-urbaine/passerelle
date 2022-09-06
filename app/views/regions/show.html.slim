@@ -1,5 +1,5 @@
 main.content
-  = turbo_frame_tag :content do
+  = turbo_frame_tag :content, target: "_top", data: { turbo_action: "advance" } do
     = render @region
 
-= turbo_frame_tag :modal
+= turbo_frame_tag :modal, target: "_top"

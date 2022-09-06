@@ -49,7 +49,7 @@ table.datatable
           a.icon-button(
             aria-label="Modifier cette commune"
             data-turbo-frame="modal"
-            href=edit_commune_path(commune, form_back: current_path)
+            href=edit_commune_path(commune, content: current_path, redirect: current_path)
           )
             = svg_icon("pencil-alt-icon", "Modifier cette commune")
             span.tooltip Modifier cette commune
@@ -86,3 +86,6 @@ table.datatable
           td( colspan="2" )
 
         td.text-right= number_with_delimiter(commune.collectivities_count) if commune.collectivities_count.positive?
+
+  - if communes.empty?
+    caption.datatable__empty-caption Aucune commune disponible.

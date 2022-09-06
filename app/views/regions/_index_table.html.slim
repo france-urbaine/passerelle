@@ -43,7 +43,7 @@ table.datatable
 
         td.datatable__row-actions
           a.icon-button(
-            href=edit_region_path(region, form_back: current_path)
+            href=edit_region_path(region, content: current_path, redirect: current_path)
             aria-label="Modifier cette région"
             data-turbo-frame="modal"
           )
@@ -63,3 +63,6 @@ table.datatable
         td.text-right= number_with_delimiter(region.departements_count)    if region.departements_count.positive?
         td.text-right= number_with_delimiter(region.ddfips_count)          if region.ddfips_count.positive?
         td.text-right= number_with_delimiter(region.collectivities_count)  if region.collectivities_count.positive?
+
+  - if regions.empty?
+    caption.datatable__empty-caption Aucune région disponible.

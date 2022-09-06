@@ -11,10 +11,6 @@ module FormHelper
     end
   end
 
-  def form_back_param_input
-    hidden_param_input(:form_back)
-  end
-
   def hidden_param_input(key, &)
     return unless params.key?(key)
 

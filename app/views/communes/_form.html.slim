@@ -1,15 +1,15 @@
 = dialog_component do |dialog|
-  = turbo_frame_tag :modal_form do
+  = turbo_frame_tag :modal_form, target: "_top" do
     = form_with(model: commune) do |form|
       .dialog__header
         h1#dialog-title.dialog__title
           | Modification de la commune
 
         .dialog__header-toolbar
-          = dialog.close_button href: params.fetch(:form_back, communes_path)
+          = dialog.close_button href: @content_location
 
       .dialog__content
-        = form_back_param_input
+        = hidden_param_input(:redirect)
 
         = form.block :name, first: true do
           = form.label :name
@@ -59,4 +59,4 @@
 
       .dialog__actions
         button.button.button--primary( type="submit" ) Enregistrer
-        = dialog.cancel_button "Annuler", href: params.fetch(:form_back, communes_path)
+        = dialog.cancel_button "Annuler", href: @content_location

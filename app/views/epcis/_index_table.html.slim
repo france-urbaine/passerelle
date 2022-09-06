@@ -44,7 +44,7 @@ table.datatable
 
         td.datatable__row-actions
           a.icon-button(
-            href=edit_epci_path(epci, form_back: current_path)
+            href=edit_epci_path(epci, content: current_path, redirect: current_path)
             aria-label="Modifier cet EPCI"
             data-turbo-frame="modal"
           )
@@ -72,3 +72,6 @@ table.datatable
 
         td.text-right= number_with_delimiter(epci.communes_count)       if epci.communes_count.positive?
         td.text-right= number_with_delimiter(epci.collectivities_count) if epci.collectivities_count.positive?
+
+  - if epcis.empty?
+    caption.datatable__empty-caption Aucun EPCI disponible.

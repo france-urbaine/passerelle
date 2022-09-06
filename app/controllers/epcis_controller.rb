@@ -22,16 +22,19 @@ class EpcisController < ApplicationController
   end
 
   def show; end
-  def edit; end
+
+  def edit
+    @content_location = safe_location_param(:content, epci_path(@epci))
+  end
 
   def update
     if @epci.update(epci_params)
+      @location = safe_location_param(:redirect, epcis_path)
       @notice   = translate(".success")
-      @location = params.fetch(:form_back, epcis_path)
 
       respond_to do |format|
-        format.turbo_stream
-        format.html { redirect_to @location, notice: @notice }
+        format.turbo_stream { redirect_to @location, notice: @notice }
+        format.html         { redirect_to @location, notice: @notice }
       end
     else
       render :edit, status: :unprocessable_entity

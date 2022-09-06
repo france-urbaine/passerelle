@@ -214,7 +214,7 @@ h2.subheader
         tr.datatable__row
           td.datatable__row-actions
             a.icon-button(
-              href=edit_collectivity_path(collectivity, form_back: current_path)
+              href=edit_collectivity_path(collectivity, content: current_path, redirect: current_path)
               aria-label="Modifier cette collectivité"
               data-turbo-frame="modal"
             )

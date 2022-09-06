@@ -22,16 +22,19 @@ class RegionsController < ApplicationController
   end
 
   def show; end
-  def edit; end
+
+  def edit
+    @content_location = safe_location_param(:content, region_path(@region))
+  end
 
   def update
     if @region.update(region_params)
+      @location = safe_location_param(:redirect, regions_path)
       @notice   = translate(".success")
-      @location = params.fetch(:form_back, regions_path)
 
       respond_to do |format|
-        format.turbo_stream
-        format.html { redirect_to @location, notice: @notice }
+        format.turbo_stream { redirect_to @location, notice: @notice }
+        format.html         { redirect_to @location, notice: @notice }
       end
     else
       render :edit, status: :unprocessable_entity

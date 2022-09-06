@@ -1,3 +1,5 @@
+= render "index_breadcrumbs", epcis: epcis, pagy: pagy
+
 div( data-controller="selection" )
   = turbo_frame_tag :index_header, data: { selection_target: "frame" } do
     = render "index_header", epcis: epcis, pagy: pagy

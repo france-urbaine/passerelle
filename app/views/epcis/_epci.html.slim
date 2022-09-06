@@ -27,7 +27,7 @@
     .header-bar__action
       a.button(
         data-turbo-frame="modal"
-        href=edit_epci_path(epci, form_back: current_path)
+        href=edit_epci_path(epci, content: current_path, redirect: current_path)
       )
         = svg_icon("pencil-alt-icon")
         | Modifier
@@ -100,7 +100,7 @@ h2.subheader
         tr.datatable__row
           td.datatable__row-actions
             a.icon-button(
-              href=edit_collectivity_path(collectivity, form_back: current_path)
+              href=edit_collectivity_path(collectivity, content: current_path, redirect: current_path)
               aria-label="Modifier cette collectivité"
               data-turbo-frame="modal"
             )

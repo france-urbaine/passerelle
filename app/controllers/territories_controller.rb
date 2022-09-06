@@ -25,6 +25,8 @@ class TerritoriesController < ApplicationController
       communes_url: DEFAULT_COMMUNES_PATH,
       epcis_url:    DEFAULT_EPCIS_PATH
     )
+
+    @content_location = safe_location_param(:content, communes_path)
   end
 
   def update
@@ -33,12 +35,12 @@ class TerritoriesController < ApplicationController
     if @territories_update.valid?
       @territories_update.perform_later
 
+      @location = safe_location_param(:redirect, communes_path)
       @notice   = translate(".success")
-      @location = params.fetch(:form_back, communes_path)
 
       respond_to do |format|
-        format.turbo_stream
-        format.html { redirect_to @location, notice: @notice }
+        format.turbo_stream { redirect_to @location, notice: @notice }
+        format.html         { redirect_to @location, notice: @notice }
       end
     else
       render :edit, status: :unprocessable_entity
