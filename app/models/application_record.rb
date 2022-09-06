@@ -19,4 +19,6 @@ class ApplicationRecord < ActiveRecord::Base
   CODE_REGION_REGEXP      = /\A[0-9]{2}\Z/
   CODE_DEPARTEMENT_REGEXP = /\A(2[AB]|[0-9]{2}|9[0-9]{2})\Z/
   CODE_INSEE_REGEXP       = /\A(2[AB]|[0-9]{2})[0-9]{3}\Z/
+
+  scope :discarded_over, ->(duration) { discarded.where("discarded_at < ?", duration.ago) }
 end

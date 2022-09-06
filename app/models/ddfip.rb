@@ -31,7 +31,7 @@ class DDFIP < ApplicationRecord
 
   has_many :users, as: :organization, dependent: :delete_all
 
-  has_many :services, dependent: :destroy_async
+  has_many :services, dependent: :destroy
 
   # Validations
   # ----------------------------------------------------------------------------

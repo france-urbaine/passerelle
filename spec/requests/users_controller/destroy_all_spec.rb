@@ -18,6 +18,8 @@ RSpec.describe "UsersController#destroy_all", type: :request do
         request
         user.reload
       }.to change(user, :discarded_at).from(nil)
+       .and have_enqueued_job(DeleteDiscardedUsersJob).once
+       .and have_enqueued_job(DeleteDiscardedUsersJob).once.with(user.id)
     end
   end
 
@@ -33,6 +35,7 @@ RSpec.describe "UsersController#destroy_all", type: :request do
         request
         user.reload
       }.to maintain(user, :discarded_at).from(nil)
+       .and not_have_enqueued_job(DeleteDiscardedUsersJob)
     end
   end
 end

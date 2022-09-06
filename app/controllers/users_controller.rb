@@ -54,6 +54,7 @@ class UsersController < ApplicationController
 
   def destroy
     @user.discard
+    DeleteDiscardedUsersJob.set(wait: 5.minutes).perform_later(@user.id)
 
     @location = safe_location_param(:redirect, users_path)
     @notice   = translate(".success").merge(
@@ -84,7 +85,10 @@ class UsersController < ApplicationController
     @users = User.kept.strict_loading
     @users = search(@users)
     @users = select(@users)
+    ids    = @users.ids
+
     @users.update_all(discarded_at: Time.current)
+    DeleteDiscardedUsersJob.set(wait: 5.minutes).perform_later(*ids)
 
     @location   = users_path if params[:ids] == "all"
     @location ||= users_path(**index_params)
