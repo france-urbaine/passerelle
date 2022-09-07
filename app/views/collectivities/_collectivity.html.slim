@@ -90,18 +90,19 @@ h2.subheader
       dt Numéro de téléphone
       dd= phone_to(collectivity.contact_phone) if collectivity.contact_phone?
 
-.flex.justify-between
+.subheader-bar
   h2.subheader
     = svg_icon("bookmark-icon", "Nouvelle section")
     | Utilisateurs de l'organisation
 
-  div
-    a.button.button--primary(
-      data-turbo-frame="modal"
-      href=new_user_path(content: current_path, redirect: current_path, user: { organization_type: "Collectivity", organization_id: collectivity.id })
-    )
-      = svg_icon("plus-icon")
-      | Inviter un utilisateur
+  .subheader-bar__actions
+    .subheader-bar__action
+      a.button(
+        data-turbo-frame="modal"
+        href=new_user_path(content: current_path, redirect: current_path, user: { organization_type: "Collectivity", organization_id: collectivity.id })
+      )
+        = svg_icon("plus-icon")
+        | Inviter un utilisateur
 
 - if collectivity.users_count.zero?
   .card.mb-6

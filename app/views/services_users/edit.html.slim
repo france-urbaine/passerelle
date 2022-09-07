@@ -21,7 +21,7 @@ main.content
             | ou inviter un nouvel utilisateur.
 
           = form.block :user_ids do
-            = form.collection_check_boxes :user_ids, @ddfip_users.order(:created_at), :id, :name
+            = form.enhanced_check_boxes_collection :user_ids, @ddfip_users.order(:created_at), :id, :name
 
         .dialog__actions.flex
           button.button.button--primary( type="submit" ) Enregistrer

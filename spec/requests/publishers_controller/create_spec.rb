@@ -17,7 +17,7 @@ RSpec.describe "PublishersController#create", type: :request do
 
   context "when requesting HTML with valid parameters" do
     it { expect(response).to have_http_status(:found) }
-    it { expect(response).to redirect_to("/editeurs") }
+    it { expect(response).to redirect_to(%r{^/editeurs/.{36}$}) }
 
     it "is expected to create a record" do
       expect { request }.to change(Publisher, :count).by(1)

@@ -67,18 +67,19 @@ h2.subheader
       dt Collectivités enregistrées
       dd= count(publisher.collectivities_count, "collectivité") if publisher.collectivities_count.positive?
 
-.flex.justify-between
+.subheader-bar
   h2.subheader
     = svg_icon("bookmark-icon", "Nouvelle section")
     | Utilisateurs de l'organisation
 
-  div
-    a.button.button--primary(
-      data-turbo-frame="modal"
-      href=new_user_path(content: current_path, redirect: current_path, user: { organization_type: "Publisher", organization_id: publisher.id })
-    )
-      = svg_icon("plus-icon")
-      | Inviter un utilisateur
+  .subheader-bar__actions
+    .subheader-bar__action
+      a.button(
+        data-turbo-frame="modal"
+        href=new_user_path(content: current_path, redirect: current_path, user: { organization_type: "Publisher", organization_id: publisher.id })
+      )
+        = svg_icon("plus-icon")
+        | Inviter un utilisateur
 
 - if publisher.users_count.zero?
   .card.mb-6
@@ -135,18 +136,19 @@ h2.subheader
             - else
               = " "
 
-.flex.justify-between
+.subheader-bar
   h2.subheader
     = svg_icon("bookmark-icon", "Nouvelle section")
     | Collectivités enregistrées
 
-  div
-    a.button.button--primary(
-      data-turbo-frame="modal"
-      href=new_collectivity_path(content: current_path, redirect: current_path, collectivity: { publisher_id: publisher.id })
-    )
-      = svg_icon("plus-icon")
-      | Ajouter une collectivité
+  .subheader-bar__actions
+    .subheader-bar__action
+      a.button(
+        data-turbo-frame="modal"
+        href=new_collectivity_path(content: current_path, redirect: current_path, collectivity: { publisher_id: publisher.id })
+      )
+        = svg_icon("plus-icon")
+        | Ajouter une collectivité
 
 - if publisher.collectivities_count.zero?
   .card.mb-6

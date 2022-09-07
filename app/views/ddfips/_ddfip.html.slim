@@ -72,18 +72,19 @@ h2.subheader
       dt Collectivités enregistrées
       dd= count(ddfip.collectivities_count, "collectivité") if ddfip.collectivities_count.positive?
 
-.flex.justify-between
+.subheader-bar
   h2.subheader
     = svg_icon("bookmark-icon", "Nouvelle section")
     | Guichets de la DDFIP
 
-  div
-    a.button.button--primary(
-      data-turbo-frame="modal"
-      href=new_service_path(content: current_path, redirect: current_path, service: { ddfip_id: ddfip.id })
-    )
-      = svg_icon("plus-icon")
-      | Ajouter un guichet
+  .subheader-bar__actions
+    .subheader-bar__action
+      a.button(
+        data-turbo-frame="modal"
+        href=new_service_path(content: current_path, redirect: current_path, service: { ddfip_id: ddfip.id })
+      )
+        = svg_icon("plus-icon")
+        | Ajouter un guichet
 
 - if ddfip.services.none?
   .card.mb-6
@@ -130,18 +131,19 @@ h2.subheader
           td.text-right= number_with_delimiter(service.users_count)    if service.users_count.positive?
           td.text-right= number_with_delimiter(service.communes_count) if service.communes_count.positive?
 
-.flex.justify-between
+.subheader-bar
   h2.subheader
     = svg_icon("bookmark-icon", "Nouvelle section")
     | Utilisateurs de l'organisation
 
-  div
-    a.button.button--primary(
-      data-turbo-frame="modal"
-      href=new_user_path(content: current_path, redirect: current_path, user: { organization_type: "DDFIP", organization_id: ddfip.id })
-    )
-      = svg_icon("plus-icon")
-      | Inviter un utilisateur
+  .subheader-bar__actions
+    .subheader-bar__action
+      a.button(
+        data-turbo-frame="modal"
+        href=new_user_path(content: current_path, redirect: current_path, user: { organization_type: "DDFIP", organization_id: ddfip.id })
+      )
+        = svg_icon("plus-icon")
+        | Inviter un utilisateur
 
 - if ddfip.users_count.zero?
   .card.mb-6

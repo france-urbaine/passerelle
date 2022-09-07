@@ -9,6 +9,10 @@ module FormHelper
     def errors(method)
       @template.display_errors(@object, method)
     end
+
+    def enhanced_check_boxes_collection(method, collection, value_method, text_method, options = {}, html_options = {})
+      @template.enhanced_check_boxes_collection(@object_name, method, collection, value_method, text_method, objectify_options(options), @default_html_options.merge(html_options))
+    end
   end
 
   def hidden_param_input(key, &)
@@ -77,19 +81,7 @@ module FormHelper
     end
   end
 
-  def collection_check_boxes(*args, &)
-    tag.div class: "checkboxes-collection" do
-      super do |b|
-        tag.div class: "checkboxes-collection__checkbox" do
-          if block_given?
-            yield b
-          else
-            concat b.check_box
-            concat b.label
-            ""
-          end
-        end
-      end
-    end
+  def enhanced_check_boxes_collection(...)
+    render(CheckBoxesCollectionComponent.new(...))
   end
 end
