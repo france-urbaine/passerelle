@@ -34,6 +34,7 @@
 #  invited_at             :datetime
 #  services_count         :integer          default(0), not null
 #  discarded_at           :datetime
+#  name                   :string
 #
 # Indexes
 #
@@ -72,12 +73,20 @@ class User < ApplicationRecord
   validates :first_name, presence: true
   validates :organization_type, inclusion: { in: %w[Publisher Collectivity DDFIP] }
 
+  # Callbacks
+  # ----------------------------------------------------------------------------
+  before_save :generate_name
+
+  def generate_name
+    self.name = "#{first_name} #{last_name}".strip
+  end
+
   # Search
   # ----------------------------------------------------------------------------
   scope :search, lambda { |input|
     scopes = {
       first_name:        ->(value) { match(:first_name, value) },
-      last_name:         ->(value) { match(:first_name, value) },
+      last_name:         ->(value) { match(:last_name, value) },
       full_name:         ->(value) { search_by_full_name(value) },
       email:             ->(value) { search_with_email_attribute(:email, value) },
       unconfirmed_email: ->(value) { search_with_email_attribute(:unconfirmed_email, value) }
@@ -121,7 +130,7 @@ class User < ApplicationRecord
   scope :order_by_param, lambda { |input|
     advanced_order(
       input,
-      name:         ->(direction) { unaccent_order(:first_name, direction).unaccent_order(:last_name, direction) },
+      name:         ->(direction) { unaccent_order(:name, direction) },
       organisation: lambda { |direction|
         joins(<<~SQL.squish)
           LEFT JOIN publishers     ON users.organization_type = 'Publisher'    AND users.organization_id = publishers.id
@@ -134,7 +143,7 @@ class User < ApplicationRecord
   }
 
   scope :order_by_score, lambda { |input|
-    scored_order("CONCAT(users.first_name, ' ', users.last_name)", input)
+    scored_order(:name, input)
   }
 
   # Invitation process

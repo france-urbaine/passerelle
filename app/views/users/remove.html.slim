@@ -6,7 +6,7 @@ main.content
     = form_with(model: @user, method: :delete) do |form|
       .dialog__header
         h1#dialog-title.dialog__title
-          | Suppression de l'utilisateur : #{@user.first_name} #{@user.last_name}
+          | Suppression de l'utilisateur : #{@user.name}
 
       .dialog__content
         = hidden_param_input(:redirect)

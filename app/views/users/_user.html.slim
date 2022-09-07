@@ -20,7 +20,7 @@
 
     .breadcrumbs__separator="/"
     .breadcrumbs__path
-      h1= "#{user.first_name} #{user.last_name}".strip
+      h1= user.name
 
   .flex-auto
   .header-bar__actions
@@ -48,7 +48,7 @@
       | Cet utilisateur va être supprimé dans quelques minutes.
 
 h2.subheader
-  = svg_icon("bookmark", "Nouvelle section")
+  = svg_icon("bookmark-icon", "Nouvelle section")
   | Description
 
 .card.mb-6
@@ -65,6 +65,22 @@ h2.subheader
               href=polymorphic_path(user.organization)
             )= user.organization.name
 
+    - if user.organization.is_a?(DDFIP)
+      .description-list__row
+        dt Guichets
+        dd
+          - services = user.services.kept.where(ddfip: user.organization)
+          - services.each.with_index do |service, index|
+            a(
+              data-turbo-frame="_top"
+              href=service_path(service)
+            )= service.name
+
+            - if services[index + 2]
+              = ", "
+            - elsif services[index + 1]
+              = " et "
+
     .description-list__row
       dt Adresse mail de contact
       dd
@@ -72,7 +88,7 @@ h2.subheader
           = mail_to user.email
         - else
           .text-disabled( title="Cet utilisateur n'a pas encore validé son inscription" )
-            = svg_icon("exclamation-triangle", class: "small-icon mr-2")
+            = svg_icon("exclamation-triangle-icon", class: "small-icon mr-2")
             = user.email
             span.tooltip Cet utilisateur n'a pas encore validé son inscription
 
@@ -85,7 +101,7 @@ h2.subheader
       dd= svg_icon("check-badge-icon", "Administrateur", class: "small-icon") if user.super_admin?
 
 h2.subheader
-  = svg_icon("bookmark", "Nouvelle section")
+  = svg_icon("bookmark-icon", "Nouvelle section")
   | Informations de connexion
 
 .card.mb-6

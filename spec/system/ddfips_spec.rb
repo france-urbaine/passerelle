@@ -69,9 +69,8 @@ RSpec.describe "DDFIPs", type: :system, use_fixtures: true do
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=alert]", text: "Une nouvelle DDFIP a été ajoutée avec succés.")
 
-    expect(page).to have_selector("h1", text: "DDFIP")
-    expect(page).to have_selector("tr", text: "DDFIP de la Gironde")
-    expect(page).to have_current_path(ddfips_path)
+    expect(page).to have_selector("h1", text: "DDFIP de la Gironde")
+    expect(page).to have_current_path(ddfip_path(DDFIP.last))
   end
 
   it "updates a DDFIP from the index page" do

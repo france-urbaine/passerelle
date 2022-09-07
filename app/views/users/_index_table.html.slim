@@ -64,15 +64,14 @@ table.datatable
           a(
             data-turbo-frame="_top"
             href=user_path(user, current_index_back_params)
-          )
-            = "#{user.first_name} #{user.last_name}".strip
+          )= user.name
 
         td
           - if user.confirmed?
             = mail_to user.email
           - else
             .text-disabled( title="Cet utilisateur n'a pas encore validé son inscription" )
-              = svg_icon("exclamation-triangle", class: "small-icon mr-2")
+              = svg_icon("exclamation-triangle-icon", class: "small-icon mr-2")
               = user.email
               span.tooltip Cet utilisateur n'a pas encore validé son inscription
 

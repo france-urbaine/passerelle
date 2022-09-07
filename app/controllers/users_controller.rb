@@ -153,11 +153,22 @@ class UsersController < ApplicationController
 
   def user_params
     input = params.fetch(:user, {})
+    input = extract_organization_params(input)
+    input = extract_service_ids_params(input)
+
+    input.permit(
+      :organization_type, :organization_id,
+      :first_name, :last_name, :email,
+      :organization_admin, :super_admin,
+      service_ids: []
+    )
+  end
+
+  def extract_organization_params(input)
     input.delete(:organization)
 
     organization_data = input.delete(:organization_data)
     organization_name = input.delete(:organization_name)
-    service_ids       = input.delete(:service_ids)
 
     if organization_data.present?
       organization_data         = JSON.parse(organization_data)
@@ -174,20 +185,20 @@ class UsersController < ApplicationController
         end
     end
 
+    input
+  end
+
+  def extract_service_ids_params(input)
+    service_ids = input.delete(:service_ids)
+
     if service_ids.present? && input[:organization_type] == "DDFIP"
-      input[:service_ids] =
-        Service.kept
-          .where(id: service_ids)
-          .where(ddfip_id: input[:organization_id])
-          .pluck(:id)
+      input[:service_ids] = Service.kept
+                                   .where(id: service_ids)
+                                   .where(ddfip_id: input[:organization_id])
+                                   .pluck(:id)
     end
 
-    input.permit(
-      :organization_type, :organization_id,
-      :first_name, :last_name, :email,
-      :organization_admin, :super_admin,
-      service_ids: []
-    )
+    input
   end
 
   def index_params

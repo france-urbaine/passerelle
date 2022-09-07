@@ -33,7 +33,7 @@
         | Modifier
 
 h2.subheader
-  = svg_icon("bookmark", "Nouvelle section")
+  = svg_icon("bookmark-icon", "Nouvelle section")
   | Description
 
 .card.mb-6
@@ -78,7 +78,7 @@ h2.subheader
       dd= count(epci.collectivities_count, "collectivité") if epci.collectivities_count.positive?
 
 h2.subheader
-  = svg_icon("bookmark", "Nouvelle section")
+  = svg_icon("bookmark-icon", "Nouvelle section")
   | Collectivités enregistrées
 
 - if epci.collectivities_count.zero?

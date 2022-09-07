@@ -1,5 +1,2 @@
 = fields_for user do |form|
-  = form.collection_check_boxes :service_ids, services, :id, :name do |b|
-    .checkboxes-collection__checkbox
-      = b.check_box
-      = b.label
+  = form.collection_check_boxes :service_ids, services, :id, :name

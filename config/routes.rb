@@ -20,10 +20,13 @@ Rails.application.routes.draw do
   devise_for :user
 
   resources :ddfips,         concerns: %i[removable undiscardable]
+
+  resources :users,          concerns: %i[removable undiscardable], path: "/utilisateurs"
   resources :publishers,     concerns: %i[removable undiscardable], path: "/editeurs"
   resources :collectivities, concerns: %i[removable undiscardable], path: "/collectivites"
-  resources :services,       concerns: %i[removable undiscardable], path: "/guichets"
-  resources :users,          concerns: %i[removable undiscardable], path: "/utilisateurs"
+  resources :services,       concerns: %i[removable undiscardable], path: "/guichets" do
+    resource :users, controller: :services_users, only: %i[edit update], path: "/utilisateurs"
+  end
 
   resources :communes,     only: %i[index show edit update]
   resources :epcis,        only: %i[index show edit update]

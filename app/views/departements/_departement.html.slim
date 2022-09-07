@@ -33,7 +33,7 @@
         | Modifier
 
 h2.subheader
-  = svg_icon("bookmark", "Nouvelle section")
+  = svg_icon("bookmark-icon", "Nouvelle section")
   | Description
 
 .card.mb-6
@@ -87,7 +87,7 @@ h2.subheader
 
 .flex.justify-between
   h2.subheader
-    = svg_icon("bookmark", "Nouvelle section")
+    = svg_icon("bookmark-icon", "Nouvelle section")
     | DDFIP enregistrées
 
   div
@@ -143,7 +143,7 @@ h2.subheader
           td.text-right= number_with_delimiter(ddfip.users_count)          if ddfip.users_count.positive?
 
 h2.subheader
-  = svg_icon("bookmark", "Nouvelle section")
+  = svg_icon("bookmark-icon", "Nouvelle section")
   | Collectivités enregistrées
 
 - if departement.collectivities_count.zero?

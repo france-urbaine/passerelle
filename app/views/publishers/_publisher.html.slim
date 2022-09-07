@@ -50,7 +50,7 @@
       |  Il sera définitivement supprimé le #{localize(30.days.after(publisher.discarded_at.to_date))}.
 
 h2.subheader
-  = svg_icon("bookmark", "Nouvelle section")
+  = svg_icon("bookmark-icon", "Nouvelle section")
   | Description
 
 .card.mb-6
@@ -69,7 +69,7 @@ h2.subheader
 
 .flex.justify-between
   h2.subheader
-    = svg_icon("bookmark", "Nouvelle section")
+    = svg_icon("bookmark-icon", "Nouvelle section")
     | Utilisateurs de l'organisation
 
   div
@@ -118,14 +118,14 @@ h2.subheader
             a(
               data-turbo-frame="_top"
               href=user_path(user)
-            )= "#{user.first_name} #{user.last_name}"
+            )= user.name
 
           td
             - if user.confirmed?
               = mail_to user.email
             - else
               .text-disabled( title="Cet utilisateur n'a pas encore validé son inscription" )
-                = svg_icon("exclamation-triangle", class: "small-icon mr-2")
+                = svg_icon("exclamation-triangle-icon", class: "small-icon mr-2")
                 = user.email
                 span.tooltip Cet utilisateur n'a pas encore validé son inscription
 
@@ -137,7 +137,7 @@ h2.subheader
 
 .flex.justify-between
   h2.subheader
-    = svg_icon("bookmark", "Nouvelle section")
+    = svg_icon("bookmark-icon", "Nouvelle section")
     | Collectivités enregistrées
 
   div

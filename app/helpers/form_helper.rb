@@ -76,4 +76,20 @@ module FormHelper
       tag.ul class: "autocomplete__list", data: { autocomplete_target: "results" }
     end
   end
+
+  def collection_check_boxes(*args, &)
+    tag.div class: "checkboxes-collection" do
+      super do |b|
+        tag.div class: "checkboxes-collection__checkbox" do
+          if block_given?
+            yield b
+          else
+            concat b.check_box
+            concat b.label
+            ""
+          end
+        end
+      end
+    end
+  end
 end

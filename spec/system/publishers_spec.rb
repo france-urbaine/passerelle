@@ -54,9 +54,8 @@ RSpec.describe "Publishers", type: :system, use_fixtures: true do
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=alert]", text: "Un nouvel éditeur a été ajouté avec succés.")
 
-    expect(page).to have_selector("h1", text: "Editeurs")
-    expect(page).to have_selector("tr", text: "Mon Territoire")
-    expect(page).to have_current_path(publishers_path)
+    expect(page).to have_selector("h1", text: "Mon Territoire")
+    expect(page).to have_current_path(publisher_path(Publisher.last))
   end
 
   it "updates a publisher from the index page" do

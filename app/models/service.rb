@@ -44,7 +44,7 @@ class Service < ApplicationRecord
       input,
       name:             ->(value) { match(:name, value) },
       ddfip_name:       ->(value) { left_joins(:ddfip).merge(DDFIP.match(:name, value)) },
-      code_departement: ->(value) { left_joins(:ddfip).merge(DDFIP.where(code_departement: value)) },
+      code_departement: ->(value) { left_joins(:ddfip).merge(DDFIP.where(code_departement: value)) }
     )
   }
 

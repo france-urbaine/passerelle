@@ -57,9 +57,8 @@ RSpec.describe "Services", type: :system, use_fixtures: true do
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=alert]", text: "Un nouveau guichet a été ajouté avec succés.")
 
-    expect(page).to have_selector("h1", text: "Guichets")
-    expect(page).to have_selector("tr", text: "SIP de Pau")
-    expect(page).to have_current_path(services_path)
+    expect(page).to have_selector("h1", text: "SIP de Pau")
+    expect(page).to have_current_path(service_path(Service.last))
   end
 
   it "updates a service from the index page" do

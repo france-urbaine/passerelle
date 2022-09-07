@@ -1,0 +1,37 @@
+main.content
+  = turbo_frame_tag :content, target: "_top", data: { turbo_action: "advance" }, src: @content_location
+
+= turbo_frame_tag :modal do
+  = dialog_component do |dialog|
+    = turbo_frame_tag :modal_form, target: "_top" do
+      = form_with(model: @service, url: service_users_path(@service)) do |form|
+        .dialog__header
+          h1#dialog-title.dialog__title
+            | Gestion des utilisateurs du guichet
+
+          .dialog__header-toolbar
+            = dialog.close_button href: @content_location
+
+        .dialog__content
+          = hidden_param_input(:redirect)
+
+          p
+            | Sélectionnez parmi les utlisateurs de la DDFIP ceux qui ont accés à ce guichet
+            br
+            | ou inviter un nouvel utilisateur.
+
+          = form.block :user_ids do
+            = form.collection_check_boxes :user_ids, @ddfip_users.order(:created_at), :id, :name
+
+        .dialog__actions.flex
+          button.button.button--primary( type="submit" ) Enregistrer
+          = dialog.cancel_button "Annuler", href: @content_location
+
+          .grow
+
+          a.button(
+            data-turbo-frame="modal"
+            href=new_user_path(content: @content_location, redirect: params[:redirect], user: { organization_type: "DDFIP", organization_id: @service.ddfip_id, service_ids: [@service.id] })
+          ) Inviter un nouvel utilisateur
+
+

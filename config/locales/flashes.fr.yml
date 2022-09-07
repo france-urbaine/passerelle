@@ -108,6 +108,9 @@ fr:
         title:        "La suppression des guichets sélectionnés a été annulée."
         delay:        3000
 
+  services_users:
+    <<: *default
+
   collectivities:
     <<: *default
     create:
