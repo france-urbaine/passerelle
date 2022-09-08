@@ -18,7 +18,7 @@ RSpec.describe "DdfipsController#create", type: :request do
 
   context "when requesting HTML with valid parameters" do
     it { expect(response).to have_http_status(:found) }
-    it { expect(response).to redirect_to(%r{^/ddfips/.{36}$}) }
+    it { expect(response).to redirect_to(%r{/ddfips/.{36}$}) }
 
     it "is expected to create a record" do
       expect { request }.to change(DDFIP, :count).by(1)

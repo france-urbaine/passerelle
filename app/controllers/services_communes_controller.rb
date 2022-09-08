@@ -1,16 +1,23 @@
 # frozen_string_literal: true
 
-class ServicesUsersController < ApplicationController
+class ServicesCommunesController < ApplicationController
   respond_to :html
   before_action :set_service
 
   def edit
-    @ddfip_users      = ddfip_users
-    @content_location = safe_location_param(:content, service_path(@service))
+    @services_communes_form = ServicesCommunesForm.new(@service)
+    @content_location       = safe_location_param(:content, service_path(@service))
   end
 
   def update
-    if @service.update(service_params)
+    @services_communes_form = ServicesCommunesForm.new(@service)
+    codes_insee_params = params
+        .fetch(:services_communes_form, {})
+        .slice(:codes_insee)
+        .permit(codes_insee: [])
+        .fetch(:codes_insee, [])
+
+    if @services_communes_form.update(codes_insee_params)
       @location = safe_location_param(:redirect, service_path(@service))
       @notice   = translate(".success")
 
@@ -27,21 +34,5 @@ class ServicesUsersController < ApplicationController
 
   def set_service
     @service = Service.find(params[:service_id])
-  end
-
-  def ddfip_users
-    @service.ddfip.users.kept
-  end
-
-  def service_params
-    input    = params.fetch(:service, {})
-    user_ids = extract_user_ids(input)
-
-    { user_ids: user_ids }
-  end
-
-  def extract_user_ids(input)
-    users_ids = input.delete(:users_ids)
-    ddfip_users.where(id: users_ids).pluck(:id)
   end
 end

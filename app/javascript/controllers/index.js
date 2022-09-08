@@ -22,6 +22,9 @@ application.register("notification", NotificationController)
 import SelectionController from "./components/selection_controller"
 application.register("selection", SelectionController)
 
+import SelectionGroupController from "./components/selection_group_controller"
+application.register("selection-group", SelectionGroupController)
+
 import SelectionRowController from "./components/selection_row_controller"
 application.register("selection-row", SelectionRowController)
 

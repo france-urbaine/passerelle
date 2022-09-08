@@ -111,6 +111,9 @@ fr:
   services_users:
     <<: *default
 
+  services_communes:
+    <<: *default
+
   collectivities:
     <<: *default
     create:

@@ -169,6 +169,7 @@ h2.subheader
     .subheader-bar__action
       a.button(
         data-turbo-frame="modal"
+        href=edit_service_communes_path(service, content: current_path, redirect: current_path)
       )
         = svg_icon("squares-plus-icon")
         | Gérer les communes
@@ -187,3 +188,34 @@ h2.subheader
         th.w-48.text-right Collectivités
 
     tbody
+      - service.communes.preload(:epci).each do |commune|
+        tr.datatable__row
+          td.datatable__row-actions
+            a.icon-button(
+              aria-label="Modifier cette commune"
+              data-turbo-frame="modal"
+              href=edit_commune_path(commune, content: current_path, redirect: current_path)
+            )
+              = svg_icon("pencil-alt-icon", "Modifier cette commune")
+              span.tooltip Modifier cette commune
+
+          td.w-px= commune.code_insee
+          td( id=dom_id(commune, :title) )
+            a(
+              data-turbo-frame="_top"
+              href=commune_path(commune, current_index_back_params)
+            )= commune.name
+
+          - if commune.siren_epci?
+            td.w-px= display_siren(commune.siren_epci)
+            td
+              - if commune.epci
+                a(
+                  data-turbo-frame="_top"
+                  href=epci_path(commune.epci)
+                )= commune.epci.name
+
+          - else
+            td( colspan="2" )
+
+          td.text-right= number_with_delimiter(commune.collectivities_count) if commune.collectivities_count.positive?

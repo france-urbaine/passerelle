@@ -1,6 +1,8 @@
 @layer components {
   .checkboxes-collection {
-    @apply py-2 px-3 rounded-md border;
+    overflow: auto;
+
+    @apply py-2 px-3 rounded-md border max-h-96;
 
     @apply bg-white border-gray-300;
     @apply dark:bg-black dark:border-gray-700;

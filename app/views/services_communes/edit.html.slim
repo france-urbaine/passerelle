@@ -1,0 +1,52 @@
+main.content
+  = turbo_frame_tag :content, target: "_top", data: { turbo_action: "advance" }, src: @content_location
+
+= turbo_frame_tag :modal do
+  = dialog_component do |dialog|
+    = turbo_frame_tag :modal_form, target: "_top" do
+      = form_with(model: @services_communes_form, url: service_communes_path(@service), method: :patch) do |form|
+        .dialog__header
+          h1#dialog-title.dialog__title
+            | Gestion des communes gérées par le guichet
+
+          .dialog__header-toolbar
+            = dialog.close_button href: @content_location
+
+        .dialog__content
+          = hidden_param_input(:redirect)
+
+          p
+            | Sélectionnez les EPCI et/ou communes dont les dossiers seront traités par ce guichet.
+
+          .form-block.form-block--margin
+            .checkboxes-collection( data-controller="selection selection-group" )
+              .checkboxes-collection__checkbox
+                input(
+                  id="service-communes-check-all"
+                  type="checkbox"
+                  data-selection-target="checkall"
+                )
+
+                label( for="service-communes-check-all" )
+                  | Tout le département
+
+              .text-disabled.my-4 Par EPCI :
+
+              = form.collection_check_boxes(:epci_sirens, @services_communes_form.departement_epcis.order(:name), :siren, :name) do |b|
+                .checkboxes-collection__checkbox
+                  = b.check_box data: { selection_target: "checkbox", selection_group_target: "parent", selection_group_target_value: b.object.siren }
+                  = b.label
+
+              .text-disabled.my-4 Par commune :
+
+              = form.collection_check_boxes(:codes_insee, @services_communes_form.departement_communes.order(:code_insee), :code_insee, :name) do |b|
+                .checkboxes-collection__checkbox
+                  - if b.object.siren_epci
+                    = b.check_box data: { selection_target: "checkbox", selection_group_target: "child", selection_group_target_value: b.object.siren_epci  }
+                  - else
+                    = b.check_box data: { selection_target: "checkbox" }
+                  = b.label
+
+        .dialog__actions.flex
+          button.button.button--primary( type="submit" ) Enregistrer
+          = dialog.cancel_button "Annuler", href: @content_location

@@ -30,4 +30,12 @@ RSpec.describe DdfipsController, type: :routing do
 
   it { expect(get:    "/guichets/9c6c00c4-0784-4ef8-8978-b1e0246882a7/utilisateurs/new").not_to be_routable }
   it { expect(get:    "/guichets/9c6c00c4-0784-4ef8-8978-b1e0246882a7/utilisateurs/edit").to    route_to("services_users#edit", service_id: "9c6c00c4-0784-4ef8-8978-b1e0246882a7") }
+
+  it { expect(get:    "/guichets/9c6c00c4-0784-4ef8-8978-b1e0246882a7/communes").not_to be_routable }
+  it { expect(post:   "/guichets/9c6c00c4-0784-4ef8-8978-b1e0246882a7/communes").not_to be_routable }
+  it { expect(patch:  "/guichets/9c6c00c4-0784-4ef8-8978-b1e0246882a7/communes").to     route_to("services_communes#update", service_id: "9c6c00c4-0784-4ef8-8978-b1e0246882a7") }
+  it { expect(delete: "/guichets/9c6c00c4-0784-4ef8-8978-b1e0246882a7/communes").not_to be_routable }
+
+  it { expect(get:    "/guichets/9c6c00c4-0784-4ef8-8978-b1e0246882a7/communes/new").not_to be_routable }
+  it { expect(get:    "/guichets/9c6c00c4-0784-4ef8-8978-b1e0246882a7/communes/edit").to    route_to("services_communes#edit", service_id: "9c6c00c4-0784-4ef8-8978-b1e0246882a7") }
 end

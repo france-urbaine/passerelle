@@ -47,6 +47,8 @@ class EPCI < ApplicationRecord
 
   # Scopes
   # ----------------------------------------------------------------------------
+  scope :having_communes, ->(communes) { where(siren: communes.select(:siren_epci)) }
+
   scope :search, lambda { |input|
     advanced_search(
       input,
