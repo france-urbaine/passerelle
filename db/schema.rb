@@ -1386,8 +1386,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_07_060629) do
   create_trigger :trigger_epcis_changes, sql_definition: <<-SQL
       CREATE TRIGGER trigger_epcis_changes AFTER INSERT OR DELETE OR UPDATE ON public.epcis FOR EACH ROW EXECUTE FUNCTION trigger_epcis_changes()
   SQL
-  create_trigger :trigger_users_changes, sql_definition: <<-SQL
-      CREATE TRIGGER trigger_users_changes AFTER INSERT OR DELETE OR UPDATE ON public.users FOR EACH ROW EXECUTE FUNCTION trigger_users_changes()
+  create_trigger :trigger_service_communes_changes, sql_definition: <<-SQL
+      CREATE TRIGGER trigger_service_communes_changes AFTER INSERT OR DELETE ON public.service_communes FOR EACH ROW EXECUTE FUNCTION trigger_service_communes_changes()
   SQL
   create_trigger :trigger_services_changes, sql_definition: <<-SQL
       CREATE TRIGGER trigger_services_changes AFTER INSERT OR DELETE OR UPDATE ON public.services FOR EACH ROW EXECUTE FUNCTION trigger_services_changes()
@@ -1395,7 +1395,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_07_060629) do
   create_trigger :trigger_user_services_changes, sql_definition: <<-SQL
       CREATE TRIGGER trigger_user_services_changes AFTER INSERT OR DELETE ON public.user_services FOR EACH ROW EXECUTE FUNCTION trigger_user_services_changes()
   SQL
-  create_trigger :trigger_service_communes_changes, sql_definition: <<-SQL
-      CREATE TRIGGER trigger_service_communes_changes AFTER INSERT OR DELETE ON public.service_communes FOR EACH ROW EXECUTE FUNCTION trigger_service_communes_changes()
+  create_trigger :trigger_users_changes, sql_definition: <<-SQL
+      CREATE TRIGGER trigger_users_changes AFTER INSERT OR DELETE OR UPDATE ON public.users FOR EACH ROW EXECUTE FUNCTION trigger_users_changes()
   SQL
 end
