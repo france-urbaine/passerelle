@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe DepartementsController, type: :routing do
+RSpec.describe DepartementsController do
   it { expect(get:    "/departements").to     route_to("departements#index") }
   it { expect(post:   "/departements").not_to be_routable }
   it { expect(patch:  "/departements").not_to be_routable }

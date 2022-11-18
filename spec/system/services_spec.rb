@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "Services", type: :system, use_fixtures: true do
+RSpec.describe "Services", use_fixtures: true do
   fixtures :ddfips, :services
 
   let(:ddifp64)            { ddfips(:pyrenees_atlantiques) }

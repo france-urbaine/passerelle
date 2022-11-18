@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "RegionsController#edit", type: :request do
+RSpec.describe "RegionsController#edit" do
   subject(:request) { get "/regions/#{region.id}/edit", headers: }
 
   let(:headers) { {} }

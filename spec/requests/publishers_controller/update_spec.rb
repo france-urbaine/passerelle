@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "PublishersController#update", type: :request do
+RSpec.describe "PublishersController#update" do
   subject(:request) { patch "/editeurs/#{publisher.id}", headers:, params: }
 
   let(:headers)   { {} }

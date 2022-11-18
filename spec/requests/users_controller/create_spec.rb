@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "UsersController#create", type: :request do
+RSpec.describe "UsersController#create" do
   subject(:request) { post "/utilisateurs", headers:, params: }
 
   let(:headers)       { {} }

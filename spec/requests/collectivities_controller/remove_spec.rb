@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "CollectivitiesController#remove", type: :request do
+RSpec.describe "CollectivitiesController#remove" do
   subject(:request) { get "/collectivites/#{collectivity.id}/remove", headers: }
 
   let(:headers)      { {} }

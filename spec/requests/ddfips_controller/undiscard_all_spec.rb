@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "DdfipsController#undiscard_all", type: :request do
+RSpec.describe "DdfipsController#undiscard_all" do
   subject(:request) { patch "/ddfips/undiscard", headers:, params: }
 
   let(:headers) { {} }

@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "Communes", type: :system, use_fixtures: true do
+RSpec.describe "Communes", use_fixtures: true do
   fixtures :communes, :epcis, :departements, :regions
 
   let(:bayonne)              { communes(:bayonne) }

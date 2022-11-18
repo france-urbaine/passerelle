@@ -13,11 +13,12 @@ class CollectivitiesController < ApplicationController
     @pagy, @collectivities = pagy(@collectivities)
   end
 
+  def show; end
+
   def new
     @collectivity = Collectivity.new(collectivity_params)
   end
 
-  def show; end
   def edit; end
   def remove; end
 

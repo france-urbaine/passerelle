@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "Services", type: :request do
+RSpec.describe "Services" do
   describe "GET /index" do
     pending "add some examples (or delete) #{__FILE__}"
   end

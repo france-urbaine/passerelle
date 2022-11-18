@@ -23,11 +23,12 @@ class DdfipsController < ApplicationController
     end
   end
 
+  def show; end
+
   def new
     @ddfip = DDFIP.new(ddfip_params)
   end
 
-  def show; end
   def edit; end
   def remove; end
 

@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Region, type: :model do
+RSpec.describe Region do
   # Associations
   # ----------------------------------------------------------------------------
   it { is_expected.to have_many(:departements) }

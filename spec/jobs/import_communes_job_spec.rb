@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe ImportCommunesJob, type: :job do
+RSpec.describe ImportCommunesJob do
   subject(:perform_now) { described_class.perform_now(url) }
 
   let(:url)     { "https://www.insee.fr/fr/statistiques/fichier/2028028/table-appartenance-geo-communes-21.zip" }

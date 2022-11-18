@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "DepartementsController#edit", type: :request do
+RSpec.describe "DepartementsController#edit" do
   subject(:request) { get "/departements/#{departement.id}/edit", headers: }
 
   let(:headers)     { {} }

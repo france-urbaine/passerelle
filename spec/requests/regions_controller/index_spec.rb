@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "RegionsController#index", type: :request do
+RSpec.describe "RegionsController#index" do
   subject(:request) { get "/regions", headers:, params: }
 
   let(:headers) { {} }

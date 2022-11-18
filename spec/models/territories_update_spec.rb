@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe TerritoriesUpdate, type: :model do
+RSpec.describe TerritoriesUpdate do
   before do
     stub_request(:head, "https://www.insee.fr/valid/path/to/file.zip")
       .to_return(status: 200, body: "", headers: {})

@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "UsersController#update", type: :request do
+RSpec.describe "UsersController#update" do
   subject(:request) { patch "/utilisateurs/#{user.id}", headers:, params: }
 
   let(:headers) { {} }

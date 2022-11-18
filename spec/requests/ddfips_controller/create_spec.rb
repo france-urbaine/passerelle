@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "DdfipsController#create", type: :request do
+RSpec.describe "DdfipsController#create" do
   subject(:request) { post "/ddfips", headers:, params: }
 
   let(:headers)     { {} }

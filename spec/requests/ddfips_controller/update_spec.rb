@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "DdfipsController#update", type: :request do
+RSpec.describe "DdfipsController#update" do
   subject(:request) { patch "/ddfips/#{ddfip.id}", headers:, params: }
 
   let(:headers) { {} }

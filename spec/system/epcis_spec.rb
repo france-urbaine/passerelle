@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "EPCIs", type: :system, use_fixtures: true do
+RSpec.describe "EPCIs", use_fixtures: true do
   fixtures :communes, :epcis, :departements, :regions
 
   let(:pays_basque)          { epcis(:pays_basque) }

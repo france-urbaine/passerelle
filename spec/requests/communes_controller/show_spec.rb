@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "CommunesController#show", type: :request do
+RSpec.describe "CommunesController#show" do
   subject(:request) { get "/communes/#{commune.id}", headers: }
 
   let(:headers) { {} }

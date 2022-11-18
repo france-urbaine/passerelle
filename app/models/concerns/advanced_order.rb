@@ -25,7 +25,7 @@ module AdvancedOrder
     end
 
     def unaccent_order(column, direction)
-      column = %(\"#{table_name}\".\"#{column}\") unless column.is_a?(String)
+      column = %("#{table_name}"."#{column}") unless column.is_a?(String)
       sql    = "UNACCENT(#{column}) "
       sql   += direction == :asc ? "ASC" : "DESC"
 

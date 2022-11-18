@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "PublishersController#undiscard", type: :request do
+RSpec.describe "PublishersController#undiscard" do
   subject(:request) { patch "/editeurs/#{publisher.id}/undiscard", headers: }
 
   let(:headers)   { {} }

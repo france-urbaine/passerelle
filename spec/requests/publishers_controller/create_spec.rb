@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "PublishersController#create", type: :request do
+RSpec.describe "PublishersController#create" do
   subject(:request) { post "/editeurs", headers:, params: }
 
   let(:headers) { {} }

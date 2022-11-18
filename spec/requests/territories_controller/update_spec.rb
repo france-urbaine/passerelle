@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "TerritoriesController#update", type: :request do
+RSpec.describe "TerritoriesController#update" do
   subject(:request) { patch "/territoires", headers:, params: }
 
   let(:headers) { {} }

@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "PublishersController#index", type: :request do
+RSpec.describe "PublishersController#index" do
   subject(:request) { get "/editeurs", headers: }
 
   let(:headers) { {} }

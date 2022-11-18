@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "RegionsController#show", type: :request do
+RSpec.describe "RegionsController#show" do
   subject(:request) { get "/departements/#{departement.id}", headers: }
 
   let(:headers)     { {} }

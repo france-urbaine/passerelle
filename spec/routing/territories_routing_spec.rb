@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe TerritoriesController, type: :routing do
+RSpec.describe TerritoriesController do
   it { expect(get:    "/territoires").to     route_to("territories#index") }
   it { expect(post:   "/territoires").not_to be_routable }
   it { expect(patch:  "/territoires").to     route_to("territories#update") }

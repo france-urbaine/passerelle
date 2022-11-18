@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "RegionsController#update", type: :request do
+RSpec.describe "RegionsController#update" do
   subject(:request) { patch "/regions/#{region.id}", headers:, params: }
 
   let(:headers) { {} }

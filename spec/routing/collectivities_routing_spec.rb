@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe CollectivitiesController, type: :routing do
+RSpec.describe CollectivitiesController do
   it { expect(get:    "/collectivites").to     route_to("collectivities#index") }
   it { expect(post:   "/collectivites").to     route_to("collectivities#create") }
   it { expect(patch:  "/collectivites").not_to be_routable }

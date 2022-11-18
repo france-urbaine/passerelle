@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe UsersController, type: :routing do
+RSpec.describe UsersController do
   it { expect(get:    "/utilisateurs").to     route_to("users#index") }
   it { expect(post:   "/utilisateurs").to     route_to("users#create") }
   it { expect(patch:  "/utilisateurs").not_to be_routable }

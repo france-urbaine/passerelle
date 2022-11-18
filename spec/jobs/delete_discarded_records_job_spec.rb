@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe DeleteDiscardedRecordsJob, type: :job do
+RSpec.describe DeleteDiscardedRecordsJob do
   before do
     publisher           = create(:publisher)
     discarded_publisher = create(:publisher, discarded_at: 31.days.ago)

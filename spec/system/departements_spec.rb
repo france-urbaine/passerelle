@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "Departements", type: :system, use_fixtures: true do
+RSpec.describe "Departements", use_fixtures: true do
   fixtures :communes, :epcis, :departements, :regions, :ddfips
 
   let(:nord)            { departements(:nord) }

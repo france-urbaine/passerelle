@@ -13,11 +13,12 @@ class UsersController < ApplicationController
     @pagy, @users = pagy(@users)
   end
 
+  def show; end
+
   def new
     @user = User.new(user_params)
   end
 
-  def show; end
   def edit; end
   def remove; end
 

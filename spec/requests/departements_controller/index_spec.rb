@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "DepartementsController#index", type: :request do
+RSpec.describe "DepartementsController#index" do
   subject(:request) { get "/departements", headers:, params: }
 
   let(:headers) { {} }

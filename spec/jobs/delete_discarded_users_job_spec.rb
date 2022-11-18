@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe DeleteDiscardedUsersJob, type: :job do
+RSpec.describe DeleteDiscardedUsersJob do
   context "when user is discarded" do
     let!(:user) { create(:user, :discarded) }
 

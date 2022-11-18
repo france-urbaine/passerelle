@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "Collectivities", type: :system, use_fixtures: true do
+RSpec.describe "Collectivities", use_fixtures: true do
   fixtures :collectivities, :publishers, :epcis, :ddfips
 
   let(:pays_basque) { collectivities(:pays_basque) }

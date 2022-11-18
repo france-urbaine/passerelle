@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "DdfipsController#remove_all", type: :request do
+RSpec.describe "DdfipsController#remove_all" do
   subject(:request) { get "/ddfips/remove", headers:, params: }
 
   let(:headers) { {} }

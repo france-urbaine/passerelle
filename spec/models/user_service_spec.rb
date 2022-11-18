@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe UserService, type: :model do
+RSpec.describe UserService do
   # Associations
   # ----------------------------------------------------------------------------
   it { is_expected.to belong_to(:service).required }

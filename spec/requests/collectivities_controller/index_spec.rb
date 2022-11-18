@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "CollectivitiesController#index", type: :request do
+RSpec.describe "CollectivitiesController#index" do
   subject(:request) { get "/collectivites", headers: }
 
   let(:headers) { {} }

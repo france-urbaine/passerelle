@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe EPCI, type: :model do
+RSpec.describe EPCI do
   # Associations
   # ----------------------------------------------------------------------------
   it { is_expected.to belong_to(:departement).optional }
@@ -53,7 +53,7 @@ RSpec.describe EPCI, type: :model do
           OR "epcis"."siren" = 'Hello'
           OR "epcis"."code_departement" = 'Hello'
           OR LOWER(UNACCENT("departements"."name")) LIKE LOWER(UNACCENT('%Hello%'))
-          OR LOWER(UNACCENT(\"regions\".\"name\")) LIKE LOWER(UNACCENT('%Hello%')))
+          OR LOWER(UNACCENT("regions"."name")) LIKE LOWER(UNACCENT('%Hello%')))
       SQL
     end
   end

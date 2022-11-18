@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "DepartementsController#update", type: :request do
+RSpec.describe "DepartementsController#update" do
   subject(:request) { patch "/departements/#{departement.id}", headers:, params: }
 
   let(:headers)     { {} }

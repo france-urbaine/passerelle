@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe DDFIP, type: :model do
+RSpec.describe DDFIP do
   # Associations
   # ----------------------------------------------------------------------------
   it { is_expected.to belong_to(:departement).required }

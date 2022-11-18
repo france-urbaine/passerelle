@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Collectivity, type: :model do
+RSpec.describe Collectivity do
   # Associations
   # ----------------------------------------------------------------------------
   it { is_expected.to belong_to(:territory).required }

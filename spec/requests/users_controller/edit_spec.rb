@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "UsersController#edit", type: :request do
+RSpec.describe "UsersController#edit" do
   subject(:request) { get "/utilisateurs/#{user.id}/edit", headers: }
 
   let(:headers) { {} }

@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "Users", type: :system, use_fixtures: true do
+RSpec.describe "Users", use_fixtures: true do
   fixtures :publishers, :users
 
   let(:marc)         { users(:marc) }

@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "CollectivitiesController#undiscard", type: :request do
+RSpec.describe "CollectivitiesController#undiscard" do
   subject(:request) { patch "/collectivites/#{collectivity.id}/undiscard", headers: }
 
   let(:headers)      { {} }

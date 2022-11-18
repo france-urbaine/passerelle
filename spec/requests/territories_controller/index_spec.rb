@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "TerritoriesController#index", type: :request do
+RSpec.describe "TerritoriesController#index" do
   subject(:request) { get "/territoires", headers:, params: }
 
   let(:headers) { {} }

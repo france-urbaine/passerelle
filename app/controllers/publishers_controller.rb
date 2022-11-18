@@ -13,11 +13,12 @@ class PublishersController < ApplicationController
     @pagy, @publishers = pagy(@publishers)
   end
 
+  def show; end
+
   def new
     @publisher = Publisher.new
   end
 
-  def show; end
   def edit; end
   def remove; end
 

@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe ServiceCommune, type: :model do
+RSpec.describe ServiceCommune do
   # Associations
   # ----------------------------------------------------------------------------
   it { is_expected.to belong_to(:service).required }

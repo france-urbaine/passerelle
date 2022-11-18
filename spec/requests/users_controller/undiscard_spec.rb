@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "UsersController#undiscard", type: :request do
+RSpec.describe "UsersController#undiscard" do
   subject(:request) { patch "/utilisateurs/#{user.id}/undiscard", headers: }
 
   let(:headers) { {} }

@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Service, type: :model do
+RSpec.describe Service do
   # Associations
   # ----------------------------------------------------------------------------
   it { is_expected.to belong_to(:ddfip).required }

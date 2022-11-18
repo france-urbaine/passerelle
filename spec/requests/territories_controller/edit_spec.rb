@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "TerritoriesController#edit", type: :request do
+RSpec.describe "TerritoriesController#edit" do
   subject(:request) { get "/territoires/edit", headers: }
 
   let(:headers) { {} }

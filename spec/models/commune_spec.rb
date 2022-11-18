@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Commune, type: :model do
+RSpec.describe Commune do
   # Associations
   # ----------------------------------------------------------------------------
   it { is_expected.to belong_to(:departement).required }

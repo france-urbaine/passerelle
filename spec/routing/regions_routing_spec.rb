@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe RegionsController, type: :routing do
+RSpec.describe RegionsController do
   it { expect(get:    "/regions").to     route_to("regions#index") }
   it { expect(post:   "/regions").not_to be_routable }
   it { expect(patch:  "/regions").not_to be_routable }

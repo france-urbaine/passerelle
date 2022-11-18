@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "UsersController#index", type: :request do
+RSpec.describe "UsersController#index" do
   subject(:request) { get "/utilisateurs", headers: }
 
   let(:headers) { {} }

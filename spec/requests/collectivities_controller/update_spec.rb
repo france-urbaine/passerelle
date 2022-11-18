@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "CollectivitiesController#update", type: :request do
+RSpec.describe "CollectivitiesController#update" do
   subject(:request) { patch "/collectivites/#{collectivity.id}", headers:, params: }
 
   let(:headers)      { {} }

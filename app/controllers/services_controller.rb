@@ -13,11 +13,12 @@ class ServicesController < ApplicationController
     @pagy, @services = pagy(@services)
   end
 
+  def show; end
+
   def new
     @service = Service.new(service_params)
   end
 
-  def show; end
   def edit; end
   def remove; end
 

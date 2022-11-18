@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "UsersController#new", type: :request do
+RSpec.describe "UsersController#new" do
   subject(:request) { get "/utilisateurs/new", headers: }
 
   let(:headers) { {} }

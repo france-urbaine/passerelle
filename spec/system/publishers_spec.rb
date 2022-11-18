@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "Publishers", type: :system, use_fixtures: true do
+RSpec.describe "Publishers", use_fixtures: true do
   fixtures :publishers, :collectivities
 
   let(:fiscalite_territoire) { publishers(:fiscalite_territoire) }

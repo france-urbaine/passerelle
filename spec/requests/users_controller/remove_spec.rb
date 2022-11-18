@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "UsersController#remove", type: :request do
+RSpec.describe "UsersController#remove" do
   subject(:request) { get "/utilisateurs/#{user.id}/remove", headers: }
 
   let(:headers) { {} }

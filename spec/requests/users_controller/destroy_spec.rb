@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "UsersController#destroy", type: :request do
+RSpec.describe "UsersController#destroy" do
   subject(:request) { delete "/utilisateurs/#{user.id}", headers: }
 
   let(:headers) { {} }

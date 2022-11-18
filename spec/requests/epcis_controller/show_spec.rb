@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "EpcisController#show", type: :request do
+RSpec.describe "EpcisController#show" do
   subject(:request) { get "/epcis/#{epci.id}", headers: }
 
   let(:headers) { {} }

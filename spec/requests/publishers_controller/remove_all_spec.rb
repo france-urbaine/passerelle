@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "PublishersController#remove_all", type: :request do
+RSpec.describe "PublishersController#remove_all" do
   subject(:request) { get "/editeurs/remove", headers:, params: }
 
   let(:headers)   { {} }

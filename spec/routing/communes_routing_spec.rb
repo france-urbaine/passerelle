@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe CommunesController, type: :routing do
+RSpec.describe CommunesController do
   it { expect(get:    "/communes").to     route_to("communes#index") }
   it { expect(post:   "/communes").not_to be_routable }
   it { expect(patch:  "/communes").not_to be_routable }

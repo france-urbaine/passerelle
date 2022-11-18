@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "DdfipsController#index", type: :request do
+RSpec.describe "DdfipsController#index" do
   subject(:request) { get "/ddfips", headers: }
 
   let(:headers) { {} }

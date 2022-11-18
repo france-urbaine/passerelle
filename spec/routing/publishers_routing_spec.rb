@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe PublishersController, type: :routing do
+RSpec.describe PublishersController do
   it { expect(get:    "/editeurs").to     route_to("publishers#index") }
   it { expect(post:   "/editeurs").to     route_to("publishers#create") }
   it { expect(patch:  "/editeurs").not_to be_routable }

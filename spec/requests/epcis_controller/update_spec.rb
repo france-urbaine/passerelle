@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "EpcisController#update", type: :request do
+RSpec.describe "EpcisController#update" do
   subject(:request) { patch "/epcis/#{epci.id}", headers:, params: }
 
   let(:headers) { {} }
