@@ -3,9 +3,10 @@
 require "rails_helper"
 
 RSpec.describe "UsersController#index" do
-  subject(:request) { get "/utilisateurs", headers: }
+  subject(:request) { get "/utilisateurs", headers:, params: }
 
   let(:headers) { {} }
+  let(:params)  { {} }
 
   context "when requesting HTML" do
     it { expect(response).to have_http_status(:success) }

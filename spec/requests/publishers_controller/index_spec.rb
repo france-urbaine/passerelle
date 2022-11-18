@@ -3,9 +3,10 @@
 require "rails_helper"
 
 RSpec.describe "PublishersController#index" do
-  subject(:request) { get "/editeurs", headers: }
+  subject(:request) { get "/editeurs", headers:, params: }
 
   let(:headers) { {} }
+  let(:params)  { {} }
 
   context "when requesting HTML" do
     it { expect(response).to have_http_status(:success) }

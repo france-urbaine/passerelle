@@ -3,9 +3,10 @@
 require "rails_helper"
 
 RSpec.describe "CollectivitiesController#index" do
-  subject(:request) { get "/collectivites", headers: }
+  subject(:request) { get "/collectivites", headers:, params: }
 
   let(:headers) { {} }
+  let(:params)  { {} }
 
   context "when requesting HTML" do
     it { expect(response).to have_http_status(:success) }

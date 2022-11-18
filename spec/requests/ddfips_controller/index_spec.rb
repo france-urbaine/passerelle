@@ -3,9 +3,10 @@
 require "rails_helper"
 
 RSpec.describe "DdfipsController#index" do
-  subject(:request) { get "/ddfips", headers: }
+  subject(:request) { get "/ddfips", headers:, params: }
 
   let(:headers) { {} }
+  let(:params)  { {} }
 
   context "when requesting HTML" do
     it { expect(response).to have_http_status(:success) }
