@@ -157,8 +157,9 @@ class DdfipsController < ApplicationController
   end
 
   def ddfip_params
-    params.fetch(:ddfip, {})
-          .permit(:name, :code_departement)
+    params
+      .fetch(:ddfip, {})
+      .permit(:name, :code_departement)
   end
 
   def index_params

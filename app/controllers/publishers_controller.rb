@@ -147,8 +147,9 @@ class PublishersController < ApplicationController
   end
 
   def publisher_params
-    params.fetch(:publisher, {})
-          .permit(:name, :siren, :email)
+    params
+      .fetch(:publisher, {})
+      .permit(:name, :siren, :email)
   end
 
   def index_params

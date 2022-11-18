@@ -71,8 +71,8 @@ POSTGRESQL_USER=marc
 ### Credentials
 
 Credentials shared by all environnements are stored using Rails credentials feature.  
-You need the master key (shared on Dashlane) to get access.  
-You can put the key in `config/master.key` or using `.env` file
+You need the master key to get access.  
+You may put the key in `config/master.key` or in `.env`
 
 ```
 # .env
@@ -115,13 +115,13 @@ This project uses Rubocop to lint and format Ruby code:
 $ bundle exec rubocop
 ```
 
-The test factories could also be linted:
+The factories used in tests may also be linted:
 
 ```shell
 $ bundle exec rails factory_bot:lint RAILS_ENV='test'
 ```
 
-Alternatively, you can use guard to perform these tasks on code changes:
+Alternatively, you can use guard to perform all these tasks on code changes:
 
 ```shell
 $ guard
@@ -141,7 +141,8 @@ $ mailcatcher
 $ open http://localhost:1080/
 ```
 
-If you experiment installation issue on MacOS:
+If you experiment installation issue on MacOS,
+take a look at the following links:
 * https://github.com/sj26/mailcatcher#rvm
 * https://github.com/sj26/mailcatcher#ruby
 * https://github.com/eventmachine/eventmachine/issues/936

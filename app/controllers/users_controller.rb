@@ -193,9 +193,9 @@ class UsersController < ApplicationController
 
     if service_ids.present? && input[:organization_type] == "DDFIP"
       input[:service_ids] = Service.kept
-                                   .where(id: service_ids)
-                                   .where(ddfip_id: input[:organization_id])
-                                   .pluck(:id)
+        .where(id: service_ids)
+        .where(ddfip_id: input[:organization_id])
+        .pluck(:id)
     end
 
     input

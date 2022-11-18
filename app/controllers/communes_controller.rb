@@ -48,7 +48,8 @@ class CommunesController < ApplicationController
   end
 
   def commune_params
-    params.fetch(:commune, {})
-          .permit(:name, :code_insee, :code_departement, :siren_epci, :qualified_name)
+    params
+      .fetch(:commune, {})
+      .permit(:name, :code_insee, :code_departement, :siren_epci, :qualified_name)
   end
 end

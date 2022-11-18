@@ -40,7 +40,7 @@ RSpec.describe "Users", type: :system, use_fixtures: true do
   it "invites an user from the index page" do
     visit users_path
 
-    click_on "Ajouter un utilisateur"
+    click_on "Inviter un utilisateur"
 
     expect(page).to have_selector("[role=dialog]", text: "Invitation d'un nouvel utilisateur")
 

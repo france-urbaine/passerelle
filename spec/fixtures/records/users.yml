@@ -2,6 +2,7 @@ marc:
   organization:       fiscalite_territoire (Publisher)
   first_name:         Marc
   last_name:          Debomy
+  name:               Marc Debomy
   super_admin:        true
   organization_admin: false
   email:              mdebomy@fiscalite-territoire.fr

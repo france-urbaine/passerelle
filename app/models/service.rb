@@ -93,15 +93,16 @@ class Service < ApplicationRecord
         service_communes.build(code_insee: value)
       end
     else
-      actual_codes_insee = self.codes_insee
+      actual_codes_insee = codes_insee
 
       values_to_delete = actual_codes_insee - values
       service_communes.where(code_insee: values_to_delete).delete_all if values_to_delete.any?
 
       values_to_insert = values - actual_codes_insee
-      ServiceCommune.insert_all(values_to_insert.map { |value| { service_id: id, code_insee: value } }) if values_to_insert.any?
+      values_to_insert.map! { |value| { service_id: id, code_insee: value } }
+      ServiceCommune.insert_all(values_to_insert) if values_to_insert.any?
     end
 
-    @codes_insee ||= values
+    @codes_insee = values
   end
 end

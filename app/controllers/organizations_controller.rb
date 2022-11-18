@@ -24,9 +24,9 @@ class OrganizationsController < ApplicationController
     input    = params[:q]
     relation = model.strict_loading.kept
     relation.search(name: input)
-            .order_by_score(input)
-            .order(relation.implicit_order_column)
-            .limit(50 - organizations.size)
-            .to_a
+      .order_by_score(input)
+      .order(relation.implicit_order_column)
+      .limit(50 - organizations.size)
+      .to_a
   end
 end

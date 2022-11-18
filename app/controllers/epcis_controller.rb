@@ -48,7 +48,8 @@ class EpcisController < ApplicationController
   end
 
   def epci_params
-    params.fetch(:epci, {})
-          .permit(:name, :siren, :code_departement)
+    params
+      .fetch(:epci, {})
+      .permit(:name, :siren, :code_departement)
   end
 end

@@ -12,10 +12,10 @@ class ServicesCommunesController < ApplicationController
   def update
     @services_communes_form = ServicesCommunesForm.new(@service)
     codes_insee_params = params
-        .fetch(:services_communes_form, {})
-        .slice(:codes_insee)
-        .permit(codes_insee: [])
-        .fetch(:codes_insee, [])
+      .fetch(:services_communes_form, {})
+      .slice(:codes_insee)
+      .permit(codes_insee: [])
+      .fetch(:codes_insee, [])
 
     if @services_communes_form.update(codes_insee_params)
       @location = safe_location_param(:redirect, service_path(@service))

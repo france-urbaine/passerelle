@@ -39,6 +39,9 @@ Layout/LineLength:
     - !ruby/regexp /\A\s*has_many/
     - !ruby/regexp /\A\s*has_one/
 
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented
+
 Layout/SpaceAroundMethodCallOperator:
   Exclude:
     - 'spec/**/*'

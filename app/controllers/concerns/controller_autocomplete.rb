@@ -6,8 +6,8 @@ module ControllerAutocomplete
   def autocomplete(relation)
     input = params[:q]
     relation.search(input)
-            .order_by_score(input)
-            .order(relation.implicit_order_column)
-            .limit(50)
+      .order_by_score(input)
+      .order(relation.implicit_order_column)
+      .limit(50)
   end
 end

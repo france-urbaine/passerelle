@@ -11,7 +11,15 @@ module FormHelper
     end
 
     def enhanced_check_boxes_collection(method, collection, value_method, text_method, options = {}, html_options = {})
-      @template.enhanced_check_boxes_collection(@object_name, method, collection, value_method, text_method, objectify_options(options), @default_html_options.merge(html_options))
+      @template.enhanced_check_boxes_collection(
+        @object_name,
+        method,
+        collection,
+        value_method,
+        text_method,
+        objectify_options(options),
+        @default_html_options.merge(html_options)
+      )
     end
   end
 

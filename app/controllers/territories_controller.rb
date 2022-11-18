@@ -50,8 +50,9 @@ class TerritoriesController < ApplicationController
   protected
 
   def update_params
-    params.fetch(:territories_update, {})
-          .permit(:communes_url, :epcis_url)
+    params
+      .fetch(:territories_update, {})
+      .permit(:communes_url, :epcis_url)
   end
 
   def autocomplete_territories(model, territories = [])
@@ -60,9 +61,9 @@ class TerritoriesController < ApplicationController
     input    = params[:q]
     relation = model.strict_loading
     relation.search(name: input)
-            .order_by_score(input)
-            .order(relation.implicit_order_column)
-            .limit(50 - territories.size)
-            .to_a
+      .order_by_score(input)
+      .order(relation.implicit_order_column)
+      .limit(50 - territories.size)
+      .to_a
   end
 end
