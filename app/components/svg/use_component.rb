@@ -12,7 +12,8 @@ module SVG
     def svg_attributes
       @svg_attributes ||= begin
         attributes = @attributes
-        attributes[:aria_hidden] = true if @title.nil?
+        attributes[:aria] ||= {}
+        attributes[:aria][:hidden] = true if @title.nil?
         attributes
       end
     end

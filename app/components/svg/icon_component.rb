@@ -13,7 +13,8 @@ module SVG
       @svg_attributes ||= begin
         attributes = svg_node.attributes
         attributes.merge!(@attributes)
-        attributes[:aria_hidden] = true if @title.nil?
+        attributes[:aria] ||= {}
+        attributes[:aria][:hidden] = true if @title.nil?
         attributes
       end
     end

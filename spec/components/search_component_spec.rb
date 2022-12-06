@@ -20,11 +20,11 @@ RSpec.describe SearchComponent, type: :component do
           <div class="form-block__label--hiden">Rechercher...</div>
           <div class="form-block__input">
             <div class="form-block__input-icon">
-              <svg aria-hidden="true">
-                <use href="#search-icon" />
+              <svg aria-hidden>
+                <use href="#search-icon">
               </svg>
             </div>
-            <input name="search" placeholder="Rechercher..." type="search" />
+            <input name="search" placeholder="Rechercher..." type="search">
           </div>
         </label>
       </form>
@@ -41,11 +41,11 @@ RSpec.describe SearchComponent, type: :component do
             <div class="form-block__label--hiden">Rechercher...</div>
             <div class="form-block__input">
               <div class="form-block__input-icon">
-                <svg aria-hidden="true">
-                  <use href="#search-icon" />
+                <svg aria-hidden>
+                  <use href="#search-icon">
                 </svg>
               </div>
-              <input name="search" placeholder="Rechercher..." type="search" value="Pyrénées" />
+              <input name="search" placeholder="Rechercher..." type="search" value="Pyrénées">
             </div>
           </label>
           <input type="hidden" name="order" value="-departement" autocomplete="off">
