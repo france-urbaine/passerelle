@@ -5,7 +5,7 @@
         aria-label="Retour à la page d'accueil"
         data-turbo-frame="_top"
         href="/"
-      )= svg_icon("home-icon", "Retour à la page d'accueil")
+      )= svg_icon("home", "Retour à la page d'accueil")
 
     .breadcrumbs__separator="/"
     .breadcrumbs__path
@@ -29,7 +29,7 @@
         data-turbo-frame="modal"
         href=edit_service_path(service, content: current_path, redirect: current_path)
       )
-        = svg_icon("pencil-alt-icon")
+        = svg_use("pencil-square")
         | Modifier
 
     .header-bar__action
@@ -37,7 +37,7 @@
         data-turbo-frame="modal"
         href=remove_service_path(service, content: current_path)
       )
-        = svg_icon("trash-icon")
+        = svg_use("trash")
         | Supprimer
 
 - if service.discarded?
@@ -50,7 +50,7 @@
       |  Il sera définitivement supprimé le #{localize(30.days.after(service.discarded_at.to_date))}.
 
 h2.subheader
-  = svg_icon("bookmark-icon", "Nouvelle section")
+  = svg_use("bookmark", "Nouvelle section")
   | Description
 
 .card.mb-6
@@ -87,12 +87,12 @@ h2.subheader
             data-turbo-frame="_top"
             href=communes_path(search: service.name)
           )
-            = svg_icon("search-icon")
+            = svg_use("search")
             | Voir les communes
 
 .subheader-bar
   h2.subheader
-    = svg_icon("bookmark-icon", "Nouvelle section")
+    = svg_use("bookmark", "Nouvelle section")
     | Utilisateurs en charge du guichet
 
   .subheader-bar__actions
@@ -101,7 +101,7 @@ h2.subheader
         data-turbo-frame="modal"
         href=new_user_path(content: current_path, redirect: current_path, user: { organization_type: "DDFIP", organization_id: @service.ddfip_id, service_ids: [@service.id] })
       )
-        = svg_icon("plus-icon")
+        = svg_use("plus")
         | Inviter un nouvel utilisateur
 
     .subheader-bar__action
@@ -109,7 +109,7 @@ h2.subheader
         data-turbo-frame="modal"
         href=edit_service_users_path(service, content: current_path, redirect: current_path)
       )
-        = svg_icon("squares-plus-icon")
+        = svg_use("squares-plus")
         | Gérer les utilisateurs
 
 - if service.users_count.zero?
@@ -134,7 +134,7 @@ h2.subheader
                 aria-label="Modifier cet utilisateur"
                 data-turbo-frame="modal"
               )
-                = svg_icon("pencil-alt-icon", "Modifier cet utilisateur")
+                = svg_use("pencil-square", "Modifier cet utilisateur")
                 span.tooltip Modifier cet utilisateur
 
               a.icon-button(
@@ -142,7 +142,7 @@ h2.subheader
                 data-turbo-frame="modal"
                 href=remove_user_path(user, content: current_path, redirect: current_path)
               )
-                = svg_icon("trash-icon", "Supprimer cet utilisateur")
+                = svg_use("trash", "Supprimer cet utilisateur")
                 span.tooltip Supprimer cet utilisateur
 
           td
@@ -156,13 +156,13 @@ h2.subheader
               = mail_to user.email
             - else
               .text-disabled( title="Cet utilisateur n'a pas encore validé son inscription" )
-                = svg_icon("exclamation-triangle-icon", class: "small-icon mr-2")
+                = svg_use("exclamation-triangle", class: "mr-2")
                 = user.email
                 span.tooltip Cet utilisateur n'a pas encore validé son inscription
 
 .subheader-bar
   h2.subheader
-    = svg_icon("bookmark-icon", "Nouvelle section")
+    = svg_use("bookmark", "Nouvelle section")
     | Communes sous la responsabilité du guichet
 
   .subheader-bar__actions
@@ -171,7 +171,7 @@ h2.subheader
         data-turbo-frame="modal"
         href=edit_service_communes_path(service, content: current_path, redirect: current_path)
       )
-        = svg_icon("squares-plus-icon")
+        = svg_use("squares-plus")
         | Gérer les communes
 
 - if service.communes_count.zero?
@@ -196,7 +196,7 @@ h2.subheader
               data-turbo-frame="modal"
               href=edit_commune_path(commune, content: current_path, redirect: current_path)
             )
-              = svg_icon("pencil-alt-icon", "Modifier cette commune")
+              = svg_use("pencil-square", "Modifier cette commune")
               span.tooltip Modifier cette commune
 
           td.w-px= commune.code_insee

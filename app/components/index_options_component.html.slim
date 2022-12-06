@@ -15,14 +15,14 @@
         href=page_url(pagy.prev)
         rel="prev"
       )
-        = helpers.svg_icon("chevron-left-icon", "Page précédente")
+        = helpers.svg_use("chevron-left", "Page précédente")
         span.tooltip Page précédente
     - else
       span.icon-button(
         aria-hidden="true"
         disabled="true"
       )
-        = helpers.svg_icon("chevron-left-icon", "Page précédente")
+        = helpers.svg_use("chevron-left", "Page précédente")
 
     - if pagy.next
       a.icon-button(
@@ -32,11 +32,11 @@
         href=page_url(pagy.next)
         rel="next"
       )
-        = helpers.svg_icon("chevron-right-icon", "Page suivante")
+        = helpers.svg_use("chevron-right", "Page suivante")
         span.tooltip Page suivante
     - else
       span.icon-button( aria-hidden="true" disabled="true" )
-        = helpers.svg_icon("chevron-right-icon", "Page suivante")
+        = helpers.svg_use("chevron-right", "Page suivante")
 
   .header-bar__action
     .dropdown(
@@ -54,7 +54,7 @@
         data-action="dropdown#toggle click@window->dropdown#clickOutside"
         data-dropdown-target="button"
       )
-        = helpers.svg_icon("adjustments-icon", "Options d'affichage")
+        = helpers.svg_use("adjustments", "Options d'affichage")
         span.tooltip Options d'affichage
 
       .dropdown__menu.hidden.dropdown__menu--above-left(
@@ -78,7 +78,7 @@
             data-dropdown-target="button"
             role="menuitem"
           )
-            = helpers.svg_icon("chevron-left-small-icon")
+            = helpers.svg_use("chevron-left-small")
             | Afficher #{pagy.items} lignes par page
 
           .dropdown__menu.dropdown__menu--side-left(
@@ -111,7 +111,7 @@
               data-dropdown-target="button"
               role="menuitem"
             )
-              = helpers.svg_icon("chevron-left-small-icon")
+              = helpers.svg_use("chevron-left-small")
               | Trier par #{order_hash.fetch(current_order_key, "défaut")}
               - if current_order_direction == :desc
                 |  (desc.)
@@ -132,7 +132,7 @@
                     href=order_url(key, :asc)
                     role="menuitem"
                   )
-                    = helpers.svg_icon("sort-ascending-icon", "Trier par ordre croissant")
+                    = helpers.svg_use("sort-ascending", "Trier par ordre croissant")
                     span.tooltip Trier par ordre croissant
 
                   a.icon-button(
@@ -142,5 +142,5 @@
                     href=order_url(key, :desc)
                     role="menuitem"
                   )
-                    = helpers.svg_icon("sort-descending-icon", "Trier par ordre décroissant")
+                    = helpers.svg_use("sort-descending", "Trier par ordre décroissant")
                     span.tooltip Trier par ordre décroissant

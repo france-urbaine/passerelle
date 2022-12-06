@@ -5,7 +5,7 @@
         aria-label="Retour à la page d'accueil"
         data-turbo-frame="_top"
         href="/"
-      )= svg_icon("home-icon", "Retour à la page d'accueil")
+      )= svg_icon("home", "Retour à la page d'accueil")
 
     .breadcrumbs__separator="/"
     .breadcrumbs__path
@@ -22,5 +22,5 @@
         data-turbo-frame="modal"
         href=new_ddfip_path(content: current_path)
       )
-        = svg_icon("plus-icon")
+        = svg_use("plus")
         | Ajouter une DDFIP

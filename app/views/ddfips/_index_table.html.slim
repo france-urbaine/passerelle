@@ -51,7 +51,7 @@ table.datatable
               data-turbo-frame="modal"
               href=edit_ddfip_path(ddfip, content: current_path, redirect: current_path)
             )
-              = svg_icon("pencil-alt-icon", "Modifier cette DDFIP")
+              = svg_use("pencil-square", "Modifier cette DDFIP")
               span.tooltip Modifier cette DDFIP
 
             a.icon-button(
@@ -59,7 +59,7 @@ table.datatable
               data-turbo-frame="modal"
               href=remove_ddfip_path(ddfip, content: current_path, redirect: current_path)
             )
-              = svg_icon("trash-icon", "Supprimer cette DDFIP")
+              = svg_use("trash", "Supprimer cette DDFIP")
               span.tooltip Supprimer cette DDFIP
 
         td( id=dom_id(ddfip, :title) )

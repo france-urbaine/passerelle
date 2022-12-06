@@ -23,7 +23,7 @@ RSpec.describe OrderColumnComponent, type: :component do
       >
         <svg>
           <title>Trier par ordre croissant</title>
-          <use href="#arrow-sm-up-icon" />
+          <use href="#arrow-small-up-icon" />
         </svg>
         <span class="tooltip">Trier par ordre croissant</span>
       </a>
@@ -43,7 +43,7 @@ RSpec.describe OrderColumnComponent, type: :component do
         >
           <svg>
             <title>Trier par ordre décroissant</title>
-            <use href="#arrow-sm-down-icon" />
+            <use href="#arrow-small-down-icon" />
           </svg>
           <span class="tooltip">Trier par ordre décroissant</span>
         </a>
@@ -64,7 +64,7 @@ RSpec.describe OrderColumnComponent, type: :component do
         >
           <svg>
             <title>Trier par ordre croissant</title>
-            <use href="#arrow-sm-up-icon" />
+            <use href="#arrow-small-up-icon" />
           </svg>
           <span class="tooltip">Trier par ordre croissant</span>
         </a>

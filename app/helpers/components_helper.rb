@@ -17,12 +17,11 @@ module ComponentsHelper
     render(OrderColumnComponent.new(...))
   end
 
-  def svg_icon(name, title = nil, **options)
-    options[:"aria-hidden"] = true if title.nil?
+  def svg_icon(...)
+    render(SVG::IconComponent.new(...))
+  end
 
-    tag.svg(**options) do
-      concat(tag.title(title)) if title
-      concat(tag.use(href: "##{name}"))
-    end
+  def svg_use(...)
+    render(SVG::UseComponent.new(...))
   end
 end

@@ -50,7 +50,7 @@ table.datatable
               data-turbo-frame="modal"
               href=edit_collectivity_path(collectivity, content: current_path, redirect: current_path)
             )
-              = svg_icon("pencil-alt-icon", "Modifier cette collectivité")
+              = svg_use("pencil-square", "Modifier cette collectivité")
               span.tooltip Modifier cette collectivité
 
             a.icon-button(
@@ -58,7 +58,7 @@ table.datatable
               data-turbo-frame="modal"
               href=remove_collectivity_path(collectivity, content: current_path, redirect: current_path)
             )
-              = svg_icon("trash-icon", "Supprimer cette collectivité")
+              = svg_use("trash", "Supprimer cette collectivité")
               span.tooltip Supprimer cette collectivité
 
         td( id=dom_id(collectivity, :title) )

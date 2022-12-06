@@ -11,11 +11,11 @@
   .flex.items-start
     - case type
     - when "success"
-      = helpers.svg_icon("check-circle-icon", "Succés", class: "notification__icon notification__icon--success")
+      = helpers.svg_use("check-circle", "Succés", class: "notification__icon notification__icon--success")
     - when "error"
-      = helpers.svg_icon("exclamation-circle-icon", "Erreur", class: "notification__icon notification__icon--error")
+      = helpers.svg_use("exclamation-circle", "Erreur", class: "notification__icon notification__icon--error")
     - else
-      = helpers.svg_icon("information-circle-icon", "Information", class: "notification__icon")
+      = helpers.svg_use("information-circle", "Information", class: "notification__icon")
 
     .flex.flex-col
       .flex.items-start
@@ -25,7 +25,7 @@
 
         .notification__closing
           button.icon-button.notification__closing-button( data-action="notification#hide" )
-            = helpers.svg_icon("x-icon", "Masquer cette notification")
+            = helpers.svg_use("x-mark", "Masquer cette notification")
 
       - if actions.any?
         .notification__actions

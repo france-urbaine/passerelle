@@ -5,7 +5,7 @@
         aria-label="Retour à la page d'accueil"
         data-turbo-frame="_top"
         href="/"
-      )= svg_icon("home-icon", "Retour à la page d'accueil")
+      )= svg_icon("home", "Retour à la page d'accueil")
 
     .breadcrumbs__separator="/"
     .breadcrumbs__path
@@ -29,11 +29,11 @@
         data-turbo-frame="modal"
         href=edit_epci_path(epci, content: current_path, redirect: current_path)
       )
-        = svg_icon("pencil-alt-icon")
+        = svg_use("pencil-square")
         | Modifier
 
 h2.subheader
-  = svg_icon("bookmark-icon", "Nouvelle section")
+  = svg_use("bookmark", "Nouvelle section")
   | Description
 
 .card.mb-6
@@ -70,7 +70,7 @@ h2.subheader
             data-turbo-frame="_top"
             href=communes_path(search: epci.siren)
           )
-            = svg_icon("search-icon")
+            = svg_use("search")
             | Voir les communes
 
     .description-list__row
@@ -78,7 +78,7 @@ h2.subheader
       dd= count(epci.collectivities_count, "collectivité") if epci.collectivities_count.positive?
 
 h2.subheader
-  = svg_icon("bookmark-icon", "Nouvelle section")
+  = svg_use("bookmark", "Nouvelle section")
   | Collectivités enregistrées
 
 - if epci.collectivities_count.zero?
@@ -104,7 +104,7 @@ h2.subheader
               aria-label="Modifier cette collectivité"
               data-turbo-frame="modal"
             )
-              = svg_icon("pencil-alt-icon", "Modifier cette collectivité")
+              = svg_use("pencil-square", "Modifier cette collectivité")
               span.tooltip Modifier cette collectivité
 
           td

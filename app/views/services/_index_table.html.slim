@@ -51,7 +51,7 @@ table.datatable
               data-turbo-frame="modal"
               href=edit_service_path(service, content: current_path, redirect: current_path)
             )
-              = svg_icon("pencil-alt-icon", "Modifier ce guichet")
+              = svg_use("pencil-square", "Modifier ce guichet")
               span.tooltip Modifier ce guichet
 
             a.icon-button(
@@ -59,7 +59,7 @@ table.datatable
               data-turbo-frame="modal"
               href=remove_service_path(service, content: current_path, redirect: current_path)
             )
-              = svg_icon("trash-icon", "Supprimer ce guichet")
+              = svg_use("trash", "Supprimer ce guichet")
               span.tooltip Supprimer ce guichet
 
         td( id=dom_id(service, :title) )

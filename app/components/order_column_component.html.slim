@@ -7,7 +7,7 @@
     data-turbo-frame="content"
     href=order_url(:desc)
   )
-    = helpers.svg_icon("arrow-sm-down-icon", "Trier par ordre décroissant")
+    = helpers.svg_use("arrow-small-down", "Trier par ordre décroissant")
     span.tooltip Trier par ordre décroissant
 
 - elsif current_desc?
@@ -17,7 +17,7 @@
     data-turbo-frame="content"
     href=order_url(:asc)
   )
-    = helpers.svg_icon("arrow-sm-up-icon", "Trier par ordre croissant")
+    = helpers.svg_use("arrow-small-up", "Trier par ordre croissant")
     span.tooltip Trier par ordre croissant
 
 - else
@@ -27,5 +27,5 @@
     data-turbo-frame="content"
     href=order_url(:asc)
   )
-    = helpers.svg_icon("arrow-sm-up-icon", "Trier par ordre croissant")
+    = helpers.svg_use("arrow-small-up", "Trier par ordre croissant")
     span.tooltip Trier par ordre croissant

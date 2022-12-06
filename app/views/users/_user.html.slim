@@ -5,7 +5,7 @@
         aria-label="Retour à la page d'accueil"
         data-turbo-frame="_top"
         href="/"
-      )= svg_icon("home-icon", "Retour à la page d'accueil")
+      )= svg_use("home", "Retour à la page d'accueil")
 
     .breadcrumbs__separator="/"
     .breadcrumbs__path
@@ -29,7 +29,7 @@
         data-turbo-frame="modal"
         href=edit_user_path(user, content: current_path, redirect: current_path)
       )
-        = svg_icon("pencil-alt-icon")
+        = svg_use("pencil-square")
         | Modifier
 
     .header-bar__action
@@ -37,7 +37,7 @@
         data-turbo-frame="modal"
         href=remove_user_path(user, content: current_path)
       )
-        = svg_icon("trash-icon")
+        = svg_use("trash")
         | Supprimer
 
 - if user.discarded?
@@ -48,7 +48,7 @@
       | Cet utilisateur va être supprimé dans quelques minutes.
 
 h2.subheader
-  = svg_icon("bookmark-icon", "Nouvelle section")
+  = svg_use("bookmark", "Nouvelle section")
   | Description
 
 .card.mb-6
@@ -88,20 +88,20 @@ h2.subheader
           = mail_to user.email
         - else
           .text-disabled( title="Cet utilisateur n'a pas encore validé son inscription" )
-            = svg_icon("exclamation-triangle-icon", class: "small-icon mr-2")
+            = svg_use("exclamation-triangle", class: "mr-2")
             = user.email
             span.tooltip Cet utilisateur n'a pas encore validé son inscription
 
     .description-list__row
       dt Administrateur de l'organisation
-      dd= svg_icon("check-badge-icon", "Administrateur", class: "small-icon") if user.organization_admin?
+      dd= svg_use("check-badge", "Administrateur") if user.organization_admin?
 
     .description-list__row
       dt Administrateur de FiscaHub
-      dd= svg_icon("check-badge-icon", "Administrateur", class: "small-icon") if user.super_admin?
+      dd= svg_use("check-badge", "Administrateur") if user.super_admin?
 
 h2.subheader
-  = svg_icon("bookmark-icon", "Nouvelle section")
+  = svg_use("bookmark", "Nouvelle section")
   | Informations de connexion
 
 .card.mb-6
