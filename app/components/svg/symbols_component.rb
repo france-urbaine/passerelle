@@ -4,7 +4,7 @@ module SVG
   class SymbolsComponent < ViewComponent::Base
     def svgs
       @svgs ||= Rails.root.glob("app/assets/icons/*.svg").to_h do |path|
-        [path.basename('.svg').to_s, path.read]
+        [path.basename(".svg").to_s, path.read]
       end
     end
 
