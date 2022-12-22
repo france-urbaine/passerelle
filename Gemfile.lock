@@ -164,6 +164,9 @@ GEM
     hashdiff (1.0.1)
     i18n (1.12.0)
       concurrent-ruby (~> 1.0)
+    inline_svg (1.8.0)
+      activesupport (>= 3.0)
+      nokogiri (>= 1.6)
     jbuilder (2.11.5)
       actionview (>= 5.0.0)
       activesupport (>= 5.0.0)
@@ -419,6 +422,7 @@ DEPENDENCIES
   guard
   guard-rspec
   guard-rubocop
+  inline_svg
   jbuilder
   jsbundling-rails
   pagy

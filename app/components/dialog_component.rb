@@ -11,7 +11,7 @@ class DialogComponent < ViewComponent::Base
         action:      "dialog#close"
       }
     ) do
-      helpers.svg_use("x-mark", "Fermer cette fenêtre")
+      helpers.svg_icon("x-mark", "Fermer cette fenêtre")
     end
   end
 

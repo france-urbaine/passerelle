@@ -51,7 +51,7 @@ table.datatable
             data-turbo-frame="modal"
             href=edit_commune_path(commune, content: current_path, redirect: current_path)
           )
-            = svg_use("pencil-square", "Modifier cette commune")
+            = svg_icon("pencil-square", "Modifier cette commune")
             span.tooltip Modifier cette commune
 
         td.w-px= commune.code_insee

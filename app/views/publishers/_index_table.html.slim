@@ -46,7 +46,7 @@ table.datatable
               data-turbo-frame="modal"
               href=edit_publisher_path(publisher, content: current_path, redirect: current_path)
             )
-              = svg_use("pencil-square", "Modifier cet éditeur")
+              = svg_icon("pencil-square", "Modifier cet éditeur")
               span.tooltip Modifier cet éditeur
 
             a.icon-button(
@@ -54,7 +54,7 @@ table.datatable
               data-turbo-frame="modal"
               href=remove_publisher_path(publisher, content: current_path, redirect: current_path)
             )
-              = svg_use("trash", "Supprimer cet éditeur")
+              = svg_icon("trash", "Supprimer cet éditeur")
               span.tooltip Supprimer cet éditeur
 
         td( id=dom_id(publisher, :title) )

@@ -25,6 +25,7 @@ gem "responders"
 
 # Assets
 gem "cssbundling-rails"
+gem "inline_svg"
 gem "jsbundling-rails"
 gem "sprockets-rails"
 gem "stimulus-rails"

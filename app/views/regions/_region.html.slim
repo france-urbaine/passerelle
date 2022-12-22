@@ -29,11 +29,11 @@
         data-turbo-frame="modal"
         href=edit_region_path(region, content: current_path, redirect: current_path)
       )
-        = svg_use("pencil-square")
+        = svg_icon("pencil-square")
         | Modifier
 
 h2.subheader
-  = svg_use("bookmark", "Nouvelle section")
+  = svg_icon("bookmark", "Nouvelle section")
   | Description
 
 .card.mb-6
@@ -52,7 +52,7 @@ h2.subheader
             data-turbo-frame="_top"
             href=departements_path(search: region.name)
           )
-            = svg_use("search")
+            = svg_icon("search")
             | Voir les départements
 
     .description-list__row
@@ -65,7 +65,7 @@ h2.subheader
             data-turbo-frame="_top"
             href=epcis_path(search: region.name)
           )
-            = svg_use("search")
+            = svg_icon("search")
             | Voir les EPCI
 
     .description-list__row
@@ -78,7 +78,7 @@ h2.subheader
             data-turbo-frame="_top"
             href=communes_path(search: region.name)
           )
-            = svg_use("search")
+            = svg_icon("search")
             | Voir les communes
 
     .description-list__row
@@ -90,7 +90,7 @@ h2.subheader
       dd= count(region.collectivities_count, "collectivité") if region.collectivities_count.positive?
 
 h2.subheader
-  = svg_use("bookmark", "Nouvelle section")
+  = svg_icon("bookmark", "Nouvelle section")
   | Départements
 
 - if region.departements_count.zero?
@@ -117,7 +117,7 @@ h2.subheader
               aria-label="Modifier ce département"
               data-turbo-frame="modal"
             )
-              = svg_use("pencil-square", "Modifier ce département")
+              = svg_icon("pencil-square", "Modifier ce département")
               span.tooltip Modifier ce département
 
           td.w-px= departement.code_departement
@@ -133,7 +133,7 @@ h2.subheader
           td.text-right= number_with_delimiter(departement.collectivities_count)  if departement.collectivities_count.positive?
 
 h2.subheader
-  = svg_use("bookmark", "Nouvelle section")
+  = svg_icon("bookmark", "Nouvelle section")
   | DDFIP enregistrées
 
 - if region.ddfips_count.zero?
@@ -158,7 +158,7 @@ h2.subheader
               aria-label="Modifier cette DDFIP"
               data-turbo-frame="modal"
             )
-              = svg_use("pencil-square", "Modifier cette DDFIP")
+              = svg_icon("pencil-square", "Modifier cette DDFIP")
               span.tooltip Modifier cette DDFIP
 
           td
@@ -172,7 +172,7 @@ h2.subheader
 
 
 h2.subheader
-  = svg_use("bookmark", "Nouvelle section")
+  = svg_icon("bookmark", "Nouvelle section")
   | Collectivités enregistrées
 
 - if region.collectivities_count.zero?
@@ -198,7 +198,7 @@ h2.subheader
               aria-label="Modifier cette collectivité"
               data-turbo-frame="modal"
             )
-              = svg_use("pencil-square", "Modifier cette collectivité")
+              = svg_icon("pencil-square", "Modifier cette collectivité")
               span.tooltip Modifier cette collectivité
 
           td

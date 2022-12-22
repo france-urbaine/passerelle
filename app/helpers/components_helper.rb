@@ -17,11 +17,18 @@ module ComponentsHelper
     render(OrderColumnComponent.new(...))
   end
 
-  def svg_icon(...)
-    render(SVG::IconComponent.new(...))
-  end
+  def svg_icon(icon, title = nil, **options)
+    if title
+      options[:title] = title
+      options[:aria] ||= true
+    else
+      options[:aria_hidden] = true
+    end
 
-  def svg_use(...)
-    render(SVG::UseComponent.new(...))
+    inline_svg_tag("#{icon}.svg", **options)
+      .strip
+      .gsub(%(aria-hidden="true"), "aria-hidden")
+      .gsub(%r{></(path|circle|rect)>}, "/>")
+      .html_safe # rubocop:disable Rails/OutputSafety
   end
 end

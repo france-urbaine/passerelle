@@ -49,7 +49,7 @@ table.datatable
               data-turbo-frame="modal"
               href=edit_user_path(user, content: current_path, redirect: current_path)
             )
-              = svg_use("pencil-square", "Modifier cet utilisateur")
+              = svg_icon("pencil-square", "Modifier cet utilisateur")
               span.tooltip Modifier cet utilisateur
 
             a.icon-button(
@@ -57,7 +57,7 @@ table.datatable
               data-turbo-frame="modal"
               href=remove_user_path(user, content: current_path, redirect: current_path)
             )
-              = svg_use("trash", "Supprimer cet utilisateur")
+              = svg_icon("trash", "Supprimer cet utilisateur")
               span.tooltip Supprimer cet utilisateur
 
         td( id=dom_id(user, :title) )
@@ -71,7 +71,7 @@ table.datatable
             = mail_to user.email
           - else
             .text-disabled( title="Cet utilisateur n'a pas encore validé son inscription" )
-              = svg_use("exclamation-triangle", class: "mr-2")
+              = svg_icon("exclamation-triangle", class: "mr-2")
               = user.email
               span.tooltip Cet utilisateur n'a pas encore validé son inscription
 
@@ -87,13 +87,13 @@ table.datatable
 
         td
           - if user.organization_admin?
-            = svg_use("check-badge", "Administrateur de l'organisation")
+            = svg_icon("check-badge", "Administrateur de l'organisation")
           - else
             = " "
 
         td
           - if user.super_admin?
-            = svg_use("check-badge", "Administrateur de FiscaHub")
+            = svg_icon("check-badge", "Administrateur de FiscaHub")
           - else
             = " "
 

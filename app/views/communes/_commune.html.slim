@@ -29,11 +29,11 @@
         data-turbo-frame="modal"
         href=edit_commune_path(commune, content: current_path, redirect: current_path)
       )
-        = svg_use("pencil-square")
+        = svg_icon("pencil-square")
         | Modifier
 
 h2.subheader
-  = svg_use("bookmark", "Nouvelle section")
+  = svg_icon("bookmark", "Nouvelle section")
   | Description
 
 .card.mb-6
@@ -74,7 +74,7 @@ h2.subheader
       dd= count(commune.collectivities_count, "collectivité") if commune.collectivities_count.positive?
 
 h2.subheader
-  = svg_use("bookmark", "Nouvelle section")
+  = svg_icon("bookmark", "Nouvelle section")
   | Collectivités enregistrées
 
 - if commune.collectivities_count.zero?
@@ -100,7 +100,7 @@ h2.subheader
               aria-label="Modifier cette collectivité"
               data-turbo-frame="modal"
             )
-              = svg_use("pencil-square", "Modifier cette collectivité")
+              = svg_icon("pencil-square", "Modifier cette collectivité")
               span.tooltip Modifier cette collectivité
 
           td
