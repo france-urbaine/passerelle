@@ -127,22 +127,29 @@ Alternatively, you can use guard to perform all these tasks on code changes:
 $ guard
 ```
 
-### Preview & catch mails in development
+### Previews
 
-You can preview mail views at http://localhost:3000/rails/mailers
+Mails can be previewed at [http://localhost:3000/rails/mailers](http://localhost:3000/rails/mailers)
 
-Mails can be catched with `mailcatcher`.  
-The gem is not part of the bundle.
-You should install and start it manually:
+### Catch mails
+
+Sent mails can be catched with `mailcatcher`:
 
 ```shell
-$ gem install mailcatcher
-$ mailcatcher
-$ open http://localhost:1080/
+$ bin/mailcather
 ```
 
+The command above will install the mailcatcher gem.  
 If you experiment installation issue on MacOS,
 take a look at the following links:
 * https://github.com/sj26/mailcatcher#rvm
 * https://github.com/sj26/mailcatcher#ruby
 * https://github.com/eventmachine/eventmachine/issues/936
+
+Mailcatcher listens to `smtp://127.0.0.1:1025` by default.  
+If you need to listen to another port, redefine `SMTP_PORT` in `.env`:
+
+```
+# .env
+SMTP_PORT=1027
+```
