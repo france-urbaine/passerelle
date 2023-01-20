@@ -3,72 +3,89 @@
 require "rails_helper"
 
 RSpec.describe OrderColumnComponent, type: :component do
-  subject(:component) { described_class.new("commune") }
+  subject(:component) { described_class.new("name") }
 
-  let(:current_path) { "/communes" }
+  context "without params" do
+    before do
+      with_request_url("/communes") do
+        render_inline(component)
+      end
+    end
 
-  before do
-    with_request_url(current_path) do
-      render_inline(component)
+    it "renders a link to sort by ascending order" do
+      expect(page).to have_link("Trier par ordre croissant", href: "/communes?order=name")
+    end
+
+    it "renders a tooltip" do
+      expect(page).to have_css(".tooltip", text: "Trier par ordre croissant")
+    end
+
+    it "renders an icon to sort by ascending order" do
+      within("svg") do
+        expect(page).to have_css("title", tex: "Trier par ordre croissant")
+      end
     end
   end
 
-  it do
-    expect(rendered_content).to eq(clean_template(<<~HTML))
-      <a aria-label="Trier par ordre croissant"
-         class="icon-button datatable__order-button"
-         data-turbo-action="advance"
-         data-turbo-frame="content"
-         href="/communes?order=commune"
-      >
-        <svg>
-          <title>Trier par ordre croissant</title>
-          <use href="#arrow-small-up-icon">
-        </svg>
-        <span class="tooltip">Trier par ordre croissant</span>
-      </a>
-    HTML
-  end
+  context "when already sort by ascending order" do
+    before do
+      with_request_url("/communes?order=name") do
+        render_inline(component)
+      end
+    end
 
-  context "when order key exists in parameters" do
-    let(:current_path) { "/communes?order=commune" }
+    it "renders a link to sort by descending order" do
+      expect(page).to have_link("Trier par ordre décroissant", href: "/communes?order=-name")
+    end
 
-    it do
-      expect(rendered_content).to eq(clean_template(<<~HTML))
-        <a aria-label="Trier par ordre décroissant"
-           class="icon-button datatable__order-button datatable__order-button--current"
-           data-turbo-action="advance"
-           data-turbo-frame="content"
-           href="/communes?order=-commune"
-        >
-          <svg>
-            <title>Trier par ordre décroissant</title>
-            <use href="#arrow-small-down-icon">
-          </svg>
-          <span class="tooltip">Trier par ordre décroissant</span>
-        </a>
-      HTML
+    it "renders a tooltip" do
+      expect(page).to have_css(".tooltip", text: "Trier par ordre décroissant")
+    end
+
+    it "renders an icon to sort by descending order" do
+      within("svg") do
+        expect(page).to have_css("title", tex: "Trier par ordre décroissant")
+      end
     end
   end
 
-  context "when reversed key exists in parameters" do
-    let(:current_path) { "/communes?order=-commune" }
+  context "when already sort by descending order" do
+    before do
+      with_request_url("/communes?order=-name") do
+        render_inline(component)
+      end
+    end
 
-    it do
-      expect(rendered_content).to eq(clean_template(<<~HTML))
-        <a aria-label="Trier par ordre croissant"
-           class="icon-button datatable__order-button datatable__order-button--current"
-           data-turbo-action="advance"
-           data-turbo-frame="content"
-           href="/communes?order=commune"
-        >
-          <svg>
-            <title>Trier par ordre croissant</title>
-            <use href="#arrow-small-up-icon">
-          </svg>
-          <span class="tooltip">Trier par ordre croissant</span>
-        </a>
-      HTML
+    it "renders a link to sort by ascending order" do
+      expect(page).to have_link("Trier par ordre croissant", href: "/communes?order=name")
+    end
+
+    it "renders a tooltip" do
+      expect(page).to have_css(".tooltip", text: "Trier par ordre croissant")
+    end
+
+    it "renders an icon to sort by ascending order" do
+      within("svg") do
+        expect(page).to have_css("title", tex: "Trier par ordre acroissant")
+      end
+    end
+  end
+
+  context "when already sort by another key" do
+    before do
+      with_request_url("/communes?order=code_insee") do
+        render_inline(component)
+      end
+    end
+
+    it "renders a link to sort by ascending order" do
+      expect(page).to have_link("Trier par ordre croissant", href: "/communes?order=name")
+    end
+
+    it "renders an icon to sort by ascending order" do
+      within("svg") do
+        expect(page).to have_css("title", tex: "Trier par ordre acroissant")
+      end
     end
   end
 end

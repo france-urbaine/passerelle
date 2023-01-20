@@ -30,6 +30,6 @@
 
 - else
   .header-bar
-    = search_component("Rechercher")
+    = search_component
     .flex-auto
     = index_options_component(pagy, "commune", order: { commune: "commune", departement: "département", epci: "EPCI" })

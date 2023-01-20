@@ -129,6 +129,8 @@ $ guard
 
 ### Previews
 
+User interface and components are documented and can be previewed at [http://localhost:3000/lookbook](http://localhost:3000/lookbook)
+
 Mails can be previewed at [http://localhost:3000/rails/mailers](http://localhost:3000/rails/mailers)
 
 ### Catch mails

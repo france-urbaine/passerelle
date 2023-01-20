@@ -100,6 +100,7 @@ RSpec/ExampleLength:
   CountAsOne: ['array', 'heredoc']
   Exclude:
     - 'spec/system/**/*'
+    - 'spec/components/**/*'
 
 RSpec/ImplicitSubject:
   EnforcedStyle: single_statement_only
