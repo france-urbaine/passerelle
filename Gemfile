@@ -67,11 +67,13 @@ group :development do
 
   gem "lookbook"
 
+  # Linting
   gem "rubocop",             require: false
   gem "rubocop-performance", require: false
   gem "rubocop-rails",       require: false
   gem "rubocop-rspec",       require: false
 
+  # Tests & lint automation
   gem "guard"
   gem "guard-rspec",   require: false
   gem "guard-rubocop", require: false
@@ -81,15 +83,18 @@ group :development do
 end
 
 group :test do
-  gem "capybara"
   gem "database_cleaner-active_record"
+  gem "simplecov", require: false
+  gem "webmock"
+
+  # RSpec extensions
   gem "fuubar"
   gem "rspec-collection_matchers"
   gem "saharspec", github: "inkstak/saharspec", branch: "proper_rubocop_linting"
-  gem "selenium-webdriver"
   gem "shoulda-matchers"
-  gem "simplecov", require: false
   gem "super_diff"
-  gem "webdrivers"
-  gem "webmock"
+
+  # System tests
+  gem "capybara"
+  gem "cuprite"
 end
