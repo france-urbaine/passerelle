@@ -1,7 +1,5 @@
-main.content
-  = turbo_frame_tag :content, target: "_top", data: { turbo_action: "advance" }, src: @content_location
-
-= turbo_frame_tag :modal do
+= page_content src: @content_location
+= page_modal do
   = dialog_component do |dialog|
     = turbo_frame_tag :modal_form, target: "_top" do
       = form_with(model: @service, url: service_users_path(@service)) do |form|

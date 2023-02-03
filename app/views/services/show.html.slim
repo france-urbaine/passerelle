@@ -1,5 +1,2 @@
-main.content
-  = turbo_frame_tag :content, target: "_top", data: { turbo_action: "advance" } do
-    = render @service
-
-= turbo_frame_tag :modal, target: "_top"
+= page_content do
+  = render @service

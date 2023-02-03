@@ -1,7 +1,5 @@
-main.content
-  = turbo_frame_tag :content, target: "_top", data: { turbo_action: "advance" }, src: @content_location
-
-= turbo_frame_tag :modal, target: "_top" do
+= page_content src: @content_location
+= page_modal do
   = dialog_component do |dialog|
     = form_with(model: @publisher, method: :delete) do |form|
       .dialog__header

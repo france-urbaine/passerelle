@@ -38,6 +38,7 @@ class ApplicationController < ActionController::Base
   # Variant
   # ----------------------------------------------------------------------------
   helper_method :turbo_frame_request_id
+  helper_method :turbo_frame_request?
 
   def accept_variant
     request.headers["Accept-Variant"]&.downcase

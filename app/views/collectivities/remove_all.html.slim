@@ -1,7 +1,5 @@
-main.content
-  = turbo_frame_tag :content, target: "_top", data: { turbo_action: "advance" }, src: @content_location
-
-= turbo_frame_tag :modal, target: "_top" do
+= page_content src: @content_location
+= page_modal do
   = dialog_component do |dialog|
     = form_with(url: collectivities_path, method: :delete) do |form|
       - count = @collectivities.count
@@ -33,3 +31,5 @@ main.content
       .dialog__actions
         button.button.button--primary( type="submit" autofocus ) Continuer
         = dialog.cancel_button "Annuler", href: @return_location
+
+
