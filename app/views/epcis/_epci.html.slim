@@ -1,36 +1,12 @@
-.header-bar
-  .breadcrumbs
-    .breadcrumbs__path
-      a.icon-button(
-        aria-label="Retour à la page d'accueil"
-        data-turbo-frame="_top"
-        href="/"
-      )= svg_icon("home", "Retour à la page d'accueil")
+= page_header_component do |header|
+  - header.with_breadcrumbs_path "Territoires"
+  - header.with_breadcrumbs_path "EPCI", href: epcis_path(retrieve_index_back_params)
+  - header.with_breadcrumbs_path epci.name
 
-    .breadcrumbs__separator="/"
-    .breadcrumbs__path
-      | Territoires
-
-    .breadcrumbs__separator="/"
-    .breadcrumbs__path
-      a(
-        data-turbo-frame="_top"
-        href=epcis_path(retrieve_index_back_params)
-      ) EPCI
-
-    .breadcrumbs__separator="/"
-    .breadcrumbs__path
-      h1= epci.name
-
-  .flex-auto
-  .header-bar__actions
-    .header-bar__action
-      a.button(
-        data-turbo-frame="modal"
-        href=edit_epci_path(epci, content: current_path, redirect: current_path)
-      )
-        = svg_icon("pencil-square")
-        | Modifier
+  - header.with_action "Modifier",
+    href: edit_epci_path(epci, content: current_path, redirect: current_path),
+    icon: "pencil-square",
+    modal: true
 
 h2.subheader
   = svg_icon("bookmark", "Nouvelle section")

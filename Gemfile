@@ -95,6 +95,8 @@ group :test do
   gem "super_diff"
 
   # System tests
-  gem "capybara"
+  # FIXME: waiting for this PR to be released
+  # https://github.com/teamcapybara/capybara/pull/2617
+  gem "capybara", github: "teamcapybara/capybara", ref: "cacd032"
   gem "cuprite"
 end

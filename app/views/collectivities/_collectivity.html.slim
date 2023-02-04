@@ -1,44 +1,17 @@
-.header-bar
-  .breadcrumbs
-    .breadcrumbs__path
-      a.icon-button(
-        aria-label="Retour à la page d'accueil"
-        data-turbo-frame="_top"
-        href="/"
-      )= svg_icon("home", "Retour à la page d'accueil")
+= page_header_component do |header|
+  - header.with_breadcrumbs_path "Organisations"
+  - header.with_breadcrumbs_path "Collectivités", href: collectivities_path(retrieve_index_back_params)
+  - header.with_breadcrumbs_path collectivity.name
 
-    .breadcrumbs__separator="/"
-    .breadcrumbs__path
-      | Organisations
+  - header.with_action "Modifier",
+    href: edit_collectivity_path(collectivity, content: current_path, redirect: current_path),
+    icon: "pencil-square",
+    modal: true
 
-    .breadcrumbs__separator="/"
-    .breadcrumbs__path
-      a(
-        data-turbo-frame="_top"
-        href=collectivities_path(retrieve_index_back_params)
-      ) Collectivités
-
-    .breadcrumbs__separator="/"
-    .breadcrumbs__path
-      h1= collectivity.name
-
-  .flex-auto
-  .header-bar__actions
-    .header-bar__action
-      a.button(
-        data-turbo-frame="modal"
-        href=edit_collectivity_path(collectivity, content: current_path, redirect: current_path)
-      )
-        = svg_icon("pencil-square")
-        | Modifier
-
-    .header-bar__action
-      a.button(
-        data-turbo-frame="modal"
-        href=remove_collectivity_path(collectivity, content: current_path)
-      )
-        = svg_icon("trash")
-        | Supprimer
+  - header.with_action "Supprimer",
+    href: remove_collectivity_path(collectivity, content: current_path),
+    icon: "trash",
+    modal: true
 
 - if collectivity.discarded?
   .card.mb-6
@@ -48,7 +21,6 @@
       |  Ce compte a été archivé le #{localize(collectivity.discarded_at.to_date)}.
       br
       |  Il sera définitivement supprimé le #{localize(30.days.after(collectivity.discarded_at.to_date))}.
-
 
 h2.subheader
   = svg_icon("bookmark", "Nouvelle section")

@@ -1,4 +1,12 @@
-= render "index_breadcrumbs", publishers: publishers, pagy: pagy
+= page_header_component do |header|
+  - header.with_breadcrumbs_path "Organisations"
+  - header.with_breadcrumbs_path "Editeurs"
+
+  - header.with_action "Ajouter un éditeur",
+    href: new_publisher_path(content: current_path),
+    icon: "plus",
+    modal: true,
+    primary: true
 
 div( data-controller="selection" )
   = turbo_frame_tag :index_header, data: { selection_target: "frame" } do

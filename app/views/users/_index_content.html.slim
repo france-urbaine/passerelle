@@ -1,4 +1,12 @@
-= render "index_breadcrumbs", users: users, pagy: pagy
+= page_header_component do |header|
+  - header.with_breadcrumbs_path "Organisations"
+  - header.with_breadcrumbs_path "Utilisateurs"
+
+  - header.with_action "Inviter un utilisateur",
+    href: new_user_path(content: current_path),
+    icon: "plus",
+    modal: true,
+    primary: true
 
 div( data-controller="selection" )
   = turbo_frame_tag :index_header, data: { selection_target: "frame" } do

@@ -1,4 +1,6 @@
-= render "index_breadcrumbs", regions: regions, pagy: pagy
+= page_header_component do |header|
+  - header.with_breadcrumbs_path "Territoires"
+  - header.with_breadcrumbs_path "Régions"
 
 div( data-controller="selection" )
   = turbo_frame_tag :index_header, data: { selection_target: "frame" } do

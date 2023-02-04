@@ -1,44 +1,17 @@
-.header-bar
-  .breadcrumbs
-    .breadcrumbs__path
-      a.icon-button(
-        aria-label="Retour à la page d'accueil"
-        data-turbo-frame="_top"
-        href="/"
-      )= svg_icon("home", "Retour à la page d'accueil")
+= page_header_component do |header|
+  - header.with_breadcrumbs_path "Organisations"
+  - header.with_breadcrumbs_path "Utilisateurs", href: users_path(retrieve_index_back_params)
+  - header.with_breadcrumbs_path user.name
 
-    .breadcrumbs__separator="/"
-    .breadcrumbs__path
-      | Organisations
+  - header.with_action "Modifier",
+    href: edit_user_path(user, content: current_path, redirect: current_path),
+    icon: "pencil-square",
+    modal: true
 
-    .breadcrumbs__separator="/"
-    .breadcrumbs__path
-      a(
-        data-turbo-frame="_top"
-        href=params.fetch(:back, users_path)
-      ) Utilisateurs
-
-    .breadcrumbs__separator="/"
-    .breadcrumbs__path
-      h1= user.name
-
-  .flex-auto
-  .header-bar__actions
-    .header-bar__action
-      a.button(
-        data-turbo-frame="modal"
-        href=edit_user_path(user, content: current_path, redirect: current_path)
-      )
-        = svg_icon("pencil-square")
-        | Modifier
-
-    .header-bar__action
-      a.button(
-        data-turbo-frame="modal"
-        href=remove_user_path(user, content: current_path)
-      )
-        = svg_icon("trash")
-        | Supprimer
+  - header.with_action "Supprimer",
+    href: remove_user_path(user, content: current_path),
+    icon: "trash",
+    modal: true
 
 - if user.discarded?
   .card.mb-6

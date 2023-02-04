@@ -3,6 +3,7 @@
 module ComponentsHelper
   # standard:disable Layout/HashAlignment
   COMPONENT_HELPERS = {
+    page_header_component:    "PageHeaderComponent",
     dialog_component:         "DialogComponent",
     search_component:         "SearchComponent",
     index_options_component:  "IndexOptionsComponent",
