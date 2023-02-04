@@ -1,34 +1,18 @@
 # frozen_string_literal: true
 
 module ComponentsHelper
-  def dialog_component(&)
-    render(DialogComponent.new, &)
-  end
+  # standard:disable Layout/HashAlignment
+  COMPONENT_HELPERS = {
+    dialog_component:         "DialogComponent",
+    search_component:         "SearchComponent",
+    index_options_component:  "IndexOptionsComponent",
+    order_column:             "OrderColumnComponent"
+  }.freeze
+  # standard:enable Layout/HashAlignment
 
-  def search_component(...)
-    render(SearchComponent.new(...))
-  end
-
-  def index_options_component(...)
-    render(IndexOptionsComponent.new(...))
-  end
-
-  def order_column(...)
-    render(OrderColumnComponent.new(...))
-  end
-
-  def svg_icon(icon, title = nil, **options)
-    if title
-      options[:title] = title
-      options[:aria] ||= true
-    else
-      options[:aria_hidden] = true
+  COMPONENT_HELPERS.each do |name, component|
+    define_method name do |*args, **kwargs, &block|
+      render component.constantize.new(*args, **kwargs), &block
     end
-
-    inline_svg_tag("#{icon}.svg", **options)
-      .strip
-      .gsub(%(aria-hidden="true"), "aria-hidden")
-      .gsub(%r{></(path|circle|rect)>}, "/>")
-      .html_safe # rubocop:disable Rails/OutputSafety
   end
 end
