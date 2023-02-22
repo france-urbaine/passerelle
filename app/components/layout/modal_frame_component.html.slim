@@ -1,0 +1,7 @@
+- if turbo_frame_request?
+  = tag.turbo_frame id: "modal" do
+    = content
+
+- else
+  = tag.turbo_frame id: "modal", src: @src, target: "_top" do
+    = content

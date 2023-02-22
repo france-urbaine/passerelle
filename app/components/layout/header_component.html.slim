@@ -17,6 +17,10 @@
 
   .flex-auto
   .header-bar__actions
+    - if primary_action?
+      .header-bar__action
+        = primary_action
+
     - actions.each do |action|
       .header-bar__action
         = action

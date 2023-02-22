@@ -1,5 +1,5 @@
-= page_content src: @content_location
-= page_modal do
+= layout_main_frame_component src: @content_location
+= layout_modal_frame_component do
   = dialog_component do |dialog|
     = form_with(model: @user, method: :delete) do |form|
       .dialog__header

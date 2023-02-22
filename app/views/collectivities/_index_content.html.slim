@@ -1,12 +1,11 @@
-= page_header_component do |header|
+= layout_header_component do |header|
   - header.with_breadcrumbs_path "Organisations"
   - header.with_breadcrumbs_path "Collectivités"
 
-  - header.with_action "Ajouter une collectivité",
+  - header.with_primary_action "Ajouter une collectivité",
       href: new_collectivity_path(content: current_path),
       icon: "plus",
-      modal: true,
-      primary: true
+      modal: true
 
 div( data-controller="selection" )
   = turbo_frame_tag :index_header, data: { selection_target: "frame" } do

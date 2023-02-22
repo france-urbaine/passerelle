@@ -2,8 +2,8 @@
 
 require "rails_helper"
 
-RSpec.describe PageHeaderComponent, type: :component do
-  it "renders breacrumbs", :aggregate_failures do
+RSpec.describe Layout::HeaderComponent, type: :component do
+  it "renders breacrumbs" do
     render_inline described_class.new do |header|
       header.with_breadcrumbs_path "Path 1"
       header.with_breadcrumbs_path "Path 2", href: "/foo"
@@ -26,7 +26,7 @@ RSpec.describe PageHeaderComponent, type: :component do
     end
   end
 
-  it "renders actions", :aggregate_failures do
+  it "renders actions" do
     render_inline described_class.new do |header|
       header.with_action "Update"
     end
@@ -36,9 +36,9 @@ RSpec.describe PageHeaderComponent, type: :component do
     end
   end
 
-  it "renders a primary action", :aggregate_failures do
+  it "renders a primary action" do
     render_inline described_class.new do |header|
-      header.with_action "Update", primary: true
+      header.with_primary_action "Update"
     end
 
     expect(page).to have_selector(".header-bar > .header-bar__actions") do |node|
@@ -46,7 +46,7 @@ RSpec.describe PageHeaderComponent, type: :component do
     end
   end
 
-  it "renders an action with an icon", :aggregate_failures do
+  it "renders an action with an icon" do
     render_inline described_class.new do |header|
       header.with_action "Update", icon: "plus"
     end
@@ -56,7 +56,7 @@ RSpec.describe PageHeaderComponent, type: :component do
     end
   end
 
-  it "renders an action with a link", :aggregate_failures do
+  it "renders an action with a link" do
     render_inline described_class.new do |header|
       header.with_action "Update", href: "/foo"
     end
@@ -66,7 +66,7 @@ RSpec.describe PageHeaderComponent, type: :component do
     end
   end
 
-  it "renders an action to open a link in a modal", :aggregate_failures do
+  it "renders an action to open a link in a modal" do
     render_inline described_class.new do |header|
       header.with_action "Update", href: "/foo", modal: true
     end

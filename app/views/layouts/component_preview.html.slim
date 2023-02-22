@@ -11,6 +11,7 @@ html
     = javascript_include_tag "application", "data-turbo-track": "reload", defer: true
 
   body
-    .p-16
-      = yield
-
+    - if params.dig(:lookbook, :display, :full_width)
+      .p-10.w-full= yield
+    - else
+      .p-10= yield

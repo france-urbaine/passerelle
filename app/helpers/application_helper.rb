@@ -4,7 +4,6 @@ module ApplicationHelper
   include ComponentsHelper
   include FormHelper
   include FormatHelper
-  include LayoutHelper
   include RequestHelper
   include SVGHelper
   include TurboHelper

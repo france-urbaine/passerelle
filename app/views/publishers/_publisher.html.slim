@@ -1,4 +1,4 @@
-= page_header_component do |header|
+= layout_header_component do |header|
   - header.with_breadcrumbs_path "Organisations"
   - header.with_breadcrumbs_path "Editeurs", href: publishers_path(retrieve_index_back_params)
   - header.with_breadcrumbs_path publisher.name

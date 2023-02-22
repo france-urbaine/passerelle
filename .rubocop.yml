@@ -107,6 +107,7 @@ RSpec/ImplicitSubject:
 
 RSpec/MultipleExpectations:
   Exclude:
+    - 'spec/components/**/*'
     - 'spec/system/**/*'
 
 RSpec/NestedGroups:

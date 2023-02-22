@@ -1,0 +1,8 @@
+= layout_header_component do |header|
+  - header.with_breadcrumbs_path "Path 1"
+  - header.with_breadcrumbs_path "Path 2"
+
+  - header.with_primary_action "Add", icon: "plus"
+
+  - header.with_action "Edit", href: "/"
+  - header.with_action "Open a modal", href: "/", modal: true

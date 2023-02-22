@@ -1,4 +1,4 @@
-= page_header_component do |header|
+= layout_header_component do |header|
   - header.with_breadcrumbs_path "Territoires"
   - header.with_breadcrumbs_path "Départements", href: departements_path(retrieve_index_back_params)
   - header.with_breadcrumbs_path departement.name
