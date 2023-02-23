@@ -1,6 +1,6 @@
 = tag.turbo_frame id: request.headers["Turbo-Frame"] do
-  .card
-    .card__content
+  = dialog_component do
+    p
       | This content is rendered by Turbo from the URL:
       br
-      | /rails/view_components/turbo_frame/card
+      | /rails/view_components/samples/turbo/modal

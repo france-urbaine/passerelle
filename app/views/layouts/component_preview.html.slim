@@ -10,8 +10,11 @@ html
     = stylesheet_link_tag "application", "data-turbo-track": "reload"
     = javascript_include_tag "application", "data-turbo-track": "reload", defer: true
 
-  body
+  body.flex-col.p-10.overflow-auto
     - if params.dig(:lookbook, :display, :full_width)
-      .p-10.w-full= yield
+      .w-full= yield
     - else
-      .p-10= yield
+      = yield
+
+    = layout_main_frame_component unless layout_main_frame_component_rendered?
+    = layout_modal_frame_component unless layout_modal_frame_component_rendered?

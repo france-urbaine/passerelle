@@ -13,7 +13,7 @@
     outline-style: solid;
     outline-width: 0px;
 
-    @apply py-2 px-4 h-10 leading-6 bg-transparent border rounded;
+    @apply py-2 px-4 h-10 leading-6 bg-transparent border rounded-full;
     @apply bg-white text-gray-900 border-gray-400;
     @apply dark:bg-black dark:text-gray-100 dark:border-gray-400;
 
@@ -60,10 +60,14 @@
 
     &--primary {
       @apply subpixel-antialiased;
-      @apply bg-blue-600 border-blue-500 text-white;
-      @apply dark:bg-sky-400 dark:border-sky-500 dark:text-black;
+      @apply bg-blue-500 border-blue-500 text-white;
+      @apply dark:bg-sky-500 dark:border-sky-500 dark:text-black;
 
-      &[disabled], &:not([disabled]):is(:hover, :active, :focus, :focus-visible) {
+      @apply contrast-more:bg-blue-600;
+      @apply contrast-more:dark:bg-blue-400;
+
+      &[disabled],
+      &:not([disabled]):is(:hover, :active, :focus, :focus-visible) {
         @apply text-white;
         @apply dark:text-black;
       }
@@ -82,6 +86,38 @@
         &:active {
           @apply bg-blue-700 border-blue-700 outline-blue-700;
           @apply dark:bg-sky-300 dark:border-sky-300 dark:outline-blue-300;
+        }
+      }
+    }
+
+    &--destructive {
+      @apply subpixel-antialiased;
+      @apply bg-red-500 border-red-500 text-white;
+      @apply dark:bg-red-500 dark:border-red-500 dark:text-black;
+
+      @apply contrast-more:bg-red-600;
+      @apply contrast-more:dark:bg-red-400;
+
+      &[disabled],
+      &:not([disabled]):is(:hover, :active, :focus, :focus-visible) {
+        @apply text-white;
+        @apply dark:text-black;
+      }
+
+      &:not([disabled]) {
+        &:is(:focus, :focus-visible) {
+          @apply outline-red-500;
+          @apply dark:outline-red-500;
+        }
+
+        &:hover {
+          @apply bg-red-600 border-red-600 outline-red-600;
+          @apply dark:bg-red-400 dark:border-red-400 dark:outline-red-400;
+        }
+
+        &:active {
+          @apply bg-red-700 border-red-700 outline-red-700;
+          @apply dark:bg-red-300 dark:border-red-300 dark:outline-red-300;
         }
       }
     }

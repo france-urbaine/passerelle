@@ -73,5 +73,34 @@
         @apply dark:bg-sky-300 dark:border-sky-300 dark:outline-blue-300;
       }
     }
+
+    &--destructive:not([disabled]) {
+      @apply subpixel-antialiased;
+      @apply h-12 w-12 p-2;
+
+      & svg {
+        @apply h-8 w-8;
+      }
+
+      &, &:is(:hover, :active, :focus, :focus-visible) {
+        @apply bg-red-500 border-red-500 text-white;
+        @apply dark:bg-sky-500 dark:border-sky-500 dark:text-black;
+      }
+
+      &:is(:focus, :focus-visible) {
+        @apply outline-red-500;
+        @apply dark:outline-sky-500;
+      }
+
+      &:hover {
+        @apply bg-red-600 border-red-600 outline-red-600;
+        @apply dark:bg-sky-400 dark:border-sky-400 dark:outline-red-400;
+      }
+
+      &:active {
+        @apply bg-red-700 border-red-700 outline-red-700;
+        @apply dark:bg-sky-300 dark:border-sky-300 dark:outline-red-300;
+      }
+    }
   }
 }

@@ -10,6 +10,7 @@ module ComponentsHelper
   }.freeze
 
   COMPONENT_HELPERS = {
+    button_component:         "ButtonComponent",
     dialog_component:         "DialogComponent",
     search_component:         "SearchComponent",
     index_options_component:  "IndexOptionsComponent",
