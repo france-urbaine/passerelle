@@ -1,5 +1,5 @@
 @layer components {
-  .dialog {
+  .modal {
     position: fixed;
     z-index: 100;
     top: 0;
@@ -13,7 +13,7 @@
     @apply transition duration-200;
   }
 
-  .dialog__overlay {
+  .modal__overlay {
     position: fixed;
     z-index: 1;
     top: 0;
@@ -24,7 +24,7 @@
     @apply bg-black/50;
   }
 
-  .dialog__container {
+  .modal__container {
     position: absolute;
     z-index: 2;
     top: theme('spacing.12');
@@ -42,7 +42,7 @@
     }
   }
 
-  .dialog__header {
+  .modal__header {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
@@ -50,40 +50,51 @@
     @apply pb-8;
   }
 
-  .dialog__header-toolbar {
+  .modal__header-toolbar {
     @apply -m-1;
   }
 
-  .dialog__close-button svg {
+  .modal__content .modal__close-button {
+    float: right;
+    @apply -mt-2 -mr-2 ml-6;
+  }
+
+  .modal__close-button svg {
     @apply text-gray-500;
   }
 
-  .dialog__actions {
+  .modal__actions {
+    display: flex;
+
     @apply pt-8;
 
     & .button {
       @apply mr-4;
     }
+
+    & .modal__secondary-action {
+      @apply ml-4 mr-0;
+    }
   }
 
-  .dialog__title {
+  .modal__title {
     @apply text-xl;
   }
 
-  .dialog--enter-from,
-  .dialog--leave-to {
+  .modal--enter-from,
+  .modal--leave-to {
     @apply opacity-0;
 
-    & .dialog__container {
+    & .modal__container {
       transform: translate(-50%, 1rem);
     }
   }
 
-  .dialog--enter-to,
-  .dialog--leave-from {
+  .modal--enter-to,
+  .modal--leave-from {
     @apply opacity-100;
 
-    & .dialog__container {
+    & .modal__container {
       transform: translate(-50%, 0);
     }
   }

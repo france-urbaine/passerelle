@@ -27,7 +27,7 @@ RSpec.describe TemplateFrameComponent, type: :component do
     end
 
     expect(page).to have_selector("main.content > turbo-frame:empty")
-    expect(page).to have_selector("turbo-frame#modal") do |node|
+    expect(page).to have_selector("turbo-frame#modal > .modal > .modal__container") do |node|
       expect(node).to have_selector("p", text: "Hello World")
     end
   end
@@ -39,5 +39,21 @@ RSpec.describe TemplateFrameComponent, type: :component do
 
     expect(page).to have_selector("main.content > turbo-frame:empty")
     expect(page).to have_selector("turbo-frame#modal[src='/communes']")
+  end
+
+  it "avoids to render modal component twice" do
+    render_inline described_class.new do |frame|
+      frame.with_modal do |modal|
+        modal.with_content do
+          tag.p "Hello World"
+        end
+      end
+    end
+
+    expect(page).to have_selector("main.content > turbo-frame:empty")
+    expect(page).to have_selector("turbo-frame#modal > .modal > .modal__container") do |node|
+      expect(node).not_to have_selector(".modal")
+      expect(node).to have_selector("p", text: "Hello World")
+    end
   end
 end

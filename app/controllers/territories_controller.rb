@@ -26,7 +26,7 @@ class TerritoriesController < ApplicationController
       epcis_url:    DEFAULT_EPCIS_PATH
     )
 
-    @content_location = safe_location_param(:content, communes_path)
+    @background_content_url = safe_location_param(:content, communes_path)
   end
 
   def update

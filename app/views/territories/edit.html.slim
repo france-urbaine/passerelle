@@ -1,22 +1,15 @@
-main.content
-  = turbo_frame_tag :content, target: "_top", data: { turbo_action: "advance" }, src: @content_location
+= template_frame_component(src: @background_content_url) do |frame|
+  - frame.with_modal do |modal|
+    - modal.with_header do
+      | Mise à jour des territoires
 
-= turbo_frame_tag :modal, target: "_top"
-  = dialog_component do |dialog|
-    = turbo_frame_tag :modal_form, target: "_top" do
-      - @territories_update.strip_domain_urls
+    - modal.with_form(model: @territories_update, url: territories_path, method: :patch) do
+      = hidden_param_input(:redirect)
 
-      = form_with(model: @territories_update, url: territories_path, method: :patch) do |form|
-        .dialog__header
-          h1#dialog-title.dialog__title
-            | Mise à jour des territoires
+      div( class="w-[640px]" )
+        - @territories_update.strip_domain_urls
 
-          .dialog__header-toolbar
-            = dialog.close_button href: @content_location
-
-        .dialog__content( class="w-[640px]" )
-          = hidden_param_input(:redirect)
-
+        = fields(model: @territories_update) do |form|
           = form_block @territories_update, :communes_url, first: true do
             .form-block__label
               = form.label :communes_url do
@@ -43,6 +36,6 @@ main.content
               span.form-block__input-prefix https://www.insee.fr/
               = form.text_field :epcis_url
 
-        .dialog__actions
-          button.button.button--primary( type="submit" ) Enregistrer
-          = dialog.cancel_button "Annuler", href: @content_location
+
+    - modal.with_submit_action "Enregistrer", autofocus: true
+    - modal.with_close_action "Annuler"

@@ -24,7 +24,7 @@ class EpcisController < ApplicationController
   def show; end
 
   def edit
-    @content_location = safe_location_param(:content, epci_path(@epci))
+    @background_content_url = safe_location_param(:content, epci_path(@epci))
   end
 
   def update

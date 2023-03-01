@@ -53,6 +53,7 @@ class ButtonComponent < ViewComponent::Base
     options = @options.dup
     options[:class] = extract_class_attributes(icon_only:)
     options[:data]  = extract_data_attributes
+    options[:type] ||= "button"
 
     tag.button(**options, &)
   end

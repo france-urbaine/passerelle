@@ -1,3 +1,3 @@
-= template_frame_component do |frame|
-  - frame.with_modal do
-    = render "form", epci: @epci
+= template_frame_component(src: @background_content_url) do |frame|
+  - frame.with_modal do |modal|
+    = render "form", epci: @epci, modal: modal

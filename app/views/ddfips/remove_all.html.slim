@@ -1,32 +1,27 @@
-= template_frame_component do |frame|
-  - frame.with_modal do |dialog|
-    = form_with(url: ddfips_path, method: :delete) do |form|
-      - count = @ddfips.count
+= template_frame_component(src: @background_content_url) do |frame|
+  - frame.with_modal do |modal|
+    - modal.with_header do
+      - if @ddfips.count > 1
+        | Suppression des DDFIP sélectionnées
+      - else
+        | Suppression de la DDFIP sélectionnée
 
-      .dialog__header
-        h1#dialog-title.dialog__title
-          - if count > 1
-            | Suppression des DDFIP sélectionnées
-          - else
-            | Suppression de la DDFIP sélectionnée
+    - modal.with_form(url: ddfips_path, method: :delete) do
+      = hidden_param_input(:ids)
+      = hidden_param_input(:search)
+      = hidden_param_input(:order)
+      = hidden_param_input(:page)
 
-      .dialog__content
-        = hidden_param_input(:ids)
-        = hidden_param_input(:search)
-        = hidden_param_input(:order)
-        = hidden_param_input(:page)
+      - if @ddfips.count > 1
+        p
+          | Êtes-vous sûrs de vouloir supprimer les <b>#{@ddfips.count}</b> DDFIP sélectionnées ?
+          br
+          | Les comptes seront archivés pendant 30 jours avant d'être définitivement supprimés.
+      - else
+        p
+          | Êtes-vous sûrs de vouloir supprimer la DDFIP sélectionnée ?
+          br
+          | Le compte sera archivé pendant 30 jours avant d'être définitivement supprimé.
 
-        - if count > 1
-          p
-            | Êtes-vous sûrs de vouloir supprimer les <b>#{count}</b> DDFIP sélectionnées ?
-            br
-            | Les comptes seront archivés pendant 30 jours avant d'être définitivement supprimés.
-        - else
-          p
-            | Êtes-vous sûrs de vouloir supprimer la DDFIP sélectionnée ?
-            br
-            | Le compte sera archivé pendant 30 jours avant d'être définitivement supprimé.
-
-      .dialog__actions
-        button.button.button--primary( type="submit" autofocus ) Continuer
-        = dialog.cancel_button "Annuler", href: @return_location
+    - modal.with_submit_action "Continuer", autofocus: true
+    - modal.with_close_action "Annuler"

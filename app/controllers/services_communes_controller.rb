@@ -6,7 +6,7 @@ class ServicesCommunesController < ApplicationController
 
   def edit
     @services_communes_form = ServicesCommunesForm.new(@service)
-    @content_location       = safe_location_param(:content, service_path(@service))
+    @background_content_url = safe_location_param(:content, service_path(@service))
   end
 
   def update

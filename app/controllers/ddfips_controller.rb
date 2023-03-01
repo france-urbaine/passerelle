@@ -3,8 +3,8 @@
 class DdfipsController < ApplicationController
   respond_to :html
 
-  before_action :set_ddfip,            only: %i[show edit update remove destroy undiscard]
-  before_action :set_content_location, only: %i[new edit remove]
+  before_action :set_ddfip,                  only: %i[show edit update remove destroy undiscard]
+  before_action :set_background_content_url, only: %i[new edit remove]
 
   def index
     @ddfips = DDFIP.kept.strict_loading
@@ -86,8 +86,8 @@ class DdfipsController < ApplicationController
     @ddfips = search(@ddfips)
     @ddfips = select(@ddfips)
 
-    @content_location = ddfips_path(ids: params[:ids], **index_params)
-    @return_location  = ddfips_path(**index_params)
+    @background_content_url = ddfips_path(ids: params[:ids], **index_params)
+    @return_location        = ddfips_path(**index_params)
   end
 
   def destroy_all
@@ -150,11 +150,11 @@ class DdfipsController < ApplicationController
     @ddfip = DDFIP.find(params[:id])
   end
 
-  def set_content_location
+  def set_background_content_url
     default = ddfips_path
     default = ddfip_path(@ddfip) if @ddfip&.persisted?
 
-    @content_location = safe_location_param(:content, default)
+    @background_content_url = safe_location_param(:content, default)
   end
 
   def ddfip_params

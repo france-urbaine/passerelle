@@ -4,7 +4,7 @@ module ComponentsHelper
   COMPONENT_HELPERS = {
     breadcrumbs_component:    "BreadcrumbsComponent",
     button_component:         "ButtonComponent",
-    dialog_component:         "DialogComponent",
+    modal_component:          "ModalComponent",
     search_component:         "SearchComponent",
     index_options_component:  "IndexOptionsComponent",
     order_column:             "OrderColumnComponent"

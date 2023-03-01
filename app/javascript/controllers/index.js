@@ -7,8 +7,8 @@ import { application } from "./application"
 import AutocompleteController from "./components/autocomplete_controller"
 application.register("autocomplete", AutocompleteController)
 
-import DialogController from "./components/dialog_controller"
-application.register("dialog", DialogController)
+import ModalController from "./components/modal_controller"
+application.register("modal", ModalController)
 
 import DropdownController from "./components/dropdown_controller"
 application.register("dropdown", DropdownController)

@@ -1,104 +1,98 @@
-= dialog_component do |dialog|
-  = turbo_frame_tag :modal_form, target: "_top" do
-    = form_with(model: user) do |form|
-      .dialog__header
-        h1#dialog-title.dialog__title
-          - if user.persisted?
-            | Modification de l'utilisateur
-          - else
-            | Invitation d'un nouvel utilisateur
+- modal.with_header do
+  - if user.persisted?
+    | Modification de l'utilisateur
+  - else
+    | Invitation d'un nouvel utilisateur
 
-        .dialog__header-toolbar
-          = dialog.close_button href: @content_location
+= modal.with_form(model: user) do
+  = hidden_param_input(:redirect)
 
-      .dialog__content( data-controller="user-form" data-user-form-services-url-value=user_services_path(user_id: user.id) )
-        = hidden_param_input(:redirect)
-
-        = form.block :organization, first: true, autocomplete: organizations_path do
-          ruby:
-            if user.organization
-              organization_data = { type: user.organization_type, id: user.organization_id }.to_json
-              organization_name = user.organization.name
-            end
-
-            # Do not add required attribute to make this form submittable in noscript mode
-            html_options = {
-              value:        organization_name,
-              placeholder:  "Commnencez à taper pour sélectionner des organisations",
-              data:         {
-                autocomplete_target: "input"
-              }
-            }
-
-            hidden_html_options = {
-              value:        organization_data,
-              data:         {
-                autocomplete_target: "hidden",
-                action:              "user-form#updateServices"
-              }
-            }
-
-          = form.label :organization
-          = form.search_field :organization, **html_options
-          = form.hidden_field :organization_data, **hidden_html_options
-
-        = noscript do
-          = form.block :organization_type, first: true do
-            ruby:
-              models  = [Publisher, DDFIP, Collectivity]
-              options = models.map { |m| [m.model_name.human, m.name] }
-
-            = form.label :organization_type
-            = form.select :organization_type, options, autofocus: true, required: true
-
-          = form.block :organization do
-            = form.label :organization_name
-            = form.text_field :organization_name, value: user.organization&.name, required: true
-
-        = form.block :first_name do
-          = form.label :first_name
-          = form.text_field :first_name, required: true
-
-        = form.block :last_name do
-          = form.label :last_name
-          = form.text_field :last_name, required: true
-
-        = form.block :email do
-          = form.label :email
-          = form.email_field :email
-
+  div( data-controller="user-form" data-user-form-services-url-value=user_services_path(user_id: user.id) )
+    = fields(model: user) do |form|
+      = form.block :organization, first: true, autocomplete: organizations_path do
         ruby:
-          services_block_options = { data: { user_form_target: "servicesFormBlock" } }
-          services_frame_options = { data: { user_form_target: "servicesCheckboxesFrame" } }
-
-          if user.organization.is_a?(DDFIP)
-            services_frame_options[:src] = user_services_path(user_id: user.id, ddfip_id: user.organization_id, service_ids: user.service_ids)
-          else
-            services_block_options[:class] = "hidden"
+          if user.organization
+            organization_data = { type: user.organization_type, id: user.organization_id }.to_json
+            organization_name = user.organization.name
           end
 
-        = form.block :service_ids, **services_block_options do
-          = form.label :service_ids
-          = turbo_frame_tag :user_services_checkboxes, **services_frame_options
+          # Do not add required attribute to make this form submittable in noscript mode
+          html_options = {
+            value:        organization_name,
+            placeholder:  "Commnencez à taper pour sélectionner des organisations",
+            data:         {
+              autocomplete_target: "input"
+            }
+          }
 
-        = form.block :organization_admin do
-          = form.check_box :organization_admin
-          = form.label :organization_admin
+          hidden_html_options = {
+            value:        organization_data,
+            data:         {
+              autocomplete_target: "hidden",
+              action:              "user-form#updateServices"
+            }
+          }
 
-          p.text-disabled
-            | Un administrateur bénéficie de tout les droits sur son organisation.
-            br
-            | Il peut notamment créer, gérer ou supprimer d'autres utilisateurs au sein de cette organisation.
+        = form.label :organization
+        = form.search_field :organization, **html_options
+        = form.hidden_field :organization_data, **hidden_html_options
 
-        = form.block :super_admin do
-          = form.check_box :super_admin
-          = form.label :super_admin
+      = noscript do
+        = form.block :organization_type, first: true do
+          ruby:
+            models  = [Publisher, DDFIP, Collectivity]
+            options = models.map { |m| [m.model_name.human, m.name] }
 
-          p.text-disabled
-            | Un administrateur de FiscaHub a accès à toutes les informations de la plateforme, sans restrictions.
-            br
-            | Il peut notamment créer, gérer et supprimer n'importe quelle organisation ou utilisateur.
+          = form.label :organization_type
+          = form.select :organization_type, options, autofocus: true, required: true
 
-      .dialog__actions
-        button.button.button--primary( type="submit" ) Enregistrer
-        = dialog.cancel_button "Annuler",  href: @content_location
+        = form.block :organization do
+          = form.label :organization_name
+          = form.text_field :organization_name, value: user.organization&.name, required: true
+
+      = form.block :first_name do
+        = form.label :first_name
+        = form.text_field :first_name, required: true
+
+      = form.block :last_name do
+        = form.label :last_name
+        = form.text_field :last_name, required: true
+
+      = form.block :email do
+        = form.label :email
+        = form.email_field :email
+
+      ruby:
+        services_block_options = { data: { user_form_target: "servicesFormBlock" } }
+        services_frame_options = { data: { user_form_target: "servicesCheckboxesFrame" } }
+
+        if user.organization.is_a?(DDFIP)
+          services_frame_options[:src] = user_services_path(user_id: user.id, ddfip_id: user.organization_id, service_ids: user.service_ids)
+        else
+          services_block_options[:class] = "hidden"
+        end
+
+      = form.block :service_ids, **services_block_options do
+        = form.label :service_ids
+        = turbo_frame_tag :user_services_checkboxes, **services_frame_options
+
+      = form.block :organization_admin do
+        = form.check_box :organization_admin
+        = form.label :organization_admin
+
+        p.text-disabled
+          | Un administrateur bénéficie de tout les droits sur son organisation.
+          br
+          | Il peut notamment créer, gérer ou supprimer d'autres utilisateurs au sein de cette organisation.
+
+      = form.block :super_admin do
+        = form.check_box :super_admin
+        = form.label :super_admin
+
+        p.text-disabled
+          | Un administrateur de FiscaHub a accès à toutes les informations de la plateforme, sans restrictions.
+          br
+          | Il peut notamment créer, gérer et supprimer n'importe quelle organisation ou utilisateur.
+
+- modal.with_submit_action "Enregistrer"
+- modal.with_close_action "Annuler"

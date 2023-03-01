@@ -1,18 +1,15 @@
-= template_frame_component do |frame|
-  - frame.with_modal do |dialog|
-    = form_with(model: @collectivity, method: :delete) do |form|
-      .dialog__header
-        h1#dialog-title.dialog__title
-          | Suppression de la collectivité : #{@collectivity.name}
+= template_frame_component(src: @background_content_url) do |frame|
+  - frame.with_modal do |modal|
+    - modal.with_header do
+      | Suppression de la collectivité : #{@collectivity.name}
 
-      .dialog__content
-        = hidden_param_input(:redirect)
+    - modal.with_form(model: @collectivity, method: :delete) do
+      = hidden_param_input(:redirect)
 
-        p
-          | Êtes-vous sûrs de vouloir supprimer ce compte ?
-          br
-          | Le compte de la collectivité sera archivé pendant 30 jours avant d'être définitivement supprimé.
+      p
+        | Êtes-vous sûrs de vouloir supprimer ce compte ?
+        br
+        | Le compte de la collectivité sera archivé pendant 30 jours avant d'être définitivement supprimé.
 
-      .dialog__actions
-        button.button.button--primary( type="submit" autofocus ) Continuer
-        = dialog.cancel_button "Annuler", href: @content_location
+    - modal.with_submit_action "Continuer", autofocus: true
+    - modal.with_close_action "Annuler"

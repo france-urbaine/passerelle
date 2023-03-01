@@ -10,11 +10,15 @@ html
     = stylesheet_link_tag "application", "data-turbo-track": "reload"
     = javascript_include_tag "application", "data-turbo-track": "reload", defer: true
 
-  body.flex-col.p-10.overflow-auto
-    - if params.dig(:lookbook, :display, :full_width)
-      .w-full= yield
-    - else
-      = yield
+  body.p-6.overflow-auto
+    - frame = params.dig(:lookbook, :display, :frame)
 
-    - if params.dig(:lookbook, :display, :modals)
-      = turbo_frame_tag :modal, target: "_top"
+    - if frame == false
+      = yield
+    - else
+      main.content
+        = turbo_frame_tag(:content, target: "_top") do
+          = yield if frame.nil? || frame == true || frame == "content"
+
+      = turbo_frame_tag(:modal, target: "_top") do
+        = yield if frame == "modal"
