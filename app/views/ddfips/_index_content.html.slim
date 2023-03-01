@@ -1,10 +1,11 @@
-= layout_header_component do |header|
-  - header.with_breadcrumbs_path "Organisations"
-  - header.with_breadcrumbs_path "DDFIP"
+= breadcrumbs_component do |breadcrumbs|
+  - breadcrumbs.with_path "Organisations"
+  - breadcrumbs.with_path "DDFIP"
 
-  - header.with_primary_action "Ajouter une DDFIP",
+  - breadcrumbs.with_action "Ajouter une DDFIP",
     href: new_ddfip_path(content: current_path),
     icon: "plus",
+    primary: true,
     modal: true
 
 div( data-controller="selection" )

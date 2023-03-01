@@ -1,0 +1,10 @@
+main.content
+  = tag.turbo_frame id: "content", src: @content_src, target: "_top", data: { turbo_action: "advance" } do
+    = content
+
+- if turbo_frame_request?
+  = tag.turbo_frame id: "modal" do
+    = modal
+- else
+  = tag.turbo_frame id: "modal", src: @modal_src, target: "_top" do
+    = modal

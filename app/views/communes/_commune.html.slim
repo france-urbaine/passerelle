@@ -1,9 +1,9 @@
-= layout_header_component do |header|
-  - header.with_breadcrumbs_path "Territoires"
-  - header.with_breadcrumbs_path "Communes", href: communes_path(retrieve_index_back_params)
-  - header.with_breadcrumbs_path commune.name
+= breadcrumbs_component do |breadcrumbs|
+  - breadcrumbs.with_path "Territoires"
+  - breadcrumbs.with_path "Communes", href: communes_path(retrieve_index_back_params)
+  - breadcrumbs.with_path commune.name
 
-  - header.with_action "Modifier",
+  - breadcrumbs.with_action "Modifier",
     href: edit_commune_path(commune, content: current_path, redirect: current_path),
     icon: "pencil-square",
     modal: true

@@ -1,6 +1,5 @@
-= layout_main_frame_component src: @content_location
-= layout_modal_frame_component do
-  = dialog_component do |dialog|
+= template_frame_component do |frame|
+  - frame.with_modal do |dialog|
     = form_with(model: @publisher, method: :delete) do |form|
       .dialog__header
         h1#dialog-title.dialog__title

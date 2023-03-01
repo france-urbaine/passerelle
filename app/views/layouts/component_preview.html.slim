@@ -16,5 +16,5 @@ html
     - else
       = yield
 
-    = layout_main_frame_component unless layout_main_frame_component_rendered?
-    = layout_modal_frame_component unless layout_modal_frame_component_rendered?
+    - if params.dig(:lookbook, :display, :modals)
+      = turbo_frame_tag :modal, target: "_top"

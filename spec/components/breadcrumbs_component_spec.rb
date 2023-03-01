@@ -2,12 +2,12 @@
 
 require "rails_helper"
 
-RSpec.describe Layout::HeaderComponent, type: :component do
+RSpec.describe BreadcrumbsComponent, type: :component do
   it "renders breacrumbs" do
-    render_inline described_class.new do |header|
-      header.with_breadcrumbs_path "Path 1"
-      header.with_breadcrumbs_path "Path 2", href: "/foo"
-      header.with_breadcrumbs_path "Path 3"
+    render_inline described_class.new do |breadcrumbs|
+      breadcrumbs.with_path "Path 1"
+      breadcrumbs.with_path "Path 2", href: "/foo"
+      breadcrumbs.with_path "Path 3"
     end
 
     expect(page).to have_selector(".header-bar > .breadcrumbs") do |node|
@@ -27,8 +27,8 @@ RSpec.describe Layout::HeaderComponent, type: :component do
   end
 
   it "renders actions" do
-    render_inline described_class.new do |header|
-      header.with_action "Update"
+    render_inline described_class.new do |breadcrumbs|
+      breadcrumbs.with_action "Update"
     end
 
     expect(page).to have_selector(".header-bar > .header-bar__actions") do |node|
@@ -37,8 +37,8 @@ RSpec.describe Layout::HeaderComponent, type: :component do
   end
 
   it "renders a primary action" do
-    render_inline described_class.new do |header|
-      header.with_primary_action "Update"
+    render_inline described_class.new do |breadcrumbs|
+      breadcrumbs.with_action "Update", primary: true
     end
 
     expect(page).to have_selector(".header-bar > .header-bar__actions") do |node|
@@ -47,8 +47,8 @@ RSpec.describe Layout::HeaderComponent, type: :component do
   end
 
   it "renders an action with an icon" do
-    render_inline described_class.new do |header|
-      header.with_action "Update", icon: "plus"
+    render_inline described_class.new do |breadcrumbs|
+      breadcrumbs.with_action "Update", icon: "plus"
     end
 
     expect(page).to have_selector(".header-bar > .header-bar__actions") do |node|
@@ -57,8 +57,8 @@ RSpec.describe Layout::HeaderComponent, type: :component do
   end
 
   it "renders an action with a link" do
-    render_inline described_class.new do |header|
-      header.with_action "Update", href: "/foo"
+    render_inline described_class.new do |breadcrumbs|
+      breadcrumbs.with_action "Update", href: "/foo"
     end
 
     expect(page).to have_selector(".header-bar > .header-bar__actions") do |node|
@@ -67,8 +67,8 @@ RSpec.describe Layout::HeaderComponent, type: :component do
   end
 
   it "renders an action to open a link in a modal" do
-    render_inline described_class.new do |header|
-      header.with_action "Update", href: "/foo", modal: true
+    render_inline described_class.new do |breadcrumbs|
+      breadcrumbs.with_action "Update", href: "/foo", modal: true
     end
 
     expect(page).to have_selector(".header-bar > .header-bar__actions") do |node|

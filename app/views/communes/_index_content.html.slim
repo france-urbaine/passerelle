@@ -1,8 +1,8 @@
-= layout_header_component do |header|
-  - header.with_breadcrumbs_path "Territoires"
-  - header.with_breadcrumbs_path "Communes"
+= breadcrumbs_component do |breadcrumbs|
+  - breadcrumbs.with_path "Territoires"
+  - breadcrumbs.with_path "Communes"
 
-  - header.with_action "Mettre à jour",
+  - breadcrumbs.with_action "Mettre à jour",
     href: edit_territories_path(content: current_path, redirect: current_path),
     icon: "cloud-arrow-down",
     modal: true

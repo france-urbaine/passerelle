@@ -1,14 +1,14 @@
-= layout_header_component do |header|
-  - header.with_breadcrumbs_path "Organisations"
-  - header.with_breadcrumbs_path "Utilisateurs", href: users_path(retrieve_index_back_params)
-  - header.with_breadcrumbs_path user.name
+= breadcrumbs_component do |breadcrumbs|
+  - breadcrumbs.with_path "Organisations"
+  - breadcrumbs.with_path "Utilisateurs", href: users_path(retrieve_index_back_params)
+  - breadcrumbs.with_path user.name
 
-  - header.with_action "Modifier",
+  - breadcrumbs.with_action "Modifier",
     href: edit_user_path(user, content: current_path, redirect: current_path),
     icon: "pencil-square",
     modal: true
 
-  - header.with_action "Supprimer",
+  - breadcrumbs.with_action "Supprimer",
     href: remove_user_path(user, content: current_path),
     icon: "trash",
     modal: true

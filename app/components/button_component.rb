@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class ButtonComponent < ViewComponent::Base
-
   def initialize(label = nil, **options)
     @label = label
     @href = options.delete(:href)
@@ -13,60 +12,70 @@ class ButtonComponent < ViewComponent::Base
     super()
   end
 
-  def label
-    @label || content
-  end
-
   def call
+    label   = capture_label
+    content = capture_content(label)
+
     if @href
-      link_to @href, **link_options do
-        concat helpers.svg_icon(@icon) if @icon
-        concat label
-      end
+      link(icon_only: !label) { content }
     else
-      content_tag :button, **button_options do
-        concat helpers.svg_icon(@icon) if @icon
-        concat label
-      end
+      button(icon_only: !label) { content }
     end
   end
 
-  def link_options
-    options = button_options
-    options[:data][:turbo_frame] = "modal" if @modal
-    options
+  protected
+
+  def capture_label
+    raise "Label can be specified as an argument or in a block, not both." if @label && content.present?
+
+    @label || content
   end
 
-  def button_options
+  def capture_content(label)
+    raise "Label is missing" if label.nil? && @icon.nil?
+
+    buffer = ActiveSupport::SafeBuffer.new
+    buffer << helpers.svg_icon(@icon) if @icon
+    buffer << label
+    buffer
+  end
+
+  def link(icon_only: false, &)
     options = @options.dup
+    options[:class] = extract_class_attributes(icon_only:)
+    options[:data]  = extract_data_attributes
+    options[:href]  = @href
 
-    options[:data] ||= {}
-
-    options[:class] ||= ""
-    options[:class] += " #{base_class}"
-    options[:class] += " #{base_class}--primary" if @primary
-    options[:class] += " #{base_class}--destructive" if @destructive
-
-    options[:class] = options[:class].strip
-
-    options
+    tag.a(**options, &)
   end
 
-  # Tell taiwind to keep these CSS classes and not be purged
-  #
-  KEEP_THESE_CLASSES = %w[
-    button--primary
-    button--destructive
-    icon-button--primary
-    icon-button--destructive
-  ].freeze
+  def button(icon_only: false, &)
+    options = @options.dup
+    options[:class] = extract_class_attributes(icon_only:)
+    options[:data]  = extract_data_attributes
 
-  def base_class
-    @base_class ||=
-      if @icon && label.blank?
-        "icon-button"
-      else
-        "button"
-      end
+    tag.button(**options, &)
+  end
+
+  def extract_class_attributes(icon_only: false)
+    classes = @options.fetch(:class, "")
+
+    if icon_only
+      classes += " icon-button"
+      classes += " icon-button--primary" if @primary
+      classes += " icon-button--destructive" if @destructive
+    else
+      classes += " button"
+      classes += " button--primary" if @primary
+      classes += " button--destructive" if @destructive
+    end
+
+    classes.strip
+  end
+
+  def extract_data_attributes
+    data = @options.fetch(:data, {})
+    data[:turbo_frame] = "modal" if @href && @modal
+    data
   end
 end

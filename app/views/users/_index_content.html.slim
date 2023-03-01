@@ -1,10 +1,11 @@
-= layout_header_component do |header|
-  - header.with_breadcrumbs_path "Organisations"
-  - header.with_breadcrumbs_path "Utilisateurs"
+= breadcrumbs_component do |breadcrumbs|
+  - breadcrumbs.with_path "Organisations"
+  - breadcrumbs.with_path "Utilisateurs"
 
-  - header.with_primary_action "Inviter un utilisateur",
+  - breadcrumbs.with_action "Inviter un utilisateur",
     href: new_user_path(content: current_path),
     icon: "plus",
+    primary: true,
     modal: true
 
 div( data-controller="selection" )

@@ -1,7 +1,7 @@
-= layout_main_frame_component do
-  = layout_header_component do |header|
-    - header.with_breadcrumbs_path "Territoires"
-    - header.with_breadcrumbs_path "Départements"
+= template_frame_component do
+  = breadcrumbs_component do |breadcrumbs|
+    - breadcrumbs.with_path "Territoires"
+    - breadcrumbs.with_path "Départements"
 
 div( data-controller="selection" )
   = turbo_frame_tag :index_header, data: { selection_target: "frame" } do

@@ -1,9 +1,9 @@
-= layout_header_component do |header|
-  - header.with_breadcrumbs_path "Territoires"
-  - header.with_breadcrumbs_path "Départements", href: departements_path(retrieve_index_back_params)
-  - header.with_breadcrumbs_path departement.name
+= breadcrumbs_component do |breadcrumbs|
+  - breadcrumbs.with_path "Territoires"
+  - breadcrumbs.with_path "Départements", href: departements_path(retrieve_index_back_params)
+  - breadcrumbs.with_path departement.name
 
-  - header.with_action "Modifier",
+  - breadcrumbs.with_action "Modifier",
     href: edit_departement_path(departement, content: current_path, redirect: current_path),
     icon: "pencil-square",
     modal: true

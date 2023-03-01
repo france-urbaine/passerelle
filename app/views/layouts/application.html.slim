@@ -14,7 +14,5 @@ html
     = render "shared/sidebar"
 
     = yield
-    = layout_main_frame_component unless layout_main_frame_component_rendered?
-    = layout_modal_frame_component unless layout_modal_frame_component_rendered?
 
     = render "shared/notifications"

@@ -1,10 +1,11 @@
-= layout_header_component do |header|
-  - header.with_breadcrumbs_path "Organisations"
-  - header.with_breadcrumbs_path "Guichets"
+= breadcrumbs_component do |breadcrumbs|
+  - breadcrumbs.with_path "Organisations"
+  - breadcrumbs.with_path "Guichets"
 
-  - header.with_primary_action "Ajouter un guichet",
+  - breadcrumbs.with_action "Ajouter un guichet",
     href: new_service_path(content: current_path),
     icon: "plus",
+    primary: true,
     modal: true
 
 div( data-controller="selection" )

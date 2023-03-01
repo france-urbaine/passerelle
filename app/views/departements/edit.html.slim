@@ -1,3 +1,3 @@
-= layout_main_frame_component src: @content_location
-= layout_modal_frame_component do
-  = render "form", departement: @departement
+= template_frame_component do |frame|
+  - frame.with_modal do
+    = render "form", departement: @departement
