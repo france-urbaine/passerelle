@@ -35,11 +35,11 @@ class ButtonComponentPreview < ViewComponent::Preview
   #
   def with_icon; end
 
-  # @label Primary button with icon
+  # @label Primary button with text and icon
   #
   def primary_with_icon; end
 
-  # @label Destructive button with icon
+  # @label Destructive button with text and icon
   #
   def destructive_with_icon; end
   #
@@ -47,15 +47,19 @@ class ButtonComponentPreview < ViewComponent::Preview
 
   # @!group With icon only
   #
-  # @label Text with icon
+  # @label With icon only
   #
   def with_only_icon; end
 
-  # @label Primary button with icon
+  # @label With aria label and tooltip
+  #
+  def with_tooltip; end
+
+  # @label Primary button with icon only
   #
   def primary_only_icon; end
 
-  # @label Destructive button with icon
+  # @label Destructive button with icon icon only
   #
   def destructive_only_icon; end
   #

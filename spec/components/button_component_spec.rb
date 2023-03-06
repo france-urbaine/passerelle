@@ -57,4 +57,12 @@ RSpec.describe ButtonComponent, type: :component do
       expect(node).to have_selector("svg > path[d='M12 4.5v15m7.5-7.5h-15']")
     end
   end
+
+  it "renders a button with only an icon but with aria label and tooltip" do
+    render_inline described_class.new("Click me!", icon: "plus", icon_only: true)
+
+    expect(page).to have_button(class: "icon-button") do |node|
+      expect(node).to have_selector("svg > path[d='M12 4.5v15m7.5-7.5h-15']")
+    end
+  end
 end

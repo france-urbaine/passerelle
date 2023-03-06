@@ -5,6 +5,7 @@ class ButtonComponent < ViewComponent::Base
     @label = label
     @href = options.delete(:href)
     @icon = options.delete(:icon)
+    @icon_only = options.delete(:icon_only)
     @modal = options.delete(:modal)
     @primary = options.delete(:primary)
     @destructive = options.delete(:destructive)
@@ -13,7 +14,7 @@ class ButtonComponent < ViewComponent::Base
   end
 
   def call
-    label   = capture_label
+    label   = capture_label unless @icon_only
     content = capture_content(label)
 
     if @href
@@ -35,8 +36,9 @@ class ButtonComponent < ViewComponent::Base
     raise "Label is missing" if label.nil? && @icon.nil?
 
     buffer = ActiveSupport::SafeBuffer.new
-    buffer << helpers.svg_icon(@icon) if @icon
+    buffer << icon if @icon
     buffer << label
+    buffer << tooltip if @icon_only && @label
     buffer
   end
 
@@ -44,6 +46,7 @@ class ButtonComponent < ViewComponent::Base
     options = @options.dup
     options[:class] = extract_class_attributes(icon_only:)
     options[:data]  = extract_data_attributes
+    options[:aria]  = extract_aria_attributes
     options[:href]  = @href
 
     tag.a(**options, &)
@@ -53,9 +56,24 @@ class ButtonComponent < ViewComponent::Base
     options = @options.dup
     options[:class] = extract_class_attributes(icon_only:)
     options[:data]  = extract_data_attributes
+    options[:aria]  = extract_aria_attributes
     options[:type] ||= "button"
 
     tag.button(**options, &)
+  end
+
+  def icon
+    if @icon_only && @label
+      helpers.svg_icon(@icon, @label)
+    else
+      helpers.svg_icon(@icon)
+    end
+  end
+
+  def tooltip
+    return unless @label
+
+    tag.span(class: "tooltip") { @label }
   end
 
   def extract_class_attributes(icon_only: false)
@@ -78,5 +96,11 @@ class ButtonComponent < ViewComponent::Base
     data = @options.fetch(:data, {})
     data[:turbo_frame] = "modal" if @href && @modal
     data
+  end
+
+  def extract_aria_attributes
+    aria = @options.fetch(:aria, {})
+    aria[:label] ||= @label if @icon_only && @label
+    aria
   end
 end
