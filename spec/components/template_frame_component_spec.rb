@@ -21,15 +21,15 @@ RSpec.describe TemplateFrameComponent, type: :component do
 
   it "renders modal content" do
     render_inline described_class.new do |frame|
-      frame.with_modal do
-        tag.p "Hello World"
+      frame.with_modal do |modal|
+        modal.with_header("Dialog header")
+        modal.with_body("Hello World")
       end
     end
 
     expect(page).to have_selector("main.content > turbo-frame:empty")
-    expect(page).to have_selector("turbo-frame#modal > .modal > .modal__container") do |node|
-      expect(node).to have_selector("p", text: "Hello World")
-    end
+    expect(page).to have_selector("turbo-frame#modal > .modal > .modal__container > .modal__header", text: "Dialog header")
+    expect(page).to have_selector("turbo-frame#modal > .modal > .modal__container > .modal__content", text: "Hello World")
   end
 
   it "renders modal with an asynchronous location" do
@@ -41,17 +41,23 @@ RSpec.describe TemplateFrameComponent, type: :component do
     expect(page).to have_selector("turbo-frame#modal[src='/communes']")
   end
 
-  it "avoids to render modal component twice" do
+  it "allows to render component without modal wrappers" do
+    # This test aims to verify we can use explicit modal component without rendering it twice,
+    # but it seems we cannot render another component using ViewComponent::TestHelpers
+    #
+    #   = template_frame_component do |frame|
+    #     - frame.with_modal do
+    #       = modal_component do
+    #         p Hello World !
+    #
     render_inline described_class.new do |frame|
-      frame.with_modal do |modal|
-        modal.with_content do
-          tag.p "Hello World"
-        end
+      frame.with_modal do
+        tag.p "Hello World"
       end
     end
 
     expect(page).to have_selector("main.content > turbo-frame:empty")
-    expect(page).to have_selector("turbo-frame#modal > .modal > .modal__container") do |node|
+    expect(page).to have_selector("turbo-frame#modal") do |node|
       expect(node).not_to have_selector(".modal")
       expect(node).to have_selector("p", text: "Hello World")
     end

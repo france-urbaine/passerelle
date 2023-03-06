@@ -47,6 +47,16 @@ RSpec.describe ModalComponent, type: :component do
     end
   end
 
+  it "renders modal body from an argument" do
+    render_inline described_class.new do |modal|
+      modal.with_body("Hello World")
+    end
+
+    expect(page).to have_selector(".modal > .modal__container > .modal__content") do |node|
+      expect(node).to have_text("Hello World")
+    end
+  end
+
   it "renders a modal with actions" do
     render_inline described_class.new do |modal|
       modal.with_body do

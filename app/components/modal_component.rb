@@ -16,18 +16,6 @@ class ModalComponent < ViewComponent::Base
     super()
   end
 
-  # def with_form(**options, &)
-  #   set_slot(:form, nil, **options)
-
-  #   capture do
-  #     helpers.fields(**options, &)
-  #   end
-  # end
-
-  # def with_submit_action(label, &)
-  #   with_primary_action(label, type: "submit", &)
-  # end
-
   def with_close_action(label, **options, &)
     set_slot(:close_action, nil, label, **options, href: @redirection_path, &)
   end
@@ -49,7 +37,7 @@ class ModalComponent < ViewComponent::Base
 
   # Slots
   # ----------------------------------------------------------------------------
-  class Header < ViewComponent::Base
+  class LabelOrContent < ViewComponent::Base
     def initialize(label = nil)
       @label = label
       super()
@@ -60,11 +48,8 @@ class ModalComponent < ViewComponent::Base
     end
   end
 
-  class Body < ViewComponent::Base
-    def call
-      content
-    end
-  end
+  class Header < LabelOrContent; end
+  class Body < LabelOrContent; end
 
   class Form < ViewComponent::Base
     attr_reader :form_options

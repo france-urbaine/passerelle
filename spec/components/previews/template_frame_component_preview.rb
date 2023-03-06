@@ -11,7 +11,7 @@ class TemplateFrameComponentPreview < ViewComponent::Preview
   #
   def with_async_content; end
 
-  # @label With modal component
+  # @label With modal
   #
   def with_modal; end
 
