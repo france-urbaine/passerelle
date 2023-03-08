@@ -26,11 +26,11 @@
     &[disabled] {
       cursor: default;
       opacity: 0.6;
-    }
 
-    &[disabled], &:not([disabled]):is(:hover, :active, :focus, :focus-visible) {
-      @apply text-gray-900;
-      @apply dark:text-gray-100;
+      &, &:is(:hover, :active, :focus, :focus-visible) {
+        @apply text-gray-800;
+        @apply dark:text-gray-100;
+      }
     }
 
     &:not([disabled]) {
@@ -58,19 +58,25 @@
       @apply dark:bg-blue-800 dark:border-gray-400;
     }
 
-    &--primary {
+    &--primary,
+    &--destructive {
       @apply subpixel-antialiased;
-      @apply bg-blue-500 border-blue-500 text-white;
-      @apply dark:bg-sky-500 dark:border-sky-500 dark:text-black;
-
-      @apply contrast-more:bg-blue-600;
-      @apply contrast-more:dark:bg-blue-400;
 
       &[disabled],
+      &[disabled]:hover,
+      &:not([disabled]),
       &:not([disabled]):is(:hover, :active, :focus, :focus-visible) {
         @apply text-white;
         @apply dark:text-black;
       }
+    }
+
+    &--primary {
+      @apply bg-blue-500 border-blue-500;
+      @apply dark:bg-sky-500 dark:border-sky-500;
+
+      @apply contrast-more:bg-blue-600;
+      @apply contrast-more:dark:bg-blue-400;
 
       &:not([disabled]) {
         &:is(:focus, :focus-visible) {
@@ -91,18 +97,11 @@
     }
 
     &--destructive {
-      @apply subpixel-antialiased;
-      @apply bg-red-500 border-red-500 text-white;
-      @apply dark:bg-red-500 dark:border-red-500 dark:text-black;
+      @apply bg-red-500 border-red-500;
+      @apply dark:bg-red-500 dark:border-red-500;
 
       @apply contrast-more:bg-red-600;
       @apply contrast-more:dark:bg-red-400;
-
-      &[disabled],
-      &:not([disabled]):is(:hover, :active, :focus, :focus-visible) {
-        @apply text-white;
-        @apply dark:text-black;
-      }
 
       &:not([disabled]) {
         &:is(:focus, :focus-visible) {

@@ -42,6 +42,18 @@ class ButtonComponentPreview < ViewComponent::Preview
   # @label Destructive button with text and icon
   #
   def destructive_with_icon; end
+
+  # @label Disabled button
+  #
+  def disabled_with_icon; end
+
+  # @label Primary button disabled
+  #
+  def primary_disabled_with_icon; end
+
+  # @label Destructive button disabled
+  #
+  def destructive_disabled_with_icon; end
   #
   # @!endgroup
 
@@ -62,6 +74,18 @@ class ButtonComponentPreview < ViewComponent::Preview
   # @label Destructive button with icon icon only
   #
   def destructive_only_icon; end
+
+  # @label Disabled button
+  #
+  def disabled_with_only_icon; end
+
+  # @label Primary button disabled
+  #
+  def primary_disabled_only_icon; end
+
+  # @label Destructive button disabled
+  #
+  def destructive_disabled_only_icon; end
   #
   # @!endgroup
 end
