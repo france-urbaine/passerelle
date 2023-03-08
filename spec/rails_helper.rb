@@ -110,11 +110,7 @@ RSpec.configure do |config|
   end
 
   config.before type: :system do
-    WebMock.disable_net_connect!(
-      net_http_connect_on_start: true,
-      allow_localhost:           true,
-      allow:                     /geckodriver/
-    )
+    WebMock.disable_net_connect!(allow_localhost: true)
 
     driven_by Capybara.javascript_driver
   end

@@ -10,7 +10,7 @@ This README would normally document whatever steps are necessary to get the appl
 * Redis
 * Yarn
 
-Integration tests require Chrome or Chromium to be installed
+System tests require Chrome or Chromium to be installed
 (see [Ferrum](https://github.com/rubycdp/ferrum)).
 
 ## Configuration
