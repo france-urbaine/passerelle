@@ -65,7 +65,7 @@ group :development do
   gem "rack-mini-profiler"
   gem "web-console"
 
-  gem "lookbook"
+  gem "lookbook", ">= 2.0.0.beta.4"
 
   # Linting
   gem "rubocop",             require: false
