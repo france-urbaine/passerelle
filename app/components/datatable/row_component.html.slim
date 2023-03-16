@@ -1,0 +1,17 @@
+tr.datatable__row(
+  id=dom_id
+  data-controller="selection-row"
+  data-selection-row-selected-class="datatable__row--selected"
+)
+  - if head_selection?
+    td.datatable__row-actions
+      = selection
+
+  - if head_actions?
+    td.datatable__row-actions
+      .flex
+        - actions.each do |action|
+          = render action
+
+  - cells.each do |cell|
+    = cell

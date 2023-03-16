@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe OrderColumnComponent, type: :component do
+RSpec.describe Datatable::OrderColumnComponent, type: :component do
   subject(:component) { described_class.new("name") }
 
   context "without params" do

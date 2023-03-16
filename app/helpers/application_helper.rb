@@ -2,6 +2,7 @@
 
 module ApplicationHelper
   include ComponentsHelper
+  include CurrentOrderParams
   include FormHelper
   include FormatHelper
   include RequestHelper

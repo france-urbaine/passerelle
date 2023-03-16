@@ -67,6 +67,12 @@ group :development do
 
   gem "lookbook", ">= 2.0.0.beta.4"
 
+  # FIXME: waiting for this PR to be released
+  # The gem can be removed from the Gemfile after release because
+  # its already a dependency of lookbook
+  # https://github.com/threedaymonk/htmlbeautifier/pull/74
+  gem "htmlbeautifier", github: "inkstak/htmlbeautifier", branch: "allow_custom_elements"
+
   # Linting
   gem "rubocop",             require: false
   gem "rubocop-performance", require: false

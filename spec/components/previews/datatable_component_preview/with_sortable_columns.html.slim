@@ -1,0 +1,12 @@
+ruby:
+  params[:order] ||= "name"
+  records = records.order_by_param(params[:order])
+
+= datatable_component(records) do |datatable|
+  - datatable.with_column(:name, sort: true) { "Commune" }
+  - datatable.with_column(:epci, sort: true) { "EPCI" }
+
+  - datatable.each_row do |row, commune|
+    - row.with_column(:name) { commune.name }
+    - row.with_column(:epci) { commune.epci&.name }
+

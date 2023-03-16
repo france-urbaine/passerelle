@@ -1,0 +1,16 @@
+div( data-controller="selection" )
+  = datatable_component(records) do |datatable|
+    - datatable.with_actions
+    - datatable.with_column(:name) { "Commune" }
+
+    - datatable.each_row do |row, commune|
+      - row.with_action "Edit this resource",
+        icon: "pencil-square",
+        href: "/rails/view_components/samples/link/default"
+
+      - row.with_action "Delete this resource",
+        icon:  "search",
+        href:  "/rails/view_components/samples/turbo/modal",
+        modal: true
+
+      - row.with_column(:name) { commune.name }

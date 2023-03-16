@@ -4,10 +4,10 @@ module ComponentsHelper
   COMPONENT_HELPERS = {
     breadcrumbs_component:    "BreadcrumbsComponent",
     button_component:         "ButtonComponent",
+    datatable_component:      "DatatableComponent",
     modal_component:          "ModalComponent",
     search_component:         "SearchComponent",
-    index_options_component:  "IndexOptionsComponent",
-    order_column:             "OrderColumnComponent"
+    index_options_component:  "IndexOptionsComponent"
   }.freeze
 
   COMPONENT_HELPERS.each do |name, component|

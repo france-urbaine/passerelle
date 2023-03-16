@@ -498,7 +498,7 @@ has@^1.0.3:
   dependencies:
     function-bind "^1.1.1"
 
-hotkeys-js@>=3, hotkeys-js@^3.10.1:
+hotkeys-js@^3.10.1:
   version "3.10.1"
   resolved "https://registry.yarnpkg.com/hotkeys-js/-/hotkeys-js-3.10.1.tgz#0c67e72298f235c9200e421ab112d156dc81356a"
   integrity sha512-mshqjgTqx8ee0qryHvRgZaZDxTwxam/2yTQmQlqAWS3+twnq1jsY9Yng9zB7lWq6WRrjTbTOc7knNwccXQiAjQ==
@@ -830,12 +830,10 @@ stimulus-autocomplete@^3.0.2:
   resolved "https://registry.yarnpkg.com/stimulus-autocomplete/-/stimulus-autocomplete-3.1.0.tgz#7c9292706556ed0a87abf60ea2688bf0ea1176a8"
   integrity sha512-SmVViCdA8yCl99oV2kzllNOqYjx7wruY+1OjAVsDTkZMNFZG5j+SqDKHMYbu+dRFy/SWq/PParzwZHvLAgH+YA==
 
-stimulus-use@^0.51.0:
-  version "0.51.3"
-  resolved "https://registry.yarnpkg.com/stimulus-use/-/stimulus-use-0.51.3.tgz#d7ac671aff8d0db253296dec89d38aa6f4b27e2a"
-  integrity sha512-V4YETxMFL4/bpmcqlwFtaOaJg9sLF+XlWsvXrsoWVA5jffsqe7uAvV6gGPPQta7Hgx01vovA0yNsWUe2eU9Jmw==
-  dependencies:
-    hotkeys-js ">=3"
+stimulus-use@^0.52.0:
+  version "0.52.0"
+  resolved "https://registry.yarnpkg.com/stimulus-use/-/stimulus-use-0.52.0.tgz#a52df4e2b59f3273fc6941f98fa173f0892d4e9d"
+  integrity sha512-b2Z2krSSIqKvG9ncrjMlxbX3SYg9mgL0g/1Zc25jTZjTr0//wgg7szUi9G67amBs/yLqO12GAEnudybZgYNnjA==
 
 string-width@^4.1.0, string-width@^4.2.0, string-width@^4.2.3:
   version "4.2.3"
