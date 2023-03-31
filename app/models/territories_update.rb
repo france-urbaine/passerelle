@@ -6,6 +6,9 @@ class TerritoriesUpdate
 
   attr_accessor :communes_url, :epcis_url
 
+  DEFAULT_COMMUNES_URL = "https://www.insee.fr/fr/statistiques/fichier/2028028/table-appartenance-geo-communes-22_V2.zip"
+  DEFAULT_EPCIS_URL    = "https://www.insee.fr/fr/statistiques/fichier/2510634/Intercommunalite_Metropole_au_01-01-2022.zip"
+
   URL_ROOT        = "https://www.insee.fr/"
   URL_ROOT_REGEXP = /^#{URL_ROOT}/
 
@@ -30,6 +33,18 @@ class TerritoriesUpdate
 
   before_validation :format_urls
 
+  def assign_default_urls
+    self.communes_url = DEFAULT_COMMUNES_URL
+    self.epcis_url    = DEFAULT_EPCIS_URL
+    self
+  end
+
+  def strip_domain_urls
+    self.communes_url = communes_url.gsub(URL_ROOT_REGEXP, "") if communes_url.present?
+    self.epcis_url    = epcis_url.gsub(URL_ROOT_REGEXP, "")    if epcis_url.present?
+    self
+  end
+
   def format_urls
     self.communes_url = format_url(communes_url)
     self.epcis_url    = format_url(epcis_url)
@@ -39,12 +54,6 @@ class TerritoriesUpdate
   def format_url(url)
     url = URI.join(URL_ROOT, url).to_s unless url.blank? || url.start_with?("http")
     url
-  end
-
-  def strip_domain_urls
-    self.communes_url = communes_url.gsub(URL_ROOT_REGEXP, "") if communes_url.present?
-    self.epcis_url    = epcis_url.gsub(URL_ROOT_REGEXP, "")    if epcis_url.present?
-    self
   end
 
   def perform_now

@@ -10,9 +10,15 @@
 
 require "csv"
 
+LOG_PREFIX = "\e[34m[ db/seed ]\e[0m"
+
+def log(message)
+  puts "#{LOG_PREFIX} #{message}"
+end
+
 # Import regions
 # ----------------------------------------------------------------------------
-puts "Seed regions"
+log "Seed regions"
 
 regions_path = Rails.root.join("db/regions.csv")
 regions_data = CSV.open(regions_path, "r", headers: true, col_sep: ";").map(&:to_h)
@@ -21,7 +27,7 @@ Region.upsert_all(regions_data, unique_by: %i[code_region])
 
 # Import departements
 # ----------------------------------------------------------------------------
-puts "Seed departements"
+log "Seed departements"
 
 departements_path = Rails.root.join("db/departements.csv")
 departements_data = CSV.open(departements_path, "r", headers: true, col_sep: ";").map(&:to_h)
@@ -30,15 +36,23 @@ Departement.upsert_all(departements_data, unique_by: %i[code_departement])
 
 # Import EPCI & communes
 # ----------------------------------------------------------------------------
-puts "Seed epcis"
-ImportEpcisJob.perform_now("https://www.insee.fr/fr/statistiques/fichier/2510634/Intercommunalite_Metropole_au_01-01-2022.zip")
+unless ENV["SKIP_EPCIS_AND_COMMUNES"] == "true"
+  log "Seed epcis & communes"
+  log "----------------------------------------------"
+  log "Populating these two models takes few minutes."
+  log "To skip this part, use the following variable:"
+  log ""
+  log "SKIP_EPCIS_AND_COMMUNES=true bin/setup"
+  log "----------------------------------------------"
 
-puts "Seed communes"
-ImportCommunesJob.perform_now("https://www.insee.fr/fr/statistiques/fichier/2028028/table-appartenance-geo-communes-22_V2.zip")
+  TerritoriesUpdate.new
+    .assign_default_urls
+    .perform_now
+end
 
 # Import ddfips
 # ----------------------------------------------------------------------------
-puts "Seed ddfips"
+log "Seed ddfips"
 
 DDFIP.insert_all([
   { code_departement: "13", name: "DDFIP des Bouches-du-Rhône" },
@@ -51,7 +65,7 @@ DDFIP.insert_all([
 
 # Import publishers
 # ----------------------------------------------------------------------------
-puts "Seed publishers"
+log "Seed publishers"
 
 Publisher.insert_all([
   { siren: "301463253", name: "France Urbaine",                   email: "franceurbaine@franceurbaine.org" },
@@ -63,7 +77,7 @@ Publisher.insert_all([
 
 # Import collectivities
 # ----------------------------------------------------------------------------
-puts "Seed collectivities"
+log "Seed collectivities"
 
 @publishers = Publisher.pluck(:name, :id).to_h
 
@@ -95,7 +109,7 @@ Collectivity.insert_all([
 
 # Import users
 # ----------------------------------------------------------------------------
-puts "Seed users"
+log "Seed users"
 
 collectivities = Collectivity.all.index_by(&:name)
 publishers     = Publisher.all.index_by(&:name)
@@ -132,7 +146,7 @@ User.insert_all([
 
 # Import services
 # ----------------------------------------------------------------------------
-puts "Seed services"
+log "Seed services"
 
 ddfips = DDFIP.pluck(:name, :id).to_h
 

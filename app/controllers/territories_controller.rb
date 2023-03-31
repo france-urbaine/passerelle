@@ -3,9 +3,6 @@
 class TerritoriesController < ApplicationController
   respond_to :html
 
-  DEFAULT_COMMUNES_PATH = "https://www.insee.fr/fr/statistiques/fichier/2028028/table-appartenance-geo-communes-22.zip"
-  DEFAULT_EPCIS_PATH    = "https://www.insee.fr/fr/statistiques/fichier/2510634/Intercommunalite_Metropole_au_01-01-2022.zip"
-
   def index
     if autocomplete_request?
       @territories  = autocomplete_territories(Region)
@@ -21,11 +18,7 @@ class TerritoriesController < ApplicationController
   end
 
   def edit
-    @territories_update = TerritoriesUpdate.new(
-      communes_url: DEFAULT_COMMUNES_PATH,
-      epcis_url:    DEFAULT_EPCIS_PATH
-    )
-
+    @territories_update = TerritoriesUpdate.new.assign_default_urls
     @background_content_url = safe_location_param(:content, communes_path)
   end
 
