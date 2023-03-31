@@ -148,8 +148,8 @@ class User < ApplicationRecord
 
   # Invitation process
   # ----------------------------------------------------------------------------
-  def invite(from: nil)
-    self.inviter    = from
+  def invite(by: nil)
+    self.inviter    = by
     self.invited_at = Time.current
     self.password   = Devise.friendly_token[0, 20]
   end

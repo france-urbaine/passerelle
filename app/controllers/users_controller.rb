@@ -24,7 +24,7 @@ class UsersController < ApplicationController
 
   def create
     @user = User.new(user_params)
-    @user.invite(from: current_user)
+    @user.invite(by: current_user)
 
     if @user.save
       @location = safe_location_param(:redirect, users_path)

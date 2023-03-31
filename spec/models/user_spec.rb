@@ -100,7 +100,7 @@ RSpec.describe User do
       let!(:user)   { build(:user, :unconfirmed, password: nil) }
       let!(:author) { build(:user) }
 
-      before { user.invite(from: author) }
+      before { user.invite(by: author) }
 
       it { expect(user).to     be_invited }
       it { expect(user).not_to be_confirmed }
