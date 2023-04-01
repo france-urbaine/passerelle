@@ -7,6 +7,11 @@
 # Ignore bundler config.
 /.bundle
 
+# .env files are used to customize runtime config for dev and test.
+# Because we may put actual secrets in these files,
+# we really don't want them in version control
+.env*
+
 # Ignore all logfiles and tempfiles.
 /log/*
 /tmp/*

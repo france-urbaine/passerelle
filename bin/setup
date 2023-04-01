@@ -57,23 +57,25 @@ def setup
   log ""
   log "All set up."
   log ""
-  log "To see commonly-needed commands, run:"
-  log ""
-  log "    bin/setup help"
-  log ""
+  log "Now you're ready to start with these useful commands:"
+  useful_commands
 end
 
 def help
   log "Useful commands:"
+  useful_commands
+end
+
+def useful_commands
   log ""
   log "  bin/dev"
-  log "     # run app locally"
+  log "     # Run the app locally"
   log ""
   log "  bin/ci"
-  log "     # runs all tests and checks as CI would"
+  log "     # Runs all tests and checks as CI would"
   log ""
   log "  bin/ci help"
-  log "     # show more options about CI"
+  log "     # Show more options about how to run tests and CI"
   log ""
   log "  bin/setup help"
   log "     # show this help"
