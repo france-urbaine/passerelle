@@ -7,6 +7,7 @@ require:
   - rubocop-performance
   - rubocop-rails
   - rubocop-rspec
+  - rubocop-capybara
 
 AllCops:
   NewCops:           enable
@@ -100,12 +101,14 @@ RSpec/ExampleLength:
   CountAsOne: ['array', 'heredoc']
   Exclude:
     - 'spec/system/**/*'
+    - 'spec/components/**/*'
 
 RSpec/ImplicitSubject:
   EnforcedStyle: single_statement_only
 
 RSpec/MultipleExpectations:
   Exclude:
+    - 'spec/components/**/*'
     - 'spec/system/**/*'
 
 RSpec/NestedGroups:

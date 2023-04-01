@@ -1,31 +1,24 @@
-= dialog_component do |dialog|
-  = turbo_frame_tag :modal_form, target: "_top" do
-    = form_with(model: publisher) do |form|
-      .dialog__header
-        h1#dialog-title.dialog__title
-          - if publisher.persisted?
-            | Modification de l'éditeur
-          - else
-            | Création d'un nouvel éditeur
+- modal.with_header do
+  - if publisher.persisted?
+    | Modification de l'éditeur
+  - else
+    | Création d'un nouvel éditeur
 
-        .dialog__header-toolbar
-          = dialog.close_button href: @content_location
+= modal.with_form(model: publisher) do
+  = hidden_param_input(:redirect)
 
-      .dialog__content
-        = hidden_param_input(:redirect)
+  = fields(model: publisher) do |form|
+    = form.block :name, first: true do
+      = form.label :name
+      = form.text_field :name, autofocus: true, required: true
 
-        = form.block :name, first: true do
-          = form.label :name
-          = form.text_field :name, autofocus: true, required: true
+    = form.block :siren do
+      = form.label :siren
+      = form.text_field :siren, required: true
 
-        = form.block :siren do
-          = form.label :siren
-          = form.text_field :siren, required: true
+    = form.block :email do
+      = form.label :email
+      = form.email_field :email
 
-        = form.block :email do
-          = form.label :email
-          = form.email_field :email
-
-      .dialog__actions
-        button.button.button--primary( type="submit" ) Enregistrer
-        = dialog.cancel_button "Annuler", href: @content_location
+- modal.with_submit_action "Enregistrer"
+- modal.with_close_action "Annuler"

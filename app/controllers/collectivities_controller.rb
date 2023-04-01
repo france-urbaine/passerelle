@@ -3,8 +3,8 @@
 class CollectivitiesController < ApplicationController
   respond_to :html
 
-  before_action :set_collectivity,     only: %i[show edit update remove destroy undiscard]
-  before_action :set_content_location, only: %i[new edit remove]
+  before_action :set_collectivity,           only: %i[show edit update remove destroy undiscard]
+  before_action :set_background_content_url, only: %i[new edit remove]
 
   def index
     @collectivities = Collectivity.kept.strict_loading
@@ -76,8 +76,7 @@ class CollectivitiesController < ApplicationController
     @collectivities = search(@collectivities)
     @collectivities = select(@collectivities)
 
-    @content_location = collectivities_path(ids: params[:ids], **index_params)
-    @return_location  = collectivities_path(**index_params)
+    @background_content_url = collectivities_path(ids: params[:ids], **index_params)
   end
 
   def destroy_all
@@ -140,11 +139,11 @@ class CollectivitiesController < ApplicationController
     @collectivity = Collectivity.find(params[:id])
   end
 
-  def set_content_location
+  def set_background_content_url
     default = collectivities_path
     default = collectivity_path(@collectivity) if @collectivity&.persisted?
 
-    @content_location = safe_location_param(:content, default)
+    @background_content_url = safe_location_param(:content, default)
   end
 
   def collectivity_params

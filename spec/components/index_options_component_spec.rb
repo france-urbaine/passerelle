@@ -5,175 +5,177 @@ require "rails_helper"
 RSpec.describe IndexOptionsComponent, type: :component do
   subject(:component) { described_class.new(pagy, "commune") }
 
-  let(:pagy)         { Pagy.new(count: 1200, page: 1) }
-  let(:current_path) { "/communes" }
-
-  before do
-    with_request_url(current_path) do
+  def render_component
+    with_request_url("/communes") do
       render_inline(component)
     end
   end
 
-  it do
-    expect(rendered_content).to include(
-      %(<b>1 200</b> communes <span class="mx-4">|</span> Page 1 sur 24)
-    )
-  end
+  context "with only one resource" do
+    let(:pagy) { Pagy.new(count: 1) }
 
-  it do
-    expect(page).to have_selector(
-      %(button[aria-label="Options d'affichage du tableau"])
-    )
-  end
+    it "renders page status" do
+      render_component
+      expect(page).to have_text("1 commune | Page 1 sur 1")
+    end
 
-  it do
-    expect(rendered_content).to include(clean_template(<<~HTML))
-      <span aria-hidden="true" class="icon-button" disabled="true">
-        <svg>
-          <title>Page précédente</title>
-          <use href="#chevron-left-icon">
-        </svg>
-      </span>
-      <a aria-label="Page suivante"
-         class="icon-button"
-         data-turbo-action="advance"
-         data-turbo-frame="content"
-         href="/communes?page=2"
-         rel="next"
-      >
-        <svg>
-          <title>Page suivante</title>
-          <use href="#chevron-right-icon">
-        </svg>
-        <span class="tooltip">Page suivante</span>
-      </a>
-    HTML
-  end
-
-  context "when the current page is in the middle" do
-    let(:pagy) { Pagy.new(count: 1200, page: 3) }
-
-    it { expect(rendered_content).to include("Page 3 sur 24") }
-
-    it do
-      expect(rendered_content).to include(clean_template(<<~HTML))
-        <a aria-label="Page précédente"
-           class="icon-button"
-           data-turbo-action="advance"
-           data-turbo-frame="content"
-           href="/communes?page=2"
-           rel="prev"
-        >
-          <svg>
-            <title>Page précédente</title>
-            <use href="#chevron-left-icon">
-          </svg>
-          <span class="tooltip">Page précédente</span>
-        </a>
-        <a aria-label="Page suivante"
-           class="icon-button"
-           data-turbo-action="advance"
-           data-turbo-frame="content"
-           href="/communes?page=4"
-           rel="next"
-        >
-          <svg>
-            <title>Page suivante</title>
-            <use href="#chevron-right-icon">
-          </svg>
-          <span class="tooltip">Page suivante</span>
-        </a>
-      HTML
+    it "renders a button to show display options" do
+      render_component
+      expect(page).to have_button("Options d'affichage")
     end
   end
 
-  context "when the current page is in the last" do
+  context "with no resources" do
+    let(:pagy) { Pagy.new(count: 0) }
+
+    it "renders page status" do
+      render_component
+      expect(page).to have_text("0 commune | Page 1 sur 1")
+    end
+
+    it "renders a button to show display options" do
+      render_component
+      expect(page).to have_button("Options d'affichage")
+    end
+  end
+
+  context "with only one page of multiple resources" do
+    let(:pagy) { Pagy.new(count: 10, page: 1) }
+
+    it "renders page status" do
+      render_component
+      expect(page).to have_text("10 communes | Page 1 sur 1")
+    end
+
+    it "renders a button to show display options" do
+      render_component
+      expect(page).to have_button("Options d'affichage")
+    end
+
+    it "renders an inactive icon for previous page", :aggregate_failures do
+      render_component
+      expect(page).to have_css(".icon-button[aria-hidden][disabled]")
+      expect(page).to have_css(".icon-button[aria-hidden][disabled] svg title", text: "Page précédente")
+    end
+
+    it "renders an inactive icon for next page", :aggregate_failures do
+      render_component
+      expect(page).to have_css(".icon-button[aria-hidden][disabled]")
+      expect(page).to have_css(".icon-button[aria-hidden][disabled] svg title", text: "Page suivante")
+    end
+  end
+
+  context "with first page of multiple resources" do
+    let(:pagy) { Pagy.new(count: 1200, page: 1) }
+
+    it "renders page status" do
+      render_component
+      expect(page).to have_text("1 200 communes | Page 1 sur 24")
+    end
+
+    it "renders a button to show display options" do
+      render_component
+      expect(page).to have_button("Options d'affichage")
+    end
+
+    it "renders link to next page", :aggregate_failures do
+      render_component
+      expect(page).to have_css("a.icon-button[href='/communes?page=2'][rel='next']")
+      expect(page).to have_css("a.icon-button[href='/communes?page=2'] svg title", text: "Page suivante")
+    end
+
+    it "renders an inactive icon for previous page", :aggregate_failures do
+      render_component
+      expect(page).to have_css(".icon-button[aria-hidden][disabled]")
+      expect(page).to have_css(".icon-button[aria-hidden][disabled] svg title", text: "Page précédente")
+    end
+  end
+
+  context "with last page of multiple resources" do
     let(:pagy) { Pagy.new(count: 1200, page: 24) }
 
-    it { expect(rendered_content).to include("Page 24 sur 24") }
+    it "renders page status" do
+      render_component
+      expect(page).to have_text("1 200 communes | Page 24 sur 24")
+    end
 
-    it do
-      expect(rendered_content).to include(clean_template(<<~HTML))
-        <a aria-label="Page précédente"
-           class="icon-button"
-           data-turbo-action="advance"
-           data-turbo-frame="content"
-           href="/communes?page=23"
-           rel="prev"
-        >
-          <svg>
-            <title>Page précédente</title>
-            <use href="#chevron-left-icon">
-          </svg>
-          <span class="tooltip">Page précédente</span>
-        </a>
-        <span aria-hidden="true" class="icon-button" disabled="true">
-          <svg>
-            <title>Page suivante</title>
-            <use href="#chevron-right-icon">
-          </svg>
-        </span>
-      HTML
+    it "renders link to previous page", :aggregate_failures do
+      render_component
+      expect(page).to have_css("a.icon-button[href='/communes?page=23'][rel='prev']")
+      expect(page).to have_css("a.icon-button[href='/communes?page=23'] svg title", text: "Page précédente")
+    end
+
+    it "renders an inactive icon for next page", :aggregate_failures do
+      render_component
+      expect(page).to have_css(".icon-button[aria-hidden][disabled]")
+      expect(page).to have_css(".icon-button[aria-hidden][disabled] svg title", text: "Page suivante")
     end
   end
 
-  context "with custom words" do
-    subject(:component) do
-      described_class.new(pagy, "établissement publique", plural: "établissements publiques")
+  context "with a middle page of multiple resources" do
+    let(:pagy) { Pagy.new(count: 1200, page: 3) }
+
+    it "renders page status" do
+      render_component
+      expect(page).to have_text("1 200 communes | Page 3 sur 24")
     end
 
-    context "with plural resources" do
-      it { expect(rendered_content).to include("<b>1 200</b> établissements publiques") }
+    it "renders link to previous page", :aggregate_failures do
+      render_component
+      expect(page).to have_css("a.icon-button[href='/communes?page=2'][rel='prev']")
+      expect(page).to have_css("a.icon-button[href='/communes?page=2'] svg title", text: "Page précédente")
     end
 
-    context "with singular resource" do
-      let(:pagy) { Pagy.new(count: 1, page: 1) }
-
-      it { expect(rendered_content).to include("<b>1</b> établissement publique") }
-    end
-
-    context "without resources" do
-      let(:pagy) { Pagy.new(count: 0, page: 1) }
-
-      it { expect(rendered_content).to include("0 établissement publique") }
+    it "renders link to next page", :aggregate_failures do
+      render_component
+      expect(page).to have_css("a.icon-button[href='/communes?page=4'][rel='next']")
+      expect(page).to have_css("a.icon-button[href='/communes?page=4'] svg title", text: "Page suivante")
     end
   end
 
-  context "with order argument" do
-    subject(:component) do
-      described_class.new(pagy, "commune", order: { commune: "commune" })
+  describe "custom inflections" do
+    subject(:component) { described_class.new(pagy, "établissement publique", plural: "établissements publiques") }
+
+    context "with only one resource" do
+      let(:pagy) { Pagy.new(page: 1, count: 1) }
+
+      it "renders page status in singular" do
+        render_component
+        expect(page).to have_text("1 établissement publique")
+      end
     end
 
-    it do
-      expect(rendered_content).to include(clean_template(<<~HTML))
-        <span class="grow">Trier par commune :</span>
-        <a aria-label="Trier par commune, par ordre croissant"
-           class="icon-button"
-           data-turbo-action="advance"
-           data-turbo-frame="content"
-           href="/communes?order=commune"
-           role="menuitem"
-        >
-          <svg>
-            <title>Trier par ordre croissant</title>
-            <use href="#sort-ascending-icon">
-          </svg>
-          <span class="tooltip">Trier par ordre croissant</span>
-        </a>
-        <a aria-label="Trier par commune, par ordre décroissant"
-           class="icon-button"
-           data-turbo-action="advance"
-           data-turbo-frame="content"
-           href="/communes?order=-commune"
-           role="menuitem"
-        >
-          <svg>
-            <title>Trier par ordre décroissant</title>
-            <use href="#sort-descending-icon">
-          </svg>
-          <span class="tooltip">Trier par ordre décroissant</span>
-        </a>
-      HTML
+    context "with no resources" do
+      let(:pagy) { Pagy.new(page: 1, count: 0) }
+
+      it "renders page status in singular" do
+        render_component
+        expect(page).to have_text("0 établissement publique")
+      end
+    end
+
+    context "with several resources" do
+      let(:pagy) { Pagy.new(page: 1, count: 1200) }
+
+      it "renders page status in plural" do
+        render_component
+        expect(page).to have_text("1 200 établissements publiques")
+      end
+    end
+  end
+
+  describe "order option" do
+    subject(:component) { described_class.new(pagy, "commune", order: { name: "nom" }) }
+
+    let(:pagy) { Pagy.new(count: 1200) }
+
+    it "renders links to sort by descending order", :aggregate_failures do
+      render_component
+
+      within("div[text='Trier par commune']") do
+        expect(page).to have_link("Trier par ordre croissant")
+        expect(page).to have_link("Trier par ordre décroissant")
+      end
     end
   end
 end

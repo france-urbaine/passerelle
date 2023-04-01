@@ -3,8 +3,8 @@
 class ServicesController < ApplicationController
   respond_to :html
 
-  before_action :set_service,          only: %i[show edit update remove destroy undiscard]
-  before_action :set_content_location, only: %i[new edit remove]
+  before_action :set_service,                only: %i[show edit update remove destroy undiscard]
+  before_action :set_background_content_url, only: %i[new edit remove]
 
   def index
     @services = Service.kept.strict_loading
@@ -76,8 +76,8 @@ class ServicesController < ApplicationController
     @services = search(@services)
     @services = select(@services)
 
-    @content_location = services_path(ids: params[:ids], **index_params)
-    @return_location  = services_path(**index_params)
+    @background_content_url = services_path(ids: params[:ids], **index_params)
+    @return_location        = services_path(**index_params)
   end
 
   def destroy_all
@@ -140,11 +140,11 @@ class ServicesController < ApplicationController
     @service = Service.find(params[:id])
   end
 
-  def set_content_location
+  def set_background_content_url
     default = services_path
     default = service_path(@service) if @service&.persisted?
 
-    @content_location = safe_location_param(:content, default)
+    @background_content_url = safe_location_param(:content, default)
   end
 
   def service_params

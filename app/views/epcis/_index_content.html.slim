@@ -1,7 +1,55 @@
-= render "index_breadcrumbs", epcis: epcis, pagy: pagy
+= breadcrumbs_component do |breadcrumbs|
+  - breadcrumbs.with_path "Territoires"
+  - breadcrumbs.with_path "EPCI"
+
+  - breadcrumbs.with_action "Mettre à jour",
+    href: edit_territories_path(content: current_path, redirect: current_path),
+    icon: "cloud-arrow-down",
+    modal: true
 
 div( data-controller="selection" )
   = turbo_frame_tag :index_header, data: { selection_target: "frame" } do
     = render "index_header", epcis: epcis, pagy: pagy
 
-  = render "index_table", epcis: epcis, pagy: pagy
+  = datatable_component(epcis.preload(:departement)) do |datatable|
+    - datatable.with_selection
+    - datatable.with_actions
+    - datatable.with_column(:epci,        sort: true, span: 2) { "EPCI" }
+    - datatable.with_column(:departement, sort: true, span: 2) { "Département" }
+    - datatable.with_column(:communes,       numeric: true)    { "Communes" }
+    - datatable.with_column(:collectivities, numeric: true)    { "Collectivités" }
+
+    - datatable.with_empty_message do
+      | Aucun EPCI disponible.
+
+    - datatable.each_row do |row, epci|
+      - row.with_selection "Sélectionner cet EPCI",
+        described_by: :name
+
+      - row.with_action "Modifier cet EPCI",
+        icon:  "pencil-square",
+        href:  edit_epci_path(epci, content: current_path, redirect: current_path),
+        modal: true
+
+      - row.with_column(:epci) do |column|
+        - column.with_span do
+          = display_siren(epci.siren)
+
+        - column.with_span do
+          = link_to epci_path(epci, current_index_back_params), data: { turbo_frame: "_top" } do
+            = epci.name
+
+      - row.with_column(:departement) do |column|
+        - if epci.departement
+          - column.with_span do
+            = epci.code_departement
+
+          - column.with_span do
+            = link_to departement_path(epci.departement), data: { turbo_frame: "_top" } do
+              = epci.departement.name
+
+      - row.with_column(:communes) do
+        = number_with_delimiter(epci.communes_count) if epci.communes_count.positive?
+
+      - row.with_column(:collectivities) do
+        = number_with_delimiter(epci.collectivities_count) if epci.collectivities_count.positive?

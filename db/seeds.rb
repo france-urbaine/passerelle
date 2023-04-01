@@ -34,7 +34,7 @@ puts "Seed epcis"
 ImportEpcisJob.perform_now("https://www.insee.fr/fr/statistiques/fichier/2510634/Intercommunalite_Metropole_au_01-01-2022.zip")
 
 puts "Seed communes"
-ImportCommunesJob.perform_now("https://www.insee.fr/fr/statistiques/fichier/2028028/table-appartenance-geo-communes-22.zip")
+ImportCommunesJob.perform_now("https://www.insee.fr/fr/statistiques/fichier/2028028/table-appartenance-geo-communes-22_V2.zip")
 
 # Import ddfips
 # ----------------------------------------------------------------------------

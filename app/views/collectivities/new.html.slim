@@ -1,5 +1,3 @@
-main.content
-  = turbo_frame_tag :content, target: "_top", data: { turbo_action: "advance" }, src: @content_location
-
-= turbo_frame_tag :modal do
-  = render "form", collectivity: @collectivity
+= template_frame_component(src: @background_content_url) do |frame|
+  - frame.with_modal do |modal|
+    = render "form", collectivity: @collectivity, modal: modal

@@ -10,6 +10,9 @@ This README would normally document whatever steps are necessary to get the appl
 * Redis
 * Yarn
 
+System tests require Chrome or Chromium to be installed
+(see [Ferrum](https://github.com/rubycdp/ferrum)).
+
 ## Configuration
 
 This project uses environnement variables.  
@@ -128,6 +131,8 @@ $ guard
 ```
 
 ### Previews
+
+User interface and components are documented and can be previewed at [http://localhost:3000/lookbook](http://localhost:3000/lookbook)
 
 Mails can be previewed at [http://localhost:3000/rails/mailers](http://localhost:3000/rails/mailers)
 

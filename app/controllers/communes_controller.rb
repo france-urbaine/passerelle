@@ -24,7 +24,7 @@ class CommunesController < ApplicationController
   def show; end
 
   def edit
-    @content_location = safe_location_param(:content, commune_path(@commune))
+    @background_content_url = safe_location_param(:content, commune_path(@commune))
   end
 
   def update

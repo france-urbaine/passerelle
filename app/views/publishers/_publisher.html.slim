@@ -1,44 +1,17 @@
-.header-bar
-  .breadcrumbs
-    .breadcrumbs__path
-      a.icon-button(
-        aria-label="Retour à la page d'accueil"
-        data-turbo-frame="_top"
-        href="/"
-      )= svg_icon("home", "Retour à la page d'accueil")
+= breadcrumbs_component do |breadcrumbs|
+  - breadcrumbs.with_path "Organisations"
+  - breadcrumbs.with_path "Editeurs", href: publishers_path(retrieve_index_back_params)
+  - breadcrumbs.with_path publisher.name
 
-    .breadcrumbs__separator="/"
-    .breadcrumbs__path
-      | Organisations
+  - breadcrumbs.with_action "Modifier",
+    href: edit_publisher_path(publisher, content: current_path, redirect: current_path),
+    icon: "pencil-square",
+    modal: true
 
-    .breadcrumbs__separator="/"
-    .breadcrumbs__path
-      a(
-        data-turbo-frame="_top"
-        href=publishers_path(retrieve_index_back_params)
-      ) Editeurs
-
-    .breadcrumbs__separator="/"
-    .breadcrumbs__path
-      h1= publisher.name
-
-  .flex-auto
-  .header-bar__actions
-    .header-bar__action
-      a.button(
-        data-turbo-frame="modal"
-        href=edit_publisher_path(publisher, content: current_path, redirect: current_path)
-      )
-        = svg_use("pencil-square")
-        | Modifier
-
-    .header-bar__action
-      a.button(
-        data-turbo-frame="modal"
-        href=remove_publisher_path(publisher, content: current_path)
-      )
-        = svg_use("trash")
-        | Supprimer
+  - breadcrumbs.with_action "Supprimer",
+    href: remove_publisher_path(publisher, content: current_path),
+    icon: "trash",
+    modal: true
 
 - if publisher.discarded?
   .card.mb-6
@@ -50,7 +23,7 @@
       |  Il sera définitivement supprimé le #{localize(30.days.after(publisher.discarded_at.to_date))}.
 
 h2.subheader
-  = svg_use("bookmark", "Nouvelle section")
+  = svg_icon("bookmark", "Nouvelle section")
   | Description
 
 .card.mb-6
@@ -69,7 +42,7 @@ h2.subheader
 
 .subheader-bar
   h2.subheader
-    = svg_use("bookmark", "Nouvelle section")
+    = svg_icon("bookmark", "Nouvelle section")
     | Utilisateurs de l'organisation
 
   .subheader-bar__actions
@@ -78,7 +51,7 @@ h2.subheader
         data-turbo-frame="modal"
         href=new_user_path(content: current_path, redirect: current_path, user: { organization_type: "Publisher", organization_id: publisher.id })
       )
-        = svg_use("plus")
+        = svg_icon("plus")
         | Inviter un utilisateur
 
 - if publisher.users_count.zero?
@@ -104,7 +77,7 @@ h2.subheader
                 aria-label="Modifier cet utilisateur"
                 data-turbo-frame="modal"
               )
-                = svg_use("pencil-square", "Modifier cet utilisateur")
+                = svg_icon("pencil-square", "Modifier cet utilisateur")
                 span.tooltip Modifier cet utilisateur
 
               a.icon-button(
@@ -112,7 +85,7 @@ h2.subheader
                 data-turbo-frame="modal"
                 href=remove_user_path(user, content: current_path, redirect: current_path)
               )
-                = svg_use("trash", "Supprimer cet utilisateur")
+                = svg_icon("trash", "Supprimer cet utilisateur")
                 span.tooltip Supprimer cet utilisateur
 
           td
@@ -126,19 +99,19 @@ h2.subheader
               = mail_to user.email
             - else
               .text-disabled( title="Cet utilisateur n'a pas encore validé son inscription" )
-                = svg_use("exclamation-triangle", class: "mr-2")
+                = svg_icon("exclamation-triangle", class: "mr-2")
                 = user.email
                 span.tooltip Cet utilisateur n'a pas encore validé son inscription
 
           td
             - if user.organization_admin?
-              = svg_use("check-badge", "Administrateur")
+              = svg_icon("check-badge", "Administrateur")
             - else
               = " "
 
 .subheader-bar
   h2.subheader
-    = svg_use("bookmark", "Nouvelle section")
+    = svg_icon("bookmark", "Nouvelle section")
     | Collectivités enregistrées
 
   .subheader-bar__actions
@@ -147,7 +120,7 @@ h2.subheader
         data-turbo-frame="modal"
         href=new_collectivity_path(content: current_path, redirect: current_path, collectivity: { publisher_id: publisher.id })
       )
-        = svg_use("plus")
+        = svg_icon("plus")
         | Ajouter une collectivité
 
 - if publisher.collectivities_count.zero?
@@ -173,7 +146,7 @@ h2.subheader
                 data-turbo-frame="modal"
                 href=edit_collectivity_path(collectivity, content: current_path, redirect: current_path)
               )
-                = svg_use("pencil-square", "Modifier cette collectivité")
+                = svg_icon("pencil-square", "Modifier cette collectivité")
                 span.tooltip Modifier cette collectivité
 
               a.icon-button(
@@ -181,7 +154,7 @@ h2.subheader
                 data-turbo-frame="modal"
                 href=remove_collectivity_path(collectivity, content: current_path, redirect: current_path)
               )
-                = svg_use("trash", "Supprimer cette collectivité")
+                = svg_icon("trash", "Supprimer cette collectivité")
                 span.tooltip Supprimer cette collectivité
 
           td

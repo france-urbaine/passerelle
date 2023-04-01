@@ -1,27 +1,33 @@
 # frozen_string_literal: true
 
 module ComponentsHelper
-  def dialog_component(&)
-    render(DialogComponent.new, &)
+  COMPONENT_HELPERS = {
+    breadcrumbs_component:    "BreadcrumbsComponent",
+    button_component:         "ButtonComponent",
+    datatable_component:      "DatatableComponent",
+    modal_component:          "ModalComponent",
+    search_component:         "SearchComponent",
+    index_options_component:  "IndexOptionsComponent"
+  }.freeze
+
+  COMPONENT_HELPERS.each do |name, component|
+    define_method name do |*args, **kwargs, &block|
+      render component.constantize.new(*args, **kwargs), &block
+    end
   end
 
-  def search_component(...)
-    render(SearchComponent.new(...))
+  # rubocop:disable Rails/HelperInstanceVariable
+  #
+  def template_frame_component(**options, &)
+    raise "Already render template_frame_component" if @template_frame_rendered
+
+    @template_frame_rendered = true
+    render TemplateFrameComponent.new(**options), &
   end
 
-  def index_options_component(...)
-    render(IndexOptionsComponent.new(...))
+  def template_frame_rendered?
+    @template_frame_rendered
   end
-
-  def order_column(...)
-    render(OrderColumnComponent.new(...))
-  end
-
-  def svg_icon(...)
-    render(SVG::IconComponent.new(...))
-  end
-
-  def svg_use(...)
-    render(SVG::UseComponent.new(...))
-  end
+  #
+  # rubocop:enable Rails/HelperInstanceVariable
 end

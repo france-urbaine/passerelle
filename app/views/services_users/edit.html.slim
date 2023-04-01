@@ -1,37 +1,23 @@
-main.content
-  = turbo_frame_tag :content, target: "_top", data: { turbo_action: "advance" }, src: @content_location
+= template_frame_component(src: @background_content_url) do |frame|
+  - frame.with_modal do |modal|
+    - modal.with_header do
+      | Gestion des utilisateurs du guichet
 
-= turbo_frame_tag :modal do
-  = dialog_component do |dialog|
-    = turbo_frame_tag :modal_form, target: "_top" do
-      = form_with(model: @service, url: service_users_path(@service)) do |form|
-        .dialog__header
-          h1#dialog-title.dialog__title
-            | Gestion des utilisateurs du guichet
+    - modal.with_form(model: @service, url: service_users_path(@service)) do
+      = hidden_param_input(:redirect)
 
-          .dialog__header-toolbar
-            = dialog.close_button href: @content_location
+      p
+        | Sélectionnez parmi les utlisateurs de la DDFIP ceux qui ont accès à ce guichet
+        br
+        | ou inviter un nouvel utilisateur.
 
-        .dialog__content
-          = hidden_param_input(:redirect)
+      = fields(model: @service) do |form|
+        = form.block :user_ids do
+          = form.enhanced_check_boxes_collection :user_ids, @ddfip_users.order(:created_at), :id, :name
 
-          p
-            | Sélectionnez parmi les utlisateurs de la DDFIP ceux qui ont accès à ce guichet
-            br
-            | ou inviter un nouvel utilisateur.
+    - modal.with_submit_action "Enregistrer", autofocus: true
+    - modal.with_close_action "Annuler"
 
-          = form.block :user_ids do
-            = form.enhanced_check_boxes_collection :user_ids, @ddfip_users.order(:created_at), :id, :name
-
-        .dialog__actions.flex
-          button.button.button--primary( type="submit" ) Enregistrer
-          = dialog.cancel_button "Annuler", href: @content_location
-
-          .grow
-
-          a.button(
-            data-turbo-frame="modal"
-            href=new_user_path(content: @content_location, redirect: params[:redirect], user: { organization_type: "DDFIP", organization_id: @service.ddfip_id, service_ids: [@service.id] })
-          ) Inviter un nouvel utilisateur
-
-
+    - modal.with_other_action "Inviter un nouvel utilisateur",
+      modal: true,
+      href: new_user_path(content: @background_content_url, redirect: params[:redirect], user: { organization_type: "DDFIP", organization_id: @service.ddfip_id, service_ids: [@service.id] })

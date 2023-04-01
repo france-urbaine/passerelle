@@ -6,6 +6,8 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   # root "articles#index"
 
+  mount Lookbook::Engine, at: "/lookbook" if Rails.env.development?
+
   concern :removable do
     get    :remove,      on: :member
     get    :remove_all,  on: :collection, path: "remove"

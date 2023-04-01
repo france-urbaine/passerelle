@@ -1,0 +1,24 @@
+doctype html
+html
+  head
+    title FiscaHub
+    meta name="viewport" content="width=device-width,initial-scale=1"
+
+    = csrf_meta_tags
+    = csp_meta_tag
+
+    = stylesheet_link_tag "application", "data-turbo-track": "reload"
+    = javascript_include_tag "application", "data-turbo-track": "reload", defer: true
+
+  body.p-6.overflow-auto
+    - frame = params.dig(:lookbook, :display, :frame)
+
+    - if frame == false
+      = yield
+    - else
+      main.content
+        = turbo_frame_tag(:content, target: "_top") do
+          = yield if frame.nil? || frame == true || frame == "content"
+
+      = turbo_frame_tag(:modal, target: "_top") do
+        = yield if frame == "modal"

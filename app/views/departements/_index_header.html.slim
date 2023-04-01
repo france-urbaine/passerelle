@@ -5,7 +5,7 @@
         button.icon-button.selection-bar__close-button(
           data-action="selection#uncheckAll"
         )
-          = svg_use("x-mark", "Réinitialiser la sélection")
+          = svg_icon("x-mark", "Réinitialiser la sélection")
           span.tooltip Réinitialiser la sélection
 
       .header-bar__text
@@ -30,6 +30,6 @@
 
 - else
   .header-bar
-    = search_component("Rechercher")
+    = search_component
     .flex-auto
     = index_options_component(pagy, "département", order: { departement: "département", region: "région" })

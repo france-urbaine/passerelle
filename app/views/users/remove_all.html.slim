@@ -1,29 +1,21 @@
-main.content
-  = turbo_frame_tag :content, target: "_top", data: { turbo_action: "advance" }, src: @content_location
+= template_frame_component(src: @background_content_url) do |frame|
+  - frame.with_modal do |modal|
+    - modal.with_header do
+      - if @users.count > 1
+        | Suppression des utilisateurs sélectionnés
+      - else
+        | Suppression de l'utilisateur sélectionné
 
-= turbo_frame_tag :modal, target: "_top" do
-  = dialog_component do |dialog|
-    = form_with(url: users_path, method: :delete) do |form|
-      - count = @users.count
+    - modal.with_form(url: users_path, method: :delete) do
+      = hidden_param_input(:ids)
+      = hidden_param_input(:search)
+      = hidden_param_input(:order)
+      = hidden_param_input(:page)
 
-      .dialog__header
-        h1#dialog-title.dialog__title
-          - if count > 1
-            | Suppression des utilisateurs sélectionnés
-          - else
-            | Suppression de l'utilisateur sélectionné
+      - if @users.count > 1
+        p Êtes-vous sûrs de vouloir supprimer les <b>#{@users.count}</b> utilisateurs sélectionnés ?
+      - else
+        p Êtes-vous sûrs de vouloir supprimer l'utilisateur sélectionné ?
 
-      .dialog__content
-        = hidden_param_input(:ids)
-        = hidden_param_input(:search)
-        = hidden_param_input(:order)
-        = hidden_param_input(:page)
-
-        - if count > 1
-          p Êtes-vous sûrs de vouloir supprimer les <b>#{count}</b> utilisateurs sélectionnés ?
-        - else
-          p Êtes-vous sûrs de vouloir supprimer l'utilisateur sélectionné ?
-
-      .dialog__actions
-        button.button.button--primary( type="submit" autofocus ) Continuer
-        = dialog.cancel_button "Annuler", href: @return_location
+    - modal.with_submit_action "Continuer", autofocus: true
+    - modal.with_close_action "Annuler"

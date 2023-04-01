@@ -1,0 +1,22 @@
+= modal_component do |modal|
+  - modal.with_header do
+    - if record.persisted?
+      | Edit a record
+    - else
+      | Add a record
+
+  / The method #with_form expects to get the same arguments passed to
+  / the Rails methods #form_with & #fields.
+  /
+  - modal.with_form(model: record) do
+    = fields(model: record) do |form|
+      = form.block(:name, first: true) do
+        = form.label(:name)
+        = form.text_field(:name, autofocus: true, required: true)
+
+      = form.block(:code_insee) do
+        = form.label(:code_insee)
+        = form.text_field(:code_insee, required: true)
+
+  - modal.with_submit_action "Enregistrer"
+  - modal.with_close_action "Annuler"

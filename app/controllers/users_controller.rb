@@ -3,8 +3,8 @@
 class UsersController < ApplicationController
   respond_to :html
 
-  before_action :set_user,             only: %i[show edit update remove destroy undiscard]
-  before_action :set_content_location, only: %i[new edit remove]
+  before_action :set_user,                   only: %i[show edit update remove destroy undiscard]
+  before_action :set_background_content_url, only: %i[new edit remove]
 
   def index
     @users = User.kept.strict_loading
@@ -78,8 +78,8 @@ class UsersController < ApplicationController
     @users = search(@users)
     @users = select(@users)
 
-    @content_location = users_path(ids: params[:ids], **index_params)
-    @return_location  = users_path(**index_params)
+    @background_content_url = users_path(ids: params[:ids], **index_params)
+    @return_location        = users_path(**index_params)
   end
 
   def destroy_all
@@ -145,11 +145,11 @@ class UsersController < ApplicationController
     @user = User.find(params[:id])
   end
 
-  def set_content_location
+  def set_background_content_url
     default = users_path
     default = user_path(@user) if @user&.persisted?
 
-    @content_location = safe_location_param(:content, default)
+    @background_content_url = safe_location_param(:content, default)
   end
 
   def user_params

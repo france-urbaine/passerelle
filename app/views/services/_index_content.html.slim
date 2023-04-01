@@ -1,7 +1,56 @@
-= render "index_breadcrumbs", services: services, pagy: pagy
+= breadcrumbs_component do |breadcrumbs|
+  - breadcrumbs.with_path "Organisations"
+  - breadcrumbs.with_path "Guichets"
+
+  - breadcrumbs.with_action "Ajouter un guichet",
+    href: new_service_path(content: current_path),
+    icon: "plus",
+    primary: true,
+    modal: true
 
 div( data-controller="selection" )
   = turbo_frame_tag :index_header, data: { selection_target: "frame" } do
     = render "index_header", services: services, pagy: pagy
 
-  = render "index_table", services: services, pagy: pagy
+  = datatable_component(services.preload(:ddfip)) do |datatable|
+    - datatable.with_selection
+    - datatable.with_actions
+    - datatable.with_column(:name,     sort: true) { "Guichet" }
+    - datatable.with_column(:ddfip,    sort: true) { "DDFIP" }
+    - datatable.with_column(:action,   sort: true) { "Action" }
+    - datatable.with_column(:users,    numeric: true) { "Utilisateurs" }
+    - datatable.with_column(:communes, numeric: true) { "Communes" }
+
+    - datatable.with_empty_message do
+      | Aucun guichet disponible.
+
+    - datatable.each_row do |row, service|
+      - row.with_selection "Sélectionner ce guichet",
+        described_by: :name
+
+      - row.with_action "Modifier ce guichet",
+        icon:  "pencil-square",
+        href:  edit_service_path(service, content: current_path, redirect: current_path),
+        modal: true
+
+      - row.with_action "Supprimer ce guichet",
+        icon:  "trash",
+        href:  remove_service_path(service, content: current_path, redirect: current_path),
+        modal: true
+
+      - row.with_column(:name) do
+        = link_to service_path(service, current_index_back_params), data: { turbo_frame: "_top" } do
+          = service.name
+
+      - row.with_column(:ddfip) do
+        = link_to ddfip_path(service.ddfip), data: { turbo_frame: "_top" } do
+          = service.ddfip.name
+
+      - row.with_column(:action) do
+        = translate(service.action, scope: "enum.action")
+
+      - row.with_column(:users) do
+        = number_with_delimiter(service.users_count) if service.users_count.positive?
+
+      - row.with_column(:communes) do
+        = number_with_delimiter(service.communes_count) if service.communes_count.positive?

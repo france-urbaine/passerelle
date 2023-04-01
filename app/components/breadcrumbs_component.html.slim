@@ -1,0 +1,22 @@
+.header-bar
+  .breadcrumbs
+    .breadcrumbs__path
+      a.icon-button(
+        aria-label="Retour à la page d'accueil"
+        data-turbo-frame="_top"
+        href="/"
+      )= helpers.svg_icon("home", "Retour à la page d'accueil")
+
+    - paths.each.with_index do |path, index|
+      .breadcrumbs__separator="/"
+      .breadcrumbs__path
+        - if index == paths.size - 1
+          h1= path
+        - else
+          = path
+
+  .flex-auto
+  .header-bar__actions
+    - actions.each do |action|
+      .header-bar__action
+        = action

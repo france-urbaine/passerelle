@@ -3,7 +3,7 @@
 class SearchComponent < ViewComponent::Base
   attr_reader :label
 
-  def initialize(label)
+  def initialize(label: "Rechercher")
     @label = label
     super()
   end

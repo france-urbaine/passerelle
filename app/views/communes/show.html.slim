@@ -1,5 +1,2 @@
-main.content
-  = turbo_frame_tag :content, target: "_top", data: { turbo_action: "advance" } do
-    = render @commune
-
-= turbo_frame_tag :modal, target: "_top"
+= template_frame_component do
+  = render @commune

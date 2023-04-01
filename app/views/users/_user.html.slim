@@ -1,44 +1,17 @@
-.header-bar
-  .breadcrumbs
-    .breadcrumbs__path
-      a.icon-button(
-        aria-label="Retour à la page d'accueil"
-        data-turbo-frame="_top"
-        href="/"
-      )= svg_use("home", "Retour à la page d'accueil")
+= breadcrumbs_component do |breadcrumbs|
+  - breadcrumbs.with_path "Organisations"
+  - breadcrumbs.with_path "Utilisateurs", href: users_path(retrieve_index_back_params)
+  - breadcrumbs.with_path user.name
 
-    .breadcrumbs__separator="/"
-    .breadcrumbs__path
-      | Organisations
+  - breadcrumbs.with_action "Modifier",
+    href: edit_user_path(user, content: current_path, redirect: current_path),
+    icon: "pencil-square",
+    modal: true
 
-    .breadcrumbs__separator="/"
-    .breadcrumbs__path
-      a(
-        data-turbo-frame="_top"
-        href=params.fetch(:back, users_path)
-      ) Utilisateurs
-
-    .breadcrumbs__separator="/"
-    .breadcrumbs__path
-      h1= user.name
-
-  .flex-auto
-  .header-bar__actions
-    .header-bar__action
-      a.button(
-        data-turbo-frame="modal"
-        href=edit_user_path(user, content: current_path, redirect: current_path)
-      )
-        = svg_use("pencil-square")
-        | Modifier
-
-    .header-bar__action
-      a.button(
-        data-turbo-frame="modal"
-        href=remove_user_path(user, content: current_path)
-      )
-        = svg_use("trash")
-        | Supprimer
+  - breadcrumbs.with_action "Supprimer",
+    href: remove_user_path(user, content: current_path),
+    icon: "trash",
+    modal: true
 
 - if user.discarded?
   .card.mb-6
@@ -48,7 +21,7 @@
       | Cet utilisateur va être supprimé dans quelques minutes.
 
 h2.subheader
-  = svg_use("bookmark", "Nouvelle section")
+  = svg_icon("bookmark", "Nouvelle section")
   | Description
 
 .card.mb-6
@@ -88,20 +61,20 @@ h2.subheader
           = mail_to user.email
         - else
           .text-disabled( title="Cet utilisateur n'a pas encore validé son inscription" )
-            = svg_use("exclamation-triangle", class: "mr-2")
+            = svg_icon("exclamation-triangle", class: "mr-2")
             = user.email
             span.tooltip Cet utilisateur n'a pas encore validé son inscription
 
     .description-list__row
       dt Administrateur de l'organisation
-      dd= svg_use("check-badge", "Administrateur") if user.organization_admin?
+      dd= svg_icon("check-badge", "Administrateur") if user.organization_admin?
 
     .description-list__row
       dt Administrateur de FiscaHub
-      dd= svg_use("check-badge", "Administrateur") if user.super_admin?
+      dd= svg_icon("check-badge", "Administrateur") if user.super_admin?
 
 h2.subheader
-  = svg_use("bookmark", "Nouvelle section")
+  = svg_icon("bookmark", "Nouvelle section")
   | Informations de connexion
 
 .card.mb-6

@@ -1,0 +1,10 @@
+= modal_component(redirection_path: "/rails/view_components/samples/link/default") do |modal|
+  - modal.with_header do
+    | Dialog title
+
+  - modal.with_body do
+    p
+      | Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+
+  - modal.with_close_action "Close"
+

@@ -5,8 +5,8 @@ class ServicesUsersController < ApplicationController
   before_action :set_service
 
   def edit
-    @ddfip_users      = ddfip_users
-    @content_location = safe_location_param(:content, service_path(@service))
+    @ddfip_users            = ddfip_users
+    @background_content_url = safe_location_param(:content, service_path(@service))
   end
 
   def update

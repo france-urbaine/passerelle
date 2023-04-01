@@ -1,47 +1,40 @@
-= dialog_component do |dialog|
-  = turbo_frame_tag :modal_form, target: "_top" do
-    = form_with(model: service) do |form|
-      .dialog__header
-        h1#dialog-title.dialog__title
-          - if service.persisted?
-            | Modification du guichet
-          - else
-            | Création d'un nouveau guichet
+- modal.with_header do
+  - if service.persisted?
+    | Modification du guichet
+  - else
+    | Création d'un nouveau guichet
 
-        .dialog__header-toolbar
-          = dialog.close_button href: @content_location
+= modal.with_form(model: service) do
+  = hidden_param_input(:redirect)
 
-      .dialog__content
-        = hidden_param_input(:redirect)
+  = fields(model: service) do |form|
+    = form.block :ddfip, first: true, autocomplete: ddfips_path do
+      ruby:
+        # Do not add required attribute to make this form submittable in noscript mode
+        html_options = {
+          value:        service.ddfip&.name,
+          placeholder:  "Commnencez à taper pour sélectionner des DDFIP",
+          data:         { autocomplete_target: "input" }
+        }
 
-        = form.block :ddfip, first: true, autocomplete: ddfips_path do
-          ruby:
-            # Do not add required attribute to make this form submittable in noscript mode
-            html_options = {
-              value:        service.ddfip&.name,
-              placeholder:  "Commnencez à taper pour sélectionner des DDFIP",
-              data:         { autocomplete_target: "input" }
-            }
+      = form.label :ddfip
+      = form.search_field :ddfip, **html_options
+      = form.hidden_field :ddfip_id, data: { autocomplete_target: "hidden" }
 
-          = form.label :ddfip
-          = form.search_field :ddfip, **html_options
-          = form.hidden_field :ddfip_id, data: { autocomplete_target: "hidden" }
+    = noscript do
+      = form.block :ddfip, first: true do
+        = form.label :ddfip_name
+        = form.text_field :ddfip_name, value: service.ddfip&.name, required: true
 
-        = noscript do
-          = form.block :ddfip, first: true do
-            = form.label :ddfip_name
-            = form.text_field :ddfip_name, value: service.ddfip&.name, required: true
+    = form.block :name do
+      = form.label :name
+      = form.text_field :name, required: true
 
-        = form.block :name do
-          = form.label :name
-          = form.text_field :name, required: true
+    = form.block :action do
+      - options = Service::ACTIONS.map { |s| [translate(s, scope: "enum.action"), s] }
 
-        = form.block :action do
-          - options = Service::ACTIONS.map { |s| [translate(s, scope: "enum.action"), s] }
+      = form.label :action
+      = form.select :action, options, required: true, prompt: true
 
-          = form.label :action
-          = form.select :action, options, required: true, prompt: true
-
-      .dialog__actions
-        button.button.button--primary( type="submit" ) Enregistrer
-        = dialog.cancel_button "Annuler", href: @content_location
+- modal.with_submit_action "Enregistrer"
+- modal.with_close_action "Annuler"

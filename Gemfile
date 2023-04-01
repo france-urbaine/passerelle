@@ -25,6 +25,7 @@ gem "responders"
 
 # Assets
 gem "cssbundling-rails"
+gem "inline_svg"
 gem "jsbundling-rails"
 gem "sprockets-rails"
 gem "stimulus-rails"
@@ -64,11 +65,21 @@ group :development do
   gem "rack-mini-profiler"
   gem "web-console"
 
+  gem "lookbook", ">= 2.0.0.beta.4"
+
+  # FIXME: waiting for this PR to be released
+  # The gem can be removed from the Gemfile after release because
+  # its already a dependency of lookbook
+  # https://github.com/threedaymonk/htmlbeautifier/pull/74
+  gem "htmlbeautifier", github: "inkstak/htmlbeautifier", branch: "allow_custom_elements"
+
+  # Linting
   gem "rubocop",             require: false
   gem "rubocop-performance", require: false
   gem "rubocop-rails",       require: false
   gem "rubocop-rspec",       require: false
 
+  # Tests & lint automation
   gem "guard"
   gem "guard-rspec",   require: false
   gem "guard-rubocop", require: false
@@ -78,15 +89,20 @@ group :development do
 end
 
 group :test do
-  gem "capybara"
   gem "database_cleaner-active_record"
+  gem "simplecov", require: false
+  gem "webmock"
+
+  # RSpec extensions
   gem "fuubar"
   gem "rspec-collection_matchers"
   gem "saharspec", github: "inkstak/saharspec", branch: "proper_rubocop_linting"
-  gem "selenium-webdriver"
   gem "shoulda-matchers"
-  gem "simplecov", require: false
   gem "super_diff"
-  gem "webdrivers"
-  gem "webmock"
+
+  # System tests
+  # FIXME: waiting for this PR to be released
+  # https://github.com/teamcapybara/capybara/pull/2617
+  gem "capybara", github: "teamcapybara/capybara", ref: "cacd032"
+  gem "cuprite"
 end

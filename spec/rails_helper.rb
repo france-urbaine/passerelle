@@ -13,6 +13,7 @@ require File.expand_path("../config/environment", __dir__)
 
 # Prevent database truncation if the environment is production
 abort("The Rails environment is running in production mode!") if Rails.env.production?
+require "capybara/cuprite"
 require "rspec/rails"
 require "webmock/rspec"
 require "database_cleaner/active_record"
@@ -47,6 +48,11 @@ begin
 rescue ActiveRecord::PendingMigrationError => e
   puts e.to_s.strip
   exit 1
+end
+
+Capybara.javascript_driver = :cuprite
+Capybara.register_driver(:cuprite) do |app|
+  Capybara::Cuprite::Driver.new(app, window_size: [1200, 800])
 end
 
 RSpec.configure do |config|
@@ -89,7 +95,7 @@ RSpec.configure do |config|
 
   config.include ViewComponent::TestHelpers, type: :component
   config.include Capybara::RSpecMatchers, type: :component
-  config.include CleanTemplate, type: :component
+  config.include ActionView::Helpers::TagHelper, type: :component
 
   config.include ImplicitResponse, type: :request
 
@@ -104,18 +110,21 @@ RSpec.configure do |config|
   end
 
   config.before type: :system do
-    WebMock.disable_net_connect!(
-      net_http_connect_on_start: true,
-      allow_localhost:           true,
-      allow:                     /geckodriver/
-    )
+    WebMock.disable_net_connect!(allow_localhost: true)
 
-    driven_by :selenium, using: :headless_firefox, screen_size: [1400, 1400]
+    driven_by Capybara.javascript_driver
   end
 
   config.after do
     ActionMailer::Base.deliveries.clear
     Faker::UniqueGenerator.clear
+  end
+
+  config.around do |example|
+    timeout = ENV.fetch("TIMEOUT", 2).to_i
+    Timeout.timeout(timeout) do
+      example.run
+    end
   end
 end
 

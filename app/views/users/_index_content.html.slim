@@ -1,7 +1,73 @@
-= render "index_breadcrumbs", users: users, pagy: pagy
+= breadcrumbs_component do |breadcrumbs|
+  - breadcrumbs.with_path "Organisations"
+  - breadcrumbs.with_path "Utilisateurs"
+
+  - breadcrumbs.with_action "Inviter un utilisateur",
+    href: new_user_path(content: current_path),
+    icon: "plus",
+    primary: true,
+    modal: true
 
 div( data-controller="selection" )
   = turbo_frame_tag :index_header, data: { selection_target: "frame" } do
     = render "index_header", users: users, pagy: pagy
 
-  = render "index_table", users: users, pagy: pagy
+  = datatable_component(users.preload(:organization)) do |datatable|
+    - datatable.with_selection
+    - datatable.with_actions
+    - datatable.with_column(:name, sort: true)         { "Nom" }
+    - datatable.with_column(:email)                    { "Adresse mail" }
+    - datatable.with_column(:organization, sort: true) { "Organisation" }
+    - datatable.with_column(:organization_admin) { "Admin. de l'organisation" }
+    - datatable.with_column(:super_admin)        { "Admin. de FiscaHub" }
+
+    - datatable.with_empty_message do
+      | Aucun utilisateur disponible.
+
+    - datatable.each_row do |row, user|
+      - row.with_selection "Sélectionner cet utilisateur",
+        described_by: :name
+
+      - row.with_action "Modifier cet utilisateur",
+        icon:  "pencil-square",
+        href:  edit_user_path(user, content: current_path, redirect: current_path),
+        modal: true
+
+      - row.with_action "Supprimer cet utilisateur",
+        icon:  "trash",
+        href:  remove_user_path(user, content: current_path, redirect: current_path),
+        modal: true
+
+      - row.with_column(:name) do
+        = link_to user_path(user, current_index_back_params), data: { turbo_frame: "_top" } do
+          = user.name
+
+      - row.with_column(:email) do
+        - if user.confirmed?
+          = mail_to user.email
+        - else
+          .text-disabled( title="Cet utilisateur n'a pas encore validé son inscription" )
+            = svg_icon("exclamation-triangle", class: "mr-2")
+            = user.email
+            span.tooltip Cet utilisateur n'a pas encore validé son inscription
+
+      - row.with_column(:organization) do
+        - if user.organization
+          - if user.organization.discarded?
+            .text-disabled
+              = "#{user.organization.name} (organisation archivée)"
+          - else
+            = link_to polymorphic_path(user.organization), data: { turbo_frame: "_top" } do
+              = user.organization.name
+
+      - row.with_column(:organization_admin) do
+        - if user.organization_admin?
+          = svg_icon("check-badge", "Administrateur de l'organisation")
+        - else
+          = " "
+
+      - row.with_column(:super_admin) do
+        - if user.super_admin?
+          = svg_icon("check-badge", "Administrateur de FiscaHub")
+        - else
+          = " "

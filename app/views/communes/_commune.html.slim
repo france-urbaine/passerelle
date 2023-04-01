@@ -1,39 +1,15 @@
-.header-bar
-  .breadcrumbs
-    .breadcrumbs__path
-      a.icon-button(
-        aria-label="Retour à la page d'accueil"
-        data-turbo-frame="_top"
-        href="/"
-      )= svg_icon("home", "Retour à la page d'accueil")
+= breadcrumbs_component do |breadcrumbs|
+  - breadcrumbs.with_path "Territoires"
+  - breadcrumbs.with_path "Communes", href: communes_path(retrieve_index_back_params)
+  - breadcrumbs.with_path commune.name
 
-    .breadcrumbs__separator="/"
-    .breadcrumbs__path
-      | Territoires
-
-    .breadcrumbs__separator="/"
-    .breadcrumbs__path
-      a(
-        data-turbo-frame="_top"
-        href=communes_path(retrieve_index_back_params)
-      ) Communes
-
-    .breadcrumbs__separator="/"
-    .breadcrumbs__path
-      h1= commune.name
-
-  .flex-auto
-  .header-bar__actions
-    .header-bar__action
-      a.button(
-        data-turbo-frame="modal"
-        href=edit_commune_path(commune, content: current_path, redirect: current_path)
-      )
-        = svg_use("pencil-square")
-        | Modifier
+  - breadcrumbs.with_action "Modifier",
+    href: edit_commune_path(commune, content: current_path, redirect: current_path),
+    icon: "pencil-square",
+    modal: true
 
 h2.subheader
-  = svg_use("bookmark", "Nouvelle section")
+  = svg_icon("bookmark", "Nouvelle section")
   | Description
 
 .card.mb-6
@@ -74,7 +50,7 @@ h2.subheader
       dd= count(commune.collectivities_count, "collectivité") if commune.collectivities_count.positive?
 
 h2.subheader
-  = svg_use("bookmark", "Nouvelle section")
+  = svg_icon("bookmark", "Nouvelle section")
   | Collectivités enregistrées
 
 - if commune.collectivities_count.zero?
@@ -100,7 +76,7 @@ h2.subheader
               aria-label="Modifier cette collectivité"
               data-turbo-frame="modal"
             )
-              = svg_use("pencil-square", "Modifier cette collectivité")
+              = svg_icon("pencil-square", "Modifier cette collectivité")
               span.tooltip Modifier cette collectivité
 
           td

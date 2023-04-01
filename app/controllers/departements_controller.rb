@@ -24,7 +24,7 @@ class DepartementsController < ApplicationController
   def show; end
 
   def edit
-    @content_location = safe_location_param(:content, departement_path(@departement))
+    @background_content_url = safe_location_param(:content, departement_path(@departement))
   end
 
   def update

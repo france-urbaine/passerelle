@@ -1,39 +1,15 @@
-.header-bar
-  .breadcrumbs
-    .breadcrumbs__path
-      a.icon-button(
-        aria-label="Retour à la page d'accueil"
-        data-turbo-frame="_top"
-        href="/"
-      )= svg_icon("home", "Retour à la page d'accueil")
+= breadcrumbs_component do |breadcrumbs|
+  - breadcrumbs.with_path "Territoires"
+  - breadcrumbs.with_path "Départements", href: departements_path(retrieve_index_back_params)
+  - breadcrumbs.with_path departement.name
 
-    .breadcrumbs__separator="/"
-    .breadcrumbs__path
-      | Territoires
-
-    .breadcrumbs__separator="/"
-    .breadcrumbs__path
-      a(
-        data-turbo-frame="_top"
-        href=departements_path(retrieve_index_back_params)
-      ) Départements
-
-    .breadcrumbs__separator="/"
-    .breadcrumbs__path
-      h1= departement.name
-
-  .flex-auto
-  .header-bar__actions
-    .header-bar__action
-      a.button(
-        data-turbo-frame="modal"
-        href=edit_departement_path(departement, content: current_path, redirect: current_path)
-      )
-        = svg_use("pencil-square")
-        | Modifier
+  - breadcrumbs.with_action "Modifier",
+    href: edit_departement_path(departement, content: current_path, redirect: current_path),
+    icon: "pencil-square",
+    modal: true
 
 h2.subheader
-  = svg_use("bookmark", "Nouvelle section")
+  = svg_icon("bookmark", "Nouvelle section")
   | Description
 
 .card.mb-6
@@ -61,7 +37,7 @@ h2.subheader
             data-turbo-frame="_top"
             href=epcis_path(search: departement.code_departement)
           )
-            = svg_use("search")
+            = svg_icon("search")
             | Voir les EPCI
 
     .description-list__row
@@ -74,7 +50,7 @@ h2.subheader
             data-turbo-frame="_top"
             href=communes_path(search: departement.code_departement)
           )
-            = svg_use("search")
+            = svg_icon("search")
             | Voir les communes
 
     .description-list__row
@@ -87,7 +63,7 @@ h2.subheader
 
 .subheader-bar
   h2.subheader
-    = svg_use("bookmark", "Nouvelle section")
+    = svg_icon("bookmark", "Nouvelle section")
     | DDFIP enregistrées
 
   .subheader-bar__actions
@@ -96,7 +72,7 @@ h2.subheader
         data-turbo-frame="modal"
         href=new_ddfip_path(content: current_path, redirect: current_path, ddfip: { code_departement: departement.code_departement })
       )
-        = svg_use("plus")
+        = svg_icon("plus")
         | Ajouter une DDFIP
 
 - if departement.ddfips_count.zero?
@@ -122,7 +98,7 @@ h2.subheader
                 aria-label="Modifier cette DDFIP"
                 data-turbo-frame="modal"
               )
-                = svg_use("pencil-square", "Modifier cette DDFIP")
+                = svg_icon("pencil-square", "Modifier cette DDFIP")
                 span.tooltip Modifier cette DDFIP
 
               a.icon-button(
@@ -130,7 +106,7 @@ h2.subheader
                 data-turbo-frame="modal"
                 href=remove_ddfip_path(ddfip, content: current_path, redirect: current_path)
               )
-                = svg_use("trash", "Supprimer cette DDFIP")
+                = svg_icon("trash", "Supprimer cette DDFIP")
                 span.tooltip Supprimer cette DDFIP
 
           td
@@ -143,7 +119,7 @@ h2.subheader
           td.text-right= number_with_delimiter(ddfip.users_count)          if ddfip.users_count.positive?
 
 h2.subheader
-  = svg_use("bookmark", "Nouvelle section")
+  = svg_icon("bookmark", "Nouvelle section")
   | Collectivités enregistrées
 
 - if departement.collectivities_count.zero?
@@ -169,7 +145,7 @@ h2.subheader
               aria-label="Modifier cette collectivité"
               data-turbo-frame="modal"
             )
-              = svg_use("pencil-square", "Modifier cette collectivité")
+              = svg_icon("pencil-square", "Modifier cette collectivité")
               span.tooltip Modifier cette collectivité
 
           td

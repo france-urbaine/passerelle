@@ -2,10 +2,12 @@
 
 module ApplicationHelper
   include ComponentsHelper
-  include TurboHelper
-  include FormatHelper
+  include CurrentOrderParams
   include FormHelper
+  include FormatHelper
   include RequestHelper
+  include SVGHelper
+  include TurboHelper
 
   def noscript(id: SecureRandom.alphanumeric, &block)
     id = h(id)

@@ -3,54 +3,41 @@
 require "rails_helper"
 
 RSpec.describe SearchComponent, type: :component do
-  subject(:component) { described_class.new("Rechercher...") }
+  subject(:component) { described_class.new }
 
-  let(:current_path) { "/communes" }
+  it "renders a form" do
+    render_inline(component)
 
-  before do
-    with_request_url(current_path) do
+    expect(page).to have_css("form.search")
+  end
+
+  it "renders default label and placeholder" do
+    render_inline(component)
+
+    expect(page).to have_field("Rechercher", type: "search", name: "search", placeholder: "Rechercher")
+  end
+
+  it "renders an alternative label and placeholder" do
+    component = described_class.new(label: "Rechercher des communes")
+    render_inline(component)
+
+    expect(page).to have_field("Rechercher des communes", type: "search", name: "search", placeholder: "Rechercher des communes")
+  end
+
+  it "hides the SVG icon from ARIA" do
+    render_inline(component)
+
+    expect(page).to have_css("svg[aria-hidden]")
+  end
+
+  it "renders URL params into inputs" do
+    with_request_url("/communes?search=Pyrenees&order=-departement&page=2") do
       render_inline(component)
     end
-  end
 
-  it do
-    expect(rendered_content).to eq(clean_template(<<~HTML))
-      <form autocomplete="off" class="search" data-turbo-frame="_top">
-        <label class="form-block">
-          <div class="form-block__label--hiden">Rechercher...</div>
-          <div class="form-block__input">
-            <div class="form-block__input-icon">
-              <svg aria-hidden>
-                <use href="#search-icon">
-              </svg>
-            </div>
-            <input name="search" placeholder="Rechercher..." type="search">
-          </div>
-        </label>
-      </form>
-    HTML
-  end
-
-  context "with parameters" do
-    let(:current_path) { "/communes?search=Pyr%C3%A9n%C3%A9es&order=-departement&page=2" }
-
-    it do
-      expect(rendered_content).to eq(clean_template(<<~HTML))
-        <form autocomplete="off" class="search" data-turbo-frame="_top">
-          <label class="form-block">
-            <div class="form-block__label--hiden">Rechercher...</div>
-            <div class="form-block__input">
-              <div class="form-block__input-icon">
-                <svg aria-hidden>
-                  <use href="#search-icon">
-                </svg>
-              </div>
-              <input name="search" placeholder="Rechercher..." type="search" value="Pyrénées">
-            </div>
-          </label>
-          <input type="hidden" name="order" value="-departement" autocomplete="off">
-        </form>
-      HTML
+    aggregate_failures do
+      expect(page).to have_css("input[type='search'][name='search'][value='Pyrenees']")
+      expect(page).to have_css("input[type='hidden'][name='order'][value='-departement']", visible: :all)
     end
   end
 end

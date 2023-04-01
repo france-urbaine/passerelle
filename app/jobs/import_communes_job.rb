@@ -4,7 +4,7 @@
 #   https://www.insee.fr/fr/information/2028028
 #
 # You can launch the job using :
-#   ImportCommunesJob.perform_now("https://www.insee.fr/fr/statistiques/fichier/2028028/table-appartenance-geo-communes-22.zip")
+#   ImportCommunesJob.perform_now("https://www.insee.fr/fr/statistiques/fichier/2028028/table-appartenance-geo-communes-22_V2.zip")
 #
 # This job is called when seeding Data :
 #   rails db:seed

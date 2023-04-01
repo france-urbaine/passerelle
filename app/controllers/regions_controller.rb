@@ -24,7 +24,7 @@ class RegionsController < ApplicationController
   def show; end
 
   def edit
-    @content_location = safe_location_param(:content, region_path(@region))
+    @background_content_url = safe_location_param(:content, region_path(@region))
   end
 
   def update

@@ -3,8 +3,8 @@
 class PublishersController < ApplicationController
   respond_to :html
 
-  before_action :set_publisher,        only: %i[show edit update remove destroy undiscard]
-  before_action :set_content_location, only: %i[new edit remove]
+  before_action :set_publisher,              only: %i[show edit update remove destroy undiscard]
+  before_action :set_background_content_url, only: %i[new edit remove]
 
   def index
     @publishers = Publisher.kept.strict_loading
@@ -76,8 +76,8 @@ class PublishersController < ApplicationController
     @publishers = search(@publishers)
     @publishers = select(@publishers)
 
-    @content_location = publishers_path(ids: params[:ids], **index_params)
-    @return_location  = publishers_path(**index_params)
+    @background_content_url = publishers_path(ids: params[:ids], **index_params)
+    @return_location        = publishers_path(**index_params)
   end
 
   def destroy_all
@@ -140,11 +140,11 @@ class PublishersController < ApplicationController
     @publisher = Publisher.find(params[:id])
   end
 
-  def set_content_location
+  def set_background_content_url
     default = publishers_path
     default = publisher_path(@publisher) if @publisher&.persisted?
 
-    @content_location = safe_location_param(:content, default)
+    @background_content_url = safe_location_param(:content, default)
   end
 
   def publisher_params

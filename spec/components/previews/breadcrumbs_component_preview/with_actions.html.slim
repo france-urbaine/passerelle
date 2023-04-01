@@ -1,0 +1,6 @@
+= breadcrumbs_component do |breadcrumbs|
+  - breadcrumbs.path "Path"
+
+  - breadcrumbs.with_action "Add", icon: "plus", primary: true
+  - breadcrumbs.with_action "Edit", href: "/rails/view_components/samples/link/default"
+  - breadcrumbs.with_action "Open a modal", href: "/rails/view_components/samples/turbo/modal", modal: true
