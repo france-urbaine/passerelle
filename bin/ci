@@ -1,0 +1,119 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Helpers
+# ------------------------------------------------------------------------------
+# It's helpful to know what messages came from this script,
+# so we'll use log instead of `puts`
+LOG_PREFIX = "\e[34m[ bin/ci ]\e[0m"
+def log(message)
+  puts "#{LOG_PREFIX} #{message}"
+end
+
+# We don't want the setup method to have to do all this error checking,
+# and we also want to explicitly log what we are executing.
+# Thus, we use this method instead of Kernel#system
+def system!(*args)
+  return if system(*args)
+
+  args_output = "\e[33m#{args}\e[0m"
+  log "#{args_output} failed"
+  abort
+end
+
+# CI methods
+# ------------------------------------------------------------------------------
+def lint_factories
+  log "Running FactoryBot linter"
+  system!({ "RAILS_ENV" => "test" }, "bundle exec bin/rails factory_bot:lint")
+end
+
+def test_all
+  log "Running all test suite"
+  system! "bundle exec rspec --no-profile"
+end
+
+def test_unit
+  log "Running non-system tests"
+  system! "bundle exec rspec -t '~type:system' --no-profile"
+end
+
+def test_system
+  log "Running system tests"
+  system! "bundle exec rspec -t 'type:system' --no-profile"
+end
+
+def rubocop
+  log "Analyzing code issues with Rubocop"
+  system! "bundle exec rubocop --server --display-cop-names"
+end
+
+def brakeman
+  log "Analyzing code for security vulnerabilities"
+  log "Output will be in tmp/brakeman.html, which can be opened in your browser."
+  system! "bundle exec brakeman -q -o tmp/brakeman.html"
+end
+
+def audit
+  log "Analyzing ruby gems for security vulnerabilities"
+  system! "bundle exec bundle audit check --update"
+end
+
+def run_all
+  lint_factories
+  test_unit
+  test_system
+  rubocop
+  brakeman
+  audit
+  log ""
+  log "Completed"
+  log ""
+end
+
+def help
+  log "Useful commands:"
+  log ""
+  log "  bin/ci"
+  log "     # runs all tests and checks as CI would"
+  log ""
+  log "  bin/ci factories"
+  log "     # lint test factories"
+  log ""
+  log "  bin/ci test"
+  log "     # run all the test suite"
+  log ""
+  log "  bin/ci test:unit"
+  log "     # run non-system tests"
+  log ""
+  log "  bin/ci test:system"
+  log "     # run system tests"
+  log ""
+  log "  bin/ci rubocop"
+  log "     # analyzing code issues with Rubocop"
+  log ""
+  log "  bin/ci brakeman"
+  log "     # analyzing code for security vulnerabilities."
+  log ""
+  log "  bin/ci audit"
+  log "     # analyzing ruby gems for security vulnerabilities"
+  log ""
+  log "  bin/ci help"
+  log "     # show this help"
+  log ""
+end
+
+if ARGV[0].nil?
+  run_all
+else
+  case ARGV[0]
+  when "factories"   then lint_factories
+  when "test"        then test_all
+  when "test:unit"   then test_unit
+  when "test:system" then test_system
+  when "rubocop"     then rubocop
+  when "brakeman"    then brakeman
+  when "audit"       then audit
+  else help
+  end
+end

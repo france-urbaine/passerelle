@@ -84,6 +84,9 @@ group :development do
   gem "guard-rspec",   require: false
   gem "guard-rubocop", require: false
 
+  gem "brakeman"
+  gem "bundler-audit"
+
   # Speed up commands on slow machines / big apps [https://github.com/rails/spring]
   # gem "spring"
 end
