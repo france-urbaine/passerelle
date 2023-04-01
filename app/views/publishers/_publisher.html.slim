@@ -34,11 +34,11 @@ h2.subheader
 
     .description-list__row
       dt Utilisateurs
-      dd= count(publisher.users_count, "utilisateur") if publisher.users_count.positive?
+      dd= display_count(publisher.users_count, "utilisateur") if publisher.users_count.positive?
 
     .description-list__row
       dt Collectivités enregistrées
-      dd= count(publisher.collectivities_count, "collectivité") if publisher.collectivities_count.positive?
+      dd= display_count(publisher.collectivities_count, "collectivité") if publisher.collectivities_count.positive?
 
 .subheader-bar
   h2.subheader

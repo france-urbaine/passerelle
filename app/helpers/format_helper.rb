@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module FormatHelper
-  def count(count_or_relation, word, plural: nil)
+  def display_count(count_or_relation, word, plural: nil)
     case count_or_relation
     when Integer                then count = count_or_relation
     when ActiveRecord::Relation then count = count_or_relation.size

@@ -31,7 +31,7 @@ h2.subheader
       dt EPCI
       dd.flex.justify-between.items-start
         - if departement.epcis_count.positive?
-          span= count(departement.epcis_count, "EPCI")
+          span= display_count(departement.epcis_count, "EPCI")
 
           a.button(
             data-turbo-frame="_top"
@@ -44,7 +44,7 @@ h2.subheader
       dt Communes
       dd.flex.justify-between.items-start
         - if departement.communes_count.positive?
-          span= count(departement.communes_count, "commune")
+          span= display_count(departement.communes_count, "commune")
 
           a.button(
             data-turbo-frame="_top"
@@ -55,11 +55,11 @@ h2.subheader
 
     .description-list__row
       dt DDFIP enregistrées
-      dd= count(departement.ddfips_count, "DDFIP") if departement.ddfips_count.positive?
+      dd= display_count(departement.ddfips_count, "DDFIP") if departement.ddfips_count.positive?
 
     .description-list__row
       dt Collectivités enregistrées
-      dd= count(departement.collectivities_count, "collectivité") if departement.collectivities_count.positive?
+      dd= display_count(departement.collectivities_count, "collectivité") if departement.collectivities_count.positive?
 
 .subheader-bar
   h2.subheader

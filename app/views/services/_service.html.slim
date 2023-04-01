@@ -48,13 +48,13 @@ h2.subheader
 
     .description-list__row
       dt Utilisateurs
-      dd= count(service.users_count, "utilisateur") if service.users_count.positive?
+      dd= display_count(service.users_count, "utilisateur") if service.users_count.positive?
 
     .description-list__row
       dt Communes gérées
       dd.flex.justify-between.items-start
         - if service.communes_count.positive?
-          span= count(service.communes_count, "commune")
+          span= display_count(service.communes_count, "commune")
 
           a.button(
             data-turbo-frame="_top"

@@ -10,9 +10,9 @@
 
       .header-bar__text
         - if params[:ids] == "all"
-          = count(pagy.count, "DDFIP sélectionnée", plural: "DDFIP sélectionnées")
+          = display_count(pagy.count, "DDFIP sélectionnée", plural: "DDFIP sélectionnées")
         - else
-          = count(params[:ids].size, "DDFIP sélectionnée", plural: "DDFIP sélectionnées")
+          = display_count(params[:ids].size, "DDFIP sélectionnée", plural: "DDFIP sélectionnées")
 
           - if params[:ids].size == ddfips.length && ddfips.length < pagy.count
             |  (

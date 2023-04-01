@@ -18,6 +18,8 @@ module AdvancedSearch
     end
 
     def match(attribute, value)
+      raise ArgumentError unless column_for_attribute(attribute)
+
       where(
         "LOWER(UNACCENT(\"#{table_name}\".\"#{attribute}\")) LIKE LOWER(UNACCENT(?))",
         "%#{sanitize_sql_like(value)}%"

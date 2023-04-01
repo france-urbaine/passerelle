@@ -47,7 +47,7 @@ h2.subheader
 
     .description-list__row
       dt Collectivités enregistrées
-      dd= count(commune.collectivities_count, "collectivité") if commune.collectivities_count.positive?
+      dd= display_count(commune.collectivities_count, "collectivité") if commune.collectivities_count.positive?
 
 h2.subheader
   = svg_icon("bookmark", "Nouvelle section")

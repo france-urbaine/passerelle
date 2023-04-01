@@ -22,7 +22,7 @@ h2.subheader
       dt Départements
       dd.flex.justify-between.items-start
         - if region.departements_count.positive?
-          div= count(region.departements_count, "département")
+          div= display_count(region.departements_count, "département")
 
           a.button(
             data-turbo-frame="_top"
@@ -35,7 +35,7 @@ h2.subheader
       dt EPCI
       dd.flex.justify-between.items-start
         - if region.epcis_count.positive?
-          div= count(region.epcis_count, "EPCI")
+          div= display_count(region.epcis_count, "EPCI")
 
           a.button(
             data-turbo-frame="_top"
@@ -48,7 +48,7 @@ h2.subheader
       dt Communes
       dd.flex.justify-between.items-start
         - if region.communes_count.positive?
-          div= count(region.communes_count, "commune")
+          div= display_count(region.communes_count, "commune")
 
           a.button(
             data-turbo-frame="_top"
@@ -59,11 +59,11 @@ h2.subheader
 
     .description-list__row
       dt DDFIP enregistrées
-      dd= count(region.ddfips_count, "DDFIP") if region.ddfips_count.positive?
+      dd= display_count(region.ddfips_count, "DDFIP") if region.ddfips_count.positive?
 
     .description-list__row
       dt Collectivités enregistrées
-      dd= count(region.collectivities_count, "collectivité") if region.collectivities_count.positive?
+      dd= display_count(region.collectivities_count, "collectivité") if region.collectivities_count.positive?
 
 h2.subheader
   = svg_icon("bookmark", "Nouvelle section")

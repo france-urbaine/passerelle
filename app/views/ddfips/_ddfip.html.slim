@@ -39,11 +39,11 @@ h2.subheader
 
     .description-list__row
       dt Utilisateurs
-      dd= count(ddfip.users_count, "utilisateur") if ddfip.users_count.positive?
+      dd= display_count(ddfip.users_count, "utilisateur") if ddfip.users_count.positive?
 
     .description-list__row
       dt Collectivités enregistrées
-      dd= count(ddfip.collectivities_count, "collectivité") if ddfip.collectivities_count.positive?
+      dd= display_count(ddfip.collectivities_count, "collectivité") if ddfip.collectivities_count.positive?
 
 .subheader-bar
   h2.subheader

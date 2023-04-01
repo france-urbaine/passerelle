@@ -40,7 +40,7 @@ h2.subheader
       dt Communes
       dd.flex.justify-between.items-start
         - if epci.communes_count.positive?
-          span= count(epci.communes_count, "commune")
+          span= display_count(epci.communes_count, "commune")
 
           a.button(
             data-turbo-frame="_top"
@@ -51,7 +51,7 @@ h2.subheader
 
     .description-list__row
       dt Collectivités enregistrées
-      dd= count(epci.collectivities_count, "collectivité") if epci.collectivities_count.positive?
+      dd= display_count(epci.collectivities_count, "collectivité") if epci.collectivities_count.positive?
 
 h2.subheader
   = svg_icon("bookmark", "Nouvelle section")

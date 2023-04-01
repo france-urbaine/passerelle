@@ -10,9 +10,9 @@
 
       .header-bar__text
         - if params[:ids] == "all"
-          = count(pagy.count, "région sélectionnée", plural: "régions sélectionnées")
+          = display_count(pagy.count, "région sélectionnée", plural: "régions sélectionnées")
         - else
-          = count(params[:ids].size, "région sélectionnée", plural: "régions sélectionnées")
+          = display_count(params[:ids].size, "région sélectionnée", plural: "régions sélectionnées")
 
           - if params[:ids].size == regions.length && regions.length < pagy.count
             |  (

@@ -10,9 +10,9 @@
 
       .header-bar__text
         - if params[:ids] == "all"
-          = count(pagy.count, "collectivité sélectionnée", plural: "collectivités sélectionnées")
+          = display_count(pagy.count, "collectivité sélectionnée", plural: "collectivités sélectionnées")
         - else
-          = count(params[:ids].size, "collectivité sélectionnée", plural: "collectivités sélectionnées")
+          = display_count(params[:ids].size, "collectivité sélectionnée", plural: "collectivités sélectionnées")
 
           - if params[:ids].size == collectivities.length && collectivities.length < pagy.count
             |  (

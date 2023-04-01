@@ -10,9 +10,9 @@
 
       .header-bar__text
         - if params[:ids] == "all"
-          = count(pagy.count, "guichet sélectionné", plural: "guichets sélectionnés")
+          = display_count(pagy.count, "guichet sélectionné", plural: "guichets sélectionnés")
         - else
-          = count(params[:ids].size, "guichet sélectionné", plural: "guichets sélectionnés")
+          = display_count(params[:ids].size, "guichet sélectionné", plural: "guichets sélectionnés")
 
           - if params[:ids].size == services.length && services.length < pagy.count
             |  (

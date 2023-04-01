@@ -10,9 +10,9 @@
 
       .header-bar__text
         - if params[:ids] == "all"
-          = count(pagy.count, "éditeur sélectionné", plural: "éditeurs sélectionnés")
+          = display_count(pagy.count, "éditeur sélectionné", plural: "éditeurs sélectionnés")
         - else
-          = count(params[:ids].size, "éditeur sélectionné", plural: "éditeurs sélectionnés")
+          = display_count(params[:ids].size, "éditeur sélectionné", plural: "éditeurs sélectionnés")
 
           - if params[:ids].size == publishers.length && publishers.length < pagy.count
             |  (

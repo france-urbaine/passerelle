@@ -10,9 +10,9 @@
 
       .header-bar__text
         - if params[:ids] == "all"
-          = count(pagy.count, "EPCI sélectionné", plural: "EPCI sélectionnés")
+          = display_count(pagy.count, "EPCI sélectionné", plural: "EPCI sélectionnés")
         - else
-          = count(params[:ids].size, "EPCI sélectionné", plural: "EPCI sélectionnés")
+          = display_count(params[:ids].size, "EPCI sélectionné", plural: "EPCI sélectionnés")
 
           - if params[:ids].size == epcis.length && epcis.length < pagy.count
             |  (
