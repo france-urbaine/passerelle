@@ -21,7 +21,7 @@ def system!(*args)
   abort
 end
 
-# CI methods
+# CI programs
 # ------------------------------------------------------------------------------
 def lint_factories
   log "Running FactoryBot linter"
@@ -65,6 +65,11 @@ def audit
   system! "bundle exec bundle audit check --update"
 end
 
+def watch
+  log "Starting Guard"
+  system!({ "SKIP_ALL_ON_START_WARNING" => "true" }, "guard")
+end
+
 def run_all
   lint_factories
   clear_coverage
@@ -82,31 +87,24 @@ def help
   log "Useful commands:"
   log ""
   log "  bin/ci"
-  log "     # runs all tests and checks as CI would"
+  log "     # Run all tests and checks as CI would"
   log ""
-  log "  bin/ci factories"
-  log "     # lint test factories"
+  log "  bin/ci watch"
+  log "     # Watch file changes to run CI checks"
   log ""
-  log "  bin/ci test"
-  log "     # run all the test suite"
-  log ""
-  log "  bin/ci test:unit"
-  log "     # run non-system tests"
-  log ""
-  log "  bin/ci test:system"
-  log "     # run system tests"
-  log ""
-  log "  bin/ci rubocop"
-  log "     # analyzing code issues with Rubocop"
-  log ""
-  log "  bin/ci brakeman"
-  log "     # analyzing code for security vulnerabilities."
-  log ""
-  log "  bin/ci audit"
-  log "     # analyzing ruby gems for security vulnerabilities"
+  log "  bin/ci <program>"
+  log "     # Run only one program from the CI"
+  log "     # Available programs are:"
+  log "     #  factories     # lint test factories"
+  log "     #  test          # run all the test suite"
+  log "     #  test:unit     # run non-system tests"
+  log "     #  test:system   # run system tests"
+  log "     #  rubocop       # analyzing code issues with Rubocop"
+  log "     #  brakeman      # analyzing code for security vulnerabilities."
+  log "     #  audit         # analyzing ruby gems for security vulnerabilities"
   log ""
   log "  bin/ci help"
-  log "     # show this help"
+  log "     # Show this help"
   log ""
 end
 
@@ -114,6 +112,7 @@ if ARGV[0].nil?
   run_all
 else
   case ARGV[0]
+  when "watch"       then watch
   when "factories"   then lint_factories
   when "test"        then test_all
   when "test:unit"   then test_unit

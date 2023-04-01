@@ -81,8 +81,9 @@ group :development do
 
   # Tests & lint automation
   gem "guard"
-  gem "guard-rspec",   require: false
-  gem "guard-rubocop", require: false
+  gem "guard-brakeman", require: false
+  gem "guard-rspec",    require: false
+  gem "guard-rubocop",  require: false
 
   gem "brakeman"
   gem "bundler-audit"

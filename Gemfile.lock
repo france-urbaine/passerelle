@@ -180,6 +180,10 @@ GEM
       pry (>= 0.13.0)
       shellany (~> 0.0)
       thor (>= 0.18.1)
+    guard-brakeman (0.8.6)
+      brakeman (>= 2.1.1)
+      guard (>= 2.0.0)
+      guard-compat (~> 1.0)
     guard-compat (1.2.1)
     guard-rspec (4.7.3)
       guard (~> 2.1)
@@ -458,6 +462,7 @@ DEPENDENCIES
   fuubar
   fx
   guard
+  guard-brakeman
   guard-rspec
   guard-rubocop
   htmlbeautifier!
