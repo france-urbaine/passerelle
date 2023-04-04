@@ -19,7 +19,7 @@ class TerritoriesController < ApplicationController
 
   def edit
     @territories_update = TerritoriesUpdate.new.assign_default_urls
-    @background_content_url = safe_location_param(:content, communes_path)
+    @background_content_url = url_from(params[:content]) || communes_path
   end
 
   def update
@@ -28,7 +28,7 @@ class TerritoriesController < ApplicationController
     if @territories_update.valid?
       @territories_update.perform_later
 
-      @location = safe_location_param(:redirect, communes_path)
+      @location = url_from(params[:redirect]) || communes_path
       @notice   = translate(".success")
 
       respond_to do |format|

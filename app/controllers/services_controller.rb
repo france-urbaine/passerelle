@@ -40,7 +40,7 @@ class ServicesController < ApplicationController
 
   def update
     if @service.update(service_params)
-      @location = safe_location_param(:redirect, services_path)
+      @location = url_from(params[:redirect]) || services_path
       @notice   = translate(".success")
 
       respond_to do |format|
@@ -55,7 +55,7 @@ class ServicesController < ApplicationController
   def destroy
     @service.discard
 
-    @location = safe_location_param(:redirect, services_path)
+    @location = url_from(params[:redirect]) || services_path
     @notice   = translate(".success").merge(
       actions: {
         label:  "Annuler",
@@ -110,7 +110,7 @@ class ServicesController < ApplicationController
   def undiscard
     @service.undiscard
 
-    @location = safe_location_param(:redirect, services_path)
+    @location = url_from(params[:redirect]) || services_path
     @notice   = translate(".success")
 
     respond_to do |format|
@@ -125,7 +125,7 @@ class ServicesController < ApplicationController
     @services = select(@services)
     @services.update_all(discarded_at: nil)
 
-    @location = safe_location_param(:redirect, services_path)
+    @location = url_from(params[:redirect]) || services_path
     @notice   = translate(".success")
 
     respond_to do |format|
@@ -144,7 +144,7 @@ class ServicesController < ApplicationController
     default = services_path
     default = service_path(@service) if @service&.persisted?
 
-    @background_content_url = safe_location_param(:content, default)
+    @background_content_url = url_from(params[:content]) || default
   end
 
   def service_params

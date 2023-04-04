@@ -40,7 +40,7 @@ class PublishersController < ApplicationController
 
   def update
     if @publisher.update(publisher_params)
-      @location = safe_location_param(:redirect, publishers_path)
+      @location = url_from(params[:redirect]) || publishers_path
       @notice   = translate(".success")
 
       respond_to do |format|
@@ -55,7 +55,7 @@ class PublishersController < ApplicationController
   def destroy
     @publisher.discard
 
-    @location = safe_location_param(:redirect, publishers_path)
+    @location = url_from(params[:redirect]) || publishers_path
     @notice   = translate(".success").merge(
       actions: {
         label:  "Annuler",
@@ -110,7 +110,7 @@ class PublishersController < ApplicationController
   def undiscard
     @publisher.undiscard
 
-    @location = safe_location_param(:redirect, publishers_path)
+    @location = url_from(params[:redirect]) || publishers_path
     @notice   = translate(".success")
 
     respond_to do |format|
@@ -125,7 +125,7 @@ class PublishersController < ApplicationController
     @publishers = select(@publishers)
     @publishers.update_all(discarded_at: nil)
 
-    @location = safe_location_param(:redirect, publishers_path)
+    @location = url_from(params[:redirect]) || publishers_path
     @notice   = translate(".success")
 
     respond_to do |format|
@@ -144,7 +144,7 @@ class PublishersController < ApplicationController
     default = publishers_path
     default = publisher_path(@publisher) if @publisher&.persisted?
 
-    @background_content_url = safe_location_param(:content, default)
+    @background_content_url = url_from(params[:content]) || default
   end
 
   def publisher_params

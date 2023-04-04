@@ -26,7 +26,7 @@ class CollectivitiesController < ApplicationController
     @collectivity = Collectivity.new(collectivity_params)
 
     if @collectivity.save
-      @location = safe_location_param(:redirect, collectivities_path)
+      @location = url_from(params[:redirect]) || collectivities_path
       @notice   = translate(".success")
 
       respond_to do |format|
@@ -40,7 +40,7 @@ class CollectivitiesController < ApplicationController
 
   def update
     if @collectivity.update(collectivity_params)
-      @location = safe_location_param(:redirect, collectivities_path)
+      @location = url_from(params[:redirect]) || collectivities_path
       @notice   = translate(".success")
 
       respond_to do |format|
@@ -55,7 +55,7 @@ class CollectivitiesController < ApplicationController
   def destroy
     @collectivity.discard
 
-    @location = safe_location_param(:redirect, collectivities_path)
+    @location = url_from(params[:redirect]) || collectivities_path
     @notice   = translate(".success").merge(
       actions: {
         label:  "Annuler",
@@ -109,7 +109,7 @@ class CollectivitiesController < ApplicationController
   def undiscard
     @collectivity.undiscard
 
-    @location = safe_location_param(:redirect, collectivities_path)
+    @location = url_from(params[:redirect]) || collectivities_path
     @notice   = translate(".success")
 
     respond_to do |format|
@@ -124,7 +124,7 @@ class CollectivitiesController < ApplicationController
     @collectivities = select(@collectivities)
     @collectivities.update_all(discarded_at: nil)
 
-    @location = safe_location_param(:redirect, collectivities_path)
+    @location = url_from(params[:redirect]) || collectivities_path
     @notice   = translate(".success")
 
     respond_to do |format|
@@ -143,7 +143,7 @@ class CollectivitiesController < ApplicationController
     default = collectivities_path
     default = collectivity_path(@collectivity) if @collectivity&.persisted?
 
-    @background_content_url = safe_location_param(:content, default)
+    @background_content_url = url_from(params[:content]) || default
   end
 
   def collectivity_params

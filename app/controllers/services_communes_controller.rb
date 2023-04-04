@@ -6,7 +6,7 @@ class ServicesCommunesController < ApplicationController
 
   def edit
     @services_communes_form = ServicesCommunesForm.new(@service)
-    @background_content_url = safe_location_param(:content, service_path(@service))
+    @background_content_url = url_from(params[:content]) || service_path(@service)
   end
 
   def update
@@ -18,7 +18,7 @@ class ServicesCommunesController < ApplicationController
       .fetch(:codes_insee, [])
 
     if @services_communes_form.update(codes_insee_params)
-      @location = safe_location_param(:redirect, service_path(@service))
+      @location = url_from(params[:redirect]) || service_path(@service)
       @notice   = translate(".success")
 
       respond_to do |format|

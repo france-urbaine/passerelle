@@ -50,7 +50,7 @@ class DdfipsController < ApplicationController
 
   def update
     if @ddfip.update(ddfip_params)
-      @location = safe_location_param(:redirect, ddfips_path)
+      @location = url_from(params[:redirect]) || ddfips_path
       @notice   = translate(".success")
 
       respond_to do |format|
@@ -65,7 +65,7 @@ class DdfipsController < ApplicationController
   def destroy
     @ddfip.discard
 
-    @location = safe_location_param(:redirect, ddfips_path)
+    @location = url_from(params[:redirect]) || ddfips_path
     @notice   = translate(".success").merge(
       actions: {
         label:  "Annuler",
@@ -120,7 +120,7 @@ class DdfipsController < ApplicationController
   def undiscard
     @ddfip.undiscard
 
-    @location = safe_location_param(:redirect, ddfips_path)
+    @location = url_from(params[:redirect]) || ddfips_path
     @notice   = translate(".success")
 
     respond_to do |format|
@@ -135,7 +135,7 @@ class DdfipsController < ApplicationController
     @ddfips = select(@ddfips)
     @ddfips.update_all(discarded_at: nil)
 
-    @location = safe_location_param(:redirect, ddfips_path)
+    @location = url_from(params[:redirect]) || ddfips_path
     @notice   = translate(".success")
 
     respond_to do |format|
@@ -154,7 +154,7 @@ class DdfipsController < ApplicationController
     default = ddfips_path
     default = ddfip_path(@ddfip) if @ddfip&.persisted?
 
-    @background_content_url = safe_location_param(:content, default)
+    @background_content_url = url_from(params[:content]) || default
   end
 
   def ddfip_params

@@ -24,12 +24,12 @@ class EpcisController < ApplicationController
   def show; end
 
   def edit
-    @background_content_url = safe_location_param(:content, epci_path(@epci))
+    @background_content_url = url_from(params[:content]) || epci_path(@epci)
   end
 
   def update
     if @epci.update(epci_params)
-      @location = safe_location_param(:redirect, epcis_path)
+      @location = url_from(params[:redirect]) || epcis_path
       @notice   = translate(".success")
 
       respond_to do |format|

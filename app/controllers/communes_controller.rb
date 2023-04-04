@@ -24,12 +24,12 @@ class CommunesController < ApplicationController
   def show; end
 
   def edit
-    @background_content_url = safe_location_param(:content, commune_path(@commune))
+    @background_content_url = url_from(params[:content]) || commune_path(@commune)
   end
 
   def update
     if @commune.update(commune_params)
-      @location = safe_location_param(:redirect, communes_path)
+      @location = url_from(params[:redirect]) || communes_path
       @notice   = translate(".success")
 
       respond_to do |format|

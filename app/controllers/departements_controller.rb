@@ -24,12 +24,12 @@ class DepartementsController < ApplicationController
   def show; end
 
   def edit
-    @background_content_url = safe_location_param(:content, departement_path(@departement))
+    @background_content_url = url_from(params[:content]) || departement_path(@departement)
   end
 
   def update
     if @departement.update(departement_params)
-      @location = safe_location_param(:redirect, departements_path)
+      @location = url_from(params[:redirect]) || departements_path
       @notice   = translate(".success")
 
       respond_to do |format|

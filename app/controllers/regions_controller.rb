@@ -24,12 +24,12 @@ class RegionsController < ApplicationController
   def show; end
 
   def edit
-    @background_content_url = safe_location_param(:content, region_path(@region))
+    @background_content_url = url_from(params[:content]) || region_path(@region)
   end
 
   def update
     if @region.update(region_params)
-      @location = safe_location_param(:redirect, regions_path)
+      @location = url_from(params[:redirect]) || regions_path
       @notice   = translate(".success")
 
       respond_to do |format|

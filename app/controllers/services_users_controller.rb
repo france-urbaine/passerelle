@@ -6,12 +6,12 @@ class ServicesUsersController < ApplicationController
 
   def edit
     @ddfip_users            = ddfip_users
-    @background_content_url = safe_location_param(:content, service_path(@service))
+    @background_content_url = url_from(params[:content]) || service_path(@service)
   end
 
   def update
     if @service.update(service_params)
-      @location = safe_location_param(:redirect, service_path(@service))
+      @location = url_from(params[:redirect]) || service_path(@service)
       @notice   = translate(".success")
 
       respond_to do |format|

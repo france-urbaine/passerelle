@@ -27,7 +27,7 @@ class UsersController < ApplicationController
     @user.invite(by: current_user)
 
     if @user.save
-      @location = safe_location_param(:redirect, users_path)
+      @location = url_from(params[:redirect]) || users_path
       @notice   = translate(".success")
 
       respond_to do |format|
@@ -41,7 +41,7 @@ class UsersController < ApplicationController
 
   def update
     if @user.update(user_params)
-      @location = safe_location_param(:redirect, users_path)
+      @location = url_from(params[:redirect]) || users_path
       @notice   = translate(".success")
 
       respond_to do |format|
@@ -57,7 +57,7 @@ class UsersController < ApplicationController
     @user.discard
     DeleteDiscardedUsersJob.set(wait: 5.minutes).perform_later(@user.id)
 
-    @location = safe_location_param(:redirect, users_path)
+    @location = url_from(params[:redirect]) || users_path
     @notice   = translate(".success").merge(
       actions: {
         label:  "Annuler",
@@ -115,7 +115,7 @@ class UsersController < ApplicationController
   def undiscard
     @user.undiscard
 
-    @location = safe_location_param(:redirect, users_path)
+    @location = url_from(params[:redirect]) || users_path
     @notice   = translate(".success")
 
     respond_to do |format|
@@ -130,7 +130,7 @@ class UsersController < ApplicationController
     @users = select(@users)
     @users.update_all(discarded_at: nil)
 
-    @location = safe_location_param(:redirect, users_path)
+    @location = url_from(params[:redirect]) || users_path
     @notice   = translate(".success")
 
     respond_to do |format|
@@ -149,7 +149,7 @@ class UsersController < ApplicationController
     default = users_path
     default = user_path(@user) if @user&.persisted?
 
-    @background_content_url = safe_location_param(:content, default)
+    @background_content_url = url_from(params[:content]) || default
   end
 
   def user_params
