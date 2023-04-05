@@ -34,6 +34,8 @@ module ControllerCollections
   end
 
   def filter_collection(relation)
+    return relation.none if params[:ids].blank?
+
     relation = search_collection(relation)
 
     case params[:ids]

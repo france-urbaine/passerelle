@@ -98,7 +98,7 @@ RSpec/DescribedClass:
   Enabled: false
 
 RSpec/ExampleLength:
-  CountAsOne: ['array', 'heredoc']
+  CountAsOne: ['array', 'hash', 'heredoc']
   Exclude:
     - 'spec/system/**/*'
     - 'spec/components/**/*'

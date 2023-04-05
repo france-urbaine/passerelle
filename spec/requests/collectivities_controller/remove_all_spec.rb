@@ -3,21 +3,40 @@
 require "rails_helper"
 
 RSpec.describe "CollectivitiesController#remove_all" do
-  subject(:request) { get "/collectivites/remove", headers:, params: }
-
-  let(:headers)      { {} }
-  let(:params)       { { ids: [collectivity.id] } }
-  let(:collectivity) { create(:collectivity) }
-
-  context "when requesting HTML" do
-    it { expect(response).to have_http_status(:success) }
-    it { expect(response).to have_content_type(:html) }
-    it { expect(response).to have_html_body }
+  subject(:request) do
+    get "/collectivites/remove", as:, params:
   end
 
-  context "when requesting JSON" do
-    let(:headers) { { "Accept" => "application/json" } }
+  let(:as)     { |e| e.metadata[:as] }
+  let(:params) { |e| e.metadata.fetch(:params, { ids: collectivities.map(&:id).take(2) }) }
 
+  let!(:collectivities) { create_list(:collectivity, 3) }
+
+  context "when requesting HTML" do
+    context "with multiple ids" do
+      it { expect(response).to have_http_status(:success) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
+    end
+
+    context "with `all` ids", params: { ids: "all" } do
+      it { expect(response).to have_http_status(:success) }
+    end
+
+    context "with empty ids", params: { ids: [] } do
+      it { expect(response).to have_http_status(:success) }
+    end
+
+    context "with unknown ids", params: { ids: %w[1 2] } do
+      it { expect(response).to have_http_status(:success) }
+    end
+
+    context "with missing ids parameters", params: {} do
+      it { expect(response).to have_http_status(:success) }
+    end
+  end
+
+  context "when requesting JSON", as: :json do
     it { expect(response).to have_http_status(:not_acceptable) }
     it { expect(response).to have_content_type(:json) }
     it { expect(response).to have_empty_body }

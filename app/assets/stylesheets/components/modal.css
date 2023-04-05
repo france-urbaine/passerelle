@@ -59,6 +59,10 @@
     @apply -mt-2 -mr-2 ml-6;
   }
 
+  .modal__content p {
+    @apply mb-2;
+  }
+
   .modal__close-button svg {
     @apply text-gray-500;
   }

@@ -4,6 +4,7 @@ class ApplicationController < ActionController::Base
   self.responder = ApplicationResponder
 
   include ControllerCollections
+  include ControllerParams
 
   before_action :verify_requested_format!
   before_action :accept_request_variant
@@ -21,7 +22,16 @@ class ApplicationController < ActionController::Base
     rescue_from "ActionController::UnknownFormat",    with: :not_acceptable
   end
 
-  %i[bad_request gone unauthorized forbidden not_found not_acceptable unprocessable_entity].each do |status|
+  %i[
+    bad_request
+    gone
+    unauthorized
+    forbidden
+    not_found
+    not_acceptable
+    unprocessable_entity
+    not_implemented
+  ].each do |status|
     define_method(status) do
       respond_to do |format|
         # TODO: add templates to render statuses
@@ -31,7 +41,7 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  # Variant
+  # Variants
   # ----------------------------------------------------------------------------
   helper_method :turbo_frame_request_id
   helper_method :turbo_frame_request?

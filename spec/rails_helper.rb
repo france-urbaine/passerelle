@@ -98,6 +98,7 @@ RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
   config.include Matchers::HaveBody
   config.include Matchers::HaveContentType
+  config.include Matchers::HaveFlash
   config.include Matchers::HaveSentEmails
   config.include Matchers::PerformSQLQueries
 

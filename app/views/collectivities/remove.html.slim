@@ -1,4 +1,4 @@
-= template_frame_component(src: @background_content_url) do |frame|
+= template_frame_component(src: @background_url) do |frame|
   - frame.with_modal do |modal|
     - modal.with_header do
       | Suppression de la collectivité : #{@collectivity.name}
@@ -6,10 +6,11 @@
     - modal.with_form(model: @collectivity, method: :delete) do
       = hidden_param_input(:redirect)
 
+      p Êtes-vous sûrs de vouloir supprimer cette collectivité ?
       p
-        | Êtes-vous sûrs de vouloir supprimer ce compte ?
+        | Par mesure de securité, les données de cette collectivité seront archivées pendant 30 jours.
         br
-        | Le compte de la collectivité sera archivé pendant 30 jours avant d'être définitivement supprimé.
+        | Toutes les données seront définitivement supprimées à la fin de ce délai.
 
     - modal.with_submit_action "Continuer", autofocus: true
     - modal.with_close_action "Annuler"

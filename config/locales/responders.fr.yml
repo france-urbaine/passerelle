@@ -3,6 +3,39 @@ fr:
     actions:
       update:
         notice:
-          type:  "success"
-          title: "Les modifications ont été enregistrées avec succés."
-          delay: 3000
+          type:         "success"
+          title:        "Les modifications ont été enregistrées avec succés."
+          delay:        3000
+
+    collectivities:
+      create:
+        notice:
+          type:         "success"
+          title:        "Une nouvelle collectivité a été ajoutée avec succés."
+          delay:        3000
+
+      destroy:
+        notice:
+          type:         "success"
+          title:        "La collectivité a été supprimée."
+          description:  "Toutes les données seront définitivement supprimées dans un délai de 30 jours."
+          delay:        10000
+
+      destroy_all:
+        notice:
+          type:         "success"
+          title:        "Les collectivités sélectionnées ont été supprimées."
+          description:  "Toutes les données seront définitivement supprimées dans un délai de 30 jours."
+          delay:        10000
+
+      undiscard:
+        notice:
+          type:         "cancel"
+          title:        "La suppression de la collectivité a été annulée."
+          delay:        3000
+
+      undiscard_all:
+        notice:
+          type:         "cancel"
+          title:        "La suppression des collectivités sélectionnées a été annulée."
+          delay:        3000
