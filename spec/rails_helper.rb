@@ -134,6 +134,16 @@ RSpec.configure do |config|
       example.run
     end
   end
+
+  config.around :each, :cache_store do |example|
+    previous_cache = Rails.cache
+
+    cache_store = example.metadata[:cache_store]
+    Rails.cache = ActiveSupport::Cache.lookup_store(cache_store)
+    example.run
+    Rails.cache.clear
+    Rails.cache = previous_cache
+  end
 end
 
 RSpec::Matchers.define_negated_matcher :exclude,    :include

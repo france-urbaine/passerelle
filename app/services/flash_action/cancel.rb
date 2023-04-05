@@ -15,6 +15,12 @@ module FlashAction
       }
     end
 
+    def to_session
+      FlashAction.write(self)
+    end
+
+    private
+
     def cancel_path
       case @params[:action]
       when "destroy"

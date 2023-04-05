@@ -57,7 +57,7 @@ class UsersController < ApplicationController
 
     @location = url_from(params[:redirect]) || users_path
     @notice   = translate(".success")
-    @cancel   = FlashAction::Cancel.new(params).to_h
+    @cancel   = FlashAction::Cancel.new(params).to_session
 
     respond_to do |format|
       format.turbo_stream { redirect_to @location, notice: @notice, flash: { actions: @cancel } }
@@ -84,7 +84,7 @@ class UsersController < ApplicationController
     @location   = users_path if params[:ids] == "all"
     @location ||= users_path(**index_params)
     @notice     = translate(".success")
-    @cancel     = FlashAction::Cancel.new(params).to_h
+    @cancel     = FlashAction::Cancel.new(params).to_session
 
     respond_to do |format|
       format.turbo_stream  { redirect_to @location, notice: @notice, flash: { actions: @cancel } }

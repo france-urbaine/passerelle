@@ -55,11 +55,11 @@ class PublishersController < ApplicationController
 
     @location = url_from(params[:redirect]) || publishers_path
     @notice   = translate(".success")
-    @cancel   = FlashAction::Cancel.new(params).to_h
+    @cancel   = FlashAction::Cancel.new(params).to_session
 
     respond_to do |format|
-      format.turbo_stream { redirect_to @location, notice: @notice }
-      format.html         { redirect_to @location, notice: @notice }
+      format.turbo_stream { redirect_to @location, notice: @notice, flash: { actions: @cancel } }
+      format.html         { redirect_to @location, notice: @notice, flash: { actions: @cancel } }
     end
   end
 
@@ -79,7 +79,7 @@ class PublishersController < ApplicationController
     @location   = publishers_path if params[:ids] == "all"
     @location ||= publishers_path(**index_params)
     @notice     = translate(".success")
-    @cancel     = FlashAction::Cancel.new(params).to_h
+    @cancel     = FlashAction::Cancel.new(params).to_session
 
     respond_to do |format|
       format.turbo_stream  { redirect_to @location, notice: @notice, flash: { actions: @cancel } }
@@ -108,8 +108,8 @@ class PublishersController < ApplicationController
     @notice   = translate(".success")
 
     respond_to do |format|
-      format.turbo_stream { redirect_to @location, notice: @notice, flash: { actions: @cancel } }
-      format.html         { redirect_to @location, notice: @notice, flash: { actions: @cancel } }
+      format.turbo_stream { redirect_to @location, notice: @notice }
+      format.html         { redirect_to @location, notice: @notice }
     end
   end
 

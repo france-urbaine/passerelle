@@ -30,13 +30,13 @@ fr:
 
     undiscard:
       success:
-        type:         "info"
+        type:         "cancel"
         title:        "La suppression de l'éditeur a été annulée."
         delay:        3000
 
     undiscard_all:
       success:
-        type:         "info"
+        type:         "cancel"
         title:        "La suppression des éditeurs sélectionnés a été annulée."
         delay:        3000
 
@@ -64,13 +64,13 @@ fr:
 
     undiscard:
       success:
-        type:         "info"
+        type:         "cancel"
         title:        "La suppression de la DDFIP a été annulée."
         delay:        3000
 
     undiscard_all:
       success:
-        type:         "info"
+        type:         "cancel"
         title:        "La suppression des DDFIP sélectionnées a été annulée."
         delay:        3000
 
@@ -98,13 +98,13 @@ fr:
 
     undiscard:
       success:
-        type:         "info"
+        type:         "cancel"
         title:        "La suppression du guichet a été annulée."
         delay:        3000
 
     undiscard_all:
       success:
-        type:         "info"
+        type:         "cancel"
         title:        "La suppression des guichets sélectionnés a été annulée."
         delay:        3000
 
@@ -138,13 +138,13 @@ fr:
 
     undiscard:
       success:
-        type:         "info"
+        type:         "cancel"
         title:        "La suppression de la collectivité a été annulée."
         delay:        3000
 
     undiscard_all:
       success:
-        type:         "info"
+        type:         "cancel"
         title:        "La suppression des collectivités sélectionnées a été annulée."
         delay:        3000
 
@@ -170,13 +170,13 @@ fr:
 
     undiscard:
       success:
-        type:         "info"
+        type:         "cancel"
         title:        "La suppression de l'utilisateur a été annulée."
         delay:        3000
 
     undiscard_all:
       success:
-        type:         "info"
+        type:         "cancel"
         title:        "La suppression des utilisateurs sélectionnés a été annulée."
         delay:        3000
 
