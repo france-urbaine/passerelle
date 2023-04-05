@@ -1,16 +1,24 @@
 # frozen_string_literal: true
 
 class NotificationComponent < ViewComponent::Base
-  attr_reader :data
+  attr_reader :data, :actions
 
-  def initialize(data)
-    case data
-    when Hash   then @data = data.stringify_keys
-    when String then @data = { "title" => data }
-    else
-      raise TypeError, "unexpected argument: #{data.inspect}"
-    end
+  def initialize(data, actions = nil)
+    @data    = parse_data(data)
+    @actions = parse_actions(actions)
     super()
+  end
+
+  def parse_data(data)
+    case data
+    when Hash   then data.stringify_keys
+    when String then { "title" => data }
+    else raise TypeError, "unexpected argument: #{data.inspect}"
+    end
+  end
+
+  def parse_actions(actions)
+    Array.wrap(actions).map(&:symbolize_keys)
   end
 
   def title
@@ -27,9 +35,5 @@ class NotificationComponent < ViewComponent::Base
 
   def description
     data["description"]
-  end
-
-  def actions
-    @actions ||= Array.wrap(data["actions"]).map(&:symbolize_keys)
   end
 end

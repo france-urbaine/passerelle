@@ -31,7 +31,7 @@
         .notification__actions
           - actions.each do |action|
             = form_with(**action.slice(:url, :method)) do |form|
-              - action[:inputs]&.each do |key, value|
+              - action[:params]&.each do |key, value|
                 - helpers.each_hidden_param_field_tag(key, value) do |input|
                   = input
 

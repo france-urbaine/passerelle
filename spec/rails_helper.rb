@@ -13,6 +13,7 @@ unless ENV["SIMPLE_COV"] == "false"
     command_name ENV["SIMPLE_COV_COMMAND"] if ENV.key?("SIMPLE_COV_COMMAND")
 
     add_group "Components", "app/components"
+    add_group "Services", "app/services"
   end
 end
 

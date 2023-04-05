@@ -59,18 +59,12 @@ class DdfipsController < ApplicationController
     @ddfip.discard
 
     @location = url_from(params[:redirect]) || ddfips_path
-    @notice   = translate(".success").merge(
-      actions: {
-        label:  "Annuler",
-        url:    undiscard_ddfip_path(@ddfip),
-        method: :patch,
-        inputs: { redirect: @location }
-      }
-    )
+    @notice   = translate(".success")
+    @cancel   = FlashAction::Cancel.new(params).to_h
 
     respond_to do |format|
-      format.turbo_stream { redirect_to @location, notice: @notice }
-      format.html         { redirect_to @location, notice: @notice }
+      format.turbo_stream { redirect_to @location, notice: @notice, flash: { actions: @cancel } }
+      format.html         { redirect_to @location, notice: @notice, flash: { actions: @cancel } }
     end
   end
 
@@ -89,22 +83,12 @@ class DdfipsController < ApplicationController
 
     @location   = ddfips_path if params[:ids] == "all"
     @location ||= ddfips_path(**index_params)
-    @notice     = translate(".success").merge(
-      actions: {
-        label:  "Annuler",
-        url:    undiscard_all_ddfips_path,
-        method: :patch,
-        inputs: {
-          ids:      params[:ids],
-          redirect: @location,
-          **index_params
-        }
-      }
-    )
+    @notice     = translate(".success")
+    @cancel     = FlashAction::Cancel.new(params).to_h
 
     respond_to do |format|
-      format.turbo_stream  { redirect_to @location, notice: @notice }
-      format.html          { redirect_to @location, notice: @notice }
+      format.turbo_stream  { redirect_to @location, notice: @notice, flash: { actions: @cancel } }
+      format.html          { redirect_to @location, notice: @notice, flash: { actions: @cancel } }
     end
   end
 

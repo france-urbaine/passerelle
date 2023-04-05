@@ -42,15 +42,14 @@ class NotificationComponentPreview < ViewComponent::Preview
   def actions
     render(NotificationComponent.new({
       title:       "Something went wrong.",
-      actions:     {
-        label:  "Annuler",
-        url:    "",
-        method: :get
-      },
       description: <<~MESSAGE
         Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n
         Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
       MESSAGE
+    }, {
+      label:  "Annuler",
+      url:    "",
+      method: :get
     }))
   end
   # @!endgroup

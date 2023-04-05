@@ -54,18 +54,12 @@ class ServicesController < ApplicationController
     @service.discard
 
     @location = url_from(params[:redirect]) || services_path
-    @notice   = translate(".success").merge(
-      actions: {
-        label:  "Annuler",
-        url:    undiscard_service_path(@service),
-        method: :patch,
-        inputs: { redirect: @location }
-      }
-    )
+    @notice   = translate(".success")
+    @cancel   = FlashAction::Cancel.new(params).to_h
 
     respond_to do |format|
-      format.turbo_stream { redirect_to @location, notice: @notice }
-      format.html         { redirect_to @location, notice: @notice }
+      format.turbo_stream { redirect_to @location, notice: @notice, flash: { actions: @cancel } }
+      format.html         { redirect_to @location, notice: @notice, flash: { actions: @cancel } }
     end
   end
 
@@ -84,22 +78,12 @@ class ServicesController < ApplicationController
 
     @location   = services_path if params[:ids] == "all"
     @location ||= services_path(**index_params)
-    @notice     = translate(".success").merge(
-      actions: {
-        label:  "Annuler",
-        url:    undiscard_all_services_path,
-        method: :patch,
-        inputs: {
-          ids:      params[:ids],
-          redirect: @location,
-          **index_params
-        }
-      }
-    )
+    @notice     = translate(".success")
+    @cancel     = FlashAction::Cancel.new(params).to_h
 
     respond_to do |format|
-      format.turbo_stream  { redirect_to @location, notice: @notice }
-      format.html          { redirect_to @location, notice: @notice }
+      format.turbo_stream  { redirect_to @location, notice: @notice, flash: { actions: @cancel } }
+      format.html          { redirect_to @location, notice: @notice, flash: { actions: @cancel } }
     end
   end
 

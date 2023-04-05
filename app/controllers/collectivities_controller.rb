@@ -54,18 +54,12 @@ class CollectivitiesController < ApplicationController
     @collectivity.discard
 
     @location = url_from(params[:redirect]) || collectivities_path
-    @notice   = translate(".success").merge(
-      actions: {
-        label:  "Annuler",
-        url:    undiscard_collectivity_path(@collectivity),
-        method: :patch,
-        inputs: { redirect: @location }
-      }
-    )
+    @notice   = translate(".success")
+    @cancel   = FlashAction::Cancel.new(params).to_h
 
     respond_to do |format|
-      format.turbo_stream { redirect_to @location, notice: @notice }
-      format.html         { redirect_to @location, notice: @notice }
+      format.turbo_stream { redirect_to @location, notice: @notice, flash: { actions: @cancel } }
+      format.html         { redirect_to @location, notice: @notice, flash: { actions: @cancel } }
     end
   end
 
@@ -83,22 +77,12 @@ class CollectivitiesController < ApplicationController
 
     @location   = collectivities_path if params[:ids] == "all"
     @location ||= collectivities_path(**index_params)
-    @notice     = translate(".success").merge(
-      actions: {
-        label:  "Annuler",
-        url:    undiscard_all_collectivities_path,
-        method: :patch,
-        inputs: {
-          ids:      params[:ids],
-          redirect: @location,
-          **index_params
-        }
-      }
-    )
+    @notice     = translate(".success")
+    @cancel     = FlashAction::Cancel.new(params).to_h
 
     respond_to do |format|
-      format.turbo_stream  { redirect_to @location, notice: @notice }
-      format.html          { redirect_to @location, notice: @notice }
+      format.turbo_stream  { redirect_to @location, notice: @notice, flash: { actions: @cancel } }
+      format.html          { redirect_to @location, notice: @notice, flash: { actions: @cancel } }
     end
   end
 

@@ -56,18 +56,12 @@ class UsersController < ApplicationController
     DeleteDiscardedUsersJob.set(wait: 5.minutes).perform_later(@user.id)
 
     @location = url_from(params[:redirect]) || users_path
-    @notice   = translate(".success").merge(
-      actions: {
-        label:  "Annuler",
-        url:    undiscard_user_path(@user),
-        method: :patch,
-        inputs: { redirect: @location }
-      }
-    )
+    @notice   = translate(".success")
+    @cancel   = FlashAction::Cancel.new(params).to_h
 
     respond_to do |format|
-      format.turbo_stream { redirect_to @location, notice: @notice }
-      format.html         { redirect_to @location, notice: @notice }
+      format.turbo_stream { redirect_to @location, notice: @notice, flash: { actions: @cancel } }
+      format.html         { redirect_to @location, notice: @notice, flash: { actions: @cancel } }
     end
   end
 
@@ -89,22 +83,12 @@ class UsersController < ApplicationController
 
     @location   = users_path if params[:ids] == "all"
     @location ||= users_path(**index_params)
-    @notice     = translate(".success").merge(
-      actions: {
-        label:  "Annuler",
-        url:    undiscard_all_users_path,
-        method: :patch,
-        inputs: {
-          ids:      params[:ids],
-          redirect: @location,
-          **index_params
-        }
-      }
-    )
+    @notice     = translate(".success")
+    @cancel     = FlashAction::Cancel.new(params).to_h
 
     respond_to do |format|
-      format.turbo_stream  { redirect_to @location, notice: @notice }
-      format.html          { redirect_to @location, notice: @notice }
+      format.turbo_stream  { redirect_to @location, notice: @notice, flash: { actions: @cancel } }
+      format.html          { redirect_to @location, notice: @notice, flash: { actions: @cancel } }
     end
   end
 

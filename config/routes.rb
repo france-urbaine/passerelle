@@ -15,8 +15,8 @@ Rails.application.routes.draw do
   end
 
   concern :undiscardable do
-    patch  :undiscard,      on: :member
-    patch  :undiscard_all,  on: :collection, path: "undiscard"
+    patch :undiscard,     on: :member
+    patch :undiscard_all, on: :collection, path: "undiscard"
   end
 
   devise_for :user
