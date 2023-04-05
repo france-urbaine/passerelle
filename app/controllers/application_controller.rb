@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class ApplicationController < ActionController::Base
+  self.responder = ApplicationResponder
+
   include ControllerCollections
 
   before_action :verify_requested_format!

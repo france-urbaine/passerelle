@@ -1,0 +1,8 @@
+fr:
+  flash:
+    actions:
+      update:
+        notice:
+          type:  "success"
+          title: "Les modifications ont été enregistrées avec succés."
+          delay: 3000
