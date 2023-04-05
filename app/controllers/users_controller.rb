@@ -8,9 +8,7 @@ class UsersController < ApplicationController
 
   def index
     @users = User.kept.strict_loading
-    @users = search(@users)
-    @users = order(@users)
-    @pagy, @users = pagy(@users)
+    @users, @pagy = index_collection(@users)
   end
 
   def show; end
@@ -75,8 +73,7 @@ class UsersController < ApplicationController
 
   def remove_all
     @users = User.kept.strict_loading
-    @users = search(@users)
-    @users = select(@users)
+    @users = filter_collection(@users)
 
     @background_content_url = users_path(ids: params[:ids], **index_params)
     @return_location        = users_path(**index_params)
@@ -84,8 +81,7 @@ class UsersController < ApplicationController
 
   def destroy_all
     @users = User.kept.strict_loading
-    @users = search(@users)
-    @users = select(@users)
+    @users = filter_collection(@users)
     ids    = @users.ids
 
     @users.update_all(discarded_at: Time.current)
@@ -126,8 +122,7 @@ class UsersController < ApplicationController
 
   def undiscard_all
     @users = User.discarded.strict_loading
-    @users = search(@users)
-    @users = select(@users)
+    @users = filter_collection(@users)
     @users.update_all(discarded_at: nil)
 
     @location = url_from(params[:redirect]) || users_path

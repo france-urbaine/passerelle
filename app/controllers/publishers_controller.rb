@@ -8,9 +8,7 @@ class PublishersController < ApplicationController
 
   def index
     @publishers = Publisher.kept.strict_loading
-    @publishers = search(@publishers)
-    @publishers = order(@publishers)
-    @pagy, @publishers = pagy(@publishers)
+    @publishers, @pagy = index_collection(@publishers)
   end
 
   def show; end
@@ -73,8 +71,7 @@ class PublishersController < ApplicationController
 
   def remove_all
     @publishers = Publisher.kept.strict_loading
-    @publishers = search(@publishers)
-    @publishers = select(@publishers)
+    @publishers = filter_collection(@publishers)
 
     @background_content_url = publishers_path(ids: params[:ids], **index_params)
     @return_location        = publishers_path(**index_params)
@@ -82,8 +79,7 @@ class PublishersController < ApplicationController
 
   def destroy_all
     @publishers = Publisher.kept.strict_loading
-    @publishers = search(@publishers)
-    @publishers = select(@publishers)
+    @publishers = filter_collection(@publishers)
     @publishers.update_all(discarded_at: Time.current)
 
     @location   = publishers_path if params[:ids] == "all"
@@ -121,8 +117,7 @@ class PublishersController < ApplicationController
 
   def undiscard_all
     @publishers = Publisher.discarded.strict_loading
-    @publishers = search(@publishers)
-    @publishers = select(@publishers)
+    @publishers = filter_collection(@publishers)
     @publishers.update_all(discarded_at: nil)
 
     @location = url_from(params[:redirect]) || publishers_path

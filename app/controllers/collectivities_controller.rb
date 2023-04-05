@@ -8,9 +8,7 @@ class CollectivitiesController < ApplicationController
 
   def index
     @collectivities = Collectivity.kept.strict_loading
-    @collectivities = search(@collectivities)
-    @collectivities = order(@collectivities)
-    @pagy, @collectivities = pagy(@collectivities)
+    @collectivities, @pagy = index_collection(@collectivities)
   end
 
   def show; end
@@ -73,16 +71,14 @@ class CollectivitiesController < ApplicationController
 
   def remove_all
     @collectivities = Collectivity.kept.strict_loading
-    @collectivities = search(@collectivities)
-    @collectivities = select(@collectivities)
+    @collectivities = filter_collection(@collectivities)
 
     @background_content_url = collectivities_path(ids: params[:ids], **index_params)
   end
 
   def destroy_all
     @collectivities = Collectivity.kept.strict_loading
-    @collectivities = search(@collectivities)
-    @collectivities = select(@collectivities)
+    @collectivities = filter_collection(@collectivities)
     @collectivities.update_all(discarded_at: Time.current)
 
     @location   = collectivities_path if params[:ids] == "all"
@@ -120,8 +116,7 @@ class CollectivitiesController < ApplicationController
 
   def undiscard_all
     @collectivities = Collectivity.discarded.strict_loading
-    @collectivities = search(@collectivities)
-    @collectivities = select(@collectivities)
+    @collectivities = filter_collection(@collectivities)
     @collectivities.update_all(discarded_at: nil)
 
     @location = url_from(params[:redirect]) || collectivities_path

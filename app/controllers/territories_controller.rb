@@ -51,12 +51,10 @@ class TerritoriesController < ApplicationController
   def autocomplete_territories(model, territories = [])
     return territories if territories.size >= 50
 
-    input    = params[:q]
     relation = model.strict_loading
-    relation.search(name: input)
-      .order_by_score(input)
-      .order(relation.implicit_order_column)
-      .limit(50 - territories.size)
-      .to_a
+    relation = search_collection(relation)
+    relation = order_collection(relation)
+    relation = relation.limit(50 - territories.size)
+    relation.to_a
   end
 end

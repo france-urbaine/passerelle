@@ -21,12 +21,10 @@ class OrganizationsController < ApplicationController
   def autocomplete_organizations(model, organizations = [])
     return organizations if organizations.size >= 50
 
-    input    = params[:q]
     relation = model.strict_loading.kept
-    relation.search(name: input)
-      .order_by_score(input)
-      .order(relation.implicit_order_column)
-      .limit(50 - organizations.size)
-      .to_a
+    relation = search_collection(relation)
+    relation = order_collection(relation)
+    relation = relation.limit(50 - organizations.size)
+    relation.to_a
   end
 end

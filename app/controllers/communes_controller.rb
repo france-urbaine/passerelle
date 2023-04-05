@@ -6,14 +6,7 @@ class CommunesController < ApplicationController
 
   def index
     @communes = Commune.strict_loading
-
-    if autocomplete_request?
-      @communes = autocomplete(@communes)
-    else
-      @communes = search(@communes)
-      @communes = order(@communes)
-      @pagy, @communes = pagy(@communes)
-    end
+    @communes, @pagy = index_collection(@communes)
 
     respond_to do |format|
       format.html.any

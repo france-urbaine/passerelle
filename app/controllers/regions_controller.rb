@@ -6,14 +6,7 @@ class RegionsController < ApplicationController
 
   def index
     @regions = Region.strict_loading
-
-    if autocomplete_request?
-      @regions = autocomplete(@regions)
-    else
-      @regions = search(@regions)
-      @regions = order(@regions)
-      @pagy, @regions = pagy(@regions)
-    end
+    @regions, @pagy = index_collection(@regions)
 
     respond_to do |format|
       format.html.any

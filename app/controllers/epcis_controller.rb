@@ -6,14 +6,7 @@ class EpcisController < ApplicationController
 
   def index
     @epcis = EPCI.strict_loading
-
-    if autocomplete_request?
-      @epcis = autocomplete(@epcis)
-    else
-      @epcis = search(@epcis)
-      @epcis = order(@epcis)
-      @pagy, @epcis = pagy(@epcis)
-    end
+    @epcis, @pagy = index_collection(@epcis)
 
     respond_to do |format|
       format.html.any

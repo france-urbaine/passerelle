@@ -6,14 +6,7 @@ class DepartementsController < ApplicationController
 
   def index
     @departements = Departement.strict_loading
-
-    if autocomplete_request?
-      @departements = autocomplete(@departements)
-    else
-      @departements = search(@departements)
-      @departements = order(@departements)
-      @pagy, @departements = pagy(@departements)
-    end
+    @departements, @pagy = index_collection(@departements)
 
     respond_to do |format|
       format.html.any

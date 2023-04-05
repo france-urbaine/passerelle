@@ -8,14 +8,7 @@ class DdfipsController < ApplicationController
 
   def index
     @ddfips = DDFIP.kept.strict_loading
-
-    if autocomplete_request?
-      @ddfips = autocomplete(@ddfips)
-    else
-      @ddfips = search(@ddfips)
-      @ddfips = order(@ddfips)
-      @pagy, @ddfips = pagy(@ddfips)
-    end
+    @ddfips, @pagy = index_collection(@ddfips)
 
     respond_to do |format|
       format.html.any
@@ -83,8 +76,7 @@ class DdfipsController < ApplicationController
 
   def remove_all
     @ddfips = DDFIP.kept.strict_loading
-    @ddfips = search(@ddfips)
-    @ddfips = select(@ddfips)
+    @ddfips = filter_collection(@ddfips)
 
     @background_content_url = ddfips_path(ids: params[:ids], **index_params)
     @return_location        = ddfips_path(**index_params)
@@ -92,8 +84,7 @@ class DdfipsController < ApplicationController
 
   def destroy_all
     @ddfips = DDFIP.kept.strict_loading
-    @ddfips = search(@ddfips)
-    @ddfips = select(@ddfips)
+    @ddfips = filter_collection(@ddfips)
     @ddfips.update_all(discarded_at: Time.current)
 
     @location   = ddfips_path if params[:ids] == "all"
@@ -131,8 +122,7 @@ class DdfipsController < ApplicationController
 
   def undiscard_all
     @ddfips = DDFIP.discarded.strict_loading
-    @ddfips = search(@ddfips)
-    @ddfips = select(@ddfips)
+    @ddfips = filter_collection(@ddfips)
     @ddfips.update_all(discarded_at: nil)
 
     @location = url_from(params[:redirect]) || ddfips_path

@@ -8,9 +8,7 @@ class ServicesController < ApplicationController
 
   def index
     @services = Service.kept.strict_loading
-    @services = search(@services)
-    @services = order(@services)
-    @pagy, @services = pagy(@services)
+    @services, @pagy = index_collection(@services)
   end
 
   def show; end
@@ -73,8 +71,7 @@ class ServicesController < ApplicationController
 
   def remove_all
     @services = Service.kept.strict_loading
-    @services = search(@services)
-    @services = select(@services)
+    @services = filter_collection(@services)
 
     @background_content_url = services_path(ids: params[:ids], **index_params)
     @return_location        = services_path(**index_params)
@@ -82,8 +79,7 @@ class ServicesController < ApplicationController
 
   def destroy_all
     @services = Service.kept.strict_loading
-    @services = search(@services)
-    @services = select(@services)
+    @services = filter_collection(@services)
     @services.update_all(discarded_at: Time.current)
 
     @location   = services_path if params[:ids] == "all"
@@ -121,8 +117,7 @@ class ServicesController < ApplicationController
 
   def undiscard_all
     @services = Service.discarded.strict_loading
-    @services = search(@services)
-    @services = select(@services)
+    @services = filter_collection(@services)
     @services.update_all(discarded_at: nil)
 
     @location = url_from(params[:redirect]) || services_path

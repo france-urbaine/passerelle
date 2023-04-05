@@ -1,12 +1,7 @@
 # frozen_string_literal: true
 
 class ApplicationController < ActionController::Base
-  include Pagy::Backend
-  include ControllerAutocomplete
-  include ControllerItems
-  include ControllerOrder
-  include ControllerSearch
-  include ControllerSelection
+  include ControllerCollections
 
   before_action :verify_requested_format!
   before_action :accept_request_variant
