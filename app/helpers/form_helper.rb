@@ -29,10 +29,11 @@ module FormHelper
     if block_given?
       each_hidden_param_field_tag(key, params[key], &)
     else
+      buffer = []
       each_hidden_param_field_tag(key, params[key]) do |input|
-        concat input
+        buffer << input
       end
-      ""
+      safe_join buffer
     end
   end
 

@@ -7,7 +7,7 @@ export default class extends Controller {
   connect () {
     useTransition(this)
     this.enter()
-    if (this.delayValue) this.timeout = setTimeout(this.hide.bind(this), this.delayValue)
+    if (this.delayValue) this.timeout = setTimeout(this.hide.bind(this), this.delayValue * 1000)
   }
 
   async hide () {

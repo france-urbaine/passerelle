@@ -12,6 +12,8 @@ class ApplicationResponder < ActionController::Responder
   self.error_status = :unprocessable_entity
   self.redirect_status = :see_other
 
+  alias to_turbo_stream to_html
+
   # Allow new options to be passed to responders
   def initialize(controller, resources, options = {})
     super
