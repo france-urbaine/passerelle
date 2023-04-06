@@ -100,13 +100,11 @@ group :test do
   # RSpec extensions
   gem "fuubar"
   gem "rspec-collection_matchers"
-  gem "saharspec", github: "inkstak/saharspec", branch: "proper_rubocop_linting"
+  gem "saharspec"
   gem "shoulda-matchers"
   gem "super_diff"
 
   # System tests
-  # FIXME: waiting for this PR to be released
-  # https://github.com/teamcapybara/capybara/pull/2617
-  gem "capybara", github: "teamcapybara/capybara", ref: "cacd032"
+  gem "capybara"
   gem "cuprite"
 end

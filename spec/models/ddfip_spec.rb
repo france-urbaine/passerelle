@@ -311,13 +311,13 @@ RSpec.describe DDFIP do
   # Reset counters
   # ----------------------------------------------------------------------------
   describe ".reset_all_counters" do
-    subject { described_class.reset_all_counters }
+    subject(:reset_all_counters) { described_class.reset_all_counters }
 
     let!(:ddfip1) { create(:ddfip) }
     let!(:ddfip2) { create(:ddfip) }
 
-    its_block { is_expected.to ret(2) }
-    its_block { is_expected.to perform_sql_query("SELECT reset_all_ddfips_counters()") }
+    it { expect { reset_all_counters }.to ret(2) }
+    it { expect { reset_all_counters }.to perform_sql_query("SELECT reset_all_ddfips_counters()") }
 
     describe "on users_count" do
       before do
@@ -329,8 +329,8 @@ RSpec.describe DDFIP do
         DDFIP.update_all(users_count: 0)
       end
 
-      its_block { is_expected.to change { ddfip1.reload.users_count }.from(0).to(4) }
-      its_block { is_expected.to change { ddfip2.reload.users_count }.from(0).to(2) }
+      it { expect { reset_all_counters }.to change { ddfip1.reload.users_count }.from(0).to(4) }
+      it { expect { reset_all_counters }.to change { ddfip2.reload.users_count }.from(0).to(2) }
     end
 
     describe "on collectivities_count" do
@@ -355,8 +355,8 @@ RSpec.describe DDFIP do
         DDFIP.update_all(collectivities_count: 0)
       end
 
-      its_block { is_expected.to change { ddfip1.reload.collectivities_count }.from(0).to(6) }
-      its_block { is_expected.to change { ddfip2.reload.collectivities_count }.from(0).to(1) }
+      it { expect { reset_all_counters }.to change { ddfip1.reload.collectivities_count }.from(0).to(6) }
+      it { expect { reset_all_counters }.to change { ddfip2.reload.collectivities_count }.from(0).to(1) }
     end
 
     describe "on services_count" do
@@ -368,8 +368,8 @@ RSpec.describe DDFIP do
         DDFIP.update_all(services_count: 0)
       end
 
-      its_block { is_expected.to change { ddfip1.reload.services_count }.from(0).to(4) }
-      its_block { is_expected.to change { ddfip2.reload.services_count }.from(0).to(2) }
+      it { expect { reset_all_counters }.to change { ddfip1.reload.services_count }.from(0).to(4) }
+      it { expect { reset_all_counters }.to change { ddfip2.reload.services_count }.from(0).to(2) }
     end
   end
 end

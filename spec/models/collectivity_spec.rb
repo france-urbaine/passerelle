@@ -125,7 +125,7 @@ RSpec.describe Collectivity do
   # Reset counters
   # ----------------------------------------------------------------------------
   describe ".reset_all_counters" do
-    subject { described_class.reset_all_counters }
+    subject(:reset_all_counters) { described_class.reset_all_counters }
 
     let!(:collectivity1) { create(:collectivity) }
     let!(:collectivity2) { create(:collectivity) }
@@ -139,10 +139,10 @@ RSpec.describe Collectivity do
       Collectivity.update_all(users_count: 0)
     end
 
-    its_block { is_expected.to ret(2) }
-    its_block { is_expected.to perform_sql_query("SELECT reset_all_collectivities_counters()") }
+    it { expect { reset_all_counters }.to ret(2) }
+    it { expect { reset_all_counters }.to perform_sql_query("SELECT reset_all_collectivities_counters()") }
 
-    its_block { is_expected.to change { collectivity1.reload.users_count }.from(0).to(4) }
-    its_block { is_expected.to change { collectivity2.reload.users_count }.from(0).to(2) }
+    it { expect { reset_all_counters }.to change { collectivity1.reload.users_count }.from(0).to(4) }
+    it { expect { reset_all_counters }.to change { collectivity2.reload.users_count }.from(0).to(2) }
   end
 end

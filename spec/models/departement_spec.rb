@@ -323,10 +323,10 @@ RSpec.describe Departement do
   # Reset counters
   # ----------------------------------------------------------------------------
   describe ".reset_all_counters" do
-    subject { described_class.reset_all_counters }
+    subject(:reset_all_counters) { described_class.reset_all_counters }
 
-    its_block { is_expected.to run_without_error }
-    its_block { is_expected.to ret(Integer) }
-    its_block { is_expected.to perform_sql_query("SELECT reset_all_departements_counters()") }
+    it { expect { reset_all_counters }.to run_without_error }
+    it { expect { reset_all_counters }.to ret(Integer) }
+    it { expect { reset_all_counters }.to perform_sql_query("SELECT reset_all_departements_counters()") }
   end
 end

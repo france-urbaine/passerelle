@@ -345,13 +345,13 @@ RSpec.describe Commune do
   # Reset counters
   # ----------------------------------------------------------------------------
   describe ".reset_all_counters" do
-    subject { described_class.reset_all_counters }
+    subject(:reset_all_counters) { described_class.reset_all_counters }
 
     let!(:commune1) { create(:commune) }
     let!(:commune2) { create(:commune, :with_epci) }
 
-    its_block { is_expected.to ret(2) }
-    its_block { is_expected.to perform_sql_query("SELECT reset_all_communes_counters()") }
+    it { expect { reset_all_counters }.to ret(2) }
+    it { expect { reset_all_counters }.to perform_sql_query("SELECT reset_all_communes_counters()") }
 
     describe "on collectivities_count" do
       before do
@@ -367,8 +367,8 @@ RSpec.describe Commune do
         Commune.update_all(collectivities_count: 0)
       end
 
-      its_block { is_expected.to change { commune1.reload.collectivities_count }.from(0).to(1) }
-      its_block { is_expected.to change { commune2.reload.collectivities_count }.from(0).to(4) }
+      it { expect { reset_all_counters }.to change { commune1.reload.collectivities_count }.from(0).to(1) }
+      it { expect { reset_all_counters }.to change { commune2.reload.collectivities_count }.from(0).to(4) }
     end
 
     describe "on services_count" do
@@ -381,8 +381,8 @@ RSpec.describe Commune do
         Commune.update_all(services_count: 0)
       end
 
-      its_block { is_expected.to change { commune1.reload.services_count }.from(0).to(4) }
-      its_block { is_expected.to change { commune2.reload.services_count }.from(0).to(2) }
+      it { expect { reset_all_counters }.to change { commune1.reload.services_count }.from(0).to(4) }
+      it { expect { reset_all_counters }.to change { commune2.reload.services_count }.from(0).to(2) }
     end
   end
 end

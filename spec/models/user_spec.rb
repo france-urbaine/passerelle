@@ -196,13 +196,13 @@ RSpec.describe User do
   # Reset counters
   # ----------------------------------------------------------------------------
   describe ".reset_all_counters" do
-    subject { described_class.reset_all_counters }
+    subject(:reset_all_counters) { described_class.reset_all_counters }
 
     let!(:user1) { create(:user) }
     let!(:user2) { create(:user) }
 
-    its_block { is_expected.to ret(2) }
-    its_block { is_expected.to perform_sql_query("SELECT reset_all_users_counters()") }
+    it { expect { reset_all_counters }.to ret(2) }
+    it { expect { reset_all_counters }.to perform_sql_query("SELECT reset_all_users_counters()") }
 
     describe "on services_count" do
       before do
@@ -214,8 +214,8 @@ RSpec.describe User do
         User.update_all(services_count: 0)
       end
 
-      its_block { is_expected.to change { user1.reload.services_count }.from(0).to(4) }
-      its_block { is_expected.to change { user2.reload.services_count }.from(0).to(2) }
+      it { expect { reset_all_counters }.to change { user1.reload.services_count }.from(0).to(4) }
+      it { expect { reset_all_counters }.to change { user2.reload.services_count }.from(0).to(2) }
     end
   end
 end

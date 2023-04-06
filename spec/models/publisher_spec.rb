@@ -204,13 +204,13 @@ RSpec.describe Publisher do
   # Reset counters
   # ----------------------------------------------------------------------------
   describe ".reset_all_counters" do
-    subject { described_class.reset_all_counters }
+    subject(:reset_all_counters) { described_class.reset_all_counters }
 
     let!(:publisher1) { create(:publisher) }
     let!(:publisher2) { create(:publisher) }
 
-    its_block { is_expected.to ret(2) }
-    its_block { is_expected.to perform_sql_query("SELECT reset_all_publishers_counters()") }
+    it { expect { reset_all_counters }.to ret(2) }
+    it { expect { reset_all_counters }.to perform_sql_query("SELECT reset_all_publishers_counters()") }
 
     describe "on users_count" do
       before do
@@ -222,8 +222,8 @@ RSpec.describe Publisher do
         Publisher.update_all(users_count: 0)
       end
 
-      its_block { is_expected.to change { publisher1.reload.users_count }.from(0).to(4) }
-      its_block { is_expected.to change { publisher2.reload.users_count }.from(0).to(2) }
+      it { expect { reset_all_counters }.to change { publisher1.reload.users_count }.from(0).to(4) }
+      it { expect { reset_all_counters }.to change { publisher2.reload.users_count }.from(0).to(2) }
     end
 
     describe "on collectivities_count" do
@@ -235,8 +235,8 @@ RSpec.describe Publisher do
         Publisher.update_all(collectivities_count: 0)
       end
 
-      its_block { is_expected.to change { publisher1.reload.collectivities_count }.from(0).to(3) }
-      its_block { is_expected.to change { publisher2.reload.collectivities_count }.from(0).to(2) }
+      it { expect { reset_all_counters }.to change { publisher1.reload.collectivities_count }.from(0).to(3) }
+      it { expect { reset_all_counters }.to change { publisher2.reload.collectivities_count }.from(0).to(2) }
     end
   end
 end
