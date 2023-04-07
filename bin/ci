@@ -28,19 +28,25 @@ def lint_factories
   system!({ "RAILS_ENV" => "test" }, "bundle exec bin/rails factory_bot:lint")
 end
 
+def clear_coverage
+  log "Clear previous coverage results"
+  system!("rm -rf coverage/.resultset.json")
+end
+
 def test_all
   log "Running all test suite"
-  system! "bundle exec rspec --no-profile"
+  clear_coverage
+  system!({ "SIMPLE_COV_COMMAND" => "bin/ci test" }, "bundle exec rspec --no-profile")
 end
 
 def test_unit
   log "Running non-system tests"
-  system! "bundle exec rspec -t '~type:system' --no-profile"
+  system!({ "SIMPLE_COV_COMMAND" => "bin/ci test:unit" }, "bundle exec rspec -t '~type:system' --no-profile")
 end
 
 def test_system
   log "Running system tests"
-  system! "bundle exec rspec -t 'type:system' --no-profile"
+  system!({ "SIMPLE_COV_COMMAND" => "bin/ci test:system" }, "bundle exec rspec -t 'type:system' --no-profile")
 end
 
 def rubocop
@@ -61,6 +67,7 @@ end
 
 def run_all
   lint_factories
+  clear_coverage
   test_unit
   test_system
   rubocop

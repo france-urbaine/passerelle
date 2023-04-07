@@ -3,10 +3,17 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 ENV["RAILS_ENV"] ||= "test"
 require "spec_helper"
-require "simplecov"
 
-SimpleCov.start "rails" do
-  add_group "Components", "app/components"
+unless ENV["SIMPLE_COV"] == "false"
+  require "simplecov"
+
+  SimpleCov.start "rails" do
+    # When runnning `bin/ci` unit tests and system tests are ran in two separate processes.
+    # To merge both coverage results, we need to setup a custom command:
+    command_name ENV["SIMPLE_COV_COMMAND"] if ENV.key?("SIMPLE_COV_COMMAND")
+
+    add_group "Components", "app/components"
+  end
 end
 
 require File.expand_path("../config/environment", __dir__)
