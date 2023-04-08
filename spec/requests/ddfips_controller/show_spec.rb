@@ -3,20 +3,29 @@
 require "rails_helper"
 
 RSpec.describe "DdfipsController#show" do
-  subject(:request) { get "/ddfips/#{ddfip.id}", headers: }
+  subject(:request) do
+    get "/ddfips/#{ddfip.id}", as:
+  end
 
-  let(:headers) { {} }
-  let(:ddfip)   { create(:ddfip) }
+  let(:as) { |e| e.metadata[:as] }
+
+  let!(:ddfip) { create(:ddfip) }
 
   context "when requesting HTML" do
     it { expect(response).to have_http_status(:success) }
     it { expect(response).to have_content_type(:html) }
     it { expect(response).to have_html_body }
+
+    context "when ddfip is missing" do
+      let(:ddfip) { DDFIP.new(id: Faker::Internet.uuid) }
+
+      it { expect(response).to have_http_status(:not_found) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
+    end
   end
 
-  context "when requesting JSON" do
-    let(:headers) { { "Accept" => "application/json" } }
-
+  context "when requesting JSON", as: :json do
     it { expect(response).to have_http_status(:not_acceptable) }
     it { expect(response).to have_content_type(:json) }
     it { expect(response).to have_empty_body }

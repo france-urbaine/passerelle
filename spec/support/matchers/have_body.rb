@@ -24,7 +24,15 @@ module Matchers
       include ChainableBodyMatcher
 
       def actual_body_matches?(body)
-        body.present? && body.include?("<html")
+        body.present? && body.match?(%r{\A(<!DOCTYPE[^>]+>)?<html(.|\s)+<body(.|\s)+</body></html>\Z})
+      end
+    end
+
+    matcher :have_partial_html do
+      include ChainableBodyMatcher
+
+      def actual_body_matches?(body)
+        body.present? && body.match?(/\A(?!<!DOCTYPE[^>]+>)(?!<html)/)
       end
     end
 

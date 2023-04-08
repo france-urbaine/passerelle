@@ -3,9 +3,11 @@
 require "rails_helper"
 
 RSpec.describe "DdfipsController#new" do
-  subject(:request) { get "/ddfips/new", headers: }
+  subject(:request) do
+    get "/ddfips/new", as:
+  end
 
-  let(:headers) { {} }
+  let(:as) { |e| e.metadata[:as] }
 
   context "when requesting HTML" do
     it { expect(response).to have_http_status(:success) }
@@ -13,9 +15,7 @@ RSpec.describe "DdfipsController#new" do
     it { expect(response).to have_html_body }
   end
 
-  context "when requesting JSON" do
-    let(:headers) { { "Accept" => "application/json" } }
-
+  context "when requesting JSON", as: :json do
     it { expect(response).to have_http_status(:not_acceptable) }
     it { expect(response).to have_content_type(:json) }
     it { expect(response).to have_empty_body }

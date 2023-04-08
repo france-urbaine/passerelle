@@ -24,14 +24,14 @@ module FlashAction
     end
 
     def read(action)
-      return action if null_cache_store?
+      return action if action.blank? || null_cache_store?
       return unless CACHE_KEY_REGEXP.match?(action)
 
       Rails.cache.read(action)&.symbolize_keys
     end
 
     def read_multi(actions)
-      return actions if null_cache_store?
+      return actions if actions.blank? || null_cache_store?
 
       cached_keys = actions.grep(CACHE_KEY_REGEXP)
       cached_actions = Rails.cache.read_multi(*cached_keys)

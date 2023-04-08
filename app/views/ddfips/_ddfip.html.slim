@@ -4,12 +4,12 @@
   - breadcrumbs.with_path ddfip.name
 
   - breadcrumbs.with_action "Modifier",
-    href: edit_ddfip_path(ddfip, content: current_path, redirect: current_path),
+    href: edit_ddfip_path(ddfip, referrer: current_path, redirect: current_path),
     icon: "pencil-square",
     modal: true
 
   - breadcrumbs.with_action "Supprimer",
-    href: remove_ddfip_path(ddfip, content: current_path),
+    href: remove_ddfip_path(ddfip, referrer: current_path),
     icon: "trash",
     modal: true
 
@@ -54,7 +54,7 @@ h2.subheader
     .subheader-bar__action
       a.button(
         data-turbo-frame="modal"
-        href=new_service_path(content: current_path, redirect: current_path, service: { ddfip_id: ddfip.id })
+        href=new_service_path(referrer: current_path, redirect: current_path, service: { ddfip_id: ddfip.id })
       )
         = svg_icon("plus")
         | Ajouter un guichet
@@ -81,7 +81,7 @@ h2.subheader
               a.icon-button(
                 aria-label="Modifier ce guichet"
                 data-turbo-frame="modal"
-                href=edit_service_path(service, content: current_path, redirect: current_path)
+                href=edit_service_path(service, referrer: current_path, redirect: current_path)
               )
                 = svg_icon("pencil-square", "Modifier ce guichet")
                 span.tooltip Modifier ce guichet
@@ -89,7 +89,7 @@ h2.subheader
               a.icon-button(
                 aria-label="Supprimer ce guichet"
                 data-turbo-frame="modal"
-                href=remove_service_path(service, content: current_path, redirect: current_path)
+                href=remove_service_path(service, referrer: current_path, redirect: current_path)
               )
                 = svg_icon("trash", "Supprimer ce guichet")
                 span.tooltip Supprimer ce guichet
@@ -113,7 +113,7 @@ h2.subheader
     .subheader-bar__action
       a.button(
         data-turbo-frame="modal"
-        href=new_user_path(content: current_path, redirect: current_path, user: { organization_type: "DDFIP", organization_id: ddfip.id })
+        href=new_user_path(referrer: current_path, redirect: current_path, user: { organization_type: "DDFIP", organization_id: ddfip.id })
       )
         = svg_icon("plus")
         | Inviter un utilisateur
@@ -138,7 +138,7 @@ h2.subheader
           td.datatable__row-actions
             .flex
               a.icon-button(
-                href=edit_user_path(user, content: current_path, redirect: current_path)
+                href=edit_user_path(user, referrer: current_path, redirect: current_path)
                 aria-label="Modifier cet utilisateur"
                 data-turbo-frame="modal"
               )
@@ -148,7 +148,7 @@ h2.subheader
               a.icon-button(
                 aria-label="Supprimer cet utilisateur"
                 data-turbo-frame="modal"
-                href=remove_user_path(user, content: current_path, redirect: current_path)
+                href=remove_user_path(user, referrer: current_path, redirect: current_path)
               )
                 = svg_icon("trash", "Supprimer cet utilisateur")
                 span.tooltip Supprimer cet utilisateur
@@ -210,7 +210,7 @@ h2.subheader
         tr.datatable__row
           td.datatable__row-actions
             a.icon-button(
-              href=edit_collectivity_path(collectivity, content: current_path, redirect: current_path)
+              href=edit_collectivity_path(collectivity, referrer: current_path, redirect: current_path)
               aria-label="Modifier cette collectivité"
               data-turbo-frame="modal"
             )
