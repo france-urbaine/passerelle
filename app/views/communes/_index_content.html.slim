@@ -3,7 +3,7 @@
   - breadcrumbs.with_path "Communes"
 
   - breadcrumbs.with_action "Mettre à jour",
-    href: edit_territories_path(content: current_path, redirect: current_path),
+    href: edit_territories_path(referrer: current_path, redirect: current_path),
     icon: "cloud-arrow-down",
     modal: true
 
@@ -28,7 +28,7 @@ div( data-controller="selection" )
 
       - row.with_action "Modifier cette commune",
         icon:  "pencil-square",
-        href:  edit_commune_path(commune, content: current_path, redirect: current_path),
+        href:  edit_commune_path(commune, referrer: current_path, redirect: current_path),
         modal: true
 
       - row.with_column(:name) do |column|

@@ -3,54 +3,65 @@
 require "rails_helper"
 
 RSpec.describe "RegionsController#update" do
-  subject(:request) { patch "/regions/#{region.id}", headers:, params: }
+  subject(:request) do
+    patch "/regions/#{region.id}", as:, params:
+  end
 
-  let(:headers) { {} }
-  let(:params)  { { region: { name: "Ile-de-France" } } }
-  let(:region)  { create(:region, name: "Ile de France") }
+  let(:as)     { |e| e.metadata[:as] }
+  let(:params) { { region: updated_attributes } }
+
+  let!(:region) { create(:region, name: "Ile de France") }
+
+  let(:updated_attributes) do
+    { name: "Ile-de-France" }
+  end
 
   context "when requesting HTML" do
-    it { expect(response).to have_http_status(:found) }
+    it { expect(response).to have_http_status(:see_other) }
     it { expect(response).to redirect_to("/regions") }
 
-    it "is expected to update the record" do
+    it "updates the region" do
       expect {
         request
         region.reload
-      } .to  change(region, :updated_at)
+      } .to change(region, :updated_at)
         .and change(region, :name).to("Ile-de-France")
     end
 
+    it "sets a flash notice" do
+      expect(flash).to have_flash_notice.to eq(
+        type:  "success",
+        title: "Les modifications ont été enregistrées avec succés.",
+        delay: 3000
+      )
+    end
+
     context "with invalid parameters" do
-      let(:params) { { region: { name: "" } } }
+      let(:updated_attributes) do
+        super().merge(name: "")
+      end
 
       it { expect(response).to have_http_status(:unprocessable_entity) }
       it { expect(response).to have_content_type(:html) }
       it { expect(response).to have_html_body }
+      it { expect { request and region.reload }.not_to change(region, :updated_at) }
+      it { expect { request and region.reload }.not_to change(region, :name) }
+    end
 
-      it "is expected to not update the record" do
-        expect {
-          request
-          region.reload
-        } .to  maintain(region, :updated_at)
-          .and maintain(region, :name)
-      end
+    context "with missing region parameters" do
+      let(:params) { {} }
+
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/regions") }
+      it { expect { request and region.reload }.not_to change(region, :updated_at) }
     end
   end
 
-  describe "rejected request as JSON" do
-    let(:headers) { { "Accept" => "application/json" } }
-
+  describe "when requesting JSON", as: :json do
     it { expect(response).to have_http_status(:not_acceptable) }
     it { expect(response).to have_content_type(:json) }
     it { expect(response).to have_empty_body }
-
-    it "is expected to not update the record" do
-      expect {
-        request
-        region.reload
-      } .to  maintain(region, :updated_at)
-        .and maintain(region, :name)
-    end
+    it { expect { request and region.reload }.not_to change(region, :updated_at) }
+    it { expect { request and region.reload }.not_to change(region, :name) }
   end
 end

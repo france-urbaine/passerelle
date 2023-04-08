@@ -52,10 +52,17 @@ RSpec.describe "EPCIs", use_fixtures: true do
   it "updates an EPCI from the index page" do
     visit epcis_path
 
-    within "tr", text: "CA du Pays Basque" do
+    # A button should be present to edit the collectivity
+    #
+    within "tr", text: "CA du Pays Basque" do |row|
+      expect(row).to have_link("Modifier cet EPCI", class: "icon-button")
+
       click_on "Modifier cet EPCI"
     end
 
+    # A dialog box should appears with a form
+    # The form should be filled with collectivity data
+    #
     expect(page).to have_selector("[role=dialog]", text: "Modification de l'EPCI")
 
     within "[role=dialog]" do
@@ -67,18 +74,35 @@ RSpec.describe "EPCIs", use_fixtures: true do
       click_on "Enregistrer"
     end
 
+    # The browser should stay on index page
+    # The collectivity should have changed its name
+    #
+    # The dialog should be closed
+    # A notification should be displayed
+    #
+    expect(page).to     have_current_path(epcis_path)
+    expect(page).to     have_selector("h1", text: "EPCI")
+    expect(page).to     have_selector("tr", text: "Agglomération Pays Basque")
+
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
-
-    expect(page).to have_current_path(epcis_path)
-    expect(page).to have_selector("tr", text: "Agglomération Pays Basque")
   end
 
   it "updates an EPCI from the show page" do
     visit epci_path(pays_basque)
 
-    click_on "Modifier"
+    # A button should be present to edit the collectivity
+    #
+    within ".header-bar" do |header|
+      expect(header).to have_selector("h1", text: "CA du Pays Basque")
+      expect(header).to have_link("Modifier", class: "button")
 
+      click_on "Modifier"
+    end
+
+    # A dialog box should appears with a form
+    # The form should be filled with collectivity data
+    #
     expect(page).to have_selector("[role=dialog]", text: "Modification de l'EPCI")
 
     within "[role=dialog]" do
@@ -90,10 +114,16 @@ RSpec.describe "EPCIs", use_fixtures: true do
       click_on "Enregistrer"
     end
 
+    # The browser should stay on show page
+    # The collectivity should have changed its name
+    #
+    # The dialog should be closed
+    # A notification should be displayed
+    #
+    expect(page).to     have_current_path(epci_path(pays_basque))
+    expect(page).to     have_selector("h1", text: "Agglomération Pays Basque")
+
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
-
-    expect(page).to have_current_path(epci_path(pays_basque))
-    expect(page).to have_selector("h1", text: "Agglomération Pays Basque")
   end
 end

@@ -4,7 +4,7 @@
   - breadcrumbs.with_path region.name
 
   - breadcrumbs.with_action "Modifier",
-    href: edit_region_path(region, content: current_path, redirect: current_path),
+    href: edit_region_path(region, referrer: current_path, redirect: current_path),
     icon: "pencil-square",
     modal: true
 
@@ -89,7 +89,7 @@ h2.subheader
         tr.datatable__row
           td.datatable__row-actions
             a.icon-button(
-              href=edit_departement_path(departement, content: current_path, redirect: current_path)
+              href=edit_departement_path(departement, referrer: current_path, redirect: current_path)
               aria-label="Modifier ce département"
               data-turbo-frame="modal"
             )
@@ -130,7 +130,7 @@ h2.subheader
         tr.datatable__row
           td.datatable__row-actions
             a.icon-button(
-              href=edit_ddfip_path(ddfip, content: current_path, redirect: current_path)
+              href=edit_ddfip_path(ddfip, referrer: current_path, redirect: current_path)
               aria-label="Modifier cette DDFIP"
               data-turbo-frame="modal"
             )
@@ -170,7 +170,7 @@ h2.subheader
         tr.datatable__row
           td.datatable__row-actions
             a.icon-button(
-              href=edit_collectivity_path(collectivity, content: current_path, redirect: current_path)
+              href=edit_collectivity_path(collectivity, referrer: current_path, redirect: current_path)
               aria-label="Modifier cette collectivité"
               data-turbo-frame="modal"
             )

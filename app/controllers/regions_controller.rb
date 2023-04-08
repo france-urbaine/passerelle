@@ -2,43 +2,37 @@
 
 class RegionsController < ApplicationController
   respond_to :html
-  before_action :set_region, only: %i[show edit update]
 
   def index
     @regions = Region.strict_loading
     @regions, @pagy = index_collection(@regions)
 
-    respond_to do |format|
-      format.html.any
+    respond_with @regions do |format|
       format.html.autocomplete { render layout: false }
     end
   end
 
-  def show; end
+  def show
+    @region = Region.find(params[:id])
+  end
 
   def edit
-    @background_content_url = url_from(params[:content]) || region_path(@region)
+    @region = Region.find(params[:id])
+    @background_url = referrer_path || region_path(@region)
   end
 
   def update
-    if @region.update(region_params)
-      @location = url_from(params[:redirect]) || regions_path
-      @notice   = translate(".success")
+    @region = Region.find(params[:id])
+    @region.update(region_params)
 
-      respond_to do |format|
-        format.turbo_stream { redirect_to @location, notice: @notice }
-        format.html         { redirect_to @location, notice: @notice }
-      end
-    else
-      render :edit, status: :unprocessable_entity
-    end
+    @background_url = referrer_path || region_path(@region) if @region.errors.any?
+
+    respond_with @region,
+      flash: true,
+      location: -> { redirect_path || regions_path }
   end
 
   private
-
-  def set_region
-    @region = Region.find(params[:id])
-  end
 
   def region_params
     params

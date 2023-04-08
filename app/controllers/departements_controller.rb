@@ -2,43 +2,37 @@
 
 class DepartementsController < ApplicationController
   respond_to :html
-  before_action :set_departement, only: %i[show edit update]
 
   def index
     @departements = Departement.strict_loading
     @departements, @pagy = index_collection(@departements)
 
-    respond_to do |format|
-      format.html.any
+    respond_with @departements do |format|
       format.html.autocomplete { render layout: false }
     end
   end
 
-  def show; end
+  def show
+    @departement = Departement.find(params[:id])
+  end
 
   def edit
-    @background_content_url = url_from(params[:content]) || departement_path(@departement)
+    @departement = Departement.find(params[:id])
+    @background_url = referrer_path || departement_path(@departement)
   end
 
   def update
-    if @departement.update(departement_params)
-      @location = url_from(params[:redirect]) || departements_path
-      @notice   = translate(".success")
+    @departement = Departement.find(params[:id])
+    @departement.update(departement_params)
 
-      respond_to do |format|
-        format.turbo_stream { redirect_to @location, notice: @notice }
-        format.html         { redirect_to @location, notice: @notice }
-      end
-    else
-      render :edit, status: :unprocessable_entity
-    end
+    @background_url = referrer_path || departement_path(@departement) if @departement.errors.any?
+
+    respond_with @departement,
+      flash: true,
+      location: -> { redirect_path || departements_path }
   end
 
   private
-
-  def set_departement
-    @departement = Departement.find(params[:id])
-  end
 
   def departement_params
     params

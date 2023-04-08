@@ -2,43 +2,37 @@
 
 class CommunesController < ApplicationController
   respond_to :html
-  before_action :set_commune, only: %i[show edit update]
 
   def index
     @communes = Commune.strict_loading
     @communes, @pagy = index_collection(@communes)
 
-    respond_to do |format|
-      format.html.any
+    respond_with @communes do |format|
       format.html.autocomplete { render layout: false }
     end
   end
 
-  def show; end
+  def show
+    @commune = Commune.find(params[:id])
+  end
 
   def edit
-    @background_content_url = url_from(params[:content]) || commune_path(@commune)
+    @commune = Commune.find(params[:id])
+    @background_url = referrer_path || commune_path(@commune)
   end
 
   def update
-    if @commune.update(commune_params)
-      @location = url_from(params[:redirect]) || communes_path
-      @notice   = translate(".success")
+    @commune = Commune.find(params[:id])
+    @commune.update(commune_params)
 
-      respond_to do |format|
-        format.turbo_stream { redirect_to @location, notice: @notice }
-        format.html         { redirect_to @location, notice: @notice }
-      end
-    else
-      render :edit, status: :unprocessable_entity
-    end
+    @background_url = referrer_path || commune_path(@commune) if @commune.errors.any?
+
+    respond_with @commune,
+      flash: true,
+      location: -> { redirect_path || communes_path }
   end
 
   private
-
-  def set_commune
-    @commune = Commune.find(params[:id])
-  end
 
   def commune_params
     params

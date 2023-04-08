@@ -3,54 +3,65 @@
 require "rails_helper"
 
 RSpec.describe "DepartementsController#update" do
-  subject(:request) { patch "/departements/#{departement.id}", headers:, params: }
+  subject(:request) do
+    patch "/departements/#{departement.id}", as:, params:
+  end
 
-  let(:headers)     { {} }
-  let(:params)      { { departement: { name: "Vendée" } } }
-  let(:departement) { create(:departement, name: "VendÉe") }
+  let(:as)     { |e| e.metadata[:as] }
+  let(:params) { { departement: updated_attributes } }
+
+  let!(:departement) { create(:departement, name: "VendÉe") }
+
+  let(:updated_attributes) do
+    { name: "Vendée" }
+  end
 
   context "when requesting HTML" do
-    it { expect(response).to have_http_status(:found) }
+    it { expect(response).to have_http_status(:see_other) }
     it { expect(response).to redirect_to("/departements") }
 
-    it "is expected to update the record" do
+    it "updates the departement" do
       expect {
         request
         departement.reload
-      } .to  change(departement, :updated_at)
+      } .to change(departement, :updated_at)
         .and change(departement, :name).to("Vendée")
     end
 
+    it "sets a flash notice" do
+      expect(flash).to have_flash_notice.to eq(
+        type:  "success",
+        title: "Les modifications ont été enregistrées avec succés.",
+        delay: 3000
+      )
+    end
+
     context "with invalid parameters" do
-      let(:params) { { departement: { name: "" } } }
+      let(:updated_attributes) do
+        super().merge(name: "")
+      end
 
       it { expect(response).to have_http_status(:unprocessable_entity) }
       it { expect(response).to have_content_type(:html) }
       it { expect(response).to have_html_body }
+      it { expect { request and departement.reload }.not_to change(departement, :updated_at) }
+      it { expect { request and departement.reload }.not_to change(departement, :name) }
+    end
 
-      it "is expected to not update the record" do
-        expect {
-          request
-          departement.reload
-        } .to  maintain(departement, :updated_at)
-          .and maintain(departement, :name)
-      end
+    context "with missing departement parameters" do
+      let(:params) { {} }
+
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/departements") }
+      it { expect { request and departement.reload }.not_to change(departement, :updated_at) }
     end
   end
 
-  describe "rejected request as JSON" do
-    let(:headers) { { "Accept" => "application/json" } }
-
+  describe "when requesting JSON", as: :json do
     it { expect(response).to have_http_status(:not_acceptable) }
     it { expect(response).to have_content_type(:json) }
     it { expect(response).to have_empty_body }
-
-    it "is expected to not update the record" do
-      expect {
-        request
-        departement.reload
-      } .to  maintain(departement, :updated_at)
-        .and maintain(departement, :name)
-    end
+    it { expect { request and departement.reload }.not_to change(departement, :updated_at) }
+    it { expect { request and departement.reload }.not_to change(departement, :name) }
   end
 end

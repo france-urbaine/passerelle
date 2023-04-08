@@ -76,10 +76,17 @@ RSpec.describe "Departements", use_fixtures: true do
   it "updates a departement from the index page" do
     visit departements_path
 
-    within "tr", text: "Nord" do
+    # A button should be present to edit the collectivity
+    #
+    within "tr", text: "Nord" do |row|
+      expect(row).to have_link("Modifier ce département", class: "icon-button")
+
       click_on "Modifier ce département"
     end
 
+    # A dialog box should appears with a form
+    # The form should be filled with collectivity data
+    #
     expect(page).to have_selector("[role=dialog]", text: "Modification du département")
 
     within "[role=dialog]" do
@@ -91,18 +98,35 @@ RSpec.describe "Departements", use_fixtures: true do
       click_on "Enregistrer"
     end
 
+    # The browser should stay on index page
+    # The collectivity should have changed its name
+    #
+    # The dialog should be closed
+    # A notification should be displayed
+    #
+    expect(page).to     have_current_path(departements_path)
+    expect(page).to     have_selector("h1", text: "Départements")
+    expect(page).to     have_selector("tr", text: "Département du Nord")
+
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
-
-    expect(page).to have_current_path(departements_path)
-    expect(page).to have_selector("tr", text: "Département du Nord")
   end
 
   it "updates a departement from the show page" do
     visit departement_path(nord)
 
-    click_on "Modifier"
+    # A button should be present to edit the collectivity
+    #
+    within ".header-bar" do |header|
+      expect(header).to have_selector("h1", text: "Nord")
+      expect(header).to have_link("Modifier", class: "button")
 
+      click_on "Modifier"
+    end
+
+    # A dialog box should appears with a form
+    # The form should be filled with collectivity data
+    #
     expect(page).to have_selector("[role=dialog]", text: "Modification du département")
 
     within "[role=dialog]" do
@@ -114,10 +138,16 @@ RSpec.describe "Departements", use_fixtures: true do
       click_on "Enregistrer"
     end
 
+    # The browser should stay on show page
+    # The collectivity should have changed its name
+    #
+    # The dialog should be closed
+    # A notification should be displayed
+    #
+    expect(page).to     have_current_path(departement_path(nord))
+    expect(page).to     have_selector("h1", text: "Département du Nord")
+
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
-
-    expect(page).to have_current_path(departement_path(nord))
-    expect(page).to have_selector("h1", text: "Département du Nord")
   end
 end

@@ -112,18 +112,6 @@ fr:
         title:        "La suppression des utilisateurs sélectionnés a été annulée."
         delay:        3000
 
-  communes:
-    <<: *default
-
-  epcis:
-    <<: *default
-
-  departements:
-    <<: *default
-
-  regions:
-    <<: *default
-
   territories:
     update:
       success:
