@@ -3,54 +3,76 @@
 require "rails_helper"
 
 RSpec.describe "PublishersController#update" do
-  subject(:request) { patch "/editeurs/#{publisher.id}", headers:, params: }
+  subject(:request) do
+    patch "/editeurs/#{publisher.id}", as:, params:
+  end
 
-  let(:headers)   { {} }
-  let(:params)    { { publisher: { name: "DDFIP de Paris" } } }
-  let(:publisher) { create(:publisher, name: "Ddfip du Paris") }
+  let(:as)     { |e| e.metadata[:as] }
+  let(:params) { { publisher: updated_attributes } }
 
-  context "when requesting HTML with valid parameters" do
-    it { expect(response).to have_http_status(:found) }
-    it { expect(response).to redirect_to("/editeurs") }
+  let!(:publisher) { create(:publisher, name: "Fiscalité & Territoire") }
 
-    it "is expected to update the record" do
-      expect {
-        request
-        publisher.reload
-      } .to  change(publisher, :updated_at)
-        .and change(publisher, :name).to("DDFIP de Paris")
+  let(:updated_attributes) do
+    { name: "Solutions & Territoire" }
+  end
+
+  context "when requesting HTML" do
+    context "with valid parameters" do
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/editeurs") }
+
+      it "updates the publisher" do
+        expect {
+          request
+          publisher.reload
+        }.to change(publisher, :updated_at)
+          .and change(publisher, :name).to("Solutions & Territoire")
+      end
+
+      it "sets a flash notice" do
+        expect(flash).to have_flash_notice.to eq(
+          type:  "success",
+          title: "Les modifications ont été enregistrées avec succés.",
+          delay: 3000
+        )
+      end
+    end
+
+    context "with invalid parameters" do
+      let(:updated_attributes) do
+        super().merge(name: "")
+      end
+
+      it { expect(response).to have_http_status(:unprocessable_entity) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
+      it { expect { request and publisher.reload }.not_to change(publisher, :updated_at) }
+      it { expect { request and publisher.reload }.not_to change(publisher, :name) }
+    end
+
+    context "with missing publisher parameters" do
+      let(:params) { {} }
+
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/editeurs") }
+      it { expect { request and publisher.reload }.not_to change(publisher, :updated_at) }
+    end
+
+    context "with redirect parameter" do
+      let(:params) do
+        super().merge(redirect: "/editeur/12345")
+      end
+
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/editeur/12345") }
     end
   end
 
-  context "when requesting HTML with invalid parameters" do
-    let(:params) { { publisher: { name: "" } } }
-
-    it { expect(response).to have_http_status(:unprocessable_entity) }
-    it { expect(response).to have_content_type(:html) }
-    it { expect(response).to have_html_body }
-
-    it "is expected to not update the record" do
-      expect {
-        request
-        publisher.reload
-      } .to  maintain(publisher, :updated_at)
-        .and maintain(publisher, :name)
-    end
-  end
-
-  describe "when requesting JSON" do
-    let(:headers) { { "Accept" => "application/json" } }
-
+  describe "when requesting JSON", as: :json do
     it { expect(response).to have_http_status(:not_acceptable) }
     it { expect(response).to have_content_type(:json) }
     it { expect(response).to have_empty_body }
-
-    it "is expected to not update the record" do
-      expect {
-        request
-        publisher.reload
-      } .to  maintain(publisher, :updated_at)
-        .and maintain(publisher, :name)
-    end
+    it { expect { request and publisher.reload }.not_to change(publisher, :updated_at) }
+    it { expect { request and publisher.reload }.not_to change(publisher, :name) }
   end
 end

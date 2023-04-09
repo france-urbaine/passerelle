@@ -1,9 +1,9 @@
 = breadcrumbs_component do |breadcrumbs|
   - breadcrumbs.with_path "Organisations"
-  - breadcrumbs.with_path "Editeurs"
+  - breadcrumbs.with_path "Éditeurs"
 
   - breadcrumbs.with_action "Ajouter un éditeur",
-    href: new_publisher_path(content: current_path),
+    href: new_publisher_path(referrer: current_path),
     icon: "plus",
     primary: true,
     modal: true
@@ -15,7 +15,7 @@ div( data-controller="selection" )
   = datatable_component(publishers) do |datatable|
     - datatable.with_selection
     - datatable.with_actions
-    - datatable.with_column(:name,           sort: true) { "Editeur" }
+    - datatable.with_column(:name,           sort: true) { "Éditeur" }
     - datatable.with_column(:siren,          sort: true) { "SIREN" }
     - datatable.with_column(:collectivities, numeric: true) { "Collectivités" }
     - datatable.with_column(:users,          numeric: true) { "Utilisateurs" }
@@ -29,12 +29,12 @@ div( data-controller="selection" )
 
       - row.with_action "Modifier cet éditeur",
         icon:  "pencil-square",
-        href:  edit_publisher_path(publisher, content: current_path, redirect: current_path),
+        href:  edit_publisher_path(publisher, referrer: current_path, redirect: current_path),
         modal: true
 
       - row.with_action "Supprimer cet éditeur",
         icon:  "trash",
-        href:  remove_publisher_path(publisher, content: current_path, redirect: current_path),
+        href:  remove_publisher_path(publisher, referrer: current_path, redirect: current_path),
         modal: true
 
       - row.with_column(:name) do

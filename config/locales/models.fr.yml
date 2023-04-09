@@ -1,7 +1,7 @@
 fr:
   activerecord:
     models:
-      publisher:    Editeur
+      publisher:    Éditeur
       ddfip:        DDFIP
       service:      Guichet
       collectivity: Collectivité
@@ -34,7 +34,7 @@ fr:
         territory_type:       Type de territoire
         territory_id:         ID du territoire
         territory_code:       Code du territoire (code INSEE ou SIREN)
-        publisher:            Editeur
+        publisher:            Éditeur
         publisher_id:         ID de l'éditeur
         publisher_name:       Nom de l'éditeur
         name:                 Nom de la collectivité

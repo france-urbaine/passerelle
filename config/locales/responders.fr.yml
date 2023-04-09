@@ -72,3 +72,36 @@ fr:
           type:         "cancel"
           title:        "La suppression des DDFIP sélectionnées a été annulée."
           delay:        3000
+
+    publishers:
+      create:
+        notice:
+          type:         "success"
+          title:        "Un nouvel éditeur a été ajouté avec succés."
+          delay:        3000
+
+      destroy:
+        notice:
+          type:         "success"
+          title:        "L'éditeur a été supprimé."
+          description:  "Toutes les données seront définitivement supprimées dans un délai de 30 jours."
+          delay:        10000
+
+      destroy_all:
+        notice:
+          type:         "success"
+          title:        "Les éditeurs sélectionnés ont été supprimés."
+          description:  "Toutes les données seront définitivement supprimées dans un délai de 30 jours."
+          delay:        10000
+
+      undiscard:
+        notice:
+          type:         "cancel"
+          title:        "La suppression de l'éditeur a été annulée."
+          delay:        3000
+
+      undiscard_all:
+        notice:
+          type:         "cancel"
+          title:        "La suppression des éditeurs sélectionnés a été annulée."
+          delay:        3000

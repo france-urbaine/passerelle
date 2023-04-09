@@ -72,7 +72,7 @@ RSpec.describe "Collectivities", use_fixtures: true do
       expect(dialog).to have_field("Territoire",                  with: "Métropole d'Aix-Marseille-Provence")
       expect(dialog).to have_field("collectivity_territory_data", type: :hidden, with: { type: "EPCI", id: epcis(:metropole_aix_marseille).id }.to_json)
 
-      select "Fiscalité & Territoire", from: "Editeur"
+      select "Fiscalité & Territoire", from: "Éditeur"
 
       fill_in "Nom de la collectivité",          with: "Métropole d'Aix-Marseille-Provence"
       fill_in "Numéro SIREN de la collectivité", with: "200054807"
@@ -114,7 +114,7 @@ RSpec.describe "Collectivities", use_fixtures: true do
       expect(dialog).to have_field("Territoire",                  with: "CA du Pays Basque")
       expect(dialog).to have_field("collectivity_territory_data", type: :hidden, with: { type: "EPCI", id: epcis(:pays_basque).id }.to_json)
 
-      expect(dialog).to have_select("Editeur", selected: "Fiscalité & Territoire")
+      expect(dialog).to have_select("Éditeur", selected: "Fiscalité & Territoire")
       expect(dialog).to have_field("Nom de la collectivité",          with: "CA du Pays Basque")
       expect(dialog).to have_field("Numéro SIREN de la collectivité", with: "200067106")
 
@@ -157,7 +157,7 @@ RSpec.describe "Collectivities", use_fixtures: true do
       expect(dialog).to have_field("Territoire",                  with: "CA du Pays Basque")
       expect(dialog).to have_field("collectivity_territory_data", type: :hidden, with: { type: "EPCI", id: epcis(:pays_basque).id }.to_json)
 
-      expect(dialog).to have_select("Editeur", selected: "Fiscalité & Territoire")
+      expect(dialog).to have_select("Éditeur", selected: "Fiscalité & Territoire")
       expect(dialog).to have_field("Nom de la collectivité",          with: "CA du Pays Basque")
       expect(dialog).to have_field("Numéro SIREN de la collectivité", with: "200067106")
 

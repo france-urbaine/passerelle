@@ -3,10 +3,12 @@
 require "rails_helper"
 
 RSpec.describe "PublishersController#create" do
-  subject(:request) { post "/editeurs", headers:, params: }
+  subject(:request) do
+    post "/editeurs", as:, params:
+  end
 
-  let(:headers) { {} }
-  let(:params)  { { publisher: attributes } }
+  let(:as)     { |e| e.metadata[:as] }
+  let(:params) { { publisher: attributes } }
 
   let(:attributes) do
     {
@@ -15,36 +17,63 @@ RSpec.describe "PublishersController#create" do
     }
   end
 
-  context "when requesting HTML with valid parameters" do
-    it { expect(response).to have_http_status(:found) }
-    it { expect(response).to redirect_to(%r{/editeurs/.{36}$}) }
+  context "when requesting HTML" do
+    context "with valid parameters" do
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/editeurs") }
+      it { expect { request }.to change(Publisher, :count).by(1) }
 
-    it "is expected to create a record" do
-      expect { request }.to change(Publisher, :count).by(1)
+      it "assigns expected attributes to the new record" do
+        request
+        expect(Publisher.last).to have_attributes(
+          name:  attributes[:name],
+          siren: attributes[:siren]
+        )
+      end
+
+      it "sets a flash notice" do
+        expect(flash).to have_flash_notice.to eq(
+          type:  "success",
+          title: "Un nouvel éditeur a été ajouté avec succés.",
+          delay: 3000
+        )
+      end
+    end
+
+    context "with invalid parameters" do
+      let(:attributes) do
+        super().merge(siren: "")
+      end
+
+      it { expect(response).to have_http_status(:unprocessable_entity) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
+      it { expect { request }.not_to change(Publisher, :count).from(0) }
+    end
+
+    context "with missing publisher parameters" do
+      let(:params) { {} }
+
+      it { expect(response).to have_http_status(:unprocessable_entity) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
+      it { expect { request }.not_to change(Publisher, :count).from(0) }
+    end
+
+    context "with redirect parameter" do
+      let(:params) do
+        super().merge(redirect: "/")
+      end
+
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/") }
     end
   end
 
-  context "when requesting HTML with invalid parameters" do
-    let(:attributes) { { name: "", siren: "" } }
-
-    it { expect(response).to have_http_status(:unprocessable_entity) }
-    it { expect(response).to have_content_type(:html) }
-    it { expect(response).to have_html_body }
-
-    it "is expected to not create any record" do
-      expect { request }.to maintain(Publisher, :count).from(0)
-    end
-  end
-
-  describe "when requesting JSON" do
-    let(:headers) { { "Accept" => "application/json" } }
-
+  describe "when requesting JSON", as: :json do
     it { expect(response).to have_http_status(:not_acceptable) }
     it { expect(response).to have_content_type(:json) }
     it { expect(response).to have_empty_body }
-
-    it "is expected to not create any record" do
-      expect{ request }.to maintain(Publisher, :count).from(0)
-    end
+    it { expect { request }.not_to change(Publisher, :count).from(0) }
   end
 end
