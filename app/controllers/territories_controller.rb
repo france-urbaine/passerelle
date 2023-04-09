@@ -5,13 +5,15 @@ class TerritoriesController < ApplicationController
 
   def index
     if autocomplete_request?
-      @territories  = autocomplete_territories(Region)
-      @territories += autocomplete_territories(Departement, @territories)
-      @territories += autocomplete_territories(EPCI, @territories)
-      @territories += autocomplete_territories(Commune, @territories)
+      @territories = merge_autocomplete_collections(
+        Region.strict_loading,
+        Departement.strict_loading,
+        EPCI.strict_loading,
+        Commune.strict_loading
+      )
     end
 
-    respond_to do |format|
+    respond_with @territories do |format|
       format.html.autocomplete { render layout: false }
       format.html.any          { not_acceptable }
     end

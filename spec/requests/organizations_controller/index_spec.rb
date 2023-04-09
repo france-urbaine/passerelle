@@ -2,9 +2,9 @@
 
 require "rails_helper"
 
-RSpec.describe "TerritoriesController#index" do
+RSpec.describe "OrganizationsController#index" do
   subject(:request) do
-    get "/territoires", as:, headers:, params:, xhr:
+    get "/organisations", as:, headers:, params:, xhr:
   end
 
   let(:as)      { |e| e.metadata[:as] }
@@ -13,10 +13,9 @@ RSpec.describe "TerritoriesController#index" do
   let(:xhr)     { |e| e.metadata[:xhr] }
 
   before do
-    create_list(:commune, 2)
-    create_list(:epci, 2)
-    create_list(:departement, 2)
-    create_list(:region, 2)
+    create_list(:collectivity, 2)
+    create_list(:ddfip, 2)
+    create_list(:publisher, 2)
   end
 
   context "when requesting HTML" do

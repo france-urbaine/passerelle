@@ -3,6 +3,7 @@
 class ApplicationController < ActionController::Base
   self.responder = ApplicationResponder
 
+  include ControllerAutocompletion
   include ControllerCollections
   include ControllerParams
 
