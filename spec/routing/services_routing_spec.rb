@@ -3,10 +3,10 @@
 require "rails_helper"
 
 RSpec.describe DdfipsController do
-  it { expect(get:    "/guichets").to         route_to("services#index") }
-  it { expect(post:   "/guichets").to         route_to("services#create") }
-  it { expect(patch:  "/guichets").not_to     be_routable }
-  it { expect(delete: "/guichets").to         route_to("services#destroy_all") }
+  it { expect(get:    "/guichets").to     route_to("services#index") }
+  it { expect(post:   "/guichets").to     route_to("services#create") }
+  it { expect(patch:  "/guichets").not_to be_routable }
+  it { expect(delete: "/guichets").to     route_to("services#destroy_all") }
 
   it { expect(get:    "/guichets/new").to        route_to("services#new") }
   it { expect(get:    "/guichets/remove").to     route_to("services#remove_all") }

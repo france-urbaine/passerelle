@@ -8,8 +8,11 @@ RSpec.describe TerritoriesController do
   it { expect(patch:  "/territoires").to     route_to("territories#update") }
   it { expect(delete: "/territoires").not_to be_routable }
 
-  it { expect(get:    "/territoires/new").not_to be_routable }
-  it { expect(get:    "/territoires/edit").to    route_to("territories#edit") }
+  it { expect(get:    "/territoires/new").not_to       be_routable }
+  it { expect(get:    "/territoires/edit").to          route_to("territories#edit") }
+  it { expect(get:    "/territoires/remove").not_to    be_routable }
+  it { expect(get:    "/territoires/undiscard").not_to be_routable }
+  it { expect(patch:  "/territoires/undiscard").not_to be_routable }
 
   it { expect(get:    "/territoires/9c6c00c4-0784-4ef8-8978-b1e0246882a7").not_to be_routable }
   it { expect(post:   "/territoires/9c6c00c4-0784-4ef8-8978-b1e0246882a7").not_to be_routable }
