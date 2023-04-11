@@ -6,40 +6,6 @@ fr:
         title:        "Les modifications ont été enregistrées avec succés."
         delay:        3000
 
-  services:
-    <<: *default
-    create:
-      success:
-        type:         "success"
-        title:        "Un nouveau guichet a été ajouté avec succés."
-        delay:        3000
-
-    destroy:
-      success:
-        type:         "success"
-        title:        "Le guichet a été archivé."
-        description:  "La suppression de ce guichet sera définitive dans 30 jours."
-        delay:        5000
-
-    destroy_all:
-      success:
-        type:         "success"
-        title:        "Les guichets sélectionnés ont été archivés."
-        description:  "Leur suppression sera définitive dans 30 jours."
-        delay:        5000
-
-    undiscard:
-      success:
-        type:         "cancel"
-        title:        "La suppression du guichet a été annulée."
-        delay:        3000
-
-    undiscard_all:
-      success:
-        type:         "cancel"
-        title:        "La suppression des guichets sélectionnés a été annulée."
-        delay:        3000
-
   services_users:
     <<: *default
 

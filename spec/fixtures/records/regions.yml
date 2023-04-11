@@ -24,3 +24,12 @@ hauts_de_france:
   departements_count:   1
   ddfips_count:         1
   collectivities_count: 3
+
+paca:
+  name:                 Provence-Alpes-Côte d'Azur
+  code_region:          93
+  communes_count:       0
+  epcis_count:          1
+  departements_count:   0
+  ddfips_count:         0
+  collectivities_count: 0

@@ -16,10 +16,10 @@ pyrenees_atlantiques:
   ddfips_count:         1
   collectivities_count: 2
 
-gironde:
-  name:                 Gironde
-  code_departement:     33
-  code_region:          75
+bouche_du_rhone:
+  name:                 Bouches-du-Rhône
+  code_departement:     13
+  code_region:          93
   epcis_count:          0
   communes_count:       0
   ddfips_count:         0

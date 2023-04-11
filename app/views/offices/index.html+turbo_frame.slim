@@ -1,8 +1,8 @@
 - case turbo_frame_request_id
 - when "index_header"
   = turbo_frame_tag :index_header do
-    = render "index_header", services: @services, pagy: @pagy
+    = render "index_header", offices: @offices, pagy: @pagy
 
 - else
   = turbo_frame_tag :content do
-    = render "index_content", services: @services, pagy: @pagy
+    = render "index_content", offices: @offices, pagy: @pagy

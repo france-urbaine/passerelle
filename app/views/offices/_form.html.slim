@@ -1,18 +1,18 @@
 - modal.with_header do
-  - if service.persisted?
+  - if office.persisted?
     | Modification du guichet
   - else
     | Création d'un nouveau guichet
 
-= modal.with_form(model: service) do
+= modal.with_form(model: office) do
   = hidden_param_input(:redirect)
 
-  = fields(model: service) do |form|
+  = fields(model: office) do |form|
     = form.block :ddfip, first: true, autocomplete: ddfips_path do
       ruby:
         # Do not add required attribute to make this form submittable in noscript mode
         html_options = {
-          value:        service.ddfip&.name,
+          value:        office.ddfip&.name,
           placeholder:  "Commnencez à taper pour sélectionner des DDFIP",
           data:         { autocomplete_target: "input" }
         }
@@ -24,14 +24,14 @@
     = noscript do
       = form.block :ddfip, first: true do
         = form.label :ddfip_name
-        = form.text_field :ddfip_name, value: service.ddfip&.name, required: true
+        = form.text_field :ddfip_name, value: office.ddfip&.name, required: true
 
     = form.block :name do
       = form.label :name
       = form.text_field :name, required: true
 
     = form.block :action do
-      - options = Service::ACTIONS.map { |s| [translate(s, scope: "enum.action"), s] }
+      - options = Office::ACTIONS.map { |s| [translate(s, scope: "enum.action"), s] }
 
       = form.label :action
       = form.select :action, options, required: true, prompt: true

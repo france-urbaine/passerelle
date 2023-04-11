@@ -22,5 +22,9 @@ FactoryBot.define do
     trait :evaluation_hab do
       action { "evaluation_hab" }
     end
+
+    trait :discarded do
+      discarded_at { Time.current }
+    end
   end
 end

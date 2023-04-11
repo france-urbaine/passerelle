@@ -14,11 +14,11 @@
         - else
           = display_count(params[:ids].size, "guichet sélectionné", plural: "guichets sélectionnés")
 
-          - if params[:ids].size == services.length && services.length < pagy.count
+          - if params[:ids].size == offices.length && offices.length < pagy.count
             |  (
             a(
               data-action="selection#checkAll"
-              href=services_path(extract_params(:search).merge(ids: "all"))
+              href=offices_path(extract_params(:search).merge(ids: "all"))
             ) Sélectionner les #{count(pagy.count, "guichet")}
             | )
 
@@ -27,7 +27,7 @@
       .header-bar__action
         a.button(
           data-turbo-frame="modal"
-          href=remove_all_services_path(**current_selection_params)
+          href=remove_all_offices_path(**current_selection_params)
         ) Supprimer la sélection
 
 - else

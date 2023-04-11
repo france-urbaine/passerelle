@@ -54,12 +54,12 @@ h2.subheader
     .subheader-bar__action
       a.button(
         data-turbo-frame="modal"
-        href=new_service_path(referrer: current_path, redirect: current_path, service: { ddfip_id: ddfip.id })
+        href=new_office_path(referrer: current_path, redirect: current_path, office: { ddfip_id: ddfip.id })
       )
         = svg_icon("plus")
         | Ajouter un guichet
 
-- if ddfip.services.none?
+- if ddfip.offices.none?
   .card.mb-6
     .card__content
       p.text-disabled Aucun guichet disponible pour ce compte.
@@ -74,14 +74,14 @@ h2.subheader
         th.w-48.text-right Communes
 
     tbody
-      - ddfip.services.kept.each do |service|
+      - ddfip.offices.kept.each do |office|
         tr.datatable__row
           td.datatable__row-actions
             .flex
               a.icon-button(
                 aria-label="Modifier ce guichet"
                 data-turbo-frame="modal"
-                href=edit_service_path(service, referrer: current_path, redirect: current_path)
+                href=edit_office_path(office, referrer: current_path, redirect: current_path)
               )
                 = svg_icon("pencil-square", "Modifier ce guichet")
                 span.tooltip Modifier ce guichet
@@ -89,7 +89,7 @@ h2.subheader
               a.icon-button(
                 aria-label="Supprimer ce guichet"
                 data-turbo-frame="modal"
-                href=remove_service_path(service, referrer: current_path, redirect: current_path)
+                href=remove_office_path(office, referrer: current_path, redirect: current_path)
               )
                 = svg_icon("trash", "Supprimer ce guichet")
                 span.tooltip Supprimer ce guichet
@@ -97,12 +97,12 @@ h2.subheader
           td
             a(
               data-turbo-frame="_top"
-              href=service_path(service)
-            )= service.name
+              href=office_path(office)
+            )= office.name
 
-          td= translate(service.action, scope: "enum.action")
-          td.text-right= number_with_delimiter(service.users_count)    if service.users_count.positive?
-          td.text-right= number_with_delimiter(service.communes_count) if service.communes_count.positive?
+          td= translate(office.action, scope: "enum.action")
+          td.text-right= number_with_delimiter(office.users_count)    if office.users_count.positive?
+          td.text-right= number_with_delimiter(office.communes_count) if office.communes_count.positive?
 
 .subheader-bar
   h2.subheader
@@ -133,7 +133,7 @@ h2.subheader
         th Guichets
 
     tbody
-      - ddfip.users.kept.preload(:services).order(:created_at).each do |user|
+      - ddfip.users.kept.preload(:offices).order(:created_at).each do |user|
         tr.datatable__row
           td.datatable__row-actions
             .flex
@@ -175,16 +175,16 @@ h2.subheader
               = " "
 
           td
-            - services = user.services.select { |service| service.kept? && service.ddfip_id == ddfip.id }
-            - services.each.with_index do |service, index|
+            - offices = user.offices.select { |office| office.kept? && office.ddfip_id == ddfip.id }
+            - offices.each.with_index do |office, index|
               a(
                 data-turbo-frame="_top"
-                href=service_path(service)
-              )= service.name
+                href=office_path(office)
+              )= office.name
 
-              - if services[index + 2]
+              - if offices[index + 2]
                 = ", "
-              - elsif services[index + 1]
+              - elsif offices[index + 1]
                 = " et "
 
 h2.subheader

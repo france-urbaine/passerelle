@@ -1,20 +1,20 @@
 = template_frame_component(src: @background_content_url) do |frame|
   - frame.with_modal do |modal|
     - modal.with_header do
-      - if @services.count > 1
+      - if @offices.count > 1
         | Suppression des guichets sélectionnés
       - else
         | Suppression du guichet sélectionné
 
-    - modal.with_form(url: services_path, method: :delete) do
+    - modal.with_form(url: offices_path, method: :delete) do
       = hidden_param_input(:ids)
       = hidden_param_input(:search)
       = hidden_param_input(:order)
       = hidden_param_input(:page)
 
-      - if @services.count > 1
+      - if @offices.count > 1
         p
-          | Êtes-vous sûrs de vouloir supprimer les <b>#{@services.count}</b>guichets sélectionnés ?
+          | Êtes-vous sûrs de vouloir supprimer les <b>#{@offices.count}</b>guichets sélectionnés ?
           br
           | Ceux-ci seront archivés pendant 30 jours avant d'être définitivement supprimés.
       - else

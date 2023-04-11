@@ -1,0 +1,11 @@
+pelp_bayonne:
+  office:   pelp_bayonne
+  commune:  bayonne
+
+pelh_bayonne:
+  office:   pelp_bayonne
+  commune:  bayonne
+
+sip_bayonne:
+  office:   sip_bayonne
+  commune:  bayonne
