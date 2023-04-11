@@ -9,7 +9,7 @@
     modal: true
 
 h2.subheader
-  = svg_icon("bookmark", "Nouvelle section")
+  = svg_icon("identification", "Nouvelle section")
   | Description
 
 .card.mb-6
@@ -50,7 +50,7 @@ h2.subheader
       dd= display_count(commune.collectivities_count, "collectivité") if commune.collectivities_count.positive?
 
 h2.subheader
-  = svg_icon("bookmark", "Nouvelle section")
+  = svg_icon("rectangle-stack", "Nouvelle section")
   | Collectivités enregistrées
 
 - if commune.collectivities_count.zero?
