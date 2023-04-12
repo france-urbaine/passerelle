@@ -10,7 +10,7 @@ RSpec.describe DDFIP do
   it { is_expected.to have_many(:communes) }
   it { is_expected.to have_one(:region) }
   it { is_expected.to have_many(:users) }
-  it { is_expected.to have_many(:services) }
+  it { is_expected.to have_many(:offices) }
 
   # Validations
   # ----------------------------------------------------------------------------
@@ -283,27 +283,27 @@ RSpec.describe DDFIP do
       end
     end
 
-    describe "#services_count" do
-      let(:service) { create(:service, ddfip: ddfip1) }
+    describe "#offices_count" do
+      let(:office) { create(:office, ddfip: ddfip1) }
 
       it "changes on creation" do
-        expect { service }
-          .to      change { ddfip1.reload.services_count }.from(0).to(1)
-          .and not_change { ddfip2.reload.services_count }.from(0)
+        expect { office }
+          .to      change { ddfip1.reload.offices_count }.from(0).to(1)
+          .and not_change { ddfip2.reload.offices_count }.from(0)
       end
 
       it "changes on deletion" do
-        service
-        expect { service.destroy }
-          .to      change { ddfip1.reload.services_count }.from(1).to(0)
-          .and not_change { ddfip2.reload.services_count }.from(0)
+        office
+        expect { office.destroy }
+          .to      change { ddfip1.reload.offices_count }.from(1).to(0)
+          .and not_change { ddfip2.reload.offices_count }.from(0)
       end
 
       it "changes on updating" do
-        service
-        expect { service.update(ddfip: ddfip2) }
-          .to  change { ddfip1.reload.services_count }.from(1).to(0)
-          .and change { ddfip2.reload.services_count }.from(0).to(1)
+        office
+        expect { office.update(ddfip: ddfip2) }
+          .to  change { ddfip1.reload.offices_count }.from(1).to(0)
+          .and change { ddfip2.reload.offices_count }.from(0).to(1)
       end
     end
   end
@@ -359,17 +359,17 @@ RSpec.describe DDFIP do
       it { expect { reset_all_counters }.to change { ddfip2.reload.collectivities_count }.from(0).to(1) }
     end
 
-    describe "on services_count" do
+    describe "on offices_count" do
       before do
-        create_list(:service, 4, ddfip: ddfip1)
-        create_list(:service, 2, ddfip: ddfip2)
-        create_list(:service, 1)
+        create_list(:office, 4, ddfip: ddfip1)
+        create_list(:office, 2, ddfip: ddfip2)
+        create_list(:office, 1)
 
-        DDFIP.update_all(services_count: 0)
+        DDFIP.update_all(offices_count: 0)
       end
 
-      it { expect { reset_all_counters }.to change { ddfip1.reload.services_count }.from(0).to(4) }
-      it { expect { reset_all_counters }.to change { ddfip2.reload.services_count }.from(0).to(2) }
+      it { expect { reset_all_counters }.to change { ddfip1.reload.offices_count }.from(0).to(4) }
+      it { expect { reset_all_counters }.to change { ddfip2.reload.offices_count }.from(0).to(2) }
     end
   end
 end

@@ -9,8 +9,8 @@ RSpec.describe Commune do
   it { is_expected.to belong_to(:epci).optional }
   it { is_expected.to have_one(:registered_collectivity) }
   it { is_expected.to respond_to(:on_territory_collectivities) }
-  it { is_expected.to have_many(:service_communes) }
-  it { is_expected.to have_many(:services).through(:service_communes) }
+  it { is_expected.to have_many(:office_communes) }
+  it { is_expected.to have_many(:offices).through(:office_communes) }
 
   # Validations
   # ----------------------------------------------------------------------------
@@ -295,49 +295,49 @@ RSpec.describe Commune do
       end
     end
 
-    describe "#services_count" do
-      let(:service) { create(:service) }
+    describe "#offices_count" do
+      let(:office) { create(:office) }
 
-      it "changes when commune is assigned to the service" do
-        expect { service.communes << commune1 }
-          .to      change { commune1.reload.services_count }.from(0).to(1)
-          .and not_change { commune2.reload.services_count }.from(0)
+      it "changes when commune is assigned to the office" do
+        expect { office.communes << commune1 }
+          .to      change { commune1.reload.offices_count }.from(0).to(1)
+          .and not_change { commune2.reload.offices_count }.from(0)
       end
 
-      it "changes when an existing code_insee is assigned to the service" do
-        expect { service.service_communes.create(code_insee: "64102") }
-          .to      change { commune1.reload.services_count }.from(0).to(1)
-          .and not_change { commune2.reload.services_count }.from(0)
+      it "changes when an existing code_insee is assigned to the office" do
+        expect { office.office_communes.create(code_insee: "64102") }
+          .to      change { commune1.reload.offices_count }.from(0).to(1)
+          .and not_change { commune2.reload.offices_count }.from(0)
       end
 
-      it "doesn't change when an unknown code_insee is assigned to the service" do
-        expect { service.service_communes.create(code_insee: "64024") }
-          .to  not_change { commune1.reload.services_count }.from(0)
-          .and not_change { commune2.reload.services_count }.from(0)
+      it "doesn't change when an unknown code_insee is assigned to the office" do
+        expect { office.office_communes.create(code_insee: "64024") }
+          .to  not_change { commune1.reload.offices_count }.from(0)
+          .and not_change { commune2.reload.offices_count }.from(0)
       end
 
-      it "changes when commune is removed from the service" do
-        service.communes << commune1
+      it "changes when commune is removed from the office" do
+        office.communes << commune1
 
-        expect { service.communes.delete(commune1) }
-          .to      change { commune1.reload.services_count }.from(1).to(0)
-          .and not_change { commune2.reload.services_count }.from(0)
+        expect { office.communes.delete(commune1) }
+          .to      change { commune1.reload.offices_count }.from(1).to(0)
+          .and not_change { commune2.reload.offices_count }.from(0)
       end
 
       it "changes when commune updates its code_insee" do
-        service.communes << commune1
+        office.communes << commune1
 
         expect { commune1.update(code_insee: "64024") }
-          .to      change { commune1.reload.services_count }.from(1).to(0)
-          .and not_change { commune2.reload.services_count }.from(0)
+          .to      change { commune1.reload.offices_count }.from(1).to(0)
+          .and not_change { commune2.reload.offices_count }.from(0)
       end
 
-      it "doesn't changes when another commune is assigned to the service" do
-        service.communes << commune1
+      it "doesn't changes when another commune is assigned to the office" do
+        office.communes << commune1
 
-        expect { service.communes << commune2 }
-          .to  not_change { commune1.reload.services_count }.from(1)
-          .and     change { commune2.reload.services_count }.from(0).to(1)
+        expect { office.communes << commune2 }
+          .to  not_change { commune1.reload.offices_count }.from(1)
+          .and     change { commune2.reload.offices_count }.from(0).to(1)
       end
     end
   end
@@ -371,18 +371,18 @@ RSpec.describe Commune do
       it { expect { reset_all_counters }.to change { commune2.reload.collectivities_count }.from(0).to(4) }
     end
 
-    describe "on services_count" do
+    describe "on offices_count" do
       before do
-        services = create_list(:service, 6)
+        offices = create_list(:office, 6)
 
-        commune1.services = services.shuffle.take(4)
-        commune2.services = services.shuffle.take(2)
+        commune1.offices = offices.shuffle.take(4)
+        commune2.offices = offices.shuffle.take(2)
 
-        Commune.update_all(services_count: 0)
+        Commune.update_all(offices_count: 0)
       end
 
-      it { expect { reset_all_counters }.to change { commune1.reload.services_count }.from(0).to(4) }
-      it { expect { reset_all_counters }.to change { commune2.reload.services_count }.from(0).to(2) }
+      it { expect { reset_all_counters }.to change { commune1.reload.offices_count }.from(0).to(4) }
+      it { expect { reset_all_counters }.to change { commune2.reload.offices_count }.from(0).to(2) }
     end
   end
 end

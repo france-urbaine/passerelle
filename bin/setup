@@ -38,9 +38,7 @@ def setup
   system! "yarn"
 
   log "Dropping & recreating the development & test databases"
-  # Note that the very first time this runs, db:reset will fail,
-  # but this failure is fixed by doing a db:migrate
-  system! "bin/rails db:reset || bin/rails db:prepare"
+  system! "bin/rails db:reset"
 
   log "Setup test environment for parallel testing"
   system! "bin/rails parallel:prepare"

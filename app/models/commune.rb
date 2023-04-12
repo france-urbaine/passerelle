@@ -9,17 +9,22 @@
 #  code_insee           :string           not null
 #  code_departement     :string           not null
 #  siren_epci           :string
+#  qualified_name       :string
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
 #  collectivities_count :integer          default(0), not null
-#  qualified_name       :string
-#  services_count       :integer          default(0), not null
+#  offices_count        :integer          default(0), not null
 #
 # Indexes
 #
 #  index_communes_on_code_departement  (code_departement)
 #  index_communes_on_code_insee        (code_insee) UNIQUE
 #  index_communes_on_siren_epci        (siren_epci)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (code_departement => departements.code_departement)
+#  fk_rails_...  (siren_epci => epcis.siren) ON UPDATE => cascade
 #
 class Commune < ApplicationRecord
   self.implicit_order_column = :code_insee
@@ -33,8 +38,8 @@ class Commune < ApplicationRecord
 
   has_one :registered_collectivity, class_name: "Collectivity", as: :territory, dependent: false
 
-  has_many :service_communes, primary_key: :code_insee, foreign_key: :code_insee, inverse_of: :commune, dependent: false
-  has_many :services, through: :service_communes
+  has_many :office_communes, primary_key: :code_insee, foreign_key: :code_insee, inverse_of: :commune, dependent: false
+  has_many :offices, through: :office_communes
 
   # Validations
   # ----------------------------------------------------------------------------

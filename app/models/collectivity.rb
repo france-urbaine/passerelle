@@ -30,6 +30,10 @@
 #  index_collectivities_on_siren         (siren) UNIQUE WHERE (discarded_at IS NULL)
 #  index_collectivities_on_territory     (territory_type,territory_id)
 #
+# Foreign Keys
+#
+#  fk_rails_...  (publisher_id => publishers.id)
+#
 class Collectivity < ApplicationRecord
   # Associations
   # ----------------------------------------------------------------------------

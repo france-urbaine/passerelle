@@ -12,13 +12,17 @@
 #  discarded_at         :datetime
 #  users_count          :integer          default(0), not null
 #  collectivities_count :integer          default(0), not null
-#  services_count       :integer          default(0), not null
+#  offices_count        :integer          default(0), not null
 #
 # Indexes
 #
 #  index_ddfips_on_code_departement  (code_departement)
 #  index_ddfips_on_discarded_at      (discarded_at)
 #  index_ddfips_on_name              (name) UNIQUE WHERE (discarded_at IS NULL)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (code_departement => departements.code_departement)
 #
 class DDFIP < ApplicationRecord
   # Associations
@@ -31,7 +35,7 @@ class DDFIP < ApplicationRecord
 
   has_many :users, as: :organization, dependent: :delete_all
 
-  has_many :services, dependent: :destroy
+  has_many :offices, dependent: :destroy
 
   # Validations
   # ----------------------------------------------------------------------------

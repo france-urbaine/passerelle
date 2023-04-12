@@ -16,43 +16,49 @@ def log(message)
   puts "#{LOG_PREFIX} #{message}"
 end
 
+def parse_csv(path)
+  path = Rails.root.join(path)
+  CSV.open(path, "r", headers: true, col_sep: ";").map(&:to_h)
+end
+
 # Import regions
 # ----------------------------------------------------------------------------
 log "Seed regions"
 
-regions_path = Rails.root.join("db/regions.csv")
-regions_data = CSV.open(regions_path, "r", headers: true, col_sep: ";").map(&:to_h)
-
+regions_data = parse_csv("db/regions.csv")
 Region.upsert_all(regions_data, unique_by: %i[code_region])
 
 # Import departements
 # ----------------------------------------------------------------------------
 log "Seed departements"
 
-departements_path = Rails.root.join("db/departements.csv")
-departements_data = CSV.open(departements_path, "r", headers: true, col_sep: ";").map(&:to_h)
-
+departements_data = parse_csv("db/departements.csv")
 Departement.upsert_all(departements_data, unique_by: %i[code_departement])
 
 # Import EPCI & communes
 # ----------------------------------------------------------------------------
-unless ENV["SKIP_EPCIS_AND_COMMUNES"] == "true"
-  log "Seed epcis & communes"
-  log "----------------------------------------------"
-  log "Populating these two models takes few minutes."
-  log "To skip this part, use the following variable:"
-  log ""
-  log "SKIP_EPCIS_AND_COMMUNES=true bin/setup"
-  log "----------------------------------------------"
+log "Seed EPCI & communes"
 
-  TerritoriesUpdate.new
-    .assign_default_urls
-    .perform_now
+if ENV["SEED_ALL_EPCIS_AND_COMMUNES"] == "true"
+  TerritoriesUpdate.new.assign_default_urls.perform_now
+else
+  log "-------------------------------------------------------"
+  log "For performances reasons, only few records are created."
+  log "To import all EPCI and communes from a remote source,"
+  log "use the following command:"
+  log "  SEED_ALL_EPCIS_AND_COMMUNES=true rails db:seed"
+  log "-------------------------------------------------------"
+
+  epcis_data = parse_csv("db/epcis.csv")
+  EPCI.upsert_all(epcis_data, unique_by: %i[siren])
+
+  communes_data = parse_csv("db/communes.csv")
+  Commune.upsert_all(communes_data, unique_by: %i[code_insee])
 end
 
 # Import ddfips
 # ----------------------------------------------------------------------------
-log "Seed ddfips"
+log "Seed DDFIP"
 
 DDFIP.insert_all([
   { code_departement: "13", name: "DDFIP des Bouches-du-Rhône" },
@@ -101,9 +107,9 @@ def build_collectivity(data = {})
 end
 
 Collectivity.insert_all([
-  build_collectivity(publisher: "Fiscalité & Territoire", siren: "200067106", epci:    "CA du Pays Basque"),
-  build_collectivity(publisher: "Fiscalité & Territoire", siren: "200093201", epci:    "Métropole Européenne de Lille"),
-  build_collectivity(publisher: "Fiscalité & Territoire", siren: "200054807", epci:    "Métropole d'Aix-Marseille-Provence"),
+  build_collectivity(publisher: "Fiscalité & Territoire", siren: "200067106", epci: "CA du Pays Basque"),
+  build_collectivity(publisher: "Fiscalité & Territoire", siren: "200093201", epci: "Métropole Européenne de Lille"),
+  build_collectivity(publisher: "Fiscalité & Territoire", siren: "200054807", epci: "Métropole d'Aix-Marseille-Provence"),
   build_collectivity(publisher: "Fiscalité & Territoire", siren: "217500016", commune: "Paris")
 ])
 
@@ -144,13 +150,13 @@ User.insert_all([
   build_user(email: "sip.pau@ddfip-64.example.org",     organization: ddfips["DDFIP des Pyrénées-Atlantiques"])
 ])
 
-# Import services
+# Import offices
 # ----------------------------------------------------------------------------
-log "Seed services"
+log "Seed offices"
 
 ddfips = DDFIP.pluck(:name, :id).to_h
 
-Service.insert_all([
+Office.insert_all([
   { ddfip_id: ddfips["DDFIP des Pyrénées-Atlantiques"], name: "PELH de Bayonne",  action: "evaluation_hab" },
   { ddfip_id: ddfips["DDFIP des Pyrénées-Atlantiques"], name: "PELP de Bayonne",  action: "evaluation_eco" },
   { ddfip_id: ddfips["DDFIP des Pyrénées-Atlantiques"], name: "SIP de Bayonne",   action: "occupation_hab" },
@@ -158,21 +164,26 @@ Service.insert_all([
   { ddfip_id: ddfips["DDFIP de l'Essonne"],             name: "SIP de l'Essonne", action: "occupation_hab" }
 ])
 
-services = Service.pluck(:name, :id).to_h
-users    = User.where(organization_type: "DDFIP").pluck(:email, :id).to_h
+offices = Office.pluck(:name, :id).to_h
+users   = User.where(organization_type: "DDFIP").pluck(:email, :id).to_h
 
-UserService.insert_all([
-  { service_id: services["PELP de Bayonne"], user_id: users["admin@ddfip-64.example.org"] },
-  { service_id: services["PELH de Bayonne"], user_id: users["admin@ddfip-64.example.org"] },
-  { service_id: services["SIP de Bayonne"],  user_id: users["admin@ddfip-64.example.org"] },
-  { service_id: services["PELP de Bayonne"], user_id: users["pelp@ddfip-64.example.org"] },
-  { service_id: services["SIP de Bayonne"],  user_id: users["sip.bayonne@ddfip-64.example.org"] }
+OfficeUser.insert_all([
+  { office_id: offices["PELP de Bayonne"], user_id: users["admin@ddfip-64.example.org"] },
+  { office_id: offices["PELH de Bayonne"], user_id: users["admin@ddfip-64.example.org"] },
+  { office_id: offices["SIP de Bayonne"],  user_id: users["admin@ddfip-64.example.org"] },
+  { office_id: offices["PELP de Bayonne"], user_id: users["pelp@ddfip-64.example.org"] },
+  { office_id: offices["SIP de Bayonne"],  user_id: users["sip.bayonne@ddfip-64.example.org"] }
 ])
 
-bayonne_codes_insee = EPCI.find_by!(name: "CA du Pays Basque").communes.pluck(:code_insee)
-pau_codes_insee     = EPCI.find_by!(name: "CA Pau Béarn Pyrénées").communes.pluck(:code_insee)
+codes_insee = {
+  pays_basque: EPCI.find_by!(name: "CA du Pays Basque").communes.pluck(:code_insee),
+  pau_bearn:   EPCI.find_by!(name: "CA Pau Béarn Pyrénées").communes.pluck(:code_insee)
+}
 
-ServiceCommune.insert_all(bayonne_codes_insee.map { |code| { service_id: services["PELP de Bayonne"], code_insee: code } })
-ServiceCommune.insert_all(bayonne_codes_insee.map { |code| { service_id: services["PELH de Bayonne"], code_insee: code } })
-ServiceCommune.insert_all(bayonne_codes_insee.map { |code| { service_id: services["SIP de Bayonne"], code_insee: code } })
-ServiceCommune.insert_all(pau_codes_insee.map { |code| { service_id: services["SIP de Pau"], code_insee: code } })
+office_communes_attributes = []
+office_communes_attributes += codes_insee[:pays_basque].map { |code| { office_id: offices["PELP de Bayonne"], code_insee: code } }
+office_communes_attributes += codes_insee[:pays_basque].map { |code| { office_id: offices["PELH de Bayonne"], code_insee: code } }
+office_communes_attributes += codes_insee[:pays_basque].map { |code| { office_id: offices["SIP de Bayonne"], code_insee: code } }
+office_communes_attributes += codes_insee[:pau_bearn].map { |code| { office_id: offices["SIP de Pau"], code_insee: code } }
+
+OfficeCommune.insert_all(office_communes_attributes)

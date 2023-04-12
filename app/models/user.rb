@@ -10,6 +10,7 @@
 #  inviter_id             :uuid
 #  first_name             :string           default(""), not null
 #  last_name              :string           default(""), not null
+#  name                   :string           default(""), not null
 #  super_admin            :boolean          default(FALSE), not null
 #  organization_admin     :boolean          default(FALSE), not null
 #  email                  :string           default(""), not null
@@ -32,9 +33,8 @@
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #  invited_at             :datetime
-#  services_count         :integer          default(0), not null
 #  discarded_at           :datetime
-#  name                   :string
+#  offices_count          :integer          default(0), not null
 #
 # Indexes
 #
@@ -64,8 +64,8 @@ class User < ApplicationRecord
   belongs_to :inviter, class_name: "User", optional: true, inverse_of: :invitees
   has_many :invitees, class_name: "User", foreign_key: :inviter_id, inverse_of: :inviter, dependent: :nullify
 
-  has_many :user_services, dependent: :delete_all
-  has_many :services, through: :user_services
+  has_many :office_users, dependent: :delete_all
+  has_many :offices, through: :office_users
 
   # Validations
   # ----------------------------------------------------------------------------

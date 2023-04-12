@@ -9,6 +9,16 @@ RSpec.describe ImportCommunesJob do
   let(:fixture) { file_fixture("communes.zip") }
 
   before do
+    # Departements & epcis should exist for data integrity constraints
+    create(:departement, code_departement: "01")
+    create(:departement, code_departement: "13")
+    create(:departement, code_departement: "29")
+    create(:departement, code_departement: "976")
+    create(:epci, siren: "200069193")
+    create(:epci, siren: "240100883")
+    create(:epci, siren: "200060465")
+    create(:epci, siren: "200054807")
+
     stub_request(:head, url)
       .to_return(status: 200, body: "", headers: {})
 

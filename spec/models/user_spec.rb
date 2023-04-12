@@ -9,8 +9,8 @@ RSpec.describe User do
   it { is_expected.to belong_to(:inviter).optional }
   it { is_expected.to have_many(:invitees) }
 
-  it { is_expected.to have_many(:user_services) }
-  it { is_expected.to have_many(:services).through(:user_services) }
+  it { is_expected.to have_many(:office_users) }
+  it { is_expected.to have_many(:offices).through(:office_users) }
 
   # Validations
   # ----------------------------------------------------------------------------
@@ -166,29 +166,29 @@ RSpec.describe User do
     let!(:user1) { create(:user) }
     let!(:user2) { create(:user) }
 
-    describe "#services_count" do
-      let(:service) { create(:service) }
+    describe "#offices_count" do
+      let(:office) { create(:office) }
 
-      it "changes when users is assigned to the service" do
-        expect { service.users << user1 }
-          .to      change { user1.reload.services_count }.from(0).to(1)
-          .and not_change { user2.reload.services_count }.from(0)
+      it "changes when users is assigned to the office" do
+        expect { office.users << user1 }
+          .to      change { user1.reload.offices_count }.from(0).to(1)
+          .and not_change { user2.reload.offices_count }.from(0)
       end
 
-      it "changes when users is removed from the service" do
-        service.users << user1
+      it "changes when users is removed from the office" do
+        office.users << user1
 
-        expect { service.users.delete(user1) }
-          .to      change { user1.reload.services_count }.from(1).to(0)
-          .and not_change { user2.reload.services_count }.from(0)
+        expect { office.users.delete(user1) }
+          .to      change { user1.reload.offices_count }.from(1).to(0)
+          .and not_change { user2.reload.offices_count }.from(0)
       end
 
       it "doesn't changes when another user is added" do
-        service.users << user1
+        office.users << user1
 
-        expect { service.users << user2 }
-          .to  not_change { user1.reload.services_count }.from(1)
-          .and     change { user2.reload.services_count }.from(0).to(1)
+        expect { office.users << user2 }
+          .to  not_change { user1.reload.offices_count }.from(1)
+          .and     change { user2.reload.offices_count }.from(0).to(1)
       end
     end
   end
@@ -204,18 +204,18 @@ RSpec.describe User do
     it { expect { reset_all_counters }.to ret(2) }
     it { expect { reset_all_counters }.to perform_sql_query("SELECT reset_all_users_counters()") }
 
-    describe "on services_count" do
+    describe "on offices_count" do
       before do
-        services = create_list(:service, 6)
+        offices = create_list(:office, 6)
 
-        user1.services = services.shuffle.take(4)
-        user2.services = services.shuffle.take(2)
+        user1.offices = offices.shuffle.take(4)
+        user2.offices = offices.shuffle.take(2)
 
-        User.update_all(services_count: 0)
+        User.update_all(offices_count: 0)
       end
 
-      it { expect { reset_all_counters }.to change { user1.reload.services_count }.from(0).to(4) }
-      it { expect { reset_all_counters }.to change { user2.reload.services_count }.from(0).to(2) }
+      it { expect { reset_all_counters }.to change { user1.reload.offices_count }.from(0).to(4) }
+      it { expect { reset_all_counters }.to change { user2.reload.offices_count }.from(0).to(2) }
     end
   end
 end
