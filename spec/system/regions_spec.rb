@@ -3,7 +3,8 @@
 require "rails_helper"
 
 RSpec.describe "Regions", use_fixtures: true do
-  fixtures :communes, :epcis, :departements, :regions, :ddfips
+  fixtures :regions, :departements, :epcis, :communes
+  fixtures :ddfips
 
   let(:nouvelle_aquitaine)   { regions(:nouvelle_aquitaine) }
   let(:pyrenees_atlantiques) { departements(:pyrenees_atlantiques) }

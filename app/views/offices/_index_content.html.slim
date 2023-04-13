@@ -3,7 +3,7 @@
   - breadcrumbs.with_path "Guichets"
 
   - breadcrumbs.with_action "Ajouter un guichet",
-    href: new_office_path(content: current_path),
+    href: new_office_path(referrer: current_path),
     icon: "plus",
     primary: true,
     modal: true
@@ -30,12 +30,12 @@ div( data-controller="selection" )
 
       - row.with_action "Modifier ce guichet",
         icon:  "pencil-square",
-        href:  edit_office_path(office, content: current_path, redirect: current_path),
+        href:  edit_office_path(office, referrer: current_path, redirect: current_path),
         modal: true
 
       - row.with_action "Supprimer ce guichet",
         icon:  "trash",
-        href:  remove_office_path(office, content: current_path, redirect: current_path),
+        href:  remove_office_path(office, referrer: current_path, redirect: current_path),
         modal: true
 
       - row.with_column(:name) do

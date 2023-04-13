@@ -58,7 +58,7 @@ module FormHelper
     options[:class] = Array.wrap(options[:class])
     options[:class] << "form-block"
     options[:class] << "form-block--margin" unless first
-    options[:class] << "form-block--invalid" if record.errors.include?(attribute)
+    options[:class] << "form-block--invalid" if record.respond_to?(:errors) && record.errors.include?(attribute)
 
     options[:data] ||= {}
 
@@ -77,6 +77,8 @@ module FormHelper
   end
 
   def display_errors(record, attribute)
+    return unless record.respond_to?(:errors)
+
     capture do
       record.errors.messages_for(attribute).each do |error|
         concat tag.div(error, class: "form-block__errors")

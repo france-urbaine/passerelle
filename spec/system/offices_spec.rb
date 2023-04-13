@@ -3,7 +3,8 @@
 require "rails_helper"
 
 RSpec.describe "Offices", use_fixtures: true do
-  fixtures :regions, :departements, :ddfips, :offices
+  fixtures :regions, :departements
+  fixtures :ddfips, :offices
 
   let(:ddifp64)      { ddfips(:pyrenees_atlantiques) }
   let(:pelp_bayonne) { offices(:pelp_bayonne) }

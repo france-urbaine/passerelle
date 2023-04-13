@@ -3,12 +3,13 @@
 require "rails_helper"
 
 RSpec.describe "DDFIPs", use_fixtures: true do
-  fixtures :ddfips, :departements, :regions, :services
+  fixtures :regions, :departements
+  fixtures :ddfips, :offices
 
   let(:ddfip64)              { ddfips(:pyrenees_atlantiques) }
   let(:pyrenees_atlantiques) { departements(:pyrenees_atlantiques) }
   let(:nouvelle_aquitaine)   { regions(:nouvelle_aquitaine) }
-  let(:pelp_bayonne)         { services(:pelp_bayonne) }
+  let(:pelp_bayonne)         { offices(:pelp_bayonne) }
 
   it "visits index & show pages" do
     visit ddfips_path
@@ -42,7 +43,7 @@ RSpec.describe "DDFIPs", use_fixtures: true do
     click_on "PELP de Bayonne"
 
     expect(page).to have_selector("h1", text: "PELP de Bayonne")
-    expect(page).to have_current_path(service_path(pelp_bayonne))
+    expect(page).to have_current_path(office_path(pelp_bayonne))
 
     go_back
 
@@ -64,10 +65,10 @@ RSpec.describe "DDFIPs", use_fixtures: true do
     expect(page).to have_selector("[role=dialog]", text: "Création d'une nouvelle DDFIP")
 
     within "[role=dialog]" do
-      fill_in "Nom de la DDFIP", with: "DDFIP de la Gironde"
-      fill_in "Département",     with: "33"
+      fill_in "Nom de la DDFIP", with: "DDFIP des Bouches-du-Rhône"
+      fill_in "Département",     with: "13"
 
-      find("[role=option]", text: "Gironde").click
+      find("[role=option]", text: "Bouches-du-Rhône").click
 
       click_on "Enregistrer"
     end
@@ -80,7 +81,7 @@ RSpec.describe "DDFIPs", use_fixtures: true do
     #
     expect(page).to     have_current_path(ddfips_path)
     expect(page).to     have_selector("h1", text: "DDFIP")
-    expect(page).to     have_selector("tr", text: "DDFIP de la Gironde")
+    expect(page).to     have_selector("tr", text: "DDFIP des Bouches-du-Rhône")
 
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=alert]", text: "Une nouvelle DDFIP a été ajoutée avec succés.")
@@ -280,7 +281,7 @@ RSpec.describe "DDFIPs", use_fixtures: true do
 
     # Some checkboxes should be present to select DDFIP
     #
-    within "tr", text: "DDFIP des Bouches-du-Rhône" do
+    within "tr", text: "DDFIP du Nord" do
       find("input[type=checkbox]").check
     end
 
@@ -317,7 +318,7 @@ RSpec.describe "DDFIPs", use_fixtures: true do
     #
     expect(page).to     have_current_path(ddfips_path)
     expect(page).to     have_selector("h1", text: "DDFIP")
-    expect(page).not_to have_selector("tr", text: "DDFIP des Bouches-du-Rhône")
+    expect(page).not_to have_selector("tr", text: "DDFIP du Nord")
     expect(page).not_to have_selector("tr", text: "DDFIP des Pyrénées-Atlantiques")
 
     expect(page).not_to have_selector("#index_header", text: "2 DDFIP sélectionnées")
@@ -341,7 +342,7 @@ RSpec.describe "DDFIPs", use_fixtures: true do
     #
     expect(page).to     have_current_path(ddfips_path)
     expect(page).to     have_selector("h1", text: "DDFIP")
-    expect(page).to     have_selector("tr", text: "DDFIP des Bouches-du-Rhône")
+    expect(page).to     have_selector("tr", text: "DDFIP du Nord")
     expect(page).to     have_selector("tr", text: "DDFIP des Pyrénées-Atlantiques")
 
     expect(page).not_to have_selector("#index_header", text: "2 DDFIP sélectionnées")

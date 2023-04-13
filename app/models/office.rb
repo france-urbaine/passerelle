@@ -34,6 +34,9 @@ class Office < ApplicationRecord
   has_many :users,    through: :office_users
   has_many :communes, through: :office_communes
 
+  has_one  :departement, through: :ddfip
+  has_many :departement_communes, through: :departement, source: :communes
+
   # Validations
   # ----------------------------------------------------------------------------
   ACTIONS = %w[evaluation_hab evaluation_eco occupation_hab occupation_eco].freeze

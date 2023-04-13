@@ -6,10 +6,14 @@ RSpec.describe Office do
   # Associations
   # ----------------------------------------------------------------------------
   it { is_expected.to belong_to(:ddfip).required }
+
   it { is_expected.to have_many(:office_users) }
   it { is_expected.to have_many(:office_communes) }
   it { is_expected.to have_many(:users).through(:office_users) }
   it { is_expected.to have_many(:communes).through(:office_communes) }
+
+  it { is_expected.to have_one(:departement).through(:ddfip) }
+  it { is_expected.to have_many(:departement_communes).through(:departement) }
 
   # Validations
   # ----------------------------------------------------------------------------

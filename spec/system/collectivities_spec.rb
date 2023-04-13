@@ -3,7 +3,8 @@
 require "rails_helper"
 
 RSpec.describe "Collectivities", use_fixtures: true do
-  fixtures :collectivities, :publishers, :epcis, :ddfips
+  fixtures :regions, :departements, :epcis
+  fixtures :collectivities, :publishers, :ddfips
 
   let(:pays_basque) { collectivities(:pays_basque) }
   let(:publisher)   { publishers(:fiscalite_territoire) }

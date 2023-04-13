@@ -7,7 +7,7 @@
 = modal.with_form(model: user) do
   = hidden_param_input(:redirect)
 
-  div( data-controller="user-form" data-user-form-services-url-value=user_services_path(user_id: user.id) )
+  div( data-controller="user-form" data-user-form-offices-url-value=user_services_path(user_id: user.id) )
     = fields(model: user) do |form|
       = form.block :organization, first: true, autocomplete: organizations_path do
         ruby:
@@ -63,18 +63,18 @@
         = form.email_field :email
 
       ruby:
-        services_block_options = { data: { user_form_target: "servicesFormBlock" } }
-        services_frame_options = { data: { user_form_target: "servicesCheckboxesFrame" } }
+        offices_block_options = { data: { user_form_target: "officesFormBlock" } }
+        offices_frame_options = { data: { user_form_target: "officesCheckboxesFrame" } }
 
         if user.organization.is_a?(DDFIP)
-          services_frame_options[:src] = user_services_path(user_id: user.id, ddfip_id: user.organization_id, service_ids: user.service_ids)
+          offices_frame_options[:src] = user_services_path(user_id: user.id, ddfip_id: user.organization_id, office_ids: user.office_ids)
         else
-          services_block_options[:class] = "hidden"
+          offices_block_options[:class] = "hidden"
         end
 
-      = form.block :service_ids, **services_block_options do
-        = form.label :service_ids
-        = turbo_frame_tag :user_services_checkboxes, **services_frame_options
+      = form.block :office_ids, **offices_block_options do
+        = form.label :office_ids
+        = turbo_frame_tag :user_offices_checkboxes, **offices_frame_options
 
       = form.block :organization_admin do
         = form.check_box :organization_admin

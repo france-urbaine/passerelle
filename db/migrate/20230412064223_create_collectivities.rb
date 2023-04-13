@@ -27,7 +27,6 @@ class CreateCollectivities < ActiveRecord::Migration[7.0]
 
       t.integer :users_count, null: false, default: 0
 
-
       t.index :name,  unique: true, where: "discarded_at IS NULL"
       t.index :siren, unique: true, where: "discarded_at IS NULL"
       t.index :discarded_at

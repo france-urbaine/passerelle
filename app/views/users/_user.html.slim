@@ -42,16 +42,16 @@ h2.subheader
       .description-list__row
         dt Guichets
         dd
-          - services = user.services.kept.where(ddfip: user.organization)
-          - services.each.with_index do |service, index|
+          - offices = user.offices.kept.where(ddfip: user.organization)
+          - offices.each.with_index do |office, index|
             a(
               data-turbo-frame="_top"
-              href=service_path(service)
-            )= service.name
+              href=office_path(office)
+            )= office.name
 
-            - if services[index + 2]
+            - if offices[index + 2]
               = ", "
-            - elsif services[index + 1]
+            - elsif offices[index + 1]
               = " et "
 
     .description-list__row
@@ -61,17 +61,17 @@ h2.subheader
           = mail_to user.email
         - else
           .text-disabled( title="Cet utilisateur n'a pas encore validé son inscription" )
-            = svg_icon("exclamation-triangle", class: "mr-2")
+            = svg_icon("exclamation-triangle", class: "mr-2 h-6 w-6 inline-block")
             = user.email
             span.tooltip Cet utilisateur n'a pas encore validé son inscription
 
     .description-list__row
       dt Administrateur de l'organisation
-      dd= svg_icon("check-badge", "Administrateur") if user.organization_admin?
+      dd= svg_icon("check-badge", "Administrateur", class: "h-6 w-6") if user.organization_admin?
 
     .description-list__row
       dt Administrateur de FiscaHub
-      dd= svg_icon("check-badge", "Administrateur") if user.super_admin?
+      dd= svg_icon("check-badge", "Administrateur", class: "h-6 w-6") if user.super_admin?
 
 h2.subheader
   = svg_icon("rectangle-stack", "Nouvelle section")

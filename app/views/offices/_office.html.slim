@@ -4,12 +4,12 @@
   - breadcrumbs.with_path office.name
 
   - breadcrumbs.with_action "Modifier",
-    href: edit_office_path(office, content: current_path, redirect: current_path),
+    href: edit_office_path(office, referrer: current_path, redirect: current_path),
     icon: "pencil-square",
     modal: true
 
   - breadcrumbs.with_action "Supprimer",
-    href: remove_office_path(office, content: current_path),
+    href: remove_office_path(office, referrer: current_path),
     icon: "trash",
     modal: true
 
@@ -72,7 +72,7 @@ h2.subheader
     .subheader-bar__action
       a.button(
         data-turbo-frame="modal"
-        href=new_user_path(content: current_path, redirect: current_path, user: { organization_type: "DDFIP", organization_id: @office.ddfip_id, office_ids: [@office.id] })
+        href=new_user_path(referrer: current_path, redirect: current_path, user: { organization_type: "DDFIP", organization_id: @office.ddfip_id, office_ids: [@office.id] })
       )
         = svg_icon("plus")
         | Inviter un nouvel utilisateur
@@ -80,7 +80,7 @@ h2.subheader
     .subheader-bar__action
       a.button(
         data-turbo-frame="modal"
-        href=edit_office_users_path(office, content: current_path, redirect: current_path)
+        href=edit_office_users_path(office, referrer: current_path, redirect: current_path)
       )
         = svg_icon("squares-plus")
         | Gérer les utilisateurs
@@ -103,7 +103,7 @@ h2.subheader
           td.datatable__row-actions
             .flex
               a.icon-button(
-                href=edit_user_path(user, content: current_path, redirect: current_path)
+                href=edit_user_path(user, referrer: current_path, redirect: current_path)
                 aria-label="Modifier cet utilisateur"
                 data-turbo-frame="modal"
               )
@@ -113,7 +113,7 @@ h2.subheader
               a.icon-button(
                 aria-label="Supprimer cet utilisateur"
                 data-turbo-frame="modal"
-                href=remove_user_path(user, content: current_path, redirect: current_path)
+                href=remove_user_path(user, referrer: current_path, redirect: current_path)
               )
                 = svg_icon("trash", "Supprimer cet utilisateur")
                 span.tooltip Supprimer cet utilisateur
@@ -142,7 +142,7 @@ h2.subheader
     .subheader-bar__action
       a.button(
         data-turbo-frame="modal"
-        href=edit_office_communes_path(office, content: current_path, redirect: current_path)
+        href=edit_office_communes_path(office, referrer: current_path, redirect: current_path)
       )
         = svg_icon("squares-plus")
         | Gérer les communes
@@ -167,7 +167,7 @@ h2.subheader
             a.icon-button(
               aria-label="Modifier cette commune"
               data-turbo-frame="modal"
-              href=edit_commune_path(commune, content: current_path, redirect: current_path)
+              href=edit_commune_path(commune, referrer: current_path, redirect: current_path)
             )
               = svg_icon("pencil-square", "Modifier cette commune")
               span.tooltip Modifier cette commune

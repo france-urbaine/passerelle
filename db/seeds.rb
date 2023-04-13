@@ -155,15 +155,22 @@ User.insert_all([
 log "Seed offices"
 
 ddfips = DDFIP.pluck(:name, :id).to_h
+offices = Office.pluck(:name, :id).to_h
 
-Office.insert_all([
+office_data = [
   { ddfip_id: ddfips["DDFIP des Pyrénées-Atlantiques"], name: "PELH de Bayonne",  action: "evaluation_hab" },
   { ddfip_id: ddfips["DDFIP des Pyrénées-Atlantiques"], name: "PELP de Bayonne",  action: "evaluation_eco" },
   { ddfip_id: ddfips["DDFIP des Pyrénées-Atlantiques"], name: "SIP de Bayonne",   action: "occupation_hab" },
   { ddfip_id: ddfips["DDFIP des Pyrénées-Atlantiques"], name: "SIP de Pau",       action: "occupation_hab" },
   { ddfip_id: ddfips["DDFIP de l'Essonne"],             name: "SIP de l'Essonne", action: "occupation_hab" }
-])
+].reject do |attributes|
+  offices.include?(attributes[:name])
+end
 
+Office.insert_all(office_data) if office_data.any?
+
+# Import office users
+# ----------------------------------------------------------------------------
 offices = Office.pluck(:name, :id).to_h
 users   = User.where(organization_type: "DDFIP").pluck(:email, :id).to_h
 
@@ -175,6 +182,8 @@ OfficeUser.insert_all([
   { office_id: offices["SIP de Bayonne"],  user_id: users["sip.bayonne@ddfip-64.example.org"] }
 ])
 
+# Import office communes
+# ----------------------------------------------------------------------------
 codes_insee = {
   pays_basque: EPCI.find_by!(name: "CA du Pays Basque").communes.pluck(:code_insee),
   pau_bearn:   EPCI.find_by!(name: "CA Pau Béarn Pyrénées").communes.pluck(:code_insee)

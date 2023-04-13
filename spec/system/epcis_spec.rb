@@ -3,7 +3,7 @@
 require "rails_helper"
 
 RSpec.describe "EPCIs", use_fixtures: true do
-  fixtures :communes, :epcis, :departements, :regions
+  fixtures :regions, :departements, :epcis, :communes
 
   let(:pays_basque)          { epcis(:pays_basque) }
   let(:pyrenees_atlantiques) { departements(:pyrenees_atlantiques) }
