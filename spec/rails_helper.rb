@@ -21,7 +21,6 @@ require File.expand_path("../config/environment", __dir__)
 
 # Prevent database truncation if the environment is production
 abort("The Rails environment is running in production mode!") if Rails.env.production?
-require "capybara/cuprite"
 require "rspec/rails"
 require "webmock/rspec"
 require "database_cleaner/active_record"
@@ -56,11 +55,6 @@ begin
 rescue ActiveRecord::PendingMigrationError => e
   puts e.to_s.strip
   exit 1
-end
-
-Capybara.javascript_driver = :cuprite
-Capybara.register_driver(:cuprite) do |app|
-  Capybara::Cuprite::Driver.new(app, window_size: [1200, 800])
 end
 
 RSpec.configure do |config|
@@ -106,34 +100,9 @@ RSpec.configure do |config|
   config.include Capybara::RSpecMatchers, type: :component
   config.include ActionView::Helpers::TagHelper, type: :component
 
-  config.include ImplicitResponse, type: :request
-
-  config.before :context, use_fixtures: true do
-    self.use_transactional_tests = false
-    DatabaseCleaner.strategy = :truncation
-    DatabaseCleaner.start
-  end
-
-  config.after :context, use_fixtures: true do
-    DatabaseCleaner.clean
-  end
-
-  config.before type: :system do
-    WebMock.disable_net_connect!(allow_localhost: true)
-
-    driven_by Capybara.javascript_driver
-  end
-
   config.after do
     ActionMailer::Base.deliveries.clear
     Faker::UniqueGenerator.clear
-  end
-
-  config.around do |example|
-    timeout = ENV.fetch("TIMEOUT", 2).to_i
-    Timeout.timeout(timeout) do
-      example.run
-    end
   end
 
   config.around :each, :cache_store do |example|
@@ -154,10 +123,3 @@ RSpec::Matchers.define_negated_matcher :run_without_error, :raise_error
 RSpec::Matchers.define_negated_matcher :not_raise_error,   :raise_error
 RSpec::Matchers.define_negated_matcher :not_have_enqueued_job, :have_enqueued_job
 RSpec::Matchers.define_negated_matcher :be_unroutable, :be_routable
-
-Shoulda::Matchers.configure do |config|
-  config.integrate do |with|
-    with.test_framework :rspec
-    with.library :rails
-  end
-end

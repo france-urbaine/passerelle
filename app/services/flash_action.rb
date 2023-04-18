@@ -33,6 +33,7 @@ module FlashAction
     def read_multi(actions)
       return actions if actions.blank? || null_cache_store?
 
+      actions = Array.wrap(actions)
       cached_keys = actions.grep(CACHE_KEY_REGEXP)
       cached_actions = Rails.cache.read_multi(*cached_keys)
 

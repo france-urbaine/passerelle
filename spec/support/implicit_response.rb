@@ -11,3 +11,7 @@ module ImplicitResponse
     super()
   end
 end
+
+RSpec.configure do |config|
+  config.include ImplicitResponse, type: :request
+end
