@@ -11,8 +11,8 @@ pyrenees_atlantiques:
   name:                 Pyrénées-Atlantiques
   code_departement:     64
   code_region:          75
-  epcis_count:          1
-  communes_count:       1
+  epcis_count:          2
+  communes_count:       3
   ddfips_count:         1
   collectivities_count: 2
 

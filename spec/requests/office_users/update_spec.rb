@@ -11,9 +11,7 @@ RSpec.describe "OfficeUsersController#edit" do
   let(:params) { { office_users: updated_attributes } }
 
   let!(:office) { create(:office) }
-
-  let!(:ddfip) { office.ddfip }
-  let!(:users) { create_list(:user, 3, organization: ddfip) }
+  let!(:users)  { create_list(:user, 3, organization: office.ddfip, offices: []) }
 
   let(:updated_attributes) do
     { user_ids: users.map(&:id) }

@@ -86,11 +86,11 @@ h2.subheader
         | Gérer les utilisateurs
 
 - if office.users_count.zero?
-  .card.mb-6
+  .card.mb-6#office-users
     .card__content
       p.text-disabled Aucun utilisateur lié à ce guichet.
 - else
-  table.datatable.mb-6
+  table.datatable.mb-6#office-users
     thead
       tr.datatable__row
         th( aria-label="Actions" )
@@ -111,12 +111,12 @@ h2.subheader
                 span.tooltip Modifier cet utilisateur
 
               a.icon-button(
-                aria-label="Supprimer cet utilisateur"
+                aria-label="Retirer cet utilisateur"
                 data-turbo-frame="modal"
-                href=remove_user_path(user, referrer: current_path, redirect: current_path)
+                href=remove_office_user_path(office, user, referrer: current_path, redirect: current_path)
               )
-                = svg_icon("trash", "Supprimer cet utilisateur")
-                span.tooltip Supprimer cet utilisateur
+                = svg_icon("backspace", "Retirer cet utilisateur")
+                span.tooltip Retirer cet utilisateur
 
           td
             a(
@@ -148,11 +148,11 @@ h2.subheader
         | Gérer les communes
 
 - if office.communes_count.zero?
-  .card.mb-6
+  .card.mb-6#office-communes
     .card__content
       p.text-disabled Aucune commune liée à ce guichet.
 - else
-  table.datatable.mb-6
+  table.datatable.mb-6#office-communes
     thead
       tr.datatable__row
         th( aria-label="Actions" )

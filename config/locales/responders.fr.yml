@@ -1,7 +1,7 @@
 fr:
   flash:
     actions:
-      update:
+      update: &update
         notice:
           type:         "success"
           title:        "Les modifications ont été enregistrées avec succés."
@@ -104,6 +104,13 @@ fr:
         notice:
           type:         "cancel"
           title:        "La suppression des éditeurs sélectionnés a été annulée."
+          delay:        3000
+
+    office_users:
+      destroy:
+        notice:
+          type:         "success"
+          title:        "L'utilisateur a été retiré du guichet."
           delay:        3000
 
     offices:

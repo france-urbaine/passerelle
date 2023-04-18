@@ -10,9 +10,9 @@ ile_de_france:
 nouvelle_aquitaine:
   name:                 Nouvelle-Aquitaine
   code_region:          75
-  communes_count:       1
-  epcis_count:          1
-  departements_count:   2
+  communes_count:       3
+  epcis_count:          2
+  departements_count:   1
   ddfips_count:         1
   collectivities_count: 2
 
