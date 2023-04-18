@@ -58,6 +58,10 @@ Lint/AmbiguousBlockAssociation:
     - change
     - satisfy
 
+Lint/ConstantDefinitionInBlock:
+  Exclude:
+    - 'config/routes.rb'
+
 # Metric -----------------------------------------------------------------------
 Metrics/AbcSize:
   Enabled: false
