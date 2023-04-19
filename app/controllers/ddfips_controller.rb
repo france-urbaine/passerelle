@@ -41,8 +41,6 @@ class DdfipsController < ApplicationController
     @ddfip = DDFIP.new(ddfip_params)
     @ddfip.save
 
-    @background_url = referrer_path || ddfips_path if @ddfip.errors.any?
-
     respond_with @ddfip,
       flash: true,
       location: -> { redirect_path || ddfips_path }
@@ -51,8 +49,6 @@ class DdfipsController < ApplicationController
   def update
     @ddfip = DDFIP.find(params[:id])
     @ddfip.update(ddfip_params)
-
-    @background_url = referrer_path || ddfip_path(@ddfip) if @ddfip.errors.any?
 
     respond_with @ddfip,
       flash: true,

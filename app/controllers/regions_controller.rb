@@ -25,8 +25,6 @@ class RegionsController < ApplicationController
     @region = Region.find(params[:id])
     @region.update(region_params)
 
-    @background_url = referrer_path || region_path(@region) if @region.errors.any?
-
     respond_with @region,
       flash: true,
       location: -> { redirect_path || regions_path }

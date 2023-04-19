@@ -41,8 +41,6 @@ class PublishersController < ApplicationController
     @publisher = Publisher.new(publisher_params)
     @publisher.save
 
-    @background_url = referrer_path || publishers_path if @publisher.errors.any?
-
     respond_with @publisher,
       flash: true,
       location: -> { redirect_path || publishers_path }
@@ -51,8 +49,6 @@ class PublishersController < ApplicationController
   def update
     @publisher = Publisher.find(params[:id])
     @publisher.update(publisher_params)
-
-    @background_url = referrer_path || publisher_path(@publisher) if @publisher.errors.any?
 
     respond_with @publisher,
       flash: true,

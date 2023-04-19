@@ -25,8 +25,6 @@ class EpcisController < ApplicationController
     @epci = EPCI.find(params[:id])
     @epci.update(epci_params)
 
-    @background_url = referrer_path || epci_path(@epci) if @epci.errors.any?
-
     respond_with @epci,
       flash: true,
       location: -> { redirect_path || epcis_path }

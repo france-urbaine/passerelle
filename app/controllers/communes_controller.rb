@@ -25,8 +25,6 @@ class CommunesController < ApplicationController
     @commune = Commune.find(params[:id])
     @commune.update(commune_params)
 
-    @background_url = referrer_path || commune_path(@commune) if @commune.errors.any?
-
     respond_with @commune,
       flash: true,
       location: -> { redirect_path || communes_path }

@@ -41,8 +41,6 @@ class CollectivitiesController < ApplicationController
     @collectivity = Collectivity.new(collectivity_params)
     @collectivity.save
 
-    @background_url = referrer_path || collectivities_path if @collectivity.errors.any?
-
     respond_with @collectivity,
       flash: true,
       location: -> { redirect_path || collectivities_path }
@@ -51,8 +49,6 @@ class CollectivitiesController < ApplicationController
   def update
     @collectivity = Collectivity.find(params[:id])
     @collectivity.update(collectivity_params)
-
-    @background_url = referrer_path || collectivity_path(@collectivity) if @collectivity.errors.any?
 
     respond_with @collectivity,
       flash: true,

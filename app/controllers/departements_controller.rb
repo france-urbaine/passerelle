@@ -25,8 +25,6 @@ class DepartementsController < ApplicationController
     @departement = Departement.find(params[:id])
     @departement.update(departement_params)
 
-    @background_url = referrer_path || departement_path(@departement) if @departement.errors.any?
-
     respond_with @departement,
       flash: true,
       location: -> { redirect_path || departements_path }

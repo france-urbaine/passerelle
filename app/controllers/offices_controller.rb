@@ -41,8 +41,6 @@ class OfficesController < ApplicationController
     @office = Office.new(office_params)
     @office.save
 
-    @background_url = referrer_path || offices_path if @office.errors.any?
-
     respond_with @office,
       flash: true,
       location: -> { redirect_path || offices_path }
@@ -51,8 +49,6 @@ class OfficesController < ApplicationController
   def update
     @office = Office.find(params[:id])
     @office.update(office_params)
-
-    @background_url = referrer_path || office_path(@office) if @office.errors.any?
 
     respond_with @office,
       flash: true,
