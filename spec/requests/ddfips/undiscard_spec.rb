@@ -32,14 +32,14 @@ RSpec.describe "DdfipsController#undiscard" do
       )
     end
 
-    context "when ddfip is not discarded" do
+    context "when the DDFIP is not discarded" do
       let(:ddfip) { create(:ddfip) }
 
       it { expect(response).to have_http_status(:see_other) }
       it { expect { request and ddfip.reload }.not_to change(ddfip, :discarded_at).from(nil) }
     end
 
-    context "when ddfip is missing" do
+    context "when the DDFIP is missing" do
       let(:ddfip) { DDFIP.new(id: Faker::Internet.uuid) }
 
       it { expect(response).to have_http_status(:not_found) }

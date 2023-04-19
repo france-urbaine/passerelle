@@ -16,7 +16,15 @@ RSpec.describe "PublishersController#show" do
     it { expect(response).to have_content_type(:html) }
     it { expect(response).to have_html_body }
 
-    context "when publisher is missing" do
+    context "when the publisher is discarded" do
+      let(:publisher) { create(:publisher, :discarded) }
+
+      it { expect(response).to have_http_status(:gone) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
+    end
+
+    context "when the publisher is missing" do
       let(:publisher) { Publisher.new(id: Faker::Internet.uuid) }
 
       it { expect(response).to have_http_status(:not_found) }

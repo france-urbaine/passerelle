@@ -16,7 +16,7 @@ RSpec.describe "EpcisController#show" do
     it { expect(response).to have_content_type(:html) }
     it { expect(response).to have_html_body }
 
-    context "when EPCI is missing" do
+    context "when the EPCI is missing" do
       let(:epci) { EPCI.new(id: Faker::Internet.uuid) }
 
       it { expect(response).to have_http_status(:not_found) }

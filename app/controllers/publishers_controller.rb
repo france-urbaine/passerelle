@@ -14,6 +14,7 @@ class PublishersController < ApplicationController
 
   def show
     @publisher = Publisher.find(params[:id])
+    gone if @publisher.discarded?
   end
 
   def new
@@ -23,11 +24,15 @@ class PublishersController < ApplicationController
 
   def edit
     @publisher = Publisher.find(params[:id])
+    return gone if @publisher.discarded?
+
     @background_url = referrer_path || publisher_path(@publisher)
   end
 
   def remove
     @publisher = Publisher.find(params[:id])
+    return gone if @publisher.discarded?
+
     @background_url = referrer_path || publisher_path(@publisher)
   end
 
@@ -48,6 +53,8 @@ class PublishersController < ApplicationController
 
   def update
     @publisher = Publisher.find(params[:id])
+    return gone if @publisher.discarded?
+
     @publisher.update(publisher_params)
 
     respond_with @publisher,

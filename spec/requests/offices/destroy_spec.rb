@@ -42,14 +42,14 @@ RSpec.describe "OfficesController#destroy" do
       )
     end
 
-    context "when office is already discarded" do
+    context "when the office is already discarded" do
       let(:office) { create(:office, :discarded) }
 
       it { expect(response).to have_http_status(:see_other) }
       it { expect { request }.not_to change(Office.discarded, :count).from(1) }
     end
 
-    context "when office is missing" do
+    context "when the office is missing" do
       let(:office) { Office.new(id: Faker::Internet.uuid) }
 
       it { expect(response).to have_http_status(:not_found) }

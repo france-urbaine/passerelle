@@ -16,13 +16,15 @@ RSpec.describe "DdfipsController#remove" do
     it { expect(response).to have_content_type(:html) }
     it { expect(response).to have_html_body }
 
-    context "when ddfip is already discarded" do
+    context "when the DDFIP is already discarded" do
       let(:ddfip) { create(:ddfip, :discarded) }
 
-      it { expect(response).to have_http_status(:success) }
+      it { expect(response).to have_http_status(:gone) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
     end
 
-    context "when ddfip is missing" do
+    context "when the DDFIP is missing" do
       let(:ddfip) { DDFIP.new(id: Faker::Internet.uuid) }
 
       it { expect(response).to have_http_status(:not_found) }

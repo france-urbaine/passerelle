@@ -25,9 +25,9 @@ Rails.application.routes.draw do
 
   devise_for :user
 
-  UUID_REGEXP = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/
+  ID_REGEXP = %r{(?!(new|edit|remove|discard|undiscard))[^/]+}
 
-  constraints(id: UUID_REGEXP) do
+  constraints(id: ID_REGEXP) do
     resources :ddfips,         concerns: %i[removable undiscardable]
 
     resources :users,          concerns: %i[removable undiscardable], path: "/utilisateurs"

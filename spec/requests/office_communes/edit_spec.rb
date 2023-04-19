@@ -16,7 +16,7 @@ RSpec.describe "OfficeCommunesController#edit" do
     it { expect(response).to have_content_type(:html) }
     it { expect(response).to have_html_body }
 
-    context "when office is missing" do
+    context "when the office is missing" do
       let(:office) { Office.new(id: Faker::Internet.uuid) }
 
       it { expect(response).to have_http_status(:not_found) }

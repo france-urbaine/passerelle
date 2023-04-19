@@ -16,7 +16,7 @@ RSpec.describe "DepartementsController#edit" do
     it { expect(response).to have_content_type(:html) }
     it { expect(response).to have_html_body }
 
-    context "when departement is missing" do
+    context "when the departement is missing" do
       let(:departement) { Departement.new(id: Faker::Internet.uuid) }
 
       it { expect(response).to have_http_status(:not_found) }

@@ -248,7 +248,7 @@ RSpec.describe "CollectivitiesController#create" do
         end
       end
 
-      context "with an invalid territory_code" do
+      context "with an invalid territory ID" do
         let(:territory_type) { "Commune" }
         let(:territory_id)   { "1234" }
 

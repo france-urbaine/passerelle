@@ -16,7 +16,15 @@ RSpec.describe "CollectivitiesController#show" do
     it { expect(response).to have_content_type(:html) }
     it { expect(response).to have_html_body }
 
-    context "when collectivity is missing" do
+    context "when the collectivity is discarded" do
+      let(:collectivity) { create(:collectivity, :discarded) }
+
+      it { expect(response).to have_http_status(:gone) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
+    end
+
+    context "when the collectivity is missing" do
       let(:collectivity) { Collectivity.new(id: Faker::Internet.uuid) }
 
       it { expect(response).to have_http_status(:not_found) }

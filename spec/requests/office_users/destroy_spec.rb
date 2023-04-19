@@ -38,7 +38,7 @@ RSpec.describe "OfficeUsersController#destroy" do
       )
     end
 
-    context "when user doesn't belong to office" do
+    context "when the user doesn't belong to office" do
       let(:user) { create(:user, organization: office.ddfip) }
 
       it { expect(response).to have_http_status(:not_found) }
@@ -46,7 +46,7 @@ RSpec.describe "OfficeUsersController#destroy" do
       it { expect(response).to have_html_body }
     end
 
-    context "when user doesn't belong to ddfip" do
+    context "when the user doesn't belong to ddfip" do
       let(:user) { create(:user) }
 
       it { expect(response).to have_http_status(:not_found) }
@@ -54,7 +54,7 @@ RSpec.describe "OfficeUsersController#destroy" do
       it { expect(response).to have_html_body }
     end
 
-    context "when user is missing" do
+    context "when the user is missing" do
       let(:user) { Office.new(id: Faker::Internet.uuid) }
 
       it { expect(response).to have_http_status(:not_found) }

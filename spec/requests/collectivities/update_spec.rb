@@ -39,6 +39,22 @@ RSpec.describe "CollectivitiesController#update" do
       end
     end
 
+    context "when the collectivity is discarded" do
+      let(:collectivity) { create(:collectivity, :discarded) }
+
+      it { expect(response).to have_http_status(:gone) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
+    end
+
+    context "when the collectivity is missing" do
+      let(:collectivity) { Collectivity.new(id: Faker::Internet.uuid) }
+
+      it { expect(response).to have_http_status(:not_found) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
+    end
+
     context "with invalid parameters" do
       let(:updated_attributes) do
         super().merge(name: "")

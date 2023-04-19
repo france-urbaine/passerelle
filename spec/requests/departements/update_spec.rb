@@ -17,23 +17,33 @@ RSpec.describe "DepartementsController#update" do
   end
 
   context "when requesting HTML" do
-    it { expect(response).to have_http_status(:see_other) }
-    it { expect(response).to redirect_to("/departements") }
+    context "with valid parameters" do
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/departements") }
 
-    it "updates the departement" do
-      expect {
-        request
-        departement.reload
-      } .to change(departement, :updated_at)
-        .and change(departement, :name).to("Vendée")
+      it "updates the departement" do
+        expect {
+          request
+          departement.reload
+        } .to change(departement, :updated_at)
+          .and change(departement, :name).to("Vendée")
+      end
+
+      it "sets a flash notice" do
+        expect(flash).to have_flash_notice.to eq(
+          type:  "success",
+          title: "Les modifications ont été enregistrées avec succés.",
+          delay: 3000
+        )
+      end
     end
 
-    it "sets a flash notice" do
-      expect(flash).to have_flash_notice.to eq(
-        type:  "success",
-        title: "Les modifications ont été enregistrées avec succés.",
-        delay: 3000
-      )
+    context "when the departement is missing" do
+      let(:departement) { Departement.new(id: Faker::Internet.uuid) }
+
+      it { expect(response).to have_http_status(:not_found) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
     end
 
     context "with invalid parameters" do

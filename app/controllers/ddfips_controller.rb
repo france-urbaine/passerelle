@@ -14,6 +14,7 @@ class DdfipsController < ApplicationController
 
   def show
     @ddfip = DDFIP.find(params[:id])
+    gone if @ddfip.discarded?
   end
 
   def new
@@ -23,11 +24,15 @@ class DdfipsController < ApplicationController
 
   def edit
     @ddfip = DDFIP.find(params[:id])
+    return gone if @ddfip.discarded?
+
     @background_url = referrer_path || ddfip_path(@ddfip)
   end
 
   def remove
     @ddfip = DDFIP.find(params[:id])
+    return gone if @ddfip.discarded?
+
     @background_url = referrer_path || ddfip_path(@ddfip)
   end
 
@@ -48,6 +53,8 @@ class DdfipsController < ApplicationController
 
   def update
     @ddfip = DDFIP.find(params[:id])
+    return gone if @ddfip.discarded?
+
     @ddfip.update(ddfip_params)
 
     respond_with @ddfip,

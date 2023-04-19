@@ -16,7 +16,7 @@ RSpec.describe "CommunesController#edit" do
     it { expect(response).to have_content_type(:html) }
     it { expect(response).to have_html_body }
 
-    context "when commune is missing" do
+    context "when the commune is missing" do
       let(:commune) { Commune.new(id: Faker::Internet.uuid) }
 
       it { expect(response).to have_http_status(:not_found) }

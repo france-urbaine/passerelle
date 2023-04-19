@@ -38,6 +38,22 @@ RSpec.describe "OfficesController#update" do
       end
     end
 
+    context "when the office is discarded" do
+      let(:office) { create(:office, :discarded) }
+
+      it { expect(response).to have_http_status(:gone) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
+    end
+
+    context "when the office is missing" do
+      let(:office) { Office.new(id: Faker::Internet.uuid) }
+
+      it { expect(response).to have_http_status(:not_found) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
+    end
+
     context "with invalid parameters" do
       let(:updated_attributes) do
         super().merge(name: "")

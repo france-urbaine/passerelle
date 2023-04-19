@@ -32,14 +32,14 @@ RSpec.describe "PublishersController#undiscard" do
       )
     end
 
-    context "when publisher is not discarded" do
+    context "when the publisher is not discarded" do
       let(:publisher) { create(:publisher) }
 
       it { expect(response).to have_http_status(:see_other) }
       it { expect { request and publisher.reload }.not_to change(publisher, :discarded_at).from(nil) }
     end
 
-    context "when publisher is missing" do
+    context "when the publisher is missing" do
       let(:publisher) { Publisher.new(id: Faker::Internet.uuid) }
 
       it { expect(response).to have_http_status(:not_found) }

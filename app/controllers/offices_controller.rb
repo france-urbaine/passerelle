@@ -14,6 +14,7 @@ class OfficesController < ApplicationController
 
   def show
     @office = Office.find(params[:id])
+    gone if @office.discarded?
   end
 
   def new
@@ -23,11 +24,15 @@ class OfficesController < ApplicationController
 
   def edit
     @office = Office.find(params[:id])
+    return gone if @office.discarded?
+
     @background_url = referrer_path || office_path(@office)
   end
 
   def remove
     @office = Office.find(params[:id])
+    return gone if @office.discarded?
+
     @background_url = referrer_path || office_path(@office)
   end
 
@@ -48,6 +53,8 @@ class OfficesController < ApplicationController
 
   def update
     @office = Office.find(params[:id])
+    return gone if @office.discarded?
+
     @office.update(office_params)
 
     respond_with @office,

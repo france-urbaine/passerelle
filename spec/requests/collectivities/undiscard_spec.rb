@@ -32,14 +32,14 @@ RSpec.describe "CollectivitiesController#undiscard" do
       )
     end
 
-    context "when collectivity is not discarded" do
+    context "when the collectivity is not discarded" do
       let(:collectivity) { create(:collectivity) }
 
       it { expect(response).to have_http_status(:see_other) }
       it { expect { request and collectivity.reload }.not_to change(collectivity, :discarded_at).from(nil) }
     end
 
-    context "when collectivity is missing" do
+    context "when the collectivity is missing" do
       let(:collectivity) { Collectivity.new(id: Faker::Internet.uuid) }
 
       it { expect(response).to have_http_status(:not_found) }

@@ -13,15 +13,6 @@
     icon: "trash",
     modal: true
 
-- if ddfip.discarded?
-  .card.mb-6
-    .card__content.bg-yellow-100.text-yellow-700( role="alert" )
-      b Compte en cours de suppression.
-      br
-      |  Ce compte a été archivé le #{localize(ddfip.discarded_at.to_date)}.
-      br
-      |  Il sera définitivement supprimé le #{localize(30.days.after(ddfip.discarded_at.to_date))}.
-
 h2.subheader
   = svg_icon("identification", "Nouvelle section")
   | Description

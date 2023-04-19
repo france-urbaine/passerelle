@@ -17,23 +17,33 @@ RSpec.describe "EpcisController#update" do
   end
 
   context "when requesting HTML" do
-    it { expect(response).to have_http_status(:see_other) }
-    it { expect(response).to redirect_to("/epcis") }
+    context "with valid parameters" do
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/epcis") }
 
-    it "updates the epci" do
-      expect {
-        request
-        epci.reload
-      } .to change(epci, :updated_at)
-        .and change(epci, :name).to("Agglomération d'Agen")
+      it "updates the epci" do
+        expect {
+          request
+          epci.reload
+        } .to change(epci, :updated_at)
+          .and change(epci, :name).to("Agglomération d'Agen")
+      end
+
+      it "sets a flash notice" do
+        expect(flash).to have_flash_notice.to eq(
+          type:  "success",
+          title: "Les modifications ont été enregistrées avec succés.",
+          delay: 3000
+        )
+      end
     end
 
-    it "sets a flash notice" do
-      expect(flash).to have_flash_notice.to eq(
-        type:  "success",
-        title: "Les modifications ont été enregistrées avec succés.",
-        delay: 3000
-      )
+    context "when the EPCI is missing" do
+      let(:epci) { EPCI.new(id: Faker::Internet.uuid) }
+
+      it { expect(response).to have_http_status(:not_found) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
     end
 
     context "with invalid parameters" do

@@ -17,23 +17,33 @@ RSpec.describe "RegionsController#update" do
   end
 
   context "when requesting HTML" do
-    it { expect(response).to have_http_status(:see_other) }
-    it { expect(response).to redirect_to("/regions") }
+    context "with valid parameters" do
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/regions") }
 
-    it "updates the region" do
-      expect {
-        request
-        region.reload
-      } .to change(region, :updated_at)
-        .and change(region, :name).to("Ile-de-France")
+      it "updates the region" do
+        expect {
+          request
+          region.reload
+        } .to change(region, :updated_at)
+          .and change(region, :name).to("Ile-de-France")
+      end
+
+      it "sets a flash notice" do
+        expect(flash).to have_flash_notice.to eq(
+          type:  "success",
+          title: "Les modifications ont été enregistrées avec succés.",
+          delay: 3000
+        )
+      end
     end
 
-    it "sets a flash notice" do
-      expect(flash).to have_flash_notice.to eq(
-        type:  "success",
-        title: "Les modifications ont été enregistrées avec succés.",
-        delay: 3000
-      )
+    context "when the region is missing" do
+      let(:region) { Region.new(id: Faker::Internet.uuid) }
+
+      it { expect(response).to have_http_status(:not_found) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
     end
 
     context "with invalid parameters" do

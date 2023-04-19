@@ -42,14 +42,14 @@ RSpec.describe "CollectivitiesController#destroy" do
       )
     end
 
-    context "when collectivity is already discarded" do
+    context "when the collectivity is already discarded" do
       let(:collectivity) { create(:collectivity, :discarded) }
 
       it { expect(response).to have_http_status(:see_other) }
       it { expect { request }.not_to change(Collectivity.discarded, :count).from(1) }
     end
 
-    context "when collectivity is missing" do
+    context "when the collectivity is missing" do
       let(:collectivity) { Collectivity.new(id: Faker::Internet.uuid) }
 
       it { expect(response).to have_http_status(:not_found) }

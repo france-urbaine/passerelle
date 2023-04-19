@@ -36,8 +36,13 @@ class ApplicationController < ActionController::Base
     define_method(status) do
       respond_to do |format|
         # TODO: add templates to render statuses
-        format.html { render(status:, template: "shared/statuses/#{status}") }
-        format.all  { head(status) }
+        format.html do
+          render status:, action: status
+        rescue ActionView::MissingTemplate
+          render status:, template: "shared/statuses/#{status}"
+        end
+
+        format.all { head(status) }
       end
     end
   end
