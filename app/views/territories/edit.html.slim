@@ -4,8 +4,6 @@
       | Mise à jour des territoires
 
     - modal.with_form(model: @territories_update, url: territories_path, method: :patch) do
-      = hidden_param_input(:redirect)
-
       div( class="w-[640px]" )
         - @territories_update.strip_domain_urls
 

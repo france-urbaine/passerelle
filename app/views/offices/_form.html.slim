@@ -4,9 +4,7 @@
   - else
     | Création d'un nouveau guichet
 
-= modal.with_form(model: office) do
-  = hidden_param_input(:redirect)
-
+- modal.with_form(model: office) do
   = fields(model: office) do |form|
     = form.block :ddfip, first: true, autocomplete: ddfips_path do
       ruby:

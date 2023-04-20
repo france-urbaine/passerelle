@@ -49,7 +49,7 @@ class UsersController < ApplicationController
 
     respond_with @user,
       flash: true,
-      location: -> { redirect_path || users_path }
+      location: -> { redirect_path || referrer_path || users_path }
   end
 
   def update
@@ -60,7 +60,7 @@ class UsersController < ApplicationController
 
     respond_with @user,
       flash: true,
-      location: -> { redirect_path || users_path }
+      location: -> { redirect_path || referrer_path || users_path }
   end
 
   def destroy
@@ -79,7 +79,7 @@ class UsersController < ApplicationController
 
     respond_with @user,
       flash: true,
-      location: redirect_path || users_path
+      location: redirect_path || referrer_path || users_path
   end
 
   def destroy_all

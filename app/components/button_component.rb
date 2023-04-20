@@ -53,7 +53,7 @@ class ButtonComponent < ViewComponent::Base
     options[:method] = @method
     options[:form_class] = ""
 
-    helpers.button_to @href, options, &
+    helpers.button_to href, options, &
   end
 
   def link(icon_only: false, &)
@@ -61,7 +61,7 @@ class ButtonComponent < ViewComponent::Base
     options[:class] = extract_class_attributes(icon_only:)
     options[:data]  = extract_data_attributes
     options[:aria]  = extract_aria_attributes
-    options[:href]  = @href
+    options[:href]  = href
 
     tag.a(**options, &)
   end
@@ -74,6 +74,16 @@ class ButtonComponent < ViewComponent::Base
     options[:type] ||= "button"
 
     tag.button(**options, &)
+  end
+
+  def href
+    return if @href.blank?
+    return @href unless @modal && helpers.current_path
+
+    params = { referrer: helpers.current_path }.to_query
+    join   = @href.include?("?") ? "&" : "?"
+
+    "#{@href}#{join}#{params}"
   end
 
   def icon

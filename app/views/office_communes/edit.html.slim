@@ -4,8 +4,6 @@
       | Gestion des communes gérées par le guichet
 
     - modal.with_form(model: @office_communes_form, url: office_communes_path(@office), method: :patch) do
-      = hidden_param_input(:redirect)
-
       p Sélectionnez les EPCI et/ou communes dont les dossiers seront traités par ce guichet.
 
       = fields(model: @office_communes_form) do |form|

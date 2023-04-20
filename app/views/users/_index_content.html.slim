@@ -30,12 +30,12 @@ div( data-controller="selection" )
 
       - row.with_action "Modifier cet utilisateur",
         icon:  "pencil-square",
-        href:  edit_user_path(user, referrer: current_path, redirect: current_path),
+        href:  edit_user_path(user),
         modal: true
 
       - row.with_action "Supprimer cet utilisateur",
         icon:  "trash",
-        href:  remove_user_path(user, referrer: current_path, redirect: current_path),
+        href:  remove_user_path(user),
         modal: true
 
       - row.with_column(:name) do

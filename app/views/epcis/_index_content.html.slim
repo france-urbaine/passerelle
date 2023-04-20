@@ -3,7 +3,7 @@
   - breadcrumbs.with_path "EPCI"
 
   - breadcrumbs.with_action "Mettre à jour",
-    href: edit_territories_path(referrer: current_path, redirect: current_path),
+    href: edit_territories_path,
     icon: "cloud-arrow-down",
     modal: true
 
@@ -28,7 +28,7 @@ div( data-controller="selection" )
 
       - row.with_action "Modifier cet EPCI",
         icon:  "pencil-square",
-        href:  edit_epci_path(epci, referrer: current_path, redirect: current_path),
+        href:  edit_epci_path(epci),
         modal: true
 
       - row.with_column(:epci) do |column|

@@ -4,9 +4,7 @@
   - else
     | Création d'un nouvel éditeur
 
-= modal.with_form(model: publisher) do
-  = hidden_param_input(:redirect)
-
+- modal.with_form(model: publisher) do
   = fields(model: publisher) do |form|
     = form.block :name, first: true do
       = form.label :name

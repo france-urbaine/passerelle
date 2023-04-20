@@ -27,7 +27,7 @@ class DepartementsController < ApplicationController
 
     respond_with @departement,
       flash: true,
-      location: -> { redirect_path || departements_path }
+      location: -> { redirect_path || referrer_path || departements_path }
   end
 
   private

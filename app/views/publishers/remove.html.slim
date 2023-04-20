@@ -4,8 +4,6 @@
       | Suppression de l'éditeur : #{@publisher.name}
 
     - modal.with_form(model: @publisher, method: :delete) do
-      = hidden_param_input(:redirect)
-
       p
         | Êtes-vous sûrs de vouloir supprimer cet éditeur ?
         br

@@ -49,7 +49,7 @@ class CollectivitiesController < ApplicationController
 
     respond_with @collectivity,
       flash: true,
-      location: -> { redirect_path || collectivities_path }
+      location: -> { redirect_path || referrer_path || collectivities_path }
   end
 
   def update
@@ -60,7 +60,7 @@ class CollectivitiesController < ApplicationController
 
     respond_with @collectivity,
       flash: true,
-      location: -> { redirect_path || collectivities_path }
+      location: -> { redirect_path || referrer_path || collectivities_path }
   end
 
   def destroy
@@ -79,7 +79,7 @@ class CollectivitiesController < ApplicationController
 
     respond_with @collectivity,
       flash: true,
-      location: redirect_path || collectivities_path
+      location: redirect_path || referrer_path || collectivities_path
   end
 
   def destroy_all

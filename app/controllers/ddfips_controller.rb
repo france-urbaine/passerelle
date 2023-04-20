@@ -48,7 +48,7 @@ class DdfipsController < ApplicationController
 
     respond_with @ddfip,
       flash: true,
-      location: -> { redirect_path || ddfips_path }
+      location: -> { redirect_path || referrer_path || ddfips_path }
   end
 
   def update
@@ -59,7 +59,7 @@ class DdfipsController < ApplicationController
 
     respond_with @ddfip,
       flash: true,
-      location: -> { redirect_path || ddfips_path }
+      location: -> { redirect_path || referrer_path || ddfips_path }
   end
 
   def destroy
@@ -78,7 +78,7 @@ class DdfipsController < ApplicationController
 
     respond_with @ddfip,
       flash: true,
-      location: redirect_path || ddfips_path
+      location: redirect_path || referrer_path || ddfips_path
   end
 
   def destroy_all

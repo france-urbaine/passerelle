@@ -4,8 +4,6 @@
       | Retrait de l'utilisateur : #{@user.name}
 
     - modal.with_form(url: office_user_path(@office, @user), method: :delete) do
-      = hidden_param_input(:redirect)
-
       p
         | Êtes-vous sûrs de vouloir retirer cet utilisateur du guichet ?
       p

@@ -4,7 +4,7 @@
   - breadcrumbs.with_path departement.name
 
   - breadcrumbs.with_action "Modifier",
-    href: edit_departement_path(departement, referrer: current_path, redirect: current_path),
+    href: edit_departement_path(departement),
     icon: "pencil-square",
     modal: true
 
@@ -70,7 +70,7 @@ h2.subheader
     .subheader-bar__action
       a.button(
         data-turbo-frame="modal"
-        href=new_ddfip_path(referrer: current_path, redirect: current_path, ddfip: { code_departement: departement.code_departement })
+        href=new_ddfip_path(referrer: current_path, ddfip: { code_departement: departement.code_departement })
       )
         = svg_icon("plus")
         | Ajouter une DDFIP
@@ -94,7 +94,7 @@ h2.subheader
           td.datatable__row-actions
             .flex
               a.icon-button(
-                href=edit_ddfip_path(ddfip, referrer: current_path, redirect: current_path)
+                href=edit_ddfip_path(ddfip, referrer: current_path)
                 aria-label="Modifier cette DDFIP"
                 data-turbo-frame="modal"
               )
@@ -104,7 +104,7 @@ h2.subheader
               a.icon-button(
                 aria-label="Supprimer cette DDFIP"
                 data-turbo-frame="modal"
-                href=remove_ddfip_path(ddfip, referrer: current_path, redirect: current_path)
+                href=remove_ddfip_path(ddfip, referrer: current_path)
               )
                 = svg_icon("trash", "Supprimer cette DDFIP")
                 span.tooltip Supprimer cette DDFIP
@@ -141,7 +141,7 @@ h2.subheader
         tr.datatable__row
           td.datatable__row-actions
             a.icon-button(
-              href=edit_collectivity_path(collectivity, referrer: current_path, redirect: current_path)
+              href=edit_collectivity_path(collectivity, referrer: current_path)
               aria-label="Modifier cette collectivité"
               data-turbo-frame="modal"
             )

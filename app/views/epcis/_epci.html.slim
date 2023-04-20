@@ -4,7 +4,7 @@
   - breadcrumbs.with_path epci.name
 
   - breadcrumbs.with_action "Modifier",
-    href: edit_epci_path(epci, referrer: current_path, redirect: current_path),
+    href: edit_epci_path(epci),
     icon: "pencil-square",
     modal: true
 
@@ -76,7 +76,7 @@ h2.subheader
         tr.datatable__row
           td.datatable__row-actions
             a.icon-button(
-              href=edit_collectivity_path(collectivity, referrer: current_path, redirect: current_path)
+              href=edit_collectivity_path(collectivity, referrer: current_path)
               aria-label="Modifier cette collectivité"
               data-turbo-frame="modal"
             )

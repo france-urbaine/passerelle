@@ -41,7 +41,7 @@ RSpec.describe ButtonComponent, type: :component do
 
       expect(page).to have_link("Click me!", class: "button") do |button|
         aggregate_failures do
-          expect(button["href"]).to eq("/communes")
+          expect(button["href"]).to eq("/communes?referrer=#{CGI.escape(current_path)}")
           expect(button["data-turbo-frame"]).to eq("modal")
         end
       end

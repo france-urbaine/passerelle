@@ -4,8 +4,6 @@
       | Suppression de l'utilisateur : #{@user.name}
 
     - modal.with_form(model: @user, method: :delete) do
-      = hidden_param_input(:redirect)
-
       p Êtes-vous sûrs de vouloir supprimer cet utilisateur ?
       p
         | Par mesure de securité, les données de cet utilisateur seront archivées pendant 1 jour.

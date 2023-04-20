@@ -4,12 +4,12 @@
   - breadcrumbs.with_path collectivity.name
 
   - breadcrumbs.with_action "Modifier",
-    href: edit_collectivity_path(collectivity, referrer: current_path, redirect: current_path),
+    href: edit_collectivity_path(collectivity),
     icon: "pencil-square",
     modal: true
 
   - breadcrumbs.with_action "Supprimer",
-    href: remove_collectivity_path(collectivity, referrer: current_path),
+    href: remove_collectivity_path(collectivity),
     icon: "trash",
     modal: true
 
@@ -62,7 +62,7 @@ h2.subheader
     .subheader-bar__action
       a.button(
         data-turbo-frame="modal"
-        href=new_user_path(referrer: current_path, redirect: current_path, user: { organization_type: "Collectivity", organization_id: collectivity.id })
+        href=new_user_path(referrer: current_path, user: { organization_type: "Collectivity", organization_id: collectivity.id })
       )
         = svg_icon("plus")
         | Inviter un utilisateur
@@ -86,7 +86,7 @@ h2.subheader
           td.datatable__row-actions
             .flex
               a.icon-button(
-                href=edit_user_path(user, referrer: current_path, redirect: current_path)
+                href=edit_user_path(user, referrer: current_path)
                 aria-label="Modifier cet utilisateur"
                 data-turbo-frame="modal"
               )
@@ -96,7 +96,7 @@ h2.subheader
               a.icon-button(
                 aria-label="Supprimer cet utilisateur"
                 data-turbo-frame="modal"
-                href=remove_user_path(user, referrer: current_path, redirect: current_path)
+                href=remove_user_path(user, referrer: current_path)
               )
                 = svg_icon("trash", "Supprimer cet utilisateur")
                 span.tooltip Supprimer cet utilisateur

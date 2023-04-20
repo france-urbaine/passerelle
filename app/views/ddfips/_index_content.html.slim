@@ -30,12 +30,12 @@ div( data-controller="selection" )
 
       - row.with_action "Modifier cette DDFIP",
         icon:  "pencil-square",
-        href:  edit_ddfip_path(ddfip, referrer: current_path, redirect: current_path),
+        href:  edit_ddfip_path(ddfip),
         modal: true
 
       - row.with_action "Supprimer cette DDFIP",
         icon:  "trash",
-        href:  remove_ddfip_path(ddfip, referrer: current_path, redirect: current_path),
+        href:  remove_ddfip_path(ddfip),
         modal: true
 
       - row.with_column(:name) do

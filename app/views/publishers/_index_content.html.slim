@@ -29,12 +29,12 @@ div( data-controller="selection" )
 
       - row.with_action "Modifier cet éditeur",
         icon:  "pencil-square",
-        href:  edit_publisher_path(publisher, referrer: current_path, redirect: current_path),
+        href:  edit_publisher_path(publisher),
         modal: true
 
       - row.with_action "Supprimer cet éditeur",
         icon:  "trash",
-        href:  remove_publisher_path(publisher, referrer: current_path, redirect: current_path),
+        href:  remove_publisher_path(publisher),
         modal: true
 
       - row.with_column(:name) do

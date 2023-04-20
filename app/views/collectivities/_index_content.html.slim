@@ -29,12 +29,12 @@ div( data-controller="selection" )
 
       - row.with_action "Modifier cette collectivité",
         icon:  "pencil-square",
-        href:  edit_collectivity_path(collectivity, referrer: current_path, redirect: current_path),
+        href:  edit_collectivity_path(collectivity),
         modal: true
 
       - row.with_action "Supprimer cette collectivité",
         icon:  "trash",
-        href:  remove_collectivity_path(collectivity, referrer: current_path, redirect: current_path),
+        href:  remove_collectivity_path(collectivity),
         modal: true
 
       - row.with_column(:name) do

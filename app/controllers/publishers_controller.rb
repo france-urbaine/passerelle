@@ -48,7 +48,7 @@ class PublishersController < ApplicationController
 
     respond_with @publisher,
       flash: true,
-      location: -> { redirect_path || publishers_path }
+      location: -> { redirect_path || referrer_path || publishers_path }
   end
 
   def update
@@ -59,7 +59,7 @@ class PublishersController < ApplicationController
 
     respond_with @publisher,
       flash: true,
-      location: -> { redirect_path || publishers_path }
+      location: -> { redirect_path || referrer_path || publishers_path }
   end
 
   def destroy
@@ -78,7 +78,7 @@ class PublishersController < ApplicationController
 
     respond_with @publisher,
       flash: true,
-      location: redirect_path || publishers_path
+      location: redirect_path || referrer_path || publishers_path
   end
 
   def destroy_all

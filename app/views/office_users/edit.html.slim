@@ -4,8 +4,6 @@
       | Gestion des utilisateurs du guichet
 
     - modal.with_form(model: @office_users_form, url: office_users_path(@office), method: :patch) do
-      = hidden_param_input(:redirect)
-
       p
         | Sélectionnez parmi les utlisateurs de la DDFIP ceux qui ont accès à ce guichet
         br

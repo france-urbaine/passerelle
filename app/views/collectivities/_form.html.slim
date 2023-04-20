@@ -5,8 +5,6 @@
     | Création d'une nouvelle collectivité
 
 - modal.with_form(model: collectivity) do
-  = hidden_param_input(:redirect)
-
   = fields(model: collectivity) do |form|
     = form.block :territory, first: true, autocomplete: territories_path do
       ruby:

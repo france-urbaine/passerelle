@@ -22,7 +22,7 @@ class OfficeUsersController < ApplicationController
 
     respond_with @office_users_updater,
       flash: true,
-      location: -> { redirect_path || office_path(@office) }
+      location: -> { redirect_path || referrer_path || office_path(@office) }
   end
 
   def destroy
@@ -32,7 +32,7 @@ class OfficeUsersController < ApplicationController
 
     respond_with @office,
       flash: true,
-      location: -> { redirect_path || office_path(@office) }
+      location: -> { redirect_path || referrer_path || office_path(@office) }
   end
 
   private

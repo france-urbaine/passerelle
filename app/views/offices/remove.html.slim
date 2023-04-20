@@ -4,8 +4,6 @@
       | Suppression du guichet : #{@office.name}
 
     - modal.with_form(model: @office, method: :delete) do
-      = hidden_param_input(:redirect)
-
       p
         | Êtes-vous sûrs de vouloir supprimer ce guichet ?
         br
