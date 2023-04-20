@@ -1,8 +1,8 @@
-- if %w[modal modal_form].include?(helpers.turbo_frame_request_id)
+- if %w[modal modal_form].include?(turbo_frame_request_id)
   = tag.turbo_frame id: "modal", src: @modal_src do
     = modal
 
-- elsif helpers.turbo_frame_request?
+- elsif turbo_frame_request?
   = tag.turbo_frame id: "content", src: @content_src do
     = content
 

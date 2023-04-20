@@ -26,4 +26,12 @@ class TemplateFrameComponent < ViewComponent::Base
       modal_component
     end
   end
+
+  def turbo_frame_request?
+    turbo_frame_request_id.present?
+  end
+
+  def turbo_frame_request_id
+    request.headers["Turbo-Frame"]
+  end
 end
