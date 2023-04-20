@@ -16,8 +16,8 @@ class ModalComponent < ViewComponent::Base
     super()
   end
 
-  def with_close_action(label, **options, &)
-    set_slot(:close_action, nil, label, **options, href: @redirection_path, &)
+  def with_close_action(*, **, &)
+    set_slot(:close_action, nil, *, **, href: @redirection_path, &)
   end
 
   protected
@@ -65,16 +65,16 @@ class ModalComponent < ViewComponent::Base
   end
 
   class OtherAction < ::ButtonComponent
-    def initialize(label, **options)
+    def initialize(*, **options)
       options[:class] ||= ""
       options[:class] += " modal__secondary-action"
 
-      super(label, **options)
+      super(*, **options)
     end
   end
 
   class CloseAction < ::ButtonComponent
-    def initialize(label, **options)
+    def initialize(*, **options)
       options[:class] ||= ""
       options[:class] += " modal__close-action"
 
@@ -82,13 +82,13 @@ class ModalComponent < ViewComponent::Base
       options[:data][:turbo_frame] ||= "content"
       options[:data][:action]      ||= "click->modal#close"
 
-      super(label, **options)
+      super(*, **options)
     end
   end
 
   class SubmitAction < ::ButtonComponent
-    def initialize(label, **options)
-      super(label, **options, primary: true, type: "submit")
+    def initialize(*, **)
+      super(*, **, primary: true, type: "submit")
     end
   end
 end

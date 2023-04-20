@@ -1,6 +1,6 @@
 = breadcrumbs_component do |breadcrumbs|
   - breadcrumbs.with_path "Territoires"
-  - breadcrumbs.with_path "Communes", href: communes_path(retrieve_index_back_params)
+  - breadcrumbs.with_path "Communes", communes_path(retrieve_index_back_params)
   - breadcrumbs.with_path commune.name
 
   - breadcrumbs.with_action "Modifier",

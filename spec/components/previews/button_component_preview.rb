@@ -11,11 +11,11 @@ class ButtonComponentPreview < ViewComponent::Preview
   #
   def with_block; end
 
-  # @label Link acted as a button
+  # @label Button to open a link
   #
   def with_link; end
 
-  # @label Link button to open in a modal
+  # @label Button to open a link in a modal
   #
   def with_modal; end
 

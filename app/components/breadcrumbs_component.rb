@@ -5,9 +5,9 @@ class BreadcrumbsComponent < ViewComponent::Base
   renders_many :actions, ::ButtonComponent
 
   class Path < ViewComponent::Base
-    def initialize(title, href: nil)
+    def initialize(title, href_arg = nil, href: nil)
       @title = title
-      @href = href
+      @href = href_arg || href
       super()
     end
 

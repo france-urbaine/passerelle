@@ -1,7 +1,7 @@
 = template_frame_component do
   = breadcrumbs_component do |breadcrumbs|
     - breadcrumbs.with_path "Organisations"
-    - breadcrumbs.with_path "Collectivités", href: collectivities_path
+    - breadcrumbs.with_path "Collectivités", collectivities_path
     - breadcrumbs.with_path @collectivity.name
 
   .card.card--status
@@ -12,4 +12,4 @@
         br
         | Cette suppression sera effective d'ici le #{localize(30.days.after(@collectivity.discarded_at.to_date))}.
 
-      = button_component "Annuler la suppression", href: undiscard_collectivity_path(@collectivity, redirect: collectivity_path(@collectivity)), method: :patch
+      = button_component "Annuler la suppression", undiscard_collectivity_path(@collectivity, redirect: collectivity_path(@collectivity)), method: :patch

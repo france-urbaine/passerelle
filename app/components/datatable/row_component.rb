@@ -81,8 +81,8 @@ module Datatable
     end
 
     class Action < ::ButtonComponent
-      def initialize(label, icon_only: true, **options)
-        super(label, icon_only: icon_only, **options)
+      def initialize(*, icon_only: true, **)
+        super(*, icon_only: icon_only, **)
       end
     end
 

@@ -167,6 +167,24 @@ RSpec.describe DatatableComponent, type: :component do
       datatable.with_column(:name) { "Commune" }
 
       datatable.each_row do |row, record|
+        row.with_action "Modifier cette commune", "/communes/123", icon: "pencil-square"
+        row.with_column(:name) { record.name }
+      end
+    end
+
+    expect(page).to have_table(class: "datatable") do |table|
+      expect(table).to have_selector("tbody tr td:first-child") do |td|
+        expect(td).to have_link("Modifier cette commune", href: "/communes/123")
+      end
+    end
+  end
+
+  it "renders actions using href option" do
+    render_inline described_class.new(records) do |datatable|
+      datatable.with_actions
+      datatable.with_column(:name) { "Commune" }
+
+      datatable.each_row do |row, record|
         row.with_action "Modifier cette commune", href: "/communes/123", icon: "pencil-square"
         row.with_column(:name) { record.name }
       end

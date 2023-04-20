@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 class ButtonComponent < ViewComponent::Base
-  def initialize(label = nil, **options)
+  def initialize(label = nil, href = nil, **options)
     @label = label
-    @href = options.delete(:href)
+    @href = href || options.delete(:href)
     @icon = options.delete(:icon)
     @icon_only = options.delete(:icon_only)
     @modal = options.delete(:modal)

@@ -1,6 +1,6 @@
 = breadcrumbs_component do |breadcrumbs|
   - breadcrumbs.with_path "Organisations"
-  - breadcrumbs.with_path "Guichets", href: offices_path(retrieve_index_back_params)
+  - breadcrumbs.with_path "Guichets", offices_path(retrieve_index_back_params)
   - breadcrumbs.with_path office.name
 
   - breadcrumbs.with_action "Modifier",
