@@ -19,6 +19,10 @@ class ButtonComponentPreview < ViewComponent::Preview
   #
   def with_modal; end
 
+  # @label Button to submit a link with a given method
+  #
+  def with_method; end
+
   # @label Primary button
   #
   def primary; end

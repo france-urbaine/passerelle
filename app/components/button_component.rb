@@ -2,14 +2,15 @@
 
 class ButtonComponent < ViewComponent::Base
   def initialize(label = nil, href = nil, **options)
-    @label = label
-    @href = href || options.delete(:href)
-    @icon = options.delete(:icon)
-    @icon_only = options.delete(:icon_only)
-    @modal = options.delete(:modal)
-    @primary = options.delete(:primary)
+    @label       = label
+    @href        = href || options.delete(:href)
+    @method      = options.delete(:method)
+    @icon        = options.delete(:icon)
+    @icon_only   = options.delete(:icon_only)
+    @modal       = options.delete(:modal)
+    @primary     = options.delete(:primary)
     @destructive = options.delete(:destructive)
-    @options = options
+    @options     = options
     super()
   end
 
@@ -17,7 +18,9 @@ class ButtonComponent < ViewComponent::Base
     label   = capture_label unless @icon_only
     content = capture_content(label)
 
-    if @href
+    if @method && @href
+      button_to(icon_only: !label) { content }
+    elsif @href
       link(icon_only: !label) { content }
     else
       button(icon_only: !label) { content }
@@ -40,6 +43,17 @@ class ButtonComponent < ViewComponent::Base
     buffer << label
     buffer << tooltip if @icon_only && @label
     buffer
+  end
+
+  def button_to(icon_only: false, &)
+    options = @options.dup
+    options[:class]  = extract_class_attributes(icon_only:)
+    options[:data]   = extract_data_attributes
+    options[:aria]   = extract_aria_attributes
+    options[:method] = @method
+    options[:form_class] = ""
+
+    helpers.button_to @href, options, &
   end
 
   def link(icon_only: false, &)
