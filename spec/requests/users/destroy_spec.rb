@@ -3,39 +3,70 @@
 require "rails_helper"
 
 RSpec.describe "UsersController#destroy" do
-  subject(:request) { delete "/utilisateurs/#{user.id}", headers: }
+  subject(:request) do
+    delete "/utilisateurs/#{user.id}", as:, params:
+  end
 
-  let(:headers) { {} }
-  let(:user)    { create(:user) }
+  let(:as)     { |e| e.metadata[:as] }
+  let(:params) { |e| e.metadata[:params] }
+
+  let!(:user) { create(:user) }
 
   context "when requesting HTML" do
-    it { expect(response).to have_http_status(:found) }
+    it { expect(response).to have_http_status(:see_other) }
     it { expect(response).to redirect_to("/utilisateurs") }
+    it { expect { request }.to change(User.discarded, :count).by(1) }
 
-    it "is expected to discard the record" do
+    it "discards the user" do
       expect {
         request
         user.reload
-      }.to change(user, :discarded_at).from(nil)
-        .and have_enqueued_job(DeleteDiscardedUsersJob).once
-        .and have_enqueued_job(DeleteDiscardedUsersJob).once.with(user.id)
+      }.to change(user, :discarded_at).to(be_present)
+    end
+
+    it "sets a flash notice" do
+      expect(flash).to have_flash_notice.to eq(
+        type:        "success",
+        title:       "L'utilisateur a été supprimé.",
+        description: "Toutes les données seront définitivement supprimées dans un délai de 1 jour.",
+        delay:       10_000
+      )
+    end
+
+    it "sets a flash action to cancel" do
+      expect(flash).to have_flash_actions.to include(
+        label:  "Annuler",
+        method: "patch",
+        url:    "/utilisateurs/#{user.id}/undiscard",
+        params: {}
+      )
+    end
+
+    context "when the user is already discarded" do
+      let(:user) { create(:user, :discarded) }
+
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect { request }.not_to change(User.discarded, :count).from(1) }
+    end
+
+    context "when the user is missing" do
+      let(:user) { User.new(id: Faker::Internet.uuid) }
+
+      it { expect(response).to have_http_status(:not_found) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
+    end
+
+    context "with redirect parameter", params: { redirect: "/editeur/12345" } do
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/editeur/12345") }
     end
   end
 
-  describe "when requesting JSON" do
-    let(:headers) { { "Accept" => "application/json" } }
-
+  describe "when requesting JSON", as: :json do
     it { expect(response).to have_http_status(:not_acceptable) }
     it { expect(response).to have_content_type(:json) }
     it { expect(response).to have_empty_body }
-
-    it "is expected to not discard the record" do
-      expect {
-        request
-        user.reload
-      }.to not_raise_error
-        .and not_change(user, :discarded_at).from(nil)
-        .and not_have_enqueued_job(DeleteDiscardedUsersJob)
-    end
+    it { expect { request }.not_to change(User.discarded, :count).from(0) }
   end
 end

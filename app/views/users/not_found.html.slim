@@ -1,0 +1,9 @@
+= template_frame_component do
+  = breadcrumbs_component do |breadcrumbs|
+    - breadcrumbs.with_path "Organisations"
+    - breadcrumbs.with_path "Utilisateurs", href: users_path
+
+  .card.card--status
+    .card__content
+      h1.card__header La page que vous recherchez n'est pas disponible.
+      p L'utilisateur n'a pas été trouvé ou n'existe plus.

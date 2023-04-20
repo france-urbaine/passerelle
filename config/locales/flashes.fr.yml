@@ -6,44 +6,6 @@ fr:
         title:        "Les modifications ont été enregistrées avec succés."
         delay:        3000
 
-  services_users:
-    <<: *default
-
-  services_communes:
-    <<: *default
-
-  users:
-    <<: *default
-    create:
-      success:
-        type:         "success"
-        title:        "Un nouvel utilisateur a été ajouté avec succés."
-        description:  "Un mail d'invitation a été envoyée avec les instructions nécessaires pour valider le compte."
-
-    destroy:
-      success:
-        type:         "success"
-        title:        "Le compte de l'utilisateur a été supprimé."
-        delay:        5000
-
-    destroy_all:
-      success:
-        type:         "success"
-        title:        "Les comptes des utilisateurs sélectionnés ont été supprimé."
-        delay:        5000
-
-    undiscard:
-      success:
-        type:         "cancel"
-        title:        "La suppression de l'utilisateur a été annulée."
-        delay:        3000
-
-    undiscard_all:
-      success:
-        type:         "cancel"
-        title:        "La suppression des utilisateurs sélectionnés a été annulée."
-        delay:        3000
-
   territories:
     update:
       success:

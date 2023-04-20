@@ -5,8 +5,8 @@ require "rails_helper"
 RSpec.describe "Users", use_fixtures: true do
   fixtures :publishers, :users
 
-  let(:marc)         { users(:marc) }
-  let(:organization) { publishers(:fiscalite_territoire) }
+  let(:fiscalite_territoire) { publishers(:fiscalite_territoire) }
+  let(:marc)                 { users(:marc) }
 
   it "visits index & show pages" do
     visit users_path
@@ -29,7 +29,7 @@ RSpec.describe "Users", use_fixtures: true do
     click_on "Fiscalité & Territoire"
 
     expect(page).to have_selector("h1", text: "Fiscalité & Territoire")
-    expect(page).to have_current_path(publisher_path(organization))
+    expect(page).to have_current_path(publisher_path(fiscalite_territoire))
 
     go_back
 
@@ -40,16 +40,26 @@ RSpec.describe "Users", use_fixtures: true do
   it "invites an user from the index page" do
     visit users_path
 
+    # A button should be present to add a new user
+    #
+    expect(page).to have_link("Inviter un utilisateur", class: "button")
+
     click_on "Inviter un utilisateur"
 
+    # A dialog box should appears with a form to fill
+    #
     expect(page).to have_selector("[role=dialog]", text: "Invitation d'un nouvel utilisateur")
 
     within "[role=dialog]" do
       fill_in "Organisation", with: "Fiscalité"
+
       find("[role=option]", text: "Fiscalité & Territoire").click
 
       expect(page).to have_field("Organisation",           with: "Fiscalité & Territoire")
-      expect(page).to have_field("user_organization_data", type: :hidden, with: { type: "Publisher", id: organization.id }.to_json)
+      expect(page).to have_field("user_organization_data", type: :hidden, with: {
+        type: "Publisher",
+        id:   fiscalite_territoire.id
+      }.to_json)
 
       fill_in "Prénom",       with: "Elliot"
       fill_in "Nom",          with: "Alderson"
@@ -58,129 +68,289 @@ RSpec.describe "Users", use_fixtures: true do
       click_on "Enregistrer"
     end
 
+    # The browser should stay on index page
+    # The new user should appears
+    #
+    # The dialog should be closed
+    # A notification should be displayed
+    #
+    expect(page).to     have_current_path(users_path)
+    expect(page).to     have_selector("h1", text: "Utilisateurs")
+    expect(page).to     have_selector("tr", text: "Elliot Alderson")
+
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=alert]", text: "Un nouvel utilisateur a été ajouté avec succés.")
-
-    expect(page).to have_selector("h1", text: "Utilisateurs")
-    expect(page).to have_selector("tr", text: "Elliot Alderson")
-    expect(page).to have_current_path(users_path)
   end
 
   it "updates an user from the index page" do
     visit users_path
 
-    within "tr", text: "Marc Debomy" do
+    # A button should be present to edit the user
+    #
+    within "tr", text: "Marc Debomy" do |row|
+      expect(row).to have_link("Modifier cet utilisateur", class: "icon-button")
+
       click_on "Modifier cet utilisateur"
     end
 
+    # A dialog box should appears with a form
+    # The form should be filled with user data
+    #
     expect(page).to have_selector("[role=dialog]", text: "Modification de l'utilisateur")
 
     within "[role=dialog]" do
       expect(page).to have_field("Organisation",           with: "Fiscalité & Territoire")
-      expect(page).to have_field("user_organization_data", type: :hidden, with: { type: "Publisher", id: organization.id }.to_json)
+      expect(page).to have_field("user_organization_data", type: :hidden, with: {
+        type: "Publisher",
+        id:   fiscalite_territoire.id
+      }.to_json)
 
       expect(page).to have_field("Prénom",       with: "Marc")
       expect(page).to have_field("Nom",          with: "Debomy")
       expect(page).to have_field("Adresse mail", with: "mdebomy@fiscalite-territoire.fr")
 
-      fill_in  "Prénom", with: "Marc-André"
+      fill_in "Prénom", with: "Marc-André"
+
       click_on "Enregistrer"
     end
 
+    # The browser should stay on index page
+    # The user should have changed its name
+    #
+    # The dialog should be closed
+    # A notification should be displayed
+    #
+    expect(page).to     have_current_path(users_path)
+    expect(page).to     have_selector("h1", text: "Utilisateurs")
+    expect(page).to     have_selector("tr", text: "Marc-André Debomy")
+
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
-
-    expect(page).to have_selector("h1", text: "Utilisateurs")
-    expect(page).to have_selector("tr", text: "Marc-André Debomy")
-    expect(page).to have_current_path(users_path)
   end
 
-  it "updates a publisher from the show page" do
+  it "updates an user from the show page" do
     visit user_path(marc)
 
-    click_on "Modifier"
+    # A button should be present to edit the user
+    #
+    within ".header-bar" do |header|
+      expect(header).to have_selector("h1", text: "Marc Debomy")
+      expect(header).to have_link("Modifier", class: "button")
 
+      click_on "Modifier"
+    end
+
+    # A dialog box should appears with a form
+    # The form should be filled with user data
+    #
     expect(page).to have_selector("[role=dialog]", text: "Modification de l'utilisateur")
 
     within "[role=dialog]" do
       expect(page).to have_field("Organisation",           with: "Fiscalité & Territoire")
-      expect(page).to have_field("user_organization_data", type: :hidden, with: { type: "Publisher", id: organization.id }.to_json)
+      expect(page).to have_field("user_organization_data", type: :hidden, with: {
+        type: "Publisher",
+        id:   fiscalite_territoire.id
+      }.to_json)
 
       expect(page).to have_field("Prénom",       with: "Marc")
       expect(page).to have_field("Nom",          with: "Debomy")
       expect(page).to have_field("Adresse mail", with: "mdebomy@fiscalite-territoire.fr")
 
-      fill_in  "Prénom", with: "Marc-André"
+      fill_in "Prénom", with: "Marc-André"
+
       click_on "Enregistrer"
     end
 
+    # The browser should stay on index page
+    # The user should have changed its name
+    #
+    # The dialog should be closed
+    # A notification should be displayed
+    #
+    expect(page).to     have_current_path(user_path(marc))
+    expect(page).to     have_selector("h1", text: "Marc-André Debomy")
+
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
-
-    expect(page).to have_selector("h1", text: "Marc-André Debomy")
-    expect(page).to have_current_path(user_path(marc))
   end
 
-  it "removes an user from the index page" do
+  it "removes an user from the index page and then rollback" do
     visit users_path
 
-    within "tr", text: "Marc Debomy" do
+    # A button should be present to remove th user
+    #
+    within "tr", text: "Marc Debomy" do |row|
+      expect(row).to have_link("Supprimer cet utilisateur", class: "icon-button")
+
       click_on "Supprimer cet utilisateur"
     end
 
-    within "[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer cet utilisateur ?" do
+    # A confirmation dialog should appears
+    #
+    expect(page).to have_selector("[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer cet utilisateur ?")
+
+    within "[role=dialog]" do |dialog|
+      expect(dialog).to have_button("Continuer")
+
       click_on "Continuer"
     end
 
-    expect(page).to have_current_path(users_path)
-    expect(page).to have_selector("[role=alert]", text: "Le compte de l'utilisateur a été supprimé.")
-
-    expect(page).not_to have_selector("tr", text: "Marc Debomy")
-
+    # The browser should stay on index page
+    # The user should not appears anymore
+    #
+    # The dialog should be closed
+    # A notification should be displayed
+    #
+    expect(page).to     have_current_path(users_path)
     expect(page).to     have_selector("h1", text: "Utilisateurs")
     expect(page).not_to have_selector("tr", text: "Marc Debomy")
+
+    expect(page).not_to have_selector("[role=dialog]")
+    expect(page).to     have_selector("[role=alert]", text: "L'utilisateur a été supprimé.")
+
+    # The notification should include a button to cancel the last action
+    #
+    within "[role=alert]", text: "L'utilisateur a été supprimé." do |alert|
+      expect(alert).to have_button("Annuler")
+
+      click_on "Annuler"
+    end
+
+    # The browser should stay on index page
+    # The user should be back again
+    #
+    # The previous notification should be closed
+    # A new notification should be displayed
+    #
     expect(page).to     have_current_path(users_path)
+    expect(page).to     have_selector("h1", text: "Utilisateurs")
+    expect(page).to     have_selector("tr", text: "Marc Debomy")
+
+    expect(page).not_to have_selector("[role=alert]", text: "L'utilisateur a été supprimé.")
+    expect(page).to     have_selector("[role=alert]", text: "La suppression de l'utilisateur a été annulée.")
   end
 
-  it "removes an user from the show page" do
+  it "removes an user from the show page and then rollback" do
     visit user_path(marc)
 
-    click_on "Supprimer"
+    # A button should be present to remove this user
+    #
+    within ".header-bar" do |header|
+      expect(header).to have_selector("h1", text: "Marc Debomy")
+      expect(header).to have_link("Supprimer", class: "button")
 
-    within "[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer cet utilisateur ?" do
+      click_on "Supprimer"
+    end
+
+    # A confirmation dialog should appears
+    #
+    expect(page).to have_selector("[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer cet utilisateur ?")
+
+    within "[role=dialog]" do |dialog|
+      expect(dialog).to have_button("Continuer")
+
       click_on "Continuer"
     end
 
-    expect(page).to have_current_path(users_path)
-    expect(page).to have_selector("[role=alert]", text: "Le compte de l'utilisateur a été supprimé.")
-
-    expect(page).not_to have_selector("tr", text: "Marc Debomy")
-
+    # The browser should stay on index page
+    # The user should not appears anymore
+    #
+    # The dialog should be closed
+    # A notification should be displayed
+    #
+    expect(page).to     have_current_path(users_path)
     expect(page).to     have_selector("h1", text: "Utilisateurs")
     expect(page).not_to have_selector("tr", text: "Marc Debomy")
+
+    expect(page).not_to have_selector("[role=dialog]")
+    expect(page).to     have_selector("[role=alert]", text: "L'utilisateur a été supprimé.")
+
+    # The notification should include a button to cancel the last action
+    #
+    within "[role=alert]", text: "L'utilisateur a été supprimé." do |alert|
+      expect(alert).to have_button("Annuler")
+
+      click_on "Annuler"
+    end
+
+    # The browser should stay on index page
+    # The user should be back again
+    #
+    # The previous notification should be closed
+    # A new notification should be displayed
+    #
     expect(page).to     have_current_path(users_path)
+    expect(page).to     have_selector("h1", text: "Utilisateurs")
+    expect(page).to     have_selector("tr", text: "Marc Debomy")
+
+    expect(page).not_to have_selector("[role=alert]", text: "L'utilisateur a été supprimé.")
+    expect(page).to     have_selector("[role=alert]", text: "La suppression de l'utilisateur a été annulée.")
   end
 
-  it "removes a selection of publisher from the index page" do
+  it "removes a selection of users from the index page and then rollback" do
     visit users_path
 
+    # Some checkboxes should be present to select users
+    #
     within "tr", text: "Marc Debomy" do
       find("input[type=checkbox]").check
     end
 
-    within "#index_header", text: "1 utilisateur sélectionné" do
+    # A message should diplay the number of selected users
+    # with a button to remove them
+    #
+    within "#index_header" do |header|
+      expect(header).to have_text("1 utilisateur sélectionné")
+      expect(header).to have_link("Supprimer la sélection", class: "button")
+
       click_on "Supprimer la sélection"
     end
 
-    within "[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer l'utilisateur sélectionné ?" do
+    # A confirmation dialog should appears
+    #
+    expect(page).to have_selector("[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer l'utilisateur sélectionné ?")
+
+    within "[role=dialog]" do |dialog|
+      expect(dialog).to have_button("Continuer")
+
       click_on "Continuer"
     end
 
-    expect(page).to have_selector("[role=alert]", text: "Les comptes des utilisateurs sélectionnés ont été supprimé.")
-
+    # The browser should stay on index page
+    # The selected users should not appears anymore
+    #
+    # The dialog should be closed
+    # A notification should be displayed
+    #
+    expect(page).to     have_current_path(users_path)
     expect(page).to     have_selector("h1", text: "Utilisateurs")
     expect(page).not_to have_selector("tr", text: "Marc Debomy")
+
     expect(page).not_to have_selector("#index_header", text: "1 utilisateur sélectionné")
+    expect(page).not_to have_selector("[role=dialog]")
+    expect(page).to     have_selector("[role=alert]", text: "Les utilisateurs sélectionnés ont été supprimés.")
+
+    # The notification should include a button to cancel the last action
+    #
+    within "[role=alert]", text: "Les utilisateurs sélectionnés ont été supprimés." do |alert|
+      expect(alert).to have_button("Annuler")
+
+      click_on "Annuler"
+    end
+
+    # The browser should stay on index page
+    # The remove users should be back again
+    #
+    # The selection message should not appears again
+    # The previous notification should be closed
+    # A new notification should be displayed
+    #
     expect(page).to     have_current_path(users_path)
+    expect(page).to     have_selector("h1", text: "Utilisateurs")
+    expect(page).to     have_selector("tr", text: "Marc Debomy")
+
+    expect(page).not_to have_selector("#index_header", text: "1 utilisateur sélectionné")
+    expect(page).not_to have_selector("[role=alert]", text: "Les utilisateurs sélectionnés ont été supprimés.")
+    expect(page).to     have_selector("[role=alert]", text: "La suppression des utilisateurs sélectionnés a été annulée.")
   end
 end

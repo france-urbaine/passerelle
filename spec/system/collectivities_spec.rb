@@ -71,7 +71,10 @@ RSpec.describe "Collectivities", use_fixtures: true do
       find("[role=option]", text: "Métropole d'Aix-Marseille-Provence").click
 
       expect(dialog).to have_field("Territoire",                  with: "Métropole d'Aix-Marseille-Provence")
-      expect(dialog).to have_field("collectivity_territory_data", type: :hidden, with: { type: "EPCI", id: epcis(:metropole_aix_marseille).id }.to_json)
+      expect(dialog).to have_field("collectivity_territory_data", type: :hidden, with: {
+        type: "EPCI",
+        id:   epcis(:metropole_aix_marseille).id
+      }.to_json)
 
       select "Fiscalité & Territoire", from: "Éditeur"
 

@@ -4,21 +4,14 @@
   - breadcrumbs.with_path user.name
 
   - breadcrumbs.with_action "Modifier",
-    href: edit_user_path(user, content: current_path, redirect: current_path),
+    href: edit_user_path(user, referrer: current_path, redirect: current_path),
     icon: "pencil-square",
     modal: true
 
   - breadcrumbs.with_action "Supprimer",
-    href: remove_user_path(user, content: current_path),
+    href: remove_user_path(user, referrer: current_path),
     icon: "trash",
     modal: true
-
-- if user.discarded?
-  .card.mb-6
-    .card__content.bg-red-100.text-red-700( role="alert" )
-      b Uitilisateur en cours de suppression.
-      br
-      | Cet utilisateur va être supprimé dans quelques minutes.
 
 h2.subheader
   = svg_icon("identification", "Nouvelle section")

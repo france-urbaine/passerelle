@@ -145,3 +145,37 @@ fr:
           type:         "cancel"
           title:        "La suppression des guichets sélectionnés a été annulée."
           delay:        3000
+
+    users:
+      create:
+        notice:
+          type:         "success"
+          title:        "Un nouvel utilisateur a été ajouté avec succés."
+          description:  "Un mail d'invitation a été envoyé avec les instructions nécessaires pour valider le compte."
+          delay:        3000
+
+      destroy:
+        notice:
+          type:         "success"
+          title:        "L'utilisateur a été supprimé."
+          description:  "Toutes les données seront définitivement supprimées dans un délai de 1 jour."
+          delay:        10000
+
+      destroy_all:
+        notice:
+          type:         "success"
+          title:        "Les utilisateurs sélectionnés ont été supprimés."
+          description:  "Toutes les données seront définitivement supprimées dans un délai de 1 jour."
+          delay:        10000
+
+      undiscard:
+        notice:
+          type:         "cancel"
+          title:        "La suppression de l'utilisateur a été annulée."
+          delay:        3000
+
+      undiscard_all:
+        notice:
+          type:         "cancel"
+          title:        "La suppression des utilisateurs sélectionnés a été annulée."
+          delay:        3000

@@ -3,7 +3,7 @@
   - breadcrumbs.with_path "Utilisateurs"
 
   - breadcrumbs.with_action "Inviter un utilisateur",
-    href: new_user_path(content: current_path),
+    href: new_user_path(referrer: current_path),
     icon: "plus",
     primary: true,
     modal: true
@@ -30,12 +30,12 @@ div( data-controller="selection" )
 
       - row.with_action "Modifier cet utilisateur",
         icon:  "pencil-square",
-        href:  edit_user_path(user, content: current_path, redirect: current_path),
+        href:  edit_user_path(user, referrer: current_path, redirect: current_path),
         modal: true
 
       - row.with_action "Supprimer cet utilisateur",
         icon:  "trash",
-        href:  remove_user_path(user, content: current_path, redirect: current_path),
+        href:  remove_user_path(user, referrer: current_path, redirect: current_path),
         modal: true
 
       - row.with_column(:name) do

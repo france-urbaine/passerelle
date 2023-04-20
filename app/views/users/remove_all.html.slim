@@ -1,4 +1,4 @@
-= template_frame_component(src: @background_content_url) do |frame|
+= template_frame_component(src: @background_url) do |frame|
   - frame.with_modal do |modal|
     - modal.with_header do
       - if @users.count > 1
@@ -14,8 +14,17 @@
 
       - if @users.count > 1
         p Êtes-vous sûrs de vouloir supprimer les <b>#{@users.count}</b> utilisateurs sélectionnés ?
+        p
+          | Par mesure de securité, les données de ces utilisateurs seront archivées pendant 1 jour.
+          br
+          | Toutes les données seront définitivement supprimées à la fin de ce délai.
+
       - else
         p Êtes-vous sûrs de vouloir supprimer l'utilisateur sélectionné ?
+        p
+          | Par mesure de securité, les données de cet utilisateur seront archivées pendant 1 jour.
+          br
+          | Toutes les données seront définitivement supprimées à la fin de ce délai.
 
     - modal.with_submit_action "Continuer", autofocus: true
     - modal.with_close_action "Annuler"

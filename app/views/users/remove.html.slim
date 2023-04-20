@@ -1,4 +1,4 @@
-= template_frame_component(src: @background_content_url) do |frame|
+= template_frame_component(src: @background_url) do |frame|
   - frame.with_modal do |modal|
     - modal.with_header do
       | Suppression de l'utilisateur : #{@user.name}
@@ -7,6 +7,10 @@
       = hidden_param_input(:redirect)
 
       p Êtes-vous sûrs de vouloir supprimer cet utilisateur ?
+      p
+        | Par mesure de securité, les données de cet utilisateur seront archivées pendant 1 jour.
+        br
+        | Toutes les données seront définitivement supprimées à la fin de ce délai.
 
     - modal.with_submit_action "Continuer", autofocus: true
     - modal.with_close_action "Annuler"
