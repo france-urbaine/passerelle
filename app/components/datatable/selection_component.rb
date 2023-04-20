@@ -12,6 +12,7 @@ module Datatable
     end
 
     def call
+      ""
     end
 
     class Action < ::ButtonComponent

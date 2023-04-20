@@ -17,7 +17,6 @@ module Datatable
       @sorted_options ||= @datatable.columns.select(&:sort?).to_h do |column|
         label = column.to_s
         label = label.downcase unless label.match?(/\A[A-Z]+\Z/)
-        label
 
         [column.key, label]
       end
