@@ -57,7 +57,7 @@ fr:
       destroy_all:
         notice:
           type:         "success"
-          title:        "Les DDFIP sélectionnées ont été supprimées."
+          title:        "Les DDFIPs sélectionnées ont été supprimées."
           description:  "Toutes les données seront définitivement supprimées dans un délai de 30 jours."
           delay:        10000
 
@@ -70,7 +70,7 @@ fr:
       undiscard_all:
         notice:
           type:         "cancel"
-          title:        "La suppression des DDFIP sélectionnées a été annulée."
+          title:        "La suppression des DDFIPs sélectionnées a été annulée."
           delay:        3000
 
     publishers:

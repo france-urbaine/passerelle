@@ -27,7 +27,7 @@ RSpec.describe "Regions", use_fixtures: true do
 
     expect(page).to have_selector("h1", text: "Nouvelle-Aquitaine")
     expect(page).to have_link("Pyrénées-Atlantiques")
-    expect(page).to have_link("Voir les EPCI")
+    expect(page).to have_link("Voir les EPCIs")
     expect(page).to have_link("Voir les communes")
     expect(page).to have_link("DDFIP des Pyrénées-Atlantiques")
 
@@ -41,7 +41,7 @@ RSpec.describe "Regions", use_fixtures: true do
     expect(page).to have_selector("h1", text: "Nouvelle-Aquitaine")
     expect(page).to have_current_path(region_path(nouvelle_aquitaine))
 
-    click_on "Voir les EPCI"
+    click_on "Voir les EPCIs"
 
     expect(page).to have_selector("h1", text: "EPCI")
     expect(page).to have_selector("tr", text: "CA du Pays Basque")

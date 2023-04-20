@@ -27,7 +27,7 @@ RSpec.describe "Departements", use_fixtures: true do
 
     expect(page).to have_selector("h1", text: "Nord")
     expect(page).to have_link("Hauts-de-France")
-    expect(page).to have_link("Voir les EPCI")
+    expect(page).to have_link("Voir les EPCIs")
     expect(page).to have_link("Voir les communes")
     expect(page).to have_link("DDFIP du Nord")
 
@@ -41,7 +41,7 @@ RSpec.describe "Departements", use_fixtures: true do
     expect(page).to have_selector("h1", text: "Nord")
     expect(page).to have_current_path(departement_path(nord))
 
-    click_on "Voir les EPCI"
+    click_on "Voir les EPCIs"
 
     expect(page).to have_selector("h1", text: "EPCI")
     expect(page).to have_selector("tr", text: "Métropole Européenne de Lille")

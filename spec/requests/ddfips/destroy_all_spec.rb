@@ -30,7 +30,7 @@ RSpec.describe "DdfipsController#destroy_all" do
       it "sets a flash notice" do
         expect(flash).to have_flash_notice.to eq(
           type:        "success",
-          title:       "Les DDFIP sélectionnées ont été supprimées.",
+          title:       "Les DDFIPs sélectionnées ont été supprimées.",
           description: "Toutes les données seront définitivement supprimées dans un délai de 30 jours.",
           delay:        10_000
         )

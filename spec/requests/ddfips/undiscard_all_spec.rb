@@ -30,7 +30,7 @@ RSpec.describe "DdfipsController#undiscard_all" do
       it "sets a flash notice" do
         expect(flash).to have_flash_notice.to eq(
           type:  "cancel",
-          title: "La suppression des DDFIP sélectionnées a été annulée.",
+          title: "La suppression des DDFIPs sélectionnées a été annulée.",
           delay: 3000
         )
       end

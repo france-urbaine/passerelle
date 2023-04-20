@@ -293,7 +293,7 @@ RSpec.describe "DDFIPs", use_fixtures: true do
     # with a button to remove them
     #
     within "#datatable-header-bar" do |header|
-      expect(header).to have_text("2 DDFIP sélectionnées")
+      expect(header).to have_text("2 DDFIPs sélectionnées")
       expect(header).to have_link("Supprimer la sélection", class: "button")
 
       click_on "Supprimer la sélection"
@@ -301,7 +301,7 @@ RSpec.describe "DDFIPs", use_fixtures: true do
 
     # A confirmation dialog should appears
     #
-    expect(page).to have_selector("[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer les 2 DDFIP sélectionnées ?")
+    expect(page).to have_selector("[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer les 2 DDFIPs sélectionnées ?")
 
     within "[role=dialog]" do |dialog|
       expect(dialog).to have_button("Continuer")
@@ -321,13 +321,13 @@ RSpec.describe "DDFIPs", use_fixtures: true do
     expect(page).not_to have_selector("tr", text: "DDFIP du Nord")
     expect(page).not_to have_selector("tr", text: "DDFIP des Pyrénées-Atlantiques")
 
-    expect(page).not_to have_selector("#datatable-header-bar", text: "2 DDFIP sélectionnées")
+    expect(page).not_to have_selector("#datatable-header-bar", text: "2 DDFIPs sélectionnées")
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "Les DDFIP sélectionnées ont été supprimées.")
+    expect(page).to     have_selector("[role=alert]", text: "Les DDFIPs sélectionnées ont été supprimées.")
 
     # The notification should include a button to cancel the last action
     #
-    within "[role=alert]", text: "Les DDFIP sélectionnées ont été supprimées." do |alert|
+    within "[role=alert]", text: "Les DDFIPs sélectionnées ont été supprimées." do |alert|
       expect(alert).to have_button("Annuler")
 
       click_on "Annuler"
@@ -345,8 +345,8 @@ RSpec.describe "DDFIPs", use_fixtures: true do
     expect(page).to     have_selector("tr", text: "DDFIP du Nord")
     expect(page).to     have_selector("tr", text: "DDFIP des Pyrénées-Atlantiques")
 
-    expect(page).not_to have_selector("#datatable-header-bar", text: "2 DDFIP sélectionnées")
-    expect(page).not_to have_selector("[role=alert]", text: "Les DDFIP sélectionnées ont été supprimées.")
-    expect(page).to     have_selector("[role=alert]", text: "La suppression des DDFIP sélectionnées a été annulée.")
+    expect(page).not_to have_selector("#datatable-header-bar", text: "2 DDFIPs sélectionnées")
+    expect(page).not_to have_selector("[role=alert]", text: "Les DDFIPs sélectionnées ont été supprimées.")
+    expect(page).to     have_selector("[role=alert]", text: "La suppression des DDFIPs sélectionnées a été annulée.")
   end
 end

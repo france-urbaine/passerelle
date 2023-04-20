@@ -16,8 +16,6 @@ module Datatable
 
     class Action < ::ButtonComponent
       def href_params
-        p params.slice(:ids, :search, :order, :page).permit!
-
         super.merge(
           params.slice(:ids, :search, :order, :page).permit!
         )
