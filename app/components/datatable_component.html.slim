@@ -1,45 +1,61 @@
-table.datatable
-  - if columns.any?(&:colgroup?)
-    colgroup
-      - if selection?
-        col
-      - if actions?
-        col
-      - columns.each do |column|
-        col( span=(column.colspan if column.colgroup?) )
+div( data-controller="selection" )
+  turbo-frame#datatable-header-bar( data-selection-target="frame" )
+    - if selection_active?
+      = render ::Datatable::Selection::HeaderBarComponent.new(self)
 
-  thead
-    tr.datatable__row
-      - if selection?
-        th.datatable__row-actions( scope="col" )
-          input(
-            type="checkbox"
-            aria-label=(selection.label || "Tout sélectionner")
-            data-selection-target="checkall"
-          )
+    - elsif search? || pagination?
+      .header-bar
+        = search
+        .flex-auto
+        .header-bar__actions
+          - if pagination?
+            = render ::Datatable::CountsComponent.new(self)
+            = render ::Datatable::PaginationComponent.new(self)
+            = render ::Datatable::IndexOptionsComponent.new(self)
 
-          - if selection.label
-            span.tooltip= selection.label
+  - unless header_bar_only?
+    table.datatable
+      - if columns.any?(&:colgroup?)
+        colgroup
+          - if selection?
+            col
+          - if actions?
+            col
+          - columns.each do |column|
+            col( span=(column.colspan if column.colgroup?) )
 
-      - if actions?
-        th(
-          aria-label="Actions"
-          scope="col"
-        )
+      thead
+        tr.datatable__row
+          - if selection?
+            th.datatable__row-actions( scope="col" )
+              input(
+                type="checkbox"
+                aria-label=(selection.label || "Tout sélectionner")
+                data-selection-target="checkall"
+              )
 
-      - columns.each do |column|
-        th(
-          class=column.css_class
-          scope=(column.colgroup? ? "colgroup" : "col")
-          colspan=(column.colspan if column.colgroup?)
-        )
-          = column
-          = render Datatable::OrderColumnComponent.new(column.key) if column.sort?
+              - if selection.label
+                span.tooltip= selection.label
 
-  - if records.empty?
-    caption.datatable__empty-caption
-      = empty_message || "Aucune donnée disponible."
+          - if actions?
+            th(
+              aria-label="Actions"
+              scope="col"
+            )
 
-  tbody
-    - rows.each do |row|
-      = render row
+          - columns.each do |column|
+            th(
+              class=column.css_class
+              scope=(column.colgroup? ? "colgroup" : "col")
+              colspan=(column.colspan if column.colgroup?)
+            )
+              = column
+              = render Datatable::OrderColumnComponent.new(column.key) if column.sort?
+
+      - if records.empty?
+        caption.datatable__empty-caption
+          = empty_message || "Aucune donnée disponible."
+
+      tbody
+        - rows.each do |row|
+          = render row

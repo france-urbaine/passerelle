@@ -1,0 +1,106 @@
+.header-bar__action
+  .dropdown(
+    data-controller="dropdown"
+    data-transition-enter-from="dropdown--enter-from"
+    data-transition-enter-to="dropdown--enter-to"
+    data-transition-leave-from="dropdown--leave-from"
+    data-transition-leave-to="dropdown--leave-to"
+  )
+    button.icon-button(
+      id="index-options-button"
+      aria-label="Options d'affichage du tableau"
+      aria-haspopup="true"
+      aria-expanded="false"
+      data-action="dropdown#toggle click@window->dropdown#clickOutside"
+      data-dropdown-target="button"
+    )
+      = helpers.svg_icon("adjustments", "Options d'affichage")
+      span.tooltip Options d'affichage
+
+    .dropdown__menu.hidden.dropdown__menu--above-left(
+      aria-labelledby="index-options-button"
+      data-dropdown-target="menu"
+      role="menu"
+    )
+      .dropdown(
+        data-controller="dropdown"
+        data-transition-enter-from="dropdown--enter-from"
+        data-transition-enter-to="dropdown--enter-to"
+        data-transition-leave-from="dropdown--leave-from"
+        data-transition-leave-to="dropdown--leave-to"
+      )
+        button.dropdown__menu-item(
+          id="index-options-items-button"
+          aria-haspopup="true"
+          aria-expanded="false"
+          aria-label="Sélectionner le nombre de lignes à afficher"
+          data-action="dropdown#toggle click@window->dropdown#clickOutside"
+          data-dropdown-target="button"
+          role="menuitem"
+        )
+          = helpers.svg_icon("chevron-left-small")
+          | Afficher #{@datatable.pagy.items} lignes par page
+
+        .dropdown__menu.dropdown__menu--side-left(
+          aria-labelledby="index-options-items-button"
+          data-dropdown-target="menu"
+          role="menu"
+        )
+          - [10, 20, 50, 100].each do |items|
+            a.dropdown__menu-item(
+              aria-label="Afficher #{items} lignes"
+              data-turbo-frame="content"
+              role="menuitem"
+              href=items_url(items)
+            ) Afficher #{items} lignes
+
+      - if sorted_options.any?
+        .dropdown(
+          data-controller="dropdown"
+          data-transition-enter-from="dropdown--enter-from"
+          data-transition-enter-to="dropdown--enter-to"
+          data-transition-leave-from="dropdown--leave-from"
+          data-transition-leave-to="dropdown--leave-to"
+        )
+          button.dropdown__menu-item(
+            id="index-options-sort-button"
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Trier les données"
+            data-action="dropdown#toggle click@window->dropdown#clickOutside"
+            data-dropdown-target="button"
+            role="menuitem"
+          )
+            = helpers.svg_icon("chevron-left-small")
+            | Trier par #{sorted_options.fetch(current_order_key, "défaut")}
+            - if current_order_direction == :desc
+              |  (desc.)
+
+          .dropdown__menu.dropdown__menu--side-left(
+            aria-labelledby="index-options-sort-button"
+            data-dropdown-target="menu"
+            role="menu"
+          )
+            - sorted_options.each do |(key, name)|
+              .dropdown__menu-item.dropdown__menu-item--icons-right.flex
+                span.grow Trier par #{name} :
+
+                a.icon-button(
+                  aria-label="Trier par #{name}, par ordre croissant"
+                  data-turbo-action="advance"
+                  data-turbo-frame="content"
+                  href=order_url(key, :asc)
+                  role="menuitem"
+                )
+                  = helpers.svg_icon("sort-ascending", "Trier par ordre croissant")
+                  span.tooltip Trier par ordre croissant
+
+                a.icon-button(
+                  aria-label="Trier par #{name}, par ordre décroissant"
+                  data-turbo-action="advance"
+                  data-turbo-frame="content"
+                  href=order_url(key, :desc)
+                  role="menuitem"
+                )
+                  = helpers.svg_icon("sort-descending", "Trier par ordre décroissant")
+                  span.tooltip Trier par ordre décroissant

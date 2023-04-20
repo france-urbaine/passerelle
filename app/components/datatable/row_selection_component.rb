@@ -17,7 +17,7 @@ module Datatable
     end
 
     def checked?
-      params[:ids].is_a?(Array) && params[:ids].include?(record_id)
+      params[:ids].is_a?(Array) && params[:ids].include?(@record.id)
     end
 
     def disabled?

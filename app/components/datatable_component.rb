@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
 class DatatableComponent < ViewComponent::Base
+  renders_one :search, ::Datatable::SearchComponent
+  renders_one :selection, ::Datatable::SelectionComponent
   renders_one :empty_message
-  renders_one :selection, "Selection"
   renders_one :actions
   renders_many :columns, "Column"
 
-  attr_reader :records, :rows
+  attr_reader :records, :rows, :pagy
 
   def initialize(records)
     @records = records
@@ -14,7 +15,14 @@ class DatatableComponent < ViewComponent::Base
     super()
   end
 
+  def before_render
+    # Call selection to build its slots
+    selection.to_s
+  end
+
   def each_row(&)
+    return if header_bar_only?
+
     @records.each do |record|
       row = ::Datatable::RowComponent.new(self, record)
       yield row, record
@@ -22,13 +30,38 @@ class DatatableComponent < ViewComponent::Base
     end
   end
 
-  class Selection < ViewComponent::Base
-    attr_reader :label
+  def with_pagination(pagy)
+    @pagy = pagy
+  end
 
-    def initialize(label = nil)
-      @label = label
-      super()
-    end
+  def with_inflections(singular, plural: nil, feminine: false)
+    @singular_inflection = singular
+    @plural_inflection   = plural || singular.pluralize
+    @feminine_inflection = feminine
+  end
+
+  def singular_inflection
+    @singular_inflection || raise("inflections are not defined in #{self}")
+  end
+
+  def plural_inflection
+    @plural_inflection ||= singular_inflection.pluralize
+  end
+
+  def feminine_inflection?
+    @feminine_inflection
+  end
+
+  def header_bar_only?
+    helpers.turbo_frame_request_id == "datatable-header-bar"
+  end
+
+  def selection_active?
+    selection? && params[:ids].present?
+  end
+
+  def pagination?
+    @pagy
   end
 
   class Column < ViewComponent::Base

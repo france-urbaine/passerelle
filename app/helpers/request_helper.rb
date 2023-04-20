@@ -28,8 +28,4 @@ module RequestHelper
   def retrieve_index_back_params
     params.fetch(:index, {}).slice(*INDEX_PARAMS).permit!
   end
-
-  def current_selection_params
-    extract_params(:ids).merge(current_index_params)
-  end
 end

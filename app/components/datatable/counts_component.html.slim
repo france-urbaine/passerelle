@@ -1,0 +1,6 @@
+.header-bar__text
+  = helpers.display_count(@datatable.pagy.count, @datatable.singular_inflection, plural: @datatable.plural_inflection)
+  = " "
+  span.mx-4 |
+  = " "
+  = helpers.page_count(@datatable.pagy)

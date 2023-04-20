@@ -77,13 +77,21 @@ class ButtonComponent < ViewComponent::Base
   end
 
   def href
-    return if @href.blank?
-    return @href unless @modal && helpers.current_path
+    params = href_params
+    return @href if params.empty?
 
-    params = { referrer: helpers.current_path }.to_query
+    params = href_params.to_query
     join   = @href.include?("?") ? "&" : "?"
 
     "#{@href}#{join}#{params}"
+  end
+
+  def href_params
+    if @modal && helpers.current_path
+      { referrer: helpers.current_path }
+    else
+      {}
+    end
   end
 
   def icon

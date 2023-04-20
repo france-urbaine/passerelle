@@ -14,6 +14,6 @@ module ControllerParams
   def selection_params
     params
       .slice(:search, :order, :page, :ids)
-      .permit(:search, :order, :page, ids: [])
+      .permit(:search, :order, :page, :ids, ids: [])
   end
 end

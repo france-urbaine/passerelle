@@ -274,7 +274,7 @@ RSpec.describe "Publishers", use_fixtures: true do
     # A message should diplay the number of selected publishers
     # with a button to remove them
     #
-    within "#index_header" do |header|
+    within "#datatable-header-bar" do |header|
       expect(header).to have_text("1 éditeur sélectionné")
       expect(header).to have_link("Supprimer la sélection", class: "button")
 
@@ -301,7 +301,7 @@ RSpec.describe "Publishers", use_fixtures: true do
     expect(page).to     have_selector("h1", text: "Éditeurs")
     expect(page).not_to have_selector("tr", text: "Fiscalité & Territoire")
 
-    expect(page).not_to have_selector("#index_header", text: "1 éditeur sélectionné")
+    expect(page).not_to have_selector("#datatable-header-bar", text: "1 éditeur sélectionné")
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=alert]", text: "Les éditeurs sélectionnés ont été supprimés.")
 
@@ -324,7 +324,7 @@ RSpec.describe "Publishers", use_fixtures: true do
     expect(page).to     have_selector("h1", text: "Éditeurs")
     expect(page).to     have_selector("tr", text: "Fiscalité & Territoire")
 
-    expect(page).not_to have_selector("#index_header", text: "1 éditeur sélectionné")
+    expect(page).not_to have_selector("#datatable-header-bar", text: "1 éditeur sélectionné")
     expect(page).not_to have_selector("[role=alert]", text: "Les éditeurs sélectionnés ont été supprimés.")
     expect(page).to     have_selector("[role=alert]", text: "La suppression des éditeurs sélectionnés a été annulée.")
   end
