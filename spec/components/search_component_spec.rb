@@ -3,41 +3,67 @@
 require "rails_helper"
 
 RSpec.describe SearchComponent, type: :component do
-  subject(:component) { described_class.new }
+  it "renders a form with an search input" do
+    render_inline described_class.new
 
-  it "renders a form" do
-    render_inline(component)
-
-    expect(page).to have_css("form.search")
-  end
-
-  it "renders default label and placeholder" do
-    render_inline(component)
-
-    expect(page).to have_field("Rechercher", type: "search", name: "search", placeholder: "Rechercher")
+    expect(page).to have_selector("form.search") do |form|
+      expect(form).to have_field("Rechercher", type: "search", name: "search", placeholder: "Rechercher")
+    end
   end
 
   it "renders an alternative label and placeholder" do
-    component = described_class.new(label: "Rechercher des communes")
-    render_inline(component)
+    render_inline described_class.new(label: "Rechercher des communes")
 
-    expect(page).to have_field("Rechercher des communes", type: "search", name: "search", placeholder: "Rechercher des communes")
+    expect(page).to have_selector("form.search") do |form|
+      expect(form).to have_field("Rechercher des communes", type: "search", name: "search", placeholder: "Rechercher des communes")
+    end
   end
 
   it "hides the SVG icon from ARIA" do
-    render_inline(component)
+    render_inline described_class.new
 
-    expect(page).to have_css("svg[aria-hidden]")
+    expect(page).to have_selector("form.search") do |form|
+      expect(form).to have_selector("svg[aria-hidden]")
+    end
+  end
+
+  it "sends form to top frame by default" do
+    render_inline described_class.new
+
+    expect(page).to have_selector("form.search") do |form|
+      expect(form["data-turbo-frame"]).to eq("_top")
+    end
+  end
+
+  it "targets a custom frame" do
+    render_inline described_class.new(turbo_frame: "datatable")
+
+    expect(page).to have_selector("form.search") do |form|
+      expect(form["data-turbo-frame"]).to eq("datatable")
+    end
+  end
+
+  it "allows to set a custom frame after initializing" do
+    component = described_class.new(turbo_frame: "datatable")
+    component.turbo_frame = "datatable"
+
+    render_inline component
+
+    expect(page).to have_selector("form.search") do |form|
+      expect(form["data-turbo-frame"]).to eq("datatable")
+    end
   end
 
   it "renders URL params into inputs" do
-    with_request_url("/communes?search=Pyrenees&order=-departement&page=2") do
-      render_inline(component)
+    with_request_url "/communes?search=Pyrenees&order=-departement&page=2" do
+      render_inline described_class.new
     end
 
-    aggregate_failures do
-      expect(page).to have_css("input[type='search'][name='search'][value='Pyrenees']")
-      expect(page).to have_css("input[type='hidden'][name='order'][value='-departement']", visible: :all)
+    expect(page).to have_selector("form.search") do |form|
+      aggregate_failures do
+        expect(form).to have_selector("input[type='search'][name='search'][value='Pyrenees']")
+        expect(form).to have_selector("input[type='hidden'][name='order'][value='-departement']", visible: :all)
+      end
     end
   end
 end

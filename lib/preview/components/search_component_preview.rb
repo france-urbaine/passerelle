@@ -2,13 +2,18 @@
 
 class SearchComponentPreview < ViewComponent::Preview
   # @!group Default
-  def default
-    render(SearchComponent.new)
-  end
+  #
+  # @label Basic search form
+  #
+  def basic; end
 
-  # @param label
-  def with_dynamic_label(label: "Rechercher des objets")
-    render(SearchComponent.new(label: label))
-  end
+  # @label Search form with a defined label
+  #
+  def with_label; end
+
+  # @label Search form targeting a turbo-frame
+  #
+  def with_turbo_frame; end
+  #
   # @!endgroup
 end
