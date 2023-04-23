@@ -6,27 +6,42 @@
 
   .dropdown__menu {
     position: absolute;
+    z-index: 11;
 
     @apply shadow-lg rounded-sm border;
     @apply bg-white border-gray-200;
     @apply dark:bg-black dark:border-gray-800;
 
-    &--above-left {
-      top: 100%;
+    &--below-left {
       right: 0;
     }
 
-    .icon-button + &--above-left {
-      top: calc(100% + 2px);
+    &--below-right {
+      top: 100%;
+      left: 0;
     }
 
-    &--side-left {
+    &--aside-left {
       top: 0;
       right: 100%;
     }
 
-    .icon-button + &--side-left {
-      right: calc(100% + 2px);
+    &--aside-right {
+      top: 0;
+      left: 100%;
+    }
+
+    .icon-button + &--below-left,
+    .icon-button + &--below-right {
+      top: calc(100% + 3px);
+    }
+
+    .icon-button + &--aside-left {
+      right: calc(100% + 3px);
+    }
+
+    .icon-button + &--aside-right {
+      left: calc(100% + 3px);
     }
   }
 
@@ -46,35 +61,6 @@
     @apply py-3 px-4 bg-transparent border-none rounded;
     @apply bg-white text-gray-900;
     @apply dark:bg-black dark:text-gray-100;
-
-    & > svg {
-      display: inline;
-      @apply -ml-1 mr-2 h-5 w-5;
-    }
-
-    & > .icon-button {
-      @apply -my-2;
-
-      &:first-of-type {
-        @apply -ml-2;
-      }
-
-      &:last-of-first-of-type {
-        @apply mr-2;
-      }
-    }
-
-    &--icons-right > .icon-button {
-      @apply -my-2;
-
-      &:first-of-type {
-        @apply ml-2;
-      }
-
-      &:last-of-first-of-type {
-        @apply -mr-2;
-      }
-    }
 
     &[disabled] {
       cursor: default;
@@ -99,6 +85,17 @@
         @apply text-blue-700;
         @apply dark:text-sky-300;
       }
+    }
+  }
+
+
+  .dropdown__menu--below-right > .dropdown > .dropdown__menu-item,
+  .dropdown__menu--aside-right > .dropdown > .dropdown__menu-item {
+    flex-direction: row-reverse;
+    justify-content: space-between;
+
+    & svg {
+      @apply ml-2 -mr-1;
     }
   }
 }

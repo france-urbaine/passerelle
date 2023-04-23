@@ -1,0 +1,6 @@
+.flex
+  = dropdown_component do |dropdown|
+    - dropdown.with_button "Plus d'options", icon: "adjustments", icon_only: true
+
+    - dropdown.with_menu_item "Option 1", "/rails/view_components/samples/link/default"
+    - dropdown.with_menu_item "Option 2", "/rails/view_components/samples/turbo/modal", modal: true

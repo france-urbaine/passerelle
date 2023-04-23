@@ -14,8 +14,10 @@ Rails.application.config.assets.version = "1.0"
 # Rails.application.config.assets.precompile += %w( admin.js admin.css )
 
 InlineSvg.configure do |config|
-  config.asset_file = InlineSvg::CachedAssetFile.new(
-    paths: [Rails.root.join("app/assets/icons")],
-    filters: /\.svg/
-  )
+  if Rails.env.production?
+    config.asset_file = InlineSvg::CachedAssetFile.new(
+      paths: [Rails.root.join("app/assets/icons")],
+      filters: /\.svg/
+    )
+  end
 end

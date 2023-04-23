@@ -1,0 +1,22 @@
+.flex
+  = dropdown_component(position: "below", direction: "right") do |dropdown|
+    - dropdown.with_button "Plus d'options", icon: "adjustments", icon_only: true
+    - dropdown.with_menu_item "Option 1"
+    - dropdown.with_menu_item "Option 2"
+
+  = dropdown_component(position: "aside", direction: "right") do |dropdown|
+    - dropdown.with_button "Plus d'options", icon: "adjustments", icon_only: true
+    - dropdown.with_menu_item "Option 1"
+    - dropdown.with_menu_item "Option 2"
+
+  .flex-grow
+
+  = dropdown_component(position: "aside", direction: "left") do |dropdown|
+    - dropdown.with_button "Plus d'options", icon: "adjustments", icon_only: true
+    - dropdown.with_menu_item "Option 1"
+    - dropdown.with_menu_item "Option 2"
+
+  = dropdown_component(position: "below", direction: "left") do |dropdown|
+    - dropdown.with_button "Plus d'options", icon: "adjustments", icon_only: true
+    - dropdown.with_menu_item "Option 1"
+    - dropdown.with_menu_item "Option 2"

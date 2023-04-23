@@ -5,6 +5,7 @@ module ComponentsHelper
     breadcrumbs_component:    "BreadcrumbsComponent",
     button_component:         "ButtonComponent",
     datatable_component:      "DatatableComponent",
+    dropdown_component:       "DropdownComponent",
     modal_component:          "ModalComponent",
     search_component:         "SearchComponent",
     index_options_component:  "IndexOptionsComponent"
