@@ -7,6 +7,9 @@ module ComponentsHelper
     datatable_component:      "DatatableComponent",
     dropdown_component:       "DropdownComponent",
     modal_component:          "ModalComponent",
+    page_count_component:     "PageCountComponent",
+    page_options_component:   "PageOptionsComponent",
+    pagination_component:     "PaginationComponent",
     search_component:         "SearchComponent",
     index_options_component:  "IndexOptionsComponent"
   }.freeze

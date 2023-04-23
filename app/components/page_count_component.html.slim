@@ -1,0 +1,7 @@
+- if inflections?
+  = helpers.display_count(pagy.count, inflections.singular, plural: inflections.plural)
+  = " "
+  span.mx-4 |
+  = " "
+
+= helpers.page_count(pagy)

@@ -1,0 +1,11 @@
+- if pagy.prev
+  = render ButtonComponent.new("Page précédente", page_url(pagy.prev), icon: "chevron-left", icon_only: true, rel: "prev", data: { turbo_frame: })
+- else
+  span.icon-button( aria-hidden="true" disabled="true" )
+    = helpers.svg_icon("chevron-left", "Page précédente")
+
+- if pagy.next
+  = render ButtonComponent.new("Page suivante", page_url(pagy.next), icon: "chevron-right", icon_only: true, rel: "next", data: { turbo_frame: })
+- else
+  span.icon-button( aria-hidden="true" disabled="true" )
+    = helpers.svg_icon("chevron-right", "Page suivante")

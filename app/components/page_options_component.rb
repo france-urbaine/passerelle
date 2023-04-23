@@ -1,20 +1,14 @@
 # frozen_string_literal: true
 
-class IndexOptionsComponent < ViewComponent::Base
-  attr_reader :pagy, :singular, :plural, :order_hash
+class PageOptionsComponent < ViewComponent::Base
+  attr_reader :pagy, :direction, :turbo_frame, :order_options
 
-  def initialize(pagy, singular, plural: nil, order: {})
-    @pagy       = pagy
-    @singular   = singular
-    @plural     = plural || singular.pluralize
-    @order_hash = order.stringify_keys
+  def initialize(pagy, direction: "right", turbo_frame: "_top", order: {})
+    @pagy          = pagy
+    @direction     = direction
+    @turbo_frame   = turbo_frame
+    @order_options = order.stringify_keys
     super()
-  end
-
-  def page_url(page)
-    new_params = params.slice(:search, :order).permit!
-    new_params[:page] = page
-    helpers.url_for(new_params)
   end
 
   def order_url(key, direction = :asc)
@@ -30,6 +24,12 @@ class IndexOptionsComponent < ViewComponent::Base
   end
 
   delegate :current_order_key, :current_order_direction, to: :helpers
+
+  def current_order_label
+    label = order_options.fetch(current_order_key, "défaut")
+    label += " (desc.)" if current_order_direction == :desc
+    label
+  end
 
   def current_order?(key)
     current_order_key == key.to_s
