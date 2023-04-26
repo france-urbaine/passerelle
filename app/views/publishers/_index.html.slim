@@ -5,14 +5,11 @@
   - breadcrumbs.with_action "Ajouter un éditeur", new_publisher_path, icon: "plus", modal: true, primary: true
 
 = datatable_component(publishers) do |datatable|
-  - datatable.with_inflections("éditeur")
-
   - datatable.with_search
   - datatable.with_pagination(pagy)
   - datatable.with_selection do |selection|
     - selection.with_action "Supprimer la sélection", remove_all_publishers_path, modal: true
 
-  - datatable.with_actions
   - datatable.with_column(:name,           sort: true) { "Éditeur" }
   - datatable.with_column(:siren,          sort: true) { "SIREN" }
   - datatable.with_column(:collectivities, numeric: true) { "Collectivités" }
@@ -22,8 +19,7 @@
     | Aucun éditeur disponible.
 
   - datatable.each_row do |row, publisher|
-    - row.with_selection "Sélectionner cet éditeur", described_by: :name
-
+    - row.with_checkbox "Sélectionner cet éditeur", described_by: :name
     - row.with_action "Modifier cet éditeur", edit_publisher_path(publisher), icon: "pencil-square", modal: true
     - row.with_action "Supprimer cet éditeur", remove_publisher_path(publisher), icon: "trash", modal: true
 

@@ -1,0 +1,9 @@
+= datatable_component(records) do |datatable|
+  - datatable.with_search
+  - datatable.with_pagination(pagy, "commune")
+
+  - datatable.with_column(:name, sort: true) { "Commune" }
+  - datatable.with_column(:epci, sort: true) { "EPCI" }
+
+  - datatable.each_row do |row, commune|
+    - row.with_column(:name) { commune.name }

@@ -24,7 +24,6 @@ RSpec/MultipleMemoizedHelpers:
 # Offense count: 5
 RSpec/PendingWithoutReason:
   Exclude:
-    - 'spec/components/check_boxes_collection_component_spec.rb'
     - 'spec/requests/services_communes_spec.rb'
     - 'spec/requests/services_spec.rb'
     - 'spec/requests/services_users_spec.rb'

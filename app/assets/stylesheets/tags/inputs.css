@@ -72,6 +72,10 @@
       @apply opacity-30
     }
 
+    & ~ label {
+      @apply ml-1;
+    }
+
     &:not([disabled]) {
       cursor: pointer;
 

@@ -299,7 +299,7 @@ RSpec.describe "Users", use_fixtures: true do
     # A message should diplay the number of selected users
     # with a button to remove them
     #
-    within "#datatable-header-bar" do |header|
+    within "#datatable-users-selection-bar" do |header|
       expect(header).to have_text("1 utilisateur sélectionné")
       expect(header).to have_link("Supprimer la sélection", class: "button")
 
@@ -326,7 +326,7 @@ RSpec.describe "Users", use_fixtures: true do
     expect(page).to     have_selector("h1", text: "Utilisateurs")
     expect(page).not_to have_selector("tr", text: "Marc Debomy")
 
-    expect(page).not_to have_selector("#datatable-header-bar", text: "1 utilisateur sélectionné")
+    expect(page).not_to have_selector("#datatable-users-selection-bar", text: "1 utilisateur sélectionné")
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=alert]", text: "Les utilisateurs sélectionnés ont été supprimés.")
 
@@ -349,7 +349,7 @@ RSpec.describe "Users", use_fixtures: true do
     expect(page).to     have_selector("h1", text: "Utilisateurs")
     expect(page).to     have_selector("tr", text: "Marc Debomy")
 
-    expect(page).not_to have_selector("#datatable-header-bar", text: "1 utilisateur sélectionné")
+    expect(page).not_to have_selector("#datatable-users-selection-bar", text: "1 utilisateur sélectionné")
     expect(page).not_to have_selector("[role=alert]", text: "Les utilisateurs sélectionnés ont été supprimés.")
     expect(page).to     have_selector("[role=alert]", text: "La suppression des utilisateurs sélectionnés a été annulée.")
   end

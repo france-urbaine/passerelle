@@ -1,0 +1,19 @@
+tr.datatable__row(
+  id=dom_id
+  data-controller="selection-row"
+  data-selection-row-selected-class="datatable__row--selected"
+)
+  - if datatable_checkboxes?
+    td.datatable__row-actions
+      = checkbox
+      - if checkbox&.label
+        span.tooltip=checkbox.label
+
+  - if datatable_actions?
+    td.datatable__row-actions
+      .flex
+        - actions.each do |action|
+          = render action
+
+  - cells.each do |cell|
+    = cell

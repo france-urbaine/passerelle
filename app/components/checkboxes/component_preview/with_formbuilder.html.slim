@@ -1,0 +1,2 @@
+= form_with(model: Office.new) do |f|
+  = f.checkboxes_component :user_ids, User.take(10), :id, :name

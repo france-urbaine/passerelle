@@ -311,7 +311,7 @@ RSpec.describe "Collectivities", use_fixtures: true do
     # A message should diplay the number of selected collectivities
     # with a button to remove them
     #
-    within "#datatable-header-bar" do |header|
+    within "#datatable-collectivities-selection-bar" do |header|
       expect(header).to have_text("2 collectivités sélectionnées")
       expect(header).to have_link("Supprimer la sélection", class: "button")
 
@@ -340,7 +340,7 @@ RSpec.describe "Collectivities", use_fixtures: true do
     expect(page).not_to have_selector("tr", text: "CA du Pays Basque")
     expect(page).not_to have_selector("tr", text: "Métropole Européenne de Lille")
 
-    expect(page).not_to have_selector("#datatable-header-bar", text: "2 collectivités sélectionnées")
+    expect(page).not_to have_selector("#datatable-collectivities-selection-bar", text: "2 collectivités sélectionnées")
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=alert]", text: "Les collectivités sélectionnées ont été supprimées.")
 
@@ -364,7 +364,7 @@ RSpec.describe "Collectivities", use_fixtures: true do
     expect(page).to     have_selector("tr", text: "CA du Pays Basque")
     expect(page).to     have_selector("tr", text: "Métropole Européenne de Lille")
 
-    expect(page).not_to have_selector("#datatable-header-bar", text: "2 collectivités sélectionnées")
+    expect(page).not_to have_selector("#datatable-collectivities-selection-bar", text: "2 collectivités sélectionnées")
     expect(page).not_to have_selector("[role=alert]", text: "Les collectivités sélectionnées ont été supprimées.")
     expect(page).to     have_selector("[role=alert]", text: "La suppression des collectivités sélectionnées a été annulée.")
   end

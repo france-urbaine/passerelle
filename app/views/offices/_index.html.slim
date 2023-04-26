@@ -5,14 +5,11 @@
   - breadcrumbs.with_action "Ajouter un guichet", new_office_path, icon: "plus", modal: true, primary: true
 
 = datatable_component(offices.preload(:ddfip)) do |datatable|
-  - datatable.with_inflections("guichet")
-
   - datatable.with_search
   - datatable.with_pagination(pagy)
   - datatable.with_selection do |selection|
     - selection.with_action "Supprimer la sélection", remove_all_offices_path, modal: true
 
-  - datatable.with_actions
   - datatable.with_column(:name,     sort: true) { "Guichet" }
   - datatable.with_column(:ddfip,    sort: true) { "DDFIP" }
   - datatable.with_column(:action,   sort: true) { "Action" }
@@ -23,8 +20,7 @@
     | Aucun guichet disponible.
 
   - datatable.each_row do |row, office|
-    - row.with_selection "Sélectionner ce guichet", described_by: :name
-
+    - row.with_checkbox "Sélectionner ce guichet", described_by: :name
     - row.with_action "Modifier ce guichet", edit_office_path(office), icon: "pencil-square", modal: true
     - row.with_action "Supprimer ce guichet", remove_office_path(office), icon: "trash", modal: true
 

@@ -11,7 +11,7 @@
 
       = fields(model: @office_users_form) do |form|
         = form.block :user_ids do
-          = form.enhanced_check_boxes_collection :user_ids, @office_users_form.suggested_users, :id, :name
+          = form.checkboxes_component :user_ids, @office_users_form.suggested_users, :id, :name
 
     - modal.with_submit_action "Enregistrer", autofocus: true
     - modal.with_close_action "Annuler"

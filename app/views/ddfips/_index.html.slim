@@ -5,14 +5,11 @@
   - breadcrumbs.with_action "Ajouter une DDFIP", new_ddfip_path, icon: "plus", modal: true, primary: true
 
 = datatable_component(ddfips.preload(departement: :region)) do |datatable|
-  - datatable.with_inflections("DDFIP", feminine: true)
-
   - datatable.with_search
   - datatable.with_pagination(pagy)
   - datatable.with_selection do |selection|
     - selection.with_action "Supprimer la sélection", remove_all_ddfips_path, modal: true
 
-  - datatable.with_actions
   - datatable.with_column(:name,           sort: true)          { "DDFIP" }
   - datatable.with_column(:departement,    sort: true, span: 2) { "Département" }
   - datatable.with_column(:region,         sort: true, span: 2) { "Région" }
@@ -23,8 +20,7 @@
     | Aucune DDFIP disponible.
 
   - datatable.each_row do |row, ddfip|
-    - row.with_selection "Sélectionner cette DDFIP", described_by: :name
-
+    - row.with_checkbox "Sélectionner cette DDFIP", described_by: :name
     - row.with_action "Modifier cette DDFIP", edit_ddfip_path(ddfip), icon: "pencil-square", modal: true
     - row.with_action "Supprimer cette DDFIP", remove_ddfip_path(ddfip), icon: "trash", modal: true
 

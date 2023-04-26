@@ -1,0 +1,11 @@
+= datatable_component(records) do |datatable|
+  - datatable.with_search
+  - datatable.with_pagination(pagy, "commune")
+  - datatable.with_selection do |selection|
+    - selection.with_actions "Uncheck all", data: { action: "selection#uncheckAll" }
+
+  - datatable.with_column(:name) { "Commune" }
+
+  - datatable.each_row do |row, commune|
+    - row.with_checkbox "Sélectionner cette commune", described_by: :name
+    - row.with_column(:name) { commune.name }

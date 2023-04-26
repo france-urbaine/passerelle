@@ -10,8 +10,8 @@ module FormHelper
       @template.display_errors(@object, method)
     end
 
-    def enhanced_check_boxes_collection(method, collection, value_method, text_method, options = {}, html_options = {})
-      @template.enhanced_check_boxes_collection(
+    def checkboxes_component(method, collection, value_method, text_method, options = {}, html_options = {})
+      @template.checkboxes_component(
         @object_name,
         method,
         collection,
@@ -90,9 +90,5 @@ module FormHelper
     tag.div class: "autocomplete__list-wrapper" do
       tag.ul class: "autocomplete__list", data: { autocomplete_target: "results" }
     end
-  end
-
-  def enhanced_check_boxes_collection(...)
-    render(CheckBoxesCollectionComponent.new(...))
   end
 end

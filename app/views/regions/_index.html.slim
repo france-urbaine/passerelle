@@ -3,14 +3,9 @@
   - breadcrumbs.with_path "Régions"
 
 = datatable_component(regions) do |datatable|
-  - datatable.with_inflections("région", feminine: true)
-
   - datatable.with_search
   - datatable.with_pagination(pagy)
 
-  -# datatable.with_selection
-
-  - datatable.with_actions
   - datatable.with_column(:region,      sort: true, span: 2) { "Région" }
   - datatable.with_column(:communes,       numeric: true) { "Communes" }
   - datatable.with_column(:epcis,          numeric: true) { "EPCI" }
@@ -22,8 +17,6 @@
     | Aucune région disponible.
 
   - datatable.each_row do |row, region|
-    - row.with_selection "Sélectionner cette région", described_by: :name
-
     - row.with_action "Modifier cette région", edit_region_path(region), icon: "pencil-square", modal: true
 
     - row.with_column(:region) do |column|

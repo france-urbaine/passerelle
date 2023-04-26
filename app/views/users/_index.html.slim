@@ -5,14 +5,11 @@
   - breadcrumbs.with_action "Inviter un utilisateur", new_user_path, icon: "plus", modal: true, primary: true
 
 = datatable_component(users.preload(:organization)) do |datatable|
-  - datatable.with_inflections("utilisateur")
-
   - datatable.with_search
   - datatable.with_pagination(pagy)
   - datatable.with_selection do |selection|
     - selection.with_action "Supprimer la sélection", remove_all_users_path, modal: true
 
-  - datatable.with_actions
   - datatable.with_column(:name, sort: true)         { "Nom" }
   - datatable.with_column(:email)                    { "Adresse mail" }
   - datatable.with_column(:organization, sort: true) { "Organisation" }
@@ -23,8 +20,7 @@
     | Aucun utilisateur disponible.
 
   - datatable.each_row do |row, user|
-    - row.with_selection "Sélectionner cet utilisateur", described_by: :name
-
+    - row.with_checkbox "Sélectionner cet utilisateur", described_by: :name
     - row.with_action "Modifier cet utilisateur", edit_user_path(user), icon: "pencil-square", modal: true
     - row.with_action "Supprimer cet utilisateur", remove_user_path(user), icon: "trash", modal: true
 

@@ -1,24 +1,26 @@
 # frozen_string_literal: true
 
 module FormatHelper
-  def display_count(count_or_relation, word, plural: nil)
+  def display_count(count_or_relation, *args, **options)
     case count_or_relation
     when Integer                then count = count_or_relation
     when ActiveRecord::Relation then count = count_or_relation.size
     else raise TypeError, "invalid count"
     end
 
+    inflections = InflectionsOptions.new(*args, **options)
+
     capture do
       case count
-      when 0 then "0 #{word}"
+      when 0 then "0 #{inflections.singular}"
       when 1
         concat tag.b(1)
         concat " "
-        concat word
+        concat inflections.singular
       else
         concat tag.b(number_with_delimiter(count))
         concat " "
-        concat plural || word.pluralize
+        concat inflections.plural
       end
     end
   end

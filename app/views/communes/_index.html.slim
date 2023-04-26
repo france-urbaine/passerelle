@@ -5,14 +5,9 @@
   - breadcrumbs.with_action "Mettre à jour", edit_territories_path(redirect: current_path), icon: "cloud-arrow-down", modal: true
 
 = datatable_component(communes.preload(:departement, :epci)) do |datatable|
-  - datatable.with_inflections("commune", feminine: true)
-
   - datatable.with_search
   - datatable.with_pagination(pagy)
 
-  -# datatable.with_selection
-
-  - datatable.with_actions
   - datatable.with_column(:name,        sort: true, span: 2) { "Commune" }
   - datatable.with_column(:departement, sort: true, span: 2) { "Département" }
   - datatable.with_column(:epci,        sort: true, span: 2) { "EPCI" }
@@ -22,8 +17,6 @@
     | Aucune commune disponible.
 
   - datatable.each_row do |row, commune|
-    - row.with_selection "Sélectionner cette commune", described_by: :name
-
     - row.with_action "Modifier cette commune", edit_commune_path(commune), icon: "pencil-square", modal: true
 
     - row.with_column(:name) do |column|

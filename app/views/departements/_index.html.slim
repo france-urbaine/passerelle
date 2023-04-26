@@ -3,14 +3,9 @@
   - breadcrumbs.with_path "Départements"
 
 = datatable_component(departements.preload(:region)) do |datatable|
-  - datatable.with_inflections("département")
-
   - datatable.with_search
   - datatable.with_pagination(pagy)
 
-  -# datatable.with_selection
-
-  - datatable.with_actions
   - datatable.with_column(:departement, sort: true, span: 2) { "Département" }
   - datatable.with_column(:region,      sort: true, span: 2) { "Région" }
   - datatable.with_column(:communes,       numeric: true) { "Communes" }
@@ -22,9 +17,6 @@
     | Aucun département disponible.
 
   - datatable.each_row do |row, departement|
-    - row.with_selection "Sélectionner ce département",
-      described_by: :name
-
     - row.with_action "Modifier ce département", edit_departement_path(departement), icon: "pencil-square", modal: true
 
     - row.with_column(:departement) do |column|

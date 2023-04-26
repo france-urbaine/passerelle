@@ -1,0 +1,17 @@
+= render ::Dropdown::Component.new(direction: direction) do |dropdown|
+  - dropdown.with_button "Options d'affichage", icon: "adjustments", icon_only: true
+
+  - dropdown.with_menu_item "Afficher #{pagy.items} lignes par page" do |item|
+    - item.with_menu_item "Afficher 10 lignes", items_url(10), data: { turbo_frame: }
+    - item.with_menu_item "Afficher 20 lignes", items_url(20), data: { turbo_frame: }
+    - item.with_menu_item "Afficher 50 lignes", items_url(50), data: { turbo_frame: }
+    - item.with_menu_item "Afficher 100 lignes", items_url(100), data: { turbo_frame: }
+
+  - if order_options.any?
+    - dropdown.with_menu_item "Trier par #{current_order_label}" do |item|
+      - order_options.each do |key, name|
+        - item.with_menu_item do
+          .mr-2 Trier par #{name} :
+          .flex-grow
+          .-my-2=       render order_button(name, key, :asc)
+          .-my-2.-mr-2= render order_button(name, key, :desc)

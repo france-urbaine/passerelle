@@ -581,7 +581,7 @@ RSpec.describe "Offices", use_fixtures: true do
     # A message should diplay the number of selected publishers
     # with a button to remove them
     #
-    within "#datatable-header-bar" do |header|
+    within "#datatable-offices-selection-bar" do |header|
       expect(header).to have_text("1 guichet sélectionné")
       expect(header).to have_link("Supprimer la sélection", class: "button")
 
@@ -608,7 +608,7 @@ RSpec.describe "Offices", use_fixtures: true do
     expect(page).to     have_selector("h1", text: "Guichets")
     expect(page).not_to have_selector("tr", text: "PELP de Bayonne")
 
-    expect(page).not_to have_selector("#datatable-header-bar", text: "1 guichet sélectionné")
+    expect(page).not_to have_selector("#datatable-offices-selection-bar", text: "1 guichet sélectionné")
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=alert]", text: "Les guichets sélectionnés ont été supprimés.")
 
@@ -631,7 +631,7 @@ RSpec.describe "Offices", use_fixtures: true do
     expect(page).to     have_selector("h1", text: "Guichets")
     expect(page).to     have_selector("tr", text: "PELP de Bayonne")
 
-    expect(page).not_to have_selector("#datatable-header-bar", text: "1 guichet sélectionné")
+    expect(page).not_to have_selector("#datatable-offices-selection-bar", text: "1 guichet sélectionné")
     expect(page).not_to have_selector("[role=alert]", text: "Les guichets sélectionnés ont été supprimés.")
     expect(page).to     have_selector("[role=alert]", text: "La suppression des guichets sélectionnés a été annulée.")
   end
