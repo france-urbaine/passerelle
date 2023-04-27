@@ -9,7 +9,7 @@ FactoryBot.define do
     password     { Faker::Internet.password }
     confirmed_at { Time.current }
 
-    sequence(:email) { |n| Faker::Internet.safe_email(name: "#{first_name}_#{n}") }
+    sequence(:email) { |n| Faker::Internet.email(name: "#{first_name}_#{n}") }
 
     trait :unconfirmed do
       confirmed_at { nil }
