@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
+  sequence(:code_insee) { Faker::Base.numerify("#####") }
+
   factory :commune do
     association :departement
 
@@ -13,7 +15,7 @@ FactoryBot.define do
 
     code_insee do
       loop do
-        value = Faker::Address.unique.zip_code
+        value = Faker::Base.numerify(code_departement.to_s.ljust(5, "#"))
         break value unless Commune.exists?(name: value)
       end
     end

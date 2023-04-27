@@ -163,32 +163,31 @@ RSpec.describe User do
   # Counter caches
   # ----------------------------------------------------------------------------
   describe "counter caches" do
-    let!(:user1) { create(:user) }
-    let!(:user2) { create(:user) }
+    let!(:users) { create_list(:user, 2) }
 
     describe "#offices_count" do
       let(:office) { create(:office) }
 
       it "changes when users is assigned to the office" do
-        expect { office.users << user1 }
-          .to      change { user1.reload.offices_count }.from(0).to(1)
-          .and not_change { user2.reload.offices_count }.from(0)
+        expect { office.users << users[0] }
+          .to      change { users[0].reload.offices_count }.from(0).to(1)
+          .and not_change { users[1].reload.offices_count }.from(0)
       end
 
       it "changes when users is removed from the office" do
-        office.users << user1
+        office.users << users[0]
 
-        expect { office.users.delete(user1) }
-          .to      change { user1.reload.offices_count }.from(1).to(0)
-          .and not_change { user2.reload.offices_count }.from(0)
+        expect { office.users.delete(users[0]) }
+          .to      change { users[0].reload.offices_count }.from(1).to(0)
+          .and not_change { users[1].reload.offices_count }.from(0)
       end
 
       it "doesn't changes when another user is added" do
-        office.users << user1
+        office.users << users[0]
 
-        expect { office.users << user2 }
-          .to  not_change { user1.reload.offices_count }.from(1)
-          .and     change { user2.reload.offices_count }.from(0).to(1)
+        expect { office.users << users[1] }
+          .to  not_change { users[0].reload.offices_count }.from(1)
+          .and     change { users[1].reload.offices_count }.from(0).to(1)
       end
     end
   end
@@ -198,8 +197,7 @@ RSpec.describe User do
   describe ".reset_all_counters" do
     subject(:reset_all_counters) { described_class.reset_all_counters }
 
-    let!(:user1) { create(:user) }
-    let!(:user2) { create(:user) }
+    let!(:users) { create_list(:user, 2) }
 
     it { expect { reset_all_counters }.to ret(2) }
     it { expect { reset_all_counters }.to perform_sql_query("SELECT reset_all_users_counters()") }
@@ -208,14 +206,14 @@ RSpec.describe User do
       before do
         offices = create_list(:office, 6)
 
-        user1.offices = offices.shuffle.take(4)
-        user2.offices = offices.shuffle.take(2)
+        users[0].offices = offices.shuffle.take(4)
+        users[1].offices = offices.shuffle.take(2)
 
         User.update_all(offices_count: 0)
       end
 
-      it { expect { reset_all_counters }.to change { user1.reload.offices_count }.from(0).to(4) }
-      it { expect { reset_all_counters }.to change { user2.reload.offices_count }.from(0).to(2) }
+      it { expect { reset_all_counters }.to change { users[0].reload.offices_count }.from(0).to(4) }
+      it { expect { reset_all_counters }.to change { users[1].reload.offices_count }.from(0).to(2) }
     end
   end
 end

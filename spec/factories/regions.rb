@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
+  sequence(:code_region) { Faker::Base.numerify("##") }
+
   factory :region do
     code_region do
       loop do
-        value = Faker::Address.zip_code[0..1]
+        value = generate(:code_region)
         break value unless Region.exists?(code_region: value)
       end
     end

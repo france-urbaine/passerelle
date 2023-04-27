@@ -67,7 +67,7 @@ end
 
 def watch
   log "Starting Guard"
-  system!({ "SKIP_ALL_ON_START_WARNING" => "true" }, "guard")
+  system!({ "SKIP_ALL_ON_START_WARNING" => "true" }, "bundle exec guard")
 end
 
 def run_all

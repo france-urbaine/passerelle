@@ -93,110 +93,109 @@ RSpec.describe Publisher do
   # Counter caches
   # ----------------------------------------------------------------------------
   describe "counter caches" do
-    let!(:publisher1) { create(:publisher) }
-    let!(:publisher2) { create(:publisher) }
+    let!(:publishers) { create_list(:publisher, 2) }
 
     describe "#users_count" do
-      let(:user) { create(:user, organization: publisher1) }
+      let(:user) { create(:user, organization: publishers[0]) }
 
       it "changes on creation" do
         expect { user }
-          .to      change { publisher1.reload.users_count }.from(0).to(1)
-          .and not_change { publisher2.reload.users_count }.from(0)
+          .to      change { publishers[0].reload.users_count }.from(0).to(1)
+          .and not_change { publishers[1].reload.users_count }.from(0)
       end
 
       it "changes on deletion" do
         user
         expect { user.destroy }
-          .to      change { publisher1.reload.users_count }.from(1).to(0)
-          .and not_change { publisher2.reload.users_count }.from(0)
+          .to      change { publishers[0].reload.users_count }.from(1).to(0)
+          .and not_change { publishers[1].reload.users_count }.from(0)
       end
 
       it "changes when discarding" do
         user
         expect { user.discard }
-          .to      change { publisher1.reload.users_count }.from(1).to(0)
-          .and not_change { publisher2.reload.users_count }.from(0)
+          .to      change { publishers[0].reload.users_count }.from(1).to(0)
+          .and not_change { publishers[1].reload.users_count }.from(0)
       end
 
       it "changes when undiscarding" do
         user.discard
         expect { user.undiscard }
-          .to      change { publisher1.reload.users_count }.from(0).to(1)
-          .and not_change { publisher2.reload.users_count }.from(0)
+          .to      change { publishers[0].reload.users_count }.from(0).to(1)
+          .and not_change { publishers[1].reload.users_count }.from(0)
       end
 
       it "changes when updating organization" do
         user
-        expect { user.update(organization: publisher2) }
-          .to  change { publisher1.reload.users_count }.from(1).to(0)
-          .and change { publisher2.reload.users_count }.from(0).to(1)
+        expect { user.update(organization: publishers[1]) }
+          .to  change { publishers[0].reload.users_count }.from(1).to(0)
+          .and change { publishers[1].reload.users_count }.from(0).to(1)
       end
     end
 
     describe "#collectivities_count" do
-      let(:collectivity) { create(:collectivity, publisher: publisher1) }
+      let(:collectivity) { create(:collectivity, publisher: publishers[0]) }
 
       it "changes on creation" do
         expect { collectivity }
-          .to      change { publisher1.reload.collectivities_count }.from(0).to(1)
-          .and not_change { publisher2.reload.collectivities_count }.from(0)
+          .to      change { publishers[0].reload.collectivities_count }.from(0).to(1)
+          .and not_change { publishers[1].reload.collectivities_count }.from(0)
       end
 
       it "changes on discarding" do
         collectivity
         expect { collectivity.discard }
-          .to      change { publisher1.reload.collectivities_count }.from(1).to(0)
-          .and not_change { publisher2.reload.collectivities_count }.from(0)
+          .to      change { publishers[0].reload.collectivities_count }.from(1).to(0)
+          .and not_change { publishers[1].reload.collectivities_count }.from(0)
       end
 
       it "changes on undiscarding" do
         collectivity.discard
         expect { collectivity.undiscard }
-          .to      change { publisher1.reload.collectivities_count }.from(0).to(1)
-          .and not_change { publisher2.reload.collectivities_count }.from(0)
+          .to      change { publishers[0].reload.collectivities_count }.from(0).to(1)
+          .and not_change { publishers[1].reload.collectivities_count }.from(0)
       end
 
       it "changes on deletion" do
         collectivity
         expect { collectivity.destroy }
-          .to      change { publisher1.reload.collectivities_count }.from(1).to(0)
-          .and not_change { publisher2.reload.collectivities_count }.from(0)
+          .to      change { publishers[0].reload.collectivities_count }.from(1).to(0)
+          .and not_change { publishers[1].reload.collectivities_count }.from(0)
       end
 
       it "doesn't change when deleting a discarded collectivity" do
         collectivity.discard
         expect { collectivity.destroy }
-          .to  not_change { publisher1.reload.collectivities_count }.from(0)
-          .and not_change { publisher2.reload.collectivities_count }.from(0)
+          .to  not_change { publishers[0].reload.collectivities_count }.from(0)
+          .and not_change { publishers[1].reload.collectivities_count }.from(0)
       end
 
       it "changes when updating publisher" do
         collectivity
-        expect { collectivity.update(publisher: publisher2) }
-          .to  change { publisher1.reload.collectivities_count }.from(1).to(0)
-          .and change { publisher2.reload.collectivities_count }.from(0).to(1)
+        expect { collectivity.update(publisher: publishers[1]) }
+          .to  change { publishers[0].reload.collectivities_count }.from(1).to(0)
+          .and change { publishers[1].reload.collectivities_count }.from(0).to(1)
       end
 
       it "doesn't change when updating publisher of a discarded collectivity" do
         collectivity.discard
-        expect { collectivity.update(publisher: publisher2) }
-          .to  not_change { publisher1.reload.collectivities_count }.from(0)
-          .and not_change { publisher2.reload.collectivities_count }.from(0)
+        expect { collectivity.update(publisher: publishers[1]) }
+          .to  not_change { publishers[0].reload.collectivities_count }.from(0)
+          .and not_change { publishers[1].reload.collectivities_count }.from(0)
       end
 
       it "changes when combining updating publisher and discarding" do
         collectivity
-        expect { collectivity.update(publisher: publisher2, discarded_at: Time.current) }
-          .to      change { publisher1.reload.collectivities_count }.from(1).to(0)
-          .and not_change { publisher2.reload.collectivities_count }.from(0)
+        expect { collectivity.update(publisher: publishers[1], discarded_at: Time.current) }
+          .to      change { publishers[0].reload.collectivities_count }.from(1).to(0)
+          .and not_change { publishers[1].reload.collectivities_count }.from(0)
       end
 
       it "changes when combining updating publisher and undiscarding" do
         collectivity.discard
-        expect { collectivity.update(publisher: publisher2, discarded_at: nil) }
-          .to  not_change { publisher1.reload.collectivities_count }.from(0)
-          .and     change { publisher2.reload.collectivities_count }.from(0).to(1)
+        expect { collectivity.update(publisher: publishers[1], discarded_at: nil) }
+          .to  not_change { publishers[0].reload.collectivities_count }.from(0)
+          .and     change { publishers[1].reload.collectivities_count }.from(0).to(1)
       end
     end
   end
@@ -206,37 +205,36 @@ RSpec.describe Publisher do
   describe ".reset_all_counters" do
     subject(:reset_all_counters) { described_class.reset_all_counters }
 
-    let!(:publisher1) { create(:publisher) }
-    let!(:publisher2) { create(:publisher) }
+    let!(:publishers) { create_list(:publisher, 2) }
 
     it { expect { reset_all_counters }.to ret(2) }
     it { expect { reset_all_counters }.to perform_sql_query("SELECT reset_all_publishers_counters()") }
 
     describe "on users_count" do
       before do
-        create_list(:user, 4, organization: publisher1)
-        create_list(:user, 2, organization: publisher2)
+        create_list(:user, 4, organization: publishers[0])
+        create_list(:user, 2, organization: publishers[1])
         create_list(:user, 1, :publisher)
         create_list(:user, 1, :collectivity)
 
         Publisher.update_all(users_count: 0)
       end
 
-      it { expect { reset_all_counters }.to change { publisher1.reload.users_count }.from(0).to(4) }
-      it { expect { reset_all_counters }.to change { publisher2.reload.users_count }.from(0).to(2) }
+      it { expect { reset_all_counters }.to change { publishers[0].reload.users_count }.from(0).to(4) }
+      it { expect { reset_all_counters }.to change { publishers[1].reload.users_count }.from(0).to(2) }
     end
 
     describe "on collectivities_count" do
       before do
-        create_list(:collectivity, 3, publisher: publisher1)
-        create_list(:collectivity, 2, publisher: publisher2)
-        create_list(:collectivity, 2, :discarded, publisher: publisher2)
+        create_list(:collectivity, 3, publisher: publishers[0])
+        create_list(:collectivity, 2, publisher: publishers[1])
+        create_list(:collectivity, 2, :discarded, publisher: publishers[1])
 
         Publisher.update_all(collectivities_count: 0)
       end
 
-      it { expect { reset_all_counters }.to change { publisher1.reload.collectivities_count }.from(0).to(3) }
-      it { expect { reset_all_counters }.to change { publisher2.reload.collectivities_count }.from(0).to(2) }
+      it { expect { reset_all_counters }.to change { publishers[0].reload.collectivities_count }.from(0).to(3) }
+      it { expect { reset_all_counters }.to change { publishers[1].reload.collectivities_count }.from(0).to(2) }
     end
   end
 end
