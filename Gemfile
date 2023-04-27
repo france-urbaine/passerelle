@@ -65,7 +65,7 @@ group :development do
   gem "rack-mini-profiler"
   gem "web-console"
 
-  gem "lookbook", ">= 2.0.0.beta.4"
+  gem "lookbook", ">= 2.0.0"
 
   # FIXME: waiting for this PR to be released
   # The gem can be removed from the Gemfile after release because
