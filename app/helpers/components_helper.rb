@@ -6,6 +6,7 @@ module ComponentsHelper
     button_component:             "Button::Component",
     checkboxes_component:         "Checkboxes::Component",
     datatable_component:          "DataTable::Component",
+    datatable_skeleton_component: "DataTable::Skeleton::Component",
     dropdown_component:           "Dropdown::Component",
     modal_component:              "Modal::Component",
     notification_component:       "Notification::Component",

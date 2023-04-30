@@ -1,0 +1,38 @@
+@layer components {
+  .text-skeleton-loader {
+    @apply animate-pulse;
+    @apply text-slate-300;
+    @apply dark:text-slate-700;
+
+    &:empty {
+      display: inline-block;
+      @apply w-40;
+    }
+
+    &:empty:before {
+      content: "\00a0";
+      display: inline-block;
+      line-height: 0.7em;
+
+      @apply w-full rounded;
+      @apply bg-slate-200 dark:bg-slate-800;
+    }
+  }
+
+  .form-skeleton-loader {
+    & .form-block__input-icon {
+      @apply animate-pulse;
+      @apply text-slate-300;
+      @apply dark:text-slate-700;
+    }
+  }
+
+  .button-skeleton-loader {
+    &,
+    &.icon-button:not([disabled]) {
+      @apply animate-pulse;
+      @apply text-slate-300;
+      @apply dark:text-slate-700;
+    }
+  }
+}

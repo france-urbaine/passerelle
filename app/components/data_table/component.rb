@@ -60,9 +60,10 @@ module DataTable
     end
 
     class Pagination < ApplicationViewComponent
-      def initialize(datatable, pagy, *args, **kwargs)
+      def initialize(datatable, pagy, *args, options: true, **kwargs)
         @datatable   = datatable
         @pagy        = pagy
+        @options     = options
         @inflections = InflectionsOptions.new(*args, **kwargs) || InflectionsOptions.new(@datatable.records.model)
         super()
       end
@@ -73,7 +74,7 @@ module DataTable
           @inflections,
           turbo_frame: @datatable.turbo_frame,
           direction:   "left",
-          order:       order_options
+          options:     @options
         )
       end
 

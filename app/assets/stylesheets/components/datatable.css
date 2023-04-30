@@ -17,8 +17,8 @@
       @apply m-0.5;
     }
 
-    tbody & th:empty:before,
-    tbody & td:empty:before {
+    .datatable tbody & th:empty:before,
+    .datatable tbody & td:empty:before {
       content: "-";
       @apply text-gray-500;
     }
