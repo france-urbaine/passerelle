@@ -12,18 +12,26 @@ RSpec.describe Pagination::Buttons::Component, type: :component do
       Pagy.new(count: 125, page: 3, items: 20)
     )
 
-    expect(page).to have_selector(".icon-button", text: "Page précédente") do |button|
-      expect(button["aria-hidden"]).not_to be_present
-      expect(button["disabled"]).not_to be_present
-      expect(button["href"]).to eq("/communes?page=2")
-      expect(button["rel"]).to eq("prev")
-    end
+    aggregate_failures do
+      expect(page).to have_selector(".icon-button", text: "Page précédente") do |button|
+        aggregate_failures do
+          expect(button).to have_html_attribute("href").with_value("/communes?page=2")
+          expect(button).to have_html_attribute("rel").with_value("prev")
 
-    expect(page).to have_selector(".icon-button", text: "Page suivante") do |button|
-      expect(button["aria-hidden"]).not_to be_present
-      expect(button["disabled"]).not_to be_present
-      expect(button["href"]).to eq("/communes?page=4")
-      expect(button["rel"]).to eq("next")
+          expect(button).not_to have_html_attribute("aria-hidden")
+          expect(button).not_to have_html_attribute("disabled")
+        end
+      end
+
+      expect(page).to have_selector(".icon-button", text: "Page suivante") do |button|
+        aggregate_failures do
+          expect(button).to have_html_attribute("href").with_value("/communes?page=4")
+          expect(button).to have_html_attribute("rel").with_value("next")
+
+          expect(button).not_to have_html_attribute("aria-hidden")
+          expect(button).not_to have_html_attribute("disabled")
+        end
+      end
     end
   end
 
@@ -32,18 +40,26 @@ RSpec.describe Pagination::Buttons::Component, type: :component do
       Pagy.new(count: 125, page: 1, items: 20)
     )
 
-    expect(page).to have_selector(".icon-button", text: "Page précédente") do |button|
-      expect(button["aria-hidden"]).to be_present
-      expect(button["disabled"]).to be_present
-      expect(button["href"]).not_to be_present
-      expect(button["rel"]).not_to be_present
-    end
+    aggregate_failures do
+      expect(page).to have_selector(".icon-button", text: "Page précédente") do |button|
+        aggregate_failures do
+          expect(button).not_to have_html_attribute("href")
+          expect(button).not_to have_html_attribute("rel")
 
-    expect(page).to have_selector(".icon-button", text: "Page suivante") do |button|
-      expect(button["aria-hidden"]).not_to be_present
-      expect(button["disabled"]).not_to be_present
-      expect(button["href"]).to eq("/communes?page=2")
-      expect(button["rel"]).to eq("next")
+          expect(button).to have_html_attribute("aria-hidden").boolean
+          expect(button).to have_html_attribute("disabled").boolean
+        end
+      end
+
+      expect(page).to have_selector(".icon-button", text: "Page suivante") do |button|
+        aggregate_failures do
+          expect(button).to have_html_attribute("href").with_value("/communes?page=2")
+          expect(button).to have_html_attribute("rel").with_value("next")
+
+          expect(button).not_to have_html_attribute("aria-hidden")
+          expect(button).not_to have_html_attribute("disabled")
+        end
+      end
     end
   end
 
@@ -52,18 +68,26 @@ RSpec.describe Pagination::Buttons::Component, type: :component do
       Pagy.new(count: 125, page: 7, items: 20)
     )
 
-    expect(page).to have_selector(".icon-button", text: "Page précédente") do |button|
-      expect(button["aria-hidden"]).not_to be_present
-      expect(button["disabled"]).not_to be_present
-      expect(button["href"]).to eq("/communes?page=6")
-      expect(button["rel"]).to eq("prev")
-    end
+    aggregate_failures do
+      expect(page).to have_selector(".icon-button", text: "Page précédente") do |button|
+        aggregate_failures do
+          expect(button).to have_html_attribute("href").with_value("/communes?page=6")
+          expect(button).to have_html_attribute("rel").with_value("prev")
 
-    expect(page).to have_selector(".icon-button", text: "Page suivante") do |button|
-      expect(button["aria-hidden"]).to be_present
-      expect(button["disabled"]).to be_present
-      expect(button["href"]).not_to be_present
-      expect(button["rel"]).not_to be_present
+          expect(button).not_to have_html_attribute("aria-hidden")
+          expect(button).not_to have_html_attribute("disabled")
+        end
+      end
+
+      expect(page).to have_selector(".icon-button", text: "Page suivante") do |button|
+        aggregate_failures do
+          expect(button).not_to have_html_attribute("href")
+          expect(button).not_to have_html_attribute("rel")
+
+          expect(button).to have_html_attribute("aria-hidden").boolean
+          expect(button).to have_html_attribute("disabled").boolean
+        end
+      end
     end
   end
 
@@ -72,18 +96,26 @@ RSpec.describe Pagination::Buttons::Component, type: :component do
       Pagy.new(count: 10, page: 1, items: 20)
     )
 
-    expect(page).to have_selector(".icon-button", text: "Page précédente") do |button|
-      expect(button["aria-hidden"]).to be_present
-      expect(button["disabled"]).to be_present
-      expect(button["href"]).not_to be_present
-      expect(button["rel"]).not_to be_present
-    end
+    aggregate_failures do
+      expect(page).to have_selector(".icon-button", text: "Page précédente") do |button|
+        aggregate_failures do
+          expect(button).not_to have_html_attribute("href")
+          expect(button).not_to have_html_attribute("rel")
 
-    expect(page).to have_selector(".icon-button", text: "Page suivante") do |button|
-      expect(button["aria-hidden"]).to be_present
-      expect(button["disabled"]).to be_present
-      expect(button["href"]).not_to be_present
-      expect(button["rel"]).not_to be_present
+          expect(button).to have_html_attribute("aria-hidden").boolean
+          expect(button).to have_html_attribute("disabled").boolean
+        end
+      end
+
+      expect(page).to have_selector(".icon-button", text: "Page suivante") do |button|
+        aggregate_failures do
+          expect(button).not_to have_html_attribute("href")
+          expect(button).not_to have_html_attribute("rel")
+
+          expect(button).to have_html_attribute("aria-hidden").boolean
+          expect(button).to have_html_attribute("disabled").boolean
+        end
+      end
     end
   end
 
@@ -94,12 +126,14 @@ RSpec.describe Pagination::Buttons::Component, type: :component do
       )
     end
 
-    expect(page).to have_link("Page précédente") do |link|
-      expect(link["href"]).to eq("/communes?order=-name&page=2&search=foo")
-    end
+    aggregate_failures do
+      expect(page).to have_link("Page précédente") do |link|
+        expect(link).to have_html_attribute("href").with_value("/communes?order=-name&page=2&search=foo")
+      end
 
-    expect(page).to have_link("Page suivante") do |link|
-      expect(link["href"]).to eq("/communes?order=-name&page=4&search=foo")
+      expect(page).to have_link("Page suivante") do |link|
+        expect(link).to have_html_attribute("href").with_value("/communes?order=-name&page=4&search=foo")
+      end
     end
   end
 
@@ -108,12 +142,14 @@ RSpec.describe Pagination::Buttons::Component, type: :component do
       Pagy.new(count: 125, page: 3, items: 20)
     )
 
-    expect(page).to have_selector(".icon-button", text: "Page précédente") do |button|
-      expect(button["data-turbo-frame"]).to eq("_top")
-    end
+    aggregate_failures do
+      expect(page).to have_selector(".icon-button", text: "Page précédente") do |button|
+        expect(button).to have_html_attribute("data-turbo-frame").with_value("_top")
+      end
 
-    expect(page).to have_selector(".icon-button", text: "Page suivante") do |button|
-      expect(button["data-turbo-frame"]).to eq("_top")
+      expect(page).to have_selector(".icon-button", text: "Page suivante") do |button|
+        expect(button).to have_html_attribute("data-turbo-frame").with_value("_top")
+      end
     end
   end
 
@@ -123,12 +159,14 @@ RSpec.describe Pagination::Buttons::Component, type: :component do
       turbo_frame: "content"
     )
 
-    expect(page).to have_selector(".icon-button", text: "Page précédente") do |button|
-      expect(button["data-turbo-frame"]).to eq("content")
-    end
+    aggregate_failures do
+      expect(page).to have_selector(".icon-button", text: "Page précédente") do |button|
+        expect(button).to have_html_attribute("data-turbo-frame").with_value("content")
+      end
 
-    expect(page).to have_selector(".icon-button", text: "Page suivante") do |button|
-      expect(button["data-turbo-frame"]).to eq("content")
+      expect(page).to have_selector(".icon-button", text: "Page suivante") do |button|
+        expect(button).to have_html_attribute("data-turbo-frame").with_value("content")
+      end
     end
   end
 end

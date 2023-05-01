@@ -11,6 +11,7 @@ module DataTable
       def initialize(rows: 5, columns: 3)
         @rows    = rows
         @columns = Array.new(columns)
+        super()
       end
     end
   end

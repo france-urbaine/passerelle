@@ -56,16 +56,16 @@ RSpec.describe Pagination::Options::Component, type: :component do
     end
 
     aggregate_failures do
-      expect(page).to have_link("Afficher 10 lignes") { |link| expect(link["href"]).to eq("/communes?items=10&order=-name&search=foo") }
-      expect(page).to have_link("Afficher 20 lignes") { |link| expect(link["href"]).to eq("/communes?items=20&order=-name&search=foo") }
-      expect(page).to have_link("Afficher 50 lignes") { |link| expect(link["href"]).to eq("/communes?items=50&order=-name&search=foo") }
-      expect(page).to have_link("Afficher 100 lignes") { |link| expect(link["href"]).to eq("/communes?items=100&order=-name&search=foo") }
+      expect(page).to have_link("Afficher 10 lignes", href: "/communes?items=10&order=-name&search=foo")
+      expect(page).to have_link("Afficher 20 lignes", href: "/communes?items=20&order=-name&search=foo")
+      expect(page).to have_link("Afficher 50 lignes", href: "/communes?items=50&order=-name&search=foo")
+      expect(page).to have_link("Afficher 100 lignes", href: "/communes?items=100&order=-name&search=foo")
 
       expect(page).to have_button("Trier par nom (desc.)")
-      expect(page).to have_link("Trier par nom, par ordre croissant") { |link| expect(link["href"]).to eq("/communes?order=name&search=foo") }
-      expect(page).to have_link("Trier par nom, par ordre décroissant") { |link| expect(link["href"]).to eq("/communes?order=-name&search=foo") }
-      expect(page).to have_link("Trier par nombre, par ordre croissant") { |link| expect(link["href"]).to eq("/communes?order=count&search=foo") }
-      expect(page).to have_link("Trier par nombre, par ordre décroissant") { |link| expect(link["href"]).to eq("/communes?order=-count&search=foo") }
+      expect(page).to have_link("Trier par nom, par ordre croissant",      href: "/communes?order=name&search=foo")
+      expect(page).to have_link("Trier par nom, par ordre décroissant",    href: "/communes?order=-name&search=foo")
+      expect(page).to have_link("Trier par nombre, par ordre croissant",   href: "/communes?order=count&search=foo")
+      expect(page).to have_link("Trier par nombre, par ordre décroissant", href: "/communes?order=-count&search=foo")
     end
   end
 end

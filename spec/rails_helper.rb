@@ -95,6 +95,7 @@ RSpec.configure do |config|
   config.include Matchers::HaveFlash
   config.include Matchers::HaveSentEmails
   config.include Matchers::PerformSQLQueries
+  config.include Matchers::HaveHTMLAttribute, type: :component
   config.include Matchers::RenderPreviewWithoutException, type: :component
 
   config.include ViewComponent::TestHelpers, type: :component
