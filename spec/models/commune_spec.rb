@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "rails_helper"
+require "models/shared_examples"
 
 RSpec.describe Commune do
   # Associations
@@ -9,8 +10,8 @@ RSpec.describe Commune do
   it { is_expected.to belong_to(:epci).optional }
   it { is_expected.to have_one(:registered_collectivity) }
   it { is_expected.to respond_to(:on_territory_collectivities) }
-  it { is_expected.to have_many(:service_communes) }
-  it { is_expected.to have_many(:services).through(:service_communes) }
+  it { is_expected.to have_many(:office_communes) }
+  it { is_expected.to have_many(:offices).through(:office_communes) }
 
   # Validations
   # ----------------------------------------------------------------------------
@@ -193,151 +194,81 @@ RSpec.describe Commune do
   # Counter caches
   # ----------------------------------------------------------------------------
   describe "counter caches" do
-    let!(:commune1) { create(:commune, code_insee: "64102") }
-    let!(:commune2) { create(:commune, code_insee: "64125") }
+    let!(:communes) { create_list(:commune, 2) }
 
     describe "#collectivities_count" do
-      shared_examples "trigger changes" do
-        let(:collectivity) { create(:collectivity, territory: territory1) }
-
-        it "changes on creation" do
-          expect { collectivity }
-            .to      change { commune1.reload.collectivities_count }.from(0).to(1)
-            .and not_change { commune2.reload.collectivities_count }.from(0)
-        end
-
-        it "changes on discarding" do
-          collectivity
-          expect { collectivity.discard }
-            .to      change { commune1.reload.collectivities_count }.from(1).to(0)
-            .and not_change { commune2.reload.collectivities_count }.from(0)
-        end
-
-        it "changes on undiscarding" do
-          collectivity.discard
-          expect { collectivity.undiscard }
-            .to      change { commune1.reload.collectivities_count }.from(0).to(1)
-            .and not_change { commune2.reload.collectivities_count }.from(0)
-        end
-
-        it "changes on deletion" do
-          collectivity
-          expect { collectivity.destroy }
-            .to      change { commune1.reload.collectivities_count }.from(1).to(0)
-            .and not_change { commune2.reload.collectivities_count }.from(0)
-        end
-
-        it "doesn't change when deleting a discarded collectivity" do
-          collectivity.discard
-          expect { collectivity.destroy }
-            .to  not_change { commune1.reload.collectivities_count }.from(0)
-            .and not_change { commune2.reload.collectivities_count }.from(0)
-        end
-
-        it "changes when updating territory" do
-          collectivity
-          expect { collectivity.update(territory: territory2) }
-            .to  change { commune1.reload.collectivities_count }.from(1).to(0)
-            .and change { commune2.reload.collectivities_count }.from(0).to(1)
-        end
-
-        it "doesn't change when updating territory of a discarded collectivity" do
-          collectivity.discard
-          expect { collectivity.update(territory: territory2) }
-            .to  not_change { commune1.reload.collectivities_count }.from(0)
-            .and not_change { commune2.reload.collectivities_count }.from(0)
-        end
-
-        it "changes when combining updating territory and discarding" do
-          collectivity
-          expect { collectivity.update(territory: territory2, discarded_at: Time.current) }
-            .to      change { commune1.reload.collectivities_count }.from(1).to(0)
-            .and not_change { commune2.reload.collectivities_count }.from(0)
-        end
-
-        it "changes when combining updating territory and undiscarding" do
-          collectivity.discard
-          expect { collectivity.update(territory: territory2, discarded_at: nil) }
-            .to  not_change { commune1.reload.collectivities_count }.from(0)
-            .and     change { commune2.reload.collectivities_count }.from(0).to(1)
+      context "with communes" do
+        it_behaves_like "it changes collectivities count" do
+          let(:subjects)    { communes }
+          let(:territories) { communes }
         end
       end
 
-      context "with a commune" do
-        let(:territory1) { commune1 }
-        let(:territory2) { commune2 }
-
-        include_examples "trigger changes"
+      context "with EPCIs" do
+        it_behaves_like "it changes collectivities count" do
+          let(:subjects)    { create_list(:commune, 2, :with_epci) }
+          let(:territories) { subjects.map(&:epci) }
+        end
       end
 
-      context "with an EPCI" do
-        let!(:commune1) { create(:commune, :with_epci) }
-        let!(:commune2) { create(:commune, :with_epci) }
-
-        let(:territory1) { commune1.epci }
-        let(:territory2) { commune2.epci }
-
-        include_examples "trigger changes"
+      context "with departements" do
+        it_behaves_like "it changes collectivities count" do
+          let(:subjects)    { communes }
+          let(:territories) { communes.map(&:departement) }
+        end
       end
 
-      context "with a departement" do
-        let(:territory1) { commune1.departement }
-        let(:territory2) { commune2.departement }
-
-        include_examples "trigger changes"
-      end
-
-      context "with a region" do
-        let(:territory1) { commune1.departement.region }
-        let(:territory2) { commune2.departement.region }
-
-        include_examples "trigger changes"
+      context "with regions" do
+        it_behaves_like "it changes collectivities count" do
+          let(:subjects)    { communes }
+          let(:territories) { communes.map(&:region) }
+        end
       end
     end
 
-    describe "#services_count" do
-      let(:service) { create(:service) }
+    describe "#offices_count" do
+      let(:office) { create(:office) }
 
-      it "changes when commune is assigned to the service" do
-        expect { service.communes << commune1 }
-          .to      change { commune1.reload.services_count }.from(0).to(1)
-          .and not_change { commune2.reload.services_count }.from(0)
+      it "changes when commune is assigned to the office" do
+        expect { office.communes << communes[0] }
+          .to      change { communes[0].reload.offices_count }.from(0).to(1)
+          .and not_change { communes[1].reload.offices_count }.from(0)
       end
 
-      it "changes when an existing code_insee is assigned to the service" do
-        expect { service.service_communes.create(code_insee: "64102") }
-          .to      change { commune1.reload.services_count }.from(0).to(1)
-          .and not_change { commune2.reload.services_count }.from(0)
+      it "changes when an existing code_insee is assigned to the office" do
+        expect { office.office_communes.create(code_insee: communes[0].code_insee) }
+          .to      change { communes[0].reload.offices_count }.from(0).to(1)
+          .and not_change { communes[1].reload.offices_count }.from(0)
       end
 
-      it "doesn't change when an unknown code_insee is assigned to the service" do
-        expect { service.service_communes.create(code_insee: "64024") }
-          .to  not_change { commune1.reload.services_count }.from(0)
-          .and not_change { commune2.reload.services_count }.from(0)
+      it "doesn't change when an unknown code_insee is assigned to the office" do
+        expect { office.office_communes.create(code_insee: generate(:code_insee)) }
+          .to  not_change { communes[0].reload.offices_count }.from(0)
+          .and not_change { communes[1].reload.offices_count }.from(0)
       end
 
-      it "changes when commune is removed from the service" do
-        service.communes << commune1
+      it "changes when commune is removed from the office" do
+        office.communes << communes[0]
 
-        expect { service.communes.delete(commune1) }
-          .to      change { commune1.reload.services_count }.from(1).to(0)
-          .and not_change { commune2.reload.services_count }.from(0)
+        expect { office.communes.delete(communes[0]) }
+          .to      change { communes[0].reload.offices_count }.from(1).to(0)
+          .and not_change { communes[1].reload.offices_count }.from(0)
       end
 
       it "changes when commune updates its code_insee" do
-        service.communes << commune1
+        office.communes << communes[0]
 
-        expect { commune1.update(code_insee: "64024") }
-          .to      change { commune1.reload.services_count }.from(1).to(0)
-          .and not_change { commune2.reload.services_count }.from(0)
+        expect { communes[0].update(code_insee: "64024") }
+          .to      change { communes[0].reload.offices_count }.from(1).to(0)
+          .and not_change { communes[1].reload.offices_count }.from(0)
       end
 
-      it "doesn't changes when another commune is assigned to the service" do
-        service.communes << commune1
+      it "doesn't changes when another commune is assigned to the office" do
+        office.communes << communes[0]
 
-        expect { service.communes << commune2 }
-          .to  not_change { commune1.reload.services_count }.from(1)
-          .and     change { commune2.reload.services_count }.from(0).to(1)
+        expect { office.communes << communes[1] }
+          .to  not_change { communes[0].reload.offices_count }.from(1)
+          .and     change { communes[1].reload.offices_count }.from(0).to(1)
       end
     end
   end
@@ -345,44 +276,52 @@ RSpec.describe Commune do
   # Reset counters
   # ----------------------------------------------------------------------------
   describe ".reset_all_counters" do
-    subject { described_class.reset_all_counters }
+    subject(:reset_all_counters) { described_class.reset_all_counters }
 
-    let!(:commune1) { create(:commune) }
-    let!(:commune2) { create(:commune, :with_epci) }
+    let!(:communes) { create_list(:commune, 2, :with_epci) }
 
-    its_block { is_expected.to ret(2) }
-    its_block { is_expected.to perform_sql_query("SELECT reset_all_communes_counters()") }
+    it { expect { reset_all_counters }.to perform_sql_query("SELECT reset_all_communes_counters()") }
+
+    it "returns the count of collectivities" do
+      expect(reset_all_counters).to eq(2)
+    end
 
     describe "on collectivities_count" do
       before do
-        create(:collectivity, territory: commune1)
-        create(:collectivity, territory: commune2)
-        create(:collectivity, territory: commune2.epci)
-        create(:collectivity, territory: commune2.departement)
-        create(:collectivity, territory: commune2.region)
+        create(:collectivity, territory: communes[0])
+        create(:collectivity, territory: communes[1])
+        create(:collectivity, territory: communes[1].epci)
+        create(:collectivity, territory: communes[1].departement)
+        create(:collectivity, territory: communes[1].region)
 
-        create(:collectivity, :discarded, territory: commune1)
-        create(:collectivity, :discarded, territory: commune2.departement)
+        create(:collectivity, :discarded, territory: communes[0])
+        create(:collectivity, :discarded, territory: communes[1].departement)
 
         Commune.update_all(collectivities_count: 0)
       end
 
-      its_block { is_expected.to change { commune1.reload.collectivities_count }.from(0).to(1) }
-      its_block { is_expected.to change { commune2.reload.collectivities_count }.from(0).to(4) }
+      it "resets counters" do
+        expect { reset_all_counters }
+          .to  change { communes[0].reload.collectivities_count }.from(0).to(1)
+          .and change { communes[1].reload.collectivities_count }.from(0).to(4)
+      end
     end
 
-    describe "on services_count" do
+    describe "on offices_count" do
       before do
-        services = create_list(:service, 6)
+        offices = create_list(:office, 6)
 
-        commune1.services = services.shuffle.take(4)
-        commune2.services = services.shuffle.take(2)
+        communes[0].offices = offices.shuffle.take(4)
+        communes[1].offices = offices.shuffle.take(2)
 
-        Commune.update_all(services_count: 0)
+        Commune.update_all(offices_count: 0)
       end
 
-      its_block { is_expected.to change { commune1.reload.services_count }.from(0).to(4) }
-      its_block { is_expected.to change { commune2.reload.services_count }.from(0).to(2) }
+      it "resets counters" do
+        expect { reset_all_counters }
+          .to  change { communes[0].reload.offices_count }.from(0).to(4)
+          .and change { communes[1].reload.offices_count }.from(0).to(2)
+      end
     end
   end
 end

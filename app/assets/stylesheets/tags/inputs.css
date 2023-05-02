@@ -23,7 +23,7 @@
       @apply opacity-30
     }
 
-    &:not([disabled]) {
+    &:not([disabled]):not([readonly]) {
       &:is(:hover, :active, :focus, :focus-visible) {
         outline-style: solid;
         outline-width: 0px;
@@ -70,6 +70,10 @@
 
     &[disabled] {
       @apply opacity-30
+    }
+
+    & ~ label {
+      @apply ml-1;
     }
 
     &:not([disabled]) {

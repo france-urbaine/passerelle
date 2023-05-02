@@ -1,0 +1,15 @@
+- if %w[modal modal_form].include?(turbo_frame_request_id)
+  = tag.turbo_frame id: "modal", src: @modal_src do
+    = modal
+
+- elsif turbo_frame_request?
+  = tag.turbo_frame id: "content", src: @content_src do
+    = content
+
+- else
+  main.content
+    = tag.turbo_frame id: "content", src: @content_src, target: "_top", data: { turbo_action: "advance" } do
+      = content
+
+  = tag.turbo_frame id: "modal", src: @modal_src, target: "_top" do
+    = modal

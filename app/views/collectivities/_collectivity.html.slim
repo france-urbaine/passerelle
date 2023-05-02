@@ -1,35 +1,26 @@
 = breadcrumbs_component do |breadcrumbs|
   - breadcrumbs.with_path "Organisations"
-  - breadcrumbs.with_path "Collectivités", href: collectivities_path(retrieve_index_back_params)
+  - breadcrumbs.with_path "Collectivités", collectivities_path(retrieve_index_back_params)
   - breadcrumbs.with_path collectivity.name
 
   - breadcrumbs.with_action "Modifier",
-    href: edit_collectivity_path(collectivity, content: current_path, redirect: current_path),
+    href: edit_collectivity_path(collectivity),
     icon: "pencil-square",
     modal: true
 
   - breadcrumbs.with_action "Supprimer",
-    href: remove_collectivity_path(collectivity, content: current_path),
+    href: remove_collectivity_path(collectivity),
     icon: "trash",
     modal: true
 
-- if collectivity.discarded?
-  .card.mb-6
-    .card__content.bg-yellow-100.text-yellow-700( role="alert" )
-      b Compte en cours de suppression.
-      br
-      |  Ce compte a été archivé le #{localize(collectivity.discarded_at.to_date)}.
-      br
-      |  Il sera définitivement supprimé le #{localize(30.days.after(collectivity.discarded_at.to_date))}.
-
 h2.subheader
-  = svg_icon("bookmark", "Nouvelle section")
+  = svg_icon("identification", "Nouvelle section")
   | Description
 
 .card.mb-6
   dl.description-list
     .description-list__row
-      dt Editeur
+      dt Éditeur
       dd
         - if collectivity.publisher
           a(
@@ -64,14 +55,14 @@ h2.subheader
 
 .subheader-bar
   h2.subheader
-    = svg_icon("bookmark", "Nouvelle section")
+    = svg_icon("rectangle-stack", "Nouvelle section")
     | Utilisateurs de l'organisation
 
   .subheader-bar__actions
     .subheader-bar__action
       a.button(
         data-turbo-frame="modal"
-        href=new_user_path(content: current_path, redirect: current_path, user: { organization_type: "Collectivity", organization_id: collectivity.id })
+        href=new_user_path(referrer: current_path, user: { organization_type: "Collectivity", organization_id: collectivity.id })
       )
         = svg_icon("plus")
         | Inviter un utilisateur
@@ -95,7 +86,7 @@ h2.subheader
           td.datatable__row-actions
             .flex
               a.icon-button(
-                href=edit_user_path(user, content: current_path, redirect: current_path)
+                href=edit_user_path(user, referrer: current_path)
                 aria-label="Modifier cet utilisateur"
                 data-turbo-frame="modal"
               )
@@ -105,7 +96,7 @@ h2.subheader
               a.icon-button(
                 aria-label="Supprimer cet utilisateur"
                 data-turbo-frame="modal"
-                href=remove_user_path(user, content: current_path, redirect: current_path)
+                href=remove_user_path(user, referrer: current_path)
               )
                 = svg_icon("trash", "Supprimer cet utilisateur")
                 span.tooltip Supprimer cet utilisateur
@@ -132,7 +123,7 @@ h2.subheader
               = " "
 
 h2.subheader
-  = svg_icon("bookmark", "Nouvelle section")
+  = svg_icon("rectangle-stack", "Nouvelle section")
   | DDFIP assignées
 .card.mb-6
   .card__content

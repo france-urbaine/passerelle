@@ -1,0 +1,11 @@
+pelp_bayonne:
+  office:     pelp_bayonne
+  code_insee: 64102
+
+pelh_bayonne:
+  office:     pelp_bayonne
+  code_insee: 64122
+
+sip_bayonne:
+  office:     sip_bayonne
+  code_insee: 64102

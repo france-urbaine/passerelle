@@ -1,0 +1,185 @@
+= breadcrumbs_component do |breadcrumbs|
+  - breadcrumbs.with_path "Organisations"
+  - breadcrumbs.with_path "Guichets", offices_path(retrieve_index_back_params)
+  - breadcrumbs.with_path office.name
+
+  - breadcrumbs.with_action "Modifier",
+    href: edit_office_path(office),
+    icon: "pencil-square",
+    modal: true
+
+  - breadcrumbs.with_action "Supprimer",
+    href: remove_office_path(office),
+    icon: "trash",
+    modal: true
+
+h2.subheader
+  = svg_icon("identification", "Nouvelle section")
+  | Description
+
+.card.mb-6
+  dl.description-list
+    .description-list__row
+      dt DDFIP
+      dd
+        - if office.ddfip
+          a(
+            data-turbo-frame="_top"
+            href=ddfip_path(office.ddfip)
+          )= office.ddfip.name
+
+    .description-list__row
+      dt Département
+      dd
+        - if office.ddfip&.departement
+          a(
+            data-turbo-frame="_top"
+            href=departement_path(office.ddfip.departement)
+          )= office.ddfip.departement.name
+
+    .description-list__row
+      dt Utilisateurs
+      dd= display_count(office.users_count, "utilisateur") if office.users_count.positive?
+
+    .description-list__row
+      dt Communes gérées
+      dd.flex.justify-between.items-start
+        - if office.communes_count.positive?
+          span= display_count(office.communes_count, "commune")
+
+          a.button(
+            data-turbo-frame="_top"
+            href=communes_path(search: office.name)
+          )
+            = svg_icon("search")
+            | Voir les communes
+
+.subheader-bar
+  h2.subheader
+    = svg_icon("rectangle-stack", "Nouvelle section")
+    | Utilisateurs en charge du guichet
+
+  .subheader-bar__actions
+    .subheader-bar__action
+      a.button(
+        data-turbo-frame="modal"
+        href=new_user_path(referrer: current_path, user: { organization_type: "DDFIP", organization_id: @office.ddfip_id, office_ids: [@office.id] })
+      )
+        = svg_icon("plus")
+        | Inviter un nouvel utilisateur
+
+    .subheader-bar__action
+      a.button(
+        data-turbo-frame="modal"
+        href=edit_office_users_path(office, referrer: current_path)
+      )
+        = svg_icon("squares-plus")
+        | Gérer les utilisateurs
+
+- if office.users_count.zero?
+  .card.mb-6#office-users
+    .card__content
+      p.text-disabled Aucun utilisateur lié à ce guichet.
+- else
+  table.datatable.mb-6#office-users
+    thead
+      tr.datatable__row
+        th( aria-label="Actions" )
+        th Utilisateur
+        th Adresse mail
+
+    tbody
+      - office.users.kept.order(:created_at).each do |user|
+        tr.datatable__row
+          td.datatable__row-actions
+            .flex
+              a.icon-button(
+                href=edit_user_path(user, referrer: current_path)
+                aria-label="Modifier cet utilisateur"
+                data-turbo-frame="modal"
+              )
+                = svg_icon("pencil-square", "Modifier cet utilisateur")
+                span.tooltip Modifier cet utilisateur
+
+              a.icon-button(
+                aria-label="Retirer cet utilisateur"
+                data-turbo-frame="modal"
+                href=remove_office_user_path(office, user, referrer: current_path)
+              )
+                = svg_icon("backspace", "Retirer cet utilisateur")
+                span.tooltip Retirer cet utilisateur
+
+          td
+            a(
+              data-turbo-frame="_top"
+              href=user_path(user, current_index_back_params)
+            )= user.name
+
+          td
+            - if user.confirmed?
+              = mail_to user.email
+            - else
+              .text-disabled( title="Cet utilisateur n'a pas encore validé son inscription" )
+                = svg_icon("exclamation-triangle", class: "mr-2")
+                = user.email
+                span.tooltip Cet utilisateur n'a pas encore validé son inscription
+
+.subheader-bar
+  h2.subheader
+    = svg_icon("rectangle-stack", "Nouvelle section")
+    | Communes sous la responsabilité du guichet
+
+  .subheader-bar__actions
+    .subheader-bar__action
+      a.button(
+        data-turbo-frame="modal"
+        href=edit_office_communes_path(office, referrer: current_path)
+      )
+        = svg_icon("squares-plus")
+        | Gérer les communes
+
+- if office.communes_count.zero?
+  .card.mb-6#office-communes
+    .card__content
+      p.text-disabled Aucune commune liée à ce guichet.
+- else
+  table.datatable.mb-6#office-communes
+    thead
+      tr.datatable__row
+        th( aria-label="Actions" )
+        th( colspan="2" ) Commune
+        th( colspan="2" ) EPCI
+        th.w-48.text-right Collectivités
+
+    tbody
+      - office.communes.preload(:epci).each do |commune|
+        tr.datatable__row
+          td.datatable__row-actions
+            a.icon-button(
+              aria-label="Modifier cette commune"
+              data-turbo-frame="modal"
+              href=edit_commune_path(commune, referrer: current_path)
+            )
+              = svg_icon("pencil-square", "Modifier cette commune")
+              span.tooltip Modifier cette commune
+
+          td.w-px= commune.code_insee
+          td( id=dom_id(commune, :title) )
+            a(
+              data-turbo-frame="_top"
+              href=commune_path(commune, current_index_back_params)
+            )= commune.name
+
+          - if commune.siren_epci?
+            td.w-px= display_siren(commune.siren_epci)
+            td
+              - if commune.epci
+                a(
+                  data-turbo-frame="_top"
+                  href=epci_path(commune.epci)
+                )= commune.epci.name
+
+          - else
+            td( colspan="2" )
+
+          td.text-right= number_with_delimiter(commune.collectivities_count) if commune.collectivities_count.positive?

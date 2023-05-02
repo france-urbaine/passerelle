@@ -1,0 +1,7 @@
+= datatable_component(records) do |datatable|
+  - datatable.with_search
+
+  - datatable.with_column(:name) { "Commune" }
+
+  - datatable.each_row do |row, commune|
+    - row.with_column(:name) { commune.name }

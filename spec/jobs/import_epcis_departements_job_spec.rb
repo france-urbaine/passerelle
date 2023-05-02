@@ -9,6 +9,10 @@ RSpec.describe ImportEpcisDepartementsJob do
   let(:fixture) { file_fixture("intercommunalites.zip") }
 
   before do
+    # Departements should exist for data integrity constraints
+    create(:departement, code_departement: "74")
+    create(:departement, code_departement: "76")
+
     create(:epci, siren: "200000172", name: "CC Faucigny-Glières")
     create(:epci, siren: "200023414", name: "Métropole Rouen Normandie")
 

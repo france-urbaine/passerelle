@@ -2,8 +2,15 @@ pays_basque:
   name:                 CA du Pays Basque
   siren:                200067106
   code_departement:     64
-  communes_count:       1
+  communes_count:       2
   collectivities_count: 2
+
+pau_bearn_pyrenees:
+  name:                 CA Pau Béarn Pyrénées
+  siren:                200067254
+  code_departement:     64
+  communes_count:       1
+  collectivities_count: 0
 
 metropole_lille:
   name:                 Métropole Européenne de Lille

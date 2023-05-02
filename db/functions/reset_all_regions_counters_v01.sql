@@ -7,64 +7,11 @@ AS $function$
     affected_rows integer;
   BEGIN
     UPDATE "regions"
-    SET
-      "communes_count" = (
-        SELECT     COUNT(*)
-        FROM       "communes"
-        INNER JOIN "departements" ON "departements"."code_departement" = "communes"."code_departement"
-        WHERE      "departements"."code_region" = "regions"."code_region"
-      ),
-      "epcis_count" = (
-        SELECT     COUNT(*)
-        FROM       "epcis"
-        INNER JOIN "departements" ON "departements"."code_departement" = "epcis"."code_departement"
-        WHERE      "departements"."code_region" = "regions"."code_region"
-      ),
-      "departements_count" = (
-        SELECT COUNT(*)
-        FROM   "departements"
-        WHERE  "departements"."code_region" = "regions"."code_region"
-      ),
-      "ddfips_count" = (
-        SELECT     COUNT(*)
-        FROM       "ddfips"
-        INNER JOIN "departements" ON "departements"."code_departement" = "ddfips"."code_departement"
-        WHERE      "departements"."code_region" = "regions"."code_region"
-      ),
-      "collectivities_count" = (
-        SELECT COUNT(*)
-        FROM   "collectivities"
-        WHERE  "collectivities"."discarded_at" IS NULL AND (
-          (
-            "collectivities"."territory_type" = 'Region' AND
-            "collectivities"."territory_id"   = "regions"."id"
-          ) OR (
-            "collectivities"."territory_type" = 'Commune' AND
-            "collectivities"."territory_id" IN (
-              SELECT     "communes"."id"
-              FROM       "communes"
-              INNER JOIN "departements" ON "departements"."code_departement" = "communes"."code_departement"
-              WHERE      "departements"."code_region" = "regions"."code_region"
-            )
-          ) OR (
-            "collectivities"."territory_type" = 'EPCI' AND
-            "collectivities"."territory_id" IN (
-              SELECT     "epcis"."id"
-              FROM       "epcis"
-              INNER JOIN "communes" ON "communes"."siren_epci" = "epcis"."siren"
-              INNER JOIN "departements" ON "departements"."code_departement" = "communes"."code_departement"
-              WHERE      "departements"."code_region" = "regions"."code_region"
-            )
-          ) OR (
-            "collectivities"."territory_type" = 'Departement' AND
-            "collectivities"."territory_id" IN (
-              SELECT "departements"."id"
-              FROM   "departements"
-              WHERE  "departements"."code_region" = "regions"."code_region"
-            )
-          )
-        )
-      );
+    SET    "communes_count"       = get_communes_count_in_regions("regions".*),
+           "epcis_count"          = get_epcis_count_in_regions("regions".*),
+           "departements_count"   = get_departements_count_in_regions("regions".*),
+           "ddfips_count"         = get_ddfips_count_in_regions("regions".*),
+           "collectivities_count" = get_collectivities_count_in_regions("regions".*);
 
     GET DIAGNOSTICS affected_rows = ROW_COUNT;
     RAISE NOTICE 'UPDATE %', affected_rows;

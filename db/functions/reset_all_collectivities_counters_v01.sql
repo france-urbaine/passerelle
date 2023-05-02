@@ -7,13 +7,7 @@ AS $function$
     affected_rows integer;
   BEGIN
     UPDATE "collectivities"
-    SET
-      "users_count" = (
-        SELECT COUNT(*)
-        FROM   "users"
-        WHERE  "users"."organization_type" = 'Collectivity'
-          AND  "users"."organization_id"   = "collectivities"."id"
-      );
+    SET    "users_count" = get_users_count_in_collectivities("collectivities".*);
 
     GET DIAGNOSTICS affected_rows = ROW_COUNT;
     RAISE NOTICE 'UPDATE %', affected_rows;

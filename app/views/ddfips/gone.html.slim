@@ -1,0 +1,15 @@
+= template_frame_component do
+  = breadcrumbs_component do |breadcrumbs|
+    - breadcrumbs.with_path "Organisations"
+    - breadcrumbs.with_path "DDFIP", ddfips_path
+    - breadcrumbs.with_path @ddfip.name
+
+  .card.card--status
+    .card__content
+      h1.card__header La page que vous recherchez n'est pas disponible.
+      p.mb-6
+        | La DDFIP est en cours de suppression.
+        br
+        | Cette suppression sera effective d'ici le #{localize(30.days.after(@ddfip.discarded_at.to_date))}.
+
+      = button_component "Annuler la suppression", undiscard_ddfip_path(@ddfip, redirect: ddfip_path(@ddfip)), method: :patch

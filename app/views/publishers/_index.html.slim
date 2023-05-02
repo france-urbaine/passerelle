@@ -1,0 +1,37 @@
+= breadcrumbs_component do |breadcrumbs|
+  - breadcrumbs.with_path "Organisations"
+  - breadcrumbs.with_path "Éditeurs"
+
+  - breadcrumbs.with_action "Ajouter un éditeur", new_publisher_path, icon: "plus", modal: true, primary: true
+
+= datatable_component(publishers) do |datatable|
+  - datatable.with_search
+  - datatable.with_pagination(pagy)
+  - datatable.with_selection do |selection|
+    - selection.with_action "Supprimer la sélection", remove_all_publishers_path, modal: true
+
+  - datatable.with_column(:name,           sort: true) { "Éditeur" }
+  - datatable.with_column(:siren,          sort: true) { "SIREN" }
+  - datatable.with_column(:collectivities, numeric: true) { "Collectivités" }
+  - datatable.with_column(:users,          numeric: true) { "Utilisateurs" }
+
+  - datatable.with_empty_message do
+    | Aucun éditeur disponible.
+
+  - datatable.each_row do |row, publisher|
+    - row.with_checkbox "Sélectionner cet éditeur", described_by: :name
+    - row.with_action "Modifier cet éditeur", edit_publisher_path(publisher), icon: "pencil-square", modal: true
+    - row.with_action "Supprimer cet éditeur", remove_publisher_path(publisher), icon: "trash", modal: true
+
+    - row.with_column(:name) do
+      = link_to publisher_path(publisher, current_index_back_params), data: { turbo_frame: "_top" } do
+        = publisher.name
+
+    - row.with_column(:siren) do
+      = display_siren(publisher.siren)
+
+    - row.with_column(:collectivities) do
+      = number_with_delimiter(publisher.collectivities_count) if publisher.collectivities_count.positive?
+
+    - row.with_column(:users) do
+      = number_with_delimiter(publisher.users_count) if publisher.users_count.positive?

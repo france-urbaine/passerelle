@@ -7,7 +7,7 @@ AS $function$
     affected_rows integer;
   BEGIN
     UPDATE "users"
-    SET    "services_count" = get_users_services_count("users".*);
+    SET    "offices_count" = get_offices_count_in_users("users".*);
 
     GET DIAGNOSTICS affected_rows = ROW_COUNT;
     RAISE NOTICE 'UPDATE %', affected_rows;

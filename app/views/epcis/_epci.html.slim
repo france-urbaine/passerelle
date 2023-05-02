@@ -1,15 +1,15 @@
 = breadcrumbs_component do |breadcrumbs|
   - breadcrumbs.with_path "Territoires"
-  - breadcrumbs.with_path "EPCI", href: epcis_path(retrieve_index_back_params)
+  - breadcrumbs.with_path "EPCI", epcis_path(retrieve_index_back_params)
   - breadcrumbs.with_path epci.name
 
   - breadcrumbs.with_action "Modifier",
-    href: edit_epci_path(epci, content: current_path, redirect: current_path),
+    href: edit_epci_path(epci),
     icon: "pencil-square",
     modal: true
 
 h2.subheader
-  = svg_icon("bookmark", "Nouvelle section")
+  = svg_icon("identification", "Nouvelle section")
   | Description
 
 .card.mb-6
@@ -40,7 +40,7 @@ h2.subheader
       dt Communes
       dd.flex.justify-between.items-start
         - if epci.communes_count.positive?
-          span= count(epci.communes_count, "commune")
+          span= display_count(epci.communes_count, "commune")
 
           a.button(
             data-turbo-frame="_top"
@@ -51,10 +51,10 @@ h2.subheader
 
     .description-list__row
       dt Collectivités enregistrées
-      dd= count(epci.collectivities_count, "collectivité") if epci.collectivities_count.positive?
+      dd= display_count(epci.collectivities_count, "collectivité") if epci.collectivities_count.positive?
 
 h2.subheader
-  = svg_icon("bookmark", "Nouvelle section")
+  = svg_icon("rectangle-stack", "Nouvelle section")
   | Collectivités enregistrées
 
 - if epci.collectivities_count.zero?
@@ -68,7 +68,7 @@ h2.subheader
         th( aria-label="Actions" )
         th Collectivité
         th SIREN
-        th Editeur
+        th Éditeur
         th.w-48.text-right Utilisateurs
 
     tbody
@@ -76,7 +76,7 @@ h2.subheader
         tr.datatable__row
           td.datatable__row-actions
             a.icon-button(
-              href=edit_collectivity_path(collectivity, content: current_path, redirect: current_path)
+              href=edit_collectivity_path(collectivity, referrer: current_path)
               aria-label="Modifier cette collectivité"
               data-turbo-frame="modal"
             )

@@ -19,11 +19,11 @@ RSpec.describe DeleteDiscardedRecordsJob do
     discarded_ddfip = create(:ddfip, discarded_at: 31.days.ago)
     create(:ddfip, discarded_at: 5.days.ago)
 
-    create(:service, ddfip: ddfip)
-    create(:service, ddfip: ddfip, discarded_at: 1.day.ago)
-    create(:service, ddfip: ddfip, discarded_at: 5.days.ago)
-    create(:service, ddfip: ddfip, discarded_at: 31.days.ago)
-    create(:service, ddfip: discarded_ddfip)
+    create(:office, ddfip: ddfip)
+    create(:office, ddfip: ddfip, discarded_at: 1.day.ago)
+    create(:office, ddfip: ddfip, discarded_at: 5.days.ago)
+    create(:office, ddfip: ddfip, discarded_at: 31.days.ago)
+    create(:office, ddfip: discarded_ddfip)
 
     create(:user, organization: publisher)
     create(:user, organization: publisher, discarded_at: 1.hour.ago)
@@ -36,7 +36,7 @@ RSpec.describe DeleteDiscardedRecordsJob do
       .to  change { Publisher.with_discarded.count    }.by(-2)
       .and change { Collectivity.with_discarded.count }.by(-3)
       .and change { DDFIP.with_discarded.count        }.by(-1)
-      .and change { Service.with_discarded.count      }.by(-2)
+      .and change { Office.with_discarded.count       }.by(-2)
       .and change { User.with_discarded.count         }.by(-2)
   end
 end

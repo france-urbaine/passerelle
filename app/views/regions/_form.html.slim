@@ -2,7 +2,6 @@
   | Modification de la région
 
 - modal.with_form(model: region) do
-  = hidden_param_input(:redirect)
 
   = fields(model: region) do |form|
     = form.block :name, first: true do

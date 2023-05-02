@@ -1,13 +1,11 @@
-= template_frame_component(src: @background_content_url) do |frame|
+= template_frame_component(src: @background_url) do |frame|
   - frame.with_modal do |modal|
     - modal.with_header do
       | Suppression de l'éditeur : #{@publisher.name}
 
     - modal.with_form(model: @publisher, method: :delete) do
-      = hidden_param_input(:redirect)
-
       p
-        | Êtes-vous sûrs de vouloir supprimer ce compte ?
+        | Êtes-vous sûrs de vouloir supprimer cet éditeur ?
         br
         | Le compte de l'éditeur sera archivé pendant 30 jours avant d'être définitivement supprimé.
 

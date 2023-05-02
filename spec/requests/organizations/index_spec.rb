@@ -3,32 +3,32 @@
 require "rails_helper"
 
 RSpec.describe "OrganizationsController#index" do
-  subject(:request) { get "/organisations", headers:, params: }
+  subject(:request) do
+    get "/organisations", as:, headers:, params:, xhr:
+  end
 
-  let(:headers) { {} }
-  let(:params)  { { q: "" } }
+  let(:as)      { |e| e.metadata[:as] }
+  let(:headers) { |e| e.metadata[:headers] }
+  let(:params)  { |e| e.metadata[:params] }
+  let(:xhr)     { |e| e.metadata[:xhr] }
+
+  before do
+    create_list(:collectivity, 2)
+    create_list(:ddfip, 2)
+    create_list(:publisher, 2)
+  end
 
   context "when requesting HTML" do
     it { expect(response).to have_http_status(:not_acceptable) }
     it { expect(response).to have_content_type(:html) }
     it { expect(response).to have_html_body }
-  end
 
-  context "when requesting HTML for autocompletion" do
-    let(:headers) { { "Accept-Variant" => "autocomplete" } }
+    context "with autocompletion", headers: { "Accept-Variant" => "autocomplete" }, xhr: true do
+      let(:params) { { q: "" } }
 
-    it { expect(response).to have_http_status(:success) }
-    it { expect(response).to have_content_type(:html) }
-    it { expect(response).to have_empty_body }
-
-    context "with results" do
-      let(:params) { { q: "Fis" } }
-
-      before do
-        create(:publisher, name: "Fiscalité & Territoire")
-      end
-
-      it { expect(response).to have_body }
+      it { expect(response).to have_http_status(:success) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_partial_html.to match(%r{\A<li.*</li>\Z}) }
     end
   end
 

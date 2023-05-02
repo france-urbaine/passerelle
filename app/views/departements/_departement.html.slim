@@ -1,15 +1,15 @@
 = breadcrumbs_component do |breadcrumbs|
   - breadcrumbs.with_path "Territoires"
-  - breadcrumbs.with_path "Départements", href: departements_path(retrieve_index_back_params)
+  - breadcrumbs.with_path "Départements", departements_path(retrieve_index_back_params)
   - breadcrumbs.with_path departement.name
 
   - breadcrumbs.with_action "Modifier",
-    href: edit_departement_path(departement, content: current_path, redirect: current_path),
+    href: edit_departement_path(departement),
     icon: "pencil-square",
     modal: true
 
 h2.subheader
-  = svg_icon("bookmark", "Nouvelle section")
+  = svg_icon("identification", "Nouvelle section")
   | Description
 
 .card.mb-6
@@ -31,20 +31,20 @@ h2.subheader
       dt EPCI
       dd.flex.justify-between.items-start
         - if departement.epcis_count.positive?
-          span= count(departement.epcis_count, "EPCI")
+          span= display_count(departement.epcis_count, "EPCI")
 
           a.button(
             data-turbo-frame="_top"
             href=epcis_path(search: departement.code_departement)
           )
             = svg_icon("search")
-            | Voir les EPCI
+            | Voir les EPCIs
 
     .description-list__row
       dt Communes
       dd.flex.justify-between.items-start
         - if departement.communes_count.positive?
-          span= count(departement.communes_count, "commune")
+          span= display_count(departement.communes_count, "commune")
 
           a.button(
             data-turbo-frame="_top"
@@ -55,22 +55,22 @@ h2.subheader
 
     .description-list__row
       dt DDFIP enregistrées
-      dd= count(departement.ddfips_count, "DDFIP") if departement.ddfips_count.positive?
+      dd= display_count(departement.ddfips_count, "DDFIP") if departement.ddfips_count.positive?
 
     .description-list__row
       dt Collectivités enregistrées
-      dd= count(departement.collectivities_count, "collectivité") if departement.collectivities_count.positive?
+      dd= display_count(departement.collectivities_count, "collectivité") if departement.collectivities_count.positive?
 
 .subheader-bar
   h2.subheader
-    = svg_icon("bookmark", "Nouvelle section")
+    = svg_icon("rectangle-stack", "Nouvelle section")
     | DDFIP enregistrées
 
   .subheader-bar__actions
     .subheader-bar__action
       a.button(
         data-turbo-frame="modal"
-        href=new_ddfip_path(content: current_path, redirect: current_path, ddfip: { code_departement: departement.code_departement })
+        href=new_ddfip_path(referrer: current_path, ddfip: { code_departement: departement.code_departement })
       )
         = svg_icon("plus")
         | Ajouter une DDFIP
@@ -94,7 +94,7 @@ h2.subheader
           td.datatable__row-actions
             .flex
               a.icon-button(
-                href=edit_ddfip_path(ddfip, content: current_path, redirect: current_path)
+                href=edit_ddfip_path(ddfip, referrer: current_path)
                 aria-label="Modifier cette DDFIP"
                 data-turbo-frame="modal"
               )
@@ -104,7 +104,7 @@ h2.subheader
               a.icon-button(
                 aria-label="Supprimer cette DDFIP"
                 data-turbo-frame="modal"
-                href=remove_ddfip_path(ddfip, content: current_path, redirect: current_path)
+                href=remove_ddfip_path(ddfip, referrer: current_path)
               )
                 = svg_icon("trash", "Supprimer cette DDFIP")
                 span.tooltip Supprimer cette DDFIP
@@ -119,7 +119,7 @@ h2.subheader
           td.text-right= number_with_delimiter(ddfip.users_count)          if ddfip.users_count.positive?
 
 h2.subheader
-  = svg_icon("bookmark", "Nouvelle section")
+  = svg_icon("rectangle-stack", "Nouvelle section")
   | Collectivités enregistrées
 
 - if departement.collectivities_count.zero?
@@ -133,7 +133,7 @@ h2.subheader
         th( aria-label="Actions" )
         th Collectivité
         th SIREN
-        th Editeur
+        th Éditeur
         th.w-48.text-right Utilisateurs
 
     tbody
@@ -141,7 +141,7 @@ h2.subheader
         tr.datatable__row
           td.datatable__row-actions
             a.icon-button(
-              href=edit_collectivity_path(collectivity, content: current_path, redirect: current_path)
+              href=edit_collectivity_path(collectivity, referrer: current_path)
               aria-label="Modifier cette collectivité"
               data-turbo-frame="modal"
             )

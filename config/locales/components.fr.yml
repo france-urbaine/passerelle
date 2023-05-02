@@ -1,0 +1,22 @@
+fr:
+  components:
+    data_table/selection:
+      collectivity:
+        singular: "collectivité sélectionnée"
+        plural:   "collectivités sélectionnées"
+
+      ddfip:
+        singular: "DDFIP sélectionnée"
+        plural:   "DDFIPs sélectionnées"
+
+      office:
+        singular: "guichet sélectionné"
+        plural:   "guichets sélectionnés"
+
+      publisher:
+        singular: "éditeur sélectionné"
+        plural:   "éditeurs sélectionnés"
+
+      user:
+        singular: "utilisateur sélectionné"
+        plural:   "utilisateurs sélectionnés"

@@ -1,0 +1,49 @@
+- if render_selection_frame?
+  turbo-frame( id=turbo_frame_selection_bar )
+    = datatable.selection
+
+- elsif render_header_frame?
+  turbo-frame( id=turbo_frame_selection_bar )
+    .header-bar
+      = datatable.search
+      .flex-auto
+      = datatable.pagination
+
+- elsif selection_component?
+  turbo-frame( id=turbo_frame )
+    div( data-controller="selection" )
+      turbo-frame( id=turbo_frame_selection_bar data-selection-target="frame" )
+        - if render_selection_component?
+          = datatable.selection
+
+        - elsif render_header?
+          .header-bar
+            = datatable.search
+            .flex-auto
+            = datatable.pagination
+
+      = content
+
+- elsif selection_controller?
+  turbo-frame( id=turbo_frame )
+    div( data-controller="selection" )
+      - if render_header?
+        .header-bar
+          = datatable.search
+          .flex-auto
+          = datatable.pagination
+
+      = content
+
+- elsif wrapped_in_frame?
+  turbo-frame( id=turbo_frame )
+    - if render_header?
+      .header-bar
+        = datatable.search
+        .flex-auto
+        = datatable.pagination
+
+    = content
+
+- else
+  = content

@@ -8,18 +8,22 @@
 #  name                 :string           not null
 #  code_departement     :string           not null
 #  code_region          :string           not null
+#  qualified_name       :string
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
 #  epcis_count          :integer          default(0), not null
 #  communes_count       :integer          default(0), not null
 #  ddfips_count         :integer          default(0), not null
 #  collectivities_count :integer          default(0), not null
-#  qualified_name       :string
 #
 # Indexes
 #
 #  index_departements_on_code_departement  (code_departement) UNIQUE
 #  index_departements_on_code_region       (code_region)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (code_region => regions.code_region)
 #
 class Departement < ApplicationRecord
   self.implicit_order_column = :code_departement

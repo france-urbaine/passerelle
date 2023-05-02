@@ -5,6 +5,20 @@ bayonne:
   siren_epci:           200067106
   collectivities_count: 2
 
+biarritz:
+  name:                 Biarritz
+  code_insee:           64122
+  code_departement:     64
+  siren_epci:           200067106
+  collectivities_count: 0
+
+pau:
+  name:                 Pau
+  code_insee:           64445
+  code_departement:     64
+  siren_epci:           200067254
+  collectivities_count: 0
+
 lille:
   name:                 Lille
   code_insee:           59350

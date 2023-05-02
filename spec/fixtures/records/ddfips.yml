@@ -1,8 +1,3 @@
-bouches_du_rhone:
-  name:                 DDFIP des Bouches-du-Rhône
-  code_departement:     13
-  collectivities_count: 0
-
 nord:
   name:                 DDFIP du Nord
   code_departement:     59

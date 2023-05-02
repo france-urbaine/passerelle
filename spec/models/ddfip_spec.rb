@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "rails_helper"
+require "models/shared_examples"
 
 RSpec.describe DDFIP do
   # Associations
@@ -10,7 +11,7 @@ RSpec.describe DDFIP do
   it { is_expected.to have_many(:communes) }
   it { is_expected.to have_one(:region) }
   it { is_expected.to have_many(:users) }
-  it { is_expected.to have_many(:services) }
+  it { is_expected.to have_many(:offices) }
 
   # Validations
   # ----------------------------------------------------------------------------
@@ -135,175 +136,115 @@ RSpec.describe DDFIP do
   # Counter caches
   # ----------------------------------------------------------------------------
   describe "counter caches" do
-    let!(:ddfip1) { create(:ddfip) }
-    let!(:ddfip2) { create(:ddfip) }
+    let!(:ddfips) { create_list(:ddfip, 2) }
 
     describe "#users_count" do
-      let(:user) { create(:user, organization: ddfip1) }
+      let(:user) { create(:user, organization: ddfips[0]) }
 
       it "changes on creation" do
         expect { user }
-          .to      change { ddfip1.reload.users_count }.from(0).to(1)
-          .and not_change { ddfip2.reload.users_count }.from(0)
+          .to      change { ddfips[0].reload.users_count }.from(0).to(1)
+          .and not_change { ddfips[1].reload.users_count }.from(0)
       end
 
       it "changes on deletion" do
         user
         expect { user.destroy }
-          .to      change { ddfip1.reload.users_count }.from(1).to(0)
-          .and not_change { ddfip2.reload.users_count }.from(0)
+          .to      change { ddfips[0].reload.users_count }.from(1).to(0)
+          .and not_change { ddfips[1].reload.users_count }.from(0)
       end
 
       it "changes when discarding" do
         user
         expect { user.discard }
-          .to      change { ddfip1.reload.users_count }.from(1).to(0)
-          .and not_change { ddfip2.reload.users_count }.from(0)
+          .to      change { ddfips[0].reload.users_count }.from(1).to(0)
+          .and not_change { ddfips[1].reload.users_count }.from(0)
       end
 
       it "changes when undiscarding" do
         user.discard
         expect { user.undiscard }
-          .to      change { ddfip1.reload.users_count }.from(0).to(1)
-          .and not_change { ddfip2.reload.users_count }.from(0)
+          .to      change { ddfips[0].reload.users_count }.from(0).to(1)
+          .and not_change { ddfips[1].reload.users_count }.from(0)
       end
 
       it "changes when updating organization" do
         user
-        expect { user.update(organization: ddfip2) }
-          .to  change { ddfip1.reload.users_count }.from(1).to(0)
-          .and change { ddfip2.reload.users_count }.from(0).to(1)
+        expect { user.update(organization: ddfips[1]) }
+          .to  change { ddfips[0].reload.users_count }.from(1).to(0)
+          .and change { ddfips[1].reload.users_count }.from(0).to(1)
       end
     end
 
     describe "#collectivities_count" do
-      shared_examples "trigger changes" do
-        let(:collectivity) { create(:collectivity, territory: territory1) }
+      let(:communes) do
+        [
+          create(:commune, :with_epci, departement: ddfips[0].departement),
+          create(:commune, :with_epci, departement: ddfips[1].departement)
+        ]
+      end
 
-        it "changes on creation" do
-          expect { collectivity }
-            .to      change { ddfip1.reload.collectivities_count }.from(0).to(1)
-            .and not_change { ddfip2.reload.collectivities_count }.from(0)
-        end
-
-        it "changes on discarding" do
-          collectivity
-          expect { collectivity.discard }
-            .to      change { ddfip1.reload.collectivities_count }.from(1).to(0)
-            .and not_change { ddfip2.reload.collectivities_count }.from(0)
-        end
-
-        it "changes on undiscarding" do
-          collectivity.discard
-          expect { collectivity.undiscard }
-            .to      change { ddfip1.reload.collectivities_count }.from(0).to(1)
-            .and not_change { ddfip2.reload.collectivities_count }.from(0)
-        end
-
-        it "changes on deletion" do
-          collectivity
-          expect { collectivity.destroy }
-            .to      change { ddfip1.reload.collectivities_count }.from(1).to(0)
-            .and not_change { ddfip2.reload.collectivities_count }.from(0)
-        end
-
-        it "doesn't change when deleting a discarded collectivity" do
-          collectivity.discard
-          expect { collectivity.destroy }
-            .to  not_change { ddfip1.reload.collectivities_count }.from(0)
-            .and not_change { ddfip2.reload.collectivities_count }.from(0)
-        end
-
-        it "changes when updating territory" do
-          collectivity
-          expect { collectivity.update(territory: territory2) }
-            .to  change { ddfip1.reload.collectivities_count }.from(1).to(0)
-            .and change { ddfip2.reload.collectivities_count }.from(0).to(1)
-        end
-
-        it "doesn't change when updating territory of a discarded collectivity" do
-          collectivity.discard
-          expect { collectivity.update(territory: territory2) }
-            .to  not_change { ddfip1.reload.collectivities_count }.from(0)
-            .and not_change { ddfip2.reload.collectivities_count }.from(0)
-        end
-
-        it "changes when combining updating territory and discarding" do
-          collectivity
-          expect { collectivity.update(territory: territory2, discarded_at: Time.current) }
-            .to      change { ddfip1.reload.collectivities_count }.from(1).to(0)
-            .and not_change { ddfip2.reload.collectivities_count }.from(0)
-        end
-
-        it "changes when combining updating territory and undiscarding" do
-          collectivity.discard
-          expect { collectivity.update(territory: territory2, discarded_at: nil) }
-            .to  not_change { ddfip1.reload.collectivities_count }.from(0)
-            .and     change { ddfip2.reload.collectivities_count }.from(0).to(1)
+      context "with communes" do
+        it_behaves_like "it changes collectivities count" do
+          let(:subjects)    { ddfips }
+          let(:territories) { communes }
         end
       end
 
-      context "with a commune" do
-        let(:territory1) { create(:commune, departement: ddfip1.departement) }
-        let(:territory2) { create(:commune, departement: ddfip2.departement) }
-
-        include_examples "trigger changes"
+      context "with EPCIs having communes in the departements" do
+        it_behaves_like "it changes collectivities count" do
+          let(:subjects)    { ddfips }
+          let(:territories) { communes.map(&:epci) }
+        end
       end
 
-      context "with an EPCI having a commune in departement" do
-        let(:territory1) { create(:commune, :with_epci, departement: ddfip1.departement).epci }
-        let(:territory2) { create(:commune, :with_epci, departement: ddfip2.departement).epci }
-
-        include_examples "trigger changes"
-      end
-
-      context "with an EPCI belonging to departement, without communes in it" do
-        let(:territory)    { create(:epci, departement: ddfip1.departement) }
-        let(:collectivity) { create(:collectivity, territory: territory) }
+      context "with an EPCI belonging to the departement but without communes in it" do
+        let(:epci)         { create(:epci, departement: ddfips[0].departement) }
+        let(:collectivity) { create(:collectivity, territory: epci) }
 
         it do
           expect { collectivity }
-            .to  not_change { ddfip1.reload.collectivities_count }.from(0)
-            .and not_change { ddfip2.reload.collectivities_count }.from(0)
+            .to  not_change { ddfips[0].reload.collectivities_count }.from(0)
+            .and not_change { ddfips[1].reload.collectivities_count }.from(0)
         end
       end
 
-      context "with a departement" do
-        let(:territory1) { ddfip1.departement }
-        let(:territory2) { ddfip2.departement }
-
-        include_examples "trigger changes"
+      context "with departements" do
+        it_behaves_like "it changes collectivities count" do
+          let(:subjects)    { ddfips }
+          let(:territories) { communes.map(&:departement) }
+        end
       end
 
-      context "with a region" do
-        let(:territory1) { ddfip1.departement.region }
-        let(:territory2) { ddfip2.departement.region }
-
-        include_examples "trigger changes"
+      context "with regions" do
+        it_behaves_like "it changes collectivities count" do
+          let(:subjects)    { ddfips }
+          let(:territories) { communes.map(&:region) }
+        end
       end
     end
 
-    describe "#services_count" do
-      let(:service) { create(:service, ddfip: ddfip1) }
+    describe "#offices_count" do
+      let(:office) { create(:office, ddfip: ddfips[0]) }
 
       it "changes on creation" do
-        expect { service }
-          .to      change { ddfip1.reload.services_count }.from(0).to(1)
-          .and not_change { ddfip2.reload.services_count }.from(0)
+        expect { office }
+          .to      change { ddfips[0].reload.offices_count }.from(0).to(1)
+          .and not_change { ddfips[1].reload.offices_count }.from(0)
       end
 
       it "changes on deletion" do
-        service
-        expect { service.destroy }
-          .to      change { ddfip1.reload.services_count }.from(1).to(0)
-          .and not_change { ddfip2.reload.services_count }.from(0)
+        office
+        expect { office.destroy }
+          .to      change { ddfips[0].reload.offices_count }.from(1).to(0)
+          .and not_change { ddfips[1].reload.offices_count }.from(0)
       end
 
       it "changes on updating" do
-        service
-        expect { service.update(ddfip: ddfip2) }
-          .to  change { ddfip1.reload.services_count }.from(1).to(0)
-          .and change { ddfip2.reload.services_count }.from(0).to(1)
+        office
+        expect { office.update(ddfip: ddfips[1]) }
+          .to  change { ddfips[0].reload.offices_count }.from(1).to(0)
+          .and change { ddfips[1].reload.offices_count }.from(0).to(1)
       end
     end
   end
@@ -311,34 +252,39 @@ RSpec.describe DDFIP do
   # Reset counters
   # ----------------------------------------------------------------------------
   describe ".reset_all_counters" do
-    subject { described_class.reset_all_counters }
+    subject(:reset_all_counters) { described_class.reset_all_counters }
 
-    let!(:ddfip1) { create(:ddfip) }
-    let!(:ddfip2) { create(:ddfip) }
+    let!(:ddfips) { create_list(:ddfip, 2) }
 
-    its_block { is_expected.to ret(2) }
-    its_block { is_expected.to perform_sql_query("SELECT reset_all_ddfips_counters()") }
+    it { expect { reset_all_counters }.to perform_sql_query("SELECT reset_all_ddfips_counters()") }
+
+    it "returns the count of DDFIPs" do
+      expect(reset_all_counters).to eq(2)
+    end
 
     describe "on users_count" do
       before do
-        create_list(:user, 4, organization: ddfip1)
-        create_list(:user, 2, organization: ddfip2)
+        create_list(:user, 4, organization: ddfips[0])
+        create_list(:user, 2, organization: ddfips[1])
         create_list(:user, 1, :publisher)
         create_list(:user, 1, :collectivity)
 
         DDFIP.update_all(users_count: 0)
       end
 
-      its_block { is_expected.to change { ddfip1.reload.users_count }.from(0).to(4) }
-      its_block { is_expected.to change { ddfip2.reload.users_count }.from(0).to(2) }
+      it "resets counters" do
+        expect { reset_all_counters }
+          .to  change { ddfips[0].reload.users_count }.from(0).to(4)
+          .and change { ddfips[1].reload.users_count }.from(0).to(2)
+      end
     end
 
     describe "on collectivities_count" do
       before do
         epcis    = create_list(:epci, 3)
         communes =
-          create_list(:commune, 3, epci: epcis[0], departement: ddfip1.departement) +
-          create_list(:commune, 2, epci: epcis[1], departement: ddfip1.departement)
+          create_list(:commune, 3, epci: epcis[0], departement: ddfips[0].departement) +
+          create_list(:commune, 2, epci: epcis[1], departement: ddfips[0].departement)
 
         create(:collectivity, territory: communes[0])
         create(:collectivity, territory: communes[1])
@@ -349,27 +295,33 @@ RSpec.describe DDFIP do
         create(:collectivity, territory: epcis[0])
         create(:collectivity, territory: epcis[1])
         create(:collectivity, territory: epcis[2])
-        create(:collectivity, territory: ddfip1.departement)
-        create(:collectivity, territory: ddfip2.departement.region)
+        create(:collectivity, territory: ddfips[0].departement)
+        create(:collectivity, territory: ddfips[1].departement.region)
 
         DDFIP.update_all(collectivities_count: 0)
       end
 
-      its_block { is_expected.to change { ddfip1.reload.collectivities_count }.from(0).to(6) }
-      its_block { is_expected.to change { ddfip2.reload.collectivities_count }.from(0).to(1) }
+      it "resets counters" do
+        expect { reset_all_counters }
+          .to  change { ddfips[0].reload.collectivities_count }.from(0).to(6)
+          .and change { ddfips[1].reload.collectivities_count }.from(0).to(1)
+      end
     end
 
-    describe "on services_count" do
+    describe "on offices_count" do
       before do
-        create_list(:service, 4, ddfip: ddfip1)
-        create_list(:service, 2, ddfip: ddfip2)
-        create_list(:service, 1)
+        create_list(:office, 4, ddfip: ddfips[0])
+        create_list(:office, 2, ddfip: ddfips[1])
+        create_list(:office, 1)
 
-        DDFIP.update_all(services_count: 0)
+        DDFIP.update_all(offices_count: 0)
       end
 
-      its_block { is_expected.to change { ddfip1.reload.services_count }.from(0).to(4) }
-      its_block { is_expected.to change { ddfip2.reload.services_count }.from(0).to(2) }
+      it "resets counters" do
+        expect { reset_all_counters }
+          .to  change { ddfips[0].reload.offices_count }.from(0).to(4)
+          .and change { ddfips[1].reload.offices_count }.from(0).to(2)
+      end
     end
   end
 end

@@ -5,7 +5,20 @@
     @apply dark:bg-black dark:ring-gray-700;
   }
 
+
   .card__content {
-    @apply px-4 py-3
+    @apply px-4 py-3;
+  }
+
+  .card--status {
+    & .card__content {
+      @apply p-10;
+
+      text-align: center;
+    }
+
+    & .card__header {
+      @apply text-xl mb-6;
+    }
   }
 }

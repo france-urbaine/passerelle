@@ -18,8 +18,12 @@ module AdvancedSearch
     end
 
     def match(attribute, value)
+      raise ArgumentError unless column_for_attribute(attribute)
+
+      quoted_column = "#{connection.quote_table_name(table_name)}.#{connection.quote_column_name(attribute)}"
+
       where(
-        "LOWER(UNACCENT(\"#{table_name}\".\"#{attribute}\")) LIKE LOWER(UNACCENT(?))",
+        "LOWER(UNACCENT(#{quoted_column})) LIKE LOWER(UNACCENT(?))",
         "%#{sanitize_sql_like(value)}%"
       )
     end

@@ -1,29 +1,20 @@
 = breadcrumbs_component do |breadcrumbs|
   - breadcrumbs.with_path "Organisations"
-  - breadcrumbs.with_path "Editeurs", href: publishers_path(retrieve_index_back_params)
+  - breadcrumbs.with_path "Éditeurs", publishers_path(retrieve_index_back_params)
   - breadcrumbs.with_path publisher.name
 
   - breadcrumbs.with_action "Modifier",
-    href: edit_publisher_path(publisher, content: current_path, redirect: current_path),
+    href: edit_publisher_path(publisher),
     icon: "pencil-square",
     modal: true
 
   - breadcrumbs.with_action "Supprimer",
-    href: remove_publisher_path(publisher, content: current_path),
+    href: remove_publisher_path(publisher),
     icon: "trash",
     modal: true
 
-- if publisher.discarded?
-  .card.mb-6
-    .card__content.bg-yellow-100.text-yellow-700( role="alert" )
-      b Compte en cours de suppression.
-      br
-      |  Ce compte a été archivé le #{localize(publisher.discarded_at.to_date)}.
-      br
-      |  Il sera définitivement supprimé le #{localize(30.days.after(publisher.discarded_at.to_date))}.
-
 h2.subheader
-  = svg_icon("bookmark", "Nouvelle section")
+  = svg_icon("identification", "Nouvelle section")
   | Description
 
 .card.mb-6
@@ -34,22 +25,22 @@ h2.subheader
 
     .description-list__row
       dt Utilisateurs
-      dd= count(publisher.users_count, "utilisateur") if publisher.users_count.positive?
+      dd= display_count(publisher.users_count, "utilisateur") if publisher.users_count.positive?
 
     .description-list__row
       dt Collectivités enregistrées
-      dd= count(publisher.collectivities_count, "collectivité") if publisher.collectivities_count.positive?
+      dd= display_count(publisher.collectivities_count, "collectivité") if publisher.collectivities_count.positive?
 
 .subheader-bar
   h2.subheader
-    = svg_icon("bookmark", "Nouvelle section")
+    = svg_icon("rectangle-stack", "Nouvelle section")
     | Utilisateurs de l'organisation
 
   .subheader-bar__actions
     .subheader-bar__action
       a.button(
         data-turbo-frame="modal"
-        href=new_user_path(content: current_path, redirect: current_path, user: { organization_type: "Publisher", organization_id: publisher.id })
+        href=new_user_path(referrer: current_path, user: { organization_type: "Publisher", organization_id: publisher.id })
       )
         = svg_icon("plus")
         | Inviter un utilisateur
@@ -73,7 +64,7 @@ h2.subheader
           td.datatable__row-actions
             .flex
               a.icon-button(
-                href=edit_user_path(user, content: current_path, redirect: current_path)
+                href=edit_user_path(user, referrer: current_path)
                 aria-label="Modifier cet utilisateur"
                 data-turbo-frame="modal"
               )
@@ -83,7 +74,7 @@ h2.subheader
               a.icon-button(
                 aria-label="Supprimer cet utilisateur"
                 data-turbo-frame="modal"
-                href=remove_user_path(user, content: current_path, redirect: current_path)
+                href=remove_user_path(user, referrer: current_path)
               )
                 = svg_icon("trash", "Supprimer cet utilisateur")
                 span.tooltip Supprimer cet utilisateur
@@ -111,14 +102,14 @@ h2.subheader
 
 .subheader-bar
   h2.subheader
-    = svg_icon("bookmark", "Nouvelle section")
+    = svg_icon("rectangle-stack", "Nouvelle section")
     | Collectivités enregistrées
 
   .subheader-bar__actions
     .subheader-bar__action
       a.button(
         data-turbo-frame="modal"
-        href=new_collectivity_path(content: current_path, redirect: current_path, collectivity: { publisher_id: publisher.id })
+        href=new_collectivity_path(referrer: current_path, collectivity: { publisher_id: publisher.id })
       )
         = svg_icon("plus")
         | Ajouter une collectivité
@@ -144,7 +135,7 @@ h2.subheader
               a.icon-button(
                 aria-label="Modifier cette collectivité"
                 data-turbo-frame="modal"
-                href=edit_collectivity_path(collectivity, content: current_path, redirect: current_path)
+                href=edit_collectivity_path(collectivity, referrer: current_path)
               )
                 = svg_icon("pencil-square", "Modifier cette collectivité")
                 span.tooltip Modifier cette collectivité
@@ -152,7 +143,7 @@ h2.subheader
               a.icon-button(
                 aria-label="Supprimer cette collectivité"
                 data-turbo-frame="modal"
-                href=remove_collectivity_path(collectivity, content: current_path, redirect: current_path)
+                href=remove_collectivity_path(collectivity, referrer: current_path)
               )
                 = svg_icon("trash", "Supprimer cette collectivité")
                 span.tooltip Supprimer cette collectivité

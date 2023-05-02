@@ -13,7 +13,7 @@ AllCops:
   NewCops:           enable
   DisplayCopNames:   true
   DisplayStyleGuide: true
-  TargetRubyVersion: 3.1
+  TargetRubyVersion: 3.2
   Exclude:
     - 'db/schema.rb'
     - 'tmp/**/*'
@@ -58,6 +58,10 @@ Lint/AmbiguousBlockAssociation:
     - change
     - satisfy
 
+Lint/ConstantDefinitionInBlock:
+  Exclude:
+    - 'config/routes.rb'
+
 # Metric -----------------------------------------------------------------------
 Metrics/AbcSize:
   Enabled: false
@@ -98,10 +102,7 @@ RSpec/DescribedClass:
   Enabled: false
 
 RSpec/ExampleLength:
-  CountAsOne: ['array', 'heredoc']
-  Exclude:
-    - 'spec/system/**/*'
-    - 'spec/components/**/*'
+  Enabled: false
 
 RSpec/ImplicitSubject:
   EnforcedStyle: single_statement_only

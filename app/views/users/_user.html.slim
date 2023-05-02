@@ -1,27 +1,20 @@
 = breadcrumbs_component do |breadcrumbs|
   - breadcrumbs.with_path "Organisations"
-  - breadcrumbs.with_path "Utilisateurs", href: users_path(retrieve_index_back_params)
+  - breadcrumbs.with_path "Utilisateurs", users_path(retrieve_index_back_params)
   - breadcrumbs.with_path user.name
 
   - breadcrumbs.with_action "Modifier",
-    href: edit_user_path(user, content: current_path, redirect: current_path),
+    href: edit_user_path(user),
     icon: "pencil-square",
     modal: true
 
   - breadcrumbs.with_action "Supprimer",
-    href: remove_user_path(user, content: current_path),
+    href: remove_user_path(user),
     icon: "trash",
     modal: true
 
-- if user.discarded?
-  .card.mb-6
-    .card__content.bg-red-100.text-red-700( role="alert" )
-      b Uitilisateur en cours de suppression.
-      br
-      | Cet utilisateur va être supprimé dans quelques minutes.
-
 h2.subheader
-  = svg_icon("bookmark", "Nouvelle section")
+  = svg_icon("identification", "Nouvelle section")
   | Description
 
 .card.mb-6
@@ -42,16 +35,16 @@ h2.subheader
       .description-list__row
         dt Guichets
         dd
-          - services = user.services.kept.where(ddfip: user.organization)
-          - services.each.with_index do |service, index|
+          - offices = user.offices.kept.where(ddfip: user.organization)
+          - offices.each.with_index do |office, index|
             a(
               data-turbo-frame="_top"
-              href=service_path(service)
-            )= service.name
+              href=office_path(office)
+            )= office.name
 
-            - if services[index + 2]
+            - if offices[index + 2]
               = ", "
-            - elsif services[index + 1]
+            - elsif offices[index + 1]
               = " et "
 
     .description-list__row
@@ -61,20 +54,20 @@ h2.subheader
           = mail_to user.email
         - else
           .text-disabled( title="Cet utilisateur n'a pas encore validé son inscription" )
-            = svg_icon("exclamation-triangle", class: "mr-2")
+            = svg_icon("exclamation-triangle", class: "mr-2 h-6 w-6 inline-block")
             = user.email
             span.tooltip Cet utilisateur n'a pas encore validé son inscription
 
     .description-list__row
       dt Administrateur de l'organisation
-      dd= svg_icon("check-badge", "Administrateur") if user.organization_admin?
+      dd= svg_icon("check-badge", "Administrateur", class: "h-6 w-6") if user.organization_admin?
 
     .description-list__row
       dt Administrateur de FiscaHub
-      dd= svg_icon("check-badge", "Administrateur") if user.super_admin?
+      dd= svg_icon("check-badge", "Administrateur", class: "h-6 w-6") if user.super_admin?
 
 h2.subheader
-  = svg_icon("bookmark", "Nouvelle section")
+  = svg_icon("rectangle-stack", "Nouvelle section")
   | Informations de connexion
 
 .card.mb-6

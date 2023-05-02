@@ -2,8 +2,6 @@
   | Modification de la commune
 
 - modal.with_form(model: commune) do
-  = hidden_param_input(:redirect)
-
   = fields(model: commune) do |form|
     = form.block :name, first: true do
       = form.label :name
@@ -30,7 +28,7 @@
       ruby:
         html_options = {
           value:        commune.epci&.name,
-          placeholder:  "Commnencez à taper pour sélectionner des EPCI",
+          placeholder:  "Commnencez à taper pour sélectionner des EPCIs",
           data:         { autocomplete_target: "input" }
         }
 

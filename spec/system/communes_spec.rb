@@ -3,7 +3,7 @@
 require "rails_helper"
 
 RSpec.describe "Communes", use_fixtures: true do
-  fixtures :communes, :epcis, :departements, :regions
+  fixtures :regions, :departements, :epcis, :communes
 
   let(:bayonne)              { communes(:bayonne) }
   let(:pays_basque)          { epcis(:pays_basque) }
@@ -64,10 +64,17 @@ RSpec.describe "Communes", use_fixtures: true do
   it "updates a commune from the index page" do
     visit communes_path
 
-    within "tr", text: "Bayonne" do
+    # A button should be present to edit the collectivity
+    #
+    within "tr", text: "Bayonne" do |row|
+      expect(row).to have_link("Modifier cette commune", class: "icon-button")
+
       click_on "Modifier cette commune"
     end
 
+    # A dialog box should appears with a form
+    # The form should be filled with collectivity data
+    #
     expect(page).to have_selector("[role=dialog]", text: "Modification de la commune")
 
     within "[role=dialog]" do
@@ -80,18 +87,35 @@ RSpec.describe "Communes", use_fixtures: true do
       click_on "Enregistrer"
     end
 
+    # The browser should stay on index page
+    # The collectivity should have changed its name
+    #
+    # The dialog should be closed
+    # A notification should be displayed
+    #
+    expect(page).to     have_current_path(communes_path)
+    expect(page).to     have_selector("h1", text: "Communes")
+    expect(page).to     have_selector("tr", text: "Nouvelle commune de Bayonne")
+
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
-
-    expect(page).to have_current_path(communes_path)
-    expect(page).to have_selector("tr", text: "Nouvelle commune de Bayonne")
   end
 
   it "updates a commune from the show page" do
     visit commune_path(bayonne)
 
-    click_on "Modifier"
+    # A button should be present to edit the collectivity
+    #
+    within ".header-bar" do |header|
+      expect(header).to have_selector("h1", text: "Bayonne")
+      expect(header).to have_link("Modifier", class: "button")
 
+      click_on "Modifier"
+    end
+
+    # A dialog box should appears with a form
+    # The form should be filled with collectivity data
+    #
     expect(page).to have_selector("[role=dialog]", text: "Modification de la commune")
 
     within "[role=dialog]" do
@@ -104,10 +128,16 @@ RSpec.describe "Communes", use_fixtures: true do
       click_on "Enregistrer"
     end
 
+    # The browser should stay on show page
+    # The collectivity should have changed its name
+    #
+    # The dialog should be closed
+    # A notification should be displayed
+    #
+    expect(page).to     have_current_path(commune_path(bayonne))
+    expect(page).to     have_selector("h1", text: "Nouvelle commune de Bayonne")
+
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
-
-    expect(page).to have_current_path(commune_path(bayonne))
-    expect(page).to have_selector("h1", text: "Nouvelle commune de Bayonne")
   end
 end

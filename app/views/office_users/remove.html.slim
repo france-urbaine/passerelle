@@ -1,0 +1,15 @@
+= template_frame_component(src: @background_url) do |frame|
+  - frame.with_modal do |modal|
+    - modal.with_header do
+      | Retrait de l'utilisateur : #{@user.name}
+
+    - modal.with_form(url: office_user_path(@office, @user), method: :delete) do
+      p
+        | Êtes-vous sûrs de vouloir retirer cet utilisateur du guichet ?
+      p
+        | L'utilisateur sera retiré du guichet uniquement.
+        br
+        | Il sera toujours présent dans la liste des utilisateurs de la DDFIP et pourra être de nouveau assigné au guichet si nécessaire.
+
+    - modal.with_submit_action "Continuer", autofocus: true
+    - modal.with_close_action "Annuler"

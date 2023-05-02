@@ -7,13 +7,17 @@
     min-width: 0px;
     min-height: theme("height.10");
 
-    @apply mb-4 px-4;
+    @apply mb-4 px-2;
     @apply text-xl leading-8;
 
     & svg {
       position: relative;
       display: block;
       @apply h-6 w-6 m-0 mr-4;
+    }
+
+    & path {
+      stroke-width: 1.5;
     }
   }
 }

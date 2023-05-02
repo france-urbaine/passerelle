@@ -2,12 +2,19 @@
 
 module ComponentsHelper
   COMPONENT_HELPERS = {
-    breadcrumbs_component:    "BreadcrumbsComponent",
-    button_component:         "ButtonComponent",
-    datatable_component:      "DatatableComponent",
-    modal_component:          "ModalComponent",
-    search_component:         "SearchComponent",
-    index_options_component:  "IndexOptionsComponent"
+    breadcrumbs_component:        "Breadcrumbs::Component",
+    button_component:             "Button::Component",
+    checkboxes_component:         "Checkboxes::Component",
+    datatable_component:          "DataTable::Component",
+    datatable_skeleton_component: "DataTable::Skeleton::Component",
+    dropdown_component:           "Dropdown::Component",
+    modal_component:              "Modal::Component",
+    notification_component:       "Notification::Component",
+    pagination_component:         "Pagination::Component",
+    pagination_counts_component:  "Pagination::Counts::Component",
+    pagination_options_component: "Pagination::Options::Component",
+    pagination_buttons_component: "Pagination::Buttons::Component",
+    search_component:             "Search::Component"
   }.freeze
 
   COMPONENT_HELPERS.each do |name, component|
@@ -22,7 +29,7 @@ module ComponentsHelper
     raise "Already render template_frame_component" if @template_frame_rendered
 
     @template_frame_rendered = true
-    render TemplateFrameComponent.new(**options), &
+    render TemplateFrame::Component.new(**options), &
   end
 
   def template_frame_rendered?

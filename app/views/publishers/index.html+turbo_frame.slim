@@ -1,8 +1,0 @@
-- case turbo_frame_request_id
-- when "index_header"
-  = turbo_frame_tag :index_header do
-    = render "index_header", publishers: @publishers, pagy: @pagy
-
-- else
-  = turbo_frame_tag :content do
-    = render "index_content", publishers: @publishers, pagy: @pagy

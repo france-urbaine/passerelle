@@ -33,6 +33,7 @@
 @import "./components/modal";
 @import "./components/breadcrumbs";
 @import "./components/dropdown";
+@import "./components/skeleton_loader";
 
 /* Data display */
 @import "./components/datatable";

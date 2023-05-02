@@ -3,30 +3,25 @@
 class TerritoriesController < ApplicationController
   respond_to :html
 
-  DEFAULT_COMMUNES_PATH = "https://www.insee.fr/fr/statistiques/fichier/2028028/table-appartenance-geo-communes-22.zip"
-  DEFAULT_EPCIS_PATH    = "https://www.insee.fr/fr/statistiques/fichier/2510634/Intercommunalite_Metropole_au_01-01-2022.zip"
-
   def index
     if autocomplete_request?
-      @territories  = autocomplete_territories(Region)
-      @territories += autocomplete_territories(Departement, @territories)
-      @territories += autocomplete_territories(EPCI, @territories)
-      @territories += autocomplete_territories(Commune, @territories)
+      @territories = merge_autocomplete_collections(
+        Region.strict_loading,
+        Departement.strict_loading,
+        EPCI.strict_loading,
+        Commune.strict_loading
+      )
     end
 
-    respond_to do |format|
+    respond_with @territories do |format|
       format.html.autocomplete { render layout: false }
       format.html.any          { not_acceptable }
     end
   end
 
   def edit
-    @territories_update = TerritoriesUpdate.new(
-      communes_url: DEFAULT_COMMUNES_PATH,
-      epcis_url:    DEFAULT_EPCIS_PATH
-    )
-
-    @background_content_url = safe_location_param(:content, communes_path)
+    @territories_update = TerritoriesUpdate.new.assign_default_urls
+    @background_content_url = url_from(params[:content]) || communes_path
   end
 
   def update
@@ -35,7 +30,7 @@ class TerritoriesController < ApplicationController
     if @territories_update.valid?
       @territories_update.perform_later
 
-      @location = safe_location_param(:redirect, communes_path)
+      @location = url_from(params[:redirect]) || communes_path
       @notice   = translate(".success")
 
       respond_to do |format|
@@ -58,12 +53,10 @@ class TerritoriesController < ApplicationController
   def autocomplete_territories(model, territories = [])
     return territories if territories.size >= 50
 
-    input    = params[:q]
     relation = model.strict_loading
-    relation.search(name: input)
-      .order_by_score(input)
-      .order(relation.implicit_order_column)
-      .limit(50 - territories.size)
-      .to_a
+    relation = search_collection(relation)
+    relation = order_collection(relation)
+    relation = relation.limit(50 - territories.size)
+    relation.to_a
   end
 end

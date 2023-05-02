@@ -80,44 +80,43 @@ RSpec.describe Collectivity do
   # Counter caches
   # ----------------------------------------------------------------------------
   describe "counter caches" do
-    let!(:collectivity1) { create(:collectivity) }
-    let!(:collectivity2) { create(:collectivity) }
+    let!(:collectivities) { create_list(:collectivity, 2) }
 
     describe "#users_count" do
-      let(:user) { create(:user, organization: collectivity1) }
+      let(:user) { create(:user, organization: collectivities[0]) }
 
       it "changes on creation" do
         expect { user }
-          .to      change { collectivity1.reload.users_count }.from(0).to(1)
-          .and not_change { collectivity2.reload.users_count }.from(0)
+          .to      change { collectivities[0].reload.users_count }.from(0).to(1)
+          .and not_change { collectivities[1].reload.users_count }.from(0)
       end
 
       it "changes on deletion" do
         user
         expect { user.destroy }
-          .to      change { collectivity1.reload.users_count }.from(1).to(0)
-          .and not_change { collectivity2.reload.users_count }.from(0)
+          .to      change { collectivities[0].reload.users_count }.from(1).to(0)
+          .and not_change { collectivities[1].reload.users_count }.from(0)
       end
 
       it "changes when discarding" do
         user
         expect { user.discard }
-          .to      change { collectivity1.reload.users_count }.from(1).to(0)
-          .and not_change { collectivity2.reload.users_count }.from(0)
+          .to      change { collectivities[0].reload.users_count }.from(1).to(0)
+          .and not_change { collectivities[1].reload.users_count }.from(0)
       end
 
       it "changes when undiscarding" do
         user.discard
         expect { user.undiscard }
-          .to      change { collectivity1.reload.users_count }.from(0).to(1)
-          .and not_change { collectivity2.reload.users_count }.from(0)
+          .to      change { collectivities[0].reload.users_count }.from(0).to(1)
+          .and not_change { collectivities[1].reload.users_count }.from(0)
       end
 
       it "changes when updating organization" do
         user
-        expect { user.update(organization: collectivity2) }
-          .to  change { collectivity1.reload.users_count }.from(1).to(0)
-          .and change { collectivity2.reload.users_count }.from(0).to(1)
+        expect { user.update(organization: collectivities[1]) }
+          .to  change { collectivities[0].reload.users_count }.from(1).to(0)
+          .and change { collectivities[1].reload.users_count }.from(0).to(1)
       end
     end
   end
@@ -125,24 +124,29 @@ RSpec.describe Collectivity do
   # Reset counters
   # ----------------------------------------------------------------------------
   describe ".reset_all_counters" do
-    subject { described_class.reset_all_counters }
+    subject(:reset_all_counters) { described_class.reset_all_counters }
 
-    let!(:collectivity1) { create(:collectivity) }
-    let!(:collectivity2) { create(:collectivity) }
+    let!(:collectivities) { create_list(:collectivity, 2) }
 
     before do
-      create_list(:user, 4, organization: collectivity1)
-      create_list(:user, 2, organization: collectivity2)
+      create_list(:user, 4, organization: collectivities[0])
+      create_list(:user, 2, organization: collectivities[1])
       create_list(:user, 1, :publisher)
       create_list(:user, 1, :ddfip)
 
       Collectivity.update_all(users_count: 0)
     end
 
-    its_block { is_expected.to ret(2) }
-    its_block { is_expected.to perform_sql_query("SELECT reset_all_collectivities_counters()") }
+    it { expect { reset_all_counters }.to perform_sql_query("SELECT reset_all_collectivities_counters()") }
 
-    its_block { is_expected.to change { collectivity1.reload.users_count }.from(0).to(4) }
-    its_block { is_expected.to change { collectivity2.reload.users_count }.from(0).to(2) }
+    it "returns the count of collectivities" do
+      expect(reset_all_counters).to eq(2)
+    end
+
+    it "resets counters" do
+      expect { reset_all_counters }
+        .to  change { collectivities[0].reload.users_count }.from(0).to(4)
+        .and change { collectivities[1].reload.users_count }.from(0).to(2)
+    end
   end
 end

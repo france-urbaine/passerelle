@@ -15,6 +15,8 @@ export default class extends Controller {
   }
 
   async close (event) {
+    if (event) event.preventDefault()
+
     await this.leave()
     this.element.remove()
   }

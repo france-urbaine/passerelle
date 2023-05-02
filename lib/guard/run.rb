@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+# This file is excluded from coverage reports.
+#
+# :nocov:
+
 require "guard/compat/plugin"
 
 module Guard
@@ -23,3 +27,4 @@ module Guard
     end
   end
 end
+# :nocov:

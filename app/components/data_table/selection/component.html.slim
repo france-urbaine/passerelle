@@ -1,0 +1,26 @@
+.header-bar.header-bar--selection
+  .header-bar__actions
+    .header-bar__action
+      button.icon-button.selection-bar__close-button(
+        data-action="selection#uncheckAll"
+      )
+        = helpers.svg_icon("x-mark", "Réinitialiser la sélection")
+        span.tooltip Réinitialiser la sélection
+
+    .header-bar__text
+      = helpers.display_count(selected_count, selected_inflections_options)
+
+      - if can_select_all?
+        |  (
+        a(
+          href=select_all_path
+          data-turbo-frame=datatable.turbo_frame_selection_bar
+        )
+          | Sélectionner les #{helpers.display_count(select_all_count, datatable.records.model)}
+          |  des #{helpers.display_count(pages_count, "page")}
+        | )
+
+  .flex-auto
+  .header-bar__actions
+    - actions.each do |action|
+      .header-bar__action= action

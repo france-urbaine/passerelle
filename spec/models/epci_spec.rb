@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "rails_helper"
+require "models/shared_examples"
 
 RSpec.describe EPCI do
   # Associations
@@ -141,141 +142,81 @@ RSpec.describe EPCI do
   # Counter caches
   # ----------------------------------------------------------------------------
   describe "counter caches" do
-    let!(:epci1) { create(:epci) }
-    let!(:epci2) { create(:epci) }
+    let!(:epcis) { create_list(:epci, 2) }
 
     describe "#communes_count" do
-      let(:commune) { create(:commune, epci: epci1) }
+      let(:commune) { create(:commune, epci: epcis[0]) }
 
       it "changes on creation" do
         expect { commune }
-          .to      change { epci1.reload.communes_count }.from(0).to(1)
-          .and not_change { epci2.reload.communes_count }.from(0)
+          .to      change { epcis[0].reload.communes_count }.from(0).to(1)
+          .and not_change { epcis[1].reload.communes_count }.from(0)
       end
 
       it "changes on deletion" do
         commune
         expect { commune.destroy }
-          .to      change { epci1.reload.communes_count }.from(1).to(0)
-          .and not_change { epci2.reload.communes_count }.from(0)
+          .to      change { epcis[0].reload.communes_count }.from(1).to(0)
+          .and not_change { epcis[1].reload.communes_count }.from(0)
       end
 
       it "changes on updating EPCI" do
         commune
-        expect { commune.update(epci: epci2) }
-          .to  change { epci1.reload.communes_count }.from(1).to(0)
-          .and change { epci2.reload.communes_count }.from(0).to(1)
+        expect { commune.update(epci: epcis[1]) }
+          .to  change { epcis[0].reload.communes_count }.from(1).to(0)
+          .and change { epcis[1].reload.communes_count }.from(0).to(1)
       end
 
       it "changes on updating to remove the EPCI" do
         commune
         expect { commune.update(epci: nil) }
-          .to      change { epci1.reload.communes_count }.from(1).to(0)
-          .and not_change { epci2.reload.communes_count }.from(0)
+          .to      change { epcis[0].reload.communes_count }.from(1).to(0)
+          .and not_change { epcis[1].reload.communes_count }.from(0)
       end
 
       it "changes on updating to add the EPCI" do
         commune = create(:commune)
 
-        expect { commune.update(epci: epci2) }
-          .to  not_change { epci1.reload.communes_count }.from(0)
-          .and     change { epci2.reload.communes_count }.from(0).to(1)
+        expect { commune.update(epci: epcis[1]) }
+          .to  not_change { epcis[0].reload.communes_count }.from(0)
+          .and     change { epcis[1].reload.communes_count }.from(0).to(1)
       end
     end
 
     describe "#collectivities_count" do
-      shared_examples "trigger changes" do
-        let(:collectivity) { create(:collectivity, territory: territory1) }
+      let!(:communes) do
+        [
+          create(:commune, epci: epcis[0]),
+          create(:commune, epci: epcis[1])
+        ]
+      end
 
-        it "changes on creation" do
-          expect { collectivity }
-            .to      change { epci1.reload.collectivities_count }.from(0).to(1)
-            .and not_change { epci2.reload.collectivities_count }.from(0)
-        end
-
-        it "changes on discarding" do
-          collectivity
-          expect { collectivity.discard }
-            .to      change { epci1.reload.collectivities_count }.from(1).to(0)
-            .and not_change { epci2.reload.collectivities_count }.from(0)
-        end
-
-        it "changes on undiscarding" do
-          collectivity.discard
-          expect { collectivity.undiscard }
-            .to      change { epci1.reload.collectivities_count }.from(0).to(1)
-            .and not_change { epci2.reload.collectivities_count }.from(0)
-        end
-
-        it "changes on deletion" do
-          collectivity
-          expect { collectivity.destroy }
-            .to      change { epci1.reload.collectivities_count }.from(1).to(0)
-            .and not_change { epci2.reload.collectivities_count }.from(0)
-        end
-
-        it "doesn't change when deleting a discarded collectivity" do
-          collectivity.discard
-          expect { collectivity.destroy }
-            .to  not_change { epci1.reload.collectivities_count }.from(0)
-            .and not_change { epci2.reload.collectivities_count }.from(0)
-        end
-
-        it "changes when updating territory" do
-          collectivity
-          expect { collectivity.update(territory: territory2) }
-            .to  change { epci1.reload.collectivities_count }.from(1).to(0)
-            .and change { epci2.reload.collectivities_count }.from(0).to(1)
-        end
-
-        it "doesn't change when updating territory of a discarded collectivity" do
-          collectivity.discard
-          expect { collectivity.update(territory: territory2) }
-            .to  not_change { epci1.reload.collectivities_count }.from(0)
-            .and not_change { epci2.reload.collectivities_count }.from(0)
-        end
-
-        it "changes when combining updating territory and discarding" do
-          collectivity
-          expect { collectivity.update(territory: territory2, discarded_at: Time.current) }
-            .to      change { epci1.reload.collectivities_count }.from(1).to(0)
-            .and not_change { epci2.reload.collectivities_count }.from(0)
-        end
-
-        it "changes when combining updating territory and undiscarding" do
-          collectivity.discard
-          expect { collectivity.update(territory: territory2, discarded_at: nil) }
-            .to  not_change { epci1.reload.collectivities_count }.from(0)
-            .and     change { epci2.reload.collectivities_count }.from(0).to(1)
+      context "with communes" do
+        it_behaves_like "it changes collectivities count" do
+          let(:subjects)    { epcis }
+          let(:territories) { communes }
         end
       end
 
-      context "with a commune" do
-        let(:territory1) { create(:commune, epci: epci1) }
-        let(:territory2) { create(:commune, epci: epci2) }
-
-        include_examples "trigger changes"
+      context "with EPCIs" do
+        it_behaves_like "it changes collectivities count" do
+          let(:subjects)    { epcis }
+          let(:territories) { epcis }
+        end
       end
 
-      context "with an EPCI" do
-        let(:territory1) { create(:commune, epci: epci1).epci }
-        let(:territory2) { create(:commune, epci: epci2).epci }
-
-        include_examples "trigger changes"
+      context "with departements" do
+        it_behaves_like "it changes collectivities count" do
+          let(:subjects)    { epcis }
+          let(:territories) { communes.map(&:departement) }
+        end
       end
 
-      context "with a departement" do
-        let(:territory1) { create(:commune, epci: epci1).departement }
-        let(:territory2) { create(:commune, epci: epci2).departement }
-
-        include_examples "trigger changes"
-      end
-
-      context "with a region" do
-        let(:territory1) { create(:commune, epci: epci1).departement.region }
-        let(:territory2) { create(:commune, epci: epci2).departement.region }
-
-        include_examples "trigger changes"
+      context "with regions" do
+        it_behaves_like "it changes collectivities count" do
+          let(:subjects)    { epcis }
+          let(:territories) { communes.map(&:region) }
+        end
       end
     end
   end
@@ -283,10 +224,10 @@ RSpec.describe EPCI do
   # Reset counters
   # ----------------------------------------------------------------------------
   describe ".reset_all_counters" do
-    subject { described_class.reset_all_counters }
+    subject(:reset_all_counters) { described_class.reset_all_counters }
 
-    its_block { is_expected.to run_without_error }
-    its_block { is_expected.to ret(Integer) }
-    its_block { is_expected.to perform_sql_query("SELECT reset_all_epcis_counters()") }
+    it { expect { reset_all_counters }.to run_without_error }
+    it { expect { reset_all_counters }.to ret(Integer) }
+    it { expect { reset_all_counters }.to perform_sql_query("SELECT reset_all_epcis_counters()") }
   end
 end

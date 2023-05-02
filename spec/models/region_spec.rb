@@ -107,105 +107,100 @@ RSpec.describe Region do
   # Counter caches
   # ----------------------------------------------------------------------------
   describe "counter caches" do
-    let!(:region1)     { create(:region) }
-    let!(:region2)     { create(:region) }
-    let(:departement1) { create(:departement, region: region1) }
-    let(:departement2) { create(:departement, region: region2) }
+    let!(:regions) { create_list(:region, 2) }
+    let(:departements) do
+      [
+        create(:departement, region: regions[0]),
+        create(:departement, region: regions[1])
+      ]
+    end
 
     describe "#communes_count" do
-      let(:commune) { create(:commune, departement: departement1) }
+      let(:commune) { create(:commune, departement: departements[0]) }
 
       it "changes on creation" do
         expect { commune }
-          .to      change { region1.reload.communes_count }.from(0).to(1)
-          .and not_change { region2.reload.communes_count }.from(0)
+          .to      change { regions[0].reload.communes_count }.from(0).to(1)
+          .and not_change { regions[1].reload.communes_count }.from(0)
       end
 
       it "changes on deletion" do
         commune
         expect { commune.destroy }
-          .to      change { region1.reload.communes_count }.from(1).to(0)
-          .and not_change { region2.reload.communes_count }.from(0)
+          .to      change { regions[0].reload.communes_count }.from(1).to(0)
+          .and not_change { regions[1].reload.communes_count }.from(0)
       end
 
       it "changes on updating departement" do
         commune
-        expect { commune.update(departement: departement2) }
-          .to  change { departement1.reload.communes_count }.from(1).to(0)
-          .and change { departement2.reload.communes_count }.from(0).to(1)
+        expect { commune.update(departement: departements[1]) }
+          .to  change { departements[0].reload.communes_count }.from(1).to(0)
+          .and change { departements[1].reload.communes_count }.from(0).to(1)
       end
     end
 
-    describe ".communes_count" do
+    describe "#epcis_count" do
       it do
-        expect { create(:commune, departement: departement1) }
-          .to      change { region1.reload.communes_count }.from(0).to(1)
-          .and not_change { region2.reload.communes_count }.from(0)
+        expect { create(:epci, departement: departements[0]) }
+          .to      change { regions[0].reload.epcis_count }.from(0).to(1)
+          .and not_change { regions[1].reload.epcis_count }.from(0)
+      end
+
+      it do
+        expect { create(:commune, :with_epci, departement: departements[0]) }
+          .to  not_change { regions[0].reload.epcis_count }.from(0)
+          .and not_change { regions[1].reload.epcis_count }.from(0)
       end
     end
 
-    describe ".epcis_count" do
+    describe "#departements_count" do
       it do
-        expect { create(:epci, departement: departement1) }
-          .to      change { region1.reload.epcis_count }.from(0).to(1)
-          .and not_change { region2.reload.epcis_count }.from(0)
-      end
-
-      it do
-        expect { create(:commune, :with_epci, departement: departement1) }
-          .to  not_change { region1.reload.epcis_count }.from(0)
-          .and not_change { region2.reload.epcis_count }.from(0)
+        expect { create(:departement, region: regions[0]) }
+          .to      change { regions[0].reload.departements_count }.from(0).to(1)
+          .and not_change { regions[1].reload.departements_count }.from(0)
       end
     end
 
-    describe ".departements_count" do
+    describe "#ddfips_count" do
       it do
-        expect { departement1 }
-          .to      change { region1.reload.departements_count }.from(0).to(1)
-          .and not_change { region2.reload.departements_count }.from(0)
+        expect { create(:ddfip, departement: departements[0]) }
+          .to      change { regions[0].reload.ddfips_count }.from(0).to(1)
+          .and not_change { regions[1].reload.ddfips_count }.from(0)
       end
     end
 
-    describe ".ddfips_count" do
+    describe "#collectivities_count" do
       it do
-        expect { create(:ddfip, departement: departement1) }
-          .to      change { region1.reload.ddfips_count }.from(0).to(1)
-          .and not_change { region2.reload.ddfips_count }.from(0)
-      end
-    end
-
-    describe ".collectivities_count" do
-      it do
-        commune = create(:commune, departement: departement1)
+        commune = create(:commune, departement: departements[0])
         expect { create(:collectivity, :commune, territory: commune) }
-          .to      change { region1.reload.collectivities_count }.from(0).to(1)
-          .and not_change { region2.reload.collectivities_count }.from(0)
+          .to      change { regions[0].reload.collectivities_count }.from(0).to(1)
+          .and not_change { regions[1].reload.collectivities_count }.from(0)
       end
 
       it do
-        epci = create(:commune, :with_epci, departement: departement1).epci
+        epci = create(:commune, :with_epci, departement: departements[0]).epci
         expect { create(:collectivity, :epci, territory: epci) }
-          .to      change { region1.reload.collectivities_count }.from(0).to(1)
-          .and not_change { region2.reload.collectivities_count }.from(0)
+          .to      change { regions[0].reload.collectivities_count }.from(0).to(1)
+          .and not_change { regions[1].reload.collectivities_count }.from(0)
       end
 
       it do
-        epci = create(:epci, departement: departement1)
+        epci = create(:epci, departement: departements[0])
         expect { create(:collectivity, :epci, territory: epci) }
-          .to  not_change { region1.reload.collectivities_count }.from(0)
-          .and not_change { region2.reload.collectivities_count }.from(0)
+          .to  not_change { regions[0].reload.collectivities_count }.from(0)
+          .and not_change { regions[1].reload.collectivities_count }.from(0)
       end
 
       it do
-        expect { create(:collectivity, :departement, territory: departement1) }
-          .to      change { region1.reload.collectivities_count }.from(0).to(1)
-          .and not_change { region2.reload.collectivities_count }.from(0)
+        expect { create(:collectivity, :departement, territory: departements[0]) }
+          .to      change { regions[0].reload.collectivities_count }.from(0).to(1)
+          .and not_change { regions[1].reload.collectivities_count }.from(0)
       end
 
       it do
-        expect { create(:collectivity, :region, territory: departement1.region) }
-          .to      change { region1.reload.collectivities_count }.from(0).to(1)
-          .and not_change { region2.reload.collectivities_count }.from(0)
+        expect { create(:collectivity, :region, territory: departements[0].region) }
+          .to      change { regions[0].reload.collectivities_count }.from(0).to(1)
+          .and not_change { regions[1].reload.collectivities_count }.from(0)
       end
     end
   end
@@ -213,10 +208,10 @@ RSpec.describe Region do
   # Reset counters
   # ----------------------------------------------------------------------------
   describe ".reset_all_counters" do
-    subject { described_class.reset_all_counters }
+    subject(:reset_all_counters) { described_class.reset_all_counters }
 
-    its_block { is_expected.to run_without_error }
-    its_block { is_expected.to ret(Integer) }
-    its_block { is_expected.to perform_sql_query("SELECT reset_all_regions_counters()") }
+    it { expect { reset_all_counters }.to run_without_error }
+    it { expect { reset_all_counters }.to ret(Integer) }
+    it { expect { reset_all_counters }.to perform_sql_query("SELECT reset_all_regions_counters()") }
   end
 end

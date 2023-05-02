@@ -19,6 +19,10 @@
 #  index_epcis_on_code_departement  (code_departement)
 #  index_epcis_on_siren             (siren) UNIQUE
 #
+# Foreign Keys
+#
+#  fk_rails_...  (code_departement => departements.code_departement)
+#
 class EPCI < ApplicationRecord
   self.implicit_order_column = :name
 

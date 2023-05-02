@@ -1,0 +1,10 @@
+= tag.turbo_frame id: request.headers["Turbo-Frame"] do
+  = modal_component do
+    p
+      | This content is rendered after being redirected to:
+      br
+      | /rails/view_components/samples/link/modal
+
+    .button( onclick="history.back()" )
+      = svg_icon("arrow-uturn-left")
+      | Back

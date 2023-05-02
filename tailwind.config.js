@@ -8,6 +8,8 @@ module.exports = {
     './app/components/**/*.html.erb',
     './app/components/**/*.html.slim',
     './app/components/**/*.rb',
-    './app/javascript/**/*.js'
+    './app/javascript/**/*.js',
+    './spec/components/previews/**/*.rb',
+    './spec/components/previews/**/*.html.slim'
   ]
 }

@@ -1,0 +1,20 @@
+pelp_bayonne:
+  ddfip:          pyrenees_atlantiques
+  name:           PELP de Bayonne
+  action:         evaluation_eco
+  users_count:    1
+  communes_count: 2
+
+pelh_bayonne:
+  ddfip:          pyrenees_atlantiques
+  name:           PELH de Bayonne
+  action:         evaluation_hab
+  users_count:    0
+  communes_count: 0
+
+sip_bayonne:
+  ddfip:          pyrenees_atlantiques
+  name:           SIP de Bayonne
+  action:         occupation_hab
+  users_count:    0
+  communes_count: 1

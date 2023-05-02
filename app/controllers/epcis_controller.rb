@@ -2,50 +2,35 @@
 
 class EpcisController < ApplicationController
   respond_to :html
-  before_action :set_epci, only: %i[show edit update]
 
   def index
     @epcis = EPCI.strict_loading
+    @epcis, @pagy = index_collection(@epcis)
 
-    if autocomplete_request?
-      @epcis = autocomplete(@epcis)
-    else
-      @epcis = search(@epcis)
-      @epcis = order(@epcis)
-      @pagy, @epcis = pagy(@epcis)
-    end
-
-    respond_to do |format|
-      format.html.any
+    respond_with @epcis do |format|
       format.html.autocomplete { render layout: false }
     end
   end
 
-  def show; end
+  def show
+    @epci = EPCI.find(params[:id])
+  end
 
   def edit
-    @background_content_url = safe_location_param(:content, epci_path(@epci))
+    @epci = EPCI.find(params[:id])
+    @background_url = referrer_path || epci_path(@epci)
   end
 
   def update
-    if @epci.update(epci_params)
-      @location = safe_location_param(:redirect, epcis_path)
-      @notice   = translate(".success")
+    @epci = EPCI.find(params[:id])
+    @epci.update(epci_params)
 
-      respond_to do |format|
-        format.turbo_stream { redirect_to @location, notice: @notice }
-        format.html         { redirect_to @location, notice: @notice }
-      end
-    else
-      render :edit, status: :unprocessable_entity
-    end
+    respond_with @epci,
+      flash: true,
+      location: -> { redirect_path || referrer_path || epcis_path }
   end
 
   private
-
-  def set_epci
-    @epci = EPCI.find(params[:id])
-  end
 
   def epci_params
     params

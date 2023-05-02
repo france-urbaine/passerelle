@@ -1,0 +1,40 @@
+= breadcrumbs_component do |breadcrumbs|
+  - breadcrumbs.with_path "Organisations"
+  - breadcrumbs.with_path "Collectivités"
+
+  - breadcrumbs.with_action "Ajouter une collectivité", new_collectivity_path, icon: "plus", modal: true, primary: true
+
+= datatable_component(collectivities.preload(:publisher)) do |datatable|
+  - datatable.with_search
+  - datatable.with_pagination(pagy)
+  - datatable.with_selection do |selection|
+    - selection.with_action "Supprimer la sélection", remove_all_collectivities_path, modal: true
+
+  - datatable.with_column(:name,      sort: true)    { "Collectivité" }
+  - datatable.with_column(:siren,     sort: true)    { "SIREN" }
+  - datatable.with_column(:publisher, sort: true)    { "Éditeur" }
+  - datatable.with_column(:users,     numeric: true) { "Utilisateurs" }
+
+  - datatable.with_empty_message do
+    | Aucune collectivité disponible.
+
+  - datatable.each_row do |row, collectivity|
+    - row.with_checkbox "Sélectionner cette collectivité", described_by: :name
+    - row.with_action "Modifier cette collectivité", edit_collectivity_path(collectivity), icon: "pencil-square", modal: true
+    - row.with_action "Supprimer cette collectivité", remove_collectivity_path(collectivity), icon: "trash", modal: true
+
+    - row.with_column(:name) do
+      = link_to collectivity_path(collectivity, current_index_back_params), data: { turbo_frame: "_top" } do
+        = collectivity.name
+
+    - row.with_column(:siren) do
+      = display_siren(collectivity.siren)
+
+    - row.with_column(:publisher) do
+      - if collectivity.publisher
+        = link_to publisher_path(collectivity.publisher), data: { turbo_frame: "_top" } do
+          = collectivity.publisher.name
+
+    - row.with_column(:users) do
+      = number_with_delimiter(collectivity.users_count) if collectivity.users_count.positive?
+

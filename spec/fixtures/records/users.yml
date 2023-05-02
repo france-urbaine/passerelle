@@ -7,3 +7,23 @@ marc:
   organization_admin: false
   email:              mdebomy@fiscalite-territoire.fr
   confirmed_at:       <%= Time.current %>
+
+maxime:
+  organization:       pyrenees_atlantiques (DDFIP)
+  first_name:         Maxime
+  last_name:          Gauthier
+  name:               Maxime Gauthier
+  super_admin:        false
+  organization_admin: false
+  email:              maxime.gauthier@dgfip.finances.gouv.fr
+  confirmed_at:       <%= Time.current %>
+
+astride:
+  organization:       pyrenees_atlantiques (DDFIP)
+  first_name:         Astride
+  last_name:          Fabre
+  name:               Astride Fabre
+  super_admin:        false
+  organization_admin: false
+  email:              astride.fabre@dgfip.finances.gouv.fr
+  confirmed_at:       <%= Time.current %>

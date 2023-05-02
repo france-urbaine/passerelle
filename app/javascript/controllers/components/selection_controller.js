@@ -10,6 +10,8 @@ export default class extends Controller {
   }
 
   connect () {
+    if (!this.hasCheckallTarget) return
+
     useHotkeys(this, {
       hotkeys: {
         "*": {
@@ -31,6 +33,8 @@ export default class extends Controller {
   }
 
   disconnect () {
+    if (!this.hasCheckallTarget) return
+
     this.checkallTarget.removeEventListener('change', this.toggleAll)
     this.checkboxTargets.forEach(checkbox => checkbox.removeEventListener('change', this.toggleBox))
   }

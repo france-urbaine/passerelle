@@ -3,169 +3,110 @@
 class DdfipsController < ApplicationController
   respond_to :html
 
-  before_action :set_ddfip,                  only: %i[show edit update remove destroy undiscard]
-  before_action :set_background_content_url, only: %i[new edit remove]
-
   def index
     @ddfips = DDFIP.kept.strict_loading
+    @ddfips, @pagy = index_collection(@ddfips)
 
-    if autocomplete_request?
-      @ddfips = autocomplete(@ddfips)
-    else
-      @ddfips = search(@ddfips)
-      @ddfips = order(@ddfips)
-      @pagy, @ddfips = pagy(@ddfips)
-    end
-
-    respond_to do |format|
-      format.html.any
+    respond_with @ddfips do |format|
       format.html.autocomplete { render layout: false }
     end
   end
 
-  def show; end
+  def show
+    @ddfip = DDFIP.find(params[:id])
+    gone if @ddfip.discarded?
+  end
 
   def new
     @ddfip = DDFIP.new(ddfip_params)
+    @background_url = referrer_path || ddfips_path
   end
 
-  def edit; end
-  def remove; end
+  def edit
+    @ddfip = DDFIP.find(params[:id])
+    return gone if @ddfip.discarded?
 
-  def create
-    @ddfip = DDFIP.new(ddfip_params)
-
-    if @ddfip.save
-      @location = ddfip_path(@ddfip)
-      @notice   = translate(".success")
-
-      respond_to do |format|
-        format.turbo_stream { redirect_to @location, notice: @notice }
-        format.html         { redirect_to @location, notice: @notice }
-      end
-    else
-      render :new, status: :unprocessable_entity
-    end
+    @background_url = referrer_path || ddfip_path(@ddfip)
   end
 
-  def update
-    if @ddfip.update(ddfip_params)
-      @location = safe_location_param(:redirect, ddfips_path)
-      @notice   = translate(".success")
+  def remove
+    @ddfip = DDFIP.find(params[:id])
+    return gone if @ddfip.discarded?
 
-      respond_to do |format|
-        format.turbo_stream { redirect_to @location, notice: @notice }
-        format.html         { redirect_to @location, notice: @notice }
-      end
-    else
-      render :edit, status: :unprocessable_entity
-    end
-  end
-
-  def destroy
-    @ddfip.discard
-
-    @location = safe_location_param(:redirect, ddfips_path)
-    @notice   = translate(".success").merge(
-      actions: {
-        label:  "Annuler",
-        url:    undiscard_ddfip_path(@ddfip),
-        method: :patch,
-        inputs: { redirect: @location }
-      }
-    )
-
-    respond_to do |format|
-      format.turbo_stream { redirect_to @location, notice: @notice }
-      format.html         { redirect_to @location, notice: @notice }
-    end
+    @background_url = referrer_path || ddfip_path(@ddfip)
   end
 
   def remove_all
     @ddfips = DDFIP.kept.strict_loading
-    @ddfips = search(@ddfips)
-    @ddfips = select(@ddfips)
+    @ddfips = filter_collection(@ddfips)
+    @background_url = referrer_path || ddfips_path(**selection_params)
+  end
 
-    @background_content_url = ddfips_path(ids: params[:ids], **index_params)
-    @return_location        = ddfips_path(**index_params)
+  def create
+    @ddfip = DDFIP.new(ddfip_params)
+    @ddfip.save
+
+    respond_with @ddfip,
+      flash: true,
+      location: -> { redirect_path || referrer_path || ddfips_path }
+  end
+
+  def update
+    @ddfip = DDFIP.find(params[:id])
+    return gone if @ddfip.discarded?
+
+    @ddfip.update(ddfip_params)
+
+    respond_with @ddfip,
+      flash: true,
+      location: -> { redirect_path || referrer_path || ddfips_path }
+  end
+
+  def destroy
+    @ddfip = DDFIP.find(params[:id])
+    @ddfip.discard
+
+    respond_with @ddfip,
+      flash: true,
+      actions: FlashAction::Cancel.new(params),
+      location: redirect_path || ddfips_path
+  end
+
+  def undiscard
+    @ddfip = DDFIP.find(params[:id])
+    @ddfip.undiscard
+
+    respond_with @ddfip,
+      flash: true,
+      location: redirect_path || referrer_path || ddfips_path
   end
 
   def destroy_all
     @ddfips = DDFIP.kept.strict_loading
-    @ddfips = search(@ddfips)
-    @ddfips = select(@ddfips)
-    @ddfips.update_all(discarded_at: Time.current)
+    @ddfips = filter_collection(@ddfips)
+    @ddfips.dispose_all
 
-    @location   = ddfips_path if params[:ids] == "all"
-    @location ||= ddfips_path(**index_params)
-    @notice     = translate(".success").merge(
-      actions: {
-        label:  "Annuler",
-        url:    undiscard_all_ddfips_path,
-        method: :patch,
-        inputs: {
-          ids:      params[:ids],
-          redirect: @location,
-          **index_params
-        }
-      }
-    )
-
-    respond_to do |format|
-      format.turbo_stream  { redirect_to @location, notice: @notice }
-      format.html          { redirect_to @location, notice: @notice }
-    end
-  end
-
-  def undiscard
-    @ddfip.undiscard
-
-    @location = safe_location_param(:redirect, ddfips_path)
-    @notice   = translate(".success")
-
-    respond_to do |format|
-      format.turbo_stream { redirect_to @location, notice: @notice }
-      format.html         { redirect_to @location, notice: @notice }
-    end
+    respond_with @ddfips,
+      flash: true,
+      actions: FlashAction::Cancel.new(params),
+      location: redirect_path || ddfips_path(**selection_params.except(:ids))
   end
 
   def undiscard_all
     @ddfips = DDFIP.discarded.strict_loading
-    @ddfips = search(@ddfips)
-    @ddfips = select(@ddfips)
-    @ddfips.update_all(discarded_at: nil)
+    @ddfips = filter_collection(@ddfips)
+    @ddfips.undispose_all
 
-    @location = safe_location_param(:redirect, ddfips_path)
-    @notice   = translate(".success")
-
-    respond_to do |format|
-      format.turbo_stream { redirect_to @location, notice: @notice }
-      format.html         { redirect_to @location, notice: @notice }
-    end
+    respond_with @ddfips,
+      flash: true,
+      location: redirect_path || ddfips_path
   end
 
   private
-
-  def set_ddfip
-    @ddfip = DDFIP.find(params[:id])
-  end
-
-  def set_background_content_url
-    default = ddfips_path
-    default = ddfip_path(@ddfip) if @ddfip&.persisted?
-
-    @background_content_url = safe_location_param(:content, default)
-  end
 
   def ddfip_params
     params
       .fetch(:ddfip, {})
       .permit(:name, :code_departement)
-  end
-
-  def index_params
-    params
-      .slice(:search, :order, :page)
-      .permit(:search, :order, :page)
   end
 end

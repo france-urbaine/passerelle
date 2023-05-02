@@ -1,0 +1,36 @@
+- if search? || pagination?
+  .header-bar( aria-hidden )
+    - if search
+      .search
+        .form-block.form-skeleton-loader
+          .form-block__input
+            .form-block__input-icon= helpers.svg_icon("search")
+            input( type="text" readonly )
+
+    .flex-auto
+    - if pagination?
+      .header-bar__actions
+        .header-bar__text
+          span.text-skeleton-loader
+          = " "
+          span.text-skeleton-loader.mx-4 |
+          = " "
+          span.text-skeleton-loader
+
+        .header-bar__action
+          span.icon-button.button-skeleton-loader= helpers.svg_icon("chevron-left", "Page précédente")
+          span.icon-button.button-skeleton-loader= helpers.svg_icon("chevron-right", "Page suivante")
+
+table.datatable( aria-hidden )
+  thead
+    tr.datatable__row
+      - columns.each do |column|
+        th
+          .text-skeleton-loader= column
+
+  tbody
+    - rows.times do |row|
+      tr.datatable__row
+        - columns.each do |column|
+          td
+            .text-skeleton-loader

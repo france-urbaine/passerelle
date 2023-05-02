@@ -1,0 +1,10 @@
+= datatable_component(records) do |datatable|
+  - datatable.with_column(:code_insee, compact: true) { "#" }
+  - datatable.with_column(:name) { "Commune" }
+  - datatable.with_column(:epci) { "EPCI" }
+  - datatable.with_column(:created_at, numeric: true) { "Creation" }
+
+  - datatable.each_row do |row, commune|
+    - row.with_column(:name) { commune.name }
+    - row.with_column(:code_insee) { commune.code_insee }
+    - row.with_column(:created_at) { commune.created_at.to_s }

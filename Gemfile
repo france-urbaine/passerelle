@@ -65,7 +65,7 @@ group :development do
   gem "rack-mini-profiler"
   gem "web-console"
 
-  gem "lookbook", ">= 2.0.0.beta.4"
+  gem "lookbook", ">= 2.0.0"
 
   # FIXME: waiting for this PR to be released
   # The gem can be removed from the Gemfile after release because
@@ -81,8 +81,12 @@ group :development do
 
   # Tests & lint automation
   gem "guard"
-  gem "guard-rspec",   require: false
-  gem "guard-rubocop", require: false
+  gem "guard-brakeman", require: false
+  gem "guard-rspec",    require: false
+  gem "guard-rubocop",  require: false
+
+  gem "brakeman"
+  gem "bundler-audit"
 
   # Speed up commands on slow machines / big apps [https://github.com/rails/spring]
   # gem "spring"
@@ -96,13 +100,11 @@ group :test do
   # RSpec extensions
   gem "fuubar"
   gem "rspec-collection_matchers"
-  gem "saharspec", github: "inkstak/saharspec", branch: "proper_rubocop_linting"
+  gem "saharspec"
   gem "shoulda-matchers"
   gem "super_diff"
 
   # System tests
-  # FIXME: waiting for this PR to be released
-  # https://github.com/teamcapybara/capybara/pull/2617
-  gem "capybara", github: "teamcapybara/capybara", ref: "cacd032"
+  gem "capybara"
   gem "cuprite"
 end

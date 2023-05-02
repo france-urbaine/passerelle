@@ -1,12 +1,14 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
+  sequence(:code_departement) { Faker::Base.numerify("##") }
+
   factory :departement do
     association :region
 
     code_departement do
       loop do
-        value = Faker::Address.zip_code[0..1]
+        value = generate(:code_departement)
         break value unless Departement.exists?(code_departement: value)
       end
     end
