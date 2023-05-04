@@ -90,11 +90,7 @@ module Button
     end
 
     def href_params
-      if @modal && helpers.current_path
-        { referrer: helpers.current_path }
-      else
-        {}
-      end
+      {}
     end
 
     def icon

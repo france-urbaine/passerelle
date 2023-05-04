@@ -4,7 +4,7 @@ module ControllerParams
   private
 
   def referrer_path
-    url_from(params[:referrer])
+    url_from(params[:referrer]) || request.referer
   end
 
   def redirect_path

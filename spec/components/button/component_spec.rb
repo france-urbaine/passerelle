@@ -21,7 +21,7 @@ RSpec.describe Button::Component, type: :component do
     render_inline described_class.new("Click me!", "/communes")
 
     expect(page).to have_link("Click me!", class: "button") do |button|
-      expect(button["href"]).to eq("/communes")
+      expect(button).to have_html_attribute("href").with_value("/communes")
     end
   end
 
@@ -29,21 +29,17 @@ RSpec.describe Button::Component, type: :component do
     render_inline described_class.new("Click me!", href: "/communes")
 
     expect(page).to have_link("Click me!", class: "button") do |button|
-      expect(button["href"]).to eq("/communes")
+      expect(button).to have_html_attribute("href").with_value("/communes")
     end
   end
 
   it "renders a link to open in a modal" do
-    current_path = "/communes?search=foo"
+    render_inline described_class.new("Click me!", "/communes", modal: true)
 
-    with_request_url current_path do
-      render_inline described_class.new("Click me!", "/communes", modal: true)
-
-      expect(page).to have_link("Click me!", class: "button") do |button|
-        aggregate_failures do
-          expect(button["href"]).to eq("/communes?referrer=#{CGI.escape(current_path)}")
-          expect(button["data-turbo-frame"]).to eq("modal")
-        end
+    expect(page).to have_link("Click me!", class: "button") do |button|
+      aggregate_failures do
+        expect(button).to have_html_attribute("href").with_value("/communes")
+        expect(button).to have_html_attribute("data-turbo-frame").with_value("modal")
       end
     end
   end
@@ -92,8 +88,8 @@ RSpec.describe Button::Component, type: :component do
 
     expect(page).to have_selector("form") do |form|
       aggregate_failures do
-        expect(form["method"]).to eq("post")
-        expect(form["action"]).to eq("/communes")
+        expect(form).to have_html_attribute("method").with_value("post")
+        expect(form).to have_html_attribute("action").with_value("/communes")
 
         expect(form).to have_selector("input[type='hidden'][name='_method'][value='patch']", visible: :hidden)
         expect(form).to have_button("Click me!")
@@ -106,8 +102,8 @@ RSpec.describe Button::Component, type: :component do
 
     expect(page).to have_selector("form") do |form|
       aggregate_failures do
-        expect(form["method"]).to eq("post")
-        expect(form["action"]).to eq("/communes")
+        expect(form).to have_html_attribute("method").with_value("post")
+        expect(form).to have_html_attribute("action").with_value("/communes")
 
         expect(form).to have_selector("input[type='hidden'][name='_method'][value='patch']", visible: :hidden)
         expect(form).to have_selector("input[type='hidden'][name='ids'][value='all']", visible: :hidden)
