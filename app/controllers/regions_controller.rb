@@ -27,7 +27,7 @@ class RegionsController < ApplicationController
 
     respond_with @region,
       flash: true,
-      location: -> { redirect_path || referrer_path || regions_path }
+      location: -> { redirect_path || regions_path }
   end
 
   private

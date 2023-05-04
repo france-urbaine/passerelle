@@ -14,9 +14,6 @@
     - if form?
       = tag.turbo_frame id: "modal_form" do
         = form_with(**form.form_options) do
-          = helpers.hidden_param_input :referrer
-          = helpers.hidden_param_input :redirect
-
           - if header?
             .modal__header
               h1#modal-title.modal__title= header

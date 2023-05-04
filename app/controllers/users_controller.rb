@@ -49,7 +49,7 @@ class UsersController < ApplicationController
 
     respond_with @user,
       flash: true,
-      location: -> { redirect_path || referrer_path || users_path }
+      location: -> { redirect_path || users_path }
   end
 
   def update
@@ -60,7 +60,7 @@ class UsersController < ApplicationController
 
     respond_with @user,
       flash: true,
-      location: -> { redirect_path || referrer_path || users_path }
+      location: -> { redirect_path || users_path }
   end
 
   def destroy
@@ -90,7 +90,7 @@ class UsersController < ApplicationController
     respond_with @users,
       flash: true,
       actions: FlashAction::Cancel.new(params),
-      location: redirect_path || users_path(**selection_params.except(:ids))
+      location: redirect_path || users_path
   end
 
   def undiscard_all
@@ -100,7 +100,7 @@ class UsersController < ApplicationController
 
     respond_with @users,
       flash: true,
-      location: redirect_path || users_path
+      location: redirect_path || referrer_path || users_path
   end
 
   private

@@ -49,7 +49,7 @@ class CollectivitiesController < ApplicationController
 
     respond_with @collectivity,
       flash: true,
-      location: -> { redirect_path || referrer_path || collectivities_path }
+      location: -> { redirect_path || collectivities_path }
   end
 
   def update
@@ -60,7 +60,7 @@ class CollectivitiesController < ApplicationController
 
     respond_with @collectivity,
       flash: true,
-      location: -> { redirect_path || referrer_path || collectivities_path }
+      location: -> { redirect_path || collectivities_path }
   end
 
   def destroy
@@ -70,7 +70,7 @@ class CollectivitiesController < ApplicationController
     respond_with @collectivity,
       flash: true,
       actions: FlashAction::Cancel.new(params),
-      location: redirect_path || collectivities_path
+      location: -> { redirect_path || collectivities_path }
   end
 
   def undiscard
@@ -90,7 +90,7 @@ class CollectivitiesController < ApplicationController
     respond_with @collectivities,
       flash: true,
       actions: FlashAction::Cancel.new(params),
-      location: redirect_path || collectivities_path(**selection_params.except(:ids))
+      location: redirect_path || collectivities_path
   end
 
   def undiscard_all
@@ -100,7 +100,7 @@ class CollectivitiesController < ApplicationController
 
     respond_with @collectivities,
       flash: true,
-      location: redirect_path || collectivities_path
+      location: redirect_path || referrer_path || collectivities_path
   end
 
   private

@@ -41,10 +41,7 @@ RSpec.describe "OfficesController#destroy_all" do
           label:  "Annuler",
           method: "patch",
           url:    "/guichets/undiscard",
-          params: {
-            redirect: "/guichets",
-            ids:      collectivities.take(2).map(&:id)
-          }
+          params: { ids: collectivities.take(2).map(&:id) }
         )
       end
     end

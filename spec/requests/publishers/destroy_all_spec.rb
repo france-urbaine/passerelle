@@ -41,10 +41,7 @@ RSpec.describe "PublishersController#destroy_all" do
           label:  "Annuler",
           method: "patch",
           url:    "/editeurs/undiscard",
-          params: {
-            redirect: "/editeurs",
-            ids:      collectivities.take(2).map(&:id)
-          }
+          params: { ids: collectivities.take(2).map(&:id) }
         )
       end
     end

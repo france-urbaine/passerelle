@@ -41,10 +41,7 @@ RSpec.describe "DdfipsController#destroy_all" do
           label:  "Annuler",
           method: "patch",
           url:    "/ddfips/undiscard",
-          params: {
-            redirect: "/ddfips",
-            ids:      ddfips.take(2).map(&:id)
-          }
+          params: { ids: ddfips.take(2).map(&:id) }
         )
       end
     end

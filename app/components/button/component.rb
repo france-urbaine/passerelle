@@ -80,13 +80,7 @@ module Button
     end
 
     def href
-      params = href_params
-      return @href if params.empty?
-
-      params = href_params.to_query
-      join   = @href.include?("?") ? "&" : "?"
-
-      "#{@href}#{join}#{params}"
+      ::UrlHelper.new(@href).join(href_params).to_s
     end
 
     def href_params

@@ -5,6 +5,8 @@
     | Création d'une nouvelle DDFIP
 
 - modal.with_form(model: ddfip) do
+  = hidden_field_tag :redirect, modal.redirection_path
+
   = fields(model: ddfip) do |form|
     = form.block :name, first: true do
       = form.label :name

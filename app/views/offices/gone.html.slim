@@ -12,4 +12,4 @@
         br
         | Cette suppression sera effective d'ici le #{localize(30.days.after(@office.discarded_at.to_date))}.
 
-      = button_component "Annuler la suppression", undiscard_office_path(@office, redirect: office_path(@office)), method: :patch
+      = button_component "Annuler la suppression", undiscard_office_path(@office), method: :patch

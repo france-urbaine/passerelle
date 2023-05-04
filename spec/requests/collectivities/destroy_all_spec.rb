@@ -41,10 +41,7 @@ RSpec.describe "CollectivitiesController#destroy_all" do
           label:  "Annuler",
           method: "patch",
           url:    "/collectivites/undiscard",
-          params: {
-            redirect: "/collectivites",
-            ids:      collectivities.take(2).map(&:id)
-          }
+          params: { ids: collectivities.take(2).map(&:id) }
         )
       end
     end

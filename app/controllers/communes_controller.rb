@@ -27,7 +27,7 @@ class CommunesController < ApplicationController
 
     respond_with @commune,
       flash: true,
-      location: -> { redirect_path || referrer_path || communes_path }
+      location: -> { redirect_path || communes_path }
   end
 
   private

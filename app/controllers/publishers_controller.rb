@@ -48,7 +48,7 @@ class PublishersController < ApplicationController
 
     respond_with @publisher,
       flash: true,
-      location: -> { redirect_path || referrer_path || publishers_path }
+      location: -> { redirect_path || publishers_path }
   end
 
   def update
@@ -59,7 +59,7 @@ class PublishersController < ApplicationController
 
     respond_with @publisher,
       flash: true,
-      location: -> { redirect_path || referrer_path || publishers_path }
+      location: -> { redirect_path || publishers_path }
   end
 
   def destroy
@@ -89,7 +89,7 @@ class PublishersController < ApplicationController
     respond_with @publishers,
       flash: true,
       actions: FlashAction::Cancel.new(params),
-      location: redirect_path || publishers_path(**selection_params.except(:ids))
+      location: redirect_path || publishers_path
   end
 
   def undiscard_all
@@ -99,7 +99,7 @@ class PublishersController < ApplicationController
 
     respond_with @publishers,
       flash: true,
-      location: redirect_path || publishers_path
+      location: redirect_path || referrer_path || publishers_path
   end
 
   private

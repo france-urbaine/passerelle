@@ -48,7 +48,7 @@ class OfficesController < ApplicationController
 
     respond_with @office,
       flash: true,
-      location: -> { redirect_path || referrer_path || offices_path }
+      location: -> { redirect_path || offices_path }
   end
 
   def update
@@ -59,7 +59,7 @@ class OfficesController < ApplicationController
 
     respond_with @office,
       flash: true,
-      location: -> { redirect_path || referrer_path || offices_path }
+      location: -> { redirect_path || offices_path }
   end
 
   def destroy
@@ -89,7 +89,7 @@ class OfficesController < ApplicationController
     respond_with @offices,
       flash: true,
       actions: FlashAction::Cancel.new(params),
-      location: redirect_path || offices_path(**selection_params.except(:ids))
+      location: redirect_path || offices_path
   end
 
   def undiscard_all
@@ -99,7 +99,7 @@ class OfficesController < ApplicationController
 
     respond_with @offices,
       flash: true,
-      location: redirect_path || offices_path
+      location: redirect_path || referrer_path || offices_path
   end
 
   private

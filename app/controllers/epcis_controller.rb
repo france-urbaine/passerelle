@@ -27,7 +27,7 @@ class EpcisController < ApplicationController
 
     respond_with @epci,
       flash: true,
-      location: -> { redirect_path || referrer_path || epcis_path }
+      location: -> { redirect_path || epcis_path }
   end
 
   private

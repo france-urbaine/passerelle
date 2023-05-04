@@ -2,6 +2,7 @@
   | Modification du département
 
 - modal.with_form(model: departement) do
+  = hidden_field_tag :redirect, modal.redirection_path
 
   = fields(model: departement) do |form|
     = form.block :name, first: true do

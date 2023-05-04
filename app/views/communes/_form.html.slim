@@ -2,6 +2,8 @@
   | Modification de la commune
 
 - modal.with_form(model: commune) do
+  = hidden_field_tag :redirect, modal.redirection_path
+
   = fields(model: commune) do |form|
     = form.block :name, first: true do
       = form.label :name

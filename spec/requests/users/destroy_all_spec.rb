@@ -40,10 +40,7 @@ RSpec.describe "UsersController#destroy_all" do
         label:  "Annuler",
         method: "patch",
         url:    "/utilisateurs/undiscard",
-        params: {
-          redirect: "/utilisateurs",
-          ids:      users.take(2).map(&:id)
-        }
+        params: { ids: users.take(2).map(&:id) }
       )
     end
 

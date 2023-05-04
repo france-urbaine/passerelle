@@ -12,4 +12,4 @@
         br
         | Cette suppression sera effective d'ici le #{localize(30.days.after(@publisher.discarded_at.to_date))}.
 
-      = button_component "Annuler la suppression", undiscard_publisher_path(@publisher, redirect: publisher_path(@publisher)), method: :patch
+      = button_component "Annuler la suppression", undiscard_publisher_path(@publisher), method: :patch

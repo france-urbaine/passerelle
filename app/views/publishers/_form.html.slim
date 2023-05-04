@@ -5,6 +5,8 @@
     | Création d'un nouvel éditeur
 
 - modal.with_form(model: publisher) do
+  = hidden_field_tag :redirect, modal.redirection_path
+
   = fields(model: publisher) do |form|
     = form.block :name, first: true do
       = form.label :name

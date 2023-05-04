@@ -5,6 +5,8 @@
     | Invitation d'un nouvel utilisateur
 
 - modal.with_form(model: user) do
+  = hidden_field_tag :redirect, modal.redirection_path
+
   div( data-controller="user-form" data-user-form-offices-url-value=user_services_path(user_id: user.id) )
     = fields(model: user) do |form|
       = form.block :organization, first: true, autocomplete: organizations_path do

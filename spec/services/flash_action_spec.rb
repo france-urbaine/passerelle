@@ -37,7 +37,7 @@ RSpec.describe FlashAction do
           label:  "Annuler",
           method: "patch",
           url:    "/collectivites/undiscard",
-          params: { redirect: "/collectivites" }
+          params: {}
         )
       end
 
@@ -46,7 +46,7 @@ RSpec.describe FlashAction do
           label:  "Annuler",
           method: "patch",
           url:    "/collectivites/undiscard",
-          params: { redirect: "/collectivites" }
+          params: {}
         )
       end
     end
@@ -66,7 +66,7 @@ RSpec.describe FlashAction do
             label:  "Annuler",
             method: "patch",
             url:    "/collectivites/undiscard",
-            params: { redirect: "/collectivites" }
+            params: {}
           }
         ])
       end
@@ -81,7 +81,7 @@ RSpec.describe FlashAction do
             label:  "Annuler",
             method: "patch",
             url:    "/collectivites/undiscard",
-            params: { redirect: "/collectivites" }
+            params: {}
           }
         ])
       end
@@ -109,7 +109,7 @@ RSpec.describe FlashAction do
       end
 
       it "returns a cache key on write" do
-        expect(result).to eq("flash_actions/72a629628c45ed8576efd127fd779af1a6b17f8a28993b2b0385a4b06e83cd4b")
+        expect(result).to eq("flash_actions/47b981abb2cc94b76c18ef9070817582e84c7f6381184539fc9a10cd106ed864")
       end
 
       it "retrieves the computed action from cache on read" do
@@ -117,7 +117,7 @@ RSpec.describe FlashAction do
           label:  "Annuler",
           method: "patch",
           url:    "/collectivites/undiscard",
-          params: { redirect: "/collectivites" }
+          params: {}
         )
       end
     end
@@ -130,7 +130,7 @@ RSpec.describe FlashAction do
       it "returns a sets of cache keys on write" do
         expect(result).to eq([
           "flash_actions/e92065047d5a34358cdf919938b00946b677f792e9d8eca39021fe6f37358732",
-          "flash_actions/72a629628c45ed8576efd127fd779af1a6b17f8a28993b2b0385a4b06e83cd4b"
+          "flash_actions/47b981abb2cc94b76c18ef9070817582e84c7f6381184539fc9a10cd106ed864"
         ])
       end
 
@@ -144,7 +144,7 @@ RSpec.describe FlashAction do
             label:  "Annuler",
             method: "patch",
             url:    "/collectivites/undiscard",
-            params: { redirect: "/collectivites" }
+            params: {}
           }
         ])
       end

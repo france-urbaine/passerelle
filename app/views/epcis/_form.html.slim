@@ -2,6 +2,7 @@
   | Modification de l'EPCI
 
 - modal.with_form(model: epci) do
+  = hidden_field_tag :redirect, modal.redirection_path
 
   = fields(model: epci) do |form|
     = form.block :name, first: true do

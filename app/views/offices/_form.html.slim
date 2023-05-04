@@ -5,6 +5,8 @@
     | Création d'un nouveau guichet
 
 - modal.with_form(model: office) do
+  = hidden_field_tag :redirect, modal.redirection_path
+
   = fields(model: office) do |form|
     = form.block :ddfip, first: true, autocomplete: ddfips_path do
       ruby:

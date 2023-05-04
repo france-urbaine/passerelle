@@ -48,7 +48,7 @@ class DdfipsController < ApplicationController
 
     respond_with @ddfip,
       flash: true,
-      location: -> { redirect_path || referrer_path || ddfips_path }
+      location: -> { redirect_path || ddfips_path }
   end
 
   def update
@@ -59,7 +59,7 @@ class DdfipsController < ApplicationController
 
     respond_with @ddfip,
       flash: true,
-      location: -> { redirect_path || referrer_path || ddfips_path }
+      location: -> { redirect_path || ddfips_path }
   end
 
   def destroy
@@ -89,7 +89,7 @@ class DdfipsController < ApplicationController
     respond_with @ddfips,
       flash: true,
       actions: FlashAction::Cancel.new(params),
-      location: redirect_path || ddfips_path(**selection_params.except(:ids))
+      location: redirect_path || ddfips_path
   end
 
   def undiscard_all
@@ -99,7 +99,7 @@ class DdfipsController < ApplicationController
 
     respond_with @ddfips,
       flash: true,
-      location: redirect_path || ddfips_path
+      location: redirect_path || referrer_path || ddfips_path
   end
 
   private

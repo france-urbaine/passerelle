@@ -41,8 +41,8 @@ module FlashAction
 
     def cancel_params
       case @params[:action]
-      when "destroy"     then { redirect: redirect_path }
-      when "destroy_all" then { redirect: redirect_path, **selection_params }
+      when "destroy"     then {}
+      when "destroy_all" then selection_params
       end
     end
 
@@ -56,20 +56,6 @@ module FlashAction
         .permit(:search, :order, :page, :ids, ids: [])
         .to_h
         .symbolize_keys
-    end
-
-    def redirect_path
-      @params[:redirect] || default_redirect_path
-    end
-
-    def default_redirect_path
-      return unless @params[:action] == "destroy_all"
-
-      url_for(
-        action:     "index",
-        controller: @params[:controller],
-        **selection_params.except(:ids)
-      )
     end
   end
 end

@@ -2,7 +2,7 @@
   - breadcrumbs.with_path "Territoires"
   - breadcrumbs.with_path "EPCI"
 
-  - breadcrumbs.with_action "Mettre à jour", edit_territories_path(redirect: current_path), icon: "cloud-arrow-down", modal: true
+  - breadcrumbs.with_action "Mettre à jour", edit_territories_path, icon: "cloud-arrow-down", modal: true
 
 = datatable_component(epcis.preload(:departement)) do |datatable|
   - datatable.with_search
