@@ -59,29 +59,29 @@ RSpec.describe DDFIP do
     it do
       expect(described_class.search("DDFIP du Nord"))
         .to  include(nord)
-        .and exclude(pyrenees_atlantiques)
-        .and exclude(paris)
+        .and not_include(pyrenees_atlantiques)
+        .and not_include(paris)
     end
 
     it do
       expect(described_class.search("Pyrénées"))
         .to  include(pyrenees_atlantiques)
-        .and exclude(nord)
-        .and exclude(paris)
+        .and not_include(nord)
+        .and not_include(paris)
     end
 
     it do
       expect(described_class.search("Aquitaine"))
         .to  include(pyrenees_atlantiques)
-        .and exclude(nord)
-        .and exclude(paris)
+        .and not_include(nord)
+        .and not_include(paris)
     end
 
     it do
       expect(described_class.search("75"))
         .to  include(paris)
-        .and exclude(nord)
-        .and exclude(pyrenees_atlantiques)
+        .and not_include(nord)
+        .and not_include(pyrenees_atlantiques)
     end
 
     it do

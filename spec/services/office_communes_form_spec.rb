@@ -24,7 +24,7 @@ RSpec.describe OfficeCommunesForm do
         .to be_an(Array)
         .and have(3).items
         .and include(communes[0].code_insee, communes[1].code_insee, communes[2].code_insee)
-        .and exclude(communes[3].code_insee)
+        .and not_include(communes[3].code_insee)
     end
   end
 
@@ -41,7 +41,7 @@ RSpec.describe OfficeCommunesForm do
         .to be_an(Array)
         .and have(2).items
         .and include(epcis[0].siren, epcis[1].siren)
-        .and exclude(epcis[2].siren)
+        .and not_include(epcis[2].siren)
     end
   end
 
@@ -53,7 +53,7 @@ RSpec.describe OfficeCommunesForm do
       expect(form.suggested_communes)
         .to be_an(ActiveRecord::Relation)
         .and include(communes[0], communes[1])
-        .and exclude(communes[2], communes[3])
+        .and not_include(communes[2], communes[3])
     end
   end
 
@@ -69,7 +69,7 @@ RSpec.describe OfficeCommunesForm do
       expect(form.suggested_epcis)
         .to be_an(ActiveRecord::Relation)
         .and include(epcis[1], epcis[2])
-        .and exclude(epcis[0], epcis[3])
+        .and not_include(epcis[0], epcis[3])
     end
   end
 end

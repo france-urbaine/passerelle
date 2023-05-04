@@ -226,7 +226,7 @@ RSpec.describe EPCI do
   describe ".reset_all_counters" do
     subject(:reset_all_counters) { described_class.reset_all_counters }
 
-    it { expect { reset_all_counters }.to run_without_error }
+    it { expect { reset_all_counters }.to not_raise_error }
     it { expect { reset_all_counters }.to ret(Integer) }
     it { expect { reset_all_counters }.to perform_sql_query("SELECT reset_all_epcis_counters()") }
   end

@@ -24,7 +24,7 @@ RSpec.describe "CollectivitiesController#destroy_all" do
           collectivities.each(&:reload)
         }.to change(collectivities[0], :discarded_at).to(be_present)
           .and change(collectivities[1], :discarded_at).to(be_present)
-          .and maintain(collectivities[2], :discarded_at).from(nil)
+          .and not_change(collectivities[2], :discarded_at).from(nil)
       end
 
       it "sets a flash notice" do

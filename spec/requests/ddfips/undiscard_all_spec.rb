@@ -24,7 +24,7 @@ RSpec.describe "DdfipsController#undiscard_all" do
           ddfips.each(&:reload)
         }.to change(ddfips[0], :discarded_at).to(nil)
           .and change(ddfips[1], :discarded_at).to(nil)
-          .and maintain(ddfips[2], :discarded_at).from(be_present)
+          .and not_change(ddfips[2], :discarded_at).from(be_present)
       end
 
       it "sets a flash notice" do

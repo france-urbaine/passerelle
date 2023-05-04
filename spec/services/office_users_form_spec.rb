@@ -24,7 +24,7 @@ RSpec.describe OfficeUsersForm do
         .to be_an(Array)
         .and have(3).items
         .and include(users[0].id, users[1].id, users[2].id)
-        .and exclude(users[3].id)
+        .and not_include(users[3].id)
     end
   end
 
@@ -36,7 +36,7 @@ RSpec.describe OfficeUsersForm do
       expect(form.suggested_users)
         .to be_an(ActiveRecord::Relation)
         .and include(users[0], users[1])
-        .and exclude(users[2], users[3])
+        .and not_include(users[2], users[3])
     end
   end
 end

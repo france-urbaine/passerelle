@@ -130,6 +130,17 @@ RSpec.configure do |config|
   end
 end
 
+# Declare negative matchers to use with operands.
+# Example:
+#
+#   expect(..)
+#     .to include(..)
+#     .and not_include(...)
+#
+#   expect { .. }
+#     .to change(..)
+#     .and not_change(...)
+#
 RSpec::Matchers.define_negated_matcher :not_include,           :include
 RSpec::Matchers.define_negated_matcher :not_change,            :change
 RSpec::Matchers.define_negated_matcher :not_raise_error,       :raise_error

@@ -24,7 +24,7 @@ RSpec.describe "UsersController#undiscard_all" do
           users.each(&:reload)
         }.to change(users[0], :discarded_at).to(nil)
           .and change(users[1], :discarded_at).to(nil)
-          .and maintain(users[2], :discarded_at).from(be_present)
+          .and not_change(users[2], :discarded_at).from(be_present)
       end
 
       it "sets a flash notice" do

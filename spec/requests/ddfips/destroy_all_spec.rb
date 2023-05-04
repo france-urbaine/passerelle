@@ -24,7 +24,7 @@ RSpec.describe "DdfipsController#destroy_all" do
           ddfips.each(&:reload)
         }.to change(ddfips[0], :discarded_at).to(be_present)
           .and change(ddfips[1], :discarded_at).to(be_present)
-          .and maintain(ddfips[2], :discarded_at).from(nil)
+          .and not_change(ddfips[2], :discarded_at).from(nil)
       end
 
       it "sets a flash notice" do

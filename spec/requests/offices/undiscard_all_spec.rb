@@ -24,7 +24,7 @@ RSpec.describe "OfficesController#undiscard_all" do
           collectivities.each(&:reload)
         }.to change(collectivities[0], :discarded_at).to(nil)
           .and change(collectivities[1], :discarded_at).to(nil)
-          .and maintain(collectivities[2], :discarded_at).from(be_present)
+          .and not_change(collectivities[2], :discarded_at).from(be_present)
       end
 
       it "sets a flash notice" do

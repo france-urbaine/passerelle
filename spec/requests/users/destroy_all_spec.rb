@@ -23,7 +23,7 @@ RSpec.describe "UsersController#destroy_all" do
         users.each(&:reload)
       }.to change(users[0], :discarded_at).to(be_present)
         .and change(users[1], :discarded_at).to(be_present)
-        .and maintain(users[2], :discarded_at).from(nil)
+        .and not_change(users[2], :discarded_at).from(nil)
     end
 
     it "sets a flash notice" do
