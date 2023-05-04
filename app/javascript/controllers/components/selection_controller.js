@@ -3,6 +3,7 @@ import { useHotkeys } from "stimulus-use/hotkeys"
 
 export default class extends Controller {
   static targets = ["checkall", "checkbox", "frame"]
+  static values = { url: String }
 
   initialize () {
     this.toggleAll = this.toggleAll.bind(this)
@@ -99,9 +100,8 @@ export default class extends Controller {
 
     this.dispatch(checkedIds.length > 0 ? "checked" : "unchecked")
 
-    if (this.hasFrameTarget) {
-      const frameHref = window.location.href
-      const parsedUrl = new URL(frameHref)
+    if (this.hasFrameTarget && this.hasUrlValue) {
+      const parsedUrl = new URL(this.urlValue, window.location.href)
 
       parsedUrl.searchParams.delete("ids")
       parsedUrl.searchParams.delete("ids[]")

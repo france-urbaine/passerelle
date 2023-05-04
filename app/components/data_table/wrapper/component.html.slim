@@ -11,7 +11,7 @@
 
 - elsif selection_component?
   turbo-frame( id=turbo_frame )
-    div( data-controller="selection" )
+    div( data-controller="selection" data-selection-url-value=helpers.request.fullpath )
       turbo-frame( id=turbo_frame_selection_bar data-selection-target="frame" )
         - if render_selection_component?
           = datatable.selection
@@ -26,7 +26,7 @@
 
 - elsif selection_controller?
   turbo-frame( id=turbo_frame )
-    div( data-controller="selection" )
+    div( data-controller="selection" data-selection-url-value=helpers.request.fullpath )
       - if render_header?
         .header-bar
           = datatable.search
