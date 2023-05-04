@@ -74,7 +74,8 @@ module DataTable
           @inflections,
           turbo_frame: @datatable.turbo_frame,
           direction:   "left",
-          options:     @options
+          options:     @options,
+          order:       order_options
         )
       end
 
