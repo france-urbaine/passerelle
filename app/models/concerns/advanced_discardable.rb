@@ -8,11 +8,11 @@ module AdvancedDiscardable
   end
 
   class_methods do
-    def dispose_all
+    def quickly_discard_all
       update_all(discard_column => Time.current)
     end
 
-    def undispose_all
+    def quickly_undiscard_all
       update_all(discard_column => nil)
     end
   end

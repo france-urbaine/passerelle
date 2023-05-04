@@ -84,7 +84,7 @@ class DdfipsController < ApplicationController
   def destroy_all
     @ddfips = DDFIP.kept.strict_loading
     @ddfips = filter_collection(@ddfips)
-    @ddfips.dispose_all
+    @ddfips.quickly_discard_all
 
     respond_with @ddfips,
       flash: true,
@@ -95,7 +95,7 @@ class DdfipsController < ApplicationController
   def undiscard_all
     @ddfips = DDFIP.discarded.strict_loading
     @ddfips = filter_collection(@ddfips)
-    @ddfips.undispose_all
+    @ddfips.quickly_undiscard_all
 
     respond_with @ddfips,
       flash: true,

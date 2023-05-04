@@ -85,7 +85,7 @@ class CollectivitiesController < ApplicationController
   def destroy_all
     @collectivities = Collectivity.kept.strict_loading
     @collectivities = filter_collection(@collectivities)
-    @collectivities.dispose_all
+    @collectivities.quickly_discard_all
 
     respond_with @collectivities,
       flash: true,
@@ -96,7 +96,7 @@ class CollectivitiesController < ApplicationController
   def undiscard_all
     @collectivities = Collectivity.discarded.strict_loading
     @collectivities = filter_collection(@collectivities)
-    @collectivities.undispose_all
+    @collectivities.quickly_undiscard_all
 
     respond_with @collectivities,
       flash: true,

@@ -85,7 +85,7 @@ class UsersController < ApplicationController
   def destroy_all
     @users = User.kept.strict_loading
     @users = filter_collection(@users)
-    @users.dispose_all
+    @users.quickly_discard_all
 
     respond_with @users,
       flash: true,
@@ -96,7 +96,7 @@ class UsersController < ApplicationController
   def undiscard_all
     @users = User.discarded.strict_loading
     @users = filter_collection(@users)
-    @users.undispose_all
+    @users.quickly_undiscard_all
 
     respond_with @users,
       flash: true,

@@ -84,7 +84,7 @@ class PublishersController < ApplicationController
   def destroy_all
     @publishers = Publisher.kept.strict_loading
     @publishers = filter_collection(@publishers)
-    @publishers.dispose_all
+    @publishers.quickly_discard_all
 
     respond_with @publishers,
       flash: true,
@@ -95,7 +95,7 @@ class PublishersController < ApplicationController
   def undiscard_all
     @publishers = Publisher.discarded.strict_loading
     @publishers = filter_collection(@publishers)
-    @publishers.undispose_all
+    @publishers.quickly_undiscard_all
 
     respond_with @publishers,
       flash: true,

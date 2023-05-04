@@ -84,7 +84,7 @@ class OfficesController < ApplicationController
   def destroy_all
     @offices = Office.kept.strict_loading
     @offices = filter_collection(@offices)
-    @offices.dispose_all
+    @offices.quickly_discard_all
 
     respond_with @offices,
       flash: true,
@@ -95,7 +95,7 @@ class OfficesController < ApplicationController
   def undiscard_all
     @offices = Office.discarded.strict_loading
     @offices = filter_collection(@offices)
-    @offices.undispose_all
+    @offices.quickly_undiscard_all
 
     respond_with @offices,
       flash: true,
