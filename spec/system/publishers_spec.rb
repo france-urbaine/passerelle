@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require "rails_helper"
+require "system_helper"
 
-RSpec.describe "Publishers", use_fixtures: true do
-  fixtures :publishers, :collectivities
+RSpec.describe "Publishers" do
+  fixtures :publishers, :collectivities, :users
 
   let(:fiscalite_territoire) { publishers(:fiscalite_territoire) }
   let(:pays_basque)          { collectivities(:pays_basque) }

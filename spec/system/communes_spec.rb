@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require "rails_helper"
+require "system_helper"
 
-RSpec.describe "Communes", use_fixtures: true do
+RSpec.describe "Communes" do
   fixtures :regions, :departements, :epcis, :communes
 
   let(:bayonne)              { communes(:bayonne) }

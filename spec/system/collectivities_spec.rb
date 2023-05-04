@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require "rails_helper"
+require "system_helper"
 
-RSpec.describe "Collectivities", use_fixtures: true do
+RSpec.describe "Collectivities" do
   fixtures :regions, :departements, :epcis
   fixtures :collectivities, :publishers, :ddfips
 

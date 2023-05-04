@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require "rails_helper"
+require "system_helper"
 
-RSpec.describe "DDFIPs", use_fixtures: true do
+RSpec.describe "DDFIPs" do
   fixtures :regions, :departements
   fixtures :ddfips, :offices
 

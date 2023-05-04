@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require "rails_helper"
+require "system_helper"
 
-RSpec.describe "EPCIs", use_fixtures: true do
+RSpec.describe "EPCIs" do
   fixtures :regions, :departements, :epcis, :communes
 
   let(:pays_basque)          { epcis(:pays_basque) }

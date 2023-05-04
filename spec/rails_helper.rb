@@ -46,7 +46,10 @@ end
 # directory. Alternatively, in the individual `*_spec.rb` files, manually
 # require only the support files necessary.
 #
-Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
+Dir[Rails.root.join("spec/support/**/*.rb")].each do |file|
+  # Files in support/system should be required from system_helper.rb
+  require file unless file.include?("spec/support/system")
+end
 
 # Checks for pending migrations and applies them before tests are run.
 # If you are not using ActiveRecord, you can remove these lines.
@@ -58,9 +61,6 @@ rescue ActiveRecord::PendingMigrationError => e
 end
 
 RSpec.configure do |config|
-  # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
-  config.fixture_path = Rails.root.join("spec/fixtures/records")
-
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
   # instead of true.
@@ -107,6 +107,18 @@ RSpec.configure do |config|
     Faker::UniqueGenerator.clear
   end
 
+  # Forbid any outbound HTTP requests when running tests
+  #
+  config.before do
+    WebMock.disable_net_connect!(allow_localhost: true)
+  end
+
+  # Allow to use a cache store within tests by using metadata:
+  #
+  #    context "with cache store", cache_store: :memory_store do
+  #      # ...
+  #    end
+  #
   config.around :each, :cache_store do |example|
     previous_cache = Rails.cache
 
@@ -118,10 +130,8 @@ RSpec.configure do |config|
   end
 end
 
-RSpec::Matchers.define_negated_matcher :exclude,    :include
-RSpec::Matchers.define_negated_matcher :maintain,   :change
-RSpec::Matchers.define_negated_matcher :not_change, :change
-RSpec::Matchers.define_negated_matcher :run_without_error, :raise_error
-RSpec::Matchers.define_negated_matcher :not_raise_error,   :raise_error
+RSpec::Matchers.define_negated_matcher :not_include,           :include
+RSpec::Matchers.define_negated_matcher :not_change,            :change
+RSpec::Matchers.define_negated_matcher :not_raise_error,       :raise_error
 RSpec::Matchers.define_negated_matcher :not_have_enqueued_job, :have_enqueued_job
-RSpec::Matchers.define_negated_matcher :be_unroutable, :be_routable
+RSpec::Matchers.define_negated_matcher :be_unroutable,         :be_routable
