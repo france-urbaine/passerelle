@@ -10,6 +10,11 @@ class ApplicationController < ActionController::Base
   before_action :verify_requested_format!
   before_action :accept_request_variant
 
+  before_action do
+    Rails.logger.debug { "Turbo-frame : #{turbo_frame_request_id}" if turbo_frame_request? }
+    Rails.logger.debug { "Accept-Variant : #{accept_variant}" if accept_variant }
+  end
+
   # Statuses
   # ----------------------------------------------------------------------------
   rescue_from "ActiveRecord::RecordNotFound",       with: :not_found
@@ -25,25 +30,40 @@ class ApplicationController < ActionController::Base
 
   %i[
     bad_request
-    gone
     unauthorized
     forbidden
-    not_found
     not_acceptable
     unprocessable_entity
     not_implemented
   ].each do |status|
     define_method(status) do
       respond_to do |format|
-        # TODO: add templates to render statuses
-        format.html do
-          render status:, action: status
-        rescue ActionView::MissingTemplate
-          render status:, template: "shared/statuses/#{status}"
-        end
-
+        format.html { render status:, template: "shared/statuses/#{status}" }
         format.all { head(status) }
       end
+    end
+  end
+
+  def not_found(exception_or_model = nil)
+    @model_not_found =
+      case exception_or_model
+      when ActiveRecord::RecordNotFound then exception_or_model.model
+      when ApplicationRecord            then model.name
+      when String                       then model
+      end
+
+    respond_to do |format|
+      format.html { render status:, template: "shared/statuses/not_found" }
+      format.all { head(status) }
+    end
+  end
+
+  def gone(record = nil)
+    @record_discarded = record
+
+    respond_to do |format|
+      format.html { render status:, template: "shared/statuses/gone" }
+      format.all { head(status) }
     end
   end
 

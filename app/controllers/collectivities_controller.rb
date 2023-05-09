@@ -15,7 +15,7 @@ class CollectivitiesController < ApplicationController
   def show
     @collectivity = Collectivity.find(params[:id])
 
-    gone if @collectivity.discarded?
+    gone(@collectivity) if @collectivity.discarded?
   end
 
   def new
@@ -25,14 +25,14 @@ class CollectivitiesController < ApplicationController
 
   def edit
     @collectivity = Collectivity.find(params[:id])
-    return gone if @collectivity.discarded?
+    return gone(@collectivity) if @collectivity.discarded?
 
     @background_url = referrer_path || collectivity_path(@collectivity)
   end
 
   def remove
     @collectivity = Collectivity.find(params[:id])
-    return gone if @collectivity.discarded?
+    return gone(@collectivity) if @collectivity.discarded?
 
     @background_url = referrer_path || collectivity_path(@collectivity)
   end
@@ -54,7 +54,7 @@ class CollectivitiesController < ApplicationController
 
   def update
     @collectivity = Collectivity.find(params[:id])
-    return gone if @collectivity.discarded?
+    return gone(@collectivity) if @collectivity.discarded?
 
     @collectivity.update(collectivity_params)
 

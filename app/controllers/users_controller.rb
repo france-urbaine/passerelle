@@ -14,7 +14,7 @@ class UsersController < ApplicationController
 
   def show
     @user = User.find(params[:id])
-    gone if @user.discarded?
+    gone(@user) if @user.discarded?
   end
 
   def new
@@ -24,14 +24,14 @@ class UsersController < ApplicationController
 
   def edit
     @user = User.find(params[:id])
-    return gone if @user.discarded?
+    return gone(@user) if @user.discarded?
 
     @background_url = referrer_path || user_path(@user)
   end
 
   def remove
     @user = User.find(params[:id])
-    return gone if @user.discarded?
+    return gone(@user) if @user.discarded?
 
     @background_url = referrer_path || user_path(@user)
   end
@@ -54,7 +54,7 @@ class UsersController < ApplicationController
 
   def update
     @user = User.find(params[:id])
-    return gone if @user.discarded?
+    return gone(@user) if @user.discarded?
 
     @user.update(user_params)
 

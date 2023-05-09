@@ -1,5 +1,75 @@
-main.content
+= template_frame_component do
+  = breadcrumbs_component do |breadcrumbs|
+    - case @record_discarded
+    - when Publisher
+      - breadcrumbs.with_path "Organisations"
+      - breadcrumbs.with_path "Éditeurs", publishers_path
+      - breadcrumbs.with_path @record_discarded.name
+
+    - when Collectivity
+      - breadcrumbs.with_path "Organisations"
+      - breadcrumbs.with_path "Collectivités", collectivities_path
+      - breadcrumbs.with_path @record_discarded.name
+
+    - when DDFIP
+      - breadcrumbs.with_path "Organisations"
+      - breadcrumbs.with_path "DDFIP", ddfips_path
+      - breadcrumbs.with_path @record_discarded.name
+
+    - when Office
+      - breadcrumbs.with_path "Organisations"
+      - breadcrumbs.with_path "Guichets", offices_path
+      - breadcrumbs.with_path @record_discarded.name
+
+    - when User
+      - breadcrumbs.with_path "Organisations"
+      - breadcrumbs.with_path "Utilisateurs", users_path
+      - breadcrumbs.with_path @record_discarded.name
+
   .card.card--status
     .card__content
       h1.card__header La page que vous recherchez n'est pas disponible.
-      p La ressource a été archivée avant sa suppression prochaine.
+
+      - case @record_discarded
+      - when Publisher
+        p.mb-6
+          | L'éditeur est en cours de suppression.
+          br
+          | Cette suppression sera effective d'ici le #{localize(30.days.after(@record_discarded.discarded_at.to_date))}.
+
+        = button_component "Annuler la suppression", undiscard_publisher_path(@record_discarded), method: :patch
+
+      - when Collectivity
+        p.mb-6
+          | La collectivité est en cours de suppression.
+          br
+          | Cette suppression sera effective d'ici le #{localize(30.days.after(@record_discarded.discarded_at.to_date))}.
+
+        = button_component "Annuler la suppression", undiscard_collectivity_path(@record_discarded), method: :patch
+
+      - when DDFIP
+        p.mb-6
+          | La DDFIP est en cours de suppression.
+          br
+          | Cette suppression sera effective d'ici le #{localize(30.days.after(@record_discarded.discarded_at.to_date))}.
+
+        = button_component "Annuler la suppression", undiscard_ddfip_path(@record_discarded), method: :patch
+
+      - when Office
+        p.mb-6
+          | Le guichet est en cours de suppression.
+          br
+          | Cette suppression sera effective d'ici le #{localize(30.days.after(@record_discarded.discarded_at.to_date))}.
+
+        = button_component "Annuler la suppression", undiscard_office_path(@record_discarded), method: :patch
+
+      - when User
+        p.mb-6
+          | L'utilisateur est en cours de suppression.
+          br
+          | Cette suppression sera effective d'ici le #{localize(1.day.after(@record_discarded.discarded_at.to_date))}.
+
+        = button_component "Annuler la suppression", undiscard_user_path(@record_discarded), method: :patch
+
+      - else
+        p La ressource a été archivée avant sa suppression prochaine.
