@@ -8,9 +8,10 @@ RSpec.describe "UsersController#remove_all" do
   end
 
   let(:as)     { |e| e.metadata[:as] }
-  let(:params) { |e| e.metadata.fetch(:params, { ids: users.map(&:id).take(2) }) }
+  let(:params) { |e| e.metadata.fetch(:params, { ids: ids }) }
 
   let!(:users) { create_list(:user, 3) }
+  let!(:ids)   { users.map(&:id).take(2) }
 
   context "when requesting HTML" do
     context "with multiple ids" do
@@ -31,7 +32,7 @@ RSpec.describe "UsersController#remove_all" do
       it { expect(response).to have_http_status(:success) }
     end
 
-    context "with missing ids parameters", params: {} do
+    context "with empty parameters", params: {} do
       it { expect(response).to have_http_status(:success) }
     end
   end

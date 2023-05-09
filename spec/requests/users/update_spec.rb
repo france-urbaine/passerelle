@@ -4,11 +4,12 @@ require "rails_helper"
 
 RSpec.describe "UsersController#update" do
   subject(:request) do
-    patch "/utilisateurs/#{user.id}", as:, params:
+    patch "/utilisateurs/#{user.id}", as:, headers:, params:
   end
 
-  let(:as)     { |e| e.metadata[:as] }
-  let(:params) { { user: updated_attributes } }
+  let(:as)      { |e| e.metadata[:as] }
+  let(:headers) { |e| e.metadata[:headers] }
+  let(:params)  { |e| e.metadata.fetch(:params, { user: updated_attributes }) }
 
   let!(:user) { create(:user, first_name: "Guillaume", last_name: "Debailly") }
 
@@ -38,6 +39,20 @@ RSpec.describe "UsersController#update" do
       end
     end
 
+    context "with invalid attributes", params: { user: { email: "" } } do
+      it { expect(response).to have_http_status(:unprocessable_entity) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
+      it { expect { request and user.reload }.not_to change(user, :updated_at) }
+      it { expect { request and user.reload }.not_to change(user, :name) }
+    end
+
+    context "with empty parameters", params: {} do
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/utilisateurs") }
+      it { expect { request and user.reload }.not_to change(user, :updated_at) }
+    end
+
     context "when the user is discarded" do
       let(:user) { create(:user, :discarded) }
 
@@ -54,31 +69,18 @@ RSpec.describe "UsersController#update" do
       it { expect(response).to have_html_body }
     end
 
-    context "with invalid parameters" do
-      let(:params) { { user: { email: "" } } }
-
-      it { expect(response).to have_http_status(:unprocessable_entity) }
-      it { expect(response).to have_content_type(:html) }
-      it { expect(response).to have_html_body }
-      it { expect { request and user.reload }.not_to change(user, :updated_at) }
-      it { expect { request and user.reload }.not_to change(user, :name) }
-    end
-
-    context "with missing user parameters" do
-      let(:params) { {} }
-
+    context "with referrer header", headers: { "Referer" => "http://example.com/parent/path" } do
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/utilisateurs") }
-      it { expect { request and user.reload }.not_to change(user, :updated_at) }
     end
 
     context "with redirect parameter" do
       let(:params) do
-        super().merge(redirect: "/editeur/12345")
+        super().merge(redirect: "/other/path")
       end
 
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/editeur/12345") }
+      it { expect(response).to redirect_to("/other/path") }
     end
   end
 

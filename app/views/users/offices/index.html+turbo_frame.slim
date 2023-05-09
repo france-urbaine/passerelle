@@ -1,0 +1,6 @@
+= turbo_frame_tag :user_offices_checkboxes do
+  - if @offices.empty?
+    p.text-disabled Aucun guichet disponible pour cette DDFIP.
+  - else
+    = fields_for @user do |form|
+      = form.checkboxes_component :office_ids, @offices, :id, :name

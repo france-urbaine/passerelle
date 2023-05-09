@@ -20,22 +20,6 @@ module Matchers
       include ChainableBodyMatcher
     end
 
-    matcher :have_html_body do
-      include ChainableBodyMatcher
-
-      def actual_body_matches?(body)
-        body.present? && body.match?(%r{\A(<!DOCTYPE[^>]+>)?<html(.|\s)+<body(.|\s)+</body></html>\Z})
-      end
-    end
-
-    matcher :have_partial_html do
-      include ChainableBodyMatcher
-
-      def actual_body_matches?(body)
-        body.present? && body.match?(/\A(?!<!DOCTYPE[^>]+>)(?!<html)/)
-      end
-    end
-
     matcher :have_json_body do
       include ChainableBodyMatcher
 
@@ -45,6 +29,28 @@ module Matchers
 
       def actual_body_matches?(body)
         body.is_a?(Array) || body.is_a?(Hash)
+      end
+    end
+
+    matcher :have_html_body do
+      include ChainableBodyMatcher
+      include ChainableTurboFrameMatcher
+
+      def actual_body_matches?(body)
+        body.present? &&
+          body.match?(%r{\A(<!DOCTYPE[^>]+>)?<html(.|\s)+<body(.|\s)+</body>\s*</html>\Z}) &&
+          actual_body_include_expected_turbo_frame?(body)
+      end
+    end
+
+    matcher :have_partial_html do
+      include ChainableBodyMatcher
+      include ChainableTurboFrameMatcher
+
+      def actual_body_matches?(body)
+        body.present? &&
+          body.match?(/\A(?!<!DOCTYPE[^>]+>)?(?!<html)/) &&
+          actual_body_include_expected_turbo_frame?(body)
       end
     end
 
@@ -62,7 +68,7 @@ module Matchers
         end
 
         failure_message do
-          "expected response to #{description}\n#{other_matcher&.failure_message}"
+          "expected to #{description}\n#{other_matcher&.failure_message}"
         end
       end
 
@@ -72,6 +78,22 @@ module Matchers
 
       def actual_body_matches?(body)
         body.present?
+      end
+    end
+
+    module ChainableTurboFrameMatcher
+      extend ActiveSupport::Concern
+
+      included do
+        chain :with_turbo_frame do |frame|
+          @expected_turbo_frame = frame
+        end
+      end
+
+      def actual_body_include_expected_turbo_frame?(body)
+        return true if @expected_turbo_frame.nil?
+
+        body.present? && body.match?(/<turbo-frame [^>]*id="#{@expected_turbo_frame}"/)
       end
     end
   end

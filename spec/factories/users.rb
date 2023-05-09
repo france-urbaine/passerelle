@@ -11,6 +11,13 @@ FactoryBot.define do
 
     sequence(:email) { |n| Faker::Internet.email(name: "#{first_name}_#{n}") }
 
+    trait :using_existing_organizations do
+      organization do
+        [DDFIP, Publisher, Collectivity].sample.order('RANDOM()').first ||
+          association(%i[publisher collectivity ddfip].sample)
+      end
+    end
+
     trait :unconfirmed do
       confirmed_at { nil }
     end

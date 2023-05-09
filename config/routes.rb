@@ -9,35 +9,32 @@ Rails.application.routes.draw do
   mount Lookbook::Engine, at: "/lookbook" if Rails.env.development?
 
   concern :removable do
-    get    :remove,      on: :member
-    get    :remove_all,  on: :collection, path: "remove"
-    delete :destroy_all, on: :collection, path: "/", as: nil
+    get   :remove,    on: :member
+    patch :undiscard, on: :member
   end
 
-  concern :removable_one do
-    get :remove, on: :member
-  end
-
-  concern :undiscardable do
-    patch :undiscard,     on: :member
-    patch :undiscard_all, on: :collection, path: "undiscard"
+  concern :removable_collection do
+    get    :remove_all,    on: :collection, path: "remove"
+    patch  :undiscard_all, on: :collection, path: "undiscard"
+    delete :destroy_all,   on: :collection, path: "/", as: nil
   end
 
   devise_for :user
 
-  ID_REGEXP = %r{(?!(new|edit|remove|discard|undiscard))[^/]+}
+  ID_REGEXP = %r{(?!(new|edit|remove|discard|undiscard|offices))[^/]+}
 
   constraints(id: ID_REGEXP) do
-    resources :ddfips,         concerns: %i[removable undiscardable]
-
-    resources :users,          concerns: %i[removable undiscardable], path: "/utilisateurs"
-    resources :publishers,     concerns: %i[removable undiscardable], path: "/editeurs"
-    resources :collectivities, concerns: %i[removable undiscardable], path: "/collectivites"
-    resources :offices,        concerns: %i[removable undiscardable], path: "/guichets" do
+    resources :publishers,     concerns: %i[removable removable_collection], path: "/editeurs"
+    resources :collectivities, concerns: %i[removable removable_collection], path: "/collectivites"
+    resources :ddfips,         concerns: %i[removable removable_collection]
+    resources :offices,        concerns: %i[removable removable_collection], path: "/guichets" do
       resource  :communes, controller: :office_communes, only: %i[edit update]
       resource  :users, controller: :office_users, only: %i[edit update], path: "/utilisateurs"
-      resources :users, controller: :office_users, only: %i[destroy], concerns: %i[removable_one], path: "/utilisateurs"
+      resources :users, controller: :office_users, only: %i[destroy], concerns: %i[removable], path: "/utilisateurs"
     end
+
+    resources :users, concerns: %i[removable removable_collection], path: "/utilisateurs"
+    resources :users_offices, only: %i[index], controller: "users/offices", path: "/utilisateurs/offices"
 
     resources :communes,     only: %i[index show edit update]
     resources :epcis,        only: %i[index show edit update]
@@ -47,8 +44,6 @@ Rails.application.routes.draw do
     resources :organizations, only: %i[index],       path: "/organisations"
     resources :territories,   only: %i[index],       path: "/territoires"
     resource  :territories,   only: %i[edit update], path: "/territoires"
-
-    resources :user_services, only: %i[index]
   end
 
   root to: redirect("/editeurs")

@@ -6,6 +6,7 @@ nord:
 pyrenees_atlantiques:
   name:                 DDFIP des Pyrénées-Atlantiques
   code_departement:     64
+  users_count:          2
   collectivities_count: 2
 
 paris:

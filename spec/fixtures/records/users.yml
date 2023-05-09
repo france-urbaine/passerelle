@@ -8,6 +8,16 @@ marc:
   email:              mdebomy@fiscalite-territoire.fr
   confirmed_at:       <%= Time.current %>
 
+elise:
+  organization:       fiscalite_territoire (Publisher)
+  first_name:         Elise
+  last_name:          Lacroix
+  name:               Elise Lacroix
+  super_admin:        false
+  organization_admin: false
+  email:              elacroix@fiscalite-territoire.fr
+  confirmed_at:       <%= Time.current %>
+
 maxime:
   organization:       pyrenees_atlantiques (DDFIP)
   first_name:         Maxime
@@ -26,4 +36,24 @@ astride:
   super_admin:        false
   organization_admin: false
   email:              astride.fabre@dgfip.finances.gouv.fr
+  confirmed_at:       <%= Time.current %>
+
+christelle:
+  organization:       pays_basque (Collectivity)
+  first_name:         Christelle
+  last_name:          Droitier
+  name:               Christelle Droitier
+  super_admin:        false
+  organization_admin: true
+  email:              christelle.droitier@paysbasque.fr
+  confirmed_at:       <%= Time.current %>
+
+pierre:
+  organization:       pays_basque (Collectivity)
+  first_name:         Pierre
+  last_name:          Civil
+  name:               Pierre Civil
+  super_admin:        false
+  organization_admin: false
+  email:              pierre.civil@paysbasque.fr
   confirmed_at:       <%= Time.current %>

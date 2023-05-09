@@ -1,9 +1,9 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["servicesFormBlock", "servicesCheckboxesFrame"]
+  static targets = ["officesFormBlock", "officesCheckboxesFrame"]
   static values  = {
-    "servicesUrl": String
+    "officesUrl": String
   }
 
   connect() {}
@@ -12,15 +12,15 @@ export default class extends Controller {
     const value = JSON.parse(event.target.value)
 
     if (value && value.type == "DDFIP") {
-      let url = this.servicesUrlValue
+      let url = this.officesUrlValue
       url += (url.includes("?") ? "&" : "?")
       url += ("ddfip_id=" + value.id)
 
-      this.servicesFormBlockTarget.classList.remove("hidden")
-      this.servicesCheckboxesFrameTarget.src = url
+      this.officesFormBlockTarget.classList.remove("hidden")
+      this.officesCheckboxesFrameTarget.src = url
     } else {
-      this.servicesFormBlockTarget.classList.add("hidden")
-      this.servicesCheckboxesFrameTarget.src = null
+      this.officesFormBlockTarget.classList.add("hidden")
+      this.officesCheckboxesFrameTarget.src = null
     }
   }
 }

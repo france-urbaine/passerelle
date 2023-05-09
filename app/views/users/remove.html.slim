@@ -3,7 +3,10 @@
     - modal.with_header do
       | Suppression de l'utilisateur : #{@user.name}
 
-    - modal.with_form(model: @user, method: :delete) do
+    - modal.with_form(url: user_path(@user), method: :delete) do
+      - unless @background_url.include?(user_path(@user))
+        = hidden_field_tag :redirect, @background_url
+
       p Êtes-vous sûrs de vouloir supprimer cet utilisateur ?
       p
         | Par mesure de securité, les données de cet utilisateur seront archivées pendant 1 jour.

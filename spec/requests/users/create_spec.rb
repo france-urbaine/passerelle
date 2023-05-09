@@ -4,11 +4,12 @@ require "rails_helper"
 
 RSpec.describe "UsersController#create" do
   subject(:request) do
-    post "/utilisateurs", as:, params:
+    post "/utilisateurs", as:, headers:, params:
   end
 
-  let(:as)     { |e| e.metadata[:as] }
-  let(:params) { { user: attributes } }
+  let(:as)      { |e| e.metadata[:as] }
+  let(:headers) { |e| e.metadata[:headers] }
+  let(:params)  { |e| e.metadata.fetch(:params, { user: attributes }) }
 
   let(:organization) { create(%i[publisher collectivity ddfip].sample) }
 
@@ -54,7 +55,7 @@ RSpec.describe "UsersController#create" do
       end
     end
 
-    context "with invalid parameters" do
+    context "with invalid attributes" do
       let(:attributes) do
         super().merge(email: "")
       end
@@ -65,16 +66,7 @@ RSpec.describe "UsersController#create" do
       it { expect { request }.not_to change(User, :count).from(0) }
     end
 
-    context "with missing user parameters" do
-      let(:params) { {} }
-
-      it { expect(response).to have_http_status(:unprocessable_entity) }
-      it { expect(response).to have_content_type(:html) }
-      it { expect(response).to have_html_body }
-      it { expect { request }.not_to change(User, :count).from(0) }
-    end
-
-    context "when using organization_id parameter" do
+    context "when using organization_id attribute" do
       let(:attributes) do
         super().merge(
           organization_type: organization_type,
@@ -83,7 +75,7 @@ RSpec.describe "UsersController#create" do
       end
 
       context "with a Publisher as organization" do
-        let!(:publisher) { create(:publisher) }
+        let!(:publisher)        { create(:publisher) }
         let(:organization_type) { "Publisher" }
         let(:organization_id)   { publisher.id }
 
@@ -94,7 +86,7 @@ RSpec.describe "UsersController#create" do
       end
 
       context "with a DDFIP as organization" do
-        let!(:ddfip) { create(:ddfip) }
+        let!(:ddfip)            { create(:ddfip) }
         let(:organization_type) { "DDFIP" }
         let(:organization_id)   { ddfip.id }
 
@@ -105,7 +97,7 @@ RSpec.describe "UsersController#create" do
       end
 
       context "with a Collectivity as organization" do
-        let!(:collectivity) { create(:collectivity) }
+        let!(:collectivity)     { create(:collectivity) }
         let(:organization_type) { "Collectivity" }
         let(:organization_id)   { collectivity.id }
 
@@ -116,7 +108,7 @@ RSpec.describe "UsersController#create" do
       end
     end
 
-    context "when using organization_name parameter" do
+    context "when using organization_name attribute" do
       let(:attributes) do
         super()
           .except(:organization_id)
@@ -127,7 +119,7 @@ RSpec.describe "UsersController#create" do
       end
 
       context "with a Publisher as organization" do
-        let!(:publisher) { create(:publisher) }
+        let!(:publisher)        { create(:publisher) }
         let(:organization_type) { "Publisher" }
         let(:organization_name) { publisher.name }
 
@@ -138,7 +130,7 @@ RSpec.describe "UsersController#create" do
       end
 
       context "with a DDFIP as organization" do
-        let!(:ddfip) { create(:ddfip) }
+        let!(:ddfip)            { create(:ddfip) }
         let(:organization_type) { "DDFIP" }
         let(:organization_name) { ddfip.name }
 
@@ -149,7 +141,7 @@ RSpec.describe "UsersController#create" do
       end
 
       context "with a Collectivity as organization" do
-        let!(:collectivity) { create(:collectivity) }
+        let!(:collectivity)     { create(:collectivity) }
         let(:organization_type) { "Collectivity" }
         let(:organization_name) { collectivity.name }
 
@@ -168,20 +160,18 @@ RSpec.describe "UsersController#create" do
       end
     end
 
-    context "when using organization_data parameter in JSON" do
+    context "when using organization_data attribute in JSON" do
       let(:attributes) do
-        super()
-          .except(:organization_id)
-          .merge(
-            organization_data: {
-              type: organization_type,
-              id:   organization_id
-            }.to_json
-          )
+        super().except(:organization_id).merge(
+          organization_data: {
+            type: organization_type,
+            id:   organization_id
+          }.to_json
+        )
       end
 
       context "with a Publisher as organization" do
-        let!(:publisher) { create(:publisher) }
+        let!(:publisher)        { create(:publisher) }
         let(:organization_type) { "Publisher" }
         let(:organization_id)   { publisher.id }
 
@@ -192,7 +182,7 @@ RSpec.describe "UsersController#create" do
       end
 
       context "with a DDFIP as organization" do
-        let!(:ddfip) { create(:ddfip) }
+        let!(:ddfip)            { create(:ddfip) }
         let(:organization_type) { "DDFIP" }
         let(:organization_id)   { ddfip.id }
 
@@ -203,7 +193,7 @@ RSpec.describe "UsersController#create" do
       end
 
       context "with a Collectivity as organization" do
-        let!(:collectivity) { create(:collectivity) }
+        let!(:collectivity)     { create(:collectivity) }
         let(:organization_type) { "Collectivity" }
         let(:organization_id)   { collectivity.id }
 
@@ -236,13 +226,25 @@ RSpec.describe "UsersController#create" do
       end
     end
 
+    context "with empty parameters", params: {} do
+      it { expect(response).to have_http_status(:unprocessable_entity) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
+      it { expect { request }.not_to change(User, :count).from(0) }
+    end
+
+    context "with referrer header", headers: { "Referer" => "http://example.com/parent/path" } do
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/utilisateurs") }
+    end
+
     context "with redirect parameter" do
       let(:params) do
-        super().merge(redirect: "/editeur/12345")
+        super().merge(redirect: "/other/path")
       end
 
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/editeur/12345") }
+      it { expect(response).to redirect_to("/other/path") }
     end
   end
 

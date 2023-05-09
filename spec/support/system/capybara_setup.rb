@@ -33,3 +33,15 @@ Capybara.singleton_class.prepend(Module.new do
     self.last_used_session = nil
   end
 end)
+
+module CapybaraHelpers
+  def select_option(option, from:)
+    within ".autocomplete", text: from do
+      find("[role=option]", text: option).click
+    end
+  end
+end
+
+RSpec.configure do |config|
+  config.include CapybaraHelpers, type: :system
+end

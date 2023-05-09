@@ -3,6 +3,7 @@ pays_basque:
   siren:        200067106
   publisher:    fiscalite_territoire
   territory:    pays_basque (EPCI)
+  users_count:  2
 
 metropole_lille:
   name:         Métropole Européenne de Lille

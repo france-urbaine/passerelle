@@ -3,47 +3,49 @@
 class UsersController < ApplicationController
   respond_to :html
 
-  def index
-    @users = User.kept.strict_loading
-    @users, @pagy = index_collection(@users)
+  before_action do
+    @user_scope = User.all
+  end
 
-    respond_with @users do |format|
-      format.html.autocomplete { not_implemented }
-    end
+  def index
+    return not_implemented if autocomplete_request?
+
+    @users = @user_scope.kept.strict_loading
+    @users, @pagy = index_collection(@users)
   end
 
   def show
-    @user = User.find(params[:id])
+    @user = @user_scope.find(params[:id])
     gone(@user) if @user.discarded?
   end
 
   def new
-    @user = User.new(user_params)
+    @user = @user_scope.build
     @background_url = referrer_path || users_path
   end
 
   def edit
-    @user = User.find(params[:id])
+    @user = @user_scope.find(params[:id])
     return gone(@user) if @user.discarded?
 
     @background_url = referrer_path || user_path(@user)
   end
 
   def remove
-    @user = User.find(params[:id])
+    @user = @user_scope.find(params[:id])
     return gone(@user) if @user.discarded?
 
     @background_url = referrer_path || user_path(@user)
   end
 
   def remove_all
-    @users = User.kept.strict_loading
+    @users = @user_scope.kept.strict_loading
     @users = filter_collection(@users)
     @background_url = referrer_path || users_path(**selection_params)
   end
 
   def create
-    @user = User.new(user_params)
+    @user = @user_scope.build(user_params)
     @user.invite(by: current_user)
     @user.save
 
@@ -53,7 +55,7 @@ class UsersController < ApplicationController
   end
 
   def update
-    @user = User.find(params[:id])
+    @user = @user_scope.find(params[:id])
     return gone(@user) if @user.discarded?
 
     @user.update(user_params)
@@ -64,7 +66,7 @@ class UsersController < ApplicationController
   end
 
   def destroy
-    @user = User.find(params[:id])
+    @user = @user_scope.find(params[:id])
     @user.discard
 
     respond_with @user,
@@ -74,7 +76,7 @@ class UsersController < ApplicationController
   end
 
   def undiscard
-    @user = User.find(params[:id])
+    @user = @user_scope.find(params[:id])
     @user.undiscard
 
     respond_with @user,
@@ -83,7 +85,7 @@ class UsersController < ApplicationController
   end
 
   def destroy_all
-    @users = User.kept.strict_loading
+    @users = @user_scope.kept.strict_loading
     @users = filter_collection(@users)
     @users.quickly_discard_all
 
@@ -94,7 +96,7 @@ class UsersController < ApplicationController
   end
 
   def undiscard_all
-    @users = User.discarded.strict_loading
+    @users = @user_scope.discarded.strict_loading
     @users = filter_collection(@users)
     @users.quickly_undiscard_all
 

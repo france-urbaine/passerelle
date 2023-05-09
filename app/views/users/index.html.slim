@@ -1,2 +1,91 @@
 = template_frame_component do
-  = render "index", users: @users, pagy: @pagy
+  = breadcrumbs_component do |breadcrumbs|
+    - breadcrumbs.with_path "Organisations"
+
+    - case @parent
+    - when Publisher
+      - breadcrumbs.with_path "Éditeurs", publishers_path
+      - breadcrumbs.with_path @parent.name, publisher_path(@parent)
+    - when Collectivity
+      - breadcrumbs.with_path "Collectivités", collectivities_path
+      - breadcrumbs.with_path @parent.name, collectivity_path(@parent)
+    - when DDFIP
+      - breadcrumbs.with_path "DDFIP", ddfips_path
+      - breadcrumbs.with_path @parent.name, ddfip_path(@parent)
+
+    - breadcrumbs.with_path "Utilisateurs"
+    - breadcrumbs.with_action "Inviter un utilisateur", url_for([:new, @parent, :user].compact), icon: "plus", modal: true, primary: true
+
+  - @users = @users.preload(:organization)
+  - @users = @users.preload(:offices) if @parent.is_a?(DDFIP)
+
+  = datatable_component(@users) do |datatable|
+    - datatable.with_search
+    - datatable.with_pagination(@pagy, options: !@parent)
+    - datatable.with_selection do |selection|
+      - selection.with_action "Supprimer la sélection", url_for([:remove_all, @parent, :users]), modal: true
+
+    - datatable.with_column(:name, sort: true)         { "Utilisateur" }
+    - datatable.with_column(:email)                    { "Adresse mail" }
+    - datatable.with_column(:organization, sort: true) { "Organisation" } unless @parent
+    - datatable.with_column(:organization_admin)       { "Admin. de l'organisation" }
+    - datatable.with_column(:super_admin)              { "Admin. de FiscaHub" }
+    - datatable.with_column(:offices)                  { "Guichets" } if @parent.is_a?(DDFIP)
+
+    - datatable.with_empty_message do
+      - if params[:search]
+        | Aucun utilisateur ne correspont à votre recherche.
+      - elsif @parent
+        | Aucun utilisateur associé.
+      - else
+        | Aucun utilisateur disponible.
+
+    - datatable.each_row do |row, user|
+      - row.with_checkbox "Sélectionner cet utilisateur", described_by: :name
+      - row.with_action "Modifier cet utilisateur", edit_user_path(user), icon: "pencil-square", modal: true
+      - row.with_action "Supprimer cet utilisateur", remove_user_path(user), icon: "trash", modal: true
+
+      - row.with_column(:name) do
+        = link_to user_path(user), data: { turbo_frame: "_top" } do
+          = user.name
+
+      - row.with_column(:email) do
+        - if user.confirmed?
+          = mail_to user.email
+        - else
+          .text-disabled( title="Cet utilisateur n'a pas encore validé son inscription" )
+            = svg_icon("exclamation-triangle", class: "mr-2")
+            = user.email
+            span.tooltip Cet utilisateur n'a pas encore validé son inscription
+
+      - row.with_column(:organization) do
+        - if user.organization
+          - if user.organization.discarded?
+            .text-disabled
+              = "#{user.organization.name} (organisation archivée)"
+          - else
+            = link_to polymorphic_path(user.organization), data: { turbo_frame: "_top" } do
+              = user.organization.name
+
+      - row.with_column(:organization_admin) do
+        - if user.organization_admin?
+          = svg_icon("check-badge", "Administrateur de l'organisation")
+        - else
+          = " "
+
+      - row.with_column(:super_admin) do
+        - if user.super_admin?
+          = svg_icon("check-badge", "Administrateur de FiscaHub")
+        - else
+          = " "
+
+      - row.with_column(:offices) do
+        - offices = user.offices.select { |office| office.kept? && office.ddfip_id == @parent.id }
+        - offices.each.with_index do |office, index|
+          = link_to office_path(office), data: { turbo_frame: "_top" } do
+            = office.name
+
+          - if offices[index + 2]
+            = ", "
+          - elsif offices[index + 1]
+            = " et "
