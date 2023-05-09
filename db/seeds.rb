@@ -25,15 +25,19 @@ end
 # ----------------------------------------------------------------------------
 log "Seed regions"
 
-regions_data = parse_csv("db/regions.csv")
-Region.upsert_all(regions_data, unique_by: %i[code_region])
+Region.upsert_all(
+  parse_csv("db/regions.csv"),
+  unique_by: %i[code_region]
+)
 
 # Import departements
 # ----------------------------------------------------------------------------
 log "Seed departements"
 
-departements_data = parse_csv("db/departements.csv")
-Departement.upsert_all(departements_data, unique_by: %i[code_departement])
+Departement.upsert_all(
+  parse_csv("db/departements.csv"),
+  unique_by: %i[code_departement]
+)
 
 # Import EPCI & communes
 # ----------------------------------------------------------------------------
@@ -49,11 +53,15 @@ else
   log "  SEED_ALL_EPCIS_AND_COMMUNES=true rails db:seed"
   log "-------------------------------------------------------"
 
-  epcis_data = parse_csv("db/epcis.csv")
-  EPCI.upsert_all(epcis_data, unique_by: %i[siren])
+  EPCI.upsert_all(
+    parse_csv("db/epcis.csv"),
+    unique_by: %i[siren]
+  )
 
-  communes_data = parse_csv("db/communes.csv")
-  Commune.upsert_all(communes_data, unique_by: %i[code_insee])
+  Commune.upsert_all(
+    parse_csv("db/communes.csv"),
+    unique_by: %i[code_insee]
+  )
 end
 
 # Import ddfips
@@ -63,9 +71,14 @@ log "Seed DDFIP"
 DDFIP.insert_all([
   { code_departement: "13", name: "DDFIP des Bouches-du-Rhône" },
   { code_departement: "18", name: "DDFIP du Cher" },
+  { code_departement: "31", name: "DRFIP Occitanie et département de la Haute-Garonne" },
+  { code_departement: "33", name: "DDFIP de la Gironde" },
   { code_departement: "51", name: "DDFIP de la Marne" },
+  { code_departement: "57", name: "DDFIP de la Moselle" },
   { code_departement: "59", name: "DDFIP du Nord" },
   { code_departement: "64", name: "DDFIP des Pyrénées-Atlantiques" },
+  { code_departement: "69", name: "DDFIP du Rhône" },
+  { code_departement: "75", name: "DDFIP - Paris" },
   { code_departement: "91", name: "DDFIP de l'Essonne" }
 ])
 
@@ -74,125 +87,188 @@ DDFIP.insert_all([
 log "Seed publishers"
 
 Publisher.insert_all([
-  { siren: "301463253", name: "France Urbaine",                   email: "franceurbaine@franceurbaine.org" },
-  { siren: "511022394", name: "Fiscalité & Territoire",           email: "contact@fiscalite-territoire.fr" },
-  { siren: "335273371", name: "FININDEV",                         email: "" },
-  { siren: "385365713", name: "INETUM",                           email: "" },
-  { siren: "383884574", name: "A6 CONSEIL METHODES ORGANISATION", email: "" }
+  { siren: "301463253", name: "France Urbaine",         email: "franceurbaine@franceurbaine.org" },
+  { siren: "511022394", name: "Fiscalité & Territoire", email: "contact@fiscalite-territoire.fr" },
+  { siren: "335273371", name: "FININDEV",               email: "contact@finindev.com" },
+  { siren: "385365713", name: "INETUM",                 email: "contact@inetum.com" },
+  { siren: "383884574", name: "A6CMO",                  email: "" }
 ])
 
 # Import collectivities
 # ----------------------------------------------------------------------------
 log "Seed collectivities"
 
-@publishers = Publisher.pluck(:name, :id).to_h
+def parse_collectivities(data)
+  publishers = Publisher.pluck(:name, :id).to_h
 
-def build_collectivity(data = {})
-  data[:publisher_id] = @publishers[data.delete(:publisher)]
+  data.map do |hash|
+    publisher = publishers[hash.delete(:publisher)]
+    territory =
+      case hash
+      in commune: String then Commune.find_by!(name: hash.delete(:commune))
+      in epci: String    then EPCI.find_by!(name: hash.delete(:epci))
+      end
 
-  case data
-  in commune: String
-    territory = Commune.find_by!(name: data.delete(:commune))
-    data[:territory_type] = "Commune"
-    data[:territory_id]   = territory.id
-    data[:name]           = territory.qualified_name
-  in epci: String
-    territory = EPCI.find_by!(name: data.delete(:epci))
-    data[:territory_type] = "EPCI"
-    data[:territory_id]   = territory.id
-    data[:name]           = territory.name
+    hash[:publisher_id]   = publisher
+    hash[:territory_type] = territory.class.name
+    hash[:territory_id]   = territory.id
+    hash[:name]           = territory.qualified_name
+    hash
   end
-
-  data
 end
 
-Collectivity.insert_all([
-  build_collectivity(publisher: "Fiscalité & Territoire", siren: "200067106", epci: "CA du Pays Basque"),
-  build_collectivity(publisher: "Fiscalité & Territoire", siren: "200093201", epci: "Métropole Européenne de Lille"),
-  build_collectivity(publisher: "Fiscalité & Territoire", siren: "200054807", epci: "Métropole d'Aix-Marseille-Provence"),
-  build_collectivity(publisher: "Fiscalité & Territoire", siren: "217500016", commune: "Paris")
-])
+Collectivity.insert_all(
+  parse_collectivities([
+    { publisher: "Fiscalité & Territoire", siren: "217500016", commune: "Paris" },
+    { publisher: "Fiscalité & Territoire", siren: "200067106", epci: "CA du Pays Basque" },
+    { publisher: "Fiscalité & Territoire", siren: "200093201", epci: "Métropole Européenne de Lille" },
+    { publisher: "Fiscalité & Territoire", siren: "200054807", epci: "Métropole d'Aix-Marseille-Provence" },
+    { publisher: "Fiscalité & Territoire", siren: "200067213", epci: "CU du Grand Reims" },
+    { publisher: "Fiscalité & Territoire", siren: "243300316", epci: "Bordeaux Métropole" },
+    { publisher: "Fiscalité & Territoire", siren: "243100518", epci: "Toulouse Métropole" },
+    { publisher: "Fiscalité & Territoire", siren: "200039865", epci: "Metz Métropole" },
+    { publisher: "Fiscalité & Territoire", siren: "249500109", epci: "CA de Cergy-Pontoise" },
+    { publisher: "FININDEV", siren: "200046977", epci: "Métropole de Lyon" },
+    { publisher: "FININDEV", siren: "243000643", epci: "CA de Nîmes Métropole" },
+    { publisher: "INETUM", siren: "242100410", epci: "Dijon Métropole" },
+    { publisher: "INETUM", siren: "243400017", epci: "Montpellier Méditerranée Métropole" }
+  ])
+)
 
 # Import users
 # ----------------------------------------------------------------------------
 log "Seed users"
 
-collectivities = Collectivity.all.index_by(&:name)
-publishers     = Publisher.all.index_by(&:name)
-ddfips         = DDFIP.all.index_by(&:name)
+def parse_users(data)
+  organizations = {}
+    .merge(Collectivity.all.index_by(&:name))
+    .merge(Publisher.all.index_by(&:name))
+    .merge(DDFIP.all.index_by(&:name))
 
-def build_user(data = {})
-  data[:first_name] ||= Faker::Name.first_name
-  data[:last_name]  ||= Faker::Name.last_name
+  data.map do |hash|
+    organization = organizations[hash.delete(:organization)]
 
-  data[:name]              = data.values_at(:first_name, :last_name).join(" ").strip
-  data[:organization_type] = data[:organization].class.name
-  data[:organization_id]   = data[:organization].id
-  data.delete(:organization)
+    hash[:organization_type] = organization.class.name
+    hash[:organization_id]   = organization.id
 
-  data[:confirmed_at] = Time.current if data.delete(:confirmed)
+    hash[:first_name] ||= Faker::Name.first_name
+    hash[:last_name]  ||= Faker::Name.last_name
+    hash[:name]         = hash.values_at(:first_name, :last_name).join(" ").strip
 
-  data.reverse_merge(
-    confirmed_at:       nil,
-    organization_admin: false,
-    super_admin:        false
-  )
+    hash[:confirmed_at] = hash.delete(:confirmed) ? Time.current : nil
+    hash
+  end
 end
 
-User.insert_all([
-  build_user(email: "random@fu.example.org",            organization: publishers["France Urbaine"],         organization_admin: true, super_admin: true, confirmed: true),
-  build_user(email: "random@ft.example.org",            organization: publishers["Fiscalité & Territoire"], organization_admin: true, super_admin: true, confirmed: true),
-  build_user(email: "admin@pays-basque.example.org",    organization: collectivities["CA du Pays Basque"],  organization_admin: true),
-  build_user(email: "user@pays-basque.example.org",     organization: collectivities["CA du Pays Basque"]),
-  build_user(email: "admin@ddfip-64.example.org",       organization: ddfips["DDFIP des Pyrénées-Atlantiques"], organization_admin: true),
-  build_user(email: "pelp@ddfip-64.example.org",        organization: ddfips["DDFIP des Pyrénées-Atlantiques"]),
-  build_user(email: "sip.bayonne@ddfip-64.example.org", organization: ddfips["DDFIP des Pyrénées-Atlantiques"]),
-  build_user(email: "sip.pau@ddfip-64.example.org",     organization: ddfips["DDFIP des Pyrénées-Atlantiques"])
-])
+User.insert_all(
+  parse_users([
+    { email: "random@fu.example.org",            organization: "France Urbaine",                 organization_admin: true,  super_admin: true,  confirmed: true },
+    { email: "random@ft.example.org",            organization: "Fiscalité & Territoire",         organization_admin: true,  super_admin: true,  confirmed: true },
+    { email: "admin@pays-basque.example.org",    organization: "CA du Pays Basque",              organization_admin: true,  super_admin: false, confirmed: false },
+    { email: "user@pays-basque.example.org",     organization: "CA du Pays Basque",              organization_admin: false, super_admin: false, confirmed: false },
+    { email: "admin@ddfip-64.example.org",       organization: "DDFIP des Pyrénées-Atlantiques", organization_admin: true,  super_admin: false, confirmed: false },
+    { email: "sdif@ddfip-64.example.org",        organization: "DDFIP des Pyrénées-Atlantiques", organization_admin: false, super_admin: false, confirmed: false },
+    { email: "sip.bayonne@ddfip-64.example.org", organization: "DDFIP des Pyrénées-Atlantiques", organization_admin: false, super_admin: false, confirmed: false },
+    { email: "sip.pau@ddfip-64.example.org",     organization: "DDFIP des Pyrénées-Atlantiques", organization_admin: false, super_admin: false, confirmed: false }
+  ])
+)
 
 # Import offices
 # ----------------------------------------------------------------------------
 log "Seed offices"
 
-ddfips = DDFIP.pluck(:name, :id).to_h
-offices = Office.pluck(:name, :id).to_h
+def parse_offices(data)
+  ddfips = DDFIP.pluck(:name, :id).to_h
 
-office_data = [
-  { ddfip_id: ddfips["DDFIP des Pyrénées-Atlantiques"], name: "PELH de Bayonne",  action: "evaluation_hab" },
-  { ddfip_id: ddfips["DDFIP des Pyrénées-Atlantiques"], name: "PELP de Bayonne",  action: "evaluation_eco" },
-  { ddfip_id: ddfips["DDFIP des Pyrénées-Atlantiques"], name: "SIP de Bayonne",   action: "occupation_hab" },
-  { ddfip_id: ddfips["DDFIP des Pyrénées-Atlantiques"], name: "SIP de Pau",       action: "occupation_hab" },
-  { ddfip_id: ddfips["DDFIP de l'Essonne"],             name: "SIP de l'Essonne", action: "occupation_hab" }
-].reject do |attributes|
-  offices.include?(attributes[:name])
+  data.map do |hash|
+    hash[:ddfip_id] = ddfips[hash.delete(:ddfip)]
+    hash
+  end
 end
 
-Office.insert_all(office_data) if office_data.any?
+Office.insert_all(
+  parse_offices([
+    { ddfip: "DDFIP des Pyrénées-Atlantiques",                     name: "SDIF Pyrénées-Atlantiques - Bayonne",         action: "evaluation_hab" },
+    { ddfip: "DDFIP des Pyrénées-Atlantiques",                     name: "SDIF Pyrénées-Atlantiques - Pau",             action: "evaluation_hab" },
+    { ddfip: "DDFIP des Pyrénées-Atlantiques",                     name: "SIP de Bayonne-Anglet",                       action: "occupation_hab" },
+    { ddfip: "DDFIP des Pyrénées-Atlantiques",                     name: "SIP de Biarritz",                             action: "occupation_hab" },
+    { ddfip: "DDFIP des Pyrénées-Atlantiques",                     name: "SIE de Bayonne-Anglet",                       action: "occupation_eco" },
+    { ddfip: "DDFIP des Pyrénées-Atlantiques",                     name: "SIE de Biarritz",                             action: "occupation_eco" },
+    { ddfip: "DDFIP du Nord",                                      name: "SIP de Lille Nord",                           action: "occupation_hab" },
+    { ddfip: "DDFIP du Nord",                                      name: "SIP de Lille Ouest",                          action: "occupation_hab" },
+    { ddfip: "DDFIP du Nord",                                      name: "SIP de Lille Seclin",                         action: "occupation_hab" },
+    { ddfip: "DRFIP Occitanie et département de la Haute-Garonne", name: "Pôle d’évaluation des locaux professionnels", action: "evaluation_eco" },
+    { ddfip: "DRFIP Occitanie et département de la Haute-Garonne", name: "SIP de Balma",                                action: "occupation_hab" },
+    { ddfip: "DRFIP Occitanie et département de la Haute-Garonne", name: "SIP de Colomiers",                            action: "occupation_hab" },
+    { ddfip: "DRFIP Occitanie et département de la Haute-Garonne", name: "SIP de Muret",                                action: "occupation_hab" },
+    { ddfip: "DRFIP Occitanie et département de la Haute-Garonne", name: "SIP de Saint-Gaudens",                        action: "occupation_hab" },
+    { ddfip: "DRFIP Occitanie et département de la Haute-Garonne", name: "SIP de Toulouse Cité",                        action: "occupation_hab" },
+    { ddfip: "DRFIP Occitanie et département de la Haute-Garonne", name: "SIP de Toulouse Mirail",                      action: "occupation_hab" },
+    { ddfip: "DRFIP Occitanie et département de la Haute-Garonne", name: "SIP de Toulouse Rangueil",                    action: "occupation_hab" }
+  ])
+)
 
-# Import office users
-# ----------------------------------------------------------------------------
-offices = Office.pluck(:name, :id).to_h
-users   = User.where(organization_type: "DDFIP").pluck(:email, :id).to_h
+def parse_office_users(data)
+  offices = Office.pluck(:name, :id).to_h
+  users   = User.pluck(:email, :id).to_h
 
-OfficeUser.insert_all([
-  { office_id: offices["PELP de Bayonne"], user_id: users["admin@ddfip-64.example.org"] },
-  { office_id: offices["PELH de Bayonne"], user_id: users["admin@ddfip-64.example.org"] },
-  { office_id: offices["SIP de Bayonne"],  user_id: users["admin@ddfip-64.example.org"] },
-  { office_id: offices["PELP de Bayonne"], user_id: users["pelp@ddfip-64.example.org"] },
-  { office_id: offices["SIP de Bayonne"],  user_id: users["sip.bayonne@ddfip-64.example.org"] }
-])
+  data.map do |hash|
+    hash[:office_id] = offices[hash.delete(:office)]
+    hash[:user_id]   = users[hash.delete(:user)]
+    hash
+  end
+end
 
-# Import office communes
-# ----------------------------------------------------------------------------
-codes_insee = {
-  pays_basque: EPCI.find_by!(name: "CA du Pays Basque").communes.pluck(:code_insee),
-  pau_bearn:   EPCI.find_by!(name: "CA Pau Béarn Pyrénées").communes.pluck(:code_insee)
-}
+OfficeUser.insert_all(
+  parse_office_users([
+    { user: "admin@ddfip-64.example.org",       office: "SDIF Pyrénées-Atlantiques - Bayonne" },
+    { user: "admin@ddfip-64.example.org",       office: "SDIF Pyrénées-Atlantiques - Pau" },
+    { user: "admin@ddfip-64.example.org",       office: "SIP de Bayonne-Anglet" },
+    { user: "admin@ddfip-64.example.org",       office: "SIP de Biarritz" },
+    { user: "admin@ddfip-64.example.org",       office: "SIE de Bayonne-Anglet" },
+    { user: "admin@ddfip-64.example.org",       office: "SIE de Biarritz" },
+    { user: "sdif@ddfip-64.example.org",        office: "SDIF Pyrénées-Atlantiques - Bayonne" },
+    { user: "sdif@ddfip-64.example.org",        office: "SDIF Pyrénées-Atlantiques - Pau" },
+    { user: "sip.bayonne@ddfip-64.example.org", office: "SIP de Bayonne-Anglet" },
+  ])
+)
 
-office_communes_attributes = []
-office_communes_attributes += codes_insee[:pays_basque].map { |code| { office_id: offices["PELP de Bayonne"], code_insee: code } }
-office_communes_attributes += codes_insee[:pays_basque].map { |code| { office_id: offices["PELH de Bayonne"], code_insee: code } }
-office_communes_attributes += codes_insee[:pays_basque].map { |code| { office_id: offices["SIP de Bayonne"], code_insee: code } }
-office_communes_attributes += codes_insee[:pau_bearn].map { |code| { office_id: offices["SIP de Pau"], code_insee: code } }
+def parse_office_communes(data)
+  offices      = Office.pluck(:name, :id).to_h
+  epcis        = Hash.new { |hash, name| EPCI.find_by!(name: name).communes.pluck(:code_insee) }
+  departements = Hash.new { |hash, name| Departement.find_by!(name: name).communes.pluck(:code_insee) }
 
-OfficeCommune.insert_all(office_communes_attributes)
+  data.flat_map do |hash|
+    office_id   = offices[hash.delete(:office)]
+    codes_insee =
+      case hash
+      in epci: String        then epcis[hash.delete(:epci)]
+      in departement: String then departements[hash.delete(:departement)]
+      end
+
+    codes_insee.map do |code|
+      { office_id: office_id, code_insee: code }
+    end
+  end
+end
+
+OfficeCommune.insert_all(
+  parse_office_communes([
+    { office: "SDIF Pyrénées-Atlantiques - Bayonne",         epci: "CA du Pays Basque" },
+    { office: "SDIF Pyrénées-Atlantiques - Pau",             epci: "CA Pau Béarn Pyrénées" },
+    { office: "SIP de Bayonne-Anglet",                       epci: "CA du Pays Basque" },
+    { office: "SIP de Biarritz",                             epci: "CA du Pays Basque" },
+    { office: "SIE de Bayonne-Anglet",                       epci: "CA du Pays Basque" },
+    { office: "SIE de Biarritz",                             epci: "CA du Pays Basque" },
+    { office: "SIP de Lille Nord",                           epci: "Métropole Européenne de Lille" },
+    { office: "SIP de Lille Ouest",                          epci: "Métropole Européenne de Lille" },
+    { office: "SIP de Lille Seclin",                         epci: "Métropole Européenne de Lille" },
+    { office: "Pôle d’évaluation des locaux professionnels", departement: "Haute-Garonne" },
+    { office: "SIP de Balma",                                epci: "Toulouse Métropole" },
+    { office: "SIP de Colomiers",                            epci: "Toulouse Métropole" },
+    { office: "SIP de Muret",                                epci: "Toulouse Métropole" },
+    { office: "SIP de Toulouse Cité",                        epci: "Toulouse Métropole" },
+    { office: "SIP de Toulouse Mirail",                      epci: "Toulouse Métropole" },
+    { office: "SIP de Toulouse Rangueil",                    epci: "Toulouse Métropole" }
+  ])
+)
