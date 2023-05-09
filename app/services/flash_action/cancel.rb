@@ -23,17 +23,8 @@ module FlashAction
 
     def cancel_path
       case @params[:action]
-      when "destroy"
-        url_for(
-          action:     "undiscard",
-          controller: @params[:controller],
-          id:         @params[:id]
-        )
-      when "destroy_all"
-        url_for(
-          action:     "undiscard_all",
-          controller: @params[:controller]
-        )
+      when "destroy"     then url_for(**url_params, action: "undiscard")
+      when "destroy_all" then url_for(**url_params, action: "undiscard_all")
       else
         raise NotImplementedError
       end
@@ -54,6 +45,14 @@ module FlashAction
       @params
         .slice(:search, :order, :page, :ids)
         .permit(:search, :order, :page, :ids, ids: [])
+        .to_h
+        .symbolize_keys
+    end
+
+    def url_params
+      @params
+        .slice(:controller, :publisher_id, :collectivity_id, :ddfip_id, :office_id, :id)
+        .permit(:controller, :publisher_id, :collectivity_id, :ddfip_id, :office_id, :id)
         .to_h
         .symbolize_keys
     end

@@ -4,12 +4,18 @@
 # UsersController to create or update an user.
 #
 class UserParamsParser
-  def initialize(input)
+  def initialize(input, organization = nil)
     @input = input.dup
+    @organization = organization
   end
 
   def parse
     @input.delete(:organization)
+
+    if @organization
+      @input[:organization_type] = @organization.class.name
+      @input[:organization_id]   = @organization.id
+    end
 
     extract_organization_data
     extract_organization_name
@@ -22,7 +28,7 @@ class UserParamsParser
 
   def extract_organization_data
     organization_data = @input.delete(:organization_data)
-    return if organization_data.blank?
+    return if @organization || organization_data.blank?
 
     organization_data          = JSON.parse(organization_data)
     @input[:organization_type] = organization_data["type"]
@@ -32,7 +38,7 @@ class UserParamsParser
   def extract_organization_name
     organization_name = @input.delete(:organization_name)
     organization_type = @input[:organization_type]
-    return if organization_name.blank?
+    return if @organization || organization_name.blank?
 
     @input[:organization_id] =
       case organization_type

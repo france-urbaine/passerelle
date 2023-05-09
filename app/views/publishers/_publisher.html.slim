@@ -34,71 +34,23 @@ h2.subheader
 .subheader-bar
   h2.subheader
     = svg_icon("rectangle-stack", "Nouvelle section")
-    | Utilisateurs de l'organisation
+    | Utilisateurs
 
   .subheader-bar__actions
     .subheader-bar__action
-      a.button(
-        data-turbo-frame="modal"
-        href=new_user_path(referrer: current_path, user: { organization_type: "Publisher", organization_id: publisher.id })
-      )
-        = svg_icon("plus")
-        | Inviter un utilisateur
+      = button_component "Inviter un utilisateur", new_publisher_user_path(@publisher), icon: "plus", modal: true
 
-- if publisher.users_count.zero?
+- if @publisher.users_count.zero?
   .card.mb-6
     .card__content
-      p.text-disabled Aucun utilisateur enregistré sur ce compte.
+      p.text-disabled Aucun utilisateur assigné.
+
 - else
-  table.datatable.mb-6
-    thead
-      tr.datatable__row
-        th( aria-label="Actions" )
-        th Utilisateurs
-        th Adresse mail
-        th Administrateur
-
-    tbody
-      - publisher.users.kept.order(:created_at).each do |user|
-        tr.datatable__row
-          td.datatable__row-actions
-            .flex
-              a.icon-button(
-                href=edit_user_path(user, referrer: current_path)
-                aria-label="Modifier cet utilisateur"
-                data-turbo-frame="modal"
-              )
-                = svg_icon("pencil-square", "Modifier cet utilisateur")
-                span.tooltip Modifier cet utilisateur
-
-              a.icon-button(
-                aria-label="Supprimer cet utilisateur"
-                data-turbo-frame="modal"
-                href=remove_user_path(user, referrer: current_path)
-              )
-                = svg_icon("trash", "Supprimer cet utilisateur")
-                span.tooltip Supprimer cet utilisateur
-
-          td
-            a(
-              data-turbo-frame="_top"
-              href=user_path(user)
-            )= user.name
-
-          td
-            - if user.confirmed?
-              = mail_to user.email
-            - else
-              .text-disabled( title="Cet utilisateur n'a pas encore validé son inscription" )
-                = svg_icon("exclamation-triangle", class: "mr-2")
-                = user.email
-                span.tooltip Cet utilisateur n'a pas encore validé son inscription
-
-          td
-            - if user.organization_admin?
-              = svg_icon("check-badge", "Administrateur")
-            - else
-              = " "
+  .mb-6
+    = turbo_frame_tag "datatable-users", src: publisher_users_path(@publisher) do
+      = datatable_skeleton_component(rows: [@publisher.users_count, ControllerCollections::NESTED_ITEMS].min) do |skeleton|
+        - skeleton.with_search
+        - skeleton.with_pagination
 
 .subheader-bar
   h2.subheader

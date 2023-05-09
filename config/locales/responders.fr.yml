@@ -1,7 +1,13 @@
 fr:
   flash:
     actions:
-      update: &update
+      update:
+        notice:
+          type:         "success"
+          title:        "Les modifications ont été enregistrées avec succés."
+          delay:        3000
+
+      update_all:
         notice:
           type:         "success"
           title:        "Les modifications ont été enregistrées avec succés."
@@ -106,13 +112,6 @@ fr:
           title:        "La suppression des éditeurs sélectionnés a été annulée."
           delay:        3000
 
-    office_users:
-      destroy:
-        notice:
-          type:         "success"
-          title:        "L'utilisateur a été retiré du guichet."
-          delay:        3000
-
     offices:
       create:
         notice:
@@ -145,6 +144,38 @@ fr:
           type:         "cancel"
           title:        "La suppression des guichets sélectionnés a été annulée."
           delay:        3000
+
+      users:
+        create:
+          notice:
+            type:         "success"
+            title:        "Un nouvel utilisateur a été ajouté avec succés."
+            description:  "Un mail d'invitation a été envoyé avec les instructions nécessaires pour valider le compte."
+            delay:        3000
+
+        destroy:
+          notice:
+            type:         "success"
+            title:        "L'utilisateur a été exclus du guichet."
+            delay:        10000
+
+        destroy_all:
+          notice:
+            type:         "success"
+            title:        "Les utilisateurs sélectionnés ont été exclus du guichet."
+            delay:        10000
+
+        undiscard:
+          notice:
+            type:         "cancel"
+            title:        "L'exclusion de l'utilisateur a été annulée."
+            delay:        3000
+
+        undiscard_all:
+          notice:
+            type:         "cancel"
+            title:        "L'exclusion des utilisateurs sélectionnés a été annulée."
+            delay:        3000
 
     users:
       create:

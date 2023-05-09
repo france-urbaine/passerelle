@@ -18,4 +18,6 @@
         p La ressource a été archivée avant sa suppression prochaine.
 
       - modal.with_close_action "Fermer"
-      - modal.with_other_action "Annuler la suppression", url_for([:undiscard, @record_discarded]), method: :patch
+
+      - if @record_discarded
+        - modal.with_other_action "Annuler la suppression", url_for([:undiscard, @record_discarded]), method: :patch

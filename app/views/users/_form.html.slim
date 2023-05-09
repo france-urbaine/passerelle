@@ -1,7 +1,8 @@
 ruby:
+  form_url  = url_for([parent, user])
   form_data = { controller: "user-form", user_form_offices_url_value: users_offices_path(user_id: user.id) }
 
-- modal.with_form(model: user, data: form_data) do
+- modal.with_form(model: user, url: form_url, data: form_data) do
   = hidden_field_tag :redirect, modal.redirection_path
 
   = fields(model: user) do |form|

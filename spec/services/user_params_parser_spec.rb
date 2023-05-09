@@ -17,6 +17,21 @@ RSpec.describe UserParamsParser do
 
       expect(described_class.new(payload).parse).to eq(payload)
     end
+
+    it "ignores input and uses the organization passed as argument" do
+      ddfip = create(:ddfip)
+      payload = {
+        organization_type: "Publisher",
+        organization_id:   "12345",
+        someting_else:     "true"
+      }
+
+      expect(described_class.new(payload, ddfip).parse).to eq({
+        organization_type: "DDFIP",
+        organization_id:   ddfip.id,
+        someting_else:     "true"
+      })
+    end
   end
 
   context "when using organization_data in JSON" do
@@ -31,6 +46,20 @@ RSpec.describe UserParamsParser do
         organization_id:   "123456",
         someting_else:     "true"
       )
+    end
+
+    it "ignores input and uses the organization passed as argument" do
+      ddfip = create(:ddfip)
+      payload = {
+        organization_data: { type: "Publisher", id: "123456" }.to_json,
+        someting_else:     "true"
+      }
+
+      expect(described_class.new(payload, ddfip).parse).to eq({
+        organization_type: "DDFIP",
+        organization_id:   ddfip.id,
+        someting_else:     "true"
+      })
     end
   end
 
@@ -97,6 +126,23 @@ RSpec.describe UserParamsParser do
         someting_else:     "true"
       )
     end
+
+    it "ignores input and uses the organization passed as argument" do
+      ddfip     = create(:ddfip)
+      publisher = create(:publisher)
+      payload   = {
+        organization_type: "Publisher",
+        organization_name: publisher.name,
+        organization_id:   "1",
+        someting_else:     "true"
+      }
+
+      expect(described_class.new(payload, ddfip).parse).to eq({
+        organization_type: "DDFIP",
+        organization_id:   ddfip.id,
+        someting_else:     "true"
+      })
+    end
   end
 
   context "when using office_ids" do
@@ -131,7 +177,7 @@ RSpec.describe UserParamsParser do
       )
     end
 
-    it "removes IDs of users which are not belonging to DDFIP" do
+    it "removes IDs of offices which are not belonging to DDFIP" do
       ddfip   = create(:ddfip)
       office1 = create(:office, ddfip: ddfip)
       office2 = create(:office)
@@ -144,6 +190,24 @@ RSpec.describe UserParamsParser do
       }
 
       expect(described_class.new(payload).parse).to eq(
+        organization_type: "DDFIP",
+        organization_id:   ddfip.id,
+        office_ids:        [office1.id],
+        someting_else:     "true"
+      )
+    end
+
+    it "ignores input and uses the organization passed as argument to restrict IDs" do
+      ddfip   = create(:ddfip)
+      office1 = create(:office, ddfip: ddfip)
+      office2 = create(:office)
+
+      payload = {
+        office_ids:    [office1.id, office2.id],
+        someting_else: "true"
+      }
+
+      expect(described_class.new(payload, ddfip).parse).to eq(
         organization_type: "DDFIP",
         organization_id:   ddfip.id,
         office_ids:        [office1.id],

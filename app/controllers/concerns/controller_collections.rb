@@ -3,12 +3,19 @@
 module ControllerCollections
   include Pagy::Backend
 
+  NESTED_ITEMS = 10
+
   private
 
-  def index_collection(relation)
+  def index_collection(relation, nested: false)
     relation = search_collection(relation)
     relation = order_collection(relation)
-    paginate_collection(relation)
+
+    if nested
+      paginate_collection(relation, items: NESTED_ITEMS)
+    else
+      paginate_collection(relation)
+    end
   end
 
   def search_collection(relation)
@@ -24,11 +31,21 @@ module ControllerCollections
     relation
   end
 
-  def paginate_collection(collection, options = {})
-    options[:items] = session[:items] if session[:items] && !params.key?(:items)
-
-    pagy, relation = pagy(collection, options)
-    session[:items] = pagy.items unless pagy.items.zero?
+  def paginate_collection(collection, items: nil)
+    # We memoize the numbers of items into session and to use the same settings
+    # on every pagination.
+    # The numer of items per page can be reinitialized from params.
+    #
+    # We don't memoize the numer of items when it's explicitely defined.
+    # (in nested turbo frames, for example).
+    #
+    if items
+      pagy, relation = pagy(collection, items:)
+    else
+      items = session[:items] if session[:items] && !params.key?(:items)
+      pagy, relation = pagy(collection, items:)
+      session[:items] = pagy.items unless pagy.items.zero?
+    end
 
     [relation, pagy]
   end

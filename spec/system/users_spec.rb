@@ -297,7 +297,7 @@ RSpec.describe "Managing users" do
     expect(page).to     have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
   end
 
-  it "removes an user from the index page and then rollbacks" do
+  it "discards an user from the index page and then rollbacks" do
     visit users_path
 
     expect(page).to have_text("6 utilisateurs | Page 1 sur 1")
@@ -349,7 +349,7 @@ RSpec.describe "Managing users" do
     expect(page).to     have_selector("[role=alert]", text: "La suppression de l'utilisateur a été annulée.")
   end
 
-  it "removes an user from the user page and then rollbacks" do
+  it "discards an user from the user page and then rollbacks" do
     visit user_path(marc)
 
     # A button should be present to edit the user
@@ -399,7 +399,7 @@ RSpec.describe "Managing users" do
     expect(page).to     have_selector("[role=alert]", text: "La suppression de l'utilisateur a été annulée.")
   end
 
-  it "selects and removes one user from the index page and then rollbacks" do
+  it "selects and discards one user from the index page and then rollbacks" do
     visit users_path
 
     expect(page).to have_text("6 utilisateurs | Page 1 sur 1")
@@ -465,7 +465,7 @@ RSpec.describe "Managing users" do
     expect(page).to     have_selector("[role=alert]", text: "La suppression des utilisateurs sélectionnés a été annulée.")
   end
 
-  it "selects and removes all users from the current page on index page and then rollbacks" do
+  it "selects and discards all users from the current page on index page and then rollbacks" do
     # Create a bunch of users to have several pages
     # Create discarded users to verify they are not rollbacked
     #
@@ -546,7 +546,7 @@ RSpec.describe "Managing users" do
     expect(page).to     have_selector("[role=alert]", text: "La suppression des utilisateurs sélectionnés a été annulée.")
   end
 
-  it "selects and removes all users through several pages on index page and then rollbacks" do
+  it "selects and discards all users through several pages on index page and then rollbacks" do
     # Create a bunch of users to have several pages
     # TODO: Create discarded users to verify they are not rollbacked
     #

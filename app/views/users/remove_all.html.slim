@@ -6,7 +6,7 @@
       - else
         | Suppression de l'utilisateur sélectionné
 
-    - modal.with_form(url: users_path, method: :delete) do
+    - modal.with_form(url: url_for([@parent, :users]), method: :delete) do
       = hidden_field_tag :redirect, @background_url
       = hidden_param_input(:ids)
       = hidden_param_input(:search)

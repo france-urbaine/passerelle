@@ -19,18 +19,33 @@ Rails.application.routes.draw do
     delete :destroy_all,   on: :collection, path: "/", as: nil
   end
 
+  concern :updatable_collection do
+    get   :edit_all,   on: :collection, path: "edit"
+    patch :update_all, on: :collection, path: "/", as: nil
+  end
+
+  concern :nested_users do
+    resources :users, only: %i[index new create], concerns: %i[removable_collection], path: "/utilisateurs"
+  end
+
   devise_for :user
 
   ID_REGEXP = %r{(?!(new|edit|remove|discard|undiscard|offices))[^/]+}
 
   constraints(id: ID_REGEXP) do
-    resources :publishers,     concerns: %i[removable removable_collection], path: "/editeurs"
-    resources :collectivities, concerns: %i[removable removable_collection], path: "/collectivites"
-    resources :ddfips,         concerns: %i[removable removable_collection]
+    resources :publishers,     concerns: %i[removable removable_collection nested_users], path: "/editeurs"
+    resources :collectivities, concerns: %i[removable removable_collection nested_users], path: "/collectivites"
+    resources :ddfips,         concerns: %i[removable removable_collection nested_users]
     resources :offices,        concerns: %i[removable removable_collection], path: "/guichets" do
-      resource  :communes, controller: :office_communes, only: %i[edit update]
-      resource  :users, controller: :office_users, only: %i[edit update], path: "/utilisateurs"
-      resources :users, controller: :office_users, only: %i[destroy], concerns: %i[removable], path: "/utilisateurs"
+      resource :communes, controller: :office_communes, concerns: %i[updatable_collection]
+
+      resources :users, module: "offices", only: %i[index new create destroy], path: "/utilisateurs" do
+        get    :remove,      on: :member
+        get    :remove_all,  on: :collection, path: "remove"
+        delete :destroy_all, on: :collection, path: "/", as: nil
+
+        concerns :updatable_collection
+      end
     end
 
     resources :users, concerns: %i[removable removable_collection], path: "/utilisateurs"

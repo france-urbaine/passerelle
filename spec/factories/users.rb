@@ -13,7 +13,7 @@ FactoryBot.define do
 
     trait :using_existing_organizations do
       organization do
-        [DDFIP, Publisher, Collectivity].sample.order('RANDOM()').first ||
+        [DDFIP, Publisher, Collectivity].sample.order("RANDOM()").first ||
           association(%i[publisher collectivity ddfip].sample)
       end
     end
