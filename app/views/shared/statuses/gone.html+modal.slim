@@ -1,0 +1,21 @@
+= template_frame_component src: @background_url do |frame|
+  - frame.with_modal do |modal|
+    - modal.with_body do
+      p La page que vous recherchez n'est pas disponible.
+
+      - case @record_discarded
+      - when Publisher
+        p L'éditeur est en cours de suppression.
+      - when Collectivity
+        p La collectivité est en cours de suppression.
+      - when DDFIP
+        p La DDFIP est en cours de suppression.
+      - when Office
+        p Le guichet est en cours de suppression.
+      - when User
+        p L'utilisateur est en cours de suppression.
+      - else
+        p La ressource a été archivée avant sa suppression prochaine.
+
+      - modal.with_close_action "Fermer"
+      - modal.with_other_action "Annuler la suppression", url_for([:undiscard, @record_discarded]), method: :patch

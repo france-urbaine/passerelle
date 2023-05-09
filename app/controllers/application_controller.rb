@@ -39,7 +39,7 @@ class ApplicationController < ActionController::Base
     define_method(status) do
       respond_to do |format|
         format.html { render status:, template: "shared/statuses/#{status}" }
-        format.all { head(status) }
+        format.all { head status }
       end
     end
   end
@@ -52,18 +52,28 @@ class ApplicationController < ActionController::Base
       when String                       then model
       end
 
+    if turbo_frame_request_id == "modal"
+      request.variant = :modal
+      @background_url = referrer_path
+    end
+
     respond_to do |format|
-      format.html { render status:, template: "shared/statuses/not_found" }
-      format.all { head(status) }
+      format.html { render status: :not_found, template: "shared/statuses/not_found" }
+      format.all { head :not_found }
     end
   end
 
   def gone(record = nil)
     @record_discarded = record
 
+    if turbo_frame_request_id == "modal"
+      request.variant = :modal
+      @background_url = referrer_path
+    end
+
     respond_to do |format|
-      format.html { render status:, template: "shared/statuses/gone" }
-      format.all { head(status) }
+      format.html { render status: :gone, template: "shared/statuses/gone" }
+      format.all { head :gone }
     end
   end
 

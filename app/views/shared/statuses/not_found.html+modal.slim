@@ -1,0 +1,26 @@
+= template_frame_component src: @background_url do |frame|
+  - frame.with_modal do |modal|
+    - modal.with_body do
+      p La page que vous recherchez n'est pas disponible.
+
+      - case @model_not_found
+      - when "Publisher"
+        p L'editeur n'a pas été trouvé ou n'existe plus.
+      - when "Collectivity"
+        p La collectivité n'a pas été trouvée ou n'existe plus.
+      - when "DDFIP"
+        p La DDFIP n'a pas été trouvée ou n'existe plus.
+      - when "Office"
+        p Le guichet n'a pas été trouvé ou n'existe plus.
+      - when "User"
+        p L'utilisateur n'a pas été trouvé ou n'existe plus.
+      - when "Commune"
+        p La commune n'a pas été trouvée ou n'existe plus.
+      - when "EPCI"
+        p L'EPCI n'a pas été trouvé ou n'existe plus.
+      - when "Departement"
+        p Le département n'a pas été trouvé ou n'existe plus.
+      - when "Region"
+        p La région n'a pas été trouvée ou n'existe plus.
+      - else
+        p La page n'existe plus ou a été déplacée.
