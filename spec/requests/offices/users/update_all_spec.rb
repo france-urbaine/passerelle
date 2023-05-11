@@ -2,24 +2,25 @@
 
 require "rails_helper"
 
-RSpec.describe "OfficeUsersController#edit" do
+RSpec.describe "Offices::UsersController#update_all" do
   subject(:request) do
-    patch "/guichets/#{office.id}/utilisateurs", as:, params:
+    patch "/guichets/#{office.id}/utilisateurs", as:, headers:, params:
   end
 
-  let(:as)     { |e| e.metadata[:as] }
-  let(:params) { { office_users: updated_attributes } }
+  let(:as)      { |e| e.metadata[:as] }
+  let(:headers) { |e| e.metadata[:headers] }
+  let(:params)  { |e| e.metadata.fetch(:params, { office_users: attributes }) }
 
   let!(:ddfip)  { create(:ddfip) }
   let!(:office) { create(:office, ddfip: ddfip) }
   let!(:users)  { create_list(:user, 3, organization: ddfip) }
 
-  let(:updated_attributes) do
+  let(:attributes) do
     { user_ids: users.map(&:id) }
   end
 
   context "when requesting HTML" do
-    context "with valid parameters" do
+    context "with valid attributes" do
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/guichets/#{office.id}") }
 
@@ -44,11 +45,26 @@ RSpec.describe "OfficeUsersController#edit" do
       end
     end
 
+    context "when the office is discarded" do
+      before { office.discard }
+
+      it { expect(response).to have_http_status(:gone) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
+    end
+
     context "when the office is missing" do
-      let(:office) { Office.new(id: Faker::Internet.uuid) }
-      let(:users)  { create_list(:user, 3, :ddfip) }
+      before { office.destroy }
 
       it { expect(response).to have_http_status(:not_found) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
+    end
+
+    context "when the DDFIP is discarded" do
+      before { office.ddfip.discard }
+
+      it { expect(response).to have_http_status(:gone) }
       it { expect(response).to have_content_type(:html) }
       it { expect(response).to have_html_body }
     end

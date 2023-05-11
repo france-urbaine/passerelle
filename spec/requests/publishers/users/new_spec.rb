@@ -4,10 +4,12 @@ require "rails_helper"
 
 RSpec.describe "Publishers::UsersController#new" do
   subject(:request) do
-    get "/editeurs/#{publisher.id}/utilisateurs/new", as:
+    get "/editeurs/#{publisher.id}/utilisateurs/new", as:, headers:, params:
   end
 
-  let(:as) { |e| e.metadata[:as] }
+  let(:as)      { |e| e.metadata[:as] }
+  let(:headers) { |e| e.metadata[:headers] }
+  let(:params)  { |e| e.metadata[:params] }
 
   let!(:publisher) { create(:publisher) }
 
@@ -17,7 +19,7 @@ RSpec.describe "Publishers::UsersController#new" do
     it { expect(response).to have_html_body }
 
     context "when publisher is discarded" do
-      let(:publisher) { create(:publisher, :discarded) }
+      before { publisher.discard }
 
       it { expect(response).to have_http_status(:gone) }
       it { expect(response).to have_content_type(:html) }
@@ -25,7 +27,7 @@ RSpec.describe "Publishers::UsersController#new" do
     end
 
     context "when publisher is missing" do
-      let(:publisher) { Publisher.new(id: Faker::Internet.uuid) }
+      before { publisher.destroy }
 
       it { expect(response).to have_http_status(:not_found) }
       it { expect(response).to have_content_type(:html) }

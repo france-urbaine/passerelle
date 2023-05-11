@@ -4,11 +4,12 @@ require "rails_helper"
 
 RSpec.describe "Ddfips::UsersController#remove_all" do
   subject(:request) do
-    get "/ddfips/#{ddfip.id}/utilisateurs/remove", as:, params:
+    get "/ddfips/#{ddfip.id}/utilisateurs/remove", as:, headers:, params:
   end
 
-  let(:as)     { |e| e.metadata[:as] }
-  let(:params) { |e| e.metadata.fetch(:params, { ids: ids }) }
+  let(:as)      { |e| e.metadata[:as] }
+  let(:headers) { |e| e.metadata[:headers] }
+  let(:params)  { |e| e.metadata.fetch(:params, { ids: ids }) }
 
   let!(:ddfip) { create(:ddfip) }
   let!(:users) { create_list(:user, 3, organization: ddfip) }
@@ -38,7 +39,7 @@ RSpec.describe "Ddfips::UsersController#remove_all" do
     end
 
     context "when DDFIP is discarded" do
-      let(:ddfip) { create(:ddfip, :discarded) }
+      before { ddfip.discard }
 
       it { expect(response).to have_http_status(:gone) }
       it { expect(response).to have_content_type(:html) }
@@ -46,7 +47,7 @@ RSpec.describe "Ddfips::UsersController#remove_all" do
     end
 
     context "when DDFIP is missing" do
-      let(:ddfip) { DDFIP.new(id: Faker::Internet.uuid) }
+      before { ddfip.destroy }
 
       it { expect(response).to have_http_status(:not_found) }
       it { expect(response).to have_content_type(:html) }

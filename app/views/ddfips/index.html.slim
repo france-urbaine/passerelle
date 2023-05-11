@@ -1,2 +1,60 @@
 = template_frame_component do
-  = render "index", ddfips: @ddfips, pagy: @pagy
+  = breadcrumbs_component do |breadcrumbs|
+    - breadcrumbs.with_path "Organisations"
+    - breadcrumbs.with_path "DDFIP"
+    - breadcrumbs.with_action "Ajouter une DDFIP", new_ddfip_path, icon: "plus", modal: true, primary: true
+
+  = datatable_component(@ddfips.preload(departement: :region)) do |datatable|
+    - datatable.with_search
+    - datatable.with_pagination(@pagy)
+    - datatable.with_selection do |selection|
+      - selection.with_action "Supprimer la sélection", remove_all_ddfips_path, modal: true
+
+    - datatable.with_column(:name,           sort: true)          { "DDFIP" }
+    - datatable.with_column(:departement,    sort: true, span: 2) { "Département" }
+    - datatable.with_column(:region,         sort: true, span: 2) { "Région" }
+    - datatable.with_column(:collectivities, numeric: true) { "Collectivités" }
+    - datatable.with_column(:offices,        numeric: true) { "Guichets" }
+    - datatable.with_column(:users,          numeric: true) { "Utilisateurs" }
+
+    - datatable.with_empty_message do
+      - if params[:search]
+        | Aucune DDFIP ne correspont à votre recherche.
+      - else
+        | Aucune DDFIP disponible.
+
+    - datatable.each_row do |row, ddfip|
+      - row.with_checkbox "Sélectionner cette DDFIP", described_by: :name
+      - row.with_action "Modifier cette DDFIP", edit_ddfip_path(ddfip), icon: "pencil-square", modal: true
+      - row.with_action "Supprimer cette DDFIP", remove_ddfip_path(ddfip), icon: "trash", modal: true
+
+      - row.with_column(:name) do
+        = link_to ddfip_path(ddfip), data: { turbo_frame: "_top" } do
+          = ddfip.name
+
+      - row.with_column(:departement) do |column|
+        - if ddfip.departement
+          - column.with_span do
+            = ddfip.code_departement
+
+          - column.with_span do
+            = link_to departement_path(ddfip.departement), data: { turbo_frame: "_top" } do
+              = ddfip.departement.name
+
+      - row.with_column(:region) do |column|
+        - if ddfip.departement&.region
+          - column.with_span do
+            = ddfip.departement.code_region
+
+          - column.with_span do
+            = link_to region_path(ddfip.departement.region), data: { turbo_frame: "_top" } do
+              = ddfip.departement.region.name
+
+      - row.with_column(:collectivities) do
+        = number_with_delimiter(ddfip.collectivities_count) if ddfip.collectivities_count.positive?
+
+      - row.with_column(:offices) do
+        = number_with_delimiter(ddfip.offices_count) if ddfip.offices_count.positive?
+
+      - row.with_column(:users) do
+        = number_with_delimiter(ddfip.users_count) if ddfip.users_count.positive?

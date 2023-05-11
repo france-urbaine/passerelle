@@ -1,10 +1,4 @@
-- modal.with_header do
-  - if collectivity.persisted?
-    | Modification de la collectivité
-  - else
-    | Création d'une nouvelle collectivité
-
-- modal.with_form(model: collectivity) do
+- modal.with_form(model: collectivity, url: url_for([parent, collectivity])) do
   = hidden_field_tag :redirect, modal.redirection_path
 
   = fields(model: collectivity) do |form|

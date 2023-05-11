@@ -24,7 +24,7 @@ RSpec.describe "UsersController#create" do
   end
 
   context "when requesting HTML" do
-    context "with valid parameters" do
+    context "with valid attributes" do
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/utilisateurs") }
       it { expect { request }.to change(User, :count).by(1) }
@@ -56,9 +56,7 @@ RSpec.describe "UsersController#create" do
     end
 
     context "with invalid attributes" do
-      let(:attributes) do
-        super().merge(email: "")
-      end
+      let(:attributes) { super().merge(email: "") }
 
       it { expect(response).to have_http_status(:unprocessable_entity) }
       it { expect(response).to have_content_type(:html) }
@@ -162,12 +160,14 @@ RSpec.describe "UsersController#create" do
 
     context "when using organization_data attribute in JSON" do
       let(:attributes) do
-        super().except(:organization_id).merge(
-          organization_data: {
-            type: organization_type,
-            id:   organization_id
-          }.to_json
-        )
+        super()
+          .except(:organization_id)
+          .merge(
+            organization_data: {
+              type: organization_type,
+              id:   organization_id
+            }.to_json
+          )
       end
 
       context "with a Publisher as organization" do
@@ -233,18 +233,18 @@ RSpec.describe "UsersController#create" do
       it { expect { request }.not_to change(User, :count).from(0) }
     end
 
-    context "with referrer header", headers: { "Referer" => "http://example.com/parent/path" } do
+    context "with referrer header", headers: { "Referer" => "http://example.com/other/path" } do
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/utilisateurs") }
+      it { expect(flash).to have_flash_notice }
     end
 
     context "with redirect parameter" do
-      let(:params) do
-        super().merge(redirect: "/other/path")
-      end
+      let(:params) { super().merge(redirect: "/other/path") }
 
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/other/path") }
+      it { expect(flash).to have_flash_notice }
     end
   end
 

@@ -1,5 +1,6 @@
 paris:
   name:                 Paris
+  qualified_name:       Département de Paris
   code_departement:     75
   code_region:          11
   epcis_count:          1
@@ -9,6 +10,7 @@ paris:
 
 pyrenees_atlantiques:
   name:                 Pyrénées-Atlantiques
+  qualified_name:       Département des Pyrénées-Atlantiques
   code_departement:     64
   code_region:          75
   epcis_count:          2
@@ -18,6 +20,7 @@ pyrenees_atlantiques:
 
 bouche_du_rhone:
   name:                 Bouches-du-Rhône
+  qualified_name:       Département des Bouches-du-Rhône
   code_departement:     13
   code_region:          93
   epcis_count:          0
@@ -27,6 +30,7 @@ bouche_du_rhone:
 
 nord:
   name:                 Nord
+  qualified_name:       Département du Nord
   code_departement:     59
   code_region:          32
   epcis_count:          1

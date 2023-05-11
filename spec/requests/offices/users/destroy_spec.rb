@@ -4,10 +4,12 @@ require "rails_helper"
 
 RSpec.describe "OfficeUsersController#destroy" do
   subject(:request) do
-    delete "/guichets/#{office.id}/utilisateurs/#{user.id}", as:
+    delete "/guichets/#{office.id}/utilisateurs/#{user.id}", as:, headers:, params:
   end
 
-  let(:as) { |e| e.metadata[:as] }
+  let(:as)      { |e| e.metadata[:as] }
+  let(:headers) { |e| e.metadata[:headers] }
+  let(:params)  { |e| e.metadata[:params] }
 
   let!(:ddfip)  { create(:ddfip) }
   let!(:office) { create(:office, ddfip: ddfip) }
@@ -35,7 +37,7 @@ RSpec.describe "OfficeUsersController#destroy" do
       it "sets a flash notice" do
         expect(flash).to have_flash_notice.to eq(
           type:  "success",
-          title: "L'utilisateur a été exclus du guichet.",
+          title: "L'utilisateur a été exclu du guichet.",
           delay: 10_000
         )
       end
@@ -61,24 +63,24 @@ RSpec.describe "OfficeUsersController#destroy" do
       it { expect(response).to have_html_body }
     end
 
-    context "when the user is missing" do
-      let(:user) { Office.new(id: Faker::Internet.uuid) }
-
-      it { expect(response).to have_http_status(:not_found) }
-      it { expect(response).to have_content_type(:html) }
-      it { expect(response).to have_html_body }
-    end
-
-    context "when the DDFIP is discarded" do
-      let(:ddfip) { create(:ddfip, :discarded) }
+    context "when the user is discarded" do
+      before { user.discard }
 
       it { expect(response).to have_http_status(:gone) }
       it { expect(response).to have_content_type(:html) }
       it { expect(response).to have_html_body }
     end
 
+    context "when the user is missing" do
+      before { user.destroy }
+
+      it { expect(response).to have_http_status(:not_found) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
+    end
+
     context "when the office is discarded" do
-      let(:office) { create(:office, :discarded, ddfip: ddfip) }
+      before { office.discard }
 
       it { expect(response).to have_http_status(:gone) }
       it { expect(response).to have_content_type(:html) }
@@ -86,10 +88,17 @@ RSpec.describe "OfficeUsersController#destroy" do
     end
 
     context "when the office is missing" do
-      let(:office) { Office.new(id: Faker::Internet.uuid) }
-      let(:user)   { create(:user, organization: ddfip) }
+      before { office.destroy }
 
       it { expect(response).to have_http_status(:not_found) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
+    end
+
+    context "when the DDFIP is discarded" do
+      before { office.ddfip.discard }
+
+      it { expect(response).to have_http_status(:gone) }
       it { expect(response).to have_content_type(:html) }
       it { expect(response).to have_html_body }
     end

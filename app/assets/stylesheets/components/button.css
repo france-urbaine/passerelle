@@ -120,5 +120,38 @@
         }
       }
     }
+
+    &--destructive-discrete {
+      @apply border-red-500;
+      @apply dark:border-red-500;
+
+      &[disabled],
+      &[disabled]:hover,
+      &:not([disabled]),
+      &:not([disabled]):is(:hover, :active, :focus, :focus-visible) {
+        @apply text-red-500;
+        @apply dark:text-red-500;
+      }
+
+      &:not([disabled]) {
+        &:is(:focus, :focus-visible) {
+          outline-width: 2px;
+          outline-offset: 3px;
+
+          @apply outline-red-500;
+          @apply dark:outline-sky-500;
+        }
+
+        &:hover {
+          @apply text-red-500 border-red-500;
+          @apply dark:text-sky-500 dark:border-sky-500;
+        }
+
+        &:active {
+          @apply text-red-700 border-red-700 outline-red-700;
+          @apply dark:text-sky-300 dark:border-sky-300 dark:outline-red-300;
+        }
+      }
+    }
   }
 }

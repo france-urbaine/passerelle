@@ -22,10 +22,10 @@ RSpec.describe "TerritoriesController#update" do
       expect {
         request
       } .to  have_enqueued_job(ImportCommunesJob).with(url)
-        .and have_enqueued_job(ImportEpcisJob).with(url)
+        .and have_enqueued_job(ImportEPCIsJob).with(url)
     end
 
-    context "with invalid parameters" do
+    context "with invalid attributes" do
       let(:params) { { region: { name: "" } } }
 
       it { expect(response).to have_http_status(:unprocessable_entity) }

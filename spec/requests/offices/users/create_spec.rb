@@ -24,7 +24,7 @@ RSpec.describe "Offices::UsersController#create" do
   end
 
   context "when requesting HTML" do
-    context "with valid parameters" do
+    context "with valid attributes" do
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/guichets/#{office.id}") }
       it { expect { request }.to change(User, :count).by(1) }
@@ -65,7 +65,7 @@ RSpec.describe "Offices::UsersController#create" do
       it { expect { request }.not_to change(User, :count).from(0) }
     end
 
-    context "when using organization_id parameter" do
+    context "when using another organization_id attribute" do
       let(:another_ddfip) { create(:ddfip) }
 
       let(:attributes) do
@@ -75,7 +75,7 @@ RSpec.describe "Offices::UsersController#create" do
         )
       end
 
-      it "assigns the DDFIP from the office in the URL" do
+      it "ignores the attributes to assign the DDFIP from the office in the URL" do
         request
         expect(User.last.organization).to eq(ddfip)
       end
@@ -88,16 +88,8 @@ RSpec.describe "Offices::UsersController#create" do
       it { expect { request }.not_to change(User, :count).from(0) }
     end
 
-    context "when the DDFIP is discarded" do
-      let(:ddfip) { create(:ddfip, :discarded) }
-
-      it { expect(response).to have_http_status(:gone) }
-      it { expect(response).to have_content_type(:html) }
-      it { expect(response).to have_html_body }
-    end
-
     context "when the office is discarded" do
-      let(:office) { create(:office, :discarded, ddfip: ddfip) }
+      before { office.discard }
 
       it { expect(response).to have_http_status(:gone) }
       it { expect(response).to have_content_type(:html) }
@@ -105,16 +97,25 @@ RSpec.describe "Offices::UsersController#create" do
     end
 
     context "when the office is missing" do
-      let(:office) { Office.new(id: Faker::Internet.uuid) }
+      before { office.destroy }
 
       it { expect(response).to have_http_status(:not_found) }
       it { expect(response).to have_content_type(:html) }
       it { expect(response).to have_html_body }
     end
 
-    context "with referrer header", headers: { "Referer" => "http://example.com/parent/path" } do
+    context "when the DDFIP is discarded" do
+      before { office.ddfip.discard }
+
+      it { expect(response).to have_http_status(:gone) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
+    end
+
+    context "with referrer header", headers: { "Referer" => "http://example.com/other/path" } do
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/guichets/#{office.id}") }
+      it { expect(flash).to have_flash_notice }
     end
 
     context "with redirect parameter" do
@@ -122,6 +123,7 @@ RSpec.describe "Offices::UsersController#create" do
 
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/other/path") }
+      it { expect(flash).to have_flash_notice }
     end
   end
 

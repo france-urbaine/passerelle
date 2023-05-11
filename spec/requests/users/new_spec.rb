@@ -4,10 +4,12 @@ require "rails_helper"
 
 RSpec.describe "UsersController#new" do
   subject(:request) do
-    get "/utilisateurs/new", as:
+    get "/utilisateurs/new", as:, headers:, params:
   end
 
-  let(:as) { |e| e.metadata[:as] }
+  let(:as)      { |e| e.metadata[:as] }
+  let(:headers) { |e| e.metadata[:headers] }
+  let(:params)  { |e| e.metadata[:params] }
 
   context "when requesting HTML" do
     it { expect(response).to have_http_status(:success) }

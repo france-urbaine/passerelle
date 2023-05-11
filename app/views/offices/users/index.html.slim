@@ -10,6 +10,7 @@
   = datatable_component(@users.preload(:offices)) do |datatable|
     - datatable.with_search
     - datatable.with_pagination(@pagy, options: false)
+
     - datatable.with_selection do |selection|
       - selection.with_action "Exclure les utilisateurs du guichet", remove_all_office_users_path(@office), modal: true
 
@@ -28,7 +29,7 @@
     - datatable.each_row do |row, user|
       - row.with_checkbox "Sélectionner cet utilisateur", described_by: :name
       - row.with_action "Modifier cet utilisateur", edit_user_path(user), icon: "pencil-square", modal: true
-      - row.with_action "Exclure cet utilisateur du guichet", remove_office_user_path(@office, user), icon: "user-minus", modal: true
+      - row.with_action "Exclure cet utilisateur du guichet", remove_office_user_path(@office, user), icon: "archive-box-x-mark", modal: true
       - row.with_action "Supprimer cet utilisateur", remove_user_path(user), icon: "trash", modal: true
 
       - row.with_column(:name) do
@@ -57,12 +58,12 @@
           = " "
 
       - row.with_column(:offices) do
-        / - offices = user.offices.select { |office| office.kept? && office.ddfip_id == @parent.id }
-        / - offices.each.with_index do |office, index|
-        /   = link_to office_path(office), data: { turbo_frame: "_top" } do
-        /     = office.name
+        - offices = user.offices.select { |office| office.kept? && office.ddfip_id == @office.ddfip_id }
+        - offices.each.with_index do |office, index|
+          = link_to office_path(office), data: { turbo_frame: "_top" } do
+            = office.name
 
-        /   - if offices[index + 2]
-        /     = ", "
-        /   - elsif offices[index + 1]
-        /     = " et "
+          - if offices[index + 2]
+            = ", "
+          - elsif offices[index + 1]
+            = " et "

@@ -4,20 +4,24 @@ require "rails_helper"
 
 RSpec.describe "OfficesController#show" do
   subject(:request) do
-    get "/guichets/#{office.id}", as:
+    get "/guichets/#{office.id}", as:, headers:, params:
   end
 
-  let(:as) { |e| e.metadata[:as] }
+  let(:as)      { |e| e.metadata[:as] }
+  let(:headers) { |e| e.metadata[:headers] }
+  let(:params)  { |e| e.metadata[:params] }
 
   let!(:office) { create(:office) }
 
   context "when requesting HTML" do
-    it { expect(response).to have_http_status(:success) }
-    it { expect(response).to have_content_type(:html) }
-    it { expect(response).to have_html_body }
+    context "when the office is accessible" do
+      it { expect(response).to have_http_status(:success) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
+    end
 
     context "when the office is discarded" do
-      let(:office) { create(:office, :discarded) }
+      before { office.discard }
 
       it { expect(response).to have_http_status(:gone) }
       it { expect(response).to have_content_type(:html) }
@@ -25,7 +29,7 @@ RSpec.describe "OfficesController#show" do
     end
 
     context "when the office is missing" do
-      let(:office) { Office.new(id: Faker::Internet.uuid) }
+      before { office.destroy }
 
       it { expect(response).to have_http_status(:not_found) }
       it { expect(response).to have_content_type(:html) }

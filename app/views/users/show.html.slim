@@ -5,13 +5,13 @@
     - breadcrumbs.with_path @user.name
 
     - breadcrumbs.with_action "Modifier", edit_user_path(@user), icon: "pencil-square", modal: true
-    - breadcrumbs.with_action "Supprimer", remove_user_path(@user), icon: "trash", modal: true
+    - breadcrumbs.with_action "Supprimer", remove_user_path(@user), icon: "trash", modal: true, destructive: "discrete"
 
   h2.subheader
     = svg_icon("identification", "Nouvelle section")
     | Description
 
-  .card.mb-6
+  .card.mb-12
     dl.description-list
       .description-list__row
         dt Organisation
@@ -62,7 +62,7 @@
     = svg_icon("rectangle-stack", "Nouvelle section")
     | Informations de connexion
 
-  .card.mb-6
+  .card.mb-12
     dl.description-list
       .description-list__row
         dt Date de création du compte

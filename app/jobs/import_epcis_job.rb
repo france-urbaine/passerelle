@@ -4,12 +4,12 @@
 #   https://www.insee.fr/fr/information/2510634
 #
 # You can launch the job using :
-#   ImportEpcisJob.perform_now("https://www.insee.fr/fr/statistiques/fichier/2510634/Intercommunalite_Metropole_au_01-01-2022.zip")
+#   ImportEPCIsJob.perform_now("https://www.insee.fr/fr/statistiques/fichier/2510634/Intercommunalite_Metropole_au_01-01-2022.zip")
 #
 # This job is called when seeding Data :
 #   rails db:seed
 #
-class ImportEpcisJob < ApplicationJob
+class ImportEPCIsJob < ApplicationJob
   queue_as :default
 
   def perform(url)
@@ -22,7 +22,7 @@ class ImportEpcisJob < ApplicationJob
 
     flush
 
-    ImportEpcisDepartementsJob.perform_later(url)
+    ImportEPCIsDepartementsJob.perform_later(url)
   end
 
   def enqueue_row(row)

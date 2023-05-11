@@ -39,18 +39,20 @@ RSpec.describe "Collectivities::UsersController#undiscard_all" do
       end
     end
 
+    context "with ids from users of any other organizations" do
+      let(:users) { create_list(:user, 3, :discarded) }
+
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/collectivites/#{collectivity.id}") }
+      it { expect(flash).to have_flash_notice }
+      it { expect { request }.not_to change(User.discarded, :count) }
+    end
+
     context "with `all` ids", params: { ids: "all" } do
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/collectivites/#{collectivity.id}") }
       it { expect(flash).to have_flash_notice }
       it { expect { request }.to change(User.discarded, :count).by(-3) }
-    end
-
-    context "with empty ids", params: { ids: [] } do
-      it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/collectivites/#{collectivity.id}") }
-      it { expect(flash).to have_flash_notice }
-      it { expect { request }.not_to change(User.discarded, :count) }
     end
 
     context "with unknown ids", params: { ids: %w[1 2] } do
@@ -67,17 +69,8 @@ RSpec.describe "Collectivities::UsersController#undiscard_all" do
       it { expect { request }.not_to change(User.discarded, :count) }
     end
 
-    context "with user ids from other organizations" do
-      let(:users) { create_list(:user, 3, :discarded) }
-
-      it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/collectivites/#{collectivity.id}") }
-      it { expect(flash).to have_flash_notice }
-      it { expect { request }.not_to change(User.discarded, :count) }
-    end
-
     context "when collectivity is discarded" do
-      let(:collectivity) { create(:collectivity, :discarded) }
+      before { collectivity.discard }
 
       it { expect(response).to have_http_status(:gone) }
       it { expect(response).to have_content_type(:html) }
@@ -85,20 +78,30 @@ RSpec.describe "Collectivities::UsersController#undiscard_all" do
     end
 
     context "when collectivity is missing" do
-      let(:collectivity) { Collectivity.new(id: Faker::Internet.uuid) }
+      before { collectivity.destroy }
 
       it { expect(response).to have_http_status(:not_found) }
       it { expect(response).to have_content_type(:html) }
       it { expect(response).to have_html_body }
     end
 
-    context "with referrer header", headers: { "Referer" => "http://www.example.com/parent/path" } do
+    context "when publisher is discarded" do
+      before { collectivity.publisher.discard }
+
+      it { expect(response).to have_http_status(:gone) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
+    end
+
+    context "with referrer header", headers: { "Referer" => "http://www.example.com/other/path" } do
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("http://www.example.com/parent/path") }
+      it { expect(response).to redirect_to("http://www.example.com/other/path") }
       it { expect(flash).to have_flash_notice }
     end
 
-    context "with redirect parameter", params: { redirect: "/other/path" } do
+    context "with redirect parameter" do
+      let(:params) { super().merge(redirect: "/other/path") }
+
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/other/path") }
       it { expect(flash).to have_flash_notice }

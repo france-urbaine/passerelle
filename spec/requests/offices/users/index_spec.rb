@@ -27,6 +27,30 @@ RSpec.describe "Offices::UsersController#index" do
   context "when requesting HTML" do
     it { expect(response).to have_http_status(:see_other) }
     it { expect(response).to redirect_to("/guichets/#{office.id}") }
+
+    context "when the office is discarded" do
+      before { office.discard }
+
+      it { expect(response).to have_http_status(:gone) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
+    end
+
+    context "when the office is missing" do
+      before { office.destroy }
+
+      it { expect(response).to have_http_status(:not_found) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
+    end
+
+    context "when the DDFIP is discarded" do
+      before { office.ddfip.discard }
+
+      it { expect(response).to have_http_status(:gone) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
+    end
   end
 
   context "when requesting Turbo-Frame", headers: { "Turbo-Frame" => "datatable-users" }, xhr: true do
@@ -36,37 +60,14 @@ RSpec.describe "Offices::UsersController#index" do
 
     it "returns only kept members of the offices" do
       expect(response.parsed_body)
-        .to  not_include(users[0].name)
-        .and include(users[1].name)
-        .and not_include(users[2].name)
-        .and not_include(users[3].name)
-    end
-
-    context "with parameters to filter collectivities", params: { search: "C", order: "-siren", page: 2, items: 5 } do
-      it { expect(response).to have_http_status(:success) }
-      it { expect(response).to have_content_type(:html) }
-    end
-
-    context "with overflowing pages", params: { page: 999_999 } do
-      it { expect(response).to have_http_status(:success) }
-      it { expect(response).to have_content_type(:html) }
-    end
-
-    context "with unknown order parameter", params: { order: "unknown" } do
-      it { expect(response).to have_http_status(:success) }
-      it { expect(response).to have_content_type(:html) }
-    end
-
-    context "when the DDFIP is discarded" do
-      let(:ddfip) { create(:ddfip, :discarded) }
-
-      it { expect(response).to have_http_status(:gone) }
-      it { expect(response).to have_content_type(:html) }
-      it { expect(response).to have_html_body }
+        .to  not_include(CGI.escape_html(users[0].name))
+        .and include(CGI.escape_html(users[1].name))
+        .and not_include(CGI.escape_html(users[2].name))
+        .and not_include(CGI.escape_html(users[3].name))
     end
 
     context "when the office is discarded" do
-      let(:office) { create(:office, :discarded, ddfip: ddfip) }
+      before { office.discard }
 
       it { expect(response).to have_http_status(:gone) }
       it { expect(response).to have_content_type(:html) }
@@ -74,10 +75,17 @@ RSpec.describe "Offices::UsersController#index" do
     end
 
     context "when the office is missing" do
-      let(:office) { Office.new(id: Faker::Internet.uuid) }
-      let(:users)  { [] }
+      before { office.destroy }
 
       it { expect(response).to have_http_status(:not_found) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
+    end
+
+    context "when the DDFIP is discarded" do
+      before { office.ddfip.discard }
+
+      it { expect(response).to have_http_status(:gone) }
       it { expect(response).to have_content_type(:html) }
       it { expect(response).to have_html_body }
     end

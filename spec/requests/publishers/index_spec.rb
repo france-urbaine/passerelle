@@ -12,33 +12,36 @@ RSpec.describe "PublishersController#index" do
   let(:params)  { |e| e.metadata[:params] }
   let(:xhr)     { |e| e.metadata[:xhr] }
 
-  before { create_list(:publisher, 3) }
+  let!(:publishers) do
+    create_list(:publisher, 3) +
+      create_list(:publisher, 2, :discarded)
+  end
 
   context "when requesting HTML" do
     it { expect(response).to have_http_status(:success) }
     it { expect(response).to have_content_type(:html) }
     it { expect(response).to have_html_body }
 
-    context "with autocompletion", headers: { "Accept-Variant" => "autocomplete" }, params: { q: "X" }, xhr: true do
-      it { expect(response).to have_http_status(:not_implemented) }
-      it { expect(response).to have_content_type(:html) }
-      it { expect(response).to have_html_body }
+    it "returns only kept publishers" do
+      aggregate_failures do
+        expect(response.parsed_body).to include(CGI.escape_html(publishers[0].name))
+        expect(response.parsed_body).to include(CGI.escape_html(publishers[1].name))
+        expect(response.parsed_body).to include(CGI.escape_html(publishers[2].name))
+        expect(response.parsed_body).to not_include(CGI.escape_html(publishers[3].name))
+      end
     end
+  end
 
-    context "with parameters to filter collectivities", params: { search: "C", order: "-siren", page: 2, items: 5 } do
-      it { expect(response).to have_http_status(:success) }
-      it { expect(response).to have_content_type(:html) }
-    end
+  context "when requesting Turbo-Frame", headers: { "Turbo-Frame" => "content" }, xhr: true do
+    it { expect(response).to have_http_status(:success) }
+    it { expect(response).to have_content_type(:html) }
+    it { expect(response).to have_html_body.with_turbo_frame("content") }
+  end
 
-    context "with overflowing pages", params: { page: 999_999 } do
-      it { expect(response).to have_http_status(:success) }
-      it { expect(response).to have_content_type(:html) }
-    end
-
-    context "with unknown order parameter", params: { order: "unknown" } do
-      it { expect(response).to have_http_status(:success) }
-      it { expect(response).to have_content_type(:html) }
-    end
+  context "when requesting autocompletion", headers: { "Accept-Variant" => "autocomplete" }, xhr: true do
+    it { expect(response).to have_http_status(:not_implemented) }
+    it { expect(response).to have_content_type(:html) }
+    it { expect(response).to have_html_body }
   end
 
   context "when requesting JSON", as: :json do

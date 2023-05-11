@@ -23,26 +23,12 @@ RSpec.describe "UsersController#index" do
     it { expect(response).to have_html_body }
 
     it "returns only kept users" do
-      expect(response.parsed_body)
-        .to  include(users[0].name)
-        .and include(users[1].name)
-        .and include(users[2].name)
-        .and not_include(users[3].name)
-    end
-
-    context "with parameters to filter collectivities", params: { search: "C", order: "-name", page: 2, items: 5 } do
-      it { expect(response).to have_http_status(:success) }
-      it { expect(response).to have_content_type(:html) }
-    end
-
-    context "with overflowing pages", params: { page: 999_999 } do
-      it { expect(response).to have_http_status(:success) }
-      it { expect(response).to have_content_type(:html) }
-    end
-
-    context "with unknown order parameter", params: { order: "unknown" } do
-      it { expect(response).to have_http_status(:success) }
-      it { expect(response).to have_content_type(:html) }
+      aggregate_failures do
+        expect(response.parsed_body).to include(CGI.escape_html(users[0].name))
+        expect(response.parsed_body).to include(CGI.escape_html(users[1].name))
+        expect(response.parsed_body).to include(CGI.escape_html(users[2].name))
+        expect(response.parsed_body).to not_include(CGI.escape_html(users[3].name))
+      end
     end
   end
 

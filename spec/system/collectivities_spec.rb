@@ -3,51 +3,74 @@
 require "system_helper"
 
 RSpec.describe "Collectivities" do
-  fixtures :regions, :departements, :epcis
+  fixtures :regions, :departements, :epcis, :communes
   fixtures :collectivities, :publishers, :ddfips
 
-  let(:pays_basque) { collectivities(:pays_basque) }
-  let(:publisher)   { publishers(:fiscalite_territoire) }
-  let(:territoire)  { epcis(:pays_basque) }
-  let(:ddfip)       { ddfips(:pyrenees_atlantiques) }
+  let(:pays_basque)   { collectivities(:pays_basque) }
+  let(:publisher)     { publishers(:fiscalite_territoire) }
+  let(:epci)          { epcis(:pays_basque) }
 
-  it "visits index & show pages" do
+  it "visits index & collectivity pages" do
     visit collectivities_path
 
+    # A table of all collectivities should be present
+    #
     expect(page).to have_selector("h1", text: "Collectivités")
     expect(page).to have_link("CA du Pays Basque")
     expect(page).to have_link("Métropole Européenne de Lille")
+    expect(page).to have_link("Commune de Paris")
 
     click_on "CA du Pays Basque"
 
+    # The browser should visit the collectivity page
+    #
     expect(page).to have_current_path(collectivity_path(pays_basque))
     expect(page).to have_selector("h1", text: "CA du Pays Basque")
+
+    go_back
+
+    # The browser should redirect back to the index page
+    #
+    expect(page).to have_current_path(collectivities_path)
+    expect(page).to have_selector("h1", text: "Collectivités")
   end
 
-  it "visits links from the show page & comes back" do
+  it "visits links on a collectivity page & comes back" do
     visit collectivity_path(pays_basque)
 
+    # On the collectivity page, we expect:
+    # - a link to the publisher
+    # - a link to the EPCI
+    #
     expect(page).to have_selector("h1", text: "CA du Pays Basque")
     expect(page).to have_link("Fiscalité & Territoire")
     expect(page).to have_link("CA du Pays Basque")
 
     click_on "Fiscalité & Territoire"
 
+    # The browser should visit the publisher page
+    #
     expect(page).to have_current_path(publisher_path(publisher))
     expect(page).to have_selector("h1", text: "Fiscalité & Territoire")
 
     go_back
 
+    # The browser should redirect back to the collectivity page
+    #
     expect(page).to have_current_path(collectivity_path(pays_basque))
     expect(page).to have_selector("h1", text: "CA du Pays Basque")
 
     click_on "CA du Pays Basque"
 
-    expect(page).to have_current_path(epci_path(territoire))
+    # The browser should visit the EPCI page
+    #
+    expect(page).to have_current_path(epci_path(epci))
     expect(page).to have_selector("h1", text: "CA du Pays Basque")
 
     go_back
 
+    # The browser should redirect back to the collectivity page
+    #
     expect(page).to have_current_path(collectivity_path(pays_basque))
     expect(page).to have_selector("h1", text: "CA du Pays Basque")
   end
@@ -57,24 +80,22 @@ RSpec.describe "Collectivities" do
 
     # A button should be present to add a new collectivity
     #
-    expect(page).to have_link("Ajouter une collectivité", class: "button")
-
     click_on "Ajouter une collectivité"
 
-    # A dialog box should appears with a form to fill
+    # A dialog box should appear with a form to fill
     #
-    expect(page).to have_selector("[role=dialog]", text: "Création d'une nouvelle collectivité")
+    within "[role=dialog]", text: "Création d'une nouvelle collectivité" do |dialog|
+      expect(dialog).to have_field("Territoire")
+      expect(dialog).to have_field("Éditeur")
+      expect(dialog).to have_field("Nom de la collectivité")
+      expect(dialog).to have_field("Numéro SIREN de la collectivité")
+      expect(dialog).to have_field("Prénom du contact")
+      expect(dialog).to have_field("Nom du contact")
+      expect(dialog).to have_field("Adresse mail de contact")
+      expect(dialog).to have_field("Numéro de téléphone")
 
-    within "[role=dialog]" do |dialog|
       fill_in "Territoire", with: "Aix-Marseille"
-
-      find("[role=option]", text: "Métropole d'Aix-Marseille-Provence").click
-
-      expect(dialog).to have_field("Territoire",                  with: "Métropole d'Aix-Marseille-Provence")
-      expect(dialog).to have_field("collectivity_territory_data", type: :hidden, with: {
-        type: "EPCI",
-        id:   epcis(:metropole_aix_marseille).id
-      }.to_json)
+      select_option "Métropole d'Aix-Marseille-Provence", from: "Territoire"
 
       select "Fiscalité & Territoire", from: "Éditeur"
 
@@ -84,16 +105,16 @@ RSpec.describe "Collectivities" do
       click_on "Enregistrer"
     end
 
-    # The browser should stay on index page
-    # The new collectivity should appears
+    # The browser should stay on the index page
+    # The new collectivity should appear
     #
+    expect(page).to have_current_path(collectivities_path)
+    expect(page).to have_selector("h1", text: "Collectivités")
+    expect(page).to have_selector(:table_row, "Collectivité" => "Métropole d'Aix-Marseille-Provence")
+
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).to     have_current_path(collectivities_path)
-    expect(page).to     have_selector("h1", text: "Collectivités")
-    expect(page).to     have_selector("tr", text: "Métropole d'Aix-Marseille-Provence")
-
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=alert]", text: "Une nouvelle collectivité a été ajoutée avec succés.")
   end
@@ -103,268 +124,399 @@ RSpec.describe "Collectivities" do
 
     # A button should be present to edit the collectivity
     #
-    within "tr", text: "CA du Pays Basque" do |row|
-      expect(row).to have_link("Modifier cette collectivité", class: "icon-button")
-
+    within :table_row, { "Collectivité" => "CA du Pays Basque" } do
       click_on "Modifier cette collectivité"
     end
 
-    # A dialog box should appears with a form
+    # A dialog box should appear with a form
     # The form should be filled with collectivity data
     #
-    expect(page).to have_selector("[role=dialog]", text: "Modification de la collectivité")
-
-    within "[role=dialog]" do |dialog|
-      expect(dialog).to have_field("Territoire",                  with: "CA du Pays Basque")
-      expect(dialog).to have_field("collectivity_territory_data", type: :hidden, with: { type: "EPCI", id: epcis(:pays_basque).id }.to_json)
-
-      expect(dialog).to have_select("Éditeur", selected: "Fiscalité & Territoire")
+    within "[role=dialog]", text: "Modification de la collectivité" do |dialog|
+      expect(dialog).to have_field("Territoire",                      with: "CA du Pays Basque")
+      expect(dialog).to have_select("Éditeur",                        selected: "Fiscalité & Territoire")
       expect(dialog).to have_field("Nom de la collectivité",          with: "CA du Pays Basque")
       expect(dialog).to have_field("Numéro SIREN de la collectivité", with: "200067106")
 
-      fill_in  "Nom de la collectivité", with: "Agglomération du Pays Basque"
+      fill_in "Nom de la collectivité", with: "Agglomération du Pays Basque"
       click_on "Enregistrer"
     end
 
-    # The browser should stay on index page
+    # The browser should stay on the index page
     # The collectivity should have changed its name
     #
+    expect(page).to  have_current_path(collectivities_path)
+    expect(page).to  have_selector("h1", text: "Collectivités")
+    expect(page).to have_selector(:table_row, "Collectivité" => "Agglomération du Pays Basque")
+
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).to     have_current_path(collectivities_path)
-    expect(page).to     have_selector("h1", text: "Collectivités")
-    expect(page).to     have_selector("tr", text: "Agglomération du Pays Basque")
-
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
   end
 
-  it "updates a collectivity from the show page" do
+  it "updates a collectivity from the collectivity page" do
     visit collectivity_path(pays_basque)
 
     # A button should be present to edit the collectivity
     #
-    within ".header-bar" do |header|
-      expect(header).to have_selector("h1", text: "CA du Pays Basque")
-      expect(header).to have_link("Modifier", class: "button")
-
+    within ".header-bar", text: "CA du Pays Basque" do
       click_on "Modifier"
     end
 
-    # A dialog box should appears with a form
+    # A dialog box should appear with a form
     # The form should be filled with collectivity data
     #
-    expect(page).to have_selector("[role=dialog]", text: "Modification de la collectivité")
-
-    within "[role=dialog]" do |dialog|
-      expect(dialog).to have_field("Territoire",                  with: "CA du Pays Basque")
-      expect(dialog).to have_field("collectivity_territory_data", type: :hidden, with: { type: "EPCI", id: epcis(:pays_basque).id }.to_json)
-
-      expect(dialog).to have_select("Éditeur", selected: "Fiscalité & Territoire")
+    within "[role=dialog]", text: "Modification de la collectivité" do |dialog|
+      expect(dialog).to have_field("Territoire",                      with: "CA du Pays Basque")
+      expect(dialog).to have_select("Éditeur",                        selected: "Fiscalité & Territoire")
       expect(dialog).to have_field("Nom de la collectivité",          with: "CA du Pays Basque")
       expect(dialog).to have_field("Numéro SIREN de la collectivité", with: "200067106")
 
-      fill_in  "Nom de la collectivité", with: "Agglomération du Pays Basque"
+      fill_in "Nom de la collectivité", with: "Agglomération du Pays Basque"
       click_on "Enregistrer"
     end
 
-    # The browser should stay on show page
+    # The browser should stay on the collectivity page
     # The collectivity should have changed its name
     #
+    expect(page).to have_current_path(collectivity_path(pays_basque))
+    expect(page).to have_selector("h1", text: "Agglomération du Pays Basque")
+
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).to     have_current_path(collectivity_path(pays_basque))
-    expect(page).to     have_selector("h1", text: "Agglomération du Pays Basque")
-
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
   end
 
-  it "removes a collectivity from the index page and then rollback" do
+  it "discards a collectivity from the index page & rollbacks" do
     visit collectivities_path
 
-    # A button should be present to remove this collectivity
-    #
-    within "tr", text: "CA du Pays Basque" do |row|
-      expect(row).to have_link("Supprimer cette collectivité", class: "icon-button")
+    expect(page).to have_text("7 collectivités | Page 1 sur 1")
 
+    # A button should be present to remove the collectivity
+    #
+    within :table_row, { "Collectivité" => "CA du Pays Basque" } do
       click_on "Supprimer cette collectivité"
     end
 
-    # A confirmation dialog should appears
+    # A confirmation dialog should appear
     #
-    expect(page).to have_selector("[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer cette collectivité ?")
-
-    within "[role=dialog]" do |dialog|
-      expect(dialog).to have_button("Continuer")
-
+    within "[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer cette collectivité ?" do
       click_on "Continuer"
     end
 
-    # The browser should stay on index page
+    # The browser should stay on the index page
     # The collectivity should not appears anymore
-    #
-    # The dialog should be closed
-    # A notification should be displayed
     #
     expect(page).to     have_current_path(collectivities_path)
     expect(page).to     have_selector("h1", text: "Collectivités")
-    expect(page).not_to have_selector("tr", text: "CA du Pays Basque")
+    expect(page).to     have_text("6 collectivités | Page 1 sur 1")
+    expect(page).not_to have_selector(:table_row, "Collectivité" => "CA du Pays Basque")
 
+    # The dialog should be closed
+    # A notification should be displayed
+    #
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=alert]", text: "La collectivité a été supprimée.")
 
     # The notification should include a button to cancel the last action
     #
-    within "[role=alert]", text: "La collectivité a été supprimée." do |alert|
-      expect(alert).to have_button("Annuler")
-
+    within "[role=alert]", text: "La collectivité a été supprimée." do
       click_on "Annuler"
     end
 
-    # The browser should stay on index page
+    # The browser should stay on the index page
     # The collectivity should be back again
     #
+    expect(page).to have_current_path(collectivities_path)
+    expect(page).to have_selector("h1", text: "Collectivités")
+    expect(page).to have_text("7 collectivités | Page 1 sur 1")
+    expect(page).to have_selector(:table_row, "Collectivité" => "CA du Pays Basque")
+
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).to     have_current_path(collectivities_path)
-    expect(page).to     have_selector("h1", text: "Collectivités")
-    expect(page).to     have_selector("tr", text: "CA du Pays Basque")
-
     expect(page).not_to have_selector("[role=alert]", text: "La collectivité a été supprimée.")
     expect(page).to     have_selector("[role=alert]", text: "La suppression de la collectivité a été annulée.")
   end
 
-  it "removes a collectivity from the show page and then rollback" do
+  it "discards a collectivity from the collectivity page & rollbacks" do
     visit collectivity_path(pays_basque)
 
-    # A button should be present to remove this collectivity
+    # A button should be present to remove the collectivity
     #
-    within ".header-bar" do |header|
-      expect(header).to have_selector("h1", text: "CA du Pays Basque")
-      expect(header).to have_link("Supprimer", class: "button")
-
+    within ".header-bar", text: "CA du Pays Basque" do
       click_on "Supprimer"
     end
 
-    # A confirmation dialog should appears
+    # A confirmation dialog should appear
     #
-    expect(page).to have_selector("[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer cette collectivité ?")
-
-    within "[role=dialog]" do |dialog|
-      expect(dialog).to have_button("Continuer")
-
+    within "[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer cette collectivité ?" do
       click_on "Continuer"
     end
 
     # The browser should redirect to the index page
     # The collectivity should not appears anymore
     #
+    expect(page).to     have_current_path(collectivities_path)
+    expect(page).to     have_selector("h1", text: "Collectivités")
+    expect(page).to     have_text("6 collectivités | Page 1 sur 1")
+    expect(page).not_to have_selector(:table_row, "Collectivité" => "CA du Pays Basque")
+
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).to     have_current_path(collectivities_path)
-    expect(page).to     have_selector("h1", text: "Collectivités")
-    expect(page).not_to have_selector("tr", text: "CA du Pays Basque")
-
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=alert]", text: "La collectivité a été supprimée.")
 
     # The notification should include a button to cancel the last action
     #
-    within "[role=alert]", text: "La collectivité a été supprimée." do |alert|
-      expect(alert).to have_button("Annuler")
-
+    within "[role=alert]", text: "La collectivité a été supprimée." do
       click_on "Annuler"
     end
 
-    # The browser should stay on index page
+    # The browser should stay on the index page
     # The collectivity should be back again
     #
+    expect(page).to have_current_path(collectivities_path)
+    expect(page).to have_selector("h1", text: "Collectivités")
+    expect(page).to have_text("7 collectivités | Page 1 sur 1")
+    expect(page).to have_selector(:table_row, "Collectivité" => "CA du Pays Basque")
+
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).to     have_current_path(collectivities_path)
-    expect(page).to     have_selector("h1", text: "Collectivités")
-    expect(page).to     have_selector("tr", text: "CA du Pays Basque")
-
     expect(page).not_to have_selector("[role=alert]", text: "La collectivité a été supprimée.")
     expect(page).to     have_selector("[role=alert]", text: "La suppression de la collectivité a été annulée.")
   end
 
-  it "removes a selection of collectivities from the index page and then rollback" do
+  it "selects and discards one collectivity from the index page & rollbacks" do
     visit collectivities_path
 
-    # Some checkboxes should be present to select collectivities
-    #
-    within "tr", text: "CA du Pays Basque" do
-      find("input[type=checkbox]").check
-    end
+    expect(page).to have_text("7 collectivités | Page 1 sur 1")
 
-    within "tr", text: "Métropole Européenne de Lille" do
-      find("input[type=checkbox]").check
+    # Checkboxes should be present to select collectivities
+    #
+    within :table_row, { "Collectivité" => "CA du Pays Basque" } do
+      check
     end
 
     # A message should diplay the number of selected collectivities
     # with a button to remove them
     #
-    within "#datatable-collectivities-selection-bar" do |header|
-      expect(header).to have_text("2 collectivités sélectionnées")
-      expect(header).to have_link("Supprimer la sélection", class: "button")
-
+    within ".header-bar--selection", text: "1 collectivité sélectionnée" do
       click_on "Supprimer la sélection"
     end
 
-    # A confirmation dialog should appears
+    # A confirmation dialog should appear
     #
-    expect(page).to have_selector("[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer les 2 collectivités sélectionnées ?")
-
-    within "[role=dialog]" do |dialog|
-      expect(dialog).to have_button("Continuer")
-
+    within "[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer la collectivité sélectionnée ?" do
       click_on "Continuer"
     end
 
     # The browser should stay on index page
     # The selected collectivities should not appears anymore
-    #
-    # The selection message should have been closed
-    # The dialog should be closed too
-    # A notification should be displayed
+    # Other collectivities should remain
     #
     expect(page).to     have_current_path(collectivities_path)
     expect(page).to     have_selector("h1", text: "Collectivités")
-    expect(page).not_to have_selector("tr", text: "CA du Pays Basque")
-    expect(page).not_to have_selector("tr", text: "Métropole Européenne de Lille")
+    expect(page).to     have_text("6 collectivités | Page 1 sur 1")
+    expect(page).not_to have_selector(:table_row, "Collectivité" => "CA du Pays Basque")
+    expect(page).to     have_selector(:table_row, "Collectivité" => "Métropole Européenne de Lille")
+    expect(page).to     have_selector(:table_row, "Collectivité" => "Commune de Paris")
 
-    expect(page).not_to have_selector("#datatable-collectivities-selection-bar", text: "2 collectivités sélectionnées")
+    # The selection message should not appears anymore
+    # The dialog should be closed
+    # A notification should be displayed
+    #
+    expect(page).not_to have_selector(".header-bar--selection")
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=alert]", text: "Les collectivités sélectionnées ont été supprimées.")
 
     # The notification should include a button to cancel the last action
     #
-    within "[role=alert]", text: "Les collectivités sélectionnées ont été supprimées." do |alert|
-      expect(alert).to have_button("Annuler")
-
+    within "[role=alert]", text: "Les collectivités sélectionnées ont été supprimées." do
       click_on "Annuler"
     end
 
     # The browser should stay on index page
     # The remove collectivities should be back again
     #
+    expect(page).to have_current_path(collectivities_path)
+    expect(page).to have_selector("h1", text: "Collectivités")
+    expect(page).to have_text("7 collectivités | Page 1 sur 1")
+    expect(page).to have_selector(:table_row, "Collectivité" => "CA du Pays Basque")
+
     # The selection message should not appears again
     # The previous notification should be closed
     # A new notification should be displayed
     #
+    expect(page).not_to have_selector(".header-bar--selection")
+    expect(page).not_to have_selector("[role=alert]", text: "Les collectivités sélectionnées ont été supprimées.")
+    expect(page).to     have_selector("[role=alert]", text: "La suppression des collectivités sélectionnées a été annulée.")
+  end
+
+  it "selects and discards all collectivities from the current page on index page & rollbacks" do
+    # Create a bunch of collectivities to have several pages
+    # Create discarded collectivities to verify they are not rollbacked
+    #
+    create_list(:collectivity, 10)
+    create_list(:collectivity, 5, :discarded)
+
+    visit collectivities_path
+
+    expect(page).to have_text("7 collectivités | Page 1 sur 1")
+
+    # Paginate collectivities by 10
+    # More than one page should exist
+    #
+    click_on "Options d'affichage"
+    click_on "Afficher 50 lignes par page"
+    click_on "Afficher 10 lignes"
+
+    expect(page).to have_text("7 collectivités | Page 1 sur 2")
+
+    # Checkboxes should be present to select all collectivities
+    #
+    within :table do
+      check nil, match: :first
+    end
+
+    # A message should diplay the number of selected collectivities
+    # with a button to remove them
+    #
+    within ".header-bar--selection", text: "10 collectivités sélectionnées" do
+      click_on "Supprimer la sélection"
+    end
+
+    # A confirmation dialog should appear
+    #
+    within "[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer les 10 collectivités sélectionnées ?" do
+      click_on "Continuer"
+    end
+
+    # The browser should stay on index page
+    # The selected collectivities should have been removed
+    #
     expect(page).to     have_current_path(collectivities_path)
     expect(page).to     have_selector("h1", text: "Collectivités")
-    expect(page).to     have_selector("tr", text: "CA du Pays Basque")
-    expect(page).to     have_selector("tr", text: "Métropole Européenne de Lille")
+    expect(page).to     have_text("7 collectivités | Page 1 sur 1")
+    expect(page).not_to have_selector(:table_row, "Collectivité" => "CA du Pays Basque")
+    expect(page).not_to have_selector(:table_row, "Collectivité" => "Métropole Européenne de Lille")
+    expect(page).not_to have_selector(:table_row, "Collectivité" => "Commune de Paris")
 
-    expect(page).not_to have_selector("#datatable-collectivities-selection-bar", text: "2 collectivités sélectionnées")
+    # The dialog should be closed
+    # A notification should be displayed
+    #
+    expect(page).not_to have_selector(".header-bar--selection")
+    expect(page).not_to have_selector("[role=dialog]")
+    expect(page).to     have_selector("[role=alert]", text: "Les collectivités sélectionnées ont été supprimées.")
+
+    # The notification should include a button to cancel the last action
+    #
+    within "[role=alert]", text: "Les collectivités sélectionnées ont été supprimées." do
+      click_on "Annuler"
+    end
+
+    # The browser should stay on index page
+    # All collectivities should be back again
+    #
+    expect(page).to have_current_path(collectivities_path)
+    expect(page).to have_selector("h1", text: "Collectivités")
+    expect(page).to have_text("7 collectivités | Page 1 sur 2")
+    expect(page).to have_selector(:table_row, "Collectivité" => "CA du Pays Basque")
+    expect(page).to have_selector(:table_row, "Collectivité" => "Métropole Européenne de Lille")
+    expect(page).to have_selector(:table_row, "Collectivité" => "Commune de Paris")
+
+    # The selection message should not appears again
+    # The previous notification should be closed
+    # A new notification should be displayed
+    #
+    expect(page).not_to have_selector(".header-bar--selection")
+    expect(page).not_to have_selector("[role=alert]", text: "Les collectivités sélectionnées ont été supprimées.")
+    expect(page).to     have_selector("[role=alert]", text: "La suppression des collectivités sélectionnées a été annulée.")
+  end
+
+  it "selects and discards all collectivities through several pages on index page & rollbacks" do
+    # Create a bunch of collectivities to have several pages
+    # TODO: Create discarded collectivities to verify they are not rollbacked
+    #
+    create_list(:collectivity, 10)
+
+    visit collectivities_path
+
+    expect(page).to have_text("17 collectivités | Page 1 sur 1")
+
+    # Paginate collectivities by 10
+    # More than one page should exist
+    #
+    click_on "Options d'affichage"
+    click_on "Afficher 50 lignes par page"
+    click_on "Afficher 10 lignes"
+
+    expect(page).to have_text("17 collectivités | Page 1 sur 2")
+
+    # Checkboxes should be present to select all collectivities
+    #
+    within :table do
+      check nil, match: :first
+    end
+
+    # A message should diplay the number of selected collectivities
+    # A link to select any collectivities from any page should be present
+    # A link to remove all of them should be present
+    #
+    within ".header-bar--selection", text: "10 collectivités sélectionnées" do
+      click_on "Sélectionner les 17 collectivités des 2 pages"
+    end
+
+    within ".header-bar--selection", text: "17 collectivités sélectionnées" do
+      click_on "Supprimer la sélection"
+    end
+
+    # A confirmation dialog should appear
+    #
+    within "[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer les 17 collectivités sélectionnées ?" do
+      click_on "Continuer"
+    end
+
+    # The browser should stay on index page
+    # No collectivities should appear anymore
+    #
+    expect(page).to have_current_path(collectivities_path)
+    expect(page).to have_selector("h1", text: "Collectivités")
+    expect(page).to have_text("Aucune collectivité disponible.")
+
+    # The dialog should be closed
+    # A notification should be displayed
+    #
+    expect(page).not_to have_selector(".header-bar--selection")
+    expect(page).not_to have_selector("[role=dialog]")
+    expect(page).to     have_selector("[role=alert]", text: "Les collectivités sélectionnées ont été supprimées.")
+
+    # The notification should include a button to cancel the last action
+    #
+    within "[role=alert]", text: "Les collectivités sélectionnées ont été supprimées." do
+      click_on "Annuler"
+    end
+
+    # The browser should stay on index page
+    # All collectivities should be back again
+    #
+    expect(page).to have_current_path(collectivities_path)
+    expect(page).to have_selector("h1", text: "Collectivités")
+    expect(page).to have_text("7 collectivités | Page 1 sur 2")
+    expect(page).to have_selector(:table_row, "Collectivité" => "CA du Pays Basque")
+    expect(page).to have_selector(:table_row, "Collectivité" => "Métropole Européenne de Lille")
+    expect(page).to have_selector(:table_row, "Collectivité" => "Commune de Paris")
+
+    # The selection message should not appears again
+    # The previous notification should be closed
+    # A new notification should be displayed
+    #
+    expect(page).not_to have_selector(".header-bar--selection")
     expect(page).not_to have_selector("[role=alert]", text: "Les collectivités sélectionnées ont été supprimées.")
     expect(page).to     have_selector("[role=alert]", text: "La suppression des collectivités sélectionnées a été annulée.")
   end

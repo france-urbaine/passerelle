@@ -1,2 +1,44 @@
 = template_frame_component do
-  = render "index", offices: @offices, pagy: @pagy
+  = breadcrumbs_component do |breadcrumbs|
+    - breadcrumbs.with_path "Organisations"
+    - breadcrumbs.with_path "Guichets"
+
+    - breadcrumbs.with_action "Ajouter un guichet", new_office_path, icon: "plus", modal: true, primary: true
+
+  = datatable_component(@offices.preload(:ddfip)) do |datatable|
+    - datatable.with_search
+    - datatable.with_pagination(@pagy, options: !@parent)
+    - datatable.with_selection do |selection|
+      - selection.with_action "Supprimer la sélection", url_for([:remove_all, @parent, :offices]), modal: true
+
+    - datatable.with_column(:name,     sort: true) { "Guichet" }
+    - datatable.with_column(:ddfip,    sort: true) { "DDFIP" } unless @parent.is_a?(DDFIP)
+    - datatable.with_column(:action,   sort: true) { "Action" }
+    - datatable.with_column(:users,    numeric: true) { "Utilisateurs" }
+    - datatable.with_column(:communes, numeric: true) { "Communes" }
+
+    - datatable.with_empty_message do
+      | Aucun guichet disponible.
+
+    - datatable.each_row do |row, office|
+      - row.with_checkbox "Sélectionner ce guichet", described_by: :name
+      - row.with_action "Modifier ce guichet", edit_office_path(office), icon: "pencil-square", modal: true
+      - row.with_action "Supprimer ce guichet", remove_office_path(office), icon: "trash", modal: true
+
+      - row.with_column(:name) do
+        = link_to office_path(office, current_index_back_params), data: { turbo_frame: "_top" } do
+          = office.name
+
+      - row.with_column(:ddfip) do
+        = link_to ddfip_path(office.ddfip), data: { turbo_frame: "_top" } do
+          = office.ddfip.name
+
+      - row.with_column(:action) do
+        = translate(office.action, scope: "enum.action")
+
+      - row.with_column(:users) do
+        = number_with_delimiter(office.users_count) if office.users_count.positive?
+
+      - row.with_column(:communes) do
+        = number_with_delimiter(office.communes_count) if office.communes_count.positive?
+

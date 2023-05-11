@@ -6,7 +6,8 @@
       - else
         | Suppression de la collectivité sélectionnée
 
-    - modal.with_form(url: collectivities_path, method: :delete) do
+    - modal.with_form(url: url_for([@parent, :collectivities]), method: :delete) do
+      = hidden_field_tag :redirect, @background_url if @background_url
       = hidden_param_input(:ids)
       = hidden_param_input(:search)
       = hidden_param_input(:order)

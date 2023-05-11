@@ -4,11 +4,12 @@ require "rails_helper"
 
 RSpec.describe "CollectivitiesController#update" do
   subject(:request) do
-    patch "/collectivites/#{collectivity.id}", as:, params:
+    patch "/collectivites/#{collectivity.id}", as:, headers:, params:
   end
 
-  let(:as)     { |e| e.metadata[:as] }
-  let(:params) { { collectivity: updated_attributes } }
+  let(:as)      { |e| e.metadata[:as] }
+  let(:headers) { |e| e.metadata[:headers] }
+  let(:params)  { |e| e.metadata.fetch(:params, { collectivity: updated_attributes }) }
 
   let!(:epci)         { create(:epci) }
   let!(:collectivity) { create(:collectivity, territory: epci, name: "Agglomération Pays Basque") }
@@ -18,7 +19,7 @@ RSpec.describe "CollectivitiesController#update" do
   end
 
   context "when requesting HTML" do
-    context "with valid parameters" do
+    context "with valid attributes" do
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/collectivites") }
 
@@ -39,26 +40,8 @@ RSpec.describe "CollectivitiesController#update" do
       end
     end
 
-    context "when the collectivity is discarded" do
-      let(:collectivity) { create(:collectivity, :discarded) }
-
-      it { expect(response).to have_http_status(:gone) }
-      it { expect(response).to have_content_type(:html) }
-      it { expect(response).to have_html_body }
-    end
-
-    context "when the collectivity is missing" do
-      let(:collectivity) { Collectivity.new(id: Faker::Internet.uuid) }
-
-      it { expect(response).to have_http_status(:not_found) }
-      it { expect(response).to have_content_type(:html) }
-      it { expect(response).to have_html_body }
-    end
-
-    context "with invalid parameters" do
-      let(:updated_attributes) do
-        super().merge(name: "")
-      end
+    context "with invalid attributes" do
+      let(:updated_attributes) { super().merge(name: "") }
 
       it { expect(response).to have_http_status(:unprocessable_entity) }
       it { expect(response).to have_content_type(:html) }
@@ -67,63 +50,41 @@ RSpec.describe "CollectivitiesController#update" do
       it { expect { request and collectivity.reload }.not_to change(collectivity, :name) }
     end
 
-    context "with missing collectivity parameters" do
-      let(:params) { {} }
-
+    context "with empty parameters", params: {} do
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/collectivites") }
+      it { expect(flash).to have_flash_notice }
       it { expect { request and collectivity.reload }.not_to change(collectivity, :updated_at) }
     end
 
-    context "when trying to update territory with territory_id parameter", pending: "use policy to authorize update params" do
-      let(:another_epci) { create(:epci) }
+    context "when the collectivity is discarded" do
+      before { collectivity.discard }
 
-      let(:updated_attributes) do
-        super().merge(
-          territory_type: "EPCI",
-          territory_id:   another_epci.id
-        )
-      end
-
-      it { expect(response).to have_http_status(:unprocessable_entity) }
-      it { expect { request and collectivity.reload }.not_to change(collectivity, :updated_at) }
+      it { expect(response).to have_http_status(:gone) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
     end
 
-    context "when trying to update territory with territory_code parameter", pending: "use policy to authorize update params" do
-      let(:another_epci) { create(:epci) }
+    context "when the collectivity is missing" do
+      before { collectivity.destroy }
 
-      let(:attributes) do
-        super().merge(
-          territory_type: "EPCI",
-          territory_code: another_epci.siren
-        )
-      end
-
-      it { expect(response).to have_http_status(:unprocessable_entity) }
-      it { expect { request and collectivity.reload }.not_to change(collectivity, :updated_at) }
+      it { expect(response).to have_http_status(:not_found) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
     end
 
-    context "when trying to update territory with territory_data parameter as json", pending: "use policy to authorize update params" do
-      let(:attributes) do
-        super().merge(
-          territory_data: {
-            type: "EPCI",
-            id:   another_epci.id
-          }.to_json
-        )
-      end
-
-      it { expect(response).to have_http_status(:unprocessable_entity) }
-      it { expect { request and collectivity.reload }.not_to change(collectivity, :updated_at) }
+    context "with referrer header", headers: { "Referer" => "http://example.com/other/path" } do
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/collectivites") }
+      it { expect(flash).to have_flash_notice }
     end
 
     context "with redirect parameter" do
-      let(:params) do
-        super().merge(redirect: "/editeur/12345")
-      end
+      let(:params) { super().merge(redirect: "/other/path") }
 
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/editeur/12345") }
+      it { expect(response).to redirect_to("/other/path") }
+      it { expect(flash).to have_flash_notice }
     end
   end
 

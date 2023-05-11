@@ -4,13 +4,15 @@ require "rails_helper"
 
 RSpec.describe "PublishersController#remove_all" do
   subject(:request) do
-    get "/editeurs/remove", as:, params:
+    get "/editeurs/remove", as:, headers:, params:
   end
 
-  let(:as)     { |e| e.metadata[:as] }
-  let(:params) { |e| e.metadata.fetch(:params, { ids: collectivities.map(&:id).take(2) }) }
+  let(:as)      { |e| e.metadata[:as] }
+  let(:headers) { |e| e.metadata[:headers] }
+  let(:params)  { |e| e.metadata.fetch(:params, { ids: ids }) }
 
-  let!(:collectivities) { create_list(:publisher, 3) }
+  let!(:publishers) { create_list(:publisher, 3) }
+  let!(:ids)        { publishers.take(2).map(&:id) }
 
   context "when requesting HTML" do
     context "with multiple ids" do
@@ -31,7 +33,7 @@ RSpec.describe "PublishersController#remove_all" do
       it { expect(response).to have_http_status(:success) }
     end
 
-    context "with missing ids parameters", params: {} do
+    context "with empty parameters", params: {} do
       it { expect(response).to have_http_status(:success) }
     end
   end

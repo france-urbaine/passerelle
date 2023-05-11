@@ -7,4 +7,8 @@
 
     @apply p-6;
   }
+
+  .content__separator {
+    @apply mb-12;
+  }
 }

@@ -12,6 +12,7 @@ module Button
       @modal       = options.delete(:modal)
       @primary     = options.delete(:primary)
       @destructive = options.delete(:destructive)
+      @discrete    = options.delete(:discrete)
       @options     = options
       super()
     end
@@ -111,7 +112,8 @@ module Button
       else
         classes += " button"
         classes += " button--primary" if @primary
-        classes += " button--destructive" if @destructive
+        classes += " button--destructive" if @destructive && @destructive != "discrete"
+        classes += " button--destructive-discrete" if @destructive == "discrete"
       end
 
       classes.strip

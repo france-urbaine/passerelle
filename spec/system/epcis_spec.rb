@@ -60,7 +60,7 @@ RSpec.describe "EPCIs" do
       click_on "Modifier cet EPCI"
     end
 
-    # A dialog box should appears with a form
+    # A dialog box should appear with a form
     # The form should be filled with collectivity data
     #
     expect(page).to have_selector("[role=dialog]", text: "Modification de l'EPCI")
@@ -100,7 +100,7 @@ RSpec.describe "EPCIs" do
       click_on "Modifier"
     end
 
-    # A dialog box should appears with a form
+    # A dialog box should appear with a form
     # The form should be filled with collectivity data
     #
     expect(page).to have_selector("[role=dialog]", text: "Modification de l'EPCI")

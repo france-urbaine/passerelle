@@ -2,22 +2,26 @@
 
 require "rails_helper"
 
-RSpec.describe "DdfipsController#show" do
+RSpec.describe "DDFIPsController#show" do
   subject(:request) do
-    get "/ddfips/#{ddfip.id}", as:
+    get "/ddfips/#{ddfip.id}", as:, headers:, params:
   end
 
-  let(:as) { |e| e.metadata[:as] }
+  let(:as)      { |e| e.metadata[:as] }
+  let(:headers) { |e| e.metadata[:headers] }
+  let(:params)  { |e| e.metadata[:params] }
 
   let!(:ddfip) { create(:ddfip) }
 
   context "when requesting HTML" do
-    it { expect(response).to have_http_status(:success) }
-    it { expect(response).to have_content_type(:html) }
-    it { expect(response).to have_html_body }
+    context "when the DDFIP is accessible" do
+      it { expect(response).to have_http_status(:success) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
+    end
 
     context "when the DDFIP is discarded" do
-      let(:ddfip) { create(:ddfip, :discarded) }
+      before { ddfip.discard }
 
       it { expect(response).to have_http_status(:gone) }
       it { expect(response).to have_content_type(:html) }
@@ -25,7 +29,7 @@ RSpec.describe "DdfipsController#show" do
     end
 
     context "when the DDFIP is missing" do
-      let(:ddfip) { DDFIP.new(id: Faker::Internet.uuid) }
+      before { ddfip.destroy }
 
       it { expect(response).to have_http_status(:not_found) }
       it { expect(response).to have_content_type(:html) }

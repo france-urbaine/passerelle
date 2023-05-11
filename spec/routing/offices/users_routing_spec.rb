@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "Users nested under offices" do
+RSpec.describe Offices::UsersController do
   it { expect(get:    "/guichets/9c6c00c4-0784-4ef8-8978-b1e0246882a7/utilisateurs").to route_to("offices/users#index", office_id: "9c6c00c4-0784-4ef8-8978-b1e0246882a7") }
   it { expect(post:   "/guichets/9c6c00c4-0784-4ef8-8978-b1e0246882a7/utilisateurs").to route_to("offices/users#create", office_id: "9c6c00c4-0784-4ef8-8978-b1e0246882a7") }
   it { expect(patch:  "/guichets/9c6c00c4-0784-4ef8-8978-b1e0246882a7/utilisateurs").to route_to("offices/users#update_all", office_id: "9c6c00c4-0784-4ef8-8978-b1e0246882a7") }

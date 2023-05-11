@@ -48,7 +48,7 @@ RSpec.describe "UsersController#destroy_all" do
       end
     end
 
-    context "with user ids already discarded" do
+    context "with ids from already discarded users" do
       let(:users) { create_list(:user, 3, :discarded) }
 
       it { expect(response).to have_http_status(:see_other) }
@@ -90,7 +90,7 @@ RSpec.describe "UsersController#destroy_all" do
       it { expect { request }.not_to change(User.discarded, :count) }
     end
 
-    context "with referrer header", headers: { "Referer" => "http://example.com/parent/path" } do
+    context "with referrer header", headers: { "Referer" => "http://example.com/other/path" } do
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/utilisateurs") }
       it { expect(flash).to have_flash_notice }
@@ -98,9 +98,7 @@ RSpec.describe "UsersController#destroy_all" do
     end
 
     context "with redirect parameter" do
-      let(:params) do
-        super().merge(redirect: "/other/path")
-      end
+      let(:params) { super().merge(redirect: "/other/path") }
 
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/other/path") }

@@ -1,0 +1,14 @@
+= template_frame_component(src: @background_url) do |frame|
+  - frame.with_modal do |modal|
+    - modal.with_header do
+      | Exlusion de la commune : #{@commune.name}
+
+    - modal.with_form(url: office_commune_path(@office, @commune), method: :delete) do
+      - unless @background_url.include?(commune_path(@commune))
+        = hidden_field_tag :redirect, @background_url
+
+      p Êtes-vous sûrs de vouloir exclure cette commune du guichet ?
+      p Ce guichet ne recevra plus les signalements liés à cette commune.
+
+    - modal.with_submit_action "Continuer", autofocus: true
+    - modal.with_close_action "Annuler"

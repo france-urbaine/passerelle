@@ -22,7 +22,7 @@ RSpec.describe "Ddfips::UsersController#create" do
   end
 
   context "when requesting HTML" do
-    context "with valid parameters" do
+    context "with valid attributes" do
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/ddfips/#{ddfip.id}") }
       it { expect { request }.to change(User, :count).by(1) }
@@ -62,17 +62,17 @@ RSpec.describe "Ddfips::UsersController#create" do
       it { expect { request }.not_to change(User, :count).from(0) }
     end
 
-    context "when using organization_id parameter" do
+    context "when using another organization_id attribute" do
       let(:another_ddfip) { create(:ddfip) }
 
       let(:attributes) do
         super().merge(
-          organization_type: "Publisher",
+          organization_type: "DDFIP",
           organization_id:   another_ddfip.id
         )
       end
 
-      it "assigns the ddfip from the URL" do
+      it "ignores the attributes to assign the DDFIP from the URL" do
         request
         expect(User.last.organization).to eq(ddfip)
       end
@@ -86,7 +86,7 @@ RSpec.describe "Ddfips::UsersController#create" do
     end
 
     context "when DDFIP is discarded" do
-      let(:ddfip) { create(:ddfip, :discarded) }
+      before { ddfip.discard }
 
       it { expect(response).to have_http_status(:gone) }
       it { expect(response).to have_content_type(:html) }
@@ -94,16 +94,17 @@ RSpec.describe "Ddfips::UsersController#create" do
     end
 
     context "when DDFIP is missing" do
-      let(:ddfip) { DDFIP.new(id: Faker::Internet.uuid) }
+      before { ddfip.destroy }
 
       it { expect(response).to have_http_status(:not_found) }
       it { expect(response).to have_content_type(:html) }
       it { expect(response).to have_html_body }
     end
 
-    context "with referrer header", headers: { "Referer" => "http://example.com/parent/path" } do
+    context "with referrer header", headers: { "Referer" => "http://example.com/other/path" } do
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/ddfips/#{ddfip.id}") }
+      it { expect(flash).to have_flash_notice }
     end
 
     context "with redirect parameter" do
@@ -111,6 +112,7 @@ RSpec.describe "Ddfips::UsersController#create" do
 
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/other/path") }
+      it { expect(flash).to have_flash_notice }
     end
   end
 

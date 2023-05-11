@@ -4,11 +4,12 @@ require "rails_helper"
 
 RSpec.describe "PublishersController#create" do
   subject(:request) do
-    post "/editeurs", as:, params:
+    post "/editeurs", as:, headers:, params:
   end
 
-  let(:as)     { |e| e.metadata[:as] }
-  let(:params) { { publisher: attributes } }
+  let(:as)      { |e| e.metadata[:as] }
+  let(:headers) { |e| e.metadata[:headers] }
+  let(:params)  { |e| e.metadata.fetch(:params, { publisher: attributes }) }
 
   let(:attributes) do
     {
@@ -18,7 +19,7 @@ RSpec.describe "PublishersController#create" do
   end
 
   context "when requesting HTML" do
-    context "with valid parameters" do
+    context "with valid attributes" do
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/editeurs") }
       it { expect { request }.to change(Publisher, :count).by(1) }
@@ -40,10 +41,8 @@ RSpec.describe "PublishersController#create" do
       end
     end
 
-    context "with invalid parameters" do
-      let(:attributes) do
-        super().merge(siren: "")
-      end
+    context "with invalid attributes" do
+      let(:attributes) { super().merge(siren: "") }
 
       it { expect(response).to have_http_status(:unprocessable_entity) }
       it { expect(response).to have_content_type(:html) }
@@ -51,22 +50,25 @@ RSpec.describe "PublishersController#create" do
       it { expect { request }.not_to change(Publisher, :count).from(0) }
     end
 
-    context "with missing publisher parameters" do
-      let(:params) { {} }
-
+    context "with empty parameters", params: {} do
       it { expect(response).to have_http_status(:unprocessable_entity) }
       it { expect(response).to have_content_type(:html) }
       it { expect(response).to have_html_body }
       it { expect { request }.not_to change(Publisher, :count).from(0) }
+    end
+
+    context "with referrer header", headers: { "Referer" => "http://example.com/other/path" } do
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/editeurs") }
+      it { expect(flash).to have_flash_notice }
     end
 
     context "with redirect parameter" do
-      let(:params) do
-        super().merge(redirect: "/")
-      end
+      let(:params) { super().merge(redirect: "/other/path") }
 
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/") }
+      it { expect(response).to redirect_to("/other/path") }
+      it { expect(flash).to have_flash_notice }
     end
   end
 

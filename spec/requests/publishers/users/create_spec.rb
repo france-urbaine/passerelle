@@ -22,7 +22,7 @@ RSpec.describe "Publishers::UsersController#create" do
   end
 
   context "when requesting HTML" do
-    context "with valid parameters" do
+    context "with valid attributes" do
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/editeurs/#{publisher.id}") }
       it { expect { request }.to change(User, :count).by(1) }
@@ -62,7 +62,7 @@ RSpec.describe "Publishers::UsersController#create" do
       it { expect { request }.not_to change(User, :count).from(0) }
     end
 
-    context "when using organization_id attribute" do
+    context "when using another organization_id attribute" do
       let(:another_publisher) { create(:publisher) }
 
       let(:attributes) do
@@ -72,7 +72,7 @@ RSpec.describe "Publishers::UsersController#create" do
         )
       end
 
-      it "assigns the publisher from the URL" do
+      it "ignores the attributes to assign the publisher in the URL" do
         request
         expect(User.last.organization).to eq(publisher)
       end
@@ -86,7 +86,7 @@ RSpec.describe "Publishers::UsersController#create" do
     end
 
     context "when publisher is discarded" do
-      let(:publisher) { create(:publisher, :discarded) }
+      before { publisher.discard }
 
       it { expect(response).to have_http_status(:gone) }
       it { expect(response).to have_content_type(:html) }
@@ -94,16 +94,17 @@ RSpec.describe "Publishers::UsersController#create" do
     end
 
     context "when publisher is missing" do
-      let(:publisher) { Publisher.new(id: Faker::Internet.uuid) }
+      before { publisher.destroy }
 
       it { expect(response).to have_http_status(:not_found) }
       it { expect(response).to have_content_type(:html) }
       it { expect(response).to have_html_body }
     end
 
-    context "with referrer header", headers: { "Referer" => "http://example.com/parent/path" } do
+    context "with referrer header", headers: { "Referer" => "http://example.com/other/path" } do
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/editeurs/#{publisher.id}") }
+      it { expect(flash).to have_flash_notice }
     end
 
     context "with redirect parameter" do
@@ -111,6 +112,7 @@ RSpec.describe "Publishers::UsersController#create" do
 
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/other/path") }
+      it { expect(flash).to have_flash_notice }
     end
   end
 

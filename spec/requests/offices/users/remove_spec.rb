@@ -4,10 +4,12 @@ require "rails_helper"
 
 RSpec.describe "Offices::UsersController#remove" do
   subject(:request) do
-    get "/guichets/#{office.id}/utilisateurs/#{user.id}/remove", as:
+    get "/guichets/#{office.id}/utilisateurs/#{user.id}/remove", as:, headers:, params:
   end
 
-  let(:as) { |e| e.metadata[:as] }
+  let(:as)      { |e| e.metadata[:as] }
+  let(:headers) { |e| e.metadata[:headers] }
+  let(:params)  { |e| e.metadata[:params] }
 
   let!(:ddfip)  { create(:ddfip) }
   let!(:office) { create(:office, ddfip: ddfip) }
@@ -20,8 +22,8 @@ RSpec.describe "Offices::UsersController#remove" do
       it { expect(response).to have_html_body }
     end
 
-    context "when the user is already discarded" do
-      let(:user) { create(:user, :discarded, organization: ddfip, offices: [office]) }
+    context "when the user is discarded" do
+      before { user.discard }
 
       it { expect(response).to have_http_status(:gone) }
       it { expect(response).to have_content_type(:html) }
@@ -29,23 +31,15 @@ RSpec.describe "Offices::UsersController#remove" do
     end
 
     context "when the user is missing" do
-      let(:user) { User.new(id: Faker::Internet.uuid) }
+      before { user.destroy }
 
       it { expect(response).to have_http_status(:not_found) }
       it { expect(response).to have_content_type(:html) }
       it { expect(response).to have_html_body }
     end
 
-    context "when the DDFIP is discarded" do
-      let(:ddfip) { create(:ddfip, :discarded) }
-
-      it { expect(response).to have_http_status(:gone) }
-      it { expect(response).to have_content_type(:html) }
-      it { expect(response).to have_html_body }
-    end
-
     context "when the office is discarded" do
-      let(:office) { create(:office, :discarded, ddfip: ddfip) }
+      before { office.discard }
 
       it { expect(response).to have_http_status(:gone) }
       it { expect(response).to have_content_type(:html) }
@@ -53,10 +47,17 @@ RSpec.describe "Offices::UsersController#remove" do
     end
 
     context "when the office is missing" do
-      let(:office) { Office.new(id: Faker::Internet.uuid) }
-      let(:user)   { create(:user, organization: ddfip) }
+      before { office.destroy }
 
       it { expect(response).to have_http_status(:not_found) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
+    end
+
+    context "when the DDFIP is discarded" do
+      before { office.ddfip.discard }
+
+      it { expect(response).to have_http_status(:gone) }
       it { expect(response).to have_content_type(:html) }
       it { expect(response).to have_html_body }
     end

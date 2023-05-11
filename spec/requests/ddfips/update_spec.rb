@@ -2,13 +2,14 @@
 
 require "rails_helper"
 
-RSpec.describe "DdfipsController#update" do
+RSpec.describe "DDFIPsController#update" do
   subject(:request) do
-    patch "/ddfips/#{ddfip.id}", as:, params:
+    patch "/ddfips/#{ddfip.id}", as:, headers:, params:
   end
 
-  let(:as)     { |e| e.metadata[:as] }
-  let(:params) { { ddfip: updated_attributes } }
+  let(:as)      { |e| e.metadata[:as] }
+  let(:headers) { |e| e.metadata[:headers] }
+  let(:params)  { |e| e.metadata.fetch(:params, { ddfip: updated_attributes }) }
 
   let!(:ddfip) { create(:ddfip, name: "Ddfip de Pyrénée-Atlantique") }
 
@@ -17,7 +18,7 @@ RSpec.describe "DdfipsController#update" do
   end
 
   context "when requesting HTML" do
-    context "with valid parameters" do
+    context "with valid attributes" do
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/ddfips") }
 
@@ -38,26 +39,8 @@ RSpec.describe "DdfipsController#update" do
       end
     end
 
-    context "when the DDFIP is discarded" do
-      let(:ddfip) { create(:ddfip, :discarded) }
-
-      it { expect(response).to have_http_status(:gone) }
-      it { expect(response).to have_content_type(:html) }
-      it { expect(response).to have_html_body }
-    end
-
-    context "when the DDFIP is missing" do
-      let(:ddfip) { DDFIP.new(id: Faker::Internet.uuid) }
-
-      it { expect(response).to have_http_status(:not_found) }
-      it { expect(response).to have_content_type(:html) }
-      it { expect(response).to have_html_body }
-    end
-
-    context "with invalid parameters" do
-      let(:updated_attributes) do
-        super().merge(name: "")
-      end
+    context "with invalid attributes" do
+      let(:updated_attributes) { super().merge(name: "") }
 
       it { expect(response).to have_http_status(:unprocessable_entity) }
       it { expect(response).to have_content_type(:html) }
@@ -66,21 +49,41 @@ RSpec.describe "DdfipsController#update" do
       it { expect { request and ddfip.reload }.not_to change(ddfip, :name) }
     end
 
-    context "with missing ddfip parameters" do
-      let(:params) { {} }
-
+    context "with empty parameters", params: {} do
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/ddfips") }
+      it { expect(flash).to have_flash_notice }
       it { expect { request and ddfip.reload }.not_to change(ddfip, :updated_at) }
     end
 
+    context "when the DDFIP is discarded" do
+      before { ddfip.discard }
+
+      it { expect(response).to have_http_status(:gone) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
+    end
+
+    context "when the DDFIP is missing" do
+      before { ddfip.destroy }
+
+      it { expect(response).to have_http_status(:not_found) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
+    end
+
+    context "with referrer header", headers: { "Referer" => "http://example.com/other/path" } do
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/ddfips") }
+      it { expect(flash).to have_flash_notice }
+    end
+
     context "with redirect parameter" do
-      let(:params) do
-        super().merge(redirect: "/editeur/12345")
-      end
+      let(:params) { super().merge(redirect: "/other/path") }
 
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/editeur/12345") }
+      it { expect(response).to redirect_to("/other/path") }
+      it { expect(flash).to have_flash_notice }
     end
   end
 

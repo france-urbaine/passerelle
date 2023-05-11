@@ -5,18 +5,20 @@ module Offices
     respond_to :html
 
     before_action do
-      @office = Office.find(params[:office_id])
-      next gone(@office) if @office.discarded?
-      next gone(@office.ddfip) if @office.ddfip.discarded?
+      office = Office.find(params[:office_id])
 
-      @user_scope = @office.users
+      next gone(office) if office.discarded?
+      next gone(office.ddfip) if office.ddfip.discarded?
+
+      @office = office
+      @users_scope = office.users
     end
 
     def index
       return not_implemented if autocomplete_request?
       return redirect_to(office_path(@office), status: :see_other) if @office && !turbo_frame_request?
 
-      @users = @user_scope.kept.strict_loading
+      @users = @users_scope.kept.strict_loading
       @users, @pagy = index_collection(@users, nested: @office)
     end
 
@@ -26,7 +28,7 @@ module Offices
     end
 
     def remove
-      @user = @user_scope.find(params[:id])
+      @user = @users_scope.find(params[:id])
       return gone(@user) if @user.discarded?
 
       @background_url = referrer_path || office_path(@office)
@@ -38,7 +40,7 @@ module Offices
     end
 
     def remove_all
-      @users = @user_scope.kept.strict_loading
+      @users = @users_scope.kept.strict_loading
       @users = filter_collection(@users)
       @background_url = referrer_path || office_path(@office)
     end
@@ -54,7 +56,9 @@ module Offices
     end
 
     def destroy
-      @user = @user_scope.find(params[:id])
+      @user = @users_scope.find(params[:id])
+      return gone(@user) if @user.discarded?
+
       @office.users.destroy(@user)
 
       respond_with @user,
@@ -72,7 +76,7 @@ module Offices
     end
 
     def destroy_all
-      @users = @user_scope.kept.strict_loading
+      @users = @users_scope.kept.strict_loading
       @users = filter_collection(@users)
       @office.users.destroy(@users)
 

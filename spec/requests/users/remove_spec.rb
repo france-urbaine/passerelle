@@ -4,10 +4,12 @@ require "rails_helper"
 
 RSpec.describe "UsersController#remove" do
   subject(:request) do
-    get "/utilisateurs/#{user.id}/remove", as:
+    get "/utilisateurs/#{user.id}/remove", as:, headers:, params:
   end
 
-  let(:as) { |e| e.metadata[:as] }
+  let(:as)      { |e| e.metadata[:as] }
+  let(:headers) { |e| e.metadata[:headers] }
+  let(:params)  { |e| e.metadata[:params] }
 
   let!(:user) { create(:user) }
 
@@ -19,7 +21,7 @@ RSpec.describe "UsersController#remove" do
     end
 
     context "when the user is already discarded" do
-      let(:user) { create(:user, :discarded) }
+      before { user.discard }
 
       it { expect(response).to have_http_status(:gone) }
       it { expect(response).to have_content_type(:html) }
@@ -27,7 +29,7 @@ RSpec.describe "UsersController#remove" do
     end
 
     context "when the user is missing" do
-      let(:user) { User.new(id: Faker::Internet.uuid) }
+      before { user.destroy }
 
       it { expect(response).to have_http_status(:not_found) }
       it { expect(response).to have_content_type(:html) }

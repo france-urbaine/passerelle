@@ -24,27 +24,52 @@ Rails.application.routes.draw do
     patch :update_all, on: :collection, path: "/", as: nil
   end
 
-  concern :nested_users do
-    resources :users, only: %i[index new create], concerns: %i[removable_collection], path: "/utilisateurs"
-  end
-
   devise_for :user
 
   ID_REGEXP = %r{(?!(new|edit|remove|discard|undiscard|offices))[^/]+}
 
   constraints(id: ID_REGEXP) do
-    resources :publishers,     concerns: %i[removable removable_collection nested_users], path: "/editeurs"
-    resources :collectivities, concerns: %i[removable removable_collection nested_users], path: "/collectivites"
-    resources :ddfips,         concerns: %i[removable removable_collection nested_users]
-    resources :offices,        concerns: %i[removable removable_collection], path: "/guichets" do
-      resource :communes, controller: :office_communes, concerns: %i[updatable_collection]
+    resources :publishers, concerns: %i[removable removable_collection], path: "/editeurs" do
+      scope module: "publishers" do
+        resources :users,          only: %i[index new create], concerns: %i[removable_collection], path: "/utilisateurs"
+        resources :collectivities, only: %i[index new create], concerns: %i[removable_collection], path: "/collectivites"
+      end
+    end
 
-      resources :users, module: "offices", only: %i[index new create destroy], path: "/utilisateurs" do
-        get    :remove,      on: :member
-        get    :remove_all,  on: :collection, path: "remove"
-        delete :destroy_all, on: :collection, path: "/", as: nil
+    resources :collectivities, concerns: %i[removable removable_collection], path: "/collectivites" do
+      scope module: "collectivities" do
+        resources :users,    only: %i[index new create], concerns: %i[removable_collection], path: "/utilisateurs"
+        resources :offices,  only: %i[index], path: "/guichets"
+      end
+    end
 
-        concerns :updatable_collection
+    resources :ddfips, concerns: %i[removable removable_collection] do
+      scope module: "ddfips" do
+        resources :offices,        only: %i[index new create], concerns: %i[removable_collection], path: "/guichets"
+        resources :users,          only: %i[index new create], concerns: %i[removable_collection], path: "/utilisateurs"
+        resources :collectivities, only: %i[index], path: "/collectivites"
+      end
+    end
+
+    resources :offices, concerns: %i[removable removable_collection], path: "/guichets" do
+      scope module: "offices" do
+        resources :communes, only: %i[index destroy] do
+          get    :remove,      on: :member
+          get    :remove_all,  on: :collection, path: "remove"
+          delete :destroy_all, on: :collection, path: "/", as: nil
+
+          concerns :updatable_collection
+        end
+
+        resources :users, only: %i[index new create destroy], path: "/utilisateurs" do
+          get    :remove,      on: :member
+          get    :remove_all,  on: :collection, path: "remove"
+          delete :destroy_all, on: :collection, path: "/", as: nil
+
+          concerns :updatable_collection
+        end
+
+        resources :collectivities, only: %i[index], path: "/collectivites"
       end
     end
 

@@ -32,6 +32,10 @@ module Button
     # @label Destructive button
     #
     def destructive; end
+
+    # @label Destructive but discrete button
+    #
+    def destructive_discrete; end
     #
     # @!endgroup
 

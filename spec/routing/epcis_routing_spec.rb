@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe EpcisController do
+RSpec.describe EPCIsController do
   it { expect(get:    "/epcis").to route_to("epcis#index") }
   it { expect(post:   "/epcis").to be_unroutable }
   it { expect(patch:  "/epcis").to be_unroutable }

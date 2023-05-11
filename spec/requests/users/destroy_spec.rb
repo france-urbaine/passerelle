@@ -46,7 +46,7 @@ RSpec.describe "UsersController#destroy" do
     end
 
     context "when the user is already discarded" do
-      let(:user) { create(:user, :discarded) }
+      before { user.discard }
 
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/utilisateurs") }
@@ -56,14 +56,14 @@ RSpec.describe "UsersController#destroy" do
     end
 
     context "when the user is missing" do
-      let(:user) { User.new(id: Faker::Internet.uuid) }
+      before { user.destroy }
 
       it { expect(response).to have_http_status(:not_found) }
       it { expect(response).to have_content_type(:html) }
       it { expect(response).to have_html_body }
     end
 
-    context "with referrer header", headers: { "Referer" => "http://example.com/parent/path" } do
+    context "with referrer header", headers: { "Referer" => "http://example.com/other/path" } do
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/utilisateurs") }
       it { expect(flash).to have_flash_notice }

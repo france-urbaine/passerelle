@@ -49,6 +49,26 @@ RSpec.describe "Ddfips::UsersController#destroy_all" do
       end
     end
 
+    context "with ids from already discarded users" do
+      let(:users) { create_list(:user, 3, :discarded, organization: ddfip) }
+
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/ddfips/#{ddfip.id}") }
+      it { expect(flash).to have_flash_notice }
+      it { expect(flash).to have_flash_actions }
+      it { expect { request }.not_to change(User.discarded, :count).from(3) }
+    end
+
+    context "with ids from users of any other organizations" do
+      let(:users) { create_list(:user, 3) }
+
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/ddfips/#{ddfip.id}") }
+      it { expect(flash).to have_flash_notice }
+      it { expect(flash).to have_flash_actions }
+      it { expect { request }.not_to change(User.discarded, :count) }
+    end
+
     context "with `all` ids", params: { ids: "all" } do
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/ddfips/#{ddfip.id}") }
@@ -81,28 +101,8 @@ RSpec.describe "Ddfips::UsersController#destroy_all" do
       it { expect { request }.not_to change(User.discarded, :count) }
     end
 
-    context "with user ids already discarded" do
-      let(:users) { create_list(:user, 3, :discarded, organization: ddfip) }
-
-      it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/ddfips/#{ddfip.id}") }
-      it { expect(flash).to have_flash_notice }
-      it { expect(flash).to have_flash_actions }
-      it { expect { request }.not_to change(User.discarded, :count).from(3) }
-    end
-
-    context "with user ids from other organizations" do
-      let(:users) { create_list(:user, 3) }
-
-      it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/ddfips/#{ddfip.id}") }
-      it { expect(flash).to have_flash_notice }
-      it { expect(flash).to have_flash_actions }
-      it { expect { request }.not_to change(User.discarded, :count) }
-    end
-
     context "when DDFIP is discarded" do
-      let(:ddfip) { create(:ddfip, :discarded) }
+      before { ddfip.discard }
 
       it { expect(response).to have_http_status(:gone) }
       it { expect(response).to have_content_type(:html) }
@@ -110,14 +110,14 @@ RSpec.describe "Ddfips::UsersController#destroy_all" do
     end
 
     context "when DDFIP is missing" do
-      let(:ddfip) { DDFIP.new(id: Faker::Internet.uuid) }
+      before { ddfip.destroy }
 
       it { expect(response).to have_http_status(:not_found) }
       it { expect(response).to have_content_type(:html) }
       it { expect(response).to have_html_body }
     end
 
-    context "with referrer header", headers: { "Referer" => "http://example.com/parent/path" } do
+    context "with referrer header", headers: { "Referer" => "http://example.com/other/path" } do
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/ddfips/#{ddfip.id}") }
       it { expect(flash).to have_flash_notice }

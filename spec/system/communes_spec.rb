@@ -72,7 +72,7 @@ RSpec.describe "Communes" do
       click_on "Modifier cette commune"
     end
 
-    # A dialog box should appears with a form
+    # A dialog box should appear with a form
     # The form should be filled with collectivity data
     #
     expect(page).to have_selector("[role=dialog]", text: "Modification de la commune")
@@ -113,7 +113,7 @@ RSpec.describe "Communes" do
       click_on "Modifier"
     end
 
-    # A dialog box should appears with a form
+    # A dialog box should appear with a form
     # The form should be filled with collectivity data
     #
     expect(page).to have_selector("[role=dialog]", text: "Modification de la commune")

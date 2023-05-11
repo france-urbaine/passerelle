@@ -57,6 +57,6 @@ RSpec.describe TerritoriesUpdate do
     end
 
     it { expect { model.perform_later }.to have_enqueued_job(ImportCommunesJob).with("https://www.insee.fr/path/communes.zip") }
-    it { expect { model.perform_later }.to have_enqueued_job(ImportEpcisJob).with("https://www.insee.fr/path/epcis.zip") }
+    it { expect { model.perform_later }.to have_enqueued_job(ImportEPCIsJob).with("https://www.insee.fr/path/epcis.zip") }
   end
 end

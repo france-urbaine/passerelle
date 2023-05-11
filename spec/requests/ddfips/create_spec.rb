@@ -2,13 +2,14 @@
 
 require "rails_helper"
 
-RSpec.describe "DdfipsController#create" do
+RSpec.describe "DDFIPsController#create" do
   subject(:request) do
-    post "/ddfips", as:, params:
+    post "/ddfips", as:, headers:, params:
   end
 
-  let(:as)     { |e| e.metadata[:as] }
-  let(:params) { { ddfip: attributes } }
+  let(:as)      { |e| e.metadata[:as] }
+  let(:headers) { |e| e.metadata[:headers] }
+  let(:params)  { |e| e.metadata.fetch(:params, { ddfip: attributes }) }
 
   let!(:departement) { create(:departement) }
 
@@ -20,7 +21,7 @@ RSpec.describe "DdfipsController#create" do
   end
 
   context "when requesting HTML" do
-    context "with valid parameters" do
+    context "with valid attributes" do
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/ddfips") }
       it { expect { request }.to change(DDFIP, :count).by(1) }
@@ -43,10 +44,8 @@ RSpec.describe "DdfipsController#create" do
       end
     end
 
-    context "with invalid parameters" do
-      let(:attributes) do
-        super().merge(code_departement: "")
-      end
+    context "with invalid attributes" do
+      let(:attributes) { super().merge(code_departement: "") }
 
       it { expect(response).to have_http_status(:unprocessable_entity) }
       it { expect(response).to have_content_type(:html) }
@@ -54,22 +53,25 @@ RSpec.describe "DdfipsController#create" do
       it { expect { request }.not_to change(DDFIP, :count).from(0) }
     end
 
-    context "with missing ddfip parameters" do
-      let(:params) { {} }
-
+    context "with empty parameters", params: {} do
       it { expect(response).to have_http_status(:unprocessable_entity) }
       it { expect(response).to have_content_type(:html) }
       it { expect(response).to have_html_body }
       it { expect { request }.not_to change(DDFIP, :count).from(0) }
+    end
+
+    context "with referrer header", headers: { "Referer" => "http://example.com/other/path" } do
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/ddfips") }
+      it { expect(flash).to have_flash_notice }
     end
 
     context "with redirect parameter" do
-      let(:params) do
-        super().merge(redirect: "/some/path")
-      end
+      let(:params) { super().merge(redirect: "/some/path") }
 
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/some/path") }
+      it { expect(flash).to have_flash_notice }
     end
   end
 

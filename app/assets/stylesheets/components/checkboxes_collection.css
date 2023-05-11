@@ -1,6 +1,7 @@
 @layer components {
   .checkboxes-collection {
     overflow: auto;
+    max-height: 400px;
 
     @apply py-2 px-3 rounded-md border;
 

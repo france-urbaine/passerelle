@@ -85,7 +85,7 @@ RSpec.describe "Departements" do
       click_on "Modifier ce département"
     end
 
-    # A dialog box should appears with a form
+    # A dialog box should appear with a form
     # The form should be filled with collectivity data
     #
     expect(page).to have_selector("[role=dialog]", text: "Modification du département")
@@ -125,7 +125,7 @@ RSpec.describe "Departements" do
       click_on "Modifier"
     end
 
-    # A dialog box should appears with a form
+    # A dialog box should appear with a form
     # The form should be filled with collectivity data
     #
     expect(page).to have_selector("[role=dialog]", text: "Modification du département")

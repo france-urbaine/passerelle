@@ -68,6 +68,17 @@ class Office < ApplicationRecord
     scored_order(:name, input)
   }
 
+  # Other associations
+  # ----------------------------------------------------------------------------
+  def on_territory_collectivities
+    territories = []
+    territories << communes
+    territories << EPCI.joins(:communes).merge(communes)
+    territories << Departement.joins(:communes).merge(communes)
+
+    Collectivity.kept.where(territory: territories)
+  end
+
   # Counters cached
   # ----------------------------------------------------------------------------
   def self.reset_all_counters

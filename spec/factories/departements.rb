@@ -4,7 +4,13 @@ FactoryBot.define do
   sequence(:code_departement) { Faker::Base.numerify("##") }
 
   factory :departement do
-    association :region
+    region do
+      if @build_strategy.to_sym == :create && Region.count >= 4
+        Region.order("RANDOM()").first
+      else
+        association :region
+      end
+    end
 
     code_departement do
       loop do
@@ -16,7 +22,7 @@ FactoryBot.define do
     name do
       loop do
         value = Faker::Address.state
-        break value unless Departement.exists?(name: value) || Region.exists?(name: value)
+        break value unless Departement.exists?(name: value)
       end
     end
   end

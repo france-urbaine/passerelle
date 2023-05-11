@@ -4,11 +4,12 @@ require "rails_helper"
 
 RSpec.describe "UsersController#remove_all" do
   subject(:request) do
-    get "/utilisateurs/remove", as:, params:
+    get "/utilisateurs/remove", as:, headers:, params:
   end
 
-  let(:as)     { |e| e.metadata[:as] }
-  let(:params) { |e| e.metadata.fetch(:params, { ids: ids }) }
+  let(:as)      { |e| e.metadata[:as] }
+  let(:headers) { |e| e.metadata[:headers] }
+  let(:params)  { |e| e.metadata.fetch(:params, { ids: ids }) }
 
   let!(:users) { create_list(:user, 3) }
   let!(:ids)   { users.map(&:id).take(2) }

@@ -124,6 +124,21 @@ class Collectivity < ApplicationRecord
     territory_type == "Region"
   end
 
+  # Other associations
+  # ----------------------------------------------------------------------------
+  def on_territory_communes
+    case territory_type
+    when "Commune"     then Commune.where(id: territory_id)
+    when "EPCI"        then Commune.distinct.joins(:epci).merge(EPCI.where(id: territory_id))
+    when "Departement" then Commune.distinct.joins(:departement).merge(Departement.where(id: territory_id))
+    when "Region"      then Commune.distinct.joins(:region).merge(Region.where(id: territory_id))
+    end
+  end
+
+  def assigned_offices
+    Office.kept.distinct.joins(:communes).merge(on_territory_communes)
+  end
+
   # Counters cached
   # ----------------------------------------------------------------------------
   def self.reset_all_counters

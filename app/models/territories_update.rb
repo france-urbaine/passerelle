@@ -57,12 +57,12 @@ class TerritoriesUpdate
   end
 
   def perform_now
-    ImportEpcisJob.perform_now(epcis_url)
+    ImportEPCIsJob.perform_now(epcis_url)
     ImportCommunesJob.perform_now(communes_url)
   end
 
   def perform_later
-    ImportEpcisJob.perform_later(epcis_url)
+    ImportEPCIsJob.perform_later(epcis_url)
     ImportCommunesJob.perform_later(communes_url)
   end
 end

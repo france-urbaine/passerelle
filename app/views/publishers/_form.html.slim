@@ -1,9 +1,3 @@
-- modal.with_header do
-  - if publisher.persisted?
-    | Modification de l'éditeur
-  - else
-    | Création d'un nouvel éditeur
-
 - modal.with_form(model: publisher) do
   = hidden_field_tag :redirect, modal.redirection_path
 

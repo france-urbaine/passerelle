@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe ImportEpcisDepartementsJob do
+RSpec.describe ImportEPCIsDepartementsJob do
   subject { described_class.perform_now(url) }
 
   let(:url)     { "https://www.insee.fr/fr/statistiques/fichier/2510634/Intercommunalite_Metropole_au_01-01-2021.zip" }

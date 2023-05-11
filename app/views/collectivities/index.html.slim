@@ -1,2 +1,62 @@
 = template_frame_component do
-  = render "index", collectivities: @collectivities, pagy: @pagy
+  = breadcrumbs_component do |breadcrumbs|
+    - breadcrumbs.with_path "Organisations"
+    - breadcrumbs.with_path "Collectivités"
+
+    - breadcrumbs.with_action "Ajouter une collectivité", new_collectivity_path, icon: "plus", modal: true, primary: true
+
+  = datatable_component(@collectivities.preload(:publisher)) do |datatable|
+    - datatable.with_search
+    - datatable.with_pagination(@pagy, options: !@parent)
+    - datatable.with_selection do |selection|
+      - selection.with_action "Supprimer la sélection", url_for([:remove_all, @parent, :collectivities]), modal: true
+
+    - datatable.with_column(:name,  sort: true) { "Collectivité" }
+    - datatable.with_column(:siren, sort: true) { "SIREN" }
+
+    - case @parent
+    - when Publisher
+      - datatable.with_column(:contact)       { "Contact" }
+      - datatable.with_column(:contact_email) { "Adresse mail de contact" }
+      - datatable.with_column(:contact_phone) { "Numéro de téléphone" }
+    - else
+      - datatable.with_column(:publisher, sort: true) { "Éditeur" }
+
+    - datatable.with_column(:users, numeric: true) { "Utilisateurs" }
+
+    - datatable.with_empty_message do
+      - if params[:search]
+        | Aucune collectivité ne correspont à votre recherche.
+      - else
+        | Aucune collectivité disponible.
+
+    - datatable.each_row do |row, collectivity|
+      - row.with_checkbox "Sélectionner cette collectivité", described_by: :name
+      - row.with_action "Modifier cette collectivité", edit_collectivity_path(collectivity), icon: "pencil-square", modal: true
+      - row.with_action "Supprimer cette collectivité", remove_collectivity_path(collectivity), icon: "trash", modal: true
+
+      - row.with_column(:name) do
+        = link_to collectivity_path(collectivity), data: { turbo_frame: "_top" } do
+          = collectivity.name
+
+      - row.with_column(:siren) do
+        = display_siren(collectivity.siren)
+
+      - row.with_column(:publisher) do
+        - if collectivity.publisher
+          = link_to publisher_path(collectivity.publisher), data: { turbo_frame: "_top" } do
+            = collectivity.publisher.name
+
+      - row.with_column(:contact) do
+         = "#{collectivity.contact_first_name} #{collectivity.contact_last_name}".strip.presence
+
+      - row.with_column(:contact_email) do
+        = mail_to(collectivity.contact_email) if collectivity.contact_email?
+
+      - row.with_column(:contact_phone) do
+        = phone_to(collectivity.contact_phone) if collectivity.contact_phone?
+
+      - row.with_column(:users) do
+        = number_with_delimiter(collectivity.users_count) if collectivity.users_count.positive?
+
+

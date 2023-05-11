@@ -16,7 +16,7 @@ FactoryBot.define do
     code_insee do
       loop do
         value = Faker::Base.numerify(code_departement.to_s.ljust(5, "#"))
-        break value unless Commune.exists?(name: value)
+        break value unless Commune.exists?(code_insee: value)
       end
     end
 

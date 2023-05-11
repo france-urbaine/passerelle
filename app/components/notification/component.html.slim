@@ -15,7 +15,7 @@
     - when "error"
       = helpers.svg_icon("exclamation-circle", "Erreur", class: "notification__icon notification__icon--error")
     - when "cancel"
-      = helpers.svg_icon("history", "Annulation", class: "notification__icon")
+      = helpers.svg_icon("arrow-path", "Annulation", class: "notification__icon notification__icon--cancel")
     - else
       = helpers.svg_icon("information-circle", "Information", class: "notification__icon")
 

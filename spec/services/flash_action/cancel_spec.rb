@@ -100,9 +100,9 @@ RSpec.describe FlashAction::Cancel do
       }.to raise_exception(NotImplementedError)
     end
 
-    it "build nested URL" do
+    it "builds a nested URL to cancel a #destroy_all" do
       params = ActionController::Parameters.new({
-        controller:   "users",
+        controller:   "publishers/users",
         action:       "destroy_all",
         publisher_id: "ef9a7632-b0ac-4994-914b-2786836e853f",
         ids:          "all"
@@ -114,9 +114,7 @@ RSpec.describe FlashAction::Cancel do
         label:  "Annuler",
         url:    "/editeurs/ef9a7632-b0ac-4994-914b-2786836e853f/utilisateurs/undiscard",
         method: "patch",
-        params: {
-          ids:    "all"
-        }
+        params: { ids: "all" }
       )
     end
   end

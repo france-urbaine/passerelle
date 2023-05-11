@@ -3,7 +3,8 @@
 FactoryBot.define do
   factory :ddfip do
     association :departement
-    name { departement&.name }
+
+    name { "DDFIP de #{departement&.name || Faker::Address.state}" }
 
     trait :discarded do
       discarded_at { Time.current }

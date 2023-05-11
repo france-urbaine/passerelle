@@ -4,10 +4,12 @@ require "rails_helper"
 
 RSpec.describe "Ddfips::UsersController#new" do
   subject(:request) do
-    get "/ddfips/#{ddfip.id}/utilisateurs/new", as:
+    get "/ddfips/#{ddfip.id}/utilisateurs/new", as:, headers:, params:
   end
 
-  let(:as) { |e| e.metadata[:as] }
+  let(:as)      { |e| e.metadata[:as] }
+  let(:headers) { |e| e.metadata[:headers] }
+  let(:params)  { |e| e.metadata[:params] }
 
   let!(:ddfip) { create(:ddfip) }
 
@@ -17,7 +19,7 @@ RSpec.describe "Ddfips::UsersController#new" do
     it { expect(response).to have_html_body }
 
     context "when DDFIP is discarded" do
-      let(:ddfip) { create(:ddfip, :discarded) }
+      before { ddfip.discard }
 
       it { expect(response).to have_http_status(:gone) }
       it { expect(response).to have_content_type(:html) }
@@ -25,7 +27,7 @@ RSpec.describe "Ddfips::UsersController#new" do
     end
 
     context "when DDFIP is missing" do
-      let(:ddfip) { DDFIP.new(id: Faker::Internet.uuid) }
+      before { ddfip.destroy }
 
       it { expect(response).to have_http_status(:not_found) }
       it { expect(response).to have_content_type(:html) }

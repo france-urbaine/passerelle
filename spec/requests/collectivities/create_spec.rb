@@ -4,11 +4,12 @@ require "rails_helper"
 
 RSpec.describe "CollectivitiesController#create" do
   subject(:request) do
-    post "/collectivites", as:, params:
+    post "/collectivites", as:, headers:, params:
   end
 
-  let(:as)     { |e| e.metadata[:as] }
-  let(:params) { { collectivity: attributes } }
+  let(:as)      { |e| e.metadata[:as] }
+  let(:headers) { |e| e.metadata[:headers] }
+  let(:params)  { |e| e.metadata.fetch(:params, { collectivity: attributes }) }
 
   let!(:epci)      { create(:epci) }
   let!(:publisher) { create(:publisher) }
@@ -28,7 +29,7 @@ RSpec.describe "CollectivitiesController#create" do
   end
 
   context "when requesting HTML" do
-    context "with valid parameters" do
+    context "with valid attributes" do
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/collectivites") }
       it { expect { request }.to change(Collectivity, :count).by(1) }
@@ -56,10 +57,8 @@ RSpec.describe "CollectivitiesController#create" do
       end
     end
 
-    context "with invalid parameters" do
-      let(:attributes) do
-        super().merge(territory_id: "")
-      end
+    context "with invalid attributes" do
+      let(:attributes) { super().merge(siren: "") }
 
       it { expect(response).to have_http_status(:unprocessable_entity) }
       it { expect(response).to have_content_type(:html) }
@@ -67,16 +66,7 @@ RSpec.describe "CollectivitiesController#create" do
       it { expect { request }.not_to change(Collectivity, :count).from(0) }
     end
 
-    context "with missing collectivity parameters" do
-      let(:params) { {} }
-
-      it { expect(response).to have_http_status(:unprocessable_entity) }
-      it { expect(response).to have_content_type(:html) }
-      it { expect(response).to have_html_body }
-      it { expect { request }.not_to change(Collectivity, :count).from(0) }
-    end
-
-    context "when using territory_id parameter" do
+    context "when using territory_id attribute" do
       let(:attributes) do
         super().merge(
           territory_type: territory_type,
@@ -129,7 +119,7 @@ RSpec.describe "CollectivitiesController#create" do
       end
     end
 
-    context "when using territory_code parameter" do
+    context "when using territory_code attribute" do
       let(:attributes) do
         super()
           .except(:territory_id)
@@ -192,7 +182,7 @@ RSpec.describe "CollectivitiesController#create" do
       end
     end
 
-    context "when using territory_data parameter in JSON" do
+    context "when using territory_data attribute in JSON" do
       let(:attributes) do
         super()
           .except(:territory_id)
@@ -257,13 +247,25 @@ RSpec.describe "CollectivitiesController#create" do
       end
     end
 
+    context "with empty parameters", params: {} do
+      it { expect(response).to have_http_status(:unprocessable_entity) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
+      it { expect { request }.not_to change(Collectivity, :count).from(0) }
+    end
+
+    context "with referrer header", headers: { "Referer" => "http://example.com/other/path" } do
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/collectivites") }
+      it { expect(flash).to have_flash_notice }
+    end
+
     context "with redirect parameter" do
-      let(:params) do
-        super().merge(redirect: "/editeur/12345")
-      end
+      let(:params) { super().merge(redirect: "/other/path") }
 
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/editeur/12345") }
+      it { expect(response).to redirect_to("/other/path") }
+      it { expect(flash).to have_flash_notice }
     end
   end
 

@@ -4,11 +4,12 @@ require "rails_helper"
 
 RSpec.describe "Publishers::UsersController#remove_all" do
   subject(:request) do
-    get "/editeurs/#{publisher.id}/utilisateurs/remove", as:, params:
+    get "/editeurs/#{publisher.id}/utilisateurs/remove", as:, headers:, params:
   end
 
-  let(:as)     { |e| e.metadata[:as] }
-  let(:params) { |e| e.metadata.fetch(:params, { ids: ids }) }
+  let(:as)      { |e| e.metadata[:as] }
+  let(:headers) { |e| e.metadata[:headers] }
+  let(:params)  { |e| e.metadata.fetch(:params, { ids: ids }) }
 
   let!(:publisher) { create(:publisher) }
   let!(:users)     { create_list(:user, 3, organization: publisher) }
@@ -38,7 +39,7 @@ RSpec.describe "Publishers::UsersController#remove_all" do
     end
 
     context "when publisher is discarded" do
-      let(:publisher) { create(:publisher, :discarded) }
+      before { publisher.discard }
 
       it { expect(response).to have_http_status(:gone) }
       it { expect(response).to have_content_type(:html) }
@@ -46,7 +47,7 @@ RSpec.describe "Publishers::UsersController#remove_all" do
     end
 
     context "when publisher is missing" do
-      let(:publisher) { Publisher.new(id: Faker::Internet.uuid) }
+      before { publisher.destroy }
 
       it { expect(response).to have_http_status(:not_found) }
       it { expect(response).to have_content_type(:html) }

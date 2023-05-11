@@ -2,7 +2,7 @@
 
 require "system_helper"
 
-RSpec.describe "Managing publisher users" do
+RSpec.describe "Publisher users" do
   fixtures :regions, :departements, :epcis, :communes
   fixtures :publishers, :collectivities, :ddfips, :offices
   fixtures :users
@@ -14,27 +14,27 @@ RSpec.describe "Managing publisher users" do
     visit publisher_path(fiscalite_territoire)
 
     # A table of users should be present
-    # with a link to their details page
     #
+    expect(page).to have_selector("h1", text: "Fiscalité & Territoire")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Marc Debomy")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 
     click_on "Marc Debomy"
 
-    # The browser should have been redirected to the user page
+    # The browser should visit the user page
     #
     expect(page).to have_current_path(user_path(marc))
     expect(page).to have_selector("h1", text: "Marc Debomy")
 
     go_back
 
-    # The browser should have redirect back to publisher page
+    # The browser should have redirect back to the publisher page
     #
     expect(page).to have_current_path(publisher_path(fiscalite_territoire))
     expect(page).to have_selector("h1", text: "Fiscalité & Territoire")
   end
 
-  it "paginate users on publisher page" do
+  it "paginate users on the publisher page" do
     # Create enough users to have several pages
     #
     create_list(:user, 10, organization: fiscalite_territoire)
@@ -52,7 +52,7 @@ RSpec.describe "Managing publisher users" do
     #
     click_on "Inviter un utilisateur"
 
-    # A dialog box should appears with a form to fill
+    # A dialog box should appear with a form to fill
     #
     within "[role=dialog]", text: "Invitation d'un nouvel utilisateur" do |dialog|
       expect(dialog).to have_field("Organisation", with: "Fiscalité & Territoire")
@@ -69,8 +69,8 @@ RSpec.describe "Managing publisher users" do
       click_on "Enregistrer"
     end
 
-    # The browser should stay on publisher page
-    # The new user should appears
+    # The browser should stay on the publisher page
+    # The new user should appear
     #
     expect(page).to have_current_path(publisher_path(fiscalite_territoire))
     expect(page).to have_selector("h1", text: "Fiscalité & Territoire")
@@ -93,7 +93,7 @@ RSpec.describe "Managing publisher users" do
       click_on "Modifier cet utilisateur"
     end
 
-    # A dialog box should appears with a form
+    # A dialog box should appear with a form
     # The form should be filled with user data
     #
     within "[role=dialog]", text: "Modification de l'utilisateur" do |dialog|
@@ -108,7 +108,7 @@ RSpec.describe "Managing publisher users" do
       click_on "Enregistrer"
     end
 
-    # The browser should stay on publisher page
+    # The browser should stay on the publisher page
     # The user's name should have been updated
     #
     expect(page).to have_current_path(publisher_path(fiscalite_territoire))
@@ -122,7 +122,7 @@ RSpec.describe "Managing publisher users" do
     expect(page).to     have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
   end
 
-  it "discards an user from the publisher page and then rollbacks" do
+  it "discards an user from the publisher page & rollbacks" do
     visit publisher_path(fiscalite_territoire)
 
     expect(page).to have_text("2 utilisateurs | Page 1 sur 1")
@@ -134,13 +134,13 @@ RSpec.describe "Managing publisher users" do
       click_on "Supprimer cet utilisateur"
     end
 
-    # A confirmation dialog should appears
+    # A confirmation dialog should appear
     #
     within "[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer cet utilisateur ?" do
       click_on "Continuer"
     end
 
-    # The browser should stay on publisher page
+    # The browser should stay on the publisher page
     # The user should not appears anymore
     #
     expect(page).to     have_current_path(publisher_path(fiscalite_territoire))
@@ -160,7 +160,7 @@ RSpec.describe "Managing publisher users" do
       click_on "Annuler"
     end
 
-    # The browser should stay on publisher page
+    # The browser should stay on the publisher page
     # The user should not appears anymore
     # The user should be back again
     #
@@ -176,7 +176,7 @@ RSpec.describe "Managing publisher users" do
     expect(page).to     have_selector("[role=alert]", text: "La suppression de l'utilisateur a été annulée.")
   end
 
-  it "selects and discards one user from the publisher page and then rollbacks" do
+  it "selects and discards one user from the publisher page & rollbacks" do
     visit publisher_path(fiscalite_territoire)
 
     expect(page).to have_text("2 utilisateurs | Page 1 sur 1")
@@ -194,13 +194,13 @@ RSpec.describe "Managing publisher users" do
       click_on "Supprimer la sélection"
     end
 
-    # A confirmation dialog should appears
+    # A confirmation dialog should appear
     #
     within "[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer l'utilisateur sélectionné ?" do
       click_on "Continuer"
     end
 
-    # The browser should stay on publisher page
+    # The browser should stay on the publisher page
     # The selected users should not appears anymore
     # Other users should remain
     #
@@ -224,7 +224,7 @@ RSpec.describe "Managing publisher users" do
       click_on "Annuler"
     end
 
-    # The browser should stay on publisher page
+    # The browser should stay on the publisher page
     # The removed users should be back again
     #
     expect(page).to have_current_path(publisher_path(fiscalite_territoire))
@@ -241,7 +241,7 @@ RSpec.describe "Managing publisher users" do
     expect(page).to     have_selector("[role=alert]", text: "La suppression des utilisateurs sélectionnés a été annulée.")
   end
 
-  it "selects and discards all users from the current page on the publisher page and then rollbacks" do
+  it "selects and discards all users from the current page on the publisher page & rollbacks" do
     # Create a bunch of users to have several pages
     # Also create discarded users on other organizations to ensure there are not rollbacked
     #
@@ -265,13 +265,13 @@ RSpec.describe "Managing publisher users" do
       click_on "Supprimer la sélection"
     end
 
-    # A confirmation dialog should appears
+    # A confirmation dialog should appear
     #
     within "[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer les 10 utilisateurs sélectionnés ?" do
       click_on "Continuer"
     end
 
-    # The browser should stay on index page
+    # The browser should stay on the publisher page
     # The selected users should have been removed
     #
     expect(page).to     have_current_path(publisher_path(fiscalite_territoire))
@@ -293,7 +293,7 @@ RSpec.describe "Managing publisher users" do
       click_on "Annuler"
     end
 
-    # The browser should stay on publisher page
+    # The browser should stay on the publisher page
     # The removed users should be back again
     #
     expect(page).to have_current_path(publisher_path(fiscalite_territoire))
@@ -313,7 +313,7 @@ RSpec.describe "Managing publisher users" do
     expect(page).to     have_selector("[role=alert]", text: "La suppression des utilisateurs sélectionnés a été annulée.")
   end
 
-  it "selects and discards all users through several pages on the publisher page and then rollbacks" do
+  it "selects and discards all users through several pages on the publisher page & rollbacks" do
     # Create a bunch of users to have several pages
     # Also create discarded users on other organizations to ensure there are not rollbacked
     #
@@ -341,19 +341,19 @@ RSpec.describe "Managing publisher users" do
       click_on "Supprimer la sélection"
     end
 
-    # A confirmation dialog should appears
+    # A confirmation dialog should appear
     #
     within "[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer les 12 utilisateurs sélectionnés ?" do
       click_on "Continuer"
     end
 
-    # The browser should stay on publisher page
-    # No users should appears anymore
+    # The browser should stay on the publisher page
+    # No users should appear anymore
     # Other users from other organizations should remain
     #
     expect(page).to have_current_path(publisher_path(fiscalite_territoire))
     expect(page).to have_selector("h1", text: "Fiscalité & Territoire")
-    expect(page).to have_text("Aucun utilisateur assigné")
+    expect(page).to have_text("Aucun utilisateur assigné.")
 
     expect(User.discarded.count).to eq(17)
 
@@ -370,7 +370,7 @@ RSpec.describe "Managing publisher users" do
       click_on "Annuler"
     end
 
-    # The browser should stay on publisher page
+    # The browser should stay on the publisher page
     # The removed users should be back again
     #
     expect(page).to have_current_path(publisher_path(fiscalite_territoire))

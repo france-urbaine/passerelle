@@ -3,7 +3,10 @@
     - modal.with_header do
       | Suppression de la collectivité : #{@collectivity.name}
 
-    - modal.with_form(model: @collectivity, method: :delete) do
+    - modal.with_form(url: url_for([@parent, @collectivity]), method: :delete) do
+      - unless @background_url.include?(collectivity_path(@collectivity))
+        = hidden_field_tag :redirect, @background_url
+
       p Êtes-vous sûrs de vouloir supprimer cette collectivité ?
       p
         | Par mesure de securité, les données de cette collectivité seront archivées pendant 30 jours.

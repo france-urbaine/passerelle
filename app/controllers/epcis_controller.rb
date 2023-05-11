@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class EpcisController < ApplicationController
+class EPCIsController < ApplicationController
   respond_to :html
 
   def index

@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe DdfipsController do
+RSpec.describe OfficesController do
   it { expect(get:    "/guichets").to route_to("offices#index") }
   it { expect(post:   "/guichets").to route_to("offices#create") }
   it { expect(patch:  "/guichets").to be_unroutable }

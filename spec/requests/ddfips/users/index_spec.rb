@@ -25,6 +25,22 @@ RSpec.describe "Ddfips::UsersController#index" do
   context "when requesting HTML" do
     it { expect(response).to have_http_status(:see_other) }
     it { expect(response).to redirect_to("/ddfips/#{ddfip.id}") }
+
+    context "when DDFIP is discarded" do
+      before { ddfip.discard }
+
+      it { expect(response).to have_http_status(:gone) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
+    end
+
+    context "when DDFIP is missing" do
+      before { ddfip.destroy }
+
+      it { expect(response).to have_http_status(:not_found) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
+    end
   end
 
   context "when requesting Turbo-Frame", headers: { "Turbo-Frame" => "datatable-users" }, xhr: true do
@@ -33,30 +49,16 @@ RSpec.describe "Ddfips::UsersController#index" do
     it { expect(response).to have_html_body.with_turbo_frame("datatable-users") }
 
     it "returns only kept members of the organization" do
-      expect(response.parsed_body)
-        .to  not_include(users[0].name)
-        .and not_include(users[1].name)
-        .and not_include(users[2].name)
-        .and include(users[3].name)
-    end
-
-    context "with parameters to filter collectivities", params: { search: "C", order: "-siren", page: 2, items: 5 } do
-      it { expect(response).to have_http_status(:success) }
-      it { expect(response).to have_content_type(:html) }
-    end
-
-    context "with overflowing pages", params: { page: 999_999 } do
-      it { expect(response).to have_http_status(:success) }
-      it { expect(response).to have_content_type(:html) }
-    end
-
-    context "with unknown order parameter", params: { order: "unknown" } do
-      it { expect(response).to have_http_status(:success) }
-      it { expect(response).to have_content_type(:html) }
+      aggregate_failures do
+        expect(response.parsed_body).to not_include(CGI.escape_html(users[0].name))
+        expect(response.parsed_body).to not_include(CGI.escape_html(users[1].name))
+        expect(response.parsed_body).to not_include(CGI.escape_html(users[2].name))
+        expect(response.parsed_body).to include(CGI.escape_html(users[3].name))
+      end
     end
 
     context "when DDFIP is discarded" do
-      let(:ddfip) { create(:ddfip, :discarded) }
+      before { ddfip.discard }
 
       it { expect(response).to have_http_status(:gone) }
       it { expect(response).to have_content_type(:html) }
@@ -64,7 +66,7 @@ RSpec.describe "Ddfips::UsersController#index" do
     end
 
     context "when DDFIP is missing" do
-      let(:ddfip) { DDFIP.new(id: Faker::Internet.uuid) }
+      before { ddfip.destroy }
 
       it { expect(response).to have_http_status(:not_found) }
       it { expect(response).to have_content_type(:html) }

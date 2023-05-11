@@ -16,29 +16,29 @@ RSpec.describe "Office users" do
     visit office_path(pelp_bayonne)
 
     # A table of users should be present
-    # with a link to their details page
     #
+    expect(page).to have_selector("h1", text: "PELP de Bayonne")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
 
     click_on "Maxime Gauthier"
 
-    # The browser should have been redirected to the user page
+    # The browser should visit the user page
     #
     expect(page).to have_current_path(user_path(maxime))
     expect(page).to have_selector("h1", text: "Maxime Gauthier")
 
     go_back
 
-    # The browser should have redirect back to office page
+    # The browser should have redirect back to the office page
     #
     expect(page).to have_current_path(office_path(pelp_bayonne))
     expect(page).to have_selector("h1", text: "PELP de Bayonne")
   end
 
-  it "paginate users on publisher page" do
+  it "paginate users on the office page" do
     # Create enough users to have several pages
     #
-    create_list(:user, 10, organization: ddfip64, offices: [pelp_bayonne])
+    pelp_bayonne.users << create_list(:user, 10, organization: ddfip64)
 
     visit office_path(pelp_bayonne)
 
@@ -53,7 +53,7 @@ RSpec.describe "Office users" do
     #
     click_on "Inviter un utilisateur"
 
-    # A dialog box should appears with a form to fill
+    # A dialog box should appear with a form to fill
     #
     within "[role=dialog]", text: "Invitation d'un nouvel utilisateur" do |dialog|
       expect(dialog).to have_field("Organisation", with: "DDFIP des Pyrénées-Atlantiques")
@@ -76,8 +76,8 @@ RSpec.describe "Office users" do
       click_on "Enregistrer"
     end
 
-    # The browser should stay on office page
-    # The new user should appears
+    # The browser should stay on the office page
+    # The new user should appear
     #
     expect(page).to have_current_path(office_path(pelp_bayonne))
     expect(page).to have_selector("h1", text: "PELP de Bayonne")
@@ -100,7 +100,7 @@ RSpec.describe "Office users" do
       click_on "Modifier cet utilisateur"
     end
 
-    # A dialog box should appears with a form
+    # A dialog box should appear with a form
     # The form should be filled with user data
     #
     within "[role=dialog]", text: "Modification de l'utilisateur" do |dialog|
@@ -122,7 +122,7 @@ RSpec.describe "Office users" do
       click_on "Enregistrer"
     end
 
-    # The browser should stay on office page
+    # The browser should stay on the office page
     # The user's name should have been updated
     #
     expect(page).to have_current_path(office_path(pelp_bayonne))
@@ -147,8 +147,8 @@ RSpec.describe "Office users" do
     #
     click_on "Gérer les utilisateurs"
 
-    # A dialog box should appears with a form
-    # The form should be filled with office data
+    # A dialog box should appear with checkboxes
+    # The checkboxes should allow to check DDIFP users
     #
     within "[role=dialog]", text: "Gestion des utilisateurs du guichet" do |dialog|
       expect(dialog).to have_unchecked_field("Maxime Gauthier")
@@ -159,8 +159,8 @@ RSpec.describe "Office users" do
       click_on "Enregistrer"
     end
 
-    # The browser should stay on office page
-    # The new user should appears
+    # The browser should stay on the office page
+    # The new user should appear
     #
     expect(page).to have_current_path(office_path(sip_bayonne))
     expect(page).to have_selector("h1", text: "SIP de Bayonne")
@@ -177,6 +177,9 @@ RSpec.describe "Office users" do
     #
     click_on "Gérer les utilisateurs"
 
+    # A dialog box should appear with checkboxes
+    # The checkboxes should be checked with assigned users
+    #
     within "[role=dialog]", text: "Gestion des utilisateurs du guichet" do |dialog|
       expect(dialog).to have_unchecked_field("Maxime Gauthier")
       expect(dialog).to have_checked_field("Astride Fabre")
@@ -186,8 +189,8 @@ RSpec.describe "Office users" do
       click_on "Enregistrer"
     end
 
-    # The browser should stay on office page
-    # The new user should appears
+    # The browser should stay on the office page
+    # The new user should appear
     #
     expect(page).to have_current_path(office_path(sip_bayonne))
     expect(page).to have_selector("h1", text: "SIP de Bayonne")
@@ -215,31 +218,31 @@ RSpec.describe "Office users" do
       click_on "Enregistrer"
     end
 
-    # The browser should stay on office page
-    # No users should appears
+    # The browser should stay on the office page
+    # No users should appear
     #
     expect(page).to have_current_path(office_path(sip_bayonne))
     expect(page).to have_selector("h1", text: "SIP de Bayonne")
     expect(page).to have_text("Aucun utilisateur assigné à ce guichet.")
   end
 
-  it "removes an user from the office without discarding it" do
+  it "excludes an user from the office without discarding it" do
     visit office_path(pelp_bayonne)
 
     # A table of users should be present
-    # with a button to edit them
+    # with a button to exclude them
     #
     within :table_row, { "Utilisateur" => "Maxime Gauthier" } do
       click_on "Exclure cet utilisateur du guichet"
     end
 
-    # A confirmation dialog should appears
+    # A confirmation dialog should appear
     #
     within "[role=dialog]", text: "Êtes-vous sûrs de vouloir exclure cet utilisateur du guichet ?" do
       click_on "Continuer"
     end
 
-    # The browser should stay on office page
+    # The browser should stay on the office page
     # The user should not appears anymore
     expect(page).to     have_current_path(office_path(pelp_bayonne))
     expect(page).to     have_selector("h1", text: "PELP de Bayonne")
@@ -249,14 +252,25 @@ RSpec.describe "Office users" do
     # A notification should be displayed
     #
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "L'utilisateur a été exclus du guichet.")
+    expect(page).to     have_selector("[role=alert]", text: "L'utilisateur a été exclu du guichet.")
 
-    # The user should still exists in database
+    # The notification doesn't propose to rollback the last action
     #
-    expect(ddfip64.users.kept).to include(maxime)
+    within "[role=alert]", text: "L'utilisateur a été exclu du guichet." do |alert|
+      expect(alert).not_to have_button("Cancel")
+    end
+
+    click_on "DDFIP des Pyrénées-Atlantiques"
+
+    # The user should remains available on the DDFIP page
+    #
+    expect(page).to have_current_path(ddfip_path(ddfip64))
+    expect(page).to have_selector("h1", text: "DDFIP des Pyrénées-Atlantiques")
+    expect(page).to have_text("2 utilisateurs | Page 1 sur 1")
+    expect(page).to have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
   end
 
-  it "selects and removes one user from the office page" do
+  it "selects and excludes one user from the office page" do
     visit office_path(pelp_bayonne)
 
     # Checkboxes should be present to select users
@@ -272,13 +286,13 @@ RSpec.describe "Office users" do
       click_on "Exclure les utilisateurs du guichet"
     end
 
-    # A confirmation dialog should appears
+    # A confirmation dialog should appear
     #
     within "[role=dialog]", text: "Êtes-vous sûrs de vouloir exclure l'utilisateur sélectionné du guichet ?" do
       click_on "Continuer"
     end
 
-    # The browser should stay on index page
+    # The browser should stay on the office page
     # The selected users should not appears anymore
     # Other users should remain
     #
@@ -293,9 +307,145 @@ RSpec.describe "Office users" do
     expect(page).not_to have_selector(".header-bar--selection")
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=alert]", text: "Les utilisateurs sélectionnés ont été exclus du guichet.")
+
+    # The notification doesn't propose to rollback the last action
+    #
+    within "[role=alert]", text: "Les utilisateurs sélectionnés ont été exclus du guichet." do |alert|
+      expect(alert).not_to have_button("Cancel")
+    end
+
+    click_on "DDFIP des Pyrénées-Atlantiques"
+
+    # The user should remains available on the DDFIP page
+    #
+    expect(page).to have_current_path(ddfip_path(ddfip64))
+    expect(page).to have_selector("h1", text: "DDFIP des Pyrénées-Atlantiques")
+    expect(page).to have_text("2 utilisateurs | Page 1 sur 1")
+    expect(page).to have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
   end
 
-  it "deletes an user from the office page and then rollbacks" do
+  it "selects and excludes all users from the current page on the office page without discarding them" do
+    # Create a bunch of users to have several pages
+    #
+    pelp_bayonne.users << create_list(:user, 10, organization: ddfip64)
+
+    visit office_path(pelp_bayonne)
+
+    expect(page).to have_text("11 utilisateurs | Page 1 sur 2")
+
+    # Checkboxes should be present to select all users
+    #
+    within "#datatable-users" do
+      check nil, match: :first
+    end
+
+    # A message should diplay the number of selected users
+    # with a button to remove them
+    #
+    within ".header-bar--selection", text: "10 utilisateurs sélectionnés" do
+      click_on "Exclure les utilisateurs du guichet"
+    end
+
+    # A confirmation dialog should appear
+    #
+    within "[role=dialog]", text: "Êtes-vous sûrs de vouloir exclure les 10 utilisateurs sélectionnés du guichet ?" do
+      click_on "Continuer"
+    end
+
+    # The browser should stay on the office page
+    # The selected users should have been removed
+    #
+    expect(page).to     have_current_path(office_path(pelp_bayonne))
+    expect(page).to     have_selector("h1", text: "PELP de Bayonne")
+    expect(page).to     have_text("1 utilisateur | Page 1 sur 1")
+    expect(page).not_to have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
+
+    # The dialog should be closed
+    # A notification should be displayed
+    #
+    expect(page).not_to have_selector(".header-bar--selection")
+    expect(page).not_to have_selector("[role=dialog]")
+    expect(page).to     have_selector("[role=alert]", text: "Les utilisateurs sélectionnés ont été exclus du guichet.")
+
+    # The notification doesn't propose to rollback the last action
+    #
+    within "[role=alert]", text: "Les utilisateurs sélectionnés ont été exclus du guichet." do |alert|
+      expect(alert).not_to have_button("Cancel")
+    end
+
+    click_on "DDFIP des Pyrénées-Atlantiques"
+
+    # The user should remains available on the DDFIP page
+    #
+    expect(page).to have_current_path(ddfip_path(ddfip64))
+    expect(page).to have_selector("h1", text: "DDFIP des Pyrénées-Atlantiques")
+    expect(page).to have_text("12 utilisateurs | Page 1 sur 2")
+    expect(page).to have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
+  end
+
+  it "selects and excludes all users through several pages on the office page" do
+    # Create a bunch of users to have several pages
+    #
+    pelp_bayonne.users << create_list(:user, 10, organization: ddfip64)
+
+    visit office_path(pelp_bayonne)
+
+    expect(page).to have_text("11 utilisateurs | Page 1 sur 2")
+
+    # Checkboxes should be present to select all users
+    #
+    within "#datatable-users" do
+      check nil, match: :first
+    end
+
+    # A message should diplay the number of selected users
+    # with a button to remove them
+    #
+    within ".header-bar--selection", text: "10 utilisateurs sélectionnés" do
+      click_on "Sélectionner les 11 utilisateurs des 2 pages"
+    end
+
+    within ".header-bar--selection", text: "11 utilisateurs sélectionnés" do
+      click_on "Exclure les utilisateurs du guichet"
+    end
+
+    # A confirmation dialog should appear
+    #
+    within "[role=dialog]", text: "Êtes-vous sûrs de vouloir exclure les 11 utilisateurs sélectionnés du guichet ?" do
+      click_on "Continuer"
+    end
+
+    # The browser should stay on the office page
+    # No users should appear anymore
+    #
+    expect(page).to have_current_path(office_path(pelp_bayonne))
+    expect(page).to have_selector("h1", text: "PELP de Bayonne")
+    expect(page).to have_text("Aucun utilisateur assigné à ce guichet.")
+
+    # The dialog should be closed
+    # A notification should be displayed
+    #
+    expect(page).not_to have_selector(".header-bar--selection")
+    expect(page).not_to have_selector("[role=dialog]")
+    expect(page).to     have_selector("[role=alert]", text: "Les utilisateurs sélectionnés ont été exclus du guichet.")
+
+    # The notification doesn't propose to rollback the last action
+    #
+    within "[role=alert]", text: "Les utilisateurs sélectionnés ont été exclus du guichet." do |alert|
+      expect(alert).not_to have_button("Cancel")
+    end
+
+    click_on "DDFIP des Pyrénées-Atlantiques"
+
+    # The user should remains available on the DDFIP page
+    #
+    expect(page).to have_current_path(ddfip_path(ddfip64))
+    expect(page).to have_selector("h1", text: "DDFIP des Pyrénées-Atlantiques")
+    expect(page).to have_text("12 utilisateurs | Page 1 sur 2")
+    expect(page).to have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
+  end
+
+  it "discards an user from the office page & rollbacks" do
     visit office_path(pelp_bayonne)
 
     # A table of users should be present
@@ -305,13 +455,13 @@ RSpec.describe "Office users" do
       click_on "Supprimer cet utilisateur"
     end
 
-    # A confirmation dialog should appears
+    # A confirmation dialog should appear
     #
     within "[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer cet utilisateur ?" do
       click_on "Continuer"
     end
 
-    # The browser should stay on publisher page
+    # The browser should stay on the office page
     # The user should not appears anymore
     #
     expect(page).to     have_current_path(office_path(pelp_bayonne))
@@ -330,7 +480,7 @@ RSpec.describe "Office users" do
       click_on "Annuler"
     end
 
-    # The browser should stay on publisher page
+    # The browser should stay on the office page
     # The user should not appears anymore
     # The user should be back again
     #

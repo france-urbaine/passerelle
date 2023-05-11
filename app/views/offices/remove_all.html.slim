@@ -6,22 +6,26 @@
       - else
         | Suppression du guichet sélectionné
 
-    - modal.with_form(url: offices_path, method: :delete) do
+    - modal.with_form(url: url_for([@parent, :offices]), method: :delete) do
+      = hidden_field_tag :redirect, @background_url if @background_url
       = hidden_param_input(:ids)
       = hidden_param_input(:search)
       = hidden_param_input(:order)
       = hidden_param_input(:page)
 
       - if @offices.count > 1
+        p Êtes-vous sûrs de vouloir supprimer les <b>#{@offices.count}</b> guichets sélectionnés ?
         p
-          | Êtes-vous sûrs de vouloir supprimer les <b>#{@offices.count}</b> guichets sélectionnés ?
+          | Par mesure de securité, les données de ces guichets seront archivées pendant 1 jour.
           br
-          | Ceux-ci seront archivés pendant 30 jours avant d'être définitivement supprimés.
+          | Toutes les données seront définitivement supprimées à la fin de ce délai.
+
       - else
+        p Êtes-vous sûrs de vouloir supprimer le guichet sélectionné ?
         p
-          | Êtes-vous sûrs de vouloir supprimer le guichet sélectionné ?
+          | Par mesure de securité, les données de ce guichet seront archivées pendant 1 jour.
           br
-          | Celui-ci sera archivé pendant 30 jours avant d'être définitivement supprimé.
+          | Toutes les données seront définitivement supprimées à la fin de ce délai.
 
     - modal.with_submit_action "Continuer", autofocus: true
     - modal.with_close_action "Annuler"

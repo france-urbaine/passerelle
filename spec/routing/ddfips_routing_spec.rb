@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe DdfipsController do
+RSpec.describe DDFIPsController do
   it { expect(get:    "/ddfips").to route_to("ddfips#index") }
   it { expect(post:   "/ddfips").to route_to("ddfips#create") }
   it { expect(patch:  "/ddfips").to be_unroutable }

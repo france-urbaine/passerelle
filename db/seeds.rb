@@ -229,14 +229,14 @@ OfficeUser.insert_all(
     { user: "admin@ddfip-64.example.org",       office: "SIE de Biarritz" },
     { user: "sdif@ddfip-64.example.org",        office: "SDIF Pyrénées-Atlantiques - Bayonne" },
     { user: "sdif@ddfip-64.example.org",        office: "SDIF Pyrénées-Atlantiques - Pau" },
-    { user: "sip.bayonne@ddfip-64.example.org", office: "SIP de Bayonne-Anglet" },
+    { user: "sip.bayonne@ddfip-64.example.org", office: "SIP de Bayonne-Anglet" }
   ])
 )
 
 def parse_office_communes(data)
   offices      = Office.pluck(:name, :id).to_h
-  epcis        = Hash.new { |hash, name| EPCI.find_by!(name: name).communes.pluck(:code_insee) }
-  departements = Hash.new { |hash, name| Departement.find_by!(name: name).communes.pluck(:code_insee) }
+  epcis        = Hash.new { |hash, name| hash[name] = EPCI.find_by!(name: name).communes.pluck(:code_insee) }
+  departements = Hash.new { |hash, name| hash[name] = Departement.find_by!(name: name).communes.pluck(:code_insee) }
 
   data.flat_map do |hash|
     office_id   = offices[hash.delete(:office)]

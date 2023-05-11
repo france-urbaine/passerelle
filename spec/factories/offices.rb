@@ -4,7 +4,12 @@ FactoryBot.define do
   factory :office do
     association :ddfip
 
-    name   { Faker::Book.title }
+    name do
+      type = %w[SIE SIP PELP PELH SDIF].sample
+      city = Faker::Address.city
+      "#{type} de #{city}"
+    end
+
     action { Office::ACTIONS.sample }
 
     trait :occupation_hab do

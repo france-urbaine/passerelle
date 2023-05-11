@@ -4,10 +4,12 @@ require "rails_helper"
 
 RSpec.describe "CollectivitiesController#new" do
   subject(:request) do
-    get "/collectivites/new", as:
+    get "/collectivites/new", as:, headers:, params:
   end
 
-  let(:as) { |e| e.metadata[:as] }
+  let(:as)      { |e| e.metadata[:as] }
+  let(:headers) { |e| e.metadata[:headers] }
+  let(:params)  { |e| e.metadata[:params] }
 
   context "when requesting HTML" do
     it { expect(response).to have_http_status(:success) }

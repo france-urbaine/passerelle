@@ -5,8 +5,9 @@ FactoryBot.define do
     siren { Faker::Company.french_siren_number }
 
     name do
+      types = %w[CA CC CU Agglomération Metropole]
       loop do
-        value = "Agglomération de #{Faker::Address.city}"
+        value = "#{types.sample} de #{Faker::Address.city}"
         break value unless EPCI.exists?(name: value)
       end
     end

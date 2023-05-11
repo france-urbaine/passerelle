@@ -4,15 +4,16 @@ require "rails_helper"
 
 RSpec.describe "Offices::UsersController#remove_all" do
   subject(:request) do
-    get "/guichets/#{office.id}/utilisateurs/remove", as:, params:
+    get "/guichets/#{office.id}/utilisateurs/remove", as:, headers:, params:
   end
 
-  let(:as)     { |e| e.metadata[:as] }
-  let(:params) { |e| e.metadata.fetch(:params, { ids: ids }) }
+  let(:as)      { |e| e.metadata[:as] }
+  let(:headers) { |e| e.metadata[:headers] }
+  let(:params)  { |e| e.metadata.fetch(:params, { ids: ids }) }
 
   let!(:ddfip)  { create(:ddfip) }
-  let!(:office) { create(:office, ddfip: ddfip) }
-  let!(:users)  { create_list(:user, 3, organization: ddfip, offices: [office]) }
+  let!(:office) { create(:office, ddfip: ddfip, users: users) }
+  let!(:users)  { create_list(:user, 3, organization: ddfip) }
   let!(:ids)    { users.take(2).map(&:id) }
 
   context "when requesting HTML" do
@@ -38,16 +39,8 @@ RSpec.describe "Offices::UsersController#remove_all" do
       it { expect(response).to have_http_status(:success) }
     end
 
-    context "when the DDFIP is discarded" do
-      let(:ddfip) { create(:ddfip, :discarded) }
-
-      it { expect(response).to have_http_status(:gone) }
-      it { expect(response).to have_content_type(:html) }
-      it { expect(response).to have_html_body }
-    end
-
     context "when the office is discarded" do
-      let(:office) { create(:office, :discarded, ddfip: ddfip) }
+      before { office.discard }
 
       it { expect(response).to have_http_status(:gone) }
       it { expect(response).to have_content_type(:html) }
@@ -55,10 +48,17 @@ RSpec.describe "Offices::UsersController#remove_all" do
     end
 
     context "when the office is missing" do
-      let(:office) { Office.new(id: Faker::Internet.uuid) }
-      let(:users)  { create_list(:user, 3, organization: ddfip) }
+      before { office.destroy }
 
       it { expect(response).to have_http_status(:not_found) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
+    end
+
+    context "when the DDFIP is discarded" do
+      before { office.ddfip.discard }
+
+      it { expect(response).to have_http_status(:gone) }
       it { expect(response).to have_content_type(:html) }
       it { expect(response).to have_html_body }
     end

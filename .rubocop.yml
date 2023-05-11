@@ -39,6 +39,7 @@ Layout/LineLength:
     - !ruby/regexp /\A\s*belongs_to/
     - !ruby/regexp /\A\s*has_many/
     - !ruby/regexp /\A\s*has_one/
+    - !ruby/regexp /\A\s*resources?/
 
 Layout/MultilineMethodCallIndentation:
   EnforcedStyle: indented
@@ -103,6 +104,11 @@ RSpec/DescribedClass:
 
 RSpec/ExampleLength:
   Enabled: false
+
+RSpec/FilePath:
+  CustomTransform:
+    ImportEPCIsDepartementsJob: import_epcis_departements_job
+    ImportEPCIsJob: import_epcis_job
 
 RSpec/ImplicitSubject:
   EnforcedStyle: single_statement_only

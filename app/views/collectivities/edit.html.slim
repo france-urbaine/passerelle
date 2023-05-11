@@ -1,3 +1,6 @@
 = template_frame_component(src: @background_url) do |frame|
   - frame.with_modal do |modal|
-    = render "form", collectivity: @collectivity, modal: modal
+    - modal.with_header do
+      | Modification de la collectivité
+
+    = render "form", parent: @parent, collectivity: @collectivity, modal: modal

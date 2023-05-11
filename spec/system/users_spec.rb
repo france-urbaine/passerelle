@@ -2,7 +2,7 @@
 
 require "system_helper"
 
-RSpec.describe "Managing users" do
+RSpec.describe "Users" do
   fixtures :regions, :departements, :epcis, :communes
   fixtures :publishers, :collectivities, :ddfips, :offices
   fixtures :users, :office_users
@@ -15,7 +15,7 @@ RSpec.describe "Managing users" do
   let(:christelle)           { users(:christelle) }
   let(:maxime)               { users(:maxime) }
 
-  it "visits index & show pages" do
+  it "visits index & user pages" do
     visit users_path
 
     # A table of all users should be present
@@ -27,69 +27,71 @@ RSpec.describe "Managing users" do
 
     click_on "Marc Debomy"
 
-    # The browser should redirect to the user page
+    # The browser should visit the user page
     #
     expect(page).to have_current_path(user_path(marc))
     expect(page).to have_selector("h1", text: "Marc Debomy")
 
     go_back
 
-    # The browser should redirect back to index page
+    # The browser should redirect back to the index page
     #
     expect(page).to have_current_path(users_path)
     expect(page).to have_selector("h1", text: "Utilisateurs")
   end
 
-  it "visits the links of a publisher user page and then comes back" do
+  it "visits the links on a publisher user page & comes back" do
     visit user_path(marc)
 
-    # A link to the publisher should be present
+    # On the user page, we expect a link to the publisher
     #
     expect(page).to have_selector("h1", text: "Marc Debomy")
     expect(page).to have_link("Fiscalité & Territoire")
 
     click_on "Fiscalité & Territoire"
 
-    # The browser should redirect to the publisher page
+    # The browser should visit the publisher page
     #
     expect(page).to have_current_path(publisher_path(fiscalite_territoire))
     expect(page).to have_selector("h1", text: "Fiscalité & Territoire")
 
     go_back
 
-    # The browser should redirect back to user page
+    # The browser should redirect back to the user page
     #
     expect(page).to have_current_path(user_path(marc))
     expect(page).to have_selector("h1", text: "Marc Debomy")
   end
 
-  it "visits the links of a collectivity user page and then comes back" do
+  it "visits the links on a collectivity user page & comes back" do
     visit user_path(christelle)
 
-    # A link to the collectivity should be present
+    # On the user page, we expect a link to the collectivity
     #
     expect(page).to have_selector("h1", text: "Christelle Droitier")
     expect(page).to have_link("CA du Pays Basque")
 
     click_on "CA du Pays Basque"
 
-    # The browser should redirect to the publisher page
+    # The browser should visit the collectivity page
     #
     expect(page).to have_current_path(collectivity_path(pays_basque))
     expect(page).to have_selector("h1", text: "CA du Pays Basque")
 
     go_back
 
-    # The browser should redirect back to user page
+    # The browser should redirect back to the user page
     #
     expect(page).to have_current_path(user_path(christelle))
     expect(page).to have_selector("h1", text: "Christelle Droitier")
   end
 
-  it "visits the links of a ddfip user page and then comes back" do
+  it "visits the links on a ddfip user page & comes back" do
     visit user_path(maxime)
 
-    # A link to the DDFIP and the offices should be present
+    # On the user page, we expect:
+    # - a link to the DDFIP
+    # - a link to each offices
     #
     expect(page).to have_selector("h1", text: "Maxime Gauthier")
     expect(page).to have_link("DDFIP des Pyrénées-Atlantiques")
@@ -97,28 +99,28 @@ RSpec.describe "Managing users" do
 
     click_on "DDFIP des Pyrénées-Atlantiques"
 
-    # The browser should redirect to the publisher page
+    # The browser should visit the DDFIP page
     #
     expect(page).to have_current_path(ddfip_path(ddfip64))
     expect(page).to have_selector("h1", text: "DDFIP des Pyrénées-Atlantiques")
 
     go_back
 
-    # The browser should redirect back to user page
+    # The browser should redirect back to the user page
     #
     expect(page).to have_current_path(user_path(maxime))
     expect(page).to have_selector("h1", text: "Maxime Gauthier")
 
     click_on "PELP de Bayonne"
 
-    # The browser should redirect to the publisher page
+    # The browser should visit the office page
     #
     expect(page).to have_current_path(office_path(pelp_bayonne))
     expect(page).to have_selector("h1", text: "PELP de Bayonne")
 
     go_back
 
-    # The browser should redirect back to user page
+    # The browser should redirect back to the user page
     #
     expect(page).to have_current_path(user_path(maxime))
     expect(page).to have_selector("h1", text: "Maxime Gauthier")
@@ -131,7 +133,7 @@ RSpec.describe "Managing users" do
     #
     click_on "Inviter un utilisateur"
 
-    # A dialog box should appears with a form to fill
+    # A dialog box should appear with a form to fill
     #
     within "[role=dialog]", text: "Invitation d'un nouvel utilisateur" do |dialog|
       expect(dialog).to have_field("Organisation")
@@ -151,8 +153,8 @@ RSpec.describe "Managing users" do
       click_on "Enregistrer"
     end
 
-    # The browser should stay on index page
-    # The new user should appears
+    # The browser should stay on the index page
+    # The new user should appear
     #
     expect(page).to have_current_path(users_path)
     expect(page).to have_selector("h1", text: "Utilisateurs")
@@ -172,7 +174,7 @@ RSpec.describe "Managing users" do
     #
     click_on "Inviter un utilisateur"
 
-    # A dialog box should appears with a form to fill
+    # A dialog box should appear with a form to fill
     #
     within "[role=dialog]", text: "Invitation d'un nouvel utilisateur" do |dialog|
       expect(dialog).to have_field("Organisation")
@@ -201,8 +203,8 @@ RSpec.describe "Managing users" do
       click_on "Enregistrer"
     end
 
-    # The browser should stay on index page
-    # The new user should appears
+    # The browser should stay on the index page
+    # The new user should appear
     #
     expect(page).to have_current_path(users_path)
     expect(page).to have_selector("h1", text: "Utilisateurs")
@@ -231,7 +233,7 @@ RSpec.describe "Managing users" do
       click_on "Modifier cet utilisateur"
     end
 
-    # A dialog box should appears with a form
+    # A dialog box should appear with a form
     # The form should be filled with user data
     #
     within "[role=dialog]", text: "Modification de l'utilisateur" do |dialog|
@@ -246,7 +248,7 @@ RSpec.describe "Managing users" do
       click_on "Enregistrer"
     end
 
-    # The browser should stay on index page
+    # The browser should stay on the index page
     # The user should have changed its name
     #
     expect(page).to have_current_path(users_path)
@@ -269,7 +271,7 @@ RSpec.describe "Managing users" do
       click_on "Modifier"
     end
 
-    # A dialog box should appears with a form
+    # A dialog box should appear with a form
     # The form should be filled with user data
     #
     within "[role=dialog]", text: "Modification de l'utilisateur" do |dialog|
@@ -284,7 +286,7 @@ RSpec.describe "Managing users" do
       click_on "Enregistrer"
     end
 
-    # The browser should stay on index page
+    # The browser should stay on the user page
     # The user should have changed its name
     #
     expect(page).to have_current_path(user_path(marc))
@@ -297,24 +299,24 @@ RSpec.describe "Managing users" do
     expect(page).to     have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
   end
 
-  it "discards an user from the index page and then rollbacks" do
+  it "discards an user from the index page & rollbacks" do
     visit users_path
 
     expect(page).to have_text("6 utilisateurs | Page 1 sur 1")
 
-    # A button should be present to remove th user
+    # A button should be present to remove the user
     #
     within :table_row, { "Utilisateur" => "Marc Debomy" } do
       click_on "Supprimer cet utilisateur"
     end
 
-    # A confirmation dialog should appears
+    # A confirmation dialog should appear
     #
     within "[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer cet utilisateur ?" do
       click_on "Continuer"
     end
 
-    # The browser should stay on index page
+    # The browser should stay on the index page
     # The user should not appears anymore
     #
     expect(page).to     have_current_path(users_path)
@@ -334,7 +336,7 @@ RSpec.describe "Managing users" do
       click_on "Annuler"
     end
 
-    # The browser should stay on index page
+    # The browser should stay on the index page
     # The user should be back again
     #
     expect(page).to have_current_path(users_path)
@@ -349,7 +351,7 @@ RSpec.describe "Managing users" do
     expect(page).to     have_selector("[role=alert]", text: "La suppression de l'utilisateur a été annulée.")
   end
 
-  it "discards an user from the user page and then rollbacks" do
+  it "discards an user from the user page & rollbacks" do
     visit user_path(marc)
 
     # A button should be present to edit the user
@@ -358,7 +360,7 @@ RSpec.describe "Managing users" do
       click_on "Supprimer"
     end
 
-    # A confirmation dialog should appears
+    # A confirmation dialog should appear
     #
     within "[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer cet utilisateur ?" do
       click_on "Continuer"
@@ -384,7 +386,7 @@ RSpec.describe "Managing users" do
       click_on "Annuler"
     end
 
-    # The browser should stay on index page
+    # The browser should stay on the index page
     # The user should be back again
     #
     expect(page).to have_current_path(users_path)
@@ -399,7 +401,7 @@ RSpec.describe "Managing users" do
     expect(page).to     have_selector("[role=alert]", text: "La suppression de l'utilisateur a été annulée.")
   end
 
-  it "selects and discards one user from the index page and then rollbacks" do
+  it "selects and discards one user from the index page & rollbacks" do
     visit users_path
 
     expect(page).to have_text("6 utilisateurs | Page 1 sur 1")
@@ -417,7 +419,7 @@ RSpec.describe "Managing users" do
       click_on "Supprimer la sélection"
     end
 
-    # A confirmation dialog should appears
+    # A confirmation dialog should appear
     #
     within "[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer l'utilisateur sélectionné ?" do
       click_on "Continuer"
@@ -465,7 +467,7 @@ RSpec.describe "Managing users" do
     expect(page).to     have_selector("[role=alert]", text: "La suppression des utilisateurs sélectionnés a été annulée.")
   end
 
-  it "selects and discards all users from the current page on index page and then rollbacks" do
+  it "selects and discards all users from the current page on index page & rollbacks" do
     # Create a bunch of users to have several pages
     # Create discarded users to verify they are not rollbacked
     #
@@ -498,7 +500,7 @@ RSpec.describe "Managing users" do
       click_on "Supprimer la sélection"
     end
 
-    # A confirmation dialog should appears
+    # A confirmation dialog should appear
     #
     within "[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer les 10 utilisateurs sélectionnés ?" do
       click_on "Continuer"
@@ -546,7 +548,7 @@ RSpec.describe "Managing users" do
     expect(page).to     have_selector("[role=alert]", text: "La suppression des utilisateurs sélectionnés a été annulée.")
   end
 
-  it "selects and discards all users through several pages on index page and then rollbacks" do
+  it "selects and discards all users through several pages on index page & rollbacks" do
     # Create a bunch of users to have several pages
     # TODO: Create discarded users to verify they are not rollbacked
     #
@@ -583,18 +585,18 @@ RSpec.describe "Managing users" do
       click_on "Supprimer la sélection"
     end
 
-    # A confirmation dialog should appears
+    # A confirmation dialog should appear
     #
     within "[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer les 16 utilisateurs sélectionnés ?" do
       click_on "Continuer"
     end
 
     # The browser should stay on index page
-    # No users should appears anymore
+    # No users should appear anymore
     #
     expect(page).to have_current_path(users_path)
     expect(page).to have_selector("h1", text: "Utilisateurs")
-    expect(page).to have_text("Aucun utilisateur disponible")
+    expect(page).to have_text("Aucun utilisateur disponible.")
 
     # The dialog should be closed
     # A notification should be displayed

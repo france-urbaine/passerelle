@@ -85,7 +85,7 @@ RSpec.describe "Regions" do
       click_on "Modifier cette région"
     end
 
-    # A dialog box should appears with a form
+    # A dialog box should appear with a form
     # The form should be filled with collectivity data
     #
     expect(page).to have_selector("[role=dialog]", text: "Modification de la région")
@@ -124,7 +124,7 @@ RSpec.describe "Regions" do
       click_on "Modifier"
     end
 
-    # A dialog box should appears with a form
+    # A dialog box should appear with a form
     # The form should be filled with collectivity data
     #
     expect(page).to have_selector("[role=dialog]", text: "Modification de la région")

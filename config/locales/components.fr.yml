@@ -5,6 +5,10 @@ fr:
         singular: "collectivité sélectionnée"
         plural:   "collectivités sélectionnées"
 
+      commune:
+        singular: "commune sélectionnée"
+        plural:   "communes sélectionnées"
+
       ddfip:
         singular: "DDFIP sélectionnée"
         plural:   "DDFIPs sélectionnées"

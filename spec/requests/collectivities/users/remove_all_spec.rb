@@ -4,11 +4,12 @@ require "rails_helper"
 
 RSpec.describe "Collectivities::UsersController#remove_all" do
   subject(:request) do
-    get "/collectivites/#{collectivity.id}/utilisateurs/remove", as:, params:
+    get "/collectivites/#{collectivity.id}/utilisateurs/remove", as:, headers:, params:
   end
 
-  let(:as)     { |e| e.metadata[:as] }
-  let(:params) { |e| e.metadata.fetch(:params, { ids: ids }) }
+  let(:as)      { |e| e.metadata[:as] }
+  let(:headers) { |e| e.metadata[:headers] }
+  let(:params)  { |e| e.metadata.fetch(:params, { ids: ids }) }
 
   let!(:collectivity) { create(:collectivity) }
   let!(:users)        { create_list(:user, 3, organization: collectivity) }
@@ -38,7 +39,7 @@ RSpec.describe "Collectivities::UsersController#remove_all" do
     end
 
     context "when collectivity is discarded" do
-      let(:collectivity) { create(:collectivity, :discarded) }
+      before { collectivity.discard }
 
       it { expect(response).to have_http_status(:gone) }
       it { expect(response).to have_content_type(:html) }
@@ -46,9 +47,17 @@ RSpec.describe "Collectivities::UsersController#remove_all" do
     end
 
     context "when collectivity is missing" do
-      let(:collectivity) { Collectivity.new(id: Faker::Internet.uuid) }
+      before { collectivity.destroy }
 
       it { expect(response).to have_http_status(:not_found) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
+    end
+
+    context "when publisher is discarded" do
+      before { collectivity.publisher.discard }
+
+      it { expect(response).to have_http_status(:gone) }
       it { expect(response).to have_content_type(:html) }
       it { expect(response).to have_html_body }
     end

@@ -2,15 +2,17 @@
 
 require "rails_helper"
 
-RSpec.describe "DdfipsController#destroy_all" do
+RSpec.describe "DDFIPsController#destroy_all" do
   subject(:request) do
-    delete "/ddfips", as:, params:
+    delete "/ddfips", as:, headers:, params:
   end
 
-  let(:as)     { |e| e.metadata[:as] }
-  let(:params) { |e| e.metadata.fetch(:params, { ids: ddfips.take(2).map(&:id) }) }
+  let(:as)      { |e| e.metadata[:as] }
+  let(:headers) { |e| e.metadata[:headers] }
+  let(:params)  { |e| e.metadata.fetch(:params, { ids: ids }) }
 
   let!(:ddfips) { create_list(:ddfip, 3) }
+  let!(:ids)    { ddfips.map(&:id).take(2) }
 
   context "when requesting HTML" do
     context "with multiple ids" do
@@ -41,42 +43,67 @@ RSpec.describe "DdfipsController#destroy_all" do
           label:  "Annuler",
           method: "patch",
           url:    "/ddfips/undiscard",
-          params: { ids: ddfips.take(2).map(&:id) }
+          params: { ids: ids }
         )
       end
+    end
+
+    context "with ids from already discarded ddfips" do
+      let(:ddfips) { create_list(:ddfip, 3, :discarded) }
+
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/ddfips") }
+      it { expect(flash).to have_flash_notice }
+      it { expect(flash).to have_flash_actions }
+      it { expect { request }.not_to change(DDFIP.discarded, :count).from(3) }
     end
 
     context "with `all` ids", params: { ids: "all" } do
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/ddfips") }
+      it { expect(flash).to have_flash_notice }
+      it { expect(flash).to have_flash_actions }
       it { expect { request }.to change(DDFIP.discarded, :count).by(3) }
     end
 
     context "with empty ids", params: { ids: [] } do
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/ddfips") }
+      it { expect(flash).to have_flash_notice }
+      it { expect(flash).to have_flash_actions }
       it { expect { request }.not_to change(DDFIP.discarded, :count) }
     end
 
     context "with unknown ids", params: { ids: %w[1 2] } do
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/ddfips") }
+      it { expect(flash).to have_flash_notice }
+      it { expect(flash).to have_flash_actions }
       it { expect { request }.not_to change(DDFIP.discarded, :count) }
     end
 
-    context "with missing ids parameters", params: {} do
+    context "with empty parameters", params: {} do
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/ddfips") }
+      it { expect(flash).to have_flash_notice }
+      it { expect(flash).to have_flash_actions }
       it { expect { request }.not_to change(DDFIP.discarded, :count) }
+    end
+
+    context "with referrer header", headers: { "Referer" => "http://example.com/other/path" } do
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/ddfips") }
+      it { expect(flash).to have_flash_notice }
+      it { expect(flash).to have_flash_actions }
     end
 
     context "with redirect parameter" do
-      let(:params) do
-        super().merge(redirect: "/editeur/12345")
-      end
+      let(:params) { super().merge(redirect: "/other/path") }
 
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/editeur/12345") }
+      it { expect(response).to redirect_to("/other/path") }
+      it { expect(flash).to have_flash_notice }
+      it { expect(flash).to have_flash_actions }
     end
   end
 

@@ -4,13 +4,15 @@ require "rails_helper"
 
 RSpec.describe "CollectivitiesController#remove_all" do
   subject(:request) do
-    get "/collectivites/remove", as:, params:
+    get "/collectivites/remove", as:, headers:, params:
   end
 
-  let(:as)     { |e| e.metadata[:as] }
-  let(:params) { |e| e.metadata.fetch(:params, { ids: collectivities.map(&:id).take(2) }) }
+  let(:as)      { |e| e.metadata[:as] }
+  let(:headers) { |e| e.metadata[:headers] }
+  let(:params)  { |e| e.metadata.fetch(:params, { ids: ids }) }
 
   let!(:collectivities) { create_list(:collectivity, 3) }
+  let!(:ids)            { collectivities.map(&:id).take(2) }
 
   context "when requesting HTML" do
     context "with multiple ids" do
@@ -31,7 +33,7 @@ RSpec.describe "CollectivitiesController#remove_all" do
       it { expect(response).to have_http_status(:success) }
     end
 
-    context "with missing ids parameters", params: {} do
+    context "with empty parameters", params: {} do
       it { expect(response).to have_http_status(:success) }
     end
   end

@@ -1,9 +1,3 @@
-- modal.with_header do
-  - if ddfip.persisted?
-    | Modification de la DDFIP
-  - else
-    | Création d'une nouvelle DDFIP
-
 - modal.with_form(model: ddfip) do
   = hidden_field_tag :redirect, modal.redirection_path
 
