@@ -31,7 +31,7 @@ RSpec.describe DeleteDiscardedRecordsJob do
     create(:user, organization: discarded_publisher)
   end
 
-  it do
+  it "destroys discarded records beyond a period" do
     expect { described_class.perform_now }
       .to  change { Publisher.with_discarded.count    }.by(-2)
       .and change { Collectivity.with_discarded.count }.by(-3)

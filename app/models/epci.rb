@@ -46,6 +46,7 @@ class EPCI < ApplicationRecord
 
   validates :siren,            format: { allow_blank: true, with: SIREN_REGEXP }
   validates :code_departement, format: { allow_blank: true, with: CODE_DEPARTEMENT_REGEXP }
+  validates :nature, inclusion: { allow_blank: true, in: %w[ME CC CA CU] }
 
   validates :siren, uniqueness: { unless: :skip_uniqueness_validation_of_siren? }
 

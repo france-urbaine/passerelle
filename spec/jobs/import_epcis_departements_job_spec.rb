@@ -3,7 +3,7 @@
 require "rails_helper"
 
 RSpec.describe ImportEpcisDepartementsJob do
-  subject(:perform_now) { described_class.perform_now(url) }
+  subject { described_class.perform_now(url) }
 
   let(:url)     { "https://www.insee.fr/fr/statistiques/fichier/2510634/Intercommunalite_Metropole_au_01-01-2021.zip" }
   let(:fixture) { file_fixture("intercommunalites.zip") }
@@ -23,14 +23,16 @@ RSpec.describe ImportEpcisDepartementsJob do
       .to_return(status: 200, body: fixture)
   end
 
-  it { expect { described_class.perform_later(url) }.not_to raise_error }
+  it "enqueues a job without error" do
+    expect { described_class.perform_later(url) }
+      .to not_raise_error
+      .and have_enqueued_job(described_class)
+  end
 
-  it { expect { perform_now }.not_to change(EPCI, :count) }
-
-  context "when perform completed" do
-    before { perform_now }
-
-    it { expect(EPCI.find_by(siren: "200000172").code_departement).to eq("74") }
-    it { expect(EPCI.find_by(siren: "200023414").code_departement).to eq("76") }
+  it "updates EPCIs #code_departement" do
+    expect { described_class.perform_now(url) }
+      .to not_change(EPCI, :count)
+      .and change { EPCI.find_by(siren: "200000172").code_departement }.to("74")
+      .and change { EPCI.find_by(siren: "200023414").code_departement }.to("76")
   end
 end

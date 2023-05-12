@@ -30,10 +30,13 @@ class ImportEpcisJob < ApplicationJob
     return if row["LIBEPCI"].blank?
     return unless row["EPCI"].match?(EPCI::SIREN_REGEXP)
 
+    nature = row["NATURE_EPCI"]
+    nature = "ME" if nature == "METLYON"
+
     queue << {
       siren:  row["EPCI"],
       name:   row["LIBEPCI"],
-      nature: row["NATURE_EPCI"]
+      nature: nature
     }
 
     flush if queue.size >= 100
