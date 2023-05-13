@@ -1,0 +1,64 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+# This workflow will download a prebuilt Ruby version, install dependencies and run tests with Rake
+# For more information see: https://github.com/marketplace/actions/setup-ruby-jruby-and-truffleruby
+
+name: CI
+on: push
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    services:
+      # Setup a postgres database to run tests
+      #
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_DB:       fiscahub_dev
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 3.2.0
+        bundler-cache: true
+
+    - name: Set up yarn packages
+      uses: borales/actions-yarn@v4
+      with:
+        cmd: install
+
+    - name: Set up application
+      env:
+        POSTGRESQL_HOST:     localhost
+        POSTGRESQL_PORT:     5432
+        POSTGRESQL_USER:     postgres
+        POSTGRESQL_PASSWORD: postgres
+        POSTGRESQL_DATABASE: fiscahub_dev
+      run: |
+        bin/rails db:test:prepare
+        yarn build:css
+        yarn build:js
+
+    - name: Run CI
+      env:
+        POSTGRESQL_HOST:     localhost
+        POSTGRESQL_PORT:     5432
+        POSTGRESQL_USER:     postgres
+        POSTGRESQL_PASSWORD: postgres
+        POSTGRESQL_DATABASE: fiscahub_dev
+      run: |
+        bin/ci
