@@ -41,6 +41,10 @@ jobs:
       with:
         cmd: install
 
+    # TODO: use bin/setup to use and test the same setup as used in development
+    # The problem is currently that bin/setup is loading two databases for
+    # development and test environnements
+    #
     - name: Set up application
       env:
         POSTGRESQL_HOST:     localhost
@@ -55,6 +59,7 @@ jobs:
 
     - name: Run CI
       env:
+        CI:                  true
         POSTGRESQL_HOST:     localhost
         POSTGRESQL_PORT:     5432
         POSTGRESQL_USER:     postgres

@@ -36,22 +36,38 @@ end
 def test_all
   log "Running all test suite"
   clear_coverage
-  system!({ "SIMPLE_COV_COMMAND" => "bin/ci test" }, "bundle exec rspec --no-profile")
+
+  command = "bundle exec rspec --no-profile"
+  command += " --format progress" if ENV["CI"] == "true"
+
+  system!({ "SIMPLE_COV_COMMAND" => "bin/ci test:system" }, command)
 end
 
 def test_unit
   log "Running non-system tests"
-  system!({ "SIMPLE_COV_COMMAND" => "bin/ci test:unit" }, "bundle exec rspec -t '~type:system' --no-profile")
+
+  command = "bundle exec rspec --tag '~type:system' --no-profile"
+  command += " --format progress" if ENV["CI"] == "true"
+
+  system!({ "SIMPLE_COV_COMMAND" => "bin/ci test:system" }, command)
 end
 
 def test_system
   log "Running system tests"
-  system!({ "SIMPLE_COV_COMMAND" => "bin/ci test:system" }, "bundle exec rspec -t 'type:system' --no-profile")
+
+  command = "bundle exec rspec --tag 'type:system' --no-profile"
+  command += " --format progress" if ENV["CI"] == "true"
+
+  system!({ "SIMPLE_COV_COMMAND" => "bin/ci test:system" }, command)
 end
 
 def rubocop
   log "Analyzing code issues with Rubocop"
-  system! "bundle exec rubocop --server --display-cop-names"
+
+  command = "bundle exec rubocop"
+  command += " --server --display-cop-names" unless ENV["CI"] == "true"
+
+  system! command
 end
 
 def brakeman
