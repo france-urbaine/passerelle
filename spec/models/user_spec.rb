@@ -14,14 +14,47 @@ RSpec.describe User do
 
   # Validations
   # ----------------------------------------------------------------------------
-  it { is_expected.to validate_presence_of(:first_name) }
-  it { is_expected.to validate_presence_of(:last_name) }
-  it { is_expected.to validate_presence_of(:password) }
+  describe "validations" do
+    subject { build(:user) }
 
-  context "with an existing user" do
-    before { create(:user) }
+    it { is_expected.to validate_presence_of(:first_name) }
+    it { is_expected.to validate_presence_of(:last_name) }
+    it { is_expected.to validate_presence_of(:email) }
+    it { is_expected.to validate_presence_of(:password) }
 
     it { is_expected.to validate_uniqueness_of(:email).case_insensitive }
+    it { is_expected.to validate_confirmation_of(:password) }
+    it { is_expected.to validate_length_of(:password).is_at_least(12) }
+
+    it { is_expected.to allow_value("a.b.c@example.com", "123@mail.test").for(:email) }
+    it { is_expected.not_to allow_value("invalid_email_format", "123").for(:email) }
+
+    it "ignores discarded users when validating uniqueness of email" do
+      create(:user, :discarded, email: "foo@bar.com")
+
+      expect(build(:user, email: "foo@bar.com")).to be_valid
+    end
+
+    it "skips uniqueness validation on discarded users" do
+      create(:user, email: "foo@bar.com")
+
+      expect(build(:user, :discarded, email: "foo@bar.com")).to be_valid
+    end
+
+    it "validates email uniqueness when resetting discarded_at" do
+      create(:user, email: "foo@bar.com")
+      user = create(:user, :discarded, email: "foo@bar.com")
+      user.discarded_at = nil
+
+      expect(user).not_to be_valid
+    end
+
+    it "raises an exception when undiscarding an user but its email is already taker by another user" do
+      user = create(:user, :discarded, email: "foo@bar.com")
+      create(:user, email: "foo@bar.com")
+
+      expect { user.undiscard }.to raise_error(ActiveRecord::RecordNotUnique)
+    end
   end
 
   # Search

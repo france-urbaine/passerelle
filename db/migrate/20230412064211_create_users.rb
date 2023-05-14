@@ -54,12 +54,14 @@ class CreateUsers < ActiveRecord::Migration[7.0]
       ## Counters
       t.integer :offices_count, null: false, default: 0
 
+      ## Discardable
+      t.index :discarded_at
+
       ## Indexes
       t.index :email,                unique: true
       t.index :reset_password_token, unique: true
       t.index :confirmation_token,   unique: true
       t.index :unlock_token,         unique: true
-      t.index :discarded_at
     end
   end
 end

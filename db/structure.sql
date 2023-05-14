@@ -1941,7 +1941,7 @@ CREATE INDEX index_users_on_discarded_at ON public.users USING btree (discarded_
 -- Name: index_users_on_email; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX index_users_on_email ON public.users USING btree (email);
+CREATE UNIQUE INDEX index_users_on_email ON public.users USING btree (email) WHERE (discarded_at IS NULL);
 
 
 --
@@ -2136,6 +2136,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230412064729'),
 ('20230412064833'),
 ('20230412064850'),
+('20230514161159'),
 ('20230516080055');
 
 

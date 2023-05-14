@@ -47,10 +47,13 @@
 #  index_users_on_unlock_token          (unlock_token) UNIQUE
 #
 class User < ApplicationRecord
+  # Devise validatable is not included:
+  # Validations are included manually to scope on kept records
+  # when validating uniqueness of email.
+  #
   devise(
     :database_authenticatable,
     :registerable,
-    :validatable,
     :recoverable,
     :trackable,
     :confirmable,
@@ -69,9 +72,31 @@ class User < ApplicationRecord
 
   # Validations
   # ----------------------------------------------------------------------------
-  validates :last_name,  presence: true
   validates :first_name, presence: true
+  validates :last_name,  presence: true
+  validates :email,      presence: true
+  validates :password,   presence: { if: :password_required? }
+
   validates :organization_type, inclusion: { in: %w[Publisher Collectivity DDFIP] }
+
+  with_options allow_blank: true do
+    validates :email, format: { with: Devise.email_regexp, if: :will_save_change_to_email? }
+    validates :email, uniqueness: {
+      case_sensitive: false,
+      conditions: -> { kept },
+      unless: :skip_uniqueness_validation_of_email?,
+    }
+
+    validates :password, confirmation: { if: :password_required? }
+    validates :password, length: { within: Devise.password_length }
+  end
+
+  # Checks whether a password is needed or not. For validations only.
+  # Passwords are always required if it's a new record, or if the password
+  # or confirmation are being set somewhere.
+  def password_required?
+    !persisted? || !password.nil? || !password_confirmation.nil?
+  end
 
   # Callbacks
   # ----------------------------------------------------------------------------

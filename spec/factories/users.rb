@@ -6,7 +6,7 @@ FactoryBot.define do
 
     first_name   { Faker::Name.first_name }
     last_name    { Faker::Name.last_name }
-    password     { Faker::Internet.password }
+    password     { Faker::Internet.password(min_length: Devise.password_length.min) }
     confirmed_at { Time.current }
 
     sequence(:email) { |n| Faker::Internet.email(name: "#{first_name}_#{n}") }
