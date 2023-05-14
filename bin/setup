@@ -59,6 +59,27 @@ def setup
   useful_commands
 end
 
+def setup_mailcatcher
+  log "Install mailcatcher"
+
+  return if system("gem install mailcatcher --pre")
+
+  log "Failed to install mailcatcher"
+
+  if system("command -v brew &> /dev/null")
+    log "Homebrew detected"
+    log "Retry with option: --with-openssl-dir=$(brew --prefix openssl@1.1)"
+    return if system("gem install mailcatcher --pre -- --with-openssl-dir=$(brew --prefix openssl@1.1)")
+
+    log "Failed to install mailcatcher"
+  end
+
+  log "Read more about potential issues:"
+  log " . https://github.com/eventmachine/eventmachine/issues/936"
+  log " . https://github.com/sj26/mailcatcher#rvm"
+  log " . https://github.com/sj26/mailcatcher#ruby"
+end
+
 def help
   log "Useful commands:"
   useful_commands
@@ -75,13 +96,18 @@ def useful_commands
   log "  bin/ci help"
   log "     # Show more options about how to run tests and CI"
   log ""
+  log "  bin/setup mailcatcher"
+  log "     # Install mailcatcher"
+  log ""
   log "  bin/setup help"
-  log "     # show this help"
+  log "     # Show this help"
   log ""
 end
 
 if ARGV[0].nil?
   setup
+elsif ARGV[0] == "mailcatcher"
+  setup_mailcatcher
 else
   help
 end

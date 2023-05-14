@@ -46,10 +46,11 @@ Rails.application.configure do
     port: ENV.fetch("PORT", 3000)
   }
 
-  # Let Mailcatcher catch emails
+  # Use Mailcatcher to catch emails
+  config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
-    address: "localhost",
-    veport:  ENV.fetch("SMTP_PORT", 1025)
+    address: "127.0.0.1",
+    port: ENV.fetch("SMTP_PORT", 1025)
   }
 
   # Print deprecation notices to the Rails logger.
