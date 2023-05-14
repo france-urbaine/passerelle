@@ -11,6 +11,9 @@
 @import "./tags/tables";
 @import "./tags/svg";
 
+/* Texts */
+@import "./components/typography";
+
 /* Interactive components */
 @import "./components/button";
 @import "./components/icon_button";
@@ -38,4 +41,3 @@
 /* Data display */
 @import "./components/datatable";
 @import "./components/description_list";
-@import "./components/typography";

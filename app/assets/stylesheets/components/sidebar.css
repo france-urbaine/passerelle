@@ -10,12 +10,7 @@
   }
 
   .sidebar__brand  {
-    display: flex;
-    align-items: center;
-
-    @apply p-4 text-3xl font-bold text-blue-500;
-    @apply text-blue-500;
-    @apply dark:text-sky-400;
+    @apply p-4 text-3xl;
 
     & img {
       @apply h-8 w-8 mr-4;
