@@ -1,0 +1,27 @@
+.card
+  .card__content
+    = form_with(model: @user, url: account_invitation_path, method: :put) do |form|
+      = hidden_param_input :confirmation_token
+
+      h1.card__header.card__title
+        | Bienvenue sur FiscaHub !
+
+      .card__body
+        p Veuillez saisir un mot de passe afin de finaliser votre inscription et activer votre compte.
+
+        = form.block :password do
+          = form.label :password
+          = form.password_field :password, autofocus: true, autocomplete: "new-password"
+
+        = form.block :password_confirmation do
+          = form.label :password_confirmation
+          = form.password_field :password_confirmation, autocomplete: "new-password"
+
+      .card__actions.card__actions--center
+        = button_component "Confirmer", primary: true, type: "submit"
+
+p
+  = link_to new_session_path(@user) do
+    = svg_icon "chevron-left-small", "Retour", class: "inline h-6 w-6"
+    | Retour au formulaire de connexion
+  | .

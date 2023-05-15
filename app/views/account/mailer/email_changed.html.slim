@@ -1,0 +1,11 @@
+p Bonjour #{@resource.name},
+p
+  - if @resource.unconfirmed_email?
+    | Nous vous informons que votre adresse mail est en cours de modification sur <strong>FiscaHub</strong>.
+  - else
+    | Nous vous informons que votre adresse mail a été modifiée sur <strong>FiscaHub</strong>.
+p
+  | Si vous n'étes pas à l'origine de cette modification,
+  |  nous vous invitons à contacter nos administreurs au plus vite :
+  br
+  = mail_to "contact@fiscahub.fr"

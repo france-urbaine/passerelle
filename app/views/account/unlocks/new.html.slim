@@ -1,0 +1,21 @@
+.card
+  .card__content
+    = form_with(model: resource, url: unlock_path(resource_name), method: :post) do |form|
+      h1.card__header.card__title
+        | Ré-activation du compte
+
+      .card__body
+        p Veuillez saisir votre adresse mail pour que nous puissions vous transmettre les instructions nécessaires.
+
+        = form.block :email do
+          = form.label :email
+          = form.text_field :email, autofocus: true, autocomplete: "email"
+
+      .card__actions.card__actions--center
+        = button_component "Envoyer les instructions", primary: true, type: "submit"
+
+p
+  = link_to new_session_path(resource_name) do
+    = svg_icon "chevron-left-small", "Retour", class: "inline h-6 w-6"
+    | Retour au formulaire de connexion
+  | .

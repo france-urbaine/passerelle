@@ -1,0 +1,22 @@
+doctype html
+html( lang="fr" )
+  head
+    title FiscaHub
+    meta name="viewport" content="width=device-width,initial-scale=1"
+
+    = csrf_meta_tags
+    = csp_meta_tag
+
+    = stylesheet_link_tag "application", "data-turbo-track": "reload"
+    = javascript_include_tag "application", "data-turbo-track": "reload", defer: true
+
+  body.public
+    .public__wrapper
+      .public__brand.brand
+        = image_tag("logo.svg", alt: "Logo de FiscaHub")
+        span.brand__left Fisca
+        span.brand__right Hub
+
+      = yield
+
+    = render "shared/notifications"

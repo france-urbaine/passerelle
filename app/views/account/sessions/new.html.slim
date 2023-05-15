@@ -1,0 +1,30 @@
+.card
+  .card__content
+    = form_with(model: resource, as: resource_name, url: session_path(resource_name)) do |form|
+      .card__body
+        - if resource.errors.any?
+          div( data-turbo-cache="false" )
+            - resource.errors.full_messages.each do |message|
+              = message
+
+        = form.block :email do
+          = form.label :email
+          = form.text_field :email, autofocus: true, autocomplete: "email"
+
+        = form.block :password do
+          = form.label :password
+          = form.password_field :password, autocomplete: "password"
+
+      .card__actions.card__actions--center
+        = button_component "Connexion", primary: true, type: "submit"
+
+      hr.my-6
+      p.text-center Votre collectivité n'est pas encore inscrite sur FiscaHub ?
+      .flex.justify-center
+        = button_component "Inscription", new_account_registration_path
+
+p
+  | Vous rencontrez des difficultés pour vous connecter ?
+  br
+  = link_to "Réinitialisez votre mot de passe", new_password_path(resource_name)
+  | .

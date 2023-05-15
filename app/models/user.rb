@@ -53,7 +53,6 @@ class User < ApplicationRecord
   #
   devise(
     :database_authenticatable,
-    :registerable,
     :recoverable,
     :trackable,
     :confirmable,
@@ -177,6 +176,7 @@ class User < ApplicationRecord
     self.inviter    = by
     self.invited_at = Time.current
     self.password   = Devise.friendly_token[0, 20]
+    self
   end
 
   def invited?

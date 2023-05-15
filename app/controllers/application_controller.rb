@@ -9,6 +9,7 @@ class ApplicationController < ActionController::Base
 
   before_action :verify_requested_format!
   before_action :accept_request_variant
+  before_action :authenticate_user!
 
   respond_to :html
 

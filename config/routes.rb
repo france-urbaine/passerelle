@@ -8,6 +8,20 @@ Rails.application.routes.draw do
 
   mount Lookbook::Engine, at: "/lookbook" if Rails.env.development?
 
+  devise_for :users, path: "/account", controllers: {
+    sessions:      "account/sessions",
+    confirmations: "account/confirmations",
+    registrations: "account/registrations",
+    passwords:     "account/passwords",
+    unlocks:       "account/unlocks"
+  }
+
+  namespace :account do
+    resource :invitation, only: %i[update] do
+      get :edit, as: :accept, path: "/accept"
+    end
+  end
+
   concern :removable do
     get   :remove,    on: :member
     patch :undiscard, on: :member
@@ -23,8 +37,6 @@ Rails.application.routes.draw do
     get   :edit_all,   on: :collection, path: "edit"
     patch :update_all, on: :collection, path: "/", as: nil
   end
-
-  devise_for :user
 
   ID_REGEXP = %r{(?!(new|edit|remove|discard|undiscard|offices))[^/]+}
 

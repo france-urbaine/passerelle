@@ -255,6 +255,14 @@ GEM
     patience_diff (1.2.0)
       optimist (~> 3.0)
     pg (1.5.3)
+    premailer (1.21.0)
+      addressable
+      css_parser (>= 1.12.0)
+      htmlentities (>= 4.0.0)
+    premailer-rails (1.12.0)
+      actionmailer (>= 3)
+      net-smtp
+      premailer (~> 1.7, >= 1.7.9)
     pry (0.14.2)
       coderay (~> 1.1)
       method_source (~> 1.0)
@@ -468,6 +476,7 @@ DEPENDENCIES
   pagy
   parallel_tests
   pg (~> 1.1)
+  premailer-rails
   puma (~> 6.0)
   rack-mini-profiler
   rails (~> 7.0.2, >= 7.0.2.3)

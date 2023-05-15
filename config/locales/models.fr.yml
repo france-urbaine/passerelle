@@ -45,16 +45,18 @@ fr:
         contact_phone:        Numéro de téléphone
 
       user:
-        organization:         Organisation
-        organization_type:    Type d'organisation
-        organization_id:      ID de l'organisation
-        organization_name:    Nom de l'organisation
-        first_name:           Prénom
-        last_name :           Nom
-        email:                Adresse mail
-        organization_admin:   Administrateur de l'organisation
-        super_admin:          Administrateur de la plateforme FiscaHub
-        office_ids:           Guichets
+        organization:           Organisation
+        organization_type:      Type d'organisation
+        organization_id:        ID de l'organisation
+        organization_name:      Nom de l'organisation
+        first_name:             Prénom
+        last_name :             Nom
+        email:                  Adresse mail
+        password:               Mot de passe
+        password_confirmation:  Confirmation du mot de passe
+        organization_admin:     Administrateur de l'organisation
+        super_admin:            Administrateur de la plateforme FiscaHub
+        office_ids:             Guichets
 
       commune:
         name:             Nom de la commune
@@ -156,6 +158,12 @@ fr:
               invalid:   Un numéro de téléphone valide est requise
 
         user:
+          already_confirmed:           Votre compte a déjà été validé, veuillez essayer de vous connecter
+          confirmation_period_expired: Votre compte à expiré, merci de faire une nouvelle demande
+          expired:                     Votre compte à expiré, merci de faire une nouvelle demande
+          not_found:                   Votre compte n'a pas été trouvé
+          not_locked:                  Votre compte n'est plus verrouillé
+
           attributes:
             organization:
                 required:  Une organisation est requise
@@ -176,6 +184,20 @@ fr:
             email:
               blank:     Une adresse mail est requise
               invalid:   Une adresse mail valide est requise
+
+            password:
+              blank:     Un mot de passe est requis
+              too_long:  Votre mot de passe est trop long (%{count} caractères maximum)
+              too_short: Votre mot de passe est trop court (%{count} caractères minimim)
+
+            password_confirmation:
+              blank:        Une confirmation de votre mot de passe est requise
+              confirmation: Votre mot de passe n'a pas pu être confirmé
+
+            reset_password_token:
+              blank:        Un code de réinitialisation est requis
+              invalid:      Votre code de réinitialisation est invalide ou expiré. Veuillez faire une nouvelle demande.
+              expired:      Votre code de réinitialisation est expiré. Veuillez faire une nouvelle demande.
 
         commune:
           attributes:
