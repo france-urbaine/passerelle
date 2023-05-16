@@ -5,9 +5,15 @@ FactoryBot.define do
     association :ddfip
 
     name do
-      type = %w[SIE SIP PELP PELH SDIF].sample
-      city = Faker::Address.city
-      "#{type} de #{city}"
+      acronyms = %w[SIE SIP PELP PELH SDIF]
+
+      loop do
+        type = acronyms.sample
+        city = Faker::Address.city
+        value = "#{type} de #{city}"
+
+        break value unless Office.exists?(ddfip_id: ddfip_id, name: value)
+      end
     end
 
     action { Office::ACTIONS.sample }
