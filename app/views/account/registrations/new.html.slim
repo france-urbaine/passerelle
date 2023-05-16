@@ -1,61 +1,25 @@
 .card
   .card__content
-    = form_with(model: @collectivity, url: account_registration_path, method: :post) do |form|
-      .card__header
-        h2.card__title Inscription à FiscaHub
+    h1.card__header.card__title
+      | Inscription sur FiscaHub
 
-      .card__body
-        = form.block :territory, autocomplete: territories_path do
-          ruby:
-            if @collectivity.territory
-              territory_data = { type: @collectivity.territory_type, id: @collectivity.territory_id }.to_json
-              territory_name = @collectivity.territory.qualified_name
-            end
+    .card__body
+      p L'inscription à FiscaHub est restreinte et se fait sur invitation.
 
-            # Do not add required attribute to make this form submittable in noscript mode
-            html_options = {
-              value:        territory_name,
-              placeholder:  "Rechercher et sélectionner un territoire",
-              data:         { autocomplete_target: "input" }
-            }
+      p
+        strong Vous êtes une collectivité ?
+      p
+        | Veuillez vous rapprocher de votre éditeur pour demander un accés à la plateforme.
+      p
+        | Si vous n'avez aucun éditeur, veuillez vous rapprocher de votre direction
+        |  départementale des finances pour pour demander un accés à la plateforme.
 
-          = form.label :territory, "Nom de votre collectivité"
-          = form.search_field :territory, **html_options
-          = form.hidden_field :territory_data, data: { autocomplete_target: "hidden" }, value: territory_data
-
-        = noscript do
-          = form.block :territory_type do
-            ruby:
-              models  = [Commune, EPCI, Departement, Region]
-              options = models.map { |m| [m.model_name.human, m.name] }
-
-            = form.label :territory_type
-            = form.select :territory_type, options, autofocus: true, required: true
-
-          = form.block :territory_code do
-            / ruby:
-            /   value = case @collectivity.territory&.name
-
-            = form.label :territory_code
-            = form.text_field :territory_code, required: true
-
-        = form.block :siren do
-          = form.label :siren, "Numéro SIREN de votre collectivité"
-          = form.text_field :siren, required: true
-
-        = form.block :publisher_id do
-          ruby:
-            options = Publisher.all.map { |o| [o.name, o.id ] }
-            html_options = {
-              prompt:        ("Sélectionnez un éditeur" if @collectivity.new_record? && @collectivity.errors.empty?),
-              include_blank: "Aucun éditeur ou éditeur absent de la liste"
-            }
-
-          = form.label :publisher_id, "Votre éditeur"
-          = form.select :publisher_id, options, **html_options
-
-      .card__actions.card__actions--center
-        = button_component "Continuer", primary: true, type: "submit"
+      p
+        strong Vous êtes un éditeur ?
+      p
+        | Veuillez nous contacter pour définir des modalités d'accés à la plateforme :
+        = " "
+        = mail_to "contact@fiscahub.fr"
 
 p
   = link_to new_user_session_path do

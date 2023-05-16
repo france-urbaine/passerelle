@@ -3,20 +3,23 @@
 Rails.application.routes.draw do
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
-  # Defines the root path route ("/")
-  # root "articles#index"
+  root to: redirect("/editeurs")
 
   mount Lookbook::Engine, at: "/lookbook" if Rails.env.development?
 
-  devise_for :users, path: "/account", controllers: {
+  devise_for :users, path: "/compte", controllers: {
     sessions:      "account/sessions",
     confirmations: "account/confirmations",
     registrations: "account/registrations",
     passwords:     "account/passwords",
     unlocks:       "account/unlocks"
+  }, path_names: {
+    sign_in: "connexion"
   }
 
-  namespace :account do
+  namespace :account, path: "/compte" do
+    resource :registration, path: "/inscription", only: %i[new]
+
     resource :invitation, only: %i[update] do
       get :edit, as: :accept, path: "/accept"
     end
@@ -97,6 +100,4 @@ Rails.application.routes.draw do
     resources :territories,   only: %i[index],       path: "/territoires"
     resource  :territories,   only: %i[edit update], path: "/territoires"
   end
-
-  root to: redirect("/editeurs")
 end
