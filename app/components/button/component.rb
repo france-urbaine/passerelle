@@ -11,6 +11,7 @@ module Button
       @icon_only   = options.delete(:icon_only)
       @modal       = options.delete(:modal)
       @primary     = options.delete(:primary)
+      @accent      = options.delete(:accent)
       @destructive = options.delete(:destructive)
       @discrete    = options.delete(:discrete)
       @options     = options
@@ -107,16 +108,29 @@ module Button
 
       if icon_only
         classes += " icon-button"
-        classes += " icon-button--primary" if @primary
-        classes += " icon-button--destructive" if @destructive
+        classes += " icon-button--#{button_class_modifier}" if button_class_modifier
       else
         classes += " button"
-        classes += " button--primary" if @primary
-        classes += " button--destructive" if @destructive && @destructive != "discrete"
-        classes += " button--destructive-discrete" if @destructive == "discrete"
+        classes += " button--#{button_class_modifier}" if button_class_modifier
       end
 
       classes.strip
+    end
+
+    def button_class_modifier
+      if @primary == "discrete"
+        "primary-discrete"
+      elsif @primary
+        "primary"
+      elsif @accent == "discrete"
+        "accent-discrete"
+      elsif @accent
+        "accent"
+      elsif @destructive == "discrete"
+        "destructive-discrete"
+      elsif @destructive
+        "destructive"
+      end
     end
 
     def extract_data_attributes

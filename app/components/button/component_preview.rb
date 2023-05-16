@@ -11,94 +11,70 @@ module Button
 
     # @label Using block to capture label
     #
-    def with_block; end
+    def default_with_block; end
 
     # @label Button to open a link
     #
-    def with_link; end
+    def default_with_link; end
 
     # @label Button to open a link in a modal
     #
-    def with_modal; end
+    def default_with_modal; end
 
     # @label Button to submit a link with a given method
     #
-    def with_method; end
+    def default_with_method; end
 
-    # @label Primary button
+    # @label Button to submit a link with a given method
     #
-    def primary; end
+    def default_disabled; end
 
-    # @label Destructive button
+    # @!group Variants
+    # --------------------------------------------------------------------------
     #
-    def destructive; end
+    # @label Colored buttons
+    #
+    def variants_colored; end
 
-    # @label Destructive but discrete button
+    # @label Colored buttons disabled
     #
-    def destructive_discrete; end
+    def variants_disabled; end
+
+    # @label Discrete buttons
+    #
+    def variants_discrete; end
+
+    # @label Discrete buttons disabled
+    #
+    def variants_discrete_disabled; end
+
+    # @label With icons
+    #
+    def variants_with_icon; end
+
+    # @label Disabled with icons
+    #
+    def variants_with_icon_disabled; end
     #
     # @!endgroup
 
-    # @!group With text and icon
+    # @!group Icon only
     # --------------------------------------------------------------------------
     #
     # @label Default
     #
-    def with_icon; end
-
-    # @label Primary button with text and icon
-    #
-    def primary_with_icon; end
-
-    # @label Destructive button with text and icon
-    #
-    def destructive_with_icon; end
-
-    # @label Disabled button
-    #
-    def disabled_with_icon; end
-
-    # @label Primary button disabled
-    #
-    def primary_disabled_with_icon; end
-
-    # @label Destructive button disabled
-    #
-    def destructive_disabled_with_icon; end
-    #
-    # @!endgroup
-
-    # @!group With icon only
-    # --------------------------------------------------------------------------
-    #
-    # @label Default
-    #
-    def with_only_icon; end
+    def icon_only; end
 
     # @label With aria label and tooltip
     #
-    def with_tooltip; end
+    def icon_only_with_label; end
 
-    # @label Primary button with icon only
+    # @label Colored variants
     #
-    def primary_only_icon; end
+    def icon_only_colored; end
 
-    # @label Destructive button with icon icon only
+    # @label Disabled buttons
     #
-    def destructive_only_icon; end
-
-    # @label Disabled button
-    #
-    def disabled_with_only_icon; end
-
-    # @label Primary button disabled
-    #
-    def primary_disabled_only_icon; end
-
-    # @label Destructive button disabled
-    #
-    def destructive_disabled_only_icon; end
-    #
-    # @!endgroup
+    def icon_only_disabled; end
   end
 end

@@ -1,36 +1,172 @@
-@layer components {
-  .button {
-    display: inline-flex;
-    box-sizing: border-box;
-    text-align: center;
-    text-decoration: none;
-    vertical-align: middle;
-    align-items: center;
-    cursor: pointer;
-    user-select: none;
-    background-color: transparent;
-    white-space: nowrap;
-    outline-style: solid;
-    outline-width: 0px;
+/* Do not use @layer components because most of the modifier classes are
+   build with interpolation. Tailwind doesn't recognize interpolations.
+ */
 
-    @apply py-2 px-4 h-10 leading-6 bg-transparent border rounded-full;
-    @apply bg-white text-gray-900 border-gray-400;
-    @apply dark:bg-black dark:text-gray-100 dark:border-gray-400;
+.button {
+  display: inline-flex;
+  box-sizing: border-box;
+  text-align: center;
+  text-decoration: none;
+  vertical-align: middle;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  background-color: transparent;
+  white-space: nowrap;
+  outline-style: solid;
+  outline-width: 0px;
 
-    & svg {
-      display: inline;
+  @apply py-2 px-4 h-10 leading-6 bg-transparent border rounded-full;
+  @apply bg-white text-gray-900 border-gray-400;
+  @apply dark:bg-black dark:text-gray-100 dark:border-gray-400 dark:border-2;
 
-      @apply -ml-1 mr-2 h-5 w-5;
+  & svg {
+    display: inline;
+
+    @apply -ml-1 mr-2 h-5 w-5;
+  }
+
+  &[disabled] {
+    cursor: default;
+    opacity: 0.6;
+
+    &, &:is(:hover, :active, :focus, :focus-visible) {
+      @apply text-gray-800;
+      @apply dark:text-gray-100;
+    }
+  }
+
+  &:not([disabled]) {
+    &:is(:focus, :focus-visible) {
+      outline-width: 2px;
+      outline-offset: 3px;
+
+      @apply outline-blue-500;
+      @apply dark:outline-sky-500;
     }
 
-    &[disabled] {
-      cursor: default;
-      opacity: 0.6;
+    &:hover {
+      @apply text-blue-500 border-blue-500;
+      @apply dark:text-sky-500 dark:border-sky-500;
+    }
 
-      &, &:is(:hover, :active, :focus, :focus-visible) {
-        @apply text-gray-800;
-        @apply dark:text-gray-100;
+    &:active {
+      @apply text-blue-700 border-blue-700 outline-blue-700;
+      @apply dark:text-sky-300 dark:border-sky-300 dark:outline-blue-300;
+    }
+  }
+
+  &--under-selection {
+    @apply bg-blue-200 border-gray-400;
+    @apply dark:bg-blue-800 dark:border-gray-400;
+  }
+
+  &--primary,
+  &--accent,
+  &--destructive {
+    @apply subpixel-antialiased;
+
+    &[disabled],
+    &[disabled]:hover,
+    &:not([disabled]),
+    &:not([disabled]):is(:hover, :active, :focus, :focus-visible) {
+      @apply text-white;
+      @apply dark:text-black;
+    }
+  }
+
+
+  &--primary {
+    @apply bg-blue-500 border-blue-500;
+    @apply dark:bg-sky-500 dark:border-sky-500;
+
+    @apply contrast-more:bg-blue-600 contrast-more:border-blue-600;
+    @apply contrast-more:dark:bg-blue-400 contrast-more:dark:border-blue-400;
+
+    &:not([disabled]) {
+      &:is(:focus, :focus-visible) {
+        @apply outline-blue-500;
+        @apply dark:outline-sky-500;
       }
+
+      &:hover {
+        @apply bg-blue-600 border-blue-600 outline-blue-600;
+        @apply dark:bg-sky-400 dark:border-sky-400 dark:outline-blue-400;
+      }
+
+      &:active {
+        @apply bg-blue-700 border-blue-700 outline-blue-700;
+        @apply dark:bg-sky-300 dark:border-sky-300 dark:outline-blue-300;
+      }
+    }
+  }
+
+  &--accent {
+    @apply bg-lime-600 border-lime-600;
+    @apply dark:bg-lime-500 dark:border-lime-500;
+
+    @apply contrast-more:bg-lime-700 contrast-more:border-lime-700;
+    @apply contrast-more:dark:bg-lime-400 contrast-more:dark:border-lime-400;
+
+    &:not([disabled]) {
+      &:is(:focus, :focus-visible) {
+        @apply outline-lime-500;
+        @apply dark:outline-lime-500;
+      }
+
+      &:hover {
+        @apply bg-lime-700 border-lime-700 outline-lime-700;
+        @apply dark:bg-lime-400 dark:border-lime-400 dark:outline-lime-400;
+      }
+
+      &:active {
+        @apply bg-lime-800 border-lime-800 outline-lime-800;
+        @apply dark:bg-lime-300 dark:border-lime-300 dark:outline-lime-300;
+      }
+    }
+  }
+
+  &--destructive {
+    @apply bg-red-500 border-red-500;
+    @apply dark:bg-red-500 dark:border-red-500;
+
+    @apply contrast-more:bg-red-600 contrast-more:border-red-600;
+    @apply contrast-more:dark:bg-red-400 contrast-more:dark:border-red-400;
+
+    &:not([disabled]) {
+      &:is(:focus, :focus-visible) {
+        @apply outline-red-500;
+        @apply dark:outline-red-500;
+      }
+
+      &:hover {
+        @apply bg-red-600 border-red-600 outline-red-600;
+        @apply dark:bg-red-400 dark:border-red-400 dark:outline-red-400;
+      }
+
+      &:active {
+        @apply bg-red-700 border-red-700 outline-red-700;
+        @apply dark:bg-red-300 dark:border-red-300 dark:outline-red-300;
+      }
+    }
+  }
+
+  &--primary-discrete,
+  &--accent-discrete,
+  &--destructive-discrete {
+    @apply subpixel-antialiased;
+  }
+
+  &--primary-discrete {
+    &[disabled],
+    &[disabled]:hover,
+    &:not([disabled]),
+    &:not([disabled]):is(:hover, :active, :focus, :focus-visible) {
+      @apply text-blue-500 border-blue-500;
+      @apply dark:text-sky-500 dark:border-sky-500;
+
+      @apply contrast-more:text-blue-600 contrast-more:border-blue-600;
+      @apply contrast-more:dark:text-blue-400 contrast-more:dark:border-blue-400;
     }
 
     &:not([disabled]) {
@@ -43,8 +179,8 @@
       }
 
       &:hover {
-        @apply text-blue-500 border-blue-500;
-        @apply dark:text-sky-500 dark:border-sky-500;
+        @apply text-blue-600 border-blue-600;
+        @apply dark:text-sky-400 dark:border-sky-400;
       }
 
       &:active {
@@ -52,105 +188,70 @@
         @apply dark:text-sky-300 dark:border-sky-300 dark:outline-blue-300;
       }
     }
+  }
 
-    &--under-selection {
-      @apply bg-blue-200 border-gray-400;
-      @apply dark:bg-blue-800 dark:border-gray-400;
+  &--accent-discrete {
+    &[disabled],
+    &[disabled]:hover,
+    &:not([disabled]),
+    &:not([disabled]):is(:hover, :active, :focus, :focus-visible) {
+      @apply text-lime-600 border-lime-600;
+      @apply dark:text-lime-500 dark:border-lime-500;
+
+      @apply contrast-more:text-lime-700 contrast-more:border-lime-700;
+      @apply contrast-more:dark:text-blue-400 contrast-more:dark:border-blue-400;
     }
 
-    &--primary,
-    &--destructive {
-      @apply subpixel-antialiased;
+    &:not([disabled]) {
+      &:is(:focus, :focus-visible) {
+        outline-width: 2px;
+        outline-offset: 3px;
 
-      &[disabled],
-      &[disabled]:hover,
-      &:not([disabled]),
-      &:not([disabled]):is(:hover, :active, :focus, :focus-visible) {
-        @apply text-white;
-        @apply dark:text-black;
+        @apply outline-lime-500;
+        @apply dark:outline-lime-500;
+      }
+
+      &:hover {
+        @apply text-lime-700 border-lime-700;
+        @apply dark:text-lime-400 dark:border-lime-400;
+      }
+
+      &:active {
+        @apply text-lime-800 border-lime-800 outline-lime-800;
+        @apply dark:text-lime-300 dark:border-lime-300 dark:outline-lime-300;
       }
     }
+  }
 
-    &--primary {
-      @apply bg-blue-500 border-blue-500;
-      @apply dark:bg-sky-500 dark:border-sky-500;
+  &--destructive-discrete {
+    &[disabled],
+    &[disabled]:hover,
+    &:not([disabled]),
+    &:not([disabled]):is(:hover, :active, :focus, :focus-visible) {
+      @apply text-red-500 border-red-500;
+      @apply dark:text-red-500 dark:border-red-500;
 
-      @apply contrast-more:bg-blue-600;
-      @apply contrast-more:dark:bg-blue-400;
-
-      &:not([disabled]) {
-        &:is(:focus, :focus-visible) {
-          @apply outline-blue-500;
-          @apply dark:outline-sky-500;
-        }
-
-        &:hover {
-          @apply bg-blue-600 border-blue-600 outline-blue-600;
-          @apply dark:bg-sky-400 dark:border-sky-400 dark:outline-blue-400;
-        }
-
-        &:active {
-          @apply bg-blue-700 border-blue-700 outline-blue-700;
-          @apply dark:bg-sky-300 dark:border-sky-300 dark:outline-blue-300;
-        }
-      }
+      @apply contrast-more:text-red-600 contrast-more:border-red-600;
+      @apply contrast-more:dark:text-blue-400 contrast-more:dark:border-blue-400;
     }
 
-    &--destructive {
-      @apply bg-red-500 border-red-500;
-      @apply dark:bg-red-500 dark:border-red-500;
+    &:not([disabled]) {
+      &:is(:focus, :focus-visible) {
+        outline-width: 2px;
+        outline-offset: 3px;
 
-      @apply contrast-more:bg-red-600;
-      @apply contrast-more:dark:bg-red-400;
-
-      &:not([disabled]) {
-        &:is(:focus, :focus-visible) {
-          @apply outline-red-500;
-          @apply dark:outline-red-500;
-        }
-
-        &:hover {
-          @apply bg-red-600 border-red-600 outline-red-600;
-          @apply dark:bg-red-400 dark:border-red-400 dark:outline-red-400;
-        }
-
-        &:active {
-          @apply bg-red-700 border-red-700 outline-red-700;
-          @apply dark:bg-red-300 dark:border-red-300 dark:outline-red-300;
-        }
-      }
-    }
-
-    &--destructive-discrete {
-      @apply border-red-500;
-      @apply dark:border-red-500;
-
-      &[disabled],
-      &[disabled]:hover,
-      &:not([disabled]),
-      &:not([disabled]):is(:hover, :active, :focus, :focus-visible) {
-        @apply text-red-500;
-        @apply dark:text-red-500;
+        @apply outline-red-500;
+        @apply dark:outline-red-500;
       }
 
-      &:not([disabled]) {
-        &:is(:focus, :focus-visible) {
-          outline-width: 2px;
-          outline-offset: 3px;
+      &:hover {
+        @apply text-red-600 border-red-600;
+        @apply dark:text-red-400 dark:border-red-400;
+      }
 
-          @apply outline-red-500;
-          @apply dark:outline-sky-500;
-        }
-
-        &:hover {
-          @apply text-red-500 border-red-500;
-          @apply dark:text-sky-500 dark:border-sky-500;
-        }
-
-        &:active {
-          @apply text-red-700 border-red-700 outline-red-700;
-          @apply dark:text-sky-300 dark:border-sky-300 dark:outline-red-300;
-        }
+      &:active {
+        @apply text-red-700 border-red-700 outline-red-700;
+        @apply dark:text-red-300 dark:border-red-300 dark:outline-red-300;
       }
     }
   }
