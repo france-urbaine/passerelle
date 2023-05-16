@@ -40,7 +40,7 @@
 #
 #  index_users_on_confirmation_token    (confirmation_token) UNIQUE
 #  index_users_on_discarded_at          (discarded_at)
-#  index_users_on_email                 (email) UNIQUE
+#  index_users_on_email                 (email) UNIQUE WHERE (discarded_at IS NULL)
 #  index_users_on_inviter_id            (inviter_id)
 #  index_users_on_organization          (organization_type,organization_id)
 #  index_users_on_reset_password_token  (reset_password_token) UNIQUE

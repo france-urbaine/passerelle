@@ -1882,6 +1882,13 @@ CREATE INDEX index_offices_on_ddfip_id ON public.offices USING btree (ddfip_id);
 
 
 --
+-- Name: index_offices_on_ddfip_id_and_name; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_offices_on_ddfip_id_and_name ON public.offices USING btree (ddfip_id, name);
+
+
+--
 -- Name: index_offices_on_discarded_at; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2128,6 +2135,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230412064725'),
 ('20230412064729'),
 ('20230412064833'),
-('20230412064850');
+('20230412064850'),
+('20230516080055');
 
 

@@ -17,10 +17,15 @@ module SkipUniquenessValidation
     @skip_uniqueness_validation
   end
 
-  def skip_uniqueness_validation_of?(attribute)
-    @skip_uniqueness_validation ||
-      (persisted? && !attribute_changed?(attribute)) ||
-      (respond_to?(:discarded?) && discarded?)
+  def skip_uniqueness_validation_of_attribute?(attribute)
+    return true if @skip_uniqueness_validation
+
+    return false if will_save_change_to_attribute?(:discarded_at, to: nil)
+    return true  if respond_to?(:discarded?) && discarded?
+
+    return true if persisted? && !will_save_change_to_attribute?(attribute)
+
+    false
   end
 
   def respond_to_missing?(method, *)
@@ -29,7 +34,7 @@ module SkipUniquenessValidation
 
   def method_missing(method, *)
     if (attribute = respond_to_skip_uniqueness_validation_method?(method))
-      skip_uniqueness_validation_of?(attribute)
+      skip_uniqueness_validation_of_attribute?(attribute)
     else
       super
     end

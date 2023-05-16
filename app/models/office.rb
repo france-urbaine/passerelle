@@ -16,8 +16,9 @@
 #
 # Indexes
 #
-#  index_offices_on_ddfip_id      (ddfip_id)
-#  index_offices_on_discarded_at  (discarded_at)
+#  index_offices_on_ddfip_id           (ddfip_id)
+#  index_offices_on_ddfip_id_and_name  (ddfip_id,name) UNIQUE
+#  index_offices_on_discarded_at       (discarded_at)
 #
 # Foreign Keys
 #
@@ -43,6 +44,13 @@ class Office < ApplicationRecord
 
   validates :name,   presence: true
   validates :action, presence: true, inclusion: { in: ACTIONS }
+
+  validates :name, uniqueness: {
+    case_sensitive: false,
+    conditions: -> { kept },
+    scope: :ddfip_id,
+    unless: :skip_uniqueness_validation_of_name?
+  }
 
   # Scopes
   # ----------------------------------------------------------------------------

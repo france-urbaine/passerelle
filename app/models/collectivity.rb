@@ -52,7 +52,7 @@ class Collectivity < ApplicationRecord
   validates :contact_phone, format: { allow_blank: true, with: PHONE_REGEXP }
   validates :territory_type, inclusion: { in: %w[Commune EPCI Departement Region] }
 
-  validates :name,  uniqueness: {
+  validates :name, uniqueness: {
     case_sensitive: false,
     conditions: -> { kept },
     unless: :skip_uniqueness_validation_of_name?
