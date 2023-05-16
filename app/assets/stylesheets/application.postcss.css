@@ -4,6 +4,7 @@
 
 /* Tags */
 @import "./tags/body";
+@import "./tags/text";
 @import "./tags/main";
 @import "./tags/links";
 @import "./tags/inputs";
@@ -12,6 +13,7 @@
 @import "./tags/svg";
 
 /* Texts */
+@import "./components/brand";
 @import "./components/typography";
 
 /* Interactive components */
@@ -37,6 +39,7 @@
 @import "./components/breadcrumbs";
 @import "./components/dropdown";
 @import "./components/skeleton_loader";
+@import "./components/public";
 
 /* Data display */
 @import "./components/datatable";

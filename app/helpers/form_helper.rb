@@ -54,10 +54,9 @@ module FormHelper
     end
   end
 
-  def form_block(record, attribute, first: false, autocomplete: false, **options, &block)
+  def form_block(record, attribute, autocomplete: false, **options, &block)
     options[:class] = Array.wrap(options[:class])
     options[:class] << "form-block"
-    options[:class] << "form-block--margin" unless first
     options[:class] << "form-block--invalid" if record.respond_to?(:errors) && record.errors.include?(attribute)
 
     options[:data] ||= {}

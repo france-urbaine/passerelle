@@ -3,7 +3,7 @@ import { useTransition } from 'stimulus-use'
 import { Turbo } from "@hotwired/turbo-rails"
 
 export default class extends Controller {
-  static targets = ["container"]
+  static targets = ["content"]
 
   connect () {
     useTransition(this)

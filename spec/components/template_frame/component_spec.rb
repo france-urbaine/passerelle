@@ -28,8 +28,8 @@ RSpec.describe TemplateFrame::Component, type: :component do
     end
 
     expect(page).to have_selector("main.content > turbo-frame:empty")
-    expect(page).to have_selector("turbo-frame#modal > .modal > .modal__container > .modal__header", text: "Dialog header")
-    expect(page).to have_selector("turbo-frame#modal > .modal > .modal__container > .modal__content", text: "Hello World")
+    expect(page).to have_selector("turbo-frame#modal > .modal > .modal__content > .modal__header", text: "Dialog header")
+    expect(page).to have_selector("turbo-frame#modal > .modal > .modal__content > .modal__body", text: "Hello World")
   end
 
   it "renders modal with an asynchronous location" do

@@ -1,0 +1,13 @@
+@layer base {
+  p {
+    @apply mb-4;
+  }
+
+  b, strong {
+    @apply font-bold;
+  }
+
+  i, em {
+    @apply italic;
+  }
+}

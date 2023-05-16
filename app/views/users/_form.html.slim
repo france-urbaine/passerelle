@@ -6,7 +6,7 @@ ruby:
   = hidden_field_tag :redirect, modal.redirection_path
 
   = fields(model: user) do |form|
-    = form.block :organization, first: true, autocomplete: organizations_path do
+    = form.block :organization, autocomplete: organizations_path do
       ruby:
         if user.organization
           organization_data = { type: user.organization_type, id: user.organization_id }.to_json
@@ -35,7 +35,7 @@ ruby:
       = form.hidden_field :organization_data, **hidden_html_options
 
     = noscript do
-      = form.block :organization_type, first: true do
+      = form.block :organization_type do
         ruby:
           models  = [Publisher, DDFIP, Collectivity]
           options = models.map { |m| [m.model_name.human, m.name] }

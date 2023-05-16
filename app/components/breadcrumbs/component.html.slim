@@ -10,7 +10,7 @@
     - paths.each.with_index do |path, index|
       .breadcrumbs__separator="/"
       .breadcrumbs__path
-        - if index == paths.size - 1
+        - if @heading && index == paths.size - 1
           h1= path
         - else
           = path

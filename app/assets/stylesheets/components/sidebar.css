@@ -1,7 +1,10 @@
 @layer components {
   .sidebar {
     display: flex;
+    flex: none;
     flex-direction: column;
+    overflow-x: hidden;
+    overflow-y: auto;
     height: 100vh;
 
     @apply w-60;
@@ -11,22 +14,17 @@
 
   .sidebar__brand  {
     @apply p-4 text-3xl;
-
-    & img {
-      @apply h-8 w-8 mr-4;
-    }
   }
 
   .sidebar__header {
-    border-bottom: 1px solid transparent;
-
     @apply px-4 py-2 mt-4 text-xl;
-    @apply border-gray-300;
-    @apply dark:border-gray-700;
   }
 
   .sidebar__links {
-    @apply p-1;
+    @apply p-1 border-t;
+
+    @apply border-gray-300;
+    @apply dark:border-gray-700;
 
     & a {
       display: block;
@@ -80,13 +78,24 @@
     }
   }
 
-  .sidebar__user {
+  .sidebar__user,
+  .sidebar__user[type="submit"],
+  .sidebar__links .sidebar__user {
     display: flex;
     align-items: center;
+    text-align: left;
+    appearance: none;
+    height: auto;
+    white-space: initial;
+    border-radius: 0;
+    border: 0;
+    width: 100%;
 
-    @apply p-4 border-t;
-    @apply text-gray-600 border-gray-300;
-    @apply dark:text-gray-400 dark:border-gray-700;
+    @apply p-3 m-0;
+
+    &, &:is(:hover, :active, :focus, :focus-visible) {
+      outline-offset: 0px;
+    }
   }
 
   .sidebar__user-text {
@@ -97,12 +106,19 @@
 
   .sidebar__user-avatar {
     overflow: hidden;
+    flex: none;
 
     @apply h-8 w-8 mr-4 rounded-full;
 
     & svg {
+      @apply h-8 w-8 m-0;
       @apply bg-gray-100 text-gray-300;
       @apply dark:bg-gray-800 dark:text-gray-600;
     }
+  }
+
+  .sidebar__user-name {
+    overflow: hidden;
+    flex: 1 1 auto;
   }
 }

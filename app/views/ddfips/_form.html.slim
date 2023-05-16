@@ -2,7 +2,7 @@
   = hidden_field_tag :redirect, modal.redirection_path
 
   = fields(model: ddfip) do |form|
-    = form.block :name, first: true do
+    = form.block :name do
       = form.label :name
       = form.text_field :name, autofocus: true, required: true
 

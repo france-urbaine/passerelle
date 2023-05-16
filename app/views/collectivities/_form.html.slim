@@ -2,7 +2,7 @@
   = hidden_field_tag :redirect, modal.redirection_path
 
   = fields(model: collectivity) do |form|
-    = form.block :territory, first: true, autocomplete: territories_path do
+    = form.block :territory, autocomplete: territories_path do
       ruby:
         if collectivity.territory
           territory_data = { type: collectivity.territory_type, id: collectivity.territory_id }.to_json
@@ -21,7 +21,7 @@
       = form.hidden_field :territory_data, data: { autocomplete_target: "hidden" }, value: territory_data
 
     = noscript do
-      = form.block :territory_type, first: true do
+      = form.block :territory_type do
         ruby:
           models  = [Commune, EPCI, Departement, Region]
           options = models.map { |m| [m.model_name.human, m.name] }

@@ -1,0 +1,29 @@
+@layer components {
+  @font-face {
+    font-family: 'M PLUS Rounded 1c';
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url('/fonts/m_plus_rounded.woff2') format('woff2')
+  }
+
+  .brand  {
+    display: flex;
+    align-items: center;
+    font-family: 'M PLUS Rounded 1c', theme('fontFamily.sans');
+
+    @apply text-3xl tracking-tighter font-bold;
+    @apply text-blue-500;
+
+    &__right {
+      @apply text-violet-600;
+    }
+
+    & img {
+      height: 1.3em;
+      with: 1.3em;
+
+      @apply mr-2;
+    }
+  }
+}

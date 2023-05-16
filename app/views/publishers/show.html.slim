@@ -38,8 +38,7 @@
 
   - if @publisher.users_count.zero?
     .card
-      .card__content
-        p.text-disabled Aucun utilisateur assigné.
+      .card__content.card__content--empty Aucun utilisateur assigné.
 
   - else
     = turbo_frame_tag "datatable-users", src: publisher_users_path(@publisher) do
@@ -60,8 +59,7 @@
 
   - if @publisher.collectivities_count.zero?
     .card
-      .card__content
-        p.text-disabled Aucune collectivité enregistrée.
+      .card__content.card__content--empty Aucune collectivité enregistrée.
 
   - else
     = turbo_frame_tag "datatable-collectivities", src: publisher_collectivities_path(@publisher) do

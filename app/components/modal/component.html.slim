@@ -10,7 +10,7 @@
   data-action="keydown@document->modal#keydown"
 )
   .modal__overlay( data-action="click->modal#close" )
-  .modal__container( data-modal-target="container" )
+  .modal__content( data-modal-target="content" )
     - if form?
       = tag.turbo_frame id: "modal_form" do
         = form_with(**form.form_options) do
@@ -19,7 +19,7 @@
               h1#modal-title.modal__title= header
               .modal__header-toolbar= close_button
 
-          .modal__content
+          .modal__body
             = close_button unless header?
             = form
 
@@ -41,7 +41,7 @@
           h1#modal-title.modal__title= header
           .modal__header-toolbar= close_button
 
-      .modal__content
+      .modal__body
         = close_button unless header?
 
         - if body?

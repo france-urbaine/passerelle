@@ -5,6 +5,11 @@ module Breadcrumbs
     renders_many :paths, "Path"
     renders_many :actions, ::Button::Component
 
+    def initialize(heading: true)
+      @heading = heading
+      super()
+    end
+
     class Path < ApplicationViewComponent
       def initialize(title, href_arg = nil, href: nil)
         @title = title

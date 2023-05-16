@@ -9,7 +9,7 @@ RSpec.describe Modal::Component, type: :component do
     end
 
     expect(page).to have_selector(".modal[role='dialog'][aria-modal='true']")
-    expect(page).to have_selector(".modal > .modal__container > .modal__content") do |node|
+    expect(page).to have_selector(".modal > .modal__content > .modal__body") do |node|
       expect(node).to have_selector("p", text: "Hello World")
     end
   end
@@ -26,11 +26,11 @@ RSpec.describe Modal::Component, type: :component do
     end
 
     aggregate_failures do
-      expect(page).to have_selector(".modal > .modal__container > .modal__header") do |node|
+      expect(page).to have_selector(".modal > .modal__content > .modal__header") do |node|
         expect(node).to have_selector("h1", text: "Dialog title")
       end
 
-      expect(page).to have_selector(".modal > .modal__container > .modal__content") do |node|
+      expect(page).to have_selector(".modal > .modal__content > .modal__body") do |node|
         expect(node).to have_selector("p", text: "Hello World")
       end
     end
@@ -44,7 +44,7 @@ RSpec.describe Modal::Component, type: :component do
       end
     end
 
-    expect(page).to have_selector(".modal > .modal__container > .modal__header") do |node|
+    expect(page).to have_selector(".modal > .modal__content > .modal__header") do |node|
       expect(node).to have_selector("h1", text: "Dialog title")
     end
   end
@@ -54,7 +54,7 @@ RSpec.describe Modal::Component, type: :component do
       modal.with_body("Hello World")
     end
 
-    expect(page).to have_selector(".modal > .modal__container > .modal__content") do |node|
+    expect(page).to have_selector(".modal > .modal__content > .modal__body") do |node|
       expect(node).to have_text("Hello World")
     end
   end
@@ -72,7 +72,7 @@ RSpec.describe Modal::Component, type: :component do
       modal.with_other_action("Action 2")
     end
 
-    expect(page).to have_selector(".modal > .modal__container > .modal__actions") do |node|
+    expect(page).to have_selector(".modal > .modal__content > .modal__actions") do |node|
       aggregate_failures do
         expect(node).to have_button("Action 1", class: "button--primary")
         expect(node).to have_link("Action 2", class: "button", href: "/some/path")
@@ -93,11 +93,11 @@ RSpec.describe Modal::Component, type: :component do
     end
 
     aggregate_failures do
-      expect(page).to have_selector(".modal > .modal__container > .modal__content") do |node|
+      expect(page).to have_selector(".modal > .modal__content > .modal__body") do |node|
         expect(node).to have_link(class: "icon-button", href: "/home/root")
       end
 
-      expect(page).to have_selector(".modal > .modal__container > .modal__actions") do |node|
+      expect(page).to have_selector(".modal > .modal__content > .modal__actions") do |node|
         expect(node).to have_link("Close", class: "button", href: "/home/root")
       end
     end
@@ -118,10 +118,10 @@ RSpec.describe Modal::Component, type: :component do
       modal.with_close_action("Dismiss")
     end
 
-    expect(page).to have_selector(".modal > .modal__container > turbo-frame > form[action='/communes']") do |form|
+    expect(page).to have_selector(".modal > .modal__content > turbo-frame > form[action='/communes']") do |form|
       expect(form).to have_selector(".modal__header > h1", text: "Dialog title")
 
-      expect(form).to have_selector(".modal__content > input[name='name']")
+      expect(form).to have_selector(".modal__body > input[name='name']")
 
       expect(form).to have_selector(".modal__actions") do |actions|
         aggregate_failures do

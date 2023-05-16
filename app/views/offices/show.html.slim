@@ -48,8 +48,7 @@
 
   - if @office.users_count.zero?
     .card
-      .card__content
-        p.text-disabled Aucun utilisateur assigné à ce guichet.
+      .card__content.card__content--empty Aucun utilisateur assigné à ce guichet.
 
   - else
     = turbo_frame_tag "datatable-users", src: office_users_path(@office) do
@@ -69,8 +68,7 @@
 
   - if @office.communes_count.zero?
     .card
-      .card__content
-        p.text-disabled Aucune commune assignée à ce guichet.
+      .card__content.card__content--empty Aucune commune assignée à ce guichet.
 
   - else
     = turbo_frame_tag "datatable-communes", src: office_communes_path(@office) do

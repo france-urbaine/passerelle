@@ -55,8 +55,7 @@
 
   - if @collectivity.users_count.zero?
     .card
-      .card__content
-        p.text-disabled Aucun utilisateur assigné.
+      .card__content.card__content--empty Aucun utilisateur assigné.
 
   - else
     = turbo_frame_tag "datatable-users", src: collectivity_users_path(@collectivity) do

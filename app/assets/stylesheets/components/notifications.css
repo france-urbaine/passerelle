@@ -2,7 +2,7 @@
   .notifications {
     position: fixed;
     z-index: 200;
-    bottom: 0;
+    top: 0;
     right: 0;
     pointer-events: none;
     display: flex;

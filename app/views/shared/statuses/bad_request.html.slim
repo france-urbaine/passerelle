@@ -1,5 +1,10 @@
-main.content
-  .card.card--status
-    .card__content
-      h1.card__header La requête n'est pas valide ou est malformée.
-      p Veuillez vérifier les paramêtres et en-têtes envoyés.
+= template_frame_component do
+  = breadcrumbs_component
+
+  .card
+    .card__content.card__content--status
+      h1.card__header.card__title
+        | La requête n'est pas valide ou est malformée.
+
+      .card__body
+        | Veuillez vérifier les paramêtres et en-têtes envoyés.

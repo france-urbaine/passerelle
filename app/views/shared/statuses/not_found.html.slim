@@ -1,5 +1,5 @@
 = template_frame_component do
-  = breadcrumbs_component do |breadcrumbs|
+  = breadcrumbs_component heading: false do |breadcrumbs|
     - case @model_not_found
     - when "Publisher"
       - breadcrumbs.with_path "Organisations"
@@ -29,28 +29,30 @@
       - breadcrumbs.with_path "Territoires"
       - breadcrumbs.with_path "Régions", regions_path
 
-  .card.card--status
-    .card__content
-      h1.card__header La page que vous recherchez n'est pas disponible.
+  .card
+    .card__content.card__content--status
+      h1 .card__header.card__title
+        | La page que vous recherchez n'est pas disponible.
 
-      - case @model_not_found
-      - when "Publisher"
-        p L'editeur n'a pas été trouvé ou n'existe plus.
-      - when "Collectivity"
-        p La collectivité n'a pas été trouvée ou n'existe plus.
-      - when "DDFIP"
-        p La DDFIP n'a pas été trouvée ou n'existe plus.
-      - when "Office"
-        p Le guichet n'a pas été trouvé ou n'existe plus.
-      - when "User"
-        p L'utilisateur n'a pas été trouvé ou n'existe plus.
-      - when "Commune"
-        p La commune n'a pas été trouvée ou n'existe plus.
-      - when "EPCI"
-        p L'EPCI n'a pas été trouvé ou n'existe plus.
-      - when "Departement"
-        p Le département n'a pas été trouvé ou n'existe plus.
-      - when "Region"
-        p La région n'a pas été trouvée ou n'existe plus.
-      - else
-        p La page n'existe plus ou a été déplacée.
+      .card__body
+        - case @model_not_found
+        - when "Publisher"
+          | L'editeur n'a pas été trouvé ou n'existe plus.
+        - when "Collectivity"
+          | La collectivité n'a pas été trouvée ou n'existe plus.
+        - when "DDFIP"
+          | La DDFIP n'a pas été trouvée ou n'existe plus.
+        - when "Office"
+          | Le guichet n'a pas été trouvé ou n'existe plus.
+        - when "User"
+          | L'utilisateur n'a pas été trouvé ou n'existe plus.
+        - when "Commune"
+          | La commune n'a pas été trouvée ou n'existe plus.
+        - when "EPCI"
+          | L'EPCI n'a pas été trouvé ou n'existe plus.
+        - when "Departement"
+          | Le département n'a pas été trouvé ou n'existe plus.
+        - when "Region"
+          | La région n'a pas été trouvée ou n'existe plus.
+        - else
+          | La page n'existe plus ou a été déplacée.

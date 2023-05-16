@@ -1,0 +1,33 @@
+@layer components {
+  .public {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 100vh;
+
+    @apply sm:py-12;
+
+    & .brand {
+      @apply p-10 text-5xl justify-center;
+    }
+
+    & .card {
+      @apply mb-8;
+    }
+
+    & .card__content {
+      @apply p-8;
+    }
+  }
+
+  .public__wrapper {
+    margin-left: auto;
+    margin-right: auto;
+
+    @apply p-10;
+
+    @media (min-width: 768px) {
+      width: 40rem;
+    }
+  }
+}

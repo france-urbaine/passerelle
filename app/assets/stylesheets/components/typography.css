@@ -3,31 +3,9 @@
     @apply italic text-gray-500;
   }
 
-  @font-face {
-    font-family: 'M PLUS Rounded 1c';
-    font-style: normal;
-    font-weight: 700;
-    font-display: swap;
-    src: url('/fonts/m_plus_rounded.woff2') format('woff2')
-  }
-
-  .brand  {
-    display: flex;
-    align-items: center;
-    font-family: 'M PLUS Rounded 1c';
-
-    @apply text-3xl tracking-tighter font-bold;
-    @apply text-blue-500;
-
-    &__right {
-      @apply text-violet-600;
-    }
-
-    & img {
-      height: 1em;
-      with: 1em;
-
-      @apply mr-4;
+  .prose {
+    h1, h2 {
+      @apply text-xl mb-6;
     }
   }
 }

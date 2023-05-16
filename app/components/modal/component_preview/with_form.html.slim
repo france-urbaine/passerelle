@@ -10,7 +10,7 @@
   /
   - modal.with_form(model: record) do
     = fields(model: record) do |form|
-      = form.block(:name, first: true) do
+      = form.block(:name) do
         = form.label(:name)
         = form.text_field(:name, autofocus: true, required: true)
 

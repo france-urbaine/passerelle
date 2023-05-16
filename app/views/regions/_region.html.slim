@@ -12,7 +12,7 @@ h2.subheader
   = svg_icon("identification", "Nouvelle section")
   | Description
 
-.card.mb-6
+.card
   dl.description-list
     .description-list__row
       dt Code INSEE de la région
@@ -65,16 +65,19 @@ h2.subheader
       dt Collectivités enregistrées
       dd= display_count(region.collectivities_count, "collectivité") if region.collectivities_count.positive?
 
-h2.subheader
-  = svg_icon("rectangle-stack", "Nouvelle section")
-  | Départements
+.content__separator
+
+.subheader-bar
+  h2.subheader
+    = svg_icon("rectangle-stack", "Nouvelle section")
+    | Départements
 
 - if region.departements_count.zero?
-  .card.mb-6
-    .card__content
-      p.text-disabled Aucune département disponible
+  .card
+    .card__content.card__content--empty Aucune département disponible
+
 - else
-  table.datatable.mb-6
+  table.datatable
     thead
       tr.datatable__row
         th( aria-label="Actions" )
@@ -108,16 +111,19 @@ h2.subheader
           td.text-right= number_with_delimiter(departement.ddfips_count)          if departement.ddfips_count.positive?
           td.text-right= number_with_delimiter(departement.collectivities_count)  if departement.collectivities_count.positive?
 
-h2.subheader
-  = svg_icon("rectangle-stack", "Nouvelle section")
-  | DDFIP enregistrées
+.content__separator
+
+.subheader-bar
+  h2.subheader
+    = svg_icon("rectangle-stack", "Nouvelle section")
+    | DDFIP enregistrées
 
 - if region.ddfips_count.zero?
-  .card.mb-6
-    .card__content
-      p.text-disabled Aucune DDFIP enregistrée dans cette région.
+  .card
+    .card__content.card__content--empty Aucune DDFIP enregistrée dans cette région.
+
 - else
-  table.datatable.mb-6
+  table.datatable
     thead
       tr.datatable__row
         th( aria-label="Actions" )
@@ -146,17 +152,19 @@ h2.subheader
           td.text-right= number_with_delimiter(ddfip.collectivities_count) if ddfip.collectivities_count.positive?
           td.text-right= number_with_delimiter(ddfip.users_count)          if ddfip.users_count.positive?
 
+.content__separator
 
-h2.subheader
-  = svg_icon("rectangle-stack", "Nouvelle section")
-  | Collectivités enregistrées
+.subheader-bar
+  h2.subheader
+    = svg_icon("rectangle-stack", "Nouvelle section")
+    | Collectivités enregistrées
 
 - if region.collectivities_count.zero?
-  .card.mb-6
-    .card__content
-      p.text-disabled Aucune collectivité enregistrée dans cette région.
+  .card
+    .card__content.card__content--empty Aucune collectivité enregistrée dans cette région.
+
 - else
-  table.datatable.mb-6
+  table.datatable
     thead
       tr.datatable__row
         th( aria-label="Actions" )
