@@ -20,7 +20,6 @@ module ControllerCollections
 
   def search_collection(relation)
     relation = relation.search(params[:search]) if params[:search]
-    relation = relation.search(params[:q]) if params[:q]
     relation
   end
 

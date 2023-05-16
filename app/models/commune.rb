@@ -94,6 +94,14 @@ class Commune < ApplicationRecord
     )
   }
 
+  scope :autocomplete, lambda { |input|
+    advanced_search(
+      input,
+      name:             ->(value) { match(:name, value) },
+      code_insee:       ->(value) { where(code_insee: value) }
+    )
+  }
+
   scope :order_by_param, lambda { |input|
     advanced_order(
       input,

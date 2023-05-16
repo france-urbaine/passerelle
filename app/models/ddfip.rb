@@ -61,6 +61,14 @@ class DDFIP < ApplicationRecord
     )
   }
 
+  scope :autocomplete, lambda { |input|
+    advanced_search(
+      input,
+      name:             ->(value) { match(:name, value) },
+      code_departement: ->(value) { where(code_departement: value) }
+    )
+  }
+
   scope :order_by_param, lambda { |input|
     advanced_order(
       input,

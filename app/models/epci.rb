@@ -65,6 +65,14 @@ class EPCI < ApplicationRecord
     )
   }
 
+  scope :autocomplete, lambda { |input|
+    advanced_search(
+      input,
+      name:             ->(value) { match(:name, value) },
+      siren:            ->(value) { where(siren: value) }
+    )
+  }
+
   scope :order_by_param, lambda { |input|
     advanced_order(
       input,

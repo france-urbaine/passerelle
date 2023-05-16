@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class TerritoriesController < ApplicationController
-  respond_to :html
-
   def index
     if autocomplete_request?
       @territories = merge_autocomplete_collections(
@@ -48,15 +46,5 @@ class TerritoriesController < ApplicationController
     params
       .fetch(:territories_update, {})
       .permit(:communes_url, :epcis_url)
-  end
-
-  def autocomplete_territories(model, territories = [])
-    return territories if territories.size >= 50
-
-    relation = model.strict_loading
-    relation = search_collection(relation)
-    relation = order_collection(relation)
-    relation = relation.limit(50 - territories.size)
-    relation.to_a
   end
 end

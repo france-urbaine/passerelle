@@ -63,6 +63,13 @@ class Office < ApplicationRecord
     )
   }
 
+  scope :autocomplete, lambda { |input|
+    advanced_search(
+      input,
+      name: ->(value) { match(:name, value) }
+    )
+  }
+
   scope :order_by_param, lambda { |input|
     advanced_order(
       input,

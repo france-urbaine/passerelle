@@ -63,6 +63,8 @@ class Region < ApplicationRecord
     )
   }
 
+  scope :autocomplete, ->(input) { search(input) }
+
   scope :order_by_param, lambda { |input|
     advanced_order(
       input,
