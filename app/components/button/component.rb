@@ -103,6 +103,22 @@ module Button
       tag.span(class: "tooltip") { @label }
     end
 
+    # Safelisting all classes to let Tailwind knowns what classes are used.
+    #
+    BUTTON_CLASSES = %w[
+      icon-button
+      icon-button--primary
+      icon-button--accent
+      icon-button--destructive
+      button
+      button--primary
+      button--accent
+      button--destructive
+      button--primary-discrete
+      button--accent-discrete
+      button--destructive-discrete
+    ].freeze
+
     def extract_class_attributes(icon_only: false)
       classes = @options.fetch(:class, "")
 
