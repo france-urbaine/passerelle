@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class UsersController < ApplicationController
-  respond_to :html
-
   before_action do
     @users_scope ||= User.all
   end

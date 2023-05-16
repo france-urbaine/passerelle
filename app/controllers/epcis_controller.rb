@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class EPCIsController < ApplicationController
-  respond_to :html
-
   def index
     @epcis = EPCI.strict_loading
     @epcis, @pagy = index_collection(@epcis)

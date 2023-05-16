@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class OrganizationsController < ApplicationController
-  respond_to :html
-
   def index
     if autocomplete_request?
       @organizations = merge_autocomplete_collections(

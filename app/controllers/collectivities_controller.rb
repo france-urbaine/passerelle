@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class CollectivitiesController < ApplicationController
-  respond_to :html
-
   before_action do
     @collectivities_scope ||= Collectivity.all
   end

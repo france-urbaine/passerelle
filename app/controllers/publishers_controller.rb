@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class PublishersController < ApplicationController
-  respond_to :html
-
   def index
     @publishers = Publisher.kept.strict_loading
     @publishers, @pagy = index_collection(@publishers)

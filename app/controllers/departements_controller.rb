@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class DepartementsController < ApplicationController
-  respond_to :html
-
   def index
     @departements = Departement.strict_loading
     @departements, @pagy = index_collection(@departements)

@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class OfficesController < ApplicationController
-  respond_to :html
-
   before_action do
     @offices_scope ||= Office.all
   end

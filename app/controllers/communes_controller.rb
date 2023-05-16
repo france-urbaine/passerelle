@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class CommunesController < ApplicationController
-  respond_to :html
-
   before_action do
     @communes_scope ||= Commune.all
   end

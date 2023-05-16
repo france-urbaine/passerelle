@@ -2,8 +2,6 @@
 
 module Users
   class OfficesController < ApplicationController
-    respond_to :html
-
     def index
       return not_acceptable unless turbo_frame_request?
 

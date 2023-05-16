@@ -2,8 +2,6 @@
 
 module Offices
   class UsersController < ApplicationController
-    respond_to :html
-
     before_action do
       office = Office.find(params[:office_id])
 

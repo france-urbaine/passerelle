@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class RegionsController < ApplicationController
-  respond_to :html
-
   def index
     @regions = Region.strict_loading
     @regions, @pagy = index_collection(@regions)

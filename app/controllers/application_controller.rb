@@ -10,6 +10,8 @@ class ApplicationController < ActionController::Base
   before_action :verify_requested_format!
   before_action :accept_request_variant
 
+  respond_to :html
+
   before_action do
     Rails.logger.debug { "Turbo-frame : #{turbo_frame_request_id}" if turbo_frame_request? }
     Rails.logger.debug { "Accept-Variant : #{accept_variant}" if accept_variant }

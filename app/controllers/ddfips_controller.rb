@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class DDFIPsController < ApplicationController
-  respond_to :html
-
   def index
     @ddfips = DDFIP.kept.strict_loading
     @ddfips, @pagy = index_collection(@ddfips)
