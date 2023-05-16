@@ -62,7 +62,7 @@ nav.sidebar
 
   .flex-auto
   .sidebar__links
-    = button_to destroy_user_session_path, method: :delete, class: "sidebar__user" do
+    = link_to account_management_path, class: "sidebar__user" do
       .sidebar__user-avatar
         svg( fill="currentColor" viewBox="0 0 24 24" )
           title Avatar de l'utilisateur

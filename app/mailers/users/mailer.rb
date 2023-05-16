@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Account
+module Users
   class Mailer < Devise::Mailer
     def confirmation_instructions(record, token, opts = {})
       if record.confirmed? && record.pending_reconfirmation?

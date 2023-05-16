@@ -1,0 +1,5 @@
+= template_frame_component do
+  = breadcrumbs_component do |breadcrumbs|
+    - breadcrumbs.with_path "Gestion du compte"
+
+    - breadcrumbs.with_action "Déconnexion", destroy_user_session_path, method: :delete, destructive: true

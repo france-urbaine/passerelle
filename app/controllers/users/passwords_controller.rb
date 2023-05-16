@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Account
+module Users
   class PasswordsController < Devise::PasswordsController
     layout "public"
   end

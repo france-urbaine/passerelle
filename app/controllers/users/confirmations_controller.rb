@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Account
+module Users
   class ConfirmationsController < Devise::ConfirmationsController
     layout "public"
 

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Account
-  class InvitationsController < ::ApplicationController
+module Users
+  class InvitationsController < ApplicationController
     skip_before_action :authenticate_user!
 
     layout "public"

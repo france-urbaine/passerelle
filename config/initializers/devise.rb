@@ -27,7 +27,7 @@ Devise.setup do |config|
   config.mailer_sender = "ne-pas-repondre@fiscahub.fr"
 
   # Configure the class responsible to send e-mails.
-  config.mailer = "Account::Mailer"
+  config.mailer = "Users::Mailer"
 
   # Configure the parent class responsible to send e-mails.
   config.parent_mailer = "ApplicationMailer"

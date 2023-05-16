@@ -7,22 +7,24 @@ Rails.application.routes.draw do
 
   mount Lookbook::Engine, at: "/lookbook" if Rails.env.development?
 
-  devise_for :users, path: "/compte", controllers: {
-    sessions:      "account/sessions",
-    confirmations: "account/confirmations",
-    registrations: "account/registrations",
-    passwords:     "account/passwords",
-    unlocks:       "account/unlocks"
+  devise_for :users, path: "/", controllers: {
+    sessions:      "users/sessions",
+    confirmations: "users/confirmations",
+    passwords:     "users/passwords",
+    unlocks:       "users/unlocks"
   }, path_names: {
     sign_in: "connexion"
   }
 
-  namespace :account, path: "/compte" do
-    resource :registration, path: "/inscription", only: %i[new]
-
+  namespace :users, as: :user, path: "/" do
     resource :invitation, only: %i[update] do
       get :edit, as: :accept, path: "/accept"
     end
+  end
+
+  namespace :account, path: "/" do
+    resource :registration, path: "/inscription", only: %i[new]
+    resource :management,   path: "/compte", only: %i[show]
   end
 
   concern :removable do
