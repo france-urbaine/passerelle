@@ -214,8 +214,9 @@ fr:
               blank:     Un nom est requis
 
             email:
-              blank:     Une adresse mail est requise
-              invalid:   Une adresse mail valide est requise
+              blank:          Une adresse mail est requise
+              invalid:        Une adresse mail valide est requise
+              invalid_domain: Cette adresse ne correspond pas au domaine de l'organisation (@%{domain})
 
             password:
               blank:     Un mot de passe est requis

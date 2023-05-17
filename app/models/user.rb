@@ -90,6 +90,14 @@ class User < ApplicationRecord
     validates :password, length: { within: Devise.password_length }
   end
 
+  validate if: :will_save_change_to_email? do |user|
+    domain = user.organization.domain_restriction
+    next unless domain.present?
+
+    regexp = build_email_regexp(domain)
+    errors.add(:email, :invalid_domain, domain: domain) unless regexp.match?(user.email)
+  end
+
   # Checks whether a password is needed or not. For validations only.
   # Passwords are always required if it's a new record, or if the password
   # or confirmation are being set somewhere.

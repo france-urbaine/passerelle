@@ -21,4 +21,14 @@ class ApplicationRecord < ActiveRecord::Base
   CODE_REGION_REGEXP      = /\A[0-9]{2}\Z/
   CODE_DEPARTEMENT_REGEXP = /\A(2[AB]|[0-9]{2}|9[0-9]{2})\Z/
   CODE_INSEE_REGEXP       = /\A(2[AB]|[0-9]{2})[0-9]{3}\Z/
+
+  private
+
+  def build_email_regexp(domain  = nil)
+    if domain.present?
+      /\A[a-zA-Z0-9.!\#$%&'*+\/=?^_`{|}~-]+@#{Regexp.escape(domain)}\z/
+    else
+      EMAIL_REGEXP
+    end
+  end
 end
