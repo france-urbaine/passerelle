@@ -13,3 +13,16 @@ fr:
         title:        "La mise à jour a été lancée en arrière-plan."
         description:  "Les données seront disponibles dans quelques minutes."
         delay:        3000
+
+  account:
+    informations:
+      update:
+        send_reconfirmation_instructions:
+          type:         "success"
+          title:        "Les instructions ont été envoyées par email."
+          delay:        3000
+
+        reset_email_reconfirmation:
+          type:         "success"
+          title:        "La modification de l'adresse email a été annulée."
+          delay:        3000

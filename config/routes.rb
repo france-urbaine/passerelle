@@ -3,6 +3,24 @@
 Rails.application.routes.draw do
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
+  ID_REGEXP = %r{(?!(new|edit|remove|discard|undiscard|offices))[^/]+}
+
+  concern :removable do
+    get   :remove,    on: :member
+    patch :undiscard, on: :member
+  end
+
+  concern :removable_collection do
+    get    :remove_all,    on: :collection, path: "remove"
+    patch  :undiscard_all, on: :collection, path: "undiscard"
+    delete :destroy_all,   on: :collection, path: "/", as: nil
+  end
+
+  concern :updatable_collection do
+    get   :edit_all,   on: :collection, path: "edit"
+    patch :update_all, on: :collection, path: "/", as: nil
+  end
+
   root to: redirect("/editeurs")
 
   mount Lookbook::Engine, at: "/lookbook" if Rails.env.development?
@@ -23,27 +41,10 @@ Rails.application.routes.draw do
   end
 
   namespace :account, path: "/" do
-    resource :registration, path: "/inscription", only: %i[new]
-    resource :management,   path: "/compte", only: %i[show]
+    resource  :registration, path: "/inscription",  only: %i[new]
+    resource  :informations, path: "/compte",       only: %i[show update]
+    resource  :organization, path: "/organisation", only: %i[show update]
   end
-
-  concern :removable do
-    get   :remove,    on: :member
-    patch :undiscard, on: :member
-  end
-
-  concern :removable_collection do
-    get    :remove_all,    on: :collection, path: "remove"
-    patch  :undiscard_all, on: :collection, path: "undiscard"
-    delete :destroy_all,   on: :collection, path: "/", as: nil
-  end
-
-  concern :updatable_collection do
-    get   :edit_all,   on: :collection, path: "edit"
-    patch :update_all, on: :collection, path: "/", as: nil
-  end
-
-  ID_REGEXP = %r{(?!(new|edit|remove|discard|undiscard|offices))[^/]+}
 
   constraints(id: ID_REGEXP) do
     resources :publishers, concerns: %i[removable removable_collection], path: "/editeurs" do

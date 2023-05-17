@@ -42,6 +42,8 @@ gem "view_component"
 gem "roo"
 gem "rubyzip"
 
+gem "faker"
+
 # Windows compatibility
 gem "tzinfo-data", platforms: %i[mingw mswin x64_mingw jruby]
 
@@ -54,7 +56,6 @@ group :development, :test do
   gem "factory_bot"
   gem "factory_bot-awesome_linter"
   gem "factory_bot_rails"
-  gem "faker"
   gem "parallel_tests"
   gem "rspec"
   gem "rspec-rails"

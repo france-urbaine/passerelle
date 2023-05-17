@@ -170,6 +170,19 @@ class User < ApplicationRecord
     scored_order(:name, input)
   }
 
+  # Update
+  # ----------------------------------------------------------------------------
+  def update_with_password_protection(params)
+    if params.include?(:email) || params.include?(:password)
+      update_with_password(params)
+    else
+      params.delete(:email)
+      params.delete(:super_admin)
+      params.delete(:organization_admin)
+      update_without_password(params)
+    end
+  end
+
   # Invitation process
   # ----------------------------------------------------------------------------
   def invite(by: nil)

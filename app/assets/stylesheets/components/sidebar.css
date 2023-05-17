@@ -25,76 +25,81 @@
 
     @apply border-gray-300;
     @apply dark:border-gray-700;
+  }
 
-    & a {
-      display: block;
-      position: relative;
-      overflow: hidden;
-      text-decoration: none;
+  .sidebar__link {
+    display: flex;
+    align-items: center;
+    flex: none;
+    position: relative;
+    overflow: hidden;
+    text-decoration: none;
+    text-align: left;
 
-      @apply w-full py-2 px-3 mb-1;
-      @apply text-base font-normal cursor-pointer;
-      @apply border rounded;
-      @apply bg-white text-gray-900 border-white;
-      @apply dark:bg-black dark:text-gray-100 dark:border-black;
+    @apply w-full py-2 px-3 mb-1;
+    @apply text-base font-normal cursor-pointer;
+    @apply border rounded;
+    @apply bg-white text-gray-900 border-white;
+    @apply dark:bg-black dark:text-gray-100 dark:border-black;
 
-      &.sidebar__link--current {
-        @apply bg-gray-200 border-gray-200;
-        @apply dark:bg-gray-800 dark:border-gray-800;
+    &--current {
+      @apply bg-gray-200 border-gray-200;
+      @apply dark:bg-gray-800 dark:border-gray-800;
+    }
+
+    &--disabled {
+      @apply text-gray-400;
+    }
+
+    & svg {
+      display: inline;
+
+      @apply mr-4 h-5 w-5;
+    }
+
+    &:not(&--disabled) {
+      &, &:is(:hover, :active, :focus, :focus-visible) {
+        outline-style: solid;
+        outline-width: 0px;
+
+        /* Overwrite links styles */
+        @apply text-gray-900;
+        @apply dark:text-gray-100;
       }
 
-      &.sidebar__link--disabled {
-        @apply text-gray-400;
+      &:is(:focus-visible) {
+        outline-width: 2px;
+        outline-offset: 0px;
+
+        @apply outline-blue-500;
+        @apply dark:outline-sky-500;
       }
 
-      &:not(.sidebar__link--disabled) {
-        &, &:is(:hover, :active, :focus, :focus-visible) {
-          outline-style: solid;
-          outline-width: 0px;
+      &:hover {
+        @apply text-blue-500 border-blue-500;
+        @apply dark:text-sky-500 dark:border-sky-500;
+      }
 
-          /* Overwrite links styles */
-          @apply text-gray-900;
-          @apply dark:text-gray-100;
-        }
-
-        &:is(:focus-visible) {
-          outline-width: 2px;
-          outline-offset: 0px;
-
-          @apply outline-blue-500;
-          @apply dark:outline-sky-500;
-        }
-
-        &:hover {
-          @apply text-blue-500 border-blue-500;
-          @apply dark:text-sky-500 dark:border-sky-500;
-        }
-
-        &:active {
-          @apply text-blue-700 border-blue-700 outline-blue-700;
-          @apply dark:text-sky-300 dark:border-sky-300 dark:outline-blue-300;
-        }
+      &:active {
+        @apply text-blue-700 border-blue-700 outline-blue-700;
+        @apply dark:text-sky-300 dark:border-sky-300 dark:outline-blue-300;
       }
     }
   }
 
-  .sidebar__user,
-  .sidebar__user[type="submit"],
-  .sidebar__links .sidebar__user {
-    display: flex;
-    align-items: center;
-    text-align: left;
-    appearance: none;
-    height: auto;
-    white-space: initial;
-    border-radius: 0;
-    border: 0;
-    width: 100%;
+  .sidebar__user {
+    @apply p-1 border-t;
 
-    @apply p-3 m-0;
+    @apply border-gray-300;
+    @apply dark:border-gray-700;
 
-    &, &:is(:hover, :active, :focus, :focus-visible) {
-      outline-offset: 0px;
+    & .sidebar__link {
+      @apply m-0;
+
+      &,
+      &:is(:hover, :active, :focus, :focus-visible) {
+        outline-offset: 0px;
+      }
     }
   }
 

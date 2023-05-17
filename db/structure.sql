@@ -166,6 +166,12 @@ CREATE TABLE public.ddfips (
     users_count integer DEFAULT 0 NOT NULL,
     collectivities_count integer DEFAULT 0 NOT NULL,
     offices_count integer DEFAULT 0 NOT NULL,
+    contact_first_name character varying,
+    contact_last_name character varying,
+    contact_email character varying,
+    contact_phone character varying,
+    domain_restriction character varying,
+    allow_2fa_via_email boolean DEFAULT false NOT NULL,
     CONSTRAINT collectivities_count_check CHECK ((collectivities_count >= 0)),
     CONSTRAINT offices_count_check CHECK ((offices_count >= 0)),
     CONSTRAINT users_count_check CHECK ((users_count >= 0))
@@ -361,12 +367,17 @@ CREATE TABLE public.publishers (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
     name character varying NOT NULL,
     siren character varying NOT NULL,
-    email character varying,
+    contact_email character varying,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
     discarded_at timestamp(6) without time zone,
     users_count integer DEFAULT 0 NOT NULL,
     collectivities_count integer DEFAULT 0 NOT NULL,
+    contact_first_name character varying,
+    contact_last_name character varying,
+    contact_phone character varying,
+    domain_restriction character varying,
+    allow_2fa_via_email boolean DEFAULT false NOT NULL,
     CONSTRAINT collectivities_count_check CHECK ((collectivities_count >= 0)),
     CONSTRAINT users_count_check CHECK ((users_count >= 0))
 );
@@ -748,6 +759,8 @@ CREATE TABLE public.collectivities (
     desactivated_at timestamp(6) without time zone,
     discarded_at timestamp(6) without time zone,
     users_count integer DEFAULT 0 NOT NULL,
+    domain_restriction character varying,
+    allow_2fa_via_email boolean DEFAULT false NOT NULL,
     CONSTRAINT users_count_check CHECK ((users_count >= 0))
 );
 
@@ -2137,6 +2150,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230412064833'),
 ('20230412064850'),
 ('20230514161159'),
-('20230516080055');
+('20230516080055'),
+('20230516173340');
 
 

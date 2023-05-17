@@ -9,6 +9,6 @@
   }
 
   .content__separator {
-    @apply mb-12;
+    @apply my-12;
   }
 }

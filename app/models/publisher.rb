@@ -7,12 +7,17 @@
 #  id                   :uuid             not null, primary key
 #  name                 :string           not null
 #  siren                :string           not null
-#  email                :string
+#  contact_email        :string
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
 #  discarded_at         :datetime
 #  users_count          :integer          default(0), not null
 #  collectivities_count :integer          default(0), not null
+#  contact_first_name   :string
+#  contact_last_name    :string
+#  contact_phone        :string
+#  domain_restriction   :string
+#  allow_2fa_via_email  :boolean          default(FALSE), not null
 #
 # Indexes
 #
@@ -31,8 +36,10 @@ class Publisher < ApplicationRecord
   validates :name,  presence: true
   validates :siren, presence: true
 
-  validates :siren, format: { allow_blank: true, with: SIREN_REGEXP }
-  validates :email, format: { allow_blank: true, with: EMAIL_REGEXP }
+  validates :siren,              format: { allow_blank: true, with: SIREN_REGEXP }
+  validates :contact_email,      format: { allow_blank: true, with: EMAIL_REGEXP }
+  validates :contact_phone,      format: { allow_blank: true, with: PHONE_REGEXP }
+  validates :domain_restriction, format: { allow_blank: true, with: DOMAIN_REGEXP }
 
   validates :name,  uniqueness: {
     case_sensitive: false,

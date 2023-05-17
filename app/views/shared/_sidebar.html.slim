@@ -4,65 +4,44 @@ nav.sidebar
     span.brand__left Fisca
     span.brand__right Hub
 
-  .sidebar__header Echanges
-  .sidebar__links
-    a.sidebar__link--disabled( disabled ) Tableau de bord
-    a.sidebar__link--disabled( disabled ) Signalements
-    a.sidebar__link--disabled( disabled ) Paquets
-    a.sidebar__link--disabled( disabled ) Fichiers
+  - if controller.class.name.start_with?("Account")
+    .p-1
+      = sidebar_link_to root_path, current: false do
+        = svg_icon "arrow-uturn-left"
+        | Retour
 
-  .sidebar__header Organisations
-  .sidebar__links
-    a(
-      href=publishers_path
-      class=("sidebar__link--current" if controller.controller_name == "publishers")
-    ) Éditeurs
+    .sidebar__header Paramètres
+    .sidebar__links
+      = sidebar_link_to "Compte",       account_informations_path
+      = sidebar_link_to "Organisation", account_organization_path
+      a.sidebar__link.sidebar__link--disabled( disabled ) API
 
-    a(
-      href=ddfips_path
-      class=("sidebar__link--current" if controller.controller_name == "ddfips")
-    ) DDFIP
+  - else
+    .sidebar__header Echanges
+    .sidebar__links
+      a.sidebar__link.sidebar__link--disabled( disabled ) Tableau de bord
+      a.sidebar__link.sidebar__link--disabled( disabled ) Signalements
+      a.sidebar__link.sidebar__link--disabled( disabled ) Paquets
+      a.sidebar__link.sidebar__link--disabled( disabled ) Fichiers
 
-    a(
-      href=offices_path
-      class=("sidebar__link--current" if controller.controller_name == "offices")
-    ) Guichets
+    .sidebar__header Organisations
+    .sidebar__links
+      = sidebar_link_to "Éditeurs", publishers_path
+      = sidebar_link_to "Collectivitiés", collectivities_path
+      = sidebar_link_to "DDFIP", ddfips_path
+      = sidebar_link_to "Guichets", offices_path
+      = sidebar_link_to "Utilisateurs", users_path
 
-    a(
-      href=collectivities_path
-      class=("sidebar__link--current" if controller.controller_name == "collectivities")
-    ) Collectivitiés
-
-    a(
-      href=users_path
-      class=("sidebar__link--current" if controller.controller_name == "user")
-    ) Utilisateurs
-
-  .sidebar__header Territoires
-  .sidebar__links
-    a(
-      href=communes_path
-      class=("sidebar__link--current" if controller.controller_name == "communes")
-    ) Communes
-
-    a(
-      href=epcis_path
-      class=("sidebar__link--current" if controller.controller_name == "epcis")
-    ) EPCI
-
-    a(
-      href=departements_path
-      class=("sidebar__link--current" if controller.controller_name == "departements")
-    ) Départements
-
-    a(
-      href=regions_path
-      class=("sidebar__link--current" if controller.controller_name == "regions")
-    ) Régions
+    .sidebar__header Territoires
+    .sidebar__links
+      = sidebar_link_to "Communes", communes_path
+      = sidebar_link_to "EPCI", epcis_path
+      = sidebar_link_to "Départements", departements_path
+      = sidebar_link_to "Régions", regions_path
 
   .flex-auto
-  .sidebar__links
-    = link_to account_management_path, class: "sidebar__user" do
+  .sidebar__user
+    = sidebar_link_to account_informations_path, current: false, title: "Gestion du compte" do
       .sidebar__user-avatar
         svg( fill="currentColor" viewBox="0 0 24 24" )
           title Avatar de l'utilisateur

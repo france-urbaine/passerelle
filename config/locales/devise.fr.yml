@@ -59,10 +59,10 @@ fr:
       send_paranoid_instructions: "Vous allez recevoir par email les instructions nécessaires pour réinitialiser votre mot de passe dans quelques instants."
       updated:
         type:  "success"
-        title: "Votre mot de passe a été édité avec succès. Vous pouvez dorénavant vous connecter."
+        title: "Votre mot de passe a été modifié avec succès"
       updated_not_active:
         type:  "success"
-        title: "Votre mot de passe a été changé avec succès."
+        title: "Votre mot de passe a été modifié avec succès. Vous pouvez dorénavant vous connecter."
 
     sessions:
       signed_in:          "Connecté."
