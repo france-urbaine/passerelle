@@ -236,6 +236,9 @@ fr:
               blank:     Un code de vérification est requis
               invalid:   Code incorrect
 
+            otp_attempt:
+              invalid:   Code incorrect
+
             reset_password_token:
               blank:        Un code de réinitialisation est requis
               invalid:      Votre code de réinitialisation est invalide ou expiré. Veuillez faire une nouvelle demande.

@@ -12,15 +12,15 @@ module Users
       super(user, token, opts)
     end
 
-    def two_factor_code_setup(user)
-      return unless user.otp_method == "email" && user.organization&.allow_2fa_via_email?
+    def two_factor_setup_code(user)
+      return unless user.send_otp_code_by_email?
 
       @user = user
       mail to: user.email, subject: translate(".subject")
     end
 
-    def two_factor_code_connexion(user)
-      return unless user.otp_method == "email" && user.organization&.allow_2fa_via_email?
+    def two_factor_sign_in_code(user)
+      return unless user.send_otp_code_by_email?
 
       @user = user
       mail to: user.email, subject: translate(".subject")

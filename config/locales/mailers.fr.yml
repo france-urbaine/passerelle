@@ -1,9 +1,9 @@
 fr:
   users:
     mailer:
-      two_factor_code_setup:
+      two_factor_setup_code:
         subject: "Activation de l'authentification en 2 étapes sur FiscaHub"
-      two_factor_code_connexion:
+      two_factor_sign_in_code:
         subject: "Connexion à FiscaHub"
       two_factor_change:
         subject: "Modification de vos paramètres de sécurité sur FiscaHub"

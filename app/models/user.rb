@@ -57,7 +57,6 @@ class User < ApplicationRecord
   #
   devise(
     :two_factor_authenticatable,
-    :database_authenticatable,
     :recoverable,
     :trackable,
     :confirmable,
@@ -226,6 +225,10 @@ class User < ApplicationRecord
 
     self.otp_code = nil
     true
+  end
+
+  def send_otp_code_by_email?
+    otp_required_for_login? && otp_method == "email" && organization&.allow_2fa_via_email?
   end
 
   def generate_two_factor_secret_if_missing

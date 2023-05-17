@@ -1,6 +1,6 @@
 .card
   .card__content
-    = form_with(model: resource, as: resource_name, url: session_path(resource_name)) do |form|
+    = form_with(model: resource, as: resource_name, url: session_path(resource_name), method: :post) do |form|
       .card__body
         - if resource.errors.any?
           div( data-turbo-cache="false" )
