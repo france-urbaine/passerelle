@@ -74,6 +74,16 @@ CREATE TYPE public.office_action AS ENUM (
 
 
 --
+-- Name: otp_method; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.otp_method AS ENUM (
+    '2fa',
+    'email'
+);
+
+
+--
 -- Name: user_organization_type; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -715,7 +725,11 @@ CREATE TABLE public.users (
     updated_at timestamp(6) without time zone NOT NULL,
     invited_at timestamp(6) without time zone,
     discarded_at timestamp(6) without time zone,
-    offices_count integer DEFAULT 0 NOT NULL
+    offices_count integer DEFAULT 0 NOT NULL,
+    otp_secret character varying,
+    otp_method public.otp_method DEFAULT '2fa'::public.otp_method NOT NULL,
+    consumed_timestep integer,
+    otp_required_for_login boolean DEFAULT false NOT NULL
 );
 
 
@@ -2151,6 +2165,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230412064850'),
 ('20230514161159'),
 ('20230516080055'),
-('20230516173340');
+('20230516173340'),
+('20230517093540');
 
 

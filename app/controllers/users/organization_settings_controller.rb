@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Account
-  class OrganizationsController < ApplicationController
+module Users
+  class OrganizationSettingsController < ApplicationController
     def show
       @organization = current_user.organization
     end
@@ -13,7 +13,7 @@ module Account
       respond_with @organization,
         action: :show,
         flash: true,
-        location: account_organization_path
+        location: user_organization_settings_path
     end
 
     private

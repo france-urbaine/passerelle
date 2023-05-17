@@ -10,7 +10,7 @@ module Users
       @user = User.find_by_invitation_token(params[:confirmation_token])
 
       if @user.errors.any?
-        redirect_to new_session_path(@user), notice: t("devise.invitation.expired")
+        redirect_to new_user_session_path, notice: t("devise.invitation.expired")
       end
     end
 

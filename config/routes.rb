@@ -38,12 +38,13 @@ Rails.application.routes.draw do
     resource :invitation, only: %i[update] do
       get :edit, as: :accept, path: "/accept"
     end
-  end
 
-  namespace :account, path: "/" do
-    resource  :registration, path: "/inscription",  only: %i[new]
-    resource  :informations, path: "/compte",       only: %i[show update]
-    resource  :organization, path: "/organisation", only: %i[show update]
+    resource :registration,          path: "/inscription",         only: %i[new]
+    resource :user_settings,         path: "/compte/parametres",   only: %i[show update], as: :settings
+    resource :two_factor_settings,   path: "/compte/2fa",          only: %i[new create edit update]
+    resource :organization_settings, path: "/compte/organisation", only: %i[show update]
+
+    get "/compte", to: redirect("/compte/parametres")
   end
 
   constraints(id: ID_REGEXP) do

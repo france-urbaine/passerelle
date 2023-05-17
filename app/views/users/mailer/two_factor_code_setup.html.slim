@@ -1,0 +1,9 @@
+p Bonjour #{@user.first_name},
+
+p
+  | Vous pouvez finaliser la configuration de l'authentification en 2 étape sur <strong>FiscaHub</strong> en utilisant le code suivant :
+  br
+  strong.text-2xl= @user.current_otp
+
+p
+  | Ce code à usage unique et valable #{distance_of_time_in_words(Devise.otp_allowed_drift)}.

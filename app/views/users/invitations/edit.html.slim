@@ -7,7 +7,7 @@
         | Bienvenue sur FiscaHub !
 
       .card__body
-        p Veuillez saisir un mot de passe afin de finaliser votre inscription et activer votre compte.
+        p Afin de finaliser votre inscription, veuillez saisir un mot de passe (#{Devise.password_length.min} caractères minimum) :
 
         = form.block :password do
           = form.label :password

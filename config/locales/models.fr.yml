@@ -68,6 +68,7 @@ fr:
         email:                  Adresse mail
         password:               Mot de passe
         password_confirmation:  Confirmation du mot de passe
+        otp_code:               Code unique de vérification
         organization_admin:     Administrateur de l'organisation
         super_admin:            Administrateur de la plateforme FiscaHub
         office_ids:             Guichets
@@ -229,6 +230,11 @@ fr:
 
             current_password:
               blank:     Votre mot de passe actuel est requis pour valider cette modification
+              invalid:   Mot de passe incorrect
+
+            otp_code:
+              blank:     Un code de vérification est requis
+              invalid:   Code incorrect
 
             reset_password_token:
               blank:        Un code de réinitialisation est requis

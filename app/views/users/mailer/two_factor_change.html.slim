@@ -1,0 +1,9 @@
+p Bonjour #{@user.name},
+p
+  | Nous vous informons que la configuration de l'authentification en 2 facteurs
+  |  a été modifiée sur <strong>FiscaHub</strong>.
+p
+  | Si vous n'étes pas à l'origine de cette modification,
+  |  nous vous invitons à contacter nos administreurs au plus vite :
+  br
+  = mail_to "contact@fiscahub.fr"

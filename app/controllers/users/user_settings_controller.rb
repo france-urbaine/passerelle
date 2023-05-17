@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Account
-  class InformationsController < ApplicationController
+module Users
+  class UserSettingsController < ApplicationController
     def show
       @user          = current_user
       @user_email    = duplicate_user_to_update_email(current_user)
@@ -15,7 +15,7 @@ module Account
         respond_with current_user,
           action: :show,
           notice: translate(".send_reconfirmation_instructions"),
-          location: account_informations_path
+          location: user_settings_path
 
       elsif params[:reset_email_reconfirmation] && current_user.pending_reconfirmation?
         current_user.update(unconfirmed_email: nil)
@@ -23,7 +23,7 @@ module Account
         respond_with current_user,
           action: :show,
           notice: translate(".reset_email_reconfirmation"),
-          location: account_informations_path
+          location: user_settings_path
 
       else
         @user = User.find(current_user.id)
@@ -42,7 +42,7 @@ module Account
         respond_with @user,
           action: :show,
           flash:  true,
-          location: account_informations_path
+          location: user_settings_path
       end
     end
 

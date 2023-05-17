@@ -1,0 +1,9 @@
+@layer components {
+  .radio-collection {
+    /*  */
+  }
+
+  .radio-collection__checkbox {
+    display: block;
+  }
+}

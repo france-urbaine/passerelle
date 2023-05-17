@@ -14,8 +14,8 @@ fr:
         description:  "Les données seront disponibles dans quelques minutes."
         delay:        3000
 
-  account:
-    informations:
+  users:
+    user_settings:
       update:
         send_reconfirmation_instructions:
           type:         "success"
@@ -25,4 +25,16 @@ fr:
         reset_email_reconfirmation:
           type:         "success"
           title:        "La modification de l'adresse email a été annulée."
+          delay:        3000
+
+    two_factor_settings:
+      update:
+        activated:
+          type:         "success"
+          title:        "L'authentification en 2 facteurs est activée."
+          delay:        3000
+
+        updated:
+          type:         "success"
+          title:        "La configuration de l'authentification en 2 facteurs a été modifiée avec succés."
           delay:        3000

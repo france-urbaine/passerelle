@@ -32,12 +32,16 @@
 
     @apply mt-8;
 
-    &--center {
-      justify-content: center;
-    }
-
     & .button {
       @apply mr-4;
+    }
+
+    &--center {
+      justify-content: center;
+
+      & .button {
+        @apply mx-2;
+      }
     }
   }
 

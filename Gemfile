@@ -17,7 +17,9 @@ gem "redis", "~> 5.0"
 
 # Models
 gem "devise"
+gem 'devise-two-factor'
 gem "discard"
+gem "rqrcode"
 
 # Controllers
 gem "pagy"

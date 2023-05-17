@@ -9,7 +9,7 @@
 
   .card
     .card__content
-      = form_with(model: @organization, scope: :organization, url: account_organization_path) do |form|
+      = form_with(model: @organization, scope: :organization, url: user_organization_settings_path) do |form|
         .card__body
           = form.block :name do
             = form.label :name
@@ -31,7 +31,7 @@
 
   .card
     .card__content
-      = form_with(model: @organization, scope: :organization, url: account_organization_path) do |form|
+      = form_with(model: @organization, scope: :organization, url: user_organization_settings_path) do |form|
         .card__body
           = form.block :contact_first_name do
             = form.label :contact_first_name
@@ -60,7 +60,7 @@
 
   .card.mb-4
     .card__content
-      = form_with(model: @organization, scope: :organization, url: account_organization_path) do |form|
+      = form_with(model: @organization, scope: :organization, url: user_organization_settings_path) do |form|
         .card__body
           p
             | Vous pouvez contraindre vos utilisateurs à utiliser seulement des adresses email correspondant à un nom de domaine.
@@ -84,7 +84,7 @@
 
       hr.content__separator
 
-      = form_with(model: @organization, scope: :organization, url: account_organization_path) do |form|
+      = form_with(model: @organization, scope: :organization, url: user_organization_settings_path) do |form|
         .card__body
           p
             | L'authentification en 2 facteurs (2FA) est activée pour tout les utilisateurs.

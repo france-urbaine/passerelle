@@ -4,7 +4,7 @@ nav.sidebar
     span.brand__left Fisca
     span.brand__right Hub
 
-  - if controller.class.name.start_with?("Account")
+  - if controller.class.name.start_with?("Users::")
     .p-1
       = sidebar_link_to root_path, current: false do
         = svg_icon "arrow-uturn-left"
@@ -12,8 +12,8 @@ nav.sidebar
 
     .sidebar__header Paramètres
     .sidebar__links
-      = sidebar_link_to "Compte",       account_informations_path
-      = sidebar_link_to "Organisation", account_organization_path
+      = sidebar_link_to "Compte",       user_settings_path
+      = sidebar_link_to "Organisation", user_organization_settings_path
       a.sidebar__link.sidebar__link--disabled( disabled ) API
 
   - else
@@ -41,7 +41,7 @@ nav.sidebar
 
   .flex-auto
   .sidebar__user
-    = sidebar_link_to account_informations_path, current: false, title: "Gestion du compte" do
+    = sidebar_link_to user_settings_path, current: false, title: "Gestion du compte" do
       .sidebar__user-avatar
         svg( fill="currentColor" viewBox="0 0 24 24" )
           title Avatar de l'utilisateur

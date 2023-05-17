@@ -35,6 +35,10 @@
 #  invited_at             :datetime
 #  discarded_at           :datetime
 #  offices_count          :integer          default(0), not null
+#  otp_secret             :string
+#  otp_method             :enum             default("2fa"), not null
+#  consumed_timestep      :integer
+#  otp_required_for_login :boolean          default(FALSE), not null
 #
 # Indexes
 #
@@ -52,6 +56,7 @@ class User < ApplicationRecord
   # when validating uniqueness of email.
   #
   devise(
+    :two_factor_authenticatable,
     :database_authenticatable,
     :recoverable,
     :trackable,
@@ -178,8 +183,16 @@ class User < ApplicationRecord
     scored_order(:name, input)
   }
 
-  # Update
+  # Security & 2FA
   # ----------------------------------------------------------------------------
+  def self.find_for_authentication(tainted_conditions)
+    undiscarded.find_first_by_auth_conditions(tainted_conditions)
+  end
+
+  def active_for_authentication?
+    super() && !discarded?
+  end
+
   def update_with_password_protection(params)
     if params.include?(:email) || params.include?(:password)
       update_with_password(params)
@@ -189,6 +202,35 @@ class User < ApplicationRecord
       params.delete(:organization_admin)
       update_without_password(params)
     end
+  end
+
+  attr_accessor :otp_code
+
+  def enable_two_factor_with_password(params)
+    current_password = params.delete(:current_password)
+    self.otp_code    = params.delete(:otp_code)
+    self.otp_method  = params.delete(:otp_method) if params.include?(:otp_method)
+    self.otp_required_for_login = true
+
+    unless valid_password?(current_password)
+      errors.add(:current_password, current_password.blank? ? :blank : :invalid)
+      return false
+    end
+
+    unless validate_and_consume_otp!(otp_code)
+      errors.add(:otp_code, otp_code.blank? ? :blank : :invalid)
+      return false
+    end
+
+    Users::Mailer.two_factor_change(self).deliver_later
+
+    self.otp_code = nil
+    true
+  end
+
+  def generate_two_factor_secret_if_missing
+    update!(otp_secret: User.generate_otp_secret) if otp_secret.nil?
+    otp_secret
   end
 
   # Invitation process
