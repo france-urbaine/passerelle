@@ -9,11 +9,11 @@
 
         = form.block :password do
           = form.label :password
-          = form.password_field :password, autofocus: true, autocomplete: "new-password"
+          = form.password_field :password, autofocus: true, require: true, autocomplete: "new-password", minlength: Devise.password_length.min, maxlength: Devise.password_length.max
 
         = form.block :password_confirmation do
           = form.label :password_confirmation
-          = form.password_field :password_confirmation, autocomplete: "new-password"
+          = form.password_field :password_confirmation, require: true, autocomplete: "new-password"
 
       .card__actions.card__actions--center
         = button_component "Continuer", primary: true, type: "submit"

@@ -22,7 +22,7 @@
             li
               = form.block :otp_code do
                 = form.label :otp_code, "Saisissez le code généré par votre application"
-                = form.text_field :otp_code, required: false, minlength: 6, maxlength: 6
+                = form.text_field :otp_code, required: true, autocomplete: "one-time-code", minlength: 6, maxlength: 6
 
           - when "email"
             li.mb-6
@@ -33,7 +33,7 @@
             li
               = form.block :otp_code do
                 = form.label :otp_code, "Saisissez le code reçu"
-                = form.text_field :otp_code, required: false, minlength: 6, maxlength: 6
+                = form.text_field :otp_code, required: true, autocomplete: "one-time-code", minlength: 6, maxlength: 6
 
       .card__actions.card__actions--center
         = button_component "Enregistrer", primary: true, type: "submit"

@@ -22,7 +22,7 @@
             li
               = form.block :otp_code do
                 = form.label :otp_code, "Saisissez le code généré par votre application"
-                = form.text_field :otp_code, required: false, minlength: 6, maxlength: 6
+                = form.text_field :otp_code, required: true, autocomplete: "one-time-code", minlength: 6, maxlength: 6
 
           - when "email"
             li.mb-6
@@ -33,12 +33,12 @@
             li
               = form.block :otp_code do
                 = form.label :otp_code, "Saisissez le code reçu"
-                = form.text_field :otp_code, required: false, minlength: 6, maxlength: 6
+                = form.text_field :otp_code, required: true, autocomplete: "one-time-code", minlength: 6, maxlength: 6
 
           li
             = form.block :current_password do
               = form.label :current_password, "Saisissez votre mot de passe pour valider la modification"
-              = form.password_field :current_password, required: false
+              = form.password_field :current_password, required: true, autocomplete: "current-password"
 
 
     - modal.with_submit_action "Enregistrer"

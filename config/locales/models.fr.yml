@@ -218,6 +218,7 @@ fr:
               blank:          Une adresse mail est requise
               invalid:        Une adresse mail valide est requise
               invalid_domain: Cette adresse ne correspond pas au domaine de l'organisation (@%{domain})
+              taken:          Cette adresse est déjà attribuée à un autre utilisateur
 
             password:
               blank:     Un mot de passe est requis

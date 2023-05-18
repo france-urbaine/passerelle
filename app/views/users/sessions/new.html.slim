@@ -9,11 +9,11 @@
 
         = form.block :email do
           = form.label :email
-          = form.text_field :email, autofocus: true, autocomplete: "email"
+          = form.text_field :email, autofocus: true, required: true, autocomplete: "email"
 
         = form.block :password do
           = form.label :password
-          = form.password_field :password, autocomplete: "password"
+          = form.password_field :password, required: true, autocomplete: "current-password"
 
       .card__actions.card__actions--center
         = button_component "Connexion", primary: true, type: "submit"

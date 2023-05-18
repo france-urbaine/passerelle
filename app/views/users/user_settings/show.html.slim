@@ -61,11 +61,11 @@
 
             = form.block :email do
               = form.label :email, "Nouvelle adresse email"
-              = form.email_field :email, required: true, autocomplete: false
+              = form.email_field :email, required: true, autocomplete: "off"
 
             = form.block :current_password do
               = form.label :current_password, "Mot de passe actuel"
-              = form.password_field :current_password, required: true
+              = form.password_field :current_password, required: true, autocomplete: "current-password"
 
           .card__actions
             = button_component "Enregistrer", primary: true, type: "submit"
@@ -83,16 +83,16 @@
           p Utilisez le formulaire ci-dessous pour changer votre mot de passe.
 
           = form.block :password do
-            = form.label :password, "Nouveau mot de passe"
-            = form.password_field :password, required: true
+            = form.label :password, "Nouveau mot de passe (#{Devise.password_length.min} caractères minimum)"
+            = form.password_field :password, required: true, autocomplete: "new-password", minlength: Devise.password_length.min, maxlength: Devise.password_length.max
 
           = form.block :password_confirmation do
             = form.label :password_confirmation
-            = form.password_field :password_confirmation, required: true
+            = form.password_field :password_confirmation, required: true, autocomplete: "new-password", minlength: Devise.password_length.min, maxlength: Devise.password_length.max
 
           = form.block :current_password do
             = form.label :current_password, "Mot de passe actuel"
-            = form.password_field :current_password, required: true
+            = form.password_field :current_password, required: true, autocomplete: "current-password"
 
         .card__actions
           = button_component "Enregistrer", primary: true, type: "submit"

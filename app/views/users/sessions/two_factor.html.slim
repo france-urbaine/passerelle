@@ -13,7 +13,7 @@
 
         = form.block :otp_attempt do
           = form.label :otp_attempt, "Code de vérification"
-          = form.text_field :otp_attempt, autofocus: true, autocomplete: false
+          = form.text_field :otp_attempt, autofocus: true, required: true, autocomplete: "one-time-code", minlength: 6, maxlength: 6
 
       .card__actions.card__actions--center
         = button_component "Connexion", primary: true, type: "submit"
