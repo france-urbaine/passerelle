@@ -205,6 +205,22 @@ class User < ApplicationRecord
 
   attr_accessor :otp_code
 
+  def enable_two_factor(params)
+    self.otp_code    = params.delete(:otp_code)
+    self.otp_method  = params.delete(:otp_method) if params.include?(:otp_method)
+    self.otp_required_for_login = true
+
+    unless validate_and_consume_otp!(otp_code)
+      errors.add(:otp_code, otp_code.blank? ? :blank : :invalid)
+      return false
+    end
+
+    Users::Mailer.two_factor_change(self).deliver_later
+
+    self.otp_code = nil
+    true
+  end
+
   def enable_two_factor_with_password(params)
     current_password = params.delete(:current_password)
     self.otp_code    = params.delete(:otp_code)

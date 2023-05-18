@@ -38,3 +38,20 @@ fr:
           type:         "success"
           title:        "La configuration de l'authentification en 2 facteurs a été modifiée avec succés."
           delay:        3000
+
+    registrations:
+      token_expired:
+          type:   "error"
+          title:  "Cette invitation est déjà complétée, a expirée ou n'a pas été trouvée."
+
+    registration_passwords:
+      update:
+        success:
+          type:   "success"
+          title:  "Votre mot de passe a été enregistré."
+
+    registration_two_factors:
+      update:
+        success:
+          type:   "success"
+          title:  "Votre inscription est complétée. Vous pouvez dorénavant vous connecter."

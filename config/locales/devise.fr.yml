@@ -75,11 +75,3 @@ fr:
       unlocked:
         type:  "success"
         title: "Votre compte a été déverrouillé avec succès. Vous pouvez dorénavant vous connecter."
-
-    invitation:
-      accepted:
-        type:  "success"
-        title: "Votre inscription est complétée. Vous pouvez dorénavant vous connecter."
-      expired:
-        type:  "error"
-        title: "Cette invitation est déjà complétée, a expirée ou n'a pas été trouvée."

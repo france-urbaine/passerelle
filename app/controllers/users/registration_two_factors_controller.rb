@@ -1,9 +1,17 @@
 # frozen_string_literal: true
 
 module Users
-  class TwoFactorSettingsController < ApplicationController
+  class RegistrationTwoFactorsController < ApplicationController
+    skip_before_action :authenticate_user!
+    before_action :sign_out
+    before_action do
+      @user = User.find_by_invitation_token(params[:token])
+      redirect_to new_user_session_path, notice: t("users.registrations.token_expired") if @user.errors.any?
+    end
+
+    layout "public"
+
     def new
-      @user = current_user
       redirect_to action: :edit unless @user.organization&.allow_2fa_via_email?
     end
 
@@ -17,30 +25,29 @@ module Users
     end
 
     def edit
-      @user = current_user
       @user.generate_two_factor_secret_if_missing
       @user.otp_required_for_login = true
       @user.otp_method = params[:otp_method] if params[:otp_method]
       @user.otp_method = "2fa" unless @user.organization&.allow_2fa_via_email?
 
-      Users::Mailer.two_factor_setup_code(@user).deliver_now if @user.otp_method == "email"
+      Users::Mailer.two_factor_setup_code(@user).deliver_now if @user.send_otp_code_by_email?
     end
 
     def update
-      @user = current_user
-      @user.enable_two_factor_with_password(otp_activation_params)
+      @user.enable_two_factor(otp_activation_params)
+      @user.confirm
 
       respond_with @user,
-        notice: translate(@user.otp_required_for_login_previously_changed?(from: false) ? ".activated" : ".updated"),
-        location: user_settings_path
+        notice: t(".success"),
+        location: new_session_path(@user)
     end
 
-    private
+    protected
 
     def otp_activation_params
       params
         .fetch(:user, {})
-        .permit(:otp_code, :otp_method, :current_password)
+        .permit(:otp_code, :otp_method)
     end
   end
 end

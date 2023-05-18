@@ -13,7 +13,7 @@ p Bonjour #{@resource.first_name},
     | Pour cela, veuillez suivre le lien ci-dessous:
   p
     - if @resource.invited?
-      = link_to "Finaliser mon inscription", accept_user_invitation_url(confirmation_token: @token)
+      = link_to "Finaliser mon inscription", user_registration_url(token: @token)
     - else
       = link_to "Finaliser mon inscription", confirmation_url(@resource, confirmation_token: @token)
 

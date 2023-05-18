@@ -1,0 +1,39 @@
+.card
+  .card__content
+    = form_with(model: @user, url: user_registration_two_factor_path, method: :post) do |form|
+      h1.card__header.card__title
+        | Configuration de l'authentification en 2 étapes
+
+      .card__body
+        p Choisissez une méthode d'authentification :
+
+        = form.block :otp_method do
+          = form.radio_button :otp_method, "2fa"
+          = form.label :otp_method, value: "2fa" do
+            | Authentification via une application
+
+          p.pl-9.italic.max-w-6xl
+            | Utilisez une application compatible (Authy, Dashlane, Microsoft Authenticator, etc..) pour générer des codes à chaque connexion.
+            br
+            | Cette méthode est la plus simple et la plus sécurisée. L'application n'a même pas besoin d'une connexion pour générer des codes.
+
+        = form.block :otp_method do
+          = form.radio_button :otp_method, "email"
+          = form.label :otp_method, value: "email" do
+            | Authentification via email
+
+          p.pl-9.italic.max-w-6xl
+            | Recevez un code de vérification par email à chaque tentative de connexion.
+            br
+            | Cette méthode alternative ne requiert pas un autre appareil.
+            |  Elle est néanmoins moins sécurisée car elle ne vous protége par en cas d'usurpation du compte email.
+            |  Par ailleurs, vous devez pouvoir accéder à votre boite de reception pour chaque connexion.
+
+      .card__actions.card__actions--center
+        = button_component "Continuer", primary: true, type: "submit"
+
+p
+  = link_to user_registration_path do
+    = svg_icon "chevron-left-small", "Retour", class: "inline h-6 w-6"
+    | Redémmarrer le processus d'enregistrement
+  | .

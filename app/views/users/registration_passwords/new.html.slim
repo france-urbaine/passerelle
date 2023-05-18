@@ -1,13 +1,11 @@
 .card
   .card__content
-    = form_with(model: @user, url: user_invitation_path, method: :put) do |form|
-      = hidden_param_input :confirmation_token
-
+    = form_with(model: @user, url: user_registration_password_path, method: :post) do |form|
       h1.card__header.card__title
-        | Bienvenue sur FiscaHub !
+        | Configuration de votre mot de passe
 
       .card__body
-        p Afin de finaliser votre inscription, veuillez saisir un mot de passe (#{Devise.password_length.min} caractères minimum) :
+        p Veuillez saisir un mot de passe (#{Devise.password_length.min} caractères minimum)
 
         = form.block :password do
           = form.label :password
@@ -18,10 +16,10 @@
           = form.password_field :password_confirmation, autocomplete: "new-password"
 
       .card__actions.card__actions--center
-        = button_component "Confirmer", primary: true, type: "submit"
+        = button_component "Continuer", primary: true, type: "submit"
 
 p
-  = link_to new_session_path(@user) do
+  = link_to user_registration_path do
     = svg_icon "chevron-left-small", "Retour", class: "inline h-6 w-6"
-    | Retour au formulaire de connexion
+    | Redémmarrer le processus d'enregistrement
   | .

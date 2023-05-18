@@ -1,0 +1,45 @@
+.card
+  .card__content
+    = form_with(model: @user, url: user_registration_two_factor_path, method: :put) do |form|
+      = form.hidden_field :otp_method
+
+      h1.card__header.card__title
+        | Configuration de l'authentification en 2 étapes
+
+      .card__body
+        ol.list-decimal.ml-5
+          - case @user.otp_method
+          - when "2fa"
+            li.mb-6
+              .mb-4 Scanner le QR code ci-dessous avec une application compatible (Authy, Dashlane, Microsoft Authenticator, etc..).
+              = otp_qr_code_as_svg_tag(@user)
+
+            li.mb-6
+              | Si vous êtes dans l'impossibilité de scanner le QR code, saisissez le code suivant dans votre application :
+              br
+              strong.text-xl= @user.otp_secret
+
+            li
+              = form.block :otp_code do
+                = form.label :otp_code, "Saisissez le code généré par votre application"
+                = form.text_field :otp_code, required: false, minlength: 6, maxlength: 6
+
+          - when "email"
+            li.mb-6
+              | Un code de vérification a été envoyé à l'adresse suivante:
+              br
+              strong= @user.email
+
+            li
+              = form.block :otp_code do
+                = form.label :otp_code, "Saisissez le code reçu"
+                = form.text_field :otp_code, required: false, minlength: 6, maxlength: 6
+
+      .card__actions.card__actions--center
+        = button_component "Enregistrer", primary: true, type: "submit"
+
+p
+  = link_to user_registration_path do
+    = svg_icon "chevron-left-small", "Retour", class: "inline h-6 w-6"
+    | Redémmarrer le processus d'enregistrement
+  | .

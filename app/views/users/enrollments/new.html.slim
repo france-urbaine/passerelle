@@ -4,10 +4,10 @@
       | Inscription sur FiscaHub
 
     .card__body
-      p L'inscription à FiscaHub est restreinte et se fait sur invitation.
+      p L'inscription à FiscaHub n'est pas encore ouvert à tous.
 
       p
-        strong Vous êtes une collectivité ?
+        strong Vous êtes une collectivité territoriale ?
       p
         | Veuillez vous rapprocher de votre éditeur pour demander un accés à la plateforme.
       p
@@ -15,12 +15,17 @@
         |  départementale des finances pour pour demander un accés à la plateforme.
 
       p
-        strong Vous êtes un éditeur ?
+        strong Vous êtes éditeur d'un observatoire fiscal ?
       p
         | Veuillez nous contacter pour définir des modalités d'accés à la plateforme :
         = " "
         = mail_to "contact@fiscahub.fr"
 
+      p
+        strong Vous êtes une direction départementale ?
+      p
+        | Veuillez contacter la Direction Générale des Finances Publiques pour définir
+        |  des modalités d'accés à la plateforme.
 p
   = link_to new_user_session_path do
     = svg_icon "chevron-left-small", "Retour", class: "inline h-6 w-6"

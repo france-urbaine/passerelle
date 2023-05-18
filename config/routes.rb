@@ -31,18 +31,18 @@ Rails.application.routes.draw do
     passwords:     "users/passwords",
     unlocks:       "users/unlocks"
   }, path_names: {
-    sign_in: "connexion"
+    sign_in:    "connexion"
   }
 
   namespace :users, as: :user, path: "/" do
-    resource :invitation, only: %i[update] do
-      get :edit, as: :accept, path: "/accept"
-    end
+    resource :enrollment,              path: "/inscription",                    only: %i[new]
+    resource :registration,            path: "/enregistrement/:token",          only: %i[show]
+    resource :registration_password,   path: "/enregistrement/:token/password", only: %i[new create]
+    resource :registration_two_factor, path: "/enregistrement/:token/2fa",      only: %i[new create edit update]
 
-    resource :registration,          path: "/inscription",         only: %i[new]
-    resource :user_settings,         path: "/compte/parametres",   only: %i[show update], as: :settings
-    resource :two_factor_settings,   path: "/compte/2fa",          only: %i[new create edit update]
-    resource :organization_settings, path: "/compte/organisation", only: %i[show update]
+    resource :user_settings,           path: "/compte/parametres",   only: %i[show update], as: :settings
+    resource :two_factor_settings,     path: "/compte/2fa",          only: %i[new create edit update]
+    resource :organization_settings,   path: "/compte/organisation", only: %i[show update]
 
     get "/compte", to: redirect("/compte/parametres")
   end
