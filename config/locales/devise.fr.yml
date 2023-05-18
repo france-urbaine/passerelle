@@ -52,7 +52,6 @@ fr:
         title: "Votre adresse mail a été validée."
         delay: 3000
 
-
     passwords:
       no_token:                   "Vous ne pouvez accéder à cette page sans passer par un e-mail de réinitialisation de mot de passe. Si vous êtes passé par un e-mail de ce type, assurez-vous d'utiliser l'URL complète."
       send_instructions:          "Vous allez recevoir par email les instructions nécessaires pour réinitialiser votre mot de passe dans quelques instants."

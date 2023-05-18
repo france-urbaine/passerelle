@@ -8,8 +8,10 @@ module AuthenticateWithOtpTwoFactor
 
   def authenticate_with_two_factor
     user = self.resource = find_user
-    # return handle_locked_user(user) unless user.can?(:log_in)
-    # return handle_changed_user(user) if user_password_changed?(user)
+
+    if user && !user.active_for_authentication?
+      throw :warden, scope: :user, message: user.inactive_message
+    end
 
     if user_params.include?(:otp_attempt) && session[:otp_user_id]
       authenticate_with_two_factor_via_otp(user)
@@ -34,7 +36,9 @@ module AuthenticateWithOtpTwoFactor
     # Set @user for Devise views
     @user = user
 
-    # return handle_locked_user(user) unless user.can?(:log_in)
+    if user && !user.active_for_authentication?
+      throw :warden, scope: :user, message: user.inactive_message
+    end
 
     session[:otp_user_id] = user.id
     session[:user_password_hash] = Digest::SHA256.hexdigest(user.encrypted_password)
