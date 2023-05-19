@@ -13,14 +13,26 @@ fr:
 
     attributes:
       publisher:
-        name:             Nom de l'éditeur
-        siren:            Numéro SIREN de l'éditeur
-        email:            Adresse mail de contact
+        name:                 Nom de l'éditeur
+        siren:                Numéro SIREN de l'éditeur
+        email:                Adresse mail de contact
+        contact_first_name:   Prénom du contact
+        contact_last_name :   Nom du contact
+        contact_email:        Adresse mail de contact
+        contact_phone:        Numéro de téléphone
+        domain_restriction:   Nom de domaine
+        allow_2fa_via_email:  Autoriser l'email comme méthode d'authentification en 2 étapes
 
       ddfip:
-        name:             Nom de la DDFIP
-        code_departement: Code INSEE du département
-        departement:      Département
+        name:                 Nom de la DDFIP
+        code_departement:     Code INSEE du département
+        departement:          Département
+        contact_first_name:   Prénom du contact
+        contact_last_name :   Nom du contact
+        contact_email:        Adresse mail de contact
+        contact_phone:        Numéro de téléphone
+        domain_restriction:   Nom de domaine
+        allow_2fa_via_email:  Autoriser l'email comme méthode d'authentification en 2 étapes
 
       office:
         name:             Nom du guichet
@@ -43,18 +55,23 @@ fr:
         contact_last_name :   Nom du contact
         contact_email:        Adresse mail de contact
         contact_phone:        Numéro de téléphone
+        domain_restriction:   Nom de domaine
+        allow_2fa_via_email:  Autoriser l'email comme méthode d'authentification en 2 étapes
 
       user:
-        organization:         Organisation
-        organization_type:    Type d'organisation
-        organization_id:      ID de l'organisation
-        organization_name:    Nom de l'organisation
-        first_name:           Prénom
-        last_name :           Nom
-        email:                Adresse mail
-        organization_admin:   Administrateur de l'organisation
-        super_admin:          Administrateur de la plateforme FiscaHub
-        office_ids:           Guichets
+        organization:           Organisation
+        organization_type:      Type d'organisation
+        organization_id:        ID de l'organisation
+        organization_name:      Nom de l'organisation
+        first_name:             Prénom
+        last_name :             Nom
+        email:                  Adresse mail
+        password:               Mot de passe
+        password_confirmation:  Confirmation du mot de passe
+        otp_code:               Code unique de vérification
+        organization_admin:     Administrateur de l'organisation
+        super_admin:            Administrateur de la plateforme FiscaHub
+        office_ids:             Guichets
 
       commune:
         name:             Nom de la commune
@@ -96,8 +113,14 @@ fr:
               invalid:   Ce numéro SIREN n'est pas valide
               taken:     Ce numéro SIREN est déjà attribué
 
-            email:
+            contact_email:
               invalid:   Une adresse mail valide est requise
+
+            contact_phone:
+              invalid:   Un numéro de téléphone valide est requise
+
+            domain_restriction:
+              invalid:   Un nom de domaine valide est requise (sans @)
 
         ddfip:
           attributes:
@@ -111,6 +134,15 @@ fr:
 
             departement:
               required:  Un département est requis
+
+            contact_email:
+              invalid:   Une adresse mail valide est requise
+
+            contact_phone:
+              invalid:   Un numéro de téléphone valide est requise
+
+            domain_restriction:
+              invalid:   Un nom de domaine valide est requise (sans @)
 
         office:
           attributes:
@@ -155,7 +187,16 @@ fr:
             contact_phone:
               invalid:   Un numéro de téléphone valide est requise
 
+            domain_restriction:
+              invalid:   Un nom de domaine valide est requise (sans @)
+
         user:
+          already_confirmed:           Votre compte a déjà été validé, veuillez essayer de vous connecter
+          confirmation_period_expired: Votre compte à expiré, merci de faire une nouvelle demande
+          expired:                     Votre compte à expiré, merci de faire une nouvelle demande
+          not_found:                   Votre compte n'a pas été trouvé
+          not_locked:                  Votre compte n'est plus verrouillé
+
           attributes:
             organization:
                 required:  Une organisation est requise
@@ -174,8 +215,35 @@ fr:
               blank:     Un nom est requis
 
             email:
-              blank:     Une adresse mail est requise
-              invalid:   Une adresse mail valide est requise
+              blank:          Une adresse mail est requise
+              invalid:        Une adresse mail valide est requise
+              invalid_domain: Cette adresse ne correspond pas au domaine de l'organisation (@%{domain})
+              taken:          Cette adresse est déjà attribuée à un autre utilisateur
+
+            password:
+              blank:     Un mot de passe est requis
+              too_long:  Votre mot de passe est trop long (%{count} caractères maximum)
+              too_short: Votre mot de passe est trop court (%{count} caractères minimim)
+
+            password_confirmation:
+              blank:        Une confirmation de votre mot de passe est requise
+              confirmation: Votre mot de passe n'a pas pu être confirmé
+
+            current_password:
+              blank:     Votre mot de passe actuel est requis pour valider cette modification
+              invalid:   Mot de passe incorrect
+
+            otp_code:
+              blank:     Un code de vérification est requis
+              invalid:   Code incorrect
+
+            otp_attempt:
+              invalid:   Code incorrect
+
+            reset_password_token:
+              blank:        Un code de réinitialisation est requis
+              invalid:      Votre code de réinitialisation est invalide ou expiré. Veuillez faire une nouvelle demande.
+              expired:      Votre code de réinitialisation est expiré. Veuillez faire une nouvelle demande.
 
         commune:
           attributes:

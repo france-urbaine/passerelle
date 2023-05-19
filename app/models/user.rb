@@ -35,6 +35,10 @@
 #  invited_at             :datetime
 #  discarded_at           :datetime
 #  offices_count          :integer          default(0), not null
+#  otp_secret             :string
+#  otp_method             :enum             default("2fa"), not null
+#  consumed_timestep      :integer
+#  otp_required_for_login :boolean          default(FALSE), not null
 #
 # Indexes
 #
@@ -47,10 +51,12 @@
 #  index_users_on_unlock_token          (unlock_token) UNIQUE
 #
 class User < ApplicationRecord
+  # Devise validatable is not included:
+  # Validations are included manually to scope on kept records
+  # when validating uniqueness of email.
+  #
   devise(
-    :database_authenticatable,
-    :registerable,
-    :validatable,
+    :two_factor_authenticatable,
     :recoverable,
     :trackable,
     :confirmable,
@@ -69,9 +75,39 @@ class User < ApplicationRecord
 
   # Validations
   # ----------------------------------------------------------------------------
-  validates :last_name,  presence: true
   validates :first_name, presence: true
+  validates :last_name,  presence: true
+  validates :email,      presence: true
+  validates :password,   presence: { if: :password_required? }
+
   validates :organization_type, inclusion: { in: %w[Publisher Collectivity DDFIP] }
+
+  with_options allow_blank: true do
+    validates :email, format: { with: Devise.email_regexp, if: :will_save_change_to_email? }
+    validates :email, uniqueness: {
+      case_sensitive: false,
+      conditions: -> { kept },
+      unless: :skip_uniqueness_validation_of_email?,
+    }
+
+    validates :password, confirmation: { if: :password_required? }
+    validates :password, length: { within: Devise.password_length }
+  end
+
+  validate if: :will_save_change_to_email? do |user|
+    domain = user.organization.domain_restriction
+    next unless domain.present?
+
+    regexp = build_email_regexp(domain)
+    errors.add(:email, :invalid_domain, domain: domain) unless regexp.match?(user.email)
+  end
+
+  # Checks whether a password is needed or not. For validations only.
+  # Passwords are always required if it's a new record, or if the password
+  # or confirmation are being set somewhere.
+  def password_required?
+    !persisted? || !password.nil? || !password_confirmation.nil?
+  end
 
   # Callbacks
   # ----------------------------------------------------------------------------
@@ -146,12 +182,83 @@ class User < ApplicationRecord
     scored_order(:name, input)
   }
 
+  # Security & 2FA
+  # ----------------------------------------------------------------------------
+  def self.find_for_authentication(tainted_conditions)
+    undiscarded.find_first_by_auth_conditions(tainted_conditions)
+  end
+
+  def active_for_authentication?
+    super() && !discarded?
+  end
+
+  def update_with_password_protection(params)
+    if params.include?(:email) || params.include?(:password)
+      update_with_password(params)
+    else
+      params.delete(:email)
+      params.delete(:super_admin)
+      params.delete(:organization_admin)
+      update_without_password(params)
+    end
+  end
+
+  attr_accessor :otp_code
+
+  def enable_two_factor(params)
+    self.otp_code    = params.delete(:otp_code)
+    self.otp_method  = params.delete(:otp_method) if params.include?(:otp_method)
+    self.otp_required_for_login = true
+
+    unless validate_and_consume_otp!(otp_code)
+      errors.add(:otp_code, otp_code.blank? ? :blank : :invalid)
+      return false
+    end
+
+    Users::Mailer.two_factor_change(self).deliver_later
+
+    self.otp_code = nil
+    true
+  end
+
+  def enable_two_factor_with_password(params)
+    current_password = params.delete(:current_password)
+    self.otp_code    = params.delete(:otp_code)
+    self.otp_method  = params.delete(:otp_method) if params.include?(:otp_method)
+    self.otp_required_for_login = true
+
+    unless valid_password?(current_password)
+      errors.add(:current_password, current_password.blank? ? :blank : :invalid)
+      return false
+    end
+
+    unless validate_and_consume_otp!(otp_code)
+      errors.add(:otp_code, otp_code.blank? ? :blank : :invalid)
+      return false
+    end
+
+    Users::Mailer.two_factor_change(self).deliver_later
+
+    self.otp_code = nil
+    true
+  end
+
+  def send_otp_code_by_email?
+    otp_required_for_login? && otp_method == "email" && organization&.allow_2fa_via_email?
+  end
+
+  def generate_two_factor_secret_if_missing
+    update!(otp_secret: User.generate_otp_secret) if otp_secret.nil?
+    otp_secret
+  end
+
   # Invitation process
   # ----------------------------------------------------------------------------
   def invite(by: nil)
     self.inviter    = by
     self.invited_at = Time.current
     self.password   = Devise.friendly_token[0, 20]
+    self
   end
 
   def invited?

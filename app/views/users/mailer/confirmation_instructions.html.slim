@@ -1,0 +1,24 @@
+p Bonjour #{@resource.first_name},
+
+- if @resource.confirmed?
+  p
+    | Veuillez confirmer votre nouvelle adresse mail sur <strong>FiscaHub</strong>.
+  p
+    = link_to "Confirmer mon adresse", confirmation_url(@resource, confirmation_token: @token)
+
+- else
+  p
+    | Nous vous invitons à confirmer et finaliser votre inscription sur <strong>FiscaHub</strong>.
+    br
+    | Pour cela, veuillez suivre le lien ci-dessous:
+  p
+    - if @resource.invited?
+      = link_to "Finaliser mon inscription", user_registration_url(token: @token)
+    - else
+      = link_to "Finaliser mon inscription", confirmation_url(@resource, confirmation_token: @token)
+
+p
+  | Ce lien est valable #{distance_of_time_in_words(Devise.confirm_within)}.
+  br
+  | Si vous n'avez pas demandé cette inscription, veuillez ignorer ce message.
+

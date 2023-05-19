@@ -74,6 +74,16 @@ CREATE TYPE public.office_action AS ENUM (
 
 
 --
+-- Name: otp_method; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.otp_method AS ENUM (
+    '2fa',
+    'email'
+);
+
+
+--
 -- Name: user_organization_type; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -166,6 +176,12 @@ CREATE TABLE public.ddfips (
     users_count integer DEFAULT 0 NOT NULL,
     collectivities_count integer DEFAULT 0 NOT NULL,
     offices_count integer DEFAULT 0 NOT NULL,
+    contact_first_name character varying,
+    contact_last_name character varying,
+    contact_email character varying,
+    contact_phone character varying,
+    domain_restriction character varying,
+    allow_2fa_via_email boolean DEFAULT false NOT NULL,
     CONSTRAINT collectivities_count_check CHECK ((collectivities_count >= 0)),
     CONSTRAINT offices_count_check CHECK ((offices_count >= 0)),
     CONSTRAINT users_count_check CHECK ((users_count >= 0))
@@ -361,12 +377,17 @@ CREATE TABLE public.publishers (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
     name character varying NOT NULL,
     siren character varying NOT NULL,
-    email character varying,
+    contact_email character varying,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
     discarded_at timestamp(6) without time zone,
     users_count integer DEFAULT 0 NOT NULL,
     collectivities_count integer DEFAULT 0 NOT NULL,
+    contact_first_name character varying,
+    contact_last_name character varying,
+    contact_phone character varying,
+    domain_restriction character varying,
+    allow_2fa_via_email boolean DEFAULT false NOT NULL,
     CONSTRAINT collectivities_count_check CHECK ((collectivities_count >= 0)),
     CONSTRAINT users_count_check CHECK ((users_count >= 0))
 );
@@ -704,7 +725,11 @@ CREATE TABLE public.users (
     updated_at timestamp(6) without time zone NOT NULL,
     invited_at timestamp(6) without time zone,
     discarded_at timestamp(6) without time zone,
-    offices_count integer DEFAULT 0 NOT NULL
+    offices_count integer DEFAULT 0 NOT NULL,
+    otp_secret character varying,
+    otp_method public.otp_method DEFAULT '2fa'::public.otp_method NOT NULL,
+    consumed_timestep integer,
+    otp_required_for_login boolean DEFAULT false NOT NULL
 );
 
 
@@ -748,6 +773,8 @@ CREATE TABLE public.collectivities (
     desactivated_at timestamp(6) without time zone,
     discarded_at timestamp(6) without time zone,
     users_count integer DEFAULT 0 NOT NULL,
+    domain_restriction character varying,
+    allow_2fa_via_email boolean DEFAULT false NOT NULL,
     CONSTRAINT users_count_check CHECK ((users_count >= 0))
 );
 
@@ -1941,7 +1968,7 @@ CREATE INDEX index_users_on_discarded_at ON public.users USING btree (discarded_
 -- Name: index_users_on_email; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX index_users_on_email ON public.users USING btree (email);
+CREATE UNIQUE INDEX index_users_on_email ON public.users USING btree (email) WHERE (discarded_at IS NULL);
 
 
 --
@@ -2136,6 +2163,9 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230412064729'),
 ('20230412064833'),
 ('20230412064850'),
-('20230516080055');
+('20230514161159'),
+('20230516080055'),
+('20230516173340'),
+('20230517093540');
 
 

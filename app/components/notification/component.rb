@@ -14,7 +14,7 @@ module Notification
       case data
       when Hash   then data.stringify_keys
       when String then { "title" => data }
-      else raise TypeError, "unexpected argument: #{data.inspect}"
+      else {}
       end
     end
 

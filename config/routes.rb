@@ -3,10 +3,7 @@
 Rails.application.routes.draw do
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
-  # Defines the root path route ("/")
-  # root "articles#index"
-
-  mount Lookbook::Engine, at: "/lookbook" if Rails.env.development?
+  ID_REGEXP = %r{(?!(new|edit|remove|discard|undiscard|offices))[^/]+}
 
   concern :removable do
     get   :remove,    on: :member
@@ -24,9 +21,31 @@ Rails.application.routes.draw do
     patch :update_all, on: :collection, path: "/", as: nil
   end
 
-  devise_for :user
+  root to: redirect("/editeurs")
 
-  ID_REGEXP = %r{(?!(new|edit|remove|discard|undiscard|offices))[^/]+}
+  mount Lookbook::Engine, at: "/lookbook" if Rails.env.development?
+
+  devise_for :users, path: "/", controllers: {
+    sessions:      "users/sessions",
+    confirmations: "users/confirmations",
+    passwords:     "users/passwords",
+    unlocks:       "users/unlocks"
+  }, path_names: {
+    sign_in:    "connexion"
+  }
+
+  namespace :users, as: :user, path: "/" do
+    resource :enrollment,              path: "/inscription",                    only: %i[new]
+    resource :registration,            path: "/enregistrement/:token",          only: %i[show]
+    resource :registration_password,   path: "/enregistrement/:token/password", only: %i[new create]
+    resource :registration_two_factor, path: "/enregistrement/:token/2fa",      only: %i[new create edit update]
+
+    resource :user_settings,           path: "/compte/parametres",   only: %i[show update], as: :settings
+    resource :two_factor_settings,     path: "/compte/2fa",          only: %i[new create edit update]
+    resource :organization_settings,   path: "/compte/organisation", only: %i[show update]
+
+    get "/compte", to: redirect("/compte/parametres")
+  end
 
   constraints(id: ID_REGEXP) do
     resources :publishers, concerns: %i[removable removable_collection], path: "/editeurs" do
@@ -85,6 +104,4 @@ Rails.application.routes.draw do
     resources :territories,   only: %i[index],       path: "/territoires"
     resource  :territories,   only: %i[edit update], path: "/territoires"
   end
-
-  root to: redirect("/editeurs")
 end

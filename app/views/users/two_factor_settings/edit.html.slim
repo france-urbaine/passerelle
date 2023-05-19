@@ -1,0 +1,48 @@
+= template_frame_component(src: user_settings_path) do |frame|
+  - frame.with_modal do |modal|
+    - modal.with_header do
+      | Activation de l'authentification en 2 facteurs
+
+    - modal.with_form(model: @user, url: user_two_factor_settings_path, method: :put) do
+      = fields(model: @user) do |form|
+        = form.hidden_field :otp_method
+
+        ol.list-decimal.ml-5
+          - case @user.otp_method
+          - when "2fa"
+            li.mb-6
+              .mb-4 Scanner le QR code ci-dessous avec une application compatible (Authy, Dashlane, Microsoft Authenticator, etc..).
+              = otp_qr_code_as_svg_tag(@user)
+
+            li.mb-6
+              | Si vous êtes dans l'impossibilité de scanner le QR code, saisissez le code suivant dans votre application :
+              br
+              strong.text-xl= @user.otp_secret
+
+            li
+              = form.block :otp_code do
+                = form.label :otp_code, "Saisissez le code généré par votre application"
+                = form.text_field :otp_code, required: true, autocomplete: "one-time-code", minlength: 6, maxlength: 6
+
+          - when "email"
+            li.mb-6
+              | Un code de vérification a été envoyé à l'adresse suivante:
+              br
+              strong= @user.email
+
+            li
+              = form.block :otp_code do
+                = form.label :otp_code, "Saisissez le code reçu"
+                = form.text_field :otp_code, required: true, autocomplete: "one-time-code", minlength: 6, maxlength: 6
+
+          li
+            = form.block :current_password do
+              = form.label :current_password, "Saisissez votre mot de passe pour valider la modification"
+              = form.password_field :current_password, required: true, autocomplete: "current-password"
+
+
+    - modal.with_submit_action "Enregistrer"
+    - modal.with_close_action "Annuler"
+
+    - if @user.organization&.allow_2fa_via_email?
+      - modal.with_other_action "Changer de méthode", new_user_two_factor_settings_path, data: { turbo_frame: "modal_form" }

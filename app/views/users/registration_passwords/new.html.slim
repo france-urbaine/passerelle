@@ -1,0 +1,25 @@
+.card
+  .card__content
+    = form_with(model: @user, url: user_registration_password_path, method: :post) do |form|
+      h1.card__header.card__title
+        | Configuration de votre mot de passe
+
+      .card__body
+        p Veuillez saisir un mot de passe (#{Devise.password_length.min} caractères minimum)
+
+        = form.block :password do
+          = form.label :password
+          = form.password_field :password, autofocus: true, require: true, autocomplete: "new-password", minlength: Devise.password_length.min, maxlength: Devise.password_length.max
+
+        = form.block :password_confirmation do
+          = form.label :password_confirmation
+          = form.password_field :password_confirmation, require: true, autocomplete: "new-password"
+
+      .card__actions.card__actions--center
+        = button_component "Continuer", primary: true, type: "submit"
+
+p
+  = link_to user_registration_path do
+    = svg_icon "chevron-left-small", "Retour", class: "inline h-6 w-6"
+    | Redémmarrer le processus d'enregistrement
+  | .

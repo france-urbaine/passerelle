@@ -17,7 +17,9 @@ gem "redis", "~> 5.0"
 
 # Models
 gem "devise"
+gem 'devise-two-factor'
 gem "discard"
+gem "rqrcode"
 
 # Controllers
 gem "pagy"
@@ -27,6 +29,7 @@ gem "responders"
 gem "cssbundling-rails"
 gem "inline_svg"
 gem "jsbundling-rails"
+gem "premailer-rails"
 gem "sprockets-rails"
 gem "stimulus-rails"
 gem "turbo-rails"
@@ -41,6 +44,8 @@ gem "view_component"
 gem "roo"
 gem "rubyzip"
 
+gem "faker"
+
 # Windows compatibility
 gem "tzinfo-data", platforms: %i[mingw mswin x64_mingw jruby]
 
@@ -53,7 +58,6 @@ group :development, :test do
   gem "factory_bot"
   gem "factory_bot-awesome_linter"
   gem "factory_bot_rails"
-  gem "faker"
   gem "parallel_tests"
   gem "rspec"
   gem "rspec-rails"

@@ -1,0 +1,25 @@
+.card
+  .card__content
+    = form_with(model: resource, as: resource_name, url: session_path(resource_name), method: :post) do |form|
+      h1.card__header.card__title
+        | Authentification en 2 facteurs
+
+      .card__body
+        - case resource.otp_method
+        - when "2fa"
+          p Veuillez saisir le code généré par votre application d'authentification :
+        - when "email"
+          p Veuillez saisir le code envoyé par email :
+
+        = form.block :otp_attempt do
+          = form.label :otp_attempt, "Code de vérification"
+          = form.text_field :otp_attempt, autofocus: true, required: true, autocomplete: "one-time-code", minlength: 6, maxlength: 6
+
+      .card__actions.card__actions--center
+        = button_component "Connexion", primary: true, type: "submit"
+
+p
+  = link_to new_session_path(resource_name) do
+    = svg_icon "chevron-left-small", "Retour", class: "inline h-6 w-6"
+    | Retour au formulaire de connexion
+  | .

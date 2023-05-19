@@ -1,0 +1,124 @@
+= template_frame_component do
+  = breadcrumbs_component do |breadcrumbs|
+    - breadcrumbs.with_path "Paramètres"
+    - breadcrumbs.with_path "Gestion du compte"
+    - breadcrumbs.with_action "Déconnexion", destroy_user_session_path, method: :delete, destructive: true
+
+  h2.subheader
+    = svg_icon("identification", "Nouvelle section")
+    | Informations personnelles
+
+  .card
+    .card__content
+      = form_with(model: @user, url: user_settings_path, method: :put) do |form|
+        .card__body
+          = form.block :first_name do
+            = form.label :first_name
+            = form.text_field :first_name, required: true
+
+          = form.block :last_name do
+            = form.label :last_name
+            = form.text_field :last_name, required: true
+
+        .card__actions
+          = button_component "Enregistrer", primary: true, type: "submit"
+
+  .content__separator
+
+  h2.subheader
+    = svg_icon("at-symbol", "Nouvelle section")
+    | Adresse email
+
+  .card
+    .card__content
+      - if current_user.pending_reconfirmation?
+        .card__body
+          p
+            | Votre adresse email actuelle est <strong>#{current_user.email}</strong>.
+            br
+            | Cette adresse est requise pour vous connecter.
+
+          p
+            | Vous avez demander à changer d'adresse email pour <strong>#{current_user.unconfirmed_email}</strong>.
+            br
+            | Veuillez suivre les instructions recues par email pour finaliser la modification.
+
+        .card__actions
+          = button_component "Envoyer de nouvelles instructions", user_settings_path, method: :put, params: { send_reconfirmation_instructions: true }
+          = button_component "Annuler le changement d'email", user_settings_path, method: :put, params: { reset_email_reconfirmation: true }, destructive: "discrete"
+
+      - else
+        = form_with(model: @user_email, url: user_settings_path, method: :put) do |form|
+          .card__body
+            p
+              | Votre adresse email est <strong>#{current_user.email}</strong>.
+              br
+              | Cette adresse est requise pour vous connecter.
+            p
+              | Si vous souhaitez modifier votre adresse email, veuillez compléter le formulaire suivant.
+              br
+              | Vous recevrez des instructions par email pour valider le changement.
+
+            = form.block :email do
+              = form.label :email, "Nouvelle adresse email"
+              = form.email_field :email, required: true, autocomplete: "off"
+
+            = form.block :current_password do
+              = form.label :current_password, "Mot de passe actuel"
+              = form.password_field :current_password, required: true, autocomplete: "current-password"
+
+          .card__actions
+            = button_component "Enregistrer", primary: true, type: "submit"
+
+  .content__separator
+
+  h2.subheader
+    = svg_icon("lock-closed", "Nouvelle section")
+    | Mot de passe
+
+  .card
+    .card__content
+      = form_with(model: @user_password, url: user_settings_path, method: :put) do |form|
+        .card__body
+          p Utilisez le formulaire ci-dessous pour changer votre mot de passe.
+
+          = form.block :password do
+            = form.label :password, "Nouveau mot de passe (#{Devise.password_length.min} caractères minimum)"
+            = form.password_field :password, required: true, autocomplete: "new-password", minlength: Devise.password_length.min, maxlength: Devise.password_length.max
+
+          = form.block :password_confirmation do
+            = form.label :password_confirmation
+            = form.password_field :password_confirmation, required: true, autocomplete: "new-password", minlength: Devise.password_length.min, maxlength: Devise.password_length.max
+
+          = form.block :current_password do
+            = form.label :current_password, "Mot de passe actuel"
+            = form.password_field :current_password, required: true, autocomplete: "current-password"
+
+        .card__actions
+          = button_component "Enregistrer", primary: true, type: "submit"
+
+  .content__separator
+
+  h2.subheader
+    = svg_icon("shield-check", "Nouvelle section")
+    | Authentification en 2 facteurs
+
+  .card
+    .card__content
+      - if current_user.otp_required_for_login?
+        .card__body
+          p
+            = svg_icon "shield-check", class: "inline text-green-500 h-8 w-8 mr-2"
+            | L'authentification en 2 facteurs est activée.
+
+        .card__action
+          = button_component "Re-configurer", new_user_two_factor_settings_path, modal: true
+
+      - else
+        .card__body
+          p
+            = svg_icon "exclamation-circle", class: "inline text-red-500 h-8 w-8 mr-2"
+            | L'authentification en 2 facteurs n'est pas encore activée.
+
+        .card__action
+          = button_component "Activer", new_user_two_factor_settings_path, modal: true, accent: true

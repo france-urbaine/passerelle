@@ -4,23 +4,25 @@
 #
 # Table name: collectivities
 #
-#  id                 :uuid             not null, primary key
-#  territory_type     :enum             not null
-#  territory_id       :uuid             not null
-#  publisher_id       :uuid
-#  name               :string           not null
-#  siren              :string           not null
-#  contact_first_name :string
-#  contact_last_name  :string
-#  contact_email      :string
-#  contact_phone      :string
-#  created_at         :datetime         not null
-#  updated_at         :datetime         not null
-#  approved_at        :datetime
-#  disapproved_at     :datetime
-#  desactivated_at    :datetime
-#  discarded_at       :datetime
-#  users_count        :integer          default(0), not null
+#  id                  :uuid             not null, primary key
+#  territory_type      :enum             not null
+#  territory_id        :uuid             not null
+#  publisher_id        :uuid
+#  name                :string           not null
+#  siren               :string           not null
+#  contact_first_name  :string
+#  contact_last_name   :string
+#  contact_email       :string
+#  contact_phone       :string
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
+#  approved_at         :datetime
+#  disapproved_at      :datetime
+#  desactivated_at     :datetime
+#  discarded_at        :datetime
+#  users_count         :integer          default(0), not null
+#  domain_restriction  :string
+#  allow_2fa_via_email :boolean          default(FALSE), not null
 #
 # Indexes
 #
@@ -47,9 +49,11 @@ class Collectivity < ApplicationRecord
   validates :name,  presence: true
   validates :siren, presence: true
 
-  validates :siren,         format: { allow_blank: true, with: SIREN_REGEXP }
-  validates :contact_email, format: { allow_blank: true, with: EMAIL_REGEXP }
-  validates :contact_phone, format: { allow_blank: true, with: PHONE_REGEXP }
+  validates :siren,              format: { allow_blank: true, with: SIREN_REGEXP }
+  validates :contact_email,      format: { allow_blank: true, with: EMAIL_REGEXP }
+  validates :contact_phone,      format: { allow_blank: true, with: PHONE_REGEXP }
+  validates :domain_restriction, format: { allow_blank: true, with: DOMAIN_REGEXP }
+
   validates :territory_type, inclusion: { in: %w[Commune EPCI Departement Region] }
 
   validates :name, uniqueness: {

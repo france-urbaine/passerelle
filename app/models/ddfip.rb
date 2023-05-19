@@ -13,6 +13,12 @@
 #  users_count          :integer          default(0), not null
 #  collectivities_count :integer          default(0), not null
 #  offices_count        :integer          default(0), not null
+#  contact_first_name   :string
+#  contact_last_name    :string
+#  contact_email        :string
+#  contact_phone        :string
+#  domain_restriction   :string
+#  allow_2fa_via_email  :boolean          default(FALSE), not null
 #
 # Indexes
 #
@@ -41,7 +47,11 @@ class DDFIP < ApplicationRecord
   # ----------------------------------------------------------------------------
   validates :name,             presence: true
   validates :code_departement, presence: true
-  validates :code_departement, format: { allow_blank: true, with: CODE_DEPARTEMENT_REGEXP }
+
+  validates :code_departement,   format: { allow_blank: true, with: CODE_DEPARTEMENT_REGEXP }
+  validates :contact_email,      format: { allow_blank: true, with: EMAIL_REGEXP }
+  validates :contact_phone,      format: { allow_blank: true, with: PHONE_REGEXP }
+  validates :domain_restriction, format: { allow_blank: true, with: DOMAIN_REGEXP }
 
   validates :name, uniqueness: {
     case_sensitive: false,

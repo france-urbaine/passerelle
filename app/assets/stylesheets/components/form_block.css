@@ -123,6 +123,19 @@
     }
   }
 
+  .form-block__input-text {
+    @apply py-2 px-3 h-10 rounded-l-md border;
+
+    border-right: none;
+
+    @apply bg-gray-200 border-gray-300 text-gray-900;
+    @apply dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100;
+
+    & + input {
+      @apply rounded-l-none;
+    }
+  }
+
   .form-block__errors {
     @apply mt-1;
     @apply text-red-700;

@@ -87,11 +87,11 @@ DDFIP.insert_all([
 log "Seed publishers"
 
 Publisher.insert_all([
-  { siren: "301463253", name: "France Urbaine",         email: "franceurbaine@franceurbaine.org" },
-  { siren: "511022394", name: "Fiscalité & Territoire", email: "contact@fiscalite-territoire.fr" },
-  { siren: "335273371", name: "FININDEV",               email: "contact@finindev.com" },
-  { siren: "385365713", name: "INETUM",                 email: "contact@inetum.com" },
-  { siren: "383884574", name: "A6CMO",                  email: "" }
+  { siren: "301463253", name: "France Urbaine",         contact_email: "franceurbaine@franceurbaine.org" },
+  { siren: "511022394", name: "Fiscalité & Territoire", contact_email: "contact@fiscalite-territoire.fr" },
+  { siren: "335273371", name: "FININDEV",               contact_email: "contact@finindev.com" },
+  { siren: "385365713", name: "INETUM",                 contact_email: "contact@inetum.com" },
+  { siren: "383884574", name: "A6CMO",                  contact_email: "" }
 ])
 
 # Import collectivities

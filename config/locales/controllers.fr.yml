@@ -1,0 +1,57 @@
+fr:
+  default: &default
+    update:
+      success:
+        type:         "success"
+        title:        "Les modifications ont été enregistrées avec succés."
+        delay:        3000
+
+  territories:
+    update:
+      success:
+        type:         "success"
+        title:        "La mise à jour a été lancée en arrière-plan."
+        description:  "Les données seront disponibles dans quelques minutes."
+        delay:        3000
+
+  users:
+    user_settings:
+      update:
+        send_reconfirmation_instructions:
+          type:         "success"
+          title:        "Les instructions ont été envoyées par email."
+          delay:        3000
+
+        reset_email_reconfirmation:
+          type:         "success"
+          title:        "La modification de l'adresse email a été annulée."
+          delay:        3000
+
+    two_factor_settings:
+      update:
+        activated:
+          type:         "success"
+          title:        "L'authentification en 2 facteurs est activée."
+          delay:        3000
+
+        updated:
+          type:         "success"
+          title:        "La configuration de l'authentification en 2 facteurs a été modifiée avec succés."
+          delay:        3000
+
+    registrations:
+      token_expired:
+          type:   "error"
+          title:  "Cette invitation est déjà complétée, a expirée ou n'a pas été trouvée."
+
+    registration_passwords:
+      update:
+        success:
+          type:   "success"
+          title:  "Votre mot de passe a été enregistré."
+
+    registration_two_factors:
+      update:
+        success:
+          type:   "success"
+          title:  "Votre inscription est complétée. Vous pouvez dorénavant vous connecter."
