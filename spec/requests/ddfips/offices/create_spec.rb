@@ -20,7 +20,20 @@ RSpec.describe "DDFIPs::OfficesController#create" do
     }
   end
 
-  context "when requesting HTML" do
+  it_behaves_like "it requires authorization in HTML"
+  it_behaves_like "it requires authorization in JSON"
+  it_behaves_like "it doesn't accept JSON when signed in"
+  it_behaves_like "it allows access to publisher user"
+  it_behaves_like "it allows access to publisher admin"
+  it_behaves_like "it allows access to DDFIP user"
+  it_behaves_like "it allows access to DDFIP admin"
+  it_behaves_like "it allows access to colletivity user"
+  it_behaves_like "it allows access to colletivity admin"
+  it_behaves_like "it allows access to super admin"
+
+  context "when signed in" do
+    before { sign_in_as(:publisher, :organization_admin) }
+
     context "with valid attributes" do
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/ddfips/#{ddfip.id}") }
@@ -73,7 +86,7 @@ RSpec.describe "DDFIPs::OfficesController#create" do
       it { expect { request }.not_to change(Office, :count).from(0) }
     end
 
-    context "when DDFIP is discarded" do
+    context "when the DDFIP is discarded" do
       before { ddfip.discard }
 
       it { expect(response).to have_http_status(:gone) }
@@ -81,7 +94,7 @@ RSpec.describe "DDFIPs::OfficesController#create" do
       it { expect(response).to have_html_body }
     end
 
-    context "when DDFIP is missing" do
+    context "when the DDFIP is missing" do
       before { ddfip.destroy }
 
       it { expect(response).to have_http_status(:not_found) }
@@ -102,12 +115,5 @@ RSpec.describe "DDFIPs::OfficesController#create" do
       it { expect(response).to redirect_to("/other/path") }
       it { expect(flash).to have_flash_notice }
     end
-  end
-
-  describe "when requesting JSON", as: :json do
-    it { expect(response).to have_http_status(:not_acceptable) }
-    it { expect(response).to have_content_type(:json) }
-    it { expect(response).to have_empty_body }
-    it { expect { request }.not_to change(Office, :count).from(0) }
   end
 end

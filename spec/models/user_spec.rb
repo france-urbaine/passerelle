@@ -23,7 +23,7 @@ RSpec.describe User do
     it { is_expected.to validate_presence_of(:password) }
 
     it { is_expected.to validate_uniqueness_of(:email).case_insensitive }
-    it { is_expected.to validate_confirmation_of(:password) }
+    it { is_expected.to validate_confirmation_of(:password).with_message("Votre mot de passe n'a pas pu être confirmé") }
     it { is_expected.to validate_length_of(:password).is_at_least(12) }
 
     it { is_expected.to allow_value("a.b.c@example.com", "123@mail.test").for(:email) }
@@ -113,7 +113,7 @@ RSpec.describe User do
     it { expect(user).not_to be_active_for_authentication }
 
     it { is_expected.to have_sent_emails.by(1) }
-    it { is_expected.to have_sent_email.to(user.email).with_subject("Instructions de confirmation") }
+    it { is_expected.to have_sent_email.to(user.email).with_subject("Votre inscription sur FiscaHub") }
   end
 
   # Confirmation process
@@ -147,7 +147,7 @@ RSpec.describe User do
       it { is_expected.not_to have_sent_emails }
 
       it { expect { user.save }.to have_sent_emails.by(1) }
-      it { expect { user.save }.to have_sent_email.to(user.email).with_subject("Instructions de confirmation") }
+      it { expect { user.save }.to have_sent_email.to(user.email).with_subject("Votre inscription sur FiscaHub") }
     end
 
     describe "#accept_invitation" do

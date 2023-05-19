@@ -3,7 +3,10 @@ html( lang="fr" )
   head
     title FiscaHub
     meta http-equiv="Content-Type" content="text/html; charset=utf-8"
-    = stylesheet_link_tag "application"
+
+    -# FIXME: Hide styles in tests to reduce HTML size.
+    -# TODO: Provide a lighter version of application.cssfor for this layout
+    = stylesheet_link_tag "application" unless Rails.env.test?
 
   body.block.p-6
     .brand.mb-6

@@ -11,6 +11,8 @@ RSpec.describe "Offices" do
   let(:pelp_bayonne) { offices(:pelp_bayonne) }
   let(:pelh_bayonne) { offices(:pelh_bayonne) }
 
+  before { sign_in(users(:marc)) }
+
   it "visits index & office pages" do
     visit offices_path
 

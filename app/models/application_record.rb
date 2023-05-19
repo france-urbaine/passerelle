@@ -16,7 +16,7 @@ class ApplicationRecord < ActiveRecord::Base
   SIREN_REGEXP  = /\A[0-9]{9}\Z/
   PHONE_REGEXP  = /\A(0|\+(33|590|594|596|262|269))?[0-9]{9}\Z/
   EMAIL_REGEXP  = URI::MailTo::EMAIL_REGEXP
-  DOMAIN_REGEXP = /\A[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\z/
+  DOMAIN_REGEXP = /\A#{EMAIL_REGEXP.source.split("@").last}/
 
   CODE_REGION_REGEXP      = /\A[0-9]{2}\Z/
   CODE_DEPARTEMENT_REGEXP = /\A(2[AB]|[0-9]{2}|9[0-9]{2})\Z/
@@ -24,9 +24,9 @@ class ApplicationRecord < ActiveRecord::Base
 
   private
 
-  def build_email_regexp(domain  = nil)
+  def build_email_regexp(domain = nil)
     if domain.present?
-      /\A[a-zA-Z0-9.!\#$%&'*+\/=?^_`{|}~-]+@#{Regexp.escape(domain)}\z/
+      /#{EMAIL_REGEXP.source.split("@").first}@#{Regexp.escape(domain)}\z/
     else
       EMAIL_REGEXP
     end

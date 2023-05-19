@@ -22,19 +22,14 @@ fr:
           title:        "Les instructions ont été envoyées par email."
           delay:        3000
 
-        reset_email_reconfirmation:
+        cancel_pending_reconfirmation:
           type:         "success"
           title:        "La modification de l'adresse email a été annulée."
           delay:        3000
 
     two_factor_settings:
       update:
-        activated:
-          type:         "success"
-          title:        "L'authentification en 2 facteurs est activée."
-          delay:        3000
-
-        updated:
+        success:
           type:         "success"
           title:        "La configuration de l'authentification en 2 facteurs a été modifiée avec succés."
           delay:        3000

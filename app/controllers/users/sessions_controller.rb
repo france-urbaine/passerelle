@@ -17,7 +17,7 @@ module Users
     # RequestForgeryProtection#verify_authenticity_token would fail because of
     # token mismatch.
     #
-    prepend_before_action :authenticate_with_two_factor, if: -> { action_name == 'create' && two_factor_enabled? }
+    prepend_before_action :authenticate_with_two_factor, only: :create # rubocop:disable Rails/LexicallyScopedActionFilter
     protect_from_forgery with: :exception, prepend: true, except: :destroy
 
     layout "public"

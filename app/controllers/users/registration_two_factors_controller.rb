@@ -15,6 +15,14 @@ module Users
       redirect_to action: :edit unless @user.organization&.allow_2fa_via_email?
     end
 
+    def edit
+      @user.otp_secret = User.generate_otp_secret
+      @user.otp_method = params[:otp_method] if params[:otp_method]
+      @user.otp_method = "2fa" unless @user.organization&.allow_2fa_via_email?
+
+      Users::Mailer.two_factor_setup_code(@user).deliver_now if @user.send_otp_code_by_email?
+    end
+
     def create
       otp_method = params
         .fetch(:user, {})
@@ -22,15 +30,6 @@ module Users
         .fetch(:otp_method)
 
       redirect_to action: :edit, params: { otp_method: otp_method }
-    end
-
-    def edit
-      @user.generate_two_factor_secret_if_missing
-      @user.otp_required_for_login = true
-      @user.otp_method = params[:otp_method] if params[:otp_method]
-      @user.otp_method = "2fa" unless @user.organization&.allow_2fa_via_email?
-
-      Users::Mailer.two_factor_setup_code(@user).deliver_now if @user.send_otp_code_by_email?
     end
 
     def update
@@ -47,7 +46,7 @@ module Users
     def otp_activation_params
       params
         .fetch(:user, {})
-        .permit(:otp_code, :otp_method)
+        .permit(:otp_method, :otp_secret, :otp_code)
     end
   end
 end

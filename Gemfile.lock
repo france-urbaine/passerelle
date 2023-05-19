@@ -1,4 +1,15 @@
 GIT
+  remote: https://github.com/inkstak/devise-two-factor.git
+  revision: 61ca1a0af6c093e3816b0ee7e2fcb57702e22366
+  branch: bugfix-insert_two_factor_authenticatable_on_top
+  specs:
+    devise-two-factor (5.0.0)
+      activesupport (~> 7.0)
+      devise (~> 4.0)
+      railties (~> 7.0)
+      rotp (~> 6.0)
+
+GIT
   remote: https://github.com/inkstak/htmlbeautifier.git
   revision: 9b2529d86c7674267454e91e67d118096d508cca
   branch: allow_custom_elements
@@ -128,11 +139,6 @@ GEM
       railties (>= 4.1.0)
       responders
       warden (~> 1.2.3)
-    devise-two-factor (5.0.0)
-      activesupport (~> 7.0)
-      devise (~> 4.0)
-      railties (~> 7.0)
-      rotp (~> 6.0)
     diff-lcs (1.5.0)
     discard (1.2.1)
       activerecord (>= 4.2, < 8)
@@ -466,7 +472,7 @@ DEPENDENCIES
   dead_end
   debug
   devise
-  devise-two-factor
+  devise-two-factor!
   discard
   dotenv
   factory_bot

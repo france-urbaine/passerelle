@@ -18,25 +18,28 @@ RSpec.describe "OrganizationsController#index" do
     create_list(:publisher, 2)
   end
 
-  context "when requesting HTML" do
-    it { expect(response).to have_http_status(:not_acceptable) }
-    it { expect(response).to have_content_type(:html) }
-    it { expect(response).to have_html_body }
+  it_behaves_like "it requires authorization in HTML"
+  it_behaves_like "it requires authorization in JSON"
+  it_behaves_like "it doesn't accept JSON when signed in"
+  it_behaves_like "it doesn't accept HTML when signed in"
 
-    context "with autocompletion", headers: { "Accept-Variant" => "autocomplete" }, xhr: true do
+  context "when signed in" do
+    before { sign_in_as(:ddfip, :organization_admin) }
+
+    context "when requesting autocompletion", headers: { "Accept-Variant" => "autocomplete" }, xhr: true do
       let(:params) { { q: "" } }
+
+      it_behaves_like "it allows access to publisher user"
+      it_behaves_like "it allows access to publisher admin"
+      it_behaves_like "it allows access to DDFIP user"
+      it_behaves_like "it allows access to DDFIP admin"
+      it_behaves_like "it allows access to colletivity user"
+      it_behaves_like "it allows access to colletivity admin"
+      it_behaves_like "it allows access to super admin"
 
       it { expect(response).to have_http_status(:success) }
       it { expect(response).to have_content_type(:html) }
       it { expect(response).to have_partial_html.to match(%r{\A<li.*</li>\Z}) }
     end
-  end
-
-  context "when requesting JSON" do
-    let(:headers) { { "Accept" => "application/json" } }
-
-    it { expect(response).to have_http_status(:not_acceptable) }
-    it { expect(response).to have_content_type(:json) }
-    it { expect(response).to have_empty_body }
   end
 end

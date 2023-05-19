@@ -10,6 +10,8 @@ RSpec.describe "DDFIP collectivities" do
   let(:ddfip64)     { ddfips(:pyrenees_atlantiques) }
   let(:pays_basque) { collectivities(:pays_basque) }
 
+  before { sign_in(users(:marc)) }
+
   it "visits an collectivity page from the DDFIP page" do
     visit ddfip_path(ddfip64)
 

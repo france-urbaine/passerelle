@@ -12,8 +12,11 @@ RSpec.describe "Users" do
   let(:ddfip64)              { ddfips(:pyrenees_atlantiques) }
   let(:pelp_bayonne)         { offices(:pelp_bayonne) }
   let(:marc)                 { users(:marc) }
+  let(:elise)                { users(:elise) }
   let(:christelle)           { users(:christelle) }
   let(:maxime)               { users(:maxime) }
+
+  before { sign_in(users(:marc)) }
 
   it "visits index & user pages" do
     visit users_path
@@ -306,7 +309,7 @@ RSpec.describe "Users" do
 
     # A button should be present to remove the user
     #
-    within :table_row, { "Utilisateur" => "Marc Debomy" } do
+    within :table_row, { "Utilisateur" => "Elise Lacroix" } do
       click_on "Supprimer cet utilisateur"
     end
 
@@ -322,7 +325,7 @@ RSpec.describe "Users" do
     expect(page).to     have_current_path(users_path)
     expect(page).to     have_selector("h1", text: "Utilisateurs")
     expect(page).to     have_text("5 utilisateurs | Page 1 sur 1")
-    expect(page).not_to have_selector(:table_row, "Utilisateur" => "Marc Debomy")
+    expect(page).not_to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 
     # The dialog should be closed
     # A notification should be displayed
@@ -342,7 +345,7 @@ RSpec.describe "Users" do
     expect(page).to have_current_path(users_path)
     expect(page).to have_selector("h1", text: "Utilisateurs")
     expect(page).to have_text("6 utilisateurs | Page 1 sur 1")
-    expect(page).to have_selector(:table_row, "Utilisateur" => "Marc Debomy")
+    expect(page).to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 
     # The previous notification should be closed
     # A new notification should be displayed
@@ -352,11 +355,11 @@ RSpec.describe "Users" do
   end
 
   it "discards an user from the user page & rollbacks" do
-    visit user_path(marc)
+    visit user_path(elise)
 
     # A button should be present to edit the user
     #
-    within ".header-bar", text: "Marc Debomy" do
+    within ".header-bar", text: "Elise Lacroix" do
       click_on "Supprimer"
     end
 
@@ -372,7 +375,7 @@ RSpec.describe "Users" do
     expect(page).to     have_current_path(users_path)
     expect(page).to     have_selector("h1", text: "Utilisateurs")
     expect(page).to     have_text("5 utilisateurs | Page 1 sur 1")
-    expect(page).not_to have_selector(:table_row, "Utilisateur" => "Marc Debomy")
+    expect(page).not_to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 
     # The dialog should be closed
     # A notification should be displayed
@@ -392,13 +395,35 @@ RSpec.describe "Users" do
     expect(page).to have_current_path(users_path)
     expect(page).to have_selector("h1", text: "Utilisateurs")
     expect(page).to have_text("6 utilisateurs | Page 1 sur 1")
-    expect(page).to have_selector(:table_row, "Utilisateur" => "Marc Debomy")
+    expect(page).to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 
     # The previous notification should be closed
     # A new notification should be displayed
     #
     expect(page).not_to have_selector("[role=alert]", text: "L'utilisateur a été supprimé.")
     expect(page).to     have_selector("[role=alert]", text: "La suppression de l'utilisateur a été annulée.")
+  end
+
+  it "discards himself and been disconnected" do
+    visit users_path
+
+    expect(page).to have_text("6 utilisateurs | Page 1 sur 1")
+
+    # A button should be present to remove the user
+    #
+    within :table_row, { "Utilisateur" => "Marc Debomy" } do
+      click_on "Supprimer cet utilisateur"
+    end
+
+    # A confirmation dialog should appear
+    #
+    within "[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer votre compte utilisateur ?" do
+      click_on "Continuer"
+    end
+
+    # The browser should sign out and redirect to login form
+    #
+    expect(page).to have_current_path(new_user_session_path)
   end
 
   it "selects and discards one user from the index page & rollbacks" do
@@ -408,7 +433,7 @@ RSpec.describe "Users" do
 
     # Checkboxes should be present to select users
     #
-    within :table_row, { "Utilisateur" => "Marc Debomy" } do
+    within :table_row, { "Utilisateur" => "Elise Lacroix" } do
       check
     end
 
@@ -432,7 +457,7 @@ RSpec.describe "Users" do
     expect(page).to     have_current_path(users_path)
     expect(page).to     have_selector("h1", text: "Utilisateurs")
     expect(page).to     have_text("5 utilisateurs | Page 1 sur 1")
-    expect(page).not_to have_selector(:table_row, "Utilisateur" => "Marc Debomy")
+    expect(page).not_to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
     expect(page).to     have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
     expect(page).to     have_selector(:table_row, "Utilisateur" => "Christelle Droitier")
 
@@ -456,7 +481,7 @@ RSpec.describe "Users" do
     expect(page).to have_current_path(users_path)
     expect(page).to have_selector("h1", text: "Utilisateurs")
     expect(page).to have_text("6 utilisateurs | Page 1 sur 1")
-    expect(page).to have_selector(:table_row, "Utilisateur" => "Marc Debomy")
+    expect(page).to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 
     # The selection message should not appears again
     # The previous notification should be closed
@@ -508,11 +533,12 @@ RSpec.describe "Users" do
 
     # The browser should stay on index page
     # The selected users should have been removed
+    # The current user should not have been removed
     #
     expect(page).to     have_current_path(users_path)
     expect(page).to     have_selector("h1", text: "Utilisateurs")
-    expect(page).to     have_text("6 utilisateurs | Page 1 sur 1")
-    expect(page).not_to have_selector(:table_row, "Utilisateur" => "Marc Debomy")
+    expect(page).to     have_text("7 utilisateurs | Page 1 sur 1")
+    expect(page).to     have_selector(:table_row, "Utilisateur" => "Marc Debomy")
     expect(page).not_to have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
     expect(page).not_to have_selector(:table_row, "Utilisateur" => "Christelle Droitier")
 
@@ -592,11 +618,15 @@ RSpec.describe "Users" do
     end
 
     # The browser should stay on index page
-    # No users should appear anymore
+    # The current user is the only one remaining user
     #
-    expect(page).to have_current_path(users_path)
-    expect(page).to have_selector("h1", text: "Utilisateurs")
-    expect(page).to have_text("Aucun utilisateur disponible.")
+    expect(page).to     have_current_path(users_path)
+    expect(page).to     have_selector("h1", text: "Utilisateurs")
+    expect(page).to     have_selector("h1", text: "Utilisateurs")
+    expect(page).to     have_text("1 utilisateur | Page 1 sur 1")
+    expect(page).to     have_selector(:table_row, "Utilisateur" => "Marc Debomy")
+    expect(page).not_to have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
+    expect(page).not_to have_selector(:table_row, "Utilisateur" => "Christelle Droitier")
 
     # The dialog should be closed
     # A notification should be displayed

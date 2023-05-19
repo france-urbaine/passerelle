@@ -3,11 +3,12 @@
 module Users
   class Mailer < Devise::Mailer
     def confirmation_instructions(user, token, opts = {})
-      if user.confirmed? && user.pending_reconfirmation?
-        opts[:subject] = translate("devise.mailer.reconfirmation_instructions.subject")
-      else
-        opts[:subject] = translate("devise.mailer.confirmation_instructions.subject")
-      end
+      opts[:subject] =
+        if user.confirmed? && user.pending_reconfirmation?
+          translate("devise.mailer.reconfirmation_instructions.subject")
+        else
+          translate("devise.mailer.confirmation_instructions.subject")
+        end
 
       super(user, token, opts)
     end

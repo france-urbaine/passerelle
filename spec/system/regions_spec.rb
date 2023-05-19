@@ -4,11 +4,13 @@ require "system_helper"
 
 RSpec.describe "Regions" do
   fixtures :regions, :departements, :epcis, :communes
-  fixtures :ddfips
+  fixtures :ddfips, :users
 
   let(:nouvelle_aquitaine)   { regions(:nouvelle_aquitaine) }
   let(:pyrenees_atlantiques) { departements(:pyrenees_atlantiques) }
   let(:ddfip64)              { ddfips(:pyrenees_atlantiques) }
+
+  before { sign_in(users(:marc)) }
 
   it "visits index & show pages" do
     visit regions_path

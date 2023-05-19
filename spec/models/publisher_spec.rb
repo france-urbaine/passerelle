@@ -17,10 +17,10 @@ RSpec.describe Publisher do
   it { is_expected.not_to allow_value("1234567AB").for(:siren) }
   it { is_expected.not_to allow_value("1234567891").for(:siren) }
 
-  it { is_expected.to     allow_value("foo@bar.com")        .for(:email) }
-  it { is_expected.to     allow_value("foo@bar")            .for(:email) }
-  it { is_expected.to     allow_value("foo@bar-bar.bar.com").for(:email) }
-  it { is_expected.not_to allow_value("foo.bar.com")        .for(:email) }
+  it { is_expected.to     allow_value("foo@bar.com")        .for(:contact_email) }
+  it { is_expected.to     allow_value("foo@bar")            .for(:contact_email) }
+  it { is_expected.to     allow_value("foo@bar-bar.bar.com").for(:contact_email) }
+  it { is_expected.not_to allow_value("foo.bar.com")        .for(:contact_email) }
 
   context "with an existing publisher" do
     # FYI: About uniqueness validations, case insensitivity and accents:

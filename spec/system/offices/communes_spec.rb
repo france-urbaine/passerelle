@@ -4,12 +4,14 @@ require "system_helper"
 
 RSpec.describe "Office communes" do
   fixtures :regions, :departements, :epcis, :communes
-  fixtures :ddfips, :offices, :office_communes
+  fixtures :ddfips, :offices, :office_communes, :users
 
   let(:ddfip64)      { ddfips(:pyrenees_atlantiques) }
   let(:pelp_bayonne) { offices(:pelp_bayonne) }
   let(:pelh_bayonne) { offices(:pelh_bayonne) }
   let(:bayonne)      { communes(:bayonne) }
+
+  before { sign_in(users(:marc)) }
 
   it "visits a comune page from the office page" do
     visit office_path(pelp_bayonne)

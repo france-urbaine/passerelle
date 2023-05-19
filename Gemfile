@@ -17,9 +17,9 @@ gem "redis", "~> 5.0"
 
 # Models
 gem "devise"
-gem 'devise-two-factor'
+# https://github.com/tinfoil/devise-two-factor/pull/240
+gem "devise-two-factor", github: "inkstak/devise-two-factor", branch: "bugfix-insert_two_factor_authenticatable_on_top"
 gem "discard"
-gem "rqrcode"
 
 # Controllers
 gem "pagy"
@@ -30,6 +30,7 @@ gem "cssbundling-rails"
 gem "inline_svg"
 gem "jsbundling-rails"
 gem "premailer-rails"
+gem "rqrcode"
 gem "sprockets-rails"
 gem "stimulus-rails"
 gem "turbo-rails"

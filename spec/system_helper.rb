@@ -9,6 +9,8 @@ Dir[Rails.root.join("spec/support/system/**/*.rb")].each do |file|
 end
 
 RSpec.configure do |config|
+  config.include Devise::Test::IntegrationHelpers
+
   # System specs use fixtures.
   # Instead of using transactional fixtures, we'll use DataCleaner around each
   # context to cleanup data.

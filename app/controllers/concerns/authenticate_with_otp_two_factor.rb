@@ -7,15 +7,11 @@ module AuthenticateWithOtpTwoFactor
   extend ActiveSupport::Concern
 
   def authenticate_with_two_factor
-    user = self.resource = find_user
-
-    if user && !user.active_for_authentication?
-      throw :warden, scope: :user, message: user.inactive_message
-    end
+    user = self.resource = find_user_for_authentication
 
     if user_params.include?(:otp_attempt) && session[:otp_user_id]
       authenticate_with_two_factor_via_otp(user)
-    elsif user && user.valid_password?(user_params[:password])
+    elsif user&.valid_password?(user_params[:password])
       Users::Mailer.two_factor_sign_in_code(user).deliver_now if user.send_otp_code_by_email?
       prompt_for_two_factor(user)
     end
@@ -35,10 +31,6 @@ module AuthenticateWithOtpTwoFactor
   def prompt_for_two_factor(user)
     # Set @user for Devise views
     @user = user
-
-    if user && !user.active_for_authentication?
-      throw :warden, scope: :user, message: user.inactive_message
-    end
 
     session[:otp_user_id] = user.id
     session[:user_password_hash] = Digest::SHA256.hexdigest(user.encrypted_password)
@@ -75,16 +67,21 @@ module AuthenticateWithOtpTwoFactor
       .permit(:email, :password, :remember_me, :otp_attempt)
   end
 
-  def find_user
-    @find_user ||=
-      if session[:otp_user_id]
-        User.find(session[:otp_user_id])
-      elsif user_params[:email]
-        User.find_for_authentication(email: user_params[:email])
-      end
+  def find_user_for_authentication
+    user = find_user
+
+    if user&.active_for_authentication?
+      user
+    else
+      throw :warden, scope: :user, message: user&.inactive_message
+    end
   end
 
-  def two_factor_enabled?
-    find_user&.otp_required_for_login?
+  def find_user
+    if session[:otp_user_id]
+      User.find(session[:otp_user_id])
+    elsif user_params[:email]
+      User.find_for_authentication(email: user_params[:email])
+    end
   end
 end

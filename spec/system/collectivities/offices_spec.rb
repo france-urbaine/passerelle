@@ -11,6 +11,8 @@ RSpec.describe "Collectivity offices" do
   let(:pelp_bayonne) { offices(:pelp_bayonne) }
   let(:bayonne)      { communes(:bayonne) }
 
+  before { sign_in(users(:marc)) }
+
   it "visits an office page from the collectivity page" do
     visit collectivity_path(pays_basque)
 

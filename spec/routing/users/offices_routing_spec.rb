@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "Offices nested under users" do
+RSpec.describe Users::OfficesController do
   it { expect(get:    "/utilisateurs/offices").to route_to("users/offices#index") }
   it { expect(post:   "/utilisateurs/offices").to be_unroutable }
   it { expect(patch:  "/utilisateurs/offices").to be_unroutable }

@@ -12,6 +12,8 @@ RSpec.describe "Office users" do
   let(:sip_bayonne)  { offices(:sip_bayonne) }
   let(:maxime)       { users(:maxime) }
 
+  before { sign_in(users(:marc)) }
+
   it "visits an user page from the office page" do
     visit office_path(pelp_bayonne)
 

@@ -105,6 +105,9 @@ class PublishersController < ApplicationController
   def publisher_params
     params
       .fetch(:publisher, {})
-      .permit(:name, :siren, :email)
+      .permit(
+        :name, :siren,
+        :contact_first_name, :contact_last_name, :contact_email, :contact_phone
+      )
   end
 end

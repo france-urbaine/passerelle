@@ -7,9 +7,9 @@ class ApplicationController < ActionController::Base
   include ControllerCollections
   include ControllerParams
 
-  before_action :verify_requested_format!
   before_action :accept_request_variant
   before_action :authenticate_user!
+  before_action :verify_requested_format!
 
   respond_to :html
 

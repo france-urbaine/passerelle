@@ -15,7 +15,20 @@ RSpec.describe "Collectivities::UsersController#destroy_all" do
   let!(:users)        { create_list(:user, 3, organization: collectivity) }
   let!(:ids)          { users.take(2).map(&:id) }
 
-  context "when requesting HTML" do
+  it_behaves_like "it requires authorization in HTML"
+  it_behaves_like "it requires authorization in JSON"
+  it_behaves_like "it doesn't accept JSON when signed in"
+  it_behaves_like "it allows access to publisher user"
+  it_behaves_like "it allows access to publisher admin"
+  it_behaves_like "it allows access to DDFIP user"
+  it_behaves_like "it allows access to DDFIP admin"
+  it_behaves_like "it allows access to colletivity user"
+  it_behaves_like "it allows access to colletivity admin"
+  it_behaves_like "it allows access to super admin"
+
+  context "when signed in" do
+    before { sign_in_as(:publisher, :organization_admin) }
+
     context "with multiple ids" do
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/collectivites/#{collectivity.id}") }
@@ -101,7 +114,7 @@ RSpec.describe "Collectivities::UsersController#destroy_all" do
       it { expect { request }.not_to change(User.discarded, :count) }
     end
 
-    context "when collectivity is discarded" do
+    context "when the collectivity is discarded" do
       before { collectivity.discard }
 
       it { expect(response).to have_http_status(:gone) }
@@ -109,7 +122,7 @@ RSpec.describe "Collectivities::UsersController#destroy_all" do
       it { expect(response).to have_html_body }
     end
 
-    context "when collectivity is missing" do
+    context "when the collectivity is missing" do
       before { collectivity.destroy }
 
       it { expect(response).to have_http_status(:not_found) }
@@ -117,7 +130,7 @@ RSpec.describe "Collectivities::UsersController#destroy_all" do
       it { expect(response).to have_html_body }
     end
 
-    context "when publisher is discarded" do
+    context "when the publisher is discarded" do
       before { collectivity.publisher.discard }
 
       it { expect(response).to have_http_status(:gone) }
@@ -138,12 +151,5 @@ RSpec.describe "Collectivities::UsersController#destroy_all" do
       it { expect(flash).to have_flash_notice }
       it { expect(flash).to have_flash_actions }
     end
-  end
-
-  describe "when requesting JSON", as: :json do
-    it { expect(response).to have_http_status(:not_acceptable) }
-    it { expect(response).to have_content_type(:json) }
-    it { expect(response).to have_empty_body }
-    it { expect { request }.not_to change(User.discarded, :count) }
   end
 end

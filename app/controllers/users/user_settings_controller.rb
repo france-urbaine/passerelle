@@ -9,41 +9,46 @@ module Users
     end
 
     def update
-      if params[:send_reconfirmation_instructions] && current_user.pending_reconfirmation?
-        current_user.send_reconfirmation_instructions
+      @user = User.find(current_user.id)
+      return gone(@user) if @user.discarded?
 
-        respond_with current_user,
-          action: :show,
-          notice: translate(".send_reconfirmation_instructions"),
-          location: user_settings_path
+      if request_for_reconfirmation_instructions?(@user)
+        @user.send_reconfirmation_instructions
+        notice = translate(".send_reconfirmation_instructions")
 
-      elsif params[:reset_email_reconfirmation] && current_user.pending_reconfirmation?
-        current_user.update(unconfirmed_email: nil)
-
-        respond_with current_user,
-          action: :show,
-          notice: translate(".reset_email_reconfirmation"),
-          location: user_settings_path
+      elsif request_to_cancel_pending_reconfirmation?(@user)
+        @user.cancel_pending_reconfirmation
+        notice = translate(".cancel_pending_reconfirmation")
 
       else
-        @user = User.find(current_user.id)
         @user.update_with_password_protection(user_params)
 
+        # Dpicate users to display errors properly for each concern
+        #
         if @user.errors.any?
           @user_email    = duplicate_user_to_update_email(@user)
           @user_password = duplicate_user_to_update_password(@user)
-        else
-          # Warden automatically signs out user when credentials changed
-          # Let's keep user signed in after updating password.
-          #
-          bypass_sign_in @user
         end
 
-        respond_with @user,
-          action: :show,
-          flash:  true,
-          location: user_settings_path
+        # Warden automatically signs out user when credentials changed
+        # Let's keep user signed in after updating password.
+        #
+        bypass_sign_in @user
       end
+
+      respond_with @user,
+        action: :show,
+        flash:  true,
+        notice: notice,
+        location: user_settings_path
+    end
+
+    def request_for_reconfirmation_instructions?(user)
+      params[:send_reconfirmation_instructions] && user.pending_reconfirmation?
+    end
+
+    def request_to_cancel_pending_reconfirmation?(user)
+      params[:cancel_pending_reconfirmation] && user.pending_reconfirmation?
     end
 
     private
@@ -71,11 +76,7 @@ module Users
 
     def duplicate_user_to_update_password(user)
       new_user = user.dup
-
-      if user_params.include?(:password)
-        new_user.errors.merge!(user.errors)
-      end
-
+      new_user.errors.merge!(user.errors) if user_params.include?(:password)
       new_user
     end
   end

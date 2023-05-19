@@ -729,7 +729,7 @@ CREATE TABLE public.users (
     otp_secret character varying,
     otp_method public.otp_method DEFAULT '2fa'::public.otp_method NOT NULL,
     consumed_timestep integer,
-    otp_required_for_login boolean DEFAULT false NOT NULL
+    otp_required_for_login boolean DEFAULT true NOT NULL
 );
 
 

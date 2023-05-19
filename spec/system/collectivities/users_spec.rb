@@ -8,6 +8,8 @@ RSpec.describe "Collectivity users" do
   let(:pays_basque) { collectivities(:pays_basque) }
   let(:christelle)  { users(:christelle) }
 
+  before { sign_in(users(:marc)) }
+
   it "visits an user page from the collectivity page" do
     visit collectivity_path(pays_basque)
 

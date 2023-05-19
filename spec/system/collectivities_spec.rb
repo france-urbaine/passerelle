@@ -4,11 +4,13 @@ require "system_helper"
 
 RSpec.describe "Collectivities" do
   fixtures :regions, :departements, :epcis, :communes
-  fixtures :collectivities, :publishers, :ddfips
+  fixtures :collectivities, :publishers, :ddfips, :users
 
   let(:pays_basque)   { collectivities(:pays_basque) }
   let(:publisher)     { publishers(:fiscalite_territoire) }
   let(:epci)          { epcis(:pays_basque) }
+
+  before { sign_in(users(:marc)) }
 
   it "visits index & collectivity pages" do
     visit collectivities_path

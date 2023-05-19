@@ -10,6 +10,8 @@ RSpec.describe "Publisher users" do
   let(:fiscalite_territoire) { publishers(:fiscalite_territoire) }
   let(:marc)                 { users(:marc) }
 
+  before { sign_in(users(:marc)) }
+
   it "visits an user page from the publisher page" do
     visit publisher_path(fiscalite_territoire)
 
@@ -130,7 +132,7 @@ RSpec.describe "Publisher users" do
     # A table of users should be present
     # with a button to remove them
     #
-    within :table_row, { "Utilisateur" => "Marc Debomy" } do
+    within :table_row, { "Utilisateur" => "Elise Lacroix" } do
       click_on "Supprimer cet utilisateur"
     end
 
@@ -146,7 +148,7 @@ RSpec.describe "Publisher users" do
     expect(page).to     have_current_path(publisher_path(fiscalite_territoire))
     expect(page).to     have_selector("h1", text: "Fiscalité & Territoire")
     expect(page).to     have_text("1 utilisateur | Page 1 sur 1")
-    expect(page).not_to have_selector(:table_row, "Utilisateur" => "Marc Debomy")
+    expect(page).not_to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 
     # The dialog should be closed
     # A notification should be displayed
@@ -167,7 +169,7 @@ RSpec.describe "Publisher users" do
     expect(page).to have_current_path(publisher_path(fiscalite_territoire))
     expect(page).to have_selector("h1", text: "Fiscalité & Territoire")
     expect(page).to have_text("2 utilisateurs | Page 1 sur 1")
-    expect(page).to have_selector(:table_row, "Utilisateur" => "Marc Debomy")
+    expect(page).to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 
     # The previous notification should be closed
     # A new notification should be displayed
@@ -183,7 +185,7 @@ RSpec.describe "Publisher users" do
 
     # Checkboxes should be present to select users
     #
-    within :table_row, { "Utilisateur" => "Marc Debomy" } do
+    within :table_row, { "Utilisateur" => "Elise Lacroix" } do
       check
     end
 
@@ -207,8 +209,8 @@ RSpec.describe "Publisher users" do
     expect(page).to     have_current_path(publisher_path(fiscalite_territoire))
     expect(page).to     have_selector("h1", text: "Fiscalité & Territoire")
     expect(page).to     have_text("1 utilisateur | Page 1 sur 1")
-    expect(page).not_to have_selector(:table_row, "Utilisateur" => "Marc Debomy")
-    expect(page).to     have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
+    expect(page).not_to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
+    expect(page).to     have_selector(:table_row, "Utilisateur" => "Marc Debomy")
 
     # The selection message should not appears anymore
     # The dialog should be closed
@@ -230,7 +232,7 @@ RSpec.describe "Publisher users" do
     expect(page).to have_current_path(publisher_path(fiscalite_territoire))
     expect(page).to have_selector("h1", text: "Fiscalité & Territoire")
     expect(page).to have_text("2 utilisateurs | Page 1 sur 1")
-    expect(page).to have_selector(:table_row, "Utilisateur" => "Marc Debomy")
+    expect(page).to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 
     # The selection message should not appears again
     # The previous notification should be closed
@@ -273,11 +275,12 @@ RSpec.describe "Publisher users" do
 
     # The browser should stay on the publisher page
     # The selected users should have been removed
+    # The current user should not have been removed
     #
     expect(page).to     have_current_path(publisher_path(fiscalite_territoire))
     expect(page).to     have_selector("h1", text: "Fiscalité & Territoire")
-    expect(page).to     have_text("2 utilisateurs | Page 1 sur 1")
-    expect(page).not_to have_selector(:table_row, "Utilisateur" => "Marc Debomy")
+    expect(page).to     have_text("3 utilisateurs | Page 1 sur 1")
+    expect(page).to     have_selector(:table_row, "Utilisateur" => "Marc Debomy")
     expect(page).not_to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 
     # The dialog should be closed
@@ -299,7 +302,7 @@ RSpec.describe "Publisher users" do
     expect(page).to have_current_path(publisher_path(fiscalite_territoire))
     expect(page).to have_selector("h1", text: "Fiscalité & Territoire")
     expect(page).to have_text("12 utilisateurs | Page 1 sur 2")
-    expect(page).to have_selector(:table_row, "Utilisateur" => "Marc Debomy")
+    expect(page).to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 
     expect(User.discarded.count).to eq(5)
@@ -348,14 +351,16 @@ RSpec.describe "Publisher users" do
     end
 
     # The browser should stay on the publisher page
-    # No users should appear anymore
+    # The current user is the only one remaining user
     # Other users from other organizations should remain
     #
-    expect(page).to have_current_path(publisher_path(fiscalite_territoire))
-    expect(page).to have_selector("h1", text: "Fiscalité & Territoire")
-    expect(page).to have_text("Aucun utilisateur assigné.")
+    expect(page).to     have_current_path(publisher_path(fiscalite_territoire))
+    expect(page).to     have_selector("h1", text: "Fiscalité & Territoire")
+    expect(page).to     have_text("1 utilisateur | Page 1 sur 1")
+    expect(page).to     have_selector(:table_row, "Utilisateur" => "Marc Debomy")
+    expect(page).not_to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 
-    expect(User.discarded.count).to eq(17)
+    expect(User.discarded.count).to eq(16)
 
     # The dialog should be closed
     # A notification should be displayed

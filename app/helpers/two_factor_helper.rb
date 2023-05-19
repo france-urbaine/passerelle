@@ -14,6 +14,6 @@ module TwoFactorHelper
       **options,
       module_size: 4,
       use_path: true
-    ).html_safe
+    ).html_safe # rubocop:disable Rails/OutputSafety
   end
 end

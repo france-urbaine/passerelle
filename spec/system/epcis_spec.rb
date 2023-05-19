@@ -4,9 +4,12 @@ require "system_helper"
 
 RSpec.describe "EPCIs" do
   fixtures :regions, :departements, :epcis, :communes
+  fixtures :users
 
   let(:pays_basque)          { epcis(:pays_basque) }
   let(:pyrenees_atlantiques) { departements(:pyrenees_atlantiques) }
+
+  before { sign_in(users(:marc)) }
 
   it "visits index & show pages" do
     visit epcis_path

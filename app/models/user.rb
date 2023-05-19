@@ -38,7 +38,7 @@
 #  otp_secret             :string
 #  otp_method             :enum             default("2fa"), not null
 #  consumed_timestep      :integer
-#  otp_required_for_login :boolean          default(FALSE), not null
+#  otp_required_for_login :boolean          default(TRUE), not null
 #
 # Indexes
 #
@@ -87,7 +87,7 @@ class User < ApplicationRecord
     validates :email, uniqueness: {
       case_sensitive: false,
       conditions: -> { kept },
-      unless: :skip_uniqueness_validation_of_email?,
+      unless: :skip_uniqueness_validation_of_email?
     }
 
     validates :password, confirmation: { if: :password_required? }
@@ -95,8 +95,8 @@ class User < ApplicationRecord
   end
 
   validate if: :will_save_change_to_email? do |user|
-    domain = user.organization.domain_restriction
-    next unless domain.present?
+    domain = user.organization&.domain_restriction
+    next if domain.blank?
 
     regexp = build_email_regexp(domain)
     errors.add(:email, :invalid_domain, domain: domain) unless regexp.match?(user.email)
@@ -206,8 +206,10 @@ class User < ApplicationRecord
   attr_accessor :otp_code
 
   def enable_two_factor(params)
-    self.otp_code    = params.delete(:otp_code)
-    self.otp_method  = params.delete(:otp_method) if params.include?(:otp_method)
+    self.otp_secret  = params.fetch(:otp_secret, "")
+    self.otp_code    = params.fetch(:otp_code, "")
+    self.otp_method  = params.fetch(:otp_method, "2fa")
+    self.otp_method  = "2fa" unless organization&.allow_2fa_via_email?
     self.otp_required_for_login = true
 
     unless validate_and_consume_otp!(otp_code)
@@ -222,9 +224,11 @@ class User < ApplicationRecord
   end
 
   def enable_two_factor_with_password(params)
-    current_password = params.delete(:current_password)
-    self.otp_code    = params.delete(:otp_code)
-    self.otp_method  = params.delete(:otp_method) if params.include?(:otp_method)
+    current_password = params.fetch(:current_password, "")
+    self.otp_secret  = params.fetch(:otp_secret, "")
+    self.otp_code    = params.fetch(:otp_code, "")
+    self.otp_method  = params.fetch(:otp_method, "2fa")
+    self.otp_method  = "2fa" unless organization&.allow_2fa_via_email?
     self.otp_required_for_login = true
 
     unless valid_password?(current_password)
@@ -237,19 +241,14 @@ class User < ApplicationRecord
       return false
     end
 
-    Users::Mailer.two_factor_change(self).deliver_later
+    Users::Mailer.two_factor_change(self).deliver_now
 
     self.otp_code = nil
     true
   end
 
   def send_otp_code_by_email?
-    otp_required_for_login? && otp_method == "email" && organization&.allow_2fa_via_email?
-  end
-
-  def generate_two_factor_secret_if_missing
-    update!(otp_secret: User.generate_otp_secret) if otp_secret.nil?
-    otp_secret
+    otp_method == "email" && organization&.allow_2fa_via_email?
   end
 
   # Invitation process
@@ -285,6 +284,12 @@ class User < ApplicationRecord
     confirmable = find_or_initialize_with_error_by(:confirmation_token, confirmation_token)
     confirmable.errors.add(:email, :already_confirmed) if confirmable.confirmed?
     confirmable
+  end
+
+  # Counters cached
+  # ----------------------------------------------------------------------------
+  def cancel_pending_reconfirmation
+    update(unconfirmed_email: nil)
   end
 
   # Counters cached

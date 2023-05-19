@@ -28,11 +28,7 @@ group :red_green_refactor, halt_on_fail: true do
   end
 
   guard :rspec, rspec_options do
-    watch("spec/spec_helper.rb")  { "spec" }
-    watch("spec/rails_helper.rb") { "spec" }
-    watch("config/routes.rb")     { "spec/routing" }
-
-    watch(%r{^spec/support/(.+)\.rb$}) { "spec" }
+    watch("config/routes.rb") { "spec/routing" }
     watch(%r{^spec/.+_spec\.rb$})
     watch(%r{^app/(.+)\.rb$})             { |m| "spec/#{m[1]}_spec.rb" }
     watch(%r{^app/controllers/(.+)\.rb$}) { |m| "spec/requests/#{m[1]}" }

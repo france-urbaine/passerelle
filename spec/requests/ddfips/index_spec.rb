@@ -17,38 +17,47 @@ RSpec.describe "DDFIPsController#index" do
       create_list(:ddfip, 2, :discarded)
   end
 
-  context "when requesting HTML" do
-    it { expect(response).to have_http_status(:success) }
-    it { expect(response).to have_content_type(:html) }
-    it { expect(response).to have_html_body }
+  it_behaves_like "it requires authorization in HTML"
+  it_behaves_like "it requires authorization in JSON"
+  it_behaves_like "it doesn't accept JSON when signed in"
+  it_behaves_like "it allows access to publisher user"
+  it_behaves_like "it allows access to publisher admin"
+  it_behaves_like "it allows access to DDFIP user"
+  it_behaves_like "it allows access to DDFIP admin"
+  it_behaves_like "it allows access to colletivity user"
+  it_behaves_like "it allows access to colletivity admin"
+  it_behaves_like "it allows access to super admin"
 
-    it "returns only kept users" do
-      aggregate_failures do
-        expect(response.parsed_body).to include(CGI.escape_html(ddfips[0].name))
-        expect(response.parsed_body).to include(CGI.escape_html(ddfips[1].name))
-        expect(response.parsed_body).to include(CGI.escape_html(ddfips[2].name))
-        expect(response.parsed_body).to not_include(CGI.escape_html(ddfips[3].name))
+  context "when signed in" do
+    before { sign_in_as(:publisher, :organization_admin) }
+
+    context "when requesting HTML" do
+      it { expect(response).to have_http_status(:success) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
+
+      it "returns only kept users" do
+        aggregate_failures do
+          expect(response.parsed_body).to include(CGI.escape_html(ddfips[0].name))
+          expect(response.parsed_body).to include(CGI.escape_html(ddfips[1].name))
+          expect(response.parsed_body).to include(CGI.escape_html(ddfips[2].name))
+          expect(response.parsed_body).to not_include(CGI.escape_html(ddfips[3].name))
+        end
       end
     end
-  end
 
-  context "when requesting Turbo-Frame", headers: { "Turbo-Frame" => "content" }, xhr: true do
-    it { expect(response).to have_http_status(:success) }
-    it { expect(response).to have_content_type(:html) }
-    it { expect(response).to have_html_body.with_turbo_frame("content") }
-  end
+    context "when requesting Turbo-Frame", headers: { "Turbo-Frame" => "content" }, xhr: true do
+      it { expect(response).to have_http_status(:success) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body.with_turbo_frame("content") }
+    end
 
-  context "when requesting autocompletion", headers: { "Accept-Variant" => "autocomplete" }, xhr: true do
-    let(:params) { { q: ddfips.first.name } }
+    context "when requesting autocompletion", headers: { "Accept-Variant" => "autocomplete" }, xhr: true do
+      let(:params) { { q: ddfips.first.name } }
 
-    it { expect(response).to have_http_status(:success) }
-    it { expect(response).to have_content_type(:html) }
-    it { expect(response).to have_partial_html.to match(%r{\A<li.*</li>\Z}) }
-  end
-
-  context "when requesting JSON", as: :json do
-    it { expect(response).to have_http_status(:not_acceptable) }
-    it { expect(response).to have_content_type(:json) }
-    it { expect(response).to have_empty_body }
+      it { expect(response).to have_http_status(:success) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_partial_html.to match(%r{\A<li.*</li>\Z}) }
+    end
   end
 end

@@ -1,6 +1,7 @@
 .card
   .card__content
     = form_with(model: @user, url: user_registration_two_factor_path, method: :put) do |form|
+      = form.hidden_field :otp_secret
       = form.hidden_field :otp_method
 
       h1.card__header.card__title

@@ -105,6 +105,9 @@ class DDFIPsController < ApplicationController
   def ddfip_params
     params
       .fetch(:ddfip, {})
-      .permit(:name, :code_departement)
+      .permit(
+        :name, :code_departement,
+        :contact_first_name, :contact_last_name, :contact_email, :contact_phone
+      )
   end
 end

@@ -5,6 +5,7 @@
 
     - modal.with_form(model: @user, url: user_two_factor_settings_path, method: :put) do
       = fields(model: @user) do |form|
+        = form.hidden_field :otp_secret
         = form.hidden_field :otp_method
 
         ol.list-decimal.ml-5
@@ -40,6 +41,9 @@
               = form.label :current_password, "Saisissez votre mot de passe pour valider la modification"
               = form.password_field :current_password, required: true, autocomplete: "current-password"
 
+        p
+          strong Attention !
+          |  En validant ce formulaire, toute configuration précédente de l'authentification en 2 étapes ne fonctionnera plus.
 
     - modal.with_submit_action "Enregistrer"
     - modal.with_close_action "Annuler"

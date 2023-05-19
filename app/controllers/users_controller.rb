@@ -86,6 +86,9 @@ class UsersController < ApplicationController
   def destroy_all
     @users = @users_scope.kept.strict_loading
     @users = filter_collection(@users)
+
+    # Do not let the current user deleting himself
+    @users = @users.where.not(id: current_user.id)
     @users.quickly_discard_all
 
     respond_with @users,

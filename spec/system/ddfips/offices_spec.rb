@@ -4,10 +4,12 @@ require "system_helper"
 
 RSpec.describe "DDFIP offices" do
   fixtures :regions, :departements
-  fixtures :ddfips, :offices
+  fixtures :ddfips, :offices, :users
 
   let(:ddfip64)      { ddfips(:pyrenees_atlantiques) }
   let(:pelp_bayonne) { offices(:pelp_bayonne) }
+
+  before { sign_in(users(:marc)) }
 
   it "visits an office page from the DDFIP page" do
     visit ddfip_path(ddfip64)

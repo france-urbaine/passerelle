@@ -4,11 +4,14 @@ require "system_helper"
 
 RSpec.describe "Communes" do
   fixtures :regions, :departements, :epcis, :communes
+  fixtures :users
 
   let(:bayonne)              { communes(:bayonne) }
   let(:pays_basque)          { epcis(:pays_basque) }
   let(:pyrenees_atlantiques) { departements(:pyrenees_atlantiques) }
   let(:nouvelle_aquitaine)   { regions(:nouvelle_aquitaine) }
+
+  before { sign_in(users(:marc)) }
 
   it "visits index & show pages" do
     visit communes_path

@@ -3,10 +3,12 @@
 require "system_helper"
 
 RSpec.describe "Publishers" do
-  fixtures :publishers, :collectivities, :publishers
+  fixtures :publishers, :collectivities, :users
 
   let(:fiscalite_territoire) { publishers(:fiscalite_territoire) }
   let(:pays_basque)          { collectivities(:pays_basque) }
+
+  before { sign_in(users(:marc)) }
 
   it "visits index & publisher pages" do
     visit publishers_path

@@ -45,7 +45,7 @@
 
         .card__actions
           = button_component "Envoyer de nouvelles instructions", user_settings_path, method: :put, params: { send_reconfirmation_instructions: true }
-          = button_component "Annuler le changement d'email", user_settings_path, method: :put, params: { reset_email_reconfirmation: true }, destructive: "discrete"
+          = button_component "Annuler le changement d'email", user_settings_path, method: :put, params: { cancel_pending_reconfirmation: true }, destructive: "discrete"
 
       - else
         = form_with(model: @user_email, url: user_settings_path, method: :put) do |form|

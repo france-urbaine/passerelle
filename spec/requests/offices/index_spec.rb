@@ -17,36 +17,45 @@ RSpec.describe "OfficesController#index" do
       create_list(:office, 2, :discarded)
   end
 
-  context "when requesting HTML" do
-    it { expect(response).to have_http_status(:success) }
-    it { expect(response).to have_content_type(:html) }
-    it { expect(response).to have_html_body }
+  it_behaves_like "it requires authorization in HTML"
+  it_behaves_like "it requires authorization in JSON"
+  it_behaves_like "it doesn't accept JSON when signed in"
+  it_behaves_like "it allows access to publisher user"
+  it_behaves_like "it allows access to publisher admin"
+  it_behaves_like "it allows access to DDFIP user"
+  it_behaves_like "it allows access to DDFIP admin"
+  it_behaves_like "it allows access to colletivity user"
+  it_behaves_like "it allows access to colletivity admin"
+  it_behaves_like "it allows access to super admin"
 
-    it "returns only kept offices" do
-      aggregate_failures do
-        expect(response.parsed_body).to include(CGI.escape_html(offices[0].name))
-        expect(response.parsed_body).to include(CGI.escape_html(offices[1].name))
-        expect(response.parsed_body).to include(CGI.escape_html(offices[2].name))
-        expect(response.parsed_body).to not_include(CGI.escape_html(offices[3].name))
+  context "when signed in" do
+    before { sign_in_as(:publisher, :organization_admin) }
+
+    context "when requesting HTML" do
+      it { expect(response).to have_http_status(:success) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
+
+      it "returns only kept offices" do
+        aggregate_failures do
+          expect(response.parsed_body).to include(CGI.escape_html(offices[0].name))
+          expect(response.parsed_body).to include(CGI.escape_html(offices[1].name))
+          expect(response.parsed_body).to include(CGI.escape_html(offices[2].name))
+          expect(response.parsed_body).to not_include(CGI.escape_html(offices[3].name))
+        end
       end
     end
-  end
 
-  context "when requesting Turbo-Frame", headers: { "Turbo-Frame" => "content" }, xhr: true do
-    it { expect(response).to have_http_status(:success) }
-    it { expect(response).to have_content_type(:html) }
-    it { expect(response).to have_html_body.with_turbo_frame("content") }
-  end
+    context "when requesting Turbo-Frame", headers: { "Turbo-Frame" => "content" }, xhr: true do
+      it { expect(response).to have_http_status(:success) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body.with_turbo_frame("content") }
+    end
 
-  context "when requesting autocompletion", headers: { "Accept-Variant" => "autocomplete" }, xhr: true do
-    it { expect(response).to have_http_status(:not_implemented) }
-    it { expect(response).to have_content_type(:html) }
-    it { expect(response).to have_html_body }
-  end
-
-  context "when requesting JSON", as: :json do
-    it { expect(response).to have_http_status(:not_acceptable) }
-    it { expect(response).to have_content_type(:json) }
-    it { expect(response).to have_empty_body }
+    context "when requesting autocompletion", headers: { "Accept-Variant" => "autocomplete" }, xhr: true do
+      it { expect(response).to have_http_status(:not_implemented) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
+    end
   end
 end

@@ -26,11 +26,6 @@ require "webmock/rspec"
 require "database_cleaner/active_record"
 require "view_component/test_helpers"
 
-unless ENV.fetch("SUPER_DIFF", nil) == "false"
-  require "super_diff/rspec"
-  require "super_diff/rails"
-end
-
 # Add additional requires below this line. Rails is not loaded until this point!
 
 # Requires supporting ruby files with custom matchers and macros, etc, in

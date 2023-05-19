@@ -4,11 +4,12 @@ require "rails_helper"
 
 RSpec.describe "EpcisController#update" do
   subject(:request) do
-    patch "/epcis/#{epci.id}", as:, params:
+    patch "/epcis/#{epci.id}", as:, headers:, params:
   end
 
-  let(:as)     { |e| e.metadata[:as] }
-  let(:params) { { epci: updated_attributes } }
+  let(:as)      { |e| e.metadata[:as] }
+  let(:headers) { |e| e.metadata[:headers] }
+  let(:params)  { |e| e.metadata.fetch(:params, { epci: updated_attributes }) }
 
   let!(:epci) { create(:epci, name: "CA d'Agen") }
 
@@ -16,8 +17,21 @@ RSpec.describe "EpcisController#update" do
     { name: "Agglomération d'Agen" }
   end
 
-  context "when requesting HTML" do
-    context "with valid parameters" do
+  it_behaves_like "it requires authorization in HTML"
+  it_behaves_like "it requires authorization in JSON"
+  it_behaves_like "it doesn't accept JSON when signed in"
+  it_behaves_like "it allows access to publisher user"
+  it_behaves_like "it allows access to publisher admin"
+  it_behaves_like "it allows access to DDFIP user"
+  it_behaves_like "it allows access to DDFIP admin"
+  it_behaves_like "it allows access to colletivity user"
+  it_behaves_like "it allows access to colletivity admin"
+  it_behaves_like "it allows access to super admin"
+
+  context "when signed in" do
+    before { sign_in_as(:super_admin) }
+
+    context "with valid attributes" do
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/epcis") }
 
@@ -38,18 +52,8 @@ RSpec.describe "EpcisController#update" do
       end
     end
 
-    context "when the EPCI is missing" do
-      let(:epci) { EPCI.new(id: Faker::Internet.uuid) }
-
-      it { expect(response).to have_http_status(:not_found) }
-      it { expect(response).to have_content_type(:html) }
-      it { expect(response).to have_html_body }
-    end
-
-    context "with invalid parameters" do
-      let(:updated_attributes) do
-        super().merge(name: "")
-      end
+    context "with invalid attributes" do
+      let(:updated_attributes) { super().merge(name: "") }
 
       it { expect(response).to have_http_status(:unprocessable_entity) }
       it { expect(response).to have_content_type(:html) }
@@ -58,20 +62,33 @@ RSpec.describe "EpcisController#update" do
       it { expect { request and epci.reload }.not_to change(epci, :name) }
     end
 
-    context "with missing epci parameters" do
-      let(:params) { {} }
-
+    context "with empty parameters", params: {} do
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/epcis") }
+      it { expect(flash).to have_flash_notice }
       it { expect { request and epci.reload }.not_to change(epci, :updated_at) }
     end
-  end
 
-  describe "when requesting JSON", as: :json do
-    it { expect(response).to have_http_status(:not_acceptable) }
-    it { expect(response).to have_content_type(:json) }
-    it { expect(response).to have_empty_body }
-    it { expect { request and epci.reload }.not_to change(epci, :updated_at) }
-    it { expect { request and epci.reload }.not_to change(epci, :name) }
+    context "when the EPCI is missing" do
+      before { epci.destroy }
+
+      it { expect(response).to have_http_status(:not_found) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
+    end
+
+    context "with referrer header", headers: { "Referer" => "http://example.com/other/path" } do
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/epcis") }
+      it { expect(flash).to have_flash_notice }
+    end
+
+    context "with redirect parameter" do
+      let(:params) { super().merge(redirect: "/other/path") }
+
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/other/path") }
+      it { expect(flash).to have_flash_notice }
+    end
   end
 end

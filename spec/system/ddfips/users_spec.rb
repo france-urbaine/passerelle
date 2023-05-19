@@ -10,6 +10,8 @@ RSpec.describe "DDFIP users" do
   let(:ddfip64) { ddfips(:pyrenees_atlantiques) }
   let(:maxime)  { users(:maxime) }
 
+  before { sign_in(users(:marc)) }
+
   it "visits an user page from the DDFIP page" do
     visit ddfip_path(ddfip64)
 

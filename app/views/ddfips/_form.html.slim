@@ -24,5 +24,21 @@
         = form.label :code_departement
         = form.text_field :code_departement, required: true
 
+    = form.block :contact_first_name do
+      = form.label :contact_first_name
+      = form.text_field :contact_first_name
+
+    = form.block :contact_last_name do
+      = form.label :contact_last_name
+      = form.text_field :contact_last_name
+
+    = form.block :contact_email do
+      = form.label :contact_email
+      = form.email_field :contact_email
+
+    = form.block :contact_phone do
+      = form.label :contact_phone
+      = form.text_field :contact_phone
+
 - modal.with_submit_action "Enregistrer"
 - modal.with_close_action "Annuler"

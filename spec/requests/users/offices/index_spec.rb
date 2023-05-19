@@ -23,57 +23,54 @@ RSpec.describe "Users::OfficesController#index" do
     create(:user, organization: ddfips[0], offices: offices[0..1])
   end
 
-  context "when requesting HTML" do
-    it { expect(response).to have_http_status(:not_acceptable) }
-    it { expect(response).to have_content_type(:html) }
-    it { expect(response).to have_html_body }
-  end
+  it_behaves_like "it requires authorization in HTML"
+  it_behaves_like "it requires authorization in JSON"
+  it_behaves_like "it doesn't accept JSON when signed in"
+  it_behaves_like "it doesn't accept HTML when signed in"
 
-  context "when requesting Turbo-Frame", headers: { "Turbo-Frame" => "user_offices_checkboxes" }, xhr: true do
-    context "without ddfip_id params" do
-      it { expect(response).to have_http_status(:bad_request) }
-      it { expect(response).to have_content_type(:html) }
-      it { expect(response).to have_html_body }
-    end
+  context "when signed in" do
+    before { sign_in_as(:ddfip, :organization_admin) }
 
-    context "with ddfip_id params" do
-      let(:params) { { ddfip_id: ddfips[0].id } }
-
-      it { expect(response).to have_http_status(:success) }
-      it { expect(response).to have_content_type(:html) }
-      it { expect(response).to have_partial_html.with_turbo_frame("user_offices_checkboxes") }
-    end
-
-    context "with ddfip_id and pre-check offices params" do
-      let(:params) do
-        {
-          ddfip_id:   ddfips[0].id,
-          office_ids: offices.take(1).map(&:id)
-        }
+    context "when requesting Turbo-Frame", headers: { "Turbo-Frame" => "user_offices_checkboxes" }, xhr: true do
+      context "without ddfip_id params" do
+        it { expect(response).to have_http_status(:bad_request) }
+        it { expect(response).to have_content_type(:html) }
+        it { expect(response).to have_html_body }
       end
 
-      it { expect(response).to have_http_status(:success) }
-      it { expect(response).to have_content_type(:html) }
-      it { expect(response).to have_partial_html.with_turbo_frame("user_offices_checkboxes") }
-    end
+      context "with ddfip_id params" do
+        let(:params) { { ddfip_id: ddfips[0].id } }
 
-    context "with ddfip_id and existing user params" do
-      let(:params) do
-        {
-          ddfip_id: ddfips[0].id,
-          user_id:  user.id
-        }
+        it { expect(response).to have_http_status(:success) }
+        it { expect(response).to have_content_type(:html) }
+        it { expect(response).to have_partial_html.with_turbo_frame("user_offices_checkboxes") }
       end
 
-      it { expect(response).to have_http_status(:success) }
-      it { expect(response).to have_content_type(:html) }
-      it { expect(response).to have_partial_html.with_turbo_frame("user_offices_checkboxes") }
-    end
-  end
+      context "with ddfip_id and pre-check offices params" do
+        let(:params) do
+          {
+            ddfip_id:   ddfips[0].id,
+            office_ids: offices.take(1).map(&:id)
+          }
+        end
 
-  context "when requesting JSON", as: :json do
-    it { expect(response).to have_http_status(:not_acceptable) }
-    it { expect(response).to have_content_type(:json) }
-    it { expect(response).to have_empty_body }
+        it { expect(response).to have_http_status(:success) }
+        it { expect(response).to have_content_type(:html) }
+        it { expect(response).to have_partial_html.with_turbo_frame("user_offices_checkboxes") }
+      end
+
+      context "with ddfip_id and existing user params" do
+        let(:params) do
+          {
+            ddfip_id: ddfips[0].id,
+            user_id:  user.id
+          }
+        end
+
+        it { expect(response).to have_http_status(:success) }
+        it { expect(response).to have_content_type(:html) }
+        it { expect(response).to have_partial_html.with_turbo_frame("user_offices_checkboxes") }
+      end
+    end
   end
 end

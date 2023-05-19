@@ -13,7 +13,20 @@ RSpec.describe "DDFIPsController#destroy" do
 
   let!(:ddfip) { create(:ddfip) }
 
-  context "when requesting HTML" do
+  it_behaves_like "it requires authorization in HTML"
+  it_behaves_like "it requires authorization in JSON"
+  it_behaves_like "it doesn't accept JSON when signed in"
+  it_behaves_like "it allows access to publisher user"
+  it_behaves_like "it allows access to publisher admin"
+  it_behaves_like "it allows access to DDFIP user"
+  it_behaves_like "it allows access to DDFIP admin"
+  it_behaves_like "it allows access to colletivity user"
+  it_behaves_like "it allows access to colletivity admin"
+  it_behaves_like "it allows access to super admin"
+
+  context "when signed in" do
+    before { sign_in_as(:publisher, :organization_admin) }
+
     context "when the DDFIP is accessible" do
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/ddfips") }
@@ -55,7 +68,7 @@ RSpec.describe "DDFIPsController#destroy" do
       it { expect { request }.not_to change(DDFIP.discarded, :count).from(1) }
     end
 
-    context "when DDFIP is missing" do
+    context "when the DDFIP is missing" do
       before { ddfip.destroy }
 
       it { expect(response).to have_http_status(:not_found) }
@@ -76,12 +89,5 @@ RSpec.describe "DDFIPsController#destroy" do
       it { expect(flash).to have_flash_notice }
       it { expect(flash).to have_flash_actions }
     end
-  end
-
-  describe "when requesting JSON", as: :json do
-    it { expect(response).to have_http_status(:not_acceptable) }
-    it { expect(response).to have_content_type(:json) }
-    it { expect(response).to have_empty_body }
-    it { expect { request }.not_to change(DDFIP.discarded, :count).from(0) }
   end
 end

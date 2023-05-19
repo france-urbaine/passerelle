@@ -116,8 +116,9 @@ RSpec.describe Notification::Component, type: :component do
     end
   end
 
-  it "raise an exception with an unexpected argument" do
-    expect { described_class.new(:foo) }
-      .to raise_exception(TypeError)
+  it "renders nothing with an unexpected argument" do
+    render_inline described_class.new(:foo)
+
+    expect(page).not_to have_selector(".notification")
   end
 end

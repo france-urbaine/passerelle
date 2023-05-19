@@ -7,11 +7,22 @@
       - unless @background_url.include?(user_path(@user))
         = hidden_field_tag :redirect, @background_url
 
-      p Êtes-vous sûrs de vouloir supprimer cet utilisateur ?
-      p
-        | Par mesure de securité, les données de cet utilisateur seront archivées pendant 1 jour.
-        br
-        | Toutes les données seront définitivement supprimées à la fin de ce délai.
+      - if @user == current_user
+        p
+          | Êtes-vous sûrs de vouloir supprimer votre compte utilisateur ?
+          br
+          | Vous serez déconnecter de la plateforme et vous ne pourrez plus vous connecter.
+        p
+          | Par mesure de securité, les données de votre compte seront archivées pendant 1 jour.
+          br
+          | Toutes les données seront définitivement supprimées à la fin de ce délai.
+
+      - else
+        p Êtes-vous sûrs de vouloir supprimer cet utilisateur ?
+        p
+          | Par mesure de securité, les données de cet utilisateur seront archivées pendant 1 jour.
+          br
+          | Toutes les données seront définitivement supprimées à la fin de ce délai.
 
     - modal.with_submit_action "Continuer", autofocus: true
     - modal.with_close_action "Annuler"
