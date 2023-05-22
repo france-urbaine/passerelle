@@ -61,6 +61,7 @@ jobs:
     - name: Run tests
       env:
         CI:                  true
+        RAILS_MASTER_KEY:    ${{ secrets.RAILS_MASTER_KEY }}
         POSTGRESQL_HOST:     localhost
         POSTGRESQL_PORT:     5432
         POSTGRESQL_USER:     postgres
@@ -121,6 +122,7 @@ jobs:
     - name: Run tests
       env:
         CI:                  true
+        RAILS_MASTER_KEY:    ${{ secrets.RAILS_MASTER_KEY }}
         POSTGRESQL_HOST:     localhost
         POSTGRESQL_PORT:     5432
         POSTGRESQL_USER:     postgres
