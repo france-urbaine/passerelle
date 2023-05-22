@@ -2,28 +2,18 @@
 
 module Offices
   class CommunesController < ApplicationController
-    before_action do
-      office = Office.find(params[:office_id])
-
-      next gone(office) if office.discarded?
-      next gone(office.ddfip) if office.ddfip.discarded?
-
-      @office = office
-      @communes_scope = office.communes
-    end
+    before_action :scope_communes
+    before_action :find_commune, only: %i[remove destroy]
 
     def index
       return not_implemented if autocomplete_request?
       return redirect_to(office_path(@office), status: :see_other) if @office && !turbo_frame_request?
 
-      @communes = @communes_scope.strict_loading
+      @communes = @communes.strict_loading
       @communes, @pagy = index_collection(@communes, nested: @office)
     end
 
     def remove
-      @commune = @communes_scope.find(params[:id])
-      return gone(@commune) if @commune.discarded?
-
       @background_url = referrer_path || office_path(@office)
     end
 
@@ -33,13 +23,13 @@ module Offices
     end
 
     def remove_all
-      @communes = @communes_scope.strict_loading
+      @communes = @communes.strict_loading
       @communes = filter_collection(@communes)
+
       @background_url = referrer_path || office_path(@office)
     end
 
     def destroy
-      @commune = @communes_scope.find(params[:id])
       @office.communes.destroy(@commune)
 
       respond_with @commune,
@@ -57,7 +47,7 @@ module Offices
     end
 
     def destroy_all
-      @communes = @communes_scope.strict_loading
+      @communes = @communes.strict_loading
       @communes = filter_collection(@communes)
       @office.communes.destroy(@communes)
 
@@ -67,6 +57,20 @@ module Offices
     end
 
     private
+
+    def scope_communes
+      office = Office.find(params[:office_id])
+
+      only_kept! office
+      only_kept! office.ddfip
+
+      @office = office
+      @communes  = office.communes
+    end
+
+    def find_commune
+      @commune = @communes.find(params[:id])
+    end
 
     def commune_codes_params
       params

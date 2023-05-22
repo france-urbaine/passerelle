@@ -1,50 +1,45 @@
 # frozen_string_literal: true
 
 class UsersController < ApplicationController
-  before_action do
-    @users_scope ||= User.all
-  end
+  before_action :scope_users
+  before_action :build_user, only: %i[new create]
+  before_action :find_user,  only: %i[show edit remove update destroy undiscard]
 
   def index
     return not_implemented if autocomplete_request?
     return redirect_to(@parent, status: :see_other) if @parent && !turbo_frame_request?
 
-    @users = @users_scope.kept.strict_loading
+    @users = @users.kept.strict_loading
     @users, @pagy = index_collection(@users, nested: @parent)
   end
 
   def show
-    @user = @users_scope.find(params[:id])
-    gone(@user) if @user.discarded?
+    only_kept! @user
   end
 
   def new
-    @user = @users_scope.build
     @background_url = referrer_path || parent_path || users_path
   end
 
   def edit
-    @user = @users_scope.find(params[:id])
-    return gone(@user) if @user.discarded?
-
+    only_kept! @user
     @background_url = referrer_path || user_path(@user)
   end
 
   def remove
-    @user = @users_scope.find(params[:id])
-    return gone(@user) if @user.discarded?
-
+    only_kept! @user
     @background_url = referrer_path || user_path(@user)
   end
 
   def remove_all
-    @users = @users_scope.kept.strict_loading
+    @users = @users.kept.strict_loading
     @users = filter_collection(@users)
+
     @background_url = referrer_path || users_path(**selection_params)
   end
 
   def create
-    @user = @users_scope.build(user_params)
+    @user.assign_attributes(user_params)
     @user.invite(by: current_user)
     @user.save
 
@@ -54,9 +49,7 @@ class UsersController < ApplicationController
   end
 
   def update
-    @user = @users_scope.find(params[:id])
-    return gone(@user) if @user.discarded?
-
+    only_kept! @user
     @user.update(user_params)
 
     respond_with @user,
@@ -65,7 +58,6 @@ class UsersController < ApplicationController
   end
 
   def destroy
-    @user = @users_scope.find(params[:id])
     @user.discard
 
     respond_with @user,
@@ -75,7 +67,6 @@ class UsersController < ApplicationController
   end
 
   def undiscard
-    @user = @users_scope.find(params[:id])
     @user.undiscard
 
     respond_with @user,
@@ -84,7 +75,7 @@ class UsersController < ApplicationController
   end
 
   def destroy_all
-    @users = @users_scope.kept.strict_loading
+    @users = @users.kept.strict_loading
     @users = filter_collection(@users)
 
     # Do not let the current user deleting himself
@@ -98,7 +89,7 @@ class UsersController < ApplicationController
   end
 
   def undiscard_all
-    @users = @users_scope.discarded.strict_loading
+    @users = @users.discarded.strict_loading
     @users = filter_collection(@users)
     @users.quickly_undiscard_all
 
@@ -111,6 +102,18 @@ class UsersController < ApplicationController
 
   def parent_path
     url_for(@parent) if @parent
+  end
+
+  def scope_users
+    @users = User.all
+  end
+
+  def build_user
+    @user = @users.build
+  end
+
+  def find_user
+    @user = @users.find(params[:id])
   end
 
   def user_params

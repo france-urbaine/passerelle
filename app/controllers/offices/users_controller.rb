@@ -2,33 +2,24 @@
 
 module Offices
   class UsersController < ApplicationController
-    before_action do
-      office = Office.find(params[:office_id])
-
-      next gone(office) if office.discarded?
-      next gone(office.ddfip) if office.ddfip.discarded?
-
-      @office = office
-      @users_scope = office.users
-    end
+    before_action :scope_users
+    before_action :build_user, only: %i[new create]
+    before_action :find_user,  only: %i[remove destroy]
 
     def index
       return not_implemented if autocomplete_request?
-      return redirect_to(office_path(@office), status: :see_other) if @office && !turbo_frame_request?
+      return redirect_to(@office, status: :see_other) if @office && !turbo_frame_request?
 
-      @users = @users_scope.kept.strict_loading
+      @users = @users.kept.strict_loading
       @users, @pagy = index_collection(@users, nested: @office)
     end
 
     def new
-      @user = @office.ddfip.users.build(offices: [@office])
       @background_url = referrer_path || office_path(@office)
     end
 
     def remove
-      @user = @users_scope.find(params[:id])
-      return gone(@user) if @user.discarded?
-
+      only_kept! @user
       @background_url = referrer_path || office_path(@office)
     end
 
@@ -38,13 +29,13 @@ module Offices
     end
 
     def remove_all
-      @users = @users_scope.kept.strict_loading
+      @users = @users.kept.strict_loading
       @users = filter_collection(@users)
       @background_url = referrer_path || office_path(@office)
     end
 
     def create
-      @user = @office.ddfip.users.build(user_params)
+      @user.assign_attributes(user_params)
       @user.invite(by: current_user)
       @user.save
 
@@ -54,9 +45,7 @@ module Offices
     end
 
     def destroy
-      @user = @users_scope.find(params[:id])
-      return gone(@user) if @user.discarded?
-
+      only_kept! @user
       @office.users.destroy(@user)
 
       respond_with @user,
@@ -74,7 +63,7 @@ module Offices
     end
 
     def destroy_all
-      @users = @users_scope.kept.strict_loading
+      @users = @users.kept.strict_loading
       @users = filter_collection(@users)
       @office.users.destroy(@users)
 
@@ -84,6 +73,24 @@ module Offices
     end
 
     private
+
+    def scope_users
+      office = Office.find(params[:office_id])
+
+      only_kept! office
+      only_kept! office.ddfip
+
+      @office = office
+      @users  = office.users
+    end
+
+    def build_user
+      @user = @office.ddfip.users.build(offices: [@office])
+    end
+
+    def find_user
+      @user = @users.find(params[:id])
+    end
 
     def user_params
       params

@@ -2,14 +2,16 @@
 
 module Collectivities
   class UsersController < ::UsersController
-    before_action do
+    private
+
+    def scope_users
       collectivity = Collectivity.find(params[:collectivity_id])
 
-      next gone(collectivity) if collectivity.discarded?
-      next gone(collectivity.publisher) if collectivity.publisher.discarded?
+      only_kept! collectivity
+      only_kept! collectivity.publisher
 
       @parent = collectivity
-      @users_scope = collectivity.users
+      @users  = collectivity.users
     end
   end
 end

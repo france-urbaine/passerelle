@@ -2,13 +2,15 @@
 
 module Publishers
   class UsersController < ::UsersController
-    before_action do
+    private
+
+    def scope_users
       publisher = Publisher.find(params[:publisher_id])
 
-      next gone(publisher) if publisher.discarded?
+      only_kept! publisher
 
       @parent = publisher
-      @users_scope = publisher.users
+      @users  = publisher.users
     end
   end
 end

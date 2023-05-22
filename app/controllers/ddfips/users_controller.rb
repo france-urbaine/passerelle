@@ -2,13 +2,15 @@
 
 module DDFIPs
   class UsersController < ::UsersController
-    before_action do
+    private
+
+    def scope_users
       ddfip = DDFIP.find(params[:ddfip_id])
 
-      next gone(ddfip) if ddfip&.discarded?
+      only_kept! ddfip
 
       @parent = ddfip
-      @users_scope = ddfip.users
+      @users  = ddfip.users
     end
   end
 end

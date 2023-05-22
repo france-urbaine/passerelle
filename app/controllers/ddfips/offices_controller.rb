@@ -2,13 +2,19 @@
 
 module DDFIPs
   class OfficesController < ::OfficesController
-    before_action do
+    private
+
+    def scope_offices
       ddfip = DDFIP.find(params[:ddfip_id])
 
-      next gone(ddfip) if ddfip&.discarded?
+      only_kept! ddfip
 
-      @parent = ddfip
-      @offices_scope = ddfip.offices
+      @parent  = ddfip
+      @offices = ddfip.offices
+    end
+
+    def office_params
+      super().except(:ddfip_id)
     end
   end
 end

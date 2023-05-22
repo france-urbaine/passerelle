@@ -2,13 +2,15 @@
 
 module DDFIPs
   class CollectivitiesController < ::CollectivitiesController
-    before_action do
+    private
+
+    def scope_collectivities
       ddfip = DDFIP.find(params[:ddfip_id])
 
-      next gone(ddfip) if ddfip&.discarded?
+      only_kept! ddfip
 
       @parent = ddfip
-      @collectivities_scope = ddfip.on_territory_collectivities
+      @collectivities = ddfip.on_territory_collectivities
     end
   end
 end

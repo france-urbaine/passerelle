@@ -1,50 +1,45 @@
 # frozen_string_literal: true
 
 class CollectivitiesController < ApplicationController
-  before_action do
-    @collectivities_scope ||= Collectivity.all
-  end
+  before_action :scope_collectivities
+  before_action :build_collectivity, only: %i[new create]
+  before_action :find_collectivity,  only: %i[show edit remove update destroy undiscard]
 
   def index
     return not_implemented if autocomplete_request?
     return redirect_to(@parent, status: :see_other) if @parent && !turbo_frame_request?
 
-    @collectivities = @collectivities_scope.kept.strict_loading
+    @collectivities = @collectivities.kept.strict_loading
     @collectivities, @pagy = index_collection(@collectivities, nested: @parent)
   end
 
   def show
-    @collectivity = @collectivities_scope.find(params[:id])
-    gone(@collectivity) if @collectivity.discarded?
+    only_kept! @collectivity
   end
 
   def new
-    @collectivity = @collectivities_scope.build
     @background_url = referrer_path || parent_path || collectivities_path
   end
 
   def edit
-    @collectivity = @collectivities_scope.find(params[:id])
-    return gone(@collectivity) if @collectivity.discarded?
-
+    only_kept! @collectivity
     @background_url = referrer_path || collectivity_path(@collectivity)
   end
 
   def remove
-    @collectivity = @collectivities_scope.find(params[:id])
-    return gone(@collectivity) if @collectivity.discarded?
-
+    only_kept! @collectivity
     @background_url = referrer_path || collectivity_path(@collectivity)
   end
 
   def remove_all
-    @collectivities = @collectivities_scope.kept.strict_loading
+    @collectivities = @collectivities.kept.strict_loading
     @collectivities = filter_collection(@collectivities)
+
     @background_url = referrer_path || collectivities_path(**selection_params)
   end
 
   def create
-    @collectivity = @collectivities_scope.build(collectivity_params)
+    @collectivity.assign_attributes(collectivity_params)
     @collectivity.save
 
     respond_with @collectivity,
@@ -53,9 +48,7 @@ class CollectivitiesController < ApplicationController
   end
 
   def update
-    @collectivity = @collectivities_scope.find(params[:id])
-    return gone(@collectivity) if @collectivity.discarded?
-
+    only_kept! @collectivity
     @collectivity.update(collectivity_params)
 
     respond_with @collectivity,
@@ -64,7 +57,7 @@ class CollectivitiesController < ApplicationController
   end
 
   def destroy
-    @collectivity = @collectivities_scope.find(params[:id])
+    @collectivity = @collectivities.find(params[:id])
     @collectivity.discard
 
     respond_with @collectivity,
@@ -74,7 +67,7 @@ class CollectivitiesController < ApplicationController
   end
 
   def undiscard
-    @collectivity = @collectivities_scope.find(params[:id])
+    @collectivity = @collectivities.find(params[:id])
     @collectivity.undiscard
 
     respond_with @collectivity,
@@ -83,7 +76,7 @@ class CollectivitiesController < ApplicationController
   end
 
   def destroy_all
-    @collectivities = @collectivities_scope.kept.strict_loading
+    @collectivities = @collectivities.kept.strict_loading
     @collectivities = filter_collection(@collectivities)
     @collectivities.quickly_discard_all
 
@@ -94,7 +87,7 @@ class CollectivitiesController < ApplicationController
   end
 
   def undiscard_all
-    @collectivities = @collectivities_scope.discarded.strict_loading
+    @collectivities = @collectivities.discarded.strict_loading
     @collectivities = filter_collection(@collectivities)
     @collectivities.quickly_undiscard_all
 
@@ -107,6 +100,18 @@ class CollectivitiesController < ApplicationController
 
   def parent_path
     url_for(@parent) if @parent
+  end
+
+  def scope_collectivities
+    @collectivities = Collectivity.all
+  end
+
+  def build_collectivity
+    @collectivity = @collectivities.build
+  end
+
+  def find_collectivity
+    @collectivity = @collectivities.find(params[:id])
   end
 
   def collectivity_params

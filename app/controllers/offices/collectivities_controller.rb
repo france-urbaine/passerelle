@@ -2,14 +2,16 @@
 
 module Offices
   class CollectivitiesController < ::CollectivitiesController
-    before_action do
+    private
+
+    def scope_collectivities
       office = Office.find(params[:office_id])
 
-      next gone(office) if office.discarded?
-      next gone(office.ddfip) if office.ddfip.discarded?
+      only_kept! office
+      only_kept! office.ddfip
 
       @parent = office
-      @collectivities_scope = office.on_territory_collectivities
+      @collectivities = office.on_territory_collectivities
     end
   end
 end

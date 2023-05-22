@@ -1,50 +1,45 @@
 # frozen_string_literal: true
 
 class OfficesController < ApplicationController
-  before_action do
-    @offices_scope ||= Office.all
-  end
+  before_action :scope_offices
+  before_action :build_office, only: %i[new create]
+  before_action :find_office,  only: %i[show edit remove update destroy undiscard]
 
   def index
     return not_implemented if autocomplete_request?
     return redirect_to(@parent, status: :see_other) if @parent && !turbo_frame_request?
 
-    @offices = @offices_scope.kept.strict_loading
+    @offices = @offices.kept.strict_loading
     @offices, @pagy = index_collection(@offices, nested: @parent)
   end
 
   def show
-    @office = @offices_scope.find(params[:id])
-    gone(@office) if @office.discarded?
+    only_kept! @office
   end
 
   def new
-    @office = @offices_scope.new(office_params)
     @background_url = referrer_path || parent_path || offices_path
   end
 
   def edit
-    @office = @offices_scope.find(params[:id])
-    return gone(@office) if @office.discarded?
-
+    only_kept! @office
     @background_url = referrer_path || office_path(@office)
   end
 
   def remove
-    @office = @offices_scope.find(params[:id])
-    return gone(@office) if @office.discarded?
-
+    only_kept! @office
     @background_url = referrer_path || office_path(@office)
   end
 
   def remove_all
-    @offices = @offices_scope.kept.strict_loading
+    @offices = @offices.kept.strict_loading
     @offices = filter_collection(@offices)
+
     @background_url = referrer_path || offices_path(**selection_params)
   end
 
   def create
-    @office = @offices_scope.new(office_params)
+    @office.assign_attributes(office_params)
     @office.save
 
     respond_with @office,
@@ -53,9 +48,7 @@ class OfficesController < ApplicationController
   end
 
   def update
-    @office = @offices_scope.find(params[:id])
-    return gone(@office) if @office.discarded?
-
+    only_kept! @office
     @office.update(office_params)
 
     respond_with @office,
@@ -64,7 +57,6 @@ class OfficesController < ApplicationController
   end
 
   def destroy
-    @office = @offices_scope.find(params[:id])
     @office.discard
 
     respond_with @office,
@@ -74,7 +66,6 @@ class OfficesController < ApplicationController
   end
 
   def undiscard
-    @office = @offices_scope.find(params[:id])
     @office.undiscard
 
     respond_with @office,
@@ -83,7 +74,7 @@ class OfficesController < ApplicationController
   end
 
   def destroy_all
-    @offices = @offices_scope.kept.strict_loading
+    @offices = @offices.kept.strict_loading
     @offices = filter_collection(@offices)
     @offices.quickly_discard_all
 
@@ -94,7 +85,7 @@ class OfficesController < ApplicationController
   end
 
   def undiscard_all
-    @offices = @offices_scope.discarded.strict_loading
+    @offices = @offices.discarded.strict_loading
     @offices = filter_collection(@offices)
     @offices.quickly_undiscard_all
 
@@ -107,6 +98,18 @@ class OfficesController < ApplicationController
 
   def parent_path
     url_for(@parent) if @parent
+  end
+
+  def scope_offices
+    @offices = Office.all
+  end
+
+  def build_office
+    @office = @offices.build
+  end
+
+  def find_office
+    @office = @offices.find(params[:id])
   end
 
   def office_params
