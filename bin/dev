@@ -1,14 +1,27 @@
 #!/usr/bin/env bash
 
+
+if command -v mailcatcher &> /dev/null
+then
+  procfile_arg="Procfile.dev+mailcatcher $@"
+else
+  procfile_arg="Procfile.dev $@"
+fi
+
+
+if command -v overmind &> /dev/null
+then
+  overmind start -f $procfile_arg
+  exit
+fi
+
 if ! command -v foreman &> /dev/null
 then
   echo "Installing foreman..."
   gem install foreman
 fi
 
-if command -v mailcatcher &> /dev/null
+if command -v foreman &> /dev/null
 then
-  foreman start -f Procfile.dev+mailcatcher "$@"
-else
-  foreman start -f Procfile.dev "$@"
+  foreman start -f $procfile_arg
 fi
