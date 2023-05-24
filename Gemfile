@@ -22,6 +22,7 @@ gem "devise-two-factor", github: "inkstak/devise-two-factor", branch: "bugfix-in
 gem "discard"
 
 # Controllers
+gem "action_policy"
 gem "pagy"
 gem "responders"
 

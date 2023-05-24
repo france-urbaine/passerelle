@@ -19,6 +19,8 @@ GIT
 GEM
   remote: https://rubygems.org/
   specs:
+    action_policy (0.6.5)
+      ruby-next-core (>= 0.14.0)
     actioncable (7.0.4.3)
       actionpack (= 7.0.4.3)
       activesupport (= 7.0.4.3)
@@ -390,6 +392,7 @@ GEM
     rubocop-rspec (2.20.0)
       rubocop (~> 1.33)
       rubocop-capybara (~> 2.17)
+    ruby-next-core (0.15.3)
     ruby-progressbar (1.13.0)
     ruby2_keywords (0.0.5)
     rubyzip (2.3.2)
@@ -461,6 +464,7 @@ PLATFORMS
   x86_64-darwin-21
 
 DEPENDENCIES
+  action_policy
   annotate
   awesome_print
   bootsnap
