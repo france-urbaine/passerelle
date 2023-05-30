@@ -2,8 +2,8 @@
 
 module Users
   class RegistrationsController < ApplicationController
-    prepend_before_action :sign_out
     skip_before_action :authenticate_user!
+    before_action :sign_out, only: :show
 
     layout "public"
 
