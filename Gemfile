@@ -22,6 +22,7 @@ gem "devise-two-factor", github: "inkstak/devise-two-factor", branch: "bugfix-in
 gem "discard"
 
 # Controllers
+gem "action_policy"
 gem "pagy"
 gem "responders"
 
@@ -101,6 +102,7 @@ end
 group :test do
   gem "database_cleaner-active_record"
   gem "simplecov", require: false
+  gem "timecop"
   gem "webmock"
 
   # RSpec extensions

@@ -2,13 +2,15 @@
 
 module Offices
   class UsersController < ApplicationController
-    before_action :scope_users
-    before_action :build_user, only: %i[new create]
-    before_action :find_user,  only: %i[remove destroy]
+    before_action :authorize!
+    before_action :find_and_authorize_office
+    before_action :build_and_authorize_users_scope, except: %i[edit_all update_all]
+    before_action :build_user,                      only: %i[new create]
+    before_action :find_and_authorize_user,         only: %i[remove destroy]
 
     def index
       return not_implemented if autocomplete_request?
-      return redirect_to(@office, status: :see_other) if @office && !turbo_frame_request?
+      return redirect_to(@office, status: :see_other) unless turbo_frame_request?
 
       @users = @users.kept.strict_loading
       @users, @pagy = index_collection(@users, nested: @office)
@@ -74,22 +76,27 @@ module Offices
 
     private
 
-    def scope_users
-      office = Office.find(params[:office_id])
+    def find_and_authorize_office
+      @office = Office.find(params[:office_id])
 
-      only_kept! office
-      only_kept! office.ddfip
+      authorize! @office, to: :show?
+      only_kept! @office
+      only_kept! @office.ddfip
+    end
 
-      @office = office
-      @users  = office.users
+    def build_and_authorize_users_scope
+      @users = @office.users
+      @users = authorized(@users)
     end
 
     def build_user
       @user = @office.ddfip.users.build(offices: [@office])
     end
 
-    def find_user
-      @user = @users.find(params[:id])
+    def find_and_authorize_user
+      @user = @office.ddfip.users.find(params[:id])
+
+      authorize! @user
     end
 
     def user_params

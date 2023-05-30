@@ -106,7 +106,7 @@ RSpec.describe User do
   # Registration process
   # ----------------------------------------------------------------------------
   describe "registration process" do
-    let!(:user) { create(:user, :unconfirmed) }
+    let!(:user) { create(:user, :unconfirmed, skip_confirmation_notification: false) }
 
     it { expect(user).not_to be_invited }
     it { expect(user).not_to be_confirmed }
@@ -119,7 +119,7 @@ RSpec.describe User do
   # Confirmation process
   # ----------------------------------------------------------------------------
   describe "confirmation process" do
-    let!(:user) { create(:user, :unconfirmed) }
+    let!(:user) { create(:user, :unconfirmed, skip_confirmation_notification: false) }
 
     it { expect { user.confirm }.to change(user, :confirmed?).to(true) }
     it { expect { user.confirm }.to change(user, :active_for_authentication?).to(true) }
@@ -130,7 +130,7 @@ RSpec.describe User do
   # ----------------------------------------------------------------------------
   describe "invitation process" do
     describe "#invite" do
-      let!(:user)   { build(:user, :unconfirmed, password: nil) }
+      let!(:user)   { build(:user, :unconfirmed, password: nil, skip_confirmation_notification: false) }
       let!(:author) { build(:user) }
 
       before { user.invite(by: author) }

@@ -13,6 +13,7 @@ unless ENV["SIMPLE_COV"] == "false"
     command_name ENV["SIMPLE_COV_COMMAND"] if ENV.key?("SIMPLE_COV_COMMAND")
 
     add_group "Components", "app/components"
+    add_group "Policies", "app/policies"
     add_group "Services", "app/services"
   end
 end
@@ -25,6 +26,8 @@ require "rspec/rails"
 require "webmock/rspec"
 require "database_cleaner/active_record"
 require "view_component/test_helpers"
+require "action_policy/rspec"
+require "action_policy/rspec/dsl"
 
 # Add additional requires below this line. Rails is not loaded until this point!
 
@@ -123,6 +126,11 @@ RSpec.configure do |config|
     Rails.cache.clear
     Rails.cache = previous_cache
   end
+
+  # Always make Timecop returns to curren time
+  config.after do
+    Timecop.return
+  end
 end
 
 # Declare negative matchers to use with operands.
@@ -142,4 +150,5 @@ RSpec::Matchers.define_negated_matcher :not_include,           :include
 RSpec::Matchers.define_negated_matcher :not_change,            :change
 RSpec::Matchers.define_negated_matcher :not_raise_error,       :raise_error
 RSpec::Matchers.define_negated_matcher :not_have_enqueued_job, :have_enqueued_job
+RSpec::Matchers.define_negated_matcher :not_redirect_to,       :redirect_to
 RSpec::Matchers.define_negated_matcher :be_unroutable,         :be_routable

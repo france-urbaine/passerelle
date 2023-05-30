@@ -12,7 +12,7 @@ RSpec.describe "Users::OfficesController#index" do
   let(:params)  { |e| e.metadata[:params] }
   let(:xhr)     { |e| e.metadata[:xhr] }
 
-  let!(:ddfips)  { create_list(:ddfip, 2) }
+  let!(:ddfips) { create_list(:ddfip, 2) }
 
   let!(:offices) do
     create_list(:office, 2, ddfip: ddfips[0]) +
@@ -25,13 +25,21 @@ RSpec.describe "Users::OfficesController#index" do
 
   it_behaves_like "it requires authorization in HTML"
   it_behaves_like "it requires authorization in JSON"
-  it_behaves_like "it doesn't accept JSON when signed in"
-  it_behaves_like "it doesn't accept HTML when signed in"
+  it_behaves_like "it responds with not acceptable in JSON when signed in"
 
-  context "when signed in" do
-    before { sign_in_as(:ddfip, :organization_admin) }
+  it_behaves_like "it denies access to DDFIP user"
+  it_behaves_like "it denies access to publisher user"
+  it_behaves_like "it denies access to publisher admin"
+  it_behaves_like "it denies access to colletivity user"
+  it_behaves_like "it denies access to colletivity admin"
 
-    context "when requesting Turbo-Frame", headers: { "Turbo-Frame" => "user_offices_checkboxes" }, xhr: true do
+  it_behaves_like "it responds with not acceptable to DDFIP admin"
+  it_behaves_like "it responds with not acceptable to super admin"
+
+  context "when requesting Turbo-Frame", headers: { "Turbo-Frame" => "user_offices_checkboxes" }, xhr: true do
+    context "when signed in as a super admin" do
+      before { sign_in_as(:super_admin) }
+
       context "without ddfip_id params" do
         it { expect(response).to have_http_status(:bad_request) }
         it { expect(response).to have_content_type(:html) }
@@ -67,6 +75,16 @@ RSpec.describe "Users::OfficesController#index" do
           }
         end
 
+        it { expect(response).to have_http_status(:success) }
+        it { expect(response).to have_content_type(:html) }
+        it { expect(response).to have_partial_html.with_turbo_frame("user_offices_checkboxes") }
+      end
+    end
+
+    context "when signed in as a DDFIP admin" do
+      before { sign_in_as(:organization_admin, organization: ddfips.first) }
+
+      context "without ddfip_id params" do
         it { expect(response).to have_http_status(:success) }
         it { expect(response).to have_content_type(:html) }
         it { expect(response).to have_partial_html.with_turbo_frame("user_offices_checkboxes") }

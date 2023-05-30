@@ -2,12 +2,14 @@
 
 module Offices
   class CommunesController < ApplicationController
-    before_action :scope_communes
-    before_action :find_commune, only: %i[remove destroy]
+    before_action :authorize!
+    before_action :find_and_authorize_office
+    before_action :build_and_authorize_communes_scope, except: %i[edit_all update_all]
+    before_action :find_and_authorize_commune,         only: %i[remove destroy]
 
     def index
       return not_implemented if autocomplete_request?
-      return redirect_to(office_path(@office), status: :see_other) if @office && !turbo_frame_request?
+      return redirect_to(@office, status: :see_other) unless turbo_frame_request?
 
       @communes = @communes.strict_loading
       @communes, @pagy = index_collection(@communes, nested: @office)
@@ -58,18 +60,23 @@ module Offices
 
     private
 
-    def scope_communes
-      office = Office.find(params[:office_id])
+    def find_and_authorize_office
+      @office = Office.find(params[:office_id])
 
-      only_kept! office
-      only_kept! office.ddfip
-
-      @office = office
-      @communes  = office.communes
+      authorize! @office, to: :show?
+      only_kept! @office
+      only_kept! @office.ddfip
     end
 
-    def find_commune
-      @commune = @communes.find(params[:id])
+    def build_and_authorize_communes_scope
+      @communes = @office.communes
+      @communes = authorized(@communes)
+    end
+
+    def find_and_authorize_commune
+      @commune = Commune.find(params[:id])
+
+      authorize! @commune
     end
 
     def commune_codes_params

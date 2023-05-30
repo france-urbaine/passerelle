@@ -12,7 +12,8 @@
     - datatable.with_pagination(@pagy, options: false)
 
     - datatable.with_selection do |selection|
-      - selection.with_action "Exclure les utilisateurs du guichet", remove_all_office_users_path(@office), modal: true
+      - if allowed_to?(:destroy_all?, User, with: Offices::UserPolicy)
+        - selection.with_action "Exclure les utilisateurs du guichet", remove_all_office_users_path(@office), modal: true
 
     - datatable.with_column(:name, sort: true)   { "Utilisateur" }
     - datatable.with_column(:email)              { "Adresse mail" }
@@ -27,13 +28,22 @@
         | Aucun utilisateur associé.
 
     - datatable.each_row do |row, user|
-      - row.with_checkbox "Sélectionner cet utilisateur", described_by: :name
-      - row.with_action "Modifier cet utilisateur", edit_user_path(user), icon: "pencil-square", modal: true
-      - row.with_action "Exclure cet utilisateur du guichet", remove_office_user_path(@office, user), icon: "archive-box-x-mark", modal: true
-      - row.with_action "Supprimer cet utilisateur", remove_user_path(user), icon: "trash", modal: true
+      - if allowed_to?(:destroy_all?, User, with: Offices::UserPolicy)
+        - row.with_checkbox "Sélectionner cet utilisateur", described_by: :name
+      - else
+        - row.with_checkbox "Sélectionner cet utilisateur", described_by: :name, disabled: true
+
+      - if allowed_to?(:update?, User, with: UserPolicy)
+        - row.with_action "Modifier cet utilisateur", edit_user_path(user), icon: "pencil-square", modal: true
+
+      - if allowed_to?(:destroy?, User, with: Offices::UserPolicy)
+        - row.with_action "Exclure cet utilisateur du guichet", remove_office_user_path(@office, user), icon: "archive-box-x-mark", modal: true
+
+      - if allowed_to?(:destroy?, User, with: UserPolicy)
+        - row.with_action "Supprimer cet utilisateur", remove_user_path(user), icon: "trash", modal: true
 
       - row.with_column(:name) do
-        = link_to user_path(user), data: { turbo_frame: "_top" } do
+        = authorized_link_to user do
           = user.name
 
       - row.with_column(:email) do
@@ -60,7 +70,7 @@
       - row.with_column(:offices) do
         - offices = user.offices.select { |office| office.kept? && office.ddfip_id == @office.ddfip_id }
         - offices.each.with_index do |office, index|
-          = link_to office_path(office), data: { turbo_frame: "_top" } do
+          = authorized_link_to office do
             = office.name
 
           - if offices[index + 2]

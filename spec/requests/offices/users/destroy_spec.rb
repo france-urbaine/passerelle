@@ -15,36 +15,42 @@ RSpec.describe "OfficeUsersController#destroy" do
   let!(:office) { create(:office, ddfip: ddfip) }
   let!(:user)   { create(:user, organization: ddfip, offices: [office]) }
 
-  it_behaves_like "it requires authorization in HTML"
-  it_behaves_like "it requires authorization in JSON"
-  it_behaves_like "it doesn't accept JSON when signed in"
-  it_behaves_like "it allows access to publisher user"
-  it_behaves_like "it allows access to publisher admin"
-  it_behaves_like "it allows access to DDFIP user"
-  it_behaves_like "it allows access to DDFIP admin"
-  it_behaves_like "it allows access to colletivity user"
-  it_behaves_like "it allows access to colletivity admin"
-  it_behaves_like "it allows access to super admin"
+  describe "authorizations" do
+    it_behaves_like "it requires authorization in HTML"
+    it_behaves_like "it requires authorization in JSON"
+    it_behaves_like "it responds with not acceptable in JSON when signed in"
 
-  context "when signed in" do
-    before { sign_in_as(:publisher, :organization_admin) }
+    it_behaves_like "it denies access to DDFIP user"
+    it_behaves_like "it denies access to DDFIP admin"
+    it_behaves_like "it denies access to publisher user"
+    it_behaves_like "it denies access to publisher admin"
+    it_behaves_like "it denies access to colletivity user"
+    it_behaves_like "it denies access to colletivity admin"
+    it_behaves_like "it allows access to super admin"
+
+    context "when the office is owned by the current user's DDFIP organization" do
+      let(:ddfip) { current_user.organization }
+
+      it_behaves_like "it denies access to DDFIP user"
+      it_behaves_like "it allows access to DDFIP admin"
+    end
+  end
+
+  describe "responses" do
+    before { sign_in_as(:super_admin) }
 
     context "when the user is active" do
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/guichets/#{office.id}") }
 
       it "removes the users from the office" do
-        expect {
-          request
-          office.users.reload
-        }.to change(office, :user_ids).from([user.id]).to([])
+        expect { request and office.users.reload }
+          .to change(office, :user_ids).from([user.id]).to([])
       end
 
       it "doesn't discard the user" do
-        expect {
-          request
-          user.reload
-        }.not_to change(user, :discarded_at).from(nil)
+        expect { request and user.reload }
+          .not_to change(user, :discarded_at).from(nil)
       end
 
       it "sets a flash notice" do
@@ -63,9 +69,9 @@ RSpec.describe "OfficeUsersController#destroy" do
     context "when the user doesn't belong to office" do
       let(:user) { create(:user, organization: ddfip) }
 
-      it { expect(response).to have_http_status(:not_found) }
-      it { expect(response).to have_content_type(:html) }
-      it { expect(response).to have_html_body }
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/guichets/#{office.id}") }
+      it { expect { request and office.users.reload }.not_to change(office, :commune_ids) }
     end
 
     context "when the user doesn't belong to ddfip" do

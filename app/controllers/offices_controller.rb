@@ -1,9 +1,12 @@
 # frozen_string_literal: true
 
 class OfficesController < ApplicationController
-  before_action :scope_offices
-  before_action :build_office, only: %i[new create]
-  before_action :find_office,  only: %i[show edit remove update destroy undiscard]
+  before_action :authorize!
+  before_action :build_offices_scope
+  before_action :authorize_offices_scope
+  before_action :build_office,     only: %i[new create]
+  before_action :find_office,      only: %i[show edit remove update destroy undiscard]
+  before_action :authorize_office, only: %i[show edit remove update destroy undiscard]
 
   def index
     return not_implemented if autocomplete_request?
@@ -96,12 +99,12 @@ class OfficesController < ApplicationController
 
   private
 
-  def parent_path
-    url_for(@parent) if @parent
+  def build_offices_scope
+    @offices = Office.all
   end
 
-  def scope_offices
-    @offices = Office.all
+  def authorize_offices_scope
+    @offices = authorized(@offices)
   end
 
   def build_office
@@ -109,15 +112,19 @@ class OfficesController < ApplicationController
   end
 
   def find_office
-    @office = @offices.find(params[:id])
+    @office = Office.find(params[:id])
+  end
+
+  def authorize_office
+    authorize! @office
   end
 
   def office_params
-    input      = params.fetch(:office, {})
-    ddfip_name = input.delete(:ddfip_name)
+    authorized(params.fetch(:office, {}))
+      .then { |input| OfficeParamsParser.new(input, @parent).parse }
+  end
 
-    input[:ddfip_id] = DDFIP.kept.search(name: ddfip_name).pick(:id) if ddfip_name.present?
-
-    input.permit(:ddfip_id, :name, :action)
+  def parent_path
+    url_for(@parent) if @parent
   end
 end

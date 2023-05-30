@@ -16,19 +16,29 @@ RSpec.describe "Offices::UsersController#remove_all" do
   let!(:users)  { create_list(:user, 3, organization: ddfip) }
   let!(:ids)    { users.take(2).map(&:id) }
 
-  it_behaves_like "it requires authorization in HTML"
-  it_behaves_like "it requires authorization in JSON"
-  it_behaves_like "it doesn't accept JSON when signed in"
-  it_behaves_like "it allows access to publisher user"
-  it_behaves_like "it allows access to publisher admin"
-  it_behaves_like "it allows access to DDFIP user"
-  it_behaves_like "it allows access to DDFIP admin"
-  it_behaves_like "it allows access to colletivity user"
-  it_behaves_like "it allows access to colletivity admin"
-  it_behaves_like "it allows access to super admin"
+  describe "authorizations" do
+    it_behaves_like "it requires authorization in HTML"
+    it_behaves_like "it requires authorization in JSON"
+    it_behaves_like "it responds with not acceptable in JSON when signed in"
 
-  context "when signed in" do
-    before { sign_in_as(:publisher, :organization_admin) }
+    it_behaves_like "it denies access to DDFIP user"
+    it_behaves_like "it denies access to DDFIP admin"
+    it_behaves_like "it denies access to publisher user"
+    it_behaves_like "it denies access to publisher admin"
+    it_behaves_like "it denies access to colletivity user"
+    it_behaves_like "it denies access to colletivity admin"
+    it_behaves_like "it allows access to super admin"
+
+    context "when the office is owned by the current user's DDFIP organization" do
+      let(:office) { create(:office, ddfip: current_user.organization) }
+
+      it_behaves_like "it denies access to DDFIP user"
+      it_behaves_like "it allows access to DDFIP admin"
+    end
+  end
+
+  describe "responses" do
+    before { sign_in_as(:super_admin) }
 
     context "with multiple ids" do
       it { expect(response).to have_http_status(:success) }

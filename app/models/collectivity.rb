@@ -84,6 +84,8 @@ class Collectivity < ApplicationRecord
   scope :departements, -> { where(territory_type: "Departement") }
   scope :regions,      -> { where(territory_type: "Region") }
 
+  scope :owned_by, ->(publisher) { where(publisher: publisher) }
+
   scope :search, lambda { |input|
     advanced_search(
       input,

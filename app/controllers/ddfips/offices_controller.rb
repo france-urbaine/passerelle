@@ -4,17 +4,14 @@ module DDFIPs
   class OfficesController < ::OfficesController
     private
 
-    def scope_offices
+    def build_offices_scope
       ddfip = DDFIP.find(params[:ddfip_id])
 
+      authorize! ddfip, to: :show?
       only_kept! ddfip
 
       @parent  = ddfip
       @offices = ddfip.offices
-    end
-
-    def office_params
-      super().except(:ddfip_id)
     end
   end
 end

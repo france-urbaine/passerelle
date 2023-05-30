@@ -12,8 +12,8 @@ nav.sidebar
 
     .sidebar__header Paramètres
     .sidebar__links
-      = sidebar_link_to "Compte",       user_settings_path
-      = sidebar_link_to "Organisation", user_organization_settings_path
+      = sidebar_link_to "Compte",       user_settings_path              if allowed_to?(:index, with: Users::UserSettingsPolicy)
+      = sidebar_link_to "Organisation", user_organization_settings_path if allowed_to?(:index, with: Users::OrganizationSettingsPolicy)
       a.sidebar__link.sidebar__link--disabled( disabled ) API
 
   - else
@@ -24,20 +24,33 @@ nav.sidebar
       a.sidebar__link.sidebar__link--disabled( disabled ) Paquets
       a.sidebar__link.sidebar__link--disabled( disabled ) Fichiers
 
-    .sidebar__header Organisations
-    .sidebar__links
-      = sidebar_link_to "Éditeurs", publishers_path
-      = sidebar_link_to "Collectivitiés", collectivities_path
-      = sidebar_link_to "DDFIP", ddfips_path
-      = sidebar_link_to "Guichets", offices_path
-      = sidebar_link_to "Utilisateurs", users_path
+    - publishers     = allowed_to?(:index?, Publisher,    with: PublisherPolicy)
+    - collectivities = allowed_to?(:index?, Collectivity, with: CollectivityPolicy)
+    - ddfips         = allowed_to?(:index?, DDFIP,        with: DDFIPPolicy)
+    - offices        = allowed_to?(:index?, Office,       with: OfficePolicy)
+    - users          = allowed_to?(:index?, User,         with: UserPolicy)
 
-    .sidebar__header Territoires
-    .sidebar__links
-      = sidebar_link_to "Communes", communes_path
-      = sidebar_link_to "EPCI", epcis_path
-      = sidebar_link_to "Départements", departements_path
-      = sidebar_link_to "Régions", regions_path
+    - if publishers || collectivities || ddfips || offices || users
+      .sidebar__header Organisations
+      .sidebar__links
+        = sidebar_link_to "Éditeurs",       publishers_path     if publishers
+        = sidebar_link_to "Collectivitiés", collectivities_path if collectivities
+        = sidebar_link_to "DDFIP",          ddfips_path         if ddfips
+        = sidebar_link_to "Guichets",       offices_path        if offices
+        = sidebar_link_to "Utilisateurs",   users_path          if users
+
+    - communes     = allowed_to?(:index?, Commune,     with: CommunePolicy)
+    - epcis        = allowed_to?(:index?, EPCI,        with: EPCIPolicy)
+    - departements = allowed_to?(:index?, Departement, with: DepartementPolicy)
+    - regions      = allowed_to?(:index?, Region,      with: RegionPolicy)
+
+    - if communes || epcis || departements || regions
+      .sidebar__header Territoires
+      .sidebar__links
+        = sidebar_link_to "Communes",     communes_path     if communes
+        = sidebar_link_to "EPCI",         epcis_path        if epcis
+        = sidebar_link_to "Départements", departements_path if departements
+        = sidebar_link_to "Régions",      regions_path      if regions
 
   .flex-auto
   .sidebar__user

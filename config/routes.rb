@@ -35,7 +35,7 @@ Rails.application.routes.draw do
   }
 
   namespace :users, as: :user, path: "/" do
-    resource :enrollment,              path: "/inscription",                    only: %i[new]
+    resource :enrollment,              path: "/inscription",                    only: %i[new], path_names: { new: "/" }
     resource :registration,            path: "/enregistrement/:token",          only: %i[show]
     resource :registration_password,   path: "/enregistrement/:token/password", only: %i[new create]
     resource :registration_two_factor, path: "/enregistrement/:token/2fa",      only: %i[new create edit update]

@@ -18,6 +18,7 @@ class ApplicationController < ActionController::Base
   before_action :accept_request_variant
   before_action :authenticate_user!
   before_action :verify_requested_format!
+  after_action  :verify_authorized, if: -> { signed_in? && !devise_controller? }
 
   rescue_from "ActionController::ParameterMissing", with: :bad_request
   rescue_from "ActionController::BadRequest",       with: :bad_request
@@ -32,6 +33,16 @@ class ApplicationController < ActionController::Base
   end
 
   respond_to :html
+
+  layout lambda {
+    if turbo_frame_request?
+      "turbo_rails/frame"
+    elsif signed_in?
+      "application"
+    else
+      "public"
+    end
+  }
 
   helper_method :turbo_frame_request_id
   helper_method :turbo_frame_request?

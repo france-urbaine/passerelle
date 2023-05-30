@@ -7,7 +7,7 @@ import "./controllers"
 //  https://github.com/hotwired/turbo-rails/pull/367
 //  https://github.com/hotwired/turbo/pull/863#issuecomment-1470184953
 //
-document.addEventListener("turbo:frame-missing", function(event) {
+document.addEventListener("turbo:frame-missing", (event) => {
   if (event.detail.response.redirected) {
     event.preventDefault()
     event.detail.visit(event.detail.response)

@@ -6,46 +6,47 @@ ruby:
   = hidden_field_tag :redirect, modal.redirection_path
 
   = fields(model: user) do |form|
-    = form.block :organization, autocomplete: organizations_path do
-      ruby:
-        if user.organization
-          organization_data = { type: user.organization_type, id: user.organization_id }.to_json
-          organization_name = user.organization.name
-        end
-
-        # Do not add required attribute to make this form submittable in noscript mode
-        html_options = {
-          value:        organization_name,
-          placeholder:  "Commnencez à taper pour sélectionner des organisations",
-          data:         {
-            autocomplete_target: "input"
-          }
-        }
-
-        hidden_html_options = {
-          value:        organization_data,
-          data:         {
-            autocomplete_target: "hidden",
-            action:              "user-form#updateServices"
-          }
-        }
-
-      = form.label :organization
-      = form.search_field :organization, **html_options
-      = form.hidden_field :organization_data, **hidden_html_options
-
-    = noscript do
-      = form.block :organization_type do
+    - if allowed_to?(:assign_organization?, user)
+      = form.block :organization, autocomplete: organizations_path do
         ruby:
-          models  = [Publisher, DDFIP, Collectivity]
-          options = models.map { |m| [m.model_name.human, m.name] }
+          if user.organization
+            organization_data = { type: user.organization_type, id: user.organization_id }.to_json
+            organization_name = user.organization.name
+          end
 
-        = form.label :organization_type
-        = form.select :organization_type, options, autofocus: true, required: true
+          # Do not add required attribute to make this form submittable in noscript mode
+          html_options = {
+            value:        organization_name,
+            placeholder:  "Commnencez à taper pour sélectionner des organisations",
+            data:         {
+              autocomplete_target: "input"
+            }
+          }
 
-      = form.block :organization do
-        = form.label :organization_name
-        = form.text_field :organization_name, value: user.organization&.name, required: true
+          hidden_html_options = {
+            value:        organization_data,
+            data:         {
+              autocomplete_target: "hidden",
+              action:              "user-form#updateServices"
+            }
+          }
+
+        = form.label :organization
+        = form.search_field :organization, **html_options
+        = form.hidden_field :organization_data, **hidden_html_options
+
+      = noscript do
+        = form.block :organization_type do
+          ruby:
+            models  = [Publisher, DDFIP, Collectivity]
+            options = models.map { |m| [m.model_name.human, m.name] }
+
+          = form.label :organization_type
+          = form.select :organization_type, options, autofocus: true, required: true
+
+        = form.block :organization do
+          = form.label :organization_name
+          = form.text_field :organization_name, value: user.organization&.name, required: true
 
     = form.block :first_name do
       = form.label :first_name
@@ -73,23 +74,25 @@ ruby:
       = form.label :office_ids
       = turbo_frame_tag :user_offices_checkboxes, **offices_frame_options
 
-    = form.block :organization_admin do
-      = form.check_box :organization_admin
-      = form.label :organization_admin
+    - if allowed_to?(:assign_organization_admin?, user)
+      = form.block :organization_admin do
+        = form.check_box :organization_admin
+        = form.label :organization_admin
 
-      p.pl-9.italic
-        | Un administrateur bénéficie de tout les droits sur son organisation.
-        br
-        | Il peut notamment créer, gérer ou supprimer d'autres utilisateurs au sein de cette organisation.
+        p.pl-9.italic
+          | Un administrateur bénéficie de tout les droits sur son organisation.
+          br
+          | Il peut notamment créer, gérer ou supprimer d'autres utilisateurs au sein de cette organisation.
 
-    = form.block :super_admin do
-      = form.check_box :super_admin
-      = form.label :super_admin
+    - if allowed_to?(:assign_super_admin?, user)
+      = form.block :super_admin do
+        = form.check_box :super_admin
+        = form.label :super_admin
 
-      p.pl-9.italic
-        | Un administrateur de FiscaHub a accès à toutes les informations de la plateforme, sans restrictions.
-        br
-        | Il peut notamment créer, gérer et supprimer n'importe quelle organisation ou utilisateur.
+        p.pl-9.italic
+          | Un administrateur de FiscaHub a accès à toutes les informations de la plateforme, sans restrictions.
+          br
+          | Il peut notamment créer, gérer et supprimer n'importe quelle organisation ou utilisateur.
 
 - modal.with_submit_action "Enregistrer"
 - modal.with_close_action "Annuler"

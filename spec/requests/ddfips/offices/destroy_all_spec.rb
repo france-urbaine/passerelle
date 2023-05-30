@@ -11,23 +11,41 @@ RSpec.describe "Ddfips::OfficesController#destroy_all" do
   let(:headers) { |e| e.metadata[:headers] }
   let(:params)  { |e| e.metadata.fetch(:params, { ids: ids }) }
 
-  let!(:ddfip)   { create(:ddfip) }
-  let!(:offices) { create_list(:office, 3, ddfip: ddfip) }
-  let!(:ids)     { offices.take(2).map(&:id) }
+  let!(:ddfip) { create(:ddfip) }
+  let!(:offices) do
+    [
+      create(:office, ddfip: ddfip),
+      create(:office, ddfip: ddfip),
+      create(:office, ddfip: ddfip),
+      create(:office),
+      create(:office, :discarded, ddfip: ddfip)
+    ]
+  end
+  let!(:ids) { offices.take(2).map(&:id) }
 
-  it_behaves_like "it requires authorization in HTML"
-  it_behaves_like "it requires authorization in JSON"
-  it_behaves_like "it doesn't accept JSON when signed in"
-  it_behaves_like "it allows access to publisher user"
-  it_behaves_like "it allows access to publisher admin"
-  it_behaves_like "it allows access to DDFIP user"
-  it_behaves_like "it allows access to DDFIP admin"
-  it_behaves_like "it allows access to colletivity user"
-  it_behaves_like "it allows access to colletivity admin"
-  it_behaves_like "it allows access to super admin"
+  describe "authorizations" do
+    it_behaves_like "it requires authorization in HTML"
+    it_behaves_like "it requires authorization in JSON"
+    it_behaves_like "it responds with not acceptable in JSON when signed in"
 
-  context "when signed in" do
-    before { sign_in_as(:publisher, :organization_admin) }
+    it_behaves_like "it denies access to publisher user"
+    it_behaves_like "it denies access to publisher admin"
+    it_behaves_like "it denies access to DDFIP user"
+    it_behaves_like "it denies access to DDFIP admin"
+    it_behaves_like "it denies access to colletivity user"
+    it_behaves_like "it denies access to colletivity admin"
+    it_behaves_like "it allows access to super admin"
+
+    context "when the DDFIP is the organization of the current user" do
+      let(:ddfip) { current_user.organization }
+
+      it_behaves_like "it denies access to DDFIP user"
+      it_behaves_like "it denies access to DDFIP admin"
+    end
+  end
+
+  describe "responses" do
+    before { sign_in_as(:super_admin) }
 
     context "with multiple ids" do
       it { expect(response).to have_http_status(:see_other) }
@@ -41,6 +59,8 @@ RSpec.describe "Ddfips::OfficesController#destroy_all" do
         }.to change(offices[0], :discarded_at).to(be_present)
           .and change(offices[1], :discarded_at).to(be_present)
           .and not_change(offices[2], :discarded_at).from(nil)
+          .and not_change(offices[3], :discarded_at).from(nil)
+          .and not_change(offices[4], :discarded_at).from(be_present)
       end
 
       it "sets a flash notice" do
@@ -63,17 +83,17 @@ RSpec.describe "Ddfips::OfficesController#destroy_all" do
     end
 
     context "with ids from already discarded offices" do
-      let(:offices) { create_list(:office, 3, :discarded, ddfip: ddfip) }
+      let(:ids) { offices.last(1).map(&:id) }
 
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/ddfips/#{ddfip.id}") }
       it { expect(flash).to have_flash_notice }
       it { expect(flash).to have_flash_actions }
-      it { expect { request }.not_to change(Office.discarded, :count).from(3) }
+      it { expect { request }.not_to change(Office.discarded, :count) }
     end
 
     context "with ids from offices of any other DDFIP" do
-      let(:offices) { create_list(:office, 3) }
+      let(:ids) { offices[3, 1].map(&:id) }
 
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/ddfips/#{ddfip.id}") }

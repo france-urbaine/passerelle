@@ -13,19 +13,42 @@ RSpec.describe "UsersController#destroy" do
 
   let!(:user) { create(:user) }
 
-  it_behaves_like "it requires authorization in HTML"
-  it_behaves_like "it requires authorization in JSON"
-  it_behaves_like "it doesn't accept JSON when signed in"
-  it_behaves_like "it allows access to publisher user"
-  it_behaves_like "it allows access to publisher admin"
-  it_behaves_like "it allows access to DDFIP user"
-  it_behaves_like "it allows access to DDFIP admin"
-  it_behaves_like "it allows access to colletivity user"
-  it_behaves_like "it allows access to colletivity admin"
-  it_behaves_like "it allows access to super admin"
+  describe "authorizations" do
+    it_behaves_like "it requires authorization in HTML"
+    it_behaves_like "it requires authorization in JSON"
+    it_behaves_like "it responds with not acceptable in JSON when signed in"
 
-  context "when signed in" do
-    before { sign_in_as(:publisher, :organization_admin) }
+    it_behaves_like "it denies access to DDFIP user"
+    it_behaves_like "it denies access to DDFIP admin"
+    it_behaves_like "it denies access to publisher user"
+    it_behaves_like "it denies access to publisher admin"
+    it_behaves_like "it denies access to colletivity user"
+    it_behaves_like "it denies access to colletivity admin"
+    it_behaves_like "it allows access to super admin"
+
+    context "when user organization is the same as current user" do
+      let(:user) { create(:user, organization: current_user.organization) }
+
+      it_behaves_like "it allows access to DDFIP admin"
+      it_behaves_like "it allows access to publisher admin"
+      it_behaves_like "it allows access to colletivity admin"
+
+      it_behaves_like "it denies access to publisher user"
+      it_behaves_like "it denies access to DDFIP user"
+      it_behaves_like "it denies access to colletivity user"
+    end
+
+    context "when user is member of a collectivity owned by current user publisher organization" do
+      let(:collectivity) { create(:collectivity, publisher: current_user.organization) }
+      let(:user)         { create(:user, organization: collectivity) }
+
+      it_behaves_like "it allows access to publisher admin"
+      it_behaves_like "it allows access to publisher user"
+    end
+  end
+
+  describe "responses" do
+    before { sign_in_as(:super_admin) }
 
     context "when the user is active" do
       it { expect(response).to have_http_status(:see_other) }
@@ -33,10 +56,8 @@ RSpec.describe "UsersController#destroy" do
       it { expect { request }.to change(User.discarded, :count).by(1) }
 
       it "discards the user" do
-        expect {
-          request
-          user.reload
-        }.to change(user, :discarded_at).to(be_present)
+        expect { request and user.reload }
+          .to change(user, :discarded_at).to(be_present)
       end
 
       it "sets a flash notice" do

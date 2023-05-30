@@ -30,8 +30,14 @@ group :red_green_refactor, halt_on_fail: true do
   guard :rspec, rspec_options do
     watch("config/routes.rb") { "spec/routing" }
     watch(%r{^spec/.+_spec\.rb$})
-    watch(%r{^app/(.+)\.rb$})             { |m| "spec/#{m[1]}_spec.rb" }
-    watch(%r{^app/controllers/(.+)\.rb$}) { |m| "spec/requests/#{m[1]}" }
+
+    watch(%r{^app/(.+)\.rb$}) do |m|
+      "spec/#{m[1]}_spec.rb"
+    end
+
+    watch(%r{^app/controllers/(.+)_controller\.rb$}) do |m|
+      Dir[File.join("spec/requests/#{m[1]}/*_spec.rb")]
+    end
   end
 
   guard :rubocop, rubocop_options do

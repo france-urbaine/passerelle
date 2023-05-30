@@ -1,9 +1,12 @@
 # frozen_string_literal: true
 
 class PublishersController < ApplicationController
-  before_action :scope_publishers
-  before_action :build_publisher, only: %i[new create]
-  before_action :find_publisher,  only: %i[show edit remove update destroy undiscard]
+  before_action :authorize!
+  before_action :build_publishers_scope
+  before_action :authorize_publishers_scope
+  before_action :build_publisher,     only: %i[new create]
+  before_action :find_publisher,      only: %i[show edit remove update destroy undiscard]
+  before_action :authorize_publisher, only: %i[show edit remove update destroy undiscard]
 
   def index
     return not_implemented if autocomplete_request?
@@ -95,8 +98,12 @@ class PublishersController < ApplicationController
 
   private
 
-  def scope_publishers
+  def build_publishers_scope
     @publishers = Publisher.all
+  end
+
+  def authorize_publishers_scope
+    @publishers = authorized(@publishers)
   end
 
   def build_publisher
@@ -104,15 +111,14 @@ class PublishersController < ApplicationController
   end
 
   def find_publisher
-    @publisher = @publishers.find(params[:id])
+    @publisher = Publisher.find(params[:id])
+  end
+
+  def authorize_publisher
+    authorize! @publisher
   end
 
   def publisher_params
-    params
-      .fetch(:publisher, {})
-      .permit(
-        :name, :siren,
-        :contact_first_name, :contact_last_name, :contact_email, :contact_phone
-      )
+    authorized(params.fetch(:publisher, {}))
   end
 end

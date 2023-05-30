@@ -17,18 +17,21 @@ RSpec.describe "RegionsController#update" do
     { name: "Ile-de-France" }
   end
 
-  it_behaves_like "it requires authorization in HTML"
-  it_behaves_like "it requires authorization in JSON"
-  it_behaves_like "it doesn't accept JSON when signed in"
-  it_behaves_like "it allows access to publisher user"
-  it_behaves_like "it allows access to publisher admin"
-  it_behaves_like "it allows access to DDFIP user"
-  it_behaves_like "it allows access to DDFIP admin"
-  it_behaves_like "it allows access to colletivity user"
-  it_behaves_like "it allows access to colletivity admin"
-  it_behaves_like "it allows access to super admin"
+  describe "authorizations" do
+    it_behaves_like "it requires authorization in HTML"
+    it_behaves_like "it requires authorization in JSON"
+    it_behaves_like "it responds with not acceptable in JSON when signed in"
 
-  context "when signed in" do
+    it_behaves_like "it denies access to publisher user"
+    it_behaves_like "it denies access to publisher admin"
+    it_behaves_like "it denies access to DDFIP user"
+    it_behaves_like "it denies access to DDFIP admin"
+    it_behaves_like "it denies access to colletivity user"
+    it_behaves_like "it denies access to colletivity admin"
+    it_behaves_like "it allows access to super admin"
+  end
+
+  describe "responses" do
     before { sign_in_as(:super_admin) }
 
     context "with valid attributes" do
@@ -36,10 +39,8 @@ RSpec.describe "RegionsController#update" do
       it { expect(response).to redirect_to("/regions") }
 
       it "updates the region" do
-        expect {
-          request
-          region.reload
-        } .to change(region, :updated_at)
+        expect { request and region.reload }
+          .to  change(region, :updated_at)
           .and change(region, :name).to("Ile-de-France")
       end
 

@@ -17,14 +17,14 @@
         dt DDFIP
         dd
           - if @office.ddfip
-            = link_to ddfip_path(@office.ddfip), data: { turbo_frame: "_top" } do
+            = authorized_link_to @office.ddfip do
               = @office.ddfip.name
 
       .description-list__row
         dt Département
         dd
           - if @office.ddfip&.departement
-            = link_to departement_path(@office.ddfip.departement), data: { turbo_frame: "_top" } do
+            = authorized_link_to @office.ddfip.departement do
               = @office.ddfip.departement.qualified_name
 
       .description-list__row
@@ -35,55 +35,62 @@
         dt Communes gérées
         dd= display_count(@office.communes_count, "commune") if @office.communes_count.positive?
 
-  .content__separator
+  - if allowed_to?(:index?, User, with: Offices::UserPolicy)
+    .content__separator
 
-  .subheader-bar
-    h2.subheader
-      = svg_icon("rectangle-stack", "Nouvelle section")
-      | Utilisateurs
+    .subheader-bar
+      h2.subheader
+        = svg_icon("rectangle-stack", "Nouvelle section")
+        | Utilisateurs
 
-    .subheader-bar__actions
-      .subheader-bar__action= button_component "Inviter un utilisateur", new_office_user_path(@office), icon: "plus", modal: true
-      .subheader-bar__action= button_component "Gérer les utilisateurs", edit_all_office_users_path(@office), icon: "squares-plus", modal: true
+      .subheader-bar__actions
+        - if allowed_to?(:create?, User, with: Offices::UserPolicy)
+          .subheader-bar__action= button_component "Inviter un utilisateur", new_office_user_path(@office), icon: "plus", modal: true
 
-  - if @office.users_count.zero?
-    .card
-      .card__content.card__content--empty Aucun utilisateur assigné à ce guichet.
+        - if allowed_to?(:manage?, User, with: Offices::UserPolicy)
+          .subheader-bar__action= button_component "Gérer les utilisateurs", edit_all_office_users_path(@office), icon: "squares-plus", modal: true
 
-  - else
-    = turbo_frame_tag "datatable-users", src: office_users_path(@office) do
-      = datatable_skeleton_component(rows: [@office.users_count, ControllerCollections::NESTED_ITEMS].min) do |skeleton|
+    - if @office.users_count.zero?
+      .card
+        .card__content.card__content--empty Aucun utilisateur assigné à ce guichet.
+
+    - else
+      = turbo_frame_tag "datatable-users", src: office_users_path(@office) do
+        = datatable_skeleton_component(rows: [@office.users_count, ControllerCollections::NESTED_ITEMS].min) do |skeleton|
+          - skeleton.with_search
+          - skeleton.with_pagination
+
+  - if allowed_to?(:index?, Commune, with: Offices::CommunePolicy)
+    .content__separator
+
+    .subheader-bar
+      h2.subheader
+        = svg_icon("rectangle-stack", "Nouvelle section")
+        | Communes assignées
+
+      .subheader-bar__actions
+        - if allowed_to?(:manage?, Commune, with: Offices::CommunePolicy)
+          .subheader-bar__action= button_component "Gérer les communes", edit_all_office_communes_path(@office), icon: "squares-plus", modal: true
+
+    - if @office.communes_count.zero?
+      .card
+        .card__content.card__content--empty Aucune commune assignée à ce guichet.
+
+    - else
+      = turbo_frame_tag "datatable-communes", src: office_communes_path(@office) do
+        = datatable_skeleton_component(rows: [@office.communes_count, ControllerCollections::NESTED_ITEMS].min) do |skeleton|
+          - skeleton.with_search
+          - skeleton.with_pagination
+
+  - if allowed_to?(:index?, Collectivity, with: Offices::CollectivityPolicy)
+    .content__separator
+
+    .subheader-bar
+      h2.subheader
+        = svg_icon("rectangle-stack", "Nouvelle section")
+        | Collectivités correspondantes
+
+    = turbo_frame_tag "datatable-collectivities", src: office_collectivities_path(@office) do
+      = datatable_skeleton_component(rows: 0) do |skeleton|
         - skeleton.with_search
         - skeleton.with_pagination
-
-  .content__separator
-
-  .subheader-bar
-    h2.subheader
-      = svg_icon("rectangle-stack", "Nouvelle section")
-      | Communes assignées
-
-    .subheader-bar__actions
-      .subheader-bar__action= button_component "Gérer les communes", edit_all_office_communes_path(@office), icon: "squares-plus", modal: true
-
-  - if @office.communes_count.zero?
-    .card
-      .card__content.card__content--empty Aucune commune assignée à ce guichet.
-
-  - else
-    = turbo_frame_tag "datatable-communes", src: office_communes_path(@office) do
-      = datatable_skeleton_component(rows: [@office.communes_count, ControllerCollections::NESTED_ITEMS].min) do |skeleton|
-        - skeleton.with_search
-        - skeleton.with_pagination
-
-  .content__separator
-
-  .subheader-bar
-    h2.subheader
-      = svg_icon("rectangle-stack", "Nouvelle section")
-      | Collectivités correspondantes
-
-  = turbo_frame_tag "datatable-collectivities", src: office_collectivities_path(@office) do
-    = datatable_skeleton_component(rows: 0) do |skeleton|
-      - skeleton.with_search
-      - skeleton.with_pagination

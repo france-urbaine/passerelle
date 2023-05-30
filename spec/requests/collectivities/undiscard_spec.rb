@@ -13,19 +13,36 @@ RSpec.describe "CollectivitiesController#undiscard" do
 
   let!(:collectivity) { create(:collectivity, :discarded) }
 
-  it_behaves_like "it requires authorization in HTML"
-  it_behaves_like "it requires authorization in JSON"
-  it_behaves_like "it doesn't accept JSON when signed in"
-  it_behaves_like "it allows access to publisher user"
-  it_behaves_like "it allows access to publisher admin"
-  it_behaves_like "it allows access to DDFIP user"
-  it_behaves_like "it allows access to DDFIP admin"
-  it_behaves_like "it allows access to colletivity user"
-  it_behaves_like "it allows access to colletivity admin"
-  it_behaves_like "it allows access to super admin"
+  describe "authorizations" do
+    it_behaves_like "it requires authorization in HTML"
+    it_behaves_like "it requires authorization in JSON"
+    it_behaves_like "it responds with not acceptable in JSON when signed in"
 
-  context "when signed in" do
-    before { sign_in_as(:publisher, :organization_admin) }
+    it_behaves_like "it denies access to DDFIP user"
+    it_behaves_like "it denies access to DDFIP admin"
+    it_behaves_like "it denies access to publisher user"
+    it_behaves_like "it denies access to publisher admin"
+    it_behaves_like "it denies access to colletivity user"
+    it_behaves_like "it denies access to colletivity admin"
+    it_behaves_like "it allows access to super admin"
+
+    context "when the collectivity is the organization of the current user" do
+      let(:collectivity) { current_user.organization }
+
+      it_behaves_like "it denies access to colletivity user"
+      it_behaves_like "it denies access to colletivity admin"
+    end
+
+    context "when the collectivity is owned by the current user's publisher organization" do
+      let(:collectivity) { create(:collectivity, publisher: current_user.organization) }
+
+      it_behaves_like "it allows access to publisher user"
+      it_behaves_like "it allows access to publisher admin"
+    end
+  end
+
+  describe "responses" do
+    before { sign_in_as(:super_admin) }
 
     context "when the collectivity is discarded" do
       it { expect(response).to have_http_status(:see_other) }
@@ -33,10 +50,8 @@ RSpec.describe "CollectivitiesController#undiscard" do
       it { expect { request }.to change(Collectivity.discarded, :count).by(-1) }
 
       it "undiscards the collectivity" do
-        expect {
-          request
-          collectivity.reload
-        }.to change(collectivity, :discarded_at).to(nil)
+        expect { request and collectivity.reload }
+          .to change(collectivity, :discarded_at).to(nil)
       end
 
       it "sets a flash notice" do

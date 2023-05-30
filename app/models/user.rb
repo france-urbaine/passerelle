@@ -117,8 +117,10 @@ class User < ApplicationRecord
     self.name = "#{first_name} #{last_name}".strip
   end
 
-  # Search
+  # Scopes
   # ----------------------------------------------------------------------------
+  scope :owned_by, ->(organization) { where(organization: organization) }
+
   scope :search, lambda { |input|
     scopes = {
       first_name:        ->(value) { match(:first_name, value) },
@@ -282,8 +284,19 @@ class User < ApplicationRecord
     end
 
     confirmable = find_or_initialize_with_error_by(:confirmation_token, confirmation_token)
-    confirmable.errors.add(:email, :already_confirmed) if confirmable.confirmed?
+    confirmable.validate_pending_confirmation
     confirmable
+  end
+
+  def validate_pending_confirmation
+    errors.add(:email, :already_confirmed) if confirmed?
+
+    if confirmation_period_expired?
+      errors.add(:email, :confirmation_period_expired,
+        period: Devise::TimeInflector.time_ago_in_words(self.class.confirm_within.ago))
+    end
+
+    errors.empty?
   end
 
   # Counters cached

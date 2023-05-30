@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class DepartementsController < ApplicationController
+  before_action :authorize!
+
   def index
     @departements = Departement.strict_loading
     @departements, @pagy = index_collection(@departements)

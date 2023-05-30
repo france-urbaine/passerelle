@@ -18,19 +18,22 @@ RSpec.describe "PublishersController#create" do
     }
   end
 
-  it_behaves_like "it requires authorization in HTML"
-  it_behaves_like "it requires authorization in JSON"
-  it_behaves_like "it doesn't accept JSON when signed in"
-  it_behaves_like "it allows access to publisher user"
-  it_behaves_like "it allows access to publisher admin"
-  it_behaves_like "it allows access to DDFIP user"
-  it_behaves_like "it allows access to DDFIP admin"
-  it_behaves_like "it allows access to colletivity user"
-  it_behaves_like "it allows access to colletivity admin"
-  it_behaves_like "it allows access to super admin"
+  describe "authorizations" do
+    it_behaves_like "it requires authorization in HTML"
+    it_behaves_like "it requires authorization in JSON"
+    it_behaves_like "it responds with not acceptable in JSON when signed in"
 
-  context "when signed in" do
-    before { sign_in_as(:publisher, :organization_admin) }
+    it_behaves_like "it denies access to publisher user"
+    it_behaves_like "it denies access to publisher admin"
+    it_behaves_like "it denies access to DDFIP user"
+    it_behaves_like "it denies access to DDFIP admin"
+    it_behaves_like "it denies access to colletivity user"
+    it_behaves_like "it denies access to colletivity admin"
+    it_behaves_like "it allows access to super admin"
+  end
+
+  describe "responses" do
+    before { sign_in_as(:super_admin) }
 
     context "with valid attributes" do
       it { expect(response).to have_http_status(:see_other) }
@@ -60,14 +63,14 @@ RSpec.describe "PublishersController#create" do
       it { expect(response).to have_http_status(:unprocessable_entity) }
       it { expect(response).to have_content_type(:html) }
       it { expect(response).to have_html_body }
-      it { expect { request }.not_to change(Publisher, :count).from(1) }
+      it { expect { request }.not_to change(Publisher, :count) }
     end
 
     context "with empty parameters", params: {} do
       it { expect(response).to have_http_status(:unprocessable_entity) }
       it { expect(response).to have_content_type(:html) }
       it { expect(response).to have_html_body }
-      it { expect { request }.not_to change(Publisher, :count).from(1) }
+      it { expect { request }.not_to change(Publisher, :count) }
     end
 
     context "with referrer header", headers: { "Referer" => "http://example.com/other/path" } do

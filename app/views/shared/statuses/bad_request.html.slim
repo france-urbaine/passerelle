@@ -1,5 +1,6 @@
 = template_frame_component do
-  = breadcrumbs_component
+  - if signed_in?
+    = breadcrumbs_component
 
   .card
     .card__content.card__content--status

@@ -57,7 +57,8 @@ RSpec.describe "Publisher users" do
     # A dialog box should appear with a form to fill
     #
     within "[role=dialog]", text: "Invitation d'un nouvel utilisateur" do |dialog|
-      expect(dialog).to have_field("Organisation", with: "Fiscalité & Territoire")
+      expect(dialog).not_to have_field("Organisation")
+
       expect(dialog).to have_field("Prénom")
       expect(dialog).to have_field("Nom")
       expect(dialog).to have_field("Adresse mail")

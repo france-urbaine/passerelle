@@ -28,7 +28,9 @@ export default class extends Controller {
 
     const checkboxes   = this.checkboxTargets
     const checkedboxes = this.checkboxTargets.filter(checkbox => checkbox.checked)
+    const disabledboxes = this.checkboxTargets.filter(checkbox => checkbox.disabled)
 
+    this.checkallTarget.disabled      = disabledboxes.length == checkboxes.length
     this.checkallTarget.checked       = checkedboxes.length > 0
     this.checkallTarget.indeterminate = checkedboxes.length > 0 && checkedboxes.length < checkboxes.length
   }

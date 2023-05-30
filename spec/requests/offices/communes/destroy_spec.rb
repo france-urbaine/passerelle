@@ -15,38 +15,42 @@ RSpec.describe "Offices::CommunesController#destroy" do
   let!(:office)  { create(:office, ddfip: ddfip, communes: [commune]) }
   let!(:commune) { create(:commune, departement: ddfip.departement) }
 
-  it_behaves_like "it requires authorization in HTML"
-  it_behaves_like "it requires authorization in JSON"
-  it_behaves_like "it doesn't accept JSON when signed in"
-  it_behaves_like "it allows access to publisher user"
-  it_behaves_like "it allows access to publisher admin"
-  it_behaves_like "it allows access to DDFIP user"
-  it_behaves_like "it allows access to DDFIP admin"
-  it_behaves_like "it allows access to colletivity user"
-  it_behaves_like "it allows access to colletivity admin"
-  it_behaves_like "it allows access to super admin"
+  describe "authorizations" do
+    it_behaves_like "it requires authorization in HTML"
+    it_behaves_like "it requires authorization in JSON"
+    it_behaves_like "it responds with not acceptable in JSON when signed in"
 
-  context "when signed in" do
-    before { sign_in_as(:publisher, :organization_admin) }
+    it_behaves_like "it denies access to DDFIP user"
+    it_behaves_like "it denies access to DDFIP admin"
+    it_behaves_like "it denies access to publisher user"
+    it_behaves_like "it denies access to publisher admin"
+    it_behaves_like "it denies access to colletivity user"
+    it_behaves_like "it denies access to colletivity admin"
+    it_behaves_like "it allows access to super admin"
+
+    context "when the office is owned by the current user's DDFIP organization" do
+      let(:ddfip) { current_user.organization }
+
+      it_behaves_like "it denies access to DDFIP user"
+      it_behaves_like "it allows access to DDFIP admin"
+    end
+  end
+
+  describe "responses" do
+    before { sign_in_as(:super_admin) }
 
     context "when the commune is accessible" do
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/guichets/#{office.id}") }
 
       it "removes the communes from the office" do
-        expect {
-          request
-          office.communes.reload
-        }.to change { office.communes.ids }
-          .from([commune.id])
-          .to([])
+        expect { request and office.communes.reload }
+          .to change { office.communes.ids }.from([commune.id]).to([])
       end
 
       it "doesn't destroy the commune" do
-        expect {
-          request
-          commune.reload
-        }.not_to change(commune, :persisted?)
+        expect { request and commune.reload }
+          .not_to change(commune, :persisted?)
       end
 
       it "sets a flash notice" do
@@ -65,9 +69,9 @@ RSpec.describe "Offices::CommunesController#destroy" do
     context "when the commune doesn't belong to office" do
       before { office.communes = [] }
 
-      it { expect(response).to have_http_status(:not_found) }
-      it { expect(response).to have_content_type(:html) }
-      it { expect(response).to have_html_body }
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/guichets/#{office.id}") }
+      it { expect { request and office.communes.reload }.not_to change { office.communes.ids } }
     end
 
     context "when the office is discarded" do

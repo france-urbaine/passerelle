@@ -26,7 +26,8 @@ RSpec.describe "Users::TwoFactorSettingsController#update" do
 
   it_behaves_like "it requires authorization in HTML"
   it_behaves_like "it requires authorization in JSON"
-  it_behaves_like "it doesn't accept JSON when signed in"
+  it_behaves_like "it responds with not acceptable in JSON when signed in"
+
   it_behaves_like "it allows access to publisher user"
   it_behaves_like "it allows access to publisher admin"
   it_behaves_like "it allows access to DDFIP user"
@@ -43,10 +44,8 @@ RSpec.describe "Users::TwoFactorSettingsController#update" do
       it { expect(response).to redirect_to("/compte/parametres") }
 
       it "updates the curent user OTP secret" do
-        expect {
-          request
-          current_user.reload
-        }.to change(current_user, :updated_at)
+        expect { request and current_user.reload }
+          .to  change(current_user, :updated_at)
           .and change(current_user, :otp_secret)
       end
 
@@ -79,10 +78,8 @@ RSpec.describe "Users::TwoFactorSettingsController#update" do
       it { expect(response).to redirect_to("/compte/parametres") }
 
       it "updates the curent user OTP secret" do
-        expect {
-          request
-          current_user.reload
-        }.to change(current_user, :updated_at)
+        expect { request and current_user.reload }
+          .to  change(current_user, :updated_at)
           .and change(current_user, :otp_secret)
           .and change(current_user, :otp_method).to("email")
       end
@@ -133,10 +130,8 @@ RSpec.describe "Users::TwoFactorSettingsController#update" do
       it { expect(response).to have_html_body }
 
       it "updates 2FA settings but ignore OTP method" do
-        expect {
-          request
-          current_user.reload
-        }.to change(current_user, :updated_at)
+        expect { request and current_user.reload }
+          .to  change(current_user, :updated_at)
           .and change(current_user, :otp_secret)
           .and not_change(current_user, :otp_method).from("2fa")
       end

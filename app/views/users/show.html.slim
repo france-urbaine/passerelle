@@ -1,7 +1,7 @@
 = template_frame_component do
   = breadcrumbs_component do |breadcrumbs|
     - breadcrumbs.with_path "Organisations"
-    - breadcrumbs.with_path "Utilisateurs", users_path(retrieve_index_back_params)
+    - breadcrumbs.with_path "Utilisateurs", users_path
     - breadcrumbs.with_path @user.name
 
     - breadcrumbs.with_action "Modifier", edit_user_path(@user), icon: "pencil-square", modal: true
@@ -17,7 +17,7 @@
         dt Organisation
         dd
           - if @user.organization&.kept?
-            = link_to polymorphic_path(@user.organization), data: { turbo_frame: "_top" } do
+            = authorized_link_to @user.organization do
               = @user.organization.name
 
           - elsif @user.organization&.discarded?
@@ -30,7 +30,7 @@
           dd
             - offices = @user.offices.kept.where(ddfip: @user.organization)
             - offices.each.with_index do |office, index|
-              = link_to office_path(office), data: { turbo_frame: "_top" } do
+              = authorized_link_to office do
                 = office.name
 
               - if offices[index + 2]
@@ -59,7 +59,7 @@
         dd= svg_icon("check-badge", "Administrateur", class: "h-6 w-6") if @user.super_admin?
 
   h2.subheader
-    = svg_icon("rectangle-stack", "Nouvelle section")
+    = svg_icon("server-stack", "Nouvelle section")
     | Informations de connexion
 
   .card.mb-12

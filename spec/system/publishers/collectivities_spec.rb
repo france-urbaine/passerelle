@@ -57,8 +57,9 @@ RSpec.describe "Publisher collectivities" do
     # A dialog box should appear with a form to fill
     #
     within "[role=dialog]", text: "Création d'une nouvelle collectivité" do |dialog|
+      expect(dialog).not_to have_select("Éditeur")
+
       expect(dialog).to have_field("Territoire")
-      expect(dialog).to have_select("Éditeur", selected: "Fiscalité & Territoire")
       expect(dialog).to have_field("Nom de la collectivité")
       expect(dialog).to have_field("Numéro SIREN de la collectivité")
       expect(dialog).to have_field("Prénom du contact")

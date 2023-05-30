@@ -2,8 +2,9 @@
 
 module Users
   class RegistrationTwoFactorsController < ApplicationController
+    prepend_before_action :sign_out
     skip_before_action :authenticate_user!
-    before_action :sign_out
+
     before_action do
       @user = User.find_by_invitation_token(params[:token])
       redirect_to new_user_session_path, notice: t("users.registrations.token_expired") if @user.errors.any?
@@ -24,6 +25,8 @@ module Users
     end
 
     def create
+      return redirect_to action: :edit unless @user.organization&.allow_2fa_via_email?
+
       otp_method = params
         .fetch(:user, {})
         .permit(:otp_method)

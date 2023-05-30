@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class RegionsController < ApplicationController
+  before_action :authorize!
+
   def index
     @regions = Region.strict_loading
     @regions, @pagy = index_collection(@regions)

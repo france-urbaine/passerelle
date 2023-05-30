@@ -1,9 +1,12 @@
 # frozen_string_literal: true
 
 class UsersController < ApplicationController
-  before_action :scope_users
-  before_action :build_user, only: %i[new create]
-  before_action :find_user,  only: %i[show edit remove update destroy undiscard]
+  before_action :authorize!
+  before_action :build_users_scope
+  before_action :authorize_users_scope
+  before_action :build_user,     only: %i[new create]
+  before_action :find_user,      only: %i[show edit remove update destroy undiscard]
+  before_action :authorize_user, only: %i[show edit remove update destroy undiscard]
 
   def index
     return not_implemented if autocomplete_request?
@@ -100,12 +103,12 @@ class UsersController < ApplicationController
 
   private
 
-  def parent_path
-    url_for(@parent) if @parent
+  def build_users_scope
+    @users = User.all
   end
 
-  def scope_users
-    @users = User.all
+  def authorize_users_scope
+    @users = authorized(@users)
   end
 
   def build_user
@@ -113,18 +116,19 @@ class UsersController < ApplicationController
   end
 
   def find_user
-    @user = @users.find(params[:id])
+    @user = User.find(params[:id])
+  end
+
+  def authorize_user
+    authorize! @user
   end
 
   def user_params
-    params
-      .fetch(:user, {})
+    authorized(params.fetch(:user, {}))
       .then { |input| UserParamsParser.new(input, @parent).parse }
-      .permit(
-        :organization_type, :organization_id,
-        :first_name, :last_name, :email,
-        :organization_admin, :super_admin,
-        office_ids: []
-      )
+  end
+
+  def parent_path
+    url_for(@parent) if @parent
   end
 end

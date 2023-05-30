@@ -1,9 +1,12 @@
 # frozen_string_literal: true
 
 class CollectivitiesController < ApplicationController
-  before_action :scope_collectivities
-  before_action :build_collectivity, only: %i[new create]
-  before_action :find_collectivity,  only: %i[show edit remove update destroy undiscard]
+  before_action :authorize!
+  before_action :build_collectivities_scope
+  before_action :authorize_collectivities_scope
+  before_action :build_collectivity,     only: %i[new create]
+  before_action :find_collectivity,      only: %i[show edit remove update destroy undiscard]
+  before_action :authorize_collectivity, only: %i[show edit remove update destroy undiscard]
 
   def index
     return not_implemented if autocomplete_request?
@@ -98,12 +101,12 @@ class CollectivitiesController < ApplicationController
 
   private
 
-  def parent_path
-    url_for(@parent) if @parent
+  def build_collectivities_scope
+    @collectivities = Collectivity.all
   end
 
-  def scope_collectivities
-    @collectivities = Collectivity.all
+  def authorize_collectivities_scope
+    @collectivities = authorized(@collectivities)
   end
 
   def build_collectivity
@@ -111,16 +114,19 @@ class CollectivitiesController < ApplicationController
   end
 
   def find_collectivity
-    @collectivity = @collectivities.find(params[:id])
+    @collectivity = Collectivity.find(params[:id])
+  end
+
+  def authorize_collectivity
+    authorize! @collectivity
   end
 
   def collectivity_params
-    params
-      .fetch(:collectivity, {})
-      .then { |input| CollectivityParamsParser.new(input).parse }
-      .permit(
-        :territory_type, :territory_id, :publisher_id, :name, :siren,
-        :contact_first_name, :contact_last_name, :contact_email, :contact_phone
-      )
+    authorized(params.fetch(:collectivity, {}))
+      .then { |input| CollectivityParamsParser.new(input, @parent).parse }
+  end
+
+  def parent_path
+    url_for(@parent) if @parent
   end
 end

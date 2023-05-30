@@ -4,8 +4,11 @@
     - breadcrumbs.with_path "Collectivités", collectivities_path
     - breadcrumbs.with_path @collectivity.name
 
-    - breadcrumbs.with_action "Modifier", edit_collectivity_path(@collectivity), icon: "pencil-square", modal: true
-    - breadcrumbs.with_action "Supprimer", remove_collectivity_path(@collectivity), icon: "trash", modal: true, destructive: "discrete"
+    - if allowed_to?(:update?, @collectivity)
+      - breadcrumbs.with_action "Modifier", edit_collectivity_path(@collectivity), icon: "pencil-square", modal: true
+
+    - if allowed_to?(:destroy?, @collectivity)
+      - breadcrumbs.with_action "Supprimer", remove_collectivity_path(@collectivity), icon: "trash", modal: true, destructive: "discrete"
 
   h2.subheader
     = svg_icon("identification", "Nouvelle section")
@@ -16,14 +19,14 @@
       .description-list__row
         dt Éditeur
         dd
-          = link_to publisher_path(@collectivity.publisher), data: { turbo_frame: "_top" } do
+          = authorized_link_to @collectivity.publisher do
             = @collectivity.publisher.name
 
       .description-list__row
         dt Territoire
         dd
           - if @collectivity.territory
-            = link_to polymorphic_path(@collectivity.territory), data: { turbo_frame: "_top" } do
+            = authorized_link_to @collectivity.territory do
               = @collectivity.territory.qualified_name
 
       .description-list__row
@@ -42,34 +45,37 @@
         dt Numéro de téléphone
         dd= phone_to(@collectivity.contact_phone) if @collectivity.contact_phone?
 
-  .content__separator
+  - if allowed_to?(:index?, User, with: Collectivities::UserPolicy)
+    .content__separator
 
-  .subheader-bar
+    .subheader-bar
+      h2.subheader
+        = svg_icon("rectangle-stack", "Nouvelle section")
+        | Utilisateurs
+
+      .subheader-bar__actions
+        - if allowed_to?(:create?, User, with: Collectivities::UserPolicy)
+          .subheader-bar__action
+            = button_component "Inviter un utilisateur", new_collectivity_user_path(@collectivity), icon: "plus", modal: true
+
+    - if @collectivity.users_count.zero?
+      .card
+        .card__content.card__content--empty Aucun utilisateur assigné.
+
+    - else
+      = turbo_frame_tag "datatable-users", src: collectivity_users_path(@collectivity) do
+        = datatable_skeleton_component(rows: [@collectivity.users_count, 5].min) do |skeleton|
+          - skeleton.with_search
+          - skeleton.with_pagination
+
+  - if allowed_to?(:index?, Office, with: Collectivities::OfficePolicy)
+    .content__separator
+
     h2.subheader
       = svg_icon("rectangle-stack", "Nouvelle section")
-      | Utilisateurs
+      | Guichets correspondants
 
-    .subheader-bar__actions
-      .subheader-bar__action
-        = button_component "Inviter un utilisateur", new_collectivity_user_path(@collectivity), icon: "plus", modal: true
-
-  - if @collectivity.users_count.zero?
-    .card
-      .card__content.card__content--empty Aucun utilisateur assigné.
-
-  - else
-    = turbo_frame_tag "datatable-users", src: collectivity_users_path(@collectivity) do
-      = datatable_skeleton_component(rows: [@collectivity.users_count, 5].min) do |skeleton|
+    = turbo_frame_tag "datatable-offices", src: collectivity_offices_path(@collectivity) do
+      = datatable_skeleton_component(rows: 0) do |skeleton|
         - skeleton.with_search
         - skeleton.with_pagination
-
-  .content__separator
-
-  h2.subheader
-    = svg_icon("rectangle-stack", "Nouvelle section")
-    | Guichets correspondants
-
-  = turbo_frame_tag "datatable-offices", src: collectivity_offices_path(@collectivity) do
-    = datatable_skeleton_component(rows: 0) do |skeleton|
-      - skeleton.with_search
-      - skeleton.with_pagination

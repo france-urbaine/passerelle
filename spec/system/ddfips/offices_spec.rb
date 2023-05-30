@@ -57,7 +57,8 @@ RSpec.describe "DDFIP offices" do
     # A dialog box should appear with a form to fill
     #
     within "[role=dialog]", text: "Création d'un nouveau guichet" do |dialog|
-      expect(dialog).to have_field("DDFIP",          with: "DDFIP des Pyrénées-Atlantiques")
+      expect(dialog).not_to have_field("DDFIP")
+
       expect(dialog).to have_field("Nom du guichet", with: nil)
       expect(dialog).to have_select("Action",        selected: "Veuillez sélectionner")
 

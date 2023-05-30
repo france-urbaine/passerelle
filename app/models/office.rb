@@ -43,7 +43,7 @@ class Office < ApplicationRecord
   ACTIONS = %w[evaluation_hab evaluation_eco occupation_hab occupation_eco].freeze
 
   validates :name,   presence: true
-  validates :action, presence: true, inclusion: { in: ACTIONS }
+  validates :action, presence: true, inclusion: { in: ACTIONS, allow_blank: true }
 
   validates :name, uniqueness: {
     case_sensitive: false,
@@ -54,6 +54,8 @@ class Office < ApplicationRecord
 
   # Scopes
   # ----------------------------------------------------------------------------
+  scope :owned_by, ->(ddfip) { where(ddfip: ddfip) }
+
   scope :search, lambda { |input|
     advanced_search(
       input,
