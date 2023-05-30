@@ -14,6 +14,11 @@ def log(message)
   puts "#{LOG_PREFIX} #{message}"
 end
 
+def gets
+  print "#{LOG_PREFIX} > "
+  $stdin.gets.strip
+end
+
 # Import EPCIs and communes from a remote source
 # ----------------------------------------------------------------------------
 if ENV["SEED_ALL_EPCIS_AND_COMMUNES"] == "true"
@@ -25,14 +30,14 @@ end
 # ----------------------------------------------------------------------------
 if ENV["SEED_INTERACTIVE_USER"] == "true"
   log "Please enter your email:"
-  email = $stdin.gets.strip
+  email = gets
 
   log "Please enter your first name (or press enter to generate a random value):"
-  first_name = $stdin.gets.strip
+  first_name = gets
   first_name = Faker::Name.first_name if first_name.blank?
 
   log "Please enter your last name (or press enter to generate a random value):"
-  last_name = $stdin.gets.strip
+  last_name = gets
   last_name = Faker::Name.last_name if last_name.blank?
 
   user = Publisher
@@ -310,31 +315,29 @@ OfficeCommune.insert_all(
 )
 
 log ""
-log "All seeds are ready"
+log "All seeds are ready."
 log ""
-
-log "---------------------------------------------------------------------------------"
-log ""
-log "For performances reasons, only few communes and EPCIs are created."
-log "To import all EPCIs and communes from a remote source, use the following command:"
-log ""
-
-if ENV["SETUP_SEED"] == "true"
-  log "  bin/setup territories"
-else
-  log "  SEED_ALL_EPCIS_AND_COMMUNES=true rails db:seed"
-end
-
-log ""
-log "You can also create your own user to access the development server with the"
-log "following command:"
+log "-------------------------------------------------------------------------------------"
+log "  For performances reasons, only few communes and EPCIs are created."
+log "  To import all EPCIs and communes from a remote source, use the following command:"
 log ""
 
 if ENV["SETUP_SEED"] == "true"
-  log "  bin/setup user"
+  log "    bin/setup territories"
 else
-  log "  SEED_INTERACTIVE_USER=true rails db:seed"
+  log "    SEED_ALL_EPCIS_AND_COMMUNES=true rails db:seed"
 end
 
 log ""
-log "---------------------------------------------------------------------------------"
+log "  You can also create your own user to access the development server with the"
+log "  following command:"
+log ""
+
+if ENV["SETUP_SEED"] == "true"
+  log "    bin/setup user"
+else
+  log "    SEED_INTERACTIVE_USER=true rails db:seed"
+end
+
+log "-------------------------------------------------------------------------------------"
+log ""

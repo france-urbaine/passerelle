@@ -10,6 +10,19 @@ def log(message)
   puts "#{LOG_PREFIX} #{message}"
 end
 
+def gets(secret: false)
+  print "#{LOG_PREFIX} "
+
+  if secret
+    require "io/console"
+    result = $stdin.noecho(&:gets).strip
+    puts
+    result
+  else
+    $stdin.gets.strip
+  end
+end
+
 # We don't want the setup method to have to do all this error checking,
 # and we also want to explicitly log what we are executing.
 # Thus, we use this method instead of Kernel#system
@@ -55,9 +68,35 @@ def setup
 
   log ""
   log "All set up."
-  log ""
   log "Now you're ready to start with these useful commands:"
   useful_commands
+end
+
+def setup_master_key
+  log "Please enter the master key:"
+  master_key = gets(secret: true)
+
+  raise "Invalid key" if master_key.length == 0
+
+  path = File.expand_path("../config/master.key", __dir__)
+  File.open(path, "w") do |f|
+    f.puts master_key
+  end
+
+  log "Key saved at config/master.key"
+end
+
+def setup_user
+  log "You are about to create a new user."
+  log ""
+  system!({ "SEED_INTERACTIVE_USER" => "true" }, "bin/rails db:seed")
+end
+
+def setup_territories
+  log "You are about to import EPCIs and communes from a remote source."
+  log "This could take a while."
+  log ""
+  system!({ "SEED_ALL_EPCIS_AND_COMMUNES" => "true" }, "bin/rails db:seed")
 end
 
 def setup_mailcatcher
@@ -79,19 +118,6 @@ def setup_mailcatcher
   log " . https://github.com/eventmachine/eventmachine/issues/936"
   log " . https://github.com/sj26/mailcatcher#rvm"
   log " . https://github.com/sj26/mailcatcher#ruby"
-end
-
-def setup_user
-  log "You are about to create a new user."
-  log ""
-  system!({ "SEED_INTERACTIVE_USER" => "true" }, "bin/rails db:seed")
-end
-
-def setup_territories
-  log "You are about to import EPCIs and communes from a remote source."
-  log "This could take a while."
-  log ""
-  system!({ "SEED_ALL_EPCIS_AND_COMMUNES" => "true" }, "bin/rails db:seed")
 end
 
 def help
@@ -122,16 +148,38 @@ def useful_commands
   log "  bin/setup help"
   log "     # Show this help"
   log ""
+  verify_master_key_file
+end
+
+def verify_master_key_file
+  path = File.expand_path("../config/master.key", __dir__)
+  return if File.exist?(path)
+
+  log "---------------------------------------------------------------------------------"
+  log "  It seems that the Rails master key is not configured."
+  log "  If you have already set it up via another way, you could ignore this message."
+  log ""
+  log "  Otherwise, you first need to find the key shared in a Dashlane card:"
+  log ""
+  log "    \"Applications Master Keys\""
+  log ""
+  log "  Then, you could use the following command to save the key:"
+  log ""
+  log "    bin/setup master_key"
+  log "---------------------------------------------------------------------------------"
+  log ""
 end
 
 if ARGV[0].nil?
   setup
-elsif ARGV[0] == "mailcatcher"
-  setup_mailcatcher
+elsif ARGV[0] == "master_key"
+  setup_master_key
 elsif ARGV[0] == "user"
   setup_user
 elsif ARGV[0] == "territories"
   setup_territories
+elsif ARGV[0] == "mailcatcher"
+  setup_mailcatcher
 else
   help
 end
