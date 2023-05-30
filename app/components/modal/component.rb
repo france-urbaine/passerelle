@@ -74,13 +74,13 @@ module Modal
     end
 
     class SubmitAction < ::Button::Component
-      def initialize(*, **)
-        super(*, **, primary: true, type: "submit")
+      def initialize(*args, **options)
+        super(*args, **options, primary: true, type: "submit")
       end
     end
 
     class CloseAction < ::Button::Component
-      def initialize(*, **options)
+      def initialize(*args, **options)
         options[:class] ||= ""
         options[:class] += " modal__close-action"
 
@@ -88,7 +88,7 @@ module Modal
         options[:data][:turbo_frame] ||= "content"
         options[:data][:action]      ||= "click->modal#close"
 
-        super(*, **options)
+        super(*args, **options)
       end
     end
 
@@ -96,11 +96,11 @@ module Modal
     end
 
     class OtherAction < ::Button::Component
-      def initialize(*, **options)
+      def initialize(*args, **options)
         options[:class] ||= ""
         options[:class] += " modal__secondary-action"
 
-        super(*, **options)
+        super(*args, **options)
       end
     end
   end
