@@ -39,9 +39,20 @@ Rails.application.configure do
   # Specifies the header that your server uses for sending files.
   # config.action_dispatch.x_sendfile_header = "X-Sendfile" # for Apache
   # config.action_dispatch.x_sendfile_header = "X-Accel-Redirect" # for NGINX
+  config.action_dispatch.x_sendfile_header = ENV["RAILS_X_SENDFILE"] if ENV["RAILS_X_SENDFILE"]
+
+  if ENV["CC_INTERNAL_LOCATION"]
+    internal, external = ENV["CC_INTERNAL_LOCATION"].split(":")
+    internal = Rails.root.join(internal.gsub(%r{^/}, ""))
+
+    x_sendfile_header  = ENV.fetch("RAILS_X_SENDFILE")
+    x_sendfile_mapping = [[internal, external]]
+
+    config.middleware.swap Rack::Sendfile, Rack::Sendfile, x_sendfile_header, x_sendfile_mapping
+  end
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
-  config.active_storage.service = :local
+  config.active_storage.service = :cellar
 
   # Mount Action Cable outside main process or domain.
   # config.action_cable.mount_path = nil
@@ -49,14 +60,14 @@ Rails.application.configure do
   # config.action_cable.allowed_request_origins = [ "http://example.com", /http:\/\/example.*/ ]
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  # config.force_ssl = true
+  config.force_ssl = ENV["RAILS_FORCE_SSL"].present?
 
   # Include generic and useful information about system operation, but avoid logging too much
   # information to avoid inadvertent exposure of personally identifiable information (PII).
-  config.log_level = :info
+  config.log_level = ENV["RAILS_LOGGER_LEVEL"]&.to_sym || :info
 
   # Prepend all log lines with the following tags.
-  config.log_tags = [:request_id]
+  config.log_tags = %i[request_id domain remote_ip]
 
   # Use a different cache store in production.
   # config.cache_store = :mem_cache_store
@@ -99,4 +110,11 @@ Rails.application.configure do
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
+
+  # Add trusted IP from reverse proxy
+  # See https://api.rubyonrails.org/classes/ActionDispatch/RemoteIp/GetIp.html#method-i-calculate_ip
+  #
+  if ENV["CC_REVERSE_PROXY_IPS"].present?
+    config.action_dispatch.trusted_proxies = ENV["CC_REVERSE_PROXY_IPS"].split(",").map { |proxy| IPAddr.new(proxy) }
+  end
 end
