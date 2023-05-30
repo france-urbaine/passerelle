@@ -36,11 +36,11 @@ fr:
 
     registrations:
       token_expired:
-          type:   "error"
-          title:  "Cette invitation est déjà complétée, a expirée ou n'a pas été trouvée."
+        type:   "error"
+        title:  "Cette invitation est déjà complétée, a expirée ou n'a pas été trouvée."
 
     registration_passwords:
-      update:
+      create:
         success:
           type:   "success"
           title:  "Votre mot de passe a été enregistré."
