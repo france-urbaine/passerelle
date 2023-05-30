@@ -23,7 +23,12 @@ default_env = "test" if ENV["RAILS_ENV"] == "test"
 
 env = ENV.fetch("DOTENV", default_env)
 
-puts "Loading #{env} environment variables"
+def log(message)
+  return if ENV["DOTENV_QUIET"]
+  puts "\e[34m[ config/dotenv ]\e[0m #{message}"
+end
+
+log "Loading #{env} environment variables"
 
 [
   ".env.local",
@@ -32,7 +37,7 @@ puts "Loading #{env} environment variables"
 ].each do |path|
   path = Pathname.pwd.join(path)
   if path.exist?
-    puts " - load #{path}"
+    log " - load #{path}"
     Dotenv.load(path)
   end
 end

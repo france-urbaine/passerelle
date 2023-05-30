@@ -14,6 +14,7 @@ end
 # and we also want to explicitly log what we are executing.
 # Thus, we use this method instead of Kernel#system
 def system!(*args)
+  ENV["DOTENV_QUIET"] = "true"
   return if system(*args)
 
   args_output = "\e[33m#{args}\e[0m"
@@ -38,7 +39,7 @@ def setup
   system! "yarn"
 
   log "Dropping & recreating the development & test databases"
-  system! "bin/rails db:reset"
+  system!({"SETUP_SEED" => "true" }, "bin/rails db:reset")
 
   log "Setup test environment for parallel testing"
   system! "bin/rails parallel:prepare"
@@ -80,12 +81,34 @@ def setup_mailcatcher
   log " . https://github.com/sj26/mailcatcher#ruby"
 end
 
+def setup_user
+  log "You are about to create a new user."
+  log ""
+  system!({ "SEED_INTERACTIVE_USER" => "true" }, "bin/rails db:seed")
+end
+
+def setup_territories
+  log "You are about to import EPCIs and communes from a remote source."
+  log "This could take a while."
+  log ""
+  system!({ "SEED_ALL_EPCIS_AND_COMMUNES" => "true" }, "bin/rails db:seed")
+end
+
 def help
   log "Useful commands:"
   useful_commands
 end
 
 def useful_commands
+  log ""
+  log "  bin/setup user"
+  log "     # Create an user to access the development server"
+  log ""
+  log "  bin/setup territories"
+  log "     # Import all EPCIs and communes from a remote source"
+  log ""
+  log "  bin/setup mailcatcher"
+  log "     # Install mailcatcher"
   log ""
   log "  bin/dev"
   log "     # Run the app locally"
@@ -96,9 +119,6 @@ def useful_commands
   log "  bin/ci help"
   log "     # Show more options about how to run tests and CI"
   log ""
-  log "  bin/setup mailcatcher"
-  log "     # Install mailcatcher"
-  log ""
   log "  bin/setup help"
   log "     # Show this help"
   log ""
@@ -108,6 +128,10 @@ if ARGV[0].nil?
   setup
 elsif ARGV[0] == "mailcatcher"
   setup_mailcatcher
+elsif ARGV[0] == "user"
+  setup_user
+elsif ARGV[0] == "territories"
+  setup_territories
 else
   help
 end

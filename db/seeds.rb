@@ -8,20 +8,69 @@
 #   movies = Movie.create([{ name: "Star Wars" }, { name: "Lord of the Rings" }])
 #   Character.create(name: "Luke", movie: movies.first)
 
-require "csv"
-
 LOG_PREFIX = "\e[34m[ db/seed ]\e[0m"
 
 def log(message)
   puts "#{LOG_PREFIX} #{message}"
 end
 
+# Import EPCIs and communes from a remote source
+# ----------------------------------------------------------------------------
+if ENV["SEED_ALL_EPCIS_AND_COMMUNES"] == "true"
+  TerritoriesUpdate.new.assign_default_urls.perform_now
+  exit
+end
+
+# Seed one user through interactive command
+# ----------------------------------------------------------------------------
+if ENV["SEED_INTERACTIVE_USER"] == "true"
+  log "Please enter your email:"
+  email = $stdin.gets.strip
+
+  log "Please enter your first name (or press enter to generate a random value):"
+  first_name = $stdin.gets.strip
+  first_name = Faker::Name.first_name if first_name.blank?
+
+  log "Please enter your last name (or press enter to generate a random value):"
+  last_name = $stdin.gets.strip
+  last_name = Faker::Name.last_name if last_name.blank?
+
+  user = Publisher
+    .create_or_find_by(siren: "511022394", name: "Fiscalité & Territoire", &:skip_uniqueness_validation!)
+    .users.create!(
+      email:              email,
+      first_name:         first_name,
+      last_name:          last_name,
+      organization_admin: true,
+      super_admin:        true,
+      password:           Devise.friendly_token
+    )
+
+  log ""
+  log "Your user has been created !"
+
+  url = Rails.application.routes.url_helpers.user_registration_url(
+    host:  "http://localhost:3000",
+    token: user.confirmation_token
+  )
+
+  log ""
+  log "Start a server with `bin/dev` command"
+  log "Then, click on the link below to complete your registration:"
+  log "  #{url}"
+  log ""
+  exit
+end
+
+# CSV parser
+# ----------------------------------------------------------------------------
 def parse_csv(path)
+  require "csv"
   path = Rails.root.join(path)
   CSV.open(path, "r", headers: true, col_sep: ";").map(&:to_h)
 end
 
-# Import regions
+# Import territories
 # ----------------------------------------------------------------------------
 log "Seed regions"
 
@@ -30,8 +79,6 @@ Region.upsert_all(
   unique_by: %i[code_region]
 )
 
-# Import departements
-# ----------------------------------------------------------------------------
 log "Seed departements"
 
 Departement.upsert_all(
@@ -39,30 +86,19 @@ Departement.upsert_all(
   unique_by: %i[code_departement]
 )
 
-# Import EPCI & communes
-# ----------------------------------------------------------------------------
-log "Seed EPCI & communes"
+log "Seed EPCIs"
 
-if ENV["SEED_ALL_EPCIS_AND_COMMUNES"] == "true"
-  TerritoriesUpdate.new.assign_default_urls.perform_now
-else
-  log "-------------------------------------------------------"
-  log "For performances reasons, only few records are created."
-  log "To import all EPCI and communes from a remote source,"
-  log "use the following command:"
-  log "  SEED_ALL_EPCIS_AND_COMMUNES=true rails db:seed"
-  log "-------------------------------------------------------"
+EPCI.upsert_all(
+  parse_csv("db/epcis.csv"),
+  unique_by: %i[siren]
+)
 
-  EPCI.upsert_all(
-    parse_csv("db/epcis.csv"),
-    unique_by: %i[siren]
-  )
+log "Seed communes"
 
-  Commune.upsert_all(
-    parse_csv("db/communes.csv"),
-    unique_by: %i[code_insee]
-  )
-end
+Commune.upsert_all(
+  parse_csv("db/communes.csv"),
+  unique_by: %i[code_insee]
+)
 
 # Import ddfips
 # ----------------------------------------------------------------------------
@@ -272,3 +308,33 @@ OfficeCommune.insert_all(
     { office: "SIP de Toulouse Rangueil",                    epci: "Toulouse Métropole" }
   ])
 )
+
+log ""
+log "All seeds are ready"
+log ""
+
+log "---------------------------------------------------------------------------------"
+log ""
+log "For performances reasons, only few communes and EPCIs are created."
+log "To import all EPCIs and communes from a remote source, use the following command:"
+log ""
+
+if ENV["SETUP_SEED"] == "true"
+  log "  bin/setup territories"
+else
+  log "  SEED_ALL_EPCIS_AND_COMMUNES=true rails db:seed"
+end
+
+log ""
+log "You can also create your own user to access the development server with the"
+log "following command:"
+log ""
+
+if ENV["SETUP_SEED"] == "true"
+  log "  bin/setup user"
+else
+  log "  SEED_INTERACTIVE_USER=true rails db:seed"
+end
+
+log ""
+log "---------------------------------------------------------------------------------"
