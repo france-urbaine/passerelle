@@ -1,24 +1,25 @@
-- modal.with_form(model: office) do
+- modal.with_form(model: office, url: url_for([parent, office])) do
   = hidden_field_tag :redirect, modal.redirection_path
 
   = fields(model: office) do |form|
-    = form.block :ddfip, autocomplete: ddfips_path do
-      ruby:
-        # Do not add required attribute to make this form submittable in noscript mode
-        html_options = {
-          value:        office.ddfip&.name,
-          placeholder:  "Commnencez à taper pour sélectionner des DDFIPs",
-          data:         { autocomplete_target: "input" }
-        }
+    - if allowed_to?(:assign_ddfip?, office)
+      = form.block :ddfip, autocomplete: ddfips_path do
+        ruby:
+          # Do not add required attribute to make this form submittable in noscript mode
+          html_options = {
+            value:        office.ddfip&.name,
+            placeholder:  "Commnencez à taper pour sélectionner des DDFIPs",
+            data:         { autocomplete_target: "input" }
+          }
 
-      = form.label :ddfip
-      = form.search_field :ddfip, **html_options
-      = form.hidden_field :ddfip_id, data: { autocomplete_target: "hidden" }
+        = form.label :ddfip
+        = form.search_field :ddfip, **html_options
+        = form.hidden_field :ddfip_id, data: { autocomplete_target: "hidden" }
 
-    = noscript do
-      = form.block :ddfip do
-        = form.label :ddfip_name
-        = form.text_field :ddfip_name, value: office.ddfip&.name, required: true
+      = noscript do
+        = form.block :ddfip do
+          = form.label :ddfip_name
+          = form.text_field :ddfip_name, value: office.ddfip&.name, required: true
 
     = form.block :name do
       = form.label :name

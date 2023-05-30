@@ -2,6 +2,20 @@
   = hidden_field_tag :redirect, modal.redirection_path
 
   = fields(model: collectivity) do |form|
+    - if allowed_to?(:assign_publisher?, collectivity)
+      = form.block :publisher_id do
+        ruby:
+          label   = Collectivity.human_attribute_name(:publisher)
+          options = Publisher.all.map { |o| [o.name, o.id ] }
+
+          html_options = {
+            prompt:        ("Sélectionnez un éditeur" if collectivity.new_record? && collectivity.errors.empty?),
+            include_blank: "Aucun éditeur ou éditeur absent de la liste"
+          }
+
+        = form.label :publisher_id, label
+        = form.select :publisher_id, options, **html_options
+
     = form.block :territory, autocomplete: territories_path do
       ruby:
         if collectivity.territory
@@ -40,19 +54,6 @@
 
         = form.label :territory_code
         = form.text_field :territory_code, value: value, required: true
-
-    = form.block :publisher_id do
-      ruby:
-        label   = Collectivity.human_attribute_name(:publisher)
-        options = Publisher.all.map { |o| [o.name, o.id ] }
-
-        html_options = {
-          prompt:        ("Sélectionnez un éditeur" if collectivity.new_record? && collectivity.errors.empty?),
-          include_blank: "Aucun éditeur ou éditeur absent de la liste"
-        }
-
-      = form.label :publisher_id, label
-      = form.select :publisher_id, options, **html_options
 
     = form.block :name do
       = form.label :name

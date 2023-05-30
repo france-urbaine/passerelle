@@ -43,7 +43,7 @@ class Office < ApplicationRecord
   ACTIONS = %w[evaluation_hab evaluation_eco occupation_hab occupation_eco].freeze
 
   validates :name,   presence: true
-  validates :action, presence: true, inclusion: { in: ACTIONS }
+  validates :action, presence: true, inclusion: { in: ACTIONS, allow_blank: true }
 
   validates :name, uniqueness: {
     case_sensitive: false,

@@ -2,16 +2,23 @@
   = breadcrumbs_component do |breadcrumbs|
     - breadcrumbs.with_path "Organisations"
     - breadcrumbs.with_path "Éditeurs"
-    - breadcrumbs.with_action "Ajouter un éditeur", new_publisher_path, icon: "plus", modal: true, primary: true
+
+    - if allowed_to?(:create?, Publisher)
+      - breadcrumbs.with_action "Ajouter un éditeur", new_publisher_path, icon: "plus", modal: true, primary: true
 
   = datatable_component(@publishers) do |datatable|
     - datatable.with_search
     - datatable.with_pagination(@pagy)
-    - datatable.with_selection do |selection|
-      - selection.with_action "Supprimer la sélection", remove_all_publishers_path, modal: true
 
-    - datatable.with_column(:name,           sort: true) { "Éditeur" }
-    - datatable.with_column(:siren,          sort: true) { "SIREN" }
+    - datatable.with_selection do |selection|
+      - if allowed_to?(:destroy_all?, Publisher)
+        - selection.with_action "Supprimer la sélection", remove_all_publishers_path, modal: true
+
+    - datatable.with_column(:name,           sort: true)    { "Éditeur" }
+    - datatable.with_column(:siren,          sort: true)    { "SIREN" }
+    - datatable.with_column(:contact)                       { "Contact" }
+    - datatable.with_column(:contact_email)                 { "Adresse mail de contact" }
+    - datatable.with_column(:contact_phone)                 { "Numéro de téléphone" }
     - datatable.with_column(:collectivities, numeric: true) { "Collectivités" }
     - datatable.with_column(:users,          numeric: true) { "Utilisateurs" }
 
@@ -22,16 +29,32 @@
         | Aucun éditeur disponible.
 
     - datatable.each_row do |row, publisher|
-      - row.with_checkbox "Sélectionner cet éditeur", described_by: :name
-      - row.with_action "Modifier cet éditeur", edit_publisher_path(publisher), icon: "pencil-square", modal: true
-      - row.with_action "Supprimer cet éditeur", remove_publisher_path(publisher), icon: "trash", modal: true
+      - if allowed_to?(:destroy_all?, Publisher)
+        - row.with_checkbox "Sélectionner cet éditeur", described_by: :name
+      - else
+        - row.with_checkbox "Sélectionner cet éditeur", described_by: :name, disabled: true
+
+      - if allowed_to?(:update?, publisher)
+        - row.with_action "Modifier cet éditeur", edit_publisher_path(publisher), icon: "pencil-square", modal: true
+
+      - if allowed_to?(:destroy?, publisher)
+        - row.with_action "Supprimer cet éditeur", remove_publisher_path(publisher), icon: "trash", modal: true
 
       - row.with_column(:name) do
-        = link_to publisher_path(publisher), data: { turbo_frame: "_top" } do
+        = authorized_link_to publisher do
           = publisher.name
 
       - row.with_column(:siren) do
         = display_siren(publisher.siren)
+
+      - row.with_column(:contact) do
+         = "#{publisher.contact_first_name} #{publisher.contact_last_name}".strip.presence
+
+      - row.with_column(:contact_email) do
+        = mail_to(publisher.contact_email) if publisher.contact_email?
+
+      - row.with_column(:contact_phone) do
+        = phone_to(publisher.contact_phone) if publisher.contact_phone?
 
       - row.with_column(:collectivities) do
         = number_with_delimiter(publisher.collectivities_count) if publisher.collectivities_count.positive?

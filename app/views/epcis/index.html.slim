@@ -1,2 +1,50 @@
 = template_frame_component do
-  = render "index", epcis: @epcis, pagy: @pagy
+  = breadcrumbs_component do |breadcrumbs|
+    - breadcrumbs.with_path "Territoires"
+    - breadcrumbs.with_path "EPCI"
+
+    - if allowed_to?(:manage?, with: TerritoriesPolicy)
+      - breadcrumbs.with_action "Mettre à jour", edit_territories_path, icon: "cloud-arrow-down", modal: true
+
+  = datatable_component(@epcis.preload(:departement)) do |datatable|
+    - datatable.with_search
+    - datatable.with_pagination(@pagy)
+
+    - datatable.with_column(:epci,        sort: true, span: 2) { "EPCI" }
+    - datatable.with_column(:departement, sort: true, span: 2) { "Département" }
+    - datatable.with_column(:communes,       numeric: true)    { "Communes" }
+    - datatable.with_column(:collectivities, numeric: true)    { "Collectivités" }
+
+    - datatable.with_empty_message do
+      - if params[:search]
+        | Aucun EPCI ne correspont à votre recherche.
+      - else
+        | Aucun EPCI disponible.
+
+    - datatable.each_row do |row, epci|
+      - if allowed_to?(:update?, epci)
+        - row.with_action "Modifier cet EPCI", edit_epci_path(epci), icon: "pencil-square", modal: true
+
+      - row.with_column(:epci) do |column|
+        - column.with_span do
+          = display_siren(epci.siren)
+
+        - column.with_span do
+          = authorized_link_to epci do
+            = epci.name
+
+      - row.with_column(:departement) do |column|
+        - if epci.departement
+          - column.with_span do
+            = epci.code_departement
+
+          - column.with_span do
+            = authorized_link_to epci.departement do
+              = epci.departement.name
+
+      - row.with_column(:communes) do
+        = number_with_delimiter(epci.communes_count) if epci.communes_count.positive?
+
+      - row.with_column(:collectivities) do
+        = number_with_delimiter(epci.collectivities_count) if epci.collectivities_count.positive?
+

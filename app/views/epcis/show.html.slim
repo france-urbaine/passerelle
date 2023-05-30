@@ -1,2 +1,77 @@
 = template_frame_component do
-  = render @epci
+  = breadcrumbs_component do |breadcrumbs|
+    - breadcrumbs.with_path "Territoires"
+    - breadcrumbs.with_path "EPCI", epcis_path
+    - breadcrumbs.with_path @epci.name
+
+    - if allowed_to?(:manage?, @epci)
+      - breadcrumbs.with_action "Modifier", edit_epci_path(@epci), icon: "pencil-square", modal: true
+
+  h2.subheader
+    = svg_icon("identification", "Nouvelle section")
+    | Description
+
+  .card
+    dl.description-list
+      .description-list__row
+        dt Numéro SIREN de l'EPCI
+        dd= display_siren(@epci.siren)
+
+      .description-list__row
+        dt Région
+        dd
+          - if @epci.region
+            = authorized_link_to @epci.region do
+              = @epci.region.name
+
+      .description-list__row
+        dt Département
+        dd
+          - if @epci.departement
+            = authorized_link_to @epci.departement do
+              = @epci.departement.name
+
+      .description-list__row
+        dt Communes
+        dd.flex.justify-between.items-start
+          - if @epci.communes_count.positive?
+            span= display_count(@epci.communes_count, "commune")
+
+            - if allowed_to?(:index?, Commune)
+              = button_component "Voir les communes", communes_path(search: @epci.siren), icon: "search", data: { turbo_frame: "_top" }
+
+      .description-list__row
+        dt Collectivités enregistrées
+        dd= display_count(@epci.collectivities_count, "collectivité") if @epci.collectivities_count.positive?
+
+  .content__separator
+
+  .subheader-bar
+    h2.subheader
+      = svg_icon("rectangle-stack", "Nouvelle section")
+      | Collectivités enregistrées
+
+  - if @epci.collectivities_count.zero?
+    .card
+      .card__content.card__content--empty
+        | Aucune collectivité enregistrée dans cet EPCI.
+
+  - else
+    table.datatable
+      thead
+        tr.datatable__row
+          th Collectivité
+          th SIREN
+          th Éditeur
+
+      tbody
+        - @epci.on_territory_collectivities.kept.preload(:publisher).each do |collectivity|
+          tr.datatable__row
+            td
+              = authorized_link_to collectivity do
+                = collectivity.name
+            td
+              = display_siren(collectivity.siren)
+            td
+              = authorized_link_to collectivity.publisher do
+                = collectivity.publisher.name

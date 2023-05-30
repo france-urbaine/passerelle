@@ -3,7 +3,7 @@
     - modal.with_body do
       p La page que vous recherchez n'est pas disponible.
 
-      - case @record_discarded
+      - case @gone_record
       - when Publisher
         p L'éditeur est en cours de suppression.
       - when Collectivity
@@ -19,5 +19,5 @@
 
       - modal.with_close_action "Fermer"
 
-      - if @record_discarded
-        - modal.with_other_action "Annuler la suppression", url_for([:undiscard, @record_discarded]), method: :patch
+      - if @gone_record
+        - modal.with_other_action "Annuler la suppression", url_for([:undiscard, @gone_record]), method: :patch
