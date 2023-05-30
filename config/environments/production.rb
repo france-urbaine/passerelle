@@ -41,7 +41,7 @@ Rails.application.configure do
   # config.action_dispatch.x_sendfile_header = "X-Accel-Redirect" # for NGINX
   config.action_dispatch.x_sendfile_header = ENV["RAILS_X_SENDFILE"] if ENV["RAILS_X_SENDFILE"]
 
-  if ENV["CC_INTERNAL_LOCATION"]
+  if ENV["CC_INTERNAL_LOCATION"] && ENV["RAILS_X_SENDFILE"]
     internal, external = ENV["CC_INTERNAL_LOCATION"].split(":")
     internal = Rails.root.join(internal.gsub(%r{^/}, ""))
 

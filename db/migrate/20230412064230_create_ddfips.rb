@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CreateDdfips < ActiveRecord::Migration[7.0]
+class CreateDDFIPs < ActiveRecord::Migration[7.0]
   def change
     create_table :ddfips, id: :uuid, default: "gen_random_uuid()" do |t|
       t.string :name,             null: false

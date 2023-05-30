@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CreateEpcis < ActiveRecord::Migration[7.0]
+class CreateEPCIs < ActiveRecord::Migration[7.0]
   def change
     create_enum :epci_nature, %w[ME CC CA CU]
 

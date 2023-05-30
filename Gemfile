@@ -21,6 +21,9 @@ gem "devise"
 gem "devise-two-factor", github: "inkstak/devise-two-factor", branch: "bugfix-insert_two_factor_authenticatable_on_top"
 gem "discard"
 
+# Storage
+gem "aws-sdk-s3", require: false
+
 # Controllers
 gem "action_policy"
 gem "pagy"
