@@ -4,7 +4,7 @@ FactoryBot.define do
   sequence(:code_insee) { Faker::Base.numerify("#####") }
 
   factory :commune do
-    association :departement
+    departement
 
     name do
       loop do
@@ -21,7 +21,7 @@ FactoryBot.define do
     end
 
     trait :with_epci do
-      association :epci
+      epci
     end
   end
 end

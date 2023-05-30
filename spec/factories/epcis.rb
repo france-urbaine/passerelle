@@ -13,7 +13,7 @@ FactoryBot.define do
     end
 
     trait :with_departement do
-      association :departement
+      departement
     end
   end
 end

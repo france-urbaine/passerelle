@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :office_user do
-    association :office
-    association :user
+    office
+    user
   end
 end

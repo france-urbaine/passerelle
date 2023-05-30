@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :collectivity do
-    association :publisher
+    publisher
     territory { association %i[commune epci departement].sample }
     name      { territory.name }
     siren     { Faker::Company.unique.french_siren_number }
@@ -27,19 +27,19 @@ FactoryBot.define do
     end
 
     trait :commune do
-      association :territory, factory: :commune
+      territory factory: :commune
     end
 
     trait :epci do
-      association :territory, factory: :epci
+      territory factory: :epci
     end
 
     trait :departement do
-      association :territory, factory: :departement
+      territory factory: :departement
     end
 
     trait :region do
-      association :territory, factory: :region
+      territory factory: :region
     end
   end
 end

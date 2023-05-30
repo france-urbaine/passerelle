@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :office_commune do
-    association :office
-    association :commune
+    office
+    commune
   end
 end

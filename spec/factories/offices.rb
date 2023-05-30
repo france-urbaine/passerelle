@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :office do
-    association :ddfip
+    ddfip
 
     name do
       acronyms = %w[SIE SIP PELP PELH SDIF]
