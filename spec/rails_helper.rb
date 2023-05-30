@@ -13,6 +13,7 @@ unless ENV["SIMPLE_COV"] == "false"
     command_name ENV["SIMPLE_COV_COMMAND"] if ENV.key?("SIMPLE_COV_COMMAND")
 
     add_group "Components", "app/components"
+    add_group "Policies", "app/policies"
     add_group "Services", "app/services"
   end
 end
@@ -25,6 +26,8 @@ require "rspec/rails"
 require "webmock/rspec"
 require "database_cleaner/active_record"
 require "view_component/test_helpers"
+require "action_policy/rspec"
+require "action_policy/rspec/dsl"
 
 # Add additional requires below this line. Rails is not loaded until this point!
 

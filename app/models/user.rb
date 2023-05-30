@@ -117,8 +117,10 @@ class User < ApplicationRecord
     self.name = "#{first_name} #{last_name}".strip
   end
 
-  # Search
+  # Scopes
   # ----------------------------------------------------------------------------
+  scope :owned_by, ->(organization) { where(organization: organization) }
+
   scope :search, lambda { |input|
     scopes = {
       first_name:        ->(value) { match(:first_name, value) },

@@ -54,6 +54,8 @@ class Office < ApplicationRecord
 
   # Scopes
   # ----------------------------------------------------------------------------
+  scope :owned_by, ->(ddfip) { where(ddfip: ddfip) }
+
   scope :search, lambda { |input|
     advanced_search(
       input,

@@ -1,7 +1,7 @@
 inherit_from: .rubocop_todo.yml
 
 inherit_gem:
-  saharspec: config/rubocop-rspec.yml
+  action_policy: config/rubocop-rspec.yml
 
 require:
   - rubocop-performance
@@ -105,6 +105,11 @@ RSpec/DescribedClass:
 RSpec/ExampleLength:
   Enabled: false
 
+RSpec/ExpectActual:
+  Exclude:
+    - 'spec/routing/**/*'  # expect(get: "/path) is a common pattern
+    - 'spec/policies/**/*' # expect(:create?) is a common pattern
+
 RSpec/FilePath:
   CustomTransform:
     ImportEPCIsDepartementsJob: import_epcis_departements_job
@@ -120,6 +125,10 @@ RSpec/MultipleExpectations:
 
 RSpec/NestedGroups:
   Enabled: false
+
+RSpec/RepeatedExampleGroupBody:
+  Exclude:
+    - 'spec/policies/**/*'
 
 # Style ------------------------------------------------------------------------
 Style/BlockDelimiters:
