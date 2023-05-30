@@ -1,14 +1,9 @@
 #!/usr/bin/env ruby
 
-begin
-  gem "mailcatcher"
-rescue LoadError
-  puts "Installing mailcatcher..."
-  system("gem install mailcatcher")
-  Gem.clear_paths
-end
-
-require "mail_catcher"
+# This file is a replacement for the `mailcatcher` command provided by the gem.
+# It allows to use environment variables from .env files
+#
+require "mailcatcher"
 require_relative "../config/dotenv"
 
 MailCatcher.run!(
