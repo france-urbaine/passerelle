@@ -19,16 +19,21 @@ RSpec.describe "TerritoriesController#index" do
     create_list(:region, 2)
   end
 
-  it_behaves_like "it requires authorization in HTML"
-  it_behaves_like "it requires authorization in JSON"
-  it_behaves_like "it doesn't accept JSON when signed in"
-  it_behaves_like "it doesn't accept HTML when signed in"
+  it_behaves_like "it responds with not acceptable in HTML whithout being signed in"
+  it_behaves_like "it responds with not acceptable in JSON whithout being signed in"
+  it_behaves_like "it responds with not acceptable in HTML when signed in"
+  it_behaves_like "it responds with not acceptable in JSON when signed in"
 
-  context "when signed in" do
-    before { sign_in_as(:ddfip, :organization_admin) }
+  context "when requesting autocompletion" do
+    let(:headers) { { "Accept-Variant" => "autocomplete" } }
+    let(:params)  { { q: "" } }
+    let(:xhr)     { true }
 
-    context "when requesting autocompletion", headers: { "Accept-Variant" => "autocomplete" }, xhr: true do
-      let(:params) { { q: "" } }
+    it_behaves_like "it allows access whithout being signed in"
+    it_behaves_like "it allows access when signed in"
+
+    context "when signed in" do
+      before { sign_in }
 
       it { expect(response).to have_http_status(:success) }
       it { expect(response).to have_content_type(:html) }

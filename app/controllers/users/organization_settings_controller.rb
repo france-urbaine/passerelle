@@ -2,6 +2,8 @@
 
 module Users
   class OrganizationSettingsController < ApplicationController
+    before_action { authorize! with: Users::OrganizationSettingsPolicy }
+
     def show
       @organization = current_user.organization
     end

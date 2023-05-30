@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class CommunesController < ApplicationController
+  before_action :authorize!
+
   def index
     @communes = Commune.strict_loading
     @communes, @pagy = index_collection(@communes, nested: @parent)

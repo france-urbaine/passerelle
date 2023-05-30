@@ -2,6 +2,8 @@
 
 module Users
   class UserSettingsController < ApplicationController
+    before_action { authorize! with: Users::UserSettingsPolicy }
+
     def show
       @user          = current_user
       @user_email    = duplicate_user_to_update_email(current_user)

@@ -9,7 +9,7 @@ RSpec.describe "OrganizationsController#index" do
 
   let(:as)      { |e| e.metadata[:as] }
   let(:headers) { |e| e.metadata[:headers] }
-  let(:params)  { |e| e.metadata[:params] }
+  let(:params)  { |e| e.metadata.fetch(:params, { q: "" }) }
   let(:xhr)     { |e| e.metadata[:xhr] }
 
   before do
@@ -20,22 +20,20 @@ RSpec.describe "OrganizationsController#index" do
 
   it_behaves_like "it requires authorization in HTML"
   it_behaves_like "it requires authorization in JSON"
-  it_behaves_like "it doesn't accept JSON when signed in"
-  it_behaves_like "it doesn't accept HTML when signed in"
+  it_behaves_like "it responds with not acceptable in JSON when signed in"
 
-  context "when signed in" do
-    before { sign_in_as(:ddfip, :organization_admin) }
+  it_behaves_like "it denies access to DDFIP user"
+  it_behaves_like "it denies access to DDFIP admin"
+  it_behaves_like "it denies access to publisher user"
+  it_behaves_like "it denies access to publisher admin"
+  it_behaves_like "it denies access to colletivity user"
+  it_behaves_like "it denies access to colletivity admin"
 
-    context "when requesting autocompletion", headers: { "Accept-Variant" => "autocomplete" }, xhr: true do
-      let(:params) { { q: "" } }
+  it_behaves_like "it responds with not acceptable to super admin"
 
-      it_behaves_like "it allows access to publisher user"
-      it_behaves_like "it allows access to publisher admin"
-      it_behaves_like "it allows access to DDFIP user"
-      it_behaves_like "it allows access to DDFIP admin"
-      it_behaves_like "it allows access to colletivity user"
-      it_behaves_like "it allows access to colletivity admin"
-      it_behaves_like "it allows access to super admin"
+  context "when requesting Turbo-Frame", headers: { "Accept-Variant" => "autocomplete" }, xhr: true do
+    context "when signed in as a super admin" do
+      before { sign_in_as(:super_admin) }
 
       it { expect(response).to have_http_status(:success) }
       it { expect(response).to have_content_type(:html) }

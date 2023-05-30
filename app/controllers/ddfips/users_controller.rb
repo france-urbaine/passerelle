@@ -4,9 +4,10 @@ module DDFIPs
   class UsersController < ::UsersController
     private
 
-    def scope_users
+    def build_users_scope
       ddfip = DDFIP.find(params[:ddfip_id])
 
+      authorize! ddfip, to: :show?
       only_kept! ddfip
 
       @parent = ddfip

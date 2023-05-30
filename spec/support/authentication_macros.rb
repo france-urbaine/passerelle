@@ -28,8 +28,8 @@ module AuthenticationMacros
     result
   end
 
-  def sign_in_as(*options)
-    sign_in create(:user, *options)
+  def sign_in_as(...)
+    sign_in create(:user, ...)
   end
 end
 

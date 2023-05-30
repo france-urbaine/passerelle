@@ -34,7 +34,15 @@ class ApplicationController < ActionController::Base
 
   respond_to :html
 
-  layout -> { signed_in? ? "application" : "public" }
+  layout lambda {
+    if turbo_frame_request?
+      "turbo_rails/frame"
+    elsif signed_in?
+      "application"
+    else
+      "public"
+    end
+  }
 
   helper_method :turbo_frame_request_id
   helper_method :turbo_frame_request?

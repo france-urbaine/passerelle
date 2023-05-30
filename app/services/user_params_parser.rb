@@ -15,18 +15,20 @@ class UserParamsParser
     if @organization
       @input[:organization_type] = @organization.class.name
       @input[:organization_id]   = @organization.id
+      @input.delete(:organization_data)
+      @input.delete(:organization_name)
     end
 
-    extract_organization_data
-    extract_organization_name
-    extract_office_ids
+    parse_organization_data
+    parse_organization_name
+    parse_office_ids
 
     @input
   end
 
   protected
 
-  def extract_organization_data
+  def parse_organization_data
     organization_data = @input.delete(:organization_data)
     return if @organization || organization_data.blank?
 
@@ -35,7 +37,7 @@ class UserParamsParser
     @input[:organization_id]   = organization_data["id"]
   end
 
-  def extract_organization_name
+  def parse_organization_name
     organization_name = @input.delete(:organization_name)
     organization_type = @input[:organization_type]
     return if @organization || organization_name.blank?
@@ -48,7 +50,7 @@ class UserParamsParser
       end
   end
 
-  def extract_office_ids
+  def parse_office_ids
     office_ids = @input.delete(:office_ids)
     organization_id = @input[:organization_id]
     organization_type = @input[:organization_type]

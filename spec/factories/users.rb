@@ -11,6 +11,18 @@ FactoryBot.define do
 
     sequence(:email) { |n| Faker::Internet.email(name: "#{first_name}_#{n}") }
 
+    # Always skip notification by default
+    # - it produces less logs
+    # - it avoids extending the unconfirmed period when manually set
+    #
+    transient do
+      skip_confirmation_notification { true }
+    end
+
+    after(:build) do |user, evaluator|
+      user.skip_confirmation_notification! if evaluator.skip_confirmation_notification
+    end
+
     trait :using_existing_organizations do
       organization do
         [DDFIP, Publisher, Collectivity].sample.order("RANDOM()").first ||

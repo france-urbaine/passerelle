@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
 class TerritoriesController < ApplicationController
+  skip_before_action :authenticate_user!, only: :index
+  skip_after_action  :verify_authorized, only: :index
+
+  before_action { authorize! with: TerritoriesPolicy }
+
   def index
     if autocomplete_request?
       @territories = merge_autocomplete_collections(

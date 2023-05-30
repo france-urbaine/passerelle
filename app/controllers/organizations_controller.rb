@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class OrganizationsController < ApplicationController
+  before_action { authorize! with: OrganizationsPolicy }
+
   def index
     if autocomplete_request?
       @organizations = merge_autocomplete_collections(

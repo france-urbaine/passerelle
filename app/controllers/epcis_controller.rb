@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class EPCIsController < ApplicationController
+  before_action :authorize!
+
   def index
     @epcis = EPCI.strict_loading
     @epcis, @pagy = index_collection(@epcis)

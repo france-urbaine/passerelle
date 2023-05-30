@@ -16,24 +16,14 @@ module ControllerStatuses
     end
   end
 
-  def not_found(exception_or_model = nil)
-    @model_not_found =
-      case exception_or_model
-      when ActiveRecord::RecordNotFound then exception_or_model.model
-      when ApplicationRecord            then model.name
-      when String                       then model
-      end
-
+  def not_found(exception = nil)
+    @model_not_found = exception&.model
     render_status(:not_found)
   end
 
-  def gone(exception_or_record = nil)
-    @record_discarded =
-      case exception_or_record
-      when ControllerDiscard::RecordDiscarded then exception_or_record.record
-      when ApplicationRecord then exception_or_record
-      end
-
+  def gone(argument = nil)
+    @gone_record = argument
+    @gone_record = argument.record if argument.is_a?(ControllerDiscard::RecordDiscarded)
     render_status(:gone)
   end
 

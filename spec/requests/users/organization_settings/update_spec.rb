@@ -12,7 +12,6 @@ RSpec.describe "Users::OrganizationSettingsController#update" do
   let(:params)  { |e| e.metadata.fetch(:params, { organization: updated_attributes }) }
 
   let!(:organization) { create(:publisher, name: "Fiscalité & Territoire") }
-  let!(:user)         { create(:user, organization: organization) }
 
   let(:updated_attributes) do
     { name: "Solution & Territoire" }
@@ -20,27 +19,27 @@ RSpec.describe "Users::OrganizationSettingsController#update" do
 
   it_behaves_like "it requires authorization in HTML"
   it_behaves_like "it requires authorization in JSON"
-  it_behaves_like "it doesn't accept JSON when signed in"
-  it_behaves_like "it allows access to publisher user"
-  it_behaves_like "it allows access to publisher admin"
-  it_behaves_like "it allows access to DDFIP user"
-  it_behaves_like "it allows access to DDFIP admin"
-  it_behaves_like "it allows access to colletivity user"
-  it_behaves_like "it allows access to colletivity admin"
-  it_behaves_like "it allows access to super admin"
+  it_behaves_like "it responds with not acceptable in JSON when signed in"
 
-  context "when signed in" do
-    before { sign_in(user) }
+  it_behaves_like "it denies access to publisher user"
+  it_behaves_like "it denies access to DDFIP user"
+  it_behaves_like "it denies access to colletivity user"
+  it_behaves_like "it denies access to super admin"
+
+  it_behaves_like "it allows access to publisher admin"
+  it_behaves_like "it allows access to DDFIP admin"
+  it_behaves_like "it allows access to colletivity admin"
+
+  context "when signed in as an organization admin" do
+    before { sign_in_as(:organization_admin, organization: organization) }
 
     context "with valid attributes" do
       it { expect(request && response).to have_http_status(:see_other) }
       it { expect(request && response).to redirect_to("/compte/organisation") }
 
       it "updates the curent organization" do
-        expect {
-          request
-          organization.reload
-        }.to change(organization, :updated_at)
+        expect { request and organization.reload }
+          .to  change(organization, :updated_at)
           .and change(organization, :name).to("Solution & Territoire")
       end
 

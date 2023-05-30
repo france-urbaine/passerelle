@@ -13,7 +13,8 @@ RSpec.describe "Users::TwoFactorSettingsController#edit" do
 
   it_behaves_like "it requires authorization in HTML"
   it_behaves_like "it requires authorization in JSON"
-  it_behaves_like "it doesn't accept JSON when signed in"
+  it_behaves_like "it responds with not acceptable in JSON when signed in"
+
   it_behaves_like "it allows access to publisher user"
   it_behaves_like "it allows access to publisher admin"
   it_behaves_like "it allows access to DDFIP user"

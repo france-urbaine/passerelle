@@ -28,19 +28,22 @@
 #   { territory_type: "Commune", territory_id: "4d1808e4-d46d-4904-a900-dc183cfc26fb" }
 #
 class CollectivityParamsParser
-  def initialize(input)
-    @input = input.dup
+  def initialize(input, publisher = nil)
+    @input     = input.dup
+    @publisher = publisher
   end
 
   def parse
-    extract_territory_data
-    extract_territory_code
+    @input.delete(:publisher_id) if @publisher
+
+    parse_territory_data
+    parse_territory_code
     @input
   end
 
   protected
 
-  def extract_territory_data
+  def parse_territory_data
     territory_data = @input.delete(:territory_data)
     return if territory_data.blank?
 
@@ -49,7 +52,7 @@ class CollectivityParamsParser
     @input[:territory_id]   = territory_data["id"]
   end
 
-  def extract_territory_code
+  def parse_territory_code
     territory_code = @input.delete(:territory_code)
     territory_type = @input[:territory_type]
     return if territory_code.blank?

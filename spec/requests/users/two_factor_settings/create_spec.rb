@@ -9,11 +9,12 @@ RSpec.describe "Users::TwoFactorSettingsController#create" do
 
   let(:as)      { |e| e.metadata[:as] }
   let(:headers) { |e| e.metadata[:headers] }
-  let(:params)  { |e| e.metadata.fetch(:params, { user: { otp_method: "2fa" } }) }
+  let(:params)  { |e| e.metadata.fetch(:params, { user: { otp_method: "email" } }) }
 
   it_behaves_like "it requires authorization in HTML"
   it_behaves_like "it requires authorization in JSON"
-  it_behaves_like "it doesn't accept JSON when signed in"
+  it_behaves_like "it responds with not acceptable in JSON when signed in"
+
   it_behaves_like "it allows access to publisher user"
   it_behaves_like "it allows access to publisher admin"
   it_behaves_like "it allows access to DDFIP user"
@@ -35,7 +36,7 @@ RSpec.describe "Users::TwoFactorSettingsController#create" do
         current_user.organization.update(allow_2fa_via_email: true)
       end
 
-      context "with 2FA method selected" do
+      context "with 2FA method selected", params: { user: { otp_method: "2fa" } } do
         it { expect(response).to have_http_status(:redirect) }
         it { expect(response).to redirect_to("/compte/2fa/edit?otp_method=2fa") }
       end
@@ -44,11 +45,9 @@ RSpec.describe "Users::TwoFactorSettingsController#create" do
         it { expect(response).to have_http_status(:redirect) }
         it { expect(response).to redirect_to("/compte/2fa/edit?otp_method=email") }
 
-        it "doesn't update the user" do
-          expect {
-            request
-            current_user.reload
-          }.to not_change(current_user, :updated_at)
+        it "doesn't update the OTP settings" do
+          expect { request and current_user.reload }
+            .to  not_change(current_user, :updated_at)
             .and not_change(current_user, :otp_method).from("2fa")
         end
       end

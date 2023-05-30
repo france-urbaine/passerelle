@@ -4,9 +4,10 @@ module Offices
   class CollectivitiesController < ::CollectivitiesController
     private
 
-    def scope_collectivities
+    def build_collectivities_scope
       office = Office.find(params[:office_id])
 
+      authorize! office, to: :show?
       only_kept! office
       only_kept! office.ddfip
 

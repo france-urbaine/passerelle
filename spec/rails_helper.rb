@@ -126,6 +126,11 @@ RSpec.configure do |config|
     Rails.cache.clear
     Rails.cache = previous_cache
   end
+
+  # Always make Timecop returns to curren time
+  config.after do
+    Timecop.return
+  end
 end
 
 # Declare negative matchers to use with operands.
@@ -145,4 +150,5 @@ RSpec::Matchers.define_negated_matcher :not_include,           :include
 RSpec::Matchers.define_negated_matcher :not_change,            :change
 RSpec::Matchers.define_negated_matcher :not_raise_error,       :raise_error
 RSpec::Matchers.define_negated_matcher :not_have_enqueued_job, :have_enqueued_job
+RSpec::Matchers.define_negated_matcher :not_redirect_to,       :redirect_to
 RSpec::Matchers.define_negated_matcher :be_unroutable,         :be_routable

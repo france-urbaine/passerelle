@@ -13,17 +13,19 @@ RSpec.describe "TerritoriesController#edit" do
 
   it_behaves_like "it requires authorization in HTML"
   it_behaves_like "it requires authorization in JSON"
-  it_behaves_like "it doesn't accept JSON when signed in"
-  it_behaves_like "it allows access to publisher user"
-  it_behaves_like "it allows access to publisher admin"
-  it_behaves_like "it allows access to DDFIP user"
-  it_behaves_like "it allows access to DDFIP admin"
-  it_behaves_like "it allows access to colletivity user"
-  it_behaves_like "it allows access to colletivity admin"
+  it_behaves_like "it responds with not acceptable in JSON when signed in"
+
+  it_behaves_like "it denies access to publisher user"
+  it_behaves_like "it denies access to publisher admin"
+  it_behaves_like "it denies access to DDFIP user"
+  it_behaves_like "it denies access to DDFIP admin"
+  it_behaves_like "it denies access to colletivity user"
+  it_behaves_like "it denies access to colletivity admin"
+
   it_behaves_like "it allows access to super admin"
 
-  context "when signed in" do
-    before { sign_in_as(:publisher, :organization_admin) }
+  context "when signed in as super admin" do
+    before { sign_in_as(:super_admin) }
 
     it { expect(response).to have_http_status(:success) }
     it { expect(response).to have_content_type(:html) }

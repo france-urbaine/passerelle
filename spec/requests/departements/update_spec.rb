@@ -17,18 +17,21 @@ RSpec.describe "DepartementsController#update" do
     { name: "Vendée" }
   end
 
-  it_behaves_like "it requires authorization in HTML"
-  it_behaves_like "it requires authorization in JSON"
-  it_behaves_like "it doesn't accept JSON when signed in"
-  it_behaves_like "it allows access to publisher user"
-  it_behaves_like "it allows access to publisher admin"
-  it_behaves_like "it allows access to DDFIP user"
-  it_behaves_like "it allows access to DDFIP admin"
-  it_behaves_like "it allows access to colletivity user"
-  it_behaves_like "it allows access to colletivity admin"
-  it_behaves_like "it allows access to super admin"
+  describe "authorizations" do
+    it_behaves_like "it requires authorization in HTML"
+    it_behaves_like "it requires authorization in JSON"
+    it_behaves_like "it responds with not acceptable in JSON when signed in"
 
-  context "when signed in" do
+    it_behaves_like "it denies access to publisher user"
+    it_behaves_like "it denies access to publisher admin"
+    it_behaves_like "it denies access to DDFIP user"
+    it_behaves_like "it denies access to DDFIP admin"
+    it_behaves_like "it denies access to colletivity user"
+    it_behaves_like "it denies access to colletivity admin"
+    it_behaves_like "it allows access to super admin"
+  end
+
+  describe "responses" do
     before { sign_in_as(:super_admin) }
 
     context "with valid attributes" do
@@ -36,10 +39,8 @@ RSpec.describe "DepartementsController#update" do
       it { expect(response).to redirect_to("/departements") }
 
       it "updates the departement" do
-        expect {
-          request
-          departement.reload
-        } .to change(departement, :updated_at)
+        expect { request and departement.reload }
+          .to  change(departement, :updated_at)
           .and change(departement, :name).to("Vendée")
       end
 

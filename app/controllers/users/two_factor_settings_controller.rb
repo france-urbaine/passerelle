@@ -2,6 +2,8 @@
 
 module Users
   class TwoFactorSettingsController < ApplicationController
+    before_action { authorize! with: Users::TwoFactorSettingsPolicy }
+
     def new
       return redirect_to action: :edit unless current_user.organization&.allow_2fa_via_email?
 

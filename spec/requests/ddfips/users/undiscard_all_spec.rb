@@ -12,22 +12,41 @@ RSpec.describe "Ddfips::UsersController#undiscard_all" do
   let(:params)  { |e| e.metadata.fetch(:params, { ids: ids }) }
 
   let!(:ddfip) { create(:ddfip) }
-  let!(:users) { create_list(:user, 3, :discarded, organization: ddfip) }
-  let!(:ids)   { users.take(2).map(&:id) }
+  let!(:users) do
+    [
+      create(:user, :discarded, organization: ddfip),
+      create(:user, :discarded, organization: ddfip),
+      create(:user, :discarded, organization: ddfip),
+      create(:user, :discarded),
+      create(:user, organization: ddfip)
+    ]
+  end
 
-  it_behaves_like "it requires authorization in HTML"
-  it_behaves_like "it requires authorization in JSON"
-  it_behaves_like "it doesn't accept JSON when signed in"
-  it_behaves_like "it allows access to publisher user"
-  it_behaves_like "it allows access to publisher admin"
-  it_behaves_like "it allows access to DDFIP user"
-  it_behaves_like "it allows access to DDFIP admin"
-  it_behaves_like "it allows access to colletivity user"
-  it_behaves_like "it allows access to colletivity admin"
-  it_behaves_like "it allows access to super admin"
+  let!(:ids) { users.take(2).map(&:id) }
 
-  context "when signed in" do
-    before { sign_in_as(:publisher, :organization_admin) }
+  describe "authorizations" do
+    it_behaves_like "it requires authorization in HTML"
+    it_behaves_like "it requires authorization in JSON"
+    it_behaves_like "it responds with not acceptable in JSON when signed in"
+
+    it_behaves_like "it denies access to publisher user"
+    it_behaves_like "it denies access to publisher admin"
+    it_behaves_like "it denies access to DDFIP user"
+    it_behaves_like "it denies access to DDFIP admin"
+    it_behaves_like "it denies access to colletivity user"
+    it_behaves_like "it denies access to colletivity admin"
+    it_behaves_like "it allows access to super admin"
+
+    context "when the DDFIP is the organization of the current user" do
+      let(:ddfip) { current_user.organization }
+
+      it_behaves_like "it denies access to DDFIP user"
+      it_behaves_like "it denies access to DDFIP admin"
+    end
+  end
+
+  describe "responses" do
+    before { sign_in_as(:super_admin) }
 
     context "with multiple ids" do
       it { expect(response).to have_http_status(:see_other) }
@@ -52,8 +71,17 @@ RSpec.describe "Ddfips::UsersController#undiscard_all" do
       end
     end
 
+    context "with ids from already undiscarded users" do
+      let(:ids) { users.last(1).map(&:id) }
+
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/ddfips/#{ddfip.id}") }
+      it { expect(flash).to have_flash_notice }
+      it { expect { request }.not_to change(User.discarded, :count) }
+    end
+
     context "with ids from users of any other organizations" do
-      let(:users) { create_list(:user, 3, :discarded) }
+      let(:ids) { users[3, 1].map(&:id) }
 
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/ddfips/#{ddfip.id}") }
