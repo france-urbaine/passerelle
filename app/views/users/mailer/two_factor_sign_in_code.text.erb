@@ -1,0 +1,7 @@
+Bonjour <%= @user.first_name %>,
+
+Utilisez le code de vérification ci-dessous pour vous connecter à FiscaHub :
+
+    <%= @user.current_otp %>
+
+Ce code à usage unique est valable <%= distance_of_time_in_words(Devise.otp_allowed_drift) %>.

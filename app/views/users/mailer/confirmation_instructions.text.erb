@@ -1,0 +1,21 @@
+Bonjour <%= @resource.first_name %>,
+
+<% if @resource.confirmed? && @resource.pending_reconfirmation? %>
+Vous avez demandé à changer d'adresse email sur FiscaHub.
+Veuillez confirmer votre nouvelle adresse en suivant le lien ci-dessous :
+
+    <%= confirmation_url(@resource, confirmation_token: @token) %>
+
+
+Ce lien est valable <%= distance_of_time_in_words(Devise.confirm_within) %>.
+Si vous n'étes pas à l'origine de cette modification, nous vous invitons à nous contacter au plus vite : contact@fiscahub.fr
+<% else %>
+Nous vous invitons à rejoindre FiscaHub.
+Pour cela, veuillez suivre le lien ci-dessous :
+
+    <%= user_registration_url(token: @token) %>
+
+
+Ce lien est valable <%= distance_of_time_in_words(Devise.confirm_within) %>.
+Si vous n'avez pas demandé à rejoindre FiscaHub, veuillez ignorer ce message.
+<% end %>

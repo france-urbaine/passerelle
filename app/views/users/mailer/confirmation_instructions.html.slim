@@ -1,27 +1,30 @@
-p Bonjour #{@resource.first_name},
+p
+  | Bonjour #{@resource.first_name},
 
 - if @resource.confirmed? && @resource.pending_reconfirmation?
   p
     | Vous avez demandé à changer d'adresse email sur <strong>FiscaHub</strong>.
     br
-    | Veuillez confirmer votre nouvelle adresse:
+    | Veuillez confirmer votre nouvelle adresse :
   p
     = link_to "Confirmer mon adresse", confirmation_url(@resource, confirmation_token: @token)
+    br
+    br
   p
     | Ce lien est valable #{distance_of_time_in_words(Devise.confirm_within)}.
     br
-    | Si vous n'étes pas à l'origine de cette modification,
-    |  nous vous invitons à contacter nos administreurs au plus vite :
+    | Si vous n'étes pas à l'origine de cette modification, nous vous invitons à nous contacter au plus vite :
     br
     = mail_to "contact@fiscahub.fr"
-
 - else
   p
     | Nous vous invitons à rejoindre <strong>FiscaHub</strong>.
     br
-    | Pour cela, veuillez suivre le lien ci-dessous:
+    | Pour cela, veuillez suivre le lien ci-dessous :
   p
     = link_to "Finaliser mon inscription", user_registration_url(token: @token)
+    br
+    br
   p
     | Ce lien est valable #{distance_of_time_in_words(Devise.confirm_within)}.
     br

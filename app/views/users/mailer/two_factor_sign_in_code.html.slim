@@ -1,9 +1,8 @@
-p Bonjour #{@user.first_name},
-
+p
+  | Bonjour #{@user.first_name},
 p
   | Utilisez le code de vérification ci-dessous pour vous connecter à <strong>FiscaHub</strong> :
-  br
-  strong.text-2xl= @user.current_otp
-
 p
-  | Ce code à usage unique et valable #{distance_of_time_in_words(Devise.otp_allowed_drift)}.
+  strong.otp-code= @user.current_otp
+p
+  | Ce code à usage unique est valable #{distance_of_time_in_words(Devise.otp_allowed_drift)}.

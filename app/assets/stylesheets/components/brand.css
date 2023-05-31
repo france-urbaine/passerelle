@@ -19,7 +19,8 @@
       @apply text-violet-600;
     }
 
-    & img {
+    & img,
+    & svg {
       height: 1.3em;
       with: 1.3em;
 

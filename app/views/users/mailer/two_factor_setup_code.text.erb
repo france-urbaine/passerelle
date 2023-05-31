@@ -1,0 +1,7 @@
+Bonjour <%= @user.first_name %>,
+
+Finalisez la configuration de l'authentification en 2 étape sur FiscaHub en utilisant le code suivant :
+
+    <%= @user.current_otp %>
+
+Ce code à usage unique est valable <%= distance_of_time_in_words(Devise.otp_allowed_drift) %>.

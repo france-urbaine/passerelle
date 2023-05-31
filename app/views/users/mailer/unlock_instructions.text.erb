@@ -1,0 +1,11 @@
+Bonjour <%= @resource.first_name %>,
+
+Votre compte a été verrouillé suite à plusieurs tentatives de connexion infructueuses.
+Il s'agit d'une mesure de securité automatique afin de protéger votre compte contre toute intrusion.
+
+Afin de déverouiller votre compte, veuillez suivre le lien ci-dessous :
+
+    <%= user_unlock_url(unlock_token: @token) %>
+
+
+Si vous n'êtes pas à l'origine de ces tentatives de connexion, nous vous invitons à vérifier la sécurité et l'intégrité de votre compte email.

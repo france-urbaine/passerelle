@@ -9,7 +9,12 @@ FactoryBot.define do
     password     { Faker::Internet.password(min_length: Devise.password_length.min) }
     confirmed_at { Time.current }
 
-    sequence(:email) { |n| Faker::Internet.email(name: "#{first_name}_#{n}") }
+    sequence(:email) do |n|
+      name   = "#{first_name} #{last_name} #{n}"
+      domain = organization&.domain_restriction
+
+      Faker::Internet.email(name: name, domain: domain)
+    end
 
     # Always skip notification by default
     # - it produces less logs
@@ -23,15 +28,23 @@ FactoryBot.define do
       user.skip_confirmation_notification! if evaluator.skip_confirmation_notification
     end
 
-    trait :using_existing_organizations do
-      organization do
-        [DDFIP, Publisher, Collectivity].sample.order("RANDOM()").first ||
-          association(%i[publisher collectivity ddfip].sample)
+    trait :unconfirmed do
+      confirmed_at       { nil }
+      confirmation_token { Devise.friendly_token }
+    end
+
+    trait :to_reconfirmed do
+      confirmation_token { Devise.friendly_token }
+      sequence(:unconfirmed_email) do |n|
+        name   = "#{first_name} #{last_name} #{n}"
+        domain = organization&.domain_restriction
+
+        Faker::Internet.email(name: "#{first_name} #{last_name}")
       end
     end
 
-    trait :unconfirmed do
-      confirmed_at { nil }
+    trait :with_otp do
+      otp_secret { User.generate_otp_secret }
     end
 
     trait :invited do
@@ -61,6 +74,13 @@ FactoryBot.define do
 
     trait :ddfip do
       organization factory: :ddfip
+    end
+
+    trait :using_existing_organizations do
+      organization do
+        [DDFIP, Publisher, Collectivity].sample.order("RANDOM()").first ||
+          association(%i[publisher collectivity ddfip].sample)
+      end
     end
   end
 end
