@@ -245,6 +245,11 @@ fr:
               invalid:      Votre code de réinitialisation est invalide ou expiré. Veuillez faire une nouvelle demande.
               expired:      Votre code de réinitialisation est expiré. Veuillez faire une nouvelle demande.
 
+            confirmation_token:
+              blank:        Un jeton de confirmation est requis
+              invalid:      Votre jeton de confirmation est invalide ou expiré. Veuillez faire une nouvelle demande.
+              expired:      Votre jeton de confirmation est expiré. Veuillez faire une nouvelle demande.
+
         commune:
           attributes:
             name:
