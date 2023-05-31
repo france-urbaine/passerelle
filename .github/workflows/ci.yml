@@ -146,6 +146,21 @@ jobs:
       run: |
         bin/ci rubocop
 
+  brakeman:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 3.2.0
+        bundler-cache: true
+
+    - name: Run brakeman
+      run: |
+        bin/ci brakeman
+
   audit:
     runs-on: ubuntu-latest
     steps:
