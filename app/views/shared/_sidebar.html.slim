@@ -33,11 +33,11 @@ nav.sidebar
     - if publishers || collectivities || ddfips || offices || users
       .sidebar__header Organisations
       .sidebar__links
-        = sidebar_link_to "Éditeurs",       publishers_path     if publishers
-        = sidebar_link_to "Collectivitiés", collectivities_path if collectivities
-        = sidebar_link_to "DDFIP",          ddfips_path         if ddfips
-        = sidebar_link_to "Guichets",       offices_path        if offices
-        = sidebar_link_to "Utilisateurs",   users_path          if users
+        = sidebar_link_to "Éditeurs",      publishers_path     if publishers
+        = sidebar_link_to "Collectivités", collectivities_path if collectivities
+        = sidebar_link_to "DDFIP",         ddfips_path         if ddfips
+        = sidebar_link_to "Guichets",      offices_path        if offices
+        = sidebar_link_to "Utilisateurs",  users_path          if users
 
     - communes     = allowed_to?(:index?, Commune,     with: CommunePolicy)
     - epcis        = allowed_to?(:index?, EPCI,        with: EPCIPolicy)
