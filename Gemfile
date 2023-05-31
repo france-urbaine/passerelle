@@ -52,6 +52,7 @@ gem "rubyzip"
 
 # Monitoring
 gem "appsignal"
+gem "lograge"
 
 # Windows compatibility
 gem "tzinfo-data", platforms: %i[mingw mswin x64_mingw jruby]
