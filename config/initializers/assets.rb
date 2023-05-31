@@ -16,7 +16,10 @@ Rails.application.config.assets.version = "1.0"
 InlineSvg.configure do |config|
   if Rails.env.production?
     config.asset_file = InlineSvg::CachedAssetFile.new(
-      paths: [Rails.root.join("app/assets/icons")],
+      paths: [
+        Rails.root.join("app/assets/icons"),
+        Rails.root.join("app/assets/images")
+      ],
       filters: /\.svg/
     )
   end
