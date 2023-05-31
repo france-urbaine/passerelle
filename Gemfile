@@ -45,11 +45,13 @@ gem "rails-i18n"
 gem "slim"
 gem "view_component"
 
-# Import utilities
+# Data tools
 gem "roo"
 gem "rubyzip"
-
 gem "faker"
+
+# Monitoring
+gem "appsignal"
 
 # Windows compatibility
 gem "tzinfo-data", platforms: %i[mingw mswin x64_mingw jruby]

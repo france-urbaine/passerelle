@@ -91,6 +91,8 @@ GEM
     annotate (3.2.0)
       activerecord (>= 3.2, < 8.0)
       rake (>= 10.4, < 14.0)
+    appsignal (3.4.2)
+      rack
     ast (2.4.2)
     attr_extras (7.1.0)
     awesome_print (1.9.2)
@@ -491,6 +493,7 @@ PLATFORMS
 DEPENDENCIES
   action_policy
   annotate
+  appsignal
   awesome_print
   aws-sdk-s3
   bootsnap
