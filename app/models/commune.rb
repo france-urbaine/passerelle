@@ -97,7 +97,7 @@ class Commune < ApplicationRecord
   scope :autocomplete, lambda { |input|
     advanced_search(
       input,
-      name:             ->(value) { match(:name, value) },
+      name:             ->(value) { match(:qualified_name, value) },
       code_insee:       ->(value) { where(code_insee: value) }
     )
   }

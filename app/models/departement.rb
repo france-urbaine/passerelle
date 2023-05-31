@@ -75,7 +75,7 @@ class Departement < ApplicationRecord
   scope :autocomplete, lambda { |input|
     advanced_search(
       input,
-      name:             ->(value) { match(:name, value) },
+      name:             ->(value) { match(:qualified_name, value) },
       code_departement: ->(value) { where(code_departement: value) }
     )
   }

@@ -8,6 +8,8 @@ module ControllerCollections
   private
 
   def index_collection(relation, nested: false)
+    return autocomplete_collection(relation), nil if autocomplete_request?
+
     relation = search_collection(relation)
     relation = order_collection(relation)
 
