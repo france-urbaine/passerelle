@@ -29,18 +29,21 @@ FactoryBot.define do
     end
 
     trait :unconfirmed do
-      confirmed_at       { nil }
-      confirmation_token { Devise.friendly_token }
+      confirmed_at         { nil }
+      confirmation_token   { Devise.friendly_token }
+      confirmation_sent_at { Time.current }
     end
 
     trait :to_reconfirmed do
-      confirmation_token { Devise.friendly_token }
       sequence(:unconfirmed_email) do |n|
         name   = "#{first_name} #{last_name} #{n}"
         domain = organization&.domain_restriction
 
-        Faker::Internet.email(name: "#{first_name} #{last_name}")
+        Faker::Internet.email(name: name, domain: domain)
       end
+
+      confirmation_token   { Devise.friendly_token }
+      confirmation_sent_at { Time.current }
     end
 
     trait :with_otp do

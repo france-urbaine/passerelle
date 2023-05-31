@@ -161,34 +161,52 @@ RSpec.describe User do
 
     describe ".find_by_invitation_token" do
       let(:unconfimed_user) { create(:user, :invited, :unconfirmed) }
+      let(:expired_user)    { Timecop.freeze(1.month.ago) { create(:user, :invited, :unconfirmed) } }
       let(:confimed_user)   { create(:user, :invited, confirmation_token: Devise.friendly_token) }
 
       let(:valid_token)     { unconfimed_user.confirmation_token }
-      let(:expired_token)   { confimed_user.confirmation_token }
+      let(:expired_token)   { expired_user.confirmation_token }
+      let(:completed_token) { confimed_user.confirmation_token }
       let(:unknown_token)   { Devise.friendly_token }
 
-      it do
-        expect(User.find_by_invitation_token(valid_token))
-          .to  eq(unconfimed_user)
-          .and satisfy { |user| user.errors.empty? }
+      it "finds unconfirmed user without errors" do
+        aggregate_failures do
+          user = User.find_by_invitation_token(valid_token)
+          expect(user).to eq(unconfimed_user)
+          expect(user.errors).to be_empty
+        end
       end
 
-      it do
-        expect(User.find_by_invitation_token(expired_token))
-          .to  eq(confimed_user)
-          .and satisfy { |user| user.errors.added?(:email, :already_confirmed) }
+      it "finds and set errors to unconfirmed with expired token" do
+        aggregate_failures do
+          user = User.find_by_invitation_token(expired_token)
+          expect(user).to eq(expired_user)
+          expect(user.errors).to satisfy { |errors| errors.of_kind?(:email, :confirmation_period_expired) }
+        end
       end
 
-      it do
-        expect(User.find_by_invitation_token(unknown_token))
-          .to  be_a_new(User)
-          .and satisfy { |user| user.errors.added?(:confirmation_token, :invalid) }
+      it "finds and set errors to already confirmed user" do
+        aggregate_failures do
+          user = User.find_by_invitation_token(completed_token)
+          expect(user).to eq(confimed_user)
+          expect(user.errors).to satisfy { |errors| errors.of_kind?(:email, :already_confirmed) }
+        end
       end
 
-      it do
-        expect(User.find_by_invitation_token(""))
-          .to  be_a_new(User)
-          .and satisfy { |user| user.errors.added?(:confirmation_token, :blank) }
+      it "builds a new user and set errors with unknown token" do
+        aggregate_failures do
+          user = User.find_by_invitation_token(unknown_token)
+          expect(user).to be_a_new(User)
+          expect(user.errors).to satisfy { |errors| errors.of_kind?(:confirmation_token, :invalid) }
+        end
+      end
+
+      it "builds a new user and set errors with blank token" do
+        aggregate_failures do
+          user = User.find_by_invitation_token("")
+          expect(user).to be_a_new(User)
+          expect(user.errors).to satisfy { |errors| errors.of_kind?(:confirmation_token, :blank) }
+        end
       end
     end
   end
