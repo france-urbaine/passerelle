@@ -123,4 +123,7 @@ group :test do
   # System tests
   gem "capybara"
   gem "cuprite"
+
+  # Analyse and improve test performances
+  gem "test-prof"
 end
