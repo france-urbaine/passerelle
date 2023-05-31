@@ -24,8 +24,7 @@ default_env = "test" if ENV["RAILS_ENV"] == "test"
 env = ENV.fetch("DOTENV", default_env)
 
 def log(message)
-  return if ENV["DOTENV_QUIET"]
-  puts "\e[34m[ config/dotenv ]\e[0m #{message}"
+  puts "\e[34m[ config/dotenv ]\e[0m #{message}" unless ENV["DOTENV_QUIET"]
 end
 
 log "Loading #{env} environment variables"

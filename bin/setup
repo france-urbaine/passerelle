@@ -52,7 +52,7 @@ def setup
   system! "yarn"
 
   log "Dropping & recreating the development & test databases"
-  system!({"SETUP_SEED" => "true" }, "bin/rails db:reset")
+  system!({ "SETUP_SEED" => "true" }, "bin/rails db:reset")
 
   log "Setup test environment for parallel testing"
   system! "bin/rails parallel:prepare"
@@ -73,10 +73,19 @@ def setup
 end
 
 def setup_master_key
-  log "Please enter the master key:"
+  log "You are about to setup the Rails master key in order to get access to the encrypted credentials."
+  log "For more details, run the following command:"
+  log ""
+  log "  bin/rails credentials:help"
+  log ""
+  log "You first need to find the key shared in a Dashlane card:"
+  log ""
+  log "  \"Applications Master Keys\""
+  log ""
+  log "Then, please enter the master key:"
   master_key = gets(secret: true)
 
-  raise "Invalid key" if master_key.length == 0
+  raise "Invalid key" if master_key.empty?
 
   path = File.expand_path("../config/master.key", __dir__)
   File.open(path, "w") do |f|
@@ -155,18 +164,18 @@ def verify_master_key_file
   path = File.expand_path("../config/master.key", __dir__)
   return if File.exist?(path)
 
-  log "---------------------------------------------------------------------------------"
-  log "  It seems that the Rails master key is not configured."
-  log "  If you have already set it up via another way, you could ignore this message."
+  log "-------------------------------------------------------------------------"
+  log "  It seems that the Rails master key is not configured and you won't"
+  log "  be able to get access to encrypted credentials."
+  log "  For more details, run the following command:"
   log ""
-  log "  Otherwise, you first need to find the key shared in a Dashlane card:"
+  log "    bin/rails credentials:help"
   log ""
-  log "    \"Applications Master Keys\""
-  log ""
-  log "  Then, you could use the following command to save the key:"
+  log "  If you have already set it up another way, you could ignore this."
+  log "  Otherwise, you could use the following command to setup the key:"
   log ""
   log "    bin/setup master_key"
-  log "---------------------------------------------------------------------------------"
+  log "-------------------------------------------------------------------------"
   log ""
 end
 

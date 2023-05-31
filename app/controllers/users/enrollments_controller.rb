@@ -3,7 +3,7 @@
 module Users
   class EnrollmentsController < ApplicationController
     skip_before_action :authenticate_user!
-    before_action :sign_out, only: :show
+    before_action :sign_out, only: :new
 
     layout "public"
 

@@ -46,9 +46,9 @@ gem "slim"
 gem "view_component"
 
 # Data tools
+gem "faker"
 gem "roo"
 gem "rubyzip"
-gem "faker"
 
 # Monitoring
 gem "appsignal"

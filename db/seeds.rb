@@ -48,7 +48,8 @@ if ENV["SEED_INTERACTIVE_USER"] == "true"
       last_name:          last_name,
       organization_admin: true,
       super_admin:        true,
-      password:           Devise.friendly_token
+      password:           Devise.friendly_token,
+      &:skip_confirmation_notification!
     )
 
   log ""

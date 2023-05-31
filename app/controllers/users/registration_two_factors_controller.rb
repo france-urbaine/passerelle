@@ -3,7 +3,7 @@
 module Users
   class RegistrationTwoFactorsController < ApplicationController
     skip_before_action :authenticate_user!
-    before_action :sign_out, only: :show
+    before_action :sign_out, only: :new
 
     before_action do
       @user = User.find_by_invitation_token(params[:token])
