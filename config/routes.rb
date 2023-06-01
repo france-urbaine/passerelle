@@ -21,8 +21,6 @@ Rails.application.routes.draw do
     patch :update_all, on: :collection, path: "/", as: nil
   end
 
-  root to: redirect("/editeurs")
-
   mount Lookbook::Engine, at: "/lookbook" if Rails.env.development?
 
   devise_for :users, path: "/", controllers: {
@@ -45,6 +43,14 @@ Rails.application.routes.draw do
     resource :organization_settings,   path: "/compte/organisation", only: %i[show update]
 
     get "/compte", to: redirect("/compte/parametres")
+  end
+
+  unauthenticated do
+    root to: redirect("/connexion")
+  end
+
+  authenticated :user do
+    root to: redirect("/editeurs"), as: :authenticated_root
   end
 
   constraints(id: ID_REGEXP) do
