@@ -50,9 +50,11 @@ gem "faker"
 gem "roo"
 gem "rubyzip"
 
-# Monitoring
+# Production config & monitoring
 gem "appsignal"
 gem "lograge"
+gem "rack-attack"
+gem "rack-rewrite"
 
 # Windows compatibility
 gem "tzinfo-data", platforms: %i[mingw mswin x64_mingw jruby]

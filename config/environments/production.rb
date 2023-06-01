@@ -67,10 +67,11 @@ Rails.application.configure do
   config.log_level = ENV["RAILS_LOGGER_LEVEL"]&.to_sym || :info
 
   # Prepend all log lines with the following tags.
-  config.log_tags = %i[request_id domain remote_ip]
+  config.log_tags = %i[remote_ip]
 
   # Use a different cache store in production.
   # config.cache_store = :mem_cache_store
+  config.cache_store = :redis_cache_store, { url: ENV.fetch("REDIS_CACHE_URL") } if ENV["REDIS_CACHE_URL"]
 
   # Use a real queuing backend for Active Job (and separate queues per environment).
   # config.active_job.queue_adapter     = :resque
@@ -113,8 +114,12 @@ Rails.application.configure do
 
   # Add trusted IP from reverse proxy
   # See https://api.rubyonrails.org/classes/ActionDispatch/RemoteIp/GetIp.html#method-i-calculate_ip
-  #
   if ENV["CC_REVERSE_PROXY_IPS"].present?
     config.action_dispatch.trusted_proxies = ENV["CC_REVERSE_PROXY_IPS"].split(",").map { |proxy| IPAddr.new(proxy) }
+  end
+
+  # Handle few redirections
+  config.middleware.insert_before Rack::Runtime, Rack::Rewrite do
+    r301(/.*/, "//fiscahub.fr$&", host: "www.fiscahub.fr")
   end
 end

@@ -13,6 +13,14 @@ Rails.application.config.assets.version = "1.0"
 # folder are already added.
 # Rails.application.config.assets.precompile += %w( admin.js admin.css )
 
+# Remove actiontext from precompiled assets
+Rails.application.config.after_initialize do
+  Rails.application.config.assets.precompile.delete("actiontext.js")
+  Rails.application.config.assets.precompile.delete("trix.js")
+  Rails.application.config.assets.precompile.delete("trix.css")
+end
+
+# Setup inline_svg to cache SVG icons in production
 InlineSvg.configure do |config|
   if Rails.env.production?
     config.asset_file = InlineSvg::CachedAssetFile.new(
