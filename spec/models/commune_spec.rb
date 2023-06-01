@@ -37,9 +37,20 @@ RSpec.describe Commune do
   it { is_expected.not_to allow_value("1234567AB").for(:siren_epci) }
   it { is_expected.not_to allow_value("1234567891").for(:siren_epci) }
 
-  # Formatting before save
+  # Normalization callbacks
   # ----------------------------------------------------------------------------
-  it { expect(create(:commune, siren_epci: "")).to have_attributes(siren_epci: nil) }
+  describe "attribute normalization" do
+    def build_record(**attributes)
+      user = build(:commune, **attributes)
+      user.validate
+      user
+    end
+
+    describe "#siren_epci" do
+      it { expect(build_record(siren_epci: "")).to  have_attributes(siren_epci: nil) }
+      it { expect(build_record(siren_epci: nil)).to have_attributes(siren_epci: nil) }
+    end
+  end
 
   # Search scope
   # ----------------------------------------------------------------------------

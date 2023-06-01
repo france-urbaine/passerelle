@@ -28,6 +28,8 @@ require "database_cleaner/active_record"
 require "view_component/test_helpers"
 require "action_policy/rspec"
 require "action_policy/rspec/dsl"
+require "test_prof/recipes/rspec/before_all"
+require "test_prof/recipes/rspec/let_it_be"
 
 # Add additional requires below this line. Rails is not loaded until this point!
 

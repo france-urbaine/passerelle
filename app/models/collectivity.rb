@@ -43,6 +43,8 @@ class Collectivity < ApplicationRecord
   belongs_to :publisher, optional: true
 
   has_many :users, as: :organization, dependent: :delete_all
+  has_many :packages, dependent: false
+  has_many :reports,  dependent: false
 
   # Validations
   # ----------------------------------------------------------------------------
@@ -70,9 +72,9 @@ class Collectivity < ApplicationRecord
 
   # Callbacks
   # ----------------------------------------------------------------------------
-  before_validation :clean_attributes
+  before_validation :normalize_contact_phone
 
-  def clean_attributes
+  def normalize_contact_phone
     self.contact_phone = contact_phone&.delete(" ")
   end
 

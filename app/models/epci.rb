@@ -87,9 +87,9 @@ class EPCI < ApplicationRecord
 
   # Callbacks
   # ----------------------------------------------------------------------------
-  before_validation :clean_empty_code_departement
+  before_validation :normalize_code_departement
 
-  def clean_empty_code_departement
+  def normalize_code_departement
     self.code_departement = nil if code_departement.blank?
   end
 
