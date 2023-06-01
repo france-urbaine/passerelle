@@ -52,13 +52,23 @@ RSpec.describe Collectivity do
     it { is_expected.not_to validate_uniqueness_of(:siren).case_insensitive }
   end
 
-  # Formatting before save
+  # Normalization callbacks
   # ----------------------------------------------------------------------------
-  it { expect(create(:collectivity, contact_phone: "0123456789")).to        have_attributes(contact_phone: "0123456789") }
-  it { expect(create(:collectivity, contact_phone: "01 23 45 67 89")).to    have_attributes(contact_phone: "0123456789") }
-  it { expect(create(:collectivity, contact_phone: "+33 1 23 45 67 89")).to have_attributes(contact_phone: "+33123456789") }
-  it { expect(create(:collectivity, contact_phone: "")).to                  have_attributes(contact_phone: "") }
-  it { expect(create(:collectivity, contact_phone: nil)).to                 have_attributes(contact_phone: nil) }
+  describe "attribute normalization" do
+    def build_record(**attributes)
+      user = build(:collectivity, **attributes)
+      user.validate
+      user
+    end
+
+    describe "#contact_phone" do
+      it { expect(build_record(contact_phone: "0123456789")).to        have_attributes(contact_phone: "0123456789") }
+      it { expect(build_record(contact_phone: "01 23 45 67 89")).to    have_attributes(contact_phone: "0123456789") }
+      it { expect(build_record(contact_phone: "+33 1 23 45 67 89")).to have_attributes(contact_phone: "+33123456789") }
+      it { expect(build_record(contact_phone: "")).to                  have_attributes(contact_phone: "") }
+      it { expect(build_record(contact_phone: nil)).to                 have_attributes(contact_phone: nil) }
+    end
+  end
 
   # Search
   # ----------------------------------------------------------------------------

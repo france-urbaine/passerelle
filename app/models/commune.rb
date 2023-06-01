@@ -55,10 +55,10 @@ class Commune < ApplicationRecord
 
   # Callbacks
   # ----------------------------------------------------------------------------
-  before_validation :clean_attributes
+  before_validation :normalize_siren_epci
   before_save       :generate_qualified_name, if: :qualified_name_need_to_be_regenerated?
 
-  def clean_attributes
+  def normalize_siren_epci
     self.siren_epci = nil if siren_epci.blank?
   end
 

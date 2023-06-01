@@ -29,6 +29,21 @@ RSpec.describe EPCI do
   it { is_expected.not_to allow_value("123").for(:code_departement) }
   it { is_expected.not_to allow_value("3C").for(:code_departement) }
 
+  # Normalization callbacks
+  # ----------------------------------------------------------------------------
+  describe "attribute normalization" do
+    def build_record(**attributes)
+      user = build(:epci, **attributes)
+      user.validate
+      user
+    end
+
+    describe "#code_departement" do
+      it { expect(build_record(code_departement: "")).to  have_attributes(code_departement: nil) }
+      it { expect(build_record(code_departement: nil)).to have_attributes(code_departement: nil) }
+    end
+  end
+
   # Search scope
   # ----------------------------------------------------------------------------
   describe ".search" do
