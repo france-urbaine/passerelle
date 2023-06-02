@@ -8,6 +8,14 @@
     @apply p-6;
   }
 
+  .content__grid {
+    @apply grid gap-12;
+
+    &--cols-2 {
+      @apply xl:grid-cols-2;
+    }
+  }
+
   .content__separator {
     @apply my-12;
   }

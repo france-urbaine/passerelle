@@ -1,6 +1,9 @@
 fr:
   activerecord:
     models:
+      report:       Signalement
+      package:      Paquet
+      dossier:      Dossier
       publisher:    Éditeur
       ddfip:        DDFIP
       office:       Guichet
@@ -102,6 +105,12 @@ fr:
 
     errors:
       models:
+        report:
+          attributes:
+            subject:
+              blank:     L'objet du signalement est requis
+              invalid:   Cet objet n'est n'est pas valide
+
         publisher:
           attributes:
             name:

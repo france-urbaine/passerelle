@@ -5,3 +5,82 @@ fr:
       evaluation_eco: "Évaluation de locaux économiques"
       occupation_hab: "Occupation de locaux d'habitation"
       occupation_eco: "Occupation de locaux économiques"
+
+    subject:
+      evaluation_hab:
+        evaluation_hab/evaluation:          "Problème d'évaluation d'un local d'habitation"
+        evaluation_hab/exoneration:         "Problème d'exonération d'un local d'habitation"
+        evaluation_hab/affectation:         "Problème d'affectation d'un local d'habitation"
+        evaluation_hab/adresse:             "Problème d'adresse d'un local d'habitation"
+        evaluation_hab/omission_batie:      "Omission bâtie sur un local d'habitation"
+        evaluation_hab/achevement_travaux:  "Achèvement de travaux sur un local d'habitation"
+
+      evaluation_eco:
+        evaluation_eco/evaluation:          "Problème d'évaluation d'un local économique"
+        evaluation_eco/exoneration:         "Problème d'exonération d'un local économique"
+        evaluation_eco/affectation:         "Problème d'affectation d'un local économique"
+        evaluation_eco/adresse:             "Problème d'adresse d'un local économique"
+        evaluation_eco/omission_batie:      "Omission bâtie sur un local économique"
+        evaluation_eco/achevement_travaux:  "Achèvement de travaux sur un local économique"
+
+    affectation:
+      A: Locaux commerciaux et biens divers passibles de la TH
+      B: Bâtiment industriel
+      C: Commerce
+      E: Locaux commerciaux et biens divers non passibles de la TH ni de la CFE
+      H: Habitation
+      K: Locaux administratifs non passibles de la TH
+      L: Hôtel
+      P: Professionnel
+      S: Biens divers passibles de la TH
+      T: Terrain industriel
+
+    nature_local:
+      AP: Appartement
+      AT: Shelters des antennes téléphones
+      AU: "Voies et éléments (ex. : péage) construits sur une autoroute"
+      CB: Local professionnel
+      DA: Dépendance d'appartement
+      DM: Dépendance de maison
+      DE: "Dépendance bâtie isolée (ex. : garage)"
+      LC: "Local commun (ex. : local à vélos)"
+      MA: Maison
+      ME: Maison exceptionnelle
+      MP: Maison partagée par une limite territoriale
+      PP: Port de plaisance
+      SM: Sol de maison (cas de construction sur sol d'autrui)
+      U:  Établissement industriel (évalué par méthode comptable)
+      UE: Transformateur électrique HBTA
+      UG: Appareil à gaz
+      UN: Usine nucléaire
+
+    categorie_habitation:
+      1:  1 - Grand luxe
+      2:  2 - Luxe
+      3:  3 - Très confortable
+      4:  4 - Confortable
+      5:  5 - Assez confortable
+      6:  6 - Ordinaire
+      7:  7 - Médiocre
+      8:  8 - Très médiocre
+      1M: 1M - Grand luxe intermédiaire
+      2M: 2M - Luxe intermédiaire
+      3M: 3M - Très confortable intermédiaire
+      4M: 4M - Confortable intermédiaire
+      5M: 5M - Assez confortable intermédiaire
+      6M: 6M - Ordinaire intermédiaire
+      7M: 7M - Médiocre intermédiaire
+
+    coefficient_entretien:
+      "1,20": 1,20 - Bon
+      "1,10": 1,10 - Assez bon
+      "1,00": 1,00 - Passable
+      "0,90": 0,90 - Médiocre
+      "0,80": 0,80 - Mauvais
+
+    coefficient_situation:
+      "+0,10": 	"+ 0,10 - Excellente"
+      "+0,05": 	"+ 0,05 - Bonne"
+      "0,00": 	"0,00 - Ordinaire"
+      "-0,05": 	"- 0,05 - Médiocre"
+      "-0,10": 	"- 0,10 - Mauvais"

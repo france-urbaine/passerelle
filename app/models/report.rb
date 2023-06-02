@@ -128,18 +128,57 @@ class Report < ApplicationRecord
   # ----------------------------------------------------------------------------
   ACTIONS = %w[evaluation_hab evaluation_eco].freeze
   SUBJECTS = %w[
-    evaluation
-    exoneration
-    affectation
-    adresse
-    omission_batie
-    achevement_travaux
+    evaluation_hab/evaluation
+    evaluation_hab/exoneration
+    evaluation_hab/affectation
+    evaluation_hab/adresse
+    evaluation_hab/omission_batie
+    evaluation_hab/achevement_travaux
+    evaluation_eco/evaluation
+    evaluation_eco/exoneration
+    evaluation_eco/affectation
+    evaluation_eco/adresse
+    evaluation_eco/omission_batie
+    evaluation_eco/achevement_travaux
   ].freeze
   PRIORITIES = %w[low medium high].freeze
 
   validates :action,  presence: true, inclusion: { in: ACTIONS, allow_blank: true }
   validates :subject, presence: true, inclusion: { in: SUBJECTS, allow_blank: true }
   validates :priority, inclusion: { in: PRIORITIES }
+
+  with_options allow_blank: true do
+    validates :situation_annee_majic, numericality: {
+      greater_than_or_equal_to: 2018,
+      less_than_or_equal_to:    ->(_) { Time.current.year }
+    }
+
+    validates :code_insee,                          format: { with: CODE_INSEE_REGEXP }
+    validates :situation_invariant,                 format: { with: INVARIANT_REGEXP }
+    validates :situation_numero_ordre_proprietaire, format: { with: NUMERO_ORDRE_PROPRIETAIRE_REGEXP }
+    validates :situation_parcelle,                  format: { with: PARCELLE_REGEXP }
+    validates :situation_numero_voie,               numericality: { in: 0..9999 }
+    validates :situation_code_rivoli,               format: { with: CODE_RIVOLI_REGEXP }
+    validates :situation_numero_batiment,           format: { with: NUMERO_BATIMENT_REGEXP }
+    validates :situation_numero_escalier,           format: { with: NUMERO_ESCALIER_REGEXP }
+    validates :situation_numero_niveau,             format: { with: NUMERO_NIVEAU_REGEXP }
+    validates :situation_numero_porte,              format: { with: NUMERO_PORTE_REGEXP }
+    validates :situation_numero_ordre_porte,        format: { with: NUMERO_ORDRE_PORTE_REGEXP }
+    validates :situation_date_mutation,             format: { with: DATE_REGEXP }
+  end
+
+  # Callbacks
+  # ----------------------------------------------------------------------------
+  before_validation :generate_action, if: :will_save_change_to_subject?
+
+  def generate_action
+    self.action =
+      if subject&.match(%r{\A(?<action>[^/]+)/.+})
+        $LAST_MATCH_INFO[:action]
+      else
+        nil
+      end
+  end
 
   # Scopes
   # ----------------------------------------------------------------------------

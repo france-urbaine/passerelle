@@ -1,0 +1,66 @@
+= template_frame_component do
+  = breadcrumbs_component do |breadcrumbs|
+    - breadcrumbs.with_path "Echanges"
+    - breadcrumbs.with_path "Signalements"
+
+    - if allowed_to?(:create?, Report, with: ReportPolicy)
+      - breadcrumbs.with_action "Ajouter un signalement", new_report_path, icon: "plus", modal: true, primary: true
+
+  = datatable_component(@reports.preload(:package)) do |datatable|
+    - datatable.with_search
+    - datatable.with_pagination(@pagy, options: !@parent)
+
+    - datatable.with_selection do |selection|
+      - if allowed_to?(:destroy_all?, Report)
+        - selection.with_action "Supprimer la sélection", url_for([:remove_all, @parent, :reports]), modal: true
+
+    - case current_user.organization
+    - when Collectivity
+      - datatable.with_column(:priority,  sort: true) { "Priorité" }
+      - datatable.with_column(:status,    sort: true) { "Etat" }
+      - datatable.with_column(:subject,   sort: true) { "Sujet" }
+      - datatable.with_column(:invariant, sort: true) { "Invariant" }
+      - datatable.with_column(:adresse,   sort: true) { "Adresse" }
+      - datatable.with_column(:commune)               { "Commune" }
+
+    - when Publisher
+      - datatable.with_column(:collectivity, sort: true) { "Collectivité" }
+      - datatable.with_column(:package,      sort: true) { "Paquet" }
+      - datatable.with_column(:status,       sort: true) { "Etat" }
+      - datatable.with_column(:action,       sort: true) { "Action" }
+      - datatable.with_column(:subject,      sort: true) { "Sujet" }
+      - datatable.with_column(:invariant,    sort: true) { "Invariant" }
+      - datatable.with_column(:adresse,      sort: true) { "Adresse" }
+      - datatable.with_column(:commune)                  { "Commune" }
+
+    - when DDFIP
+      - datatable.with_column(:status,       sort: true) { "Etat" }
+      - datatable.with_column(:subject,      sort: true) { "Sujet" }
+      - datatable.with_column(:invariant,    sort: true) { "Invariant" }
+      - datatable.with_column(:adresse,      sort: true) { "Adresse" }
+      - datatable.with_column(:commune)                  { "Commune" }
+      - datatable.with_column(:collectivity, sort: true) { "Collectivité" }
+      - datatable.with_column(:package,      sort: true) { "Paquet" }
+      - datatable.with_column(:workshop,     sort: true) { "Dossier" }
+      - datatable.with_column(:office,       sort: true) { "Guichet" }
+
+    - when Office
+      - datatable.with_column(:workshop,  sort: true) { "Dossier" }
+      - datatable.with_column(:status,    sort: true) { "Etat" }
+      - datatable.with_column(:subject,   sort: true) { "Sujet" }
+      - datatable.with_column(:invariant, sort: true) { "Invariant" }
+      - datatable.with_column(:adresse,   sort: true) { "Adresse" }
+      - datatable.with_column(:commune)               { "Commune" }
+
+    - datatable.with_empty_message do
+      - if params[:search]
+        | Aucun signalement ne correspont à votre recherche.
+      - else
+        | Aucun signalement disponible.
+
+    - datatable.each_row do |row, report|
+      - row.with_checkbox "Sélectionner cette collectivité", described_by: :name, disabled: true
+
+      - row.with_column(:subject) do
+        = authorized_link_to report do
+          = report.subject

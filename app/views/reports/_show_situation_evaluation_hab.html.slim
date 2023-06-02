@@ -1,0 +1,43 @@
+.subheader-bar
+  h2.subheader
+    = svg_icon("document-text", "Nouvelle section")
+    | Evaluation actuelle
+
+  .subheader-bar__actions
+    - if allowed_to?(:update?, @report)
+      .subheader-bar__action
+        = button_component "Compléter", edit_report_path(@report, fields: "situation_evaluation_hab"), icon: "pencil-square", modal: true
+
+.card
+  dl.description-list
+    .description-list__row
+      dt Affectation
+      dd= @report_decorator.situation_affectation
+
+    .description-list__row
+      dt Nature du local
+      dd= @report_decorator.situation_nature
+
+    .description-list__row
+      dt Catégorie de local d'habitation
+      dd= @report_decorator.situation_categorie
+
+    .description-list__row
+      dt Surface réelle
+      dd= display_surface(@report.situation_surface_reelle)
+
+    .description-list__row
+      dt Date de mutation
+      dd= display_date(@report.situation_date_mutation)
+
+    .description-list__row
+      dt Coefficient d'entretien
+      dd= @report_decorator.situation_coefficient_entretien
+
+    .description-list__row
+      dt Coefficient de situation générale
+      dd= @report_decorator.situation_coefficient_situation_generale
+
+    .description-list__row
+      dt Coefficient de situation particulière
+      dd= @report_decorator.situation_coefficient_situation_particuliere

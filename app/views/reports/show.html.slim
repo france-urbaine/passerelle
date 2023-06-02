@@ -1,0 +1,30 @@
+= template_frame_component do
+  = breadcrumbs_component do |breadcrumbs|
+    - breadcrumbs.with_path "Echanges"
+    - breadcrumbs.with_path "Signalements", reports_path
+    - breadcrumbs.with_path translate(@report.subject, scope: "enum.subject.#{@report.action}")
+
+  - case @report.subject
+  - when "evaluation_hab/evaluation"
+    = render "show_situation_majic"
+    .content__separator
+    .content__grid.content__grid--cols-2
+      div= render "show_situation_evaluation_hab"
+      div= render "show_proposition_evaluation_hab"
+
+    .content__separator
+    .content__grid.content__grid--cols-2
+      div= render "show_observations"
+      div= render "show_enjeu"
+
+  -# when "evaluation_hab/exoneration"
+  -# when "evaluation_hab/affectation"
+  -# when "evaluation_hab/adresse"
+  -# when "evaluation_hab/omission_batie"
+  -# when "evaluation_hab/achevement_travaux"
+  -# when "evaluation_eco/evaluation"
+  -# when "evaluation_eco/exoneration"
+  -# when "evaluation_eco/affectation"
+  -# when "evaluation_eco/adresse"
+  -# when "evaluation_eco/omission_batie"
+  -# when "evaluation_eco/achevement_travaux""

@@ -17,12 +17,17 @@ nav.sidebar
       a.sidebar__link.sidebar__link--disabled( disabled ) API
 
   - else
+    - dashboard = true
+    - reports   = allowed_to?(:index?, Report, with: ReportPolicy)
+    - packages  = true
+    - files     = true
+
     .sidebar__header Echanges
     .sidebar__links
-      a.sidebar__link.sidebar__link--disabled( disabled ) Tableau de bord
-      a.sidebar__link.sidebar__link--disabled( disabled ) Signalements
-      a.sidebar__link.sidebar__link--disabled( disabled ) Paquets
-      a.sidebar__link.sidebar__link--disabled( disabled ) Fichiers
+      = sidebar_link_to "Tableau de bord", root_path, current: false, disabled: true if dashboard
+      = sidebar_link_to "Signalements",    reports_path if reports
+      = sidebar_link_to "Paquets",         root_path, current: false, disabled: true if packages
+      = sidebar_link_to "Fichiers",        root_path, current: false, disabled: true if files
 
     - publishers     = allowed_to?(:index?, Publisher,    with: PublisherPolicy)
     - collectivities = allowed_to?(:index?, Collectivity, with: CollectivityPolicy)

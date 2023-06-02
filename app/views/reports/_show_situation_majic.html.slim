@@ -1,0 +1,69 @@
+.subheader-bar
+  h2.subheader
+    = svg_icon("document-text", "Nouvelle section")
+    | Identification MAJIC
+
+  .subheader-bar__actions
+    - if allowed_to?(:update?, @report)
+      .subheader-bar__action
+        = button_component "Compléter", edit_report_path(@report, fields: "situation_majic"), icon: "pencil-square", modal: true
+
+.card
+  dl.description-list
+    .description-list__row
+      dt Année du fichier MAJIC
+      dd= @report.situation_annee_majic
+
+    .description-list__row
+      dt Commune
+      dd.flex.justify-between.items-start.flex-col.md:flex-row
+        - if @report.code_insee
+          span= @report.commune&.name
+          span.text-gray-600
+            | Code INSEE :
+            = " "
+            = @report.code_insee
+
+    .description-list__row
+      dt Invariant
+      dd= @report.situation_invariant
+
+    .description-list__row
+      dt Parcelle
+      dd= display_parcelle(@report.situation_parcelle)
+
+    .description-list__row
+      dt Adresse du local
+      dd.flex.justify-between.items-start.flex-col.md:flex-row
+        - if @report_decorator.situation_adresse?
+          span= @report_decorator.situation_adresse
+
+          - if @report.situation_code_rivoli?
+            span.text-gray-600
+              | Code RIVOLI :
+              = " "
+              = @report.situation_code_rivoli
+
+    .description-list__row
+      dt Numéro de porte
+      dd.flex.justify-between.items-start.flex-col.md:flex-row
+        - if @report_decorator.situation_porte?
+          span= @report_decorator.situation_porte
+
+          - if @report.situation_numero_ordre_porte?
+            span.text-gray-600
+              | Numéro d'ordre :
+              = " "
+              = @report_decorator.situation_numero_ordre_porte
+
+    .description-list__row
+      dt Propriétaire
+      dd.flex.justify-between.items-start.flex-col.md:flex-row
+        - if @report.situation_proprietaire?
+          span= @report.situation_proprietaire
+
+          - if @report.situation_numero_ordre_proprietaire?
+            span.text-gray-600
+              | Numéro d'ordre :
+              = " "
+              = @report.situation_numero_ordre_proprietaire

@@ -1,0 +1,15 @@
+.subheader-bar
+  h2.subheader
+    = svg_icon("banknotes", "Nouvelle section")
+    | Enjeux
+
+  .subheader-bar__actions
+    - if allowed_to?(:update?, @report)
+      .subheader-bar__action
+        = button_component "Compléter", edit_report_path(@report, fields: "enjeux"), icon: "pencil-square", modal: true
+
+.card.flex
+  .h-24
+  .card__content.flex-auto.flex.items-center.justify-center.text-3xl
+    = number_to_currency(@report.enjeu)
+

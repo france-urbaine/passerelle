@@ -1,0 +1,11 @@
+= template_frame_component(src: @background_url) do |frame|
+  - frame.with_modal do |modal|
+    - modal.with_header do
+      | Edition du formulaire de signalement
+
+    - modal.with_form(model: @report) do
+      = hidden_param_input(:fields)
+      = render "edit_#{@report_form.fields}"
+
+    - modal.with_submit_action "Enregistrer"
+    - modal.with_close_action "Annuler"

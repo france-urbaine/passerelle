@@ -1,0 +1,17 @@
+= template_frame_component(src: @background_url) do |frame|
+  - frame.with_modal do |modal|
+    - modal.with_header do
+      | Création d'un nouveau signalement
+
+    - modal.with_form(model: @report, url: reports_path) do
+      = hidden_field_tag :redirect, modal.redirection_path
+
+      = fields(model: @report_form) do |form|
+        = form.block :subject do
+          = form.label :subject, "Objet du signalement"
+          = form.select :subject, @report_form.subject_options, include_blank: "Sélectionnez un formulaire"
+
+    - modal.with_submit_action "Enregistrer"
+    - modal.with_close_action "Annuler"
+
+
