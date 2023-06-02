@@ -1,4 +1,4 @@
 web: MAILCATCHER=true bin/rails server -p 3000
-css: yarn build:css --watch
-js: yarn build:js --watch
+js: yarn watch:js
+css: yarn watch:css
 mailcatcher: bin/mailcatcher

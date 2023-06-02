@@ -20,6 +20,12 @@
     "build:css:mailer": "postcss ./app/assets/stylesheets/mailer.postcss.css -o ./app/assets/builds/mailer.css",
     "build:css": "yarn build:css:application && yarn build:css:mailer",
     "build:js": "esbuild app/javascript/*.* --bundle --sourcemap --outdir=app/assets/builds",
-    "build": "yarn build:js && yarn build:css"
+    "build": "yarn build:js && yarn build:css",
+
+    "watch:css": "concurrently \"yarn build:css:application --verbose --watch\" \"yarn build:css:mailer --verbose --watch\" --kill-others",
+    "watch:js": "yarn build:js --watch"
+  },
+  "devDependencies": {
+    "concurrently": "^8.1.0"
   }
 }
