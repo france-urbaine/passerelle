@@ -5,37 +5,43 @@ require "rails_helper"
 RSpec.describe Publisher do
   # Associations
   # ----------------------------------------------------------------------------
-  it { is_expected.to have_many(:collectivities) }
-  it { is_expected.to have_many(:users) }
+  describe "associations" do
+    it { is_expected.to have_many(:users) }
+    it { is_expected.to have_many(:collectivities) }
+    it { is_expected.to have_many(:packages) }
+    it { is_expected.to have_many(:reports) }
+  end
 
   # Validations
   # ----------------------------------------------------------------------------
-  it { is_expected.to validate_presence_of(:name) }
-  it { is_expected.to validate_presence_of(:siren) }
+  describe "validations" do
+    it { is_expected.to validate_presence_of(:name) }
+    it { is_expected.to validate_presence_of(:siren) }
 
-  it { is_expected.to     allow_value("801453893").for(:siren) }
-  it { is_expected.not_to allow_value("1234567AB").for(:siren) }
-  it { is_expected.not_to allow_value("1234567891").for(:siren) }
+    it { is_expected.to     allow_value("801453893").for(:siren) }
+    it { is_expected.not_to allow_value("1234567AB").for(:siren) }
+    it { is_expected.not_to allow_value("1234567891").for(:siren) }
 
-  it { is_expected.to     allow_value("foo@bar.com")        .for(:contact_email) }
-  it { is_expected.to     allow_value("foo@bar")            .for(:contact_email) }
-  it { is_expected.to     allow_value("foo@bar-bar.bar.com").for(:contact_email) }
-  it { is_expected.not_to allow_value("foo.bar.com")        .for(:contact_email) }
+    it { is_expected.to     allow_value("foo@bar.com")        .for(:contact_email) }
+    it { is_expected.to     allow_value("foo@bar")            .for(:contact_email) }
+    it { is_expected.to     allow_value("foo@bar-bar.bar.com").for(:contact_email) }
+    it { is_expected.not_to allow_value("foo.bar.com")        .for(:contact_email) }
 
-  context "with an existing publisher" do
-    # FYI: About uniqueness validations, case insensitivity and accents:
-    # You should read ./docs/uniqueness_validations_and_accents.md
-    before { create(:publisher) }
+    context "with an existing publisher" do
+      # FYI: About uniqueness validations, case insensitivity and accents:
+      # You should read ./docs/uniqueness_validations_and_accents.md
+      before { create(:publisher) }
 
-    it { is_expected.to validate_uniqueness_of(:name).case_insensitive }
-    it { is_expected.to validate_uniqueness_of(:siren).case_insensitive }
-  end
+      it { is_expected.to validate_uniqueness_of(:name).case_insensitive }
+      it { is_expected.to validate_uniqueness_of(:siren).case_insensitive }
+    end
 
-  context "when existing publisher is discarded" do
-    before { create(:publisher, :discarded) }
+    context "when existing publisher is discarded" do
+      before { create(:publisher, :discarded) }
 
-    it { is_expected.not_to validate_uniqueness_of(:name).case_insensitive }
-    it { is_expected.not_to validate_uniqueness_of(:siren).case_insensitive }
+      it { is_expected.not_to validate_uniqueness_of(:name).case_insensitive }
+      it { is_expected.not_to validate_uniqueness_of(:siren).case_insensitive }
+    end
   end
 
   # Search

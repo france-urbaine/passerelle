@@ -129,9 +129,9 @@ RSpec.configure do |config|
     Rails.cache = previous_cache
   end
 
-  # Always make Timecop returns to curren time
-  config.after do
-    Timecop.return
+  # Always make Timecop returns to current time
+  config.after do |example|
+    Timecop.return unless example.metadata[:prevent_timecop_to_return]
   end
 end
 

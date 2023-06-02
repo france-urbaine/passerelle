@@ -29,8 +29,8 @@ class Office < ApplicationRecord
   # ----------------------------------------------------------------------------
   belongs_to :ddfip
 
-  has_many :office_users,    dependent: :delete_all
-  has_many :office_communes, dependent: :delete_all
+  has_many :office_users,    dependent: false
+  has_many :office_communes, dependent: false
 
   has_many :users,    through: :office_users
   has_many :communes, through: :office_communes
@@ -96,7 +96,7 @@ class Office < ApplicationRecord
     Collectivity.kept.where(territory: territories)
   end
 
-  # Counters cached
+  # Database updates
   # ----------------------------------------------------------------------------
   def self.reset_all_counters
     connection.select_value("SELECT reset_all_offices_counters()")

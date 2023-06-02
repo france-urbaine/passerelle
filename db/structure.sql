@@ -38,14 +38,14 @@ COMMENT ON EXTENSION unaccent IS 'text search dictionary that removes accents';
 
 
 --
--- Name: collectivity_territory_type; Type: TYPE; Schema: public; Owner: -
+-- Name: action; Type: TYPE; Schema: public; Owner: -
 --
 
-CREATE TYPE public.collectivity_territory_type AS ENUM (
-    'Commune',
-    'EPCI',
-    'Departement',
-    'Region'
+CREATE TYPE public.action AS ENUM (
+    'evaluation_hab',
+    'evaluation_eco',
+    'occupation_hab',
+    'occupation_eco'
 );
 
 
@@ -62,14 +62,13 @@ CREATE TYPE public.epci_nature AS ENUM (
 
 
 --
--- Name: office_action; Type: TYPE; Schema: public; Owner: -
+-- Name: organization_type; Type: TYPE; Schema: public; Owner: -
 --
 
-CREATE TYPE public.office_action AS ENUM (
-    'evaluation_hab',
-    'evaluation_eco',
-    'occupation_hab',
-    'occupation_eco'
+CREATE TYPE public.organization_type AS ENUM (
+    'Collectivity',
+    'Publisher',
+    'DDFIP'
 );
 
 
@@ -84,13 +83,56 @@ CREATE TYPE public.otp_method AS ENUM (
 
 
 --
--- Name: user_organization_type; Type: TYPE; Schema: public; Owner: -
+-- Name: package_action; Type: TYPE; Schema: public; Owner: -
 --
 
-CREATE TYPE public.user_organization_type AS ENUM (
-    'Collectivity',
-    'Publisher',
-    'DDFIP'
+CREATE TYPE public.package_action AS ENUM (
+    'evaluation_hab',
+    'evaluation_eco'
+);
+
+
+--
+-- Name: priority; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.priority AS ENUM (
+    'low',
+    'medium',
+    'high'
+);
+
+
+--
+-- Name: report_action; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.report_action AS ENUM (
+    'evaluation_hab',
+    'evaluation_eco'
+);
+
+
+--
+-- Name: report_priority; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.report_priority AS ENUM (
+    'low',
+    'medium',
+    'high'
+);
+
+
+--
+-- Name: territory_type; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.territory_type AS ENUM (
+    'Commune',
+    'EPCI',
+    'Departement',
+    'Region'
 );
 
 
@@ -523,7 +565,7 @@ CREATE TABLE public.offices (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
     ddfip_id uuid NOT NULL,
     name character varying NOT NULL,
-    action public.office_action NOT NULL,
+    action public.action NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
     discarded_at timestamp(6) without time zone,
@@ -696,7 +738,7 @@ $$;
 
 CREATE TABLE public.users (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
-    organization_type public.user_organization_type NOT NULL,
+    organization_type public.organization_type NOT NULL,
     organization_id uuid NOT NULL,
     inviter_id uuid,
     first_name character varying DEFAULT ''::character varying NOT NULL,
@@ -757,7 +799,7 @@ $$;
 
 CREATE TABLE public.collectivities (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
-    territory_type public.collectivity_territory_type NOT NULL,
+    territory_type public.territory_type NOT NULL,
     territory_id uuid NOT NULL,
     publisher_id uuid,
     name character varying NOT NULL,
@@ -1604,6 +1646,48 @@ $$;
 
 
 --
+-- Name: active_storage_attachments; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.active_storage_attachments (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    record_type character varying NOT NULL,
+    record_id uuid NOT NULL,
+    blob_id uuid NOT NULL,
+    name character varying NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: active_storage_blobs; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.active_storage_blobs (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    key character varying NOT NULL,
+    filename character varying NOT NULL,
+    content_type character varying,
+    metadata text,
+    service_name character varying NOT NULL,
+    byte_size bigint NOT NULL,
+    checksum character varying,
+    created_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: active_storage_variant_records; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.active_storage_variant_records (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    blob_id uuid NOT NULL,
+    variation_digest character varying NOT NULL
+);
+
+
+--
 -- Name: ar_internal_metadata; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1642,12 +1726,162 @@ CREATE TABLE public.office_users (
 
 
 --
+-- Name: packages; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.packages (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    collectivity_id uuid NOT NULL,
+    publisher_id uuid,
+    name character varying NOT NULL,
+    reference character varying NOT NULL,
+    action public.action NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL,
+    transmitted_at timestamp(6) without time zone,
+    approved_at timestamp(6) without time zone,
+    rejected_at timestamp(6) without time zone,
+    discarded_at timestamp(6) without time zone,
+    due_on date
+);
+
+
+--
+-- Name: reports; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.reports (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    collectivity_id uuid NOT NULL,
+    publisher_id uuid,
+    package_id uuid NOT NULL,
+    workshop_id uuid,
+    sibling_id character varying,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL,
+    approved_at timestamp(6) without time zone,
+    rejected_at timestamp(6) without time zone,
+    debated_at timestamp(6) without time zone,
+    discarded_at timestamp(6) without time zone,
+    action public.action NOT NULL,
+    subject character varying NOT NULL,
+    sandbox boolean DEFAULT false NOT NULL,
+    priority public.priority DEFAULT 'low'::public.priority NOT NULL,
+    code_insee character varying,
+    date_constat date,
+    enjeu text,
+    observations text,
+    reponse text,
+    situation_annee_majic integer,
+    situation_invariant character varying,
+    situation_proprietaire character varying,
+    situation_numero_ordre_proprietaire character varying,
+    situation_parcelle character varying,
+    situation_numero_voie character varying,
+    situation_indice_repetition character varying,
+    situation_libelle_voie character varying,
+    situation_code_rivoli character varying,
+    situation_adresse character varying,
+    situation_numero_batiment character varying,
+    situation_numero_escalier character varying,
+    situation_numero_niveau character varying,
+    situation_numero_porte character varying,
+    situation_numero_ordre_porte character varying,
+    situation_nature character varying,
+    situation_affectation character varying,
+    situation_categorie character varying,
+    situation_surface_reelle double precision,
+    situation_surface_p1 double precision,
+    situation_surface_p2 double precision,
+    situation_surface_p3 double precision,
+    situation_surface_pk1 double precision,
+    situation_surface_pk2 double precision,
+    situation_surface_ponderee double precision,
+    situation_date_mutation character varying,
+    situation_coefficient_localisation character varying,
+    situation_coefficient_entretien character varying,
+    situation_coefficient_situation_generale character varying,
+    situation_coefficient_situation_particuliere character varying,
+    situation_exoneration character varying,
+    proposition_parcelle character varying,
+    proposition_numero_voie character varying,
+    proposition_indice_repetition character varying,
+    proposition_libelle_voie character varying,
+    proposition_code_rivoli character varying,
+    proposition_adresse character varying,
+    proposition_numero_batiment character varying,
+    proposition_numero_escalier character varying,
+    proposition_numero_niveau character varying,
+    proposition_numero_porte character varying,
+    proposition_numero_ordre_porte character varying,
+    proposition_nature character varying,
+    proposition_nature_dependance character varying,
+    proposition_affectation character varying,
+    proposition_categorie character varying,
+    proposition_surface_reelle double precision,
+    proposition_surface_p1 double precision,
+    proposition_surface_p2 double precision,
+    proposition_surface_p3 double precision,
+    proposition_surface_pk1 double precision,
+    proposition_surface_pk2 double precision,
+    proposition_surface_ponderee double precision,
+    proposition_coefficient_localisation character varying,
+    proposition_coefficient_entretien character varying,
+    proposition_coefficient_situation_generale character varying,
+    proposition_coefficient_situation_particuliere character varying,
+    proposition_exoneration character varying,
+    proposition_date_achevement character varying,
+    proposition_numero_permis character varying,
+    proposition_nature_travaux character varying
+);
+
+
+--
 -- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.schema_migrations (
     version character varying NOT NULL
 );
+
+
+--
+-- Name: workshops; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.workshops (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    ddfip_id uuid NOT NULL,
+    name character varying NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL,
+    discarded_at timestamp(6) without time zone,
+    due_on date
+);
+
+
+--
+-- Name: active_storage_attachments active_storage_attachments_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.active_storage_attachments
+    ADD CONSTRAINT active_storage_attachments_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: active_storage_blobs active_storage_blobs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.active_storage_blobs
+    ADD CONSTRAINT active_storage_blobs_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: active_storage_variant_records active_storage_variant_records_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.active_storage_variant_records
+    ADD CONSTRAINT active_storage_variant_records_pkey PRIMARY KEY (id);
 
 
 --
@@ -1723,6 +1957,14 @@ ALTER TABLE ONLY public.offices
 
 
 --
+-- Name: packages packages_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.packages
+    ADD CONSTRAINT packages_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: publishers publishers_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1739,6 +1981,14 @@ ALTER TABLE ONLY public.regions
 
 
 --
+-- Name: reports reports_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.reports
+    ADD CONSTRAINT reports_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: schema_migrations schema_migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1752,6 +2002,42 @@ ALTER TABLE ONLY public.schema_migrations
 
 ALTER TABLE ONLY public.users
     ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: workshops workshops_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.workshops
+    ADD CONSTRAINT workshops_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: index_active_storage_attachments_on_blob_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_active_storage_attachments_on_blob_id ON public.active_storage_attachments USING btree (blob_id);
+
+
+--
+-- Name: index_active_storage_attachments_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_active_storage_attachments_uniqueness ON public.active_storage_attachments USING btree (record_type, record_id, name, blob_id);
+
+
+--
+-- Name: index_active_storage_blobs_on_key; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_active_storage_blobs_on_key ON public.active_storage_blobs USING btree (key);
+
+
+--
+-- Name: index_active_storage_variant_records_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_active_storage_variant_records_uniqueness ON public.active_storage_variant_records USING btree (blob_id, variation_digest);
 
 
 --
@@ -1923,6 +2209,34 @@ CREATE INDEX index_offices_on_discarded_at ON public.offices USING btree (discar
 
 
 --
+-- Name: index_packages_on_collectivity_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_packages_on_collectivity_id ON public.packages USING btree (collectivity_id);
+
+
+--
+-- Name: index_packages_on_discarded_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_packages_on_discarded_at ON public.packages USING btree (discarded_at);
+
+
+--
+-- Name: index_packages_on_publisher_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_packages_on_publisher_id ON public.packages USING btree (publisher_id);
+
+
+--
+-- Name: index_packages_on_reference; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_packages_on_reference ON public.packages USING btree (reference);
+
+
+--
 -- Name: index_publishers_on_discarded_at; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1948,6 +2262,48 @@ CREATE UNIQUE INDEX index_publishers_on_siren ON public.publishers USING btree (
 --
 
 CREATE UNIQUE INDEX index_regions_on_code_region ON public.regions USING btree (code_region);
+
+
+--
+-- Name: index_reports_on_collectivity_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_reports_on_collectivity_id ON public.reports USING btree (collectivity_id);
+
+
+--
+-- Name: index_reports_on_package_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_reports_on_package_id ON public.reports USING btree (package_id);
+
+
+--
+-- Name: index_reports_on_publisher_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_reports_on_publisher_id ON public.reports USING btree (publisher_id);
+
+
+--
+-- Name: index_reports_on_sibling_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_reports_on_sibling_id ON public.reports USING btree (sibling_id);
+
+
+--
+-- Name: index_reports_on_subject_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_reports_on_subject_uniqueness ON public.reports USING btree (sibling_id, subject) WHERE (discarded_at IS NULL);
+
+
+--
+-- Name: index_reports_on_workshop_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_reports_on_workshop_id ON public.reports USING btree (workshop_id);
 
 
 --
@@ -1997,6 +2353,20 @@ CREATE UNIQUE INDEX index_users_on_reset_password_token ON public.users USING bt
 --
 
 CREATE UNIQUE INDEX index_users_on_unlock_token ON public.users USING btree (unlock_token);
+
+
+--
+-- Name: index_workshops_on_ddfip_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_workshops_on_ddfip_id ON public.workshops USING btree (ddfip_id);
+
+
+--
+-- Name: index_workshops_on_discarded_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_workshops_on_discarded_at ON public.workshops USING btree (discarded_at);
 
 
 --
@@ -2063,6 +2433,14 @@ CREATE TRIGGER trigger_users_changes AFTER INSERT OR DELETE OR UPDATE ON public.
 
 
 --
+-- Name: reports fk_rails_05f6a25318; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.reports
+    ADD CONSTRAINT fk_rails_05f6a25318 FOREIGN KEY (workshop_id) REFERENCES public.workshops(id) ON DELETE SET NULL;
+
+
+--
 -- Name: communes fk_rails_12e546a056; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2095,6 +2473,22 @@ ALTER TABLE ONLY public.office_users
 
 
 --
+-- Name: reports fk_rails_4674dd48a1; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.reports
+    ADD CONSTRAINT fk_rails_4674dd48a1 FOREIGN KEY (package_id) REFERENCES public.packages(id) ON DELETE CASCADE;
+
+
+--
+-- Name: reports fk_rails_4bfc052571; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.reports
+    ADD CONSTRAINT fk_rails_4bfc052571 FOREIGN KEY (publisher_id) REFERENCES public.publishers(id) ON DELETE CASCADE;
+
+
+--
 -- Name: office_users fk_rails_528e1db265; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2111,11 +2505,35 @@ ALTER TABLE ONLY public.epcis
 
 
 --
+-- Name: packages fk_rails_880b85e679; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.packages
+    ADD CONSTRAINT fk_rails_880b85e679 FOREIGN KEY (publisher_id) REFERENCES public.publishers(id) ON DELETE CASCADE;
+
+
+--
 -- Name: collectivities fk_rails_8f20c81d41; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.collectivities
     ADD CONSTRAINT fk_rails_8f20c81d41 FOREIGN KEY (publisher_id) REFERENCES public.publishers(id);
+
+
+--
+-- Name: active_storage_variant_records fk_rails_993965df05; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.active_storage_variant_records
+    ADD CONSTRAINT fk_rails_993965df05 FOREIGN KEY (blob_id) REFERENCES public.active_storage_blobs(id);
+
+
+--
+-- Name: reports fk_rails_a7a6115818; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.reports
+    ADD CONSTRAINT fk_rails_a7a6115818 FOREIGN KEY (collectivity_id) REFERENCES public.collectivities(id) ON DELETE CASCADE;
 
 
 --
@@ -2127,11 +2545,35 @@ ALTER TABLE ONLY public.office_communes
 
 
 --
+-- Name: active_storage_attachments fk_rails_c3b3935057; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.active_storage_attachments
+    ADD CONSTRAINT fk_rails_c3b3935057 FOREIGN KEY (blob_id) REFERENCES public.active_storage_blobs(id);
+
+
+--
 -- Name: communes fk_rails_ca34c89446; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.communes
     ADD CONSTRAINT fk_rails_ca34c89446 FOREIGN KEY (code_departement) REFERENCES public.departements(code_departement);
+
+
+--
+-- Name: workshops fk_rails_d255d96eba; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.workshops
+    ADD CONSTRAINT fk_rails_d255d96eba FOREIGN KEY (ddfip_id) REFERENCES public.ddfips(id) ON DELETE CASCADE;
+
+
+--
+-- Name: packages fk_rails_d338b343c7; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.packages
+    ADD CONSTRAINT fk_rails_d338b343c7 FOREIGN KEY (collectivity_id) REFERENCES public.collectivities(id) ON DELETE CASCADE;
 
 
 --
@@ -2166,6 +2608,11 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230514161159'),
 ('20230516080055'),
 ('20230516173340'),
-('20230517093540');
+('20230517093540'),
+('20230601080000'),
+('20230601080335'),
+('20230601080341'),
+('20230601080346'),
+('20230601093936');
 
 

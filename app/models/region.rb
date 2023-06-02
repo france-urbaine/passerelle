@@ -93,7 +93,7 @@ class Region < ApplicationRecord
     Collectivity.kept.where(territory: territories)
   end
 
-  # Counters cached
+  # Database updates
   # ----------------------------------------------------------------------------
   def self.reset_all_counters
     connection.select_value("SELECT reset_all_regions_counters()")

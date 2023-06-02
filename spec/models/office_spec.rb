@@ -5,24 +5,22 @@ require "rails_helper"
 RSpec.describe Office do
   # Associations
   # ----------------------------------------------------------------------------
-  it { is_expected.to belong_to(:ddfip).required }
-
-  it { is_expected.to have_many(:office_users) }
-  it { is_expected.to have_many(:office_communes) }
-  it { is_expected.to have_many(:users).through(:office_users) }
-  it { is_expected.to have_many(:communes).through(:office_communes) }
-
-  it { is_expected.to have_one(:departement).through(:ddfip) }
-  it { is_expected.to have_many(:departement_communes).through(:departement) }
+  describe "associations" do
+    it { is_expected.to belong_to(:ddfip).required }
+    it { is_expected.to have_many(:office_communes) }
+    it { is_expected.to have_many(:office_users) }
+    it { is_expected.to have_many(:users).through(:office_users) }
+    it { is_expected.to have_many(:communes).through(:office_communes) }
+    it { is_expected.to have_one(:departement).through(:ddfip) }
+    it { is_expected.to have_many(:departement_communes).through(:departement) }
+  end
 
   # Validations
   # ----------------------------------------------------------------------------
-  it { is_expected.to validate_presence_of(:name) }
-  it { is_expected.to validate_presence_of(:action) }
-
-  it do
-    is_expected.to validate_inclusion_of(:action)
-      .in_array(%w[evaluation_hab evaluation_eco occupation_hab occupation_eco])
+  describe "validations" do
+    it { is_expected.to validate_presence_of(:name) }
+    it { is_expected.to validate_presence_of(:action) }
+    it { is_expected.to validate_inclusion_of(:action).in_array(Office::ACTIONS) }
   end
 
   # Counter caches

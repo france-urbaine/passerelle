@@ -8,6 +8,10 @@ module Matchers
       perform_sql_queries.including(expected)
     end
 
+    def perform_no_sql_query
+      perform_sql_queries.to_the_number_of(0)
+    end
+
     matcher :perform_sql_queries do
       supports_block_expectations
 
@@ -24,9 +28,13 @@ module Matchers
       match do |actual|
         @actual_queries = capture_sql_queries(&actual)
 
-        @actual_queries.any? &&
-          number_of_queries_match? &&
-          expected_queries_match?
+        if @expected_number_of_queries&.zero?
+          @actual_queries.empty?
+        else
+          @actual_queries.any? &&
+            number_of_queries_match? &&
+            expected_queries_match?
+        end
       end
 
       def failure_message

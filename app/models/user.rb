@@ -70,7 +70,7 @@ class User < ApplicationRecord
   belongs_to :inviter, class_name: "User", optional: true, inverse_of: :invitees
   has_many :invitees, class_name: "User", foreign_key: :inviter_id, inverse_of: :inviter, dependent: :nullify
 
-  has_many :office_users, dependent: :delete_all
+  has_many :office_users, dependent: false
   has_many :offices, through: :office_users
 
   # Validations
@@ -253,6 +253,12 @@ class User < ApplicationRecord
     otp_method == "email" && organization&.allow_2fa_via_email?
   end
 
+  # Devise reconfirmation
+  # ----------------------------------------------------------------------------
+  def cancel_pending_reconfirmation
+    update(unconfirmed_email: nil)
+  end
+
   # Invitation process
   # ----------------------------------------------------------------------------
   def invite(by: nil)
@@ -299,13 +305,7 @@ class User < ApplicationRecord
     errors.empty?
   end
 
-  # Counters cached
-  # ----------------------------------------------------------------------------
-  def cancel_pending_reconfirmation
-    update(unconfirmed_email: nil)
-  end
-
-  # Counters cached
+  # Database updates
   # ----------------------------------------------------------------------------
   def self.reset_all_counters
     connection.select_value("SELECT reset_all_users_counters()")

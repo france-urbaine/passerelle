@@ -29,7 +29,10 @@ class Publisher < ApplicationRecord
   # Associations
   # ----------------------------------------------------------------------------
   has_many :users, as: :organization, dependent: :delete_all
-  has_many :collectivities, dependent: :delete_all
+  has_many :collectivities, dependent: false
+
+  has_many :packages, dependent: false
+  has_many :reports, dependent: false
 
   # Validations
   # ----------------------------------------------------------------------------
@@ -77,7 +80,7 @@ class Publisher < ApplicationRecord
     scored_order(:name, input)
   }
 
-  # Counters cached
+  # Database updates
   # ----------------------------------------------------------------------------
   def self.reset_all_counters
     connection.select_value("SELECT reset_all_publishers_counters()")

@@ -6,37 +6,42 @@ require "models/shared_examples"
 RSpec.describe DDFIP do
   # Associations
   # ----------------------------------------------------------------------------
-  it { is_expected.to belong_to(:departement).required }
-  it { is_expected.to have_many(:epcis) }
-  it { is_expected.to have_many(:communes) }
-  it { is_expected.to have_one(:region) }
-  it { is_expected.to have_many(:users) }
-  it { is_expected.to have_many(:offices) }
+  describe "associations" do
+    it { is_expected.to belong_to(:departement).required }
+    it { is_expected.to have_many(:epcis) }
+    it { is_expected.to have_many(:communes) }
+    it { is_expected.to have_one(:region).through(:departement) }
+    it { is_expected.to have_many(:users) }
+    it { is_expected.to have_many(:offices) }
+    it { is_expected.to have_many(:workshops) }
+  end
 
   # Validations
   # ----------------------------------------------------------------------------
-  it { is_expected.to validate_presence_of(:name) }
-  it { is_expected.to validate_presence_of(:code_departement) }
+  describe "validations" do
+    it { is_expected.to validate_presence_of(:name) }
+    it { is_expected.to validate_presence_of(:code_departement) }
 
-  it { is_expected.to     allow_value("01").for(:code_departement) }
-  it { is_expected.to     allow_value("2A").for(:code_departement) }
-  it { is_expected.to     allow_value("987").for(:code_departement) }
-  it { is_expected.not_to allow_value("1").for(:code_departement) }
-  it { is_expected.not_to allow_value("123").for(:code_departement) }
-  it { is_expected.not_to allow_value("3C").for(:code_departement) }
+    it { is_expected.to     allow_value("01").for(:code_departement) }
+    it { is_expected.to     allow_value("2A").for(:code_departement) }
+    it { is_expected.to     allow_value("987").for(:code_departement) }
+    it { is_expected.not_to allow_value("1").for(:code_departement) }
+    it { is_expected.not_to allow_value("123").for(:code_departement) }
+    it { is_expected.not_to allow_value("3C").for(:code_departement) }
 
-  context "with an existing DDFIP" do
-    # FYI: About uniqueness validations, case insensitivity and accents:
-    # You should read ./docs/uniqueness_validations_and_accents.md
-    before { create(:ddfip) }
+    context "with an existing DDFIP" do
+      # FYI: About uniqueness validations, case insensitivity and accents:
+      # You should read ./docs/uniqueness_validations_and_accents.md
+      before { create(:ddfip) }
 
-    it { is_expected.to validate_uniqueness_of(:name).case_insensitive }
-  end
+      it { is_expected.to validate_uniqueness_of(:name).case_insensitive }
+    end
 
-  context "when existing collectivity is discarded" do
-    before { create(:ddfip, :discarded) }
+    context "when existing collectivity is discarded" do
+      before { create(:ddfip, :discarded) }
 
-    it { is_expected.not_to validate_uniqueness_of(:name).case_insensitive }
+      it { is_expected.not_to validate_uniqueness_of(:name).case_insensitive }
+    end
   end
 
   # Search
@@ -98,7 +103,7 @@ RSpec.describe DDFIP do
     end
   end
 
-  # Other associations
+  # Database queries
   # ----------------------------------------------------------------------------
   describe "#on_territory_collectivities" do
     let(:ddfip) { create(:ddfip) }
@@ -133,9 +138,87 @@ RSpec.describe DDFIP do
     end
   end
 
-  # Counter caches
+  describe ".reset_all_counters" do
+    subject(:reset_all_counters) { described_class.reset_all_counters }
+
+    let!(:ddfips) { create_list(:ddfip, 2) }
+
+    it { expect { reset_all_counters }.to perform_sql_query("SELECT reset_all_ddfips_counters()") }
+
+    it "returns the count of DDFIPs" do
+      expect(reset_all_counters).to eq(2)
+    end
+
+    describe "on users_count" do
+      before do
+        create_list(:user, 4, organization: ddfips[0])
+        create_list(:user, 2, organization: ddfips[1])
+        create_list(:user, 1, :publisher)
+        create_list(:user, 1, :collectivity)
+
+        DDFIP.update_all(users_count: 0)
+      end
+
+      it "resets counters" do
+        expect { reset_all_counters }
+          .to  change { ddfips[0].reload.users_count }.from(0).to(4)
+          .and change { ddfips[1].reload.users_count }.from(0).to(2)
+      end
+    end
+
+    describe "on collectivities_count" do
+      before do
+        epcis    = create_list(:epci, 3)
+        communes =
+          create_list(:commune, 3, epci: epcis[0], departement: ddfips[0].departement) +
+          create_list(:commune, 2, epci: epcis[1], departement: ddfips[0].departement)
+
+        create(:collectivity, territory: communes[0])
+        create(:collectivity, territory: communes[1])
+        create(:collectivity, territory: communes[3])
+        create(:collectivity, :discarded, territory: communes[2])
+        create(:collectivity, :discarded, territory: communes[4])
+        create(:collectivity, :commune)
+        create(:collectivity, territory: epcis[0])
+        create(:collectivity, territory: epcis[1])
+        create(:collectivity, territory: epcis[2])
+        create(:collectivity, territory: ddfips[0].departement)
+        create(:collectivity, territory: ddfips[1].departement.region)
+
+        DDFIP.update_all(collectivities_count: 0)
+      end
+
+      it "resets counters" do
+        expect { reset_all_counters }
+          .to  change { ddfips[0].reload.collectivities_count }.from(0).to(6)
+          .and change { ddfips[1].reload.collectivities_count }.from(0).to(1)
+      end
+    end
+
+    describe "on offices_count" do
+      before do
+        create_list(:office, 4, ddfip: ddfips[0])
+        create_list(:office, 2, ddfip: ddfips[1])
+        create_list(:office, 1)
+
+        DDFIP.update_all(offices_count: 0)
+      end
+
+      it "resets counters" do
+        expect { reset_all_counters }
+          .to  change { ddfips[0].reload.offices_count }.from(0).to(4)
+          .and change { ddfips[1].reload.offices_count }.from(0).to(2)
+      end
+    end
+  end
+
+  # Database constraints and triggers
   # ----------------------------------------------------------------------------
-  describe "counter caches" do
+  describe "database constraints" do
+    pending "TODO"
+  end
+
+  describe "database triggers" do
     let!(:ddfips) { create_list(:ddfip, 2) }
 
     describe "#users_count" do
@@ -245,82 +328,6 @@ RSpec.describe DDFIP do
         expect { office.update(ddfip: ddfips[1]) }
           .to  change { ddfips[0].reload.offices_count }.from(1).to(0)
           .and change { ddfips[1].reload.offices_count }.from(0).to(1)
-      end
-    end
-  end
-
-  # Reset counters
-  # ----------------------------------------------------------------------------
-  describe ".reset_all_counters" do
-    subject(:reset_all_counters) { described_class.reset_all_counters }
-
-    let!(:ddfips) { create_list(:ddfip, 2) }
-
-    it { expect { reset_all_counters }.to perform_sql_query("SELECT reset_all_ddfips_counters()") }
-
-    it "returns the count of DDFIPs" do
-      expect(reset_all_counters).to eq(2)
-    end
-
-    describe "on users_count" do
-      before do
-        create_list(:user, 4, organization: ddfips[0])
-        create_list(:user, 2, organization: ddfips[1])
-        create_list(:user, 1, :publisher)
-        create_list(:user, 1, :collectivity)
-
-        DDFIP.update_all(users_count: 0)
-      end
-
-      it "resets counters" do
-        expect { reset_all_counters }
-          .to  change { ddfips[0].reload.users_count }.from(0).to(4)
-          .and change { ddfips[1].reload.users_count }.from(0).to(2)
-      end
-    end
-
-    describe "on collectivities_count" do
-      before do
-        epcis    = create_list(:epci, 3)
-        communes =
-          create_list(:commune, 3, epci: epcis[0], departement: ddfips[0].departement) +
-          create_list(:commune, 2, epci: epcis[1], departement: ddfips[0].departement)
-
-        create(:collectivity, territory: communes[0])
-        create(:collectivity, territory: communes[1])
-        create(:collectivity, territory: communes[3])
-        create(:collectivity, :discarded, territory: communes[2])
-        create(:collectivity, :discarded, territory: communes[4])
-        create(:collectivity, :commune)
-        create(:collectivity, territory: epcis[0])
-        create(:collectivity, territory: epcis[1])
-        create(:collectivity, territory: epcis[2])
-        create(:collectivity, territory: ddfips[0].departement)
-        create(:collectivity, territory: ddfips[1].departement.region)
-
-        DDFIP.update_all(collectivities_count: 0)
-      end
-
-      it "resets counters" do
-        expect { reset_all_counters }
-          .to  change { ddfips[0].reload.collectivities_count }.from(0).to(6)
-          .and change { ddfips[1].reload.collectivities_count }.from(0).to(1)
-      end
-    end
-
-    describe "on offices_count" do
-      before do
-        create_list(:office, 4, ddfip: ddfips[0])
-        create_list(:office, 2, ddfip: ddfips[1])
-        create_list(:office, 1)
-
-        DDFIP.update_all(offices_count: 0)
-      end
-
-      it "resets counters" do
-        expect { reset_all_counters }
-          .to  change { ddfips[0].reload.offices_count }.from(0).to(4)
-          .and change { ddfips[1].reload.offices_count }.from(0).to(2)
       end
     end
   end
