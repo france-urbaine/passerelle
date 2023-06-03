@@ -31,7 +31,7 @@ class ReportsController < ApplicationController
     only_kept! @report
 
     @report_form = ReportUpdateForm.new(@report, params.require(:fields))
-    @background_url = referrer_path || parent_path || reports_path
+    @background_url = referrer_path || report_path(@report)
   end
 
   def create

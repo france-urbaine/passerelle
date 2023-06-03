@@ -16,10 +16,6 @@
     @apply mx-1;
     @apply text-gray-600;
     @apply dark:text-gray-400;
-
-    & svg {
-      @apply h-6 w-6;
-    }
   }
 
   .breadcrumbs__path {
@@ -35,12 +31,6 @@
     & .icon-button:not([disabled]):not(:hover, :active, :focus, :focus-visible) {
       @apply text-gray-600;
       @apply dark:text-gray-400;
-    }
-
-    & .icon-button {
-      & svg {
-        @apply h-6 w-6;
-      }
     }
   }
 }

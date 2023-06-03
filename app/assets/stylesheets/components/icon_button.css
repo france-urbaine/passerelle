@@ -12,7 +12,7 @@
     & svg {
       position: relative;
       display: block;
-      @apply h-6 w-6 m-0;
+      @apply m-0;
     }
 
     &[disabled] {
@@ -52,6 +52,7 @@
       @apply subpixel-antialiased;
 
       & svg {
+        stroke-width: 2;
         @apply h-8 w-8;
       }
 

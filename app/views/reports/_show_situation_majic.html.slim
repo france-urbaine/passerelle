@@ -20,8 +20,7 @@
         - if @report.code_insee
           span= @report.commune&.name
           span.text-gray-600
-            | Code INSEE :
-            = " "
+            ' Code INSEE :
             = @report.code_insee
 
     .description-list__row
@@ -40,8 +39,7 @@
 
           - if @report.situation_code_rivoli?
             span.text-gray-600
-              | Code RIVOLI :
-              = " "
+              ' Code RIVOLI :
               = @report.situation_code_rivoli
 
     .description-list__row
@@ -52,8 +50,7 @@
 
           - if @report.situation_numero_ordre_porte?
             span.text-gray-600
-              | Numéro d'ordre :
-              = " "
+              ' Numéro d'ordre :
               = @report_decorator.situation_numero_ordre_porte
 
     .description-list__row
@@ -64,6 +61,5 @@
 
           - if @report.situation_numero_ordre_proprietaire?
             span.text-gray-600
-              | Numéro d'ordre :
-              = " "
+              ' Numéro d'ordre :
               = @report.situation_numero_ordre_proprietaire

@@ -13,11 +13,7 @@
     & svg {
       position: relative;
       display: block;
-      @apply h-6 w-6 m-0 mr-4;
-    }
-
-    & path {
-      stroke-width: 1.5;
+      @apply m-0 mr-4;
     }
   }
 }

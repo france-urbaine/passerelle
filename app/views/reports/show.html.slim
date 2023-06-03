@@ -4,6 +4,27 @@
     - breadcrumbs.with_path "Signalements", reports_path
     - breadcrumbs.with_path translate(@report.subject, scope: "enum.subject.#{@report.action}")
 
+  .badges
+    - case @report.priority
+    - when "low"
+      = button_component href: edit_report_path(@report, fields: "priority"), modal: true, class: "badge badge--low-priority" do
+        ' Priorité :
+        = svg_icon("chart-bar", "Basse")
+
+    - when "medium"
+      = button_component href: edit_report_path(@report, fields: "priority"), modal: true, class: "badge badge--medium-priority" do
+        ' Priorité :
+        = svg_icon("chart-bar", "Moyenne")
+
+    - when "high"
+      = button_component href: edit_report_path(@report, fields: "priority"), modal: true, class: "badge badge--high-priority" do
+        ' Priorité :
+        = svg_icon("chart-bar", "Haute")
+
+    .badge.badge--error Formulaire incomplet
+
+  .content__separator
+
   - case @report.subject
   - when "evaluation_hab/evaluation"
     = render "show_situation_majic"

@@ -1,0 +1,173 @@
+@layer components {
+  .badges {
+    display: flex;
+    flew-wrap: wrap;
+
+    & .badge {
+      @apply mr-4;
+    }
+  }
+
+  .badge {
+    display: inline-flex;
+    box-sizing: border-box;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    align-items: center;
+    white-space: nowrap;
+
+    @apply py-2 px-4 h-10 leading-6 font-semibold rounded-full border-none;
+    @apply bg-blue-200 text-blue-900;
+
+    & svg {
+      display: inline;
+      @apply -ml-1 mr-2;
+    }
+
+    &--error {
+      @apply bg-red-300 text-red-900;
+    }
+
+    &--low-priority,
+    &--medium-priority,
+    &--high-priority {
+      & svg {
+        @apply ml-2 -mr-0;
+      }
+
+      & svg path {
+        stroke: none;
+        fill:   currentColor;
+      }
+    }
+
+    &--low-priority {
+      @apply bg-lime-300 text-lime-900;
+
+      & svg path:nth-of-type(2),
+      & svg path:nth-of-type(3) {
+        @apply fill-lime-500;
+      }
+
+      &:not([disabled]) {
+        &:is(:focus, :focus-visible) {
+          @apply text-lime-900;
+          @apply outline-lime-500;
+          @apply dark:outline-lime-500;
+        }
+
+        &:hover {
+          @apply text-lime-700 border-lime-500;
+          @apply dark:text-lime-700 dark:border-lime-500;
+        }
+
+        &:active {
+          @apply text-lime-700 border-lime-700 outline-lime-700;
+          @apply dark:text-lime-300 dark:border-lime-300 dark:outline-lime-300;
+        }
+      }
+    }
+
+    &--medium-priority {
+      @apply bg-yellow-300 text-yellow-900;
+
+      & svg path:nth-of-type(3) {
+        @apply stroke-yellow-500;
+        @apply fill-yellow-500;
+      }
+
+      &:not([disabled]) {
+        &:is(:focus, :focus-visible) {
+          @apply text-yellow-900;
+          @apply outline-yellow-500;
+          @apply dark:outline-yellow-500;
+        }
+
+        &:hover {
+          @apply text-yellow-700 border-yellow-500;
+          @apply dark:text-yellow-700 dark:border-yellow-500;
+        }
+
+        &:active {
+          @apply text-yellow-700 border-yellow-700 outline-yellow-700;
+          @apply dark:text-yellow-300 dark:border-yellow-300 dark:outline-yellow-300;
+        }
+      }
+    }
+
+    &--high-priority {
+      @apply bg-orange-300 text-orange-900;
+
+      &:not([disabled]) {
+        &:is(:focus, :focus-visible) {
+          @apply text-orange-900;
+          @apply outline-orange-500;
+          @apply dark:outline-orange-500;
+        }
+
+        &:hover {
+          @apply text-orange-700 border-orange-500;
+          @apply dark:text-orange-700 dark:border-orange-500;
+        }
+
+        &:active {
+          @apply text-orange-700 border-orange-700 outline-orange-700;
+          @apply dark:text-orange-300 dark:border-orange-300 dark:outline-orange-300;
+        }
+      }
+    }
+  }
+
+  /*
+
+
+    padding:          .5em $small-padding
+    margin:           5px 5px 5px 0
+    font-weight:      700
+    color:            $gray-500
+    background-color: rgba($gray-500, 0.26)
+
+    &.mini-badge
+      line-height:   1em
+      padding:       .25em $tiny-padding
+
+    &[role="button"]
+      cursor: pointer
+
+    md-icon
+      font-size:      18px
+      margin:         -2px .5em 0
+      vertical-align: middle
+
+      &:first-child
+        margin-left: -2px
+      &:last-child
+        margin-right: -2px
+
+    table &
+      margin-top:    0
+      margin-right:  .5em
+      margin-bottom: 0
+
+      &:last-child
+        margin-right: 0
+
+      md-icon
+        font-size:   12px
+        line-height: 12px
+
+    &.primary
+      color:            $primary-color
+      background-color: rgba($primary-color, 0.14)
+    &.accent
+      color:            $accent-color
+      background-color: rgba($accent-color, 0.20)
+    &.warn
+      color:            $warn-color
+      background-color: rgba($warn-color, 0.26)
+    &.soft-warn
+      color:            $orange
+      background-color: rgba($orange, 0.20) */
+
+}

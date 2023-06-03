@@ -1,5 +1,10 @@
 fr:
   enum:
+    priority:
+      low:     Basse
+      medium:  Moyenne
+      high:    Haute
+
     action:
       evaluation_hab: "Évaluation de locaux d'habitation"
       evaluation_eco: "Évaluation de locaux économiques"

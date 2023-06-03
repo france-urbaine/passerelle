@@ -59,13 +59,15 @@
         - if user.organization_admin?
           = svg_icon("check-badge", "Administrateur de l'organisation")
         - else
-          = " "
+          -# Do not let empty placeholder fill the cell
+          '
 
       - row.with_column(:super_admin) do
         - if user.super_admin?
           = svg_icon("check-badge", "Administrateur de FiscaHub")
         - else
-          = " "
+          -# Do not let empty placeholder fill the cell
+          '
 
       - row.with_column(:offices) do
         - offices = user.offices.select { |office| office.kept? && office.ddfip_id == @office.ddfip_id }

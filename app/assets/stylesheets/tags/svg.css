@@ -1,11 +1,10 @@
 svg {
-  stroke-width: 2;
+  stroke-width: 1.5;
+
+  @apply h-6 w-6;
 }
 
 table svg,
 table svg use {
   display: inline-block;
-  stroke-width: 1.7;
-
-  @apply h-6 w-6;
 }

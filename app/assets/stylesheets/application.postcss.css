@@ -18,6 +18,7 @@
 
 /* Interactive components */
 @import "./components/button";
+@import "./components/badge";
 @import "./components/icon_button";
 @import "./components/tooltip";
 @import "./components/notifications";

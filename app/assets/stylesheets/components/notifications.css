@@ -23,8 +23,6 @@
   }
 
   .notification__icon {
-    stroke-width: 1.5;
-
     @apply mr-4 w-10 h-10 text-blue-500;
   }
 

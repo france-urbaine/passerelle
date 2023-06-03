@@ -18,6 +18,7 @@ class ReportUpdateForm < FormService
     proposition_evaluation_hab
     observations
     enjeux
+    priority
   ].freeze
 
   def initialize(report, fields, attributes = {})
@@ -70,6 +71,10 @@ class ReportUpdateForm < FormService
 
   def coefficient_situation_options
     I18n.translate("enum.coefficient_situation").map(&:reverse)
+  end
+
+  def priority_options
+    I18n.translate("enum.priority").map(&:reverse)
   end
 
   protected
