@@ -24,23 +24,6 @@ class CollectivitiesController < ApplicationController
     @background_url = referrer_path || parent_path || collectivities_path
   end
 
-  def edit
-    only_kept! @collectivity
-    @background_url = referrer_path || collectivity_path(@collectivity)
-  end
-
-  def remove
-    only_kept! @collectivity
-    @background_url = referrer_path || collectivity_path(@collectivity)
-  end
-
-  def remove_all
-    @collectivities = @collectivities.kept.strict_loading
-    @collectivities = filter_collection(@collectivities)
-
-    @background_url = referrer_path || collectivities_path(**selection_params)
-  end
-
   def create
     @collectivity.assign_attributes(collectivity_params)
     @collectivity.save
@@ -50,6 +33,11 @@ class CollectivitiesController < ApplicationController
       location: -> { redirect_path || parent_path || collectivities_path }
   end
 
+  def edit
+    only_kept! @collectivity
+    @background_url = referrer_path || collectivity_path(@collectivity)
+  end
+
   def update
     only_kept! @collectivity
     @collectivity.update(collectivity_params)
@@ -57,6 +45,11 @@ class CollectivitiesController < ApplicationController
     respond_with @collectivity,
       flash: true,
       location: -> { redirect_path || collectivities_path }
+  end
+
+  def remove
+    only_kept! @collectivity
+    @background_url = referrer_path || collectivity_path(@collectivity)
   end
 
   def destroy
@@ -76,6 +69,13 @@ class CollectivitiesController < ApplicationController
     respond_with @collectivity,
       flash: true,
       location: redirect_path || referrer_path || collectivities_path
+  end
+
+  def remove_all
+    @collectivities = @collectivities.kept.strict_loading
+    @collectivities = filter_collection(@collectivities)
+
+    @background_url = referrer_path || collectivities_path(**selection_params)
   end
 
   def destroy_all

@@ -81,6 +81,21 @@ Metrics/ModuleLength:
   Enabled: false
 
 # Rails ------------------------------------------------------------------------
+Rails/ActionOrder:
+  ExpectedOrder:
+    - index
+    - show
+    - new
+    - create
+    - edit
+    - update
+    - remove
+    - destroy
+    - undiscard
+    - remove_all
+    - destroy_all
+    - undiscard_all
+
 Rails/DynamicFindBy:
   AllowedMethods:
     # Method defined as User.find_by_invitation_token

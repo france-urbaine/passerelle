@@ -24,23 +24,6 @@ class OfficesController < ApplicationController
     @background_url = referrer_path || parent_path || offices_path
   end
 
-  def edit
-    only_kept! @office
-    @background_url = referrer_path || office_path(@office)
-  end
-
-  def remove
-    only_kept! @office
-    @background_url = referrer_path || office_path(@office)
-  end
-
-  def remove_all
-    @offices = @offices.kept.strict_loading
-    @offices = filter_collection(@offices)
-
-    @background_url = referrer_path || offices_path(**selection_params)
-  end
-
   def create
     @office.assign_attributes(office_params)
     @office.save
@@ -50,6 +33,11 @@ class OfficesController < ApplicationController
       location: -> { redirect_path || parent_path || offices_path }
   end
 
+  def edit
+    only_kept! @office
+    @background_url = referrer_path || office_path(@office)
+  end
+
   def update
     only_kept! @office
     @office.update(office_params)
@@ -57,6 +45,11 @@ class OfficesController < ApplicationController
     respond_with @office,
       flash: true,
       location: -> { redirect_path || offices_path }
+  end
+
+  def remove
+    only_kept! @office
+    @background_url = referrer_path || office_path(@office)
   end
 
   def destroy
@@ -74,6 +67,13 @@ class OfficesController < ApplicationController
     respond_with @office,
       flash: true,
       location: redirect_path || referrer_path || offices_path
+  end
+
+  def remove_all
+    @offices = @offices.kept.strict_loading
+    @offices = filter_collection(@offices)
+
+    @background_url = referrer_path || offices_path(**selection_params)
   end
 
   def destroy_all

@@ -20,22 +20,6 @@ module Offices
       @background_url = referrer_path || office_path(@office)
     end
 
-    def remove
-      only_kept! @user
-      @background_url = referrer_path || office_path(@office)
-    end
-
-    def edit_all
-      @office_users_form = OfficeUsersForm.new(@office)
-      @background_url = referrer_path || office_path(@office)
-    end
-
-    def remove_all
-      @users = @users.kept.strict_loading
-      @users = filter_collection(@users)
-      @background_url = referrer_path || office_path(@office)
-    end
-
     def create
       @user.assign_attributes(user_params)
       @user.invite(by: current_user)
@@ -44,6 +28,11 @@ module Offices
       respond_with @user,
         flash: true,
         location: -> { redirect_path || office_path(@office) }
+    end
+
+    def remove
+      only_kept! @user
+      @background_url = referrer_path || office_path(@office)
     end
 
     def destroy
@@ -55,6 +44,11 @@ module Offices
         location: redirect_path || office_path(@office)
     end
 
+    def edit_all
+      @office_users_form = OfficeUsersForm.new(@office)
+      @background_url = referrer_path || office_path(@office)
+    end
+
     def update_all
       @office_users_updater = OfficeUsersUpdater.new(@office)
       @office_users_updater.update(user_ids_params)
@@ -62,6 +56,12 @@ module Offices
       respond_with @office_users_updater,
         flash: true,
         location: -> { redirect_path || office_path(@office) }
+    end
+
+    def remove_all
+      @users = @users.kept.strict_loading
+      @users = filter_collection(@users)
+      @background_url = referrer_path || office_path(@office)
     end
 
     def destroy_all

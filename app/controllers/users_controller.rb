@@ -24,23 +24,6 @@ class UsersController < ApplicationController
     @background_url = referrer_path || parent_path || users_path
   end
 
-  def edit
-    only_kept! @user
-    @background_url = referrer_path || user_path(@user)
-  end
-
-  def remove
-    only_kept! @user
-    @background_url = referrer_path || user_path(@user)
-  end
-
-  def remove_all
-    @users = @users.kept.strict_loading
-    @users = filter_collection(@users)
-
-    @background_url = referrer_path || users_path(**selection_params)
-  end
-
   def create
     @user.assign_attributes(user_params)
     @user.invite(by: current_user)
@@ -51,6 +34,11 @@ class UsersController < ApplicationController
       location: -> { redirect_path || parent_path || users_path }
   end
 
+  def edit
+    only_kept! @user
+    @background_url = referrer_path || user_path(@user)
+  end
+
   def update
     only_kept! @user
     @user.update(user_params)
@@ -58,6 +46,11 @@ class UsersController < ApplicationController
     respond_with @user,
       flash: true,
       location: -> { redirect_path || users_path }
+  end
+
+  def remove
+    only_kept! @user
+    @background_url = referrer_path || user_path(@user)
   end
 
   def destroy
@@ -75,6 +68,13 @@ class UsersController < ApplicationController
     respond_with @user,
       flash: true,
       location: redirect_path || referrer_path || users_path
+  end
+
+  def remove_all
+    @users = @users.kept.strict_loading
+    @users = filter_collection(@users)
+
+    @background_url = referrer_path || users_path(**selection_params)
   end
 
   def destroy_all

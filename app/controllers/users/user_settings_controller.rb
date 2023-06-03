@@ -45,6 +45,8 @@ module Users
         location: user_settings_path
     end
 
+    private
+
     def request_for_reconfirmation_instructions?(user)
       params[:send_reconfirmation_instructions] && user.pending_reconfirmation?
     end
@@ -52,8 +54,6 @@ module Users
     def request_to_cancel_pending_reconfirmation?(user)
       params[:cancel_pending_reconfirmation] && user.pending_reconfirmation?
     end
-
-    private
 
     def user_params
       params

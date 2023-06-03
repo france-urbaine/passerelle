@@ -10,15 +10,6 @@ module Users
       @user = current_user
     end
 
-    def edit
-      @user = current_user
-      @user.otp_secret = User.generate_otp_secret
-      @user.otp_method = params[:otp_method] if params[:otp_method]
-      @user.otp_method = "2fa" unless @user.organization&.allow_2fa_via_email?
-
-      Users::Mailer.two_factor_setup_code(@user).deliver_now if @user.otp_method == "email"
-    end
-
     def create
       return redirect_to action: :edit unless current_user.organization&.allow_2fa_via_email?
 
@@ -28,6 +19,15 @@ module Users
         .fetch(:otp_method)
 
       redirect_to action: :edit, params: { otp_method: otp_method }
+    end
+
+    def edit
+      @user = current_user
+      @user.otp_secret = User.generate_otp_secret
+      @user.otp_method = params[:otp_method] if params[:otp_method]
+      @user.otp_method = "2fa" unless @user.organization&.allow_2fa_via_email?
+
+      Users::Mailer.two_factor_setup_code(@user).deliver_now if @user.otp_method == "email"
     end
 
     def update

@@ -23,23 +23,6 @@ class PublishersController < ApplicationController
     @background_url = referrer_path || publishers_path
   end
 
-  def edit
-    only_kept! @publisher
-    @background_url = referrer_path || publisher_path(@publisher)
-  end
-
-  def remove
-    only_kept! @publisher
-    @background_url = referrer_path || publisher_path(@publisher)
-  end
-
-  def remove_all
-    @publishers = @publishers.kept.strict_loading
-    @publishers = filter_collection(@publishers)
-
-    @background_url = referrer_path || publishers_path(**selection_params)
-  end
-
   def create
     @publisher.assign_attributes(publisher_params)
     @publisher.save
@@ -49,6 +32,11 @@ class PublishersController < ApplicationController
       location: -> { redirect_path || publishers_path }
   end
 
+  def edit
+    only_kept! @publisher
+    @background_url = referrer_path || publisher_path(@publisher)
+  end
+
   def update
     only_kept! @publisher
     @publisher.update(publisher_params)
@@ -56,6 +44,11 @@ class PublishersController < ApplicationController
     respond_with @publisher,
       flash: true,
       location: -> { redirect_path || publishers_path }
+  end
+
+  def remove
+    only_kept! @publisher
+    @background_url = referrer_path || publisher_path(@publisher)
   end
 
   def destroy
@@ -73,6 +66,13 @@ class PublishersController < ApplicationController
     respond_with @publisher,
       flash: true,
       location: redirect_path || referrer_path || publishers_path
+  end
+
+  def remove_all
+    @publishers = @publishers.kept.strict_loading
+    @publishers = filter_collection(@publishers)
+
+    @background_url = referrer_path || publishers_path(**selection_params)
   end
 
   def destroy_all

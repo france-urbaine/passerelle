@@ -25,24 +25,6 @@ class DDFIPsController < ApplicationController
     @background_url = referrer_path || ddfips_path
   end
 
-  def edit
-    only_kept! @ddfip
-
-    @background_url = referrer_path || ddfip_path(@ddfip)
-  end
-
-  def remove
-    only_kept! @ddfip
-    @background_url = referrer_path || ddfip_path(@ddfip)
-  end
-
-  def remove_all
-    @ddfips = @ddfips.kept.strict_loading
-    @ddfips = filter_collection(@ddfips)
-
-    @background_url = referrer_path || ddfips_path(**selection_params)
-  end
-
   def create
     @ddfip.assign_attributes(ddfip_params)
     @ddfip.save
@@ -52,6 +34,12 @@ class DDFIPsController < ApplicationController
       location: -> { redirect_path || ddfips_path }
   end
 
+  def edit
+    only_kept! @ddfip
+
+    @background_url = referrer_path || ddfip_path(@ddfip)
+  end
+
   def update
     only_kept! @ddfip
     @ddfip.update(ddfip_params)
@@ -59,6 +47,11 @@ class DDFIPsController < ApplicationController
     respond_with @ddfip,
       flash: true,
       location: -> { redirect_path || ddfips_path }
+  end
+
+  def remove
+    only_kept! @ddfip
+    @background_url = referrer_path || ddfip_path(@ddfip)
   end
 
   def destroy
@@ -76,6 +69,13 @@ class DDFIPsController < ApplicationController
     respond_with @ddfip,
       flash: true,
       location: redirect_path || referrer_path || ddfips_path
+  end
+
+  def remove_all
+    @ddfips = @ddfips.kept.strict_loading
+    @ddfips = filter_collection(@ddfips)
+
+    @background_url = referrer_path || ddfips_path(**selection_params)
   end
 
   def destroy_all

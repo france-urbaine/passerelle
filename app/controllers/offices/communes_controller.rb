@@ -19,24 +19,17 @@ module Offices
       @background_url = referrer_path || office_path(@office)
     end
 
-    def edit_all
-      @office_communes_form = OfficeCommunesForm.new(@office)
-      @background_url = referrer_path || office_path(@office)
-    end
-
-    def remove_all
-      @communes = @communes.strict_loading
-      @communes = filter_collection(@communes)
-
-      @background_url = referrer_path || office_path(@office)
-    end
-
     def destroy
       @office.communes.destroy(@commune)
 
       respond_with @commune,
         flash: true,
         location: redirect_path || office_path(@office)
+    end
+
+    def edit_all
+      @office_communes_form = OfficeCommunesForm.new(@office)
+      @background_url = referrer_path || office_path(@office)
     end
 
     def update_all
@@ -46,6 +39,13 @@ module Offices
       respond_with @office_communes_updater,
         flash: true,
         location: -> { redirect_path || office_path(@office) }
+    end
+
+    def remove_all
+      @communes = @communes.strict_loading
+      @communes = filter_collection(@communes)
+
+      @background_url = referrer_path || office_path(@office)
     end
 
     def destroy_all
