@@ -20,6 +20,10 @@
     @apply py-2 px-4 h-10 leading-6 font-semibold rounded-full border-none;
     @apply bg-blue-200 text-blue-900;
 
+    table & {
+      @apply py-1 px-3 -my-1 h-auto;
+    }
+
     & svg {
       display: inline;
       @apply -ml-1 mr-2;
@@ -35,47 +39,32 @@
       & svg {
         @apply ml-2 -mr-0;
       }
-
-      & svg path {
-        stroke: none;
-        fill:   currentColor;
-      }
     }
 
     &--low-priority {
-      @apply bg-lime-300 text-lime-900;
-
-      & svg path:nth-of-type(2),
-      & svg path:nth-of-type(3) {
-        @apply fill-lime-500;
-      }
+      @apply bg-sky-200 text-blue-900;
 
       &:not([disabled]) {
         &:is(:focus, :focus-visible) {
-          @apply text-lime-900;
-          @apply outline-lime-500;
-          @apply dark:outline-lime-500;
+          @apply text-blue-900;
+          @apply outline-blue-500;
+          @apply dark:outline-blue-500;
         }
 
         &:hover {
-          @apply text-lime-700 border-lime-500;
-          @apply dark:text-lime-700 dark:border-lime-500;
+          @apply text-blue-700 border-blue-500;
+          @apply dark:text-blue-700 dark:border-blue-500;
         }
 
         &:active {
-          @apply text-lime-700 border-lime-700 outline-lime-700;
-          @apply dark:text-lime-300 dark:border-lime-300 dark:outline-lime-300;
+          @apply text-blue-700 border-blue-700 outline-blue-700;
+          @apply dark:text-blue-300 dark:border-blue-300 dark:outline-blue-300;
         }
       }
     }
 
     &--medium-priority {
       @apply bg-yellow-300 text-yellow-900;
-
-      & svg path:nth-of-type(3) {
-        @apply stroke-yellow-500;
-        @apply fill-yellow-500;
-      }
 
       &:not([disabled]) {
         &:is(:focus, :focus-visible) {
@@ -118,56 +107,4 @@
       }
     }
   }
-
-  /*
-
-
-    padding:          .5em $small-padding
-    margin:           5px 5px 5px 0
-    font-weight:      700
-    color:            $gray-500
-    background-color: rgba($gray-500, 0.26)
-
-    &.mini-badge
-      line-height:   1em
-      padding:       .25em $tiny-padding
-
-    &[role="button"]
-      cursor: pointer
-
-    md-icon
-      font-size:      18px
-      margin:         -2px .5em 0
-      vertical-align: middle
-
-      &:first-child
-        margin-left: -2px
-      &:last-child
-        margin-right: -2px
-
-    table &
-      margin-top:    0
-      margin-right:  .5em
-      margin-bottom: 0
-
-      &:last-child
-        margin-right: 0
-
-      md-icon
-        font-size:   12px
-        line-height: 12px
-
-    &.primary
-      color:            $primary-color
-      background-color: rgba($primary-color, 0.14)
-    &.accent
-      color:            $accent-color
-      background-color: rgba($accent-color, 0.20)
-    &.warn
-      color:            $warn-color
-      background-color: rgba($warn-color, 0.26)
-    &.soft-warn
-      color:            $orange
-      background-color: rgba($orange, 0.20) */
-
 }

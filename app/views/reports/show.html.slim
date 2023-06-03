@@ -2,26 +2,51 @@
   = breadcrumbs_component do |breadcrumbs|
     - breadcrumbs.with_path "Echanges"
     - breadcrumbs.with_path "Signalements", reports_path
-    - breadcrumbs.with_path translate(@report.subject, scope: "enum.subject.#{@report.action}")
+    - breadcrumbs.with_path translate(@report.subject, scope: ["enum.subject", @report.action])
 
   .badges
-    - case @report.priority
-    - when "low"
-      = button_component href: edit_report_path(@report, fields: "priority"), modal: true, class: "badge badge--low-priority" do
-        ' Priorité :
-        = svg_icon("chart-bar", "Basse")
 
-    - when "medium"
-      = button_component href: edit_report_path(@report, fields: "priority"), modal: true, class: "badge badge--medium-priority" do
-        ' Priorité :
-        = svg_icon("chart-bar", "Moyenne")
 
-    - when "high"
-      = button_component href: edit_report_path(@report, fields: "priority"), modal: true, class: "badge badge--high-priority" do
-        ' Priorité :
-        = svg_icon("chart-bar", "Haute")
+  .content__separator
 
-    .badge.badge--error Formulaire incomplet
+  .subheader-bar
+    h2.subheader
+      = svg_icon("server-stack", "Nouvelle section")
+      | Informations relatives au signalement
+
+    .subheader-bar__actions
+      .subheader-bar__action
+        - case @report.priority
+        - when "low"
+          = button_component href: edit_report_path(@report, fields: "priority"), modal: true, class: "badge badge--low-priority" do
+            ' Priorité :
+            = svg_icon("chart-bar", "Basse", class: "low-priority-icon")
+
+        - when "medium"
+          = button_component href: edit_report_path(@report, fields: "priority"), modal: true, class: "badge badge--medium-priority" do
+            ' Priorité :
+            = svg_icon("chart-bar", "Moyenne", class: "medium-priority-icon")
+
+        - when "high"
+          = button_component href: edit_report_path(@report, fields: "priority"), modal: true, class: "badge badge--high-priority" do
+            ' Priorité :
+            = svg_icon("chart-bar", "Haute", class: "high-priority-icon")
+      .subheader-bar__action
+        .badge.badge--error Formulaire incomplet
+
+  .card
+    dl.description-list
+      .description-list__row
+        dt Référence du signalement
+        dd= @report.reference
+
+      .description-list__row
+        dt Date de transmission
+        dd
+          - if @report.package.transmitted?
+            = localize(@report.package.transmitted_at)
+          - else
+            em Non transmis
 
   .content__separator
 

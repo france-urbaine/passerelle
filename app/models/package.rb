@@ -41,24 +41,9 @@ class Package < ApplicationRecord
   # ----------------------------------------------------------------------------
   ACTIONS = %w[evaluation_hab evaluation_eco].freeze
 
-  validates :name, presence: true
-  validates :action, presence: true, inclusion: { in: ACTIONS, allow_blank: true }
-
-  # Callbacks
-  # ----------------------------------------------------------------------------
-  before_create :generate_reference
-
-  def generate_reference
-    return if reference?
-
-    last_reference = Package.maximum(:reference)
-
-    month = (created_at || Time.zone.today).strftime("%Y-%m")
-    index = last_reference&.slice(/^#{month}-(\d{5})$/, 1).to_i + 1
-    index = index.to_s.rjust(5, "0")
-
-    self.reference ||= "#{month}-#{index}"
-  end
+  validates :name,      presence: true
+  validates :reference, presence: true, uniqueness: { unless: :skip_uniqueness_validation_of_reference? }
+  validates :action,    presence: true, inclusion: { in: ACTIONS, allow_blank: true }
 
   # Scopes
   # ----------------------------------------------------------------------------

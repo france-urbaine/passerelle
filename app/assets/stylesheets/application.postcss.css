@@ -22,6 +22,7 @@
 @import "./components/icon_button";
 @import "./components/tooltip";
 @import "./components/notifications";
+@import "./components/priority_icon";
 
 /* Forms */
 @import "./components/form_block";

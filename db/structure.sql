@@ -1763,8 +1763,10 @@ CREATE TABLE public.reports (
     rejected_at timestamp(6) without time zone,
     debated_at timestamp(6) without time zone,
     discarded_at timestamp(6) without time zone,
+    reference character varying NOT NULL,
     action public.action NOT NULL,
     subject character varying NOT NULL,
+    completed character varying DEFAULT 'f'::character varying NOT NULL,
     sandbox boolean DEFAULT false NOT NULL,
     priority public.priority DEFAULT 'low'::public.priority NOT NULL,
     code_insee character varying,
@@ -2283,6 +2285,13 @@ CREATE INDEX index_reports_on_package_id ON public.reports USING btree (package_
 --
 
 CREATE INDEX index_reports_on_publisher_id ON public.reports USING btree (publisher_id);
+
+
+--
+-- Name: index_reports_on_reference; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_reports_on_reference ON public.reports USING btree (reference);
 
 
 --

@@ -15,11 +15,14 @@ class CreateReports < ActiveRecord::Migration[7.0]
       t.datetime :debated_at
       t.datetime :discarded_at
 
-      t.enum    :action,   null: false, enum_type: "action"
-      t.string  :subject,  null: false
-      t.boolean :sandbox,  null: false, default: false
-      t.enum    :priority, null: false, enum_type: "priority", default: "low"
+      t.string  :reference, null: false
+      t.enum    :action,    null: false, enum_type: "action"
+      t.string  :subject,   null: false
+      t.string  :completed, null: false, default: false
+      t.boolean :sandbox,   null: false, default: false
+      t.enum    :priority,  null: false, enum_type: "priority", default: "low"
 
+      t.index :reference, unique: true
       t.index %i[sibling_id subject],
         unique: true,
         name:   "index_reports_on_subject_uniqueness",

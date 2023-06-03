@@ -1,26 +1,44 @@
 # frozen_string_literal: true
 
-# Copied from yaaf gem:
+# Adapted from yaaf gem:
 # https://github.com/rootstrap/yaaf/blob/4531200021fbe3c77df46f3290134dbf4bcdc71d/lib/yaaf/form.rb
 #
 class FormService
+  class Result
+    attr_reader :models, :errors
+
+    def initialize(models, errors)
+      @models = models
+      @errors = errors
+    end
+
+    def failed?
+      @errors.any?
+    end
+
+    def success?
+      !failed?
+    end
+  end
+
   include ::ActiveModel::Model
   include ::ActiveModel::Validations::Callbacks
   include ::ActiveRecord::Transactions
+
   define_model_callbacks :save
-
   delegate :transaction, to: ::ActiveRecord::Base
-
   validate :validate_models
 
   def save(...)
     save_form(...)
+    build_result
   rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotSaved, ActiveModel::ValidationError
-    false
+    build_result
   end
 
   def save!(...)
     save_form(...)
+    build_result
   end
 
   private
@@ -61,6 +79,10 @@ class FormService
 
   def promote_errors(model)
     errors.merge!(model.errors)
+  end
+
+  def build_result
+    Result.new(models, errors)
   end
 
   def handle_transaction_rollback(exception)

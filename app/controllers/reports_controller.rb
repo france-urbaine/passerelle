@@ -18,38 +18,42 @@ class ReportsController < ApplicationController
 
   def show
     only_kept! @report
-
-    @report_decorator = ReportShowDecorator.new(@report)
+    @report_decorator = Reports::DecorateService.new(@report)
   end
 
   def new
-    @report_form = ReportCreateForm.new(@report)
+    @report_form = Reports::CreateFormService.new(@report)
     @background_url = referrer_path || parent_path || reports_path
+  end
+
+  def create
+    service = Reports::CreateService.new(@report, current_organization, report_params)
+    result  = service.save
+
+    # Initialize a new form Service to re-render the :new template
+    @report_form = Reports::CreateFormService.new(@report) if result.failed?
+
+    respond_with result,
+      flash: true,
+      location: -> { report_path(@report) }
   end
 
   def edit
     only_kept! @report
-
-    @report_form = ReportUpdateForm.new(@report, params.require(:fields))
+    @report_form = Reports::UpdateFormService.new(@report, update_fields_param)
     @background_url = referrer_path || report_path(@report)
-  end
-
-  def create
-    @report_form = ReportCreateForm.new(@report, current_user, report_params)
-    @report_form.save
-
-    respond_with @report,
-      flash: true,
-      location: -> { report_path(@report) }
   end
 
   def update
     only_kept! @report
 
-    @report_form = ReportUpdateForm.new(@report, params.require(:fields), report_params)
-    @report_form.save
+    service = Reports::UpdateService.new(@report, report_params)
+    result  = service.save
 
-    respond_with @report,
+    # Initialize a new form Service to re-render the :edit template
+    @report_form = Reports::UpdateFormService.new(@report, update_fields_param) if result.failed?
+
+    respond_with result,
       flash: true,
       location: -> { report_path(@report) }
   end
@@ -78,6 +82,10 @@ class ReportsController < ApplicationController
 
   def report_params
     authorized(params.fetch(:report, {}))
+  end
+
+  def update_fields_param
+    params.require(:fields)
   end
 
   def parent_path

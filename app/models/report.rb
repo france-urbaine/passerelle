@@ -16,8 +16,10 @@
 #  rejected_at                                    :datetime
 #  debated_at                                     :datetime
 #  discarded_at                                   :datetime
+#  reference                                      :string           not null
 #  action                                         :enum             not null
 #  subject                                        :string           not null
+#  completed                                      :string           default("f"), not null
 #  sandbox                                        :boolean          default(FALSE), not null
 #  priority                                       :enum             default("low"), not null
 #  code_insee                                     :string
@@ -92,6 +94,7 @@
 #  index_reports_on_collectivity_id     (collectivity_id)
 #  index_reports_on_package_id          (package_id)
 #  index_reports_on_publisher_id        (publisher_id)
+#  index_reports_on_reference           (reference) UNIQUE
 #  index_reports_on_sibling_id          (sibling_id)
 #  index_reports_on_subject_uniqueness  (sibling_id,subject) UNIQUE WHERE (discarded_at IS NULL)
 #  index_reports_on_workshop_id         (workshop_id)
@@ -126,7 +129,9 @@ class Report < ApplicationRecord
 
   # Validations
   # ----------------------------------------------------------------------------
-  ACTIONS = %w[evaluation_hab evaluation_eco].freeze
+  ACTIONS    = %w[evaluation_hab evaluation_eco].freeze
+  PRIORITIES = %w[low medium high].freeze
+
   SUBJECTS = %w[
     evaluation_hab/evaluation
     evaluation_hab/exoneration
@@ -141,10 +146,17 @@ class Report < ApplicationRecord
     evaluation_eco/omission_batie
     evaluation_eco/achevement_travaux
   ].freeze
-  PRIORITIES = %w[low medium high].freeze
 
-  validates :action,  presence: true, inclusion: { in: ACTIONS, allow_blank: true }
-  validates :subject, presence: true, inclusion: { in: SUBJECTS, allow_blank: true }
+  validates :action,    presence: true, inclusion: { in: ACTIONS, allow_blank: true }
+  validates :subject,   presence: true, inclusion: { in: SUBJECTS, allow_blank: true }
+  validates :reference, presence: true, uniqueness: { unless: :skip_uniqueness_validation_of_reference? }
+
+  validates :subject,   uniqueness: {
+    scope:      :sibling_id,
+    unless:     -> { skip_uniqueness_validation_of_subject? || situation_invariant.blank? },
+    conditions: -> { kept}
+  }
+
   validates :priority, inclusion: { in: PRIORITIES }
 
   with_options allow_blank: true do
@@ -169,16 +181,46 @@ class Report < ApplicationRecord
 
   # Callbacks
   # ----------------------------------------------------------------------------
-  before_validation :generate_action, if: :will_save_change_to_subject?
+  # before_validation :generate_action,    if: :will_save_change_to_subject?
+  # before_validation :generate_reference, on: :create
+  # before_validation :generate_sibling_ig
+  # before_save       :generate_completeness
 
-  def generate_action
-    self.action =
-      if subject&.match(%r{\A(?<action>[^/]+)/.+})
-        $LAST_MATCH_INFO[:action]
-      else
-        nil
-      end
-  end
+  # def generate_action
+  #   self.action =
+  #     if subject&.match(%r{\A(?<action>[^/]+)/.+})
+  #       $LAST_MATCH_INFO[:action]
+  #     else
+  #       nil
+  #     end
+  # end
+
+  # def generate_reference
+  #   return unless package.nil?
+
+  #   if package.new_record?
+  #     package_reference = package.reference || package.generate_reference
+  #     index             = "00001"
+  #   else
+  #     package_reference = package.reference
+  #     last_reference    = package.reports.maximum(:reference)
+  #     index = last_reference&.slice(/-(\d{5})\Z/, 1).to_i + 1
+  #     index = index.to_s.rjust(5, "0")
+  #   end
+
+  #   self.reference = "#{package_reference}-#{index}"
+  # end
+
+  # def generate_sibling_ig
+  #   self.sibling_id =
+  #     if code_insee? && situation_invariant?
+  #       "#{code_insee}#{etat_invariant}"
+  #     end
+  # end
+
+  # def generate_completeness
+  #   self.completed = false
+  # end
 
   # Scopes
   # ----------------------------------------------------------------------------

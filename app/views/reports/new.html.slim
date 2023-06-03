@@ -4,8 +4,6 @@
       | Création d'un nouveau signalement
 
     - modal.with_form(model: @report, url: reports_path) do
-      = hidden_field_tag :redirect, modal.redirection_path
-
       = fields(model: @report_form) do |form|
         = form.block :subject do
           = form.label :subject, "Objet du signalement"
