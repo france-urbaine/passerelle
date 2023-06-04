@@ -18,7 +18,7 @@ class CreateReports < ActiveRecord::Migration[7.0]
       t.string  :reference, null: false
       t.enum    :action,    null: false, enum_type: "action"
       t.string  :subject,   null: false
-      t.string  :completed, null: false, default: false
+      t.boolean :completed, null: false, default: false
       t.boolean :sandbox,   null: false, default: false
       t.enum    :priority,  null: false, enum_type: "priority", default: "low"
 

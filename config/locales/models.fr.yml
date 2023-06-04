@@ -330,3 +330,15 @@ fr:
           invalid_url:       Cette URL n'est pas valide
           invalid_extension: Le fichier cible doit être un fichier ZIP
           dead_link:         Le fichier cible n'existe pas
+
+        reports/check_completeness_service:
+          blank:             Ce champs est requis
+          incomplete:        Ce champs est incomplet
+
+          attributes:
+            situation_adresse:
+              incomplete_libelle_voie: "Ce champs est incomplet: un libellé de voie est requis"
+              incomplete_code_rivoli:  "Ce champs est incomplet: un code RIVOLI est requis"
+
+            situation_proprietaire:
+              incomplete_numero_ordre: "Ce champs est incomplet: un numéro d'ordre est requis"

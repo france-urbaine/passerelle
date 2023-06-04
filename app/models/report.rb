@@ -19,7 +19,7 @@
 #  reference                                      :string           not null
 #  action                                         :enum             not null
 #  subject                                        :string           not null
-#  completed                                      :string           default("f"), not null
+#  completed                                      :boolean          default(FALSE), not null
 #  sandbox                                        :boolean          default(FALSE), not null
 #  priority                                       :enum             default("low"), not null
 #  code_insee                                     :string
@@ -177,50 +177,67 @@ class Report < ApplicationRecord
     validates :situation_numero_porte,              format: { with: NUMERO_PORTE_REGEXP }
     validates :situation_numero_ordre_porte,        format: { with: NUMERO_ORDRE_PORTE_REGEXP }
     validates :situation_date_mutation,             format: { with: DATE_REGEXP }
+
+    validates :proposition_parcelle,           format: { with: PARCELLE_REGEXP }
+    validates :proposition_numero_voie,        numericality: { in: 0..9999 }
+    validates :proposition_code_rivoli,        format: { with: CODE_RIVOLI_REGEXP }
+    validates :proposition_numero_batiment,    format: { with: NUMERO_BATIMENT_REGEXP }
+    validates :proposition_numero_escalier,    format: { with: NUMERO_ESCALIER_REGEXP }
+    validates :proposition_numero_niveau,      format: { with: NUMERO_NIVEAU_REGEXP }
+    validates :proposition_numero_porte,       format: { with: NUMERO_PORTE_REGEXP }
+    validates :proposition_numero_ordre_porte, format: { with: NUMERO_ORDRE_PORTE_REGEXP }
+    validates :proposition_date_achevement,    format: { with: DATE_REGEXP }
+
+    # validates :situation_nature,       inclusion: ->(person) { person.valid_natures }
+    # validates :situation_affectation,  inclusion: ->(person) { person.valid_affectations }
+    # validates :situation_categorie,    inclusion: ->(person) { person.valid_categories }
+
+    # validates :proposition_nature,      inclusion: ->(person) { person.valid_natures }
+    # validates :proposition_affectation, inclusion: ->(person) { person.valid_affectations }
+    # validates :proposition_categorie,   inclusion: ->(person) { person.valid_categories }
+
+    validates :situation_surface_reelle,   numericality: { greater_than: 0 }
+    validates :situation_surface_p1,       numericality: { greater_than: 0 }
+    validates :situation_surface_p2,       numericality: { greater_than: 0 }
+    validates :situation_surface_p3,       numericality: { greater_than: 0 }
+    validates :situation_surface_pk1,      numericality: { greater_than: 0 }
+    validates :situation_surface_pk2,      numericality: { greater_than: 0 }
+    validates :situation_surface_ponderee, numericality: { greater_than: 0 }
+
+    validates :proposition_surface_reelle,   numericality: { greater_than: 0 }
+    validates :proposition_surface_p1,       numericality: { greater_than: 0 }
+    validates :proposition_surface_p2,       numericality: { greater_than: 0 }
+    validates :proposition_surface_p3,       numericality: { greater_than: 0 }
+    validates :proposition_surface_pk1,      numericality: { greater_than: 0 }
+    validates :proposition_surface_pk2,      numericality: { greater_than: 0 }
+    validates :proposition_surface_ponderee, numericality: { greater_than: 0 }
+  end
+
+  def valid_natures
+    I18n.translate("enum.natures").keys
+  end
+
+  def valid_affectations
+    I18n.translate("enum.affectation").keys
+  end
+
+  def valid_categories
+    case action
+    when "evaluation_hab", "occupation_hab" then I18n.translate("enum.categorie_habitation").keys
+    when "evaluation_eco", "occupation_eco" then I18n.translate("enum.categorie_economique").keys
+    end
   end
 
   # Callbacks
   # ----------------------------------------------------------------------------
-  # before_validation :generate_action,    if: :will_save_change_to_subject?
-  # before_validation :generate_reference, on: :create
-  # before_validation :generate_sibling_ig
-  # before_save       :generate_completeness
+  before_save :generate_sibling_ig
 
-  # def generate_action
-  #   self.action =
-  #     if subject&.match(%r{\A(?<action>[^/]+)/.+})
-  #       $LAST_MATCH_INFO[:action]
-  #     else
-  #       nil
-  #     end
-  # end
-
-  # def generate_reference
-  #   return unless package.nil?
-
-  #   if package.new_record?
-  #     package_reference = package.reference || package.generate_reference
-  #     index             = "00001"
-  #   else
-  #     package_reference = package.reference
-  #     last_reference    = package.reports.maximum(:reference)
-  #     index = last_reference&.slice(/-(\d{5})\Z/, 1).to_i + 1
-  #     index = index.to_s.rjust(5, "0")
-  #   end
-
-  #   self.reference = "#{package_reference}-#{index}"
-  # end
-
-  # def generate_sibling_ig
-  #   self.sibling_id =
-  #     if code_insee? && situation_invariant?
-  #       "#{code_insee}#{etat_invariant}"
-  #     end
-  # end
-
-  # def generate_completeness
-  #   self.completed = false
-  # end
+  def generate_sibling_ig
+    self.sibling_id =
+      if code_insee? && situation_invariant?
+        "#{code_insee}#{situation_invariant}"
+      end
+  end
 
   # Scopes
   # ----------------------------------------------------------------------------

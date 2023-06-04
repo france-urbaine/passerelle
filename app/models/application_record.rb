@@ -23,7 +23,6 @@ class ApplicationRecord < ActiveRecord::Base
   CODE_INSEE_REGEXP       = /\A(2[AB]|[0-9]{2})[0-9]{3}\Z/
 
   INVARIANT_REGEXP                 = /\A[0-9]{10}\Z/
-  SIREN_REGEXP                     = /\A[0-9]{9}\Z/
   CODE_RIVOLI_REGEXP               = /\A[0-9A-Z]{4}\Z/
   NUMERO_BATIMENT_REGEXP           = /\A(?:[A-Z]|[0-9]{1,2})\Z/
   NUMERO_ESCALIER_REGEXP           = /\A[0-9]{1,2}\Z/

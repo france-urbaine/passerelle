@@ -18,7 +18,10 @@ class ReportsController < ApplicationController
 
   def show
     only_kept! @report
-    @report_decorator = Reports::DecorateService.new(@report)
+
+    @report_decorator    = Reports::DecorateService.new(@report)
+    @report_completeness = Reports::CheckCompletenessService.new(@report)
+    @report_completeness.validate unless @report.transmitted?
   end
 
   def new

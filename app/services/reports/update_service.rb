@@ -11,5 +11,9 @@ module Reports
       super(attributes)
       self.models = [report]
     end
+
+    before_save do
+      self.completed = Reports::CheckCompletenessService.new(report).valid?
+    end
   end
 end

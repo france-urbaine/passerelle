@@ -3,8 +3,6 @@
 Rails.application.routes.draw do
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
-  ID_REGEXP = %r{(?!(new|edit|remove|discard|undiscard|offices))[^/]+}
-
   concern :removable do
     get   :remove,    on: :member
     patch :undiscard, on: :member
@@ -53,7 +51,7 @@ Rails.application.routes.draw do
     root to: redirect("/signalements"), as: :authenticated_root
   end
 
-  constraints(id: ID_REGEXP) do
+  constraints(id: %r{(?!(new|edit|remove|discard|undiscard|offices))[^/]+}) do
     resources :reports, path: "signalements", path_names: { edit: "/edit/:fields" }
 
     resources :publishers, concerns: %i[removable removable_collection], path: "/editeurs" do

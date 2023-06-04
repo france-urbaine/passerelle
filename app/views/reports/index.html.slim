@@ -103,4 +103,9 @@
           = svg_icon("chart-bar", "Haute", class: "high-priority-icon")
 
       - row.with_column(:status) do
-        .badge.badge--error Formulaire incomplet
+        - if report.transmitted?
+          .badge.badge--valid Formulaire transmis
+        - elsif report.completed?
+          .badge.badge--valid Formulaire prêt à être transmi
+        - else
+          .badge.badge--error Formulaire incomplet

@@ -1,10 +1,13 @@
 
 @layer components {
   .description-list__row {
-    @apply grid gap-2 md:grid-cols-3 xl:grid-cols-7 2xl:grid-cols-9;
-    @apply px-4 py-3 border-b;
+    @apply grid gap-2 px-4 py-3 border-b;
     @apply border-gray-200;
     @apply dark:border-gray-800;
+
+    @apply md:grid-cols-6;
+    @apply xl:grid-cols-7;
+    @apply 2xl:grid-cols-9;
 
     &:last-child {
       @apply border-none;
@@ -15,10 +18,11 @@
       white-space: nowrap;
       text-overflow: ellipsis;
 
-      @apply md:col-span-1 xl:col-span-2;
       @apply font-semibold;
       @apply text-gray-600;
       @apply dark:text-gray-300;
+
+      @apply md:col-span-2;
 
       &:after {
         content: " :"
@@ -26,19 +30,9 @@
     }
 
     & dd {
-      @apply md:col-span-2 xl:col-span-5 2xl:col-span-7;
-    }
-
-    .content__grid--cols-2 & {
-      @apply xl:grid-cols-2 2xl:grid-cols-9;
-
-      & dt {
-        @apply xl:col-span-1 2xl:col-span-4;
-      }
-
-      & dd {
-        @apply xl:col-span-1 2xl:col-span-5;
-      }
+      @apply md:col-span-4;
+      @apply xl:col-span-5;
+      @apply 2xl:col-span-7;
     }
 
     & dd .button {
@@ -54,6 +48,21 @@
     &:hover {
       @apply bg-gray-100;
       @apply dark:bg-gray-900;
+    }
+  }
+
+  .content__grid--cols-2 .description-list__row {
+    @apply xl:grid-cols-2;
+    @apply 2xl:grid-cols-9;
+
+    & dt {
+      @apply xl:col-span-1;
+      @apply 2xl:col-span-4;
+    }
+
+    & dd {
+      @apply xl:col-span-1;
+      @apply 2xl:col-span-5;
     }
   }
 }

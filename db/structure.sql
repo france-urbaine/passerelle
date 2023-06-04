@@ -1766,7 +1766,7 @@ CREATE TABLE public.reports (
     reference character varying NOT NULL,
     action public.action NOT NULL,
     subject character varying NOT NULL,
-    completed character varying DEFAULT 'f'::character varying NOT NULL,
+    completed boolean DEFAULT false NOT NULL,
     sandbox boolean DEFAULT false NOT NULL,
     priority public.priority DEFAULT 'low'::public.priority NOT NULL,
     code_insee character varying,

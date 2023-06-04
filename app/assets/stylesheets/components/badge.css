@@ -17,8 +17,7 @@
     align-items: center;
     white-space: nowrap;
 
-    @apply py-2 px-4 h-10 leading-6 font-semibold rounded-full border-none;
-    @apply bg-blue-200 text-blue-900;
+    @apply py-2 px-4 h-10 leading-6 font-semibold rounded-full border-0;
 
     table & {
       @apply py-1 px-3 -my-1 h-auto;
@@ -27,6 +26,10 @@
     & svg {
       display: inline;
       @apply -ml-1 mr-2;
+    }
+
+    &--valid {
+      @apply bg-blue-200 text-blue-900;
     }
 
     &--error {
@@ -42,25 +45,7 @@
     }
 
     &--low-priority {
-      @apply bg-sky-200 text-blue-900;
-
-      &:not([disabled]) {
-        &:is(:focus, :focus-visible) {
-          @apply text-blue-900;
-          @apply outline-blue-500;
-          @apply dark:outline-blue-500;
-        }
-
-        &:hover {
-          @apply text-blue-700 border-blue-500;
-          @apply dark:text-blue-700 dark:border-blue-500;
-        }
-
-        &:active {
-          @apply text-blue-700 border-blue-700 outline-blue-700;
-          @apply dark:text-blue-300 dark:border-blue-300 dark:outline-blue-300;
-        }
-      }
+      @apply border;
     }
 
     &--medium-priority {
