@@ -31,7 +31,7 @@
 @import "./components/checkboxes_collection";
 
 /* Layouts */
-@import "./components/sidebar";
+@import "./components/navbar";
 @import "./components/content";
 @import "./components/header_bar";
 @import "./components/subheader_bar";
