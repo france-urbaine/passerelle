@@ -1,12 +1,15 @@
 svg {
   stroke-width: 1.5;
 
-  &:not([height]):not([width]) {
-    @apply h-6 w-6;
-  }
+  @apply h-6 w-6;
 }
 
 table svg,
 table svg use {
   display: inline-block;
+}
+
+.qr-code {
+  height: inherit;
+  width: inherit;
 }
