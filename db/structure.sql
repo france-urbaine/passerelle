@@ -83,41 +83,10 @@ CREATE TYPE public.otp_method AS ENUM (
 
 
 --
--- Name: package_action; Type: TYPE; Schema: public; Owner: -
---
-
-CREATE TYPE public.package_action AS ENUM (
-    'evaluation_hab',
-    'evaluation_eco'
-);
-
-
---
 -- Name: priority; Type: TYPE; Schema: public; Owner: -
 --
 
 CREATE TYPE public.priority AS ENUM (
-    'low',
-    'medium',
-    'high'
-);
-
-
---
--- Name: report_action; Type: TYPE; Schema: public; Owner: -
---
-
-CREATE TYPE public.report_action AS ENUM (
-    'evaluation_hab',
-    'evaluation_eco'
-);
-
-
---
--- Name: report_priority; Type: TYPE; Schema: public; Owner: -
---
-
-CREATE TYPE public.report_priority AS ENUM (
     'low',
     'medium',
     'high'
@@ -2526,7 +2495,7 @@ ALTER TABLE ONLY public.packages
 --
 
 ALTER TABLE ONLY public.collectivities
-    ADD CONSTRAINT fk_rails_8f20c81d41 FOREIGN KEY (publisher_id) REFERENCES public.publishers(id);
+    ADD CONSTRAINT fk_rails_8f20c81d41 FOREIGN KEY (publisher_id) REFERENCES public.publishers(id) ON DELETE SET NULL;
 
 
 --
@@ -2623,6 +2592,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230601080341'),
 ('20230601080346'),
 ('20230601093936'),
+('20230605122559'),
 ('20230605130656');
 
 
