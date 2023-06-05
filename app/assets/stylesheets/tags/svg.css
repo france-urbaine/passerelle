@@ -1,7 +1,9 @@
 svg {
   stroke-width: 1.5;
 
-  @apply h-6 w-6;
+  &:not([height]):not([width]) {
+    @apply h-6 w-6;
+  }
 }
 
 table svg,
