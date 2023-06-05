@@ -13,7 +13,11 @@ module TwoFactorHelper
     ).as_svg(
       **options,
       module_size: 4,
-      use_path: true
+      use_path: true,
+      fill: :white,
+      svg_attributes: {
+        class: "qr-code"
+      }
     ).html_safe # rubocop:disable Rails/OutputSafety
   end
 end
