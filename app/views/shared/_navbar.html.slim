@@ -41,7 +41,7 @@ div( data-controller="navbar" )
     - organization_users    = current_user.organization_admin?
     - api_settings          = current_user.organization_type == "Publisher"
 
-    - if organization_settings || api
+    - if organization_settings || api_settings
       .navbar__header Mon organisation
       .navbar__links
         = navbar_link_to "Paramètres", user_organization_settings_path           if organization_settings
