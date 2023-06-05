@@ -26,57 +26,56 @@ div( data-controller="navbar" )
       span.brand__left Fisca
       span.brand__right Hub
 
-    - if controller.class.name.start_with?("Users::")
-      .p-1
-        = navbar_link_to root_path, current: false do
-          = svg_icon "arrow-uturn-left"
-          | Retour
+    - packages  = allowed_to?(:index?, Package,  with: PackagePolicy)
+    - workshops = current_user.organization_type == "DDFIP"
 
-      .navbar__header Paramètres
+    .navbar__header Echanges
+    .navbar__links
+      = navbar_link_to "Tableau de bord", root_path, current: false, disabled: true
+      = navbar_link_to "Signalements",    reports_path
+      = navbar_link_to "Paquets",         packages_path if packages
+      = navbar_link_to "Dossiers",        root_path, current: false, disabled: true if workshops
+      = navbar_link_to "Fichiers",        root_path, current: false, disabled: true
+
+    - organization_settings = allowed_to?(:index, with: Users::OrganizationSettingsPolicy)
+    - organization_users    = current_user.organization_admin?
+    - api_settings          = current_user.organization_type == "Publisher"
+
+    - if organization_settings || api
+      .navbar__header Mon organisation
       .navbar__links
-        = navbar_link_to "Compte",       user_settings_path              if allowed_to?(:index, with: Users::UserSettingsPolicy)
-        = navbar_link_to "Organisation", user_organization_settings_path if allowed_to?(:index, with: Users::OrganizationSettingsPolicy)
-        a.navbar__link.navbar__link--disabled( disabled ) API
+        = navbar_link_to "Paramètres", user_organization_settings_path           if organization_settings
+        = navbar_link_to "Equipe",     root_path, current: false, disabled: true if organization_users
+        = navbar_link_to "API",        root_path, current: false, disabled: true if api_settings
 
-    - else
-      - packages  = allowed_to?(:index?, Package,  with: PackagePolicy)
-      - workshops = false
 
-      .navbar__header Echanges
+    - publishers     = allowed_to?(:index?, Publisher,    with: PublisherPolicy)
+    - collectivities = allowed_to?(:index?, Collectivity, with: CollectivityPolicy)
+    - ddfips         = allowed_to?(:index?, DDFIP,        with: DDFIPPolicy)
+    - offices        = allowed_to?(:index?, Office,       with: OfficePolicy)
+    - users          = allowed_to?(:index?, User,         with: UserPolicy)
+
+    - if publishers || collectivities || ddfips || offices || users
+      .navbar__header Administration
       .navbar__links
-        = navbar_link_to "Tableau de bord", root_path, current: false, disabled: true
-        = navbar_link_to "Signalements",    reports_path
-        = navbar_link_to "Paquets",         packages_path if packages
-        = navbar_link_to "Dossiers",        root_path, current: false, disabled: true if workshops
-        = navbar_link_to "Fichiers",        root_path, current: false, disabled: true
+        = navbar_link_to "Éditeurs",      publishers_path     if publishers
+        = navbar_link_to "Collectivités", collectivities_path if collectivities
+        = navbar_link_to "DDFIP",         ddfips_path         if ddfips
+        = navbar_link_to "Guichets",      offices_path        if offices
+        = navbar_link_to "Utilisateurs",  users_path          if users
 
-      - publishers     = allowed_to?(:index?, Publisher,    with: PublisherPolicy)
-      - collectivities = allowed_to?(:index?, Collectivity, with: CollectivityPolicy)
-      - ddfips         = allowed_to?(:index?, DDFIP,        with: DDFIPPolicy)
-      - offices        = allowed_to?(:index?, Office,       with: OfficePolicy)
-      - users          = allowed_to?(:index?, User,         with: UserPolicy)
+    - communes     = allowed_to?(:index?, Commune,     with: CommunePolicy)
+    - epcis        = allowed_to?(:index?, EPCI,        with: EPCIPolicy)
+    - departements = allowed_to?(:index?, Departement, with: DepartementPolicy)
+    - regions      = allowed_to?(:index?, Region,      with: RegionPolicy)
 
-      - if publishers || collectivities || ddfips || offices || users
-        .navbar__header Organisations
-        .navbar__links
-          = navbar_link_to "Éditeurs",      publishers_path     if publishers
-          = navbar_link_to "Collectivités", collectivities_path if collectivities
-          = navbar_link_to "DDFIP",         ddfips_path         if ddfips
-          = navbar_link_to "Guichets",      offices_path        if offices
-          = navbar_link_to "Utilisateurs",  users_path          if users
-
-      - communes     = allowed_to?(:index?, Commune,     with: CommunePolicy)
-      - epcis        = allowed_to?(:index?, EPCI,        with: EPCIPolicy)
-      - departements = allowed_to?(:index?, Departement, with: DepartementPolicy)
-      - regions      = allowed_to?(:index?, Region,      with: RegionPolicy)
-
-      - if communes || epcis || departements || regions
-        .navbar__header Territoires
-        .navbar__links
-          = navbar_link_to "Communes",     communes_path     if communes
-          = navbar_link_to "EPCI",         epcis_path        if epcis
-          = navbar_link_to "Départements", departements_path if departements
-          = navbar_link_to "Régions",      regions_path      if regions
+    - if communes || epcis || departements || regions
+      .navbar__header Territoires
+      .navbar__links
+        = navbar_link_to "Communes",     communes_path     if communes
+        = navbar_link_to "EPCI",         epcis_path        if epcis
+        = navbar_link_to "Départements", departements_path if departements
+        = navbar_link_to "Régions",      regions_path      if regions
 
     .flex-auto
     .navbar__user

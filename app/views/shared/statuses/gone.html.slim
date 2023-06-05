@@ -2,27 +2,27 @@
   = breadcrumbs_component heading: false do |breadcrumbs|
     - case @gone_record
     - when Publisher
-      - breadcrumbs.with_path "Organisations"
+      - breadcrumbs.with_path "Administration"
       - breadcrumbs.with_path "Éditeurs", publishers_path
       - breadcrumbs.with_path @gone_record.name
 
     - when Collectivity
-      - breadcrumbs.with_path "Organisations"
+      - breadcrumbs.with_path "Administration"
       - breadcrumbs.with_path "Collectivités", collectivities_path
       - breadcrumbs.with_path @gone_record.name
 
     - when DDFIP
-      - breadcrumbs.with_path "Organisations"
+      - breadcrumbs.with_path "Administration"
       - breadcrumbs.with_path "DDFIP", ddfips_path
       - breadcrumbs.with_path @gone_record.name
 
     - when Office
-      - breadcrumbs.with_path "Organisations"
+      - breadcrumbs.with_path "Administration"
       - breadcrumbs.with_path "Guichets", offices_path
       - breadcrumbs.with_path @gone_record.name
 
     - when User
-      - breadcrumbs.with_path "Organisations"
+      - breadcrumbs.with_path "Administration"
       - breadcrumbs.with_path "Utilisateurs", users_path
       - breadcrumbs.with_path @gone_record.name
 

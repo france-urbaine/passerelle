@@ -3,25 +3,25 @@
     = breadcrumbs_component heading: false do |breadcrumbs|
       - case @model_not_found
       - when "Publisher"
-        - breadcrumbs.with_path "Organisations"
+        - breadcrumbs.with_path "Administration"
         - breadcrumbs.with_path "Éditeurs", publishers_path
       - when "Collectivity"
-        - breadcrumbs.with_path "Organisations"
+        - breadcrumbs.with_path "Administration"
         - breadcrumbs.with_path "Collectivités", collectivities_path
       - when "DDFIP"
-        - breadcrumbs.with_path "Organisations"
+        - breadcrumbs.with_path "Administration"
         - breadcrumbs.with_path "DDFIP", ddfips_path
       - when "Office"
-        - breadcrumbs.with_path "Organisations"
+        - breadcrumbs.with_path "Administration"
         - breadcrumbs.with_path "Guichets", offices_path
       - when "User"
-        - breadcrumbs.with_path "Organisations"
+        - breadcrumbs.with_path "Administration"
         - breadcrumbs.with_path "Utilisateurs", users_path
       - when "Commune"
         - breadcrumbs.with_path "Territoires"
         - breadcrumbs.with_path "Communes", communes_path
       - when "EPCI"
-        - breadcrumbs.with_path "Organisations"
+        - breadcrumbs.with_path "Administration"
         - breadcrumbs.with_path "EPCI", epcis_path
       - when "Departement"
         - breadcrumbs.with_path "Territoires"
