@@ -3,8 +3,14 @@
 FactoryBot.define do
   factory :package do
     collectivity
-    name   { Faker::Book.title }
-    action { Package::ACTIONS.sample }
+    name      { Faker::Book.title }
+    action    { Package::ACTIONS.sample }
+
+    sequence(:reference) do |n|
+      month = Time.zone.now.strftime('%Y-%m')
+      index = n.to_s.rjust(4, "0")
+      "#{month}-#{index}"
+    end
 
     trait :transmitted do
       transmitted_at { Time.zone.now }

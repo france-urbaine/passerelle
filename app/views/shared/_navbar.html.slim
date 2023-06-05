@@ -39,12 +39,15 @@ div( data-controller="navbar" )
         a.navbar__link.navbar__link--disabled( disabled ) API
 
     - else
+      - packages  = allowed_to?(:index?, Package,  with: PackagePolicy)
+      - workshops = false
+
       .navbar__header Echanges
       .navbar__links
         = navbar_link_to "Tableau de bord", root_path, current: false, disabled: true
         = navbar_link_to "Signalements",    reports_path
-        = navbar_link_to "Paquets",         root_path, current: false, disabled: true
-        = navbar_link_to "Dossiers",        root_path, current: false, disabled: true
+        = navbar_link_to "Paquets",         packages_path if packages
+        = navbar_link_to "Dossiers",        root_path, current: false, disabled: true if workshops
         = navbar_link_to "Fichiers",        root_path, current: false, disabled: true
 
       - publishers     = allowed_to?(:index?, Publisher,    with: PublisherPolicy)
