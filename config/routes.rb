@@ -54,6 +54,10 @@ Rails.application.routes.draw do
   constraints(id: %r{(?!(new|edit|remove|discard|undiscard|offices))[^/]+}) do
     resources :reports, path: "signalements", path_names: { edit: "/edit/:fields" }
 
+    resources :packages, path: "paquets" do
+      resources :reports, path: "signalements"
+    end
+
     resources :publishers, concerns: %i[removable removable_collection], path: "/editeurs" do
       scope module: "publishers" do
         resources :users,          only: %i[index new create], concerns: %i[removable_collection], path: "/utilisateurs"

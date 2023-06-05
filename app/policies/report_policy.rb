@@ -14,10 +14,12 @@ class ReportPolicy < ApplicationPolicy
   end
 
   relation_scope do |relation|
+    # TODO
     relation.available_to(organization)
   end
 
   params_filter do |params|
+    # TODO
     params.permit!
   end
 end

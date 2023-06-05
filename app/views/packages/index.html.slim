@@ -1,0 +1,53 @@
+
+= template_frame_component do
+  = breadcrumbs_component do |breadcrumbs|
+    - breadcrumbs.with_path "Echanges"
+    - breadcrumbs.with_path "Paquets"
+
+  - @packages = @packages.preload(:collectivity) unless current_user.organization.is_a?(Collectivity)
+
+  = datatable_component(@packages) do |datatable|
+    - datatable.with_search
+    - datatable.with_pagination(@pagy, options: !@parent)
+
+    - datatable.with_selection do |selection|
+      - selection.with_action "Tout regrouper", disabled: true
+      - selection.with_action "Tout supprimer", disabled: true
+
+    - datatable.with_column(:reference) { "Reference" }
+    - datatable.with_column(:name)      { "Paquet" }
+    - datatable.with_column(:action)    { "Action" }
+
+    - unless current_user.organization.is_a?(Collectivity)
+      - datatable.with_column(:collectivity)  { "Collectivité" }
+
+    - datatable.with_column(:status, compact: true) { "Etat" }
+
+    - datatable.with_empty_message do
+      - if params[:search]
+        | Aucun signalement ne correspont à votre recherche.
+      - else
+        | Aucun signalement disponible.
+
+    - datatable.each_row do |row, package|
+      - row.with_checkbox "Sélectionner ce paquet", described_by: :name
+
+      - row.with_column(:reference) do
+        = authorized_link_to package do
+          = package.reference
+
+      - row.with_column(:name) do
+        = package.name
+
+      - row.with_column(:action) do
+        = translate(package.action, scope: "enum.action")
+
+      - row.with_column(:collectivity) do
+        = authorized_link_to report.collectivity do
+          = package.collectivity&.name
+
+      - row.with_column(:status) do
+        - if package.transmitted?
+          .badge.badge--valid Paquet transmis
+        - else
+          .badge.badge--error Paquet en attente
