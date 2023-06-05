@@ -328,6 +328,20 @@ class Report < ApplicationRecord
     end
   }
 
+  scope :search, lambda { |input|
+    advanced_search(
+      input,
+      reference:         ->(value) { where(reference: value) },
+      invariant:         ->(value) { where(situation_invariant: value) },
+      package_reference: ->(value) { where(package_id: Package.where(reference: value)) },
+      package_name:      ->(value) { where(package_id: Package.match(:name, value)) }
+    )
+  }
+
+  scope :order_by_score, lambda { |input|
+    self
+  }
+
   # Predicates
   # ----------------------------------------------------------------------------
   def transmitted?

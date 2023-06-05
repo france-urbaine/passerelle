@@ -252,7 +252,7 @@ RSpec.describe "Publishers" do
     # with a button to remove them
     #
     within ".header-bar--selection", text: "1 éditeur sélectionné" do
-      click_on "Supprimer la sélection"
+      click_on "Tout supprimer"
     end
 
     # A confirmation dialog should appear
@@ -332,7 +332,7 @@ RSpec.describe "Publishers" do
     # with a button to remove them
     #
     within ".header-bar--selection", text: "10 éditeurs sélectionnés" do
-      click_on "Supprimer la sélection"
+      click_on "Tout supprimer"
     end
 
     # A confirmation dialog should appear
@@ -415,7 +415,7 @@ RSpec.describe "Publishers" do
     end
 
     within ".header-bar--selection", text: "12 éditeurs sélectionnés" do
-      click_on "Supprimer la sélection"
+      click_on "Tout supprimer"
     end
 
     # A confirmation dialog should appear

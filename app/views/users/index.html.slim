@@ -27,7 +27,7 @@
 
     - datatable.with_selection do |selection|
       - if allowed_to?(:destroy_all?, User)
-        - selection.with_action "Supprimer la sélection", url_for([:remove_all, @parent, :users]), modal: true
+        - selection.with_action "Tout supprimer", url_for([:remove_all, @parent, :users]), modal: true
 
     - if @parent.is_a?(DDFIP)
       - datatable.with_column(:name, sort: true)   { "Utilisateur" }

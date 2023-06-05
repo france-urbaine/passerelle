@@ -298,7 +298,7 @@ RSpec.describe "DDFIPs" do
     # with a button to remove them
     #
     within ".header-bar--selection", text: "1 DDFIP sélectionnée" do
-      click_on "Supprimer la sélection"
+      click_on "Tout supprimer"
     end
 
     # A confirmation dialog should appear
@@ -379,7 +379,7 @@ RSpec.describe "DDFIPs" do
     # with a button to remove them
     #
     within ".header-bar--selection", text: "10 DDFIPs sélectionnées" do
-      click_on "Supprimer la sélection"
+      click_on "Tout supprimer"
     end
 
     # A confirmation dialog should appear
@@ -464,7 +464,7 @@ RSpec.describe "DDFIPs" do
     end
 
     within ".header-bar--selection", text: "13 DDFIPs sélectionnées" do
-      click_on "Supprimer la sélection"
+      click_on "Tout supprimer"
     end
 
     # A confirmation dialog should appear
