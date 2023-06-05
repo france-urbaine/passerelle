@@ -34,7 +34,7 @@
 #
 # Foreign Keys
 #
-#  fk_rails_...  (publisher_id => publishers.id)
+#  fk_rails_...  (publisher_id => publishers.id) ON DELETE => nullify
 #
 class Collectivity < ApplicationRecord
   # Associations
