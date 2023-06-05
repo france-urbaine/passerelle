@@ -17,7 +17,7 @@
 # Indexes
 #
 #  index_offices_on_ddfip_id           (ddfip_id)
-#  index_offices_on_ddfip_id_and_name  (ddfip_id,name) UNIQUE
+#  index_offices_on_ddfip_id_and_name  (ddfip_id,name) UNIQUE WHERE (discarded_at IS NULL)
 #  index_offices_on_discarded_at       (discarded_at)
 #
 # Foreign Keys
