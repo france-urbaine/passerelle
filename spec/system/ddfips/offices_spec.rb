@@ -184,7 +184,7 @@ RSpec.describe "DDFIP offices" do
     # with a button to remove them
     #
     within ".header-bar--selection", text: "1 guichet sélectionné" do
-      click_on "Supprimer la sélection"
+      click_on "Tout supprimer"
     end
 
     # A confirmation dialog should appear
@@ -256,7 +256,7 @@ RSpec.describe "DDFIP offices" do
     # with a button to remove them
     #
     within ".header-bar--selection", text: "10 guichets sélectionnés" do
-      click_on "Supprimer la sélection"
+      click_on "Tout supprimer"
     end
 
     # A confirmation dialog should appear
@@ -332,7 +332,7 @@ RSpec.describe "DDFIP offices" do
     end
 
     within ".header-bar--selection", text: "13 guichets sélectionnés" do
-      click_on "Supprimer la sélection"
+      click_on "Tout supprimer"
     end
 
     # A confirmation dialog should appear

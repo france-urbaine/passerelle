@@ -1,0 +1,95 @@
+@layer components {
+  .badges {
+    display: flex;
+    flew-wrap: wrap;
+
+    & .badge {
+      @apply mr-4;
+    }
+  }
+
+  .badge {
+    display: inline-flex;
+    box-sizing: border-box;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    align-items: center;
+    white-space: nowrap;
+
+    @apply py-2 px-4 h-10 leading-6 font-semibold rounded-full border-0;
+
+    table & {
+      @apply py-1 px-3 -my-1 h-auto;
+    }
+
+    & svg {
+      display: inline;
+      @apply -ml-1 mr-2;
+    }
+
+    &--valid {
+      @apply bg-blue-200 text-blue-900;
+    }
+
+    &--error {
+      @apply bg-red-300 text-red-900;
+    }
+
+    &--low-priority,
+    &--medium-priority,
+    &--high-priority {
+      & svg {
+        @apply ml-2 -mr-0;
+      }
+    }
+
+    &--low-priority {
+      @apply border;
+    }
+
+    &--medium-priority {
+      @apply bg-yellow-300 text-yellow-900;
+
+      &:not([disabled]) {
+        &:is(:focus, :focus-visible) {
+          @apply text-yellow-900;
+          @apply outline-yellow-500;
+          @apply dark:outline-yellow-500;
+        }
+
+        &:hover {
+          @apply text-yellow-700 border-yellow-500;
+          @apply dark:text-yellow-700 dark:border-yellow-500;
+        }
+
+        &:active {
+          @apply text-yellow-700 border-yellow-700 outline-yellow-700;
+          @apply dark:text-yellow-300 dark:border-yellow-300 dark:outline-yellow-300;
+        }
+      }
+    }
+
+    &--high-priority {
+      @apply bg-orange-300 text-orange-900;
+
+      &:not([disabled]) {
+        &:is(:focus, :focus-visible) {
+          @apply text-orange-900;
+          @apply outline-orange-500;
+          @apply dark:outline-orange-500;
+        }
+
+        &:hover {
+          @apply text-orange-700 border-orange-500;
+          @apply dark:text-orange-700 dark:border-orange-500;
+        }
+
+        &:active {
+          @apply text-orange-700 border-orange-700 outline-orange-700;
+          @apply dark:text-orange-300 dark:border-orange-300 dark:outline-orange-300;
+        }
+      }
+    }
+  }
+}

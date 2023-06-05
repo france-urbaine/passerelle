@@ -12,7 +12,7 @@
 
     - datatable.with_selection do |selection|
       - if allowed_to?(:destroy_all?, Collectivity)
-        - selection.with_action "Supprimer la sélection", url_for([:remove_all, @parent, :collectivities]), modal: true
+        - selection.with_action "Tout supprimer", url_for([:remove_all, @parent, :collectivities]), modal: true
 
     - if allowed_to?(:show?, Collectivity, with: CollectivityPolicy)
       - datatable.with_column(:name,      sort: true) { "Collectivité" }

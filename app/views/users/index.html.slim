@@ -27,7 +27,7 @@
 
     - datatable.with_selection do |selection|
       - if allowed_to?(:destroy_all?, User)
-        - selection.with_action "Supprimer la sélection", url_for([:remove_all, @parent, :users]), modal: true
+        - selection.with_action "Tout supprimer", url_for([:remove_all, @parent, :users]), modal: true
 
     - if @parent.is_a?(DDFIP)
       - datatable.with_column(:name, sort: true)   { "Utilisateur" }
@@ -90,13 +90,15 @@
         - if user.organization_admin?
           = svg_icon("check-badge", "Administrateur de l'organisation")
         - else
-          = " "
+          -# Do not let empty placeholder fill the cell
+          '
 
       - row.with_column(:super_admin) do
         - if user.super_admin?
           = svg_icon("check-badge", "Administrateur de FiscaHub")
         - else
-          = " "
+          -# Do not let empty placeholder fill the cell
+          '
 
       - row.with_column(:offices) do
         - offices = user.offices.select { |office| office.kept? && office.ddfip_id == @parent.id }

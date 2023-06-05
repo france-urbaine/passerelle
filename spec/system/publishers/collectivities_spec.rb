@@ -195,7 +195,7 @@ RSpec.describe "Publisher collectivities" do
     # with a button to remove them
     #
     within ".header-bar--selection", text: "1 collectivité sélectionnée" do
-      click_on "Supprimer la sélection"
+      click_on "Tout supprimer"
     end
 
     # A confirmation dialog should appear
@@ -264,7 +264,7 @@ RSpec.describe "Publisher collectivities" do
     # with a button to remove them
     #
     within ".header-bar--selection", text: "10 collectivités sélectionnées" do
-      click_on "Supprimer la sélection"
+      click_on "Tout supprimer"
     end
 
     # A confirmation dialog should appear
@@ -340,7 +340,7 @@ RSpec.describe "Publisher collectivities" do
     end
 
     within ".header-bar--selection", text: "17 collectivités sélectionnées" do
-      click_on "Supprimer la sélection"
+      click_on "Tout supprimer"
     end
 
     # A confirmation dialog should appear

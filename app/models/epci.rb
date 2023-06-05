@@ -50,6 +50,14 @@ class EPCI < ApplicationRecord
 
   validates :siren, uniqueness: { unless: :skip_uniqueness_validation_of_siren? }
 
+  # Callbacks
+  # ----------------------------------------------------------------------------
+  before_validation :normalize_code_departement
+
+  def normalize_code_departement
+    self.code_departement = nil if code_departement.blank?
+  end
+
   # Scopes
   # ----------------------------------------------------------------------------
   scope :having_communes, ->(communes) { where(siren: communes.select(:siren_epci)) }
@@ -85,14 +93,6 @@ class EPCI < ApplicationRecord
     scored_order(:name, input)
   }
 
-  # Callbacks
-  # ----------------------------------------------------------------------------
-  before_validation :normalize_code_departement
-
-  def normalize_code_departement
-    self.code_departement = nil if code_departement.blank?
-  end
-
   # Other associations
   # ----------------------------------------------------------------------------
   def on_territory_collectivities
@@ -103,7 +103,7 @@ class EPCI < ApplicationRecord
     Collectivity.kept.where(territory: territories)
   end
 
-  # Counters cached
+  # Database updates
   # ----------------------------------------------------------------------------
   def self.reset_all_counters
     connection.select_value("SELECT reset_all_epcis_counters()")

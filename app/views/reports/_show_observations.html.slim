@@ -1,0 +1,14 @@
+.subheader-bar
+  h2.subheader
+    = svg_icon("chat-bubble-bottom-center-text", "Nouvelle section")
+    | Observations
+
+  .subheader-bar__actions
+    - if allowed_to?(:update?, @report)
+      .subheader-bar__action
+        = button_component "Compléter", edit_report_path(@report, fields: "observations"), icon: "pencil-square", modal: true
+
+.card.flex
+  .h-24
+  .card__content.text-lg
+    = simple_format @report.observations

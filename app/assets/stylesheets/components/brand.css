@@ -22,7 +22,8 @@
     & img,
     & svg {
       height: 1.3em;
-      with: 1.3em;
+      width: 1.3em;
+      max-width: inherit;
 
       @apply mr-2;
     }

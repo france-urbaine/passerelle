@@ -4,6 +4,9 @@
 
 import { application } from "./application"
 
+import NavbarController from "./components/navbar_controller"
+application.register("navbar", NavbarController)
+
 import AutocompleteController from "./components/autocomplete_controller"
 application.register("autocomplete", AutocompleteController)
 

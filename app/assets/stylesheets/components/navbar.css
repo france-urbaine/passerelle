@@ -1,33 +1,41 @@
 @layer components {
-  .sidebar {
+  .navbar {
+    position: relative;
+    z-index: 4;
     display: flex;
     flex: none;
     flex-direction: column;
     overflow-x: hidden;
     overflow-y: auto;
     height: 100vh;
+    transition: all 50ms linear;
 
-    @apply w-60;
+    @apply w-60 pt-2;
     @apply bg-white shadow;
     @apply dark:bg-black dark:shadow-gray-700;
   }
 
-  .sidebar__brand  {
-    @apply p-4 text-3xl;
+  .navbar__brand  {
+    @apply px-3 py-4 text-3xl;
+
+    & img,
+    & svg {
+      @apply w-10 h-10;
+    }
   }
 
-  .sidebar__header {
+  .navbar__header {
     @apply px-4 py-2 mt-4 text-xl;
   }
 
-  .sidebar__links {
+  .navbar__links {
     @apply p-1 border-t;
 
     @apply border-gray-300;
     @apply dark:border-gray-700;
   }
 
-  .sidebar__link {
+  .navbar__link {
     display: flex;
     align-items: center;
     flex: none;
@@ -47,7 +55,9 @@
       @apply dark:bg-gray-800 dark:border-gray-800;
     }
 
-    &--disabled {
+    &[disabled] {
+      cursor: default;
+
       @apply text-gray-400;
     }
 
@@ -57,7 +67,7 @@
       @apply mr-4 h-5 w-5;
     }
 
-    &:not(&--disabled) {
+    &:not([disabled]) {
       &, &:is(:hover, :active, :focus, :focus-visible) {
         outline-style: solid;
         outline-width: 0px;
@@ -87,13 +97,26 @@
     }
   }
 
-  .sidebar__user {
+  .menu__icon-link {
+    @apply p-2 h-16 w-16;
+
+    & button {
+      @apply h-12 w-12;
+    }
+
+    & img,
+    & svg {
+      @apply w-8 h-8;
+    }
+  }
+
+  .navbar__user {
     @apply p-1 border-t;
 
     @apply border-gray-300;
     @apply dark:border-gray-700;
 
-    & .sidebar__link {
+    & .navbar__link {
       @apply m-0;
 
       &,
@@ -103,13 +126,13 @@
     }
   }
 
-  .sidebar__user-text {
+  .navbar__user-text {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
   }
 
-  .sidebar__user-avatar {
+  .navbar__user-avatar {
     overflow: hidden;
     flex: none;
 
@@ -117,13 +140,81 @@
 
     & svg {
       @apply h-8 w-8 m-0;
-      @apply bg-gray-100 text-gray-300;
-      @apply dark:bg-gray-800 dark:text-gray-600;
     }
   }
 
-  .sidebar__user-name {
+  .navbar__user-name {
     overflow: hidden;
     flex: 1 1 auto;
+  }
+
+  .navbar--minified {
+    display: none;
+    @apply w-16;
+  }
+
+  .navbar__overlay {
+    position: fixed;
+    z-index: 3;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: none;
+
+    @apply bg-black/50;
+  }
+
+  @media not all and (min-width: 1280px) {
+    .navbar--minified {
+      display: flex;
+    }
+
+    .navbar:not(.navbar--minified)  {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+
+      &[aria-expanded="true"] {
+        display: flex;
+      }
+
+      &[aria-expanded="true"] + .navbar__overlay {
+        display: block;
+      }
+    }
+  }
+
+  @media not all and (min-width: 768px) {
+    .navbar--minified {
+      position: fixed;
+      z-index: 2;
+      bottom: 0;
+      display: flex;
+      flex-direction: row;
+      overflow: hidden;
+      width: 100vw;
+      @apply h-16 p-0 px-2;
+
+      & .navbar__brand {
+        display: none;
+      }
+
+      & .menu__icon-link--more {
+        transform: rotate(90deg);
+      }
+
+      &[aria-expanded="false"] {
+        display: flex;
+      }
+    }
+  }
+
+  @media not all and (min-width: 640px) {
+    .navbar:not(.navbar--minified) {
+      min-width: 50vw
+    }
   }
 }

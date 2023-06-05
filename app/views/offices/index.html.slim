@@ -12,7 +12,7 @@
 
     - datatable.with_selection do |selection|
       - if allowed_to?(:destroy_all?, Office)
-        - selection.with_action "Supprimer la sélection", url_for([:remove_all, @parent, :offices]), modal: true
+        - selection.with_action "Tout supprimer", url_for([:remove_all, @parent, :offices]), modal: true
 
     - if @parent.is_a?(DDFIP)
       - datatable.with_column(:name, sort: true)   { "Guichet" }

@@ -46,17 +46,17 @@
 
           - else
             .text-disabled( title="Cet utilisateur n'a pas encore validé son inscription" )
-              = svg_icon("exclamation-triangle", class: "mr-2 h-6 w-6 inline-block")
+              = svg_icon("exclamation-triangle", class: "inline-block mr-2")
               = @user.email
               span.tooltip Cet utilisateur n'a pas encore validé son inscription
 
       .description-list__row
         dt Administrateur de l'organisation
-        dd= svg_icon("check-badge", "Administrateur", class: "h-6 w-6") if @user.organization_admin?
+        dd= svg_icon("check-badge", "Administrateur") if @user.organization_admin?
 
       .description-list__row
         dt Administrateur de FiscaHub
-        dd= svg_icon("check-badge", "Administrateur", class: "h-6 w-6") if @user.super_admin?
+        dd= svg_icon("check-badge", "Administrateur") if @user.super_admin?
 
   h2.subheader
     = svg_icon("server-stack", "Nouvelle section")

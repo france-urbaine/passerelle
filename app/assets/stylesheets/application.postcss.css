@@ -18,9 +18,11 @@
 
 /* Interactive components */
 @import "./components/button";
+@import "./components/badge";
 @import "./components/icon_button";
 @import "./components/tooltip";
 @import "./components/notifications";
+@import "./components/priority_icon";
 
 /* Forms */
 @import "./components/form_block";
@@ -29,7 +31,7 @@
 @import "./components/checkboxes_collection";
 
 /* Layouts */
-@import "./components/sidebar";
+@import "./components/navbar";
 @import "./components/content";
 @import "./components/header_bar";
 @import "./components/subheader_bar";

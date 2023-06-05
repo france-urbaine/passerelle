@@ -20,8 +20,8 @@ class ApplicationController < ActionController::Base
   before_action :verify_requested_format!
   after_action  :verify_authorized, if: -> { signed_in? && !devise_controller? }
 
-  rescue_from "ActionController::ParameterMissing", with: :bad_request
-  rescue_from "ActionController::BadRequest",       with: :bad_request
+  # rescue_from "ActionController::ParameterMissing", with: :bad_request
+  # rescue_from "ActionController::BadRequest",       with: :bad_request
   rescue_from "ActionPolicy::Unauthorized",         with: :forbidden
   rescue_from "ActiveRecord::RecordNotFound",       with: :not_found
   rescue_from "ControllerDiscard::RecordDiscarded", with: :gone
@@ -46,4 +46,8 @@ class ApplicationController < ActionController::Base
 
   helper_method :turbo_frame_request_id
   helper_method :turbo_frame_request?
+
+  def current_organization
+    current_user.organization
+  end
 end

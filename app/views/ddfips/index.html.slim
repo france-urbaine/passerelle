@@ -12,7 +12,7 @@
 
     - datatable.with_selection do |selection|
       - if allowed_to?(:destroy_all?, DDFIP)
-        - selection.with_action "Supprimer la sélection", remove_all_ddfips_path, modal: true
+        - selection.with_action "Tout supprimer", remove_all_ddfips_path, modal: true
 
     - datatable.with_column(:name,        sort: true)          { "DDFIP" }
     - datatable.with_column(:departement, sort: true, span: 2) { "Département" }

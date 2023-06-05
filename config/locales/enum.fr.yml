@@ -1,7 +1,132 @@
 fr:
   enum:
+    priority:
+      low:     Basse
+      medium:  Moyenne
+      high:    Haute
+
     action:
       evaluation_hab: "Évaluation de locaux d'habitation"
       evaluation_eco: "Évaluation de locaux économiques"
       occupation_hab: "Occupation de locaux d'habitation"
       occupation_eco: "Occupation de locaux économiques"
+
+    subject:
+      evaluation_hab:
+        evaluation_hab/evaluation:          "Problème d'évaluation d'un local d'habitation"
+        evaluation_hab/exoneration:         "Problème d'exonération d'un local d'habitation"
+        evaluation_hab/affectation:         "Problème d'affectation d'un local d'habitation"
+        evaluation_hab/adresse:             "Problème d'adresse d'un local d'habitation"
+        evaluation_hab/omission_batie:      "Omission bâtie sur un local d'habitation"
+        evaluation_hab/achevement_travaux:  "Achèvement de travaux sur un local d'habitation"
+
+      evaluation_eco:
+        evaluation_eco/evaluation:          "Problème d'évaluation d'un local économique"
+        evaluation_eco/exoneration:         "Problème d'exonération d'un local économique"
+        evaluation_eco/affectation:         "Problème d'affectation d'un local économique"
+        evaluation_eco/adresse:             "Problème d'adresse d'un local économique"
+        evaluation_eco/omission_batie:      "Omission bâtie sur un local économique"
+        evaluation_eco/achevement_travaux:  "Achèvement de travaux sur un local économique"
+
+    affectation:
+      A: "Locaux commerciaux et biens divers passibles de la TH"
+      B: "Bâtiment industriel"
+      C: "Commerce"
+      E: "Locaux commerciaux et biens divers non passibles de la TH ni de la CFE"
+      H: "Habitation"
+      K: "Locaux administratifs non passibles de la TH"
+      L: "Hôtel"
+      P: "Professionnel"
+      S: "Biens divers passibles de la TH"
+      T: "Terrain industriel"
+
+    nature_local:
+      AP: "Appartement"
+      AT: "Shelters des antennes téléphones"
+      AU: "Voies et éléments (ex. : péage) construits sur une autoroute"
+      CB: "Local professionnel"
+      DA: "Dépendance d'appartement"
+      DM: "Dépendance de maison"
+      DE: "Dépendance bâtie isolée (ex. : garage)"
+      LC: "Local commun (ex. : local à vélos)"
+      MA: "Maison"
+      ME: "Maison exceptionnelle"
+      MP: "Maison partagée par une limite territoriale"
+      PP: "Port de plaisance"
+      SM: "Sol de maison (cas de construction sur sol d'autrui)"
+      U:  "Établissement industriel (évalué par méthode comptable)"
+      UE: "Transformateur électrique HBTA"
+      UG: "Appareil à gaz"
+      UN: "Usine nucléaire"
+
+    categorie_habitation:
+      1:  1 - Grand luxe
+      2:  2 - Luxe
+      3:  3 - Très confortable
+      4:  4 - Confortable
+      5:  5 - Assez confortable
+      6:  6 - Ordinaire
+      7:  7 - Médiocre
+      8:  8 - Très médiocre
+      1M: 1M - Grand luxe intermédiaire
+      2M: 2M - Luxe intermédiaire
+      3M: 3M - Très confortable intermédiaire
+      4M: 4M - Confortable intermédiaire
+      5M: 5M - Assez confortable intermédiaire
+      6M: 6M - Ordinaire intermédiaire
+      7M: 7M - Médiocre intermédiaire
+
+    categorie_economique:
+      MAG1: "MAG1 - Boutiques et magasins sur rue (exemples : commerces, restaurants, cafés ou agences bancaires pour une surface principale inférieure à 400 m2)"
+      MAG2: "MAG2 - Commerces sans accès direct sur la rue (surface principale inférieure à 400 m2)"
+      MAG3: "MAG3 - Magasins appartenant à un ensemble commercial (surface principale inférieure à 400 m2)"
+      MAG4: "MAG4 - Magasins de grande surface (surface principale comprise entre 400 et 2 499 m2)"
+      MAG5: "MAG5 - Magasins de très grande surface (surface principale égale ou supérieure à 2 500 m2)"
+      MAG6: "MAG6 - Stations-service, stations de lavage et assimilables"
+      MAG7: "MAG7 - Marchés"
+      BUR1: "BUR1 - Locaux à usage de bureaux d’agencement ancien"
+      BUR2: "BUR2 - Locaux à usage de bureaux d’agencement récent"
+      BUR3: "BUR3 - Locaux assimilables à des bureaux mais présentant des aménagements spécifiques"
+      DEP1: "DEP1 - Lieux de dépôt à ciel ouvert et terrains à usage commercial ou industriel"
+      DEP2: "DEP2 - Lieux et dépôt couverts"
+      DEP3: "DEP3 - Parcs de stationnement à ciel ouvert"
+      DEP4: "DEP4 - Parcs de stationnement couverts"
+      DEP5: "DEP5 - Installations spécifiques de stockage"
+      ATE1: "ATE1 - Ateliers artisanaux"
+      ATE2: "ATE2 - Locaux utilisés pour une activité de transformation, de manutention ou de maintenance"
+      ATE3: "ATE3 - Chenils, viviers et autres locaux assimilables"
+      HOT1: "HOT1 - Hôtels « confort » (4 étoiles et plus, ou confort identique)"
+      HOT2: "HOT2 - Hôtels « supérieur » (2 ou 3 étoiles, ou confort identique)"
+      HOT3: "HOT3 - Hôtels « standard » (1 étoile, ou confort identique)"
+      HOT4: "HOT4 - Foyers d’hébergement, centres d’accueil, auberges de jeunesse"
+      HOT5: "HOT5 - Hôtels clubs, villages de vacances et résidences hôtelières"
+      SPE1: "SPE1 - Salles de spectacles, musées et locaux assimilables"
+      SPE2: "SPE2 - Établissements ou terrains affectés à la pratique d'un sport ou à usage de spectacles sportifs"
+      SPE3: "SPE3 - Salles de loisirs diverses"
+      SPE4: "SPE4 - Terrains de camping confortables (3 étoiles et plus, ou confort identique)"
+      SPE5: "SPE5 - Terrains de camping ordinaires (1 ou 2 étoiles, ou confort identique)"
+      SPE6: "SPE6 - Établissements de détente et de bien-être"
+      SPE7: "SPE7 - Centres de loisirs, centres de colonies de vacances, maisons de jeune"
+      ENS1: "ENS1 - Écoles et institutions privées exploitées dans un but non lucratif"
+      ENS2: "ENS2 - Établissements d’enseignement à but lucratif"
+      CLI1: "CLI1 - Cliniques et établissements hospitaliers"
+      CLI2: "CLI2 - Centres médico-sociaux, centres de soins, crèches, halte-garderies"
+      CLI3: "CLI3 - Maisons de repos, maisons de retraite (médicalisées ou non) et locaux assimilables"
+      CLI4: "CLI4 - Centres de rééducation, de thalassothérapie, établissements thermaux"
+      IND1: "IND1 - Établissements industriels nécessitant un outillage important autres que les carrières et assimilés"
+      IND2: "IND2 - Carrières et établissements assimilables"
+      EXC1: "EXC1 - Locaux ne relevant d’aucune des catégories précédentes par leurs caractéristiques sortant de l’ordinaire"
+
+    coefficient_entretien:
+      "1,20": 1,20 - Bon
+      "1,10": 1,10 - Assez bon
+      "1,00": 1,00 - Passable
+      "0,90": 0,90 - Médiocre
+      "0,80": 0,80 - Mauvais
+
+    coefficient_situation:
+      "+0,10": 	"+ 0,10 - Excellente"
+      "+0,05": 	"+ 0,05 - Bonne"
+      "0,00": 	"0,00 - Ordinaire"
+      "-0,05": 	"- 0,05 - Médiocre"
+      "-0,10": 	"- 0,10 - Mauvais"

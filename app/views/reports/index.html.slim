@@ -1,0 +1,115 @@
+= template_frame_component do
+  = breadcrumbs_component do |breadcrumbs|
+    - breadcrumbs.with_path "Echanges"
+    - breadcrumbs.with_path "Signalements"
+
+    - if allowed_to?(:create?, Report, with: ReportPolicy)
+      - breadcrumbs.with_action "Ajouter un signalement", new_report_path, icon: "plus", modal: true, primary: true
+
+  - case current_user.organization
+  - when Collectivity then @reports = @reports.preload(:commune, :package)
+  - when Publisher    then @reports = @reports.preload(:collectivity, :commune, :package)
+  - when DDFIP
+    - if current_user.organization_admin?
+      - @reports = @reports.preload(:collectivity, :commune, :package, :workshop)
+    - else
+      - @reports = @reports.preload(:commune, :workshop)
+
+  = datatable_component(@reports) do |datatable|
+    - datatable.with_search
+    - datatable.with_pagination(@pagy, options: !@parent)
+
+    - datatable.with_selection do |selection|
+      / - if allowed_to?(:destroy_all?, Report)
+      /   - selection.with_action "Tout supprimer", url_for([:remove_all, @parent, :reports]), modal: true
+
+      - selection.with_action "Tout modifier", disabled: true
+      - selection.with_action "Tout regrouper", disabled: true
+      - selection.with_action "Tout supprimer", disabled: true
+
+    - datatable.with_column(:reference) { "Reference" }
+
+    - case current_user.organization
+    - when Collectivity
+      - datatable.with_column(:subject)    { "Sujet" }
+      - datatable.with_column(:invariant)  { "Invariant" }
+      - datatable.with_column(:adresse)    { "Adresse" }
+      - datatable.with_column(:commune)    { "Commune" }
+      - datatable.with_column(:package)    { "Paquet" }
+
+    - when Publisher
+      - datatable.with_column(:collectivity)  { "Collectivité" }
+      - datatable.with_column(:subject)       { "Sujet" }
+      - datatable.with_column(:invariant)     { "Invariant" }
+      - datatable.with_column(:adresse)       { "Adresse" }
+      - datatable.with_column(:commune)       { "Commune" }
+      - datatable.with_column(:package)       { "Paquet" }
+
+    - when DDFIP
+      - datatable.with_column(:subject)       { "Sujet" }
+      - datatable.with_column(:invariant)     { "Invariant" }
+      - datatable.with_column(:adresse)       { "Adresse" }
+      - datatable.with_column(:commune)       { "Commune" }
+
+      - if current_user.organization_admin?
+        - datatable.with_column(:collectivity) { "Collectivité" }
+        - datatable.with_column(:package)      { "Paquet" }
+        - datatable.with_column(:workshop)     { "Dossier" }
+        - datatable.with_column(:office)       { "Guichet" }
+      - else
+        - datatable.with_column(:workshop)     { "Dossier" }
+
+    - datatable.with_column(:priority, compact: true) { "Priorité" }
+    - datatable.with_column(:status,   compact: true) { "Etat" }
+
+    - datatable.with_empty_message do
+      - if params[:search]
+        | Aucun signalement ne correspont à votre recherche.
+      - else
+        | Aucun signalement disponible.
+
+    - datatable.each_row do |row, report|
+      - row.with_checkbox "Sélectionner cette collectivité", described_by: :name
+
+      - row.with_column(:reference) do
+        = authorized_link_to report do
+          = report.reference
+
+      - row.with_column(:subject) do
+        = translate(report.subject, scope: ["enum.subject", report.action])
+
+      - row.with_column(:invariant) do
+        = report.situation_invariant
+
+      - row.with_column(:adresse) do
+        = Reports::DecorateService.new(report).situation_adresse
+
+      - row.with_column(:commune) do
+        = report.commune&.name
+
+      - row.with_column(:collectivity) do
+        = authorized_link_to report.collectivity do
+          = report.collectivity.name
+
+      - row.with_column(:package) do
+        = report.package.name
+
+      - row.with_column(:workshop) do
+        = report.workshop&.name
+
+      - row.with_column(:priority) do
+        - case report.priority
+        - when "low"
+          = svg_icon("chart-bar", "Basse", class: "low-priority-icon")
+        - when "medium"
+          = svg_icon("chart-bar", "Moyenne", class: "medium-priority-icon")
+        - when "high"
+          = svg_icon("chart-bar", "Haute", class: "high-priority-icon")
+
+      - row.with_column(:status) do
+        - if report.transmitted?
+          .badge.badge--valid Formulaire transmis
+        - elsif report.completed?
+          .badge.badge--valid Formulaire prêt à être transmi
+        - else
+          .badge.badge--error Formulaire incomplet

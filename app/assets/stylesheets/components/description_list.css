@@ -1,25 +1,38 @@
 
 @layer components {
   .description-list__row {
-    display: grid;
-    grid-template-columns: repeat(3,minmax(0,1fr));
-
-    @apply px-4 py-3 gap-2 border-b;
+    @apply grid gap-2 px-4 py-3 border-b;
     @apply border-gray-200;
     @apply dark:border-gray-800;
+
+    @apply md:grid-cols-6;
+    @apply xl:grid-cols-7;
+    @apply 2xl:grid-cols-9;
 
     &:last-child {
       @apply border-none;
     }
 
     & dt {
-      @apply font-medium;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+
+      @apply font-semibold;
       @apply text-gray-600;
       @apply dark:text-gray-300;
+
+      @apply md:col-span-2;
+
+      &:after {
+        content: " :"
+      }
     }
 
     & dd {
-      grid-column: span 2/span 2;
+      @apply md:col-span-4;
+      @apply xl:col-span-5;
+      @apply 2xl:col-span-7;
     }
 
     & dd .button {
@@ -35,6 +48,21 @@
     &:hover {
       @apply bg-gray-100;
       @apply dark:bg-gray-900;
+    }
+  }
+
+  .content__grid--cols-2 .description-list__row {
+    @apply xl:grid-cols-2;
+    @apply 2xl:grid-cols-9;
+
+    & dt {
+      @apply xl:col-span-1;
+      @apply 2xl:col-span-4;
+    }
+
+    & dd {
+      @apply xl:col-span-1;
+      @apply 2xl:col-span-5;
     }
   }
 }

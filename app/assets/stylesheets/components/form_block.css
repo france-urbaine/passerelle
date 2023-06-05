@@ -114,10 +114,6 @@
     @apply py-2 px-3 h-10;
     @apply text-gray-500;
 
-    & svg {
-      @apply h-6 w-6;
-    }
-
     & + input {
       @apply pl-12;
     }

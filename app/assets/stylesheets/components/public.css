@@ -3,13 +3,12 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    height: min-content;
     min-height: 100vh;
     overflow: auto;
 
-    @apply sm:py-12;
-
     & .brand {
-      @apply p-10 text-5xl justify-center;
+      @apply pt-0 p-10 text-5xl justify-center;
     }
 
     & .card {

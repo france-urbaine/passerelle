@@ -1,0 +1,89 @@
+div( data-controller="navbar" )
+  nav.navbar.navbar--minified( data-navbar-target="minified" )
+    .navbar__brand.brand
+      = image_tag("logo.svg", alt: "Logo de FiscaHub")
+
+      - dashboard = true
+      - reports   = allowed_to?(:index?, Report, with: ReportPolicy)
+      - packages  = true
+      - files     = true
+
+    - if controller.class.name.start_with?("Users::")
+      .menu__icon-link= button_component "Retour", root_path, icon: "arrow-uturn-left", icon_only: true
+    - else
+      .menu__icon-link= button_component "Tableau de bord", root_path,    icon: "home", icon_only: true
+      .menu__icon-link= button_component "Signalements",    reports_path, icon: "document-duplicate", icon_only: true
+
+    .menu__icon-link.menu__icon-link--more
+      = button_component "Afficher tout le menu", icon: "ellipsis-horizontal", icon_only: true, data: { action: "click->navbar#expand" }
+
+    .flex-auto
+    .menu__icon-link= button_component "Gestion du compte", user_settings_path, icon: "user-circle", icon_only: true
+
+  nav.navbar( data-navbar-target="expanded" )
+    .navbar__brand.brand
+      = image_tag("logo.svg", alt: "Logo de FiscaHub")
+      span.brand__left Fisca
+      span.brand__right Hub
+
+    - if controller.class.name.start_with?("Users::")
+      .p-1
+        = navbar_link_to root_path, current: false do
+          = svg_icon "arrow-uturn-left"
+          | Retour
+
+      .navbar__header Paramètres
+      .navbar__links
+        = navbar_link_to "Compte",       user_settings_path              if allowed_to?(:index, with: Users::UserSettingsPolicy)
+        = navbar_link_to "Organisation", user_organization_settings_path if allowed_to?(:index, with: Users::OrganizationSettingsPolicy)
+        a.navbar__link.navbar__link--disabled( disabled ) API
+
+    - else
+      .navbar__header Echanges
+      .navbar__links
+        = navbar_link_to "Tableau de bord", root_path, current: false, disabled: true
+        = navbar_link_to "Signalements",    reports_path
+        = navbar_link_to "Paquets",         root_path, current: false, disabled: true
+        = navbar_link_to "Dossiers",        root_path, current: false, disabled: true
+        = navbar_link_to "Fichiers",        root_path, current: false, disabled: true
+
+      - publishers     = allowed_to?(:index?, Publisher,    with: PublisherPolicy)
+      - collectivities = allowed_to?(:index?, Collectivity, with: CollectivityPolicy)
+      - ddfips         = allowed_to?(:index?, DDFIP,        with: DDFIPPolicy)
+      - offices        = allowed_to?(:index?, Office,       with: OfficePolicy)
+      - users          = allowed_to?(:index?, User,         with: UserPolicy)
+
+      - if publishers || collectivities || ddfips || offices || users
+        .navbar__header Organisations
+        .navbar__links
+          = navbar_link_to "Éditeurs",      publishers_path     if publishers
+          = navbar_link_to "Collectivités", collectivities_path if collectivities
+          = navbar_link_to "DDFIP",         ddfips_path         if ddfips
+          = navbar_link_to "Guichets",      offices_path        if offices
+          = navbar_link_to "Utilisateurs",  users_path          if users
+
+      - communes     = allowed_to?(:index?, Commune,     with: CommunePolicy)
+      - epcis        = allowed_to?(:index?, EPCI,        with: EPCIPolicy)
+      - departements = allowed_to?(:index?, Departement, with: DepartementPolicy)
+      - regions      = allowed_to?(:index?, Region,      with: RegionPolicy)
+
+      - if communes || epcis || departements || regions
+        .navbar__header Territoires
+        .navbar__links
+          = navbar_link_to "Communes",     communes_path     if communes
+          = navbar_link_to "EPCI",         epcis_path        if epcis
+          = navbar_link_to "Départements", departements_path if departements
+          = navbar_link_to "Régions",      regions_path      if regions
+
+    .flex-auto
+    .navbar__user
+      = navbar_link_to user_settings_path, current: false, title: "Gestion du compte" do
+        .navbar__user-avatar
+          = svg_icon "user-circle"
+
+        .navbar__user-name
+          .navbar__user-text= current_user&.name
+          .navbar__user-text= current_user&.organization&.name
+
+  .navbar__overlay( data-action="click->navbar#minify" role="button" aria-label="Fermer le menu" )
+

@@ -1,0 +1,4 @@
+= fields(model: @report_form) do |form|
+  = form.block :priority do
+    = form.label :priority, "Priorité"
+    = form.select :priority, @report_form.priority_options

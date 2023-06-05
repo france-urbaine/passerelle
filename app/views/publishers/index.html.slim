@@ -12,7 +12,7 @@
 
     - datatable.with_selection do |selection|
       - if allowed_to?(:destroy_all?, Publisher)
-        - selection.with_action "Supprimer la sélection", remove_all_publishers_path, modal: true
+        - selection.with_action "Tout supprimer", remove_all_publishers_path, modal: true
 
     - datatable.with_column(:name,           sort: true)    { "Éditeur" }
     - datatable.with_column(:siren,          sort: true)    { "SIREN" }

@@ -80,12 +80,12 @@ class Collectivity < ApplicationRecord
 
   # Scopes
   # ----------------------------------------------------------------------------
-  scope :orphans,      -> { where(publisher_id: nil) }
   scope :communes,     -> { where(territory_type: "Commune") }
   scope :epcis,        -> { where(territory_type: "EPCI") }
   scope :departements, -> { where(territory_type: "Departement") }
   scope :regions,      -> { where(territory_type: "Region") }
 
+  scope :orphans,      -> { where(publisher_id: nil) }
   scope :owned_by, ->(publisher) { where(publisher: publisher) }
 
   scope :search, lambda { |input|
@@ -100,28 +100,30 @@ class Collectivity < ApplicationRecord
   scope :autocomplete, lambda { |input|
     advanced_search(
       input,
-      name:           ->(value) { match(:name, value) },
-      siren:          ->(value) { where(siren: value) }
+      name:  ->(value) { match(:name, value) },
+      siren: ->(value) { where(siren: value) }
     )
   }
 
   scope :order_by_param, lambda { |input|
     advanced_order(
       input,
-      name:         ->(direction) { unaccent_order(:name, direction) },
-      siren:        ->(direction) { order(siren: direction) },
-      publisher:    ->(direction) { left_joins(:publisher).merge(Publisher.unaccent_order(:name, direction)) }
+      name:      ->(direction) { unaccent_order(:name, direction) },
+      siren:     ->(direction) { order(siren: direction) },
+      publisher: lambda { |direction|
+        left_joins(:publisher).merge(
+          Publisher.unaccent_order(:name, direction, nulls: true)
+        )
+      }
     )
   }
 
-  scope :order_by_score, lambda { |input|
-    scored_order(:name, input)
-  }
+  scope :order_by_score, ->(input) { scored_order(:name, input) }
 
   # Predicates
   # ----------------------------------------------------------------------------
   def orphan?
-    publisher_id.nil?
+    !(publisher_id? || (new_record? && publisher))
   end
 
   def commune?
@@ -155,7 +157,7 @@ class Collectivity < ApplicationRecord
     Office.kept.distinct.joins(:communes).merge(on_territory_communes)
   end
 
-  # Counters cached
+  # Database updates
   # ----------------------------------------------------------------------------
   def self.reset_all_counters
     connection.select_value("SELECT reset_all_collectivities_counters()")

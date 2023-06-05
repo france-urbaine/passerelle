@@ -22,6 +22,47 @@ class ApplicationRecord < ActiveRecord::Base
   CODE_DEPARTEMENT_REGEXP = /\A(2[AB]|[0-9]{2}|9[0-9]{2})\Z/
   CODE_INSEE_REGEXP       = /\A(2[AB]|[0-9]{2})[0-9]{3}\Z/
 
+  INVARIANT_REGEXP                 = /\A[0-9]{10}\Z/
+  CODE_RIVOLI_REGEXP               = /\A[0-9A-Z]{4}\Z/
+  NUMERO_BATIMENT_REGEXP           = /\A(?:[A-Z]|[0-9]{1,2})\Z/
+  NUMERO_ESCALIER_REGEXP           = /\A[0-9]{1,2}\Z/
+  NUMERO_NIVEAU_REGEXP             = /\A[0-9]{1,2}\Z/
+  NUMERO_PORTE_REGEXP              = /\A[0-9]{1,2}\Z/
+  NUMERO_ORDRE_PORTE_REGEXP        = /\A[0-9]{1,3}\Z/
+  NUMERO_ORDRE_PROPRIETAIRE_REGEXP = /\A[0A-Za-z*+]\s?[0-9]{5}\s?(?:[0-9]{2})?\Z/
+
+  # https://rubular.com/r/GoPbmeSUeTZVEd
+  PARCELLE_REGEXP = %r{
+    \A
+      (?:(?<prefix>[0-9]{3})\s?)?
+      (?:0(?=[A-Z]))?
+      (?<section>[A-Z]{1,2}|[0-9]{2}(?=\s?[0-9]{4}))\s?
+      (?<plan>[0-9]{1,4})
+    \Z
+  }x
+
+  DATE_REGEXP = %r{
+    (?<year>  (19|20)\d{2}){0}
+    (?<month> #{Regexp.union(Array('01'..'12'))}){0}
+    (?<day>   #{Regexp.union(Array('01'..'31'))}){0}
+
+    \A(
+      \g<year>\g<month>\g<day>|
+      \g<year>/\g<month>/\g<day>|
+      \g<year>-\g<month>-\g<day>|
+      \g<day>\g<month>\g<year>|
+      \g<day>/\g<month>/\g<year>|
+      \g<day>-\g<month>-\g<year>|
+      \g<year>\g<month>|
+      \g<year>/\g<month>|
+      \g<year>-\g<month>|
+      \g<month>\g<year>|
+      \g<month>/\g<year>|
+      \g<month>-\g<year>|
+      \g<year>
+    )\Z
+  }x
+
   private
 
   def build_email_regexp(domain = nil)

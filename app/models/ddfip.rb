@@ -41,7 +41,8 @@ class DDFIP < ApplicationRecord
 
   has_many :users, as: :organization, dependent: :delete_all
 
-  has_many :offices, dependent: :destroy
+  has_many :offices,   dependent: false
+  has_many :workshops, dependent: false
 
   # Validations
   # ----------------------------------------------------------------------------
@@ -103,7 +104,7 @@ class DDFIP < ApplicationRecord
     Collectivity.kept.where(territory: territories)
   end
 
-  # Counters cached
+  # Database updates
   # ----------------------------------------------------------------------------
   def self.reset_all_counters
     connection.select_value("SELECT reset_all_ddfips_counters()")

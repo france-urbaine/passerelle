@@ -20,7 +20,7 @@
     & svg {
       display: inline;
 
-      @apply -ml-1 mr-2 h-5 w-5;
+      @apply -ml-1 mr-2;
     }
 
     &[disabled] {
@@ -62,6 +62,10 @@
     &--accent,
     &--destructive {
       @apply subpixel-antialiased;
+
+      & svg {
+        stroke-width: 2;
+      }
 
       &[disabled],
       &[disabled]:hover,

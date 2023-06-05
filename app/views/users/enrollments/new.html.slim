@@ -14,8 +14,7 @@
       p
         strong Vous êtes éditeur d'un observatoire fiscal ?
       p
-        | Contactez
-        = " "
+        ' Contactez
         = link_to "France Urbaine", "https://franceurbaine.org", target: "_blank"
         |  pour définir des modalités d'accés à la plateforme.
 
@@ -26,6 +25,6 @@
         |  des modalités d'accés à la plateforme.
 p
   = link_to new_user_session_path do
-    = svg_icon "chevron-left-small", "Retour", class: "inline h-6 w-6"
+    = svg_icon "chevron-left-small", "Retour", class: "inline"
     | Retour au formulaire de connexion
   | .

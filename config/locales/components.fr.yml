@@ -1,6 +1,14 @@
 fr:
   components:
     data_table/selection:
+      report:
+        singular: "signalement sélectionné"
+        plural:   "signalements sélectionnés"
+
+      package:
+        singular: "paquet sélectionné"
+        plural:   "paquets sélectionnés"
+
       collectivity:
         singular: "collectivité sélectionnée"
         plural:   "collectivités sélectionnées"

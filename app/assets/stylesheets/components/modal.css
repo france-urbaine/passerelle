@@ -37,8 +37,13 @@
     @apply bg-white;
     @apply dark:bg-black dark:border dark:border-gray-700 dark:shadow-gray-500/50;
 
-    @media (max-width: 500px) {
+    @media not all and (min-width: 640px) {
+      position: fixed;
+      box-sizing: border-box;
+      top: 0;
       min-width: 100vw;
+      height: 100vh;
+      overflow: auto;
     }
   }
 

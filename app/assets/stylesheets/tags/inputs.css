@@ -42,6 +42,10 @@
     }
   }
 
+  textarea {
+    height: auto;
+  }
+
   input::placeholder,
   textarea::placeholder {
     opacity: 1;

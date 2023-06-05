@@ -194,7 +194,7 @@ RSpec.describe "Publisher users" do
     # with a button to remove them
     #
     within ".header-bar--selection", text: "1 utilisateur sélectionné" do
-      click_on "Supprimer la sélection"
+      click_on "Tout supprimer"
     end
 
     # A confirmation dialog should appear
@@ -265,7 +265,7 @@ RSpec.describe "Publisher users" do
     # with a button to remove them
     #
     within ".header-bar--selection", text: "10 utilisateurs sélectionnés" do
-      click_on "Supprimer la sélection"
+      click_on "Tout supprimer"
     end
 
     # A confirmation dialog should appear
@@ -342,7 +342,7 @@ RSpec.describe "Publisher users" do
     end
 
     within ".header-bar--selection", text: "12 utilisateurs sélectionnés" do
-      click_on "Supprimer la sélection"
+      click_on "Tout supprimer"
     end
 
     # A confirmation dialog should appear

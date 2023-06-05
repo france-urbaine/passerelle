@@ -38,8 +38,12 @@ class Commune < ApplicationRecord
 
   has_one :registered_collectivity, class_name: "Collectivity", as: :territory, dependent: false
 
+  has_many :ddfips, primary_key: :code_departement, foreign_key: :code_departement, inverse_of: false, dependent: false
+
   has_many :office_communes, primary_key: :code_insee, foreign_key: :code_insee, inverse_of: :commune, dependent: false
   has_many :offices, through: :office_communes
+
+  has_many :reports, primary_key: :code_insee, foreign_key: :code_insee, inverse_of: :commune, dependent: false
 
   # Validations
   # ----------------------------------------------------------------------------
@@ -73,14 +77,37 @@ class Commune < ApplicationRecord
   def self.generate_qualified_name(name)
     "Commune de #{name}"
       .gsub(/\bde Les\b/, "des")
-      .gsub(/\bde Le\b/,  "du")
-      .gsub(/\bde La\b/,  "de la")
-      .gsub(/\bde La\b/,  "de la")
+      .gsub(/\bde Le\b/, "du")
+      .gsub(/\bde La\b/, "de la")
       .gsub(/\bde (?=[AEÉÈIÎOÔUY])/, "d'")
   end
 
   # Scopes
   # ----------------------------------------------------------------------------
+  scope :covered_by_ddfip, lambda { |ddfip|
+    if ddfip.is_a?(ActiveRecord::Relation)
+      where(code_departement: ddfip.select(:code_departement))
+    else
+      where(code_departement: ddfip.code_departement)
+    end
+  }
+
+  scope :covered_by_office, lambda { |office|
+    where(code_insee: OfficeCommune.where(office: office).select(:code_insee))
+  }
+
+  scope :covered_by, lambda { |entity|
+    # Use `model_name.name`` to match an instance or a relation
+    #    covered_by(DDIP.last)
+    #    covered_by(Office.all)
+    #
+    case entity.model_name.name
+    when "DDFIP"  then covered_by_ddfip(entity)
+    when "Office" then covered_by_office(entity)
+    else raise TypeError, "unexpected argument: #{entity}"
+    end
+  }
+
   scope :search, lambda { |input|
     advanced_search(
       input,
@@ -125,7 +152,7 @@ class Commune < ApplicationRecord
     Collectivity.kept.where(territory: territories)
   end
 
-  # Counters cached
+  # Database updates
   # ----------------------------------------------------------------------------
   def self.reset_all_counters
     connection.select_value("SELECT reset_all_communes_counters()")
