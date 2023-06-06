@@ -1,0 +1,14 @@
+ruby:
+  actions = [
+    "direct-upload:initialize->direct-upload-field#initDirectUpload",
+    "direct-upload:start->direct-upload-field#startDirectUpload",
+    "direct-upload:progress->direct-upload-field#updateDirectUploadProgression",
+    "direct-upload:error->direct-upload-field#addDirectUploadError",
+    "direct-upload:end->direct-upload-field#endDirectUpload"
+  ]
+  field_data = { controller: "direct-upload-field", action: actions.join(" ") }
+
+= fields do |form|
+  = form.block :documents do
+    = form.label :documents, "Documents"
+    = form.file_field :documents, multiple: true, direct_upload: true, data: field_data

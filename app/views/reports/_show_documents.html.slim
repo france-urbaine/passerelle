@@ -1,0 +1,32 @@
+.subheader-bar
+  h2.subheader
+    = svg_icon("paper-clip", "Nouvelle section")
+    | Documents attachés
+
+  .subheader-bar__actions
+    - if allowed_to?(:update?, @report)
+      .subheader-bar__action
+        = button_component "Ajouter des documents", new_report_attachment_path(@report), icon: "document-plus", modal: true
+
+.card.flex
+  - if @report.documents.any?
+    table.datatable
+      thead
+        tr.datatable__row
+          th
+          th Nom du fichier
+          th Type de fichier
+      tbody
+        - @report.documents.each do |document|
+          tr.datatable__row
+            td.datatable__row-actions
+              .flex
+                = button_component "Supprimer ce document", report_attachment_path(id: document.id, report_id: @report.id), icon: "trash", icon_only: true, method: "delete"
+            td
+              = link_to document.filename, url_for(document), target: :blank
+            td
+              = document.content_type
+
+  - else
+    .h-24
+    .card__content.text-lg

@@ -33,3 +33,6 @@ application.register("selection-row", SelectionRowController)
 
 import UserFormController from "./forms/user_form_controller"
 application.register("user-form", UserFormController)
+
+import DirectUploadFieldController from "./forms/direct_upload_field_controller"
+application.register("direct-upload-field", DirectUploadFieldController)

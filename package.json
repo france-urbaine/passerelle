@@ -4,6 +4,7 @@
   "dependencies": {
     "@hotwired/stimulus": "^3.1.0",
     "@hotwired/turbo-rails": "^7.1.1",
+    "@rails/activestorage": "^7.0.5",
     "autoprefixer": "^10.4.14",
     "esbuild": "^0.17.15",
     "hotkeys-js": "^3.10.2",
@@ -21,7 +22,6 @@
     "build:css": "yarn build:css:application && yarn build:css:mailer",
     "build:js": "esbuild app/javascript/*.* --bundle --sourcemap --outdir=app/assets/builds",
     "build": "yarn build:js && yarn build:css",
-
     "watch:css": "concurrently \"yarn build:css:application --verbose --watch\" \"yarn build:css:mailer --verbose --watch\" --kill-others",
     "watch:js": "yarn build:js --watch"
   },
