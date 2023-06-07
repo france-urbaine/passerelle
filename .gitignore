@@ -50,3 +50,6 @@
 
 # Ignore temporay file created by Excel when opening xlxs fixtures
 spec/fixtures/**/~*.xlsx
+
+# Ignore s3cfg files
+s3cfg
