@@ -108,8 +108,8 @@
 
       - row.with_column(:status) do
         - if report.transmitted?
-          .badge.badge--valid Formulaire transmis
+          .badge.badge--blue Signalement transmis
         - elsif report.completed?
-          .badge.badge--valid Formulaire prêt à être transmi
+          .badge.badge--yellow Signalement complété
         - else
-          .badge.badge--error Formulaire incomplet
+          .badge.badge--red Signalement incomplet

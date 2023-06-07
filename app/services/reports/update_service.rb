@@ -16,5 +16,9 @@ module Reports
     before_save do
       self.completed = Reports::CheckCompletenessService.new(report).valid?
     end
+
+    after_commit do
+      package.update(completed: package.reports.where(completed: false).none?)
+    end
   end
 end

@@ -12,9 +12,11 @@
     .subheader-bar__actions
       .subheader-bar__action
         - if @package.transmitted?
-          .badge.badge--valid Paquet transmis
+          .badge.badge--blue Paquet transmis
+        - elsif @package.completed?
+          .badge.badge--yellow Paquet prêt
         - else
-          .badge.badge--error Paquet en attente
+          .badge.badge--red Signalements incomplets
 
   .card
     dl.description-list

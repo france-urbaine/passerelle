@@ -1711,7 +1711,8 @@ CREATE TABLE public.packages (
     approved_at timestamp(6) without time zone,
     rejected_at timestamp(6) without time zone,
     discarded_at timestamp(6) without time zone,
-    due_on date
+    due_on date,
+    completed boolean DEFAULT false NOT NULL
 );
 
 
@@ -2593,6 +2594,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230601080346'),
 ('20230601093936'),
 ('20230605122559'),
-('20230605130656');
+('20230605130656'),
+('20230607183851');
 
 

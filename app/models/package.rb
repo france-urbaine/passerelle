@@ -17,6 +17,7 @@
 #  rejected_at     :datetime
 #  discarded_at    :datetime
 #  due_on          :date
+#  completed       :boolean          default(FALSE), not null
 #
 # Indexes
 #

@@ -13,30 +13,36 @@
       .subheader-bar__action
         - case @report.priority
         - when "low"
-          = button_component href: edit_report_path(@report, fields: "priority"), modal: true, class: "badge badge--low-priority" do
+          = button_component href: edit_report_path(@report, fields: "priority"), modal: true, class: "low-priority-button" do
             ' Priorité :
             = svg_icon("chart-bar", "Basse", class: "low-priority-icon")
 
         - when "medium"
-          = button_component href: edit_report_path(@report, fields: "priority"), modal: true, class: "badge badge--medium-priority" do
+          = button_component href: edit_report_path(@report, fields: "priority"), modal: true, class: "medium-priority-button" do
             ' Priorité :
             = svg_icon("chart-bar", "Moyenne", class: "medium-priority-icon")
 
         - when "high"
-          = button_component href: edit_report_path(@report, fields: "priority"), modal: true, class: "badge badge--high-priority" do
+          = button_component href: edit_report_path(@report, fields: "priority"), modal: true, class: "high-priority-button" do
             ' Priorité :
             = svg_icon("chart-bar", "Haute", class: "high-priority-icon")
 
       .subheader-bar__action
         - if @report.transmitted?
-          .badge.badge--valid Formulaire transmis
+          .badge.badge--blue Signalement transmis
         - elsif @report.completed?
-          .badge.badge--valid Formulaire prêt à être transmi
+          .badge.badge--yellow Signalement completé
         - else
-          .badge.badge--error Formulaire incomplet
+          .badge.badge--red Signalement incomplet
 
   .card
     dl.description-list
+      .description-list__row
+        dt Référence du paquet
+        dd
+          = authorized_link_to @report.package do
+            = @report.package.reference
+
       .description-list__row
         dt Référence du signalement
         dd= @report.reference
