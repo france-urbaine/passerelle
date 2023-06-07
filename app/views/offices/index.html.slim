@@ -27,8 +27,9 @@
       - datatable.with_column(:action, sort: true) { "Action" }
 
     - if allowed_to?(:show?, Office, with: OfficePolicy)
-      - datatable.with_column(:users,    numeric: true) { "Utilisateurs" }
-      - datatable.with_column(:communes, numeric: true) { "Communes" }
+      - datatable.with_column(:users,         numeric: true) { "Utilisateurs" }
+      - datatable.with_column(:communes,      numeric: true) { "Communes" }
+      - datatable.with_column(:reports_count, numeric: true) { "Signalements" }
 
     - datatable.with_empty_message do
       - if params[:search]

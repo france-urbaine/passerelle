@@ -22,6 +22,7 @@
     - datatable.with_column(:collectivities, numeric: true)    { "Collectivités" }
     - datatable.with_column(:offices,        numeric: true)    { "Guichets" }
     - datatable.with_column(:users,          numeric: true)    { "Utilisateurs" }
+    - datatable.with_column(:reports_count,  numeric: true)    { "Signalements" }
 
     - datatable.with_empty_message do
       - if params[:search]
