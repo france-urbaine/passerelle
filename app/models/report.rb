@@ -154,7 +154,7 @@ class Report < ApplicationRecord
   validates :subject,   uniqueness: {
     scope:      :sibling_id,
     unless:     -> { skip_uniqueness_validation_of_subject? || situation_invariant.blank? },
-    conditions: -> { kept}
+    conditions: -> { kept }
   }
 
   validates :priority, inclusion: { in: PRIORITIES }
@@ -214,67 +214,51 @@ class Report < ApplicationRecord
   end
 
   def valid_natures
-    I18n.translate("enum.natures").keys
+    I18n.t("enum.natures").keys
   end
 
   def valid_affectations
-    I18n.translate("enum.affectation").keys
+    I18n.t("enum.affectation").keys
   end
 
   def valid_categories
     case action
-    when "evaluation_hab", "occupation_hab" then I18n.translate("enum.categorie_habitation").keys
-    when "evaluation_eco", "occupation_eco" then I18n.translate("enum.categorie_economique").keys
+    when "evaluation_hab", "occupation_hab" then I18n.t("enum.categorie_habitation").keys
+    when "evaluation_eco", "occupation_eco" then I18n.t("enum.categorie_economique").keys
     end
   end
 
   # Callbacks
   # ----------------------------------------------------------------------------
-  before_save :generate_sibling_ig
+  before_save :generate_sibling_id
 
-  def generate_sibling_ig
-    self.sibling_id =
-      if code_insee? && situation_invariant?
-        "#{code_insee}#{situation_invariant}"
-      end
+  def generate_sibling_id
+    self.sibling_id = ("#{code_insee}#{situation_invariant}" if code_insee? && situation_invariant?)
   end
 
   # Scopes
   # ----------------------------------------------------------------------------
-  # In some scopes we use `model_name.name` to identify the model of either
-  # an instance or a relation:
-  # Example:
-  #    sent_by(Publisher.last)
-  #    sent_by(Publisher.all)
-
   scope :sandbox,        -> { where(sandbox: true) }
   scope :out_of_sandbox, -> { where(sandbox: false) }
-  scope :transmitted,    -> { joins(:package).merge(Package.unscoped.transmitted) }
-  scope :all_kept,       -> { joins(:package).merge(Package.unscoped.kept).kept }
-  scope :published,      -> { transmitted.all_kept.out_of_sandbox }
+
+  scope :packing,             -> { joins(:package).merge(Package.unscoped.packing) }
+  scope :transmitted,         -> { joins(:package).merge(Package.unscoped.transmitted) }
+  scope :all_kept,            -> { joins(:package).merge(Package.unscoped.kept).kept }
+  scope :published,           -> { transmitted.all_kept.out_of_sandbox }
+  scope :approved_packages,   -> { joins(:package).merge(Package.unscoped.approved) }
+  scope :rejected_packages,   -> { joins(:package).merge(Package.unscoped.rejected) }
+  scope :unrejected_packages, -> { joins(:package).merge(Package.unscoped.unrejected) }
 
   scope :pending,  -> { published.where(approved_at: nil, rejected_at: nil, debated_at: nil) }
   scope :approved, -> { published.where.not(approved_at: nil) }
   scope :rejected, -> { published.where.not(rejected_at: nil) }
   scope :debated,  -> { published.where.not(debated_at: nil) }
 
+  scope :packed_through_publisher_api, -> { where.not(publisher_id: nil) }
+  scope :packed_through_web_ui,        -> { where(publisher_id: nil) }
+
   scope :sent_by_collectivity, ->(collectivity) { where(collectivity: collectivity) }
   scope :sent_by_publisher,    ->(publisher)    { where(publisher: publisher) }
-  scope :sent_by, lambda { |entity|
-    case entity.model_name.name
-    when "Publisher"    then sent_by_publisher(entity)
-    when "Collectivity" then sent_by_collectivity(entity)
-    else raise TypeError, "unexpected argument: #{entity}"
-    end
-  }
-
-  scope :located_in, lambda { |commune|
-    if commune.is_a?(ActiveRecord::Relation)
-      where(code_insee: commune.select(:code_insee))
-    else
-      where(code_insee: commune.code_insee)
-    end
-  }
 
   scope :covered_by_ddfip, lambda { |ddfip|
     if ddfip.is_a?(ActiveRecord::Relation)
@@ -298,36 +282,6 @@ class Report < ApplicationRecord
     end
   }
 
-  scope :covered_by, lambda { |entity|
-    case entity.model_name.name
-    when "DDFIP"  then covered_by_ddfip(entity)
-    when "Office" then covered_by_office(entity)
-    else raise TypeError, "unexpected argument: #{entity}"
-    end
-  }
-
-  scope :available_to_collectivity, lambda { |collectivity|
-    all_kept.out_of_sandbox.sent_by_collectivity(collectivity).merge(
-      Package.unscoped.transmitted.or(
-        Package.unscoped.packed_through_collectivity_ui
-      )
-    )
-  }
-
-  scope :available_to_publisher,    ->(publisher)    { all_kept.sent_by_publisher(publisher) }
-  scope :available_to_ddfip,  ->(ddfip)  { published.covered_by_ddfip(ddfip).merge(Package.unscoped.kept.unrejected) }
-  scope :available_to_office, ->(office) { published.covered_by_office(office).merge(Package.unscoped.kept.approved) }
-
-  scope :available_to, lambda { |entity|
-    case entity.model_name.name
-    when "Publisher"    then available_to_publisher(entity)
-    when "Collectivity" then available_to_collectivity(entity)
-    when "DDFIP"        then available_to_ddfip(entity)
-    when "Office"       then available_to_office(entity)
-    else raise TypeError, "unexpected argument: #{entity}"
-    end
-  }
-
   scope :search, lambda { |input|
     advanced_search(
       input,
@@ -338,18 +292,43 @@ class Report < ApplicationRecord
     )
   }
 
-  scope :order_by_score, lambda { |input|
+  scope :order_by_score, lambda { |_input|
+    # TODO
     self
   }
 
   # Predicates
   # ----------------------------------------------------------------------------
+  def out_of_sandbox?
+    !sandbox?
+  end
+
+  def packing?
+    package&.packing? || new_record?
+  end
+
   def transmitted?
     package&.transmitted?
   end
 
+  def all_kept?
+    kept? && package&.kept?
+  end
+
   def published?
-    transmitted? && kept? && !sandbox?
+    transmitted? && all_kept? && out_of_sandbox?
+  end
+
+  def approved_package?
+    package&.approved?
+  end
+
+  def rejected_package?
+    package&.rejecetd?
+  end
+
+  def unrejected_package?
+    package&.unrejected?
   end
 
   def pending?
@@ -366,5 +345,36 @@ class Report < ApplicationRecord
 
   def debated?
     published? && debated_at?
+  end
+
+  def packed_through_publisher_api?
+    publisher_id? || (new_record? && publisher)
+  end
+
+  def packed_through_web_ui?
+    !packed_through_publisher_api?
+  end
+
+  def sent_by_collectivity?(collectivity)
+    (collectivity_id == collectivity.id) || (new_record? && collectivity == self.collectivity)
+  end
+
+  def sent_by_publisher?(publisher)
+    (publisher_id == publisher.id) || (new_record? && publisher == self.publisher)
+  end
+
+  def covered_by_ddfip?(ddfip)
+    ddfip.code_departement == commune.code_departement
+  end
+
+  def covered_by_office?(office)
+    office.action == action && office.communes.where(code_insee: code_insee).exist?
+  end
+
+  def covered_by_offices?(offices)
+    offices.joins(:communes)
+      .where(action: action)
+      .merge(Commune.where(code_insee: code_insee))
+      .exists?
   end
 end

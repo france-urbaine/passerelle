@@ -38,15 +38,15 @@ module Reports
     end
 
     def situation_affectation
-      I18n.translate(super, scope: "enum.affectation") if situation_affectation?
+      I18n.t(super, scope: "enum.affectation") if situation_affectation?
     end
 
     def situation_nature
-      I18n.translate(super, scope: "enum.nature_local") if situation_nature?
+      I18n.t(super, scope: "enum.nature_local") if situation_nature?
     end
 
     def proposition_nature
-      I18n.translate(super, scope: "enum.nature_local") if proposition_nature?
+      I18n.t(super, scope: "enum.nature_local") if proposition_nature?
     end
 
     def situation_categorie
@@ -54,9 +54,9 @@ module Reports
 
       case report.action
       when "evaluation_hab", "occupation_hab"
-        I18n.translate(super, scope: "enum.categorie_habitation")
+        I18n.t(super, scope: "enum.categorie_habitation")
       else
-        I18n.translate(super, scope: "enum.categorie_economique")
+        I18n.t(super, scope: "enum.categorie_economique")
       end
     end
 
@@ -65,34 +65,34 @@ module Reports
 
       case report.action
       when "evaluation_hab", "occupation_hab"
-        I18n.translate(super, scope: "enum.categorie_habitation")
+        I18n.t(super, scope: "enum.categorie_habitation")
       else
-        I18n.translate(super, scope: "enum.categorie_economique")
+        I18n.t(super, scope: "enum.categorie_economique")
       end
     end
 
     def situation_coefficient_entretien
-      I18n.translate(super, scope: "enum.coefficient_entretien") if situation_coefficient_entretien?
+      I18n.t(super, scope: "enum.coefficient_entretien") if situation_coefficient_entretien?
     end
 
     def situation_coefficient_situation_generale
-      I18n.translate(super, scope: "enum.coefficient_situation") if situation_coefficient_situation_generale?
+      I18n.t(super, scope: "enum.coefficient_situation") if situation_coefficient_situation_generale?
     end
 
     def situation_coefficient_situation_particuliere
-      I18n.translate(super, scope: "enum.coefficient_situation") if situation_coefficient_situation_particuliere?
+      I18n.t(super, scope: "enum.coefficient_situation") if situation_coefficient_situation_particuliere?
     end
 
     def proposition_coefficient_entretien
-      I18n.translate(super, scope: "enum.coefficient_entretien") if proposition_coefficient_entretien?
+      I18n.t(super, scope: "enum.coefficient_entretien") if proposition_coefficient_entretien?
     end
 
     def proposition_coefficient_situation_generale
-      I18n.translate(super, scope: "enum.coefficient_situation") if proposition_coefficient_situation_generale?
+      I18n.t(super, scope: "enum.coefficient_situation") if proposition_coefficient_situation_generale?
     end
 
     def proposition_coefficient_situation_particuliere
-      I18n.translate(super, scope: "enum.coefficient_situation") if proposition_coefficient_situation_particuliere?
+      I18n.t(super, scope: "enum.coefficient_situation") if proposition_coefficient_situation_particuliere?
     end
   end
 end

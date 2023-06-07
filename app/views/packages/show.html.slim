@@ -1,0 +1,43 @@
+= template_frame_component do
+  = breadcrumbs_component do |breadcrumbs|
+    - breadcrumbs.with_path "Echanges"
+    - breadcrumbs.with_path "Paquets", packages_path
+    - breadcrumbs.with_path @package.name
+
+  .subheader-bar
+    h2.subheader
+      = svg_icon("server-stack", "Nouvelle section")
+      | Informations relatives au signalement
+
+    .subheader-bar__actions
+      .subheader-bar__action
+        - if @package.transmitted?
+          .badge.badge--valid Paquet transmis
+        - else
+          .badge.badge--error Paquet en attente
+
+  .card
+    dl.description-list
+      .description-list__row
+        dt Référence du paquet
+        dd= @package.reference
+
+      .description-list__row
+        dt Date de transmission
+        dd
+          - if @package.transmitted?
+            = localize(@package.transmitted_at)
+          - else
+            em Non transmis
+
+  - if allowed_to?(:index?, Report)
+    .content__separator
+
+    h2.subheader
+      = svg_icon("rectangle-stack", "Nouvelle section")
+      | Signalements
+
+    = turbo_frame_tag "datatable-reports", src: package_reports_path(@package) do
+      = datatable_skeleton_component(rows: 0) do |skeleton|
+        - skeleton.with_search
+        - skeleton.with_pagination

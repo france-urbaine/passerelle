@@ -8,6 +8,7 @@ module Reports
     end
 
     attr_reader :report
+
     delegate_missing_to :report
 
     def initialize(report)
@@ -34,13 +35,13 @@ module Reports
     ].freeze
 
     def subject_options
-      SUBJECT_OPTIONS.map do |(name, group)|
+      SUBJECT_OPTIONS.map do |(group_name, group)|
         group = group.map do |(name, key, options)|
           name = "(Bientôt disponible) #{name}" if options[:disabled]
           [name, key, options]
         end
 
-        [name, group]
+        [group_name, group]
       end
     end
   end

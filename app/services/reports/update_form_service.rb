@@ -8,9 +8,10 @@ module Reports
     end
 
     attr_reader :report, :fields
+
     delegate_missing_to :report
 
-    FIELDS = %[
+    FIELDS = %w[
       situation_majic
       situation_evaluation_hab
       situation_evaluation_hab
@@ -32,11 +33,11 @@ module Reports
     end
 
     def affectation_options
-      I18n.translate("enum.affectation").map(&:reverse)
+      I18n.t("enum.affectation").map(&:reverse)
     end
 
     def nature_options
-      I18n.translate("enum.nature_local").map(&:reverse)
+      I18n.t("enum.nature_local").map(&:reverse)
     end
 
     def categorie_label
@@ -51,9 +52,9 @@ module Reports
     def categorie_options
       case action
       when "evaluation_hab", "occupation_hab"
-        I18n.translate("enum.categorie_habitation").map(&:reverse)
+        I18n.t("enum.categorie_habitation").map(&:reverse)
       else
-        I18n.translate("enum.categorie_economique").map(&:reverse)
+        I18n.t("enum.categorie_economique").map(&:reverse)
       end
     end
 
@@ -62,15 +63,15 @@ module Reports
     end
 
     def coefficient_entretien_options
-      I18n.translate("enum.coefficient_entretien").map(&:reverse)
+      I18n.t("enum.coefficient_entretien").map(&:reverse)
     end
 
     def coefficient_situation_options
-      I18n.translate("enum.coefficient_situation").map(&:reverse)
+      I18n.t("enum.coefficient_situation").map(&:reverse)
     end
 
     def priority_options
-      I18n.translate("enum.priority").map(&:reverse)
+      I18n.t("enum.priority").map(&:reverse)
     end
 
     protected

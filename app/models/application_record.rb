@@ -32,14 +32,14 @@ class ApplicationRecord < ActiveRecord::Base
   NUMERO_ORDRE_PROPRIETAIRE_REGEXP = /\A[0A-Za-z*+]\s?[0-9]{5}\s?(?:[0-9]{2})?\Z/
 
   # https://rubular.com/r/GoPbmeSUeTZVEd
-  PARCELLE_REGEXP = %r{
+  PARCELLE_REGEXP = /
     \A
       (?:(?<prefix>[0-9]{3})\s?)?
       (?:0(?=[A-Z]))?
       (?<section>[A-Z]{1,2}|[0-9]{2}(?=\s?[0-9]{4}))\s?
       (?<plan>[0-9]{1,4})
     \Z
-  }x
+  /x
 
   DATE_REGEXP = %r{
     (?<year>  (19|20)\d{2}){0}

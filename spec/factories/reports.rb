@@ -22,10 +22,16 @@ FactoryBot.define do
     # We also allow to define the status of the package through transient attributes
     #
     transient do
-      transmitted_package { false }
-      approved_package    { false }
-      rejected_package    { false }
-      debated_package     { false }
+      package_transmitted { false }
+      package_approved    { false }
+      package_rejected    { false }
+      package_traits do
+        [].tap do |array|
+          array << :transmitted if package_transmitted
+          array << :approved    if package_approved
+          array << :rejected    if package_rejected
+        end
+      end
     end
 
     collectivity do
@@ -35,14 +41,7 @@ FactoryBot.define do
 
     package do
       collectivity = self.collectivity
-      traits = [].tap do |array|
-        array << :transmitted if transmitted_package
-        array << :approved    if approved_package
-        array << :rejected    if rejected_package
-        array << :debated     if debated_package
-      end
-
-      association(:package, *traits, collectivity: collectivity, publisher: self.publisher)
+      association(:package, *package_traits, collectivity: collectivity, publisher: self.publisher)
     end
 
     # The commune shoud be on the territory of the package collectivity
@@ -65,8 +64,11 @@ FactoryBot.define do
       end
     end
 
-    action  { Report::ACTIONS.sample }
-    subject { Report::SUBJECTS.sample }
+    action { package.action }
+
+    subject do
+      Report::SUBJECTS.select { |subject| subject.start_with?(action) }.sample
+    end
 
     sequence(:reference) do |n|
       index = n.to_s.rjust(5, "0")
@@ -86,7 +88,7 @@ FactoryBot.define do
     end
 
     trait :transmitted do
-      transmitted_package { true }
+      package_transmitted { true }
     end
 
     trait :discarded do
@@ -106,6 +108,78 @@ FactoryBot.define do
     trait :debated do
       transmitted
       debated_at { Time.current }
+    end
+
+    trait :reported_through_web_ui do
+      transient do
+        publisher { association(:publisher) }
+      end
+
+      collectivity { association(:collectivity, publisher: publisher) }
+      package do
+        association(:package, :packed_through_web_ui, *package_traits,
+          collectivity: collectivity,
+          publisher: publisher)
+      end
+    end
+
+    trait :reported_through_api do
+      publisher    { association(:publisher) }
+      collectivity { association(:collectivity, publisher: publisher) }
+      package do
+        association(:package, :packed_through_api, *package_traits,
+          collectivity: collectivity,
+          publisher: publisher)
+      end
+    end
+
+    trait :reported_for_ddfip do
+      transient do
+        ddfip { association(:ddfip) }
+      end
+
+      collectivity do
+        departement    = ddfip.departement
+        territory_type = %i[commune epci departement].sample
+        territory      = departement if territory_type == :departement
+        territory    ||= association(territory_type, departement: departement)
+
+        association(:collectivity, :commune, territory: territory)
+      end
+
+      package do
+        traits     = package_traits
+        attributes = { collectivity: collectivity, ddfip: ddfip }
+
+        association(:package, :packed_for_ddfip, *traits, **attributes)
+      end
+    end
+
+    trait :transmitted_through_web_ui do
+      transmitted
+      reported_through_web_ui
+    end
+
+    trait :transmitted_through_api do
+      transmitted
+      reported_through_api
+    end
+
+    trait :transmitted_to_ddfip do
+      transmitted
+      reported_for_ddfip
+    end
+
+    trait :package_approved_by_ddfip do
+      transmitted
+      package_approved { true }
+      reported_for_ddfip
+    end
+
+    trait :package_rejected_by_ddfip do
+      transmitted
+      package_rejected { true }
+      reported_for_ddfip
     end
   end
 end

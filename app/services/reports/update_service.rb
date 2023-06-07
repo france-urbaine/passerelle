@@ -3,6 +3,7 @@
 module Reports
   class UpdateService < FormService
     attr_reader :report
+
     delegate_missing_to :report
 
     def initialize(report, attributes = {})

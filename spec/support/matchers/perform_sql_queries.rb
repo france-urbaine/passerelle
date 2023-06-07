@@ -4,21 +4,27 @@ module Matchers
   module PerformSQLQueries
     extend RSpec::Matchers::DSL
 
-    def perform_sql_query(expected)
-      perform_sql_queries.including(expected)
+    def perform_sql_query(query)
+      perform_sql_queries.including(query)
     end
 
-    def perform_no_sql_query
-      perform_sql_queries.to_the_number_of(0)
+    matcher :perform_no_sql_queries do
+      supports_block_expectations
+      include CaptureSQLQueries
+
+      match do |actual|
+        @actual_queries = capture_sql_queries(&actual)
+        @actual_queries.empty?
+      end
     end
 
     matcher :perform_sql_queries do
       supports_block_expectations
+      include CaptureSQLQueries
 
-      chain :including do |expected|
+      chain :including do |query|
         # https://rubular.com/r/7l4NUpa8HwBbfR
-        @expected_queries ||= []
-        @expected_queries << expected.squish.gsub(/((?<=\()\s+|\s+(?=\)))/, "")
+        (@expected_queries ||= []) << query.squish.gsub(/((?<=\()\s+|\s+(?=\)))/, "")
       end
 
       chain :to_the_number_of do |expected|
@@ -28,24 +34,26 @@ module Matchers
       match do |actual|
         @actual_queries = capture_sql_queries(&actual)
 
-        if @expected_number_of_queries&.zero?
-          @actual_queries.empty?
-        else
-          @actual_queries.any? &&
-            number_of_queries_match? &&
-            expected_queries_match?
-        end
+        @actual_queries.any? &&
+          number_of_queries_match? &&
+          expected_queries_match?
       end
 
-      def failure_message
-        message = super
-        message = diff_queries(message) if @expected_queries
-        message
+      def number_of_queries_match?
+        @expected_number_of_queries.nil? || @expected_number_of_queries == @actual_queries.size
       end
 
+      def expected_queries_match?
+        @expected_queries.nil? || @expected_queries.all? { |query| @actual_queries.include?(query) }
+      end
+    end
+
+    module CaptureSQLQueries
       def capture_sql_queries(&)
         sql_queries = []
         subscriber  = ActiveSupport::Notifications.subscribe("sql.active_record") do |_, _, _, _, payload|
+          next if payload[:sql].match?(/FROM (pg_class|pg_attribute|pg_index)/)
+
           sql_queries << payload[:sql]
         end
 
@@ -56,16 +64,12 @@ module Matchers
         ActiveSupport::Notifications.unsubscribe(subscriber)
       end
 
-      def number_of_queries_match?
-        @expected_number_of_queries.nil? || @expected_number_of_queries == @actual_queries.size
-      end
-
-      def expected_queries_match?
-        @expected_queries.nil? || @expected_queries.all? { |query| @actual_queries.include?(query) }
+      def failure_message
+        diff_queries(super)
       end
 
       def diff_queries(message)
-        ::RSpec::Matchers::ExpectedsForMultipleDiffs.from(@expected_queries).message_with_diff(
+        ::RSpec::Matchers::ExpectedsForMultipleDiffs.from(@expected_queries || []).message_with_diff(
           message,
           RSpec::Expectations.differ,
           @actual_queries

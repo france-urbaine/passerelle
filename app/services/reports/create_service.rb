@@ -5,9 +5,10 @@ module Reports
     attr_reader :report
     attr_accessor :subject
 
-    def initialize(report, collectivity = nil, attributes = {})
+    def initialize(report, current_user = nil, attributes = {})
       @report       = report
-      @collectivity = collectivity
+      @current_user = current_user
+      @collectivity = current_user.organization if current_user.organization.is_a?(Collectivity)
 
       super(attributes)
       self.models = [report]
@@ -30,8 +31,14 @@ module Reports
     end
 
     def find_or_build_package
-      packages = Package.available_to(@collectivity)
-      packages = packages.packing.kept.where(action: @report.action).order(created_at: :desc)
+      policy   = PackagePolicy.new(user: @current_user)
+      packages = policy.apply_scope(
+        @collectivity.packages.order(created_at: :desc),
+        type: :active_record_relation,
+        name: :to_pack,
+        scope_options: { report: @report }
+      )
+
       packages.first_or_initialize do |package|
         package.name      = I18n.t(@report.action, scope: "enum.action")
         package.reference = Packages::GenerateReferenceService.new.generate

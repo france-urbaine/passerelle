@@ -13,20 +13,6 @@ RSpec.describe Collectivity do
     it { is_expected.to have_many(:reports) }
   end
 
-  # Database constraints
-  # ----------------------------------------------------------------------------
-  describe "database contraints" do
-    it "nullify the publisher_id of a collectivity after its publisher has been destroyed" do
-      publisher    = create(:publisher)
-      collectivity = create(:collectivity, publisher: publisher)
-
-      expect {
-        publisher.destroy
-        collectivity.reload
-      }.to change(collectivity, :publisher_id).to(nil)
-    end
-  end
-
   # Validations
   # ----------------------------------------------------------------------------
   describe "validations" do
@@ -411,7 +397,17 @@ RSpec.describe Collectivity do
   # Database constraints and triggers
   # ----------------------------------------------------------------------------
   describe "database constraints" do
-    pending "TODO"
+    it "nullify the publisher_id of a collectivity after its publisher has been destroyed" do
+      publisher    = create(:publisher)
+      collectivity = create(:collectivity, publisher: publisher)
+
+      expect {
+        publisher.destroy
+        collectivity.reload
+      }.to change(collectivity, :publisher_id).to(nil)
+    end
+
+    pending "Add more tests about constraints"
   end
 
   describe "database triggers" do

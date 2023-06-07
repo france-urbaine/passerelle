@@ -18,4 +18,8 @@ class ApplicationPolicy < ActionPolicy::Base
   # Add predicates to check permissions
   #
   delegate :organization, :organization_admin?, :super_admin?, to: :user
+
+  def user?
+    user.present?
+  end
 end

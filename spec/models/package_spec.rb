@@ -19,32 +19,6 @@ RSpec.describe Package do
     it { is_expected.to validate_inclusion_of(:action).in_array(Report::ACTIONS) }
   end
 
-  # Database constraints
-  # ----------------------------------------------------------------------------
-  describe "database contraints" do
-    let_it_be(:package) do
-      create(:package, action: "evaluation_hab", reference: "2023-05-0003")
-    end
-
-    it "asserts the uniqueness of reference" do
-      expect {
-        create(:package, reference: "2023-05-0003")
-      }.to raise_error(ActiveRecord::RecordNotUnique)
-    end
-
-    it "asserts an action is allowed by not triggering DB constraints" do
-      expect {
-        package.update_column(:action, "evaluation_eco")
-      }.not_to raise_error
-    end
-
-    it "asserts an action is not allowed by triggering DB constraints" do
-      expect {
-        package.update_column(:action, "evaluation_cfe")
-      }.to raise_error(ActiveRecord::StatementInvalid)
-    end
-  end
-
   # Scopes
   # ----------------------------------------------------------------------------
   describe "scopes" do
@@ -139,10 +113,10 @@ RSpec.describe Package do
       end
     end
 
-    describe ".packed_through_collectivity_ui" do
-      it "scopes on packages packed through collectivity UI" do
+    describe ".packed_through_web_ui" do
+      it "scopes on packages packed byt the collectivity through web UI" do
         expect {
-          described_class.packed_through_collectivity_ui.load
+          described_class.packed_through_web_ui.load
         }.to perform_sql_query(<<~SQL)
           SELECT "packages".*
           FROM   "packages"
@@ -207,46 +181,6 @@ RSpec.describe Package do
       end
     end
 
-    describe ".sent_by" do
-      it "scopes on packages sent by one single collectivity" do
-        collectivity = create(:collectivity)
-
-        expect {
-          described_class.sent_by(collectivity).load
-        }.to send_message(described_class, :sent_by_collectivity).with(collectivity)
-      end
-
-      it "scopes on packages sent by many collectivities" do
-        collectivities = Collectivity.where(name: "A")
-
-        expect {
-          described_class.sent_by(collectivities).load
-        }.to send_message(described_class, :sent_by_collectivity).with(collectivities)
-      end
-
-      it "scopes on packages sent by one single publisher" do
-        publisher = create(:publisher)
-
-        expect {
-          described_class.sent_by(publisher).load
-        }.to send_message(described_class, :sent_by_publisher).with(publisher)
-      end
-
-      it "scopes on packages sent by many publishers" do
-        publishers = Publisher.where(name: "A")
-
-        expect {
-          described_class.sent_by(publishers).load
-        }.to send_message(described_class, :sent_by_publisher).with(publishers)
-      end
-
-      it "raises an TypeError with unexpected argument" do
-        expect {
-          described_class.sent_by(User.all).load
-        }.to raise_error(TypeError)
-      end
-    end
-
     describe ".with_reports" do
       it "scopes on packages having reports" do
         expect {
@@ -259,7 +193,7 @@ RSpec.describe Package do
         SQL
       end
 
-      it "scopes on packages includings the given reports" do
+      it "scopes on packages having the expected reports" do
         expect {
           described_class.with_reports(Report.sandbox).load
         }.to perform_sql_query(<<~SQL)
@@ -271,137 +205,22 @@ RSpec.describe Package do
         SQL
       end
     end
-
-    describe ".available_to_collectivity" do
-      it "scopes on packages available to a collectivity" do
-        collectivity = create(:collectivity)
-
-        expect {
-          described_class.available_to_collectivity(collectivity).load
-        }.to perform_sql_query(<<~SQL)
-          SELECT "packages".*
-          FROM   "packages"
-          WHERE  "packages"."discarded_at" IS NULL
-            AND  "packages"."collectivity_id" = '#{collectivity.id}'
-            AND  ("packages"."transmitted_at" IS NOT NULL OR "packages"."publisher_id" IS NULL)
-        SQL
-      end
-    end
-
-    describe ".available_to_publisher" do
-      it "scopes on packages available to a publisher" do
-        publisher = create(:publisher)
-
-        expect {
-          described_class.available_to_publisher(publisher).load
-        }.to perform_sql_query(<<~SQL)
-          SELECT "packages".*
-          FROM   "packages"
-          WHERE  "packages"."discarded_at" IS NULL
-            AND  "packages"."publisher_id" = '#{publisher.id}'
-        SQL
-      end
-    end
-
-    describe ".available_to_ddfip" do
-      it "scopes on packages available to a DDIP" do
-        departement = create(:departement, code_departement: "64")
-        ddfip       = create(:ddfip, departement: departement)
-
-        expect {
-          described_class.available_to_ddfip(ddfip).load
-        }.to perform_sql_query(<<~SQL)
-          SELECT     DISTINCT "packages".*
-          FROM       "packages"
-          INNER JOIN "reports" ON "reports"."package_id" = "packages"."id"
-          INNER JOIN "communes" ON "communes"."code_insee" = "reports"."code_insee"
-          WHERE      "packages"."discarded_at" IS NULL
-            AND      "packages"."transmitted_at" IS NOT NULL
-            AND      "packages"."rejected_at" IS NULL
-            AND      "communes"."code_departement" = '64'
-            AND      "reports"."discarded_at" IS NULL
-        SQL
-      end
-    end
-
-    describe ".available_to_office" do
-      it "scopes on packages available to an Office" do
-        office = create(:office, action: "evaluation_hab")
-
-        expect {
-          described_class.available_to_office(office).load
-        }.to perform_sql_query(<<~SQL)
-          SELECT     DISTINCT "packages".*
-          FROM       "packages"
-          INNER JOIN "reports" ON "reports"."package_id" = "packages"."id"
-          INNER JOIN "office_communes" ON "office_communes"."code_insee" = "reports"."code_insee"
-          WHERE      "packages"."discarded_at" IS NULL
-            AND      "packages"."transmitted_at" IS NOT NULL
-            AND      "packages"."approved_at" IS NOT NULL
-            AND      "packages"."rejected_at" IS NULL
-            AND      "office_communes"."office_id" = '#{office.id}'
-            AND      "reports"."action" = 'evaluation_hab'
-            AND      "reports"."discarded_at" IS NULL
-        SQL
-      end
-    end
-
-    describe ".available_to" do
-      it "scopes reports available to a publisher" do
-        publisher = create(:publisher)
-
-        expect {
-          described_class.available_to(publisher).load
-        }.to send_message(described_class, :available_to_publisher).with(publisher)
-      end
-
-      it "scopes reports available to a collectivity" do
-        collectivity = create(:collectivity)
-
-        expect {
-          described_class.available_to(collectivity).load
-        }.to send_message(described_class, :available_to_collectivity).with(collectivity)
-      end
-
-      it "scopes reports available to a ddfip" do
-        ddfip = create(:ddfip)
-
-        expect {
-          described_class.available_to(ddfip).load
-        }.to send_message(described_class, :available_to_ddfip).with(ddfip)
-      end
-
-      it "scopes reports available to a office" do
-        office = create(:office)
-
-        expect {
-          described_class.available_to(office).load
-        }.to send_message(described_class, :available_to_office).with(office)
-      end
-
-      it "raises an TypeError with unexpected argument" do
-        expect {
-          described_class.available_to(User.all).load
-        }.to raise_error(TypeError)
-      end
-    end
   end
 
   # Predicates
   # ----------------------------------------------------------------------------
   describe "predicates" do
+    let_it_be(:publisher)      { build_stubbed(:publisher) }
+    let_it_be(:collectivities) { build_stubbed_list(:collectivity, 2, publisher: publisher) }
     let_it_be(:packages) do
-      # Use only one publisher & collectivity to reduce the number of queries and
-      # records to create
-      publisher = build(:publisher)
-      collectivity = build(:collectivity, publisher: publisher)
-
       [
-        build(:package, collectivity: collectivity),
-        build(:package, :transmitted, collectivity: collectivity, publisher: publisher),
-        build(:package, :approved, collectivity: collectivity),
-        build(:package, :rejected, collectivity: collectivity),
-        build(:package, :approved, :rejected, collectivity: collectivity)
+        build_stubbed(:package, collectivity: collectivities[0]),
+        build_stubbed(:package, :transmitted, collectivity: collectivities[0], publisher: publisher),
+        build_stubbed(:package, :approved, collectivity: collectivities[0]),
+        build_stubbed(:package, :rejected, collectivity: collectivities[0]),
+        build_stubbed(:package, :approved, :rejected, collectivity: collectivities[1]),
+        build(:package, collectivity: collectivities[0]),
+        build(:package, collectivity: collectivities[1], publisher: publisher)
       ]
     end
 
@@ -419,14 +238,6 @@ RSpec.describe Package do
       it { expect(packages[2]).to be_transmitted }
       it { expect(packages[3]).to be_transmitted }
       it { expect(packages[4]).to be_transmitted }
-    end
-
-    describe "#packed_through_publisher_api?" do
-      it { expect(packages[0]).not_to be_packed_through_publisher_api }
-      it { expect(packages[1]).to be_packed_through_publisher_api }
-      it { expect(packages[2]).not_to be_packed_through_publisher_api }
-      it { expect(packages[3]).not_to be_packed_through_publisher_api }
-      it { expect(packages[4]).not_to be_packed_through_publisher_api }
     end
 
     describe "#to_approve?" do
@@ -452,5 +263,71 @@ RSpec.describe Package do
       it { expect(packages[3]).to be_rejected }
       it { expect(packages[4]).to be_rejected }
     end
+
+    describe "#unrejected?" do
+      it { expect(packages[0]).not_to be_unrejected }
+      it { expect(packages[1]).to be_unrejected }
+      it { expect(packages[2]).to be_unrejected }
+      it { expect(packages[3]).not_to be_unrejected }
+      it { expect(packages[4]).not_to be_unrejected }
+    end
+
+    describe "#packed_through_publisher_api?" do
+      it { expect(packages[0]).not_to be_packed_through_publisher_api }
+      it { expect(packages[1]).to     be_packed_through_publisher_api }
+      it { expect(packages[5]).not_to be_packed_through_publisher_api }
+      it { expect(packages[6]).to     be_packed_through_publisher_api }
+    end
+
+    describe "#packed_through_web_ui?" do
+      it { expect(packages[0]).to     be_packed_through_web_ui }
+      it { expect(packages[1]).not_to be_packed_through_web_ui }
+      it { expect(packages[5]).to     be_packed_through_web_ui }
+      it { expect(packages[6]).not_to be_packed_through_web_ui }
+    end
+
+    describe "#sent_by_collectivity?" do
+      it { expect(packages[0]).to     be_sent_by_collectivity(collectivities[0]) }
+      it { expect(packages[1]).to     be_sent_by_collectivity(collectivities[0]) }
+      it { expect(packages[5]).to     be_sent_by_collectivity(collectivities[0]) }
+      it { expect(packages[6]).not_to be_sent_by_collectivity(collectivities[0]) }
+    end
+
+    describe "#sent_by_publisher?" do
+      it { expect(packages[0]).not_to be_sent_by_publisher(publisher) }
+      it { expect(packages[1]).to     be_sent_by_publisher(publisher) }
+      it { expect(packages[5]).not_to be_sent_by_publisher(publisher) }
+      it { expect(packages[6]).to     be_sent_by_publisher(publisher) }
+    end
+  end
+
+  # Database constraints and triggers
+  # ----------------------------------------------------------------------------
+  describe "database constraints" do
+    let_it_be(:package) do
+      create(:package, action: "evaluation_hab", reference: "2023-05-0003")
+    end
+
+    it "asserts the uniqueness of reference" do
+      expect {
+        create(:package, reference: "2023-05-0003")
+      }.to raise_error(ActiveRecord::RecordNotUnique)
+    end
+
+    it "asserts an action is allowed by not triggering DB constraints" do
+      expect {
+        package.update_column(:action, "evaluation_eco")
+      }.not_to raise_error
+    end
+
+    it "asserts an action is not allowed by triggering DB constraints" do
+      expect {
+        package.update_column(:action, "evaluation_cfe")
+      }.to raise_error(ActiveRecord::StatementInvalid)
+    end
+  end
+
+  describe "database triggers" do
+    pending "TODO"
   end
 end
