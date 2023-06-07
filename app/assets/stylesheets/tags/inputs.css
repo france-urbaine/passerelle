@@ -161,4 +161,12 @@
   [type='radio'] {
     @apply rounded-full;
   }
+
+  input[type=file] {
+    @apply py-2.5 h-14;
+  }
+
+  input[type=file][data-direct-upload-url][disabled] {
+    display: none;
+  }
 }

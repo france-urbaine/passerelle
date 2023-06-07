@@ -52,7 +52,11 @@ Rails.application.routes.draw do
   end
 
   constraints(id: %r{(?!(new|edit|remove|discard|undiscard|offices))[^/]+}) do
-    resources :reports, path: "signalements", path_names: { edit: "/edit/:fields" }
+    resources :reports, path: "signalements", path_names: { edit: "/edit/:fields" } do
+      scope module: "reports" do
+        resources :attachments, only: %i[new create destroy]
+      end
+    end
 
     resources :packages, path: "paquets" do
       resources :reports, path: "signalements"
