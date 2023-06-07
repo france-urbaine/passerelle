@@ -2,7 +2,11 @@
 
 FactoryBot.define do
   factory :package do
-    collectivity
+    collectivity do
+      publisher = self.publisher || build(:publisher)
+      association(:collectivity, publisher: publisher)
+    end
+
     name      { Faker::Book.title }
     action    { Package::ACTIONS.sample }
 
@@ -63,6 +67,58 @@ FactoryBot.define do
             commune:      communes.sample)
         end
       end
+    end
+
+    trait :packed_through_web_ui do
+      transient do
+        publisher { association(:publisher) }
+      end
+
+      collectivity { association(:collectivity, publisher: publisher) }
+      with_reports
+    end
+
+    trait :packed_through_api do
+      publisher    { association(:publisher) }
+      collectivity { association(:collectivity, publisher: publisher) }
+      with_reports
+    end
+
+    trait :packed_for_ddfip do
+      transient do
+        ddfip { association(:ddfip) }
+      end
+
+      # First, create a random collectivity
+      # The collectivity territory should be on the DDIP departement and respect the build strategy.
+      #
+      collectivity do
+        departement    = ddfip.departement
+        territory_type = %i[commune epci departement].sample
+        territory      = departement if territory_type == :departement
+        territory    ||= association(territory_type, departement: departement)
+
+        association(:collectivity, :commune, territory: territory)
+      end
+
+      # Then build reports using `with_reports` traits
+      # The trait will build reports on communes which are respecting the collectivity territory
+      with_reports
+    end
+
+    trait :transmitted_through_web_ui do
+      transmitted
+      packed_through_web_ui
+    end
+
+    trait :transmitted_through_api do
+      transmitted
+      packed_through_api
+    end
+
+    trait :transmitted_to_ddfip do
+      transmitted
+      packed_for_ddfip
     end
   end
 end

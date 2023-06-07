@@ -1,25 +1,212 @@
 # frozen_string_literal: true
 
 class ReportPolicy < ApplicationPolicy
+  alias_rule :edit?, to: :update?
+  alias_rule :remove?, :undiscard?, to: :destroy?
+  alias_rule :remove_all?, :undiscard_all?, to: :destroy_all?
+
   def index?
-    true
+    user?
   end
 
   def create?
-    organization.is_a?(Collectivity)
+    collectivity?
   end
 
-  def manage?
-    true
+  def show?
+    if record == Report
+      user?
+    elsif record.is_a?(Report)
+      report_shown_to_collectivity?(record) ||
+        report_shown_to_publisher?(record) ||
+        report_shown_to_ddfip_admin?(record) ||
+        report_shown_to_office_user?(record)
+    end
+  end
+
+  def update?
+    if record == Report
+      user?
+    elsif record.is_a?(Report)
+      report_updatable_by_collectivity?(record) ||
+        report_updatable_by_publisher?(record) ||
+        report_updatable_by_ddfip_admin?(record) ||
+        report_updatable_by_office_user?(record)
+    end
+  end
+
+  def destroy?
+    if record == Report
+      collectivity? || publisher?
+    elsif record.is_a?(Report)
+      report_destroyable_by_collectivity?(record) ||
+        report_destroyable_by_publisher?(record)
+    end
+  end
+
+  def destroy_all?
+    false
   end
 
   relation_scope do |relation|
-    # TODO
-    relation.available_to(organization)
+    if collectivity?
+      relation.merge(reports_listed_to_collectivity)
+    elsif publisher?
+      relation.merge(reports_listed_to_publisher)
+    elsif ddfip_admin?
+      relation.merge(reports_listed_to_ddfip_admins)
+    elsif office_user?
+      relation.merge(reports_listed_to_office_users)
+    else
+      relation.none # :nocov:
+    end
   end
 
   params_filter do |params|
     # TODO
     params.permit!
+  end
+
+  private
+
+  # Categorize current situation
+  # ----------------------------------------------------------------------------
+  def collectivity?
+    organization.is_a?(Collectivity)
+  end
+
+  def publisher?
+    organization.is_a?(Publisher)
+  end
+
+  def ddfip_admin?
+    organization.is_a?(DDFIP) && organization_admin?
+  end
+
+  def office_user?
+    organization.is_a?(DDFIP) && !organization_admin?
+  end
+
+  # List reports that can be listed to an user
+  # ----------------------------------------------------------------------------
+  def reports_listed_to_collectivity
+    return Report.none unless collectivity?
+
+    # Collectivities can see all reports they've packed through the web UI and
+    # those fully transmitted by their publishers.
+    #
+    Report
+      .all_kept
+      .joins(:package)
+      .out_of_sandbox
+      .sent_by_collectivity(organization)
+      .merge(
+        Report.packed_through_collectivity_ui
+          .or(Package.transmitted)
+      )
+  end
+
+  def reports_listed_to_publisher
+    return Report.none unless publisher?
+
+    # Publisher can only see reports they packed through their API.
+    # It excludes those packed though the web UI by their owned collectivities.
+    #
+    # The scope `packed_through_publisher_api` is implied by `sent_by_publisher`
+    # and will be redundant if added.
+    #
+    Report.all_kept.sent_by_publisher(organization)
+  end
+
+  def reports_listed_to_ddfip_admins
+    return Report.none unless ddfip_admin?
+
+    Report
+      .published
+      .unrejected_packages
+      .covered_by_ddfip(organization)
+  end
+
+  def reports_listed_to_office_users
+    return Report.none unless office_user?
+
+    Report
+      .published
+      .approved_packages
+      .covered_by_office(user.offices)
+  end
+
+  # Assert if a report can be shown to an user
+  # ----------------------------------------------------------------------------
+  def report_shown_to_collectivity?(report)
+    collectivity? &&
+      report.out_of_sandbox? &&
+      report.sent_by_collectivity?(organization) && (
+        report.packed_through_collectivity_ui? || report.transmitted?
+      )
+  end
+
+  def report_shown_to_publisher?(report)
+    publisher? &&
+      report.sent_by_publisher?(organization) &&
+      report.packed_through_publisher_api?
+  end
+
+  def report_shown_to_ddfip_admin?(report)
+    ddfip_admin? &&
+      report.published? &&
+      report.covered_by_ddfip?(organization)
+  end
+
+  def report_shown_to_office_user?(report)
+    office_user? &&
+      report.published? &&
+      report.approved_package? &&
+      report.covered_by_offices?(user.offices)
+  end
+
+  # Assert if a package can be updated by an user
+  # ----------------------------------------------------------------------------
+  def report_updatable_by_collectivity?(report)
+    collectivity? &&
+      report.out_of_sandbox? &&
+      report.sent_by_collectivity?(organization) &&
+      report.packed_through_collectivity_ui? &&
+      report.packing?
+  end
+
+  def report_updatable_by_publisher?(report)
+    publisher? &&
+      report.sent_by_publisher?(organization) &&
+      report.packed_through_publisher_api? &&
+      report.packing?
+  end
+
+  def report_updatable_by_ddfip_admin?(report)
+    ddfip_admin? &&
+      report.published? &&
+      report.unrejected_package? &&
+      report.covered_by_ddfip?(organization)
+  end
+
+  def report_updatable_by_office_user?(report)
+    report_shown_to_office_user?(report)
+  end
+
+  # Assert if a package can be destroyed by an user
+  # ----------------------------------------------------------------------------
+  def report_destroyable_by_collectivity?(report)
+    collectivity? &&
+      report.out_of_sandbox? &&
+      report.sent_by_collectivity?(organization) &&
+      report.packed_through_collectivity_ui? &&
+      report.packing?
+  end
+
+  def report_destroyable_by_publisher?(report)
+    publisher? &&
+      report.sent_by_publisher?(organization) &&
+      report.packed_through_publisher_api? &&
+      report.packing?
   end
 end
