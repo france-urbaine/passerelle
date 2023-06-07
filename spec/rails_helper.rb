@@ -146,6 +146,7 @@ end
 #     .to change(..)
 #     .and not_change(...)
 #
+RSpec::Matchers.define_negated_matcher :not_eq,                :eq
 RSpec::Matchers.define_negated_matcher :not_be_a,              :be_a
 RSpec::Matchers.define_negated_matcher :not_be_an,             :be_an
 RSpec::Matchers.define_negated_matcher :not_include,           :include

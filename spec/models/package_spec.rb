@@ -387,42 +387,6 @@ RSpec.describe Package do
     end
   end
 
-  # Callbacks
-  # ----------------------------------------------------------------------------
-  describe "callbacks" do
-    describe "#generate_reference" do
-      # Use only one collectivity to reduce the number of queries and records to create
-      let_it_be(:collectivities) { create_list(:collectivity, 3) }
-
-      def create_package
-        create(:package, collectivity: collectivities.sample)
-      end
-
-      it "increments the reference for every package created the same month" do
-        aggregate_failures do
-          Timecop.travel(Time.zone.local(2023, 5, 26))
-          expect(create_package).to have_attributes(reference: "2023-05-00001")
-          expect(create_package).to have_attributes(reference: "2023-05-00002")
-          expect(create_package).to have_attributes(reference: "2023-05-00003")
-
-          Timecop.travel(Time.zone.local(2023, 5, 30))
-          expect(create_package).to have_attributes(reference: "2023-05-00004")
-        end
-      end
-
-      it "starts again references to 1 next month" do
-        aggregate_failures do
-          Timecop.travel(Time.zone.local(2023, 5, 26))
-          expect(create_package).to have_attributes(reference: "2023-05-00001")
-          expect(create_package).to have_attributes(reference: "2023-05-00002")
-
-          Timecop.travel(Time.zone.local(2023, 6, 1))
-          expect(create_package).to have_attributes(reference: "2023-06-00001")
-        end
-      end
-    end
-  end
-
   # Predicates
   # ----------------------------------------------------------------------------
   describe "predicates" do

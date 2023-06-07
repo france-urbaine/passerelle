@@ -6,7 +6,7 @@ module Packages
       last_reference = Package.maximum(:reference)
 
       month = Time.zone.today.strftime("%Y-%m")
-      index = last_reference&.slice(/^#{month}-(\d{5})$/, 1).to_i + 1
+      index = last_reference&.slice(/^#{month}-(\d+)$/, 1).to_i + 1
       index = index.to_s.rjust(4, "0")
 
       "#{month}-#{index}"

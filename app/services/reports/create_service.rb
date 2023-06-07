@@ -33,7 +33,7 @@ module Reports
       packages = Package.available_to(@collectivity)
       packages = packages.packing.kept.where(action: @report.action).order(created_at: :desc)
       packages.first_or_initialize do |package|
-        package.name      = I18n.translate(@report.action, scope: "enum.action")
+        package.name      = I18n.t(@report.action, scope: "enum.action")
         package.reference = Packages::GenerateReferenceService.new.generate
       end
     end
