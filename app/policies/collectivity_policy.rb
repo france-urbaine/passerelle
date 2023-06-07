@@ -33,13 +33,15 @@ class CollectivityPolicy < ApplicationPolicy
         :publisher_id,
         :territory_type, :territory_id, :territory_data, :territory_code,
         :name, :siren,
-        :contact_first_name, :contact_last_name, :contact_email, :contact_phone
+        :contact_first_name, :contact_last_name, :contact_email, :contact_phone,
+        :allow_2fa_via_email
       )
     elsif publisher?
       params.permit(
         :territory_type, :territory_id, :territory_data, :territory_code,
         :name, :siren,
-        :contact_first_name, :contact_last_name, :contact_email, :contact_phone
+        :contact_first_name, :contact_last_name, :contact_email, :contact_phone,
+        :allow_2fa_via_email
       )
     else
       {}

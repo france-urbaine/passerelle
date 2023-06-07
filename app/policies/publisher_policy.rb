@@ -19,7 +19,8 @@ class PublisherPolicy < ApplicationPolicy
     if super_admin?
       params.permit(
         :name, :siren,
-        :contact_first_name, :contact_last_name, :contact_email, :contact_phone
+        :contact_first_name, :contact_last_name, :contact_email, :contact_phone,
+        :allow_2fa_via_email
       )
     end
   end
