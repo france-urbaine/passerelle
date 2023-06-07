@@ -43,7 +43,7 @@
         = translate(package.action, scope: "enum.action")
 
       - row.with_column(:collectivity) do
-        = authorized_link_to report.collectivity do
+        = authorized_link_to package.collectivity do
           = package.collectivity&.name
 
       - row.with_column(:status) do

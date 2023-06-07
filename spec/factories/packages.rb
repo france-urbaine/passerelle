@@ -30,6 +30,10 @@ FactoryBot.define do
       rejected_at    { Time.current }
     end
 
+    trait :discarded do
+      discarded_at { Time.current}
+    end
+
     trait :with_reports do
       transient do
         report_size { 1 }
