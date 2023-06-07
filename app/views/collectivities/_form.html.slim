@@ -91,13 +91,13 @@
           br
           | Vous pouvez autoriser les utilisateurs de cette organisation à recevoir un code de vérification par email.
 
-        p <strong>Attention :</strong>
-        ul.list-decimal.list-inside
+        strong Attention :
+        ul.list-decimal.ml-6
           li Cette méthode ne protégera pas les utilisateurs en cas d'usurpation du compte email.
           li
-            ' Si vous désactivez cette option alors que des utilisateurs ont déjà
-            ' sélectionné l'envoi d'un email comme méthode d'authentification, ces utilisateurs ne pourront plus
-            ' accéder à la plateforme.
+            | Si vous désactivez cette option alors que des utilisateurs ont déjà sélectionné l'envoi d'un email
+            br
+            | comme méthode d'authentification, ces utilisateurs ne pourront plus accéder à la plateforme.
 
 - modal.with_submit_action "Enregistrer"
 - modal.with_close_action "Annuler"
