@@ -75,6 +75,7 @@ RSpec.describe Reports::CreateService do
 
   it "increments reference when existing package has already some reports" do
     Timecop.travel(Time.zone.local(2023, 5, 26))
+    FactoryBot.rewind_sequences
     create(:package, :with_reports, report_size: 3, collectivity: collectivity, action: "evaluation_hab", reference: "2023-05-0003")
 
     service.save
