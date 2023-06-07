@@ -113,10 +113,10 @@ RSpec.describe Package do
       end
     end
 
-    describe ".packed_through_collectivity_ui" do
-      it "scopes on packages packed through collectivity UI" do
+    describe ".packed_through_web_ui" do
+      it "scopes on packages packed byt the collectivity through web UI" do
         expect {
-          described_class.packed_through_collectivity_ui.load
+          described_class.packed_through_web_ui.load
         }.to perform_sql_query(<<~SQL)
           SELECT "packages".*
           FROM   "packages"
@@ -279,11 +279,11 @@ RSpec.describe Package do
       it { expect(packages[6]).to     be_packed_through_publisher_api }
     end
 
-    describe "#packed_through_collectivity_ui?" do
-      it { expect(packages[0]).to     be_packed_through_collectivity_ui }
-      it { expect(packages[1]).not_to be_packed_through_collectivity_ui }
-      it { expect(packages[5]).to     be_packed_through_collectivity_ui }
-      it { expect(packages[6]).not_to be_packed_through_collectivity_ui }
+    describe "#packed_through_web_ui?" do
+      it { expect(packages[0]).to     be_packed_through_web_ui }
+      it { expect(packages[1]).not_to be_packed_through_web_ui }
+      it { expect(packages[5]).to     be_packed_through_web_ui }
+      it { expect(packages[6]).not_to be_packed_through_web_ui }
     end
 
     describe "#sent_by_collectivity?" do

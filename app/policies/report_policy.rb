@@ -63,8 +63,14 @@ class ReportPolicy < ApplicationPolicy
   end
 
   params_filter do |params|
-    # TODO
-    params.permit!
+    if collectivity?
+      attributes = %i[subject priority code_insee date_constat enjeu observations]
+      attributes += Report.column_names.grep(/^(situation|proposition)_/).map(&:to_sym)
+
+      params.permit(*attributes)
+    elsif office_user?
+      params.permit(:reponse)
+    end
   end
 
   private
@@ -101,7 +107,7 @@ class ReportPolicy < ApplicationPolicy
       .out_of_sandbox
       .sent_by_collectivity(organization)
       .merge(
-        Report.packed_through_collectivity_ui
+        Report.packed_through_web_ui
           .or(Package.transmitted)
       )
   end
@@ -142,7 +148,7 @@ class ReportPolicy < ApplicationPolicy
     collectivity? &&
       report.out_of_sandbox? &&
       report.sent_by_collectivity?(organization) && (
-        report.packed_through_collectivity_ui? || report.transmitted?
+        report.packed_through_web_ui? || report.transmitted?
       )
   end
 
@@ -171,7 +177,7 @@ class ReportPolicy < ApplicationPolicy
     collectivity? &&
       report.out_of_sandbox? &&
       report.sent_by_collectivity?(organization) &&
-      report.packed_through_collectivity_ui? &&
+      report.packed_through_web_ui? &&
       report.packing?
   end
 
@@ -199,7 +205,7 @@ class ReportPolicy < ApplicationPolicy
     collectivity? &&
       report.out_of_sandbox? &&
       report.sent_by_collectivity?(organization) &&
-      report.packed_through_collectivity_ui? &&
+      report.packed_through_web_ui? &&
       report.packing?
   end
 

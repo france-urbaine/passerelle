@@ -47,13 +47,13 @@ RSpec.describe "PackagesController#index" do
         it { expect(response).to have_content_type(:html) }
         it { expect(response).to have_html_body }
 
-        fit "returns only accessible packages" do
+        it "returns only accessible packages" do
           aggregate_failures do
-            expect(response.parsed_body).to     include(CGI.escape_html(packages[0].name))
-            expect(response.parsed_body).not_to include(CGI.escape_html(packages[1].name))
-            expect(response.parsed_body).not_to include(CGI.escape_html(packages[2].name))
-            expect(response.parsed_body).to     include(CGI.escape_html(packages[3].name))
-            expect(response.parsed_body).not_to include(CGI.escape_html(packages[4].name))
+            expect(response.parsed_body).to     include(CGI.escape_html(packages[0].reference))
+            expect(response.parsed_body).not_to include(CGI.escape_html(packages[1].reference))
+            expect(response.parsed_body).not_to include(CGI.escape_html(packages[2].reference))
+            expect(response.parsed_body).to     include(CGI.escape_html(packages[3].reference))
+            expect(response.parsed_body).not_to include(CGI.escape_html(packages[4].reference))
           end
         end
       end
@@ -81,11 +81,11 @@ RSpec.describe "PackagesController#index" do
 
         it "returns only accessible packages" do
           aggregate_failures do
-            expect(response.parsed_body).not_to include(CGI.escape_html(packages[0].name))
-            expect(response.parsed_body).to     include(CGI.escape_html(packages[1].name))
-            expect(response.parsed_body).not_to include(CGI.escape_html(packages[2].name))
-            expect(response.parsed_body).to     include(CGI.escape_html(packages[3].name))
-            expect(response.parsed_body).not_to include(CGI.escape_html(packages[4].name))
+            expect(response.parsed_body).not_to include(CGI.escape_html(packages[0].reference))
+            expect(response.parsed_body).to     include(CGI.escape_html(packages[1].reference))
+            expect(response.parsed_body).not_to include(CGI.escape_html(packages[2].reference))
+            expect(response.parsed_body).to     include(CGI.escape_html(packages[3].reference))
+            expect(response.parsed_body).not_to include(CGI.escape_html(packages[4].reference))
           end
         end
       end
@@ -95,13 +95,13 @@ RSpec.describe "PackagesController#index" do
       let(:ddfip) { create(:ddfip) }
       let(:packages) do
         [
-          create(:package, :sent_to_ddfip, ddfip: ddfip),
+          create(:package, :packed_for_ddfip,     ddfip: ddfip),
           create(:package, :transmitted_to_ddfip, ddfip: ddfip),
           create(:package, :transmitted_to_ddfip)
         ]
       end
 
-      before { sign_in_as(:orgnization_admin, ddfip: ddfip) }
+      before { sign_in_as(:organization_admin, organization: ddfip) }
 
       context "when requesting HTML" do
         it { expect(response).to have_http_status(:success) }
@@ -110,9 +110,9 @@ RSpec.describe "PackagesController#index" do
 
         it "returns only accessible packages" do
           aggregate_failures do
-            expect(response.parsed_body).not_to include(CGI.escape_html(packages[0].name))
-            expect(response.parsed_body).to     include(CGI.escape_html(packages[1].name))
-            expect(response.parsed_body).not_to include(CGI.escape_html(packages[2].name))
+            expect(response.parsed_body).not_to include(CGI.escape_html(packages[0].reference))
+            expect(response.parsed_body).to     include(CGI.escape_html(packages[1].reference))
+            expect(response.parsed_body).not_to include(CGI.escape_html(packages[2].reference))
           end
         end
       end

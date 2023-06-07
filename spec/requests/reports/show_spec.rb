@@ -2,16 +2,16 @@
 
 require "rails_helper"
 
-RSpec.describe "PackagesController#show" do
+RSpec.describe "ReportsController#show" do
   subject(:request) do
-    get "/paquets/#{package.id}", as:, headers:, params:
+    get "/signalements/#{report.id}", as:, headers:, params:
   end
 
   let(:as)      { |e| e.metadata[:as] }
   let(:headers) { |e| e.metadata[:headers] }
   let(:params)  { |e| e.metadata[:params] }
 
-  let!(:package) { create(:package) }
+  let!(:report) { create(:report) }
 
   describe "authorizations" do
     it_behaves_like "it requires authorization in HTML"
@@ -25,24 +25,39 @@ RSpec.describe "PackagesController#show" do
     it_behaves_like "it denies access to colletivity user"
     it_behaves_like "it denies access to colletivity admin"
 
-    context "when package has been packed by current user collectivity" do
-      let(:package) { create(:package, collectivity: current_user.organization) }
+    context "when report has been created by current user collectivity" do
+      let(:report) { create(:report, :reported_through_web_ui, collectivity: current_user.organization) }
 
       it_behaves_like "it allows access to colletivity user"
       it_behaves_like "it allows access to colletivity admin"
     end
 
-    context "when package has been packed by current user publisher" do
-      let(:package) { create(:package, publisher: current_user.organization) }
+    context "when report has been created by current user publisher" do
+      let(:report) { create(:report, publisher: current_user.organization) }
 
       it_behaves_like "it allows access to publisher user"
       it_behaves_like "it allows access to publisher admin"
     end
 
-    context "when package has been transmitted to current user DDFIP" do
-      let(:package) { create(:package, :transmitted_to_ddfip, ddfip: current_user.organization) }
+    context "when report has been transmitted to current user DDFIP" do
+      let(:report) { create(:report, :transmitted_to_ddfip, ddfip: current_user.organization) }
 
       it_behaves_like "it denies access to DDFIP user"
+      it_behaves_like "it allows access to DDFIP admin"
+    end
+
+    context "when report has been approved and forwarded to current user office" do
+      let(:report) { create(:report, :package_approved_by_ddfip, ddfip: current_user.organization) }
+
+      before do
+        create(:office,
+          ddfip:    current_user.organization,
+          action:   report.action,
+          communes: [report.commune],
+          users:    [current_user])
+      end
+
+      it_behaves_like "it allows access to DDFIP user"
       it_behaves_like "it allows access to DDFIP admin"
     end
   end
@@ -50,34 +65,34 @@ RSpec.describe "PackagesController#show" do
   describe "responses" do
     context "when signed in as a collectivity user" do
       let(:collectivity) { create(:collectivity) }
-      let(:package)      { create(:package, collectivity: collectivity) }
+      let(:report)       { create(:report, :reported_through_web_ui, collectivity: collectivity) }
 
       before { sign_in_as(organization: collectivity) }
 
-      context "when the package is active" do
+      context "when the report is active" do
         it { expect(response).to have_http_status(:success) }
         it { expect(response).to have_content_type(:html) }
         it { expect(response).to have_html_body }
       end
 
-      context "when the package is transmitted" do
-        before { package.touch(:transmitted_at) }
+      context "when the report is transmitted" do
+        before { report.package.touch(:transmitted_at) }
 
         it { expect(response).to have_http_status(:success) }
         it { expect(response).to have_content_type(:html) }
         it { expect(response).to have_html_body }
       end
 
-      context "when the package is discarded" do
-        before { package.discard }
+      context "when the report is discarded" do
+        before { report.discard }
 
         it { expect(response).to have_http_status(:gone) }
         it { expect(response).to have_content_type(:html) }
         it { expect(response).to have_html_body }
       end
 
-      context "when the package is missing" do
-        before { package.destroy }
+      context "when the report is missing" do
+        before { report.destroy }
 
         it { expect(response).to have_http_status(:not_found) }
         it { expect(response).to have_content_type(:html) }

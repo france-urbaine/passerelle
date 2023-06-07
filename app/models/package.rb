@@ -54,8 +54,8 @@ class Package < ApplicationRecord
   scope :rejected,     -> { transmitted.where.not(rejected_at: nil) }
   scope :unrejected,   -> { transmitted.where(rejected_at: nil) }
 
-  scope :packed_through_publisher_api,   -> { where.not(publisher_id: nil) }
-  scope :packed_through_collectivity_ui, -> { where(publisher_id: nil) }
+  scope :packed_through_publisher_api, -> { where.not(publisher_id: nil) }
+  scope :packed_through_web_ui,        -> { where(publisher_id: nil) }
 
   scope :sent_by_collectivity, ->(collectivity) { where(collectivity: collectivity) }
   scope :sent_by_publisher,    ->(publisher)    { where(publisher: publisher) }
@@ -92,7 +92,7 @@ class Package < ApplicationRecord
     publisher_id? || (new_record? && publisher)
   end
 
-  def packed_through_collectivity_ui?
+  def packed_through_web_ui?
     !packed_through_publisher_api?
   end
 

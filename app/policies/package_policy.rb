@@ -80,9 +80,9 @@ class PackagePolicy < ApplicationPolicy
 
   params_filter do |params|
     if collectivity? || publisher?
-      params.permit!(:name)
+      params.permit(:name)
     elsif ddfip_admin?
-      params.permit!(:approved_at, :rejected_at)
+      params.permit(:approved_at, :rejected_at)
     else
       {}
     end
@@ -118,7 +118,7 @@ class PackagePolicy < ApplicationPolicy
       .kept
       .sent_by_collectivity(organization)
       .merge(
-        Package.packed_through_collectivity_ui
+        Package.packed_through_web_ui
           .or(Package.transmitted.merge(Report.out_of_sandbox))
       )
   end
@@ -150,7 +150,7 @@ class PackagePolicy < ApplicationPolicy
     collectivity? &&
       package.sent_by_collectivity?(organization) &&
       (
-        package.packed_through_collectivity_ui? || (
+        package.packed_through_web_ui? || (
           package.transmitted? && package.reports.out_of_sandbox.any?
         )
       )
@@ -176,7 +176,7 @@ class PackagePolicy < ApplicationPolicy
 
     Package.kept.packing
       .sent_by_collectivity(organization)
-      .packed_through_collectivity_ui
+      .packed_through_web_ui
       .where(action: report.action)
   end
 
@@ -194,7 +194,7 @@ class PackagePolicy < ApplicationPolicy
   def package_updatable_by_collectivity?(package)
     collectivity? &&
       package.sent_by_collectivity?(organization) &&
-      package.packed_through_collectivity_ui? &&
+      package.packed_through_web_ui? &&
       package.packing?
   end
 
@@ -217,7 +217,7 @@ class PackagePolicy < ApplicationPolicy
     Package
       .kept
       .sent_by_collectivity(organization)
-      .packed_through_collectivity_ui
+      .packed_through_web_ui
       .packing
   end
 
@@ -235,7 +235,7 @@ class PackagePolicy < ApplicationPolicy
   def package_destroyable_by_collectivity?(package)
     collectivity? &&
       package.sent_by_collectivity?(organization) &&
-      package.packed_through_collectivity_ui? &&
+      package.packed_through_web_ui? &&
       package.packing?
   end
 

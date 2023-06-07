@@ -31,7 +31,7 @@ FactoryBot.define do
     end
 
     trait :discarded do
-      discarded_at { Time.current}
+      discarded_at { Time.current }
     end
 
     trait :with_reports do

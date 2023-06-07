@@ -15,7 +15,7 @@
     - else
       - @reports = @reports.preload(:commune, :workshop)
 
-  = datatable_component(@reports) do |datatable|
+  = datatable_component(@reports.preload(:package)) do |datatable|
     - datatable.with_search
     - datatable.with_pagination(@pagy, options: !@parent)
 

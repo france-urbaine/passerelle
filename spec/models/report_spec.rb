@@ -262,10 +262,10 @@ RSpec.describe Report do
       end
     end
 
-    describe ".packed_through_collectivity_ui" do
+    describe ".packed_through_web_ui" do
       it "scopes on reports created through Web UI" do
         expect {
-          described_class.packed_through_collectivity_ui.load
+          described_class.packed_through_web_ui.load
         }.to perform_sql_query(<<~SQL)
           SELECT "reports".*
           FROM   "reports"
