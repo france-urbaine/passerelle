@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe OfficePolicy, type: :policy do
+RSpec.describe OfficePolicy do
   describe_rule :manage_collection? do
     it_behaves_like("when current user is a super admin")        { succeed }
     it_behaves_like("when current user is a DDFIP admin")        { succeed }
@@ -58,7 +58,7 @@ RSpec.describe OfficePolicy, type: :policy do
   it { expect(:destroy?).to be_an_alias_of(policy, :manage?) }
   it { expect(:undiscard?).to be_an_alias_of(policy, :manage?) }
 
-  describe "relation scope", stub_current_user: false do
+  describe "relation scope", stub_factories: false do
     # The following tests will assert a list of attributes rather than of a list
     # of records to produce lighter and readable output.
     subject do

@@ -24,7 +24,7 @@ RSpec.shared_context "with policies shared contexts" do
           options[key] = instance_exec(&value) if value.respond_to?(:call)
         end
 
-        if example.metadata[:stub_current_user] == false
+        if example.metadata[:stub_factories] == false
           create(:user, *user_traits, **options)
         else
           build_stubbed(:user, *user_traits, **options)

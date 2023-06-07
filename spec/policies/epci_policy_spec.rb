@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe EPCIPolicy, type: :policy do
+RSpec.describe EPCIPolicy do
   describe_rule :manage? do
     context "without record" do
       let(:record) { EPCI }

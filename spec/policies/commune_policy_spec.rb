@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe CommunePolicy, type: :policy do
+RSpec.describe CommunePolicy do
   describe_rule :manage? do
     context "without record" do
       let(:record) { Commune }

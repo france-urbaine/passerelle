@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Collectivities::UserPolicy, type: :policy do
+RSpec.describe Collectivities::UserPolicy do
   describe_rule :manage_collection? do
     it_behaves_like("when current user is a super admin")        { succeed }
     it_behaves_like("when current user is a publisher user")     { succeed }

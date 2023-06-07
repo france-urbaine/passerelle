@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe DDFIPPolicy, type: :policy do
+RSpec.describe DDFIPPolicy do
   describe_rule :manage? do
     context "without record" do
       let(:record) { DDFIP }

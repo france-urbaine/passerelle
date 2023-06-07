@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe RegionPolicy, type: :policy do
+RSpec.describe RegionPolicy do
   describe_rule :manage? do
     context "without record" do
       let(:record) { Region }

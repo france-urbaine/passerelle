@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Users::TwoFactorSettingsPolicy, type: :policy do
+RSpec.describe Users::TwoFactorSettingsPolicy do
   describe_rule :manage? do
     it_behaves_like("when current user is a super admin")        { succeed }
     it_behaves_like("when current user is a DDFIP admin")        { succeed }

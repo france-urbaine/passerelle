@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe DepartementPolicy, type: :policy do
+RSpec.describe DepartementPolicy do
   describe_rule :manage? do
     context "without record" do
       let(:record) { Departement }

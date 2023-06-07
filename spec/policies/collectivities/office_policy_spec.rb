@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Collectivities::OfficePolicy, type: :policy do
+RSpec.describe Collectivities::OfficePolicy do
   describe_rule :index? do
     it_behaves_like("when current user is a super admin")        { succeed }
     it_behaves_like("when current user is a publisher user")     { succeed }

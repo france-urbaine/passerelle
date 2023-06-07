@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe PublisherPolicy, type: :policy do
+RSpec.describe PublisherPolicy do
   describe_rule :manage? do
     context "without record" do
       let(:record) { Publisher }
