@@ -2,13 +2,10 @@
 
 module Reports
   class AttachmentsController < ApplicationController
-    # TODO : Add Policy and authorization
-    skip_after_action :verify_authorized
-    before_action :find_report, only: %i[new create destroy]
+    before_action :find_report
+    before_action :authorize_report
 
     def new
-      only_kept! @report
-
       @background_url = referrer_path || report_path(@report)
     end
 
@@ -33,6 +30,11 @@ module Reports
 
     def find_report
       @report = Report.find(params[:report_id])
+    end
+
+    def authorize_report
+      only_kept! @report
+      authorize! @report, to: :update?, with: ReportPolicy
     end
   end
 end
