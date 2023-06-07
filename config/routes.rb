@@ -59,7 +59,9 @@ Rails.application.routes.draw do
     end
 
     resources :packages, path: "paquets" do
-      resources :reports, path: "signalements"
+      scope module: "packages" do
+        resources :reports, only: %i[index], path: "signalements"
+      end
     end
 
     resources :publishers, concerns: %i[removable removable_collection], path: "/editeurs" do

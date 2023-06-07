@@ -5,6 +5,7 @@ module Reports
     include ::ActiveModel::Model
 
     attr_reader :report
+
     delegate_missing_to :report
 
     def initialize(report)

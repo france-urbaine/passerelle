@@ -30,7 +30,7 @@ class ReportsController < ApplicationController
   end
 
   def create
-    service = Reports::CreateService.new(@report, current_organization, report_params)
+    service = Reports::CreateService.new(@report, current_user, report_params)
     result  = service.save
 
     # Initialize a new form Service to re-render the :new template

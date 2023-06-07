@@ -51,26 +51,26 @@ module FormatHelper
       $LAST_MATCH_INFO[:prefix]&.rjust(3, "0"),
       $LAST_MATCH_INFO[:section],
       $LAST_MATCH_INFO[:plan]&.rjust(4, "0")
-    ].compact.join(' ')
+    ].compact.join(" ")
   end
 
   def display_date(date)
     case date
     when Date
-      I18n.localize(date, format: "%-d %B %Y")
+      I18n.l(date, format: "%-d %B %Y")
 
     when ApplicationRecord::DATE_REGEXP
       args   = $LAST_MATCH_INFO.values_at(:year, :month, :day).compact.map(&:to_i)
       date   = Date.new(*args)
-      format = %w[%-d %B %Y][(0 - args.size)..].join(' ')
+      format = ["%-d", "%B", "%Y"][(0 - args.size)..].join(" ")
 
-      value = I18n.localize(date, format:)
+      value = I18n.l(date, format:)
       value = value.titleize if value.match?(/\A[A-Z]/)
       value
 
     when String
       date = Date.parse(date)
-      I18n.localize(date, format: "%-d %B %Y")
+      I18n.l(date, format: "%-d %B %Y")
     end
   end
 end

@@ -4,11 +4,12 @@ require "rails_helper"
 
 RSpec.describe Reports::CreateService do
   subject(:service) do
-    described_class.new(report, collectivity, attributes)
+    described_class.new(report, user, attributes)
   end
 
   let(:report)       { Report.new }
   let(:collectivity) { create(:collectivity) }
+  let(:user)         { create(:user, organization: collectivity) }
   let(:attributes)   { { subject: "evaluation_hab/evaluation" } }
 
   it "creates a package and a report" do

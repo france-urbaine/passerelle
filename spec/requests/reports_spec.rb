@@ -1,6 +1,8 @@
-require 'rails_helper'
+# frozen_string_literal: true
 
-RSpec.describe "Reports", type: :request do
+require "rails_helper"
+
+RSpec.describe "Reports" do
   describe "GET /index" do
     pending "add some examples (or delete) #{__FILE__}"
   end
