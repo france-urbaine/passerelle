@@ -1713,7 +1713,12 @@ CREATE TABLE public.packages (
     discarded_at timestamp(6) without time zone,
     due_on date,
     completed boolean DEFAULT false NOT NULL,
-    sandbox boolean DEFAULT false NOT NULL
+    sandbox boolean DEFAULT false NOT NULL,
+    reports_count integer DEFAULT 0 NOT NULL,
+    reports_completed_count integer DEFAULT 0 NOT NULL,
+    reports_approved_count integer DEFAULT 0 NOT NULL,
+    reports_rejected_count integer DEFAULT 0 NOT NULL,
+    reports_debated_count integer DEFAULT 0 NOT NULL
 );
 
 
@@ -2596,6 +2601,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230605122559'),
 ('20230605130656'),
 ('20230607183851'),
+('20230608074912'),
 ('20230609124040');
 
 
