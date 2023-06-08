@@ -25,8 +25,8 @@ RSpec.describe "OfficesController#index" do
     it_behaves_like "it denies access to publisher user"
     it_behaves_like "it denies access to publisher admin"
     it_behaves_like "it denies access to DDFIP user"
-    it_behaves_like "it denies access to colletivity user"
-    it_behaves_like "it denies access to colletivity admin"
+    it_behaves_like "it denies access to collectivity user"
+    it_behaves_like "it denies access to collectivity admin"
 
     it_behaves_like "it allows access to DDFIP admin"
     it_behaves_like "it allows access to super admin"

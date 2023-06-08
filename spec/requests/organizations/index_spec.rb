@@ -26,8 +26,8 @@ RSpec.describe "OrganizationsController#index" do
   it_behaves_like "it denies access to DDFIP admin"
   it_behaves_like "it denies access to publisher user"
   it_behaves_like "it denies access to publisher admin"
-  it_behaves_like "it denies access to colletivity user"
-  it_behaves_like "it denies access to colletivity admin"
+  it_behaves_like "it denies access to collectivity user"
+  it_behaves_like "it denies access to collectivity admin"
 
   it_behaves_like "it responds with not acceptable to super admin"
 

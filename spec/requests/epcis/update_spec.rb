@@ -26,8 +26,8 @@ RSpec.describe "EpcisController#update" do
     it_behaves_like "it denies access to publisher admin"
     it_behaves_like "it denies access to DDFIP user"
     it_behaves_like "it denies access to DDFIP admin"
-    it_behaves_like "it denies access to colletivity user"
-    it_behaves_like "it denies access to colletivity admin"
+    it_behaves_like "it denies access to collectivity user"
+    it_behaves_like "it denies access to collectivity admin"
     it_behaves_like "it allows access to super admin"
   end
 

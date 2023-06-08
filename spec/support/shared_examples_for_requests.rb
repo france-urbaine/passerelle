@@ -57,8 +57,8 @@ RSpec.shared_context "with requests shared examples" do
     "publisher admin",
     "DDFIP user",
     "DDFIP admin",
-    "colletivity user",
-    "colletivity admin",
+    "collectivity user",
+    "collectivity admin",
     "super admin"
   ].each do |user_description|
     # All these shared examples accepts literal and proc attributes to defin user:

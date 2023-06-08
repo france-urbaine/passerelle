@@ -32,8 +32,8 @@ RSpec.shared_context "with requests shared contexts" do
     "publisher admin"   => %i[publisher organization_admin],
     "DDFIP user"        => %i[ddfip],
     "DDFIP admin"       => %i[ddfip organization_admin],
-    "colletivity user"  => %i[collectivity],
-    "colletivity admin" => %i[collectivity organization_admin],
+    "collectivity user"  => %i[collectivity],
+    "collectivity admin" => %i[collectivity organization_admin],
     "super admin"       => %i[super_admin]
   }.each do |user_description, user_traits|
     # These shared contexts accepts literal and proc attributes:

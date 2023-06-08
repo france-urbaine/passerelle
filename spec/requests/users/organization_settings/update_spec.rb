@@ -23,12 +23,12 @@ RSpec.describe "Users::OrganizationSettingsController#update" do
 
   it_behaves_like "it denies access to publisher user"
   it_behaves_like "it denies access to DDFIP user"
-  it_behaves_like "it denies access to colletivity user"
+  it_behaves_like "it denies access to collectivity user"
   it_behaves_like "it denies access to super admin"
 
   it_behaves_like "it allows access to publisher admin"
   it_behaves_like "it allows access to DDFIP admin"
-  it_behaves_like "it allows access to colletivity admin"
+  it_behaves_like "it allows access to collectivity admin"
 
   context "when signed in as an organization admin" do
     before { sign_in_as(:organization_admin, organization: organization) }

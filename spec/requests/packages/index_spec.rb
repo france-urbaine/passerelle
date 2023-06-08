@@ -33,8 +33,8 @@ RSpec.describe "PackagesController#index" do
 
     it_behaves_like "it allows access to publisher user"
     it_behaves_like "it allows access to publisher admin"
-    it_behaves_like "it allows access to colletivity user"
-    it_behaves_like "it allows access to colletivity admin"
+    it_behaves_like "it allows access to collectivity user"
+    it_behaves_like "it allows access to collectivity admin"
     it_behaves_like "it allows access to DDFIP admin"
   end
 

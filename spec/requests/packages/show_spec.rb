@@ -22,14 +22,14 @@ RSpec.describe "PackagesController#show" do
     it_behaves_like "it denies access to publisher admin"
     it_behaves_like "it denies access to DDFIP user"
     it_behaves_like "it denies access to DDFIP admin"
-    it_behaves_like "it denies access to colletivity user"
-    it_behaves_like "it denies access to colletivity admin"
+    it_behaves_like "it denies access to collectivity user"
+    it_behaves_like "it denies access to collectivity admin"
 
     context "when package has been packed by current user collectivity" do
       let(:package) { create(:package, collectivity: current_user.organization) }
 
-      it_behaves_like "it allows access to colletivity user"
-      it_behaves_like "it allows access to colletivity admin"
+      it_behaves_like "it allows access to collectivity user"
+      it_behaves_like "it allows access to collectivity admin"
     end
 
     context "when package has been packed by current user publisher" do
