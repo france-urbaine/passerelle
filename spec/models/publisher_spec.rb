@@ -206,6 +206,148 @@ RSpec.describe Publisher do
     end
   end
 
+  # Counter caches
+  # ----------------------------------------------------------------------------
+  describe "counter caches" do
+    let_it_be(:publishers) { create_list(:publisher, 2) }
+
+    describe "#reports_count" do
+      let(:report) { create(:report, publisher: publishers[0]) }
+
+      it "changes on creation" do
+        expect { report }
+          .to      change { publishers[0].reload.reports_count }.from(0).to(1)
+          .and not_change { publishers[1].reload.reports_count }.from(0)
+      end
+
+      it "changes on deletion" do
+        report
+        expect { report.destroy }
+          .to      change { publishers[0].reload.reports_count }.from(1).to(0)
+          .and not_change { publishers[1].reload.reports_count }.from(0)
+      end
+    end
+
+    describe "#reports_completed_count" do
+      let(:completed_report) { create(:report, :completed, publisher: publishers[0]) }
+
+      it "changes when report is completed" do
+        expect { completed_report }
+          .to      change { publishers[0].reload.reports_completed_count }.from(0).to(1)
+          .and not_change { publishers[1].reload.reports_completed_count }.from(0)
+      end
+
+      it "changes on deletion" do
+        completed_report
+        expect { completed_report.destroy }
+          .to      change { publishers[0].reload.reports_completed_count }.from(1).to(0)
+          .and not_change { publishers[1].reload.reports_completed_count }.from(0)
+      end
+    end
+
+    describe "#reports_approved_count" do
+      let(:approved_report) { create(:report, :approved, publisher: publishers[0]) }
+
+      it "changes when report is approved" do
+        expect { approved_report }
+          .to      change { publishers[0].reload.reports_approved_count }.from(0).to(1)
+          .and not_change { publishers[1].reload.reports_approved_count }.from(0)
+      end
+
+      it "changes on deletion" do
+        approved_report
+        expect { approved_report.destroy }
+          .to      change { publishers[0].reload.reports_approved_count }.from(1).to(0)
+          .and not_change { publishers[1].reload.reports_approved_count }.from(0)
+      end
+    end
+
+    describe "#reports_rejected_count" do
+      let(:rejected_report) { create(:report, :rejected, publisher: publishers[0]) }
+
+      it "changes when report is rejected" do
+        expect { rejected_report }
+          .to      change { publishers[0].reload.reports_rejected_count }.from(0).to(1)
+          .and not_change { publishers[1].reload.reports_rejected_count }.from(0)
+      end
+
+      it "changes on deletion" do
+        rejected_report
+        expect { rejected_report.destroy }
+          .to      change { publishers[0].reload.reports_rejected_count }.from(1).to(0)
+          .and not_change { publishers[1].reload.reports_rejected_count }.from(0)
+      end
+    end
+
+    describe "#reports_debated_count" do
+      let(:debated_report) { create(:report, :debated, publisher: publishers[0]) }
+
+      it "changes when report is debated" do
+        expect { debated_report }
+          .to      change { publishers[0].reload.reports_debated_count }.from(0).to(1)
+          .and not_change { publishers[1].reload.reports_debated_count }.from(0)
+      end
+
+      it "changes on deletion" do
+        debated_report
+        expect { debated_report.destroy }
+          .to      change { publishers[0].reload.reports_debated_count }.from(1).to(0)
+          .and not_change { publishers[1].reload.reports_debated_count }.from(0)
+      end
+    end
+
+    describe "#packages_count" do
+      let(:package) { create(:package, publisher: publishers[0]) }
+
+      it "changes on creation" do
+        expect { package }
+          .to      change { publishers[0].reload.packages_count }.from(0).to(1)
+          .and not_change { publishers[1].reload.packages_count }.from(0)
+      end
+
+      it "changes on deletion" do
+        package
+        expect { package.destroy }
+          .to      change { publishers[0].reload.packages_count }.from(1).to(0)
+          .and not_change { publishers[1].reload.packages_count }.from(0)
+      end
+    end
+
+    describe "#packages_approved_count" do
+      let(:approved_package) { create(:package, :approved, publisher: publishers[0]) }
+
+      it "changes on creation" do
+        expect { approved_package }
+          .to      change { publishers[0].reload.packages_approved_count }.from(0).to(1)
+          .and not_change { publishers[1].reload.packages_approved_count }.from(0)
+      end
+
+      it "changes on deletion" do
+        approved_package
+        expect { approved_package.destroy }
+          .to      change { publishers[0].reload.packages_approved_count }.from(1).to(0)
+          .and not_change { publishers[1].reload.packages_approved_count }.from(0)
+      end
+    end
+
+    describe "#packages_rejected_count" do
+      let(:rejected_package) { create(:package, :rejected, publisher: publishers[0]) }
+
+      it "changes on creation" do
+        expect { rejected_package }
+          .to      change { publishers[0].reload.packages_rejected_count }.from(0).to(1)
+          .and not_change { publishers[1].reload.packages_rejected_count }.from(0)
+      end
+
+      it "changes on deletion" do
+        rejected_package
+        expect { rejected_package.destroy }
+          .to      change { publishers[0].reload.packages_rejected_count }.from(1).to(0)
+          .and not_change { publishers[1].reload.packages_rejected_count }.from(0)
+      end
+    end
+  end
+
   # Reset counters
   # ----------------------------------------------------------------------------
   describe ".reset_all_counters" do
@@ -241,6 +383,28 @@ RSpec.describe Publisher do
 
       it { expect { reset_all_counters }.to change { publishers[0].reload.collectivities_count }.from(0).to(3) }
       it { expect { reset_all_counters }.to change { publishers[1].reload.collectivities_count }.from(0).to(2) }
+    end
+
+    describe "on reports_count" do
+      before do
+        create_list(:report, 2, publisher: publishers[0])
+
+        Publisher.update_all(reports_count: 0)
+      end
+
+      it { expect { reset_all_counters }.to change { publishers[0].reload.reports_count }.from(0).to(2) }
+      it { expect { reset_all_counters }.to not_change { publishers[1].reload.reports_count }.from(0) }
+    end
+
+    describe "on packages_count" do
+      before do
+        create_list(:package, 2, publisher: publishers[0])
+
+        Publisher.update_all(packages_count: 0)
+      end
+
+      it { expect { reset_all_counters }.to change { publishers[0].reload.packages_count }.from(0).to(2) }
+      it { expect { reset_all_counters }.to not_change { publishers[1].reload.packages_count }.from(0) }
     end
   end
 end

@@ -771,6 +771,62 @@ $$;
 
 
 --
+-- Name: get_packages_approved_count_in_publishers(public.publishers); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.get_packages_approved_count_in_publishers(publishers public.publishers) RETURNS integer
+    LANGUAGE plpgsql
+    AS $$
+  BEGIN
+    RETURN (
+      SELECT COUNT(*)
+      FROM   "packages"
+      WHERE  "packages"."publisher_id" = publishers."id"
+        AND  "packages"."approved_at" IS NOT NULL
+        AND  "packages"."transmitted_at" IS NOT NULL
+        AND  "packages"."rejected_at" IS NULL
+    );
+  END;
+$$;
+
+
+--
+-- Name: get_packages_count_in_publishers(public.publishers); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.get_packages_count_in_publishers(publishers public.publishers) RETURNS integer
+    LANGUAGE plpgsql
+    AS $$
+  BEGIN
+    RETURN (
+      SELECT COUNT(*)
+      FROM   "packages"
+      WHERE  "packages"."publisher_id" = publishers."id"
+    );
+  END;
+$$;
+
+
+--
+-- Name: get_packages_rejected_count_in_publishers(public.publishers); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.get_packages_rejected_count_in_publishers(publishers public.publishers) RETURNS integer
+    LANGUAGE plpgsql
+    AS $$
+  BEGIN
+    RETURN (
+      SELECT COUNT(*)
+      FROM   "packages"
+      WHERE  "packages"."publisher_id" = publishers."id"
+        AND  "packages"."rejected_at" IS NOT NULL
+        AND  "packages"."transmitted_at" IS NOT NULL
+    );
+  END;
+$$;
+
+
+--
 -- Name: packages; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -818,6 +874,24 @@ $$;
 
 
 --
+-- Name: get_reports_approved_count_in_publishers(public.publishers); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.get_reports_approved_count_in_publishers(publishers public.publishers) RETURNS integer
+    LANGUAGE plpgsql
+    AS $$
+  BEGIN
+    RETURN (
+      SELECT COUNT(*)
+      FROM   "reports"
+      WHERE  "reports"."publisher_id" = publishers."id"
+        AND  "reports"."approved_at" IS NOT NULL
+    );
+  END;
+$$;
+
+
+--
 -- Name: get_reports_completed_count_in_packages(public.packages); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -830,6 +904,24 @@ CREATE FUNCTION public.get_reports_completed_count_in_packages(packages public.p
       FROM   "reports"
       WHERE  "reports"."package_id" = packages."id"
         AND  "reports"."discarded_at" IS NULL
+        AND  "reports"."completed" IS TRUE
+    );
+  END;
+$$;
+
+
+--
+-- Name: get_reports_completed_count_in_publishers(public.publishers); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.get_reports_completed_count_in_publishers(publishers public.publishers) RETURNS integer
+    LANGUAGE plpgsql
+    AS $$
+  BEGIN
+    RETURN (
+      SELECT COUNT(*)
+      FROM   "reports"
+      WHERE  "reports"."publisher_id" = publishers."id"
         AND  "reports"."completed" IS TRUE
     );
   END;
@@ -855,6 +947,23 @@ $$;
 
 
 --
+-- Name: get_reports_count_in_publishers(public.publishers); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.get_reports_count_in_publishers(publishers public.publishers) RETURNS integer
+    LANGUAGE plpgsql
+    AS $$
+  BEGIN
+    RETURN (
+      SELECT COUNT(*)
+      FROM   "reports"
+      WHERE  "reports"."publisher_id" = publishers."id"
+    );
+  END;
+$$;
+
+
+--
 -- Name: get_reports_debated_count_in_packages(public.packages); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -874,6 +983,24 @@ $$;
 
 
 --
+-- Name: get_reports_debated_count_in_publishers(public.publishers); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.get_reports_debated_count_in_publishers(publishers public.publishers) RETURNS integer
+    LANGUAGE plpgsql
+    AS $$
+  BEGIN
+    RETURN (
+      SELECT COUNT(*)
+      FROM   "reports"
+      WHERE  "reports"."publisher_id" = publishers."id"
+        AND  "reports"."debated_at" IS NOT NULL
+    );
+  END;
+$$;
+
+
+--
 -- Name: get_reports_rejected_count_in_packages(public.packages); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -886,6 +1013,24 @@ CREATE FUNCTION public.get_reports_rejected_count_in_packages(packages public.pa
       FROM   "reports"
       WHERE  "reports"."package_id" = packages."id"
         AND  "reports"."discarded_at" IS NULL
+        AND  "reports"."rejected_at" IS NOT NULL
+    );
+  END;
+$$;
+
+
+--
+-- Name: get_reports_rejected_count_in_publishers(public.publishers); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.get_reports_rejected_count_in_publishers(publishers public.publishers) RETURNS integer
+    LANGUAGE plpgsql
+    AS $$
+  BEGIN
+    RETURN (
+      SELECT COUNT(*)
+      FROM   "reports"
+      WHERE  "reports"."publisher_id" = publishers."id"
         AND  "reports"."rejected_at" IS NOT NULL
     );
   END;
@@ -1166,8 +1311,16 @@ CREATE FUNCTION public.reset_all_publishers_counters() RETURNS integer
     affected_rows integer;
   BEGIN
     UPDATE "publishers"
-    SET    "users_count"          = get_users_count_in_publishers("publishers".*),
-           "collectivities_count" = get_collectivities_count_in_publishers("publishers".*);
+    SET    "users_count"             = get_users_count_in_publishers("publishers".*),
+           "collectivities_count"    = get_collectivities_count_in_publishers("publishers".*),
+           "reports_count"           = get_reports_count_in_publishers("publishers".*),
+           "reports_completed_count" = get_reports_completed_count_in_publishers("publishers".*),
+           "reports_approved_count"  = get_reports_approved_count_in_publishers("publishers".*),
+           "reports_rejected_count"  = get_reports_rejected_count_in_publishers("publishers".*),
+           "reports_debated_count"   = get_reports_debated_count_in_publishers("publishers".*),
+           "packages_count"          = get_packages_count_in_publishers("publishers".*),
+           "packages_approved_count" = get_packages_approved_count_in_publishers("publishers".*),
+           "packages_rejected_count" = get_packages_rejected_count_in_publishers("publishers".*);
 
     GET DIAGNOSTICS affected_rows = ROW_COUNT;
     RAISE NOTICE 'UPDATE %', affected_rows;
@@ -1718,6 +1871,40 @@ $$;
 
 
 --
+-- Name: trigger_packages_changes(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.trigger_packages_changes() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+  BEGIN
+
+    -- Reset all packages_count, packages_approved_count, packages_rejected_count
+    -- * on deletion
+    -- * when approved_at changed
+    -- * when rejected_at changed
+
+    IF (TG_OP = 'INSERT')
+    OR (TG_OP = 'DELETE')
+    OR (TG_OP = 'UPDATE' AND NEW."approved_at" <> OLD."approved_at")
+    OR (TG_OP = 'UPDATE' AND NEW."rejected_at" <> OLD."rejected_at")
+    THEN
+
+      UPDATE "publishers"
+      SET    "packages_count"          = get_packages_count_in_publishers("publishers".*),
+             "packages_approved_count" = get_packages_approved_count_in_publishers("publishers".*),
+             "packages_rejected_count" = get_packages_rejected_count_in_publishers("publishers".*)
+      WHERE  "publishers"."id" IN (NEW."publisher_id", OLD."publisher_id");
+
+    END IF;
+
+    -- result is ignored since this is an AFTER trigger
+    RETURN NULL;
+  END;
+$$;
+
+
+--
 -- Name: trigger_reports_changes(); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -1726,22 +1913,23 @@ CREATE FUNCTION public.trigger_reports_changes() RETURNS trigger
     AS $$
   BEGIN
 
-    -- Reset all reports counts
+    -- Reset all reports_count, reports_completed_count, reports_approved_count, reports_rejected_count & reports_debated_count & completed
+    -- * on creation
     -- * on creation
     -- * on deletion
-    -- * when package_id changed
     -- * when completed changed
-    -- * when (approved_at|rejected_at|debated_at|discarded_at) changed from NULL
-    -- * when (approved_at|rejected_at|debated_at|discarded_at) changed to NULL
+    -- * when approved_at changed
+    -- * when rejected_at changed
+    -- * when debated_at changed
+    -- * when package_id changed
 
     IF (TG_OP = 'INSERT')
     OR (TG_OP = 'DELETE')
-    OR (TG_OP = 'UPDATE' AND NEW."package_id" <> OLD."package_id")
     OR (TG_OP = 'UPDATE' AND NEW."completed" <> OLD."completed")
-    OR (TG_OP = 'UPDATE' AND (NEW."approved_at" IS NULL) <> (OLD."approved_at" IS NULL))
-    OR (TG_OP = 'UPDATE' AND (NEW."rejected_at" IS NULL) <> (OLD."rejected_at" IS NULL))
-    OR (TG_OP = 'UPDATE' AND (NEW."debated_at" IS NULL) <> (OLD."debated_at" IS NULL))
-    OR (TG_OP = 'UPDATE' AND (NEW."discarded_at" IS NULL) <> (OLD."discarded_at" IS NULL))
+    OR (TG_OP = 'UPDATE' AND NEW."approved_at" <> OLD."approved_at")
+    OR (TG_OP = 'UPDATE' AND NEW."rejected_at" <> OLD."rejected_at")
+    OR (TG_OP = 'UPDATE' AND NEW."debated_at" <> OLD."debated_at")
+    OR (TG_OP = 'UPDATE' AND NEW."package_id" <> OLD."package_id")
     THEN
 
       UPDATE "packages"
@@ -1749,8 +1937,20 @@ CREATE FUNCTION public.trigger_reports_changes() RETURNS trigger
              "reports_completed_count" = get_reports_completed_count_in_packages("packages".*),
              "reports_approved_count"  = get_reports_approved_count_in_packages("packages".*),
              "reports_rejected_count"  = get_reports_rejected_count_in_packages("packages".*),
-             "reports_debated_count"   = get_reports_debated_count_in_packages("packages".*)
+             "reports_debated_count"   = get_reports_debated_count_in_packages("packages".*),
+             "completed"               = CASE
+                                           WHEN "reports_count" = "reports_approved_count" THEN TRUE
+                                           ELSE FALSE
+                                         END
       WHERE  "packages"."id" IN (NEW."package_id", OLD."package_id");
+
+      UPDATE "publishers"
+      SET    "reports_count"           = get_reports_count_in_publishers("publishers".*),
+             "reports_completed_count" = get_reports_completed_count_in_publishers("publishers".*),
+             "reports_approved_count"  = get_reports_approved_count_in_publishers("publishers".*),
+             "reports_rejected_count"  = get_reports_rejected_count_in_publishers("publishers".*),
+             "reports_debated_count"   = get_reports_debated_count_in_publishers("publishers".*)
+      WHERE  "publishers"."id" IN (NEW."publisher_id", OLD."publisher_id");
 
     END IF;
 
@@ -2580,6 +2780,13 @@ CREATE TRIGGER trigger_offices_changes AFTER INSERT OR DELETE OR UPDATE ON publi
 
 
 --
+-- Name: packages trigger_packages_changes; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER trigger_packages_changes AFTER INSERT OR DELETE OR UPDATE ON public.packages FOR EACH ROW EXECUTE FUNCTION public.trigger_packages_changes();
+
+
+--
 -- Name: reports trigger_reports_changes; Type: TRIGGER; Schema: public; Owner: -
 --
 
@@ -2780,6 +2987,10 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230607183851'),
 ('20230608074912'),
 ('20230608152933'),
+('20230608153411'),
+('20230609093353'),
+('20230609094310'),
+('20230609120619'),
 ('20230609124040');
 
 

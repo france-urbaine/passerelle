@@ -460,6 +460,16 @@ RSpec.describe Package do
           .and not_change { packages[1].reload.reports_debated_count }.from(0)
       end
     end
+
+    describe "#completed" do
+      let(:approved_report) { create(:report, :approved, package: packages[0]) }
+
+      fit "changes when reports_count is equal to reports_approved_count" do
+        expect { approved_report }
+          .to      change { packages[0].reload.completed? }.from(false).to(true)
+          .and not_change { packages[1].reload.completed? }.from(false)
+      end
+    end
   end
 
   # Reset counters
