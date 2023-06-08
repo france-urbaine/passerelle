@@ -117,4 +117,10 @@ class Package < ApplicationRecord
   def sent_by_publisher?(publisher)
     (publisher_id == publisher.id) || (new_record? && publisher == self.publisher)
   end
+
+  # Database updates
+  # ----------------------------------------------------------------------------
+  def self.reset_all_counters
+    connection.select_value("SELECT reset_all_packages_counters()")
+  end
 end

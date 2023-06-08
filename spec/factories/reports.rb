@@ -89,6 +89,10 @@ FactoryBot.define do
       priority { "high" }
     end
 
+    trait :completed do
+      completed { true }
+    end
+
     trait :transmitted do
       package_transmitted { true }
     end

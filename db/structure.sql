@@ -763,6 +763,123 @@ $$;
 
 
 --
+-- Name: packages; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.packages (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    collectivity_id uuid NOT NULL,
+    publisher_id uuid,
+    name character varying NOT NULL,
+    reference character varying NOT NULL,
+    action public.action NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL,
+    transmitted_at timestamp(6) without time zone,
+    approved_at timestamp(6) without time zone,
+    rejected_at timestamp(6) without time zone,
+    discarded_at timestamp(6) without time zone,
+    due_on date,
+    completed boolean DEFAULT false NOT NULL,
+    sandbox boolean DEFAULT false NOT NULL,
+    reports_count integer DEFAULT 0 NOT NULL,
+    reports_completed_count integer DEFAULT 0 NOT NULL,
+    reports_approved_count integer DEFAULT 0 NOT NULL,
+    reports_rejected_count integer DEFAULT 0 NOT NULL,
+    reports_debated_count integer DEFAULT 0 NOT NULL
+);
+
+
+--
+-- Name: get_reports_approved_count_in_packages(public.packages); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.get_reports_approved_count_in_packages(packages public.packages) RETURNS integer
+    LANGUAGE plpgsql
+    AS $$
+  BEGIN
+    RETURN (
+      SELECT COUNT(*)
+      FROM   "reports"
+      WHERE  "reports"."package_id" = packages."id"
+        AND  "reports"."approved_at" IS NOT NULL
+    );
+  END;
+$$;
+
+
+--
+-- Name: get_reports_completed_count_in_packages(public.packages); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.get_reports_completed_count_in_packages(packages public.packages) RETURNS integer
+    LANGUAGE plpgsql
+    AS $$
+  BEGIN
+    RETURN (
+      SELECT COUNT(*)
+      FROM   "reports"
+      WHERE  "reports"."package_id" = packages."id"
+        AND  "reports"."completed" IS TRUE
+    );
+  END;
+$$;
+
+
+--
+-- Name: get_reports_count_in_packages(public.packages); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.get_reports_count_in_packages(packages public.packages) RETURNS integer
+    LANGUAGE plpgsql
+    AS $$
+  BEGIN
+    RETURN (
+      SELECT COUNT(*)
+      FROM   "reports"
+      WHERE  "reports"."package_id" = packages."id"
+    );
+  END;
+$$;
+
+
+--
+-- Name: get_reports_debated_count_in_packages(public.packages); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.get_reports_debated_count_in_packages(packages public.packages) RETURNS integer
+    LANGUAGE plpgsql
+    AS $$
+  BEGIN
+    RETURN (
+      SELECT COUNT(*)
+      FROM   "reports"
+      WHERE  "reports"."package_id" = packages."id"
+        AND  "reports"."debated_at" IS NOT NULL
+    );
+  END;
+$$;
+
+
+--
+-- Name: get_reports_rejected_count_in_packages(public.packages); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.get_reports_rejected_count_in_packages(packages public.packages) RETURNS integer
+    LANGUAGE plpgsql
+    AS $$
+  BEGIN
+    RETURN (
+      SELECT COUNT(*)
+      FROM   "reports"
+      WHERE  "reports"."package_id" = packages."id"
+        AND  "reports"."rejected_at" IS NOT NULL
+    );
+  END;
+$$;
+
+
+--
 -- Name: collectivities; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -991,6 +1108,31 @@ CREATE FUNCTION public.reset_all_offices_counters() RETURNS integer
     UPDATE "offices"
     SET    "users_count"    = get_users_count_in_offices("offices".*),
            "communes_count" = get_communes_count_in_offices("offices".*);
+
+    GET DIAGNOSTICS affected_rows = ROW_COUNT;
+    RAISE NOTICE 'UPDATE %', affected_rows;
+
+    RETURN affected_rows;
+  END;
+$$;
+
+
+--
+-- Name: reset_all_packages_counters(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.reset_all_packages_counters() RETURNS integer
+    LANGUAGE plpgsql
+    AS $$
+  DECLARE
+    affected_rows integer;
+  BEGIN
+    UPDATE "packages"
+    SET    "reports_count"           = get_reports_count_in_packages("packages".*),
+           "reports_completed_count" = get_reports_completed_count_in_packages("packages".*),
+           "reports_approved_count"  = get_reports_approved_count_in_packages("packages".*),
+           "reports_rejected_count"  = get_reports_rejected_count_in_packages("packages".*),
+           "reports_debated_count"   = get_reports_debated_count_in_packages("packages".*);
 
     GET DIAGNOSTICS affected_rows = ROW_COUNT;
     RAISE NOTICE 'UPDATE %', affected_rows;
@@ -1563,6 +1705,49 @@ $$;
 
 
 --
+-- Name: trigger_reports_changes(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.trigger_reports_changes() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+  BEGIN
+
+    -- Reset all reports_count, reports_completed_count, reports_approved_count, reports_rejected_count & reports_debated_count
+    -- * on creation
+    -- * on deletion
+    -- * when completed changed
+    -- * when approved_at changed
+    -- * when rejected_at changed
+    -- * when debated_at changed
+    -- * when package_id changed
+
+    IF (TG_OP = 'INSERT')
+    OR (TG_OP = 'DELETE')
+    OR (TG_OP = 'UPDATE' AND NEW."completed" <> OLD."completed")
+    OR (TG_OP = 'UPDATE' AND NEW."approved_at" <> OLD."approved_at")
+    OR (TG_OP = 'UPDATE' AND NEW."rejected_at" <> OLD."rejected_at")
+    OR (TG_OP = 'UPDATE' AND NEW."debated_at" <> OLD."debated_at")
+    OR (TG_OP = 'UPDATE' AND NEW."package_id" <> OLD."package_id")
+    THEN
+
+      UPDATE "packages"
+      SET    "reports_count"           = get_reports_count_in_packages("packages".*),
+             "reports_completed_count" = get_reports_completed_count_in_packages("packages".*),
+             "reports_approved_count"  = get_reports_approved_count_in_packages("packages".*),
+             "reports_rejected_count"  = get_reports_rejected_count_in_packages("packages".*),
+             "reports_debated_count"   = get_reports_debated_count_in_packages("packages".*)
+      WHERE  "packages"."id" IN (NEW."package_id", OLD."package_id");
+
+    END IF;
+
+    -- result is ignored since this is an AFTER trigger
+    RETURN NULL;
+  END;
+$$;
+
+
+--
 -- Name: trigger_users_changes(); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -1691,34 +1876,6 @@ CREATE TABLE public.office_users (
     user_id uuid NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
-);
-
-
---
--- Name: packages; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.packages (
-    id uuid DEFAULT gen_random_uuid() NOT NULL,
-    collectivity_id uuid NOT NULL,
-    publisher_id uuid,
-    name character varying NOT NULL,
-    reference character varying NOT NULL,
-    action public.action NOT NULL,
-    created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL,
-    transmitted_at timestamp(6) without time zone,
-    approved_at timestamp(6) without time zone,
-    rejected_at timestamp(6) without time zone,
-    discarded_at timestamp(6) without time zone,
-    due_on date,
-    completed boolean DEFAULT false NOT NULL,
-    sandbox boolean DEFAULT false NOT NULL,
-    reports_count integer DEFAULT 0 NOT NULL,
-    reports_completed_count integer DEFAULT 0 NOT NULL,
-    reports_approved_count integer DEFAULT 0 NOT NULL,
-    reports_rejected_count integer DEFAULT 0 NOT NULL,
-    reports_debated_count integer DEFAULT 0 NOT NULL
 );
 
 
@@ -2410,6 +2567,13 @@ CREATE TRIGGER trigger_offices_changes AFTER INSERT OR DELETE OR UPDATE ON publi
 
 
 --
+-- Name: reports trigger_reports_changes; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER trigger_reports_changes AFTER INSERT OR DELETE OR UPDATE ON public.reports FOR EACH ROW EXECUTE FUNCTION public.trigger_reports_changes();
+
+
+--
 -- Name: users trigger_users_changes; Type: TRIGGER; Schema: public; Owner: -
 --
 
@@ -2602,6 +2766,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230605130656'),
 ('20230607183851'),
 ('20230608074912'),
+('20230608080536'),
+('20230608091017'),
 ('20230609124040');
 
 
