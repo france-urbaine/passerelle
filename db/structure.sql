@@ -399,6 +399,14 @@ CREATE TABLE public.publishers (
     contact_phone character varying,
     domain_restriction character varying,
     allow_2fa_via_email boolean DEFAULT false NOT NULL,
+    reports_count integer DEFAULT 0 NOT NULL,
+    reports_completed_count integer DEFAULT 0 NOT NULL,
+    reports_approved_count integer DEFAULT 0 NOT NULL,
+    reports_rejected_count integer DEFAULT 0 NOT NULL,
+    reports_debated_count integer DEFAULT 0 NOT NULL,
+    packages_count integer DEFAULT 0 NOT NULL,
+    packages_approved_count integer DEFAULT 0 NOT NULL,
+    packages_rejected_count integer DEFAULT 0 NOT NULL,
     CONSTRAINT collectivities_count_check CHECK ((collectivities_count >= 0)),
     CONSTRAINT users_count_check CHECK ((users_count >= 0))
 );
@@ -2771,6 +2779,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230605130656'),
 ('20230607183851'),
 ('20230608074912'),
+('20230608152933'),
 ('20230609124040');
 
 
