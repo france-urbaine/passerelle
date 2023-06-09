@@ -5,8 +5,8 @@ class PackagesController < ApplicationController
   before_action :build_packages_scope
   before_action :authorize_packages_scope
   before_action :build_package,     only: %i[new create]
-  before_action :find_package,      only: %i[show edit remove update destroy undiscard]
-  before_action :authorize_package, only: %i[show edit remove update destroy undiscard]
+  before_action :find_package,      only: %i[show edit update]
+  before_action :authorize_package, only: %i[show edit update]
 
   def index
     return not_implemented if autocomplete_request?

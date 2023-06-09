@@ -5,8 +5,8 @@ class ReportsController < ApplicationController
   before_action :build_reports_scope
   before_action :authorize_reports_scope
   before_action :build_report,     only: %i[new create]
-  before_action :find_report,      only: %i[show edit remove update destroy undiscard]
-  before_action :authorize_report, only: %i[show edit remove update destroy undiscard]
+  before_action :find_report,      only: %i[show edit update]
+  before_action :authorize_report, only: %i[show edit update]
 
   def index
     return not_implemented if autocomplete_request?
