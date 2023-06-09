@@ -10,15 +10,19 @@ RSpec.shared_context "with policies shared contexts" do
   end
 
   {
-    "publisher user"     => %i[publisher],
-    "publisher admin"    => %i[publisher organization_admin],
-    "DDFIP user"         => %i[ddfip],
-    "DDFIP admin"        => %i[ddfip organization_admin],
-    "collectivity user"  => %i[collectivity],
-    "collectivity admin" => %i[collectivity organization_admin],
-    "super admin"        => %i[super_admin]
+    "a super admin"              => %i[super_admin],
+    "an admin"                   => %i[organization_admin],
+    "a DDFIP super admin"        => %i[ddfip super_admin],
+    "a DDFIP admin"              => %i[ddfip organization_admin],
+    "a DDFIP user"               => %i[ddfip],
+    "a publisher super admin"    => %i[publisher super_admin],
+    "a publisher admin"          => %i[publisher organization_admin],
+    "a publisher user"           => %i[publisher],
+    "a collectivity super admin" => %i[collectivity super_admin],
+    "a collectivity admin"       => %i[collectivity organization_admin],
+    "a collectivity user"        => %i[collectivity]
   }.each do |user_description, user_traits|
-    shared_context "when current user is a #{user_description}" do |**options|
+    shared_context "when current user is #{user_description}" do |**options|
       let(:current_user) do |example|
         options.each do |key, value|
           options[key] = instance_exec(&value) if value.respond_to?(:call)

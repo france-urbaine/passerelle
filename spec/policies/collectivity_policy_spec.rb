@@ -33,7 +33,7 @@ RSpec.describe CollectivityPolicy do
       it_behaves_like("when current user is a collectivity user")  { failed }
     end
 
-    context "with record" do
+    context "with a collectivity" do
       let(:record) { build_stubbed(:collectivity) }
 
       it_behaves_like("when current user is a super admin")        { succeed }
@@ -45,11 +45,18 @@ RSpec.describe CollectivityPolicy do
       it_behaves_like("when current user is a collectivity user")  { failed }
     end
 
-    context "when record is owned by the current publisher" do
+    context "with a collectivity owned by the current publisher" do
       let(:record) { build_stubbed(:collectivity, publisher: current_organization) }
 
       it_behaves_like("when current user is a publisher admin") { succeed }
       it_behaves_like("when current user is a publisher user")  { succeed }
+    end
+
+    context "with the same collectivity as the current organization" do
+      let(:record) { current_organization }
+
+      it_behaves_like("when current user is a collectivity admin") { failed }
+      it_behaves_like("when current user is a collectivity user")  { failed }
     end
   end
 
@@ -60,97 +67,317 @@ RSpec.describe CollectivityPolicy do
   it { expect(:remove?).to    be_an_alias_of(policy, :manage?) }
   it { expect(:undiscard?).to be_an_alias_of(policy, :manage?) }
 
-  describe "relation scope", stub_factories: false do
-    # The following tests will assert a list of attributes rather than of a list
-    # of records to produce lighter and readable output.
-    subject do
-      policy.apply_scope(target, type: :active_record_relation).pluck(:name)
+  describe_rule :assign_publisher? do
+    context "without record" do
+      let(:record) { Collectivity }
+
+      it_behaves_like("when current user is a super admin")        { succeed }
+      it_behaves_like("when current user is a DDFIP admin")        { failed }
+      it_behaves_like("when current user is a DDFIP user")         { failed }
+      it_behaves_like("when current user is a publisher admin")    { failed }
+      it_behaves_like("when current user is a publisher user")     { failed }
+      it_behaves_like("when current user is a collectivity admin") { failed }
+      it_behaves_like("when current user is a collectivity user")  { failed }
     end
 
-    # The scope is ordered to have a deterministic order
-    #
-    let(:target) { Collectivity.order(:name) }
+    context "with a collectivity owned by the current publisher" do
+      let(:record) { build_stubbed(:collectivity, publisher: current_organization) }
 
-    before do
-      create(:collectivity, name: "A")
-      create(:collectivity, name: "B")
-      create(:collectivity, name: "C", publisher: current_organization) if current_organization.is_a?(Publisher)
+      it_behaves_like("when current user is a publisher admin") { failed }
+      it_behaves_like("when current user is a publisher user")  { failed }
     end
 
-    it_behaves_like("when current user is a super admin") do
-      # Create a publisher super admin to ensure its collectivities are included
-      let(:current_user) { create(:user, :super_admin, :publisher) }
+    context "with the same collectivity as the current organization" do
+      let(:record) { current_organization }
 
-      it { is_expected.to eq(%w[A B C]) }
+      it_behaves_like("when current user is a collectivity admin") { failed }
+      it_behaves_like("when current user is a collectivity user")  { failed }
+    end
+  end
+
+  describe "default relation scope" do
+    subject!(:scope) do
+      policy.apply_scope(target, type: :active_record_relation)
     end
 
-    it_behaves_like("when current user is a DDFIP admin")        { it { is_expected.to be_empty } }
-    it_behaves_like("when current user is a publisher admin")    { it { is_expected.to eq(%w[C]) } }
-    it_behaves_like("when current user is a collectivity admin") { it { is_expected.to be_empty } }
-    it_behaves_like("when current user is a DDFIP user")         { it { is_expected.to be_empty } }
-    it_behaves_like("when current user is a publisher user")     { it { is_expected.to eq(%w[C]) } }
-    it_behaves_like("when current user is a collectivity user")  { it { is_expected.to be_empty } }
+    let(:target) { Collectivity.all }
+
+    it_behaves_like "when current user is a super admin" do
+      it "scopes all kept collectivities" do
+        expect {
+          scope.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "collectivities".*
+          FROM   "collectivities"
+          WHERE  "collectivities"."discarded_at" IS NULL
+        SQL
+      end
+    end
+
+    it_behaves_like "when current user is a publisher admin" do
+      it "scopes all kept collectivities belonging to publisher" do
+        expect {
+          scope.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "collectivities".*
+          FROM   "collectivities"
+          WHERE  "collectivities"."discarded_at" IS NULL
+            AND  "collectivities"."publisher_id" = '#{current_organization.id}'
+        SQL
+      end
+    end
+
+    it_behaves_like "when current user is a publisher user" do
+      it "scopes all kept collectivities belonging to publisher" do
+        expect {
+          scope.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "collectivities".*
+          FROM   "collectivities"
+          WHERE  "collectivities"."discarded_at" IS NULL
+            AND  "collectivities"."publisher_id" = '#{current_organization.id}'
+        SQL
+      end
+    end
+
+    it_behaves_like("when current user is a DDFIP admin")        { it { is_expected.to be_a_null_relation } }
+    it_behaves_like("when current user is a DDFIP user")         { it { is_expected.to be_a_null_relation } }
+    it_behaves_like("when current user is a collectivity admin") { it { is_expected.to be_a_null_relation } }
+    it_behaves_like("when current user is a collectivity user")  { it { is_expected.to be_a_null_relation } }
+  end
+
+  describe "destroyable relation scope" do
+    subject!(:scope) do
+      policy.apply_scope(
+        target,
+        name: :destroyable,
+        type: :active_record_relation,
+        scope_options: scope_options
+      )
+    end
+
+    let(:target)        { Collectivity.all }
+    let(:scope_options) { |e| e.metadata.fetch(:scope_options, {}) }
+
+    it_behaves_like "when current user is a collectivity super admin" do
+      it "scopes all kept collectivities" do
+        expect {
+          scope.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "collectivities".*
+          FROM   "collectivities"
+          WHERE  "collectivities"."discarded_at" IS NULL
+            AND  "collectivities"."id" != '#{current_organization.id}'
+        SQL
+      end
+
+      it "allows to explicitely include its own organization", scope_options: { exclude_current: false } do
+        expect {
+          scope.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "collectivities".*
+          FROM   "collectivities"
+          WHERE  "collectivities"."discarded_at" IS NULL
+        SQL
+      end
+    end
+
+    it_behaves_like "when current user is a DDFIP super admin" do
+      it "scopes all kept collectivities" do
+        expect {
+          scope.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "collectivities".*
+          FROM   "collectivities"
+          WHERE  "collectivities"."discarded_at" IS NULL
+        SQL
+      end
+    end
+
+    it_behaves_like "when current user is a publisher super admin" do
+      it "scopes all kept collectivities" do
+        expect {
+          scope.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "collectivities".*
+          FROM   "collectivities"
+          WHERE  "collectivities"."discarded_at" IS NULL
+        SQL
+      end
+    end
+
+    it_behaves_like "when current user is a publisher admin" do
+      it "scopes all kept collectivities belonging to publisher" do
+        expect {
+          scope.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "collectivities".*
+          FROM   "collectivities"
+          WHERE  "collectivities"."discarded_at" IS NULL
+            AND  "collectivities"."publisher_id" = '#{current_organization.id}'
+        SQL
+      end
+    end
+
+    it_behaves_like "when current user is a publisher user" do
+      it "scopes all kept collectivities belonging to publisher" do
+        expect {
+          scope.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "collectivities".*
+          FROM   "collectivities"
+          WHERE  "collectivities"."discarded_at" IS NULL
+            AND  "collectivities"."publisher_id" = '#{current_organization.id}'
+        SQL
+      end
+    end
+
+    it_behaves_like("when current user is a DDFIP admin")        { it { is_expected.to be_a_null_relation } }
+    it_behaves_like("when current user is a DDFIP user")         { it { is_expected.to be_a_null_relation } }
+    it_behaves_like("when current user is a collectivity admin") { it { is_expected.to be_a_null_relation } }
+    it_behaves_like("when current user is a collectivity user")  { it { is_expected.to be_a_null_relation } }
+  end
+
+  describe "undiscardable relation scope" do
+    subject!(:scope) do
+      policy.apply_scope(target, name: :undiscardable, type: :active_record_relation)
+    end
+
+    let(:target) { Collectivity.all }
+
+    it_behaves_like "when current user is a super admin" do
+      it "scopes all discarded collectivities" do
+        expect {
+          scope.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "collectivities".*
+          FROM   "collectivities"
+          WHERE  "collectivities"."discarded_at" IS NOT NULL
+        SQL
+      end
+    end
+
+    it_behaves_like "when current user is a publisher admin" do
+      it "scopes all discarded collectivities belonging to publisher" do
+        expect {
+          scope.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "collectivities".*
+          FROM   "collectivities"
+          WHERE  "collectivities"."publisher_id" = '#{current_organization.id}'
+            AND  "collectivities"."discarded_at" IS NOT NULL
+        SQL
+      end
+    end
+
+    it_behaves_like "when current user is a publisher user" do
+      it "scopes all discarded collectivities belonging to publisher" do
+        expect {
+          scope.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "collectivities".*
+          FROM   "collectivities"
+          WHERE  "collectivities"."publisher_id" = '#{current_organization.id}'
+            AND  "collectivities"."discarded_at" IS NOT NULL
+        SQL
+      end
+    end
+
+    it_behaves_like("when current user is a DDFIP admin")        { it { is_expected.to be_a_null_relation } }
+    it_behaves_like("when current user is a DDFIP user")         { it { is_expected.to be_a_null_relation } }
+    it_behaves_like("when current user is a collectivity admin") { it { is_expected.to be_a_null_relation } }
+    it_behaves_like("when current user is a collectivity user")  { it { is_expected.to be_a_null_relation } }
   end
 
   describe "params scope" do
-    # It's easier to assert the hash representation, not the ActionController::Params object
-    subject do
-      policy.apply_scope(target, type: :action_controller_params).to_hash.symbolize_keys
+    subject(:params) do
+      policy.apply_scope(target, type: :action_controller_params)&.to_hash&.symbolize_keys
     end
 
     let(:target) { ActionController::Parameters.new(attributes) }
+
     let(:attributes) do
       {
-        publisher_id:       "f4e6854a-00fb-48c4-b669-5f0623e07778",
-        territory_type:     "EPCI",
-        territory_id:       "738569d4-1761-4a99-8bbc-7f40aa243fce",
-        territory_data:     { type: "EPCI", id: "738569d4-1761-4a99-8bbc-7f40aa243fce" }.to_json,
-        territory_code:     "123456789",
-        name:               "CA du Pays Basque",
-        siren:              "123456789",
-        contact_first_name: "Christelle",
-        contact_last_name:  "Droitier",
-        contact_email:      "christelle.droitier@pays-basque.fr",
-        contact_phone:      "+0000"
+        publisher_id:        "f4e6854a-00fb-48c4-b669-5f0623e07778",
+        territory_type:      "EPCI",
+        territory_id:        "738569d4-1761-4a99-8bbc-7f40aa243fce",
+        territory_data:      { type: "EPCI", id: "738569d4-1761-4a99-8bbc-7f40aa243fce" }.to_json,
+        territory_code:      "123456789",
+        name:                "CA du Pays Basque",
+        siren:               "123456789",
+        contact_first_name:  "Christelle",
+        contact_last_name:   "Droitier",
+        contact_email:       "christelle.droitier@pays-basque.fr",
+        contact_phone:       "+0000",
+        allow_2fa_via_email: "true",
+        domain_restriction:  "@pays-basque.fr",
+        something_else:      "true"
       }
     end
 
-    it_behaves_like("when current user is a super admin") do
-      it { is_expected.to eq(attributes) }
-    end
-
-    it_behaves_like("when current user is a publisher admin") do
+    it_behaves_like "when current user is a super admin" do
       it do
-        is_expected.to eq(
-          territory_type:     "EPCI",
-          territory_id:       "738569d4-1761-4a99-8bbc-7f40aa243fce",
-          territory_data:     { type: "EPCI", id: "738569d4-1761-4a99-8bbc-7f40aa243fce" }.to_json,
-          territory_code:     "123456789",
-          name:               "CA du Pays Basque",
-          siren:              "123456789",
-          contact_first_name: "Christelle",
-          contact_last_name:  "Droitier",
-          contact_email:      "christelle.droitier@pays-basque.fr",
-          contact_phone:      "+0000"
-        )
+        is_expected
+          .to  include(publisher_id:        attributes[:publisher_id])
+          .and include(territory_type:      attributes[:territory_type])
+          .and include(territory_id:        attributes[:territory_id])
+          .and include(territory_data:      attributes[:territory_data])
+          .and include(territory_code:      attributes[:territory_code])
+          .and include(name:                attributes[:name])
+          .and include(siren:               attributes[:siren])
+          .and include(contact_first_name:  attributes[:contact_first_name])
+          .and include(contact_last_name:   attributes[:contact_last_name])
+          .and include(contact_email:       attributes[:contact_email])
+          .and include(contact_phone:       attributes[:contact_phone])
+          .and include(allow_2fa_via_email: attributes[:allow_2fa_via_email])
+          .and not_include(:domain_restriction)
+          .and not_include(:something_else)
       end
     end
 
-    it_behaves_like("when current user is a publisher user") do
+    it_behaves_like "when current user is a publisher admin" do
       it do
-        is_expected.to eq(
-          territory_type:     "EPCI",
-          territory_id:       "738569d4-1761-4a99-8bbc-7f40aa243fce",
-          territory_data:     { type: "EPCI", id: "738569d4-1761-4a99-8bbc-7f40aa243fce" }.to_json,
-          territory_code:     "123456789",
-          name:               "CA du Pays Basque",
-          siren:              "123456789",
-          contact_first_name: "Christelle",
-          contact_last_name:  "Droitier",
-          contact_email:      "christelle.droitier@pays-basque.fr",
-          contact_phone:      "+0000"
-        )
+        is_expected
+          .to  not_include(:publisher_id)
+          .and include(territory_type:      attributes[:territory_type])
+          .and include(territory_id:        attributes[:territory_id])
+          .and include(territory_data:      attributes[:territory_data])
+          .and include(territory_code:      attributes[:territory_code])
+          .and include(name:                attributes[:name])
+          .and include(siren:               attributes[:siren])
+          .and include(contact_first_name:  attributes[:contact_first_name])
+          .and include(contact_last_name:   attributes[:contact_last_name])
+          .and include(contact_email:       attributes[:contact_email])
+          .and include(contact_phone:       attributes[:contact_phone])
+          .and include(allow_2fa_via_email: attributes[:allow_2fa_via_email])
+          .and not_include(:domain_restriction)
+          .and not_include(:something_else)
       end
     end
+
+    it_behaves_like "when current user is a publisher user" do
+      it do
+        is_expected
+          .to  not_include(:publisher_id)
+          .and include(territory_type:      attributes[:territory_type])
+          .and include(territory_id:        attributes[:territory_id])
+          .and include(territory_data:      attributes[:territory_data])
+          .and include(territory_code:      attributes[:territory_code])
+          .and include(name:                attributes[:name])
+          .and include(siren:               attributes[:siren])
+          .and include(contact_first_name:  attributes[:contact_first_name])
+          .and include(contact_last_name:   attributes[:contact_last_name])
+          .and include(contact_email:       attributes[:contact_email])
+          .and include(contact_phone:       attributes[:contact_phone])
+          .and include(allow_2fa_via_email: attributes[:allow_2fa_via_email])
+          .and not_include(:domain_restriction)
+          .and not_include(:something_else)
+      end
+    end
+
+    it_behaves_like("when current user is a DDFIP admin")        { it { is_expected.to be_nil } }
+    it_behaves_like("when current user is a DDFIP user")         { it { is_expected.to be_nil } }
+    it_behaves_like("when current user is a collectivity admin") { it { is_expected.to be_nil } }
+    it_behaves_like("when current user is a collectivity user")  { it { is_expected.to be_nil } }
   end
 end

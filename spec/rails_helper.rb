@@ -90,6 +90,7 @@ RSpec.configure do |config|
   # config.filter_gems_from_backtrace("gem name")
 
   config.include FactoryBot::Syntax::Methods
+  config.include Matchers::BeANullRelation
   config.include Matchers::HaveBody
   config.include Matchers::HaveContentType
   config.include Matchers::HaveFlash
