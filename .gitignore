@@ -11,6 +11,7 @@
 # Because we may put actual secrets in these files,
 # we really don't want them in version control
 .env*
+.rspec
 
 # Ignore all logfiles and tempfiles.
 /log/*
