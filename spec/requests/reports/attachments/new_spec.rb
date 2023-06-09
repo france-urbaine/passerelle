@@ -17,10 +17,34 @@ RSpec.describe "Reports::AttachmentsController#new" do
     it_behaves_like "it requires authorization in HTML"
     it_behaves_like "it requires authorization in JSON"
     it_behaves_like "it responds with not acceptable in JSON when signed in"
+
+    it_behaves_like "it denies access to publisher user"
+    it_behaves_like "it denies access to publisher admin"
+    it_behaves_like "it denies access to DDFIP user"
+    it_behaves_like "it denies access to DDFIP admin"
+    it_behaves_like "it denies access to collectivity user"
+    it_behaves_like "it denies access to collectivity admin"
+
+    context "when report has been created by current user collectivity" do
+      let(:report) { create(:report, :reported_through_web_ui, collectivity: current_user.organization) }
+
+      it_behaves_like "it allows access to collectivity user"
+      it_behaves_like "it allows access to collectivity admin"
+    end
+
+    context "when report has been created by current user publisher" do
+      let(:report) { create(:report, publisher: current_user.organization) }
+
+      it_behaves_like "it allows access to publisher user"
+      it_behaves_like "it allows access to publisher admin"
+    end
   end
 
   describe "responses" do
-    before { sign_in_as(:super_admin) }
+    before { sign_in_as(organization: collectivity) }
+
+    let(:collectivity) { create(:collectivity) }
+    let(:report)       { create(:report, :reported_through_web_ui, collectivity: collectivity) }
 
     context "when the report is accessible" do
       it { expect(response).to have_http_status(:success) }
