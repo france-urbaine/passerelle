@@ -160,6 +160,12 @@ Style/FetchEnvVar:
     - BUNDLE_GEMFILE
     - RAILS_ENV
 
+Style/FormatString:
+  Enabled: false
+
+Style/FormatStringToken:
+  EnforcedStyle: template
+
 Style/FrozenStringLiteralComment:
   Exclude:
     - 'bin/*'
