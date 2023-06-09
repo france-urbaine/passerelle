@@ -4,14 +4,17 @@ module DDFIPs
   class CollectivitiesController < ::CollectivitiesController
     private
 
-    def build_collectivities_scope
+    def load_and_authorize_parent
       ddfip = DDFIP.find(params[:ddfip_id])
 
       authorize! ddfip, to: :show?
       only_kept! ddfip
 
       @parent = ddfip
-      @collectivities = ddfip.on_territory_collectivities
+    end
+
+    def build_and_authorize_scope(as: :default)
+      authorized(@parent.on_territory_collectivities, as:).strict_loading
     end
   end
 end

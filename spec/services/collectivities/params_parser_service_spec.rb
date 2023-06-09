@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe CollectivityParamsParser do
+RSpec.describe Collectivities::ParamsParserService do
   subject(:parser) do
     described_class.new(payload)
   end

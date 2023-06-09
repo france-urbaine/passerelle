@@ -2,29 +2,24 @@
 
 class PublishersController < ApplicationController
   before_action :authorize!
-  before_action :build_publishers_scope
-  before_action :authorize_publishers_scope
-  before_action :build_publisher,     only: %i[new create]
-  before_action :find_publisher,      only: %i[show edit remove update destroy undiscard]
-  before_action :authorize_publisher, only: %i[show edit remove update destroy undiscard]
+  before_action :autocompletion_not_implemented!, only: :index
 
   def index
-    return not_implemented if autocomplete_request?
-
-    @publishers = @publishers.kept.strict_loading
+    @publishers = build_and_authorize_scope
     @publishers, @pagy = index_collection(@publishers)
   end
 
   def show
-    only_kept! @publisher
+    @publisher = find_and_authorize_publisher
   end
 
   def new
+    @publisher = build_publisher
     @background_url = referrer_path || publishers_path
   end
 
   def create
-    @publisher.assign_attributes(publisher_params)
+    @publisher = build_publisher(publisher_params)
     @publisher.save
 
     respond_with @publisher,
@@ -33,12 +28,12 @@ class PublishersController < ApplicationController
   end
 
   def edit
-    only_kept! @publisher
+    @publisher = find_and_authorize_publisher
     @background_url = referrer_path || publisher_path(@publisher)
   end
 
   def update
-    only_kept! @publisher
+    @publisher = find_and_authorize_publisher
     @publisher.update(publisher_params)
 
     respond_with @publisher,
@@ -47,11 +42,12 @@ class PublishersController < ApplicationController
   end
 
   def remove
-    only_kept! @publisher
+    @publisher = find_and_authorize_publisher
     @background_url = referrer_path || publisher_path(@publisher)
   end
 
   def destroy
+    @publisher = find_and_authorize_publisher(allow_discarded: true)
     @publisher.discard
 
     respond_with @publisher,
@@ -61,6 +57,7 @@ class PublishersController < ApplicationController
   end
 
   def undiscard
+    @publisher = find_and_authorize_publisher(allow_discarded: true)
     @publisher.undiscard
 
     respond_with @publisher,
@@ -69,14 +66,13 @@ class PublishersController < ApplicationController
   end
 
   def remove_all
-    @publishers = @publishers.kept.strict_loading
+    @publishers = build_and_authorize_scope
     @publishers = filter_collection(@publishers)
-
     @background_url = referrer_path || publishers_path(**selection_params)
   end
 
   def destroy_all
-    @publishers = @publishers.kept.strict_loading
+    @publishers = build_and_authorize_scope(as: :destroyable)
     @publishers = filter_collection(@publishers)
     @publishers.quickly_discard_all
 
@@ -87,7 +83,7 @@ class PublishersController < ApplicationController
   end
 
   def undiscard_all
-    @publishers = @publishers.discarded.strict_loading
+    @publishers = build_and_authorize_scope(as: :undiscardable)
     @publishers = filter_collection(@publishers)
     @publishers.quickly_undiscard_all
 
@@ -98,24 +94,21 @@ class PublishersController < ApplicationController
 
   private
 
-  def build_publishers_scope
-    @publishers = Publisher.all
+  def build_and_authorize_scope(as: :default)
+    authorized(Publisher.all, as:).strict_loading
   end
 
-  def authorize_publishers_scope
-    @publishers = authorized(@publishers)
+  def build_publisher(...)
+    build_and_authorize_scope.build(...)
   end
 
-  def build_publisher
-    @publisher = @publishers.build
-  end
+  def find_and_authorize_publisher(allow_discarded: false)
+    publisher = Publisher.find(params[:id])
 
-  def find_publisher
-    @publisher = Publisher.find(params[:id])
-  end
+    authorize! publisher
+    only_kept! publisher unless allow_discarded
 
-  def authorize_publisher
-    authorize! @publisher
+    publisher
   end
 
   def publisher_params

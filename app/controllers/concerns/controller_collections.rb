@@ -63,4 +63,8 @@ module ControllerCollections
       raise ActionController::UnpermittedParameters, %i[ids]
     end
   end
+
+  def better_view_on_parent
+    redirect_to(@parent, status: :see_other) if @parent && !turbo_frame_request?
+  end
 end

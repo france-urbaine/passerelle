@@ -3,6 +3,10 @@
 module ControllerAutocompletion
   private
 
+  def autocompletion_not_implemented!
+    not_implemented if autocomplete_request?
+  end
+
   def autocomplete_collection(relation)
     relation = relation.autocomplete(params[:q]) if params[:q]
     relation = order_collection(relation)

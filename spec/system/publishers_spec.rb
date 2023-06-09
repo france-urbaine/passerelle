@@ -244,7 +244,7 @@ RSpec.describe "Publishers" do
 
     # Checkboxes should be present to select publishers
     #
-    within :table_row, { "Éditeur" => "Fiscalité & Territoire" } do
+    within :table_row, { "Éditeur" => "France Urbaine" } do
       check
     end
 
@@ -268,8 +268,8 @@ RSpec.describe "Publishers" do
     expect(page).to     have_current_path(publishers_path)
     expect(page).to     have_selector("h1", text: "Éditeurs")
     expect(page).to     have_text("1 éditeur | Page 1 sur 1")
-    expect(page).not_to have_selector(:table_row, "Éditeur" => "Fiscalité & Territoire")
-    expect(page).to     have_selector(:table_row, "Éditeur" => "France Urbaine")
+    expect(page).not_to have_selector(:table_row, "Éditeur" => "France Urbaine")
+    expect(page).to     have_selector(:table_row, "Éditeur" => "Fiscalité & Territoire")
 
     # The selection message should not appears anymore
     # The dialog should be closed
@@ -291,7 +291,7 @@ RSpec.describe "Publishers" do
     expect(page).to have_current_path(publishers_path)
     expect(page).to have_selector("h1", text: "Éditeurs")
     expect(page).to have_text("2 éditeurs | Page 1 sur 1")
-    expect(page).to have_selector(:table_row, "Éditeur" => "Fiscalité & Territoire")
+    expect(page).to have_selector(:table_row, "Éditeur" => "France Urbaine")
 
     # The selection message should not appears again
     # The previous notification should be closed
@@ -343,11 +343,12 @@ RSpec.describe "Publishers" do
 
     # The browser should stay on index page
     # The selected publishers should have been removed
+    # The current publisher should remains
     #
     expect(page).to     have_current_path(publishers_path)
     expect(page).to     have_selector("h1", text: "Éditeurs")
-    expect(page).to     have_text("2 éditeurs | Page 1 sur 1")
-    expect(page).not_to have_selector(:table_row, "Éditeur" => "Fiscalité & Territoire")
+    expect(page).to     have_text("3 éditeurs | Page 1 sur 1")
+    expect(page).to     have_selector(:table_row, "Éditeur" => "Fiscalité & Territoire")
     expect(page).not_to have_selector(:table_row, "Éditeur" => "France Urbaine")
 
     # The dialog should be closed
@@ -425,11 +426,12 @@ RSpec.describe "Publishers" do
     end
 
     # The browser should stay on index page
-    # No publishers should appear anymore
+    # Only the current publisher should remain
     #
     expect(page).to have_current_path(publishers_path)
     expect(page).to have_selector("h1", text: "Éditeurs")
-    expect(page).to have_text("Aucun éditeur disponible.")
+    expect(page).to have_text("1 éditeur | Page 1 sur 1")
+    expect(page).to have_selector(:table_row, "Éditeur" => "Fiscalité & Territoire")
 
     # The dialog should be closed
     # A notification should be displayed
