@@ -4,7 +4,6 @@ require "rails_helper"
 
 RSpec.describe "Reports::AttachmentsController#destroy" do
   subject(:request) do
-    p attachment
     delete "/signalements/#{report.id}/attachments/#{attachment.id}", as:, headers:, params:
   end
 
