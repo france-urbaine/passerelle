@@ -20,7 +20,6 @@
 #  action                                         :enum             not null
 #  subject                                        :string           not null
 #  completed                                      :boolean          default(FALSE), not null
-#  sandbox                                        :boolean          default(FALSE), not null
 #  priority                                       :enum             default("low"), not null
 #  code_insee                                     :string
 #  date_constat                                   :date
@@ -238,9 +237,8 @@ class Report < ApplicationRecord
 
   # Scopes
   # ----------------------------------------------------------------------------
-  scope :sandbox,        -> { where(sandbox: true) }
-  scope :out_of_sandbox, -> { where(sandbox: false) }
-
+  scope :sandbox,             -> { joins(:package).merge(Package.unscoped.sandbox) }
+  scope :out_of_sandbox,      -> { joins(:package).merge(Package.unscoped.out_of_sandbox) }
   scope :packing,             -> { joins(:package).merge(Package.unscoped.packing) }
   scope :transmitted,         -> { joins(:package).merge(Package.unscoped.transmitted) }
   scope :all_kept,            -> { joins(:package).merge(Package.unscoped.kept).kept }
@@ -299,16 +297,10 @@ class Report < ApplicationRecord
 
   # Predicates
   # ----------------------------------------------------------------------------
-  def out_of_sandbox?
-    !sandbox?
-  end
+  delegate :sandbox?, :out_of_sandbox?, :transmitted?, to: :package, allow_nil: true
 
   def packing?
     package&.packing? || new_record?
-  end
-
-  def transmitted?
-    package&.transmitted?
   end
 
   def all_kept?

@@ -1712,7 +1712,8 @@ CREATE TABLE public.packages (
     rejected_at timestamp(6) without time zone,
     discarded_at timestamp(6) without time zone,
     due_on date,
-    completed boolean DEFAULT false NOT NULL
+    completed boolean DEFAULT false NOT NULL,
+    sandbox boolean DEFAULT false NOT NULL
 );
 
 
@@ -1737,7 +1738,6 @@ CREATE TABLE public.reports (
     action public.action NOT NULL,
     subject character varying NOT NULL,
     completed boolean DEFAULT false NOT NULL,
-    sandbox boolean DEFAULT false NOT NULL,
     priority public.priority DEFAULT 'low'::public.priority NOT NULL,
     code_insee character varying,
     date_constat date,
@@ -2595,6 +2595,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230601093936'),
 ('20230605122559'),
 ('20230605130656'),
-('20230607183851');
+('20230607183851'),
+('20230609124040');
 
 

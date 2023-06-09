@@ -18,6 +18,7 @@
 #  discarded_at    :datetime
 #  due_on          :date
 #  completed       :boolean          default(FALSE), not null
+#  sandbox         :boolean          default(FALSE), not null
 #
 # Indexes
 #
@@ -48,6 +49,9 @@ class Package < ApplicationRecord
 
   # Scopes
   # ----------------------------------------------------------------------------
+  scope :sandbox,        -> { where(sandbox: true) }
+  scope :out_of_sandbox, -> { where(sandbox: false) }
+
   scope :packing,      -> { where(transmitted_at: nil) }
   scope :transmitted,  -> { where.not(transmitted_at: nil) }
   scope :to_approve,   -> { transmitted.kept.where(approved_at: nil, rejected_at: nil) }
@@ -61,10 +65,14 @@ class Package < ApplicationRecord
   scope :sent_by_collectivity, ->(collectivity) { where(collectivity: collectivity) }
   scope :sent_by_publisher,    ->(publisher)    { where(publisher: publisher) }
 
-  scope :with_reports, ->(reports = Report.all) { distinct.joins(:reports).merge(reports.kept) }
+  scope :with_reports, ->(reports = Report.kept) { distinct.joins(:reports).merge(reports) }
 
   # Predicates
   # ----------------------------------------------------------------------------
+  def out_of_sandbox?
+    !sandbox?
+  end
+
   def packing?
     !transmitted_at?
   end

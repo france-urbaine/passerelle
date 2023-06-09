@@ -31,7 +31,7 @@ RSpec.describe "ReportsController#index" do
       create(:report, :transmitted_through_web_ui, collectivity: collectivities[0], publisher: publisher),
       create(:report, :transmitted_through_web_ui, collectivity: collectivities[1], publisher: publisher),
       create(:report, :transmitted_through_api,    collectivity: collectivities[0], publisher: publisher),
-      create(:report, :transmitted_through_api,    collectivity: collectivities[0], publisher: publisher, sandbox: true),
+      create(:report, :transmitted_through_api,    collectivity: collectivities[0], publisher: publisher, package_sandbox: true),
       create(:report, :reported_through_web_ui, :discarded, collectivity: collectivities[0], publisher: publisher)
     ]
   end
@@ -114,7 +114,7 @@ RSpec.describe "ReportsController#index" do
         [
           create(:report, :reported_for_ddfip,   ddfip: ddfip, collectivity: collectivities[0], publisher: publisher),
           create(:report, :transmitted_to_ddfip, ddfip: ddfip, collectivity: collectivities[0], publisher: publisher),
-          create(:report, :transmitted_to_ddfip, ddfip: ddfip, collectivity: collectivities[0], publisher: publisher, sandbox: true)
+          create(:report, :transmitted_to_ddfip, ddfip: ddfip, collectivity: collectivities[0], publisher: publisher, package_sandbox: true)
         ]
       end
 
@@ -148,7 +148,7 @@ RSpec.describe "ReportsController#index" do
         [
           create(:report, :reported_for_ddfip,        **attributes),
           create(:report, :transmitted_to_ddfip,      **attributes),
-          create(:report, :package_approved_by_ddfip, **attributes, sandbox: true),
+          create(:report, :package_approved_by_ddfip, **attributes, package_sandbox: true),
           create(:report, :package_approved_by_ddfip, **attributes),
           create(:report, :package_approved_by_ddfip, **attributes, collectivity: collectivities[1]),
           create(:report, :package_approved_by_ddfip, **attributes, action: "evaluation_eco")

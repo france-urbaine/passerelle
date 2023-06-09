@@ -113,14 +113,10 @@ class PackagePolicy < ApplicationPolicy
     # those fully transmitted by their publishers
     #
     Package
-      .distinct
-      .left_joins(:reports)
       .kept
+      .out_of_sandbox
       .sent_by_collectivity(organization)
-      .merge(
-        Package.packed_through_web_ui
-          .or(Package.transmitted.merge(Report.out_of_sandbox))
-      )
+      .merge(Package.packed_through_web_ui.or(Package.transmitted))
   end
 
   def packages_listed_to_publisher
@@ -140,8 +136,9 @@ class PackagePolicy < ApplicationPolicy
 
     Package
       .kept
+      .out_of_sandbox
       .unrejected
-      .with_reports(Report.covered_by_ddfip(organization).out_of_sandbox)
+      .with_reports(Report.kept.covered_by_ddfip(organization))
   end
 
   # Assert if a package can be shown to an user
@@ -149,11 +146,8 @@ class PackagePolicy < ApplicationPolicy
   def package_shown_to_collectivity?(package)
     collectivity? &&
       package.sent_by_collectivity?(organization) &&
-      (
-        package.packed_through_web_ui? || (
-          package.transmitted? && package.reports.out_of_sandbox.any?
-        )
-      )
+      package.out_of_sandbox? &&
+      (package.packed_through_web_ui? || package.transmitted?)
   end
 
   def package_shown_to_publisher?(package)
@@ -165,8 +159,9 @@ class PackagePolicy < ApplicationPolicy
   def package_shown_to_ddfip_admin?(package)
     ddfip_admin? &&
       package.kept? &&
+      package.out_of_sandbox? &&
       package.unrejected? &&
-      package.reports.out_of_sandbox.covered_by_ddfip(organization).any?
+      package.reports.covered_by_ddfip(organization).any?
   end
 
   # List packages that can receive reports by an user
@@ -227,7 +222,7 @@ class PackagePolicy < ApplicationPolicy
     Package
       .kept
       .sent_by_publisher(organization)
-      .packing
+      .merge(Package.packing.or(Package.sandbox))
   end
 
   # Assert if a package can be destroyed by an user
@@ -243,6 +238,6 @@ class PackagePolicy < ApplicationPolicy
     publisher? &&
       package.sent_by_publisher?(organization) &&
       package.packed_through_publisher_api? &&
-      (package.packing? || package.reports.out_of_sandbox.none?)
+      (package.packing? || package.sandbox?)
   end
 end

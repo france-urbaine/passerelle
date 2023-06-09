@@ -22,6 +22,30 @@ RSpec.describe Package do
   # Scopes
   # ----------------------------------------------------------------------------
   describe "scopes" do
+    describe ".sandbox" do
+      it "scopes packages not yet transmitted" do
+        expect {
+          described_class.sandbox.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "packages".*
+          FROM   "packages"
+          WHERE  "packages"."sandbox" = TRUE
+        SQL
+      end
+    end
+
+    describe ".out_of_sandbox" do
+      it "scopes packages not yet transmitted" do
+        expect {
+          described_class.out_of_sandbox.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "packages".*
+          FROM   "packages"
+          WHERE  "packages"."sandbox" = FALSE
+        SQL
+      end
+    end
+
     describe ".packing" do
       it "scopes packages not yet transmitted" do
         expect {
@@ -182,7 +206,7 @@ RSpec.describe Package do
     end
 
     describe ".with_reports" do
-      it "scopes on packages having reports" do
+      it "scopes on packages having kept reports" do
         expect {
           described_class.with_reports.load
         }.to perform_sql_query(<<~SQL)
@@ -193,15 +217,14 @@ RSpec.describe Package do
         SQL
       end
 
-      it "scopes on packages having the expected reports" do
+      it "scopes on packages having the expected reports (overriding default kept reports)" do
         expect {
-          described_class.with_reports(Report.sandbox).load
+          described_class.with_reports(Report.where(code_insee: "64102")).load
         }.to perform_sql_query(<<~SQL)
           SELECT     DISTINCT "packages".*
           FROM       "packages"
           INNER JOIN "reports" ON "reports"."package_id" = "packages"."id"
-          WHERE      "reports"."sandbox" = TRUE
-            AND      "reports"."discarded_at" IS NULL
+          WHERE      "reports"."code_insee" = '64102'
         SQL
       end
     end
@@ -219,9 +242,19 @@ RSpec.describe Package do
         build_stubbed(:package, :approved, collectivity: collectivities[0]),
         build_stubbed(:package, :rejected, collectivity: collectivities[0]),
         build_stubbed(:package, :approved, :rejected, collectivity: collectivities[1]),
+        build_stubbed(:package, :transmitted, collectivity: collectivities[0], publisher: publisher, sandbox: true),
         build(:package, collectivity: collectivities[0]),
         build(:package, collectivity: collectivities[1], publisher: publisher)
       ]
+    end
+
+    describe "#out_of_sandbox?" do
+      it { expect(packages[0]).to be_out_of_sandbox }
+      it { expect(packages[1]).to be_out_of_sandbox }
+      it { expect(packages[2]).to be_out_of_sandbox }
+      it { expect(packages[3]).to be_out_of_sandbox }
+      it { expect(packages[4]).to be_out_of_sandbox }
+      it { expect(packages[5]).not_to be_out_of_sandbox }
     end
 
     describe "#packing?" do
@@ -275,29 +308,29 @@ RSpec.describe Package do
     describe "#packed_through_publisher_api?" do
       it { expect(packages[0]).not_to be_packed_through_publisher_api }
       it { expect(packages[1]).to     be_packed_through_publisher_api }
-      it { expect(packages[5]).not_to be_packed_through_publisher_api }
-      it { expect(packages[6]).to     be_packed_through_publisher_api }
+      it { expect(packages[6]).not_to be_packed_through_publisher_api }
+      it { expect(packages[7]).to     be_packed_through_publisher_api }
     end
 
     describe "#packed_through_web_ui?" do
       it { expect(packages[0]).to     be_packed_through_web_ui }
       it { expect(packages[1]).not_to be_packed_through_web_ui }
-      it { expect(packages[5]).to     be_packed_through_web_ui }
-      it { expect(packages[6]).not_to be_packed_through_web_ui }
+      it { expect(packages[6]).to     be_packed_through_web_ui }
+      it { expect(packages[7]).not_to be_packed_through_web_ui }
     end
 
     describe "#sent_by_collectivity?" do
       it { expect(packages[0]).to     be_sent_by_collectivity(collectivities[0]) }
       it { expect(packages[1]).to     be_sent_by_collectivity(collectivities[0]) }
-      it { expect(packages[5]).to     be_sent_by_collectivity(collectivities[0]) }
-      it { expect(packages[6]).not_to be_sent_by_collectivity(collectivities[0]) }
+      it { expect(packages[6]).to     be_sent_by_collectivity(collectivities[0]) }
+      it { expect(packages[7]).not_to be_sent_by_collectivity(collectivities[0]) }
     end
 
     describe "#sent_by_publisher?" do
       it { expect(packages[0]).not_to be_sent_by_publisher(publisher) }
       it { expect(packages[1]).to     be_sent_by_publisher(publisher) }
-      it { expect(packages[5]).not_to be_sent_by_publisher(publisher) }
-      it { expect(packages[6]).to     be_sent_by_publisher(publisher) }
+      it { expect(packages[6]).not_to be_sent_by_publisher(publisher) }
+      it { expect(packages[7]).to     be_sent_by_publisher(publisher) }
     end
   end
 

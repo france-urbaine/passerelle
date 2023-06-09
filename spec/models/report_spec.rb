@@ -75,9 +75,10 @@ RSpec.describe Report do
         expect {
           described_class.sandbox.load
         }.to perform_sql_query(<<~SQL)
-          SELECT "reports".*
-          FROM   "reports"
-          WHERE  "reports"."sandbox" = TRUE
+          SELECT     "reports".*
+          FROM       "reports"
+          INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
+          WHERE      "packages"."sandbox" = TRUE
         SQL
       end
     end
@@ -87,9 +88,10 @@ RSpec.describe Report do
         expect {
           described_class.out_of_sandbox.load
         }.to perform_sql_query(<<~SQL)
-          SELECT "reports".*
-          FROM   "reports"
-          WHERE  "reports"."sandbox" = FALSE
+          SELECT     "reports".*
+          FROM       "reports"
+          INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
+          WHERE      "packages"."sandbox" = FALSE
         SQL
       end
     end
@@ -132,7 +134,7 @@ RSpec.describe Report do
           WHERE      "packages"."transmitted_at" IS NOT NULL
             AND      "packages"."discarded_at" IS NULL
             AND      "reports"."discarded_at" IS NULL
-            AND      "reports"."sandbox" = FALSE
+            AND      "packages"."sandbox" = FALSE
         SQL
       end
     end
@@ -191,7 +193,7 @@ RSpec.describe Report do
           WHERE      "packages"."transmitted_at" IS NOT NULL
             AND      "packages"."discarded_at" IS NULL
             AND      "reports"."discarded_at" IS NULL
-            AND      "reports"."sandbox" = FALSE
+            AND      "packages"."sandbox" = FALSE
             AND      "reports"."approved_at" IS NULL
             AND      "reports"."rejected_at" IS NULL
             AND      "reports"."debated_at" IS NULL
@@ -210,7 +212,7 @@ RSpec.describe Report do
           WHERE      "packages"."transmitted_at" IS NOT NULL
             AND      "packages"."discarded_at" IS NULL
             AND      "reports"."discarded_at" IS NULL
-            AND      "reports"."sandbox" = FALSE
+            AND      "packages"."sandbox" = FALSE
             AND      "reports"."approved_at" IS NOT NULL
         SQL
       end
@@ -227,7 +229,7 @@ RSpec.describe Report do
           WHERE      "packages"."transmitted_at" IS NOT NULL
             AND      "packages"."discarded_at" IS NULL
             AND      "reports"."discarded_at" IS NULL
-            AND      "reports"."sandbox" = FALSE
+            AND      "packages"."sandbox" = FALSE
             AND      "reports"."rejected_at" IS NOT NULL
         SQL
       end
@@ -244,7 +246,7 @@ RSpec.describe Report do
           WHERE      "packages"."transmitted_at" IS NOT NULL
             AND      "packages"."discarded_at" IS NULL
             AND      "reports"."discarded_at" IS NULL
-            AND      "reports"."sandbox" = FALSE
+            AND      "packages"."sandbox" = FALSE
             AND      "reports"."debated_at" IS NOT NULL
         SQL
       end
@@ -395,11 +397,13 @@ RSpec.describe Report do
   # ----------------------------------------------------------------------------
   describe "predicates" do
     # Use only one collectivity to reduce the number of queries and records to create
-    let_it_be(:collectivity) { build(:collectivity) }
+    let_it_be(:publisher)    { build(:publisher) }
+    let_it_be(:collectivity) { build(:collectivity, publisher: publisher) }
     let_it_be(:packages) do
       [
         build(:package, collectivity: collectivity),
-        build(:package, :transmitted,         collectivity: collectivity),
+        build(:package, :transmitted, collectivity: collectivity),
+        build(:package, :transmitted, collectivity: collectivity, publisher: publisher, sandbox: true),
         build(:package, :rejected,            collectivity: collectivity),
         build(:package, :approved, :rejected, collectivity: collectivity),
         build(:package, :approved,            collectivity: collectivity)
@@ -408,16 +412,16 @@ RSpec.describe Report do
 
     let_it_be(:reports) do
       [
-        build(:report, package: packages[0]),                 # 0
-        build(:report, package: packages[1]),                 # 1
-        build(:report, package: packages[1], sandbox: true),  # 2
-        build(:report, package: packages[2]),                 # 3
-        build(:report, package: packages[3]),                 # 4
-        build(:report, package: packages[4]),                 # 5
-        build(:report, :discarded, package: packages[4]),     # 6
-        build(:report, :approved,  package: packages[4]),     # 7
-        build(:report, :rejected,  package: packages[4]),     # 8
-        build(:report, :debated,   package: packages[4])      # 9
+        build(:report, package: packages[0]),             # 0
+        build(:report, package: packages[1]),             # 1
+        build(:report, package: packages[2]),             # 2
+        build(:report, package: packages[3]),             # 3
+        build(:report, package: packages[4]),             # 4
+        build(:report, package: packages[5]),             # 5
+        build(:report, :discarded, package: packages[5]), # 6
+        build(:report, :approved,  package: packages[5]), # 7
+        build(:report, :rejected,  package: packages[5]), # 8
+        build(:report, :debated,   package: packages[5])  # 9
       ]
     end
 
