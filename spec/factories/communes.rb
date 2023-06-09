@@ -6,11 +6,8 @@ FactoryBot.define do
   factory :commune do
     departement
 
-    name do
-      loop do
-        value = Faker::Address.unique.city
-        break value unless Commune.exists?(name: value)
-      end
+    sequence(:name) do |n|
+      "#{Faker::Address.city} ##{n}"
     end
 
     code_insee do

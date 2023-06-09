@@ -19,11 +19,8 @@ FactoryBot.define do
       end
     end
 
-    name do
-      loop do
-        value = Faker::Address.state
-        break value unless Departement.exists?(name: value)
-      end
+    sequence(:name) do |n|
+      "#{Faker::Address.state} ##{n}"
     end
   end
 end

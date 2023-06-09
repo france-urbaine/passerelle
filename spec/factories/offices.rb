@@ -4,16 +4,16 @@ FactoryBot.define do
   factory :office do
     ddfip
 
-    name do
-      acronyms = %w[SIE SIP PELP PELH SDIF]
+    transient do
+      name_pattern { "%{acronym} #%{sequence} de %{city}" }
+    end
 
-      loop do
-        type = acronyms.sample
-        city = Faker::Address.city
-        value = "#{type} de #{city}"
-
-        break value unless Office.exists?(ddfip_id: ddfip_id, name: value)
-      end
+    sequence(:name) do |n|
+      name_pattern % {
+        acronym:  %w[SIE SIP PELP PELH SDIF].sample,
+        city:     Faker::Address.city,
+        sequence: n
+      }
     end
 
     action { Office::ACTIONS.sample }

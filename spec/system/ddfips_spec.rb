@@ -353,8 +353,8 @@ RSpec.describe "DDFIPs" do
     # Create a bunch of DDFIPs to have several pages
     # Create discarded DDFIPs to verify they are not rollbacked
     #
-    create_list(:ddfip, 10)
-    create_list(:ddfip, 5, :discarded)
+    create_list(:ddfip, 10, name_pattern: "DDFIP #%{sequence}")
+    create_list(:ddfip, 5, :discarded, name_pattern: "DDFIP #%{sequence}")
 
     visit ddfips_path
 
@@ -434,7 +434,7 @@ RSpec.describe "DDFIPs" do
     # Create a bunch of DDFIPs to have several pages
     # TODO: Create discarded DDFIPs to verify they are not rollbacked
     #
-    create_list(:ddfip, 10)
+    create_list(:ddfip, 10, name_pattern: "DDFIP #%{sequence}")
 
     visit ddfips_path
 

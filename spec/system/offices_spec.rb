@@ -355,8 +355,8 @@ RSpec.describe "Offices" do
     # Create a bunch of offices to have several pages
     # Create discarded offices to verify they are not rollbacked
     #
-    create_list(:office, 10)
-    create_list(:office, 5, :discarded)
+    create_list(:office, 10, name_pattern: "Guichet #%{sequence}")
+    create_list(:office, 5, :discarded, name_pattern: "Guichet #%{sequence}")
 
     visit offices_path
 
@@ -436,7 +436,7 @@ RSpec.describe "Offices" do
     # Create a bunch of offices to have several pages
     # TODO: Create discarded offices to verify they are not rollbacked
     #
-    create_list(:office, 10)
+    create_list(:office, 10, name_pattern: "Guichet #%{sequence}")
 
     visit offices_path
 

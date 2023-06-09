@@ -11,11 +11,8 @@ FactoryBot.define do
       end
     end
 
-    name do
-      loop do
-        value = "Région de #{Faker::Address.state}"
-        break value unless Region.exists?(name: value)
-      end
+    sequence(:name) do |n|
+      "#{Faker::Address.state} ##{n}"
     end
   end
 end

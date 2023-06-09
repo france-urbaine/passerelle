@@ -10,14 +10,15 @@ FactoryBot.define do
       end
     end
 
-    name do
-      value = "DDFIP de #{departement&.name || Faker::Address.state}"
-      next value unless DDFIP.exists?(name: value)
+    transient do
+      name_pattern { "DDFIP de %{deparement} #%{sequence}" }
+    end
 
-      loop do
-        value = "DDFIP de #{Faker::Address.city}"
-        break value unless DDFIP.exists?(name: value)
-      end
+    sequence(:name) do |n|
+      name_pattern % {
+        deparement: departement&.name || Faker::Address.state,
+        sequence:   n
+      }
     end
 
     trait :discarded do
