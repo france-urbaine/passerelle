@@ -18,13 +18,13 @@ module Publishers
     end
 
     relation_scope :destroyable do |relation, exclude_current: true|
-      relation = authorized(relation)
+      relation = authorized(relation, with: self.class)
       relation = relation.where.not(id: organization) if collectivity? && exclude_current
       relation
     end
 
     relation_scope :undiscardable do |relation|
-      relation = authorized(relation)
+      relation = authorized(relation, with: self.class)
       relation.with_discarded.discarded
     end
 

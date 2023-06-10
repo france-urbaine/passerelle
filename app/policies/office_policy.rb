@@ -16,12 +16,21 @@ class OfficePolicy < ApplicationPolicy
 
   relation_scope do |relation|
     if super_admin?
-      relation
+      relation.kept
     elsif ddfip_admin?
-      relation.owned_by(organization)
+      relation.kept.owned_by(organization)
     else
       relation.none
     end
+  end
+
+  relation_scope :destroyable do |relation|
+    authorized(relation)
+  end
+
+  relation_scope :undiscardable do |relation|
+    relation = authorized(relation)
+    relation.with_discarded.discarded
   end
 
   params_filter do |params|

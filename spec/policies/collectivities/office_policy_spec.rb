@@ -13,51 +13,52 @@ RSpec.describe Collectivities::OfficePolicy do
     it_behaves_like("when current user is a collectivity user")  { failed }
   end
 
-  describe "relation scope" do
-    # The following tests will assert a list of attributes rather than of a list
-    # of records to produce lighter and readable output.
-    #
-    subject do
-      policy.apply_scope(target, type: :active_record_relation).pluck(:name)
+  describe "default relation scope" do
+    subject!(:scope) do
+      policy.apply_scope(target, type: :active_record_relation)
     end
 
-    # The scope is ordered to have a deterministic order
-    #
-    let(:target) { Office.order(:name) }
+    let(:target) { Office.all }
 
-    before do
-      [
-        create(:office, name: "A"),
-        create(:office, name: "B")
-      ]
+    it_behaves_like "when current user is a super admin" do
+      it "scopes all kept offices" do
+        expect {
+          scope.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "offices".*
+          FROM   "offices"
+          WHERE  "offices"."discarded_at" IS NULL
+        SQL
+      end
     end
 
-    it_behaves_like("when current user is a super admin") do
-      it { is_expected.to eq(%w[A B]) }
+    it_behaves_like "when current user is a publisher admin" do
+      it "scopes all kept offices" do
+        expect {
+          scope.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "offices".*
+          FROM   "offices"
+          WHERE  "offices"."discarded_at" IS NULL
+        SQL
+      end
     end
 
-    it_behaves_like("when current user is a DDFIP admin") do
-      it { is_expected.to be_empty }
+    it_behaves_like "when current user is a publisher user" do
+      it "scopes all kept offices" do
+        expect {
+          scope.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "offices".*
+          FROM   "offices"
+          WHERE  "offices"."discarded_at" IS NULL
+        SQL
+      end
     end
 
-    it_behaves_like("when current user is a publisher admin") do
-      it { is_expected.to eq(%w[A B]) }
-    end
-
-    it_behaves_like("when current user is a collectivity admin") do
-      it { is_expected.to be_empty }
-    end
-
-    it_behaves_like("when current user is a DDFIP user") do
-      it { is_expected.to be_empty }
-    end
-
-    it_behaves_like("when current user is a publisher user") do
-      it { is_expected.to eq(%w[A B]) }
-    end
-
-    it_behaves_like("when current user is a collectivity user") do
-      it { is_expected.to be_empty }
-    end
+    it_behaves_like("when current user is a DDFIP admin")        { it { is_expected.to be_a_null_relation } }
+    it_behaves_like("when current user is a DDFIP user")         { it { is_expected.to be_a_null_relation } }
+    it_behaves_like("when current user is a collectivity admin") { it { is_expected.to be_a_null_relation } }
+    it_behaves_like("when current user is a collectivity user")  { it { is_expected.to be_a_null_relation } }
   end
 end

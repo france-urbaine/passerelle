@@ -2,30 +2,26 @@
 
 class OfficesController < ApplicationController
   before_action :authorize!
-  before_action :build_offices_scope
-  before_action :authorize_offices_scope
-  before_action :build_office,     only: %i[new create]
-  before_action :find_office,      only: %i[show edit remove update destroy undiscard]
-  before_action :authorize_office, only: %i[show edit remove update destroy undiscard]
+  before_action :load_and_authorize_parent
+  before_action :autocompletion_not_implemented!, only: :index
+  before_action :better_view_on_parent, only: :index
 
   def index
-    return not_implemented if autocomplete_request?
-    return redirect_to(@parent, status: :see_other) if @parent && !turbo_frame_request?
-
-    @offices = @offices.kept.strict_loading
+    @offices = build_and_authorize_scope
     @offices, @pagy = index_collection(@offices, nested: @parent)
   end
 
   def show
-    only_kept! @office
+    @office = find_and_authorize_office
   end
 
   def new
+    @office = build_office
     @background_url = referrer_path || parent_path || offices_path
   end
 
   def create
-    @office.assign_attributes(office_params)
+    @office = build_office(office_params)
     @office.save
 
     respond_with @office,
@@ -34,12 +30,12 @@ class OfficesController < ApplicationController
   end
 
   def edit
-    only_kept! @office
+    @office = find_and_authorize_office
     @background_url = referrer_path || office_path(@office)
   end
 
   def update
-    only_kept! @office
+    @office = find_and_authorize_office
     @office.update(office_params)
 
     respond_with @office,
@@ -48,11 +44,12 @@ class OfficesController < ApplicationController
   end
 
   def remove
-    only_kept! @office
+    @office = find_and_authorize_office
     @background_url = referrer_path || office_path(@office)
   end
 
   def destroy
+    @office = find_and_authorize_office(allow_discarded: true)
     @office.discard
 
     respond_with @office,
@@ -62,6 +59,7 @@ class OfficesController < ApplicationController
   end
 
   def undiscard
+    @office = find_and_authorize_office(allow_discarded: true)
     @office.undiscard
 
     respond_with @office,
@@ -70,14 +68,14 @@ class OfficesController < ApplicationController
   end
 
   def remove_all
-    @offices = @offices.kept.strict_loading
+    @offices = build_and_authorize_scope
     @offices = filter_collection(@offices)
 
     @background_url = referrer_path || offices_path(**selection_params)
   end
 
   def destroy_all
-    @offices = @offices.kept.strict_loading
+    @offices = build_and_authorize_scope(as: :destroyable)
     @offices = filter_collection(@offices)
     @offices.quickly_discard_all
 
@@ -88,7 +86,7 @@ class OfficesController < ApplicationController
   end
 
   def undiscard_all
-    @offices = @offices.discarded.strict_loading
+    @offices = build_and_authorize_scope(as: :undiscardable)
     @offices = filter_collection(@offices)
     @offices.quickly_undiscard_all
 
@@ -99,24 +97,25 @@ class OfficesController < ApplicationController
 
   private
 
-  def build_offices_scope
-    @offices = Office.all
+  def load_and_authorize_parent
+    # Override this method to load a @parent variable
   end
 
-  def authorize_offices_scope
-    @offices = authorized(@offices)
+  def build_and_authorize_scope(as: :default)
+    authorized(Office.all, as:).strict_loading
   end
 
-  def build_office
-    @office = @offices.build
+  def build_office(...)
+    build_and_authorize_scope.build(...)
   end
 
-  def find_office
-    @office = Office.find(params[:id])
-  end
+  def find_and_authorize_office(allow_discarded: false)
+    office = Office.find(params[:id])
 
-  def authorize_office
-    authorize! @office
+    authorize! office
+    only_kept! office unless allow_discarded
+
+    office
   end
 
   def office_params
