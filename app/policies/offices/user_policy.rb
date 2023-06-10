@@ -29,8 +29,10 @@ module Offices
     end
 
     relation_scope do |relation|
-      if super_admin? || ddfip_admin?
-        relation
+      if super_admin?
+        relation.kept
+      elsif ddfip_admin?
+        relation.kept.owned_by(organization)
       else
         relation.none
       end
@@ -38,11 +40,17 @@ module Offices
 
     params_filter do |params|
       if super_admin?
-        params.permit(:first_name, :last_name, :email, :organization_admin, :super_admin)
+        params.permit(
+          :first_name, :last_name, :email,
+          :organization_admin, :super_admin,
+          office_ids: []
+        )
       elsif ddfip_admin?
-        params.permit(:first_name, :last_name, :email, :organization_admin)
-      else
-        {}
+        params.permit(
+          :first_name, :last_name, :email,
+          :organization_admin,
+          office_ids: []
+        )
       end
     end
   end

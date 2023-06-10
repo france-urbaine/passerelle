@@ -32,7 +32,7 @@ RSpec.describe UserPolicy do
       it_behaves_like("when current user is a collectivity user")  { failed }
     end
 
-    context "with user" do
+    context "with an user" do
       let(:record) { build_stubbed(:user) }
 
       it_behaves_like("when current user is a super admin")        { succeed }
@@ -44,7 +44,7 @@ RSpec.describe UserPolicy do
       it_behaves_like("when current user is a collectivity user")  { failed }
     end
 
-    context "when member of the current organization" do
+    context "with a member of the current organization" do
       let(:record) { build_stubbed(:user, organization: current_organization) }
 
       it_behaves_like("when current user is a super admin")        { succeed }
@@ -56,7 +56,7 @@ RSpec.describe UserPolicy do
       it_behaves_like("when current user is a collectivity user")  { failed }
     end
 
-    context "when member of a collectivity, owned by the current organization" do
+    context "with a member of a collectivity, owned by the current organization" do
       let(:collectivity) { build_stubbed(:collectivity, publisher: current_organization) }
       let(:record)       { build_stubbed(:user, organization: collectivity) }
 
@@ -71,6 +71,70 @@ RSpec.describe UserPolicy do
   it { expect(:destroy?).to   be_an_alias_of(policy, :manage?) }
   it { expect(:undiscard?).to be_an_alias_of(policy, :manage?) }
 
+  describe_rule :assign_organization? do
+    context "without record" do
+      it_behaves_like("when current user is a super admin")        { succeed }
+      it_behaves_like("when current user is a DDFIP admin")        { failed }
+      it_behaves_like("when current user is a DDFIP user")         { failed }
+      it_behaves_like("when current user is a publisher admin")    { failed }
+      it_behaves_like("when current user is a publisher user")     { failed }
+      it_behaves_like("when current user is a collectivity admin") { failed }
+      it_behaves_like("when current user is a collectivity user")  { failed }
+    end
+
+    context "with a member of the current organization" do
+      let(:record) { build_stubbed(:user, organization: current_organization) }
+
+      it_behaves_like("when current user is a super admin")        { succeed }
+      it_behaves_like("when current user is a DDFIP admin")        { failed }
+      it_behaves_like("when current user is a DDFIP user")         { failed }
+      it_behaves_like("when current user is a publisher admin")    { failed }
+      it_behaves_like("when current user is a publisher user")     { failed }
+      it_behaves_like("when current user is a collectivity admin") { failed }
+      it_behaves_like("when current user is a collectivity user")  { failed }
+    end
+
+    context "with a member of a collectivity, owned by the current organization" do
+      let(:collectivity) { build_stubbed(:collectivity, publisher: current_organization) }
+      let(:record)       { build_stubbed(:user, organization: collectivity) }
+
+      it_behaves_like("when current user is a publisher admin") { failed }
+      it_behaves_like("when current user is a publisher user")  { failed }
+    end
+  end
+
+  describe_rule :assign_super_admin? do
+    context "without record" do
+      it_behaves_like("when current user is a super admin")        { succeed }
+      it_behaves_like("when current user is a DDFIP admin")        { failed }
+      it_behaves_like("when current user is a DDFIP user")         { failed }
+      it_behaves_like("when current user is a publisher admin")    { failed }
+      it_behaves_like("when current user is a publisher user")     { failed }
+      it_behaves_like("when current user is a collectivity admin") { failed }
+      it_behaves_like("when current user is a collectivity user")  { failed }
+    end
+
+    context "with a member of the current organization" do
+      let(:record) { build_stubbed(:user, organization: current_organization) }
+
+      it_behaves_like("when current user is a super admin")        { succeed }
+      it_behaves_like("when current user is a DDFIP admin")        { failed }
+      it_behaves_like("when current user is a DDFIP user")         { failed }
+      it_behaves_like("when current user is a publisher admin")    { failed }
+      it_behaves_like("when current user is a publisher user")     { failed }
+      it_behaves_like("when current user is a collectivity admin") { failed }
+      it_behaves_like("when current user is a collectivity user")  { failed }
+    end
+
+    context "with a member of a collectivity, owned by the current organization" do
+      let(:collectivity) { build_stubbed(:collectivity, publisher: current_organization) }
+      let(:record)       { build_stubbed(:user, organization: collectivity) }
+
+      it_behaves_like("when current user is a publisher admin") { failed }
+      it_behaves_like("when current user is a publisher user")  { failed }
+    end
+  end
+
   describe_rule :assign_organization_admin? do
     context "without record" do
       let(:record) { User }
@@ -84,7 +148,7 @@ RSpec.describe UserPolicy do
       it_behaves_like("when current user is a collectivity user")  { failed }
     end
 
-    context "with record" do
+    context "with an user" do
       let(:record) { build_stubbed(:user) }
 
       it_behaves_like("when current user is a super admin")        { succeed }
@@ -96,7 +160,7 @@ RSpec.describe UserPolicy do
       it_behaves_like("when current user is a collectivity user")  { failed }
     end
 
-    context "when record is member of the current organization" do
+    context "with a member of the current organization" do
       let(:record) { build_stubbed(:user, organization: current_organization) }
 
       it_behaves_like("when current user is a DDFIP admin")        { succeed }
@@ -107,7 +171,7 @@ RSpec.describe UserPolicy do
       it_behaves_like("when current user is a collectivity user")  { failed }
     end
 
-    context "when record is member of a collectivity, owned by the current organization" do
+    context "with a member of a collectivity, owned by the current organization" do
       let(:collectivity) { build_stubbed(:collectivity, publisher: current_organization) }
       let(:record)       { build_stubbed(:user, organization: collectivity) }
 
@@ -116,44 +180,267 @@ RSpec.describe UserPolicy do
     end
   end
 
-  it { expect(:assign_super_admin?).to  be_an_alias_of(policy, :super_admin?) }
-  it { expect(:assign_organization?).to be_an_alias_of(policy, :super_admin?) }
-
-  describe "relation scope" do
-    # The following tests will assert a list of attributes rather than of a list
-    # of records to produce lighter and readable output.
-    subject do
-      policy.apply_scope(target, type: :active_record_relation).pluck(:first_name)
+  describe "default relation scope" do
+    subject!(:scope) do
+      policy.apply_scope(target, type: :active_record_relation)
     end
 
-    # The scope is ordered to have a deterministic order
-    #
-    let(:target) { User.where(first_name: "A".."D").order(:first_name) }
+    let(:target) { User.all }
 
-    before do
-      create(:user, first_name: "A", organization: create(:ddfip))
-      create(:user, first_name: "B", organization: create(:publisher))
-      create(:user, first_name: "C", organization: create(:collectivity))
-      create(:user, first_name: "D", organization: current_organization)
+    it_behaves_like "when current user is a super admin" do
+      it "scopes all kept users" do
+        expect {
+          scope.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "users".*
+          FROM   "users"
+          WHERE  "users"."discarded_at" IS NULL
+        SQL
+      end
     end
 
-    it_behaves_like("when current user is a super admin")        { it { is_expected.to eq(%w[A B C D]) } }
-    it_behaves_like("when current user is a DDFIP admin")        { it { is_expected.to eq(%w[D]) } }
-    it_behaves_like("when current user is a publisher admin")    { it { is_expected.to eq(%w[D]) } }
-    it_behaves_like("when current user is a collectivity admin") { it { is_expected.to eq(%w[D]) } }
-    it_behaves_like("when current user is a DDFIP user")         { it { is_expected.to be_empty } }
-    it_behaves_like("when current user is a publisher user")     { it { is_expected.to be_empty } }
-    it_behaves_like("when current user is a collectivity user")  { it { is_expected.to be_empty } }
+    it_behaves_like "when current user is a publisher admin" do
+      it "scopes all kept users from its own organization" do
+        expect {
+          scope.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "users".*
+          FROM   "users"
+          WHERE  "users"."discarded_at" IS NULL
+            AND  "users"."organization_type" = 'Publisher'
+            AND  "users"."organization_id" = '#{current_organization.id}'
+        SQL
+      end
+    end
+
+    it_behaves_like "when current user is a collectivity admin" do
+      it "scopes all kept users from its own organization" do
+        expect {
+          scope.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "users".*
+          FROM   "users"
+          WHERE  "users"."discarded_at" IS NULL
+            AND  "users"."organization_type" = 'Collectivity'
+            AND   "users"."organization_id" = '#{current_organization.id}'
+        SQL
+      end
+    end
+
+    it_behaves_like "when current user is a DDFIP admin" do
+      it "scopes all kept users from its own organization" do
+        expect {
+          scope.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "users".*
+          FROM   "users"
+          WHERE  "users"."discarded_at" IS NULL
+            AND  "users"."organization_type" = 'DDFIP'
+            AND   "users"."organization_id" = '#{current_organization.id}'
+        SQL
+      end
+    end
+
+    it_behaves_like("when current user is a DDFIP user")         { it { is_expected.to be_a_null_relation } }
+    it_behaves_like("when current user is a publisher user")     { it { is_expected.to be_a_null_relation } }
+    it_behaves_like("when current user is a collectivity user")  { it { is_expected.to be_a_null_relation } }
+  end
+
+  describe "destroyable relation scope" do
+    subject!(:scope) do
+      policy.apply_scope(
+        target,
+        name: :destroyable,
+        type: :active_record_relation,
+        scope_options: scope_options
+      )
+    end
+
+    let(:target)        { User.all }
+    let(:scope_options) { |e| e.metadata.fetch(:scope_options, {}) }
+
+    it_behaves_like "when current user is a super admin" do
+      it "scopes all kept users excluding himself" do
+        expect {
+          scope.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "users".*
+          FROM   "users"
+          WHERE  "users"."discarded_at" IS NULL
+            AND  "users"."id" != '#{current_user.id}'
+        SQL
+      end
+
+      it "allows to explicitely include himself", scope_options: { exclude_current: false } do
+        expect {
+          scope.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "users".*
+          FROM   "users"
+          WHERE  "users"."discarded_at" IS NULL
+        SQL
+      end
+    end
+
+    it_behaves_like "when current user is a DDFIP admin" do
+      it "scopes all kept users from its own organization excluding himself" do
+        expect {
+          scope.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "users".*
+          FROM   "users"
+          WHERE  "users"."discarded_at" IS NULL
+            AND  "users"."organization_type" = 'DDFIP'
+            AND  "users"."organization_id" = '#{current_organization.id}'
+            AND  "users"."id" != '#{current_user.id}'
+        SQL
+      end
+
+      it "allows to explicitely include himself", scope_options: { exclude_current: false } do
+        expect {
+          scope.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "users".*
+          FROM   "users"
+          WHERE  "users"."discarded_at" IS NULL
+            AND  "users"."organization_type" = 'DDFIP'
+            AND  "users"."organization_id" = '#{current_organization.id}'
+        SQL
+      end
+    end
+
+    it_behaves_like "when current user is a publisher admin" do
+      it "scopes all kept users from its own organization excluding himself" do
+        expect {
+          scope.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "users".*
+          FROM   "users"
+          WHERE  "users"."discarded_at" IS NULL
+            AND  "users"."organization_type" = 'Publisher'
+            AND  "users"."organization_id" = '#{current_organization.id}'
+            AND  "users"."id" != '#{current_user.id}'
+        SQL
+      end
+
+      it "allows to explicitely include himself", scope_options: { exclude_current: false } do
+        expect {
+          scope.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "users".*
+          FROM   "users"
+          WHERE  "users"."discarded_at" IS NULL
+            AND  "users"."organization_type" = 'Publisher'
+            AND  "users"."organization_id" = '#{current_organization.id}'
+        SQL
+      end
+    end
+
+    it_behaves_like "when current user is a collectivity admin" do
+      it "scopes all kept users from its own organization excluding himself" do
+        expect {
+          scope.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "users".*
+          FROM   "users"
+          WHERE  "users"."discarded_at" IS NULL
+            AND  "users"."organization_type" = 'Collectivity'
+            AND  "users"."organization_id" = '#{current_organization.id}'
+            AND  "users"."id" != '#{current_user.id}'
+        SQL
+      end
+
+      it "allows to explicitely include himself", scope_options: { exclude_current: false } do
+        expect {
+          scope.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "users".*
+          FROM   "users"
+          WHERE  "users"."discarded_at" IS NULL
+            AND  "users"."organization_type" = 'Collectivity'
+            AND  "users"."organization_id" = '#{current_organization.id}'
+        SQL
+      end
+    end
+
+    it_behaves_like("when current user is a DDFIP user")         { it { is_expected.to be_a_null_relation } }
+    it_behaves_like("when current user is a publisher user")     { it { is_expected.to be_a_null_relation } }
+    it_behaves_like("when current user is a collectivity user")  { it { is_expected.to be_a_null_relation } }
+  end
+
+  describe "undiscardable relation scope" do
+    subject!(:scope) do
+      policy.apply_scope(target, name: :undiscardable, type: :active_record_relation)
+    end
+
+    let(:target) { User.all }
+
+    it_behaves_like "when current user is a super admin" do
+      it "scopes all discarded users" do
+        expect {
+          scope.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "users".*
+          FROM   "users"
+          WHERE  "users"."discarded_at" IS NOT NULL
+        SQL
+      end
+    end
+
+    it_behaves_like "when current user is a publisher admin" do
+      it "scopes all kept users from its own organization" do
+        expect {
+          scope.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "users".*
+          FROM   "users"
+          WHERE  "users"."organization_type" = 'Publisher'
+            AND  "users"."organization_id" = '#{current_organization.id}'
+            AND  "users"."discarded_at" IS NOT NULL
+        SQL
+      end
+    end
+
+    it_behaves_like "when current user is a collectivity admin" do
+      it "scopes all kept users from its own organization" do
+        expect {
+          scope.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "users".*
+          FROM   "users"
+          WHERE  "users"."organization_type" = 'Collectivity'
+            AND   "users"."organization_id" = '#{current_organization.id}'
+            AND  "users"."discarded_at" IS NOT NULL
+        SQL
+      end
+    end
+
+    it_behaves_like "when current user is a DDFIP admin" do
+      it "scopes all kept users from its own organization" do
+        expect {
+          scope.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "users".*
+          FROM   "users"
+          WHERE  "users"."organization_type" = 'DDFIP'
+            AND   "users"."organization_id" = '#{current_organization.id}'
+            AND  "users"."discarded_at" IS NOT NULL
+        SQL
+      end
+    end
+
+    it_behaves_like("when current user is a DDFIP user")         { it { is_expected.to be_a_null_relation } }
+    it_behaves_like("when current user is a publisher user")     { it { is_expected.to be_a_null_relation } }
+    it_behaves_like("when current user is a collectivity user")  { it { is_expected.to be_a_null_relation } }
   end
 
   describe "params scope" do
-    # It's easier to assert the hash representation, not the ActionController::Params object
-    #
-    subject do
-      policy.apply_scope(target, type: :action_controller_params).to_hash.symbolize_keys
+    subject(:params) do
+      policy.apply_scope(target, type: :action_controller_params)&.to_hash&.symbolize_keys
     end
 
     let(:target) { ActionController::Parameters.new(attributes) }
+
     let(:attributes) do
       {
         organization_type:  "DDFIP",
@@ -163,58 +450,99 @@ RSpec.describe UserPolicy do
         first_name:         "Juliette",
         last_name:          "Lemoine",
         email:              "juliette.lemoine@example.org",
-        organization_admin: false,
-        super_admin:        false,
-        office_ids:         %w[f3fabf04-eef3-4dee-989f-102b5842e18c]
+        organization_admin: "false",
+        super_admin:        "false",
+        office_ids:         %w[f3fabf04-eef3-4dee-989f-102b5842e18c],
+        otp_secret:         "123456789"
       }
     end
 
-    it_behaves_like("when current user is a super admin") do
-      it { is_expected.to eq(attributes) }
-    end
-
-    it_behaves_like("when current user is a DDFIP admin") do
+    it_behaves_like "when current user is a super admin" do
       it do
-        is_expected.to eq(
-          first_name:         "Juliette",
-          last_name:          "Lemoine",
-          email:              "juliette.lemoine@example.org",
-          organization_admin: false,
-          office_ids:         %w[f3fabf04-eef3-4dee-989f-102b5842e18c]
-        )
+        is_expected
+          .to  include(organization_type:  attributes[:organization_type])
+          .and include(organization_id:    attributes[:organization_id])
+          .and include(organization_data:  attributes[:organization_data])
+          .and include(organization_name:  attributes[:organization_name])
+          .and include(first_name:         attributes[:first_name])
+          .and include(last_name:          attributes[:last_name])
+          .and include(email:              attributes[:email])
+          .and include(organization_admin: attributes[:organization_admin])
+          .and include(super_admin:        attributes[:super_admin])
+          .and include(office_ids:         attributes[:office_ids])
+          .and not_include(:otp_secret)
       end
     end
 
-    it_behaves_like("when current user is a publisher admin") do
+    it_behaves_like "when current user is a DDFIP admin" do
       it do
-        is_expected.to eq(
-          first_name:         "Juliette",
-          last_name:          "Lemoine",
-          email:              "juliette.lemoine@example.org",
-          organization_admin: false
-        )
+        is_expected
+          .to  include(first_name:         attributes[:first_name])
+          .and include(last_name:          attributes[:last_name])
+          .and include(email:              attributes[:email])
+          .and include(organization_admin: attributes[:organization_admin])
+          .and include(office_ids:         attributes[:office_ids])
+          .and not_include(:organization_type)
+          .and not_include(:organization_id)
+          .and not_include(:organization_data)
+          .and not_include(:organization_name)
+          .and not_include(:super_admin)
+          .and not_include(:otp_secret)
       end
     end
 
-    it_behaves_like("when current user is a collectivity admin") do
+    it_behaves_like "when current user is a publisher admin" do
       it do
-        is_expected.to eq(
-          first_name:         "Juliette",
-          last_name:          "Lemoine",
-          email:              "juliette.lemoine@example.org",
-          organization_admin: false
-        )
+        is_expected
+          .to  include(first_name:         attributes[:first_name])
+          .and include(last_name:          attributes[:last_name])
+          .and include(email:              attributes[:email])
+          .and include(organization_admin: attributes[:organization_admin])
+          .and not_include(:organization_type)
+          .and not_include(:organization_id)
+          .and not_include(:organization_data)
+          .and not_include(:organization_name)
+          .and not_include(:super_admin)
+          .and not_include(:office_ids)
+          .and not_include(:otp_secret)
       end
     end
 
-    it_behaves_like("when current user is a publisher user") do
+    it_behaves_like "when current user is a collectivity admin" do
       it do
-        is_expected.to eq(
-          first_name:         "Juliette",
-          last_name:          "Lemoine",
-          email:              "juliette.lemoine@example.org"
-        )
+        is_expected
+          .to  include(first_name:         attributes[:first_name])
+          .and include(last_name:          attributes[:last_name])
+          .and include(email:              attributes[:email])
+          .and include(organization_admin: attributes[:organization_admin])
+          .and not_include(:organization_type)
+          .and not_include(:organization_id)
+          .and not_include(:organization_data)
+          .and not_include(:organization_name)
+          .and not_include(:super_admin)
+          .and not_include(:office_ids)
+          .and not_include(:otp_secret)
       end
     end
+
+    it_behaves_like "when current user is a publisher user" do
+      it do
+        is_expected
+          .to  include(first_name:         attributes[:first_name])
+          .and include(last_name:          attributes[:last_name])
+          .and include(email:              attributes[:email])
+          .and not_include(:organization_type)
+          .and not_include(:organization_id)
+          .and not_include(:organization_data)
+          .and not_include(:organization_name)
+          .and not_include(:organization_admin)
+          .and not_include(:super_admin)
+          .and not_include(:office_ids)
+          .and not_include(:otp_secret)
+      end
+    end
+
+    it_behaves_like("when current user is a DDFIP user")         { it { is_expected.to be_nil } }
+    it_behaves_like("when current user is a collectivity user")  { it { is_expected.to be_nil } }
   end
 end
