@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 class OfficePolicy < ApplicationPolicy
-  alias_rule :index?, :create?, to: :manage_collection?
-  alias_rule :assign_ddfip?, to: :super_admin?
+  alias_rule :new?, :create?, to: :index?
+  alias_rule :remove_all?, :destroy_all?, :undiscard_all?, to: :index?
 
-  def manage_collection?
+  def index?
     super_admin? || ddfip_admin?
   end
 
@@ -30,11 +30,5 @@ class OfficePolicy < ApplicationPolicy
     elsif ddfip_admin?
       params.permit(:name, :action)
     end
-  end
-
-  private
-
-  def ddfip_admin?
-    organization_admin? && organization.is_a?(DDFIP)
   end
 end

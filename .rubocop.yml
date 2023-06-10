@@ -132,6 +132,7 @@ RSpec/FilePath:
   CustomTransform:
     ImportEPCIsDepartementsJob: import_epcis_departements_job
     ImportEPCIsJob: import_epcis_job
+    DDFIPs: ddfips
 
 RSpec/ImplicitSubject:
   EnforcedStyle: single_statement_only

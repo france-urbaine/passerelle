@@ -2,9 +2,10 @@
 
 module Publishers
   class CollectivityPolicy < ApplicationPolicy
-    alias_rule :index?, :create?, to: :manage_collection?
+    alias_rule :new?, :create?, to: :index?
+    alias_rule :remove_all?, :destroy_all?, :undiscard_all?, to: :index?
 
-    def manage_collection?
+    def index?
       super_admin?
     end
 

@@ -3,21 +3,21 @@
 require "rails_helper"
 
 RSpec.describe OfficePolicy do
-  describe_rule :manage_collection? do
+  describe_rule :index? do
     it_behaves_like("when current user is a super admin")        { succeed }
     it_behaves_like("when current user is a DDFIP admin")        { succeed }
-    it_behaves_like("when current user is a publisher admin")    { failed }
-    it_behaves_like("when current user is a collectivity admin") { failed }
     it_behaves_like("when current user is a DDFIP user")         { failed }
+    it_behaves_like("when current user is a publisher admin")    { failed }
     it_behaves_like("when current user is a publisher user")     { failed }
+    it_behaves_like("when current user is a collectivity admin") { failed }
     it_behaves_like("when current user is a collectivity user")  { failed }
   end
 
-  it { expect(:index?).to be_an_alias_of(policy, :manage_collection?) }
-  it { expect(:create?).to be_an_alias_of(policy, :manage_collection?) }
-  it { expect(:remove_all?).to be_an_alias_of(policy, :manage_collection?) }
-  it { expect(:destroy_all?).to be_an_alias_of(policy, :manage_collection?) }
-  it { expect(:undiscard_all?).to be_an_alias_of(policy, :manage_collection?) }
+  it { expect(:new?).to           be_an_alias_of(policy, :index?) }
+  it { expect(:create?).to        be_an_alias_of(policy, :index?) }
+  it { expect(:remove_all?).to    be_an_alias_of(policy, :index?) }
+  it { expect(:destroy_all?).to   be_an_alias_of(policy, :index?) }
+  it { expect(:undiscard_all?).to be_an_alias_of(policy, :index?) }
 
   describe_rule :manage? do
     context "without record" do
@@ -25,10 +25,10 @@ RSpec.describe OfficePolicy do
 
       it_behaves_like("when current user is a super admin")        { succeed }
       it_behaves_like("when current user is a DDFIP admin")        { succeed }
-      it_behaves_like("when current user is a publisher admin")    { failed }
-      it_behaves_like("when current user is a collectivity admin") { failed }
       it_behaves_like("when current user is a DDFIP user")         { failed }
+      it_behaves_like("when current user is a publisher admin")    { failed }
       it_behaves_like("when current user is a publisher user")     { failed }
+      it_behaves_like("when current user is a collectivity admin") { failed }
       it_behaves_like("when current user is a collectivity user")  { failed }
     end
 
@@ -37,10 +37,10 @@ RSpec.describe OfficePolicy do
 
       it_behaves_like("when current user is a super admin")        { succeed }
       it_behaves_like("when current user is a DDFIP admin")        { failed }
-      it_behaves_like("when current user is a publisher admin")    { failed }
-      it_behaves_like("when current user is a collectivity admin") { failed }
       it_behaves_like("when current user is a DDFIP user")         { failed }
+      it_behaves_like("when current user is a publisher admin")    { failed }
       it_behaves_like("when current user is a publisher user")     { failed }
+      it_behaves_like("when current user is a collectivity admin") { failed }
       it_behaves_like("when current user is a collectivity user")  { failed }
     end
 
@@ -52,11 +52,21 @@ RSpec.describe OfficePolicy do
     end
   end
 
-  it { expect(:edit?).to be_an_alias_of(policy, :manage?) }
-  it { expect(:update?).to be_an_alias_of(policy, :manage?) }
-  it { expect(:remove?).to be_an_alias_of(policy, :manage?) }
-  it { expect(:destroy?).to be_an_alias_of(policy, :manage?) }
+  it { expect(:edit?).to      be_an_alias_of(policy, :manage?) }
+  it { expect(:update?).to    be_an_alias_of(policy, :manage?) }
+  it { expect(:remove?).to    be_an_alias_of(policy, :manage?) }
+  it { expect(:destroy?).to   be_an_alias_of(policy, :manage?) }
   it { expect(:undiscard?).to be_an_alias_of(policy, :manage?) }
+
+  describe_rule :assign_ddfip? do
+    it_behaves_like("when current user is a super admin")        { succeed }
+    it_behaves_like("when current user is a DDFIP admin")        { failed }
+    it_behaves_like("when current user is a DDFIP user")         { failed }
+    it_behaves_like("when current user is a publisher admin")    { failed }
+    it_behaves_like("when current user is a publisher user")     { failed }
+    it_behaves_like("when current user is a collectivity admin") { failed }
+    it_behaves_like("when current user is a collectivity user")  { failed }
+  end
 
   describe "relation scope", stub_factories: false do
     # The following tests will assert a list of attributes rather than of a list

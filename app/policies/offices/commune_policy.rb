@@ -2,7 +2,9 @@
 
 module Offices
   class CommunePolicy < ApplicationPolicy
-    alias_rule :index?, :manage_collection?, to: :manage?
+    alias_rule :index?, to: :manage?
+    alias_rule :edit_all?, :update_all?, to: :manage?
+    alias_rule :remove_all?, :destroy_all?, :undiscard_all?, to: :manage?
 
     def manage?
       super_admin? || ddfip_admin?
@@ -14,12 +16,6 @@ module Offices
       else
         relation.none
       end
-    end
-
-    private
-
-    def ddfip_admin?
-      organization_admin? && organization.is_a?(DDFIP)
     end
   end
 end

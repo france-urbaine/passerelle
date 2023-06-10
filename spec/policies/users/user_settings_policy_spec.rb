@@ -6,10 +6,10 @@ RSpec.describe Users::UserSettingsPolicy do
   describe_rule :manage? do
     it_behaves_like("when current user is a super admin")        { succeed }
     it_behaves_like("when current user is a DDFIP admin")        { succeed }
-    it_behaves_like("when current user is a publisher admin")    { succeed }
-    it_behaves_like("when current user is a collectivity admin") { succeed }
     it_behaves_like("when current user is a DDFIP user")         { succeed }
+    it_behaves_like("when current user is a publisher admin")    { succeed }
     it_behaves_like("when current user is a publisher user")     { succeed }
+    it_behaves_like("when current user is a collectivity admin") { succeed }
     it_behaves_like("when current user is a collectivity user")  { succeed }
   end
 

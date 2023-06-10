@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
 class UserPolicy < ApplicationPolicy
-  alias_rule :index?, :create?, to: :manage_collection?
+  alias_rule :new?, :create?, to: :index?
+  alias_rule :remove_all?, :destroy_all?, :undiscard_all?, to: :index?
   alias_rule :assign_organization?, :assign_super_admin?, to: :super_admin?
 
-  def manage_collection?
+  def index?
     super_admin? || organization_admin?
   end
 

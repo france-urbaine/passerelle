@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 class DDFIPPolicy < ApplicationPolicy
-  alias_rule :index?, :create?, :manage_collection?, to: :manage?
+  alias_rule :index?, :new?, :create?, to: :manage?
+  alias_rule :remove_all?, :destroy_all?, :undiscard_all?, to: :manage?
 
   def manage?
     super_admin?

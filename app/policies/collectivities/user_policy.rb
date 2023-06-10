@@ -2,11 +2,11 @@
 
 module Collectivities
   class UserPolicy < ApplicationPolicy
-    alias_rule :index?, :create?, to: :manage_collection?
-    alias_rule :assign_super_admin?, to: :super_admin?
+    alias_rule :new?, :create?, to: :index?
+    alias_rule :remove_all?, :destroy_all?, :undiscard_all?, to: :index?
 
-    def manage_collection?
-      super_admin? || organization.is_a?(Publisher)
+    def index?
+      super_admin? || publisher?
     end
 
     def assign_organization?
@@ -14,11 +14,15 @@ module Collectivities
     end
 
     def assign_organization_admin?
-      super_admin? || (organization_admin? && organization.is_a?(Publisher))
+      super_admin? || publisher_admin?
+    end
+
+    def assign_super_admin?
+      super_admin?
     end
 
     relation_scope do |relation|
-      if super_admin? || organization.is_a?(Publisher)
+      if super_admin? || publisher?
         relation
       else
         relation.none
@@ -28,9 +32,9 @@ module Collectivities
     params_filter do |params|
       if super_admin?
         params.permit(:first_name, :last_name, :email, :organization_admin, :super_admin)
-      elsif organization.is_a?(Publisher) && organization_admin?
+      elsif publisher_admin?
         params.permit(:first_name, :last_name, :email, :organization_admin)
-      elsif organization.is_a?(Publisher)
+      elsif publisher?
         params.permit(:first_name, :last_name, :email)
       else
         {}
