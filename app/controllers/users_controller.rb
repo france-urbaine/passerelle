@@ -2,30 +2,26 @@
 
 class UsersController < ApplicationController
   before_action :authorize!
-  before_action :build_users_scope
-  before_action :authorize_users_scope
-  before_action :build_user,     only: %i[new create]
-  before_action :find_user,      only: %i[show edit remove update destroy undiscard]
-  before_action :authorize_user, only: %i[show edit remove update destroy undiscard]
+  before_action :load_and_authorize_parent
+  before_action :autocompletion_not_implemented!, only: :index
+  before_action :better_view_on_parent, only: :index
 
   def index
-    return not_implemented if autocomplete_request?
-    return redirect_to(@parent, status: :see_other) if @parent && !turbo_frame_request?
-
-    @users = @users.kept.strict_loading
+    @users = build_and_authorize_scope
     @users, @pagy = index_collection(@users, nested: @parent)
   end
 
   def show
-    only_kept! @user
+    @user = find_and_authorize_user
   end
 
   def new
+    @user = build_user
     @background_url = referrer_path || parent_path || users_path
   end
 
   def create
-    @user.assign_attributes(user_params)
+    @user = build_user(user_params)
     @user.invite(by: current_user)
     @user.save
 
@@ -35,12 +31,12 @@ class UsersController < ApplicationController
   end
 
   def edit
-    only_kept! @user
+    @user = find_and_authorize_user
     @background_url = referrer_path || user_path(@user)
   end
 
   def update
-    only_kept! @user
+    @user = find_and_authorize_user
     @user.update(user_params)
 
     respond_with @user,
@@ -49,11 +45,12 @@ class UsersController < ApplicationController
   end
 
   def remove
-    only_kept! @user
+    @user = find_and_authorize_user
     @background_url = referrer_path || user_path(@user)
   end
 
   def destroy
+    @user = find_and_authorize_user(allow_discarded: true)
     @user.discard
 
     respond_with @user,
@@ -63,6 +60,7 @@ class UsersController < ApplicationController
   end
 
   def undiscard
+    @user = find_and_authorize_user(allow_discarded: true)
     @user.undiscard
 
     respond_with @user,
@@ -71,18 +69,14 @@ class UsersController < ApplicationController
   end
 
   def remove_all
-    @users = @users.kept.strict_loading
+    @users = build_and_authorize_scope
     @users = filter_collection(@users)
-
     @background_url = referrer_path || users_path(**selection_params)
   end
 
   def destroy_all
-    @users = @users.kept.strict_loading
+    @users = build_and_authorize_scope(as: :destroyable)
     @users = filter_collection(@users)
-
-    # Do not let the current user deleting himself
-    @users = @users.where.not(id: current_user.id)
     @users.quickly_discard_all
 
     respond_with @users,
@@ -92,7 +86,7 @@ class UsersController < ApplicationController
   end
 
   def undiscard_all
-    @users = @users.discarded.strict_loading
+    @users = build_and_authorize_scope(as: :undiscardable)
     @users = filter_collection(@users)
     @users.quickly_undiscard_all
 
@@ -103,24 +97,25 @@ class UsersController < ApplicationController
 
   private
 
-  def build_users_scope
-    @users = User.all
+  def load_and_authorize_parent
+    # Override this method to load a @parent variable
   end
 
-  def authorize_users_scope
-    @users = authorized(@users)
+  def build_and_authorize_scope(as: :default)
+    authorized(User.all, as:).strict_loading
   end
 
-  def build_user
-    @user = @users.build
+  def build_user(...)
+    build_and_authorize_scope.build(...)
   end
 
-  def find_user
-    @user = User.find(params[:id])
-  end
+  def find_and_authorize_user(allow_discarded: false)
+    user = User.find(params[:id])
 
-  def authorize_user
-    authorize! @user
+    authorize! user
+    only_kept! user unless allow_discarded
+
+    user
   end
 
   def user_params
