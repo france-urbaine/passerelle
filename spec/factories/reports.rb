@@ -22,11 +22,13 @@ FactoryBot.define do
     # We also allow to define the status of the package through transient attributes
     #
     transient do
+      package_sandbox     { false }
       package_transmitted { false }
       package_approved    { false }
       package_rejected    { false }
       package_traits do
         [].tap do |array|
+          array << :sandbox     if package_sandbox
           array << :transmitted if package_transmitted
           array << :approved    if package_approved
           array << :rejected    if package_rejected

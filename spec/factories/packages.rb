@@ -34,10 +34,13 @@ FactoryBot.define do
       discarded_at { Time.current }
     end
 
+    trait :sandbox do
+      sandbox { true }
+    end
+
     trait :with_reports do
       transient do
         report_size { 1 }
-        sandbox     { false }
       end
 
       reports do
@@ -66,7 +69,6 @@ FactoryBot.define do
           association(:report,
             publisher:    publisher,
             collectivity: collectivity,
-            sandbox:      sandbox,
             package:      instance,
             commune:      communes.sample)
         end

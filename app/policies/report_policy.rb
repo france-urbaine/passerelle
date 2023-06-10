@@ -102,14 +102,11 @@ class ReportPolicy < ApplicationPolicy
     # those fully transmitted by their publishers.
     #
     Report
-      .all_kept
       .joins(:package)
+      .all_kept
       .out_of_sandbox
       .sent_by_collectivity(organization)
-      .merge(
-        Report.packed_through_web_ui
-          .or(Package.transmitted)
-      )
+      .merge(Package.packed_through_web_ui.or(Package.transmitted))
   end
 
   def reports_listed_to_publisher
@@ -145,20 +142,25 @@ class ReportPolicy < ApplicationPolicy
   # Assert if a report can be shown to an user
   # ----------------------------------------------------------------------------
   def report_shown_to_collectivity?(report)
+    # Discarded packages are not listed but are still accessible
+    #
     collectivity? &&
       report.out_of_sandbox? &&
-      report.sent_by_collectivity?(organization) && (
-        report.packed_through_web_ui? || report.transmitted?
-      )
+      report.sent_by_collectivity?(organization) &&
+      (report.packed_through_web_ui? || report.transmitted?)
   end
 
   def report_shown_to_publisher?(report)
+    # Discarded packages are not listed but are still accessible
+    #
     publisher? &&
       report.sent_by_publisher?(organization) &&
       report.packed_through_publisher_api?
   end
 
   def report_shown_to_ddfip_admin?(report)
+    # Rejected packages are not listed but are still accessible
+    #
     ddfip_admin? &&
       report.published? &&
       report.covered_by_ddfip?(organization)

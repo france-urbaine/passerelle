@@ -93,7 +93,7 @@ RSpec.describe ReportPolicy, stub_factories: false do
       end
 
       context "when transmitted as sandbox through API for the current collectivity" do
-        let(:record) { create(:report, :transmitted_through_api, collectivity: current_organization, sandbox: true) }
+        let(:record) { create(:report, :transmitted_through_api, collectivity: current_organization, package_sandbox: true) }
 
         it_behaves_like("when current user is a collectivity admin") { failed }
         it_behaves_like("when current user is a collectivity user")  { failed }
@@ -114,7 +114,7 @@ RSpec.describe ReportPolicy, stub_factories: false do
       end
 
       context "when transmitted as sandbox through API by the current publisher" do
-        let(:record) { create(:report, :transmitted_through_api, publisher: current_organization, sandbox: true) }
+        let(:record) { create(:report, :transmitted_through_api, publisher: current_organization, package_sandbox: true) }
 
         it_behaves_like("when current user is a publisher admin") { succeed }
         it_behaves_like("when current user is a publisher user")  { succeed }
@@ -137,7 +137,7 @@ RSpec.describe ReportPolicy, stub_factories: false do
       end
 
       context "when transmitted as sandbox to the current DDFIP" do
-        let(:record) { create(:report, :transmitted_to_ddfip, ddfip: current_organization, sandbox: true) }
+        let(:record) { create(:report, :transmitted_to_ddfip, ddfip: current_organization, package_sandbox: true) }
 
         it_behaves_like("when current user is a DDFIP admin")             { failed }
         it_behaves_like("when current user is a DDFIP user")              { failed }
@@ -227,7 +227,7 @@ RSpec.describe ReportPolicy, stub_factories: false do
       end
 
       context "when transmitted as sandbox through API for the current collectivity" do
-        let(:record) { create(:report, :transmitted_through_api, collectivity: current_organization, sandbox: true) }
+        let(:record) { create(:report, :transmitted_through_api, collectivity: current_organization, package_sandbox: true) }
 
         it_behaves_like("when current user is a collectivity admin") { failed }
         it_behaves_like("when current user is a collectivity user")  { failed }
@@ -248,7 +248,7 @@ RSpec.describe ReportPolicy, stub_factories: false do
       end
 
       context "when transmitted as sandbox through API by the current publisher" do
-        let(:record) { create(:report, :transmitted_through_api, publisher: current_organization, sandbox: true) }
+        let(:record) { create(:report, :transmitted_through_api, publisher: current_organization, package_sandbox: true) }
 
         it_behaves_like("when current user is a publisher admin") { failed }
         it_behaves_like("when current user is a publisher user")  { failed }
@@ -271,7 +271,7 @@ RSpec.describe ReportPolicy, stub_factories: false do
       end
 
       context "when transmitted as sandbox to the current DDFIP" do
-        let(:record) { create(:report, :transmitted_to_ddfip, ddfip: current_organization, sandbox: true) }
+        let(:record) { create(:report, :transmitted_to_ddfip, ddfip: current_organization, package_sandbox: true) }
 
         it_behaves_like("when current user is a DDFIP admin")             { failed }
         it_behaves_like("when current user is a DDFIP user")              { failed }
@@ -361,7 +361,7 @@ RSpec.describe ReportPolicy, stub_factories: false do
       end
 
       context "when transmitted as sandbox through API for the current collectivity" do
-        let(:record) { create(:report, :transmitted_through_api, collectivity: current_organization, sandbox: true) }
+        let(:record) { create(:report, :transmitted_through_api, collectivity: current_organization, package_sandbox: true) }
 
         it_behaves_like("when current user is a collectivity admin") { failed }
         it_behaves_like("when current user is a collectivity user")  { failed }
@@ -382,7 +382,7 @@ RSpec.describe ReportPolicy, stub_factories: false do
       end
 
       context "when transmitted as sandbox through API by the current publisher" do
-        let(:record) { create(:report, :transmitted_through_api, publisher: current_organization, sandbox: true) }
+        let(:record) { create(:report, :transmitted_through_api, publisher: current_organization, package_sandbox: true) }
 
         it_behaves_like("when current user is a publisher admin") { failed }
         it_behaves_like("when current user is a publisher user")  { failed }
@@ -405,7 +405,7 @@ RSpec.describe ReportPolicy, stub_factories: false do
       end
 
       context "when transmitted as sandbox to the current DDFIP" do
-        let(:record) { create(:report, :transmitted_to_ddfip, ddfip: current_organization, sandbox: true) }
+        let(:record) { create(:report, :transmitted_to_ddfip, ddfip: current_organization, package_sandbox: true) }
 
         it_behaves_like("when current user is a DDFIP admin")             { failed }
         it_behaves_like("when current user is a DDFIP user")              { failed }
@@ -465,12 +465,9 @@ RSpec.describe ReportPolicy, stub_factories: false do
           INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
           WHERE  "packages"."discarded_at" IS NULL
             AND  "reports"."discarded_at" IS NULL
-            AND  "reports"."sandbox" = FALSE
+            AND  "packages"."sandbox" = FALSE
             AND  "reports"."collectivity_id" = '#{current_organization.id}'
-            AND  (
-                  "reports"."publisher_id" IS NULL
-              OR  "packages"."transmitted_at" IS NOT NULL
-            )
+            AND  ("packages"."publisher_id" IS NULL OR "packages"."transmitted_at" IS NOT NULL)
         SQL
       end
     end
@@ -501,7 +498,7 @@ RSpec.describe ReportPolicy, stub_factories: false do
           INNER JOIN "communes" ON "communes"."code_insee" = "reports"."code_insee"
           WHERE  "packages"."discarded_at" IS NULL
             AND  "reports"."discarded_at" IS NULL
-            AND  "reports"."sandbox" = FALSE
+            AND  "packages"."sandbox" = FALSE
             AND  "packages"."transmitted_at" IS NOT NULL
             AND  "packages"."rejected_at" IS NULL
             AND  "communes"."code_departement" = '#{current_organization.code_departement}'
@@ -522,7 +519,7 @@ RSpec.describe ReportPolicy, stub_factories: false do
           INNER JOIN "office_users"    ON "offices"."id" = "office_users"."office_id"
           WHERE  "packages"."discarded_at" IS NULL
             AND  "reports"."discarded_at" IS NULL
-            AND  "reports"."sandbox" = FALSE
+            AND  "packages"."sandbox" = FALSE
             AND  "packages"."transmitted_at" IS NOT NULL
             AND  "packages"."approved_at" IS NOT NULL
             AND  "packages"."rejected_at" IS NULL
