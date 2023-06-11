@@ -1,4 +1,13 @@
 @layer components {
+  .priority-badge,
+  .priority-button {
+    @apply font-medium;
+
+    & svg {
+      @apply ml-2 -mr-0;
+    }
+  }
+
   .low-priority-icon,
   .medium-priority-icon,
   .high-priority-icon {
@@ -13,15 +22,5 @@
   .medium-priority-icon path:nth-of-type(3) {
     opacity: .2;
     @apply dark:opacity-40;
-  }
-
-  .low-priority-button,
-  .medium-priority-button,
-  .high-priority-button {
-    @apply font-medium;
-
-    & svg {
-      @apply ml-2 -mr-0;
-    }
   }
 }

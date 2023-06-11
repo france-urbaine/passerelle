@@ -32,6 +32,15 @@ class PackagePolicy < ApplicationPolicy
     end
   end
 
+  def transmit?
+    if record == Package
+      collectivity? || publisher?
+    elsif record.is_a?(Package)
+      package_transmittable_by_collectivity?(record) ||
+        package_transmittable_by_publisher?(record)
+    end
+  end
+
   def destroy?
     if record == Package
       collectivity? || publisher?
@@ -191,6 +200,16 @@ class PackagePolicy < ApplicationPolicy
       package.sent_by_publisher?(organization) &&
       package.packed_through_publisher_api? &&
       package.packing?
+  end
+
+  # Assert if a package can be transmitted by an user
+  # ----------------------------------------------------------------------------
+  def package_transmittable_by_collectivity?(package)
+    package_updatable_by_collectivity?(package) && package.completed?
+  end
+
+  def package_transmittable_by_publisher?(package)
+    package_updatable_by_publisher?(package) && package.completed?
   end
 
   # List packages that can be destroyed by an user

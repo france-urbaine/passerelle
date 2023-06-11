@@ -11,21 +11,26 @@
 
     .subheader-bar__actions
       .subheader-bar__action
-        - case @report.priority
-        - when "low"
-          = button_component href: edit_report_path(@report, fields: "priority"), modal: true, class: "low-priority-button" do
+        - if @report.transmitted?
+          .badge.priority-badge
             ' Priorité :
-            = svg_icon("chart-bar", "Basse", class: "low-priority-icon")
-
-        - when "medium"
-          = button_component href: edit_report_path(@report, fields: "priority"), modal: true, class: "medium-priority-button" do
+            - case @report.priority
+            - when "low"
+              = svg_icon("chart-bar", "Basse", class: "low-priority-icon")
+            - when "medium"
+              = svg_icon("chart-bar", "Moyenne", class: "medium-priority-icon")
+            - when "high"
+              = svg_icon("chart-bar", "Haute", class: "high-priority-icon")
+        - else
+          = button_component href: edit_report_path(@report, fields: "priority"), modal: true, class: "priority-button" do
             ' Priorité :
-            = svg_icon("chart-bar", "Moyenne", class: "medium-priority-icon")
-
-        - when "high"
-          = button_component href: edit_report_path(@report, fields: "priority"), modal: true, class: "high-priority-button" do
-            ' Priorité :
-            = svg_icon("chart-bar", "Haute", class: "high-priority-icon")
+            - case @report.priority
+            - when "low"
+              = svg_icon("chart-bar", "Basse", class: "low-priority-icon")
+            - when "medium"
+              = svg_icon("chart-bar", "Moyenne", class: "medium-priority-icon")
+            - when "high"
+              = svg_icon("chart-bar", "Haute", class: "high-priority-icon")
 
       .subheader-bar__action
         - if @report.transmitted?
