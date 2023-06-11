@@ -38,6 +38,10 @@ FactoryBot.define do
       sandbox { true }
     end
 
+    trait :completed do
+      completed { true }
+    end
+
     trait :with_reports do
       transient do
         report_size { 1 }
@@ -70,6 +74,7 @@ FactoryBot.define do
             publisher:    publisher,
             collectivity: collectivity,
             package:      instance,
+            completed:    completed,
             commune:      communes.sample)
         end
       end

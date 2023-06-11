@@ -58,7 +58,7 @@
           = office.ddfip.name
 
       - row.with_column(:action) do
-        = translate(office.action, scope: "enum.action")
+        = t(office.action, scope: "enum.action")
 
       - row.with_column(:users) do
         = number_with_delimiter(office.users_count) if office.users_count.positive?

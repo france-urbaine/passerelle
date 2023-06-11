@@ -4,7 +4,10 @@
     - breadcrumbs.with_path "Paquets", packages_path
     - breadcrumbs.with_path @package.name
 
-    - breadcrumbs.with_action "Transmettre", icon: "cloud-arrow-up", primary: true, disabled: true
+    - if allowed_to?(:transmit?, @package)
+      - breadcrumbs.with_action "Transmettre", package_transmission_path(@package), icon: "cloud-arrow-up", primary: true, modal: true
+    - elsif @package.packing? && allowed_to?(:transmit?, Package)
+      - breadcrumbs.with_action "Transmettre", icon: "cloud-arrow-up", primary: true, disabled: true
 
     - if allowed_to?(:update?, @package)
       - breadcrumbs.with_action "Modifier", edit_package_path(@package), icon: "pencil-square", modal: true
@@ -36,9 +39,13 @@
         dt Date de transmission
         dd
           - if @package.transmitted?
-            = localize(@package.transmitted_at)
+            = l(@package.transmitted_at.to_date)
           - else
             em Non transmis
+
+      .description-list__row
+        dt Date d'échéance
+        dd= l(@package.due_on) if @package.due_on
 
   - if allowed_to?(:index?, Report)
     .content__separator

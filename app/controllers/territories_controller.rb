@@ -34,7 +34,7 @@ class TerritoriesController < ApplicationController
       @territories_update.perform_later
 
       @location = url_from(params[:redirect]) || communes_path
-      @notice   = translate(".success")
+      @notice   = t(".success")
 
       respond_to do |format|
         format.turbo_stream { redirect_to @location, notice: @notice }

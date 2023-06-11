@@ -18,7 +18,7 @@ module Reports
     end
 
     after_commit do
-      package.update(completed: package.reports.where(completed: false).none?)
+      package.update(completed: package.reports.kept.where(completed: false).none?)
     end
   end
 end
