@@ -18,9 +18,9 @@ module Reports
     SUBJECT_OPTIONS = [
       ["Évaluation de locaux d'habitation", [
         ["Problème d'évaluation d'un local d'habitation",   "evaluation_hab/evaluation",         { disabled: false }],
+        ["Problème d'adresse d'un local d'habitation",      "evaluation_hab/adresse",            { disabled: false }],
         ["Problème d'exonération d'un local d'habitation",  "evaluation_hab/exoneration",        { disabled: true }],
         ["Problème d'affectation d'un local d'habitation",  "evaluation_hab/affectation",        { disabled: true }],
-        ["Problème d'adresse d'un local d'habitation",      "evaluation_hab/adresse",            { disabled: true }],
         ["Omission bâtie sur un local d'habitation",        "evaluation_hab/omission_batie",     { disabled: true }],
         ["Achèvement de travaux sur un local d'habitation", "evaluation_hab/achevement_travaux", { disabled: true }]
       ]],

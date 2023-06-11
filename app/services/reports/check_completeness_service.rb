@@ -14,7 +14,6 @@ module Reports
     end
 
     validates_presence_of :code_insee
-    validates_presence_of :date_constat
 
     with_options if: :require_situation_majic? do
       validates_presence_of :situation_annee_majic
@@ -55,6 +54,10 @@ module Reports
       validates_presence_of :proposition_coefficient_entretien
     end
 
+    with_options if: :require_proposition_address? do
+      validates_presence_of :proposition_libelle_voie
+    end
+
     private
 
     def require_situation_majic?
@@ -62,11 +65,15 @@ module Reports
     end
 
     def require_situation_evaluatuation_hab?
-      action == "evaluation_hab"
+      subject == "evaluation_hab/evaluation"
     end
 
     def require_proposition_evaluatuation_hab?
-      action == "evaluation_hab"
+      subject == "evaluation_hab/evaluation"
+    end
+
+    def require_proposition_address?
+      subject == "evaluation_hab/adresse"
     end
 
     SITUATION_ADDRESSE_ATTRIBUTES = %w[

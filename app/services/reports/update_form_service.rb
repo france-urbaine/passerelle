@@ -16,6 +16,7 @@ module Reports
       situation_evaluation_hab
       situation_evaluation_hab
       proposition_evaluation_hab
+      proposition_address
       observations
       enjeux
       priority

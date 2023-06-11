@@ -76,13 +76,20 @@
       div= render "show_situation_evaluation_hab"
       div= render "show_proposition_evaluation_hab"
 
-    .content__separator
+  - when "evaluation_hab/adresse"
     .content__grid.content__grid--cols-2
-      div= render "show_observations"
-      div= render "show_enjeu"
+      div= render "show_situation_majic"
+      div= render "show_proposition_address"
 
-    .content__separator
-    = render "show_documents"
+  .content__separator
+  .content__grid.content__grid--cols-2
+    div= render "show_observations"
+    div= render "show_enjeu"
+
+  .content__separator
+  = render "show_documents"
+
+
 
   -# when "evaluation_hab/exoneration"
   -# when "evaluation_hab/affectation"
