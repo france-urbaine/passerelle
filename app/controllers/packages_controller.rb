@@ -2,30 +2,26 @@
 
 class PackagesController < ApplicationController
   before_action :authorize!
-  before_action :build_packages_scope
-  before_action :authorize_packages_scope
-  before_action :build_package,     only: %i[new create]
-  before_action :find_package,      only: %i[show edit update]
-  before_action :authorize_package, only: %i[show edit update]
+  before_action :load_and_authorize_parent
+  before_action :autocompletion_not_implemented!, only: :index
+  before_action :better_view_on_parent, only: :index
 
   def index
-    return not_implemented if autocomplete_request?
-    return redirect_to(@parent, status: :see_other) if @parent && !turbo_frame_request?
-
-    @packages = @packages.kept.strict_loading
+    @packages = build_and_authorize_scope
     @packages, @pagy = index_collection(@packages)
   end
 
   def show
-    only_kept! @package
+    @package = find_and_authorize_package
   end
 
   def new
+    @package = build_package
     @background_url = referrer_path || parent_path || packages_path
   end
 
   def create
-    @package.assign_attributes(package_params)
+    @package = build_package(package_params)
     @package.save
 
     respond_with @package,
@@ -34,46 +30,95 @@ class PackagesController < ApplicationController
   end
 
   def edit
-    only_kept! @package
+    @package = find_and_authorize_package
     @background_url = referrer_path || package_path(@package)
   end
 
   def update
-    only_kept! @package
+    @package = find_and_authorize_package
     @package.update(package_params)
-    respond_with result,
+
+    respond_with @package,
       flash: true,
-      location: -> { package_path(@package) }
+      location: -> { redirect_path || package_path(@package) }
+  end
+
+  def remove
+    @package = find_and_authorize_package
+    @background_url = referrer_path || package_path(@package)
+  end
+
+  def destroy
+    @package = find_and_authorize_package(allow_discarded: true)
+    @package.discard
+
+    respond_with @package,
+      flash: true,
+      actions: FlashAction::Cancel.new(params),
+      location: redirect_path || packages_path
+  end
+
+  def undiscard
+    @package = find_and_authorize_package(allow_discarded: true)
+    @package.undiscard
+
+    respond_with @package,
+      flash: true,
+      location: redirect_path || referrer_path || packages_path
+  end
+
+  def remove_all
+    @packages = build_and_authorize_scope(as: :destroyable)
+    @packages = filter_collection(@packages)
+    @background_url = referrer_path || packages_path(**selection_params)
+  end
+
+  def destroy_all
+    @packages = build_and_authorize_scope(as: :destroyable)
+    @packages = filter_collection(@packages)
+    @packages.quickly_discard_all
+
+    respond_with @packages,
+      flash: true,
+      actions: FlashAction::Cancel.new(params),
+      location: redirect_path || parent_path || packages_path
+  end
+
+  def undiscard_all
+    @packages = build_and_authorize_scope(as: :undiscardable)
+    @packages = filter_collection(@packages)
+    @packages.quickly_undiscard_all
+
+    respond_with @packages,
+      flash: true,
+      location: redirect_path || referrer_path || parent_path || packages_path
   end
 
   private
 
-  def build_packages_scope
-    @packages = Package.all
+  def load_and_authorize_parent
+    # Override this method to load a @parent variable
   end
 
-  def authorize_packages_scope
-    @packages = authorized(@packages)
+  def build_and_authorize_scope(as: :default)
+    authorized(Package.all, as:).strict_loading
   end
 
-  def build_package
-    @package = @packages.build
+  def build_package(...)
+    build_and_authorize_scope.build(...)
   end
 
-  def find_package
-    @package = Package.find(params[:id])
-  end
+  def find_and_authorize_package(allow_discarded: false)
+    package = Package.find(params[:id])
 
-  def authorize_package
-    authorize! @package
+    authorize! package
+    only_kept! package unless allow_discarded
+
+    package
   end
 
   def package_params
     authorized(params.fetch(:package, {}))
-  end
-
-  def update_fields_param
-    params.require(:fields)
   end
 
   def parent_path

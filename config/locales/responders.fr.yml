@@ -114,6 +114,34 @@ fr:
             title:        "La suppression des utilisateurs sélectionnés a été annulée."
             delay:        3000
 
+    packages:
+      destroy:
+        notice:
+          type:         "success"
+          title:        "Le paquet a été supprimé."
+          description:  "Toutes les données seront définitivement supprimées dans un délai de 30 jours."
+          delay:        10000
+
+      destroy_all:
+        notice:
+          type:         "success"
+          title:        "Les paquets sélectionnés ont été supprimés."
+          description:  "Toutes les données seront définitivement supprimées dans un délai de 30 jours."
+          delay:        10000
+
+      undiscard:
+        notice:
+          type:         "cancel"
+          title:        "La suppression du paquet a été annulée."
+          delay:        3000
+
+      undiscard_all:
+        notice:
+          type:         "cancel"
+          title:        "La suppression des paquets sélectionnés a été annulée."
+          delay:        3000
+
+
     collectivities:
       <<: *collectivities
 

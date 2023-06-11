@@ -15,6 +15,10 @@ fr:
       region:       Région
 
     attributes:
+      package:
+        name:                 Intitulé du package
+        due_on:               Date d'échéance
+
       publisher:
         name:                 Nom de l'éditeur
         siren:                Numéro SIREN de l'éditeur
@@ -110,6 +114,11 @@ fr:
             subject:
               blank:     L'objet du signalement est requis
               invalid:   Cet objet n'est n'est pas valide
+
+        package:
+          attributes:
+            name:
+              blank:     Un titre est requis
 
         publisher:
           attributes:

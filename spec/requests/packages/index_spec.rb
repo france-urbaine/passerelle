@@ -13,7 +13,7 @@ RSpec.describe "PackagesController#index" do
   let(:xhr)     { |e| e.metadata[:xhr] }
 
   let!(:publisher)      { create(:publisher) }
-  let!(:collectivities) { create_list(:collectivity, 2) }
+  let!(:collectivities) { create_list(:collectivity, 2, publisher: publisher) }
   let!(:packages) do
     [
       create(:package, collectivity: collectivities[0]),

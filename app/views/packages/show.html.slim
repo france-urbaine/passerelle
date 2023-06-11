@@ -4,6 +4,14 @@
     - breadcrumbs.with_path "Paquets", packages_path
     - breadcrumbs.with_path @package.name
 
+    - breadcrumbs.with_action "Transmettre", icon: "cloud-arrow-up", primary: true, disabled: true
+
+    - if allowed_to?(:update?, @package)
+      - breadcrumbs.with_action "Modifier", edit_package_path(@package), icon: "pencil-square", modal: true
+
+    - if allowed_to?(:destroy?, @package)
+      - breadcrumbs.with_action "Supprimer", remove_package_path(@package), icon: "trash", modal: true, destructive: "discrete"
+
   .subheader-bar
     h2.subheader
       = svg_icon("server-stack", "Nouvelle section")

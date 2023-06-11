@@ -58,7 +58,7 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :packages, path: "paquets", only: %i[index show] do
+    resources :packages, only: %i[index show edit update destroy], concerns: %i[removable removable_collection], path: "paquets" do
       scope module: "packages" do
         resources :reports, only: %i[index], path: "signalements"
       end

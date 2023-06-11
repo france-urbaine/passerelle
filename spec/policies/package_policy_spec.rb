@@ -231,17 +231,17 @@ RSpec.describe PackagePolicy, stub_factories: false do
       it_behaves_like("when current user is a publisher user")  { failed }
     end
 
-    context "when packed and covered by the current DDFIP" do
+    context "when packed for the current DDFIP" do
       let(:record) { create(:package, :packed_for_ddfip, ddfip: current_organization) }
 
       it_behaves_like("when current user is a DDFIP admin") { failed }
       it_behaves_like("when current user is a DDFIP user")  { failed }
     end
 
-    context "when transmitted and covered by the current DDFIP" do
+    context "when transmitted to the current DDFIP" do
       let(:record) { create(:package, :transmitted_to_ddfip, ddfip: current_organization) }
 
-      it_behaves_like("when current user is a DDFIP admin") { succeed }
+      it_behaves_like("when current user is a DDFIP admin") { failed }
       it_behaves_like("when current user is a DDFIP user")  { failed }
     end
   end
@@ -371,15 +371,14 @@ RSpec.describe PackagePolicy, stub_factories: false do
   it { expect(:remove_all?).to    be_an_alias_of(policy, :destroy_all?) }
   it { expect(:undiscard_all?).to be_an_alias_of(policy, :destroy_all?) }
 
-  describe "relation scope" do
-    # Subject is called before running tests to load all dependencies
-    # and asserts to run only expected queries when calling `.load`
-    #
+  describe "default relation scope" do
     subject!(:scope) do
-      policy.apply_scope(Package.all, type: :active_record_relation)
+      policy.apply_scope(target, type: :active_record_relation)
     end
 
-    it_behaves_like("when current user is a collectivity user") do
+    let(:target) { Package.all }
+
+    it_behaves_like "when current user is a collectivity user" do
       it "scopes on packages packed through the web UI or transmitted through API" do
         expect {
           scope.load
@@ -394,7 +393,7 @@ RSpec.describe PackagePolicy, stub_factories: false do
       end
     end
 
-    it_behaves_like("when current user is a publisher user") do
+    it_behaves_like "when current user is a publisher user" do
       it "scopes on packages packed through the API" do
         expect {
           scope.load
@@ -407,7 +406,7 @@ RSpec.describe PackagePolicy, stub_factories: false do
       end
     end
 
-    it_behaves_like("when current user is a DDFIP admin") do
+    it_behaves_like "when current user is a DDFIP admin" do
       it "scopes on packages transmitted to the DDFIP" do
         expect {
           scope.load
@@ -426,10 +425,8 @@ RSpec.describe PackagePolicy, stub_factories: false do
       end
     end
 
-    it_behaves_like("when current user is a DDFIP user") do
-      it "returns a null relation" do
-        expect { scope.load }.to perform_no_sql_queries
-      end
+    it_behaves_like "when current user is a DDFIP user" do
+      it { is_expected.to be_a_null_relation }
     end
   end
 
@@ -485,27 +482,22 @@ RSpec.describe PackagePolicy, stub_factories: false do
     end
 
     it_behaves_like("when current user is a DDFIP admin") do
-      it "returns a null relation" do
-        expect { scope.load }.to perform_no_sql_queries
-      end
+      it { is_expected.to be_a_null_relation }
     end
 
     it_behaves_like("when current user is a DDFIP user") do
-      it "returns a null relation" do
-        expect { scope.load }.to perform_no_sql_queries
-      end
+      it { is_expected.to be_a_null_relation }
     end
   end
 
-  describe "relation scope to destroy all" do
-    # Subject is called before running tests to load all dependencies
-    # and asserts to run only expected queries when calling `.load`
-    #
+  describe "destroyable relation scope" do
     subject!(:scope) do
-      policy.apply_scope(Package.all, type: :active_record_relation, name: :destroy_all)
+      policy.apply_scope(target, name: :destroyable, type: :active_record_relation)
     end
 
-    it_behaves_like("when current user is a collectivity user") do
+    let(:target) { Package.all }
+
+    it_behaves_like "when current user is a collectivity user" do
       it "scopes on packages packed through the web UI or transmitted through API" do
         expect {
           scope.load
@@ -520,7 +512,7 @@ RSpec.describe PackagePolicy, stub_factories: false do
       end
     end
 
-    it_behaves_like("when current user is a publisher user") do
+    it_behaves_like "when current user is a publisher user" do
       it "scopes on packages packed through the API" do
         expect {
           scope.load
@@ -534,16 +526,47 @@ RSpec.describe PackagePolicy, stub_factories: false do
       end
     end
 
-    it_behaves_like("when current user is a DDFIP admin") do
-      it "returns a null relation" do
-        expect { scope.load }.to perform_no_sql_queries
+    it_behaves_like("when current user is a DDFIP admin") { it { is_expected.to be_a_null_relation } }
+    it_behaves_like("when current user is a DDFIP user")  { it { is_expected.to be_a_null_relation } }
+  end
+
+  describe "undiscardable relation scope" do
+    subject!(:scope) do
+      policy.apply_scope(target, name: :undiscardable, type: :active_record_relation)
+    end
+
+    let(:target) { Package.all }
+
+    it_behaves_like "when current user is a collectivity user" do
+      it "scopes on packages packed through the web UI or transmitted through API" do
+        expect {
+          scope.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "packages".*
+          FROM   "packages"
+          WHERE  "packages"."discarded_at" IS NOT NULL
+            AND  "packages"."collectivity_id" = '#{current_organization.id}'
+            AND  "packages"."publisher_id" IS NULL
+            AND  "packages"."transmitted_at" IS NULL
+        SQL
       end
     end
 
-    it_behaves_like("when current user is a DDFIP user") do
-      it "returns a null relation" do
-        expect { scope.load }.to perform_no_sql_queries
+    it_behaves_like "when current user is a publisher user" do
+      it "scopes on packages packed through the API" do
+        expect {
+          scope.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "packages".*
+          FROM   "packages"
+          WHERE  "packages"."discarded_at" IS NOT NULL
+            AND  "packages"."publisher_id" = '#{current_organization.id}'
+            AND  ("packages"."transmitted_at" IS NULL OR "packages"."sandbox" = TRUE)
+        SQL
       end
     end
+
+    it_behaves_like("when current user is a DDFIP admin") { it { is_expected.to be_a_null_relation } }
+    it_behaves_like("when current user is a DDFIP user")  { it { is_expected.to be_a_null_relation } }
   end
 end

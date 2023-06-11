@@ -28,8 +28,7 @@ class PackagePolicy < ApplicationPolicy
       collectivity? || publisher? || ddfip_admin?
     elsif record.is_a?(Package)
       package_updatable_by_collectivity?(record) ||
-        package_updatable_by_publisher?(record) ||
-        package_updatable_by_ddfip_admin?(record)
+        package_updatable_by_publisher?(record)
     end
   end
 
@@ -68,7 +67,7 @@ class PackagePolicy < ApplicationPolicy
     end
   end
 
-  relation_scope :destroy_all do |relation|
+  relation_scope :destroyable do |relation|
     if collectivity?
       relation.merge(packages_destroyable_by_collectivity)
     elsif publisher?
@@ -78,13 +77,21 @@ class PackagePolicy < ApplicationPolicy
     end
   end
 
+  relation_scope :undiscardable do |relation|
+    if collectivity?
+      relation.merge(packages_undiscardable_by_collectivity)
+    elsif publisher?
+      relation.merge(packages_undiscardable_by_publisher)
+    else
+      relation.none
+    end
+  end
+
   params_filter do |params|
     if collectivity? || publisher?
-      params.permit(:name)
+      params.permit(:name, :due_on)
     elsif ddfip_admin?
       params.permit(:approved_at, :rejected_at)
-    else
-      {}
     end
   end
 
@@ -186,10 +193,6 @@ class PackagePolicy < ApplicationPolicy
       package.packing?
   end
 
-  def package_updatable_by_ddfip_admin?(package)
-    package_shown_to_ddfip_admin?(package)
-  end
-
   # List packages that can be destroyed by an user
   # ----------------------------------------------------------------------------
   def packages_destroyable_by_collectivity
@@ -207,6 +210,27 @@ class PackagePolicy < ApplicationPolicy
 
     Package
       .kept
+      .sent_by_publisher(organization)
+      .merge(Package.packing.or(Package.sandbox))
+  end
+
+  # List packages that can be undiscarded by an user
+  # ----------------------------------------------------------------------------
+  def packages_undiscardable_by_collectivity
+    return Package.none unless collectivity?
+
+    Package
+      .discarded
+      .sent_by_collectivity(organization)
+      .packed_through_web_ui
+      .packing
+  end
+
+  def packages_undiscardable_by_publisher
+    return Package.none unless publisher?
+
+    Package
+      .discarded
       .sent_by_publisher(organization)
       .merge(Package.packing.or(Package.sandbox))
   end
