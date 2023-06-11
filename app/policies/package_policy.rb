@@ -90,20 +90,6 @@ class PackagePolicy < ApplicationPolicy
 
   private
 
-  # Categorize current situation
-  # ----------------------------------------------------------------------------
-  def collectivity?
-    organization.is_a?(Collectivity)
-  end
-
-  def publisher?
-    organization.is_a?(Publisher)
-  end
-
-  def ddfip_admin?
-    organization.is_a?(DDFIP) && organization_admin?
-  end
-
   # List packages that can be listed to an user
   # ----------------------------------------------------------------------------
   def packages_listed_to_collectivity

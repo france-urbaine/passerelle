@@ -75,24 +75,6 @@ class ReportPolicy < ApplicationPolicy
 
   private
 
-  # Categorize current situation
-  # ----------------------------------------------------------------------------
-  def collectivity?
-    organization.is_a?(Collectivity)
-  end
-
-  def publisher?
-    organization.is_a?(Publisher)
-  end
-
-  def ddfip_admin?
-    organization.is_a?(DDFIP) && organization_admin?
-  end
-
-  def office_user?
-    organization.is_a?(DDFIP) && !organization_admin?
-  end
-
   # List reports that can be listed to an user
   # ----------------------------------------------------------------------------
   def reports_listed_to_collectivity

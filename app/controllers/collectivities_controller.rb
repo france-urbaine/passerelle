@@ -2,30 +2,26 @@
 
 class CollectivitiesController < ApplicationController
   before_action :authorize!
-  before_action :build_collectivities_scope
-  before_action :authorize_collectivities_scope
-  before_action :build_collectivity,     only: %i[new create]
-  before_action :find_collectivity,      only: %i[show edit remove update destroy undiscard]
-  before_action :authorize_collectivity, only: %i[show edit remove update destroy undiscard]
+  before_action :load_and_authorize_parent
+  before_action :autocompletion_not_implemented!, only: :index
+  before_action :better_view_on_parent, only: :index
 
   def index
-    return not_implemented if autocomplete_request?
-    return redirect_to(@parent, status: :see_other) if @parent && !turbo_frame_request?
-
-    @collectivities = @collectivities.kept.strict_loading
+    @collectivities = build_and_authorize_scope
     @collectivities, @pagy = index_collection(@collectivities, nested: @parent)
   end
 
   def show
-    only_kept! @collectivity
+    @collectivity = find_and_authorize_collectivity
   end
 
   def new
+    @collectivity = build_collectivity
     @background_url = referrer_path || parent_path || collectivities_path
   end
 
   def create
-    @collectivity.assign_attributes(collectivity_params)
+    @collectivity = build_collectivity(collectivity_params)
     @collectivity.save
 
     respond_with @collectivity,
@@ -34,12 +30,12 @@ class CollectivitiesController < ApplicationController
   end
 
   def edit
-    only_kept! @collectivity
+    @collectivity = find_and_authorize_collectivity
     @background_url = referrer_path || collectivity_path(@collectivity)
   end
 
   def update
-    only_kept! @collectivity
+    @collectivity = find_and_authorize_collectivity
     @collectivity.update(collectivity_params)
 
     respond_with @collectivity,
@@ -48,12 +44,12 @@ class CollectivitiesController < ApplicationController
   end
 
   def remove
-    only_kept! @collectivity
+    @collectivity = find_and_authorize_collectivity
     @background_url = referrer_path || collectivity_path(@collectivity)
   end
 
   def destroy
-    @collectivity = @collectivities.find(params[:id])
+    @collectivity = find_and_authorize_collectivity(allow_discarded: true)
     @collectivity.discard
 
     respond_with @collectivity,
@@ -63,7 +59,7 @@ class CollectivitiesController < ApplicationController
   end
 
   def undiscard
-    @collectivity = @collectivities.find(params[:id])
+    @collectivity = find_and_authorize_collectivity(allow_discarded: true)
     @collectivity.undiscard
 
     respond_with @collectivity,
@@ -72,14 +68,13 @@ class CollectivitiesController < ApplicationController
   end
 
   def remove_all
-    @collectivities = @collectivities.kept.strict_loading
+    @collectivities = build_and_authorize_scope
     @collectivities = filter_collection(@collectivities)
-
     @background_url = referrer_path || collectivities_path(**selection_params)
   end
 
   def destroy_all
-    @collectivities = @collectivities.kept.strict_loading
+    @collectivities = build_and_authorize_scope(as: :destroyable)
     @collectivities = filter_collection(@collectivities)
     @collectivities.quickly_discard_all
 
@@ -90,7 +85,7 @@ class CollectivitiesController < ApplicationController
   end
 
   def undiscard_all
-    @collectivities = @collectivities.discarded.strict_loading
+    @collectivities = build_and_authorize_scope(as: :undiscardable)
     @collectivities = filter_collection(@collectivities)
     @collectivities.quickly_undiscard_all
 
@@ -101,29 +96,30 @@ class CollectivitiesController < ApplicationController
 
   private
 
-  def build_collectivities_scope
-    @collectivities = Collectivity.all
+  def load_and_authorize_parent
+    # Override this method to load a @parent variable
   end
 
-  def authorize_collectivities_scope
-    @collectivities = authorized(@collectivities)
+  def build_and_authorize_scope(as: :default)
+    authorized(Collectivity.all, as:).strict_loading
   end
 
-  def build_collectivity
-    @collectivity = @collectivities.build
+  def build_collectivity(...)
+    build_and_authorize_scope.build(...)
   end
 
-  def find_collectivity
-    @collectivity = Collectivity.find(params[:id])
-  end
+  def find_and_authorize_collectivity(allow_discarded: false)
+    collectivity = Collectivity.find(params[:id])
 
-  def authorize_collectivity
-    authorize! @collectivity
+    authorize! collectivity
+    only_kept! collectivity unless allow_discarded
+
+    collectivity
   end
 
   def collectivity_params
     authorized(params.fetch(:collectivity, {}))
-      .then { |input| CollectivityParamsParser.new(input, @parent).parse }
+      .then { |input| Collectivities::ParamsParserService.new(input, @parent).parse }
   end
 
   def parent_path

@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 class OfficePolicy < ApplicationPolicy
-  alias_rule :index?, :create?, to: :manage_collection?
-  alias_rule :assign_ddfip?, to: :super_admin?
+  alias_rule :new?, :create?, to: :index?
+  alias_rule :remove_all?, :destroy_all?, :undiscard_all?, to: :index?
 
-  def manage_collection?
+  def index?
     super_admin? || ddfip_admin?
   end
 
@@ -16,12 +16,21 @@ class OfficePolicy < ApplicationPolicy
 
   relation_scope do |relation|
     if super_admin?
-      relation
+      relation.kept
     elsif ddfip_admin?
-      relation.owned_by(organization)
+      relation.kept.owned_by(organization)
     else
       relation.none
     end
+  end
+
+  relation_scope :destroyable do |relation|
+    authorized(relation)
+  end
+
+  relation_scope :undiscardable do |relation|
+    relation = authorized(relation)
+    relation.with_discarded.discarded
   end
 
   params_filter do |params|
@@ -30,11 +39,5 @@ class OfficePolicy < ApplicationPolicy
     elsif ddfip_admin?
       params.permit(:name, :action)
     end
-  end
-
-  private
-
-  def ddfip_admin?
-    organization_admin? && organization.is_a?(DDFIP)
   end
 end

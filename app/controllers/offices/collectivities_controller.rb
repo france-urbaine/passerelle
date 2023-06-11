@@ -4,7 +4,7 @@ module Offices
   class CollectivitiesController < ::CollectivitiesController
     private
 
-    def build_collectivities_scope
+    def load_and_authorize_parent
       office = Office.find(params[:office_id])
 
       authorize! office, to: :show?
@@ -12,7 +12,10 @@ module Offices
       only_kept! office.ddfip
 
       @parent = office
-      @collectivities = office.on_territory_collectivities
+    end
+
+    def build_and_authorize_scope(as: :default)
+      authorized(@parent.on_territory_collectivities, as:).strict_loading
     end
   end
 end

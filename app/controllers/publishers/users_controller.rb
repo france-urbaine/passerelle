@@ -4,14 +4,17 @@ module Publishers
   class UsersController < ::UsersController
     private
 
-    def build_users_scope
+    def load_and_authorize_parent
       publisher = Publisher.find(params[:publisher_id])
 
       authorize! publisher, to: :show?
       only_kept! publisher
 
       @parent = publisher
-      @users  = publisher.users
+    end
+
+    def build_and_authorize_scope(as: :default)
+      authorized(@parent.users, as:).strict_loading
     end
   end
 end

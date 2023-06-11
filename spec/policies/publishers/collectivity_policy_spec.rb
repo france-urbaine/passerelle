@@ -2,69 +2,52 @@
 
 require "rails_helper"
 
-RSpec.describe PublisherPolicy do
-  describe_rule :manage? do
-    context "without record" do
-      let(:record) { Publisher }
-
-      it_behaves_like("when current user is a super admin")        { succeed }
-      it_behaves_like("when current user is a DDFIP admin")        { failed }
-      it_behaves_like("when current user is a DDFIP user")         { failed }
-      it_behaves_like("when current user is a publisher admin")    { failed }
-      it_behaves_like("when current user is a publisher user")     { failed }
-      it_behaves_like("when current user is a collectivity admin") { failed }
-      it_behaves_like("when current user is a collectivity user")  { failed }
-    end
-
-    context "with a publisher" do
-      let(:record) { build_stubbed(:publisher) }
-
-      it_behaves_like("when current user is a super admin")        { succeed }
-      it_behaves_like("when current user is a DDFIP admin")        { failed }
-      it_behaves_like("when current user is a DDFIP user")         { failed }
-      it_behaves_like("when current user is a publisher admin")    { failed }
-      it_behaves_like("when current user is a publisher user")     { failed }
-      it_behaves_like("when current user is a collectivity admin") { failed }
-      it_behaves_like("when current user is a collectivity user")  { failed }
-    end
-
-    context "with the same publisher as the current organization" do
-      let(:record) { current_organization }
-
-      it_behaves_like("when current user is a super admin")     { succeed }
-      it_behaves_like("when current user is a publisher admin") { failed }
-      it_behaves_like("when current user is a publisher user")  { failed }
-    end
+RSpec.describe Publishers::CollectivityPolicy do
+  describe_rule :index? do
+    it_behaves_like("when current user is a super admin")        { succeed }
+    it_behaves_like("when current user is a DDFIP admin")        { failed }
+    it_behaves_like("when current user is a DDFIP user")         { failed }
+    it_behaves_like("when current user is a publisher admin")    { failed }
+    it_behaves_like("when current user is a publisher user")     { failed }
+    it_behaves_like("when current user is a collectivity admin") { failed }
+    it_behaves_like("when current user is a collectivity user")  { failed }
   end
 
-  it { expect(:index?).to         be_an_alias_of(policy, :manage?) }
-  it { expect(:show?).to          be_an_alias_of(policy, :manage?) }
-  it { expect(:new?).to           be_an_alias_of(policy, :manage?) }
-  it { expect(:create?).to        be_an_alias_of(policy, :manage?) }
-  it { expect(:edit?).to          be_an_alias_of(policy, :manage?) }
-  it { expect(:update?).to        be_an_alias_of(policy, :manage?) }
-  it { expect(:remove?).to        be_an_alias_of(policy, :manage?) }
-  it { expect(:destroy?).to       be_an_alias_of(policy, :manage?) }
-  it { expect(:undiscard?).to     be_an_alias_of(policy, :manage?) }
-  it { expect(:remove_all?).to    be_an_alias_of(policy, :manage?) }
-  it { expect(:destroy_all?).to   be_an_alias_of(policy, :manage?) }
-  it { expect(:undiscard_all?).to be_an_alias_of(policy, :manage?) }
+  it { expect(:new?).to           be_an_alias_of(policy, :index?) }
+  it { expect(:create?).to        be_an_alias_of(policy, :index?) }
+  it { expect(:remove_all?).to    be_an_alias_of(policy, :index?) }
+  it { expect(:destroy_all?).to   be_an_alias_of(policy, :index?) }
+  it { expect(:undiscard_all?).to be_an_alias_of(policy, :index?) }
+
+  describe_rule :assign_publisher? do
+    context "without record" do
+      let(:record) { Collectivity }
+
+      it_behaves_like("when current user is a super admin")        { failed }
+      it_behaves_like("when current user is a DDFIP admin")        { failed }
+      it_behaves_like("when current user is a DDFIP user")         { failed }
+      it_behaves_like("when current user is a publisher admin")    { failed }
+      it_behaves_like("when current user is a publisher user")     { failed }
+      it_behaves_like("when current user is a collectivity admin") { failed }
+      it_behaves_like("when current user is a collectivity user")  { failed }
+    end
+  end
 
   describe "default relation scope" do
     subject!(:scope) do
       policy.apply_scope(target, type: :active_record_relation)
     end
 
-    let(:target) { Publisher.all }
+    let(:target) { Collectivity.all }
 
     it_behaves_like "when current user is a super admin" do
-      it "scopes on kept publishers" do
+      it "scopes all kept collectivities" do
         expect {
           scope.load
         }.to perform_sql_query(<<~SQL)
-          SELECT "publishers".*
-          FROM   "publishers"
-          WHERE  "publishers"."discarded_at" IS NULL
+          SELECT "collectivities".*
+          FROM   "collectivities"
+          WHERE  "collectivities"."discarded_at" IS NULL
         SQL
       end
     end
@@ -90,7 +73,7 @@ RSpec.describe PublisherPolicy do
     let(:target)        { Publisher.all }
     let(:scope_options) { |e| e.metadata.fetch(:scope_options, {}) }
 
-    it_behaves_like "when current user is a publisher super admin" do
+    it_behaves_like "when current user is a collectivity super admin" do
       it "scopes all kept publishers" do
         expect {
           scope.load
@@ -125,7 +108,7 @@ RSpec.describe PublisherPolicy do
       end
     end
 
-    it_behaves_like "when current user is a collectivity super admin" do
+    it_behaves_like "when current user is a publisher super admin" do
       it "scopes all kept publishers" do
         expect {
           scope.load
@@ -181,14 +164,19 @@ RSpec.describe PublisherPolicy do
 
     let(:attributes) do
       {
-        name:                "Fiscalité & Territoire",
+        publisher_id:        "f4e6854a-00fb-48c4-b669-5f0623e07778",
+        territory_type:      "EPCI",
+        territory_id:        "738569d4-1761-4a99-8bbc-7f40aa243fce",
+        territory_data:      { type: "EPCI", id: "738569d4-1761-4a99-8bbc-7f40aa243fce" }.to_json,
+        territory_code:      "123456789",
+        name:                "CA du Pays Basque",
         siren:               "123456789",
-        contact_first_name:  "Marc",
-        contact_last_name:   "Debomy",
-        contact_email:       "marc.debomy@fiscalite-territoire.fr",
+        contact_first_name:  "Christelle",
+        contact_last_name:   "Droitier",
+        contact_email:       "christelle.droitier@pays-basque.fr",
         contact_phone:       "+0000",
         allow_2fa_via_email: "true",
-        domain_restriction:  "@fiscalite-territoire.fr",
+        domain_restriction:  "@pays-basque.fr",
         something_else:      "true"
       }
     end
@@ -196,7 +184,12 @@ RSpec.describe PublisherPolicy do
     it_behaves_like "when current user is a super admin" do
       it do
         is_expected
-          .to  include(name:                attributes[:name])
+          .to  not_include(:publisher_id)
+          .and include(territory_type:      attributes[:territory_type])
+          .and include(territory_id:        attributes[:territory_id])
+          .and include(territory_data:      attributes[:territory_data])
+          .and include(territory_code:      attributes[:territory_code])
+          .and include(name:                attributes[:name])
           .and include(siren:               attributes[:siren])
           .and include(contact_first_name:  attributes[:contact_first_name])
           .and include(contact_last_name:   attributes[:contact_last_name])

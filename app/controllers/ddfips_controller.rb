@@ -2,14 +2,9 @@
 
 class DDFIPsController < ApplicationController
   before_action :authorize!
-  before_action :build_ddfips_scope
-  before_action :authorize_ddfips_scope
-  before_action :build_ddfip,     only: %i[new create]
-  before_action :find_ddfip,      only: %i[show edit remove update destroy undiscard]
-  before_action :authorize_ddfip, only: %i[show edit remove update destroy undiscard]
 
   def index
-    @ddfips = @ddfips.kept.strict_loading
+    @ddfips = build_and_authorize_scope
     @ddfips, @pagy = index_collection(@ddfips)
 
     respond_with @ddfips do |format|
@@ -18,15 +13,16 @@ class DDFIPsController < ApplicationController
   end
 
   def show
-    only_kept! @ddfip
+    @ddfip = find_and_authorize_ddfip
   end
 
   def new
+    @ddfip = build_ddfip
     @background_url = referrer_path || ddfips_path
   end
 
   def create
-    @ddfip.assign_attributes(ddfip_params)
+    @ddfip = build_ddfip(ddfip_params)
     @ddfip.save
 
     respond_with @ddfip,
@@ -35,13 +31,12 @@ class DDFIPsController < ApplicationController
   end
 
   def edit
-    only_kept! @ddfip
-
+    @ddfip = find_and_authorize_ddfip
     @background_url = referrer_path || ddfip_path(@ddfip)
   end
 
   def update
-    only_kept! @ddfip
+    @ddfip = find_and_authorize_ddfip
     @ddfip.update(ddfip_params)
 
     respond_with @ddfip,
@@ -50,11 +45,12 @@ class DDFIPsController < ApplicationController
   end
 
   def remove
-    only_kept! @ddfip
+    @ddfip = find_and_authorize_ddfip
     @background_url = referrer_path || ddfip_path(@ddfip)
   end
 
   def destroy
+    @ddfip = find_and_authorize_ddfip(allow_discarded: true)
     @ddfip.discard
 
     respond_with @ddfip,
@@ -64,6 +60,7 @@ class DDFIPsController < ApplicationController
   end
 
   def undiscard
+    @ddfip = find_and_authorize_ddfip(allow_discarded: true)
     @ddfip.undiscard
 
     respond_with @ddfip,
@@ -72,14 +69,13 @@ class DDFIPsController < ApplicationController
   end
 
   def remove_all
-    @ddfips = @ddfips.kept.strict_loading
+    @ddfips = build_and_authorize_scope
     @ddfips = filter_collection(@ddfips)
-
     @background_url = referrer_path || ddfips_path(**selection_params)
   end
 
   def destroy_all
-    @ddfips = @ddfips.kept.strict_loading
+    @ddfips = build_and_authorize_scope(as: :destroyable)
     @ddfips = filter_collection(@ddfips)
     @ddfips.quickly_discard_all
 
@@ -90,7 +86,7 @@ class DDFIPsController < ApplicationController
   end
 
   def undiscard_all
-    @ddfips = @ddfips.discarded.strict_loading
+    @ddfips = build_and_authorize_scope(as: :undiscardable)
     @ddfips = filter_collection(@ddfips)
     @ddfips.quickly_undiscard_all
 
@@ -101,24 +97,21 @@ class DDFIPsController < ApplicationController
 
   private
 
-  def build_ddfips_scope
-    @ddfips = DDFIP.all
+  def build_and_authorize_scope(as: :default)
+    authorized(DDFIP.all, as:).strict_loading
   end
 
-  def authorize_ddfips_scope
-    @ddfips = authorized(@ddfips)
+  def build_ddfip(...)
+    build_and_authorize_scope.build(...)
   end
 
-  def build_ddfip
-    @ddfip = @ddfips.build
-  end
+  def find_and_authorize_ddfip(allow_discarded: false)
+    ddfip = DDFIP.find(params[:id])
 
-  def find_ddfip
-    @ddfip = DDFIP.find(params[:id])
-  end
+    authorize! ddfip
+    only_kept! ddfip unless allow_discarded
 
-  def authorize_ddfip
-    authorize! @ddfip
+    ddfip
   end
 
   def ddfip_params

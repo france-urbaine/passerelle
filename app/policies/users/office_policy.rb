@@ -3,7 +3,7 @@
 module Users
   class OfficePolicy < ApplicationPolicy
     def index?
-      super_admin? || (organization_admin? && organization.is_a?(DDFIP))
+      super_admin? || ddfip_admin?
     end
 
     def switch_ddfip?

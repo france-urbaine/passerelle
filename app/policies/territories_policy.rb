@@ -8,6 +8,6 @@ class TerritoriesPolicy < ApplicationPolicy
   end
 
   def manage?
-    user.present? && user.super_admin?
+    super_admin?
   end
 end

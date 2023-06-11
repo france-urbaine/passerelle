@@ -3,25 +3,22 @@
 module Offices
   class UsersController < ApplicationController
     before_action :authorize!
-    before_action :find_and_authorize_office
-    before_action :build_and_authorize_users_scope, except: %i[edit_all update_all]
-    before_action :build_user,                      only: %i[new create]
-    before_action :find_and_authorize_user,         only: %i[remove destroy]
+    before_action :load_and_authorize_office
+    before_action :autocompletion_not_implemented!, only: :index
+    before_action :better_view_on_office, only: :index
 
     def index
-      return not_implemented if autocomplete_request?
-      return redirect_to(@office, status: :see_other) unless turbo_frame_request?
-
-      @users = @users.kept.strict_loading
+      @users = build_and_authorize_scope
       @users, @pagy = index_collection(@users, nested: @office)
     end
 
     def new
+      @user = build_user(office_ids: [@office.id])
       @background_url = referrer_path || office_path(@office)
     end
 
     def create
-      @user.assign_attributes(user_params)
+      @user = build_user(user_params)
       @user.invite(by: current_user)
       @user.save
 
@@ -31,12 +28,12 @@ module Offices
     end
 
     def remove
-      only_kept! @user
+      @user = find_and_authorize_user
       @background_url = referrer_path || office_path(@office)
     end
 
     def destroy
-      only_kept! @user
+      @user = find_and_authorize_user
       @office.users.destroy(@user)
 
       respond_with @user,
@@ -59,13 +56,13 @@ module Offices
     end
 
     def remove_all
-      @users = @users.kept.strict_loading
+      @users = build_and_authorize_scope
       @users = filter_collection(@users)
       @background_url = referrer_path || office_path(@office)
     end
 
     def destroy_all
-      @users = @users.kept.strict_loading
+      @users = build_and_authorize_scope
       @users = filter_collection(@users)
       @office.users.destroy(@users)
 
@@ -76,39 +73,41 @@ module Offices
 
     private
 
-    def find_and_authorize_office
-      @office = Office.find(params[:office_id])
+    def load_and_authorize_office
+      office = Office.find(params[:office_id])
 
-      authorize! @office, to: :show?
-      only_kept! @office
-      only_kept! @office.ddfip
+      authorize! office, to: :show?
+      only_kept! office
+      only_kept! office.ddfip
+
+      @office = office
     end
 
-    def build_and_authorize_users_scope
-      @users = @office.users
-      @users = authorized(@users)
+    def better_view_on_office
+      return redirect_to(@office, status: :see_other) unless turbo_frame_request?
     end
 
-    def build_user
-      @user = @office.ddfip.users.build(offices: [@office])
+    def build_and_authorize_scope
+      authorized(@office.users).strict_loading
     end
 
-    def find_and_authorize_user
-      @user = @office.ddfip.users.find(params[:id])
+    def build_user(...)
+      scope = authorized(@office.ddfip.users).strict_loading
+      scope.build(...)
+    end
 
-      authorize! @user
+    def find_and_authorize_user(allow_discarded: false)
+      user = @office.ddfip.users.find(params[:id])
+
+      authorize! user
+      only_kept! user unless allow_discarded
+
+      user
     end
 
     def user_params
-      params
-        .fetch(:user, {})
+      authorized(params.fetch(:user, {}))
         .then { |input| UserParamsParser.new(input, @office.ddfip).parse }
-        .permit(
-          :organization_type, :organization_id,
-          :first_name, :last_name, :email,
-          :organization_admin, :super_admin,
-          office_ids: []
-        )
     end
 
     def user_ids_params

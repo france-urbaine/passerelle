@@ -1,19 +1,27 @@
 # frozen_string_literal: true
 
 class UserPolicy < ApplicationPolicy
-  alias_rule :index?, :create?, to: :manage_collection?
-  alias_rule :assign_organization?, :assign_super_admin?, to: :super_admin?
+  alias_rule :new?, :create?, to: :index?
+  alias_rule :remove_all?, :destroy_all?, :undiscard_all?, to: :index?
 
-  def manage_collection?
+  def index?
     super_admin? || organization_admin?
   end
 
   def manage?
     super_admin? ||
       (record == User && organization_admin?) ||
-      (record == User && organization.is_a?(Publisher)) ||
+      (record == User && publisher?) ||
       (record.is_a?(User) && admin_of_user_organization?(record)) ||
       (record.is_a?(User) && publisher_of_user_collectivity?(record))
+  end
+
+  def assign_organization?
+    super_admin?
+  end
+
+  def assign_super_admin?
+    super_admin?
   end
 
   def assign_organization_admin?
@@ -22,12 +30,23 @@ class UserPolicy < ApplicationPolicy
 
   relation_scope do |relation|
     if super_admin?
-      relation
+      relation.kept
     elsif organization_admin?
-      relation.owned_by(organization)
+      relation.kept.owned_by(organization)
     else
       relation.none
     end
+  end
+
+  relation_scope :destroyable do |relation, exclude_current: true|
+    relation = authorized(relation)
+    relation = relation.where.not(id: user) if exclude_current
+    relation
+  end
+
+  relation_scope :undiscardable do |relation|
+    relation = authorized(relation)
+    relation.with_discarded.discarded
   end
 
   params_filter do |params|
@@ -49,7 +68,7 @@ class UserPolicy < ApplicationPolicy
         :first_name, :last_name, :email,
         :organization_admin
       )
-    else
+    elsif publisher?
       params.permit(
         :first_name, :last_name, :email
       )
@@ -63,7 +82,7 @@ class UserPolicy < ApplicationPolicy
   end
 
   def publisher_of_user_collectivity?(record)
-    organization.is_a?(Publisher) &&
+    publisher? &&
       record.organization.is_a?(Collectivity) &&
       record.organization.publisher_id == organization.id
   end

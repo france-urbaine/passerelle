@@ -12,19 +12,10 @@ RSpec.describe ReportPolicy, stub_factories: false do
 
   describe_rule :index? do
     it_behaves_like("when current user is a DDFIP admin")        { succeed }
-    it_behaves_like("when current user is a publisher admin")    { succeed }
-    it_behaves_like("when current user is a collectivity admin") { succeed }
     it_behaves_like("when current user is a DDFIP user")         { succeed }
+    it_behaves_like("when current user is a publisher admin")    { succeed }
     it_behaves_like("when current user is a publisher user")     { succeed }
-    it_behaves_like("when current user is a collectivity user")  { succeed }
-  end
-
-  describe_rule :create? do
-    it_behaves_like("when current user is a DDFIP admin")        { failed }
-    it_behaves_like("when current user is a publisher admin")    { failed }
     it_behaves_like("when current user is a collectivity admin") { succeed }
-    it_behaves_like("when current user is a DDFIP user")         { failed }
-    it_behaves_like("when current user is a publisher user")     { failed }
     it_behaves_like("when current user is a collectivity user")  { succeed }
   end
 
@@ -33,10 +24,10 @@ RSpec.describe ReportPolicy, stub_factories: false do
       let(:record) { Report }
 
       it_behaves_like("when current user is a DDFIP admin")        { succeed }
-      it_behaves_like("when current user is a publisher admin")    { succeed }
-      it_behaves_like("when current user is a collectivity admin") { succeed }
       it_behaves_like("when current user is a DDFIP user")         { succeed }
+      it_behaves_like("when current user is a publisher admin")    { succeed }
       it_behaves_like("when current user is a publisher user")     { succeed }
+      it_behaves_like("when current user is a collectivity admin") { succeed }
       it_behaves_like("when current user is a collectivity user")  { succeed }
     end
 
@@ -44,10 +35,10 @@ RSpec.describe ReportPolicy, stub_factories: false do
       let(:record) { build_stubbed(:report) }
 
       it_behaves_like("when current user is a DDFIP admin")        { failed }
-      it_behaves_like("when current user is a publisher admin")    { failed }
-      it_behaves_like("when current user is a collectivity admin") { failed }
       it_behaves_like("when current user is a DDFIP user")         { failed }
+      it_behaves_like("when current user is a publisher admin")    { failed }
       it_behaves_like("when current user is a publisher user")     { failed }
+      it_behaves_like("when current user is a collectivity admin") { failed }
       it_behaves_like("when current user is a collectivity user")  { failed }
 
       context "when reported through Web UI by the current collectivity" do
@@ -161,16 +152,27 @@ RSpec.describe ReportPolicy, stub_factories: false do
       end
     end
   end
+
+  describe_rule :create? do
+    it_behaves_like("when current user is a DDFIP admin")        { failed }
+    it_behaves_like("when current user is a DDFIP user")         { failed }
+    it_behaves_like("when current user is a publisher admin")    { failed }
+    it_behaves_like("when current user is a publisher user")     { failed }
+    it_behaves_like("when current user is a collectivity admin") { succeed }
+    it_behaves_like("when current user is a collectivity user")  { succeed }
+  end
+
+  it { expect(:new?).to be_an_alias_of(policy, :create?) }
 
   describe_rule :update? do
     context "without record" do
       let(:record) { Report }
 
       it_behaves_like("when current user is a DDFIP admin")        { succeed }
-      it_behaves_like("when current user is a publisher admin")    { succeed }
-      it_behaves_like("when current user is a collectivity admin") { succeed }
       it_behaves_like("when current user is a DDFIP user")         { succeed }
+      it_behaves_like("when current user is a publisher admin")    { succeed }
       it_behaves_like("when current user is a publisher user")     { succeed }
+      it_behaves_like("when current user is a collectivity admin") { succeed }
       it_behaves_like("when current user is a collectivity user")  { succeed }
     end
 
@@ -178,10 +180,10 @@ RSpec.describe ReportPolicy, stub_factories: false do
       let(:record) { build_stubbed(:report) }
 
       it_behaves_like("when current user is a DDFIP admin")        { failed }
-      it_behaves_like("when current user is a publisher admin")    { failed }
-      it_behaves_like("when current user is a collectivity admin") { failed }
       it_behaves_like("when current user is a DDFIP user")         { failed }
+      it_behaves_like("when current user is a publisher admin")    { failed }
       it_behaves_like("when current user is a publisher user")     { failed }
+      it_behaves_like("when current user is a collectivity admin") { failed }
       it_behaves_like("when current user is a collectivity user")  { failed }
 
       context "when reported through Web UI by the current collectivity" do
@@ -296,15 +298,17 @@ RSpec.describe ReportPolicy, stub_factories: false do
     end
   end
 
+  it { expect(:edit?).to be_an_alias_of(policy, :update?) }
+
   describe_rule :destroy? do
     context "without record" do
       let(:record) { Report }
 
       it_behaves_like("when current user is a DDFIP admin")        { failed }
-      it_behaves_like("when current user is a publisher admin")    { succeed }
-      it_behaves_like("when current user is a collectivity admin") { succeed }
       it_behaves_like("when current user is a DDFIP user")         { failed }
+      it_behaves_like("when current user is a publisher admin")    { succeed }
       it_behaves_like("when current user is a publisher user")     { succeed }
+      it_behaves_like("when current user is a collectivity admin") { succeed }
       it_behaves_like("when current user is a collectivity user")  { succeed }
     end
 
@@ -312,10 +316,10 @@ RSpec.describe ReportPolicy, stub_factories: false do
       let(:record) { build_stubbed(:report) }
 
       it_behaves_like("when current user is a DDFIP admin")        { failed }
-      it_behaves_like("when current user is a publisher admin")    { failed }
-      it_behaves_like("when current user is a collectivity admin") { failed }
       it_behaves_like("when current user is a DDFIP user")         { failed }
+      it_behaves_like("when current user is a publisher admin")    { failed }
       it_behaves_like("when current user is a publisher user")     { failed }
+      it_behaves_like("when current user is a collectivity admin") { failed }
       it_behaves_like("when current user is a collectivity user")  { failed }
 
       context "when reported through Web UI by the current collectivity" do
@@ -430,21 +434,19 @@ RSpec.describe ReportPolicy, stub_factories: false do
     end
   end
 
-  it { expect(:new?).to be_an_alias_of(policy, :create?) }
-  it { expect(:edit?).to be_an_alias_of(policy, :update?) }
-  it { expect(:remove?).to be_an_alias_of(policy, :destroy?) }
+  it { expect(:remove?).to    be_an_alias_of(policy, :destroy?) }
   it { expect(:undiscard?).to be_an_alias_of(policy, :destroy?) }
 
   describe_rule :destroy_all? do
     it_behaves_like("when current user is a DDFIP admin")        { failed }
-    it_behaves_like("when current user is a publisher admin")    { failed }
-    it_behaves_like("when current user is a collectivity admin") { failed }
     it_behaves_like("when current user is a DDFIP user")         { failed }
+    it_behaves_like("when current user is a publisher admin")    { failed }
     it_behaves_like("when current user is a publisher user")     { failed }
+    it_behaves_like("when current user is a collectivity admin") { failed }
     it_behaves_like("when current user is a collectivity user")  { failed }
   end
 
-  it { expect(:remove_all?).to be_an_alias_of(policy, :destroy_all?) }
+  it { expect(:remove_all?).to    be_an_alias_of(policy, :destroy_all?) }
   it { expect(:undiscard_all?).to be_an_alias_of(policy, :destroy_all?) }
 
   describe "relation scope" do

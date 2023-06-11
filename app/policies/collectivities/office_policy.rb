@@ -3,12 +3,12 @@
 module Collectivities
   class OfficePolicy < ApplicationPolicy
     def index?
-      super_admin? || organization.is_a?(Publisher)
+      super_admin? || publisher?
     end
 
     relation_scope do |relation|
-      if super_admin? || organization.is_a?(Publisher)
-        relation
+      if super_admin? || publisher?
+        relation.kept
       else
         relation.none
       end

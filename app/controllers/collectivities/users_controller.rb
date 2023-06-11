@@ -4,7 +4,7 @@ module Collectivities
   class UsersController < ::UsersController
     private
 
-    def build_users_scope
+    def load_and_authorize_parent
       collectivity = Collectivity.find(params[:collectivity_id])
 
       authorize! collectivity, to: :show?
@@ -12,7 +12,10 @@ module Collectivities
       only_kept! collectivity.publisher
 
       @parent = collectivity
-      @users  = collectivity.users
+    end
+
+    def build_and_authorize_scope(as: :default)
+      authorized(@parent.users, as:).strict_loading
     end
   end
 end
