@@ -363,4 +363,124 @@ RSpec.describe Package do
   describe "database triggers" do
     pending "TODO"
   end
+
+  # Counter caches
+  # ----------------------------------------------------------------------------
+  describe "counter caches" do
+    let_it_be(:packages) { create_list(:package, 2) }
+
+    describe "#reports_count" do
+      let(:report) { create(:report, package: packages[0]) }
+
+      it "changes on creation" do
+        expect { report }
+          .to      change { packages[0].reload.reports_count }.from(0).to(1)
+          .and not_change { packages[1].reload.reports_count }.from(0)
+      end
+
+      it "changes when report is assigned to another package" do
+        report
+        expect { report.update(package_id: packages[1].id) }
+          .to  change { packages[0].reload.reports_count }.from(1).to(0)
+          .and change { packages[1].reload.reports_count }.from(0).to(1)
+      end
+
+      it "changes on deletion" do
+        report
+        expect { report.destroy }
+          .to      change { packages[0].reload.reports_count }.from(1).to(0)
+          .and not_change { packages[1].reload.reports_count }.from(0)
+      end
+    end
+
+    describe "#reports_completed_count" do
+      let(:completed_report) { create(:report, :completed, package: packages[0]) }
+
+      it "changes when report is completed" do
+        expect { completed_report }
+          .to      change { packages[0].reload.reports_completed_count }.from(0).to(1)
+          .and not_change { packages[1].reload.reports_completed_count }.from(0)
+      end
+
+      it "changes on deletion" do
+        completed_report
+        expect { completed_report.destroy }
+          .to      change { packages[0].reload.reports_completed_count }.from(1).to(0)
+          .and not_change { packages[1].reload.reports_completed_count }.from(0)
+      end
+    end
+
+    describe "#reports_approved_count" do
+      let(:approved_report) { create(:report, :approved, package: packages[0]) }
+
+      it "changes when report is approved" do
+        expect { approved_report }
+          .to      change { packages[0].reload.reports_approved_count }.from(0).to(1)
+          .and not_change { packages[1].reload.reports_approved_count }.from(0)
+      end
+
+      it "changes on deletion" do
+        approved_report
+        expect { approved_report.destroy }
+          .to      change { packages[0].reload.reports_approved_count }.from(1).to(0)
+          .and not_change { packages[1].reload.reports_approved_count }.from(0)
+      end
+    end
+
+    describe "#reports_rejected_count" do
+      let(:rejected_report) { create(:report, :rejected, package: packages[0]) }
+
+      it "changes when report is rejected" do
+        expect { rejected_report }
+          .to      change { packages[0].reload.reports_rejected_count }.from(0).to(1)
+          .and not_change { packages[1].reload.reports_rejected_count }.from(0)
+      end
+
+      it "changes on deletion" do
+        rejected_report
+        expect { rejected_report.destroy }
+          .to      change { packages[0].reload.reports_rejected_count }.from(1).to(0)
+          .and not_change { packages[1].reload.reports_rejected_count }.from(0)
+      end
+    end
+
+    describe "#reports_debated_count" do
+      let(:debated_report) { create(:report, :debated, package: packages[0]) }
+
+      it "changes when report is debated" do
+        expect { debated_report }
+          .to      change { packages[0].reload.reports_debated_count }.from(0).to(1)
+          .and not_change { packages[1].reload.reports_debated_count }.from(0)
+      end
+
+      it "changes on deletion" do
+        debated_report
+        expect { debated_report.destroy }
+          .to      change { packages[0].reload.reports_debated_count }.from(1).to(0)
+          .and not_change { packages[1].reload.reports_debated_count }.from(0)
+      end
+    end
+  end
+
+  # Reset counters
+  # ----------------------------------------------------------------------------
+  describe ".reset_all_counters" do
+    subject(:reset_all_counters) { described_class.reset_all_counters }
+
+    let!(:packages) { create_list(:package, 2) }
+
+    it { expect { reset_all_counters }.to ret(2) }
+    it { expect { reset_all_counters }.to perform_sql_query("SELECT reset_all_packages_counters()") }
+
+    describe "on reports_count" do
+      before do
+        create_list(:report, 2, package: packages[0])
+
+        Package.update_all(reports_count: 0)
+      end
+
+      it { expect { reset_all_counters }.to change { packages[0].reload.reports_count }.from(0).to(2) }
+      it { expect { reset_all_counters }.to not_change { packages[1].reload.reports_count }.from(0) }
+    end
+  end
 end

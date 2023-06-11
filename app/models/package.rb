@@ -4,21 +4,26 @@
 #
 # Table name: packages
 #
-#  id              :uuid             not null, primary key
-#  collectivity_id :uuid             not null
-#  publisher_id    :uuid
-#  name            :string           not null
-#  reference       :string           not null
-#  action          :enum             not null
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
-#  transmitted_at  :datetime
-#  approved_at     :datetime
-#  rejected_at     :datetime
-#  discarded_at    :datetime
-#  due_on          :date
-#  completed       :boolean          default(FALSE), not null
-#  sandbox         :boolean          default(FALSE), not null
+#  id                      :uuid             not null, primary key
+#  collectivity_id         :uuid             not null
+#  publisher_id            :uuid
+#  name                    :string           not null
+#  reference               :string           not null
+#  action                  :enum             not null
+#  created_at              :datetime         not null
+#  updated_at              :datetime         not null
+#  transmitted_at          :datetime
+#  approved_at             :datetime
+#  rejected_at             :datetime
+#  discarded_at            :datetime
+#  due_on                  :date
+#  completed               :boolean          default(FALSE), not null
+#  sandbox                 :boolean          default(FALSE), not null
+#  reports_count           :integer          default(0), not null
+#  reports_completed_count :integer          default(0), not null
+#  reports_approved_count  :integer          default(0), not null
+#  reports_rejected_count  :integer          default(0), not null
+#  reports_debated_count   :integer          default(0), not null
 #
 # Indexes
 #
@@ -111,5 +116,11 @@ class Package < ApplicationRecord
 
   def sent_by_publisher?(publisher)
     (publisher_id == publisher.id) || (new_record? && publisher == self.publisher)
+  end
+
+  # Database updates
+  # ----------------------------------------------------------------------------
+  def self.reset_all_counters
+    connection.select_value("SELECT reset_all_packages_counters()")
   end
 end
