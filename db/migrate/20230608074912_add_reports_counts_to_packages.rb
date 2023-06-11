@@ -2,10 +2,22 @@
 
 class AddReportsCountsToPackages < ActiveRecord::Migration[7.0]
   def change
-    add_column :packages, :reports_count, :integer, null: false, default: 0
-    add_column :packages, :reports_completed_count, :integer, null: false, default: 0
-    add_column :packages, :reports_approved_count, :integer, null: false, default: 0
-    add_column :packages, :reports_rejected_count, :integer, null: false, default: 0
-    add_column :packages, :reports_debated_count, :integer, null: false, default: 0
+    change_table :packages, bulk: true do |t|
+      t.integer :reports_count, null: false, default: 0
+      t.integer :reports_completed_count, null: false, default: 0
+      t.integer :reports_approved_count, null: false, default: 0
+      t.integer :reports_rejected_count, null: false, default: 0
+      t.integer :reports_debated_count, null: false, default: 0
+    end
+
+    create_function :get_reports_count_in_packages
+    create_function :get_reports_completed_count_in_packages
+    create_function :get_reports_approved_count_in_packages
+    create_function :get_reports_rejected_count_in_packages
+    create_function :get_reports_debated_count_in_packages
+    create_function :reset_all_packages_counters
+
+    create_function :trigger_reports_changes
+    create_trigger  :trigger_reports_changes, on: :reports
   end
 end
