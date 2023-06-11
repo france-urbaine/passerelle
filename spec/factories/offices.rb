@@ -22,12 +22,12 @@ FactoryBot.define do
       action { "occupation_hab" }
     end
 
-    trait :occupation_eco do
-      action { "occupation_eco" }
+    trait :occupation_pro do
+      action { "occupation_pro" }
     end
 
-    trait :evaluation_eco do
-      action { "evaluation_eco" }
+    trait :evaluation_pro do
+      action { "evaluation_pro" }
     end
 
     trait :evaluation_hab do

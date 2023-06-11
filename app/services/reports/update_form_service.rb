@@ -16,6 +16,7 @@ module Reports
       situation_evaluation_hab
       situation_evaluation_hab
       proposition_evaluation_hab
+      proposition_address
       observations
       enjeux
       priority
@@ -45,7 +46,7 @@ module Reports
       when "evaluation_hab", "occupation_hab"
         "Catégorie de local d'habitation"
       else
-        "Catégorie de local économique"
+        "Catégorie de local professionnel"
       end
     end
 

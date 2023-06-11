@@ -43,9 +43,9 @@ COMMENT ON EXTENSION unaccent IS 'text search dictionary that removes accents';
 
 CREATE TYPE public.action AS ENUM (
     'evaluation_hab',
-    'evaluation_eco',
+    'evaluation_pro',
     'occupation_hab',
-    'occupation_eco'
+    'occupation_pro'
 );
 
 
@@ -3009,6 +3009,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230607183851'),
 ('20230608074912'),
 ('20230608152933'),
-('20230609124040');
+('20230609124040'),
+('20230611213727');
 
 

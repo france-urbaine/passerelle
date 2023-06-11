@@ -7,9 +7,9 @@ fr:
 
     action:
       evaluation_hab: "Évaluation de locaux d'habitation"
-      evaluation_eco: "Évaluation de locaux économiques"
+      evaluation_pro: "Évaluation de locaux professionnels"
       occupation_hab: "Occupation de locaux d'habitation"
-      occupation_eco: "Occupation de locaux économiques"
+      occupation_pro: "Occupation de locaux professionnels"
 
     subject:
       evaluation_hab:
@@ -20,13 +20,13 @@ fr:
         evaluation_hab/omission_batie:      "Omission bâtie sur un local d'habitation"
         evaluation_hab/achevement_travaux:  "Achèvement de travaux sur un local d'habitation"
 
-      evaluation_eco:
-        evaluation_eco/evaluation:          "Problème d'évaluation d'un local économique"
-        evaluation_eco/exoneration:         "Problème d'exonération d'un local économique"
-        evaluation_eco/affectation:         "Problème d'affectation d'un local économique"
-        evaluation_eco/adresse:             "Problème d'adresse d'un local économique"
-        evaluation_eco/omission_batie:      "Omission bâtie sur un local économique"
-        evaluation_eco/achevement_travaux:  "Achèvement de travaux sur un local économique"
+      evaluation_pro:
+        evaluation_pro/evaluation:          "Problème d'évaluation d'un local professionnel"
+        evaluation_pro/exoneration:         "Problème d'exonération d'un local professionnel"
+        evaluation_pro/affectation:         "Problème d'affectation d'un local professionnel"
+        evaluation_pro/adresse:             "Problème d'adresse d'un local professionnel"
+        evaluation_pro/omission_batie:      "Omission bâtie sur un local professionnel"
+        evaluation_pro/achevement_travaux:  "Achèvement de travaux sur un local professionnel"
 
     affectation:
       A: "Locaux commerciaux et biens divers passibles de la TH"

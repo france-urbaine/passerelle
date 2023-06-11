@@ -197,7 +197,7 @@ RSpec.describe OfficePolicy do
         ddfip_name:     "DDFIP des Pays de la Loire",
         ddfip_id:       "f4e6854a-00fb-48c4-b669-5f0623e07778",
         name:           "PELP de Nantes",
-        action:         "evaluation_eco",
+        action:         "evaluation_pro",
         users_count:    200,
         something_else: "true"
       }

@@ -349,7 +349,7 @@ RSpec.describe Package do
 
     it "asserts an action is allowed by not triggering DB constraints" do
       expect {
-        package.update_column(:action, "evaluation_eco")
+        package.update_column(:action, "evaluation_pro")
       }.not_to raise_error
     end
 
@@ -464,7 +464,7 @@ RSpec.describe Package do
     describe "#completed" do
       let(:approved_report) { create(:report, :approved, package: packages[0]) }
 
-      fit "changes when reports_count is equal to reports_approved_count" do
+      it "changes when reports_count is equal to reports_approved_count" do
         expect { approved_report }
           .to      change { packages[0].reload.completed? }.from(false).to(true)
           .and not_change { packages[1].reload.completed? }.from(false)
