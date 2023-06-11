@@ -35,12 +35,15 @@ AS $function$
     -- * on creation
     -- * on deletion
     -- * when publisher_id changed
+    -- * when publisher_id changed from NULL
+    -- * when publisher_id changed to NULL
     -- * when (approved_at|rejected_at|debated_at|discarded_at) changed from NULL
     -- * when (approved_at|rejected_at|debated_at|discarded_at) changed to NULL
 
     IF (TG_OP = 'INSERT')
     OR (TG_OP = 'DELETE')
     OR (TG_OP = 'UPDATE' AND NEW."publisher_id" <> OLD."publisher_id")
+    OR (TG_OP = 'UPDATE' AND (NEW."publisher_id" IS NULL) <> (OLD."publisher_id" IS NULL))
     OR (TG_OP = 'UPDATE' AND (NEW."approved_at" IS NULL) <> (OLD."approved_at" IS NULL))
     OR (TG_OP = 'UPDATE' AND (NEW."rejected_at" IS NULL) <> (OLD."rejected_at" IS NULL))
     OR (TG_OP = 'UPDATE' AND (NEW."debated_at" IS NULL) <> (OLD."debated_at" IS NULL))
