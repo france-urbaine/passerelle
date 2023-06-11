@@ -20,12 +20,11 @@
     - datatable.with_pagination(@pagy, options: !@parent)
 
     - datatable.with_selection do |selection|
-      / - if allowed_to?(:destroy_all?, Report)
-      /   - selection.with_action "Tout supprimer", url_for([:remove_all, @parent, :reports]), modal: true
+      - if allowed_to?(:create?, Package)
+        - selection.with_action "Tout regrouper", disabled: true
 
-      - selection.with_action "Tout modifier", disabled: true
-      - selection.with_action "Tout regrouper", disabled: true
-      - selection.with_action "Tout supprimer", disabled: true
+      - if allowed_to?(:destroy_all?, Report)
+        - selection.with_action "Tout supprimer", disabled: true
 
     - datatable.with_column(:reference) { "Reference" }
 
@@ -76,7 +75,8 @@
           = report.reference
 
       - row.with_column(:subject) do
-        = translate(report.subject, scope: ["enum.subject", report.action])
+        = authorized_link_to report do
+          = t(report.subject, scope: ["enum.subject", report.action])
 
       - row.with_column(:invariant) do
         = report.situation_invariant
@@ -92,7 +92,8 @@
           = report.collectivity.name
 
       - row.with_column(:package) do
-        = report.package.name
+        = authorized_link_to report.package do
+          = report.package.name
 
       - row.with_column(:workshop) do
         = report.workshop&.name

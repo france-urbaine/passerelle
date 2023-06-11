@@ -4,7 +4,7 @@
     | Identification MAJIC
 
   .subheader-bar__actions
-    - if allowed_to?(:update?, @report)
+    - if allowed_to?(:update?, @report) && @report.packing?
       .subheader-bar__action
         = button_component "Compléter", edit_report_path(@report, fields: "situation_majic"), icon: "pencil-square", modal: true
 

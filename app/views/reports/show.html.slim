@@ -47,6 +47,8 @@
         dd
           = authorized_link_to @report.package do
             = @report.package.reference
+            '  /
+            = @report.package.name
 
       .description-list__row
         dt Référence du signalement
@@ -56,9 +58,13 @@
         dt Date de transmission
         dd
           - if @report.transmitted?
-            = localize(@report.package.transmitted_at)
+            = l(@report.package.transmitted_at.to_date)
           - else
             em Non transmis
+
+      .description-list__row
+        dt Date d'échéance
+        dd= l(@report.package.due_on) if @report.package.due_on
 
   .content__separator
 

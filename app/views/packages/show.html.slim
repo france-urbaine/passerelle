@@ -39,9 +39,13 @@
         dt Date de transmission
         dd
           - if @package.transmitted?
-            = localize(@package.transmitted_at)
+            = l(@package.transmitted_at.to_date)
           - else
             em Non transmis
+
+      .description-list__row
+        dt Date d'échéance
+        dd= l(@package.due_on) if @package.due_on
 
   - if allowed_to?(:index?, Report)
     .content__separator

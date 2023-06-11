@@ -16,11 +16,11 @@ module Users
 
       if request_for_reconfirmation_instructions?(@user)
         @user.send_reconfirmation_instructions
-        notice = translate(".send_reconfirmation_instructions")
+        notice = t(".send_reconfirmation_instructions")
 
       elsif request_to_cancel_pending_reconfirmation?(@user)
         @user.cancel_pending_reconfirmation
-        notice = translate(".cancel_pending_reconfirmation")
+        notice = t(".cancel_pending_reconfirmation")
 
       else
         @user.update_with_password_protection(user_params)

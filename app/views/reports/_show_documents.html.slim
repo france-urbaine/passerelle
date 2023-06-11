@@ -4,7 +4,7 @@
     | Documents attachés
 
   .subheader-bar__actions
-    - if allowed_to?(:update?, @report)
+    - if allowed_to?(:update?, @report) && @report.packing?
       .subheader-bar__action
         = button_component "Ajouter des documents", new_report_attachment_path(@report), icon: "document-plus", modal: true
 
@@ -13,19 +13,21 @@
     table.datatable
       thead
         tr.datatable__row
-          th
+          - if @report.packing?
+            th
+
           th Nom du fichier
           th Type de fichier
       tbody
         - @report.documents.each do |document|
           tr.datatable__row
-            td.datatable__row-actions
-              .flex
-                = button_component "Supprimer ce document", report_attachment_path(id: document.id, report_id: @report.id), icon: "trash", icon_only: true, method: "delete"
-            td
-              = link_to document.filename, url_for(document), target: :blank
-            td
-              = document.content_type
+            - if @report.packing?
+              td.datatable__row-actions
+                - if allowed_to?(:update?, @report)
+                  = button_component "Supprimer ce document", report_attachment_path(id: document.id, report_id: @report.id), icon: "trash", icon_only: true, method: "delete"
+
+            td= link_to document.filename, url_for(document), target: :blank
+            td= document.content_type
 
   - else
     .h-24
