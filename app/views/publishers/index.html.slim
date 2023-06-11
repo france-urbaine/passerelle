@@ -63,3 +63,8 @@
       - row.with_column(:users) do
         = number_with_delimiter(publisher.users_count) if publisher.users_count.positive?
 
+      - row.with_column(:reports_count) do
+        - if publisher.reports_count.positive?
+          = number_with_delimiter(publisher.reports_count)
+        - else
+          .text-disabled 0

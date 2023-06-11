@@ -6,8 +6,9 @@ AS $function$
       SELECT COUNT(*)
       FROM   "packages"
       WHERE  "packages"."publisher_id" = publishers."id"
-        AND  "packages"."rejected_at" IS NOT NULL
+        AND  "packages"."discarded_at" IS NULL
         AND  "packages"."transmitted_at" IS NOT NULL
+        AND  "packages"."rejected_at" IS NOT NULL
     );
   END;
 $function$ LANGUAGE plpgsql;

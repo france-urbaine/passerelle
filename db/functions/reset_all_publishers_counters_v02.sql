@@ -10,7 +10,6 @@ AS $function$
     SET    "users_count"             = get_users_count_in_publishers("publishers".*),
            "collectivities_count"    = get_collectivities_count_in_publishers("publishers".*),
            "reports_count"           = get_reports_count_in_publishers("publishers".*),
-           "reports_completed_count" = get_reports_completed_count_in_publishers("publishers".*),
            "reports_approved_count"  = get_reports_approved_count_in_publishers("publishers".*),
            "reports_rejected_count"  = get_reports_rejected_count_in_publishers("publishers".*),
            "reports_debated_count"   = get_reports_debated_count_in_publishers("publishers".*),

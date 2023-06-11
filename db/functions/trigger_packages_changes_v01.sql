@@ -3,15 +3,34 @@ RETURNS trigger
 AS $function$
   BEGIN
 
-    -- Reset all packages_count, packages_approved_count, packages_rejected_count
+     -- Reset all completed
+    -- * on creation
     -- * on deletion
-    -- * when approved_at changed
-    -- * when rejected_at changed
+    -- * when reports_count or reports_completed_count changed
 
     IF (TG_OP = 'INSERT')
     OR (TG_OP = 'DELETE')
-    OR (TG_OP = 'UPDATE' AND NEW."approved_at" <> OLD."approved_at")
-    OR (TG_OP = 'UPDATE' AND NEW."rejected_at" <> OLD."rejected_at")
+    OR (TG_OP = 'UPDATE' AND NEW."reports_count" <> OLD."reports_count")
+    OR (TG_OP = 'UPDATE' AND NEW."reports_completed_count" <> OLD."reports_completed_count")
+    THEN
+
+      UPDATE "packages"
+      SET    "completed" = (NEW."reports_count" = NEW."reports_completed_count")
+      WHERE  "packages"."id" IN (NEW."id", OLD."id");
+
+    END IF;
+
+    -- Reset all packages count
+    -- * on creation
+    -- * on deletion
+    -- * when publisher_id changed
+    -- * when approved_at or rejected_at changed from NULL
+    -- * when approved_at or rejected_at changed to NULL
+
+    IF (TG_OP = 'INSERT')
+    OR (TG_OP = 'DELETE')
+    OR (TG_OP = 'UPDATE' AND (NEW."approved_at" IS NULL) <> (OLD."approved_at" IS NULL))
+    OR (TG_OP = 'UPDATE' AND (NEW."rejected_at" IS NULL) <> (OLD."rejected_at" IS NULL))
     THEN
 
       UPDATE "publishers"
