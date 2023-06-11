@@ -19,5 +19,16 @@ class AddReportsCountsToPackages < ActiveRecord::Migration[7.0]
 
     create_function :trigger_reports_changes
     create_trigger  :trigger_reports_changes, on: :reports
+
+    up_only do
+      execute <<~SQL.squish
+        DELETE FROM schema_migrations
+        WHERE version IN ('20230608080536', '20230608091017')
+      SQL
+
+      execute <<~SQL.squish
+        SELECT reset_all_packages_counters()
+      SQL
+    end
   end
 end

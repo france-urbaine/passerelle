@@ -16,11 +16,8 @@
         p
           ' Ce paquet est prêt à être tranmis :
           br
-          -# TODO: use @package.reports_count
-          - reports_count = @package.reports.kept.count
-
-          - if reports_count > 1
-            ' Les <b>#{reports_count}</b> signalements seront transmis à la DDFIP, avant d'être assignés aux guichets dédiés.
+          - if @package.reports_count > 1
+            ' Les <b>#{@package.reports_count}</b> signalements seront transmis à la DDFIP, avant d'être assignés aux guichets dédiés.
           - else
             ' Un seul signalement sera transmis à la DDFIP, avant d'être assigné au guichet dédié.
         p

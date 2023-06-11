@@ -76,3 +76,21 @@
           .badge.badge--yellow Paquet prêt
         - else
           .badge.badge--red Signalements incomplets
+
+      - row.with_column(:reports_count) do
+        - if package.reports_count.positive?
+          = number_with_delimiter(package.reports_count)
+        - else
+          .text-disabled 0
+
+      - row.with_column(:reports_approved_count) do
+        - if package.reports_approved_count.positive?
+          = number_with_delimiter(package.reports_approved_count)
+        - else
+          .text-disabled 0
+
+      - row.with_column(:reports_rejected_count) do
+        - if package.reports_rejected_count.positive?
+          = number_with_delimiter(package.reports_rejected_count)
+        - else
+          .text-disabled 0
