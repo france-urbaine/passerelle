@@ -490,7 +490,7 @@ RSpec.describe Report do
 
     it "asserts an action is allowed by not triggering DB constraints" do
       expect {
-        report.update_column(:action, "evaluation_eco")
+        report.update_column(:action, "evaluation_pro")
       }.not_to raise_error
     end
 

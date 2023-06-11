@@ -239,7 +239,7 @@ Office.insert_all(
     { ddfip: "DDFIP du Nord",                                      name: "SIP de Lille Nord",                           action: "occupation_hab" },
     { ddfip: "DDFIP du Nord",                                      name: "SIP de Lille Ouest",                          action: "occupation_hab" },
     { ddfip: "DDFIP du Nord",                                      name: "SIP de Lille Seclin",                         action: "occupation_hab" },
-    { ddfip: "DRFIP Occitanie et département de la Haute-Garonne", name: "Pôle d’évaluation des locaux professionnels", action: "evaluation_eco" },
+    { ddfip: "DRFIP Occitanie et département de la Haute-Garonne", name: "Pôle d’évaluation des locaux professionnels", action: "evaluation_pro" },
     { ddfip: "DRFIP Occitanie et département de la Haute-Garonne", name: "SIP de Balma",                                action: "occupation_hab" },
     { ddfip: "DRFIP Occitanie et département de la Haute-Garonne", name: "SIP de Colomiers",                            action: "occupation_hab" },
     { ddfip: "DRFIP Occitanie et département de la Haute-Garonne", name: "SIP de Muret",                                action: "occupation_hab" },

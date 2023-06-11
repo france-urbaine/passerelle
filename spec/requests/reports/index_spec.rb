@@ -151,7 +151,7 @@ RSpec.describe "ReportsController#index" do
           create(:report, :package_approved_by_ddfip, **attributes, package_sandbox: true),
           create(:report, :package_approved_by_ddfip, **attributes),
           create(:report, :package_approved_by_ddfip, **attributes, collectivity: collectivities[1]),
-          create(:report, :package_approved_by_ddfip, **attributes, action: "evaluation_eco")
+          create(:report, :package_approved_by_ddfip, **attributes, action: "evaluation_pro")
         ]
       end
 

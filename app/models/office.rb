@@ -40,7 +40,7 @@ class Office < ApplicationRecord
 
   # Validations
   # ----------------------------------------------------------------------------
-  ACTIONS = %w[evaluation_hab evaluation_eco occupation_hab occupation_eco].freeze
+  ACTIONS = %w[evaluation_hab evaluation_pro occupation_hab occupation_pro].freeze
 
   validates :name,   presence: true
   validates :action, presence: true, inclusion: { in: ACTIONS, allow_blank: true }

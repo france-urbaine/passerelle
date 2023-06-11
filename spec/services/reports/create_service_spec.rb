@@ -30,7 +30,7 @@ RSpec.describe Reports::CreateService do
   end
 
   it "doesn't assign an existing package when action doesn't match" do
-    package = create(:package, collectivity: collectivity, action: "evaluation_eco")
+    package = create(:package, collectivity: collectivity, action: "evaluation_pro")
 
     expect { service.save }
       .to  change(Package, :count).by(1)

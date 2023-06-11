@@ -129,7 +129,7 @@ RSpec.describe "Offices" do
     within "[role=dialog]", text: "Modification du guichet" do |dialog|
       expect(dialog).to have_field("DDFIP",          with: "DDFIP des Pyrénées-Atlantiques")
       expect(dialog).to have_field("Nom du guichet", with: "PELP de Bayonne")
-      expect(dialog).to have_select("Action",        selected: "Évaluation de locaux économiques")
+      expect(dialog).to have_select("Action",        selected: "Évaluation de locaux professionnels")
 
       fill_in "Nom du guichet", with: "PELP de Bayonne-Anglet-Biarritz"
       click_on "Enregistrer"
@@ -164,7 +164,7 @@ RSpec.describe "Offices" do
     within "[role=dialog]", text: "Modification du guichet" do |dialog|
       expect(dialog).to have_field("DDFIP",          with: "DDFIP des Pyrénées-Atlantiques")
       expect(dialog).to have_field("Nom du guichet", with: "PELP de Bayonne")
-      expect(dialog).to have_select("Action",        selected: "Évaluation de locaux économiques")
+      expect(dialog).to have_select("Action",        selected: "Évaluation de locaux professionnels")
 
       fill_in "Nom du guichet", with: "PELP de Bayonne-Anglet-Biarritz"
       click_on "Enregistrer"

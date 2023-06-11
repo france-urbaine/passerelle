@@ -1,7 +1,7 @@
 pelp_bayonne:
   ddfip:          pyrenees_atlantiques
   name:           PELP de Bayonne
-  action:         evaluation_eco
+  action:         evaluation_pro
   users_count:    1
   communes_count: 2
 

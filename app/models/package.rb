@@ -46,7 +46,7 @@ class Package < ApplicationRecord
 
   # Validations
   # ----------------------------------------------------------------------------
-  ACTIONS = %w[evaluation_hab evaluation_eco].freeze
+  ACTIONS = %w[evaluation_hab evaluation_pro].freeze
 
   validates :name,      presence: true
   validates :reference, presence: true, uniqueness: { unless: :skip_uniqueness_validation_of_reference? }

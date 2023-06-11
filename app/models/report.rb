@@ -128,7 +128,7 @@ class Report < ApplicationRecord
 
   # Validations
   # ----------------------------------------------------------------------------
-  ACTIONS    = %w[evaluation_hab evaluation_eco].freeze
+  ACTIONS    = %w[evaluation_hab evaluation_pro].freeze
   PRIORITIES = %w[low medium high].freeze
 
   SUBJECTS = %w[
@@ -138,12 +138,12 @@ class Report < ApplicationRecord
     evaluation_hab/adresse
     evaluation_hab/omission_batie
     evaluation_hab/achevement_travaux
-    evaluation_eco/evaluation
-    evaluation_eco/exoneration
-    evaluation_eco/affectation
-    evaluation_eco/adresse
-    evaluation_eco/omission_batie
-    evaluation_eco/achevement_travaux
+    evaluation_pro/evaluation
+    evaluation_pro/exoneration
+    evaluation_pro/affectation
+    evaluation_pro/adresse
+    evaluation_pro/omission_batie
+    evaluation_pro/achevement_travaux
   ].freeze
 
   validates :action,    presence: true, inclusion: { in: ACTIONS, allow_blank: true }
@@ -223,7 +223,7 @@ class Report < ApplicationRecord
   def valid_categories
     case action
     when "evaluation_hab", "occupation_hab" then I18n.t("enum.categorie_habitation").keys
-    when "evaluation_eco", "occupation_eco" then I18n.t("enum.categorie_economique").keys
+    when "evaluation_pro", "occupation_pro" then I18n.t("enum.categorie_economique").keys
     end
   end
 

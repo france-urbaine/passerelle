@@ -61,7 +61,7 @@ module Reports
     private
 
     def require_situation_majic?
-      %w[evaluation_hab evaluation_eco].include?(action)
+      %w[evaluation_hab evaluation_pro].include?(action)
     end
 
     def require_situation_evaluatuation_hab?

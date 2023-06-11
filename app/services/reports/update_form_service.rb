@@ -46,7 +46,7 @@ module Reports
       when "evaluation_hab", "occupation_hab"
         "Catégorie de local d'habitation"
       else
-        "Catégorie de local économique"
+        "Catégorie de local professionnel"
       end
     end
 
