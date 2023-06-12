@@ -11,8 +11,8 @@ RSpec.describe "Users::TwoFactorSettingsController#new" do
   let(:headers) { |e| e.metadata[:headers] }
   let(:params)  { |e| e.metadata[:params] }
 
-  it_behaves_like "it requires authorization in HTML"
-  it_behaves_like "it requires authorization in JSON"
+  it_behaves_like "it requires to be signed in in HTML"
+  it_behaves_like "it requires to be signed in in JSON"
   it_behaves_like "it responds with not acceptable in JSON when signed in"
   it_behaves_like "it allows access to publisher user"
   it_behaves_like "it allows access to publisher admin"

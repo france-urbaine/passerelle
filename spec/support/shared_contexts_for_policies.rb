@@ -4,6 +4,17 @@ RSpec.shared_context "with policies shared contexts" do
   let(:current_user)         { build_stubbed(:user) }
   let(:current_organization) { current_user&.organization }
   let(:context)              { { user: current_user } }
+  let(:scope_options)        { |e| e.metadata.fetch(:scope_options, {}) }
+
+  def apply_params_scope(params, type: :action_controller_params, **)
+    params = ActionController::Parameters.new(params)
+    params = policy.apply_scope(params, type:, **)
+    params&.to_hash&.symbolize_keys
+  end
+
+  def apply_relation_scope(target, type: :active_record_relation, **)
+    policy.apply_scope(target, type:, scope_options:, **)
+  end
 
   shared_context "without current user" do
     let(:current_user) { nil }

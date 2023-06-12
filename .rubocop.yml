@@ -140,6 +140,7 @@ RSpec/ImplicitSubject:
 RSpec/MultipleExpectations:
   Exclude:
     - 'spec/components/**/*'
+    - 'spec/requests/**/*'
     - 'spec/system/**/*'
 
 RSpec/NestedGroups:

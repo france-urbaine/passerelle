@@ -37,8 +37,8 @@ RSpec.describe "DDFIPs::CollectivitiesController#index" do
   end
 
   describe "authorizations" do
-    it_behaves_like "it requires authorization in HTML"
-    it_behaves_like "it requires authorization in JSON"
+    it_behaves_like "it requires to be signed in in HTML"
+    it_behaves_like "it requires to be signed in in JSON"
     it_behaves_like "it responds with not acceptable in JSON when signed in"
 
     it_behaves_like "it denies access to DDFIP user"
