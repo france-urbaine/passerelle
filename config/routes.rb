@@ -61,6 +61,7 @@ Rails.application.routes.draw do
     resources :packages, only: %i[index show edit update destroy], concerns: %i[removable removable_collection], path: "paquets" do
       scope module: "packages" do
         resource  :transmission, only: %i[show update]
+        resource  :approval,     only: %i[show update delete]
         resources :reports,      only: %i[index], path: "signalements"
       end
     end

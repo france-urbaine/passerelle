@@ -11,7 +11,7 @@ module Packages
 
     def update
       @package = find_and_authorize_package
-      @package.touch(:transmitted_at)
+      @package.transmit!
 
       respond_with @package,
         flash: true,
