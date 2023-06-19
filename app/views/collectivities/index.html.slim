@@ -21,8 +21,9 @@
       - datatable.with_column(:contact)               { "Contact" }
       - datatable.with_column(:contact_email)         { "Adresse mail de contact" }
       - datatable.with_column(:contact_phone)         { "Numéro de téléphone" }
-      - datatable.with_column(:users,         numeric: true) { "Utilisateurs" }
-      - datatable.with_column(:reports_count, numeric: true) { "Signalements" }
+      - datatable.with_column(:users,          numeric: true) { "Utilisateurs" }
+      - datatable.with_column(:packages_count, numeric: true) { "Paquets" }
+      - datatable.with_column(:reports_count,  numeric: true) { "Signalements" }
     - else
       - datatable.with_column(:name,      sort: true) { "Collectivité" }
       - datatable.with_column(:publisher, sort: true) { "Éditeur" }
@@ -70,6 +71,19 @@
         = phone_to(collectivity.contact_phone) if collectivity.contact_phone?
 
       - row.with_column(:users) do
-        = number_with_delimiter(collectivity.users_count) if collectivity.users_count.positive?
+        - if collectivity.users_count.positive?
+          = number_with_delimiter(collectivity.users_count)
+        - else
+          .text-disabled 0
 
+      - row.with_column(:packages_count) do
+        - if collectivity.packages_count.positive?
+          = number_with_delimiter(collectivity.packages_count)
+        - else
+          .text-disabled 0
 
+      - row.with_column(:reports_count) do
+        - if collectivity.reports_count.positive?
+          = number_with_delimiter(collectivity.reports_count)
+        - else
+          .text-disabled 0
