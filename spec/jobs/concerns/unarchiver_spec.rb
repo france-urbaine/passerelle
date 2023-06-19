@@ -11,6 +11,7 @@ RSpec.describe Unarchiver do
   let(:fixture) { file_fixture("communes.zip") }
 
   before do
+    path.dirname.mkpath
     target.delete if target.exist?
     FileUtils.cp(fixture, path)
   end
