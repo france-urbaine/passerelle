@@ -41,6 +41,14 @@ class PackagePolicy < ApplicationPolicy
     end
   end
 
+  def approve?
+    if record == Package
+      ddfip_admin?
+    elsif record.is_a?(Package)
+      package_approvable_by_ddfip_admin?(record)
+    end
+  end
+
   def destroy?
     if record == Package
       collectivity? || publisher?
@@ -162,7 +170,6 @@ class PackagePolicy < ApplicationPolicy
     ddfip_admin? &&
       package.kept? &&
       package.out_of_sandbox? &&
-      package.unrejected? &&
       package.reports.covered_by_ddfip(organization).any?
   end
 
@@ -210,6 +217,14 @@ class PackagePolicy < ApplicationPolicy
 
   def package_transmittable_by_publisher?(package)
     package_updatable_by_publisher?(package) && package.completed?
+  end
+
+  def package_approvable_by_ddfip_admin?(package)
+    ddfip_admin? &&
+      package.kept? &&
+      package.out_of_sandbox? &&
+      !package.approved? &&
+      package.reports.covered_by_ddfip(organization).any?
   end
 
   # List packages that can be destroyed by an user

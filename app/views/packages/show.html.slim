@@ -9,6 +9,12 @@
     - elsif @package.packing? && allowed_to?(:transmit?, Package)
       - breadcrumbs.with_action "Transmettre", icon: "cloud-arrow-up", primary: true, disabled: true
 
+    - if allowed_to?(:approve?, @package)
+      - unless @package.approved?
+        - breadcrumbs.with_action "Approuver", package_approval_path(@package), icon: "hand-thumb-up", accent: true, method: "patch"
+      - unless @package.rejected?
+        - breadcrumbs.with_action "Rejeter",   package_approval_path(@package), icon: "hand-thumb-down", destructive: true, method: "delete"
+
     - if allowed_to?(:update?, @package)
       - breadcrumbs.with_action "Modifier", edit_package_path(@package), icon: "pencil-square", modal: true
 
@@ -22,7 +28,11 @@
 
     .subheader-bar__actions
       .subheader-bar__action
-        - if @package.transmitted?
+        - if @package.approved?
+          .badge.badge--lime Paquet approuvé par la DDFIP
+        - elsif @package.rejected?
+          .badge.badge--red Paquet rejeté par la DDFIP
+        - elsif @package.transmitted?
           .badge.badge--blue Paquet transmis
         - elsif @package.completed?
           .badge.badge--yellow Paquet prêt

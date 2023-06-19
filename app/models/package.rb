@@ -118,6 +118,32 @@ class Package < ApplicationRecord
     (publisher_id == publisher.id) || (new_record? && publisher == self.publisher)
   end
 
+  # Updates
+  # ----------------------------------------------------------------------------
+  def transmit!
+    return true if transmitted?
+
+    touch(:transmitted_at)
+  end
+
+  def approve!
+    return true if approved?
+
+    update_columns(
+      rejected_at: nil,
+      approved_at: Time.current
+    )
+  end
+
+  def reject!
+    return true if rejected?
+
+    update_columns(
+      rejected_at: Time.current,
+      approved_at: nil
+    )
+  end
+
   # Database updates
   # ----------------------------------------------------------------------------
   def self.reset_all_counters

@@ -70,7 +70,11 @@
         = l(package.due_on) if package.due_on
 
       - row.with_column(:status) do
-        - if package.transmitted?
+        - if package.approved?
+          .badge.badge--lime Paquet approuvé par la DDFIP
+        - elsif package.rejected?
+          .badge.badge--red Paquet rejeté par la DDFIP
+        - elsif package.transmitted?
           .badge.badge--blue Paquet transmis
         - elsif package.completed?
           .badge.badge--yellow Paquet prêt

@@ -3,19 +3,11 @@
 module Packages
   class TransmissionPolicy < ApplicationPolicy
     def show?
-      if record == Package
-        collectivity? || publisher?
-      elsif record.is_a?(Package)
-        allowed_to?(:show?, record, with: ::PackagePolicy)
-      end
+      (collectivity? || publisher?) && allowed_to?(:show?, record, with: ::PackagePolicy)
     end
 
-    def update?
-      if record == Package
-        collectivity? || publisher?
-      elsif record.is_a?(Package)
-        allowed_to?(:transmit?, record, with: ::PackagePolicy)
-      end
+    def manage?
+      (collectivity? || publisher?) && allowed_to?(:transmit?, record, with: ::PackagePolicy)
     end
   end
 end
