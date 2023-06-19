@@ -600,10 +600,10 @@ RSpec.describe Package do
     end
 
     describe "#completed" do
-      let(:approved_report) { create(:report, :approved, package: packages[0]) }
+      let(:completed_report) { create(:report, :completed, package: packages[0]) }
 
-      it "changes when reports_count is equal to reports_approved_count" do
-        expect { approved_report }
+      it "changes when reports_count is equal to reports_completed_count" do
+        expect { completed_report }
           .to      change { packages[0].reload.completed? }.from(false).to(true)
           .and not_change { packages[1].reload.completed? }.from(false)
       end

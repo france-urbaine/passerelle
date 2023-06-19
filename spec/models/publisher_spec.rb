@@ -228,23 +228,6 @@ RSpec.describe Publisher do
       end
     end
 
-    describe "#reports_completed_count" do
-      let(:completed_report) { create(:report, :completed, publisher: publishers[0]) }
-
-      it "changes when report is completed" do
-        expect { completed_report }
-          .to      change { publishers[0].reload.reports_completed_count }.from(0).to(1)
-          .and not_change { publishers[1].reload.reports_completed_count }.from(0)
-      end
-
-      it "changes on deletion" do
-        completed_report
-        expect { completed_report.destroy }
-          .to      change { publishers[0].reload.reports_completed_count }.from(1).to(0)
-          .and not_change { publishers[1].reload.reports_completed_count }.from(0)
-      end
-    end
-
     describe "#reports_approved_count" do
       let(:approved_report) { create(:report, :approved, publisher: publishers[0]) }
 
