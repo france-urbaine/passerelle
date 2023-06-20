@@ -31,7 +31,7 @@ AS $function$
 
     END IF;
 
-    -- Reset all reports counts on publishers
+    -- Reset all reports counts on publishers & collectivities
     -- * on creation
     -- * on deletion
     -- * when publisher_id changed
@@ -42,8 +42,7 @@ AS $function$
 
     IF (TG_OP = 'INSERT')
     OR (TG_OP = 'DELETE')
-    OR (TG_OP = 'UPDATE' AND NEW."publisher_id" <> OLD."publisher_id")
-    OR (TG_OP = 'UPDATE' AND (NEW."publisher_id" IS NULL) <> (OLD."publisher_id" IS NULL))
+    OR (TG_OP = 'UPDATE' AND ((NEW."publisher_id" IS NULL) <> (OLD."publisher_id" IS NULL) OR (NEW."publisher_id" <> OLD."publisher_id")))
     OR (TG_OP = 'UPDATE' AND (NEW."approved_at" IS NULL) <> (OLD."approved_at" IS NULL))
     OR (TG_OP = 'UPDATE' AND (NEW."rejected_at" IS NULL) <> (OLD."rejected_at" IS NULL))
     OR (TG_OP = 'UPDATE' AND (NEW."debated_at" IS NULL) <> (OLD."debated_at" IS NULL))
@@ -55,32 +54,13 @@ AS $function$
              "reports_approved_count"  = get_reports_approved_count_in_publishers("publishers".*),
              "reports_rejected_count"  = get_reports_rejected_count_in_publishers("publishers".*),
              "reports_debated_count"   = get_reports_debated_count_in_publishers("publishers".*)
-
       WHERE  "publishers"."id" IN (NEW."publisher_id", OLD."publisher_id");
 
-    END IF;
-
-    -- Reset all reports counts on collectivities
-    -- * on creation
-    -- * on deletion
-    -- * when (publisher_id|approved_at|rejected_at|debated_at|discarded_at) changed from NULL
-    -- * when (publisher_id|approved_at|rejected_at|debated_at|discarded_at) changed to NULL
-
-    IF (TG_OP = 'INSERT')
-    OR (TG_OP = 'DELETE')
-    OR (TG_OP = 'UPDATE' AND (NEW."publisher_id" IS NULL) <> (OLD."publisher_id" IS NULL))
-    OR (TG_OP = 'UPDATE' AND (NEW."approved_at" IS NULL) <> (OLD."approved_at" IS NULL))
-    OR (TG_OP = 'UPDATE' AND (NEW."rejected_at" IS NULL) <> (OLD."rejected_at" IS NULL))
-    OR (TG_OP = 'UPDATE' AND (NEW."debated_at" IS NULL) <> (OLD."debated_at" IS NULL))
-    OR (TG_OP = 'UPDATE' AND (NEW."discarded_at" IS NULL) <> (OLD."discarded_at" IS NULL))
-    THEN
-
       UPDATE "collectivities"
-      SET    "reports_count"           = get_reports_count_in_collectivities("collectivities".*),
-             "reports_approved_count"  = get_reports_approved_count_in_collectivities("collectivities".*),
-             "reports_rejected_count"  = get_reports_rejected_count_in_collectivities("collectivities".*),
-             "reports_debated_count"   = get_reports_debated_count_in_collectivities("collectivities".*)
-
+      SET    "reports_transmitted_count" = get_reports_transmitted_count_in_collectivities("collectivities".*),
+             "reports_approved_count"    = get_reports_approved_count_in_collectivities("collectivities".*),
+             "reports_rejected_count"    = get_reports_rejected_count_in_collectivities("collectivities".*),
+             "reports_debated_count"     = get_reports_debated_count_in_collectivities("collectivities".*)
       WHERE  "collectivities"."id" IN (NEW."collectivity_id", OLD."collectivity_id");
 
     END IF;

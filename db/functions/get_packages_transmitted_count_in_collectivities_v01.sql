@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION get_packages_count_in_collectivities(collectivities collectivities)
+CREATE OR REPLACE FUNCTION get_packages_transmitted_count_in_collectivities(collectivities collectivities)
 RETURNS integer
 AS $function$
   BEGIN
@@ -7,8 +7,8 @@ AS $function$
       FROM   "packages"
       WHERE  "packages"."collectivity_id" = collectivities."id"
         AND  "packages"."sandbox" = FALSE
+        AND  "packages"."transmitted_at" IS NOT NULL
         AND  "packages"."discarded_at" IS NULL
-        AND  ("packages"."publisher_id" IS NULL OR "packages"."transmitted_at" IS NOT NULL)
     );
   END;
 $function$ LANGUAGE plpgsql;

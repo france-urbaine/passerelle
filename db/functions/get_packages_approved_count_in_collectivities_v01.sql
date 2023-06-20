@@ -7,11 +7,10 @@ AS $function$
       FROM   "packages"
       WHERE  "packages"."collectivity_id" = collectivities."id"
         AND  "packages"."sandbox" = FALSE
-        AND  "packages"."discarded_at" IS NULL
         AND  "packages"."transmitted_at" IS NOT NULL
         AND  "packages"."approved_at" IS NOT NULL
         AND  "packages"."rejected_at" IS NULL
-        AND  ("packages"."publisher_id" IS NULL OR "packages"."transmitted_at" IS NOT NULL)
+        AND  "packages"."discarded_at" IS NULL
     );
   END;
 $function$ LANGUAGE plpgsql;

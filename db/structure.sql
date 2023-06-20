@@ -793,11 +793,11 @@ CREATE TABLE public.collectivities (
     users_count integer DEFAULT 0 NOT NULL,
     domain_restriction character varying,
     allow_2fa_via_email boolean DEFAULT false NOT NULL,
-    reports_count integer DEFAULT 0 NOT NULL,
+    reports_transmitted_count integer DEFAULT 0 NOT NULL,
     reports_approved_count integer DEFAULT 0 NOT NULL,
     reports_rejected_count integer DEFAULT 0 NOT NULL,
     reports_debated_count integer DEFAULT 0 NOT NULL,
-    packages_count integer DEFAULT 0 NOT NULL,
+    packages_transmitted_count integer DEFAULT 0 NOT NULL,
     packages_approved_count integer DEFAULT 0 NOT NULL,
     packages_rejected_count integer DEFAULT 0 NOT NULL,
     CONSTRAINT users_count_check CHECK ((users_count >= 0))
@@ -817,11 +817,10 @@ CREATE FUNCTION public.get_packages_approved_count_in_collectivities(collectivit
       FROM   "packages"
       WHERE  "packages"."collectivity_id" = collectivities."id"
         AND  "packages"."sandbox" = FALSE
-        AND  "packages"."discarded_at" IS NULL
         AND  "packages"."transmitted_at" IS NOT NULL
         AND  "packages"."approved_at" IS NOT NULL
         AND  "packages"."rejected_at" IS NULL
-        AND  ("packages"."publisher_id" IS NULL OR "packages"."transmitted_at" IS NOT NULL)
+        AND  "packages"."discarded_at" IS NULL
     );
   END;
 $$;
@@ -843,26 +842,6 @@ CREATE FUNCTION public.get_packages_approved_count_in_publishers(publishers publ
         AND  "packages"."transmitted_at" IS NOT NULL
         AND  "packages"."approved_at" IS NOT NULL
         AND  "packages"."rejected_at" IS NULL
-    );
-  END;
-$$;
-
-
---
--- Name: get_packages_count_in_collectivities(public.collectivities); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION public.get_packages_count_in_collectivities(collectivities public.collectivities) RETURNS integer
-    LANGUAGE plpgsql
-    AS $$
-  BEGIN
-    RETURN (
-      SELECT COUNT(*)
-      FROM   "packages"
-      WHERE  "packages"."collectivity_id" = collectivities."id"
-        AND  "packages"."sandbox" = FALSE
-        AND  "packages"."discarded_at" IS NULL
-        AND  ("packages"."publisher_id" IS NULL OR "packages"."transmitted_at" IS NOT NULL)
     );
   END;
 $$;
@@ -899,10 +878,9 @@ CREATE FUNCTION public.get_packages_rejected_count_in_collectivities(collectivit
       FROM   "packages"
       WHERE  "packages"."collectivity_id" = collectivities."id"
         AND  "packages"."sandbox" = FALSE
-        AND  "packages"."discarded_at" IS NULL
         AND  "packages"."transmitted_at" IS NOT NULL
         AND  "packages"."rejected_at" IS NOT NULL
-        AND  ("packages"."publisher_id" IS NULL OR "packages"."transmitted_at" IS NOT NULL)
+        AND  "packages"."discarded_at" IS NULL
     );
   END;
 $$;
@@ -929,6 +907,26 @@ $$;
 
 
 --
+-- Name: get_packages_transmitted_count_in_collectivities(public.collectivities); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.get_packages_transmitted_count_in_collectivities(collectivities public.collectivities) RETURNS integer
+    LANGUAGE plpgsql
+    AS $$
+  BEGIN
+    RETURN (
+      SELECT COUNT(*)
+      FROM   "packages"
+      WHERE  "packages"."collectivity_id" = collectivities."id"
+        AND  "packages"."sandbox" = FALSE
+        AND  "packages"."transmitted_at" IS NOT NULL
+        AND  "packages"."discarded_at" IS NULL
+    );
+  END;
+$$;
+
+
+--
 -- Name: get_reports_approved_count_in_collectivities(public.collectivities); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -941,11 +939,11 @@ CREATE FUNCTION public.get_reports_approved_count_in_collectivities(collectiviti
       FROM       "reports"
       INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
       WHERE      "reports"."collectivity_id" = collectivities."id"
-        AND      "reports"."discarded_at" IS NULL
         AND      "reports"."approved_at" IS NOT NULL
+        AND      "reports"."discarded_at" IS NULL
         AND      "packages"."sandbox" = FALSE
+        AND      "packages"."transmitted_at" IS NOT NULL
         AND      "packages"."discarded_at" IS NULL
-        AND      ("packages"."publisher_id" IS NULL OR "packages"."transmitted_at" IS NOT NULL)
     );
   END;
 $$;
@@ -1037,28 +1035,6 @@ $$;
 
 
 --
--- Name: get_reports_count_in_collectivities(public.collectivities); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION public.get_reports_count_in_collectivities(collectivities public.collectivities) RETURNS integer
-    LANGUAGE plpgsql
-    AS $$
-  BEGIN
-    RETURN (
-      SELECT     COUNT(*)
-      FROM       "reports"
-      INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
-      WHERE      "reports"."collectivity_id" = collectivities."id"
-        AND      "reports"."discarded_at" IS NULL
-        AND      "packages"."sandbox" = FALSE
-        AND      "packages"."discarded_at" IS NULL
-        AND      ("packages"."publisher_id" IS NULL OR "packages"."transmitted_at" IS NOT NULL)
-    );
-  END;
-$$;
-
-
---
 -- Name: get_reports_count_in_packages(public.packages); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -1107,11 +1083,11 @@ CREATE FUNCTION public.get_reports_debated_count_in_collectivities(collectivitie
       FROM       "reports"
       INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
       WHERE      "reports"."collectivity_id" = collectivities."id"
-        AND      "reports"."discarded_at" IS NULL
         AND      "reports"."debated_at" IS NOT NULL
+        AND      "reports"."discarded_at" IS NULL
         AND      "packages"."sandbox" = FALSE
+        AND      "packages"."transmitted_at" IS NOT NULL
         AND      "packages"."discarded_at" IS NULL
-        AND      ("packages"."publisher_id" IS NULL OR "packages"."transmitted_at" IS NOT NULL)
     );
   END;
 $$;
@@ -1168,11 +1144,11 @@ CREATE FUNCTION public.get_reports_rejected_count_in_collectivities(collectiviti
       FROM       "reports"
       INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
       WHERE      "reports"."collectivity_id" = collectivities."id"
-        AND      "reports"."discarded_at" IS NULL
         AND      "reports"."rejected_at" IS NOT NULL
+        AND      "reports"."discarded_at" IS NULL
         AND      "packages"."sandbox" = FALSE
+        AND      "packages"."transmitted_at" IS NOT NULL
         AND      "packages"."discarded_at" IS NULL
-        AND      ("packages"."publisher_id" IS NULL OR "packages"."transmitted_at" IS NOT NULL)
     );
   END;
 $$;
@@ -1211,6 +1187,28 @@ CREATE FUNCTION public.get_reports_rejected_count_in_publishers(publishers publi
       WHERE  "reports"."publisher_id" = publishers."id"
         AND  "reports"."discarded_at" IS NULL
         AND  "reports"."rejected_at" IS NOT NULL
+    );
+  END;
+$$;
+
+
+--
+-- Name: get_reports_transmitted_count_in_collectivities(public.collectivities); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.get_reports_transmitted_count_in_collectivities(collectivities public.collectivities) RETURNS integer
+    LANGUAGE plpgsql
+    AS $$
+  BEGIN
+    RETURN (
+      SELECT     COUNT(*)
+      FROM       "reports"
+      INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
+      WHERE      "reports"."collectivity_id" = collectivities."id"
+        AND      "reports"."discarded_at" IS NULL
+        AND      "packages"."sandbox" = FALSE
+        AND      "packages"."transmitted_at" IS NOT NULL
+        AND      "packages"."discarded_at" IS NULL
     );
   END;
 $$;
@@ -1303,14 +1301,14 @@ CREATE FUNCTION public.reset_all_collectivities_counters() RETURNS integer
     affected_rows integer;
   BEGIN
     UPDATE "collectivities"
-    SET    "users_count"             = get_users_count_in_collectivities("collectivities".*),
-           "reports_count"           = get_reports_count_in_collectivities("collectivities".*),
-           "reports_approved_count"  = get_reports_approved_count_in_collectivities("collectivities".*),
-           "reports_rejected_count"  = get_reports_rejected_count_in_collectivities("collectivities".*),
-           "reports_debated_count"   = get_reports_debated_count_in_collectivities("collectivities".*),
-           "packages_count"          = get_packages_count_in_collectivities("collectivities".*),
-           "packages_approved_count" = get_packages_approved_count_in_collectivities("collectivities".*),
-           "packages_rejected_count" = get_packages_rejected_count_in_collectivities("collectivities".*);
+    SET    "users_count"                = get_users_count_in_collectivities("collectivities".*),
+           "reports_transmitted_count"  = get_reports_transmitted_count_in_collectivities("collectivities".*),
+           "reports_approved_count"     = get_reports_approved_count_in_collectivities("collectivities".*),
+           "reports_rejected_count"     = get_reports_rejected_count_in_collectivities("collectivities".*),
+           "reports_debated_count"      = get_reports_debated_count_in_collectivities("collectivities".*),
+           "packages_transmitted_count" = get_packages_transmitted_count_in_collectivities("collectivities".*),
+           "packages_approved_count"    = get_packages_approved_count_in_collectivities("collectivities".*),
+           "packages_rejected_count"    = get_packages_rejected_count_in_collectivities("collectivities".*);
 
     GET DIAGNOSTICS affected_rows = ROW_COUNT;
     RAISE NOTICE 'UPDATE %', affected_rows;
@@ -2037,28 +2035,39 @@ CREATE FUNCTION public.trigger_packages_changes() RETURNS trigger
   BEGIN
 
     -- Reset all completed
+    -- * on creation
     -- * when reports_count or reports_completed_count changed
 
-    IF (TG_OP = 'UPDATE' AND NEW."reports_count" <> OLD."reports_count")
+    IF (TG_OP = 'INSERT')
+    OR (TG_OP = 'UPDATE' AND NEW."reports_count" <> OLD."reports_count")
     OR (TG_OP = 'UPDATE' AND NEW."reports_completed_count" <> OLD."reports_completed_count")
     THEN
 
       UPDATE "packages"
       SET    "completed" = (NEW."reports_count" = NEW."reports_completed_count")
-      WHERE  "packages"."id" IN (NEW."id", OLD."id");
+      WHERE  "packages"."id" IN (NEW."id", OLD."id")
+        AND NEW."reports_count" <> 0;
 
     END IF;
 
-    -- Reset all packages count on publishers
+    -- Reset all packages counts on publishers & collectivities
     -- * on creation
     -- * on deletion
-    -- * when approved_at or rejected_at changed from NULL
-    -- * when approved_at or rejected_at changed to NULL
+    -- * when sandbox changed
+    -- * when publisher_id changed
+    -- * when publisher_id changed from NULL
+    -- * when publisher_id changed to NULL
+    -- * when (transmitted_at|approved_at|rejected_at|discarded_at) changed from NULL
+    -- * when (transmitted_at|approved_at|rejected_at|discarded_at) changed to NULL
 
     IF (TG_OP = 'INSERT')
     OR (TG_OP = 'DELETE')
+    OR (TG_OP = 'UPDATE' AND NEW."sandbox" <> OLD."sandbox")
+    OR (TG_OP = 'UPDATE' AND ((NEW."publisher_id" IS NULL) <> (OLD."publisher_id" IS NULL) OR (NEW."publisher_id" <> OLD."publisher_id")))
+    OR (TG_OP = 'UPDATE' AND (NEW."transmitted_at" IS NULL) <> (OLD."transmitted_at" IS NULL))
     OR (TG_OP = 'UPDATE' AND (NEW."approved_at" IS NULL) <> (OLD."approved_at" IS NULL))
     OR (TG_OP = 'UPDATE' AND (NEW."rejected_at" IS NULL) <> (OLD."rejected_at" IS NULL))
+    OR (TG_OP = 'UPDATE' AND (NEW."discarded_at" IS NULL) <> (OLD."discarded_at" IS NULL))
     THEN
 
       UPDATE "publishers"
@@ -2067,34 +2076,14 @@ CREATE FUNCTION public.trigger_packages_changes() RETURNS trigger
              "packages_rejected_count" = get_packages_rejected_count_in_publishers("publishers".*)
       WHERE  "publishers"."id" IN (NEW."publisher_id", OLD."publisher_id");
 
-    END IF;
-
-    -- Reset all packages and reports counts on collectivities
-    -- * on creation
-    -- * on deletion
-    -- * when sandbox changed
-    -- * when (publisher_id|transmitted_at|approved_at|rejected_at|discarded_at) changed from NULL
-    -- * when (publisher_id|transmitted_at|approved_at|rejected_at|discarded_at) changed to NULL
-
-    IF (TG_OP = 'INSERT')
-    OR (TG_OP = 'DELETE')
-    OR (TG_OP = 'UPDATE' AND NEW."sandbox" <> OLD."sandbox")
-    OR (TG_OP = 'UPDATE' AND (NEW."publisher_id" IS NULL) <> (OLD."publisher_id" IS NULL))
-    OR (TG_OP = 'UPDATE' AND (NEW."transmitted_at" IS NULL) <> (OLD."transmitted_at" IS NULL))
-    OR (TG_OP = 'UPDATE' AND (NEW."approved_at" IS NULL) <> (OLD."approved_at" IS NULL))
-    OR (TG_OP = 'UPDATE' AND (NEW."rejected_at" IS NULL) <> (OLD."rejected_at" IS NULL))
-    OR (TG_OP = 'UPDATE' AND (NEW."discarded_at" IS NULL) <> (OLD."discarded_at" IS NULL))
-    THEN
-
       UPDATE "collectivities"
-      SET    "packages_count"          = get_packages_count_in_collectivities("collectivities".*),
-             "packages_approved_count" = get_packages_approved_count_in_collectivities("collectivities".*),
-             "packages_rejected_count" = get_packages_rejected_count_in_collectivities("collectivities".*),
-             "reports_count"           = get_reports_count_in_collectivities("collectivities".*),
-             "reports_approved_count"  = get_reports_approved_count_in_collectivities("collectivities".*),
-             "reports_rejected_count"  = get_reports_rejected_count_in_collectivities("collectivities".*),
-             "reports_debated_count"   = get_reports_debated_count_in_collectivities("collectivities".*)
-
+      SET    "packages_transmitted_count" = get_packages_transmitted_count_in_collectivities("collectivities".*),
+             "packages_approved_count"    = get_packages_approved_count_in_collectivities("collectivities".*),
+             "packages_rejected_count"    = get_packages_rejected_count_in_collectivities("collectivities".*),
+             "reports_transmitted_count"  = get_reports_transmitted_count_in_collectivities("collectivities".*),
+             "reports_approved_count"     = get_reports_approved_count_in_collectivities("collectivities".*),
+             "reports_rejected_count"     = get_reports_rejected_count_in_collectivities("collectivities".*),
+             "reports_debated_count"      = get_reports_debated_count_in_collectivities("collectivities".*)
       WHERE  "collectivities"."id" IN (NEW."collectivity_id", OLD."collectivity_id");
 
     END IF;
@@ -2142,7 +2131,7 @@ CREATE FUNCTION public.trigger_reports_changes() RETURNS trigger
 
     END IF;
 
-    -- Reset all reports counts on publishers
+    -- Reset all reports counts on publishers & collectivities
     -- * on creation
     -- * on deletion
     -- * when publisher_id changed
@@ -2153,8 +2142,7 @@ CREATE FUNCTION public.trigger_reports_changes() RETURNS trigger
 
     IF (TG_OP = 'INSERT')
     OR (TG_OP = 'DELETE')
-    OR (TG_OP = 'UPDATE' AND NEW."publisher_id" <> OLD."publisher_id")
-    OR (TG_OP = 'UPDATE' AND (NEW."publisher_id" IS NULL) <> (OLD."publisher_id" IS NULL))
+    OR (TG_OP = 'UPDATE' AND ((NEW."publisher_id" IS NULL) <> (OLD."publisher_id" IS NULL) OR (NEW."publisher_id" <> OLD."publisher_id")))
     OR (TG_OP = 'UPDATE' AND (NEW."approved_at" IS NULL) <> (OLD."approved_at" IS NULL))
     OR (TG_OP = 'UPDATE' AND (NEW."rejected_at" IS NULL) <> (OLD."rejected_at" IS NULL))
     OR (TG_OP = 'UPDATE' AND (NEW."debated_at" IS NULL) <> (OLD."debated_at" IS NULL))
@@ -2166,32 +2154,13 @@ CREATE FUNCTION public.trigger_reports_changes() RETURNS trigger
              "reports_approved_count"  = get_reports_approved_count_in_publishers("publishers".*),
              "reports_rejected_count"  = get_reports_rejected_count_in_publishers("publishers".*),
              "reports_debated_count"   = get_reports_debated_count_in_publishers("publishers".*)
-
       WHERE  "publishers"."id" IN (NEW."publisher_id", OLD."publisher_id");
 
-    END IF;
-
-    -- Reset all reports counts on collectivities
-    -- * on creation
-    -- * on deletion
-    -- * when (publisher_id|approved_at|rejected_at|debated_at|discarded_at) changed from NULL
-    -- * when (publisher_id|approved_at|rejected_at|debated_at|discarded_at) changed to NULL
-
-    IF (TG_OP = 'INSERT')
-    OR (TG_OP = 'DELETE')
-    OR (TG_OP = 'UPDATE' AND (NEW."publisher_id" IS NULL) <> (OLD."publisher_id" IS NULL))
-    OR (TG_OP = 'UPDATE' AND (NEW."approved_at" IS NULL) <> (OLD."approved_at" IS NULL))
-    OR (TG_OP = 'UPDATE' AND (NEW."rejected_at" IS NULL) <> (OLD."rejected_at" IS NULL))
-    OR (TG_OP = 'UPDATE' AND (NEW."debated_at" IS NULL) <> (OLD."debated_at" IS NULL))
-    OR (TG_OP = 'UPDATE' AND (NEW."discarded_at" IS NULL) <> (OLD."discarded_at" IS NULL))
-    THEN
-
       UPDATE "collectivities"
-      SET    "reports_count"           = get_reports_count_in_collectivities("collectivities".*),
-             "reports_approved_count"  = get_reports_approved_count_in_collectivities("collectivities".*),
-             "reports_rejected_count"  = get_reports_rejected_count_in_collectivities("collectivities".*),
-             "reports_debated_count"   = get_reports_debated_count_in_collectivities("collectivities".*)
-
+      SET    "reports_transmitted_count" = get_reports_transmitted_count_in_collectivities("collectivities".*),
+             "reports_approved_count"    = get_reports_approved_count_in_collectivities("collectivities".*),
+             "reports_rejected_count"    = get_reports_rejected_count_in_collectivities("collectivities".*),
+             "reports_debated_count"     = get_reports_debated_count_in_collectivities("collectivities".*)
       WHERE  "collectivities"."id" IN (NEW."collectivity_id", OLD."collectivity_id");
 
     END IF;
