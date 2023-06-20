@@ -204,12 +204,6 @@ RSpec.describe Publisher do
           .and     change { publishers[1].reload.collectivities_count }.from(0).to(1)
       end
     end
-  end
-
-  # Counter caches
-  # ----------------------------------------------------------------------------
-  describe "counter caches" do
-    let_it_be(:publishers) { create_list(:publisher, 2) }
 
     describe "#reports_count" do
       let(:report) { create(:report, publisher: publishers[0]) }
