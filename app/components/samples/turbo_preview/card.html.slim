@@ -1,6 +1,5 @@
 = tag.turbo_frame id: request.headers["Turbo-Frame"] do
-  .card
-    .card__content
-      | This content is rendered asynchronously by Turbo from the URL:
-      br
-      | /rails/view_components/samples/turbo/card
+  = card_component do
+    | This content is rendered asynchronously by Turbo from the URL:
+    br
+    | /rails/view_components/samples/turbo/card

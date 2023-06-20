@@ -3,13 +3,12 @@
     | Dialog title
 
   - modal.with_body do
-    p
-      | Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.
-      br
-      | Ut labore et dolore magna aliqua. Ut enim ad minim veniam.
+    | Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.
+    br
+    | Ut labore et dolore magna aliqua. Ut enim ad minim veniam.
 
   - modal.with_action "Continue", primary: true
   - modal.with_action "Do something else"
 
   - modal.with_close_action "Cancel"
-  - modal.with_other_action "Open a modal", "/rails/view_components/samples/turbo/modal", modal: true
+  - modal.with_other_action "Open a modal", "/rails/view_components/samples/link/modal", modal: true

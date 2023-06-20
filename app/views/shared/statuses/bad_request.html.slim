@@ -1,11 +1,9 @@
 = template_frame_component do
-  - if signed_in?
-    = breadcrumbs_component
+  = breadcrumbs_component if signed_in?
 
-  .card
-    .card__content.card__content--status
-      h1.card__header.card__title
-        | La requête n'est pas valide ou est malformée.
+  = card_component content_class: "card__content--status" do |card|
+    - card.with_header do
+      | La requête n'est pas valide ou est malformée.
 
-      .card__body
-        | Veuillez vérifier les paramêtres et en-têtes envoyés.
+    - card.with_body do
+      | Veuillez vérifier les paramêtres et en-têtes envoyés.

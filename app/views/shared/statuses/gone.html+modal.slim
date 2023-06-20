@@ -17,7 +17,7 @@
       - else
         p La ressource a été archivée avant sa suppression prochaine.
 
-      - modal.with_close_action "Fermer"
+    - modal.with_close_action "Fermer"
 
-      - if @gone_record
-        - modal.with_other_action "Annuler la suppression", url_for([:undiscard, @gone_record]), method: :patch
+    - if @gone_record
+      - modal.with_other_action "Annuler la suppression", url_for([:undiscard, @gone_record]), method: :patch
