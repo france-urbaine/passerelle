@@ -5,6 +5,7 @@ module ComponentsHelper
     breadcrumbs_component:        "Breadcrumbs::Component",
     button_component:             "Button::Component",
     checkboxes_component:         "Checkboxes::Component",
+    card_component:               "Card::Component",
     datatable_component:          "DataTable::Component",
     datatable_skeleton_component: "DataTable::Skeleton::Component",
     dropdown_component:           "Dropdown::Component",

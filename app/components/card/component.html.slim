@@ -1,0 +1,16 @@
+.card *css_classes(:class)
+  .card__content *css_classes(:content_class)
+    - if header?
+      .card__header
+        h1.card__title= header
+
+    .card__body *css_classes(:body_class)
+      - if body?
+        = body
+      - else
+        = content
+
+    - if actions?
+      .card__actions *css_classes(:actions_class)
+        - actions.each do |action|
+          = action
