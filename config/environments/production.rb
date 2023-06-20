@@ -67,7 +67,7 @@ Rails.application.configure do
   config.log_level = ENV["RAILS_LOGGER_LEVEL"]&.to_sym || :info
 
   # Prepend all log lines with the following tags.
-  config.log_tags = %i[remote_ip]
+  config.log_tags = %i[request_id remote_ip]
 
   # Use a different cache store in production.
   # config.cache_store = :mem_cache_store

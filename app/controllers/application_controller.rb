@@ -50,4 +50,12 @@ class ApplicationController < ActionController::Base
   def current_organization
     current_user.organization
   end
+
+  # Add more info to Lograge payload
+  # See https://github.com/roidrage/lograge
+  #
+  def append_info_to_payload(payload)
+    super
+    payload[:request_id] = request.request_id
+  end
 end
