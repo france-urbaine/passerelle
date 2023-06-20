@@ -106,7 +106,7 @@ RSpec.describe Packages::TransmissionPolicy, stub_factories: false do
     context "with package transmitted and covered by the current DDFIP" do
       let(:record) { create(:package, :transmitted_to_ddfip, ddfip: current_organization) }
 
-      it_behaves_like("when current user is a DDFIP admin") { succeed }
+      it_behaves_like("when current user is a DDFIP admin") { failed }
       it_behaves_like("when current user is a DDFIP user")  { failed }
     end
 

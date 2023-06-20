@@ -170,6 +170,7 @@ class PackagePolicy < ApplicationPolicy
     ddfip_admin? &&
       package.kept? &&
       package.out_of_sandbox? &&
+      package.transmitted? &&
       package.reports.covered_by_ddfip(organization).any?
   end
 
