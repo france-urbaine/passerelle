@@ -7,7 +7,7 @@
 
     - breadcrumbs.with_action "Inviter un utilisateur", new_office_user_path(@office), icon: "plus", modal: true, primary: true
 
-  = datatable_component(@users.preload(:offices)) do |datatable|
+  = datatable_component(@users.preload(:organization, :offices)) do |datatable|
     - datatable.with_search
     - datatable.with_pagination(@pagy, options: false)
 
