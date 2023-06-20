@@ -2,8 +2,8 @@
 
 module Modal
   class Component < ApplicationViewComponent
-    renders_one :header, "Header"
-    renders_one :body, "Body"
+    renders_one :header, "LabelOrContent"
+    renders_one :body, "LabelOrContent"
     renders_one :form, "Form"
 
     renders_one  :submit_action, "SubmitAction"
@@ -38,28 +38,6 @@ module Modal
 
     # Slots
     # ----------------------------------------------------------------------------
-    class Header < ApplicationViewComponent
-      def initialize(label = nil)
-        @label = label
-        super()
-      end
-
-      def call
-        @label || content
-      end
-    end
-
-    class Body < ApplicationViewComponent
-      def initialize(label = nil)
-        @label = label
-        super()
-      end
-
-      def call
-        @label || content
-      end
-    end
-
     class Form < ApplicationViewComponent
       attr_reader :form_options
 
