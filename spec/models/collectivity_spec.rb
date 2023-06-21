@@ -450,5 +450,321 @@ RSpec.describe Collectivity do
           .and change { collectivities[1].reload.users_count }.from(0).to(1)
       end
     end
+
+    describe "#report_transmitted_count" do
+      let(:transmitted_report) { create(:report, :transmitted, collectivity: collectivities[0]) }
+
+      it "changes on report's creation" do
+        expect { transmitted_report }
+          .to      change { collectivities[0].reload.reports_transmitted_count }.from(0).to(1)
+          .and not_change { collectivities[1].reload.reports_transmitted_count }.from(0)
+      end
+
+      it "changes on report's deletion" do
+        transmitted_report
+        expect { transmitted_report.destroy }
+          .to      change { collectivities[0].reload.reports_transmitted_count }.from(1).to(0)
+          .and not_change { collectivities[1].reload.reports_transmitted_count }.from(0)
+      end
+
+      it "changes when report is discarded" do
+        transmitted_report
+        expect { transmitted_report.discard }
+          .to      change { collectivities[0].reload.reports_transmitted_count }.from(1).to(0)
+          .and not_change { collectivities[1].reload.reports_transmitted_count }.from(0)
+      end
+
+      it "changes when report is undiscarded" do
+        transmitted_report.discard
+        expect { transmitted_report.undiscard }
+          .to      change { collectivities[0].reload.reports_transmitted_count }.from(0).to(1)
+          .and not_change { collectivities[1].reload.reports_transmitted_count }.from(0)
+      end
+
+      it "changes when report's package is a sandbox" do
+        transmitted_report
+        expect { transmitted_report.package.update(sandbox: true) }
+          .to      change { collectivities[0].reload.reports_transmitted_count }.from(1).to(0)
+          .and not_change { collectivities[1].reload.reports_transmitted_count }.from(0)
+      end
+    end
+
+    describe "#report_approved_count" do
+      let(:approved_report) { create(:report, :approved, collectivity: collectivities[0]) }
+
+      it "changes on report's creation" do
+        expect { approved_report }
+          .to      change { collectivities[0].reload.reports_transmitted_count }.from(0).to(1)
+          .and     change { collectivities[0].reload.reports_approved_count }.from(0).to(1)
+          .and not_change { collectivities[1].reload.reports_transmitted_count }.from(0)
+          .and not_change { collectivities[1].reload.reports_approved_count }.from(0)
+      end
+
+      it "changes on report's deletion" do
+        approved_report
+        expect { approved_report.destroy }
+          .to      change { collectivities[0].reload.reports_transmitted_count }.from(1).to(0)
+          .and     change { collectivities[0].reload.reports_approved_count }.from(1).to(0)
+          .and not_change { collectivities[1].reload.reports_transmitted_count }.from(0)
+          .and not_change { collectivities[1].reload.reports_approved_count }.from(0)
+      end
+
+      it "changes when report is discarded" do
+        approved_report
+        expect { approved_report.discard }
+          .to      change { collectivities[0].reload.reports_transmitted_count }.from(1).to(0)
+          .and     change { collectivities[0].reload.reports_approved_count }.from(1).to(0)
+          .and not_change { collectivities[1].reload.reports_transmitted_count }.from(0)
+          .and not_change { collectivities[1].reload.reports_approved_count }.from(0)
+      end
+
+      it "changes when report is undiscarded" do
+        approved_report.discard
+        expect { approved_report.undiscard }
+          .to      change { collectivities[0].reload.reports_transmitted_count }.from(0).to(1)
+          .and     change { collectivities[0].reload.reports_approved_count }.from(0).to(1)
+          .and not_change { collectivities[1].reload.reports_transmitted_count }.from(0)
+          .and not_change { collectivities[1].reload.reports_approved_count }.from(0)
+      end
+
+      it "changes when report's package is a sandbox" do
+        approved_report
+        expect { approved_report.package.update(sandbox: true) }
+          .to      change { collectivities[0].reload.reports_transmitted_count }.from(1).to(0)
+          .and     change { collectivities[0].reload.reports_approved_count }.from(1).to(0)
+          .and not_change { collectivities[1].reload.reports_transmitted_count }.from(0)
+          .and not_change { collectivities[1].reload.reports_approved_count }.from(0)
+      end
+    end
+
+    describe "#report_rejected_count" do
+      let(:rejected_report) { create(:report, :rejected, collectivity: collectivities[0]) }
+
+      it "changes on report's creation" do
+        expect { rejected_report }
+          .to      change { collectivities[0].reload.reports_transmitted_count }.from(0).to(1)
+          .and     change { collectivities[0].reload.reports_rejected_count }.from(0).to(1)
+          .and not_change { collectivities[1].reload.reports_transmitted_count }.from(0)
+          .and not_change { collectivities[1].reload.reports_rejected_count }.from(0)
+      end
+
+      it "changes on report's deletion" do
+        rejected_report
+        expect { rejected_report.destroy }
+          .to      change { collectivities[0].reload.reports_transmitted_count }.from(1).to(0)
+          .and     change { collectivities[0].reload.reports_rejected_count }.from(1).to(0)
+          .and not_change { collectivities[1].reload.reports_transmitted_count }.from(0)
+          .and not_change { collectivities[1].reload.reports_rejected_count }.from(0)
+      end
+
+      it "changes when report is discarded" do
+        rejected_report
+        expect { rejected_report.discard }
+          .to      change { collectivities[0].reload.reports_transmitted_count }.from(1).to(0)
+          .and     change { collectivities[0].reload.reports_rejected_count }.from(1).to(0)
+          .and not_change { collectivities[1].reload.reports_transmitted_count }.from(0)
+          .and not_change { collectivities[1].reload.reports_rejected_count }.from(0)
+      end
+
+      it "changes when report is undiscarded" do
+        rejected_report.discard
+        expect { rejected_report.undiscard }
+          .to      change { collectivities[0].reload.reports_transmitted_count }.from(0).to(1)
+          .and     change { collectivities[0].reload.reports_rejected_count }.from(0).to(1)
+          .and not_change { collectivities[1].reload.reports_transmitted_count }.from(0)
+          .and not_change { collectivities[1].reload.reports_rejected_count }.from(0)
+      end
+
+      it "changes when report's package is a sandbox" do
+        rejected_report
+        expect { rejected_report.package.update(sandbox: true) }
+          .to      change { collectivities[0].reload.reports_transmitted_count }.from(1).to(0)
+          .and     change { collectivities[0].reload.reports_rejected_count }.from(1).to(0)
+          .and not_change { collectivities[1].reload.reports_transmitted_count }.from(0)
+          .and not_change { collectivities[1].reload.reports_rejected_count }.from(0)
+      end
+    end
+
+    describe "#report_debated_count" do
+      let(:debated_report) { create(:report, :debated, collectivity: collectivities[0]) }
+
+      it "changes on report's creation" do
+        expect { debated_report }
+          .to      change { collectivities[0].reload.reports_transmitted_count }.from(0).to(1)
+          .and     change { collectivities[0].reload.reports_debated_count }.from(0).to(1)
+          .and not_change { collectivities[1].reload.reports_transmitted_count }.from(0)
+          .and not_change { collectivities[1].reload.reports_debated_count }.from(0)
+      end
+
+      it "changes on report's deletion" do
+        debated_report
+        expect { debated_report.destroy }
+          .to      change { collectivities[0].reload.reports_transmitted_count }.from(1).to(0)
+          .and     change { collectivities[0].reload.reports_debated_count }.from(1).to(0)
+          .and not_change { collectivities[1].reload.reports_transmitted_count }.from(0)
+          .and not_change { collectivities[1].reload.reports_debated_count }.from(0)
+      end
+
+      it "changes when report is discarded" do
+        debated_report
+        expect { debated_report.discard }
+          .to      change { collectivities[0].reload.reports_transmitted_count }.from(1).to(0)
+          .and     change { collectivities[0].reload.reports_debated_count }.from(1).to(0)
+          .and not_change { collectivities[1].reload.reports_transmitted_count }.from(0)
+          .and not_change { collectivities[1].reload.reports_debated_count }.from(0)
+      end
+
+      it "changes when report is undiscarded" do
+        debated_report.discard
+        expect { debated_report.undiscard }
+          .to      change { collectivities[0].reload.reports_transmitted_count }.from(0).to(1)
+          .and     change { collectivities[0].reload.reports_debated_count }.from(0).to(1)
+          .and not_change { collectivities[1].reload.reports_transmitted_count }.from(0)
+          .and not_change { collectivities[1].reload.reports_debated_count }.from(0)
+      end
+
+      it "changes when report's package is a sandbox" do
+        debated_report
+        expect { debated_report.package.update(sandbox: true) }
+          .to      change { collectivities[0].reload.reports_transmitted_count }.from(1).to(0)
+          .and     change { collectivities[0].reload.reports_debated_count }.from(1).to(0)
+          .and not_change { collectivities[1].reload.reports_transmitted_count }.from(0)
+          .and not_change { collectivities[1].reload.reports_debated_count }.from(0)
+      end
+    end
+
+    describe "#package_transmitted_count" do
+      let(:transmitted_package) { create(:package, :transmitted, collectivity: collectivities[0]) }
+
+      it "changes on package's creation" do
+        expect { transmitted_package }
+          .to      change { collectivities[0].reload.packages_transmitted_count }.from(0).to(1)
+          .and not_change { collectivities[1].reload.packages_transmitted_count }.from(0)
+      end
+
+      it "changes on package's deletion" do
+        transmitted_package
+        expect { transmitted_package.destroy }
+          .to      change { collectivities[0].reload.packages_transmitted_count }.from(1).to(0)
+          .and not_change { collectivities[1].reload.packages_transmitted_count }.from(0)
+      end
+
+      it "changes when package is discarded" do
+        transmitted_package
+        expect { transmitted_package.discard }
+          .to      change { collectivities[0].reload.packages_transmitted_count }.from(1).to(0)
+          .and not_change { collectivities[1].reload.packages_transmitted_count }.from(0)
+      end
+
+      it "changes when package is undiscarded" do
+        transmitted_package.discard
+        expect { transmitted_package.undiscard }
+          .to      change { collectivities[0].reload.packages_transmitted_count }.from(0).to(1)
+          .and not_change { collectivities[1].reload.packages_transmitted_count }.from(0)
+      end
+
+      it "changes when package is a sandbox" do
+        transmitted_package
+        expect { transmitted_package.update(sandbox: true) }
+          .to      change { collectivities[0].reload.packages_transmitted_count }.from(1).to(0)
+          .and not_change { collectivities[1].reload.packages_transmitted_count }.from(0)
+      end
+    end
+
+    describe "#package_approved_count" do
+      let(:approved_package) { create(:package, :approved, collectivity: collectivities[0]) }
+
+      it "changes on package's creation" do
+        expect { approved_package }
+          .to      change { collectivities[0].reload.packages_transmitted_count }.from(0).to(1)
+          .and     change { collectivities[0].reload.packages_approved_count }.from(0).to(1)
+          .and not_change { collectivities[1].reload.packages_transmitted_count }.from(0)
+          .and not_change { collectivities[1].reload.packages_approved_count }.from(0)
+      end
+
+      it "changes on package's deletion" do
+        approved_package
+        expect { approved_package.destroy }
+          .to      change { collectivities[0].reload.packages_transmitted_count }.from(1).to(0)
+          .and     change { collectivities[0].reload.packages_approved_count }.from(1).to(0)
+          .and not_change { collectivities[1].reload.packages_transmitted_count }.from(0)
+          .and not_change { collectivities[1].reload.packages_approved_count }.from(0)
+      end
+
+      it "changes when package is discarded" do
+        approved_package
+        expect { approved_package.discard }
+          .to      change { collectivities[0].reload.packages_transmitted_count }.from(1).to(0)
+          .and     change { collectivities[0].reload.packages_approved_count }.from(1).to(0)
+          .and not_change { collectivities[1].reload.packages_transmitted_count }.from(0)
+          .and not_change { collectivities[1].reload.packages_approved_count }.from(0)
+      end
+
+      it "changes when package is undiscarded" do
+        approved_package.discard
+        expect { approved_package.undiscard }
+          .to      change { collectivities[0].reload.packages_transmitted_count }.from(0).to(1)
+          .and     change { collectivities[0].reload.packages_approved_count }.from(0).to(1)
+          .and not_change { collectivities[1].reload.packages_transmitted_count }.from(0)
+          .and not_change { collectivities[1].reload.packages_approved_count }.from(0)
+      end
+
+      it "changes when package is a sandbox" do
+        approved_package
+        expect { approved_package.update(sandbox: true) }
+          .to      change { collectivities[0].reload.packages_transmitted_count }.from(1).to(0)
+          .and     change { collectivities[0].reload.packages_approved_count }.from(1).to(0)
+          .and not_change { collectivities[1].reload.packages_transmitted_count }.from(0)
+          .and not_change { collectivities[1].reload.packages_approved_count }.from(0)
+      end
+    end
+
+    describe "#package_rejected_count" do
+      let(:rejected_package) { create(:package, :rejected, collectivity: collectivities[0]) }
+
+      it "changes on package's creation" do
+        expect { rejected_package }
+          .to      change { collectivities[0].reload.packages_transmitted_count }.from(0).to(1)
+          .and     change { collectivities[0].reload.packages_rejected_count }.from(0).to(1)
+          .and not_change { collectivities[1].reload.packages_transmitted_count }.from(0)
+          .and not_change { collectivities[1].reload.packages_rejected_count }.from(0)
+      end
+
+      it "changes on package's deletion" do
+        rejected_package
+        expect { rejected_package.destroy }
+          .to      change { collectivities[0].reload.packages_transmitted_count }.from(1).to(0)
+          .and     change { collectivities[0].reload.packages_rejected_count }.from(1).to(0)
+          .and not_change { collectivities[1].reload.packages_transmitted_count }.from(0)
+          .and not_change { collectivities[1].reload.packages_rejected_count }.from(0)
+      end
+
+      it "changes when package is discarded" do
+        rejected_package
+        expect { rejected_package.discard }
+          .to      change { collectivities[0].reload.packages_transmitted_count }.from(1).to(0)
+          .and     change { collectivities[0].reload.packages_rejected_count }.from(1).to(0)
+          .and not_change { collectivities[1].reload.packages_transmitted_count }.from(0)
+          .and not_change { collectivities[1].reload.packages_rejected_count }.from(0)
+      end
+
+      it "changes when package is undiscarded" do
+        rejected_package.discard
+        expect { rejected_package.undiscard }
+          .to      change { collectivities[0].reload.packages_transmitted_count }.from(0).to(1)
+          .and     change { collectivities[0].reload.packages_rejected_count }.from(0).to(1)
+          .and not_change { collectivities[1].reload.packages_transmitted_count }.from(0)
+          .and not_change { collectivities[1].reload.packages_rejected_count }.from(0)
+      end
+
+      it "changes when package is a sandbox" do
+        rejected_package
+        expect { rejected_package.update(sandbox: true) }
+          .to      change { collectivities[0].reload.packages_transmitted_count }.from(1).to(0)
+          .and     change { collectivities[0].reload.packages_rejected_count }.from(1).to(0)
+          .and not_change { collectivities[1].reload.packages_transmitted_count }.from(0)
+          .and not_change { collectivities[1].reload.packages_rejected_count }.from(0)
+      end
+    end
   end
 end
