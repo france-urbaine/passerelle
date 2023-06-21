@@ -2044,9 +2044,8 @@ CREATE FUNCTION public.trigger_packages_changes() RETURNS trigger
     THEN
 
       UPDATE "packages"
-      SET    "completed" = (NEW."reports_count" = NEW."reports_completed_count")
-      WHERE  "packages"."id" IN (NEW."id", OLD."id")
-        AND NEW."reports_count" <> 0;
+      SET    "completed" = ((NEW."reports_count" = NEW."reports_completed_count") AND NEW."reports_count" <> 0)
+      WHERE  "packages"."id" IN (NEW."id", OLD."id");
 
     END IF;
 
