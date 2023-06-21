@@ -17,5 +17,12 @@ module Card
     # @label With CSS classes
     #
     def with_css_classes; end
+
+    # @label With a form
+    #
+    def with_form
+      record = ::Commune.new
+      render_with_template(locals: { record: record })
+    end
   end
 end

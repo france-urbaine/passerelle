@@ -4,7 +4,11 @@ module Modal
   class Component < ApplicationViewComponent
     renders_one :header, "LabelOrContent"
     renders_one :body, "LabelOrContent"
-    renders_one :form, "Form"
+
+    renders_one :form, lambda { |**options, &block|
+      self.form_options = options
+      fields(**options, &block)
+    }
 
     renders_one  :submit_action, "SubmitAction"
     renders_one  :close_action, lambda { |*args, **options|
@@ -15,6 +19,7 @@ module Modal
     renders_many :other_actions, "OtherAction"
 
     attr_reader :redirection_path
+    attr_accessor :form_options
 
     def initialize(redirection_path: nil)
       @redirection_path = redirection_path
@@ -37,20 +42,7 @@ module Modal
     end
 
     # Slots
-    # ----------------------------------------------------------------------------
-    class Form < ApplicationViewComponent
-      attr_reader :form_options
-
-      def initialize(**form_options)
-        @form_options = form_options
-        super()
-      end
-
-      def call
-        content
-      end
-    end
-
+    # --------------------------------------------------------------------------
     class SubmitAction < ::Button::Component
       def initialize(*args, **options)
         super(*args, **options, primary: true, type: "submit")

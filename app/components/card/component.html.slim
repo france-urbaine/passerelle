@@ -1,16 +1,27 @@
-.card *css_classes(:class)
-  .card__content *css_classes(:content_class)
+- captured_content = capture do
     - if header?
       .card__header
         h1.card__title= header
 
     .card__body *css_classes(:body_class)
-      - if body?
+      - if form?
+        = form
+      - elsif body?
         = body
       - else
         = content
 
-    - if actions?
+    - if form? || actions?
       .card__actions *css_classes(:actions_class)
+        = submit_action if form?
+
         - actions.each do |action|
           = action
+
+.card *css_classes(:class)
+  .card__content *css_classes(:content_class)
+    - if form?
+      = form_with(**form_options) do
+        = captured_content
+    - else
+      = captured_content

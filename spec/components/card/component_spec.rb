@@ -96,4 +96,31 @@ RSpec.describe Card::Component, type: :component do
       end
     end
   end
+
+  it "renders a card with a form" do
+    record = Commune.new
+    render_inline described_class.new do |card|
+      card.with_header do
+        "Dialog title"
+      end
+
+      card.with_form(model: record, url: "/form/path") do |form|
+        form.block(:name) do
+          form.text_field(:name)
+        end
+      end
+
+      card.with_submit_action("Save")
+    end
+
+    expect(page).to have_selector(".card > .card__content > form[action='/form/path']") do |form|
+      aggregate_failures do
+        expect(form).to have_selector(".card__header > h1.card__title", text: "Dialog title")
+        expect(form).to have_selector(".card__body > .form-block > input[name='commune[name]']")
+        expect(form).to have_selector(".card__actions") do |actions|
+          expect(actions).to have_button("Save", type: "submit")
+        end
+      end
+    end
+  end
 end
