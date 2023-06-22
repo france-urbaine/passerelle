@@ -4,27 +4,27 @@
 #
 # Table name: publishers
 #
-#  id                      :uuid             not null, primary key
-#  name                    :string           not null
-#  siren                   :string           not null
-#  contact_email           :string
-#  created_at              :datetime         not null
-#  updated_at              :datetime         not null
-#  discarded_at            :datetime
-#  users_count             :integer          default(0), not null
-#  collectivities_count    :integer          default(0), not null
-#  contact_first_name      :string
-#  contact_last_name       :string
-#  contact_phone           :string
-#  domain_restriction      :string
-#  allow_2fa_via_email     :boolean          default(FALSE), not null
-#  reports_count           :integer          default(0), not null
-#  reports_approved_count  :integer          default(0), not null
-#  reports_rejected_count  :integer          default(0), not null
-#  reports_debated_count   :integer          default(0), not null
-#  packages_count          :integer          default(0), not null
-#  packages_approved_count :integer          default(0), not null
-#  packages_rejected_count :integer          default(0), not null
+#  id                         :uuid             not null, primary key
+#  name                       :string           not null
+#  siren                      :string           not null
+#  contact_email              :string
+#  created_at                 :datetime         not null
+#  updated_at                 :datetime         not null
+#  discarded_at               :datetime
+#  users_count                :integer          default(0), not null
+#  collectivities_count       :integer          default(0), not null
+#  contact_first_name         :string
+#  contact_last_name          :string
+#  contact_phone              :string
+#  domain_restriction         :string
+#  allow_2fa_via_email        :boolean          default(FALSE), not null
+#  reports_transmitted_count  :integer          default(0), not null
+#  reports_approved_count     :integer          default(0), not null
+#  reports_rejected_count     :integer          default(0), not null
+#  reports_debated_count      :integer          default(0), not null
+#  packages_transmitted_count :integer          default(0), not null
+#  packages_approved_count    :integer          default(0), not null
+#  packages_rejected_count    :integer          default(0), not null
 #
 # Indexes
 #

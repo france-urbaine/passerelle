@@ -14,14 +14,14 @@
       - if allowed_to?(:destroy_all?, Publisher)
         - selection.with_action "Tout supprimer", remove_all_publishers_path, modal: true
 
-    - datatable.with_column(:name,           sort: true)    { "Éditeur" }
-    - datatable.with_column(:siren,          sort: true)    { "SIREN" }
-    - datatable.with_column(:contact)                       { "Contact" }
-    - datatable.with_column(:contact_email)                 { "Adresse mail de contact" }
-    - datatable.with_column(:contact_phone)                 { "Numéro de téléphone" }
-    - datatable.with_column(:collectivities, numeric: true) { "Collectivités" }
-    - datatable.with_column(:users,          numeric: true) { "Utilisateurs" }
-    - datatable.with_column(:reports_count,  numeric: true) { "Signalements" }
+    - datatable.with_column(:name,                      sort: true)    { "Éditeur" }
+    - datatable.with_column(:siren,                     sort: true)    { "SIREN" }
+    - datatable.with_column(:contact)                                  { "Contact" }
+    - datatable.with_column(:contact_email)                            { "Adresse mail de contact" }
+    - datatable.with_column(:contact_phone)                            { "Numéro de téléphone" }
+    - datatable.with_column(:collectivities,            numeric: true) { "Collectivités" }
+    - datatable.with_column(:users,                     numeric: true) { "Utilisateurs" }
+    - datatable.with_column(:reports_transmitted_count, numeric: true) { "Signalements transmis" }
 
     - datatable.with_empty_message do
       - if params[:search]
@@ -63,8 +63,8 @@
       - row.with_column(:users) do
         = number_with_delimiter(publisher.users_count) if publisher.users_count.positive?
 
-      - row.with_column(:reports_count) do
-        - if publisher.reports_count.positive?
-          = number_with_delimiter(publisher.reports_count)
+      - row.with_column(:reports_transmitted_count) do
+        - if publisher.reports_transmitted_count.positive?
+          = number_with_delimiter(publisher.reports_transmitted_count)
         - else
           .text-disabled 0
