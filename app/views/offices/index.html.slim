@@ -66,3 +66,5 @@
       - row.with_column(:communes) do
         = number_with_delimiter(office.communes_count) if office.communes_count.positive?
 
+      - row.with_column(:reports_count) do
+        = number_with_delimiter(office.reports_count) if office.reports_count.positive?
