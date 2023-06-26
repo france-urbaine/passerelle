@@ -210,6 +210,74 @@ RSpec.describe DDFIP do
           .and change { ddfips[1].reload.offices_count }.from(0).to(2)
       end
     end
+
+    describe "on reports_count" do
+      before do
+        create_list(:commune, 4, code_departement: ddfips[0].code_departement)
+        create_list(:commune, 2, code_departement: ddfips[1].code_departement)
+
+        Commune.all.each { |commune| create(:report, :transmitted, commune: commune) }
+
+        DDFIP.update_all(reports_count: 0)
+      end
+
+      it "resets counters" do
+        expect { reset_all_counters }
+          .to  change { ddfips[0].reload.reports_count }.from(0).to(4)
+          .and change { ddfips[1].reload.reports_count }.from(0).to(2)
+      end
+    end
+
+    describe "on reports_approved_count" do
+      before do
+        create_list(:commune, 4, code_departement: ddfips[0].code_departement)
+        create_list(:commune, 2, code_departement: ddfips[1].code_departement)
+
+        Commune.all.each { |commune| create(:report, :approved, commune: commune) }
+
+        DDFIP.update_all(reports_approved_count: 0)
+      end
+
+      it "resets counters" do
+        expect { reset_all_counters }
+          .to  change { ddfips[0].reload.reports_approved_count }.from(0).to(4)
+          .and change { ddfips[1].reload.reports_approved_count }.from(0).to(2)
+      end
+    end
+
+    describe "on reports_rejected_count" do
+      before do
+        create_list(:commune, 4, code_departement: ddfips[0].code_departement)
+        create_list(:commune, 2, code_departement: ddfips[1].code_departement)
+
+        Commune.all.each { |commune| create(:report, :rejected, commune: commune) }
+
+        DDFIP.update_all(reports_rejected_count: 0)
+      end
+
+      it "resets counters" do
+        expect { reset_all_counters }
+          .to  change { ddfips[0].reload.reports_rejected_count }.from(0).to(4)
+          .and change { ddfips[1].reload.reports_rejected_count }.from(0).to(2)
+      end
+    end
+
+    describe "on reports_debated_count" do
+      before do
+        create_list(:commune, 4, code_departement: ddfips[0].code_departement)
+        create_list(:commune, 2, code_departement: ddfips[1].code_departement)
+
+        Commune.all.each { |commune| create(:report, :debated, commune: commune) }
+
+        DDFIP.update_all(reports_debated_count: 0)
+      end
+
+      it "resets counters" do
+        expect { reset_all_counters }
+          .to  change { ddfips[0].reload.reports_debated_count }.from(0).to(4)
+          .and change { ddfips[1].reload.reports_debated_count }.from(0).to(2)
+      end
+    end
   end
 
   # Database constraints and triggers
@@ -331,7 +399,7 @@ RSpec.describe DDFIP do
       end
     end
 
-    describe "#report_count" do
+    describe "#reports_count" do
       before do
         commune = create(:commune)
         ddfips.first.update(code_departement: commune.code_departement)
@@ -375,7 +443,7 @@ RSpec.describe DDFIP do
       end
     end
 
-    describe "#report_approved_count" do
+    describe "#reports_approved_count" do
       before do
         commune = create(:commune)
         ddfips.first.update(code_departement: commune.code_departement)
@@ -429,7 +497,7 @@ RSpec.describe DDFIP do
       end
     end
 
-    describe "#report_rejected_count" do
+    describe "#reports_rejected_count" do
       before do
         commune = create(:commune)
         ddfips.first.update(code_departement: commune.code_departement)
@@ -483,7 +551,7 @@ RSpec.describe DDFIP do
       end
     end
 
-    describe "#report_debated_count" do
+    describe "#reports_debated_count" do
       before do
         commune = create(:commune)
         ddfips.first.update(code_departement: commune.code_departement)
