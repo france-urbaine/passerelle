@@ -115,6 +115,212 @@ RSpec.describe Office do
           .and not_change { offices[1].reload.communes_count }.from(0)
       end
     end
+
+    describe "#report_count" do
+      before do
+        commune = create(:commune)
+        offices.first.update(communes: [commune], action: Office::ACTIONS.first)
+        @commune = commune
+      end
+
+      let(:report) { create(:report, :package_approved_by_ddfip, commune: @commune, action: Report::ACTIONS.first, subject: Report::SUBJECTS.first) }
+
+      it "changes on report's creation" do
+        expect { report }
+          .to      change { offices[0].reload.reports_count }.from(0).to(1)
+          .and not_change { offices[1].reload.reports_count }.from(0)
+      end
+
+      it "changes on report's deletion" do
+        report
+        expect { report.destroy }
+          .to      change { offices[0].reload.reports_count }.from(1).to(0)
+          .and not_change { offices[1].reload.reports_count }.from(0)
+      end
+
+      it "changes when report is discarded" do
+        report
+        expect { report.discard }
+          .to      change { offices[0].reload.reports_count }.from(1).to(0)
+          .and not_change { offices[1].reload.reports_count }.from(0)
+      end
+
+      it "changes when report is undiscarded" do
+        report.discard
+        expect { report.undiscard }
+          .to      change { offices[0].reload.reports_count }.from(0).to(1)
+          .and not_change { offices[1].reload.reports_count }.from(0)
+      end
+
+      it "changes when report's package is a sandbox" do
+        report
+        expect { report.package.update(sandbox: true) }
+          .to      change { offices[0].reload.reports_count }.from(1).to(0)
+          .and not_change { offices[1].reload.reports_count }.from(0)
+      end
+    end
+
+    describe "#report_approved_count" do
+      before do
+        commune = create(:commune)
+        offices.first.update(communes: [commune], action: Office::ACTIONS.first)
+        @commune = commune
+      end
+
+      let(:approved_report) { create(:report, :package_approved_by_ddfip, :approved, commune: @commune, action: Report::ACTIONS.first, subject: Report::SUBJECTS.first) }
+
+      it "changes on report's creation" do
+        expect { approved_report }
+          .to      change { offices[0].reload.reports_count }.from(0).to(1)
+          .and     change { offices[0].reload.reports_approved_count }.from(0).to(1)
+          .and not_change { offices[1].reload.reports_count }.from(0)
+          .and not_change { offices[1].reload.reports_approved_count }.from(0)
+      end
+
+      it "changes on report's deletion" do
+        approved_report
+        expect { approved_report.destroy }
+          .to      change { offices[0].reload.reports_count }.from(1).to(0)
+          .and     change { offices[0].reload.reports_approved_count }.from(1).to(0)
+          .and not_change { offices[1].reload.reports_count }.from(0)
+          .and not_change { offices[1].reload.reports_approved_count }.from(0)
+      end
+
+      it "changes when report is discarded" do
+        approved_report
+        expect { approved_report.discard }
+          .to      change { offices[0].reload.reports_count }.from(1).to(0)
+          .and     change { offices[0].reload.reports_approved_count }.from(1).to(0)
+          .and not_change { offices[1].reload.reports_count }.from(0)
+          .and not_change { offices[1].reload.reports_approved_count }.from(0)
+      end
+
+      it "changes when report is undiscarded" do
+        approved_report.discard
+        expect { approved_report.undiscard }
+          .to      change { offices[0].reload.reports_count }.from(0).to(1)
+          .and     change { offices[0].reload.reports_approved_count }.from(0).to(1)
+          .and not_change { offices[1].reload.reports_count }.from(0)
+          .and not_change { offices[1].reload.reports_approved_count }.from(0)
+      end
+
+      it "changes when report's package is a sandbox" do
+        approved_report
+        expect { approved_report.package.update(sandbox: true) }
+          .to      change { offices[0].reload.reports_count }.from(1).to(0)
+          .and     change { offices[0].reload.reports_approved_count }.from(1).to(0)
+          .and not_change { offices[1].reload.reports_count }.from(0)
+          .and not_change { offices[1].reload.reports_approved_count }.from(0)
+      end
+    end
+
+    describe "#report_rejected_count" do
+      before do
+        commune = create(:commune)
+        offices.first.update(communes: [commune], action: Office::ACTIONS.first)
+        @commune = commune
+      end
+
+      let(:rejected_report) { create(:report, :package_approved_by_ddfip, :rejected, commune: @commune, action: Report::ACTIONS.first, subject: Report::SUBJECTS.first) }
+
+      it "changes on report's creation" do
+        expect { rejected_report }
+          .to      change { offices[0].reload.reports_count }.from(0).to(1)
+          .and     change { offices[0].reload.reports_rejected_count }.from(0).to(1)
+          .and not_change { offices[1].reload.reports_count }.from(0)
+          .and not_change { offices[1].reload.reports_rejected_count }.from(0)
+      end
+
+      it "changes on report's deletion" do
+        rejected_report
+        expect { rejected_report.destroy }
+          .to      change { offices[0].reload.reports_count }.from(1).to(0)
+          .and     change { offices[0].reload.reports_rejected_count }.from(1).to(0)
+          .and not_change { offices[1].reload.reports_count }.from(0)
+          .and not_change { offices[1].reload.reports_rejected_count }.from(0)
+      end
+
+      it "changes when report is discarded" do
+        rejected_report
+        expect { rejected_report.discard }
+          .to      change { offices[0].reload.reports_count }.from(1).to(0)
+          .and     change { offices[0].reload.reports_rejected_count }.from(1).to(0)
+          .and not_change { offices[1].reload.reports_count }.from(0)
+          .and not_change { offices[1].reload.reports_rejected_count }.from(0)
+      end
+
+      it "changes when report is undiscarded" do
+        rejected_report.discard
+        expect { rejected_report.undiscard }
+          .to      change { offices[0].reload.reports_count }.from(0).to(1)
+          .and     change { offices[0].reload.reports_rejected_count }.from(0).to(1)
+          .and not_change { offices[1].reload.reports_count }.from(0)
+          .and not_change { offices[1].reload.reports_rejected_count }.from(0)
+      end
+
+      it "changes when report's package is a sandbox" do
+        rejected_report
+        expect { rejected_report.package.update(sandbox: true) }
+          .to      change { offices[0].reload.reports_count }.from(1).to(0)
+          .and     change { offices[0].reload.reports_rejected_count }.from(1).to(0)
+          .and not_change { offices[1].reload.reports_count }.from(0)
+          .and not_change { offices[1].reload.reports_rejected_count }.from(0)
+      end
+    end
+
+    describe "#report_debated_count" do
+      before do
+        commune = create(:commune)
+        offices.first.update(communes: [commune], action: Office::ACTIONS.first)
+        @commune = commune
+      end
+
+      let(:debated_report) { create(:report, :package_approved_by_ddfip, :debated, commune: @commune, action: Report::ACTIONS.first, subject: Report::SUBJECTS.first) }
+
+      it "changes on report's creation" do
+        expect { debated_report }
+          .to      change { offices[0].reload.reports_count }.from(0).to(1)
+          .and     change { offices[0].reload.reports_debated_count }.from(0).to(1)
+          .and not_change { offices[1].reload.reports_count }.from(0)
+          .and not_change { offices[1].reload.reports_debated_count }.from(0)
+      end
+
+      it "changes on report's deletion" do
+        debated_report
+        expect { debated_report.destroy }
+          .to      change { offices[0].reload.reports_count }.from(1).to(0)
+          .and     change { offices[0].reload.reports_debated_count }.from(1).to(0)
+          .and not_change { offices[1].reload.reports_count }.from(0)
+          .and not_change { offices[1].reload.reports_debated_count }.from(0)
+      end
+
+      it "changes when report is discarded" do
+        debated_report
+        expect { debated_report.discard }
+          .to      change { offices[0].reload.reports_count }.from(1).to(0)
+          .and     change { offices[0].reload.reports_debated_count }.from(1).to(0)
+          .and not_change { offices[1].reload.reports_count }.from(0)
+          .and not_change { offices[1].reload.reports_debated_count }.from(0)
+      end
+
+      it "changes when report is undiscarded" do
+        debated_report.discard
+        expect { debated_report.undiscard }
+          .to      change { offices[0].reload.reports_count }.from(0).to(1)
+          .and     change { offices[0].reload.reports_debated_count }.from(0).to(1)
+          .and not_change { offices[1].reload.reports_count }.from(0)
+          .and not_change { offices[1].reload.reports_debated_count }.from(0)
+      end
+
+      it "changes when report's package is a sandbox" do
+        debated_report
+        expect { debated_report.package.update(sandbox: true) }
+          .to      change { offices[0].reload.reports_count }.from(1).to(0)
+          .and     change { offices[0].reload.reports_debated_count }.from(1).to(0)
+          .and not_change { offices[1].reload.reports_count }.from(0)
+          .and not_change { offices[1].reload.reports_debated_count }.from(0)
+      end
+    end
   end
 
   # Reset counters
