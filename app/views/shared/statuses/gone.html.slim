@@ -1,5 +1,5 @@
-= template_frame_component do
-  = breadcrumbs_component heading: false do |breadcrumbs|
+= template_gone_component(referrer: @referrer_path) do |template|
+  - template.with_breadcrumbs do |breadcrumbs|
     - case @gone_record
     - when Publisher
       - breadcrumbs.with_path "Administration"
@@ -26,39 +26,5 @@
       - breadcrumbs.with_path "Utilisateurs", users_path
       - breadcrumbs.with_path @gone_record.name
 
-  = card_component content_class: "card__content--status" do |card|
-    - card.with_header do
-      | La page que vous recherchez n'est pas disponible.
-
-    - card.with_body do
-      - case @gone_record
-      - when Publisher
-        | L'éditeur est en cours de suppression.
-        br
-        | Cette suppression sera effective d'ici le #{localize(30.days.after(@gone_record.discarded_at.to_date))}.
-
-      - when Collectivity
-        | La collectivité est en cours de suppression.
-        br
-        | Cette suppression sera effective d'ici le #{localize(30.days.after(@gone_record.discarded_at.to_date))}.
-
-      - when DDFIP
-        | La DDFIP est en cours de suppression.
-        br
-        | Cette suppression sera effective d'ici le #{localize(30.days.after(@gone_record.discarded_at.to_date))}.
-
-      - when Office
-        | Le guichet est en cours de suppression.
-        br
-        | Cette suppression sera effective d'ici le #{localize(30.days.after(@gone_record.discarded_at.to_date))}.
-
-      - when User
-        | L'utilisateur est en cours de suppression.
-        br
-        | Cette suppression sera effective d'ici le #{localize(1.day.after(@gone_record.discarded_at.to_date))}.
-
-      - else
-        | La ressource a été archivée avant sa suppression prochaine.
-
-    - if @gone_record
-      - modal.with_action "Annuler la suppression", url_for([:undiscard, @gone_record]), method: :patch
+  - if @gone_record
+    - template.with_action "Annuler la suppression", url_for([:undiscard, @gone_record]), icon: "arrow-path", method: :patch

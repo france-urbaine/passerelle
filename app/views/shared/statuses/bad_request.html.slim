@@ -1,9 +1,6 @@
-= template_frame_component do
-  = breadcrumbs_component if signed_in?
+= template_status_component(referrer: @referrer_path) do |template|
+  - template.with_header do
+    | La requête n'est pas valide ou est malformée.
 
-  = card_component content_class: "card__content--status" do |card|
-    - card.with_header do
-      | La requête n'est pas valide ou est malformée.
-
-    - card.with_body do
-      | Veuillez vérifier les paramêtres et en-têtes envoyés.
+  - template.with_body do
+    | Veuillez vérifier les paramêtres et en-têtes envoyés.

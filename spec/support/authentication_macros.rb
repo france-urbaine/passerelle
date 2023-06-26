@@ -34,6 +34,12 @@ module AuthenticationMacros
 end
 
 RSpec.configure do |config|
+  config.include Devise::Test::ControllerHelpers,  type: :component
   config.include Devise::Test::IntegrationHelpers, type: :request
   config.include AuthenticationMacros, type: :request
+  config.include AuthenticationMacros, type: :component
+
+  config.before(:each, type: :component) do
+    @request = vc_test_controller.request
+  end
 end

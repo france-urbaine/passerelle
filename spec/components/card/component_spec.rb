@@ -3,7 +3,7 @@
 require "rails_helper"
 
 RSpec.describe Card::Component, type: :component do
-  it "renders a basic card" do
+  it "renders a basic card with body" do
     render_inline described_class.new do
       tag.p "Hello World"
     end
@@ -17,7 +17,7 @@ RSpec.describe Card::Component, type: :component do
   it "renders a card with header and body" do
     render_inline described_class.new do |card|
       card.with_header do
-        "Dialog title"
+        "Card title"
       end
 
       card.with_body do
@@ -27,7 +27,7 @@ RSpec.describe Card::Component, type: :component do
 
     aggregate_failures do
       expect(page).to have_selector(".card > .card__content > .card__header") do |node|
-        expect(node).to have_selector("h1.card__title", text: "Dialog title")
+        expect(node).to have_selector("h1.card__title", text: "Card title")
       end
 
       expect(page).to have_selector(".card > .card__content > .card__body") do |node|
@@ -36,35 +36,26 @@ RSpec.describe Card::Component, type: :component do
     end
   end
 
-  it "renders card header from an argument" do
+  it "renders a card with header and body passed as arguments" do
     render_inline described_class.new do |card|
-      card.with_header("Dialog title")
-      card.with_body do
-        tag.p "Hello World"
-      end
-    end
-
-    expect(page).to have_selector(".card > .card__content > .card__header") do |node|
-      expect(node).to have_selector("h1.card__title", text: "Dialog title")
-    end
-  end
-
-  it "renders card body from an argument" do
-    render_inline described_class.new do |card|
+      card.with_header("Card title")
       card.with_body("Hello World")
     end
 
-    expect(page).to have_selector(".card > .card__content > .card__body") do |node|
-      expect(node).to have_text("Hello World")
+    aggregate_failures do
+      expect(page).to have_selector(".card > .card__content > .card__header") do |node|
+        expect(node).to have_selector("h1.card__title", text: "Card title")
+      end
+
+      expect(page).to have_selector(".card > .card__content > .card__body") do |node|
+        expect(node).to have_text("Hello World")
+      end
     end
   end
 
   it "renders a card with actions" do
     render_inline described_class.new do |card|
-      card.with_body do
-        tag.p "Hello World"
-      end
-
+      card.with_body("Hello World")
       card.with_action("Action 1", primary: true)
       card.with_action("Action 2", href: "/some/path")
     end
@@ -84,7 +75,7 @@ RSpec.describe Card::Component, type: :component do
       body_class:    "card__body--grid",
       actions_class: "card__actions--center"
     ) do |card|
-      card.with_header("Dialog title")
+      card.with_header("Card title")
       card.with_body("Hello World")
       card.with_action("Action")
     end
@@ -100,9 +91,7 @@ RSpec.describe Card::Component, type: :component do
   it "renders a card with a form" do
     record = Commune.new
     render_inline described_class.new do |card|
-      card.with_header do
-        "Dialog title"
-      end
+      card.with_header("Card title")
 
       card.with_form(model: record, url: "/form/path") do |form|
         form.block(:name) do
@@ -115,7 +104,7 @@ RSpec.describe Card::Component, type: :component do
 
     expect(page).to have_selector(".card > .card__content > form[action='/form/path']") do |form|
       aggregate_failures do
-        expect(form).to have_selector(".card__header > h1.card__title", text: "Dialog title")
+        expect(form).to have_selector(".card__header > h1.card__title", text: "Card title")
         expect(form).to have_selector(".card__body > .form-block > input[name='commune[name]']")
         expect(form).to have_selector(".card__actions") do |actions|
           expect(actions).to have_button("Save", type: "submit")

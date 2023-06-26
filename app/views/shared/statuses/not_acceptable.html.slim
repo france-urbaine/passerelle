@@ -1,9 +1,6 @@
-= template_frame_component do
-  = breadcrumbs_component if signed_in?
+= template_status_component(referrer: @referrer_path) do |template|
+  - template.with_header do
+    | La page que vous recherchez ne peut être retournée.
 
-  = card_component content_class: "card__content--status" do |card|
-    - card.with_header do
-      | La page que vous recherchez ne peut être retournée.
-
-    - card.with_body do
-      | La resource a été trouvée mais ne peut être retournée sous ce format.
+  - template.with_body do
+    | La resource a été trouvée mais ne peut être retournée sous ce format.

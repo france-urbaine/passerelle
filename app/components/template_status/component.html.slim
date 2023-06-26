@@ -1,0 +1,17 @@
+- if request.variant.include?(:modal)
+  = render TemplateFrame::Component.new(src: @referrer) do |template|
+    - template.with_modal do |modal|
+      - modal.with_header(header) if header?
+      - modal.with_body(body || content)
+      - modal.with_close_action "Fermer"
+      - modal.with_actions(actions) if actions?
+
+- else
+  = render TemplateFrame::Component.new do |template|
+    - if signed_in?
+      = breadcrumbs || render(Breadcrumbs::Component.new(heading: false))
+
+    = render Card::Component.new(**CARD_OPTIONS) do |card|
+      - card.with_header(header) if header?
+      - card.with_body(body || content)
+      - card.with_actions(actions) if actions?

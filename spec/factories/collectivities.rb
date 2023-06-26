@@ -5,8 +5,7 @@ FactoryBot.define do
     publisher
     territory { association %i[commune epci departement].sample }
     siren     { Faker::Company.unique.french_siren_number }
-
-    sequence(:name) { |n| "#{territory.name} ##{n}" }
+    name      { territory.name }
 
     trait :orphan do
       publisher { nil }
