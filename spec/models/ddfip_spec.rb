@@ -379,7 +379,6 @@ RSpec.describe DDFIP do
       before do
         commune = create(:commune)
         ddfips.first.update(code_departement: commune.code_departement)
-
       end
 
       let(:commune) { Commune.first }
