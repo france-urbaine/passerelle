@@ -335,10 +335,10 @@ RSpec.describe DDFIP do
       before do
         commune = create(:commune)
         ddfips.first.update(code_departement: commune.code_departement)
-        @commune = commune
       end
 
-      let(:report) { create(:report, :transmitted, commune: @commune) }
+      let(:commune) { Commune.first }
+      let(:report) { create(:report, :transmitted, commune: commune) }
 
       it "changes on report's creation" do
         expect { report }
@@ -379,10 +379,11 @@ RSpec.describe DDFIP do
       before do
         commune = create(:commune)
         ddfips.first.update(code_departement: commune.code_departement)
-        @commune = commune
+
       end
 
-      let(:approved_report) { create(:report, :approved, commune: @commune) }
+      let(:commune) { Commune.first }
+      let(:approved_report) { create(:report, :approved, commune: commune) }
 
       it "changes on report's creation" do
         expect { approved_report }
@@ -433,10 +434,10 @@ RSpec.describe DDFIP do
       before do
         commune = create(:commune)
         ddfips.first.update(code_departement: commune.code_departement)
-        @commune = commune
       end
 
-      let(:rejected_report) { create(:report, :rejected, commune: @commune) }
+      let(:commune) { Commune.first }
+      let(:rejected_report) { create(:report, :rejected, commune: commune) }
 
       it "changes on report's creation" do
         expect { rejected_report }
@@ -487,10 +488,10 @@ RSpec.describe DDFIP do
       before do
         commune = create(:commune)
         ddfips.first.update(code_departement: commune.code_departement)
-        @commune = commune
       end
 
-      let(:debated_report) { create(:report, :debated, commune: @commune) }
+      let(:commune) { Commune.first }
+      let(:debated_report) { create(:report, :debated, commune: commune) }
 
       it "changes on report's creation" do
         expect { debated_report }
