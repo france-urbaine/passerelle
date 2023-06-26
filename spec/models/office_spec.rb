@@ -116,7 +116,7 @@ RSpec.describe Office do
       end
     end
 
-    describe "#report_count" do
+    describe "#reports_count" do
       before do
         commune = create(:commune)
         offices.first.communes << commune
@@ -161,7 +161,7 @@ RSpec.describe Office do
       end
     end
 
-    describe "#report_approved_count" do
+    describe "#reports_approved_count" do
       before do
         commune = create(:commune)
         offices.first.communes << commune
@@ -216,7 +216,7 @@ RSpec.describe Office do
       end
     end
 
-    describe "#report_rejected_count" do
+    describe "#reports_rejected_count" do
       before do
         commune = create(:commune)
         offices.first.communes << commune
@@ -271,7 +271,7 @@ RSpec.describe Office do
       end
     end
 
-    describe "#report_debated_count" do
+    describe "#reports_debated_count" do
       before do
         commune = create(:commune)
         offices.first.communes << commune
@@ -363,6 +363,70 @@ RSpec.describe Office do
 
       it { expect { reset_all_counters }.to change { offices[0].reload.communes_count }.from(0).to(4) }
       it { expect { reset_all_counters }.to change { offices[1].reload.communes_count }.from(0).to(2) }
+    end
+
+    describe "on reports_count" do
+      before do
+        communes = create_list(:commune, 6)
+
+        offices[0].communes = communes.shuffle.take(4)
+        offices[1].communes = communes.shuffle.take(2)
+
+        Commune.all.each { |commune| create(:report, :package_approved_by_ddfip, commune: commune, action: Report::ACTIONS.first, subject: Report::SUBJECTS.first) }
+
+        Office.update_all(reports_count: 0, action: Office::ACTIONS.first)
+      end
+
+      it { expect { reset_all_counters }.to change { offices[0].reload.reports_count }.from(0).to(4) }
+      it { expect { reset_all_counters }.to change { offices[1].reload.reports_count }.from(0).to(2) }
+    end
+
+    describe "on reports_approved_count" do
+      before do
+        communes = create_list(:commune, 6)
+
+        offices[0].communes = communes.shuffle.take(4)
+        offices[1].communes = communes.shuffle.take(2)
+
+        Commune.all.each { |commune| create(:report, :package_approved_by_ddfip, :approved, commune: commune, action: Report::ACTIONS.first, subject: Report::SUBJECTS.first) }
+
+        Office.update_all(reports_approved_count: 0, action: Office::ACTIONS.first)
+      end
+
+      it { expect { reset_all_counters }.to change { offices[0].reload.reports_approved_count }.from(0).to(4) }
+      it { expect { reset_all_counters }.to change { offices[1].reload.reports_approved_count }.from(0).to(2) }
+    end
+
+    describe "on reports_rejected_count" do
+      before do
+        communes = create_list(:commune, 6)
+
+        offices[0].communes = communes.shuffle.take(4)
+        offices[1].communes = communes.shuffle.take(2)
+
+        Commune.all.each { |commune| create(:report, :package_approved_by_ddfip, :rejected, commune: commune, action: Report::ACTIONS.first, subject: Report::SUBJECTS.first) }
+
+        Office.update_all(reports_rejected_count: 0, action: Office::ACTIONS.first)
+      end
+
+      it { expect { reset_all_counters }.to change { offices[0].reload.reports_rejected_count }.from(0).to(4) }
+      it { expect { reset_all_counters }.to change { offices[1].reload.reports_rejected_count }.from(0).to(2) }
+    end
+
+    describe "on reports_debated_count" do
+      before do
+        communes = create_list(:commune, 6)
+
+        offices[0].communes = communes.shuffle.take(4)
+        offices[1].communes = communes.shuffle.take(2)
+
+        Commune.all.each { |commune| create(:report, :package_approved_by_ddfip, :debated, commune: commune, action: Report::ACTIONS.first, subject: Report::SUBJECTS.first) }
+
+        Office.update_all(reports_debated_count: 0, action: Office::ACTIONS.first)
+      end
+
+      it { expect { reset_all_counters }.to change { offices[0].reload.reports_debated_count }.from(0).to(4) }
+      it { expect { reset_all_counters }.to change { offices[1].reload.reports_debated_count }.from(0).to(2) }
     end
   end
 end
