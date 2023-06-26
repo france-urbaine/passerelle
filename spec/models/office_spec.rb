@@ -119,11 +119,12 @@ RSpec.describe Office do
     describe "#report_count" do
       before do
         commune = create(:commune)
-        offices.first.update(communes: [commune], action: Office::ACTIONS.first)
-        @commune = commune
+        offices.first.communes << commune
+        offices.first.update(action: Office::ACTIONS.first)
       end
 
-      let(:report) { create(:report, :package_approved_by_ddfip, commune: @commune, action: Report::ACTIONS.first, subject: Report::SUBJECTS.first) }
+      let(:commune) { Commune.first }
+      let(:report) { create(:report, :package_approved_by_ddfip, commune: commune, action: Report::ACTIONS.first, subject: Report::SUBJECTS.first) }
 
       it "changes on report's creation" do
         expect { report }
@@ -163,11 +164,12 @@ RSpec.describe Office do
     describe "#report_approved_count" do
       before do
         commune = create(:commune)
-        offices.first.update(communes: [commune], action: Office::ACTIONS.first)
-        @commune = commune
+        offices.first.communes << commune
+        offices.first.update(action: Office::ACTIONS.first)
       end
 
-      let(:approved_report) { create(:report, :package_approved_by_ddfip, :approved, commune: @commune, action: Report::ACTIONS.first, subject: Report::SUBJECTS.first) }
+      let(:commune) { Commune.first }
+      let(:approved_report) { create(:report, :package_approved_by_ddfip, :approved, commune: commune, action: Report::ACTIONS.first, subject: Report::SUBJECTS.first) }
 
       it "changes on report's creation" do
         expect { approved_report }
@@ -217,11 +219,12 @@ RSpec.describe Office do
     describe "#report_rejected_count" do
       before do
         commune = create(:commune)
-        offices.first.update(communes: [commune], action: Office::ACTIONS.first)
-        @commune = commune
+        offices.first.communes << commune
+        offices.first.update(action: Office::ACTIONS.first)
       end
 
-      let(:rejected_report) { create(:report, :package_approved_by_ddfip, :rejected, commune: @commune, action: Report::ACTIONS.first, subject: Report::SUBJECTS.first) }
+      let(:commune) { Commune.first }
+      let(:rejected_report) { create(:report, :package_approved_by_ddfip, :rejected, commune: commune, action: Report::ACTIONS.first, subject: Report::SUBJECTS.first) }
 
       it "changes on report's creation" do
         expect { rejected_report }
@@ -271,11 +274,12 @@ RSpec.describe Office do
     describe "#report_debated_count" do
       before do
         commune = create(:commune)
-        offices.first.update(communes: [commune], action: Office::ACTIONS.first)
-        @commune = commune
+        offices.first.communes << commune
+        offices.first.update(action: Office::ACTIONS.first)
       end
 
-      let(:debated_report) { create(:report, :package_approved_by_ddfip, :debated, commune: @commune, action: Report::ACTIONS.first, subject: Report::SUBJECTS.first) }
+      let(:commune) { Commune.first }
+      let(:debated_report) { create(:report, :package_approved_by_ddfip, :debated, commune: commune, action: Report::ACTIONS.first, subject: Report::SUBJECTS.first) }
 
       it "changes on report's creation" do
         expect { debated_report }
