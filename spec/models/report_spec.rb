@@ -476,6 +476,136 @@ RSpec.describe Report do
     end
   end
 
+  # Updates methods
+  # ----------------------------------------------------------------------------
+  describe "update methods" do
+    describe "#approve!" do
+      it "marks the report as approved" do
+        report = create(:report, :transmitted)
+
+        aggregate_failures do
+          expect {
+            expect(report.approve!).to be(true)
+            report.reload
+          }.to change(report, :approved_at).to(be_present)
+        end
+      end
+
+      it "resets rejection time when previously rejected" do
+        report = create(:report, :rejected)
+
+        aggregate_failures do
+          expect {
+            expect(report.approve!).to be(true)
+            report.reload
+          }.to change(report, :rejected_at).to(nil)
+            .and change(report, :approved_at).to(be_present)
+        end
+      end
+
+      it "doesn't update previous approval time when already approved" do
+        report = Timecop.freeze(2.minutes.ago) do
+          create(:report, :approved)
+        end
+
+        aggregate_failures do
+          expect {
+            expect(report.approve!).to be(true)
+            report.reload
+          }.not_to change(report, :approved_at)
+        end
+      end
+    end
+
+    describe "#reject!" do
+      it "marks the report as rejected" do
+        report = create(:report, :transmitted)
+
+        aggregate_failures do
+          expect {
+            expect(report.reject!).to be(true)
+            report.reload
+          }.to change(report, :rejected_at).to(be_present)
+        end
+      end
+
+      it "reset approval time when previously approved" do
+        report = create(:report, :approved)
+
+        aggregate_failures do
+          expect {
+            expect(report.reject!).to be(true)
+            report.reload
+          }.to change(report, :approved_at).to(nil)
+            .and change(report, :rejected_at).to(be_present)
+        end
+      end
+
+      it "doesn't update previous rejection time when already rejected" do
+        report = Timecop.freeze(2.minutes.ago) do
+          create(:report, :rejected)
+        end
+
+        aggregate_failures do
+          expect {
+            expect(report.reject!).to be(true)
+            report.reload
+          }.not_to change(report, :rejected_at)
+        end
+      end
+    end
+
+    describe "#debate!" do
+      it "marks the report as debated" do
+        report = create(:report, :transmitted)
+
+        aggregate_failures do
+          expect {
+            expect(report.debate!).to be(true)
+            report.reload
+          }.to change(report, :debated_at).to(be_present)
+        end
+      end
+
+      it "doesn't overwrite previous debated time" do
+        report = Timecop.freeze(2.minutes.ago) do
+          create(:report, :debated)
+        end
+
+        aggregate_failures do
+          expect {
+            expect(report.debate!).to be(true)
+            report.reload
+          }.not_to change(report, :debated_at)
+        end
+      end
+
+      it "doesn't update an approved report" do
+        report = create(:report, :approved)
+
+        aggregate_failures do
+          expect {
+            expect(report.debate!).to be(false)
+            report.reload
+          }.to not_change(report, :debated_at).from(nil)
+            .and not_change(report, :approved_at).from(be_present)
+        end
+      end
+
+      it "doesn't update a rejected report" do
+        report = create(:report, :rejected)
+
+        aggregate_failures do
+          expect {
+            expect(report.debate!).to be(false)
+            report.reload
+          }.to not_change(report, :debated_at).from(nil)
+            .and not_change(report, :rejected_at).from(be_present)
+        end
+      end
+    end
+  end
+
   # Database constraints and triggers
   # ----------------------------------------------------------------------------
   describe "database constraints" do
