@@ -2,56 +2,81 @@
 
 module Button
   class Component < ApplicationViewComponent
-    def initialize(label = nil, href = nil, **options)
-      @label       = label
-      @href        = href || options.delete(:href)
+    def initialize(*args, **options)
+      raise ArgumentError, "wrong number of arguments (given #{args.size}, expected 0..2)" if args.size > 2
+
+      @args    = args
+      @options = options
+      super()
+    end
+
+    def call
+      extract_label_and_href
+      extract_options
+
+      if @href && (@method || @params)
+        button_to { capture_html_content }
+      elsif @href
+        link { capture_html_content }
+      else
+        button { capture_html_content }
+      end
+    end
+
+    protected
+
+    def extract_label_and_href
+      if content?
+        case @args.size
+        when 0
+          @label = content
+        when 1
+          @label = content
+          @href  = @args[0] || @options[:href]
+        else
+          raise ArgumentError, "Label can be specified as an argument or in a block, not both."
+        end
+      else
+        @label = @args[0]
+        @href  = @args[1] || @options[:href]
+      end
+    end
+
+    def extract_options
+      options = @options.dup
+      options.delete(:href)
+
+      @icon = options.delete(:icon)
+
+      if options.key?(:icon_only)
+        @icon_only = options.delete(:icon_only)
+      elsif @icon && @label.blank?
+        @icon_only = true
+      end
+
       @method      = options.delete(:method)
       @params      = options.delete(:params).presence
-      @icon        = options.delete(:icon)
-      @icon_only   = options.delete(:icon_only)
       @modal       = options.delete(:modal)
       @primary     = options.delete(:primary)
       @accent      = options.delete(:accent)
       @destructive = options.delete(:destructive)
       @discrete    = options.delete(:discrete)
       @options     = options
-      super()
     end
 
-    def call
-      label   = capture_label unless @icon_only
-      content = capture_content(label)
-
-      if (@method || @params) && @href
-        button_to(icon_only: !label) { content }
-      elsif @href
-        link(icon_only: !label) { content }
-      else
-        button(icon_only: !label) { content }
-      end
-    end
-
-    protected
-
-    def capture_label
-      raise "Label can be specified as an argument or in a block, not both." if @label && content.present?
-
-      @label || content
-    end
-
-    def capture_content(label)
-      raise "Label is missing" if label.nil? && @icon.nil?
+    def capture_html_content
+      raise "Label is missing" if @label.nil? && @icon.nil?
 
       buffer = ActiveSupport::SafeBuffer.new
       buffer << icon if @icon
-      buffer << label
+      buffer << @label if @label && !@icon_only
       buffer << tooltip if @icon_only && @label
       buffer
     end
 
-    def button_to(icon_only: false, &)
+    def button_to(&)
       options = @options.dup
-      options[:class]  = extract_class_attributes(icon_only:)
+      options[:class]  = extract_class_attributes
       options[:data]   = extract_data_attributes
       options[:aria]   = extract_aria_attributes
       options[:method] = @method
@@ -61,9 +86,9 @@ module Button
       helpers.button_to href, options, &
     end
 
-    def link(icon_only: false, &)
+    def link(&)
       options = @options.dup
-      options[:class] = extract_class_attributes(icon_only:)
+      options[:class] = extract_class_attributes
       options[:data]  = extract_data_attributes
       options[:aria]  = extract_aria_attributes
       options[:href]  = href
@@ -71,9 +96,9 @@ module Button
       tag.a(**options, &)
     end
 
-    def button(icon_only: false, &)
+    def button(&)
       options = @options.dup
-      options[:class] = extract_class_attributes(icon_only:)
+      options[:class] = extract_class_attributes
       options[:data]  = extract_data_attributes
       options[:aria]  = extract_aria_attributes
       options[:type] ||= "button"
@@ -119,10 +144,10 @@ module Button
       button--destructive-discrete
     ].freeze
 
-    def extract_class_attributes(icon_only: false)
+    def extract_class_attributes
       classes = @options.fetch(:class, "")
 
-      if icon_only
+      if @icon_only
         classes += " icon-button"
         classes += " icon-button--#{button_class_modifier}" if button_class_modifier
       else

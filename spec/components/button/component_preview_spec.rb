@@ -6,6 +6,7 @@ RSpec.describe Button::ComponentPreview, type: :component do
   it { is_expected.to render_preview_without_exception(:default) }
   it { is_expected.to render_preview_without_exception(:default_with_block) }
   it { is_expected.to render_preview_without_exception(:default_with_link) }
+  it { is_expected.to render_preview_without_exception(:default_with_link_and_block) }
   it { is_expected.to render_preview_without_exception(:default_with_modal) }
   it { is_expected.to render_preview_without_exception(:default_with_method) }
   it { is_expected.to render_preview_without_exception(:default_disabled) }
