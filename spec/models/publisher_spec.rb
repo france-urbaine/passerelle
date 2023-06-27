@@ -100,6 +100,10 @@ RSpec.describe Publisher do
   # ----------------------------------------------------------------------------
   describe "counter caches" do
     let!(:publishers) { create_list(:publisher, 2) }
+    let(:report) { create(:report, publisher: publishers[0]) }
+    let(:transmitted_report) { create(:report, :transmitted, publisher: publishers[0]) }
+    let(:package) { create(:package, publisher: publishers[0]) }
+    let(:transmitted_package) { create(:package, :transmitted, publisher: publishers[0]) }
 
     describe "#users_count" do
       let(:user) { create(:user, organization: publishers[0]) }
@@ -206,8 +210,6 @@ RSpec.describe Publisher do
     end
 
     describe "#report_transmitted_count" do
-      let(:transmitted_report) { create(:report, :transmitted, publisher: publishers[0]) }
-
       it "changes on report's creation" do
         expect { transmitted_report }
           .to      change { publishers[0].reload.reports_transmitted_count }.from(0).to(1)
@@ -239,6 +241,13 @@ RSpec.describe Publisher do
         transmitted_report
         expect { transmitted_report.package.update(sandbox: true) }
           .to      change { publishers[0].reload.reports_transmitted_count }.from(1).to(0)
+          .and not_change { publishers[1].reload.reports_transmitted_count }.from(0)
+      end
+
+      it "changes when package is transmitted" do
+        report
+        expect { report.package.transmit! }
+          .to      change { publishers[0].reload.reports_transmitted_count }.from(0).to(1)
           .and not_change { publishers[1].reload.reports_transmitted_count }.from(0)
       end
     end
@@ -281,11 +290,29 @@ RSpec.describe Publisher do
           .and not_change { publishers[1].reload.reports_approved_count }.from(0)
       end
 
+      it "changes when report is a approved" do
+        transmitted_report
+        expect { transmitted_report.update(approved_at: Time.current) }
+          .to  not_change { publishers[0].reload.reports_transmitted_count }.from(1)
+          .and     change { publishers[0].reload.reports_approved_count }.from(0).to(1)
+          .and not_change { publishers[1].reload.reports_transmitted_count }.from(0)
+          .and not_change { publishers[1].reload.reports_approved_count }.from(0)
+      end
+
       it "changes when report's package is a sandbox" do
         approved_report
         expect { approved_report.package.update(sandbox: true) }
           .to      change { publishers[0].reload.reports_transmitted_count }.from(1).to(0)
           .and     change { publishers[0].reload.reports_approved_count }.from(1).to(0)
+          .and not_change { publishers[1].reload.reports_transmitted_count }.from(0)
+          .and not_change { publishers[1].reload.reports_approved_count }.from(0)
+      end
+
+      it "doesn't change when package is transmitted" do
+        report
+        expect { report.package.transmit! }
+          .to      change { publishers[0].reload.reports_transmitted_count }.from(0).to(1)
+          .and not_change { publishers[0].reload.reports_approved_count }.from(0)
           .and not_change { publishers[1].reload.reports_transmitted_count }.from(0)
           .and not_change { publishers[1].reload.reports_approved_count }.from(0)
       end
@@ -329,11 +356,29 @@ RSpec.describe Publisher do
           .and not_change { publishers[1].reload.reports_rejected_count }.from(0)
       end
 
+      it "changes when report is a rejected" do
+        transmitted_report
+        expect { transmitted_report.update(rejected_at: Time.current) }
+          .to  not_change { publishers[0].reload.reports_transmitted_count }.from(1)
+          .and     change { publishers[0].reload.reports_rejected_count }.from(0).to(1)
+          .and not_change { publishers[1].reload.reports_transmitted_count }.from(0)
+          .and not_change { publishers[1].reload.reports_rejected_count }.from(0)
+      end
+
       it "changes when report's package is a sandbox" do
         rejected_report
         expect { rejected_report.package.update(sandbox: true) }
           .to      change { publishers[0].reload.reports_transmitted_count }.from(1).to(0)
           .and     change { publishers[0].reload.reports_rejected_count }.from(1).to(0)
+          .and not_change { publishers[1].reload.reports_transmitted_count }.from(0)
+          .and not_change { publishers[1].reload.reports_rejected_count }.from(0)
+      end
+
+      it "doesn't change when package is transmitted" do
+        report
+        expect { report.package.transmit! }
+          .to      change { publishers[0].reload.reports_transmitted_count }.from(0).to(1)
+          .and not_change { publishers[0].reload.reports_rejected_count }.from(0)
           .and not_change { publishers[1].reload.reports_transmitted_count }.from(0)
           .and not_change { publishers[1].reload.reports_rejected_count }.from(0)
       end
@@ -377,6 +422,15 @@ RSpec.describe Publisher do
           .and not_change { publishers[1].reload.reports_debated_count }.from(0)
       end
 
+      it "changes when report is a debated" do
+        transmitted_report
+        expect { transmitted_report.update(debated_at: Time.current) }
+          .to  not_change { publishers[0].reload.reports_transmitted_count }.from(1)
+          .and     change { publishers[0].reload.reports_debated_count }.from(0).to(1)
+          .and not_change { publishers[1].reload.reports_transmitted_count }.from(0)
+          .and not_change { publishers[1].reload.reports_debated_count }.from(0)
+      end
+
       it "changes when report's package is a sandbox" do
         debated_report
         expect { debated_report.package.update(sandbox: true) }
@@ -385,11 +439,18 @@ RSpec.describe Publisher do
           .and not_change { publishers[1].reload.reports_transmitted_count }.from(0)
           .and not_change { publishers[1].reload.reports_debated_count }.from(0)
       end
+
+      it "doesn't change when package is transmitted" do
+        report
+        expect { report.package.transmit! }
+          .to      change { publishers[0].reload.reports_transmitted_count }.from(0).to(1)
+          .and not_change { publishers[0].reload.reports_rejected_count }.from(0)
+          .and not_change { publishers[1].reload.reports_transmitted_count }.from(0)
+          .and not_change { publishers[1].reload.reports_rejected_count }.from(0)
+      end
     end
 
     describe "#package_transmitted_count" do
-      let(:transmitted_package) { create(:package, :transmitted, publisher: publishers[0]) }
-
       it "changes on package's creation" do
         expect { transmitted_package }
           .to      change { publishers[0].reload.packages_transmitted_count }.from(0).to(1)
@@ -421,6 +482,13 @@ RSpec.describe Publisher do
         transmitted_package
         expect { transmitted_package.update(sandbox: true) }
           .to      change { publishers[0].reload.packages_transmitted_count }.from(1).to(0)
+          .and not_change { publishers[1].reload.packages_transmitted_count }.from(0)
+      end
+
+      it "changes when package is transmitted" do
+        package
+        expect { package.transmit! }
+          .to      change { publishers[0].reload.packages_transmitted_count }.from(0).to(1)
           .and not_change { publishers[1].reload.packages_transmitted_count }.from(0)
       end
     end
@@ -471,6 +539,24 @@ RSpec.describe Publisher do
           .and not_change { publishers[1].reload.packages_transmitted_count }.from(0)
           .and not_change { publishers[1].reload.packages_approved_count }.from(0)
       end
+
+      it "changes when package is approved" do
+        transmitted_package
+        expect { transmitted_package.approve! }
+          .to  not_change { publishers[0].reload.packages_transmitted_count }.from(1)
+          .and     change { publishers[0].reload.packages_approved_count }.from(0).to(1)
+          .and not_change { publishers[1].reload.packages_transmitted_count }.from(0)
+          .and not_change { publishers[1].reload.packages_approved_count }.from(0)
+      end
+
+      it "doesn't change when package is transmitted" do
+        package
+        expect { package.transmit! }
+          .to      change { publishers[0].reload.packages_transmitted_count }.from(0).to(1)
+          .and not_change { publishers[0].reload.packages_approved_count }.from(0)
+          .and not_change { publishers[1].reload.packages_transmitted_count }.from(0)
+          .and not_change { publishers[1].reload.packages_approved_count }.from(0)
+      end
     end
 
     describe "#packages_rejected_count" do
@@ -516,6 +602,24 @@ RSpec.describe Publisher do
         expect { rejected_package.update(sandbox: true) }
           .to      change { publishers[0].reload.packages_transmitted_count }.from(1).to(0)
           .and     change { publishers[0].reload.packages_rejected_count }.from(1).to(0)
+          .and not_change { publishers[1].reload.packages_transmitted_count }.from(0)
+          .and not_change { publishers[1].reload.packages_rejected_count }.from(0)
+      end
+
+      it "changes when package is rejected" do
+        transmitted_package
+        expect { transmitted_package.reject! }
+          .to  not_change { publishers[0].reload.packages_transmitted_count }.from(1)
+          .and     change { publishers[0].reload.packages_rejected_count }.from(0).to(1)
+          .and not_change { publishers[1].reload.packages_transmitted_count }.from(0)
+          .and not_change { publishers[1].reload.packages_rejected_count }.from(0)
+      end
+
+      it "doesn't change when package is transmitted" do
+        package
+        expect { package.transmit! }
+          .to      change { publishers[0].reload.packages_transmitted_count }.from(0).to(1)
+          .and not_change { publishers[0].reload.packages_rejected_count }.from(0)
           .and not_change { publishers[1].reload.packages_transmitted_count }.from(0)
           .and not_change { publishers[1].reload.packages_rejected_count }.from(0)
       end
