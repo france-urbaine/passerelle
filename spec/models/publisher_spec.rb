@@ -204,12 +204,6 @@ RSpec.describe Publisher do
           .and     change { publishers[1].reload.collectivities_count }.from(0).to(1)
       end
     end
-  end
-
-  # Counter caches
-  # ----------------------------------------------------------------------------
-  describe "counter caches" do
-    let_it_be(:publishers) { create_list(:publisher, 2) }
 
     describe "#reports_count" do
       let(:report) { create(:report, publisher: publishers[0]) }
@@ -225,23 +219,6 @@ RSpec.describe Publisher do
         expect { report.destroy }
           .to      change { publishers[0].reload.reports_count }.from(1).to(0)
           .and not_change { publishers[1].reload.reports_count }.from(0)
-      end
-    end
-
-    describe "#reports_completed_count" do
-      let(:completed_report) { create(:report, :completed, publisher: publishers[0]) }
-
-      it "changes when report is completed" do
-        expect { completed_report }
-          .to      change { publishers[0].reload.reports_completed_count }.from(0).to(1)
-          .and not_change { publishers[1].reload.reports_completed_count }.from(0)
-      end
-
-      it "changes on deletion" do
-        completed_report
-        expect { completed_report.destroy }
-          .to      change { publishers[0].reload.reports_completed_count }.from(1).to(0)
-          .and not_change { publishers[1].reload.reports_completed_count }.from(0)
       end
     end
 

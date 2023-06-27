@@ -600,10 +600,22 @@ RSpec.describe Package do
     end
 
     describe "#completed" do
-      let(:approved_report) { create(:report, :approved, package: packages[0]) }
+      let(:empty_package) { create(:package) }
+      let(:reports) { create_list(:report, 2, package: packages[0]) }
 
-      it "changes when reports_count is equal to reports_approved_count" do
-        expect { approved_report }
+      it "is false when reports_count is equal to 0" do
+        expect { empty_package }
+          .to not_change { empty_package.reload.completed? }.from(false)
+      end
+
+      it "is false when reports_count is not equal to reports_completed_count" do
+        expect { reports }
+          .to  not_change { packages[0].reload.completed? }.from(false)
+          .and not_change { packages[1].reload.completed? }.from(false)
+      end
+
+      it "is true when reports_count is equal to reports_completed_count" do
+        expect { reports.each { |report| report.update(completed: true) } }
           .to      change { packages[0].reload.completed? }.from(false).to(true)
           .and not_change { packages[1].reload.completed? }.from(false)
       end

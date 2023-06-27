@@ -4,25 +4,32 @@
 #
 # Table name: collectivities
 #
-#  id                  :uuid             not null, primary key
-#  territory_type      :enum             not null
-#  territory_id        :uuid             not null
-#  publisher_id        :uuid
-#  name                :string           not null
-#  siren               :string           not null
-#  contact_first_name  :string
-#  contact_last_name   :string
-#  contact_email       :string
-#  contact_phone       :string
-#  created_at          :datetime         not null
-#  updated_at          :datetime         not null
-#  approved_at         :datetime
-#  disapproved_at      :datetime
-#  desactivated_at     :datetime
-#  discarded_at        :datetime
-#  users_count         :integer          default(0), not null
-#  domain_restriction  :string
-#  allow_2fa_via_email :boolean          default(FALSE), not null
+#  id                         :uuid             not null, primary key
+#  territory_type             :enum             not null
+#  territory_id               :uuid             not null
+#  publisher_id               :uuid
+#  name                       :string           not null
+#  siren                      :string           not null
+#  contact_first_name         :string
+#  contact_last_name          :string
+#  contact_email              :string
+#  contact_phone              :string
+#  created_at                 :datetime         not null
+#  updated_at                 :datetime         not null
+#  approved_at                :datetime
+#  disapproved_at             :datetime
+#  desactivated_at            :datetime
+#  discarded_at               :datetime
+#  users_count                :integer          default(0), not null
+#  domain_restriction         :string
+#  allow_2fa_via_email        :boolean          default(FALSE), not null
+#  reports_transmitted_count  :integer          default(0), not null
+#  reports_approved_count     :integer          default(0), not null
+#  reports_rejected_count     :integer          default(0), not null
+#  reports_debated_count      :integer          default(0), not null
+#  packages_transmitted_count :integer          default(0), not null
+#  packages_approved_count    :integer          default(0), not null
+#  packages_rejected_count    :integer          default(0), not null
 #
 # Indexes
 #
