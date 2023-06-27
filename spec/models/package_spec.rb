@@ -19,9 +19,9 @@ RSpec.describe Package do
     it { is_expected.to validate_inclusion_of(:action).in_array(Report::ACTIONS) }
   end
 
-  # Scopes
+  # Scopes methods
   # ----------------------------------------------------------------------------
-  describe "scopes" do
+  describe "scopes methods" do
     describe ".sandbox" do
       it "scopes packages not yet transmitted" do
         expect {
@@ -232,7 +232,7 @@ RSpec.describe Package do
 
   # Predicates
   # ----------------------------------------------------------------------------
-  describe "predicates" do
+  describe "predicates methods" do
     let_it_be(:publisher)      { build_stubbed(:publisher) }
     let_it_be(:collectivities) { build_stubbed_list(:collectivity, 2, publisher: publisher) }
     let_it_be(:packages) do
@@ -331,6 +331,144 @@ RSpec.describe Package do
       it { expect(packages[1]).to     be_sent_by_publisher(publisher) }
       it { expect(packages[6]).not_to be_sent_by_publisher(publisher) }
       it { expect(packages[7]).to     be_sent_by_publisher(publisher) }
+    end
+  end
+
+  # Updates methods
+  # ----------------------------------------------------------------------------
+  describe "update methods" do
+    describe "#transmit!" do
+      it "returns true" do
+        package = create(:package)
+        expect(package.transmit!).to be(true)
+      end
+
+      it "returns true when package was already transmitted" do
+        package = create(:package, :transmitted)
+        expect(package.transmit!).to be(true)
+      end
+
+      it "marks the package as transmitted" do
+        package = create(:package)
+
+        expect {
+          package.transmit!
+          package.reload
+        }.to change(package, :transmitted_at).to(be_present)
+      end
+
+      it "doesn't update previous transmission time" do
+        package = Timecop.freeze(2.minutes.ago) do
+          create(:package, :transmitted)
+        end
+
+        expect {
+          package.transmit!
+          package.reload
+        }.not_to change(package, :transmitted_at)
+      end
+    end
+
+    describe "#approve!" do
+      it "returns true" do
+        package = create(:package, :transmitted)
+        expect(package.approve!).to be(true)
+      end
+
+      it "returns true when package was already approved" do
+        package = create(:package, :approved)
+        expect(package.approve!).to be(true)
+      end
+
+      it "marks the package as approved" do
+        package = create(:package, :transmitted)
+
+        expect {
+          package.approve!
+          package.reload
+        }.to change(package, :approved_at).to(be_present)
+      end
+
+      it "resets rejection time" do
+        package = create(:package, :rejected)
+
+        expect {
+          package.approve!
+          package.reload
+        }.to change(package, :rejected_at).to(nil)
+      end
+
+      it "doesn't update previous approval time" do
+        package = Timecop.freeze(2.minutes.ago) do
+          create(:package, :approved)
+        end
+
+        expect {
+          package.approve!
+          package.reload
+        }.not_to change(package, :approved_at)
+      end
+    end
+
+    describe "#reject!" do
+      it "returns true" do
+        package = create(:package, :transmitted)
+        expect(package.reject!).to be(true)
+      end
+
+      it "returns true when package was already rejected" do
+        package = create(:package, :rejected)
+        expect(package.reject!).to be(true)
+      end
+
+      it "marks the package as approved" do
+        package = create(:package, :transmitted)
+
+        expect {
+          package.reject!
+          package.reload
+        }.to change(package, :rejected_at).to(be_present)
+      end
+
+      it "reset approval time" do
+        package = create(:package, :approved)
+
+        expect {
+          package.reject!
+          package.reload
+        }.to change(package, :approved_at).to(nil)
+      end
+
+      it "doesn't update previous rejection time" do
+        package = Timecop.freeze(2.minutes.ago) do
+          create(:package, :rejected)
+        end
+
+        expect {
+          package.reject!
+          package.reload
+        }.not_to change(package, :rejected_at)
+      end
+    end
+
+    describe ".reset_all_counters" do
+      subject(:reset_all_counters) { described_class.reset_all_counters }
+
+      let!(:packages) { create_list(:package, 2) }
+
+      it { expect { reset_all_counters }.to ret(2) }
+      it { expect { reset_all_counters }.to perform_sql_query("SELECT reset_all_packages_counters()") }
+
+      describe "on reports_count" do
+        before do
+          create_list(:report, 2, package: packages[0])
+
+          Package.update_all(reports_count: 0)
+        end
+
+        it { expect { reset_all_counters }.to change { packages[0].reload.reports_count }.from(0).to(2) }
+        it { expect { reset_all_counters }.to not_change { packages[1].reload.reports_count }.from(0) }
+      end
     end
   end
 
@@ -469,28 +607,6 @@ RSpec.describe Package do
           .to      change { packages[0].reload.completed? }.from(false).to(true)
           .and not_change { packages[1].reload.completed? }.from(false)
       end
-    end
-  end
-
-  # Reset counters
-  # ----------------------------------------------------------------------------
-  describe ".reset_all_counters" do
-    subject(:reset_all_counters) { described_class.reset_all_counters }
-
-    let!(:packages) { create_list(:package, 2) }
-
-    it { expect { reset_all_counters }.to ret(2) }
-    it { expect { reset_all_counters }.to perform_sql_query("SELECT reset_all_packages_counters()") }
-
-    describe "on reports_count" do
-      before do
-        create_list(:report, 2, package: packages[0])
-
-        Package.update_all(reports_count: 0)
-      end
-
-      it { expect { reset_all_counters }.to change { packages[0].reload.reports_count }.from(0).to(2) }
-      it { expect { reset_all_counters }.to not_change { packages[1].reload.reports_count }.from(0) }
     end
   end
 end

@@ -369,4 +369,33 @@ class Report < ApplicationRecord
       .merge(Commune.where(code_insee: code_insee))
       .exists?
   end
+
+  # Updates methods
+  # ----------------------------------------------------------------------------
+  def approve!
+    return true if approved?
+
+    update_columns(
+      approved_at: Time.current,
+      rejected_at: nil,
+      debated_at: nil
+    )
+  end
+
+  def reject!
+    return true if rejected?
+
+    update_columns(
+      rejected_at: Time.current,
+      approved_at: nil,
+      debated_at: nil
+    )
+  end
+
+  def debate!
+    return true if debated?
+    return false if approved? || rejected?
+
+    update_columns(debated_at: Time.current)
+  end
 end
