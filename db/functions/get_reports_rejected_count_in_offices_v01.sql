@@ -6,9 +6,10 @@ AS $function$
       SELECT     COUNT(*)
       FROM       "reports"
       INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
-      INNER JOIN "office_communes" ON "office_communes"."code_insee" = "reports"."code_insee"
-      WHERE      "office_communes"."office_id" = offices."id"
-        AND      "reports"."action" = offices."action"
+      INNER JOIN "office_communes"
+         ON      "office_communes"."code_insee" = "reports"."code_insee"
+        AND      "office_communes"."office_id" = offices."id"
+      WHERE      "reports"."action" = offices."action"
         AND      "reports"."rejected_at" IS NOT NULL
         AND      "reports"."discarded_at" IS NULL
         AND      "packages"."sandbox" = FALSE

@@ -998,9 +998,10 @@ CREATE FUNCTION public.get_reports_approved_count_in_offices(offices public.offi
       SELECT     COUNT(*)
       FROM       "reports"
       INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
-      INNER JOIN "office_communes" ON "office_communes"."code_insee" = "reports"."code_insee"
-      WHERE      "office_communes"."office_id" = offices."id"
-        AND      "reports"."action" = offices."action"
+      INNER JOIN "office_communes"
+         ON      "office_communes"."code_insee" = "reports"."code_insee"
+        AND      "office_communes"."office_id" = offices."id"
+      WHERE      "reports"."action" = offices."action"
         AND      "reports"."approved_at" IS NOT NULL
         AND      "reports"."discarded_at" IS NULL
         AND      "packages"."sandbox" = FALSE
@@ -1138,9 +1139,10 @@ CREATE FUNCTION public.get_reports_count_in_offices(offices public.offices) RETU
       SELECT     COUNT(*)
       FROM       "reports"
       INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
-      INNER JOIN "office_communes" ON "office_communes"."code_insee" = "reports"."code_insee"
-      WHERE      "office_communes"."office_id" = offices."id"
-        AND      "reports"."action" = offices."action"
+      INNER JOIN "office_communes"
+         ON      "office_communes"."code_insee" = "reports"."code_insee"
+        AND      "office_communes"."office_id" = offices."id"
+      WHERE      "reports"."action" = offices."action"
         AND      "reports"."discarded_at" IS NULL
         AND      "packages"."sandbox" = FALSE
         AND      "packages"."transmitted_at" IS NOT NULL
@@ -1230,9 +1232,10 @@ CREATE FUNCTION public.get_reports_debated_count_in_offices(offices public.offic
       SELECT     COUNT(*)
       FROM       "reports"
       INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
-      INNER JOIN "office_communes" ON "office_communes"."code_insee" = "reports"."code_insee"
-      WHERE      "office_communes"."office_id" = offices."id"
-        AND      "reports"."action" = offices."action"
+      INNER JOIN "office_communes"
+         ON      "office_communes"."code_insee" = "reports"."code_insee"
+        AND      "office_communes"."office_id" = offices."id"
+      WHERE      "reports"."action" = offices."action"
         AND      "reports"."debated_at" IS NOT NULL
         AND      "reports"."discarded_at" IS NULL
         AND      "packages"."sandbox" = FALSE
@@ -1347,9 +1350,10 @@ CREATE FUNCTION public.get_reports_rejected_count_in_offices(offices public.offi
       SELECT     COUNT(*)
       FROM       "reports"
       INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
-      INNER JOIN "office_communes" ON "office_communes"."code_insee" = "reports"."code_insee"
-      WHERE      "office_communes"."office_id" = offices."id"
-        AND      "reports"."action" = offices."action"
+      INNER JOIN "office_communes"
+         ON      "office_communes"."code_insee" = "reports"."code_insee"
+        AND      "office_communes"."office_id" = offices."id"
+      WHERE      "reports"."action" = offices."action"
         AND      "reports"."rejected_at" IS NOT NULL
         AND      "reports"."discarded_at" IS NULL
         AND      "packages"."sandbox" = FALSE
@@ -2340,16 +2344,24 @@ CREATE FUNCTION public.trigger_packages_changes() RETURNS trigger
              "reports_approved_count" = get_reports_approved_count_in_ddfips("ddfips".*),
              "reports_rejected_count" = get_reports_rejected_count_in_ddfips("ddfips".*),
              "reports_debated_count"  = get_reports_debated_count_in_ddfips("ddfips".*)
-      WHERE  "ddfips"."code_departement" IN (SELECT "communes"."code_departement" FROM "communes" INNER JOIN "reports" ON "reports"."code_insee" = "communes"."code_insee" WHERE "reports"."package_id" = NEW."id")
-         OR  "ddfips"."code_departement" IN (SELECT "communes"."code_departement" FROM "communes" INNER JOIN "reports" ON "reports"."code_insee" = "communes"."code_insee" WHERE "reports"."package_id" = OLD."id");
+      WHERE  "ddfips"."code_departement" IN (
+        SELECT "communes"."code_departement"
+        FROM "communes"
+        INNER JOIN "reports" ON "reports"."code_insee" = "communes"."code_insee"
+        WHERE "reports"."package_id" IN (NEW."id", OLD."id")
+      );
 
       UPDATE "offices"
       SET    "reports_count"          = get_reports_count_in_offices("offices".*),
              "reports_approved_count" = get_reports_approved_count_in_offices("offices".*),
              "reports_rejected_count" = get_reports_rejected_count_in_offices("offices".*),
              "reports_debated_count"  = get_reports_debated_count_in_offices("offices".*)
-      WHERE  "offices"."id" IN (SELECT "office_communes"."office_id" FROM "office_communes" INNER JOIN "reports" ON "reports"."code_insee" = "office_communes"."code_insee" WHERE "reports"."package_id" = NEW."id")
-         OR  "offices"."id" IN (SELECT "office_communes"."office_id" FROM "office_communes" INNER JOIN "reports" ON "reports"."code_insee" = "office_communes"."code_insee" WHERE "reports"."package_id" = OLD."id");
+      WHERE  "offices"."id" IN (
+        SELECT "office_communes"."office_id"
+        FROM "office_communes"
+        INNER JOIN "reports" ON "reports"."code_insee" = "office_communes"."code_insee"
+        WHERE "reports"."package_id" IN (NEW."id", OLD."id")
+      );
 
     END IF;
 
