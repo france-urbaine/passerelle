@@ -557,10 +557,10 @@ RSpec.describe Collectivity do
       it "doesn't change when package is transmitted" do
         report
         expect { report.package.transmit! }
-        .to      change { collectivities[0].reload.reports_transmitted_count }.from(0).to(1)
-        .and not_change { collectivities[0].reload.reports_approved_count }.from(0)
-        .and not_change { collectivities[1].reload.reports_transmitted_count }.from(0)
-        .and not_change { collectivities[1].reload.reports_approved_count }.from(0)
+          .to      change { collectivities[0].reload.reports_transmitted_count }.from(0).to(1)
+          .and not_change { collectivities[0].reload.reports_approved_count }.from(0)
+          .and not_change { collectivities[1].reload.reports_transmitted_count }.from(0)
+          .and not_change { collectivities[1].reload.reports_approved_count }.from(0)
       end
     end
 
@@ -623,10 +623,10 @@ RSpec.describe Collectivity do
       it "doesn't change when package is transmitted" do
         report
         expect { report.package.transmit! }
-        .to      change { collectivities[0].reload.reports_transmitted_count }.from(0).to(1)
-        .and not_change { collectivities[0].reload.reports_rejected_count }.from(0)
-        .and not_change { collectivities[1].reload.reports_transmitted_count }.from(0)
-        .and not_change { collectivities[1].reload.reports_rejected_count }.from(0)
+          .to      change { collectivities[0].reload.reports_transmitted_count }.from(0).to(1)
+          .and not_change { collectivities[0].reload.reports_rejected_count }.from(0)
+          .and not_change { collectivities[1].reload.reports_transmitted_count }.from(0)
+          .and not_change { collectivities[1].reload.reports_rejected_count }.from(0)
       end
     end
 
@@ -689,10 +689,10 @@ RSpec.describe Collectivity do
       it "doesn't change when package is transmitted" do
         report
         expect { report.package.transmit! }
-        .to      change { collectivities[0].reload.reports_transmitted_count }.from(0).to(1)
-        .and not_change { collectivities[0].reload.reports_rejected_count }.from(0)
-        .and not_change { collectivities[1].reload.reports_transmitted_count }.from(0)
-        .and not_change { collectivities[1].reload.reports_rejected_count }.from(0)
+          .to      change { collectivities[0].reload.reports_transmitted_count }.from(0).to(1)
+          .and not_change { collectivities[0].reload.reports_rejected_count }.from(0)
+          .and not_change { collectivities[1].reload.reports_transmitted_count }.from(0)
+          .and not_change { collectivities[1].reload.reports_rejected_count }.from(0)
       end
     end
 
@@ -798,10 +798,10 @@ RSpec.describe Collectivity do
       it "doesn't change when package is transmitted" do
         package
         expect { package.transmit! }
-        .to      change { collectivities[0].reload.packages_transmitted_count }.from(0).to(1)
-        .and not_change { collectivities[0].reload.packages_approved_count }.from(0)
-        .and not_change { collectivities[1].reload.packages_transmitted_count }.from(0)
-        .and not_change { collectivities[1].reload.packages_approved_count }.from(0)
+          .to      change { collectivities[0].reload.packages_transmitted_count }.from(0).to(1)
+          .and not_change { collectivities[0].reload.packages_approved_count }.from(0)
+          .and not_change { collectivities[1].reload.packages_transmitted_count }.from(0)
+          .and not_change { collectivities[1].reload.packages_approved_count }.from(0)
       end
     end
 
@@ -864,10 +864,10 @@ RSpec.describe Collectivity do
       it "doesn't change when package is transmitted" do
         package
         expect { package.transmit! }
-        .to      change { collectivities[0].reload.packages_transmitted_count }.from(0).to(1)
-        .and not_change { collectivities[0].reload.packages_rejected_count }.from(0)
-        .and not_change { collectivities[1].reload.packages_transmitted_count }.from(0)
-        .and not_change { collectivities[1].reload.packages_rejected_count }.from(0)
+          .to      change { collectivities[0].reload.packages_transmitted_count }.from(0).to(1)
+          .and not_change { collectivities[0].reload.packages_rejected_count }.from(0)
+          .and not_change { collectivities[1].reload.packages_transmitted_count }.from(0)
+          .and not_change { collectivities[1].reload.packages_rejected_count }.from(0)
       end
     end
   end
