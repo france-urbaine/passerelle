@@ -1,27 +1,25 @@
-.card
-  .card__content
-    = form_with(model: resource, as: resource_name, url: session_path(resource_name), method: :post) do |form|
-      .card__body
-        - if resource.errors.any?
-          div( data-turbo-cache="false" )
-            - resource.errors.full_messages.each do |message|
-              = message
+= card_component(actions_class: "card__actions--center") do |card|
+  - card.with_multipart do |card_content|
+    - card_content.with_form(model: resource, as: resource_name, url: session_path(resource_name), method: :post) do |form|
+      - if resource.errors.any?
+        div( data-turbo-cache="false" )
+          - resource.errors.full_messages.each do |message|
+            = message
 
-        = form.block :email do
-          = form.label :email
-          = form.text_field :email, autofocus: true, required: true, autocomplete: "email"
+      = form.block(:email) do
+        = form.label(:email)
+        = form.text_field(:email, autofocus: true, required: true, autocomplete: "email")
 
-        = form.block :password do
-          = form.label :password
-          = form.password_field :password, required: true, autocomplete: "current-password"
+      = form.block(:password) do
+        = form.label(:password)
+        = form.password_field(:password, required: true, autocomplete: "current-password")
 
-      .card__actions.card__actions--center
-        = button_component "Connexion", primary: true, type: "submit"
+    - card_content.with_submit_action "Connexion"
 
-      hr.my-6
-      p.text-center Votre collectivité n'est pas encore inscrite sur FiscaHub ?
-      .flex.justify-center
-        = button_component "Inscription", new_user_enrollment_path
+  - card.with_multipart do |card_content|
+    p.text-center Votre collectivité n'est pas encore inscrite sur FiscaHub ?
+    .flex.justify-center
+      = button_component "Inscription", new_user_enrollment_path
 
 p
   | Vous rencontrez des difficultés pour vous connecter ?

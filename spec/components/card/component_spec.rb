@@ -112,4 +112,36 @@ RSpec.describe Card::Component, type: :component do
       end
     end
   end
+
+  it "renders a multipar card" do
+    render_inline described_class.new do |card|
+      card.with_multipart do |card_content|
+        card_content.with_header do
+          "Part 1 title"
+        end
+
+        card_content.with_body do
+          tag.p "Part 1 body"
+        end
+      end
+
+      card.with_multipart do |card_content|
+        card_content.with_header do
+          "Part 2 title"
+        end
+
+        card_content.with_body do
+          tag.p "Part 2 body"
+        end
+      end
+    end
+
+    expect(page).to have_selector(".card > .card__content > .card__header", count: 2) do |node|
+      expect(node).to have_selector("h1.card__title")
+    end
+
+    expect(page).to have_selector(".card > .card__content > .card__body", count: 2) do |node|
+      expect(node).to have_selector("p")
+    end
+  end
 end

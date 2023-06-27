@@ -14,6 +14,8 @@ module Card
     renders_many :actions, "Action"
     renders_one :raw_actions
 
+    renders_many :multiparts, ->(**options) { Multipart.new(**@options, **options) }
+
     attr_accessor :form_options
 
     def initialize(**options)
@@ -34,6 +36,9 @@ module Card
     end
 
     class Action < ::Button::Component
+    end
+
+    class Multipart < self
     end
   end
 end

@@ -8,8 +8,8 @@
       .subheader-bar__action
         = button_component "Ajouter des documents", new_report_attachment_path(@report), icon: "document-plus", modal: true
 
-.card.flex
-  - if @report.documents.any?
+- if @report.documents.any?
+  .card
     table.datatable
       thead
         tr.datatable__row
@@ -29,6 +29,6 @@
             td= link_to document.filename, url_for(document), target: :blank
             td= document.content_type
 
-  - else
-    .h-24
-    .card__content.text-lg
+- else
+  = card_component(content_class: "card__content--empty h-24 flex-auto flex items-center justify-center") do |card|
+    | Aucun document ajouté pour ce signalement.

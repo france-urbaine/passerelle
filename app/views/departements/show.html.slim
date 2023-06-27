@@ -58,9 +58,8 @@
       | DDFIP enregistrées
 
   - if @departement.ddfips_count.zero?
-    .card
-      .card__content.card__content--empty
-        | Aucune DDFIP enregistrée dans ce département.
+    = card_component(content_class: "card__content--empty")
+      | Aucune DDFIP enregistrée dans ce département.
 
   - else
     table.datatable
@@ -86,9 +85,8 @@
       | Collectivités enregistrées
 
   - if @departement.collectivities_count.zero?
-    .card
-      .card__content.card__content--empty
-        | Aucune collectivité enregistrée dans ce département.
+    = card_component(content_class: "card__content--empty")
+      | Aucune collectivité enregistrée dans ce département.
 
   - else
     table.datatable

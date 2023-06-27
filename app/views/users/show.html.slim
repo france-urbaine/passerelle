@@ -11,7 +11,7 @@
     = svg_icon("identification", "Nouvelle section")
     | Description
 
-  .card.mb-12
+  = card_component(class: "mb-12", content_class: "card__content--list")
     dl.description-list
       .description-list__row
         dt Organisation
@@ -62,7 +62,7 @@
     = svg_icon("server-stack", "Nouvelle section")
     | Informations de connexion
 
-  .card.mb-12
+  = card_component(class: "mb-12", content_class: "card__content--list")
     dl.description-list
       .description-list__row
         dt Date de création du compte
@@ -89,4 +89,3 @@
           = @user.last_sign_in_at
           = " @ " if @user.last_sign_in_at && @user.last_sign_in_ip
           = @user.last_sign_in_ip
-

@@ -59,8 +59,8 @@
             = button_component "Inviter un utilisateur", new_collectivity_user_path(@collectivity), icon: "plus", modal: true
 
     - if @collectivity.users_count.zero?
-      .card
-        .card__content.card__content--empty Aucun utilisateur assigné.
+      = card_component(content_class: "card__content--empty")
+        | Aucun utilisateur assigné.
 
     - else
       = turbo_frame_tag "datatable-users", src: collectivity_users_path(@collectivity) do

@@ -8,8 +8,10 @@
       .subheader-bar__action
         = button_component "Compléter", edit_report_path(@report, fields: "enjeux"), icon: "pencil-square", modal: true
 
-.card.flex
-  .h-24
-  .card__content.flex-auto.flex.items-center.justify-center.text-3xl
+- if @report.enjeu.present?
+  = card_component(content_class: "h-24 flex-auto flex items-center justify-center text-3xl") do |card|
     = number_to_currency(@report.enjeu)
 
+- else
+  = card_component(content_class: "card__content--empty h-24 flex-auto flex items-center justify-center") do |card|
+    | Aucun enjeu fixé pour ce signalement.

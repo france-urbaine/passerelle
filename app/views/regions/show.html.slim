@@ -60,9 +60,8 @@
       | Départements
 
   - if @region.departements_count.zero?
-    .card
-      .card__content.card__content--empty
-        | Aucune département disponible
+    = card_component(content_class: "card__content--empty")
+      | Aucune département disponible
 
   - else
     table.datatable
@@ -96,9 +95,8 @@
       | DDFIP enregistrées
 
   - if @region.ddfips_count.zero?
-    .card
-      .card__content.card__content--empty
-        | Aucune DDFIP enregistrée dans cette région.
+    = card_component(content_class: "card__content--empty")
+      | Aucune DDFIP enregistrée dans cette région.
 
   - else
     table.datatable
@@ -124,9 +122,8 @@
       | Collectivités enregistrées
 
   - if @region.collectivities_count.zero?
-    .card
-      .card__content.card__content--empty
-        | Aucune collectivité enregistrée dans cette région.
+    = card_component(content_class: "card__content--empty")
+      | Aucune collectivité enregistrée dans cette région.
 
   - else
     table.datatable

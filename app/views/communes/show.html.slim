@@ -50,9 +50,8 @@
       | Collectivités enregistrées
 
   - if @commune.collectivities_count.zero?
-    .card
-      .card__content.card__content--empty
-        | Aucune collectivité enregistrée dans cette commune.
+    = card_component(content_class: "card__content--empty")
+      | Aucune collectivité enregistrée dans cette commune.
 
   - else
     table.datatable

@@ -7,21 +7,19 @@
     = svg_icon("identification", "Nouvelle section")
     | Identification
 
-  .card
-    .card__content
-      = form_with(model: @organization, scope: :organization, url: user_organization_settings_path) do |form|
-        .card__body
-          = form.block :name do
-            = form.label :name
-            = form.text_field :name, required: true
 
-          - if @organization.is_a?(Publisher) || @organization.is_a?(Collectivity)
-            = form.block :siren do
-              = form.label :siren
-              = form.text_field :siren, required: true
+  = card_component do |card|
+    - card.with_form(model: @organization, scope: :organization, url: user_organization_settings_path) do |form|
+      = form.block(:name) do
+        = form.label(:name)
+        = form.text_field(:name, required: true)
 
-        .card__actions
-          = button_component "Enregistrer", primary: true, type: "submit"
+      - if @organization.is_a?(Publisher) || @organization.is_a?(Collectivity)
+        = form.block(:siren) do
+          = form.label(:siren)
+          = form.text_field(:siren, required: true)
+
+    - card.with_submit_action "Enregistrer"
 
   .content__separator
 
@@ -29,28 +27,25 @@
     = svg_icon("chat-bubble-left-right", "Nouvelle section")
     | Informations de contact
 
-  .card
-    .card__content
-      = form_with(model: @organization, scope: :organization, url: user_organization_settings_path) do |form|
-        .card__body
-          = form.block :contact_first_name do
-            = form.label :contact_first_name
-            = form.text_field :contact_first_name
+  = card_component do |card|
+    - card.with_form(model: @organization, scope: :organization, url: user_organization_settings_path) do |form|
+      = form.block(:contact_first_name) do
+        = form.label(:contact_first_name)
+        = form.text_field(:contact_first_name)
 
-          = form.block :contact_last_name do
-            = form.label :contact_last_name
-            = form.text_field :contact_last_name
+      = form.block(:contact_last_name) do
+        = form.label(:contact_last_name)
+        = form.text_field(:contact_last_name)
 
-          = form.block :contact_email do
-            = form.label :contact_email
-            = form.email_field :contact_email
+      = form.block(:contact_email) do
+        = form.label(:contact_email)
+        = form.email_field(:contact_email)
 
-          = form.block :contact_phone do
-            = form.label :contact_phone
-            = form.text_field :contact_phone
+      = form.block(:contact_phone) do
+        = form.label(:contact_phone)
+        = form.text_field(:contact_phone)
 
-        .card__actions
-          = button_component "Enregistrer", primary: true, type: "submit"
+    - card.with_submit_action "Enregistrer"
 
   .content__separator
 
@@ -58,51 +53,45 @@
     = svg_icon("shield-check", "Nouvelle section")
     | Sécurité
 
-  .card.mb-4
-    .card__content
-      = form_with(model: @organization, scope: :organization, url: user_organization_settings_path) do |form|
-        .card__body
-          p
-            | Vous pouvez contraindre vos utilisateurs à utiliser seulement des adresses email correspondant à un nom de domaine.
-            br
-            | Cette restriction ne s'appliquera qu'aux nouveaux utilisateurs et aux utilisateurs qui changent d'adresse mail.
+  = card_component do |card|
+    - card.with_multipart do |card_content|
+      - card_content.with_form(model: @organization, scope: :organization, url: user_organization_settings_path) do |form|
+        p
+          | Vous pouvez contraindre vos utilisateurs à utiliser seulement des adresses email correspondant à un nom de domaine.
+          br
+          | Cette restriction ne s'appliquera qu'aux nouveaux utilisateurs et aux utilisateurs qui changent d'adresse mail.
 
-          p
-            | Veuillez laissez le champs vide pour lever la restriction.
+        p
+          | Veuillez laissez le champs vide pour lever la restriction.
 
+        = form.block(:domain_restriction) do
+          = form.label(:domain_restriction)
+          .form-block__input
+            .form-block__input-text
+              = %w[maxime.gauthier elise.lacroix astride.fabre pierre.civil].sample
+              | @
+            = form.text_field(:domain_restriction)
 
-          = form.block :domain_restriction do
-            = form.label :domain_restriction
-            .form-block__input
-              .form-block__input-text
-                = %w[maxime.gauthier elise.lacroix astride.fabre pierre.civil].sample
-                | @
-              = form.text_field :domain_restriction
+      - card_content.with_submit_action "Enregistrer"
 
-        .card__actions
-          = button_component "Enregistrer", primary: true, type: "submit"
+    - card.with_multipart do |card_content|
+      - card_content.with_form(model: @organization, scope: :organization, url: user_organization_settings_path) do |form|
+        p
+          | L'authentification en 2 facteurs (2FA) est activée pour tous les utilisateurs.
+          br
+          | Par défaut, la méthode proposée est d'utiliser un autre appareil pour générer des codes de vérification.
+        p
+          | Vous pouvez autoriser les utilisateurs à recevoir un code de vérification par email.
+          br
+          | Cette méthode ne protégera pas vos utilisateurs en cas d'usurpation du compte email.
 
-      hr.content__separator
+        = form.block(:allow_2fa_via_email) do
+          = form.check_box(:allow_2fa_via_email)
+          = form.label(:allow_2fa_via_email)
 
-      = form_with(model: @organization, scope: :organization, url: user_organization_settings_path) do |form|
-        .card__body
-          p
-            | L'authentification en 2 facteurs (2FA) est activée pour tous les utilisateurs.
-            br
-            | Par défaut, la méthode proposée est d'utiliser un autre appareil pour générer des codes de vérification.
-          p
-            | Vous pouvez autoriser les utilisateurs à recevoir un code de vérification par email.
-            br
-            | Cette méthode ne protégera pas vos utilisateurs en cas d'usurpation du compte email.
+        p
+          | <strong>Attention !</strong> Si vous désactivez cette option alors que des utilisateurs ont déjà
+          |  sélectionné l'envoi d'un email comme méthode d'authentification, ces utilisateurs ne pourront plus
+          |  accéder à la plateforme.
 
-          = form.block :allow_2fa_via_email do
-            = form.check_box :allow_2fa_via_email
-            = form.label :allow_2fa_via_email
-
-          p
-            | <strong>Attention !</strong> Si vous désactivez cette option alors que des utilisateurs ont déjà
-            |  sélectionné l'envoi d'un email comme méthode d'authentification, ces utilisateurs ne pourront plus
-            |  accéder à la plateforme.
-
-        .card__actions
-          = button_component "Enregistrer", primary: true, type: "submit"
+      - card_content.with_submit_action "Enregistrer"

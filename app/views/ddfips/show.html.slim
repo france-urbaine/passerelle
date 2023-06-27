@@ -57,8 +57,8 @@
             = button_component "Ajouter un guichet", new_ddfip_office_path(@ddfip), icon: "plus", modal: true
 
     - if @ddfip.offices_count.zero?
-      .card
-        .card__content.card__content--empty Aucun guichet enregistré.
+      = card_component(content_class: "card__content--empty")
+        | Aucun guichet enregistré.
 
     - else
       = turbo_frame_tag "datatable-offices", src: ddfip_offices_path(@ddfip) do
@@ -80,8 +80,8 @@
             = button_component "Inviter un utilisateur", new_ddfip_user_path(@ddfip), icon: "plus", modal: true
 
     - if @ddfip.users_count.zero?
-      .card
-        .card__content.card__content--empty Aucun utilisateur assigné.
+      = card_component(content_class: "card__content--empty")
+        | Aucun utilisateur assigné.
 
     - else
       = turbo_frame_tag "datatable-users", src: ddfip_users_path(@ddfip) do
@@ -97,8 +97,8 @@
       | Collectivités enregistrées
 
     - if @ddfip.collectivities_count.zero?
-      .card
-        .card__content.card__content--empty Aucune collectivité enregistrée.
+      = card_component(content_class: "card__content--empty")
+        | Aucune collectivité enregistrée.
 
     - else
       = turbo_frame_tag "datatable-collectivities", src: ddfip_collectivities_path(@ddfip) do

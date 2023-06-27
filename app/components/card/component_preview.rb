@@ -24,5 +24,12 @@ module Card
       record = ::Commune.new
       render_with_template(locals: { record: record })
     end
+
+    # @label With multipart
+    #
+    def with_multipart
+      record = ::Commune.new
+      render_with_template(locals: { record: record })
+    end
   end
 end

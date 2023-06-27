@@ -1,28 +1,28 @@
-.card
-  .card__content
-    h1.card__header.card__title
-      | Inscription sur FiscaHub
+= card_component do |card|
+  - card.with_header do
+    | Inscription sur FiscaHub
 
-    .card__body
-      p L'inscription à FiscaHub n'est pas encore ouvert à tous.
+  - card.with_body do
+    p L'inscription à FiscaHub n'est pas encore ouvert à tous.
 
-      p
-        strong Vous êtes une collectivité territoriale ?
-      p
-        | Veuillez vous rapprocher de votre éditeur pour demander un accés à la plateforme.
+    p
+      strong Vous êtes une collectivité territoriale ?
+    p
+      | Veuillez vous rapprocher de votre éditeur pour demander un accés à la plateforme.
 
-      p
-        strong Vous êtes éditeur d'un observatoire fiscal ?
-      p
-        ' Contactez
-        = link_to "France Urbaine", "https://franceurbaine.org", target: "_blank"
-        |  pour définir des modalités d'accés à la plateforme.
+    p
+      strong Vous êtes éditeur d'un observatoire fiscal ?
+    p
+      ' Contactez
+      = link_to "France Urbaine", "https://franceurbaine.org", target: "_blank"
+      |  pour définir des modalités d'accés à la plateforme.
 
-      p
-        strong Vous êtes une direction départementale ?
-      p
-        | Veuillez contacter la Direction Générale des Finances Publiques pour définir
-        |  des modalités d'accés à la plateforme.
+    p
+      strong Vous êtes une direction départementale ?
+    p
+      | Veuillez contacter la Direction Générale des Finances Publiques pour définir
+      |  des modalités d'accés à la plateforme.
+
 p
   = link_to new_user_session_path do
     = svg_icon "chevron-left-small", "Retour", class: "inline"
