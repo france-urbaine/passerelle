@@ -101,7 +101,7 @@ RSpec.describe Breadcrumbs::Component, type: :component do
 
   it "renders an action to open a link in a modal" do
     render_inline described_class.new do |breadcrumbs|
-      breadcrumbs.with_action "Update", href: "/foo", modal: true
+      breadcrumbs.with_action "Update", "/foo", modal: true
     end
 
     expect(page).to have_selector(".header-bar > .header-bar__actions") do |node|

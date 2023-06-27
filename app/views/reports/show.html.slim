@@ -22,7 +22,7 @@
             - when "high"
               = svg_icon("chart-bar", "Haute", class: "high-priority-icon")
         - else
-          = button_component href: edit_report_path(@report, fields: "priority"), modal: true, class: "priority-button" do
+          = button_component edit_report_path(@report, fields: "priority"), modal: true, class: "priority-button" do
             ' Priorité :
             - case @report.priority
             - when "low"

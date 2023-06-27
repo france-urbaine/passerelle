@@ -25,6 +25,16 @@ RSpec.describe Button::Component, type: :component do
     end
   end
 
+  it "renders a link using a block to capture the label" do
+    render_inline described_class.new("/communes") do
+      "Click me!"
+    end
+
+    expect(page).to have_link("Click me!", class: "button") do |button|
+      expect(button).to have_html_attribute("href").with_value("/communes")
+    end
+  end
+
   it "renders a link using href option" do
     render_inline described_class.new("Click me!", href: "/communes")
 
