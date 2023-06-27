@@ -3,7 +3,7 @@
 all_on_start    = ENV.fetch("ALL_ON_START", nil) == "true"
 parallel_rspec  = ENV.fetch("PARALLEL", nil) == "true"
 
-require_relative "./lib/guard/run"
+require_relative "lib/guard/run"
 Guard::FactoryBot = Class.new(Guard::Run)
 
 unless ENV["SKIP_ALL_ON_START_WARNING"] || all_on_start
