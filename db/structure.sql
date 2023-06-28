@@ -399,11 +399,11 @@ CREATE TABLE public.publishers (
     contact_phone character varying,
     domain_restriction character varying,
     allow_2fa_via_email boolean DEFAULT false NOT NULL,
-    reports_count integer DEFAULT 0 NOT NULL,
+    reports_transmitted_count integer DEFAULT 0 NOT NULL,
     reports_approved_count integer DEFAULT 0 NOT NULL,
     reports_rejected_count integer DEFAULT 0 NOT NULL,
     reports_debated_count integer DEFAULT 0 NOT NULL,
-    packages_count integer DEFAULT 0 NOT NULL,
+    packages_transmitted_count integer DEFAULT 0 NOT NULL,
     packages_approved_count integer DEFAULT 0 NOT NULL,
     packages_rejected_count integer DEFAULT 0 NOT NULL,
     CONSTRAINT collectivities_count_check CHECK ((collectivities_count >= 0)),
@@ -838,27 +838,10 @@ CREATE FUNCTION public.get_packages_approved_count_in_publishers(publishers publ
       SELECT COUNT(*)
       FROM   "packages"
       WHERE  "packages"."publisher_id" = publishers."id"
-        AND  "packages"."discarded_at" IS NULL
+        AND  "packages"."sandbox" = FALSE
         AND  "packages"."transmitted_at" IS NOT NULL
         AND  "packages"."approved_at" IS NOT NULL
         AND  "packages"."rejected_at" IS NULL
-    );
-  END;
-$$;
-
-
---
--- Name: get_packages_count_in_publishers(public.publishers); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION public.get_packages_count_in_publishers(publishers public.publishers) RETURNS integer
-    LANGUAGE plpgsql
-    AS $$
-  BEGIN
-    RETURN (
-      SELECT COUNT(*)
-      FROM   "packages"
-      WHERE  "packages"."publisher_id" = publishers."id"
         AND  "packages"."discarded_at" IS NULL
     );
   END;
@@ -898,9 +881,10 @@ CREATE FUNCTION public.get_packages_rejected_count_in_publishers(publishers publ
       SELECT COUNT(*)
       FROM   "packages"
       WHERE  "packages"."publisher_id" = publishers."id"
-        AND  "packages"."discarded_at" IS NULL
+        AND  "packages"."sandbox" = FALSE
         AND  "packages"."transmitted_at" IS NOT NULL
         AND  "packages"."rejected_at" IS NOT NULL
+        AND  "packages"."discarded_at" IS NULL
     );
   END;
 $$;
@@ -918,6 +902,26 @@ CREATE FUNCTION public.get_packages_transmitted_count_in_collectivities(collecti
       SELECT COUNT(*)
       FROM   "packages"
       WHERE  "packages"."collectivity_id" = collectivities."id"
+        AND  "packages"."sandbox" = FALSE
+        AND  "packages"."transmitted_at" IS NOT NULL
+        AND  "packages"."discarded_at" IS NULL
+    );
+  END;
+$$;
+
+
+--
+-- Name: get_packages_transmitted_count_in_publishers(public.publishers); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.get_packages_transmitted_count_in_publishers(publishers public.publishers) RETURNS integer
+    LANGUAGE plpgsql
+    AS $$
+  BEGIN
+    RETURN (
+      SELECT COUNT(*)
+      FROM   "packages"
+      WHERE  "packages"."publisher_id" = publishers."id"
         AND  "packages"."sandbox" = FALSE
         AND  "packages"."transmitted_at" IS NOT NULL
         AND  "packages"."discarded_at" IS NULL
@@ -1005,11 +1009,15 @@ CREATE FUNCTION public.get_reports_approved_count_in_publishers(publishers publi
     AS $$
   BEGIN
     RETURN (
-      SELECT COUNT(*)
-      FROM   "reports"
-      WHERE  "reports"."publisher_id" = publishers."id"
-        AND  "reports"."discarded_at" IS NULL
-        AND  "reports"."approved_at" IS NOT NULL
+      SELECT     COUNT(*)
+      FROM       "reports"
+      INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
+      WHERE      "reports"."publisher_id" = publishers."id"
+        AND      "reports"."approved_at" IS NOT NULL
+        AND      "reports"."discarded_at" IS NULL
+        AND      "packages"."sandbox" = FALSE
+        AND      "packages"."transmitted_at" IS NOT NULL
+        AND      "packages"."discarded_at" IS NULL
     );
   END;
 $$;
@@ -1046,24 +1054,6 @@ CREATE FUNCTION public.get_reports_count_in_packages(packages public.packages) R
       SELECT COUNT(*)
       FROM   "reports"
       WHERE  "reports"."package_id" = packages."id"
-        AND  "reports"."discarded_at" IS NULL
-    );
-  END;
-$$;
-
-
---
--- Name: get_reports_count_in_publishers(public.publishers); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION public.get_reports_count_in_publishers(publishers public.publishers) RETURNS integer
-    LANGUAGE plpgsql
-    AS $$
-  BEGIN
-    RETURN (
-      SELECT COUNT(*)
-      FROM   "reports"
-      WHERE  "reports"."publisher_id" = publishers."id"
         AND  "reports"."discarded_at" IS NULL
     );
   END;
@@ -1121,11 +1111,15 @@ CREATE FUNCTION public.get_reports_debated_count_in_publishers(publishers public
     AS $$
   BEGIN
     RETURN (
-      SELECT COUNT(*)
-      FROM   "reports"
-      WHERE  "reports"."publisher_id" = publishers."id"
-        AND  "reports"."discarded_at" IS NULL
-        AND  "reports"."debated_at" IS NOT NULL
+      SELECT     COUNT(*)
+      FROM       "reports"
+      INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
+      WHERE      "reports"."publisher_id" = publishers."id"
+        AND      "reports"."debated_at" IS NOT NULL
+        AND      "reports"."discarded_at" IS NULL
+        AND      "packages"."sandbox" = FALSE
+        AND      "packages"."transmitted_at" IS NOT NULL
+        AND      "packages"."discarded_at" IS NULL
     );
   END;
 $$;
@@ -1182,11 +1176,15 @@ CREATE FUNCTION public.get_reports_rejected_count_in_publishers(publishers publi
     AS $$
   BEGIN
     RETURN (
-      SELECT COUNT(*)
-      FROM   "reports"
-      WHERE  "reports"."publisher_id" = publishers."id"
-        AND  "reports"."discarded_at" IS NULL
-        AND  "reports"."rejected_at" IS NOT NULL
+      SELECT     COUNT(*)
+      FROM       "reports"
+      INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
+      WHERE      "reports"."publisher_id" = publishers."id"
+        AND      "reports"."rejected_at" IS NOT NULL
+        AND      "reports"."discarded_at" IS NULL
+        AND      "packages"."sandbox" = FALSE
+        AND      "packages"."transmitted_at" IS NOT NULL
+        AND      "packages"."discarded_at" IS NULL
     );
   END;
 $$;
@@ -1205,6 +1203,28 @@ CREATE FUNCTION public.get_reports_transmitted_count_in_collectivities(collectiv
       FROM       "reports"
       INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
       WHERE      "reports"."collectivity_id" = collectivities."id"
+        AND      "reports"."discarded_at" IS NULL
+        AND      "packages"."sandbox" = FALSE
+        AND      "packages"."transmitted_at" IS NOT NULL
+        AND      "packages"."discarded_at" IS NULL
+    );
+  END;
+$$;
+
+
+--
+-- Name: get_reports_transmitted_count_in_publishers(public.publishers); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.get_reports_transmitted_count_in_publishers(publishers public.publishers) RETURNS integer
+    LANGUAGE plpgsql
+    AS $$
+  BEGIN
+    RETURN (
+      SELECT     COUNT(*)
+      FROM       "reports"
+      INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
+      WHERE      "reports"."publisher_id" = publishers."id"
         AND      "reports"."discarded_at" IS NULL
         AND      "packages"."sandbox" = FALSE
         AND      "packages"."transmitted_at" IS NOT NULL
@@ -1467,15 +1487,15 @@ CREATE FUNCTION public.reset_all_publishers_counters() RETURNS integer
     affected_rows integer;
   BEGIN
     UPDATE "publishers"
-    SET    "users_count"             = get_users_count_in_publishers("publishers".*),
-           "collectivities_count"    = get_collectivities_count_in_publishers("publishers".*),
-           "reports_count"           = get_reports_count_in_publishers("publishers".*),
-           "reports_approved_count"  = get_reports_approved_count_in_publishers("publishers".*),
-           "reports_rejected_count"  = get_reports_rejected_count_in_publishers("publishers".*),
-           "reports_debated_count"   = get_reports_debated_count_in_publishers("publishers".*),
-           "packages_count"          = get_packages_count_in_publishers("publishers".*),
-           "packages_approved_count" = get_packages_approved_count_in_publishers("publishers".*),
-           "packages_rejected_count" = get_packages_rejected_count_in_publishers("publishers".*);
+    SET    "users_count"                = get_users_count_in_publishers("publishers".*),
+           "collectivities_count"       = get_collectivities_count_in_publishers("publishers".*),
+           "reports_transmitted_count"  = get_reports_transmitted_count_in_publishers("publishers".*),
+           "reports_approved_count"     = get_reports_approved_count_in_publishers("publishers".*),
+           "reports_rejected_count"     = get_reports_rejected_count_in_publishers("publishers".*),
+           "reports_debated_count"      = get_reports_debated_count_in_publishers("publishers".*),
+           "packages_transmitted_count" = get_packages_transmitted_count_in_publishers("publishers".*),
+           "packages_approved_count"    = get_packages_approved_count_in_publishers("publishers".*),
+           "packages_rejected_count"    = get_packages_rejected_count_in_publishers("publishers".*);
 
     GET DIAGNOSTICS affected_rows = ROW_COUNT;
     RAISE NOTICE 'UPDATE %', affected_rows;
@@ -2070,9 +2090,13 @@ CREATE FUNCTION public.trigger_packages_changes() RETURNS trigger
     THEN
 
       UPDATE "publishers"
-      SET    "packages_count"          = get_packages_count_in_publishers("publishers".*),
-             "packages_approved_count" = get_packages_approved_count_in_publishers("publishers".*),
-             "packages_rejected_count" = get_packages_rejected_count_in_publishers("publishers".*)
+      SET    "packages_transmitted_count" = get_packages_transmitted_count_in_publishers("publishers".*),
+             "packages_approved_count"    = get_packages_approved_count_in_publishers("publishers".*),
+             "packages_rejected_count"    = get_packages_rejected_count_in_publishers("publishers".*),
+             "reports_transmitted_count"  = get_reports_transmitted_count_in_publishers("publishers".*),
+             "reports_approved_count"     = get_reports_approved_count_in_publishers("publishers".*),
+             "reports_rejected_count"     = get_reports_rejected_count_in_publishers("publishers".*),
+             "reports_debated_count"      = get_reports_debated_count_in_publishers("publishers".*)
       WHERE  "publishers"."id" IN (NEW."publisher_id", OLD."publisher_id");
 
       UPDATE "collectivities"
@@ -2149,10 +2173,10 @@ CREATE FUNCTION public.trigger_reports_changes() RETURNS trigger
     THEN
 
       UPDATE "publishers"
-      SET    "reports_count"           = get_reports_count_in_publishers("publishers".*),
-             "reports_approved_count"  = get_reports_approved_count_in_publishers("publishers".*),
-             "reports_rejected_count"  = get_reports_rejected_count_in_publishers("publishers".*),
-             "reports_debated_count"   = get_reports_debated_count_in_publishers("publishers".*)
+      SET    "reports_transmitted_count" = get_reports_transmitted_count_in_publishers("publishers".*),
+             "reports_approved_count"    = get_reports_approved_count_in_publishers("publishers".*),
+             "reports_rejected_count"    = get_reports_rejected_count_in_publishers("publishers".*),
+             "reports_debated_count"     = get_reports_debated_count_in_publishers("publishers".*)
       WHERE  "publishers"."id" IN (NEW."publisher_id", OLD."publisher_id");
 
       UPDATE "collectivities"
@@ -3200,6 +3224,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230608152933'),
 ('20230609124040'),
 ('20230611213727'),
-('20230619095430');
+('20230619095430'),
+('20230622073103');
 
 
