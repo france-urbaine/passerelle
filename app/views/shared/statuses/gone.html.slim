@@ -26,6 +26,5 @@
       - breadcrumbs.with_path "Utilisateurs", users_path
       - breadcrumbs.with_path @gone_record.name
 
-  -# TODO: implement undiscard reports
   - if @gone_record && !@gone_record.is_a?(Report)
     - template.with_action "Annuler la suppression", url_for([:undiscard, @gone_record]), icon: "arrow-path", method: :patch
