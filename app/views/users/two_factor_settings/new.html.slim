@@ -3,31 +3,30 @@
     - modal.with_header do
       | Activation de l'authentification en 2 facteurs
 
-    - modal.with_form(model: @user, url: user_two_factor_settings_path, method: :post) do
-      = fields(model: @user) do |form|
-        p Choisissez une méthode d'authentification :
+    - modal.with_form(model: @user, url: user_two_factor_settings_path, method: :post) do |form|
+      p Choisissez une méthode d'authentification :
 
-        = form.block :otp_method do
-          = form.radio_button :otp_method, "2fa"
-          = form.label :otp_method, value: "2fa" do
-            | Authentification via une application
+      = form.block :otp_method do
+        = form.radio_button :otp_method, "2fa"
+        = form.label :otp_method, value: "2fa" do
+          | Authentification via une application
 
-          p.pl-9.italic.max-w-6xl
-            | Utilisez une application compatible (Authy, Dashlane, Microsoft Authenticator, etc..) pour générer des codes à chaque connexion.
-            br
-            | Cette méthode est la plus simple et la plus sécurisée. L'application n'a même pas besoin d'une connexion pour générer des codes.
+        p.pl-9.italic.max-w-6xl
+          | Utilisez une application compatible (Authy, Dashlane, Microsoft Authenticator, etc..) pour générer des codes à chaque connexion.
+          br
+          | Cette méthode est la plus simple et la plus sécurisée. L'application n'a même pas besoin d'une connexion pour générer des codes.
 
-        = form.block :otp_method do
-          = form.radio_button :otp_method, "email"
-          = form.label :otp_method, value: "email" do
-            | Authentification via email
+      = form.block :otp_method do
+        = form.radio_button :otp_method, "email"
+        = form.label :otp_method, value: "email" do
+          | Authentification via email
 
-          p.pl-9.italic.max-w-6xl
-            | Recevez un code de vérification par email à chaque tentative de connexion.
-            br
-            | Cette méthode alternative ne requiert pas un autre appareil.
-            |  Elle est néanmoins moins sécurisée car elle ne vous protége par en cas d'usurpation du compte email.
-            |  Par ailleurs, vous devez pouvoir accéder à votre boite de reception pour chaque connexion.
+        p.pl-9.italic.max-w-6xl
+          | Recevez un code de vérification par email à chaque tentative de connexion.
+          br
+          | Cette méthode alternative ne requiert pas un autre appareil.
+          |  Elle est néanmoins moins sécurisée car elle ne vous protége par en cas d'usurpation du compte email.
+          |  Par ailleurs, vous devez pouvoir accéder à votre boite de reception pour chaque connexion.
 
     - modal.with_submit_action "Continuer"
     - modal.with_close_action "Annuler"

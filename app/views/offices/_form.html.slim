@@ -1,35 +1,34 @@
-- modal.with_form(model: office, url: url_for([parent, office])) do
+- modal.with_form(model: office, url: url_for([parent, office])) do |form|
   = hidden_field_tag :redirect, modal.redirection_path
 
-  = fields(model: office) do |form|
-    - if allowed_to?(:assign_ddfip?, office)
-      = form.block :ddfip, autocomplete: ddfips_path do
-        ruby:
-          # Do not add required attribute to make this form submittable in noscript mode
-          html_options = {
-            value:        office.ddfip&.name,
-            placeholder:  "Commnencez à taper pour sélectionner des DDFIPs",
-            data:         { autocomplete_target: "input" }
-          }
+  - if allowed_to?(:assign_ddfip?, office)
+    = form.block :ddfip, autocomplete: ddfips_path do
+      ruby:
+        # Do not add required attribute to make this form submittable in noscript mode
+        html_options = {
+          value:        office.ddfip&.name,
+          placeholder:  "Commnencez à taper pour sélectionner des DDFIPs",
+          data:         { autocomplete_target: "input" }
+        }
 
-        = form.label :ddfip
-        = form.search_field :ddfip, **html_options
-        = form.hidden_field :ddfip_id, data: { autocomplete_target: "hidden" }
+      = form.label :ddfip
+      = form.search_field :ddfip, **html_options
+      = form.hidden_field :ddfip_id, data: { autocomplete_target: "hidden" }
 
-      = noscript do
-        = form.block :ddfip do
-          = form.label :ddfip_name
-          = form.text_field :ddfip_name, value: office.ddfip&.name, required: true
+    = noscript do
+      = form.block :ddfip do
+        = form.label :ddfip_name
+        = form.text_field :ddfip_name, value: office.ddfip&.name, required: true
 
-    = form.block :name do
-      = form.label :name
-      = form.text_field :name, required: true
+  = form.block :name do
+    = form.label :name
+    = form.text_field :name, required: true
 
-    = form.block :action do
-      - options = Office::ACTIONS.map { |s| [translate(s, scope: "enum.action"), s] }
+  = form.block :action do
+    - options = Office::ACTIONS.map { |s| [translate(s, scope: "enum.action"), s] }
 
-      = form.label :action
-      = form.select :action, options, required: true, prompt: true
+    = form.label :action
+    = form.select :action, options, required: true, prompt: true
 
 - modal.with_submit_action "Enregistrer"
 - modal.with_close_action "Annuler"
