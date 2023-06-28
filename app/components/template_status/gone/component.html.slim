@@ -1,5 +1,7 @@
 = render TemplateStatus::Component.new(**@options) do |template|
-  - template.with_breadcrumbs(breadcrumbs) if breadcrumbs?
+  - if breadcrumbs?
+    - template.with_raw_breadcrumbs do
+      = breadcrumbs
 
   - template.with_header do
     - if header?
@@ -31,4 +33,8 @@
         br
         | Cette suppression sera effective d'ici le #{localize(deletion_date)}.
 
-  - template.with_actions(actions) if actions?
+  - if actions?
+    - template.with_raw_actions do
+      - actions.each do |action|
+        = action
+

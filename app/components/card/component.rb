@@ -12,6 +12,7 @@ module Card
 
     renders_one  :submit_action, "SubmitAction"
     renders_many :actions, "Action"
+    renders_one :raw_actions
 
     attr_accessor :form_options
 

@@ -11,12 +11,14 @@
       - else
         = content
 
-    - if form? || actions?
+    - if form? || actions? || raw_actions?
       .card__actions *css_classes(:actions_class)
         = submit_action if form?
 
         - actions.each do |action|
           = action
+
+        = raw_actions
 
 .card *css_classes(:class)
   .card__content *css_classes(:content_class)

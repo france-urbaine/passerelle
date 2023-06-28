@@ -6,14 +6,10 @@ module TemplateStatus
     renders_one :body, "LabelOrContent"
 
     renders_many :actions, ::Button::Component
+    renders_one :raw_actions
 
-    renders_one :breadcrumbs, lambda { |*args, **options|
-      if args.first.is_a?(ViewComponent::Slot)
-        args.first.to_s
-      else
-        ::Breadcrumbs::Component.new(heading: false, **options)
-      end
-    }
+    renders_one :breadcrumbs, ->(**options) { ::Breadcrumbs::Component.new(heading: false, **options) }
+    renders_one :raw_breadcrumbs
 
     CARD_OPTIONS = {
       content_class: "card__content--status",

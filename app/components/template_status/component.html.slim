@@ -1,17 +1,37 @@
 - if request.variant.include?(:modal)
   = render TemplateFrame::Component.new(src: @referrer) do |template|
     - template.with_modal do |modal|
-      - modal.with_header(header) if header?
-      - modal.with_body(body || content)
+      - if header?
+        - modal.with_header do
+          = header
+
+      - modal.with_body do
+        = body || content
+
       - modal.with_close_action "Fermer"
-      - modal.with_actions(actions) if actions?
+
+      - if actions? || raw_actions?
+        - modal.with_raw_actions do
+          - actions.each do |action|
+            = action
+
+          = raw_actions
 
 - else
   = render TemplateFrame::Component.new do |template|
-    - if signed_in?
-      = breadcrumbs || render(Breadcrumbs::Component.new(heading: false))
+    = breadcrumbs || raw_breadcrumbs
 
     = render Card::Component.new(**CARD_OPTIONS) do |card|
-      - card.with_header(header) if header?
-      - card.with_body(body || content)
-      - card.with_actions(actions) if actions?
+      - if header?
+        - card.with_header do
+          = header
+
+      - card.with_body do
+        = body || content
+
+      - if actions? || raw_actions?
+        - card.with_raw_actions do
+          - actions.each do |action|
+            = action
+
+          = raw_actions

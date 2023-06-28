@@ -17,6 +17,7 @@ module Modal
 
     renders_many :actions,       "Action"
     renders_many :other_actions, "OtherAction"
+    renders_one :raw_actions
 
     attr_reader :redirection_path
     attr_accessor :form_options

@@ -27,7 +27,7 @@ module ComponentsHelper
   TEMPLATE_COMPONENT_HELPERS = {
     template_frame_component:   "TemplateFrame::Component",
     template_status_component:  "TemplateStatus::Component",
-    template_gone_component:    "TemplateStatus::Gone::Component",
+    template_gone_component:    "TemplateStatus::Gone::Component"
   }.freeze
 
   # rubocop:disable Rails/HelperInstanceVariable
