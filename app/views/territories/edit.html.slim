@@ -7,7 +7,7 @@
       div( class="w-[640px]" )
         - @territories_update.strip_domain_urls
 
-        = form_block @territories_update, :communes_url do
+        = form.block :communes_url do
           .form-block__label
             = form.label :communes_url do
               | URL du fichier de découpage communal sur le site de l'INSEE :
@@ -20,7 +20,7 @@
             span.form-block__input-prefix https://www.insee.fr/
             = form.text_field :communes_url, autofocus: true
 
-        = form_block @territories_update, :epcis_url do
+        = form.block :epcis_url do
           .form-block__label
             = form.label :epcis_url do
               | URL du fichier des intercommunalités sur le site de l'INSEE :

@@ -3,6 +3,7 @@
 Rails.application.configure do
   config.view_component.preview_paths << Rails.root.join("app/components")
   config.view_component.default_preview_layout = "component_preview"
+  config.view_component.capture_compatibility_patch_enabled = true
 
   if defined?(Lookbook)
     config.lookbook.project_name = "FiscaHub"
