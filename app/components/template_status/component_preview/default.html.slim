@@ -1,0 +1,8 @@
+- request.variant = :modal if modal
+
+= template_status_component(referrer:) do |template|
+  - template.with_header do
+    | L'accès à cette page n'est pas autorisé.
+
+  - template.with_body do
+    | Vous n'avez pas les droits suffisants pour accéder à la page demandée.

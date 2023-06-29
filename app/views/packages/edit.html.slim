@@ -3,17 +3,16 @@
     - modal.with_header do
       | Modification du paquet
 
-    - modal.with_form(model: @package, url: url_for([@parent, @package])) do
+    - modal.with_form(model: @package, url: url_for([@parent, @package])) do |form|
       = hidden_field_tag :redirect, modal.redirection_path
 
-      = fields(model: @package) do |form|
-        = form.block :name do
-          = form.label :name
-          = form.text_field :name, required: true, autofocus: true
+      = form.block :name do
+        = form.label :name
+        = form.text_field :name, required: true, autofocus: true
 
-        = form.block :due_on do
-          = form.label :due_on
-          = form.date_field :due_on
+      = form.block :due_on do
+        = form.label :due_on
+        = form.date_field :due_on
 
     - modal.with_submit_action "Enregistrer"
     - modal.with_close_action "Annuler"

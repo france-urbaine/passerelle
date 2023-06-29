@@ -51,8 +51,8 @@
           .subheader-bar__action= button_component "Gérer les utilisateurs", edit_all_office_users_path(@office), icon: "squares-plus", modal: true
 
     - if @office.users_count.zero?
-      .card
-        .card__content.card__content--empty Aucun utilisateur assigné à ce guichet.
+      = card_component(content_class: "card__content--empty")
+        | Aucun utilisateur assigné à ce guichet.
 
     - else
       = turbo_frame_tag "datatable-users", src: office_users_path(@office) do
@@ -73,8 +73,8 @@
           .subheader-bar__action= button_component "Gérer les communes", edit_all_office_communes_path(@office), icon: "squares-plus", modal: true
 
     - if @office.communes_count.zero?
-      .card
-        .card__content.card__content--empty Aucune commune assignée à ce guichet.
+      = card_component(content_class: "card__content--empty")
+        | Aucune commune assignée à ce guichet.
 
     - else
       = turbo_frame_tag "datatable-communes", src: office_communes_path(@office) do

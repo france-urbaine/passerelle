@@ -1,21 +1,18 @@
-.card
-  .card__content
-    = form_with(model: resource, url: password_path(resource_name), method: :post) do |form|
-      h1.card__header.card__title
-        | Réinitialisation de votre mot de passe
+= card_component(actions_class: "card__actions--center") do |card|
+  - card.with_header do
+    | Réinitialisation de votre mot de passe
 
-      .card__body
-        - if resource.errors.include?(:reset_password_token)
-          p= display_errors(resource, :reset_password_token)
-        - else
-          p Veuillez saisir votre adresse mail pour que nous puissions vous transmettre les instructions nécessaires.
+  - card.with_form(model: resource, url: confirmation_path(resource_name), method: :post) do |form|
+    - if resource.errors.include?(:reset_password_token)
+      p= display_errors(resource, :reset_password_token)
 
-        = form.block :email do
-          = form.label :email
-          = form.text_field :email, autofocus: true, autocomplete: "email"
+    p Veuillez saisir votre adresse mail pour que nous puissions vous transmettre les instructions nécessaires.
 
-      .card__actions.card__actions--center
-        = button_component "Envoyer les instructions", primary: true, type: "submit"
+    = form.block(:email) do
+      = form.label(:email)
+      = form.text_field(:email, autofocus: true, autocomplete: "email", required: true)
+
+  - card.with_submit_action "Envoyer les instructions"
 
 p
   = link_to new_session_path(resource_name) do

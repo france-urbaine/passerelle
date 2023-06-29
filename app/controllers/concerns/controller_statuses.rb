@@ -30,7 +30,7 @@ module ControllerStatuses
   def render_status(status)
     if turbo_frame_request_id == "modal"
       request.variant = :modal
-      @background_url = referrer_path
+      @referrer_path = referrer_path
     end
 
     respond_to do |format|

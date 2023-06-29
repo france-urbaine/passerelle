@@ -1,0 +1,12 @@
+= card_component(class: "card-wrapper", content_class: "card__content--status", actions_class: "card__actions--center") do |card|
+  - card.with_header do
+    | Dialog title
+
+  - card.with_body do
+    p
+      | Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.
+      br
+      | Ut labore et dolore magna aliqua. Ut enim ad minim veniam.
+
+  - card.with_action "Continue", primary: true
+  - card.with_action "Do something else"

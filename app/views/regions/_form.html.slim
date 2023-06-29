@@ -1,21 +1,20 @@
 - modal.with_header do
   | Modification de la région
 
-- modal.with_form(model: region) do
+- modal.with_form(model: region) do |form|
   = hidden_field_tag :redirect, modal.redirection_path
 
-  = fields(model: region) do |form|
-    = form.block :name do
-      = form.label :name
-      = form.text_field :name, autofocus: true, required: true
+  = form.block :name do
+    = form.label :name
+    = form.text_field :name, autofocus: true, required: true
 
-    = form.block :code_region do
-      = form.label :code_region
-      = form.text_field :code_region, required: true
+  = form.block :code_region do
+    = form.label :code_region
+    = form.text_field :code_region, required: true
 
-    = form.block :qualified_name do
-      = form.label :qualified_name
-      = form.text_field :qualified_name
+  = form.block :qualified_name do
+    = form.label :qualified_name
+    = form.text_field :qualified_name
 
 - modal.with_submit_action "Enregistrer"
 - modal.with_close_action "Annuler"

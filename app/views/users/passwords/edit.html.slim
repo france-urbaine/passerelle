@@ -1,31 +1,30 @@
-.card
-  .card__content
-    = form_with(model: resource, url: password_path(resource_name), method: :put) do |form|
-      = form.hidden_field :reset_password_token
+= card_component(actions_class: "card__actions--center") do |card|
+  - card.with_multipart do |card_content|
+    - card_content.with_header do
+      | Réinitialisation de votre mot de passe
 
-      h1.card__header.card__title
-        | Réinitialisation de votre mot de passe
+    - card_content.with_form(model: resource, url: password_path(resource_name), method: :put) do |form|
+      = form.hidden_field(:reset_password_token)
 
-      .card__body
-        - if resource.errors.include?(:reset_password_token)
-          p= display_errors(resource, :reset_password_token)
-        - else
-          p Veuillez saisir un nouveau de mot de passe.
+      - if resource.errors.include?(:reset_password_token)
+        p= display_errors(resource, :reset_password_token)
+      - else
+        p Veuillez saisir un nouveau de mot de passe.
 
-        = form.block :password do
-          = form.label :password
-          = form.password_field :password, autofocus: true, autocomplete: "new-password"
+      = form.block(:password) do
+        = form.label(:password)
+        = form.password_field(:password, autofocus: true, autocomplete: "new-password")
 
-        = form.block :password_confirmation do
-          = form.label :password_confirmation
-          = form.password_field :password_confirmation, autocomplete: "new-password"
+      = form.block(:password_confirmation) do
+        = form.label(:password_confirmation)
+        = form.password_field(:password_confirmation, autocomplete: "new-password")
 
-      .card__actions.card__actions--center
-        = button_component "Modifier mon mot de passe", primary: true, type: "submit"
+    - card.with_submit_action "Modifier mon mot de passe"
 
-      - if resource.errors.of_kind?(:reset_password_token)
-        .mt-4.text-center
-          = link_to "Effectuez une nouvelle demande", new_password_path(resource_name)
+  - if resource.errors.of_kind?(:reset_password_token)
+    - card.with_multipart do |card_content|
+      .text-center
+        = link_to "Effectuez une nouvelle demande", new_password_path(resource_name)
 
 p
   = link_to new_session_path(resource_name) do

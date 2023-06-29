@@ -8,7 +8,10 @@
       .subheader-bar__action
         = button_component "Compléter", edit_report_path(@report, fields: "observations"), icon: "pencil-square", modal: true
 
-.card.flex
-  .h-24
-  .card__content.text-lg
+- if @report.observations.present?
+  = card_component(content_class: "text-lg") do |card|
     = simple_format @report.observations
+
+- else
+  = card_component(content_class: "card__content--empty h-24 flex-auto flex items-center justify-center") do |card|
+    | Aucune observation ajoutée pour ce signalement.

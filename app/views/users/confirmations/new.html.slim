@@ -1,21 +1,18 @@
-.card
-  .card__content
-    = form_with(model: resource, url: confirmation_path(resource_name), method: :post) do |form|
-      h1.card__header.card__title
-        | Confirmation de votre compte
+= card_component(actions_class: "card__actions--center") do |card|
+  - card.with_header do
+    | Confirmation de votre compte
 
-      .card__body
-        - if resource.errors.include?(:confirmation_token)
-          p= display_errors(resource, :confirmation_token)
+  - card.with_form(model: resource, url: confirmation_path(resource_name), method: :post) do |form|
+    - if resource.errors.include?(:confirmation_token)
+      p= display_errors(resource, :confirmation_token)
 
-        p Veuillez saisir votre adresse mail pour que nous puissions vous transmettre les instructions nécessaires.
+    p Veuillez saisir votre adresse mail pour que nous puissions vous transmettre les instructions nécessaires.
 
-        = form.block :email do
-          = form.label :email
-          = form.text_field :email, autofocus: true, autocomplete: "email", value: (resource.pending_reconfirmation? ? resource.unconfirmed_email : resource.email)
+    = form.block(:email) do
+      = form.label(:email)
+      = form.text_field(:email, autofocus: true, autocomplete: "email", value: (resource.pending_reconfirmation? ? resource.unconfirmed_email : resource.email))
 
-      .card__actions.card__actions--center
-        = button_component "Envoyer les instructions", primary: true, type: "submit"
+  - card.with_submit_action "Envoyer les instructions"
 
 p
   = link_to new_session_path(resource_name) do

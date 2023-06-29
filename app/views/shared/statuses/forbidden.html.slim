@@ -1,39 +1,6 @@
-= template_frame_component do
-  - if signed_in?
-    = breadcrumbs_component heading: false do |breadcrumbs|
-      - case @model_forbidden
-      - when "Publisher"
-        - breadcrumbs.with_path "Administration"
-        - breadcrumbs.with_path "Éditeurs", publishers_path
-      - when "Collectivity"
-        - breadcrumbs.with_path "Administration"
-        - breadcrumbs.with_path "Collectivités", collectivities_path
-      - when "DDFIP"
-        - breadcrumbs.with_path "Administration"
-        - breadcrumbs.with_path "DDFIP", ddfips_path
-      - when "Office"
-        - breadcrumbs.with_path "Administration"
-        - breadcrumbs.with_path "Guichets", offices_path
-      - when "User"
-        - breadcrumbs.with_path "Administration"
-        - breadcrumbs.with_path "Utilisateurs", users_path
-      - when "Commune"
-        - breadcrumbs.with_path "Territoires"
-        - breadcrumbs.with_path "Communes", communes_path
-      - when "EPCI"
-        - breadcrumbs.with_path "Administration"
-        - breadcrumbs.with_path "EPCI", epcis_path
-      - when "Departement"
-        - breadcrumbs.with_path "Territoires"
-        - breadcrumbs.with_path "Départements", departements_path
-      - when "Region"
-        - breadcrumbs.with_path "Territoires"
-        - breadcrumbs.with_path "Régions", regions_path
+= template_status_component(referrer: @referrer_path) do |template|
+  - template.with_header do
+    | L'accès à cette page n'est pas autorisé.
 
-  .card
-    .card__content.card__content--status
-      h1.card__header.card__title
-        | L'accès à cette page n'est pas autorisé.
-
-      .card__body
-        | Vous n'avez pas les droits suffisants pour accéder à la page demandée.
+  - template.with_body do
+    | Vous n'avez pas les droits suffisants pour accéder à la page demandée.

@@ -1,22 +1,19 @@
-.card
-  .card__content
-    = form_with(model: @user, url: user_registration_password_path, method: :post) do |form|
-      h1.card__header.card__title
-        | Configuration de votre mot de passe
+= card_component(actions_class: "card__actions--center") do |card|
+  - card.with_header do
+    | Configuration de votre mot de passe
 
-      .card__body
-        p Veuillez saisir un mot de passe (#{Devise.password_length.min} caractères minimum)
+  - card.with_form(model: @user, url: user_registration_password_path, method: :post) do |form|
+    p Veuillez saisir un mot de passe (#{Devise.password_length.min} caractères minimum)
 
-        = form.block :password do
-          = form.label :password
-          = form.password_field :password, autofocus: true, require: true, autocomplete: "new-password", minlength: Devise.password_length.min, maxlength: Devise.password_length.max
+    = form.block(:password) do
+      = form.label(:password)
+      = form.password_field(:password, autofocus: true, require: true, autocomplete: "new-password", minlength: Devise.password_length.min, maxlength: Devise.password_length.max)
 
-        = form.block :password_confirmation do
-          = form.label :password_confirmation
-          = form.password_field :password_confirmation, require: true, autocomplete: "new-password"
+    = form.block(:password_confirmation) do
+      = form.label(:password_confirmation)
+      = form.password_field(:password_confirmation, require: true, autocomplete: "new-password")
 
-      .card__actions.card__actions--center
-        = button_component "Continuer", primary: true, type: "submit"
+  - card.with_submit_action "Continuer"
 
 p
   = link_to user_registration_path do

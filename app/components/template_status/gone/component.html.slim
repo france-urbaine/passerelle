@@ -1,0 +1,40 @@
+= render TemplateStatus::Component.new(**@options) do |template|
+  - if breadcrumbs?
+    - template.with_raw_breadcrumbs do
+      = breadcrumbs
+
+  - template.with_header do
+    - if header?
+      = header
+    - else
+      | La page que vous recherchez n'est pas disponible.
+
+  - template.with_body do
+    - if body?
+      = body
+    - else
+      - case @record
+      - when Report
+        | Ce signalement est en cours de suppression.
+      - when Package
+        | Ce paquet est en cours de suppression.
+      - when Publisher
+        | Cet éditeur est en cours de suppression.
+      - when Collectivity
+        | Cette collectivité est en cours de suppression.
+      - when DDFIP
+        | Cette DDFIP est en cours de suppression.
+      - when Office
+        | Ce guichet est en cours de suppression.
+      - when User
+        | Cet utilisateur est en cours de suppression.
+
+      - if deletion_delay
+        br
+        | Cette suppression sera effective d'ici le #{localize(deletion_date)}.
+
+  - if actions?
+    - template.with_raw_actions do
+      - actions.each do |action|
+        = action
+

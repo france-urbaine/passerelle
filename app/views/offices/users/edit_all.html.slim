@@ -3,15 +3,14 @@
     - modal.with_header do
       | Gestion des utilisateurs du guichet
 
-    - modal.with_form(model: @office_users_form, url: office_users_path(@office), method: :patch) do
+    - modal.with_form(model: @office_users_form, url: office_users_path(@office), method: :patch) do |form|
       p
         | Sélectionnez parmi les utlisateurs de la DDFIP ceux qui ont accès à ce guichet
         br
         | ou inviter un nouvel utilisateur.
 
-      = fields(model: @office_users_form) do |form|
-        = form.block :user_ids do
-          = form.checkboxes_component :user_ids, @office_users_form.suggested_users, :id, :name
+      = form.block :user_ids do
+        = form.checkboxes_component :user_ids, @office_users_form.suggested_users, :id, :name
 
     - modal.with_submit_action "Enregistrer", autofocus: true
     - modal.with_close_action "Annuler"

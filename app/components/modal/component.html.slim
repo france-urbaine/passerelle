@@ -1,3 +1,33 @@
+- captured_content = capture do
+  - if header?
+    .modal__header
+      h1#modal-title.modal__title= header
+      .modal__header-toolbar= close_button
+
+  .modal__body
+    = close_button unless header?
+
+    - if form?
+      = form
+    - elsif body?
+      = body
+    - else
+      = content
+
+  - if form? || actions? || other_actions? || close_action? || raw_actions?
+    .modal__actions
+      = submit_action if form?
+
+      - actions.each do |action|
+        = action
+
+      = raw_actions
+      = close_action
+
+      .flex-grow
+      - other_actions.each do |action|
+        = action
+
 .modal(
   role="dialog"
   aria-modal="true"
@@ -13,50 +43,7 @@
   .modal__content( data-modal-target="content" )
     - if form?
       = tag.turbo_frame id: "modal_form" do
-        = form_with(**form.form_options) do
-          - if header?
-            .modal__header
-              h1#modal-title.modal__title= header
-              .modal__header-toolbar= close_button
-
-          .modal__body
-            = close_button unless header?
-            = form
-
-          .modal__actions
-            = submit_action
-
-            - actions.each do |action|
-              = action
-
-            = close_action
-
-            .flex-grow
-            - other_actions.each do |action|
-              = action
-
+        = form_with(**form_options) do
+          = captured_content
     - else
-      - if header?
-        .modal__header
-          h1#modal-title.modal__title= header
-          .modal__header-toolbar= close_button
-
-      .modal__body
-        = close_button unless header?
-
-        - if body?
-          = body
-        - else
-          = content
-
-      - if actions? || other_actions? || close_action?
-        .modal__actions
-          - actions.each do |action|
-            = action
-
-          = close_action
-
-          .flex-grow
-          - other_actions.each do |action|
-            = action
-
+      = captured_content

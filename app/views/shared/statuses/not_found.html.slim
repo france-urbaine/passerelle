@@ -1,59 +1,56 @@
-= template_frame_component do
-  - if signed_in?
-    = breadcrumbs_component heading: false do |breadcrumbs|
-      - case @model_not_found
-      - when "Publisher"
-        - breadcrumbs.with_path "Administration"
-        - breadcrumbs.with_path "Éditeurs", publishers_path
-      - when "Collectivity"
-        - breadcrumbs.with_path "Administration"
-        - breadcrumbs.with_path "Collectivités", collectivities_path
-      - when "DDFIP"
-        - breadcrumbs.with_path "Administration"
-        - breadcrumbs.with_path "DDFIP", ddfips_path
-      - when "Office"
-        - breadcrumbs.with_path "Administration"
-        - breadcrumbs.with_path "Guichets", offices_path
-      - when "User"
-        - breadcrumbs.with_path "Administration"
-        - breadcrumbs.with_path "Utilisateurs", users_path
-      - when "Commune"
-        - breadcrumbs.with_path "Territoires"
-        - breadcrumbs.with_path "Communes", communes_path
-      - when "EPCI"
-        - breadcrumbs.with_path "Administration"
-        - breadcrumbs.with_path "EPCI", epcis_path
-      - when "Departement"
-        - breadcrumbs.with_path "Territoires"
-        - breadcrumbs.with_path "Départements", departements_path
-      - when "Region"
-        - breadcrumbs.with_path "Territoires"
-        - breadcrumbs.with_path "Régions", regions_path
+= template_status_component(referrer: @referrer_path) do |template|
+  - template.with_breadcrumbs do |breadcrumbs|
+    - case @model_not_found
+    - when "Publisher"
+      - breadcrumbs.with_path "Administration"
+      - breadcrumbs.with_path "Éditeurs", publishers_path
+    - when "Collectivity"
+      - breadcrumbs.with_path "Administration"
+      - breadcrumbs.with_path "Collectivités", collectivities_path
+    - when "DDFIP"
+      - breadcrumbs.with_path "Administration"
+      - breadcrumbs.with_path "DDFIP", ddfips_path
+    - when "Office"
+      - breadcrumbs.with_path "Administration"
+      - breadcrumbs.with_path "Guichets", offices_path
+    - when "User"
+      - breadcrumbs.with_path "Administration"
+      - breadcrumbs.with_path "Utilisateurs", users_path
+    - when "Commune"
+      - breadcrumbs.with_path "Territoires"
+      - breadcrumbs.with_path "Communes", communes_path
+    - when "EPCI"
+      - breadcrumbs.with_path "Administration"
+      - breadcrumbs.with_path "EPCI", epcis_path
+    - when "Departement"
+      - breadcrumbs.with_path "Territoires"
+      - breadcrumbs.with_path "Départements", departements_path
+    - when "Region"
+      - breadcrumbs.with_path "Territoires"
+      - breadcrumbs.with_path "Régions", regions_path
 
-  .card
-    .card__content.card__content--status
-      h1.card__header.card__title
-        | La page que vous recherchez n'est pas disponible.
+  - template.with_header do
+    | La page que vous recherchez n'est pas disponible.
 
-      .card__body
-        - case @model_not_found
-        - when "Publisher"
-          | L'editeur n'a pas été trouvé ou n'existe plus.
-        - when "Collectivity"
-          | La collectivité n'a pas été trouvée ou n'existe plus.
-        - when "DDFIP"
-          | La DDFIP n'a pas été trouvée ou n'existe plus.
-        - when "Office"
-          | Le guichet n'a pas été trouvé ou n'existe plus.
-        - when "User"
-          | L'utilisateur n'a pas été trouvé ou n'existe plus.
-        - when "Commune"
-          | La commune n'a pas été trouvée ou n'existe plus.
-        - when "EPCI"
-          | L'EPCI n'a pas été trouvé ou n'existe plus.
-        - when "Departement"
-          | Le département n'a pas été trouvé ou n'existe plus.
-        - when "Region"
-          | La région n'a pas été trouvée ou n'existe plus.
-        - else
-          | La page n'existe plus ou a été déplacée.
+  - template.with_body do
+    - case @model_not_found
+    - when "Publisher"
+      | L'editeur n'a pas été trouvé ou n'existe plus.
+    - when "Collectivity"
+      | La collectivité n'a pas été trouvée ou n'existe plus.
+    - when "DDFIP"
+      | La DDFIP n'a pas été trouvée ou n'existe plus.
+    - when "Office"
+      | Le guichet n'a pas été trouvé ou n'existe plus.
+    - when "User"
+      | L'utilisateur n'a pas été trouvé ou n'existe plus.
+    - when "Commune"
+      | La commune n'a pas été trouvée ou n'existe plus.
+    - when "EPCI"
+      | L'EPCI n'a pas été trouvé ou n'existe plus.
+    - when "Departement"
+      | Le département n'a pas été trouvé ou n'existe plus.
+    - when "Region"
+      | La région n'a pas été trouvée ou n'existe plus.
+    - else
+      | La page n'existe plus ou a été déplacée.

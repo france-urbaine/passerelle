@@ -5,6 +5,7 @@ module ComponentsHelper
     breadcrumbs_component:        "Breadcrumbs::Component",
     button_component:             "Button::Component",
     checkboxes_component:         "Checkboxes::Component",
+    card_component:               "Card::Component",
     datatable_component:          "DataTable::Component",
     datatable_skeleton_component: "DataTable::Skeleton::Component",
     dropdown_component:           "Dropdown::Component",
@@ -23,13 +24,21 @@ module ComponentsHelper
     end
   end
 
+  TEMPLATE_COMPONENT_HELPERS = {
+    template_frame_component:   "TemplateFrame::Component",
+    template_status_component:  "TemplateStatus::Component",
+    template_gone_component:    "TemplateStatus::Gone::Component"
+  }.freeze
+
   # rubocop:disable Rails/HelperInstanceVariable
   #
-  def template_frame_component(**options, &)
-    raise "Already render template_frame_component" if @template_frame_rendered
+  TEMPLATE_COMPONENT_HELPERS.each do |name, component|
+    define_method name do |*args, **kwargs, &block|
+      raise "Already render template_frame_component" if @template_frame_rendered
 
-    @template_frame_rendered = true
-    render TemplateFrame::Component.new(**options), &
+      @template_frame_rendered = true
+      render component.constantize.new(*args, **kwargs), &block
+    end
   end
 
   def template_frame_rendered?

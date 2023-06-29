@@ -110,23 +110,25 @@ RSpec.describe Modal::Component, type: :component do
         "Dialog title"
       end
 
-      modal.with_form(model: record) do
-        tag.input(type: "text", name: "name")
+      modal.with_form(model: record, url: "/form/path") do |form|
+        form.block(:name) do
+          form.text_field(:name)
+        end
       end
 
       modal.with_submit_action("Save")
       modal.with_close_action("Dismiss")
     end
 
-    expect(page).to have_selector(".modal > .modal__content > turbo-frame > form[action='/communes']") do |form|
-      expect(form).to have_selector(".modal__header > h1", text: "Dialog title")
-
-      expect(form).to have_selector(".modal__body > input[name='name']")
-
-      expect(form).to have_selector(".modal__actions") do |actions|
-        aggregate_failures do
-          expect(actions).to have_button("Save", type: "submit")
-          expect(actions).to have_button("Dismiss", type: "button")
+    expect(page).to have_selector(".modal > .modal__content > turbo-frame > form[action='/form/path']") do |form|
+      aggregate_failures do
+        expect(form).to have_selector(".modal__header > h1.modal__title", text: "Dialog title")
+        expect(form).to have_selector(".modal__body > .form-block > input[name='commune[name]']")
+        expect(form).to have_selector(".modal__actions") do |actions|
+          aggregate_failures do
+            expect(actions).to have_button("Save", type: "submit")
+            expect(actions).to have_button("Dismiss", type: "button")
+          end
         end
       end
     end

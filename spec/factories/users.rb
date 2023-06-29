@@ -28,6 +28,10 @@ FactoryBot.define do
       user.skip_confirmation_notification! if evaluator.skip_confirmation_notification
     end
 
+    after(:stub) do |user, _evaluator|
+      user.generate_name
+    end
+
     trait :unconfirmed do
       confirmed_at         { nil }
       confirmation_token   { Devise.friendly_token }

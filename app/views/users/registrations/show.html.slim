@@ -1,19 +1,17 @@
-.card
-  .card__content
-    h1.card__header.card__title
-      | Bienvenue sur FiscaHub !
+= card_component(actions_class: "card__actions--center") do |card|
+  - card.with_header do
+    | Bienvenue sur FiscaHub !
 
-    .card__body
-      p
-        | Afin de finaliser votre enregistrement sur FiscaHub, vous allez devoir compléter
-        |  les étapes suivantes :
+  - card.with_body do
+    p
+      | Afin de finaliser votre enregistrement sur FiscaHub, vous allez devoir compléter
+      |  les étapes suivantes :
 
-      ol.list-decimal.ml-5
-        li Configurer un mot de passe
-        li Configurer l'authentification en 2 étapes (2FA)
+    ol.list-decimal.ml-5
+      li Configurer un mot de passe
+      li Configurer l'authentification en 2 étapes (2FA)
 
-    .card__actions.card__actions--center
-      = button_component "Commencer", new_user_registration_password_path, primary: true
+  - card.with_action "Commencer", new_user_registration_password_path, primary: true
 
 p
   = link_to new_session_path(@user) do

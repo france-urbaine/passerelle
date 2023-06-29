@@ -3,36 +3,35 @@
     - modal.with_header do
       | Mise à jour des territoires
 
-    - modal.with_form(model: @territories_update, url: territories_path, method: :patch) do
+    - modal.with_form(model: @territories_update, url: territories_path, method: :patch) do |form|
       div( class="w-[640px]" )
         - @territories_update.strip_domain_urls
 
-        = fields(model: @territories_update) do |form|
-          = form_block @territories_update, :communes_url do
-            .form-block__label
-              = form.label :communes_url do
-                | URL du fichier de découpage communal sur le site de l'INSEE :
-                br
-                = "(consultez "
-                = link_to "https://www.insee.fr/fr/information/2028028", "https://www.insee.fr/fr/information/2028028", target: "_blank"
-                |  pour plus d'informations)
+        = form.block :communes_url do
+          .form-block__label
+            = form.label :communes_url do
+              | URL du fichier de découpage communal sur le site de l'INSEE :
+              br
+              = "(consultez "
+              = link_to "https://www.insee.fr/fr/information/2028028", "https://www.insee.fr/fr/information/2028028", target: "_blank"
+              |  pour plus d'informations)
 
-            .form-block__input
-              span.form-block__input-prefix https://www.insee.fr/
-              = form.text_field :communes_url, autofocus: true
+          .form-block__input
+            span.form-block__input-prefix https://www.insee.fr/
+            = form.text_field :communes_url, autofocus: true
 
-          = form_block @territories_update, :epcis_url do
-            .form-block__label
-              = form.label :epcis_url do
-                | URL du fichier des intercommunalités sur le site de l'INSEE :
-                br
-                = "(consultez "
-                = link_to "https://www.insee.fr/fr/information/2510634", "https://www.insee.fr/fr/information/2510634", target: "_blank"
-                |  pour plus d'informations)
+        = form.block :epcis_url do
+          .form-block__label
+            = form.label :epcis_url do
+              | URL du fichier des intercommunalités sur le site de l'INSEE :
+              br
+              = "(consultez "
+              = link_to "https://www.insee.fr/fr/information/2510634", "https://www.insee.fr/fr/information/2510634", target: "_blank"
+              |  pour plus d'informations)
 
-            .form-block__input
-              span.form-block__input-prefix https://www.insee.fr/
-              = form.text_field :epcis_url
+          .form-block__input
+            span.form-block__input-prefix https://www.insee.fr/
+            = form.text_field :epcis_url
 
 
     - modal.with_submit_action "Enregistrer", autofocus: true

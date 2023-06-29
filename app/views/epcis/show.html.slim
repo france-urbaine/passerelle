@@ -52,9 +52,8 @@
       | Collectivités enregistrées
 
   - if @epci.collectivities_count.zero?
-    .card
-      .card__content.card__content--empty
-        | Aucune collectivité enregistrée dans cet EPCI.
+    = card_component(content_class: "card__content--empty")
+      | Aucune collectivité enregistrée dans cet EPCI.
 
   - else
     table.datatable
