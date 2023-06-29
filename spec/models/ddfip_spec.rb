@@ -210,6 +210,74 @@ RSpec.describe DDFIP do
           .and change { ddfips[1].reload.offices_count }.from(0).to(2)
       end
     end
+
+    describe "on reports_count" do
+      before do
+        create_list(:commune, 4, code_departement: ddfips[0].code_departement)
+        create_list(:commune, 2, code_departement: ddfips[1].code_departement)
+
+        Commune.all.each { |commune| create(:report, :transmitted, commune: commune) }
+
+        DDFIP.update_all(reports_count: 0)
+      end
+
+      it "resets counters" do
+        expect { reset_all_counters }
+          .to  change { ddfips[0].reload.reports_count }.from(0).to(4)
+          .and change { ddfips[1].reload.reports_count }.from(0).to(2)
+      end
+    end
+
+    describe "on reports_approved_count" do
+      before do
+        create_list(:commune, 4, code_departement: ddfips[0].code_departement)
+        create_list(:commune, 2, code_departement: ddfips[1].code_departement)
+
+        Commune.all.each { |commune| create(:report, :approved, commune: commune) }
+
+        DDFIP.update_all(reports_approved_count: 0)
+      end
+
+      it "resets counters" do
+        expect { reset_all_counters }
+          .to  change { ddfips[0].reload.reports_approved_count }.from(0).to(4)
+          .and change { ddfips[1].reload.reports_approved_count }.from(0).to(2)
+      end
+    end
+
+    describe "on reports_rejected_count" do
+      before do
+        create_list(:commune, 4, code_departement: ddfips[0].code_departement)
+        create_list(:commune, 2, code_departement: ddfips[1].code_departement)
+
+        Commune.all.each { |commune| create(:report, :rejected, commune: commune) }
+
+        DDFIP.update_all(reports_rejected_count: 0)
+      end
+
+      it "resets counters" do
+        expect { reset_all_counters }
+          .to  change { ddfips[0].reload.reports_rejected_count }.from(0).to(4)
+          .and change { ddfips[1].reload.reports_rejected_count }.from(0).to(2)
+      end
+    end
+
+    describe "on reports_debated_count" do
+      before do
+        create_list(:commune, 4, code_departement: ddfips[0].code_departement)
+        create_list(:commune, 2, code_departement: ddfips[1].code_departement)
+
+        Commune.all.each { |commune| create(:report, :debated, commune: commune) }
+
+        DDFIP.update_all(reports_debated_count: 0)
+      end
+
+      it "resets counters" do
+        expect { reset_all_counters }
+          .to  change { ddfips[0].reload.reports_debated_count }.from(0).to(4)
+          .and change { ddfips[1].reload.reports_debated_count }.from(0).to(2)
+      end
+    end
   end
 
   # Database constraints and triggers
@@ -328,6 +396,230 @@ RSpec.describe DDFIP do
         expect { office.update(ddfip: ddfips[1]) }
           .to  change { ddfips[0].reload.offices_count }.from(1).to(0)
           .and change { ddfips[1].reload.offices_count }.from(0).to(1)
+      end
+    end
+
+    describe "#reports_count" do
+      before do
+        commune = create(:commune)
+        ddfips.first.update(code_departement: commune.code_departement)
+      end
+
+      let(:commune) { Commune.first }
+      let(:report) { create(:report, commune: commune) }
+
+      it "doesn't change on report creation" do
+        expect { report }
+          .to  not_change { ddfips[0].reload.reports_count }.from(0)
+          .and not_change { ddfips[1].reload.reports_count }.from(0)
+      end
+
+      it "changes when package is transmitted" do
+        report
+
+        expect { report.package.transmit! }
+          .to      change { ddfips[0].reload.reports_count }.from(0).to(1)
+          .and not_change { ddfips[1].reload.reports_count }.from(0)
+      end
+
+      it "doesn't changes when package in sandbox is transmitted" do
+        report.package.update(sandbox: true)
+
+        expect { report.package.transmit! }
+          .to  not_change { ddfips[0].reload.reports_count }.from(0)
+          .and not_change { ddfips[1].reload.reports_count }.from(0)
+      end
+
+      it "changes when transmitted report is discarded" do
+        report.package.touch(:transmitted_at)
+
+        expect { report.discard }
+          .to      change { ddfips[0].reload.reports_count }.from(1).to(0)
+          .and not_change { ddfips[1].reload.reports_count }.from(0)
+      end
+
+      it "changes when transmitted report is undiscarded" do
+        report.discard and report.package.transmit!
+
+        expect { report.undiscard }
+          .to      change { ddfips[0].reload.reports_count }.from(0).to(1)
+          .and not_change { ddfips[1].reload.reports_count }.from(0)
+      end
+
+      it "changes when transmitted report is deleted" do
+        report.package.transmit!
+
+        expect { report.destroy }
+          .to      change { ddfips[0].reload.reports_count }.from(1).to(0)
+          .and not_change { ddfips[1].reload.reports_count }.from(0)
+      end
+
+      it "changes when transmitted package is discarded" do
+        report.package.transmit!
+
+        expect { report.package.discard }
+          .to      change { ddfips[0].reload.reports_count }.from(1).to(0)
+          .and not_change { ddfips[1].reload.reports_count }.from(0)
+      end
+
+      it "changes when transmitted package is undiscarded" do
+        report.package.touch(:transmitted_at, :discarded_at)
+
+        expect { report.package.undiscard }
+          .to      change { ddfips[0].reload.reports_count }.from(0).to(1)
+          .and not_change { ddfips[1].reload.reports_count }.from(0)
+      end
+
+      it "changes when transmitted package is deleted" do
+        report.package.transmit!
+
+        expect { report.package.delete }
+          .to      change { ddfips[0].reload.reports_count }.from(1).to(0)
+          .and not_change { ddfips[1].reload.reports_count }.from(0)
+      end
+    end
+
+    describe "#reports_approved_count" do
+      before do
+        commune = create(:commune)
+        ddfips.first.update(code_departement: commune.code_departement)
+      end
+
+      let(:commune) { Commune.first }
+      let(:report) { create(:report, commune: commune) }
+
+      it "doesn't change on report creation" do
+        expect { report }
+          .to  not_change { ddfips[0].reload.reports_approved_count }.from(0)
+          .and not_change { ddfips[1].reload.reports_approved_count }.from(0)
+      end
+
+      it "changes when transmitted report is approved" do
+        report.package.touch(:transmitted_at)
+
+        expect { report.approve! }
+          .to      change { ddfips[0].reload.reports_approved_count }.from(0).to(1)
+          .and not_change { ddfips[1].reload.reports_approved_count }.from(0)
+      end
+
+      it "changes when approved and transmitted report is discarded" do
+        report.approve! and report.package.touch(:transmitted_at)
+
+        expect { report.discard }
+          .to      change { ddfips[0].reload.reports_approved_count }.from(1).to(0)
+          .and not_change { ddfips[1].reload.reports_approved_count }.from(0)
+      end
+
+      it "changes when approved and transmitted report is undiscarded" do
+        report.touch(:approved_at, :discarded_at) and report.package.touch(:transmitted_at)
+
+        expect { report.undiscard }
+          .to      change { ddfips[0].reload.reports_approved_count }.from(0).to(1)
+          .and not_change { ddfips[1].reload.reports_approved_count }.from(0)
+      end
+
+      it "changes when approved and transmitted report is deleted" do
+        report.touch(:approved_at) and report.package.touch(:transmitted_at)
+
+        expect { report.delete }
+          .to      change { ddfips[0].reload.reports_approved_count }.from(1).to(0)
+          .and not_change { ddfips[1].reload.reports_approved_count }.from(0)
+      end
+    end
+
+    describe "#reports_rejected_count" do
+      before do
+        commune = create(:commune)
+        ddfips.first.update(code_departement: commune.code_departement)
+      end
+
+      let(:commune) { Commune.first }
+      let(:report) { create(:report, commune: commune) }
+
+      it "doesn't change on report creation" do
+        expect { report }
+          .to  not_change { ddfips[0].reload.reports_rejected_count }.from(0)
+          .and not_change { ddfips[1].reload.reports_rejected_count }.from(0)
+      end
+
+      it "changes when transmitted report is rejected" do
+        report.package.touch(:transmitted_at)
+
+        expect { report.reject! }
+          .to      change { ddfips[0].reload.reports_rejected_count }.from(0).to(1)
+          .and not_change { ddfips[1].reload.reports_rejected_count }.from(0)
+      end
+
+      it "changes when rejected and transmitted report is discarded" do
+        report.reject! and report.package.touch(:transmitted_at)
+
+        expect { report.discard }
+          .to      change { ddfips[0].reload.reports_rejected_count }.from(1).to(0)
+          .and not_change { ddfips[1].reload.reports_rejected_count }.from(0)
+      end
+
+      it "changes when rejected and transmitted report is undiscarded" do
+        report.touch(:rejected_at, :discarded_at) and report.package.touch(:transmitted_at)
+
+        expect { report.undiscard }
+          .to      change { ddfips[0].reload.reports_rejected_count }.from(0).to(1)
+          .and not_change { ddfips[1].reload.reports_rejected_count }.from(0)
+      end
+
+      it "changes when rejected and transmitted report is deleted" do
+        report.touch(:rejected_at) and report.package.touch(:transmitted_at)
+
+        expect { report.delete }
+          .to      change { ddfips[0].reload.reports_rejected_count }.from(1).to(0)
+          .and not_change { ddfips[1].reload.reports_rejected_count }.from(0)
+      end
+    end
+
+    describe "#reports_debated_count" do
+      before do
+        commune = create(:commune)
+        ddfips.first.update(code_departement: commune.code_departement)
+      end
+
+      let(:commune) { Commune.first }
+      let(:report) { create(:report, commune: commune) }
+
+      it "doesn't change on report creation" do
+        expect { report }
+          .to  not_change { ddfips[0].reload.reports_debated_count }.from(0)
+          .and not_change { ddfips[1].reload.reports_debated_count }.from(0)
+      end
+
+      it "changes when transmitted report is marked as debated" do
+        report.package.touch(:transmitted_at)
+
+        expect { report.debate! }
+          .to      change { ddfips[0].reload.reports_debated_count }.from(0).to(1)
+          .and not_change { ddfips[1].reload.reports_debated_count }.from(0)
+      end
+
+      it "changes when debated and transmitted report is discarded" do
+        report.debate! and report.package.touch(:transmitted_at)
+
+        expect { report.discard }
+          .to      change { ddfips[0].reload.reports_debated_count }.from(1).to(0)
+          .and not_change { ddfips[1].reload.reports_debated_count }.from(0)
+      end
+
+      it "changes when debated and transmitted report is undiscarded" do
+        report.touch(:debated_at, :discarded_at) and report.package.touch(:transmitted_at)
+
+        expect { report.undiscard }
+          .to      change { ddfips[0].reload.reports_debated_count }.from(0).to(1)
+          .and not_change { ddfips[1].reload.reports_debated_count }.from(0)
+      end
+
+      it "changes when debated and transmitted report is deleted" do
+        report.touch(:debated_at) and report.package.touch(:transmitted_at)
+
+        expect { report.delete }
+          .to      change { ddfips[0].reload.reports_debated_count }.from(1).to(0)
+          .and not_change { ddfips[1].reload.reports_debated_count }.from(0)
       end
     end
   end

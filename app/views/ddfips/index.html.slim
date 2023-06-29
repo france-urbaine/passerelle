@@ -72,3 +72,6 @@
 
       - row.with_column(:users) do
         = number_with_delimiter(ddfip.users_count) if ddfip.users_count.positive?
+
+      - row.with_column(:reports_count) do
+        = number_with_delimiter(ddfip.reports_count) if ddfip.reports_count.positive?
