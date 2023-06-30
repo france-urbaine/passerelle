@@ -21,7 +21,7 @@ module SkipUniquenessValidation
     return true if @skip_uniqueness_validation
 
     return false if will_save_change_to_attribute?(:discarded_at, to: nil)
-    return true  if respond_to?(:discarded?) && discarded?
+    return true  if attribute.to_s != "reference" && respond_to?(:discarded?) && discarded?
 
     return true if persisted? && !will_save_change_to_attribute?(attribute)
 

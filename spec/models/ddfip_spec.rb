@@ -19,8 +19,6 @@ RSpec.describe DDFIP do
   # Validations
   # ----------------------------------------------------------------------------
   describe "validations" do
-    subject { build(:ddfip) }
-
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_presence_of(:code_departement) }
 
@@ -31,12 +29,21 @@ RSpec.describe DDFIP do
     it { is_expected.not_to allow_value("123").for(:code_departement) }
     it { is_expected.not_to allow_value("3C").for(:code_departement) }
 
-    it { is_expected.to validate_uniqueness_of(:name).case_insensitive }
+    it "validates uniqueness of :name" do
+      create(:ddfip)
+      is_expected.to validate_uniqueness_of(:name).ignoring_case_sensitivity
+    end
 
-    context "when existing collectivity is discarded" do
-      subject { build(:ddfip, :discarded) }
+    it "ignores discarded records when validating uniqueness of :name" do
+      create(:ddfip, :discarded)
+      is_expected.not_to validate_uniqueness_of(:name).ignoring_case_sensitivity
+    end
 
-      it { is_expected.not_to validate_uniqueness_of(:name).case_insensitive }
+    it "raises an exception when undiscarding a record when its attributes is already used by other records" do
+      discarded_ddfip = create(:ddfip, :discarded)
+      create(:ddfip, name: discarded_ddfip.name)
+
+      expect { discarded_ddfip.undiscard }.to raise_error(ActiveRecord::RecordNotUnique)
     end
   end
 

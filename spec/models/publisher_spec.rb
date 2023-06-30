@@ -29,14 +29,32 @@ RSpec.describe Publisher do
     it { is_expected.to     allow_value("foo@bar-bar.bar.com").for(:contact_email) }
     it { is_expected.not_to allow_value("foo.bar.com")        .for(:contact_email) }
 
-    it { is_expected.to validate_uniqueness_of(:name).case_insensitive }
-    it { is_expected.to validate_uniqueness_of(:siren).case_insensitive }
+    it "validates uniqueness of :siren & :name" do
+      create(:publisher)
 
-    context "when existing publisher is discarded" do
-      subject { build(:publisher, :discarded) }
+      aggregate_failures do
+        is_expected.to validate_uniqueness_of(:siren).ignoring_case_sensitivity
+        is_expected.to validate_uniqueness_of(:name).ignoring_case_sensitivity
+      end
+    end
 
-      it { is_expected.not_to validate_uniqueness_of(:name).case_insensitive }
-      it { is_expected.not_to validate_uniqueness_of(:siren).case_insensitive }
+    it "ignores discarded records when validating uniqueness of :siren & :name" do
+      create(:publisher, :discarded)
+
+      aggregate_failures do
+        is_expected.not_to validate_uniqueness_of(:siren).ignoring_case_sensitivity
+        is_expected.not_to validate_uniqueness_of(:name).ignoring_case_sensitivity
+      end
+    end
+
+    it "raises an exception when undiscarding a record when its attributes is already used by other records" do
+      discarded_publishers = create_list(:publisher, 2, :discarded)
+      create(:publisher, siren: discarded_publishers[0].siren, name: discarded_publishers[1].name)
+
+      aggregate_failures do
+        expect { discarded_publishers[0].undiscard }.to raise_error(ActiveRecord::RecordNotUnique)
+        expect { discarded_publishers[1].undiscard }.to raise_error(ActiveRecord::RecordNotUnique)
+      end
     end
   end
 

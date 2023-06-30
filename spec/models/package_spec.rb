@@ -14,13 +14,20 @@ RSpec.describe Package do
   # Validations
   # ----------------------------------------------------------------------------
   describe "validations" do
-    subject { build(:package) }
-
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_presence_of(:reference) }
     it { is_expected.to validate_presence_of(:action) }
     it { is_expected.to validate_inclusion_of(:action).in_array(Package::ACTIONS) }
-    it { is_expected.to validate_uniqueness_of(:reference).case_insensitive }
+
+    it "validates uniqueness of :reference" do
+      create(:package)
+      is_expected.to validate_uniqueness_of(:reference).ignoring_case_sensitivity
+    end
+
+    it "validates uniqueness of :reference against discarded records" do
+      create(:package, :discarded)
+      is_expected.to validate_uniqueness_of(:reference).ignoring_case_sensitivity
+    end
   end
 
   # Scopes

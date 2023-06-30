@@ -36,6 +36,16 @@ RSpec.describe Report do
     it { is_expected.to validate_inclusion_of(:subject).in_array(Report::SUBJECTS) }
     it { is_expected.to validate_inclusion_of(:priority).in_array(%w[low medium high]) }
 
+    it "validates uniqueness of :reference" do
+      create(:report)
+      is_expected.to validate_uniqueness_of(:reference).ignoring_case_sensitivity
+    end
+
+    it "validates uniqueness of :reference against discarded records" do
+      create(:report, :discarded)
+      is_expected.to validate_uniqueness_of(:reference).ignoring_case_sensitivity
+    end
+
     pending "Add missing tests for other validations"
   end
 

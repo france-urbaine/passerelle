@@ -17,15 +17,16 @@ RSpec.describe Region do
   # Validations
   # ----------------------------------------------------------------------------
   describe "validations" do
-    subject { build(:region) }
-
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_presence_of(:code_region) }
 
     it { is_expected.to     allow_value("12")  .for(:code_region) }
     it { is_expected.not_to allow_value("12AB").for(:code_region) }
 
-    it { is_expected.to validate_uniqueness_of(:code_region).case_insensitive }
+    it "validates uniqueness of :code_region" do
+      create(:region)
+      is_expected.to validate_uniqueness_of(:code_region).ignoring_case_sensitivity
+    end
   end
 
   # Scopes

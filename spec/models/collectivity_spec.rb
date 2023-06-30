@@ -16,10 +16,6 @@ RSpec.describe Collectivity do
   # Validations
   # ----------------------------------------------------------------------------
   describe "validations" do
-    # FYI: If you're experimenting errors due to accents,
-    # you should read ./docs/uniqueness_validations_and_accents.md
-    subject { build(:collectivity) }
-
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_presence_of(:siren) }
 
@@ -45,14 +41,32 @@ RSpec.describe Collectivity do
     it { is_expected.to     allow_value("Departement").for(:territory_type) }
     it { is_expected.not_to allow_value("DDFIP")      .for(:territory_type) }
 
-    it { is_expected.to validate_uniqueness_of(:name).case_insensitive }
-    it { is_expected.to validate_uniqueness_of(:siren).case_insensitive }
+    it "validates uniqueness of :siren & :name" do
+      create(:collectivity)
 
-    context "when existing collectivity is discarded" do
-      subject { build(:collectivity, :discarded) }
+      aggregate_failures do
+        is_expected.to validate_uniqueness_of(:siren).ignoring_case_sensitivity
+        is_expected.to validate_uniqueness_of(:name).ignoring_case_sensitivity
+      end
+    end
 
-      it { is_expected.not_to validate_uniqueness_of(:name).case_insensitive }
-      it { is_expected.not_to validate_uniqueness_of(:siren).case_insensitive }
+    it "ignores discarded records when validating uniqueness of :siren & :name" do
+      create(:collectivity, :discarded)
+
+      aggregate_failures do
+        is_expected.not_to validate_uniqueness_of(:siren).ignoring_case_sensitivity
+        is_expected.not_to validate_uniqueness_of(:name).ignoring_case_sensitivity
+      end
+    end
+
+    it "raises an exception when undiscarding a record when its attributes is already used by other records" do
+      discarded_collectivities = create_list(:collectivity, 2, :discarded)
+      create(:collectivity, siren: discarded_collectivities[0].siren, name: discarded_collectivities[1].name)
+
+      aggregate_failures do
+        expect { discarded_collectivities[0].undiscard }.to raise_error(ActiveRecord::RecordNotUnique)
+        expect { discarded_collectivities[1].undiscard }.to raise_error(ActiveRecord::RecordNotUnique)
+      end
     end
   end
 

@@ -21,12 +21,26 @@ RSpec.describe Office do
   # Validations
   # ----------------------------------------------------------------------------
   describe "validations" do
-    subject { build(:office) }
-
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_presence_of(:action) }
     it { is_expected.to validate_inclusion_of(:action).in_array(Office::ACTIONS) }
-    it { is_expected.to validate_uniqueness_of(:name).scoped_to(:ddfip_id).case_insensitive }
+
+    it "validates uniqueness of :name" do
+      create(:office)
+      is_expected.to validate_uniqueness_of(:name).ignoring_case_sensitivity.scoped_to(:ddfip_id)
+    end
+
+    it "ignores discarded records when validating uniqueness of :name" do
+      create(:office, :discarded)
+      is_expected.not_to validate_uniqueness_of(:name).ignoring_case_sensitivity.scoped_to(:ddfip_id)
+    end
+
+    it "raises an exception when undiscarding a record when its attributes is already used by other records" do
+      discarded_office = create(:office, :discarded)
+      create(:office, ddfip: discarded_office.ddfip, name: discarded_office.name)
+
+      expect { discarded_office.undiscard }.to raise_error(ActiveRecord::RecordNotUnique)
+    end
   end
 
   # Scopes

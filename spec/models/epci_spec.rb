@@ -17,8 +17,6 @@ RSpec.describe EPCI do
   # Validations
   # ----------------------------------------------------------------------------
   describe "validations" do
-    subject { build(:epci) }
-
     it { is_expected.to     validate_presence_of(:name) }
     it { is_expected.to     validate_presence_of(:siren) }
     it { is_expected.not_to validate_presence_of(:code_departement) }
@@ -33,6 +31,11 @@ RSpec.describe EPCI do
     it { is_expected.not_to allow_value("1").for(:code_departement) }
     it { is_expected.not_to allow_value("123").for(:code_departement) }
     it { is_expected.not_to allow_value("3C").for(:code_departement) }
+
+    it "validates uniqueness of :siren" do
+      create(:epci)
+      is_expected.to validate_uniqueness_of(:siren).ignoring_case_sensitivity
+    end
   end
 
   # Normalization callbacks

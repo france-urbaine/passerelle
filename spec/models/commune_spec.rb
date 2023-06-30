@@ -24,8 +24,6 @@ RSpec.describe Commune do
   # Validations
   # ----------------------------------------------------------------------------
   describe "validations" do
-    subject { build(:commune) }
-
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_presence_of(:code_insee) }
     it { is_expected.to validate_presence_of(:code_departement) }
@@ -47,6 +45,11 @@ RSpec.describe Commune do
     it { is_expected.to     allow_value("801453893").for(:siren_epci) }
     it { is_expected.not_to allow_value("1234567AB").for(:siren_epci) }
     it { is_expected.not_to allow_value("1234567891").for(:siren_epci) }
+
+    it "validates uniqueness of :code_insee" do
+      create(:commune)
+      is_expected.to validate_uniqueness_of(:code_insee).ignoring_case_sensitivity
+    end
   end
 
   # Normalization callbacks

@@ -18,8 +18,6 @@ RSpec.describe Departement do
   # Validations
   # ----------------------------------------------------------------------------
   describe "validations" do
-    subject { build(:departement) }
-
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_presence_of(:code_departement) }
     it { is_expected.to validate_presence_of(:code_region) }
@@ -33,6 +31,11 @@ RSpec.describe Departement do
 
     it { is_expected.to     allow_value("12")  .for(:code_region) }
     it { is_expected.not_to allow_value("12AB").for(:code_region) }
+
+    it "validates uniqueness of :code_departement" do
+      create(:departement)
+      is_expected.to validate_uniqueness_of(:code_departement).ignoring_case_sensitivity
+    end
   end
 
   # Scopes

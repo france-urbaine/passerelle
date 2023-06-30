@@ -135,7 +135,7 @@ RSpec/FilePath:
     DDFIPs: ddfips
 
 RSpec/ImplicitSubject:
-  EnforcedStyle: single_statement_only
+  EnforcedStyle: require_implicit
 
 RSpec/MultipleExpectations:
   Exclude:
