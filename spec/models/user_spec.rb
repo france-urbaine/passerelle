@@ -5,12 +5,14 @@ require "rails_helper"
 RSpec.describe User do
   # Associations
   # ----------------------------------------------------------------------------
-  it { is_expected.to belong_to(:organization).required }
-  it { is_expected.to belong_to(:inviter).optional }
-  it { is_expected.to have_many(:invitees) }
+  describe "associations" do
+    it { is_expected.to belong_to(:organization).required }
+    it { is_expected.to belong_to(:inviter).optional }
+    it { is_expected.to have_many(:invitees) }
 
-  it { is_expected.to have_many(:office_users) }
-  it { is_expected.to have_many(:offices).through(:office_users) }
+    it { is_expected.to have_many(:office_users) }
+    it { is_expected.to have_many(:offices).through(:office_users) }
+  end
 
   # Validations
   # ----------------------------------------------------------------------------
@@ -211,60 +213,64 @@ RSpec.describe User do
     end
   end
 
-  # Counter caches
+  # Updates methods
   # ----------------------------------------------------------------------------
-  describe "counter caches" do
-    let!(:users) { create_list(:user, 2) }
+  describe "update methods" do
+    describe ".reset_all_counters" do
+      subject(:reset_all_counters) { described_class.reset_all_counters }
 
-    describe "#offices_count" do
-      let(:office) { create(:office) }
+      let!(:users) { create_list(:user, 2) }
 
-      it "changes when users is assigned to the office" do
-        expect { office.users << users[0] }
-          .to      change { users[0].reload.offices_count }.from(0).to(1)
-          .and not_change { users[1].reload.offices_count }.from(0)
-      end
+      it { expect { reset_all_counters }.to ret(2) }
+      it { expect { reset_all_counters }.to perform_sql_query("SELECT reset_all_users_counters()") }
 
-      it "changes when users is removed from the office" do
-        office.users << users[0]
+      describe "on offices_count" do
+        before do
+          offices = create_list(:office, 6)
 
-        expect { office.users.delete(users[0]) }
-          .to      change { users[0].reload.offices_count }.from(1).to(0)
-          .and not_change { users[1].reload.offices_count }.from(0)
-      end
+          users[0].offices = offices.shuffle.take(4)
+          users[1].offices = offices.shuffle.take(2)
 
-      it "doesn't changes when another user is added" do
-        office.users << users[0]
+          User.update_all(offices_count: 0)
+        end
 
-        expect { office.users << users[1] }
-          .to  not_change { users[0].reload.offices_count }.from(1)
-          .and     change { users[1].reload.offices_count }.from(0).to(1)
+        it { expect { reset_all_counters }.to change { users[0].reload.offices_count }.from(0).to(4) }
+        it { expect { reset_all_counters }.to change { users[1].reload.offices_count }.from(0).to(2) }
       end
     end
   end
 
-  # Reset counters
+  # Database constraints and triggers
   # ----------------------------------------------------------------------------
-  describe ".reset_all_counters" do
-    subject(:reset_all_counters) { described_class.reset_all_counters }
+  describe "database triggers" do
+    describe "about counter caches" do
+      let!(:users) { create_list(:user, 2) }
 
-    let!(:users) { create_list(:user, 2) }
+      describe "#offices_count" do
+        let(:office) { create(:office) }
 
-    it { expect { reset_all_counters }.to ret(2) }
-    it { expect { reset_all_counters }.to perform_sql_query("SELECT reset_all_users_counters()") }
+        it "changes when users is assigned to the office" do
+          expect { office.users << users[0] }
+            .to      change { users[0].reload.offices_count }.from(0).to(1)
+            .and not_change { users[1].reload.offices_count }.from(0)
+        end
 
-    describe "on offices_count" do
-      before do
-        offices = create_list(:office, 6)
+        it "changes when users is removed from the office" do
+          office.users << users[0]
 
-        users[0].offices = offices.shuffle.take(4)
-        users[1].offices = offices.shuffle.take(2)
+          expect { office.users.delete(users[0]) }
+            .to      change { users[0].reload.offices_count }.from(1).to(0)
+            .and not_change { users[1].reload.offices_count }.from(0)
+        end
 
-        User.update_all(offices_count: 0)
+        it "doesn't changes when another user is added" do
+          office.users << users[0]
+
+          expect { office.users << users[1] }
+            .to  not_change { users[0].reload.offices_count }.from(1)
+            .and     change { users[1].reload.offices_count }.from(0).to(1)
+        end
       end
-
-      it { expect { reset_all_counters }.to change { users[0].reload.offices_count }.from(0).to(4) }
-      it { expect { reset_all_counters }.to change { users[1].reload.offices_count }.from(0).to(2) }
     end
   end
 end

@@ -7,8 +7,10 @@ FactoryBot.define do
       association(:collectivity, publisher: publisher)
     end
 
-    name      { Faker::Book.title }
-    action    { Package::ACTIONS.sample }
+    name   { Faker::Book.title }
+    action { Package::ACTIONS.sample }
+
+    traits_for_enum(:action, Package::ACTIONS)
 
     sequence(:reference) do |n|
       month = Time.current.strftime("%Y-%m")
@@ -70,12 +72,12 @@ FactoryBot.define do
         # Finally, build the list of reports, randomly assigning one the communes.
         #
         Array.new(report_size) do
-          association(:report,
+          association :report,
             publisher:    publisher,
             collectivity: collectivity,
             package:      instance,
             completed:    completed,
-            commune:      communes.sample)
+            commune:      communes.sample
         end
       end
     end

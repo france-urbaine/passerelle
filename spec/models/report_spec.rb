@@ -36,7 +36,7 @@ RSpec.describe Report do
     it { is_expected.to validate_inclusion_of(:subject).in_array(Report::SUBJECTS) }
     it { is_expected.to validate_inclusion_of(:priority).in_array(%w[low medium high]) }
 
-    pending "Add missing test for other validations"
+    pending "Add missing tests for other validations"
   end
 
   # Callbacks

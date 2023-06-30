@@ -100,7 +100,7 @@ class Office < ApplicationRecord
     Collectivity.kept.where(territory: territories)
   end
 
-  # Database updates
+  # Updates methods
   # ----------------------------------------------------------------------------
   def self.reset_all_counters
     connection.select_value("SELECT reset_all_offices_counters()")

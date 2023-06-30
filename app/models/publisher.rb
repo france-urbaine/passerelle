@@ -87,7 +87,7 @@ class Publisher < ApplicationRecord
     scored_order(:name, input)
   }
 
-  # Database updates
+  # Updates methods
   # ----------------------------------------------------------------------------
   def self.reset_all_counters
     connection.select_value("SELECT reset_all_publishers_counters()")

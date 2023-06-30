@@ -18,24 +18,22 @@ FactoryBot.define do
 
     action { Office::ACTIONS.sample }
 
-    trait :occupation_hab do
-      action { "occupation_hab" }
-    end
-
-    trait :occupation_pro do
-      action { "occupation_pro" }
-    end
-
-    trait :evaluation_pro do
-      action { "evaluation_pro" }
-    end
-
-    trait :evaluation_hab do
-      action { "evaluation_hab" }
-    end
+    traits_for_enum(:action, Office::ACTIONS)
 
     trait :discarded do
       discarded_at { Time.current }
+    end
+
+    trait :with_communes do
+      transient do
+        communes_size { 1 }
+      end
+
+      communes do
+        Array.new(communes_size) do
+          association(:commune, departement: ddfip.departement)
+        end
+      end
     end
   end
 end

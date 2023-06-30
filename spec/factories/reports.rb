@@ -37,13 +37,17 @@ FactoryBot.define do
     end
 
     collectivity do
-      publisher = self.publisher || build(:publisher)
-      association(:collectivity, publisher: publisher)
+      factored_publisher = publisher || build(:publisher)
+      association(:collectivity, publisher: factored_publisher)
     end
 
     package do
-      collectivity = self.collectivity
-      association(:package, *package_traits, collectivity: collectivity, publisher: self.publisher)
+      factored_collectivity = collectivity
+      factored_publisher    = publisher
+
+      association :package, *package_traits,
+        collectivity: factored_collectivity,
+        publisher:    factored_publisher
     end
 
     # The commune shoud be on the territory of the package collectivity
@@ -159,6 +163,24 @@ FactoryBot.define do
 
         association(:package, :packed_for_ddfip, *traits, **attributes)
       end
+    end
+
+    trait :reported_for_office do
+      reported_for_ddfip
+
+      transient do
+        office do
+          # FIXME: Not all reports have been implemented.
+          # We need to create an office with its competence compatible with available reports
+          action = Report::ACTIONS.sample
+          association :office, :with_communes, action: action
+        end
+
+        ddfip { office.ddfip }
+      end
+
+      commune { office.communes.sample }
+      action  { office.action }
     end
 
     trait :transmitted_through_web_ui do

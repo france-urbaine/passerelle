@@ -164,7 +164,7 @@ class Collectivity < ApplicationRecord
     Office.kept.distinct.joins(:communes).merge(on_territory_communes)
   end
 
-  # Database updates
+  # Updates methods
   # ----------------------------------------------------------------------------
   def self.reset_all_counters
     connection.select_value("SELECT reset_all_collectivities_counters()")

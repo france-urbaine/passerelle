@@ -16,6 +16,10 @@ RSpec.describe Collectivity do
   # Validations
   # ----------------------------------------------------------------------------
   describe "validations" do
+    # FYI: If you're experimenting errors due to accents,
+    # you should read ./docs/uniqueness_validations_and_accents.md
+    subject { build(:collectivity) }
+
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_presence_of(:siren) }
 
@@ -41,17 +45,11 @@ RSpec.describe Collectivity do
     it { is_expected.to     allow_value("Departement").for(:territory_type) }
     it { is_expected.not_to allow_value("DDFIP")      .for(:territory_type) }
 
-    context "with an existing collectivity" do
-      # FYI: If you're experimenting errors due to accents,
-      # you should read ./docs/uniqueness_validations_and_accents.md
-      before { create(:collectivity) }
-
-      it { is_expected.to validate_uniqueness_of(:name).case_insensitive }
-      it { is_expected.to validate_uniqueness_of(:siren).case_insensitive }
-    end
+    it { is_expected.to validate_uniqueness_of(:name).case_insensitive }
+    it { is_expected.to validate_uniqueness_of(:siren).case_insensitive }
 
     context "when existing collectivity is discarded" do
-      before { create(:collectivity, :discarded) }
+      subject { build(:collectivity, :discarded) }
 
       it { is_expected.not_to validate_uniqueness_of(:name).case_insensitive }
       it { is_expected.not_to validate_uniqueness_of(:siren).case_insensitive }
@@ -323,74 +321,78 @@ RSpec.describe Collectivity do
 
   # Other associations
   # ----------------------------------------------------------------------------
-  describe "#on_territory_communes" do
-    context "when collectivity is a commune" do
-      subject(:association) { build_stubbed(:collectivity, :commune).on_territory_communes }
+  describe "other associations" do
+    describe "#on_territory_communes" do
+      context "when collectivity is a commune" do
+        subject(:association) { build_stubbed(:collectivity, :commune).on_territory_communes }
 
-      it { expect(association).to be_an(ActiveRecord::Relation) }
-      it { expect(association.model).to eq(Commune) }
+        it { expect(association).to be_an(ActiveRecord::Relation) }
+        it { expect(association.model).to eq(Commune) }
 
-      pending "scopes on the collectivity commune"
+        pending "scopes on the collectivity commune"
+      end
+
+      context "when collectivity is an EPCI" do
+        subject(:association) { build_stubbed(:collectivity, :epci).on_territory_communes }
+
+        it { expect(association).to be_an(ActiveRecord::Relation) }
+        it { expect(association.model).to eq(Commune) }
+
+        pending "scopes on communes belonging to the collectivity EPCI"
+      end
+
+      context "when collectivity is a Departement" do
+        subject(:association) { build_stubbed(:collectivity, :departement).on_territory_communes }
+
+        it { expect(association).to be_an(ActiveRecord::Relation) }
+        it { expect(association.model).to eq(Commune) }
+
+        pending "scopes on communes belonging to the collectivity departement"
+      end
+
+      context "when collectivity is a Region" do
+        subject(:association) { build_stubbed(:collectivity, :region).on_territory_communes }
+
+        it { expect(association).to be_an(ActiveRecord::Relation) }
+        it { expect(association.model).to eq(Commune) }
+
+        pending "scopes on communes belonging to the collectivity region"
+      end
     end
 
-    context "when collectivity is an EPCI" do
-      subject(:association) { build_stubbed(:collectivity, :epci).on_territory_communes }
-
-      it { expect(association).to be_an(ActiveRecord::Relation) }
-      it { expect(association.model).to eq(Commune) }
-
-      pending "scopes on communes belonging to the collectivity EPCI"
-    end
-
-    context "when collectivity is a Departement" do
-      subject(:association) { build_stubbed(:collectivity, :departement).on_territory_communes }
-
-      it { expect(association).to be_an(ActiveRecord::Relation) }
-      it { expect(association.model).to eq(Commune) }
-
-      pending "scopes on communes belonging to the collectivity departement"
-    end
-
-    context "when collectivity is a Region" do
-      subject(:association) { build_stubbed(:collectivity, :region).on_territory_communes }
-
-      it { expect(association).to be_an(ActiveRecord::Relation) }
-      it { expect(association.model).to eq(Commune) }
-
-      pending "scopes on communes belonging to the collectivity region"
+    describe "#assigned_offices" do
+      pending "TODO"
     end
   end
 
-  describe "#assigned_offices" do
-    pending "TODO"
-  end
-
-  # Database updates
+  # Updates methods
   # ----------------------------------------------------------------------------
-  describe ".reset_all_counters" do
-    subject(:reset_all_counters) { described_class.reset_all_counters }
+  describe "update methods" do
+    describe ".reset_all_counters" do
+      subject(:reset_all_counters) { described_class.reset_all_counters }
 
-    let!(:collectivities) { create_list(:collectivity, 2) }
+      let!(:collectivities) { create_list(:collectivity, 2) }
 
-    before do
-      create_list(:user, 4, organization: collectivities[0])
-      create_list(:user, 2, organization: collectivities[1])
-      create_list(:user, 1, :publisher)
-      create_list(:user, 1, :ddfip)
+      before do
+        create_list(:user, 4, organization: collectivities[0])
+        create_list(:user, 2, organization: collectivities[1])
+        create_list(:user, 1, :publisher)
+        create_list(:user, 1, :ddfip)
 
-      Collectivity.update_all(users_count: 0)
-    end
+        Collectivity.update_all(users_count: 0)
+      end
 
-    it { expect { reset_all_counters }.to perform_sql_query("SELECT reset_all_collectivities_counters()") }
+      it { expect { reset_all_counters }.to perform_sql_query("SELECT reset_all_collectivities_counters()") }
 
-    it "returns the count of collectivities" do
-      expect(reset_all_counters).to eq(2)
-    end
+      it "returns the count of collectivities" do
+        expect(reset_all_counters).to eq(2)
+      end
 
-    it "resets counters" do
-      expect { reset_all_counters }
-        .to  change { collectivities[0].reload.users_count }.from(0).to(4)
-        .and change { collectivities[1].reload.users_count }.from(0).to(2)
+      it "resets counters" do
+        expect { reset_all_counters }
+          .to  change { collectivities[0].reload.users_count }.from(0).to(4)
+          .and change { collectivities[1].reload.users_count }.from(0).to(2)
+      end
     end
   end
 
@@ -413,367 +415,373 @@ RSpec.describe Collectivity do
   describe "database triggers" do
     let!(:collectivities) { create_list(:collectivity, 2) }
 
-    describe "#users_count" do
-      let(:user) { create(:user, organization: collectivities[0]) }
+    describe "about users counter cache" do
+      describe "#users_count" do
+        let(:user) { create(:user, organization: collectivities[0]) }
 
-      it "changes on creation" do
-        expect { user }
-          .to      change { collectivities[0].reload.users_count }.from(0).to(1)
-          .and not_change { collectivities[1].reload.users_count }.from(0)
-      end
+        it "changes on creation" do
+          expect { user }
+            .to      change { collectivities[0].reload.users_count }.from(0).to(1)
+            .and not_change { collectivities[1].reload.users_count }.from(0)
+        end
 
-      it "changes on deletion" do
-        user
-        expect { user.destroy }
-          .to      change { collectivities[0].reload.users_count }.from(1).to(0)
-          .and not_change { collectivities[1].reload.users_count }.from(0)
-      end
+        it "changes on deletion" do
+          user
+          expect { user.destroy }
+            .to      change { collectivities[0].reload.users_count }.from(1).to(0)
+            .and not_change { collectivities[1].reload.users_count }.from(0)
+        end
 
-      it "changes when discarding" do
-        user
-        expect { user.discard }
-          .to      change { collectivities[0].reload.users_count }.from(1).to(0)
-          .and not_change { collectivities[1].reload.users_count }.from(0)
-      end
+        it "changes when discarding" do
+          user
+          expect { user.discard }
+            .to      change { collectivities[0].reload.users_count }.from(1).to(0)
+            .and not_change { collectivities[1].reload.users_count }.from(0)
+        end
 
-      it "changes when undiscarding" do
-        user.discard
-        expect { user.undiscard }
-          .to      change { collectivities[0].reload.users_count }.from(0).to(1)
-          .and not_change { collectivities[1].reload.users_count }.from(0)
-      end
+        it "changes when undiscarding" do
+          user.discard
+          expect { user.undiscard }
+            .to      change { collectivities[0].reload.users_count }.from(0).to(1)
+            .and not_change { collectivities[1].reload.users_count }.from(0)
+        end
 
-      it "changes when updating organization" do
-        user
-        expect { user.update(organization: collectivities[1]) }
-          .to  change { collectivities[0].reload.users_count }.from(1).to(0)
-          .and change { collectivities[1].reload.users_count }.from(0).to(1)
-      end
-    end
-
-    describe "#reports_transmitted_count" do
-      let(:package) { create(:package, collectivity: collectivities[0]) }
-      let(:report)  { create(:report, package: package, collectivity: collectivities[0]) }
-
-      it "doesn't change on report creation" do
-        expect { report }
-          .to  not_change { collectivities[0].reload.reports_transmitted_count }.from(0)
-          .and not_change { collectivities[1].reload.reports_transmitted_count }.from(0)
-      end
-
-      it "changes when package is transmitted" do
-        report
-
-        expect { report.package.transmit! }
-          .to      change { collectivities[0].reload.reports_transmitted_count }.from(0).to(1)
-          .and not_change { collectivities[1].reload.reports_transmitted_count }.from(0)
-      end
-
-      it "doesn't changes when package in sandbox is transmitted" do
-        report.package.update(sandbox: true)
-
-        expect { report.package.transmit! }
-          .to  not_change { collectivities[0].reload.reports_transmitted_count }.from(0)
-          .and not_change { collectivities[1].reload.reports_transmitted_count }.from(0)
-      end
-
-      it "changes when transmitted report is discarded" do
-        report.package.touch(:transmitted_at)
-
-        expect { report.discard }
-          .to      change { collectivities[0].reload.reports_transmitted_count }.from(1).to(0)
-          .and not_change { collectivities[1].reload.reports_transmitted_count }.from(0)
-      end
-
-      it "changes when transmitted report is undiscarded" do
-        report.discard and package.transmit!
-
-        expect { report.undiscard }
-          .to      change { collectivities[0].reload.reports_transmitted_count }.from(0).to(1)
-          .and not_change { collectivities[1].reload.reports_transmitted_count }.from(0)
-      end
-
-      it "changes when transmitted report is deleted" do
-        report.package.transmit!
-
-        expect { report.destroy }
-          .to      change { collectivities[0].reload.reports_transmitted_count }.from(1).to(0)
-          .and not_change { collectivities[1].reload.reports_transmitted_count }.from(0)
-      end
-
-      it "changes when transmitted package is discarded" do
-        report.package.transmit!
-
-        expect { package.discard }
-          .to      change { collectivities[0].reload.reports_transmitted_count }.from(1).to(0)
-          .and not_change { collectivities[1].reload.reports_transmitted_count }.from(0)
-      end
-
-      it "changes when transmitted package is undiscarded" do
-        report.package.touch(:transmitted_at, :discarded_at)
-
-        expect { package.undiscard }
-          .to      change { collectivities[0].reload.reports_transmitted_count }.from(0).to(1)
-          .and not_change { collectivities[1].reload.reports_transmitted_count }.from(0)
-      end
-
-      it "changes when transmitted package is deleted" do
-        report.package.transmit!
-
-        expect { package.delete }
-          .to      change { collectivities[0].reload.reports_transmitted_count }.from(1).to(0)
-          .and not_change { collectivities[1].reload.reports_transmitted_count }.from(0)
+        it "changes when updating organization" do
+          user
+          expect { user.update(organization: collectivities[1]) }
+            .to  change { collectivities[0].reload.users_count }.from(1).to(0)
+            .and change { collectivities[1].reload.users_count }.from(0).to(1)
+        end
       end
     end
 
-    describe "#reports_approved_count" do
-      let(:package) { create(:package, :transmitted, collectivity: collectivities[0]) }
-      let(:report)  { create(:report, package: package, collectivity: collectivities[0]) }
+    describe "about reports counter caches" do
+      describe "#reports_transmitted_count" do
+        let(:package) { create(:package, collectivity: collectivities[0]) }
+        let(:report)  { create(:report, package: package, collectivity: collectivities[0]) }
 
-      it "doesn't change on report creation" do
-        expect { report }
-          .to  not_change { collectivities[0].reload.reports_approved_count }.from(0)
-          .and not_change { collectivities[1].reload.reports_approved_count }.from(0)
+        it "doesn't change on report creation" do
+          expect { report }
+            .to  not_change { collectivities[0].reload.reports_transmitted_count }.from(0)
+            .and not_change { collectivities[1].reload.reports_transmitted_count }.from(0)
+        end
+
+        it "changes when package is transmitted" do
+          report
+
+          expect { report.package.transmit! }
+            .to      change { collectivities[0].reload.reports_transmitted_count }.from(0).to(1)
+            .and not_change { collectivities[1].reload.reports_transmitted_count }.from(0)
+        end
+
+        it "doesn't changes when package in sandbox is transmitted" do
+          report.package.update(sandbox: true)
+
+          expect { report.package.transmit! }
+            .to  not_change { collectivities[0].reload.reports_transmitted_count }.from(0)
+            .and not_change { collectivities[1].reload.reports_transmitted_count }.from(0)
+        end
+
+        it "changes when transmitted report is discarded" do
+          report.package.touch(:transmitted_at)
+
+          expect { report.discard }
+            .to      change { collectivities[0].reload.reports_transmitted_count }.from(1).to(0)
+            .and not_change { collectivities[1].reload.reports_transmitted_count }.from(0)
+        end
+
+        it "changes when transmitted report is undiscarded" do
+          report.discard and package.transmit!
+
+          expect { report.undiscard }
+            .to      change { collectivities[0].reload.reports_transmitted_count }.from(0).to(1)
+            .and not_change { collectivities[1].reload.reports_transmitted_count }.from(0)
+        end
+
+        it "changes when transmitted report is deleted" do
+          report.package.transmit!
+
+          expect { report.destroy }
+            .to      change { collectivities[0].reload.reports_transmitted_count }.from(1).to(0)
+            .and not_change { collectivities[1].reload.reports_transmitted_count }.from(0)
+        end
+
+        it "changes when transmitted package is discarded" do
+          report.package.transmit!
+
+          expect { package.discard }
+            .to      change { collectivities[0].reload.reports_transmitted_count }.from(1).to(0)
+            .and not_change { collectivities[1].reload.reports_transmitted_count }.from(0)
+        end
+
+        it "changes when transmitted package is undiscarded" do
+          report.package.touch(:transmitted_at, :discarded_at)
+
+          expect { package.undiscard }
+            .to      change { collectivities[0].reload.reports_transmitted_count }.from(0).to(1)
+            .and not_change { collectivities[1].reload.reports_transmitted_count }.from(0)
+        end
+
+        it "changes when transmitted package is deleted" do
+          report.package.transmit!
+
+          expect { package.delete }
+            .to      change { collectivities[0].reload.reports_transmitted_count }.from(1).to(0)
+            .and not_change { collectivities[1].reload.reports_transmitted_count }.from(0)
+        end
       end
 
-      it "changes when report is approved" do
-        report
+      describe "#reports_approved_count" do
+        let(:package) { create(:package, :transmitted, collectivity: collectivities[0]) }
+        let(:report)  { create(:report, package: package, collectivity: collectivities[0]) }
 
-        expect { report.approve! }
-          .to      change { collectivities[0].reload.reports_approved_count }.from(0).to(1)
-          .and not_change { collectivities[1].reload.reports_approved_count }.from(0)
+        it "doesn't change on report creation" do
+          expect { report }
+            .to  not_change { collectivities[0].reload.reports_approved_count }.from(0)
+            .and not_change { collectivities[1].reload.reports_approved_count }.from(0)
+        end
+
+        it "changes when report is approved" do
+          report
+
+          expect { report.approve! }
+            .to      change { collectivities[0].reload.reports_approved_count }.from(0).to(1)
+            .and not_change { collectivities[1].reload.reports_approved_count }.from(0)
+        end
+
+        it "changes when approved report is discarded" do
+          report.approve!
+
+          expect { report.discard }
+            .to      change { collectivities[0].reload.reports_approved_count }.from(1).to(0)
+            .and not_change { collectivities[1].reload.reports_approved_count }.from(0)
+        end
+
+        it "changes when approved report is undiscarded" do
+          report.touch(:approved_at, :discarded_at)
+
+          expect { report.undiscard }
+            .to      change { collectivities[0].reload.reports_approved_count }.from(0).to(1)
+            .and not_change { collectivities[1].reload.reports_approved_count }.from(0)
+        end
+
+        it "changes when approved report is deleted" do
+          report.touch(:approved_at)
+
+          expect { report.delete }
+            .to      change { collectivities[0].reload.reports_approved_count }.from(1).to(0)
+            .and not_change { collectivities[1].reload.reports_approved_count }.from(0)
+        end
       end
 
-      it "changes when approved report is discarded" do
-        report.approve!
+      describe "#reports_rejected_count" do
+        let(:package) { create(:package, :transmitted, collectivity: collectivities[0]) }
+        let(:report)  { create(:report, package: package, collectivity: collectivities[0]) }
 
-        expect { report.discard }
-          .to      change { collectivities[0].reload.reports_approved_count }.from(1).to(0)
-          .and not_change { collectivities[1].reload.reports_approved_count }.from(0)
+        it "doesn't change on report creation" do
+          expect { report }
+            .to  not_change { collectivities[0].reload.reports_rejected_count }.from(0)
+            .and not_change { collectivities[1].reload.reports_rejected_count }.from(0)
+        end
+
+        it "changes when report is rejected" do
+          report
+
+          expect { report.reject! }
+            .to      change { collectivities[0].reload.reports_rejected_count }.from(0).to(1)
+            .and not_change { collectivities[1].reload.reports_rejected_count }.from(0)
+        end
+
+        it "changes when rejected report is discarded" do
+          report.reject!
+
+          expect { report.discard }
+            .to      change { collectivities[0].reload.reports_rejected_count }.from(1).to(0)
+            .and not_change { collectivities[1].reload.reports_rejected_count }.from(0)
+        end
+
+        it "changes when rejected report is undiscarded" do
+          report.touch(:rejected_at, :discarded_at)
+
+          expect { report.undiscard }
+            .to      change { collectivities[0].reload.reports_rejected_count }.from(0).to(1)
+            .and not_change { collectivities[1].reload.reports_rejected_count }.from(0)
+        end
+
+        it "changes when rejected report is deleted" do
+          report.touch(:rejected_at)
+
+          expect { report.delete }
+            .to      change { collectivities[0].reload.reports_rejected_count }.from(1).to(0)
+            .and not_change { collectivities[1].reload.reports_rejected_count }.from(0)
+        end
       end
 
-      it "changes when approved report is undiscarded" do
-        report.touch(:approved_at, :discarded_at)
+      describe "#reports_debated_count" do
+        let(:package) { create(:package, :transmitted, collectivity: collectivities[0]) }
+        let(:report)  { create(:report, package: package, collectivity: collectivities[0]) }
 
-        expect { report.undiscard }
-          .to      change { collectivities[0].reload.reports_approved_count }.from(0).to(1)
-          .and not_change { collectivities[1].reload.reports_approved_count }.from(0)
-      end
+        it "doesn't change on report creation" do
+          expect { report }
+            .to  not_change { collectivities[0].reload.reports_debated_count }.from(0)
+            .and not_change { collectivities[1].reload.reports_debated_count }.from(0)
+        end
 
-      it "changes when approved report is deleted" do
-        report.touch(:approved_at)
+        it "changes when report is marked as debated" do
+          report
 
-        expect { report.delete }
-          .to      change { collectivities[0].reload.reports_approved_count }.from(1).to(0)
-          .and not_change { collectivities[1].reload.reports_approved_count }.from(0)
-      end
-    end
+          expect { report.debate! }
+            .to      change { collectivities[0].reload.reports_debated_count }.from(0).to(1)
+            .and not_change { collectivities[1].reload.reports_debated_count }.from(0)
+        end
 
-    describe "#reports_rejected_count" do
-      let(:package) { create(:package, :transmitted, collectivity: collectivities[0]) }
-      let(:report)  { create(:report, package: package, collectivity: collectivities[0]) }
+        it "changes when debated report is discarded" do
+          report.debate!
 
-      it "doesn't change on report creation" do
-        expect { report }
-          .to  not_change { collectivities[0].reload.reports_rejected_count }.from(0)
-          .and not_change { collectivities[1].reload.reports_rejected_count }.from(0)
-      end
+          expect { report.discard }
+            .to      change { collectivities[0].reload.reports_debated_count }.from(1).to(0)
+            .and not_change { collectivities[1].reload.reports_debated_count }.from(0)
+        end
 
-      it "changes when report is rejected" do
-        report
+        it "changes when debated report is undiscarded" do
+          report.touch(:debated_at, :discarded_at)
 
-        expect { report.reject! }
-          .to      change { collectivities[0].reload.reports_rejected_count }.from(0).to(1)
-          .and not_change { collectivities[1].reload.reports_rejected_count }.from(0)
-      end
+          expect { report.undiscard }
+            .to      change { collectivities[0].reload.reports_debated_count }.from(0).to(1)
+            .and not_change { collectivities[1].reload.reports_debated_count }.from(0)
+        end
 
-      it "changes when rejected report is discarded" do
-        report.reject!
+        it "changes when debated report is deleted" do
+          report.touch(:debated_at)
 
-        expect { report.discard }
-          .to      change { collectivities[0].reload.reports_rejected_count }.from(1).to(0)
-          .and not_change { collectivities[1].reload.reports_rejected_count }.from(0)
-      end
-
-      it "changes when rejected report is undiscarded" do
-        report.touch(:rejected_at, :discarded_at)
-
-        expect { report.undiscard }
-          .to      change { collectivities[0].reload.reports_rejected_count }.from(0).to(1)
-          .and not_change { collectivities[1].reload.reports_rejected_count }.from(0)
-      end
-
-      it "changes when rejected report is deleted" do
-        report.touch(:rejected_at)
-
-        expect { report.delete }
-          .to      change { collectivities[0].reload.reports_rejected_count }.from(1).to(0)
-          .and not_change { collectivities[1].reload.reports_rejected_count }.from(0)
-      end
-    end
-
-    describe "#reports_debated_count" do
-      let(:package) { create(:package, :transmitted, collectivity: collectivities[0]) }
-      let(:report)  { create(:report, package: package, collectivity: collectivities[0]) }
-
-      it "doesn't change on report creation" do
-        expect { report }
-          .to  not_change { collectivities[0].reload.reports_debated_count }.from(0)
-          .and not_change { collectivities[1].reload.reports_debated_count }.from(0)
-      end
-
-      it "changes when report is marked as debated" do
-        report
-
-        expect { report.debate! }
-          .to      change { collectivities[0].reload.reports_debated_count }.from(0).to(1)
-          .and not_change { collectivities[1].reload.reports_debated_count }.from(0)
-      end
-
-      it "changes when debated report is discarded" do
-        report.debate!
-
-        expect { report.discard }
-          .to      change { collectivities[0].reload.reports_debated_count }.from(1).to(0)
-          .and not_change { collectivities[1].reload.reports_debated_count }.from(0)
-      end
-
-      it "changes when debated report is undiscarded" do
-        report.touch(:debated_at, :discarded_at)
-
-        expect { report.undiscard }
-          .to      change { collectivities[0].reload.reports_debated_count }.from(0).to(1)
-          .and not_change { collectivities[1].reload.reports_debated_count }.from(0)
-      end
-
-      it "changes when debated report is deleted" do
-        report.touch(:debated_at)
-
-        expect { report.delete }
-          .to      change { collectivities[0].reload.reports_debated_count }.from(1).to(0)
-          .and not_change { collectivities[1].reload.reports_debated_count }.from(0)
-      end
-    end
-
-    describe "#packages_transmitted_count" do
-      let(:package) { create(:package, collectivity: collectivities[0]) }
-
-      it "doesn't change on package creation" do
-        expect { package }
-          .to  not_change { collectivities[0].reload.packages_transmitted_count }.from(0)
-          .and not_change { collectivities[1].reload.packages_transmitted_count }.from(0)
-      end
-
-      it "changes when package is transmitted" do
-        package
-        expect { package.transmit! }
-          .to      change { collectivities[0].reload.packages_transmitted_count }.from(0).to(1)
-          .and not_change { collectivities[1].reload.packages_transmitted_count }.from(0)
-      end
-
-      it "doesn't changes when package in sandbox is transmitted" do
-        package.update(sandbox: true)
-
-        expect { package.transmit! }
-          .to  not_change { collectivities[0].reload.packages_transmitted_count }.from(0)
-          .and not_change { collectivities[1].reload.packages_transmitted_count }.from(0)
-      end
-
-      it "changes when transmitted package is discarded" do
-        package.transmit!
-        expect { package.discard }
-          .to      change { collectivities[0].reload.packages_transmitted_count }.from(1).to(0)
-          .and not_change { collectivities[1].reload.packages_transmitted_count }.from(0)
-      end
-
-      it "changes when transmitted package is undiscarded" do
-        package.touch(:transmitted_at, :discarded_at)
-        expect { package.undiscard }
-          .to      change { collectivities[0].reload.packages_transmitted_count }.from(0).to(1)
-          .and not_change { collectivities[1].reload.packages_transmitted_count }.from(0)
-      end
-
-      it "changes when transmitted package is deleted" do
-        package.transmit!
-        expect { package.delete }
-          .to      change { collectivities[0].reload.packages_transmitted_count }.from(1).to(0)
-          .and not_change { collectivities[1].reload.packages_transmitted_count }.from(0)
-      end
-    end
-
-    describe "#packages_approved_count" do
-      let(:package) { create(:package, :transmitted, collectivity: collectivities[0]) }
-
-      it "doesn't change on package creation" do
-        expect { package }
-          .to  not_change { collectivities[0].reload.packages_approved_count }.from(0)
-          .and not_change { collectivities[1].reload.packages_approved_count }.from(0)
-      end
-
-      it "changes when package is approved" do
-        package
-        expect { package.approve! }
-          .to      change { collectivities[0].reload.packages_approved_count }.from(0).to(1)
-          .and not_change { collectivities[1].reload.packages_approved_count }.from(0)
-      end
-
-      it "changes when approved package is discarded" do
-        package.approve!
-        expect { package.discard }
-          .to      change { collectivities[0].reload.packages_approved_count }.from(1).to(0)
-          .and not_change { collectivities[1].reload.packages_approved_count }.from(0)
-      end
-
-      it "changes when approved package is undiscarded" do
-        package.touch(:approved_at, :discarded_at)
-        expect { package.undiscard }
-          .to      change { collectivities[0].reload.packages_approved_count }.from(0).to(1)
-          .and not_change { collectivities[1].reload.packages_approved_count }.from(0)
-      end
-
-      it "changes when approved package is deleted" do
-        package.approve!
-        expect { package.delete }
-          .to      change { collectivities[0].reload.packages_approved_count }.from(1).to(0)
-          .and not_change { collectivities[1].reload.packages_approved_count }.from(0)
+          expect { report.delete }
+            .to      change { collectivities[0].reload.reports_debated_count }.from(1).to(0)
+            .and not_change { collectivities[1].reload.reports_debated_count }.from(0)
+        end
       end
     end
 
-    describe "#packages_rejected_count" do
-      let(:package) { create(:package, :transmitted, collectivity: collectivities[0]) }
+    describe "about packages counter caches" do
+      describe "#packages_transmitted_count" do
+        let(:package) { create(:package, collectivity: collectivities[0]) }
 
-      it "doesn't change on package creation" do
-        expect { package }
-          .to  not_change { collectivities[0].reload.packages_rejected_count }.from(0)
-          .and not_change { collectivities[1].reload.packages_rejected_count }.from(0)
+        it "doesn't change on package creation" do
+          expect { package }
+            .to  not_change { collectivities[0].reload.packages_transmitted_count }.from(0)
+            .and not_change { collectivities[1].reload.packages_transmitted_count }.from(0)
+        end
+
+        it "changes when package is transmitted" do
+          package
+          expect { package.transmit! }
+            .to      change { collectivities[0].reload.packages_transmitted_count }.from(0).to(1)
+            .and not_change { collectivities[1].reload.packages_transmitted_count }.from(0)
+        end
+
+        it "doesn't changes when package in sandbox is transmitted" do
+          package.update(sandbox: true)
+
+          expect { package.transmit! }
+            .to  not_change { collectivities[0].reload.packages_transmitted_count }.from(0)
+            .and not_change { collectivities[1].reload.packages_transmitted_count }.from(0)
+        end
+
+        it "changes when transmitted package is discarded" do
+          package.transmit!
+          expect { package.discard }
+            .to      change { collectivities[0].reload.packages_transmitted_count }.from(1).to(0)
+            .and not_change { collectivities[1].reload.packages_transmitted_count }.from(0)
+        end
+
+        it "changes when transmitted package is undiscarded" do
+          package.touch(:transmitted_at, :discarded_at)
+          expect { package.undiscard }
+            .to      change { collectivities[0].reload.packages_transmitted_count }.from(0).to(1)
+            .and not_change { collectivities[1].reload.packages_transmitted_count }.from(0)
+        end
+
+        it "changes when transmitted package is deleted" do
+          package.transmit!
+          expect { package.delete }
+            .to      change { collectivities[0].reload.packages_transmitted_count }.from(1).to(0)
+            .and not_change { collectivities[1].reload.packages_transmitted_count }.from(0)
+        end
       end
 
-      it "changes when package is rejected" do
-        package
-        expect { package.reject! }
-          .to      change { collectivities[0].reload.packages_rejected_count }.from(0).to(1)
-          .and not_change { collectivities[1].reload.packages_rejected_count }.from(0)
+      describe "#packages_approved_count" do
+        let(:package) { create(:package, :transmitted, collectivity: collectivities[0]) }
+
+        it "doesn't change on package creation" do
+          expect { package }
+            .to  not_change { collectivities[0].reload.packages_approved_count }.from(0)
+            .and not_change { collectivities[1].reload.packages_approved_count }.from(0)
+        end
+
+        it "changes when package is approved" do
+          package
+          expect { package.approve! }
+            .to      change { collectivities[0].reload.packages_approved_count }.from(0).to(1)
+            .and not_change { collectivities[1].reload.packages_approved_count }.from(0)
+        end
+
+        it "changes when approved package is discarded" do
+          package.approve!
+          expect { package.discard }
+            .to      change { collectivities[0].reload.packages_approved_count }.from(1).to(0)
+            .and not_change { collectivities[1].reload.packages_approved_count }.from(0)
+        end
+
+        it "changes when approved package is undiscarded" do
+          package.touch(:approved_at, :discarded_at)
+          expect { package.undiscard }
+            .to      change { collectivities[0].reload.packages_approved_count }.from(0).to(1)
+            .and not_change { collectivities[1].reload.packages_approved_count }.from(0)
+        end
+
+        it "changes when approved package is deleted" do
+          package.approve!
+          expect { package.delete }
+            .to      change { collectivities[0].reload.packages_approved_count }.from(1).to(0)
+            .and not_change { collectivities[1].reload.packages_approved_count }.from(0)
+        end
       end
 
-      it "changes when rejected package is discarded" do
-        package.reject!
-        expect { package.discard }
-          .to      change { collectivities[0].reload.packages_rejected_count }.from(1).to(0)
-          .and not_change { collectivities[1].reload.packages_rejected_count }.from(0)
-      end
+      describe "#packages_rejected_count" do
+        let(:package) { create(:package, :transmitted, collectivity: collectivities[0]) }
 
-      it "changes when rejected package is undiscarded" do
-        package.touch(:rejected_at, :discarded_at)
-        expect { package.undiscard }
-          .to      change { collectivities[0].reload.packages_rejected_count }.from(0).to(1)
-          .and not_change { collectivities[1].reload.packages_rejected_count }.from(0)
-      end
+        it "doesn't change on package creation" do
+          expect { package }
+            .to  not_change { collectivities[0].reload.packages_rejected_count }.from(0)
+            .and not_change { collectivities[1].reload.packages_rejected_count }.from(0)
+        end
 
-      it "changes when rejected package is deleted" do
-        package.reject!
-        expect { package.delete }
-          .to      change { collectivities[0].reload.packages_rejected_count }.from(1).to(0)
-          .and not_change { collectivities[1].reload.packages_rejected_count }.from(0)
+        it "changes when package is rejected" do
+          package
+          expect { package.reject! }
+            .to      change { collectivities[0].reload.packages_rejected_count }.from(0).to(1)
+            .and not_change { collectivities[1].reload.packages_rejected_count }.from(0)
+        end
+
+        it "changes when rejected package is discarded" do
+          package.reject!
+          expect { package.discard }
+            .to      change { collectivities[0].reload.packages_rejected_count }.from(1).to(0)
+            .and not_change { collectivities[1].reload.packages_rejected_count }.from(0)
+        end
+
+        it "changes when rejected package is undiscarded" do
+          package.touch(:rejected_at, :discarded_at)
+          expect { package.undiscard }
+            .to      change { collectivities[0].reload.packages_rejected_count }.from(0).to(1)
+            .and not_change { collectivities[1].reload.packages_rejected_count }.from(0)
+        end
+
+        it "changes when rejected package is deleted" do
+          package.reject!
+          expect { package.delete }
+            .to      change { collectivities[0].reload.packages_rejected_count }.from(1).to(0)
+            .and not_change { collectivities[1].reload.packages_rejected_count }.from(0)
+        end
       end
     end
   end

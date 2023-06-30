@@ -24,6 +24,8 @@ RSpec.describe Commune do
   # Validations
   # ----------------------------------------------------------------------------
   describe "validations" do
+    subject { build(:commune) }
+
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_presence_of(:code_insee) }
     it { is_expected.to validate_presence_of(:code_departement) }
@@ -332,110 +334,114 @@ RSpec.describe Commune do
 
   # Other associations
   # ----------------------------------------------------------------------------
-  describe "#on_territory_collectivities" do
-    context "without EPCI attached" do
-      let(:commune) { create(:commune) }
+  describe "other associations" do
+    describe "#on_territory_collectivities" do
+      context "without EPCI attached" do
+        let(:commune) { create(:commune) }
 
-      it do
-        expect {
-          commune.on_territory_collectivities.load
-        }.to perform_sql_query(<<~SQL)
-          SELECT "collectivities".*
-          FROM   "collectivities"
-          WHERE  "collectivities"."discarded_at" IS NULL
-            AND  (
-                    "collectivities"."territory_type" = 'Commune'
-                AND "collectivities"."territory_id"   = '#{commune.id}'
-                OR  "collectivities"."territory_type" = 'Departement'
-                AND "collectivities"."territory_id" IN (
-                      SELECT "departements"."id"
-                      FROM "departements"
-                      WHERE "departements"."code_departement" = '#{commune.code_departement}'
-                )
-            )
-        SQL
+        it do
+          expect {
+            commune.on_territory_collectivities.load
+          }.to perform_sql_query(<<~SQL)
+            SELECT "collectivities".*
+            FROM   "collectivities"
+            WHERE  "collectivities"."discarded_at" IS NULL
+              AND  (
+                      "collectivities"."territory_type" = 'Commune'
+                  AND "collectivities"."territory_id"   = '#{commune.id}'
+                  OR  "collectivities"."territory_type" = 'Departement'
+                  AND "collectivities"."territory_id" IN (
+                        SELECT "departements"."id"
+                        FROM "departements"
+                        WHERE "departements"."code_departement" = '#{commune.code_departement}'
+                  )
+              )
+          SQL
+        end
       end
-    end
 
-    context "with an EPCI attached" do
-      let(:commune) { create(:commune, :with_epci) }
+      context "with an EPCI attached" do
+        let(:commune) { create(:commune, :with_epci) }
 
-      it do
-        expect {
-          commune.on_territory_collectivities.load
-        }.to perform_sql_query(<<~SQL)
-          SELECT "collectivities".*
-          FROM   "collectivities"
-          WHERE  "collectivities"."discarded_at" IS NULL
-            AND (
-                    "collectivities"."territory_type" = 'Commune'
-                AND "collectivities"."territory_id"   = '#{commune.id}'
-                OR  "collectivities"."territory_type" = 'EPCI'
-                AND "collectivities"."territory_id" IN (
-                      SELECT "epcis"."id"
-                      FROM "epcis"
-                      WHERE "epcis"."siren" = '#{commune.siren_epci}'
-                )
-                OR  "collectivities"."territory_type" = 'Departement'
-                AND "collectivities"."territory_id" IN (
-                      SELECT "departements"."id"
-                      FROM "departements"
-                      WHERE "departements"."code_departement" = '#{commune.code_departement}'
-                )
-            )
-        SQL
+        it do
+          expect {
+            commune.on_territory_collectivities.load
+          }.to perform_sql_query(<<~SQL)
+            SELECT "collectivities".*
+            FROM   "collectivities"
+            WHERE  "collectivities"."discarded_at" IS NULL
+              AND (
+                      "collectivities"."territory_type" = 'Commune'
+                  AND "collectivities"."territory_id"   = '#{commune.id}'
+                  OR  "collectivities"."territory_type" = 'EPCI'
+                  AND "collectivities"."territory_id" IN (
+                        SELECT "epcis"."id"
+                        FROM "epcis"
+                        WHERE "epcis"."siren" = '#{commune.siren_epci}'
+                  )
+                  OR  "collectivities"."territory_type" = 'Departement'
+                  AND "collectivities"."territory_id" IN (
+                        SELECT "departements"."id"
+                        FROM "departements"
+                        WHERE "departements"."code_departement" = '#{commune.code_departement}'
+                  )
+              )
+          SQL
+        end
       end
     end
   end
 
-  # Reset counters
+  # Updates methods
   # ----------------------------------------------------------------------------
-  describe ".reset_all_counters" do
-    subject(:reset_all_counters) { described_class.reset_all_counters }
+  describe "update methods" do
+    describe ".reset_all_counters" do
+      subject(:reset_all_counters) { described_class.reset_all_counters }
 
-    let!(:communes) { create_list(:commune, 2, :with_epci) }
+      let!(:communes) { create_list(:commune, 2, :with_epci) }
 
-    it { expect { reset_all_counters }.to perform_sql_query("SELECT reset_all_communes_counters()") }
+      it { expect { reset_all_counters }.to perform_sql_query("SELECT reset_all_communes_counters()") }
 
-    it "returns the count of collectivities" do
-      expect(reset_all_counters).to eq(2)
-    end
-
-    describe "on collectivities_count" do
-      before do
-        create(:collectivity, territory: communes[0])
-        create(:collectivity, territory: communes[1])
-        create(:collectivity, territory: communes[1].epci)
-        create(:collectivity, territory: communes[1].departement)
-        create(:collectivity, territory: communes[1].region)
-
-        create(:collectivity, :discarded, territory: communes[0])
-        create(:collectivity, :discarded, territory: communes[1].departement)
-
-        Commune.update_all(collectivities_count: 0)
+      it "returns the count of collectivities" do
+        expect(reset_all_counters).to eq(2)
       end
 
-      it "resets counters" do
-        expect { reset_all_counters }
-          .to  change { communes[0].reload.collectivities_count }.from(0).to(1)
-          .and change { communes[1].reload.collectivities_count }.from(0).to(4)
+      describe "on collectivities_count" do
+        before do
+          create(:collectivity, territory: communes[0])
+          create(:collectivity, territory: communes[1])
+          create(:collectivity, territory: communes[1].epci)
+          create(:collectivity, territory: communes[1].departement)
+          create(:collectivity, territory: communes[1].region)
+
+          create(:collectivity, :discarded, territory: communes[0])
+          create(:collectivity, :discarded, territory: communes[1].departement)
+
+          Commune.update_all(collectivities_count: 0)
+        end
+
+        it "resets counters" do
+          expect { reset_all_counters }
+            .to  change { communes[0].reload.collectivities_count }.from(0).to(1)
+            .and change { communes[1].reload.collectivities_count }.from(0).to(4)
+        end
       end
-    end
 
-    describe "on offices_count" do
-      before do
-        offices = create_list(:office, 6)
+      describe "on offices_count" do
+        before do
+          offices = create_list(:office, 6)
 
-        communes[0].offices = offices.shuffle.take(4)
-        communes[1].offices = offices.shuffle.take(2)
+          communes[0].offices = offices.shuffle.take(4)
+          communes[1].offices = offices.shuffle.take(2)
 
-        Commune.update_all(offices_count: 0)
-      end
+          Commune.update_all(offices_count: 0)
+        end
 
-      it "resets counters" do
-        expect { reset_all_counters }
-          .to  change { communes[0].reload.offices_count }.from(0).to(4)
-          .and change { communes[1].reload.offices_count }.from(0).to(2)
+        it "resets counters" do
+          expect { reset_all_counters }
+            .to  change { communes[0].reload.offices_count }.from(0).to(4)
+            .and change { communes[1].reload.offices_count }.from(0).to(2)
+        end
       end
     end
   end
@@ -449,79 +455,81 @@ RSpec.describe Commune do
   describe "database triggers" do
     let!(:communes) { create_list(:commune, 2) }
 
-    describe "#collectivities_count" do
-      context "with communes" do
-        it_behaves_like "it changes collectivities count" do
-          let(:subjects)    { communes }
-          let(:territories) { communes }
+    describe "about counter caches" do
+      describe "#collectivities_count" do
+        context "with communes" do
+          it_behaves_like "it changes collectivities count" do
+            let(:subjects)    { communes }
+            let(:territories) { communes }
+          end
+        end
+
+        context "with EPCIs" do
+          it_behaves_like "it changes collectivities count" do
+            let(:subjects)    { create_list(:commune, 2, :with_epci) }
+            let(:territories) { subjects.map(&:epci) }
+          end
+        end
+
+        context "with departements" do
+          it_behaves_like "it changes collectivities count" do
+            let(:subjects)    { communes }
+            let(:territories) { communes.map(&:departement) }
+          end
+        end
+
+        context "with regions" do
+          it_behaves_like "it changes collectivities count" do
+            let(:subjects)    { communes }
+            let(:territories) { communes.map(&:region) }
+          end
         end
       end
 
-      context "with EPCIs" do
-        it_behaves_like "it changes collectivities count" do
-          let(:subjects)    { create_list(:commune, 2, :with_epci) }
-          let(:territories) { subjects.map(&:epci) }
+      describe "#offices_count" do
+        let(:office) { create(:office) }
+
+        it "changes when commune is assigned to the office" do
+          expect { office.communes << communes[0] }
+            .to      change { communes[0].reload.offices_count }.from(0).to(1)
+            .and not_change { communes[1].reload.offices_count }.from(0)
         end
-      end
 
-      context "with departements" do
-        it_behaves_like "it changes collectivities count" do
-          let(:subjects)    { communes }
-          let(:territories) { communes.map(&:departement) }
+        it "changes when an existing code_insee is assigned to the office" do
+          expect { office.office_communes.create(code_insee: communes[0].code_insee) }
+            .to      change { communes[0].reload.offices_count }.from(0).to(1)
+            .and not_change { communes[1].reload.offices_count }.from(0)
         end
-      end
 
-      context "with regions" do
-        it_behaves_like "it changes collectivities count" do
-          let(:subjects)    { communes }
-          let(:territories) { communes.map(&:region) }
+        it "doesn't change when an unknown code_insee is assigned to the office" do
+          expect { office.office_communes.create(code_insee: generate(:code_insee)) }
+            .to  not_change { communes[0].reload.offices_count }.from(0)
+            .and not_change { communes[1].reload.offices_count }.from(0)
         end
-      end
-    end
 
-    describe "#offices_count" do
-      let(:office) { create(:office) }
+        it "changes when commune is removed from the office" do
+          office.communes << communes[0]
 
-      it "changes when commune is assigned to the office" do
-        expect { office.communes << communes[0] }
-          .to      change { communes[0].reload.offices_count }.from(0).to(1)
-          .and not_change { communes[1].reload.offices_count }.from(0)
-      end
+          expect { office.communes.delete(communes[0]) }
+            .to      change { communes[0].reload.offices_count }.from(1).to(0)
+            .and not_change { communes[1].reload.offices_count }.from(0)
+        end
 
-      it "changes when an existing code_insee is assigned to the office" do
-        expect { office.office_communes.create(code_insee: communes[0].code_insee) }
-          .to      change { communes[0].reload.offices_count }.from(0).to(1)
-          .and not_change { communes[1].reload.offices_count }.from(0)
-      end
+        it "changes when commune updates its code_insee" do
+          office.communes << communes[0]
 
-      it "doesn't change when an unknown code_insee is assigned to the office" do
-        expect { office.office_communes.create(code_insee: generate(:code_insee)) }
-          .to  not_change { communes[0].reload.offices_count }.from(0)
-          .and not_change { communes[1].reload.offices_count }.from(0)
-      end
+          expect { communes[0].update(code_insee: "64024") }
+            .to      change { communes[0].reload.offices_count }.from(1).to(0)
+            .and not_change { communes[1].reload.offices_count }.from(0)
+        end
 
-      it "changes when commune is removed from the office" do
-        office.communes << communes[0]
+        it "doesn't changes when another commune is assigned to the office" do
+          office.communes << communes[0]
 
-        expect { office.communes.delete(communes[0]) }
-          .to      change { communes[0].reload.offices_count }.from(1).to(0)
-          .and not_change { communes[1].reload.offices_count }.from(0)
-      end
-
-      it "changes when commune updates its code_insee" do
-        office.communes << communes[0]
-
-        expect { communes[0].update(code_insee: "64024") }
-          .to      change { communes[0].reload.offices_count }.from(1).to(0)
-          .and not_change { communes[1].reload.offices_count }.from(0)
-      end
-
-      it "doesn't changes when another commune is assigned to the office" do
-        office.communes << communes[0]
-
-        expect { office.communes << communes[1] }
-          .to  not_change { communes[0].reload.offices_count }.from(1)
-          .and     change { communes[1].reload.offices_count }.from(0).to(1)
+          expect { office.communes << communes[1] }
+            .to  not_change { communes[0].reload.offices_count }.from(1)
+            .and     change { communes[1].reload.offices_count }.from(0).to(1)
+        end
       end
     end
   end

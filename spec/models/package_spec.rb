@@ -14,14 +14,18 @@ RSpec.describe Package do
   # Validations
   # ----------------------------------------------------------------------------
   describe "validations" do
+    subject { build(:package) }
+
     it { is_expected.to validate_presence_of(:name) }
+    it { is_expected.to validate_presence_of(:reference) }
     it { is_expected.to validate_presence_of(:action) }
-    it { is_expected.to validate_inclusion_of(:action).in_array(Report::ACTIONS) }
+    it { is_expected.to validate_inclusion_of(:action).in_array(Package::ACTIONS) }
+    it { is_expected.to validate_uniqueness_of(:reference).case_insensitive }
   end
 
-  # Scopes methods
+  # Scopes
   # ----------------------------------------------------------------------------
-  describe "scopes methods" do
+  describe "scopes" do
     describe ".sandbox" do
       it "scopes packages not yet transmitted" do
         expect {
@@ -475,149 +479,220 @@ RSpec.describe Package do
   # Database constraints and triggers
   # ----------------------------------------------------------------------------
   describe "database constraints" do
-    let_it_be(:package) do
-      create(:package, action: "evaluation_hab", reference: "2023-05-0003")
-    end
-
     it "asserts the uniqueness of reference" do
+      create(:package, reference: "2023-05-0003")
+
       expect {
         create(:package, reference: "2023-05-0003")
       }.to raise_error(ActiveRecord::RecordNotUnique)
     end
 
-    it "asserts an action is allowed by not triggering DB constraints" do
+    it "asserts action is allowed by not triggering DB constraints" do
       expect {
-        package.update_column(:action, "evaluation_pro")
+        package = build(:package, action: "evaluation_hab")
+        package.save(validate: false)
       }.not_to raise_error
     end
 
-    it "asserts an action is not allowed by triggering DB constraints" do
+    it "asserts action is not allowed by triggering DB constraints" do
       expect {
-        package.update_column(:action, "evaluation_cfe")
+        package = build(:package, action: "evaluation_cfe")
+        package.save(validate: false)
       }.to raise_error(ActiveRecord::StatementInvalid)
     end
   end
 
   describe "database triggers" do
-    pending "TODO"
-  end
+    describe "about completed state" do
+      let!(:package) { create(:package) }
 
-  # Counter caches
-  # ----------------------------------------------------------------------------
-  describe "counter caches" do
-    let_it_be(:packages) { create_list(:package, 2) }
+      describe "#completed?" do
+        it "is false by default until reports_count is equal to zero" do
+          expect(package.completed?).to be(false)
+        end
 
-    describe "#reports_count" do
-      let(:report) { create(:report, package: packages[0]) }
+        it "is false when reports_count is superior than reports_completed_count" do
+          expect {
+            package.update_columns(reports_count: 3, reports_completed_count: 0)
+          }.not_to change { package.reload.completed? }.from(false)
+        end
 
-      it "changes on creation" do
-        expect { report }
-          .to      change { packages[0].reload.reports_count }.from(0).to(1)
-          .and not_change { packages[1].reload.reports_count }.from(0)
-      end
-
-      it "changes when report is assigned to another package" do
-        report
-        expect { report.update(package_id: packages[1].id) }
-          .to  change { packages[0].reload.reports_count }.from(1).to(0)
-          .and change { packages[1].reload.reports_count }.from(0).to(1)
-      end
-
-      it "changes on deletion" do
-        report
-        expect { report.destroy }
-          .to      change { packages[0].reload.reports_count }.from(1).to(0)
-          .and not_change { packages[1].reload.reports_count }.from(0)
+        it "is updated to true when reports_count is equal to reports_completed_count" do
+          expect {
+            package.update_columns(reports_count: 3, reports_completed_count: 3)
+          }.to change { package.reload.completed? }.to(true)
+        end
       end
     end
 
-    describe "#reports_completed_count" do
-      let(:completed_report) { create(:report, :completed, package: packages[0]) }
+    describe "about reports counters caches" do
+      let!(:collectivity) { create(:collectivity) }
+      let!(:packages)     { create_list(:package, 2, collectivity: collectivity) }
 
-      it "changes when report is completed" do
-        expect { completed_report }
-          .to      change { packages[0].reload.reports_completed_count }.from(0).to(1)
-          .and not_change { packages[1].reload.reports_completed_count }.from(0)
+      describe "#reports_count" do
+        let(:report) { build(:report, package: packages[0]) }
+
+        it "changes on creation" do
+          expect { report.save! }
+            .to      change { packages[0].reload.reports_count }.from(0).to(1)
+            .and not_change { packages[1].reload.reports_count }.from(0)
+        end
+
+        it "changes when report is assigned to another package" do
+          report.save!
+
+          expect { report.update_columns(package_id: packages[1].id) }
+            .to  change { packages[0].reload.reports_count }.from(1).to(0)
+            .and change { packages[1].reload.reports_count }.from(0).to(1)
+        end
+
+        it "changes on deletion" do
+          report.save!
+
+          expect { report.destroy }
+            .to      change { packages[0].reload.reports_count }.from(1).to(0)
+            .and not_change { packages[1].reload.reports_count }.from(0)
+        end
       end
 
-      it "changes on deletion" do
-        completed_report
-        expect { completed_report.destroy }
-          .to      change { packages[0].reload.reports_completed_count }.from(1).to(0)
-          .and not_change { packages[1].reload.reports_completed_count }.from(0)
-      end
-    end
+      describe "#reports_completed_count" do
+        let(:report) { build(:report, package: packages[0]) }
 
-    describe "#reports_approved_count" do
-      let(:approved_report) { create(:report, :approved, package: packages[0]) }
+        it "doesn't changes on creation" do
+          expect { report.save! }
+            .to  not_change { packages[0].reload.reports_completed_count }.from(0)
+            .and not_change { packages[1].reload.reports_completed_count }.from(0)
+        end
 
-      it "changes when report is approved" do
-        expect { approved_report }
-          .to      change { packages[0].reload.reports_approved_count }.from(0).to(1)
-          .and not_change { packages[1].reload.reports_approved_count }.from(0)
-      end
+        it "changes on creation when report is already completed" do
+          report.completed = true
 
-      it "changes on deletion" do
-        approved_report
-        expect { approved_report.destroy }
-          .to      change { packages[0].reload.reports_approved_count }.from(1).to(0)
-          .and not_change { packages[1].reload.reports_approved_count }.from(0)
-      end
-    end
+          expect { report.save! }
+            .to      change { packages[0].reload.reports_completed_count }.from(0).to(1)
+            .and not_change { packages[1].reload.reports_completed_count }.from(0)
+        end
 
-    describe "#reports_rejected_count" do
-      let(:rejected_report) { create(:report, :rejected, package: packages[0]) }
+        it "changes when report is completed" do
+          report.save!
 
-      it "changes when report is rejected" do
-        expect { rejected_report }
-          .to      change { packages[0].reload.reports_rejected_count }.from(0).to(1)
-          .and not_change { packages[1].reload.reports_rejected_count }.from(0)
-      end
+          expect { report.update_columns(completed: true) }
+            .to      change { packages[0].reload.reports_completed_count }.from(0).to(1)
+            .and not_change { packages[1].reload.reports_completed_count }.from(0)
+        end
 
-      it "changes on deletion" do
-        rejected_report
-        expect { rejected_report.destroy }
-          .to      change { packages[0].reload.reports_rejected_count }.from(1).to(0)
-          .and not_change { packages[1].reload.reports_rejected_count }.from(0)
-      end
-    end
+        it "changes when completed report is deleted" do
+          report.completed = true
+          report.save!
 
-    describe "#reports_debated_count" do
-      let(:debated_report) { create(:report, :debated, package: packages[0]) }
-
-      it "changes when report is debated" do
-        expect { debated_report }
-          .to      change { packages[0].reload.reports_debated_count }.from(0).to(1)
-          .and not_change { packages[1].reload.reports_debated_count }.from(0)
+          expect { report.delete }
+            .to      change { packages[0].reload.reports_completed_count }.from(1).to(0)
+            .and not_change { packages[1].reload.reports_completed_count }.from(0)
+        end
       end
 
-      it "changes on deletion" do
-        debated_report
-        expect { debated_report.destroy }
-          .to      change { packages[0].reload.reports_debated_count }.from(1).to(0)
-          .and not_change { packages[1].reload.reports_debated_count }.from(0)
+      describe "#reports_approved_count" do
+        let(:report) { build(:report, package: packages[0]) }
+
+        it "doesn't changes on creation" do
+          expect { report.save! }
+            .to  not_change { packages[0].reload.reports_approved_count }.from(0)
+            .and not_change { packages[1].reload.reports_approved_count }.from(0)
+        end
+
+        it "changes on creation when report is already approved" do
+          report.approved_at = Time.current
+
+          expect { report.save! }
+            .to      change { packages[0].reload.reports_approved_count }.from(0).to(1)
+            .and not_change { packages[1].reload.reports_approved_count }.from(0)
+        end
+
+        it "changes when report is approved" do
+          report.save!
+
+          expect { report.update_columns(approved_at: Time.current) }
+            .to      change { packages[0].reload.reports_approved_count }.from(0).to(1)
+            .and not_change { packages[1].reload.reports_approved_count }.from(0)
+        end
+
+        it "changes when approved report is deleted" do
+          report.approved_at = Time.current
+          report.save!
+
+          expect { report.delete }
+            .to      change { packages[0].reload.reports_approved_count }.from(1).to(0)
+            .and not_change { packages[1].reload.reports_approved_count }.from(0)
+        end
       end
-    end
 
-    describe "#completed" do
-      let(:empty_package) { create(:package) }
-      let(:reports) { create_list(:report, 2, package: packages[0]) }
+      describe "#reports_rejected_count" do
+        let(:report) { create(:report, package: packages[0]) }
 
-      it "is false when reports_count is equal to 0" do
-        expect { empty_package }
-          .to not_change { empty_package.reload.completed? }.from(false)
+        it "doesn't changes on creation" do
+          expect { report.save! }
+            .to  not_change { packages[0].reload.reports_rejected_count }.from(0)
+            .and not_change { packages[1].reload.reports_rejected_count }.from(0)
+        end
+
+        it "changes on creation when report is already rejected" do
+          report.rejected_at = Time.current
+
+          expect { report.save! }
+            .to      change { packages[0].reload.reports_rejected_count }.from(0).to(1)
+            .and not_change { packages[1].reload.reports_rejected_count }.from(0)
+        end
+
+        it "changes when report is rejected" do
+          report.save!
+
+          expect { report.update_columns(rejected_at: Time.current) }
+            .to      change { packages[0].reload.reports_rejected_count }.from(0).to(1)
+            .and not_change { packages[1].reload.reports_rejected_count }.from(0)
+        end
+
+        it "changes when rejected report is deleted" do
+          report.rejected_at = Time.current
+          report.save!
+
+          expect { report.delete }
+            .to      change { packages[0].reload.reports_rejected_count }.from(1).to(0)
+            .and not_change { packages[1].reload.reports_rejected_count }.from(0)
+        end
       end
 
-      it "is false when reports_count is not equal to reports_completed_count" do
-        expect { reports }
-          .to  not_change { packages[0].reload.completed? }.from(false)
-          .and not_change { packages[1].reload.completed? }.from(false)
-      end
+      describe "#reports_debated_count" do
+        let(:report) { create(:report, package: packages[0]) }
 
-      it "is true when reports_count is equal to reports_completed_count" do
-        expect { reports.each { |report| report.update(completed: true) } }
-          .to      change { packages[0].reload.completed? }.from(false).to(true)
-          .and not_change { packages[1].reload.completed? }.from(false)
+        it "doesn't changes on creation" do
+          expect { report.save! }
+            .to  not_change { packages[0].reload.reports_debated_count }.from(0)
+            .and not_change { packages[1].reload.reports_debated_count }.from(0)
+        end
+
+        it "changes on creation when report is already debated" do
+          report.debated_at = Time.current
+
+          expect { report.save! }
+            .to      change { packages[0].reload.reports_debated_count }.from(0).to(1)
+            .and not_change { packages[1].reload.reports_debated_count }.from(0)
+        end
+
+        it "changes when report is debated" do
+          report.save!
+
+          expect { report.update_columns(debated_at: Time.current) }
+            .to      change { packages[0].reload.reports_debated_count }.from(0).to(1)
+            .and not_change { packages[1].reload.reports_debated_count }.from(0)
+        end
+
+        it "changes when debated report is deleted" do
+          report.debated_at = Time.current
+          report.save!
+
+          expect { report.delete }
+            .to      change { packages[0].reload.reports_debated_count }.from(1).to(0)
+            .and not_change { packages[1].reload.reports_debated_count }.from(0)
+        end
       end
     end
   end
