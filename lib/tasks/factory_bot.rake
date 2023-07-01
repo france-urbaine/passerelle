@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 namespace :factory_bot do
-  desc "Verify that all FactoryBot factories are valid"
+  desc "Lint all FactoryBot factories"
   task lint: :environment do
     if Rails.env.test?
-      abort unless FactoryBot::AwesomeLinter.lint!
+      abort unless FactoryBot::AwesomeLinter.lint!(strategy: %i[create build_stubbed])
     else
       puts "Wrong environment detected to run factory_bot:lint"
       puts "Running `bundle exec bin/rails factory_bot:lint RAILS_ENV='test'` instead"
