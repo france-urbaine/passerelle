@@ -1,7 +1,7 @@
 = template_frame_component(src: @background_url) do |frame|
   - frame.with_modal do |modal|
     - modal.with_header do
-      | Suppression du paquet : #{@package.name}
+      | Suppression du paquet : #{@package.reference}
 
     - modal.with_form(url: url_for([@parent, @package]), method: :delete) do
       - unless @background_url.include?(package_path(@package))

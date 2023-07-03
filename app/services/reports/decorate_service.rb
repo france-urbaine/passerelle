@@ -52,8 +52,8 @@ module Reports
     def situation_categorie
       return unless situation_categorie?
 
-      case report.action
-      when "evaluation_hab", "occupation_hab"
+      case report.subject
+      when /(evaluation|occupation)_hab/
         I18n.t(super, scope: "enum.categorie_habitation")
       else
         I18n.t(super, scope: "enum.categorie_economique")
@@ -63,8 +63,8 @@ module Reports
     def proposition_categorie
       return unless proposition_categorie?
 
-      case report.action
-      when "evaluation_hab", "occupation_hab"
+      case report.subject
+      when /(evaluation|occupation)_hab/
         I18n.t(super, scope: "enum.categorie_habitation")
       else
         I18n.t(super, scope: "enum.categorie_economique")

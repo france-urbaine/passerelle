@@ -35,9 +35,9 @@ class OfficePolicy < ApplicationPolicy
 
   params_filter do |params|
     if super_admin?
-      params.permit(:ddfip_name, :ddfip_id, :name, :action)
+      params.permit(:ddfip_name, :ddfip_id, :name, competences: [])
     elsif ddfip_admin?
-      params.permit(:name, :action)
+      params.permit(:name, competences: [])
     end
   end
 end

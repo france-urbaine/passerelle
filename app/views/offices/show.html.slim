@@ -35,6 +35,10 @@
         dt Communes gérées
         dd= display_count(@office.communes_count, "commune") if @office.communes_count.positive?
 
+      .description-list__row
+        dt Compétences
+        dd= display_competences(@office.competences)
+
   - if allowed_to?(:index?, User, with: Offices::UserPolicy)
     .content__separator
 

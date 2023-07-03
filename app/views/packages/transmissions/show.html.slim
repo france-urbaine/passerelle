@@ -1,7 +1,7 @@
 = template_frame_component(src: @background_url) do |frame|
   - frame.with_modal do |modal|
     - modal.with_header do
-      | Transmissions du paquet : #{@package.name}
+      | Transmissions du paquet : #{@package.reference}
 
     - modal.with_form(url: package_transmission_path(@package), method: :patch) do
       = hidden_field_tag :redirect, modal.redirection_path

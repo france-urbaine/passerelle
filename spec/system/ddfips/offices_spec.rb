@@ -60,10 +60,15 @@ RSpec.describe "DDFIP offices" do
       expect(dialog).not_to have_field("DDFIP")
 
       expect(dialog).to have_field("Nom du guichet", with: nil)
-      expect(dialog).to have_select("Action",        selected: "Veuillez sélectionner")
+
+      within ".form-block", text: "Compétences" do |block|
+        expect(block).to have_unchecked_field("Tout sélectionner")
+        expect(block).to have_unchecked_field("Évaluation des locaux d'habitation")
+        expect(block).to have_unchecked_field("Évaluation des locaux professionnels")
+      end
 
       fill_in "Nom du guichet", with: "SIP de Pau"
-      select "Occupation de locaux d'habitation", from: "Action"
+      check   "Occupation des locaux d'habitation"
 
       click_on "Enregistrer"
     end
@@ -97,7 +102,11 @@ RSpec.describe "DDFIP offices" do
     within "[role=dialog]", text: "Modification du guichet" do |dialog|
       expect(dialog).to have_field("DDFIP",          with: "DDFIP des Pyrénées-Atlantiques")
       expect(dialog).to have_field("Nom du guichet", with: "PELP de Bayonne")
-      expect(dialog).to have_select("Action",        selected: "Évaluation de locaux professionnels")
+
+      within ".form-block", text: "Compétences" do |block|
+        expect(block).to have_unchecked_field("Évaluation des locaux d'habitation")
+        expect(block).to have_checked_field("Évaluation des locaux professionnels")
+      end
 
       fill_in "Nom du guichet", with: "PELP de Bayonne-Anglet-Biarritz"
       click_on "Enregistrer"

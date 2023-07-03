@@ -1,8 +1,12 @@
+# Add a created_at to offices in order to have implicit order
+# when listing them through `authorized_links_to_offices`
+
 pelp_bayonne:
   ddfip:          pyrenees_atlantiques
   name:           PELP de Bayonne
   users_count:    1
   communes_count: 2
+  created_at:     <%= 2.minutes.ago %>
   competences:
     - evaluation_local_professionnel
 
@@ -11,6 +15,7 @@ pelh_bayonne:
   name:           PELH de Bayonne
   users_count:    0
   communes_count: 0
+  created_at:     <%= 1.minute.ago %>
   competences:
     - evaluation_local_habitation
 

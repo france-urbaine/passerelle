@@ -27,16 +27,7 @@
       - if @user.organization.is_a?(DDFIP)
         .description-list__row
           dt Guichets
-          dd
-            - offices = @user.offices.kept.where(ddfip: @user.organization)
-            - offices.each.with_index do |office, index|
-              = authorized_link_to office do
-                = office.name
-
-              - if offices[index + 2]
-                = ", "
-              - elsif offices[index + 1]
-                = " et "
+          dd= authorized_links_to_offices(@user.offices, @user.organization_id)
 
       .description-list__row
         dt Adresse mail de contact

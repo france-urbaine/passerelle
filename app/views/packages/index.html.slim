@@ -20,15 +20,12 @@
       - if allowed_to?(:destroy_all?, Package)
         - selection.with_action "Tout supprimer", url_for([:remove_all, @parent, :packages]), modal: true
 
-    - datatable.with_column(:reference) { "Reference" }
-    - datatable.with_column(:name)   { "Paquet" }
-    - datatable.with_column(:action) { "Action" }
+    - datatable.with_column(:reference)    { "Reference" }
+    - datatable.with_column(:collectivity) { "Collectivité" } unless current_user.organization.is_a?(Collectivity)
 
-    - unless current_user.organization.is_a?(Collectivity)
-      - datatable.with_column(:collectivity)  { "Collectivité" }
-
-    - datatable.with_column(:due_on) { "Echéance" }
-    - datatable.with_column(:status) { "Etat" }
+    - datatable.with_column(:form_type) { "Type de signalement" }
+    - datatable.with_column(:due_on)    { "Echéance" }
+    - datatable.with_column(:status)    { "Etat" }
     - datatable.with_column(:reports_count,          numeric: true) { "Signalements" }
     - datatable.with_column(:reports_approved_count, numeric: true) { "Approuvés" }
     - datatable.with_column(:reports_rejected_count, numeric: true) { "Rejetés" }
@@ -55,27 +52,23 @@
         = authorized_link_to package do
           = package.reference
 
-      - row.with_column(:name) do
-        = authorized_link_to package do
-          = package.name
-
-      - row.with_column(:action) do
-        = t(package.action, scope: "enum.action")
-
       - row.with_column(:collectivity) do
         = authorized_link_to package.collectivity do
           = package.collectivity&.name
 
+      - row.with_column(:form_type) do
+        = t(package.form_type, scope: "enum.package_form_type")
+
       - row.with_column(:due_on) do
-        = l(package.due_on) if package.due_on
+        = l(package.due_on, format: :long) if package.due_on
 
       - row.with_column(:status) do
         - if package.approved?
-          .badge.badge--lime Paquet approuvé par la DDFIP
+          .badge.badge--lime Réception du paquet confirmée
         - elsif package.rejected?
-          .badge.badge--red Paquet rejeté par la DDFIP
+          .badge.badge--red Paquet rejeté
         - elsif package.transmitted?
-          .badge.badge--blue Paquet transmis
+          .badge.badge--blue Paquet transmis, en attente de confirmation
         - elsif package.completed?
           .badge.badge--yellow Paquet prêt
         - else

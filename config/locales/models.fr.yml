@@ -16,8 +16,10 @@ fr:
 
     attributes:
       package:
-        name:                 Intitulé du package
-        competence:           Compétence
+        form_type:            Formulaire type
+
+      package:
+        form_type:            Formulaire type
         due_on:               Date d'échéance
 
       publisher:
@@ -44,7 +46,7 @@ fr:
 
       office:
         name:             Nom du guichet
-        competence:       Compétence
+        competences:      Compétences
         ddfip:            DDFIP
         ddfip_id:         ID de la DDFIP
         ddfip_name:       Nom de la DDFIP

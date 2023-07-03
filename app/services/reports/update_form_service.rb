@@ -42,8 +42,8 @@ module Reports
     end
 
     def categorie_label
-      case action
-      when "evaluation_hab", "occupation_hab"
+      case subject
+      when /(evaluation|occupation)_hab/
         "Catégorie de local d'habitation"
       else
         "Catégorie de local professionnel"
@@ -51,8 +51,8 @@ module Reports
     end
 
     def categorie_options
-      case action
-      when "evaluation_hab", "occupation_hab"
+      case subject
+      when /(evaluation|occupation)_hab/
         I18n.t("enum.categorie_habitation").map(&:reverse)
       else
         I18n.t("enum.categorie_economique").map(&:reverse)

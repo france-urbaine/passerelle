@@ -73,4 +73,11 @@ module FormatHelper
       I18n.l(date, format: "%-d %B %Y")
     end
   end
+
+  def display_competences(competences)
+    competences
+      .map { |value| t(value, scope: "enum.competence") }
+      .to_sentence(last_word_connector: " & ", two_words_connector: " & ")
+      .humanize
+  end
 end

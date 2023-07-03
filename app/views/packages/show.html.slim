@@ -2,7 +2,7 @@
   = breadcrumbs_component do |breadcrumbs|
     - breadcrumbs.with_path "Echanges"
     - breadcrumbs.with_path "Paquets", packages_path
-    - breadcrumbs.with_path @package.name
+    - breadcrumbs.with_path @package.reference
 
     - if allowed_to?(:transmit?, @package)
       - breadcrumbs.with_action "Transmettre", package_transmission_path(@package), icon: "cloud-arrow-up", primary: true, modal: true
@@ -29,11 +29,11 @@
     .subheader-bar__actions
       .subheader-bar__action
         - if @package.approved?
-          .badge.badge--lime Paquet approuvé par la DDFIP
+          .badge.badge--lime Réception du paquet confirmée
         - elsif @package.rejected?
-          .badge.badge--red Paquet rejeté par la DDFIP
+          .badge.badge--red Paquet rejeté
         - elsif @package.transmitted?
-          .badge.badge--blue Paquet transmis
+          .badge.badge--blue Paquet transmis, en attente de confirmation
         - elsif @package.completed?
           .badge.badge--yellow Paquet prêt
         - else
@@ -42,20 +42,16 @@
   .card
     dl.description-list
       .description-list__row
-        dt Référence du paquet
-        dd= @package.reference
-
-      .description-list__row
         dt Date de transmission
         dd
           - if @package.transmitted?
-            = l(@package.transmitted_at.to_date)
+            = l(@package.transmitted_at.to_date, format: :long)
           - else
             em Non transmis
 
       .description-list__row
         dt Date d'échéance
-        dd= l(@package.due_on) if @package.due_on
+        dd= l(@package.due_on, format: :long) if @package.due_on
 
   - if allowed_to?(:index?, Report)
     .content__separator

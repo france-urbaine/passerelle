@@ -101,12 +101,4 @@
           '
 
       - row.with_column(:offices) do
-        - offices = user.offices.select { |office| office.kept? && office.ddfip_id == @parent.id }
-        - offices.each.with_index do |office, index|
-          = authorized_link_to office do
-            = office.name
-
-          - if offices[index + 2]
-            = ", "
-          - elsif offices[index + 1]
-            = " et "
+        = authorized_links_to_offices(user.offices, @parent.id, truncate: true)

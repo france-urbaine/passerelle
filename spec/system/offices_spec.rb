@@ -88,14 +88,18 @@ RSpec.describe "Offices" do
     within "[role=dialog]", text: "Création d'un nouveau guichet" do |dialog|
       expect(dialog).to have_field("DDFIP",          with: nil)
       expect(dialog).to have_field("Nom du guichet", with: nil)
-      expect(dialog).to have_select("Action",        selected: "Veuillez sélectionner")
+
+      within ".form-block", text: "Compétences" do |block|
+        expect(block).to have_unchecked_field("Tout sélectionner")
+        expect(block).to have_unchecked_field("Évaluation des locaux d'habitation")
+        expect(block).to have_unchecked_field("Évaluation des locaux professionnels")
+      end
 
       fill_in "DDFIP", with: "64"
       select_option "DDFIP des Pyrénées-Atlantiques", from: "DDFIP"
 
       fill_in "Nom du guichet", with: "SIP de Pau"
-
-      select "Occupation de locaux d'habitation", from: "Action"
+      check   "Occupation des locaux d'habitation"
 
       click_on "Enregistrer"
     end
@@ -129,7 +133,11 @@ RSpec.describe "Offices" do
     within "[role=dialog]", text: "Modification du guichet" do |dialog|
       expect(dialog).to have_field("DDFIP",          with: "DDFIP des Pyrénées-Atlantiques")
       expect(dialog).to have_field("Nom du guichet", with: "PELP de Bayonne")
-      expect(dialog).to have_select("Action",        selected: "Évaluation de locaux professionnels")
+
+      within ".form-block", text: "Compétences" do |block|
+        expect(block).to have_unchecked_field("Évaluation des locaux d'habitation")
+        expect(block).to have_checked_field("Évaluation des locaux professionnels")
+      end
 
       fill_in "Nom du guichet", with: "PELP de Bayonne-Anglet-Biarritz"
       click_on "Enregistrer"
@@ -164,7 +172,11 @@ RSpec.describe "Offices" do
     within "[role=dialog]", text: "Modification du guichet" do |dialog|
       expect(dialog).to have_field("DDFIP",          with: "DDFIP des Pyrénées-Atlantiques")
       expect(dialog).to have_field("Nom du guichet", with: "PELP de Bayonne")
-      expect(dialog).to have_select("Action",        selected: "Évaluation de locaux professionnels")
+
+      within ".form-block", text: "Compétences" do |block|
+        expect(block).to have_unchecked_field("Évaluation des locaux d'habitation")
+        expect(block).to have_checked_field("Évaluation des locaux professionnels")
+      end
 
       fill_in "Nom du guichet", with: "PELP de Bayonne-Anglet-Biarritz"
       click_on "Enregistrer"
@@ -174,7 +186,7 @@ RSpec.describe "Offices" do
     # The office should have changed its name
     #
     expect(page).to have_current_path(office_path(pelp_bayonne))
-    expect(page).to have_selector(:table_row, "Guichet" => "PELP de Bayonne-Anglet-Biarritz")
+    expect(page).to have_selector("h1", text: "PELP de Bayonne-Anglet-Biarritz")
 
     # The dialog should be closed
     # A notification should be displayed

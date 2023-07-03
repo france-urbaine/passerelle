@@ -3,7 +3,7 @@
 module Reports
   class CreateService < FormService
     attr_reader :report
-    attr_accessor :subject
+    attr_accessor :form_type
 
     def initialize(report, current_user = nil, attributes = {})
       @report       = report
@@ -15,20 +15,14 @@ module Reports
     end
 
     before_validation do
-      @report.subject      = subject
-      @report.action       = generate_action
+      @report.anomalies    = []
+      @report.form_type    = form_type
       @report.collectivity = @collectivity
       @report.package      = find_or_build_package
       @report.reference    = generate_reference
     end
 
     private
-
-    def generate_action
-      return unless subject&.match(%r{\A(?<action>[^/]+)/.+})
-
-      $LAST_MATCH_INFO[:action]
-    end
 
     def find_or_build_package
       policy   = PackagePolicy.new(user: @current_user)
@@ -40,7 +34,6 @@ module Reports
       )
 
       packages.first_or_initialize do |package|
-        package.name      = I18n.t(@report.action, scope: "enum.action")
         package.reference = Packages::GenerateReferenceService.new.generate
       end
     end

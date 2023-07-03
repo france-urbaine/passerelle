@@ -32,7 +32,7 @@ module DDFIPs
 
     params_filter do |params|
       if super_admin?
-        params.permit(:name, :action)
+        params.permit(:name, competences: [])
       else
         {}
       end

@@ -24,11 +24,11 @@
     = form.label :name
     = form.text_field :name, required: true
 
-  = form.block :action do
-    - options = Office::ACTIONS.map { |s| [translate(s, scope: "enum.action"), s] }
+  = form.block :competences do
+    - options = Office::COMPETENCES.map { |s| [translate(s, scope: "enum.competence"), s] }
 
-    = form.label :action
-    = form.select :action, options, required: true, prompt: true
+    = form.label :competences
+    = form.checkboxes_component :competences, options, :last, :first
 
 - modal.with_submit_action "Enregistrer"
 - modal.with_close_action "Annuler"

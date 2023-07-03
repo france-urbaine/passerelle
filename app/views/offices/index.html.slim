@@ -15,16 +15,16 @@
         - selection.with_action "Tout supprimer", url_for([:remove_all, @parent, :offices]), modal: true
 
     - if @parent.is_a?(DDFIP)
-      - datatable.with_column(:name, sort: true)   { "Guichet" }
-      - datatable.with_column(:action, sort: true) { "Action" }
+      - datatable.with_column(:name,       sort: true) { "Guichet" }
+      - datatable.with_column(:competence, sort: true) { "Compétence" }
     - elsif @parent
-      - datatable.with_column(:ddfip, sort: true)  { "DDFIP" }
-      - datatable.with_column(:name,  sort: true)  { "Guichet" }
-      - datatable.with_column(:action, sort: true) { "Action" }
+      - datatable.with_column(:ddfip,      sort: true) { "DDFIP" }
+      - datatable.with_column(:name,       sort: true) { "Guichet" }
+      - datatable.with_column(:competence, sort: true) { "Compétence" }
     - else
-      - datatable.with_column(:name,  sort: true)  { "Guichet" }
-      - datatable.with_column(:ddfip, sort: true)  { "DDFIP" }
-      - datatable.with_column(:action, sort: true) { "Action" }
+      - datatable.with_column(:name,       sort: true) { "Guichet" }
+      - datatable.with_column(:ddfip,      sort: true) { "DDFIP" }
+      - datatable.with_column(:competence, sort: true) { "Compétence" }
 
     - if allowed_to?(:show?, Office, with: OfficePolicy)
       - datatable.with_column(:users,         numeric: true) { "Utilisateurs" }
@@ -57,8 +57,8 @@
         = authorized_link_to office.ddfip do
           = office.ddfip.name
 
-      - row.with_column(:action) do
-        = t(office.action, scope: "enum.action")
+      - row.with_column(:competence) do
+        = display_competences(office.competences)
 
       - row.with_column(:users) do
         = number_with_delimiter(office.users_count) if office.users_count.positive?

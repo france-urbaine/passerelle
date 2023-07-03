@@ -5,28 +5,39 @@ fr:
       medium:  Moyenne
       high:    Haute
 
-    action:
-      evaluation_hab: "Évaluation de locaux d'habitation"
-      evaluation_pro: "Évaluation de locaux professionnels"
-      occupation_hab: "Occupation de locaux d'habitation"
-      occupation_pro: "Occupation de locaux professionnels"
+    competence:
+      evaluation_local_habitation:           "Évaluation des locaux d'habitation"
+      evaluation_local_professionnel:        "Évaluation des locaux professionnels"
+      creation_local_habitation:             "Création des locaux d'habitation"
+      creation_local_professionnel:          "Création des locaux professionnels"
+      occupation_local_habitation:           "Occupation des locaux d'habitation"
+      occupation_local_professionnel:        "Occupation des locaux professionnels"
 
-    subject:
-      evaluation_hab:
-        evaluation_hab/evaluation:          "Problème d'évaluation d'un local d'habitation"
-        evaluation_hab/exoneration:         "Problème d'exonération d'un local d'habitation"
-        evaluation_hab/affectation:         "Problème d'affectation d'un local d'habitation"
-        evaluation_hab/adresse:             "Problème d'adresse d'un local d'habitation"
-        evaluation_hab/omission_batie:      "Omission bâtie sur un local d'habitation"
-        evaluation_hab/achevement_travaux:  "Achèvement de travaux sur un local d'habitation"
+    package_form_type:
+      evaluation_local_habitation:           "Évaluations de locaux d'habitation"
+      evaluation_local_professionnel:        "Évaluations de locaux professionnels"
+      creation_local_habitation:             "Créations de locaux d'habitation"
+      creation_local_professionnel:          "Créations de locaux professionnels"
+      occupation_local_habitation:           "Occupations de locaux d'habitation"
+      occupation_local_professionnel:        "Occupations de locaux professionnels"
 
-      evaluation_pro:
-        evaluation_pro/evaluation:          "Problème d'évaluation d'un local professionnel"
-        evaluation_pro/exoneration:         "Problème d'exonération d'un local professionnel"
-        evaluation_pro/affectation:         "Problème d'affectation d'un local professionnel"
-        evaluation_pro/adresse:             "Problème d'adresse d'un local professionnel"
-        evaluation_pro/omission_batie:      "Omission bâtie sur un local professionnel"
-        evaluation_pro/achevement_travaux:  "Achèvement de travaux sur un local professionnel"
+    report_form_type:
+      evaluation_local_habitation:           "Évaluation d'un local d'habitation"
+      evaluation_local_professionnel:        "Évaluation d'un local professionnel"
+      creation_local_habitation:             "Création d'un local d'habitation"
+      creation_local_professionnel:          "Création d'un local professionnel"
+      occupation_local_habitation:           "Occupation d'un local d'habitation"
+      occupation_local_professionnel:        "Occupation d'un local professionnel"
+
+    anomalies:
+      consistance:          Changement de consistance
+      affectation:          Changement d'affectation
+      exoneration:          Exonération à tort
+      adresse:              Changement d'adresse
+      correctif:            Anomalie correctif d'ensemble
+      omission_batie:       Omission bâtie
+      achevement_travaux:   Achèvementdetravaux
+      occupation:           Occupation du local
 
     affectation:
       A: "Locaux commerciaux et biens divers passibles de la TH"

@@ -61,19 +61,19 @@ module Reports
     private
 
     def require_situation_majic?
-      %w[evaluation_hab evaluation_pro].include?(action)
+      form_type.match?(/^evaluation_local_/)
     end
 
     def require_situation_evaluatuation_hab?
-      subject == "evaluation_hab/evaluation"
+      form_type == "evaluation_local_habitation"
     end
 
     def require_proposition_evaluatuation_hab?
-      subject == "evaluation_hab/evaluation"
+      form_type == "evaluation_local_habitation"
     end
 
     def require_proposition_address?
-      subject == "evaluation_hab/adresse"
+      form_type == "evaluation_hab/adresse"
     end
 
     SITUATION_ADDRESSE_ATTRIBUTES = %w[

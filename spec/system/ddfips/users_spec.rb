@@ -47,7 +47,7 @@ RSpec.describe "DDFIP users" do
     expect(page).not_to have_button("Options d'affichage")
   end
 
-  it "invites an user from the DDFIP page" do
+  fit "invites an user from the DDFIP page" do
     visit ddfip_path(ddfip64)
 
     # A button should be present to add a new user
@@ -86,8 +86,7 @@ RSpec.describe "DDFIP users" do
     expect(page).to have_current_path(ddfip_path(ddfip64))
     expect(page).to have_selector("h1", text: "DDFIP des Pyrénées-Atlantiques")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Elliot Alderson") do |row|
-      expect(row).to have_text("PELP de Bayonne")
-      expect(row).to have_text("PELH de Bayonne")
+      expect(row).to have_text("PELP de Bayonne & 1 autre")
     end
 
     # The dialog should be closed

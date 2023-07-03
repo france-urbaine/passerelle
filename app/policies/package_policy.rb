@@ -105,11 +105,7 @@ class PackagePolicy < ApplicationPolicy
   end
 
   params_filter do |params|
-    if collectivity? || publisher?
-      params.permit(:name, :due_on)
-    elsif ddfip_admin?
-      params.permit(:approved_at, :rejected_at)
-    end
+    params.permit(:due_on) if collectivity? || publisher?
   end
 
   private
@@ -182,7 +178,7 @@ class PackagePolicy < ApplicationPolicy
     Package.kept.packing
       .sent_by_collectivity(organization)
       .packed_through_web_ui
-      .where(action: report.action)
+      .where(form_type: report.form_type)
   end
 
   def packages_to_pack_report_by_publisher(report)
@@ -191,7 +187,7 @@ class PackagePolicy < ApplicationPolicy
     Package.kept.packing
       .sent_by_publisher(organization)
       .sent_by_collectivity(report.collectivity)
-      .where(action: report.action)
+      .where(form_type: report.form_type)
   end
 
   # Assert if a package can be updated by an user

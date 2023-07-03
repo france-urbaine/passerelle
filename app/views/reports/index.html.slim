@@ -6,14 +6,19 @@
     - if allowed_to?(:create?, Report, with: ReportPolicy)
       - breadcrumbs.with_action "Ajouter un signalement", new_report_path, icon: "plus", modal: true, primary: true
 
-  - case current_user.organization
-  - when Collectivity then @reports = @reports.preload(:commune, :package)
-  - when Publisher    then @reports = @reports.preload(:collectivity, :commune, :package)
-  - when DDFIP
-    - if current_user.organization_admin?
-      - @reports = @reports.preload(:collectivity, :commune, :package, :workshop)
-    - else
-      - @reports = @reports.preload(:commune, :workshop)
+  ruby:
+    @reports = @reports.preload(:commune)
+
+    case current_user.organization
+    when Collectivity then @reports.preload!(:package)
+    when Publisher    then @reports.preload!(:package, :collectivity)
+    when DDFIP
+      if current_user.organization_admin?
+        @reports.preload!(:collectivity, :package, :workshop)
+      else
+        @reports.preload!(:collectivity, :workshop)
+      end
+    end
 
   = datatable_component(@reports.preload(:package)) do |datatable|
     - datatable.with_search
@@ -30,33 +35,37 @@
 
     - case current_user.organization
     - when Collectivity
-      - datatable.with_column(:subject)    { "Sujet" }
+      - datatable.with_column(:package)    { "Paquet" }
+      - datatable.with_column(:form_type)  { "Type de signalement" }
       - datatable.with_column(:invariant)  { "Invariant" }
       - datatable.with_column(:adresse)    { "Adresse" }
       - datatable.with_column(:commune)    { "Commune" }
-      - datatable.with_column(:package)    { "Paquet" }
 
     - when Publisher
+      - datatable.with_column(:package)       { "Paquet" }
       - datatable.with_column(:collectivity)  { "Collectivité" }
-      - datatable.with_column(:subject)       { "Sujet" }
+      - datatable.with_column(:form_type)     { "Type de signalement" }
       - datatable.with_column(:invariant)     { "Invariant" }
       - datatable.with_column(:adresse)       { "Adresse" }
       - datatable.with_column(:commune)       { "Commune" }
-      - datatable.with_column(:package)       { "Paquet" }
 
     - when DDFIP
-      - datatable.with_column(:subject)       { "Sujet" }
-      - datatable.with_column(:invariant)     { "Invariant" }
-      - datatable.with_column(:adresse)       { "Adresse" }
-      - datatable.with_column(:commune)       { "Commune" }
-
       - if current_user.organization_admin?
-        - datatable.with_column(:collectivity) { "Collectivité" }
-        - datatable.with_column(:package)      { "Paquet" }
-        - datatable.with_column(:workshop)     { "Dossier" }
-        - datatable.with_column(:office)       { "Guichet" }
+        - datatable.with_column(:package)       { "Paquet" }
+        - datatable.with_column(:collectivity)  { "Collectivité" }
+        - datatable.with_column(:office)        { "Guichet" }
+        - datatable.with_column(:workshop)      { "Dossier" }
+        - datatable.with_column(:form_type)     { "Type de signalement" }
+        - datatable.with_column(:invariant)     { "Invariant" }
+        - datatable.with_column(:adresse)       { "Adresse" }
+        - datatable.with_column(:commune)       { "Commune" }
       - else
-        - datatable.with_column(:workshop)     { "Dossier" }
+        - datatable.with_column(:collectivity)  { "Collectivité" }
+        - datatable.with_column(:workshop)      { "Dossier" }
+        - datatable.with_column(:form_type)     { "Type de signalement" }
+        - datatable.with_column(:invariant)     { "Invariant" }
+        - datatable.with_column(:adresse)       { "Adresse" }
+        - datatable.with_column(:commune)       { "Commune" }
 
     - datatable.with_column(:priority, compact: true) { "Priorité" }
     - datatable.with_column(:status,   compact: true) { "Etat" }
@@ -74,9 +83,19 @@
         = authorized_link_to report do
           = report.reference
 
-      - row.with_column(:subject) do
-        = authorized_link_to report do
-          = t(report.subject, scope: ["enum.subject", report.action])
+      - row.with_column(:collectivity) do
+        = authorized_link_to report.collectivity do
+          = report.collectivity.name
+
+      - row.with_column(:package) do
+        = authorized_link_to report.package do
+          = report.package.reference
+
+      - row.with_column(:form_type) do
+        = t(report.form_type, scope: "enum.report_form_type")
+
+      - row.with_column(:workshop) do
+        = report.workshop&.name
 
       - row.with_column(:invariant) do
         = report.situation_invariant
@@ -86,17 +105,6 @@
 
       - row.with_column(:commune) do
         = report.commune&.name
-
-      - row.with_column(:collectivity) do
-        = authorized_link_to report.collectivity do
-          = report.collectivity.name
-
-      - row.with_column(:package) do
-        = authorized_link_to report.package do
-          = report.package.name
-
-      - row.with_column(:workshop) do
-        = report.workshop&.name
 
       - row.with_column(:priority) do
         - case report.priority
@@ -108,8 +116,18 @@
           = svg_icon("chart-bar", "Haute", class: "high-priority-icon")
 
       - row.with_column(:status) do
-        - if report.transmitted?
+        - if report.approved?
+          .badge.badge--lime Signalement approuvé
+        - elsif report.rejected?
+          .badge.badge--red Signalement rejeté
+        - elsif report.debated?
+          .badge.badge--orange Demande d'informations complémentaires
+        - elsif report.transmitted? && report.package.approved?
           .badge.badge--blue Signalement transmis
+        - elsif report.transmitted? && report.package.rejected?
+          .badge.badge--blue Paquet rejeté
+        - elsif report.transmitted?
+          .badge.badge--blue Paquet transmis, en attente de confirmation
         - elsif report.completed?
           .badge.badge--yellow Signalement complété
         - else

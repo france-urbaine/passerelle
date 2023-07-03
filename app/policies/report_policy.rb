@@ -64,7 +64,8 @@ class ReportPolicy < ApplicationPolicy
 
   params_filter do |params|
     if collectivity?
-      attributes = %i[subject priority code_insee date_constat enjeu observations]
+      attributes = %i[form_type priority code_insee date_constat enjeu observations]
+      attributes << { anomalies: [] }
       attributes += Report.column_names.grep(/^(situation|proposition)_/).map(&:to_sym)
 
       params.permit(*attributes)
