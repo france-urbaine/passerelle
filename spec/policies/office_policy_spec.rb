@@ -197,7 +197,7 @@ RSpec.describe OfficePolicy do
         ddfip_name:     "DDFIP des Pays de la Loire",
         ddfip_id:       "f4e6854a-00fb-48c4-b669-5f0623e07778",
         name:           "PELP de Nantes",
-        action:         "evaluation_pro",
+        competences:    %w[evaluation_local_professionnel],
         users_count:    200,
         something_else: "true"
       }
@@ -209,7 +209,7 @@ RSpec.describe OfficePolicy do
           .to  include(ddfip_name:         attributes[:ddfip_name])
           .and include(ddfip_id:           attributes[:ddfip_id])
           .and include(name:               attributes[:name])
-          .and include(action:             attributes[:action])
+          .and include(competences:        attributes[:competences])
           .and not_include(users_count:    attributes[:users_count])
           .and not_include(something_else: attributes[:something_else])
       end
@@ -219,9 +219,9 @@ RSpec.describe OfficePolicy do
       it do
         is_expected
           .to  include(name:               attributes[:name])
-          .and include(action:             attributes[:action])
-          .and not_include(ddfip_name:         attributes[:ddfip_name])
-          .and not_include(ddfip_id:           attributes[:ddfip_id])
+          .and include(competences:        attributes[:competences])
+          .and not_include(ddfip_name:     attributes[:ddfip_name])
+          .and not_include(ddfip_id:       attributes[:ddfip_id])
           .and not_include(users_count:    attributes[:users_count])
           .and not_include(something_else: attributes[:something_else])
       end

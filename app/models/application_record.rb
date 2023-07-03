@@ -8,6 +8,12 @@ class ApplicationRecord < ActiveRecord::Base
   include ScoredOrder
   include SkipUniquenessValidation
 
+  class ArrayValidator < ActiveModel::EachValidator
+    def validate_each(record, attribute, value)
+      record.errors.add(attribute, :must_be_an_array, **options) unless value.is_a?(Array)
+    end
+  end
+
   primary_abstract_class
 
   self.abstract_class        = true

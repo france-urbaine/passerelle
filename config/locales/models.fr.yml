@@ -17,6 +17,7 @@ fr:
     attributes:
       package:
         name:                 Intitulé du package
+        competence:           Compétence
         due_on:               Date d'échéance
 
       publisher:
@@ -43,7 +44,7 @@ fr:
 
       office:
         name:             Nom du guichet
-        action:           Action
+        competence:       Compétence
         ddfip:            DDFIP
         ddfip_id:         ID de la DDFIP
         ddfip_name:       Nom de la DDFIP
@@ -111,9 +112,13 @@ fr:
       models:
         report:
           attributes:
-            subject:
-              blank:     L'objet du signalement est requis
-              invalid:   Cet objet n'est n'est pas valide
+            form_type:
+              blank:     Un formulaire type est requis
+              invalid:   Ce formulaire n'est n'est pas valide
+
+            anomalies:
+              must_be_an_array: "Les anomalies doivent être soumis sous la forme d'un tableau de valeurs"
+              inclusion:        "Certaines anomalies ne sont pas compatibles avec ce type de formulaire"
 
         package:
           attributes:
@@ -168,9 +173,10 @@ fr:
               blank:     Un nom est requis
               taken:     Ce nom est déjà attribué
 
-            action:
-              blank:     Une action est requise
-              inclusion: Cette action n'est pas incluse dans la liste
+            competences:
+              blank:            Une sélection de compétence est requise
+              must_be_an_array: "Les compétences doivent être soumises sous la forme d'un tableau de valeurs"
+              inclusion:        Certaines compétences ne sont pas incluses dans la liste
 
             ddfip:
               required:  Une DDFIP est requise

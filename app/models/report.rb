@@ -17,8 +17,8 @@
 #  debated_at                                     :datetime
 #  discarded_at                                   :datetime
 #  reference                                      :string           not null
-#  action                                         :enum             not null
-#  subject                                        :string           not null
+#  form_type                                      :enum             not null
+#  anomalies                                      :enum             not null, is an Array
 #  completed                                      :boolean          default(FALSE), not null
 #  priority                                       :enum             default("low"), not null
 #  code_insee                                     :string
@@ -90,13 +90,12 @@
 #
 # Indexes
 #
-#  index_reports_on_collectivity_id     (collectivity_id)
-#  index_reports_on_package_id          (package_id)
-#  index_reports_on_publisher_id        (publisher_id)
-#  index_reports_on_reference           (reference) UNIQUE
-#  index_reports_on_sibling_id          (sibling_id)
-#  index_reports_on_subject_uniqueness  (sibling_id,subject) UNIQUE WHERE (discarded_at IS NULL)
-#  index_reports_on_workshop_id         (workshop_id)
+#  index_reports_on_collectivity_id  (collectivity_id)
+#  index_reports_on_package_id       (package_id)
+#  index_reports_on_publisher_id     (publisher_id)
+#  index_reports_on_reference        (reference) UNIQUE
+#  index_reports_on_sibling_id       (sibling_id)
+#  index_reports_on_workshop_id      (workshop_id)
 #
 # Foreign Keys
 #
@@ -119,7 +118,7 @@ class Report < ApplicationRecord
   has_many :potential_office_communes, -> { distinct }, class_name: "OfficeCommune", primary_key: :code_insee, foreign_key: :code_insee, inverse_of: false, dependent: false
   has_many :potential_offices,         -> { distinct }, through: :potential_office_communes, source: :office
 
-  has_many :offices, ->(report) { distinct.where(action: report.action) }, through: :potential_office_communes, source: :office
+  has_many :offices, ->(report) { distinct.where(competences: report.competence) }, through: :potential_office_communes, source: :office
 
   # Attachments
   # ----------------------------------------------------------------------------
@@ -128,35 +127,43 @@ class Report < ApplicationRecord
 
   # Validations
   # ----------------------------------------------------------------------------
-  ACTIONS    = %w[evaluation_hab evaluation_pro].freeze
   PRIORITIES = %w[low medium high].freeze
 
-  SUBJECTS = %w[
-    evaluation_hab/evaluation
-    evaluation_hab/exoneration
-    evaluation_hab/affectation
-    evaluation_hab/adresse
-    evaluation_hab/omission_batie
-    evaluation_hab/achevement_travaux
-    evaluation_pro/evaluation
-    evaluation_pro/exoneration
-    evaluation_pro/affectation
-    evaluation_pro/adresse
-    evaluation_pro/omission_batie
-    evaluation_pro/achevement_travaux
+  FORM_TYPES = %w[
+    evaluation_local_habitation
+    evaluation_local_professionnel
+    creation_local_habitation
+    creation_local_professionnel
+    occupation_local_habitation
+    occupation_local_professionnel
   ].freeze
 
-  validates :action,    presence: true, inclusion: { in: ACTIONS, allow_blank: true }
-  validates :subject,   presence: true, inclusion: { in: SUBJECTS, allow_blank: true }
+  EVALUATION_ANOMALIES = %w[
+    consistance
+    affectation
+    exoneration
+    adresse
+    correctif
+  ].freeze
+
+  CREATION_ANOMALIES = %w[
+    omission_batie
+    achevement_travaux
+  ].freeze
+
+  OCCUPATION_ANOMALIES = %w[
+    occupation
+    adresse
+  ].freeze
+
   validates :reference, presence: true, uniqueness: { unless: :skip_uniqueness_validation_of_reference? }
+  validates :form_type, presence: true, inclusion: { in: FORM_TYPES, allow_blank: true }
 
-  validates :subject,   uniqueness: {
-    scope:      :sibling_id,
-    unless:     -> { skip_uniqueness_validation_of_subject? || situation_invariant.blank? },
-    conditions: -> { kept }
-  }
-
-  validates :priority, inclusion: { in: PRIORITIES }
+  validates :anomalies, array: true
+  validates :anomalies, inclusion: { in: EVALUATION_ANOMALIES, allow_blank: true, if: :evaluation_form_type? }
+  validates :anomalies, inclusion: { in: CREATION_ANOMALIES,   allow_blank: true, if: :creation_form_type? }
+  validates :anomalies, inclusion: { in: OCCUPATION_ANOMALIES, allow_blank: true, if: :occupation_form_type? }
+  validates :priority,  inclusion: { in: PRIORITIES }
 
   with_options allow_blank: true do
     validates :situation_annee_majic, numericality: {
@@ -221,9 +228,9 @@ class Report < ApplicationRecord
   end
 
   def valid_categories
-    case action
-    when "evaluation_hab", "occupation_hab" then I18n.t("enum.categorie_habitation").keys
-    when "evaluation_pro", "occupation_pro" then I18n.t("enum.categorie_economique").keys
+    case form_type
+    when /(evaluation|creation|occupation)_local_habitation/    then I18n.t("enum.categorie_habitation").keys
+    when /(evaluation|creation|occupation)_local_professionnel/ then I18n.t("enum.categorie_economique").keys
     end
   end
 
@@ -271,12 +278,12 @@ class Report < ApplicationRecord
       distinct
         .joins(:potential_offices)
         .merge(office)
-        .where(arel_table[:action].eq(Office.arel_table[:action]))
+        .where(%{"reports"."form_type" = ANY ("offices"."competences")})
     else
       distinct
         .joins(:potential_office_communes)
         .merge(OfficeCommune.where(office: office))
-        .where(action: office.action)
+        .where(form_type: office.competences)
     end
   }
 
@@ -360,18 +367,50 @@ class Report < ApplicationRecord
   end
 
   def covered_by_office?(office)
-    office.action == action && office.communes.where(code_insee: code_insee).exist?
+    office.competences.include?(form_type) && office.communes.where(code_insee: code_insee).exist?
   end
 
   def covered_by_offices?(offices)
     offices.joins(:communes)
-      .where(action: action)
+      .where(%{? = ANY ("offices"."competences")}, form_type)
       .merge(Commune.where(code_insee: code_insee))
       .exists?
   end
 
+  def evaluation_form_type?
+    %w[
+      evaluation_local_habitation
+      evaluation_local_professionnel
+    ].include?(form_type)
+  end
+
+  def creation_form_type?
+    %w[
+      creation_local_habitation
+      creation_local_professionnel
+    ].include?(form_type)
+  end
+
+  def occupation_form_type?
+    %w[
+      occupation_local_habitation
+      occupation_local_professionnel
+    ].include?(form_type)
+  end
+
   # Updates methods
   # ----------------------------------------------------------------------------
+  # When no selection is made for a collection of checkboxes, most web browsers
+  # wont't send any value.
+  #
+  # `collection_check_boxes` adds a blank value to the array:
+  #   ["", "consistance", "adresse"]
+  #
+  def anomalies=(value)
+    value.compact_blank! if value.is_a?(Array)
+    super(value)
+  end
+
   def approve!
     return true if approved?
 

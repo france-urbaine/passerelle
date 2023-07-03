@@ -7,9 +7,9 @@
 #  id                      :uuid             not null, primary key
 #  collectivity_id         :uuid             not null
 #  publisher_id            :uuid
-#  name                    :string           not null
+#  name                    :string
 #  reference               :string           not null
-#  action                  :enum             not null
+#  form_type               :enum             not null
 #  created_at              :datetime         not null
 #  updated_at              :datetime         not null
 #  transmitted_at          :datetime
@@ -46,11 +46,8 @@ class Package < ApplicationRecord
 
   # Validations
   # ----------------------------------------------------------------------------
-  ACTIONS = %w[evaluation_hab evaluation_pro].freeze
-
-  validates :name,      presence: true
   validates :reference, presence: true, uniqueness: { unless: :skip_uniqueness_validation_of_reference? }
-  validates :action,    presence: true, inclusion: { in: ACTIONS, allow_blank: true }
+  validates :form_type, presence: true, inclusion: { in: ->(_) { Report::FORM_TYPES }, allow_blank: true }
 
   # Scopes
   # ----------------------------------------------------------------------------

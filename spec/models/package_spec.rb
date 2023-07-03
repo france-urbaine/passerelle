@@ -14,10 +14,9 @@ RSpec.describe Package do
   # Validations
   # ----------------------------------------------------------------------------
   describe "validations" do
-    it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_presence_of(:reference) }
-    it { is_expected.to validate_presence_of(:action) }
-    it { is_expected.to validate_inclusion_of(:action).in_array(Package::ACTIONS) }
+    it { is_expected.to validate_presence_of(:form_type) }
+    it { is_expected.to validate_inclusion_of(:form_type).in_array(Report::FORM_TYPES) }
 
     it "validates uniqueness of :reference" do
       create(:package)
@@ -487,25 +486,25 @@ RSpec.describe Package do
   # ----------------------------------------------------------------------------
   describe "database constraints" do
     it "asserts the uniqueness of reference" do
-      create(:package, reference: "2023-05-0003")
+      existing_package = create(:package, reference: "2023-05-0003")
+      another_package  = build(:package, reference: existing_package.reference)
 
-      expect {
-        create(:package, reference: "2023-05-0003")
-      }.to raise_error(ActiveRecord::RecordNotUnique)
+      expect { another_package.save(validate: false) }
+        .to raise_error(ActiveRecord::RecordNotUnique).with_message(/PG::UniqueViolation/)
     end
 
-    it "asserts action is allowed by not triggering DB constraints" do
-      expect {
-        package = build(:package, action: "evaluation_hab")
-        package.save(validate: false)
-      }.not_to raise_error
+    it "asserts a form_type is allowed by not triggering DB constraints" do
+      package = build(:package, form_type: "evaluation_local_habitation")
+
+      expect { package.save(validate: false) }
+        .not_to raise_error
     end
 
-    it "asserts action is not allowed by triggering DB constraints" do
-      expect {
-        package = build(:package, action: "evaluation_cfe")
-        package.save(validate: false)
-      }.to raise_error(ActiveRecord::StatementInvalid)
+    it "asserts a form_type is not allowed by triggering DB constraints" do
+      package = build(:package, form_type: "foo")
+
+      expect { package.save(validate: false) }
+        .to raise_error(ActiveRecord::StatementInvalid).with_message(/PG::InvalidTextRepresentation/)
     end
   end
 

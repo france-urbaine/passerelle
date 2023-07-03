@@ -16,9 +16,13 @@ FactoryBot.define do
       }
     end
 
-    action { Office::ACTIONS.sample }
+    competences { [Office::COMPETENCES.sample] }
 
-    traits_for_enum(:action, Office::ACTIONS)
+    Office::COMPETENCES.each do |competence|
+      trait competence do
+        competences { [competence] }
+      end
+    end
 
     trait :discarded do
       discarded_at { Time.current }

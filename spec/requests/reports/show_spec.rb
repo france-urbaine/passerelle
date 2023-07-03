@@ -51,10 +51,10 @@ RSpec.describe "ReportsController#show" do
 
       before do
         create(:office,
-          ddfip:    current_user.organization,
-          action:   report.action,
-          communes: [report.commune],
-          users:    [current_user])
+          ddfip:       current_user.organization,
+          competences: [report.form_type],
+          communes:    [report.commune],
+          users:       [current_user])
       end
 
       it_behaves_like "it allows access to DDFIP user"

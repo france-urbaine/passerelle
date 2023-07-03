@@ -22,8 +22,34 @@ RSpec.describe Office do
   # ----------------------------------------------------------------------------
   describe "validations" do
     it { is_expected.to validate_presence_of(:name) }
-    it { is_expected.to validate_presence_of(:action) }
-    it { is_expected.to validate_inclusion_of(:action).in_array(Office::ACTIONS) }
+
+    it "validates that :competences must be an array" do
+      aggregate_failures do
+        is_expected.to     allow_value([]).for(:competences)
+        is_expected.not_to allow_value(nil).for(:competences)
+
+        # Invalid values are converted to an empty array
+        # So we cannot test with string:
+        #
+        #   is_expected.not_to allow_value(Office::COMPETENCES.sample).for(:competences)
+      end
+    end
+
+    it "validates that :competences accept only combinaison of valid values" do
+      valid_values = Office::COMPETENCES
+
+      allowed_arrays = valid_values.map { |v| [v] }
+      allowed_arrays += Array.new(4) { valid_values.sample(2) }
+
+      invalid_arrays = []
+      invalid_arrays << [Faker::Lorem.word]
+      invalid_arrays << [Faker::Lorem.word, valid_values.sample]
+
+      aggregate_failures do
+        is_expected.to     allow_values(*allowed_arrays).for(:competences)
+        is_expected.not_to allow_values(*invalid_arrays).for(:competences)
+      end
+    end
 
     it "validates uniqueness of :name" do
       create(:office)
@@ -60,6 +86,26 @@ RSpec.describe Office do
   # Updates methods
   # ----------------------------------------------------------------------------
   describe "update methods" do
+    describe "#competences=" do
+      it "assigns the arrray passed as argument" do
+        expect(
+          Office.new(competences: %w[evaluation_local_habitation])
+        ).to have_attributes(competences: %w[evaluation_local_habitation])
+      end
+
+      it "removes blank values from array" do
+        expect(
+          Office.new(competences: ["", "evaluation_local_habitation"])
+        ).to have_attributes(competences: %w[evaluation_local_habitation])
+      end
+
+      it "maintains default Rails behavior when assigning non-array values" do
+        expect(
+          Office.new(competences: "evaluation_local_habitation")
+        ).to have_attributes(competences: [])
+      end
+    end
+
     describe ".reset_all_counters" do
       subject(:reset_all_counters) { described_class.reset_all_counters }
 
@@ -98,7 +144,7 @@ RSpec.describe Office do
       end
 
       describe "on reports_count" do
-        let!(:offices) { create_list(:office, 2, :with_communes, ddfip: ddfip, action: "evaluation_hab") }
+        let!(:offices) { create_list(:office, 2, :with_communes, ddfip: ddfip) }
 
         before do
           create_list(:report, 4, :reported_for_office, :package_approved_by_ddfip, ddfip: ddfip, office: offices[0])
@@ -112,7 +158,7 @@ RSpec.describe Office do
       end
 
       describe "on reports_approved_count" do
-        let!(:offices) { create_list(:office, 2, :with_communes, ddfip: ddfip, action: "evaluation_hab") }
+        let!(:offices) { create_list(:office, 2, :with_communes, ddfip: ddfip) }
 
         before do
           create_list(:report, 4, :reported_for_office, :package_approved_by_ddfip, :approved, ddfip: ddfip, office: offices[0])
@@ -128,7 +174,7 @@ RSpec.describe Office do
       end
 
       describe "on reports_rejected_count" do
-        let!(:offices) { create_list(:office, 2, :with_communes, ddfip: ddfip, action: "evaluation_hab") }
+        let!(:offices) { create_list(:office, 2, :with_communes, ddfip: ddfip) }
 
         before do
           create_list(:report, 4, :reported_for_office, :package_approved_by_ddfip, :rejected, ddfip: ddfip, office: offices[0])
@@ -144,7 +190,7 @@ RSpec.describe Office do
       end
 
       describe "on reports_debated_count" do
-        let!(:offices) { create_list(:office, 2, :with_communes, ddfip: ddfip, action: "evaluation_hab") }
+        let!(:offices) { create_list(:office, 2, :with_communes, ddfip: ddfip) }
 
         before do
           create_list(:report, 4, :reported_for_office, :package_approved_by_ddfip, :debated, ddfip: ddfip, office: offices[0])
@@ -163,6 +209,30 @@ RSpec.describe Office do
 
   # Database constraints and triggers
   # ----------------------------------------------------------------------------
+  describe "database constraints" do
+    it "asserts the uniqueness of name" do
+      existing_office = create(:office)
+      another_office  = build(:office, ddfip_id: existing_office.ddfip_id, name: existing_office.name)
+
+      expect { another_office.save(validate: false) }
+        .to raise_error(ActiveRecord::RecordNotUnique).with_message(/PG::UniqueViolation/)
+    end
+
+    it "asserts a competence is allowed by not triggering DB constraints" do
+      office = build(:office, competences: %w[evaluation_local_habitation])
+
+      expect { office.save(validate: false) }
+        .not_to raise_error
+    end
+
+    it "asserts a competence is not allowed by triggering DB constraints" do
+      office = build(:office, competences: %w[foo])
+
+      expect { office.save(validate: false) }
+        .to raise_error(ActiveRecord::StatementInvalid).with_message(/PG::InvalidTextRepresentation/)
+    end
+  end
+
   describe "database triggers" do
     describe "about users counter cache" do
       let!(:ddfip)   { create(:ddfip) }
@@ -270,9 +340,9 @@ RSpec.describe Office do
         # - one with the right territory but wrong competence
         #
         offices = []
-        offices << create(:office, :with_communes, ddfip: ddfip, action: "evaluation_hab")
-        offices << create(:office, :with_communes, ddfip: ddfip, action: "evaluation_hab")
-        offices << create(:office, ddfip: ddfip, communes: offices[0].communes, action: "evaluation_pro")
+        offices << create(:office, :evaluation_local_habitation, :with_communes, ddfip: ddfip)
+        offices << create(:office, :evaluation_local_habitation, :with_communes, ddfip: ddfip)
+        offices << create(:office, :evaluation_local_professionnel, ddfip: ddfip, communes: offices[0].communes)
         offices
       end
 

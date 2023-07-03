@@ -15,9 +15,9 @@ RSpec.describe "OfficesController#create" do
 
   let(:attributes) do
     {
-      ddfip_id: ddfip.id,
-      name:     Faker::Company.name,
-      action:   Office::ACTIONS.sample
+      ddfip_id:    ddfip.id,
+      name:        Faker::Company.name,
+      competences: Office::COMPETENCES.sample(1)
     }
   end
 
@@ -47,9 +47,9 @@ RSpec.describe "OfficesController#create" do
       it "assigns expected attributes to the new record" do
         request
         expect(Office.last).to have_attributes(
-          ddfip:  ddfip,
-          name:   attributes[:name],
-          action: attributes[:action]
+          ddfip:       ddfip,
+          name:        attributes[:name],
+          competences: attributes[:competences]
         )
       end
 

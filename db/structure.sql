@@ -50,6 +50,22 @@ CREATE TYPE public.action AS ENUM (
 
 
 --
+-- Name: anomaly; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.anomaly AS ENUM (
+    'consistance',
+    'affectation',
+    'exoneration',
+    'adresse',
+    'correctif',
+    'omission_batie',
+    'achevement_travaux',
+    'occupation'
+);
+
+
+--
 -- Name: epci_nature; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -58,6 +74,20 @@ CREATE TYPE public.epci_nature AS ENUM (
     'CC',
     'CA',
     'CU'
+);
+
+
+--
+-- Name: form_type; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.form_type AS ENUM (
+    'evaluation_local_habitation',
+    'evaluation_local_professionnel',
+    'creation_local_habitation',
+    'creation_local_professionnel',
+    'occupation_local_habitation',
+    'occupation_local_professionnel'
 );
 
 
@@ -545,7 +575,7 @@ CREATE TABLE public.offices (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
     ddfip_id uuid NOT NULL,
     name character varying NOT NULL,
-    action public.action NOT NULL,
+    competences public.form_type[] NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
     discarded_at timestamp(6) without time zone,
@@ -1001,7 +1031,7 @@ CREATE FUNCTION public.get_reports_approved_count_in_offices(offices public.offi
       INNER JOIN "office_communes"
          ON      "office_communes"."code_insee" = "reports"."code_insee"
         AND      "office_communes"."office_id" = offices."id"
-      WHERE      "reports"."action" = offices."action"
+      WHERE      ARRAY["reports"."form_type"] <@ offices."competences"
         AND      "reports"."approved_at" IS NOT NULL
         AND      "reports"."discarded_at" IS NULL
         AND      "packages"."sandbox" = FALSE
@@ -1022,9 +1052,9 @@ CREATE TABLE public.packages (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
     collectivity_id uuid NOT NULL,
     publisher_id uuid,
-    name character varying NOT NULL,
+    name character varying,
     reference character varying NOT NULL,
-    action public.action NOT NULL,
+    form_type public.form_type NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
     transmitted_at timestamp(6) without time zone,
@@ -1142,7 +1172,7 @@ CREATE FUNCTION public.get_reports_count_in_offices(offices public.offices) RETU
       INNER JOIN "office_communes"
          ON      "office_communes"."code_insee" = "reports"."code_insee"
         AND      "office_communes"."office_id" = offices."id"
-      WHERE      "reports"."action" = offices."action"
+      WHERE      ARRAY["reports"."form_type"] <@ offices."competences"
         AND      "reports"."discarded_at" IS NULL
         AND      "packages"."sandbox" = FALSE
         AND      "packages"."transmitted_at" IS NOT NULL
@@ -1235,7 +1265,7 @@ CREATE FUNCTION public.get_reports_debated_count_in_offices(offices public.offic
       INNER JOIN "office_communes"
          ON      "office_communes"."code_insee" = "reports"."code_insee"
         AND      "office_communes"."office_id" = offices."id"
-      WHERE      "reports"."action" = offices."action"
+      WHERE      ARRAY["reports"."form_type"] <@ offices."competences"
         AND      "reports"."debated_at" IS NOT NULL
         AND      "reports"."discarded_at" IS NULL
         AND      "packages"."sandbox" = FALSE
@@ -1353,7 +1383,7 @@ CREATE FUNCTION public.get_reports_rejected_count_in_offices(offices public.offi
       INNER JOIN "office_communes"
          ON      "office_communes"."code_insee" = "reports"."code_insee"
         AND      "office_communes"."office_id" = offices."id"
-      WHERE      "reports"."action" = offices."action"
+      WHERE      ARRAY["reports"."form_type"] <@ offices."competences"
         AND      "reports"."rejected_at" IS NOT NULL
         AND      "reports"."discarded_at" IS NULL
         AND      "packages"."sandbox" = FALSE
@@ -2614,8 +2644,8 @@ CREATE TABLE public.reports (
     debated_at timestamp(6) without time zone,
     discarded_at timestamp(6) without time zone,
     reference character varying NOT NULL,
-    action public.action NOT NULL,
-    subject character varying NOT NULL,
+    form_type public.form_type NOT NULL,
+    anomalies public.anomaly[] NOT NULL,
     completed boolean DEFAULT false NOT NULL,
     priority public.priority DEFAULT 'low'::public.priority NOT NULL,
     code_insee character varying,
@@ -3151,13 +3181,6 @@ CREATE INDEX index_reports_on_sibling_id ON public.reports USING btree (sibling_
 
 
 --
--- Name: index_reports_on_subject_uniqueness; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_reports_on_subject_uniqueness ON public.reports USING btree (sibling_id, subject) WHERE (discarded_at IS NULL);
-
-
---
 -- Name: index_reports_on_workshop_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3490,12 +3513,12 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230605130656'),
 ('20230607183851'),
 ('20230608074912'),
-('20230608080536'),
 ('20230608152933'),
 ('20230609124040'),
 ('20230611213727'),
 ('20230619095430'),
 ('20230622073103'),
-('20230622135614');
+('20230622135614'),
+('20230628131702');
 
 

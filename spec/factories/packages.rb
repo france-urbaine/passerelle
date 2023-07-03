@@ -3,14 +3,14 @@
 FactoryBot.define do
   factory :package do
     collectivity do
-      publisher = self.publisher || build(:publisher)
-      association(:collectivity, publisher: publisher)
+      factored_publisher = publisher || build(:publisher)
+      association(:collectivity, publisher: factored_publisher)
     end
 
-    name   { Faker::Book.title }
-    action { Package::ACTIONS.sample }
+    name      { Faker::Book.title }
+    form_type { Report::FORM_TYPES.sample }
 
-    traits_for_enum(:action, Package::ACTIONS)
+    traits_for_enum :form_type, Report::FORM_TYPES
 
     sequence(:reference) do |n|
       month = Time.current.strftime("%Y-%m")

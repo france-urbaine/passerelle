@@ -230,23 +230,23 @@ end
 
 Office.insert_all(
   parse_offices([
-    { ddfip: "DDFIP des Pyrénées-Atlantiques",                     name: "SDIF Pyrénées-Atlantiques - Bayonne",         action: "evaluation_hab" },
-    { ddfip: "DDFIP des Pyrénées-Atlantiques",                     name: "SDIF Pyrénées-Atlantiques - Pau",             action: "evaluation_hab" },
-    { ddfip: "DDFIP des Pyrénées-Atlantiques",                     name: "SIP de Bayonne-Anglet",                       action: "occupation_hab" },
-    { ddfip: "DDFIP des Pyrénées-Atlantiques",                     name: "SIP de Biarritz",                             action: "occupation_hab" },
-    { ddfip: "DDFIP des Pyrénées-Atlantiques",                     name: "SIE de Bayonne-Anglet",                       action: "occupation_eco" },
-    { ddfip: "DDFIP des Pyrénées-Atlantiques",                     name: "SIE de Biarritz",                             action: "occupation_eco" },
-    { ddfip: "DDFIP du Nord",                                      name: "SIP de Lille Nord",                           action: "occupation_hab" },
-    { ddfip: "DDFIP du Nord",                                      name: "SIP de Lille Ouest",                          action: "occupation_hab" },
-    { ddfip: "DDFIP du Nord",                                      name: "SIP de Lille Seclin",                         action: "occupation_hab" },
-    { ddfip: "DRFIP Occitanie et département de la Haute-Garonne", name: "Pôle d’évaluation des locaux professionnels", action: "evaluation_pro" },
-    { ddfip: "DRFIP Occitanie et département de la Haute-Garonne", name: "SIP de Balma",                                action: "occupation_hab" },
-    { ddfip: "DRFIP Occitanie et département de la Haute-Garonne", name: "SIP de Colomiers",                            action: "occupation_hab" },
-    { ddfip: "DRFIP Occitanie et département de la Haute-Garonne", name: "SIP de Muret",                                action: "occupation_hab" },
-    { ddfip: "DRFIP Occitanie et département de la Haute-Garonne", name: "SIP de Saint-Gaudens",                        action: "occupation_hab" },
-    { ddfip: "DRFIP Occitanie et département de la Haute-Garonne", name: "SIP de Toulouse Cité",                        action: "occupation_hab" },
-    { ddfip: "DRFIP Occitanie et département de la Haute-Garonne", name: "SIP de Toulouse Mirail",                      action: "occupation_hab" },
-    { ddfip: "DRFIP Occitanie et département de la Haute-Garonne", name: "SIP de Toulouse Rangueil",                    action: "occupation_hab" }
+    { ddfip: "DDFIP des Pyrénées-Atlantiques",                     name: "SDIF Pyrénées-Atlantiques - Bayonne", competences: %w[evaluation_local_habitation evaluation_local_professionnel] },
+    { ddfip: "DDFIP des Pyrénées-Atlantiques",                     name: "SDIF Pyrénées-Atlantiques - Pau",     competences: %w[evaluation_local_habitation evaluation_local_professionnel] },
+    { ddfip: "DDFIP des Pyrénées-Atlantiques",                     name: "SIP de Bayonne-Anglet",               competences: %w[occupation_local_habitation] },
+    { ddfip: "DDFIP des Pyrénées-Atlantiques",                     name: "SIP de Biarritz",                     competences: %w[occupation_local_habitation] },
+    { ddfip: "DDFIP des Pyrénées-Atlantiques",                     name: "SIE de Bayonne-Anglet",               competences: %w[occupation_local_professionnel] },
+    { ddfip: "DDFIP des Pyrénées-Atlantiques",                     name: "SIE de Biarritz",                     competences: %w[occupation_local_professionnel] },
+    { ddfip: "DDFIP du Nord",                                      name: "SIP de Lille Nord",                   competences: %w[occupation_local_habitation] },
+    { ddfip: "DDFIP du Nord",                                      name: "SIP de Lille Ouest",                  competences: %w[occupation_local_habitation] },
+    { ddfip: "DDFIP du Nord",                                      name: "SIP de Lille Seclin",                 competences: %w[occupation_local_habitation] },
+    { ddfip: "DRFIP Occitanie et département de la Haute-Garonne", name: "PELP de Haute-Garonne",               competences: %w[evaluation_local_professionnel] },
+    { ddfip: "DRFIP Occitanie et département de la Haute-Garonne", name: "SIP de Balma",                        competences: %w[occupation_local_habitation] },
+    { ddfip: "DRFIP Occitanie et département de la Haute-Garonne", name: "SIP de Colomiers",                    competences: %w[occupation_local_habitation] },
+    { ddfip: "DRFIP Occitanie et département de la Haute-Garonne", name: "SIP de Muret",                        competences: %w[occupation_local_habitation] },
+    { ddfip: "DRFIP Occitanie et département de la Haute-Garonne", name: "SIP de Saint-Gaudens",                competences: %w[occupation_local_habitation] },
+    { ddfip: "DRFIP Occitanie et département de la Haute-Garonne", name: "SIP de Toulouse Cité",                competences: %w[occupation_local_habitation] },
+    { ddfip: "DRFIP Occitanie et département de la Haute-Garonne", name: "SIP de Toulouse Mirail",              competences: %w[occupation_local_habitation] },
+    { ddfip: "DRFIP Occitanie et département de la Haute-Garonne", name: "SIP de Toulouse Rangueil",            competences: %w[occupation_local_habitation] }
   ])
 )
 
@@ -296,22 +296,22 @@ end
 
 OfficeCommune.insert_all(
   parse_office_communes([
-    { office: "SDIF Pyrénées-Atlantiques - Bayonne",         epci: "CA du Pays Basque" },
-    { office: "SDIF Pyrénées-Atlantiques - Pau",             epci: "CA Pau Béarn Pyrénées" },
-    { office: "SIP de Bayonne-Anglet",                       epci: "CA du Pays Basque" },
-    { office: "SIP de Biarritz",                             epci: "CA du Pays Basque" },
-    { office: "SIE de Bayonne-Anglet",                       epci: "CA du Pays Basque" },
-    { office: "SIE de Biarritz",                             epci: "CA du Pays Basque" },
-    { office: "SIP de Lille Nord",                           epci: "Métropole Européenne de Lille" },
-    { office: "SIP de Lille Ouest",                          epci: "Métropole Européenne de Lille" },
-    { office: "SIP de Lille Seclin",                         epci: "Métropole Européenne de Lille" },
-    { office: "Pôle d’évaluation des locaux professionnels", departement: "Haute-Garonne" },
-    { office: "SIP de Balma",                                epci: "Toulouse Métropole" },
-    { office: "SIP de Colomiers",                            epci: "Toulouse Métropole" },
-    { office: "SIP de Muret",                                epci: "Toulouse Métropole" },
-    { office: "SIP de Toulouse Cité",                        epci: "Toulouse Métropole" },
-    { office: "SIP de Toulouse Mirail",                      epci: "Toulouse Métropole" },
-    { office: "SIP de Toulouse Rangueil",                    epci: "Toulouse Métropole" }
+    { office: "SDIF Pyrénées-Atlantiques - Bayonne", epci: "CA du Pays Basque" },
+    { office: "SDIF Pyrénées-Atlantiques - Pau",     epci: "CA Pau Béarn Pyrénées" },
+    { office: "SIP de Bayonne-Anglet",               epci: "CA du Pays Basque" },
+    { office: "SIP de Biarritz",                     epci: "CA du Pays Basque" },
+    { office: "SIE de Bayonne-Anglet",               epci: "CA du Pays Basque" },
+    { office: "SIE de Biarritz",                     epci: "CA du Pays Basque" },
+    { office: "SIP de Lille Nord",                   epci: "Métropole Européenne de Lille" },
+    { office: "SIP de Lille Ouest",                  epci: "Métropole Européenne de Lille" },
+    { office: "SIP de Lille Seclin",                 epci: "Métropole Européenne de Lille" },
+    { office: "PELP de Haute-Garonne",               departement: "Haute-Garonne" },
+    { office: "SIP de Balma",                        epci: "Toulouse Métropole" },
+    { office: "SIP de Colomiers",                    epci: "Toulouse Métropole" },
+    { office: "SIP de Muret",                        epci: "Toulouse Métropole" },
+    { office: "SIP de Toulouse Cité",                epci: "Toulouse Métropole" },
+    { office: "SIP de Toulouse Mirail",              epci: "Toulouse Métropole" },
+    { office: "SIP de Toulouse Rangueil",            epci: "Toulouse Métropole" }
   ])
 )
 

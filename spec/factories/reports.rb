@@ -22,32 +22,31 @@ FactoryBot.define do
     # We also allow to define the status of the package through transient attributes
     #
     transient do
-      package_sandbox     { false }
-      package_transmitted { false }
-      package_approved    { false }
-      package_rejected    { false }
-      package_traits do
-        [].tap do |array|
-          array << :sandbox     if package_sandbox
-          array << :transmitted if package_transmitted
-          array << :approved    if package_approved
-          array << :rejected    if package_rejected
-        end
-      end
+      package_sandbox       { false }
+      package_transmitted   { false }
+      package_approved      { false }
+      package_rejected      { false }
+      packed_through_web_ui { publisher.nil? }
     end
 
-    collectivity do
-      factored_publisher = publisher || build(:publisher)
-      association(:collectivity, publisher: factored_publisher)
-    end
+    # collectivity do
+    #   factored_publisher = publisher || build(:publisher)
+    #   association(:collectivity, publisher: factored_publisher)
+    # end
 
     package do
-      factored_collectivity = collectivity
-      factored_publisher    = publisher
+      package_traits = []
+      package_traits << :sandbox               if package_sandbox
+      package_traits << :transmitted           if package_transmitted
+      package_traits << :approved              if package_approved
+      package_traits << :rejected              if package_rejected
+      package_traits << :packed_through_web_ui if packed_through_web_ui
 
-      association :package, *package_traits,
-        collectivity: factored_collectivity,
-        publisher:    factored_publisher
+      attributes = { form_type: form_type }
+      attributes[:collectivity] = collectivity if collectivity
+      attributes[:publisher]    = publisher    if publisher
+
+      association :package, *package_traits, **attributes
     end
 
     # The commune shoud be on the territory of the package collectivity
@@ -70,15 +69,19 @@ FactoryBot.define do
       end
     end
 
-    action { package.action }
+    form_type { Report::FORM_TYPES.sample }
+    anomalies { [] }
 
-    subject do
-      Report::SUBJECTS.select { |subject| subject.start_with?(action) }.sample
-    end
+    traits_for_enum :form_type, Report::FORM_TYPES
 
-    sequence(:reference) do |n|
+    sequence :reference do |n|
       index = n.to_s.rjust(5, "0")
       "#{package.reference}-#{index}"
+    end
+
+    after :build, :stub do |report|
+      report.collectivity ||= report.package.collectivity
+      report.publisher    ||= report.package.publisher
     end
 
     trait :low_priority do
@@ -97,8 +100,12 @@ FactoryBot.define do
       completed { true }
     end
 
+    trait :sandbox do
+      package_sandbox { true }
+    end
+
     trait :transmitted do
-      package_transmitted { true }
+      package_transmitted{ true }
     end
 
     trait :discarded do
@@ -122,25 +129,21 @@ FactoryBot.define do
 
     trait :reported_through_web_ui do
       transient do
-        publisher { association(:publisher) }
+        publisher             { association(:publisher) }
+        packed_through_web_ui { true }
       end
 
       collectivity { association(:collectivity, publisher: publisher) }
-      package do
-        association(:package, :packed_through_web_ui, *package_traits,
-          collectivity: collectivity,
-          publisher: publisher)
+
+      after :build, :stub do |report|
+        raise "invalid factory: a publisher is assigned to report" if report.publisher
+        raise "invalid factory: a publisher is assigned to package" if report.package.publisher
       end
     end
 
     trait :reported_through_api do
       publisher    { association(:publisher) }
       collectivity { association(:collectivity, publisher: publisher) }
-      package do
-        association(:package, :packed_through_api, *package_traits,
-          collectivity: collectivity,
-          publisher: publisher)
-      end
     end
 
     trait :reported_for_ddfip do
@@ -149,19 +152,16 @@ FactoryBot.define do
       end
 
       collectivity do
-        departement    = ddfip.departement
-        territory_type = %i[commune epci departement].sample
-        territory      = departement if territory_type == :departement
-        territory    ||= association(territory_type, departement: departement)
+        publisher = self.publisher || build(:publisher)
+        departement = ddfip.departement
+        territory =
+          case %i[commune epci departement].sample
+          when :departement then departement
+          when :epci        then association :epci, departement: departement
+          when :commune     then association :commune, departement: departement
+          end
 
-        association(:collectivity, :commune, territory: territory)
-      end
-
-      package do
-        traits     = package_traits
-        attributes = { collectivity: collectivity, ddfip: ddfip }
-
-        association(:package, :packed_for_ddfip, *traits, **attributes)
+        association(:collectivity, :commune, territory:, publisher:)
       end
     end
 
@@ -169,18 +169,12 @@ FactoryBot.define do
       reported_for_ddfip
 
       transient do
-        office do
-          # FIXME: Not all reports have been implemented.
-          # We need to create an office with its competence compatible with available reports
-          action = Report::ACTIONS.sample
-          association :office, :with_communes, action: action
-        end
-
-        ddfip { office.ddfip }
+        office { association(:office, :with_communes) }
+        ddfip  { office.ddfip }
       end
 
-      commune { office.communes.sample }
-      action  { office.action }
+      commune   { office.communes.sample }
+      form_type { office.competences.sample }
     end
 
     trait :transmitted_through_web_ui do
@@ -200,14 +194,14 @@ FactoryBot.define do
 
     trait :package_approved_by_ddfip do
       transmitted
-      package_approved { true }
       reported_for_ddfip
+      package_approved { true }
     end
 
     trait :package_rejected_by_ddfip do
       transmitted
-      package_rejected { true }
       reported_for_ddfip
+      package_rejected { true }
     end
   end
 end

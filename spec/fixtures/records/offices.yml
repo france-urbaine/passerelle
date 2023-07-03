@@ -1,20 +1,23 @@
 pelp_bayonne:
   ddfip:          pyrenees_atlantiques
   name:           PELP de Bayonne
-  action:         evaluation_pro
   users_count:    1
   communes_count: 2
+  competences:
+    - evaluation_local_professionnel
 
 pelh_bayonne:
   ddfip:          pyrenees_atlantiques
   name:           PELH de Bayonne
-  action:         evaluation_hab
   users_count:    0
   communes_count: 0
+  competences:
+    - evaluation_local_habitation
 
 sip_bayonne:
   ddfip:          pyrenees_atlantiques
   name:           SIP de Bayonne
-  action:         occupation_hab
   users_count:    0
   communes_count: 1
+  competences:
+    - occupation_local_habitation

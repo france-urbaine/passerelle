@@ -29,11 +29,10 @@ RSpec.describe Report do
   # Validations
   # ----------------------------------------------------------------------------
   describe "validations" do
-    it { is_expected.to validate_presence_of(:action) }
-    it { is_expected.to validate_presence_of(:subject) }
+    it { is_expected.to validate_presence_of(:reference) }
+    it { is_expected.to validate_presence_of(:form_type) }
 
-    it { is_expected.to validate_inclusion_of(:action).in_array(Report::ACTIONS) }
-    it { is_expected.to validate_inclusion_of(:subject).in_array(Report::SUBJECTS) }
+    it { is_expected.to validate_inclusion_of(:form_type).in_array(Report::FORM_TYPES) }
     it { is_expected.to validate_inclusion_of(:priority).in_array(%w[low medium high]) }
 
     it "validates uniqueness of :reference" do
@@ -44,6 +43,72 @@ RSpec.describe Report do
     it "validates uniqueness of :reference against discarded records" do
       create(:report, :discarded)
       is_expected.to validate_uniqueness_of(:reference).ignoring_case_sensitivity
+    end
+
+    it "validates that :anomalies must be an array" do
+      aggregate_failures do
+        is_expected.to     allow_value([]).for(:anomalies)
+        is_expected.not_to allow_value(nil).for(:anomalies)
+
+        # Invalid values are converted to an empty array
+        # So we cannot test with string:
+        #
+        #   is_expected.not_to allow_value(Report::EVALUATION_ANOMALIES.sample).for(:anomalies)
+      end
+    end
+
+    it "validates that :anomalies accept only combinaison of valid values when reporting an evaluation form" do
+      valid_values = Report::EVALUATION_ANOMALIES
+
+      allowed_arrays = valid_values.map { |v| [v] }
+      allowed_arrays += Array.new(4) { valid_values.sample(2) }
+
+      invalid_arrays = []
+      invalid_arrays << [Faker::Lorem.word]
+      invalid_arrays << [Faker::Lorem.word, valid_values.sample]
+
+      report = build(:report, :evaluation_local_habitation)
+
+      aggregate_failures do
+        expect(report).to     allow_values(*allowed_arrays).for(:anomalies)
+        expect(report).not_to allow_values(*invalid_arrays).for(:anomalies)
+      end
+    end
+
+    it "validates that :anomalies accept only combinaison of valid values when reporting a creation form" do
+      valid_values = Report::CREATION_ANOMALIES
+
+      allowed_arrays = valid_values.map { |v| [v] }
+      allowed_arrays += Array.new(4) { valid_values.sample(2) }
+
+      invalid_arrays = []
+      invalid_arrays << [Faker::Lorem.word]
+      invalid_arrays << [Faker::Lorem.word, valid_values.sample]
+
+      report = build(:report, :creation_local_habitation)
+
+      aggregate_failures do
+        expect(report).to     allow_values(*allowed_arrays).for(:anomalies)
+        expect(report).not_to allow_values(*invalid_arrays).for(:anomalies)
+      end
+    end
+
+    it "validates that :anomalies accept only combinaison of valid values when reporting an occupation form" do
+      valid_values = Report::OCCUPATION_ANOMALIES
+
+      allowed_arrays = valid_values.map { |v| [v] }
+      allowed_arrays += Array.new(4) { valid_values.sample(2) }
+
+      invalid_arrays = []
+      invalid_arrays << [Faker::Lorem.word]
+      invalid_arrays << [Faker::Lorem.word, valid_values.sample]
+
+      report = build(:report, :occupation_local_habitation)
+
+      aggregate_failures do
+        expect(report).to     allow_values(*allowed_arrays).for(:anomalies)
+        expect(report).not_to allow_values(*invalid_arrays).for(:anomalies)
+      end
     end
 
     pending "Add missing tests for other validations"
@@ -375,7 +440,7 @@ RSpec.describe Report do
 
     describe ".covered_by_office" do
       it "scopes reports covered by one single office" do
-        office = create(:office, action: "evaluation_hab")
+        office = create(:office, :evaluation_local_habitation)
 
         expect {
           described_class.covered_by_office(office).load
@@ -384,7 +449,21 @@ RSpec.describe Report do
           FROM       "reports"
           INNER JOIN "office_communes" ON "office_communes"."code_insee" = "reports"."code_insee"
           WHERE      "office_communes"."office_id" = '#{office.id}'
-            AND      "reports"."action" = 'evaluation_hab'
+            AND      "reports"."form_type" = 'evaluation_local_habitation'
+        SQL
+      end
+
+      it "scopes reports covered by one single office with multiple competences" do
+        office = create(:office, competences: %w[evaluation_local_habitation evaluation_local_professionnel])
+
+        expect {
+          described_class.covered_by_office(office).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT     DISTINCT "reports".*
+          FROM       "reports"
+          INNER JOIN "office_communes" ON "office_communes"."code_insee" = "reports"."code_insee"
+          WHERE      "office_communes"."office_id" = '#{office.id}'
+            AND      "reports"."form_type" IN ('evaluation_local_habitation', 'evaluation_local_professionnel')
         SQL
       end
 
@@ -397,7 +476,7 @@ RSpec.describe Report do
           INNER JOIN "office_communes" ON "office_communes"."code_insee" = "reports"."code_insee"
           INNER JOIN "offices" ON "offices"."id" = "office_communes"."office_id"
           WHERE      "offices"."name" = 'A'
-            AND      "reports"."action" = "offices"."action"
+            AND      ("reports"."form_type" = ANY ("offices"."competences"))
         SQL
       end
     end
@@ -489,6 +568,26 @@ RSpec.describe Report do
   # Updates methods
   # ----------------------------------------------------------------------------
   describe "update methods" do
+    describe "#anomalies=" do
+      it "assigns the arrray passed as argument" do
+        expect(
+          Report.new(anomalies: %w[consistance adresse])
+        ).to have_attributes(anomalies: %w[consistance adresse])
+      end
+
+      it "removes blank values from array" do
+        expect(
+          Report.new(anomalies: ["", "consistance", "adresse"])
+        ).to have_attributes(anomalies: %w[consistance adresse])
+      end
+
+      it "maintains default Rails behavior when assigning non-array values" do
+        expect(
+          Report.new(anomalies: "consistance adresse")
+        ).to have_attributes(anomalies: [])
+      end
+    end
+
     describe "#approve!" do
       it "marks the report as approved" do
         report = create(:report, :transmitted)
@@ -619,37 +718,26 @@ RSpec.describe Report do
   # Database constraints and triggers
   # ----------------------------------------------------------------------------
   describe "database constraints" do
-    let_it_be(:report) { create(:report, action: "evaluation_hab") }
+    let(:report) { create(:report) }
 
-    it "asserts uniqueness of action per local" do
-      pending "TODO"
-      expect {
-        create(:report)
-      }.to raise_error(ActiveRecord::RecordNotUnique)
+    it "asserts a form_type is allowed by not triggering DB constraints" do
+      expect { report.update_columns(form_type: "evaluation_local_habitation") }
+        .not_to raise_error
     end
 
-    it "asserts an action is allowed by not triggering DB constraints" do
-      expect {
-        report.update_column(:action, "evaluation_pro")
-      }.not_to raise_error
-    end
-
-    it "asserts an action is not allowed by triggering DB constraints" do
-      expect {
-        report.update_column(:action, "evaluation_cfe")
-      }.to raise_error(ActiveRecord::StatementInvalid)
+    it "asserts a form_type is not allowed by triggering DB constraints" do
+      expect { report.update_columns(form_type: "foo") }
+        .to raise_error(ActiveRecord::StatementInvalid).with_message(/PG::InvalidTextRepresentation/)
     end
 
     it "asserts a priority is allowed by not triggering DB constraints" do
-      expect {
-        report.update_column(:priority, "high")
-      }.not_to raise_error
+      expect { report.update_columns(priority: "high") }
+        .not_to raise_error
     end
 
     it "asserts a priority is not allowed by triggering DB constraints" do
-      expect {
-        report.update_column(:priority, "higher")
-      }.to raise_error(ActiveRecord::StatementInvalid)
+      expect { report.update_columns(priority: "higher") }
+        .to raise_error(ActiveRecord::StatementInvalid).with_message(/PG::InvalidTextRepresentation/)
     end
   end
 

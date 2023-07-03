@@ -7,7 +7,7 @@
 #  id                     :uuid             not null, primary key
 #  ddfip_id               :uuid             not null
 #  name                   :string           not null
-#  action                 :enum             not null
+#  competences            :enum             not null, is an Array
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #  discarded_at           :datetime
@@ -44,10 +44,17 @@ class Office < ApplicationRecord
 
   # Validations
   # ----------------------------------------------------------------------------
-  ACTIONS = %w[evaluation_hab evaluation_pro occupation_hab occupation_pro].freeze
+  COMPETENCES = %w[
+    evaluation_local_habitation
+    evaluation_local_professionnel
+    creation_local_habitation
+    creation_local_professionnel
+    occupation_local_habitation
+    occupation_local_professionnel
+  ].freeze
 
-  validates :name,   presence: true
-  validates :action, presence: true, inclusion: { in: ACTIONS, allow_blank: true }
+  validates :name,        presence: true
+  validates :competences, array: true, inclusion: { in: COMPETENCES, allow_blank: true }
 
   validates :name, uniqueness: {
     case_sensitive: false,
@@ -79,9 +86,9 @@ class Office < ApplicationRecord
   scope :order_by_param, lambda { |input|
     advanced_order(
       input,
-      name:   ->(direction) { unaccent_order(:name, direction) },
-      ddfip:  ->(direction) { left_joins(:ddfip).merge(DDFIP.order(name: direction)) },
-      action: ->(direction) { order(action: direction) }
+      name:        ->(direction) { unaccent_order(:name, direction) },
+      ddfip:       ->(direction) { left_joins(:ddfip).merge(DDFIP.order(name: direction)) },
+      competences: ->(direction) { order(competence: direction) }
     )
   }
 
@@ -102,6 +109,17 @@ class Office < ApplicationRecord
 
   # Updates methods
   # ----------------------------------------------------------------------------
+  # When no selection is made for a collection of checkboxes, most web browsers
+  # wont't send any value.
+  #
+  # `collection_check_boxes` adds a blank value to the array:
+  #   ["", "evaluation_local_habitation"]
+  #
+  def competences=(value)
+    value.compact_blank! if value.is_a?(Array)
+    super(value)
+  end
+
   def self.reset_all_counters
     connection.select_value("SELECT reset_all_offices_counters()")
   end

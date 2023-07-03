@@ -11,10 +11,10 @@ RSpec.describe "PackagesController#update" do
   let(:headers) { |e| e.metadata[:headers] }
   let(:params)  { |e| e.metadata.fetch(:params, { package: attributes }) }
 
-  let!(:package) { create(:package, name: "Paquet #1") }
+  let!(:package) { create(:package) }
 
   let(:attributes) do
-    { name: "Paquet#2", due_on: "2023-06-07" }
+    { due_on: "2023-06-07" }
   end
 
   describe "authorizations" do
@@ -76,7 +76,6 @@ RSpec.describe "PackagesController#update" do
         it "updates the package" do
           expect { request and package.reload }
             .to  change(package, :updated_at)
-            .and change(package, :name).to("Paquet#2")
             .and change(package, :due_on).to(Date.parse("2023-06-07"))
         end
 
@@ -89,15 +88,13 @@ RSpec.describe "PackagesController#update" do
         end
       end
 
-      context "with invalid attributes" do
-        let(:attributes) { super().merge(name: "  ") }
-
-        it { expect(response).to have_http_status(:unprocessable_entity) }
-        it { expect(response).to have_content_type(:html) }
-        it { expect(response).to have_html_body }
-        it { expect { request and package.reload }.not_to change(package, :updated_at) }
-        it { expect { request and package.reload }.not_to change(package, :name) }
-      end
+      # Skip this context: #
+      # The only permitted attribute is :due_on and it transform any unexpected
+      # value to nil, which is a valid value.
+      #
+      # context "with invalid attributes" do
+      #   ....
+      # end
 
       context "with empty parameters", params: {} do
         it { expect(response).to have_http_status(:see_other) }

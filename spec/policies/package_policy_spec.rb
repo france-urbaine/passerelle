@@ -563,7 +563,7 @@ RSpec.describe PackagePolicy, stub_factories: false do
     it_behaves_like("when current user is a collectivity user") do
       let(:report) { build_stubbed(:report, collectivity: current_organization) }
 
-      it "scopes on packages not yet transmitted by the collectivity with the same action" do
+      it "scopes on packages not yet transmitted by the collectivity with the same form type" do
         expect {
           scope.load
         }.to perform_sql_query(<<~SQL)
@@ -573,7 +573,7 @@ RSpec.describe PackagePolicy, stub_factories: false do
             AND  "packages"."transmitted_at" IS NULL
             AND  "packages"."collectivity_id" = '#{current_organization.id}'
             AND  "packages"."publisher_id" IS NULL
-            AND  "packages"."action" = '#{report.action}'
+            AND  "packages"."form_type" = '#{report.form_type}'
         SQL
       end
     end
@@ -581,7 +581,7 @@ RSpec.describe PackagePolicy, stub_factories: false do
     it_behaves_like("when current user is a publisher user") do
       let(:report) { build_stubbed(:report, publisher: current_organization) }
 
-      it "scopes on packages not yet transmitted by the collectivity with the same action" do
+      it "scopes on packages not yet transmitted by the collectivity with the same form type" do
         expect {
           scope.load
         }.to perform_sql_query(<<~SQL)
@@ -591,7 +591,7 @@ RSpec.describe PackagePolicy, stub_factories: false do
             AND  "packages"."transmitted_at" IS NULL
             AND  "packages"."publisher_id" = '#{current_organization.id}'
             AND  "packages"."collectivity_id" = '#{report.collectivity.id}'
-            AND  "packages"."action" = '#{report.action}'
+            AND  "packages"."form_type" = '#{report.form_type}'
         SQL
       end
     end

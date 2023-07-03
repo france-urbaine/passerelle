@@ -6,7 +6,7 @@ RSpec.describe ReportPolicy, stub_factories: false do
   shared_context "when current user is member of targeted office" do
     include_context "when current user is a DDFIP user"
     before do
-      create(:office, action: record.action, users: [current_user], communes: [record.commune])
+      create(:office, competences: [record.form_type], users: [current_user], communes: [record.commune])
     end
   end
 
@@ -526,7 +526,7 @@ RSpec.describe ReportPolicy, stub_factories: false do
             AND  "packages"."approved_at" IS NOT NULL
             AND  "packages"."rejected_at" IS NULL
             AND  "office_users"."user_id" = '#{current_user.id}'
-            AND  "reports"."action" = "offices"."action"
+            AND  ("reports"."form_type" = ANY ("offices"."competences"))
         SQL
       end
     end

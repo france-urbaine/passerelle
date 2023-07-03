@@ -31,7 +31,7 @@ RSpec.describe "ReportsController#index" do
       create(:report, :transmitted_through_web_ui, collectivity: collectivities[0], publisher: publisher),
       create(:report, :transmitted_through_web_ui, collectivity: collectivities[1], publisher: publisher),
       create(:report, :transmitted_through_api,    collectivity: collectivities[0], publisher: publisher),
-      create(:report, :transmitted_through_api,    collectivity: collectivities[0], publisher: publisher, package_sandbox: true),
+      create(:report, :transmitted_through_api, :sandbox, collectivity: collectivities[0], publisher: publisher),
       create(:report, :reported_through_web_ui, :discarded, collectivity: collectivities[0], publisher: publisher)
     ]
   end
@@ -142,7 +142,7 @@ RSpec.describe "ReportsController#index" do
           ddfip:        ddfip,
           collectivity: collectivities[0],
           publisher:    publisher,
-          action:       "evaluation_hab"
+          form_type:    "evaluation_local_habitation"
         }
 
         [
@@ -151,17 +151,16 @@ RSpec.describe "ReportsController#index" do
           create(:report, :package_approved_by_ddfip, **attributes, package_sandbox: true),
           create(:report, :package_approved_by_ddfip, **attributes),
           create(:report, :package_approved_by_ddfip, **attributes, collectivity: collectivities[1]),
-          create(:report, :package_approved_by_ddfip, **attributes, action: "evaluation_pro")
+          create(:report, :package_approved_by_ddfip, **attributes, form_type: "evaluation_local_professionnel")
         ]
       end
 
       before do
         sign_in_as(organization: ddfip)
-        create(:office,
-          ddfip:    ddfip,
-          action:   "evaluation_hab",
-          communes: [communes[0]],
-          users:    [current_user])
+        create(:office, :evaluation_local_habitation,
+          ddfip:       ddfip,
+          communes:    [communes[0]],
+          users:       [current_user])
       end
 
       context "when requesting HTML" do
