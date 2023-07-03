@@ -1,4 +1,3 @@
-
 @layer components {
   .description-list__row {
     @apply grid gap-2 px-4 py-3 border-b;
@@ -39,15 +38,33 @@
       @apply -my-2;
     }
 
-    & dd:empty:before {
+    &:hover {
+      @apply bg-gray-100;
+      @apply dark:bg-gray-900;
+    }
+
+    &--with-action dd,
+    &--with-reference dd {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+
+    &--with-reference dd {
+      flex-direction: column;
+      @apply md:flex-row;
+    }
+
+    & dd:empty:before,
+    &--with-action dd *:first-child:empty:before,
+    &--with-reference dd *:first-child:empty:before {
       content: "-";
       @apply text-gray-500;
       @apply dark:text-gray-400;
     }
 
-    &:hover {
-      @apply bg-gray-100;
-      @apply dark:bg-gray-900;
+    &--with-reference dd *:last-child {
+      @apply text-gray-600;
     }
   }
 

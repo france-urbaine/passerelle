@@ -22,14 +22,13 @@
         = validate_report_attribute(:proposition_indice_repetition) do
           = @report.proposition_indice_repetition
 
-    .description-list__row
+    .description-list__row.description-list__row--with-reference
       dt Voie
       dd
         = validate_report_attribute(:proposition_libelle_voie) do
-          .flex.justify-between.items-start.flex-col.md:flex-row
-            span= @report.proposition_libelle_voie
-            span.text-gray-600
-              - if @report.proposition_code_rivoli?
-                = "Code RIVOLI : #{@report.proposition_code_rivoli}"
-              - else
-                | Aucun code RIVOLI fourni
+          span= @report.proposition_libelle_voie
+          span
+            - if @report.proposition_code_rivoli?
+              = "Code RIVOLI : #{@report.proposition_code_rivoli}"
+            - else
+              | Aucun code RIVOLI fourni

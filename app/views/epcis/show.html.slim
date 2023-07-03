@@ -31,14 +31,14 @@
             = authorized_link_to @epci.departement do
               = @epci.departement.name
 
-      .description-list__row
+      .description-list__row.description-list__row--with-action
         dt Communes
-        dd.flex.justify-between.items-start
+        dd
           - if @epci.communes_count.positive?
             span= display_count(@epci.communes_count, "commune")
 
             - if allowed_to?(:index?, Commune)
-              = button_component "Voir les communes", communes_path(search: @epci.siren), icon: "search", data: { turbo_frame: "_top" }
+              span= button_component "Voir les communes", communes_path(search: @epci.siren), icon: "search", data: { turbo_frame: "_top" }
 
       .description-list__row
         dt Collectivités enregistrées

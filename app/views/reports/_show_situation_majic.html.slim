@@ -16,13 +16,12 @@
         = validate_report_attribute(:situation_annee_majic) do
           = @report.situation_annee_majic.presence
 
-    .description-list__row
+    .description-list__row.description-list__row--with-reference
       dt Commune
       dd
         = validate_report_attribute(:code_insee) do
-          .flex.justify-between.items-start.flex-col.md:flex-row
-            span= @report.commune&.name
-            span.text-gray-600= "Code INSEE : #{@report.code_insee}"
+          span= @report.commune&.name
+          span= "Code INSEE : #{@report.code_insee}"
 
     .description-list__row
       dt Invariant
@@ -36,26 +35,23 @@
         = validate_report_attribute(:situation_parcelle) do
           = display_parcelle(@report.situation_parcelle)
 
-    .description-list__row
+    .description-list__row.description-list__row--with-reference
       dt Adresse du local
       dd
         = validate_report_attribute(:situation_adresse) do
-          .flex.justify-between.items-start.flex-col.md:flex-row
-            span= @report_decorator.situation_adresse
-            span.text-gray-600= "Code RIVOLI : #{@report.situation_code_rivoli}"
+          span= @report_decorator.situation_adresse
+          span= "Code RIVOLI : #{@report.situation_code_rivoli}"
 
-    .description-list__row
+    .description-list__row.description-list__row--with-reference
       dt Numéro de porte
       dd
         = validate_report_attribute(:situation_porte) do
-          .flex.justify-between.items-start.flex-col.md:flex-row
-            span= @report_decorator.situation_porte
-            span.text-gray-600= "Numéro d'ordre : #{@report_decorator.situation_numero_ordre_porte}"
+          span= @report_decorator.situation_porte
+          span= "Numéro d'ordre : #{@report_decorator.situation_numero_ordre_porte}"
 
-    .description-list__row
+    .description-list__row.description-list__row--with-reference
       dt Propriétaire
       dd
         = validate_report_attribute(:situation_proprietaire) do
-          .flex.justify-between.items-start.flex-col.md:flex-row
-            span= @report.situation_proprietaire
-            span.text-gray-600= "Numéro d'ordre : #{@report.situation_numero_ordre_proprietaire}"
+          span= @report.situation_proprietaire
+          span= "Numéro d'ordre : #{@report.situation_numero_ordre_proprietaire}"

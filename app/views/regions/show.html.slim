@@ -17,32 +17,32 @@
         dt Code INSEE de la région
         dd= @region.code_region
 
-      .description-list__row
+      .description-list__row.description-list__row--with-action
         dt Départements
-        dd.flex.justify-between.items-start
+        dd
           - if @region.departements_count.positive?
-            div= display_count(@region.departements_count, "département")
+            span= display_count(@region.departements_count, "département")
 
             - if allowed_to?(:index?, Departement)
-              = button_component "Voir les départements", departements_path(search: @region.name), icon: "search", data: { turbo_frame: "_top" }
+              span= button_component "Voir les départements", departements_path(search: @region.name), icon: "search", data: { turbo_frame: "_top" }
 
-      .description-list__row
+      .description-list__row.description-list__row--with-action
         dt EPCI
-        dd.flex.justify-between.items-start
+        dd
           - if @region.epcis_count.positive?
-            div= display_count(@region.epcis_count, "EPCI")
+            span= display_count(@region.epcis_count, "EPCI")
 
             - if allowed_to?(:index?, EPCI)
-              = button_component "Voir les EPCIs", epcis_path(search: @region.name), icon: "search", data: { turbo_frame: "_top" }
+              span= button_component "Voir les EPCIs", epcis_path(search: @region.name), icon: "search", data: { turbo_frame: "_top" }
 
-      .description-list__row
+      .description-list__row.description-list__row--with-action
         dt Communes
-        dd.flex.justify-between.items-start
+        dd
           - if @region.communes_count.positive?
-            div= display_count(@region.communes_count, "commune")
+            span= display_count(@region.communes_count, "commune")
 
             - if allowed_to?(:index?, Commune)
-              = button_component "Voir les communes", communes_path(search: @region.name), icon: "search", data: { turbo_frame: "_top" }
+              span= button_component "Voir les communes", communes_path(search: @region.name), icon: "search", data: { turbo_frame: "_top" }
 
       .description-list__row
         dt DDFIP enregistrées
