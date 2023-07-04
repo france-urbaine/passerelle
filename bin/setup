@@ -1,6 +1,11 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
+# Examples:
+# bin/setup test
+# bin/setup test  + .env.test (POSTGRESQL_DATABASE=test)
+# POSTGRESQL_DATABASE=test bin/setup test
+
 # Helpers
 # ------------------------------------------------------------------------------
 # It's helpful to know what messages came from this script,
@@ -54,14 +59,7 @@ def setup
   log "Dropping & recreating the development & test databases"
   system!({ "SETUP_SEED" => "true" }, "bin/rails db:reset")
 
-  log "Setup test environment for parallel testing"
-  system! "bin/rails parallel:prepare"
-
-  log "Compile assets"
-  # Compile assets in case they were missing.
-  # They are required to start the test suite
-  system! "yarn build:css"
-  system! "yarn build:js"
+  setup_test
 
   log "Removing old logs and tempfiles"
   system! "bin/rails log:clear tmp:clear"
@@ -99,6 +97,25 @@ def setup_user
   log "You are about to create a new user."
   log ""
   system!({ "SEED_INTERACTIVE_USER" => "true" }, "bin/rails db:seed")
+end
+
+def setup_test
+  log "Compile assets"
+  # Compile assets in case they were missing.
+  # They are required to start the test suite
+  system! "yarn build:css"
+  system! "yarn build:js"
+
+  log "Setup test database"
+  system!({ "RAILS_ENV" => "test" }, "bin/rails db:prepare")
+
+  unless ENV.include?("POSTGRESQL_DATABASE")
+    log "Setup test databases for run bin/ci watch"
+    system!({ "RAILS_ENV" => "test", "POSTGRESQL_DATABASE" => "fiscahub_test_watch" }, "bin/rails db:prepare")
+  end
+
+  log "Setup test databases for parallel testing"
+  system!("bin/rails parallel:prepare")
 end
 
 def setup_territories
@@ -148,6 +165,9 @@ def useful_commands
   log "  bin/dev"
   log "     # Run the app locally"
   log ""
+  log "  bin/setup test"
+  log "     # Run the test preparation tasks to parallelelize tests DB"
+  log ""
   log "  bin/ci"
   log "     # Runs all tests and checks as CI would"
   log ""
@@ -189,6 +209,8 @@ elsif ARGV[0] == "territories"
   setup_territories
 elsif ARGV[0] == "mailcatcher"
   setup_mailcatcher
+elsif ARGV[0] == "test"
+  setup_test
 else
   help
 end
