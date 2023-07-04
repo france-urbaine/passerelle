@@ -5,7 +5,13 @@ FactoryBot.define do
     publisher
     territory { association %i[commune epci departement].sample }
     siren     { Faker::Company.unique.french_siren_number }
-    name      { territory.name }
+
+    sequence :name do |n|
+      # Remove the sequence number added by territories (if it exists)
+      # and replace it by the sequence number of this factory
+      name = territory.name.gsub(/#\d+/, "")
+      "#{name} ##{n}"
+    end
 
     trait :orphan do
       publisher { nil }
