@@ -13,6 +13,7 @@ module Reports
       super()
     end
 
+    validates_presence_of :anomalies
     validates_presence_of :code_insee
 
     with_options if: :require_situation_majic? do
@@ -37,21 +38,42 @@ module Reports
       validate :situation_proprietaire_must_be_complete
     end
 
-    with_options if: :require_situation_evaluatuation_hab? do
+    with_options if: :require_situation_evaluation_habitation? do
+      validates_presence_of :situation_date_mutation
       validates_presence_of :situation_affectation
       validates_presence_of :situation_nature
       validates_presence_of :situation_categorie
       validates_presence_of :situation_surface_reelle
-      validates_presence_of :situation_date_mutation
       validates_presence_of :situation_coefficient_entretien
     end
 
-    with_options if: :require_proposition_evaluatuation_hab? do
+    with_options if: :require_situation_evaluation_professionnel? do
+      validates_presence_of :situation_date_mutation
+      validates_presence_of :situation_affectation
+      validates_presence_of :situation_nature
+      validates_presence_of :situation_categorie
+      validates_presence_of :situation_surface_reelle
+      validates_presence_of :situation_coefficient_localisation
+    end
+
+    with_options if: :require_proposition_affectation? do
+      validates_presence_of :proposition_affectation
+    end
+
+    with_options if: :require_proposition_evaluation_habitation? do
       validates_presence_of :date_constat
       validates_presence_of :proposition_nature
       validates_presence_of :proposition_categorie
       validates_presence_of :proposition_surface_reelle
       validates_presence_of :proposition_coefficient_entretien
+    end
+
+    with_options if: :require_proposition_evaluation_professionnel? do
+      validates_presence_of :date_constat
+      validates_presence_of :proposition_nature
+      validates_presence_of :proposition_categorie
+      validates_presence_of :proposition_surface_reelle
+      validates_presence_of :proposition_coefficient_localisation
     end
 
     with_options if: :require_proposition_address? do
@@ -60,21 +82,20 @@ module Reports
 
     private
 
-    def require_situation_majic?
-      form_type.match?(/^evaluation_local_/)
+    def requirements
+      @requirements ||= Reports::RequirementsService.new(@report)
     end
 
-    def require_situation_evaluatuation_hab?
-      form_type == "evaluation_local_habitation"
-    end
-
-    def require_proposition_evaluatuation_hab?
-      form_type == "evaluation_local_habitation"
-    end
-
-    def require_proposition_address?
-      form_type == "evaluation_hab/adresse"
-    end
+    delegate :require_situation_majic?,
+      :require_situation_evaluation?,
+      :require_situation_evaluation_habitation?,
+      :require_situation_evaluation_professionnel?,
+      :require_proposition_affectation?,
+      :require_proposition_evaluation?,
+      :require_proposition_evaluation_habitation?,
+      :require_proposition_evaluation_professionnel?,
+      :require_proposition_address?,
+      to: :requirements
 
     SITUATION_ADDRESSE_ATTRIBUTES = %w[
       situation_numero_voie

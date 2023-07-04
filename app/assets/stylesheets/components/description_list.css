@@ -56,14 +56,14 @@
     }
 
     & dd:empty:before,
-    &--with-action dd *:first-child:empty:before,
-    &--with-reference dd *:first-child:empty:before {
+    &--with-action dd > *:first-child:empty:before,
+    &--with-reference dd > *:first-child:empty:before {
       content: "-";
       @apply text-gray-500;
       @apply dark:text-gray-400;
     }
 
-    &--with-reference dd *:last-child {
+    &--with-reference dd > *:last-child:not(:first-child) {
       @apply text-gray-600;
     }
   }

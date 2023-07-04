@@ -13,45 +13,45 @@
     .description-list__row
       dt Année du fichier MAJIC
       dd
-        = validate_report_attribute(:situation_annee_majic) do
+        = render_valid_content(:situation_annee_majic) do
           = @report.situation_annee_majic.presence
 
     .description-list__row.description-list__row--with-reference
       dt Commune
       dd
-        = validate_report_attribute(:code_insee) do
+        = render_valid_content(:code_insee) do
           span= @report.commune&.name
           span= "Code INSEE : #{@report.code_insee}"
 
     .description-list__row
       dt Invariant
       dd
-        = validate_report_attribute(:situation_invariant) do
+        = render_valid_content(:situation_invariant) do
           = @report.situation_invariant
 
     .description-list__row
       dt Parcelle
       dd
-        = validate_report_attribute(:situation_parcelle) do
-          = display_parcelle(@report.situation_parcelle)
+        = render_valid_content(:situation_parcelle) do
+          = helpers.display_parcelle(@report.situation_parcelle)
 
     .description-list__row.description-list__row--with-reference
       dt Adresse du local
       dd
-        = validate_report_attribute(:situation_adresse) do
-          span= @report_decorator.situation_adresse
+        = render_valid_content(:situation_adresse) do
+          span= situation_adresse
           span= "Code RIVOLI : #{@report.situation_code_rivoli}"
 
     .description-list__row.description-list__row--with-reference
       dt Numéro de porte
       dd
-        = validate_report_attribute(:situation_porte) do
-          span= @report_decorator.situation_porte
-          span= "Numéro d'ordre : #{@report_decorator.situation_numero_ordre_porte}"
+        = render_valid_content(:situation_porte) do
+          span= situation_porte
+          span= "Numéro d'ordre : #{situation_numero_ordre_porte}"
 
     .description-list__row.description-list__row--with-reference
       dt Propriétaire
       dd
-        = validate_report_attribute(:situation_proprietaire) do
+        = render_valid_content(:situation_proprietaire) do
           span= @report.situation_proprietaire
           span= "Numéro d'ordre : #{@report.situation_numero_ordre_proprietaire}"

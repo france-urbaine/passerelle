@@ -1,0 +1,81 @@
+= fields(model: @report) do |form|
+  .subheader.px-0
+    = svg_icon("presentation-chart-bar")
+    | Proposition de mise à jour de l’évaluation
+
+  = tag.div **controller_html_options do
+    = form.block :date_constat do
+      = form.label :date_constat, "Date du constat"
+      = form.date_field :date_constat
+
+    - if require_proposition_affectation?
+      = form.block :proposition_affectation do
+        = form.label :proposition_affectation, "Affectation"
+        = form.select :proposition_affectation, affectation_options, { include_blank: true }, affectation_input_html_options
+
+    - if require_proposition_evaluation?
+      = tag.div **habitation_html_options do
+        = form.block :proposition_nature do
+          = form.label :proposition_nature, "Nature du local"
+          = form.select :proposition_nature, nature_habitation_options, { include_blank: true }, habitation_input_html_options
+
+        = form.block :proposition_categorie do
+          = form.label :proposition_categorie,"Catégorie du local"
+          = form.select :proposition_categorie, categorie_habitation_options, { include_blank: true }, habitation_input_html_options
+
+        = form.block :proposition_surface_reelle do
+          = form.label :proposition_surface_reelle, "Surface réelle"
+          = form.number_field :proposition_surface_reelle, step: "any", min: 0, **habitation_input_html_options
+
+        = form.block :proposition_coefficient_entretien do
+          = form.label :proposition_coefficient_entretien, "Coefficient d'entretien"
+          = form.select :proposition_coefficient_entretien, coefficient_entretien_options, { include_blank: true }, habitation_input_html_options
+
+        = form.block :proposition_coefficient_situation_generale do
+          = form.label :proposition_coefficient_situation_generale, "Coefficient de situation générale"
+          = form.select :proposition_coefficient_situation_generale, coefficient_situation_options, { include_blank: true }, habitation_input_html_options
+
+        = form.block :proposition_coefficient_situation_particuliere do
+          = form.label :proposition_coefficient_situation_particuliere, "Coefficient de situation particuliere"
+          = form.select :proposition_coefficient_situation_particuliere, coefficient_situation_options, { include_blank: true }, habitation_input_html_options
+
+      = tag.div **professionnel_html_options do
+        = form.block :proposition_nature do
+          = form.label :proposition_nature, "Nature du local"
+          = form.select :proposition_nature, nature_professionnel_options, { include_blank: true }, professionnel_input_html_options
+
+        = form.block :proposition_categorie do
+          = form.label :proposition_categorie,"Catégorie du local"
+          = form.select :proposition_categorie, categorie_professionnel_options, { include_blank: true }, professionnel_input_html_options
+
+        = form.block :proposition_surface_reelle do
+          = form.label :proposition_surface_reelle, "Surface réelle"
+          = form.number_field :proposition_surface_reelle, step: "any", min: 0, **professionnel_input_html_options
+
+        = form.block :proposition_surface_p1 do
+          = form.label :proposition_surface_p1, "(P1)Surface des parties principales"
+          = form.number_field :proposition_surface_p1, step: "any", min: 0, **professionnel_input_html_options
+
+        = form.block :proposition_surface_p2 do
+          = form.label :proposition_surface_p2, "(P2)Surface des parties secondaires couvertes"
+          = form.number_field :proposition_surface_p2, step: "any", min: 0, **professionnel_input_html_options
+
+        = form.block :proposition_surface_p3 do
+          = form.label :proposition_surface_p3, "(P3)Surface des parties secondaires non couvertes"
+          = form.number_field :proposition_surface_p3, step: "any", min: 0, **professionnel_input_html_options
+
+        = form.block :proposition_surface_pk1 do
+          = form.label :proposition_surface_pk1, "(Pk1) Surface des stationnements couverts"
+          = form.number_field :proposition_surface_pk1, step: "any", min: 0, **professionnel_input_html_options
+
+        = form.block :proposition_surface_pk2 do
+          = form.label :proposition_surface_pk2, "(Pk2) Surface des stationnements non couverts"
+          = form.number_field :proposition_surface_pk2, step: "any", min: 0, **professionnel_input_html_options
+
+        = form.block :proposition_surface_ponderee do
+          = form.label :proposition_surface_ponderee, "Surface pondérée"
+          = form.number_field :proposition_surface_ponderee, step: "any", min: 0, **professionnel_input_html_options
+
+        = form.block :proposition_coefficient_localisation do
+          = form.label :proposition_coefficient_localisation, "Coefficient de localisation"
+          = form.number_field :proposition_coefficient_localisation, step: "any", min: 0, **professionnel_input_html_options

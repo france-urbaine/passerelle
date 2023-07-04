@@ -28,7 +28,7 @@
     - options = Office::COMPETENCES.map { |s| [translate(s, scope: "enum.competence"), s] }
 
     = form.label :competences
-    = form.checkboxes_component :competences, options, :last, :first
+    = form.checkboxes_component :competences, options, :second, :first
 
 - modal.with_submit_action "Enregistrer"
 - modal.with_close_action "Annuler"

@@ -3,10 +3,8 @@
     - modal.with_header do
       | Création d'un nouveau signalement
 
-    - modal.with_form(model: @report, url: reports_path) do |form|
-      = form.block :form_type do
-        = form.label :form_type, "Type de formulaire"
-        = form.select :form_type, @report_form.form_type_options, include_blank: "Sélectionnez un formulaire"
+    - modal.with_form(model: @report, url: reports_path) do
+      = render Views::Reports::CreateForm::Component.new(@report)
 
     - modal.with_submit_action "Enregistrer"
     - modal.with_close_action "Annuler"

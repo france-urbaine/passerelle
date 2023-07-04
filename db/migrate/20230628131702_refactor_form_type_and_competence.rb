@@ -119,6 +119,7 @@ class RefactorFormTypeAndCompetence < ActiveRecord::Migration[7.0]
             WHEN "anomalies"::varchar = 'evaluation_pro/adresse'            THEN ARRAY['adresse'::anomaly]
             WHEN "anomalies"::varchar = 'evaluation_pro/omission_batie'     THEN ARRAY['omission_batie'::anomaly]
             WHEN "anomalies"::varchar = 'evaluation_pro/achevement_travaux' THEN ARRAY['achevement_travaux'::anomaly]
+            ELSE '{}'
             END
           SQL
         end

@@ -14,27 +14,26 @@ class ReportsController < ApplicationController
 
     @reports = @reports.kept.strict_loading
     @reports, @pagy = index_collection(@reports, nested: @parent)
+
+    case [current_organization, current_user.organization_admin?]
+    in [Collectivity, *] then @reports.preload!(:commune, :package)
+    in [Publisher, *]    then @reports.preload!(:commune, :package, :collectivity)
+    in [DDFIP, true]     then @reports.preload!(:commune, :collectivity, :package, :workshop)
+    in [DDFIP, false]    then @reports.preload!(:commune, :collectivity, :workshop)
+    end
   end
 
   def show
     only_kept! @report
-
-    @report_decorator    = Reports::DecorateService.new(@report)
-    @report_completeness = Reports::CheckCompletenessService.new(@report)
-    @report_completeness.validate unless @report.transmitted?
   end
 
   def new
-    @report_form = Reports::CreateFormService.new(@report)
     @background_url = referrer_path || parent_path || reports_path
   end
 
   def create
     service = Reports::CreateService.new(@report, current_user, report_params)
     result  = service.save
-
-    # Initialize a new form Service to re-render the :new template
-    @report_form = Reports::CreateFormService.new(@report) if result.failed?
 
     respond_with result,
       flash: true,
@@ -43,7 +42,6 @@ class ReportsController < ApplicationController
 
   def edit
     only_kept! @report
-    @report_form = Reports::UpdateFormService.new(@report, update_fields_param)
     @background_url = referrer_path || report_path(@report)
   end
 
@@ -52,9 +50,6 @@ class ReportsController < ApplicationController
 
     service = Reports::UpdateService.new(@report, report_params)
     result  = service.save
-
-    # Initialize a new form Service to re-render the :edit template
-    @report_form = Reports::UpdateFormService.new(@report, update_fields_param) if result.failed?
 
     respond_with result,
       flash: true,
@@ -85,10 +80,6 @@ class ReportsController < ApplicationController
 
   def report_params
     authorized(params.fetch(:report, {}))
-  end
-
-  def update_fields_param
-    params.require(:fields)
   end
 
   def parent_path

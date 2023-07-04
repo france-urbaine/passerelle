@@ -2,8 +2,6 @@
 
 module Checkboxes
   class Component < ApplicationViewComponent
-    attr_reader :object_name, :method, :collection, :other_args
-
     def initialize(object_name, method, collection, *args)
       @object_name = object_name
       @method      = method

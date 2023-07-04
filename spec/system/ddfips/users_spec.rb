@@ -47,7 +47,7 @@ RSpec.describe "DDFIP users" do
     expect(page).not_to have_button("Options d'affichage")
   end
 
-  fit "invites an user from the DDFIP page" do
+  it "invites an user from the DDFIP page" do
     visit ddfip_path(ddfip64)
 
     # A button should be present to add a new user

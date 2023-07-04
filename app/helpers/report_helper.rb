@@ -13,7 +13,7 @@ module ReportHelper
       return content
     end
 
-    tag.div class: "flex space-x-2 text-red-500" do
+    tag.span class: "flex space-x-2 text-red-500" do
       concat svg_icon("exclamation-circle", "Une erreur est présente")
 
       @report_completeness.errors.messages_for(attribute).each do |error|

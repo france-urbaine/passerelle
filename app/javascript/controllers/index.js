@@ -4,6 +4,8 @@
 
 import { application } from "./application"
 
+// Components
+// -----------------------------------------------------------------------------
 import NavbarController from "./components/navbar_controller"
 application.register("navbar", NavbarController)
 
@@ -31,8 +33,14 @@ application.register("selection-group", SelectionGroupController)
 import SelectionRowController from "./components/selection_row_controller"
 application.register("selection-row", SelectionRowController)
 
+// Forms
+// -----------------------------------------------------------------------------
+import DirectUploadFieldController from "./forms/direct_upload_field_controller"
+application.register("direct-upload-field", DirectUploadFieldController)
+
+import ReportFormController from "./forms/report_form_controller"
+application.register("report-form", ReportFormController)
+
 import UserFormController from "./forms/user_form_controller"
 application.register("user-form", UserFormController)
 
-import DirectUploadFieldController from "./forms/direct_upload_field_controller"
-application.register("direct-upload-field", DirectUploadFieldController)

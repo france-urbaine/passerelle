@@ -80,6 +80,10 @@
       @apply ml-1;
     }
 
+    &[disabled] ~ label {
+      @apply text-gray-500;
+    }
+
     &:not([disabled]) {
       cursor: pointer;
 

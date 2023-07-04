@@ -6,10 +6,6 @@
     - modal.with_form(model: @package, url: url_for([@parent, @package])) do |form|
       = hidden_field_tag :redirect, modal.redirection_path
 
-      = form.block :name do
-        = form.label :name
-        = form.text_field :name, required: true, autofocus: true
-
       = form.block :due_on do
         = form.label :due_on
         = form.date_field :due_on

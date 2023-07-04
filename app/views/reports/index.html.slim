@@ -6,20 +6,6 @@
     - if allowed_to?(:create?, Report, with: ReportPolicy)
       - breadcrumbs.with_action "Ajouter un signalement", new_report_path, icon: "plus", modal: true, primary: true
 
-  ruby:
-    @reports = @reports.preload(:commune)
-
-    case current_user.organization
-    when Collectivity then @reports.preload!(:package)
-    when Publisher    then @reports.preload!(:package, :collectivity)
-    when DDFIP
-      if current_user.organization_admin?
-        @reports.preload!(:collectivity, :package, :workshop)
-      else
-        @reports.preload!(:collectivity, :workshop)
-      end
-    end
-
   = datatable_component(@reports.preload(:package)) do |datatable|
     - datatable.with_search
     - datatable.with_pagination(@pagy, options: !@parent)
@@ -101,7 +87,10 @@
         = report.situation_invariant
 
       - row.with_column(:adresse) do
-        = Reports::DecorateService.new(report).situation_adresse
+        - if report.situation_adresse?
+          = report.situation_adresse
+        - else
+          = [report.situation_numero_voie, report.situation_indice_repetition, report.situation_libelle_voie].join(" ").squish
 
       - row.with_column(:commune) do
         = report.commune&.name

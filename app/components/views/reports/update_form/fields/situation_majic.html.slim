@@ -1,23 +1,24 @@
-= fields(model: @report_form) do |form|
+= fields(model: @report) do |form|
   .subheader.px-0
     = svg_icon("document-text")
     | Identification MAJIC
 
-  = form.block :situation_annee_majic do
-    = form.label :situation_annee_majic, "Année du fichier MAJIC"
-    = form.text_field :situation_annee_majic
+  div
+    = form.block :situation_annee_majic do
+      = form.label :situation_annee_majic, "Année du fichier MAJIC"
+      = form.text_field :situation_annee_majic
 
-  = form.block :code_insee do
-    = form.label :code_insee, "Commune"
-    = form.select :code_insee, @report_form.code_insee_options, prompt: "Sélectionnez une commune"
+    = form.block :code_insee do
+      = form.label :code_insee, "Commune"
+      = form.select :code_insee, code_insee_options, prompt: "Sélectionnez une commune"
 
-  = form.block :situation_invariant do
-    = form.label :situation_invariant, "Invariant"
-    = form.text_field :situation_invariant
+    = form.block :situation_invariant do
+      = form.label :situation_invariant, "Invariant"
+      = form.text_field :situation_invariant
 
-  = form.block :situation_parcelle do
-    = form.label :situation_parcelle, "Parcelle"
-    = form.text_field :situation_parcelle
+    = form.block :situation_parcelle do
+      = form.label :situation_parcelle, "Parcelle"
+      = form.text_field :situation_parcelle
 
   h2.subheader.px-0
     = svg_icon("document-text")

@@ -13,19 +13,19 @@
     .description-list__row
       dt Numéro de voie
       dd
-        = validate_report_attribute(:proposition_numero_voie) do
+        = render_valid_content(:proposition_numero_voie) do
           = @report.proposition_numero_voie
 
     .description-list__row
       dt Indice de répétition
       dd
-        = validate_report_attribute(:proposition_indice_repetition) do
+        = render_valid_content(:proposition_indice_repetition) do
           = @report.proposition_indice_repetition
 
     .description-list__row.description-list__row--with-reference
       dt Voie
       dd
-        = validate_report_attribute(:proposition_libelle_voie) do
+        = render_valid_content(:proposition_libelle_voie) do
           span= @report.proposition_libelle_voie
           span
             - if @report.proposition_code_rivoli?

@@ -40,16 +40,30 @@ fr:
       occupation:           Occupation du local
 
     affectation:
-      A: "Locaux commerciaux et biens divers passibles de la TH"
-      B: "Bâtiment industriel"
-      C: "Commerce"
-      E: "Locaux commerciaux et biens divers non passibles de la TH ni de la CFE"
       H: "Habitation"
-      K: "Locaux administratifs non passibles de la TH"
+      C: "Commerce"
       L: "Hôtel"
-      P: "Professionnel"
-      S: "Biens divers passibles de la TH"
+      P: "Local professionnel"
+      B: "Bâtiment industriel"
       T: "Terrain industriel"
+      K: "Locaux administratifs non passibles de la TH"
+      A: "Locaux commerciaux et biens divers passibles de la TH"
+      E: "Locaux commerciaux et biens divers non passibles de la TH ni de la CFE"
+      S: "Biens divers passibles de la TH"
+
+    affectation_local_habitation:
+      H: "Habitation"
+
+    affectation_local_professionnel:
+      C: "Commerce"
+      L: "Hôtel"
+      P: "Local professionnel"
+      B: "Bâtiment industriel"
+      T: "Terrain industriel"
+      K: "Locaux administratifs non passibles de la TH"
+      A: "Locaux commerciaux et biens divers passibles de la TH"
+      E: "Locaux commerciaux et biens divers non passibles de la TH ni de la CFE"
+      S: "Biens divers passibles de la TH"
 
     nature_local:
       AP: "Appartement"
@@ -70,6 +84,30 @@ fr:
       UG: "Appareil à gaz"
       UN: "Usine nucléaire"
 
+    nature_local_habitation:
+      AP: "Appartement"
+      MA: "Maison"
+      ME: "Maison exceptionnelle"
+      MP: "Maison partagée par une limite territoriale"
+      DA: "Dépendance d'appartement"
+      DM: "Dépendance de maison"
+      DE: "Dépendance bâtie isolée (ex. : garage)"
+      LC: "Local commun (ex. : local à vélos)"
+      SM: "Sol de maison (cas de construction sur sol d'autrui)"
+
+    nature_local_professionnel:
+      CB: "Local professionnel"
+      LC: "Local commun (ex. : local à vélos)"
+      DE: "Dépendance bâtie isolée (ex. : garage)"
+      UG: "Appareil à gaz"
+      UE: "Transformateur électrique HBTA"
+      AT: "Shelters des antennes téléphones"
+      PP: "Port de plaisance"
+      UN: "Usine nucléaire"
+      AU: "Voies et éléments (ex. : péage) construits sur une autoroute"
+      SM: "Sol de maison (cas de construction sur sol d'autrui)"
+      U:  "Établissement industriel (évalué par méthode comptable)"
+
     categorie_habitation:
       1:  1 - Grand luxe
       2:  2 - Luxe
@@ -88,7 +126,7 @@ fr:
       7M: 7M - Médiocre intermédiaire
 
     categorie_economique:
-      MAG1: "MAG1 - Boutiques et magasins sur rue (exemples : commerces, restaurants, cafés ou agences bancaires pour une surface principale inférieure à 400 m2)"
+      MAG1: "MAG1 - Boutiques et magasins sur rue (surface principale inférieure à 400 m2)"
       MAG2: "MAG2 - Commerces sans accès direct sur la rue (surface principale inférieure à 400 m2)"
       MAG3: "MAG3 - Magasins appartenant à un ensemble commercial (surface principale inférieure à 400 m2)"
       MAG4: "MAG4 - Magasins de grande surface (surface principale comprise entre 400 et 2 499 m2)"

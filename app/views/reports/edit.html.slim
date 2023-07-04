@@ -4,8 +4,7 @@
       | Edition du formulaire de signalement
 
     - modal.with_form(model: @report) do
-      = hidden_param_input(:fields)
-      = render "edit_#{@report_form.fields}"
+      = render Views::Reports::UpdateForm::Component.new(@report, params.require(:fields))
 
     - modal.with_submit_action "Enregistrer"
     - modal.with_close_action "Annuler"

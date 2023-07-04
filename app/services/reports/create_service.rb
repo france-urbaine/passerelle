@@ -25,6 +25,8 @@ module Reports
     private
 
     def find_or_build_package
+      return Package.new unless Report::FORM_TYPES.include?(@report.form_type)
+
       policy   = PackagePolicy.new(user: @current_user)
       packages = policy.apply_scope(
         @collectivity.packages.order(created_at: :desc),

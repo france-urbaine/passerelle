@@ -1,0 +1,103 @@
+.subheader-bar
+  h2.subheader
+    = svg_icon("document-text", "Nouvelle section")
+    | Évaluation actuelle
+
+  .subheader-bar__actions
+    - if allowed_to?(:update?, @report) && @report.packing?
+      .subheader-bar__action
+        = button_component "Compléter", edit_report_path(@report, fields: "situation_evaluation"), icon: "pencil-square", modal: true
+
+.card
+  dl.description-list
+    .description-list__row
+      dt Date de mutation
+      dd
+        = render_valid_content(:situation_date_mutation) do
+          = helpers.display_date(@report.situation_date_mutation)
+
+    .description-list__row
+      dt Affectation
+      dd
+        = render_valid_content(:situation_affectation) do
+          = situation_affectation
+
+    .description-list__row
+      dt Nature du local
+      dd
+        = render_valid_content(:situation_nature) do
+          = situation_nature
+
+    .description-list__row
+      dt Catégorie du local
+      dd
+        = render_valid_content(:situation_categorie) do
+          = situation_categorie
+
+    .description-list__row
+      dt Surface réelle
+      dd
+        = render_valid_content(:situation_surface_reelle) do
+          = helpers.display_surface(@report.situation_surface_reelle)
+
+    - if require_situation_evaluation_professionnel?
+      .description-list__row
+        dt= "(P1) Surface des parties principales"
+        dd
+          = render_valid_content(:situation_surface_p1) do
+            = helpers.display_surface(@report.situation_surface_p1)
+
+      .description-list__row
+        dt= "(P2) Surface des parties secondaires couvertes"
+        dd
+          = render_valid_content(:situation_surface_p2) do
+            = helpers.display_surface(@report.situation_surface_p2)
+
+      .description-list__row
+        dt= "(P3) Surface des parties secondaires non couvertes"
+        dd
+          = render_valid_content(:situation_surface_p3) do
+            = helpers.display_surface(@report.situation_surface_p3)
+
+      .description-list__row
+        dt= "(PK1) Surface des stationnements couverts"
+        dd
+          = render_valid_content(:situation_surface_pk1) do
+            = helpers.display_surface(@report.situation_surface_pk1)
+
+      .description-list__row
+        dt= "(PK2) Surface des stationnements non couverts"
+        dd
+          = render_valid_content(:situation_surface_pk2) do
+            = helpers.display_surface(@report.situation_surface_pk2)
+
+      .description-list__row
+        dt Surface pondérée
+        dd
+          = render_valid_content(:situation_surface_ponderee) do
+            = helpers.display_surface(@report.situation_surface_ponderee)
+
+      .description-list__row
+        dt Coefficient de localisation
+        dd
+          = render_valid_content(:situation_coefficient_localisation) do
+            = @report.situation_coefficient_localisation
+
+    - if require_situation_evaluation_habitation?
+      .description-list__row
+        dt Coefficient d'entretien
+        dd
+          = render_valid_content(:situation_coefficient_entretien) do
+            = situation_coefficient_entretien
+
+      .description-list__row
+        dt Coefficient de situation générale
+        dd
+          = render_valid_content(:situation_coefficient_situation_generale) do
+            = situation_coefficient_situation_generale
+
+      .description-list__row
+        dt Coefficient de situation particulière
+        dd
+          = render_valid_content(:situation_coefficient_situation_particuliere) do
+            = situation_coefficient_situation_particuliere

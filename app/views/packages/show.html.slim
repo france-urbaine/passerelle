@@ -15,9 +15,6 @@
       - unless @package.rejected?
         - breadcrumbs.with_action "Rejeter",   package_approval_path(@package), icon: "hand-thumb-down", destructive: true, method: "delete"
 
-    - if allowed_to?(:update?, @package)
-      - breadcrumbs.with_action "Modifier", edit_package_path(@package), icon: "pencil-square", modal: true
-
     - if allowed_to?(:destroy?, @package)
       - breadcrumbs.with_action "Supprimer", remove_package_path(@package), icon: "trash", modal: true, destructive: "discrete"
 
@@ -49,9 +46,13 @@
           - else
             em Non transmis
 
-      .description-list__row
+      .description-list__row.description-list__row--with-action
         dt Date d'échéance
-        dd= l(@package.due_on, format: :long) if @package.due_on
+        dd
+          span= l(@package.due_on, format: :long) if @package.due_on
+
+          - if allowed_to?(:update?, @package) && @package.packing?
+            span= button_component "Modifier", edit_package_path(@package), icon: "pencil-square", modal: true
 
   - if allowed_to?(:index?, Report)
     .content__separator
