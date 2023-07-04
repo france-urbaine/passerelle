@@ -8,9 +8,10 @@ module Views
         # create Subclasses to render other templates:
         # https://github.com/ViewComponent/view_component/issues/387
         #
-        Documents    = Class.new(self)
-        Enjeu        = Class.new(self)
-        Observations = Class.new(self)
+        Documents          = Class.new(self)
+        Enjeu              = Class.new(self)
+        Observations       = Class.new(self)
+        PropositionAdresse = Class.new(self)
 
         def initialize(report)
           @report = report
@@ -35,7 +36,7 @@ module Views
           :require_proposition_evaluation?,
           :require_proposition_evaluation_habitation?,
           :require_proposition_evaluation_professionnel?,
-          :require_proposition_address?,
+          :require_proposition_adresse?,
           to: :requirements
 
         # Helpers

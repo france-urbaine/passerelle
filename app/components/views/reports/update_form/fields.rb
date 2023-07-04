@@ -4,6 +4,10 @@ module Views
   module Reports
     module UpdateForm
       class Fields < ApplicationViewComponent
+        Enjeu              = Class.new(self)
+        Observations       = Class.new(self)
+        PropositionAdresse = Class.new(self)
+
         def initialize(report)
           @report = report
           super()
@@ -23,7 +27,7 @@ module Views
           :require_proposition_evaluation?,
           :require_proposition_evaluation_habitation?,
           :require_proposition_evaluation_professionnel?,
-          :require_proposition_address?,
+          :require_proposition_adresse?,
           to: :requirements
       end
     end

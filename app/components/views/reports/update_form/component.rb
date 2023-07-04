@@ -10,7 +10,7 @@ module Views
           situation_majic
           situation_evaluation
           proposition_evaluation
-          proposition_address
+          proposition_adresse
           observations
           enjeu
         ].freeze

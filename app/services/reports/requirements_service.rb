@@ -33,7 +33,7 @@ module Reports
       form_type.match?(/^evaluation_local_/) && anomalies.include?("affectation")
     end
 
-    def require_proposition_address?
+    def require_proposition_adresse?
       form_type.match?(/^evaluation_local_/) && anomalies.include?("adresse")
     end
 

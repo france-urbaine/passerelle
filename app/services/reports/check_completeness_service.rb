@@ -76,7 +76,7 @@ module Reports
       validates_presence_of :proposition_coefficient_localisation
     end
 
-    with_options if: :require_proposition_address? do
+    with_options if: :require_proposition_adresse? do
       validates_presence_of :proposition_libelle_voie
     end
 
@@ -94,7 +94,7 @@ module Reports
       :require_proposition_evaluation?,
       :require_proposition_evaluation_habitation?,
       :require_proposition_evaluation_professionnel?,
-      :require_proposition_address?,
+      :require_proposition_adresse?,
       to: :requirements
 
     SITUATION_ADDRESSE_ATTRIBUTES = %w[
