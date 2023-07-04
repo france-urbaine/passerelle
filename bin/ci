@@ -14,10 +14,10 @@ end
 # and we also want to explicitly log what we are executing.
 # Thus, we use this method instead of Kernel#system
 def system!(*args)
+  log "\e[33m#{args.join(' ')}\e[0m"
   return if system(*args)
 
-  args_output = "\e[33m#{args}\e[0m"
-  log "#{args_output} failed"
+  log "\e[33m#{args.join(' ')}\e[0m failed"
   abort
 end
 
@@ -37,28 +37,48 @@ def test_all
   log "Running all test suite"
   clear_coverage
 
-  command = "bundle exec rspec --no-profile"
-  command += " --format progress" if ENV["CI"] == "true"
+  command = "bundle exec rspec"
+  env = { "SIMPLE_COV_COMMAND" => "bin/ci test" }
 
-  system!({ "SIMPLE_COV_COMMAND" => "bin/ci test:system" }, command)
+  if ENV["CI"] == "true"
+    command += " --no-profile --format RSpec::Github::Formatter --format progress --tag ~skip"
+    env["SIMPLE_COV"] = "false"
+    env["SUPER_DIFF"] = "false"
+    env["CAPYBARA_MAX_WAIT_TIME"] = "5"
+  end
+
+  system!(env, command)
 end
 
 def test_unit
   log "Running non-system tests"
 
-  command = "bundle exec rspec --tag '~type:system' --no-profile"
-  command += " --format progress" if ENV["CI"] == "true"
+  command = "bundle exec rspec --tag '~type:system'"
+  env = { "SIMPLE_COV_COMMAND" => "bin/ci test:unit" }
 
-  system!({ "SIMPLE_COV_COMMAND" => "bin/ci test:system" }, command)
+  if ENV["CI"] == "true"
+    command += " --no-profile --format RSpec::Github::Formatter --format progress --tag ~skip"
+    env["SIMPLE_COV"] = "false"
+    env["SUPER_DIFF"] = "false"
+  end
+
+  system!(env, command)
 end
 
 def test_system
   log "Running system tests"
 
-  command = "bundle exec rspec --tag 'type:system' --no-profile"
-  command += " --format progress" if ENV["CI"] == "true"
+  command = "bundle exec rspec --tag 'type:system'"
+  env = { "SIMPLE_COV_COMMAND" => "bin/ci test:system" }
 
-  system!({ "SIMPLE_COV_COMMAND" => "bin/ci test:system" }, command)
+  if ENV["CI"] == "true"
+    command += " --no-profile --format RSpec::Github::Formatter --format progress --tag ~skip"
+    env["SIMPLE_COV"] = "false"
+    env["SUPER_DIFF"] = "false"
+    env["CAPYBARA_MAX_WAIT_TIME"] = "5"
+  end
+
+  system!(env, command)
 end
 
 def rubocop

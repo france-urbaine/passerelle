@@ -117,6 +117,7 @@ group :test do
   # RSpec extensions
   gem "fuubar"
   gem "rspec-collection_matchers"
+  gem "rspec-github", require: false
   gem "saharspec"
   gem "shoulda-matchers"
   gem "super_diff"
