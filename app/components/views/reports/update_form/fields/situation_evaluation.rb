@@ -9,7 +9,7 @@ module Views
             @report.situation_date_mutation = nil if @report.situation_date_mutation.blank?
           end
 
-          def affectation_options
+          def affectation_choices
             if require_situation_evaluation_habitation?
               I18n.t("enum.affectation_local_habitation").map(&:reverse)
             elsif require_situation_evaluation_professionnel?
@@ -17,7 +17,7 @@ module Views
             end
           end
 
-          def nature_options
+          def nature_choices
             if require_situation_evaluation_habitation?
               I18n.t("enum.nature_local_habitation").map(&:reverse)
             elsif require_situation_evaluation_professionnel?
@@ -25,7 +25,7 @@ module Views
             end
           end
 
-          def categorie_options
+          def categorie_choices
             if require_situation_evaluation_habitation?
               I18n.t("enum.categorie_habitation").map(&:reverse)
             elsif require_situation_evaluation_professionnel?
@@ -33,11 +33,11 @@ module Views
             end
           end
 
-          def coefficient_entretien_options
+          def coefficient_entretien_choices
             I18n.t("enum.coefficient_entretien").map(&:reverse)
           end
 
-          def coefficient_situation_options
+          def coefficient_situation_choices
             I18n.t("enum.coefficient_situation").map(&:reverse)
           end
 

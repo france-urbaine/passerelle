@@ -9,15 +9,15 @@
 
   = form.block :situation_affectation do
     = form.label :situation_affectation, "Affectation"
-    = form.select :situation_affectation, affectation_options, prompt: ("" if affectation_options.size > 1)
+    = form.select :situation_affectation, affectation_choices, prompt: ("" if affectation_choices.size > 1)
 
   = form.block :situation_nature do
     = form.label :situation_nature, "Nature du local"
-    = form.select :situation_nature, nature_options, prompt: ""
+    = form.select :situation_nature, nature_choices, prompt: ""
 
   = form.block :situation_categorie do
     = form.label :situation_categorie,"Catégorie du local"
-    = form.select :situation_categorie, categorie_options, prompt: ""
+    = form.select :situation_categorie, categorie_choices, prompt: ""
 
   = form.block :situation_surface_reelle do
     = form.label :situation_surface_reelle, "Surface réelle"
@@ -26,15 +26,15 @@
   - if require_situation_evaluation_habitation?
     = form.block :situation_coefficient_entretien do
       = form.label :situation_coefficient_entretien, "Coefficient d'entretien"
-      = form.select :situation_coefficient_entretien, coefficient_entretien_options, include_blank: true
+      = form.select :situation_coefficient_entretien, coefficient_entretien_choices, include_blank: true
 
     = form.block :situation_coefficient_situation_generale do
       = form.label :situation_coefficient_situation_generale, "Coefficient de situation générale"
-      = form.select :situation_coefficient_situation_generale, coefficient_situation_options, include_blank: true
+      = form.select :situation_coefficient_situation_generale, coefficient_situation_choices, include_blank: true
 
     = form.block :situation_coefficient_situation_particuliere do
       = form.label :situation_coefficient_situation_particuliere, "Coefficient de situation particuliere"
-      = form.select :situation_coefficient_situation_particuliere, coefficient_situation_options, include_blank: true
+      = form.select :situation_coefficient_situation_particuliere, coefficient_situation_choices, include_blank: true
 
   - if require_situation_evaluation_professionnel?
     = form.block :situation_surface_p1 do

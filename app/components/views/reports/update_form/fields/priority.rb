@@ -5,7 +5,7 @@ module Views
     module UpdateForm
       class Fields
         class Priority < self
-          def priority_options
+          def priority_choices
             I18n.t("enum.priority").map(&:reverse)
           end
         end
