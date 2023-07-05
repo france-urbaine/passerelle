@@ -1,0 +1,61 @@
+= modal_component do |modal|
+  - modal.with_header do
+    | Proposition de mise à jour des exonérations
+
+  - modal.with_form model: @report, **form_html_attributes do |form|
+    template( data-nested-form-target="template" )
+      = form.fields_for :exonerations, ReportExoneration.new, child_index: "NEW_RECORD" do |fields|
+        .nested-form-wrapper.grid.gap-x-4.grid-cols-7( data-new-record="true" )
+
+          = fields.block :status do
+            = fields.label :status, "Action"
+            = fields.select :status, status_choices, prompt: false
+
+          = fields.block :code do
+            = fields.label :code, "Code d'exonération"
+            = fields.text_field :code
+
+          = fields.block :label, class: "col-span-2" do
+            = fields.label :label, "Libellé"
+            = fields.text_field :label
+
+          = fields.block :base do
+            = fields.label :base, "Base applicable"
+            = fields.select :base, base_choices, prompt: false
+
+          = fields.block :code_collectivite do
+            = fields.label :code_collectivite, "Collectivité concernée"
+            = fields.select :code_collectivite, code_collectivite_choices, prompt: false
+
+          .form-block.flex.items-end.justify-end
+            = button_component "Supprimer", icon: "trash", data: { action: "nested-form#remove" }
+
+    = form.fields_for(:exonerations) do |fields|
+      .nested-form-wrapper.grid.gap-x-4.grid-cols-7( data-new-record="#{fields.object.new_record?}" )
+        = fields.block :status do
+          = fields.label :status, "Action"
+          = fields.select :status, status_choices, prompt: false
+
+        = fields.block :code do
+          = fields.label :code, "Code d'exonération"
+          = fields.text_field :code
+
+        = fields.block :label, class: "col-span-2" do
+          = fields.label :label, "Libellé"
+          = fields.text_field :label
+
+        = fields.block :base do
+          = fields.label :base, "Base applicable"
+          = fields.select :base, base_choices, prompt: false
+
+        = fields.block :code_collectivite do
+          = fields.label :code_collectivite, "Collectivité concernée"
+          = fields.select :code_collectivite, code_collectivite_choices, prompt: false
+
+        .form-block.flex.items-end.justify-end
+          = button_component "Supprimer", icon: "trash", data: { action: "nested-form#remove" }
+          = fields.hidden_field :_destroy
+
+    div( data-nested-form-target="target" )
+
+  - modal.with_other_action "Ajouter", icon: "plus", data: { action: "nested-form#add" }

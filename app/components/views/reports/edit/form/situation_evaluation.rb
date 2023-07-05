@@ -2,8 +2,8 @@
 
 module Views
   module Reports
-    module UpdateForm
-      class Fields
+    module Edit
+      class Form
         class SituationEvaluation < self
           def before_render
             @report.situation_date_mutation = nil if @report.situation_date_mutation.blank?

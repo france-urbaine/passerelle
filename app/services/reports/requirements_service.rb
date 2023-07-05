@@ -40,6 +40,10 @@ module Reports
       form_type.start_with?("evaluation_local_") && anomalies.include?("adresse")
     end
 
+    def require_proposition_exoneration?
+      form_type.start_with?("evaluation_local_") && anomalies.include?("exoneration")
+    end
+
     def require_proposition_evaluation?
       form_type.start_with?("evaluation_local_") &&
         anomalies.intersect?(%w[affectation consistance correctif])

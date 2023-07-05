@@ -1,0 +1,8 @@
+= modal_component do |modal|
+  - modal.with_header do
+    | Enjeu du signalement
+
+  - modal.with_form(model: @report) do |form|
+    = form.block :enjeu do
+      = form.label :enjeu, "Enjeu"
+      = form.number_field :enjeu

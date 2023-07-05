@@ -19,6 +19,10 @@ module Modal
     renders_many :other_actions, "OtherAction"
     renders_one :raw_actions
 
+    renders_many :hidden_fields, lambda { |*args, **options|
+      hidden_field_tag(*args, **options)
+    }
+
     attr_reader :redirection_path
     attr_accessor :form_options
 

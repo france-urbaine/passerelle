@@ -44,6 +44,9 @@
     - if form?
       = tag.turbo_frame id: "modal_form" do
         = form_with(**form_options) do
+          - hidden_fields.each do |hidden_field|
+            = hidden_field
+
           = captured_content
     - else
       = captured_content

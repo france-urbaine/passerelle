@@ -2,14 +2,14 @@
 
 module Views
   module Reports
-    module UpdateForm
-      class Fields
+    module Edit
+      class Form
         class Information < self
           ANOMALIES_ENABLED = {
             "consistance"        => true,
             "affectation"        => true,
             "correctif"          => true,
-            "exoneration"        => false,
+            "exoneration"        => true,
             "adresse"            => true,
             "omission_batie"     => false,
             "achevement_travaux" => false,

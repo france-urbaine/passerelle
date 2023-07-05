@@ -1,0 +1,8 @@
+= modal_component do |modal|
+  - modal.with_header do
+    | Observations relatives au signalement
+
+  - modal.with_form(model: @report) do |form|
+    = form.block :observations do
+      = form.label :observations, "Observations"
+      = form.text_area :observations, rows: 10

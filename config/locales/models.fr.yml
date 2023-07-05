@@ -17,9 +17,6 @@ fr:
     attributes:
       package:
         form_type:            Formulaire type
-
-      package:
-        form_type:            Formulaire type
         due_on:               Date d'échéance
 
       publisher:
@@ -121,6 +118,22 @@ fr:
             anomalies:
               must_be_an_array: "Les anomalies doivent être soumis sous la forme d'un tableau de valeurs"
               inclusion:        "Certaines anomalies ne sont pas compatibles avec ce type de formulaire"
+
+        report_exoneration:
+          attributes:
+            code:
+              blank: Un code est requis
+            label:
+              blank: Un libellé est requis
+            status:
+              blank:     Une action est requise
+              inclusion: Cette action n'est pas inclus dans la liste
+            base:
+              blank:     Cette information est requise
+              inclusion: Cette base d'exonération n'est pas inclus dans la liste
+            code_collectivite:
+              blank:     Cette information est requise
+              inclusion: Ce code collectivité n'est pas inclus dans la liste
 
         package:
           attributes:
@@ -360,3 +373,6 @@ fr:
 
             situation_proprietaire:
               incomplete_numero_ordre: "Ce champs est incomplet: un numéro d'ordre est requis"
+
+            exonerations:
+              blank: La saisie des exonérations est requise

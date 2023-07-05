@@ -2,10 +2,11 @@
 
 module Views
   module Reports
-    module CreateForm
+    module New
       class Component < ApplicationViewComponent
-        def initialize(report)
+        def initialize(report, redirection_path: nil)
           @report = report
+          @redirection_path = redirection_path
           super()
         end
 
