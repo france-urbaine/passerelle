@@ -4,14 +4,17 @@ module Packages
   class ReportsController < ::ReportsController
     private
 
-    def build_reports_scope
+    def load_and_authorize_parent
       package = Package.find(params[:package_id])
 
       authorize! package, to: :show?
       only_kept! package
 
-      @parent  = package
-      @reports = package.reports
+      @parent = package
+    end
+
+    def build_and_authorize_scope(as: :default)
+      authorized(@parent.reports, as:).strict_loading
     end
   end
 end

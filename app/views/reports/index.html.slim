@@ -15,7 +15,7 @@
         - selection.with_action "Tout regrouper", disabled: true
 
       - if allowed_to?(:destroy_all?, Report)
-        - selection.with_action "Tout supprimer", disabled: true
+        - selection.with_action "Tout supprimer", url_for([:remove_all, @parent, :reports]), modal: true
 
     - datatable.with_column(:reference) { "Reference" }
 
@@ -68,6 +68,9 @@
 
     - datatable.each_row do |row, report|
       - row.with_checkbox "Sélectionner cette collectivité", described_by: :name
+
+      - if allowed_to?(:destroy?, report, with: ReportPolicy)
+        - row.with_action "Supprimer ce signalement", remove_report_path(report), icon: "trash", modal: true
 
       - row.with_column(:reference) do
         = authorized_link_to report do

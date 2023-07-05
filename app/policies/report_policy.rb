@@ -45,7 +45,7 @@ class ReportPolicy < ApplicationPolicy
   end
 
   def destroy_all?
-    false
+    collectivity? || publisher?
   end
 
   relation_scope do |relation|
@@ -59,6 +59,26 @@ class ReportPolicy < ApplicationPolicy
       relation.merge(reports_listed_to_office_users)
     else
       relation.none # :nocov:
+    end
+  end
+
+  relation_scope :destroyable do |relation|
+    if collectivity?
+      relation.merge(reports_destroyable_by_collectivity)
+    elsif publisher?
+      relation.merge(reports_destroyable_by_publisher)
+    else
+      relation.none
+    end
+  end
+
+  relation_scope :undiscardable do |relation|
+    if collectivity?
+      relation.merge(reports_undiscardable_by_collectivity)
+    elsif publisher?
+      relation.merge(reports_undiscardable_by_publisher)
+    else
+      relation.none
     end
   end
 
@@ -157,7 +177,7 @@ class ReportPolicy < ApplicationPolicy
       report.covered_by_offices?(user.offices)
   end
 
-  # Assert if a package can be updated by an user
+  # Assert if a report can be updated by an user
   # ----------------------------------------------------------------------------
   def report_updatable_by_collectivity?(report)
     collectivity? &&
@@ -185,7 +205,51 @@ class ReportPolicy < ApplicationPolicy
     report_shown_to_office_user?(report)
   end
 
-  # Assert if a package can be destroyed by an user
+  # List reports that can be destroyed by an user
+  # ----------------------------------------------------------------------------
+  def reports_destroyable_by_collectivity
+    return Report.none unless collectivity?
+
+    Report
+      .kept
+      .out_of_sandbox
+      .sent_by_collectivity(organization)
+      .packed_through_web_ui
+      .packing
+  end
+
+  def reports_destroyable_by_publisher
+    return Report.none unless publisher?
+
+    Report
+      .kept
+      .sent_by_publisher(organization)
+      .packing
+  end
+
+  # List reports that can be undiscarded by an user
+  # ----------------------------------------------------------------------------
+  def reports_undiscardable_by_collectivity
+    return Report.none unless collectivity?
+
+    Report
+      .discarded
+      .out_of_sandbox
+      .sent_by_collectivity(organization)
+      .packed_through_web_ui
+      .packing
+  end
+
+  def reports_undiscardable_by_publisher
+    return Report.none unless publisher?
+
+    Report
+      .discarded
+      .sent_by_publisher(organization)
+      .packing
+  end
+
+  # Assert if a report can be destroyed by an user
   # ----------------------------------------------------------------------------
   def report_destroyable_by_collectivity?(report)
     collectivity? &&

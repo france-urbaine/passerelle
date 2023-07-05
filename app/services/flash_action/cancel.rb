@@ -50,9 +50,11 @@ module FlashAction
     end
 
     def url_params
+      # FIXME: this hack allow to keept parent ID in nested URLs
+      # We just fucking need to do something else.
       @params
-        .slice(:controller, :publisher_id, :collectivity_id, :ddfip_id, :office_id, :id)
-        .permit(:controller, :publisher_id, :collectivity_id, :ddfip_id, :office_id, :id)
+        .slice(:controller, :publisher_id, :collectivity_id, :ddfip_id, :office_id, :package_id, :id)
+        .permit(:controller, :publisher_id, :collectivity_id, :ddfip_id, :office_id, :package_id, :id)
         .to_h
         .symbolize_keys
     end
