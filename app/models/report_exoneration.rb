@@ -35,7 +35,7 @@ class ReportExoneration < ApplicationRecord
 
   validates :code,   presence: true
   validates :label,  presence: true
-  validates :status, presence: true, inclusion: { in: STATUSES, allow_blank: true}
-  validates :base,   presence: true, inclusion: { in: BASES, allow_blank: true}
-  validates :code_collectivite, presence: true, inclusion: { in: CODES_COLLECTIVITE, allow_blank: true}
+  validates :status, presence: true, inclusion: { in: STATUSES, allow_blank: true }
+  validates :base,   presence: true, inclusion: { in: BASES, allow_blank: true }
+  validates :code_collectivite, presence: true, inclusion: { in: CODES_COLLECTIVITE, allow_blank: true }
 end
