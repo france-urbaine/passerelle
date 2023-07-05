@@ -4,15 +4,17 @@
 
   - modal.with_form model: @report, **form_html_attributes do |form|
     template( data-nested-form-target="template" )
+      -# FIXME: improve responsivity
+
       = form.fields_for :exonerations, ReportExoneration.new, child_index: "NEW_RECORD" do |fields|
-        .nested-form-wrapper.grid.gap-x-4.grid-cols-7( data-new-record="true" )
+        .nested-form-wrapper.grid.gap-x-4.grid-cols-7( class="min-w-[1000px]" data-new-record="true" )
 
           = fields.block :status do
             = fields.label :status, "Action"
             = fields.select :status, status_choices, prompt: false
 
           = fields.block :code do
-            = fields.label :code, "Code d'exonération"
+            = fields.label :code, "Code d'exonération", class: "text-ellipsis overflow-hidden whitespace-nowrap"
             = fields.text_field :code
 
           = fields.block :label, class: "col-span-2" do
@@ -20,24 +22,24 @@
             = fields.text_field :label
 
           = fields.block :base do
-            = fields.label :base, "Base applicable"
+            = fields.label :base, "Base applicable", class: "text-ellipsis overflow-hidden whitespace-nowrap"
             = fields.select :base, base_choices, prompt: false
 
           = fields.block :code_collectivite do
-            = fields.label :code_collectivite, "Collectivité concernée"
+            = fields.label :code_collectivite, "Collectivité concernée", class: "text-ellipsis overflow-hidden whitespace-nowrap"
             = fields.select :code_collectivite, code_collectivite_choices, prompt: false
 
           .form-block.flex.items-end.justify-end
             = button_component "Supprimer", icon: "trash", data: { action: "nested-form#remove" }
 
     = form.fields_for(:exonerations) do |fields|
-      .nested-form-wrapper.grid.gap-x-4.grid-cols-7( data-new-record="#{fields.object.new_record?}" )
+      .nested-form-wrapper.grid.gap-x-4.grid-cols-7( class="min-w-[1000px]" data-new-record="#{fields.object.new_record?}" )
         = fields.block :status do
           = fields.label :status, "Action"
           = fields.select :status, status_choices, prompt: false
 
         = fields.block :code do
-          = fields.label :code, "Code d'exonération"
+          = fields.label :code, "Code d'exonération", class: "text-ellipsis overflow-hidden whitespace-nowrap"
           = fields.text_field :code
 
         = fields.block :label, class: "col-span-2" do
@@ -45,11 +47,11 @@
           = fields.text_field :label
 
         = fields.block :base do
-          = fields.label :base, "Base applicable"
+          = fields.label :base, "Base applicable", class: "text-ellipsis overflow-hidden whitespace-nowrap"
           = fields.select :base, base_choices, prompt: false
 
         = fields.block :code_collectivite do
-          = fields.label :code_collectivite, "Collectivité concernée"
+          = fields.label :code_collectivite, "Collectivité concernée", class: "text-ellipsis overflow-hidden whitespace-nowrap"
           = fields.select :code_collectivite, code_collectivite_choices, prompt: false
 
         .form-block.flex.items-end.justify-end
