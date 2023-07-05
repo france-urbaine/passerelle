@@ -87,7 +87,7 @@
   .content__separator
   = render SituationMajic.new(@report)
 
-- if require_situation_evaluation? && require_proposition_evaluation?
+- if require_proposition_affectation? || (require_situation_evaluation? && require_proposition_evaluation?)
   .content__separator
   .content__grid.content__grid--cols-2
     div= render SituationEvaluation.new(@report)
