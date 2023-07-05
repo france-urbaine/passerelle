@@ -37,7 +37,7 @@
 
       .description-list__row
         dt Compétences
-        dd= display_competences(@office.competences)
+        dd= list(@office.competences) { |value| t(value, scope: "enum.competence") }
 
   - if allowed_to?(:index?, User, with: Offices::UserPolicy)
     .content__separator

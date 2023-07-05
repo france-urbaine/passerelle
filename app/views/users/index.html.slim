@@ -101,4 +101,4 @@
           '
 
       - row.with_column(:offices) do
-        = authorized_links_to_offices(user.offices, @parent.id, truncate: true)
+        = short_offices_list(user.offices, @parent.id)

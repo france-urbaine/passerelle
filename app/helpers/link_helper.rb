@@ -14,28 +14,27 @@ module LinkHelper
     end
   end
 
-  def authorized_links_to_offices(offices, ddfip_id, truncate: false)
+  def short_offices_list(offices, ddfip_id)
     offices = offices.select { |office| office.kept? && office.ddfip_id == ddfip_id }
     return if offices.empty?
 
-    buffer = []
-    buffer << authorized_link_to(offices[0]) { offices[0].name }
+    # Add a consistent & deterministic order
+    offices.sort_by(&:created_at)
 
-    if truncate
-      two_words_connector = " & "
-
-      case offices.size
-      when 2     then buffer << "1 autre"
-      when (3..) then buffer << "#{offices.size - 1} autres"
-      end
-    else
-      words_connector = last_word_connector = two_words_connector = "<br>".html_safe
-
-      offices[1..].each do |office|
-        buffer << authorized_link_to(office) { office.name }
-      end
+    sort_list(offices) do |office|
+      authorized_link_to(office) { office.name }
     end
+  end
 
-    to_sentence buffer, words_connector:, last_word_connector:, two_words_connector:
+  def offices_list(offices, ddfip_id)
+    offices = offices.select { |office| office.kept? && office.ddfip_id == ddfip_id }
+    return if offices.empty?
+
+    # Add a consistent & deterministic order
+    offices.sort_by(&:created_at)
+
+    list(offices) do |office|
+      authorized_link_to(office) { office.name }
+    end
   end
 end

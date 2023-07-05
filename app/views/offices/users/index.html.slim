@@ -70,4 +70,4 @@
           '
 
       - row.with_column(:offices) do
-        = authorized_links_to_offices(user.offices, @office.ddfip_id, truncate: true)
+        = short_offices_list(user.offices, @office.ddfip_id)

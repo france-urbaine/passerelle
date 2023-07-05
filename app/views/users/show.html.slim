@@ -27,7 +27,7 @@
       - if @user.organization.is_a?(DDFIP)
         .description-list__row
           dt Guichets
-          dd= authorized_links_to_offices(@user.offices, @user.organization_id)
+          dd= offices_list(@user.offices, @user.organization_id)
 
       .description-list__row
         dt Adresse mail de contact

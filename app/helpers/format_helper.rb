@@ -74,10 +74,32 @@ module FormatHelper
     end
   end
 
-  def display_competences(competences)
-    competences
-      .map { |value| t(value, scope: "enum.competence") }
-      .to_sentence(last_word_connector: " & ", two_words_connector: " & ")
-      .humanize
+  def list(collection, &)
+    return if collection.empty?
+
+    collection = collection.map.with_index(&) if block_given?
+    collection.map! do |item|
+      tag.li { item }
+    end
+
+    tag.ul do
+      safe_join collection
+    end
+  end
+
+  def sort_list(collection, humanize: false, &)
+    list = []
+
+    if collection.size <= 2
+      list = collection
+      list = list.map.with_index(&) if block_given?
+      list[1] = list[0][0].downcase.concat(list[0][1..]) if humanize && list[1].present?
+    else
+      list = collection[0,1]
+      list = list.map.with_index(&) if block_given?
+      list << "#{collection.size - 1} autres"
+    end
+
+    to_sentence(list, two_words_connector: " & ")
   end
 end

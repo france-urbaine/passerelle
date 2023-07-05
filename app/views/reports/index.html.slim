@@ -23,6 +23,7 @@
     - when Collectivity
       - datatable.with_column(:package)    { "Paquet" }
       - datatable.with_column(:form_type)  { "Type de signalement" }
+      - datatable.with_column(:anomalies)  { "Objet" }
       - datatable.with_column(:invariant)  { "Invariant" }
       - datatable.with_column(:adresse)    { "Adresse" }
       - datatable.with_column(:commune)    { "Commune" }
@@ -31,6 +32,7 @@
       - datatable.with_column(:package)       { "Paquet" }
       - datatable.with_column(:collectivity)  { "Collectivité" }
       - datatable.with_column(:form_type)     { "Type de signalement" }
+      - datatable.with_column(:anomalies)  { "Objet" }
       - datatable.with_column(:invariant)     { "Invariant" }
       - datatable.with_column(:adresse)       { "Adresse" }
       - datatable.with_column(:commune)       { "Commune" }
@@ -42,6 +44,7 @@
         - datatable.with_column(:office)        { "Guichet" }
         - datatable.with_column(:workshop)      { "Dossier" }
         - datatable.with_column(:form_type)     { "Type de signalement" }
+        - datatable.with_column(:anomalies)     { "Objet" }
         - datatable.with_column(:invariant)     { "Invariant" }
         - datatable.with_column(:adresse)       { "Adresse" }
         - datatable.with_column(:commune)       { "Commune" }
@@ -49,6 +52,7 @@
         - datatable.with_column(:collectivity)  { "Collectivité" }
         - datatable.with_column(:workshop)      { "Dossier" }
         - datatable.with_column(:form_type)     { "Type de signalement" }
+        - datatable.with_column(:anomalies)     { "Objet" }
         - datatable.with_column(:invariant)     { "Invariant" }
         - datatable.with_column(:adresse)       { "Adresse" }
         - datatable.with_column(:commune)       { "Commune" }
@@ -79,6 +83,9 @@
 
       - row.with_column(:form_type) do
         = t(report.form_type, scope: "enum.report_form_type")
+
+      - row.with_column(:anomalies) do
+        = sort_list(report.anomalies, humanize: true) { |value| t(value, scope: "enum.anomalies") }
 
       - row.with_column(:workshop) do
         = report.workshop&.name

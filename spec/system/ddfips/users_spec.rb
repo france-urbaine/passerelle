@@ -86,7 +86,7 @@ RSpec.describe "DDFIP users" do
     expect(page).to have_current_path(ddfip_path(ddfip64))
     expect(page).to have_selector("h1", text: "DDFIP des Pyrénées-Atlantiques")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Elliot Alderson") do |row|
-      expect(row).to have_text("PELP de Bayonne & 1 autre")
+      expect(row).to have_text("PELP de Bayonne & PELH de Bayonne")
     end
 
     # The dialog should be closed
