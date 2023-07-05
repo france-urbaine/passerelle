@@ -9,6 +9,7 @@ module Views
           situation_majic
           situation_evaluation
           proposition_evaluation
+          proposition_exoneration
           proposition_adresse
           observations
           enjeu

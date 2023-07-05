@@ -66,6 +66,7 @@ class ReportPolicy < ApplicationPolicy
     if collectivity?
       attributes = %i[form_type priority code_insee date_constat enjeu observations]
       attributes << { anomalies: [] }
+      attributes << { exonerations_attributes: %i[id _destroy status code label base code_collectivite] }
       attributes += Report.column_names.grep(/^(situation|proposition)_/).map(&:to_sym)
 
       params.permit(*attributes)

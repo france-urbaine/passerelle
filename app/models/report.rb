@@ -120,10 +120,16 @@ class Report < ApplicationRecord
 
   has_many :offices, ->(report) { distinct.where(competences: report.competence) }, through: :potential_office_communes, source: :office
 
+  has_many :exonerations, class_name: "ReportExoneration", dependent: false
+
   # Attachments
   # ----------------------------------------------------------------------------
   has_many_attached :images
   has_many_attached :documents
+
+  # Attributes
+  # ----------------------------------------------------------------------------
+  accepts_nested_attributes_for :exonerations, reject_if: :all_blank, allow_destroy: true
 
   # Validations
   # ----------------------------------------------------------------------------

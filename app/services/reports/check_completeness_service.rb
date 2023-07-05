@@ -96,6 +96,10 @@ module Reports
       end
     end
 
+    with_options if: :require_proposition_exoneration? do
+      validates_presence_of :exonerations
+    end
+
     with_options if: :require_proposition_adresse? do
       validates_presence_of :proposition_libelle_voie
     end
@@ -117,6 +121,7 @@ module Reports
       :require_proposition_adresse?,
       :require_proposition_consistance?,
       :require_proposition_correctif?,
+      :require_proposition_exoneration?,
       to: :requirements
 
     {

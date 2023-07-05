@@ -4,6 +4,11 @@
 
 import { application } from "./application"
 
+// Third parties
+// -----------------------------------------------------------------------------
+import NestedForm from "stimulus-rails-nested-form"
+application.register("nested-form", NestedForm)
+
 // Components
 // -----------------------------------------------------------------------------
 import NavbarController from "./components/navbar_controller"

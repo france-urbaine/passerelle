@@ -10,10 +10,11 @@ module Views
         #
         InformationPacking      = Class.new(self)
         InformationTransmitted  = Class.new(self)
-        Documents               = Class.new(self)
+        PropositionExoneration  = Class.new(self)
+        PropositionAdresse      = Class.new(self)
         Enjeu                   = Class.new(self)
         Observations            = Class.new(self)
-        PropositionAdresse      = Class.new(self)
+        Documents               = Class.new(self)
 
         def initialize(report)
           @report = report
@@ -41,6 +42,7 @@ module Views
           :require_proposition_adresse?,
           :require_proposition_consistance?,
           :require_proposition_correctif?,
+          :require_proposition_exoneration?,
           to: :requirements
 
         # Helpers

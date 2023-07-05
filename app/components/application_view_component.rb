@@ -19,5 +19,5 @@ class ApplicationViewComponent < ViewComponent::Base
   delegate :form_block, :checkboxes_component, :svg_icon, :authorized_link_to, to: :helpers
 
   # Other components helpers
-  delegate :button_component, :card_component, :modal_component, to: :helpers
+  delegate :button_component, :card_component, :modal_component, :datatable_component, to: :helpers
 end

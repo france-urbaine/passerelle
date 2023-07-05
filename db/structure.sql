@@ -78,6 +78,39 @@ CREATE TYPE public.epci_nature AS ENUM (
 
 
 --
+-- Name: exoneration_base; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.exoneration_base AS ENUM (
+    'imposable',
+    'impose'
+);
+
+
+--
+-- Name: exoneration_code_collectivite; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.exoneration_code_collectivite AS ENUM (
+    'C',
+    'GC',
+    'TS',
+    'OM'
+);
+
+
+--
+-- Name: exoneration_status; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.exoneration_status AS ENUM (
+    'conserver',
+    'supprimer',
+    'ajouter'
+);
+
+
+--
 -- Name: form_type; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -2627,6 +2660,23 @@ CREATE TABLE public.office_users (
 
 
 --
+-- Name: report_exonerations; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.report_exonerations (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    report_id uuid NOT NULL,
+    code character varying NOT NULL,
+    label character varying NOT NULL,
+    status public.exoneration_status NOT NULL,
+    base public.exoneration_base NOT NULL,
+    code_collectivite public.exoneration_code_collectivite NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
 -- Name: reports; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -2859,6 +2909,14 @@ ALTER TABLE ONLY public.publishers
 
 ALTER TABLE ONLY public.regions
     ADD CONSTRAINT regions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: report_exonerations report_exonerations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.report_exonerations
+    ADD CONSTRAINT report_exonerations_pkey PRIMARY KEY (id);
 
 
 --
@@ -3146,6 +3204,13 @@ CREATE UNIQUE INDEX index_regions_on_code_region ON public.regions USING btree (
 
 
 --
+-- Name: index_report_exonerations_on_report_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_report_exonerations_on_report_id ON public.report_exonerations USING btree (report_id);
+
+
+--
 -- Name: index_reports_on_collectivity_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3400,6 +3465,14 @@ ALTER TABLE ONLY public.epcis
 
 
 --
+-- Name: report_exonerations fk_rails_763b0b7e91; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.report_exonerations
+    ADD CONSTRAINT fk_rails_763b0b7e91 FOREIGN KEY (report_id) REFERENCES public.reports(id) ON DELETE CASCADE;
+
+
+--
 -- Name: packages fk_rails_880b85e679; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3519,6 +3592,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230619095430'),
 ('20230622073103'),
 ('20230622135614'),
-('20230628131702');
+('20230628131702'),
+('20230705064157');
 
 

@@ -179,3 +179,18 @@ fr:
       "0,00": 	"0,00 - Ordinaire"
       "-0,05": 	"- 0,05 - Médiocre"
       "-0,10": 	"- 0,10 - Mauvais"
+
+    exoneration_status:
+      conserver: A conserver
+      ajouter:   A ajouter
+      supprimer: Appliquée à tort
+
+    exoneration_base:
+      imposable: Appliquée sur la base imposable
+      impose:    Appliquée sur la base imposée
+
+    exoneration_code_collectivite:
+      C:  Commune
+      GC: Groupement de communes
+      TS: Taxe spéciale d’équipement (TSE)
+      OM: Taxe sur l'enlèvement des ordures ménagères (TEOM)

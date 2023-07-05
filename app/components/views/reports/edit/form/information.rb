@@ -9,7 +9,7 @@ module Views
             "consistance"        => true,
             "affectation"        => true,
             "correctif"          => true,
-            "exoneration"        => false,
+            "exoneration"        => true,
             "adresse"            => true,
             "omission_batie"     => false,
             "achevement_travaux" => false,
