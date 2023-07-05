@@ -15,7 +15,7 @@
         - selection.with_action "Tout regrouper", disabled: true
 
       - if allowed_to?(:destroy_all?, Report)
-        - selection.with_action "Tout supprimer", disabled: true
+        - selection.with_action "Tout supprimer", url_for([:remove_all, @parent, :reports]), modal: true
 
     - datatable.with_column(:reference) { "Reference" }
 

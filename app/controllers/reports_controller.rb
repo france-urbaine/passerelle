@@ -2,15 +2,12 @@
 
 class ReportsController < ApplicationController
   before_action :authorize!
-  before_action :build_reports_scope
-  before_action :authorize_reports_scope
-  before_action :build_report, only: %i[new create]
+  before_action :load_and_authorize_parent
+  before_action :autocompletion_not_implemented!, only: :index
+  before_action :better_view_on_parent, only: :index
 
   def index
-    return not_implemented if autocomplete_request?
-    return redirect_to(@parent, status: :see_other) if @parent && !turbo_frame_request?
-
-    @reports = @reports.kept.strict_loading
+    @reports = build_and_authorize_scope
     @reports, @pagy = index_collection(@reports, nested: @parent)
 
     case [current_organization, current_user.organization_admin?]
@@ -26,10 +23,12 @@ class ReportsController < ApplicationController
   end
 
   def new
+    @report = build_report
     @background_url = referrer_path || parent_path || reports_path
   end
 
   def create
+    @report = build_report
     service = Reports::CreateService.new(@report, current_user, report_params)
     result  = service.save
 
@@ -45,7 +44,6 @@ class ReportsController < ApplicationController
 
   def update
     @report = find_and_authorize_report
-
     service = Reports::UpdateService.new(@report, report_params)
     result  = service.save
 
@@ -78,18 +76,45 @@ class ReportsController < ApplicationController
       location: redirect_path || referrer_path || reports_path
   end
 
+  def remove_all
+    @reports = build_and_authorize_scope(as: :destroyable)
+    @reports = filter_collection(@reports)
+    @background_url = referrer_path || reports_path(**selection_params)
+  end
+
+  def destroy_all
+    @reports = build_and_authorize_scope(as: :destroyable)
+    @reports = filter_collection(@reports)
+    @reports.quickly_discard_all
+
+    respond_with @reports,
+      flash: true,
+      actions: FlashAction::Cancel.new(params),
+      location: redirect_path || parent_path || reports_path
+  end
+
+  def undiscard_all
+    @reports = build_and_authorize_scope(as: :undiscardable)
+    @reports = filter_collection(@reports)
+    @reports.quickly_undiscard_all
+
+    respond_with @reports,
+      flash: true,
+      location: redirect_path || referrer_path || parent_path || reports_path
+  end
+
   private
 
-  def build_reports_scope
-    @reports = Report.all
+  def load_and_authorize_parent
+    # Override this method to load a @parent variable
   end
 
-  def authorize_reports_scope
-    @reports = authorized(@reports)
+  def build_and_authorize_scope(as: :default)
+    authorized(Report.all, as:).strict_loading
   end
 
-  def build_report
-    @report = @reports.build
+  def build_report(...)
+    build_and_authorize_scope.build(...)
   end
 
   def find_and_authorize_report(allow_discarded: false)
