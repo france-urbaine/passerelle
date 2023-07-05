@@ -61,7 +61,7 @@ module Reports
       validates_presence_of :situation_coefficient_localisation
 
       with_options allow_blank: true do
-        validates_inclusion_of :situation_nature,    in: :nature_local_professionnel
+        validates_inclusion_of :situation_nature,    in: :valid_local_professionnel_natures
         validates_inclusion_of :situation_categorie, in: :valid_local_professionnel_categories
       end
     end
