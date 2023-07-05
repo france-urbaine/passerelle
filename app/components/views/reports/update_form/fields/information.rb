@@ -4,25 +4,20 @@ module Views
   module Reports
     module UpdateForm
       class Fields
-        class Anomalies < self
+        class Information < self
           ANOMALIES_ENABLED = {
             "consistance"        => true,
             "affectation"        => true,
+            "correctif"          => true,
             "exoneration"        => false,
             "adresse"            => true,
-            "correctif"          => false,
             "omission_batie"     => false,
             "achevement_travaux" => false,
             "occupation"         => false
           }.freeze
 
           def form_type_anomalies
-            case @report.form_type
-            when /^evaluation_local_/ then Report::EVALUATION_ANOMALIES
-            when /^creation_local_/   then Report::CREATION_ANOMALIES
-            when /^occupation_local_/ then Report::OCCUPATION_ANOMALIES
-            else []
-            end
+            Report::FORM_TYPE_ANOMALIES.fetch(@report.form_type, [])
           end
 
           def anomalies_choices
@@ -38,6 +33,10 @@ module Views
 
           def anomalies_disabled
             form_type_anomalies.reject { |key| ANOMALIES_ENABLED[key] }
+          end
+
+          def priority_choices
+            I18n.t("enum.priority").map(&:reverse)
           end
         end
       end

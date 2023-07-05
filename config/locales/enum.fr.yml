@@ -39,7 +39,7 @@ fr:
       achevement_travaux:   Achèvementdetravaux
       occupation:           Occupation du local
 
-    affectation:
+    local_affectation:
       H: "Habitation"
       C: "Commerce"
       L: "Hôtel"
@@ -51,10 +51,10 @@ fr:
       E: "Locaux commerciaux et biens divers non passibles de la TH ni de la CFE"
       S: "Biens divers passibles de la TH"
 
-    affectation_local_habitation:
+    local_habitation_affectation:
       H: "Habitation"
 
-    affectation_local_professionnel:
+    local_professionnel_affectation:
       C: "Commerce"
       L: "Hôtel"
       P: "Local professionnel"
@@ -65,7 +65,7 @@ fr:
       E: "Locaux commerciaux et biens divers non passibles de la TH ni de la CFE"
       S: "Biens divers passibles de la TH"
 
-    nature_local:
+    local_nature:
       AP: "Appartement"
       AT: "Shelters des antennes téléphones"
       AU: "Voies et éléments (ex. : péage) construits sur une autoroute"
@@ -84,7 +84,7 @@ fr:
       UG: "Appareil à gaz"
       UN: "Usine nucléaire"
 
-    nature_local_habitation:
+    local_habitation_nature:
       AP: "Appartement"
       MA: "Maison"
       ME: "Maison exceptionnelle"
@@ -95,7 +95,7 @@ fr:
       LC: "Local commun (ex. : local à vélos)"
       SM: "Sol de maison (cas de construction sur sol d'autrui)"
 
-    nature_local_professionnel:
+    local_professionnel_nature:
       CB: "Local professionnel"
       LC: "Local commun (ex. : local à vélos)"
       DE: "Dépendance bâtie isolée (ex. : garage)"
@@ -108,7 +108,7 @@ fr:
       SM: "Sol de maison (cas de construction sur sol d'autrui)"
       U:  "Établissement industriel (évalué par méthode comptable)"
 
-    categorie_habitation:
+    local_habitation_categorie:
       1:  1 - Grand luxe
       2:  2 - Luxe
       3:  3 - Très confortable
@@ -125,7 +125,7 @@ fr:
       6M: 6M - Ordinaire intermédiaire
       7M: 7M - Médiocre intermédiaire
 
-    categorie_economique:
+    local_professionnel_categorie:
       MAG1: "MAG1 - Boutiques et magasins sur rue (surface principale inférieure à 400 m2)"
       MAG2: "MAG2 - Commerces sans accès direct sur la rue (surface principale inférieure à 400 m2)"
       MAG3: "MAG3 - Magasins appartenant à un ensemble commercial (surface principale inférieure à 400 m2)"

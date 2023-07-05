@@ -6,22 +6,22 @@ module Views
       class Component
         class PropositionEvaluation < self
           def proposition_affectation
-            t(@report.proposition_affectation, scope: "enum.affectation")
+            t(@report.proposition_affectation, scope: "enum.local_affectation")
           end
 
           def proposition_nature
             if require_proposition_evaluation_habitation?
-              t(@report.proposition_nature, scope: "enum.nature_local_habitation", default: "")
+              t(@report.proposition_nature, scope: "enum.local_habitation_nature", default: "")
             elsif require_proposition_evaluation_professionnel?
-              t(@report.proposition_nature, scope: "enum.nature_local_professionnel", default: "")
+              t(@report.proposition_nature, scope: "enum.local_professionnel_nature", default: "")
             end
           end
 
           def proposition_categorie
             if require_proposition_evaluation_habitation?
-              t(@report.proposition_categorie, scope: "enum.categorie_habitation", default: "")
+              t(@report.proposition_categorie, scope: "enum.local_habitation_categorie", default: "")
             elsif require_proposition_evaluation_professionnel?
-              t(@report.proposition_categorie, scope: "enum.categorie_economique", default: "")
+              t(@report.proposition_categorie, scope: "enum.local_professionnel_categorie", default: "")
             end
           end
 

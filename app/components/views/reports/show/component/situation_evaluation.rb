@@ -6,18 +6,18 @@ module Views
       class Component
         class SituationEvaluation < self
           def situation_affectation
-            t(@report.situation_affectation, scope: "enum.affectation")
+            t(@report.situation_affectation, scope: "enum.local_affectation")
           end
 
           def situation_nature
-            t(@report.situation_nature, scope: "enum.nature_local")
+            t(@report.situation_nature, scope: "enum.local_nature")
           end
 
           def situation_categorie
             if require_situation_evaluation_habitation?
-              I18n.t(@report.situation_categorie, scope: "enum.categorie_habitation")
+              I18n.t(@report.situation_categorie, scope: "enum.local_habitation_categorie")
             elsif require_situation_evaluation_professionnel?
-              I18n.t(@report.situation_categorie, scope: "enum.categorie_economique")
+              I18n.t(@report.situation_categorie, scope: "enum.local_professionnel_categorie")
             end
           end
 

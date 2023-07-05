@@ -1,0 +1,72 @@
+.subheader-bar
+  h2.subheader
+    = svg_icon("server-stack", "Icône d'illustration")
+    | Informations relatives au paquet
+
+  .subheader-bar__actions
+    .subheader-bar__action
+      - if @report.completed?
+        .badge.badge--yellow Signalement complété
+      - else
+        .badge.badge--red Signalement incomplet
+
+.card
+  dl.description-list
+    .description-list__row
+      dt Référence du paquet
+      dd
+        = authorized_link_to @report.package do
+          = @report.package.reference
+
+    .description-list__row
+      dt Date de transmission
+      dd
+        em Non transmis
+
+    .description-list__row
+      dt Date d'échéance
+      dd
+        - if @report.package.due_on
+          = l(@report.package.due_on)
+        - elsif @report.packing?
+          em A spécifier dans le paquet
+
+    .description-list__row
+      dt Type de signalement
+      dd= t(@report.form_type, scope: "enum.report_form_type")
+
+.content__separator
+.subheader-bar
+  h2.subheader
+    = svg_icon("flag", "Icône d'illustration")
+    | Objet du signalement
+
+  .subheader-bar__actions
+    - if allowed_to?(:update?, @report) && @report.packing?
+      .subheader-bar__action
+        = button_component "Modifier", edit_report_path(@report, fields: "information"), icon: "pencil-square", modal: true
+
+.card
+  dl.description-list
+    .description-list__row
+      dt Objet(s)
+      dd
+        = render_valid_content(:anomalies) do
+          = helpers.list(@report.anomalies) { |value| t(value, scope: "enum.anomalies") }
+
+    .description-list__row
+      dt Date de contat
+      dd
+        = render_valid_content(:date_constat) do
+          = helpers.display_date(@report.date_constat)
+
+    .description-list__row
+      dt Priorité
+      dd
+        - case @report.priority
+        - when "low"
+          = svg_icon("chart-bar", "Basse", class: "low-priority-icon")
+        - when "medium"
+          = svg_icon("chart-bar", "Moyenne", class: "medium-priority-icon")
+        - when "high"
+          = svg_icon("chart-bar", "Haute", class: "high-priority-icon")

@@ -1,4 +1,0 @@
-= fields(model: @report) do |form|
-  = form.block :anomalies do
-    = form.label :anomalies, "Objet(s) du signalement"
-    = form.checkboxes_component :anomalies, anomalies_choices, :first, :second, { disabled: anomalies_disabled }

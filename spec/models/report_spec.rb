@@ -50,24 +50,36 @@ RSpec.describe Report do
         is_expected.to     allow_value([]).for(:anomalies)
         is_expected.not_to allow_value(nil).for(:anomalies)
 
-        # Invalid values are converted to an empty array
-        # So we cannot test with string:
+        # After setting :anomalies to aything but nil or an Array, ActiveRecord will convert it to an empty array.
+        # So we cannot test invalid string with Shoulda matcher:
         #
-        #   is_expected.not_to allow_value(Report::EVALUATION_ANOMALIES.sample).for(:anomalies)
+        #   is_expected.not_to allow_value("foo").for(:anomalies)
       end
     end
 
-    it "validates that :anomalies accept only combinaison of valid values when reporting an evaluation form" do
-      valid_values = Report::EVALUATION_ANOMALIES
+    def random_combinaison(values)
+      array = values.map { |v| [v] }
+      array += Array.new(values.size) { values.sample(2) }
+      array.uniq
+    end
 
-      allowed_arrays = valid_values.map { |v| [v] }
-      allowed_arrays += Array.new(4) { valid_values.sample(2) }
-
-      invalid_arrays = []
-      invalid_arrays << [Faker::Lorem.word]
-      invalid_arrays << [Faker::Lorem.word, valid_values.sample]
-
+    it "validates that :anomalies accept only combinaison of valid values when reporting an evaluation_local_habitation" do
       report = build(:report, :evaluation_local_habitation)
+
+      allowed_arrays = random_combinaison(%w[consistance affectation exoneration correctif adresse])
+      invalid_arrays = random_combinaison(%w[occupation omission_batie])
+
+      aggregate_failures do
+        expect(report).to     allow_values(*allowed_arrays).for(:anomalies)
+        expect(report).not_to allow_values(*invalid_arrays).for(:anomalies)
+      end
+    end
+
+    it "validates that :anomalies accept only combinaison of valid values when reporting an evaluation_local_professionnel" do
+      report = build(:report, :evaluation_local_professionnel)
+
+      allowed_arrays = random_combinaison(%w[consistance affectation exoneration adresse])
+      invalid_arrays = random_combinaison(%w[correctif omission_batie])
 
       aggregate_failures do
         expect(report).to     allow_values(*allowed_arrays).for(:anomalies)
@@ -76,16 +88,10 @@ RSpec.describe Report do
     end
 
     it "validates that :anomalies accept only combinaison of valid values when reporting a creation form" do
-      valid_values = Report::CREATION_ANOMALIES
-
-      allowed_arrays = valid_values.map { |v| [v] }
-      allowed_arrays += Array.new(4) { valid_values.sample(2) }
-
-      invalid_arrays = []
-      invalid_arrays << [Faker::Lorem.word]
-      invalid_arrays << [Faker::Lorem.word, valid_values.sample]
-
       report = build(:report, :creation_local_habitation)
+
+      allowed_arrays = random_combinaison(%w[omission_batie achevement_travaux])
+      invalid_arrays = random_combinaison(%w[consistance adresse])
 
       aggregate_failures do
         expect(report).to     allow_values(*allowed_arrays).for(:anomalies)
@@ -94,16 +100,10 @@ RSpec.describe Report do
     end
 
     it "validates that :anomalies accept only combinaison of valid values when reporting an occupation form" do
-      valid_values = Report::OCCUPATION_ANOMALIES
-
-      allowed_arrays = valid_values.map { |v| [v] }
-      allowed_arrays += Array.new(4) { valid_values.sample(2) }
-
-      invalid_arrays = []
-      invalid_arrays << [Faker::Lorem.word]
-      invalid_arrays << [Faker::Lorem.word, valid_values.sample]
-
       report = build(:report, :occupation_local_habitation)
+
+      allowed_arrays = random_combinaison(%w[occupation adresse])
+      invalid_arrays = random_combinaison(%w[consistance affectation])
 
       aggregate_failures do
         expect(report).to     allow_values(*allowed_arrays).for(:anomalies)

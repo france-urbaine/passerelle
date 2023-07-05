@@ -1,7 +1,12 @@
 .subheader-bar
   h2.subheader
-    = svg_icon("presentation-chart-bar", "Nouvelle section")
-    | Proposition de mise à jour de l’évaluation
+    = svg_icon("presentation-chart-bar", "Icône d'illustration")
+    - if @report.anomalies.include?("affectation")
+      | Proposition de mise à jour de l'affectation
+    - elsif @report.anomalies.include?("consistance")
+      | Proposition de mise à jour de la consistance
+    - elsif @report.anomalies.include?("correctif")
+      | Proposition de mise à jour du correctif
 
   .subheader-bar__actions
     - if allowed_to?(:update?, @report) && @report.packing?
@@ -10,12 +15,6 @@
 
 .card
   dl.description-list
-    .description-list__row
-      dt Date de contat
-      dd
-        = render_valid_content(:date_constat) do
-          = helpers.display_date(@report.date_constat)
-
     - if @report.anomalies.include?("affectation")
       .description-list__row
         dt Affectation
@@ -23,7 +22,7 @@
           = render_valid_content(:proposition_affectation) do
             = proposition_affectation
 
-    - if require_proposition_evaluation?
+    - if require_proposition_consistance? && (require_proposition_evaluation_habitation? || require_proposition_evaluation_professionnel?)
       .description-list__row
         dt Nature du local
         dd
@@ -42,7 +41,7 @@
           = render_valid_content(:proposition_surface_reelle) do
             = helpers.display_surface(@report.proposition_surface_reelle)
 
-    - if require_proposition_evaluation_professionnel?
+    - if require_proposition_consistance? && require_proposition_evaluation_professionnel?
       .description-list__row
         dt= "(P1) Surface des parties principales"
         dd
@@ -85,7 +84,7 @@
           = render_valid_content(:proposition_coefficient_localisation) do
             = @report.proposition_coefficient_localisation
 
-    - if require_proposition_evaluation_habitation?
+    - if require_proposition_correctif? && require_proposition_evaluation_habitation?
       .description-list__row
         dt Coefficient d'entretien
         dd

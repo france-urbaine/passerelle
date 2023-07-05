@@ -5,8 +5,7 @@ module Views
     module UpdateForm
       class Component < ApplicationViewComponent
         FIELDS = %w[
-          priority
-          anomalies
+          information
           situation_majic
           situation_evaluation
           proposition_evaluation

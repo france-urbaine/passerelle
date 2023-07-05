@@ -8,10 +8,12 @@ module Views
         # create Subclasses to render other templates:
         # https://github.com/ViewComponent/view_component/issues/387
         #
-        Documents          = Class.new(self)
-        Enjeu              = Class.new(self)
-        Observations       = Class.new(self)
-        PropositionAdresse = Class.new(self)
+        InformationPacking      = Class.new(self)
+        InformationTransmitted  = Class.new(self)
+        Documents               = Class.new(self)
+        Enjeu                   = Class.new(self)
+        Observations            = Class.new(self)
+        PropositionAdresse      = Class.new(self)
 
         def initialize(report)
           @report = report
@@ -32,11 +34,13 @@ module Views
           :require_situation_evaluation?,
           :require_situation_evaluation_habitation?,
           :require_situation_evaluation_professionnel?,
-          :require_proposition_affectation?,
           :require_proposition_evaluation?,
           :require_proposition_evaluation_habitation?,
           :require_proposition_evaluation_professionnel?,
+          :require_proposition_affectation?,
           :require_proposition_adresse?,
+          :require_proposition_consistance?,
+          :require_proposition_correctif?,
           to: :requirements
 
         # Helpers

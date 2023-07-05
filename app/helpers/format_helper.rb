@@ -95,7 +95,7 @@ module FormatHelper
       list = list.map.with_index(&) if block_given?
       list[1] = list[0][0].downcase.concat(list[0][1..]) if humanize && list[1].present?
     else
-      list = collection[0,1]
+      list = collection[0, 1]
       list = list.map.with_index(&) if block_given?
       list << "#{collection.size - 1} autres"
     end

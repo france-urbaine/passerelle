@@ -11,25 +11,25 @@ module Views
 
           def affectation_choices
             if require_situation_evaluation_habitation?
-              I18n.t("enum.affectation_local_habitation").map(&:reverse)
+              I18n.t("enum.local_habitation_affectation").map(&:reverse)
             elsif require_situation_evaluation_professionnel?
-              I18n.t("enum.affectation_local_professionnel").map(&:reverse)
+              I18n.t("enum.local_professionnel_affectation").map(&:reverse)
             end
           end
 
           def nature_choices
             if require_situation_evaluation_habitation?
-              I18n.t("enum.nature_local_habitation").map(&:reverse)
+              I18n.t("enum.local_habitation_nature").map(&:reverse)
             elsif require_situation_evaluation_professionnel?
-              I18n.t("enum.nature_local_professionnel").map(&:reverse)
+              I18n.t("enum.local_professionnel_nature").map(&:reverse)
             end
           end
 
           def categorie_choices
             if require_situation_evaluation_habitation?
-              I18n.t("enum.categorie_habitation").map(&:reverse)
+              I18n.t("enum.local_habitation_categorie").map(&:reverse)
             elsif require_situation_evaluation_professionnel?
-              I18n.t("enum.categorie_economique").map(&:reverse)
+              I18n.t("enum.local_professionnel_categorie").map(&:reverse)
             end
           end
 

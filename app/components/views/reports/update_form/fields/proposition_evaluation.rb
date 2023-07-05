@@ -9,8 +9,8 @@ module Views
             {
               data: {
                 controller: "report-form",
-                report_form_affectation_habitation_value: I18n.t("enum.affectation_local_habitation").keys,
-                report_form_affectation_professionnel_value: I18n.t("enum.affectation_local_professionnel").keys
+                report_form_affectation_habitation_value: I18n.t("enum.local_habitation_affectation").keys,
+                report_form_affectation_professionnel_value: I18n.t("enum.local_professionnel_affectation").keys
               }
             }
           end
@@ -50,26 +50,26 @@ module Views
           def affectation_choices
             case @report.form_type
             when "evaluation_local_habitation"
-              I18n.t("enum.affectation_local_professionnel").map(&:reverse)
+              I18n.t("enum.local_professionnel_affectation").map(&:reverse)
             else
-              I18n.t("enum.affectation").map(&:reverse)
+              I18n.t("enum.local_affectation").map(&:reverse)
             end
           end
 
           def nature_habitation_choices
-            I18n.t("enum.nature_local_habitation").map(&:reverse)
+            I18n.t("enum.local_habitation_nature").map(&:reverse)
           end
 
           def nature_professionnel_choices
-            I18n.t("enum.nature_local_professionnel").map(&:reverse)
+            I18n.t("enum.local_professionnel_nature").map(&:reverse)
           end
 
           def categorie_habitation_choices
-            I18n.t("enum.categorie_habitation").map(&:reverse)
+            I18n.t("enum.local_habitation_categorie").map(&:reverse)
           end
 
           def categorie_professionnel_choices
-            I18n.t("enum.categorie_economique").map(&:reverse)
+            I18n.t("enum.local_professionnel_categorie").map(&:reverse)
           end
 
           def coefficient_entretien_choices

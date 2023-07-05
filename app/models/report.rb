@@ -138,32 +138,37 @@ class Report < ApplicationRecord
     occupation_local_professionnel
   ].freeze
 
-  EVALUATION_ANOMALIES = %w[
+  ANOMALIES = %w[
     consistance
     affectation
     exoneration
-    adresse
     correctif
-  ].freeze
-
-  CREATION_ANOMALIES = %w[
     omission_batie
     achevement_travaux
-  ].freeze
-
-  OCCUPATION_ANOMALIES = %w[
     occupation
     adresse
   ].freeze
 
+  FORM_TYPE_ANOMALIES = {
+    "evaluation_local_habitation"    => %w[consistance affectation exoneration correctif adresse],
+    "evaluation_local_professionnel" => %w[consistance affectation exoneration adresse],
+    "creation_local_habitation"      => %w[omission_batie achevement_travaux],
+    "creation_local_professionnel"   => %w[omission_batie achevement_travaux],
+    "occupation_local_habitation"    => %w[occupation adresse],
+    "occupation_local_professionnel" => %w[occupation adresse]
+  }.freeze
+
   validates :reference, presence: true, uniqueness: { unless: :skip_uniqueness_validation_of_reference? }
   validates :form_type, presence: true, inclusion: { in: FORM_TYPES, allow_blank: true }
-
   validates :anomalies, array: true
-  validates :anomalies, inclusion: { in: EVALUATION_ANOMALIES, allow_blank: true, if: :evaluation_form_type? }
-  validates :anomalies, inclusion: { in: CREATION_ANOMALIES,   allow_blank: true, if: :creation_form_type? }
-  validates :anomalies, inclusion: { in: OCCUPATION_ANOMALIES, allow_blank: true, if: :occupation_form_type? }
-  validates :priority,  inclusion: { in: PRIORITIES }
+
+  validates :anomalies, inclusion: {
+    in: ->(report) { FORM_TYPE_ANOMALIES[report.form_type] },
+    if: :form_type?,
+    allow_blank: true
+  }
+
+  validates :priority, inclusion: { in: PRIORITIES }
 
   with_options allow_blank: true do
     validates :situation_annee_majic, numericality: {
@@ -194,13 +199,13 @@ class Report < ApplicationRecord
     validates :proposition_numero_ordre_porte, format: { with: NUMERO_ORDRE_PORTE_REGEXP }
     validates :proposition_date_achevement,    format: { with: DATE_REGEXP }
 
-    # validates :situation_nature,       inclusion: ->(person) { person.valid_natures }
-    # validates :situation_affectation,  inclusion: ->(person) { person.valid_affectations }
-    # validates :situation_categorie,    inclusion: ->(person) { person.valid_categories }
+    validates :situation_affectation,  inclusion: { in: :valid_affectations }
+    validates :situation_nature,       inclusion: { in: :valid_natures }
+    validates :situation_categorie,    inclusion: { in: :valid_categories }
 
-    # validates :proposition_nature,      inclusion: ->(person) { person.valid_natures }
-    # validates :proposition_affectation, inclusion: ->(person) { person.valid_affectations }
-    # validates :proposition_categorie,   inclusion: ->(person) { person.valid_categories }
+    validates :proposition_affectation, inclusion: { in: :valid_affectations }
+    validates :proposition_nature,      inclusion: { in: :valid_natures }
+    validates :proposition_categorie,   inclusion: { in: :valid_categories }
 
     validates :situation_surface_reelle,   numericality: { greater_than: 0 }
     validates :situation_surface_p1,       numericality: { greater_than: 0 }
@@ -219,19 +224,16 @@ class Report < ApplicationRecord
     validates :proposition_surface_ponderee, numericality: { greater_than: 0 }
   end
 
-  def valid_natures
-    I18n.t("enum.natures").keys
+  def valid_affectations
+    I18n.t("enum.local_affectation").keys.map(&:to_s)
   end
 
-  def valid_affectations
-    I18n.t("enum.affectation").keys
+  def valid_natures
+    I18n.t("enum.local_nature").keys.map(&:to_s)
   end
 
   def valid_categories
-    case form_type
-    when /(evaluation|creation|occupation)_local_habitation/    then I18n.t("enum.categorie_habitation").keys
-    when /(evaluation|creation|occupation)_local_professionnel/ then I18n.t("enum.categorie_economique").keys
-    end
+    (I18n.t("enum.local_habitation_categorie").keys + I18n.t("enum.local_professionnel_categorie").keys).map(&:to_s)
   end
 
   # Callbacks
@@ -375,27 +377,6 @@ class Report < ApplicationRecord
       .where(%{? = ANY ("offices"."competences")}, form_type)
       .merge(Commune.where(code_insee: code_insee))
       .exists?
-  end
-
-  def evaluation_form_type?
-    %w[
-      evaluation_local_habitation
-      evaluation_local_professionnel
-    ].include?(form_type)
-  end
-
-  def creation_form_type?
-    %w[
-      creation_local_habitation
-      creation_local_professionnel
-    ].include?(form_type)
-  end
-
-  def occupation_form_type?
-    %w[
-      occupation_local_habitation
-      occupation_local_professionnel
-    ].include?(form_type)
   end
 
   # Updates methods

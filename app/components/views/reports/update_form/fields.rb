@@ -23,11 +23,13 @@ module Views
           :require_situation_evaluation?,
           :require_situation_evaluation_habitation?,
           :require_situation_evaluation_professionnel?,
-          :require_proposition_affectation?,
           :require_proposition_evaluation?,
           :require_proposition_evaluation_habitation?,
           :require_proposition_evaluation_professionnel?,
+          :require_proposition_affectation?,
           :require_proposition_adresse?,
+          :require_proposition_consistance?,
+          :require_proposition_correctif?,
           to: :requirements
       end
     end

@@ -351,6 +351,7 @@ fr:
         reports/check_completeness_service:
           blank:             Ce champs est requis
           incomplete:        Ce champs est incomplet
+          inclusion:         Ce champs est invalide ou incomplet
 
           attributes:
             situation_adresse:
