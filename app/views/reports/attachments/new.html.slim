@@ -1,7 +1,7 @@
 = template_frame_component(src: @background_url) do |frame|
   - frame.with_modal do |modal|
     - modal.with_header do
-      | Ajout de documents joints
+      | Ajout de pièces jointes
 
     - modal.with_form(url: report_attachments_path(@report), method: :post) do
       = render "form"

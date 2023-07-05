@@ -2,8 +2,8 @@
 
 module Views
   module Reports
-    module UpdateForm
-      class Fields
+    module Edit
+      class Form
         class PropositionEvaluation < self
           def controller_html_attributes
             {

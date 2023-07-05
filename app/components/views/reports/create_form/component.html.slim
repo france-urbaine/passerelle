@@ -1,4 +1,0 @@
-= fields(model: @report) do |form|
-  = form.block :form_type do
-    = form.label :form_type, "Type de formulaire"
-    = form.select :form_type, form_type_choices, include_blank: "Sélectionnez un formulaire", disabled: form_type_disabled

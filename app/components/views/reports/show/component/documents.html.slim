@@ -1,7 +1,7 @@
 .subheader-bar
   h2.subheader
     = svg_icon("paper-clip", "Icône d'illustration")
-    | Documents attachés
+    | Pièces jointes
 
   .subheader-bar__actions
     - if allowed_to?(:update?, @report) && @report.packing?

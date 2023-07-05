@@ -2,18 +2,29 @@
 
 module Views
   module Reports
-    module UpdateForm
-      class Fields < ApplicationViewComponent
+    module Edit
+      class Form < ApplicationViewComponent
         Enjeu              = Class.new(self)
         Observations       = Class.new(self)
         PropositionAdresse = Class.new(self)
 
-        def initialize(report)
+        def initialize(report, redirection_path: nil)
           @report = report
+          @redirection_path = redirection_path
           super()
         end
 
         private
+
+        def modal_component
+          render Modal::Component.new(redirection_path: @redirection_path) do |modal|
+            yield(modal)
+
+            modal.with_hidden_field :form, self.class.name.demodulize.underscore
+            modal.with_submit_action "Enregistrer"
+            modal.with_close_action "Annuler"
+          end
+        end
 
         def requirements
           @requirements ||= ::Reports::RequirementsService.new(@report)

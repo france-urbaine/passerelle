@@ -2,8 +2,8 @@
 
 module Views
   module Reports
-    module UpdateForm
-      class Fields
+    module Edit
+      class Form
         class Information < self
           ANOMALIES_ENABLED = {
             "consistance"        => true,
