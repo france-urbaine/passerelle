@@ -8,6 +8,8 @@ class DeleteDiscardedRecordsJob < ApplicationJob
     "DDFIP"        => 30.days,
     "Publisher"    => 30.days,
     "Office"       => 30.days,
+    "Package"      => 30.days,
+    "Report"       => 30.days,
     "User"         => 1.day
   }.freeze
 

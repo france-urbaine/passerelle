@@ -69,6 +69,9 @@
     - datatable.each_row do |row, report|
       - row.with_checkbox "Sélectionner cette collectivité", described_by: :name
 
+      - if allowed_to?(:destroy?, report, with: ReportPolicy)
+        - row.with_action "Supprimer ce signalement", remove_report_path(report), icon: "trash", modal: true
+
       - row.with_column(:reference) do
         = authorized_link_to report do
           = report.reference

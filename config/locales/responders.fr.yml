@@ -141,6 +141,19 @@ fr:
           title:        "La suppression des paquets sélectionnés a été annulée."
           delay:        3000
 
+    reports:
+      destroy:
+        notice:
+          type:         "success"
+          title:        "Le signalement a été supprimé."
+          description:  "Toutes les données seront définitivement supprimées dans un délai de 30 jours."
+          delay:        10000
+
+      undiscard:
+        notice:
+          type:         "cancel"
+          title:        "La suppression du signalement a été annulée."
+          delay:        3000
 
     collectivities:
       <<: *collectivities

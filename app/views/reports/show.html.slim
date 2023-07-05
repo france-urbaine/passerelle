@@ -4,4 +4,7 @@
     - breadcrumbs.with_path "Signalements", reports_path
     - breadcrumbs.with_path @report.reference
 
+    - if allowed_to?(:destroy?, @report)
+      - breadcrumbs.with_action "Supprimer", remove_report_path(@report), icon: "trash", modal: true, destructive: "discrete"
+
   = render Views::Reports::Show::Component.new(@report)

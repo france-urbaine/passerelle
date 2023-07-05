@@ -4,9 +4,7 @@ class ReportsController < ApplicationController
   before_action :authorize!
   before_action :build_reports_scope
   before_action :authorize_reports_scope
-  before_action :build_report,     only: %i[new create]
-  before_action :find_report,      only: %i[show edit update]
-  before_action :authorize_report, only: %i[show edit update]
+  before_action :build_report, only: %i[new create]
 
   def index
     return not_implemented if autocomplete_request?
@@ -24,7 +22,7 @@ class ReportsController < ApplicationController
   end
 
   def show
-    only_kept! @report
+    @report = find_and_authorize_report
   end
 
   def new
@@ -41,12 +39,12 @@ class ReportsController < ApplicationController
   end
 
   def edit
-    only_kept! @report
+    @report = find_and_authorize_report
     @background_url = referrer_path || report_path(@report)
   end
 
   def update
-    only_kept! @report
+    @report = find_and_authorize_report
 
     service = Reports::UpdateService.new(@report, report_params)
     result  = service.save
@@ -54,6 +52,30 @@ class ReportsController < ApplicationController
     respond_with result,
       flash: true,
       location: -> { report_path(@report) }
+  end
+
+  def remove
+    @report = find_and_authorize_report
+    @background_url = referrer_path || report_path(@report)
+  end
+
+  def destroy
+    @report = find_and_authorize_report(allow_discarded: true)
+    @report.discard
+
+    respond_with @report,
+      flash: true,
+      actions: FlashAction::Cancel.new(params),
+      location: redirect_path || reports_path
+  end
+
+  def undiscard
+    @report = find_and_authorize_report(allow_discarded: true)
+    @report.undiscard
+
+    respond_with @report,
+      flash: true,
+      location: redirect_path || referrer_path || reports_path
   end
 
   private
@@ -70,12 +92,13 @@ class ReportsController < ApplicationController
     @report = @reports.build
   end
 
-  def find_report
-    @report = Report.find(params[:id])
-  end
+  def find_and_authorize_report(allow_discarded: false)
+    report = Report.find(params[:id])
 
-  def authorize_report
-    authorize! @report
+    authorize! report
+    only_kept! report unless allow_discarded
+
+    report
   end
 
   def report_params
