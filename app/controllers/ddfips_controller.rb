@@ -18,7 +18,7 @@ class DDFIPsController < ApplicationController
 
   def new
     @ddfip = build_ddfip
-    @background_url = referrer_path || ddfips_path
+    @referrer_path = referrer_path || ddfips_path
   end
 
   def create
@@ -32,7 +32,7 @@ class DDFIPsController < ApplicationController
 
   def edit
     @ddfip = find_and_authorize_ddfip
-    @background_url = referrer_path || ddfip_path(@ddfip)
+    @referrer_path = referrer_path || ddfip_path(@ddfip)
   end
 
   def update
@@ -46,7 +46,7 @@ class DDFIPsController < ApplicationController
 
   def remove
     @ddfip = find_and_authorize_ddfip
-    @background_url = referrer_path || ddfip_path(@ddfip)
+    @referrer_path = referrer_path || ddfip_path(@ddfip)
   end
 
   def destroy
@@ -71,7 +71,7 @@ class DDFIPsController < ApplicationController
   def remove_all
     @ddfips = build_and_authorize_scope
     @ddfips = filter_collection(@ddfips)
-    @background_url = referrer_path || ddfips_path(**selection_params)
+    @referrer_path = referrer_path || ddfips_path(**selection_params)
   end
 
   def destroy_all

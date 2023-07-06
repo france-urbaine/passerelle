@@ -15,7 +15,7 @@ class PublishersController < ApplicationController
 
   def new
     @publisher = build_publisher
-    @background_url = referrer_path || publishers_path
+    @referrer_path = referrer_path || publishers_path
   end
 
   def create
@@ -29,7 +29,7 @@ class PublishersController < ApplicationController
 
   def edit
     @publisher = find_and_authorize_publisher
-    @background_url = referrer_path || publisher_path(@publisher)
+    @referrer_path = referrer_path || publisher_path(@publisher)
   end
 
   def update
@@ -43,7 +43,7 @@ class PublishersController < ApplicationController
 
   def remove
     @publisher = find_and_authorize_publisher
-    @background_url = referrer_path || publisher_path(@publisher)
+    @referrer_path = referrer_path || publisher_path(@publisher)
   end
 
   def destroy
@@ -68,7 +68,7 @@ class PublishersController < ApplicationController
   def remove_all
     @publishers = build_and_authorize_scope
     @publishers = filter_collection(@publishers)
-    @background_url = referrer_path || publishers_path(**selection_params)
+    @referrer_path = referrer_path || publishers_path(**selection_params)
   end
 
   def destroy_all

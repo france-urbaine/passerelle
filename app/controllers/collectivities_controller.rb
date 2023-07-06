@@ -17,7 +17,7 @@ class CollectivitiesController < ApplicationController
 
   def new
     @collectivity = build_collectivity
-    @background_url = referrer_path || parent_path || collectivities_path
+    @referrer_path = referrer_path || parent_path || collectivities_path
   end
 
   def create
@@ -31,7 +31,7 @@ class CollectivitiesController < ApplicationController
 
   def edit
     @collectivity = find_and_authorize_collectivity
-    @background_url = referrer_path || collectivity_path(@collectivity)
+    @referrer_path = referrer_path || collectivity_path(@collectivity)
   end
 
   def update
@@ -45,7 +45,7 @@ class CollectivitiesController < ApplicationController
 
   def remove
     @collectivity = find_and_authorize_collectivity
-    @background_url = referrer_path || collectivity_path(@collectivity)
+    @referrer_path = referrer_path || collectivity_path(@collectivity)
   end
 
   def destroy
@@ -70,7 +70,7 @@ class CollectivitiesController < ApplicationController
   def remove_all
     @collectivities = build_and_authorize_scope
     @collectivities = filter_collection(@collectivities)
-    @background_url = referrer_path || collectivities_path(**selection_params)
+    @referrer_path = referrer_path || collectivities_path(**selection_params)
   end
 
   def destroy_all

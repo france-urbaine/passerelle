@@ -14,7 +14,7 @@ module Offices
 
     def new
       @user = build_user(office_ids: [@office.id])
-      @background_url = referrer_path || office_path(@office)
+      @referrer_path = referrer_path || office_path(@office)
     end
 
     def create
@@ -29,7 +29,7 @@ module Offices
 
     def remove
       @user = find_and_authorize_user
-      @background_url = referrer_path || office_path(@office)
+      @referrer_path = referrer_path || office_path(@office)
     end
 
     def destroy
@@ -43,7 +43,7 @@ module Offices
 
     def edit_all
       @office_users_form = OfficeUsersForm.new(@office)
-      @background_url = referrer_path || office_path(@office)
+      @referrer_path = referrer_path || office_path(@office)
     end
 
     def update_all
@@ -58,7 +58,7 @@ module Offices
     def remove_all
       @users = build_and_authorize_scope
       @users = filter_collection(@users)
-      @background_url = referrer_path || office_path(@office)
+      @referrer_path = referrer_path || office_path(@office)
     end
 
     def destroy_all

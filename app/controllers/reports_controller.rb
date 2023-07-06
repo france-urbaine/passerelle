@@ -24,7 +24,7 @@ class ReportsController < ApplicationController
 
   def new
     @report = build_report
-    @background_url = referrer_path || parent_path || reports_path
+    @referrer_path = referrer_path || parent_path || reports_path
   end
 
   def create
@@ -39,7 +39,7 @@ class ReportsController < ApplicationController
 
   def edit
     @report = find_and_authorize_report
-    @background_url = referrer_path || report_path(@report)
+    @referrer_path = referrer_path || report_path(@report)
   end
 
   def update
@@ -54,7 +54,7 @@ class ReportsController < ApplicationController
 
   def remove
     @report = find_and_authorize_report
-    @background_url = referrer_path || report_path(@report)
+    @referrer_path = referrer_path || report_path(@report)
   end
 
   def destroy
@@ -79,7 +79,7 @@ class ReportsController < ApplicationController
   def remove_all
     @reports = build_and_authorize_scope(as: :destroyable)
     @reports = filter_collection(@reports)
-    @background_url = referrer_path || reports_path(**selection_params)
+    @referrer_path = referrer_path || reports_path(**selection_params)
   end
 
   def destroy_all

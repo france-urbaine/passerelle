@@ -24,7 +24,7 @@ class TerritoriesController < ApplicationController
 
   def edit
     @territories_update = TerritoriesUpdate.new.assign_default_urls
-    @background_content_url = url_from(params[:content]) || communes_path
+    @referrer_path = referrer_path || communes_path
   end
 
   def update

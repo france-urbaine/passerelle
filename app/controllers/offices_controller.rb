@@ -17,7 +17,7 @@ class OfficesController < ApplicationController
 
   def new
     @office = build_office
-    @background_url = referrer_path || parent_path || offices_path
+    @referrer_path = referrer_path || parent_path || offices_path
   end
 
   def create
@@ -31,7 +31,7 @@ class OfficesController < ApplicationController
 
   def edit
     @office = find_and_authorize_office
-    @background_url = referrer_path || office_path(@office)
+    @referrer_path = referrer_path || office_path(@office)
   end
 
   def update
@@ -45,7 +45,7 @@ class OfficesController < ApplicationController
 
   def remove
     @office = find_and_authorize_office
-    @background_url = referrer_path || office_path(@office)
+    @referrer_path = referrer_path || office_path(@office)
   end
 
   def destroy
@@ -71,7 +71,7 @@ class OfficesController < ApplicationController
     @offices = build_and_authorize_scope
     @offices = filter_collection(@offices)
 
-    @background_url = referrer_path || offices_path(**selection_params)
+    @referrer_path = referrer_path || offices_path(**selection_params)
   end
 
   def destroy_all

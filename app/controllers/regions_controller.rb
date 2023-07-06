@@ -18,7 +18,7 @@ class RegionsController < ApplicationController
 
   def edit
     @region = Region.find(params[:id])
-    @background_url = referrer_path || region_path(@region)
+    @referrer_path = referrer_path || region_path(@region)
   end
 
   def update

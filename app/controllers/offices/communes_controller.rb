@@ -16,7 +16,7 @@ module Offices
     end
 
     def remove
-      @background_url = referrer_path || office_path(@office)
+      @referrer_path = referrer_path || office_path(@office)
     end
 
     def destroy
@@ -29,7 +29,7 @@ module Offices
 
     def edit_all
       @office_communes_form = OfficeCommunesForm.new(@office)
-      @background_url = referrer_path || office_path(@office)
+      @referrer_path = referrer_path || office_path(@office)
     end
 
     def update_all
@@ -45,7 +45,7 @@ module Offices
       @communes = @communes.strict_loading
       @communes = filter_collection(@communes)
 
-      @background_url = referrer_path || office_path(@office)
+      @referrer_path = referrer_path || office_path(@office)
     end
 
     def destroy_all

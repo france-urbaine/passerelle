@@ -6,7 +6,7 @@ module Packages
 
     def show
       @package = find_and_authorize_package
-      @background_url = referrer_path || package_path(@package)
+      @referrer_path = referrer_path || package_path(@package)
     end
 
     def update

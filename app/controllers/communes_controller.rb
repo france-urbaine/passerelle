@@ -18,7 +18,7 @@ class CommunesController < ApplicationController
 
   def edit
     @commune = Commune.find(params[:id])
-    @background_url = referrer_path || commune_path(@commune)
+    @referrer_path = referrer_path || commune_path(@commune)
   end
 
   def update

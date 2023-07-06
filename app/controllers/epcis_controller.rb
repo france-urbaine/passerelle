@@ -18,7 +18,7 @@ class EPCIsController < ApplicationController
 
   def edit
     @epci = EPCI.find(params[:id])
-    @background_url = referrer_path || epci_path(@epci)
+    @referrer_path = referrer_path || epci_path(@epci)
   end
 
   def update

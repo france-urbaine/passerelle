@@ -1,4 +1,4 @@
-= template_frame_component(src: @background_url) do |frame|
+= template_frame_component(src: @referrer_path) do |frame|
   - frame.with_modal do |modal|
     - modal.with_header do
       - if @offices.count > 1
@@ -7,7 +7,7 @@
         | Suppression du guichet sélectionné
 
     - modal.with_form(url: url_for([@parent, :offices]), method: :delete) do
-      = hidden_field_tag :redirect, @background_url if @background_url
+      = hidden_field_tag :redirect, @referrer_path if @referrer_path
       = hidden_param_input(:ids)
       = hidden_param_input(:search)
       = hidden_param_input(:order)

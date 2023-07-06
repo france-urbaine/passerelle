@@ -17,7 +17,7 @@ class UsersController < ApplicationController
 
   def new
     @user = build_user
-    @background_url = referrer_path || parent_path || users_path
+    @referrer_path = referrer_path || parent_path || users_path
   end
 
   def create
@@ -32,7 +32,7 @@ class UsersController < ApplicationController
 
   def edit
     @user = find_and_authorize_user
-    @background_url = referrer_path || user_path(@user)
+    @referrer_path = referrer_path || user_path(@user)
   end
 
   def update
@@ -46,7 +46,7 @@ class UsersController < ApplicationController
 
   def remove
     @user = find_and_authorize_user
-    @background_url = referrer_path || user_path(@user)
+    @referrer_path = referrer_path || user_path(@user)
   end
 
   def destroy
@@ -71,7 +71,7 @@ class UsersController < ApplicationController
   def remove_all
     @users = build_and_authorize_scope
     @users = filter_collection(@users)
-    @background_url = referrer_path || users_path(**selection_params)
+    @referrer_path = referrer_path || users_path(**selection_params)
   end
 
   def destroy_all

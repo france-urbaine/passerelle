@@ -18,7 +18,7 @@ class DepartementsController < ApplicationController
 
   def edit
     @departement = Departement.find(params[:id])
-    @background_url = referrer_path || departement_path(@departement)
+    @referrer_path = referrer_path || departement_path(@departement)
   end
 
   def update

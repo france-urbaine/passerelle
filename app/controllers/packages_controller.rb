@@ -17,7 +17,7 @@ class PackagesController < ApplicationController
 
   def new
     @package = build_package
-    @background_url = referrer_path || parent_path || packages_path
+    @referrer_path = referrer_path || parent_path || packages_path
   end
 
   def create
@@ -31,7 +31,7 @@ class PackagesController < ApplicationController
 
   def edit
     @package = find_and_authorize_package
-    @background_url = referrer_path || package_path(@package)
+    @referrer_path = referrer_path || package_path(@package)
   end
 
   def update
@@ -45,7 +45,7 @@ class PackagesController < ApplicationController
 
   def remove
     @package = find_and_authorize_package
-    @background_url = referrer_path || package_path(@package)
+    @referrer_path = referrer_path || package_path(@package)
   end
 
   def destroy
@@ -70,7 +70,7 @@ class PackagesController < ApplicationController
   def remove_all
     @packages = build_and_authorize_scope(as: :destroyable)
     @packages = filter_collection(@packages)
-    @background_url = referrer_path || packages_path(**selection_params)
+    @referrer_path = referrer_path || packages_path(**selection_params)
   end
 
   def destroy_all

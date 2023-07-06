@@ -6,7 +6,7 @@ module Reports
     before_action :authorize_report
 
     def new
-      @background_url = referrer_path || report_path(@report)
+      @referrer_path = referrer_path || report_path(@report)
     end
 
     def create
