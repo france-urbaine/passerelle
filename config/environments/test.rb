@@ -65,4 +65,6 @@ Rails.application.configure do
 
   # Use a test backend for Active Job
   config.active_job.queue_adapter = :test
+
+  config.logger = ActiveSupport::Logger.new(ENV["LOG_PATH"]) if ENV["LOG_PATH"]
 end

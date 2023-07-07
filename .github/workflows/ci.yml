@@ -21,7 +21,7 @@ jobs:
       # Setup a postgres database to run tests
       #
       postgres:
-        image: postgres
+        image: postgres:14.8
         env:
           POSTGRES_DB:       fiscahub_dev
           POSTGRES_PASSWORD: postgres
@@ -47,10 +47,6 @@ jobs:
       with:
         cmd: install
 
-    # TODO: use bin/setup to use and test the same setup as used in development
-    # The problem is currently that bin/setup is loading two databases for
-    # development and test environnements
-    #
     - name: Set up application
       env:
         POSTGRESQL_HOST:     localhost
@@ -59,9 +55,7 @@ jobs:
         POSTGRESQL_PASSWORD: postgres
         POSTGRESQL_DATABASE: fiscahub_dev
       run: |
-        bin/rails db:test:prepare
-        yarn build:css
-        yarn build:js
+        bin/setup test
 
     - name: Run tests
       env:
@@ -82,7 +76,7 @@ jobs:
       # Setup a postgres database to run tests
       #
       postgres:
-        image: postgres
+        image: postgres:14.8
         env:
           POSTGRES_DB:       fiscahub_dev
           POSTGRES_PASSWORD: postgres
@@ -108,10 +102,6 @@ jobs:
       with:
         cmd: install
 
-    # TODO: use bin/setup to use and test the same setup as used in development
-    # The problem is currently that bin/setup is loading two databases for
-    # development and test environnements
-    #
     - name: Set up application
       env:
         POSTGRESQL_HOST:     localhost
@@ -120,9 +110,7 @@ jobs:
         POSTGRESQL_PASSWORD: postgres
         POSTGRESQL_DATABASE: fiscahub_dev
       run: |
-        bin/rails db:test:prepare
-        yarn build:css
-        yarn build:js
+        bin/setup test
 
     - name: Run tests
       env:

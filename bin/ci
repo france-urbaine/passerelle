@@ -103,7 +103,13 @@ end
 
 def watch
   log "Starting Guard"
-  system!({ "SKIP_ALL_ON_START_WARNING" => "true" }, "bundle exec guard")
+
+  env = {}
+  env["POSTGRESQL_DATABASE"] = ENV.fetch("POSTGRESQL_DATABASE", "fiscahub_test_watch")
+  env["LOG_PATH"]            = ENV.fetch("LOG_PATH", "log/watch.log")
+  env["SKIP_ALL_ON_START_WARNING"] = "true"
+
+  system!(env, "bundle exec guard")
 end
 
 def run_all
