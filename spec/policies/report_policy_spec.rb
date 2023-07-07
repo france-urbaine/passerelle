@@ -440,10 +440,10 @@ RSpec.describe ReportPolicy, stub_factories: false do
   describe_rule :destroy_all? do
     it_behaves_like("when current user is a DDFIP admin")        { failed }
     it_behaves_like("when current user is a DDFIP user")         { failed }
-    it_behaves_like("when current user is a publisher admin")    { failed }
-    it_behaves_like("when current user is a publisher user")     { failed }
-    it_behaves_like("when current user is a collectivity admin") { failed }
-    it_behaves_like("when current user is a collectivity user")  { failed }
+    it_behaves_like("when current user is a publisher admin")    { succeed }
+    it_behaves_like("when current user is a publisher user")     { succeed }
+    it_behaves_like("when current user is a collectivity admin") { succeed }
+    it_behaves_like("when current user is a collectivity user")  { succeed }
   end
 
   it { expect(:remove_all?).to    be_an_alias_of(policy, :destroy_all?) }
