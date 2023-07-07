@@ -1,0 +1,9 @@
+div( class="w-[48rem]" )
+  = fields model: User.new do |form|
+    = form.block :first_name do
+      = form.label :first_name
+      = form.text_field :first_name
+
+      .form-block__hint
+        ' Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+        ' ut labore et dolore magna aliqua. Ut enim ad minim veniam

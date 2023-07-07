@@ -16,7 +16,7 @@
 @import "./components/brand";
 @import "./components/typography";
 
-/* Interactive components */
+/* Interactive elements */
 @import "./components/button";
 @import "./components/badge";
 @import "./components/icon_button";

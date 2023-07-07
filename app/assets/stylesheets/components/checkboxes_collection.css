@@ -11,6 +11,17 @@
 
   .checkboxes-collection__checkbox {
     display: block;
+
+    & [type="checkbox"],
+    & [type='radio'] {
+      display: inline-block;
+      @apply mr-2;
+    }
+
+    & [type="checkbox"] + label,
+    & [type='radio'] + label {
+      display: inline-block;
+    }
   }
 
   .checkboxes-collection__checkall {

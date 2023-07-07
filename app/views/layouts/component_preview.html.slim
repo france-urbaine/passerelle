@@ -13,12 +13,20 @@ html
   body.p-6.overflow-auto
     - frame = params.dig(:lookbook, :display, :frame)
 
-    - if frame == false
+    - case frame
+    - when nil, false
       = yield
-    - else
+
+    - when "content"
       main.content
         = turbo_frame_tag(:content, target: "_top") do
-          = yield if frame.nil? || frame == true || frame == "content"
+          = yield
+
+      = turbo_frame_tag(:modal, target: "_top") do
+
+    - when "modal"
+      main.content
+        = turbo_frame_tag(:content, target: "_top")
 
       = turbo_frame_tag(:modal, target: "_top") do
         = yield if frame == "modal"

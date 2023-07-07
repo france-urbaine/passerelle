@@ -1,0 +1,5 @@
+.w-96
+  = fields model: User.new do |form|
+    = form.block :otp_method do
+      = form.radio_button :otp_method, "2fa"
+      = form.label :otp_method, "Custom label", value: "2fa"

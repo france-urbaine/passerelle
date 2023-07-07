@@ -10,7 +10,7 @@
       = form.label(:otp_method, value: "2fa") do
         | Authentification via une application
 
-      p.pl-9.italic.max-w-6xl
+      .form-block__hint.max-w-6xl
         | Utilisez une application compatible (Authy, Dashlane, Microsoft Authenticator, etc..) pour générer des codes à chaque connexion.
         br
         | Cette méthode est la plus simple et la plus sécurisée. L'application n'a même pas besoin d'une connexion pour générer des codes.
@@ -20,7 +20,7 @@
       = form.label(:otp_method, value: "email") do
         | Authentification via email
 
-      p.pl-9.italic.max-w-6xl
+      .form-block__hint.max-w-6xl
         | Recevez un code de vérification par email à chaque tentative de connexion.
         br
         | Cette méthode alternative ne requiert pas un autre appareil.

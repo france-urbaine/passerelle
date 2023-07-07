@@ -60,6 +60,14 @@ gem "rack-rewrite"
 gem "tzinfo-data", platforms: %i[mingw mswin x64_mingw jruby]
 
 group :development, :test do
+  gem "lookbook", ">= 2.0.0"
+
+  # FIXME: waiting for this PR to be released
+  # The gem can be removed from the Gemfile after release because
+  # its already a dependency of lookbook
+  # https://github.com/threedaymonk/htmlbeautifier/pull/74
+  gem "htmlbeautifier", github: "inkstak/htmlbeautifier", branch: "allow_custom_elements"
+
   gem "awesome_print"
   gem "byebug"
   gem "dead_end"
@@ -79,14 +87,6 @@ group :development do
   gem "foreman"
   gem "rack-mini-profiler"
   gem "web-console"
-
-  gem "lookbook", ">= 2.0.0"
-
-  # FIXME: waiting for this PR to be released
-  # The gem can be removed from the Gemfile after release because
-  # its already a dependency of lookbook
-  # https://github.com/threedaymonk/htmlbeautifier/pull/74
-  gem "htmlbeautifier", github: "inkstak/htmlbeautifier", branch: "allow_custom_elements"
 
   # Linting
   gem "rubocop",             require: false
