@@ -148,6 +148,9 @@ def help
   log "  bin/ci help"
   log "     # Show this help"
   log ""
+  log "To run the commands in CI environnement (ex: on github), use the CI variable:"
+  log "   CI=true bin/ci"
+  log ""
 end
 
 if ARGV[0].nil?

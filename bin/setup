@@ -1,11 +1,6 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-# Examples:
-# bin/setup test
-# bin/setup test  + .env.test (POSTGRESQL_DATABASE=test)
-# POSTGRESQL_DATABASE=test bin/setup test
-
 # Helpers
 # ------------------------------------------------------------------------------
 # It's helpful to know what messages came from this script,
@@ -65,9 +60,11 @@ def setup
   system! "bin/rails log:clear tmp:clear"
 
   log ""
+  log "-------------------------------------------------------------------------------------"
   log "All set up."
   log "Now you're ready to start with these useful commands:"
   useful_commands
+  log "-------------------------------------------------------------------------------------"
 end
 
 def setup_master_key
@@ -100,22 +97,24 @@ def setup_user
 end
 
 def setup_test
-  log "Compile assets"
-  # Compile assets in case they were missing.
-  # They are required to start the test suite
-  system! "yarn build:css"
-  system! "yarn build:js"
-
   log "Setup test database"
-  system!({ "RAILS_ENV" => "test" }, "bin/rails db:prepare")
+  system!({ "RAILS_ENV" => "test" }, "bin/rails db:test:prepare")
 
-  unless ENV.include?("POSTGRESQL_DATABASE")
-    log "Setup test databases for run bin/ci watch"
-    system!({ "RAILS_ENV" => "test", "POSTGRESQL_DATABASE" => "fiscahub_test_watch" }, "bin/rails db:prepare")
+  if ENV.include?("POSTGRESQL_DATABASE")
+    log "Setup test database for guard testing ignore due to presence of POSTGRESQL_DATABASE"
+  else
+    log "Setup test database for guard testing"
+    system!({ "RAILS_ENV" => "test", "POSTGRESQL_DATABASE" => "fiscahub_test_watch" }, "bin/rails db:test:prepare")
   end
 
   log "Setup test databases for parallel testing"
   system!("bin/rails parallel:prepare")
+
+  log "Compile assets to run system tests"
+  # Compile assets in case they were missing.
+  # They are required to start the test suite
+  system! "yarn build:css"
+  system! "yarn build:js"
 end
 
 def setup_territories
@@ -155,6 +154,7 @@ def useful_commands
   log ""
   log "  bin/setup user"
   log "     # Create an user to access the development server"
+  log "     # through an interactive command"
   log ""
   log "  bin/setup territories"
   log "     # Import all EPCIs and communes from a remote source"
@@ -162,14 +162,17 @@ def useful_commands
   log "  bin/setup mailcatcher"
   log "     # Install mailcatcher"
   log ""
+  log "  bin/setup test"
+  log "     # Setup all databases for testing"
+  log "     # To overwrite the default databases used for testing,"
+  log "     # add a POSTGRESQL_DATABASE to .env.test or send:"
+  log "     #   POSTGRESQL_DATABASE=test bin/setup test"
+  log ""
   log "  bin/dev"
   log "     # Run the app locally"
   log ""
-  log "  bin/setup test"
-  log "     # Run the test preparation tasks to parallelelize tests DB"
-  log ""
   log "  bin/ci"
-  log "     # Runs all tests and checks as CI would"
+  log "     # Runs all tests and checks"
   log ""
   log "  bin/ci help"
   log "     # Show more options about how to run tests and CI"
