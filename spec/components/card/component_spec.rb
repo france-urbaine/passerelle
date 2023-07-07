@@ -113,7 +113,24 @@ RSpec.describe Card::Component, type: :component do
     end
   end
 
-  it "renders a multipar card" do
+  it "renders a card with a form and a custom scope" do
+    record = Commune.new
+    render_inline described_class.new do |card|
+      card.with_header("Card title")
+
+      card.with_form(model: record, scope: :foo, url: "/form/path") do |form|
+        form.block(:name) do
+          form.text_field(:name)
+        end
+      end
+    end
+
+    expect(page).to have_selector(".card > .card__content > form[action='/form/path']") do |form|
+      expect(form).to have_selector(".card__body > .form-block > input[name='foo[name]']")
+    end
+  end
+
+  it "renders a multipart card" do
     render_inline described_class.new do |card|
       card.with_multipart do |card_content|
         card_content.with_header do

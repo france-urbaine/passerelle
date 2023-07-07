@@ -133,4 +133,19 @@ RSpec.describe Modal::Component, type: :component do
       end
     end
   end
+
+  it "renders a modal with a form and a custom scope" do
+    record = Commune.new
+    render_inline described_class.new do |modal|
+      modal.with_form(model: record, scope: :foo, url: "/form/path") do |form|
+        form.block(:name) do
+          form.text_field(:name)
+        end
+      end
+    end
+
+    expect(page).to have_selector(".modal > .modal__content > turbo-frame > form[action='/form/path']") do |form|
+      expect(form).to have_selector(".modal__body > .form-block > input[name='foo[name]']")
+    end
+  end
 end

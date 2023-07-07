@@ -7,7 +7,6 @@
     = svg_icon("identification", "Nouvelle section")
     | Identification
 
-
   = card_component do |card|
     - card.with_form(model: @organization, scope: :organization, url: user_organization_settings_path) do |form|
       = form.block(:name) do

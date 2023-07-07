@@ -7,7 +7,13 @@ module Card
 
     renders_one :form, lambda { |**options, &block|
       self.form_options = options
-      fields(**options, &block)
+
+      # `form_with` & `fields` have a similar API, but not quite:
+      # * scope is passed as an option to `form_with``
+      # * scope is passed as an argument to `fields`
+      #
+      scope = options[:scope]
+      fields(scope, **options, &block)
     }
 
     renders_one  :submit_action, "SubmitAction"
