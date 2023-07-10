@@ -13,7 +13,7 @@ RSpec.describe "ReportsController#remove_all" do
 
   let!(:publisher)      { create(:publisher) }
   let!(:collectivities) { create_list(:collectivity, 2, publisher: publisher) }
-  let!(:reports)       { create_list(:report, 3, collectivity: collectivities[0]) }
+  let!(:reports)        { create_list(:report, 3, collectivity: collectivities[0]) }
   let!(:ids)            { reports.take(2).map(&:id) }
 
   describe "authorizations" do
