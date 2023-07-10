@@ -127,7 +127,7 @@ RSpec.describe "PackagesController#destroy_all" do
       it { expect(response).to redirect_to("/paquets") }
       it { expect(flash).to have_flash_notice }
       it { expect(flash).to have_flash_actions }
-      it { expect { request }.not_to change(Report.discarded, :count) }
+      it { expect { request }.not_to change(Package.discarded, :count) }
     end
 
     context "with referrer header", headers: { "Referer" => "http://example.com/other/path" } do
