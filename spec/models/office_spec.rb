@@ -72,14 +72,194 @@ RSpec.describe Office do
   # Scopes
   # ----------------------------------------------------------------------------
   describe "scopes" do
-    pending "Add more tests about scopes"
+    describe ".search" do
+      it "searches for offices with all criteria" do
+        expect {
+          described_class.search("Hello").load
+        }.to perform_sql_query(<<~SQL.squish)
+          SELECT          "offices".*
+          FROM            "offices"
+          LEFT OUTER JOIN "ddfips" ON "ddfips"."id" = "offices"."ddfip_id"
+          WHERE (
+                LOWER(UNACCENT("offices"."name")) LIKE LOWER(UNACCENT('%Hello%'))
+            OR  LOWER(UNACCENT("ddfips"."name")) LIKE LOWER(UNACCENT('%Hello%'))
+            OR  "ddfips"."code_departement" = 'Hello'
+          )
+        SQL
+      end
+
+      it "searches for offices by matching name" do
+        expect {
+          described_class.search(name: "Hello").load
+        }.to perform_sql_query(<<~SQL.squish)
+          SELECT "offices".*
+          FROM   "offices"
+          WHERE  (LOWER(UNACCENT("offices"."name")) LIKE LOWER(UNACCENT('%Hello%')))
+        SQL
+      end
+
+      it "searches for offices by matching DDFIP name" do
+        expect {
+          described_class.search(ddfip_name: "Hello").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT          "offices".*
+          FROM            "offices"
+          LEFT OUTER JOIN "ddfips" ON "ddfips"."id" = "offices"."ddfip_id"
+          WHERE           (LOWER(UNACCENT("ddfips"."name")) LIKE LOWER(UNACCENT('%Hello%')))
+        SQL
+      end
+
+      it "searches for offices by matching departement code" do
+        expect {
+          described_class.search(code_departement: "64").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT          "offices".*
+          FROM            "offices"
+          LEFT OUTER JOIN "ddfips" ON "ddfips"."id" = "offices"."ddfip_id"
+          WHERE           "ddfips"."code_departement" = '64'
+        SQL
+      end
+    end
+
+    describe ".autocomplete" do
+      it "searches for offices with text matching the name" do
+        expect {
+          described_class.autocomplete("Hello").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "offices".*
+          FROM   "offices"
+          WHERE  (LOWER(UNACCENT("offices"."name")) LIKE LOWER(UNACCENT('%Hello%')))
+        SQL
+      end
+    end
+
+    describe ".order_by_param" do
+      it "orders offices by name" do
+        expect {
+          described_class.order_by_param("name").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "offices".*
+          FROM     "offices"
+          ORDER BY UNACCENT("offices"."name") ASC,
+                   "offices"."created_at" ASC
+        SQL
+      end
+
+      it "orders offices by name in descendant order" do
+        expect {
+          described_class.order_by_param("-name").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "offices".*
+          FROM     "offices"
+          ORDER BY UNACCENT("offices"."name") DESC,
+                   "offices"."created_at" DESC
+        SQL
+      end
+
+      it "orders offices by DDFIP" do
+        expect {
+          described_class.order_by_param("ddfip").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT          "offices".*
+          FROM            "offices"
+          LEFT OUTER JOIN "ddfips" ON "ddfips"."id" = "offices"."ddfip_id"
+          ORDER BY        UNACCENT("ddfips"."name") ASC,
+                          "offices"."created_at" ASC
+        SQL
+      end
+
+      it "orders offices by DDFIP in descendant order" do
+        expect {
+          described_class.order_by_param("-ddfip").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT          "offices".*
+          FROM            "offices"
+          LEFT OUTER JOIN "ddfips" ON "ddfips"."id" = "offices"."ddfip_id"
+          ORDER BY        UNACCENT("ddfips"."name") DESC,
+                          "offices"."created_at" DESC
+        SQL
+      end
+
+      it "orders offices by competences" do
+        expect {
+          described_class.order_by_param("competences").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "offices".*
+          FROM     "offices"
+          ORDER BY "offices"."competences" ASC,
+                   "offices"."created_at" ASC
+        SQL
+      end
+
+      it "orders offices by competences in descendant order" do
+        expect {
+          described_class.order_by_param("-competences").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "offices".*
+          FROM     "offices"
+          ORDER BY "offices"."competences" DESC,
+                   "offices"."created_at" DESC
+        SQL
+      end
+    end
+
+    describe ".order_by_score" do
+      it "orders offices by search score" do
+        expect {
+          described_class.order_by_score("Hello").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "offices".*
+          FROM     "offices"
+          ORDER BY ts_rank_cd(to_tsvector('french', "offices"."name"), to_tsquery('french', 'Hello')) DESC,
+                   "offices"."created_at" ASC
+        SQL
+      end
+    end
   end
 
   # Other associations
   # ----------------------------------------------------------------------------
   describe "other associations" do
     describe "#on_territory_collectivities" do
-      pending "Add more tests about such association"
+      subject(:on_territory_collectivities) { office.on_territory_collectivities }
+
+      let(:office) { create(:office) }
+
+      it { expect(on_territory_collectivities).to be_an(ActiveRecord::Relation) }
+      it { expect(on_territory_collectivities.model).to eq(Collectivity) }
+
+      it "loads the registered collectivities in the DDFIP departement" do
+        expect { on_territory_collectivities.load }.to perform_sql_query(<<~SQL)
+          SELECT "collectivities".*
+          FROM   "collectivities"
+          WHERE  "collectivities"."discarded_at" IS NULL
+            AND (
+                  "collectivities"."territory_type" = 'Commune'
+              AND "collectivities"."territory_id" IN (
+                    SELECT     "communes"."id"
+                    FROM       "communes"
+                    INNER JOIN "office_communes" ON "communes"."code_insee" = "office_communes"."code_insee"
+                    WHERE      "office_communes"."office_id" = '#{office.id}'
+              )
+              OR  "collectivities"."territory_type" = 'EPCI'
+              AND "collectivities"."territory_id" IN (
+                    SELECT     "epcis"."id"
+                    FROM       "epcis"
+                    INNER JOIN "communes" ON "communes"."siren_epci" = "epcis"."siren"
+                    INNER JOIN "office_communes" ON "communes"."code_insee" = "office_communes"."code_insee"
+                    WHERE      "office_communes"."office_id" = '#{office.id}'
+              )
+              OR  "collectivities"."territory_type" = 'Departement'
+              AND "collectivities"."territory_id" IN (
+                    SELECT     "departements"."id"
+                    FROM       "departements"
+                    INNER JOIN "communes" ON "communes"."code_departement" = "departements"."code_departement"
+                    INNER JOIN "office_communes" ON "communes"."code_insee" = "office_communes"."code_insee"
+                    WHERE      "office_communes"."office_id" = '#{office.id}'
+              )
+            )
+        SQL
+      end
     end
   end
 

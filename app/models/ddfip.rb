@@ -89,7 +89,7 @@ class DDFIP < ApplicationRecord
       input,
       name:        ->(direction) { unaccent_order(:name, direction) },
       departement: ->(direction) { order(code_departement: direction) },
-      region:      ->(direction) { left_joins(:departement).order(code_region: direction) }
+      region:      ->(direction) { left_joins(:departement).merge(Departement.order(code_region: direction)) }
     )
   }
 

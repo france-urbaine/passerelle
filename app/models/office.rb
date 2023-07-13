@@ -87,8 +87,8 @@ class Office < ApplicationRecord
     advanced_order(
       input,
       name:        ->(direction) { unaccent_order(:name, direction) },
-      ddfip:       ->(direction) { left_joins(:ddfip).merge(DDFIP.order(name: direction)) },
-      competences: ->(direction) { order(competence: direction) }
+      ddfip:       ->(direction) { left_joins(:ddfip).merge(DDFIP.unaccent_order(:name, direction)) },
+      competences: ->(direction) { order(competences: direction) }
     )
   }
 

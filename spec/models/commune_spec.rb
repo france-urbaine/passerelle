@@ -55,29 +55,23 @@ RSpec.describe Commune do
   # Normalization callbacks
   # ----------------------------------------------------------------------------
   describe "attribute normalization" do
-    def build_record(**attributes)
-      user = build(:commune, **attributes)
-      user.validate
-      user
+    # Create only one departement to reduce the number of queries and records to create
+    let_it_be(:departement) { create(:departement) }
+
+    def validate_record(**attributes)
+      build(:commune, departement:, **attributes).tap(&:validate)
+    end
+
+    def create_record(**attributes)
+      create(:commune, departement:, **attributes)
     end
 
     describe "#siren_epci" do
-      it { expect(build_record(siren_epci: "")).to  have_attributes(siren_epci: nil) }
-      it { expect(build_record(siren_epci: nil)).to have_attributes(siren_epci: nil) }
-    end
-  end
-
-  # Other callbacks
-  # ----------------------------------------------------------------------------
-  describe "callbacks" do
-    # Use only one departement to reduce the number of queries and records to create
-    let_it_be(:departement) { create(:departement) }
-
-    def create_record(**attributes)
-      create(:commune, departement: departement, **attributes)
+      it { expect(validate_record(siren_epci: "")).to  have_attributes(siren_epci: nil) }
+      it { expect(validate_record(siren_epci: nil)).to have_attributes(siren_epci: nil) }
     end
 
-    describe "#generate_qualified_name" do
+    describe "#qualified_name" do
       it { expect(create_record(name: "Bayonne")).to     have_attributes(qualified_name: "Commune de Bayonne") }
       it { expect(create_record(name: "Le Chateley")).to have_attributes(qualified_name: "Commune du Chateley") }
       it { expect(create_record(name: "La Rochelle")).to have_attributes(qualified_name: "Commune de la Rochelle") }
@@ -230,7 +224,7 @@ RSpec.describe Commune do
     end
 
     describe ".search" do
-      it "searches for communes with text" do
+      it "searches for communes with all criteria" do
         expect {
           described_class.search("Hello").load
         }.to perform_sql_query(<<~SQL)
@@ -240,18 +234,18 @@ RSpec.describe Commune do
           LEFT OUTER JOIN "departements" ON "departements"."code_departement" = "communes"."code_departement"
           LEFT OUTER JOIN "regions" ON "regions"."code_region" = "departements"."code_region"
           WHERE (
-            LOWER(UNACCENT("communes"."name")) LIKE LOWER(UNACCENT('%Hello%'))
-            OR "communes"."code_insee" = 'Hello'
-            OR "communes"."siren_epci" = 'Hello'
-            OR "communes"."code_departement" = 'Hello'
-            OR LOWER(UNACCENT("epcis"."name")) LIKE LOWER(UNACCENT('%Hello%'))
-            OR LOWER(UNACCENT("departements"."name")) LIKE LOWER(UNACCENT('%Hello%'))
-            OR LOWER(UNACCENT("regions"."name")) LIKE LOWER(UNACCENT('%Hello%'))
+                LOWER(UNACCENT("communes"."name")) LIKE LOWER(UNACCENT('%Hello%'))
+            OR  "communes"."code_insee" = 'Hello'
+            OR  "communes"."siren_epci" = 'Hello'
+            OR  "communes"."code_departement" = 'Hello'
+            OR  LOWER(UNACCENT("epcis"."name")) LIKE LOWER(UNACCENT('%Hello%'))
+            OR  LOWER(UNACCENT("departements"."name")) LIKE LOWER(UNACCENT('%Hello%'))
+            OR  LOWER(UNACCENT("regions"."name")) LIKE LOWER(UNACCENT('%Hello%'))
           )
         SQL
       end
 
-      it "searches for communes with text matching a single attribute" do
+      it "searches for communes by matching name" do
         expect {
           described_class.search(name: "Hello").load
         }.to perform_sql_query(<<~SQL)
@@ -260,63 +254,122 @@ RSpec.describe Commune do
           WHERE  (LOWER(UNACCENT("communes"."name")) LIKE LOWER(UNACCENT('%Hello%')))
         SQL
       end
+
+      it "searches for DDFIPs by matching departement code" do
+        expect {
+          described_class.search(code_departement: "64").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "communes".*
+          FROM   "communes"
+          WHERE  "communes"."code_departement" = '64'
+        SQL
+      end
+
+      it "searches for DDFIPs by matching departement name" do
+        expect {
+          described_class.search(departement_name: "Pyrén").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT          "communes".*
+          FROM            "communes"
+          LEFT OUTER JOIN "departements" ON "departements"."code_departement" = "communes"."code_departement"
+          WHERE           (LOWER(UNACCENT("departements"."name")) LIKE LOWER(UNACCENT('%Pyrén%')))
+        SQL
+      end
+
+      it "searches for DDFIPs by matching region name" do
+        expect {
+          described_class.search(region_name: "Sud").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT          "communes".*
+          FROM            "communes"
+          LEFT OUTER JOIN "departements" ON "departements"."code_departement" = "communes"."code_departement"
+          LEFT OUTER JOIN "regions" ON "regions"."code_region" = "departements"."code_region"
+          WHERE           (LOWER(UNACCENT("regions"."name")) LIKE LOWER(UNACCENT('%Sud%')))
+        SQL
+      end
     end
 
     describe ".autocomplete" do
-      it "searches for communes with text matching the qualified name" do
+      it "searches for communes with text matching the qualified name and SIREN" do
         expect {
           described_class.autocomplete("Hello").load
         }.to perform_sql_query(<<~SQL)
           SELECT "communes".*
           FROM   "communes"
           WHERE (
-            LOWER(UNACCENT("communes"."qualified_name")) LIKE LOWER(UNACCENT('%Hello%'))
-            OR "communes"."code_insee" = 'Hello'
+                LOWER(UNACCENT("communes"."qualified_name")) LIKE LOWER(UNACCENT('%Hello%'))
+            OR  "communes"."code_insee" = 'Hello'
           )
         SQL
       end
     end
 
     describe ".order_by_param" do
-      it "orders communes by commune codes" do
+      it "orders communes by name" do
         expect {
           described_class.order_by_param("commune").load
         }.to perform_sql_query(<<~SQL)
-          SELECT "communes".*
-          FROM   "communes"
-          ORDER BY UNACCENT("communes"."name") ASC, "communes"."code_insee" ASC
+          SELECT   "communes".*
+          FROM     "communes"
+          ORDER BY UNACCENT("communes"."name") ASC,
+                   "communes"."code_insee" ASC
         SQL
       end
 
-      it "orders communes by departement codes" do
+      it "orders communes by name in descendant order" do
+        expect {
+          described_class.order_by_param("-commune").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "communes".*
+          FROM     "communes"
+          ORDER BY UNACCENT("communes"."name") DESC,
+                   "communes"."code_insee" DESC
+        SQL
+      end
+
+      it "orders communes by departement" do
         expect {
           described_class.order_by_param("departement").load
         }.to perform_sql_query(<<~SQL)
-          SELECT "communes".*
-          FROM   "communes"
-          ORDER BY "communes"."code_departement" ASC, "communes"."code_insee" ASC
+          SELECT   "communes".*
+          FROM     "communes"
+          ORDER BY "communes"."code_departement" ASC,
+                   "communes"."code_insee" ASC
         SQL
       end
 
-      it "orders communes by EPCI names" do
+      it "orders communes by departement in descendant order" do
+        expect {
+          described_class.order_by_param("-departement").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "communes".*
+          FROM     "communes"
+          ORDER BY "communes"."code_departement" DESC,
+                   "communes"."code_insee" DESC
+        SQL
+      end
+
+      it "orders communes by EPCI" do
         expect {
           described_class.order_by_param("epci").load
         }.to perform_sql_query(<<~SQL)
-          SELECT "communes".*
-          FROM   "communes"
+          SELECT          "communes".*
+          FROM            "communes"
           LEFT OUTER JOIN "epcis" ON "epcis"."siren" = "communes"."siren_epci"
-          ORDER BY UNACCENT("epcis"."name") ASC, "communes"."code_insee" ASC
+          ORDER BY        UNACCENT("epcis"."name") ASC,
+                          "communes"."code_insee" ASC
         SQL
       end
 
-      it "orders communes by EPCI names in descendant order" do
+      it "orders communes by EPCI in descendant order" do
         expect {
           described_class.order_by_param("-epci").load
         }.to perform_sql_query(<<~SQL)
-          SELECT "communes".*
-          FROM   "communes"
+          SELECT          "communes".*
+          FROM            "communes"
           LEFT OUTER JOIN "epcis" ON "epcis"."siren" = "communes"."siren_epci"
-          ORDER BY UNACCENT("epcis"."name") DESC, "communes"."code_insee" DESC
+          ORDER BY        UNACCENT("epcis"."name") DESC,
+                          "communes"."code_insee" DESC
         SQL
       end
     end
@@ -326,10 +379,10 @@ RSpec.describe Commune do
         expect {
           described_class.order_by_score("Hello").load
         }.to perform_sql_query(<<~SQL)
-          SELECT "communes".*
-          FROM   "communes"
+          SELECT   "communes".*
+          FROM     "communes"
           ORDER BY ts_rank_cd(to_tsvector('french', "communes"."name"), to_tsquery('french', 'Hello')) DESC,
-                  "communes"."code_insee" ASC
+                   "communes"."code_insee" ASC
         SQL
       end
     end
@@ -339,12 +392,17 @@ RSpec.describe Commune do
   # ----------------------------------------------------------------------------
   describe "other associations" do
     describe "#on_territory_collectivities" do
+      subject(:on_territory_collectivities) { commune.on_territory_collectivities }
+
       context "without EPCI attached" do
         let(:commune) { create(:commune) }
 
-        it do
+        it { expect(on_territory_collectivities).to be_an(ActiveRecord::Relation) }
+        it { expect(on_territory_collectivities.model).to eq(Collectivity) }
+
+        it "loads the registered collectivities having this commune in their territory" do
           expect {
-            commune.on_territory_collectivities.load
+            on_territory_collectivities.load
           }.to perform_sql_query(<<~SQL)
             SELECT "collectivities".*
             FROM   "collectivities"
@@ -366,9 +424,12 @@ RSpec.describe Commune do
       context "with an EPCI attached" do
         let(:commune) { create(:commune, :with_epci) }
 
-        it do
+        it { expect(on_territory_collectivities).to be_an(ActiveRecord::Relation) }
+        it { expect(on_territory_collectivities.model).to eq(Collectivity) }
+
+        it "loads the registered collectivities having this commune in their territory" do
           expect {
-            commune.on_territory_collectivities.load
+            on_territory_collectivities.load
           }.to perform_sql_query(<<~SQL)
             SELECT "collectivities".*
             FROM   "collectivities"
@@ -452,7 +513,29 @@ RSpec.describe Commune do
   # Database constraints and triggers
   # ----------------------------------------------------------------------------
   describe "database constraints" do
-    pending "TODO"
+    it "asserts the uniqueness of code_insee" do
+      existing_commune = create(:commune)
+      another_commune  = build(:commune, code_insee: existing_commune.code_insee)
+
+      expect { another_commune.save(validate: false) }
+        .to raise_error(ActiveRecord::RecordNotUnique).with_message(/PG::UniqueViolation/)
+    end
+
+    it "cannot destroy a departement referenced from communes" do
+      departement = create(:departement)
+      create(:commune, departement: departement)
+
+      expect { departement.delete }
+        .to raise_error(ActiveRecord::InvalidForeignKey).with_message(/PG::ForeignKeyViolation/)
+    end
+
+    it "cannot destroy an EPCI referenced from communes" do
+      epci = create(:epci)
+      create(:commune, epci: epci)
+
+      expect { epci.delete }
+        .to raise_error(ActiveRecord::InvalidForeignKey).with_message(/PG::ForeignKeyViolation/)
+    end
   end
 
   describe "database triggers" do

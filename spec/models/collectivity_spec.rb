@@ -166,7 +166,7 @@ RSpec.describe Collectivity do
     end
 
     describe ".search" do
-      it "searches for collectivities" do
+      it "searches for collectivities with all criteria" do
         expect {
           described_class.search("Hello").load
         }.to perform_sql_query(<<~SQL.squish)
@@ -174,10 +174,41 @@ RSpec.describe Collectivity do
           FROM   "collectivities"
           LEFT OUTER JOIN "publishers" ON "publishers"."id" = "collectivities"."publisher_id"
           WHERE (
-            LOWER(UNACCENT("collectivities"."name")) LIKE LOWER(UNACCENT('%Hello%'))
-            OR "collectivities"."siren" = 'Hello'
-            OR "publishers"."name" = 'Hello'
+                LOWER(UNACCENT("collectivities"."name")) LIKE LOWER(UNACCENT('%Hello%'))
+            OR  "collectivities"."siren" = 'Hello'
+            OR  "publishers"."name" = 'Hello'
           )
+        SQL
+      end
+
+      it "searches for collectivities by matching name" do
+        expect {
+          described_class.search(name: "Hello").load
+        }.to perform_sql_query(<<~SQL.squish)
+          SELECT "collectivities".*
+          FROM   "collectivities"
+          WHERE  (LOWER(UNACCENT("collectivities"."name")) LIKE LOWER(UNACCENT('%Hello%')))
+        SQL
+      end
+
+      it "searches for collectivities by matching SIREN" do
+        expect {
+          described_class.search(siren: "123456789").load
+        }.to perform_sql_query(<<~SQL.squish)
+          SELECT "collectivities".*
+          FROM   "collectivities"
+          WHERE  "collectivities"."siren" = '123456789'
+        SQL
+      end
+
+      it "searches for collectivities by matching publisher name" do
+        expect {
+          described_class.search(publisher_name: "Hello").load
+        }.to perform_sql_query(<<~SQL.squish)
+          SELECT          "collectivities".*
+          FROM            "collectivities"
+          LEFT OUTER JOIN "publishers" ON "publishers"."id" = "collectivities"."publisher_id"
+          WHERE           "publishers"."name" = 'Hello'
         SQL
       end
     end
@@ -189,9 +220,9 @@ RSpec.describe Collectivity do
         }.to perform_sql_query(<<~SQL)
           SELECT "collectivities".*
           FROM   "collectivities"
-          WHERE (
-            LOWER(UNACCENT("collectivities"."name")) LIKE LOWER(UNACCENT('%Hello%'))
-            OR "collectivities"."siren" = 'Hello'
+          WHERE  (
+                LOWER(UNACCENT("collectivities"."name")) LIKE LOWER(UNACCENT('%Hello%'))
+            OR  "collectivities"."siren" = 'Hello'
           )
         SQL
       end
@@ -202,8 +233,8 @@ RSpec.describe Collectivity do
         expect {
           described_class.order_by_param("name").load
         }.to perform_sql_query(<<~SQL)
-          SELECT "collectivities".*
-          FROM   "collectivities"
+          SELECT   "collectivities".*
+          FROM     "collectivities"
           ORDER BY UNACCENT("collectivities"."name") ASC,
                    "collectivities"."created_at" ASC
         SQL
@@ -213,8 +244,8 @@ RSpec.describe Collectivity do
         expect {
           described_class.order_by_param("-name").load
         }.to perform_sql_query(<<~SQL)
-          SELECT "collectivities".*
-          FROM   "collectivities"
+          SELECT   "collectivities".*
+          FROM     "collectivities"
           ORDER BY UNACCENT("collectivities"."name") DESC,
                    "collectivities"."created_at" DESC
         SQL
@@ -224,8 +255,8 @@ RSpec.describe Collectivity do
         expect {
           described_class.order_by_param("siren").load
         }.to perform_sql_query(<<~SQL)
-          SELECT "collectivities".*
-          FROM   "collectivities"
+          SELECT   "collectivities".*
+          FROM     "collectivities"
           ORDER BY "collectivities"."siren" ASC,
                    "collectivities"."created_at" ASC
         SQL
@@ -235,34 +266,34 @@ RSpec.describe Collectivity do
         expect {
           described_class.order_by_param("-siren").load
         }.to perform_sql_query(<<~SQL)
-          SELECT "collectivities".*
-          FROM   "collectivities"
+          SELECT   "collectivities".*
+          FROM     "collectivities"
           ORDER BY "collectivities"."siren" DESC,
                    "collectivities"."created_at" DESC
         SQL
       end
 
-      it "orders collectivities by publisher name" do
+      it "orders collectivities by publisher" do
         expect {
           described_class.order_by_param("publisher").load
         }.to perform_sql_query(<<~SQL)
-          SELECT "collectivities".*
-          FROM   "collectivities"
+          SELECT          "collectivities".*
+          FROM            "collectivities"
           LEFT OUTER JOIN "publishers" ON "publishers"."id" = "collectivities"."publisher_id"
-          ORDER BY UNACCENT("publishers"."name") ASC NULLS FIRST,
-                   "collectivities"."created_at" ASC
+          ORDER BY        UNACCENT("publishers"."name") ASC NULLS FIRST,
+                          "collectivities"."created_at" ASC
         SQL
       end
 
-      it "orders collectivities by publisher name in reversed order" do
+      it "orders collectivities by publisher in reversed order" do
         expect {
           described_class.order_by_param("-publisher").load
         }.to perform_sql_query(<<~SQL)
-          SELECT "collectivities".*
-          FROM   "collectivities"
+          SELECT          "collectivities".*
+          FROM            "collectivities"
           LEFT OUTER JOIN "publishers" ON "publishers"."id" = "collectivities"."publisher_id"
-          ORDER BY UNACCENT("publishers"."name") DESC NULLS LAST,
-                   "collectivities"."created_at" DESC
+          ORDER BY        UNACCENT("publishers"."name") DESC NULLS LAST,
+                          "collectivities"."created_at" DESC
         SQL
       end
     end
@@ -272,8 +303,8 @@ RSpec.describe Collectivity do
         expect {
           described_class.order_by_score("Hello").load
         }.to perform_sql_query(<<~SQL)
-          SELECT "collectivities".*
-          FROM   "collectivities"
+          SELECT   "collectivities".*
+          FROM     "collectivities"
           ORDER BY ts_rank_cd(to_tsvector('french', "collectivities"."name"), to_tsquery('french', 'Hello')) DESC,
                    "collectivities"."created_at" ASC
         SQL
@@ -337,45 +368,124 @@ RSpec.describe Collectivity do
   # ----------------------------------------------------------------------------
   describe "other associations" do
     describe "#on_territory_communes" do
+      subject(:on_territory_communes) { collectivity.on_territory_communes }
+
       context "when collectivity is a commune" do
-        subject(:association) { build_stubbed(:collectivity, :commune).on_territory_communes }
+        let(:collectivity) { build_stubbed(:collectivity, :commune) }
 
-        it { expect(association).to be_an(ActiveRecord::Relation) }
-        it { expect(association.model).to eq(Commune) }
+        it { expect(on_territory_communes).to be_an(ActiveRecord::Relation) }
+        it { expect(on_territory_communes.model).to eq(Commune) }
 
-        pending "scopes on the collectivity commune"
+        it "loads the commune matching the collectivity" do
+          expect {
+            on_territory_communes.load
+          }.to perform_sql_query(<<~SQL)
+            SELECT "communes".*
+            FROM   "communes"
+            WHERE  "communes"."id" = '#{collectivity.territory_id}'
+          SQL
+        end
       end
 
       context "when collectivity is an EPCI" do
-        subject(:association) { build_stubbed(:collectivity, :epci).on_territory_communes }
+        let(:collectivity) { build_stubbed(:collectivity, :epci) }
 
-        it { expect(association).to be_an(ActiveRecord::Relation) }
-        it { expect(association.model).to eq(Commune) }
+        it { expect(on_territory_communes).to be_an(ActiveRecord::Relation) }
+        it { expect(on_territory_communes.model).to eq(Commune) }
 
-        pending "scopes on communes belonging to the collectivity EPCI"
+        it "loads the communes inside the EPCI" do
+          expect {
+            on_territory_communes.load
+          }.to perform_sql_query(<<~SQL)
+            SELECT DISTINCT "communes".*
+            FROM            "communes"
+            INNER JOIN      "epcis" ON "epcis"."siren" = "communes"."siren_epci"
+            WHERE           "epcis"."id" = '#{collectivity.territory_id}'
+          SQL
+        end
       end
 
       context "when collectivity is a Departement" do
-        subject(:association) { build_stubbed(:collectivity, :departement).on_territory_communes }
+        let(:collectivity) { build_stubbed(:collectivity, :departement) }
 
-        it { expect(association).to be_an(ActiveRecord::Relation) }
-        it { expect(association.model).to eq(Commune) }
+        it { expect(on_territory_communes).to be_an(ActiveRecord::Relation) }
+        it { expect(on_territory_communes.model).to eq(Commune) }
 
-        pending "scopes on communes belonging to the collectivity departement"
+        it "loads the communes inside the departement" do
+          expect {
+            on_territory_communes.load
+          }.to perform_sql_query(<<~SQL)
+            SELECT DISTINCT "communes".*
+            FROM            "communes"
+            INNER JOIN      "departements" ON "departements"."code_departement" = "communes"."code_departement"
+            WHERE           "departements"."id" = '#{collectivity.territory_id}'
+          SQL
+        end
       end
 
       context "when collectivity is a Region" do
-        subject(:association) { build_stubbed(:collectivity, :region).on_territory_communes }
+        let(:collectivity) { build_stubbed(:collectivity, :region) }
 
-        it { expect(association).to be_an(ActiveRecord::Relation) }
-        it { expect(association.model).to eq(Commune) }
+        it { expect(on_territory_communes).to be_an(ActiveRecord::Relation) }
+        it { expect(on_territory_communes.model).to eq(Commune) }
 
-        pending "scopes on communes belonging to the collectivity region"
+        it "loads the communes inside the region" do
+          expect {
+            on_territory_communes.load
+          }.to perform_sql_query(<<~SQL)
+            SELECT DISTINCT "communes".*
+            FROM            "communes"
+            INNER JOIN      "departements" ON "departements"."code_departement" = "communes"."code_departement"
+            INNER JOIN      "regions"      ON "regions"."code_region" = "departements"."code_region"
+            WHERE           "regions"."id" = '#{collectivity.territory_id}'
+          SQL
+        end
       end
     end
 
     describe "#assigned_offices" do
-      pending "TODO"
+      subject(:assigned_offices) { collectivity.assigned_offices }
+
+      context "when collectivity is a commune" do
+        let(:collectivity) { build_stubbed(:collectivity, :commune) }
+
+        it { expect(assigned_offices).to be_an(ActiveRecord::Relation) }
+        it { expect(assigned_offices.model).to eq(Office) }
+
+        it "loads the commune matching the collectivity" do
+          expect {
+            assigned_offices.load
+          }.to perform_sql_query(<<~SQL)
+            SELECT DISTINCT "offices".*
+            FROM            "offices"
+            INNER JOIN      "office_communes" ON "office_communes"."office_id" = "offices"."id"
+            INNER JOIN      "communes"        ON "communes"."code_insee" = "office_communes"."code_insee"
+            WHERE           "offices"."discarded_at" IS NULL
+              AND           "communes"."id" = '#{collectivity.territory_id}'
+          SQL
+        end
+      end
+
+      context "when collectivity is an EPCI" do
+        let(:collectivity) { build_stubbed(:collectivity, :epci) }
+
+        it { expect(assigned_offices).to be_an(ActiveRecord::Relation) }
+        it { expect(assigned_offices.model).to eq(Office) }
+
+        it "loads the commune matching the collectivity" do
+          expect {
+            assigned_offices.load
+          }.to perform_sql_query(<<~SQL)
+            SELECT DISTINCT "offices".*
+            FROM            "offices"
+            INNER JOIN      "office_communes" ON "office_communes"."office_id" = "offices"."id"
+            INNER JOIN      "communes"        ON "communes"."code_insee" = "office_communes"."code_insee"
+            INNER JOIN      "epcis"           ON "epcis"."siren" = "communes"."siren_epci"
+            WHERE           "offices"."discarded_at" IS NULL
+              AND           "epcis"."id" = '#{collectivity.territory_id}'
+          SQL
+        end
+      end
     end
   end
 
@@ -413,6 +523,22 @@ RSpec.describe Collectivity do
   # Database constraints and triggers
   # ----------------------------------------------------------------------------
   describe "database constraints" do
+    it "asserts the uniqueness of SIREN" do
+      existing_collectivity = create(:collectivity)
+      another_collectivity  = build(:collectivity, siren: existing_collectivity.siren)
+
+      expect { another_collectivity.save(validate: false) }
+        .to raise_error(ActiveRecord::RecordNotUnique).with_message(/PG::UniqueViolation/)
+    end
+
+    it "ignores discarded records when asserting the uniqueness of SIREN" do
+      existing_collectivity = create(:collectivity, :discarded)
+      another_collectivity  = build(:collectivity, siren: existing_collectivity.siren)
+
+      expect { another_collectivity.save(validate: false) }
+        .not_to raise_error
+    end
+
     it "nullify the publisher_id of a collectivity after its publisher has been destroyed" do
       publisher    = create(:publisher)
       collectivity = create(:collectivity, publisher: publisher)
@@ -422,8 +548,6 @@ RSpec.describe Collectivity do
         collectivity.reload
       }.to change(collectivity, :publisher_id).to(nil)
     end
-
-    pending "Add more tests about constraints"
   end
 
   describe "database triggers" do

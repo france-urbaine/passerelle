@@ -111,7 +111,38 @@ RSpec.describe Report do
       end
     end
 
-    pending "Add missing tests for other validations"
+    it { is_expected.to     allow_values("64102", "2B013", "97101").for(:code_insee) }
+    it { is_expected.not_to allow_values("640102", "102").for(:code_insee) }
+
+    it { is_expected.to validate_numericality_of(:situation_annee_majic).is_in(2018..Time.current.year) }
+
+    it { is_expected.to     allow_values("0123456789").for(:situation_invariant) }
+    it { is_expected.not_to allow_values("123", "A123456789").for(:situation_invariant) }
+
+    it { is_expected.to     allow_values("A12345", "* 12345", "* 12345 01").for(:situation_numero_ordre_proprietaire) }
+    it { is_expected.not_to allow_values("123", "-12345").for(:situation_numero_ordre_proprietaire) }
+
+    it "validates format of parcelles" do
+      valid_parcelles   = ["A 0003", "AB 0002", "0A 0003", "01 0093", "001 A 0093", "001 0A 0093", "001 01 0093", "0010A0093", "001AB0093", "001010093", "001A0093", "010093"]
+      invalid_parcelles = ["ABC 1", "ABC 0001", "001 0093", "001 001 0093"]
+
+      aggregate_failures do
+        is_expected.to     allow_values(*valid_parcelles).for(:situation_parcelle)
+        is_expected.not_to allow_values(*invalid_parcelles).for(:situation_parcelle)
+
+        is_expected.to     allow_values(*valid_parcelles).for(:proposition_parcelle)
+        is_expected.not_to allow_values(*invalid_parcelles).for(:proposition_parcelle)
+      end
+    end
+
+    it { is_expected.to validate_numericality_of(:situation_numero_voie).is_in(0..9999) }
+    it { is_expected.to validate_numericality_of(:proposition_numero_voie).is_in(0..9999) }
+
+    it { is_expected.to     allow_values("1234", "A345").for(:situation_code_rivoli) }
+    it { is_expected.not_to allow_values("123", "-123").for(:situation_code_rivoli) }
+
+    it { is_expected.to     allow_values("1234", "A345").for(:proposition_code_rivoli) }
+    it { is_expected.not_to allow_values("123", "-123").for(:proposition_code_rivoli) }
   end
 
   # Callbacks
@@ -739,9 +770,5 @@ RSpec.describe Report do
       expect { report.update_columns(priority: "higher") }
         .to raise_error(ActiveRecord::StatementInvalid).with_message(/PG::InvalidTextRepresentation/)
     end
-  end
-
-  describe "database triggers" do
-    pending "TODO"
   end
 end

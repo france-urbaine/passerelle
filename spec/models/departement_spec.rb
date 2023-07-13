@@ -38,11 +38,42 @@ RSpec.describe Departement do
     end
   end
 
+  # Normalization callbacks
+  # ----------------------------------------------------------------------------
+  describe "attribute normalization" do
+    # Create only one region to reduce the number of queries and records to create
+    let_it_be(:region) { create(:region) }
+
+    def create_record(**attributes)
+      create(:departement, region:, **attributes)
+    end
+
+    describe "#qualified_name" do
+      it { expect(create_record(name: "Guyanne")).to         have_attributes(qualified_name: "Département de Guyanne") }
+      it { expect(create_record(name: "Hautes-Pyrénées")).to have_attributes(qualified_name: "Département de Hautes-Pyrénées") }
+    end
+  end
+
   # Scopes
   # ----------------------------------------------------------------------------
   describe "scopes" do
     describe ".search" do
-      it do
+      it "searches for departements with all criteria" do
+        expect {
+          described_class.search("Hello").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "departements".*
+          FROM   "departements"
+          LEFT OUTER JOIN "regions" ON "regions"."code_region" = "departements"."code_region"
+          WHERE (
+                LOWER(UNACCENT("departements"."name")) LIKE LOWER(UNACCENT('%Hello%'))
+            OR  "departements"."code_departement" = 'Hello'
+            OR  LOWER(UNACCENT("regions"."name")) LIKE LOWER(UNACCENT('%Hello%'))
+          )
+        SQL
+      end
+
+      it "searches for departements by matching name" do
         expect {
           described_class.search(name: "Hello").load
         }.to perform_sql_query(<<~SQL)
@@ -52,51 +83,94 @@ RSpec.describe Departement do
         SQL
       end
 
-      it do
+      it "searches for departements by matching departement code" do
         expect {
-          described_class.search("Hello").load
+          described_class.search(code_departement: "64").load
         }.to perform_sql_query(<<~SQL)
           SELECT "departements".*
           FROM   "departements"
+          WHERE  "departements"."code_departement" = '64'
+        SQL
+      end
+
+      it "searches for departements by matching region name" do
+        expect {
+          described_class.search(region_name: "Sud").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT          "departements".*
+          FROM            "departements"
           LEFT OUTER JOIN "regions" ON "regions"."code_region" = "departements"."code_region"
-          WHERE (LOWER(UNACCENT("departements"."name")) LIKE LOWER(UNACCENT('%Hello%'))
-            OR "departements"."code_departement" = 'Hello'
-            OR LOWER(UNACCENT("regions"."name")) LIKE LOWER(UNACCENT('%Hello%')))
+          WHERE           (LOWER(UNACCENT("regions"."name")) LIKE LOWER(UNACCENT('%Sud%')))
+        SQL
+      end
+    end
+
+    describe ".autocomplete" do
+      it "searches for departements with text matching the qualified name or its code" do
+        expect {
+          described_class.autocomplete("Hello").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "departements".*
+          FROM   "departements"
+          WHERE (
+                LOWER(UNACCENT("departements"."qualified_name")) LIKE LOWER(UNACCENT('%Hello%'))
+            OR  "departements"."code_departement" = 'Hello'
+          )
         SQL
       end
     end
 
     describe ".order_by_param" do
-      it do
+      it "orders departements by code" do
         expect {
           described_class.order_by_param("departement").load
         }.to perform_sql_query(<<~SQL)
-          SELECT "departements".*
-          FROM   "departements"
+          SELECT   "departements".*
+          FROM     "departements"
           ORDER BY "departements"."code_departement" ASC
         SQL
       end
 
-      it do
+      it "orders departements by code in descendant order" do
         expect {
           described_class.order_by_param("-departement").load
         }.to perform_sql_query(<<~SQL)
-          SELECT "departements".*
-          FROM   "departements"
+          SELECT   "departements".*
+          FROM     "departements"
           ORDER BY "departements"."code_departement" DESC
+        SQL
+      end
+
+      it "orders departements by region" do
+        expect {
+          described_class.order_by_param("region").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "departements".*
+          FROM     "departements"
+          ORDER BY "departements"."code_region" ASC, "departements"."code_departement" ASC
+        SQL
+      end
+
+      it "orders departements by region in descendant order" do
+        expect {
+          described_class.order_by_param("-region").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "departements".*
+          FROM     "departements"
+          ORDER BY "departements"."code_region" DESC, "departements"."code_departement" DESC
         SQL
       end
     end
 
     describe ".order_by_score" do
-      it do
+      it "orders departements by search score" do
         expect {
           described_class.order_by_score("Hello").load
         }.to perform_sql_query(<<~SQL)
-          SELECT "departements".*
-          FROM   "departements"
+          SELECT   "departements".*
+          FROM     "departements"
           ORDER BY ts_rank_cd(to_tsvector('french', "departements"."name"), to_tsquery('french', 'Hello')) DESC,
-                  "departements"."code_departement" ASC
+                   "departements"."code_departement" ASC
         SQL
       end
     end
@@ -106,11 +180,16 @@ RSpec.describe Departement do
   # ----------------------------------------------------------------------------
   describe "other associations" do
     describe "#on_territory_collectivities" do
+      subject(:on_territory_collectivities) { departement.on_territory_collectivities }
+
       let(:departement) { create(:departement) }
 
-      it do
+      it { expect(on_territory_collectivities).to be_an(ActiveRecord::Relation) }
+      it { expect(on_territory_collectivities.model).to eq(Collectivity) }
+
+      it "loads the registered collectivities having this departement crossing their territory" do
         expect {
-          departement.on_territory_collectivities.load
+          on_territory_collectivities.load
         }.to perform_sql_query(<<~SQL)
           SELECT "collectivities".*
           FROM   "collectivities"
@@ -156,7 +235,21 @@ RSpec.describe Departement do
   # Database constraints and triggers
   # ----------------------------------------------------------------------------
   describe "database constraints" do
-    pending "TODO"
+    it "asserts the uniqueness of code_departement" do
+      existing_departement = create(:departement)
+      another_departement  = build(:departement, code_departement: existing_departement.code_departement)
+
+      expect { another_departement.save(validate: false) }
+        .to raise_error(ActiveRecord::RecordNotUnique).with_message(/PG::UniqueViolation/)
+    end
+
+    it "cannot destroy a region referenced from departements" do
+      region = create(:region)
+      create(:departement, region: region)
+
+      expect { region.delete }
+        .to raise_error(ActiveRecord::InvalidForeignKey).with_message(/PG::ForeignKeyViolation/)
+    end
   end
 
   describe "database triggers" do

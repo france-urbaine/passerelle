@@ -305,6 +305,13 @@ class Report < ApplicationRecord
     )
   }
 
+  scope :order_by_param, lambda { |input|
+    advanced_order(
+      input,
+      reference: ->(direction) { order(reference: direction) }
+    )
+  }
+
   scope :order_by_score, lambda { |_input|
     # TODO
     self

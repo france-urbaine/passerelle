@@ -51,58 +51,161 @@ RSpec.describe DDFIP do
   # ----------------------------------------------------------------------------
   describe "scopes" do
     describe ".search" do
-      let(:nord)                 { create(:ddfip, code_departement: 59, name: "DDFIP du Nord") }
-      let(:pyrenees_atlantiques) { create(:ddfip, code_departement: 64, name: "DDFIP des PA") }
-      let(:paris)                { create(:ddfip, code_departement: 75, name: "DDFIP de Paris") }
-
-      before do
-        create(:region, code_region: 11, name: "Ile-de-France")
-        create(:region, code_region: 75, name: "Nouvelle-Aquitaine")
-        create(:region, code_region: 32, name: "Hauts-de-France")
-
-        create(:departement, code_departement: 75, code_region: 11, name: "Paris")
-        create(:departement, code_departement: 64, code_region: 75, name: "Pyrénées-Atlantiques")
-        create(:departement, code_departement: 59, code_region: 32, name: "Nord")
-      end
-
-      it do
-        expect(described_class.search("DDFIP du Nord"))
-          .to  include(nord)
-          .and not_include(pyrenees_atlantiques)
-          .and not_include(paris)
-      end
-
-      it do
-        expect(described_class.search("Pyrénées"))
-          .to  include(pyrenees_atlantiques)
-          .and not_include(nord)
-          .and not_include(paris)
-      end
-
-      it do
-        expect(described_class.search("Aquitaine"))
-          .to  include(pyrenees_atlantiques)
-          .and not_include(nord)
-          .and not_include(paris)
-      end
-
-      it do
-        expect(described_class.search("75"))
-          .to  include(paris)
-          .and not_include(nord)
-          .and not_include(pyrenees_atlantiques)
-      end
-
-      it do
-        expect { described_class.search("Hello").load }.to perform_sql_query(<<~SQL.squish)
+      it "searches for DDFIPs with all criteria" do
+        expect {
+          described_class.search("Hello").load
+        }.to perform_sql_query(<<~SQL.squish)
           SELECT          "ddfips".*
           FROM            "ddfips"
           LEFT OUTER JOIN "departements" ON "departements"."code_departement" = "ddfips"."code_departement"
           LEFT OUTER JOIN "regions" ON "regions"."code_region" = "departements"."code_region"
-          WHERE (LOWER(UNACCENT("ddfips"."name")) LIKE LOWER(UNACCENT('%Hello%'))
-            OR "ddfips"."code_departement" = 'Hello'
-            OR LOWER(UNACCENT("departements"."name")) LIKE LOWER(UNACCENT('%Hello%'))
-            OR LOWER(UNACCENT("regions"."name"))      LIKE LOWER(UNACCENT('%Hello%')))
+          WHERE (
+                LOWER(UNACCENT("ddfips"."name")) LIKE LOWER(UNACCENT('%Hello%'))
+            OR  "ddfips"."code_departement" = 'Hello'
+            OR  LOWER(UNACCENT("departements"."name")) LIKE LOWER(UNACCENT('%Hello%'))
+            OR  LOWER(UNACCENT("regions"."name"))      LIKE LOWER(UNACCENT('%Hello%'))
+          )
+        SQL
+      end
+
+      it "searches for DDFIPs by matching name" do
+        expect {
+          described_class.search(name: "Hello").load
+        }.to perform_sql_query(<<~SQL.squish)
+          SELECT "ddfips".*
+          FROM   "ddfips"
+          WHERE  (LOWER(UNACCENT("ddfips"."name")) LIKE LOWER(UNACCENT('%Hello%')))
+        SQL
+      end
+
+      it "searches for DDFIPs by matching departement code" do
+        expect {
+          described_class.search(code_departement: "64").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "ddfips".*
+          FROM   "ddfips"
+          WHERE  "ddfips"."code_departement" = '64'
+        SQL
+      end
+
+      it "searches for DDFIPs by matching departement name" do
+        expect {
+          described_class.search(departement_name: "Pyrén").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT          "ddfips".*
+          FROM            "ddfips"
+          LEFT OUTER JOIN "departements" ON "departements"."code_departement" = "ddfips"."code_departement"
+          WHERE            (LOWER(UNACCENT("departements"."name")) LIKE LOWER(UNACCENT('%Pyrén%')))
+        SQL
+      end
+
+      it "searches for DDFIPs by matching region name" do
+        expect {
+          described_class.search(region_name: "Sud").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT          "ddfips".*
+          FROM            "ddfips"
+          LEFT OUTER JOIN "departements" ON "departements"."code_departement" = "ddfips"."code_departement"
+          LEFT OUTER JOIN "regions" ON "regions"."code_region" = "departements"."code_region"
+          WHERE           (LOWER(UNACCENT("regions"."name")) LIKE LOWER(UNACCENT('%Sud%')))
+        SQL
+      end
+    end
+
+    describe ".autocomplete" do
+      it "searches for DDFIPs with text matching the name" do
+        expect {
+          described_class.autocomplete("Hello").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "ddfips".*
+          FROM   "ddfips"
+          WHERE (
+                LOWER(UNACCENT("ddfips"."name")) LIKE LOWER(UNACCENT('%Hello%'))
+            OR  "ddfips"."code_departement" = 'Hello'
+          )
+        SQL
+      end
+    end
+
+    describe ".order_by_param" do
+      it "orders DDFIPs by name" do
+        expect {
+          described_class.order_by_param("name").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "ddfips".*
+          FROM     "ddfips"
+          ORDER BY UNACCENT("ddfips"."name") ASC,
+                   "ddfips"."created_at" ASC
+        SQL
+      end
+
+      it "orders DDFIPs by name in descendant order" do
+        expect {
+          described_class.order_by_param("-name").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "ddfips".*
+          FROM     "ddfips"
+          ORDER BY UNACCENT("ddfips"."name") DESC,
+                   "ddfips"."created_at" DESC
+        SQL
+      end
+
+      it "orders DDFIPs by departement" do
+        expect {
+          described_class.order_by_param("departement").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "ddfips".*
+          FROM     "ddfips"
+          ORDER BY "ddfips"."code_departement" ASC,
+                   "ddfips"."created_at" ASC
+        SQL
+      end
+
+      it "orders DDFIPs by departement in descendant order" do
+        expect {
+          described_class.order_by_param("-departement").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "ddfips".*
+          FROM     "ddfips"
+          ORDER BY "ddfips"."code_departement" DESC,
+                   "ddfips"."created_at" DESC
+        SQL
+      end
+
+      it "orders DDFIPs by region" do
+        expect {
+          described_class.order_by_param("region").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT          "ddfips".*
+          FROM            "ddfips"
+          LEFT OUTER JOIN "departements" ON "departements"."code_departement" = "ddfips"."code_departement"
+          ORDER BY        "departements"."code_region" ASC,
+                          "ddfips"."created_at" ASC
+        SQL
+      end
+
+      it "orders DDFIPs by region in descendant order" do
+        expect {
+          described_class.order_by_param("-region").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT          "ddfips".*
+          FROM            "ddfips"
+          LEFT OUTER JOIN "departements" ON "departements"."code_departement" = "ddfips"."code_departement"
+          ORDER BY        "departements"."code_region" DESC,
+                          "ddfips"."created_at" DESC
+        SQL
+      end
+    end
+
+    describe ".order_by_score" do
+      it "orders DDFIPs by search score" do
+        expect {
+          described_class.order_by_score("Hello").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "ddfips".*
+          FROM     "ddfips"
+          ORDER BY ts_rank_cd(to_tsvector('french', "ddfips"."name"), to_tsquery('french', 'Hello')) DESC,
+                   "ddfips"."created_at" ASC
         SQL
       end
     end
@@ -112,10 +215,15 @@ RSpec.describe DDFIP do
   # ----------------------------------------------------------------------------
   describe "other associations" do
     describe "#on_territory_collectivities" do
+      subject(:on_territory_collectivities) { ddfip.on_territory_collectivities }
+
       let(:ddfip) { create(:ddfip) }
 
-      it do
-        expect { ddfip.on_territory_collectivities.load }.to perform_sql_query(<<~SQL)
+      it { expect(on_territory_collectivities).to be_an(ActiveRecord::Relation) }
+      it { expect(on_territory_collectivities.model).to eq(Collectivity) }
+
+      it "loads the registered collectivities in the DDFIP departement" do
+        expect { on_territory_collectivities.load }.to perform_sql_query(<<~SQL)
           SELECT "collectivities".*
           FROM   "collectivities"
           WHERE  "collectivities"."discarded_at" IS NULL
@@ -123,21 +231,21 @@ RSpec.describe DDFIP do
                   "collectivities"."territory_type" = 'Commune'
               AND "collectivities"."territory_id" IN (
                     SELECT "communes"."id"
-                    FROM "communes"
-                    WHERE "communes"."code_departement" = '#{ddfip.code_departement}'
+                    FROM   "communes"
+                    WHERE  "communes"."code_departement" = '#{ddfip.code_departement}'
               )
               OR  "collectivities"."territory_type" = 'EPCI'
               AND "collectivities"."territory_id" IN (
-                    SELECT "epcis"."id"
-                    FROM "epcis"
+                    SELECT     "epcis"."id"
+                    FROM       "epcis"
                     INNER JOIN "communes" ON "communes"."siren_epci" = "epcis"."siren"
-                    WHERE "communes"."code_departement" = '#{ddfip.code_departement}'
+                    WHERE      "communes"."code_departement" = '#{ddfip.code_departement}'
               )
               OR  "collectivities"."territory_type" = 'Departement'
               AND "collectivities"."territory_id" IN (
-                SELECT "departements"."id"
-                FROM "departements"
-                WHERE "departements"."code_departement" = '#{ddfip.code_departement}'
+                    SELECT "departements"."id"
+                    FROM   "departements"
+                    WHERE  "departements"."code_departement" = '#{ddfip.code_departement}'
               )
             )
         SQL
@@ -294,7 +402,29 @@ RSpec.describe DDFIP do
   # Database constraints and triggers
   # ----------------------------------------------------------------------------
   describe "database constraints" do
-    pending "TODO"
+    it "asserts the uniqueness of name" do
+      existing_ddfip = create(:ddfip)
+      another_ddfip  = build(:ddfip, name: existing_ddfip.name)
+
+      expect { another_ddfip.save(validate: false) }
+        .to raise_error(ActiveRecord::RecordNotUnique).with_message(/PG::UniqueViolation/)
+    end
+
+    it "ignores discarded records when asserting the uniqueness of SIREN" do
+      existing_ddfip = create(:ddfip, :discarded)
+      another_ddfip  = build(:ddfip, name: existing_ddfip.name)
+
+      expect { another_ddfip.save(validate: false) }
+        .not_to raise_error
+    end
+
+    it "cannot destroy a departement referenced from ddfips" do
+      departement = create(:departement)
+      create(:ddfip, departement: departement)
+
+      expect { departement.delete }
+        .to raise_error(ActiveRecord::InvalidForeignKey).with_message(/PG::ForeignKeyViolation/)
+    end
   end
 
   describe "database triggers" do
