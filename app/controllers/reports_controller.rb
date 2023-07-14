@@ -55,6 +55,7 @@ class ReportsController < ApplicationController
   def remove
     @report = find_and_authorize_report
     @referrer_path = referrer_path || report_path(@report)
+    @redirect_path = @referrer_path unless @referrer_path.include?(report_path(@report))
   end
 
   def destroy
@@ -80,6 +81,7 @@ class ReportsController < ApplicationController
     @reports = build_and_authorize_scope(as: :destroyable)
     @reports = filter_collection(@reports)
     @referrer_path = referrer_path || reports_path(**selection_params)
+    @redirect_path = referrer_path
   end
 
   def destroy_all

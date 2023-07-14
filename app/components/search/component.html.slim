@@ -5,6 +5,5 @@ form.search( autocomplete="off" data-turbo-frame=turbo_frame action=request.path
       .form-block__input-icon= helpers.svg_icon("search")
       input( type="search" name="search" value=params[:search] placeholder=label )
 
-  - helpers.hidden_param_input(:order) do |input|
-    = input
+  = helpers.hidden_param_input(:order)
 

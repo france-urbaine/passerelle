@@ -20,7 +20,9 @@ module Views
           render Modal::Component.new(redirection_path: @redirection_path) do |modal|
             yield(modal)
 
+            modal.with_hidden_field :redirect, @redirection_path
             modal.with_hidden_field :form, self.class.name.demodulize.underscore
+
             modal.with_submit_action "Enregistrer"
             modal.with_close_action "Annuler"
           end

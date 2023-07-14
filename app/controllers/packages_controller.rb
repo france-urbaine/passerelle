@@ -46,6 +46,7 @@ class PackagesController < ApplicationController
   def remove
     @package = find_and_authorize_package
     @referrer_path = referrer_path || package_path(@package)
+    @redirect_path = @referrer_path unless @referrer_path.include?(package_path(@package))
   end
 
   def destroy
@@ -71,6 +72,7 @@ class PackagesController < ApplicationController
     @packages = build_and_authorize_scope(as: :destroyable)
     @packages = filter_collection(@packages)
     @referrer_path = referrer_path || packages_path(**selection_params)
+    @redirect_path = referrer_path
   end
 
   def destroy_all

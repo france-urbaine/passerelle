@@ -24,34 +24,7 @@ module FormHelper
   end
 
   def hidden_param_input(key, &)
-    return unless params.key?(key)
-
-    if block_given?
-      each_hidden_param_field_tag(key, params[key], &)
-    else
-      buffer = []
-      each_hidden_param_field_tag(key, params[key]) do |input|
-        buffer << input
-      end
-      safe_join buffer
-    end
-  end
-
-  def each_hidden_param_field_tag(name, value, &)
-    return to_enum(:each_hidden_param_field_tag, name, value) unless block_given?
-
-    case value
-    when Array
-      value.each do |item|
-        each_hidden_param_field_tag("#{name}[]", item, &)
-      end
-    when Hash, ActionController::Parameters
-      value.each do |key, item|
-        each_hidden_param_field_tag("#{name}[#{key}]", item, &)
-      end
-    else
-      yield tag.input(type: "hidden", name: name, value: value, autocomplete: "off")
-    end
+    render HiddenField::Component.new(key, params[key]) if params.key?(key)
   end
 
   def form_block(record, attribute, autocomplete: false, **options, &block)

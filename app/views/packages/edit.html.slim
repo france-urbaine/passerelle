@@ -4,7 +4,7 @@
       | Modification du paquet
 
     - modal.with_form(model: @package, url: url_for([@parent, @package])) do |form|
-      = hidden_field_tag :redirect, modal.redirection_path
+      - modal.with_hidden_field :redirect, @referrer_path
 
       = form.block :due_on do
         = form.label :due_on

@@ -4,10 +4,10 @@
       | Suppression du signalement : #{@report.reference}
 
     - modal.with_form(url: url_for([@parent, @report]), method: :delete) do
-      - unless @referrer_path.include?(report_path(@report))
-        = hidden_field_tag :redirect, @referrer_path
+      - modal.with_hidden_field :redirect, @redirect_path
 
-      p Êtes-vous sûrs de vouloir supprimer ce signalement ?
+      p
+        | Êtes-vous sûrs de vouloir supprimer ce signalement ?
       p
         | Par mesure de securité, les données de ce signalement seront archivées pendant 30 jours.
         br
