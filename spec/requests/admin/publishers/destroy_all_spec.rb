@@ -2,9 +2,9 @@
 
 require "rails_helper"
 
-RSpec.describe "PublishersController#destroy_all" do
+RSpec.describe "Admin::PublishersController#destroy_all" do
   subject(:request) do
-    delete "/editeurs", as:, headers:, params:
+    delete "/admin/editeurs", as:, headers:, params:
   end
 
   let(:as)      { |e| e.metadata[:as] }
@@ -45,7 +45,7 @@ RSpec.describe "PublishersController#destroy_all" do
 
     context "with multiple ids" do
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/editeurs") }
+      it { expect(response).to redirect_to("/admin/editeurs") }
       it { expect { request }.to change(Publisher.discarded, :count).by(2) }
 
       it "discards the selected publishers" do
@@ -71,7 +71,7 @@ RSpec.describe "PublishersController#destroy_all" do
         expect(flash).to have_flash_actions.to include(
           label:  "Annuler",
           method: "patch",
-          url:    "/editeurs/undiscard",
+          url:    "/admin/editeurs/undiscard",
           params: { ids: ids }
         )
       end
@@ -81,7 +81,7 @@ RSpec.describe "PublishersController#destroy_all" do
       let(:ids) { publishers.last(1).map(&:id) }
 
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/editeurs") }
+      it { expect(response).to redirect_to("/admin/editeurs") }
       it { expect(flash).to have_flash_notice }
       it { expect(flash).to have_flash_actions }
       it { expect { request }.to not_change(Publisher.discarded, :count) }
@@ -91,7 +91,7 @@ RSpec.describe "PublishersController#destroy_all" do
       let(:ids) { publishers.take(1).map(&:id) }
 
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/editeurs") }
+      it { expect(response).to redirect_to("/admin/editeurs") }
       it { expect(flash).to have_flash_notice }
       it { expect(flash).to have_flash_actions }
       it { expect { request }.to change(Publisher.discarded, :count).by(1) }
@@ -99,7 +99,7 @@ RSpec.describe "PublishersController#destroy_all" do
 
     context "with `all` ids", params: { ids: "all" } do
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/editeurs") }
+      it { expect(response).to redirect_to("/admin/editeurs") }
       it { expect(flash).to have_flash_notice }
       it { expect(flash).to have_flash_actions }
       it { expect { request }.to change(Publisher.discarded, :count).by(3) }
@@ -107,7 +107,7 @@ RSpec.describe "PublishersController#destroy_all" do
 
     context "with empty ids", params: { ids: [] } do
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/editeurs") }
+      it { expect(response).to redirect_to("/admin/editeurs") }
       it { expect(flash).to have_flash_notice }
       it { expect(flash).to have_flash_actions }
       it { expect { request }.not_to change(Publisher.discarded, :count) }
@@ -115,7 +115,7 @@ RSpec.describe "PublishersController#destroy_all" do
 
     context "with unknown ids", params: { ids: %w[1 2] } do
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/editeurs") }
+      it { expect(response).to redirect_to("/admin/editeurs") }
       it { expect(flash).to have_flash_notice }
       it { expect(flash).to have_flash_actions }
       it { expect { request }.not_to change(Publisher.discarded, :count) }
@@ -123,7 +123,7 @@ RSpec.describe "PublishersController#destroy_all" do
 
     context "with empty parameters", params: {} do
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/editeurs") }
+      it { expect(response).to redirect_to("/admin/editeurs") }
       it { expect(flash).to have_flash_notice }
       it { expect(flash).to have_flash_actions }
       it { expect { request }.not_to change(DDFIP.discarded, :count) }
@@ -131,7 +131,7 @@ RSpec.describe "PublishersController#destroy_all" do
 
     context "with referrer header", headers: { "Referer" => "http://example.com/other/path" } do
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/editeurs") }
+      it { expect(response).to redirect_to("/admin/editeurs") }
       it { expect(flash).to have_flash_notice }
       it { expect(flash).to have_flash_actions }
     end

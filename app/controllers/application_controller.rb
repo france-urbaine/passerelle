@@ -48,7 +48,7 @@ class ApplicationController < ActionController::Base
   helper_method :turbo_frame_request?
 
   def current_organization
-    current_user.organization
+    current_user&.organization
   end
 
   # Add more info to Lograge payload

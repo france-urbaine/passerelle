@@ -49,7 +49,7 @@ div( data-controller="navbar" )
         = navbar_link_to "API",        root_path, current: false, disabled: true if api_settings
 
 
-    - publishers     = allowed_to?(:index?, Publisher,    with: PublisherPolicy)
+    - publishers     = allowed_to?(:index?, with: Admin::PublisherPolicy)
     - collectivities = allowed_to?(:index?, Collectivity, with: CollectivityPolicy)
     - ddfips         = allowed_to?(:index?, DDFIP,        with: DDFIPPolicy)
     - offices        = allowed_to?(:index?, Office,       with: OfficePolicy)
@@ -58,11 +58,11 @@ div( data-controller="navbar" )
     - if publishers || collectivities || ddfips || offices || users
       .navbar__header Administration
       .navbar__links
-        = navbar_link_to "Éditeurs",      publishers_path     if publishers
-        = navbar_link_to "Collectivités", collectivities_path if collectivities
-        = navbar_link_to "DDFIP",         ddfips_path         if ddfips
-        = navbar_link_to "Guichets",      offices_path        if offices
-        = navbar_link_to "Utilisateurs",  users_path          if users
+        = navbar_link_to "Éditeurs",      admin_publishers_path if publishers
+        = navbar_link_to "Collectivités", collectivities_path   if collectivities
+        = navbar_link_to "DDFIP",         ddfips_path           if ddfips
+        = navbar_link_to "Guichets",      offices_path          if offices
+        = navbar_link_to "Utilisateurs",  users_path            if users
 
     - communes     = allowed_to?(:index?, Commune,     with: CommunePolicy)
     - epcis        = allowed_to?(:index?, EPCI,        with: EPCIPolicy)

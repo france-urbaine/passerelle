@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe PublisherPolicy do
+RSpec.describe Admin::PublisherPolicy do
   describe_rule :manage? do
     context "without record" do
       let(:record) { Publisher }
@@ -195,16 +195,18 @@ RSpec.describe PublisherPolicy do
 
     it_behaves_like "when current user is a super admin" do
       it do
-        is_expected
-          .to  include(name:                attributes[:name])
-          .and include(siren:               attributes[:siren])
-          .and include(contact_first_name:  attributes[:contact_first_name])
-          .and include(contact_last_name:   attributes[:contact_last_name])
-          .and include(contact_email:       attributes[:contact_email])
-          .and include(contact_phone:       attributes[:contact_phone])
-          .and include(allow_2fa_via_email: attributes[:allow_2fa_via_email])
-          .and not_include(:domain_restriction)
-          .and not_include(:something_else)
+        is_expected.to include(
+          name:                attributes[:name],
+          siren:               attributes[:siren],
+          contact_first_name:  attributes[:contact_first_name],
+          contact_last_name:   attributes[:contact_last_name],
+          contact_email:       attributes[:contact_email],
+          contact_phone:       attributes[:contact_phone],
+          allow_2fa_via_email: attributes[:allow_2fa_via_email]
+        ).and not_include(
+          :domain_restriction,
+          :something_else
+        )
       end
     end
 

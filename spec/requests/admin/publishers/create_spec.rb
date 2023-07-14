@@ -2,9 +2,9 @@
 
 require "rails_helper"
 
-RSpec.describe "PublishersController#create" do
+RSpec.describe "Admin::PublishersController#create" do
   subject(:request) do
-    post "/editeurs", as:, headers:, params:
+    post "/admin/editeurs", as:, headers:, params:
   end
 
   let(:as)      { |e| e.metadata[:as] }
@@ -38,7 +38,7 @@ RSpec.describe "PublishersController#create" do
 
     context "with valid attributes" do
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/editeurs") }
+      it { expect(response).to redirect_to("/admin/editeurs") }
       it { expect { request }.to change(Publisher, :count).by(1) }
 
       it "assigns expected attributes to the new record" do
@@ -76,7 +76,7 @@ RSpec.describe "PublishersController#create" do
 
     context "with referrer header", headers: { "Referer" => "http://example.com/other/path" } do
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/editeurs") }
+      it { expect(response).to redirect_to("/admin/editeurs") }
       it { expect(flash).to have_flash_notice }
     end
 

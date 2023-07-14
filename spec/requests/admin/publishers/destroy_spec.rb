@@ -2,16 +2,16 @@
 
 require "rails_helper"
 
-RSpec.describe "PublishersController#undiscard" do
+RSpec.describe "Admin::PublishersController#destroy" do
   subject(:request) do
-    patch "/editeurs/#{publisher.id}/undiscard", as:, headers:, params:
+    delete "/admin/editeurs/#{publisher.id}", as:, headers:, params:
   end
 
   let(:as)      { |e| e.metadata[:as] }
   let(:headers) { |e| e.metadata[:headers] }
   let(:params)  { |e| e.metadata[:params] }
 
-  let!(:publisher) { create(:publisher, :discarded) }
+  let!(:publisher) { create(:publisher) }
 
   describe "authorizations" do
     it_behaves_like "it requires to be signed in in HTML"
@@ -38,30 +38,40 @@ RSpec.describe "PublishersController#undiscard" do
   describe "responses" do
     before { sign_in_as(:super_admin) }
 
-    context "when the publisher is discarded" do
+    context "when the publisher is accessible" do
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/editeurs") }
-      it { expect { request }.to change(Publisher.discarded, :count).by(-1) }
+      it { expect(response).to redirect_to("/admin/editeurs") }
+      it { expect { request }.to change(Publisher.discarded, :count).by(1) }
 
-      it "undiscards the publisher" do
+      it "discards the publisher" do
         expect { request and publisher.reload }
-          .to change(publisher, :discarded_at).to(nil)
+          .to change(publisher, :discarded_at).to(be_present)
       end
 
       it "sets a flash notice" do
         expect(flash).to have_flash_notice.to eq(
-          type:  "cancel",
-          title: "La suppression de l'éditeur a été annulée.",
-          delay: 3000
+          type:        "success",
+          title:       "L'éditeur a été supprimé.",
+          description: "Toutes les données seront définitivement supprimées dans un délai de 30 jours.",
+          delay:       10_000
+        )
+      end
+
+      it "sets a flash action to cancel" do
+        expect(flash).to have_flash_actions.to include(
+          label:  "Annuler",
+          method: "patch",
+          url:    "/admin/editeurs/#{publisher.id}/undiscard",
+          params: {}
         )
       end
     end
 
-    context "when the publisher is not discarded" do
-      before { publisher.undiscard }
+    context "when the publisher is already discarded" do
+      before { publisher.discard }
 
       it { expect(response).to have_http_status(:see_other) }
-      it { expect { request and publisher.reload }.not_to change(publisher, :discarded_at).from(nil) }
+      it { expect { request }.not_to change(Publisher.discarded, :count).from(1) }
     end
 
     context "when the publisher is missing" do
@@ -72,16 +82,18 @@ RSpec.describe "PublishersController#undiscard" do
       it { expect(response).to have_html_body }
     end
 
-    context "with referrer header", headers: { "Referer" => "http://www.example.com/other/path" } do
+    context "with referrer header", headers: { "Referer" => "http://example.com/other/path" } do
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("http://www.example.com/other/path") }
+      it { expect(response).to redirect_to("/admin/editeurs") }
       it { expect(flash).to have_flash_notice }
+      it { expect(flash).to have_flash_actions }
     end
 
     context "with redirect parameter", params: { redirect: "/other/path" } do
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/other/path") }
       it { expect(flash).to have_flash_notice }
+      it { expect(flash).to have_flash_actions }
     end
   end
 end

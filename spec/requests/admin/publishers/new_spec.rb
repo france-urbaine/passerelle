@@ -2,9 +2,9 @@
 
 require "rails_helper"
 
-RSpec.describe "PublishersController#new" do
+RSpec.describe "Admin::PublishersController#new" do
   subject(:request) do
-    get "/editeurs/new", as:, headers:, params:
+    get "/admin/editeurs/new", as:, headers:, params:
   end
 
   let(:as)      { |e| e.metadata[:as] }

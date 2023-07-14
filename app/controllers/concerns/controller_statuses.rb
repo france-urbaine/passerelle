@@ -34,7 +34,12 @@ module ControllerStatuses
     end
 
     respond_to do |format|
-      format.html { render status: status, template: "shared/statuses/#{status}" }
+      format.html do
+        render status:, action: status
+      rescue ActionView::MissingTemplate
+        render status:, template: "shared/statuses/#{status}"
+      end
+
       format.all { head status }
     end
   end

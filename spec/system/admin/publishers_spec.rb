@@ -2,7 +2,7 @@
 
 require "system_helper"
 
-RSpec.describe "Publishers" do
+RSpec.describe "Publishers in admin" do
   fixtures :publishers, :collectivities, :users
 
   let(:fiscalite_territoire) { publishers(:fiscalite_territoire) }
@@ -11,7 +11,7 @@ RSpec.describe "Publishers" do
   before { sign_in(users(:marc)) }
 
   it "visits index & publisher pages" do
-    visit publishers_path
+    visit admin_publishers_path
 
     # A table of all publishers should be present
     #
@@ -23,18 +23,18 @@ RSpec.describe "Publishers" do
     # The browser should visit the publisher page
     #
     expect(page).to have_selector("h1", text: "Fiscalité & Territoire")
-    expect(page).to have_current_path(publisher_path(fiscalite_territoire))
+    expect(page).to have_current_path(admin_publisher_path(fiscalite_territoire))
 
     go_back
 
     # The browser should redirect back to the index page
     #
-    expect(page).to have_current_path(publishers_path)
+    expect(page).to have_current_path(admin_publishers_path)
     expect(page).to have_selector("h1", text: "Éditeurs")
   end
 
   it "creates a publisher from the index page" do
-    visit publishers_path
+    visit admin_publishers_path
 
     # A button should be present to add a new publisher
     #
@@ -55,7 +55,7 @@ RSpec.describe "Publishers" do
     # The browser should stay on the index page
     # The new publisher should appear
     #
-    expect(page).to     have_current_path(publishers_path)
+    expect(page).to     have_current_path(admin_publishers_path)
     expect(page).to     have_selector("h1", text: "Éditeurs")
     expect(page).to have_selector(:table_row, "Éditeur" => "Solutions & Territoire")
 
@@ -67,7 +67,7 @@ RSpec.describe "Publishers" do
   end
 
   it "updates a publisher from the index page" do
-    visit publishers_path
+    visit admin_publishers_path
 
     # A button should be present to edit the publisher
     #
@@ -90,7 +90,7 @@ RSpec.describe "Publishers" do
     # The browser should stay on the index page
     # The publisher should have changed its name
     #
-    expect(page).to have_current_path(publishers_path)
+    expect(page).to have_current_path(admin_publishers_path)
     expect(page).to have_selector("h1", text: "Éditeurs")
     expect(page).to have_selector(:table_row, "Éditeur" => "Solutions & Territoire")
 
@@ -102,7 +102,7 @@ RSpec.describe "Publishers" do
   end
 
   it "updates a publisher from the publisher page" do
-    visit publisher_path(fiscalite_territoire)
+    visit admin_publisher_path(fiscalite_territoire)
 
     # A button should be present to edit the publisher
     #
@@ -125,7 +125,7 @@ RSpec.describe "Publishers" do
     # The browser should stay on the publisher show page
     # The publisher should have changed its name
     #
-    expect(page).to have_current_path(publisher_path(fiscalite_territoire))
+    expect(page).to have_current_path(admin_publisher_path(fiscalite_territoire))
     expect(page).to have_selector("h1", text: "Solutions & Territoire")
 
     # The dialog should be closed
@@ -136,7 +136,7 @@ RSpec.describe "Publishers" do
   end
 
   it "discards a publisher from the index page & rollbacks" do
-    visit publishers_path
+    visit admin_publishers_path
 
     expect(page).to have_text("2 éditeurs | Page 1 sur 1")
 
@@ -155,7 +155,7 @@ RSpec.describe "Publishers" do
     # The browser should stay on the index page
     # The publisher should not appears anymore
     #
-    expect(page).to     have_current_path(publishers_path)
+    expect(page).to     have_current_path(admin_publishers_path)
     expect(page).to     have_selector("h1", text: "Éditeurs")
     expect(page).to     have_text("1 éditeur | Page 1 sur 1")
     expect(page).not_to have_selector(:table_row, "Éditeur" => "Fiscalité & Territoire")
@@ -175,7 +175,7 @@ RSpec.describe "Publishers" do
     # The browser should stay on the index page
     # The publisher should be back again
     #
-    expect(page).to have_current_path(publishers_path)
+    expect(page).to have_current_path(admin_publishers_path)
     expect(page).to have_selector("h1", text: "Éditeurs")
     expect(page).to have_text("2 éditeurs | Page 1 sur 1")
     expect(page).to have_selector(:table_row, "Éditeur" => "Fiscalité & Territoire")
@@ -188,7 +188,7 @@ RSpec.describe "Publishers" do
   end
 
   it "discards a publisher from the publisher page & rollbacks" do
-    visit publisher_path(fiscalite_territoire)
+    visit admin_publisher_path(fiscalite_territoire)
 
     # A button should be present to edit the publisher
     #
@@ -205,7 +205,7 @@ RSpec.describe "Publishers" do
     # The browser should redirect to the index page
     # The publisher should not appears anymore
     #
-    expect(page).to     have_current_path(publishers_path)
+    expect(page).to     have_current_path(admin_publishers_path)
     expect(page).to     have_selector("h1", text: "Éditeurs")
     expect(page).to     have_text("1 éditeur | Page 1 sur 1")
     expect(page).not_to have_selector(:table_row, "Éditeur" => "Fiscalité & Territoire")
@@ -225,7 +225,7 @@ RSpec.describe "Publishers" do
     # The browser should stay on the index page
     # The publisher should be back again
     #
-    expect(page).to have_current_path(publishers_path)
+    expect(page).to have_current_path(admin_publishers_path)
     expect(page).to have_selector("h1", text: "Éditeurs")
     expect(page).to have_text("2 éditeurs | Page 1 sur 1")
     expect(page).to have_selector(:table_row, "Éditeur" => "Fiscalité & Territoire")
@@ -238,7 +238,7 @@ RSpec.describe "Publishers" do
   end
 
   it "selects and discards one publisher from the index page & rollbacks" do
-    visit publishers_path
+    visit admin_publishers_path
 
     expect(page).to have_text("2 éditeurs | Page 1 sur 1")
 
@@ -265,7 +265,7 @@ RSpec.describe "Publishers" do
     # The selected publishers should not appears anymore
     # Other publishers should remain
     #
-    expect(page).to     have_current_path(publishers_path)
+    expect(page).to     have_current_path(admin_publishers_path)
     expect(page).to     have_selector("h1", text: "Éditeurs")
     expect(page).to     have_text("1 éditeur | Page 1 sur 1")
     expect(page).not_to have_selector(:table_row, "Éditeur" => "France Urbaine")
@@ -288,7 +288,7 @@ RSpec.describe "Publishers" do
     # The browser should stay on index page
     # The remove publishers should be back again
     #
-    expect(page).to have_current_path(publishers_path)
+    expect(page).to have_current_path(admin_publishers_path)
     expect(page).to have_selector("h1", text: "Éditeurs")
     expect(page).to have_text("2 éditeurs | Page 1 sur 1")
     expect(page).to have_selector(:table_row, "Éditeur" => "France Urbaine")
@@ -309,7 +309,7 @@ RSpec.describe "Publishers" do
     create_list(:publisher, 10)
     create_list(:publisher, 5, :discarded)
 
-    visit publishers_path
+    visit admin_publishers_path
 
     expect(page).to have_text("12 éditeurs | Page 1 sur 1")
 
@@ -345,7 +345,7 @@ RSpec.describe "Publishers" do
     # The selected publishers should have been removed
     # The current publisher should remains
     #
-    expect(page).to     have_current_path(publishers_path)
+    expect(page).to     have_current_path(admin_publishers_path)
     expect(page).to     have_selector("h1", text: "Éditeurs")
     expect(page).to     have_text("3 éditeurs | Page 1 sur 1")
     expect(page).to     have_selector(:table_row, "Éditeur" => "Fiscalité & Territoire")
@@ -367,7 +367,7 @@ RSpec.describe "Publishers" do
     # The browser should stay on index page
     # All publishers should be back again
     #
-    expect(page).to have_current_path(publishers_path)
+    expect(page).to have_current_path(admin_publishers_path)
     expect(page).to have_selector("h1", text: "Éditeurs")
     expect(page).to have_text("12 éditeurs | Page 1 sur 2")
     expect(page).to have_selector(:table_row, "Éditeur" => "Fiscalité & Territoire")
@@ -388,7 +388,7 @@ RSpec.describe "Publishers" do
     #
     create_list(:publisher, 10)
 
-    visit publishers_path
+    visit admin_publishers_path
 
     expect(page).to have_text("12 éditeurs | Page 1 sur 1")
 
@@ -428,7 +428,7 @@ RSpec.describe "Publishers" do
     # The browser should stay on index page
     # Only the current publisher should remain
     #
-    expect(page).to have_current_path(publishers_path)
+    expect(page).to have_current_path(admin_publishers_path)
     expect(page).to have_selector("h1", text: "Éditeurs")
     expect(page).to have_text("1 éditeur | Page 1 sur 1")
     expect(page).to have_selector(:table_row, "Éditeur" => "Fiscalité & Territoire")
@@ -449,7 +449,7 @@ RSpec.describe "Publishers" do
     # The browser should stay on index page
     # All publishers should be back again
     #
-    expect(page).to have_current_path(publishers_path)
+    expect(page).to have_current_path(admin_publishers_path)
     expect(page).to have_selector("h1", text: "Éditeurs")
     expect(page).to have_text("12 éditeurs | Page 1 sur 2")
     expect(page).to have_selector(:table_row, "Éditeur" => "Fiscalité & Territoire")

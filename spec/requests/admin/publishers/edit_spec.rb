@@ -2,9 +2,9 @@
 
 require "rails_helper"
 
-RSpec.describe "PublishersController#remove" do
+RSpec.describe "Admin::PublishersController#edit" do
   subject(:request) do
-    get "/editeurs/#{publisher.id}/remove", as:, headers:, params:
+    get "/admin/editeurs/#{publisher.id}/edit", as:, headers:, params:
   end
 
   let(:as)      { |e| e.metadata[:as] }
@@ -44,7 +44,7 @@ RSpec.describe "PublishersController#remove" do
       it { expect(response).to have_html_body }
     end
 
-    context "when the publisher is already discarded" do
+    context "when the publisher is discarded" do
       before { publisher.discard }
 
       it { expect(response).to have_http_status(:gone) }

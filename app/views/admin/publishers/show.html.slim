@@ -1,14 +1,14 @@
 = template_frame_component do
   = breadcrumbs_component do |breadcrumbs|
     - breadcrumbs.with_path "Administration"
-    - breadcrumbs.with_path "Éditeurs", publishers_path
+    - breadcrumbs.with_path "Éditeurs", admin_publishers_path
     - breadcrumbs.with_path @publisher.name
 
     - if allowed_to?(:update?, @publisher)
-      - breadcrumbs.with_action "Modifier", edit_publisher_path(@publisher), icon: "pencil-square", modal: true
+      - breadcrumbs.with_action "Modifier", edit_admin_publisher_path(@publisher), icon: "pencil-square", modal: true
 
     - if allowed_to?(:destroy?, @publisher)
-      - breadcrumbs.with_action "Supprimer", remove_publisher_path(@publisher), icon: "trash", modal: true, destructive: "discrete"
+      - breadcrumbs.with_action "Supprimer", remove_admin_publisher_path(@publisher), icon: "trash", modal: true, destructive: "discrete"
 
   h2.subheader
     = svg_icon("identification", "Nouvelle section")
@@ -39,6 +39,16 @@
       .description-list__row
         dt Collectivités enregistrées
         dd= display_count(@publisher.collectivities_count, "collectivité") if @publisher.collectivities_count.positive?
+
+      .description-list__row
+        dt Signalements
+        dd
+          - if @publisher.reports_transmitted_count.positive?
+            = display_count(@publisher.reports_transmitted_count, "transmis")
+            = " / "
+            = display_count(@publisher.reports_approved_count, "approuvé")
+            = " / "
+            = display_count(@publisher.reports_rejected_count, "rejeté")
 
   - if allowed_to?(:index?, User, with: Publishers::UserPolicy)
     .content__separator

@@ -2,20 +2,16 @@
 
 require "rails_helper"
 
-RSpec.describe "PublishersController#update" do
+RSpec.describe "Admin::PublishersController#undiscard" do
   subject(:request) do
-    patch "/editeurs/#{publisher.id}", as:, headers:, params:
+    patch "/admin/editeurs/#{publisher.id}/undiscard", as:, headers:, params:
   end
 
   let(:as)      { |e| e.metadata[:as] }
   let(:headers) { |e| e.metadata[:headers] }
-  let(:params)  { |e| e.metadata.fetch(:params, { publisher: attributes }) }
+  let(:params)  { |e| e.metadata[:params] }
 
-  let!(:publisher) { create(:publisher, name: "Fiscalité & Territoire") }
-
-  let(:attributes) do
-    { name: "Solutions & Territoire" }
-  end
+  let!(:publisher) { create(:publisher, :discarded) }
 
   describe "authorizations" do
     it_behaves_like "it requires to be signed in in HTML"
@@ -42,48 +38,30 @@ RSpec.describe "PublishersController#update" do
   describe "responses" do
     before { sign_in_as(:super_admin) }
 
-    context "with valid attributes" do
+    context "when the publisher is discarded" do
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/editeurs") }
+      it { expect(response).to redirect_to("/admin/editeurs") }
+      it { expect { request }.to change(Publisher.discarded, :count).by(-1) }
 
-      it "updates the publisher" do
+      it "undiscards the publisher" do
         expect { request and publisher.reload }
-          .to  change(publisher, :updated_at)
-          .and change(publisher, :name).to("Solutions & Territoire")
+          .to change(publisher, :discarded_at).to(nil)
       end
 
       it "sets a flash notice" do
         expect(flash).to have_flash_notice.to eq(
-          type:  "success",
-          title: "Les modifications ont été enregistrées avec succés.",
+          type:  "cancel",
+          title: "La suppression de l'éditeur a été annulée.",
           delay: 3000
         )
       end
     end
 
-    context "with invalid attributes" do
-      let(:attributes) { super().merge(name: "") }
+    context "when the publisher is not discarded" do
+      before { publisher.undiscard }
 
-      it { expect(response).to have_http_status(:unprocessable_entity) }
-      it { expect(response).to have_content_type(:html) }
-      it { expect(response).to have_html_body }
-      it { expect { request and publisher.reload }.not_to change(publisher, :updated_at) }
-      it { expect { request and publisher.reload }.not_to change(publisher, :name) }
-    end
-
-    context "with empty parameters", params: {} do
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/editeurs") }
-      it { expect(flash).to have_flash_notice }
-      it { expect { request and publisher.reload }.not_to change(publisher, :updated_at) }
-    end
-
-    context "when the publisher is discarded" do
-      before { publisher.discard }
-
-      it { expect(response).to have_http_status(:gone) }
-      it { expect(response).to have_content_type(:html) }
-      it { expect(response).to have_html_body }
+      it { expect { request and publisher.reload }.not_to change(publisher, :discarded_at).from(nil) }
     end
 
     context "when the publisher is missing" do
@@ -94,15 +72,13 @@ RSpec.describe "PublishersController#update" do
       it { expect(response).to have_html_body }
     end
 
-    context "with referrer header", headers: { "Referer" => "http://example.com/other/path" } do
+    context "with referrer header", headers: { "Referer" => "http://www.example.com/other/path" } do
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/editeurs") }
+      it { expect(response).to redirect_to("http://www.example.com/other/path") }
       it { expect(flash).to have_flash_notice }
     end
 
-    context "with redirect parameter" do
-      let(:params) { super().merge(redirect: "/other/path") }
-
+    context "with redirect parameter", params: { redirect: "/other/path" } do
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/other/path") }
       it { expect(flash).to have_flash_notice }

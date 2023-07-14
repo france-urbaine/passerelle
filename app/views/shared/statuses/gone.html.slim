@@ -1,11 +1,6 @@
 = template_gone_component(referrer: @referrer_path) do |template|
   - template.with_breadcrumbs do |breadcrumbs|
     - case @gone_record
-    - when Publisher
-      - breadcrumbs.with_path "Administration"
-      - breadcrumbs.with_path "Éditeurs", publishers_path
-      - breadcrumbs.with_path @gone_record.name
-
     - when Collectivity
       - breadcrumbs.with_path "Administration"
       - breadcrumbs.with_path "Collectivités", collectivities_path

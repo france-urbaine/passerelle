@@ -14,6 +14,10 @@ Capybara.default_normalize_ws = true
 # It could be useful to be able to configure this path from the outside (e.g., on CI).
 Capybara.save_path = ENV.fetch("CAPYBARA_ARTIFACTS", "./tmp/capybara")
 
+# Raise in test suite any exception raised from server.
+# Otherwise, it'll raise only exception get from browser.
+Capybara.raise_server_errors = ENV.fetch("CAPYBARA_RAISE_SERVER_ERRORS", "true") == "true"
+
 # The Capybara.using_session allows you to manipulate a different browser session, and thus,
 # multiple independent sessions within a single test scenario. That’s especially useful for
 # testing real-time features, e.g., something with WebSocket.
