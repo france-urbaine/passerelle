@@ -44,4 +44,8 @@ end
 
 RSpec.configure do |config|
   config.include CapybaraHelpers, type: :system
+
+  config.before :suite do
+    Rails.root.join(Capybara.save_path).glob("*").each(&:delete)
+  end
 end
