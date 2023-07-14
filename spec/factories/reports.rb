@@ -29,11 +29,6 @@ FactoryBot.define do
       packed_through_web_ui { publisher.nil? }
     end
 
-    # collectivity do
-    #   factored_publisher = publisher || build(:publisher)
-    #   association(:collectivity, publisher: factored_publisher)
-    # end
-
     package do
       package_traits = []
       package_traits << :sandbox               if package_sandbox

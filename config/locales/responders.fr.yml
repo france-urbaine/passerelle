@@ -141,6 +141,19 @@ fr:
           title:        "La suppression des paquets sélectionnés a été annulée."
           delay:        3000
 
+      approvals:
+        update:
+          notice:
+            type:         "success"
+            title:        "Le paquet a été approuvé et transmis aux guichets concernés."
+            delay:        3000
+
+        destroy:
+          notice:
+            type:         "success"
+            title:        "Le paquet a été rejeté."
+            delay:        3000
+
     reports:
       destroy:
         notice:

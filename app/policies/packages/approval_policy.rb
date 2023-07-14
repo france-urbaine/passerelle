@@ -2,12 +2,16 @@
 
 module Packages
   class ApprovalPolicy < ApplicationPolicy
-    def show?
-      ddfip_admin? && allowed_to?(:show?, record, with: ::PackagePolicy)
-    end
-
     def manage?
-      ddfip_admin? && allowed_to?(:approve?, record, with: ::PackagePolicy)
+      if record == Package
+        ddfip_admin?
+      elsif record.is_a?(Package)
+        ddfip_admin? &&
+          record.kept? &&
+          record.out_of_sandbox? &&
+          record.transmitted? &&
+          record.reports.covered_by_ddfip(organization).any?
+      end
     end
   end
 end

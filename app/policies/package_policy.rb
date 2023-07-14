@@ -217,11 +217,7 @@ class PackagePolicy < ApplicationPolicy
   end
 
   def package_approvable_by_ddfip_admin?(package)
-    ddfip_admin? &&
-      package.kept? &&
-      package.out_of_sandbox? &&
-      !package.approved? &&
-      package.reports.covered_by_ddfip(organization).any?
+    package_shown_to_ddfip_admin?(package)
   end
 
   # List packages that can be destroyed by an user

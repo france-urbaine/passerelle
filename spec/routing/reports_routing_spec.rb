@@ -23,4 +23,7 @@ RSpec.describe ReportsController do
   it { expect(get:    "/signalements/9c6c00c4-0784-4ef8-8978-b1e0246882a7/remove").to    route_to("reports#remove", id: "9c6c00c4-0784-4ef8-8978-b1e0246882a7") }
   it { expect(get:    "/signalements/9c6c00c4-0784-4ef8-8978-b1e0246882a7/undiscard").to be_unroutable }
   it { expect(patch:  "/signalements/9c6c00c4-0784-4ef8-8978-b1e0246882a7/undiscard").to route_to("reports#undiscard", id: "9c6c00c4-0784-4ef8-8978-b1e0246882a7") }
+
+  it { expect(get:    "/signalements/9c6c00c4-0784-4ef8-8978-b1e0246882a7/edit/situation_majic").to route_to("reports#edit", id: "9c6c00c4-0784-4ef8-8978-b1e0246882a7", form: "situation_majic") }
+  it { expect(get:    "/signalements/9c6c00c4-0784-4ef8-8978-b1e0246882a7/edit/unknown").to         route_to("reports#edit", id: "9c6c00c4-0784-4ef8-8978-b1e0246882a7", form: "unknown") }
 end
