@@ -34,7 +34,7 @@ ruby:
       = form.search_field :organization, **html_options
       = form.hidden_field :organization_data, **hidden_html_options
 
-    = noscript do
+    = noscript_component do
       = form.block :organization_type do
         ruby:
           models  = [Publisher, DDFIP, Collectivity]

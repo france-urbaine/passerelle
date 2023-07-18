@@ -33,7 +33,7 @@
     = form.search_field :territory, **html_options
     = form.hidden_field :territory_data, data: { autocomplete_target: "hidden" }, value: territory_data
 
-  = noscript do
+  = noscript_component do
     = form.block :territory_type do
       ruby:
         models  = [Commune, EPCI, Departement, Region]

@@ -11,6 +11,7 @@ module ComponentsHelper
     dropdown_component:           "Dropdown::Component",
     hidden_field_component:       "HiddenField::Component",
     modal_component:              "Modal::Component",
+    noscript_component:           "Noscript::Component",
     notification_component:       "Notification::Component",
     pagination_component:         "Pagination::Component",
     pagination_counts_component:  "Pagination::Counts::Component",

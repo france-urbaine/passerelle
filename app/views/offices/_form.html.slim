@@ -15,7 +15,7 @@
       = form.search_field :ddfip, **html_options
       = form.hidden_field :ddfip_id, data: { autocomplete_target: "hidden" }
 
-    = noscript do
+    = noscript_component do
       = form.block :ddfip do
         = form.label :ddfip_name
         = form.text_field :ddfip_name, value: office.ddfip&.name, required: true

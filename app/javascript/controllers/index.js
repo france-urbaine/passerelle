@@ -23,9 +23,6 @@ application.register("modal", ModalController)
 import DropdownController from "./components/dropdown_controller"
 application.register("dropdown", DropdownController)
 
-import NoscriptController from "./components/noscript_controller"
-application.register("noscript", NoscriptController)
-
 import NotificationController from "./components/notification_controller"
 application.register("notification", NotificationController)
 
