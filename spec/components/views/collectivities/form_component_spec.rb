@@ -31,6 +31,18 @@ RSpec.describe Views::Collectivities::FormComponent, type: :component do
     end
   end
 
+  it "renders a form in a modal to create a new collectivity belonging to a given publisher" do
+    publisher = build_stubbed(:publisher)
+    render_inline described_class.new(Collectivity.new, scope: :admin, publisher: publisher)
+
+    expect(page).to have_selector(".modal form") do |form|
+      aggregate_failures do
+        expect(form).to have_html_attribute("action").with_value("/admin/editeurs/#{publisher.id}/collectivites")
+        expect(form).not_to have_select("Éditeur")
+      end
+    end
+  end
+
   it "renders a form in a modal to update an existing collectivity" do
     publisher = publishers.sample
     collectivity = build_stubbed(:collectivity, :epci, publisher: publisher)

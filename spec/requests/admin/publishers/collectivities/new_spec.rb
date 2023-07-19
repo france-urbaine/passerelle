@@ -2,18 +2,16 @@
 
 require "rails_helper"
 
-RSpec.describe "Publishers::CollectivitiesController#remove_all" do
+RSpec.describe "Admin::Publishers::CollectivitiesController#new" do
   subject(:request) do
-    get "/editeurs/#{publisher.id}/collectivites/remove", as:, headers:, params:
+    get "/admin/editeurs/#{publisher.id}/collectivites/new", as:, headers:, params:
   end
 
   let(:as)      { |e| e.metadata[:as] }
   let(:headers) { |e| e.metadata[:headers] }
-  let(:params)  { |e| e.metadata.fetch(:params, { ids: ids }) }
+  let(:params)  { |e| e.metadata[:params] }
 
-  let!(:publisher)      { create(:publisher) }
-  let!(:collectivities) { create_list(:collectivity, 3, publisher: publisher) }
-  let!(:ids)            { collectivities.take(2).map(&:id) }
+  let!(:publisher) { create(:publisher) }
 
   describe "authorizations" do
     it_behaves_like "it requires to be signed in in HTML"
@@ -26,6 +24,7 @@ RSpec.describe "Publishers::CollectivitiesController#remove_all" do
     it_behaves_like "it denies access to publisher admin"
     it_behaves_like "it denies access to collectivity user"
     it_behaves_like "it denies access to collectivity admin"
+
     it_behaves_like "it allows access to super admin"
 
     context "when the publisher is the organization of the current user" do
@@ -39,26 +38,10 @@ RSpec.describe "Publishers::CollectivitiesController#remove_all" do
   describe "responses" do
     before { sign_in_as(:super_admin) }
 
-    context "with multiple ids" do
+    context "when the publisher is accessible" do
       it { expect(response).to have_http_status(:success) }
       it { expect(response).to have_content_type(:html) }
       it { expect(response).to have_html_body }
-    end
-
-    context "with `all` ids", params: { ids: "all" } do
-      it { expect(response).to have_http_status(:success) }
-    end
-
-    context "with empty ids", params: { ids: [] } do
-      it { expect(response).to have_http_status(:success) }
-    end
-
-    context "with unknown ids", params: { ids: %w[1 2] } do
-      it { expect(response).to have_http_status(:success) }
-    end
-
-    context "with empty parameters", params: {} do
-      it { expect(response).to have_http_status(:success) }
     end
 
     context "when the publisher is discarded" do

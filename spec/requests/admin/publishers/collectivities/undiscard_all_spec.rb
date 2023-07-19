@@ -2,9 +2,9 @@
 
 require "rails_helper"
 
-RSpec.describe "Publishers::CollectivitiesController#undiscard_all" do
+RSpec.describe "Admin::Publishers::CollectivitiesController#undiscard_all" do
   subject(:request) do
-    patch "/editeurs/#{publisher.id}/collectivites/undiscard", as:, headers:, params:
+    patch "/admin/editeurs/#{publisher.id}/collectivites/undiscard", as:, headers:, params:
   end
 
   let(:as)      { |e| e.metadata[:as] }
@@ -50,7 +50,7 @@ RSpec.describe "Publishers::CollectivitiesController#undiscard_all" do
 
     context "with multiple ids" do
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/editeurs/#{publisher.id}") }
+      it { expect(response).to redirect_to("/admin/editeurs/#{publisher.id}") }
       it { expect { request }.to change(Collectivity.discarded, :count).by(-2) }
 
       it "undiscards the selected collectivities" do
@@ -77,7 +77,7 @@ RSpec.describe "Publishers::CollectivitiesController#undiscard_all" do
       let(:ids) { collectivities.last(1).map(&:id) }
 
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/editeurs/#{publisher.id}") }
+      it { expect(response).to redirect_to("/admin/editeurs/#{publisher.id}") }
       it { expect(flash).to have_flash_notice }
       it { expect { request }.not_to change(Collectivity.discarded, :count) }
     end
@@ -86,35 +86,35 @@ RSpec.describe "Publishers::CollectivitiesController#undiscard_all" do
       let(:ids) { collectivities[3, 1].map(&:id) }
 
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/editeurs/#{publisher.id}") }
+      it { expect(response).to redirect_to("/admin/editeurs/#{publisher.id}") }
       it { expect(flash).to have_flash_notice }
       it { expect { request }.not_to change(Collectivity.discarded, :count) }
     end
 
     context "with `all` ids", params: { ids: "all" } do
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/editeurs/#{publisher.id}") }
+      it { expect(response).to redirect_to("/admin/editeurs/#{publisher.id}") }
       it { expect(flash).to have_flash_notice }
       it { expect { request }.to change(Collectivity.discarded, :count).by(-3) }
     end
 
     context "with empty ids", params: { ids: [] } do
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/editeurs/#{publisher.id}") }
+      it { expect(response).to redirect_to("/admin/editeurs/#{publisher.id}") }
       it { expect(flash).to have_flash_notice }
       it { expect { request }.not_to change(Collectivity.discarded, :count) }
     end
 
     context "with unknown ids", params: { ids: %w[1 2] } do
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/editeurs/#{publisher.id}") }
+      it { expect(response).to redirect_to("/admin/editeurs/#{publisher.id}") }
       it { expect(flash).to have_flash_notice }
       it { expect { request }.not_to change(Collectivity.discarded, :count) }
     end
 
     context "with empty parameters", params: {} do
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/editeurs/#{publisher.id}") }
+      it { expect(response).to redirect_to("/admin/editeurs/#{publisher.id}") }
       it { expect(flash).to have_flash_notice }
       it { expect { request }.not_to change(Collectivity.discarded, :count) }
     end

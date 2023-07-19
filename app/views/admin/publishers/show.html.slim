@@ -73,7 +73,7 @@
           - skeleton.with_search
           - skeleton.with_pagination
 
-  - if allowed_to?(:index?, Collectivity, with: Publishers::CollectivityPolicy)
+  - if allowed_to?(:index?, Collectivity, with: Admin::CollectivityPolicy)
     .content__separator
 
     .subheader-bar
@@ -82,16 +82,16 @@
         | Collectivités
 
       .subheader-bar__actions
-        - if allowed_to?(:create?, Collectivity, with: Publishers::CollectivityPolicy)
+        - if allowed_to?(:create?, Collectivity, with: Admin::CollectivityPolicy)
           .subheader-bar__action
-            = button_component "Ajouter une collectivité", new_publisher_collectivity_path(@publisher), icon: "plus", modal: true
+            = button_component "Ajouter une collectivité", new_admin_publisher_collectivity_path(@publisher), icon: "plus", modal: true
 
     - if @publisher.collectivities_count.zero?
       = card_component(content_class: "card__content--empty")
         | Aucune collectivité enregistrée.
 
     - else
-      = turbo_frame_tag "datatable-collectivities", src: publisher_collectivities_path(@publisher) do
+      = turbo_frame_tag "datatable-collectivities", src: admin_publisher_collectivities_path(@publisher) do
         = datatable_skeleton_component(rows: [@publisher.collectivities_count, ControllerCollections::NESTED_ITEMS].min) do |skeleton|
           - skeleton.with_search
           - skeleton.with_pagination

@@ -2,9 +2,9 @@
 
 require "rails_helper"
 
-RSpec.describe "Publishers::CollectivitiesController#create" do
+RSpec.describe "Admin::Publishers::CollectivitiesController#create" do
   subject(:request) do
-    post "/editeurs/#{publisher.id}/collectivites", as:, headers:, params:
+    post "/admin/editeurs/#{publisher.id}/collectivites", as:, headers:, params:
   end
 
   let(:as)      { |e| e.metadata[:as] }
@@ -38,6 +38,7 @@ RSpec.describe "Publishers::CollectivitiesController#create" do
     it_behaves_like "it denies access to publisher admin"
     it_behaves_like "it denies access to collectivity user"
     it_behaves_like "it denies access to collectivity admin"
+
     it_behaves_like "it allows access to super admin"
 
     context "when the publisher is the organization of the current user" do
@@ -53,7 +54,7 @@ RSpec.describe "Publishers::CollectivitiesController#create" do
 
     context "with valid attributes" do
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/editeurs/#{publisher.id}") }
+      it { expect(response).to redirect_to("/admin/editeurs/#{publisher.id}") }
       it { expect { request }.to change(Collectivity, :count).by(1) }
 
       it "assigns expected attributes to the new record" do
@@ -123,7 +124,7 @@ RSpec.describe "Publishers::CollectivitiesController#create" do
 
     context "with referrer header", headers: { "Referer" => "http://example.com/other/path" } do
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/editeurs/#{publisher.id}") }
+      it { expect(response).to redirect_to("/admin/editeurs/#{publisher.id}") }
       it { expect(flash).to have_flash_notice }
     end
 

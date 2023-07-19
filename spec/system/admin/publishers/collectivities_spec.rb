@@ -2,7 +2,7 @@
 
 require "system_helper"
 
-RSpec.describe "Publisher collectivities" do
+RSpec.describe "Publisher collectivities in admin" do
   fixtures :regions, :departements, :epcis, :communes
   fixtures :publishers, :collectivities, :users
 
@@ -13,7 +13,7 @@ RSpec.describe "Publisher collectivities" do
   before { sign_in(users(:marc)) }
 
   it "visits a collectivity page from the publisher page" do
-    visit publisher_path(fiscalite_territoire)
+    visit admin_publisher_path(fiscalite_territoire)
 
     # A table of collectivities should be present
     #
@@ -25,14 +25,14 @@ RSpec.describe "Publisher collectivities" do
 
     # The browser should visit the collectivity page
     #
-    expect(page).to have_current_path(collectivity_path(pays_basque))
+    expect(page).to have_current_path(admin_collectivity_path(pays_basque))
     expect(page).to have_selector("h1", text: "CA du Pays Basque")
 
     go_back
 
     # The browser should gone back to the publisher page
     #
-    expect(page).to have_current_path(publisher_path(fiscalite_territoire))
+    expect(page).to have_current_path(admin_publisher_path(fiscalite_territoire))
     expect(page).to have_selector("h1", text: "Fiscalité & Territoire")
   end
 
@@ -41,14 +41,14 @@ RSpec.describe "Publisher collectivities" do
     #
     create_list(:collectivity, 10, publisher: fiscalite_territoire)
 
-    visit publisher_path(fiscalite_territoire)
+    visit admin_publisher_path(fiscalite_territoire)
 
-    expect(page).to     have_text("17 collectivités | Page 1 sur 2")
+    expect(page).to     have_text("16 collectivités | Page 1 sur 2")
     expect(page).not_to have_button("Options d'affichage")
   end
 
   it "creates a collectivity from the publisher page" do
-    visit publisher_path(fiscalite_territoire)
+    visit admin_publisher_path(fiscalite_territoire)
 
     # A button should be present to add a new collectivity
     #
@@ -79,7 +79,7 @@ RSpec.describe "Publisher collectivities" do
     # The browser should stay on the publisher page
     # The new collectivity should appear
     #
-    expect(page).to have_current_path(publisher_path(fiscalite_territoire))
+    expect(page).to have_current_path(admin_publisher_path(fiscalite_territoire))
     expect(page).to have_selector("h1", text: "Fiscalité & Territoire")
     expect(page).to have_selector(:table_row, "Collectivité" => "Métropole d'Aix-Marseille-Provence")
 
@@ -91,7 +91,7 @@ RSpec.describe "Publisher collectivities" do
   end
 
   it "updates a collectivity from the publisher page" do
-    visit publisher_path(fiscalite_territoire)
+    visit admin_publisher_path(fiscalite_territoire)
 
     # A table of collectivities should be present
     # with a button to edit them
@@ -116,7 +116,7 @@ RSpec.describe "Publisher collectivities" do
     # The browser should stay on the publisher page
     # The collectivity's name should have been updated
     #
-    expect(page).to have_current_path(publisher_path(fiscalite_territoire))
+    expect(page).to have_current_path(admin_publisher_path(fiscalite_territoire))
     expect(page).to have_selector("h1", text: "Fiscalité & Territoire")
     expect(page).to have_selector(:table_row, "Collectivité" => "Agglomération du Pays Basque")
 
@@ -128,9 +128,9 @@ RSpec.describe "Publisher collectivities" do
   end
 
   it "discards a collectivity from the publisher page & rollbacks" do
-    visit publisher_path(fiscalite_territoire)
+    visit admin_publisher_path(fiscalite_territoire)
 
-    expect(page).to have_text("7 collectivités | Page 1 sur 1")
+    expect(page).to have_text("6 collectivités | Page 1 sur 1")
 
     # A table of collectivities should be present
     # with a button to remove them
@@ -148,9 +148,9 @@ RSpec.describe "Publisher collectivities" do
     # The browser should stay on the publisher page
     # The collectivity should not appears anymore
     #
-    expect(page).to     have_current_path(publisher_path(fiscalite_territoire))
+    expect(page).to     have_current_path(admin_publisher_path(fiscalite_territoire))
     expect(page).to     have_selector("h1", text: "Fiscalité & Territoire")
-    expect(page).to     have_text("6 collectivités | Page 1 sur 1")
+    expect(page).to     have_text("5 collectivités | Page 1 sur 1")
     expect(page).not_to have_selector(:table_row, "Collectivité" => "CA du Pays Basque")
 
     # The dialog should be closed
@@ -168,9 +168,9 @@ RSpec.describe "Publisher collectivities" do
     # The browser should stay on the publisher page
     # The collectivity should be back again
     #
-    expect(page).to have_current_path(publisher_path(fiscalite_territoire))
+    expect(page).to have_current_path(admin_publisher_path(fiscalite_territoire))
     expect(page).to have_selector("h1", text: "Fiscalité & Territoire")
-    expect(page).to have_text("7 collectivités | Page 1 sur 1")
+    expect(page).to have_text("6 collectivités | Page 1 sur 1")
     expect(page).to have_selector(:table_row, "Collectivité" => "CA du Pays Basque")
 
     # The previous notification should be closed
@@ -181,9 +181,9 @@ RSpec.describe "Publisher collectivities" do
   end
 
   it "selects and discards one collectivity from the publisher page & rollbacks" do
-    visit publisher_path(fiscalite_territoire)
+    visit admin_publisher_path(fiscalite_territoire)
 
-    expect(page).to have_text("7 collectivités | Page 1 sur 1")
+    expect(page).to have_text("6 collectivités | Page 1 sur 1")
 
     # Some checkboxes should be present to select collectivities
     #
@@ -207,9 +207,9 @@ RSpec.describe "Publisher collectivities" do
     # The browser should stay on the publisher page
     # The selected collectivities should not appears anymore
     #
-    expect(page).to     have_current_path(publisher_path(fiscalite_territoire))
+    expect(page).to     have_current_path(admin_publisher_path(fiscalite_territoire))
     expect(page).to     have_selector("h1", text: "Fiscalité & Territoire")
-    expect(page).to     have_text("6 collectivités | Page 1 sur 1")
+    expect(page).to     have_text("5 collectivités | Page 1 sur 1")
     expect(page).not_to have_selector(:table_row, "Collectivité" => "CA du Pays Basque")
 
     # The selection message should not appears anymore
@@ -229,9 +229,9 @@ RSpec.describe "Publisher collectivities" do
     # The browser should stay on the publisher page
     # The removed collectivities should be back again
     #
-    expect(page).to have_current_path(publisher_path(fiscalite_territoire))
+    expect(page).to have_current_path(admin_publisher_path(fiscalite_territoire))
     expect(page).to have_selector("h1", text: "Fiscalité & Territoire")
-    expect(page).to have_text("7 collectivités | Page 1 sur 1")
+    expect(page).to have_text("6 collectivités | Page 1 sur 1")
     expect(page).to have_selector(:table_row, "Collectivité" => "CA du Pays Basque")
 
     # The selection message should not appears again
@@ -250,9 +250,9 @@ RSpec.describe "Publisher collectivities" do
     create_list(:collectivity, 10, publisher: fiscalite_territoire)
     create_list(:collectivity, 5, :discarded)
 
-    visit publisher_path(fiscalite_territoire)
+    visit admin_publisher_path(fiscalite_territoire)
 
-    expect(page).to have_text("17 collectivités | Page 1 sur 2")
+    expect(page).to have_text("16 collectivités | Page 1 sur 2")
 
     # Checkboxes should be present to select all collectivities
     #
@@ -276,9 +276,10 @@ RSpec.describe "Publisher collectivities" do
     # The browser should stay on the publisher page
     # The selected collectivities should have been removed
     #
-    expect(page).to     have_current_path(publisher_path(fiscalite_territoire))
+    expect(page).to     have_current_path(admin_publisher_path(fiscalite_territoire))
     expect(page).to     have_selector("h1", text: "Fiscalité & Territoire")
-    expect(page).to     have_text("7 collectivités | Page 1 sur 1")
+    expect(page).to     have_text("6 collectivités | Page 1 sur 1")
+    expect(page).not_to have_text("16 collectivités")
     expect(page).not_to have_selector(:table_row, "Collectivité" => "CA du Pays Basque")
     expect(page).not_to have_selector(:table_row, "Collectivité" => "Métropole Européenne de Lille")
 
@@ -298,9 +299,9 @@ RSpec.describe "Publisher collectivities" do
     # The browser should stay on the publisher page
     # The removed collectivities should be back again
     #
-    expect(page).to have_current_path(publisher_path(fiscalite_territoire))
+    expect(page).to have_current_path(admin_publisher_path(fiscalite_territoire))
     expect(page).to have_selector("h1", text: "Fiscalité & Territoire")
-    expect(page).to have_text("17 collectivités | Page 1 sur 2")
+    expect(page).to have_text("16 collectivités | Page 1 sur 2")
     expect(page).to have_selector(:table_row, "Collectivité" => "CA du Pays Basque")
     expect(page).to have_selector(:table_row, "Collectivité" => "Métropole Européenne de Lille")
 
@@ -322,9 +323,9 @@ RSpec.describe "Publisher collectivities" do
     create_list(:collectivity, 10, publisher: fiscalite_territoire)
     create_list(:collectivity, 5, :discarded)
 
-    visit publisher_path(fiscalite_territoire)
+    visit admin_publisher_path(fiscalite_territoire)
 
-    expect(page).to have_text("17 collectivités | Page 1 sur 2")
+    expect(page).to have_text("16 collectivités | Page 1 sur 2")
 
     # Checkboxes should be present to select all collectivities
     #
@@ -336,16 +337,16 @@ RSpec.describe "Publisher collectivities" do
     # with a button to remove them
     #
     within ".header-bar--selection", text: "10 collectivités sélectionnées" do
-      click_on "Sélectionner les 17 collectivités des 2 pages"
+      click_on "Sélectionner les 16 collectivités des 2 pages"
     end
 
-    within ".header-bar--selection", text: "17 collectivités sélectionnées" do
+    within ".header-bar--selection", text: "16 collectivités sélectionnées" do
       click_on "Tout supprimer"
     end
 
     # A confirmation dialog should appear
     #
-    within "[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer les 17 collectivités sélectionnées ?" do
+    within "[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer les 16 collectivités sélectionnées ?" do
       click_on "Continuer"
     end
 
@@ -353,11 +354,11 @@ RSpec.describe "Publisher collectivities" do
     # No collectivities should appear anymore
     # Other collectivities from other organizations should remain
     #
-    expect(page).to have_current_path(publisher_path(fiscalite_territoire))
+    expect(page).to have_current_path(admin_publisher_path(fiscalite_territoire))
     expect(page).to have_selector("h1", text: "Fiscalité & Territoire")
     expect(page).to have_text("Aucune collectivité enregistrée.")
 
-    expect(Collectivity.discarded.count).to eq(22)
+    expect(Collectivity.discarded.count).to eq(21)
 
     # The dialog should be closed
     # A notification should be displayed
@@ -375,9 +376,9 @@ RSpec.describe "Publisher collectivities" do
     # The browser should stay on the publisher page
     # The removed collectivities should be back again
     #
-    expect(page).to have_current_path(publisher_path(fiscalite_territoire))
+    expect(page).to have_current_path(admin_publisher_path(fiscalite_territoire))
     expect(page).to have_selector("h1", text: "Fiscalité & Territoire")
-    expect(page).to have_text("17 collectivités | Page 1 sur 2")
+    expect(page).to have_text("16 collectivités | Page 1 sur 2")
     expect(page).to have_selector(:table_row, "Collectivité" => "CA du Pays Basque")
     expect(page).to have_selector(:table_row, "Collectivité" => "Métropole Européenne de Lille")
 

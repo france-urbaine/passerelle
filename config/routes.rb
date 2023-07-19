@@ -69,7 +69,6 @@ Rails.application.routes.draw do
     resources :publishers, concerns: %i[removable removable_collection], path: "/editeurs" do
       scope module: "publishers" do
         resources :users,          only: %i[index new create], concerns: %i[removable_collection], path: "/utilisateurs"
-        resources :collectivities, only: %i[index new create], concerns: %i[removable_collection], path: "/collectivites"
       end
     end
 
@@ -125,7 +124,12 @@ Rails.application.routes.draw do
     # Admin stuff
     # ----------------------------------------------------------------------------
     namespace :admin do
-      resources :publishers, concerns: %i[removable removable_collection], path: "/editeurs"
+      resources :publishers, concerns: %i[removable removable_collection], path: "/editeurs" do
+        scope module: "publishers" do
+          resources :collectivities, only: %i[index new create], concerns: %i[removable_collection], path: "/collectivites"
+        end
+      end
+
       resources :collectivities, concerns: %i[removable removable_collection], path: "/collectivites"
     end
   end

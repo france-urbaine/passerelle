@@ -2,9 +2,9 @@
 
 require "rails_helper"
 
-RSpec.describe "Publishers::CollectivitiesController#destroy_all" do
+RSpec.describe "Admin::Publishers::CollectivitiesController#destroy_all" do
   subject(:request) do
-    delete "/editeurs/#{publisher.id}/collectivites", as:, headers:, params:
+    delete "/admin/editeurs/#{publisher.id}/collectivites", as:, headers:, params:
   end
 
   let(:as)      { |e| e.metadata[:as] }
@@ -35,6 +35,7 @@ RSpec.describe "Publishers::CollectivitiesController#destroy_all" do
     it_behaves_like "it denies access to publisher admin"
     it_behaves_like "it denies access to collectivity user"
     it_behaves_like "it denies access to collectivity admin"
+
     it_behaves_like "it allows access to super admin"
 
     context "when the publisher is the organization of the current user" do
@@ -53,7 +54,7 @@ RSpec.describe "Publishers::CollectivitiesController#destroy_all" do
 
     context "with multiple ids" do
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/editeurs/#{publisher.id}") }
+      it { expect(response).to redirect_to("/admin/editeurs/#{publisher.id}") }
       it { expect { request }.to change(Collectivity.discarded, :count).by(2) }
 
       it "discards the selected collectivities" do
@@ -80,7 +81,7 @@ RSpec.describe "Publishers::CollectivitiesController#destroy_all" do
         expect(flash).to have_flash_actions.to include(
           label:  "Annuler",
           method: "patch",
-          url:    "/editeurs/#{publisher.id}/collectivites/undiscard",
+          url:    "/admin/editeurs/#{publisher.id}/collectivites/undiscard",
           params: { ids: ids }
         )
       end
@@ -90,7 +91,7 @@ RSpec.describe "Publishers::CollectivitiesController#destroy_all" do
       let(:ids) { collectivities.last(1).map(&:id) }
 
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/editeurs/#{publisher.id}") }
+      it { expect(response).to redirect_to("/admin/editeurs/#{publisher.id}") }
       it { expect(flash).to have_flash_notice }
       it { expect(flash).to have_flash_actions }
       it { expect { request }.not_to change(Collectivity.discarded, :count) }
@@ -100,7 +101,7 @@ RSpec.describe "Publishers::CollectivitiesController#destroy_all" do
       let(:ids) { collectivities[3, 1].map(&:id) }
 
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/editeurs/#{publisher.id}") }
+      it { expect(response).to redirect_to("/admin/editeurs/#{publisher.id}") }
       it { expect(flash).to have_flash_notice }
       it { expect(flash).to have_flash_actions }
       it { expect { request }.not_to change(Collectivity.discarded, :count) }
@@ -108,7 +109,7 @@ RSpec.describe "Publishers::CollectivitiesController#destroy_all" do
 
     context "with `all` ids", params: { ids: "all" } do
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/editeurs/#{publisher.id}") }
+      it { expect(response).to redirect_to("/admin/editeurs/#{publisher.id}") }
       it { expect(flash).to have_flash_notice }
       it { expect(flash).to have_flash_actions }
       it { expect { request }.to change(Collectivity.discarded, :count).by(3) }
@@ -116,19 +117,19 @@ RSpec.describe "Publishers::CollectivitiesController#destroy_all" do
 
     context "with empty ids", params: { ids: [] } do
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/editeurs/#{publisher.id}") }
+      it { expect(response).to redirect_to("/admin/editeurs/#{publisher.id}") }
       it { expect { request }.not_to change(Collectivity.discarded, :count) }
     end
 
     context "with unknown ids", params: { ids: %w[1 2] } do
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/editeurs/#{publisher.id}") }
+      it { expect(response).to redirect_to("/admin/editeurs/#{publisher.id}") }
       it { expect { request }.not_to change(Collectivity.discarded, :count) }
     end
 
     context "with empty parameters", params: {} do
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/editeurs/#{publisher.id}") }
+      it { expect(response).to redirect_to("/admin/editeurs/#{publisher.id}") }
       it { expect(flash).to have_flash_notice }
       it { expect(flash).to have_flash_actions }
       it { expect { request }.not_to change(User.discarded, :count) }
@@ -152,7 +153,7 @@ RSpec.describe "Publishers::CollectivitiesController#destroy_all" do
 
     context "with referrer header", headers: { "Referer" => "http://example.com/other/path" } do
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/editeurs/#{publisher.id}") }
+      it { expect(response).to redirect_to("/admin/editeurs/#{publisher.id}") }
       it { expect(flash).to have_flash_notice }
       it { expect(flash).to have_flash_actions }
     end

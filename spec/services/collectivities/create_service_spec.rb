@@ -70,6 +70,19 @@ RSpec.describe Collectivities::CreateService do
     end
   end
 
+  context "with a given publisher" do
+    subject(:service) do
+      described_class.new(collectivity, attributes, publisher: another_publisher)
+    end
+
+    let(:another_publisher) { create(:publisher) }
+
+    it "creates a collectivity with the given publisher instead of the one passed" do
+      expect { service.save && collectivity.reload }
+        .to change(collectivity, :publisher).to(another_publisher)
+    end
+  end
+
   context "when using territory_data in JSON" do
     let(:attributes) do
       {
