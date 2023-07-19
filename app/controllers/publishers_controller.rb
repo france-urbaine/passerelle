@@ -52,7 +52,7 @@ class PublishersController < ApplicationController
 
     respond_with @publisher,
       flash: true,
-      actions: FlashAction::Cancel.new(params),
+      actions: undiscard_publisher_action(@publisher),
       location: redirect_path || publishers_path
   end
 
@@ -78,7 +78,7 @@ class PublishersController < ApplicationController
 
     respond_with @publishers,
       flash: true,
-      actions: FlashAction::Cancel.new(params),
+      actions: undiscard_all_publishers_action,
       location: redirect_path || publishers_path
   end
 

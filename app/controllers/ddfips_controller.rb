@@ -55,7 +55,7 @@ class DDFIPsController < ApplicationController
 
     respond_with @ddfip,
       flash: true,
-      actions: FlashAction::Cancel.new(params),
+      actions: undiscard_ddfip_action(@ddfip),
       location: redirect_path || ddfips_path
   end
 
@@ -81,7 +81,7 @@ class DDFIPsController < ApplicationController
 
     respond_with @ddfips,
       flash: true,
-      actions: FlashAction::Cancel.new(params),
+      actions: undiscard_all_ddfips_action,
       location: redirect_path || ddfips_path
   end
 

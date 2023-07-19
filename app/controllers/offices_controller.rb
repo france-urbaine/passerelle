@@ -54,7 +54,7 @@ class OfficesController < ApplicationController
 
     respond_with @office,
       flash: true,
-      actions: FlashAction::Cancel.new(params),
+      actions: undiscard_action([:undiscard, @parent, @office]),
       location: redirect_path || offices_path
   end
 
@@ -81,7 +81,7 @@ class OfficesController < ApplicationController
 
     respond_with @offices,
       flash: true,
-      actions: FlashAction::Cancel.new(params),
+      actions: undiscard_action([:undiscard_all, @parent, :offices]),
       location: redirect_path || parent_path || offices_path
   end
 

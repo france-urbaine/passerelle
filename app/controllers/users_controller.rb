@@ -55,7 +55,7 @@ class UsersController < ApplicationController
 
     respond_with @user,
       flash: true,
-      actions: FlashAction::Cancel.new(params),
+      actions: undiscard_action([:undiscard, @parent, @user]),
       location: redirect_path || users_path
   end
 
@@ -81,7 +81,7 @@ class UsersController < ApplicationController
 
     respond_with @users,
       flash: true,
-      actions: FlashAction::Cancel.new(params),
+      actions: undiscard_action([:undiscard_all, @parent, :users]),
       location: redirect_path || parent_path || users_path
   end
 

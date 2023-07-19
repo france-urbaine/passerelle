@@ -55,7 +55,7 @@ class PackagesController < ApplicationController
 
     respond_with @package,
       flash: true,
-      actions: FlashAction::Cancel.new(params),
+      actions: undiscard_package_action(@package),
       location: redirect_path || packages_path
   end
 
@@ -82,7 +82,7 @@ class PackagesController < ApplicationController
 
     respond_with @packages,
       flash: true,
-      actions: FlashAction::Cancel.new(params),
+      actions: undiscard_all_packages_action,
       location: redirect_path || parent_path || packages_path
   end
 

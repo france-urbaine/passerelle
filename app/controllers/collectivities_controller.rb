@@ -54,7 +54,7 @@ class CollectivitiesController < ApplicationController
 
     respond_with @collectivity,
       flash: true,
-      actions: FlashAction::Cancel.new(params),
+      actions: undiscard_action([:undiscard, @parent, @collectivity]),
       location: redirect_path || collectivities_path
   end
 
@@ -80,7 +80,7 @@ class CollectivitiesController < ApplicationController
 
     respond_with @collectivities,
       flash: true,
-      actions: FlashAction::Cancel.new(params),
+      actions: undiscard_action([:undiscard_all, @parent, :collectivities]),
       location: redirect_path || parent_path || collectivities_path
   end
 
