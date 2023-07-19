@@ -89,7 +89,7 @@
           - skeleton.with_search
           - skeleton.with_pagination
 
-  - if allowed_to?(:index?, Collectivity, with: DDFIPs::CollectivityPolicy)
+  - if allowed_to?(:index?, Collectivity, with: Admin::CollectivityPolicy)
     .content__separator
 
     h2.subheader
@@ -101,7 +101,7 @@
         | Aucune collectivité enregistrée.
 
     - else
-      = turbo_frame_tag "datatable-collectivities", src: ddfip_collectivities_path(@ddfip) do
+      = turbo_frame_tag "datatable-collectivities", src: admin_ddfip_collectivities_path(@ddfip) do
         = datatable_skeleton_component(rows: [@ddfip.collectivities_count, 5].min) do |skeleton|
           - skeleton.with_search
           - skeleton.with_pagination

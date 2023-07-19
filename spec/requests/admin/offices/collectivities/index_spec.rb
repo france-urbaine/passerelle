@@ -2,9 +2,9 @@
 
 require "rails_helper"
 
-RSpec.describe "Offices::CollectivitiesController#index" do
+RSpec.describe "Admin::Offices::CollectivitiesController#index" do
   subject(:request) do
-    get "/guichets/#{office.id}/collectivites", as:, headers:, params:, xhr:
+    get "/admin/guichets/#{office.id}/collectivites", as:, headers:, params:, xhr:
   end
 
   let(:as)      { |e| e.metadata[:as] }
@@ -53,13 +53,14 @@ RSpec.describe "Offices::CollectivitiesController#index" do
     it_behaves_like "it denies access to publisher admin"
     it_behaves_like "it denies access to collectivity user"
     it_behaves_like "it denies access to collectivity admin"
+
     it_behaves_like "it allows access to super admin"
 
     context "when the office is owned by the current user's DDFIP organization" do
       let(:office) { create(:office, ddfip: current_user.organization) }
 
       it_behaves_like "it denies access to DDFIP user"
-      it_behaves_like "it allows access to DDFIP admin"
+      it_behaves_like "it denies access to DDFIP admin"
     end
   end
 
@@ -69,7 +70,7 @@ RSpec.describe "Offices::CollectivitiesController#index" do
     context "when requesting HTML" do
       context "when the office is accessible" do
         it { expect(response).to have_http_status(:see_other) }
-        it { expect(response).to redirect_to("/guichets/#{office.id}") }
+        it { expect(response).to redirect_to("/admin/guichets/#{office.id}") }
       end
 
       context "when the office is discarded" do

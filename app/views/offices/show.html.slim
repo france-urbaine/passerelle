@@ -86,7 +86,7 @@
           - skeleton.with_search
           - skeleton.with_pagination
 
-  - if allowed_to?(:index?, Collectivity, with: Offices::CollectivityPolicy)
+  - if allowed_to?(:index?, Collectivity, with: Admin::CollectivityPolicy)
     .content__separator
 
     .subheader-bar
@@ -94,7 +94,7 @@
         = svg_icon("rectangle-stack", "Nouvelle section")
         | Collectivités correspondantes
 
-    = turbo_frame_tag "datatable-collectivities", src: office_collectivities_path(@office) do
+    = turbo_frame_tag "datatable-collectivities", src: admin_office_collectivities_path(@office) do
       = datatable_skeleton_component(rows: 0) do |skeleton|
         - skeleton.with_search
         - skeleton.with_pagination

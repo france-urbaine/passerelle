@@ -131,6 +131,18 @@ Rails.application.routes.draw do
       end
 
       resources :collectivities, concerns: %i[removable removable_collection], path: "/collectivites"
+
+      resources :ddfips do
+        scope module: "ddfips" do
+          resources :collectivities, only: %i[index], path: "/collectivites"
+        end
+      end
+
+      resources :offices, path: "/guichets" do
+        scope module: "offices" do
+          resources :collectivities, only: %i[index], path: "/collectivites"
+        end
+      end
     end
   end
 end

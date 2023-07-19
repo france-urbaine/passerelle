@@ -2,9 +2,9 @@
 
 require "rails_helper"
 
-RSpec.describe "DDFIPs::CollectivitiesController#index" do
+RSpec.describe "Admin::DDFIPs::CollectivitiesController#index" do
   subject(:request) do
-    get "/ddfips/#{ddfip.id}/collectivites", as:, headers:, params:, xhr:
+    get "/admin/ddfips/#{ddfip.id}/collectivites", as:, headers:, params:, xhr:
   end
 
   let(:as)      { |e| e.metadata[:as] }
@@ -47,6 +47,7 @@ RSpec.describe "DDFIPs::CollectivitiesController#index" do
     it_behaves_like "it denies access to publisher admin"
     it_behaves_like "it denies access to collectivity user"
     it_behaves_like "it denies access to collectivity admin"
+
     it_behaves_like "it allows access to super admin"
 
     context "when the DDFIP is the organization of the current user" do
@@ -63,7 +64,7 @@ RSpec.describe "DDFIPs::CollectivitiesController#index" do
     context "when requesting HTML" do
       context "when the DDFIP is accessible" do
         it { expect(response).to have_http_status(:see_other) }
-        it { expect(response).to redirect_to("/ddfips/#{ddfip.id}") }
+        it { expect(response).to redirect_to("/admin/ddfips/#{ddfip.id}") }
       end
 
       context "when the DDFIP is discarded" do
