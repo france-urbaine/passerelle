@@ -2,37 +2,36 @@
 
 module Reports
   class CreateService < FormService
-    attr_reader :report
+    alias_record :report
+
     attr_accessor :form_type
 
     def initialize(report, current_user = nil, attributes = {})
-      @report       = report
+      super(report, attributes)
+
       @current_user = current_user
       @collectivity = current_user.organization if current_user.organization.is_a?(Collectivity)
-
-      super(attributes)
-      self.models = [report]
     end
 
     before_validation do
-      @report.anomalies    = []
-      @report.form_type    = form_type
-      @report.collectivity = @collectivity
-      @report.package      = find_or_build_package
-      @report.reference    = generate_reference
+      record.anomalies    = []
+      record.form_type    = form_type
+      record.collectivity = @collectivity
+      record.package      = find_or_build_package
+      record.reference    = generate_reference
     end
 
     private
 
     def find_or_build_package
-      return Package.new unless Report::FORM_TYPES.include?(@report.form_type)
+      return Package.new unless Report::FORM_TYPES.include?(record.form_type)
 
       policy   = PackagePolicy.new(user: @current_user)
       packages = policy.apply_scope(
         @collectivity.packages.order(created_at: :desc),
         type: :active_record_relation,
         name: :to_pack,
-        scope_options: { report: @report }
+        scope_options: { report: record }
       )
 
       packages.first_or_initialize do |package|
@@ -41,7 +40,7 @@ module Reports
     end
 
     def generate_reference
-      package = @report.package
+      package = record.package
       return unless package&.reference
 
       if package.new_record?

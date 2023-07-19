@@ -5,10 +5,10 @@
 #
 class FormService
   class Result
-    attr_reader :models, :errors
+    attr_reader :record, :errors
 
-    def initialize(models, errors)
-      @models = models
+    def initialize(record, errors)
+      @record = record
       @errors = errors
     end
 
@@ -27,7 +27,12 @@ class FormService
 
   define_model_callbacks :save
   delegate :transaction, to: ::ActiveRecord::Base
-  validate :validate_models
+  validate :validate_record
+
+  def initialize(record, attributes = {})
+    @record = record
+    super(attributes)
+  end
 
   def save(...)
     save_form(...)
@@ -41,9 +46,19 @@ class FormService
     build_result
   end
 
+  def respond_to_missing?(method, *)
+    missing_attribute_method?(method)
+  end
+
+  def method_missing(method, *)
+    return super unless missing_attribute_method?(method)
+
+    record.public_send(method, *)
+  end
+
   private
 
-  attr_accessor :models
+  attr_accessor :record
 
   def save_form(**options)
     validate! unless options[:validate] == false
@@ -58,35 +73,43 @@ class FormService
   def save_in_transaction(...)
     transaction do
       run_callbacks :save do
-        save_models(...)
+        save_record(...)
       end
     end
   rescue StandardError => e
     handle_transaction_rollback(e)
   end
 
-  def save_models(**options)
-    models.map do |model|
-      model.save!(**options, validate: false)
-    end
+  def save_record(**options)
+    record.save!(**options, validate: false)
   end
 
-  def validate_models
-    models.each do |model|
-      promote_errors(model) if model.invalid?
-    end
+  def validate_record
+    promote_errors(record) if record.invalid?
   end
 
-  def promote_errors(model)
-    errors.merge!(model.errors)
+  def promote_errors(record)
+    errors.merge!(record.errors)
   end
 
   def build_result
-    Result.new(models, errors)
+    Result.new(record, errors)
   end
 
   def handle_transaction_rollback(exception)
     run_callbacks :rollback
     raise exception
   end
+
+  def missing_attribute_method?(method)
+    return false unless method =~ /^([a-z]\w+)=?$/
+
+    record.class.column_names.include?(::Regexp.last_match(1))
+  end
+
+  def self.alias_record(alias_name)
+    alias_method alias_name, :record
+  end
+
+  private_class_method :alias_record
 end
