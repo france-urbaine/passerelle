@@ -1,0 +1,12 @@
+= template_status_component(referrer: @referrer_path) do |template|
+  - template.with_breadcrumbs do |breadcrumbs|
+    - breadcrumbs.with_path "Administration"
+    - breadcrumbs.with_path "Collectivités", admin_collectivities_path
+
+  - template.with_header do
+    | La page que vous recherchez n'est pas disponible.
+
+  - template.with_body do
+    | La collectivité n'a pas été trouvée ou n'existe plus.
+
+  - template.with_action "Consulter les collectivités existantes", admin_collectivities_path, icon: "search"

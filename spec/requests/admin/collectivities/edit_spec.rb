@@ -2,9 +2,9 @@
 
 require "rails_helper"
 
-RSpec.describe "CollectivitiesController#remove" do
+RSpec.describe "Admin::CollectivitiesController#edit" do
   subject(:request) do
-    get "/collectivites/#{collectivity.id}/remove", as:, headers:, params:
+    get "/admin/collectivites/#{collectivity.id}/edit", as:, headers:, params:
   end
 
   let(:as)      { |e| e.metadata[:as] }
@@ -24,6 +24,7 @@ RSpec.describe "CollectivitiesController#remove" do
     it_behaves_like "it denies access to publisher admin"
     it_behaves_like "it denies access to collectivity user"
     it_behaves_like "it denies access to collectivity admin"
+
     it_behaves_like "it allows access to super admin"
 
     context "when the collectivity is the organization of the current user" do
@@ -36,8 +37,8 @@ RSpec.describe "CollectivitiesController#remove" do
     context "when the collectivity is owned by the current user's publisher organization" do
       let(:collectivity) { create(:collectivity, publisher: current_user.organization) }
 
-      it_behaves_like "it allows access to publisher user"
-      it_behaves_like "it allows access to publisher admin"
+      it_behaves_like "it denies access to publisher user"
+      it_behaves_like "it denies access to publisher admin"
     end
   end
 
@@ -50,7 +51,7 @@ RSpec.describe "CollectivitiesController#remove" do
       it { expect(response).to have_html_body }
     end
 
-    context "when the collectivity is already discarded" do
+    context "when the collectivity is discarded" do
       before { collectivity.discard }
 
       it { expect(response).to have_http_status(:gone) }

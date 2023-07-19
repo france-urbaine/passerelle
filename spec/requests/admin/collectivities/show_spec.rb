@@ -2,9 +2,9 @@
 
 require "rails_helper"
 
-RSpec.describe "CollectivitiesController#show" do
+RSpec.describe "Admin::CollectivitiesController#show" do
   subject(:request) do
-    get "/collectivites/#{collectivity.id}", as:, headers:, params:
+    get "/admin/collectivites/#{collectivity.id}", as:, headers:, params:
   end
 
   let(:as)      { |e| e.metadata[:as] }
@@ -24,6 +24,7 @@ RSpec.describe "CollectivitiesController#show" do
     it_behaves_like "it denies access to publisher admin"
     it_behaves_like "it denies access to collectivity user"
     it_behaves_like "it denies access to collectivity admin"
+
     it_behaves_like "it allows access to super admin"
 
     context "when the collectivity is the organization of the current user" do
@@ -36,8 +37,8 @@ RSpec.describe "CollectivitiesController#show" do
     context "when the collectivity is owned by the current user's publisher organization" do
       let(:collectivity) { create(:collectivity, publisher: current_user.organization) }
 
-      it_behaves_like "it allows access to publisher user"
-      it_behaves_like "it allows access to publisher admin"
+      it_behaves_like "it denies access to publisher user"
+      it_behaves_like "it denies access to publisher admin"
     end
   end
 

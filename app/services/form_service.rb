@@ -16,7 +16,7 @@ class FormService
       @errors.any?
     end
 
-    def success?
+    def successful?
       !failed?
     end
   end

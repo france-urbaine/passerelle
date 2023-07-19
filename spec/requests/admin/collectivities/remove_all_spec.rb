@@ -2,9 +2,9 @@
 
 require "rails_helper"
 
-RSpec.describe "CollectivitiesController#remove_all" do
+RSpec.describe "Admin::CollectivitiesController#remove_all" do
   subject(:request) do
-    get "/collectivites/remove", as:, headers:, params:
+    get "/admin/collectivites/remove", as:, headers:, params:
   end
 
   let(:as)      { |e| e.metadata[:as] }
@@ -21,11 +21,11 @@ RSpec.describe "CollectivitiesController#remove_all" do
 
     it_behaves_like "it denies access to DDFIP user"
     it_behaves_like "it denies access to DDFIP admin"
+    it_behaves_like "it denies access to publisher user"
+    it_behaves_like "it denies access to publisher admin"
     it_behaves_like "it denies access to collectivity user"
     it_behaves_like "it denies access to collectivity admin"
 
-    it_behaves_like "it allows access to publisher user"
-    it_behaves_like "it allows access to publisher admin"
     it_behaves_like "it allows access to super admin"
   end
 

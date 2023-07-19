@@ -1,14 +1,14 @@
 = template_frame_component do
   = breadcrumbs_component do |breadcrumbs|
     - breadcrumbs.with_path "Administration"
-    - breadcrumbs.with_path "Collectivités", collectivities_path
+    - breadcrumbs.with_path "Collectivités", admin_collectivities_path
     - breadcrumbs.with_path @collectivity.name
 
     - if allowed_to?(:update?, @collectivity)
-      - breadcrumbs.with_action "Modifier", edit_collectivity_path(@collectivity), icon: "pencil-square", modal: true
+      - breadcrumbs.with_action "Modifier", edit_admin_collectivity_path(@collectivity), icon: "pencil-square", modal: true
 
     - if allowed_to?(:destroy?, @collectivity)
-      - breadcrumbs.with_action "Supprimer", remove_collectivity_path(@collectivity), icon: "trash", modal: true, destructive: "discrete"
+      - breadcrumbs.with_action "Supprimer", remove_admin_collectivity_path(@collectivity), icon: "trash", modal: true, destructive: "discrete"
 
   h2.subheader
     = svg_icon("identification", "Nouvelle section")
@@ -19,15 +19,15 @@
       .description-list__row
         dt Éditeur
         dd
-          = authorized_link_to @collectivity.publisher do
+          = authorized_link_to @collectivity.publisher, scope: :admin do
             = @collectivity.publisher.name
 
       .description-list__row
         dt Territoire
         dd
-          - if @collectivity.territory
-            = authorized_link_to @collectivity.territory do
-              = @collectivity.territory.qualified_name
+          = authorized_link_to @collectivity.territory do
+            = @collectivity.territory.qualified_name
+            = " (#{@collectivity.territory.model_name.human})"
 
       .description-list__row
         dt Numéro SIREN de la collectivité
@@ -44,6 +44,20 @@
       .description-list__row
         dt Numéro de téléphone
         dd= phone_to(@collectivity.contact_phone) if @collectivity.contact_phone?
+
+      .description-list__row
+        dt Utilisateurs
+        dd= display_count(@collectivity.users_count, "utilisateur") if @collectivity.users_count.positive?
+
+      .description-list__row
+        dt Signalements
+        dd
+          - if @collectivity.reports_transmitted_count.positive?
+            = display_count(@collectivity.reports_transmitted_count, "transmis")
+            = " / "
+            = display_count(@collectivity.reports_approved_count, "approuvé")
+            = " / "
+            = display_count(@collectivity.reports_rejected_count, "rejeté")
 
   - if allowed_to?(:index?, User, with: Collectivities::UserPolicy)
     .content__separator

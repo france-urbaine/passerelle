@@ -126,6 +126,7 @@ Rails.application.routes.draw do
     # ----------------------------------------------------------------------------
     namespace :admin do
       resources :publishers, concerns: %i[removable removable_collection], path: "/editeurs"
+      resources :collectivities, concerns: %i[removable removable_collection], path: "/collectivites"
     end
   end
 end
