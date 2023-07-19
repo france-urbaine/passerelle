@@ -10,6 +10,7 @@ module ComponentsHelper
     datatable_skeleton_component: "DatatableSkeleton::Component",
     dropdown_component:           "Dropdown::Component",
     hidden_field_component:       "HiddenField::Component",
+    form_block_component:         "FormBlock::Component",
     modal_component:              "Modal::Component",
     noscript_component:           "Noscript::Component",
     notification_component:       "Notification::Component",

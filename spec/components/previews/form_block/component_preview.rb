@@ -1,11 +1,14 @@
 # frozen_string_literal: true
 
-module Form
+module FormBlock
   # @logical_path Interactive elements
-  # @display frame "content"
   #
-  class ComponentPreview < ::Lookbook::Preview
+  # @display frame "content"
+  # @display width "medium"
+  #
+  class ComponentPreview < ViewComponent::Preview
     # @!group Inputs
+    # @display width "small"
     # --------------------------------------------------------------------------
     #
     # @label Text fields
@@ -36,9 +39,20 @@ module Form
     # @label Text field with error message
     def text_field_with_errors; end
 
+    # @label Text field with hint & error message
+    def text_field_with_hint_and_errors; end
+
     # @label Checkbox with hint message
     #
     def check_box_with_hint; end
+    #
+    # @!endgroup
+
+    # @!group Autocompletion
+    # --------------------------------------------------------------------------
+    # @label Autocompletion field
+    #
+    def autocompletion; end
     #
     # @!endgroup
   end

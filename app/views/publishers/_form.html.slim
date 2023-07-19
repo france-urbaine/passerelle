@@ -25,11 +25,11 @@
     = form.label :contact_phone
     = form.text_field :contact_phone
 
-  = form.block :allow_2fa_via_email do
+  = form.block :allow_2fa_via_email do |block|
     = form.check_box :allow_2fa_via_email
     = form.label :allow_2fa_via_email
 
-    .form-block__hint
+    - block.with_hint do
       p
         | L'authentification en 2 facteurs (2FA) est activée pour tous les utilisateurs.
         br

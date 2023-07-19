@@ -11,7 +11,13 @@ html
     = javascript_include_tag "application", "data-turbo-track": "reload", defer: true
 
   body.p-6.overflow-auto
-    - frame = params.dig(:lookbook, :display, :frame)
+    ruby:
+      frame = params.dig(:lookbook, :display, :frame)
+      width =
+        case params.dig(:lookbook, :display, :width)
+        when "medium" then "w-[48rem]"
+        when "small"  then "w-96"
+        end
 
     - case frame
     - when nil, false
@@ -20,7 +26,10 @@ html
     - when "content"
       main.content
         = turbo_frame_tag(:content, target: "_top") do
-          = yield
+          - if width
+            div( class=width )= yield
+          - else
+            = yield
 
       = turbo_frame_tag(:modal, target: "_top") do
 

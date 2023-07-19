@@ -74,21 +74,21 @@ ruby:
     = turbo_frame_tag :user_offices_checkboxes, **offices_frame_options
 
   - if allowed_to?(:assign_organization_admin?, user)
-    = form.block :organization_admin do
+    = form.block :organization_admin do |block|
       = form.check_box :organization_admin
       = form.label :organization_admin
 
-      .form-block__hint
+      - block.with_hint do
         | Un administrateur bénéficie de tout les droits sur son organisation.
         br
         | Il peut notamment créer, gérer ou supprimer d'autres utilisateurs au sein de cette organisation.
 
   - if allowed_to?(:assign_super_admin?, user)
-    = form.block :super_admin do
+    = form.block :super_admin do |block|
       = form.check_box :super_admin
       = form.label :super_admin
 
-      .form-block__hint
+      - block.with_hint do
         | Un administrateur de FiscaHub a accès à toutes les informations de la plateforme, sans restrictions.
         br
         | Il peut notamment créer, gérer et supprimer n'importe quelle organisation ou utilisateur.

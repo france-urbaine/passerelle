@@ -1,0 +1,8 @@
+= tag.div **block_html_attributes do
+  = content
+  = errors
+
+  - if hint?
+    .form-block__hint= hint
+
+  = autocomplete_results
