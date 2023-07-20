@@ -121,6 +121,12 @@ Rails.application.routes.draw do
     resources :territories,   only: %i[index],       path: "/territoires"
     resource  :territories,   only: %i[edit update], path: "/territoires"
 
+    # Organization stuff
+    # ----------------------------------------------------------------------------
+    namespace :organization, path: "/organisation" do
+      resources :collectivities, concerns: %i[removable removable_collection], path: "/collectivites"
+    end
+
     # Admin stuff
     # ----------------------------------------------------------------------------
     namespace :admin do

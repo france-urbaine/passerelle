@@ -37,17 +37,18 @@ div( data-controller="navbar" )
       = navbar_link_to "Dossiers",        root_path, current: false, disabled: true if workshops
       = navbar_link_to "Fichiers",        root_path, current: false, disabled: true
 
-    - organization_settings = allowed_to?(:index, with: Users::OrganizationSettingsPolicy)
-    - organization_users    = current_user.organization_admin?
-    - api_settings          = current_user.organization_type == "Publisher"
+    - organization_settings       = allowed_to?(:manage?, with: Users::OrganizationSettingsPolicy)
+    - organization_collectivities = allowed_to?(:index?, Collectivity, with: Organization::CollectivityPolicy)
+    - organization_users          = current_user.organization_admin?
+    - api_settings                = current_user.organization_type == "Publisher"
 
-    - if organization_settings || api_settings
+    - if organization_settings || organization_collectivities || api_settings
       .navbar__header Mon organisation
       .navbar__links
-        = navbar_link_to "Paramètres", user_organization_settings_path           if organization_settings
-        = navbar_link_to "Equipe",     root_path, current: false, disabled: true if organization_users
-        = navbar_link_to "API",        root_path, current: false, disabled: true if api_settings
-
+        = navbar_link_to "Paramètres",    user_organization_settings_path           if organization_settings
+        = navbar_link_to "Equipe",        root_path, current: false, disabled: true if organization_users
+        = navbar_link_to "Collectivités", organization_collectivities_path          if organization_collectivities
+        = navbar_link_to "API",           root_path, current: false, disabled: true if api_settings
 
     - publishers     = allowed_to?(:index?, Publisher,    with: Admin::PublisherPolicy)
     - collectivities = allowed_to?(:index?, Collectivity, with: Admin::CollectivityPolicy)

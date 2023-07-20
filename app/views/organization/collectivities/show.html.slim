@@ -1,0 +1,100 @@
+= template_frame_component do
+  = breadcrumbs_component do |breadcrumbs|
+    - breadcrumbs.with_path "Mon organisation"
+    - breadcrumbs.with_path "Collectivités", organization_collectivities_path
+    - breadcrumbs.with_path @collectivity.name
+
+    - if allowed_to?(:update?, @collectivity)
+      - breadcrumbs.with_action "Modifier", edit_organization_collectivity_path(@collectivity), icon: "pencil-square", modal: true
+
+    - if allowed_to?(:destroy?, @collectivity)
+      - breadcrumbs.with_action "Supprimer", remove_organization_collectivity_path(@collectivity), icon: "trash", modal: true, destructive: "discrete"
+
+  h2.subheader
+    = svg_icon("identification", "Nouvelle section")
+    | Description
+
+  .card
+    dl.description-list
+      .description-list__row
+        dt Territoire
+        dd
+          = authorized_link_to @collectivity.territory do
+            = @collectivity.territory.qualified_name
+            = " (#{@collectivity.territory.model_name.human})"
+
+      .description-list__row
+        dt Numéro SIREN de la collectivité
+        dd= display_siren(@collectivity.siren)
+
+      .description-list__row
+        dt Contact
+        dd= "#{@collectivity.contact_first_name} #{@collectivity.contact_last_name}".strip.presence
+
+      .description-list__row
+        dt Adresse mail de contact
+        dd= mail_to(@collectivity.contact_email) if @collectivity.contact_email?
+
+      .description-list__row
+        dt Numéro de téléphone
+        dd= phone_to(@collectivity.contact_phone) if @collectivity.contact_phone?
+
+      .description-list__row
+        dt Utilisateurs
+        dd= display_count(@collectivity.users_count, "utilisateur") if @collectivity.users_count.positive?
+
+      / TODO: show only counts of packages & reports send through publisher API
+      / .description-list__row
+      /   dt Paquets
+      /   dd
+      /     - if @collectivity.packages_transmitted_count.positive?
+      /       = display_count(@collectivity.packages_transmitted_count, "transmis")
+      /       = " / "
+      /       = display_count(@collectivity.packages_approved_count, "approuvé")
+      /       = " / "
+      /       = display_count(@collectivity.packages_rejected_count, "rejeté")
+      /
+      / .description-list__row
+      /   dt Signalements
+      /   dd
+      /     - if @collectivity.reports_transmitted_count.positive?
+      /       = display_count(@collectivity.reports_transmitted_count, "transmis")
+      /       = " / "
+      /       = display_count(@collectivity.reports_approved_count, "approuvé")
+      /       = " / "
+      /       = display_count(@collectivity.reports_rejected_count, "rejeté")
+
+  - if allowed_to?(:index?, User, with: Collectivities::UserPolicy)
+    .content__separator
+
+    .subheader-bar
+      h2.subheader
+        = svg_icon("rectangle-stack", "Nouvelle section")
+        | Utilisateurs
+
+      .subheader-bar__actions
+        - if allowed_to?(:create?, User, with: Collectivities::UserPolicy)
+          .subheader-bar__action
+            = button_component "Inviter un utilisateur", new_collectivity_user_path(@collectivity), icon: "plus", modal: true
+
+    - if @collectivity.users_count.zero?
+      = card_component(content_class: "card__content--empty")
+        | Aucun utilisateur assigné.
+
+    - else
+      = turbo_frame_tag "datatable-users", src: collectivity_users_path(@collectivity) do
+        = datatable_skeleton_component(rows: [@collectivity.users_count, 5].min) do |skeleton|
+          - skeleton.with_search
+          - skeleton.with_pagination
+
+  - if allowed_to?(:index?, Office, with: Collectivities::OfficePolicy)
+    .content__separator
+
+    h2.subheader
+      = svg_icon("rectangle-stack", "Nouvelle section")
+      | Guichets correspondants
+
+    = turbo_frame_tag "datatable-offices", src: collectivity_offices_path(@collectivity) do
+      = datatable_skeleton_component(rows: 0) do |skeleton|
+        - skeleton.with_search
+        - skeleton.with_pagination

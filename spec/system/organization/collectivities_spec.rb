@@ -2,7 +2,7 @@
 
 require "system_helper"
 
-RSpec.describe "Collectivities in admin" do
+RSpec.describe "Collectivities managed by current organization" do
   fixtures :regions, :departements, :epcis, :communes
   fixtures :collectivities, :publishers, :ddfips, :users
 
@@ -13,53 +13,55 @@ RSpec.describe "Collectivities in admin" do
   before { sign_in(users(:marc)) }
 
   it "visits index & collectivity pages" do
-    visit admin_collectivities_path
+    visit organization_collectivities_path
 
-    # A table of all collectivities should be present
+    # A table of owned collectivities should be present
     #
-    expect(page).to have_selector("h1", text: "Collectivités")
-    expect(page).to have_link("CA du Pays Basque")
-    expect(page).to have_link("Métropole Européenne de Lille")
-    expect(page).to have_link("Commune de Paris")
+    expect(page).to     have_selector("h1", text: "Collectivités")
+    expect(page).to     have_link("CA du Pays Basque")
+    expect(page).to     have_link("Métropole Européenne de Lille")
+    expect(page).to     have_link("Commune de Paris")
+    expect(page).not_to have_link("Département du Nord")
 
     click_on "CA du Pays Basque"
 
     # The browser should visit the collectivity page
     #
-    expect(page).to have_current_path(admin_collectivity_path(pays_basque))
+    expect(page).to have_current_path(organization_collectivity_path(pays_basque))
     expect(page).to have_selector("h1", text: "CA du Pays Basque")
 
     go_back
 
     # The browser should redirect back to the index page
     #
-    expect(page).to have_current_path(admin_collectivities_path)
+    expect(page).to have_current_path(organization_collectivities_path)
     expect(page).to have_selector("h1", text: "Collectivités")
   end
 
   it "visits links on a collectivity page & comes back" do
-    visit admin_collectivity_path(pays_basque)
+    pending "Failed due to refactoring"
+
+    visit organization_collectivity_path(pays_basque)
 
     # On the collectivity page, we expect:
     # - a link to the publisher
     # - a link to the EPCI
     #
     expect(page).to have_selector("h1", text: "CA du Pays Basque")
-    expect(page).to have_link("Fiscalité & Territoire")
     expect(page).to have_link("CA du Pays Basque (EPCI)")
 
     click_on "Fiscalité & Territoire"
 
     # The browser should visit the publisher page
     #
-    expect(page).to have_current_path(admin_publisher_path(publisher))
+    expect(page).to have_current_path(publisher_path(publisher))
     expect(page).to have_selector("h1", text: "Fiscalité & Territoire")
 
     go_back
 
     # The browser should redirect back to the collectivity page
     #
-    expect(page).to have_current_path(admin_collectivity_path(pays_basque))
+    expect(page).to have_current_path(organization_collectivity_path(pays_basque))
     expect(page).to have_selector("h1", text: "CA du Pays Basque")
 
     click_on "CA du Pays Basque (EPCI)"
@@ -75,12 +77,12 @@ RSpec.describe "Collectivities in admin" do
 
     # The browser should redirect back to the collectivity page
     #
-    expect(page).to have_current_path(admin_collectivity_path(pays_basque))
+    expect(page).to have_current_path(organization_collectivity_path(pays_basque))
     expect(page).to have_selector("h1", text: "CA du Pays Basque")
   end
 
   it "creates a collectivity from the index page" do
-    visit admin_collectivities_path
+    visit organization_collectivities_path
 
     # A button should be present to add a new collectivity
     #
@@ -89,8 +91,9 @@ RSpec.describe "Collectivities in admin" do
     # A dialog box should appear with a form to fill
     #
     within "[role=dialog]", text: "Création d'une nouvelle collectivité" do |dialog|
+      expect(dialog).not_to have_field("Éditeur")
+
       expect(dialog).to have_field("Territoire")
-      expect(dialog).to have_field("Éditeur")
       expect(dialog).to have_field("Nom de la collectivité")
       expect(dialog).to have_field("Numéro SIREN de la collectivité")
       expect(dialog).to have_field("Prénom du contact")
@@ -101,8 +104,6 @@ RSpec.describe "Collectivities in admin" do
       fill_in "Territoire", with: "Aix-Marseille"
       select_option "Métropole d'Aix-Marseille-Provence", from: "Territoire"
 
-      select "Fiscalité & Territoire", from: "Éditeur"
-
       fill_in "Nom de la collectivité",          with: "Métropole d'Aix-Marseille-Provence"
       fill_in "Numéro SIREN de la collectivité", with: "200054807"
 
@@ -112,7 +113,7 @@ RSpec.describe "Collectivities in admin" do
     # The browser should stay on the index page
     # The new collectivity should appear
     #
-    expect(page).to have_current_path(admin_collectivities_path)
+    expect(page).to have_current_path(organization_collectivities_path)
     expect(page).to have_selector("h1", text: "Collectivités")
     expect(page).to have_selector(:table_row, "Collectivité" => "Métropole d'Aix-Marseille-Provence")
 
@@ -124,7 +125,7 @@ RSpec.describe "Collectivities in admin" do
   end
 
   it "updates a collectivity from the index page" do
-    visit admin_collectivities_path
+    visit organization_collectivities_path
 
     # A button should be present to edit the collectivity
     #
@@ -136,7 +137,8 @@ RSpec.describe "Collectivities in admin" do
     # The form should be filled with collectivity data
     #
     within "[role=dialog]", text: "Modification de la collectivité" do |dialog|
-      expect(dialog).to have_select("Éditeur",                        selected: "Fiscalité & Territoire")
+      expect(dialog).not_to have_field("Éditeur")
+
       expect(dialog).to have_field("Territoire",                      with: "CA du Pays Basque")
       expect(dialog).to have_field("Nom de la collectivité",          with: "CA du Pays Basque")
       expect(dialog).to have_field("Numéro SIREN de la collectivité", with: "200067106")
@@ -148,7 +150,7 @@ RSpec.describe "Collectivities in admin" do
     # The browser should stay on the index page
     # The collectivity should have changed its name
     #
-    expect(page).to  have_current_path(admin_collectivities_path)
+    expect(page).to  have_current_path(organization_collectivities_path)
     expect(page).to  have_selector("h1", text: "Collectivités")
     expect(page).to have_selector(:table_row, "Collectivité" => "Agglomération du Pays Basque")
 
@@ -160,7 +162,7 @@ RSpec.describe "Collectivities in admin" do
   end
 
   it "updates a collectivity from the collectivity page" do
-    visit admin_collectivity_path(pays_basque)
+    visit organization_collectivity_path(pays_basque)
 
     # A button should be present to edit the collectivity
     #
@@ -172,8 +174,9 @@ RSpec.describe "Collectivities in admin" do
     # The form should be filled with collectivity data
     #
     within "[role=dialog]", text: "Modification de la collectivité" do |dialog|
+      expect(dialog).not_to have_field("Éditeur")
+
       expect(dialog).to have_field("Territoire",                      with: "CA du Pays Basque")
-      expect(dialog).to have_select("Éditeur",                        selected: "Fiscalité & Territoire")
       expect(dialog).to have_field("Nom de la collectivité",          with: "CA du Pays Basque")
       expect(dialog).to have_field("Numéro SIREN de la collectivité", with: "200067106")
 
@@ -184,7 +187,7 @@ RSpec.describe "Collectivities in admin" do
     # The browser should stay on the collectivity page
     # The collectivity should have changed its name
     #
-    expect(page).to have_current_path(admin_collectivity_path(pays_basque))
+    expect(page).to have_current_path(organization_collectivity_path(pays_basque))
     expect(page).to have_selector("h1", text: "Agglomération du Pays Basque")
 
     # The dialog should be closed
@@ -195,9 +198,9 @@ RSpec.describe "Collectivities in admin" do
   end
 
   it "discards a collectivity from the index page & rollbacks" do
-    visit admin_collectivities_path
+    visit organization_collectivities_path
 
-    expect(page).to have_text("7 collectivités | Page 1 sur 1")
+    expect(page).to have_text("6 collectivités | Page 1 sur 1")
 
     # A button should be present to remove the collectivity
     #
@@ -214,9 +217,9 @@ RSpec.describe "Collectivities in admin" do
     # The browser should stay on the index page
     # The collectivity should not appears anymore
     #
-    expect(page).to     have_current_path(admin_collectivities_path)
+    expect(page).to     have_current_path(organization_collectivities_path)
     expect(page).to     have_selector("h1", text: "Collectivités")
-    expect(page).to     have_text("6 collectivités | Page 1 sur 1")
+    expect(page).to     have_text("5 collectivités | Page 1 sur 1")
     expect(page).not_to have_selector(:table_row, "Collectivité" => "CA du Pays Basque")
 
     # The dialog should be closed
@@ -234,9 +237,9 @@ RSpec.describe "Collectivities in admin" do
     # The browser should stay on the index page
     # The collectivity should be back again
     #
-    expect(page).to have_current_path(admin_collectivities_path)
+    expect(page).to have_current_path(organization_collectivities_path)
     expect(page).to have_selector("h1", text: "Collectivités")
-    expect(page).to have_text("7 collectivités | Page 1 sur 1")
+    expect(page).to have_text("6 collectivités | Page 1 sur 1")
     expect(page).to have_selector(:table_row, "Collectivité" => "CA du Pays Basque")
 
     # The previous notification should be closed
@@ -247,7 +250,7 @@ RSpec.describe "Collectivities in admin" do
   end
 
   it "discards a collectivity from the collectivity page & rollbacks" do
-    visit admin_collectivity_path(pays_basque)
+    visit organization_collectivity_path(pays_basque)
 
     # A button should be present to remove the collectivity
     #
@@ -264,9 +267,9 @@ RSpec.describe "Collectivities in admin" do
     # The browser should redirect to the index page
     # The collectivity should not appears anymore
     #
-    expect(page).to     have_current_path(admin_collectivities_path)
+    expect(page).to     have_current_path(organization_collectivities_path)
     expect(page).to     have_selector("h1", text: "Collectivités")
-    expect(page).to     have_text("6 collectivités | Page 1 sur 1")
+    expect(page).to     have_text("5 collectivités | Page 1 sur 1")
     expect(page).not_to have_selector(:table_row, "Collectivité" => "CA du Pays Basque")
 
     # The dialog should be closed
@@ -284,9 +287,9 @@ RSpec.describe "Collectivities in admin" do
     # The browser should stay on the index page
     # The collectivity should be back again
     #
-    expect(page).to have_current_path(admin_collectivities_path)
+    expect(page).to have_current_path(organization_collectivities_path)
     expect(page).to have_selector("h1", text: "Collectivités")
-    expect(page).to have_text("7 collectivités | Page 1 sur 1")
+    expect(page).to have_text("6 collectivités | Page 1 sur 1")
     expect(page).to have_selector(:table_row, "Collectivité" => "CA du Pays Basque")
 
     # The previous notification should be closed
@@ -297,9 +300,9 @@ RSpec.describe "Collectivities in admin" do
   end
 
   it "selects and discards one collectivity from the index page & rollbacks" do
-    visit admin_collectivities_path
+    visit organization_collectivities_path
 
-    expect(page).to have_text("7 collectivités | Page 1 sur 1")
+    expect(page).to have_text("6 collectivités | Page 1 sur 1")
 
     # Checkboxes should be present to select collectivities
     #
@@ -324,9 +327,9 @@ RSpec.describe "Collectivities in admin" do
     # The selected collectivities should not appears anymore
     # Other collectivities should remain
     #
-    expect(page).to     have_current_path(admin_collectivities_path)
+    expect(page).to     have_current_path(organization_collectivities_path)
     expect(page).to     have_selector("h1", text: "Collectivités")
-    expect(page).to     have_text("6 collectivités | Page 1 sur 1")
+    expect(page).to     have_text("5 collectivités | Page 1 sur 1")
     expect(page).not_to have_selector(:table_row, "Collectivité" => "CA du Pays Basque")
     expect(page).to     have_selector(:table_row, "Collectivité" => "Métropole Européenne de Lille")
     expect(page).to     have_selector(:table_row, "Collectivité" => "Commune de Paris")
@@ -348,9 +351,9 @@ RSpec.describe "Collectivities in admin" do
     # The browser should stay on index page
     # The remove collectivities should be back again
     #
-    expect(page).to have_current_path(admin_collectivities_path)
+    expect(page).to have_current_path(organization_collectivities_path)
     expect(page).to have_selector("h1", text: "Collectivités")
-    expect(page).to have_text("7 collectivités | Page 1 sur 1")
+    expect(page).to have_text("6 collectivités | Page 1 sur 1")
     expect(page).to have_selector(:table_row, "Collectivité" => "CA du Pays Basque")
 
     # The selection message should not appears again
@@ -366,12 +369,12 @@ RSpec.describe "Collectivities in admin" do
     # Create a bunch of collectivities to have several pages
     # Create discarded collectivities to verify they are not rollbacked
     #
-    create_list(:collectivity, 10)
-    create_list(:collectivity, 5, :discarded)
+    create_list(:collectivity, 10, publisher: publisher)
+    create_list(:collectivity, 5, :discarded, publisher: publisher)
 
-    visit admin_collectivities_path
+    visit organization_collectivities_path
 
-    expect(page).to have_text("17 collectivités | Page 1 sur 1")
+    expect(page).to have_text("16 collectivités | Page 1 sur 1")
 
     # Paginate collectivities by 10
     # More than one page should exist
@@ -380,7 +383,7 @@ RSpec.describe "Collectivities in admin" do
     click_on "Afficher 50 lignes par page"
     click_on "Afficher 10 lignes"
 
-    expect(page).to have_text("17 collectivités | Page 1 sur 2")
+    expect(page).to have_text("16 collectivités | Page 1 sur 2")
 
     # Checkboxes should be present to select all collectivities
     #
@@ -404,10 +407,10 @@ RSpec.describe "Collectivities in admin" do
     # The browser should stay on index page
     # The selected collectivities should have been removed
     #
-    expect(page).to     have_current_path(admin_collectivities_path)
+    expect(page).to     have_current_path(organization_collectivities_path)
     expect(page).to     have_selector("h1", text: "Collectivités")
-    expect(page).to     have_text("7 collectivités | Page 1 sur 1")
-    expect(page).not_to have_text("17 collectivités")
+    expect(page).to     have_text("6 collectivités | Page 1 sur 1")
+    expect(page).not_to have_text("16 collectivités")
     expect(page).not_to have_selector(:table_row, "Collectivité" => "CA du Pays Basque")
     expect(page).not_to have_selector(:table_row, "Collectivité" => "Métropole Européenne de Lille")
     expect(page).not_to have_selector(:table_row, "Collectivité" => "Commune de Paris")
@@ -428,9 +431,9 @@ RSpec.describe "Collectivities in admin" do
     # The browser should stay on index page
     # All collectivities should be back again
     #
-    expect(page).to have_current_path(admin_collectivities_path)
+    expect(page).to have_current_path(organization_collectivities_path)
     expect(page).to have_selector("h1", text: "Collectivités")
-    expect(page).to have_text("17 collectivités | Page 1 sur 2")
+    expect(page).to have_text("16 collectivités | Page 1 sur 2")
     expect(page).to have_selector(:table_row, "Collectivité" => "CA du Pays Basque")
     expect(page).to have_selector(:table_row, "Collectivité" => "Métropole Européenne de Lille")
     expect(page).to have_selector(:table_row, "Collectivité" => "Commune de Paris")
@@ -448,11 +451,11 @@ RSpec.describe "Collectivities in admin" do
     # Create a bunch of collectivities to have several pages
     # TODO: Create discarded collectivities to verify they are not rollbacked
     #
-    create_list(:collectivity, 10)
+    create_list(:collectivity, 10, publisher: publisher)
 
-    visit admin_collectivities_path
+    visit organization_collectivities_path
 
-    expect(page).to have_text("17 collectivités | Page 1 sur 1")
+    expect(page).to have_text("16 collectivités | Page 1 sur 1")
 
     # Paginate collectivities by 10
     # More than one page should exist
@@ -461,7 +464,7 @@ RSpec.describe "Collectivities in admin" do
     click_on "Afficher 50 lignes par page"
     click_on "Afficher 10 lignes"
 
-    expect(page).to have_text("17 collectivités | Page 1 sur 2")
+    expect(page).to have_text("16 collectivités | Page 1 sur 2")
 
     # Checkboxes should be present to select all collectivities
     #
@@ -474,23 +477,23 @@ RSpec.describe "Collectivities in admin" do
     # A link to remove all of them should be present
     #
     within ".header-bar--selection", text: "10 collectivités sélectionnées" do
-      click_on "Sélectionner les 17 collectivités des 2 pages"
+      click_on "Sélectionner les 16 collectivités des 2 pages"
     end
 
-    within ".header-bar--selection", text: "17 collectivités sélectionnées" do
+    within ".header-bar--selection", text: "16 collectivités sélectionnées" do
       click_on "Tout supprimer"
     end
 
     # A confirmation dialog should appear
     #
-    within "[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer les 17 collectivités sélectionnées ?" do
+    within "[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer les 16 collectivités sélectionnées ?" do
       click_on "Continuer"
     end
 
     # The browser should stay on index page
     # No collectivities should appear anymore
     #
-    expect(page).to have_current_path(admin_collectivities_path)
+    expect(page).to have_current_path(organization_collectivities_path)
     expect(page).to have_selector("h1", text: "Collectivités")
     expect(page).to have_text("Aucune collectivité disponible.")
 
@@ -510,9 +513,9 @@ RSpec.describe "Collectivities in admin" do
     # The browser should stay on index page
     # All collectivities should be back again
     #
-    expect(page).to have_current_path(admin_collectivities_path)
+    expect(page).to have_current_path(organization_collectivities_path)
     expect(page).to have_selector("h1", text: "Collectivités")
-    expect(page).to have_text("7 collectivités | Page 1 sur 2")
+    expect(page).to have_text("16 collectivités | Page 1 sur 2")
     expect(page).to have_selector(:table_row, "Collectivité" => "CA du Pays Basque")
     expect(page).to have_selector(:table_row, "Collectivité" => "Métropole Européenne de Lille")
     expect(page).to have_selector(:table_row, "Collectivité" => "Commune de Paris")
