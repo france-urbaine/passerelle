@@ -50,7 +50,7 @@ RSpec.describe "Admin::DDFIPs::CollectivitiesController#index" do
 
     it_behaves_like "it allows access to super admin"
 
-    context "when the DDFIP is the organization of the current user" do
+    context "when the DDFIP is the current organization" do
       let(:ddfip) { current_user.organization }
 
       it_behaves_like "it denies access to DDFIP user"

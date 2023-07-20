@@ -56,7 +56,7 @@ RSpec.describe "Admin::Offices::CollectivitiesController#index" do
 
     it_behaves_like "it allows access to super admin"
 
-    context "when the office is owned by the current user's DDFIP organization" do
+    context "when the office is owned by the current organization" do
       let(:office) { create(:office, ddfip: current_user.organization) }
 
       it_behaves_like "it denies access to DDFIP user"

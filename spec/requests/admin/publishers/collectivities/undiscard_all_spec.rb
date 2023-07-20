@@ -37,7 +37,7 @@ RSpec.describe "Admin::Publishers::CollectivitiesController#undiscard_all" do
     it_behaves_like "it denies access to collectivity admin"
     it_behaves_like "it allows access to super admin"
 
-    context "when the publisher is the organization of the current user" do
+    context "when the publisher is the current organization" do
       let(:publisher) { current_user.organization }
 
       it_behaves_like "it denies access to publisher user"
