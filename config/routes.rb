@@ -38,7 +38,6 @@ Rails.application.routes.draw do
 
     resource :user_settings,           path: "/compte/parametres",   only: %i[show update], as: :settings
     resource :two_factor_settings,     path: "/compte/2fa",          only: %i[new create edit update]
-    resource :organization_settings,   path: "/compte/organisation", only: %i[show update]
 
     get "/compte", to: redirect("/compte/parametres")
   end
@@ -124,6 +123,7 @@ Rails.application.routes.draw do
     # Organization stuff
     # ----------------------------------------------------------------------------
     namespace :organization, path: "/organisation" do
+      resource  :settings,       only: %i[show update], path: "/parametres"
       resources :collectivities, concerns: %i[removable removable_collection], path: "/collectivites"
     end
 

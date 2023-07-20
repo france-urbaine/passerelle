@@ -4,7 +4,7 @@ marc:
   last_name:          Debomy
   name:               Marc Debomy
   super_admin:        true
-  organization_admin: false
+  organization_admin: true
   email:              mdebomy@fiscalite-territoire.fr
   confirmed_at:       <%= Time.current %>
 
@@ -24,7 +24,7 @@ maxime:
   last_name:          Gauthier
   name:               Maxime Gauthier
   super_admin:        false
-  organization_admin: false
+  organization_admin: true
   email:              maxime.gauthier@dgfip.finances.gouv.fr
   confirmed_at:       <%= Time.current %>
 

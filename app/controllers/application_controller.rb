@@ -46,6 +46,7 @@ class ApplicationController < ActionController::Base
 
   helper_method :turbo_frame_request_id
   helper_method :turbo_frame_request?
+  helper_method :current_organization
 
   def current_organization
     current_user&.organization
