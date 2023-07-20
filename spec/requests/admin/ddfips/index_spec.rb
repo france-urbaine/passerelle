@@ -2,9 +2,9 @@
 
 require "rails_helper"
 
-RSpec.describe "DDFIPsController#index" do
+RSpec.describe "Admin::DDFIPsController#index" do
   subject(:request) do
-    get "/ddfips", as:, headers:, params:, xhr:
+    get "/admin/ddfips", as:, headers:, params:, xhr:
   end
 
   let(:as)      { |e| e.metadata[:as] }
@@ -13,8 +13,11 @@ RSpec.describe "DDFIPsController#index" do
   let(:xhr)     { |e| e.metadata[:xhr] }
 
   let!(:ddfips) do
-    create_list(:ddfip, 3) +
-      create_list(:ddfip, 2, :discarded)
+    [
+      create(:ddfip),
+      create(:ddfip, :discarded),
+      create(:ddfip)
+    ]
   end
 
   describe "authorizations" do
@@ -28,6 +31,7 @@ RSpec.describe "DDFIPsController#index" do
     it_behaves_like "it denies access to DDFIP admin"
     it_behaves_like "it denies access to collectivity user"
     it_behaves_like "it denies access to collectivity admin"
+
     it_behaves_like "it allows access to super admin"
   end
 
@@ -41,10 +45,9 @@ RSpec.describe "DDFIPsController#index" do
 
       it "returns only kept users" do
         aggregate_failures do
-          expect(response.parsed_body).to include(CGI.escape_html(ddfips[0].name))
-          expect(response.parsed_body).to include(CGI.escape_html(ddfips[1].name))
-          expect(response.parsed_body).to include(CGI.escape_html(ddfips[2].name))
-          expect(response.parsed_body).to not_include(CGI.escape_html(ddfips[3].name))
+          expect(response.parsed_body).to     include(CGI.escape_html(ddfips[0].name))
+          expect(response.parsed_body).not_to include(CGI.escape_html(ddfips[1].name))
+          expect(response.parsed_body).to     include(CGI.escape_html(ddfips[2].name))
         end
       end
     end
@@ -60,7 +63,7 @@ RSpec.describe "DDFIPsController#index" do
 
       it { expect(response).to have_http_status(:success) }
       it { expect(response).to have_content_type(:html) }
-      it { expect(response).to have_partial_html.to match(%r{\A<li.*</li>\Z}) }
+      it { expect(response).to have_partial_html.to match(%r{\A<li.*>#{CGI.escape_html(ddfips[0].name)}</li>\Z}) }
     end
   end
 end

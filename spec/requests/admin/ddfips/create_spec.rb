@@ -2,9 +2,9 @@
 
 require "rails_helper"
 
-RSpec.describe "DDFIPsController#create" do
+RSpec.describe "Admin::DDFIPsController#create" do
   subject(:request) do
-    post "/ddfips", as:, headers:, params:
+    post "/admin/ddfips", as:, headers:, params:
   end
 
   let(:as)      { |e| e.metadata[:as] }
@@ -31,6 +31,7 @@ RSpec.describe "DDFIPsController#create" do
     it_behaves_like "it denies access to DDFIP admin"
     it_behaves_like "it denies access to collectivity user"
     it_behaves_like "it denies access to collectivity admin"
+
     it_behaves_like "it allows access to super admin"
   end
 
@@ -39,7 +40,7 @@ RSpec.describe "DDFIPsController#create" do
 
     context "with valid attributes" do
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/ddfips") }
+      it { expect(response).to redirect_to("/admin/ddfips") }
       it { expect { request }.to change(DDFIP, :count).by(1) }
 
       it "assigns expected attributes to the new record" do
@@ -78,7 +79,7 @@ RSpec.describe "DDFIPsController#create" do
 
     context "with referrer header", headers: { "Referer" => "http://example.com/other/path" } do
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/ddfips") }
+      it { expect(response).to redirect_to("/admin/ddfips") }
       it { expect(flash).to have_flash_notice }
     end
 

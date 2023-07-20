@@ -4,7 +4,7 @@ require "rails_helper"
 
 RSpec.describe "Admin::DDFIPs::CollectivitiesController#index" do
   subject(:request) do
-    get "/admin/ddfips/#{ddfip.id}/collectivites", as:, headers:, params:, xhr:
+    get "/admin/admin/ddfips/#{ddfip.id}/collectivites", as:, headers:, params:, xhr:
   end
 
   let(:as)      { |e| e.metadata[:as] }
@@ -64,7 +64,7 @@ RSpec.describe "Admin::DDFIPs::CollectivitiesController#index" do
     context "when requesting HTML" do
       context "when the DDFIP is accessible" do
         it { expect(response).to have_http_status(:see_other) }
-        it { expect(response).to redirect_to("/admin/ddfips/#{ddfip.id}") }
+        it { expect(response).to redirect_to("/admin/admin/ddfips/#{ddfip.id}") }
       end
 
       context "when the DDFIP is discarded" do

@@ -2,9 +2,9 @@
 
 require "rails_helper"
 
-RSpec.describe "DDFIPsController#destroy" do
+RSpec.describe "Admin::DDFIPsController#destroy" do
   subject(:request) do
-    delete "/ddfips/#{ddfip.id}", as:, headers:, params:
+    delete "/admin/ddfips/#{ddfip.id}", as:, headers:, params:
   end
 
   let(:as)      { |e| e.metadata[:as] }
@@ -24,9 +24,10 @@ RSpec.describe "DDFIPsController#destroy" do
     it_behaves_like "it denies access to DDFIP admin"
     it_behaves_like "it denies access to collectivity user"
     it_behaves_like "it denies access to collectivity admin"
+
     it_behaves_like "it allows access to super admin"
 
-    context "when the DDFIP is the organization of the current user" do
+    context "when the DDFIP is the current organization" do
       let(:ddfip) { current_user.organization }
 
       it_behaves_like "it denies access to DDFIP user"
@@ -39,7 +40,7 @@ RSpec.describe "DDFIPsController#destroy" do
 
     context "when the DDFIP is accessible" do
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/ddfips") }
+      it { expect(response).to redirect_to("/admin/ddfips") }
       it { expect { request }.to change(DDFIP.discarded, :count).by(1) }
 
       it "discards the ddfip" do
@@ -60,7 +61,7 @@ RSpec.describe "DDFIPsController#destroy" do
         expect(flash).to have_flash_actions.to include(
           label:  "Annuler",
           method: "patch",
-          url:    "/ddfips/#{ddfip.id}/undiscard",
+          url:    "/admin/ddfips/#{ddfip.id}/undiscard",
           params: {}
         )
       end
@@ -70,7 +71,7 @@ RSpec.describe "DDFIPsController#destroy" do
       before { ddfip.discard }
 
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/ddfips") }
+      it { expect(response).to redirect_to("/admin/ddfips") }
       it { expect(flash).to have_flash_notice }
       it { expect(flash).to have_flash_actions }
       it { expect { request }.not_to change(DDFIP.discarded, :count).from(1) }
@@ -86,7 +87,7 @@ RSpec.describe "DDFIPsController#destroy" do
 
     context "with referrer header", headers: { "Referer" => "http://example.com/other/path" } do
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/ddfips") }
+      it { expect(response).to redirect_to("/admin/ddfips") }
       it { expect(flash).to have_flash_notice }
       it { expect(flash).to have_flash_actions }
     end

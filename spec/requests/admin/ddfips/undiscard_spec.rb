@@ -2,20 +2,16 @@
 
 require "rails_helper"
 
-RSpec.describe "DDFIPsController#update" do
+RSpec.describe "Admin::DDFIPsController#undiscard" do
   subject(:request) do
-    patch "/ddfips/#{ddfip.id}", as:, headers:, params:
+    patch "/admin/ddfips/#{ddfip.id}/undiscard", as:, headers:, params:
   end
 
   let(:as)      { |e| e.metadata[:as] }
   let(:headers) { |e| e.metadata[:headers] }
-  let(:params)  { |e| e.metadata.fetch(:params, { ddfip: updated_attributes }) }
+  let(:params)  { |e| e.metadata[:params] }
 
-  let!(:ddfip) { create(:ddfip, name: "Ddfip de Pyrénée-Atlantique") }
-
-  let(:updated_attributes) do
-    { name: "DDFIP des Pyrénées-Atlantiques" }
-  end
+  let!(:ddfip) { create(:ddfip, :discarded) }
 
   describe "authorizations" do
     it_behaves_like "it requires to be signed in in HTML"
@@ -28,9 +24,10 @@ RSpec.describe "DDFIPsController#update" do
     it_behaves_like "it denies access to DDFIP admin"
     it_behaves_like "it denies access to collectivity user"
     it_behaves_like "it denies access to collectivity admin"
+
     it_behaves_like "it allows access to super admin"
 
-    context "when the DDFIP is the organization of the current user" do
+    context "when the DDFIP is the current organization" do
       let(:ddfip) { current_user.organization }
 
       it_behaves_like "it denies access to DDFIP user"
@@ -41,48 +38,32 @@ RSpec.describe "DDFIPsController#update" do
   describe "responses" do
     before { sign_in_as(:super_admin) }
 
-    context "with valid attributes" do
+    context "when the DDFIP is discarded" do
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/ddfips") }
+      it { expect(response).to redirect_to("/admin/ddfips") }
+      it { expect { request }.to change(DDFIP.discarded, :count).by(-1) }
 
-      it "updates the ddfip" do
+      it "undiscards the ddfip" do
         expect { request and ddfip.reload }
-          .to  change(ddfip, :updated_at)
-          .and change(ddfip, :name).to("DDFIP des Pyrénées-Atlantiques")
+          .to change(ddfip, :discarded_at).to(nil)
       end
 
       it "sets a flash notice" do
         expect(flash).to have_flash_notice.to eq(
-          type:  "success",
-          title: "Les modifications ont été enregistrées avec succés.",
+          type:  "cancel",
+          title: "La suppression de la DDFIP a été annulée.",
           delay: 3000
         )
       end
     end
 
-    context "with invalid attributes" do
-      let(:updated_attributes) { super().merge(name: "") }
+    context "when the DDFIP is not discarded" do
+      before { ddfip.undiscard }
 
-      it { expect(response).to have_http_status(:unprocessable_entity) }
-      it { expect(response).to have_content_type(:html) }
-      it { expect(response).to have_html_body }
-      it { expect { request and ddfip.reload }.not_to change(ddfip, :updated_at) }
-      it { expect { request and ddfip.reload }.not_to change(ddfip, :name) }
-    end
-
-    context "with empty parameters", params: {} do
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/ddfips") }
+      it { expect(response).to redirect_to("/admin/ddfips") }
       it { expect(flash).to have_flash_notice }
-      it { expect { request and ddfip.reload }.not_to change(ddfip, :updated_at) }
-    end
-
-    context "when the DDFIP is discarded" do
-      before { ddfip.discard }
-
-      it { expect(response).to have_http_status(:gone) }
-      it { expect(response).to have_content_type(:html) }
-      it { expect(response).to have_html_body }
+      it { expect { request and ddfip.reload }.not_to change(ddfip, :discarded_at).from(nil) }
     end
 
     context "when the DDFIP is missing" do
@@ -93,15 +74,13 @@ RSpec.describe "DDFIPsController#update" do
       it { expect(response).to have_html_body }
     end
 
-    context "with referrer header", headers: { "Referer" => "http://example.com/other/path" } do
+    context "with referrer header", headers: { "Referer" => "http://www.example.com/other/path" } do
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/ddfips") }
+      it { expect(response).to redirect_to("http://www.example.com/other/path") }
       it { expect(flash).to have_flash_notice }
     end
 
-    context "with redirect parameter" do
-      let(:params) { super().merge(redirect: "/other/path") }
-
+    context "with redirect parameter", params: { redirect: "/other/path" } do
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/other/path") }
       it { expect(flash).to have_flash_notice }

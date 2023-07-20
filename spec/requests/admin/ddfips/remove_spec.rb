@@ -2,9 +2,9 @@
 
 require "rails_helper"
 
-RSpec.describe "DDFIPsController#show" do
+RSpec.describe "Admin::DDFIPsController#remove" do
   subject(:request) do
-    get "/ddfips/#{ddfip.id}", as:, headers:, params:
+    get "/admin/ddfips/#{ddfip.id}/remove", as:, headers:, params:
   end
 
   let(:as)      { |e| e.metadata[:as] }
@@ -24,9 +24,10 @@ RSpec.describe "DDFIPsController#show" do
     it_behaves_like "it denies access to DDFIP admin"
     it_behaves_like "it denies access to collectivity user"
     it_behaves_like "it denies access to collectivity admin"
+
     it_behaves_like "it allows access to super admin"
 
-    context "when the DDFIP is the organization of the current user" do
+    context "when the DDFIP is the current organization" do
       let(:ddfip) { current_user.organization }
 
       it_behaves_like "it denies access to DDFIP user"
@@ -43,7 +44,7 @@ RSpec.describe "DDFIPsController#show" do
       it { expect(response).to have_html_body }
     end
 
-    context "when the DDFIP is discarded" do
+    context "when the DDFIP is already discarded" do
       before { ddfip.discard }
 
       it { expect(response).to have_http_status(:gone) }

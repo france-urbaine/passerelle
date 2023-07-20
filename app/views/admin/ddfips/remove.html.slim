@@ -3,8 +3,11 @@
     - modal.with_header do
       | Suppression de la DDFIP : #{@ddfip.name}
 
-    - modal.with_form(model: @ddfip, method: :delete) do
-      p Êtes-vous sûrs de vouloir supprimer cette DDFIP ?
+    - modal.with_form(url: admin_ddfip_path(@ddfip), method: :delete) do
+      - modal.with_hidden_field :redirect, @redirect_path
+
+      p
+        | Êtes-vous sûrs de vouloir supprimer cette DDFIP ?
       p
         | Par mesure de securité, les données de cette DDFIP seront archivées pendant 30 jours.
         br

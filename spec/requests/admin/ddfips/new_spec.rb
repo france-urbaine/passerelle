@@ -2,9 +2,9 @@
 
 require "rails_helper"
 
-RSpec.describe "DDFIPsController#new" do
+RSpec.describe "Admin::DDFIPsController#new" do
   subject(:request) do
-    get "/ddfips/new", as:, headers:, params:
+    get "/admin/ddfips/new", as:, headers:, params:
   end
 
   let(:as)      { |e| e.metadata[:as] }
@@ -22,6 +22,7 @@ RSpec.describe "DDFIPsController#new" do
     it_behaves_like "it denies access to DDFIP admin"
     it_behaves_like "it denies access to collectivity user"
     it_behaves_like "it denies access to collectivity admin"
+
     it_behaves_like "it allows access to super admin"
   end
 

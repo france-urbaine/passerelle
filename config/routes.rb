@@ -65,20 +65,20 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :publishers, concerns: %i[removable removable_collection], path: "/editeurs" do
+    resources :publishers, only: [], path: "/editeurs" do
       scope module: "publishers" do
         resources :users,          only: %i[index new create], concerns: %i[removable_collection], path: "/utilisateurs"
       end
     end
 
-    resources :collectivities, concerns: %i[removable removable_collection], path: "/collectivites" do
+    resources :collectivities, only: [], path: "/collectivites" do
       scope module: "collectivities" do
         resources :users,    only: %i[index new create], concerns: %i[removable_collection], path: "/utilisateurs"
         resources :offices,  only: %i[index], path: "/guichets"
       end
     end
 
-    resources :ddfips, concerns: %i[removable removable_collection] do
+    resources :ddfips, only: [] do
       scope module: "ddfips" do
         resources :offices,        only: %i[index new create], concerns: %i[removable_collection], path: "/guichets"
         resources :users,          only: %i[index new create], concerns: %i[removable_collection], path: "/utilisateurs"
@@ -138,7 +138,7 @@ Rails.application.routes.draw do
 
       resources :collectivities, concerns: %i[removable removable_collection], path: "/collectivites"
 
-      resources :ddfips do
+      resources :ddfips, concerns: %i[removable removable_collection] do
         scope module: "ddfips" do
           resources :collectivities, only: %i[index], path: "/collectivites"
         end
