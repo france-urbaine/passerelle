@@ -18,7 +18,27 @@ RSpec.describe TemplateStatus::Gone::Component, type: :component do
       expect(page).to have_selector(".card > .card__content > .card__body") do |node|
         aggregate_failures do
           expect(node).to have_text("Cet utilisateur est en cours de suppression.")
-          expect(node).to have_text("Cette suppression sera effective d'ici le 03/06/2023.")
+          expect(node).to have_text("Sa suppression sera effective d'ici le 03/06/2023.")
+        end
+      end
+    end
+  end
+
+  it "renders a status template for a record which have its parent discarded" do
+    publisher = build_stubbed(:publisher, :discarded)
+    user      = build_stubbed(:user, organization: publisher)
+
+    render_inline described_class.new(publisher, user)
+
+    aggregate_failures do
+      expect(page).to have_selector(".card > .card__content > .card__header") do |node|
+        expect(node).to have_selector("h1.card__title", text: "La page que vous recherchez n'est pas disponible.")
+      end
+
+      expect(page).to have_selector(".card > .card__content > .card__body") do |node|
+        aggregate_failures do
+          expect(node).to have_text("L'organisation de cet utilisateur est en cours de suppression.")
+          expect(node).to have_text("Sa suppression sera effective d'ici le 02/07/2023.")
         end
       end
     end
@@ -52,7 +72,7 @@ RSpec.describe TemplateStatus::Gone::Component, type: :component do
       expect(page).to have_selector(".modal > .modal__content > .modal__body") do |node|
         aggregate_failures do
           expect(node).to have_text("Cet utilisateur est en cours de suppression.")
-          expect(node).to have_text("Cette suppression sera effective d'ici le 03/06/2023.")
+          expect(node).to have_text("Sa suppression sera effective d'ici le 03/06/2023.")
         end
       end
 

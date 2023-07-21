@@ -2,20 +2,23 @@
 
 module ControllerDiscard
   class RecordDiscarded < StandardError
-    attr_reader :record
+    attr_reader :records
 
-    def initialize(record)
-      @record = record
-      super "Record is discarded: #{record}"
+    def initialize(records)
+      @records = records
+      super "Record is discarded: #{records.last.inspect}"
     end
   end
 
-  def only_kept!(record)
-    raise RecordDiscarded, record if record.discarded?
-  end
+  # You can pass one or several records to `only_kept!`
+  # The first discarded record and all the following (discarded or not)
+  # will be pushed into @gone_records
+  #
+  def only_kept!(*records, **)
+    return unless (first_index = records.index(&:discarded?))
 
-  def gone_if_discarded(record)
-    gone(record) if record.discarded?
+    gone_records = records[first_index..]
+    raise RecordDiscarded, gone_records
   end
 
   def undiscard_action(path, params = nil)

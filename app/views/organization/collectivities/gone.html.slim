@@ -1,8 +1,8 @@
-= template_gone_component(@gone_record, referrer: @referrer_path) do |template|
+= template_gone_component(@gone_records, referrer: @referrer_path) do |template|
   - template.with_breadcrumbs do |breadcrumbs|
     - breadcrumbs.with_path "Mon organisation"
     - breadcrumbs.with_path "Collectivités", organization_collectivities_path
-    - breadcrumbs.with_path @gone_record.name
+    - breadcrumbs.with_path @gone_records.last.name
 
-  - if allowed_to?(:undiscard, @gone_record)
-    - template.with_action "Annuler la suppression", undiscard_organization_collectivity_path(@gone_record), method: :patch, icon: "arrow-path"
+  - if allowed_to?(:undiscard, @gone_records.last)
+    - template.with_action "Annuler la suppression", undiscard_organization_collectivity_path(@gone_records.last), method: :patch, icon: "arrow-path"

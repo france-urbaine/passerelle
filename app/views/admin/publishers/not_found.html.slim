@@ -1,12 +1,6 @@
-= template_status_component(referrer: @referrer_path) do |template|
+= template_not_found_component(@model_not_found, referrer: @referrer_path) do |template|
   - template.with_breadcrumbs do |breadcrumbs|
     - breadcrumbs.with_path "Administration"
     - breadcrumbs.with_path "Éditeurs", admin_publishers_path
 
-  - template.with_header do
-    | La page que vous recherchez n'est pas disponible.
-
-  - template.with_body do
-    | L'editeur n'a pas été trouvé ou n'existe plus.
-
-  - template.with_action "Consulter les éditeurs", admin_publishers_path, icon: "search"
+  - template.with_action "Consulter les éditeurs existants", admin_publishers_path, icon: "search"

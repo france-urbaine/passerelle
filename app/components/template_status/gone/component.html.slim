@@ -13,25 +13,37 @@
     - if body?
       = body
     - else
-      - case @record
-      - when Report
-        | Ce signalement est en cours de suppression.
-      - when Package
-        | Ce paquet est en cours de suppression.
-      - when Publisher
+      - case @records
+      - in [Publisher, User]
+        | L'organisation de cet utilisateur est en cours de suppression.
+      - in [Publisher, Collectivity]
+        | L'éditeur de cette collectivité est en cours de suppression.
+      - in [Publisher]
         | Cet éditeur est en cours de suppression.
-      - when Collectivity
-        | Cette collectivité est en cours de suppression.
-      - when DDFIP
+      - in [DDFIP, User]
+        | L'organisation de cet utilisateur est en cours de suppression.
+      - in [DDFIP, Office]
+        | La DDFIP de ce guichet est en cours de suppression.
+      - in [DDFIP]
         | Cette DDFIP est en cours de suppression.
-      - when Office
+      - in [Collectivity, User]
+        | L'organisation de cet utilisateur est en cours de suppression.
+      - in [Collectivity]
+        | Cette collectivité est en cours de suppression.
+      - in [Office]
         | Ce guichet est en cours de suppression.
-      - when User
+      - in [User]
         | Cet utilisateur est en cours de suppression.
+      - in [Report]
+        | Ce signalement est en cours de suppression.
+      - in [Package]
+        | Ce paquet est en cours de suppression.
+      - else
+        | Cette ressource est en cours de suppression.
 
       - if deletion_delay
         br
-        | Cette suppression sera effective d'ici le #{localize(deletion_date)}.
+        | Sa suppression sera effective d'ici le #{localize(deletion_date)}.
 
   - if actions?
     - template.with_raw_actions do

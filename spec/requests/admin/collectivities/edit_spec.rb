@@ -59,6 +59,14 @@ RSpec.describe "Admin::CollectivitiesController#edit" do
       it { expect(response).to have_html_body }
     end
 
+    context "when the publisher is discarded" do
+      before { collectivity.publisher.discard }
+
+      it { expect(response).to have_http_status(:success) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
+    end
+
     context "when the collectivity is missing" do
       before { collectivity.destroy }
 

@@ -21,8 +21,7 @@ module Admin
         @office = Office.find(params[:office_id])
 
         authorize! @office, to: :show?
-        only_kept! @office
-        only_kept! @office.ddfip
+        only_kept! @office.ddfip, @office
       end
 
       def better_view_on_office

@@ -1,8 +1,12 @@
 - request.variant = :modal if modal
 
-= template_gone_component(gone_record, referrer:) do |template|
+= template_gone_component(gone_records, referrer:) do |template|
   - template.with_breadcrumbs do |breadcrumbs|
-    - breadcrumbs.with_path "Administration"
-    - breadcrumbs.with_path gone_record&.name if gone_record
+    - breadcrumbs.with_path "..."
 
-  - template.with_action "Annuler", icon: "arrow-path"
+    - gone_records.last.try do |record|
+      - breadcrumbs.with_path record.model_name.human
+      - breadcrumbs.with_path record.name
+
+  - if gone_records.any?
+    - template.with_action "Annuler", icon: "arrow-path"

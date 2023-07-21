@@ -1,8 +1,12 @@
-= template_gone_component(@gone_record, referrer: @referrer_path) do |template|
+= template_gone_component(@gone_records, referrer: @referrer_path) do |template|
   - template.with_breadcrumbs do |breadcrumbs|
     - breadcrumbs.with_path "Administration"
     - breadcrumbs.with_path "Collectivités", admin_collectivities_path
-    - breadcrumbs.with_path @gone_record.name
+    - breadcrumbs.with_path @gone_records.last.name
 
-  - if allowed_to?(:undiscard, @gone_record)
-    - template.with_action "Annuler la suppression", undiscard_admin_collectivity_path(@gone_record), method: :patch, icon: "arrow-path"
+  - if allowed_to?(:undiscard, @gone_records.first)
+    - case @gone_records.first
+    - when Collectivity
+      - template.with_action "Annuler la suppression de la collectivité", undiscard_admin_collectivity_path(@gone_records.first), method: :patch, icon: "arrow-path"
+    - when Publisher
+      - template.with_action "Annuler la suppression de l'éditeur", undiscard_admin_publisher_path(@gone_records.first), method: :patch, icon: "arrow-path"

@@ -3,18 +3,22 @@
 module TemplateStatus
   module Gone
     class Component < TemplateStatus::Component
-      def initialize(record = nil, **options)
-        @record = record
+      def initialize(*records, **options)
+        @records = records.flatten
         @options = options
         super()
       end
 
+      def discarded_record
+        @records.first
+      end
+
       def deletion_delay
-        @record && DeleteDiscardedRecordsJob::DELETION_DELAYS[@record.class.name]
+        discarded_record && DeleteDiscardedRecordsJob::DELETION_DELAYS[discarded_record.class.name]
       end
 
       def deletion_date
-        @record && deletion_delay&.after(@record.discarded_at.to_date)
+        discarded_record && deletion_delay&.after(discarded_record.discarded_at.to_date)
       end
     end
   end

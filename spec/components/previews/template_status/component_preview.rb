@@ -18,7 +18,7 @@ module TemplateStatus
     # @label 404 Not Found
     # @param modal toggle "View the template when requesting a modal"
     # @param referrer text "Referrer URL (rendered in background of a modal)"
-    # @param model select { choices: [user, publisher, collectivity, other] } "Model not found"
+    # @param model select { choices: [[Publisher, publisher], [Collectivity, collectivity], [User, user], other] } "Model not found"
     #
     def not_found(modal: false, referrer: DEFAULT_REFERRER, model: "user")
       model_not_found = model.classify
@@ -29,12 +29,14 @@ module TemplateStatus
     # @label 410 Gone
     # @param modal toggle "View the template when requesting a modal"
     # @param referrer text "Referrer URL (rendered in background of a modal)"
-    # @param model select { choices: [user, publisher, collectivity, other] } "Gone record"
+    # @param model select { choices: [[DDFIP, ddfip], [Office, office], ["[DDFIP, Office]", ddfip_office], [User, user], ["[Publisher, User]", publisher_user], other] } "Gone records"
     #
     def gone(modal: false, referrer: DEFAULT_REFERRER, model: "user")
-      gone_record = ::FactoryBot.build_stubbed(model, :discarded) unless model == "other"
+      gone_records = model.split("_").filter_map do |m|
+        ::FactoryBot.build_stubbed(m, :discarded) unless m == "other"
+      end
 
-      render_with_template(locals: { modal:, referrer:, gone_record: })
+      render_with_template(locals: { modal:, referrer:, gone_records: })
     end
   end
 end

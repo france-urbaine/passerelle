@@ -49,7 +49,7 @@ RSpec.describe "Admin::DDFIPsController#show" do
 
       it { expect(response).to have_http_status(:gone) }
       it { expect(response).to have_content_type(:html) }
-      it { expect(response).to have_html_body }
+      it { expect(response).to have_html_body.to include("Cette DDFIP est en cours de suppression.") }
     end
 
     context "when the DDFIP is missing" do
@@ -57,7 +57,7 @@ RSpec.describe "Admin::DDFIPsController#show" do
 
       it { expect(response).to have_http_status(:not_found) }
       it { expect(response).to have_content_type(:html) }
-      it { expect(response).to have_html_body }
+      it { expect(response).to have_html_body.to include("La DDFIP n'a pas été trouvée ou n'existe plus.") }
     end
   end
 end
