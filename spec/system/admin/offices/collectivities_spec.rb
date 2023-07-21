@@ -13,7 +13,7 @@ RSpec.describe "Office collectivities in admin" do
   before { sign_in(users(:marc)) }
 
   it "visits an collectivity page from the office page" do
-    visit office_path(pelp_bayonne)
+    visit admin_office_path(pelp_bayonne)
 
     # A table of all users should be present
     #
@@ -34,7 +34,7 @@ RSpec.describe "Office collectivities in admin" do
 
     # The browser should redirect back to the collectivity page
     #
-    expect(page).to have_current_path(office_path(pelp_bayonne))
+    expect(page).to have_current_path(admin_office_path(pelp_bayonne))
     expect(page).to have_selector("h1", text: "PELP de Bayonne")
   end
 
@@ -47,7 +47,7 @@ RSpec.describe "Office collectivities in admin" do
       create(:collectivity, territory: commune)
     end
 
-    visit office_path(pelp_bayonne)
+    visit admin_office_path(pelp_bayonne)
 
     expect(page).to     have_text("12 collectivités | Page 1 sur 2")
     expect(page).not_to have_button("Options d'affichage")

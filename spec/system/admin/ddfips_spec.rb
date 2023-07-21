@@ -71,7 +71,7 @@ RSpec.describe "DDFIPs in admin" do
 
     # The browser should visit the office page
     #
-    expect(page).to have_current_path(office_path(pelp_bayonne))
+    expect(page).to have_current_path(admin_office_path(pelp_bayonne))
     expect(page).to have_selector("h1", text: "PELP de Bayonne")
 
     go_back

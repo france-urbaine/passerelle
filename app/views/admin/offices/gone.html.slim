@@ -9,4 +9,4 @@
     - when DDFIP
       - template.with_action "Annuler la suppression de la DDFIP", undiscard_admin_ddfip_path(@gone_records.first), method: :patch, icon: "arrow-path"
     - when Office
-      -# template.with_action "Annuler la suppression du guichet", undiscard_admin_office_path(@gone_records.first), method: :patch, icon: "arrow-path"
+      - template.with_action "Annuler la suppression du guichet", undiscard_admin_office_path(@gone_records.first), method: :patch, icon: "arrow-path"

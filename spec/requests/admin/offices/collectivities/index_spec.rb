@@ -81,20 +81,20 @@ RSpec.describe "Admin::Offices::CollectivitiesController#index" do
         it { expect(response).to have_html_body.to include("Ce guichet est en cours de suppression.") }
       end
 
-      context "when the office is missing" do
-        before { office.destroy }
-
-        it { expect(response).to have_http_status(:not_found) }
-        it { expect(response).to have_content_type(:html) }
-        it { expect(response).to have_html_body.to include("Le guichet n'a pas été trouvé ou n'existe plus.") }
-      end
-
       context "when the DDFIP is discarded" do
         before { office.ddfip.discard }
 
         it { expect(response).to have_http_status(:gone) }
         it { expect(response).to have_content_type(:html) }
         it { expect(response).to have_html_body.to include("La DDFIP de ce guichet est en cours de suppression.") }
+      end
+
+      context "when the office is missing" do
+        before { office.destroy }
+
+        it { expect(response).to have_http_status(:not_found) }
+        it { expect(response).to have_content_type(:html) }
+        it { expect(response).to have_html_body.to include("Le guichet n'a pas été trouvé ou n'existe plus.") }
       end
     end
 
@@ -123,20 +123,20 @@ RSpec.describe "Admin::Offices::CollectivitiesController#index" do
         it { expect(response).to have_html_body.to include("Ce guichet est en cours de suppression.") }
       end
 
-      context "when the office is missing" do
-        before { office.destroy }
-
-        it { expect(response).to have_http_status(:not_found) }
-        it { expect(response).to have_content_type(:html) }
-        it { expect(response).to have_html_body.to include("Le guichet n'a pas été trouvé ou n'existe plus.") }
-      end
-
       context "when the DDFIP is discarded" do
         before { office.ddfip.discard }
 
         it { expect(response).to have_http_status(:gone) }
         it { expect(response).to have_content_type(:html) }
         it { expect(response).to have_html_body.to include("La DDFIP de ce guichet est en cours de suppression.") }
+      end
+
+      context "when the office is missing" do
+        before { office.destroy }
+
+        it { expect(response).to have_http_status(:not_found) }
+        it { expect(response).to have_content_type(:html) }
+        it { expect(response).to have_html_body.to include("Le guichet n'a pas été trouvé ou n'existe plus.") }
       end
     end
 

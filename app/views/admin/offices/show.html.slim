@@ -1,0 +1,111 @@
+= template_frame_component do
+  = breadcrumbs_component do |breadcrumbs|
+    - breadcrumbs.with_path "Administration"
+    - breadcrumbs.with_path "Guichets", admin_offices_path
+    - breadcrumbs.with_path @office.name
+
+    - if allowed_to?(:update?, @office)
+      - breadcrumbs.with_action "Modifier", edit_admin_office_path(@office), icon: "pencil-square", modal: true
+
+    - if allowed_to?(:destroy?, @office)
+      - breadcrumbs.with_action "Supprimer", remove_admin_office_path(@office), icon: "trash", modal: true, destructive: "discrete"
+
+  h2.subheader
+    = svg_icon("identification", "Nouvelle section")
+    | Description
+
+  .card
+    dl.description-list
+      .description-list__row
+        dt DDFIP
+        dd
+          = authorized_link_to @office.ddfip, scope: :admin do
+            = @office.ddfip.name
+
+      .description-list__row
+        dt Département
+        dd
+          = authorized_link_to @office.ddfip.departement do
+            = @office.ddfip.departement.qualified_name
+
+      .description-list__row
+        dt Compétences
+        dd= list(@office.competences) { |value| t(value, scope: "enum.competence") }
+
+      .description-list__row
+        dt Utilisateurs
+        dd= display_count(@office.users_count, "utilisateur") if @office.users_count.positive?
+
+      .description-list__row
+        dt Communes assignées
+        dd= display_count(@office.communes_count, "commune") if @office.communes_count.positive?
+
+      .description-list__row
+        dt Signalements
+        dd
+          - if @office.reports_count.positive?
+            = display_count(@office.reports_count, "reçu")
+            = " / "
+            = display_count(@office.reports_approved_count, "approuvé")
+            = " / "
+            = display_count(@office.reports_rejected_count, "rejeté")
+
+  - if allowed_to?(:index?, User, with: Offices::UserPolicy)
+    .content__separator
+
+    .subheader-bar
+      h2.subheader
+        = svg_icon("rectangle-stack", "Nouvelle section")
+        | Utilisateurs
+
+      .subheader-bar__actions
+        - if allowed_to?(:create?, User, with: Offices::UserPolicy)
+          .subheader-bar__action= button_component "Inviter un utilisateur", new_office_user_path(@office), icon: "plus", modal: true
+
+        - if allowed_to?(:manage?, User, with: Offices::UserPolicy)
+          .subheader-bar__action= button_component "Gérer les utilisateurs", edit_all_office_users_path(@office), icon: "squares-plus", modal: true
+
+    - if @office.users_count.zero?
+      = card_component(content_class: "card__content--empty")
+        | Aucun utilisateur assigné à ce guichet.
+
+    - else
+      = turbo_frame_tag "datatable-users", src: office_users_path(@office) do
+        = datatable_skeleton_component(rows: [@office.users_count, ControllerCollections::NESTED_ITEMS].min) do |skeleton|
+          - skeleton.with_search
+          - skeleton.with_pagination
+
+  - if allowed_to?(:index?, Commune, with: Offices::CommunePolicy)
+    .content__separator
+
+    .subheader-bar
+      h2.subheader
+        = svg_icon("rectangle-stack", "Nouvelle section")
+        | Communes assignées
+
+      .subheader-bar__actions
+        - if allowed_to?(:manage?, Commune, with: Offices::CommunePolicy)
+          .subheader-bar__action= button_component "Gérer les communes", edit_all_office_communes_path(@office), icon: "squares-plus", modal: true
+
+    - if @office.communes_count.zero?
+      = card_component(content_class: "card__content--empty")
+        | Aucune commune assignée à ce guichet.
+
+    - else
+      = turbo_frame_tag "datatable-communes", src: office_communes_path(@office) do
+        = datatable_skeleton_component(rows: [@office.communes_count, ControllerCollections::NESTED_ITEMS].min) do |skeleton|
+          - skeleton.with_search
+          - skeleton.with_pagination
+
+  - if allowed_to?(:index?, Collectivity)
+    .content__separator
+
+    .subheader-bar
+      h2.subheader
+        = svg_icon("rectangle-stack", "Nouvelle section")
+        | Collectivités correspondantes
+
+    = turbo_frame_tag "datatable-collectivities", src: admin_office_collectivities_path(@office) do
+      = datatable_skeleton_component(rows: 0) do |skeleton|
+        - skeleton.with_search
+        - skeleton.with_pagination

@@ -8,7 +8,7 @@
   - modal.with_form(model: @collectivity, url: form_url) do |form|
     - modal.with_hidden_field :redirect, @redirection_path
 
-    - if @scope == :admin && @publisher.nil?
+    - if allowed_to_assign_publisher?
       = form.block :publisher_id do
         = form.label :publisher_id, "Éditeur"
         = form.select :publisher_id, publisher_id_choice, publisher_id_options

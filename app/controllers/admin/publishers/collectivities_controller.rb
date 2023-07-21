@@ -20,7 +20,7 @@ module Admin
 
       def create
         @collectivity = build_collectivity
-        service = Collectivities::CreateService.new(@collectivity, collectivity_params, publisher: @publisher)
+        service = ::Collectivities::CreateService.new(@collectivity, collectivity_params, publisher: @publisher)
         result  = service.save
 
         respond_with result,

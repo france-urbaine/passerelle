@@ -52,7 +52,7 @@
             = " / "
             = display_count(@ddfip.reports_rejected_count, "rejeté")
 
-  - if allowed_to?(:index?, Office, with: DDFIPs::OfficePolicy)
+  - if allowed_to?(:index?, Office)
     .content__separator
 
     .subheader-bar
@@ -61,16 +61,16 @@
         | Guichets
 
       .subheader-bar__actions
-        - if allowed_to?(:create?, Office, with: DDFIPs::OfficePolicy)
+        - if allowed_to?(:create?, Office)
           .subheader-bar__action
-            = button_component "Ajouter un guichet", new_ddfip_office_path(@ddfip), icon: "plus", modal: true
+            = button_component "Ajouter un guichet", new_admin_ddfip_office_path(@ddfip), icon: "plus", modal: true
 
     - if @ddfip.offices_count.zero?
       = card_component(content_class: "card__content--empty")
         | Aucun guichet enregistré.
 
     - else
-      = turbo_frame_tag "datatable-offices", src: ddfip_offices_path(@ddfip) do
+      = turbo_frame_tag "datatable-offices", src: admin_ddfip_offices_path(@ddfip) do
         = datatable_skeleton_component(rows: [@ddfip.offices_count, 5].min) do |skeleton|
           - skeleton.with_search
           - skeleton.with_pagination
@@ -98,7 +98,7 @@
           - skeleton.with_search
           - skeleton.with_pagination
 
-  - if allowed_to?(:index?, Collectivity, with: Admin::CollectivityPolicy)
+  - if allowed_to?(:index?, Collectivity)
     .content__separator
 
     h2.subheader

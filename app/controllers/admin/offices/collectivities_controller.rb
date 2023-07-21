@@ -31,8 +31,8 @@ module Admin
         redirect_to admin_office_path(@office), status: :see_other
       end
 
-      def authorize_collectivities_scope(as: :default)
-        authorized(@office.on_territory_collectivities, as:).strict_loading
+      def authorize_collectivities_scope
+        authorized(@office.on_territory_collectivities).strict_loading
       end
     end
   end

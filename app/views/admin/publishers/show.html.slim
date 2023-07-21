@@ -73,7 +73,7 @@
           - skeleton.with_search
           - skeleton.with_pagination
 
-  - if allowed_to?(:index?, Collectivity, with: Admin::CollectivityPolicy)
+  - if allowed_to?(:index?, Collectivity)
     .content__separator
 
     .subheader-bar
@@ -82,7 +82,7 @@
         | Collectivités
 
       .subheader-bar__actions
-        - if allowed_to?(:create?, Collectivity, with: Admin::CollectivityPolicy)
+        - if allowed_to?(:create?, Collectivity)
           .subheader-bar__action
             = button_component "Ajouter une collectivité", new_admin_publisher_collectivity_path(@publisher), icon: "plus", modal: true
 

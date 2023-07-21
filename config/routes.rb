@@ -74,19 +74,16 @@ Rails.application.routes.draw do
     resources :collectivities, only: [], path: "/collectivites" do
       scope module: "collectivities" do
         resources :users,    only: %i[index new create], concerns: %i[removable_collection], path: "/utilisateurs"
-        resources :offices,  only: %i[index], path: "/guichets"
       end
     end
 
     resources :ddfips, only: [] do
       scope module: "ddfips" do
-        resources :offices,        only: %i[index new create], concerns: %i[removable_collection], path: "/guichets"
         resources :users,          only: %i[index new create], concerns: %i[removable_collection], path: "/utilisateurs"
-        resources :collectivities, only: %i[index], path: "/collectivites"
       end
     end
 
-    resources :offices, concerns: %i[removable removable_collection], path: "/guichets" do
+    resources :offices, only: [], path: "/guichets" do
       scope module: "offices" do
         resources :communes, only: %i[index destroy] do
           get    :remove,      on: :member
@@ -103,8 +100,6 @@ Rails.application.routes.draw do
 
           concerns :updatable_collection
         end
-
-        resources :collectivities, only: %i[index], path: "/collectivites"
       end
     end
 
@@ -125,6 +120,7 @@ Rails.application.routes.draw do
     namespace :organization, path: "/organisation" do
       resource  :settings,       only: %i[show update], path: "/parametres"
       resources :collectivities, concerns: %i[removable removable_collection], path: "/collectivites"
+      resources :offices,        concerns: %i[removable removable_collection], path: "/guichets"
     end
 
     # Admin stuff
@@ -136,15 +132,20 @@ Rails.application.routes.draw do
         end
       end
 
-      resources :collectivities, concerns: %i[removable removable_collection], path: "/collectivites"
+      resources :collectivities, concerns: %i[removable removable_collection], path: "/collectivites" do
+        scope module: "collectivities" do
+          resources :offices, only: %i[index], path: "/guichets"
+        end
+      end
 
       resources :ddfips, concerns: %i[removable removable_collection] do
         scope module: "ddfips" do
+          resources :offices,        only: %i[index new create], concerns: %i[removable_collection], path: "/guichets"
           resources :collectivities, only: %i[index], path: "/collectivites"
         end
       end
 
-      resources :offices, path: "/guichets" do
+      resources :offices, concerns: %i[removable removable_collection], path: "/guichets" do
         scope module: "offices" do
           resources :collectivities, only: %i[index], path: "/collectivites"
         end

@@ -82,14 +82,14 @@
           - skeleton.with_search
           - skeleton.with_pagination
 
-  - if allowed_to?(:index?, Office, with: Collectivities::OfficePolicy)
+  - if allowed_to?(:index?, Office)
     .content__separator
 
     h2.subheader
       = svg_icon("rectangle-stack", "Nouvelle section")
       | Guichets correspondants
 
-    = turbo_frame_tag "datatable-offices", src: collectivity_offices_path(@collectivity) do
+    = turbo_frame_tag "datatable-offices", src: admin_collectivity_offices_path(@collectivity) do
       = datatable_skeleton_component(rows: 0) do |skeleton|
         - skeleton.with_search
         - skeleton.with_pagination

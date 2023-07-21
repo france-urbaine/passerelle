@@ -2,7 +2,7 @@
 
 require "system_helper"
 
-RSpec.describe "DDFIP collectivities in admin" do
+RSpec.describe "Collectivities assigned to a DDFIP in admin" do
   fixtures :regions, :departements, :epcis, :communes
   fixtures :publishers, :collectivities, :users
   fixtures :ddfips
@@ -13,7 +13,7 @@ RSpec.describe "DDFIP collectivities in admin" do
   before { sign_in(users(:marc)) }
 
   it "visits an collectivity page from the DDFIP page" do
-    visit ddfip_path(ddfip64)
+    visit admin_ddfip_path(ddfip64)
 
     # A table of all users should be present
     #
@@ -32,7 +32,7 @@ RSpec.describe "DDFIP collectivities in admin" do
 
     # The browser should redirect back to the collectivity page
     #
-    expect(page).to have_current_path(ddfip_path(ddfip64))
+    expect(page).to have_current_path(admin_ddfip_path(ddfip64))
     expect(page).to have_selector("h1", text: "DDFIP des Pyrénées-Atlantiques")
   end
 
@@ -43,7 +43,7 @@ RSpec.describe "DDFIP collectivities in admin" do
       create(:collectivity, territory: create(:commune, departement: ddfip64.departement))
     end
 
-    visit ddfip_path(ddfip64)
+    visit admin_ddfip_path(ddfip64)
 
     expect(page).to     have_text("12 collectivités | Page 1 sur 2")
     expect(page).not_to have_button("Options d'affichage")

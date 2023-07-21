@@ -24,6 +24,10 @@ module Views
         polymorphic_path(url_args.compact)
       end
 
+      def allowed_to_assign_publisher?
+        @scope == :admin && @publisher.nil?
+      end
+
       def publisher_id_choice
         Publisher.pluck(:name, :id)
       end

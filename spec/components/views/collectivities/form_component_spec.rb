@@ -85,7 +85,7 @@ RSpec.describe Views::Collectivities::FormComponent, type: :component do
     end
   end
 
-  it "renders a form in a modal to update an existing collectivity of the current organization" do
+  it "renders a form in a modal to update an existing collectivity belonging to the current organization" do
     publisher = publishers.sample
     collectivity = build_stubbed(:collectivity, :epci, publisher: publisher)
 
