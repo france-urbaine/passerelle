@@ -4,7 +4,7 @@ require "rails_helper"
 
 RSpec.describe "Admin::DDFIPs::CollectivitiesController#index" do
   subject(:request) do
-    get "/admin/admin/ddfips/#{ddfip.id}/collectivites", as:, headers:, params:, xhr:
+    get "/admin/ddfips/#{ddfip.id}/collectivites", as:, headers:, params:, xhr:
   end
 
   let(:as)      { |e| e.metadata[:as] }
@@ -64,7 +64,7 @@ RSpec.describe "Admin::DDFIPs::CollectivitiesController#index" do
     context "when requesting HTML" do
       context "when the DDFIP is accessible" do
         it { expect(response).to have_http_status(:see_other) }
-        it { expect(response).to redirect_to("/admin/admin/ddfips/#{ddfip.id}") }
+        it { expect(response).to redirect_to("/admin/ddfips/#{ddfip.id}") }
       end
 
       context "when the DDFIP is discarded" do
@@ -72,7 +72,7 @@ RSpec.describe "Admin::DDFIPs::CollectivitiesController#index" do
 
         it { expect(response).to have_http_status(:gone) }
         it { expect(response).to have_content_type(:html) }
-        it { expect(response).to have_html_body }
+        it { expect(response).to have_html_body.to include("Cette DDFIP est en cours de suppression.") }
       end
 
       context "when the DDFIP is missing" do
@@ -80,7 +80,7 @@ RSpec.describe "Admin::DDFIPs::CollectivitiesController#index" do
 
         it { expect(response).to have_http_status(:not_found) }
         it { expect(response).to have_content_type(:html) }
-        it { expect(response).to have_html_body }
+        it { expect(response).to have_html_body.to include("La DDFIP n'a pas été trouvée ou n'existe plus.") }
       end
     end
 
@@ -105,7 +105,7 @@ RSpec.describe "Admin::DDFIPs::CollectivitiesController#index" do
 
         it { expect(response).to have_http_status(:gone) }
         it { expect(response).to have_content_type(:html) }
-        it { expect(response).to have_html_body }
+        it { expect(response).to have_html_body.to include("Cette DDFIP est en cours de suppression.") }
       end
 
       context "when the DDFIP is missing" do
@@ -113,7 +113,7 @@ RSpec.describe "Admin::DDFIPs::CollectivitiesController#index" do
 
         it { expect(response).to have_http_status(:not_found) }
         it { expect(response).to have_content_type(:html) }
-        it { expect(response).to have_html_body }
+        it { expect(response).to have_html_body.to include("La DDFIP n'a pas été trouvée ou n'existe plus.") }
       end
     end
 
