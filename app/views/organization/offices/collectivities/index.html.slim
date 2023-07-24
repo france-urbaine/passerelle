@@ -1,8 +1,8 @@
 = template_frame_component do
   = breadcrumbs_component do |breadcrumbs|
-    - breadcrumbs.with_path "Administration"
-    - breadcrumbs.with_path "DDFIP", admin_ddfips_path
-    - breadcrumbs.with_path @ddfip.name, admin_ddfip_path(@ddfip)
+    - breadcrumbs.with_path "Mon organisation"
+    - breadcrumbs.with_path "Guichets", organization_offices_path
+    - breadcrumbs.with_path @office.name, organization_office_path(@office)
     - breadcrumbs.with_path "Collectivités"
 
   = datatable_component(@collectivities) do |datatable|
@@ -17,7 +17,6 @@
     - datatable.with_column(:contact_email) { "Adresse mail de contact" }
     - datatable.with_column(:contact_phone) { "Numéro de téléphone" }
 
-    - datatable.with_column(:users_count,                numeric: true) { "Utilisateurs" }
     - datatable.with_column(:packages_transmitted_count, numeric: true) { "Paquets" }
     - datatable.with_column(:reports_transmitted_count,  numeric: true) { "Signalements" }
     - datatable.with_column(:reports_approved_count,     numeric: true) { "Approuvés" }
@@ -33,21 +32,20 @@
       - row.with_checkbox "Sélectionner cette collectivité", described_by: :name, disabled: true
 
       - if allowed_to?(:update?, collectivity)
-        - row.with_action "Modifier cette collectivité", edit_admin_collectivity_path(collectivity), icon: "pencil-square", modal: true
+        - row.with_action "Modifier cette collectivité", edit_organization_collectivity_path(collectivity), icon: "pencil-square", modal: true
 
       - if allowed_to?(:destroy?, collectivity)
-        - row.with_action "Supprimer cette collectivité", remove_admin_collectivity_path(collectivity), icon: "trash", modal: true
+        - row.with_action "Supprimer cette collectivité", remove_organization_collectivity_path(collectivity), icon: "trash", modal: true
 
       - row.with_column(:name) do
-        = authorized_link_to collectivity, scope: :admin do
+        = authorized_link_to collectivity, scope: :organization do
           = collectivity.name
 
       - row.with_column(:siren) do
         = display_siren(collectivity.siren)
 
       - row.with_column(:publisher) do
-        = authorized_link_to collectivity.publisher, scope: :admin do
-          = collectivity.publisher.name
+        = collectivity.publisher.name
 
       - row.with_column(:contact) do
         = "#{collectivity.contact_first_name} #{collectivity.contact_last_name}".strip.presence
@@ -57,9 +55,6 @@
 
       - row.with_column(:contact_phone) do
         = phone_to(collectivity.contact_phone) if collectivity.contact_phone?
-
-      - row.with_column(:users_count) do
-        = number_with_delimiter(collectivity.users_count) if collectivity.users_count.positive?
 
       - row.with_column(:packages_transmitted_count) do
         = number_with_delimiter(collectivity.packages_transmitted_count) if collectivity.packages_transmitted_count.positive?

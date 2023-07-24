@@ -86,15 +86,3 @@
         = datatable_skeleton_component(rows: [@collectivity.users_count, 5].min) do |skeleton|
           - skeleton.with_search
           - skeleton.with_pagination
-
-  - if allowed_to?(:index?, Office, with: Collectivities::OfficePolicy)
-    .content__separator
-
-    h2.subheader
-      = svg_icon("rectangle-stack", "Nouvelle section")
-      | Guichets correspondants
-
-    = turbo_frame_tag "datatable-offices", src: collectivity_offices_path(@collectivity) do
-      = datatable_skeleton_component(rows: 0) do |skeleton|
-        - skeleton.with_search
-        - skeleton.with_pagination

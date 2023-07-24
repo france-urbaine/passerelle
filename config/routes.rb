@@ -118,9 +118,19 @@ Rails.application.routes.draw do
     # Organization stuff
     # ----------------------------------------------------------------------------
     namespace :organization, path: "/organisation" do
-      resource  :settings,       only: %i[show update], path: "/parametres"
-      resources :collectivities, concerns: %i[removable removable_collection], path: "/collectivites"
-      resources :offices,        concerns: %i[removable removable_collection], path: "/guichets"
+      resource  :settings, only: %i[show update], path: "/parametres"
+
+      resources :collectivities, concerns: %i[removable removable_collection], path: "/collectivites" do
+        scope module: "collectivities" do
+          resources :offices, only: %i[index], path: "/guichets"
+        end
+      end
+
+      resources :offices, concerns: %i[removable removable_collection], path: "/guichets" do
+        scope module: "offices" do
+          resources :collectivities, only: %i[index], path: "/collectivites"
+        end
+      end
     end
 
     # Admin stuff

@@ -39,30 +39,13 @@ RSpec.describe "Collectivities managed by current organization" do
   end
 
   it "visits links on a collectivity page & comes back" do
-    pending "Failed due to refactoring"
-
     visit organization_collectivity_path(pays_basque)
 
     # On the collectivity page, we expect:
-    # - a link to the publisher
     # - a link to the EPCI
     #
     expect(page).to have_selector("h1", text: "CA du Pays Basque")
     expect(page).to have_link("CA du Pays Basque (EPCI)")
-
-    click_on "Fiscalité & Territoire"
-
-    # The browser should visit the publisher page
-    #
-    expect(page).to have_current_path(publisher_path(publisher))
-    expect(page).to have_selector("h1", text: "Fiscalité & Territoire")
-
-    go_back
-
-    # The browser should redirect back to the collectivity page
-    #
-    expect(page).to have_current_path(organization_collectivity_path(pays_basque))
-    expect(page).to have_selector("h1", text: "CA du Pays Basque")
 
     click_on "CA du Pays Basque (EPCI)"
 

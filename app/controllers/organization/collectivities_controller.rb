@@ -8,6 +8,8 @@ module Organization
     def index
       @collectivities = authorize_collectivities_scope
       @collectivities, @pagy = index_collection(@collectivities)
+
+      @collectivities = @collectivities.preload(:publisher) unless current_organization.is_a?(Publisher)
     end
 
     def show
@@ -99,7 +101,13 @@ module Organization
     private
 
     def authorize_collectivities_scope(as: :default)
-      authorized(current_organization.collectivities, as:).strict_loading
+      scope =
+        case current_organization
+        when Publisher then current_organization.collectivities
+        when DDFIP     then current_organization.on_territory_collectivities
+        end
+
+      authorized(scope, as:).strict_loading
     end
 
     def build_collectivity(...)

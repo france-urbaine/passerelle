@@ -2,9 +2,9 @@
 
 require "rails_helper"
 
-RSpec.describe "Organization::CollectivitiesController#index" do
+RSpec.describe "Organization::OfficesController#index" do
   subject(:request) do
-    get "/organisation/collectivites", as:, headers:, params:, xhr:
+    get "/organisation/guichets", as:, headers:, params:, xhr:
   end
 
   let(:as)      { |e| e.metadata[:as] }
@@ -12,13 +12,13 @@ RSpec.describe "Organization::CollectivitiesController#index" do
   let(:params)  { |e| e.metadata[:params] }
   let(:xhr)     { |e| e.metadata[:xhr] }
 
-  let!(:publisher) { create(:publisher) }
-  let!(:collectivities) do
+  let!(:ddfip) { create(:ddfip) }
+  let!(:offices) do
     [
-      create(:collectivity, publisher: publisher),
-      create(:collectivity, :discarded, publisher: publisher),
-      create(:collectivity, publisher: publisher),
-      create(:collectivity)
+      create(:office, ddfip: ddfip),
+      create(:office, :discarded, ddfip: ddfip),
+      create(:office, ddfip: ddfip),
+      create(:office)
     ]
   end
 
@@ -29,30 +29,30 @@ RSpec.describe "Organization::CollectivitiesController#index" do
 
     it_behaves_like "it denies access to DDFIP user"
     it_behaves_like "it denies access to DDFIP super admin"
+    it_behaves_like "it denies access to publisher user"
+    it_behaves_like "it denies access to publisher admin"
+    it_behaves_like "it denies access to publisher super admin"
     it_behaves_like "it denies access to collectivity user"
     it_behaves_like "it denies access to collectivity admin"
     it_behaves_like "it denies access to collectivity super admin"
 
     it_behaves_like "it allows access to DDFIP admin"
-    it_behaves_like "it allows access to publisher user"
-    it_behaves_like "it allows access to publisher admin"
-    it_behaves_like "it allows access to publisher super admin"
   end
 
   describe "responses" do
-    before { sign_in_as(:publisher, organization: publisher) }
+    before { sign_in_as(:organization_admin, organization: ddfip) }
 
     context "when requesting HTML" do
       it { expect(response).to have_http_status(:success) }
       it { expect(response).to have_content_type(:html) }
       it { expect(response).to have_html_body }
 
-      it "returns only kept collectivities" do
+      it "returns only kept offices" do
         aggregate_failures do
-          expect(response.parsed_body).to     include(CGI.escape_html(collectivities[0].name))
-          expect(response.parsed_body).not_to include(CGI.escape_html(collectivities[1].name))
-          expect(response.parsed_body).to     include(CGI.escape_html(collectivities[2].name))
-          expect(response.parsed_body).not_to include(CGI.escape_html(collectivities[3].name))
+          expect(response.parsed_body).to     include(CGI.escape_html(offices[0].name))
+          expect(response.parsed_body).not_to include(CGI.escape_html(offices[1].name))
+          expect(response.parsed_body).to     include(CGI.escape_html(offices[2].name))
+          expect(response.parsed_body).not_to include(CGI.escape_html(offices[3].name))
         end
       end
     end

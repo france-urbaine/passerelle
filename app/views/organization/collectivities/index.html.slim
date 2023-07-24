@@ -14,16 +14,31 @@
       - if allowed_to?(:destroy_all?, Collectivity)
         - selection.with_action "Tout supprimer", remove_all_organization_collectivities_path, modal: true
 
-    - datatable.with_column(:name,  sort: true) { "Collectivité" }
-    - datatable.with_column(:siren, sort: true) { "SIREN" }
+    - case current_organization
+    - when Publisher
+      - datatable.with_column(:name,  sort: true) { "Collectivité" }
+      - datatable.with_column(:siren, sort: true) { "SIREN" }
 
-    - datatable.with_column(:contact)       { "Contact" }
-    - datatable.with_column(:contact_email) { "Adresse mail de contact" }
-    - datatable.with_column(:contact_phone) { "Numéro de téléphone" }
+      - datatable.with_column(:contact)       { "Contact" }
+      - datatable.with_column(:contact_email) { "Adresse mail de contact" }
+      - datatable.with_column(:contact_phone) { "Numéro de téléphone" }
 
-    - datatable.with_column(:users_count,                numeric: true) { "Utilisateurs" }
-    - datatable.with_column(:packages_transmitted_count, numeric: true) { "Paquets transmis" }
-    - datatable.with_column(:reports_transmitted_count,  numeric: true) { "Signalements transmis" }
+      - datatable.with_column(:users_count,                numeric: true) { "Utilisateurs" }
+      - datatable.with_column(:packages_transmitted_count, numeric: true) { "Paquets transmis" }
+      - datatable.with_column(:reports_transmitted_count,  numeric: true) { "Signalements transmis" }
+    - when DDFIP
+      - datatable.with_column(:name,      sort: true) { "Collectivité" }
+      - datatable.with_column(:siren,     sort: true) { "SIREN" }
+      - datatable.with_column(:publisher, sort: true) { "Éditeur" }
+
+      - datatable.with_column(:contact)       { "Contact" }
+      - datatable.with_column(:contact_email) { "Adresse mail de contact" }
+      - datatable.with_column(:contact_phone) { "Numéro de téléphone" }
+
+      - datatable.with_column(:packages_transmitted_count, numeric: true) { "Paquets" }
+      - datatable.with_column(:reports_transmitted_count,  numeric: true) { "Signalements" }
+      - datatable.with_column(:reports_approved_count,     numeric: true) { "Approuvés" }
+      - datatable.with_column(:reports_rejected_count,     numeric: true) { "Rejetés" }
 
     - datatable.with_empty_message do
       - if params[:search]
@@ -47,8 +62,11 @@
       - row.with_column(:siren) do
         = display_siren(collectivity.siren)
 
+      - row.with_column(:publisher) do
+        = collectivity.publisher.name
+
       - row.with_column(:contact) do
-         = "#{collectivity.contact_first_name} #{collectivity.contact_last_name}".strip.presence
+        = "#{collectivity.contact_first_name} #{collectivity.contact_last_name}".strip.presence
 
       - row.with_column(:contact_email) do
         = mail_to(collectivity.contact_email) if collectivity.contact_email?

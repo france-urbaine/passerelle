@@ -3,6 +3,20 @@
 require "rails_helper"
 
 RSpec.describe Organization::CollectivityPolicy do
+  describe_rule :index? do
+    let(:record) { Collectivity }
+
+    it_behaves_like("when current user is a DDFIP super admin")        { failed }
+    it_behaves_like("when current user is a DDFIP admin")              { succeed }
+    it_behaves_like("when current user is a DDFIP user")               { failed }
+    it_behaves_like("when current user is a publisher super admin")    { succeed }
+    it_behaves_like("when current user is a publisher admin")          { succeed }
+    it_behaves_like("when current user is a publisher user")           { succeed }
+    it_behaves_like("when current user is a collectivity super admin") { failed }
+    it_behaves_like("when current user is a collectivity admin")       { failed }
+    it_behaves_like("when current user is a collectivity user")        { failed }
+  end
+
   describe_rule :manage? do
     context "without record" do
       let(:record) { Collectivity }
@@ -49,7 +63,6 @@ RSpec.describe Organization::CollectivityPolicy do
     end
   end
 
-  it { expect(:index?).to         be_an_alias_of(policy, :manage?) }
   it { expect(:show?).to          be_an_alias_of(policy, :manage?) }
   it { expect(:new?).to           be_an_alias_of(policy, :manage?) }
   it { expect(:create?).to        be_an_alias_of(policy, :manage?) }
@@ -108,8 +121,40 @@ RSpec.describe Organization::CollectivityPolicy do
       end
     end
 
+    it_behaves_like "when current user is a DDFIP admin" do
+      it "scopes all kept collectivities on its territory" do
+        expect {
+          scope.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "collectivities".*
+          FROM   "collectivities"
+          WHERE  "collectivities"."discarded_at" IS NULL
+            AND (
+                  "collectivities"."territory_type" = 'Commune'
+              AND "collectivities"."territory_id" IN (
+                    SELECT "communes"."id"
+                    FROM   "communes"
+                    WHERE  "communes"."code_departement" = '#{current_organization.code_departement}'
+              )
+              OR  "collectivities"."territory_type" = 'EPCI'
+              AND "collectivities"."territory_id" IN (
+                    SELECT     "epcis"."id"
+                    FROM       "epcis"
+                    INNER JOIN "communes" ON "communes"."siren_epci" = "epcis"."siren"
+                    WHERE      "communes"."code_departement" = '#{current_organization.code_departement}'
+              )
+              OR  "collectivities"."territory_type" = 'Departement'
+              AND "collectivities"."territory_id" IN (
+                    SELECT "departements"."id"
+                    FROM   "departements"
+                    WHERE  "departements"."code_departement" = '#{current_organization.code_departement}'
+              )
+            )
+        SQL
+      end
+    end
+
     it_behaves_like("when current user is a DDFIP super admin")        { it { is_expected.to be_a_null_relation } }
-    it_behaves_like("when current user is a DDFIP admin")              { it { is_expected.to be_a_null_relation } }
     it_behaves_like("when current user is a DDFIP user")               { it { is_expected.to be_a_null_relation } }
     it_behaves_like("when current user is a collectivity super admin") { it { is_expected.to be_a_null_relation } }
     it_behaves_like("when current user is a collectivity admin")       { it { is_expected.to be_a_null_relation } }
