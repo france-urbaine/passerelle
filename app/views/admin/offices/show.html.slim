@@ -50,7 +50,7 @@
             = " / "
             = display_count(@office.reports_rejected_count, "rejeté")
 
-  - if allowed_to?(:index?, User, with: Offices::UserPolicy)
+  - if allowed_to?(:index?, User)
     .content__separator
 
     .subheader-bar
@@ -59,18 +59,18 @@
         | Utilisateurs
 
       .subheader-bar__actions
-        - if allowed_to?(:create?, User, with: Offices::UserPolicy)
-          .subheader-bar__action= button_component "Inviter un utilisateur", new_office_user_path(@office), icon: "plus", modal: true
+        - if allowed_to?(:create?, User)
+          .subheader-bar__action= button_component "Inviter un utilisateur", new_admin_office_user_path(@office), icon: "plus", modal: true
 
-        - if allowed_to?(:manage?, User, with: Offices::UserPolicy)
-          .subheader-bar__action= button_component "Gérer les utilisateurs", edit_all_office_users_path(@office), icon: "squares-plus", modal: true
+        - if allowed_to?(:edit_all?, User, with: Admin::Offices::UserPolicy)
+          .subheader-bar__action= button_component "Gérer les utilisateurs", edit_all_admin_office_users_path(@office), icon: "squares-plus", modal: true
 
     - if @office.users_count.zero?
       = card_component(content_class: "card__content--empty")
         | Aucun utilisateur assigné à ce guichet.
 
     - else
-      = turbo_frame_tag "datatable-users", src: office_users_path(@office) do
+      = turbo_frame_tag "datatable-users", src: admin_office_users_path(@office) do
         = datatable_skeleton_component(rows: [@office.users_count, ControllerCollections::NESTED_ITEMS].min) do |skeleton|
           - skeleton.with_search
           - skeleton.with_pagination

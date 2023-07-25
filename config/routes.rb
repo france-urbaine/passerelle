@@ -3,15 +3,15 @@
 Rails.application.routes.draw do
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
-  concern :removable do
+  concern :removable do |options|
     get   :remove,    on: :member
-    patch :undiscard, on: :member
+    patch :undiscard, on: :member unless options[:undiscard] == false
   end
 
-  concern :removable_collection do
+  concern :removable_collection do |options|
     get    :remove_all,    on: :collection, path: "remove"
-    patch  :undiscard_all, on: :collection, path: "undiscard"
     delete :destroy_all,   on: :collection, path: "/", as: nil
+    patch  :undiscard_all, on: :collection, path: "undiscard" unless options[:undiscard] == false
   end
 
   concern :updatable_collection do
@@ -160,6 +160,12 @@ Rails.application.routes.draw do
 
       resources :offices, concerns: %i[removable removable_collection], path: "/guichets" do
         scope module: "offices" do
+          resources :users, only: %i[index new create destroy], path: "/utilisateurs" do
+            concerns :removable,            undiscard: false
+            concerns :removable_collection, undiscard: false
+            concerns :updatable_collection
+          end
+
           resources :collectivities, only: %i[index], path: "/collectivites"
         end
       end

@@ -22,15 +22,21 @@ RSpec.describe Offices::CreateService do
     expect(service.save).to be_successful
   end
 
-  it "creates an office" do
+  it "creates the office" do
     expect { service.save }
       .to  change(Office, :count).by(1)
       .and change(office, :persisted?).from(false).to(true)
   end
 
-  it "creates an office with expected ddfip" do
-    expect { service.save }
-      .to change(office, :ddfip).to(ddfip)
+  it "assigns expected attributes" do
+    service.save
+    office.reload
+
+    expect(office).to have_attributes(
+      ddfip:       ddfip,
+      name:        attributes[:name],
+      competences: attributes[:competences]
+    )
   end
 
   context "with invalid arguments" do

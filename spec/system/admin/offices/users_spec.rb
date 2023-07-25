@@ -2,7 +2,7 @@
 
 require "system_helper"
 
-RSpec.describe "Office users" do
+RSpec.describe "Office users in admin" do
   fixtures :regions, :departements, :epcis, :communes
   fixtures :publishers, :collectivities, :ddfips, :offices
   fixtures :users, :office_users
@@ -15,7 +15,7 @@ RSpec.describe "Office users" do
   before { sign_in(users(:marc)) }
 
   it "visits an user page from the office page" do
-    visit office_path(pelp_bayonne)
+    visit admin_office_path(pelp_bayonne)
 
     # A table of users should be present
     #
@@ -26,14 +26,14 @@ RSpec.describe "Office users" do
 
     # The browser should visit the user page
     #
-    expect(page).to have_current_path(user_path(maxime))
+    expect(page).to have_current_path(admin_user_path(maxime))
     expect(page).to have_selector("h1", text: "Maxime Gauthier")
 
     go_back
 
     # The browser should have redirect back to the office page
     #
-    expect(page).to have_current_path(office_path(pelp_bayonne))
+    expect(page).to have_current_path(admin_office_path(pelp_bayonne))
     expect(page).to have_selector("h1", text: "PELP de Bayonne")
   end
 
@@ -42,14 +42,14 @@ RSpec.describe "Office users" do
     #
     pelp_bayonne.users << create_list(:user, 10, organization: ddfip64)
 
-    visit office_path(pelp_bayonne)
+    visit admin_office_path(pelp_bayonne)
 
     expect(page).to     have_text("11 utilisateurs | Page 1 sur 2")
     expect(page).not_to have_button("Options d'affichage")
   end
 
   it "invites an user from the office page" do
-    visit office_path(pelp_bayonne)
+    visit admin_office_path(pelp_bayonne)
 
     # A button should be present to add a new user
     #
@@ -81,7 +81,7 @@ RSpec.describe "Office users" do
     # The browser should stay on the office page
     # The new user should appear
     #
-    expect(page).to have_current_path(office_path(pelp_bayonne))
+    expect(page).to have_current_path(admin_office_path(pelp_bayonne))
     expect(page).to have_selector("h1", text: "PELP de Bayonne")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Elliot Alderson")
 
@@ -93,7 +93,7 @@ RSpec.describe "Office users" do
   end
 
   it "updates an user from the office page" do
-    visit office_path(pelp_bayonne)
+    visit admin_office_path(pelp_bayonne)
 
     # A table of users should be present
     # with a button to edit them
@@ -110,7 +110,7 @@ RSpec.describe "Office users" do
       expect(dialog).to have_field("Prénom",       with: "Maxime")
       expect(dialog).to have_field("Nom",          with: "Gauthier")
       expect(dialog).to have_field("Adresse mail", with: "maxime.gauthier@dgfip.finances.gouv.fr")
-      expect(dialog).to have_unchecked_field("Administrateur de l'organisation")
+      expect(dialog).to have_checked_field("Administrateur de l'organisation")
       expect(dialog).to have_unchecked_field("Administrateur de la plateforme FiscaHub")
 
       within ".form-block", text: "Guichets" do |block|
@@ -127,7 +127,7 @@ RSpec.describe "Office users" do
     # The browser should stay on the office page
     # The user's name should have been updated
     #
-    expect(page).to have_current_path(office_path(pelp_bayonne))
+    expect(page).to have_current_path(admin_office_path(pelp_bayonne))
     expect(page).to have_selector("h1", text: "PELP de Bayonne")
     expect(page).to have_selector(:table_row, { "Utilisateur" => "Maxime Gaultier" })
 
@@ -139,7 +139,7 @@ RSpec.describe "Office users" do
   end
 
   it "manages users from the office page" do
-    visit office_path(sip_bayonne)
+    visit admin_office_path(sip_bayonne)
 
     # The users list should be empty
     #
@@ -164,7 +164,7 @@ RSpec.describe "Office users" do
     # The browser should stay on the office page
     # The new user should appear
     #
-    expect(page).to have_current_path(office_path(sip_bayonne))
+    expect(page).to have_current_path(admin_office_path(sip_bayonne))
     expect(page).to have_selector("h1", text: "SIP de Bayonne")
     expect(page).to have_text("1 utilisateur | Page 1 sur 1")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Astride Fabre")
@@ -194,7 +194,7 @@ RSpec.describe "Office users" do
     # The browser should stay on the office page
     # The new user should appear
     #
-    expect(page).to have_current_path(office_path(sip_bayonne))
+    expect(page).to have_current_path(admin_office_path(sip_bayonne))
     expect(page).to have_selector("h1", text: "SIP de Bayonne")
     expect(page).to have_text("2 utilisateurs | Page 1 sur 1")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Astride Fabre")
@@ -223,13 +223,13 @@ RSpec.describe "Office users" do
     # The browser should stay on the office page
     # No users should appear
     #
-    expect(page).to have_current_path(office_path(sip_bayonne))
+    expect(page).to have_current_path(admin_office_path(sip_bayonne))
     expect(page).to have_selector("h1", text: "SIP de Bayonne")
     expect(page).to have_text("Aucun utilisateur assigné à ce guichet.")
   end
 
   it "excludes an user from the office without discarding it" do
-    visit office_path(pelp_bayonne)
+    visit admin_office_path(pelp_bayonne)
 
     # A table of users should be present
     # with a button to exclude them
@@ -246,7 +246,7 @@ RSpec.describe "Office users" do
 
     # The browser should stay on the office page
     # The user should not appears anymore
-    expect(page).to     have_current_path(office_path(pelp_bayonne))
+    expect(page).to     have_current_path(admin_office_path(pelp_bayonne))
     expect(page).to     have_selector("h1", text: "PELP de Bayonne")
     expect(page).not_to have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
 
@@ -266,14 +266,14 @@ RSpec.describe "Office users" do
 
     # The user should remains available on the DDFIP page
     #
-    expect(page).to have_current_path(ddfip_path(ddfip64))
+    expect(page).to have_current_path(admin_ddfip_path(ddfip64))
     expect(page).to have_selector("h1", text: "DDFIP des Pyrénées-Atlantiques")
     expect(page).to have_text("2 utilisateurs | Page 1 sur 1")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
   end
 
   it "selects and excludes one user from the office page" do
-    visit office_path(pelp_bayonne)
+    visit admin_office_path(pelp_bayonne)
 
     # Checkboxes should be present to select users
     #
@@ -298,7 +298,7 @@ RSpec.describe "Office users" do
     # The selected users should not appears anymore
     # Other users should remain
     #
-    expect(page).to     have_current_path(office_path(pelp_bayonne))
+    expect(page).to     have_current_path(admin_office_path(pelp_bayonne))
     expect(page).to     have_selector("h1", text: "PELP de Bayonne")
     expect(page).not_to have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
 
@@ -320,7 +320,7 @@ RSpec.describe "Office users" do
 
     # The user should remains available on the DDFIP page
     #
-    expect(page).to have_current_path(ddfip_path(ddfip64))
+    expect(page).to have_current_path(admin_ddfip_path(ddfip64))
     expect(page).to have_selector("h1", text: "DDFIP des Pyrénées-Atlantiques")
     expect(page).to have_text("2 utilisateurs | Page 1 sur 1")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
@@ -331,7 +331,7 @@ RSpec.describe "Office users" do
     #
     pelp_bayonne.users << create_list(:user, 10, organization: ddfip64)
 
-    visit office_path(pelp_bayonne)
+    visit admin_office_path(pelp_bayonne)
 
     expect(page).to have_text("11 utilisateurs | Page 1 sur 2")
 
@@ -357,7 +357,7 @@ RSpec.describe "Office users" do
     # The browser should stay on the office page
     # The selected users should have been removed
     #
-    expect(page).to     have_current_path(office_path(pelp_bayonne))
+    expect(page).to     have_current_path(admin_office_path(pelp_bayonne))
     expect(page).to     have_selector("h1", text: "PELP de Bayonne")
     expect(page).to     have_text("1 utilisateur | Page 1 sur 1")
     expect(page).not_to have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
@@ -379,7 +379,7 @@ RSpec.describe "Office users" do
 
     # The user should remains available on the DDFIP page
     #
-    expect(page).to have_current_path(ddfip_path(ddfip64))
+    expect(page).to have_current_path(admin_ddfip_path(ddfip64))
     expect(page).to have_selector("h1", text: "DDFIP des Pyrénées-Atlantiques")
     expect(page).to have_text("12 utilisateurs | Page 1 sur 2")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
@@ -390,7 +390,7 @@ RSpec.describe "Office users" do
     #
     pelp_bayonne.users << create_list(:user, 10, organization: ddfip64)
 
-    visit office_path(pelp_bayonne)
+    visit admin_office_path(pelp_bayonne)
 
     expect(page).to have_text("11 utilisateurs | Page 1 sur 2")
 
@@ -420,7 +420,7 @@ RSpec.describe "Office users" do
     # The browser should stay on the office page
     # No users should appear anymore
     #
-    expect(page).to have_current_path(office_path(pelp_bayonne))
+    expect(page).to have_current_path(admin_office_path(pelp_bayonne))
     expect(page).to have_selector("h1", text: "PELP de Bayonne")
     expect(page).to have_text("Aucun utilisateur assigné à ce guichet.")
 
@@ -441,14 +441,14 @@ RSpec.describe "Office users" do
 
     # The user should remains available on the DDFIP page
     #
-    expect(page).to have_current_path(ddfip_path(ddfip64))
+    expect(page).to have_current_path(admin_ddfip_path(ddfip64))
     expect(page).to have_selector("h1", text: "DDFIP des Pyrénées-Atlantiques")
     expect(page).to have_text("12 utilisateurs | Page 1 sur 2")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
   end
 
   it "discards an user from the office page & rollbacks" do
-    visit office_path(pelp_bayonne)
+    visit admin_office_path(pelp_bayonne)
 
     # A table of users should be present
     # with a button to remove them
@@ -466,7 +466,7 @@ RSpec.describe "Office users" do
     # The browser should stay on the office page
     # The user should not appears anymore
     #
-    expect(page).to     have_current_path(office_path(pelp_bayonne))
+    expect(page).to     have_current_path(admin_office_path(pelp_bayonne))
     expect(page).to     have_selector("h1", text: "PELP de Bayonne")
     expect(page).not_to have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
 
@@ -486,7 +486,7 @@ RSpec.describe "Office users" do
     # The user should not appears anymore
     # The user should be back again
     #
-    expect(page).to have_current_path(office_path(pelp_bayonne))
+    expect(page).to have_current_path(admin_office_path(pelp_bayonne))
     expect(page).to have_selector("h1", text: "PELP de Bayonne")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
 

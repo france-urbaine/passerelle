@@ -1,0 +1,54 @@
+= template_frame_component do
+  = breadcrumbs_component do |breadcrumbs|
+    - breadcrumbs.with_path "Administration"
+    - breadcrumbs.with_path "Guichets", admin_offices_path
+    - breadcrumbs.with_path @office.name, admin_office_path(@office)
+    - breadcrumbs.with_path "Utilisateurs"
+
+  = datatable_component(@users.preload(:organization, :offices)) do |datatable|
+    - datatable.with_search
+    - datatable.with_pagination(@pagy, options: false)
+
+    - datatable.with_selection do |selection|
+      - if allowed_to?(:destroy_all?, User, with: Admin::Offices::UserPolicy)
+        - selection.with_action "Exclure les utilisateurs du guichet", remove_all_admin_office_users_path(@office), modal: true
+
+    - datatable.with_column(:name, sort: true)   { "Utilisateur" }
+    - datatable.with_column(:email)              { "Adresse mail" }
+    - datatable.with_column(:organization_admin) { "Admin. de l'organisation" }
+    - datatable.with_column(:super_admin)        { "Admin. de FiscaHub" }
+    - datatable.with_column(:offices)            { "Guichets" }
+
+    - datatable.with_empty_message do
+      - if params[:search]
+        | Aucun utilisateur ne correspont à votre recherche.
+      - else
+        | Aucun utilisateur associé.
+
+    - datatable.each_row do |row, user|
+      - row.with_checkbox "Sélectionner cet utilisateur", described_by: :name, disabled: !allowed_to?(:destroy_all?, User, with: Admin::Offices::UserPolicy)
+
+      - if allowed_to?(:update?, User, with: Admin::UserPolicy)
+        - row.with_action "Modifier cet utilisateur", edit_admin_user_path(user), icon: "pencil-square", modal: true
+
+      - if allowed_to?(:destroy?, User, with: Admin::Offices::UserPolicy)
+        - row.with_action "Exclure cet utilisateur du guichet", remove_admin_office_user_path(@office, user), icon: "arrow-right-on-rectangle", modal: true
+
+      - if allowed_to?(:destroy?, User, with: Admin::UserPolicy)
+        - row.with_action "Supprimer cet utilisateur", remove_admin_user_path(user), icon: "trash", modal: true
+
+      - row.with_column(:name) do
+        = authorized_link_to user, scope: :admin do
+          = user.name
+
+      - row.with_column(:email) do
+        = user_email(user)
+
+      - row.with_column(:organization_admin) do
+        = check_badge(user.organization_admin?, "Administrateur de l'organisation")
+
+      - row.with_column(:super_admin) do
+        = check_badge(user.super_admin?, "Administrateur de FiscaHub")
+
+      - row.with_column(:offices) do
+        = short_offices_list(user.offices, user.organization_id, scope: :organization)
