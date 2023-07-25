@@ -22,8 +22,9 @@ RSpec.describe Views::Users::FormComponent, type: :component do
           expect(form).to have_unchecked_field("Administrateur de l'organisation")
           expect(form).to have_unchecked_field("Administrateur de la plateforme FiscaHub")
 
-          expect(form).not_to have_text("Guichets")
-          expect(form).not_to have_field("user[office_ids][]")
+          expect(form).to     have_selector(".form-block", text: "Guichets",       visible: :hidden)
+          expect(form).to     have_selector("turbo-frame#user_offices_checkboxes", visible: :hidden)
+          expect(form).not_to have_selector("input[name='user[office_ids][]']",    visible: :all)
         end
       end
     end
@@ -42,8 +43,9 @@ RSpec.describe Views::Users::FormComponent, type: :component do
           expect(form).to     have_unchecked_field("Administrateur de l'organisation")
           expect(form).to     have_unchecked_field("Administrateur de la plateforme FiscaHub")
 
-          expect(form).not_to have_text("Guichets")
-          expect(form).not_to have_field("user[office_ids][]")
+          expect(form).not_to have_selector(".form-block", text: "Guichets",       visible: :all)
+          expect(form).not_to have_selector("turbo-frame#user_offices_checkboxes", visible: :all)
+          expect(form).not_to have_selector("input[name='user[office_ids][]']",    visible: :all)
         end
       end
     end
@@ -62,14 +64,15 @@ RSpec.describe Views::Users::FormComponent, type: :component do
           expect(form).to     have_unchecked_field("Administrateur de l'organisation")
           expect(form).to     have_unchecked_field("Administrateur de la plateforme FiscaHub")
 
-          expect(form).not_to have_text("Guichets")
-          expect(form).not_to have_field("user[office_ids][]")
+          expect(form).not_to have_selector(".form-block", text: "Guichets",       visible: :all)
+          expect(form).not_to have_selector("turbo-frame#user_offices_checkboxes", visible: :all)
+          expect(form).not_to have_selector("input[name='user[office_ids][]']",    visible: :all)
         end
       end
     end
 
     it "renders a form in a modal to create a new user belonging to a given DDFIP" do
-      ddfip = build_stubbed(:ddfip)
+      ddfip = create(:ddfip)
       render_inline described_class.new(User.new, scope: :admin, organization: ddfip)
 
       expect(page).to have_selector(".modal form") do |form|
@@ -82,14 +85,15 @@ RSpec.describe Views::Users::FormComponent, type: :component do
           expect(form).to     have_unchecked_field("Administrateur de l'organisation")
           expect(form).to     have_unchecked_field("Administrateur de la plateforme FiscaHub")
 
-          expect(form).not_to have_text("Guichets")
-          expect(form).not_to have_field("user[office_ids][]")
+          expect(form).to     have_selector(".form-block", text: "Guichets",       visible: :visible)
+          expect(form).not_to have_selector("turbo-frame#user_offices_checkboxes", visible: :all)
+          expect(form).to     have_selector("input[name='user[office_ids][]']",    visible: :all)
         end
       end
     end
 
-    it "renders a form in a modal to update an existing user" do
-      user = build_stubbed(:user)
+    it "renders a form in a modal to update an existing publisher user" do
+      user = build_stubbed(:user, :publisher)
       render_inline described_class.new(user, scope: :admin)
 
       expect(page).to have_selector(".modal form") do |form|
@@ -102,8 +106,30 @@ RSpec.describe Views::Users::FormComponent, type: :component do
           expect(form).to have_unchecked_field("Administrateur de l'organisation")
           expect(form).to have_unchecked_field("Administrateur de la plateforme FiscaHub")
 
-          expect(form).not_to have_text("Guichets")
-          expect(form).not_to have_field("user[office_ids][]")
+          expect(form).to     have_selector(".form-block", text: "Guichets",       visible: :hidden)
+          expect(form).to     have_selector("turbo-frame#user_offices_checkboxes", visible: :hidden)
+          expect(form).not_to have_selector("input[name='user[office_ids][]']",    visible: :all)
+        end
+      end
+    end
+
+    it "renders a form in a modal to update an existing DDFIP user" do
+      user = build_stubbed(:user, :ddfip)
+      render_inline described_class.new(user, scope: :admin)
+
+      expect(page).to have_selector(".modal form") do |form|
+        aggregate_failures do
+          expect(form).to have_html_attribute("action").with_value("/admin/utilisateurs/#{user.id}")
+
+          expect(form).to have_field("Organisation", with: user.organization&.name)
+          expect(form).to have_field("Nom",          with: user.last_name)
+          expect(form).to have_field("Prénom",       with: user.first_name)
+          expect(form).to have_unchecked_field("Administrateur de l'organisation")
+          expect(form).to have_unchecked_field("Administrateur de la plateforme FiscaHub")
+
+          expect(form).to     have_selector(".form-block", text: "Guichets",       visible: :visible)
+          expect(form).to     have_selector("turbo-frame#user_offices_checkboxes", visible: :visible)
+          expect(form).not_to have_selector("input[name='user[office_ids][]']",    visible: :all)
         end
       end
     end
@@ -121,9 +147,6 @@ RSpec.describe Views::Users::FormComponent, type: :component do
           expect(form).to have_field("Prénom",       with: user.first_name)
           expect(form).to have_checked_field("Administrateur de l'organisation")
           expect(form).to have_checked_field("Administrateur de la plateforme FiscaHub")
-
-          expect(form).not_to have_text("Guichets")
-          expect(form).not_to have_field("user[office_ids][]")
         end
       end
     end
@@ -145,8 +168,9 @@ RSpec.describe Views::Users::FormComponent, type: :component do
           expect(form).to     have_field("Administrateur de l'organisation")
           expect(form).not_to have_field("Administrateur de la plateforme FiscaHub")
 
-          expect(form).not_to have_text("Guichets")
-          expect(form).not_to have_field("user[office_ids][]")
+          expect(form).not_to have_selector(".form-block", text: "Guichets",       visible: :all)
+          expect(form).not_to have_selector("turbo-frame#user_offices_checkboxes", visible: :all)
+          expect(form).not_to have_selector("input[name='user[office_ids][]']",    visible: :all)
         end
       end
     end
@@ -165,8 +189,9 @@ RSpec.describe Views::Users::FormComponent, type: :component do
           expect(form).to     have_unchecked_field("Administrateur de l'organisation")
           expect(form).not_to have_field("Administrateur de la plateforme FiscaHub")
 
-          expect(form).not_to have_text("Guichets")
-          expect(form).not_to have_field("user[office_ids][]")
+          expect(form).not_to have_selector(".form-block", text: "Guichets",       visible: :all)
+          expect(form).not_to have_selector("turbo-frame#user_offices_checkboxes", visible: :all)
+          expect(form).not_to have_selector("input[name='user[office_ids][]']",    visible: :all)
         end
       end
     end
@@ -184,9 +209,6 @@ RSpec.describe Views::Users::FormComponent, type: :component do
           expect(form).to     have_field("Prénom",       with: user.first_name)
           expect(form).to     have_checked_field("Administrateur de l'organisation")
           expect(form).not_to have_field("Administrateur de la plateforme FiscaHub")
-
-          expect(form).not_to have_text("Guichets")
-          expect(form).not_to have_field("user[office_ids][]")
         end
       end
     end
@@ -218,8 +240,9 @@ RSpec.describe Views::Users::FormComponent, type: :component do
           expect(form).to     have_field("Administrateur de l'organisation")
           expect(form).not_to have_field("Administrateur de la plateforme FiscaHub")
 
-          expect(form).not_to have_text("Guichets")
-          expect(form).not_to have_field("user[office_ids][]")
+          expect(form).not_to have_selector(".form-block", text: "Guichets",       visible: :all)
+          expect(form).not_to have_selector("turbo-frame#user_offices_checkboxes", visible: :all)
+          expect(form).not_to have_selector("input[name='user[office_ids][]']",    visible: :all)
         end
       end
     end
@@ -238,8 +261,9 @@ RSpec.describe Views::Users::FormComponent, type: :component do
           expect(form).to     have_unchecked_field("Administrateur de l'organisation")
           expect(form).not_to have_field("Administrateur de la plateforme FiscaHub")
 
-          expect(form).not_to have_text("Guichets")
-          expect(form).not_to have_field("user[office_ids][]")
+          expect(form).not_to have_selector(".form-block", text: "Guichets",       visible: :all)
+          expect(form).not_to have_selector("turbo-frame#user_offices_checkboxes", visible: :all)
+          expect(form).not_to have_selector("input[name='user[office_ids][]']",    visible: :all)
         end
       end
     end
@@ -257,9 +281,6 @@ RSpec.describe Views::Users::FormComponent, type: :component do
           expect(form).to     have_field("Prénom",       with: user.first_name)
           expect(form).to     have_checked_field("Administrateur de l'organisation")
           expect(form).not_to have_field("Administrateur de la plateforme FiscaHub")
-
-          expect(form).not_to have_text("Guichets")
-          expect(form).not_to have_field("user[office_ids][]")
         end
       end
     end
@@ -291,8 +312,9 @@ RSpec.describe Views::Users::FormComponent, type: :component do
           expect(form).to     have_field("Administrateur de l'organisation")
           expect(form).not_to have_field("Administrateur de la plateforme FiscaHub")
 
-          expect(form).to have_selector("label", text: "Guichets")
-          expect(form).to have_field("user[office_ids][]", count: 3)
+          expect(form).to     have_selector(".form-block", text: "Guichets",       visible: :visible)
+          expect(form).not_to have_selector("turbo-frame#user_offices_checkboxes", visible: :all)
+          expect(form).to     have_selector("input[name='user[office_ids][]']",    visible: :all)
         end
       end
     end
@@ -333,9 +355,6 @@ RSpec.describe Views::Users::FormComponent, type: :component do
           expect(form).to     have_field("Prénom",       with: user.first_name)
           expect(form).to     have_checked_field("Administrateur de l'organisation")
           expect(form).not_to have_field("Administrateur de la plateforme FiscaHub")
-
-          expect(form).to have_selector("label", text: "Guichets")
-          expect(form).to have_field("user[office_ids][]", count: 3)
         end
       end
     end

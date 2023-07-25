@@ -50,7 +50,7 @@ Rails.application.routes.draw do
     root to: redirect("/signalements"), as: :authenticated_root
   end
 
-  constraints(id: %r{(?!(new|edit|remove|discard|undiscard|offices))[^/]+}) do
+  constraints(id: %r{(?!(new|edit|remove|discard|undiscard|guichets))[^/]+}) do
     resources :reports, path: "signalements", concerns: %i[removable removable_collection], path_names: { edit: "/edit/:form" } do
       scope module: "reports" do
         resources :attachments, only: %i[new create destroy]
@@ -139,18 +139,21 @@ Rails.application.routes.draw do
       resources :publishers, concerns: %i[removable removable_collection], path: "/editeurs" do
         scope module: "publishers" do
           resources :collectivities, only: %i[index new create], concerns: %i[removable_collection], path: "/collectivites"
+          resources :users,          only: %i[index new create], concerns: %i[removable_collection], path: "/utilisateurs"
         end
       end
 
       resources :collectivities, concerns: %i[removable removable_collection], path: "/collectivites" do
         scope module: "collectivities" do
           resources :offices, only: %i[index], path: "/guichets"
+          resources :users,   only: %i[index new create], concerns: %i[removable_collection], path: "/utilisateurs"
         end
       end
 
       resources :ddfips, concerns: %i[removable removable_collection] do
         scope module: "ddfips" do
           resources :offices,        only: %i[index new create], concerns: %i[removable_collection], path: "/guichets"
+          resources :users,          only: %i[index new create], concerns: %i[removable_collection], path: "/utilisateurs"
           resources :collectivities, only: %i[index], path: "/collectivites"
         end
       end
@@ -162,6 +165,7 @@ Rails.application.routes.draw do
       end
 
       resources :users, concerns: %i[removable removable_collection], path: "/utilisateurs"
+      resources :users_offices, only: %i[index], controller: "users/offices", path: "/utilisateurs/guichets"
     end
   end
 end

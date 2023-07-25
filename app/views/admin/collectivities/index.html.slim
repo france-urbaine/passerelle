@@ -55,7 +55,7 @@
           = collectivity.publisher.name
 
       - row.with_column(:contact) do
-         = "#{collectivity.contact_first_name} #{collectivity.contact_last_name}".strip.presence
+        = "#{collectivity.contact_first_name} #{collectivity.contact_last_name}".strip.presence
 
       - row.with_column(:contact_email) do
         = mail_to(collectivity.contact_email) if collectivity.contact_email?

@@ -75,7 +75,7 @@
           - skeleton.with_search
           - skeleton.with_pagination
 
-  - if allowed_to?(:index?, User, with: DDFIPs::UserPolicy)
+  - if allowed_to?(:index?, User)
     .content__separator
 
     .subheader-bar
@@ -84,16 +84,16 @@
         | Utilisateurs de l'organisation
 
       .subheader-bar__actions
-        - if allowed_to?(:create?, User, with: DDFIPs::UserPolicy)
+        - if allowed_to?(:create?, User)
           .subheader-bar__action
-            = button_component "Inviter un utilisateur", new_ddfip_user_path(@ddfip), icon: "plus", modal: true
+            = button_component "Inviter un utilisateur", new_admin_ddfip_user_path(@ddfip), icon: "plus", modal: true
 
     - if @ddfip.users_count.zero?
       = card_component(content_class: "card__content--empty")
         | Aucun utilisateur assigné.
 
     - else
-      = turbo_frame_tag "datatable-users", src: ddfip_users_path(@ddfip) do
+      = turbo_frame_tag "datatable-users", src: admin_ddfip_users_path(@ddfip) do
         = datatable_skeleton_component(rows: [@ddfip.users_count, 5].min) do |skeleton|
           - skeleton.with_search
           - skeleton.with_pagination

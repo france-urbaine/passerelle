@@ -1,0 +1,33 @@
+= template_frame_component(src: @referrer_path) do |frame|
+  - frame.with_modal do |modal|
+    - modal.with_header do
+      - if @users.count > 1
+        | Suppression des utilisateurs sélectionnés
+      - else
+        | Suppression de l'utilisateur sélectionné
+
+    - modal.with_form(url: admin_publisher_users_path(@publisher), method: :delete) do
+      - modal.with_hidden_field :redirect, @referrer_path
+      - modal.with_hidden_field :ids,    params[:ids]
+      - modal.with_hidden_field :search, params[:search]
+      - modal.with_hidden_field :order,  params[:order]
+      - modal.with_hidden_field :page,   params[:page]
+
+      - if @users.count > 1
+        p
+          | Êtes-vous sûrs de vouloir supprimer les <b>#{@users.count}</b> utilisateurs sélectionnés ?
+        p
+          | Par mesure de securité, les données de ces utilisateurs seront archivées pendant 1 jour.
+          br
+          | Toutes les données seront définitivement supprimées à la fin de ce délai.
+
+      - else
+        p
+          | Êtes-vous sûrs de vouloir supprimer l'utilisateur sélectionné ?
+        p
+          | Par mesure de securité, les données de cet utilisateur seront archivées pendant 1 jour.
+          br
+          | Toutes les données seront définitivement supprimées à la fin de ce délai.
+
+    - modal.with_submit_action "Continuer", autofocus: true
+    - modal.with_close_action "Annuler"

@@ -1,0 +1,47 @@
+= template_frame_component do
+  = breadcrumbs_component do |breadcrumbs|
+    - breadcrumbs.with_path "Administration"
+    - breadcrumbs.with_path "Éditeurs", admin_publishers_path
+    - breadcrumbs.with_path @publisher.name, admin_publisher_path(@publisher)
+    - breadcrumbs.with_path "Utilisateurs"
+
+  = datatable_component(@users) do |datatable|
+    - datatable.with_search
+    - datatable.with_pagination(@pagy, options: false)
+
+    - datatable.with_selection do |selection|
+      - if allowed_to?(:destroy_all?, User)
+        - selection.with_action "Tout supprimer", remove_all_admin_publisher_users_path(@publisher), modal: true
+
+    - datatable.with_column(:name, sort: true)   { "Utilisateur" }
+    - datatable.with_column(:email)              { "Adresse mail" }
+    - datatable.with_column(:organization_admin) { "Admin. de l'organisation" }
+    - datatable.with_column(:super_admin)        { "Admin. de FiscaHub" }
+
+    - datatable.with_empty_message do
+      - if params[:search]
+        | Aucun utilisateur ne correspont à votre recherche.
+      - else
+        | Aucun utilisateur disponible.
+
+    - datatable.each_row do |row, user|
+      - row.with_checkbox "Sélectionner cet utilisateur", described_by: :name, disabled: !allowed_to?(:destroy_all?, User)
+
+      - if allowed_to?(:update?, user)
+        - row.with_action "Modifier cet utilisateur", edit_admin_user_path(user), icon: "pencil-square", modal: true
+
+      - if allowed_to?(:destroy?, user)
+        - row.with_action "Supprimer cet utilisateur", remove_admin_user_path(user), icon: "trash", modal: true
+
+      - row.with_column(:name) do
+        = authorized_link_to user, scope: :admin do
+          = user.name
+
+      - row.with_column(:email) do
+        = user_email(user)
+
+      - row.with_column(:organization_admin) do
+        = check_badge(user.organization_admin?, "Administrateur de l'organisation")
+
+      - row.with_column(:super_admin) do
+        = check_badge(user.super_admin?, "Administrateur de FiscaHub")

@@ -24,22 +24,36 @@ module Views
         polymorphic_path(url_args.compact)
       end
 
+      def form_html_attributes
+        return {} unless allowed_to_assign_offices? && allowed_to_assign_organization?
+
+        # In admin, we can change the organization of an user
+        # Therefore, we need to update the offices accordingly to the  selected organization
+        #
+        {
+          data: {
+            controller: "user-form",
+            user_form_offices_url_value: admin_users_offices_path(user_id: @user.id)
+          }
+        }
+      end
+
       def allowed_to_assign_organization?
         @scope == :admin && @organization.nil?
       end
 
       def allowed_to_assign_offices?
-        @scope == :organization && current_organization.is_a?(DDFIP)
+        (@scope == :admin && @organization.nil?) ||
+          (@scope == :admin && @organization.is_a?(DDFIP)) ||
+          (@scope == :organization && current_organization.is_a?(DDFIP))
       end
 
       def allowed_to_assign_organization_admin?
-        @scope == :admin ||
-          (@scope == :organization && current_user.organization_admin?)
+        @scope == :admin || (@scope == :organization && current_user.organization_admin?)
       end
 
       def allowed_to_assign_super_admin?
-        @scope == :admin ||
-          (@scope == :organization && current_user.super_admin?)
+        @scope == :admin || (@scope == :organization && current_user.super_admin?)
       end
 
       def organization_input_html_attributes
@@ -82,7 +96,37 @@ module Views
       def office_ids_choices
         return [] unless allowed_to_assign_offices?
 
-        current_organization.offices.kept.strict_loading.to_a
+        ddfip = @organization || current_organization
+        ddfip.offices.kept.strict_loading.to_a
+      end
+
+      def offices_block_html_attributes
+        return {} unless allowed_to_assign_offices?
+
+        attributes = { data: { user_form_target: "officesFormBlock" } }
+
+        unless @user.organization.is_a?(DDFIP)
+          attributes[:class] = "hidden"
+          attributes[:hidden] = true
+        end
+
+        attributes
+      end
+
+      def offices_frame_html_attributes
+        return {} unless allowed_to_assign_offices?
+
+        attributes = { data: { user_form_target: "officesCheckboxesFrame" } }
+
+        if @user.organization.is_a?(DDFIP)
+          attributes[:src] = admin_users_offices_path(
+            user_id:    @user.id,
+            ddfip_id:   @user.organization_id,
+            office_ids: @user.office_ids
+          )
+        end
+
+        attributes
       end
     end
   end

@@ -5,9 +5,6 @@
     - breadcrumbs.with_path @publisher.name, admin_publisher_path(@publisher)
     - breadcrumbs.with_path "Collectivités"
 
-    - if allowed_to?(:create?, Collectivity)
-      - breadcrumbs.with_action "Ajouter une collectivité", new_admin_publisher_collectivity_path(@publisher), icon: "plus", modal: true, primary: true
-
   = datatable_component(@collectivities) do |datatable|
     - datatable.with_search
     - datatable.with_pagination(@pagy, options: false)

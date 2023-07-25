@@ -5,7 +5,7 @@
     - else
       | Modification de l'utilisateur
 
-  - modal.with_form(model: @user, url: form_url) do |form|
+  - modal.with_form(model: @user, url: form_url, **form_html_attributes) do |form|
     - modal.with_hidden_field :redirect, @redirection_path
 
     - if allowed_to_assign_organization?
@@ -45,9 +45,15 @@
           | Des instructions ont été transmises à cet utilisateur pour confirmer la modification.
 
     - if allowed_to_assign_offices?
-      = form.block :office_ids do
-        = form.label :office_ids
-        = form.checkboxes_component :office_ids, office_ids_choices, :id, :name
+      - if allowed_to_assign_organization?
+        = form.block :office_ids, **offices_block_html_attributes do
+          = form.label :office_ids
+          = helpers.turbo_frame_tag :user_offices_checkboxes, **offices_frame_html_attributes
+
+      - else
+        = form.block :office_ids do
+          = form.label :office_ids
+          = form.checkboxes_component :office_ids, office_ids_choices, :id, :name
 
     - if allowed_to_assign_organization_admin?
       = form.block :organization_admin do |block|
