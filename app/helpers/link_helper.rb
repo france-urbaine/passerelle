@@ -41,4 +41,35 @@ module LinkHelper
       authorized_link_to(office, scope:) { office.name }
     end
   end
+
+  def user_email(user)
+    if user.unconfirmed_email?
+      message = t("user_email.unconfirmed_email")
+
+      tag.span(class: "text-disabled", title: message) do
+        concat svg_icon("arrow-path", class: "inline-block mr-2")
+        concat user.unconfirmed_email
+        concat tag.span(message, class: "tooltip")
+      end
+    elsif user.confirmed?
+      mail_to user.email
+    else
+      message = t("user_email.unconfirmed_user")
+
+      tag.span(class: "text-disabled", title: message) do
+        concat svg_icon("envelope", class: "inline-block mr-2")
+        concat user.email
+        concat tag.span(message, class: "tooltip")
+      end
+    end
+  end
+
+  def check_badge(checked, title)
+    if checked
+      svg_icon("check-badge", title)
+    else
+      # Render a empty string to avoid empty placeholder
+      " "
+    end
+  end
 end

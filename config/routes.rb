@@ -160,6 +160,8 @@ Rails.application.routes.draw do
           resources :collectivities, only: %i[index], path: "/collectivites"
         end
       end
+
+      resources :users, concerns: %i[removable removable_collection], path: "/utilisateurs"
     end
   end
 end
