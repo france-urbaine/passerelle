@@ -43,7 +43,7 @@
 
       - if deletion_delay
         br
-        | Sa suppression sera effective d'ici le #{localize(deletion_date)}.
+        | Sa suppression sera effective #{deletion_distance_from_now_in_words}.
 
   - if actions?
     - template.with_raw_actions do
