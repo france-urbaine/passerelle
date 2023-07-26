@@ -30,7 +30,7 @@ module Organization
         return if turbo_frame_request?
         return if params.key?(:debug)
 
-        redirect_to admin_office_path(@office), status: :see_other
+        redirect_to organization_office_path(@office), status: :see_other
       end
 
       def authorize_collectivities_scope

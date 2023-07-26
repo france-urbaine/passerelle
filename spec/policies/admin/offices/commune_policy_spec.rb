@@ -36,4 +36,12 @@ RSpec.describe Admin::Offices::CommunePolicy do
   it { expect(:destroy_all?).to   be_an_alias_of(policy, :manage?) }
   it { expect(:edit_all?).to      be_an_alias_of(policy, :manage?) }
   it { expect(:update_all?).to    be_an_alias_of(policy, :manage?) }
+
+  it { expect(:new?).to           be_an_alias_of(policy, :not_supported) }
+  it { expect(:create?).to        be_an_alias_of(policy, :not_supported) }
+  it { expect(:show?).to          be_an_alias_of(policy, :not_supported) }
+  it { expect(:edit?).to          be_an_alias_of(policy, :not_supported) }
+  it { expect(:update?).to        be_an_alias_of(policy, :not_supported) }
+  it { expect(:undiscard?).to     be_an_alias_of(policy, :not_supported) }
+  it { expect(:undiscard_all?).to be_an_alias_of(policy, :not_supported) }
 end

@@ -104,7 +104,7 @@ RSpec.describe "Publisher users in admin" do
       expect(dialog).to have_field("Prénom",       with: "Marc")
       expect(dialog).to have_field("Nom",          with: "Debomy")
       expect(dialog).to have_field("Adresse mail", with: "mdebomy@fiscalite-territoire.fr")
-      expect(dialog).to have_unchecked_field("Administrateur de l'organisation")
+      expect(dialog).to have_checked_field("Administrateur de l'organisation")
       expect(dialog).to have_checked_field("Administrateur de la plateforme FiscaHub")
 
       fill_in "Prénom", with: "Marc-André"

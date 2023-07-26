@@ -1,7 +1,7 @@
 = template_frame_component do
   = breadcrumbs_component do |breadcrumbs|
     - breadcrumbs.with_path "Mon organisation"
-    - breadcrumbs.with_path "Utilisateurs"
+    - breadcrumbs.with_path "Équipe"
 
     - if allowed_to?(:create?, User)
       - breadcrumbs.with_action "Inviter un utilisateur", new_organization_user_path, icon: "plus", modal: true, primary: true

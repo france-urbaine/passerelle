@@ -82,11 +82,24 @@ Rails.application.routes.draw do
       resources :collectivities, concerns: %i[removable removable_collection], path: "/collectivites" do
         scope module: "collectivities" do
           resources :offices, only: %i[index], path: "/guichets"
+          resources :users,   concerns: %i[removable removable_collection], path: "/utilisateurs"
         end
       end
 
       resources :offices, concerns: %i[removable removable_collection], path: "/guichets" do
         scope module: "offices" do
+          resources :users, only: %i[index new create destroy], path: "/utilisateurs" do
+            concerns :removable,            undiscard: false
+            concerns :removable_collection, undiscard: false
+            concerns :updatable_collection
+          end
+
+          resources :communes, only: %i[index destroy] do
+            concerns :removable,            undiscard: false
+            concerns :removable_collection, undiscard: false
+            concerns :updatable_collection
+          end
+
           resources :collectivities, only: %i[index], path: "/collectivites"
         end
       end

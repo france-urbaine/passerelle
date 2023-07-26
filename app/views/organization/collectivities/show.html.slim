@@ -64,7 +64,7 @@
       /       = " / "
       /       = display_count(@collectivity.reports_rejected_count, "rejeté")
 
-  - if allowed_to?(:index?, User, with: Collectivities::UserPolicy)
+  - if allowed_to?(:index?, User, with: Organization::Collectivities::UserPolicy)
     .content__separator
 
     .subheader-bar
@@ -73,16 +73,16 @@
         | Utilisateurs
 
       .subheader-bar__actions
-        - if allowed_to?(:create?, User, with: Collectivities::UserPolicy)
+        - if allowed_to?(:create?, User, with: Organization::Collectivities::UserPolicy)
           .subheader-bar__action
-            = button_component "Inviter un utilisateur", new_collectivity_user_path(@collectivity), icon: "plus", modal: true
+            = button_component "Inviter un utilisateur", new_organization_collectivity_user_path(@collectivity), icon: "plus", modal: true
 
     - if @collectivity.users_count.zero?
       = card_component(content_class: "card__content--empty")
         | Aucun utilisateur assigné.
 
     - else
-      = turbo_frame_tag "datatable-users", src: collectivity_users_path(@collectivity) do
+      = turbo_frame_tag "datatable-users", src: organization_collectivity_users_path(@collectivity) do
         = datatable_skeleton_component(rows: [@collectivity.users_count, 5].min) do |skeleton|
           - skeleton.with_search
           - skeleton.with_pagination

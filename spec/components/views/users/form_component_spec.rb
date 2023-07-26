@@ -222,6 +222,92 @@ RSpec.describe Views::Users::FormComponent, type: :component do
         expect(form).to have_field("Administrateur de la plateforme FiscaHub")
       end
     end
+
+    it "renders a form in a modal to create a new user in an owned collectivity" do
+      collectivity = build_stubbed(:collectivity, publisher: current_user.organization)
+
+      render_inline described_class.new(User.new, scope: :organization, organization: collectivity)
+
+      expect(page).to have_selector(".modal form") do |form|
+        aggregate_failures do
+          expect(form).to have_html_attribute("action").with_value("/organisation/collectivites/#{collectivity.id}/utilisateurs")
+
+          expect(form).not_to have_field("Organisation")
+          expect(form).to     have_field("Nom")
+          expect(form).to     have_field("Prénom")
+          expect(form).to     have_field("Administrateur de l'organisation")
+          expect(form).not_to have_field("Administrateur de la plateforme FiscaHub")
+
+          expect(form).not_to have_selector(".form-block", text: "Guichets",       visible: :all)
+          expect(form).not_to have_selector("turbo-frame#user_offices_checkboxes", visible: :all)
+          expect(form).not_to have_selector("input[name='user[office_ids][]']",    visible: :all)
+        end
+      end
+    end
+
+    it "renders a form in a modal to update an existing user from an owned collectivity" do
+      collectivity = build_stubbed(:collectivity, publisher: current_user.organization)
+      user         = build_stubbed(:user, organization: collectivity)
+
+      render_inline described_class.new(user, scope: :organization, organization: collectivity)
+
+      expect(page).to have_selector(".modal form") do |form|
+        aggregate_failures do
+          expect(form).to have_html_attribute("action").with_value("/organisation/collectivites/#{collectivity.id}/utilisateurs/#{user.id}")
+
+          expect(form).not_to have_field("Organisation")
+          expect(form).to     have_field("Nom",          with: user.last_name)
+          expect(form).to     have_field("Prénom",       with: user.first_name)
+          expect(form).to     have_unchecked_field("Administrateur de l'organisation")
+          expect(form).not_to have_field("Administrateur de la plateforme FiscaHub")
+
+          expect(form).not_to have_selector(".form-block", text: "Guichets",       visible: :all)
+          expect(form).not_to have_selector("turbo-frame#user_offices_checkboxes", visible: :all)
+          expect(form).not_to have_selector("input[name='user[office_ids][]']",    visible: :all)
+        end
+      end
+    end
+  end
+
+  context "with organization scope and logged in as a publisher user" do
+    before { sign_in_as(:publisher) }
+
+    it "renders a form in a modal to create a new user in an owned collectivity without admin checkbox" do
+      collectivity = build_stubbed(:collectivity, publisher: current_user.organization)
+
+      render_inline described_class.new(User.new, scope: :organization, organization: collectivity)
+
+      expect(page).to have_selector(".modal form") do |form|
+        aggregate_failures do
+          expect(form).to have_html_attribute("action").with_value("/organisation/collectivites/#{collectivity.id}/utilisateurs")
+
+          expect(form).not_to have_field("Organisation")
+          expect(form).to     have_field("Nom")
+          expect(form).to     have_field("Prénom")
+          expect(form).not_to have_field("Administrateur de l'organisation")
+          expect(form).not_to have_field("Administrateur de la plateforme FiscaHub")
+        end
+      end
+    end
+
+    it "renders a form in a modal to update an existing user from an owned collectivity without admin checkbox" do
+      collectivity = build_stubbed(:collectivity, publisher: current_user.organization)
+      user         = build_stubbed(:user, organization: collectivity)
+
+      render_inline described_class.new(user, scope: :organization, organization: collectivity)
+
+      expect(page).to have_selector(".modal form") do |form|
+        aggregate_failures do
+          expect(form).to have_html_attribute("action").with_value("/organisation/collectivites/#{collectivity.id}/utilisateurs/#{user.id}")
+
+          expect(form).not_to have_field("Organisation")
+          expect(form).to     have_field("Nom",          with: user.last_name)
+          expect(form).to     have_field("Prénom",       with: user.first_name)
+          expect(form).not_to have_field("Administrateur de l'organisation")
+          expect(form).not_to have_field("Administrateur de la plateforme FiscaHub")
+        end
+      end
+    end
   end
 
   context "with organization scope and logged in as a collectivity admin" do

@@ -5,7 +5,7 @@
     - breadcrumbs.with_path @office.name, admin_office_path(@office)
     - breadcrumbs.with_path "Utilisateurs"
 
-  = datatable_component(@users.preload(:organization, :offices)) do |datatable|
+  = datatable_component(@users) do |datatable|
     - datatable.with_search
     - datatable.with_pagination(@pagy, options: false)
 
@@ -38,7 +38,7 @@
         - row.with_action "Supprimer cet utilisateur", remove_admin_user_path(user), icon: "trash", modal: true
 
       - row.with_column(:name) do
-        = authorized_link_to user, scope: :admin do
+        = authorized_link_to user, scope: :admin, with: Admin::UserPolicy do
           = user.name
 
       - row.with_column(:email) do

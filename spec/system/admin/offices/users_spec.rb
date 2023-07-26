@@ -44,7 +44,7 @@ RSpec.describe "Office users in admin" do
 
     visit admin_office_path(pelp_bayonne)
 
-    expect(page).to     have_text("11 utilisateurs | Page 1 sur 2")
+    expect(page).to     have_text("12 utilisateurs | Page 1 sur 2")
     expect(page).not_to have_button("Options d'affichage")
   end
 
@@ -333,7 +333,7 @@ RSpec.describe "Office users in admin" do
 
     visit admin_office_path(pelp_bayonne)
 
-    expect(page).to have_text("11 utilisateurs | Page 1 sur 2")
+    expect(page).to have_text("12 utilisateurs | Page 1 sur 2")
 
     # Checkboxes should be present to select all users
     #
@@ -359,7 +359,7 @@ RSpec.describe "Office users in admin" do
     #
     expect(page).to     have_current_path(admin_office_path(pelp_bayonne))
     expect(page).to     have_selector("h1", text: "PELP de Bayonne")
-    expect(page).to     have_text("1 utilisateur | Page 1 sur 1")
+    expect(page).to     have_text("2 utilisateurs | Page 1 sur 1")
     expect(page).not_to have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
 
     # The dialog should be closed
@@ -392,7 +392,7 @@ RSpec.describe "Office users in admin" do
 
     visit admin_office_path(pelp_bayonne)
 
-    expect(page).to have_text("11 utilisateurs | Page 1 sur 2")
+    expect(page).to have_text("12 utilisateurs | Page 1 sur 2")
 
     # Checkboxes should be present to select all users
     #
@@ -404,16 +404,16 @@ RSpec.describe "Office users in admin" do
     # with a button to remove them
     #
     within ".header-bar--selection", text: "10 utilisateurs sélectionnés" do
-      click_on "Sélectionner les 11 utilisateurs des 2 pages"
+      click_on "Sélectionner les 12 utilisateurs des 2 pages"
     end
 
-    within ".header-bar--selection", text: "11 utilisateurs sélectionnés" do
+    within ".header-bar--selection", text: "12 utilisateurs sélectionnés" do
       click_on "Exclure les utilisateurs du guichet"
     end
 
     # A confirmation dialog should appear
     #
-    within "[role=dialog]", text: "Êtes-vous sûrs de vouloir exclure les 11 utilisateurs sélectionnés du guichet ?" do
+    within "[role=dialog]", text: "Êtes-vous sûrs de vouloir exclure les 12 utilisateurs sélectionnés du guichet ?" do
       click_on "Continuer"
     end
 

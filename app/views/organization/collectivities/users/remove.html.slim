@@ -1,0 +1,28 @@
+= template_frame_component(src: @referrer_path) do |frame|
+  - frame.with_modal do |modal|
+    - modal.with_header do
+      | Suppression de l'utilisateur : #{@user.name}
+
+    - modal.with_form(url: organization_collectivity_user_path(@collectivity, @user), method: :delete) do
+      - modal.with_hidden_field :redirect, @redirect_path
+
+      - if @user == current_user
+        p
+          | Êtes-vous sûrs de vouloir supprimer votre compte utilisateur ?
+          br
+          | Vous serez déconnecter de la plateforme et vous ne pourrez plus vous connecter.
+        p
+          | Par mesure de securité, les données de votre compte seront archivées pendant 1 jour.
+          br
+          | Toutes les données seront définitivement supprimées à la fin de ce délai.
+
+      - else
+        p
+          | Êtes-vous sûrs de vouloir supprimer cet utilisateur ?
+        p
+          | Par mesure de securité, les données de cet utilisateur seront archivées pendant 1 jour.
+          br
+          | Toutes les données seront définitivement supprimées à la fin de ce délai.
+
+    - modal.with_submit_action "Continuer", autofocus: true
+    - modal.with_close_action "Annuler"

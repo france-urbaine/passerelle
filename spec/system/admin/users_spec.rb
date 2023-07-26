@@ -624,7 +624,6 @@ RSpec.describe "Users in admin" do
     #
     expect(page).to     have_current_path(admin_users_path)
     expect(page).to     have_selector("h1", text: "Utilisateurs")
-    expect(page).to     have_selector("h1", text: "Utilisateurs")
     expect(page).to     have_text("1 utilisateur | Page 1 sur 1")
     expect(page).to     have_selector(:table_row, "Utilisateur" => "Marc Debomy")
     expect(page).not_to have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")

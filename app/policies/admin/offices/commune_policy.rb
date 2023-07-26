@@ -9,6 +9,12 @@ module Admin
       def manage?
         super_admin?
       end
+
+      alias_rule :new?, :create?, :show?, :edit?, :update?, :undiscard?, :undiscard_all?, to: :not_supported
+
+      def not_supported
+        false
+      end
     end
   end
 end

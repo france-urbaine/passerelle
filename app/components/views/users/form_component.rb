@@ -17,6 +17,9 @@ module Views
         if @user.new_record?
           url_args << @organization
           url_args << :users
+        elsif @scope == :organization
+          url_args << @organization
+          url_args << @user
         else
           url_args << @user
         end

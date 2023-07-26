@@ -18,7 +18,7 @@ RSpec.describe "Manage users from organization" do
 
       # A table of all organization users should be present
       #
-      expect(page).to have_selector("h1", text: "Utilisateurs")
+      expect(page).to have_selector("h1", text: "Équipe")
       expect(page).to have_text("2 utilisateurs | Page 1 sur 1")
       expect(page).to have_selector(:table_row, "Utilisateur" => "Marc Debomy")
       expect(page).to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
@@ -35,7 +35,7 @@ RSpec.describe "Manage users from organization" do
       # The browser should redirect back to the index page
       #
       expect(page).to have_current_path(organization_users_path)
-      expect(page).to have_selector("h1", text: "Utilisateurs")
+      expect(page).to have_selector("h1", text: "Équipe")
     end
 
     it "visits the links on a user page" do
@@ -93,7 +93,7 @@ RSpec.describe "Manage users from organization" do
       # The new user should appear
       #
       expect(page).to have_current_path(organization_users_path)
-      expect(page).to have_selector("h1", text: "Utilisateurs")
+      expect(page).to have_selector("h1", text: "Équipe")
       expect(page).to have_selector(:table_row, "Utilisateur" => "Elliot Alderson")
 
       # The dialog should be closed
@@ -147,7 +147,7 @@ RSpec.describe "Manage users from organization" do
       # The user should have changed its name
       #
       expect(page).to have_current_path(organization_users_path)
-      expect(page).to have_selector("h1", text: "Utilisateurs")
+      expect(page).to have_selector("h1", text: "Équipe")
       expect(page).to have_selector(:table_row, "Utilisateur" => "Marc-André De Bomy")
 
       # The dialog should be closed
@@ -231,7 +231,7 @@ RSpec.describe "Manage users from organization" do
       # The user should not appears anymore
       #
       expect(page).to     have_current_path(organization_users_path)
-      expect(page).to     have_selector("h1", text: "Utilisateurs")
+      expect(page).to     have_selector("h1", text: "Équipe")
       expect(page).to     have_text("1 utilisateur | Page 1 sur 1")
       expect(page).not_to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 
@@ -251,7 +251,7 @@ RSpec.describe "Manage users from organization" do
       # The user should be back again
       #
       expect(page).to have_current_path(organization_users_path)
-      expect(page).to have_selector("h1", text: "Utilisateurs")
+      expect(page).to have_selector("h1", text: "Équipe")
       expect(page).to have_text("2 utilisateurs | Page 1 sur 1")
       expect(page).to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 
@@ -281,7 +281,7 @@ RSpec.describe "Manage users from organization" do
       # The user should not appears anymore
       #
       expect(page).to     have_current_path(organization_users_path)
-      expect(page).to     have_selector("h1", text: "Utilisateurs")
+      expect(page).to     have_selector("h1", text: "Équipe")
       expect(page).to     have_text("1 utilisateur | Page 1 sur 1")
       expect(page).not_to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 
@@ -301,7 +301,7 @@ RSpec.describe "Manage users from organization" do
       # The user should be back again
       #
       expect(page).to have_current_path(organization_users_path)
-      expect(page).to have_selector("h1", text: "Utilisateurs")
+      expect(page).to have_selector("h1", text: "Équipe")
       expect(page).to have_text("2 utilisateurs | Page 1 sur 1")
       expect(page).to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 
@@ -365,7 +365,7 @@ RSpec.describe "Manage users from organization" do
       # Other users should remain
       #
       expect(page).to     have_current_path(organization_users_path)
-      expect(page).to     have_selector("h1", text: "Utilisateurs")
+      expect(page).to     have_selector("h1", text: "Équipe")
       expect(page).to     have_text("1 utilisateur | Page 1 sur 1")
       expect(page).not_to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
       expect(page).to     have_selector(:table_row, "Utilisateur" => "Marc Debomy")
@@ -388,7 +388,7 @@ RSpec.describe "Manage users from organization" do
       # The remove users should be back again
       #
       expect(page).to have_current_path(organization_users_path)
-      expect(page).to have_selector("h1", text: "Utilisateurs")
+      expect(page).to have_selector("h1", text: "Équipe")
       expect(page).to have_text("2 utilisateurs | Page 1 sur 1")
       expect(page).to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 
@@ -450,7 +450,7 @@ RSpec.describe "Manage users from organization" do
       # The current user should not have been removed
       #
       expect(page).to have_current_path(organization_users_path)
-      expect(page).to have_selector("h1", text: "Utilisateurs")
+      expect(page).to have_selector("h1", text: "Équipe")
       expect(page).to have_text("3 utilisateurs | Page 1 sur 1")
       expect(page).to have_selector(:table_row, "Utilisateur" => "Marc Debomy")
 
@@ -471,7 +471,7 @@ RSpec.describe "Manage users from organization" do
       # All users should be back again
       #
       expect(page).to have_current_path(organization_users_path)
-      expect(page).to have_selector("h1", text: "Utilisateurs")
+      expect(page).to have_selector("h1", text: "Équipe")
       expect(page).to have_text("12 utilisateurs | Page 1 sur 2")
       expect(page).to have_selector(:table_row, "Utilisateur" => "Marc Debomy")
       expect(page).to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
@@ -548,7 +548,7 @@ RSpec.describe "Manage users from organization" do
 
       # A table of all users should be present
       #
-      expect(page).to have_selector("h1", text: "Utilisateurs")
+      expect(page).to have_selector("h1", text: "Équipe")
       expect(page).to have_text("2 utilisateurs | Page 1 sur 1")
       expect(page).to have_selector(:table_row, "Utilisateur" => "Christelle Droitier")
       expect(page).to have_selector(:table_row, "Utilisateur" => "Pierre Civil")
@@ -565,7 +565,7 @@ RSpec.describe "Manage users from organization" do
       # The browser should redirect back to the index page
       #
       expect(page).to have_current_path(organization_users_path)
-      expect(page).to have_selector("h1", text: "Utilisateurs")
+      expect(page).to have_selector("h1", text: "Équipe")
     end
 
     it "visits the user page to identify links" do
@@ -588,7 +588,7 @@ RSpec.describe "Manage users from organization" do
 
       # A table of all users should be present
       #
-      expect(page).to have_selector("h1", text: "Utilisateurs")
+      expect(page).to have_selector("h1", text: "Équipe")
       expect(page).to have_text("2 utilisateurs | Page 1 sur 1")
       expect(page).to have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
       expect(page).to have_selector(:table_row, "Utilisateur" => "Astride Fabre")
@@ -605,7 +605,7 @@ RSpec.describe "Manage users from organization" do
       # The browser should redirect back to the index page
       #
       expect(page).to have_current_path(organization_users_path)
-      expect(page).to have_selector("h1", text: "Utilisateurs")
+      expect(page).to have_selector("h1", text: "Équipe")
     end
 
     it "visits the user page to identify links" do
@@ -656,7 +656,7 @@ RSpec.describe "Manage users from organization" do
       # The new user should appear
       #
       expect(page).to have_current_path(organization_users_path)
-      expect(page).to have_selector("h1", text: "Utilisateurs")
+      expect(page).to have_selector("h1", text: "Équipe")
       expect(page).to have_selector(:table_row, "Utilisateur" => "Elliot Alderson")
 
       # The dialog should be closed

@@ -35,8 +35,7 @@ module Organization
     params_filter do |params|
       return unless organization_admin?
 
-      attributes = %i[first_name last_name email]
-      attributes << :organization_admin if organization_admin?
+      attributes = %i[first_name last_name email organization_admin]
       attributes << :super_admin        if super_admin?
       attributes << { office_ids: [] }  if organization.is_a?(DDFIP)
 

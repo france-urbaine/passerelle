@@ -23,7 +23,7 @@
     - datatable.each_row do |row, commune|
       - row.with_checkbox "Sélectionner cette commune", described_by: :name, disabled: !allowed_to?(:destroy_all?, Commune, with: Admin::Offices::CommunePolicy)
 
-      - if allowed_to?(:update?, Commune)
+      - if allowed_to?(:update?, Commune, with: CommunePolicy)
         - row.with_action "Modifier cette commune", edit_commune_path(commune), icon: "pencil-square", modal: true
 
       - if allowed_to?(:destroy?, Commune, with: Admin::Offices::CommunePolicy)
@@ -34,7 +34,7 @@
           = commune.code_insee
 
         - column.with_span do
-          = authorized_link_to commune do
+          = authorized_link_to commune, with: CommunePolicy do
             = commune.name
 
       - row.with_column(:epci) do |column|

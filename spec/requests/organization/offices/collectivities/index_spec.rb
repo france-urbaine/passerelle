@@ -74,7 +74,7 @@ RSpec.describe "Organization::Offices::CollectivitiesController#index" do
     context "when requesting HTML" do
       context "when the office is accessible" do
         it { expect(response).to have_http_status(:see_other) }
-        it { expect(response).to redirect_to("/admin/guichets/#{office.id}") }
+        it { expect(response).to redirect_to("/organisation/guichets/#{office.id}") }
       end
 
       context "when the office is discarded" do

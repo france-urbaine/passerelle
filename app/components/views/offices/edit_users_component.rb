@@ -22,7 +22,7 @@ module Views
       end
 
       def suggested_users
-        @office.ddfip.users.order(:created_at)
+        @office.ddfip.users.kept.order(:created_at)
       end
     end
   end

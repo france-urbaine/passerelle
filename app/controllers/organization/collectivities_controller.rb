@@ -23,7 +23,7 @@ module Organization
 
     def create
       @collectivity = build_collectivity
-      service = Collectivities::CreateService.new(@collectivity, collectivity_params)
+      service = ::Collectivities::CreateService.new(@collectivity, collectivity_params)
       result  = service.save
 
       respond_with result,
@@ -38,7 +38,7 @@ module Organization
 
     def update
       @collectivity = find_and_authorize_collectivity
-      service = Collectivities::UpdateService.new(@collectivity, collectivity_params)
+      service = ::Collectivities::UpdateService.new(@collectivity, collectivity_params)
       result  = service.save
 
       respond_with result,
