@@ -166,6 +166,12 @@ Rails.application.routes.draw do
             concerns :updatable_collection
           end
 
+          resources :communes, only: %i[index destroy] do
+            concerns :removable,            undiscard: false
+            concerns :removable_collection, undiscard: false
+            concerns :updatable_collection
+          end
+
           resources :collectivities, only: %i[index], path: "/collectivites"
         end
       end

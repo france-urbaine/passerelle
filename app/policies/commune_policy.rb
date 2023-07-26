@@ -6,4 +6,8 @@ class CommunePolicy < ApplicationPolicy
   def manage?
     super_admin?
   end
+
+  relation_scope do |relation|
+    relation
+  end
 end

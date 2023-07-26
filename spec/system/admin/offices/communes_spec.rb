@@ -2,7 +2,7 @@
 
 require "system_helper"
 
-RSpec.describe "Office communes" do
+RSpec.describe "Office communes in admin" do
   fixtures :regions, :departements, :epcis, :communes
   fixtures :ddfips, :offices, :office_communes, :users
 
@@ -14,7 +14,7 @@ RSpec.describe "Office communes" do
   before { sign_in(users(:marc)) }
 
   it "visits a comune page from the office page" do
-    visit office_path(pelp_bayonne)
+    visit admin_office_path(pelp_bayonne)
 
     # A table of communes should be present
     #
@@ -33,7 +33,7 @@ RSpec.describe "Office communes" do
 
     # The browser should have redirect back to the office page
     #
-    expect(page).to have_current_path(office_path(pelp_bayonne))
+    expect(page).to have_current_path(admin_office_path(pelp_bayonne))
     expect(page).to have_selector("h1", text: "PELP de Bayonne")
   end
 
@@ -42,14 +42,14 @@ RSpec.describe "Office communes" do
     #
     pelp_bayonne.communes << create_list(:commune, 10, departement: pelp_bayonne.departement)
 
-    visit office_path(pelp_bayonne)
+    visit admin_office_path(pelp_bayonne)
 
     expect(page).to     have_text("12 communes | Page 1 sur 2")
     expect(page).not_to have_button("Options d'affichage")
   end
 
   it "manages communes from the office page" do
-    visit office_path(pelh_bayonne)
+    visit admin_office_path(pelh_bayonne)
 
     # The communes list should be empty
     #
@@ -89,7 +89,7 @@ RSpec.describe "Office communes" do
     # The browser should stay on the office page
     # The new communes should appear
     #
-    expect(page).to have_current_path(office_path(pelh_bayonne))
+    expect(page).to have_current_path(admin_office_path(pelh_bayonne))
     expect(page).to have_selector("h1", text: "PELH de Bayonne")
     expect(page).to have_text("2 communes | Page 1 sur 1")
     expect(page).to have_selector(:table_row, { "Commune" => "64102" }, text: "Bayonne")
@@ -131,7 +131,7 @@ RSpec.describe "Office communes" do
     # The browser should stay on the office page
     # The new communes should appear
     #
-    expect(page).to have_current_path(office_path(pelh_bayonne))
+    expect(page).to have_current_path(admin_office_path(pelh_bayonne))
     expect(page).to have_selector("h1", text: "PELH de Bayonne")
     expect(page).to have_text("3 communes | Page 1 sur 1")
     expect(page).to have_selector(:table_row, { "Commune" => "64102" }, text: "Bayonne")
@@ -163,7 +163,7 @@ RSpec.describe "Office communes" do
     # The browser should stay on the office page
     # The new communes should appear
     #
-    expect(page).to have_current_path(office_path(pelh_bayonne))
+    expect(page).to have_current_path(admin_office_path(pelh_bayonne))
     expect(page).to have_selector("h1", text: "PELH de Bayonne")
     expect(page).to have_text("Aucune commune assignée à ce guichet.")
 
@@ -175,7 +175,7 @@ RSpec.describe "Office communes" do
   end
 
   it "excludes an user from the office without deleting it" do
-    visit office_path(pelp_bayonne)
+    visit admin_office_path(pelp_bayonne)
 
     # A table of communes should be present
     # with a button to exclude them
@@ -192,7 +192,7 @@ RSpec.describe "Office communes" do
 
     # The browser should stay on the office page
     # The user should not appears anymore
-    expect(page).to     have_current_path(office_path(pelp_bayonne))
+    expect(page).to     have_current_path(admin_office_path(pelp_bayonne))
     expect(page).to     have_selector("h1", text: "PELP de Bayonne")
     expect(page).not_to have_selector(:table_row, { "Commune" => "64102" }, text: "Bayonne")
 
@@ -214,7 +214,7 @@ RSpec.describe "Office communes" do
   end
 
   it "selects and excludes one commune from the office page" do
-    visit office_path(pelp_bayonne)
+    visit admin_office_path(pelp_bayonne)
 
     # Checkboxes should be present to select communes
     #
@@ -239,7 +239,7 @@ RSpec.describe "Office communes" do
     # The selected communes should not appears anymore
     # Other communes should remain
     #
-    expect(page).to     have_current_path(office_path(pelp_bayonne))
+    expect(page).to     have_current_path(admin_office_path(pelp_bayonne))
     expect(page).to     have_selector("h1", text: "PELP de Bayonne")
     expect(page).not_to have_selector(:table_row, { "Commune" => "64102" }, text: "Bayonne")
 
@@ -267,7 +267,7 @@ RSpec.describe "Office communes" do
     #
     pelp_bayonne.communes << create_list(:commune, 10, departement: pelp_bayonne.departement)
 
-    visit office_path(pelp_bayonne)
+    visit admin_office_path(pelp_bayonne)
 
     expect(page).to have_text("12 communes | Page 1 sur 2")
 
@@ -293,7 +293,7 @@ RSpec.describe "Office communes" do
     # The browser should stay on the office page
     # The selected communes should have been removed
     #
-    expect(page).to     have_current_path(office_path(pelp_bayonne))
+    expect(page).to     have_current_path(admin_office_path(pelp_bayonne))
     expect(page).to     have_selector("h1", text: "PELP de Bayonne")
     expect(page).to     have_text("2 communes | Page 1 sur 1")
     expect(page).not_to have_selector(:table_row, { "Commune" => "64102" }, text: "Bayonne")
@@ -322,7 +322,7 @@ RSpec.describe "Office communes" do
     #
     pelp_bayonne.communes << create_list(:commune, 10, departement: pelp_bayonne.departement)
 
-    visit office_path(pelp_bayonne)
+    visit admin_office_path(pelp_bayonne)
 
     expect(page).to have_text("12 communes | Page 1 sur 2")
 
@@ -352,7 +352,7 @@ RSpec.describe "Office communes" do
     # The browser should stay on the office page
     # No communes should appear anymore
     #
-    expect(page).to have_current_path(office_path(pelp_bayonne))
+    expect(page).to have_current_path(admin_office_path(pelp_bayonne))
     expect(page).to have_selector("h1", text: "PELP de Bayonne")
     expect(page).to have_text("Aucune commune assignée à ce guichet.")
 

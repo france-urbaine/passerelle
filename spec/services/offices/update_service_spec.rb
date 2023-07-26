@@ -80,4 +80,29 @@ RSpec.describe Offices::UpdateService do
         .and include(users[3], users[4])
     end
   end
+
+  context "with communes IDs" do
+    let!(:departement) { create(:departement) }
+    let!(:ddfip)       { create(:ddfip, departement: departement) }
+    let!(:office)      { create(:office, ddfip: ddfip) }
+    let!(:communes) do
+      [
+        create(:commune, departement: departement),
+        create(:commune, departement: departement),
+        create(:commune, departement: departement),
+        create(:commune),
+        create(:commune)
+      ]
+    end
+
+    it "assigns only communes belonging to the same departement" do
+      service = described_class.new(office, { commune_ids: communes[1..4].map(&:code_insee) })
+      service.save
+      office.reload
+
+      expect(office.communes.to_a)
+        .to have(2).communes
+        .and include(communes[1], communes[2])
+    end
+  end
 end

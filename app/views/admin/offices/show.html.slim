@@ -75,7 +75,7 @@
           - skeleton.with_search
           - skeleton.with_pagination
 
-  - if allowed_to?(:index?, Commune, with: Offices::CommunePolicy)
+  - if allowed_to?(:index?, Commune)
     .content__separator
 
     .subheader-bar
@@ -84,15 +84,15 @@
         | Communes assignées
 
       .subheader-bar__actions
-        - if allowed_to?(:manage?, Commune, with: Offices::CommunePolicy)
-          .subheader-bar__action= button_component "Gérer les communes", edit_all_office_communes_path(@office), icon: "squares-plus", modal: true
+        - if allowed_to?(:manage?, Commune, with: Admin::Offices::CommunePolicy)
+          .subheader-bar__action= button_component "Gérer les communes", edit_all_admin_office_communes_path(@office), icon: "squares-plus", modal: true
 
     - if @office.communes_count.zero?
       = card_component(content_class: "card__content--empty")
         | Aucune commune assignée à ce guichet.
 
     - else
-      = turbo_frame_tag "datatable-communes", src: office_communes_path(@office) do
+      = turbo_frame_tag "datatable-communes", src: admin_office_communes_path(@office) do
         = datatable_skeleton_component(rows: [@office.communes_count, ControllerCollections::NESTED_ITEMS].min) do |skeleton|
           - skeleton.with_search
           - skeleton.with_pagination

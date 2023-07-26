@@ -6,12 +6,12 @@
       - else
         | Exclusion de la commune sélectionnée
 
-    - modal.with_form(url: office_communes_path(@office), method: :delete) do
-      = hidden_field_tag :redirect, @referrer_path
-      = hidden_param_input(:ids)
-      = hidden_param_input(:search)
-      = hidden_param_input(:order)
-      = hidden_param_input(:page)
+    - modal.with_form(url: admin_office_communes_path(@office), method: :delete) do
+      - modal.with_hidden_field :redirect, @referrer_path
+      - modal.with_hidden_field :ids,    params[:ids]
+      - modal.with_hidden_field :search, params[:search]
+      - modal.with_hidden_field :order,  params[:order]
+      - modal.with_hidden_field :page,   params[:page]
 
       - if @communes.count > 1
         p Êtes-vous sûrs de vouloir exclure les <b>#{@communes.count}</b> communes sélectionnées du guichet ?

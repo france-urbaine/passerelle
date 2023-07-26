@@ -3,9 +3,8 @@
     - modal.with_header do
       | Exlusion de la commune : #{@commune.name}
 
-    - modal.with_form(url: office_commune_path(@office, @commune), method: :delete) do
-      - unless @referrer_path.include?(commune_path(@commune))
-        = hidden_field_tag :redirect, @referrer_path
+    - modal.with_form(url: admin_office_commune_path(@office, @commune), method: :delete) do
+      - modal.with_hidden_field :redirect, @referrer_path
 
       p Êtes-vous sûrs de vouloir exclure cette commune du guichet ?
       p Ce guichet ne recevra plus les signalements liés à cette commune.
