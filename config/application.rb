@@ -33,5 +33,8 @@ module Fiscahub
     # We want to be able to use any feature of our database,
     # and the SQL format makes that possible
     config.active_record.schema_format = :sql
+
+    # Autoload extra classes defined in lib/extra
+    config.autoload_paths << "#{root}/lib/extras"
   end
 end
