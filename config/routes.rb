@@ -65,47 +65,6 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :publishers, only: [], path: "/editeurs" do
-      scope module: "publishers" do
-        resources :users,          only: %i[index new create], concerns: %i[removable_collection], path: "/utilisateurs"
-      end
-    end
-
-    resources :collectivities, only: [], path: "/collectivites" do
-      scope module: "collectivities" do
-        resources :users,    only: %i[index new create], concerns: %i[removable_collection], path: "/utilisateurs"
-      end
-    end
-
-    resources :ddfips, only: [] do
-      scope module: "ddfips" do
-        resources :users,          only: %i[index new create], concerns: %i[removable_collection], path: "/utilisateurs"
-      end
-    end
-
-    resources :offices, only: [], path: "/guichets" do
-      scope module: "offices" do
-        resources :communes, only: %i[index destroy] do
-          get    :remove,      on: :member
-          get    :remove_all,  on: :collection, path: "remove"
-          delete :destroy_all, on: :collection, path: "/", as: nil
-
-          concerns :updatable_collection
-        end
-
-        resources :users, only: %i[index new create destroy], path: "/utilisateurs" do
-          get    :remove,      on: :member
-          get    :remove_all,  on: :collection, path: "remove"
-          delete :destroy_all, on: :collection, path: "/", as: nil
-
-          concerns :updatable_collection
-        end
-      end
-    end
-
-    resources :users, concerns: %i[removable removable_collection], path: "/utilisateurs"
-    resources :users_offices, only: %i[index], controller: "users/offices", path: "/utilisateurs/offices"
-
     resources :communes,     only: %i[index show edit update]
     resources :epcis,        only: %i[index show edit update]
     resources :departements, only: %i[index show edit update]
@@ -131,6 +90,8 @@ Rails.application.routes.draw do
           resources :collectivities, only: %i[index], path: "/collectivites"
         end
       end
+
+      resources :users, concerns: %i[removable removable_collection], path: "/utilisateurs"
     end
 
     # Admin stuff
