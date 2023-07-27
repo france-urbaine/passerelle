@@ -93,7 +93,7 @@ RSpec.describe "Admin::Collectivities::OfficesController#index" do
 
         it { expect(response).to have_http_status(:not_found) }
         it { expect(response).to have_content_type(:html) }
-        it { expect(response).to have_html_body.to include("La collectivité n'a pas été trouvée ou n'existe plus.") }
+        it { expect(response).to have_html_body.to include("Cette collectivité n'a pas été trouvée ou n'existe plus.") }
       end
     end
 
@@ -134,7 +134,7 @@ RSpec.describe "Admin::Collectivities::OfficesController#index" do
 
         it { expect(response).to have_http_status(:not_found) }
         it { expect(response).to have_content_type(:html) }
-        it { expect(response).to have_html_body.to include("La collectivité n'a pas été trouvée ou n'existe plus.") }
+        it { expect(response).to have_html_body.to include("Cette collectivité n'a pas été trouvée ou n'existe plus.") }
       end
     end
 

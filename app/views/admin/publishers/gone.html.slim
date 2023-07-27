@@ -4,5 +4,5 @@
     - breadcrumbs.with_path "Éditeurs", admin_publishers_path
     - breadcrumbs.with_path @gone_records.last.name
 
-  - if allowed_to?(:undiscard, @gone_records.last)
+  - if allowed_to?(:undiscard?,@gone_records.last)
     - template.with_action "Annuler la suppression de l'éditeur", undiscard_admin_publisher_path(@gone_records.last), method: :patch, icon: "arrow-path"

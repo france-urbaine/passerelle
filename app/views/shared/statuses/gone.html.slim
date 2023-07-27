@@ -2,6 +2,10 @@
   - template.with_breadcrumbs do |breadcrumbs|
     - breadcrumbs.with_path "..."
 
-    - @gone_records.last.try do |record|
-      - breadcrumbs.with_path record.model_name.human
-      - breadcrumbs.with_path record.name
+    - if @gone_records.last
+      - breadcrumbs.with_path @gone_records.last.model_name.human.pluralize
+
+      - if @gone_records.last.respond_to?(:name)
+        - breadcrumbs.with_path @gone_records.last.name
+      - elsif @gone_records.last.respond_to?(:reference)
+        - breadcrumbs.with_path @gone_records.last.reference

@@ -1,4 +1,4 @@
-= render Modal::Component.new(redirection_path: @redirection_path) do |modal|
+= render Modal::Component.new(redirection_path: redirection_path) do |modal|
   - modal.with_header do
     - if @user.new_record?
       | Invitation d'un nouvel utilisateur
@@ -6,7 +6,7 @@
       | Modification de l'utilisateur
 
   - modal.with_form(model: @user, url: form_url, **form_html_attributes) do |form|
-    - modal.with_hidden_field :redirect, @redirection_path
+    - modal.with_hidden_field :redirect, redirection_path
 
     - if allowed_to_assign_organization?
       = form.block :organization, autocomplete: organizations_path do

@@ -61,7 +61,7 @@ RSpec.describe "Organization::OfficesController#show" do
 
       it { expect(response).to have_http_status(:not_found) }
       it { expect(response).to have_content_type(:html) }
-      it { expect(response).to have_html_body.to include("Le guichet n'a pas été trouvé ou n'existe plus.") }
+      it { expect(response).to have_html_body.to include("Ce guichet n'a pas été trouvé ou n'existe plus.") }
     end
   end
 end

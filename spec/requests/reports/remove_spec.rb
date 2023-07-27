@@ -81,6 +81,14 @@ RSpec.describe "ReportsController#remove" do
         it { expect(response).to have_html_body }
       end
 
+      context "when the package is discarded" do
+        before { report.package.discard }
+
+        it { expect(response).to have_http_status(:gone) }
+        it { expect(response).to have_content_type(:html) }
+        it { expect(response).to have_html_body }
+      end
+
       context "when the report is missing" do
         before { report.destroy }
 

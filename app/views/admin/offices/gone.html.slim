@@ -4,7 +4,7 @@
     - breadcrumbs.with_path "Guichets", admin_offices_path
     - breadcrumbs.with_path @gone_records.last.name
 
-  - if allowed_to?(:undiscard, @gone_records.first)
+  - if allowed_to?(:undiscard?,@gone_records.first)
     - case @gone_records.first
     - when DDFIP
       - template.with_action "Annuler la suppression de la DDFIP", undiscard_admin_ddfip_path(@gone_records.first), method: :patch, icon: "arrow-path"

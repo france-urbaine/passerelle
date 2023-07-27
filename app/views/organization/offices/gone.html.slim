@@ -4,5 +4,5 @@
     - breadcrumbs.with_path "Guichets", organization_offices_path
     - breadcrumbs.with_path @gone_records.last.name
 
-  - if allowed_to?(:undiscard, @gone_records.first)
+  - if allowed_to?(:undiscard?,@gone_records.first)
     - template.with_action "Annuler la suppression du guichet", undiscard_organization_office_path(@gone_records.first), method: :patch, icon: "arrow-path"

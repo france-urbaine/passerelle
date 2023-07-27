@@ -11,6 +11,14 @@ module Views
         super()
       end
 
+      def redirection_path
+        if @redirection_path.nil? && @user.errors.any? && params[:redirect]
+          params[:redirect]
+        else
+          @redirection_path
+        end
+      end
+
       def form_url
         url_args = [@scope]
 
