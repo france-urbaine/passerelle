@@ -34,6 +34,37 @@ module TemplateStatus
         when 24..   then "dans #{I18n.t(:x_days, count: distance_in_days, scope: 'datetime.distance_in_words')}"
         end
       end
+
+      def gone_resource_message
+        # NOTE: Brakeman cannot parse pattern matching in slim templates
+        #
+        case @records
+        in [Publisher, User] | [Collectivity, User] | [DDFIP, User]
+          "L'organisation de cet utilisateur est en cours de suppression."
+        in [Publisher, Collectivity]
+          "L'éditeur de cette collectivité est en cours de suppression."
+        in [Publisher]
+          "Cet éditeur est en cours de suppression."
+        in [DDFIP, Office]
+          "La DDFIP de ce guichet est en cours de suppression."
+        in [DDFIP]
+          "Cette DDFIP est en cours de suppression."
+        in [Collectivity]
+          "Cette collectivité est en cours de suppression."
+        in [Office]
+          "Ce guichet est en cours de suppression."
+        in [User]
+          "Cet utilisateur est en cours de suppression."
+        in [Package, Report]
+          "Le paquet de ce signalement est en cours de suppression."
+        in [Report]
+          "Ce signalement est en cours de suppression."
+        in [Package]
+          "Ce paquet est en cours de suppression."
+        else
+          "Cette ressource est en cours de suppression."
+        end
+      end
     end
   end
 end
