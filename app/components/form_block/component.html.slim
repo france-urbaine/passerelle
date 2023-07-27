@@ -1,6 +1,10 @@
 = tag.div **block_html_attributes do
   = content
-  = errors
+
+  - errors.each do |error|
+    .form-block__errors= error
+
+  = display_errors
 
   - if hint?
     .form-block__hint= hint

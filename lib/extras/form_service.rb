@@ -4,23 +4,6 @@
 # https://github.com/rootstrap/yaaf/blob/4531200021fbe3c77df46f3290134dbf4bcdc71d/lib/yaaf/form.rb
 #
 class FormService
-  class Result
-    attr_reader :record, :errors
-
-    def initialize(record, errors)
-      @record = record
-      @errors = errors
-    end
-
-    def failed?
-      @errors.any?
-    end
-
-    def successful?
-      !failed?
-    end
-  end
-
   include ::ActiveModel::Model
   include ::ActiveModel::Validations::Callbacks
   include ::ActiveRecord::Transactions
@@ -93,7 +76,11 @@ class FormService
   end
 
   def build_result
-    Result.new(record, errors)
+    if errors.empty?
+      Result::Success.new(record)
+    else
+      Result::Failure.new(errors)
+    end
   end
 
   def handle_transaction_rollback(exception)

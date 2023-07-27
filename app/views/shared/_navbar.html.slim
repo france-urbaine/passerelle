@@ -67,18 +67,18 @@ div( data-controller="navbar" )
         = navbar_link_to "Guichets",      admin_offices_path        if admin_offices
         = navbar_link_to "Utilisateurs",  admin_users_path          if admin_users
 
-    - communes     = allowed_to?(:index?, Commune,     with: CommunePolicy)
-    - epcis        = allowed_to?(:index?, EPCI,        with: EPCIPolicy)
-    - departements = allowed_to?(:index?, Departement, with: DepartementPolicy)
-    - regions      = allowed_to?(:index?, Region,      with: RegionPolicy)
+    - communes     = allowed_to?(:index?, Commune,     with: Territories::CommunePolicy)
+    - epcis        = allowed_to?(:index?, EPCI,        with: Territories::EPCIPolicy)
+    - departements = allowed_to?(:index?, Departement, with: Territories::DepartementPolicy)
+    - regions      = allowed_to?(:index?, Region,      with: Territories::RegionPolicy)
 
     - if communes || epcis || departements || regions
       .navbar__header Territoires
       .navbar__links
-        = navbar_link_to "Communes",     communes_path     if communes
-        = navbar_link_to "EPCI",         epcis_path        if epcis
-        = navbar_link_to "Départements", departements_path if departements
-        = navbar_link_to "Régions",      regions_path      if regions
+        = navbar_link_to "Communes",     territories_communes_path     if communes
+        = navbar_link_to "EPCI",         territories_epcis_path        if epcis
+        = navbar_link_to "Départements", territories_departements_path if departements
+        = navbar_link_to "Régions",      territories_regions_path      if regions
 
     .flex-auto
     .navbar__user

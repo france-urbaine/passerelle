@@ -1,8 +1,12 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  # Development extensiosn
+  # ----------------------------------------------------------------------------
+  mount Lookbook::Engine, at: "/lookbook" if Rails.env.development?
 
+  # Concerns
+  # ----------------------------------------------------------------------------
   concern :removable do |options|
     get   :remove,    on: :member
     patch :undiscard, on: :member unless options[:undiscard] == false
@@ -19,8 +23,8 @@ Rails.application.routes.draw do
     patch :update_all, on: :collection, path: "/", as: nil
   end
 
-  mount Lookbook::Engine, at: "/lookbook" if Rails.env.development?
-
+  # User stuff
+  # ----------------------------------------------------------------------------
   devise_for :users, path: "/", controllers: {
     sessions:      "users/sessions",
     confirmations: "users/confirmations",
@@ -65,14 +69,8 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :communes,     only: %i[index show edit update]
-    resources :epcis,        only: %i[index show edit update]
-    resources :departements, only: %i[index show edit update]
-    resources :regions,      only: %i[index show edit update]
-
-    resources :organizations, only: %i[index],       path: "/organisations"
-    resources :territories,   only: %i[index],       path: "/territoires"
-    resource  :territories,   only: %i[edit update], path: "/territoires"
+    resources :organizations, only: %i[index], path: "/organisations"
+    resources :territories,   only: %i[index], path: "/territoires"
 
     # Organization stuff
     # ----------------------------------------------------------------------------
@@ -152,6 +150,41 @@ Rails.application.routes.draw do
 
       resources :users, concerns: %i[removable removable_collection], path: "/utilisateurs"
       resources :users_offices, only: %i[index], controller: "users/offices", path: "/utilisateurs/guichets"
+    end
+
+    # Territories stuff
+    # ----------------------------------------------------------------------------
+    namespace :territories, path: "/territoires" do
+      resources :communes, only: %i[index show edit update] do
+        scope module: "communes" do
+          resources :collectivities, only: %i[index], path: "/collectivites"
+        end
+      end
+
+      resources :epcis, only: %i[index show edit update] do
+        scope module: "epcis" do
+          resources :communes,       only: %i[index]
+          resources :collectivities, only: %i[index], path: "/collectivites"
+        end
+      end
+
+      resources :departements, only: %i[index show edit update] do
+        scope module: "departements" do
+          resources :communes,       only: %i[index]
+          resources :epcis,          only: %i[index]
+          resources :collectivities, only: %i[index], path: "/collectivites"
+        end
+      end
+
+      resources :regions, only: %i[index show edit update] do
+        scope module: "regions" do
+          resources :departements,   only: %i[index]
+          resources :ddfips,         only: %i[index]
+          resources :collectivities, only: %i[index], path: "/collectivites"
+        end
+      end
+
+      resource :update, only: %i[edit update], path: "/mise-a-jour", path_names: { edit: "/" }
     end
   end
 end

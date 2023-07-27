@@ -1,0 +1,45 @@
+= render Modal::Component.new(redirection_path: redirection_path) do |modal|
+  - modal.with_header do
+    | Mise à jour des communes & EPCIs
+
+  - modal.with_form(url: territories_update_path, method: :patch, class: "w-[640px]") do |form|
+    = form.block :communes_url do |block|
+      .form-block__label
+        = form.label :communes_url, "Fichier de découpage communal"
+
+      .form-block__input
+        span.form-block__input-prefix= URL_ROOT
+        = form.text_field :communes_url, autofocus: true, value: communes_url
+
+      - @result&.errors&.messages_for(:communes_url)&.each do |message|
+        - block.with_error do
+          = message
+
+      - block.with_hint do
+        ' Consultez
+        = link_to "https://www.insee.fr/fr/information/2028028", "https://www.insee.fr/fr/information/2028028", target: "_blank"
+        '  pour plus d'informations.
+        br
+        | Utilisez l'URL du fichier <b>Table d’appartenance géographique des commune</b> le plus récent.
+
+    = form.block :epcis_url do |block|
+      .form-block__label
+        = form.label :epcis_url, "Fichier des intercommunalités"
+
+      .form-block__input
+        span.form-block__input-prefix= URL_ROOT
+        = form.text_field :epcis_url, value: epcis_url
+
+      - @result&.errors&.messages_for(:epcis_url)&.each do |message|
+        - block.with_error do
+          = message
+
+      - block.with_hint do
+        ' Consultez
+        = link_to "https://www.insee.fr/fr/information/2510634", "https://www.insee.fr/fr/information/2510634", target: "_blank"
+        '  pour plus d'informations.
+        br
+        | Utilisez l'URL du fichier <b>Base des EPCI à fiscalité propre</b> le plus récent.
+
+  - modal.with_submit_action "Continuer", autofocus: true
+  - modal.with_close_action "Annuler"

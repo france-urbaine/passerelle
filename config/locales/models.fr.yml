@@ -355,7 +355,7 @@ fr:
   activemodel:
     errors:
       models:
-        territories_update:
+        territories/update_service:
           blank:             Une URL est requise
           invalid_url:       Cette URL n'est pas valide
           invalid_extension: Le fichier cible doit être un fichier ZIP

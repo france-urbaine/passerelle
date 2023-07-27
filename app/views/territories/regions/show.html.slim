@@ -1,0 +1,92 @@
+= template_frame_component do
+  = breadcrumbs_component do |breadcrumbs|
+    - breadcrumbs.with_path "Territoires"
+    - breadcrumbs.with_path "Régions", territories_regions_path
+    - breadcrumbs.with_path @region.name
+
+    - if allowed_to?(:manage?, @region)
+      - breadcrumbs.with_action "Modifier", edit_territories_region_path(@region), icon: "pencil-square", modal: true
+
+  h2.subheader
+    = svg_icon("identification", "Nouvelle section")
+    | Description
+
+  .card
+    dl.description-list
+      .description-list__row
+        dt Code INSEE de la région
+        dd= @region.code_region
+
+      .description-list__row
+        dt Départements
+        dd= display_count(@region.departements_count, "département") if @region.departements_count.positive?
+
+      .description-list__row
+        dt EPCI
+        dd= display_count(@region.epcis_count, "EPCI") if @region.epcis_count.positive?
+
+      .description-list__row
+        dt Communes
+        dd= display_count(@region.communes_count, "commune") if @region.communes_count.positive?
+
+      .description-list__row
+        dt DDFIP enregistrées
+        dd= display_count(@region.ddfips_count, "DDFIP") if @region.ddfips_count.positive?
+
+      .description-list__row
+        dt Collectivités enregistrées
+        dd= display_count(@region.collectivities_count, "collectivité") if @region.collectivities_count.positive?
+
+  - if allowed_to?(:index?, Departement)
+    .content__separator
+
+    .subheader-bar
+      h2.subheader
+        = svg_icon("rectangle-stack", "Nouvelle section")
+        | Départements
+
+    - if @region.departements_count.zero?
+      = card_component(content_class: "card__content--empty")
+        | Aucun département dans cette région.
+
+    - else
+      = turbo_frame_tag "datatable-departements", src: territories_region_departements_path(@region) do
+        = datatable_skeleton_component(nested: true, rows: @region.departements_count) do |skeleton|
+          - skeleton.with_search
+          - skeleton.with_pagination
+
+  - if allowed_to?(:index?, Region)
+    .content__separator
+
+    .subheader-bar
+      h2.subheader
+        = svg_icon("rectangle-stack", "Nouvelle section")
+        | DDFIP enregistrées
+
+    - if @region.ddfips_count.zero?
+      = card_component(content_class: "card__content--empty")
+        | Aucune DDFIP enregistrée dans cette région.
+
+    - else
+      = turbo_frame_tag "datatable-ddfips", src: territories_region_ddfips_path(@region) do
+        = datatable_skeleton_component(nested: true, rows: @region.ddfips_count) do |skeleton|
+          - skeleton.with_search
+          - skeleton.with_pagination
+
+  - if allowed_to?(:index?, Collectivity)
+    .content__separator
+
+    .subheader-bar
+      h2.subheader
+        = svg_icon("rectangle-stack", "Nouvelle section")
+        | Collectivités enregistrées
+
+    - if @region.collectivities_count.zero?
+      = card_component(content_class: "card__content--empty")
+        | Aucune collectivité enregistrée dans cette région.
+
+    - else
+      = turbo_frame_tag "datatable-collectivities", src: territories_region_collectivities_path(@region) do
+        = datatable_skeleton_component(nested: true, rows: @region.collectivities_count) do |skeleton|
+          - skeleton.with_search
+          - skeleton.with_pagination

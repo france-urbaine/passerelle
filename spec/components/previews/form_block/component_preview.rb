@@ -37,10 +37,16 @@ module FormBlock
     def text_field_with_hint; end
 
     # @label Text field with error message
+    #
     def text_field_with_errors; end
 
-    # @label Text field with hint & error message
-    def text_field_with_hint_and_errors; end
+    # @label Text field with validation errors
+    #
+    def text_field_with_validation_errors; end
+
+    # @label Text field with all type of messages
+    #
+    def text_field_with_messages; end
 
     # @label Checkbox with hint message
     #

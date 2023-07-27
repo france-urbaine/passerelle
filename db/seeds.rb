@@ -22,7 +22,10 @@ end
 # Import EPCIs and communes from a remote source
 # ----------------------------------------------------------------------------
 if ENV["SEED_ALL_EPCIS_AND_COMMUNES"] == "true"
-  TerritoriesUpdate.new.assign_default_urls.perform_now
+  Territories::UpdateService.new(
+    communes_url: Fiscahub::Application::DEFAULT_COMMUNES_URL,
+    epcis_url:    Fiscahub::Application::DEFAULT_EPCIS_URL
+  ).perform_now
   exit
 end
 

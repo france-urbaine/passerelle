@@ -9,7 +9,8 @@ module LinkHelper
       url_for(url_args)
     end
 
-    policy_options = options.extract!(:with)
+    policy_options = options.extract!(:with, :namespace)
+    policy_options[:namespace] ||= scope&.to_s&.camelize&.safe_constantize
 
     if allowed_to?(:show?, resource, **policy_options)
       link_to url, data: { turbo_frame: "_top" }, **options, &

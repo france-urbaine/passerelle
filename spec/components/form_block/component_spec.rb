@@ -28,6 +28,23 @@ RSpec.describe FormBlock::Component, type: :component do
     end
   end
 
+  it "displays a custom error" do
+    render_inline described_class.new(:user, :first_name) do |block|
+      block.with_error do
+        "A value is required"
+      end
+
+      tag.input(type: "text", name: "first_name")
+    end
+
+    expect(page).to have_selector(".form-block") do |node|
+      aggregate_failures do
+        expect(node).to have_field("first_name")
+        expect(node).to have_selector(".form-block__errors", text: "A value is required")
+      end
+    end
+  end
+
   it "displays an hint" do
     render_inline described_class.new(:user, :first_name) do |block|
       block.with_hint do

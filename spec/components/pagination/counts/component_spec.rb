@@ -4,7 +4,7 @@ require "rails_helper"
 
 RSpec.describe Pagination::Counts::Component, type: :component do
   around do |example|
-    with_request_url("/communes") { example.run }
+    with_request_url("/territoires/communes") { example.run }
   end
 
   it "renders counts with only one page" do

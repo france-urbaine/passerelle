@@ -1,0 +1,57 @@
+= template_frame_component do
+  = breadcrumbs_component do |breadcrumbs|
+    - breadcrumbs.with_path "Territoires"
+    - breadcrumbs.with_path "Communes"
+
+    - if allowed_to?(:update?, with: Territories::UpdatesPolicy)
+      - breadcrumbs.with_action "Mettre à jour", territories_update_path, icon: "cloud-arrow-down", modal: true
+
+  = datatable_component(@communes) do |datatable|
+    - datatable.with_search
+    - datatable.with_pagination(@pagy)
+
+    - datatable.with_column(:name,        sort: true, span: 2) { "Commune" }
+    - datatable.with_column(:departement, sort: true, span: 2) { "Département" }
+    - datatable.with_column(:epci,        sort: true, span: 2) { "EPCI" }
+    - datatable.with_column(:collectivities_count, numeric: true) { "Collectivités" }
+
+    - datatable.with_empty_message do
+      - if params[:search]
+        | Aucune commune ne correspont à votre recherche.
+      - else
+        | Aucune commune disponible.
+
+    - datatable.each_row do |row, commune|
+      - if allowed_to?(:update?, commune)
+        - row.with_action "Modifier cette commune", edit_territories_commune_path(commune), icon: "pencil-square", modal: true
+
+      - row.with_column(:name) do |column|
+        - column.with_span do
+          = commune.code_insee
+
+        - column.with_span do
+          = authorized_link_to commune, scope: :territories do
+            = commune.name
+
+      - row.with_column(:departement) do |column|
+        - if commune.departement
+          - column.with_span do
+            = commune.code_departement
+
+          - column.with_span do
+            = authorized_link_to commune.departement, scope: :territories do
+              = commune.departement.name
+
+      - row.with_column(:epci) do |column|
+        - if commune.epci
+          - column.with_span do
+            = display_siren(commune.siren_epci)
+
+          - column.with_span do
+            = authorized_link_to commune.epci, scope: :territories do
+              = commune.epci.name
+
+      - row.with_column(:collectivities_count) do
+        = number_with_delimiter(commune.collectivities_count) if commune.collectivities_count.positive?
+
+

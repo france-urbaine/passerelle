@@ -148,8 +148,8 @@ RSpec.describe "Collectivities in admin" do
     # The browser should stay on the index page
     # The collectivity should have changed its name
     #
-    expect(page).to  have_current_path(admin_collectivities_path)
-    expect(page).to  have_selector("h1", text: "Collectivités")
+    expect(page).to have_current_path(admin_collectivities_path)
+    expect(page).to have_selector("h1", text: "Collectivités")
     expect(page).to have_selector(:table_row, "Collectivité" => "Agglomération du Pays Basque")
 
     # The dialog should be closed

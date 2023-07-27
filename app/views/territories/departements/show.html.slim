@@ -1,0 +1,94 @@
+= template_frame_component do
+  = breadcrumbs_component do |breadcrumbs|
+    - breadcrumbs.with_path "Territoires"
+    - breadcrumbs.with_path "Départements", territories_departements_path
+    - breadcrumbs.with_path @departement.name
+
+    - if allowed_to?(:manage?, @departement)
+      - breadcrumbs.with_action "Modifier", edit_territories_departement_path(@departement), icon: "pencil-square", modal: true
+
+  h2.subheader
+    = svg_icon("identification", "Nouvelle section")
+    | Description
+
+  .card
+    dl.description-list
+      .description-list__row
+        dt Code INSEE du département
+        dd= @departement.code_departement
+
+      .description-list__row
+        dt Région
+        dd
+          = authorized_link_to @departement.region, scope: :territories do
+            = @departement.region.name
+
+      .description-list__row
+        dt EPCI
+        dd= display_count(@departement.epcis_count, "EPCI") if @departement.epcis_count.positive?
+
+      .description-list__row
+        dt Communes
+        dd= display_count(@departement.communes_count, "commune") if @departement.communes_count.positive?
+
+      .description-list__row
+        dt DDFIP enregistrées
+        dd= display_count(@departement.ddfips_count, "DDFIP") if @departement.ddfips_count.positive?
+
+      .description-list__row
+        dt Collectivités enregistrées
+        dd= display_count(@departement.collectivities_count, "collectivité") if @departement.collectivities_count.positive?
+
+  - if allowed_to?(:index?, EPCI)
+    .content__separator
+
+    .subheader-bar
+      h2.subheader
+        = svg_icon("rectangle-stack", "Nouvelle section")
+        | EPCI
+
+    - if @departement.epcis_count.zero?
+      = card_component(content_class: "card__content--empty")
+        | Aucun epci dans ce département.
+
+    - else
+      = turbo_frame_tag "datatable-epcis", src: territories_departement_epcis_path(@departement) do
+        = datatable_skeleton_component(nested: true, rows: @departement.epcis_count) do |skeleton|
+          - skeleton.with_search
+          - skeleton.with_pagination
+
+  - if allowed_to?(:index?, Commune)
+    .content__separator
+
+    .subheader-bar
+      h2.subheader
+        = svg_icon("rectangle-stack", "Nouvelle section")
+        | Communes
+
+    - if @departement.communes_count.zero?
+      = card_component(content_class: "card__content--empty")
+        | Aucune commune dans ce département.
+
+    - else
+      = turbo_frame_tag "datatable-communes", src: territories_departement_communes_path(@departement) do
+        = datatable_skeleton_component(nested: true, rows: @departement.communes_count) do |skeleton|
+          - skeleton.with_search
+          - skeleton.with_pagination
+
+  - if allowed_to?(:index?, Collectivity)
+    .content__separator
+
+    .subheader-bar
+      h2.subheader
+        = svg_icon("rectangle-stack", "Nouvelle section")
+        | Collectivités enregistrées
+
+    - if @departement.collectivities_count.zero?
+      = card_component(content_class: "card__content--empty")
+        | Aucune collectivité enregistrée dans ce département.
+
+    - else
+      = turbo_frame_tag "datatable-collectivities", src: territories_departement_collectivities_path(@departement) do
+        = datatable_skeleton_component(nested: true, rows: @departement.collectivities_count) do |skeleton|
+          - skeleton.with_search
+          - skeleton.with_pagination

@@ -2,6 +2,7 @@
 
 module FormBlock
   class Component < ApplicationViewComponent
+    renders_many :errors
     renders_one :hint
 
     def initialize(record, attribute, autocomplete: false, **options)
@@ -19,7 +20,7 @@ module FormBlock
       options[:class] ||= ""
 
       options[:class] += " form-block"
-      options[:class] += " form-block--invalid" if invalid?
+      options[:class] += " form-block--invalid" if invalid? || errors?
 
       if @autocomplete
         options[:class] += " hidden autocomplete"
@@ -31,7 +32,7 @@ module FormBlock
       options
     end
 
-    def errors
+    def display_errors
       helpers.display_errors(@record, @attribute) if invalid?
     end
 

@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 
 class TerritoriesController < ApplicationController
-  skip_before_action :authenticate_user!, only: :index
-  skip_after_action  :verify_authorized, only: :index
-
-  before_action { authorize! with: TerritoriesPolicy }
+  before_action :authorize!
 
   def index
     if autocomplete_request?
@@ -22,34 +19,9 @@ class TerritoriesController < ApplicationController
     end
   end
 
-  def edit
-    @territories_update = TerritoriesUpdate.new.assign_default_urls
-    @referrer_path = referrer_path || communes_path
-  end
-
-  def update
-    @territories_update = TerritoriesUpdate.new(update_params)
-
-    if @territories_update.valid?
-      @territories_update.perform_later
-
-      @location = url_from(params[:redirect]) || communes_path
-      @notice   = t(".success")
-
-      respond_to do |format|
-        format.turbo_stream { redirect_to @location, notice: @notice }
-        format.html         { redirect_to @location, notice: @notice }
-      end
-    else
-      render :edit, status: :unprocessable_entity
-    end
-  end
-
   protected
 
-  def update_params
-    params
-      .fetch(:territories_update, {})
-      .permit(:communes_url, :epcis_url)
+  def implicit_authorization_target
+    :territories
   end
 end

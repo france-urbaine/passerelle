@@ -1,0 +1,29 @@
+= template_frame_component(src: @referrer_path) do |frame|
+  - frame.with_modal do |modal|
+    - modal.with_header do
+      | Modification de l'EPCI
+
+    - modal.with_form(model: @epci, url: territories_epci_path(@epci)) do |form|
+      - modal.with_hidden_field :redirect, @referrer_path
+
+      = form.block :name do
+        = form.label :name
+        = form.text_field :name, autofocus: true, required: true
+
+      = form.block :siren do
+        = form.label :siren
+        = form.text_field :siren, required: true
+
+      = form.block :departement, autocomplete: territories_departements_path do
+        = form.label :departement
+        = form.search_field :departement,      data: { autocomplete_target: "input" }, value: @epci.departement&.name, placeholder: "Commnencez à taper pour sélectionner un département"
+        = form.hidden_field :code_departement, data: { autocomplete_target: "hidden" }
+
+      = noscript_component do
+        = form.block :code_departement do
+          = form.label :code_departement
+          = form.text_field :code_departement
+
+    - modal.with_submit_action "Enregistrer"
+    - modal.with_close_action "Annuler"
+
