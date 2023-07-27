@@ -42,7 +42,7 @@ module Views
       def territory_input_html_attributes
         {
           value:       @collectivity.territory&.qualified_name,
-          placeholder: "Commnencez à taper pour sélectionner des territoires"
+          placeholder: "Commnencez à taper pour sélectionner un territoire"
         }
       end
 

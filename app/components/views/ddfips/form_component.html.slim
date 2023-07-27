@@ -12,7 +12,7 @@
       = form.label :name
       = form.text_field :name, autofocus: true, required: true
 
-    = form.block :departement, autocomplete: departements_path do
+    = form.block :departement, autocomplete: territories_departements_path do
       = form.label :departement
       = form.search_field :departement,      data: { autocomplete_target: "input" }, **departement_input_html_attributes
       = form.hidden_field :code_departement, data: { autocomplete_target: "hidden" }

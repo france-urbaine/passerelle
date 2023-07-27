@@ -31,7 +31,7 @@ module Views
       def ddfip_input_html_attributes
         {
           value:       ddfip_name,
-          placeholder: "Commnencez à taper pour sélectionner des DDFIPs"
+          placeholder: "Commnencez à taper pour sélectionner une DDFIP"
         }
       end
 

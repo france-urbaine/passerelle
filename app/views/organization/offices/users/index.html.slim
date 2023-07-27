@@ -38,7 +38,7 @@
         - row.with_action "Supprimer cet utilisateur", remove_organization_user_path(user), icon: "trash", modal: true
 
       - row.with_column(:name) do
-        = authorized_link_to user, scope: :organization, with: Organization::UserPolicy do
+        = authorized_link_to user, scope: :organization do
           = user.name
 
       - row.with_column(:email) do

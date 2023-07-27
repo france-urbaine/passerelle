@@ -25,7 +25,7 @@
       .description-list__row
         dt Territoire
         dd
-          = authorized_link_to @collectivity.territory do
+          = authorized_link_to @collectivity.territory, scope: :territories do
             = @collectivity.territory.qualified_name
             = " (#{@collectivity.territory.model_name.human})"
 

@@ -62,7 +62,7 @@ module Views
       def organization_input_html_attributes
         {
           value:       organization_name,
-          placeholder: "Commnencez à taper pour sélectionner des organisations",
+          placeholder: "Commnencez à taper pour sélectionner une organisation",
           data:        { autocomplete_target: "input" }
         }
       end

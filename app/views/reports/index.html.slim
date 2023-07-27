@@ -77,7 +77,7 @@
           = report.reference
 
       - row.with_column(:collectivity) do
-        = authorized_link_to report.collectivity do
+        = authorized_link_to report.collectivity, scope: :organization do
           = report.collectivity.name
 
       - row.with_column(:package) do

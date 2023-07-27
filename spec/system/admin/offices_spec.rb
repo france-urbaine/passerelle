@@ -63,11 +63,9 @@ RSpec.describe "Offices in admin" do
 
     click_on "Département des Pyrénées-Atlantiques"
 
-    pending "fails due to refactoring in progress"
-
     # The browser should visit the DDFIP page
     #
-    expect(page).to have_current_path(departement_path(departement))
+    expect(page).to have_current_path(territories_departement_path(departement))
     expect(page).to have_selector("h1", text: "Pyrénées-Atlantiques")
 
     go_back

@@ -26,7 +26,7 @@ RSpec.describe "Office communes in admin" do
 
     # The browser should visit the user page
     #
-    expect(page).to have_current_path(commune_path(bayonne))
+    expect(page).to have_current_path(territories_commune_path(bayonne))
     expect(page).to have_selector("h1", text: "Bayonne")
 
     go_back

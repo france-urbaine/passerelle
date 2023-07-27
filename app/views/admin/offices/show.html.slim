@@ -25,7 +25,7 @@
       .description-list__row
         dt Département
         dd
-          = authorized_link_to @office.ddfip.departement do
+          = authorized_link_to @office.ddfip.departement, scope: :territories do
             = @office.ddfip.departement.qualified_name
 
       .description-list__row
@@ -62,7 +62,7 @@
         - if allowed_to?(:create?, User)
           .subheader-bar__action= button_component "Inviter un utilisateur", new_admin_office_user_path(@office), icon: "plus", modal: true
 
-        - if allowed_to?(:edit_all?, User, with: Admin::Offices::UserPolicy)
+        - if allowed_to?(:edit_all?, User, namespace: Admin::Offices)
           .subheader-bar__action= button_component "Gérer les utilisateurs", edit_all_admin_office_users_path(@office), icon: "squares-plus", modal: true
 
     - if @office.users_count.zero?
@@ -75,7 +75,7 @@
           - skeleton.with_search
           - skeleton.with_pagination
 
-  - if allowed_to?(:index?, Commune)
+  - if allowed_to?(:index?, Commune, namespace: Admin::Offices)
     .content__separator
 
     .subheader-bar
@@ -84,7 +84,7 @@
         | Communes assignées
 
       .subheader-bar__actions
-        - if allowed_to?(:manage?, Commune, with: Admin::Offices::CommunePolicy)
+        - if allowed_to?(:manage?, Commune, namespace: Admin::Offices)
           .subheader-bar__action= button_component "Gérer les communes", edit_all_admin_office_communes_path(@office), icon: "squares-plus", modal: true
 
     - if @office.communes_count.zero?

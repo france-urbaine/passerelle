@@ -19,7 +19,7 @@
       .description-list__row
         dt Département
         dd
-          = authorized_link_to @ddfip.departement do
+          = authorized_link_to @ddfip.departement, scope: :territories do
             = @ddfip.departement.qualified_name
 
       .description-list__row

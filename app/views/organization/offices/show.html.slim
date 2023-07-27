@@ -38,7 +38,7 @@
             = " / "
             = display_count(@office.reports_rejected_count, "rejeté")
 
-  - if allowed_to?(:index?, User, with: Organization::Offices::UserPolicy)
+  - if allowed_to?(:index?, User, namespace: Organization::Offices)
     .content__separator
 
     .subheader-bar
@@ -47,10 +47,10 @@
         | Utilisateurs
 
       .subheader-bar__actions
-        - if allowed_to?(:create?, User, with: Organization::Offices::UserPolicy)
+        - if allowed_to?(:create?, User, namespace: Organization::Offices)
           .subheader-bar__action= button_component "Inviter un utilisateur", new_organization_office_user_path(@office), icon: "plus", modal: true
 
-        - if allowed_to?(:edit_all?, User, with: Organization::Offices::UserPolicy)
+        - if allowed_to?(:edit_all?, User, namespace: Organization::Offices)
           .subheader-bar__action= button_component "Gérer les utilisateurs", edit_all_organization_office_users_path(@office), icon: "squares-plus", modal: true
 
     - if @office.users_count.zero?
@@ -63,7 +63,7 @@
           - skeleton.with_search
           - skeleton.with_pagination
 
-  - if allowed_to?(:index?, Commune, with: Organization::Offices::CommunePolicy)
+  - if allowed_to?(:index?, Commune, namespace: Organization::Offices)
     .content__separator
 
     .subheader-bar
@@ -72,7 +72,7 @@
         | Communes assignées
 
       .subheader-bar__actions
-        - if allowed_to?(:manage?, Commune, with: Organization::Offices::CommunePolicy)
+        - if allowed_to?(:manage?, Commune, namespace: Organization::Offices)
           .subheader-bar__action= button_component "Gérer les communes", edit_all_organization_office_communes_path(@office), icon: "squares-plus", modal: true
 
     - if @office.communes_count.zero?

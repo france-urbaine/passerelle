@@ -51,9 +51,7 @@ RSpec.describe "Collectivities managed by current organization" do
 
     # The browser should visit the EPCI page
     #
-    pending "fails due to refactoring in progress"
-
-    expect(page).to have_current_path(epci_path(epci))
+    expect(page).to have_current_path(territories_epci_path(epci))
     expect(page).to have_selector("h1", text: "CA du Pays Basque")
 
     go_back

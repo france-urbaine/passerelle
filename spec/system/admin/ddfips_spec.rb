@@ -53,11 +53,9 @@ RSpec.describe "DDFIPs in admin" do
 
     click_on "Département des Pyrénées-Atlantiques"
 
-    pending "fails due to refactoring in progress"
-
     # The browser should visit the departement page
     #
-    expect(page).to have_current_path(departement_path(pyrenees_atlantiques))
+    expect(page).to have_current_path(territories_departement_path(pyrenees_atlantiques))
     expect(page).to have_selector("h1", text: "Pyrénées-Atlantiques")
 
     go_back

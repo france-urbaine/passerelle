@@ -10,7 +10,7 @@
     - datatable.with_pagination(@pagy, options: false)
 
     - datatable.with_selection do |selection|
-      - if allowed_to?(:destroy_all?, Commune, with: Admin::Offices::CommunePolicy)
+      - if allowed_to?(:destroy_all?, Commune, namespace: Admin::Offices)
         - selection.with_action "Exclure les communes du guichet", remove_all_admin_office_communes_path(@office), modal: true
 
     - datatable.with_column(:name, sort: true, span: 2) { "Commune" }
@@ -21,12 +21,12 @@
       | Aucune commune disponible.
 
     - datatable.each_row do |row, commune|
-      - row.with_checkbox "Sélectionner cette commune", described_by: :name, disabled: !allowed_to?(:destroy_all?, Commune, with: Admin::Offices::CommunePolicy)
+      - row.with_checkbox "Sélectionner cette commune", described_by: :name, disabled: !allowed_to?(:destroy_all?, Commune, namespace: Admin::Offices)
 
-      - if allowed_to?(:update?, Commune, with: CommunePolicy)
-        - row.with_action "Modifier cette commune", edit_commune_path(commune), icon: "pencil-square", modal: true
+      - if allowed_to?(:update?, Commune, namespace: Territories)
+        - row.with_action "Modifier cette commune", edit_territories_commune_path(commune), icon: "pencil-square", modal: true
 
-      - if allowed_to?(:destroy?, Commune, with: Admin::Offices::CommunePolicy)
+      - if allowed_to?(:destroy?, Commune, namespace: Admin::Offices)
         - row.with_action "Exclure cet utilisateur du guichet", remove_admin_office_commune_path(@office, commune), icon: "arrow-right-on-rectangle", modal: true
 
       - row.with_column(:name) do |column|
@@ -34,7 +34,7 @@
           = commune.code_insee
 
         - column.with_span do
-          = authorized_link_to commune, with: CommunePolicy do
+          = authorized_link_to commune, scope: :territories do
             = commune.name
 
       - row.with_column(:epci) do |column|
@@ -43,7 +43,7 @@
             = display_siren(commune.siren_epci)
 
           - column.with_span do
-            = authorized_link_to commune.epci do
+            = authorized_link_to commune.epci, scope: :territories do
               = commune.epci.name
 
       - row.with_column(:collectivities_count) do

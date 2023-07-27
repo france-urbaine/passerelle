@@ -53,7 +53,7 @@
             = ddfip.code_departement
 
           - column.with_span do
-            = authorized_link_to ddfip.departement do
+            = authorized_link_to ddfip.departement, scope: :territories do
               = ddfip.departement.name
 
       - row.with_column(:contact) do
