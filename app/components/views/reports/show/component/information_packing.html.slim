@@ -52,7 +52,7 @@
       dt Objet(s)
       dd
         = render_valid_content(:anomalies) do
-          = helpers.list(@report.anomalies) { |value| t(value, scope: "enum.anomalies") }
+          = helpers.list(@report.anomalies) { |value| t(value, scope: ["enum.anomalies", @report.form_type]) }
 
     .description-list__row
       dt Date de contat

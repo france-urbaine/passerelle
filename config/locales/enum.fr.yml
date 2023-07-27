@@ -32,12 +32,41 @@ fr:
     anomalies:
       consistance:          Changement de consistance
       affectation:          Changement d'affectation
+      categorie:            Changement d'utilisation
       exoneration:          Exonération à tort
-      adresse:              Changement d'adresse
       correctif:            Anomalie correctif d'ensemble
+      adresse:              Changement d'adresse
+      construction_neuve:   Construction neuve
       omission_batie:       Omission bâtie
-      achevement_travaux:   Achèvementdetravaux
       occupation:           Occupation du local
+
+      evaluation_local_habitation:
+        consistance:          Changement de consistance
+        affectation:          Changement d'affectation
+        exoneration:          Exonération à tort
+        correctif:            Anomalie correctif d'ensemble
+        adresse:              Changement d'adresse
+
+      evaluation_local_professionnel:
+        consistance:          Changement de consistance
+        affectation:          Changement d'affectation (nature du local)
+        categorie:            Changement d'utilisation (catégorie du local)
+        exoneration:          Exonération à tort
+        adresse:              Changement d'adresse
+
+      creation_local_habitation:
+        construction_neuve:   Construction neuve
+        omission_batie:       Omission bâtie
+
+      creation_local_professionnel:
+        construction_neuve:   Construction neuve
+        omission_batie:       Omission bâtie
+
+      occupation_local_habitation:
+        occupation:           Occupation du local
+
+      occupation_local_professionnel:
+        occupation:           Occupation du local
 
     local_affectation:
       H: "Habitation"

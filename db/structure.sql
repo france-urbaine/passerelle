@@ -60,8 +60,9 @@ CREATE TYPE public.anomaly AS ENUM (
     'adresse',
     'correctif',
     'omission_batie',
-    'achevement_travaux',
-    'occupation'
+    'construction_neuve',
+    'occupation',
+    'categorie'
 );
 
 
@@ -3593,6 +3594,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230622073103'),
 ('20230622135614'),
 ('20230628131702'),
-('20230705064157');
+('20230705064157'),
+('20230727083603');
 
 

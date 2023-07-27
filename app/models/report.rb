@@ -147,19 +147,20 @@ class Report < ApplicationRecord
   ANOMALIES = %w[
     consistance
     affectation
+    categorie
     exoneration
     correctif
     omission_batie
-    achevement_travaux
+    construction_neuve
     occupation
     adresse
   ].freeze
 
   FORM_TYPE_ANOMALIES = {
     "evaluation_local_habitation"    => %w[consistance affectation exoneration correctif adresse],
-    "evaluation_local_professionnel" => %w[consistance affectation exoneration adresse],
-    "creation_local_habitation"      => %w[omission_batie achevement_travaux],
-    "creation_local_professionnel"   => %w[omission_batie achevement_travaux],
+    "evaluation_local_professionnel" => %w[consistance affectation categorie exoneration adresse],
+    "creation_local_habitation"      => %w[omission_batie construction_neuve],
+    "creation_local_professionnel"   => %w[omission_batie construction_neuve],
     "occupation_local_habitation"    => %w[occupation adresse],
     "occupation_local_professionnel" => %w[occupation adresse]
   }.freeze
@@ -214,19 +215,19 @@ class Report < ApplicationRecord
     validates :proposition_categorie,   inclusion: { in: :valid_categories }
 
     validates :situation_surface_reelle,   numericality: { greater_than: 0 }
-    validates :situation_surface_p1,       numericality: { greater_than: 0 }
-    validates :situation_surface_p2,       numericality: { greater_than: 0 }
-    validates :situation_surface_p3,       numericality: { greater_than: 0 }
-    validates :situation_surface_pk1,      numericality: { greater_than: 0 }
-    validates :situation_surface_pk2,      numericality: { greater_than: 0 }
+    validates :situation_surface_p1,       numericality: { greater_than_or_equal_to: 0 }
+    validates :situation_surface_p2,       numericality: { greater_than_or_equal_to: 0 }
+    validates :situation_surface_p3,       numericality: { greater_than_or_equal_to: 0 }
+    validates :situation_surface_pk1,      numericality: { greater_than_or_equal_to: 0 }
+    validates :situation_surface_pk2,      numericality: { greater_than_or_equal_to: 0 }
     validates :situation_surface_ponderee, numericality: { greater_than: 0 }
 
     validates :proposition_surface_reelle,   numericality: { greater_than: 0 }
-    validates :proposition_surface_p1,       numericality: { greater_than: 0 }
-    validates :proposition_surface_p2,       numericality: { greater_than: 0 }
-    validates :proposition_surface_p3,       numericality: { greater_than: 0 }
-    validates :proposition_surface_pk1,      numericality: { greater_than: 0 }
-    validates :proposition_surface_pk2,      numericality: { greater_than: 0 }
+    validates :proposition_surface_p1,       numericality: { greater_than_or_equal_to: 0 }
+    validates :proposition_surface_p2,       numericality: { greater_than_or_equal_to: 0 }
+    validates :proposition_surface_p3,       numericality: { greater_than_or_equal_to: 0 }
+    validates :proposition_surface_pk1,      numericality: { greater_than_or_equal_to: 0 }
+    validates :proposition_surface_pk2,      numericality: { greater_than_or_equal_to: 0 }
     validates :proposition_surface_ponderee, numericality: { greater_than: 0 }
   end
 

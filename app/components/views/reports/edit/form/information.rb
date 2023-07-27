@@ -8,11 +8,12 @@ module Views
           ANOMALIES_ENABLED = {
             "consistance"        => true,
             "affectation"        => true,
+            "categorie"          => true,
             "correctif"          => true,
             "exoneration"        => true,
             "adresse"            => true,
             "omission_batie"     => false,
-            "achevement_travaux" => false,
+            "construction_neuve" => false,
             "occupation"         => false
           }.freeze
 
@@ -25,7 +26,7 @@ module Views
               .sort_by { |key| ANOMALIES_ENABLED[key] ? 0 : 1 }
               .map do |key|
                 enabled = ANOMALIES_ENABLED[key]
-                name = I18n.t(key, scope: "enum.anomalies")
+                name = I18n.t(key, scope: ["enum.anomalies", @report.form_type])
                 name = "(Bientôt disponible) #{name}" unless enabled
                 [key, name]
               end
