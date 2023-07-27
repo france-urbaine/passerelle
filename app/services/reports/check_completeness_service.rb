@@ -6,7 +6,7 @@ module Reports
 
     attr_reader :report
 
-    delegate_missing_to :report
+    delegate :exonerations, to: :report
 
     def initialize(report)
       @report = report
@@ -40,60 +40,41 @@ module Reports
       validate :situation_proprietaire_must_be_complete
     end
 
-    with_options if: :require_situation_evaluation? do
-      validates_presence_of :situation_date_mutation
-      validates_presence_of :situation_affectation
-      validates_presence_of :situation_nature
-      validates_presence_of :situation_categorie
-      validates_presence_of :situation_surface_reelle
+    validates_presence_of :situation_date_mutation,            if: :require_situation_evaluation?
+    validates_presence_of :situation_affectation,              if: :require_situation_evaluation?
+    validates_presence_of :situation_nature,                   if: :require_situation_evaluation?
+
+    validates_presence_of :situation_categorie,                if: :require_situation_categorie?
+    validates_presence_of :situation_surface_reelle,           if: :require_situation_surface?
+    validates_presence_of :situation_coefficient_localisation, if: :require_situation_coefficient_localisation?
+
+    validates_presence_of :situation_coefficient_entretien,    if: :require_situation_evaluation_habitation?
+
+    with_options if: :require_situation_evaluation_habitation?, allow_blank: true do
+      validates_inclusion_of :situation_nature,    in: :valid_local_habitation_natures
+      validates_inclusion_of :situation_categorie, in: :valid_local_habitation_categories
     end
 
-    with_options if: :require_situation_evaluation_habitation? do
-      validates_presence_of :situation_coefficient_entretien
-
-      with_options allow_blank: true do
-        validates_inclusion_of :situation_nature,    in: :valid_local_habitation_natures
-        validates_inclusion_of :situation_categorie, in: :valid_local_habitation_categories
-      end
+    with_options if: :require_situation_evaluation_professionnel?, allow_blank: true do
+      validates_inclusion_of :situation_nature,    in: :valid_local_professionnel_natures
+      validates_inclusion_of :situation_categorie, in: :valid_local_professionnel_categories
     end
 
-    with_options if: :require_situation_evaluation_professionnel? do
-      validates_presence_of :situation_coefficient_localisation
+    validates_presence_of :proposition_affectation,              if: :require_proposition_affectation?
+    validates_presence_of :proposition_nature,                   if: :require_proposition_nature?
+    validates_presence_of :proposition_categorie,                if: :require_proposition_categorie?
+    validates_presence_of :proposition_surface_reelle,           if: :require_proposition_surface?
+    validates_presence_of :proposition_coefficient_entretien,    if: :require_proposition_correctif?
+    validates_presence_of :proposition_coefficient_localisation, if: :require_proposition_coefficient_localisation?
 
-      with_options allow_blank: true do
-        validates_inclusion_of :situation_nature,    in: :valid_local_professionnel_natures
-        validates_inclusion_of :situation_categorie, in: :valid_local_professionnel_categories
-      end
+    with_options if: :require_proposition_evaluation_habitation?, allow_blank: true do
+      validates_inclusion_of :proposition_nature,    in: :valid_local_habitation_natures
+      validates_inclusion_of :proposition_categorie, in: :valid_local_habitation_categories
     end
 
-    with_options if: :require_proposition_affectation? do
-      validates_presence_of :proposition_affectation
-    end
-
-    with_options if: :require_proposition_consistance? do
-      validates_presence_of :proposition_nature
-      validates_presence_of :proposition_categorie
-      validates_presence_of :proposition_surface_reelle
-    end
-
-    with_options if: :require_proposition_correctif? do
-      validates_presence_of :proposition_coefficient_entretien
-    end
-
-    with_options if: :require_proposition_evaluation_habitation? do
-      with_options allow_blank: true do
-        validates_inclusion_of :proposition_nature,    in: :valid_local_habitation_natures
-        validates_inclusion_of :proposition_categorie, in: :valid_local_habitation_categories
-      end
-    end
-
-    with_options if: :require_proposition_evaluation_professionnel? do
-      validates_presence_of :proposition_coefficient_localisation
-
-      with_options allow_blank: true do
-        validates_inclusion_of :proposition_nature,    in: :valid_local_professionnel_natures
-        validates_inclusion_of :proposition_categorie, in: :valid_local_professionnel_categories
-      end
+    with_options if: :require_proposition_evaluation_professionnel?, allow_blank: true do
+      validates_inclusion_of :proposition_nature,    in: :valid_local_professionnel_natures
+      validates_inclusion_of :proposition_categorie, in: :valid_local_professionnel_categories
     end
 
     with_options if: :require_proposition_exoneration? do
@@ -110,19 +91,25 @@ module Reports
       @requirements ||= Reports::RequirementsService.new(@report)
     end
 
-    delegate :require_situation_majic?,
-      :require_situation_evaluation?,
-      :require_situation_evaluation_habitation?,
-      :require_situation_evaluation_professionnel?,
-      :require_proposition_evaluation?,
-      :require_proposition_evaluation_habitation?,
-      :require_proposition_evaluation_professionnel?,
-      :require_proposition_affectation?,
-      :require_proposition_adresse?,
-      :require_proposition_consistance?,
-      :require_proposition_correctif?,
-      :require_proposition_exoneration?,
-      to: :requirements
+    def respond_to_missing?(method, *)
+      requirements.respond_to_predicate?(method) || missing_attribute_method?(method) || super
+    end
+
+    def method_missing(method, *)
+      if requirements.respond_to_predicate?(method)
+        requirements.public_send(method, *)
+      elsif missing_attribute_method?(method)
+        report.public_send(method, *)
+      else
+        super
+      end
+    end
+
+    def missing_attribute_method?(method)
+      return false unless method =~ /^([a-z]\w+)(=|\?)?$/
+
+      report.class.column_names.include?(::Regexp.last_match(1))
+    end
 
     {
       valid_local_habitation_natures:       "enum.local_habitation_nature",

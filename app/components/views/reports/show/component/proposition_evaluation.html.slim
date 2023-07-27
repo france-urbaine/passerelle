@@ -3,10 +3,14 @@
     = svg_icon("presentation-chart-bar", "Icône d'illustration")
     - if @report.anomalies.include?("affectation")
       | Proposition de mise à jour de l'affectation
+    - elsif @report.anomalies.include?("categorie")
+      | Proposition de mise à jour de l'utilisation
     - elsif @report.anomalies.include?("consistance")
       | Proposition de mise à jour de la consistance
     - elsif @report.anomalies.include?("correctif")
       | Proposition de mise à jour du correctif
+    - else
+      | Proposition de mise à jour de l'évaluation
 
   .subheader-bar__actions
     - if allowed_to?(:update?, @report) && @report.packing?
@@ -15,20 +19,21 @@
 
 .card
   dl.description-list
-    - if @report.anomalies.include?("affectation")
+    - if require_proposition_affectation?
       .description-list__row
         dt Affectation
         dd
           = render_valid_content(:proposition_affectation) do
             = proposition_affectation
 
-    - if require_proposition_consistance? && (require_proposition_evaluation_habitation? || require_proposition_evaluation_professionnel?)
+    - if require_proposition_nature?
       .description-list__row
         dt Nature du local
         dd
           = render_valid_content(:proposition_nature) do
             = proposition_nature
 
+    - if require_proposition_consistance?
       .description-list__row
         dt Catégorie du local
         dd
@@ -41,7 +46,7 @@
           = render_valid_content(:proposition_surface_reelle) do
             = helpers.display_surface(@report.proposition_surface_reelle)
 
-    - if require_proposition_consistance? && require_proposition_evaluation_professionnel?
+    - if require_proposition_evaluation_professionnel?
       .description-list__row
         dt= "(P1) Surface des parties principales"
         dd
@@ -84,7 +89,7 @@
           = render_valid_content(:proposition_coefficient_localisation) do
             = @report.proposition_coefficient_localisation
 
-    - if require_proposition_correctif? && require_proposition_evaluation_habitation?
+    - if require_proposition_correctif?
       .description-list__row
         dt Coefficient d'entretien
         dd

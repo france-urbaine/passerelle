@@ -51,7 +51,7 @@
 
     .description-list__row
       dt Objet du signalement
-      dd= helpers.list(@report.anomalies) { |value| t(value, scope: "enum.anomalies") }
+      dd= helpers.list(@report.anomalies) { |value| t(value, scope: ["enum.anomalies", @report.form_type]) }
 
     .description-list__row
       dt Date de contat

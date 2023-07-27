@@ -90,7 +90,7 @@ RSpec.describe Report do
     it "validates that :anomalies accept only combinaison of valid values when reporting a creation form" do
       report = build(:report, :creation_local_habitation)
 
-      allowed_arrays = random_combinaison(%w[omission_batie achevement_travaux])
+      allowed_arrays = random_combinaison(%w[omission_batie construction_neuve])
       invalid_arrays = random_combinaison(%w[consistance adresse])
 
       aggregate_failures do

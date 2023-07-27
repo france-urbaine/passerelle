@@ -31,19 +31,17 @@ module Views
           @requirements ||= ::Reports::RequirementsService.new(@report)
         end
 
-        delegate :require_situation_majic?,
-          :require_situation_evaluation?,
-          :require_situation_evaluation_habitation?,
-          :require_situation_evaluation_professionnel?,
-          :require_proposition_evaluation?,
-          :require_proposition_evaluation_habitation?,
-          :require_proposition_evaluation_professionnel?,
-          :require_proposition_affectation?,
-          :require_proposition_adresse?,
-          :require_proposition_consistance?,
-          :require_proposition_correctif?,
-          :require_proposition_exoneration?,
-          to: :requirements
+        def respond_to_missing?(method, *)
+          requirements.respond_to_predicate?(method, *) || super
+        end
+
+        def method_missing(method, *)
+          if requirements.respond_to_predicate?(method, *)
+            requirements.public_send(method, *)
+          else
+            super
+          end
+        end
 
         # Helpers
         # ----------------------------------------------------------------------

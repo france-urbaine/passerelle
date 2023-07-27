@@ -14,6 +14,8 @@ module Views
           end
 
           def situation_categorie
+            return if @report.situation_categorie.blank?
+
             if require_situation_evaluation_habitation?
               I18n.t(@report.situation_categorie, scope: "enum.local_habitation_categorie")
             elsif require_situation_evaluation_professionnel?
