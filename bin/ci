@@ -53,7 +53,7 @@ end
 def test_unit
   log "Running non-system tests"
 
-  command = "bundle exec rspec --tag '~type:system'"
+  command = "bundle exec rspec --exclude-pattern 'system/**/*_spec.rb'"
   env = { "SIMPLE_COV_COMMAND" => "bin/ci test:unit" }
 
   if ENV["CI"] == "true"
@@ -68,7 +68,7 @@ end
 def test_system
   log "Running system tests"
 
-  command = "bundle exec rspec --tag 'type:system'"
+  command = "bundle exec rspec --pattern 'system/**/*_spec.rb'"
   env = { "SIMPLE_COV_COMMAND" => "bin/ci test:system" }
 
   if ENV["CI"] == "true"
