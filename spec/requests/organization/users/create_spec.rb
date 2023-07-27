@@ -146,9 +146,7 @@ RSpec.describe "Organization::UsersController#create" do
 
         it "assigns the offices to the new user" do
           request
-          expect(User.last.offices)
-            .to have(2).offices
-            .and include(offices[0], offices[1])
+          expect(User.last.offices).to have(2).offices.and include(*offices[0..1])
         end
       end
 

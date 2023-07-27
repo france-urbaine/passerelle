@@ -95,10 +95,10 @@ RSpec.describe Users::CreateService do
       service.save
       user.reload
 
-      expect(user).to have_attributes(
-        organization: ddfip,
-        offices:      offices[1..2]
-      )
+      aggregate_failures do
+        expect(user.organization).to eq(ddfip)
+        expect(user.offices).to have(2).offices.and include(*offices[1..2])
+      end
     end
   end
 

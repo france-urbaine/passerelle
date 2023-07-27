@@ -239,7 +239,7 @@ RSpec.describe "Admin::UsersController#create" do
 
       it "assigns the offices to the new user" do
         request
-        expect(User.last.office_ids).to eq(offices.map(&:id))
+        expect(User.last.offices).to have(2).offices.and include(*offices)
       end
     end
 

@@ -149,11 +149,9 @@ RSpec.describe Users::UpdateService do
       })
 
       service.save
+      user.reload
 
-      expect(user.offices.reload.to_a)
-        .to have(2).offices
-        .and include(offices[0])
-        .and include(offices[1])
+      expect(user.offices).to have(2).offices.and include(*offices[0..1])
     end
 
     it "updates user offices using offices of its new organization" do

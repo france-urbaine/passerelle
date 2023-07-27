@@ -24,7 +24,7 @@ module LinkHelper
     return if offices.empty?
 
     # Add a consistent & deterministic order
-    offices.sort_by(&:created_at)
+    offices.sort_by!(&:name)
 
     short_list(offices) do |office|
       authorized_link_to(office, scope:) { office.name }
