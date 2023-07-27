@@ -12,8 +12,6 @@ RSpec.describe "Territories::DepartementsController#index" do
   let(:params)  { |e| e.metadata[:params] }
   let(:xhr)     { |e| e.metadata[:xhr] }
 
-  before { create_list(:departement, 3) }
-
   describe "authorizations" do
     it_behaves_like "it requires to be signed in in HTML"
     it_behaves_like "it requires to be signed in in JSON"
@@ -39,11 +37,16 @@ RSpec.describe "Territories::DepartementsController#index" do
     end
 
     context "when requesting autocompletion", headers: { "Accept-Variant" => "autocomplete" }, xhr: true do
-      let(:params) { { q: Departement.first.name } }
+      before do
+        create(:departement, name: "Pyrénées-Atlantiques")
+        create(:departement, name: "Gironde")
+      end
+
+      let(:params) { { q: "Pyre" } }
 
       it { expect(response).to have_http_status(:success) }
       it { expect(response).to have_content_type(:html) }
-      it { expect(response).to have_partial_html.to match(%r{\A<li.*</li>\Z}) }
+      it { expect(response).to have_partial_html.to match(%r{\A<li.*>Pyrénées-Atlantiques</li>\Z}) }
     end
   end
 end
