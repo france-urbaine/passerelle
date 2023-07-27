@@ -78,7 +78,7 @@
 
     - else
       = turbo_frame_tag "datatable-users", src: admin_collectivity_users_path(@collectivity) do
-        = datatable_skeleton_component(rows: [@collectivity.users_count, 5].min) do |skeleton|
+        = datatable_skeleton_component(nested: true, rows: @collectivity.users_count) do |skeleton|
           - skeleton.with_search
           - skeleton.with_pagination
 
@@ -90,6 +90,6 @@
       | Guichets correspondants
 
     = turbo_frame_tag "datatable-offices", src: admin_collectivity_offices_path(@collectivity) do
-      = datatable_skeleton_component(rows: 0) do |skeleton|
+      = datatable_skeleton_component(nested: true, rows: 0) do |skeleton|
         - skeleton.with_search
         - skeleton.with_pagination

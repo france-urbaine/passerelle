@@ -71,7 +71,7 @@
 
     - else
       = turbo_frame_tag "datatable-offices", src: admin_ddfip_offices_path(@ddfip) do
-        = datatable_skeleton_component(rows: [@ddfip.offices_count, 5].min) do |skeleton|
+        = datatable_skeleton_component(nested: true, rows: @ddfip.offices_count) do |skeleton|
           - skeleton.with_search
           - skeleton.with_pagination
 
@@ -94,7 +94,7 @@
 
     - else
       = turbo_frame_tag "datatable-users", src: admin_ddfip_users_path(@ddfip) do
-        = datatable_skeleton_component(rows: [@ddfip.users_count, 5].min) do |skeleton|
+        = datatable_skeleton_component(nested: true, rows: @ddfip.users_count) do |skeleton|
           - skeleton.with_search
           - skeleton.with_pagination
 
@@ -111,6 +111,6 @@
 
     - else
       = turbo_frame_tag "datatable-collectivities", src: admin_ddfip_collectivities_path(@ddfip) do
-        = datatable_skeleton_component(rows: [@ddfip.collectivities_count, 5].min) do |skeleton|
+        = datatable_skeleton_component(nested: true, rows: @ddfip.collectivities_count) do |skeleton|
           - skeleton.with_search
           - skeleton.with_pagination

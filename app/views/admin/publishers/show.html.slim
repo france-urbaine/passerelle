@@ -69,7 +69,7 @@
 
     - else
       = turbo_frame_tag "datatable-users", src: admin_publisher_users_path(@publisher) do
-        = datatable_skeleton_component(rows: [@publisher.users_count, ControllerCollections::NESTED_ITEMS].min) do |skeleton|
+        = datatable_skeleton_component(nested: true, rows: @publisher.users_count) do |skeleton|
           - skeleton.with_search
           - skeleton.with_pagination
 
@@ -92,6 +92,6 @@
 
     - else
       = turbo_frame_tag "datatable-collectivities", src: admin_publisher_collectivities_path(@publisher) do
-        = datatable_skeleton_component(rows: [@publisher.collectivities_count, ControllerCollections::NESTED_ITEMS].min) do |skeleton|
+        = datatable_skeleton_component(nested: true, rows: @publisher.collectivities_count) do |skeleton|
           - skeleton.with_search
           - skeleton.with_pagination

@@ -83,6 +83,6 @@
 
     - else
       = turbo_frame_tag "datatable-users", src: organization_collectivity_users_path(@collectivity) do
-        = datatable_skeleton_component(rows: [@collectivity.users_count, 5].min) do |skeleton|
+        = datatable_skeleton_component(nested: true, rows: @collectivity.users_count) do |skeleton|
           - skeleton.with_search
           - skeleton.with_pagination

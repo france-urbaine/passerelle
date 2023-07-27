@@ -38,6 +38,14 @@ RSpec.describe DatatableSkeleton::Component, type: :component do
     end
   end
 
+  it "caps the number of rows when nested" do
+    render_inline described_class.new(rows: 15, nested: true)
+
+    expect(page).to have_table(class: "datatable") do |table|
+      expect(table).to have_selector("tbody tr", count: 10)
+    end
+  end
+
   it "renders a header bar" do
     render_inline described_class.new do |skeleton|
       skeleton.with_search

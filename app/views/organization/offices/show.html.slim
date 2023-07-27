@@ -59,7 +59,7 @@
 
     - else
       = turbo_frame_tag "datatable-users", src: organization_office_users_path(@office) do
-        = datatable_skeleton_component(rows: [@office.users_count, ControllerCollections::NESTED_ITEMS].min) do |skeleton|
+        = datatable_skeleton_component(nested: true, rows: @office.users_count) do |skeleton|
           - skeleton.with_search
           - skeleton.with_pagination
 
@@ -81,7 +81,7 @@
 
     - else
       = turbo_frame_tag "datatable-communes", src: organization_office_communes_path(@office) do
-        = datatable_skeleton_component(rows: [@office.communes_count, ControllerCollections::NESTED_ITEMS].min) do |skeleton|
+        = datatable_skeleton_component(nested: true, rows: @office.communes_count) do |skeleton|
           - skeleton.with_search
           - skeleton.with_pagination
 
@@ -94,6 +94,6 @@
         | Collectivités correspondantes
 
     = turbo_frame_tag "datatable-collectivities", src: organization_office_collectivities_path(@office) do
-      = datatable_skeleton_component(rows: 0) do |skeleton|
+      = datatable_skeleton_component(nested: true, rows: 0) do |skeleton|
         - skeleton.with_search
         - skeleton.with_pagination

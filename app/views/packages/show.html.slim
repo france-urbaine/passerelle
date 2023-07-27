@@ -62,6 +62,6 @@
       | Signalements
 
     = turbo_frame_tag "datatable-reports", src: package_reports_path(@package) do
-      = datatable_skeleton_component(rows: 0) do |skeleton|
+      = datatable_skeleton_component(nested: true, rows: 0) do |skeleton|
         - skeleton.with_search
         - skeleton.with_pagination
