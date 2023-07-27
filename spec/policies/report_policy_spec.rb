@@ -450,12 +450,9 @@ RSpec.describe ReportPolicy, stub_factories: false do
   it { expect(:undiscard_all?).to be_an_alias_of(policy, :destroy_all?) }
 
   describe "relation scope" do
-    # Subject is called before running tests to load all dependencies
-    # and asserts to run only expected queries when calling `.load`
-    #
-    subject!(:scope) do
-      policy.apply_scope(Report.all, type: :active_record_relation)
-    end
+    subject!(:scope) { apply_relation_scope(target) }
+
+    let(:target) { Report.all }
 
     it_behaves_like("when current user is a collectivity user") do
       it "scopes on reports reported through the web UI or transmitted through API" do

@@ -51,9 +51,7 @@ RSpec.describe Admin::DDFIPPolicy do
   it { expect(:undiscard_all?).to be_an_alias_of(policy, :manage?) }
 
   describe "default relation scope" do
-    subject!(:scope) do
-      policy.apply_scope(target, type: :active_record_relation)
-    end
+    subject!(:scope) { apply_relation_scope(target) }
 
     let(:target) { DDFIP.all }
 
@@ -78,14 +76,7 @@ RSpec.describe Admin::DDFIPPolicy do
   end
 
   describe "destroyable relation scope" do
-    subject!(:scope) do
-      policy.apply_scope(
-        target,
-        name: :destroyable,
-        type: :active_record_relation,
-        scope_options: scope_options
-      )
-    end
+    subject!(:scope) { apply_relation_scope(target, name: :destroyable, scope_options:) }
 
     let(:target)        { DDFIP.all }
     let(:scope_options) { |e| e.metadata.fetch(:scope_options, {}) }
@@ -146,9 +137,7 @@ RSpec.describe Admin::DDFIPPolicy do
   end
 
   describe "undiscardable relation scope" do
-    subject!(:scope) do
-      policy.apply_scope(target, name: :undiscardable, type: :active_record_relation)
-    end
+    subject!(:scope) { apply_relation_scope(target, name: :undiscardable) }
 
     let(:target) { DDFIP.all }
 
@@ -173,11 +162,7 @@ RSpec.describe Admin::DDFIPPolicy do
   end
 
   describe "params scope" do
-    subject(:params) do
-      policy.apply_scope(target, type: :action_controller_params)&.to_hash&.symbolize_keys
-    end
-
-    let(:target) { ActionController::Parameters.new(attributes) }
+    subject(:params) { apply_params_scope(attributes) }
 
     let(:attributes) do
       {
