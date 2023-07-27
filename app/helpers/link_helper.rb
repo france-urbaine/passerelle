@@ -26,7 +26,7 @@ module LinkHelper
     # Add a consistent & deterministic order
     offices.sort_by(&:created_at)
 
-    sort_list(offices) do |office|
+    short_list(offices) do |office|
       authorized_link_to(office, scope:) { office.name }
     end
   end

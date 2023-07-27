@@ -87,7 +87,7 @@ module FormatHelper
     end
   end
 
-  def sort_list(collection, humanize: false, &)
+  def short_list(collection, humanize: false, &)
     list = []
 
     if collection.size <= 2

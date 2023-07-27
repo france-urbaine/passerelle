@@ -48,7 +48,7 @@
           = office.ddfip.name
 
       - row.with_column(:competence) do
-        = sort_list(office.competences, humanize: true) { |value| t(value, scope: "enum.competence") }
+        = short_list(office.competences, humanize: true) { |value| t(value, scope: "enum.competence") }
 
       - row.with_column(:users_count) do
         = number_with_delimiter(office.users_count) if office.users_count.positive?

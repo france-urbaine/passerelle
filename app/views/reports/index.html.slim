@@ -88,7 +88,7 @@
         = t(report.form_type, scope: "enum.report_form_type")
 
       - row.with_column(:anomalies) do
-        = sort_list(report.anomalies, humanize: true) { |value| t(value, scope: "enum.anomalies") }
+        = short_list(report.anomalies, humanize: true) { |value| t(value, scope: "enum.anomalies") }
 
       - row.with_column(:workshop) do
         = report.workshop&.name
