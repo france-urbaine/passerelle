@@ -9,18 +9,10 @@ class ApplicationPolicy < ActionPolicy::Base
   #   def create? = false
   #   def manage? = false
   #
-  alias_rule :remove_all?, to: :destroy_all?
-  alias_rule :edit_all?, to: :update_all?
+  alias_rule :remove_all?, :destroy_all?, :undiscard_all?, to: :not_supported
+  alias_rule :edit_all?, :update_all?, to: :not_supported
 
-  def destroy_all?
-    false
-  end
-
-  def undiscard_all
-    false
-  end
-
-  def update_all?
+  def not_supported
     false
   end
 
