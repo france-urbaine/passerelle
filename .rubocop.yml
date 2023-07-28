@@ -107,6 +107,7 @@ Rails/Output:
   Exclude:
     - 'config/dotenv.rb'
     - 'db/seeds.rb'
+    - 'db/seeds/*.rb'
 
 Rails/SkipsModelValidations:
   Enabled: false
