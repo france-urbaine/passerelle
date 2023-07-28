@@ -261,6 +261,7 @@ CREATE TABLE public.ddfips (
     reports_approved_count integer DEFAULT 0 NOT NULL,
     reports_rejected_count integer DEFAULT 0 NOT NULL,
     reports_debated_count integer DEFAULT 0 NOT NULL,
+    auto_approve_packages boolean DEFAULT false NOT NULL,
     CONSTRAINT collectivities_count_check CHECK ((collectivities_count >= 0)),
     CONSTRAINT offices_count_check CHECK ((offices_count >= 0)),
     CONSTRAINT users_count_check CHECK ((users_count >= 0))
@@ -872,6 +873,7 @@ CREATE TABLE public.collectivities (
     packages_transmitted_count integer DEFAULT 0 NOT NULL,
     packages_approved_count integer DEFAULT 0 NOT NULL,
     packages_rejected_count integer DEFAULT 0 NOT NULL,
+    allow_publisher_management boolean DEFAULT false NOT NULL,
     CONSTRAINT users_count_check CHECK ((users_count >= 0))
 );
 
@@ -3595,6 +3597,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230622135614'),
 ('20230628131702'),
 ('20230705064157'),
-('20230727083603');
+('20230727083603'),
+('20230728085901');
 
 

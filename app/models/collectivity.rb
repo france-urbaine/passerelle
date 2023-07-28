@@ -30,6 +30,7 @@
 #  packages_transmitted_count :integer          default(0), not null
 #  packages_approved_count    :integer          default(0), not null
 #  packages_rejected_count    :integer          default(0), not null
+#  allow_publisher_management :boolean          default(FALSE), not null
 #
 # Indexes
 #

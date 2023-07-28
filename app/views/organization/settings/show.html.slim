@@ -9,14 +9,14 @@
 
   = card_component do |card|
     - card.with_form(model: @organization, scope: :organization, url: organization_settings_path, id: "identification-form") do |form|
-      = form.block(:name) do
-        = form.label(:name)
-        = form.text_field(:name, required: true)
+      = form.block :name do
+        = form.label :name
+        = form.text_field :name, required: true
 
       - if @organization.is_a?(Publisher) || @organization.is_a?(Collectivity)
-        = form.block(:siren) do
-          = form.label(:siren)
-          = form.text_field(:siren, required: true)
+        = form.block :siren do
+          = form.label :siren
+          = form.text_field :siren, required: true
 
       - if @organization.is_a?(Collectivity)
         = form.block :publisher_id do
@@ -33,21 +33,21 @@
 
   = card_component do |card|
     - card.with_form(model: @organization, scope: :organization, url: organization_settings_path, id: "contact-form") do |form|
-      = form.block(:contact_first_name) do
-        = form.label(:contact_first_name)
-        = form.text_field(:contact_first_name)
+      = form.block :contact_first_name do
+        = form.label :contact_first_name
+        = form.text_field :contact_first_name
 
-      = form.block(:contact_last_name) do
-        = form.label(:contact_last_name)
-        = form.text_field(:contact_last_name)
+      = form.block :contact_last_name do
+        = form.label :contact_last_name
+        = form.text_field :contact_last_name
 
-      = form.block(:contact_email) do
-        = form.label(:contact_email)
-        = form.email_field(:contact_email)
+      = form.block :contact_email do
+        = form.label :contact_email
+        = form.email_field :contact_email
 
-      = form.block(:contact_phone) do
-        = form.label(:contact_phone)
-        = form.text_field(:contact_phone)
+      = form.block :contact_phone do
+        = form.label :contact_phone
+        = form.text_field :contact_phone
 
     - card.with_submit_action "Enregistrer"
 
@@ -58,22 +58,61 @@
     | Sécurité
 
   = card_component do |card|
+    - if current_organization.is_a?(Collectivity)
+      - card.with_multipart do |card_content|
+        - card_content.with_form(model: @organization, scope: :organization, url: organization_settings_path, id: "security-settings-form") do |form|
+
+          p
+            | Vous pouvez déléguer la gestion de votre organisation à votre éditeur, si vous en avez un.
+            br
+            | Votre éditeur pourra gérer les utilisateurs et administrateurs de votre équipe, ainsi que les paramètres de cette page.
+
+          = form.block :allow_publisher_management do |block|
+            = form.check_box :allow_publisher_management
+            = form.label :allow_publisher_management
+
+            - block.with_hint do
+              p
+                | Ce réglage reste applicable même lors d'un changement d'éditeur.
+              p
+                | <b>Note sur la confidentialié :</b> par défaut, votre éditeur ne peut pas voir les signalements que vous avez transmis en dehors de son API.
+                br
+                | En acceptant cette délégation, il est libre de se créer un utilisateur au sein de votre organisation et accéder à l'ensemble de vos signalements.
+
+        - card_content.with_submit_action "Enregistrer"
+
+    - if current_organization.is_a?(DDFIP)
+      - card.with_multipart do |card_content|
+        - card_content.with_form(model: @organization, scope: :organization, url: organization_settings_path, id: "security-settings-form") do |form|
+
+          p
+            | Vous pouvez automatiser l'approbation des paquets de signalements dès reception.
+            br
+            | Les signalements seront ainsi transmis directement aux guichets appropriés sans l'approbation d'un administrateur.
+
+          = form.block :auto_approve_packages do |block|
+            = form.check_box :auto_approve_packages
+            = form.label :auto_approve_packages
+
+        - card_content.with_submit_action "Enregistrer"
+
     - card.with_multipart do |card_content|
       - card_content.with_form(model: @organization, scope: :organization, url: organization_settings_path, id: "domain-settings-form") do |form|
         p
           | Vous pouvez contraindre vos utilisateurs à utiliser seulement des adresses email correspondant à un nom de domaine.
           br
           | Cette restriction ne s'appliquera qu'aux nouveaux utilisateurs et aux utilisateurs qui changent d'adresse mail.
-        p
-          | Veuillez laissez le champs vide pour lever la restriction.
 
-        = form.block(:domain_restriction) do
-          = form.label(:domain_restriction)
+        = form.block :domain_restriction do |block|
+          = form.label :domain_restriction
           .form-block__input
             .form-block__input-text
-              = %w[maxime.gauthier elise.lacroix astride.fabre pierre.civil].sample
+              = current_user.email.split("@").first
               | @
-            = form.text_field(:domain_restriction)
+            = form.text_field :domain_restriction
+
+          - block.with_hint do
+            | Veuillez laissez le champs vide pour lever la restriction.
 
       - card_content.with_submit_action "Enregistrer"
 
@@ -83,18 +122,19 @@
           | L'authentification en 2 facteurs (2FA) est activée pour tous les utilisateurs.
           br
           | Par défaut, la méthode proposée est d'utiliser un autre appareil pour générer des codes de vérification.
-        p
-          | Vous pouvez autoriser les utilisateurs à recevoir un code de vérification par email.
           br
-          | Cette méthode ne protégera pas vos utilisateurs en cas d'usurpation du compte email.
+          | Vous pouvez autoriser les utilisateurs à recevoir un code de vérification par email.
 
-        = form.block(:allow_2fa_via_email) do
-          = form.check_box(:allow_2fa_via_email)
-          = form.label(:allow_2fa_via_email)
+        = form.block :allow_2fa_via_email do |block|
+          = form.check_box :allow_2fa_via_email
+          = form.label :allow_2fa_via_email
 
-        p
-          ' <strong>Attention !</strong> Si vous désactivez cette option alors que des utilisateurs ont déjà
-          ' sélectionné l'envoi d'un email comme méthode d'authentification, ces utilisateurs ne pourront plus
-          ' accéder à la plateforme.
+          - block.with_hint do
+            p
+              ' <strong>Attention !</strong> Cette méthode ne protégera pas vos utilisateurs en cas d'usurpation de leur compte email.
+            p
+              ' <strong>Attention !</strong> Si vous désactivez cette option alors que des utilisateurs ont déjà
+              ' sélectionné l'envoi d'un email comme méthode d'authentification, ces utilisateurs ne pourront plus
+              ' accéder à la plateforme.
 
       - card_content.with_submit_action "Enregistrer"

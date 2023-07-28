@@ -31,15 +31,16 @@ fr:
         allow_2fa_via_email:  Autoriser l'email comme méthode d'authentification en 2 étapes
 
       ddfip:
-        name:                 Nom de la DDFIP
-        code_departement:     Code INSEE du département
-        departement:          Département
-        contact_first_name:   Prénom du contact
-        contact_last_name :   Nom du contact
-        contact_email:        Adresse mail de contact
-        contact_phone:        Numéro de téléphone
-        domain_restriction:   Nom de domaine
-        allow_2fa_via_email:  Autoriser l'email comme méthode d'authentification en 2 étapes
+        name:                   Nom de la DDFIP
+        code_departement:       Code INSEE du département
+        departement:            Département
+        contact_first_name:     Prénom du contact
+        contact_last_name :     Nom du contact
+        contact_email:          Adresse mail de contact
+        contact_phone:          Numéro de téléphone
+        domain_restriction:     Nom de domaine
+        allow_2fa_via_email:    Autoriser l'email comme méthode d'authentification en 2 étapes
+        auto_approve_packages:  Approuver automatiquement tout les paquets
 
       office:
         name:             Nom du guichet
@@ -49,21 +50,22 @@ fr:
         ddfip_name:       Nom de la DDFIP
 
       collectivity:
-        territory:            Territoire de la collectivité
-        territory_type:       Type de territoire
-        territory_id:         ID du territoire
-        territory_code:       Code du territoire (code INSEE ou SIREN)
-        publisher:            Éditeur
-        publisher_id:         ID de l'éditeur
-        publisher_name:       Nom de l'éditeur
-        name:                 Nom de la collectivité
-        siren:                Numéro SIREN de la collectivité
-        contact_first_name:   Prénom du contact
-        contact_last_name :   Nom du contact
-        contact_email:        Adresse mail de contact
-        contact_phone:        Numéro de téléphone
-        domain_restriction:   Nom de domaine
-        allow_2fa_via_email:  Autoriser l'email comme méthode d'authentification en 2 étapes
+        territory:                    Territoire de la collectivité
+        territory_type:               Type de territoire
+        territory_id:                 ID du territoire
+        territory_code:               Code du territoire (code INSEE ou SIREN)
+        publisher:                    Éditeur
+        publisher_id:                 ID de l'éditeur
+        publisher_name:               Nom de l'éditeur
+        name:                         Nom de la collectivité
+        siren:                        Numéro SIREN de la collectivité
+        contact_first_name:           Prénom du contact
+        contact_last_name :           Nom du contact
+        contact_email:                Adresse mail de contact
+        contact_phone:                Numéro de téléphone
+        domain_restriction:           Nom de domaine
+        allow_2fa_via_email:          Autoriser l'email comme méthode d'authentification en 2 étapes
+        allow_publisher_management:   Autoriser la gestion du compte par l'éditeur
 
       user:
         organization:           Organisation

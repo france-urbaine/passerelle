@@ -12,7 +12,10 @@ module Organization
       params.permit(
         :name, :siren, :publisher_id,
         :contact_first_name, :contact_last_name, :contact_email, :contact_phone,
-        :domain_restriction, :allow_2fa_via_email
+        :domain_restriction,
+        :allow_2fa_via_email,
+        :allow_publisher_management,
+        :auto_approve_packages
       )
     end
   end
