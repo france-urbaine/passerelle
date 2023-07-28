@@ -34,6 +34,9 @@ module Fiscahub
     # and the SQL format makes that possible
     config.active_record.schema_format = :sql
 
+    # Routes exceptions tp ApplicationController via config/routes
+    config.exceptions_app = routes
+
     # Autoload extra classes defined in lib/extra
     config.autoload_paths << "#{root}/lib/extras"
 

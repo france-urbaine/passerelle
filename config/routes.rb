@@ -187,4 +187,11 @@ Rails.application.routes.draw do
       resource :update, only: %i[edit update], path: "/mise-a-jour", path_names: { edit: "/" }
     end
   end
+
+  # Errors pages
+  # ----------------------------------------------------------------------------
+  get "404", to: "exceptions#not_found"
+  get "406", to: "exceptions#not_acceptable"
+  get "422", to: "exceptions#unprocessable_entity"
+  get "500", to: "exceptions#internal_server_error"
 end

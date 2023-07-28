@@ -1,0 +1,11 @@
+fr:
+  status:
+    bad_request:            "La requête et/ou les paramètres transmis ne sont pas valides."
+    unauthorized:           "Vous devez commencer par vous authentifier."
+    forbidden:              "Vous ne disposez pas des permissions suffisantes pour accéder à cette resource."
+    not_found:              "La resource demandée n'a pas été trouvé ou n'existe plus."
+    not_acceptable:         "La resource demandée ne peut être retournée dans le format demandé."
+    gone:                   "La resource demandée n'est plus disponible ou est en cours de suppression."
+    unprocessable_entity:   "Les paramètres transmis sont incomplets ou ne permettent pas de finaliser la requète."
+    not_implemented:        "La resource ou le format demandé n'ont pas encore été implémenté."
+    internal_server_error:  "Une erreur s'est produite"

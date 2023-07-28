@@ -2,5 +2,5 @@
   - template.with_breadcrumbs do |breadcrumbs|
     - breadcrumbs.with_path "..."
 
-    - @model_not_found.safe_constantize.try do |model|
+    - @model_not_found&.safe_constantize.try do |model|
       - breadcrumbs.with_path model.model_name.human
