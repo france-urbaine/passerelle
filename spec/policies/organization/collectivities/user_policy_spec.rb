@@ -3,56 +3,128 @@
 require "rails_helper"
 
 RSpec.describe Organization::Collectivities::UserPolicy do
+  let(:collectivity) { build_stubbed(:collectivity) }
+  let(:context)      { { collectivity: collectivity } }
+
+  shared_context "when the collectivity allowed to be managed by its publisher" do
+    let(:collectivity) { build_stubbed(:collectivity, allow_publisher_management: true) }
+  end
+
+  shared_context "when the collectivity disallowed to be managed by the current publisher" do
+    let(:collectivity) { build_stubbed(:collectivity, publisher: current_organization) }
+  end
+
+  shared_context "when the collectivity allowed to be managed by the current publisher" do
+    let(:collectivity) { build_stubbed(:collectivity, publisher: current_organization, allow_publisher_management: true) }
+  end
+
   describe_rule :manage? do
     context "without record" do
       let(:record) { User }
 
-      it_behaves_like("when current user is a DDFIP super admin")        { failed }
-      it_behaves_like("when current user is a DDFIP admin")              { failed }
-      it_behaves_like("when current user is a DDFIP user")               { failed }
-      it_behaves_like("when current user is a publisher super admin")    { succeed }
-      it_behaves_like("when current user is a publisher admin")          { succeed }
-      it_behaves_like("when current user is a publisher user")           { succeed }
-      it_behaves_like("when current user is a collectivity super admin") { failed }
-      it_behaves_like("when current user is a collectivity admin")       { failed }
-      it_behaves_like("when current user is a collectivity user")        { failed }
+      context "without collectivity in context" do
+        let(:context) { super().without(:collectivity) }
+
+        it_behaves_like("when current user is a DDFIP super admin")        { failed }
+        it_behaves_like("when current user is a DDFIP admin")              { failed }
+        it_behaves_like("when current user is a DDFIP user")               { failed }
+        it_behaves_like("when current user is a publisher super admin")    { succeed }
+        it_behaves_like("when current user is a publisher admin")          { succeed }
+        it_behaves_like("when current user is a publisher user")           { succeed }
+        it_behaves_like("when current user is a collectivity super admin") { failed }
+        it_behaves_like("when current user is a collectivity admin")       { failed }
+        it_behaves_like("when current user is a collectivity user")        { failed }
+      end
+
+      context "when the collectivity disallowed to be managed by its publisher" do
+        it_behaves_like("when current user is a DDFIP super admin")        { failed }
+        it_behaves_like("when current user is a DDFIP admin")              { failed }
+        it_behaves_like("when current user is a DDFIP user")               { failed }
+        it_behaves_like("when current user is a publisher super admin")    { failed }
+        it_behaves_like("when current user is a publisher admin")          { failed }
+        it_behaves_like("when current user is a publisher user")           { failed }
+        it_behaves_like("when current user is a collectivity super admin") { failed }
+        it_behaves_like("when current user is a collectivity admin")       { failed }
+        it_behaves_like("when current user is a collectivity user")        { failed }
+      end
+
+      it_behaves_like "when the collectivity allowed to be managed by its publisher" do
+        it_behaves_like("when current user is a DDFIP super admin")        { failed }
+        it_behaves_like("when current user is a DDFIP admin")              { failed }
+        it_behaves_like("when current user is a DDFIP user")               { failed }
+        it_behaves_like("when current user is a publisher super admin")    { failed }
+        it_behaves_like("when current user is a publisher admin")          { failed }
+        it_behaves_like("when current user is a publisher user")           { failed }
+        it_behaves_like("when current user is a collectivity super admin") { failed }
+        it_behaves_like("when current user is a collectivity admin")       { failed }
+        it_behaves_like("when current user is a collectivity user")        { failed }
+      end
+
+      it_behaves_like "when the collectivity allowed to be managed by the current publisher" do
+        it_behaves_like("when current user is a publisher super admin") { succeed }
+        it_behaves_like("when current user is a publisher admin")       { succeed }
+        it_behaves_like("when current user is a publisher user")        { succeed }
+      end
     end
 
     context "with an user" do
       let(:record) { build_stubbed(:user) }
 
-      it_behaves_like("when current user is a DDFIP super admin")        { failed }
-      it_behaves_like("when current user is a DDFIP admin")              { failed }
-      it_behaves_like("when current user is a DDFIP user")               { failed }
-      it_behaves_like("when current user is a publisher super admin")    { failed }
-      it_behaves_like("when current user is a publisher admin")          { failed }
-      it_behaves_like("when current user is a publisher user")           { failed }
-      it_behaves_like("when current user is a collectivity super admin") { failed }
-      it_behaves_like("when current user is a collectivity admin")       { failed }
-      it_behaves_like("when current user is a collectivity user")        { failed }
+      context "when the collectivity disallowed to be managed by its publisher" do
+        it_behaves_like("when current user is a DDFIP super admin")        { failed }
+        it_behaves_like("when current user is a DDFIP admin")              { failed }
+        it_behaves_like("when current user is a DDFIP user")               { failed }
+        it_behaves_like("when current user is a publisher super admin")    { failed }
+        it_behaves_like("when current user is a publisher admin")          { failed }
+        it_behaves_like("when current user is a publisher user")           { failed }
+        it_behaves_like("when current user is a collectivity super admin") { failed }
+        it_behaves_like("when current user is a collectivity admin")       { failed }
+        it_behaves_like("when current user is a collectivity user")        { failed }
+      end
+
+      it_behaves_like "when the collectivity allowed to be managed by the current publisher" do
+        it_behaves_like("when current user is a publisher super admin") { failed }
+        it_behaves_like("when current user is a publisher admin")       { failed }
+        it_behaves_like("when current user is a publisher user")        { failed }
+      end
     end
 
-    context "with a member of the current organization" do
+    context "with a user of the current organization" do
       let(:record) { build_stubbed(:user, organization: current_organization) }
 
-      it_behaves_like("when current user is a DDFIP super admin")        { failed }
-      it_behaves_like("when current user is a DDFIP admin")              { failed }
-      it_behaves_like("when current user is a DDFIP user")               { failed }
-      it_behaves_like("when current user is a publisher super admin")    { failed }
-      it_behaves_like("when current user is a publisher admin")          { failed }
-      it_behaves_like("when current user is a publisher user")           { failed }
-      it_behaves_like("when current user is a collectivity super admin") { failed }
-      it_behaves_like("when current user is a collectivity admin")       { failed }
-      it_behaves_like("when current user is a collectivity user")        { failed }
+      context "when the collectivity disallowed to be managed by its publisher" do
+        it_behaves_like("when current user is a DDFIP super admin")        { failed }
+        it_behaves_like("when current user is a DDFIP admin")              { failed }
+        it_behaves_like("when current user is a DDFIP user")               { failed }
+        it_behaves_like("when current user is a publisher super admin")    { failed }
+        it_behaves_like("when current user is a publisher admin")          { failed }
+        it_behaves_like("when current user is a publisher user")           { failed }
+        it_behaves_like("when current user is a collectivity super admin") { failed }
+        it_behaves_like("when current user is a collectivity admin")       { failed }
+        it_behaves_like("when current user is a collectivity user")        { failed }
+      end
+
+      it_behaves_like "when the collectivity allowed to be managed by the current publisher" do
+        it_behaves_like("when current user is a publisher super admin") { failed }
+        it_behaves_like("when current user is a publisher admin")       { failed }
+        it_behaves_like("when current user is a publisher user")        { failed }
+      end
     end
 
-    context "with a member of a collectivity owned by the current organization" do
-      let(:collectivity) { build_stubbed(:collectivity, publisher: current_organization) }
-      let(:record)       { build_stubbed(:user, organization: collectivity) }
+    context "with a user of a collectivity owned by the current organization" do
+      let(:record) { build_stubbed(:user, organization: collectivity) }
 
-      it_behaves_like("when current user is a publisher super admin")    { succeed }
-      it_behaves_like("when current user is a publisher admin")          { succeed }
-      it_behaves_like("when current user is a publisher user")           { succeed }
+      it_behaves_like "when the collectivity disallowed to be managed by the current publisher" do
+        it_behaves_like("when current user is a publisher super admin") { failed }
+        it_behaves_like("when current user is a publisher admin")       { failed }
+        it_behaves_like("when current user is a publisher user")        { failed }
+      end
+
+      it_behaves_like "when the collectivity allowed to be managed by the current publisher" do
+        it_behaves_like("when current user is a publisher super admin") { succeed }
+        it_behaves_like("when current user is a publisher admin")       { succeed }
+        it_behaves_like("when current user is a publisher user")        { succeed }
+      end
     end
   end
 
@@ -74,39 +146,38 @@ RSpec.describe Organization::Collectivities::UserPolicy do
 
     let(:target) { User.all }
 
-    it_behaves_like "when current user is a publisher user" do
-      it "scopes all kept users from its own organization" do
-        expect {
-          scope.load
-        }.to perform_sql_query(<<~SQL)
-          SELECT "users".*
-          FROM   "users"
-          WHERE  "users"."discarded_at" IS NULL
-            AND  "users"."organization_type" = 'Collectivity'
-            AND  "users"."organization_id" IN (
-              SELECT "collectivities"."id"
-              FROM   "collectivities"
-              WHERE  "collectivities"."publisher_id" = '#{current_organization.id}'
-            )
-        SQL
-      end
+    it_behaves_like "when the collectivity disallowed to be managed by the current publisher" do
+      it_behaves_like("when current user is a publisher admin")       { it { is_expected.to be_a_null_relation } }
+      it_behaves_like("when current user is a publisher user")        { it { is_expected.to be_a_null_relation } }
     end
 
-    it_behaves_like "when current user is a publisher admin" do
-      it "scopes all kept users from its own organization" do
-        expect {
-          scope.load
-        }.to perform_sql_query(<<~SQL)
-          SELECT "users".*
-          FROM   "users"
-          WHERE  "users"."discarded_at" IS NULL
-            AND  "users"."organization_type" = 'Collectivity'
-            AND  "users"."organization_id" IN (
-              SELECT "collectivities"."id"
-              FROM   "collectivities"
-              WHERE  "collectivities"."publisher_id" = '#{current_organization.id}'
-            )
-        SQL
+    it_behaves_like "when the collectivity allowed to be managed by the current publisher" do
+      it_behaves_like "when current user is a publisher user" do
+        it "scopes all kept users from its own organization" do
+          expect {
+            scope.load
+          }.to perform_sql_query(<<~SQL)
+            SELECT "users".*
+            FROM   "users"
+            WHERE  "users"."discarded_at" IS NULL
+              AND  "users"."organization_type" = 'Collectivity'
+              AND  "users"."organization_id" = '#{collectivity.id}'
+          SQL
+        end
+      end
+
+      it_behaves_like "when current user is a publisher admin" do
+        it "scopes all kept users from its own organization" do
+          expect {
+            scope.load
+          }.to perform_sql_query(<<~SQL)
+            SELECT "users".*
+            FROM   "users"
+            WHERE  "users"."discarded_at" IS NULL
+              AND  "users"."organization_type" = 'Collectivity'
+              AND  "users"."organization_id" = '#{collectivity.id}'
+          SQL
+        end
       end
     end
 
@@ -124,41 +195,40 @@ RSpec.describe Organization::Collectivities::UserPolicy do
     let(:target)        { User.all }
     let(:scope_options) { |e| e.metadata.fetch(:scope_options, {}) }
 
-    it_behaves_like "when current user is a publisher user" do
-      it "scopes all kept users from its own organization" do
-        expect {
-          scope.load
-        }.to perform_sql_query(<<~SQL)
-          SELECT "users".*
-          FROM   "users"
-          WHERE  "users"."discarded_at" IS NULL
-            AND  "users"."organization_type" = 'Collectivity'
-            AND  "users"."organization_id" IN (
-              SELECT "collectivities"."id"
-              FROM   "collectivities"
-              WHERE  "collectivities"."publisher_id" = '#{current_organization.id}'
-            )
-            AND "users"."id" != '#{current_user.id}'
-        SQL
-      end
+    it_behaves_like "when the collectivity disallowed to be managed by the current publisher" do
+      it_behaves_like("when current user is a publisher admin")       { it { is_expected.to be_a_null_relation } }
+      it_behaves_like("when current user is a publisher user")        { it { is_expected.to be_a_null_relation } }
     end
 
-    it_behaves_like "when current user is a publisher admin" do
-      it "scopes all kept users from its own organization" do
-        expect {
-          scope.load
-        }.to perform_sql_query(<<~SQL)
-          SELECT "users".*
-          FROM   "users"
-          WHERE  "users"."discarded_at" IS NULL
-            AND  "users"."organization_type" = 'Collectivity'
-            AND  "users"."organization_id" IN (
-              SELECT "collectivities"."id"
-              FROM   "collectivities"
-              WHERE  "collectivities"."publisher_id" = '#{current_organization.id}'
-            )
-            AND "users"."id" != '#{current_user.id}'
-        SQL
+    it_behaves_like "when the collectivity allowed to be managed by the current publisher" do
+      it_behaves_like "when current user is a publisher user" do
+        it "scopes all kept users from its own organization" do
+          expect {
+            scope.load
+          }.to perform_sql_query(<<~SQL)
+            SELECT "users".*
+            FROM   "users"
+            WHERE  "users"."discarded_at" IS NULL
+              AND  "users"."organization_type" = 'Collectivity'
+              AND  "users"."organization_id" = '#{collectivity.id}'
+              AND "users"."id" != '#{current_user.id}'
+          SQL
+        end
+      end
+
+      it_behaves_like "when current user is a publisher admin" do
+        it "scopes all kept users from its own organization" do
+          expect {
+            scope.load
+          }.to perform_sql_query(<<~SQL)
+            SELECT "users".*
+            FROM   "users"
+            WHERE  "users"."discarded_at" IS NULL
+              AND  "users"."organization_type" = 'Collectivity'
+              AND  "users"."organization_id" = '#{collectivity.id}'
+              AND "users"."id" != '#{current_user.id}'
+          SQL
+        end
       end
     end
 
@@ -175,39 +245,38 @@ RSpec.describe Organization::Collectivities::UserPolicy do
 
     let(:target) { User.all }
 
-    it_behaves_like "when current user is a publisher user" do
-      it "scopes all kept users from its own organization" do
-        expect {
-          scope.load
-        }.to perform_sql_query(<<~SQL)
-          SELECT "users".*
-          FROM   "users"
-          WHERE  "users"."organization_type" = 'Collectivity'
-            AND  "users"."organization_id" IN (
-              SELECT "collectivities"."id"
-              FROM   "collectivities"
-              WHERE  "collectivities"."publisher_id" = '#{current_organization.id}'
-            )
-            AND  "users"."discarded_at" IS NOT NULL
-        SQL
-      end
+    it_behaves_like "when the collectivity disallowed to be managed by the current publisher" do
+      it_behaves_like("when current user is a publisher admin")       { it { is_expected.to be_a_null_relation } }
+      it_behaves_like("when current user is a publisher user")        { it { is_expected.to be_a_null_relation } }
     end
 
-    it_behaves_like "when current user is a publisher admin" do
-      it "scopes all kept users from its own organization" do
-        expect {
-          scope.load
-        }.to perform_sql_query(<<~SQL)
-          SELECT "users".*
-          FROM   "users"
-          WHERE  "users"."organization_type" = 'Collectivity'
-            AND  "users"."organization_id" IN (
-              SELECT "collectivities"."id"
-              FROM   "collectivities"
-              WHERE  "collectivities"."publisher_id" = '#{current_organization.id}'
-            )
-            AND  "users"."discarded_at" IS NOT NULL
-        SQL
+    it_behaves_like "when the collectivity allowed to be managed by the current publisher" do
+      it_behaves_like "when current user is a publisher user" do
+        it "scopes all kept users from its own organization" do
+          expect {
+            scope.load
+          }.to perform_sql_query(<<~SQL)
+            SELECT "users".*
+            FROM   "users"
+            WHERE  "users"."organization_type" = 'Collectivity'
+              AND  "users"."organization_id" = '#{collectivity.id}'
+              AND  "users"."discarded_at" IS NOT NULL
+          SQL
+        end
+      end
+
+      it_behaves_like "when current user is a publisher admin" do
+        it "scopes all kept users from its own organization" do
+          expect {
+            scope.load
+          }.to perform_sql_query(<<~SQL)
+            SELECT "users".*
+            FROM   "users"
+            WHERE  "users"."organization_type" = 'Collectivity'
+              AND  "users"."organization_id" = '#{collectivity.id}'
+              AND  "users"."discarded_at" IS NOT NULL
+          SQL
+        end
       end
     end
 

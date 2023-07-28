@@ -15,16 +15,15 @@ RSpec.describe "Office collectivities in organization" do
   it "visits an collectivity page from the office page" do
     visit organization_office_path(pelp_bayonne)
 
-    # A table of all users should be present
+    # A table of all collectivites should be present
     #
     expect(page).to have_selector("h1", text: "PELP de Bayonne")
-
     expect(page).to have_selector(:table_row, "Collectivité" => "CA du Pays Basque") do |row|
-      expect(row).not_to have_link
+      expect(row).to have_link("CA du Pays Basque")
     end
 
     expect(page).to have_selector(:table_row, "Collectivité" => "Bayonne") do |row|
-      expect(row).not_to have_link
+      expect(row).to have_link("Bayonne")
     end
   end
 

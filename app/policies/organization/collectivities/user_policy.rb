@@ -3,21 +3,27 @@
 module Organization
   module Collectivities
     class UserPolicy < ApplicationPolicy
+      authorize :collectivity, optional: true
+
       alias_rule :index?, :new?, :create?, to: :manage?
       alias_rule :remove_all?, :destroy_all?, :undiscard_all?, to: :manage?
 
       def manage?
         if record == User
-          publisher?
+          publisher? && (
+            collectivity.nil? ||
+            allowed_to?(:manage?, collectivity, with: Organization::CollectivityPolicy)
+          )
         elsif record.is_a? User
-          publisher? && publisher_of_user_collectivity?(record)
-
+          publisher? &&
+            publisher_of_user_collectivity?(record) &&
+            allowed_to?(:manage?, collectivity, with: Organization::CollectivityPolicy)
         end
       end
 
       relation_scope do |relation|
-        if publisher?
-          relation.kept.owned_by(organization.collectivities)
+        if publisher? && collectivity && allowed_to?(:manage?, collectivity, with: Organization::CollectivityPolicy)
+          relation.kept.owned_by(collectivity)
         else
           relation.none
         end
@@ -47,8 +53,10 @@ module Organization
       private
 
       def publisher_of_user_collectivity?(user)
-        user.organization.is_a?(Collectivity) &&
-          user.organization.publisher_id == organization.id
+        collectivity &&
+          user.organization == collectivity &&
+          user.organization.publisher_id == organization.id &&
+          user.organization.allow_publisher_management?
       end
     end
   end

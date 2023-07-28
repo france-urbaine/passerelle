@@ -59,6 +59,19 @@
       = form.label :contact_phone
       = form.text_field :contact_phone
 
+    - if allowed_to_allow_publisher_management?
+      = form.block :allow_publisher_management do |block|
+        = form.check_box :allow_publisher_management
+        = form.label :allow_publisher_management
+
+        - block.with_hint do
+          p
+            | Vous pouvez déléguer ou annuler la gestion des paramètres de cette organisation par son éditeur.
+            br
+            | Une fois autorisé, l'éditeur peut notamment créer, modifier ou supprimer des utilisateurs ou
+            br
+            | des administrateurs au sein de cette organisation.
+
     = form.block :allow_2fa_via_email do |block|
       = form.check_box :allow_2fa_via_email
       = form.label :allow_2fa_via_email

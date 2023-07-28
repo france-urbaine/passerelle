@@ -49,7 +49,7 @@
 
         - elsif user.organization&.discarded?
           .text-disabled
-            = "#{user.organization.name} (organisation archivée)"
+            = "#{user.organization.name} (organisation supprimée)"
 
       - row.with_column(:organization_admin) do
         = check_badge(user.organization_admin?, "Administrateur de l'organisation")

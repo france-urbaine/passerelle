@@ -14,11 +14,11 @@ RSpec.describe "Organization::CollectivitiesController#destroy_all" do
   let!(:publisher) { create(:publisher) }
   let!(:collectivities) do
     [
+      create(:collectivity, publisher: publisher, allow_publisher_management: true),
+      create(:collectivity, publisher: publisher, allow_publisher_management: true),
       create(:collectivity, publisher: publisher),
-      create(:collectivity, publisher: publisher),
-      create(:collectivity, publisher: publisher),
-      create(:collectivity),
-      create(:collectivity, :discarded, publisher: publisher)
+      create(:collectivity, allow_publisher_management: true),
+      create(:collectivity, :discarded, publisher: publisher, allow_publisher_management: true)
     ]
   end
 
@@ -53,7 +53,7 @@ RSpec.describe "Organization::CollectivitiesController#destroy_all" do
         expect {
           request
           collectivities.each(&:reload)
-        }.to change(collectivities[0], :discarded_at).to(be_present)
+        }.to   change(collectivities[0], :discarded_at).to(be_present)
           .and change(collectivities[1], :discarded_at).to(be_present)
           .and not_change(collectivities[2], :discarded_at).from(nil)
           .and not_change(collectivities[3], :discarded_at).from(nil)
@@ -104,7 +104,7 @@ RSpec.describe "Organization::CollectivitiesController#destroy_all" do
       it { expect(response).to redirect_to("/organisation/collectivites") }
       it { expect(flash).to have_flash_notice }
       it { expect(flash).to have_flash_actions }
-      it { expect { request }.to change(Collectivity.discarded, :count).by(3) }
+      it { expect { request }.to change(Collectivity.discarded, :count).by(2) }
     end
 
     context "with empty ids", params: { ids: [] } do

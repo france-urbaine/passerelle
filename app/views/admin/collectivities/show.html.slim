@@ -19,8 +19,13 @@
       .description-list__row
         dt Éditeur
         dd
-          = authorized_link_to @collectivity.publisher, scope: :admin do
-            = @collectivity.publisher.name
+          - if @collectivity.publisher&.kept?
+            = authorized_link_to @collectivity.publisher, scope: :admin do
+              = @collectivity.publisher.name
+
+          - elsif @collectivity.publisher&.discarded?
+            .text-disabled
+              = "#{@collectivity.publisher.name} (organisation supprimée)"
 
       .description-list__row
         dt Territoire

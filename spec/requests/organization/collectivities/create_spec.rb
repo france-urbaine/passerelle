@@ -66,6 +66,11 @@ RSpec.describe "Organization::CollectivitiesController#create" do
         )
       end
 
+      it "creates a collectivity and is allowed to manage it" do
+        request
+        expect(Collectivity.last.allow_publisher_management).to be(true)
+      end
+
       it "sets a flash notice" do
         expect(flash).to have_flash_notice.to eq(
           type:  "success",

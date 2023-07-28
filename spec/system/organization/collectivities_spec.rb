@@ -350,8 +350,8 @@ RSpec.describe "Collectivities managed by current organization" do
     # Create a bunch of collectivities to have several pages
     # Create discarded collectivities to verify they are not rollbacked
     #
-    create_list(:collectivity, 10, publisher: publisher)
-    create_list(:collectivity, 5, :discarded, publisher: publisher)
+    create_list(:collectivity, 10, publisher: publisher, allow_publisher_management: true)
+    create_list(:collectivity, 5, :discarded, publisher: publisher, allow_publisher_management: true)
 
     visit organization_collectivities_path
 
@@ -432,7 +432,7 @@ RSpec.describe "Collectivities managed by current organization" do
     # Create a bunch of collectivities to have several pages
     # TODO: Create discarded collectivities to verify they are not rollbacked
     #
-    create_list(:collectivity, 10, publisher: publisher)
+    create_list(:collectivity, 10, publisher: publisher, allow_publisher_management: true)
 
     visit organization_collectivities_path
 

@@ -17,6 +17,69 @@ RSpec.describe Organization::CollectivityPolicy do
     it_behaves_like("when current user is a collectivity user")        { failed }
   end
 
+  describe_rule :show? do
+    context "without record" do
+      let(:record) { Collectivity }
+
+      it_behaves_like("when current user is a DDFIP super admin")        { failed }
+      it_behaves_like("when current user is a DDFIP admin")              { succeed }
+      it_behaves_like("when current user is a DDFIP user")               { failed }
+      it_behaves_like("when current user is a publisher super admin")    { succeed }
+      it_behaves_like("when current user is a publisher admin")          { succeed }
+      it_behaves_like("when current user is a publisher user")           { succeed }
+      it_behaves_like("when current user is a collectivity super admin") { failed }
+      it_behaves_like("when current user is a collectivity admin")       { failed }
+      it_behaves_like("when current user is a collectivity user")        { failed }
+    end
+
+    context "with a collectivity" do
+      let(:record) { build_stubbed(:collectivity) }
+
+      it_behaves_like("when current user is a DDFIP super admin")        { failed }
+      it_behaves_like("when current user is a DDFIP admin")              { failed }
+      it_behaves_like("when current user is a DDFIP user")               { failed }
+      it_behaves_like("when current user is a publisher super admin")    { failed }
+      it_behaves_like("when current user is a publisher admin")          { failed }
+      it_behaves_like("when current user is a publisher user")           { failed }
+      it_behaves_like("when current user is a collectivity super admin") { failed }
+      it_behaves_like("when current user is a collectivity admin")       { failed }
+      it_behaves_like("when current user is a collectivity user")        { failed }
+    end
+
+    context "with the same collectivity as the current organization" do
+      let(:record) { current_organization }
+
+      it_behaves_like("when current user is a collectivity super admin") { failed }
+      it_behaves_like("when current user is a collectivity admin")       { failed }
+      it_behaves_like("when current user is a collectivity user")        { failed }
+    end
+
+    context "with a collectivity owned by the current publisher" do
+      let(:record) { build_stubbed(:collectivity, publisher: current_organization) }
+
+      it_behaves_like("when current user is a publisher super admin") { succeed }
+      it_behaves_like("when current user is a publisher admin")       { succeed }
+      it_behaves_like("when current user is a publisher user")        { succeed }
+    end
+
+    context "with a collectivity owned and allowed to be managed by the current publisher" do
+      let(:record) { build_stubbed(:collectivity, publisher: current_organization, allow_publisher_management: true) }
+
+      it_behaves_like("when current user is a publisher super admin") { succeed }
+      it_behaves_like("when current user is a publisher admin")       { succeed }
+      it_behaves_like("when current user is a publisher user")        { succeed }
+    end
+
+    context "with a collectivity which is likely to send reports to the current DDFIP", stub_factories: false do
+      let(:commune) { create(:commune, departement: current_organization.departement) }
+      let(:record)  { create(:collectivity, territory: commune) }
+
+      it_behaves_like("when current user is a DDFIP super admin") { failed }
+      it_behaves_like("when current user is a DDFIP admin")       { succeed }
+      it_behaves_like("when current user is a DDFIP user")        { failed }
+    end
+  end
+
   describe_rule :manage? do
     context "without record" do
       let(:record) { Collectivity }
@@ -46,14 +109,6 @@ RSpec.describe Organization::CollectivityPolicy do
       it_behaves_like("when current user is a collectivity user")        { failed }
     end
 
-    context "with a collectivity owned by the current publisher" do
-      let(:record) { build_stubbed(:collectivity, publisher: current_organization) }
-
-      it_behaves_like("when current user is a publisher super admin") { succeed }
-      it_behaves_like("when current user is a publisher admin")       { succeed }
-      it_behaves_like("when current user is a publisher user")        { succeed }
-    end
-
     context "with the same collectivity as the current organization" do
       let(:record) { current_organization }
 
@@ -61,9 +116,24 @@ RSpec.describe Organization::CollectivityPolicy do
       it_behaves_like("when current user is a collectivity admin")       { failed }
       it_behaves_like("when current user is a collectivity user")        { failed }
     end
+
+    context "with a collectivity owned by the current publisher" do
+      let(:record) { build_stubbed(:collectivity, publisher: current_organization) }
+
+      it_behaves_like("when current user is a publisher super admin") { failed }
+      it_behaves_like("when current user is a publisher admin")       { failed }
+      it_behaves_like("when current user is a publisher user")        { failed }
+    end
+
+    context "with a collectivity owned and allowed to be managed by the current publisher" do
+      let(:record) { build_stubbed(:collectivity, publisher: current_organization, allow_publisher_management: true) }
+
+      it_behaves_like("when current user is a publisher super admin") { succeed }
+      it_behaves_like("when current user is a publisher admin")       { succeed }
+      it_behaves_like("when current user is a publisher user")        { succeed }
+    end
   end
 
-  it { expect(:show?).to          be_an_alias_of(policy, :manage?) }
   it { expect(:new?).to           be_an_alias_of(policy, :manage?) }
   it { expect(:create?).to        be_an_alias_of(policy, :manage?) }
   it { expect(:edit?).to          be_an_alias_of(policy, :manage?) }
@@ -174,6 +244,7 @@ RSpec.describe Organization::CollectivityPolicy do
           FROM   "collectivities"
           WHERE  "collectivities"."discarded_at" IS NULL
             AND  "collectivities"."publisher_id" = '#{current_organization.id}'
+            AND  "collectivities"."allow_publisher_management" = TRUE
         SQL
       end
     end
@@ -187,6 +258,7 @@ RSpec.describe Organization::CollectivityPolicy do
           FROM   "collectivities"
           WHERE  "collectivities"."discarded_at" IS NULL
             AND  "collectivities"."publisher_id" = '#{current_organization.id}'
+            AND  "collectivities"."allow_publisher_management" = TRUE
         SQL
       end
     end
@@ -200,6 +272,7 @@ RSpec.describe Organization::CollectivityPolicy do
           FROM   "collectivities"
           WHERE  "collectivities"."discarded_at" IS NULL
             AND  "collectivities"."publisher_id" = '#{current_organization.id}'
+            AND  "collectivities"."allow_publisher_management" = TRUE
         SQL
       end
     end
@@ -225,6 +298,7 @@ RSpec.describe Organization::CollectivityPolicy do
           SELECT "collectivities".*
           FROM   "collectivities"
           WHERE  "collectivities"."publisher_id" = '#{current_organization.id}'
+            AND  "collectivities"."allow_publisher_management" = TRUE
             AND  "collectivities"."discarded_at" IS NOT NULL
         SQL
       end
@@ -238,6 +312,7 @@ RSpec.describe Organization::CollectivityPolicy do
           SELECT "collectivities".*
           FROM   "collectivities"
           WHERE  "collectivities"."publisher_id" = '#{current_organization.id}'
+            AND  "collectivities"."allow_publisher_management" = TRUE
             AND  "collectivities"."discarded_at" IS NOT NULL
         SQL
       end
@@ -251,6 +326,7 @@ RSpec.describe Organization::CollectivityPolicy do
           SELECT "collectivities".*
           FROM   "collectivities"
           WHERE  "collectivities"."publisher_id" = '#{current_organization.id}'
+            AND  "collectivities"."allow_publisher_management" = TRUE
             AND  "collectivities"."discarded_at" IS NOT NULL
         SQL
       end
