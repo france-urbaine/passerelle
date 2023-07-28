@@ -4,7 +4,7 @@ require "rails_helper"
 
 RSpec.describe Pagination::Buttons::Component, type: :component do
   around do |example|
-    with_request_url("/communes") { example.run }
+    with_request_url("/territoires/communes") { example.run }
   end
 
   it "renders two buttons to navigate to previous and next pages" do
@@ -15,7 +15,7 @@ RSpec.describe Pagination::Buttons::Component, type: :component do
     aggregate_failures do
       expect(page).to have_selector(".icon-button", text: "Page précédente") do |button|
         aggregate_failures do
-          expect(button).to have_html_attribute("href").with_value("/communes?page=2")
+          expect(button).to have_html_attribute("href").with_value("/territoires/communes?page=2")
           expect(button).to have_html_attribute("rel").with_value("prev")
 
           expect(button).not_to have_html_attribute("aria-hidden")
@@ -25,7 +25,7 @@ RSpec.describe Pagination::Buttons::Component, type: :component do
 
       expect(page).to have_selector(".icon-button", text: "Page suivante") do |button|
         aggregate_failures do
-          expect(button).to have_html_attribute("href").with_value("/communes?page=4")
+          expect(button).to have_html_attribute("href").with_value("/territoires/communes?page=4")
           expect(button).to have_html_attribute("rel").with_value("next")
 
           expect(button).not_to have_html_attribute("aria-hidden")
@@ -53,7 +53,7 @@ RSpec.describe Pagination::Buttons::Component, type: :component do
 
       expect(page).to have_selector(".icon-button", text: "Page suivante") do |button|
         aggregate_failures do
-          expect(button).to have_html_attribute("href").with_value("/communes?page=2")
+          expect(button).to have_html_attribute("href").with_value("/territoires/communes?page=2")
           expect(button).to have_html_attribute("rel").with_value("next")
 
           expect(button).not_to have_html_attribute("aria-hidden")
@@ -71,7 +71,7 @@ RSpec.describe Pagination::Buttons::Component, type: :component do
     aggregate_failures do
       expect(page).to have_selector(".icon-button", text: "Page précédente") do |button|
         aggregate_failures do
-          expect(button).to have_html_attribute("href").with_value("/communes?page=6")
+          expect(button).to have_html_attribute("href").with_value("/territoires/communes?page=6")
           expect(button).to have_html_attribute("rel").with_value("prev")
 
           expect(button).not_to have_html_attribute("aria-hidden")
@@ -120,7 +120,7 @@ RSpec.describe Pagination::Buttons::Component, type: :component do
   end
 
   it "renders buttons and keep actual params" do
-    with_request_url("/communes?search=foo&order=-name") do
+    with_request_url("/territoires/communes?search=foo&order=-name") do
       render_inline described_class.new(
         Pagy.new(count: 125, page: 3, items: 20)
       )
@@ -128,11 +128,11 @@ RSpec.describe Pagination::Buttons::Component, type: :component do
 
     aggregate_failures do
       expect(page).to have_link("Page précédente") do |link|
-        expect(link).to have_html_attribute("href").with_value("/communes?order=-name&page=2&search=foo")
+        expect(link).to have_html_attribute("href").with_value("/territoires/communes?order=-name&page=2&search=foo")
       end
 
       expect(page).to have_link("Page suivante") do |link|
-        expect(link).to have_html_attribute("href").with_value("/communes?order=-name&page=4&search=foo")
+        expect(link).to have_html_attribute("href").with_value("/territoires/communes?order=-name&page=4&search=foo")
       end
     end
   end

@@ -53,7 +53,7 @@
           = package.reference
 
       - row.with_column(:collectivity) do
-        = authorized_link_to package.collectivity do
+        = authorized_link_to package.collectivity, scope: :organization do
           = package.collectivity&.name
 
       - row.with_column(:form_type) do

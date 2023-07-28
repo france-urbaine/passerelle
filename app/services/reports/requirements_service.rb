@@ -6,8 +6,6 @@ module Reports
 
     attr_reader :report
 
-    delegate :form_type, :anomalies, to: :report
-
     def initialize(report)
       @report = report
       super()
@@ -128,6 +126,8 @@ module Reports
 
     # --------------------------------------------------------------------------
     private
+
+    delegate :form_type, :anomalies, to: :report
 
     def proposition_affectation_habitation?
       I18n.t("enum.local_habitation_affectation").keys.map(&:to_s).include?(@report.proposition_affectation)

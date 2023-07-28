@@ -1,0 +1,13 @@
+= template_gone_component(@gone_records, referrer: @referrer_path) do |template|
+  - template.with_breadcrumbs do |breadcrumbs|
+    - breadcrumbs.with_path "Echanges"
+    - breadcrumbs.with_path "Signalements", reports_path
+    - breadcrumbs.with_path @gone_records.last.reference
+
+  - if allowed_to?(:undiscard?,@gone_records.first)
+    - case @gone_records.first
+    - when Package
+      - template.with_action "Annuler la suppression du paquet", undiscard_package_path(@gone_records.first), method: :patch, icon: "arrow-path"
+    - when Report
+      - template.with_action "Annuler la suppression du signalement", undiscard_report_path(@gone_records.first), method: :patch, icon: "arrow-path"
+

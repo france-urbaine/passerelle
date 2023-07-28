@@ -21,9 +21,8 @@ module ControllerStatuses
     render_status(:not_found)
   end
 
-  def gone(argument = nil)
-    @gone_record = argument
-    @gone_record = argument.record if argument.is_a?(ControllerDiscard::RecordDiscarded)
+  def gone(exception = nil)
+    @gone_records = exception&.records
     render_status(:gone)
   end
 
@@ -34,7 +33,12 @@ module ControllerStatuses
     end
 
     respond_to do |format|
-      format.html { render status: status, template: "shared/statuses/#{status}" }
+      format.html do
+        render status:, action: status
+      rescue ActionView::MissingTemplate
+        render status:, template: "shared/statuses/#{status}"
+      end
+
       format.all { head status }
     end
   end

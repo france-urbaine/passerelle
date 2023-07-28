@@ -155,10 +155,10 @@ fr:
               invalid:   Une adresse mail valide est requise
 
             contact_phone:
-              invalid:   Un numéro de téléphone valide est requise
+              invalid:   Un numéro de téléphone valide est requis (sans espaces)
 
             domain_restriction:
-              invalid:   Un nom de domaine valide est requise (sans @)
+              invalid:   Un nom de domaine valide est requis (sans @)
 
         ddfip:
           attributes:
@@ -177,10 +177,10 @@ fr:
               invalid:   Une adresse mail valide est requise
 
             contact_phone:
-              invalid:   Un numéro de téléphone valide est requise
+              invalid:   Un numéro de téléphone valide est requis (sans espaces)
 
             domain_restriction:
-              invalid:   Un nom de domaine valide est requise (sans @)
+              invalid:   Un nom de domaine valide est requis (sans @)
 
         office:
           attributes:
@@ -224,10 +224,10 @@ fr:
               invalid:   Une adresse mail valide est requise
 
             contact_phone:
-              invalid:   Un numéro de téléphone valide est requise
+              invalid:   Un numéro de téléphone valide est requis (sans espaces)
 
             domain_restriction:
-              invalid:   Un nom de domaine valide est requise (sans @)
+              invalid:   Un nom de domaine valide est requis (sans @)
 
         user:
           already_confirmed:           Votre compte a déjà été validé, veuillez essayer de vous connecter
@@ -355,7 +355,7 @@ fr:
   activemodel:
     errors:
       models:
-        territories_update:
+        territories/update_service:
           blank:             Une URL est requise
           invalid_url:       Cette URL n'est pas valide
           invalid_extension: Le fichier cible doit être un fichier ZIP

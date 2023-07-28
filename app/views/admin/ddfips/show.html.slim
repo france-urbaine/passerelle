@@ -1,0 +1,116 @@
+= template_frame_component do
+  = breadcrumbs_component do |breadcrumbs|
+    - breadcrumbs.with_path "Administration"
+    - breadcrumbs.with_path "DDFIP", admin_ddfips_path
+    - breadcrumbs.with_path @ddfip.name
+
+    - if allowed_to?(:update?, @ddfip)
+      - breadcrumbs.with_action "Modifier", edit_admin_ddfip_path(@ddfip), icon: "pencil-square", modal: true
+
+    - if allowed_to?(:destroy?, @ddfip)
+      - breadcrumbs.with_action "Supprimer", remove_admin_ddfip_path(@ddfip), icon: "trash", modal: true, destructive: "discrete"
+
+  h2.subheader
+    = svg_icon("identification", "Nouvelle section")
+    | Description
+
+  .card
+    dl.description-list
+      .description-list__row
+        dt Département
+        dd
+          = authorized_link_to @ddfip.departement, scope: :territories do
+            = @ddfip.departement.qualified_name
+
+      .description-list__row
+        dt Contact
+        dd= "#{@ddfip.contact_first_name} #{@ddfip.contact_last_name}".strip.presence
+
+      .description-list__row
+        dt Adresse mail de contact
+        dd= mail_to(@ddfip.contact_email) if @ddfip.contact_email?
+
+      .description-list__row
+        dt Numéro de téléphone
+        dd= phone_to(@ddfip.contact_phone) if @ddfip.contact_phone?
+
+      .description-list__row
+        dt Utilisateurs
+        dd= display_count(@ddfip.users_count, "utilisateur") if @ddfip.users_count.positive?
+
+      .description-list__row
+        dt Collectivités enregistrées
+        dd= display_count(@ddfip.collectivities_count, "collectivité") if @ddfip.collectivities_count.positive?
+
+      .description-list__row
+        dt Signalements
+        dd
+          - if @ddfip.reports_count.positive?
+            = display_count(@ddfip.reports_count, "reçu")
+            = " / "
+            = display_count(@ddfip.reports_approved_count, "approuvé")
+            = " / "
+            = display_count(@ddfip.reports_rejected_count, "rejeté")
+
+  - if allowed_to?(:index?, Office)
+    .content__separator
+
+    .subheader-bar
+      h2.subheader
+        = svg_icon("rectangle-stack", "Nouvelle section")
+        | Guichets
+
+      .subheader-bar__actions
+        - if allowed_to?(:create?, Office)
+          .subheader-bar__action
+            = button_component "Ajouter un guichet", new_admin_ddfip_office_path(@ddfip), icon: "plus", modal: true
+
+    - if @ddfip.offices_count.zero?
+      = card_component(content_class: "card__content--empty")
+        | Aucun guichet enregistré.
+
+    - else
+      = turbo_frame_tag "datatable-offices", src: admin_ddfip_offices_path(@ddfip) do
+        = datatable_skeleton_component(nested: true, rows: @ddfip.offices_count) do |skeleton|
+          - skeleton.with_search
+          - skeleton.with_pagination
+
+  - if allowed_to?(:index?, User)
+    .content__separator
+
+    .subheader-bar
+      h2.subheader
+        = svg_icon("rectangle-stack", "Nouvelle section")
+        | Utilisateurs de l'organisation
+
+      .subheader-bar__actions
+        - if allowed_to?(:create?, User)
+          .subheader-bar__action
+            = button_component "Inviter un utilisateur", new_admin_ddfip_user_path(@ddfip), icon: "plus", modal: true
+
+    - if @ddfip.users_count.zero?
+      = card_component(content_class: "card__content--empty")
+        | Aucun utilisateur assigné.
+
+    - else
+      = turbo_frame_tag "datatable-users", src: admin_ddfip_users_path(@ddfip) do
+        = datatable_skeleton_component(nested: true, rows: @ddfip.users_count) do |skeleton|
+          - skeleton.with_search
+          - skeleton.with_pagination
+
+  - if allowed_to?(:index?, Collectivity)
+    .content__separator
+
+    h2.subheader
+      = svg_icon("rectangle-stack", "Nouvelle section")
+      | Collectivités enregistrées
+
+    - if @ddfip.collectivities_count.zero?
+      = card_component(content_class: "card__content--empty")
+        | Aucune collectivité enregistrée.
+
+    - else
+      = turbo_frame_tag "datatable-collectivities", src: admin_ddfip_collectivities_path(@ddfip) do
+        = datatable_skeleton_component(nested: true, rows: @ddfip.collectivities_count) do |skeleton|
+          - skeleton.with_search
+          - skeleton.with_pagination

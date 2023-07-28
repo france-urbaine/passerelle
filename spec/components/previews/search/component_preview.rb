@@ -2,7 +2,9 @@
 
 module Search
   # @logical_path Interactive elements
+  #
   # @display frame "content"
+  # @display width "small"
   #
   class ComponentPreview < ViewComponent::Preview
     # @label Default

@@ -1,0 +1,6 @@
+= template_not_found_component(@model_not_found, referrer: @referrer_path) do |template|
+  - template.with_breadcrumbs do |breadcrumbs|
+    - breadcrumbs.with_path "Echanges"
+    - breadcrumbs.with_path "Signalements", reports_path
+
+  - template.with_action "Consulter les signalements disponibles", reports_path, icon: "search"

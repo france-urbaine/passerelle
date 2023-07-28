@@ -18,8 +18,8 @@ RSpec.describe "ReportsController#update" do
   end
 
   describe "authorizations" do
-    it_behaves_like "it requires authorization in HTML"
-    it_behaves_like "it requires authorization in JSON"
+    it_behaves_like "it requires to be signed in in HTML"
+    it_behaves_like "it requires to be signed in in JSON"
     it_behaves_like "it responds with not acceptable in JSON when signed in"
 
     it_behaves_like "it denies access to collectivity user"
@@ -103,21 +103,47 @@ RSpec.describe "ReportsController#update" do
 
     before { sign_in_as(organization: report.collectivity) }
 
-    it { expect(response).to have_http_status(:see_other) }
-    it { expect(response).to redirect_to("/signalements/#{report.id}") }
+    context "when the report is accessible" do
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/signalements/#{report.id}") }
 
-    it "updates the report" do
-      expect { request and report.reload }
-        .to  change(report, :updated_at)
-        .and change(report, :situation_annee_majic).to(2022)
+      it "updates the report" do
+        expect { request and report.reload }
+          .to  change(report, :updated_at)
+          .and change(report, :situation_annee_majic).to(2022)
+      end
+
+      it "sets a flash notice" do
+        expect(flash).to have_flash_notice.to eq(
+          type:  "success",
+          title: "Les modifications ont été enregistrées avec succés.",
+          delay: 3000
+        )
+      end
     end
 
-    it "sets a flash notice" do
-      expect(flash).to have_flash_notice.to eq(
-        type:  "success",
-        title: "Les modifications ont été enregistrées avec succés.",
-        delay: 3000
-      )
+    context "when the report is discarded" do
+      before { report.discard }
+
+      it { expect(response).to have_http_status(:gone) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
+    end
+
+    context "when the package is discarded" do
+      before { report.package.discard }
+
+      it { expect(response).to have_http_status(:gone) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
+    end
+
+    context "when the report is missing" do
+      before { report.destroy }
+
+      it { expect(response).to have_http_status(:not_found) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
     end
   end
 end

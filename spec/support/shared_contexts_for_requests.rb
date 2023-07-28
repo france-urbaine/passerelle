@@ -1,14 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.shared_context "with requests shared contexts" do
-  shared_context "when requesting HTML" do
-    let(:as) { :html }
-  end
-
-  shared_context "when requesting JSON" do
-    let(:as) { :json }
-  end
-
   # rubocop:disable RSpec/LetSetup
   #
   # This shared context accepts traits, raw and proc attributes:
@@ -28,13 +20,17 @@ RSpec.shared_context "with requests shared contexts" do
   end
 
   {
-    "publisher user"    => %i[publisher],
-    "publisher admin"   => %i[publisher organization_admin],
-    "DDFIP user"        => %i[ddfip],
-    "DDFIP admin"       => %i[ddfip organization_admin],
-    "collectivity user"  => %i[collectivity],
-    "collectivity admin" => %i[collectivity organization_admin],
-    "super admin"       => %i[super_admin]
+    "super admin"              => %i[super_admin],
+    "admin"                    => %i[organization_admin],
+    "DDFIP super admin"        => %i[ddfip super_admin],
+    "DDFIP admin"              => %i[ddfip organization_admin],
+    "DDFIP user"               => %i[ddfip],
+    "publisher super admin"    => %i[publisher super_admin],
+    "publisher admin"          => %i[publisher organization_admin],
+    "publisher user"           => %i[publisher],
+    "collectivity super admin" => %i[collectivity super_admin],
+    "collectivity admin"       => %i[collectivity organization_admin],
+    "collectivity user"        => %i[collectivity]
   }.each do |user_description, user_traits|
     # These shared contexts accepts literal and proc attributes:
     # See `shared_context "when signed in"` for more info.

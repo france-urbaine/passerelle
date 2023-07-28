@@ -19,25 +19,30 @@ RSpec.describe "TerritoriesController#index" do
     create_list(:region, 2)
   end
 
-  it_behaves_like "it responds with not acceptable in HTML whithout being signed in"
-  it_behaves_like "it responds with not acceptable in JSON whithout being signed in"
-  it_behaves_like "it responds with not acceptable in HTML when signed in"
-  it_behaves_like "it responds with not acceptable in JSON when signed in"
+  describe "authorizations" do
+    it_behaves_like "it requires to be signed in in HTML"
+    it_behaves_like "it requires to be signed in in JSON"
+    it_behaves_like "it responds with not acceptable in JSON when signed in"
+    it_behaves_like "it responds with not acceptable in HTML when signed in"
 
-  context "when requesting autocompletion" do
-    let(:headers) { { "Accept-Variant" => "autocomplete" } }
-    let(:params)  { { q: "" } }
-    let(:xhr)     { true }
-
-    it_behaves_like "it allows access whithout being signed in"
-    it_behaves_like "it allows access when signed in"
-
-    context "when signed in" do
-      before { sign_in }
-
-      it { expect(response).to have_http_status(:success) }
-      it { expect(response).to have_content_type(:html) }
-      it { expect(response).to have_partial_html.to match(%r{\A<li.*</li>\Z}) }
+    context "when requesting autocompletion", headers: { "Accept-Variant" => "autocomplete" }, xhr: true do
+      it_behaves_like "it allows access to publisher user"
+      it_behaves_like "it allows access to publisher admin"
+      it_behaves_like "it allows access to DDFIP user"
+      it_behaves_like "it allows access to DDFIP admin"
+      it_behaves_like "it allows access to collectivity user"
+      it_behaves_like "it allows access to collectivity admin"
+      it_behaves_like "it allows access to super admin"
     end
+  end
+
+  describe "responses", headers: { "Accept-Variant" => "autocomplete" }, xhr: true do
+    before { sign_in }
+
+    let(:params) { { q: "" } }
+
+    it { expect(response).to have_http_status(:success) }
+    it { expect(response).to have_content_type(:html) }
+    it { expect(response).to have_partial_html.to match(%r{\A<li.*</li>\Z}) }
   end
 end

@@ -20,5 +20,9 @@ FactoryBot.define do
     trait :with_epci do
       epci
     end
+
+    after(:stub) do |commune, _evaluator|
+      commune.generate_qualified_name
+    end
   end
 end

@@ -17,9 +17,11 @@ export default class extends Controller {
       url += ("ddfip_id=" + value.id)
 
       this.officesFormBlockTarget.classList.remove("hidden")
+      this.officesFormBlockTarget.removeAttribute("hidden")
       this.officesCheckboxesFrameTarget.src = url
     } else {
       this.officesFormBlockTarget.classList.add("hidden")
+      this.officesFormBlockTarget.setAttribute("hidden", "hidden")
       this.officesCheckboxesFrameTarget.src = null
     }
   }

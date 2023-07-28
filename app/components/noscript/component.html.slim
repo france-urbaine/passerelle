@@ -1,0 +1,6 @@
+noscript( id="#{@id}-noscript" )
+  = content
+
+script( id="#{@id}-script" )
+  ' document.getElementById("#{@id}-noscript").remove();
+  ' document.getElementById("#{@id}-script").remove();

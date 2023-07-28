@@ -1,0 +1,6 @@
+= template_not_found_component(@model_not_found, referrer: @referrer_path) do |template|
+  - template.with_breadcrumbs do |breadcrumbs|
+    - breadcrumbs.with_path "Mon organisation"
+    - breadcrumbs.with_path "Utilisateurs", organization_users_path
+
+  - template.with_action "Consulter les utilisateurs existants", organization_users_path, icon: "search"

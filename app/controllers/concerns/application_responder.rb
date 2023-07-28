@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class ApplicationResponder < ActionController::Responder
+  Responders::FlashResponder.namespace_lookup = true
+
   include Responders::FlashResponder
   include Responders::HttpCacheResponder
 

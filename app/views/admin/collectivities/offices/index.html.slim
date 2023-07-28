@@ -1,0 +1,61 @@
+= template_frame_component do
+  = breadcrumbs_component do |breadcrumbs|
+    - breadcrumbs.with_path "Administration"
+    - breadcrumbs.with_path "Collectivités", admin_collectivities_path
+    - breadcrumbs.with_path @collectivity.name, admin_collectivity_path(@collectivity)
+    - breadcrumbs.with_path "Guichets"
+
+  = datatable_component(@offices) do |datatable|
+    - datatable.with_search
+    - datatable.with_pagination(@pagy, options: false)
+
+    - datatable.with_column(:name,       sort: true) { "Guichet" }
+    - datatable.with_column(:ddfip,      sort: true) { "DDFIP" }
+    - datatable.with_column(:competence, sort: true) { "Compétence" }
+
+    - datatable.with_column(:users_count,            numeric: true) { "Utilisateurs" }
+    - datatable.with_column(:communes_count,         numeric: true) { "Communes" }
+    - datatable.with_column(:reports_count,          numeric: true) { "Signalements" }
+    - datatable.with_column(:reports_approved_count, numeric: true) { "Approuvés" }
+    - datatable.with_column(:reports_rejected_count, numeric: true) { "Rejetés" }
+
+    - datatable.with_empty_message do
+      - if params[:search]
+        | Aucun guichet ne correspont à votre recherche.
+      - else
+        | Aucun guichet disponible.
+
+    - datatable.each_row do |row, office|
+      - row.with_checkbox "Sélectionner ce guichet", described_by: :name, disabled: true
+
+      - if allowed_to?(:update?, office)
+        - row.with_action "Modifier ce guichet", edit_admin_office_path(office), icon: "pencil-square", modal: true
+
+      - if allowed_to?(:destroy?, office)
+        - row.with_action "Supprimer ce guichet", remove_admin_office_path(office), icon: "trash", modal: true
+
+      - row.with_column(:name) do
+        = authorized_link_to office, scope: :admin do
+          = office.name
+
+      - row.with_column(:ddfip) do
+        = authorized_link_to office.ddfip, scope: :admin do
+          = office.ddfip.name
+
+      - row.with_column(:competence) do
+        = short_list(office.competences, humanize: true) { |value| t(value, scope: "enum.competence") }
+
+      - row.with_column(:users_count) do
+        = number_with_delimiter(office.users_count) if office.users_count.positive?
+
+      - row.with_column(:communes_count) do
+        = number_with_delimiter(office.communes_count) if office.communes_count.positive?
+
+      - row.with_column(:reports_count) do
+        = number_with_delimiter(office.reports_count) if office.reports_count.positive?
+
+      - row.with_column(:reports_approved_count) do
+        = number_with_delimiter(office.reports_approved_count) if office.reports_approved_count.positive?
+
+      - row.with_column(:reports_rejected_count) do
+        = number_with_delimiter(office.reports_rejected_count) if office.reports_rejected_count.positive?

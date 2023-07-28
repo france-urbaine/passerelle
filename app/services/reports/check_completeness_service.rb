@@ -6,8 +6,6 @@ module Reports
 
     attr_reader :report
 
-    delegate :exonerations, to: :report
-
     def initialize(report)
       @report = report
       super()
@@ -86,6 +84,8 @@ module Reports
     end
 
     private
+
+    delegate :exonerations, to: :report
 
     def requirements
       @requirements ||= Reports::RequirementsService.new(@report)

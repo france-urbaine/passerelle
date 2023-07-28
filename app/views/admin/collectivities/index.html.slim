@@ -1,0 +1,79 @@
+= template_frame_component do
+  = breadcrumbs_component do |breadcrumbs|
+    - breadcrumbs.with_path "Administration"
+    - breadcrumbs.with_path "Collectivités"
+
+    - if allowed_to?(:create?, Collectivity)
+      - breadcrumbs.with_action "Ajouter une collectivité", new_admin_collectivity_path, icon: "plus", modal: true, primary: true
+
+  = datatable_component(@collectivities) do |datatable|
+    - datatable.with_search
+    - datatable.with_pagination(@pagy)
+
+    - datatable.with_selection do |selection|
+      - if allowed_to?(:destroy_all?, Collectivity)
+        - selection.with_action "Tout supprimer", remove_all_admin_collectivities_path, modal: true
+
+    - datatable.with_column(:name,      sort: true) { "Collectivité" }
+    - datatable.with_column(:siren,     sort: true) { "SIREN" }
+    - datatable.with_column(:publisher, sort: true) { "Éditeur" }
+
+    - datatable.with_column(:contact)       { "Contact" }
+    - datatable.with_column(:contact_email) { "Adresse mail de contact" }
+    - datatable.with_column(:contact_phone) { "Numéro de téléphone" }
+
+    - datatable.with_column(:users_count,                numeric: true) { "Utilisateurs" }
+    - datatable.with_column(:packages_transmitted_count, numeric: true) { "Paquets" }
+    - datatable.with_column(:reports_transmitted_count,  numeric: true) { "Signalements" }
+    - datatable.with_column(:reports_approved_count,     numeric: true) { "Approuvés" }
+    - datatable.with_column(:reports_rejected_count,     numeric: true) { "Rejetés" }
+
+    - datatable.with_empty_message do
+      - if params[:search]
+        | Aucune collectivité ne correspont à votre recherche.
+      - else
+        | Aucune collectivité disponible.
+
+    - datatable.each_row do |row, collectivity|
+      - row.with_checkbox "Sélectionner cette collectivité", described_by: :name, disabled: !allowed_to?(:destroy_all?, Collectivity)
+
+      - if allowed_to?(:update?, collectivity)
+        - row.with_action "Modifier cette collectivité", edit_admin_collectivity_path(collectivity), icon: "pencil-square", modal: true
+
+      - if allowed_to?(:destroy?, collectivity)
+        - row.with_action "Supprimer cette collectivité", remove_admin_collectivity_path(collectivity), icon: "trash", modal: true
+
+      - row.with_column(:name) do
+        = authorized_link_to collectivity, scope: :admin do
+          = collectivity.name
+
+      - row.with_column(:siren) do
+        = display_siren(collectivity.siren)
+
+      - row.with_column(:publisher) do
+        = authorized_link_to collectivity.publisher, scope: :admin do
+          = collectivity.publisher.name
+
+      - row.with_column(:contact) do
+        = "#{collectivity.contact_first_name} #{collectivity.contact_last_name}".strip.presence
+
+      - row.with_column(:contact_email) do
+        = mail_to(collectivity.contact_email) if collectivity.contact_email?
+
+      - row.with_column(:contact_phone) do
+        = phone_to(collectivity.contact_phone) if collectivity.contact_phone?
+
+      - row.with_column(:users_count) do
+        = number_with_delimiter(collectivity.users_count) if collectivity.users_count.positive?
+
+      - row.with_column(:packages_transmitted_count) do
+        = number_with_delimiter(collectivity.packages_transmitted_count) if collectivity.packages_transmitted_count.positive?
+
+      - row.with_column(:reports_transmitted_count) do
+        = number_with_delimiter(collectivity.reports_transmitted_count) if collectivity.reports_transmitted_count.positive?
+
+      - row.with_column(:reports_approved_count) do
+        = number_with_delimiter(collectivity.reports_approved_count) if collectivity.reports_approved_count.positive?
+
+      - row.with_column(:reports_rejected_count) do
+        = number_with_delimiter(collectivity.reports_rejected_count) if collectivity.reports_rejected_count.positive?

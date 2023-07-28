@@ -1,0 +1,25 @@
+= template_frame_component(src: @referrer_path) do |frame|
+  - frame.with_modal do |modal|
+    - modal.with_header do
+      - if @communes.count > 1
+        | Exclusion des communes sélectionnées
+      - else
+        | Exclusion de la commune sélectionnée
+
+    - modal.with_form(url: admin_office_communes_path(@office), method: :delete) do
+      - modal.with_hidden_field :redirect, @referrer_path
+      - modal.with_hidden_field :ids,    params[:ids]
+      - modal.with_hidden_field :search, params[:search]
+      - modal.with_hidden_field :order,  params[:order]
+      - modal.with_hidden_field :page,   params[:page]
+
+      - if @communes.count > 1
+        p Êtes-vous sûrs de vouloir exclure les <b>#{@communes.count}</b> communes sélectionnées du guichet ?
+        p Ce guichet ne recevra plus les signalements liés à ces communes.
+
+      - else
+        p Êtes-vous sûrs de vouloir exclure la commune sélectionnée du guichet ?
+        p Ce guichet ne recevra plus les signalements liés à cette commune.
+
+    - modal.with_submit_action "Continuer", autofocus: true
+    - modal.with_close_action "Annuler"

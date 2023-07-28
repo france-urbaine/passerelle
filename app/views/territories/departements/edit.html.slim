@@ -1,0 +1,33 @@
+= template_frame_component(src: @referrer_path) do |frame|
+  - frame.with_modal do |modal|
+    - modal.with_header do
+      | Modification du département
+
+    - modal.with_form(model: @departement, url: territories_departement_path(@departement)) do |form|
+      - modal.with_hidden_field :redirect, @referrer_path
+
+      = form.block :name do
+        = form.label :name
+        = form.text_field :name, autofocus: true, required: true
+
+      = form.block :code_departement do
+        = form.label :code_departement
+        = form.text_field :code_departement, required: true
+
+      = form.block :region, autocomplete: territories_regions_path do
+        = form.label :region
+        = form.search_field :region,      data: { autocomplete_target: "input" }, value: @departement.region&.name, placeholder: "Commnencez à taper pour sélectionner une région"
+        = form.hidden_field :code_region, data: { autocomplete_target: "hidden" }
+
+      = noscript_component do
+        = form.block :code_region do
+          = form.label :code_region
+          = form.text_field :code_region, required: true
+
+      = form.block :qualified_name do
+        = form.label :qualified_name
+        = form.text_field :qualified_name
+
+    - modal.with_submit_action "Enregistrer"
+    - modal.with_close_action "Annuler"
+

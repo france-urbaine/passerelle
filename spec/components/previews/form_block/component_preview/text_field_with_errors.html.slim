@@ -1,0 +1,7 @@
+= fields model: User.new do |form|
+  = form.block :first_name do |block|
+    = form.label :first_name
+    = form.text_field :first_name
+
+    - block.with_error do
+      ' The input is invalid. Try again !

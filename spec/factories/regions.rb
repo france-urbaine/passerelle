@@ -14,5 +14,9 @@ FactoryBot.define do
     sequence(:name) do |n|
       "#{Faker::Address.state} ##{n}"
     end
+
+    after(:stub) do |region, _evaluator|
+      region.generate_qualified_name
+    end
   end
 end

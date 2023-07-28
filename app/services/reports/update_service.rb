@@ -2,19 +2,10 @@
 
 module Reports
   class UpdateService < FormService
-    attr_reader :report
-
-    delegate_missing_to :report
-
-    def initialize(report, attributes = {})
-      @report = report
-
-      super(attributes)
-      self.models = [report]
-    end
+    alias_record :report
 
     before_save do
-      self.completed = Reports::CheckCompletenessService.new(report).valid?
+      record.completed = Reports::CheckCompletenessService.new(record).valid?
     end
   end
 end

@@ -1,22 +1,8 @@
 - request.variant = :modal if modal
 
-= template_status_component(referrer:) do |template|
+= template_not_found_component(model_not_found, referrer:) do |template|
   - template.with_breadcrumbs do |breadcrumbs|
-    - breadcrumbs.with_path "Administration"
-    - breadcrumbs.with_path "Utilisateurs"
-
-  - template.with_header do
-    | La page que vous recherchez n'est pas disponible.
-
-  - template.with_body do
-    - case model_not_found
-    - when "User"
-      | L'utilisateur n'a pas été trouvé ou n'existe plus.
-    - when "Publisher"
-      | L'editeur n'a pas été trouvé ou n'existe plus.
-    - when "Collectivity"
-      | La collectivité n'a pas été trouvée ou n'existe plus.
-    - else
-      | La page n'existe plus ou a été déplacée.
+    - breadcrumbs.with_path "..."
+    - breadcrumbs.with_path model_not_found
 
   - template.with_action "Retour", icon: "arrow-uturn-left"

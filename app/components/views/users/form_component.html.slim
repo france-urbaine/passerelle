@@ -1,0 +1,79 @@
+= render Modal::Component.new(redirection_path: redirection_path) do |modal|
+  - modal.with_header do
+    - if @user.new_record?
+      | Invitation d'un nouvel utilisateur
+    - else
+      | Modification de l'utilisateur
+
+  - modal.with_form(model: @user, url: form_url, **form_html_attributes) do |form|
+    - modal.with_hidden_field :redirect, redirection_path
+
+    - if allowed_to_assign_organization?
+      = form.block :organization, autocomplete: organizations_path do
+        = form.label :organization
+        = form.search_field :organization,      **organization_input_html_attributes
+        = form.hidden_field :organization_data, **organization_hidden_html_attributes
+
+      = render Noscript::Component.new do
+        = form.block :organization_type do
+          = form.label :organization_type
+          = form.select :organization_type, organization_type_choice, autofocus: true, required: true
+
+        = form.block :organization do |block|
+          = form.label :organization_name
+          = form.text_field :organization_name, required: true, value: organization_name
+
+          - block.with_hint do
+            p En l'absence de Javascript, vous devez saisir le nom exact de l'organisation.
+
+    = form.block :first_name do
+      = form.label :first_name
+      = form.text_field :first_name, required: true, autofocus: true
+
+    = form.block :last_name do
+      = form.label :last_name
+      = form.text_field :last_name, required: true
+
+    = form.block :email do |block|
+      = form.label :email
+      = form.email_field :email
+
+      - if @user.unconfirmed_email?
+        - block.with_hint do
+          | Une nouvelle adresse email est en cours de validation : <strong>#{current_user.unconfirmed_email}</strong>.
+          br
+          | Des instructions ont été transmises à cet utilisateur pour confirmer la modification.
+
+    - if allowed_to_assign_offices?
+      - if allowed_to_assign_organization?
+        = form.block :office_ids, **offices_block_html_attributes do
+          = form.label :office_ids
+          = helpers.turbo_frame_tag :user_offices_checkboxes, **offices_frame_html_attributes
+
+      - else
+        = form.block :office_ids do
+          = form.label :office_ids
+          = form.checkboxes_component :office_ids, office_ids_choices, :id, :name
+
+    - if allowed_to_assign_organization_admin?
+      = form.block :organization_admin do |block|
+        = form.check_box :organization_admin
+        = form.label :organization_admin
+
+        - block.with_hint do
+          | Un administrateur bénéficie de tout les droits sur son organisation.
+          br
+          | Il peut notamment créer, gérer ou supprimer d'autres utilisateurs au sein de cette organisation.
+
+    - if allowed_to_assign_super_admin?
+      = form.block :super_admin do |block|
+        = form.check_box :super_admin
+        = form.label :super_admin
+
+        - block.with_hint do
+          | Un administrateur de FiscaHub a accès à toutes les informations de la plateforme, sans restrictions.
+          br
+          | Il peut notamment créer, gérer et supprimer n'importe quelle organisation ou utilisateur.
+
+  - modal.with_submit_action "Enregistrer"
+  - modal.with_close_action "Annuler"

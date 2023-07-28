@@ -1,0 +1,40 @@
+= render Modal::Component.new(redirection_path: @redirection_path) do |modal|
+  - modal.with_header do
+    | Gestion des communes asignées au guichet
+
+  - modal.with_form(model: @office, url: form_url, method: :patch) do |form|
+    - modal.with_hidden_field :redirect, @redirection_path
+
+    p Sélectionnez les EPCIs et/ou communes dont les dossiers seront traités par ce guichet.
+
+    .form-block
+      .checkboxes-collection( data-controller="selection selection-group" )
+        .checkboxes-collection__checkbox
+          input( id="office-communes-check-all" type="checkbox" data-selection-target="checkall" )
+          label( for="office-communes-check-all" ) Tout le département
+
+        .text-disabled.my-4 Par EPCI :
+
+        - suggested_epcis.pluck(:siren, :name).each do |(siren, name)|
+          .checkboxes-collection__checkbox
+            input(
+              id="office-communes-epcis-#{siren}"
+              type="checkbox"
+              data-selection-target="checkbox"
+              data-selection-group-target="parent"
+              data-selection-group-target-value=siren
+            )
+            label( for="office-communes-epcis-#{siren}" )= name
+
+        .text-disabled.my-4 Par commune :
+
+        = form.collection_check_boxes(:commune_ids, suggested_communes, :code_insee, :name) do |b|
+          .checkboxes-collection__checkbox
+            - if b.object.siren_epci
+              = b.check_box data: { selection_target: "checkbox", selection_group_target: "child", selection_group_target_value: b.object.siren_epci  }
+            - else
+              = b.check_box data: { selection_target: "checkbox" }
+            = b.label
+
+  - modal.with_submit_action "Enregistrer", autofocus: true
+  - modal.with_close_action "Annuler"

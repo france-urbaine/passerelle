@@ -64,7 +64,7 @@ class ReportsController < ApplicationController
 
     respond_with @report,
       flash: true,
-      actions: FlashAction::Cancel.new(params),
+      actions: undiscard_action([:undiscard, @parent, @report]),
       location: redirect_path || reports_path
   end
 
@@ -91,7 +91,7 @@ class ReportsController < ApplicationController
 
     respond_with @reports,
       flash: true,
-      actions: FlashAction::Cancel.new(params),
+      actions: undiscard_action([:undiscard_all, @parent, :reports]),
       location: redirect_path || parent_path || reports_path
   end
 
@@ -123,7 +123,7 @@ class ReportsController < ApplicationController
     report = Report.find(params[:id])
 
     authorize! report
-    only_kept! report unless allow_discarded
+    only_kept! report.package, report unless allow_discarded
 
     report
   end

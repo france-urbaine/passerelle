@@ -10,7 +10,9 @@ module ComponentsHelper
     datatable_skeleton_component: "DatatableSkeleton::Component",
     dropdown_component:           "Dropdown::Component",
     hidden_field_component:       "HiddenField::Component",
+    form_block_component:         "FormBlock::Component",
     modal_component:              "Modal::Component",
+    noscript_component:           "Noscript::Component",
     notification_component:       "Notification::Component",
     pagination_component:         "Pagination::Component",
     pagination_counts_component:  "Pagination::Counts::Component",
@@ -26,9 +28,10 @@ module ComponentsHelper
   end
 
   TEMPLATE_COMPONENT_HELPERS = {
-    template_frame_component:   "TemplateFrame::Component",
-    template_status_component:  "TemplateStatus::Component",
-    template_gone_component:    "TemplateStatus::Gone::Component"
+    template_frame_component:     "TemplateFrame::Component",
+    template_status_component:    "TemplateStatus::Component",
+    template_gone_component:      "TemplateStatus::Gone::Component",
+    template_not_found_component: "TemplateStatus::NotFound::Component"
   }.freeze
 
   # rubocop:disable Rails/HelperInstanceVariable

@@ -487,9 +487,7 @@ RSpec.describe PackagePolicy, stub_factories: false do
   it { expect(:undiscard_all?).to be_an_alias_of(policy, :destroy_all?) }
 
   describe "default relation scope" do
-    subject!(:scope) do
-      policy.apply_scope(target, type: :active_record_relation)
-    end
+    subject!(:scope) { apply_relation_scope(target) }
 
     let(:target) { Package.all }
 
@@ -546,18 +544,9 @@ RSpec.describe PackagePolicy, stub_factories: false do
   end
 
   describe "relation scope to pack a report" do
-    # Subject is called before running tests to load all dependencies
-    # and asserts to run only expected queries when calling `.load`
-    #
-    subject!(:scope) do
-      policy.apply_scope(
-        Package.all,
-        type: :active_record_relation,
-        name: :to_pack,
-        scope_options: { report: report }
-      )
-    end
+    subject!(:scope) { apply_relation_scope(target, name: :to_pack, scope_options: { report: report }) }
 
+    let(:target) { Package.all }
     let(:report) { build_stubbed(:report) }
 
     it_behaves_like("when current user is a collectivity user") do
@@ -606,9 +595,7 @@ RSpec.describe PackagePolicy, stub_factories: false do
   end
 
   describe "destroyable relation scope" do
-    subject!(:scope) do
-      policy.apply_scope(target, name: :destroyable, type: :active_record_relation)
-    end
+    subject!(:scope) { apply_relation_scope(target, name: :destroyable) }
 
     let(:target) { Package.all }
 
@@ -646,9 +633,7 @@ RSpec.describe PackagePolicy, stub_factories: false do
   end
 
   describe "undiscardable relation scope" do
-    subject!(:scope) do
-      policy.apply_scope(target, name: :undiscardable, type: :active_record_relation)
-    end
+    subject!(:scope) { apply_relation_scope(target, name: :undiscardable) }
 
     let(:target) { Package.all }
 

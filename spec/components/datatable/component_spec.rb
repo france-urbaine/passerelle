@@ -4,7 +4,7 @@ require "rails_helper"
 
 RSpec.describe Datatable::Component, type: :component do
   around do |example|
-    with_request_url("/communes") { example.run }
+    with_request_url("/territoires/communes") { example.run }
   end
 
   let!(:communes) { create_list(:commune, 2).sort_by(&:code_insee) }
@@ -281,12 +281,12 @@ RSpec.describe Datatable::Component, type: :component do
     expect(page).to have_table(class: "datatable") do |table|
       aggregate_failures do
         expect(table).to have_selector("thead tr th:first-child", text: "Code INSEE") do |cell|
-          expect(cell).to have_link("Trier par ordre croissant", href: "/communes?order=code")
+          expect(cell).to have_link("Trier par ordre croissant", href: "/territoires/communes?order=code")
           expect(cell).to have_selector("svg title", text: "Trier par ordre croissant")
         end
 
         expect(table).to have_selector("thead tr th:nth-child(2)", text: "Commune") do |cell|
-          expect(cell).to have_link("Trier par ordre croissant", href: "/communes?order=name")
+          expect(cell).to have_link("Trier par ordre croissant", href: "/territoires/communes?order=name")
           expect(cell).to have_selector("svg title", text: "Trier par ordre croissant")
         end
       end
@@ -294,7 +294,7 @@ RSpec.describe Datatable::Component, type: :component do
   end
 
   it "renders a table with current order button" do
-    with_request_url("/communes?order=name") do
+    with_request_url("/territoires/communes?order=name") do
       render_inline described_class.new(relation) do |datatable|
         datatable.with_column(:code, sort: true) { "Code INSEE" }
         datatable.with_column(:name, sort: true) { "Commune" }
@@ -309,12 +309,12 @@ RSpec.describe Datatable::Component, type: :component do
     expect(page).to have_table(class: "datatable") do |table|
       aggregate_failures do
         expect(table).to have_selector("thead tr th:first-child", text: "Code INSEE") do |cell|
-          expect(cell).to have_link("Trier par ordre croissant", href: "/communes?order=code")
+          expect(cell).to have_link("Trier par ordre croissant", href: "/territoires/communes?order=code")
           expect(cell).to have_selector("svg title", text: "Trier par ordre croissant")
         end
 
         expect(table).to have_selector("thead tr th:nth-child(2)", text: "Commune") do |cell|
-          expect(cell).to have_link("Trier par ordre décroissant", href: "/communes?order=-name")
+          expect(cell).to have_link("Trier par ordre décroissant", href: "/territoires/communes?order=-name")
           expect(cell).to have_selector("svg title", text: "Trier par ordre décroissant")
         end
       end

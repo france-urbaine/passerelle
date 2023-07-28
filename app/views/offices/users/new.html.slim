@@ -1,6 +1,0 @@
-= template_frame_component(src: @referrer_path) do |frame|
-  - frame.with_modal do |modal|
-    - modal.with_header do
-      | Invitation d'un nouvel utilisateur
-
-    = render "users/form", parent: @office, user: @user, modal: modal

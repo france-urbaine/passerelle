@@ -71,12 +71,12 @@
 
   .form-block label {
     display: block;
-    @apply mb-1;
+    @apply mb-2;
   }
 
   .form-block__label {
     display: block;
-    @apply mb-1;
+    @apply mb-2;
 
     label {
       @apply mb-0;
@@ -134,13 +134,8 @@
 
   .form-block__hint {
     font-style: italic;
-    @apply mt-1;
-    @apply text-gray-700;
-
-    .form-block [type="checkbox"] ~ &,
-    .form-block [type='radio'] ~ & {
-      @apply pl-7;
-    }
+    @apply mt-4 pl-4 border-l-2;
+    @apply text-gray-700 border-gray-200;
   }
 
   .form-block__errors {

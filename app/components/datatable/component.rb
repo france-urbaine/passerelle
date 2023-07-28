@@ -130,7 +130,7 @@ module Datatable
         css = ""
         css += " w-px" if compact?
         css += " text-right" if numeric?
-        css += " w-48" if numeric? && !compact?
+        css += " w-1 pl-12" if numeric? && !compact?
         css.strip.presence
       end
     end

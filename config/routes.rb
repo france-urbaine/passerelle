@@ -1,17 +1,21 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  # Development extensiosn
+  # ----------------------------------------------------------------------------
+  mount Lookbook::Engine, at: "/lookbook" if Rails.env.development?
 
-  concern :removable do
+  # Concerns
+  # ----------------------------------------------------------------------------
+  concern :removable do |options|
     get   :remove,    on: :member
-    patch :undiscard, on: :member
+    patch :undiscard, on: :member unless options[:undiscard] == false
   end
 
-  concern :removable_collection do
+  concern :removable_collection do |options|
     get    :remove_all,    on: :collection, path: "remove"
-    patch  :undiscard_all, on: :collection, path: "undiscard"
     delete :destroy_all,   on: :collection, path: "/", as: nil
+    patch  :undiscard_all, on: :collection, path: "undiscard" unless options[:undiscard] == false
   end
 
   concern :updatable_collection do
@@ -19,8 +23,8 @@ Rails.application.routes.draw do
     patch :update_all, on: :collection, path: "/", as: nil
   end
 
-  mount Lookbook::Engine, at: "/lookbook" if Rails.env.development?
-
+  # User stuff
+  # ----------------------------------------------------------------------------
   devise_for :users, path: "/", controllers: {
     sessions:      "users/sessions",
     confirmations: "users/confirmations",
@@ -38,7 +42,6 @@ Rails.application.routes.draw do
 
     resource :user_settings,           path: "/compte/parametres",   only: %i[show update], as: :settings
     resource :two_factor_settings,     path: "/compte/2fa",          only: %i[new create edit update]
-    resource :organization_settings,   path: "/compte/organisation", only: %i[show update]
 
     get "/compte", to: redirect("/compte/parametres")
   end
@@ -51,7 +54,7 @@ Rails.application.routes.draw do
     root to: redirect("/signalements"), as: :authenticated_root
   end
 
-  constraints(id: %r{(?!(new|edit|remove|discard|undiscard|offices))[^/]+}) do
+  constraints(id: %r{(?!(new|edit|remove|discard|undiscard|guichets))[^/]+}) do
     resources :reports, path: "signalements", concerns: %i[removable removable_collection], path_names: { edit: "/edit/:form" } do
       scope module: "reports" do
         resources :attachments, only: %i[new create destroy]
@@ -66,60 +69,122 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :publishers, concerns: %i[removable removable_collection], path: "/editeurs" do
-      scope module: "publishers" do
-        resources :users,          only: %i[index new create], concerns: %i[removable_collection], path: "/utilisateurs"
-        resources :collectivities, only: %i[index new create], concerns: %i[removable_collection], path: "/collectivites"
-      end
-    end
+    resources :organizations, only: %i[index], path: "/organisations"
+    resources :territories,   only: %i[index], path: "/territoires"
 
-    resources :collectivities, concerns: %i[removable removable_collection], path: "/collectivites" do
-      scope module: "collectivities" do
-        resources :users,    only: %i[index new create], concerns: %i[removable_collection], path: "/utilisateurs"
-        resources :offices,  only: %i[index], path: "/guichets"
-      end
-    end
+    # Organization stuff
+    # ----------------------------------------------------------------------------
+    namespace :organization, path: "/organisation" do
+      resource  :settings, only: %i[show update], path: "/parametres"
 
-    resources :ddfips, concerns: %i[removable removable_collection] do
-      scope module: "ddfips" do
-        resources :offices,        only: %i[index new create], concerns: %i[removable_collection], path: "/guichets"
-        resources :users,          only: %i[index new create], concerns: %i[removable_collection], path: "/utilisateurs"
-        resources :collectivities, only: %i[index], path: "/collectivites"
-      end
-    end
-
-    resources :offices, concerns: %i[removable removable_collection], path: "/guichets" do
-      scope module: "offices" do
-        resources :communes, only: %i[index destroy] do
-          get    :remove,      on: :member
-          get    :remove_all,  on: :collection, path: "remove"
-          delete :destroy_all, on: :collection, path: "/", as: nil
-
-          concerns :updatable_collection
+      resources :collectivities, concerns: %i[removable removable_collection], path: "/collectivites" do
+        scope module: "collectivities" do
+          resources :offices, only: %i[index], path: "/guichets"
+          resources :users,   concerns: %i[removable removable_collection], path: "/utilisateurs"
         end
-
-        resources :users, only: %i[index new create destroy], path: "/utilisateurs" do
-          get    :remove,      on: :member
-          get    :remove_all,  on: :collection, path: "remove"
-          delete :destroy_all, on: :collection, path: "/", as: nil
-
-          concerns :updatable_collection
-        end
-
-        resources :collectivities, only: %i[index], path: "/collectivites"
       end
+
+      resources :offices, concerns: %i[removable removable_collection], path: "/guichets" do
+        scope module: "offices" do
+          resources :users, only: %i[index new create destroy], path: "/utilisateurs" do
+            concerns :removable,            undiscard: false
+            concerns :removable_collection, undiscard: false
+            concerns :updatable_collection
+          end
+
+          resources :communes, only: %i[index destroy] do
+            concerns :removable,            undiscard: false
+            concerns :removable_collection, undiscard: false
+            concerns :updatable_collection
+          end
+
+          resources :collectivities, only: %i[index], path: "/collectivites"
+        end
+      end
+
+      resources :users, concerns: %i[removable removable_collection], path: "/utilisateurs"
     end
 
-    resources :users, concerns: %i[removable removable_collection], path: "/utilisateurs"
-    resources :users_offices, only: %i[index], controller: "users/offices", path: "/utilisateurs/offices"
+    # Admin stuff
+    # ----------------------------------------------------------------------------
+    namespace :admin do
+      resources :publishers, concerns: %i[removable removable_collection], path: "/editeurs" do
+        scope module: "publishers" do
+          resources :collectivities, only: %i[index new create], concerns: %i[removable_collection], path: "/collectivites"
+          resources :users,          only: %i[index new create], concerns: %i[removable_collection], path: "/utilisateurs"
+        end
+      end
 
-    resources :communes,     only: %i[index show edit update]
-    resources :epcis,        only: %i[index show edit update]
-    resources :departements, only: %i[index show edit update]
-    resources :regions,      only: %i[index show edit update]
+      resources :collectivities, concerns: %i[removable removable_collection], path: "/collectivites" do
+        scope module: "collectivities" do
+          resources :offices, only: %i[index], path: "/guichets"
+          resources :users,   only: %i[index new create], concerns: %i[removable_collection], path: "/utilisateurs"
+        end
+      end
 
-    resources :organizations, only: %i[index],       path: "/organisations"
-    resources :territories,   only: %i[index],       path: "/territoires"
-    resource  :territories,   only: %i[edit update], path: "/territoires"
+      resources :ddfips, concerns: %i[removable removable_collection] do
+        scope module: "ddfips" do
+          resources :offices,        only: %i[index new create], concerns: %i[removable_collection], path: "/guichets"
+          resources :users,          only: %i[index new create], concerns: %i[removable_collection], path: "/utilisateurs"
+          resources :collectivities, only: %i[index], path: "/collectivites"
+        end
+      end
+
+      resources :offices, concerns: %i[removable removable_collection], path: "/guichets" do
+        scope module: "offices" do
+          resources :users, only: %i[index new create destroy], path: "/utilisateurs" do
+            concerns :removable,            undiscard: false
+            concerns :removable_collection, undiscard: false
+            concerns :updatable_collection
+          end
+
+          resources :communes, only: %i[index destroy] do
+            concerns :removable,            undiscard: false
+            concerns :removable_collection, undiscard: false
+            concerns :updatable_collection
+          end
+
+          resources :collectivities, only: %i[index], path: "/collectivites"
+        end
+      end
+
+      resources :users, concerns: %i[removable removable_collection], path: "/utilisateurs"
+      resources :users_offices, only: %i[index], controller: "users/offices", path: "/utilisateurs/guichets"
+    end
+
+    # Territories stuff
+    # ----------------------------------------------------------------------------
+    namespace :territories, path: "/territoires" do
+      resources :communes, only: %i[index show edit update] do
+        scope module: "communes" do
+          resources :collectivities, only: %i[index], path: "/collectivites"
+        end
+      end
+
+      resources :epcis, only: %i[index show edit update] do
+        scope module: "epcis" do
+          resources :communes,       only: %i[index]
+          resources :collectivities, only: %i[index], path: "/collectivites"
+        end
+      end
+
+      resources :departements, only: %i[index show edit update] do
+        scope module: "departements" do
+          resources :communes,       only: %i[index]
+          resources :epcis,          only: %i[index]
+          resources :collectivities, only: %i[index], path: "/collectivites"
+        end
+      end
+
+      resources :regions, only: %i[index show edit update] do
+        scope module: "regions" do
+          resources :departements,   only: %i[index]
+          resources :ddfips,         only: %i[index]
+          resources :collectivities, only: %i[index], path: "/collectivites"
+        end
+      end
+
+      resource :update, only: %i[edit update], path: "/mise-a-jour", path_names: { edit: "/" }
+    end
   end
 end

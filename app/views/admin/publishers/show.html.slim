@@ -1,0 +1,97 @@
+= template_frame_component do
+  = breadcrumbs_component do |breadcrumbs|
+    - breadcrumbs.with_path "Administration"
+    - breadcrumbs.with_path "Éditeurs", admin_publishers_path
+    - breadcrumbs.with_path @publisher.name
+
+    - if allowed_to?(:update?, @publisher)
+      - breadcrumbs.with_action "Modifier", edit_admin_publisher_path(@publisher), icon: "pencil-square", modal: true
+
+    - if allowed_to?(:destroy?, @publisher)
+      - breadcrumbs.with_action "Supprimer", remove_admin_publisher_path(@publisher), icon: "trash", modal: true, destructive: "discrete"
+
+  h2.subheader
+    = svg_icon("identification", "Nouvelle section")
+    | Description
+
+  .card
+    dl.description-list
+      .description-list__row
+        dt Numéro SIREN de l'éditeur
+        dd= display_siren(@publisher.siren)
+
+      .description-list__row
+        dt Contact
+        dd= "#{@publisher.contact_first_name} #{@publisher.contact_last_name}".strip.presence
+
+      .description-list__row
+        dt Adresse mail de contact
+        dd= mail_to(@publisher.contact_email) if @publisher.contact_email?
+
+      .description-list__row
+        dt Numéro de téléphone
+        dd= phone_to(@publisher.contact_phone) if @publisher.contact_phone?
+
+      .description-list__row
+        dt Utilisateurs
+        dd= display_count(@publisher.users_count, "utilisateur") if @publisher.users_count.positive?
+
+      .description-list__row
+        dt Collectivités enregistrées
+        dd= display_count(@publisher.collectivities_count, "collectivité") if @publisher.collectivities_count.positive?
+
+      .description-list__row
+        dt Signalements
+        dd
+          - if @publisher.reports_transmitted_count.positive?
+            = display_count(@publisher.reports_transmitted_count, "transmis")
+            = " / "
+            = display_count(@publisher.reports_approved_count, "approuvé")
+            = " / "
+            = display_count(@publisher.reports_rejected_count, "rejeté")
+
+  - if allowed_to?(:index?, User)
+    .content__separator
+
+    .subheader-bar
+      h2.subheader
+        = svg_icon("rectangle-stack", "Nouvelle section")
+        | Utilisateurs
+
+      .subheader-bar__actions
+        - if allowed_to?(:create?, User)
+          .subheader-bar__action
+            = button_component "Inviter un utilisateur", new_admin_publisher_user_path(@publisher), icon: "plus", modal: true
+
+    - if @publisher.users_count.zero?
+      = card_component(content_class: "card__content--empty")
+        | Aucun utilisateur assigné.
+
+    - else
+      = turbo_frame_tag "datatable-users", src: admin_publisher_users_path(@publisher) do
+        = datatable_skeleton_component(nested: true, rows: @publisher.users_count) do |skeleton|
+          - skeleton.with_search
+          - skeleton.with_pagination
+
+  - if allowed_to?(:index?, Collectivity)
+    .content__separator
+
+    .subheader-bar
+      h2.subheader
+        = svg_icon("rectangle-stack", "Nouvelle section")
+        | Collectivités
+
+      .subheader-bar__actions
+        - if allowed_to?(:create?, Collectivity)
+          .subheader-bar__action
+            = button_component "Ajouter une collectivité", new_admin_publisher_collectivity_path(@publisher), icon: "plus", modal: true
+
+    - if @publisher.collectivities_count.zero?
+      = card_component(content_class: "card__content--empty")
+        | Aucune collectivité enregistrée.
+
+    - else
+      = turbo_frame_tag "datatable-collectivities", src: admin_publisher_collectivities_path(@publisher) do
+        = datatable_skeleton_component(nested: true, rows: @publisher.collectivities_count) do |skeleton|
+          - skeleton.with_search
+          - skeleton.with_pagination

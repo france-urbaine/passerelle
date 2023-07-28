@@ -44,7 +44,7 @@ RSpec.describe Search::Component, type: :component do
   end
 
   it "renders URL params into inputs" do
-    with_request_url "/communes?search=Pyrenees&order=-departement&page=2" do
+    with_request_url "/territoires/communes?search=Pyrenees&order=-departement&page=2" do
       render_inline described_class.new
     end
 
