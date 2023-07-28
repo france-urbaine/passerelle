@@ -9,10 +9,11 @@ RSpec.describe "ReportsController#update" do
 
   let(:as)      { |e| e.metadata[:as] }
   let(:headers) { |e| e.metadata[:headers] }
-  let(:params)  { |e| e.metadata.fetch(:params, { report: attributes }) }
+  let(:params)  { |e| e.metadata.fetch(:params, { form: form_template, report: attributes }) }
 
   let!(:report) { create(:report) }
 
+  let(:form_template) { "situation_majic" }
   let(:attributes) do
     { situation_annee_majic: 2022 }
   end
@@ -103,7 +104,7 @@ RSpec.describe "ReportsController#update" do
 
     before { sign_in_as(organization: report.collectivity) }
 
-    context "when the report is accessible" do
+    context "with valid attributes" do
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/signalements/#{report.id}") }
 
@@ -120,6 +121,20 @@ RSpec.describe "ReportsController#update" do
           delay: 3000
         )
       end
+    end
+
+    context "with invalid date" do
+      let!(:report) { create(:report, form_type: "evaluation_local_habitation", anomalies: %w[consistance]) }
+
+      let(:form_template) { "situation_evaluation" }
+      let(:attributes) do
+        { situation_date_mutation: "0003-07-27" }
+      end
+
+      it { expect(response).to have_http_status(:unprocessable_entity) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
+      it { expect { request and report.reload }.not_to change(report, :updated_at) }
     end
 
     context "when the report is discarded" do

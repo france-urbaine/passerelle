@@ -42,7 +42,7 @@ module Views
           end
 
           def situation_date_mutation
-            parse_date(@report.situation_date_mutation)
+            parse_date(@report.situation_date_mutation) || @report.situation_date_mutation
           end
 
           def parse_date(date)
