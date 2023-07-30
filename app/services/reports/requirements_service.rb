@@ -11,7 +11,7 @@ module Reports
       super()
     end
 
-    def respond_to_predicate?(method)
+    def respond_to_predicate?(method, *)
       method.match?(/^require_.*\?$/) && respond_to?(method)
     end
 
