@@ -5,10 +5,7 @@
 
   .subheader-bar__actions
     .subheader-bar__action
-      - if @report.completed?
-        .badge.badge--yellow Signalement complété
-      - else
-        .badge.badge--red Signalement incomplet
+      = helpers.report_badge(@report)
 
 .card
   dl.description-list

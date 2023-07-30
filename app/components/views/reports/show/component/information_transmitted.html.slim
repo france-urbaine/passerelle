@@ -4,30 +4,8 @@
     | Informations relatives au signalement
 
   .subheader-bar__actions
-    .subheader-bar__action
-      .badge.priority-badge
-        ' Priorité :
-        - case @report.priority
-        - when "low"
-          = svg_icon("chart-bar", "Basse", class: "low-priority-icon")
-        - when "medium"
-          = svg_icon("chart-bar", "Moyenne", class: "medium-priority-icon")
-        - when "high"
-          = svg_icon("chart-bar", "Haute", class: "high-priority-icon")
-
-    .subheader-bar__action
-      - if @report.approved?
-        .badge.badge--lime Signalement approuvé
-      - elsif @report.rejected?
-        .badge.badge--red Signalement rejeté
-      - elsif @report.debated?
-        .badge.badge--orange Demande d'informations complémentaires
-      - elsif @report.package.approved?
-        .badge.badge--blue Signalement transmis
-      - elsif @report.package.rejected?
-        .badge.badge--blue Paquet rejeté
-      - else
-        .badge.badge--blue Paquet transmis, en attente de confirmation
+    .subheader-bar__action= helpers.priority_badge(@report.priority)
+    .subheader-bar__action= helpers.report_badge(@report)
 
 .card
   dl.description-list

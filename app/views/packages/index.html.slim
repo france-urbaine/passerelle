@@ -63,16 +63,7 @@
         = l(package.due_on, format: :long) if package.due_on
 
       - row.with_column(:status) do
-        - if package.approved?
-          .badge.badge--lime Réception du paquet confirmée
-        - elsif package.rejected?
-          .badge.badge--red Paquet rejeté
-        - elsif package.transmitted?
-          .badge.badge--blue Paquet transmis, en attente de confirmation
-        - elsif package.completed?
-          .badge.badge--yellow Paquet prêt
-        - else
-          .badge.badge--red Signalements incomplets
+        = package_badge(package)
 
       - row.with_column(:reports_count) do
         - if package.reports_count.positive?

@@ -25,16 +25,7 @@
 
     .subheader-bar__actions
       .subheader-bar__action
-        - if @package.approved?
-          .badge.badge--lime Réception du paquet confirmée
-        - elsif @package.rejected?
-          .badge.badge--red Paquet rejeté
-        - elsif @package.transmitted?
-          .badge.badge--blue Paquet transmis, en attente de confirmation
-        - elsif @package.completed?
-          .badge.badge--yellow Paquet prêt
-        - else
-          .badge.badge--red Signalements incomplets
+        = package_badge(@package)
 
   .card
     dl.description-list
