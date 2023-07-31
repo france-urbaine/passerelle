@@ -3,7 +3,7 @@
 RSpec.shared_context "with policies shared contexts" do
   let(:current_user)         { build_stubbed(:user) }
   let(:current_organization) { current_user&.organization }
-  let(:context)              { { user: current_user } }
+  let(:context)              { super().merge(user: current_user) }
   let(:scope_options)        { |e| e.metadata.fetch(:scope_options, {}) }
 
   def apply_params_scope(params, type: :action_controller_params, **)

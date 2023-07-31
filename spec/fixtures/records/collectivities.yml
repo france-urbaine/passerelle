@@ -4,36 +4,42 @@ pays_basque:
   publisher:    fiscalite_territoire
   territory:    pays_basque (EPCI)
   users_count:  2
+  allow_publisher_management: true
 
 metropole_lille:
   name:         Métropole Européenne de Lille
   siren:        200093201
   publisher:    fiscalite_territoire
   territory:    metropole_lille (EPCI)
+  allow_publisher_management: true
 
 metropole_grand_paris:
   name:         Métropole du Grand Paris
   siren:        200054781
   publisher:    fiscalite_territoire
   territory:    metropole_grand_paris (EPCI)
+  allow_publisher_management: true
 
 lille:
   name:         Lille
   siren:        215903501
   publisher:    fiscalite_territoire
   territory:    lille (Commune)
+  allow_publisher_management: true
 
 bayonne:
   name:         Bayonne
   siren:        216401026
   publisher:    fiscalite_territoire
   territory:    bayonne (Commune)
+  allow_publisher_management: true
 
 paris:
   name:         Commune de Paris
   siren:        217500016
   publisher:    fiscalite_territoire
   territory:    paris (Commune)
+  allow_publisher_management: true
 
 nord:
   name:         Département du Nord

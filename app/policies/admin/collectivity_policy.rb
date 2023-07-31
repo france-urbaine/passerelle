@@ -36,7 +36,7 @@ module Admin
         :territory_type, :territory_id, :territory_data, :territory_code,
         :name, :siren,
         :contact_first_name, :contact_last_name, :contact_email, :contact_phone,
-        :allow_2fa_via_email
+        :allow_2fa_via_email, :allow_publisher_management
       )
     end
   end

@@ -51,8 +51,13 @@
         = display_siren(collectivity.siren)
 
       - row.with_column(:publisher) do
-        = authorized_link_to collectivity.publisher, scope: :admin do
-          = collectivity.publisher.name
+        - if collectivity.publisher&.kept?
+          = authorized_link_to collectivity.publisher, scope: :admin do
+            = collectivity.publisher.name
+
+        - elsif collectivity.publisher&.discarded?
+          .text-disabled
+            = "#{collectivity.publisher.name} (organisation supprimée)"
 
       - row.with_column(:contact) do
         = "#{collectivity.contact_first_name} #{collectivity.contact_last_name}".strip.presence

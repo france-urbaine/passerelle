@@ -14,11 +14,11 @@ RSpec.describe "Organization::CollectivitiesController#undiscard_all" do
   let!(:publisher) { create(:publisher) }
   let!(:collectivities) do
     [
+      create(:collectivity, :discarded, publisher: publisher, allow_publisher_management: true),
+      create(:collectivity, :discarded, publisher: publisher, allow_publisher_management: true),
       create(:collectivity, :discarded, publisher: publisher),
-      create(:collectivity, :discarded, publisher: publisher),
-      create(:collectivity, :discarded, publisher: publisher),
-      create(:collectivity, :discarded),
-      create(:collectivity, publisher: publisher)
+      create(:collectivity, :discarded, allow_publisher_management: true),
+      create(:collectivity, publisher: publisher, allow_publisher_management: true)
     ]
   end
 
@@ -91,7 +91,7 @@ RSpec.describe "Organization::CollectivitiesController#undiscard_all" do
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/organisation/collectivites") }
       it { expect(flash).to have_flash_notice }
-      it { expect { request }.to change(Collectivity.discarded, :count).by(-3) }
+      it { expect { request }.to change(Collectivity.discarded, :count).by(-2) }
     end
 
     context "with empty ids", params: { ids: [] } do

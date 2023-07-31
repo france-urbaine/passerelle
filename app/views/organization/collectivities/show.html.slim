@@ -23,6 +23,18 @@
             = @collectivity.territory.qualified_name
             = " (#{@collectivity.territory.model_name.human})"
 
+      - unless current_organization.is_a?(Publisher)
+        .description-list__row
+          dt Éditeur
+          dd
+            - if @collectivity.publisher&.kept?
+              = authorized_link_to @collectivity.publisher, scope: :admin do
+                = @collectivity.publisher.name
+
+            - elsif @collectivity.publisher&.discarded?
+              .text-disabled
+                = "#{@collectivity.publisher.name} (organisation supprimée)"
+
       .description-list__row
         dt Numéro SIREN de la collectivité
         dd= display_siren(@collectivity.siren)
@@ -64,7 +76,13 @@
       /       = " / "
       /       = display_count(@collectivity.reports_rejected_count, "rejeté")
 
-  - if allowed_to?(:index?, User, with: Organization::Collectivities::UserPolicy)
+  - if !allowed_to?(:manage?, @collectivity)
+    .content__separator
+
+    = card_component(content_class: "card__content--empty")
+      | La collectivité ne vous a pas autorisé à gerer son compte et ses utilisateurs.
+
+  - if allowed_to?(:index?, User, with: Organization::Collectivities::UserPolicy, context: { collectivity: @collectivity })
     .content__separator
 
     .subheader-bar
@@ -73,7 +91,7 @@
         | Utilisateurs
 
       .subheader-bar__actions
-        - if allowed_to?(:create?, User, with: Organization::Collectivities::UserPolicy)
+        - if allowed_to?(:create?, User, with: Organization::Collectivities::UserPolicy, context: { collectivity: @collectivity })
           .subheader-bar__action
             = button_component "Inviter un utilisateur", new_organization_collectivity_user_path(@collectivity), icon: "plus", modal: true
 

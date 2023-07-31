@@ -23,8 +23,11 @@ module Organization
 
     def create
       @collectivity = build_collectivity
+      # Because the publisher creates the collectivity, it's allowed to manage it.
+      @collectivity.allow_publisher_management = true
+
       service = ::Collectivities::CreateService.new(@collectivity, collectivity_params)
-      result  = service.save
+      result = service.save
 
       respond_with result,
         flash: true,
@@ -115,7 +118,13 @@ module Organization
     end
 
     def find_and_authorize_collectivity(allow_discarded: false)
-      collectivity = current_organization.collectivities.find(params[:id])
+      scope =
+        case current_organization
+        when Publisher then current_organization.collectivities
+        when DDFIP     then current_organization.on_territory_collectivities
+        end
+
+      collectivity = scope.find(params[:id])
 
       authorize! collectivity
       only_kept! collectivity unless allow_discarded

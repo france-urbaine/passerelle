@@ -112,6 +112,15 @@ module Organization
 
         authorize! @collectivity, to: :show?
         only_kept! @collectivity
+
+        # A first `authorize!` has been perfomed because of `before_action :authorize!`
+        # It has been performed without collectivity in context to first know if
+        # the current user may access to this controller.
+        #
+        # This second `authorize!` should be performed with the collectivity in context.
+        #
+        authorization_context[:collectivity] = @collectivity
+        authorize!
       end
 
       def better_view_on_collectivity

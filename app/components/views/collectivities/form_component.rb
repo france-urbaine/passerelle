@@ -28,6 +28,10 @@ module Views
         @scope == :admin && @publisher.nil?
       end
 
+      def allowed_to_allow_publisher_management?
+        @scope == :admin
+      end
+
       def publisher_id_choice
         Publisher.pluck(:name, :id)
       end

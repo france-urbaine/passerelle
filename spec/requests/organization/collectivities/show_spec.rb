@@ -19,17 +19,17 @@ RSpec.describe "Organization::CollectivitiesController#show" do
     it_behaves_like "it responds with not acceptable in JSON when signed in"
 
     it_behaves_like "it denies access to DDFIP user"
-    it_behaves_like "it denies access to DDFIP admin"
     it_behaves_like "it denies access to DDFIP super admin"
     it_behaves_like "it denies access to collectivity user"
     it_behaves_like "it denies access to collectivity admin"
     it_behaves_like "it denies access to collectivity super admin"
 
+    it_behaves_like "it responds with not found to DDFIP admin"
     it_behaves_like "it responds with not found to publisher user"
     it_behaves_like "it responds with not found to publisher admin"
     it_behaves_like "it responds with not found to publisher super admin"
 
-    context "when the collectivity is the organization of the current user" do
+    context "when the collectivity is the current organization" do
       let(:collectivity) { current_user.organization }
 
       it_behaves_like "it denies access to collectivity user"
@@ -37,12 +37,30 @@ RSpec.describe "Organization::CollectivitiesController#show" do
       it_behaves_like "it denies access to collectivity super admin"
     end
 
-    context "when the collectivity is owned by the current user's publisher organization" do
-      let(:collectivity) { create(:collectivity, publisher: current_user.organization) }
+    context "when the collectivity is owned by but didn't allow to be managed by the current publisher" do
+      let(:collectivity) { create(:collectivity, publisher: current_user.organization, allow_publisher_management: false) }
 
       it_behaves_like "it allows access to publisher user"
       it_behaves_like "it allows access to publisher admin"
       it_behaves_like "it allows access to publisher super admin"
+    end
+
+    context "when the collectivity is owned by and allowed to be managed by the current publisher" do
+      let(:collectivity) { create(:collectivity, publisher: current_user.organization, allow_publisher_management: true) }
+
+      it_behaves_like "it allows access to publisher user"
+      it_behaves_like "it allows access to publisher admin"
+      it_behaves_like "it allows access to publisher super admin"
+    end
+
+    context "when the collectivity is likely to send reports to current DDFIP" do
+      let(:commune)      { create(:commune, departement: current_user.organization.departement) }
+      let(:collectivity) { create(:collectivity, territory: commune) }
+
+      it_behaves_like "it denies access to DDFIP user"
+      it_behaves_like "it denies access to DDFIP super admin"
+
+      it_behaves_like "it allows access to DDFIP admin"
     end
   end
 

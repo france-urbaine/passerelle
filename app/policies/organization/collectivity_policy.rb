@@ -7,14 +7,26 @@ module Organization
 
     def index?
       # A DDFIP admin can list all collectivities assigned to its territory
-      manage? || ddfip_admin?
+      publisher? || ddfip_admin?
+    end
+
+    def show?
+      if record == Collectivity
+        publisher? || ddfip_admin?
+      elsif record.is_a?(Collectivity)
+        (
+          publisher? && publisher_of_collectivity?(record)
+        ) || (
+          ddfip_admin? && ddfip_of_collectivity?(record)
+        )
+      end
     end
 
     def manage?
       if record == Collectivity
         publisher?
       elsif record.is_a?(Collectivity)
-        publisher? && record.publisher_id == organization.id
+        publisher? && publisher_of_collectivity?(record) && record.allow_publisher_management?
       end
     end
 
@@ -31,6 +43,7 @@ module Organization
     relation_scope :destroyable do |relation, exclude_current: true|
       if publisher?
         relation = authorized(relation, with: self.class)
+        relation = relation.where(allow_publisher_management: true)
         relation = relation.where.not(id: organization) if collectivity? && exclude_current
         relation
       else
@@ -41,6 +54,7 @@ module Organization
     relation_scope :undiscardable do |relation|
       if publisher?
         relation = authorized(relation, with: self.class)
+        relation = relation.where(allow_publisher_management: true)
         relation.with_discarded.discarded
       else
         relation.none
@@ -56,6 +70,16 @@ module Organization
         :contact_first_name, :contact_last_name, :contact_email, :contact_phone,
         :allow_2fa_via_email
       )
+    end
+
+    private
+
+    def publisher_of_collectivity?(collectivity)
+      collectivity.publisher_id == organization.id
+    end
+
+    def ddfip_of_collectivity?(collectivity)
+      organization.on_territory_collectivities.include?(collectivity)
     end
   end
 end
