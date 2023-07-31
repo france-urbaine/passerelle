@@ -54,10 +54,18 @@ Rails.application.routes.draw do
     root to: redirect("/signalements"), as: :authenticated_root
   end
 
+  # Combined autocompletions
+  # ----------------------------------------------------------------------------
+  resources :organizations, only: %i[index], path: "/organisations"
+  resources :territories,   only: %i[index], path: "/territoires"
+
   constraints(id: %r{(?!(new|edit|remove|discard|undiscard|guichets))[^/]+}) do
+    # Reports stuff
+    # ----------------------------------------------------------------------------
     resources :reports, path: "signalements", concerns: %i[removable removable_collection], path_names: { edit: "/edit/:form" } do
       scope module: "reports" do
         resources :attachments, only: %i[new create destroy]
+        resource  :approval,    only: %i[show update destroy]
       end
     end
 
@@ -68,9 +76,6 @@ Rails.application.routes.draw do
         resources :reports,      only: %i[index], concerns: %i[removable_collection], path: "signalements"
       end
     end
-
-    resources :organizations, only: %i[index], path: "/organisations"
-    resources :territories,   only: %i[index], path: "/territoires"
 
     # Organization stuff
     # ----------------------------------------------------------------------------
