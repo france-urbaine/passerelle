@@ -64,7 +64,7 @@ module BadgeHelper
       css  += "badge--lime"
     end
 
-    badge(text.html_safe, css)
+    badge(text.html_safe, css) # rubocop:disable Rails/OutputSafety
   end
 
   def report_status(report)

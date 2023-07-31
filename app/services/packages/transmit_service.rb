@@ -12,10 +12,7 @@ module Packages
       # TODO: verify package consistency
       # TODO: assign package to a single DDFIP
       @package.transmit!
-
-      unless potential_ddfips.where(auto_approve_packages: false).exists?
-        @package.approve!
-      end
+      @package.approve! unless potential_ddfips.exists?(auto_approve_packages: false)
 
       true
     end
