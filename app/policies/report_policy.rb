@@ -35,6 +35,15 @@ class ReportPolicy < ApplicationPolicy
     end
   end
 
+  def approve?
+    if record == Report
+      ddfip_admin?
+    elsif record.is_a?(Report)
+      report_updatable_by_ddfip_admin?(record) ||
+        report_updatable_by_office_user?(record)
+    end
+  end
+
   def destroy?
     if record == Report
       collectivity? || publisher?

@@ -245,6 +245,20 @@ fr:
           title:        "La suppression des signalements sélectionnés a été annulée."
           delay:        3000
 
+      approvals:
+        update:
+          notice:
+            type:         "success"
+            title:        "Le signalement a été approuvé."
+            delay:        3000
+
+        destroy:
+          notice:
+            type:         "success"
+            title:        "Le signalement a été rejeté."
+            delay:        3000
+
+
     users:
       create:
         notice:
