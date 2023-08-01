@@ -20,6 +20,6 @@ class ApplicationViewComponent < ViewComponent::Base
 
   # Other components helpers
   delegate :button_component, :card_component, :modal_component, :datatable_component,
-    :form_block_component, :checkboxes_component,
+    :form_block_component, :checkboxes_component, :radio_buttons_component,
     to: :helpers
 end

@@ -1,0 +1,10 @@
+.choices-collection
+  = collection_radio_buttons(@object_name, @method, @collection, @value_method, @text_method, @options) do |b|
+    .choices-collection__input
+      = b.radio_button
+      = b.label
+
+  - if @resettable
+    .choices-collection__input.choices-collection__reset
+      = radio_button_reset_tag
+      = label_reset_tag

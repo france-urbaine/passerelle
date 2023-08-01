@@ -10,16 +10,12 @@ module FormHelper
       @template.display_errors(@object, method)
     end
 
-    def checkboxes_component(method, collection, value_method, text_method, options = {}, html_options = {})
-      @template.checkboxes_component(
-        @object_name,
-        method,
-        collection,
-        value_method,
-        text_method,
-        objectify_options(options),
-        @default_html_options.merge(html_options)
-      )
+    def checkboxes_component(method, collection, **options)
+      @template.checkboxes_component(@object_name, method, collection, **objectify_options(options))
+    end
+
+    def radio_buttons_component(method, collection, **options)
+      @template.radio_buttons_component(@object_name, method, collection, **objectify_options(options))
     end
   end
 

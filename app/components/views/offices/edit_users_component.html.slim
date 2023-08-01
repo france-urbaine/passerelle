@@ -11,7 +11,7 @@
       | ou inviter un nouvel utilisateur.
 
     = form.block :user_ids do
-      = form.checkboxes_component :user_ids, suggested_users, :id, :name
+      = form.checkboxes_component :user_ids, suggested_users
 
   - modal.with_submit_action "Enregistrer", autofocus: true
   - modal.with_close_action "Annuler"

@@ -28,7 +28,7 @@
 @import "./components/form_block";
 @import "./components/autocomplete";
 @import "./components/search";
-@import "./components/checkboxes_collection";
+@import "./components/choices_collection";
 @import "./components/direct_upload";
 
 /* Layouts */

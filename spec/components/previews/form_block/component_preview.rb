@@ -7,25 +7,41 @@ module FormBlock
   # @display width "medium"
   #
   class ComponentPreview < ViewComponent::Preview
-    # @!group Inputs
+    # @label Text inputs
+    # @display width "small"
+    #
+    def text_inputs; end
+
+    # @label Selectors
+    # @display width "small"
+    #
+    def selectors; end
+
+    # @!group Check boxes
     # @display width "small"
     # --------------------------------------------------------------------------
     #
-    # @label Text fields
-    #
-    def text_fields; end
-
-    # @label Select options
-    #
-    def select; end
-
-    # @label Checkbox
+    # @label Single checkbox
     #
     def check_box; end
 
-    # @label Radio button
+    # @label Multiple checkboxes
+    #
+    def check_boxes; end
+    #
+    # @!endgroup
+
+    # @!group Radio buttons
+    # @display width "small"
+    # --------------------------------------------------------------------------
+    #
+    # @label Single radio buttons
     #
     def radio_button; end
+
+    # @label Multiple radio buttons
+    #
+    def radio_buttons; end
     #
     # @!endgroup
 
