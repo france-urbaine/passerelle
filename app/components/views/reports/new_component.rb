@@ -3,9 +3,9 @@
 module Views
   module Reports
     class NewComponent < ApplicationViewComponent
-      def initialize(report, redirection_path: nil)
-        @report = report
-        @redirection_path = redirection_path
+      def initialize(report, referrer: nil)
+        @report   = report
+        @referrer = referrer
         super()
       end
 

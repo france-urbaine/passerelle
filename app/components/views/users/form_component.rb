@@ -3,19 +3,19 @@
 module Views
   module Users
     class FormComponent < ApplicationViewComponent
-      def initialize(user, scope:, organization: nil, redirection_path: nil)
-        @user             = user
-        @organization     = organization
-        @scope            = scope
-        @redirection_path = redirection_path
+      def initialize(user, scope:, organization: nil, referrer: nil)
+        @user         = user
+        @organization = organization
+        @scope        = scope
+        @referrer     = referrer
         super()
       end
 
       def redirection_path
-        if @redirection_path.nil? && @user.errors.any? && params[:redirect]
+        if @referrer.nil? && @user.errors.any? && params[:redirect]
           params[:redirect]
         else
-          @redirection_path
+          @referrer
         end
       end
 

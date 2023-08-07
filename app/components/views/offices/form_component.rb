@@ -3,11 +3,11 @@
 module Views
   module Offices
     class FormComponent < ApplicationViewComponent
-      def initialize(office, scope:, ddfip: nil, redirection_path: nil)
-        @office           = office
-        @ddfip            = ddfip
-        @scope            = scope
-        @redirection_path = redirection_path
+      def initialize(office, scope:, ddfip: nil, referrer: nil)
+        @office   = office
+        @ddfip    = ddfip
+        @scope    = scope
+        @referrer = referrer
         super()
       end
 
@@ -22,6 +22,14 @@ module Views
         end
 
         polymorphic_path(url_args.compact)
+      end
+
+      def redirection_path
+        if @referrer.nil? && @office.errors.any? && params[:redirect]
+          params[:redirect]
+        else
+          @referrer
+        end
       end
 
       def allowed_to_assign_ddfip?

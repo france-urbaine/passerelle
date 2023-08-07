@@ -1,5 +1,5 @@
 - if request.variant.include?(:modal)
-  = render TemplateFrame::Component.new(src: @referrer) do |template|
+  = render TemplateModal::Component.new(referrer: @referrer) do |template|
     - template.with_modal do |modal|
       - if header?
         - modal.with_header do
@@ -18,7 +18,7 @@
           = raw_actions
 
 - else
-  = render TemplateFrame::Component.new do |template|
+  = render TemplateContent::Component.new do |template|
     = breadcrumbs || raw_breadcrumbs
 
     = render Card::Component.new(**CARD_OPTIONS) do |card|

@@ -1,34 +1,35 @@
-= render Modal::Component.new(redirection_path: @redirection_path) do |modal|
-  - modal.with_header do
-    - if @office.new_record?
-      | Création d'un nouveau guichet
-    - else
-      | Modification du guichet
+= template_modal_component(referrer: @referrer) do |template|
+  - template.with_modal do |modal|
+    - modal.with_header do
+      - if @office.new_record?
+        | Création d'un nouveau guichet
+      - else
+        | Modification du guichet
 
-  - modal.with_form(model: @office, url: form_url) do |form|
-    - modal.with_hidden_field :redirect, @redirection_path
+    - modal.with_form(model: @office, url: form_url) do |form|
+      - modal.with_hidden_field :redirect, redirection_path
 
-    - if allowed_to_assign_ddfip?
-      = form.block :ddfip, autocomplete: admin_ddfips_path do
-        = form.label :ddfip
-        = form.search_field :ddfip,    data: { autocomplete_target: "input" }, **ddfip_input_html_attributes
-        = form.hidden_field :ddfip_id, data: { autocomplete_target: "hidden" }
+      - if allowed_to_assign_ddfip?
+        = form.block :ddfip, autocomplete: admin_ddfips_path do
+          = form.label :ddfip
+          = form.search_field :ddfip,    data: { autocomplete_target: "input" }, **ddfip_input_html_attributes
+          = form.hidden_field :ddfip_id, data: { autocomplete_target: "hidden" }
 
-      = render Noscript::Component.new do
-        = form.block :ddfip do |block|
-          = form.label :ddfip_name
-          = form.text_field :ddfip_name, required: true, value: ddfip_name
+        = render Noscript::Component.new do
+          = form.block :ddfip do |block|
+            = form.label :ddfip_name
+            = form.text_field :ddfip_name, required: true, value: ddfip_name
 
-          - block.with_hint do
-            p En l'absence de Javascript, vous devez saisir le nom exact de la DDFIP.
+            - block.with_hint do
+              p En l'absence de Javascript, vous devez saisir le nom exact de la DDFIP.
 
-    = form.block :name do
-      = form.label :name
-      = form.text_field :name, required: true
+      = form.block :name do
+        = form.label :name
+        = form.text_field :name, required: true
 
-    = form.block :competences do
-      = form.label :competences
-      = form.checkboxes_component :competences, competences_choice
+      = form.block :competences do
+        = form.label :competences
+        = form.checkboxes_component :competences, competences_choice
 
-  - modal.with_submit_action "Enregistrer"
-  - modal.with_close_action "Annuler"
+    - modal.with_submit_action "Enregistrer"
+    - modal.with_close_action "Annuler"

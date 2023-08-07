@@ -3,10 +3,10 @@
 module Views
   module Publishers
     class FormComponent < ApplicationViewComponent
-      def initialize(publisher, scope:, redirection_path: nil)
-        @publisher        = publisher
-        @scope            = scope
-        @redirection_path = redirection_path
+      def initialize(publisher, scope:, referrer: nil)
+        @publisher = publisher
+        @scope     = scope
+        @referrer  = referrer
         super()
       end
 
@@ -16,6 +16,14 @@ module Views
         url_args << (@publisher.new_record? ? :publishers : @publisher)
 
         polymorphic_path(url_args.compact)
+      end
+
+      def redirection_path
+        if @referrer.nil? && @publisher.errors.any? && params[:redirect]
+          params[:redirect]
+        else
+          @referrer
+        end
       end
     end
   end

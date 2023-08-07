@@ -1,4 +1,2 @@
-= template_frame_component(src: @referrer_path) do |frame|
-  - frame.with_modal do
-    = render Views::Collectivities::FormComponent.new(@collectivity, scope: :admin, redirection_path: @referrer_path)
+= render Views::Collectivities::FormComponent.new(@collectivity, scope: :admin, referrer: @referrer_path)
 

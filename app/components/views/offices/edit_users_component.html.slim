@@ -1,19 +1,20 @@
-= render Modal::Component.new(redirection_path: @redirection_path) do |modal|
-  - modal.with_header do
-    | Gestion des utilisateurs du guichet
+= template_modal_component(referrer: @referrer) do |template|
+  - template.with_modal do |modal|
+    - modal.with_header do
+      | Gestion des utilisateurs du guichet
 
-  - modal.with_form(model: @office, url: form_url, method: :patch) do |form|
-    - modal.with_hidden_field :redirect, @redirection_path
+    - modal.with_form(model: @office, url: form_url, method: :patch) do |form|
+      - modal.with_hidden_field :redirect, @referrer
 
-    p
-      | Sélectionnez parmi les utlisateurs de la DDFIP ceux qui ont accès à ce guichet
-      br
-      | ou inviter un nouvel utilisateur.
+      p
+        | Sélectionnez parmi les utlisateurs de la DDFIP ceux qui ont accès à ce guichet
+        br
+        | ou inviter un nouvel utilisateur.
 
-    = form.block :user_ids do
-      = form.checkboxes_component :user_ids, suggested_users
+      = form.block :user_ids do
+        = form.checkboxes_component :user_ids, suggested_users
 
-  - modal.with_submit_action "Enregistrer", autofocus: true
-  - modal.with_close_action "Annuler"
+    - modal.with_submit_action "Enregistrer", autofocus: true
+    - modal.with_close_action "Annuler"
 
-  - modal.with_other_action "Inviter un nouvel utilisateur", new_user_url, modal: true
+    - modal.with_other_action "Inviter un nouvel utilisateur", new_user_url, modal: true

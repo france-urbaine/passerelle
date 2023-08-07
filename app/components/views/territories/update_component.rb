@@ -6,7 +6,7 @@ module Views
       URL_ROOT        = "https://www.insee.fr/"
       URL_ROOT_REGEXP = /^#{URL_ROOT}/
 
-      def initialize(params = {}, result = nil, redirection_path: nil)
+      def initialize(params = {}, result = nil, referrer: nil)
         if params.is_a?(ActionController::Parameters)
           params = params
             .slice(:communes_url, :epcis_url)
@@ -14,17 +14,17 @@ module Views
             .to_unsafe_h.symbolize_keys
         end
 
-        @params           = params
-        @result           = result
-        @redirection_path = redirection_path
+        @params   = params
+        @result   = result
+        @referrer = referrer
         super()
       end
 
       def redirection_path
-        if @redirection_path.nil? && params[:redirect]
+        if @referrer.nil? && params[:redirect]
           params[:redirect]
         else
-          @redirection_path
+          @referrer
         end
       end
 

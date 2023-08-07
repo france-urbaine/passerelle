@@ -1,3 +1,1 @@
-= template_frame_component(src: @referrer_path) do |frame|
-  - frame.with_modal do
-    = render Views::Users::FormComponent.new(@user, scope: :organization, redirection_path: @referrer_path)
+= render Views::Users::FormComponent.new(@user, scope: :organization, referrer: @referrer_path)
