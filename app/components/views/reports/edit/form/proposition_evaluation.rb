@@ -30,34 +30,34 @@ module Views
           def affectation_choices
             case @report.form_type
             when "evaluation_local_habitation"
-              I18n.t("enum.local_professionnel_affectation").map(&:reverse)
+              enum_options(:local_professionnel_affectation)
             else
-              I18n.t("enum.local_affectation").map(&:reverse)
+              enum_options(:local_affectation)
             end
           end
 
           def nature_habitation_choices
-            I18n.t("enum.local_habitation_nature").map(&:reverse)
+            enum_options(:local_habitation_nature)
           end
 
           def nature_professionnel_choices
-            I18n.t("enum.local_professionnel_nature").map(&:reverse)
+            enum_options(:local_professionnel_nature)
           end
 
           def categorie_habitation_choices
-            I18n.t("enum.local_habitation_categorie").map(&:reverse)
+            enum_options(:local_habitation_categorie)
           end
 
           def categorie_professionnel_choices
-            I18n.t("enum.local_professionnel_categorie").map(&:reverse)
+            enum_options(:local_professionnel_categorie)
           end
 
           def coefficient_entretien_choices
-            I18n.t("enum.coefficient_entretien").map(&:reverse)
+            enum_options(:coefficient_entretien)
           end
 
           def coefficient_situation_choices
-            I18n.t("enum.coefficient_situation").map(&:reverse)
+            enum_options(:coefficient_situation)
           end
         end
       end

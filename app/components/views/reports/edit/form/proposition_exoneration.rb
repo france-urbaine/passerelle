@@ -14,15 +14,15 @@ module Views
           end
 
           def status_choices
-            I18n.t("enum.exoneration_status").map(&:reverse)
+            enum_options(:exoneration_status)
           end
 
           def base_choices
-            I18n.t("enum.exoneration_base").map(&:reverse)
+            enum_options(:exoneration_base)
           end
 
           def code_collectivite_choices
-            I18n.t("enum.exoneration_code_collectivite").map(&:reverse)
+            enum_options(:exoneration_code_collectivite)
           end
         end
       end

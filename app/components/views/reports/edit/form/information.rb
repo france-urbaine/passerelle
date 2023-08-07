@@ -37,7 +37,7 @@ module Views
           end
 
           def priority_choices
-            I18n.t("enum.priority").map(&:reverse)
+            enum_options(:priority)
           end
         end
       end

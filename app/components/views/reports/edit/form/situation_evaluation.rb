@@ -11,34 +11,34 @@ module Views
 
           def affectation_choices
             if require_situation_evaluation_habitation?
-              I18n.t("enum.local_habitation_affectation").map(&:reverse)
+              enum_options(:local_habitation_affectation)
             elsif require_situation_evaluation_professionnel?
-              I18n.t("enum.local_professionnel_affectation").map(&:reverse)
+              enum_options(:local_professionnel_affectation)
             end
           end
 
           def nature_choices
             if require_situation_evaluation_habitation?
-              I18n.t("enum.local_habitation_nature").map(&:reverse)
+              enum_options(:local_habitation_nature)
             elsif require_situation_evaluation_professionnel?
-              I18n.t("enum.local_professionnel_nature").map(&:reverse)
+              enum_options(:local_professionnel_nature)
             end
           end
 
           def categorie_choices
             if require_situation_evaluation_habitation?
-              I18n.t("enum.local_habitation_categorie").map(&:reverse)
+              enum_options(:local_habitation_categorie)
             elsif require_situation_evaluation_professionnel?
-              I18n.t("enum.local_professionnel_categorie").map(&:reverse)
+              enum_options(:local_professionnel_categorie)
             end
           end
 
           def coefficient_entretien_choices
-            I18n.t("enum.coefficient_entretien").map(&:reverse)
+            enum_options(:coefficient_entretien)
           end
 
           def coefficient_situation_choices
-            I18n.t("enum.coefficient_situation").map(&:reverse)
+            enum_options(:coefficient_situation)
           end
 
           def situation_date_mutation

@@ -43,6 +43,12 @@ module Views
             super
           end
         end
+
+        # Common helpers
+
+        def enum_options(path)
+          I18n.t(path, scope: "enum", default: []).map(&:reverse)
+        end
       end
     end
   end
