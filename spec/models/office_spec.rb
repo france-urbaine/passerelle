@@ -426,7 +426,7 @@ RSpec.describe Office do
       describe "#users_count" do
         it "changes when users is assigned to the office" do
           expect { offices[0].users << user }
-            .to      change { offices[0].reload.users_count }.from(0).to(1)
+            .to change { offices[0].reload.users_count }.from(0).to(1)
             .and not_change { offices[1].reload.users_count }.from(0)
         end
 
@@ -434,7 +434,7 @@ RSpec.describe Office do
           offices[0].users << user
 
           expect { offices[0].users.delete(user) }
-            .to      change { offices[0].reload.users_count }.from(1).to(0)
+            .to change { offices[0].reload.users_count }.from(1).to(0)
             .and not_change { offices[1].reload.users_count }.from(0)
         end
 
@@ -442,7 +442,7 @@ RSpec.describe Office do
           offices[0].users << user
 
           expect { user.destroy }
-            .to      change { offices[0].reload.users_count }.from(1).to(0)
+            .to change { offices[0].reload.users_count }.from(1).to(0)
             .and not_change { offices[1].reload.users_count }.from(0)
         end
 
@@ -450,7 +450,7 @@ RSpec.describe Office do
           offices[0].users << user
 
           expect { user.discard }
-            .to      change { offices[0].reload.users_count }.from(1).to(0)
+            .to change { offices[0].reload.users_count }.from(1).to(0)
             .and not_change { offices[1].reload.users_count }.from(0)
         end
 
@@ -459,7 +459,7 @@ RSpec.describe Office do
           user.discard
 
           expect { user.undiscard }
-            .to      change { offices[0].reload.users_count }.from(0).to(1)
+            .to change { offices[0].reload.users_count }.from(0).to(1)
             .and not_change { offices[1].reload.users_count }.from(0)
         end
       end
@@ -473,13 +473,13 @@ RSpec.describe Office do
       describe "#communes_count" do
         it "changes when communes is assigned to the office" do
           expect { offices[0].communes << commune }
-            .to      change { offices[0].reload.communes_count }.from(0).to(1)
+            .to change { offices[0].reload.communes_count }.from(0).to(1)
             .and not_change { offices[1].reload.communes_count }.from(0)
         end
 
         it "changes when an existing code_insee is assigned to the office" do
           expect { offices[0].office_communes.create(code_insee: "64102") }
-            .to      change { offices[0].reload.communes_count }.from(0).to(1)
+            .to change { offices[0].reload.communes_count }.from(0).to(1)
             .and not_change { offices[1].reload.communes_count }.from(0)
         end
 
@@ -493,7 +493,7 @@ RSpec.describe Office do
           offices[0].communes << commune
 
           expect { offices[0].communes.delete(commune) }
-            .to      change { offices[0].reload.communes_count }.from(1).to(0)
+            .to change { offices[0].reload.communes_count }.from(1).to(0)
             .and not_change { offices[1].reload.communes_count }.from(0)
         end
 
@@ -501,7 +501,7 @@ RSpec.describe Office do
           offices[0].communes << commune
 
           expect { commune.destroy }
-            .to      change { offices[0].reload.communes_count }.from(1).to(0)
+            .to change { offices[0].reload.communes_count }.from(1).to(0)
             .and not_change { offices[1].reload.communes_count }.from(0)
         end
 
@@ -509,7 +509,7 @@ RSpec.describe Office do
           offices[0].communes << commune
 
           expect { commune.update(code_insee: "64024") }
-            .to      change { offices[0].reload.communes_count }.from(1).to(0)
+            .to change { offices[0].reload.communes_count }.from(1).to(0)
             .and not_change { offices[1].reload.communes_count }.from(0)
         end
       end
@@ -553,7 +553,7 @@ RSpec.describe Office do
           report.package.transmit!
 
           expect { report.package.approve! }
-            .to      change { offices[0].reload.reports_count }.from(0).to(1)
+            .to change { offices[0].reload.reports_count }.from(0).to(1)
             .and not_change { offices[1].reload.reports_count }.from(0)
             .and not_change { offices[2].reload.reports_count }.from(0)
         end
@@ -580,7 +580,7 @@ RSpec.describe Office do
           report.package.touch(:transmitted_at) and report.package.approve!
 
           expect { report.discard }
-            .to      change { offices[0].reload.reports_count }.from(1).to(0)
+            .to change { offices[0].reload.reports_count }.from(1).to(0)
             .and not_change { offices[1].reload.reports_count }.from(0)
             .and not_change { offices[2].reload.reports_count }.from(0)
         end
@@ -589,7 +589,7 @@ RSpec.describe Office do
           report.discard and report.package.transmit! and report.package.approve!
 
           expect { report.undiscard }
-            .to      change { offices[0].reload.reports_count }.from(0).to(1)
+            .to change { offices[0].reload.reports_count }.from(0).to(1)
             .and not_change { offices[1].reload.reports_count }.from(0)
             .and not_change { offices[2].reload.reports_count }.from(0)
         end
@@ -598,7 +598,7 @@ RSpec.describe Office do
           report.package.transmit! and report.package.approve!
 
           expect { report.destroy }
-            .to      change { offices[0].reload.reports_count }.from(1).to(0)
+            .to change { offices[0].reload.reports_count }.from(1).to(0)
             .and not_change { offices[1].reload.reports_count }.from(0)
             .and not_change { offices[2].reload.reports_count }.from(0)
         end
@@ -616,7 +616,7 @@ RSpec.describe Office do
           report.package.transmit! and report.package.approve!
 
           expect { report.package.discard }
-            .to      change { offices[0].reload.reports_count }.from(1).to(0)
+            .to change { offices[0].reload.reports_count }.from(1).to(0)
             .and not_change { offices[1].reload.reports_count }.from(0)
             .and not_change { offices[2].reload.reports_count }.from(0)
         end
@@ -634,7 +634,7 @@ RSpec.describe Office do
           report.package.touch(:transmitted_at, :discarded_at, :approved_at)
 
           expect { report.package.undiscard }
-            .to      change { offices[0].reload.reports_count }.from(0).to(1)
+            .to change { offices[0].reload.reports_count }.from(0).to(1)
             .and not_change { offices[1].reload.reports_count }.from(0)
             .and not_change { offices[2].reload.reports_count }.from(0)
         end
@@ -652,7 +652,7 @@ RSpec.describe Office do
           report.package.transmit! and report.package.approve!
 
           expect { report.package.delete }
-            .to      change { offices[0].reload.reports_count }.from(1).to(0)
+            .to change { offices[0].reload.reports_count }.from(1).to(0)
             .and not_change { offices[1].reload.reports_count }.from(0)
             .and not_change { offices[2].reload.reports_count }.from(0)
         end
@@ -681,7 +681,7 @@ RSpec.describe Office do
           report.package.touch(:transmitted_at, :approved_at)
 
           expect { report.approve! }
-            .to      change { offices[0].reload.reports_approved_count }.from(0).to(1)
+            .to change { offices[0].reload.reports_approved_count }.from(0).to(1)
             .and not_change { offices[1].reload.reports_approved_count }.from(0)
             .and not_change { offices[2].reload.reports_approved_count }.from(0)
         end
@@ -699,7 +699,7 @@ RSpec.describe Office do
           report.approve! and report.package.touch(:transmitted_at, :approved_at)
 
           expect { report.discard }
-            .to      change { offices[0].reload.reports_approved_count }.from(1).to(0)
+            .to change { offices[0].reload.reports_approved_count }.from(1).to(0)
             .and not_change { offices[1].reload.reports_approved_count }.from(0)
             .and not_change { offices[2].reload.reports_approved_count }.from(0)
         end
@@ -717,7 +717,7 @@ RSpec.describe Office do
           report.touch(:approved_at, :discarded_at) and report.package.touch(:transmitted_at, :approved_at)
 
           expect { report.undiscard }
-            .to      change { offices[0].reload.reports_approved_count }.from(0).to(1)
+            .to change { offices[0].reload.reports_approved_count }.from(0).to(1)
             .and not_change { offices[1].reload.reports_approved_count }.from(0)
             .and not_change { offices[2].reload.reports_approved_count }.from(0)
         end
@@ -735,7 +735,7 @@ RSpec.describe Office do
           report.approve! and report.package.touch(:transmitted_at, :approved_at)
 
           expect { report.delete }
-            .to      change { offices[0].reload.reports_approved_count }.from(1).to(0)
+            .to change { offices[0].reload.reports_approved_count }.from(1).to(0)
             .and not_change { offices[1].reload.reports_approved_count }.from(0)
             .and not_change { offices[2].reload.reports_approved_count }.from(0)
         end
@@ -764,7 +764,7 @@ RSpec.describe Office do
           report.package.touch(:transmitted_at, :approved_at)
 
           expect { report.reject! }
-            .to      change { offices[0].reload.reports_rejected_count }.from(0).to(1)
+            .to change { offices[0].reload.reports_rejected_count }.from(0).to(1)
             .and not_change { offices[1].reload.reports_rejected_count }.from(0)
             .and not_change { offices[2].reload.reports_rejected_count }.from(0)
         end
@@ -782,7 +782,7 @@ RSpec.describe Office do
           report.reject! and report.package.touch(:transmitted_at, :approved_at)
 
           expect { report.discard }
-            .to      change { offices[0].reload.reports_rejected_count }.from(1).to(0)
+            .to change { offices[0].reload.reports_rejected_count }.from(1).to(0)
             .and not_change { offices[1].reload.reports_rejected_count }.from(0)
             .and not_change { offices[2].reload.reports_rejected_count }.from(0)
         end
@@ -800,7 +800,7 @@ RSpec.describe Office do
           report.touch(:rejected_at, :discarded_at) and report.package.touch(:transmitted_at, :approved_at)
 
           expect { report.undiscard }
-            .to      change { offices[0].reload.reports_rejected_count }.from(0).to(1)
+            .to change { offices[0].reload.reports_rejected_count }.from(0).to(1)
             .and not_change { offices[1].reload.reports_rejected_count }.from(0)
             .and not_change { offices[2].reload.reports_rejected_count }.from(0)
         end
@@ -818,7 +818,7 @@ RSpec.describe Office do
           report.reject! and report.package.touch(:transmitted_at, :approved_at)
 
           expect { report.delete }
-            .to      change { offices[0].reload.reports_rejected_count }.from(1).to(0)
+            .to change { offices[0].reload.reports_rejected_count }.from(1).to(0)
             .and not_change { offices[1].reload.reports_rejected_count }.from(0)
             .and not_change { offices[2].reload.reports_rejected_count }.from(0)
         end
@@ -847,7 +847,7 @@ RSpec.describe Office do
           report.package.touch(:transmitted_at, :approved_at)
 
           expect { report.debate! }
-            .to      change { offices[0].reload.reports_debated_count }.from(0).to(1)
+            .to change { offices[0].reload.reports_debated_count }.from(0).to(1)
             .and not_change { offices[1].reload.reports_debated_count }.from(0)
             .and not_change { offices[2].reload.reports_debated_count }.from(0)
         end
@@ -865,7 +865,7 @@ RSpec.describe Office do
           report.debate! and report.package.touch(:transmitted_at, :approved_at)
 
           expect { report.discard }
-            .to      change { offices[0].reload.reports_debated_count }.from(1).to(0)
+            .to change { offices[0].reload.reports_debated_count }.from(1).to(0)
             .and not_change { offices[1].reload.reports_debated_count }.from(0)
             .and not_change { offices[2].reload.reports_debated_count }.from(0)
         end
@@ -883,7 +883,7 @@ RSpec.describe Office do
           report.touch(:debated_at, :discarded_at) and report.package.touch(:transmitted_at, :approved_at)
 
           expect { report.undiscard }
-            .to      change { offices[0].reload.reports_debated_count }.from(0).to(1)
+            .to change { offices[0].reload.reports_debated_count }.from(0).to(1)
             .and not_change { offices[1].reload.reports_debated_count }.from(0)
             .and not_change { offices[2].reload.reports_debated_count }.from(0)
         end
@@ -901,7 +901,7 @@ RSpec.describe Office do
           report.debate! and report.package.touch(:transmitted_at, :approved_at)
 
           expect { report.delete }
-            .to      change { offices[0].reload.reports_debated_count }.from(1).to(0)
+            .to change { offices[0].reload.reports_debated_count }.from(1).to(0)
             .and not_change { offices[1].reload.reports_debated_count }.from(0)
             .and not_change { offices[2].reload.reports_debated_count }.from(0)
         end

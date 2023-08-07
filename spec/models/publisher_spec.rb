@@ -253,28 +253,28 @@ RSpec.describe Publisher do
 
         it "changes on creation" do
           expect { user }
-            .to      change { publishers[0].reload.users_count }.from(0).to(1)
+            .to change { publishers[0].reload.users_count }.from(0).to(1)
             .and not_change { publishers[1].reload.users_count }.from(0)
         end
 
         it "changes on deletion" do
           user
           expect { user.destroy }
-            .to      change { publishers[0].reload.users_count }.from(1).to(0)
+            .to change { publishers[0].reload.users_count }.from(1).to(0)
             .and not_change { publishers[1].reload.users_count }.from(0)
         end
 
         it "changes when discarding" do
           user
           expect { user.discard }
-            .to      change { publishers[0].reload.users_count }.from(1).to(0)
+            .to change { publishers[0].reload.users_count }.from(1).to(0)
             .and not_change { publishers[1].reload.users_count }.from(0)
         end
 
         it "changes when undiscarding" do
           user.discard
           expect { user.undiscard }
-            .to      change { publishers[0].reload.users_count }.from(0).to(1)
+            .to change { publishers[0].reload.users_count }.from(0).to(1)
             .and not_change { publishers[1].reload.users_count }.from(0)
         end
 
@@ -291,28 +291,28 @@ RSpec.describe Publisher do
 
         it "changes on creation" do
           expect { collectivity }
-            .to      change { publishers[0].reload.collectivities_count }.from(0).to(1)
+            .to change { publishers[0].reload.collectivities_count }.from(0).to(1)
             .and not_change { publishers[1].reload.collectivities_count }.from(0)
         end
 
         it "changes on discarding" do
           collectivity
           expect { collectivity.discard }
-            .to      change { publishers[0].reload.collectivities_count }.from(1).to(0)
+            .to change { publishers[0].reload.collectivities_count }.from(1).to(0)
             .and not_change { publishers[1].reload.collectivities_count }.from(0)
         end
 
         it "changes on undiscarding" do
           collectivity.discard
           expect { collectivity.undiscard }
-            .to      change { publishers[0].reload.collectivities_count }.from(0).to(1)
+            .to change { publishers[0].reload.collectivities_count }.from(0).to(1)
             .and not_change { publishers[1].reload.collectivities_count }.from(0)
         end
 
         it "changes on deletion" do
           collectivity
           expect { collectivity.destroy }
-            .to      change { publishers[0].reload.collectivities_count }.from(1).to(0)
+            .to change { publishers[0].reload.collectivities_count }.from(1).to(0)
             .and not_change { publishers[1].reload.collectivities_count }.from(0)
         end
 
@@ -340,7 +340,7 @@ RSpec.describe Publisher do
         it "changes when combining updating publisher and discarding" do
           collectivity
           expect { collectivity.update(publisher: publishers[1], discarded_at: Time.current) }
-            .to      change { publishers[0].reload.collectivities_count }.from(1).to(0)
+            .to change { publishers[0].reload.collectivities_count }.from(1).to(0)
             .and not_change { publishers[1].reload.collectivities_count }.from(0)
         end
 
@@ -348,7 +348,7 @@ RSpec.describe Publisher do
           collectivity.discard
           expect { collectivity.update(publisher: publishers[1], discarded_at: nil) }
             .to  not_change { publishers[0].reload.collectivities_count }.from(0)
-            .and     change { publishers[1].reload.collectivities_count }.from(0).to(1)
+            .and change { publishers[1].reload.collectivities_count }.from(0).to(1)
         end
       end
     end
@@ -368,7 +368,7 @@ RSpec.describe Publisher do
           report
 
           expect { report.package.transmit! }
-            .to      change { publishers[0].reload.reports_transmitted_count }.from(0).to(1)
+            .to change { publishers[0].reload.reports_transmitted_count }.from(0).to(1)
             .and not_change { publishers[1].reload.reports_transmitted_count }.from(0)
         end
 
@@ -384,7 +384,7 @@ RSpec.describe Publisher do
           report.package.touch(:transmitted_at)
 
           expect { report.discard }
-            .to      change { publishers[0].reload.reports_transmitted_count }.from(1).to(0)
+            .to change { publishers[0].reload.reports_transmitted_count }.from(1).to(0)
             .and not_change { publishers[1].reload.reports_transmitted_count }.from(0)
         end
 
@@ -392,7 +392,7 @@ RSpec.describe Publisher do
           report.discard and package.transmit!
 
           expect { report.undiscard }
-            .to      change { publishers[0].reload.reports_transmitted_count }.from(0).to(1)
+            .to change { publishers[0].reload.reports_transmitted_count }.from(0).to(1)
             .and not_change { publishers[1].reload.reports_transmitted_count }.from(0)
         end
 
@@ -400,7 +400,7 @@ RSpec.describe Publisher do
           report.package.transmit!
 
           expect { report.destroy }
-            .to      change { publishers[0].reload.reports_transmitted_count }.from(1).to(0)
+            .to change { publishers[0].reload.reports_transmitted_count }.from(1).to(0)
             .and not_change { publishers[1].reload.reports_transmitted_count }.from(0)
         end
 
@@ -408,7 +408,7 @@ RSpec.describe Publisher do
           report.package.transmit!
 
           expect { package.discard }
-            .to      change { publishers[0].reload.reports_transmitted_count }.from(1).to(0)
+            .to change { publishers[0].reload.reports_transmitted_count }.from(1).to(0)
             .and not_change { publishers[1].reload.reports_transmitted_count }.from(0)
         end
 
@@ -416,7 +416,7 @@ RSpec.describe Publisher do
           report.package.touch(:transmitted_at, :discarded_at)
 
           expect { package.undiscard }
-            .to      change { publishers[0].reload.reports_transmitted_count }.from(0).to(1)
+            .to change { publishers[0].reload.reports_transmitted_count }.from(0).to(1)
             .and not_change { publishers[1].reload.reports_transmitted_count }.from(0)
         end
 
@@ -424,7 +424,7 @@ RSpec.describe Publisher do
           report.package.transmit!
 
           expect { package.delete }
-            .to      change { publishers[0].reload.reports_transmitted_count }.from(1).to(0)
+            .to change { publishers[0].reload.reports_transmitted_count }.from(1).to(0)
             .and not_change { publishers[1].reload.reports_transmitted_count }.from(0)
         end
       end
@@ -443,7 +443,7 @@ RSpec.describe Publisher do
           report
 
           expect { report.approve! }
-            .to      change { publishers[0].reload.reports_approved_count }.from(0).to(1)
+            .to change { publishers[0].reload.reports_approved_count }.from(0).to(1)
             .and not_change { publishers[1].reload.reports_approved_count }.from(0)
         end
 
@@ -451,7 +451,7 @@ RSpec.describe Publisher do
           report.approve!
 
           expect { report.discard }
-            .to      change { publishers[0].reload.reports_approved_count }.from(1).to(0)
+            .to change { publishers[0].reload.reports_approved_count }.from(1).to(0)
             .and not_change { publishers[1].reload.reports_approved_count }.from(0)
         end
 
@@ -459,7 +459,7 @@ RSpec.describe Publisher do
           report.touch(:approved_at, :discarded_at)
 
           expect { report.undiscard }
-            .to      change { publishers[0].reload.reports_approved_count }.from(0).to(1)
+            .to change { publishers[0].reload.reports_approved_count }.from(0).to(1)
             .and not_change { publishers[1].reload.reports_approved_count }.from(0)
         end
 
@@ -467,7 +467,7 @@ RSpec.describe Publisher do
           report.touch(:approved_at)
 
           expect { report.delete }
-            .to      change { publishers[0].reload.reports_approved_count }.from(1).to(0)
+            .to change { publishers[0].reload.reports_approved_count }.from(1).to(0)
             .and not_change { publishers[1].reload.reports_approved_count }.from(0)
         end
       end
@@ -486,7 +486,7 @@ RSpec.describe Publisher do
           report
 
           expect { report.reject! }
-            .to      change { publishers[0].reload.reports_rejected_count }.from(0).to(1)
+            .to change { publishers[0].reload.reports_rejected_count }.from(0).to(1)
             .and not_change { publishers[1].reload.reports_rejected_count }.from(0)
         end
 
@@ -494,7 +494,7 @@ RSpec.describe Publisher do
           report.reject!
 
           expect { report.discard }
-            .to      change { publishers[0].reload.reports_rejected_count }.from(1).to(0)
+            .to change { publishers[0].reload.reports_rejected_count }.from(1).to(0)
             .and not_change { publishers[1].reload.reports_rejected_count }.from(0)
         end
 
@@ -502,7 +502,7 @@ RSpec.describe Publisher do
           report.touch(:rejected_at, :discarded_at)
 
           expect { report.undiscard }
-            .to      change { publishers[0].reload.reports_rejected_count }.from(0).to(1)
+            .to change { publishers[0].reload.reports_rejected_count }.from(0).to(1)
             .and not_change { publishers[1].reload.reports_rejected_count }.from(0)
         end
 
@@ -510,7 +510,7 @@ RSpec.describe Publisher do
           report.touch(:rejected_at)
 
           expect { report.delete }
-            .to      change { publishers[0].reload.reports_rejected_count }.from(1).to(0)
+            .to change { publishers[0].reload.reports_rejected_count }.from(1).to(0)
             .and not_change { publishers[1].reload.reports_rejected_count }.from(0)
         end
       end
@@ -529,7 +529,7 @@ RSpec.describe Publisher do
           report
 
           expect { report.debate! }
-            .to      change { publishers[0].reload.reports_debated_count }.from(0).to(1)
+            .to change { publishers[0].reload.reports_debated_count }.from(0).to(1)
             .and not_change { publishers[1].reload.reports_debated_count }.from(0)
         end
 
@@ -537,7 +537,7 @@ RSpec.describe Publisher do
           report.debate!
 
           expect { report.discard }
-            .to      change { publishers[0].reload.reports_debated_count }.from(1).to(0)
+            .to change { publishers[0].reload.reports_debated_count }.from(1).to(0)
             .and not_change { publishers[1].reload.reports_debated_count }.from(0)
         end
 
@@ -545,7 +545,7 @@ RSpec.describe Publisher do
           report.touch(:debated_at, :discarded_at)
 
           expect { report.undiscard }
-            .to      change { publishers[0].reload.reports_debated_count }.from(0).to(1)
+            .to change { publishers[0].reload.reports_debated_count }.from(0).to(1)
             .and not_change { publishers[1].reload.reports_debated_count }.from(0)
         end
 
@@ -553,7 +553,7 @@ RSpec.describe Publisher do
           report.touch(:debated_at)
 
           expect { report.delete }
-            .to      change { publishers[0].reload.reports_debated_count }.from(1).to(0)
+            .to change { publishers[0].reload.reports_debated_count }.from(1).to(0)
             .and not_change { publishers[1].reload.reports_debated_count }.from(0)
         end
       end
@@ -572,7 +572,7 @@ RSpec.describe Publisher do
         it "changes when package is transmitted" do
           package
           expect { package.transmit! }
-            .to      change { publishers[0].reload.packages_transmitted_count }.from(0).to(1)
+            .to change { publishers[0].reload.packages_transmitted_count }.from(0).to(1)
             .and not_change { publishers[1].reload.packages_transmitted_count }.from(0)
         end
 
@@ -587,21 +587,21 @@ RSpec.describe Publisher do
         it "changes when transmitted package is discarded" do
           package.transmit!
           expect { package.discard }
-            .to      change { publishers[0].reload.packages_transmitted_count }.from(1).to(0)
+            .to change { publishers[0].reload.packages_transmitted_count }.from(1).to(0)
             .and not_change { publishers[1].reload.packages_transmitted_count }.from(0)
         end
 
         it "changes when transmitted package is undiscarded" do
           package.touch(:transmitted_at, :discarded_at)
           expect { package.undiscard }
-            .to      change { publishers[0].reload.packages_transmitted_count }.from(0).to(1)
+            .to change { publishers[0].reload.packages_transmitted_count }.from(0).to(1)
             .and not_change { publishers[1].reload.packages_transmitted_count }.from(0)
         end
 
         it "changes when transmitted package is deleted" do
           package.transmit!
           expect { package.delete }
-            .to      change { publishers[0].reload.packages_transmitted_count }.from(1).to(0)
+            .to change { publishers[0].reload.packages_transmitted_count }.from(1).to(0)
             .and not_change { publishers[1].reload.packages_transmitted_count }.from(0)
         end
       end
@@ -618,28 +618,28 @@ RSpec.describe Publisher do
         it "changes when package is approved" do
           package
           expect { package.approve! }
-            .to      change { publishers[0].reload.packages_approved_count }.from(0).to(1)
+            .to change { publishers[0].reload.packages_approved_count }.from(0).to(1)
             .and not_change { publishers[1].reload.packages_approved_count }.from(0)
         end
 
         it "changes when approved package is discarded" do
           package.approve!
           expect { package.discard }
-            .to      change { publishers[0].reload.packages_approved_count }.from(1).to(0)
+            .to change { publishers[0].reload.packages_approved_count }.from(1).to(0)
             .and not_change { publishers[1].reload.packages_approved_count }.from(0)
         end
 
         it "changes when approved package is undiscarded" do
           package.touch(:approved_at, :discarded_at)
           expect { package.undiscard }
-            .to      change { publishers[0].reload.packages_approved_count }.from(0).to(1)
+            .to change { publishers[0].reload.packages_approved_count }.from(0).to(1)
             .and not_change { publishers[1].reload.packages_approved_count }.from(0)
         end
 
         it "changes when approved package is deleted" do
           package.approve!
           expect { package.delete }
-            .to      change { publishers[0].reload.packages_approved_count }.from(1).to(0)
+            .to change { publishers[0].reload.packages_approved_count }.from(1).to(0)
             .and not_change { publishers[1].reload.packages_approved_count }.from(0)
         end
       end
@@ -656,28 +656,28 @@ RSpec.describe Publisher do
         it "changes when package is rejected" do
           package
           expect { package.reject! }
-            .to      change { publishers[0].reload.packages_rejected_count }.from(0).to(1)
+            .to change { publishers[0].reload.packages_rejected_count }.from(0).to(1)
             .and not_change { publishers[1].reload.packages_rejected_count }.from(0)
         end
 
         it "changes when rejected package is discarded" do
           package.reject!
           expect { package.discard }
-            .to      change { publishers[0].reload.packages_rejected_count }.from(1).to(0)
+            .to change { publishers[0].reload.packages_rejected_count }.from(1).to(0)
             .and not_change { publishers[1].reload.packages_rejected_count }.from(0)
         end
 
         it "changes when rejected package is undiscarded" do
           package.touch(:rejected_at, :discarded_at)
           expect { package.undiscard }
-            .to      change { publishers[0].reload.packages_rejected_count }.from(0).to(1)
+            .to change { publishers[0].reload.packages_rejected_count }.from(0).to(1)
             .and not_change { publishers[1].reload.packages_rejected_count }.from(0)
         end
 
         it "changes when rejected package is deleted" do
           package.reject!
           expect { package.delete }
-            .to      change { publishers[0].reload.packages_rejected_count }.from(1).to(0)
+            .to change { publishers[0].reload.packages_rejected_count }.from(1).to(0)
             .and not_change { publishers[1].reload.packages_rejected_count }.from(0)
         end
       end

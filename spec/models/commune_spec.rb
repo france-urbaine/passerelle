@@ -58,12 +58,12 @@ RSpec.describe Commune do
     # Create only one departement to reduce the number of queries and records to create
     let_it_be(:departement) { create(:departement) }
 
-    def validate_record(**attributes)
-      build(:commune, departement:, **attributes).tap(&:validate)
+    def validate_record(**)
+      build(:commune, departement:, **).tap(&:validate)
     end
 
-    def create_record(**attributes)
-      create(:commune, departement:, **attributes)
+    def create_record(**)
+      create(:commune, departement:, **)
     end
 
     describe "#siren_epci" do
@@ -577,13 +577,13 @@ RSpec.describe Commune do
 
         it "changes when commune is assigned to the office" do
           expect { office.communes << communes[0] }
-            .to      change { communes[0].reload.offices_count }.from(0).to(1)
+            .to change { communes[0].reload.offices_count }.from(0).to(1)
             .and not_change { communes[1].reload.offices_count }.from(0)
         end
 
         it "changes when an existing code_insee is assigned to the office" do
           expect { office.office_communes.create(code_insee: communes[0].code_insee) }
-            .to      change { communes[0].reload.offices_count }.from(0).to(1)
+            .to change { communes[0].reload.offices_count }.from(0).to(1)
             .and not_change { communes[1].reload.offices_count }.from(0)
         end
 
@@ -597,7 +597,7 @@ RSpec.describe Commune do
           office.communes << communes[0]
 
           expect { office.communes.delete(communes[0]) }
-            .to      change { communes[0].reload.offices_count }.from(1).to(0)
+            .to change { communes[0].reload.offices_count }.from(1).to(0)
             .and not_change { communes[1].reload.offices_count }.from(0)
         end
 
@@ -605,7 +605,7 @@ RSpec.describe Commune do
           office.communes << communes[0]
 
           expect { communes[0].update(code_insee: "64024") }
-            .to      change { communes[0].reload.offices_count }.from(1).to(0)
+            .to change { communes[0].reload.offices_count }.from(1).to(0)
             .and not_change { communes[1].reload.offices_count }.from(0)
         end
 
@@ -614,7 +614,7 @@ RSpec.describe Commune do
 
           expect { office.communes << communes[1] }
             .to  not_change { communes[0].reload.offices_count }.from(1)
-            .and     change { communes[1].reload.offices_count }.from(0).to(1)
+            .and change { communes[1].reload.offices_count }.from(0).to(1)
         end
       end
     end

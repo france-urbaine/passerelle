@@ -44,8 +44,8 @@ RSpec.describe Departement do
     # Create only one region to reduce the number of queries and records to create
     let_it_be(:region) { create(:region) }
 
-    def create_record(**attributes)
-      create(:departement, region:, **attributes)
+    def create_record(**)
+      create(:departement, region:, **)
     end
 
     describe "#qualified_name" do
@@ -261,14 +261,14 @@ RSpec.describe Departement do
 
         it "changes on creation" do
           expect { commune }
-            .to      change { departements[0].reload.communes_count }.from(0).to(1)
+            .to change { departements[0].reload.communes_count }.from(0).to(1)
             .and not_change { departements[1].reload.communes_count }.from(0)
         end
 
         it "changes on deletion" do
           commune
           expect { commune.destroy }
-            .to      change { departements[0].reload.communes_count }.from(1).to(0)
+            .to change { departements[0].reload.communes_count }.from(1).to(0)
             .and not_change { departements[1].reload.communes_count }.from(0)
         end
 
@@ -285,14 +285,14 @@ RSpec.describe Departement do
 
         it "changes on creation" do
           expect { epci }
-            .to      change { departements[0].reload.epcis_count }.from(0).to(1)
+            .to change { departements[0].reload.epcis_count }.from(0).to(1)
             .and not_change { departements[1].reload.epcis_count }.from(0)
         end
 
         it "changes on deletion" do
           epci
           expect { epci.destroy }
-            .to      change { departements[0].reload.epcis_count }.from(1).to(0)
+            .to change { departements[0].reload.epcis_count }.from(1).to(0)
             .and not_change { departements[1].reload.epcis_count }.from(0)
         end
 
@@ -309,14 +309,14 @@ RSpec.describe Departement do
 
         it "changes on creation" do
           expect { ddfip }
-            .to      change { departements[0].reload.ddfips_count }.from(0).to(1)
+            .to change { departements[0].reload.ddfips_count }.from(0).to(1)
             .and not_change { departements[1].reload.ddfips_count }.from(0)
         end
 
         it "changes on deletion" do
           ddfip
           expect { ddfip.destroy }
-            .to      change { departements[0].reload.ddfips_count }.from(1).to(0)
+            .to change { departements[0].reload.ddfips_count }.from(1).to(0)
             .and not_change { departements[1].reload.ddfips_count }.from(0)
         end
 

@@ -2,8 +2,8 @@
 
 module FormHelper
   class FormBuilder < ActionView::Helpers::FormBuilder
-    def block(method, **options, &)
-      @template.form_block_component(@object, method, **options, &)
+    def block(...)
+      @template.form_block_component(@object, ...)
     end
 
     def errors(method)

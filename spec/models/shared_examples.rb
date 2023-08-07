@@ -17,28 +17,28 @@ RSpec.shared_examples "it changes collectivities count" do
 
   it "changes on creation" do
     expect { collectivity }
-      .to      change { subjects[0].reload.collectivities_count }.from(0).to(1)
+      .to change { subjects[0].reload.collectivities_count }.from(0).to(1)
       .and not_change { subjects[1].reload.collectivities_count }.from(0)
   end
 
   it "changes on discarding" do
     collectivity
     expect { collectivity.discard }
-      .to      change { subjects[0].reload.collectivities_count }.from(1).to(0)
+      .to change { subjects[0].reload.collectivities_count }.from(1).to(0)
       .and not_change { subjects[1].reload.collectivities_count }.from(0)
   end
 
   it "changes on undiscarding" do
     collectivity.discard
     expect { collectivity.undiscard }
-      .to      change { subjects[0].reload.collectivities_count }.from(0).to(1)
+      .to change { subjects[0].reload.collectivities_count }.from(0).to(1)
       .and not_change { subjects[1].reload.collectivities_count }.from(0)
   end
 
   it "changes on deletion" do
     collectivity
     expect { collectivity.destroy }
-      .to      change { subjects[0].reload.collectivities_count }.from(1).to(0)
+      .to change { subjects[0].reload.collectivities_count }.from(1).to(0)
       .and not_change { subjects[1].reload.collectivities_count }.from(0)
   end
 
@@ -66,7 +66,7 @@ RSpec.shared_examples "it changes collectivities count" do
   it "changes when combining updating territory and discarding" do
     collectivity
     expect { collectivity.update(territory: territories[1], discarded_at: Time.current) }
-      .to      change { subjects[0].reload.collectivities_count }.from(1).to(0)
+      .to change { subjects[0].reload.collectivities_count }.from(1).to(0)
       .and not_change { subjects[1].reload.collectivities_count }.from(0)
   end
 
@@ -74,6 +74,6 @@ RSpec.shared_examples "it changes collectivities count" do
     collectivity.discard
     expect { collectivity.update(territory: territories[1], discarded_at: nil) }
       .to  not_change { subjects[0].reload.collectivities_count }.from(0)
-      .and     change { subjects[1].reload.collectivities_count }.from(0).to(1)
+      .and change { subjects[1].reload.collectivities_count }.from(0).to(1)
   end
 end

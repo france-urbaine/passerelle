@@ -41,8 +41,8 @@ RSpec.describe EPCI do
   # Normalization callbacks
   # ----------------------------------------------------------------------------
   describe "attribute normalization" do
-    def build_record(**attributes)
-      user = build(:epci, **attributes)
+    def build_record(...)
+      user = build(:epci, ...)
       user.validate
       user
     end
@@ -301,14 +301,14 @@ RSpec.describe EPCI do
 
         it "changes on creation" do
           expect { commune }
-            .to      change { epcis[0].reload.communes_count }.from(0).to(1)
+            .to change { epcis[0].reload.communes_count }.from(0).to(1)
             .and not_change { epcis[1].reload.communes_count }.from(0)
         end
 
         it "changes on deletion" do
           commune
           expect { commune.destroy }
-            .to      change { epcis[0].reload.communes_count }.from(1).to(0)
+            .to change { epcis[0].reload.communes_count }.from(1).to(0)
             .and not_change { epcis[1].reload.communes_count }.from(0)
         end
 
@@ -322,7 +322,7 @@ RSpec.describe EPCI do
         it "changes on updating to remove the EPCI" do
           commune
           expect { commune.update(epci: nil) }
-            .to      change { epcis[0].reload.communes_count }.from(1).to(0)
+            .to change { epcis[0].reload.communes_count }.from(1).to(0)
             .and not_change { epcis[1].reload.communes_count }.from(0)
         end
 
@@ -331,7 +331,7 @@ RSpec.describe EPCI do
 
           expect { commune.update(epci: epcis[1]) }
             .to  not_change { epcis[0].reload.communes_count }.from(0)
-            .and     change { epcis[1].reload.communes_count }.from(0).to(1)
+            .and change { epcis[1].reload.communes_count }.from(0).to(1)
         end
       end
 

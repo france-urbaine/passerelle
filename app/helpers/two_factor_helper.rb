@@ -7,11 +7,11 @@ module TwoFactorHelper
     user.otp_provisioning_uri(user.email, issuer: OTP_ISSUER)
   end
 
-  def otp_qr_code_as_svg_tag(*user, **options)
+  def otp_qr_code_as_svg_tag(*, **)
     RQRCode::QRCode.new(
-      otp_provisioning_uri(*user)
+      otp_provisioning_uri(*)
     ).as_svg(
-      **options,
+      **,
       module_size: 4,
       use_path: true,
       fill: :white,
