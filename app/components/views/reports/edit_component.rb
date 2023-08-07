@@ -6,10 +6,13 @@ module Views
       FORMS = %w[
         information
         situation_majic
+        situation_parcelle
         situation_evaluation
         proposition_evaluation
         proposition_exoneration
         proposition_adresse
+        proposition_omission_batie
+        proposition_construction_neuve
         observations
         enjeu
       ].freeze

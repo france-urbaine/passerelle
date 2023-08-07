@@ -7,6 +7,10 @@
   .content__separator
   = render SituationMajic.new(@report)
 
+- if require_situation_parcelle?
+  .content__separator
+  = render SituationParcelle.new(@report)
+
 - if require_situation_evaluation? && require_proposition_evaluation?
   .content__separator
   .content__grid.content__grid--cols-2
@@ -24,6 +28,14 @@
 - if require_proposition_exoneration?
   .content__separator
   = render PropositionExoneration.new(@report)
+
+- if require_proposition_omission_batie?
+  .content__separator
+  = render PropositionOmissionBatie.new(@report)
+
+- if require_proposition_construction_neuve?
+  .content__separator
+  = render PropositionConstructionNeuve.new(@report)
 
 - if require_proposition_adresse?
   .content__separator

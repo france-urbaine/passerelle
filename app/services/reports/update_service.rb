@@ -7,5 +7,9 @@ module Reports
     before_save do
       record.completed = Reports::CheckCompletenessService.new(record).valid?
     end
+
+    def anomalies=(value)
+      report.anomalies = Array.wrap(value)
+    end
   end
 end

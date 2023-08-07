@@ -19,33 +19,42 @@ module Reports
     with_options if: :require_situation_majic? do
       validates_presence_of :situation_annee_majic
       validates_presence_of :situation_invariant
+    end
 
-      validates_presence_of :situation_proprietaire
-      validates_presence_of :situation_numero_ordre_proprietaire
-
+    with_options if: :require_situation_parcelle? do
       validates_presence_of :situation_parcelle
+    end
+
+    with_options if: :require_situation_adresse? do
       validates_presence_of :situation_libelle_voie
       validates_presence_of :situation_code_rivoli
+      validate :situation_adresse_must_be_complete
+    end
 
+    with_options if: :require_situation_porte? do
       validates_presence_of :situation_numero_batiment
       validates_presence_of :situation_numero_escalier
       validates_presence_of :situation_numero_niveau
       validates_presence_of :situation_numero_porte
       validates_presence_of :situation_numero_ordre_porte
-
-      validate :situation_adresse_must_be_complete
       validate :situation_porte_must_be_complete
+    end
+
+    with_options if: :require_situation_proprietaire? do
+      validates_presence_of :situation_proprietaire
+      validates_presence_of :situation_numero_ordre_proprietaire
       validate :situation_proprietaire_must_be_complete
     end
 
-    validates_presence_of :situation_date_mutation,            if: :require_situation_evaluation?
-    validates_presence_of :situation_affectation,              if: :require_situation_evaluation?
-    validates_presence_of :situation_nature,                   if: :require_situation_evaluation?
+    with_options if: :require_situation_evaluation? do
+      validates_presence_of :situation_date_mutation
+      validates_presence_of :situation_affectation
+      validates_presence_of :situation_nature
+    end
 
     validates_presence_of :situation_categorie,                if: :require_situation_categorie?
     validates_presence_of :situation_surface_reelle,           if: :require_situation_surface?
     validates_presence_of :situation_coefficient_localisation, if: :require_situation_coefficient_localisation?
-
     validates_presence_of :situation_coefficient_entretien,    if: :require_situation_evaluation_habitation?
 
     with_options if: :require_situation_evaluation_habitation?, allow_blank: true do
@@ -60,6 +69,7 @@ module Reports
 
     validates_presence_of :proposition_affectation,              if: :require_proposition_affectation?
     validates_presence_of :proposition_nature,                   if: :require_proposition_nature?
+    validates_presence_of :proposition_nature_dependance,        if: :require_proposition_nature_dependance?
     validates_presence_of :proposition_categorie,                if: :require_proposition_categorie?
     validates_presence_of :proposition_surface_reelle,           if: :require_proposition_surface?
     validates_presence_of :proposition_coefficient_entretien,    if: :require_proposition_correctif?
@@ -81,6 +91,15 @@ module Reports
 
     with_options if: :require_proposition_adresse? do
       validates_presence_of :proposition_libelle_voie
+    end
+
+    with_options if: :require_proposition_date_achevement? do
+      validates_presence_of :proposition_date_achevement
+    end
+
+    with_options if: :require_proposition_construction_neuve? do
+      validates_presence_of :proposition_numero_permis
+      validates_presence_of :proposition_nature_travaux
     end
 
     private

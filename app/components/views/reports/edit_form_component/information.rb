@@ -11,8 +11,8 @@ module Views
           "correctif"          => true,
           "exoneration"        => true,
           "adresse"            => true,
-          "omission_batie"     => false,
-          "construction_neuve" => false,
+          "omission_batie"     => true,
+          "construction_neuve" => true,
           "occupation"         => false
         }.freeze
 
@@ -33,6 +33,10 @@ module Views
 
         def anomalies_disabled
           form_type_anomalies.reject { |key| ANOMALIES_ENABLED[key] }
+        end
+
+        def anomalies_exclusive?
+          @report.form_type.start_with?("creation_local_")
         end
 
         def priority_choices

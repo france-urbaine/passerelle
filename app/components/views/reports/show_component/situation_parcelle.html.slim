@@ -1,0 +1,38 @@
+.subheader-bar
+  h2.subheader
+    = svg_icon("document-text", "Icône d'illustration")
+    | Identification de la parcelle
+
+  .subheader-bar__actions
+    - if allowed_to?(:update?, @report) && @report.packing?
+      .subheader-bar__action
+        = button_component "Compléter", edit_report_path(@report, "situation_parcelle"), icon: "pencil-square", modal: true
+
+.card
+  dl.description-list
+    .description-list__row.description-list__row--with-reference
+      dt Commune
+      dd
+        = render_valid_content(:code_insee) do
+          span= @report.commune&.name
+          span= "Code INSEE : #{@report.code_insee}"
+
+    .description-list__row
+      dt Parcelle
+      dd
+        = render_valid_content(:situation_parcelle) do
+          = helpers.display_parcelle(@report.situation_parcelle)
+
+    .description-list__row.description-list__row--with-reference
+      dt Adresse de la parcelle
+      dd
+        = render_valid_content(:situation_adresse) do
+          span= situation_adresse
+          span= "Code RIVOLI : #{@report.situation_code_rivoli}"
+
+    .description-list__row.description-list__row--with-reference
+      dt Propriétaire
+      dd
+        = render_valid_content(:situation_proprietaire) do
+          span= @report.situation_proprietaire
+          span= "Numéro d'ordre : #{@report.situation_numero_ordre_proprietaire}"
