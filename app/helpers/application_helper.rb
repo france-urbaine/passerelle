@@ -5,7 +5,6 @@ module ApplicationHelper
   include CurrentOrderParams
   include FormHelper
   include FormatHelper
-  include RequestHelper
   include SVGHelper
   include TurboHelper
 end

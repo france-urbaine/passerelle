@@ -540,7 +540,7 @@ RSpec.describe Package do
 
         it "changes on creation" do
           expect { report.save! }
-            .to      change { packages[0].reload.reports_count }.from(0).to(1)
+            .to change { packages[0].reload.reports_count }.from(0).to(1)
             .and not_change { packages[1].reload.reports_count }.from(0)
         end
 
@@ -556,7 +556,7 @@ RSpec.describe Package do
           report.save!
 
           expect { report.destroy }
-            .to      change { packages[0].reload.reports_count }.from(1).to(0)
+            .to change { packages[0].reload.reports_count }.from(1).to(0)
             .and not_change { packages[1].reload.reports_count }.from(0)
         end
       end
@@ -574,7 +574,7 @@ RSpec.describe Package do
           report.completed = true
 
           expect { report.save! }
-            .to      change { packages[0].reload.reports_completed_count }.from(0).to(1)
+            .to change { packages[0].reload.reports_completed_count }.from(0).to(1)
             .and not_change { packages[1].reload.reports_completed_count }.from(0)
         end
 
@@ -582,7 +582,7 @@ RSpec.describe Package do
           report.save!
 
           expect { report.update_columns(completed: true) }
-            .to      change { packages[0].reload.reports_completed_count }.from(0).to(1)
+            .to change { packages[0].reload.reports_completed_count }.from(0).to(1)
             .and not_change { packages[1].reload.reports_completed_count }.from(0)
         end
 
@@ -591,7 +591,7 @@ RSpec.describe Package do
           report.save!
 
           expect { report.delete }
-            .to      change { packages[0].reload.reports_completed_count }.from(1).to(0)
+            .to change { packages[0].reload.reports_completed_count }.from(1).to(0)
             .and not_change { packages[1].reload.reports_completed_count }.from(0)
         end
       end
@@ -609,7 +609,7 @@ RSpec.describe Package do
           report.approved_at = Time.current
 
           expect { report.save! }
-            .to      change { packages[0].reload.reports_approved_count }.from(0).to(1)
+            .to change { packages[0].reload.reports_approved_count }.from(0).to(1)
             .and not_change { packages[1].reload.reports_approved_count }.from(0)
         end
 
@@ -617,7 +617,7 @@ RSpec.describe Package do
           report.save!
 
           expect { report.update_columns(approved_at: Time.current) }
-            .to      change { packages[0].reload.reports_approved_count }.from(0).to(1)
+            .to change { packages[0].reload.reports_approved_count }.from(0).to(1)
             .and not_change { packages[1].reload.reports_approved_count }.from(0)
         end
 
@@ -626,7 +626,7 @@ RSpec.describe Package do
           report.save!
 
           expect { report.delete }
-            .to      change { packages[0].reload.reports_approved_count }.from(1).to(0)
+            .to change { packages[0].reload.reports_approved_count }.from(1).to(0)
             .and not_change { packages[1].reload.reports_approved_count }.from(0)
         end
       end
@@ -644,7 +644,7 @@ RSpec.describe Package do
           report.rejected_at = Time.current
 
           expect { report.save! }
-            .to      change { packages[0].reload.reports_rejected_count }.from(0).to(1)
+            .to change { packages[0].reload.reports_rejected_count }.from(0).to(1)
             .and not_change { packages[1].reload.reports_rejected_count }.from(0)
         end
 
@@ -652,7 +652,7 @@ RSpec.describe Package do
           report.save!
 
           expect { report.update_columns(rejected_at: Time.current) }
-            .to      change { packages[0].reload.reports_rejected_count }.from(0).to(1)
+            .to change { packages[0].reload.reports_rejected_count }.from(0).to(1)
             .and not_change { packages[1].reload.reports_rejected_count }.from(0)
         end
 
@@ -661,7 +661,7 @@ RSpec.describe Package do
           report.save!
 
           expect { report.delete }
-            .to      change { packages[0].reload.reports_rejected_count }.from(1).to(0)
+            .to change { packages[0].reload.reports_rejected_count }.from(1).to(0)
             .and not_change { packages[1].reload.reports_rejected_count }.from(0)
         end
       end
@@ -679,7 +679,7 @@ RSpec.describe Package do
           report.debated_at = Time.current
 
           expect { report.save! }
-            .to      change { packages[0].reload.reports_debated_count }.from(0).to(1)
+            .to change { packages[0].reload.reports_debated_count }.from(0).to(1)
             .and not_change { packages[1].reload.reports_debated_count }.from(0)
         end
 
@@ -687,7 +687,7 @@ RSpec.describe Package do
           report.save!
 
           expect { report.update_columns(debated_at: Time.current) }
-            .to      change { packages[0].reload.reports_debated_count }.from(0).to(1)
+            .to change { packages[0].reload.reports_debated_count }.from(0).to(1)
             .and not_change { packages[1].reload.reports_debated_count }.from(0)
         end
 
@@ -696,7 +696,7 @@ RSpec.describe Package do
           report.save!
 
           expect { report.delete }
-            .to      change { packages[0].reload.reports_debated_count }.from(1).to(0)
+            .to change { packages[0].reload.reports_debated_count }.from(1).to(0)
             .and not_change { packages[1].reload.reports_debated_count }.from(0)
         end
       end

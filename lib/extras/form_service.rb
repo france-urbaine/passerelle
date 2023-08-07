@@ -63,8 +63,8 @@ class FormService
     handle_transaction_rollback(e)
   end
 
-  def save_record(**options)
-    record.save!(**options, validate: false)
+  def save_record(**)
+    record.save!(**, validate: false)
   end
 
   def validate_record

@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
 module FormatHelper
-  def display_count(count_or_relation, *args, **options)
+  def display_count(count_or_relation, ...)
     case count_or_relation
     when Integer                then count = count_or_relation
     when ActiveRecord::Relation then count = count_or_relation.size
     else raise TypeError, "invalid count"
     end
 
-    inflections = InflectionsOptions.new(*args, **options)
+    inflections = InflectionsOptions.new(...)
 
     capture do
       case count

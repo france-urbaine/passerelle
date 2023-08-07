@@ -140,14 +140,14 @@ RSpec.describe Region do
 
         it "changes on creation" do
           expect { commune }
-            .to      change { regions[0].reload.communes_count }.from(0).to(1)
+            .to change { regions[0].reload.communes_count }.from(0).to(1)
             .and not_change { regions[1].reload.communes_count }.from(0)
         end
 
         it "changes on deletion" do
           commune
           expect { commune.destroy }
-            .to      change { regions[0].reload.communes_count }.from(1).to(0)
+            .to change { regions[0].reload.communes_count }.from(1).to(0)
             .and not_change { regions[1].reload.communes_count }.from(0)
         end
 
@@ -162,7 +162,7 @@ RSpec.describe Region do
       describe "#epcis_count" do
         it do
           expect { create(:epci, departement: departements[0]) }
-            .to      change { regions[0].reload.epcis_count }.from(0).to(1)
+            .to change { regions[0].reload.epcis_count }.from(0).to(1)
             .and not_change { regions[1].reload.epcis_count }.from(0)
         end
 
@@ -176,7 +176,7 @@ RSpec.describe Region do
       describe "#departements_count" do
         it do
           expect { create(:departement, region: regions[0]) }
-            .to      change { regions[0].reload.departements_count }.from(0).to(1)
+            .to change { regions[0].reload.departements_count }.from(0).to(1)
             .and not_change { regions[1].reload.departements_count }.from(0)
         end
       end
@@ -184,7 +184,7 @@ RSpec.describe Region do
       describe "#ddfips_count" do
         it do
           expect { create(:ddfip, departement: departements[0]) }
-            .to      change { regions[0].reload.ddfips_count }.from(0).to(1)
+            .to change { regions[0].reload.ddfips_count }.from(0).to(1)
             .and not_change { regions[1].reload.ddfips_count }.from(0)
         end
       end
@@ -193,14 +193,14 @@ RSpec.describe Region do
         it do
           commune = create(:commune, departement: departements[0])
           expect { create(:collectivity, :commune, territory: commune) }
-            .to      change { regions[0].reload.collectivities_count }.from(0).to(1)
+            .to change { regions[0].reload.collectivities_count }.from(0).to(1)
             .and not_change { regions[1].reload.collectivities_count }.from(0)
         end
 
         it do
           epci = create(:commune, :with_epci, departement: departements[0]).epci
           expect { create(:collectivity, :epci, territory: epci) }
-            .to      change { regions[0].reload.collectivities_count }.from(0).to(1)
+            .to change { regions[0].reload.collectivities_count }.from(0).to(1)
             .and not_change { regions[1].reload.collectivities_count }.from(0)
         end
 
@@ -213,13 +213,13 @@ RSpec.describe Region do
 
         it do
           expect { create(:collectivity, :departement, territory: departements[0]) }
-            .to      change { regions[0].reload.collectivities_count }.from(0).to(1)
+            .to change { regions[0].reload.collectivities_count }.from(0).to(1)
             .and not_change { regions[1].reload.collectivities_count }.from(0)
         end
 
         it do
           expect { create(:collectivity, :region, territory: departements[0].region) }
-            .to      change { regions[0].reload.collectivities_count }.from(0).to(1)
+            .to change { regions[0].reload.collectivities_count }.from(0).to(1)
             .and not_change { regions[1].reload.collectivities_count }.from(0)
         end
       end

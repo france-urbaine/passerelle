@@ -64,8 +64,8 @@ module Views
         end
       end
 
-      def t(value, **options)
-        I18n.t(value, **options, default: "") if value.present?
+      def t(value, **)
+        I18n.t(value, **, default: "") if value.present?
       end
     end
   end

@@ -436,28 +436,28 @@ RSpec.describe DDFIP do
 
         it "changes on creation" do
           expect { user }
-            .to      change { ddfips[0].reload.users_count }.from(0).to(1)
+            .to change { ddfips[0].reload.users_count }.from(0).to(1)
             .and not_change { ddfips[1].reload.users_count }.from(0)
         end
 
         it "changes on deletion" do
           user
           expect { user.destroy }
-            .to      change { ddfips[0].reload.users_count }.from(1).to(0)
+            .to change { ddfips[0].reload.users_count }.from(1).to(0)
             .and not_change { ddfips[1].reload.users_count }.from(0)
         end
 
         it "changes when discarding" do
           user
           expect { user.discard }
-            .to      change { ddfips[0].reload.users_count }.from(1).to(0)
+            .to change { ddfips[0].reload.users_count }.from(1).to(0)
             .and not_change { ddfips[1].reload.users_count }.from(0)
         end
 
         it "changes when undiscarding" do
           user.discard
           expect { user.undiscard }
-            .to      change { ddfips[0].reload.users_count }.from(0).to(1)
+            .to change { ddfips[0].reload.users_count }.from(0).to(1)
             .and not_change { ddfips[1].reload.users_count }.from(0)
         end
 
@@ -522,14 +522,14 @@ RSpec.describe DDFIP do
 
         it "changes on creation" do
           expect { office }
-            .to      change { ddfips[0].reload.offices_count }.from(0).to(1)
+            .to change { ddfips[0].reload.offices_count }.from(0).to(1)
             .and not_change { ddfips[1].reload.offices_count }.from(0)
         end
 
         it "changes on deletion" do
           office
           expect { office.destroy }
-            .to      change { ddfips[0].reload.offices_count }.from(1).to(0)
+            .to change { ddfips[0].reload.offices_count }.from(1).to(0)
             .and not_change { ddfips[1].reload.offices_count }.from(0)
         end
 
@@ -562,7 +562,7 @@ RSpec.describe DDFIP do
           report
 
           expect { report.package.transmit! }
-            .to      change { ddfips[0].reload.reports_count }.from(0).to(1)
+            .to change { ddfips[0].reload.reports_count }.from(0).to(1)
             .and not_change { ddfips[1].reload.reports_count }.from(0)
         end
 
@@ -578,7 +578,7 @@ RSpec.describe DDFIP do
           report.package.touch(:transmitted_at)
 
           expect { report.discard }
-            .to      change { ddfips[0].reload.reports_count }.from(1).to(0)
+            .to change { ddfips[0].reload.reports_count }.from(1).to(0)
             .and not_change { ddfips[1].reload.reports_count }.from(0)
         end
 
@@ -586,7 +586,7 @@ RSpec.describe DDFIP do
           report.discard and report.package.transmit!
 
           expect { report.undiscard }
-            .to      change { ddfips[0].reload.reports_count }.from(0).to(1)
+            .to change { ddfips[0].reload.reports_count }.from(0).to(1)
             .and not_change { ddfips[1].reload.reports_count }.from(0)
         end
 
@@ -594,7 +594,7 @@ RSpec.describe DDFIP do
           report.package.transmit!
 
           expect { report.destroy }
-            .to      change { ddfips[0].reload.reports_count }.from(1).to(0)
+            .to change { ddfips[0].reload.reports_count }.from(1).to(0)
             .and not_change { ddfips[1].reload.reports_count }.from(0)
         end
 
@@ -602,7 +602,7 @@ RSpec.describe DDFIP do
           report.package.transmit!
 
           expect { report.package.discard }
-            .to      change { ddfips[0].reload.reports_count }.from(1).to(0)
+            .to change { ddfips[0].reload.reports_count }.from(1).to(0)
             .and not_change { ddfips[1].reload.reports_count }.from(0)
         end
 
@@ -610,7 +610,7 @@ RSpec.describe DDFIP do
           report.package.touch(:transmitted_at, :discarded_at)
 
           expect { report.package.undiscard }
-            .to      change { ddfips[0].reload.reports_count }.from(0).to(1)
+            .to change { ddfips[0].reload.reports_count }.from(0).to(1)
             .and not_change { ddfips[1].reload.reports_count }.from(0)
         end
 
@@ -618,7 +618,7 @@ RSpec.describe DDFIP do
           report.package.transmit!
 
           expect { report.package.delete }
-            .to      change { ddfips[0].reload.reports_count }.from(1).to(0)
+            .to change { ddfips[0].reload.reports_count }.from(1).to(0)
             .and not_change { ddfips[1].reload.reports_count }.from(0)
         end
       end
@@ -642,7 +642,7 @@ RSpec.describe DDFIP do
           report.package.touch(:transmitted_at)
 
           expect { report.approve! }
-            .to      change { ddfips[0].reload.reports_approved_count }.from(0).to(1)
+            .to change { ddfips[0].reload.reports_approved_count }.from(0).to(1)
             .and not_change { ddfips[1].reload.reports_approved_count }.from(0)
         end
 
@@ -650,7 +650,7 @@ RSpec.describe DDFIP do
           report.approve! and report.package.touch(:transmitted_at)
 
           expect { report.discard }
-            .to      change { ddfips[0].reload.reports_approved_count }.from(1).to(0)
+            .to change { ddfips[0].reload.reports_approved_count }.from(1).to(0)
             .and not_change { ddfips[1].reload.reports_approved_count }.from(0)
         end
 
@@ -658,7 +658,7 @@ RSpec.describe DDFIP do
           report.touch(:approved_at, :discarded_at) and report.package.touch(:transmitted_at)
 
           expect { report.undiscard }
-            .to      change { ddfips[0].reload.reports_approved_count }.from(0).to(1)
+            .to change { ddfips[0].reload.reports_approved_count }.from(0).to(1)
             .and not_change { ddfips[1].reload.reports_approved_count }.from(0)
         end
 
@@ -666,7 +666,7 @@ RSpec.describe DDFIP do
           report.touch(:approved_at) and report.package.touch(:transmitted_at)
 
           expect { report.delete }
-            .to      change { ddfips[0].reload.reports_approved_count }.from(1).to(0)
+            .to change { ddfips[0].reload.reports_approved_count }.from(1).to(0)
             .and not_change { ddfips[1].reload.reports_approved_count }.from(0)
         end
       end
@@ -690,7 +690,7 @@ RSpec.describe DDFIP do
           report.package.touch(:transmitted_at)
 
           expect { report.reject! }
-            .to      change { ddfips[0].reload.reports_rejected_count }.from(0).to(1)
+            .to change { ddfips[0].reload.reports_rejected_count }.from(0).to(1)
             .and not_change { ddfips[1].reload.reports_rejected_count }.from(0)
         end
 
@@ -698,7 +698,7 @@ RSpec.describe DDFIP do
           report.reject! and report.package.touch(:transmitted_at)
 
           expect { report.discard }
-            .to      change { ddfips[0].reload.reports_rejected_count }.from(1).to(0)
+            .to change { ddfips[0].reload.reports_rejected_count }.from(1).to(0)
             .and not_change { ddfips[1].reload.reports_rejected_count }.from(0)
         end
 
@@ -706,7 +706,7 @@ RSpec.describe DDFIP do
           report.touch(:rejected_at, :discarded_at) and report.package.touch(:transmitted_at)
 
           expect { report.undiscard }
-            .to      change { ddfips[0].reload.reports_rejected_count }.from(0).to(1)
+            .to change { ddfips[0].reload.reports_rejected_count }.from(0).to(1)
             .and not_change { ddfips[1].reload.reports_rejected_count }.from(0)
         end
 
@@ -714,7 +714,7 @@ RSpec.describe DDFIP do
           report.touch(:rejected_at) and report.package.touch(:transmitted_at)
 
           expect { report.delete }
-            .to      change { ddfips[0].reload.reports_rejected_count }.from(1).to(0)
+            .to change { ddfips[0].reload.reports_rejected_count }.from(1).to(0)
             .and not_change { ddfips[1].reload.reports_rejected_count }.from(0)
         end
       end
@@ -738,7 +738,7 @@ RSpec.describe DDFIP do
           report.package.touch(:transmitted_at)
 
           expect { report.debate! }
-            .to      change { ddfips[0].reload.reports_debated_count }.from(0).to(1)
+            .to change { ddfips[0].reload.reports_debated_count }.from(0).to(1)
             .and not_change { ddfips[1].reload.reports_debated_count }.from(0)
         end
 
@@ -746,7 +746,7 @@ RSpec.describe DDFIP do
           report.debate! and report.package.touch(:transmitted_at)
 
           expect { report.discard }
-            .to      change { ddfips[0].reload.reports_debated_count }.from(1).to(0)
+            .to change { ddfips[0].reload.reports_debated_count }.from(1).to(0)
             .and not_change { ddfips[1].reload.reports_debated_count }.from(0)
         end
 
@@ -754,7 +754,7 @@ RSpec.describe DDFIP do
           report.touch(:debated_at, :discarded_at) and report.package.touch(:transmitted_at)
 
           expect { report.undiscard }
-            .to      change { ddfips[0].reload.reports_debated_count }.from(0).to(1)
+            .to change { ddfips[0].reload.reports_debated_count }.from(0).to(1)
             .and not_change { ddfips[1].reload.reports_debated_count }.from(0)
         end
 
@@ -762,7 +762,7 @@ RSpec.describe DDFIP do
           report.touch(:debated_at) and report.package.touch(:transmitted_at)
 
           expect { report.delete }
-            .to      change { ddfips[0].reload.reports_debated_count }.from(1).to(0)
+            .to change { ddfips[0].reload.reports_debated_count }.from(1).to(0)
             .and not_change { ddfips[1].reload.reports_debated_count }.from(0)
         end
       end

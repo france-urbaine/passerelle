@@ -60,11 +60,11 @@ module Datatable
     end
 
     class Pagination < ApplicationViewComponent
-      def initialize(datatable, pagy, *args, options: true, **kwargs)
+      def initialize(datatable, pagy, *, options: true, **)
         @datatable   = datatable
         @pagy        = pagy
         @options     = options
-        @inflections = InflectionsOptions.new(*args, **kwargs) || InflectionsOptions.new(@datatable.records.model)
+        @inflections = InflectionsOptions.new(*, **) || InflectionsOptions.new(@datatable.records.model)
         super()
       end
 

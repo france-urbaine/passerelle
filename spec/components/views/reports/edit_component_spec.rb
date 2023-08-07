@@ -7,8 +7,8 @@ RSpec.describe Views::Reports::EditComponent, type: :component do
 
   before { sign_in_as(organization: collectivity) }
 
-  def render_with_report(*args, **options)
-    report = build_stubbed(:report, *args, **options, collectivity: collectivity)
+  def render_with_report(*, **)
+    report = build_stubbed(:report, *, collectivity:, **)
     render_inline described_class.new(report, fields)
     report
   end

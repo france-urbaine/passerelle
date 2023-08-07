@@ -238,7 +238,7 @@ RSpec.describe User do
 
         it "changes when users is assigned to the office" do
           expect { office.users << users[0] }
-            .to      change { users[0].reload.offices_count }.from(0).to(1)
+            .to change { users[0].reload.offices_count }.from(0).to(1)
             .and not_change { users[1].reload.offices_count }.from(0)
         end
 
@@ -246,7 +246,7 @@ RSpec.describe User do
           office.users << users[0]
 
           expect { office.users.delete(users[0]) }
-            .to      change { users[0].reload.offices_count }.from(1).to(0)
+            .to change { users[0].reload.offices_count }.from(1).to(0)
             .and not_change { users[1].reload.offices_count }.from(0)
         end
 
@@ -254,8 +254,8 @@ RSpec.describe User do
           office.users << users[0]
 
           expect { office.users << users[1] }
-            .to  not_change { users[0].reload.offices_count }.from(1)
-            .and     change { users[1].reload.offices_count }.from(0).to(1)
+            .to not_change { users[0].reload.offices_count }.from(1)
+            .and change { users[1].reload.offices_count }.from(0).to(1)
         end
       end
     end

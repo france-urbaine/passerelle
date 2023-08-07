@@ -7,9 +7,10 @@ RSpec.describe Views::Reports::ShowComponent, type: :component do
 
   before { sign_in_as(organization: collectivity) }
 
-  def render_with_report(*args, **options)
-    report = build_stubbed(:report, *args, **options, collectivity: collectivity)
+  def render_with_report(*, **)
+    report = build_stubbed(:report, *, collectivity:, **)
     render_inline described_class.new(report)
+    report
   end
 
   it "composes report details of a new `evaluation_local_habitation`" do
