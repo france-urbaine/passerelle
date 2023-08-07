@@ -1,3 +1,3 @@
 = template_frame_component(src: @referrer_path) do |frame|
   - frame.with_modal do
-    = render Views::Reports::Edit::Component.new(@report, params.require(:form), redirection_path: @referrer_path)
+    = render Views::Reports::EditComponent.new(@report, params.require(:form), redirection_path: @referrer_path)
