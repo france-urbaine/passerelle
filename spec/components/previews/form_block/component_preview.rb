@@ -7,30 +7,51 @@ module FormBlock
   # @display width "medium"
   #
   class ComponentPreview < ViewComponent::Preview
-    # @!group Inputs
+    # @label Text inputs
     # @display width "small"
+    #
+    def text_inputs; end
+
     # --------------------------------------------------------------------------
-    #
-    # @label Text fields
-    #
-    def text_fields; end
 
-    # @label Select options
+    # @label Selectors
+    # @display width "small"
     #
-    def select; end
+    def selectors; end
 
-    # @label Checkbox
+    # --------------------------------------------------------------------------
+
+    # @!group Check boxes
+    # @display width "small"
+    #
+    # @label Single checkbox
     #
     def check_box; end
 
-    # @label Radio button
+    # @label Multiple checkboxes
     #
-    def radio_button; end
+    def check_boxes; end
     #
     # @!endgroup
 
-    # @!group Input messages
     # --------------------------------------------------------------------------
+
+    # @!group Radio buttons
+    # @display width "small"
+    #
+    # @label Single radio buttons
+    #
+    def radio_button; end
+
+    # @label Multiple radio buttons
+    #
+    def radio_buttons; end
+    #
+    # @!endgroup
+
+    # --------------------------------------------------------------------------
+
+    # @!group Input messages
     #
     # @label Text field with hint message
     #
@@ -54,12 +75,16 @@ module FormBlock
     #
     # @!endgroup
 
-    # @!group Autocompletion
     # --------------------------------------------------------------------------
-    # @label Autocompletion field
+
+    # @label Autocompletion
     #
     def autocompletion; end
+
+    # --------------------------------------------------------------------------
+
+    # @label Content switcher
     #
-    # @!endgroup
+    def content_switcher; end
   end
 end

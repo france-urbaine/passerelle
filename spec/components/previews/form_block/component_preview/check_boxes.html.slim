@@ -1,0 +1,4 @@
+= fields model: User.new do |form|
+  = form.block :office_ids do
+    = form.label :office_ids, "Guichets"
+    = form.checkboxes_component :office_ids, Office.take(5)

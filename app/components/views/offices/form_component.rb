@@ -41,10 +41,7 @@ module Views
 
       def competences_choice
         Office::COMPETENCES.map do |value|
-          [
-            I18n.t(value, scope: "enum.competence"),
-            value
-          ]
+          [value, I18n.t(value, scope: "enum.competence")]
         end
       end
     end

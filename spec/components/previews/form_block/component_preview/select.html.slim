@@ -1,8 +1,0 @@
-= fields model: User.new do |form|
-  = form.block :organization_id do
-    = form.label :organization_id, "Select"
-    = form.select :organisation_id, Collectivity.pluck(:name, :id), prompt: ""
-
-  = form.block :created_at do
-    = form.label :created_at, "Date"
-    = form.date_field :created_at

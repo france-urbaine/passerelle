@@ -1,0 +1,45 @@
+= modal_component do |modal|
+  - modal.with_header do
+    | Identification de la parcelle
+
+  - modal.with_form(model: @report) do |form|
+    div
+      = form.block :code_insee do
+        = form.label :code_insee, "Commune"
+        = form.select :code_insee, code_insee_choices, prompt: "Sélectionnez une commune"
+
+      = form.block :situation_parcelle do
+        = form.label :situation_parcelle, "Parcelle"
+        = form.text_field :situation_parcelle
+
+    h2.subheader.px-0
+      | Adresse du local
+
+    .grid.gap-x-4.grid-cols-3
+      = form.block :situation_numero_voie do
+        = form.label :situation_numero_voie, "Numéro de voie"
+        = form.text_field :situation_numero_voie
+
+      = form.block :situation_indice_repetition do
+        = form.label :situation_indice_repetition, "Indice de répétition (bis, ter, ...)"
+        = form.text_field :situation_indice_repetition
+
+      = form.block :situation_code_rivoli, class: "col-start-1" do
+        = form.label :situation_code_rivoli, "Code RIVOLI"
+        = form.text_field :situation_code_rivoli
+
+      = form.block :situation_libelle_voie, class: "col-span-2" do
+        = form.label :situation_libelle_voie, "Libéllé de voie"
+        = form.text_field :situation_libelle_voie
+
+    h2.subheader.px-0
+      | Propriétaire
+
+    .grid.gap-x-4.grid-cols-3
+      = form.block :situation_numero_ordre_proprietaire do
+        = form.label :situation_numero_ordre_proprietaire, "Numéro d'ordre"
+        = form.text_field :situation_numero_ordre_proprietaire
+
+      = form.block :situation_proprietaire, class: "col-span-2" do
+        = form.label :situation_proprietaire, "Nom du propriétaire"
+        = form.text_field :situation_proprietaire

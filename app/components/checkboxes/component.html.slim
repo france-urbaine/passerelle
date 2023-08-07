@@ -1,6 +1,6 @@
-.checkboxes-collection( data-controller="selection" )
+.choices-collection( data-controller="selection" )
   - if @collection.size > 4
-    .checkboxes-collection__checkbox.checkboxes-collection__checkall
+    .choices-collection__input.choices-collection__checkall
       input(
         id="#{@object_name}_#{@method}_check_all"
         type="checkbox"
@@ -10,7 +10,7 @@
       label( for="#{@object_name}_#{@method}_check_all" )
         | Tout sélectionner
 
-  = collection_check_boxes(@object_name, @method, @collection, *@other_args) do |b|
-    .checkboxes-collection__checkbox
+  = collection_check_boxes(@object_name, @method, @collection, @value_method, @text_method, @options) do |b|
+    .choices-collection__input
       = b.check_box data: { selection_target: "checkbox" }
       = b.label

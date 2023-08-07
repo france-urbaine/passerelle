@@ -53,7 +53,7 @@
       - else
         = form.block :office_ids do
           = form.label :office_ids
-          = form.checkboxes_component :office_ids, office_ids_choices, :id, :name
+          = form.checkboxes_component :office_ids, office_ids_choices
 
     - if allowed_to_assign_organization_admin?
       = form.block :organization_admin do |block|

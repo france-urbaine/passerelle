@@ -1,0 +1,77 @@
+= modal_component do |modal|
+  - modal.with_header do
+    | Identification MAJIC
+
+  - modal.with_form(model: @report) do |form|
+    div
+      = form.block :situation_annee_majic do
+        = form.label :situation_annee_majic, "Année du fichier MAJIC"
+        = form.text_field :situation_annee_majic
+
+      = form.block :code_insee do
+        = form.label :code_insee, "Commune"
+        = form.select :code_insee, code_insee_choices, prompt: "Sélectionnez une commune"
+
+      = form.block :situation_invariant do
+        = form.label :situation_invariant, "Invariant"
+        = form.text_field :situation_invariant
+
+      = form.block :situation_parcelle do
+        = form.label :situation_parcelle, "Parcelle"
+        = form.text_field :situation_parcelle
+
+    h2.subheader.px-0
+      | Adresse du local
+
+    .grid.gap-x-4.grid-cols-3
+      = form.block :situation_numero_voie do
+        = form.label :situation_numero_voie, "Numéro de voie"
+        = form.text_field :situation_numero_voie
+
+      = form.block :situation_indice_repetition do
+        = form.label :situation_indice_repetition, "Indice de répétition (bis, ter, ...)"
+        = form.text_field :situation_indice_repetition
+
+      = form.block :situation_code_rivoli, class: "col-start-1" do
+        = form.label :situation_code_rivoli, "Code RIVOLI"
+        = form.text_field :situation_code_rivoli
+
+      = form.block :situation_libelle_voie, class: "col-span-2" do
+        = form.label :situation_libelle_voie, "Libellé de voie"
+        = form.text_field :situation_libelle_voie
+
+    h2.subheader.px-0
+      | Situation
+
+    .grid.gap-x-4.grid-cols-3
+      = form.block :situation_numero_batiment do
+        = form.label :situation_numero_batiment, "Bâtiment"
+        = form.text_field :situation_numero_batiment
+
+      = form.block :situation_numero_escalier do
+        = form.label :situation_numero_escalier, "Escalier "
+        = form.text_field :situation_numero_escalier
+
+      = form.block :situation_numero_niveau do
+        = form.label :situation_numero_niveau, "Etage"
+        = form.text_field :situation_numero_niveau
+
+      = form.block :situation_numero_porte do
+        = form.label :situation_numero_porte, "Porte"
+        = form.text_field :situation_numero_porte
+
+      = form.block :situation_numero_ordre_porte do
+        = form.label :situation_numero_ordre_porte, "Numéro d'ordre"
+        = form.text_field :situation_numero_ordre_porte
+
+    h2.subheader.px-0
+      | Propriétaire
+
+    .grid.gap-x-4.grid-cols-3
+      = form.block :situation_numero_ordre_proprietaire do
+        = form.label :situation_numero_ordre_proprietaire, "Numéro d'ordre"
+        = form.text_field :situation_numero_ordre_proprietaire
+
+      = form.block :situation_proprietaire, class: "col-span-2" do
+        = form.label :situation_proprietaire, "Nom du propriétaire"
+        = form.text_field :situation_proprietaire

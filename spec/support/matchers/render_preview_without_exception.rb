@@ -6,8 +6,13 @@ module Matchers
 
     matcher :render_preview_without_exception do |expected_method|
       match do |actual|
-        render_preview(expected_method, from: actual.class)
-        true
+        if actual.class <= ViewComponent::Preview
+          render_preview(expected_method, from: actual.class)
+          true
+        else
+          pending "TODO: handle Lookbook::Preview subclasses"
+          false
+        end
       end
     end
   end

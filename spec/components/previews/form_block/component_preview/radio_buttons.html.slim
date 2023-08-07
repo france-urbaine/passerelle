@@ -1,0 +1,4 @@
+= fields model: User.new do |form|
+  = form.block :otp_method do
+    = form.label :organization_id, "Custom label"
+    = form.radio_buttons_component :organization_id, Publisher.take(5)
