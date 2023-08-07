@@ -44,19 +44,6 @@ module Views
           def situation_date_mutation
             parse_date(@report.situation_date_mutation) || @report.situation_date_mutation
           end
-
-          def parse_date(date)
-            return unless date&.match(ApplicationRecord::DATE_REGEXP)
-
-            # The API might send pseudo-date without days or months
-            # This helper ignores missing information to return a full date
-            #
-            # We don't really care because date edited through this form should have been
-            # filled by datefield inputs and be full-date.
-            #
-            args = $LAST_MATCH_INFO.values_at(:year, :month, :day).compact.map(&:to_i)
-            Date.new(*args)
-          end
         end
       end
     end

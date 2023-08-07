@@ -5,7 +5,10 @@
   - modal.with_form(model: @report) do |form|
     = form.block :situation_date_mutation do
       = form.label :situation_date_mutation, "Date de mutation"
-      = form.date_field :situation_date_mutation, value: situation_date_mutation
+      - if situation_date_mutation.is_a?(String) && situation_date_mutation.present?
+        = form.text_field :situation_date_mutation
+      - else
+        = form.date_field :situation_date_mutation, value: situation_date_mutation
 
     = form.block :situation_affectation do
       = form.label :situation_affectation, "Affectation"
