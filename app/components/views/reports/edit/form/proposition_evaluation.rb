@@ -5,46 +5,26 @@ module Views
     module Edit
       class Form
         class PropositionEvaluation < self
-          def controller_html_attributes
-            {
-              data: {
-                controller: "report-form",
-                report_form_affectation_habitation_value: I18n.t("enum.local_habitation_affectation").keys,
-                report_form_affectation_professionnel_value: I18n.t("enum.local_professionnel_affectation").keys
-              }
+          SWITCH_SEPARATOR = ","
+
+          def habitation_fields(&)
+            data = {
+              switch_target:          "target",
+              switch_value:           I18n.t("enum.local_habitation_affectation").keys.join(SWITCH_SEPARATOR),
+              switch_value_separator: SWITCH_SEPARATOR
             }
+
+            tag.div(data:, hidden: !require_proposition_evaluation_habitation?, &)
           end
 
-          def affectation_input_html_attributes
-            { data: { action: "change->report-form#toggleAffectation", report_form_target: "affectationInput" } }
-          end
-
-          def habitation_html_attributes
-            {
-              data: { report_form_target: "habitation" },
-              hidden: !require_proposition_evaluation_habitation?
+          def professionnel_fields(&)
+            data = {
+              switch_target:          "target",
+              switch_value:           I18n.t("enum.local_professionnel_affectation").keys.join(SWITCH_SEPARATOR),
+              switch_value_separator: SWITCH_SEPARATOR
             }
-          end
 
-          def professionnel_html_attributes
-            {
-              data: { report_form_target: "professionnel" },
-              hidden: !require_proposition_evaluation_professionnel?
-            }
-          end
-
-          def habitation_input_html_attributes
-            {
-              data: { report_form_target: "habitationInput" },
-              disabled: !require_proposition_evaluation_habitation?
-            }
-          end
-
-          def professionnel_input_html_attributes
-            {
-              data: { report_form_target: "professionnelInput" },
-              disabled: !require_proposition_evaluation_professionnel?
-            }
+            tag.div(data:, hidden: !require_proposition_evaluation_professionnel?, &)
           end
 
           def affectation_choices

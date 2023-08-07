@@ -12,14 +12,17 @@ module FormBlock
     #
     def text_inputs; end
 
+    # --------------------------------------------------------------------------
+
     # @label Selectors
     # @display width "small"
     #
     def selectors; end
 
+    # --------------------------------------------------------------------------
+
     # @!group Check boxes
     # @display width "small"
-    # --------------------------------------------------------------------------
     #
     # @label Single checkbox
     #
@@ -31,9 +34,10 @@ module FormBlock
     #
     # @!endgroup
 
+    # --------------------------------------------------------------------------
+
     # @!group Radio buttons
     # @display width "small"
-    # --------------------------------------------------------------------------
     #
     # @label Single radio buttons
     #
@@ -45,8 +49,9 @@ module FormBlock
     #
     # @!endgroup
 
-    # @!group Input messages
     # --------------------------------------------------------------------------
+
+    # @!group Input messages
     #
     # @label Text field with hint message
     #
@@ -70,12 +75,16 @@ module FormBlock
     #
     # @!endgroup
 
-    # @!group Autocompletion
     # --------------------------------------------------------------------------
-    # @label Autocompletion field
+
+    # @label Autocompletion
     #
     def autocompletion; end
+
+    # --------------------------------------------------------------------------
+
+    # @label Content switcher
     #
-    # @!endgroup
+    def content_switcher; end
   end
 end
