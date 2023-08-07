@@ -10,17 +10,17 @@ module Views
 
         def proposition_nature
           if require_proposition_evaluation_habitation?
-            t(@report.proposition_nature, scope: "enum.local_habitation_nature", default: "")
+            t(@report.proposition_nature, scope: "enum.local_habitation_nature")
           elsif require_proposition_evaluation_professionnel?
-            t(@report.proposition_nature, scope: "enum.local_professionnel_nature", default: "")
+            t(@report.proposition_nature, scope: "enum.local_professionnel_nature")
           end
         end
 
         def proposition_categorie
           if require_proposition_evaluation_habitation?
-            t(@report.proposition_categorie, scope: "enum.local_habitation_categorie", default: "")
+            t(@report.proposition_categorie, scope: "enum.local_habitation_categorie")
           elsif require_proposition_evaluation_professionnel?
-            t(@report.proposition_categorie, scope: "enum.local_professionnel_categorie", default: "")
+            t(@report.proposition_categorie, scope: "enum.local_professionnel_categorie")
           end
         end
 
@@ -34,10 +34,6 @@ module Views
 
         def proposition_coefficient_situation_particuliere
           t(@report.proposition_coefficient_situation_particuliere, scope: "enum.coefficient_situation")
-        end
-
-        def t(value, **options)
-          I18n.t(value, **options) if value.present?
         end
       end
     end

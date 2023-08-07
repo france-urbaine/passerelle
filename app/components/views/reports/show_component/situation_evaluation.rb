@@ -13,12 +13,10 @@ module Views
         end
 
         def situation_categorie
-          return if @report.situation_categorie.blank?
-
           if require_situation_evaluation_habitation?
-            I18n.t(@report.situation_categorie, scope: "enum.local_habitation_categorie")
+            t(@report.situation_categorie, scope: "enum.local_habitation_categorie")
           elsif require_situation_evaluation_professionnel?
-            I18n.t(@report.situation_categorie, scope: "enum.local_professionnel_categorie")
+            t(@report.situation_categorie, scope: "enum.local_professionnel_categorie")
           end
         end
 
@@ -32,10 +30,6 @@ module Views
 
         def situation_coefficient_situation_particuliere
           t(@report.situation_coefficient_situation_particuliere, scope: "enum.coefficient_situation")
-        end
-
-        def t(value, **options)
-          I18n.t(value, **options) if value.present?
         end
       end
     end
