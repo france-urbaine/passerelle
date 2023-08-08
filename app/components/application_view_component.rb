@@ -19,7 +19,17 @@ class ApplicationViewComponent < ViewComponent::Base
   delegate :svg_icon, :authorized_link_to, to: :helpers
 
   # Other components helpers
-  delegate :button_component, :card_component, :modal_component, :datatable_component,
+
+  delegate :template_modal_component, :template_content_component,
+    :button_component, :card_component, :modal_component, :datatable_component,
     :form_block_component, :checkboxes_component, :radio_buttons_component,
     to: :helpers
+
+  def turbo_frame_request_id
+    request.headers["Turbo-Frame"]
+  end
+
+  def turbo_frame_request?
+    turbo_frame_request_id.present?
+  end
 end

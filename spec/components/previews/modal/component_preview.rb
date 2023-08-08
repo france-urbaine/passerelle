@@ -5,6 +5,8 @@ module Modal
   # @display frame "modal"
   #
   class ComponentPreview < ViewComponent::Preview
+    DEFAULT_REFERRER = "/rails/view_components/samples/turbo/card"
+
     # @label Default
     #
     def default; end
@@ -17,9 +19,14 @@ module Modal
     #
     def with_actions; end
 
-    # @label Redirection after closing (noJS)
+    # @label With referrer
+    # @param referrer text "Referrer URL"
     #
-    def with_redirection; end
+    # `referrer` option allows you to perform a redirection when the modal is closed and Javascript is disabled.
+    #
+    def with_referrer(referrer: DEFAULT_REFERRER)
+      render_with_template(locals: { referrer: })
+    end
 
     # @label With a form
     #

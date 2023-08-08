@@ -18,7 +18,7 @@ module Modal
 
     renders_one  :submit_action, "SubmitAction"
     renders_one  :close_action, lambda { |*args, **options|
-      CloseAction.new(*args, **options, href: redirection_path)
+      CloseAction.new(*args, **options, href: referrer)
     }
 
     renders_many :actions,       "Action"
@@ -27,11 +27,11 @@ module Modal
 
     renders_many :hidden_fields, HiddenField::Component
 
-    attr_reader :redirection_path
+    attr_reader :referrer
     attr_accessor :form_options
 
-    def initialize(redirection_path: nil)
-      @redirection_path = redirection_path
+    def initialize(referrer: nil)
+      @referrer = referrer
       super()
     end
 
@@ -40,7 +40,7 @@ module Modal
     def close_button
       helpers.button_component(
         icon: "x-mark",
-        href: redirection_path,
+        href: referrer,
         class: "modal__close-button",
         aria: { label: "Fermer la fenêtre de dialogue" },
         data: {

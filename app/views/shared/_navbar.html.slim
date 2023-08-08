@@ -1,41 +1,27 @@
+- dashboard = true
+- reports   = allowed_to?(:index?, Report, with: ReportPolicy)
+- packages  = allowed_to?(:index?, Package,  with: PackagePolicy)
+- workshops = current_user.organization_type == "DDFIP"
+- files     = true
+
 div( data-controller="navbar" )
-  nav.navbar.navbar--minified( data-navbar-target="minified" )
-    .navbar__brand.brand
-      = image_tag("logo.svg", alt: "Logo de FiscaHub")
-
-      - dashboard = true
-      - reports   = allowed_to?(:index?, Report, with: ReportPolicy)
-      - packages  = true
-      - files     = true
-
-    - if controller.class.name.start_with?("Users::")
-      .menu__icon-link= button_component "Retour", root_path, icon: "arrow-uturn-left", icon_only: true
-    - else
-      .menu__icon-link= button_component "Tableau de bord", root_path,    icon: "home", icon_only: true
-      .menu__icon-link= button_component "Signalements",    reports_path, icon: "document-duplicate", icon_only: true
-
-    .menu__icon-link.menu__icon-link--more
-      = button_component "Afficher tout le menu", icon: "ellipsis-horizontal", icon_only: true, data: { action: "click->navbar#expand" }
-
-    .flex-auto
-    .menu__icon-link= button_component "Gestion du compte", user_settings_path, icon: "user-circle", icon_only: true
-
   nav.navbar( data-navbar-target="expanded" )
     .navbar__brand.brand
-      = image_tag("logo.svg", alt: "Logo de FiscaHub")
+      = image_tag("logo.svg", alt: "Logo de FiscaHub", height: 30)
       span.brand__left Fisca
       span.brand__right Hub
 
-    - packages  = allowed_to?(:index?, Package,  with: PackagePolicy)
-    - workshops = current_user.organization_type == "DDFIP"
+      .flex-auto
+      .navbar__close-button
+        = button_component "Fermer le menu", icon: "x-mark", data: { action: "click->navbar#minify" }
 
     .navbar__header Echanges
     .navbar__links
-      = navbar_link_to "Tableau de bord", root_path, current: false, disabled: true
-      = navbar_link_to "Signalements",    reports_path
-      = navbar_link_to "Paquets",         packages_path if packages
-      = navbar_link_to "Dossiers",        root_path, current: false, disabled: true if workshops
-      = navbar_link_to "Fichiers",        root_path, current: false, disabled: true
+      = navbar_link_to "Tableau de bord",             icon: "chart-pie",         disabled: true if dashboard
+      = navbar_link_to "Signalements", reports_path,  icon: "document-duplicate" if reports
+      = navbar_link_to "Paquets",      packages_path, icon: "archive-box"        if packages
+      = navbar_link_to "Dossiers",                    icon: "briefcase",         disabled: true if workshops
+      = navbar_link_to "Fichiers",                    icon: "cloud-arrow-down",  disabled: true if files
 
     - organization_settings       = allowed_to?(:manage?, :settings,   with: Organization::SettingsPolicy)
     - organization_users          = allowed_to?(:index?, User,         with: Organization::UserPolicy)
@@ -46,11 +32,11 @@ div( data-controller="navbar" )
     - if organization_settings || organization_users || organization_offices || organization_collectivities || organization_users || organization_api_settings
       .navbar__header Mon organisation
       .navbar__links
-        = navbar_link_to "Paramètres",    organization_settings_path                if organization_settings
-        = navbar_link_to "Équipe",        organization_users_path                   if organization_users
-        = navbar_link_to "Guichets",      organization_offices_path                 if organization_offices
-        = navbar_link_to "Collectivités", organization_collectivities_path          if organization_collectivities
-        = navbar_link_to "API",           root_path, current: false, disabled: true if organization_api_settings
+        = navbar_link_to "Paramètres",    organization_settings_path,        icon: "cog-6-tooth"      if organization_settings
+        = navbar_link_to "Équipe",        organization_users_path,           icon: "users"            if organization_users
+        = navbar_link_to "Guichets",      organization_offices_path,         icon: "inbox"            if organization_offices
+        = navbar_link_to "Collectivités", organization_collectivities_path,  icon: "building-library" if organization_collectivities
+        = navbar_link_to "API",           disabled: true, icon: "command-line"                        if organization_api_settings
 
     - admin_publishers     = allowed_to?(:index?, Publisher,    with: Admin::PublisherPolicy)
     - admin_collectivities = allowed_to?(:index?, Collectivity, with: Admin::CollectivityPolicy)
@@ -91,4 +77,31 @@ div( data-controller="navbar" )
           .navbar__user-text= current_user&.organization&.name
 
   .navbar__overlay( data-action="click->navbar#minify" role="button" aria-label="Fermer le menu" )
+
+  nav.navbar.navbar--tablet( data-navbar-target="minified" )
+    .navbar__brand.brand
+      = image_tag("logo.svg", alt: "Logo de FiscaHub", height: 30)
+
+    = navbar_icon_link_to "Tableau de bord",             icon: "chart-pie",           disabled: true if dashboard
+    = navbar_icon_link_to "Signalements", reports_path,  icon: "document-duplicate"   if reports
+    = navbar_icon_link_to "Paquets",      packages_path, icon: "archive-box"          if packages
+    = navbar_icon_link_to "Dossiers",                    icon: "briefcase",           disabled: true if workshops
+    = navbar_icon_link_to "Fichiers",                    icon: "cloud-arrow-down",    disabled: true if files
+    = navbar_icon_link_to "Afficher tout le menu",       icon: "ellipsis-horizontal", data: { action: "click->navbar#expand" }
+
+    .flex-auto
+    = navbar_icon_link_to "Gestion du compte", user_settings_path, icon: "user-circle"
+
+  nav.navbar.navbar--mobile( data-navbar-target="minified" )
+    = navbar_icon_link_to "Afficher tout le menu",       icon: "bars-3", data: { action: "click->navbar#expand" }
+    .flex-auto
+
+    = navbar_icon_link_to "Tableau de bord",             icon: "chart-pie",         disabled: true if dashboard
+    = navbar_icon_link_to "Signalements", reports_path,  icon: "document-duplicate" if reports
+    = navbar_icon_link_to "Paquets",      packages_path, icon: "archive-box"        if packages
+    = navbar_icon_link_to "Dossiers",                    icon: "briefcase",         disabled: true if workshops
+    = navbar_icon_link_to "Fichiers",                    icon: "cloud-arrow-down",  disabled: true if files
+
+    .flex-auto
+    = navbar_icon_link_to "Gestion du compte", user_settings_path, icon: "user-circle"
 

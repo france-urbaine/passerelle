@@ -84,7 +84,7 @@ RSpec.describe Modal::Component, type: :component do
   end
 
   it "sets redirection to close buttons" do
-    render_inline described_class.new(redirection_path: "/home/root") do |modal|
+    render_inline described_class.new(referrer: "/home/root") do |modal|
       modal.with_body do
         tag.p "Hello World"
       end

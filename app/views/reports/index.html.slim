@@ -1,4 +1,4 @@
-= template_frame_component do
+= template_content_component do
   = breadcrumbs_component do |breadcrumbs|
     - breadcrumbs.with_path "Echanges"
     - breadcrumbs.with_path "Signalements"
@@ -108,11 +108,14 @@
       - row.with_column(:priority) do
         - case report.priority
         - when "low"
-          = svg_icon("chart-bar", "Basse", class: "low-priority-icon")
+          = svg_icon("chart-bar", "Priorité basse", class: "low-priority-icon")
+          span.tooltip Priorité basse
         - when "medium"
-          = svg_icon("chart-bar", "Moyenne", class: "medium-priority-icon")
+          = svg_icon("chart-bar", "Priorité moyenne", class: "medium-priority-icon")
+          span.tooltip Priorité moyenne
         - when "high"
-          = svg_icon("chart-bar", "Haute", class: "high-priority-icon")
+          = svg_icon("chart-bar", "Priorité haute", class: "high-priority-icon")
+          span.tooltip Priorité haute
 
       - row.with_column(:status) do
         = report_badge(report)

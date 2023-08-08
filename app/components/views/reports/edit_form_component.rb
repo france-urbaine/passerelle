@@ -7,23 +7,33 @@ module Views
       Observations       = Class.new(self)
       PropositionAdresse = Class.new(self)
 
-      def initialize(report, redirection_path: nil)
-        @report = report
-        @redirection_path = redirection_path
+      def initialize(report, referrer: nil)
+        @report   = report
+        @referrer = referrer
         super()
       end
 
       private
 
       def modal_component
-        render Modal::Component.new(redirection_path: @redirection_path) do |modal|
-          yield(modal)
+        render TemplateModal::Component.new(referrer: @referrer) do |template|
+          template.with_modal do |modal|
+            yield(modal)
 
-          modal.with_hidden_field :redirect, @redirection_path
-          modal.with_hidden_field :form, self.class.name.demodulize.underscore
+            modal.with_hidden_field :redirect, redirection_path
+            modal.with_hidden_field :form, self.class.name.demodulize.underscore
 
-          modal.with_submit_action "Enregistrer"
-          modal.with_close_action "Annuler"
+            modal.with_submit_action "Enregistrer"
+            modal.with_close_action "Annuler"
+          end
+        end
+      end
+
+      def redirection_path
+        if @referrer.nil? && @report.errors.any? && params[:redirect]
+          params[:redirect]
+        else
+          @referrer
         end
       end
 

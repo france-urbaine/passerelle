@@ -3,10 +3,10 @@
 module Views
   module Offices
     class EditUsersComponent < ApplicationViewComponent
-      def initialize(office, scope:, redirection_path: nil)
-        @office           = office
-        @scope            = scope
-        @redirection_path = redirection_path
+      def initialize(office, scope:, referrer: nil)
+        @office   = office
+        @scope    = scope
+        @referrer = referrer
         super()
       end
 
@@ -16,7 +16,7 @@ module Views
 
       def new_user_url
         url_args = [:new, @scope, @office, :user]
-        params   = { redirect: @redirection_path }
+        params   = { redirect: @referrer }
 
         polymorphic_path(url_args.compact, params)
       end

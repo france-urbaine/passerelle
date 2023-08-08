@@ -1,3 +1,1 @@
-= template_frame_component(src: @referrer_path) do |frame|
-  - frame.with_modal do
-    = render Views::DDFIPs::FormComponent.new(@ddfip, scope: :admin, redirection_path: @referrer_path)
+= render Views::DDFIPs::FormComponent.new(@ddfip, scope: :admin, referrer: @referrer_path)

@@ -1,5 +1,8 @@
-= template_frame_component(src: "/rails/view_components/samples/turbo/card") do |template|
+= template_modal_component do |template|
   - template.with_modal do |modal|
+    - modal.with_header do
+      | Dialog title
+
     - modal.with_body do
       | Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.
       br

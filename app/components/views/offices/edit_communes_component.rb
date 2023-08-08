@@ -3,10 +3,10 @@
 module Views
   module Offices
     class EditCommunesComponent < ApplicationViewComponent
-      def initialize(office, scope:, redirection_path: nil)
-        @office           = office
-        @scope            = scope
-        @redirection_path = redirection_path
+      def initialize(office, scope:, referrer: nil)
+        @office   = office
+        @scope    = scope
+        @referrer = referrer
         super()
       end
 

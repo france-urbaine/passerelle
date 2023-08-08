@@ -1,13 +1,31 @@
 # frozen_string_literal: true
 
 module NavbarHelper
-  def navbar_link_to(*args, current: :__undef__, **options, &)
-    path    = args.last
-    current = request.fullpath.start_with?(path) if current == :__undef__
+  def navbar_link_to(*args, current: :__undef__, disabled: false, **, &)
+    href = args.last if block_given? || args.size > 1
 
-    options[:class] = "navbar__link"
-    options[:class] += " navbar__link--current" if current
+    if href.nil?
+      args << "/"
+      disabled = true
+    end
 
-    link_to(*args, **options, &)
+    current = false if disabled
+    current = request.fullpath.start_with?(href) if current == :__undef__
+
+    css_classes  = "navbar__link"
+    css_classes += " navbar__link--current" if current
+
+    button_component(*args, disabled:, class: css_classes, **, &)
+  end
+
+  def navbar_icon_link_to(*args, current: :__undef__, disabled: false, **, &)
+    href = args.last if block_given? || args.size > 1
+
+    current = false if href.nil? || disabled
+    current = request.fullpath.start_with?(href) if current == :__undef__
+
+    tag.div(class: "navbar__icon-link") do
+      button_component(*args, disabled:, icon_only: true, **, &)
+    end
   end
 end

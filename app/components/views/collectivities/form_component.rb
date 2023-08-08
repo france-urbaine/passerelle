@@ -3,11 +3,11 @@
 module Views
   module Collectivities
     class FormComponent < ApplicationViewComponent
-      def initialize(collectivity, scope:, publisher: nil, redirection_path: nil)
-        @collectivity     = collectivity
-        @publisher        = publisher
-        @scope            = scope
-        @redirection_path = redirection_path
+      def initialize(collectivity, scope:, publisher: nil, referrer: nil)
+        @collectivity = collectivity
+        @publisher    = publisher
+        @scope        = scope
+        @referrer     = referrer
         super()
       end
 
@@ -22,6 +22,14 @@ module Views
         end
 
         polymorphic_path(url_args.compact)
+      end
+
+      def redirection_path
+        if @referrer.nil? && @collectivity.errors.any? && params[:redirect]
+          params[:redirect]
+        else
+          @referrer
+        end
       end
 
       def allowed_to_assign_publisher?

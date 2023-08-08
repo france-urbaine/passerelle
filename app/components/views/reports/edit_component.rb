@@ -17,12 +17,12 @@ module Views
         enjeu
       ].freeze
 
-      def initialize(report, form, redirection_path: nil)
+      def initialize(report, form, referrer: nil)
         raise ArgumentError, "unexpected form: #{form}" unless FORMS.include?(form)
 
-        @report = report
-        @form   = form
-        @redirection_path = redirection_path
+        @report   = report
+        @form     = form
+        @referrer = referrer
         super()
       end
 
@@ -33,10 +33,7 @@ module Views
       private
 
       def form_component
-        "Views::Reports::EditFormComponent::#{@form.camelize}".constantize.new(
-          @report,
-          redirection_path: @redirection_path
-        )
+        "Views::Reports::EditFormComponent::#{@form.camelize}".constantize.new(@report, referrer: @referrer)
       end
     end
   end
