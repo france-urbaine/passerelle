@@ -18,11 +18,13 @@ module NavbarHelper
     button_component(*args, disabled:, class: css_classes, **, &)
   end
 
-  def navbar_icon_link_to(*args, current: :__undef__, disabled: false, **, &)
+  def navbar_icon_link_to(*args, disabled: false, **, &)
     href = args.last if block_given? || args.size > 1
 
-    current = false if href.nil? || disabled
-    current = request.fullpath.start_with?(href) if current == :__undef__
+    if href.nil?
+      args << "/"
+      disabled = true
+    end
 
     tag.div(class: "navbar__icon-link") do
       button_component(*args, disabled:, icon_only: true, **, &)
