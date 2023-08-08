@@ -3,19 +3,19 @@
 module Views
   module Offices
     class EditUsersComponent < ApplicationViewComponent
-      def initialize(office, scope:, referrer: nil)
-        @office   = office
-        @scope    = scope
-        @referrer = referrer
+      def initialize(office, namespace:, referrer: nil)
+        @office    = office
+        @namespace = namespace
+        @referrer  = referrer
         super()
       end
 
       def form_url
-        polymorphic_path([@scope, @office, :users].compact)
+        polymorphic_path([@namespace, @office, :users].compact)
       end
 
       def new_user_url
-        url_args = [:new, @scope, @office, :user]
+        url_args = [:new, @namespace, @office, :user]
         params   = { redirect: @referrer }
 
         polymorphic_path(url_args.compact, params)

@@ -3,10 +3,10 @@
 module Views
   module Users
     class FormComponent < ApplicationViewComponent
-      def initialize(user, scope:, organization: nil, referrer: nil)
+      def initialize(user, namespace:, organization: nil, referrer: nil)
         @user         = user
+        @namespace    = namespace
         @organization = organization
-        @scope        = scope
         @referrer     = referrer
         super()
       end
@@ -20,12 +20,12 @@ module Views
       end
 
       def form_url
-        url_args = [@scope]
+        url_args = [@namespace]
 
         if @user.new_record?
           url_args << @organization
           url_args << :users
-        elsif @scope == :organization
+        elsif @namespace == :organization
           url_args << @organization
           url_args << @user
         else
@@ -50,21 +50,21 @@ module Views
       end
 
       def allowed_to_assign_organization?
-        @scope == :admin && @organization.nil?
+        @namespace == :admin && @organization.nil?
       end
 
       def allowed_to_assign_offices?
-        (@scope == :admin && @organization.nil?) ||
-          (@scope == :admin && @organization.is_a?(DDFIP)) ||
-          (@scope == :organization && current_organization.is_a?(DDFIP))
+        (@namespace == :admin && @organization.nil?) ||
+          (@namespace == :admin && @organization.is_a?(DDFIP)) ||
+          (@namespace == :organization && current_organization.is_a?(DDFIP))
       end
 
       def allowed_to_assign_organization_admin?
-        @scope == :admin || (@scope == :organization && current_user.organization_admin?)
+        @namespace == :admin || (@namespace == :organization && current_user.organization_admin?)
       end
 
       def allowed_to_assign_super_admin?
-        @scope == :admin || (@scope == :organization && current_user.super_admin?)
+        @namespace == :admin || (@namespace == :organization && current_user.super_admin?)
       end
 
       def organization_input_html_attributes

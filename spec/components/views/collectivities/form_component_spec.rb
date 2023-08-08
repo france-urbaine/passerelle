@@ -12,7 +12,7 @@ RSpec.describe Views::Collectivities::FormComponent, type: :component do
   end
 
   it "renders a form in a modal to create a new collectivity" do
-    render_inline described_class.new(Collectivity.new, scope: :admin)
+    render_inline described_class.new(Collectivity.new, namespace: :admin)
 
     expect(page).to have_selector(".modal form") do |form|
       aggregate_failures do
@@ -33,7 +33,7 @@ RSpec.describe Views::Collectivities::FormComponent, type: :component do
 
   it "renders a form in a modal to create a new collectivity belonging to a given publisher" do
     publisher = build_stubbed(:publisher)
-    render_inline described_class.new(Collectivity.new, scope: :admin, publisher: publisher)
+    render_inline described_class.new(Collectivity.new, namespace: :admin, publisher: publisher)
 
     expect(page).to have_selector(".modal form") do |form|
       aggregate_failures do
@@ -48,7 +48,7 @@ RSpec.describe Views::Collectivities::FormComponent, type: :component do
   end
 
   it "renders a form in a modal to create a new collectivity belonging to the current organization" do
-    render_inline described_class.new(Collectivity.new, scope: :organization)
+    render_inline described_class.new(Collectivity.new, namespace: :organization)
 
     expect(page).to have_selector(".modal form") do |form|
       aggregate_failures do
@@ -71,7 +71,7 @@ RSpec.describe Views::Collectivities::FormComponent, type: :component do
     publisher = publishers.sample
     collectivity = build_stubbed(:collectivity, :epci, publisher: publisher)
 
-    render_inline described_class.new(collectivity, scope: :admin)
+    render_inline described_class.new(collectivity, namespace: :admin)
 
     expect(page).to have_selector(".modal form") do |form|
       aggregate_failures do
@@ -89,7 +89,7 @@ RSpec.describe Views::Collectivities::FormComponent, type: :component do
     publisher = publishers.sample
     collectivity = build_stubbed(:collectivity, :epci, publisher: publisher)
 
-    render_inline described_class.new(collectivity, scope: :organization)
+    render_inline described_class.new(collectivity, namespace: :organization)
 
     expect(page).to have_selector(".modal form") do |form|
       aggregate_failures do

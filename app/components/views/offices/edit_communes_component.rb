@@ -3,15 +3,15 @@
 module Views
   module Offices
     class EditCommunesComponent < ApplicationViewComponent
-      def initialize(office, scope:, referrer: nil)
-        @office   = office
-        @scope    = scope
-        @referrer = referrer
+      def initialize(office, namespace:, referrer: nil)
+        @office    = office
+        @namespace = namespace
+        @referrer  = referrer
         super()
       end
 
       def form_url
-        polymorphic_path([@scope, @office, :communes].compact)
+        polymorphic_path([@namespace, @office, :communes].compact)
       end
 
       def suggested_epcis

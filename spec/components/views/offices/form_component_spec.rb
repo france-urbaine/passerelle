@@ -4,7 +4,7 @@ require "rails_helper"
 
 RSpec.describe Views::Offices::FormComponent, type: :component do
   it "renders a form in a modal to create a new office" do
-    render_inline described_class.new(Office.new, scope: :admin)
+    render_inline described_class.new(Office.new, namespace: :admin)
 
     expect(page).to have_selector(".modal form") do |form|
       aggregate_failures do
@@ -20,7 +20,7 @@ RSpec.describe Views::Offices::FormComponent, type: :component do
 
   it "renders a form in a modal to create a new office belonging to a given DDFIP" do
     ddfip = build_stubbed(:ddfip)
-    render_inline described_class.new(Office.new, scope: :admin, ddfip: ddfip)
+    render_inline described_class.new(Office.new, namespace: :admin, ddfip: ddfip)
 
     expect(page).to have_selector(".modal form") do |form|
       aggregate_failures do
@@ -35,7 +35,7 @@ RSpec.describe Views::Offices::FormComponent, type: :component do
   end
 
   it "renders a form in a modal to create a new office belonging to the current organization" do
-    render_inline described_class.new(Office.new, scope: :organization)
+    render_inline described_class.new(Office.new, namespace: :organization)
 
     expect(page).to have_selector(".modal form") do |form|
       aggregate_failures do
@@ -52,7 +52,7 @@ RSpec.describe Views::Offices::FormComponent, type: :component do
   it "renders a form in a modal to update an existing office" do
     ddfip  = build_stubbed(:ddfip)
     office = build_stubbed(:office, :evaluation_local_professionnel, ddfip: ddfip)
-    render_inline described_class.new(office, scope: :admin)
+    render_inline described_class.new(office, namespace: :admin)
 
     expect(page).to have_selector(".modal form") do |form|
       aggregate_failures do
@@ -69,7 +69,7 @@ RSpec.describe Views::Offices::FormComponent, type: :component do
   it "renders a form in a modal to update an existing office belonging to the current organization" do
     office = build_stubbed(:office, :evaluation_local_professionnel)
 
-    render_inline described_class.new(office, scope: :organization)
+    render_inline described_class.new(office, namespace: :organization)
 
     expect(page).to have_selector(".modal form") do |form|
       aggregate_failures do
