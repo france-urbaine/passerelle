@@ -6,11 +6,11 @@
   .datatable__row {
     & .icon-button,
     & .checkbox {
-      @apply h-8 w-8 p-1.5 -my-2;
+      @apply h-10 w-10 p-2 -my-2;
     }
 
     & .icon-button svg {
-      @apply h-5 w-5;
+      @apply h-6 w-6;
     }
 
     & .checkbox input {

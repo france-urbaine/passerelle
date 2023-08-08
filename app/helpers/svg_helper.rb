@@ -9,6 +9,8 @@ module SVGHelper
       options[:aria_hidden] = true
     end
 
+    options[:height] = 24 unless options.key?(:height) || options.key?(:width)
+
     inline_svg_tag("#{icon}.svg", **options)
       .strip
       .gsub(%(aria-hidden="true"), "aria-hidden")
