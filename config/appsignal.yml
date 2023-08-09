@@ -26,6 +26,9 @@ default: &defaults
   #   - SystemExit
   #   - SystemStackError
 
+  ignore_actions:
+    - ActionController::InvalidAuthenticityToken
+
   # See https://docs.appsignal.com/ruby/configuration/options.html for
   # all configuration options.
 
