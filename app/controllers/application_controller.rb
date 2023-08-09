@@ -30,6 +30,7 @@ class ApplicationController < ActionController::Base
     rescue_from "AbstractController::ActionNotFound", with: :not_found
     rescue_from "ActionController::RoutingError",     with: :not_found
     rescue_from "ActionController::UnknownFormat",    with: :not_acceptable
+    rescue_from "Pagy::VariableError",                with: :bad_request
   end
 
   respond_to :html
