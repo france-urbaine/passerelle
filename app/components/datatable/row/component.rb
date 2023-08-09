@@ -8,7 +8,11 @@ module Datatable
       }
 
       renders_many :actions, lambda { |*args, **options|
-        ::Button::Component.new(*args, **options, icon_only: true, data: { turbo_frame: "_top" })
+        if args.empty? && options.empty?
+          LabelOrContent.new
+        else
+          ::Button::Component.new(*args, **options, icon_only: true, data: { turbo_frame: "_top" })
+        end
       }
 
       renders_many :columns,  "Column"

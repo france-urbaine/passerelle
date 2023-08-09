@@ -2,14 +2,23 @@
 
 module Organization
   class UserPolicy < ApplicationPolicy
-    alias_rule :index?, :new?, :create?, to: :manage?
+    alias_rule :index?, to: :show?
+    alias_rule :new?, :create?, to: :manage?
     alias_rule :remove_all?, :destroy_all?, :undiscard_all?, to: :manage?
+
+    def show?
+      if record == User
+        organization_admin?
+      elsif record.is_a? User
+        organization_admin? && organization_match?(record)
+      end
+    end
 
     def manage?
       if record == User
         organization_admin?
       elsif record.is_a? User
-        organization_admin? && organization_match?(record)
+        organization_admin? && organization_match?(record) && !record_as_more_privilege_than_current_user(record)
       end
     end
 
@@ -47,6 +56,10 @@ module Organization
     def organization_match?(user)
       user.organization_type == organization.class.name &&
         user.organization_id == organization.id
+    end
+
+    def record_as_more_privilege_than_current_user(other)
+      other.super_admin? && !user.super_admin?
     end
   end
 end

@@ -21,17 +21,20 @@ RSpec.shared_context "with policies shared contexts" do
   end
 
   {
-    "a super admin"              => %i[super_admin],
-    "an admin"                   => %i[organization_admin],
-    "a DDFIP super admin"        => %i[ddfip super_admin],
-    "a DDFIP admin"              => %i[ddfip organization_admin],
-    "a DDFIP user"               => %i[ddfip],
-    "a publisher super admin"    => %i[publisher super_admin],
-    "a publisher admin"          => %i[publisher organization_admin],
-    "a publisher user"           => %i[publisher],
-    "a collectivity super admin" => %i[collectivity super_admin],
-    "a collectivity admin"       => %i[collectivity organization_admin],
-    "a collectivity user"        => %i[collectivity]
+    "a super admin"                      => %i[super_admin],
+    "an admin"                           => %i[organization_admin],
+    "a DDFIP admin & super admin"        => %i[ddfip super_admin organization_admin],
+    "a DDFIP super admin"                => %i[ddfip super_admin],
+    "a DDFIP admin"                      => %i[ddfip organization_admin],
+    "a DDFIP user"                       => %i[ddfip],
+    "a publisher admin & super admin"    => %i[publisher super_admin organization_admin],
+    "a publisher super admin"            => %i[publisher super_admin],
+    "a publisher admin"                  => %i[publisher organization_admin],
+    "a publisher user"                   => %i[publisher],
+    "a collectivity admin & super admin" => %i[collectivity super_admin organization_admin],
+    "a collectivity super admin"         => %i[collectivity super_admin],
+    "a collectivity admin"               => %i[collectivity organization_admin],
+    "a collectivity user"                => %i[collectivity]
   }.each do |user_description, user_traits|
     shared_context "when current user is #{user_description}" do |**options|
       let(:current_user) do |example|

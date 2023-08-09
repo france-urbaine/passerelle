@@ -31,6 +31,9 @@
 
       - if allowed_to?(:update?, user)
         - row.with_action "Modifier cet utilisateur", edit_organization_user_path(user), icon: "pencil-square", modal: true
+      - elsif current_user.organization_admin? && user.super_admin?
+        - row.with_action do
+          = svg_icon("question-mark-circle", title: "Seul un administrateur de Fiscahub peut éditer cet utilisateur")
 
       - if allowed_to?(:destroy?, user)
         - row.with_action "Supprimer cet utilisateur", remove_organization_user_path(user), icon: "trash", modal: true
