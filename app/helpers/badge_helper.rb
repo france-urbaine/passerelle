@@ -104,13 +104,4 @@ module BadgeHelper
   def badge(text, css = nil)
     tag.div(text, class: "badge #{css}")
   end
-
-  def check_badge(checked, title)
-    if checked
-      svg_icon("check-badge", title)
-    else
-      # Render a empty string to avoid empty placeholder
-      " "
-    end
-  end
 end

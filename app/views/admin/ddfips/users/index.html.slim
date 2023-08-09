@@ -39,13 +39,14 @@
           = user.name
 
       - row.with_column(:email) do
-        = user_email(user)
+        = render Views::Users::ShowEmailComponent.new(user)
 
       - row.with_column(:organization_admin) do
-        = check_badge(user.organization_admin?, "Administrateur de l'organisation")
+        = render Views::Users::ShowCheckBadgeComponent.new(user, :organization_admin)
 
       - row.with_column(:super_admin) do
-        = check_badge(user.super_admin?, "Administrateur de FiscaHub")
+        = render Views::Users::ShowCheckBadgeComponent.new(user, :super_admin)
 
       - row.with_column(:offices) do
-        = short_offices_list(user.offices, user.organization_id, scope: :organization)
+        = render Views::Users::ShowOfficesShortListComponent.new(user, namespace: :admin)
+

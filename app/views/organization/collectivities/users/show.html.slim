@@ -31,15 +31,15 @@
 
       .description-list__row
         dt Adresse mail de contact
-        dd= user_email(@user)
+        dd= render Views::Users::ShowEmailComponent.new(@user)
 
       .description-list__row
         dt Administrateur de l'organisation
-        dd= svg_icon("check-badge", "Oui") if @user.organization_admin?
+        dd= render Views::Users::ShowCheckBadgeComponent.new(@user, :organization_admin)
 
       .description-list__row
         dt Administrateur de FiscaHub
-        dd= svg_icon("check-badge", "Oui") if @user.super_admin?
+        dd= render Views::Users::ShowCheckBadgeComponent.new(@user, :super_admin)
 
   h2.subheader
     = svg_icon("server-stack", "Nouvelle section")
