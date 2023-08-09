@@ -2,7 +2,7 @@
   - card.with_header do
     | Réinitialisation de votre mot de passe
 
-  - card.with_form(model: resource, url: confirmation_path(resource_name), method: :post) do |form|
+  - card.with_form(model: resource, url: password_path(resource_name), method: :post) do |form|
     - if resource.errors.include?(:reset_password_token)
       p= display_errors(resource, :reset_password_token)
 
