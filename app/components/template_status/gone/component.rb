@@ -2,7 +2,12 @@
 
 module TemplateStatus
   module Gone
-    class Component < TemplateStatus::Component
+    class Component < ApplicationViewComponent
+      renders_one :header, "LabelOrContent"
+      renders_one :body, "LabelOrContent"
+      renders_many :actions, ::Button::Component
+      renders_one :breadcrumbs, ->(**options) { ::Breadcrumbs::Component.new(heading: false, **options) }
+
       def initialize(*records, **options)
         @records = records.flatten
         @options = options
