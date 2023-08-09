@@ -10,7 +10,7 @@
 
 - if @report.observations.present?
   = card_component(content_class: "text-lg") do |card|
-    = simple_format @report.observations
+    = simple_format h(@report.observations)
 
 - else
   = card_component(content_class: "card__content--empty h-24 flex-auto flex items-center justify-center") do |card|
