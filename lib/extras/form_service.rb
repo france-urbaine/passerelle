@@ -89,9 +89,31 @@ class FormService
   end
 
   def missing_attribute_method?(method)
-    return false unless method =~ /^([a-z]\w+)=?$/
+    # This method allow to call any attribute method from the delegated model.
+    # It also accepts nested attributes methods.
+    #
+    # By default, all attributes (and nested attributes) methods are delegated,
+    # so there is no mass-assignement protection at this level.
+    #
+    # To protect against mass-assignement, you'd better have to filter attributes
+    # at upper level, with policy for example.
+    #
 
-    record.class.column_names.include?(::Regexp.last_match(1))
+    # Match regular attibutes methods:
+    #   name
+    #   name=
+    #   name?
+    #
+    return false unless method =~ /^([a-z]\w+)(=|\?)?$/
+    return true  if record.class.column_names.include?(::Regexp.last_match(1))
+
+    # Match nested attributes methods
+    #   exonerations_attributes=
+    #
+    return false unless method =~ /^([a-z]\w+)_attributes=$/
+    return true if record.class.nested_attributes_options.keys.map(&:to_s).include?(::Regexp.last_match(1))
+
+    false
   end
 
   def self.alias_record(alias_name)
