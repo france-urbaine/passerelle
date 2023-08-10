@@ -1,6 +1,6 @@
 .subheader-bar
   h2.subheader
-    = svg_icon("presentation-chart-bar", "Icône d'illustration")
+    = icon_component("presentation-chart-bar", "Icône d'illustration")
     - if @report.anomalies.include?("affectation")
       | Proposition de mise à jour de l'affectation
     - elsif @report.anomalies.include?("categorie")

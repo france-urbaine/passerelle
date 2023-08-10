@@ -8,7 +8,7 @@
       - breadcrumbs.with_action "Modifier", edit_territories_departement_path(@departement), icon: "pencil-square", modal: true
 
   h2.subheader
-    = svg_icon("identification", "Nouvelle section")
+    = icon_component("identification", "Nouvelle section")
     | Description
 
   .card
@@ -44,7 +44,7 @@
 
     .subheader-bar
       h2.subheader
-        = svg_icon("rectangle-stack", "Nouvelle section")
+        = icon_component("rectangle-stack", "Nouvelle section")
         | EPCI
 
     - if @departement.epcis_count.zero?
@@ -62,7 +62,7 @@
 
     .subheader-bar
       h2.subheader
-        = svg_icon("rectangle-stack", "Nouvelle section")
+        = icon_component("rectangle-stack", "Nouvelle section")
         | Communes
 
     - if @departement.communes_count.zero?
@@ -80,7 +80,7 @@
 
     .subheader-bar
       h2.subheader
-        = svg_icon("rectangle-stack", "Nouvelle section")
+        = icon_component("rectangle-stack", "Nouvelle section")
         | Collectivités enregistrées
 
     - if @departement.collectivities_count.zero?

@@ -116,9 +116,9 @@ module Button
 
     def icon
       if @icon_only && @label
-        helpers.svg_icon(@icon, @label)
+        icon_component(@icon, @label)
       else
-        helpers.svg_icon(@icon)
+        icon_component(@icon)
       end
     end
 

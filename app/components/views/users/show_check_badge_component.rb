@@ -22,7 +22,7 @@ module Views
         # Render a empty string to avoid empty placeholder
         return " " unless checked?
 
-        svg_icon("check-badge", TITLES[@attribute])
+        icon_component("check-badge", TITLES[@attribute])
       end
     end
   end

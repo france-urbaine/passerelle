@@ -2,10 +2,10 @@
   = render previous_button
 - else
   span.icon-button( aria-hidden disabled )
-    = helpers.svg_icon("chevron-left", "Page précédente")
+    = icon_component("chevron-left", "Page précédente")
 
 - if pagy.next
   = render next_button
 - else
   span.icon-button( aria-hidden disabled )
-    = helpers.svg_icon("chevron-right", "Page suivante")
+    = icon_component("chevron-right", "Page suivante")

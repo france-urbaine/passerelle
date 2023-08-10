@@ -108,13 +108,13 @@
       - row.with_column(:priority) do
         - case report.priority
         - when "low"
-          = svg_icon("chart-bar", "Priorité basse", class: "low-priority-icon")
+          = icon_component("chart-bar", "Priorité basse", class: "low-priority-icon")
           span.tooltip Priorité basse
         - when "medium"
-          = svg_icon("chart-bar", "Priorité moyenne", class: "medium-priority-icon")
+          = icon_component("chart-bar", "Priorité moyenne", class: "medium-priority-icon")
           span.tooltip Priorité moyenne
         - when "high"
-          = svg_icon("chart-bar", "Priorité haute", class: "high-priority-icon")
+          = icon_component("chart-bar", "Priorité haute", class: "high-priority-icon")
           span.tooltip Priorité haute
 
       - row.with_column(:status) do

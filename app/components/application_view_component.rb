@@ -5,7 +5,7 @@ class ApplicationViewComponent < ViewComponent::Base
 
   delegate :current_user, :current_organization,
     :signed_in?, :allowed_to?,
-    :authorized_link_to, :svg_icon,
+    :authorized_link_to, :icon_component,
     to: :helpers
 
   class LabelOrContent < self

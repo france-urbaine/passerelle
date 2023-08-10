@@ -13,7 +13,7 @@
       - breadcrumbs.with_action "Supprimer", remove_organization_collectivity_user_path(@collectivity, @user), icon: "trash", modal: true, destructive: "discrete"
 
   h2.subheader
-    = svg_icon("identification", "Nouvelle section")
+    = icon_component("identification", "Nouvelle section")
     | Description
 
   .card.mb-12
@@ -42,7 +42,7 @@
         dd= render Views::Users::ShowCheckBadgeComponent.new(@user, :super_admin)
 
   h2.subheader
-    = svg_icon("server-stack", "Nouvelle section")
+    = icon_component("server-stack", "Nouvelle section")
     | Informations de connexion
 
   .card

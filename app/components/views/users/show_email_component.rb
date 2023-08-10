@@ -13,7 +13,7 @@ module Views
           message = t("user_email.unconfirmed_email")
 
           tag.span(class: "text-disabled", title: message) do
-            concat svg_icon("arrow-path", class: "inline-block mr-2")
+            concat icon_component("arrow-path", class: "inline-block mr-2")
             concat @user.unconfirmed_email
             concat tag.span(message, class: "tooltip")
           end
@@ -23,7 +23,7 @@ module Views
           message = t("user_email.unconfirmed_user")
 
           tag.span(class: "text-disabled", title: message) do
-            concat svg_icon("envelope", class: "inline-block mr-2")
+            concat icon_component("envelope", class: "inline-block mr-2")
             concat @user.email
             concat tag.span(message, class: "tooltip")
           end

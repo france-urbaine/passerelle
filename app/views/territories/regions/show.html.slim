@@ -8,7 +8,7 @@
       - breadcrumbs.with_action "Modifier", edit_territories_region_path(@region), icon: "pencil-square", modal: true
 
   h2.subheader
-    = svg_icon("identification", "Nouvelle section")
+    = icon_component("identification", "Nouvelle section")
     | Description
 
   .card
@@ -42,7 +42,7 @@
 
     .subheader-bar
       h2.subheader
-        = svg_icon("rectangle-stack", "Nouvelle section")
+        = icon_component("rectangle-stack", "Nouvelle section")
         | Départements
 
     - if @region.departements_count.zero?
@@ -60,7 +60,7 @@
 
     .subheader-bar
       h2.subheader
-        = svg_icon("rectangle-stack", "Nouvelle section")
+        = icon_component("rectangle-stack", "Nouvelle section")
         | DDFIP enregistrées
 
     - if @region.ddfips_count.zero?
@@ -78,7 +78,7 @@
 
     .subheader-bar
       h2.subheader
-        = svg_icon("rectangle-stack", "Nouvelle section")
+        = icon_component("rectangle-stack", "Nouvelle section")
         | Collectivités enregistrées
 
     - if @region.collectivities_count.zero?
