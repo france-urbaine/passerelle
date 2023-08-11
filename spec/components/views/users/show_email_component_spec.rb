@@ -7,7 +7,14 @@ RSpec.describe Views::Users::ShowEmailComponent, type: :component do
     user = build_stubbed(:user)
     render_inline described_class.new(user)
 
-    expect(page).to have_link(user.email, href: "mailto:#{user.email}")
+    expect(page).to have_link(user.email)
+  end
+
+  it "escapes user email symbols in href (thanks to mail_to)" do
+    user = build_stubbed(:user, email: "moulin+c#leste.10@lesch.test")
+    render_inline described_class.new(user)
+
+    expect(page).to have_link("moulin+c#leste.10@lesch.test", href: "mailto:moulin%2Bc%23leste.10@lesch.test")
   end
 
   it "shows the email of an unconfirmed user" do
