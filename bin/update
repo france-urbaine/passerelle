@@ -1,0 +1,115 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Helpers
+# ------------------------------------------------------------------------------
+# It's helpful to know what messages came from this script,
+# so we'll use log instead of `puts`
+LOG_PREFIX = "\e[34m[ bin/update ]\e[0m"
+def log(message)
+  puts "#{LOG_PREFIX} #{message}"
+end
+
+# We don't want the setup method to have to do all this error checking,
+# and we also want to explicitly log what we are executing.
+# Thus, we use this method instead of Kernel#system
+def system!(*args, skip_abort: false)
+  log "\e[33m#{args.join(' ')}\e[0m"
+  return true if system(*args)
+  return false if skip_abort
+
+  log "\e[33m#{args.join(' ')}\e[0m failed"
+  abort
+end
+
+def gets(secret: false)
+  print "#{LOG_PREFIX} "
+
+  if secret
+    require "io/console"
+    result = $stdin.noecho(&:gets).strip
+    puts
+    result
+  else
+    $stdin.gets.strip
+  end
+end
+
+# Update programs
+# ------------------------------------------------------------------------------
+def update_gems
+  require "bundler/setup"
+  require "bundleup"
+
+  log "Updating gems"
+  updates = Bundleup::CLI.new([]).run
+  log ""
+  log "List outdated gems"
+  system! "bundle outdated", skip_abort: true
+
+  if updates.any?
+    log ""
+    log "Some gems have been updated."
+    log "Would you like to run the CI ? [Yn]"
+
+    if gets == "Y"
+      system! "bin/ci"
+    elsif updates.any? { |gem| gem.include?("rubocop") }
+      log "Some rubocop gems have been updated."
+      log "Would you like to run rubocop ? [Yn]"
+      system! "bin/ci rubocop" if gets == "Y"
+    end
+  end
+
+  return if system!("git diff --quiet Gemfile.lock", skip_abort: true)
+
+  log ""
+  log "Gemfile.lock has changed."
+  log "Would you like to commit changes to Gemfile.lock ? [Yn]"
+  system! "git commit -m \"Update gems dependencies\" -- Gemfile.lock" if gets == "Y"
+end
+
+def update_js
+  log "Updating JS dependencies"
+  system! "yarn upgrade-interactive"
+  log ""
+  log "List outdated JS dependencies"
+  system! "yarn outdated", skip_abort: true
+
+  return if system!("git diff --quiet yarn.lock", skip_abort: true)
+
+  log ""
+  log "yarn.lock has changed."
+  log "Would you like to commit changes to yarn.lock ? [Yn]"
+  system! "git commit -m \"Update JS dependencies\" -- yarn.lock" if gets == "Y"
+end
+
+def update_database
+  log "Verifying database migration"
+  system! "bin/rails db:migrate"
+end
+
+def help
+  log "Update commands:"
+  log "----------------"
+  log ""
+  log "  bin/update gems"
+  log "     # Update gems through an interactive command"
+  log ""
+  log "  bin/update js"
+  log "     # Update JS packages through an interactive command"
+  log ""
+  log "  bin/update database"
+  log "     # Update database"
+  log ""
+  log "  bin/update help"
+  log "     # Show this help"
+  log ""
+end
+
+case ARGV[0]
+when "gems"     then update_gems
+when "js"       then update_js
+when "database" then update_database
+else help
+end
