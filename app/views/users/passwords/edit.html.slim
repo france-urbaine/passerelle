@@ -19,7 +19,7 @@
         = form.label(:password_confirmation)
         = form.password_field(:password_confirmation, autocomplete: "new-password")
 
-    - card.with_submit_action "Modifier mon mot de passe"
+    - card_content.with_submit_action "Modifier mon mot de passe"
 
   - if resource.errors.of_kind?(:reset_password_token)
     - card.with_multipart do |card_content|
