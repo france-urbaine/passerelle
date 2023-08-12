@@ -35,12 +35,28 @@ module Views
           end
         end
 
+        def nature_choices
+          if require_proposition_evaluation_habitation?
+            nature_habitation_choices
+          else
+            nature_professionnel_choices
+          end
+        end
+
         def nature_habitation_choices
           enum_options(:local_habitation_nature)
         end
 
         def nature_professionnel_choices
           enum_options(:local_professionnel_nature)
+        end
+
+        def categorie_choices
+          if require_proposition_evaluation_habitation?
+            categorie_habitation_choices
+          else
+            categorie_professionnel_choices
+          end
         end
 
         def categorie_habitation_choices
