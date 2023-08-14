@@ -37,6 +37,17 @@ end
 
 # Update programs
 # ------------------------------------------------------------------------------
+def update_check
+  log "Verifying gem dependencies"
+  system! "bundle check || bundle install"
+
+  log "Verifying JS packages"
+  system! "yarn"
+
+  log "Verifying database migration"
+  system! "bin/rails db:migrate"
+end
+
 def update_gems
   require "bundler/setup"
   require "bundleup"
@@ -84,14 +95,13 @@ def update_js
   system! "git commit -m \"Update JS dependencies\" -- yarn.lock" if gets == "Y"
 end
 
-def update_database
-  log "Verifying database migration"
-  system! "bin/rails db:migrate"
-end
-
 def help
   log "Update commands:"
   log "----------------"
+  log ""
+  log "  bin/update check"
+  log "     # Update dependencies & database after switching branches or pulling code from remote"
+  log "     # You could add this in a git hook : .git/hook/post-merge"
   log ""
   log "  bin/update gems"
   log "     # Update gems through an interactive command"
@@ -99,17 +109,14 @@ def help
   log "  bin/update js"
   log "     # Update JS packages through an interactive command"
   log ""
-  log "  bin/update database"
-  log "     # Update database"
-  log ""
   log "  bin/update help"
   log "     # Show this help"
   log ""
 end
 
 case ARGV[0]
-when "gems"     then update_gems
-when "js"       then update_js
-when "database" then update_database
+when "gems"  then update_gems
+when "js"    then update_js
+when "check" then update_check
 else help
 end
