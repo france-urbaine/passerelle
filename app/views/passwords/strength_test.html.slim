@@ -1,0 +1,27 @@
+= turbo_frame_tag "password-strength-test-result" do
+  - if @checked_password
+    .password-strength-test
+      - case @checked_password.score
+      - when 0
+        div Sécurité du mot de passe : Très faible
+        .password-strength-test__bar.password-strength-test__bar--very-weak
+      - when 1
+        div Sécurité du mot de passe : Faible
+        .password-strength-test__bar.password-strength-test__bar--weak
+      - when 2
+        div Sécurité du mot de passe : Correcte
+        .password-strength-test__bar.password-strength-test__bar--medium
+      - when 3
+        div Sécurité du mot de passe : Bonne
+        .password-strength-test__bar.password-strength-test__bar--good
+      - when 4
+        div Sécurité du mot de passe : Très bonne
+        .password-strength-test__bar.password-strength-test__bar--very-good
+
+      - if @checked_password.feedback.warning || @checked_password.feedback.suggestions.any?
+        .password-strength-test__hint
+          - if @checked_password.feedback.warning
+            div= I18n.t(@checked_password.feedback.warning.parameterize.underscore, scope: "zxcvbn.warnings")
+
+          - @checked_password.feedback.suggestions.each do |suggestion|
+            div= I18n.t(suggestion.parameterize.underscore, scope: "zxcvbn.suggestions")

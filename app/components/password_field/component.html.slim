@@ -1,0 +1,7 @@
+= tag.div **controller_options do
+  = helpers.password_field @object_name, @method, options
+
+  = button_component icon: "eyes", icon_only: true
+
+  - if @strength_test
+    turbo-frame( id="password-strength-test-result" data-strength-test-target="frame" )
