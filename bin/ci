@@ -126,7 +126,8 @@ def run_all
 end
 
 def help
-  log "Useful commands:"
+  log "CI commands:"
+  log "------------"
   log ""
   log "  bin/ci"
   log "     # Run all tests and checks as CI would"
@@ -148,8 +149,8 @@ def help
   log "  bin/ci help"
   log "     # Show this help"
   log ""
-  log "To run the commands in CI environnement (ex: on github), use the CI variable:"
-  log "   CI=true bin/ci"
+  log "  To run the commands in CI environnement (ex: on github), use the CI variable:"
+  log "     CI=true bin/ci"
   log ""
 end
 

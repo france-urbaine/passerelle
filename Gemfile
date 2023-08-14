@@ -69,6 +69,9 @@ group :development, :test do
   gem "htmlbeautifier", github: "inkstak/htmlbeautifier", branch: "allow_custom_elements"
 
   gem "awesome_print"
+
+  # https://github.com/mattbrictson/bundleup/pull/214
+  gem "bundleup", github: "inkstak/bundleup", branch: "return_cli_report"
   gem "byebug"
   gem "dead_end"
   gem "debug", platforms: %i[mri mingw x64_mingw]
