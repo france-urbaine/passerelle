@@ -19,10 +19,10 @@ module PasswordField
         options[:maxlength] = Devise.password_length.max
       end
 
-      if @strength_test
-        options[:data] ||= {}
-        options[:data][:action] = "strength-test#check"
-      end
+      options[:data] ||= {}
+      options[:data][:password_visibility_target] = "input"
+
+      options[:data][:action] = "strength-test#check" if @strength_test
 
       options
     end

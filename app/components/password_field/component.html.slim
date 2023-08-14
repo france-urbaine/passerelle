@@ -1,7 +1,12 @@
 = tag.div **controller_options do
-  = helpers.password_field @object_name, @method, options
+  div.password-visibility-input
+    = helpers.password_field @object_name, @method, options
 
-  = button_component icon: "eyes", icon_only: true
+    div.password-visibility-button data-action="click->password-visibility#toggle"
+      span data-password-visibility-target="icon"
+        = svg_icon("eye")
+      span.hidden data-password-visibility-target="icon"
+        = svg_icon("eye-slash")
 
   - if @strength_test
     turbo-frame( id="password-strength-test-result" data-strength-test-target="frame" )

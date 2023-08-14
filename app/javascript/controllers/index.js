@@ -9,6 +9,9 @@ import { application } from "./application"
 import NestedForm from "stimulus-rails-nested-form"
 application.register("nested-form", NestedForm)
 
+import PasswordVisibility from 'stimulus-password-visibility'
+application.register('password-visibility', PasswordVisibility)
+
 // Components
 // -----------------------------------------------------------------------------
 import NavbarController from "./components/navbar_controller"
