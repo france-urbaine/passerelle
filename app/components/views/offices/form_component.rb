@@ -3,16 +3,16 @@
 module Views
   module Offices
     class FormComponent < ApplicationViewComponent
-      def initialize(office, scope:, ddfip: nil, referrer: nil)
-        @office   = office
-        @ddfip    = ddfip
-        @scope    = scope
-        @referrer = referrer
+      def initialize(office, namespace:, ddfip: nil, referrer: nil)
+        @office    = office
+        @ddfip     = ddfip
+        @namespace = namespace
+        @referrer  = referrer
         super()
       end
 
       def form_url
-        url_args = [@scope]
+        url_args = [@namespace]
 
         if @office.new_record?
           url_args << @ddfip
@@ -33,7 +33,7 @@ module Views
       end
 
       def allowed_to_assign_ddfip?
-        @scope == :admin && @ddfip.nil?
+        @namespace == :admin && @ddfip.nil?
       end
 
       def ddfip_input_html_attributes

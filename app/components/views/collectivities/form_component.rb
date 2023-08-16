@@ -3,16 +3,16 @@
 module Views
   module Collectivities
     class FormComponent < ApplicationViewComponent
-      def initialize(collectivity, scope:, publisher: nil, referrer: nil)
+      def initialize(collectivity, namespace:, publisher: nil, referrer: nil)
         @collectivity = collectivity
+        @namespace    = namespace
         @publisher    = publisher
-        @scope        = scope
         @referrer     = referrer
         super()
       end
 
       def form_url
-        url_args = [@scope]
+        url_args = [@namespace]
 
         if @collectivity.new_record?
           url_args << @publisher
@@ -33,11 +33,11 @@ module Views
       end
 
       def allowed_to_assign_publisher?
-        @scope == :admin && @publisher.nil?
+        @namespace == :admin && @publisher.nil?
       end
 
       def allowed_to_allow_publisher_management?
-        @scope == :admin
+        @namespace == :admin
       end
 
       def publisher_id_choice

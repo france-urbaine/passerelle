@@ -11,41 +11,34 @@
       - breadcrumbs.with_action "Supprimer", remove_admin_user_path(@user), icon: "trash", modal: true, destructive: "discrete"
 
   h2.subheader
-    = svg_icon("identification", "Nouvelle section")
+    = icon_component("identification", "Nouvelle section")
     | Description
 
   .card.mb-12
     dl.description-list
       .description-list__row
         dt Organisation
-        dd
-          - if @user.organization&.kept?
-            = authorized_link_to @user.organization, scope: :admin do
-              = @user.organization.name
-
-          - elsif @user.organization&.discarded?
-            .text-disabled
-              = "#{@user.organization.name} (organisation supprimée)"
+        dd= render Views::Users::ShowOrganizationComponent.new(@user)
 
       - if @user.organization.is_a?(DDFIP)
         .description-list__row
           dt Guichets
-          dd= offices_list(@user.offices, @user.organization_id, scope: :admin)
+          dd= render Views::Users::ShowOfficesListComponent.new(@user, namespace: :admin)
 
       .description-list__row
         dt Adresse mail de contact
-        dd= user_email(@user)
+        dd= render Views::Users::ShowEmailComponent.new(@user)
 
       .description-list__row
         dt Administrateur de l'organisation
-        dd= svg_icon("check-badge", "Oui") if @user.organization_admin?
+        dd= render Views::Users::ShowCheckBadgeComponent.new(@user, :organization_admin)
 
       .description-list__row
         dt Administrateur de FiscaHub
-        dd= svg_icon("check-badge", "Oui") if @user.super_admin?
+        dd= render Views::Users::ShowCheckBadgeComponent.new(@user, :super_admin)
 
   h2.subheader
-    = svg_icon("server-stack", "Nouvelle section")
+    = icon_component("server-stack", "Nouvelle section")
     | Informations de connexion
 
   .card

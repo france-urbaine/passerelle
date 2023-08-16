@@ -4,7 +4,7 @@ require "rails_helper"
 
 RSpec.describe Views::DDFIPs::FormComponent, type: :component do
   it "renders a form in a modal to create a new DDFIP" do
-    render_inline described_class.new(DDFIP.new, scope: :admin)
+    render_inline described_class.new(DDFIP.new, namespace: :admin)
 
     expect(page).to have_selector(".modal form") do |form|
       aggregate_failures do
@@ -23,7 +23,7 @@ RSpec.describe Views::DDFIPs::FormComponent, type: :component do
 
   it "renders a form in a modal to update an existing DDFIP" do
     ddfip = build_stubbed(:ddfip)
-    render_inline described_class.new(ddfip, scope: :admin)
+    render_inline described_class.new(ddfip, namespace: :admin)
 
     expect(page).to have_selector(".modal form") do |form|
       aggregate_failures do

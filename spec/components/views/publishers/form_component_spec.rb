@@ -4,7 +4,7 @@ require "rails_helper"
 
 RSpec.describe Views::Publishers::FormComponent, type: :component do
   it "renders a form in a modal to create a new publisher" do
-    render_inline described_class.new(Publisher.new, scope: :admin)
+    render_inline described_class.new(Publisher.new, namespace: :admin)
 
     expect(page).to have_selector(".modal form") do |form|
       aggregate_failures do
@@ -23,7 +23,7 @@ RSpec.describe Views::Publishers::FormComponent, type: :component do
 
   it "renders a form in a modal to update an existing publisher" do
     publisher = build_stubbed(:publisher)
-    render_inline described_class.new(publisher, scope: :admin)
+    render_inline described_class.new(publisher, namespace: :admin)
 
     expect(page).to have_selector(".modal form") do |form|
       aggregate_failures do

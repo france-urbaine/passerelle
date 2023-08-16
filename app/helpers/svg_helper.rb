@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module SVGHelper
-  def svg_icon(icon, title = nil, **options)
+  def icon_component(icon, title = nil, **options)
     if title
       options[:title] = title
       options[:aria] ||= true

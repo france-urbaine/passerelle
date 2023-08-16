@@ -68,16 +68,16 @@ RSpec.describe TemplateStatus::Component, type: :component do
   end
 
   it "renders a modal instead of a card when requested" do
-    vc_test_controller.request.variant = :modal
+    with_variant :modal do
+      render_inline described_class.new(referrer: "/background/path") do |card|
+        card.with_breadcrumbs do |breadcrumbs|
+          breadcrumbs.with_path("Root path")
+        end
 
-    render_inline described_class.new(referrer: "/background/path") do |card|
-      card.with_breadcrumbs do |breadcrumbs|
-        breadcrumbs.with_path("Root path")
+        card.with_body("Hello World")
+        card.with_action("Action 1", primary: true)
+        card.with_action("Action 2", href: "/some/path")
       end
-
-      card.with_body("Hello World")
-      card.with_action("Action 1", primary: true)
-      card.with_action("Action 2", href: "/some/path")
     end
 
     expect(page).not_to have_selector(".card")
@@ -123,10 +123,10 @@ RSpec.describe TemplateStatus::Component, type: :component do
   end
 
   it "doesn't render breadcrumbs when a modal is requested" do
-    vc_test_controller.request.variant = :modal
-
-    render_inline described_class.new do
-      tag.p "Hello World"
+    with_variant :modal do
+      render_inline described_class.new do
+        tag.p "Hello World"
+      end
     end
 
     expect(page).not_to have_selector(".breadcrumbs")

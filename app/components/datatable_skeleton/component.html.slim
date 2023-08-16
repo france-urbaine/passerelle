@@ -4,7 +4,7 @@
       .search
         .form-block.form-block--no-margin.form-skeleton-loader
           .form-block__input
-            .form-block__input-icon= helpers.svg_icon("search")
+            .form-block__input-icon= icon_component("search")
             input( type="text" readonly )
 
     .flex-auto
@@ -18,8 +18,8 @@
           span.text-skeleton-loader
 
         .header-bar__action
-          span.icon-button.button-skeleton-loader= helpers.svg_icon("chevron-left", "Page précédente")
-          span.icon-button.button-skeleton-loader= helpers.svg_icon("chevron-right", "Page suivante")
+          span.icon-button.button-skeleton-loader= icon_component("chevron-left", "Page précédente")
+          span.icon-button.button-skeleton-loader= icon_component("chevron-right", "Page suivante")
 
 table.datatable( aria-hidden )
   thead

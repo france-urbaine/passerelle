@@ -28,10 +28,10 @@ RSpec.describe TemplateStatus::NotFound::Component, type: :component do
   end
 
   it "renders a status template in a modal when requested" do
-    vc_test_controller.request.variant = :modal
-
-    render_inline described_class.new("User", referrer: "/background/path") do |template|
-      template.with_action("Annuler")
+    with_variant :modal do
+      render_inline described_class.new("User", referrer: "/background/path") do |template|
+        template.with_action("Annuler")
+      end
     end
 
     aggregate_failures do

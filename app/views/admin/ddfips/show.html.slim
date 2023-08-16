@@ -11,7 +11,7 @@
       - breadcrumbs.with_action "Supprimer", remove_admin_ddfip_path(@ddfip), icon: "trash", modal: true, destructive: "discrete"
 
   h2.subheader
-    = svg_icon("identification", "Nouvelle section")
+    = icon_component("identification", "Nouvelle section")
     | Description
 
   .card
@@ -57,7 +57,7 @@
 
     .subheader-bar
       h2.subheader
-        = svg_icon("rectangle-stack", "Nouvelle section")
+        = icon_component("rectangle-stack", "Nouvelle section")
         | Guichets
 
       .subheader-bar__actions
@@ -80,7 +80,7 @@
 
     .subheader-bar
       h2.subheader
-        = svg_icon("rectangle-stack", "Nouvelle section")
+        = icon_component("rectangle-stack", "Nouvelle section")
         | Utilisateurs de l'organisation
 
       .subheader-bar__actions
@@ -102,7 +102,7 @@
     .content__separator
 
     h2.subheader
-      = svg_icon("rectangle-stack", "Nouvelle section")
+      = icon_component("rectangle-stack", "Nouvelle section")
       | Collectivités enregistrées
 
     - if @ddfip.collectivities_count.zero?

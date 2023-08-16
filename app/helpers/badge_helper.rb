@@ -54,13 +54,13 @@ module BadgeHelper
 
     case priority.to_s
     when "high"
-      text += svg_icon("chart-bar", "Haute", class: "high-priority-icon")
+      text += icon_component("chart-bar", "Haute", class: "high-priority-icon")
       css  += "badge--red"
     when "medium"
-      text += svg_icon("chart-bar", "Moyenne", class: "medium-priority-icon")
+      text += icon_component("chart-bar", "Moyenne", class: "medium-priority-icon")
       css  += "badge--yellow"
     else
-      text += svg_icon("chart-bar", "Basse", class: "low-priority-icon")
+      text += icon_component("chart-bar", "Basse", class: "low-priority-icon")
       css  += "badge--lime"
     end
 
@@ -103,14 +103,5 @@ module BadgeHelper
 
   def badge(text, css = nil)
     tag.div(text, class: "badge #{css}")
-  end
-
-  def check_badge(checked, title)
-    if checked
-      svg_icon("check-badge", title)
-    else
-      # Render a empty string to avoid empty placeholder
-      " "
-    end
   end
 end

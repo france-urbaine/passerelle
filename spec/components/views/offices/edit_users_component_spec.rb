@@ -7,7 +7,7 @@ RSpec.describe Views::Offices::EditUsersComponent, type: :component do
     office = create(:office)
     users  = create_list(:user, 3, organization: office.ddfip)
 
-    render_inline described_class.new(office, scope: :admin)
+    render_inline described_class.new(office, namespace: :admin)
 
     expect(page).to have_selector(".modal form") do |form|
       aggregate_failures do

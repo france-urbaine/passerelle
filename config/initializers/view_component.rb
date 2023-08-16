@@ -5,6 +5,14 @@ Rails.application.configure do
   config.view_component.default_preview_layout = "component_preview"
   config.view_component.capture_compatibility_patch_enabled = true
 
+  if ENV.fetch("INSTRUMENT_VIEW_COMPONENT", "false") == "true"
+    # ViewComponent instrumentation could be very noisy, especially with Lookbook
+    # That's why it isn't active by default.
+    #
+    config.view_component.instrumentation_enabled = true
+    config.view_component.use_deprecated_instrumentation_name = false
+  end
+
   if defined?(Lookbook)
     config.lookbook.project_name = "FiscaHub"
 

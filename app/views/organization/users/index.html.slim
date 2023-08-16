@@ -33,7 +33,7 @@
         - row.with_action "Modifier cet utilisateur", edit_organization_user_path(user), icon: "pencil-square", modal: true
       - elsif current_user.organization_admin? && user.super_admin?
         - row.with_action do
-          = svg_icon("question-mark-circle", title: "Seul un administrateur de Fiscahub peut éditer cet utilisateur")
+          = icon_component("question-mark-circle", title: "Seul un administrateur de Fiscahub peut éditer cet utilisateur")
 
       - if allowed_to?(:destroy?, user)
         - row.with_action "Supprimer cet utilisateur", remove_organization_user_path(user), icon: "trash", modal: true
@@ -43,13 +43,13 @@
           = user.name
 
       - row.with_column(:email) do
-        = user_email(user)
+        = render Views::Users::ShowEmailComponent.new(user)
 
       - row.with_column(:organization_admin) do
-        = check_badge(user.organization_admin?, "Administrateur de l'organisation")
+        = render Views::Users::ShowCheckBadgeComponent.new(user, :organization_admin)
 
       - row.with_column(:super_admin) do
-        = check_badge(user.super_admin?, "Administrateur de FiscaHub")
+        = render Views::Users::ShowCheckBadgeComponent.new(user, :super_admin)
 
       - row.with_column(:offices) do
-        = short_offices_list(user.offices, user.organization_id, scope: :organization)
+        = render Views::Users::ShowOfficesShortListComponent.new(user, namespace: :organization)

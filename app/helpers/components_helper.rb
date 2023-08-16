@@ -19,16 +19,7 @@ module ComponentsHelper
     pagination_options_component: "Pagination::Options::Component",
     pagination_buttons_component: "Pagination::Buttons::Component",
     radio_buttons_component:      "RadioButtons::Component",
-    search_component:             "Search::Component"
-  }.freeze
-
-  COMPONENT_HELPERS.each do |name, component|
-    define_method name do |*args, **kwargs, &block|
-      render component.constantize.new(*args, **kwargs), &block
-    end
-  end
-
-  TEMPLATE_COMPONENT_HELPERS = {
+    search_component:             "Search::Component",
     template_frame_component:     "TemplateFrame::Component",
     template_content_component:   "TemplateContent::Component",
     template_modal_component:     "TemplateModal::Component",
@@ -37,20 +28,9 @@ module ComponentsHelper
     template_not_found_component: "TemplateStatus::NotFound::Component"
   }.freeze
 
-  # rubocop:disable Rails/HelperInstanceVariable
-  #
-  TEMPLATE_COMPONENT_HELPERS.each do |name, component|
+  COMPONENT_HELPERS.each do |name, component|
     define_method name do |*args, **kwargs, &block|
-      raise "Already render template_frame_component" if @template_frame_rendered
-
-      @template_frame_rendered = true
       render component.constantize.new(*args, **kwargs), &block
     end
   end
-
-  def template_frame_rendered?
-    @template_frame_rendered
-  end
-  #
-  # rubocop:enable Rails/HelperInstanceVariable
 end

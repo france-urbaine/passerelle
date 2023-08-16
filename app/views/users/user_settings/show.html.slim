@@ -5,7 +5,7 @@
     - breadcrumbs.with_action "Déconnexion", destroy_user_session_path, method: :delete, destructive: true
 
   h2.subheader
-    = svg_icon("identification", "Nouvelle section")
+    = icon_component("identification", "Nouvelle section")
     | Informations personnelles
 
   = card_component do |card|
@@ -23,7 +23,7 @@
   .content__separator
 
   h2.subheader
-    = svg_icon("at-symbol", "Nouvelle section")
+    = icon_component("at-symbol", "Nouvelle section")
     | Adresse email
 
   = card_component do |card|
@@ -65,7 +65,7 @@
   .content__separator
 
   h2.subheader
-    = svg_icon("lock-closed", "Nouvelle section")
+    = icon_component("lock-closed", "Nouvelle section")
     | Mot de passe
 
   = card_component do |card|
@@ -89,21 +89,21 @@
   .content__separator
 
   h2.subheader
-    = svg_icon("shield-check", "Nouvelle section")
+    = icon_component("shield-check", "Nouvelle section")
     | Authentification en 2 facteurs
 
   = card_component do |card|
     - if current_user.otp_required_for_login?
       - card.with_body do
         p
-          = svg_icon "shield-check", class: "inline text-green-500 h-8 w-8 mr-2"
+          = icon_component "shield-check", class: "inline text-green-500 h-8 w-8 mr-2"
           | L'authentification en 2 facteurs est activée.
 
       - card.with_action "Re-configurer", new_user_two_factor_settings_path, modal: true
     - else
       - card.with_body do
         p
-          = svg_icon "exclamation-circle", class: "inline text-red-500 h-8 w-8 mr-2"
+          = icon_component "exclamation-circle", class: "inline text-red-500 h-8 w-8 mr-2"
           | L'authentification en 2 facteurs n'est pas encore activée.
 
       - card.with_action "Activer", new_user_two_factor_settings_path, modal: true, accent: true

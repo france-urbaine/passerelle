@@ -3,16 +3,16 @@
 module Views
   module DDFIPs
     class FormComponent < ApplicationViewComponent
-      def initialize(ddfip, scope:, referrer: nil)
-        @ddfip    = ddfip
-        @scope    = scope
-        @referrer = referrer
+      def initialize(ddfip, namespace:, referrer: nil)
+        @ddfip     = ddfip
+        @namespace = namespace
+        @referrer  = referrer
         super()
       end
 
       def form_url
         url_args = []
-        url_args << @scope
+        url_args << @namespace
         url_args << (@ddfip.new_record? ? :ddfips : @ddfip)
 
         polymorphic_path(url_args.compact)

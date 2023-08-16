@@ -3,16 +3,16 @@
 module Views
   module Publishers
     class FormComponent < ApplicationViewComponent
-      def initialize(publisher, scope:, referrer: nil)
+      def initialize(publisher, namespace:, referrer: nil)
         @publisher = publisher
-        @scope     = scope
+        @namespace = namespace
         @referrer  = referrer
         super()
       end
 
       def form_url
         url_args = []
-        url_args << @scope
+        url_args << @namespace
         url_args << (@publisher.new_record? ? :publishers : @publisher)
 
         polymorphic_path(url_args.compact)

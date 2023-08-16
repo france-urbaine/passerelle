@@ -11,7 +11,7 @@
       - breadcrumbs.with_action "Supprimer", remove_admin_office_path(@office), icon: "trash", modal: true, destructive: "discrete"
 
   h2.subheader
-    = svg_icon("identification", "Nouvelle section")
+    = icon_component("identification", "Nouvelle section")
     | Description
 
   .card
@@ -55,7 +55,7 @@
 
     .subheader-bar
       h2.subheader
-        = svg_icon("rectangle-stack", "Nouvelle section")
+        = icon_component("rectangle-stack", "Nouvelle section")
         | Utilisateurs
 
       .subheader-bar__actions
@@ -80,7 +80,7 @@
 
     .subheader-bar
       h2.subheader
-        = svg_icon("rectangle-stack", "Nouvelle section")
+        = icon_component("rectangle-stack", "Nouvelle section")
         | Communes assignées
 
       .subheader-bar__actions
@@ -102,7 +102,7 @@
 
     .subheader-bar
       h2.subheader
-        = svg_icon("rectangle-stack", "Nouvelle section")
+        = icon_component("rectangle-stack", "Nouvelle section")
         | Collectivités correspondantes
 
     = turbo_frame_tag "datatable-collectivities", src: admin_office_collectivities_path(@office) do

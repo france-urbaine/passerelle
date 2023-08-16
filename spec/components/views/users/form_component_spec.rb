@@ -10,7 +10,7 @@ RSpec.describe Views::Users::FormComponent, type: :component do
     before { sign_in_as(:super_admin) }
 
     it "renders a form in a modal to create a new user" do
-      render_inline described_class.new(User.new, scope: :admin)
+      render_inline described_class.new(User.new, namespace: :admin)
 
       expect(page).to have_selector(".modal form") do |form|
         aggregate_failures do
@@ -31,7 +31,7 @@ RSpec.describe Views::Users::FormComponent, type: :component do
 
     it "renders a form in a modal to create a new user belonging to a given publisher" do
       publisher = build_stubbed(:publisher)
-      render_inline described_class.new(User.new, scope: :admin, organization: publisher)
+      render_inline described_class.new(User.new, namespace: :admin, organization: publisher)
 
       expect(page).to have_selector(".modal form") do |form|
         aggregate_failures do
@@ -52,7 +52,7 @@ RSpec.describe Views::Users::FormComponent, type: :component do
 
     it "renders a form in a modal to create a new user belonging to a given collectivity" do
       collectivity = build_stubbed(:collectivity)
-      render_inline described_class.new(User.new, scope: :admin, organization: collectivity)
+      render_inline described_class.new(User.new, namespace: :admin, organization: collectivity)
 
       expect(page).to have_selector(".modal form") do |form|
         aggregate_failures do
@@ -73,7 +73,7 @@ RSpec.describe Views::Users::FormComponent, type: :component do
 
     it "renders a form in a modal to create a new user belonging to a given DDFIP" do
       ddfip = create(:ddfip)
-      render_inline described_class.new(User.new, scope: :admin, organization: ddfip)
+      render_inline described_class.new(User.new, namespace: :admin, organization: ddfip)
 
       expect(page).to have_selector(".modal form") do |form|
         aggregate_failures do
@@ -94,7 +94,7 @@ RSpec.describe Views::Users::FormComponent, type: :component do
 
     it "renders a form in a modal to update an existing publisher user" do
       user = build_stubbed(:user, :publisher)
-      render_inline described_class.new(user, scope: :admin)
+      render_inline described_class.new(user, namespace: :admin)
 
       expect(page).to have_selector(".modal form") do |form|
         aggregate_failures do
@@ -115,7 +115,7 @@ RSpec.describe Views::Users::FormComponent, type: :component do
 
     it "renders a form in a modal to update an existing DDFIP user" do
       user = build_stubbed(:user, :ddfip)
-      render_inline described_class.new(user, scope: :admin)
+      render_inline described_class.new(user, namespace: :admin)
 
       expect(page).to have_selector(".modal form") do |form|
         aggregate_failures do
@@ -136,7 +136,7 @@ RSpec.describe Views::Users::FormComponent, type: :component do
 
     it "renders a form in a modal to update an existing admin" do
       user = build_stubbed(:user, :organization_admin, :super_admin)
-      render_inline described_class.new(user, scope: :admin)
+      render_inline described_class.new(user, namespace: :admin)
 
       expect(page).to have_selector(".modal form") do |form|
         aggregate_failures do
@@ -156,7 +156,7 @@ RSpec.describe Views::Users::FormComponent, type: :component do
     before { sign_in_as(:publisher, :organization_admin) }
 
     it "renders a form in a modal to create a new user" do
-      render_inline described_class.new(User.new, scope: :organization)
+      render_inline described_class.new(User.new, namespace: :organization)
 
       expect(page).to have_selector(".modal form") do |form|
         aggregate_failures do
@@ -177,7 +177,7 @@ RSpec.describe Views::Users::FormComponent, type: :component do
 
     it "renders a form in a modal to update an existing user" do
       user = build_stubbed(:user, organization: current_user.organization)
-      render_inline described_class.new(user, scope: :organization)
+      render_inline described_class.new(user, namespace: :organization)
 
       expect(page).to have_selector(".modal form") do |form|
         aggregate_failures do
@@ -198,7 +198,7 @@ RSpec.describe Views::Users::FormComponent, type: :component do
 
     it "renders a form in a modal to update an existing admin" do
       user = build_stubbed(:user, :organization_admin, organization: current_user.organization)
-      render_inline described_class.new(user, scope: :organization)
+      render_inline described_class.new(user, namespace: :organization)
 
       expect(page).to have_selector(".modal form") do |form|
         aggregate_failures do
@@ -215,7 +215,7 @@ RSpec.describe Views::Users::FormComponent, type: :component do
 
     it "allows to check super admin role when signed as a super admin" do
       current_user.update(super_admin: true)
-      render_inline described_class.new(User.new, scope: :organization)
+      render_inline described_class.new(User.new, namespace: :organization)
 
       expect(page).to have_selector(".modal form") do |form|
         expect(form).to have_field("Administrateur de l'organisation")
@@ -226,7 +226,7 @@ RSpec.describe Views::Users::FormComponent, type: :component do
     it "renders a form in a modal to create a new user in an owned collectivity" do
       collectivity = build_stubbed(:collectivity, publisher: current_user.organization)
 
-      render_inline described_class.new(User.new, scope: :organization, organization: collectivity)
+      render_inline described_class.new(User.new, namespace: :organization, organization: collectivity)
 
       expect(page).to have_selector(".modal form") do |form|
         aggregate_failures do
@@ -249,7 +249,7 @@ RSpec.describe Views::Users::FormComponent, type: :component do
       collectivity = build_stubbed(:collectivity, publisher: current_user.organization)
       user         = build_stubbed(:user, organization: collectivity)
 
-      render_inline described_class.new(user, scope: :organization, organization: collectivity)
+      render_inline described_class.new(user, namespace: :organization, organization: collectivity)
 
       expect(page).to have_selector(".modal form") do |form|
         aggregate_failures do
@@ -275,7 +275,7 @@ RSpec.describe Views::Users::FormComponent, type: :component do
     it "renders a form in a modal to create a new user in an owned collectivity without admin checkbox" do
       collectivity = build_stubbed(:collectivity, publisher: current_user.organization)
 
-      render_inline described_class.new(User.new, scope: :organization, organization: collectivity)
+      render_inline described_class.new(User.new, namespace: :organization, organization: collectivity)
 
       expect(page).to have_selector(".modal form") do |form|
         aggregate_failures do
@@ -294,7 +294,7 @@ RSpec.describe Views::Users::FormComponent, type: :component do
       collectivity = build_stubbed(:collectivity, publisher: current_user.organization)
       user         = build_stubbed(:user, organization: collectivity)
 
-      render_inline described_class.new(user, scope: :organization, organization: collectivity)
+      render_inline described_class.new(user, namespace: :organization, organization: collectivity)
 
       expect(page).to have_selector(".modal form") do |form|
         aggregate_failures do
@@ -314,7 +314,7 @@ RSpec.describe Views::Users::FormComponent, type: :component do
     before { sign_in_as(:collectivity, :organization_admin) }
 
     it "renders a form in a modal to create a new user" do
-      render_inline described_class.new(User.new, scope: :organization)
+      render_inline described_class.new(User.new, namespace: :organization)
 
       expect(page).to have_selector(".modal form") do |form|
         aggregate_failures do
@@ -335,7 +335,7 @@ RSpec.describe Views::Users::FormComponent, type: :component do
 
     it "renders a form in a modal to update an existing user" do
       user = build_stubbed(:user, organization: current_user.organization)
-      render_inline described_class.new(user, scope: :organization)
+      render_inline described_class.new(user, namespace: :organization)
 
       expect(page).to have_selector(".modal form") do |form|
         aggregate_failures do
@@ -356,7 +356,7 @@ RSpec.describe Views::Users::FormComponent, type: :component do
 
     it "renders a form in a modal to update an existing admin" do
       user = build_stubbed(:user, :organization_admin, organization: current_user.organization)
-      render_inline described_class.new(user, scope: :organization)
+      render_inline described_class.new(user, namespace: :organization)
 
       expect(page).to have_selector(".modal form") do |form|
         aggregate_failures do
@@ -373,7 +373,7 @@ RSpec.describe Views::Users::FormComponent, type: :component do
 
     it "allows to check super admin role when signed as a super admin" do
       current_user.update(super_admin: true)
-      render_inline described_class.new(User.new, scope: :organization)
+      render_inline described_class.new(User.new, namespace: :organization)
 
       expect(page).to have_selector(".modal form") do |form|
         expect(form).to have_field("Administrateur de l'organisation")
@@ -386,7 +386,7 @@ RSpec.describe Views::Users::FormComponent, type: :component do
     before { sign_in_as(:ddfip, :organization_admin, organization: ddfip) }
 
     it "renders a form in a modal to create a new user" do
-      render_inline described_class.new(User.new, scope: :organization)
+      render_inline described_class.new(User.new, namespace: :organization)
 
       expect(page).to have_selector(".modal form") do |form|
         aggregate_failures do
@@ -407,7 +407,7 @@ RSpec.describe Views::Users::FormComponent, type: :component do
 
     it "renders a form in a modal to update an existing user" do
       user = build_stubbed(:user, organization: ddfip, offices: offices[2..])
-      render_inline described_class.new(user, scope: :organization)
+      render_inline described_class.new(user, namespace: :organization)
 
       expect(page).to have_selector(".modal form") do |form|
         aggregate_failures do
@@ -430,7 +430,7 @@ RSpec.describe Views::Users::FormComponent, type: :component do
 
     it "renders a form in a modal to update an existing admin" do
       user = build_stubbed(:user, :organization_admin, organization: current_user.organization)
-      render_inline described_class.new(user, scope: :organization)
+      render_inline described_class.new(user, namespace: :organization)
 
       expect(page).to have_selector(".modal form") do |form|
         aggregate_failures do
@@ -447,7 +447,7 @@ RSpec.describe Views::Users::FormComponent, type: :component do
 
     it "allows to check super admin role when signed as a super admin" do
       current_user.update(super_admin: true)
-      render_inline described_class.new(User.new, scope: :organization)
+      render_inline described_class.new(User.new, namespace: :organization)
 
       expect(page).to have_selector(".modal form") do |form|
         expect(form).to have_field("Administrateur de l'organisation")
