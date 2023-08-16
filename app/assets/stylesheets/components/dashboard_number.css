@@ -1,0 +1,25 @@
+@layer components {
+  .dashboard-numbers {
+    display: flex;
+    flew-wrap: wrap;
+    @apply space-x-12;
+
+    & .dashboard-number {
+      flex: 1;
+    }
+  }
+
+  .dashboard-number {
+    text-align: center;
+
+    @apply rounded-xl ring-1 p-6;
+    @apply text-3xl;
+    @apply bg-white ring-gray-300;
+    @apply dark:bg-black dark:ring-gray-700;
+  }
+
+  .dashboard-number__unit {
+    display: block;
+    @apply text-xl mt-1;
+  }
+}

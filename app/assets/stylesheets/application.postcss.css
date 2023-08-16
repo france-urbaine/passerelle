@@ -18,7 +18,6 @@
 
 /* Interactive elements */
 @import "./components/button";
-@import "./components/badge";
 @import "./components/icon_button";
 @import "./components/tooltip";
 @import "./components/notifications";
@@ -45,5 +44,7 @@
 @import "./components/public";
 
 /* Data display */
+@import "./components/badge";
+@import "./components/dashboard_number";
 @import "./components/datatable";
 @import "./components/description_list";

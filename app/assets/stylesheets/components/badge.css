@@ -80,4 +80,12 @@
       @apply dark:bg-lime-500 text-black;
     }
   }
+
+  .priority-badge {
+    @apply font-medium;
+
+    & svg {
+      @apply ml-2 -mr-0;
+    }
+  }
 }
