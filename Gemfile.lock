@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/inkstak/bundleup.git
-  revision: ea20301410ac9f59ea486d18bcf353ac566e4ec6
+  revision: 889c51b35bbebbc671ced712bd3ab13e122b84e0
   branch: return_cli_report
   specs:
     bundleup (2.3.0)
