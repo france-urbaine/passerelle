@@ -11,6 +11,10 @@
     = form.label :password, "Password"
     = form.password_field :password
 
+  = form.block :password do
+    = form.label :password, "Password"
+    = form.password_field_component :password
+
   = form.block :name do
     = form.label :name, "Textarea"
     = form.text_area :name
