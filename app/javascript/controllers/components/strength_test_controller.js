@@ -8,6 +8,12 @@ export default class extends Controller {
   check (event) {
     const value = event.target.value
 
-    this.frameTarget.src = "/password/strength_test?password=" + value
+    if (value) {
+      this.frameTarget.src = "/password/strength_test?password=" + value
+    } else {
+      this.frameTarget.src = null
+      this.frameTarget.innerHTML = ""
+    }
+
   }
 }

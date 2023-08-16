@@ -24,7 +24,6 @@
       @apply dark:text-gray-100;
 
       &:is(:hover, :active, :focus, :focus-visible) {
-        outline-style: solid;
         outline-width: 0px;
 
         @apply text-blue-500;

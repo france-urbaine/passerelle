@@ -19,20 +19,20 @@ module PasswordField
         options[:maxlength] = Devise.password_length.max
       end
 
-      options[:data] ||= {}
+      options[:data] ||= { action: "" }
       options[:data][:password_visibility_target] = "input"
-
-      options[:data][:action] = "strength-test#check" if @strength_test
-
+      options[:data][:action] += " strength-test#check" if @strength_test
       options
     end
 
-    def controller_options
-      if @strength_test
-        { data: { controller: "strength-test password-visibility" } }
-      else
-        { data: { controller: "password-visibility" } }
-      end
+    def wrapper_html_attributes
+      attributes = {
+        class: "password-field",
+        data: { controller: "password-visibility" }
+      }
+
+      attributes[:data][:controller] += " strength-test" if @strength_test
+      attributes
     end
   end
 end

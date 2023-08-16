@@ -2,7 +2,9 @@
 
 module PasswordField
   # @logical_path Interactive elements
+  #
   # @display frame "content"
+  # @display width "medium"
   #
   class ComponentPreview < ViewComponent::Preview
     # @label Default

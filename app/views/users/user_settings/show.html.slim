@@ -74,7 +74,8 @@
 
       = form.block(:password) do
         = form.label(:password, "Nouveau mot de passe (#{Devise.password_length.min} caractères minimum)")
-        = form.password_field(:password, required: true, autocomplete: "new-password", minlength: Devise.password_length.min, maxlength: Devise.password_length.max)
+        = form.password_field_component(:password, strength_test: true, required: true, autocomplete: "new-password",)
+        / = form.password_field(:password, required: true, autocomplete: "new-password", minlength: Devise.password_length.min, maxlength: Devise.password_length.max)
 
       = form.block(:password_confirmation) do
         = form.label(:password_confirmation)

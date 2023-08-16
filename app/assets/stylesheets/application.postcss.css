@@ -30,7 +30,6 @@
 @import "./components/choices_collection";
 @import "./components/direct_upload";
 @import "./components/password_field";
-@import "./components/password_strength_test";
 
 /* Layouts */
 @import "./components/navbar";
