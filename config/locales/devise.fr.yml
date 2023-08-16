@@ -74,3 +74,6 @@ fr:
       unlocked:
         type:  "success"
         title: "Votre compte a été déverrouillé avec succès. Vous pouvez dorénavant vous connecter."
+  errors:
+    messages:
+      weak_password: "Le mot de passe n'est pas assez fort. Assurez-vous d'avoir un mot de passe avec un niveau de sécurité \"bon\" au minimum."

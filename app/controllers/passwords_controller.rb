@@ -7,12 +7,18 @@ class PasswordsController < ApplicationController
   def strength_test
     return not_acceptable unless turbo_frame_request?
 
-    @checked_password = Zxcvbn.test(password_params) if password_params.present?
+    result = Zxcvbn.zxcvbn(password_params)
+
+    @score       = result["score"]
+    @warning     = result.dig("feedback", "warning").presence&.parameterize&.underscore
+    @suggestions = result.dig("feedback", "suggestions").map do |suggestion|
+      suggestion.parameterize.underscore
+    end
   end
 
   private
 
   def password_params
-    params.fetch(:password)
+    params.require(:password)
   end
 end

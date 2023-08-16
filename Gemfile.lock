@@ -168,6 +168,9 @@ GEM
       railties (>= 4.1.0)
       responders
       warden (~> 1.2.3)
+    devise_zxcvbn (6.0.0)
+      devise
+      zxcvbn (~> 0.1.7)
     diff-lcs (1.5.0)
     discard (1.2.1)
       activerecord (>= 4.2, < 8)
@@ -511,7 +514,7 @@ GEM
       nokogiri (~> 1.8)
     yard (0.9.34)
     zeitwerk (2.6.11)
-    zxcvbn-ruby (1.2.0)
+    zxcvbn (0.1.9)
 
 PLATFORMS
   arm64-darwin-21
@@ -538,6 +541,7 @@ DEPENDENCIES
   debug
   devise
   devise-two-factor!
+  devise_zxcvbn
   discard
   dotenv
   factory_bot
@@ -595,7 +599,7 @@ DEPENDENCIES
   view_component
   web-console
   webmock
-  zxcvbn-ruby
+  zxcvbn
 
 RUBY VERSION
    ruby 3.2.2p53
