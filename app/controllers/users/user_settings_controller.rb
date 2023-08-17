@@ -11,6 +11,11 @@ module Users
     end
 
     def update
+      # Reload another instance of the current user
+      # so changes are applied to this instance and not to current_user instance.
+      #
+      # In case of success, current_user will be reloaded after redirection.
+      #
       @user = User.find(current_user.id)
       return gone(@user) if @user.discarded?
 
