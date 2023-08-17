@@ -36,16 +36,19 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Set up Ruby
+    - name: Set up Ruby & install gems bundle
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: 3.2.2
         bundler-cache: true
 
-    - name: Set up yarn packages
-      uses: borales/actions-yarn@v4
+    - name: Set up Yarn
+      uses: actions/setup-node@v3
       with:
-        cmd: install
+        cache: 'yarn'
+
+    - name: Install JS packages
+      run: yarn
 
     - name: Set up application
       env:
@@ -91,16 +94,19 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Set up Ruby
+    - name: Set up Ruby & install gems bundle
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: 3.2.2
         bundler-cache: true
 
-    - name: Set up yarn packages
-      uses: borales/actions-yarn@v4
+    - name: Set up Yarn
+      uses: actions/setup-node@v3
       with:
-        cmd: install
+        cache: 'yarn'
+
+    - name: Install JS packages
+      run: yarn
 
     - name: Set up application
       env:
