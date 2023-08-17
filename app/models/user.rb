@@ -61,7 +61,8 @@ class User < ApplicationRecord
     :trackable,
     :confirmable,
     :timeoutable,
-    :lockable
+    :lockable,
+    :zxcvbnable
   )
 
   # Associations

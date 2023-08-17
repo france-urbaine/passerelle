@@ -17,9 +17,11 @@ gem "redis", "~> 5.0"
 
 # Models
 gem "devise"
+gem "devise_zxcvbn"
 # https://github.com/tinfoil/devise-two-factor/pull/240
 gem "devise-two-factor", github: "inkstak/devise-two-factor", branch: "bugfix-insert_two_factor_authenticatable_on_top"
 gem "discard"
+gem "zxcvbn"
 
 # Storage
 gem "aws-sdk-s3", require: false

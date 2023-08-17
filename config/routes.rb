@@ -54,6 +54,10 @@ Rails.application.routes.draw do
     root to: redirect("/signalements"), as: :authenticated_root
   end
 
+  # Test passwords strength
+  # ----------------------------------------------------------------------------
+  get "/password/strength_test", to: "passwords#strength_test"
+
   # Combined autocompletions
   # ----------------------------------------------------------------------------
   resources :organizations, only: %i[index], path: "/organisations"

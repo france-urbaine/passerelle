@@ -7,11 +7,11 @@
 
     = form.block(:password) do
       = form.label(:password)
-      = form.password_field(:password, autofocus: true, require: true, autocomplete: "new-password", minlength: Devise.password_length.min, maxlength: Devise.password_length.max)
+      = form.password_field_component(:password, strength_test: true, autofocus: true, require: true, autocomplete: "new-password")
 
     = form.block(:password_confirmation) do
       = form.label(:password_confirmation)
-      = form.password_field(:password_confirmation, require: true, autocomplete: "new-password")
+      = form.password_field_component(:password_confirmation, require: true, autocomplete: "new-password")
 
   - card.with_submit_action "Continuer"
 

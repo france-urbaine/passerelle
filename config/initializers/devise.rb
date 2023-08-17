@@ -327,4 +327,7 @@ Devise.setup do |config|
   # ==> OTP / Two factor Authentication configuration
   # Make Code valid for 5 minutes
   config.otp_allowed_drift = 5.minutes.to_i
+
+  # ==> Configuration for :zxcvbnable
+  config.min_password_score = 3
 end

@@ -38,7 +38,7 @@
         li
           = form.block :current_password do
             = form.label :current_password, "Saisissez votre mot de passe pour valider la modification"
-            = form.password_field :current_password, required: true, autocomplete: "current-password"
+            = form.password_field_component(:current_password, required: true, autocomplete: "current-password")
 
       p
         strong Attention !

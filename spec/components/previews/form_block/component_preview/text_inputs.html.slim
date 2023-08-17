@@ -8,8 +8,12 @@
     = form.email_field :email
 
   = form.block :password do
-    = form.label :password, "Password"
+    = form.label :password, "Password (default)"
     = form.password_field :password
+
+  = form.block :password do
+    = form.label :password, "Password (enhanced component)"
+    = form.password_field_component :password
 
   = form.block :name do
     = form.label :name, "Textarea"

@@ -58,7 +58,7 @@
 
         = form.block(:current_password) do
           = form.label(:current_password, "Mot de passe actuel")
-          = form.password_field(:current_password, required: true, autocomplete: "current-password")
+          = form.password_field_component(:current_password, required: true, autocomplete: "new-password")
 
       - card.with_submit_action "Enregistrer"
 
@@ -74,15 +74,15 @@
 
       = form.block(:password) do
         = form.label(:password, "Nouveau mot de passe (#{Devise.password_length.min} caractères minimum)")
-        = form.password_field(:password, required: true, autocomplete: "new-password", minlength: Devise.password_length.min, maxlength: Devise.password_length.max)
+        = form.password_field_component(:password, strength_test: true, required: true, autocomplete: "new-password")
 
       = form.block(:password_confirmation) do
         = form.label(:password_confirmation)
-        = form.password_field(:password_confirmation, required: true, autocomplete: "new-password", minlength: Devise.password_length.min, maxlength: Devise.password_length.max)
+        = form.password_field_component(:password_confirmation, required: true, autocomplete: "new-password")
 
       = form.block(:current_password) do
         = form.label(:current_password, "Mot de passe actuel")
-        = form.password_field(:current_password, required: true, autocomplete: "current-password")
+        = form.password_field_component(:current_password, required: true, autocomplete: "new-password")
 
     - card.with_submit_action "Enregistrer"
 

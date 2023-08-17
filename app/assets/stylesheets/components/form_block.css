@@ -140,7 +140,7 @@
   }
 
   .form-block__errors {
-    @apply mt-1;
+    @apply mt-2;
     @apply text-red-700;
   }
 }

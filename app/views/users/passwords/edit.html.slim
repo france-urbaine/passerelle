@@ -13,11 +13,11 @@
 
       = form.block(:password) do
         = form.label(:password)
-        = form.password_field(:password, autofocus: true, autocomplete: "new-password")
+        = form.password_field_component(:password, strength_test: true, required: true, autofocus: true, autocomplete: "new-password")
 
       = form.block(:password_confirmation) do
         = form.label(:password_confirmation)
-        = form.password_field(:password_confirmation, autocomplete: "new-password")
+        = form.password_field_component(:password_confirmation, required: true, autocomplete: "new-password")
 
     - card_content.with_submit_action "Modifier mon mot de passe"
 

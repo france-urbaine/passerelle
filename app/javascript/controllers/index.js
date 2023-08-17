@@ -9,6 +9,9 @@ import { application } from "./application"
 import NestedForm from "stimulus-rails-nested-form"
 application.register("nested-form", NestedForm)
 
+import PasswordVisibility from 'stimulus-password-visibility'
+application.register('password-visibility', PasswordVisibility)
+
 // Components
 // -----------------------------------------------------------------------------
 import NavbarController from "./components/navbar_controller"
@@ -35,6 +38,9 @@ application.register("selection-group", SelectionGroupController)
 import SelectionRowController from "./components/selection_row_controller"
 application.register("selection-row", SelectionRowController)
 
+import StrenghTestController from "./components/strength_test_controller"
+application.register("strength-test", StrenghTestController)
+
 import SwitchController from "./components/switch_controller"
 application.register("switch", SwitchController)
 
@@ -45,4 +51,3 @@ application.register("direct-upload-field", DirectUploadFieldController)
 
 import UserFormController from "./forms/user_form_controller"
 application.register("user-form", UserFormController)
-
