@@ -1,27 +1,36 @@
 #!/usr/bin/env bash
 
+if command -v overmind &> /dev/null; then
+  arguments="-f Procfile.dev"
 
-if command -v mailcatcher &> /dev/null
-then
-  procfile_arg="Procfile.dev+mailcatcher $@"
-else
-  procfile_arg="Procfile.dev $@"
-fi
+  if command -v mailcatacher &> /dev/null; then
+    arguments="$arguments+mailcatcher"
+  fi
 
+  if [[ "$@" != "" ]]; then
+    arguments="$arguments -l $@"
+  fi
 
-if command -v overmind &> /dev/null
-then
-  overmind start -f $procfile_arg
+  overmind start $arguments
   exit
 fi
 
-if ! command -v foreman &> /dev/null
-then
+if ! command -v foreman &> /dev/null; then
   echo "Installing foreman..."
   gem install foreman
 fi
 
-if command -v foreman &> /dev/null
-then
-  foreman start -f $procfile_arg
+if command -v foreman &> /dev/null; then
+  if [[ "$@" == "mailcatcher" ]]; then
+    echo "Mailcatcher cannot be run with foreman."
+    echo "You should consider using overmind."
+    exit
+  fi
+
+  if [[ "$@" == "" ]] && (command -v mailcatcher &> /dev/null); then
+    echo "Mailcatcher is installed but cannot be run with foreman."
+    echo "You should consider using overmind to start it with bin/dev"
+  fi
+
+  foreman start -f Procfile.dev $@
 fi
