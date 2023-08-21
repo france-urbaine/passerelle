@@ -1,0 +1,50 @@
+= datatable_component(@users) do |datatable|
+  - datatable.with_search
+  - datatable.with_pagination(@pagy, options: false) if @pagy
+
+  - datatable.with_selection do |selection|
+    - if allowed_to?(:destroy_all?, User, with: office_user_policy)
+      - selection.with_action "Tout exclure du guichet", polymorphic_path([:remove_all, @namespace, @office, :users]), modal: true
+
+  - datatable.with_column(:name, sort: true)         { "Utilisateur" }
+  - datatable.with_column(:email)                    { "Adresse mail" }
+  - datatable.with_column(:organization_admin)       { "Admin. de l'organisation" }
+  - datatable.with_column(:super_admin)              { "Admin. de FiscaHub" }
+  - datatable.with_column(:offices)                  { "Guichets" }
+
+  - datatable.with_empty_message do
+    - if params[:search]
+      | Aucun utilisateur ne correspont à votre recherche.
+    - else
+      | Aucun utilisateur disponible.
+
+  - datatable.each_row do |row, user|
+    - row.with_checkbox "Sélectionner cet utilisateur", described_by: :name, disabled: !allowed_to?(:destroy_all?, User, with: office_user_policy)
+
+    - if allowed_to?(:update?, user, with: user_policy)
+      - row.with_action "Modifier cet utilisateur", polymorphic_path([:edit, @namespace, user]), icon: "pencil-square", modal: true
+
+    - if allowed_to?(:destroy?, user, with: office_user_policy)
+      - row.with_action "Exclure cet utilisateur du guichet", polymorphic_path([:remove, @namespace, @office, user]), icon: "arrow-right-on-rectangle", modal: true
+
+    - if allowed_to?(:destroy?, user, with: user_policy)
+      - row.with_action "Supprimer cet utilisateur", polymorphic_path([:remove, @namespace, user]), icon: "trash", modal: true
+
+    - row.with_column(:name) do
+      = authorized_link_to user, scope: @namespace, with: user_policy do
+        = user.name
+
+    - row.with_column(:email) do
+      = render Views::Users::ShowEmailComponent.new(user)
+
+    - row.with_column(:organization) do
+      = render Views::Users::ShowOrganizationComponent.new(user)
+
+    - row.with_column(:organization_admin) do
+      = render Views::Users::ShowCheckBadgeComponent.new(user, :organization_admin)
+
+    - row.with_column(:super_admin) do
+      = render Views::Users::ShowCheckBadgeComponent.new(user, :super_admin)
+
+    - row.with_column(:offices) do
+      = render Views::Users::ShowOfficesShortListComponent.new(user, namespace: @namespace)
