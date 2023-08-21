@@ -2,11 +2,16 @@
 
 class ApplicationViewComponent < ViewComponent::Base
   include ComponentsHelper
+  include ActionPolicy::Behaviour
 
-  delegate :current_user, :current_organization,
-    :signed_in?, :allowed_to?,
-    :authorized_link_to, :icon_component,
-    to: :helpers
+  # Delegate devise methods
+  delegate :current_user, :signed_in?, to: :helpers
+
+  # Delegate few helpers (to convert to component)
+  delegate :authorized_link_to, :icon_component, to: :helpers
+
+  # Setup policies context
+  authorize :user, through: :current_user
 
   class LabelOrContent < self
     def initialize(label = nil)
@@ -25,5 +30,9 @@ class ApplicationViewComponent < ViewComponent::Base
 
   def turbo_frame_request?
     turbo_frame_request_id.present?
+  end
+
+  def current_organization
+    current_user&.organization
   end
 end

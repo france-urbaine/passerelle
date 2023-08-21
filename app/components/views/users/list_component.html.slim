@@ -1,0 +1,56 @@
+= datatable_component(@users) do |datatable|
+  - datatable.with_search
+  - datatable.with_pagination(@pagy, options: !nested?) if @pagy
+
+  - datatable.with_selection do |selection|
+    - if allowed_to_remove_all?
+      - if @parent.is_a?(Office)
+        - selection.with_action "Tout exclure du guichet", polymorphic_path([:remove_all, @namespace, @parent, :users]), modal: true
+      - else
+        - selection.with_action "Tout supprimer", polymorphic_path([:remove_all, @namespace, @parent, :users]), modal: true
+
+  - datatable.with_column(:name, sort: true)         { "Utilisateur" }              if columns.include?(:name)
+  - datatable.with_column(:email)                    { "Adresse mail" }             if columns.include?(:email)
+  - datatable.with_column(:organization, sort: true) { "Organisation" }             if columns.include?(:organization)
+  - datatable.with_column(:organization_admin)       { "Admin. de l'organisation" } if columns.include?(:organization_admin)
+  - datatable.with_column(:super_admin)              { "Admin. de FiscaHub" }       if columns.include?(:super_admin)
+  - datatable.with_column(:offices)                  { "Guichets" }                 if columns.include?(:offices)
+
+  - datatable.with_empty_message do
+    - if params[:search]
+      | Aucun utilisateur ne correspont à votre recherche.
+    - else
+      | Aucun utilisateur disponible.
+
+  - datatable.each_row do |row, user|
+    - row.with_checkbox "Sélectionner cet utilisateur", described_by: :name, disabled: !allowed_to_remove_all?
+
+    - if allowed_to_edit?(user)
+      - row.with_action "Modifier cet utilisateur", edit_path(user), icon: "pencil-square", modal: true
+
+    - if allowed_to_remove_from_office?(user)
+      - row.with_action "Exclure cet utilisateur du guichet", polymorphic_path([:remove, @namespace, @parent, user]), icon: "arrow-right-on-rectangle", modal: true
+
+    - if allowed_to_remove?(user)
+      - row.with_action "Supprimer cet utilisateur", remove_path(user), icon: "trash", modal: true
+
+    - row.with_column(:name) do
+      - if allowed_to_show?(user)
+        = link_to user.name, show_path(user), data: { turbo_frame: "_top" }
+      - else
+        = user.name
+
+    - row.with_column(:email) do
+      = render Views::Users::ShowEmailComponent.new(user)
+
+    - row.with_column(:organization) do
+      = render Views::Users::ShowOrganizationComponent.new(user)
+
+    - row.with_column(:organization_admin) do
+      = render Views::Users::ShowCheckBadgeComponent.new(user, :organization_admin)
+
+    - row.with_column(:super_admin) do
+      = render Views::Users::ShowCheckBadgeComponent.new(user, :super_admin)
+
+    - row.with_column(:offices) do
+      = render Views::Users::ShowOfficesShortListComponent.new(user, namespace: @namespace)

@@ -11,8 +11,6 @@ module Organization
       def index
         @users = authorize_users_scope
         @users, @pagy = index_collection(@users, nested: true)
-
-        @users = @users.preload(:offices)
       end
 
       def new

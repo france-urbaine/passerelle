@@ -76,15 +76,9 @@
       /       = " / "
       /       = display_count(@collectivity.reports_rejected_count, "rejeté")
 
-  - if !allowed_to?(:manage?, @collectivity)
-    .content__separator
-
-    = card_component(content_class: "card__content--empty")
-      | La collectivité ne vous a pas autorisé à gerer son compte et ses utilisateurs.
+  .content__separator
 
   - if allowed_to?(:index?, User, with: Organization::Collectivities::UserPolicy, context: { collectivity: @collectivity })
-    .content__separator
-
     .subheader-bar
       h2.subheader
         = icon_component("rectangle-stack", "Nouvelle section")
@@ -104,3 +98,7 @@
         = datatable_skeleton_component(nested: true, rows: @collectivity.users_count) do |skeleton|
           - skeleton.with_search
           - skeleton.with_pagination
+
+  - elsif current_organization.is_a?(Publisher)
+    = card_component(content_class: "card__content--empty")
+      | La collectivité ne vous a pas autorisé à gerer son compte et ses utilisateurs.

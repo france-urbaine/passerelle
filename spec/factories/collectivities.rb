@@ -9,7 +9,7 @@ FactoryBot.define do
     sequence :name do |n|
       # Remove the sequence number added by territories (if it exists)
       # and replace it by the sequence number of this factory
-      name = territory.name.gsub(/#\d+/, "")
+      name = territory.name.gsub(/\s*#\d+/, "")
       "#{name} ##{n}"
     end
 
