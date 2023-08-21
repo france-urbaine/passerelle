@@ -17,13 +17,22 @@ jobs:
   test_unit:
     name: test:unit
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        # Set N number of parallel jobs to run
+        # Remember to update ci_node_index below to 0..N-1
+        #
+        ci_node_total: [6]
+        ci_node_index: [0, 1, 2, 3, 4, 5]
+
     services:
       # Setup a postgres database to run tests
       #
       postgres:
         image: postgres:14.8
         env:
-          POSTGRES_DB:       fiscahub_dev
+          POSTGRES_DB:       fiscahub_test
           POSTGRES_PASSWORD: postgres
         ports:
           - 5432:5432
@@ -36,49 +45,64 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Set up Ruby
+    - name: Set up Ruby & install gems bundle
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: 3.2.2
         bundler-cache: true
 
-    - name: Set up yarn packages
-      uses: borales/actions-yarn@v4
+    - name: Set up Yarn
+      uses: actions/setup-node@v3
       with:
-        cmd: install
+        cache: 'yarn'
+
+    - name: Install JS packages
+      run: yarn
 
     - name: Set up application
       env:
+        CI:                  true
         POSTGRESQL_HOST:     localhost
         POSTGRESQL_PORT:     5432
         POSTGRESQL_USER:     postgres
         POSTGRESQL_PASSWORD: postgres
-        POSTGRESQL_DATABASE: fiscahub_dev
+        POSTGRESQL_DATABASE: fiscahub_test
       run: |
         bin/setup test
 
     - name: Run tests
       env:
         CI:                  true
+        CI_NODE_TOTAL:       ${{ matrix.ci_node_total }}
+        CI_NODE_INDEX:       ${{ matrix.ci_node_index }}
         RAILS_MASTER_KEY:    ${{ secrets.RAILS_MASTER_KEY }}
         POSTGRESQL_HOST:     localhost
         POSTGRESQL_PORT:     5432
         POSTGRESQL_USER:     postgres
         POSTGRESQL_PASSWORD: postgres
-        POSTGRESQL_DATABASE: fiscahub_dev
+        POSTGRESQL_DATABASE: fiscahub_test
       run: |
         bin/ci test:unit
 
   test_system:
     name: test:system
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        # Set N number of parallel jobs to run
+        # Remember to update ci_node_index below to 0..N-1
+        #
+        ci_node_total: [2]
+        ci_node_index: [0, 1]
+
     services:
       # Setup a postgres database to run tests
       #
       postgres:
         image: postgres:14.8
         env:
-          POSTGRES_DB:       fiscahub_dev
+          POSTGRES_DB:       fiscahub_test
           POSTGRES_PASSWORD: postgres
         ports:
           - 5432:5432
@@ -91,36 +115,42 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Set up Ruby
+    - name: Set up Ruby & install gems bundle
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: 3.2.2
         bundler-cache: true
 
-    - name: Set up yarn packages
-      uses: borales/actions-yarn@v4
+    - name: Set up Yarn
+      uses: actions/setup-node@v3
       with:
-        cmd: install
+        cache: 'yarn'
+
+    - name: Install JS packages
+      run: yarn
 
     - name: Set up application
       env:
+        CI:                  true
         POSTGRESQL_HOST:     localhost
         POSTGRESQL_PORT:     5432
         POSTGRESQL_USER:     postgres
         POSTGRESQL_PASSWORD: postgres
-        POSTGRESQL_DATABASE: fiscahub_dev
+        POSTGRESQL_DATABASE: fiscahub_test
       run: |
         bin/setup test
 
     - name: Run tests
       env:
-        CI:                     true
-        RAILS_MASTER_KEY:       ${{ secrets.RAILS_MASTER_KEY }}
-        POSTGRESQL_HOST:        localhost
-        POSTGRESQL_PORT:        5432
-        POSTGRESQL_USER:        postgres
-        POSTGRESQL_PASSWORD:    postgres
-        POSTGRESQL_DATABASE:    fiscahub_dev
+        CI:                  true
+        CI_NODE_TOTAL:       ${{ matrix.ci_node_total }}
+        CI_NODE_INDEX:       ${{ matrix.ci_node_index }}
+        RAILS_MASTER_KEY:    ${{ secrets.RAILS_MASTER_KEY }}
+        POSTGRESQL_HOST:     localhost
+        POSTGRESQL_PORT:     5432
+        POSTGRESQL_USER:     postgres
+        POSTGRESQL_PASSWORD: postgres
+        POSTGRESQL_DATABASE: fiscahub_test
       run: |
         bin/ci test:system
 
