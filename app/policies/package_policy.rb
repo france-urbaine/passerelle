@@ -42,11 +42,12 @@ class PackagePolicy < ApplicationPolicy
   end
 
   def approve?
-    if record == Package
-      ddfip_admin?
-    elsif record.is_a?(Package)
-      package_approvable_by_ddfip_admin?(record)
-    end
+    false
+    # if record == Package
+    #   ddfip_admin?
+    # elsif record.is_a?(Package)
+    #   package_approvable_by_ddfip_admin?(record)
+    # end
   end
 
   def destroy?
