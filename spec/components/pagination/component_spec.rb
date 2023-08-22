@@ -3,10 +3,6 @@
 require "rails_helper"
 
 RSpec.describe Pagination::Component, type: :component do
-  around do |example|
-    with_request_url("/territoires/communes") { example.run }
-  end
-
   let(:pagy) { Pagy.new(count: 1025, page: 3, items: 20) }
 
   context "with only pagy" do
@@ -56,10 +52,10 @@ RSpec.describe Pagination::Component, type: :component do
       expect(page).to have_button("Options d'affichage")
       expect(page).to have_selector(".dropdown__menu") do |menu|
         aggregate_failures do
-          expect(menu).to have_link("Trier par nom, par ordre croissant",      href: "/territoires/communes?order=name")
-          expect(menu).to have_link("Trier par nom, par ordre décroissant",    href: "/territoires/communes?order=-name")
-          expect(menu).to have_link("Trier par nombre, par ordre croissant",   href: "/territoires/communes?order=count")
-          expect(menu).to have_link("Trier par nombre, par ordre décroissant", href: "/territoires/communes?order=-count")
+          expect(menu).to have_link("Trier par nom, par ordre croissant",      href: "/test/components?order=name")
+          expect(menu).to have_link("Trier par nom, par ordre décroissant",    href: "/test/components?order=-name")
+          expect(menu).to have_link("Trier par nombre, par ordre croissant",   href: "/test/components?order=count")
+          expect(menu).to have_link("Trier par nombre, par ordre décroissant", href: "/test/components?order=-count")
         end
       end
     end

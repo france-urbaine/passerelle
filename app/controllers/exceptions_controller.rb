@@ -19,4 +19,10 @@ class ExceptionsController < ApplicationController
       super()
     end
   end
+
+  def testing
+    return not_found unless Rails.env.test?
+
+    render html: ""
+  end
 end

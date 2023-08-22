@@ -115,6 +115,18 @@ RSpec.configure do |config|
     WebMock.disable_net_connect!(allow_localhost: true)
   end
 
+  config.around :each, type: :component do |example|
+    # Some components might requires a routed path to be set
+    # (for examples, when using `url_for`).
+    #
+    # So we created a route only available in test environnement
+    # to ensure that tests are independant from any behavior linked to URL.
+    #
+    with_request_url("/test/components") do
+      example.run
+    end
+  end
+
   # Allow to use a cache store within tests by using metadata:
   #
   #    context "with cache store", cache_store: :memory_store do

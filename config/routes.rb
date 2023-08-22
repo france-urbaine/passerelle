@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
-  # Development extensiosn
-  # ----------------------------------------------------------------------------
-  mount Lookbook::Engine, at: "/lookbook" if Rails.env.development?
-
   # Concerns
   # ----------------------------------------------------------------------------
   concern :removable do |options|
@@ -203,4 +199,10 @@ Rails.application.routes.draw do
   get "406", to: "exceptions#not_acceptable"
   get "422", to: "exceptions#unprocessable_entity"
   get "500", to: "exceptions#internal_server_error"
+
+  # Development extensiosn
+  # ----------------------------------------------------------------------------
+  mount Lookbook::Engine, at: "/lookbook" if Rails.env.development?
+
+  get "/test/components", to: "exceptions#testing" if Rails.env.test?
 end

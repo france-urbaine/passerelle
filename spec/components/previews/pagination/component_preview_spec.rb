@@ -3,10 +3,6 @@
 require "rails_helper"
 
 RSpec.describe Pagination::ComponentPreview, type: :component do
-  around do |example|
-    with_request_url("/territoires/communes") { example.run }
-  end
-
   it { is_expected.to render_preview_without_exception(:default) }
   it { is_expected.to render_preview_without_exception(:with_countable_model) }
   it { is_expected.to render_preview_without_exception(:with_countable_word) }
