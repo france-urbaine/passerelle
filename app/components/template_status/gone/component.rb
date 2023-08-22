@@ -40,9 +40,14 @@ module TemplateStatus
         end
       end
 
+      # NOTE: Brakeman cannot parse pattern matching in slim templates
+      # That why we use a method instead
+      #
+      # We definitely can't make simpler than this case statement
+      # rubocop:disable Metrics/CyclomaticComplexity
+      # rubocop:disable Metrics/PerceivedComplexity
+      #
       def gone_resource_message
-        # NOTE: Brakeman cannot parse pattern matching in slim templates
-        #
         case @records
         in [Publisher, User] | [Collectivity, User] | [DDFIP, User]
           "L'organisation de cet utilisateur est en cours de suppression."
@@ -70,6 +75,9 @@ module TemplateStatus
           "Cette ressource est en cours de suppression."
         end
       end
+      #
+      # rubocop:enable Metrics/CyclomaticComplexity
+      # rubocop:enable Metrics/PerceivedComplexity
     end
   end
 end
