@@ -41,7 +41,31 @@ def test(scope = nil)
   log "Running tests"
   clear_coverage unless @coverage_cleared
 
-  env        = { "SIMPLE_COV_COMMAND" => "bin/ci test" }
+  env     = test_env(scope)
+  command = test_command(scope)
+
+  system!(env, command)
+end
+
+def test_env(scope)
+  node_total = ENV.fetch("CI_NODE_TOTAL", 1).to_i
+
+  env = { "SIMPLE_COV_COMMAND" => "bin/ci test" }
+
+  env["SIMPLE_COV_COMMAND"] += ":parallel" if node_total > 1
+  env["SIMPLE_COV_COMMAND"] += ":unit"     if scope == "unit"
+  env["SIMPLE_COV_COMMAND"] += ":system"   if scope == "system"
+
+  if ENV["CI"] == "true"
+    env["SIMPLE_COV"] = "false"
+    env["SUPER_DIFF"] = "false"
+    env["CAPYBARA_MAX_WAIT_TIME"] = "5"
+  end
+
+  env
+end
+
+def test_command(scope)
   node_total = ENV.fetch("CI_NODE_TOTAL", 1).to_i
   node_index = ENV.fetch("CI_NODE_INDEX", nil)
 
@@ -51,8 +75,6 @@ def test(scope = nil)
     command += " --only-group #{node_index}"    if node_index
     command += " --exclude-pattern spec/system" if scope == "unit"
     command += " --pattern spec/system"         if scope == "system"
-
-    env["SIMPLE_COV_COMMAND"] += ":parallel"
   else
     command  = "bundle exec rspec"
     command += " --exclude-pattern 'system/**/*_spec.rb'" if scope == "unit"
@@ -60,16 +82,7 @@ def test(scope = nil)
     command += " --no-profile --format RSpec::Github::Formatter --format progress" if ENV["CI"] == "true"
   end
 
-  env["SIMPLE_COV_COMMAND"] += ":unit"   if scope == "unit"
-  env["SIMPLE_COV_COMMAND"] += ":system" if scope == "system"
-
-  if ENV["CI"] == "true"
-    env["SIMPLE_COV"] = "false"
-    env["SUPER_DIFF"] = "false"
-    env["CAPYBARA_MAX_WAIT_TIME"] = "5"
-  end
-
-  system!(env, command)
+  command
 end
 
 def rubocop
