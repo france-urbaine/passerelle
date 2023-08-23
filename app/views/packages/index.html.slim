@@ -20,12 +20,12 @@
       - if allowed_to?(:destroy_all?, Package)
         - selection.with_action "Tout supprimer", url_for([:remove_all, @parent, :packages]), modal: true
 
-    - datatable.with_column(:reference)    { "Reference" }
-    - datatable.with_column(:collectivity) { "Collectivité" } unless current_user.organization.is_a?(Collectivity)
+    - datatable.with_column(:status, compact: true) { "Etat" }
+    - datatable.with_column(:reference)             { "Reference" }
+    - datatable.with_column(:collectivity)          { "Collectivité" } unless current_user.organization.is_a?(Collectivity)
 
     - datatable.with_column(:form_type) { "Type de signalement" }
     - datatable.with_column(:due_on)    { "Echéance" }
-    - datatable.with_column(:status)    { "Etat" }
     - datatable.with_column(:reports_count,          numeric: true) { "Signalements" }
     - datatable.with_column(:reports_approved_count, numeric: true) { "Approuvés" }
     - datatable.with_column(:reports_rejected_count, numeric: true) { "Rejetés" }

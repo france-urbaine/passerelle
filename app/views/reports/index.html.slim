@@ -17,48 +17,50 @@
       - if allowed_to?(:destroy_all?, Report)
         - selection.with_action "Tout supprimer", url_for([:remove_all, @parent, :reports]), modal: true
 
-    - datatable.with_column(:reference, sort: true) { "Reference" }
+    - datatable.with_column(:status,   compact: true) { "Etat" }
+    - datatable.with_column(:reference, sort: true)   { "Reference" }
 
     - case current_user.organization
     - when Collectivity
-      - datatable.with_column(:package)    { "Paquet" }
-      - datatable.with_column(:form_type)  { "Type de signalement" }
-      - datatable.with_column(:anomalies)  { "Objet" }
-      - datatable.with_column(:invariant)  { "Invariant" }
-      - datatable.with_column(:adresse)    { "Adresse" }
-      - datatable.with_column(:commune)    { "Commune" }
+      - datatable.with_column(:package)                 { "Paquet" }
+      - datatable.with_column(:priority, compact: true) { "Priorité" }
+      - datatable.with_column(:form_type)               { "Type de signalement" }
+      - datatable.with_column(:anomalies)               { "Objet" }
+      - datatable.with_column(:invariant)               { "Invariant" }
+      - datatable.with_column(:adresse)                 { "Adresse" }
+      - datatable.with_column(:commune)                 { "Commune" }
 
     - when Publisher
-      - datatable.with_column(:package)       { "Paquet" }
-      - datatable.with_column(:collectivity)  { "Collectivité" }
-      - datatable.with_column(:form_type)     { "Type de signalement" }
-      - datatable.with_column(:anomalies)     { "Objet" }
-      - datatable.with_column(:invariant)     { "Invariant" }
-      - datatable.with_column(:adresse)       { "Adresse" }
-      - datatable.with_column(:commune)       { "Commune" }
+      - datatable.with_column(:package)                 { "Paquet" }
+      - datatable.with_column(:collectivity)            { "Collectivité" }
+      - datatable.with_column(:priority, compact: true) { "Priorité" }
+      - datatable.with_column(:form_type)               { "Type de signalement" }
+      - datatable.with_column(:anomalies)               { "Objet" }
+      - datatable.with_column(:invariant)               { "Invariant" }
+      - datatable.with_column(:adresse)                 { "Adresse" }
+      - datatable.with_column(:commune)                 { "Commune" }
 
     - when DDFIP
       - if current_user.organization_admin?
-        - datatable.with_column(:package)       { "Paquet" }
-        - datatable.with_column(:collectivity)  { "Collectivité" }
-        / - datatable.with_column(:office)        { "Guichet" }
-        / - datatable.with_column(:workshop)      { "Dossier" }
-        - datatable.with_column(:form_type)     { "Type de signalement" }
-        - datatable.with_column(:anomalies)     { "Objet" }
-        - datatable.with_column(:invariant)     { "Invariant" }
-        - datatable.with_column(:adresse)       { "Adresse" }
-        - datatable.with_column(:commune)       { "Commune" }
+        - datatable.with_column(:package)                 { "Paquet" }
+        - datatable.with_column(:collectivity)            { "Collectivité" }
+        - datatable.with_column(:priority, compact: true) { "Priorité" }
+        / - datatable.with_column(:office)                  { "Guichet" }
+        / - datatable.with_column(:workshop)                { "Dossier" }
+        - datatable.with_column(:form_type)               { "Type de signalement" }
+        - datatable.with_column(:anomalies)               { "Objet" }
+        - datatable.with_column(:invariant)               { "Invariant" }
+        - datatable.with_column(:adresse)                 { "Adresse" }
+        - datatable.with_column(:commune)                 { "Commune" }
       - else
-        - datatable.with_column(:collectivity)  { "Collectivité" }
-        / - datatable.with_column(:workshop)      { "Dossier" }
-        - datatable.with_column(:form_type)     { "Type de signalement" }
-        - datatable.with_column(:anomalies)     { "Objet" }
-        - datatable.with_column(:invariant)     { "Invariant" }
-        - datatable.with_column(:adresse)       { "Adresse" }
-        - datatable.with_column(:commune)       { "Commune" }
-
-    - datatable.with_column(:priority, compact: true) { "Priorité" }
-    - datatable.with_column(:status,   compact: true) { "Etat" }
+        - datatable.with_column(:collectivity)            { "Collectivité" }
+        - datatable.with_column(:priority, compact: true) { "Priorité" }
+        / - datatable.with_column(:workshop)                { "Dossier" }
+        - datatable.with_column(:form_type)               { "Type de signalement" }
+        - datatable.with_column(:anomalies)               { "Objet" }
+        - datatable.with_column(:invariant)               { "Invariant" }
+        - datatable.with_column(:adresse)                 { "Adresse" }
+        - datatable.with_column(:commune)                 { "Commune" }
 
     - datatable.with_empty_message do
       - if params[:search]
