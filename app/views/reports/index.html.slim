@@ -32,7 +32,7 @@
       - datatable.with_column(:package)       { "Paquet" }
       - datatable.with_column(:collectivity)  { "Collectivité" }
       - datatable.with_column(:form_type)     { "Type de signalement" }
-      - datatable.with_column(:anomalies)  { "Objet" }
+      - datatable.with_column(:anomalies)     { "Objet" }
       - datatable.with_column(:invariant)     { "Invariant" }
       - datatable.with_column(:adresse)       { "Adresse" }
       - datatable.with_column(:commune)       { "Commune" }
@@ -41,8 +41,8 @@
       - if current_user.organization_admin?
         - datatable.with_column(:package)       { "Paquet" }
         - datatable.with_column(:collectivity)  { "Collectivité" }
-        - datatable.with_column(:office)        { "Guichet" }
-        - datatable.with_column(:workshop)      { "Dossier" }
+        / - datatable.with_column(:office)        { "Guichet" }
+        / - datatable.with_column(:workshop)      { "Dossier" }
         - datatable.with_column(:form_type)     { "Type de signalement" }
         - datatable.with_column(:anomalies)     { "Objet" }
         - datatable.with_column(:invariant)     { "Invariant" }
@@ -50,7 +50,7 @@
         - datatable.with_column(:commune)       { "Commune" }
       - else
         - datatable.with_column(:collectivity)  { "Collectivité" }
-        - datatable.with_column(:workshop)      { "Dossier" }
+        / - datatable.with_column(:workshop)      { "Dossier" }
         - datatable.with_column(:form_type)     { "Type de signalement" }
         - datatable.with_column(:anomalies)     { "Objet" }
         - datatable.with_column(:invariant)     { "Invariant" }
