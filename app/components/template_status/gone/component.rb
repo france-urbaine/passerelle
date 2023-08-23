@@ -59,6 +59,8 @@ module TemplateStatus
           "La DDFIP de ce guichet est en cours de suppression."
         in [DDFIP]
           "Cette DDFIP est en cours de suppression."
+        in [DGFIP]
+          "Cette DGFIP est en cours de suppression."
         in [Collectivity]
           "Cette collectivité est en cours de suppression."
         in [Office]

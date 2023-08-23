@@ -40,15 +40,17 @@ div( data-controller="navbar" )
 
     - admin_publishers     = allowed_to?(:index?, Publisher,    with: Admin::PublisherPolicy)
     - admin_collectivities = allowed_to?(:index?, Collectivity, with: Admin::CollectivityPolicy)
+    - admin_dgfips         = allowed_to?(:index?, DGFIP,        with: Admin::DGFIPPolicy)
     - admin_ddfips         = allowed_to?(:index?, DDFIP,        with: Admin::DDFIPPolicy)
     - admin_offices        = allowed_to?(:index?, Office,       with: Admin::OfficePolicy)
     - admin_users          = allowed_to?(:index?, User,         with: Admin::UserPolicy)
 
-    - if admin_publishers || admin_collectivities || admin_ddfips || admin_offices || admin_users
+    - if admin_publishers || admin_collectivities || admin_dgfips || admin_ddfips || admin_offices || admin_users
       .navbar__header Administration
       .navbar__links
         = navbar_link_to "Éditeurs",      admin_publishers_path     if admin_publishers
         = navbar_link_to "Collectivités", admin_collectivities_path if admin_collectivities
+        = navbar_link_to "DGFIP",         admin_dgfips_path         if admin_dgfips
         = navbar_link_to "DDFIP",         admin_ddfips_path         if admin_ddfips
         = navbar_link_to "Guichets",      admin_offices_path        if admin_offices
         = navbar_link_to "Utilisateurs",  admin_users_path          if admin_users

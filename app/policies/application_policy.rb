@@ -48,6 +48,10 @@ class ApplicationPolicy < ActionPolicy::Base
     organization.is_a?(DDFIP)
   end
 
+  def dgfip?
+    organization.is_a?(DGFIP)
+  end
+
   def collectivity_admin?
     collectivity? && organization_admin?
   end
@@ -58,6 +62,10 @@ class ApplicationPolicy < ActionPolicy::Base
 
   def ddfip_admin?
     ddfip? && organization_admin?
+  end
+
+  def dgfip_admin?
+    dgfip? && organization_admin?
   end
 
   def office_user?

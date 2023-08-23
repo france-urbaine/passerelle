@@ -100,7 +100,8 @@ module Views
         [
           Publisher,
           DDFIP,
-          Collectivity
+          Collectivity,
+          DGFIP
         ].map { |m| [m.model_name.human, m.name] }
       end
 
