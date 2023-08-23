@@ -62,4 +62,10 @@ class DGFIP < ApplicationRecord
   scope :order_by_score, lambda { |input|
     scored_order(:name, input)
   }
+
+  # Updates methods
+  # ----------------------------------------------------------------------------
+  def self.reset_all_counters
+    connection.select_value("SELECT reset_all_dgfips_counters()")
+  end
 end
