@@ -55,6 +55,30 @@
 
     - card.with_submit_action "Enregistrer"
 
+  - if current_organization.is_a?(DDFIP)
+    .content__separator
+
+    h2.subheader
+      = icon_component("archive-box", "Nouvelle section")
+      | Traitement des signalements
+
+    = card_component do |card|
+      - card.with_body do
+
+        p
+          ' Par défaut, les signalements reçus sont automatiquement assignés aux guichets appropriés.
+          br
+          ' En tant qu'administrateur, vous pouvez décider de confirmer ou rejeter chaque paquet dés sa réception,
+          ' avant que ceux-ci soient assignés aux guichets.
+
+        = form_block_component(@organisation, :auto_approve_packages) do |block|
+          input( id="package_approval" type="checkbox" disabled checked )
+          label( for="package_approval" ) Confirmer les paquets à la réception
+
+          - block.with_hint do
+            ' Cette fonctionnalité n'est pas encore disponible.
+
+
   .content__separator
 
   h2.subheader
@@ -85,22 +109,6 @@
                 br
                 ' En acceptant cette délégation, il est libre de se créer un utilisateur au sein de votre organisatio
                 ' et accéder à l'ensemble de vos signalements.
-
-        - card_content.with_submit_action "Enregistrer"
-
-    - if current_organization.is_a?(DDFIP)
-      - card.with_multipart do |card_content|
-        - card_content.with_form(model: @organization, scope: :organization, url: organization_settings_path, id: "security-settings-form") do |form|
-
-          p
-            ' Vous pouvez automatiser l'approbation des paquets de signalements dès reception.
-            br
-            ' Les signalements seront ainsi transmis directement aux guichets appropriés sans l'approbation d'un
-            ' administrateur.
-
-          = form.block :auto_approve_packages do |block|
-            = form.check_box :auto_approve_packages
-            = form.label :auto_approve_packages
 
         - card_content.with_submit_action "Enregistrer"
 

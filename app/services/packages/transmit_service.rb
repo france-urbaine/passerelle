@@ -12,7 +12,10 @@ module Packages
       # TODO: verify package consistency
       # TODO: assign package to a single DDFIP
       @package.transmit!
-      @package.approve! unless potential_ddfips.exists?(auto_approve_packages: false)
+
+      # The workflow is simplified :
+      # packages are auto-approved.
+      @package.approve!
 
       true
     end
