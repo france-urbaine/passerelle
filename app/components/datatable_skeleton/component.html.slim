@@ -21,16 +21,17 @@
           span.icon-button.button-skeleton-loader= icon_component("chevron-left", "Page précédente")
           span.icon-button.button-skeleton-loader= icon_component("chevron-right", "Page suivante")
 
-table.datatable( aria-hidden )
-  thead
-    tr.datatable__row
-      - columns.each do |column|
-        th
-          .text-skeleton-loader= column
-
-  tbody
-    - rows.times do |row|
+.datatable( aria-hidden )
+  table
+    thead
       tr.datatable__row
         - columns.each do |column|
-          td
-            .text-skeleton-loader
+          th
+            .text-skeleton-loader= column
+
+    tbody
+      - rows.times do |row|
+        tr.datatable__row
+          - columns.each do |column|
+            td
+              .text-skeleton-loader

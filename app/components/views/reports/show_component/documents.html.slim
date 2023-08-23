@@ -8,27 +8,21 @@
       .subheader-bar__action
         = button_component "Ajouter des documents", new_report_attachment_path(@report), icon: "document-plus", modal: true
 
-- if @report.documents.any?
-  .card
-    table.datatable
-      thead
-        tr.datatable__row
-          - if @report.packing?
-            th
-
-          th Nom du fichier
-          th Type de fichier
-      tbody
-        - @report.documents.each do |document|
-          tr.datatable__row
-            - if @report.packing?
-              td.datatable__row-actions
-                - if allowed_to?(:update?, @report)
-                  = button_component "Supprimer ce document", report_attachment_path(id: document.id, report_id: @report.id), icon: "trash", icon_only: true, method: "delete"
-
-            td= link_to document.filename, url_for(document), target: :blank
-            td= document.content_type
+- if @report.documents.empty?
+  = card_component(content_class: "card__content--empty h-24 flex-auto flex items-center justify-center")
+    | Aucun document ajouté pour ce signalement.
 
 - else
-  = card_component(content_class: "card__content--empty h-24 flex-auto flex items-center justify-center") do |card|
-    | Aucun document ajouté pour ce signalement.
+  = datatable_component(@report.documents) do |datatable|
+    - datatable.with_column(:name) { "Nom du fichier" }
+    - datatable.with_column(:type) { "Type de fichier" }
+
+    - datatable.each_row do |row, document|
+      - if @report.packing? && allowed_to?(:update?, @report)
+        - row.with_action "Supprimer ce document", report_attachment_path(id: document.id, report_id: @report.id), icon: "trash", icon_only: true, method: "delete"
+
+      - row.with_column(:name) do
+        = link_to document.filename, url_for(document), target: :blank
+
+      - row.with_column(:type) do
+        = document.content_type
