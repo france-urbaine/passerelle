@@ -132,7 +132,8 @@ CREATE TYPE public.form_type AS ENUM (
 CREATE TYPE public.organization_type AS ENUM (
     'Collectivity',
     'Publisher',
-    'DDFIP'
+    'DDFIP',
+    'DGFIP'
 );
 
 
@@ -2637,6 +2638,27 @@ CREATE TABLE public.ar_internal_metadata (
 
 
 --
+-- Name: dgfips; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.dgfips (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    name character varying NOT NULL,
+    contact_first_name character varying,
+    contact_last_name character varying,
+    contact_email character varying,
+    contact_phone character varying,
+    domain_restriction character varying,
+    allow_2fa_via_email boolean DEFAULT false NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL,
+    discarded_at timestamp(6) without time zone,
+    users_count integer DEFAULT 0 NOT NULL,
+    CONSTRAINT users_count_check CHECK ((users_count >= 0))
+);
+
+
+--
 -- Name: office_communes; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -2859,6 +2881,14 @@ ALTER TABLE ONLY public.departements
 
 
 --
+-- Name: dgfips dgfips_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.dgfips
+    ADD CONSTRAINT dgfips_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: epcis epcis_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3071,6 +3101,20 @@ CREATE UNIQUE INDEX index_departements_on_code_departement ON public.departement
 --
 
 CREATE INDEX index_departements_on_code_region ON public.departements USING btree (code_region);
+
+
+--
+-- Name: index_dgfips_on_discarded_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_dgfips_on_discarded_at ON public.dgfips USING btree (discarded_at);
+
+
+--
+-- Name: index_dgfips_on_name; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_dgfips_on_name ON public.dgfips USING btree (name) WHERE (discarded_at IS NULL);
 
 
 --
@@ -3598,6 +3642,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230628131702'),
 ('20230705064157'),
 ('20230727083603'),
-('20230728085901');
+('20230728085901'),
+('20230823083541'),
+('20230823125725');
 
 

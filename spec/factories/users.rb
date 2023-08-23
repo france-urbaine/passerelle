@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :user do
-    organization { association %i[publisher collectivity ddfip].sample }
+    organization { association %i[publisher collectivity ddfip dgfip].sample }
 
     first_name   { Faker::Name.first_name }
     last_name    { Faker::Name.last_name }
@@ -81,6 +81,10 @@ FactoryBot.define do
 
     trait :ddfip do
       organization factory: :ddfip
+    end
+
+    trait :dgfip do
+      organization factory: :dgfip
     end
 
     trait :using_existing_organizations do
