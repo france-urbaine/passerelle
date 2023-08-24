@@ -58,7 +58,7 @@ RSpec.describe DatatableSkeleton::Component, type: :component do
         expect(header).to have_selector(".header-bar__actions .button-skeleton-loader", count: 2)
       end
 
-      expect(page).to have_table(class: "datatable")
+      expect(page).to have_selector(".datatable table")
     end
   end
 end
