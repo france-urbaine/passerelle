@@ -22,20 +22,15 @@ def system!(*args, skip_abort: false)
   abort
 end
 
-def gets(secret: false)
-  print "#{LOG_PREFIX} "
-
-  if secret
-    require "io/console"
-    result = $stdin.noecho(&:gets).strip
-    puts
-    result
-  else
-    $stdin.gets.strip
-  end
+# Prompt user input
+def gets
+  print "#{LOG_PREFIX} > "
+  result = $stdin.gets(chomp: true)
+  log ""
+  result
 end
 
-# Update programs
+# Programs
 # ------------------------------------------------------------------------------
 def update_check
   log "Verifying gem dependencies"
@@ -48,24 +43,27 @@ def update_check
   system! "bin/rails db:migrate"
 end
 
-def update_gems
+def update_bundle
   require "bundler/setup"
   require "bundleup"
 
   log "Updating gems"
-  updates = Bundleup::CLI.new([]).run
+
+  bundleup = Bundleup::CLI.new([])
+  bundleup.run
+
   log ""
   log "List outdated gems"
   system! "bundle outdated", skip_abort: true
 
-  if updates.any?
+  if bundleup.updated_gems.any?
     log ""
     log "Some gems have been updated."
     log "Would you like to run the CI ? [Yn]"
 
     if gets == "Y"
       system! "bin/ci"
-    elsif updates.any? { |gem| gem.include?("rubocop") }
+    elsif bundleup.updated_gems.any? { |gem| gem.include?("rubocop") }
       log "Some rubocop gems have been updated."
       log "Would you like to run rubocop ? [Yn]"
       system! "bin/ci rubocop" if gets == "Y"
@@ -80,7 +78,7 @@ def update_gems
   system! "git commit -m \"Update gems dependencies\" -- Gemfile.lock" if gets == "Y"
 end
 
-def update_js
+def update_yarn
   log "Updating JS dependencies"
   system! "yarn upgrade-interactive"
   log ""
@@ -97,26 +95,23 @@ end
 
 def help
   log "Update commands:"
-  log "----------------"
   log ""
-  log "  bin/update check"
-  log "     # Update dependencies & database after switching branches or pulling code from remote"
-  log "     # You could add this in a git hook : .git/hook/post-merge"
+  log "    bin/update check       # Update dependencies & database after getting new code version"
+  log "    bin/update bundle      # Update gems through an interactive command"
+  log "    bin/update yarn        # Update JS packages through an interactive command"
+  log "    bin/update help        # Show this help"
   log ""
-  log "  bin/update gems"
-  log "     # Update gems through an interactive command"
+  log "To automate update checks after switching to a branch or after pulling code from remote,"
+  log "open or create the file `.git/hooks/post-merge` and add the following lines:"
   log ""
-  log "  bin/update js"
-  log "     # Update JS packages through an interactive command"
-  log ""
-  log "  bin/update help"
-  log "     # Show this help"
+  log "    #!/bin/sh"
+  log "    bin/update check"
   log ""
 end
 
 case ARGV[0]
-when "gems"  then update_gems
-when "js"    then update_js
-when "check" then update_check
+when "bundle" then update_bundle
+when "yarn"   then update_yarn
+when "check"  then update_check
 else help
 end

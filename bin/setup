@@ -10,32 +10,37 @@ def log(message)
   puts "#{LOG_PREFIX} #{message}"
 end
 
-def gets(secret: false)
-  print "#{LOG_PREFIX} "
-
-  if secret
-    require "io/console"
-    result = $stdin.noecho(&:gets).strip
-    puts
-    result
-  else
-    $stdin.gets.strip
-  end
-end
-
 # We don't want the setup method to have to do all this error checking,
 # and we also want to explicitly log what we are executing.
 # Thus, we use this method instead of Kernel#system
 def system!(*args)
-  ENV["DOTENV_QUIET"] = "true"
+  log "\e[33m#{args.join(' ')}\e[0m"
   return if system(*args)
 
-  args_output = "\e[33m#{args}\e[0m"
-  log "#{args_output} failed"
+  log "\e[33m#{args.join(' ')}\e[0m failed"
   abort
 end
 
-# Setup methods
+# Prompt user input
+def gets(secret: false)
+  print "#{LOG_PREFIX} > "
+
+  result =
+    if secret
+      require "io/console"
+      $stdin.getpass
+    else
+      $stdin.gets(chomp: true)
+    end
+
+  log ""
+  result
+end
+
+# Do not output message from config/dotenv.rb
+ENV["DOTENV_QUIET"] = "true"
+
+# Programs
 # ------------------------------------------------------------------------------
 def setup
   log "Installing gems"
@@ -53,7 +58,6 @@ def setup
 
   log "Dropping & recreating the development & test databases"
   system!({ "SETUP_SEED" => "true" }, "bin/rails db:reset")
-
   setup_test
 
   log "Removing old logs and tempfiles"
@@ -61,23 +65,34 @@ def setup
 
   log ""
   log "-------------------------------------------------------------------------------------"
-  log "All set up."
-  log "Now you're ready to start with these useful commands:"
-  useful_commands
+  log "Almost set up, you might find these commands useful to complete your setup:"
+  log ""
+  log "    bin/setup master_key     # Add the Rails master key"
+  log "    bin/setup user           # Create a new user through an interactive command"
+  log "    bin/setup territories    # Import all EPCIs and communes from a remote source"
+  log "    bin/setup mailcatcher    # Install mailcatcher"
+  log ""
+  log "Once you're ready, you can start working:"
+  log ""
+  log "    bin/dev                  # Start all process to run the app"
+  log "    bin/ci                   # Run all tests and checks as CI would"
+  log ""
+  log "To get more commands, try:"
+  log ""
+  log "    bin/setup help"
+  log "    bin/dev help"
+  log "    bin/ci help"
+  log ""
   log "-------------------------------------------------------------------------------------"
 end
 
 def setup_master_key
-  log "You are about to setup the Rails master key in order to get access to the encrypted credentials."
-  log "For more details, run the following command:"
+  log "Setup Rails master key"
+  log "You can find the key in a Dashlane card:"
   log ""
-  log "  bin/rails credentials:help"
+  log "    \"Applications Master Keys\""
   log ""
-  log "You first need to find the key shared in a Dashlane card:"
-  log ""
-  log "  \"Applications Master Keys\""
-  log ""
-  log "Then, please enter the master key:"
+  log "Please enter the master key:"
   master_key = gets(secret: true)
 
   raise "Invalid key" if master_key.empty?
@@ -87,12 +102,11 @@ def setup_master_key
     f.puts master_key
   end
 
-  log "Key saved at config/master.key"
+  log "All set up & saved at `config/master.key`"
 end
 
 def setup_user
-  log "You are about to create a new user."
-  log ""
+  log "Setup user"
   system!({ "SEED_INTERACTIVE_USER" => "true" }, "bin/rails db:seed")
 end
 
@@ -117,10 +131,12 @@ def setup_test
   # They are required to start the test suite
   system! "yarn build:css"
   system! "yarn build:js"
+
+  log "Ready to test !"
 end
 
 def setup_territories
-  log "You are about to import EPCIs and communes from a remote source."
+  log "Import all territories"
   log "This could take a while."
   log ""
   system!({ "SEED_ALL_EPCIS_AND_COMMUNES" => "true" }, "bin/rails db:seed")
@@ -148,81 +164,54 @@ def setup_mailcatcher
 end
 
 def help
-  log "Useful commands:"
-  log "----------------"
-  useful_commands
+  log "Setup commands:"
+  log ""
+  log "    bin/setup                # Run the default setup process"
+  log "    bin/setup master_key     # Add the Rails master key"
+  log "    bin/setup user           # Create a new user through an interactive command"
+  log "    bin/setup territories    # Import all EPCIs and communes from a remote source"
+  log "    bin/setup mailcatcher    # Install mailcatcher"
+  log "    bin/setup test           # Reset all databases for testing"
+  log "    bin/setup help           # Show this help"
+  log ""
+  log "To overwrite the default databases used for testing, add a POSTGRESQL_DATABASE to .env.test or send:"
+  log ""
+  log "    POSTGRESQL_DATABASE=test bin/setup test"
+  log ""
+  log "Here are some other useful commands:"
+  log ""
+  log "    bin/dev                  # Start all process to run the app"
+  log "    bin/ci                   # Run all tests and checks as CI would"
+  log ""
+  log "To get more commands, try:"
+  log ""
+  log "    bin/dev help"
+  log "    bin/ci help"
+  log "    bin/update help"
+  log ""
 end
 
-def useful_commands
-  log ""
-  log "  bin/setup"
-  log "     # Run the default setup process to install dependencies, create databases and seed minimal data"
-  log ""
-  log "  bin/setup user"
-  log "     # Create an user to access the development server through an interactive command"
-  log ""
-  log "  bin/setup territories"
-  log "     # Import all EPCIs and communes from a remote source"
-  log ""
-  log "  bin/setup mailcatcher"
-  log "     # Install mailcatcher"
-  log ""
-  log "  bin/setup test"
-  log "     # Setup all databases for testing"
-  log "     # To overwrite the default databases used for testing, add a POSTGRESQL_DATABASE to .env.test or send:"
-  log "     #   POSTGRESQL_DATABASE=test bin/setup test"
-  log ""
-  log "  bin/setup help"
-  log "     # Show this help"
-  log ""
-  log "Other commands:"
-  log "---------------"
-  log ""
-  log "  bin/dev"
-  log "     # Run the app locally"
-  log ""
-  log "  bin/ci <command>"
-  log "     # Run all tests and checks as CI would"
-  log "     # Use `help` command to get more options."
-  log ""
-  log "  bin/update <command>"
-  log "     # Launch an update process"
-  log "     # Use `help` command to get more options."
-  log ""
-  verify_master_key_file
-end
-
-def verify_master_key_file
+def master_key_exist?
   path = File.expand_path("../config/master.key", __dir__)
-  return if File.exist?(path)
+  return true if File.exist?(path)
 
-  log "-------------------------------------------------------------------------"
-  log "  It seems that the Rails master key is not configured and you won't"
-  log "  be able to get access to encrypted credentials."
-  log "  For more details, run the following command:"
-  log ""
-  log "    bin/rails credentials:help"
-  log ""
-  log "  If you have already set it up another way, you could ignore this."
-  log "  Otherwise, you could use the following command to setup the key:"
-  log ""
-  log "    bin/setup master_key"
-  log "-------------------------------------------------------------------------"
-  log ""
+  require_relative "../config/dotenv"
+  return true if ENV.key?("RAILS_MASTER_KEY")
+
+  false
 end
 
+# Command parser
+# ------------------------------------------------------------------------------
 if ARGV[0].nil?
   setup
-elsif ARGV[0] == "master_key"
-  setup_master_key
-elsif ARGV[0] == "user"
-  setup_user
-elsif ARGV[0] == "territories"
-  setup_territories
-elsif ARGV[0] == "mailcatcher"
-  setup_mailcatcher
-elsif ARGV[0] == "test"
-  setup_test
 else
-  help
+  case ARGV[0]
+  when "master_key"   then setup_master_key
+  when "user"         then setup_user
+  when "territories"  then setup_territories
+  when "mailcatcher"  then setup_mailcatcher
+  when "test"         then setup_test
+  else help
+  end
 end

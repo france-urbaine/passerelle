@@ -21,7 +21,7 @@ def system!(*args)
   abort
 end
 
-# CI programs
+# Programs
 # ------------------------------------------------------------------------------
 def lint_factories
   log "Running FactoryBot linter"
@@ -37,7 +37,14 @@ def clear_coverage
   system!("rm -rf coverage/.resultset.json")
 end
 
+TEST_SCOPES = %w[
+  unit
+  system
+].freeze
+
 def test(scope = nil)
+  raise "unknown command `bin/ci test:#{scope}`" unless scope.nil? || TEST_SCOPES.include?(scope)
+
   log "Running tests"
   clear_coverage unless @coverage_cleared
 
@@ -53,8 +60,7 @@ def test_env(scope)
   env = { "SIMPLE_COV_COMMAND" => "bin/ci test" }
 
   env["SIMPLE_COV_COMMAND"] += ":parallel" if node_total > 1
-  env["SIMPLE_COV_COMMAND"] += ":unit"     if scope == "unit"
-  env["SIMPLE_COV_COMMAND"] += ":system"   if scope == "system"
+  env["SIMPLE_COV_COMMAND"] += ":#{scope}" if scope
 
   if ENV["CI"] == "true"
     env["SIMPLE_COV"] = "false"
@@ -131,48 +137,43 @@ end
 
 def help
   log "CI commands:"
-  log "------------"
   log ""
-  log "  bin/ci"
-  log "     # Run all tests and checks as CI would"
+  log "    bin/ci               # Run all tests and checks as CI would"
+  log "    bin/ci watch         # Run CI checks as code change"
+  log "    bin/ci help          # Show this help"
   log ""
-  log "  bin/ci watch"
-  log "     # Watch file changes to run CI checks"
+  log "You can also run only one program from the CI:"
   log ""
-  log "  bin/ci <program>"
-  log "     # Run only one program from the CI"
-  log "     # Available programs are:"
-  log "     #  factories          # lint test factories"
-  log "     #  test               # run all the test suite"
-  log "     #  test:unit          # run non-system tests"
-  log "     #  test:system        # run system tests"
-  log "     #  rubocop            # analyzing code issues with Rubocop"
-  log "     #  brakeman           # analyzing code for security vulnerabilities."
-  log "     #  audit              # analyzing ruby gems for security vulnerabilities"
+  log "    bin/ci factories     # Lint test factories"
+  log "    bin/ci test          # Run all the test suite"
+  log "    bin/ci test:unit     # Run non-system tests"
+  log "    bin/ci test:system   # Run system tests"
+  log "    bin/ci rubocop       # Analyzing code issues with Rubocop"
+  log "    bin/ci brakeman      # Analyzing code for security vulnerabilities."
+  log "    bin/ci audit         # Analyzing ruby gems for security vulnerabilities"
   log ""
-  log "  bin/ci help"
-  log "     # Show this help"
+  log "To run the commands in CI environnement (ex: on Github), use the CI variable:"
   log ""
-  log "  To run the commands in CI environnement (ex: on Github), use the CI variable:"
-  log "     CI=true bin/ci"
+  log "    CI=true bin/ci"
   log ""
-  log "  To run tests in parallel, use the CI_NODE_TOTAL variable (or add it to your .env.test)"
-  log "     CI_NODE_TOTAL=4 bin/ci test"
+  log "To run tests in parallel, use the CI_NODE_TOTAL variable (or add it to your .env.test)"
+  log ""
+  log "    CI_NODE_TOTAL=4 bin/ci test"
   log ""
 end
 
+# Command parser
+# ------------------------------------------------------------------------------
 if ARGV[0].nil?
   run_all
 else
   case ARGV[0]
-  when "watch"       then watch
-  when "factories"   then lint_factories
-  when "test"        then test
-  when "test:unit"   then test("unit")
-  when "test:system" then test("system")
-  when "rubocop"     then rubocop
-  when "brakeman"    then brakeman
-  when "audit"       then audit
+  when "watch"          then watch
+  when "factories"      then lint_factories
+  when /test(?::(.*))?/ then test(Regexp.last_match[1])
+  when "rubocop"        then rubocop
+  when "brakeman"       then brakeman
+  when "audit"          then audit
   else help
   end
 end

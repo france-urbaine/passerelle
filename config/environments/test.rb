@@ -66,5 +66,7 @@ Rails.application.configure do
   # Use a test backend for Active Job
   config.active_job.queue_adapter = :test
 
+  # Set an alternative log file
+  # Useful for running `bin/ci watch` and `bin/ci` in parallel
   config.logger = ActiveSupport::Logger.new(ENV["LOG_PATH"]) if ENV["LOG_PATH"]
 end
