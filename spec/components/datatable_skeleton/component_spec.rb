@@ -6,7 +6,7 @@ RSpec.describe DatatableSkeleton::Component, type: :component do
   it "renders a table" do
     render_inline described_class.new
 
-    expect(page).to have_table(class: "datatable") do |table|
+    expect(page).to have_selector(".datatable table") do |table|
       aggregate_failures do
         expect(table).to have_selector("thead tr th .text-skeleton-loader", count: 3)
         expect(table).to have_selector("tbody tr td .text-skeleton-loader", count: 15)
@@ -17,7 +17,7 @@ RSpec.describe DatatableSkeleton::Component, type: :component do
   it "renders a table with sizes of rows and columns" do
     render_inline described_class.new(rows: 5, columns: 5)
 
-    expect(page).to have_table(class: "datatable") do |table|
+    expect(page).to have_selector(".datatable table") do |table|
       aggregate_failures do
         expect(table).to have_selector("thead tr th .text-skeleton-loader", count: 5)
         expect(table).to have_selector("tbody tr td .text-skeleton-loader", count: 25)
@@ -28,7 +28,7 @@ RSpec.describe DatatableSkeleton::Component, type: :component do
   it "renders a table with column headers" do
     render_inline described_class.new(columns: %w[A B C])
 
-    expect(page).to have_table(class: "datatable") do |table|
+    expect(page).to have_selector(".datatable table") do |table|
       aggregate_failures do
         expect(table).to have_selector("thead tr th .text-skeleton-loader", count: 3)
         expect(table).to have_selector("thead tr th .text-skeleton-loader", text: "A")
@@ -41,7 +41,7 @@ RSpec.describe DatatableSkeleton::Component, type: :component do
   it "caps the number of rows when nested" do
     render_inline described_class.new(rows: 15, nested: true)
 
-    expect(page).to have_table(class: "datatable") do |table|
+    expect(page).to have_selector(".datatable table") do |table|
       expect(table).to have_selector("tbody tr", count: 10)
     end
   end

@@ -17,7 +17,7 @@ RSpec.describe Datatable::Component, type: :component do
       end
     end
 
-    expect(page).to have_table(class: "datatable") do |table|
+    expect(page).to have_selector(".datatable table") do |table|
       aggregate_failures do
         expect(table).to have_selector("thead tr th", text: "Code INSEE")
         expect(table).to have_selector("thead tr th", text: "Commune")
@@ -42,7 +42,7 @@ RSpec.describe Datatable::Component, type: :component do
       end
     end
 
-    expect(page).to have_table(class: "datatable") do |table|
+    expect(page).to have_selector(".datatable table") do |table|
       aggregate_failures do
         expect(table).to have_selector("thead tr th.w-px", text: "Code INSEE")
         expect(table).to have_selector("thead tr th", text: "Commune")
@@ -61,7 +61,7 @@ RSpec.describe Datatable::Component, type: :component do
       end
     end
 
-    expect(page).to have_table(class: "datatable") do |table|
+    expect(page).to have_selector(".datatable table") do |table|
       aggregate_failures do
         expect(table).to have_selector("thead tr th",            text: "Commune")
         expect(table).to have_selector("thead tr th.text-right", text: "Total")
@@ -86,7 +86,7 @@ RSpec.describe Datatable::Component, type: :component do
       end
     end
 
-    expect(page).to have_table(class: "datatable") do |table|
+    expect(page).to have_selector(".datatable table") do |table|
       aggregate_failures do
         expect(table).to have_selector("thead tr th", text: "Code INSEE")
         expect(table).to have_selector("thead tr th", text: "Commune")
@@ -112,7 +112,7 @@ RSpec.describe Datatable::Component, type: :component do
       end
     end
 
-    expect(page).to have_table(class: "datatable") do |table|
+    expect(page).to have_selector(".datatable table") do |table|
       aggregate_failures do
         expect(table).to have_selector("thead tr th", text: "Commune")
 
@@ -134,7 +134,7 @@ RSpec.describe Datatable::Component, type: :component do
       end
     end
 
-    expect(page).to have_table(class: "datatable") do |table|
+    expect(page).to have_selector(".datatable table") do |table|
       aggregate_failures do
         expect(table).to have_selector("thead tr th:first-child") do |th|
           aggregate_failures do
@@ -163,7 +163,7 @@ RSpec.describe Datatable::Component, type: :component do
       end
     end
 
-    expect(page).to have_table(class: "datatable") do |table|
+    expect(page).to have_selector(".datatable table") do |table|
       expect(table).to have_selector("tbody tr td:first-child") do |td|
         aggregate_failures do
           expect(td).to have_selector("input[aria-label='Sélectionner cette commune'][aria-describedby='name_commune_#{communes[0].id}']")
@@ -184,7 +184,7 @@ RSpec.describe Datatable::Component, type: :component do
       end
     end
 
-    expect(page).to have_table(class: "datatable") do |table|
+    expect(page).to have_selector(".datatable table") do |table|
       aggregate_failures do
         expect(table).to have_selector("tbody tr:first-child td:first-child:empty")
         expect(table).to have_selector("tbody tr:last-child td:first-child") do |td|
@@ -204,7 +204,7 @@ RSpec.describe Datatable::Component, type: :component do
       end
     end
 
-    expect(page).to have_table(class: "datatable") do |table|
+    expect(page).to have_selector(".datatable table") do |table|
       aggregate_failures do
         expect(table).to have_selector("thead tr th:first-child[aria-label='Actions']")
         expect(table).to have_selector("tbody tr td:first-child") do |td|
@@ -224,7 +224,7 @@ RSpec.describe Datatable::Component, type: :component do
       end
     end
 
-    expect(page).to have_table(class: "datatable") do |table|
+    expect(page).to have_selector(".datatable table") do |table|
       expect(table).to have_selector("tbody tr td:first-child") do |td|
         expect(td).to have_link("Modifier cette commune", href: "/communes/123")
       end
@@ -245,7 +245,7 @@ RSpec.describe Datatable::Component, type: :component do
       end
     end
 
-    expect(page).to have_table(class: "datatable") do |table|
+    expect(page).to have_selector(".datatable table") do |table|
       aggregate_failures do
         expect(table).to have_selector("colgroup col:first-child[span=2]")
         expect(table).to have_selector("colgroup col:nth-child(2)[span=2]")
@@ -274,7 +274,7 @@ RSpec.describe Datatable::Component, type: :component do
       end
     end
 
-    expect(page).to have_table(class: "datatable") do |table|
+    expect(page).to have_selector(".datatable table") do |table|
       aggregate_failures do
         expect(table).to have_selector("thead tr th:first-child", text: "Code INSEE") do |cell|
           expect(cell).to have_link("Trier par ordre croissant", href: "/test/components?order=code")
@@ -302,7 +302,7 @@ RSpec.describe Datatable::Component, type: :component do
       end
     end
 
-    expect(page).to have_table(class: "datatable") do |table|
+    expect(page).to have_selector(".datatable table") do |table|
       aggregate_failures do
         expect(table).to have_selector("thead tr th:first-child", text: "Code INSEE") do |cell|
           expect(cell).to have_link("Trier par ordre croissant", href: "/test/components?order=code")
