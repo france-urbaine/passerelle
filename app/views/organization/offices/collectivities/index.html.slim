@@ -5,64 +5,14 @@
     - breadcrumbs.with_path @office.name, organization_office_path(@office)
     - breadcrumbs.with_path "Collectivités"
 
-  = datatable_component(@collectivities) do |datatable|
-    - datatable.with_search
-    - datatable.with_pagination(@pagy, options: false)
-
-    - datatable.with_column(:name,      sort: true) { "Collectivité" }
-    - datatable.with_column(:siren,     sort: true) { "SIREN" }
-    - datatable.with_column(:publisher, sort: true) { "Éditeur" }
-
-    - datatable.with_column(:contact)       { "Contact" }
-    - datatable.with_column(:contact_email) { "Adresse mail de contact" }
-    - datatable.with_column(:contact_phone) { "Numéro de téléphone" }
-
-    - datatable.with_column(:packages_transmitted_count, numeric: true) { "Paquets" }
-    - datatable.with_column(:reports_transmitted_count,  numeric: true) { "Signalements" }
-    - datatable.with_column(:reports_approved_count,     numeric: true) { "Approuvés" }
-    - datatable.with_column(:reports_rejected_count,     numeric: true) { "Rejetés" }
-
-    - datatable.with_empty_message do
-      - if params[:search]
-        | Aucune collectivité ne correspont à votre recherche.
-      - else
-        | Aucune collectivité disponible.
-
-    - datatable.each_row do |row, collectivity|
-      - row.with_checkbox "Sélectionner cette collectivité", described_by: :name, disabled: true
-
-      - if allowed_to?(:update?, collectivity)
-        - row.with_action "Modifier cette collectivité", edit_organization_collectivity_path(collectivity), icon: "pencil-square", modal: true
-
-      - if allowed_to?(:destroy?, collectivity)
-        - row.with_action "Supprimer cette collectivité", remove_organization_collectivity_path(collectivity), icon: "trash", modal: true
-
-      - row.with_column(:name) do
-        = authorized_link_to collectivity, namespace: :organization
-
-      - row.with_column(:siren) do
-        = display_siren(collectivity.siren)
-
-      - row.with_column(:publisher) do
-        = collectivity.publisher.name
-
-      - row.with_column(:contact) do
-        = "#{collectivity.contact_first_name} #{collectivity.contact_last_name}".strip.presence
-
-      - row.with_column(:contact_email) do
-        = mail_to(collectivity.contact_email) if collectivity.contact_email?
-
-      - row.with_column(:contact_phone) do
-        = phone_to(collectivity.contact_phone) if collectivity.contact_phone?
-
-      - row.with_column(:packages_transmitted_count) do
-        = number_with_delimiter(collectivity.packages_transmitted_count) if collectivity.packages_transmitted_count.positive?
-
-      - row.with_column(:reports_transmitted_count) do
-        = number_with_delimiter(collectivity.reports_transmitted_count) if collectivity.reports_transmitted_count.positive?
-
-      - row.with_column(:reports_approved_count) do
-        = number_with_delimiter(collectivity.reports_approved_count) if collectivity.reports_approved_count.positive?
-
-      - row.with_column(:reports_rejected_count) do
-        = number_with_delimiter(collectivity.reports_rejected_count) if collectivity.reports_rejected_count.positive?
+  = render Views::Collectivities::ListComponent.new(@collectivities, @pagy, namespace: :organization, parent: @office) do |view|
+    - view.with_column(:name)
+    - view.with_column(:siren)
+    - view.with_column(:publisher)
+    - view.with_column(:contact)
+    - view.with_column(:contact_email)
+    - view.with_column(:contact_phone)
+    - view.with_column(:packages_transmitted_count)
+    - view.with_column(:reports_transmitted_count)
+    - view.with_column(:reports_approved_count)
+    - view.with_column(:reports_rejected_count)

@@ -11,8 +11,6 @@ module Organization
       def index
         @collectivities = authorize_collectivities_scope
         @collectivities, @pagy = index_collection(@collectivities, nested: true)
-
-        @collectivities = @collectivities.preload(:publisher)
       end
 
       private
