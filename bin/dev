@@ -1,36 +1,129 @@
-#!/usr/bin/env bash
+#!/usr/bin/env ruby
+# frozen_string_literal: true
 
-if command -v overmind &> /dev/null; then
-  arguments="-f Procfile.dev"
+# Helpers
+# ------------------------------------------------------------------------------
+# It's helpful to know what messages came from this script,
+# so we'll use log instead of `puts`
+LOG_PREFIX = "\e[34m[ bin/ci ]\e[0m"
+def log(message)
+  puts "#{LOG_PREFIX} #{message}"
+end
 
-  if command -v mailcatacher &> /dev/null; then
-    arguments="$arguments+mailcatcher"
-  fi
+# We don't want the setup method to have to do all this error checking,
+# and we also want to explicitly log what we are executing.
+# Thus, we use this method instead of Kernel#system
+def system!(*args)
+  log "\e[33m#{args.join(' ')}\e[0m"
+  return if system(*args)
 
-  if [[ "$@" != "" ]]; then
-    arguments="$arguments -l $@"
-  fi
+  log "\e[33m#{args.join(' ')}\e[0m failed"
+  abort
+end
 
-  overmind start $arguments
+def command_available?(command)
+  system("command -v #{command} &> /dev/null")
+end
+
+def process_manager
+  @process_manager ||=
+    if command_available?("overmind")
+      "overmind"
+    elsif command_available?("foreman")
+      "foreman"
+    else
+      log "Installing foreman..."
+      system!("gem install foreman")
+      "foreman"
+    end
+end
+
+def optional_processes(processes)
+  case process_manager
+  when "overmind"
+    processes = processes.join(",")
+    " -l #{processes}"
+  when "foreman"
+    processes = processes.map { |s| "#{s}=1" }.join(",")
+    " -m #{processes}"
+  end
+end
+
+# Programs
+# ------------------------------------------------------------------------------
+def start_server
+  command = process_manager
+  command += " start -f Procfile.dev"
+  command += optional_processes(%w[web js css])
+  system!(command)
+end
+
+def start_sidekiq
+  # command = process_manager
+  # command += " start -f Procfile.dev"
+  # command += optional_processes(%w[sidekiq])
+  # system!(command)
+
+  log "Sidekiq is not yet available on Fiscahub"
   exit
-fi
+end
 
-if ! command -v foreman &> /dev/null; then
-  echo "Installing foreman..."
-  gem install foreman
-fi
-
-if command -v foreman &> /dev/null; then
-  if [[ "$@" == "mailcatcher" ]]; then
-    echo "Mailcatcher cannot be run with foreman."
-    echo "You should consider using overmind."
+def start_mailcatcher
+  unless command_available?("mailcatcher")
+    log "Mailcatcher is not installed or the command is not available"
     exit
-  fi
+  end
 
-  if [[ "$@" == "" ]] && (command -v mailcatcher &> /dev/null); then
-    echo "Mailcatcher is installed but cannot be run with foreman."
-    echo "You should consider using overmind to start it with bin/dev"
-  fi
+  if process_manager == "foreman"
+    log "Mailcatcher cannot be run with foreman."
+    log "You should consider using overmind."
+    exit
+  end
 
-  foreman start -f Procfile.dev $@
-fi
+  command = process_manager
+  command += " start -f Procfile.dev+mailcatcher"
+  command += optional_processes(%w[mailcatcher])
+  system!(command)
+end
+
+def start_all
+  command = process_manager
+
+  if command_available?("mailcatcher") && process_manager == "foreman"
+    log "Mailcatcher is installed but cannot be run with foreman."
+    log "You should consider using overmind to use within bin/dev"
+    command += " start -f Procfile.dev"
+  elsif command_available?("mailcatcher")
+    command += " start -f Procfile.dev+mailcatcher"
+  else
+    command += " start -f Procfile.dev"
+  end
+
+  # TODO: match optional process arguments
+  # See https://rubular.com/r/duh3wqS6z10jOn
+
+  system!(command)
+end
+
+def help
+  log "Development commands:"
+  log ""
+  log "    bin/dev              # Start all default process"
+  log "    bin/dev server       # Start only processes to serve the app"
+  log "    bin/dev mailcatcher  # Start only mailcatcher in foreground mode"
+  log "    bin/dev help         # Show this help"
+  log ""
+end
+
+# Command parser
+# ------------------------------------------------------------------------------
+if ARGV[0].nil?
+  start_all
+else
+  case ARGV[0]
+  when "server"      then start_server
+  when "sidekiq"     then start_sidekiq
+  when "mailcatcher" then start_mailcatcher
+  else help
+  end
+end

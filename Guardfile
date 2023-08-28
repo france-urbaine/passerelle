@@ -1,15 +1,25 @@
 # frozen_string_literal: true
 
+# Setup guard using env variables
+# - use ALL_ON_START to run all guards on startup
+# - use PARALLEL to run rspec on multiple CPUs
+#
 all_on_start    = ENV.fetch("ALL_ON_START", nil) == "true"
 parallel_rspec  = ENV.fetch("PARALLEL", nil) == "true"
 
-require_relative "lib/guard/run"
-Guard::FactoryBot = Class.new(Guard::Run)
-
+# - use SKIP_ALL_ON_START_WARNING to avoid showing a warning on startup
+#
 unless ENV["SKIP_ALL_ON_START_WARNING"] || all_on_start
   Guard::UI.info "No guard called on start: use ALL_ON_START=true next time"
 end
 
+# Setup FactoryBot linter
+#
+require_relative "lib/guard/run"
+Guard::FactoryBot = Class.new(Guard::Run)
+
+# Prepare options of guard defined below
+#
 factory_bot_options = { all_on_start:, cmd: "bundle exec bin/rails factory_bot:lint RAILS_ENV='test'" }
 rspec_options       = { all_on_start:, cmd: "bundle exec rspec --no-profile" }
 rubocop_options     = { all_on_start:, cli: %w[--display-cop-names --server] }
@@ -21,6 +31,21 @@ if parallel_rspec
     cmd_additional_args: "'"
   }
 end
+
+# Uncomment and set this to only include directories you want to watch
+# directories %w(app lib config test spec features) \
+#  .select{|d| Dir.exists?(d) ? d : UI.warning("Directory #{d} does not exist")}
+#
+# Note: if you are using the `directories` clause above and you are not
+# watching the project directory ('.'), then you will want to move
+# the Guardfile to a watched dir and symlink it back, e.g.
+#
+#  $ mkdir config
+#  $ mv Guardfile config/
+#  $ ln -s config/Guardfile .
+#
+# and, you'll have to watch "config/Guardfile" instead of "Guardfile"
+#
 
 group :red_green_refactor, halt_on_fail: true do
   guard :factory_bot, factory_bot_options do
@@ -41,6 +66,8 @@ group :red_green_refactor, halt_on_fail: true do
   end
 
   guard :rubocop, rubocop_options do
+    watch("Gemfile")
+    watch("Guardfile")
     watch(/.+\.rb$/)
     watch(%r{(?:.+/)?\.rubocop(?:_todo)?\.yml$}) { |m| File.dirname(m[0]) }
   end

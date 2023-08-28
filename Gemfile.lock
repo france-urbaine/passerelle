@@ -1,11 +1,4 @@
 GIT
-  remote: https://github.com/inkstak/bundleup.git
-  revision: 889c51b35bbebbc671ced712bd3ab13e122b84e0
-  branch: return_cli_report
-  specs:
-    bundleup (2.3.0)
-
-GIT
   remote: https://github.com/inkstak/devise-two-factor.git
   revision: 61ca1a0af6c093e3816b0ee7e2fcb57702e22366
   branch: bugfix-insert_two_factor_authenticatable_on_top
@@ -129,6 +122,7 @@ GEM
     bundler-audit (0.9.1)
       bundler (>= 1.2.0, < 3)
       thor (~> 1.0)
+    bundleup (2.4.0)
     byebug (11.1.3)
     capybara (3.39.2)
       addressable
@@ -531,7 +525,7 @@ DEPENDENCIES
   bootsnap
   brakeman
   bundler-audit
-  bundleup!
+  bundleup
   byebug
   capybara
   cssbundling-rails

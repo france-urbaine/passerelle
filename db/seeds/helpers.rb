@@ -8,7 +8,9 @@ end
 
 def gets
   print "#{LOG_PREFIX} > "
-  $stdin.gets.strip
+  result = $stdin.gets(chomp: true)
+  log ""
+  result
 end
 
 def parse_csv(path)

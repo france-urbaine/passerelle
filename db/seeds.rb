@@ -188,8 +188,8 @@ log ""
 log "All seeds are ready."
 log ""
 log "-------------------------------------------------------------------------------------"
-log "  For performances reasons, only few communes and EPCIs are created."
-log "  To import all EPCIs and communes from a remote source, use the following command:"
+log "For performances reasons, only few communes and EPCIs are created."
+log "To import all EPCIs and communes from a remote source, use the following command:"
 log ""
 
 if ENV["SETUP_SEED"] == "true"
@@ -209,5 +209,6 @@ else
   log "    SEED_INTERACTIVE_USER=true rails db:seed"
 end
 
+log ""
 log "-------------------------------------------------------------------------------------"
 log ""
