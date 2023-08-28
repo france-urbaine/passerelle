@@ -5,4 +5,4 @@
     - breadcrumbs.with_path @departement.name, territories_departement_path(@departement)
     - breadcrumbs.with_path "Collectivités"
 
-  = render Views::Collectivities::ListComponent.new(@collectivities, @pagy, namespace: :territories, parent: @departement, selectable: false)
+  = render Views::Collectivities::ListComponent.new(@collectivities, @pagy, namespace: :territories, parent: @departement)

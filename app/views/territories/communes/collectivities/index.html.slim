@@ -5,4 +5,4 @@
     - breadcrumbs.with_path @commune.name, territories_commune_path(@commune)
     - breadcrumbs.with_path "Collectivités"
 
-  = render Views::Collectivities::ListComponent.new(@collectivities, @pagy, namespace: :territories, parent: @commune, selectable: false)
+  = render Views::Collectivities::ListComponent.new(@collectivities, @pagy, namespace: :territories, parent: @commune)

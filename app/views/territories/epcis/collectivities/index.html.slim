@@ -5,4 +5,4 @@
     - breadcrumbs.with_path @epci.name, territories_epci_path(@epci)
     - breadcrumbs.with_path "Collectivités"
 
-  = render Views::Collectivities::ListComponent.new(@collectivities, @pagy, namespace: :territories, parent: @epci, selectable: false)
+  = render Views::Collectivities::ListComponent.new(@collectivities, @pagy, namespace: :territories, parent: @epci)

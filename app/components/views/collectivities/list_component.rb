@@ -17,12 +17,11 @@ module Views
         reports_rejected_count
       ].freeze
 
-      def initialize(collectivities, pagy = nil, namespace:, parent: nil, selectable: true)
+      def initialize(collectivities, pagy = nil, namespace:, parent: nil)
         @collectivities = collectivities
         @pagy           = pagy
         @namespace      = namespace
         @parent         = parent
-        @selectable     = selectable
         super()
       end
 
@@ -45,27 +44,82 @@ module Views
         @parent
       end
 
-      def authorization_namespace
-        @namespace = :admin if @namespace == :territories
-        @namespace&.to_s&.camelize&.safe_constantize
+      def namespace_module
+        @namespace_module ||= @namespace.to_s.classify.constantize
       end
 
-      def link_scope
-        @namespace = :admin if @namespace == :territories
-        @namespace
+      # Disable these layout cops to allow more comparable lines
+      #
+      # rubocop:disable Layout/LineLength
+      # rubocop:disable Layout/ExtraSpacing
+      #
+      def allowed_to_show?(collectivity)
+        case @namespace
+        when :territories                  then allowed_to?(:show?, collectivity, with: Admin::CollectivityPolicy)
+        else                                    allowed_to?(:show?, collectivity, with: namespace_module::CollectivityPolicy)
+        end
       end
 
-      def organization_namespace?
-        @namespace == :organization
+      def allowed_to_edit?(collectivity)
+        case @namespace
+        when :territories                  then false
+        else                                    allowed_to?(:edit?, collectivity, with: namespace_module::CollectivityPolicy)
+        end
       end
 
-      def organization_namespace_and_office_parent?
-        @namespace == :organization && @parent.is_a?(Office)
+      def allowed_to_remove?(collectivity)
+        case @namespace
+        when :territories                  then false
+        else                                    allowed_to?(:remove?, collectivity, with: namespace_module::CollectivityPolicy)
+        end
       end
 
-      def selectable?
-        @selectable
+      def allowed_to_remove_all?
+        case @namespace
+        when :admin                        then [DDFIP, Office].exclude? @parent.class
+        when :territories                  then false
+        else                                    allowed_to?(:destroy_all?, Collectivity, with: namespace_module::CollectivityPolicy)
+        end
       end
+
+      def show_path(collectivity)
+        case @namespace
+        when :territories                  then polymorphic_path([:admin, collectivity])
+        else                                    polymorphic_path([@namespace, collectivity])
+        end
+      end
+
+      def edit_path(collectivity)
+        case @namespace
+        when :territories                  then polymorphic_path([:edit, :admin, collectivity])
+        else                                    polymorphic_path([:edit, @namespace, collectivity])
+        end
+      end
+
+      def remove_path(collectivity)
+        case @namespace
+        when :territories                  then polymorphic_path([:remove, :admin, collectivity])
+        else                                    polymorphic_path([:remove, @namespace, collectivity])
+        end
+      end
+
+      def allowed_to_show_publisher?
+        case @namespace
+        when :organization                 then @parent.instance_of?(Office) ? false : allowed_to?(:show?, Publisher, with: Admin::PublisherPolicy)
+        when :territories                  then allowed_to?(:show?, Publisher, with: Admin::PublisherPolicy)
+        else                                    allowed_to?(:show?, Publisher, with: namespace_module::PublisherPolicy)
+        end
+      end
+
+      def publisher_show_path(publisher)
+        case @namespace
+        when :organization, :territories then polymorphic_path([:admin, publisher])
+        else                                  polymorphic_path([@namespace, publisher])
+        end
+      end
+      #
+      # rubocop:enable Layout/LineLength
+      # rubocop:enable Layout/ExtraSpacing
     end
   end
 end
