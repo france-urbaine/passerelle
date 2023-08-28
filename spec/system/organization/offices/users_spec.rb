@@ -284,7 +284,7 @@ RSpec.describe "Office users in admin" do
     # with a button to remove them
     #
     within ".header-bar--selection", text: "1 utilisateur sélectionné" do
-      click_on "Exclure les utilisateurs du guichet"
+      click_on "Tout exclure du guichet"
     end
 
     # A confirmation dialog should appear
@@ -345,7 +345,7 @@ RSpec.describe "Office users in admin" do
     # with a button to remove them
     #
     within ".header-bar--selection", text: "10 utilisateurs sélectionnés" do
-      click_on "Exclure les utilisateurs du guichet"
+      click_on "Tout exclure du guichet"
     end
 
     # A confirmation dialog should appear
@@ -409,7 +409,7 @@ RSpec.describe "Office users in admin" do
     end
 
     within ".header-bar--selection", text: "12 utilisateurs sélectionnés" do
-      click_on "Exclure les utilisateurs du guichet"
+      click_on "Tout exclure du guichet"
     end
 
     # A confirmation dialog should appear

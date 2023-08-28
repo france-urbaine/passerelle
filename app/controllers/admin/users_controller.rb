@@ -8,8 +8,6 @@ module Admin
     def index
       @users = authorize_users_scope
       @users, @pagy = index_collection(@users)
-
-      @users = @users.preload(:organization)
     end
 
     def show

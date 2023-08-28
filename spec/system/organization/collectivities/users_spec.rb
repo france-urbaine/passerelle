@@ -379,20 +379,11 @@ RSpec.describe "Manage users of collectivities managed by current organization" 
 
     visit organization_collectivity_path(pays_basque)
 
-    expect(page).to have_text("12 utilisateurs | Page 1 sur 1")
-
-    # Paginate users by 10
-    # More than one page should exist
-    #
-    click_on "Options d'affichage"
-    click_on "Afficher 50 lignes par page"
-    click_on "Afficher 10 lignes"
-
     expect(page).to have_text("12 utilisateurs | Page 1 sur 2")
 
     # Checkboxes should be present to select all users
     #
-    within :table do
+    within "#datatable-users" do
       check nil, match: :first
     end
 
@@ -457,20 +448,11 @@ RSpec.describe "Manage users of collectivities managed by current organization" 
 
     visit organization_collectivity_path(pays_basque)
 
-    expect(page).to have_text("12 utilisateurs | Page 1 sur 1")
-
-    # Paginate users by 10
-    # More than one page should exist
-    #
-    click_on "Options d'affichage"
-    click_on "Afficher 50 lignes par page"
-    click_on "Afficher 10 lignes"
-
     expect(page).to have_text("12 utilisateurs | Page 1 sur 2")
 
     # Checkboxes should be present to select all users
     #
-    within :table do
+    within "#datatable-users" do
       check nil, match: :first
     end
 

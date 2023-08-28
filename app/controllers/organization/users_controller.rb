@@ -8,8 +8,6 @@ module Organization
     def index
       @users = authorize_users_scope
       @users, @pagy = index_collection(@users)
-
-      @users = @users.preload(:offices) if current_organization.is_a?(DDFIP)
     end
 
     def show
