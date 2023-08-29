@@ -1,0 +1,9 @@
+ministere:
+  name:        Ministère de l'Économie et des Finances
+  users_count: 2
+
+DNEF:
+  name:        Direction nationale d'Enquêtes fiscales
+
+DVNI:
+  name:        Direction des Vérifications nationales et internationales

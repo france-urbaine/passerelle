@@ -57,3 +57,23 @@ pierre:
   organization_admin: false
   email:              pierre.civil@paysbasque.fr
   confirmed_at:       <%= Time.current %>
+
+bruno:
+  organization:       ministere (DGFIP)
+  first_name:         Bruno
+  last_name:          Le Maire
+  name:               Bruno Le Maire
+  super_admin:        false
+  organization_admin: true
+  email:              bruno@economie.gouv.fr
+  confirmed_at:       <%= Time.current %>
+
+nicolas:
+  organization:       ministere (DGFIP)
+  first_name:         Nicolas
+  last_name:          Fouquet
+  name:               Nicolas Fouquet
+  super_admin:        false
+  organization_admin: false
+  email:              nicolas@economie.gouv.fr
+  confirmed_at:       <%= Time.current %>
