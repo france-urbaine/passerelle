@@ -364,32 +364,6 @@ RSpec.describe Collectivity do
     end
   end
 
-  # Utility methods
-  # ----------------------------------------------------------------------------
-  describe "Utility methods" do
-    let!(:publisher)   { create(:publisher) }
-    let(:collectivity) { create(:collectivity, publisher: publisher) }
-
-    describe "#packing_count" do
-      context "when there are no reports" do
-        it "returns 0" do
-          expect(collectivity.packing_count).to eq(0)
-        end
-      end
-
-      context "when there are reports with 'packing' state" do
-        before do
-          create_list(:report, 3, :transmitted, collectivity: collectivity, publisher: publisher)
-          create_list(:report, 2, collectivity: collectivity, publisher: publisher)
-        end
-
-        it "returns the correct count of 'packing' reports" do
-          expect(collectivity.packing_count).to eq(2)
-        end
-      end
-    end
-  end
-
   # Other associations
   # ----------------------------------------------------------------------------
   describe "other associations" do
