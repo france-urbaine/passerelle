@@ -43,6 +43,7 @@ def parse_users(data)
     .merge(Collectivity.all.index_by(&:name))
     .merge(Publisher.all.index_by(&:name))
     .merge(DDFIP.all.index_by(&:name))
+    .merge(DGFIP.all.index_by(&:name))
 
   data.map do |hash|
     organization = organizations[hash.delete(:organization)]
