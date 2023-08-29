@@ -99,12 +99,6 @@ class DDFIP < ApplicationRecord
     scored_order(:name, input)
   }
 
-  # Utility methods
-  # ----------------------------------------------------------------------------
-  def reports_pending_count
-    reports_count - reports_approved_count - reports_rejected_count - reports_debated_count
-  end
-
   # Other associations
   # ----------------------------------------------------------------------------
   def on_territory_collectivities
