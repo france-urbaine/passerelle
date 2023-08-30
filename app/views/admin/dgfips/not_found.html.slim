@@ -1,6 +1,0 @@
-= template_not_found_component(@model_not_found, referrer: @referrer_path) do |template|
-  - template.with_breadcrumbs do |breadcrumbs|
-    - breadcrumbs.with_path "Administration"
-    - breadcrumbs.with_path "DGFIP", admin_dgfip_path
-
-  - template.with_action "Créer une DGFIP", new_admin_dgfip_path, icon: "plus"

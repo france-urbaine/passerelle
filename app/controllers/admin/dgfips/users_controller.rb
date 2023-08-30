@@ -58,7 +58,7 @@ module Admin
       private
 
       def load_and_authorize_dgfip
-        @dgfip = DGFIP.kept.first || DGFIP.find(nil)
+        @dgfip = DGFIP.find_or_create_singleton_record
 
         authorize! @dgfip, to: :show?
         only_kept! @dgfip

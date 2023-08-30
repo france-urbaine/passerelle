@@ -2,13 +2,9 @@
 
 require "rails_helper"
 
-RSpec.describe "Admin::DGFIPsController#index" do
+RSpec.describe "Admin::DGFIPsController#index", skip: "Disabled because of singleton record" do
   subject(:request) do
     get "/admin/dgfips", as:, headers:, params:, xhr:
-  end
-
-  before do
-    skip("Admin::DGFIPsController#index is not available")
   end
 
   let(:as)      { |e| e.metadata[:as] }

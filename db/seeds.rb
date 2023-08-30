@@ -76,9 +76,7 @@ DDFIP.insert_all([
 # ----------------------------------------------------------------------------
 log "Seed DGFIP"
 
-DGFIP.insert_all([
-  { name: "Direction générale des Finances publiques" }
-])
+DGFIP.find_or_create_singleton_record
 
 # Import publishers
 # ----------------------------------------------------------------------------

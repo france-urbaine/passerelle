@@ -11,7 +11,7 @@ RSpec.describe "Admin::DGFIPsController#update" do
   let(:headers) { |e| e.metadata[:headers] }
   let(:params)  { |e| e.metadata.fetch(:params, { dgfip: updated_attributes }) }
 
-  let!(:dgfip) { DGFIP.kept.first || create(:dgfip, name: "Ministère des finances") }
+  let!(:dgfip) { DGFIP.find_or_create_singleton_record }
 
   let(:updated_attributes) do
     { name: "Ministère de l'Économie et des Finances" }
@@ -81,17 +81,17 @@ RSpec.describe "Admin::DGFIPsController#update" do
     context "when the DGFIP is discarded" do
       before { dgfip.discard }
 
-      it { expect(response).to have_http_status(:not_found) }
-      it { expect(response).to have_content_type(:html) }
-      it { expect(response).to have_html_body }
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/admin/dgfip") }
+      it { expect(flash).to have_flash_notice }
     end
 
     context "when the DGFIP is missing" do
       before { dgfip.destroy }
 
-      it { expect(response).to have_http_status(:not_found) }
-      it { expect(response).to have_content_type(:html) }
-      it { expect(response).to have_html_body }
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/admin/dgfip") }
+      it { expect(flash).to have_flash_notice }
     end
 
     context "with referrer header", headers: { "Referer" => "http://example.com/other/path" } do

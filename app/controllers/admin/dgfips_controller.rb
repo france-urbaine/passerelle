@@ -8,20 +8,6 @@ module Admin
       @dgfip = find_and_authorize_dgfip
     end
 
-    def new
-      @dgfip = build_dgfip
-      @referrer_path = referrer_path || admin_dgfip_path
-    end
-
-    def create
-      @dgfip = build_dgfip(dgfip_params)
-      @dgfip.save
-
-      respond_with @dgfip,
-        flash: true,
-        location: -> { redirect_path || admin_dgfip_path }
-    end
-
     def edit
       @dgfip = find_and_authorize_dgfip
       @referrer_path = referrer_path || admin_dgfip_path(@dgfip)
@@ -47,7 +33,7 @@ module Admin
     end
 
     def find_and_authorize_dgfip
-      dgfip = DGFIP.kept.first || DGFIP.find(nil)
+      dgfip = DGFIP.find_or_create_singleton_record
 
       authorize! dgfip
 

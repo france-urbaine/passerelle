@@ -14,31 +14,20 @@ RSpec.describe DGFIP do
   describe "validations" do
     it { is_expected.to validate_presence_of(:name) }
 
-    it "validates uniqueness of :name" do
+    it "validates that no other one DGFIP exist on creation" do
       create(:dgfip)
-      is_expected.to validate_uniqueness_of(:name).ignoring_case_sensitivity
+
+      expect {
+        create(:dgfip)
+      }.to raise_error(ActiveRecord::RecordInvalid).with_message(/Une instance .+ a déjà été crée/)
     end
 
-    it "ignores discarded records when validating uniqueness of :name" do
+    it "cannot create a new DGFIP when another one is discarded" do
       create(:dgfip, :discarded)
-      is_expected.not_to validate_uniqueness_of(:name).ignoring_case_sensitivity
-    end
 
-    it "validates only one dgfip on creation" do
-      create(:dgfip)
-      expect { create(:dgfip) }.to raise_error(ActiveRecord::RecordInvalid).with_message("La validation a échoué : Une seule DGFIP est possible")
-    end
-
-    it "validates only one dgfip on undiscard" do
-      create(:dgfip)
-      discarded_dgfip = create(:dgfip, :discarded)
-      expect { discarded_dgfip.undiscard }.to raise_error(ActiveRecord::RecordInvalid).with_message("La validation a échoué : Une seule DGFIP est possible")
-    end
-
-    it "allows to undiscard dgfip if others are discarded" do
-      create(:dgfip, :discarded)
-      discarded_dgfip = create(:dgfip, :discarded)
-      expect { discarded_dgfip.undiscard }.to not_raise_error
+      expect {
+        create(:dgfip)
+      }.to raise_error(ActiveRecord::RecordInvalid).with_message(/Une instance .+ a déjà été crée/)
     end
   end
 
@@ -109,67 +98,93 @@ RSpec.describe DGFIP do
         end
       end
     end
+  end
 
-    # Database constraints and triggers
-    # ----------------------------------------------------------------------------
-    describe "database constraints" do
-      it "asserts the uniqueness of name" do
-        existing_dgfip = create(:dgfip)
-        another_dgfip  = build(:dgfip, name: existing_dgfip.name)
-
-        expect { another_dgfip.save(validate: false) }
-          .to raise_error(ActiveRecord::RecordNotUnique).with_message(/PG::UniqueViolation/)
-      end
-
-      it "ignores discarded records when asserting the uniqueness of name" do
-        existing_dgfip = create(:dgfip, :discarded)
-        another_dgfip  = build(:dgfip, name: existing_dgfip.name)
-
-        expect { another_dgfip.save(validate: false) }
-          .not_to raise_error
-      end
+  # Singleton record
+  # ----------------------------------------------------------------------------
+  describe ".find_or_create_singleton_record" do
+    it "creates a new record when no other one exists" do
+      expect {
+        DGFIP.find_or_create_singleton_record
+      }.to change(DGFIP, :count).by(1)
     end
 
-    describe "database triggers" do
-      let!(:dgfips) { create_list(:dgfip, 2, :discarded) }
+    it "assigns default values to new record" do
+      dgfip = DGFIP.find_or_create_singleton_record
 
-      describe "about organization counter caches" do
-        describe "#users_count" do
-          let(:user) { create(:user, organization: dgfips[0]) }
+      expect(dgfip).to have_attributes(name: "Direction générale des Finances publiques")
+    end
 
-          it "changes on creation" do
-            expect { user }
-              .to change { dgfips[0].reload.users_count }.from(0).to(1)
-              .and not_change { dgfips[1].reload.users_count }.from(0)
-          end
+    it "returns existing record" do
+      dgfip = create(:dgfip)
 
-          it "changes on deletion" do
-            user
-            expect { user.destroy }
-              .to change { dgfips[0].reload.users_count }.from(1).to(0)
-              .and not_change { dgfips[1].reload.users_count }.from(0)
-          end
+      expect(DGFIP.find_or_create_singleton_record).to eq(dgfip)
+    end
 
-          it "changes when discarding" do
-            user
-            expect { user.discard }
-              .to change { dgfips[0].reload.users_count }.from(1).to(0)
-              .and not_change { dgfips[1].reload.users_count }.from(0)
-          end
+    it "undiscard existing but discarded record" do
+      dgfip = create(:dgfip, :discarded)
 
-          it "changes when undiscarding" do
-            user.discard
-            expect { user.undiscard }
-              .to change { dgfips[0].reload.users_count }.from(0).to(1)
-              .and not_change { dgfips[1].reload.users_count }.from(0)
-          end
+      expect(DGFIP.find_or_create_singleton_record)
+        .to eq(dgfip)
+        .and be_undiscarded
+    end
+  end
 
-          it "changes when updating organization" do
-            user
-            expect { user.update(organization: dgfips[1]) }
-              .to  change { dgfips[0].reload.users_count }.from(1).to(0)
-              .and change { dgfips[1].reload.users_count }.from(0).to(1)
-          end
+  # Database constraints and triggers
+  # ----------------------------------------------------------------------------
+  describe "database constraints" do
+    it "asserts the uniqueness of a single record" do
+      create(:dgfip)
+
+      expect {
+        build(:dgfip).save(validate: false)
+      }.to raise_error(ActiveRecord::RecordNotUnique).with_message(/PG::UniqueViolation/)
+    end
+
+    it "doesn't ignore discarded records when asserting the uniqueness of a single record" do
+      create(:dgfip, :discarded)
+
+      expect {
+        build(:dgfip).save(validate: false)
+      }.to raise_error(ActiveRecord::RecordNotUnique).with_message(/PG::UniqueViolation/)
+    end
+  end
+
+  describe "database triggers" do
+    let(:dgfip) { create(:dgfip) }
+
+    describe "about organization counter caches" do
+      describe "#users_count" do
+        let(:user) { create(:user, organization: dgfip) }
+
+        it "changes on creation" do
+          expect { user }
+            .to change { dgfip.reload.users_count }.from(0).to(1)
+        end
+
+        it "changes on deletion" do
+          user
+          expect { user.destroy }
+            .to change { dgfip.reload.users_count }.from(1).to(0)
+        end
+
+        it "changes when discarding" do
+          user
+          expect { user.discard }
+            .to change { dgfip.reload.users_count }.from(1).to(0)
+        end
+
+        it "changes when undiscarding" do
+          user.discard
+          expect { user.undiscard }
+            .to change { dgfip.reload.users_count }.from(0).to(1)
+        end
+
+        it "changes when updating organization" do
+          ddfip = create(:ddfip)
+          user
+          expect { user.update(organization: ddfip) }
+            .to  change { dgfip.reload.users_count }.from(1).to(0)
         end
       end
     end

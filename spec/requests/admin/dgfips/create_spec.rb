@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "Admin::DGFIPsController#create" do
+RSpec.describe "Admin::DGFIPsController#create", skip: "Disabled because of singleton record" do
   subject(:request) do
     post "/admin/dgfip", as:, headers:, params:
   end

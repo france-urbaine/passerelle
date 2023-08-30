@@ -3408,6 +3408,13 @@ CREATE INDEX index_workshops_on_discarded_at ON public.workshops USING btree (di
 
 
 --
+-- Name: singleton_dgfip_constraint; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX singleton_dgfip_constraint ON public.dgfips USING btree ((1));
+
+
+--
 -- Name: collectivities trigger_collectivities_changes; Type: TRIGGER; Schema: public; Owner: -
 --
 
@@ -3690,6 +3697,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230728085901'),
 ('20230823083541'),
 ('20230823125725'),
-('20230823132126');
+('20230823132126'),
+('20230830170839');
 
 

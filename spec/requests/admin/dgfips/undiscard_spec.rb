@@ -2,13 +2,9 @@
 
 require "rails_helper"
 
-RSpec.describe "Admin::DGFIPsController#undiscard" do
+RSpec.describe "Admin::DGFIPsController#undiscard", skip: "Disabled because of singleton record" do
   subject(:request) do
     patch "/admin/dgfips/#{dgfip.id}/undiscard", as:, headers:, params:
-  end
-
-  before do
-    skip("Admin::DGFIPsController#undiscard is not available")
   end
 
   let(:as)      { |e| e.metadata[:as] }

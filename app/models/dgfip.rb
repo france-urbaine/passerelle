@@ -21,6 +21,7 @@
 #
 #  index_dgfips_on_discarded_at  (discarded_at)
 #  index_dgfips_on_name          (name) UNIQUE WHERE (discarded_at IS NULL)
+#  singleton_dgfip_constraint    ((1)) UNIQUE
 #
 class DGFIP < ApplicationRecord
   # Associations
@@ -35,19 +36,10 @@ class DGFIP < ApplicationRecord
   validates :contact_phone,      format: { allow_blank: true, with: PHONE_REGEXP }
   validates :domain_restriction, format: { allow_blank: true, with: DOMAIN_REGEXP }
 
-  validates :name, uniqueness: {
-    case_sensitive: false,
-    conditions: -> { kept },
-    unless: :skip_uniqueness_validation_of_name?
-  }
+  validate :validate_one_singleton_record, on: :create
 
-  validate :only_one_dgfip, on: :create
-
-  def only_one_dgfip(undiscarding: false)
-    return true unless (kept? || undiscarding) && DGFIP.kept.where.not(id: id).any?
-
-    errors.add :base, "Une seule DGFIP est possible"
-    false
+  def validate_one_singleton_record
+    errors.add :base, :exist if DGFIP.with_discarded.exists?
   end
 
   # Scopes
@@ -67,15 +59,17 @@ class DGFIP < ApplicationRecord
     connection.select_value("SELECT reset_all_dgfips_counters()")
   end
 
-  # Overwrite to_param so DGFIP is a singular resource for url_for
+  # Singleton record
   # ----------------------------------------------------------------------------
+  # Overwrite to_param so DGFIP is a singular resource when calling url_for
+  #
   def to_param
     nil
   end
 
-  def undiscard
-    raise ActiveRecord::RecordInvalid, self unless only_one_dgfip(undiscarding: true)
-
-    super
+  def self.find_or_create_singleton_record
+    record = with_discarded.first
+    record.undiscard if record&.discarded?
+    record || create(name: I18n.t("activerecord.default_values.dgfip.name"))
   end
 end

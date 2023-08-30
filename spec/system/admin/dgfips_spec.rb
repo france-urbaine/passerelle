@@ -9,39 +9,25 @@ RSpec.describe "DGFIPs in admin" do
 
   before { sign_in(users(:marc)) }
 
-  it "creates a DGFIP if no DGFIPs are available" do
-    DGFIP.discard_all
+  it "visits the DGFIP page" do
+    visit admin_dgfip_path
+
+    # On the DGFIP page, we expect to get the title of the organization
+    #
+    expect(page).to have_selector("h1", text: "Direction générale des Finances publiques")
+  end
+
+  it "visits the the page of a newly created DGFIP when no record are available" do
+    DGFIP.delete_all
 
     visit admin_dgfip_path
 
-    # A button should be present to add a new DGFIP
+    # On the DGFIP page, we expect to get the title of the organization
     #
-    click_on "Créer une DGFIP"
-
-    # A dialog box should appear with a form to fill
-    #
-    within "[role=dialog]", text: "Création d'une nouvelle DGFIP" do |dialog|
-      expect(dialog).to have_field("Nom de la DGFIP")
-
-      fill_in "Nom de la DGFIP", with: "DGFIP test"
-
-      click_on "Enregistrer"
-    end
-
-    # The browser should go on the DGFIP page
-    # The new DGFIP should appear
-    #
-    expect(page).to have_current_path(admin_dgfip_path)
-    expect(page).to have_selector("h1", text: "DGFIP test")
-
-    # The dialog should be closed
-    # A notification should be displayed
-    #
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "Une nouvelle DGFIP a été ajoutée avec succés.")
+    expect(page).to have_selector("h1", text: "Direction générale des Finances publiques")
   end
 
-  it "updates a DGFIP from the DGFIP page" do
+  it "updates the DGFIP" do
     visit admin_dgfip_path
 
     # A button should be present to edit the DGFIP

@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "Admin::DGFIPsController#remove" do
+RSpec.describe "Admin::DGFIPsController#remove", skip: "Disabled because of singleton record" do
   subject(:request) do
     get "/admin/dgfips/#{dgfip.id}/remove", as:, headers:, params:
   end

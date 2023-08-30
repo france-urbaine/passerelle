@@ -127,7 +127,7 @@ Rails.application.routes.draw do
         end
       end
 
-      resource :dgfip, only: %i[new create edit update show] do
+      resource :dgfip, only: %i[show edit update] do
         scope module: "dgfips" do
           resources :users, only: %i[index new create], concerns: %i[removable_collection], path: "/utilisateurs"
         end

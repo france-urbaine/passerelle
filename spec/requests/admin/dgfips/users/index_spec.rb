@@ -56,17 +56,15 @@ RSpec.describe "Admin::Dgfips::UsersController#index" do
       context "when the DGFIP is discarded" do
         before { DGFIP.discard_all }
 
-        it { expect(response).to have_http_status(:not_found) }
-        it { expect(response).to have_content_type(:html) }
-        it { expect(response).to have_html_body }
+        it { expect(response).to have_http_status(:see_other) }
+        it { expect(response).to redirect_to("/admin/dgfip") }
       end
 
       context "when the DGFIP is missing" do
         before { dgfip.destroy }
 
-        it { expect(response).to have_http_status(:not_found) }
-        it { expect(response).to have_content_type(:html) }
-        it { expect(response).to have_html_body }
+        it { expect(response).to have_http_status(:see_other) }
+        it { expect(response).to redirect_to("/admin/dgfip") }
       end
     end
 
@@ -89,17 +87,17 @@ RSpec.describe "Admin::Dgfips::UsersController#index" do
       context "when the DGFIP is discarded" do
         before { dgfip.discard }
 
-        it { expect(response).to have_http_status(:not_found) }
+        it { expect(response).to have_http_status(:success) }
         it { expect(response).to have_content_type(:html) }
-        it { expect(response).to have_html_body }
+        it { expect(response).to have_html_body.with_turbo_frame("datatable-users") }
       end
 
       context "when the DGFIP is missing" do
         before { dgfip.destroy }
 
-        it { expect(response).to have_http_status(:not_found) }
+        it { expect(response).to have_http_status(:success) }
         it { expect(response).to have_content_type(:html) }
-        it { expect(response).to have_html_body }
+        it { expect(response).to have_html_body.with_turbo_frame("datatable-users") }
       end
     end
 

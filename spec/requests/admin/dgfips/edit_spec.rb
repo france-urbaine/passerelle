@@ -11,7 +11,7 @@ RSpec.describe "Admin::DGFIPsController#edit" do
   let(:headers) { |e| e.metadata[:headers] }
   let(:params)  { |e| e.metadata[:params] }
 
-  let!(:dgfip) { DGFIP.kept.first || create(:dgfip) }
+  let!(:dgfip) { DGFIP.find_or_create_singleton_record }
 
   describe "authorizations" do
     it_behaves_like "it requires to be signed in in HTML"
@@ -47,7 +47,7 @@ RSpec.describe "Admin::DGFIPsController#edit" do
     context "when the DGFIP is discarded" do
       before { dgfip.discard }
 
-      it { expect(response).to have_http_status(:not_found) }
+      it { expect(response).to have_http_status(:success) }
       it { expect(response).to have_content_type(:html) }
       it { expect(response).to have_html_body }
     end
@@ -55,7 +55,7 @@ RSpec.describe "Admin::DGFIPsController#edit" do
     context "when the DGFIP is missing" do
       before { dgfip.destroy }
 
-      it { expect(response).to have_http_status(:not_found) }
+      it { expect(response).to have_http_status(:success) }
       it { expect(response).to have_content_type(:html) }
       it { expect(response).to have_html_body }
     end

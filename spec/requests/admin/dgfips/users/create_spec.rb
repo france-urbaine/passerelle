@@ -96,17 +96,17 @@ RSpec.describe "Admin::Dgfips::UsersController#create" do
     context "when the DGFIP is discarded" do
       before { dgfip.discard }
 
-      it { expect(response).to have_http_status(:not_found) }
-      it { expect(response).to have_content_type(:html) }
-      it { expect(response).to have_html_body }
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/admin/dgfip") }
+      it { expect { request }.to change(User, :count).by(1) }
     end
 
     context "when the DGFIP is missing" do
       before { dgfip.destroy }
 
-      it { expect(response).to have_http_status(:not_found) }
-      it { expect(response).to have_content_type(:html) }
-      it { expect(response).to have_html_body }
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/admin/dgfip") }
+      it { expect { request }.to change(User, :count).by(1) }
     end
 
     context "with referrer header", headers: { "Referer" => "http://example.com/other/path" } do

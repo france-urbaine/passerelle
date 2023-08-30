@@ -2,13 +2,9 @@
 
 require "rails_helper"
 
-RSpec.describe "Admin::DGFIPsController#destroy_all" do
+RSpec.describe "Admin::DGFIPsController#destroy_all", skip: "Disabled because of singleton record" do
   subject(:request) do
     delete "/admin/dgfips", as:, headers:, params:
-  end
-
-  before do
-    skip("Admin::DGFIPsController#destroy_all is not available")
   end
 
   let(:as)      { |e| e.metadata[:as] }
