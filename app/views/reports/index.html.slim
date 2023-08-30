@@ -40,6 +40,16 @@
       - datatable.with_column(:adresse)                 { "Adresse" }
       - datatable.with_column(:commune)                 { "Commune" }
 
+    - when DGFIP
+      - datatable.with_column(:package)                 { "Paquet" }
+      - datatable.with_column(:collectivity)            { "Collectivité" }
+      - datatable.with_column(:priority, compact: true) { "Priorité" }
+      - datatable.with_column(:form_type)               { "Type de signalement" }
+      - datatable.with_column(:anomalies)               { "Objet" }
+      - datatable.with_column(:invariant)               { "Invariant" }
+      - datatable.with_column(:adresse)                 { "Adresse" }
+      - datatable.with_column(:commune)                 { "Commune" }
+
     - when DDFIP
       - if current_user.organization_admin?
         - datatable.with_column(:package)                 { "Paquet" }

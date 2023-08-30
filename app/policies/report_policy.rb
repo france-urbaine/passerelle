@@ -6,7 +6,7 @@ class ReportPolicy < ApplicationPolicy
   alias_rule :remove_all?, :undiscard_all?, to: :destroy_all?
 
   def index?
-    user?
+    user? || dgfip?
   end
 
   def create?
@@ -15,18 +15,19 @@ class ReportPolicy < ApplicationPolicy
 
   def show?
     if record == Report
-      user?
+      user? || report_shown_to_dgfip?(record)
     elsif record.is_a?(Report)
       report_shown_to_collectivity?(record) ||
         report_shown_to_publisher?(record) ||
         report_shown_to_ddfip_admin?(record) ||
-        report_shown_to_office_user?(record)
+        report_shown_to_office_user?(record) ||
+        report_shown_to_dgfip?(record)
     end
   end
 
   def update?
     if record == Report
-      user?
+      user? && !dgfip?
     elsif record.is_a?(Report)
       report_updatable_by_collectivity?(record) ||
         report_updatable_by_publisher?(record) ||
@@ -64,6 +65,8 @@ class ReportPolicy < ApplicationPolicy
       relation.merge(reports_listed_to_publisher)
     elsif ddfip_admin?
       relation.merge(reports_listed_to_ddfip_admins)
+    elsif dgfip?
+      relation.merge(reports_listed_to_dgfip)
     elsif office_user?
       relation.merge(reports_listed_to_office_users)
     else
@@ -134,6 +137,14 @@ class ReportPolicy < ApplicationPolicy
     Report.all_kept.sent_by_publisher(organization)
   end
 
+  def reports_listed_to_dgfip
+    return Report.none unless dgfip?
+
+    Report
+      .published
+      .unrejected_packages
+  end
+
   def reports_listed_to_ddfip_admins
     return Report.none unless ddfip_admin?
 
@@ -154,6 +165,13 @@ class ReportPolicy < ApplicationPolicy
 
   # Assert if a report can be shown to an user
   # ----------------------------------------------------------------------------
+  def report_shown_to_dgfip?(report)
+    # Discarded packages are not listed but are still accessible
+    #
+    dgfip? &&
+      report.published?
+  end
+
   def report_shown_to_collectivity?(report)
     # Discarded packages are not listed but are still accessible
     #
