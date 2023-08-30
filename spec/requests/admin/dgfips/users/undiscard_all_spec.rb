@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "Admin::Dgfips::UsersController#undiscard_all" do
+RSpec.describe "Admin::DGFIPs::UsersController#undiscard_all" do
   subject(:request) do
     patch "/admin/dgfip/utilisateurs/undiscard", as:, headers:, params:
   end

@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "Admin::Dgfips::UsersController#remove_all" do
+RSpec.describe "Admin::DGFIPs::UsersController#remove_all" do
   subject(:request) do
     get "/admin/dgfip/utilisateurs/remove", as:, headers:, params:
   end

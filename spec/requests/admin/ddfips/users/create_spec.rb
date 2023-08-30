@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "Admin::Ddfips::UsersController#create" do
+RSpec.describe "Admin::DDFIPs::UsersController#create" do
   subject(:request) do
     post "/admin/ddfips/#{ddfip.id}/utilisateurs", as:, headers:, params:
   end

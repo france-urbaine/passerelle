@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "Admin::Ddfips::UsersController#destroy_all" do
+RSpec.describe "Admin::DDFIPs::UsersController#destroy_all" do
   subject(:request) do
     delete "/admin/ddfips/#{ddfip.id}/utilisateurs", as:, headers:, params:
   end

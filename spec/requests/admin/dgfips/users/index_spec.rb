@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "Admin::Dgfips::UsersController#index" do
+RSpec.describe "Admin::DGFIPs::UsersController#index" do
   subject(:request) do
     get "/admin/dgfip/utilisateurs", as:, headers:, params:, xhr:
   end
