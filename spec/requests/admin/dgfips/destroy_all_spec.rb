@@ -7,6 +7,10 @@ RSpec.describe "Admin::DGFIPsController#destroy_all" do
     delete "/admin/dgfips", as:, headers:, params:
   end
 
+  before do
+    skip("Admin::DGFIPsController#destroy_all is not available")
+  end
+
   let(:as)      { |e| e.metadata[:as] }
   let(:headers) { |e| e.metadata[:headers] }
   let(:params)  { |e| e.metadata.fetch(:params, { ids: ids }) }

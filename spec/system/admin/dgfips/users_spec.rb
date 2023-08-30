@@ -7,17 +7,17 @@ RSpec.describe "DGFIP users in admin" do
   fixtures :publishers, :collectivities, :ddfips, :dgfips, :offices
   fixtures :users
 
-  let(:ministere) { dgfips(:ministere) }
-  let(:bruno)     { users(:bruno) }
+  let(:dgfip) { dgfips(:dgfip) }
+  let(:bruno) { users(:bruno) }
 
   before { sign_in(users(:marc)) }
 
   it "visits an user page from the DGFIP page" do
-    visit admin_dgfip_path(ministere)
+    visit admin_dgfip_path(dgfip)
 
     # A table of users should be present
     #
-    expect(page).to have_selector("h1", text: "Ministère de l'Économie et des Finances")
+    expect(page).to have_selector("h1", text: "Direction générale des Finances publiques")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Bruno Le Maire")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Nicolas Fouquet")
 
@@ -32,23 +32,23 @@ RSpec.describe "DGFIP users in admin" do
 
     # The browser should have redirect back to the DGFIP page
     #
-    expect(page).to have_current_path(admin_dgfip_path(ministere))
-    expect(page).to have_selector("h1", text: "Ministère de l'Économie et des Finances")
+    expect(page).to have_current_path(admin_dgfip_path(dgfip))
+    expect(page).to have_selector("h1", text: "Direction générale des Finances publiques")
   end
 
   it "paginate users on the DGFIP page" do
     # Create enough users to have several pages
     #
-    create_list(:user, 10, organization: ministere)
+    create_list(:user, 10, organization: dgfip)
 
-    visit admin_dgfip_path(ministere)
+    visit admin_dgfip_path(dgfip)
 
     expect(page).to     have_text("12 utilisateurs | Page 1 sur 2")
     expect(page).not_to have_button("Options d'affichage")
   end
 
   it "invites an user from the DGFIP page" do
-    visit admin_dgfip_path(ministere)
+    visit admin_dgfip_path(dgfip)
 
     # A button should be present to add a new user
     #
@@ -75,8 +75,8 @@ RSpec.describe "DGFIP users in admin" do
     # The browser should stay on the DGFIP page
     # The new user should appear
     #
-    expect(page).to have_current_path(admin_dgfip_path(ministere))
-    expect(page).to have_selector("h1", text: "Ministère de l'Économie et des Finances")
+    expect(page).to have_current_path(admin_dgfip_path(dgfip))
+    expect(page).to have_selector("h1", text: "Direction générale des Finances publiques")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Elliot Alderson")
 
     # The dialog should be closed
@@ -87,7 +87,7 @@ RSpec.describe "DGFIP users in admin" do
   end
 
   it "updates an user from the DGFIP page" do
-    visit admin_dgfip_path(ministere)
+    visit admin_dgfip_path(dgfip)
 
     # A table of users should be present
     # with a button to edit them
@@ -100,7 +100,7 @@ RSpec.describe "DGFIP users in admin" do
     # The form should be filled with user data
     #
     within "[role=dialog]", text: "Modification de l'utilisateur" do |dialog|
-      expect(dialog).to have_field("Organisation", with: "Ministère de l'Économie et des Finances")
+      expect(dialog).to have_field("Organisation", with: "Direction générale des Finances publiques")
       expect(dialog).to have_field("Prénom",       with: "Bruno")
       expect(dialog).to have_field("Nom",          with: "Le Maire")
       expect(dialog).to have_field("Adresse mail", with: "bruno@economie.gouv.fr")
@@ -115,8 +115,8 @@ RSpec.describe "DGFIP users in admin" do
     # The browser should stay on the DGFIP page
     # The user's name should have been updated
     #
-    expect(page).to have_current_path(admin_dgfip_path(ministere))
-    expect(page).to have_selector("h1", text: "Ministère de l'Économie et des Finances")
+    expect(page).to have_current_path(admin_dgfip_path(dgfip))
+    expect(page).to have_selector("h1", text: "Direction générale des Finances publiques")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Bruno Lemaire")
 
     # The dialog should be closed
@@ -127,7 +127,7 @@ RSpec.describe "DGFIP users in admin" do
   end
 
   it "discards an user from the DGFIP page & rollbacks" do
-    visit admin_dgfip_path(ministere)
+    visit admin_dgfip_path(dgfip)
 
     expect(page).to have_text("2 utilisateurs | Page 1 sur 1")
 
@@ -147,8 +147,8 @@ RSpec.describe "DGFIP users in admin" do
     # The browser should stay on the DGFIP page
     # The user should not appears anymore
     #
-    expect(page).to     have_current_path(admin_dgfip_path(ministere))
-    expect(page).to     have_selector("h1", text: "Ministère de l'Économie et des Finances")
+    expect(page).to     have_current_path(admin_dgfip_path(dgfip))
+    expect(page).to     have_selector("h1", text: "Direction générale des Finances publiques")
     expect(page).to     have_text("1 utilisateur | Page 1 sur 1")
     expect(page).not_to have_selector(:table_row, "Utilisateur" => "Bruno Le Maire")
 
@@ -168,8 +168,8 @@ RSpec.describe "DGFIP users in admin" do
     # The user should not appears anymore
     # The user should be back again
     #
-    expect(page).to have_current_path(admin_dgfip_path(ministere))
-    expect(page).to have_selector("h1", text: "Ministère de l'Économie et des Finances")
+    expect(page).to have_current_path(admin_dgfip_path(dgfip))
+    expect(page).to have_selector("h1", text: "Direction générale des Finances publiques")
     expect(page).to have_text("2 utilisateurs | Page 1 sur 1")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Bruno Le Maire")
 
@@ -181,7 +181,7 @@ RSpec.describe "DGFIP users in admin" do
   end
 
   it "selects and discards one user from the DGFIP page & rollbacks" do
-    visit admin_dgfip_path(ministere)
+    visit admin_dgfip_path(dgfip)
 
     expect(page).to have_text("2 utilisateurs | Page 1 sur 1")
 
@@ -208,8 +208,8 @@ RSpec.describe "DGFIP users in admin" do
     # The selected users should not appears anymore
     # Other users should remain
     #
-    expect(page).to     have_current_path(admin_dgfip_path(ministere))
-    expect(page).to     have_selector("h1", text: "Ministère de l'Économie et des Finances")
+    expect(page).to     have_current_path(admin_dgfip_path(dgfip))
+    expect(page).to     have_selector("h1", text: "Direction générale des Finances publiques")
     expect(page).to     have_text("1 utilisateur | Page 1 sur 1")
     expect(page).not_to have_selector(:table_row, "Utilisateur" => "Bruno Le Maire")
     expect(page).to     have_selector(:table_row, "Utilisateur" => "Nicolas Fouquet")
@@ -231,8 +231,8 @@ RSpec.describe "DGFIP users in admin" do
     # The browser should stay on the DGFIP page
     # The removed users should be back again
     #
-    expect(page).to have_current_path(admin_dgfip_path(ministere))
-    expect(page).to have_selector("h1", text: "Ministère de l'Économie et des Finances")
+    expect(page).to have_current_path(admin_dgfip_path(dgfip))
+    expect(page).to have_selector("h1", text: "Direction générale des Finances publiques")
     expect(page).to have_text("2 utilisateurs | Page 1 sur 1")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Bruno Le Maire")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Nicolas Fouquet")
@@ -250,10 +250,10 @@ RSpec.describe "DGFIP users in admin" do
     # Create a bunch of users to have several pages
     # Also create discarded users on other organizations to ensure there are not rollbacked
     #
-    create_list(:user, 10, organization: ministere)
+    create_list(:user, 10, organization: dgfip)
     create_list(:user, 5, :discarded)
 
-    visit admin_dgfip_path(ministere)
+    visit admin_dgfip_path(dgfip)
 
     expect(page).to have_text("12 utilisateurs | Page 1 sur 2")
 
@@ -279,8 +279,8 @@ RSpec.describe "DGFIP users in admin" do
     # The browser should stay on the DGFIP page
     # The selected users should have been removed
     #
-    expect(page).to     have_current_path(admin_dgfip_path(ministere))
-    expect(page).to     have_selector("h1", text: "Ministère de l'Économie et des Finances")
+    expect(page).to     have_current_path(admin_dgfip_path(dgfip))
+    expect(page).to     have_selector("h1", text: "Direction générale des Finances publiques")
     expect(page).to     have_text("2 utilisateurs | Page 1 sur 1")
     expect(page).not_to have_selector(:table_row, "Utilisateur" => "Bruno Le Maire")
     expect(page).not_to have_selector(:table_row, "Utilisateur" => "Nicolas Fouquet")
@@ -301,8 +301,8 @@ RSpec.describe "DGFIP users in admin" do
     # The browser should stay on the DGFIP page
     # The removed users should be back again
     #
-    expect(page).to have_current_path(admin_dgfip_path(ministere))
-    expect(page).to have_selector("h1", text: "Ministère de l'Économie et des Finances")
+    expect(page).to have_current_path(admin_dgfip_path(dgfip))
+    expect(page).to have_selector("h1", text: "Direction générale des Finances publiques")
     expect(page).to have_text("12 utilisateurs | Page 1 sur 2")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Bruno Le Maire")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Nicolas Fouquet")
@@ -322,10 +322,10 @@ RSpec.describe "DGFIP users in admin" do
     # Create a bunch of users to have several pages
     # Also create discarded users on other organizations to ensure there are not rollbacked
     #
-    create_list(:user, 10, organization: ministere)
+    create_list(:user, 10, organization: dgfip)
     create_list(:user, 5, :discarded)
 
-    visit admin_dgfip_path(ministere)
+    visit admin_dgfip_path(dgfip)
 
     expect(page).to have_text("12 utilisateurs | Page 1 sur 2")
 
@@ -356,8 +356,8 @@ RSpec.describe "DGFIP users in admin" do
     # No users should appear anymore
     # Other users from other organizations should remain
     #
-    expect(page).to have_current_path(admin_dgfip_path(ministere))
-    expect(page).to have_selector("h1", text: "Ministère de l'Économie et des Finances")
+    expect(page).to have_current_path(admin_dgfip_path(dgfip))
+    expect(page).to have_selector("h1", text: "Direction générale des Finances publiques")
     expect(page).to have_text("Aucun utilisateur assigné.")
 
     expect(User.discarded.count).to eq(17)
@@ -378,8 +378,8 @@ RSpec.describe "DGFIP users in admin" do
     # The browser should stay on the DGFIP page
     # The removed users should be back again
     #
-    expect(page).to have_current_path(admin_dgfip_path(ministere))
-    expect(page).to have_selector("h1", text: "Ministère de l'Économie et des Finances")
+    expect(page).to have_current_path(admin_dgfip_path(dgfip))
+    expect(page).to have_selector("h1", text: "Direction générale des Finances publiques")
     expect(page).to have_text("12 utilisateurs | Page 1 sur 2")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Bruno Le Maire")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Nicolas Fouquet")

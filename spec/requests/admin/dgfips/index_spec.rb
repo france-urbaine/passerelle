@@ -7,6 +7,10 @@ RSpec.describe "Admin::DGFIPsController#index" do
     get "/admin/dgfips", as:, headers:, params:, xhr:
   end
 
+  before do
+    skip("Admin::DGFIPsController#index is not available")
+  end
+
   let(:as)      { |e| e.metadata[:as] }
   let(:headers) { |e| e.metadata[:headers] }
   let(:params)  { |e| e.metadata[:params] }

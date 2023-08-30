@@ -41,6 +41,15 @@ class DGFIP < ApplicationRecord
     unless: :skip_uniqueness_validation_of_name?
   }
 
+  validate :only_one_dgfip, on: :create
+
+  def only_one_dgfip(undiscarding: false)
+    return true unless (kept? || undiscarding) && DGFIP.kept.where.not(id: id).any?
+
+    errors.add :base, "Une seule DGFIP est possible"
+    false
+  end
+
   # Scopes
   # ----------------------------------------------------------------------------
   scope :search, lambda { |input|
@@ -52,20 +61,21 @@ class DGFIP < ApplicationRecord
 
   scope :autocomplete, ->(input) { search(input) }
 
-  scope :order_by_param, lambda { |input|
-    advanced_order(
-      input,
-      name: ->(direction) { unaccent_order(:name, direction) }
-    )
-  }
-
-  scope :order_by_score, lambda { |input|
-    scored_order(:name, input)
-  }
-
   # Updates methods
   # ----------------------------------------------------------------------------
   def self.reset_all_counters
     connection.select_value("SELECT reset_all_dgfips_counters()")
+  end
+
+  # Overwrite to_param so DGFIP is a singular resource for url_for
+  # ----------------------------------------------------------------------------
+  def to_param
+    nil
+  end
+
+  def undiscard
+    raise ActiveRecord::RecordInvalid, self unless only_one_dgfip(undiscarding: true)
+
+    super
   end
 end

@@ -4,7 +4,7 @@ require "rails_helper"
 
 RSpec.describe "Admin::DGFIPsController#create" do
   subject(:request) do
-    post "/admin/dgfips", as:, headers:, params:
+    post "/admin/dgfip", as:, headers:, params:
   end
 
   let(:as)      { |e| e.metadata[:as] }
@@ -42,7 +42,7 @@ RSpec.describe "Admin::DGFIPsController#create" do
 
     context "with valid attributes" do
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/admin/dgfips") }
+      it { expect(response).to redirect_to("/admin/dgfip") }
       it { expect { request }.to change(DGFIP, :count).by(1) }
 
       it "assigns expected attributes to the new record" do
@@ -82,7 +82,7 @@ RSpec.describe "Admin::DGFIPsController#create" do
 
     context "with referrer header", headers: { "Referer" => "http://example.com/other/path" } do
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/admin/dgfips") }
+      it { expect(response).to redirect_to("/admin/dgfip") }
       it { expect(flash).to have_flash_notice }
     end
 

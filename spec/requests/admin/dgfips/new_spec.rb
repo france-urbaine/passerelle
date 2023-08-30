@@ -4,7 +4,7 @@ require "rails_helper"
 
 RSpec.describe "Admin::DGFIPsController#new" do
   subject(:request) do
-    get "/admin/dgfips/new", as:, headers:, params:
+    get "/admin/dgfip/new", as:, headers:, params:
   end
 
   let(:as)      { |e| e.metadata[:as] }

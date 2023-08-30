@@ -7,6 +7,10 @@ RSpec.describe "Admin::DGFIPsController#undiscard" do
     patch "/admin/dgfips/#{dgfip.id}/undiscard", as:, headers:, params:
   end
 
+  before do
+    skip("Admin::DGFIPsController#undiscard is not available")
+  end
+
   let(:as)      { |e| e.metadata[:as] }
   let(:headers) { |e| e.metadata[:headers] }
   let(:params)  { |e| e.metadata[:params] }

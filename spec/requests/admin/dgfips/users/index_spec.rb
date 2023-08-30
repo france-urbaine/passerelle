@@ -4,7 +4,7 @@ require "rails_helper"
 
 RSpec.describe "Admin::Dgfips::UsersController#index" do
   subject(:request) do
-    get "/admin/dgfips/#{dgfip.id}/utilisateurs", as:, headers:, params:, xhr:
+    get "/admin/dgfip/utilisateurs", as:, headers:, params:, xhr:
   end
 
   let(:as)      { |e| e.metadata[:as] }
@@ -12,7 +12,7 @@ RSpec.describe "Admin::Dgfips::UsersController#index" do
   let(:params)  { |e| e.metadata[:params] }
   let(:xhr)     { |e| e.metadata[:xhr] }
 
-  let!(:dgfip) { create(:dgfip) }
+  let!(:dgfip) { DGFIP.kept.first || create(:dgfip) }
   let!(:users) do
     [
       create(:user, :discarded, organization: dgfip),
@@ -50,15 +50,15 @@ RSpec.describe "Admin::Dgfips::UsersController#index" do
     context "when requesting HTML" do
       context "when the DGFIP is accesible" do
         it { expect(response).to have_http_status(:see_other) }
-        it { expect(response).to redirect_to("/admin/dgfips/#{dgfip.id}") }
+        it { expect(response).to redirect_to("/admin/dgfip") }
       end
 
       context "when the DGFIP is discarded" do
-        before { dgfip.discard }
+        before { DGFIP.discard_all }
 
-        it { expect(response).to have_http_status(:gone) }
+        it { expect(response).to have_http_status(:not_found) }
         it { expect(response).to have_content_type(:html) }
-        it { expect(response).to have_html_body.to include("Cette DGFIP est en cours de suppression.") }
+        it { expect(response).to have_html_body }
       end
 
       context "when the DGFIP is missing" do
@@ -66,7 +66,7 @@ RSpec.describe "Admin::Dgfips::UsersController#index" do
 
         it { expect(response).to have_http_status(:not_found) }
         it { expect(response).to have_content_type(:html) }
-        it { expect(response).to have_html_body.to include("Cette DGFIP n'a pas été trouvée ou n'existe plus.") }
+        it { expect(response).to have_html_body }
       end
     end
 
@@ -89,9 +89,9 @@ RSpec.describe "Admin::Dgfips::UsersController#index" do
       context "when the DGFIP is discarded" do
         before { dgfip.discard }
 
-        it { expect(response).to have_http_status(:gone) }
+        it { expect(response).to have_http_status(:not_found) }
         it { expect(response).to have_content_type(:html) }
-        it { expect(response).to have_html_body.to include("Cette DGFIP est en cours de suppression.") }
+        it { expect(response).to have_html_body }
       end
 
       context "when the DGFIP is missing" do
@@ -99,7 +99,7 @@ RSpec.describe "Admin::Dgfips::UsersController#index" do
 
         it { expect(response).to have_http_status(:not_found) }
         it { expect(response).to have_content_type(:html) }
-        it { expect(response).to have_html_body.to include("Cette DGFIP n'a pas été trouvée ou n'existe plus.") }
+        it { expect(response).to have_html_body }
       end
     end
 

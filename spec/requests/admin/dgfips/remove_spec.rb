@@ -7,6 +7,10 @@ RSpec.describe "Admin::DGFIPsController#remove" do
     get "/admin/dgfips/#{dgfip.id}/remove", as:, headers:, params:
   end
 
+  before do
+    skip("Admin::DGFIPsController#remove is not available")
+  end
+
   let(:as)      { |e| e.metadata[:as] }
   let(:headers) { |e| e.metadata[:headers] }
   let(:params)  { |e| e.metadata[:params] }

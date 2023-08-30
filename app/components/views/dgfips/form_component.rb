@@ -11,11 +11,7 @@ module Views
       end
 
       def form_url
-        url_args = []
-        url_args << @namespace
-        url_args << (@dgfip.new_record? ? :dgfips : @dgfip)
-
-        polymorphic_path(url_args.compact)
+        polymorphic_path(%i[admin dgfip])
       end
 
       def redirection_path

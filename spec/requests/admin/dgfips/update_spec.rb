@@ -4,14 +4,14 @@ require "rails_helper"
 
 RSpec.describe "Admin::DGFIPsController#update" do
   subject(:request) do
-    patch "/admin/dgfips/#{dgfip.id}", as:, headers:, params:
+    patch "/admin/dgfip", as:, headers:, params:
   end
 
   let(:as)      { |e| e.metadata[:as] }
   let(:headers) { |e| e.metadata[:headers] }
   let(:params)  { |e| e.metadata.fetch(:params, { dgfip: updated_attributes }) }
 
-  let!(:dgfip) { create(:dgfip, name: "Ministère des finances") }
+  let!(:dgfip) { DGFIP.kept.first || create(:dgfip, name: "Ministère des finances") }
 
   let(:updated_attributes) do
     { name: "Ministère de l'Économie et des Finances" }
@@ -44,7 +44,7 @@ RSpec.describe "Admin::DGFIPsController#update" do
 
     context "with valid attributes" do
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/admin/dgfips") }
+      it { expect(response).to redirect_to("/admin/dgfip") }
 
       it "updates the dgfip" do
         expect { request and dgfip.reload }
@@ -73,7 +73,7 @@ RSpec.describe "Admin::DGFIPsController#update" do
 
     context "with empty parameters", params: {} do
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/admin/dgfips") }
+      it { expect(response).to redirect_to("/admin/dgfip") }
       it { expect(flash).to have_flash_notice }
       it { expect { request and dgfip.reload }.not_to change(dgfip, :updated_at) }
     end
@@ -81,7 +81,7 @@ RSpec.describe "Admin::DGFIPsController#update" do
     context "when the DGFIP is discarded" do
       before { dgfip.discard }
 
-      it { expect(response).to have_http_status(:gone) }
+      it { expect(response).to have_http_status(:not_found) }
       it { expect(response).to have_content_type(:html) }
       it { expect(response).to have_html_body }
     end
@@ -96,7 +96,7 @@ RSpec.describe "Admin::DGFIPsController#update" do
 
     context "with referrer header", headers: { "Referer" => "http://example.com/other/path" } do
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/admin/dgfips") }
+      it { expect(response).to redirect_to("/admin/dgfip") }
       it { expect(flash).to have_flash_notice }
     end
 

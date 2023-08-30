@@ -59,7 +59,7 @@ pierre:
   confirmed_at:       <%= Time.current %>
 
 bruno:
-  organization:       ministere (DGFIP)
+  organization:       dgfip (DGFIP)
   first_name:         Bruno
   last_name:          Le Maire
   name:               Bruno Le Maire
@@ -69,7 +69,7 @@ bruno:
   confirmed_at:       <%= Time.current %>
 
 nicolas:
-  organization:       ministere (DGFIP)
+  organization:       dgfip (DGFIP)
   first_name:         Nicolas
   last_name:          Fouquet
   name:               Nicolas Fouquet

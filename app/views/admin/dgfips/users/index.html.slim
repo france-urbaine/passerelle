@@ -1,8 +1,7 @@
 = template_content_component do
   = breadcrumbs_component do |breadcrumbs|
     - breadcrumbs.with_path "Administration"
-    - breadcrumbs.with_path "DGFIP", admin_dgfips_path
-    - breadcrumbs.with_path @dgfip.name, admin_dgfip_path(@dgfip)
+    - breadcrumbs.with_path @dgfip.name, admin_dgfip_path
     - breadcrumbs.with_path "Utilisateurs"
 
   = render Views::Users::ListComponent.new(@users, @pagy, namespace: :admin, parent: @dgfip) do |view|

@@ -4,14 +4,14 @@ require "rails_helper"
 
 RSpec.describe "Admin::Dgfips::UsersController#create" do
   subject(:request) do
-    post "/admin/dgfips/#{dgfip.id}/utilisateurs", as:, headers:, params:
+    post "/admin/dgfip/utilisateurs", as:, headers:, params:
   end
 
   let(:as)      { |e| e.metadata[:as] }
   let(:headers) { |e| e.metadata[:headers] }
   let(:params)  { |e| e.metadata.fetch(:params, { user: attributes }) }
 
-  let!(:dgfip) { create(:dgfip) }
+  let!(:dgfip) { DGFIP.kept.first || create(:dgfip) }
 
   let(:attributes) do
     {
@@ -48,7 +48,7 @@ RSpec.describe "Admin::Dgfips::UsersController#create" do
 
     context "with valid attributes" do
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/admin/dgfips/#{dgfip.id}") }
+      it { expect(response).to redirect_to("/admin/dgfip") }
       it { expect { request }.to change(User, :count).by(1) }
 
       it "assigns expected attributes to the new record" do
@@ -86,22 +86,6 @@ RSpec.describe "Admin::Dgfips::UsersController#create" do
       it { expect { request }.not_to change(User, :count).from(1) }
     end
 
-    context "when using another organization_id attribute" do
-      let(:another_dgfip) { create(:dgfip) }
-
-      let(:attributes) do
-        super().merge(
-          organization_type: "DGFIP",
-          organization_id:   another_dgfip.id
-        )
-      end
-
-      it "ignores the attributes to assign the DGFIP from the URL" do
-        request
-        expect(User.last.organization).to eq(dgfip)
-      end
-    end
-
     context "with empty parameters", params: {} do
       it { expect(response).to have_http_status(:unprocessable_entity) }
       it { expect(response).to have_content_type(:html) }
@@ -112,7 +96,7 @@ RSpec.describe "Admin::Dgfips::UsersController#create" do
     context "when the DGFIP is discarded" do
       before { dgfip.discard }
 
-      it { expect(response).to have_http_status(:gone) }
+      it { expect(response).to have_http_status(:not_found) }
       it { expect(response).to have_content_type(:html) }
       it { expect(response).to have_html_body }
     end
@@ -127,7 +111,7 @@ RSpec.describe "Admin::Dgfips::UsersController#create" do
 
     context "with referrer header", headers: { "Referer" => "http://example.com/other/path" } do
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/admin/dgfips/#{dgfip.id}") }
+      it { expect(response).to redirect_to("/admin/dgfip") }
       it { expect(flash).to have_flash_notice }
     end
 

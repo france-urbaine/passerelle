@@ -77,7 +77,7 @@ DDFIP.insert_all([
 log "Seed DGFIP"
 
 DGFIP.insert_all([
-  { name: "Ministère de l'Économie et des Finances" }
+  { name: "Direction générale des Finances publiques" }
 ])
 
 # Import publishers
@@ -128,7 +128,7 @@ User.insert_all(
     { email: "sdif@ddfip-64.example.org",        organization: "DDFIP des Pyrénées-Atlantiques", organization_admin: false, super_admin: false, confirmed: false },
     { email: "sip.bayonne@ddfip-64.example.org", organization: "DDFIP des Pyrénées-Atlantiques", organization_admin: false, super_admin: false, confirmed: false },
     { email: "sip.pau@ddfip-64.example.org",     organization: "DDFIP des Pyrénées-Atlantiques", organization_admin: false, super_admin: false, confirmed: false },
-    { email: "admin@dgfip.example.org",          organization: "Ministère de l'Économie et des Finances", organization_admin: false, super_admin: false, confirmed: false }
+    { email: "admin@dgfip.example.org",          organization: "Direction générale des Finances publiques", organization_admin: false, super_admin: false, confirmed: false }
   ])
 )
 

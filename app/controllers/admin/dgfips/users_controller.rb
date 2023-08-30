@@ -15,7 +15,7 @@ module Admin
 
       def new
         @user = build_user
-        @referrer_path = referrer_path || admin_dgfip_path(@dgfip)
+        @referrer_path = referrer_path || admin_dgfip_path
       end
 
       def create
@@ -25,13 +25,13 @@ module Admin
 
         respond_with result,
           flash: true,
-          location: -> { redirect_path || admin_dgfip_path(@dgfip) }
+          location: -> { redirect_path || admin_dgfip_path }
       end
 
       def remove_all
         @users = authorize_users_scope
         @users = filter_collection(@users)
-        @referrer_path = referrer_path || admin_dgfip_path(@dgfip)
+        @referrer_path = referrer_path || admin_dgfip_path
       end
 
       def destroy_all
@@ -42,7 +42,7 @@ module Admin
         respond_with @users,
           flash: true,
           actions: undiscard_all_admin_dgfip_users_action,
-          location: redirect_path || admin_dgfip_path(@dgfip)
+          location: redirect_path || admin_dgfip_path
       end
 
       def undiscard_all
@@ -52,13 +52,13 @@ module Admin
 
         respond_with @users,
           flash: true,
-          location: redirect_path || referrer_path || admin_dgfip_path(@dgfip)
+          location: redirect_path || referrer_path || admin_dgfip_path
       end
 
       private
 
       def load_and_authorize_dgfip
-        @dgfip = DGFIP.find(params[:dgfip_id])
+        @dgfip = DGFIP.kept.first || DGFIP.find(nil)
 
         authorize! @dgfip, to: :show?
         only_kept! @dgfip
@@ -68,7 +68,7 @@ module Admin
         return if turbo_frame_request?
         return if params.key?(:debug)
 
-        redirect_to admin_dgfip_path(@dgfip), status: :see_other
+        redirect_to admin_dgfip_path, status: :see_other
       end
 
       def authorize_users_scope(as: :default)

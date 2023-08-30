@@ -4,14 +4,14 @@ require "rails_helper"
 
 RSpec.describe "Admin::DGFIPsController#edit" do
   subject(:request) do
-    get "/admin/dgfips/#{dgfip.id}/edit", as:, headers:, params:
+    get "/admin/dgfip/edit", as:, headers:, params:
   end
 
   let(:as)      { |e| e.metadata[:as] }
   let(:headers) { |e| e.metadata[:headers] }
   let(:params)  { |e| e.metadata[:params] }
 
-  let!(:dgfip) { create(:dgfip) }
+  let!(:dgfip) { DGFIP.kept.first || create(:dgfip) }
 
   describe "authorizations" do
     it_behaves_like "it requires to be signed in in HTML"
@@ -47,7 +47,7 @@ RSpec.describe "Admin::DGFIPsController#edit" do
     context "when the DGFIP is discarded" do
       before { dgfip.discard }
 
-      it { expect(response).to have_http_status(:gone) }
+      it { expect(response).to have_http_status(:not_found) }
       it { expect(response).to have_content_type(:html) }
       it { expect(response).to have_html_body }
     end

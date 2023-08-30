@@ -24,11 +24,21 @@ RSpec.describe DGFIP do
       is_expected.not_to validate_uniqueness_of(:name).ignoring_case_sensitivity
     end
 
-    it "raises an exception when undiscarding a record when its attributes is already used by other records" do
-      discarded_dgfip = create(:dgfip, :discarded)
-      create(:dgfip, name: discarded_dgfip.name)
+    it "validates only one dgfip on creation" do
+      create(:dgfip)
+      expect { create(:dgfip) }.to raise_error(ActiveRecord::RecordInvalid).with_message("La validation a échoué : Une seule DGFIP est possible")
+    end
 
-      expect { discarded_dgfip.undiscard }.to raise_error(ActiveRecord::RecordNotUnique)
+    it "validates only one dgfip on undiscard" do
+      create(:dgfip)
+      discarded_dgfip = create(:dgfip, :discarded)
+      expect { discarded_dgfip.undiscard }.to raise_error(ActiveRecord::RecordInvalid).with_message("La validation a échoué : Une seule DGFIP est possible")
+    end
+
+    it "allows to undiscard dgfip if others are discarded" do
+      create(:dgfip, :discarded)
+      discarded_dgfip = create(:dgfip, :discarded)
+      expect { discarded_dgfip.undiscard }.to not_raise_error
     end
   end
 
@@ -68,43 +78,6 @@ RSpec.describe DGFIP do
         SQL
       end
     end
-
-    describe ".order_by_param" do
-      it "orders DGFIPs by name" do
-        expect {
-          described_class.order_by_param("name").load
-        }.to perform_sql_query(<<~SQL)
-          SELECT   "dgfips".*
-          FROM     "dgfips"
-          ORDER BY UNACCENT("dgfips"."name") ASC,
-                   "dgfips"."created_at" ASC
-        SQL
-      end
-
-      it "orders DGFIPs by name in descendant order" do
-        expect {
-          described_class.order_by_param("-name").load
-        }.to perform_sql_query(<<~SQL)
-          SELECT   "dgfips".*
-          FROM     "dgfips"
-          ORDER BY UNACCENT("dgfips"."name") DESC,
-                   "dgfips"."created_at" DESC
-        SQL
-      end
-    end
-
-    describe ".order_by_score" do
-      it "orders DGFIPs by search score" do
-        expect {
-          described_class.order_by_score("Hello").load
-        }.to perform_sql_query(<<~SQL)
-          SELECT   "dgfips".*
-          FROM     "dgfips"
-          ORDER BY ts_rank_cd(to_tsvector('french', "dgfips"."name"), to_tsquery('french', 'Hello')) DESC,
-                   "dgfips"."created_at" ASC
-        SQL
-      end
-    end
   end
 
   # Updates methods
@@ -113,18 +86,17 @@ RSpec.describe DGFIP do
     describe ".reset_all_counters" do
       subject(:reset_all_counters) { described_class.reset_all_counters }
 
-      let!(:dgfips) { create_list(:dgfip, 2) }
+      let!(:dgfips) { create_list(:dgfip, 1) }
 
       it { expect { reset_all_counters }.to perform_sql_query("SELECT reset_all_dgfips_counters()") }
 
       it "returns the count of DGFIPs" do
-        expect(reset_all_counters).to eq(2)
+        expect(reset_all_counters).to eq(1)
       end
 
       describe "on users_count" do
         before do
           create_list(:user, 4, organization: dgfips[0])
-          create_list(:user, 2, organization: dgfips[1])
           create_list(:user, 1, :publisher)
           create_list(:user, 1, :collectivity)
 
@@ -134,7 +106,6 @@ RSpec.describe DGFIP do
         it "resets counters" do
           expect { reset_all_counters }
             .to  change { dgfips[0].reload.users_count }.from(0).to(4)
-            .and change { dgfips[1].reload.users_count }.from(0).to(2)
         end
       end
     end
@@ -160,7 +131,7 @@ RSpec.describe DGFIP do
     end
 
     describe "database triggers" do
-      let!(:dgfips) { create_list(:dgfip, 2) }
+      let!(:dgfips) { create_list(:dgfip, 2, :discarded) }
 
       describe "about organization counter caches" do
         describe "#users_count" do

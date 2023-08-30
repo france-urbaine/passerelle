@@ -4,7 +4,7 @@ require "rails_helper"
 
 RSpec.describe "Admin::Dgfips::UsersController#remove_all" do
   subject(:request) do
-    get "/admin/dgfips/#{dgfip.id}/utilisateurs/remove", as:, headers:, params:
+    get "/admin/dgfip/utilisateurs/remove", as:, headers:, params:
   end
 
   let(:as)      { |e| e.metadata[:as] }
@@ -65,7 +65,7 @@ RSpec.describe "Admin::Dgfips::UsersController#remove_all" do
     context "when the DGFIP is discarded" do
       before { dgfip.discard }
 
-      it { expect(response).to have_http_status(:gone) }
+      it { expect(response).to have_http_status(:not_found) }
       it { expect(response).to have_content_type(:html) }
       it { expect(response).to have_html_body }
     end

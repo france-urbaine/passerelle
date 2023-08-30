@@ -4,14 +4,14 @@ require "rails_helper"
 
 RSpec.describe "Admin::DGFIPsController#show" do
   subject(:request) do
-    get "/admin/dgfips/#{dgfip.id}", as:, headers:, params:
+    get "/admin/dgfip", as:, headers:, params:
   end
 
   let(:as)      { |e| e.metadata[:as] }
   let(:headers) { |e| e.metadata[:headers] }
   let(:params)  { |e| e.metadata[:params] }
 
-  let!(:dgfip) { create(:dgfip) }
+  before { DGFIP.kept.first || create(:dgfip) }
 
   describe "authorizations" do
     it_behaves_like "it requires to be signed in in HTML"
@@ -45,19 +45,21 @@ RSpec.describe "Admin::DGFIPsController#show" do
     end
 
     context "when the DGFIP is discarded" do
-      before { dgfip.discard }
-
-      it { expect(response).to have_http_status(:gone) }
-      it { expect(response).to have_content_type(:html) }
-      it { expect(response).to have_html_body.to include("Cette DGFIP est en cours de suppression.") }
-    end
-
-    context "when the DGFIP is missing" do
-      before { dgfip.destroy }
+      before { DGFIP.discard_all }
 
       it { expect(response).to have_http_status(:not_found) }
       it { expect(response).to have_content_type(:html) }
-      it { expect(response).to have_html_body.to include("Cette DGFIP n'a pas été trouvée ou n'existe plus.") }
+      it { expect(response).to have_html_body.to include("Aucune DGFIP n'est disponible.") }
+      it { expect(response).to have_html_body.to include("Créer une DGFIP") }
+    end
+
+    context "when the DGFIP is missing" do
+      before { DGFIP.destroy_all }
+
+      it { expect(response).to have_http_status(:not_found) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body.to include("Aucune DGFIP n'est disponible.") }
+      it { expect(response).to have_html_body.to include("Créer une DGFIP") }
     end
   end
 end

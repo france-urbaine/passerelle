@@ -4,7 +4,7 @@ require "rails_helper"
 
 RSpec.describe "Admin::Dgfips::UsersController#undiscard_all" do
   subject(:request) do
-    patch "/admin/dgfips/#{dgfip.id}/utilisateurs/undiscard", as:, headers:, params:
+    patch "/admin/dgfip/utilisateurs/undiscard", as:, headers:, params:
   end
 
   let(:as)      { |e| e.metadata[:as] }
@@ -51,7 +51,7 @@ RSpec.describe "Admin::Dgfips::UsersController#undiscard_all" do
 
     context "with multiple ids" do
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/admin/dgfips/#{dgfip.id}") }
+      it { expect(response).to redirect_to("/admin/dgfip") }
       it { expect { request }.to change(User.discarded, :count).by(-2) }
 
       it "undiscards the selected users" do
@@ -76,7 +76,7 @@ RSpec.describe "Admin::Dgfips::UsersController#undiscard_all" do
       let(:ids) { users.last(1).map(&:id) }
 
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/admin/dgfips/#{dgfip.id}") }
+      it { expect(response).to redirect_to("/admin/dgfip") }
       it { expect(flash).to have_flash_notice }
       it { expect { request }.not_to change(User.discarded, :count) }
     end
@@ -85,35 +85,35 @@ RSpec.describe "Admin::Dgfips::UsersController#undiscard_all" do
       let(:ids) { users[3, 1].map(&:id) }
 
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/admin/dgfips/#{dgfip.id}") }
+      it { expect(response).to redirect_to("/admin/dgfip") }
       it { expect(flash).to have_flash_notice }
       it { expect { request }.not_to change(User.discarded, :count) }
     end
 
     context "with `all` ids", params: { ids: "all" } do
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/admin/dgfips/#{dgfip.id}") }
+      it { expect(response).to redirect_to("/admin/dgfip") }
       it { expect(flash).to have_flash_notice }
       it { expect { request }.to change(User.discarded, :count).by(-3) }
     end
 
     context "with empty ids", params: { ids: [] } do
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/admin/dgfips/#{dgfip.id}") }
+      it { expect(response).to redirect_to("/admin/dgfip") }
       it { expect(flash).to have_flash_notice }
       it { expect { request }.not_to change(User.discarded, :count) }
     end
 
     context "with unknown ids", params: { ids: %w[1 2] } do
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/admin/dgfips/#{dgfip.id}") }
+      it { expect(response).to redirect_to("/admin/dgfip") }
       it { expect(flash).to have_flash_notice }
       it { expect { request }.not_to change(User.discarded, :count) }
     end
 
     context "with empty parameters", params: {} do
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/admin/dgfips/#{dgfip.id}") }
+      it { expect(response).to redirect_to("/admin/dgfip") }
       it { expect(flash).to have_flash_notice }
       it { expect { request }.not_to change(User.discarded, :count) }
     end
@@ -121,7 +121,7 @@ RSpec.describe "Admin::Dgfips::UsersController#undiscard_all" do
     context "when the DGFIP is discarded" do
       before { dgfip.discard }
 
-      it { expect(response).to have_http_status(:gone) }
+      it { expect(response).to have_http_status(:not_found) }
       it { expect(response).to have_content_type(:html) }
       it { expect(response).to have_html_body }
     end
