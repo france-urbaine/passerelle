@@ -594,6 +594,97 @@ RSpec.describe Collectivity do
     end
 
     describe "about reports counter caches" do
+      describe "#reports_packing_count" do
+        let(:package) { create(:package, :packed_through_web_ui, collectivity: collectivities[0], publisher: nil) }
+        let(:report)  { create(:report, package: package, collectivity: collectivities[0]) }
+
+        fit "changes when report is created" do
+          expect { report; byebug }
+            .to  change { collectivities[0].reload.reports_packing_count }.from(0).to(1)
+            .and not_change { collectivities[1].reload.reports_packing_count }.from(0)
+        end
+
+        it "changes when package is transmitted" do
+          report
+
+          expect { report.package.transmit! }
+            .to  change { collectivities[0].reload.reports_packing_count }.from(1).to(0)
+            .and not_change { collectivities[1].reload.reports_packing_count }.from(0)
+        end
+
+        it "doesn't changes when report package is created in sandbox" do
+          report.package.update(sandbox: true)
+
+          expect { report }
+            .to  not_change { collectivities[0].reload.reports_packing_count }.from(0)
+            .and not_change { collectivities[1].reload.reports_packing_count }.from(0)
+        end
+
+        it "changes when report is discarded" do
+          report
+
+          expect { report.discard }
+            .to  change { collectivities[0].reload.reports_packing_count }.from(1).to(0)
+            .and not_change { collectivities[1].reload.reports_packing_count }.from(0)
+        end
+
+        it "changes when package is discarded" do
+          report
+
+          expect { package.discard }
+            .to  change { collectivities[0].reload.reports_packing_count }.from(1).to(0)
+            .and not_change { collectivities[1].reload.reports_packing_count }.from(0)
+        end
+
+        it "changes when report is undiscarded" do
+          report.discard
+
+          expect { report.undiscard }
+            .to  change { collectivities[0].reload.reports_packing_count }.from(0).to(1)
+            .and not_change { collectivities[1].reload.reports_packing_count }.from(0)
+        end
+
+        it "changes when package is undiscarded" do
+          package.discard
+
+          expect { package.undiscard }
+            .to  change { collectivities[0].reload.reports_packing_count }.from(0).to(1)
+            .and not_change { collectivities[1].reload.reports_packing_count }.from(0)
+        end
+
+        # it "changes when transmitted report is deleted" do
+        #   report.package.transmit!
+
+        #   expect { report.destroy }
+        #     .to change { collectivities[0].reload.reports_packing_count }.from(1).to(0)
+        #     .and not_change { collectivities[1].reload.reports_packing_count }.from(0)
+        # end
+
+        # it "changes when transmitted package is discarded" do
+        #   report.package.transmit!
+
+        #   expect { package.discard }
+        #     .to change { collectivities[0].reload.reports_packing_count }.from(1).to(0)
+        #     .and not_change { collectivities[1].reload.reports_packing_count }.from(0)
+        # end
+
+        # it "changes when transmitted package is undiscarded" do
+        #   report.package.touch(:transmitted_at, :discarded_at)
+
+        #   expect { package.undiscard }
+        #     .to change { collectivities[0].reload.reports_packing_count }.from(0).to(1)
+        #     .and not_change { collectivities[1].reload.reports_packing_count }.from(0)
+        # end
+
+        # it "changes when transmitted package is deleted" do
+        #   report.package.transmit!
+
+        #   expect { package.delete }
+        #     .to change { collectivities[0].reload.reports_packing_count }.from(1).to(0)
+        #     .and not_change { collectivities[1].reload.reports_packing_count }.from(0)
+        # end
+      end
+
       describe "#reports_transmitted_count" do
         let(:package) { create(:package, collectivity: collectivities[0]) }
         let(:report)  { create(:report, package: package, collectivity: collectivities[0]) }
