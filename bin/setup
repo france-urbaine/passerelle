@@ -1,6 +1,8 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
+raise "Are you crazy ?" if ENV["RAILS_ENV"] == "production" || ENV["DOTENV"] == "production"
+
 # Helpers
 # ------------------------------------------------------------------------------
 # It's helpful to know what messages came from this script,
