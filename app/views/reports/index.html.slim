@@ -79,7 +79,8 @@
         | Aucun signalement disponible.
 
     - datatable.each_row do |row, report|
-      - row.with_checkbox "Sélectionner cette collectivité", described_by: :name
+      - if allowed_to?(:create?, Package) || allowed_to?(:destroy_all?, Report)
+        - row.with_checkbox "Sélectionner ce signalement", described_by: :reference
 
       - if allowed_to?(:destroy?, report, with: ReportPolicy)
         - row.with_action "Supprimer ce signalement", remove_report_path(report), icon: "trash", modal: true
