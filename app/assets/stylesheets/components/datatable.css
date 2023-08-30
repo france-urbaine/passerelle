@@ -88,7 +88,7 @@
   .datatable__empty-caption {
     caption-side: bottom;
 
-    @apply px-4 py-3 italic border-b border-r border-l rounded-b-md;
+    @apply px-4 py-3 italic rounded-b-md;
     @apply bg-white border-gray-300 text-gray-500;
     @apply dark:bg-black dark:border-gray-700;
   }
