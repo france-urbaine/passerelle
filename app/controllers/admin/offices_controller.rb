@@ -8,8 +8,6 @@ module Admin
     def index
       @offices = authorize_offices_scope
       @offices, @pagy = index_collection(@offices)
-
-      @offices = @offices.preload(:ddfip)
     end
 
     def show

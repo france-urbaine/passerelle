@@ -11,8 +11,6 @@ module Admin
       def index
         @offices = authorize_offices_scope
         @offices, @pagy = index_collection(@offices, nested: true)
-
-        @offices = @offices.preload(:ddfip)
       end
 
       private
