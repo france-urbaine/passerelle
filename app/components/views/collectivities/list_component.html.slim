@@ -43,13 +43,14 @@
       = display_siren(collectivity.siren)
 
     - row.with_column(:publisher) do
-      - if collectivity.publisher&.discarded?
+      - if collectivity.publisher&.kept?
+        - if allowed_to_show_publisher?
+          = link_to collectivity.publisher.name, publisher_show_path(collectivity.publisher), data: { turbo_frame: "_top" }
+        - else
+          = collectivity.publisher.name
+      - elsif collectivity.publisher&.discarded?
         .text-disabled
           = "#{collectivity.publisher.name} (organisation supprimée)"
-      - elsif allowed_to_show_publisher?
-        = link_to collectivity.publisher.name, publisher_show_path(collectivity.publisher), data: { turbo_frame: "_top" }
-      - else
-        = collectivity.publisher.name
 
     - row.with_column(:contact) do
       = "#{collectivity.contact_first_name} #{collectivity.contact_last_name}".strip.presence
