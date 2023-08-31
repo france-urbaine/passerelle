@@ -1,0 +1,11 @@
+= template_content_component do
+  = breadcrumbs_component do |breadcrumbs|
+    - breadcrumbs.with_path "Tableau de bord"
+
+  - case current_user.organization_type
+  - when "Collectivity"
+    = render "index_collectivity"
+  - when "DDFIP"
+    = render "index_ddfip"
+  - when "Publisher"
+    = render "index_publisher"

@@ -1,0 +1,45 @@
+.dashboard-numbers
+  .dashboard-number
+    = current_organization.packing_count
+    span.dashboard-number__unit Signalements non transmis
+  .dashboard-number
+    = current_organization.reports_transmitted_count
+    span.dashboard-number__unit Signalements transmis
+  .dashboard-number
+    = current_organization.reports_approved_count
+    span.dashboard-number__unit Signalements approuvés
+  .dashboard-number
+    = current_organization.reports_rejected_count
+    span.dashboard-number__unit Signalements rejetés
+
+.content__separator
+h2.subheader
+  = icon_component("rectangle-stack", "Nouvelle section")
+  | Signalements à compléter/transmettre
+
+= render Views::Reports::ListComponent.new(@reports.packing.order(created_at: :desc), searchable: false) do |view|
+  - view.with_column(:reference)
+  - view.with_column(:package)
+  - view.with_column(:form_type)
+  - view.with_column(:anomalies)
+  - view.with_column(:invariant)
+  - view.with_column(:adresse)
+  - view.with_column(:commune)
+  - view.with_column(:priority)
+  - view.with_column(:status)
+
+.content__separator
+h2.subheader
+  = icon_component("server-stack", "Nouvelle section")
+  | Derniers signalements traités
+
+= render Views::Reports::ListComponent.new(@reports.includes(:package).updated_by_ddfip.order('packages.approved_at DESC, packages.rejected_at DESC, packages.discarded_at DESC'), searchable: false) do |view|
+  - view.with_column(:reference)
+  - view.with_column(:package)
+  - view.with_column(:form_type)
+  - view.with_column(:anomalies)
+  - view.with_column(:invariant)
+  - view.with_column(:adresse)
+  - view.with_column(:commune)
+  - view.with_column(:priority)
+  - view.with_column(:status)

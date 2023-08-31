@@ -1,0 +1,10 @@
+.dashboard-numbers
+  .dashboard-number
+    = current_organization.collectivities_count
+    span.dashboard-number__unit Nombre de collectivités
+  .dashboard-number
+    = current_organization.packages_transmitted_count
+    span.dashboard-number__unit Nombre de paquets transmis
+  .dashboard-number
+    = current_organization.reports_transmitted_count
+    span.dashboard-number__unit Nombre de signalements transmis
