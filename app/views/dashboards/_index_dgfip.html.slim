@@ -1,0 +1,27 @@
+.dashboard-numbers
+  .dashboard-number
+    = Report.published.count
+    span.dashboard-number__unit Signalements transmis
+  .dashboard-number
+    = Report.published.approved.count
+    span.dashboard-number__unit Signalements approuvés
+  .dashboard-number
+    = Report.published.rejected.count
+    span.dashboard-number__unit Signalements rejetés
+
+.content__separator
+h2.subheader
+  = icon_component("rectangle-stack", "Nouvelle section")
+  | Signalements transmis
+
+= render Views::Reports::ListComponent.new(@reports.includes(:package).transmitted.order('packages.transmitted_at DESC'), searchable: false) do |view|
+  - view.with_column(:reference)
+  - view.with_column(:package)
+  - view.with_column(:collectivity)
+  - view.with_column(:form_type)
+  - view.with_column(:anomalies)
+  - view.with_column(:invariant)
+  - view.with_column(:adresse)
+  - view.with_column(:commune)
+  - view.with_column(:priority)
+  - view.with_column(:status)

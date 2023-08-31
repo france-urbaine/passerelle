@@ -5,7 +5,7 @@ require "rails_helper"
 RSpec.describe User do
   # Associations
   # ----------------------------------------------------------------------------
-  describe "Associations" do
+  describe "associations" do
     it { is_expected.to belong_to(:organization).required }
     it { is_expected.to belong_to(:inviter).optional }
     it { is_expected.to have_many(:invitees) }
@@ -16,7 +16,7 @@ RSpec.describe User do
 
   # Validations
   # ----------------------------------------------------------------------------
-  describe "Validations" do
+  describe "validations" do
     it { is_expected.to validate_presence_of(:first_name) }
     it { is_expected.to validate_presence_of(:last_name) }
     it { is_expected.to validate_presence_of(:email) }
@@ -94,7 +94,7 @@ RSpec.describe User do
 
   # Registration process
   # ----------------------------------------------------------------------------
-  describe "Registration process" do
+  describe "registration process" do
     let!(:user) { create(:user, :unconfirmed, skip_confirmation_notification: false) }
 
     it { expect(user).not_to be_invited }
@@ -107,7 +107,7 @@ RSpec.describe User do
 
   # Confirmation process
   # ----------------------------------------------------------------------------
-  describe "Confirmation process" do
+  describe "confirmation process" do
     let!(:user) { create(:user, :unconfirmed, skip_confirmation_notification: false) }
 
     it { expect { user.confirm }.to change(user, :confirmed?).to(true) }
@@ -117,7 +117,7 @@ RSpec.describe User do
 
   # Invitation process
   # ----------------------------------------------------------------------------
-  describe "Invitation process" do
+  describe "invitation process" do
     describe "#invite" do
       let!(:user)   { build(:user, :unconfirmed, password: nil, skip_confirmation_notification: false) }
       let!(:author) { build(:user) }
@@ -202,7 +202,7 @@ RSpec.describe User do
 
   # Updates methods
   # ----------------------------------------------------------------------------
-  describe "Update methods" do
+  describe "update methods" do
     describe ".reset_all_counters" do
       subject(:reset_all_counters) { described_class.reset_all_counters }
 
@@ -229,7 +229,7 @@ RSpec.describe User do
 
   # Database constraints and triggers
   # ----------------------------------------------------------------------------
-  describe "Database triggers" do
+  describe "database triggers" do
     describe "about counter caches" do
       let!(:users) { create_list(:user, 2) }
 
