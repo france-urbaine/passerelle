@@ -875,6 +875,7 @@ CREATE TABLE public.collectivities (
     packages_approved_count integer DEFAULT 0 NOT NULL,
     packages_rejected_count integer DEFAULT 0 NOT NULL,
     allow_publisher_management boolean DEFAULT false NOT NULL,
+    reports_packing_count integer DEFAULT 0 NOT NULL,
     CONSTRAINT users_count_check CHECK ((users_count >= 0))
 );
 
@@ -1358,6 +1359,29 @@ $$;
 
 
 --
+-- Name: get_reports_packing_count_in_collectivities(public.collectivities); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.get_reports_packing_count_in_collectivities(collectivities public.collectivities) RETURNS integer
+    LANGUAGE plpgsql
+    AS $$
+  BEGIN
+    RETURN (
+      SELECT     COUNT(*)
+      FROM       "reports"
+      INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
+      WHERE      "packages"."collectivity_id" = collectivities."id"
+        AND      "reports"."discarded_at" IS NULL
+        AND      "packages"."sandbox" = FALSE
+        AND      "packages"."publisher_id" IS NULL
+        AND      "packages"."transmitted_at" IS NULL
+        AND      "packages"."discarded_at" IS NULL
+    );
+  END;
+$$;
+
+
+--
 -- Name: get_reports_rejected_count_in_collectivities(public.collectivities); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -1653,7 +1677,8 @@ CREATE FUNCTION public.reset_all_collectivities_counters() RETURNS integer
            "reports_debated_count"      = get_reports_debated_count_in_collectivities("collectivities".*),
            "packages_transmitted_count" = get_packages_transmitted_count_in_collectivities("collectivities".*),
            "packages_approved_count"    = get_packages_approved_count_in_collectivities("collectivities".*),
-           "packages_rejected_count"    = get_packages_rejected_count_in_collectivities("collectivities".*);
+           "packages_rejected_count"    = get_packages_rejected_count_in_collectivities("collectivities".*),
+           "reports_packing_count"      = get_reports_packing_count_in_collectivities("collectivities".*);
 
     GET DIAGNOSTICS affected_rows = ROW_COUNT;
     RAISE NOTICE 'UPDATE %', affected_rows;
@@ -2464,7 +2489,8 @@ CREATE FUNCTION public.trigger_packages_changes() RETURNS trigger
              "reports_transmitted_count"  = get_reports_transmitted_count_in_collectivities("collectivities".*),
              "reports_approved_count"     = get_reports_approved_count_in_collectivities("collectivities".*),
              "reports_rejected_count"     = get_reports_rejected_count_in_collectivities("collectivities".*),
-             "reports_debated_count"      = get_reports_debated_count_in_collectivities("collectivities".*)
+             "reports_debated_count"      = get_reports_debated_count_in_collectivities("collectivities".*),
+             "reports_packing_count"      = get_reports_packing_count_in_collectivities("collectivities".*)
       WHERE  "collectivities"."id" IN (NEW."collectivity_id", OLD."collectivity_id");
 
       UPDATE "ddfips"
@@ -2565,7 +2591,8 @@ CREATE FUNCTION public.trigger_reports_changes() RETURNS trigger
       SET    "reports_transmitted_count" = get_reports_transmitted_count_in_collectivities("collectivities".*),
              "reports_approved_count"    = get_reports_approved_count_in_collectivities("collectivities".*),
              "reports_rejected_count"    = get_reports_rejected_count_in_collectivities("collectivities".*),
-             "reports_debated_count"     = get_reports_debated_count_in_collectivities("collectivities".*)
+             "reports_debated_count"     = get_reports_debated_count_in_collectivities("collectivities".*),
+             "reports_packing_count"     = get_reports_packing_count_in_collectivities("collectivities".*)
       WHERE  "collectivities"."id" IN (NEW."collectivity_id", OLD."collectivity_id");
 
       UPDATE "ddfips"
@@ -3698,6 +3725,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230823083541'),
 ('20230823125725'),
 ('20230823132126'),
+('20230829135011'),
 ('20230830170839');
 
 
