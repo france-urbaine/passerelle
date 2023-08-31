@@ -12,5 +12,9 @@ module Icon
     # @label With ARIA title
     #
     def with_title; end
+
+    # @label Priority icon
+    #
+    def priority_icon; end
   end
 end

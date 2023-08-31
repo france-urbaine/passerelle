@@ -64,13 +64,13 @@ module Icon
 
     def asset_exist?
       ::InlineSvg.configuration.asset_file.named("#{@icon}.svg")
-    rescue
+    rescue InlineSvg::AssetFile::FileNotFound
       false
     end
 
     def heroicon_exist?
       ::InlineSvg.configuration.asset_file.named("heroicons/outline/#{@icon}.svg")
-    rescue
+    rescue InlineSvg::AssetFile::FileNotFound
       false
     end
 

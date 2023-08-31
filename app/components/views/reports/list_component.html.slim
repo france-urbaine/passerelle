@@ -71,14 +71,5 @@
       - row.with_column(:priority) do
         = priority_icon_component(report.priority)
 
-        span.tooltip
-          - case report.priority
-          - when "low"
-            | Priorité basse
-          - when "medium"
-            | Priorité moyenne
-          - when "high"
-            | Priorité haute
-
       - row.with_column(:status) do
         = report_badge(report)
