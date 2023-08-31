@@ -30,10 +30,10 @@ module Pagination
       def order_button(name, key, direction)
         if direction == :asc
           label = "Trier par #{name}, par ordre croissant"
-          icon  = "sort-ascending"
+          icon  = "bars-arrow-up"
         else
           label = "Trier par #{name}, par ordre décroissant"
-          icon  = "sort-descending"
+          icon  = "bars-arrow-down"
         end
 
         ::Button::Component.new(

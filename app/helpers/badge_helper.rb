@@ -49,20 +49,16 @@ module BadgeHelper
   end
 
   def priority_badge(priority)
-    text = "Priorité : "
-    css  = "priority-badge "
+    text  = "Priorité : "
+    text += priority_icon_component(priority)
 
-    case priority.to_s
-    when "high"
-      text += icon_component("chart-bar", "Haute", class: "high-priority-icon")
-      css  += "badge--red"
-    when "medium"
-      text += icon_component("chart-bar", "Moyenne", class: "medium-priority-icon")
-      css  += "badge--yellow"
-    else
-      text += icon_component("chart-bar", "Basse", class: "low-priority-icon")
-      css  += "badge--lime"
-    end
+    css  = "priority-badge "
+    css +=
+      case priority.to_s
+      when "high"   then "badge--red"
+      when "medium" then "badge--yellow"
+      else               "badge--lime"
+      end
 
     badge(text.html_safe, css) # rubocop:disable Rails/OutputSafety
   end

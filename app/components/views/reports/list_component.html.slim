@@ -69,16 +69,16 @@
         = report.commune&.name
 
       - row.with_column(:priority) do
-        - case report.priority
-        - when "low"
-          = icon_component("chart-bar", "Priorité basse", class: "low-priority-icon")
-          span.tooltip Priorité basse
-        - when "medium"
-          = icon_component("chart-bar", "Priorité moyenne", class: "medium-priority-icon")
-          span.tooltip Priorité moyenne
-        - when "high"
-          = icon_component("chart-bar", "Priorité haute", class: "high-priority-icon")
-          span.tooltip Priorité haute
+        = priority_icon_component(report.priority)
+
+        span.tooltip
+          - case report.priority
+          - when "low"
+            | Priorité basse
+          - when "medium"
+            | Priorité moyenne
+          - when "high"
+            | Priorité haute
 
       - row.with_column(:status) do
         = report_badge(report)

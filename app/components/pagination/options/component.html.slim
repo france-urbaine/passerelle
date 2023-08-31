@@ -1,5 +1,5 @@
 = render ::Dropdown::Component.new(direction: direction) do |dropdown|
-  - dropdown.with_button "Options d'affichage", icon: "adjustments", icon_only: true
+  - dropdown.with_button "Options d'affichage", icon: "adjustments-vertical", icon_only: true
 
   - dropdown.with_menu_item "Afficher #{pagy.items} lignes par page" do |item|
     - item.with_menu_item "Afficher 10 lignes", items_url(10), data: { turbo_frame: }
