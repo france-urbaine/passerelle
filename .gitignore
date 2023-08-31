@@ -49,7 +49,7 @@
 !/db/functions/*.sql
 !/db/triggers/*.sql
 
-# Ignore temporay file created by Excel when opening xlxs fixtures
+# Ignore temporary file created by Excel when opening xlxs fixtures
 spec/fixtures/**/~*.xlsx
 
 # Ignore s3cfg files

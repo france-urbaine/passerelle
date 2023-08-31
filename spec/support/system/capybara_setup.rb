@@ -18,6 +18,14 @@ Capybara.save_path = ENV.fetch("CAPYBARA_ARTIFACTS", "./tmp/capybara")
 # Otherwise, it'll raise only exception get from browser.
 Capybara.raise_server_errors = ENV.fetch("CAPYBARA_RAISE_SERVER_ERRORS", "true") == "true"
 
+# To run system specs with parallel tests, we need to set up several ports to run
+# concurrent headless browsers.
+if ENV["TEST_ENV_NUMBER"]
+  Capybara.server_port = ENV.fetch("CAPYBARA_SERVER_PORT") do
+    9887 + ENV["TEST_ENV_NUMBER"].to_i
+  end
+end
+
 # The Capybara.using_session allows you to manipulate a different browser session, and thus,
 # multiple independent sessions within a single test scenario. That’s especially useful for
 # testing real-time features, e.g., something with WebSocket.
