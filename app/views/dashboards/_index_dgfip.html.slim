@@ -1,12 +1,12 @@
 .dashboard-numbers
   .dashboard-number
-    | Non implementer
+    = Report.published.count
     span.dashboard-number__unit Signalements transmis
   .dashboard-number
-    | Non implementer
+    = Report.published.approved.count
     span.dashboard-number__unit Signalements approuvés
   .dashboard-number
-    | Non implementer
+    = Report.published.rejected.count
     span.dashboard-number__unit Signalements rejetés
 
 .content__separator
