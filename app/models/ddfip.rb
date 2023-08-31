@@ -24,6 +24,7 @@
 #  reports_rejected_count :integer          default(0), not null
 #  reports_debated_count  :integer          default(0), not null
 #  auto_approve_packages  :boolean          default(FALSE), not null
+#  reports_pending_count  :integer          default(0), not null
 #
 # Indexes
 #

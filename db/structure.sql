@@ -263,6 +263,7 @@ CREATE TABLE public.ddfips (
     reports_rejected_count integer DEFAULT 0 NOT NULL,
     reports_debated_count integer DEFAULT 0 NOT NULL,
     auto_approve_packages boolean DEFAULT false NOT NULL,
+    reports_pending_count integer DEFAULT 0 NOT NULL,
     CONSTRAINT collectivities_count_check CHECK ((collectivities_count >= 0)),
     CONSTRAINT offices_count_check CHECK ((offices_count >= 0)),
     CONSTRAINT users_count_check CHECK ((users_count >= 0))
@@ -620,7 +621,8 @@ CREATE TABLE public.offices (
     reports_count integer DEFAULT 0 NOT NULL,
     reports_approved_count integer DEFAULT 0 NOT NULL,
     reports_rejected_count integer DEFAULT 0 NOT NULL,
-    reports_debated_count integer DEFAULT 0 NOT NULL
+    reports_debated_count integer DEFAULT 0 NOT NULL,
+    reports_pending_count integer DEFAULT 0 NOT NULL
 );
 
 
@@ -1382,6 +1384,61 @@ $$;
 
 
 --
+-- Name: get_reports_pending_count_in_ddfips(public.ddfips); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.get_reports_pending_count_in_ddfips(ddfips public.ddfips) RETURNS integer
+    LANGUAGE plpgsql
+    AS $$
+  BEGIN
+    RETURN (
+      SELECT     COUNT(*)
+      FROM       "reports"
+      INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
+      INNER JOIN "communes" ON "communes"."code_insee" = "reports"."code_insee"
+      WHERE      "communes"."code_departement" = ddfips."code_departement"
+        AND      "reports"."discarded_at" IS NULL
+        AND      "packages"."sandbox" = FALSE
+        AND      "packages"."transmitted_at" IS NOT NULL
+        AND      "reports"."debated_at" IS NULL
+        AND      "reports"."rejected_at" IS NULL
+        AND      "reports"."approved_at" IS NULL
+        AND      "packages"."rejected_at" IS NULL
+        AND      "packages"."discarded_at" IS NULL
+    );
+  END;
+$$;
+
+
+--
+-- Name: get_reports_pending_count_in_offices(public.offices); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.get_reports_pending_count_in_offices(offices public.offices) RETURNS integer
+    LANGUAGE plpgsql
+    AS $$
+  BEGIN
+    RETURN (
+      SELECT     COUNT(*)
+      FROM       "reports"
+      INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
+      INNER JOIN "office_communes"
+         ON      "office_communes"."code_insee" = "reports"."code_insee"
+        AND      "office_communes"."office_id" = offices."id"
+      WHERE      ARRAY["reports"."form_type"] <@ offices."competences"
+        AND      "reports"."discarded_at" IS NULL
+        AND      "packages"."sandbox" = FALSE
+        AND      "packages"."transmitted_at" IS NOT NULL
+        AND      "packages"."approved_at" IS NULL
+        AND      "packages"."rejected_at" IS NULL
+        AND      "reports"."debated_at" IS NULL
+        AND      "packages"."discarded_at" IS NULL
+    );
+  END;
+$$;
+
+
+--
 -- Name: get_reports_rejected_count_in_collectivities(public.collectivities); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -1727,7 +1784,8 @@ CREATE FUNCTION public.reset_all_ddfips_counters() RETURNS integer
            "reports_count"          = get_reports_count_in_ddfips("ddfips".*),
            "reports_approved_count" = get_reports_approved_count_in_ddfips("ddfips".*),
            "reports_rejected_count" = get_reports_rejected_count_in_ddfips("ddfips".*),
-           "reports_debated_count"  = get_reports_debated_count_in_ddfips("ddfips".*);
+           "reports_debated_count"  = get_reports_debated_count_in_ddfips("ddfips".*),
+           "reports_pending_count"  = get_reports_pending_count_in_ddfips("ddfips".*);
 
     GET DIAGNOSTICS affected_rows = ROW_COUNT;
     RAISE NOTICE 'UPDATE %', affected_rows;
@@ -1820,7 +1878,8 @@ CREATE FUNCTION public.reset_all_offices_counters() RETURNS integer
            "reports_count"          = get_reports_count_in_offices("offices".*),
            "reports_approved_count" = get_reports_approved_count_in_offices("offices".*),
            "reports_rejected_count" = get_reports_rejected_count_in_offices("offices".*),
-           "reports_debated_count"  = get_reports_debated_count_in_offices("offices".*);
+           "reports_debated_count"  = get_reports_debated_count_in_offices("offices".*),
+           "reports_pending_count"  = get_reports_pending_count_in_offices("offices".*);
 
     GET DIAGNOSTICS affected_rows = ROW_COUNT;
     RAISE NOTICE 'UPDATE %', affected_rows;
@@ -2362,7 +2421,8 @@ CREATE FUNCTION public.trigger_office_communes_changes() RETURNS trigger
             "reports_count"          = get_reports_count_in_offices("offices".*),
             "reports_approved_count" = get_reports_approved_count_in_offices("offices".*),
             "reports_rejected_count" = get_reports_rejected_count_in_offices("offices".*),
-            "reports_debated_count"  = get_reports_debated_count_in_offices("offices".*)
+            "reports_debated_count"  = get_reports_debated_count_in_offices("offices".*),
+            "reports_pending_count"  = get_reports_pending_count_in_offices("offices".*)
     WHERE   "offices"."id" IN (NEW."office_id", OLD."office_id");
 
     UPDATE  "communes"
@@ -2497,7 +2557,8 @@ CREATE FUNCTION public.trigger_packages_changes() RETURNS trigger
       SET    "reports_count"          = get_reports_count_in_ddfips("ddfips".*),
              "reports_approved_count" = get_reports_approved_count_in_ddfips("ddfips".*),
              "reports_rejected_count" = get_reports_rejected_count_in_ddfips("ddfips".*),
-             "reports_debated_count"  = get_reports_debated_count_in_ddfips("ddfips".*)
+             "reports_debated_count"  = get_reports_debated_count_in_ddfips("ddfips".*),
+             "reports_pending_count"  = get_reports_pending_count_in_ddfips("ddfips".*)
       WHERE  "ddfips"."code_departement" IN (
         SELECT "communes"."code_departement"
         FROM "communes"
@@ -2509,7 +2570,8 @@ CREATE FUNCTION public.trigger_packages_changes() RETURNS trigger
       SET    "reports_count"          = get_reports_count_in_offices("offices".*),
              "reports_approved_count" = get_reports_approved_count_in_offices("offices".*),
              "reports_rejected_count" = get_reports_rejected_count_in_offices("offices".*),
-             "reports_debated_count"  = get_reports_debated_count_in_offices("offices".*)
+             "reports_debated_count"  = get_reports_debated_count_in_offices("offices".*),
+             "reports_pending_count"  = get_reports_pending_count_in_offices("offices".*)
       WHERE  "offices"."id" IN (
         SELECT "office_communes"."office_id"
         FROM "office_communes"
@@ -2599,7 +2661,8 @@ CREATE FUNCTION public.trigger_reports_changes() RETURNS trigger
       SET    "reports_count"          = get_reports_count_in_ddfips("ddfips".*),
              "reports_approved_count" = get_reports_approved_count_in_ddfips("ddfips".*),
              "reports_rejected_count" = get_reports_rejected_count_in_ddfips("ddfips".*),
-             "reports_debated_count"  = get_reports_debated_count_in_ddfips("ddfips".*)
+             "reports_debated_count"  = get_reports_debated_count_in_ddfips("ddfips".*),
+             "reports_pending_count"  = get_reports_pending_count_in_ddfips("ddfips".*)
       WHERE  "ddfips"."code_departement" IN (SELECT "communes"."code_departement" FROM "communes" WHERE "communes"."code_insee" = NEW."code_insee")
          OR  "ddfips"."code_departement" IN (SELECT "communes"."code_departement" FROM "communes" WHERE "communes"."code_insee" = OLD."code_insee" );
 
@@ -2607,7 +2670,8 @@ CREATE FUNCTION public.trigger_reports_changes() RETURNS trigger
       SET    "reports_count"          = get_reports_count_in_offices("offices".*),
              "reports_approved_count" = get_reports_approved_count_in_offices("offices".*),
              "reports_rejected_count" = get_reports_rejected_count_in_offices("offices".*),
-             "reports_debated_count"  = get_reports_debated_count_in_offices("offices".*)
+             "reports_debated_count"  = get_reports_debated_count_in_offices("offices".*),
+             "reports_pending_count"  = get_reports_pending_count_in_offices("offices".*)
       WHERE  "offices"."id" IN (SELECT "office_communes"."office_id" FROM "office_communes" WHERE "office_communes"."code_insee" = NEW."code_insee")
          OR  "offices"."id" IN (SELECT "office_communes"."office_id" FROM "office_communes" WHERE "office_communes"."code_insee" = OLD."code_insee");
 
@@ -3726,6 +3790,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230823125725'),
 ('20230823132126'),
 ('20230829135011'),
+('20230829153550'),
 ('20230830170839');
 
 
