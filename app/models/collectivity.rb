@@ -153,7 +153,7 @@ class Collectivity < ApplicationRecord
   # Utility methods
   # ----------------------------------------------------------------------------
   def packing_count
-    reports.packing.count
+    reports.all_kept.packing.count
   end
 
   # Other associations
