@@ -132,7 +132,8 @@ CREATE TYPE public.form_type AS ENUM (
 CREATE TYPE public.organization_type AS ENUM (
     'Collectivity',
     'Publisher',
-    'DDFIP'
+    'DDFIP',
+    'DGFIP'
 );
 
 
@@ -1557,6 +1558,46 @@ $$;
 
 
 --
+-- Name: dgfips; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.dgfips (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    name character varying NOT NULL,
+    contact_first_name character varying,
+    contact_last_name character varying,
+    contact_email character varying,
+    contact_phone character varying,
+    domain_restriction character varying,
+    allow_2fa_via_email boolean DEFAULT false NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL,
+    discarded_at timestamp(6) without time zone,
+    users_count integer DEFAULT 0 NOT NULL,
+    CONSTRAINT users_count_check CHECK ((users_count >= 0))
+);
+
+
+--
+-- Name: get_users_count_in_dgfips(public.dgfips); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.get_users_count_in_dgfips(dgfips public.dgfips) RETURNS integer
+    LANGUAGE plpgsql
+    AS $$
+  BEGIN
+    RETURN (
+      SELECT COUNT(*)
+      FROM   "users"
+      WHERE  "users"."organization_type" = 'DGFIP'
+        AND  "users"."organization_id"   = dgfips."id"
+        AND  "users"."discarded_at" IS NULL
+    );
+  END;
+$$;
+
+
+--
 -- Name: get_users_count_in_offices(public.offices); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -1686,6 +1727,27 @@ CREATE FUNCTION public.reset_all_departements_counters() RETURNS integer
            "epcis_count"          = get_epcis_count_in_departements("departements".*),
            "ddfips_count"         = get_ddfips_count_in_departements("departements".*),
            "collectivities_count" = get_collectivities_count_in_departements("departements".*);
+
+    GET DIAGNOSTICS affected_rows = ROW_COUNT;
+    RAISE NOTICE 'UPDATE %', affected_rows;
+
+    RETURN affected_rows;
+  END;
+$$;
+
+
+--
+-- Name: reset_all_dgfips_counters(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.reset_all_dgfips_counters() RETURNS integer
+    LANGUAGE plpgsql
+    AS $$
+  DECLARE
+    affected_rows integer;
+  BEGIN
+    UPDATE "dgfips"
+    SET    "users_count"            = get_users_count_in_dgfips("dgfips".*);
 
     GET DIAGNOSTICS affected_rows = ROW_COUNT;
     RAISE NOTICE 'UPDATE %', affected_rows;
@@ -2566,6 +2628,11 @@ CREATE FUNCTION public.trigger_users_changes() RETURNS trigger
       WHERE  (NEW."organization_type" = 'DDFIP' AND "ddfips"."id" = NEW."organization_id")
         OR   (OLD."organization_type" = 'DDFIP' AND "ddfips"."id" = OLD."organization_id");
 
+      UPDATE "dgfips"
+      SET    "users_count" = get_users_count_in_dgfips("dgfips".*)
+      WHERE  (NEW."organization_type" = 'DGFIP' AND "dgfips"."id" = NEW."organization_id")
+        OR   (OLD."organization_type" = 'DGFIP' AND "dgfips"."id" = OLD."organization_id");
+
       UPDATE "offices"
       SET    "users_count" = get_users_count_in_offices("offices".*)
       WHERE  "offices"."id" IN (
@@ -2859,6 +2926,14 @@ ALTER TABLE ONLY public.departements
 
 
 --
+-- Name: dgfips dgfips_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.dgfips
+    ADD CONSTRAINT dgfips_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: epcis epcis_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3071,6 +3146,20 @@ CREATE UNIQUE INDEX index_departements_on_code_departement ON public.departement
 --
 
 CREATE INDEX index_departements_on_code_region ON public.departements USING btree (code_region);
+
+
+--
+-- Name: index_dgfips_on_discarded_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_dgfips_on_discarded_at ON public.dgfips USING btree (discarded_at);
+
+
+--
+-- Name: index_dgfips_on_name; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_dgfips_on_name ON public.dgfips USING btree (name) WHERE (discarded_at IS NULL);
 
 
 --
@@ -3316,6 +3405,13 @@ CREATE INDEX index_workshops_on_ddfip_id ON public.workshops USING btree (ddfip_
 --
 
 CREATE INDEX index_workshops_on_discarded_at ON public.workshops USING btree (discarded_at);
+
+
+--
+-- Name: singleton_dgfip_constraint; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX singleton_dgfip_constraint ON public.dgfips USING btree ((1));
 
 
 --
@@ -3598,6 +3694,10 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230628131702'),
 ('20230705064157'),
 ('20230727083603'),
-('20230728085901');
+('20230728085901'),
+('20230823083541'),
+('20230823125725'),
+('20230823132126'),
+('20230830170839');
 
 

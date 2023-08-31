@@ -13,6 +13,7 @@ class ReportsController < ApplicationController
     case [current_organization, current_user.organization_admin?]
     in [Collectivity, *] then @reports.preload!(:commune, :package)
     in [Publisher, *]    then @reports.preload!(:commune, :package, :collectivity)
+    in [DGFIP, *]        then @reports.preload!(:commune, :package, :collectivity, :workshop)
     in [DDFIP, true]     then @reports.preload!(:commune, :collectivity, :package, :workshop)
     in [DDFIP, false]    then @reports.preload!(:commune, :collectivity, :workshop)
     end

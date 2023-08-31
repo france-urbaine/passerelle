@@ -1,0 +1,55 @@
+= template_content_component do
+  = breadcrumbs_component do |breadcrumbs|
+    - breadcrumbs.with_path "Administration"
+    - breadcrumbs.with_path @dgfip.name, admin_dgfip_path
+
+    - if allowed_to?(:update?, @dgfip)
+      - breadcrumbs.with_action "Modifier", edit_admin_dgfip_path, icon: "pencil-square", modal: true
+
+    - if allowed_to?(:destroy?, @dgfip)
+      - breadcrumbs.with_action "Supprimer", remove_admin_dgfip_path(@dgfip), icon: "trash", modal: true, destructive: "discrete"
+
+  h2.subheader
+    = icon_component("identification", "Nouvelle section")
+    | Description
+
+  .card
+    dl.description-list
+      .description-list__row
+        dt Contact
+        dd= "#{@dgfip.contact_first_name} #{@dgfip.contact_last_name}".strip.presence
+
+      .description-list__row
+        dt Adresse mail de contact
+        dd= mail_to(@dgfip.contact_email) if @dgfip.contact_email?
+
+      .description-list__row
+        dt Numéro de téléphone
+        dd= phone_to(@dgfip.contact_phone) if @dgfip.contact_phone?
+
+      .description-list__row
+        dt Utilisateurs
+        dd= display_count(@dgfip.users_count, "utilisateur") if @dgfip.users_count.positive?
+
+  - if allowed_to?(:index?, User)
+    .content__separator
+
+    .subheader-bar
+      h2.subheader
+        = icon_component("rectangle-stack", "Nouvelle section")
+        | Utilisateurs de l'organisation
+
+      .subheader-bar__actions
+        - if allowed_to?(:create?, User)
+          .subheader-bar__action
+            = button_component "Inviter un utilisateur", new_admin_dgfip_user_path, icon: "plus", modal: true
+
+    - if @dgfip.users_count.zero?
+      = card_component(content_class: "card__content--empty")
+        | Aucun utilisateur assigné.
+
+    - else
+      = turbo_frame_tag "datatable-users", src: admin_dgfip_users_path do
+        = datatable_skeleton_component(nested: true, rows: @dgfip.users_count) do |skeleton|
+          - skeleton.with_search
+          - skeleton.with_pagination

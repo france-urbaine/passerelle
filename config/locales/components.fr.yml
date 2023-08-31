@@ -21,6 +21,10 @@ fr:
         singular: "DDFIP sélectionnée"
         plural:   "DDFIPs sélectionnées"
 
+      dgfip:
+        singular: "DGFIP sélectionnée"
+        plural:   "DGFIPs sélectionnées"
+
       office:
         singular: "guichet sélectionné"
         plural:   "guichets sélectionnés"

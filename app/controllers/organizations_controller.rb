@@ -8,6 +8,7 @@ class OrganizationsController < ApplicationController
       @organizations = merge_autocomplete_collections(
         Publisher.kept.strict_loading,
         DDFIP.kept.strict_loading,
+        DGFIP.kept.strict_loading,
         Collectivity.kept.strict_loading
       )
     end

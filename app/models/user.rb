@@ -81,7 +81,7 @@ class User < ApplicationRecord
   validates :email,      presence: true
   validates :password,   presence: { if: :password_required? }
 
-  validates :organization_type, inclusion: { in: %w[Publisher Collectivity DDFIP] }
+  validates :organization_type, inclusion: { in: %w[Publisher Collectivity DDFIP DGFIP] }
 
   with_options allow_blank: true do
     validates :email, format: { with: Devise.email_regexp, if: :will_save_change_to_email? }
@@ -175,8 +175,9 @@ class User < ApplicationRecord
           LEFT JOIN publishers     ON users.organization_type = 'Publisher'    AND users.organization_id = publishers.id
           LEFT JOIN collectivities ON users.organization_type = 'Collectivity' AND users.organization_id = collectivities.id
           LEFT JOIN ddfips         ON users.organization_type = 'DDFIP'        AND users.organization_id = ddfips.id
+          LEFT JOIN dgfips         ON users.organization_type = 'DGFIP'        AND users.organization_id = dgfips.id
         SQL
-        .unaccent_order("COALESCE(publishers.name, collectivities.name, ddfips.name)", direction)
+        .unaccent_order("COALESCE(publishers.name, collectivities.name, ddfips.name, dgfips.name)", direction)
       }
     )
   }

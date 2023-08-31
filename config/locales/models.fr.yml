@@ -6,6 +6,7 @@ fr:
       dossier:      Dossier
       publisher:    Éditeur
       ddfip:        DDFIP
+      dgfip:        DGFIP
       office:       Guichet
       collectivity: Collectivité
       user:         Utilisateur
@@ -41,6 +42,15 @@ fr:
         domain_restriction:     Nom de domaine
         allow_2fa_via_email:    Autoriser l'email comme méthode d'authentification en 2 étapes
         auto_approve_packages:  Approuver automatiquement tout les paquets
+
+      dgfip:
+        name:                   Nom de la DGFIP
+        contact_first_name:     Prénom du contact
+        contact_last_name :     Nom du contact
+        contact_email:          Adresse mail de contact
+        contact_phone:          Numéro de téléphone
+        domain_restriction:     Nom de domaine
+        allow_2fa_via_email:    Autoriser l'email comme méthode d'authentification en 2 étapes
 
       office:
         name:             Nom du guichet
@@ -183,6 +193,15 @@ fr:
 
             domain_restriction:
               invalid:   Un nom de domaine valide est requis (sans @)
+
+        dgfip:
+          attributes:
+            name:
+              blank:  Un nom est requis
+              taken:  Ce nom est déjà attribué
+
+            base:
+              exist:  Une instance de la Direction générale a déjà été crée
 
         office:
           attributes:
@@ -353,6 +372,10 @@ fr:
               blank:     Un numéro de region est requis
               invalid:   Ce numéro de region n'est pas valide
               taken:     Ce numéro de région est déjà attribué
+
+    default_values:
+      dgfip:
+        name:   Direction générale des Finances publiques
 
   activemodel:
     errors:

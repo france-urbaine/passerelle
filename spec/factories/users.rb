@@ -83,6 +83,10 @@ FactoryBot.define do
       organization factory: :ddfip
     end
 
+    trait :dgfip do
+      organization { DGFIP.kept.first || build(:dgfip) }
+    end
+
     trait :using_existing_organizations do
       organization do
         [DDFIP, Publisher, Collectivity].sample.order("RANDOM()").first ||

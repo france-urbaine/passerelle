@@ -13,6 +13,8 @@ RSpec.describe ReportPolicy, stub_factories: false do
   describe_rule :index? do
     it_behaves_like("when current user is a DDFIP admin")        { succeed }
     it_behaves_like("when current user is a DDFIP user")         { succeed }
+    it_behaves_like("when current user is a DGFIP admin")        { succeed }
+    it_behaves_like("when current user is a DGFIP user")         { succeed }
     it_behaves_like("when current user is a publisher admin")    { succeed }
     it_behaves_like("when current user is a publisher user")     { succeed }
     it_behaves_like("when current user is a collectivity admin") { succeed }
@@ -25,6 +27,8 @@ RSpec.describe ReportPolicy, stub_factories: false do
 
       it_behaves_like("when current user is a DDFIP admin")        { succeed }
       it_behaves_like("when current user is a DDFIP user")         { succeed }
+      it_behaves_like("when current user is a DGFIP admin")        { succeed }
+      it_behaves_like("when current user is a DGFIP user")         { succeed }
       it_behaves_like("when current user is a publisher admin")    { succeed }
       it_behaves_like("when current user is a publisher user")     { succeed }
       it_behaves_like("when current user is a collectivity admin") { succeed }
@@ -36,6 +40,8 @@ RSpec.describe ReportPolicy, stub_factories: false do
 
       it_behaves_like("when current user is a DDFIP admin")        { failed }
       it_behaves_like("when current user is a DDFIP user")         { failed }
+      it_behaves_like("when current user is a DGFIP admin")        { failed }
+      it_behaves_like("when current user is a DGFIP user")         { failed }
       it_behaves_like("when current user is a publisher admin")    { failed }
       it_behaves_like("when current user is a publisher user")     { failed }
       it_behaves_like("when current user is a collectivity admin") { failed }
@@ -150,12 +156,28 @@ RSpec.describe ReportPolicy, stub_factories: false do
         it_behaves_like("when current user is a DDFIP user")              { failed }
         it_behaves_like("when current user is member of targeted office") { failed }
       end
+
+      context "when transmitted to any DDFIP" do
+        let(:record) { create(:report, :transmitted_to_ddfip, package_sandbox: false) }
+
+        it_behaves_like("when current user is a DGFIP admin")             { succeed }
+        it_behaves_like("when current user is a DGFIP user")              { succeed }
+      end
+
+      context "when transmitted as sandbox to any DDFIP" do
+        let(:record) { create(:report, :transmitted_to_ddfip, package_sandbox: true) }
+
+        it_behaves_like("when current user is a DGFIP admin")             { failed }
+        it_behaves_like("when current user is a DGFIP user")              { failed }
+      end
     end
   end
 
   describe_rule :create? do
     it_behaves_like("when current user is a DDFIP admin")        { failed }
     it_behaves_like("when current user is a DDFIP user")         { failed }
+    it_behaves_like("when current user is a DGFIP admin")        { failed }
+    it_behaves_like("when current user is a DGFIP user")         { failed }
     it_behaves_like("when current user is a publisher admin")    { failed }
     it_behaves_like("when current user is a publisher user")     { failed }
     it_behaves_like("when current user is a collectivity admin") { succeed }
@@ -170,6 +192,8 @@ RSpec.describe ReportPolicy, stub_factories: false do
 
       it_behaves_like("when current user is a DDFIP admin")        { succeed }
       it_behaves_like("when current user is a DDFIP user")         { succeed }
+      it_behaves_like("when current user is a DGFIP admin")        { failed }
+      it_behaves_like("when current user is a DGFIP user")         { failed }
       it_behaves_like("when current user is a publisher admin")    { succeed }
       it_behaves_like("when current user is a publisher user")     { succeed }
       it_behaves_like("when current user is a collectivity admin") { succeed }
@@ -181,6 +205,8 @@ RSpec.describe ReportPolicy, stub_factories: false do
 
       it_behaves_like("when current user is a DDFIP admin")        { failed }
       it_behaves_like("when current user is a DDFIP user")         { failed }
+      it_behaves_like("when current user is a DGFIP admin")        { failed }
+      it_behaves_like("when current user is a DGFIP user")         { failed }
       it_behaves_like("when current user is a publisher admin")    { failed }
       it_behaves_like("when current user is a publisher user")     { failed }
       it_behaves_like("when current user is a collectivity admin") { failed }
@@ -306,6 +332,8 @@ RSpec.describe ReportPolicy, stub_factories: false do
 
       it_behaves_like("when current user is a DDFIP admin")        { failed }
       it_behaves_like("when current user is a DDFIP user")         { failed }
+      it_behaves_like("when current user is a DGFIP admin")        { failed }
+      it_behaves_like("when current user is a DGFIP user")         { failed }
       it_behaves_like("when current user is a publisher admin")    { succeed }
       it_behaves_like("when current user is a publisher user")     { succeed }
       it_behaves_like("when current user is a collectivity admin") { succeed }
@@ -317,6 +345,8 @@ RSpec.describe ReportPolicy, stub_factories: false do
 
       it_behaves_like("when current user is a DDFIP admin")        { failed }
       it_behaves_like("when current user is a DDFIP user")         { failed }
+      it_behaves_like("when current user is a DGFIP admin")        { failed }
+      it_behaves_like("when current user is a DGFIP user")         { failed }
       it_behaves_like("when current user is a publisher admin")    { failed }
       it_behaves_like("when current user is a publisher user")     { failed }
       it_behaves_like("when current user is a collectivity admin") { failed }

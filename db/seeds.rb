@@ -72,6 +72,12 @@ DDFIP.insert_all([
   { code_departement: "91", name: "DDFIP de l'Essonne" }
 ])
 
+# Import ddfips
+# ----------------------------------------------------------------------------
+log "Seed DGFIP"
+
+DGFIP.find_or_create_singleton_record
+
 # Import publishers
 # ----------------------------------------------------------------------------
 log "Seed publishers"
@@ -119,7 +125,8 @@ User.insert_all(
     { email: "admin@ddfip-64.example.org",       organization: "DDFIP des Pyrénées-Atlantiques", organization_admin: true,  super_admin: false, confirmed: false },
     { email: "sdif@ddfip-64.example.org",        organization: "DDFIP des Pyrénées-Atlantiques", organization_admin: false, super_admin: false, confirmed: false },
     { email: "sip.bayonne@ddfip-64.example.org", organization: "DDFIP des Pyrénées-Atlantiques", organization_admin: false, super_admin: false, confirmed: false },
-    { email: "sip.pau@ddfip-64.example.org",     organization: "DDFIP des Pyrénées-Atlantiques", organization_admin: false, super_admin: false, confirmed: false }
+    { email: "sip.pau@ddfip-64.example.org",     organization: "DDFIP des Pyrénées-Atlantiques", organization_admin: false, super_admin: false, confirmed: false },
+    { email: "admin@dgfip.example.org",          organization: "Direction générale des Finances publiques", organization_admin: false, super_admin: false, confirmed: false }
   ])
 )
 

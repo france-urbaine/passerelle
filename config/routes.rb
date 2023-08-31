@@ -127,6 +127,12 @@ Rails.application.routes.draw do
         end
       end
 
+      resource :dgfip, only: %i[show edit update] do
+        scope module: "dgfips" do
+          resources :users, only: %i[index new create], concerns: %i[removable_collection], path: "/utilisateurs"
+        end
+      end
+
       resources :ddfips, concerns: %i[removable removable_collection] do
         scope module: "ddfips" do
           resources :offices,        only: %i[index new create], concerns: %i[removable_collection], path: "/guichets"
