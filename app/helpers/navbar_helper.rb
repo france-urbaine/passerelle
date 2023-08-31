@@ -10,7 +10,8 @@ module NavbarHelper
     end
 
     current = false if disabled
-    current = request.fullpath.start_with?(href) if current == :__undef__
+
+    current = href == "/" ? href == request.path : request.fullpath.start_with?(href) if current == :__undef__
 
     css_classes  = "navbar__link"
     css_classes += " navbar__link--current" if current

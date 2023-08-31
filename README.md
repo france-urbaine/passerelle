@@ -74,5 +74,5 @@ Mails can be previewed at [http://localhost:3000/rails/mailers](http://localhost
 In development, mails can be catched with `mailcatcher`:
 
 ```shell
-$ bin/mailcather
+$ bin/mailcatcher
 ```

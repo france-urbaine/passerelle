@@ -307,6 +307,27 @@ RSpec.describe Report do
       end
     end
 
+    describe ".updated_by_ddfip" do
+      it "scopes on updated_by_ddfip reports" do
+        expect {
+          described_class.updated_by_ddfip.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT     "reports".*
+          FROM       "reports"
+          INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
+          WHERE      "packages"."transmitted_at" IS NOT NULL
+            AND      "packages"."discarded_at" IS NULL
+            AND      "reports"."discarded_at" IS NULL
+            AND      "packages"."sandbox" = FALSE
+            AND (
+              "reports"."approved_at" IS NOT NULL
+              OR "reports"."rejected_at" IS NOT NULL
+              OR "reports"."debated_at" IS NOT NULL
+            )
+        SQL
+      end
+    end
+
     describe ".approved" do
       it "scopes on approved reports" do
         expect {

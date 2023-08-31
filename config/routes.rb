@@ -47,7 +47,7 @@ Rails.application.routes.draw do
   end
 
   authenticated :user do
-    root to: redirect("/signalements"), as: :authenticated_root
+    root "dashboards#index", as: :authenticated_root
   end
 
   # Test passwords strength
@@ -58,6 +58,10 @@ Rails.application.routes.draw do
   # ----------------------------------------------------------------------------
   resources :organizations, only: %i[index], path: "/organisations"
   resources :territories,   only: %i[index], path: "/territoires"
+
+  # Shared stuff
+  # ----------------------------------------------------------------------------
+  resources :dashboards, only: %i[index], path: "/"
 
   constraints(id: %r{(?!(new|edit|remove|discard|undiscard|guichets))[^/]+}) do
     # Reports stuff

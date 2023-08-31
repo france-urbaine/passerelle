@@ -211,6 +211,28 @@ RSpec.describe DDFIP do
     end
   end
 
+  # Utility methods
+  # ----------------------------------------------------------------------------
+  describe "utility methods" do
+    describe "#reports_pending_count" do
+      context "when there are no reports" do
+        let(:ddfip) { create(:ddfip) }
+
+        it "returns 0" do
+          expect(ddfip.reports_pending_count).to eq(0)
+        end
+      end
+
+      context "when there are reports with this scope" do
+        let(:ddfip) { create(:ddfip, reports_count: 12, reports_approved_count: 5, reports_rejected_count: 2, reports_debated_count: 1) }
+
+        it "returns the correct count of 'packing' reports" do
+          expect(ddfip.reports_pending_count).to eq(4)
+        end
+      end
+    end
+  end
+
   # Other associations
   # ----------------------------------------------------------------------------
   describe "other associations" do

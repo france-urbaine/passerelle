@@ -263,10 +263,11 @@ class Report < ApplicationRecord
   scope :rejected_packages,   -> { joins(:package).merge(Package.unscoped.rejected) }
   scope :unrejected_packages, -> { joins(:package).merge(Package.unscoped.unrejected) }
 
-  scope :pending,  -> { published.where(approved_at: nil, rejected_at: nil, debated_at: nil) }
-  scope :approved, -> { published.where.not(approved_at: nil) }
-  scope :rejected, -> { published.where.not(rejected_at: nil) }
-  scope :debated,  -> { published.where.not(debated_at: nil) }
+  scope :pending,          -> { published.where(approved_at: nil, rejected_at: nil, debated_at: nil) }
+  scope :updated_by_ddfip, -> { approved.or(rejected).or(debated) }
+  scope :approved,         -> { published.where.not(approved_at: nil) }
+  scope :rejected,         -> { published.where.not(rejected_at: nil) }
+  scope :debated,          -> { published.where.not(debated_at: nil) }
 
   scope :packed_through_publisher_api, -> { where.not(publisher_id: nil) }
   scope :packed_through_web_ui,        -> { where(publisher_id: nil) }

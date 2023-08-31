@@ -6,129 +6,50 @@
     - if allowed_to?(:create?, Report, with: ReportPolicy)
       - breadcrumbs.with_action "Ajouter un signalement", new_report_path, icon: "plus", modal: true, primary: true
 
-  = datatable_component(@reports.preload(:package)) do |datatable|
-    - datatable.with_search
-    - datatable.with_pagination(@pagy, options: !@parent)
-
-    - datatable.with_selection do |selection|
-      - if allowed_to?(:create?, Package)
-        - selection.with_action "Tout regrouper", disabled: true
-
-      - if allowed_to?(:destroy_all?, Report)
-        - selection.with_action "Tout supprimer", url_for([:remove_all, @parent, :reports]), modal: true
-
-    - datatable.with_column(:status,   compact: true) { "Etat" }
-    - datatable.with_column(:reference, sort: true)   { "Reference" }
-
-    - case current_user.organization
-    - when Collectivity
-      - datatable.with_column(:package)                 { "Paquet" }
-      - datatable.with_column(:priority, compact: true) { "Priorité" }
-      - datatable.with_column(:form_type)               { "Type de signalement" }
-      - datatable.with_column(:anomalies)               { "Objet" }
-      - datatable.with_column(:invariant)               { "Invariant" }
-      - datatable.with_column(:adresse)                 { "Adresse" }
-      - datatable.with_column(:commune)                 { "Commune" }
-
-    - when Publisher
-      - datatable.with_column(:package)                 { "Paquet" }
-      - datatable.with_column(:collectivity)            { "Collectivité" }
-      - datatable.with_column(:priority, compact: true) { "Priorité" }
-      - datatable.with_column(:form_type)               { "Type de signalement" }
-      - datatable.with_column(:anomalies)               { "Objet" }
-      - datatable.with_column(:invariant)               { "Invariant" }
-      - datatable.with_column(:adresse)                 { "Adresse" }
-      - datatable.with_column(:commune)                 { "Commune" }
-
-    - when DGFIP
-      - datatable.with_column(:package)                 { "Paquet" }
-      - datatable.with_column(:collectivity)            { "Collectivité" }
-      - datatable.with_column(:priority, compact: true) { "Priorité" }
-      - datatable.with_column(:form_type)               { "Type de signalement" }
-      - datatable.with_column(:anomalies)               { "Objet" }
-      - datatable.with_column(:invariant)               { "Invariant" }
-      - datatable.with_column(:adresse)                 { "Adresse" }
-      - datatable.with_column(:commune)                 { "Commune" }
-
-    - when DDFIP
-      - if current_user.organization_admin?
-        - datatable.with_column(:package)                 { "Paquet" }
-        - datatable.with_column(:collectivity)            { "Collectivité" }
-        - datatable.with_column(:priority, compact: true) { "Priorité" }
-        / - datatable.with_column(:office)                  { "Guichet" }
-        / - datatable.with_column(:workshop)                { "Dossier" }
-        - datatable.with_column(:form_type)               { "Type de signalement" }
-        - datatable.with_column(:anomalies)               { "Objet" }
-        - datatable.with_column(:invariant)               { "Invariant" }
-        - datatable.with_column(:adresse)                 { "Adresse" }
-        - datatable.with_column(:commune)                 { "Commune" }
-      - else
-        - datatable.with_column(:collectivity)            { "Collectivité" }
-        - datatable.with_column(:priority, compact: true) { "Priorité" }
-        / - datatable.with_column(:workshop)                { "Dossier" }
-        - datatable.with_column(:form_type)               { "Type de signalement" }
-        - datatable.with_column(:anomalies)               { "Objet" }
-        - datatable.with_column(:invariant)               { "Invariant" }
-        - datatable.with_column(:adresse)                 { "Adresse" }
-        - datatable.with_column(:commune)                 { "Commune" }
-
-    - datatable.with_empty_message do
-      - if params[:search]
-        | Aucun signalement ne correspont à votre recherche.
-      - else
-        | Aucun signalement disponible.
-
-    - datatable.each_row do |row, report|
-      - if allowed_to?(:create?, Package) || allowed_to?(:destroy_all?, Report)
-        - row.with_checkbox "Sélectionner ce signalement", described_by: :reference
-
-      - if allowed_to?(:destroy?, report, with: ReportPolicy)
-        - row.with_action "Supprimer ce signalement", remove_report_path(report), icon: "trash", modal: true
-
-      - row.with_column(:reference) do
-        = authorized_link_to report do
-          = report.reference
-
-      - row.with_column(:collectivity) do
-        = authorized_link_to report.collectivity, scope: :organization do
-          = report.collectivity.name
-
-      - row.with_column(:package) do
-        = authorized_link_to report.package do
-          = report.package.reference
-
-      - row.with_column(:form_type) do
-        = t(report.form_type, scope: "enum.report_form_type")
-
-      - row.with_column(:anomalies) do
-        = short_list(report.anomalies, humanize: true) { |value| t(value, scope: "enum.anomalies") }
-
-      - row.with_column(:workshop) do
-        = report.workshop&.name
-
-      - row.with_column(:invariant) do
-        = report.situation_invariant
-
-      - row.with_column(:adresse) do
-        - if report.situation_adresse?
-          = report.situation_adresse
+  = render Views::Reports::ListComponent.new(@reports, @pagy, searchable: true) do |view|
+      - view.with_column(:reference)
+      - case current_user.organization_type
+      - when "Collectivity"
+        - view.with_column(:package)
+        - view.with_column(:form_type)
+        - view.with_column(:anomalies)
+        - view.with_column(:invariant)
+        - view.with_column(:adresse)
+        - view.with_column(:commune)
+      - when "Publisher"
+        - view.with_column(:package)
+        - view.with_column(:collectivity)
+        - view.with_column(:form_type)
+        - view.with_column(:anomalies)
+        - view.with_column(:invariant)
+        - view.with_column(:adresse)
+        - view.with_column(:commune)
+      - when "DDFIP"
+        - if current_user.organization_admin?
+          - view.with_column(:package)
+          - view.with_column(:collectivity)
+          - view.with_column(:office)
+          - view.with_column(:workshop)
+          - view.with_column(:form_type)
+          - view.with_column(:anomalies)
+          - view.with_column(:invariant)
+          - view.with_column(:adresse)
+          - view.with_column(:commune)
         - else
-          = [report.situation_numero_voie, report.situation_indice_repetition, report.situation_libelle_voie].join(" ").squish
-
-      - row.with_column(:commune) do
-        = report.commune&.name
-
-      - row.with_column(:priority) do
-        - case report.priority
-        - when "low"
-          = icon_component("chart-bar", "Priorité basse", class: "low-priority-icon")
-          span.tooltip Priorité basse
-        - when "medium"
-          = icon_component("chart-bar", "Priorité moyenne", class: "medium-priority-icon")
-          span.tooltip Priorité moyenne
-        - when "high"
-          = icon_component("chart-bar", "Priorité haute", class: "high-priority-icon")
-          span.tooltip Priorité haute
-
-      - row.with_column(:status) do
-        = report_badge(report)
+          - view.with_column(:collectivity)
+          - view.with_column(:workshop)
+          - view.with_column(:form_type)
+          - view.with_column(:anomalies)
+          - view.with_column(:invariant)
+          - view.with_column(:adresse)
+          - view.with_column(:commune)
+      - when "DGFIP"
+        - view.with_column(:package)
+        - view.with_column(:collectivity)
+        - view.with_column(:form_type)
+        - view.with_column(:anomalies)
+        - view.with_column(:invariant)
+        - view.with_column(:adresse)
+        - view.with_column(:commune)
+      - view.with_column(:priority)
+      - view.with_column(:status)
