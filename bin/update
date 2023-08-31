@@ -93,12 +93,24 @@ def update_yarn
   system! "git commit -m \"Update JS dependencies\" -- yarn.lock" if gets == "Y"
 end
 
+def update_icons
+  log "Downloading Heroicons set"
+  system! "rm -rf tmp/icons/heroicons"
+  system! "git clone git@github.com:tailwindlabs/heroicons.git tmp/icons/heroicons"
+
+  system! "rm -rf vendor/assets/icons/heroicons"
+  system! "mkdir -p vendor/assets/icons/heroicons"
+  system! "cp -r tmp/icons/heroicons/optimized/24/ vendor/assets/icons/heroicons/"
+  system! "rm -rf tmp/icons/heroicons"
+end
+
 def help
   log "Update commands:"
   log ""
   log "    bin/update check       # Update dependencies & database after getting new code version"
   log "    bin/update bundle      # Update gems through an interactive command"
   log "    bin/update yarn        # Update JS packages through an interactive command"
+  log "    bin/update icons       # Update icons sets (heroicons)"
   log "    bin/update help        # Show this help"
   log ""
   log "To automate update checks after switching to a branch or after pulling code from remote,"
@@ -113,5 +125,6 @@ case ARGV[0]
 when "bundle" then update_bundle
 when "yarn"   then update_yarn
 when "check"  then update_check
+when "icons"  then update_icons
 else help
 end
