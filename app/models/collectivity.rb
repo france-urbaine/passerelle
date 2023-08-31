@@ -150,6 +150,12 @@ class Collectivity < ApplicationRecord
     territory_type == "Region"
   end
 
+  # Utility methods
+  # ----------------------------------------------------------------------------
+  def packing_count
+    reports.packing.count
+  end
+
   # Other associations
   # ----------------------------------------------------------------------------
   def on_territory_communes
