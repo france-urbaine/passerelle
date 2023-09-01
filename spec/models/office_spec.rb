@@ -906,6 +906,114 @@ RSpec.describe Office do
             .and not_change { offices[2].reload.reports_debated_count }.from(0)
         end
       end
+
+      describe "#reports_pending_count" do
+        let(:report) { create(:report, :reported_for_office, office: offices[0]) }
+
+        it "doesn't change on report creation" do
+          expect { report }
+            .to  not_change { offices[0].reload.reports_pending_count }.from(0)
+            .and not_change { offices[1].reload.reports_pending_count }.from(0)
+            .and not_change { offices[2].reload.reports_pending_count }.from(0)
+        end
+
+        it "change when report is transmitted" do
+          expect { report.package.transmit! }
+            .to  change { offices[0].reload.reports_pending_count }.from(0).to(1)
+            .and not_change { offices[1].reload.reports_pending_count }.from(0)
+            .and not_change { offices[2].reload.reports_pending_count }.from(0)
+        end
+
+        it "doesn't changes when transmitted report is approved" do
+          report.package.touch(:transmitted_at)
+
+          expect { report.approve! }
+            .to not_change { offices[0].reload.reports_pending_count }.from(1)
+            .and not_change { offices[1].reload.reports_pending_count }.from(0)
+            .and not_change { offices[2].reload.reports_pending_count }.from(0)
+        end
+
+        it "changes when transmitted package is approved" do
+          report.package.touch(:transmitted_at)
+
+          expect { report.package.approve! }
+            .to change { offices[0].reload.reports_pending_count }.from(1).to(0)
+            .and not_change { offices[1].reload.reports_pending_count }.from(0)
+            .and not_change { offices[2].reload.reports_pending_count }.from(0)
+        end
+
+        it "changes when transmitted report is added to office" do
+          report.package.touch(:transmitted_at)
+
+          expect { create(:report, :reported_for_office, :transmitted, office: offices[0]) }
+            .to change { offices[0].reload.reports_pending_count }.from(1).to(2)
+            .and not_change { offices[1].reload.reports_pending_count }.from(0)
+            .and not_change { offices[2].reload.reports_pending_count }.from(0)
+        end
+
+        it "changes when office commune is deleted" do
+          report.package.touch(:transmitted_at)
+
+          expect { offices[0].office_communes.where(code_insee: report.code_insee).first.destroy }
+            .to change { offices[0].reload.reports_pending_count }.from(1).to(0)
+            .and not_change { offices[1].reload.reports_pending_count }.from(0)
+            .and not_change { offices[2].reload.reports_pending_count }.from(0)
+        end
+
+        it "change when transmitted report is discarded" do
+          report.package.touch(:transmitted_at)
+
+          expect { report.discard }
+            .to  change { offices[0].reload.reports_pending_count }.from(1).to(0)
+            .and not_change { offices[1].reload.reports_pending_count }.from(0)
+            .and not_change { offices[2].reload.reports_pending_count }.from(0)
+        end
+
+        it "changes when transmitted package is discarded" do
+          report.package.touch(:transmitted_at)
+
+          expect { report.package.discard }
+            .to change { offices[0].reload.reports_pending_count }.from(1).to(0)
+            .and not_change { offices[1].reload.reports_pending_count }.from(0)
+            .and not_change { offices[2].reload.reports_pending_count }.from(0)
+        end
+
+        it "change when transmitted report is undiscarded" do
+          report.touch(:discarded_at) and report.package.touch(:transmitted_at)
+
+          expect { report.undiscard }
+            .to  change { offices[0].reload.reports_pending_count }.from(0).to(1)
+            .and not_change { offices[1].reload.reports_pending_count }.from(0)
+            .and not_change { offices[2].reload.reports_pending_count }.from(0)
+        end
+
+        it "changes when transmitted package is undiscarded" do
+          report.package.touch(:transmitted_at, :discarded_at)
+
+          expect { report.package.undiscard }
+            .to change { offices[0].reload.reports_pending_count }.from(0).to(1)
+            .and not_change { offices[1].reload.reports_pending_count }.from(0)
+            .and not_change { offices[2].reload.reports_pending_count }.from(0)
+        end
+
+        it "change when transmitted report is deleted" do
+          report.package.touch(:transmitted_at)
+
+          expect { report.delete }
+            .to  change { offices[0].reload.reports_pending_count }.from(1).to(0)
+            .and not_change { offices[1].reload.reports_pending_count }.from(0)
+            .and not_change { offices[2].reload.reports_pending_count }.from(0)
+        end
+
+        it "changes transmitted package is deleted" do
+          report.package.touch(:transmitted_at)
+
+          expect { report.package.delete }
+            .to change { offices[0].reload.reports_pending_count }.from(1).to(0)
+            .and not_change { offices[1].reload.reports_pending_count }.from(0)
+            .and not_change { offices[2].reload.reports_pending_count }.from(0)
+        end
+      end
     end
   end
 end

@@ -766,6 +766,54 @@ RSpec.describe DDFIP do
             .and not_change { ddfips[1].reload.reports_debated_count }.from(0)
         end
       end
+
+      describe "#reports_pending_count" do
+        before do
+          commune = create(:commune)
+          ddfips.first.update(code_departement: commune.code_departement)
+        end
+
+        let(:commune) { Commune.first }
+        let(:report) { create(:report, :transmitted, commune: commune) }
+
+        it "change on report creation" do
+          expect { report }
+            .to  change { ddfips[0].reload.reports_pending_count }.from(0).to(1)
+            .and not_change { ddfips[1].reload.reports_pending_count }.from(0)
+        end
+
+        it "changes when report is approved" do
+          report
+
+          expect { report.approve! }
+            .to change { ddfips[0].reload.reports_pending_count }.from(1).to(0)
+            .and not_change { ddfips[1].reload.reports_pending_count }.from(0)
+        end
+
+        it "changes when report is discarded" do
+          report
+
+          expect { report.discard }
+            .to change { ddfips[0].reload.reports_pending_count }.from(1).to(0)
+            .and not_change { ddfips[1].reload.reports_pending_count }.from(0)
+        end
+
+        it "changes when report is undiscarded" do
+          report.discard
+
+          expect { report.undiscard }
+            .to change { ddfips[0].reload.reports_pending_count }.from(0).to(1)
+            .and not_change { ddfips[1].reload.reports_pending_count }.from(0)
+        end
+
+        it "changes when report is deleted" do
+          report
+
+          expect { report.delete }
+            .to change { ddfips[0].reload.reports_pending_count }.from(1).to(0)
+            .and not_change { ddfips[1].reload.reports_pending_count }.from(0)
+        end
+      end
     end
   end
 end
