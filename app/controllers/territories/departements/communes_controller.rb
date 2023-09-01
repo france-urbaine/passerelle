@@ -11,8 +11,6 @@ module Territories
       def index
         @communes = authorized(@departement.communes).strict_loading
         @communes, @pagy = index_collection(@communes, nested: true)
-
-        @communes = @communes.preload(:epci)
       end
 
       private

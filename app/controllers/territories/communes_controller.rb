@@ -10,9 +10,6 @@ module Territories
 
       respond_with @communes do |format|
         format.html.autocomplete { render layout: false }
-        format.html.any do
-          @communes = @communes.preload(:departement, :epci)
-        end
       end
     end
 

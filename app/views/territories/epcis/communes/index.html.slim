@@ -5,40 +5,7 @@
     - breadcrumbs.with_path @epci.name, territories_epci_path(@epci)
     - breadcrumbs.with_path "Communes"
 
-  = datatable_component(@communes) do |datatable|
-    - datatable.with_search
-    - datatable.with_pagination(@pagy, options: false)
-
-    - datatable.with_column(:name,        sort: true, span: 2) { "Commune" }
-    - datatable.with_column(:departement, sort: true, span: 2) { "Département" }
-    - datatable.with_column(:collectivities_count, numeric: true) { "Collectivités" }
-
-    - datatable.with_empty_message do
-      - if params[:search]
-        | Aucune commune ne correspont à votre recherche.
-      - else
-        | Aucune commune disponible.
-
-    - datatable.each_row do |row, commune|
-      - if allowed_to?(:update?, commune)
-        - row.with_action "Modifier cette commune", edit_territories_commune_path(commune), icon: "pencil-square", modal: true
-
-      - row.with_column(:name) do |column|
-        - column.with_span do
-          = commune.code_insee
-
-        - column.with_span do
-          = authorized_link_to commune, namespace: :territories
-
-      - row.with_column(:departement) do |column|
-        - if commune.departement
-          - column.with_span do
-            = commune.code_departement
-
-          - column.with_span do
-            = authorized_link_to commune.departement, namespace: :territories
-
-      - row.with_column(:collectivities_count) do
-        = number_with_delimiter(commune.collectivities_count) if commune.collectivities_count.positive?
-
-
+  = render Views::Communes::ListComponent.new(@communes, @pagy, namespace: :territories, parent: @epci) do |view|
+    - view.with_column(:name)
+    - view.with_column(:departement)
+    - view.with_column(:collectivities_count)
