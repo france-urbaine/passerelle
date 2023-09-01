@@ -1,12 +1,12 @@
 .dashboard-numbers
   .dashboard-number
-    = Report.published.count
+    = current_organization.reports_published_count
     span.dashboard-number__unit Signalements transmis
   .dashboard-number
-    = Report.published.approved.count
+    = current_organization.reports_approved_count
     span.dashboard-number__unit Signalements approuvés
   .dashboard-number
-    = Report.published.rejected.count
+    = current_organization.reports_rejected_count
     span.dashboard-number__unit Signalements rejetés
 
 .content__separator
