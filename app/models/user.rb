@@ -74,6 +74,10 @@ class User < ApplicationRecord
   has_many :office_users, dependent: false
   has_many :offices, through: :office_users
 
+  # API applications
+  has_many :access_grants, class_name: "Doorkeeper::AccessGrant", foreign_key: :resource_owner_id, dependent: :delete_all, inverse_of: false
+  has_many :access_tokens, class_name: "Doorkeeper::AccessToken", foreign_key: :resource_owner_id, dependent: :delete_all, inverse_of: false
+
   # Validations
   # ----------------------------------------------------------------------------
   validates :first_name, presence: true

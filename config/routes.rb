@@ -21,6 +21,13 @@ Rails.application.routes.draw do
     patch :update_all, on: :collection, path: "/", as: nil
   end
 
+  # Oauth
+  # ----------------------------------------------------------------------------
+  use_doorkeeper do
+    # only use :authorizations, :tokens and :token_info
+    skip_controllers :applications, :authorized_applications
+  end
+
   # User stuff
   # ----------------------------------------------------------------------------
   devise_for :users, path: "/", controllers: {

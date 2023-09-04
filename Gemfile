@@ -19,6 +19,10 @@ gem "redis", "~> 5.0"
 gem "sidekiq"
 gem "sidekiq-pro", source: "https://gems.contribsys.com"
 
+# API
+gem "doorkeeper"
+gem "doorkeeper-i18n"
+
 # Models
 gem "devise"
 gem "devise_zxcvbn"
