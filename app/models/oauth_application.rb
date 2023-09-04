@@ -24,4 +24,28 @@
 #
 class OauthApplication < ApplicationRecord
   include ::Doorkeeper::Orm::ActiveRecord::Mixins::Application
+
+  belongs_to :owner, polymorphic: true, inverse_of: :oauth_applications
+
+  # Scopes
+  # ----------------------------------------------------------------------------
+  scope :owned_by, ->(organization) { where(owner: organization) }
+
+  scope :search, lambda { |input|
+    advanced_search(
+      input,
+      name: ->(value) { match(:name, value) }
+    )
+  }
+
+  scope :order_by_param, lambda { |input|
+    advanced_order(
+      input,
+      name: ->(direction) { unaccent_order(:name, direction) }
+    )
+  }
+
+  scope :order_by_score, lambda { |input|
+    scored_order(:name, input)
+  }
 end

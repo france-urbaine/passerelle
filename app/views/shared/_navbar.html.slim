@@ -23,20 +23,20 @@ div( data-controller="navbar" )
       = navbar_link_to "Dossiers",                         icon: "briefcase",         disabled: true if workshops
       = navbar_link_to "Fichiers",                         icon: "cloud-arrow-down",  disabled: true if files
 
-    - organization_settings       = allowed_to?(:manage?, :settings,   with: Organization::SettingsPolicy)
-    - organization_users          = allowed_to?(:index?, User,         with: Organization::UserPolicy)
-    - organization_offices        = allowed_to?(:index?, Office,       with: Organization::OfficePolicy)
-    - organization_collectivities = allowed_to?(:index?, Collectivity, with: Organization::CollectivityPolicy)
-    - organization_api_settings   = current_user.organization_type == "Publisher"
+    - organization_settings           = allowed_to?(:manage?, :settings,       with: Organization::SettingsPolicy)
+    - organization_users              = allowed_to?(:index?, User,             with: Organization::UserPolicy)
+    - organization_offices            = allowed_to?(:index?, Office,           with: Organization::OfficePolicy)
+    - organization_collectivities     = allowed_to?(:index?, Collectivity,     with: Organization::CollectivityPolicy)
+    - organization_oauth_applications = allowed_to?(:index?, OauthApplication, with: Organization::OauthApplicationPolicy)
 
-    - if organization_settings || organization_users || organization_offices || organization_collectivities || organization_users || organization_api_settings
+    - if organization_settings || organization_users || organization_offices || organization_collectivities || organization_users || organization_oauth_applications
       .navbar__header Mon organisation
       .navbar__links
-        = navbar_link_to "Paramètres",    organization_settings_path,        icon: "cog-6-tooth"      if organization_settings
-        = navbar_link_to "Équipe",        organization_users_path,           icon: "users"            if organization_users
-        = navbar_link_to "Guichets",      organization_offices_path,         icon: "inbox"            if organization_offices
-        = navbar_link_to "Collectivités", organization_collectivities_path,  icon: "building-library" if organization_collectivities
-        = navbar_link_to "API",           disabled: true, icon: "command-line"                        if organization_api_settings
+        = navbar_link_to "Paramètres",    organization_settings_path,           icon: "cog-6-tooth"      if organization_settings
+        = navbar_link_to "Équipe",        organization_users_path,              icon: "users"            if organization_users
+        = navbar_link_to "Guichets",      organization_offices_path,            icon: "inbox"            if organization_offices
+        = navbar_link_to "Collectivités", organization_collectivities_path,     icon: "building-library" if organization_collectivities
+        = navbar_link_to "API",           organization_oauth_applications_path, icon: "command-line"     if organization_oauth_applications
 
     - admin_publishers     = allowed_to?(:index?, Publisher,    with: Admin::PublisherPolicy)
     - admin_collectivities = allowed_to?(:index?, Collectivity, with: Admin::CollectivityPolicy)

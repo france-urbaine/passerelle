@@ -41,6 +41,9 @@ class Publisher < ApplicationRecord
   has_many :packages, dependent: false
   has_many :reports, dependent: false
 
+  # API applications
+  has_many :oauth_applications, as: :owner, dependent: :delete_all, inverse_of: :owner
+
   # Validations
   # ----------------------------------------------------------------------------
   validates :name,  presence: true

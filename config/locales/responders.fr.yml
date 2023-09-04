@@ -333,3 +333,36 @@ fr:
             title:        "La mise à jour a été lancée en arrière-plan."
             description:  "Les données seront disponibles dans quelques minutes."
             delay:        3000
+
+    oauth_applications:
+      create:
+        notice:
+          type:         "success"
+          title:        "Une nouvelle application a été ajoutée avec succés."
+          delay:        3000
+
+      destroy:
+        notice:
+          type:         "success"
+          title:        "L'application a été supprimée."
+          description:  "Toutes les données seront définitivement supprimées dans un délai de 30 jours."
+          delay:        10000
+
+      destroy_all:
+        notice:
+          type:         "success"
+          title:        "Les applications sélectionnées ont été supprimées."
+          description:  "Toutes les données seront définitivement supprimées dans un délai de 30 jours."
+          delay:        10000
+
+      undiscard:
+        notice:
+          type:         "cancel"
+          title:        "La suppression de l'application a été annulée."
+          delay:        3000
+
+      undiscard_all:
+        notice:
+          type:         "cancel"
+          title:        "La suppression des applications sélectionnées a été annulée."
+          delay:        3000

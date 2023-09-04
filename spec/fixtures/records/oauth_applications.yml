@@ -1,0 +1,12 @@
+test_app:
+  name:         Test Oauth Application
+  owner:        fiscalite_territoire (Publisher)
+  uid:          a4OLndHolY47Ej9yThpTbFjBYSy2xuQhJeGqHnhg11A
+  secret:       -qtVXvoADkOtW1Lt9pVHuHswEQP46i4Mo6c4t87cX9a
+
+redirect_uri_app:
+  name:         Oauth Application with URI
+  owner:        fiscalite_territoire (Publisher)
+  uid:          a4OLndHolY47Ej9yThpTbFjBYSy2xuQhJeGqHnhg11B
+  secret:       -qtVXvoADkOtW1Lt9pVHuHswEQP46i4Mo6c4t87cX9b
+  redirect_uri: https://test-app.com

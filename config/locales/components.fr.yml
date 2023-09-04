@@ -36,3 +36,7 @@ fr:
       user:
         singular: "utilisateur sélectionné"
         plural:   "utilisateurs sélectionnés"
+
+      oauth_application:
+        singular: "application sélectionnée"
+        plural:   "applications sélectionnées"

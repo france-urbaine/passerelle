@@ -1,0 +1,25 @@
+= template_modal_component(referrer: @referrer) do |template|
+  - template.with_modal do |modal|
+    - modal.with_header do
+      - if @oauth_application.new_record?
+        | Création d'une nouvelle application
+      - else
+        | Modification de l'application
+
+    - modal.with_form(model: @oauth_application, url: form_url) do |form|
+      - modal.with_hidden_field :redirect, redirection_path
+
+      = form.block :name do
+        = form.label :name
+        = form.text_field :name, required: true
+
+      = form.block :redirect_uri do
+        = form.label :redirect_uri
+        = form.text_field :redirect_uri
+
+      = form.block :scopes do
+        = form.label :scopes
+        = form.text_field :scopes
+
+    - modal.with_submit_action "Enregistrer"
+    - modal.with_close_action "Annuler"

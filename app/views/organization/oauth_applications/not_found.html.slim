@@ -1,0 +1,6 @@
+= template_not_found_component(@model_not_found, referrer: @referrer_path) do |template|
+  - template.with_breadcrumbs do |breadcrumbs|
+    - breadcrumbs.with_path "Mon organisation"
+    - breadcrumbs.with_path "Applications", organization_oauth_applications_path
+
+  - template.with_action "Consulter les applications existantes", organization_oauth_applications_path, icon: "magnifying-glass"

@@ -1,19 +1,20 @@
 fr:
   activerecord:
     models:
-      report:       Signalement
-      package:      Paquet
-      dossier:      Dossier
-      publisher:    Éditeur
-      ddfip:        DDFIP
-      dgfip:        DGFIP
-      office:       Guichet
-      collectivity: Collectivité
-      user:         Utilisateur
-      commune:      Commune
-      epci:         EPCI
-      departement:  Département
-      region:       Région
+      report:            Signalement
+      package:           Paquet
+      dossier:           Dossier
+      publisher:         Éditeur
+      ddfip:             DDFIP
+      dgfip:             DGFIP
+      office:            Guichet
+      collectivity:      Collectivité
+      user:              Utilisateur
+      commune:           Commune
+      epci:              EPCI
+      departement:       Département
+      region:            Région
+      oauth_application: Application
 
     attributes:
       package:
@@ -118,6 +119,13 @@ fr:
         name:             Nom de la région
         code_region:      Code INSEE de la région
         qualified_name:   Nom qualifié (Région de ?)
+
+      oauth_application:
+        name:         Nom de l'application
+        redirect_uri: URI de redirection
+        uid:          Client ID
+        secret:       Secret
+
 
     errors:
       models:
@@ -372,6 +380,18 @@ fr:
               blank:     Un numéro de region est requis
               invalid:   Ce numéro de region n'est pas valide
               taken:     Ce numéro de région est déjà attribué
+
+        oauth_application:
+          attributes:
+            redirect_uri:
+              fragment_present: L'URI ne peut contenir un fragment.
+              invalid_uri: L'URI doit être valide.'
+              unspecified_scheme: L'URI doit spécifier un schéma.
+              relative_uri: L'URI doit être absolue.
+              secured_uri: L'URI doit être une URI HTTP/SSL.
+              forbidden_uri: Cette URI est interdit par le serveur.
+            scopes:
+              not_match_configured: Ces scopes ne correspondent pas à la configuration du serveur.
 
     default_values:
       dgfip:

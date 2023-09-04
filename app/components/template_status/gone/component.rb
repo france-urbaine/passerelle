@@ -73,6 +73,8 @@ module TemplateStatus
           "Ce signalement est en cours de suppression."
         in [Package]
           "Ce paquet est en cours de suppression."
+        in [OauthApplication]
+          "Cette application est en cours de suppression."
         else
           "Cette ressource est en cours de suppression."
         end

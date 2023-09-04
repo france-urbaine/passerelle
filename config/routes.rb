@@ -124,6 +124,8 @@ Rails.application.routes.draw do
         end
       end
 
+      resources :oauth_applications, concerns: %i[removable removable_collection]
+
       resources :users, concerns: %i[removable removable_collection], path: "/utilisateurs"
     end
 
