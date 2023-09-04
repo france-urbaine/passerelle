@@ -88,13 +88,11 @@ FactoryBot.define do
       end
 
       collectivity { association(:collectivity, publisher: publisher) }
-      with_reports
     end
 
     trait :packed_through_api do
       publisher    { association(:publisher) }
       collectivity { association(:collectivity, publisher: publisher) }
-      with_reports
     end
 
     trait :packed_for_ddfip do

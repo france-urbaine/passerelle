@@ -95,7 +95,7 @@ RSpec.describe "PackagesController#index" do
       let(:ddfip) { create(:ddfip) }
       let(:packages) do
         [
-          create(:package, :packed_for_ddfip,     ddfip: ddfip),
+          create(:package, :packed_for_ddfip, ddfip: ddfip),
           create(:package, :transmitted_to_ddfip, ddfip: ddfip),
           create(:package, :transmitted_to_ddfip)
         ]

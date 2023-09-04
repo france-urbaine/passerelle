@@ -55,7 +55,7 @@ RSpec.describe "Packages::Reports" do
     end
 
     context "when package has been transmitted to current user DDFIP" do
-      let(:package) { create(:package, :transmitted_to_ddfip, :with_reports, ddfip: current_user.organization) }
+      let(:package) { create(:package, :transmitted_to_ddfip, ddfip: current_user.organization) }
 
       it_behaves_like "it denies access to DDFIP user"
       it_behaves_like "it allows access to DDFIP admin"
