@@ -64,7 +64,7 @@ RSpec.describe Views::Reports::ListComponent, type: :component do
     end
 
     it "allows to not render search form" do
-      render_inline described_class.new(Report.all, pagy, searchable: false)
+      render_inline described_class.new(Report.all, pagy, dashboard: true)
 
       expect(page).not_to have_selector("form.search")
     end
@@ -80,7 +80,7 @@ RSpec.describe Views::Reports::ListComponent, type: :component do
     end
 
     it "allows to not render sort links" do
-      render_inline described_class.new(Report.all, pagy, searchable: false)
+      render_inline described_class.new(Report.all, pagy, dashboard: true)
 
       expect(page).to have_selector(".datatable table") do |table|
         expect(table).to have_selector("th", text: "Reference") do |row|

@@ -6,7 +6,7 @@
     - if allowed_to?(:create?, Report, with: ReportPolicy)
       - breadcrumbs.with_action "Ajouter un signalement", new_report_path, icon: "plus", modal: true, primary: true
 
-  = render Views::Reports::ListComponent.new(@reports, @pagy, searchable: true) do |view|
+  = render Views::Reports::ListComponent.new(@reports, @pagy) do |view|
       - view.with_column(:reference)
       - case current_user.organization_type
       - when "Collectivity"

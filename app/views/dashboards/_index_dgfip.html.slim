@@ -14,7 +14,7 @@ h2.subheader
   = icon_component("rectangle-stack", "Nouvelle section")
   | Signalements transmis
 
-= render Views::Reports::ListComponent.new(@reports.includes(:package).transmitted.order('packages.transmitted_at DESC'), searchable: false) do |view|
+= render Views::Reports::ListComponent.new(@reports.includes(:package).transmitted.order('packages.transmitted_at DESC'), dashboard: true) do |view|
   - view.with_column(:reference)
   - view.with_column(:package)
   - view.with_column(:collectivity)

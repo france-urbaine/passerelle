@@ -17,7 +17,7 @@ h2.subheader
   = icon_component("rectangle-stack", "Nouvelle section")
   | Signalements à compléter/transmettre
 
-= render Views::Reports::ListComponent.new(@reports.packing.order(created_at: :desc), searchable: false) do |view|
+= render Views::Reports::ListComponent.new(@reports.packing.order(created_at: :desc), dashboard: true) do |view|
   - view.with_column(:reference)
   - view.with_column(:package)
   - view.with_column(:form_type)
@@ -33,7 +33,7 @@ h2.subheader
   = icon_component("server-stack", "Nouvelle section")
   | Derniers signalements traités
 
-= render Views::Reports::ListComponent.new(@reports.includes(:package).updated_by_ddfip.order('packages.approved_at DESC, packages.rejected_at DESC, packages.discarded_at DESC'), searchable: false) do |view|
+= render Views::Reports::ListComponent.new(@reports.includes(:package).updated_by_ddfip.order('packages.approved_at DESC, packages.rejected_at DESC, packages.discarded_at DESC'), dashboard: false) do |view|
   - view.with_column(:reference)
   - view.with_column(:package)
   - view.with_column(:form_type)
