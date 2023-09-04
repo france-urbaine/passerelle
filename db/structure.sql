@@ -2918,13 +2918,14 @@ CREATE TABLE public.oauth_applications (
     name character varying NOT NULL,
     uid character varying NOT NULL,
     secret character varying NOT NULL,
+    owner_id uuid,
+    owner_type character varying,
     redirect_uri text,
     scopes character varying DEFAULT ''::character varying NOT NULL,
     confidential boolean DEFAULT true NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
-    owner_id uuid,
-    owner_type character varying
+    discarded_at timestamp(6) without time zone
 );
 
 
@@ -4046,7 +4047,6 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230829153550'),
 ('20230830170839'),
 ('20230901084754'),
-('20230904105215'),
-('20230904112328');
+('20230904105215');
 
 
