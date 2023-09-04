@@ -254,7 +254,7 @@ RSpec.describe DGFIP do
       describe "#reports_approved_count" do
         let(:report) { create(:report, :approved) }
 
-        it "changes on report creation", :focus do
+        it "changes on report creation" do
           expect { report }
             .to change { dgfip.reload.reports_approved_count }.from(0).to(1)
         end

@@ -21,7 +21,7 @@ module Views
         @reports     = reports
         @pagy        = pagy
         @parent      = parent
-        @dashboard  = dashboard
+        @dashboard   = dashboard
         super()
       end
 
