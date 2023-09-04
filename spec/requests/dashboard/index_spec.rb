@@ -166,5 +166,34 @@ RSpec.describe "DashboardsController#index" do
         end
       end
     end
+
+    context "when signed in as a DGFIP" do
+      let(:ddfip) { create(:dgfip) }
+      let(:reports) do
+        [
+          create(:report, :reported_for_ddfip, collectivity: collectivities[0], publisher: publisher),
+          create(:report, :transmitted_to_ddfip, collectivity: collectivities[0], publisher: publisher),
+          create(:report, :package_approved_by_ddfip, collectivity: collectivities[0], publisher: publisher),
+          create(:report, :transmitted_to_ddfip, collectivity: collectivities[0], publisher: publisher, package_sandbox: true)
+        ]
+      end
+
+      before { sign_in_as(:organization_admin, organization: ddfip) }
+
+      context "when requesting HTML" do
+        it { expect(response).to have_http_status(:success) }
+        it { expect(response).to have_content_type(:html) }
+        it { expect(response).to have_html_body }
+
+        it "returns only accessible reports" do
+          aggregate_failures do
+            expect(response.parsed_body).not_to include(CGI.escape_html(reports[0].reference))
+            expect(response.parsed_body).to     include(CGI.escape_html(reports[1].reference))
+            expect(response.parsed_body).to     include(CGI.escape_html(reports[2].reference))
+            expect(response.parsed_body).not_to include(CGI.escape_html(reports[3].reference))
+          end
+        end
+      end
+    end
   end
 end
