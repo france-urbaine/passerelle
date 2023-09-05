@@ -25,25 +25,25 @@
     - row.with_checkbox "Sélectionner ce guichet", described_by: :name, disabled: !allowed_to_remove_all?
 
     - if allowed_to_edit?(office)
-      - row.with_action "Modifier ce guichet", edit_path(office), icon: "pencil-square", modal: true
+      - row.with_action "Modifier ce guichet", polymorphic_path([:edit, @namespace, office]), icon: "pencil-square", modal: true
 
     - if allowed_to_remove?(office)
-      - row.with_action "Supprimer ce guichet", remove_path(office), icon: "trash", modal: true
+      - row.with_action "Supprimer ce guichet", polymorphic_path([:remove, @namespace, office]), icon: "trash", modal: true
 
     - row.with_column(:name) do
       - if allowed_to_show?(office)
-        = link_to office.name, show_path(office), data: { turbo_frame: "_top" }
+        = link_to office.name, polymorphic_path([@namespace, office]), data: { turbo_frame: "_top" }
       - else
         = office.name
 
     - row.with_column(:ddfip) do
       - if allowed_to_show_ddfip?(office.ddfip)
-        = link_to office.ddfip.name, show_ddfip_path(office.ddfip), data: { turbo_frame: "_top" }
+        = link_to office.ddfip.name, polymorphic_path([@namespace, office.ddfip]), data: { turbo_frame: "_top" }
       - else
         = office.ddfip.name
 
     - row.with_column(:competence) do
-      = short_list(office.competences, humanize: true) { |value| t(value, scope: "enum.competence") }
+      = helpers.short_list(office.competences, humanize: true) { |value| t(value, scope: "enum.competence") }
 
     - row.with_column(:users_count) do
       = number_with_delimiter(office.users_count) if office.users_count.positive?
