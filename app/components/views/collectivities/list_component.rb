@@ -44,8 +44,8 @@ module Views
         @parent
       end
 
-      def namespace_module
-        @namespace_module ||= @namespace.to_s.classify.constantize
+      def authorization_namespace
+        @namespace.to_s.classify.constantize unless @namespace == :territories
       end
 
       # Disable these layout cops to allow more comparable lines
@@ -56,21 +56,21 @@ module Views
       def allowed_to_show?(collectivity)
         case @namespace
         when :territories                  then allowed_to?(:show?, collectivity, with: Admin::CollectivityPolicy)
-        else                                    allowed_to?(:show?, collectivity, with: namespace_module::CollectivityPolicy)
+        else                                    allowed_to?(:show?, collectivity)
         end
       end
 
       def allowed_to_edit?(collectivity)
         case @namespace
         when :territories                  then false
-        else                                    allowed_to?(:edit?, collectivity, with: namespace_module::CollectivityPolicy)
+        else                                    allowed_to?(:edit?, collectivity)
         end
       end
 
       def allowed_to_remove?(collectivity)
         case @namespace
         when :territories                  then false
-        else                                    allowed_to?(:remove?, collectivity, with: namespace_module::CollectivityPolicy)
+        else                                    allowed_to?(:remove?, collectivity)
         end
       end
 
@@ -78,7 +78,7 @@ module Views
         case @namespace
         when :admin                        then [DDFIP, Office].exclude? @parent.class
         when :territories                  then false
-        else                                    allowed_to?(:destroy_all?, Collectivity, with: namespace_module::CollectivityPolicy)
+        else                                    allowed_to?(:destroy_all?, Collectivity)
         end
       end
 
@@ -107,7 +107,7 @@ module Views
         case @namespace
         when :organization                 then @parent.instance_of?(Office) ? false : allowed_to?(:show?, Publisher, with: Admin::PublisherPolicy)
         when :territories                  then allowed_to?(:show?, Publisher, with: Admin::PublisherPolicy)
-        else                                    allowed_to?(:show?, Publisher, with: namespace_module::PublisherPolicy)
+        else                                    allowed_to?(:show?, Publisher)
         end
       end
 
