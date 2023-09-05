@@ -50,7 +50,7 @@
     - row.with_column(:epci) do |column|
       - if commune.epci
         - column.with_span do
-          = display_siren(commune.siren_epci)
+          = helpers.display_siren(commune.siren_epci)
 
         - column.with_span do
           - if allowed_to_show_epci?(commune.epci)
