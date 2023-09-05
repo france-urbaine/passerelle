@@ -73,26 +73,6 @@ module Views
       def allowed_to_show_epci?(epci)
         allowed_to?(:show?, epci, with: ::Territories::EPCIPolicy)
       end
-
-      def show_path(commune)
-        polymorphic_path([:territories, commune])
-      end
-
-      def edit_path(commune)
-        polymorphic_path([:edit, :territories, commune])
-      end
-
-      def remove_path(commune)
-        polymorphic_path([:remove, @namespace, @parent, commune])
-      end
-
-      def show_departement_path(departement)
-        polymorphic_path([:territories, departement])
-      end
-
-      def show_epci_path(epci)
-        polymorphic_path([:territories, epci])
-      end
       #
       # rubocop:enable Layout/LineLength
       #

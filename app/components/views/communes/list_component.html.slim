@@ -21,10 +21,10 @@
     - row.with_checkbox "Sélectionner cette commune", described_by: :name, disabled: !allowed_to_remove_all_from_office?
 
     - if allowed_to_edit?(commune)
-      - row.with_action "Modifier cette commune", edit_path(commune), icon: "pencil-square", modal: true
+      - row.with_action "Modifier cette commune", polymorphic_path([:edit, :territories, commune]), icon: "pencil-square", modal: true
 
     - if allowed_to_remove_from_office?(commune)
-      - row.with_action "Exclure cette commune du guichet", remove_path(commune), icon: "arrow-right-on-rectangle", modal: true
+      - row.with_action "Exclure cette commune du guichet", polymorphic_path([:remove, @namespace, @parent, commune]), icon: "arrow-right-on-rectangle", modal: true
 
     - row.with_column(:name) do |column|
       - column.with_span do
@@ -32,7 +32,7 @@
 
       - column.with_span do
         - if allowed_to_show?(commune)
-          = link_to commune.name, show_path(commune), data: { turbo_frame: "_top" }
+          = link_to commune.name, polymorphic_path([:territories, commune]), data: { turbo_frame: "_top" }
         - else
             = commune.name
 
@@ -43,7 +43,7 @@
 
         - column.with_span do
           - if allowed_to_show_departement?(commune.departement)
-            = link_to commune.departement.name, show_departement_path(commune.departement), data: { turbo_frame: "_top" }
+            = link_to commune.departement.name, polymorphic_path([:territories, commune.departement]), data: { turbo_frame: "_top" }
           - else
             = commune.departement.name
 
@@ -54,7 +54,7 @@
 
         - column.with_span do
           - if allowed_to_show_epci?(commune.epci)
-            = link_to commune.epci.name, show_epci_path(commune.epci), data: { turbo_frame: "_top" }
+            = link_to commune.epci.name, polymorphic_path([:territories, commune.epci]), data: { turbo_frame: "_top" }
           - else
             = commune.epci.name
 
