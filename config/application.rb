@@ -40,6 +40,9 @@ module Fiscahub
     # Autoload extra classes defined in lib/extra
     config.autoload_paths << "#{root}/lib/extras"
 
+    # Use a real queuing backend for Active Job
+    config.active_job.queue_adapter = :sidekiq
+
     DEFAULT_COMMUNES_URL = "https://www.insee.fr/fr/statistiques/fichier/2028028/table-appartenance-geo-communes-23.zip"
     DEFAULT_EPCIS_URL    = "https://www.insee.fr/fr/statistiques/fichier/2510634/Intercommunalite_Metropole_au_01-01-2023.zip"
   end
