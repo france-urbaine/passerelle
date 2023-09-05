@@ -40,7 +40,7 @@
         = collectivity.name
 
     - row.with_column(:siren) do
-      = display_siren(collectivity.siren)
+      = helpers.display_siren(collectivity.siren)
 
     - row.with_column(:publisher) do
       - if collectivity.publisher&.kept?
