@@ -12,7 +12,7 @@ module AuthenticateWithOtpTwoFactor
     if user_params.include?(:otp_attempt) && session[:otp_user_id]
       authenticate_with_two_factor_via_otp(user)
     elsif user&.valid_password?(user_params[:password])
-      Users::Mailer.two_factor_sign_in_code(user).deliver_now if user.send_otp_code_by_email?
+      Users::Mailer.two_factor_sign_in_code(user).deliver_later if user.send_otp_code_by_email?
       prompt_for_two_factor(user)
     end
   end

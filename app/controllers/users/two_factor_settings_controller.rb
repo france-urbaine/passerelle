@@ -27,7 +27,7 @@ module Users
       @user.otp_method = params[:otp_method] if params[:otp_method]
       @user.otp_method = "2fa" unless @user.organization&.allow_2fa_via_email?
 
-      Users::Mailer.two_factor_setup_code(@user).deliver_now if @user.otp_method == "email"
+      Users::Mailer.two_factor_setup_code(@user).deliver_later if @user.otp_method == "email"
     end
 
     def update

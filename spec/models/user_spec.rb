@@ -95,14 +95,22 @@ RSpec.describe User do
   # Registration process
   # ----------------------------------------------------------------------------
   describe "registration process" do
-    let!(:user) { create(:user, :unconfirmed, skip_confirmation_notification: false) }
+    let(:user) { create(:user, :unconfirmed, skip_confirmation_notification: false) }
 
     it { expect(user).not_to be_invited }
     it { expect(user).not_to be_confirmed }
     it { expect(user).not_to be_active_for_authentication }
 
-    it { is_expected.to have_sent_emails.by(1) }
-    it { is_expected.to have_sent_email.to(user.email).with_subject("Votre inscription sur FiscaHub") }
+    it { expect { user }.not_to have_sent_emails }
+    it { expect { user }.to have_enqueued_job.once }
+    it { expect { user }.to have_enqueued_job(ActionMailer::MailDeliveryJob) }
+
+    describe "asynchronous deliveries" do
+      before { user }
+
+      it { expect { perform_enqueued_jobs }.to have_sent_emails.by(1) }
+      it { expect { perform_enqueued_jobs }.to have_sent_email.to(user.email).with_subject("Votre inscription sur FiscaHub") }
+    end
   end
 
   # Confirmation process
@@ -119,10 +127,12 @@ RSpec.describe User do
   # ----------------------------------------------------------------------------
   describe "invitation process" do
     describe "#invite" do
-      let!(:user)   { build(:user, :unconfirmed, password: nil, skip_confirmation_notification: false) }
-      let!(:author) { build(:user) }
-
-      before { user.invite(by: author) }
+      let(:author) { build(:user) }
+      let(:user) do
+        user = build(:user, :unconfirmed, password: nil, skip_confirmation_notification: false)
+        user.invite(by: author)
+        user
+      end
 
       it { expect(user).to     be_invited }
       it { expect(user).not_to be_confirmed }
@@ -133,19 +143,30 @@ RSpec.describe User do
       it { expect(user.invited_at).to be_present }
       it { expect(user.inviter)   .to eq(author) }
 
-      it { is_expected.not_to have_sent_emails }
+      it { expect { user }.not_to have_sent_emails }
+      it { expect { user }.not_to have_enqueued_job }
 
-      it { expect { user.save }.to have_sent_emails.by(1) }
-      it { expect { user.save }.to have_sent_email.to(user.email).with_subject("Votre inscription sur FiscaHub") }
+      it { expect { user.save }.not_to have_sent_emails }
+      it { expect { user.save }.to have_enqueued_job.once }
+      it { expect { user.save }.to have_enqueued_job(ActionMailer::MailDeliveryJob) }
+
+      describe "asynchronous deliveries" do
+        before { user.save }
+
+        it { expect { perform_enqueued_jobs }.to have_sent_emails.by(1) }
+        it { expect { perform_enqueued_jobs }.to have_sent_email.to(user.email).with_subject("Votre inscription sur FiscaHub") }
+      end
     end
 
     describe "#accept_invitation" do
-      let!(:user) { create(:user, :invited, :unconfirmed) }
+      let(:user) { create(:user, :invited, :unconfirmed) }
 
       it { expect { user.accept_invitation }.to change(user, :invited?).to(false) }
       it { expect { user.accept_invitation }.to change(user, :confirmed?).to(true) }
       it { expect { user.accept_invitation }.to change(user, :active_for_authentication?).to(true) }
+
       it { expect { user.accept_invitation }.not_to have_sent_emails }
+      it { expect { user.accept_invitation }.not_to have_enqueued_job }
     end
 
     describe ".find_by_invitation_token" do

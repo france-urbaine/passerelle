@@ -103,9 +103,12 @@ RSpec.configure do |config|
   config.include ViewComponent::TestHelpers, type: :component
   config.include Capybara::RSpecMatchers, type: :component
   config.include ActionView::Helpers::TagHelper, type: :component
+  config.include ActiveJob::TestHelper
 
   config.after do
     ActionMailer::Base.deliveries.clear
+    ActiveJob::Base.queue_adapter.enqueued_jobs.clear
+    ActiveJob::Base.queue_adapter.performed_jobs.clear
     Faker::UniqueGenerator.clear
   end
 
