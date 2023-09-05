@@ -29,6 +29,9 @@ class OauthApplication < ApplicationRecord
 
   # Scopes
   # ----------------------------------------------------------------------------
+  # Add default scope to restrict token creation
+  default_scope { kept }
+
   scope :owned_by, ->(organization) { where(owner: organization) }
 
   scope :search, lambda { |input|

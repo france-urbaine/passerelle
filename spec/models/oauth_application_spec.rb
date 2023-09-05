@@ -26,6 +26,17 @@ RSpec.describe OauthApplication do
         }.to perform_sql_query(<<~SQL.squish)
           SELECT "oauth_applications".*
           FROM   "oauth_applications"
+          WHERE  "oauth_applications"."discarded_at" IS NULL
+          AND    (LOWER(UNACCENT("oauth_applications"."name")) LIKE LOWER(UNACCENT('%Hello%')))
+        SQL
+      end
+
+      it "searches for OauthApplications with discarded with all criteria" do
+        expect {
+          described_class.with_discarded.search("Hello").load
+        }.to perform_sql_query(<<~SQL.squish)
+          SELECT "oauth_applications".*
+          FROM   "oauth_applications"
           WHERE  (LOWER(UNACCENT("oauth_applications"."name")) LIKE LOWER(UNACCENT('%Hello%')))
         SQL
       end
@@ -36,7 +47,8 @@ RSpec.describe OauthApplication do
         }.to perform_sql_query(<<~SQL.squish)
           SELECT "oauth_applications".*
           FROM   "oauth_applications"
-          WHERE  (LOWER(UNACCENT("oauth_applications"."name")) LIKE LOWER(UNACCENT('%Hello%')))
+          WHERE  "oauth_applications"."discarded_at" IS NULL
+          AND    (LOWER(UNACCENT("oauth_applications"."name")) LIKE LOWER(UNACCENT('%Hello%')))
         SQL
       end
     end
@@ -48,6 +60,7 @@ RSpec.describe OauthApplication do
         }.to perform_sql_query(<<~SQL)
           SELECT   "oauth_applications".*
           FROM     "oauth_applications"
+          WHERE    "oauth_applications"."discarded_at" IS NULL
           ORDER BY UNACCENT("oauth_applications"."name") ASC,
                    "oauth_applications"."created_at" ASC
         SQL
@@ -59,6 +72,7 @@ RSpec.describe OauthApplication do
         }.to perform_sql_query(<<~SQL)
           SELECT   "oauth_applications".*
           FROM     "oauth_applications"
+          WHERE    "oauth_applications"."discarded_at" IS NULL
           ORDER BY UNACCENT("oauth_applications"."name") DESC,
                    "oauth_applications"."created_at" DESC
         SQL
@@ -72,6 +86,7 @@ RSpec.describe OauthApplication do
         }.to perform_sql_query(<<~SQL)
           SELECT   "oauth_applications".*
           FROM     "oauth_applications"
+          WHERE    "oauth_applications"."discarded_at" IS NULL
           ORDER BY ts_rank_cd(to_tsvector('french', "oauth_applications"."name"), to_tsquery('french', 'Hello')) DESC,
                    "oauth_applications"."created_at" ASC
         SQL
