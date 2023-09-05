@@ -59,11 +59,4 @@
 
     .description-list__row
       dt Priorité
-      dd
-        - case @report.priority
-        - when "low"
-          = icon_component("chart-bar", "Basse", class: "low-priority-icon")
-        - when "medium"
-          = icon_component("chart-bar", "Moyenne", class: "medium-priority-icon")
-        - when "high"
-          = icon_component("chart-bar", "Haute", class: "high-priority-icon")
+      dd= priority_icon_component @report.priority

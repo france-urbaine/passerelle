@@ -2,7 +2,7 @@ form.search( autocomplete="off" data-turbo-frame=turbo_frame action=request.path
   label.form-block.form-block--no-margin
     .form-block__label--hiden= label
     .form-block__input
-      .form-block__input-icon= icon_component("search")
+      .form-block__input-icon= icon_component("magnifying-glass")
       input( type="search" name="search" value=params[:search] placeholder=label )
 
   = helpers.hidden_param_input(:order)

@@ -3,6 +3,6 @@
 
   - datatable.each_row do |row, commune|
     - row.with_action "Modifier cette commune",  "/rails/view_components/samples/link/default", icon: "pencil-square"
-    - row.with_action "Supprimer cette commune", "/rails/view_components/samples/link/modal", icon: "search", modal: true
+    - row.with_action "Supprimer cette commune", "/rails/view_components/samples/link/modal", icon: "magnifying-glass", modal: true
 
     - row.with_column(:name) { commune.name }

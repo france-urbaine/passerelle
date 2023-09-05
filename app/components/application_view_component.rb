@@ -8,7 +8,7 @@ class ApplicationViewComponent < ViewComponent::Base
   delegate :current_user, :signed_in?, to: :helpers
 
   # Delegate few helpers (to convert to component)
-  delegate :authorized_link_to, :icon_component, to: :helpers
+  delegate :authorized_link_to, to: :helpers
 
   # Setup policies context
   authorize :user, through: :current_user
