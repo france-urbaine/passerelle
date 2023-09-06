@@ -12,31 +12,6 @@ RSpec.describe "DashboardsController#index" do
   let(:params)  { |e| e.metadata[:params] }
   let(:xhr)     { |e| e.metadata[:xhr] }
 
-  let!(:departement) { create(:departement) }
-  let!(:communes)    { create_list(:commune, 2, departement: departement) }
-
-  let!(:publisher)   { create(:publisher, collectivities_count: 2, packages_transmitted_count: 3, reports_transmitted_count: 5) }
-
-  let!(:collectivities) do
-    [
-      create(:collectivity, publisher: publisher, territory: communes[0]),
-      create(:collectivity, publisher: publisher, territory: communes[1])
-    ]
-  end
-
-  let!(:reports) do
-    [
-      create(:report, :reported_through_web_ui, collectivity: collectivities[0], publisher: publisher),
-      create(:report, :reported_through_web_ui, collectivity: collectivities[1], publisher: publisher),
-      create(:report, :reported_through_api,    collectivity: collectivities[0], publisher: publisher),
-      create(:report, :transmitted_through_web_ui, collectivity: collectivities[0], publisher: publisher),
-      create(:report, :transmitted_through_web_ui, collectivity: collectivities[1], publisher: publisher),
-      create(:report, :transmitted_through_api,    collectivity: collectivities[0], publisher: publisher),
-      create(:report, :transmitted_through_api, :sandbox, collectivity: collectivities[0], publisher: publisher),
-      create(:report, :reported_through_web_ui, :discarded, collectivity: collectivities[0], publisher: publisher)
-    ]
-  end
-
   describe "authorizations" do
     it_behaves_like "it requires to be signed in in HTML"
     it_behaves_like "it responds with not acceptable in JSON when signed in"
@@ -50,12 +25,27 @@ RSpec.describe "DashboardsController#index" do
   end
 
   describe "responses" do
+    let!(:collectivities) { create_list(:collectivity, 2) }
+
     context "when signed in as a collectivity user" do
-      let!(:updated_by_ddfip_reports) do
+      let!(:included_reports) do
         [
-          create(:report, :approved, collectivity: collectivities[0], publisher: publisher),
-          create(:report, :rejected, collectivity: collectivities[0], publisher: publisher),
-          create(:report, :debated,  collectivity: collectivities[0], publisher: publisher)
+          create(:report, :approved, collectivity: collectivities[0]),
+          create(:report, :rejected, collectivity: collectivities[0]),
+          create(:report, :debated,  collectivity: collectivities[0]),
+          create(:report, :reported_through_web_ui, collectivity: collectivities[0])
+        ]
+      end
+
+      let!(:excluded_reports) do
+        [
+          create(:report, :approved, collectivity: collectivities[1]),
+          create(:report, :rejected, collectivity: collectivities[1]),
+          create(:report, :debated,  collectivity: collectivities[1]),
+          create(:report, :sandbox,  collectivity: collectivities[0]),
+          create(:report, :discarded, collectivity: collectivities[0]),
+          create(:report, :transmitted, collectivity: collectivities[0]),
+          create(:report, :reported_through_web_ui, collectivity: collectivities[1])
         ]
       end
 
@@ -68,17 +58,13 @@ RSpec.describe "DashboardsController#index" do
 
         it "returns only accessible reports" do
           aggregate_failures do
-            expect(response.parsed_body).to     include(CGI.escape_html(reports[0].reference))
-            expect(response.parsed_body).not_to include(CGI.escape_html(reports[1].reference))
-            expect(response.parsed_body).not_to include(CGI.escape_html(reports[2].reference))
-            expect(response.parsed_body).not_to include(CGI.escape_html(reports[3].reference))
-            expect(response.parsed_body).not_to include(CGI.escape_html(reports[4].reference))
-            expect(response.parsed_body).not_to include(CGI.escape_html(reports[5].reference))
-            expect(response.parsed_body).not_to include(CGI.escape_html(reports[6].reference))
-            expect(response.parsed_body).not_to include(CGI.escape_html(reports[7].reference))
-            expect(response.parsed_body).to include(CGI.escape_html(updated_by_ddfip_reports[0].reference))
-            expect(response.parsed_body).to include(CGI.escape_html(updated_by_ddfip_reports[1].reference))
-            expect(response.parsed_body).to include(CGI.escape_html(updated_by_ddfip_reports[2].reference))
+            excluded_reports.each do |report|
+              expect(response.parsed_body).not_to include(CGI.escape_html(report.reference))
+            end
+
+            included_reports.each do |report|
+              expect(response.parsed_body).to include(CGI.escape_html(report.reference))
+            end
           end
         end
       end
@@ -91,6 +77,8 @@ RSpec.describe "DashboardsController#index" do
     end
 
     context "when signed in as a publisher user" do
+      let!(:publisher)   { create(:publisher) }
+
       before { sign_in_as(organization: publisher) }
 
       context "when requesting HTML" do
@@ -101,27 +89,21 @@ RSpec.describe "DashboardsController#index" do
     end
 
     context "when signed in as a DDFIP user" do
-      let(:ddfip) { create(:ddfip, departement: departement) }
-      let(:reports) do
-        attributes = {
-          ddfip:        ddfip,
-          collectivity: collectivities[0],
-          publisher:    publisher,
-          form_type:    "evaluation_local_habitation"
-        }
-
+      let(:ddfip)            { create(:ddfip) }
+      let(:included_reports) { create_list(:report, 1, :package_approved_to_office, ddfip: ddfip) }
+      let(:excluded_reports) do
         [
-          create(:report, :transmitted_to_ddfip,      **attributes),
-          create(:report, :package_approved_by_ddfip, **attributes)
+          create(:report, :package_approved_to_office, :approved, ddfip: ddfip, commune: included_reports.first.commune, office: included_reports.first.commune.offices.first),
+          create(:report, :package_approved_to_office, :sandbox, ddfip: ddfip, commune: included_reports.first.commune, office: included_reports.first.commune.offices.first),
+          create(:report, :package_approved_to_office, :rejected, ddfip: ddfip, commune: included_reports.first.commune, office: included_reports.first.commune.offices.first),
+          create(:report, :package_approved_to_office, :debated, ddfip: ddfip, commune: included_reports.first.commune, office: included_reports.first.commune.offices.first),
+          create(:report, :package_approved_to_office, :discarded, ddfip: ddfip, commune: included_reports.first.commune, office: included_reports.first.commune.offices.first)
         ]
       end
 
       before do
         sign_in_as(organization: ddfip)
-        create(:office, :evaluation_local_habitation,
-          ddfip:       ddfip,
-          communes:    [communes[0]],
-          users:       [current_user])
+        create(:office_user, office: included_reports.first.commune.offices.first, user: current_user)
       end
 
       context "when requesting HTML" do
@@ -131,25 +113,27 @@ RSpec.describe "DashboardsController#index" do
 
         it "returns only accessible reports" do
           aggregate_failures do
-            expect(response.parsed_body).not_to include(CGI.escape_html(reports[0].reference))
-            expect(response.parsed_body).to include(CGI.escape_html(reports[1].reference))
+            excluded_reports.each do |report|
+              expect(response.parsed_body).not_to include(CGI.escape_html(report.reference))
+            end
+
+            included_reports.each do |report|
+              expect(response.parsed_body).to include(CGI.escape_html(report.reference))
+            end
           end
         end
       end
     end
 
     context "when signed in as a DDFIP admin" do
-      let(:ddfip) { create(:ddfip, departement: departement) }
-      let(:reports) do
-        [
-          create(:report, :reported_for_ddfip,   ddfip: ddfip, collectivity: collectivities[0], publisher: publisher),
-          create(:report, :transmitted_to_ddfip, ddfip: ddfip, collectivity: collectivities[0], publisher: publisher),
-          create(:report, :package_approved_by_ddfip, ddfip: ddfip, collectivity: collectivities[0], publisher: publisher),
-          create(:report, :transmitted_to_ddfip, ddfip: ddfip, collectivity: collectivities[0], publisher: publisher, package_sandbox: true)
-        ]
-      end
+      let(:ddfip)           { create(:ddfip) }
+      let(:included_report) { create(:report, :package_approved_to_office, ddfip: ddfip) }
+      let(:excluded_report) { create(:report, :package_approved_to_office, :approved, ddfip: ddfip, commune: included_report.commune, office: included_report.commune.offices.first) }
 
-      before { sign_in_as(:organization_admin, organization: ddfip) }
+      before do
+        sign_in_as(:organization_admin, organization: ddfip)
+        create(:office_user, office: included_report.commune.offices.first, user: current_user)
+      end
 
       context "when requesting HTML" do
         it { expect(response).to have_http_status(:success) }
@@ -158,27 +142,33 @@ RSpec.describe "DashboardsController#index" do
 
         it "returns only accessible reports" do
           aggregate_failures do
-            expect(response.parsed_body).not_to include(CGI.escape_html(reports[0].reference))
-            expect(response.parsed_body).to     include(CGI.escape_html(reports[1].reference))
-            expect(response.parsed_body).to     include(CGI.escape_html(reports[2].reference))
-            expect(response.parsed_body).not_to include(CGI.escape_html(reports[3].reference))
+            expect(response.parsed_body).to     include(CGI.escape_html(included_report.reference))
+            expect(response.parsed_body).not_to include(CGI.escape_html(excluded_report.reference))
           end
         end
       end
     end
 
     context "when signed in as a DGFIP" do
-      let(:ddfip) { create(:dgfip) }
-      let(:reports) do
+      let(:dgfip) { create(:dgfip) }
+      let!(:included_reports) do
         [
-          create(:report, :reported_for_ddfip, collectivity: collectivities[0], publisher: publisher),
-          create(:report, :transmitted_to_ddfip, collectivity: collectivities[0], publisher: publisher),
-          create(:report, :package_approved_by_ddfip, collectivity: collectivities[0], publisher: publisher),
-          create(:report, :transmitted_to_ddfip, collectivity: collectivities[0], publisher: publisher, package_sandbox: true)
+          create(:report, :transmitted),
+          create(:report, :approved),
+          create(:report, :rejected),
+          create(:report, :debated)
         ]
       end
 
-      before { sign_in_as(:organization_admin, organization: ddfip) }
+      let!(:excluded_reports) do
+        [
+          create(:report, :transmitted, :sandbox),
+          create(:report, :transmitted, package_rejected: true),
+          create(:report, :completed)
+        ]
+      end
+
+      before { sign_in_as(organization: dgfip) }
 
       context "when requesting HTML" do
         it { expect(response).to have_http_status(:success) }
@@ -187,10 +177,13 @@ RSpec.describe "DashboardsController#index" do
 
         it "returns only accessible reports" do
           aggregate_failures do
-            expect(response.parsed_body).not_to include(CGI.escape_html(reports[0].reference))
-            expect(response.parsed_body).to     include(CGI.escape_html(reports[1].reference))
-            expect(response.parsed_body).to     include(CGI.escape_html(reports[2].reference))
-            expect(response.parsed_body).not_to include(CGI.escape_html(reports[3].reference))
+            excluded_reports.each do |report|
+              expect(response.parsed_body).not_to include(CGI.escape_html(report.reference))
+            end
+
+            included_reports.each do |report|
+              expect(response.parsed_body).to include(CGI.escape_html(report.reference))
+            end
           end
         end
       end
