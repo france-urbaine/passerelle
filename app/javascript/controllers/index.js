@@ -44,6 +44,12 @@ application.register("strength-test", StrenghTestController)
 import SwitchController from "./components/switch_controller"
 application.register("switch", SwitchController)
 
+import CopyTextController from "./components/copy_text_controller"
+application.register("copy-text", CopyTextController)
+
+import ToggleClassController from "./components/toggle_class_controller"
+application.register("toggle-class", ToggleClassController)
+
 // Forms
 // -----------------------------------------------------------------------------
 import DirectUploadFieldController from "./forms/direct_upload_field_controller"
