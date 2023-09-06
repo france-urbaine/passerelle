@@ -6,15 +6,28 @@
 module AuthenticateWithOtpTwoFactor
   extend ActiveSupport::Concern
 
+  # Authenticate user with 2FA
+  #
+  # First step is to validate user credentials (email/password),
+  # cache the user's ID and then render the 2FA prompt.
+  #
+  # Second step is to validate OTP attempt and finally log in user.
+  #
   def authenticate_with_two_factor
-    user = self.resource = find_user_for_authentication
-
     if user_params.include?(:otp_attempt) && session[:otp_user_id]
+      user = self.resource = find_user_for_authentication
       authenticate_with_two_factor_via_otp(user)
-    elsif user&.valid_password?(user_params[:password])
-      Users::Mailer.two_factor_sign_in_code(user).deliver_later if user.send_otp_code_by_email?
-      prompt_for_two_factor(user)
+      return
     end
+
+    # The user request a first step authentication
+    # Clear any lingering user data from previous login attempts.
+    clear_two_factor_attempt!
+    user = self.resource = find_user_for_authentication
+    return unless user&.valid_password?(user_params[:password])
+
+    Users::Mailer.two_factor_sign_in_code(user).deliver_later if user.send_otp_code_by_email?
+    prompt_for_two_factor(user)
   end
 
   private
@@ -25,9 +38,6 @@ module AuthenticateWithOtpTwoFactor
   # The user must have been authenticated with a valid login and password
   # before calling this method!
   #
-  # user - User record
-  #
-  # Returns nil
   def prompt_for_two_factor(user)
     # Set @user for Devise views
     @user = user
@@ -79,7 +89,7 @@ module AuthenticateWithOtpTwoFactor
 
   def find_user
     if session[:otp_user_id]
-      User.find(session[:otp_user_id])
+      User.find_by(id: session[:otp_user_id])
     elsif user_params[:email]
       User.find_for_authentication(email: user_params[:email])
     end
