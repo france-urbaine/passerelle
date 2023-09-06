@@ -174,14 +174,14 @@ RSpec.describe "Office communes in admin" do
     expect(page).to     have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
   end
 
-  it "excludes an user from the office without deleting it" do
+  it "excludes a commune from the office without deleting it" do
     visit admin_office_path(pelp_bayonne)
 
     # A table of communes should be present
     # with a button to exclude them
     #
     within :table_row, { "Commune" => "64102" }, text: "Bayonne" do
-      click_on "Exclure cet utilisateur du guichet"
+      click_on "Exclure cette commune du guichet"
     end
 
     # A confirmation dialog should appear
