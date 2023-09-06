@@ -29,11 +29,3 @@
           code
             span=@oauth_application.secret
             = copy_button_component @oauth_application.secret
-
-      .description-list__row
-        dt URI de redirection
-        dd= @oauth_application.redirect_uri
-
-      .description-list__row
-        dt Scopes
-        dd= list(@oauth_application.scopes.to_a)

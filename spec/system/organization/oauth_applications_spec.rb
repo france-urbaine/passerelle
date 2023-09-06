@@ -45,7 +45,6 @@ RSpec.describe "OauthApplications managed by current organization" do
     #
     within "[role=dialog]", text: "Création d'une nouvelle application" do |dialog|
       expect(dialog).to     have_field("Nom de l'application", with: nil)
-      expect(dialog).to     have_field("URI de redirection", with: nil)
 
       fill_in "Nom", with: "Nouvelle App"
 

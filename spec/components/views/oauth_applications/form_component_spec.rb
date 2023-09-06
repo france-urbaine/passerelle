@@ -11,8 +11,6 @@ RSpec.describe Views::OauthApplications::FormComponent, type: :component do
         expect(form).to have_html_attribute("action").with_value("/organisation/oauth_applications")
 
         expect(form).to have_field("Nom de l'application")
-        expect(form).to have_field("URI de redirection")
-        expect(form).to have_field("Scopes")
       end
     end
   end
@@ -28,8 +26,6 @@ RSpec.describe Views::OauthApplications::FormComponent, type: :component do
         expect(form).to have_html_attribute("action").with_value("/organisation/oauth_applications/#{oauth_application.id}")
 
         expect(form).to have_field("Nom de l'application")
-        expect(form).to have_field("URI de redirection")
-        expect(form).to have_field("Scopes")
       end
     end
   end

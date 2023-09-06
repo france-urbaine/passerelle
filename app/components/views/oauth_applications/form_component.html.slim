@@ -13,13 +13,5 @@
         = form.label :name
         = form.text_field :name, required: true
 
-      = form.block :redirect_uri do
-        = form.label :redirect_uri
-        = form.text_field :redirect_uri
-
-      = form.block :scopes do
-        = form.label :scopes
-        = form.text_field :scopes
-
     - modal.with_submit_action "Enregistrer"
     - modal.with_close_action "Annuler"
