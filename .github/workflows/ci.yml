@@ -23,8 +23,8 @@ jobs:
         # Set N number of parallel jobs to run
         # Remember to update ci_node_index below to 0..N-1
         #
-        ci_node_total: [4]
-        ci_node_index: [0, 1, 2, 3]
+        ci_node_total: [2]
+        ci_node_index: [0, 1]
 
     services:
       # Setup a postgres database to run tests
@@ -89,15 +89,6 @@ jobs:
   test_system:
     name: test:system
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: true
-      matrix:
-        # Set N number of parallel jobs to run
-        # Remember to update ci_node_index below to 0..N-1
-        #
-        ci_node_total: [2]
-        ci_node_index: [0, 1]
-
     services:
       # Setup a postgres database to run tests
       #
@@ -147,8 +138,6 @@ jobs:
     - name: Run tests
       env:
         CI:                  true
-        CI_NODE_TOTAL:       ${{ matrix.ci_node_total }}
-        CI_NODE_INDEX:       ${{ matrix.ci_node_index }}
         RAILS_MASTER_KEY:    ${{ secrets.RAILS_MASTER_KEY }}
         POSTGRESQL_HOST:     localhost
         POSTGRESQL_PORT:     5432
