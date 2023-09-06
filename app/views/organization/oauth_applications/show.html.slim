@@ -18,7 +18,17 @@
     dl.description-list
       .description-list__row
         dt Client UID
-        dd= @oauth_application.uid
+        dd
+          code
+            span=@oauth_application.uid
+            = copy_button_component @oauth_application.uid
+
+      .description-list__row
+        dt Client Secret
+        dd
+          code
+            span=@oauth_application.secret
+            = copy_button_component @oauth_application.secret
 
       .description-list__row
         dt URI de redirection
