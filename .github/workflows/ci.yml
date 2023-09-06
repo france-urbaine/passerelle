@@ -9,9 +9,12 @@ name: CI
 
 on:
   pull_request:
-    types: [labeled]
-    label:
-      name: CI
+    types: [ready_for_review]
+    paths:
+      - "**"
+      - "!bin/*"
+      - "!/*.md"
+      - "!/**.md"
 
 jobs:
   test_unit:
