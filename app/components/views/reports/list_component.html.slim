@@ -36,16 +36,13 @@
         - row.with_action "Supprimer ce signalement", remove_report_path(report), icon: "trash", modal: true
 
       - row.with_column(:reference) do
-        = authorized_link_to report do
-          = report.reference
+        = authorized_link_to report
 
       - row.with_column(:collectivity) do
-        = authorized_link_to report.collectivity, scope: :organization do
-          = report.collectivity.name
+        = authorized_link_to report.collectivity
 
       - row.with_column(:package) do
-        = authorized_link_to report.package do
-          = report.package.reference
+        = authorized_link_to report.package
 
       - row.with_column(:form_type) do
         = t(report.form_type, scope: "enum.report_form_type")

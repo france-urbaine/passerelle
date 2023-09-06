@@ -20,14 +20,7 @@
     dl.description-list
       .description-list__row
         dt Collectivité
-        dd
-          - if @user.organization&.kept?
-            = authorized_link_to @user.organization, scope: :admin do
-              = @user.organization.name
-
-          - elsif @user.organization&.discarded?
-            .text-disabled
-              = "#{@user.organization.name} (organisation archivée)"
+        dd= authorized_link_to @user.organization, namespace: :organization
 
       .description-list__row
         dt Adresse mail de contact

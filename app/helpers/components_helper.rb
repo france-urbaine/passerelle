@@ -2,6 +2,7 @@
 
 module ComponentsHelper
   COMPONENT_HELPERS = {
+    authorized_link_to:           "AuthorizedLink::Component",
     breadcrumbs_component:        "Breadcrumbs::Component",
     button_component:             "Button::Component",
     checkboxes_component:         "Checkboxes::Component",

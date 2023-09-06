@@ -30,8 +30,7 @@
           = display_siren(epci.siren)
 
         - column.with_span do
-          = authorized_link_to epci, scope: :territories do
-            = epci.name
+          = authorized_link_to epci, namespace: :territories
 
       - row.with_column(:departement) do |column|
         - if epci.departement
@@ -39,8 +38,7 @@
             = epci.code_departement
 
           - column.with_span do
-            = authorized_link_to epci.departement, scope: :territories do
-              = epci.departement.name
+            = authorized_link_to epci.departement, namespace: :territories
 
       - row.with_column(:communes_count) do
         = number_with_delimiter(epci.communes_count) if epci.communes_count.positive?

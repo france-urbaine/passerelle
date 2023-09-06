@@ -18,19 +18,12 @@
     dl.description-list
       .description-list__row
         dt Éditeur
-        dd
-          - if @collectivity.publisher&.kept?
-            = authorized_link_to @collectivity.publisher, scope: :admin do
-              = @collectivity.publisher.name
-
-          - elsif @collectivity.publisher&.discarded?
-            .text-disabled
-              = "#{@collectivity.publisher.name} (organisation supprimée)"
+        dd= authorized_link_to @collectivity.publisher, namespace: :admin
 
       .description-list__row
         dt Territoire
         dd
-          = authorized_link_to @collectivity.territory, scope: :territories do
+          = authorized_link_to @collectivity.territory, namespace: :admin do
             = @collectivity.territory.qualified_name
             = " (#{@collectivity.territory.model_name.human})"
 

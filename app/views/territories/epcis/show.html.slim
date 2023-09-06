@@ -19,15 +19,11 @@
 
       .description-list__row
         dt Région
-        dd
-          = authorized_link_to @epci.region, scope: :territories do
-            = @epci.region.name
+        dd= authorized_link_to @epci.region, namespace: :territories
 
       .description-list__row
         dt Département
-        dd
-          = authorized_link_to @epci.departement, scope: :territories do
-            = @epci.departement.name
+        dd= authorized_link_to @epci.departement, namespace: :territories
 
       .description-list__row
         dt Communes

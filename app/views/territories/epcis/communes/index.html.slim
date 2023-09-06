@@ -28,8 +28,7 @@
           = commune.code_insee
 
         - column.with_span do
-          = authorized_link_to commune, scope: :territories do
-            = commune.name
+          = authorized_link_to commune, namespace: :territories
 
       - row.with_column(:departement) do |column|
         - if commune.departement
@@ -37,8 +36,7 @@
             = commune.code_departement
 
           - column.with_span do
-            = authorized_link_to commune.departement, scope: :territories do
-              = commune.departement.name
+            = authorized_link_to commune.departement, namespace: :territories
 
       - row.with_column(:collectivities_count) do
         = number_with_delimiter(commune.collectivities_count) if commune.collectivities_count.positive?

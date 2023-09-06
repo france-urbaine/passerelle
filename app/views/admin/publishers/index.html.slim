@@ -44,8 +44,7 @@
         - row.with_action "Supprimer cet éditeur", remove_admin_publisher_path(publisher), icon: "trash", modal: true
 
       - row.with_column(:name) do
-        = authorized_link_to publisher, scope: :admin do
-          = publisher.name
+        = authorized_link_to publisher, namespace: :admin
 
       - row.with_column(:siren) do
         = display_siren(publisher.siren)

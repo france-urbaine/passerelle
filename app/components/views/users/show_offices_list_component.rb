@@ -13,7 +13,7 @@ module Views
         return if offices.empty?
 
         helpers.list(offices) do |office|
-          authorized_link_to(office, scope: @namespace) { office.name }
+          authorized_link_to(office, namespace: @namespace)
         end
       end
 

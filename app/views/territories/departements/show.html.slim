@@ -19,9 +19,7 @@
 
       .description-list__row
         dt Région
-        dd
-          = authorized_link_to @departement.region, scope: :territories do
-            = @departement.region.name
+        dd= authorized_link_to @departement.region, namespace: :territories
 
       .description-list__row
         dt EPCI

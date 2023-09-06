@@ -49,12 +49,10 @@
         - row.with_action "Supprimer ce paquet", remove_package_path(package), icon: "trash", modal: true
 
       - row.with_column(:reference) do
-        = authorized_link_to package do
-          = package.reference
+        = authorized_link_to package
 
       - row.with_column(:collectivity) do
-        = authorized_link_to package.collectivity, scope: :organization do
-          = package.collectivity&.name
+        = authorized_link_to package.collectivity
 
       - row.with_column(:form_type) do
         = t(package.form_type, scope: "enum.package_form_type")

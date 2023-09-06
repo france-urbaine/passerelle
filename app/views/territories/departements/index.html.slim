@@ -29,8 +29,7 @@
           = departement.code_departement
 
         - column.with_span do
-          = authorized_link_to departement, scope: :territories do
-            = departement.name
+          = authorized_link_to departement, namespace: :territories
 
       - row.with_column(:region) do |column|
         - if departement.region
@@ -38,8 +37,7 @@
             = departement.code_region
 
           - column.with_span do
-            = authorized_link_to departement.region, scope: :territories do
-              = departement.region.name
+            = authorized_link_to departement.region, namespace: :territories
 
       - row.with_column(:communes_count) do
         = number_with_delimiter(departement.communes_count) if departement.communes_count.positive?

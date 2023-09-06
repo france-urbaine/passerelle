@@ -44,8 +44,7 @@
         - row.with_action "Supprimer cette DDFIP", remove_admin_ddfip_path(ddfip), icon: "trash", modal: true
 
       - row.with_column(:name) do
-        = authorized_link_to ddfip, scope: :admin do
-          = ddfip.name
+        = authorized_link_to ddfip, namespace: :admin
 
       - row.with_column(:departement) do |column|
         - if ddfip.departement
@@ -53,8 +52,7 @@
             = ddfip.code_departement
 
           - column.with_span do
-            = authorized_link_to ddfip.departement, scope: :territories do
-              = ddfip.departement.name
+            = authorized_link_to ddfip.departement, namespace: :admin
 
       - row.with_column(:contact) do
          = "#{ddfip.contact_first_name} #{ddfip.contact_last_name}".strip.presence

@@ -39,15 +39,13 @@
         - row.with_action "Supprimer cette collectivité", remove_admin_collectivity_path(collectivity), icon: "trash", modal: true
 
       - row.with_column(:name) do
-        = authorized_link_to collectivity, scope: :admin do
-          = collectivity.name
+        = authorized_link_to collectivity, namespace: :admin
 
       - row.with_column(:siren) do
         = display_siren(collectivity.siren)
 
       - row.with_column(:publisher) do
-        = authorized_link_to collectivity.publisher, scope: :admin do
-          = collectivity.publisher.name
+        = authorized_link_to collectivity.publisher, namespace: :admin
 
       - row.with_column(:contact) do
         = "#{collectivity.contact_first_name} #{collectivity.contact_last_name}".strip.presence

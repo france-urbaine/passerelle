@@ -29,8 +29,7 @@
           = region.code_region
 
         - column.with_span do
-          = authorized_link_to region, scope: :territories do
-            = region.name
+          = authorized_link_to region, namespace: :territories
 
       - row.with_column(:communes_count) do
         = number_with_delimiter(region.communes_count) if region.communes_count.positive?

@@ -49,13 +49,6 @@ module Views
       # rubocop:disable Layout/LineLength
       # rubocop:disable Layout/ExtraSpacing
       #
-      def allowed_to_show?(user)
-        case [@namespace, @parent]
-        in [:organization, Collectivity] then allowed_to?(:show?, user, with: ::Organization::Collectivities::UserPolicy, context: { collectivity: @parent })
-        else                                  allowed_to?(:show?, user, with: namespace_module::UserPolicy)
-        end
-      end
-
       def allowed_to_edit?(user)
         case [@namespace, @parent]
         in [:organization, Collectivity] then allowed_to?(:edit?, user, with: ::Organization::Collectivities::UserPolicy, context: { collectivity: @parent })
@@ -82,13 +75,6 @@ module Views
         in [:organization, Collectivity] then allowed_to?(:destroy_all?, User, with: ::Organization::Collectivities::UserPolicy, context: { collectivity: @parent })
         in [*, Office]                   then allowed_to?(:destroy_all?, User, with: namespace_module::Offices::UserPolicy)
         else                                  allowed_to?(:destroy_all?, User, with: namespace_module::UserPolicy)
-        end
-      end
-
-      def show_path(user)
-        case [@namespace, @parent]
-        in [:organization, Collectivity] then polymorphic_path([@namespace, @parent, user])
-        else                                  polymorphic_path([@namespace, user])
         end
       end
 

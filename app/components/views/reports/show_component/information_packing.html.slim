@@ -11,9 +11,7 @@
   dl.description-list
     .description-list__row
       dt Référence du paquet
-      dd
-        = authorized_link_to @report.package do
-          = @report.package.reference
+      dd= authorized_link_to @report.package
 
     .description-list__row
       dt Date de transmission
