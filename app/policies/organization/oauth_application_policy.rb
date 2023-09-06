@@ -15,7 +15,7 @@ module Organization
 
     relation_scope do |relation|
       if publisher?
-        relation.owned_by(organization)
+        relation.kept.owned_by(organization)
       else
         relation.none
       end
@@ -33,7 +33,7 @@ module Organization
     params_filter do |params|
       return unless publisher?
 
-      params.permit(:name, :redirect_uri, scopes: [])
+      params.permit(:name)
     end
   end
 end
