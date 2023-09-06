@@ -51,6 +51,8 @@ jobs:
 
     - name: Set up Ruby & install gems bundle
       uses: ruby/setup-ruby@v1
+      env:
+        BUNDLE_GEMS__CONTRIBSYS__COM: ${{ secrets.BUNDLE_GEMS__CONTRIBSYS__COM }}
       with:
         ruby-version: 3.2.2
         bundler-cache: true
@@ -121,6 +123,8 @@ jobs:
 
     - name: Set up Ruby & install gems bundle
       uses: ruby/setup-ruby@v1
+      env:
+        BUNDLE_GEMS__CONTRIBSYS__COM: ${{ secrets.BUNDLE_GEMS__CONTRIBSYS__COM }}
       with:
         ruby-version: 3.2.2
         bundler-cache: true
@@ -165,6 +169,8 @@ jobs:
 
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
+      env:
+        BUNDLE_GEMS__CONTRIBSYS__COM: ${{ secrets.BUNDLE_GEMS__CONTRIBSYS__COM }}
       with:
         ruby-version: 3.2.2
         bundler-cache: true
@@ -180,6 +186,8 @@ jobs:
 
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
+      env:
+        BUNDLE_GEMS__CONTRIBSYS__COM: ${{ secrets.BUNDLE_GEMS__CONTRIBSYS__COM }}
       with:
         ruby-version: 3.2.2
         bundler-cache: true
@@ -195,6 +203,8 @@ jobs:
 
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
+      env:
+        BUNDLE_GEMS__CONTRIBSYS__COM: ${{ secrets.BUNDLE_GEMS__CONTRIBSYS__COM }}
       with:
         ruby-version: 3.2.2
         bundler-cache: true
