@@ -8,14 +8,10 @@
 name: CI
 
 on:
-  # push:
-  #   branches:
-  #     - main
-
-  pull_request_review:
-    types: [submitted]
-
-  workflow_dispatch:
+  pull_request:
+    types: [labeled]
+    label:
+      name: CI
 
 jobs:
   test_unit:
@@ -27,8 +23,8 @@ jobs:
         # Set N number of parallel jobs to run
         # Remember to update ci_node_index below to 0..N-1
         #
-        ci_node_total: [6]
-        ci_node_index: [0, 1, 2, 3, 4, 5]
+        ci_node_total: [4]
+        ci_node_index: [0, 1, 2, 3]
 
     services:
       # Setup a postgres database to run tests
