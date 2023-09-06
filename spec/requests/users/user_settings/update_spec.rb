@@ -76,8 +76,14 @@ RSpec.describe "Users::UserSettingsController#update" do
         )
       end
 
-      it "sent notifications about change to new and old user's addresses" do
+      it "enqueues a job to deliver notification" do
         expect { request }
+          .to have_enqueued_job.twice
+          .and have_enqueued_job(ActionMailer::MailDeliveryJob).twice
+      end
+
+      it "sent notifications about change to new and old user's addresses" do
+        expect { request && perform_enqueued_jobs }
           .to have_sent_emails.by(2)
           .and have_sent_email.with_subject("Modification de votre adresse e-mail sur FiscaHub").to("paul.lefebvre@legende.fr")
           .and have_sent_email.with_subject("Modification de votre adresse e-mail sur FiscaHub").to(user.email)
@@ -125,8 +131,14 @@ RSpec.describe "Users::UserSettingsController#update" do
         )
       end
 
-      it "sent a notification about change to user" do
+      it "enqueues a job to deliver notification" do
         expect { request }
+          .to have_enqueued_job.once
+          .and have_enqueued_job(ActionMailer::MailDeliveryJob)
+      end
+
+      it "sent a notification about change to user" do
+        expect { request && perform_enqueued_jobs }
           .to have_sent_emails.by(1)
           .and have_sent_email.with_subject("Modification de votre mot de passe sur FiscaHub").to(user.email)
       end

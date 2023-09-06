@@ -245,7 +245,7 @@ class User < ApplicationRecord
       return false
     end
 
-    Users::Mailer.two_factor_change(self).deliver_now
+    Users::Mailer.two_factor_change(self).deliver_later
 
     self.otp_code = nil
     true
@@ -253,6 +253,12 @@ class User < ApplicationRecord
 
   def send_otp_code_by_email?
     otp_method == "email" && organization&.allow_2fa_via_email?
+  end
+
+  # Devise delivery method
+  # ----------------------------------------------------------------------------
+  def send_devise_notification(notification, *)
+    devise_mailer.send(notification, self, *).deliver_later
   end
 
   # Devise reconfirmation

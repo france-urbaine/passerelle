@@ -15,6 +15,10 @@ gem "fx"
 gem "pg", "~> 1.1"
 gem "redis", "~> 5.0"
 
+# Asynchronous adapater
+gem "sidekiq"
+gem "sidekiq-pro", source: "https://gems.contribsys.com"
+
 # Models
 gem "devise"
 gem "devise_zxcvbn"

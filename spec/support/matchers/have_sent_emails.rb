@@ -39,7 +39,8 @@ module Matchers
         @actual.any? do |mail|
           property_match?(:@recipient, mail.to) &&
             property_match?(:@sender, mail.from) &&
-            property_match?(:@email_subject, mail.subject)
+            property_match?(:@email_subject, mail.subject) &&
+            property_match?(:@email_body, mail_body(mail))
         end
       end
 
@@ -63,6 +64,16 @@ module Matchers
       chain :with_subject do |value|
         @email_subject = value
       end
+
+      chain :with_body do |value|
+        @email_body = value
+      end
+
+      private
+
+      def mail_body(email)
+        HTMLEntities.new.decode(email.html_part.decoded)
+      end
     end
 
     module DeliveriesHelpers
@@ -82,15 +93,23 @@ module Matchers
         expected = instance_variable_get(expected_var)
 
         if actual.is_a?(Array)
-          if expected.is_a?(Regexp)
-            actual.any? { |value| value.match?(expected) }
+          if expected.is_a?(Regexp) || expected.respond_to?(:matches?)
+            actual.any? { |value| property_match_expectation?(expected, value) }
           else
             actual.include?(expected)
           end
-        elsif expected.is_a?(Regexp)
-          actual.match?(expected)
         else
-          actual == expected
+          property_match_expectation?(expected, actual)
+        end
+      end
+
+      def property_match_expectation?(expected, actual)
+        if expected.is_a?(Regexp)
+          expected.match?(actual)
+        elsif expected.respond_to?(:matches?)
+          expected.matches?(actual)
+        else
+          expected == actual
         end
       end
     end

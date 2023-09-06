@@ -59,13 +59,10 @@ def start_server
 end
 
 def start_sidekiq
-  # command = process_manager
-  # command += " start -f Procfile.dev"
-  # command += optional_processes(%w[sidekiq])
-  # system!(command)
-
-  log "Sidekiq is not yet available on Fiscahub"
-  exit
+  command = process_manager
+  command += " start -f Procfile.dev"
+  command += optional_processes(%w[sidekiq])
+  system!(command)
 end
 
 def start_mailcatcher
