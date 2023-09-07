@@ -3,106 +3,147 @@
 require "rails_helper"
 
 RSpec.describe Views::Reports::ListComponent, type: :component do
-  subject(:component_call) { described_class.new(reports, pagy, parent: parent, searchable: searchable) }
+  describe "rendered component" do
+    let!(:collectivity) { create(:collectivity) }
+    let!(:reports)      { create_list(:report, 2, collectivity: collectivity) }
+    let(:pagy)          { Pagy.new(count: 56, page: 1, items: 20) }
 
-  let(:collectivity) { create(:collectivity) }
-  let!(:reports) { Report.all }
-  let(:pagy) { nil }
-  let(:namespace) { :organization }
-  let(:parent) { nil }
-  let(:searchable) { true }
-
-  before do
-    sign_in_as(organization: collectivity)
-    create_list(:report, 2, collectivity: collectivity, package: create(:package))
-  end
-
-  def render_component
-    render_inline(component_call)
-  end
-
-  it "preloads package association" do
-    expect {
-      described_class.new(reports.strict_loading, pagy).with_column(:package)
-    }.not_to raise_error(ActiveRecord::StrictLoadingViolationError)
-  end
-
-  it "preloads commune association" do
-    expect {
-      described_class.new(reports.strict_loading, pagy).with_column(:commune)
-    }.not_to raise_error(ActiveRecord::StrictLoadingViolationError)
-  end
-
-  it "preloads collectivity association" do
-    expect {
-      described_class.new(reports.strict_loading, pagy).with_column(:collectivity)
-    }.not_to raise_error(ActiveRecord::StrictLoadingViolationError)
-  end
-
-  it "preloads workshop association" do
-    expect {
-      described_class.new(reports.strict_loading, pagy).with_column(:workshop)
-    }.not_to raise_error(ActiveRecord::StrictLoadingViolationError)
-  end
-
-  context "with pagination" do
-    let(:pagy) { Pagy.new(count: 1, page: 1, items: 1) }
+    before { sign_in_as(organization: collectivity) }
 
     it "renders pagination" do
-      render_component
+      render_inline described_class.new(Report.all, pagy)
 
-      expect(page).to have_text("Page 1 sur 1")
+      expect(page).to have_text("56 signalements | Page 1 sur 3")
     end
-  end
 
-  it "renders a table of reports" do
-    render_component
+    it "renders a table of reports" do
+      render_inline described_class.new(Report.all, pagy)
 
-    expect(page).to have_selector(".datatable table") do |table|
-      aggregate_failures do
-        expect(table).to have_selector("th", text: "Etat")
-        expect(table).to have_selector("th", text: "Reference")
-        expect(table).to have_selector("th", text: "Priorité")
-        expect(table).to have_selector("th", text: "Type de signalement")
-        expect(table).to have_selector("th", text: "Objet")
-        expect(table).to have_selector("th", text: "Invariant")
-        expect(table).to have_selector("th", text: "Adresse")
-        expect(table).to have_selector("th", text: "Commune")
-        expect(table).to have_selector(:table_row, {
-          "Reference"  => reports.first.reference
-        })
+      expect(page).to have_selector(".datatable table") do |table|
+        aggregate_failures do
+          expect(table).to have_selector("th", text: "Etat")
+          expect(table).to have_selector("th", text: "Reference")
+          expect(table).to have_selector("th", text: "Priorité")
+          expect(table).to have_selector("th", text: "Type de signalement")
+          expect(table).to have_selector("th", text: "Objet")
+          expect(table).to have_selector("th", text: "Invariant")
+          expect(table).to have_selector("th", text: "Adresse")
+          expect(table).to have_selector("th", text: "Commune")
+          expect(table).to have_selector(:table_row, {
+            "Reference"  => reports.first.reference
+          })
+        end
+      end
+    end
+
+    it "renders a table with a limited set of columns" do
+      render_inline described_class.new(Report.all, pagy) do |list|
+        list.with_column(:reference)
+        list.with_column(:form_type)
+        list.with_column(:anomalies)
+      end
+
+      expect(page).to have_selector(".datatable table") do |table|
+        aggregate_failures do
+          expect(table).to have_selector("th", text: "Reference")
+          expect(table).to have_selector("th", text: "Type de signalement")
+          expect(table).to have_selector("th", text: "Objet")
+
+          expect(table).not_to have_selector("th", text: "Etat")
+          expect(table).not_to have_selector("th", text: "Priorité")
+          expect(table).not_to have_selector("th", text: "Invariant")
+          expect(table).not_to have_selector("th", text: "Adresse")
+        end
+      end
+    end
+
+    it "renders search form by default" do
+      render_inline described_class.new(Report.all, pagy)
+
+      expect(page).to have_selector("form.search")
+    end
+
+    it "allows to not render search form" do
+      render_inline described_class.new(Report.all, pagy, searchable: false)
+
+      expect(page).not_to have_selector("form.search")
+    end
+
+    it "renders sort links by default" do
+      render_inline described_class.new(Report.all, pagy)
+
+      expect(page).to have_selector(".datatable table") do |table|
+        expect(table).to have_selector("th", text: "Reference") do |row|
+          expect(row).to have_link("Trier par ordre croissant")
+        end
+      end
+    end
+
+    it "allows to not render sort links" do
+      render_inline described_class.new(Report.all, pagy, searchable: false)
+
+      expect(page).to have_selector(".datatable table") do |table|
+        expect(table).to have_selector("th", text: "Reference") do |row|
+          expect(row).not_to have_link("Trier par ordre croissant")
+        end
+      end
+    end
+
+    it "renders reports links" do
+      render_inline described_class.new(Report.all, pagy)
+
+      expect(page).to have_selector(:table_row, "Reference" => reports.first.reference) do |row|
+        expect(row).to have_link(reports.first.reference, href: "/signalements/#{reports.first.id}")
       end
     end
   end
 
-  it "renders reports links" do
-    render_component
+  describe "eager loading resources" do
+    let(:pagy) { Pagy.new(count: 2) }
 
-    expect(page).to have_selector(:table_row, "Reference" => reports.first.reference) do |row|
-      expect(row).to have_link(reports.first.reference, href: "/signalements/#{reports.first.id}")
+    before do
+      collectivity = create(:collectivity)
+
+      create_list(:report, 2, collectivity: collectivity)
+      sign_in_as(organization: collectivity)
     end
-  end
 
-  it "renders a table with a limited set of columns" do
-    component_call.with_column(:reference)
-    component_call.with_column(:invariant)
-    render_component
+    it "doesn't raise an error about N+1 queries with all default columns" do
+      expect {
+        render_inline described_class.new(Report.strict_loading, pagy)
+      }.not_to raise_error
+    end
 
-    expect(page).to have_selector(".datatable table") do |table|
-      aggregate_failures do
-        expect(table).to have_selector("th", text: "Reference")
-        expect(table).to have_selector("th", text: "Invariant")
-        expect(table).not_to have_selector("th", text: "Etat")
-        expect(table).not_to have_selector("th", text: "Priorité")
-        expect(table).not_to have_selector("th", text: "Type de signalement")
-        expect(table).not_to have_selector("th", text: "Objet")
-        expect(table).not_to have_selector("th", text: "Adresse")
-        expect(table).not_to have_selector("th", text: "Commune")
+    it "doesn't raise an error about N+1 queries with only package column" do
+      expect {
+        render_inline described_class.new(Report.strict_loading, pagy) do |list|
+          list.with_column(:package)
+        end
+      }.not_to raise_error
+    end
 
-        expect(table).to have_selector(:table_row, {
-          "Reference"  => reports.first.reference
-        })
-      end
+    it "doesn't raise an error about N+1 queries with only commune column" do
+      expect {
+        render_inline described_class.new(Report.strict_loading, pagy) do |list|
+          list.with_column(:commune)
+        end
+      }.not_to raise_error
+    end
+
+    it "doesn't raise an error about N+1 queries with only collectivity column" do
+      expect {
+        render_inline described_class.new(Report.strict_loading, pagy) do |list|
+          list.with_column(:collectivity)
+        end
+      }.not_to raise_error
+    end
+
+    it "doesn't raise an error about N+1 queries with only workshop column" do
+      expect {
+        render_inline described_class.new(Report.strict_loading, pagy) do |list|
+          list.with_column(:workshop)
+        end
+      }.not_to raise_error
     end
   end
 end
