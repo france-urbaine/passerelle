@@ -25,7 +25,7 @@ FactoryBot.define do
       package_sandbox       { false }
       package_transmitted   { false }
       package_approved      { false }
-      package_rejected      { false }
+      package_returned      { false }
       packed_through_web_ui { publisher.nil? }
     end
 
@@ -34,7 +34,7 @@ FactoryBot.define do
       package_traits << :sandbox               if package_sandbox
       package_traits << :transmitted           if package_transmitted
       package_traits << :approved              if package_approved
-      package_traits << :rejected              if package_rejected
+      package_traits << :returned              if package_returned
       package_traits << :packed_through_web_ui if packed_through_web_ui
 
       attributes = { form_type: form_type }
@@ -199,10 +199,10 @@ FactoryBot.define do
       package_approved { true }
     end
 
-    trait :package_rejected_by_ddfip do
+    trait :package_returned_by_ddfip do
       transmitted
       reported_for_ddfip
-      package_rejected { true }
+      package_returned { true }
     end
   end
 end

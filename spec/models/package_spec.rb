@@ -109,10 +109,10 @@ RSpec.describe Package do
       end
     end
 
-    describe ".rejected" do
-      it "scopes on packages rejected by a DDFIP" do
+    describe ".returned" do
+      it "scopes on packages returned by a DDFIP" do
         expect {
-          described_class.rejected.load
+          described_class.returned.load
         }.to perform_sql_query(<<~SQL)
           SELECT "packages".*
           FROM   "packages"
@@ -123,7 +123,7 @@ RSpec.describe Package do
     end
 
     describe ".unrejected" do
-      it "scopes on packages rejected by a DDFIP" do
+      it "scopes on packages unrejected by a DDFIP" do
         expect {
           described_class.unrejected.load
         }.to perform_sql_query(<<~SQL)
@@ -250,8 +250,8 @@ RSpec.describe Package do
         build_stubbed(:package, collectivity: collectivities[0]),
         build_stubbed(:package, :transmitted, collectivity: collectivities[0], publisher: publisher),
         build_stubbed(:package, :approved, collectivity: collectivities[0]),
-        build_stubbed(:package, :rejected, collectivity: collectivities[0]),
-        build_stubbed(:package, :approved, :rejected, collectivity: collectivities[1]),
+        build_stubbed(:package, :returned, collectivity: collectivities[0]),
+        build_stubbed(:package, :approved, :returned, collectivity: collectivities[1]),
         build_stubbed(:package, :transmitted, collectivity: collectivities[0], publisher: publisher, sandbox: true),
         build(:package, collectivity: collectivities[0]),
         build(:package, collectivity: collectivities[1], publisher: publisher)
@@ -299,12 +299,12 @@ RSpec.describe Package do
       it { expect(packages[4]).not_to be_approved }
     end
 
-    describe "#rejected?" do
-      it { expect(packages[0]).not_to be_rejected }
-      it { expect(packages[1]).not_to be_rejected }
-      it { expect(packages[2]).not_to be_rejected }
-      it { expect(packages[3]).to be_rejected }
-      it { expect(packages[4]).to be_rejected }
+    describe "#returned?" do
+      it { expect(packages[0]).not_to be_returned }
+      it { expect(packages[1]).not_to be_returned }
+      it { expect(packages[2]).not_to be_returned }
+      it { expect(packages[3]).to be_returned }
+      it { expect(packages[4]).to be_returned }
     end
 
     describe "#unrejected?" do
@@ -400,7 +400,7 @@ RSpec.describe Package do
       end
 
       it "resets rejection time" do
-        package = create(:package, :rejected)
+        package = create(:package, :returned)
 
         expect {
           package.approve!
@@ -420,22 +420,22 @@ RSpec.describe Package do
       end
     end
 
-    describe "#reject!" do
+    describe "#return!" do
       it "returns true" do
         package = create(:package, :transmitted)
-        expect(package.reject!).to be(true)
+        expect(package.return!).to be(true)
       end
 
-      it "returns true when package was already rejected" do
-        package = create(:package, :rejected)
-        expect(package.reject!).to be(true)
+      it "returns true when package was already returned" do
+        package = create(:package, :returned)
+        expect(package.return!).to be(true)
       end
 
       it "marks the package as approved" do
         package = create(:package, :transmitted)
 
         expect {
-          package.reject!
+          package.return!
           package.reload
         }.to change(package, :rejected_at).to(be_present)
       end
@@ -444,18 +444,18 @@ RSpec.describe Package do
         package = create(:package, :approved)
 
         expect {
-          package.reject!
+          package.return!
           package.reload
         }.to change(package, :approved_at).to(nil)
       end
 
       it "doesn't update previous rejection time" do
         package = Timecop.freeze(2.minutes.ago) do
-          create(:package, :rejected)
+          create(:package, :returned)
         end
 
         expect {
-          package.reject!
+          package.return!
           package.reload
         }.not_to change(package, :rejected_at)
       end

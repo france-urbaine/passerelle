@@ -965,41 +965,41 @@ RSpec.describe Collectivity do
         end
       end
 
-      describe "#packages_rejected_count" do
+      describe "#packages_returned_count" do
         let(:package) { create(:package, :transmitted, collectivity: collectivities[0]) }
 
         it "doesn't change on package creation" do
           expect { package }
-            .to  not_change { collectivities[0].reload.packages_rejected_count }.from(0)
-            .and not_change { collectivities[1].reload.packages_rejected_count }.from(0)
+            .to  not_change { collectivities[0].reload.packages_returned_count }.from(0)
+            .and not_change { collectivities[1].reload.packages_returned_count }.from(0)
         end
 
-        it "changes when package is rejected" do
+        it "changes when package is returned" do
           package
-          expect { package.reject! }
-            .to change { collectivities[0].reload.packages_rejected_count }.from(0).to(1)
-            .and not_change { collectivities[1].reload.packages_rejected_count }.from(0)
+          expect { package.return! }
+            .to change { collectivities[0].reload.packages_returned_count }.from(0).to(1)
+            .and not_change { collectivities[1].reload.packages_returned_count }.from(0)
         end
 
-        it "changes when rejected package is discarded" do
-          package.reject!
+        it "changes when returned package is discarded" do
+          package.return!
           expect { package.discard }
-            .to change { collectivities[0].reload.packages_rejected_count }.from(1).to(0)
-            .and not_change { collectivities[1].reload.packages_rejected_count }.from(0)
+            .to change { collectivities[0].reload.packages_returned_count }.from(1).to(0)
+            .and not_change { collectivities[1].reload.packages_returned_count }.from(0)
         end
 
-        it "changes when rejected package is undiscarded" do
+        it "changes when returned package is undiscarded" do
           package.touch(:rejected_at, :discarded_at)
           expect { package.undiscard }
-            .to change { collectivities[0].reload.packages_rejected_count }.from(0).to(1)
-            .and not_change { collectivities[1].reload.packages_rejected_count }.from(0)
+            .to change { collectivities[0].reload.packages_returned_count }.from(0).to(1)
+            .and not_change { collectivities[1].reload.packages_returned_count }.from(0)
         end
 
-        it "changes when rejected package is deleted" do
-          package.reject!
+        it "changes when returned package is deleted" do
+          package.return!
           expect { package.delete }
-            .to change { collectivities[0].reload.packages_rejected_count }.from(1).to(0)
-            .and not_change { collectivities[1].reload.packages_rejected_count }.from(0)
+            .to change { collectivities[0].reload.packages_returned_count }.from(1).to(0)
+            .and not_change { collectivities[1].reload.packages_returned_count }.from(0)
         end
       end
     end

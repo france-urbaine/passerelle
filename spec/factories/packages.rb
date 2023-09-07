@@ -27,7 +27,7 @@ FactoryBot.define do
       approved_at    { Time.current }
     end
 
-    trait :rejected do
+    trait :returned do
       transmitted_at { Time.current }
       rejected_at    { Time.current }
     end

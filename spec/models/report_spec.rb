@@ -229,10 +229,10 @@ RSpec.describe Report do
       end
     end
 
-    describe ".published" do
+    describe ".delivered" do
       it "scopes on transmitted reports, not discarded and not tagged as sandbox" do
         expect {
-          described_class.published.load
+          described_class.delivered.load
         }.to perform_sql_query(<<~SQL)
           SELECT     "reports".*
           FROM       "reports"
@@ -260,10 +260,10 @@ RSpec.describe Report do
       end
     end
 
-    describe ".rejected_packages" do
-      it "scopes on transmitted reports with package rejected by DDFIP" do
+    describe ".returned_packages" do
+      it "scopes on transmitted reports with package returned by DDFIP" do
         expect {
-          described_class.rejected_packages.load
+          described_class.returned_packages.load
         }.to perform_sql_query(<<~SQL)
           SELECT     "reports".*
           FROM       "reports"
@@ -289,7 +289,7 @@ RSpec.describe Report do
     end
 
     describe ".pending" do
-      it "scopes on published reports waiting for decision" do
+      it "scopes on delivered reports waiting for decision" do
         expect {
           described_class.pending.load
         }.to perform_sql_query(<<~SQL)
@@ -545,8 +545,8 @@ RSpec.describe Report do
         build(:package, collectivity: collectivity),
         build(:package, :transmitted, collectivity: collectivity),
         build(:package, :transmitted, collectivity: collectivity, publisher: publisher, sandbox: true),
-        build(:package, :rejected,            collectivity: collectivity),
-        build(:package, :approved, :rejected, collectivity: collectivity),
+        build(:package, :returned,            collectivity: collectivity),
+        build(:package, :approved, :returned, collectivity: collectivity),
         build(:package, :approved,            collectivity: collectivity)
       ]
     end
@@ -571,17 +571,17 @@ RSpec.describe Report do
       it { expect(reports[1..]).to all(be_transmitted) }
     end
 
-    describe "#published?" do
-      it { expect(reports[0]).not_to be_published }
-      it { expect(reports[1]).to     be_published }
-      it { expect(reports[2]).not_to be_published }
-      it { expect(reports[3]).to     be_published }
-      it { expect(reports[4]).to     be_published }
-      it { expect(reports[5]).to     be_published }
-      it { expect(reports[6]).not_to be_published }
-      it { expect(reports[7]).to     be_published }
-      it { expect(reports[8]).to     be_published }
-      it { expect(reports[9]).to     be_published }
+    describe "#delivered?" do
+      it { expect(reports[0]).not_to be_delivered }
+      it { expect(reports[1]).to     be_delivered }
+      it { expect(reports[2]).not_to be_delivered }
+      it { expect(reports[3]).to     be_delivered }
+      it { expect(reports[4]).to     be_delivered }
+      it { expect(reports[5]).to     be_delivered }
+      it { expect(reports[6]).not_to be_delivered }
+      it { expect(reports[7]).to     be_delivered }
+      it { expect(reports[8]).to     be_delivered }
+      it { expect(reports[9]).to     be_delivered }
     end
 
     describe "#pending?" do

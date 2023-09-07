@@ -149,8 +149,8 @@ RSpec.describe ReportPolicy, stub_factories: false do
         it_behaves_like("when current user is member of targeted office") { succeed }
       end
 
-      context "when package is rejected by the current DDFIP" do
-        let(:record) { create(:report, :package_rejected_by_ddfip, ddfip: current_organization) }
+      context "when package is returned by the current DDFIP" do
+        let(:record) { create(:report, :package_returned_by_ddfip, ddfip: current_organization) }
 
         it_behaves_like("when current user is a DDFIP admin")             { succeed }
         it_behaves_like("when current user is a DDFIP user")              { failed }
@@ -314,8 +314,8 @@ RSpec.describe ReportPolicy, stub_factories: false do
         it_behaves_like("when current user is member of targeted office") { succeed }
       end
 
-      context "when package is rejected by the current DDFIP" do
-        let(:record) { create(:report, :package_rejected_by_ddfip, ddfip: current_organization) }
+      context "when package is returned by the current DDFIP" do
+        let(:record) { create(:report, :package_returned_by_ddfip, ddfip: current_organization) }
 
         it_behaves_like("when current user is a DDFIP admin")             { failed }
         it_behaves_like("when current user is a DDFIP user")              { failed }
@@ -454,8 +454,8 @@ RSpec.describe ReportPolicy, stub_factories: false do
         it_behaves_like("when current user is member of targeted office") { failed }
       end
 
-      context "when package is rejected by the current DDFIP" do
-        let(:record) { create(:report, :package_rejected_by_ddfip, ddfip: current_organization) }
+      context "when package is returned by the current DDFIP" do
+        let(:record) { create(:report, :package_returned_by_ddfip, ddfip: current_organization) }
 
         it_behaves_like("when current user is a DDFIP admin")             { failed }
         it_behaves_like("when current user is a DDFIP user")              { failed }
