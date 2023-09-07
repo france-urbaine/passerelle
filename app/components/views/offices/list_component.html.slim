@@ -3,7 +3,7 @@
   - datatable.with_pagination(@pagy, options: !nested?) if @pagy
 
   - datatable.with_selection do |selection|
-    - if allowed_to_remove_all?
+    - if allow_action_to?(:destroy_all?, Office)
       - selection.with_action "Tout supprimer", polymorphic_path([:remove_all, @namespace, @parent, :offices]), modal: true
 
   - datatable.with_column(:name,                   sort: true)    { "Guichet" }      if columns.include?(:name)
@@ -22,25 +22,20 @@
       | Aucun guichet disponible.
 
   - datatable.each_row do |row, office|
-    - row.with_checkbox "Sélectionner ce guichet", described_by: :name, disabled: !allowed_to_remove_all?
+    - row.with_checkbox "Sélectionner ce guichet", described_by: :name, disabled: !allow_action_to?(:destroy_all?, Office)
 
-    - if allowed_to_edit?(office)
-      - row.with_action "Modifier ce guichet", polymorphic_path([:edit, @namespace, office]), icon: "pencil-square", modal: true
+    - if allow_action_to?(:edit?, office)
+      - row.with_action "Modifier ce guichet", polymorphic_action_path(:edit, office), icon: "pencil-square", modal: true
 
-    - if allowed_to_remove?(office)
-      - row.with_action "Supprimer ce guichet", polymorphic_path([:remove, @namespace, office]), icon: "trash", modal: true
+    - if allow_action_to?(:remove?, office)
+      - row.with_action "Supprimer ce guichet", polymorphic_action_path(:remove, office), icon: "trash", modal: true
 
     - row.with_column(:name) do
-      - if allowed_to_show?(office)
-        = link_to office.name, polymorphic_path([@namespace, office]), data: { turbo_frame: "_top" }
-      - else
-        = office.name
+      = authorized_link_to(office, namespace: @namespace, parent: @parent)
+
 
     - row.with_column(:ddfip) do
-      - if allowed_to_show_ddfip?(office.ddfip)
-        = link_to office.ddfip.name, polymorphic_path([@namespace, office.ddfip]), data: { turbo_frame: "_top" }
-      - else
-        = office.ddfip.name
+      = authorized_link_to(office.ddfip, namespace: @namespace, parent: @parent)
 
     - row.with_column(:competence) do
       = helpers.short_list(office.competences, humanize: true) { |value| t(value, scope: "enum.competence") }

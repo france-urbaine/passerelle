@@ -41,34 +41,17 @@ module Views
         @parent
       end
 
-      def authorization_namespace
-        @namespace.to_s.classify.constantize
-      end
-
-      def allowed_to_show?(office)
-        allowed_to?(:show?, office)
-      end
-
-      def allowed_to_edit?(office)
-        allowed_to?(:edit?, office)
-      end
-
-      def allowed_to_remove?(office)
-        allowed_to?(:remove?, office)
-      end
-
-      def allowed_to_remove_all?
-        case [@namespace, @parent]
-        in [:admin, Collectivity] then false
-        else                           allowed_to?(:destroy_all?, Office)
+      def allow_action_to?(action, office)
+        case [action, @namespace, @parent]
+        in [:destroy_all?, :admin, Collectivity]
+          false
+        else
+          allowed_to?(action, office, namespace: @namespace.to_s.classify.constantize)
         end
       end
 
-      def allowed_to_show_ddfip?(ddfip)
-        case [@namespace, @parent]
-        in [:organization, nil] then false
-        else                         allowed_to?(:show?, ddfip)
-        end
+      def polymorphic_action_path(action, office)
+        polymorphic_path([action, @namespace, office])
       end
     end
   end
