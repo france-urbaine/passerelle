@@ -3,8 +3,8 @@
   - datatable.with_pagination(@pagy, options: !nested?) if @pagy
 
   - datatable.with_selection do |selection|
-    - if allowed_to?(:destroy_all?, Collectivity)
-      - selection.with_action "Tout supprimer", polymorphic_path([:remove_all, link_scope, :collectivities]), modal: true
+    - if allow_action_to?(:destroy_all?, Collectivity)
+      - selection.with_action "Tout supprimer", polymorphic_path([:remove_all, @namespace, @parent, :collectivities]), modal: true
 
   - datatable.with_column(:name, sort: true)                          { "Collectivité" }            if columns.include?(:name)
   - datatable.with_column(:siren, sort: true)                         { "SIREN" }                   if columns.include?(:siren)
@@ -25,14 +25,14 @@
       | Aucune collectivité disponible.
 
   - datatable.each_row do |row, collectivity|
-    - row.with_checkbox "Sélectionner cette collectivité", described_by: :name, disabled: !allowed_to?(:destroy_all?, Collectivity)
+    - row.with_checkbox "Sélectionner cette collectivité", described_by: :name, disabled: !allow_action_to?(:destroy_all?, Collectivity)
 
     - unless @namespace == :territories
-      - if allowed_to?(:edit?, collectivity)
-        - row.with_action "Modifier cette collectivité", polymorphic_path([:edit, link_scope, collectivity]), icon: "pencil-square", modal: true
+      - if allow_action_to?(:edit?, collectivity)
+        - row.with_action "Modifier cette collectivité", polymorphic_action_path(:edit, collectivity), icon: "pencil-square", modal: true
 
-      - if allowed_to?(:remove?, collectivity)
-        - row.with_action "Supprimer cette collectivité", polymorphic_path([:remove, link_scope, collectivity]), icon: "trash", modal: true
+      - if allow_action_to?(:remove?, collectivity)
+        - row.with_action "Supprimer cette collectivité", polymorphic_action_path(:remove, collectivity), icon: "trash", modal: true
 
     - row.with_column(:name) do
       = authorized_link_to(collectivity, namespace: @namespace, parent: @parent)

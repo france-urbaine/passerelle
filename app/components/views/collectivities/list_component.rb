@@ -44,17 +44,21 @@ module Views
         @parent
       end
 
-      def authorization_namespace
-        case @namespace
-        when :territories then Admin
-        else @namespace.to_s.classify.constantize
+      def allow_action_to?(action, collectivity)
+        case [action, @namespace, @parent]
+        in [:destroy_all?, :admin, DDFIP] | [:destroy_all?, _, Office] | [:destroy_all?, :territories, _]
+          false
+        in [_, :territories, _]
+          allowed_to?(action, collectivity, namespace: Admin)
+        else
+          allowed_to?(action, collectivity, namespace: @namespace.to_s.classify.constantize)
         end
       end
 
-      def link_scope
+      def polymorphic_action_path(action, collectivity)
         case @namespace
-        when :territories then :admin
-        else @namespace
+        when :territories then polymorphic_path([action, :admin, collectivity])
+        else polymorphic_path([action, @namespace, collectivity])
         end
       end
     end
