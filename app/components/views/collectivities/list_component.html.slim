@@ -3,7 +3,7 @@
   - datatable.with_pagination(@pagy, options: !nested?) if @pagy
 
   - datatable.with_selection do |selection|
-    - if allowed_to_remove_all?
+    - if allowed_to?(:destroy_all?, Collectivity)
       - selection.with_action "Tout supprimer", polymorphic_path([:remove_all, @namespace, @parent, :collectivities]), modal: true
 
   - datatable.with_column(:name, sort: true)                          { "Collectivité" }            if columns.include?(:name)
@@ -25,32 +25,23 @@
       | Aucune collectivité disponible.
 
   - datatable.each_row do |row, collectivity|
-    - row.with_checkbox "Sélectionner cette collectivité", described_by: :name, disabled: !allowed_to_remove_all?
+    - row.with_checkbox "Sélectionner cette collectivité", described_by: :name, disabled: !allowed_to?(:destroy_all?, Collectivity)
 
-    - if allowed_to_edit?(collectivity)
-      - row.with_action "Modifier cette collectivité", edit_path(collectivity), icon: "pencil-square", modal: true
+    - unless @namespace == :territories
+      - if allowed_to?(:edit?, collectivity)
+        - row.with_action "Modifier cette collectivité", polymorphic_path([:edit, link_scope, collectivity]), icon: "pencil-square", modal: true
 
-    - if allowed_to_remove?(collectivity)
-      - row.with_action "Supprimer cette collectivité", remove_path(collectivity), icon: "trash", modal: true
+      - if allowed_to?(:remove?, collectivity)
+        - row.with_action "Supprimer cette collectivité", polymorphic_path([:remove, link_scope, collectivity]), icon: "trash", modal: true
 
     - row.with_column(:name) do
-      - if allowed_to_show?(collectivity)
-        = link_to collectivity.name, show_path(collectivity), data: { turbo_frame: "_top" }
-      - else
-        = collectivity.name
+      = authorized_link_to(collectivity, namespace: @namespace, parent: @parent)
 
     - row.with_column(:siren) do
       = helpers.display_siren(collectivity.siren)
 
     - row.with_column(:publisher) do
-      - if collectivity.publisher&.kept?
-        - if allowed_to_show_publisher?
-          = link_to collectivity.publisher.name, publisher_show_path(collectivity.publisher), data: { turbo_frame: "_top" }
-        - else
-          = collectivity.publisher.name
-      - elsif collectivity.publisher&.discarded?
-        .text-disabled
-          = "#{collectivity.publisher.name} (organisation supprimée)"
+      = authorized_link_to(collectivity.publisher, namespace: @namespace, parent: @parent)
 
     - row.with_column(:contact) do
       = "#{collectivity.contact_first_name} #{collectivity.contact_last_name}".strip.presence

@@ -45,81 +45,18 @@ module Views
       end
 
       def authorization_namespace
-        @namespace.to_s.classify.constantize unless @namespace == :territories
-      end
-
-      # Disable these layout cops to allow more comparable lines
-      #
-      # rubocop:disable Layout/LineLength
-      # rubocop:disable Layout/ExtraSpacing
-      #
-      def allowed_to_show?(collectivity)
         case @namespace
-        when :territories                  then allowed_to?(:show?, collectivity, with: Admin::CollectivityPolicy)
-        else                                    allowed_to?(:show?, collectivity)
+        when :territories then Admin
+        else @namespace.to_s.classify.constantize
         end
       end
 
-      def allowed_to_edit?(collectivity)
+      def link_scope
         case @namespace
-        when :territories                  then false
-        else                                    allowed_to?(:edit?, collectivity)
+        when :territories then :admin
+        else @namespace
         end
       end
-
-      def allowed_to_remove?(collectivity)
-        case @namespace
-        when :territories                  then false
-        else                                    allowed_to?(:remove?, collectivity)
-        end
-      end
-
-      def allowed_to_remove_all?
-        case @namespace
-        when :admin                        then [DDFIP, Office].exclude? @parent.class
-        when :territories                  then false
-        else                                    allowed_to?(:destroy_all?, Collectivity)
-        end
-      end
-
-      def show_path(collectivity)
-        case @namespace
-        when :territories                  then polymorphic_path([:admin, collectivity])
-        else                                    polymorphic_path([@namespace, collectivity])
-        end
-      end
-
-      def edit_path(collectivity)
-        case @namespace
-        when :territories                  then polymorphic_path([:edit, :admin, collectivity])
-        else                                    polymorphic_path([:edit, @namespace, collectivity])
-        end
-      end
-
-      def remove_path(collectivity)
-        case @namespace
-        when :territories                  then polymorphic_path([:remove, :admin, collectivity])
-        else                                    polymorphic_path([:remove, @namespace, collectivity])
-        end
-      end
-
-      def allowed_to_show_publisher?
-        case @namespace
-        when :organization                 then @parent.instance_of?(Office) ? false : allowed_to?(:show?, Publisher, with: Admin::PublisherPolicy)
-        when :territories                  then allowed_to?(:show?, Publisher, with: Admin::PublisherPolicy)
-        else                                    allowed_to?(:show?, Publisher)
-        end
-      end
-
-      def publisher_show_path(publisher)
-        case @namespace
-        when :organization, :territories then polymorphic_path([:admin, publisher])
-        else                                  polymorphic_path([@namespace, publisher])
-        end
-      end
-      #
-      # rubocop:enable Layout/LineLength
-      # rubocop:enable Layout/ExtraSpacing
     end
   end
 end

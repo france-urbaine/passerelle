@@ -78,7 +78,7 @@ RSpec.describe Views::Collectivities::ListComponent, type: :component do
       before { sign_in_as(:super_admin) }
 
       context "without parent" do
-        it "renders cellectivities links & actions" do
+        it "renders collectivites links & actions" do
           render_inline described_class.new(Collectivity.all, pagy, namespace: :admin)
 
           expect(page).to have_selector(:table_row, "Collectivité" => collectivities.first.name) do |row|
@@ -96,7 +96,7 @@ RSpec.describe Views::Collectivities::ListComponent, type: :component do
         let!(:commune) { create(:commune, code_departement: ddfip.code_departement) }
         let!(:collectivity) { create(:collectivity, territory: commune) }
 
-        it "renders cellectivities links & actions" do
+        it "renders collectivites links & actions" do
           render_inline described_class.new(Collectivity.all, pagy, namespace: :admin, parent: ddfip)
 
           expect(page).to have_selector(:table_row, "Collectivité" => collectivity.name) do |row|
@@ -114,7 +114,7 @@ RSpec.describe Views::Collectivities::ListComponent, type: :component do
         let!(:commune) { create(:commune, offices: [office]) }
         let!(:collectivity) { create(:collectivity, territory: commune) }
 
-        it "renders cellectivities links & actions" do
+        it "renders collectivites links & actions" do
           render_inline described_class.new(Collectivity.all, pagy, namespace: :admin, parent: office)
 
           expect(page).to have_selector(:table_row, "Collectivité" => collectivity.name) do |row|
@@ -131,7 +131,7 @@ RSpec.describe Views::Collectivities::ListComponent, type: :component do
         let!(:publisher) { create(:publisher) }
         let!(:collectivity) { create(:collectivity, publisher: publisher) }
 
-        it "renders cellectivities links & actions" do
+        it "renders collectivites links & actions" do
           render_inline described_class.new(Collectivity.all, pagy, namespace: :admin, parent: publisher)
 
           expect(page).to have_selector(:table_row, "Collectivité" => collectivity.name) do |row|
@@ -154,7 +154,7 @@ RSpec.describe Views::Collectivities::ListComponent, type: :component do
       before { sign_in_as(:organization_admin, organization: [ddfip, publisher].sample) }
 
       context "without parent" do
-        it "renders cellectivities links & actions" do
+        it "renders collectivites links & actions" do
           render_inline described_class.new(Collectivity.all, pagy, namespace: :organization)
 
           expect(page).to have_selector(:table_row, "Collectivité" => collectivity.name) do |row|
@@ -175,7 +175,7 @@ RSpec.describe Views::Collectivities::ListComponent, type: :component do
 
         before { sign_in_as(:organization_admin, organization: ddfip) }
 
-        it "renders cellectivities links & actions" do
+        it "renders collectivites links & actions" do
           render_inline described_class.new(Collectivity.all, pagy, namespace: :organization, parent: office)
 
           expect(page).to have_selector(:table_row, "Collectivité" => collectivity.name) do |row|
@@ -196,7 +196,7 @@ RSpec.describe Views::Collectivities::ListComponent, type: :component do
         let!(:commune)      { create(:commune) }
         let!(:collectivity) { create(:collectivity, territory: commune) }
 
-        it "renders cellectivities links & actions" do
+        it "renders collectivites links & actions" do
           render_inline described_class.new(Collectivity.all, pagy, namespace: :territories, parent: commune)
 
           expect(page).to have_selector(:table_row, "Collectivité" => collectivity.name) do |row|
@@ -213,7 +213,7 @@ RSpec.describe Views::Collectivities::ListComponent, type: :component do
         let!(:departement)  { create(:departement) }
         let!(:collectivity) { create(:collectivity, territory: departement) }
 
-        it "renders cellectivities links & actions" do
+        it "renders collectivites links & actions" do
           render_inline described_class.new(Collectivity.all, pagy, namespace: :territories, parent: departement)
 
           expect(page).to have_selector(:table_row, "Collectivité" => collectivity.name) do |row|
@@ -230,7 +230,7 @@ RSpec.describe Views::Collectivities::ListComponent, type: :component do
         let!(:epci)         { create(:epci) }
         let!(:collectivity) { create(:collectivity, territory: epci) }
 
-        it "renders cellectivities links & actions" do
+        it "renders collectivites links & actions" do
           render_inline described_class.new(Collectivity.all, pagy, namespace: :territories, parent: epci)
 
           expect(page).to have_selector(:table_row, "Collectivité" => collectivity.name) do |row|
@@ -247,7 +247,7 @@ RSpec.describe Views::Collectivities::ListComponent, type: :component do
         let!(:region)       { create(:region) }
         let!(:collectivity) { create(:collectivity, territory: region) }
 
-        it "renders cellectivities links & actions" do
+        it "renders collectivites links & actions" do
           render_inline described_class.new(Collectivity.all, pagy, namespace: :territories, parent: region)
 
           expect(page).to have_selector(:table_row, "Collectivité" => collectivity.name) do |row|
