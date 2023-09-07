@@ -62,6 +62,7 @@ def start_sidekiq
   command = process_manager
   command += " start -f Procfile.dev"
   command += optional_processes(%w[sidekiq])
+  command += " -s ./.overmind_sidekiq.sock" if process_manager == "overmind"
   system!(command)
 end
 
