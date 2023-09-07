@@ -40,60 +40,33 @@ module Views
         @parent
       end
 
-      def namespace_module
-        @namespace_module ||= @namespace.to_s.classify.constantize
-      end
+      def allow_action_to?(action, user, from: nil)
+        case [action, @namespace, @parent, from]
+        in [:remove_all?, :organization, Office, *] | [:remove?, :organization, Office, :office]
+          allowed_to?(action, user, namespace: ::Organization::Offices)
 
-      # Disable these layout cops to allow more comparable lines
-      #
-      # rubocop:disable Layout/LineLength
-      # rubocop:disable Layout/ExtraSpacing
-      #
-      def allowed_to_edit?(user)
-        case [@namespace, @parent]
-        in [:organization, Collectivity] then allowed_to?(:edit?, user, with: ::Organization::Collectivities::UserPolicy, context: { collectivity: @parent })
-        else                                  allowed_to?(:edit?, user, with: namespace_module::UserPolicy)
+        in [:remove_all?, :admin, Office, *] | [:remove?, :admin, Office, :office]
+          allowed_to?(action, user, namespace: ::Admin::Offices)
+
+        in [*, :office]
+          false
+
+        in [_, :organization, Collectivity, _]
+          allowed_to?(action, user, namespace: ::Organization::Collectivities, context: { collectivity: @parent })
+
+        else
+          allowed_to?(action, user, namespace: @namespace.to_s.classify.constantize)
         end
       end
 
-      def allowed_to_remove?(user)
+      def polymorphic_action_path(action, user)
         case [@namespace, @parent]
-        in [:organization, Collectivity] then allowed_to?(:remove?, user, with: ::Organization::Collectivities::UserPolicy, context: { collectivity: @parent })
-        else                                  allowed_to?(:remove?, user, with: namespace_module::UserPolicy)
+        in [:organization, Collectivity]
+          polymorphic_path([action, @namespace, @parent, user])
+        else
+          polymorphic_path([action, @namespace, user])
         end
       end
-
-      def allowed_to_remove_from_office?(user)
-        case [@namespace, @parent]
-        in [*, Office]                   then allowed_to?(:remove?, user, with: namespace_module::Offices::UserPolicy)
-        else false
-        end
-      end
-
-      def allowed_to_remove_all?
-        case [@namespace, @parent]
-        in [:organization, Collectivity] then allowed_to?(:destroy_all?, User, with: ::Organization::Collectivities::UserPolicy, context: { collectivity: @parent })
-        in [*, Office]                   then allowed_to?(:destroy_all?, User, with: namespace_module::Offices::UserPolicy)
-        else                                  allowed_to?(:destroy_all?, User, with: namespace_module::UserPolicy)
-        end
-      end
-
-      def edit_path(user)
-        case [@namespace, @parent]
-        in [:organization, Collectivity] then polymorphic_path([:edit, @namespace, @parent, user])
-        else                                  polymorphic_path([:edit, @namespace, user])
-        end
-      end
-
-      def remove_path(user)
-        case [@namespace, @parent]
-        in [:organization, Collectivity] then polymorphic_path([:remove, @namespace, @parent, user])
-        else                                  polymorphic_path([:remove, @namespace, user])
-        end
-      end
-      #
-      # rubocop:enable Layout/LineLength
-      # rubocop:enable Layout/ExtraSpacing
     end
   end
 end

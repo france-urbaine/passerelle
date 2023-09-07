@@ -3,7 +3,7 @@
   - datatable.with_pagination(@pagy, options: !nested?) if @pagy
 
   - datatable.with_selection do |selection|
-    - if allowed_to_remove_all?
+    - if allow_action_to?(:remove_all?, User)
       - if @parent.is_a?(Office)
         - selection.with_action "Tout exclure du guichet", polymorphic_path([:remove_all, @namespace, @parent, :users]), modal: true
       - else
@@ -23,16 +23,16 @@
       | Aucun utilisateur disponible.
 
   - datatable.each_row do |row, user|
-    - row.with_checkbox "Sélectionner cet utilisateur", described_by: :name, disabled: !allowed_to_remove_all?
+    - row.with_checkbox "Sélectionner cet utilisateur", described_by: :name, disabled: !allow_action_to?(:remove_all?, User)
 
-    - if allowed_to_edit?(user)
-      - row.with_action "Modifier cet utilisateur", edit_path(user), icon: "pencil-square", modal: true
+    - if allow_action_to?(:edit?, user)
+      - row.with_action "Modifier cet utilisateur", polymorphic_action_path(:edit, user), icon: "pencil-square", modal: true
 
-    - if allowed_to_remove_from_office?(user)
+    - if allow_action_to?(:remove?, user, from: :office)
       - row.with_action "Exclure cet utilisateur du guichet", polymorphic_path([:remove, @namespace, @parent, user]), icon: "arrow-right-on-rectangle", modal: true
 
-    - if allowed_to_remove?(user)
-      - row.with_action "Supprimer cet utilisateur", remove_path(user), icon: "trash", modal: true
+    - if allow_action_to?(:remove?, user)
+      - row.with_action "Supprimer cet utilisateur", polymorphic_action_path(:remove, user), icon: "trash", modal: true
 
     - row.with_column(:name) do
       = authorized_link_to(user, namespace: @namespace, parent: @parent)
