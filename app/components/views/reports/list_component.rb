@@ -29,8 +29,9 @@ module Views
         content
         @columns = DEFAULT_COLUMNS if columns.empty?
 
-        # BadgeHelper.report_badge use package association that's why we need to preload it
-        @reports = @reports.preload(:package)      if columns.include?(:package) || columns.include?(:status)
+        # Always eager load package, it's may be used for policy check
+        @reports = @reports.preload(:package)
+
         @reports = @reports.preload(:commune)      if columns.include?(:commune)
         @reports = @reports.preload(:collectivity) if columns.include?(:collectivity)
         @reports = @reports.preload(:workshop)     if columns.include?(:workshop)

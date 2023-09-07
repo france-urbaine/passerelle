@@ -60,6 +60,34 @@ RSpec.describe Views::Users::ListComponent, type: :component do
     end
   end
 
+  describe "eager loading" do
+    let(:pagy) { Pagy.new(count: 3) }
+
+    before do
+      sign_in_as(:super_admin)
+      create_list(:user, 3)
+    end
+
+    # Expect strict_loading to raise an ActiveRecord::StrictLoadingViolationError
+    # in case of a N+1 query.
+
+    it "doesn't raise an error about N+1 queries with all default columns" do
+      expect {
+        render_inline described_class.new(User.strict_loading, pagy, namespace: :admin)
+      }.not_to raise_error
+    end
+
+    it "doesn't raise an error about N+1 queries with a limited set of columns" do
+      expect {
+        render_inline described_class.new(User.strict_loading, pagy, namespace: :admin) do |list|
+          list.with_column(:name)
+          list.with_column(:organization)
+          list.with_column(:offices)
+        end
+      }.not_to raise_error
+    end
+  end
+
   describe "links & actions" do
     let!(:users) { create_list(:user, 3) }
     let(:pagy)   { Pagy.new(count: 3) }
