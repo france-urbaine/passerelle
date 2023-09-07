@@ -2,6 +2,8 @@
 
 module Icon
   class Component < ApplicationViewComponent
+    class FileNotFound < IOError; end
+
     SETS = %i[
       auto
       assets
@@ -13,7 +15,9 @@ module Icon
       solid
     ].freeze
 
-    def initialize(icon, title = nil, set: :auto, variant: :outline, **options)
+    DEFAULT_VARIANT = :outline
+
+    def initialize(icon, title = nil, set: :auto, variant: DEFAULT_VARIANT, **options)
       validate_set!(set)
       validate_variant!(variant)
 
@@ -27,13 +31,11 @@ module Icon
     end
 
     def call
-      with_cache do
-        svg
-          .strip
-          .gsub(%(aria-hidden="true"), "aria-hidden")
-          .gsub(%r{></(path|circle|rect)>}, "/>")
-          .html_safe # rubocop:disable Rails/OutputSafety
-      end
+      svg
+        .strip
+        .gsub(%(aria-hidden="true"), "aria-hidden")
+        .gsub(%r{></(path|circle|rect)>}, "/>")
+        .html_safe # rubocop:disable Rails/OutputSafety
     end
 
     private
@@ -54,53 +56,41 @@ module Icon
       raise ArgumentError, "unexpected variant argument: #{variant.inspect}"
     end
 
-    def set
-      return @set      if @set != :auto
-      return :assets   if asset_exist?
-      return :heroicon if heroicon_exist?
-
-      :assets
-    end
-
-    def asset_exist?
-      ::InlineSvg.configuration.asset_file.named("#{@icon}.svg")
-    rescue InlineSvg::AssetFile::FileNotFound
-      false
-    end
-
-    def heroicon_exist?
-      ::InlineSvg.configuration.asset_file.named("heroicons/outline/#{@icon}.svg")
-    rescue InlineSvg::AssetFile::FileNotFound
-      false
-    end
-
-    # Caching
-    # --------------------------------------------------------------------------
-    CACHE_LOOKUP = {} # rubocop:disable Style/MutableConstant
-
-    def with_cache
-      # TODO
-      yield
-    end
-
     # SVG reading
     # --------------------------------------------------------------------------
     def svg
-      case set
-      when :assets   then assets_svg
-      when :heroicon then heroicon_svg
+      inline_svg_tag(icon_path, **transform_options)
+    end
+
+    def icon_path
+      case @set
+      when :assets    then default_path
+      when :heroicon  then heroicon_path
+      when :auto
+        if @variant == DEFAULT_VARIANT && icon_exist?(default_path)
+          default_path
+        elsif icon_exist?(heroicon_path)
+          heroicon_path
+        else # rubocop:disable Lint/DuplicateBranch
+          default_path
+        end
       end
     end
 
-    def assets_svg
-      helpers.inline_svg_tag("#{@icon}.svg", **transform_options)
+    def default_path
+      "#{@icon}.svg"
     end
 
-    def heroicon_svg
+    def heroicon_path
       path = "heroicons/outline/#{@icon}.svg"
       path = "heroicons/solid/#{@icon}.svg" if @variant == :solid
+      path
+    end
 
-      helpers.inline_svg_tag(path, **transform_options)
+    def icon_exist?(path)
+      ::InlineSvg.configuration.asset_file.named(path)
+    rescue InlineSvg::AssetFile::FileNotFound
+      false
     end
 
     def transform_options

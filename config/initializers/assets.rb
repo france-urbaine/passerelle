@@ -21,14 +21,9 @@ Rails.application.config.after_initialize do
 end
 
 # Setup inline_svg to cache SVG icons in production
+require "extras/icon_file_loader"
+
 InlineSvg.configure do |config|
-  if Rails.env.production?
-    config.asset_file = InlineSvg::CachedAssetFile.new(
-      paths: [
-        Rails.root.join("app/assets/icons"),
-        Rails.root.join("app/assets/images")
-      ],
-      filters: /\.svg/
-    )
-  end
+  # config.asset_file = IconFileLoader.new(cache: Rails.env.production?)
+  config.asset_file = IconFileLoader.new(cache: true)
 end
