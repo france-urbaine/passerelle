@@ -38,8 +38,7 @@
         - row.with_action "Supprimer cette DGFIP", remove_admin_dgfip_path(dgfip), icon: "trash", modal: true
 
       - row.with_column(:name) do
-        = authorized_link_to dgfip, scope: :admin do
-          = dgfip.name
+        = authorized_link_to ddfip, namespace: :admin
 
       - row.with_column(:contact) do
          = "#{dgfip.contact_first_name} #{dgfip.contact_last_name}".strip.presence

@@ -38,8 +38,7 @@
         - row.with_action "Supprimer cette collectivité", remove_organization_collectivity_path(collectivity), icon: "trash", modal: true
 
       - row.with_column(:name) do
-        = authorized_link_to collectivity, scope: :organization do
-          = collectivity.name
+        = authorized_link_to collectivity, namespace: :organization
 
       - row.with_column(:siren) do
         = display_siren(collectivity.siren)

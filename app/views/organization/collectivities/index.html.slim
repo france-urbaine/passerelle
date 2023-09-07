@@ -44,20 +44,13 @@
         - row.with_action "Supprimer cette collectivité", remove_organization_collectivity_path(collectivity), icon: "trash", modal: true
 
       - row.with_column(:name) do
-        = authorized_link_to collectivity, scope: :organization do
-          = collectivity.name
+        = authorized_link_to collectivity, namespace: :organization
 
       - row.with_column(:siren) do
         = display_siren(collectivity.siren)
 
       - row.with_column(:publisher) do
-        - if collectivity.publisher&.kept?
-          = authorized_link_to collectivity.publisher, scope: :admin do
-            = collectivity.publisher.name
-
-        - elsif collectivity.publisher&.discarded?
-          .text-disabled
-            = "#{collectivity.publisher.name} (organisation supprimée)"
+        = authorized_link_to collectivity.publisher, namespace: :organization
 
       - row.with_column(:contact) do
         = "#{collectivity.contact_first_name} #{collectivity.contact_last_name}".strip.presence

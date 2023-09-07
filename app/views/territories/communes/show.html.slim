@@ -19,21 +19,15 @@
 
       .description-list__row
         dt Région
-        dd
-          = authorized_link_to @commune.region, scope: :territories do
-            = @commune.region.name
+        dd= authorized_link_to @commune.region, namespace: :territories
 
       .description-list__row
         dt Département
-        dd
-          = authorized_link_to @commune.departement, scope: :territories do
-            = @commune.departement.name
+        dd= authorized_link_to @commune.departement, namespace: :territories
 
       .description-list__row
         dt EPCI
-        dd
-          = authorized_link_to @commune.epci, scope: :territories do
-            = @commune.epci.name
+        dd= authorized_link_to @commune.epci, namespace: :territories
 
       .description-list__row
         dt Collectivités enregistrées

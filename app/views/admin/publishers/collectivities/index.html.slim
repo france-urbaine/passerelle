@@ -42,8 +42,7 @@
         - row.with_action "Supprimer cette collectivité", remove_admin_collectivity_path(collectivity), icon: "trash", modal: true
 
       - row.with_column(:name) do
-        = authorized_link_to collectivity, admin_collectivity_path(collectivity) do
-          = collectivity.name
+        = authorized_link_to collectivity, namespace: :admin
 
       - row.with_column(:siren) do
         = display_siren(collectivity.siren)

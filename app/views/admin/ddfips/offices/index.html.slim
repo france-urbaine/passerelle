@@ -39,12 +39,10 @@
         - row.with_action "Supprimer ce guichet", remove_admin_office_path(office), icon: "trash", modal: true
 
       - row.with_column(:name) do
-        = authorized_link_to office, scope: :admin do
-          = office.name
+        = authorized_link_to office, namespace: :admin
 
       - row.with_column(:ddfip) do
-        = authorized_link_to office.ddfip, scope: :admin do
-          = office.ddfip.name
+        = authorized_link_to office.ddfip, namespace: :admin
 
       - row.with_column(:competence) do
         = short_list(office.competences, humanize: true) { |value| t(value, scope: "enum.competence") }

@@ -18,15 +18,13 @@
     dl.description-list
       .description-list__row
         dt DDFIP
-        dd
-          = authorized_link_to @office.ddfip, scope: :admin do
-            = @office.ddfip.name
+        dd= authorized_link_to @office.ddfip, namespace: :admin
 
       .description-list__row
         dt Département
         dd
-          = authorized_link_to @office.ddfip.departement, scope: :territories do
-            = @office.ddfip.departement.qualified_name
+          = authorized_link_to @office.ddfip&.departement, namespace: :admin do
+            = @office.ddfip&.departement&.qualified_name
 
       .description-list__row
         dt Compétences

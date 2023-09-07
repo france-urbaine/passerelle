@@ -35,16 +35,13 @@
       - row.with_action "Supprimer cet utilisateur", remove_path(user), icon: "trash", modal: true
 
     - row.with_column(:name) do
-      - if allowed_to_show?(user)
-        = link_to user.name, show_path(user), data: { turbo_frame: "_top" }
-      - else
-        = user.name
+      = authorized_link_to(user, namespace: @namespace, parent: @parent)
 
     - row.with_column(:email) do
       = render Views::Users::ShowEmailComponent.new(user)
 
     - row.with_column(:organization) do
-      = render Views::Users::ShowOrganizationComponent.new(user)
+      = authorized_link_to(user.organization, namespace: @namespace, parent: @parent)
 
     - row.with_column(:organization_admin) do
       = render Views::Users::ShowCheckBadgeComponent.new(user, :organization_admin)

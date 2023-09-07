@@ -28,8 +28,7 @@
           = commune.code_insee
 
         - column.with_span do
-          = authorized_link_to commune, scope: :territories do
-            = commune.name
+          = authorized_link_to commune, namespace: :territories
 
       - row.with_column(:epci) do |column|
         - if commune.epci
@@ -37,8 +36,7 @@
             = display_siren(commune.siren_epci)
 
           - column.with_span do
-            = authorized_link_to commune.epci, scope: :territories do
-              = commune.epci.name
+            = authorized_link_to commune.epci, namespace: :territories
 
       - row.with_column(:collectivities_count) do
         = number_with_delimiter(commune.collectivities_count) if commune.collectivities_count.positive?

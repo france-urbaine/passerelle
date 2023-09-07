@@ -18,7 +18,7 @@
     dl.description-list
       .description-list__row
         dt Organisation
-        dd= render Views::Users::ShowOrganizationComponent.new(@user)
+        dd= authorized_link_to @user.organization, namespace: :admin
 
       - if @user.organization.is_a?(DDFIP)
         .description-list__row
