@@ -274,10 +274,10 @@ RSpec.describe Report do
       end
     end
 
-    describe ".unrejected_packages" do
+    describe ".unreturned_packages" do
       it "scopes on transmitted reports with package not yet rejected by DDFIP" do
         expect {
-          described_class.unrejected_packages.load
+          described_class.unreturned_packages.load
         }.to perform_sql_query(<<~SQL)
           SELECT     "reports".*
           FROM       "reports"

@@ -144,7 +144,7 @@ class PackagePolicy < ApplicationPolicy
     Package
       .kept
       .out_of_sandbox
-      .unrejected
+      .unreturned
       .with_reports(Report.kept.covered_by_ddfip(organization))
   end
 

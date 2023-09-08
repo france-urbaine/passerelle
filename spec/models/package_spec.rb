@@ -122,10 +122,10 @@ RSpec.describe Package do
       end
     end
 
-    describe ".unrejected" do
-      it "scopes on packages unrejected by a DDFIP" do
+    describe ".unreturned" do
+      it "scopes on packages unreturned by a DDFIP" do
         expect {
-          described_class.unrejected.load
+          described_class.unreturned.load
         }.to perform_sql_query(<<~SQL)
           SELECT "packages".*
           FROM   "packages"
@@ -307,12 +307,12 @@ RSpec.describe Package do
       it { expect(packages[4]).to be_returned }
     end
 
-    describe "#unrejected?" do
-      it { expect(packages[0]).not_to be_unrejected }
-      it { expect(packages[1]).to be_unrejected }
-      it { expect(packages[2]).to be_unrejected }
-      it { expect(packages[3]).not_to be_unrejected }
-      it { expect(packages[4]).not_to be_unrejected }
+    describe "#unreturned?" do
+      it { expect(packages[0]).not_to be_unreturned }
+      it { expect(packages[1]).to be_unreturned }
+      it { expect(packages[2]).to be_unreturned }
+      it { expect(packages[3]).not_to be_unreturned }
+      it { expect(packages[4]).not_to be_unreturned }
     end
 
     describe "#packed_through_publisher_api?" do
