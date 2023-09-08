@@ -1,5 +1,5 @@
 = datatable_component(@reports) do |datatable|
-    - datatable.with_search if @searchable
+    - datatable.with_search unless @dashboard
     - datatable.with_pagination(@pagy, options: !nested?) if @pagy
 
     - datatable.with_selection do |selection|
@@ -10,7 +10,7 @@
         - selection.with_action "Tout supprimer", url_for([:remove_all, @parent, :reports]), modal: true
 
     - datatable.with_column(:status,   compact: true)                        { "Etat" }                if columns.include?(:status)
-    - datatable.with_column(:reference, **(@searchable ? {sort: true} : {})) { "Reference" }           if columns.include?(:reference)
+    - datatable.with_column(:reference, **(@dashboard ? {} : {sort: true})) { "Reference" }           if columns.include?(:reference)
     - datatable.with_column(:package)                                        { "Paquet" }              if columns.include?(:package)
     - datatable.with_column(:collectivity)                                   { "Collectivité" }        if columns.include?(:collectivity)
     - datatable.with_column(:priority, compact: true)                        { "Priorité" }            if columns.include?(:priority)

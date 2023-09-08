@@ -1,12 +1,12 @@
 .dashboard-numbers
   .dashboard-number
-    = Report.published.count
+    = current_organization.reports_published_count
     span.dashboard-number__unit Signalements transmis
   .dashboard-number
-    = Report.published.approved.count
+    = current_organization.reports_approved_count
     span.dashboard-number__unit Signalements approuvés
   .dashboard-number
-    = Report.published.rejected.count
+    = current_organization.reports_rejected_count
     span.dashboard-number__unit Signalements rejetés
 
 .content__separator
@@ -14,7 +14,7 @@ h2.subheader
   = icon_component("rectangle-stack", "Nouvelle section")
   | Signalements transmis
 
-= render Views::Reports::ListComponent.new(@reports.includes(:package).transmitted.order('packages.transmitted_at DESC'), searchable: false) do |view|
+= render Views::Reports::ListComponent.new(@reports.includes(:package).transmitted.order('packages.transmitted_at DESC'), dashboard: true) do |view|
   - view.with_column(:reference)
   - view.with_column(:package)
   - view.with_column(:collectivity)

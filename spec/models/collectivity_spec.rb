@@ -364,32 +364,6 @@ RSpec.describe Collectivity do
     end
   end
 
-  # Utility methods
-  # ----------------------------------------------------------------------------
-  describe "Utility methods" do
-    let!(:publisher)   { create(:publisher) }
-    let(:collectivity) { create(:collectivity, publisher: publisher) }
-
-    describe "#packing_count" do
-      context "when there are no reports" do
-        it "returns 0" do
-          expect(collectivity.packing_count).to eq(0)
-        end
-      end
-
-      context "when there are reports with 'packing' state" do
-        before do
-          create_list(:report, 3, :transmitted, collectivity: collectivity, publisher: publisher)
-          create_list(:report, 2, collectivity: collectivity, publisher: publisher)
-        end
-
-        it "returns the correct count of 'packing' reports" do
-          expect(collectivity.packing_count).to eq(2)
-        end
-      end
-    end
-  end
-
   # Other associations
   # ----------------------------------------------------------------------------
   describe "other associations" do
@@ -620,6 +594,87 @@ RSpec.describe Collectivity do
     end
 
     describe "about reports counter caches" do
+      describe "#reports_packing_count" do
+        let(:package) { create(:package, collectivity: collectivities[0], publisher: nil) }
+        let(:report)  { create(:report, package: package, collectivity: collectivities[0]) }
+
+        it "changes when report is created" do
+          expect { report }
+            .to  change { collectivities[0].reload.reports_packing_count }.from(0).to(1)
+            .and not_change { collectivities[1].reload.reports_packing_count }.from(0)
+        end
+
+        it "changes when package is created" do
+          expect { report.package }
+            .to  change { collectivities[0].reload.reports_packing_count }.from(0).to(1)
+            .and not_change { collectivities[1].reload.reports_packing_count }.from(0)
+        end
+
+        it "changes when package is transmitted" do
+          report
+
+          expect { report.package.transmit! }
+            .to  change { collectivities[0].reload.reports_packing_count }.from(1).to(0)
+            .and not_change { collectivities[1].reload.reports_packing_count }.from(0)
+        end
+
+        it "doesn't changes when report package is created in sandbox" do
+          report.package.update(sandbox: true)
+
+          expect { report }
+            .to  not_change { collectivities[0].reload.reports_packing_count }.from(0)
+            .and not_change { collectivities[1].reload.reports_packing_count }.from(0)
+        end
+
+        it "changes when report is discarded" do
+          report
+
+          expect { report.discard }
+            .to  change { collectivities[0].reload.reports_packing_count }.from(1).to(0)
+            .and not_change { collectivities[1].reload.reports_packing_count }.from(0)
+        end
+
+        it "changes when package is discarded" do
+          report
+
+          expect { package.discard }
+            .to  change { collectivities[0].reload.reports_packing_count }.from(1).to(0)
+            .and not_change { collectivities[1].reload.reports_packing_count }.from(0)
+        end
+
+        it "changes when report is undiscarded" do
+          report.discard
+
+          expect { report.undiscard }
+            .to  change { collectivities[0].reload.reports_packing_count }.from(0).to(1)
+            .and not_change { collectivities[1].reload.reports_packing_count }.from(0)
+        end
+
+        it "changes when package is undiscarded" do
+          report.package.discard
+
+          expect { package.undiscard }
+            .to  change { collectivities[0].reload.reports_packing_count }.from(0).to(1)
+            .and not_change { collectivities[1].reload.reports_packing_count }.from(0)
+        end
+
+        it "changes when report is deleted" do
+          report
+
+          expect { report.destroy }
+            .to change { collectivities[0].reload.reports_packing_count }.from(1).to(0)
+            .and not_change { collectivities[1].reload.reports_packing_count }.from(0)
+        end
+
+        it "changes when package is deleted" do
+          report.package
+
+          expect { package.delete }
+            .to change { collectivities[0].reload.reports_packing_count }.from(1).to(0)
+            .and not_change { collectivities[1].reload.reports_packing_count }.from(0)
+        end
+      end
+
       describe "#reports_transmitted_count" do
         let(:package) { create(:package, collectivity: collectivities[0]) }
         let(:report)  { create(:report, package: package, collectivity: collectivities[0]) }

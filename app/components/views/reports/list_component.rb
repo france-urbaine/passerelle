@@ -17,11 +17,11 @@ module Views
         status
       ].freeze
 
-      def initialize(reports, pagy = nil, parent: nil, searchable: true)
+      def initialize(reports, pagy = nil, parent: nil, dashboard: false)
         @reports     = reports
         @pagy        = pagy
         @parent      = parent
-        @searchable  = searchable
+        @dashboard   = dashboard
         super()
       end
 

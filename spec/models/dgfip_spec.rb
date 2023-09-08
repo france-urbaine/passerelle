@@ -151,7 +151,7 @@ RSpec.describe DGFIP do
   end
 
   describe "database triggers" do
-    let(:dgfip) { create(:dgfip) }
+    let!(:dgfip) { create(:dgfip) }
 
     describe "about organization counter caches" do
       describe "#users_count" do
@@ -164,18 +164,21 @@ RSpec.describe DGFIP do
 
         it "changes on deletion" do
           user
+
           expect { user.destroy }
             .to change { dgfip.reload.users_count }.from(1).to(0)
         end
 
         it "changes when discarding" do
           user
+
           expect { user.discard }
             .to change { dgfip.reload.users_count }.from(1).to(0)
         end
 
         it "changes when undiscarding" do
           user.discard
+
           expect { user.undiscard }
             .to change { dgfip.reload.users_count }.from(0).to(1)
         end
@@ -183,8 +186,184 @@ RSpec.describe DGFIP do
         it "changes when updating organization" do
           ddfip = create(:ddfip)
           user
+
           expect { user.update(organization: ddfip) }
             .to  change { dgfip.reload.users_count }.from(1).to(0)
+        end
+      end
+
+      describe "#reports_published_count" do
+        let(:package) { create(:package, :transmitted) }
+        let(:report) { create(:report, package: package) }
+
+        it "changes on report creation" do
+          expect { report }
+            .to change { dgfip.reload.reports_published_count }.from(0).to(1)
+        end
+
+        it "changes on report deletion" do
+          report
+
+          expect { report.destroy }
+            .to change { dgfip.reload.reports_published_count }.from(1).to(0)
+        end
+
+        it "changes on package deletion" do
+          report
+
+          expect { report.package.destroy }
+            .to change { dgfip.reload.reports_published_count }.from(1).to(0)
+        end
+
+        it "changes when discarding report" do
+          report
+
+          expect { report.discard }
+            .to change { dgfip.reload.reports_published_count }.from(1).to(0)
+        end
+
+        it "changes when discarding package" do
+          report
+
+          expect { report.package.discard }
+            .to change { dgfip.reload.reports_published_count }.from(1).to(0)
+        end
+
+        it "changes when undiscarding report" do
+          report.discard
+
+          expect { report.undiscard }
+            .to change { dgfip.reload.reports_published_count }.from(0).to(1)
+        end
+
+        it "changes when undiscarding package" do
+          report.package.discard
+
+          expect { report.package.undiscard }
+            .to change { dgfip.reload.reports_published_count }.from(0).to(1)
+        end
+
+        it "changes when package is set to sandbox" do
+          report
+
+          expect { report.package.update(sandbox: true) }
+            .to  change { dgfip.reload.reports_published_count }.from(1).to(0)
+        end
+      end
+
+      describe "#reports_approved_count" do
+        let(:report) { create(:report, :approved) }
+
+        it "changes on report creation" do
+          expect { report }
+            .to change { dgfip.reload.reports_approved_count }.from(0).to(1)
+        end
+
+        it "changes on report deletion" do
+          report
+
+          expect { report.destroy }
+            .to change { dgfip.reload.reports_approved_count }.from(1).to(0)
+        end
+
+        it "changes on package deletion" do
+          report
+
+          expect { report.package.destroy }
+            .to change { dgfip.reload.reports_approved_count }.from(1).to(0)
+        end
+
+        it "changes when discarding report" do
+          report
+
+          expect { report.discard }
+            .to change { dgfip.reload.reports_approved_count }.from(1).to(0)
+        end
+
+        it "changes when discarding package" do
+          report
+
+          expect { report.package.discard }
+            .to change { dgfip.reload.reports_approved_count }.from(1).to(0)
+        end
+
+        it "changes when undiscarding report" do
+          report.discard
+
+          expect { report.undiscard }
+            .to change { dgfip.reload.reports_approved_count }.from(0).to(1)
+        end
+
+        it "changes when undiscarding package" do
+          report.package.discard
+
+          expect { report.package.undiscard }
+            .to change { dgfip.reload.reports_approved_count }.from(0).to(1)
+        end
+
+        it "changes when package is set to sandbox" do
+          report
+
+          expect { report.package.update(sandbox: true) }
+            .to  change { dgfip.reload.reports_approved_count }.from(1).to(0)
+        end
+      end
+
+      describe "#reports_rejected_count" do
+        let(:report) { create(:report, :rejected) }
+
+        it "changes on report creation" do
+          expect { report }
+            .to change { dgfip.reload.reports_rejected_count }.from(0).to(1)
+        end
+
+        it "changes on report deletion" do
+          report
+
+          expect { report.destroy }
+            .to change { dgfip.reload.reports_rejected_count }.from(1).to(0)
+        end
+
+        it "changes on package deletion" do
+          report
+
+          expect { report.package.destroy }
+            .to change { dgfip.reload.reports_rejected_count }.from(1).to(0)
+        end
+
+        it "changes when discarding report" do
+          report
+
+          expect { report.discard }
+            .to change { dgfip.reload.reports_rejected_count }.from(1).to(0)
+        end
+
+        it "changes when discarding package" do
+          report
+
+          expect { report.package.discard }
+            .to change { dgfip.reload.reports_rejected_count }.from(1).to(0)
+        end
+
+        it "changes when undiscarding report" do
+          report.discard
+
+          expect { report.undiscard }
+            .to change { dgfip.reload.reports_rejected_count }.from(0).to(1)
+        end
+
+        it "changes when undiscarding package" do
+          report.package.discard
+
+          expect { report.package.undiscard }
+            .to change { dgfip.reload.reports_rejected_count }.from(0).to(1)
+        end
+
+        it "changes when package is set to sandbox" do
+          report
+
+          expect { report.package.update(sandbox: true) }
+            .to  change { dgfip.reload.reports_rejected_count }.from(1).to(0)
         end
       end
     end

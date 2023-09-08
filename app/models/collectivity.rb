@@ -31,6 +31,7 @@
 #  packages_approved_count    :integer          default(0), not null
 #  packages_rejected_count    :integer          default(0), not null
 #  allow_publisher_management :boolean          default(FALSE), not null
+#  reports_packing_count      :integer          default(0), not null
 #
 # Indexes
 #
@@ -148,12 +149,6 @@ class Collectivity < ApplicationRecord
 
   def region?
     territory_type == "Region"
-  end
-
-  # Utility methods
-  # ----------------------------------------------------------------------------
-  def packing_count
-    reports.all_kept.packing.count
   end
 
   # Other associations

@@ -211,28 +211,6 @@ RSpec.describe DDFIP do
     end
   end
 
-  # Utility methods
-  # ----------------------------------------------------------------------------
-  describe "utility methods" do
-    describe "#reports_pending_count" do
-      context "when there are no reports" do
-        let(:ddfip) { create(:ddfip) }
-
-        it "returns 0" do
-          expect(ddfip.reports_pending_count).to eq(0)
-        end
-      end
-
-      context "when there are reports with this scope" do
-        let(:ddfip) { create(:ddfip, reports_count: 12, reports_approved_count: 5, reports_rejected_count: 2, reports_debated_count: 1) }
-
-        it "returns the correct count of 'packing' reports" do
-          expect(ddfip.reports_pending_count).to eq(4)
-        end
-      end
-    end
-  end
-
   # Other associations
   # ----------------------------------------------------------------------------
   describe "other associations" do
@@ -786,6 +764,54 @@ RSpec.describe DDFIP do
           expect { report.delete }
             .to change { ddfips[0].reload.reports_debated_count }.from(1).to(0)
             .and not_change { ddfips[1].reload.reports_debated_count }.from(0)
+        end
+      end
+
+      describe "#reports_pending_count" do
+        before do
+          commune = create(:commune)
+          ddfips.first.update(code_departement: commune.code_departement)
+        end
+
+        let(:commune) { Commune.first }
+        let(:report) { create(:report, :transmitted, commune: commune) }
+
+        it "change on report creation" do
+          expect { report }
+            .to  change { ddfips[0].reload.reports_pending_count }.from(0).to(1)
+            .and not_change { ddfips[1].reload.reports_pending_count }.from(0)
+        end
+
+        it "changes when report is approved" do
+          report
+
+          expect { report.approve! }
+            .to change { ddfips[0].reload.reports_pending_count }.from(1).to(0)
+            .and not_change { ddfips[1].reload.reports_pending_count }.from(0)
+        end
+
+        it "changes when report is discarded" do
+          report
+
+          expect { report.discard }
+            .to change { ddfips[0].reload.reports_pending_count }.from(1).to(0)
+            .and not_change { ddfips[1].reload.reports_pending_count }.from(0)
+        end
+
+        it "changes when report is undiscarded" do
+          report.discard
+
+          expect { report.undiscard }
+            .to change { ddfips[0].reload.reports_pending_count }.from(0).to(1)
+            .and not_change { ddfips[1].reload.reports_pending_count }.from(0)
+        end
+
+        it "changes when report is deleted" do
+          report
+
+          expect { report.delete }
+            .to change { ddfips[0].reload.reports_pending_count }.from(1).to(0)
+            .and not_change { ddfips[1].reload.reports_pending_count }.from(0)
         end
       end
     end

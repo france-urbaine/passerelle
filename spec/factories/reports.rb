@@ -164,8 +164,8 @@ FactoryBot.define do
       reported_for_ddfip
 
       transient do
-        office { association(:office, :with_communes) }
-        ddfip  { office.ddfip }
+        ddfip  { association(:ddfip) }
+        office { association(:office, :with_communes, ddfip: ddfip) }
       end
 
       commune   { office.communes.sample }
@@ -185,6 +185,12 @@ FactoryBot.define do
     trait :transmitted_to_ddfip do
       transmitted
       reported_for_ddfip
+    end
+
+    trait :package_approved_to_office do
+      transmitted
+      reported_for_office
+      package_approved { true }
     end
 
     trait :package_approved_by_ddfip do
