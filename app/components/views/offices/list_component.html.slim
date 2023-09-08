@@ -1,0 +1,56 @@
+= datatable_component(@offices) do |datatable|
+  - datatable.with_search
+  - datatable.with_pagination(@pagy, options: !nested?) if @pagy
+
+  - datatable.with_selection do |selection|
+    - if allow_action_to?(:destroy_all?, Office)
+      - selection.with_action "Tout supprimer", polymorphic_path([:remove_all, @namespace, @parent, :offices]), modal: true
+
+  - datatable.with_column(:name,                   sort: true)    { "Guichet" }      if columns.include?(:name)
+  - datatable.with_column(:ddfip,                  sort: true)    { "DDFIP" }        if columns.include?(:ddfip)
+  - datatable.with_column(:competence,             sort: true)    { "Compétence" }   if columns.include?(:competence)
+  - datatable.with_column(:users_count,            numeric: true) { "Utilisateurs" } if columns.include?(:users_count)
+  - datatable.with_column(:communes_count,         numeric: true) { "Communes" }     if columns.include?(:communes_count)
+  - datatable.with_column(:reports_count,          numeric: true) { "Signalements" } if columns.include?(:reports_count)
+  - datatable.with_column(:reports_approved_count, numeric: true) { "Approuvés" }    if columns.include?(:reports_approved_count)
+  - datatable.with_column(:reports_rejected_count, numeric: true) { "Rejetés" }      if columns.include?(:reports_rejected_count)
+
+  - datatable.with_empty_message do
+    - if params[:search]
+      | Aucun guichet ne correspont à votre recherche.
+    - else
+      | Aucun guichet disponible.
+
+  - datatable.each_row do |row, office|
+    - row.with_checkbox "Sélectionner ce guichet", described_by: :name, disabled: !allow_action_to?(:destroy_all?, Office)
+
+    - if allow_action_to?(:edit?, office)
+      - row.with_action "Modifier ce guichet", polymorphic_action_path(:edit, office), icon: "pencil-square", modal: true
+
+    - if allow_action_to?(:remove?, office)
+      - row.with_action "Supprimer ce guichet", polymorphic_action_path(:remove, office), icon: "trash", modal: true
+
+    - row.with_column(:name) do
+      = authorized_link_to(office, namespace: @namespace, parent: @parent)
+
+
+    - row.with_column(:ddfip) do
+      = authorized_link_to(office.ddfip, namespace: @namespace, parent: @parent)
+
+    - row.with_column(:competence) do
+      = helpers.short_list(office.competences, humanize: true) { |value| t(value, scope: "enum.competence") }
+
+    - row.with_column(:users_count) do
+      = number_with_delimiter(office.users_count) if office.users_count.positive?
+
+    - row.with_column(:communes_count) do
+      = number_with_delimiter(office.communes_count) if office.communes_count.positive?
+
+    - row.with_column(:reports_count) do
+      = number_with_delimiter(office.reports_count) if office.reports_count.positive?
+
+    - row.with_column(:reports_approved_count) do
+      = number_with_delimiter(office.reports_approved_count) if office.reports_approved_count.positive?
+
+    - row.with_column(:reports_rejected_count) do
+      = number_with_delimiter(office.reports_rejected_count) if office.reports_rejected_count.positive?
