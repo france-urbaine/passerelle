@@ -8,8 +8,6 @@ module Admin
     def index
       @collectivities = authorize_collectivities_scope
       @collectivities, @pagy = index_collection(@collectivities)
-
-      @collectivities = @collectivities.preload(:publisher)
     end
 
     def show

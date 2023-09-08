@@ -11,8 +11,6 @@ module Territories
       def index
         @collectivities = authorized(@commune.on_territory_collectivities).strict_loading
         @collectivities, @pagy = index_collection(@collectivities, nested: true)
-
-        @collectivities = @collectivities.preload(:publisher) if allowed_to?(:show?, Publisher, namespace: Admin)
       end
 
       private

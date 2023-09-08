@@ -8,8 +8,6 @@ module Organization
     def index
       @collectivities = authorize_collectivities_scope
       @collectivities, @pagy = index_collection(@collectivities)
-
-      @collectivities = @collectivities.preload(:publisher) unless current_organization.is_a?(Publisher)
     end
 
     def show
