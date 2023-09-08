@@ -38,44 +38,22 @@ module Views
         @parent
       end
 
-      # Disable these layout cops to allow more comparable lines
-      #
-      # rubocop:disable Layout/LineLength
-      #
-      def allowed_to_show?(commune)
-        allowed_to?(:show?, commune, with: ::Territories::CommunePolicy)
-      end
-
-      def allowed_to_edit?(commune)
-        allowed_to?(:edit?, commune, with: ::Territories::CommunePolicy)
-      end
-
-      def allowed_to_remove_from_office?(commune)
-        case [@namespace, @parent]
-        in [:admin, Office]        then allowed_to?(:destroy?, commune, with: ::Admin::Offices::CommunePolicy)
-        in [:organization, Office] then allowed_to?(:destroy?, commune, with: ::Organization::Offices::CommunePolicy)
-        else                            false
+      def allow_action_to?(action, commune)
+        case [action, @namespace, @parent]
+        in [:destroy?, :admin, Office]
+          allowed_to?(:destroy?, commune, with: ::Admin::Offices::CommunePolicy)
+        in [:destroy?, :organization, Office]
+          allowed_to?(:destroy?, commune, with: ::Organization::Offices::CommunePolicy)
+        in [:destroy_all?, :admin, Office]
+          allowed_to?(:destroy_all?, Commune, with: ::Admin::Offices::CommunePolicy)
+        in [:destroy_all?, :organization, Office]
+          allowed_to?(:destroy_all?, Commune, with: ::Organization::Offices::CommunePolicy)
+        in [:destroy?, _, _] | [:destroy_all?, _, _]
+          false
+        else
+          allowed_to?(action, commune, with: ::Territories::CommunePolicy)
         end
       end
-
-      def allowed_to_remove_all_from_office?
-        case [@namespace, @parent]
-        in [:admin, Office]        then allowed_to?(:destroy_all?, Commune, with: ::Admin::Offices::CommunePolicy)
-        in [:organization, Office] then allowed_to?(:destroy_all?, Commune, with: ::Organization::Offices::CommunePolicy)
-        else                            false
-        end
-      end
-
-      def allowed_to_show_departement?(departement)
-        allowed_to?(:show?, departement, with: ::Territories::DepartementPolicy)
-      end
-
-      def allowed_to_show_epci?(epci)
-        allowed_to?(:show?, epci, with: ::Territories::EPCIPolicy)
-      end
-      #
-      # rubocop:enable Layout/LineLength
-      #
     end
   end
 end

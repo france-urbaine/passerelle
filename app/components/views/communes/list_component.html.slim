@@ -3,7 +3,7 @@
   - datatable.with_pagination(@pagy, options: !nested?) if @pagy
 
   - datatable.with_selection do |selection|
-    - if allowed_to_remove_all_from_office?
+    - if allow_action_to?(:destroy_all?, Commune)
       - selection.with_action "Exclure les communes du guichet", polymorphic_path([:remove_all, @namespace, @parent, :communes]), modal: true
 
   - datatable.with_column(:name,        sort: true, span: 2)    { "Commune" }       if columns.include?(:name)
@@ -18,12 +18,12 @@
       | Aucune commune disponible.
 
   - datatable.each_row do |row, commune|
-    - row.with_checkbox "Sélectionner cette commune", described_by: :name, disabled: !allowed_to_remove_all_from_office?
+    - row.with_checkbox "Sélectionner cette commune", described_by: :name, disabled: !allow_action_to?(:destroy_all?, Commune)
 
-    - if allowed_to_edit?(commune)
+    - if allow_action_to?(:edit?, commune)
       - row.with_action "Modifier cette commune", polymorphic_path([:edit, :territories, commune]), icon: "pencil-square", modal: true
 
-    - if allowed_to_remove_from_office?(commune)
+    - if allow_action_to?(:destroy?, commune)
       - row.with_action "Exclure cette commune du guichet", polymorphic_path([:remove, @namespace, @parent, commune]), icon: "arrow-right-on-rectangle", modal: true
 
     - row.with_column(:name) do |column|
@@ -31,10 +31,7 @@
         = commune.code_insee
 
       - column.with_span do
-        - if allowed_to_show?(commune)
-          = link_to commune.name, polymorphic_path([:territories, commune]), data: { turbo_frame: "_top" }
-        - else
-            = commune.name
+        = authorized_link_to(commune, namespace: @namespace, parent: @parent)
 
     - row.with_column(:departement) do |column|
       - if commune.departement
@@ -42,10 +39,7 @@
           = commune.code_departement
 
         - column.with_span do
-          - if allowed_to_show_departement?(commune.departement)
-            = link_to commune.departement.name, polymorphic_path([:territories, commune.departement]), data: { turbo_frame: "_top" }
-          - else
-            = commune.departement.name
+          = authorized_link_to(commune.departement, namespace: @namespace, parent: @parent)
 
     - row.with_column(:epci) do |column|
       - if commune.epci
@@ -53,10 +47,7 @@
           = helpers.display_siren(commune.siren_epci)
 
         - column.with_span do
-          - if allowed_to_show_epci?(commune.epci)
-            = link_to commune.epci.name, polymorphic_path([:territories, commune.epci]), data: { turbo_frame: "_top" }
-          - else
-            = commune.epci.name
+          = authorized_link_to(commune.epci, namespace: @namespace, parent: @parent)
 
     - row.with_column(:collectivities_count) do
       = number_with_delimiter(commune.collectivities_count) if commune.collectivities_count.positive?
