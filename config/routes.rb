@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "sidekiq/web"
+
 Rails.application.routes.draw do
   # Concerns
   # ----------------------------------------------------------------------------
@@ -48,6 +50,10 @@ Rails.application.routes.draw do
 
   authenticated :user do
     root "dashboards#index", as: :authenticated_root
+  end
+
+  authenticate :user, ->(user) { user.super_admin? } do
+    mount Sidekiq::Web => "/sidekiq"
   end
 
   # Test passwords strength
