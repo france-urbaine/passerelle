@@ -2583,7 +2583,7 @@ CREATE FUNCTION public.trigger_packages_changes() RETURNS trigger
 
     END IF;
 
-    -- Reset all packages and reports counts on publishers, collectivities, ddfips & offices
+    -- Reset all packages and reports counts on publishers, collectivities, ddfips, dgfips & offices
     -- * on creation
     -- * on deletion
     -- * when sandbox changed
@@ -2700,7 +2700,7 @@ CREATE FUNCTION public.trigger_reports_changes() RETURNS trigger
 
     END IF;
 
-    -- Reset all reports counts on publishers, collectivities, ddfips & offices
+    -- Reset all reports counts on publishers, collectivities, ddfips, dgfips & offices
     -- * on creation
     -- * on deletion
     -- * when publisher_id changed
