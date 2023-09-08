@@ -12,7 +12,6 @@ module States
       scope :unresolved,   -> { transmitted.kept.where(approved_at: nil, rejected_at: nil) }
       scope :assigned,     -> { transmitted.where.not(approved_at: nil).where(rejected_at: nil) }
       scope :returned,     -> { transmitted.where.not(rejected_at: nil) }
-      scope :unreturned,   -> { transmitted.where(rejected_at: nil) }
 
       # Predicates
       # ----------------------------------------------------------------------------
@@ -34,10 +33,6 @@ module States
 
       def returned?
         transmitted? && rejected_at?
-      end
-
-      def unreturned?
-        transmitted? && rejected_at.nil?
       end
 
       # Updates methods

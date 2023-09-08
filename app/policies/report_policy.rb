@@ -141,16 +141,16 @@ class ReportPolicy < ApplicationPolicy
     return Report.none unless dgfip?
 
     Report
+      .all_kept
       .delivered
-      .unreturned
   end
 
   def reports_listed_to_ddfip_admins
     return Report.none unless ddfip_admin?
 
     Report
+      .all_kept
       .delivered
-      .unreturned
       .covered_by_ddfip(organization)
   end
 
@@ -158,7 +158,7 @@ class ReportPolicy < ApplicationPolicy
     return Report.none unless office_user?
 
     Report
-      .delivered
+      .all_kept
       .assigned
       .covered_by_office(user.offices)
   end
@@ -224,7 +224,6 @@ class ReportPolicy < ApplicationPolicy
   def report_updatable_by_ddfip_admin?(report)
     ddfip_admin? &&
       report.delivered? &&
-      report.unreturned? &&
       report.covered_by_ddfip?(organization)
   end
 

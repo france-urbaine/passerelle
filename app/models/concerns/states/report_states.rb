@@ -12,7 +12,6 @@ module States
       scope :delivered,        -> { transmitted.all_kept.out_of_sandbox }
       scope :assigned,         -> { joins(:package).merge(Package.unscoped.approved) }
       scope :returned,         -> { joins(:package).merge(Package.unscoped.returned) }
-      scope :unreturned,       -> { joins(:package).merge(Package.unscoped.unreturned) }
       scope :pending,          -> { delivered.where(approved_at: nil, rejected_at: nil, debated_at: nil) }
       scope :updated_by_ddfip, -> { approved.or(rejected).or(debated) }
       scope :approved,         -> { delivered.where.not(approved_at: nil) }
@@ -37,10 +36,6 @@ module States
 
       def returned?
         package&.returned?
-      end
-
-      def unreturned?
-        package&.unreturned?
       end
 
       def pending?

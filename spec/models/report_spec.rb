@@ -274,20 +274,6 @@ RSpec.describe Report do
       end
     end
 
-    describe ".unreturned" do
-      it "scopes on transmitted reports with package not yet rejected by DDFIP" do
-        expect {
-          described_class.unreturned.load
-        }.to perform_sql_query(<<~SQL)
-          SELECT     "reports".*
-          FROM       "reports"
-          INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
-          WHERE      "packages"."transmitted_at" IS NOT NULL
-            AND      "packages"."rejected_at" IS NULL
-        SQL
-      end
-    end
-
     describe ".pending" do
       it "scopes on delivered reports waiting for decision" do
         expect {
