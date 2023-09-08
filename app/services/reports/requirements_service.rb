@@ -18,7 +18,7 @@ module Reports
     # Requirements for basic situation informations
     # --------------------------------------------------------------------------
     def require_situation_majic?
-      evaluation_local?
+      evaluation_local? || occupation_local_habitation?
     end
 
     def require_situation_parcelle?
@@ -40,8 +40,8 @@ module Reports
     # Requirements for current evaluation
     # --------------------------------------------------------------------------
     def require_situation_evaluation?
-      evaluation_local? &&
-        anomalies.intersect?(%w[affectation consistance categorie correctif exoneration])
+      (evaluation_local? && anomalies.intersect?(%w[affectation consistance categorie correctif exoneration])) ||
+        occupation_local_habitation?
     end
 
     def require_situation_evaluation_habitation?
@@ -66,6 +66,10 @@ module Reports
 
     def require_situation_coefficient_localisation?
       require_situation_evaluation_professionnel? && !situation_nature_industriel?
+    end
+
+    def require_situation_occupation?
+      occupation_local_habitation?
     end
 
     # Requirements for new evaluation
@@ -164,6 +168,10 @@ module Reports
       creation_local?
     end
 
+    def require_proposition_occupation?
+      occupation_local_habitation?
+    end
+
     # --------------------------------------------------------------------------
     private
 
@@ -197,6 +205,10 @@ module Reports
 
     def proposition_nature_industriel?
       @report.proposition_nature == "U"
+    end
+
+    def occupation_local_habitation?
+      @occupation_local_habitation ||= form_type == "occupation_local_habitation"
     end
   end
 end

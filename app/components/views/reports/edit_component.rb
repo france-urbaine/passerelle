@@ -8,11 +8,13 @@ module Views
         situation_majic
         situation_parcelle
         situation_evaluation
+        situation_occupation
         proposition_evaluation
         proposition_exoneration
         proposition_adresse
         proposition_omission_batie
         proposition_construction_neuve
+        proposition_occupation
         observations
         enjeu
       ].freeze

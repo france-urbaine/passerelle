@@ -1,0 +1,128 @@
+<div class="subheader-bar">
+  <h2 class="subheader">
+    <%= icon_component("document-text", "Icône d'illustration") %>
+    Proposition de mise à jour de l'occupation
+  </h2>
+
+  <div class="subheader-bar__actions">
+    <% if allowed_to?(:update?, @report) && @report.packing? %>
+      <div class="subheader-bar__action">
+        <%= button_component "Compléter", edit_report_path(@report, "proposition_occupation"), icon: "pencil-square", modal: true %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="card">
+  <dl class="description-list">
+
+    <div class="description-list__row">
+      <dt>Date du constat</dt>
+      <dd>
+        <%= render_valid_content(:date_constat) do %>
+          <%= helpers.display_date(@report.date_constat) %>
+        <% end %>
+      </dd>
+    </div>
+
+    <div class="description-list__row">
+      <dt>Année sur laquelle porte le signalement</dt>
+      <dd>
+        <%= render_valid_content(:proposition_occupation_annee_concernee) do %>
+          <%= @report.proposition_occupation_annee_concernee %>
+        <% end %>
+      </dd>
+    </div>
+
+    <div class="description-list__row">
+      <dt>Nature de l'occupation constatée</dt>
+      <dd>
+        <%= render_valid_content(:proposition_occupation) do %>
+          <%= proposition_occupation %>
+        <% end %>
+      </dd>
+    </div>
+
+    <div class="description-list__row">
+      <dt>Date du changement</dt>
+      <dd>
+        <%= render_valid_content(:proposition_date_occupation) do %>
+          <%= helpers.display_date(@report.proposition_date_occupation) %>
+        <% end %>
+      </dd>
+    </div>
+
+    <% if situation_occupation_vacant_tlv? %>
+      <div class="description-list__row">
+        <dt>TLV à tort</dt>
+        <dd>
+          <%= render_valid_content(:proposition_erreur_tlv) do %>
+            <%= @report.proposition_erreur_tlv %>
+          <% end %>
+        </dd>
+      </div>
+    <% end %>
+
+    <% if situation_occupation_vacant_thlv? %>
+      <div class="description-list__row">
+        <dt>THLV à tort</dt>
+        <dd>
+          <%= render_valid_content(:proposition_erreur_thlv) do %>
+            <%= @report.proposition_erreur_thlv %>
+          <% end %>
+        </dd>
+      </div>
+    <% end %>
+
+    <% if proposition_occupation_non_vacant? %>
+      <div class="description-list__row">
+        <dt>Meublé de tourisme</dt>
+        <dd>
+          <%= render_valid_content(:proposition_meuble_tourisme) do %>
+            <%= @report.proposition_meuble_tourisme %>
+          <% end %>
+        </dd>
+      </div>
+    <% end %>
+
+    <% if proposition_occupation_rs? %>
+      <div class="description-list__row">
+        <dt>Application de la majoration sur les résidences secondaire</dt>
+        <dd>
+          <%= render_valid_content(:proposition_majoration_rs) do %>
+            <%= @report.proposition_majoration_rs %>
+          <% end %>
+        </dd>
+      </div>
+    <% end %>
+
+    <% if proposition_occupation_non_vacant? %>
+      <div class="description-list__row">
+        <dt>Nom de l'occupant</dt>
+        <dd>
+          <%= render_valid_content(:proposition_occupation_nom_occupant) do %>
+            <%= @report.proposition_occupation_nom_occupant %>
+          <% end %>
+        </dd>
+      </div>
+
+      <div class="description-list__row">
+        <dt>Prénom de l'occupant</dt>
+        <dd>
+          <%= render_valid_content(:proposition_occupation_prenom_occupant) do %>
+            <%= @report.proposition_occupation_prenom_occupant %>
+          <% end %>
+        </dd>
+      </div>
+
+      <div class="description-list__row">
+        <dt>Adresse de l'occupant</dt>
+        <dd>
+          <%= render_valid_content(:proposition_occupation_adresse_occupant) do %>
+            <%= @report.proposition_occupation_adresse_occupant %>
+          <% end %>
+        </dd>
+      </div>
+    <% end %>
+  </dl>
+</div>

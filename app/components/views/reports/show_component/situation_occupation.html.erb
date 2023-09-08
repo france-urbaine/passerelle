@@ -1,0 +1,40 @@
+<div class="subheader-bar">
+  <h2 class="subheader">
+    <%= icon_component("document-text", "Icône d'illustration") %>
+    Situation actuelle de l'occupation
+  </h2>
+
+  <div class="subheader-bar__actions">
+    <% if allowed_to?(:update?, @report) && @report.packing? %>
+      <div class="subheader-bar__action">
+        <%= button_component "Compléter", edit_report_path(@report, "situation_occupation"), icon: "pencil-square", modal: true %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="card">
+  <dl class="description-list">
+
+    <div class="description-list__row">
+      <dt>Nature de l'occupation actuelle</dt>
+      <dd>
+        <%= render_valid_content(:situation_occupation) do %>
+          <%= situation_occupation %>
+        <% end %>
+      </dd>
+    </div>
+
+    <% if situation_occupation_rs? %>
+      <div class="description-list__row">
+        <dt>Application de la majoration sur les résidences secondaire</dt>
+        <dd>
+          <%= render_valid_content(:situation_majoration_rs) do %>
+            <%= @report.situation_majoration_rs %>
+          <% end %>
+        </dd>
+      </div>
+    <% end %>
+
+  </dl>
+</div>

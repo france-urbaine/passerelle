@@ -1,0 +1,21 @@
+<%= modal_component do |modal| %>
+  <% modal.with_header do %>
+    Situation actuelle de l'occupation
+  <% end %>
+
+  <% modal.with_form(model: @report) do |form| %>
+    <div data-controller="switch">
+      <%= form.block :situation_occupation do %>
+        <%= form.label :situation_occupation, "Nature de l'occupation actuelle" %>
+        <%= form.select :situation_occupation, situation_occupation, { include_blank: true }, data: { switch_target: "input" } %>
+      <% end %>
+
+      <div data-switch-target="target" data-switch-value="RS" hidden>
+        <%= form.block :situation_majoration_rs do %>
+          <%= form.check_box :situation_majoration_rs %>
+          <%= form.label :situation_majoration_rs, "Application de la majoration sur les résidences secondaire ?" %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+<% end %>

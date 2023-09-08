@@ -13,7 +13,7 @@ module Views
           "adresse"            => true,
           "omission_batie"     => true,
           "construction_neuve" => true,
-          "occupation"         => false
+          "occupation"         => true
         }.freeze
 
         def form_type_anomalies

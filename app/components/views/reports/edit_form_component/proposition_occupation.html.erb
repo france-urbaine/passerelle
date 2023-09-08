@@ -1,0 +1,74 @@
+<%= modal_component do |modal| %>
+  <% modal.with_header do %>
+    Proposition de mise à jour de l'occupation
+  <% end %>
+
+  <% modal.with_form(model: @report) do |form| %>
+    <div data-controller="switch">
+      <%= form.block :date_constat do %>
+        <%= form.label :date_constat, "Date du constat" %>
+        <%= form.date_field :date_constat %>
+      <% end %>
+
+      <%= form.block :proposition_occupation_annee_concernee do %>
+        <%= form.label :proposition_occupation_annee_concernee, "Année sur laquelle porte le signalement" %>
+        <%= form.number_field :proposition_occupation_annee_concernee %>
+      <% end %>
+
+      <%= form.block :proposition_occupation do %>
+        <%= form.label :proposition_occupation, "Nature de l'occupation constatée" %>
+        <%= form.select :proposition_occupation, proposition_occupation, { include_blank: true }, data: { switch_target: "input" } %>
+      <% end %>
+
+      <%= form.block :proposition_date_occupation do %>
+        <%= form.label :proposition_date_occupation, "Date du changement" %>
+        <%= form.date_field :proposition_date_occupation %>
+      <% end %>
+
+      <% if situation_occupation_vacant_tlv? %>
+        <%= form.block :proposition_erreur_tlv do %>
+          <%= form.check_box :proposition_erreur_tlv %>
+          <%= form.label :proposition_erreur_tlv, "TLV à tort ?" %>
+        <% end %>
+      <% end  %>
+
+      <% if situation_occupation_vacant_thlv? %>
+        <%= form.block :proposition_erreur_thlv do %>
+          <%= form.check_box :proposition_erreur_thlv %>
+          <%= form.label :proposition_erreur_thlv, "THLV à tort ?" %>
+        <% end %>
+      <% end %>
+
+      <div data-switch-target="target" data-switch-value="RP, RS, RE" data-switch-value-separator=", " hidden>
+        <%= form.block :proposition_meuble_tourisme do %>
+          <%= form.check_box :proposition_meuble_tourisme %>
+          <%= form.label :proposition_meuble_tourisme, "Meublé de tourisme ?" %>
+        <% end %>
+      </div>
+
+      <div data-switch-target="target" data-switch-value="RS" hidden>
+        <%= form.block :proposition_majoration_rs do %>
+          <%= form.check_box :proposition_majoration_rs %>
+          <%= form.label :proposition_majoration_rs, "Application de la majoration sur les résidences secondaire" %>
+        <% end %>
+      </div>
+
+      <div data-switch-target="target" data-switch-value="RP, RS, RE" data-switch-value-separator=", " hidden>
+        <%= form.block :proposition_occupation_nom_occupant do %>
+          <%= form.label :proposition_occupation_nom_occupant, "Nom de l'occupant" %>
+          <%= form.text_field :proposition_occupation_nom_occupant %>
+        <% end %>
+
+        <%= form.block :proposition_occupation_prenom_occupant do %>
+          <%= form.label :proposition_occupation_prenom_occupant, "Prénom de l'occupant" %>
+          <%= form.text_field :proposition_occupation_prenom_occupant %>
+        <% end %>
+
+        <%= form.block :proposition_occupation_adresse_occupant do %>
+          <%= form.label :proposition_occupation_adresse_occupant, "Adresse de l'occupant" %>
+          <%= form.text_field :proposition_occupation_adresse_occupant %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+<% end %>

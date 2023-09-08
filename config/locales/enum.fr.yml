@@ -63,6 +63,7 @@ fr:
         omission_batie:       Omission bâtie
 
       occupation_local_habitation:
+        adresse:              Changement d'adresse
         occupation:           Occupation du local
 
       occupation_local_professionnel:
@@ -247,3 +248,11 @@ fr:
       GC: Groupement de communes
       TS: Taxe spéciale d'équipement (TSE)
       OM: Taxe sur l'enlèvement des ordures ménagères (TEOM)
+
+    occupation_local_habitation:
+      RP:          Résidence principale ouvrant droit aux abattements et aux dégrèvement éventuels
+      RS:          Résidence secondaire
+      RE:          Dépendance principale n'ouvrant droit qu'aux dégrèvements éventuels
+      vacant:      Local vacant non taxé
+      vacant_tlv:  Local vacant taxé TLV
+      vacant_thlv: Local vacant taxé THLV

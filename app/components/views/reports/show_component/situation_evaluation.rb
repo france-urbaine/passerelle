@@ -13,7 +13,7 @@ module Views
         end
 
         def situation_categorie
-          if require_situation_evaluation_habitation?
+          if require_situation_evaluation_habitation? || require_situation_occupation?
             t(@report.situation_categorie, scope: "enum.local_habitation_categorie")
           elsif require_situation_evaluation_professionnel?
             t(@report.situation_categorie, scope: "enum.local_professionnel_categorie")

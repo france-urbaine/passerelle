@@ -87,6 +87,18 @@
 #  proposition_numero_permis                      :string
 #  proposition_nature_travaux                     :string
 #  completed_at                                   :datetime
+#  situation_occupation                           :string
+#  situation_majoration_rs                        :boolean          default(FALSE), not null
+#  proposition_occupation_annee_concernee         :integer
+#  proposition_occupation                         :string
+#  proposition_date_occupation                    :date
+#  proposition_erreur_tlv                         :boolean          default(FALSE), not null
+#  proposition_erreur_thlv                        :boolean          default(FALSE), not null
+#  proposition_meuble_tourisme                    :boolean          default(FALSE), not null
+#  proposition_majoration_rs                      :boolean          default(FALSE), not null
+#  proposition_occupation_nom_occupant            :string
+#  proposition_occupation_prenom_occupant         :string
+#  proposition_occupation_adresse_occupant        :string
 #
 # Indexes
 #
