@@ -80,10 +80,10 @@ RSpec.describe Package do
       end
     end
 
-    describe ".to_approve" do
+    describe ".unresolved" do
       it "scopes on transmitted and undiscarded packages waiting for approval" do
         expect {
-          described_class.to_approve.load
+          described_class.unresolved.load
         }.to perform_sql_query(<<~SQL)
           SELECT "packages".*
           FROM   "packages"
@@ -283,12 +283,12 @@ RSpec.describe Package do
       it { expect(packages[4]).to be_transmitted }
     end
 
-    describe "#to_approve?" do
-      it { expect(packages[0]).not_to be_to_approve }
-      it { expect(packages[1]).to be_to_approve }
-      it { expect(packages[2]).not_to be_to_approve }
-      it { expect(packages[3]).not_to be_to_approve }
-      it { expect(packages[4]).not_to be_to_approve }
+    describe "#unresolved?" do
+      it { expect(packages[0]).not_to be_unresolved }
+      it { expect(packages[1]).to be_unresolved }
+      it { expect(packages[2]).not_to be_unresolved }
+      it { expect(packages[3]).not_to be_unresolved }
+      it { expect(packages[4]).not_to be_unresolved }
     end
 
     describe "#approved?" do

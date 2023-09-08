@@ -9,8 +9,8 @@ module States
       # ----------------------------------------------------------------------------
       scope :packing,      -> { where(transmitted_at: nil) }
       scope :transmitted,  -> { where.not(transmitted_at: nil) }
-      scope :to_approve,   -> { transmitted.kept.where(approved_at: nil, rejected_at: nil) }
-      scope :approved,     -> { transmitted.where.not(approved_at: nil).where(rejected_at: nil) }
+      scope :unresolved,   -> { transmitted.kept.where(approved_at: nil, rejected_at: nil) }
+      scope :assigned,     -> { transmitted.where.not(approved_at: nil).where(rejected_at: nil) }
       scope :returned,     -> { transmitted.where.not(rejected_at: nil) }
       scope :unreturned,   -> { transmitted.where(rejected_at: nil) }
 
@@ -24,7 +24,7 @@ module States
         transmitted_at?
       end
 
-      def to_approve?
+      def unresolved?
         transmitted? && kept? && approved_at.nil? && rejected_at.nil?
       end
 

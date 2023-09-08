@@ -7,17 +7,17 @@ module States
     included do
       # Scopes
       # ----------------------------------------------------------------------------
-      scope :packing,             -> { joins(:package).merge(Package.unscoped.packing) }
-      scope :transmitted,         -> { joins(:package).merge(Package.unscoped.transmitted) }
-      scope :delivered,           -> { transmitted.all_kept.out_of_sandbox }
-      scope :approved_packages,   -> { joins(:package).merge(Package.unscoped.approved) }
-      scope :returned_packages,   -> { joins(:package).merge(Package.unscoped.returned) }
-      scope :unreturned_packages, -> { joins(:package).merge(Package.unscoped.unreturned) }
-      scope :pending,             -> { delivered.where(approved_at: nil, rejected_at: nil, debated_at: nil) }
-      scope :updated_by_ddfip,    -> { approved.or(rejected).or(debated) }
-      scope :approved,            -> { delivered.where.not(approved_at: nil) }
-      scope :rejected,            -> { delivered.where.not(rejected_at: nil) }
-      scope :debated,             -> { delivered.where.not(debated_at: nil) }
+      scope :packing,          -> { joins(:package).merge(Package.unscoped.packing) }
+      scope :transmitted,      -> { joins(:package).merge(Package.unscoped.transmitted) }
+      scope :delivered,        -> { transmitted.all_kept.out_of_sandbox }
+      scope :assigned,         -> { joins(:package).merge(Package.unscoped.approved) }
+      scope :returned,         -> { joins(:package).merge(Package.unscoped.returned) }
+      scope :unreturned,       -> { joins(:package).merge(Package.unscoped.unreturned) }
+      scope :pending,          -> { delivered.where(approved_at: nil, rejected_at: nil, debated_at: nil) }
+      scope :updated_by_ddfip, -> { approved.or(rejected).or(debated) }
+      scope :approved,         -> { delivered.where.not(approved_at: nil) }
+      scope :rejected,         -> { delivered.where.not(rejected_at: nil) }
+      scope :debated,          -> { delivered.where.not(debated_at: nil) }
 
       # Predicates
       # ----------------------------------------------------------------------------
@@ -31,15 +31,15 @@ module States
         transmitted? && all_kept? && out_of_sandbox?
       end
 
-      def approved_package?
+      def assigned?
         package&.approved?
       end
 
-      def returned_package?
+      def returned?
         package&.returned?
       end
 
-      def unreturned_package?
+      def unreturned?
         package&.unreturned?
       end
 

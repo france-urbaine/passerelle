@@ -142,7 +142,7 @@ class ReportPolicy < ApplicationPolicy
 
     Report
       .delivered
-      .unreturned_packages
+      .unreturned
   end
 
   def reports_listed_to_ddfip_admins
@@ -150,7 +150,7 @@ class ReportPolicy < ApplicationPolicy
 
     Report
       .delivered
-      .unreturned_packages
+      .unreturned
       .covered_by_ddfip(organization)
   end
 
@@ -159,7 +159,7 @@ class ReportPolicy < ApplicationPolicy
 
     Report
       .delivered
-      .approved_packages
+      .assigned
       .covered_by_office(user.offices)
   end
 
@@ -200,7 +200,7 @@ class ReportPolicy < ApplicationPolicy
   def report_shown_to_office_user?(report)
     office_user? &&
       report.delivered? &&
-      report.approved_package? &&
+      report.assigned? &&
       report.covered_by_offices?(user.offices)
   end
 
@@ -224,7 +224,7 @@ class ReportPolicy < ApplicationPolicy
   def report_updatable_by_ddfip_admin?(report)
     ddfip_admin? &&
       report.delivered? &&
-      report.unreturned_package? &&
+      report.unreturned? &&
       report.covered_by_ddfip?(organization)
   end
 

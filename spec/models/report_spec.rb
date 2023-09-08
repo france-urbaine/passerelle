@@ -245,10 +245,10 @@ RSpec.describe Report do
       end
     end
 
-    describe ".approved_packages" do
+    describe ".assigned" do
       it "scopes on transmitted reports with package approved by DDFIP" do
         expect {
-          described_class.approved_packages.load
+          described_class.assigned.load
         }.to perform_sql_query(<<~SQL)
           SELECT     "reports".*
           FROM       "reports"
@@ -260,10 +260,10 @@ RSpec.describe Report do
       end
     end
 
-    describe ".returned_packages" do
+    describe ".returned" do
       it "scopes on transmitted reports with package returned by DDFIP" do
         expect {
-          described_class.returned_packages.load
+          described_class.returned.load
         }.to perform_sql_query(<<~SQL)
           SELECT     "reports".*
           FROM       "reports"
@@ -274,10 +274,10 @@ RSpec.describe Report do
       end
     end
 
-    describe ".unreturned_packages" do
+    describe ".unreturned" do
       it "scopes on transmitted reports with package not yet rejected by DDFIP" do
         expect {
-          described_class.unreturned_packages.load
+          described_class.unreturned.load
         }.to perform_sql_query(<<~SQL)
           SELECT     "reports".*
           FROM       "reports"
