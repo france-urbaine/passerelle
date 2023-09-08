@@ -11,8 +11,6 @@ module Organization
       def index
         @communes = authorize_communes_scope
         @communes, @pagy = index_collection(@communes, nested: true)
-
-        @communes = @communes.preload(:departement, :epci)
       end
 
       def remove
