@@ -141,7 +141,7 @@ class ReportPolicy < ApplicationPolicy
     return Report.none unless dgfip?
 
     Report
-      .published
+      .delivered
       .unrejected_packages
   end
 
@@ -149,7 +149,7 @@ class ReportPolicy < ApplicationPolicy
     return Report.none unless ddfip_admin?
 
     Report
-      .published
+      .delivered
       .unrejected_packages
       .covered_by_ddfip(organization)
   end
@@ -158,7 +158,7 @@ class ReportPolicy < ApplicationPolicy
     return Report.none unless office_user?
 
     Report
-      .published
+      .delivered
       .approved_packages
       .covered_by_office(user.offices)
   end
@@ -169,7 +169,7 @@ class ReportPolicy < ApplicationPolicy
     # Discarded packages are not listed but are still accessible
     #
     dgfip? &&
-      report.published?
+      report.delivered?
   end
 
   def report_shown_to_collectivity?(report)
@@ -190,16 +190,16 @@ class ReportPolicy < ApplicationPolicy
   end
 
   def report_shown_to_ddfip_admin?(report)
-    # Rejected packages are not listed but are still accessible
+    # Returned packages are not listed but are still accessible
     #
     ddfip_admin? &&
-      report.published? &&
+      report.delivered? &&
       report.covered_by_ddfip?(organization)
   end
 
   def report_shown_to_office_user?(report)
     office_user? &&
-      report.published? &&
+      report.delivered? &&
       report.approved_package? &&
       report.covered_by_offices?(user.offices)
   end
@@ -223,7 +223,7 @@ class ReportPolicy < ApplicationPolicy
 
   def report_updatable_by_ddfip_admin?(report)
     ddfip_admin? &&
-      report.published? &&
+      report.delivered? &&
       report.unrejected_package? &&
       report.covered_by_ddfip?(organization)
   end

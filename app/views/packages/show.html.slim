@@ -12,7 +12,7 @@
     - if allowed_to?(:approve?, @package)
       - unless @package.approved?
         - breadcrumbs.with_action "Approuver", package_approval_path(@package), icon: "hand-thumb-up", accent: true, method: "patch"
-      - unless @package.rejected?
+      - unless @package.returned?
         - breadcrumbs.with_action "Rejeter",   package_approval_path(@package), icon: "hand-thumb-down", destructive: true, method: "delete"
 
     - if allowed_to?(:destroy?, @package)

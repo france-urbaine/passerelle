@@ -38,6 +38,8 @@
 #  fk_rails_...  (publisher_id => publishers.id) ON DELETE => cascade
 #
 class Package < ApplicationRecord
+  include States::PackageStates
+
   # Associations
   # ----------------------------------------------------------------------------
   belongs_to :collectivity
@@ -54,13 +56,6 @@ class Package < ApplicationRecord
   scope :sandbox,        -> { where(sandbox: true) }
   scope :out_of_sandbox, -> { where(sandbox: false) }
 
-  scope :packing,      -> { where(transmitted_at: nil) }
-  scope :transmitted,  -> { where.not(transmitted_at: nil) }
-  scope :to_approve,   -> { transmitted.kept.where(approved_at: nil, rejected_at: nil) }
-  scope :approved,     -> { transmitted.where.not(approved_at: nil).where(rejected_at: nil) }
-  scope :rejected,     -> { transmitted.where.not(rejected_at: nil) }
-  scope :unrejected,   -> { transmitted.where(rejected_at: nil) }
-
   scope :packed_through_publisher_api, -> { where.not(publisher_id: nil) }
   scope :packed_through_web_ui,        -> { where(publisher_id: nil) }
 
@@ -73,30 +68,6 @@ class Package < ApplicationRecord
   # ----------------------------------------------------------------------------
   def out_of_sandbox?
     !sandbox?
-  end
-
-  def packing?
-    !transmitted_at?
-  end
-
-  def transmitted?
-    transmitted_at?
-  end
-
-  def to_approve?
-    transmitted? && kept? && approved_at.nil? && rejected_at.nil?
-  end
-
-  def approved?
-    transmitted? && approved_at? && rejected_at.nil?
-  end
-
-  def rejected?
-    transmitted? && rejected_at?
-  end
-
-  def unrejected?
-    transmitted? && rejected_at.nil?
   end
 
   def packed_through_publisher_api?
@@ -117,30 +88,6 @@ class Package < ApplicationRecord
 
   # Updates methods
   # ----------------------------------------------------------------------------
-  def transmit!
-    return true if transmitted?
-
-    touch(:transmitted_at)
-  end
-
-  def approve!
-    return true if approved?
-
-    update_columns(
-      rejected_at: nil,
-      approved_at: Time.current
-    )
-  end
-
-  def reject!
-    return true if rejected?
-
-    update_columns(
-      rejected_at: Time.current,
-      approved_at: nil
-    )
-  end
-
   def self.reset_all_counters
     connection.select_value("SELECT reset_all_packages_counters()")
   end

@@ -5,7 +5,7 @@ module BadgeHelper
     approved:         "badge--green",
     rejected:         "badge--red",
     debated:          "badge--orange",
-    package_rejected: "badge--red",
+    package_returned: "badge--red",
     package_approved: "badge--blue",
     transmitted:      "badge--violet",
     completed:        "badge--pink",
@@ -14,7 +14,7 @@ module BadgeHelper
 
   PACKAGE_BADGE_COLORS = {
     approved:         "badge--blue",
-    rejected:         "badge--red",
+    returned:         "badge--red",
     transmitted:      "badge--violet",
     completed:        "badge--pink",
     incomplete:       "badge--yellow"
@@ -70,8 +70,8 @@ module BadgeHelper
       :rejected
     elsif report.debated?
       :debated
-    elsif report.package.rejected?
-      :package_rejected
+    elsif report.package.returned?
+      :package_returned
     elsif report.package.approved?
       :package_approved
     elsif report.transmitted?
@@ -86,8 +86,8 @@ module BadgeHelper
   def package_status(package)
     if package.approved?
       :approved
-    elsif package.rejected?
-      :rejected
+    elsif package.returned?
+      :returned
     elsif package.transmitted?
       :transmitted
     elsif package.completed?

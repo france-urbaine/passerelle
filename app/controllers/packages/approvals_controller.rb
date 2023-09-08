@@ -20,7 +20,7 @@ module Packages
 
     def destroy
       @package = find_and_authorize_package
-      @package.reject!
+      @package.return!
 
       respond_with @package,
         flash: true,

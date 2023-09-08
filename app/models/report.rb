@@ -105,6 +105,8 @@
 #  fk_rails_...  (workshop_id => workshops.id) ON DELETE => nullify
 #
 class Report < ApplicationRecord
+  include States::ReportStates
+
   # Associations
   # ----------------------------------------------------------------------------
   belongs_to :collectivity
@@ -255,19 +257,7 @@ class Report < ApplicationRecord
   # ----------------------------------------------------------------------------
   scope :sandbox,             -> { joins(:package).merge(Package.unscoped.sandbox) }
   scope :out_of_sandbox,      -> { joins(:package).merge(Package.unscoped.out_of_sandbox) }
-  scope :packing,             -> { joins(:package).merge(Package.unscoped.packing) }
-  scope :transmitted,         -> { joins(:package).merge(Package.unscoped.transmitted) }
   scope :all_kept,            -> { joins(:package).merge(Package.unscoped.kept).kept }
-  scope :published,           -> { transmitted.all_kept.out_of_sandbox }
-  scope :approved_packages,   -> { joins(:package).merge(Package.unscoped.approved) }
-  scope :rejected_packages,   -> { joins(:package).merge(Package.unscoped.rejected) }
-  scope :unrejected_packages, -> { joins(:package).merge(Package.unscoped.unrejected) }
-
-  scope :pending,          -> { published.where(approved_at: nil, rejected_at: nil, debated_at: nil) }
-  scope :updated_by_ddfip, -> { approved.or(rejected).or(debated) }
-  scope :approved,         -> { published.where.not(approved_at: nil) }
-  scope :rejected,         -> { published.where.not(rejected_at: nil) }
-  scope :debated,          -> { published.where.not(debated_at: nil) }
 
   scope :packed_through_publisher_api, -> { where.not(publisher_id: nil) }
   scope :packed_through_web_ui,        -> { where(publisher_id: nil) }
@@ -321,46 +311,10 @@ class Report < ApplicationRecord
 
   # Predicates
   # ----------------------------------------------------------------------------
-  delegate :sandbox?, :out_of_sandbox?, :transmitted?, to: :package, allow_nil: true
-
-  def packing?
-    package&.packing? || new_record?
-  end
+  delegate :sandbox?, :out_of_sandbox?, to: :package, allow_nil: true
 
   def all_kept?
     kept? && package&.kept?
-  end
-
-  def published?
-    transmitted? && all_kept? && out_of_sandbox?
-  end
-
-  def approved_package?
-    package&.approved?
-  end
-
-  def rejected_package?
-    package&.rejecetd?
-  end
-
-  def unrejected_package?
-    package&.unrejected?
-  end
-
-  def pending?
-    published? && !approved_at? && !rejected_at? && !debated_at?
-  end
-
-  def approved?
-    published? && approved_at?
-  end
-
-  def rejected?
-    published? && rejected_at?
-  end
-
-  def debated?
-    published? && debated_at?
   end
 
   def packed_through_publisher_api?
@@ -405,32 +359,5 @@ class Report < ApplicationRecord
   def anomalies=(value)
     value.compact_blank! if value.is_a?(Array)
     super(value)
-  end
-
-  def approve!
-    return true if approved?
-
-    update_columns(
-      approved_at: Time.current,
-      rejected_at: nil,
-      debated_at: nil
-    )
-  end
-
-  def reject!
-    return true if rejected?
-
-    update_columns(
-      rejected_at: Time.current,
-      approved_at: nil,
-      debated_at: nil
-    )
-  end
-
-  def debate!
-    return true if debated?
-    return false if approved? || rejected?
-
-    update_columns(debated_at: Time.current)
   end
 end
