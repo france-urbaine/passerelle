@@ -40,7 +40,7 @@ RSpec.describe "Territories::Departements::Collectivities#index" do
       end
     end
 
-    context "when requesting Turbo-Frame", headers: { "Turbo-Frame" => "datatable-collectivities" }, xhr: true do
+    context "when requesting Turbo-Frame", :xhr, headers: { "Turbo-Frame" => "datatable-collectivities" } do
       context "when the publisher is accessible" do
         it { expect(response).to have_http_status(:success) }
         it { expect(response).to have_content_type(:html) }
@@ -54,7 +54,7 @@ RSpec.describe "Territories::Departements::Collectivities#index" do
       end
     end
 
-    context "when requesting autocompletion", headers: { "Accept-Variant" => "autocomplete" }, xhr: true do
+    context "when requesting autocompletion", :xhr, headers: { "Accept-Variant" => "autocomplete" } do
       it { expect(response).to have_http_status(:not_implemented) }
       it { expect(response).to have_content_type(:html) }
       it { expect(response).to have_html_body }

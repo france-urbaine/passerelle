@@ -19,7 +19,7 @@ RSpec.describe "PasswordsController#strengh_test" do
       it { expect(response).to have_html_body }
     end
 
-    context "when requesting turbo frame", headers: { "Turbo-Frame" => "content" }, xhr: true do
+    context "when requesting turbo frame", :xhr, headers: { "Turbo-Frame" => "content" } do
       context "when the password is present" do
         it { expect(response).to have_http_status(:success) }
         it { expect(response).to have_content_type(:html) }

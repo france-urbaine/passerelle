@@ -36,7 +36,7 @@ RSpec.describe "Territories::DepartementsController#index" do
       it { expect(response).to have_html_body }
     end
 
-    context "when requesting autocompletion", headers: { "Accept-Variant" => "autocomplete" }, xhr: true do
+    context "when requesting autocompletion", :xhr, headers: { "Accept-Variant" => "autocomplete" } do
       before do
         create(:departement, name: "Pyrénées-Atlantiques")
         create(:departement, name: "Gironde")

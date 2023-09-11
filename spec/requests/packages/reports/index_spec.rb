@@ -90,7 +90,7 @@ RSpec.describe "Packages::Reports" do
       end
     end
 
-    context "when requesting Turbo-Frame", headers: { "Turbo-Frame" => "datatable-reports" }, xhr: true do
+    context "when requesting Turbo-Frame", :xhr, headers: { "Turbo-Frame" => "datatable-reports" } do
       context "when the package is accessible" do
         it { expect(response).to have_http_status(:success) }
         it { expect(response).to have_content_type(:html) }

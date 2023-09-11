@@ -31,7 +31,7 @@ RSpec.describe "OrganizationsController#index" do
 
   it_behaves_like "it responds with not acceptable to super admin"
 
-  context "when requesting Turbo-Frame", headers: { "Accept-Variant" => "autocomplete" }, xhr: true do
+  context "when requesting Turbo-Frame", :xhr, headers: { "Accept-Variant" => "autocomplete" } do
     context "when signed in as a super admin" do
       before { sign_in_as(:super_admin) }
 

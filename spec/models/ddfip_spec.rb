@@ -334,7 +334,7 @@ RSpec.describe DDFIP do
           create_list(:commune, 4, code_departement: ddfips[0].code_departement)
           create_list(:commune, 2, code_departement: ddfips[1].code_departement)
 
-          Commune.all.each { |commune| create(:report, :transmitted, commune: commune) }
+          Commune.find_each { |commune| create(:report, :transmitted, commune: commune) }
 
           DDFIP.update_all(reports_count: 0)
         end
@@ -351,7 +351,7 @@ RSpec.describe DDFIP do
           create_list(:commune, 4, code_departement: ddfips[0].code_departement)
           create_list(:commune, 2, code_departement: ddfips[1].code_departement)
 
-          Commune.all.each { |commune| create(:report, :approved, commune: commune) }
+          Commune.find_each { |commune| create(:report, :approved, commune: commune) }
 
           DDFIP.update_all(reports_approved_count: 0)
         end
@@ -368,7 +368,7 @@ RSpec.describe DDFIP do
           create_list(:commune, 4, code_departement: ddfips[0].code_departement)
           create_list(:commune, 2, code_departement: ddfips[1].code_departement)
 
-          Commune.all.each { |commune| create(:report, :rejected, commune: commune) }
+          Commune.find_each { |commune| create(:report, :rejected, commune: commune) }
 
           DDFIP.update_all(reports_rejected_count: 0)
         end
@@ -385,7 +385,7 @@ RSpec.describe DDFIP do
           create_list(:commune, 4, code_departement: ddfips[0].code_departement)
           create_list(:commune, 2, code_departement: ddfips[1].code_departement)
 
-          Commune.all.each { |commune| create(:report, :debated, commune: commune) }
+          Commune.find_each { |commune| create(:report, :debated, commune: commune) }
 
           DDFIP.update_all(reports_debated_count: 0)
         end
