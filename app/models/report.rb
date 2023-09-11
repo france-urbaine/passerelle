@@ -315,7 +315,7 @@ class Report < ApplicationRecord
   }
 
   scope :order_by_score, lambda { |_input|
-    # TODO
+    # TODO: Not implemented
     self
   }
 

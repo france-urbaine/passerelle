@@ -3,9 +3,9 @@
 module Views
   module Reports
     class ShowComponent < ApplicationViewComponent
-      # FIXME: A PR on ViewComponent will eliminate the need to
+      # FIXME: https://github.com/ViewComponent/view_component/issues/387
+      # The PR on ViewComponent will eliminate the need to
       # create Subclasses to render other templates:
-      # https://github.com/ViewComponent/view_component/issues/387
       #
       InformationPacking      = Class.new(self)
       InformationTransmitted  = Class.new(self)
