@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module CopyButton
+module CopyableText
   # @logical_path Interactive elements
   #
   # @display frame "content"
@@ -10,5 +10,9 @@ module CopyButton
     # @label Default
     #
     def default; end
+
+    # @label Hidden
+    #
+    def hidden; end
   end
 end

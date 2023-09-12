@@ -21,7 +21,7 @@ module ComponentsHelper
     pagination_options_component: "Pagination::Options::Component",
     pagination_buttons_component: "Pagination::Buttons::Component",
     password_field_component:     "PasswordField::Component",
-    copy_button_component:        "CopyButton::Component",
+    copyable_text_component:      "CopyableText::Component",
     priority_icon_component:      "PriorityIcon::Component",
     radio_buttons_component:      "RadioButtons::Component",
     search_component:             "Search::Component",

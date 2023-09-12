@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe CopyButton::Component, type: :component do
+RSpec.describe CopyableText::Component, type: :component do
   it "renders a button with an icon" do
     render_inline described_class.new("texte-a-copier")
 

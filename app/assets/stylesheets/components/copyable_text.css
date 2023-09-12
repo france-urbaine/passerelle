@@ -1,0 +1,5 @@
+@layer components {
+  .copyable-text .icon-button {
+    outline-style: none;
+  }
+}

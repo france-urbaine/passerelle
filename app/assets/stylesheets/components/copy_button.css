@@ -1,9 +1,0 @@
-@layer components {
-  .icon-button.copy-button {
-    position: absolute;
-    top: 0;
-    right: 0;
-    outline-style: none;
-    position: relative;
-  }
-}

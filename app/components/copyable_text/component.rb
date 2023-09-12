@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-module CopyButton
+module CopyableText
   class Component < ApplicationViewComponent
-    def initialize(value)
+    def initialize(value, hide: false)
       @value = value
+      @hide  = hide
       super()
     end
   end

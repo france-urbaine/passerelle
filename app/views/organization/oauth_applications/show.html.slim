@@ -19,13 +19,9 @@
       .description-list__row
         dt Client UID
         dd
-          code
-            span=@oauth_application.uid
-            = copy_button_component @oauth_application.uid
+          = copyable_text_component @oauth_application.uid
 
       .description-list__row
         dt Client Secret
         dd
-          code
-            span=@oauth_application.secret
-            = copy_button_component @oauth_application.secret
+          = copyable_text_component @oauth_application.secret, hide: true
