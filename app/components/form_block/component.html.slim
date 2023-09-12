@@ -9,4 +9,6 @@
   - if hint?
     .form-block__hint= hint
 
-  = autocomplete_results
+  - if @autocomplete
+    .autocomplete__list-wrapper
+      ul.autocomplete__list( data-autocomplete-target="results" )
