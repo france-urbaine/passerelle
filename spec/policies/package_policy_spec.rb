@@ -531,7 +531,7 @@ RSpec.describe PackagePolicy, stub_factories: false do
           WHERE  "packages"."discarded_at" IS NULL
             AND  "packages"."sandbox" = FALSE
             AND  "packages"."transmitted_at" IS NOT NULL
-            AND  "packages"."rejected_at" IS NULL
+            AND  "packages"."returned_at" IS NULL
             AND  "reports"."discarded_at" IS NULL
             AND  "communes"."code_departement" = '#{current_organization.code_departement}'
         SQL

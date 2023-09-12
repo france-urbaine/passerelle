@@ -8,10 +8,11 @@ module States
       # Scopes
       # ----------------------------------------------------------------------------
       scope :packing,      -> { where(transmitted_at: nil) }
+      scope :delivered,    -> { transmitted.kept.out_of_sandbox }
       scope :transmitted,  -> { where.not(transmitted_at: nil) }
-      scope :unresolved,   -> { transmitted.kept.where(approved_at: nil, rejected_at: nil) }
-      scope :assigned,     -> { transmitted.where.not(approved_at: nil).where(rejected_at: nil) }
-      scope :returned,     -> { transmitted.where.not(rejected_at: nil) }
+      scope :unresolved,   -> { transmitted.kept.where(assigned_at: nil, returned_at: nil) }
+      scope :assigned,     -> { transmitted.where.not(assigned_at: nil).where(returned_at: nil) }
+      scope :returned,     -> { transmitted.where.not(returned_at: nil) }
 
       # Predicates
       # ----------------------------------------------------------------------------
@@ -24,15 +25,15 @@ module States
       end
 
       def unresolved?
-        transmitted? && kept? && approved_at.nil? && rejected_at.nil?
+        transmitted? && kept? && assigned_at.nil? && returned_at.nil?
       end
 
-      def approved?
-        transmitted? && approved_at? && rejected_at.nil?
+      def assigned?
+        transmitted? && assigned_at? && returned_at.nil?
       end
 
       def returned?
-        transmitted? && rejected_at?
+        transmitted? && returned_at?
       end
 
       # Updates methods
@@ -43,12 +44,12 @@ module States
         touch(:transmitted_at)
       end
 
-      def approve!
-        return true if approved?
+      def assign!
+        return true if assigned?
 
         update_columns(
-          rejected_at: nil,
-          approved_at: Time.current
+          returned_at: nil,
+          assigned_at: Time.current
         )
       end
 
@@ -56,8 +57,8 @@ module States
         return true if returned?
 
         update_columns(
-          rejected_at: Time.current,
-          approved_at: nil
+          returned_at: Time.current,
+          assigned_at: nil
         )
       end
     end

@@ -141,8 +141,8 @@ RSpec.describe ReportPolicy, stub_factories: false do
         it_behaves_like("when current user is member of targeted office") { failed }
       end
 
-      context "when package is approved by the current DDFIP" do
-        let(:record) { create(:report, :package_approved_by_ddfip, ddfip: current_organization) }
+      context "when package is assigned by the current DDFIP" do
+        let(:record) { create(:report, :package_assigned_by_ddfip, ddfip: current_organization) }
 
         it_behaves_like("when current user is a DDFIP admin")             { succeed }
         it_behaves_like("when current user is a DDFIP user")              { failed }
@@ -306,8 +306,8 @@ RSpec.describe ReportPolicy, stub_factories: false do
         it_behaves_like("when current user is member of targeted office") { failed }
       end
 
-      context "when package is approved by the current DDFIP" do
-        let(:record) { create(:report, :package_approved_by_ddfip, ddfip: current_organization) }
+      context "when package is assigned by the current DDFIP" do
+        let(:record) { create(:report, :package_assigned_by_ddfip, ddfip: current_organization) }
 
         it_behaves_like("when current user is a DDFIP admin")             { succeed }
         it_behaves_like("when current user is a DDFIP user")              { failed }
@@ -446,8 +446,8 @@ RSpec.describe ReportPolicy, stub_factories: false do
         it_behaves_like("when current user is member of targeted office") { failed }
       end
 
-      context "when package is approved by the current DDFIP" do
-        let(:record) { create(:report, :package_approved_by_ddfip, ddfip: current_organization) }
+      context "when package is assigned by the current DDFIP" do
+        let(:record) { create(:report, :package_assigned_by_ddfip, ddfip: current_organization) }
 
         it_behaves_like("when current user is a DDFIP admin")             { failed }
         it_behaves_like("when current user is a DDFIP user")              { failed }
@@ -529,7 +529,7 @@ RSpec.describe ReportPolicy, stub_factories: false do
             AND  "reports"."discarded_at" IS NULL
             AND  "packages"."sandbox" = FALSE
             AND  "packages"."transmitted_at" IS NOT NULL
-            AND  "packages"."rejected_at" IS NULL
+            AND  "packages"."returned_at" IS NULL
             AND  "communes"."code_departement" = '#{current_organization.code_departement}'
         SQL
       end
@@ -550,8 +550,8 @@ RSpec.describe ReportPolicy, stub_factories: false do
             AND  "reports"."discarded_at" IS NULL
             AND  "packages"."sandbox" = FALSE
             AND  "packages"."transmitted_at" IS NOT NULL
-            AND  "packages"."approved_at" IS NOT NULL
-            AND  "packages"."rejected_at" IS NULL
+            AND  "packages"."assigned_at" IS NOT NULL
+            AND  "packages"."returned_at" IS NULL
             AND  "office_users"."user_id" = '#{current_user.id}'
             AND  ("reports"."form_type" = ANY ("offices"."competences"))
         SQL

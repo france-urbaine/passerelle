@@ -46,8 +46,8 @@ RSpec.describe "ReportsController#show" do
       it_behaves_like "it allows access to DDFIP admin"
     end
 
-    context "when report has been approved and forwarded to current user office" do
-      let(:report) { create(:report, :package_approved_by_ddfip, ddfip: current_user.organization) }
+    context "when report has been assigned and forwarded to current user office" do
+      let(:report) { create(:report, :package_assigned_by_ddfip, ddfip: current_user.organization) }
 
       before do
         create(:office,

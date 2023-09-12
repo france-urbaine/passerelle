@@ -13,8 +13,8 @@
 #  created_at              :datetime         not null
 #  updated_at              :datetime         not null
 #  transmitted_at          :datetime
-#  approved_at             :datetime
-#  rejected_at             :datetime
+#  assigned_at             :datetime
+#  returned_at             :datetime
 #  discarded_at            :datetime
 #  due_on                  :date
 #  completed               :boolean          default(FALSE), not null

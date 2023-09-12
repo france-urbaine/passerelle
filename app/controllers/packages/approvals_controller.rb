@@ -11,7 +11,7 @@ module Packages
 
     def update
       @package = find_and_authorize_package
-      @package.approve!
+      @package.assign!
 
       respond_with @package,
         flash: true,

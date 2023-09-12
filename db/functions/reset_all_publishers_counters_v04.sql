@@ -14,7 +14,7 @@ AS $function$
            "reports_rejected_count"     = get_reports_rejected_count_in_publishers("publishers".*),
            "reports_debated_count"      = get_reports_debated_count_in_publishers("publishers".*),
            "packages_transmitted_count" = get_packages_transmitted_count_in_publishers("publishers".*),
-           "packages_approved_count"    = get_packages_approved_count_in_publishers("publishers".*),
+           "packages_assigned_count"    = get_packages_assigned_count_in_publishers("publishers".*),
            "packages_returned_count"    = get_packages_returned_count_in_publishers("publishers".*);
 
     GET DIAGNOSTICS affected_rows = ROW_COUNT;

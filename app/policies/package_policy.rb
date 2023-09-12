@@ -41,7 +41,7 @@ class PackagePolicy < ApplicationPolicy
     end
   end
 
-  def approve?
+  def assign?
     false
     # if record == Package
     #   ddfip_admin?

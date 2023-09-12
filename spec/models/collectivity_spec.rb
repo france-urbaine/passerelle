@@ -927,41 +927,41 @@ RSpec.describe Collectivity do
         end
       end
 
-      describe "#packages_approved_count" do
+      describe "#packages_assigned_count" do
         let(:package) { create(:package, :transmitted, collectivity: collectivities[0]) }
 
         it "doesn't change on package creation" do
           expect { package }
-            .to  not_change { collectivities[0].reload.packages_approved_count }.from(0)
-            .and not_change { collectivities[1].reload.packages_approved_count }.from(0)
+            .to  not_change { collectivities[0].reload.packages_assigned_count }.from(0)
+            .and not_change { collectivities[1].reload.packages_assigned_count }.from(0)
         end
 
-        it "changes when package is approved" do
+        it "changes when package is assigned" do
           package
-          expect { package.approve! }
-            .to change { collectivities[0].reload.packages_approved_count }.from(0).to(1)
-            .and not_change { collectivities[1].reload.packages_approved_count }.from(0)
+          expect { package.assign! }
+            .to change { collectivities[0].reload.packages_assigned_count }.from(0).to(1)
+            .and not_change { collectivities[1].reload.packages_assigned_count }.from(0)
         end
 
-        it "changes when approved package is discarded" do
-          package.approve!
+        it "changes when assigned package is discarded" do
+          package.assign!
           expect { package.discard }
-            .to change { collectivities[0].reload.packages_approved_count }.from(1).to(0)
-            .and not_change { collectivities[1].reload.packages_approved_count }.from(0)
+            .to change { collectivities[0].reload.packages_assigned_count }.from(1).to(0)
+            .and not_change { collectivities[1].reload.packages_assigned_count }.from(0)
         end
 
-        it "changes when approved package is undiscarded" do
-          package.touch(:approved_at, :discarded_at)
+        it "changes when assigned package is undiscarded" do
+          package.touch(:assigned_at, :discarded_at)
           expect { package.undiscard }
-            .to change { collectivities[0].reload.packages_approved_count }.from(0).to(1)
-            .and not_change { collectivities[1].reload.packages_approved_count }.from(0)
+            .to change { collectivities[0].reload.packages_assigned_count }.from(0).to(1)
+            .and not_change { collectivities[1].reload.packages_assigned_count }.from(0)
         end
 
-        it "changes when approved package is deleted" do
-          package.approve!
+        it "changes when assigned package is deleted" do
+          package.assign!
           expect { package.delete }
-            .to change { collectivities[0].reload.packages_approved_count }.from(1).to(0)
-            .and not_change { collectivities[1].reload.packages_approved_count }.from(0)
+            .to change { collectivities[0].reload.packages_assigned_count }.from(1).to(0)
+            .and not_change { collectivities[1].reload.packages_assigned_count }.from(0)
         end
       end
 
@@ -989,7 +989,7 @@ RSpec.describe Collectivity do
         end
 
         it "changes when returned package is undiscarded" do
-          package.touch(:rejected_at, :discarded_at)
+          package.touch(:returned_at, :discarded_at)
           expect { package.undiscard }
             .to change { collectivities[0].reload.packages_returned_count }.from(0).to(1)
             .and not_change { collectivities[1].reload.packages_returned_count }.from(0)

@@ -60,8 +60,8 @@ RSpec.describe "Packages::ApprovalsController#update" do
       it_behaves_like "it allows access to DDFIP admin"
     end
 
-    context "when package has been approved to current user DDFIP" do
-      let(:package) { create(:package, :transmitted_to_ddfip, :approved, ddfip: current_user.organization) }
+    context "when package has been assigned to current user DDFIP" do
+      let(:package) { create(:package, :transmitted_to_ddfip, :assigned, ddfip: current_user.organization) }
 
       it_behaves_like "it denies access to DDFIP user"
       it_behaves_like "it allows access to DDFIP admin"
@@ -85,9 +85,9 @@ RSpec.describe "Packages::ApprovalsController#update" do
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/paquets/#{package.id}") }
 
-      it "approves the package" do
+      it "assigns the package" do
         expect { request and package.reload }
-          .to change(package, :approved_at).from(nil)
+          .to change(package, :assigned_at).from(nil)
       end
 
       it "sets a flash notice" do

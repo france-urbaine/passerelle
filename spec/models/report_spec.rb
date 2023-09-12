@@ -246,7 +246,7 @@ RSpec.describe Report do
     end
 
     describe ".assigned" do
-      it "scopes on transmitted reports with package approved by DDFIP" do
+      it "scopes on transmitted reports with package assigned by DDFIP" do
         expect {
           described_class.assigned.load
         }.to perform_sql_query(<<~SQL)
@@ -254,8 +254,8 @@ RSpec.describe Report do
           FROM       "reports"
           INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
           WHERE      "packages"."transmitted_at" IS NOT NULL
-            AND      "packages"."approved_at" IS NOT NULL
-            AND      "packages"."rejected_at" IS NULL
+            AND      "packages"."assigned_at" IS NOT NULL
+            AND      "packages"."returned_at" IS NULL
         SQL
       end
     end
@@ -269,7 +269,7 @@ RSpec.describe Report do
           FROM       "reports"
           INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
           WHERE      "packages"."transmitted_at" IS NOT NULL
-            AND      "packages"."rejected_at" IS NOT NULL
+            AND      "packages"."returned_at" IS NOT NULL
         SQL
       end
     end
@@ -532,8 +532,8 @@ RSpec.describe Report do
         build(:package, :transmitted, collectivity: collectivity),
         build(:package, :transmitted, collectivity: collectivity, publisher: publisher, sandbox: true),
         build(:package, :returned,            collectivity: collectivity),
-        build(:package, :approved, :returned, collectivity: collectivity),
-        build(:package, :approved,            collectivity: collectivity)
+        build(:package, :assigned, :returned, collectivity: collectivity),
+        build(:package, :assigned,            collectivity: collectivity)
       ]
     end
 

@@ -22,14 +22,14 @@ FactoryBot.define do
       transmitted_at { Time.current }
     end
 
-    trait :approved do
+    trait :assigned do
       transmitted_at { Time.current }
-      approved_at    { Time.current }
+      assigned_at    { Time.current }
     end
 
     trait :returned do
       transmitted_at { Time.current }
-      rejected_at    { Time.current }
+      returned_at    { Time.current }
     end
 
     trait :discarded do

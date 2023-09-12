@@ -328,8 +328,8 @@ RSpec.describe Office do
         let!(:collectivity) { create(:collectivity) }
 
         before do
-          create_list(:report, 4, :reported_for_office, :package_approved_by_ddfip, ddfip: ddfip, office: offices[0], collectivity: collectivity)
-          create_list(:report, 2, :reported_for_office, :package_approved_by_ddfip, ddfip: ddfip, office: offices[1], collectivity: collectivity)
+          create_list(:report, 4, :reported_for_office, :package_assigned_by_ddfip, ddfip: ddfip, office: offices[0], collectivity: collectivity)
+          create_list(:report, 2, :reported_for_office, :package_assigned_by_ddfip, ddfip: ddfip, office: offices[1], collectivity: collectivity)
 
           Office.update_all(reports_count: 0)
         end
@@ -343,10 +343,10 @@ RSpec.describe Office do
         let!(:collectivity) { create(:collectivity) }
 
         before do
-          create_list(:report, 4, :reported_for_office, :package_approved_by_ddfip, :approved, ddfip: ddfip, office: offices[0], collectivity: collectivity)
-          create_list(:report, 2, :reported_for_office, :package_approved_by_ddfip, :approved, ddfip: ddfip, office: offices[1], collectivity: collectivity)
-          create_list(:report, 1, :reported_for_office, :package_approved_by_ddfip, ddfip: ddfip, office: offices[0], collectivity: collectivity)
-          create_list(:report, 1, :reported_for_office, :package_approved_by_ddfip, ddfip: ddfip, office: offices[1], collectivity: collectivity)
+          create_list(:report, 4, :reported_for_office, :package_assigned_by_ddfip, :approved, ddfip: ddfip, office: offices[0], collectivity: collectivity)
+          create_list(:report, 2, :reported_for_office, :package_assigned_by_ddfip, :approved, ddfip: ddfip, office: offices[1], collectivity: collectivity)
+          create_list(:report, 1, :reported_for_office, :package_assigned_by_ddfip, ddfip: ddfip, office: offices[0], collectivity: collectivity)
+          create_list(:report, 1, :reported_for_office, :package_assigned_by_ddfip, ddfip: ddfip, office: offices[1], collectivity: collectivity)
 
           Office.update_all(reports_approved_count: 0)
         end
@@ -360,10 +360,10 @@ RSpec.describe Office do
         let!(:collectivity) { create(:collectivity) }
 
         before do
-          create_list(:report, 4, :reported_for_office, :package_approved_by_ddfip, :rejected, ddfip: ddfip, office: offices[0], collectivity: collectivity)
-          create_list(:report, 2, :reported_for_office, :package_approved_by_ddfip, :rejected, ddfip: ddfip, office: offices[1], collectivity: collectivity)
-          create_list(:report, 1, :reported_for_office, :package_approved_by_ddfip, ddfip: ddfip, office: offices[0], collectivity: collectivity)
-          create_list(:report, 1, :reported_for_office, :package_approved_by_ddfip, ddfip: ddfip, office: offices[1], collectivity: collectivity)
+          create_list(:report, 4, :reported_for_office, :package_assigned_by_ddfip, :rejected, ddfip: ddfip, office: offices[0], collectivity: collectivity)
+          create_list(:report, 2, :reported_for_office, :package_assigned_by_ddfip, :rejected, ddfip: ddfip, office: offices[1], collectivity: collectivity)
+          create_list(:report, 1, :reported_for_office, :package_assigned_by_ddfip, ddfip: ddfip, office: offices[0], collectivity: collectivity)
+          create_list(:report, 1, :reported_for_office, :package_assigned_by_ddfip, ddfip: ddfip, office: offices[1], collectivity: collectivity)
 
           Office.update_all(reports_rejected_count: 0)
         end
@@ -377,10 +377,10 @@ RSpec.describe Office do
         let!(:collectivity) { create(:collectivity) }
 
         before do
-          create_list(:report, 4, :reported_for_office, :package_approved_by_ddfip, :debated, ddfip: ddfip, office: offices[0], collectivity: collectivity)
-          create_list(:report, 2, :reported_for_office, :package_approved_by_ddfip, :debated, ddfip: ddfip, office: offices[1], collectivity: collectivity)
-          create_list(:report, 1, :reported_for_office, :package_approved_by_ddfip, ddfip: ddfip, office: offices[0], collectivity: collectivity)
-          create_list(:report, 1, :reported_for_office, :package_approved_by_ddfip, ddfip: ddfip, office: offices[1], collectivity: collectivity)
+          create_list(:report, 4, :reported_for_office, :package_assigned_by_ddfip, :debated, ddfip: ddfip, office: offices[0], collectivity: collectivity)
+          create_list(:report, 2, :reported_for_office, :package_assigned_by_ddfip, :debated, ddfip: ddfip, office: offices[1], collectivity: collectivity)
+          create_list(:report, 1, :reported_for_office, :package_assigned_by_ddfip, ddfip: ddfip, office: offices[0], collectivity: collectivity)
+          create_list(:report, 1, :reported_for_office, :package_assigned_by_ddfip, ddfip: ddfip, office: offices[1], collectivity: collectivity)
 
           Office.update_all(reports_debated_count: 0)
         end
@@ -549,10 +549,10 @@ RSpec.describe Office do
             .and not_change { offices[2].reload.reports_count }.from(0)
         end
 
-        it "changes when transmitted package is approved" do
+        it "changes when transmitted package is assigned" do
           report.package.transmit!
 
-          expect { report.package.approve! }
+          expect { report.package.assign! }
             .to change { offices[0].reload.reports_count }.from(0).to(1)
             .and not_change { offices[1].reload.reports_count }.from(0)
             .and not_change { offices[2].reload.reports_count }.from(0)
@@ -567,17 +567,17 @@ RSpec.describe Office do
             .and not_change { offices[2].reload.reports_count }.from(0)
         end
 
-        it "doesn't changes when transmitted package in sandbox is approved" do
+        it "doesn't changes when transmitted package in sandbox is assigned" do
           report.package.update(sandbox: true) and report.package.transmit!
 
-          expect { report.package.approve! }
+          expect { report.package.assign! }
             .to  not_change { offices[0].reload.reports_count }.from(0)
             .and not_change { offices[1].reload.reports_count }.from(0)
             .and not_change { offices[2].reload.reports_count }.from(0)
         end
 
         it "changes when transmitted report in approved package is discarded" do
-          report.package.touch(:transmitted_at) and report.package.approve!
+          report.package.touch(:transmitted_at) and report.package.assign!
 
           expect { report.discard }
             .to change { offices[0].reload.reports_count }.from(1).to(0)
@@ -585,8 +585,8 @@ RSpec.describe Office do
             .and not_change { offices[2].reload.reports_count }.from(0)
         end
 
-        it "changes when transmitted report in approved package is undiscarded" do
-          report.discard and report.package.transmit! and report.package.approve!
+        it "changes when transmitted report in assigned package is undiscarded" do
+          report.discard and report.package.transmit! and report.package.assign!
 
           expect { report.undiscard }
             .to change { offices[0].reload.reports_count }.from(0).to(1)
@@ -594,8 +594,8 @@ RSpec.describe Office do
             .and not_change { offices[2].reload.reports_count }.from(0)
         end
 
-        it "changes when transmitted report in approved package is deleted" do
-          report.package.transmit! and report.package.approve!
+        it "changes when transmitted report in assigned package is deleted" do
+          report.package.transmit! and report.package.assign!
 
           expect { report.destroy }
             .to change { offices[0].reload.reports_count }.from(1).to(0)
@@ -612,8 +612,8 @@ RSpec.describe Office do
             .and not_change { offices[2].reload.reports_count }.from(0)
         end
 
-        it "changes when transmitted and approved package is discarded" do
-          report.package.transmit! and report.package.approve!
+        it "changes when transmitted and assigned package is discarded" do
+          report.package.transmit! and report.package.assign!
 
           expect { report.package.discard }
             .to change { offices[0].reload.reports_count }.from(1).to(0)
@@ -630,8 +630,8 @@ RSpec.describe Office do
             .and not_change { offices[2].reload.reports_count }.from(0)
         end
 
-        it "changes when transmitted and approved package is undiscarded" do
-          report.package.touch(:transmitted_at, :discarded_at, :approved_at)
+        it "changes when transmitted and assigned package is undiscarded" do
+          report.package.touch(:transmitted_at, :discarded_at, :assigned_at)
 
           expect { report.package.undiscard }
             .to change { offices[0].reload.reports_count }.from(0).to(1)
@@ -648,8 +648,8 @@ RSpec.describe Office do
             .and not_change { offices[2].reload.reports_count }.from(0)
         end
 
-        it "changes when transmitted and approved package is deleted" do
-          report.package.transmit! and report.package.approve!
+        it "changes when transmitted and assigned package is deleted" do
+          report.package.transmit! and report.package.assign!
 
           expect { report.package.delete }
             .to change { offices[0].reload.reports_count }.from(1).to(0)
@@ -677,8 +677,8 @@ RSpec.describe Office do
             .and not_change { offices[2].reload.reports_approved_count }.from(0)
         end
 
-        it "changes when transmitted report in approved package is approved" do
-          report.package.touch(:transmitted_at, :approved_at)
+        it "changes when transmitted report in assigned package is approved" do
+          report.package.touch(:transmitted_at, :assigned_at)
 
           expect { report.approve! }
             .to change { offices[0].reload.reports_approved_count }.from(0).to(1)
@@ -695,8 +695,8 @@ RSpec.describe Office do
             .and not_change { offices[2].reload.reports_approved_count }.from(0)
         end
 
-        it "changes when approved and transmitted report in approved package is discarded" do
-          report.approve! and report.package.touch(:transmitted_at, :approved_at)
+        it "changes when approved and transmitted report in assigned package is discarded" do
+          report.approve! and report.package.touch(:transmitted_at, :assigned_at)
 
           expect { report.discard }
             .to change { offices[0].reload.reports_approved_count }.from(1).to(0)
@@ -713,8 +713,8 @@ RSpec.describe Office do
             .and not_change { offices[2].reload.reports_approved_count }.from(0)
         end
 
-        it "changes when approved and transmitted report in approved package is undiscarded" do
-          report.touch(:approved_at, :discarded_at) and report.package.touch(:transmitted_at, :approved_at)
+        it "changes when approved and transmitted report in assigned package is undiscarded" do
+          report.touch(:approved_at, :discarded_at) and report.package.touch(:transmitted_at, :assigned_at)
 
           expect { report.undiscard }
             .to change { offices[0].reload.reports_approved_count }.from(0).to(1)
@@ -731,8 +731,8 @@ RSpec.describe Office do
             .and not_change { offices[2].reload.reports_approved_count }.from(0)
         end
 
-        it "changes when approved and transmitted report in approved package is deleted" do
-          report.approve! and report.package.touch(:transmitted_at, :approved_at)
+        it "changes when approved and transmitted report in assigned package is deleted" do
+          report.approve! and report.package.touch(:transmitted_at, :assigned_at)
 
           expect { report.delete }
             .to change { offices[0].reload.reports_approved_count }.from(1).to(0)
@@ -760,8 +760,8 @@ RSpec.describe Office do
             .and not_change { offices[2].reload.reports_rejected_count }.from(0)
         end
 
-        it "changes when transmitted report in approved package is rejected" do
-          report.package.touch(:transmitted_at, :approved_at)
+        it "changes when transmitted report in assigned package is rejected" do
+          report.package.touch(:transmitted_at, :assigned_at)
 
           expect { report.reject! }
             .to change { offices[0].reload.reports_rejected_count }.from(0).to(1)
@@ -778,8 +778,8 @@ RSpec.describe Office do
             .and not_change { offices[2].reload.reports_rejected_count }.from(0)
         end
 
-        it "changes when rejected and transmitted report in approved package is discarded" do
-          report.reject! and report.package.touch(:transmitted_at, :approved_at)
+        it "changes when rejected and transmitted report in assigned package is discarded" do
+          report.reject! and report.package.touch(:transmitted_at, :assigned_at)
 
           expect { report.discard }
             .to change { offices[0].reload.reports_rejected_count }.from(1).to(0)
@@ -796,8 +796,8 @@ RSpec.describe Office do
             .and not_change { offices[2].reload.reports_rejected_count }.from(0)
         end
 
-        it "changes when rejected and transmitted report in approved package is undiscarded" do
-          report.touch(:rejected_at, :discarded_at) and report.package.touch(:transmitted_at, :approved_at)
+        it "changes when rejected and transmitted report in assigned package is undiscarded" do
+          report.touch(:rejected_at, :discarded_at) and report.package.touch(:transmitted_at, :assigned_at)
 
           expect { report.undiscard }
             .to change { offices[0].reload.reports_rejected_count }.from(0).to(1)
@@ -814,8 +814,8 @@ RSpec.describe Office do
             .and not_change { offices[2].reload.reports_rejected_count }.from(0)
         end
 
-        it "changes when rejected and transmitted report in approved package is deleted" do
-          report.reject! and report.package.touch(:transmitted_at, :approved_at)
+        it "changes when rejected and transmitted report in assigned package is deleted" do
+          report.reject! and report.package.touch(:transmitted_at, :assigned_at)
 
           expect { report.delete }
             .to change { offices[0].reload.reports_rejected_count }.from(1).to(0)
@@ -843,8 +843,8 @@ RSpec.describe Office do
             .and not_change { offices[2].reload.reports_debated_count }.from(0)
         end
 
-        it "changes when transmitted report in approved package is debated" do
-          report.package.touch(:transmitted_at, :approved_at)
+        it "changes when transmitted report in assigned package is debated" do
+          report.package.touch(:transmitted_at, :assigned_at)
 
           expect { report.debate! }
             .to change { offices[0].reload.reports_debated_count }.from(0).to(1)
@@ -861,8 +861,8 @@ RSpec.describe Office do
             .and not_change { offices[2].reload.reports_debated_count }.from(0)
         end
 
-        it "changes when debated and transmitted report in approved package is discarded" do
-          report.debate! and report.package.touch(:transmitted_at, :approved_at)
+        it "changes when debated and transmitted report in assigned package is discarded" do
+          report.debate! and report.package.touch(:transmitted_at, :assigned_at)
 
           expect { report.discard }
             .to change { offices[0].reload.reports_debated_count }.from(1).to(0)
@@ -879,8 +879,8 @@ RSpec.describe Office do
             .and not_change { offices[2].reload.reports_debated_count }.from(0)
         end
 
-        it "changes when debated and transmitted report in approved package is undiscarded" do
-          report.touch(:debated_at, :discarded_at) and report.package.touch(:transmitted_at, :approved_at)
+        it "changes when debated and transmitted report in assigned package is undiscarded" do
+          report.touch(:debated_at, :discarded_at) and report.package.touch(:transmitted_at, :assigned_at)
 
           expect { report.undiscard }
             .to change { offices[0].reload.reports_debated_count }.from(0).to(1)
@@ -897,8 +897,8 @@ RSpec.describe Office do
             .and not_change { offices[2].reload.reports_debated_count }.from(0)
         end
 
-        it "changes when debated and transmitted report in approved package is deleted" do
-          report.debate! and report.package.touch(:transmitted_at, :approved_at)
+        it "changes when debated and transmitted report in assigned package is deleted" do
+          report.debate! and report.package.touch(:transmitted_at, :assigned_at)
 
           expect { report.delete }
             .to change { offices[0].reload.reports_debated_count }.from(1).to(0)
@@ -933,10 +933,10 @@ RSpec.describe Office do
             .and not_change { offices[2].reload.reports_pending_count }.from(0)
         end
 
-        it "changes when transmitted package is approved" do
+        it "changes when transmitted package is assigned" do
           report.package.touch(:transmitted_at)
 
-          expect { report.package.approve! }
+          expect { report.package.assign! }
             .to change { offices[0].reload.reports_pending_count }.from(1).to(0)
             .and not_change { offices[1].reload.reports_pending_count }.from(0)
             .and not_change { offices[2].reload.reports_pending_count }.from(0)

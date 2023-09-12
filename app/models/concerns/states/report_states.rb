@@ -10,7 +10,7 @@ module States
       scope :packing,          -> { joins(:package).merge(Package.unscoped.packing) }
       scope :transmitted,      -> { joins(:package).merge(Package.unscoped.transmitted) }
       scope :delivered,        -> { transmitted.all_kept.out_of_sandbox }
-      scope :assigned,         -> { joins(:package).merge(Package.unscoped.approved) }
+      scope :assigned,         -> { joins(:package).merge(Package.unscoped.assigned) }
       scope :returned,         -> { joins(:package).merge(Package.unscoped.returned) }
       scope :pending,          -> { delivered.where(approved_at: nil, rejected_at: nil, debated_at: nil) }
       scope :updated_by_ddfip, -> { approved.or(rejected).or(debated) }
@@ -31,7 +31,7 @@ module States
       end
 
       def assigned?
-        package&.approved?
+        package&.assigned?
       end
 
       def returned?

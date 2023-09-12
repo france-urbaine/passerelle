@@ -13,7 +13,7 @@ AS $function$
            "reports_rejected_count"     = get_reports_rejected_count_in_collectivities("collectivities".*),
            "reports_debated_count"      = get_reports_debated_count_in_collectivities("collectivities".*),
            "packages_transmitted_count" = get_packages_transmitted_count_in_collectivities("collectivities".*),
-           "packages_approved_count"    = get_packages_approved_count_in_collectivities("collectivities".*),
+           "packages_assigned_count"    = get_packages_assigned_count_in_collectivities("collectivities".*),
            "packages_returned_count"    = get_packages_returned_count_in_collectivities("collectivities".*),
            "reports_packing_count"      = get_reports_packing_count_in_collectivities("collectivities".*);
 

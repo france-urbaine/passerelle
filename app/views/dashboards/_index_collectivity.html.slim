@@ -33,7 +33,7 @@ h2.subheader
   = icon_component("server-stack", "Nouvelle section")
   | Derniers signalements traités
 
-= render Views::Reports::ListComponent.new(@reports.includes(:package).updated_by_ddfip.order('packages.approved_at DESC, packages.rejected_at DESC, packages.discarded_at DESC'), dashboard: false) do |view|
+= render Views::Reports::ListComponent.new(@reports.includes(:package).updated_by_ddfip.order('packages.assigned_at DESC, packages.returned_at DESC, packages.discarded_at DESC'), dashboard: false) do |view|
   - view.with_column(:reference)
   - view.with_column(:package)
   - view.with_column(:form_type)

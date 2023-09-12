@@ -42,7 +42,7 @@ fr:
         contact_phone:          Numéro de téléphone
         domain_restriction:     Nom de domaine
         allow_2fa_via_email:    Autoriser l'email comme méthode d'authentification en 2 étapes
-        auto_approve_packages:  Approuver automatiquement tout les paquets
+        auto_assign_packages:   Approuver automatiquement tout les paquets
 
       dgfip:
         name:                   Nom de la DGFIP

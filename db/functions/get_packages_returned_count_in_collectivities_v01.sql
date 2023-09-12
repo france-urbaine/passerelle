@@ -8,7 +8,7 @@ AS $function$
       WHERE  "packages"."collectivity_id" = collectivities."id"
         AND  "packages"."sandbox" = FALSE
         AND  "packages"."transmitted_at" IS NOT NULL
-        AND  "packages"."rejected_at" IS NOT NULL
+        AND  "packages"."returned_at" IS NOT NULL
         AND  "packages"."discarded_at" IS NULL
     );
   END;

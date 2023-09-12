@@ -25,22 +25,22 @@ AS $function$
     -- * when publisher_id changed
     -- * when publisher_id changed from NULL
     -- * when publisher_id changed to NULL
-    -- * when (transmitted_at|approved_at|rejected_at|discarded_at) changed from NULL
-    -- * when (transmitted_at|approved_at|rejected_at|discarded_at) changed to NULL
+    -- * when (transmitted_at|approved_at|returned_at|discarded_at) changed from NULL
+    -- * when (transmitted_at|approved_at|returned_at|discarded_at) changed to NULL
 
     IF (TG_OP = 'INSERT')
     OR (TG_OP = 'DELETE')
     OR (TG_OP = 'UPDATE' AND NEW."sandbox" <> OLD."sandbox")
     OR (TG_OP = 'UPDATE' AND ((NEW."publisher_id" IS NULL) <> (OLD."publisher_id" IS NULL) OR (NEW."publisher_id" <> OLD."publisher_id")))
     OR (TG_OP = 'UPDATE' AND (NEW."transmitted_at" IS NULL) <> (OLD."transmitted_at" IS NULL))
-    OR (TG_OP = 'UPDATE' AND (NEW."approved_at" IS NULL) <> (OLD."approved_at" IS NULL))
-    OR (TG_OP = 'UPDATE' AND (NEW."rejected_at" IS NULL) <> (OLD."rejected_at" IS NULL))
+    OR (TG_OP = 'UPDATE' AND (NEW."assigned_at" IS NULL) <> (OLD."assigned_at" IS NULL))
+    OR (TG_OP = 'UPDATE' AND (NEW."returned_at" IS NULL) <> (OLD."returned_at" IS NULL))
     OR (TG_OP = 'UPDATE' AND (NEW."discarded_at" IS NULL) <> (OLD."discarded_at" IS NULL))
     THEN
 
       UPDATE "publishers"
       SET    "packages_transmitted_count" = get_packages_transmitted_count_in_publishers("publishers".*),
-             "packages_approved_count"    = get_packages_approved_count_in_publishers("publishers".*),
+             "packages_assigned_count"    = get_packages_assigned_count_in_publishers("publishers".*),
              "packages_returned_count"    = get_packages_returned_count_in_publishers("publishers".*),
              "reports_transmitted_count"  = get_reports_transmitted_count_in_publishers("publishers".*),
              "reports_approved_count"     = get_reports_approved_count_in_publishers("publishers".*),
@@ -50,7 +50,7 @@ AS $function$
 
       UPDATE "collectivities"
       SET    "packages_transmitted_count" = get_packages_transmitted_count_in_collectivities("collectivities".*),
-             "packages_approved_count"    = get_packages_approved_count_in_collectivities("collectivities".*),
+             "packages_assigned_count"    = get_packages_assigned_count_in_collectivities("collectivities".*),
              "packages_returned_count"    = get_packages_returned_count_in_collectivities("collectivities".*),
              "reports_transmitted_count"  = get_reports_transmitted_count_in_collectivities("collectivities".*),
              "reports_approved_count"     = get_reports_approved_count_in_collectivities("collectivities".*),
