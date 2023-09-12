@@ -3,25 +3,14 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 ENV["RAILS_ENV"] ||= "test"
 require "spec_helper"
-
-unless ENV["SIMPLE_COV"] == "false"
-  require "simplecov"
-
-  SimpleCov.start "rails" do
-    # When runnning `bin/ci` unit tests and system tests are ran in two separate processes.
-    # To merge both coverage results, we need to setup a custom command:
-    command_name ENV["SIMPLE_COV_COMMAND"] if ENV.key?("SIMPLE_COV_COMMAND")
-
-    add_group "Components", "app/components"
-    add_group "Policies", "app/policies"
-    add_group "Services", "app/services"
-  end
-end
+require "simplecov" unless ENV["SIMPLE_COV"] == "false"
 
 require File.expand_path("../config/environment", __dir__)
 
 # Prevent database truncation if the environment is production
 abort("The Rails environment is running in production mode!") if Rails.env.production?
+
+# Add additional requires below this line. Rails is not loaded until this point!
 require "rspec/rails"
 require "webmock/rspec"
 require "database_cleaner/active_record"
@@ -30,8 +19,6 @@ require "action_policy/rspec"
 require "action_policy/rspec/dsl"
 require "test_prof/recipes/rspec/before_all"
 require "test_prof/recipes/rspec/let_it_be"
-
-# Add additional requires below this line. Rails is not loaded until this point!
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
