@@ -65,7 +65,7 @@ module AuthorizedLink
       in [*, Publisher] | [*, DDFIP] | [*, DGFIP] | [:territories, *]
         allowed_to?(:show?, @resource, namespace: ::Admin)
 
-      in [*, User] | [*, Office] | [*, Collectivity]
+      in [*, User] | [*, Office] | [*, Collectivity] | [*, OauthApplication]
         namespace = (@namespace || :organization).to_s.classify.constantize
         allowed_to?(:show?, @resource, namespace: namespace)
 
@@ -86,7 +86,7 @@ module AuthorizedLink
         in [*, Publisher] | [*, DDFIP] | [*, DGFIP] | [:territories, *]
           polymorphic_path([:admin, @resource])
 
-        in [*, User] | [*, Office] | [*, Collectivity]
+        in [*, User] | [*, Office] | [*, Collectivity] | [*, OauthApplication]
           polymorphic_path([@namespace || :organization, @resource])
 
         else

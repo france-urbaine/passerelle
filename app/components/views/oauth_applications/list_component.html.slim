@@ -1,0 +1,32 @@
+= datatable_component(@oauth_applications) do |datatable|
+  - datatable.with_search
+  - datatable.with_pagination(@pagy, options: !nested?) if @pagy
+
+  - datatable.with_selection do |selection|
+    - if allow_action_to?(:destroy_all?, OauthApplication)
+      - selection.with_action "Tout supprimer", polymorphic_path([:remove_all, @namespace, @parent, :oauth_applications]), modal: true
+
+  - datatable.with_column(:name,       sort: true ) { "Nom" }              if columns.include?(:name)
+  - datatable.with_column(:created_at, sort: true ) { "Date de création" } if columns.include?(:created_at)
+
+  - datatable.with_empty_message do
+    - if params[:search]
+      | Aucune application ne correspont à votre recherche.
+    - else
+      | Aucune application disponible.
+
+  - datatable.each_row do |row, oauth_application|
+    - row.with_checkbox "Sélectionner cette application", described_by: :name, disabled: !allow_action_to?(:destroy_all?, OauthApplication)
+
+    - if allow_action_to?(:edit?, oauth_application)
+      - row.with_action "Modifier cette application", polymorphic_path([:edit, @namespace, @parent, oauth_application]), icon: "pencil-square", modal: true
+
+    - if allow_action_to?(:destroy?, oauth_application)
+      - row.with_action "Supprimer cette application", polymorphic_path([:remove, @namespace, @parent, oauth_application]), icon: "trash", modal: true
+
+    - row.with_column(:name) do
+      = authorized_link_to(oauth_application, namespace: @namespace, parent: @parent) do
+        = oauth_application.name
+
+    - row.with_column(:created_at) do
+      = oauth_application.created_at
