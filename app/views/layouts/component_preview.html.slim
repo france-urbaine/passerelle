@@ -38,4 +38,4 @@ html
         = turbo_frame_tag(:content, target: "_top")
 
       = turbo_frame_tag(:modal, target: "_top") do
-        = yield if frame == "modal"
+        = yield

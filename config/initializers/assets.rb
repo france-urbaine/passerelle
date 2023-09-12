@@ -24,6 +24,5 @@ end
 require "extras/icon_file_loader"
 
 InlineSvg.configure do |config|
-  # config.asset_file = IconFileLoader.new(cache: Rails.env.production?)
   config.asset_file = IconFileLoader.new(cache: true)
 end

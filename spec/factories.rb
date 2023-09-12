@@ -2,8 +2,9 @@
 
 FactoryBot.define do
   after(:stub) do |object|
-    # FactoryBot doesn't set up primary key ti stubbed records
+    # FactoryBot doesn't set up primary key on stubbed records
     # because we use UUID everywhere instead of integers.
+    #
     object.id ||= SecureRandom.uuid
   end
 
@@ -28,8 +29,8 @@ FactoryBot.define do
     #         end
     #       end
     #
-    # Finally, unicity should be constrained at database level by using unique
-    # constraint or index.
+    # Finally, uniqueness should be ensured at database level by using unique
+    # constraints or unique indexes.
     #
     # When needed, you can always ovveride this behavior by passing a
     # `skip_uniqueness_validation` attribute.
@@ -45,7 +46,7 @@ FactoryBot.define do
 end
 
 # Unsubscribe notifications to avoid duplicate message in console
-# after reloading it wth `reload!`
+# after reloading it with `reload!`
 #
 ActiveSupport::Notifications.unsubscribe("factory_bot.run_factory")
 ActiveSupport::Notifications.subscribe("factory_bot.run_factory") do |*args|
