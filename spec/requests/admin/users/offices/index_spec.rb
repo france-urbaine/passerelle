@@ -39,7 +39,7 @@ RSpec.describe "Admin::Users::OfficesController#index" do
       it_behaves_like "it responds with not acceptable to super admin"
     end
 
-    context "when requesting Turbo-Frame", headers: { "Turbo-Frame" => "user_offices_checkboxes" }, xhr: true do
+    context "when requesting Turbo-Frame", :xhr, headers: { "Turbo-Frame" => "user_offices_checkboxes" } do
       it_behaves_like "it denies access to DDFIP user"
       it_behaves_like "it denies access to DDFIP admin"
       it_behaves_like "it denies access to publisher user"

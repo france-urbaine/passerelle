@@ -36,7 +36,7 @@ RSpec.describe "Territories::EpcisController#index" do
       it { expect(response).to have_html_body }
     end
 
-    context "when requesting autocompletion", headers: { "Accept-Variant" => "autocomplete" }, xhr: true do
+    context "when requesting autocompletion", :xhr, headers: { "Accept-Variant" => "autocomplete" } do
       before do
         create(:epci, name: "CA du Pays Basque")
         create(:epci, name: "CA Pau Béarn Pyrénées")

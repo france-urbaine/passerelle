@@ -129,7 +129,7 @@ RSpec/ExpectActual:
     - 'spec/routing/**/*'  # expect(get: "/path) is a common pattern
     - 'spec/policies/**/*' # expect(:create?) is a common pattern
 
-RSpec/FilePath:
+RSpec/SpecFilePathFormat:
   CustomTransform:
     ImportEPCIsDepartementsJob: import_epcis_departements_job
     ImportEPCIsJob: import_epcis_job

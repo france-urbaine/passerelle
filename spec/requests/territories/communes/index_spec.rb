@@ -36,7 +36,7 @@ RSpec.describe "Territories::CommunesController#index" do
       it { expect(response).to have_html_body }
     end
 
-    context "when requesting autocompletion", headers: { "Accept-Variant" => "autocomplete" }, xhr: true do
+    context "when requesting autocompletion", :xhr, headers: { "Accept-Variant" => "autocomplete" } do
       before do
         create(:commune, name: "Bayonne")
         create(:commune, name: "Biarritz")

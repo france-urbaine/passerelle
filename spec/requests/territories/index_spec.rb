@@ -25,7 +25,7 @@ RSpec.describe "TerritoriesController#index" do
     it_behaves_like "it responds with not acceptable in JSON when signed in"
     it_behaves_like "it responds with not acceptable in HTML when signed in"
 
-    context "when requesting autocompletion", headers: { "Accept-Variant" => "autocomplete" }, xhr: true do
+    context "when requesting autocompletion", :xhr, headers: { "Accept-Variant" => "autocomplete" } do
       it_behaves_like "it allows access to publisher user"
       it_behaves_like "it allows access to publisher admin"
       it_behaves_like "it allows access to DDFIP user"
@@ -36,7 +36,7 @@ RSpec.describe "TerritoriesController#index" do
     end
   end
 
-  describe "responses", headers: { "Accept-Variant" => "autocomplete" }, xhr: true do
+  describe "responses", :xhr, headers: { "Accept-Variant" => "autocomplete" } do
     before { sign_in }
 
     let(:params) { { q: "" } }
