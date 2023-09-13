@@ -5,7 +5,7 @@ module BadgeHelper
     approved:         "badge--green",
     rejected:         "badge--red",
     debated:          "badge--orange",
-    package_returned: "badge--red",
+    returned: "badge--red",
     assigned:         "badge--blue",
     transmitted:      "badge--violet",
     completed:        "badge--pink",
@@ -70,9 +70,9 @@ module BadgeHelper
       :rejected
     elsif report.debated?
       :debated
-    elsif report.package.returned?
-      :package_returned
-    elsif report.package.assigned?
+    elsif report.returned?
+      :returned
+    elsif report.assigned?
       :assigned
     elsif report.transmitted?
       :transmitted

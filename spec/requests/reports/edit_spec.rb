@@ -82,7 +82,7 @@ RSpec.describe "ReportsController#edit" do
     end
 
     context "when report package has been assigned by the current DDFIP" do
-      let(:report) { create(:report, :package_assigned_by_ddfip, ddfip: current_user.organization) }
+      let(:report) { create(:report, :assigned_by_ddfip, ddfip: current_user.organization) }
 
       it_behaves_like "it allows access to DDFIP admin"
       it_behaves_like "it denies access to DDFIP user" do

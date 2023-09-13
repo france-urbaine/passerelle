@@ -7,7 +7,7 @@ fr:
     approved:            Signalement approuvé
     rejected:            Signalement rejeté
     debated:             Demande d'informations complémentaires
-    package_returned:    Paquet refusé
+    returned:            Paquet refusé
     assigned:            Signalement transmis
     transmitted:         Paquet transmis, en attente de confirmation
     completed:           Signalement en attente de transmission

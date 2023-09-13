@@ -47,7 +47,7 @@ RSpec.describe "ReportsController#show" do
     end
 
     context "when report has been assigned and forwarded to current user office" do
-      let(:report) { create(:report, :package_assigned_by_ddfip, ddfip: current_user.organization) }
+      let(:report) { create(:report, :assigned_by_ddfip, ddfip: current_user.organization) }
 
       before do
         create(:office,

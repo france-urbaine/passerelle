@@ -328,8 +328,8 @@ RSpec.describe Office do
         let!(:collectivity) { create(:collectivity) }
 
         before do
-          create_list(:report, 4, :reported_for_office, :package_assigned_by_ddfip, ddfip: ddfip, office: offices[0], collectivity: collectivity)
-          create_list(:report, 2, :reported_for_office, :package_assigned_by_ddfip, ddfip: ddfip, office: offices[1], collectivity: collectivity)
+          create_list(:report, 4, :reported_for_office, :assigned_by_ddfip, ddfip: ddfip, office: offices[0], collectivity: collectivity)
+          create_list(:report, 2, :reported_for_office, :assigned_by_ddfip, ddfip: ddfip, office: offices[1], collectivity: collectivity)
 
           Office.update_all(reports_count: 0)
         end
@@ -343,10 +343,10 @@ RSpec.describe Office do
         let!(:collectivity) { create(:collectivity) }
 
         before do
-          create_list(:report, 4, :reported_for_office, :package_assigned_by_ddfip, :approved, ddfip: ddfip, office: offices[0], collectivity: collectivity)
-          create_list(:report, 2, :reported_for_office, :package_assigned_by_ddfip, :approved, ddfip: ddfip, office: offices[1], collectivity: collectivity)
-          create_list(:report, 1, :reported_for_office, :package_assigned_by_ddfip, ddfip: ddfip, office: offices[0], collectivity: collectivity)
-          create_list(:report, 1, :reported_for_office, :package_assigned_by_ddfip, ddfip: ddfip, office: offices[1], collectivity: collectivity)
+          create_list(:report, 4, :reported_for_office, :assigned_by_ddfip, :approved, ddfip: ddfip, office: offices[0], collectivity: collectivity)
+          create_list(:report, 2, :reported_for_office, :assigned_by_ddfip, :approved, ddfip: ddfip, office: offices[1], collectivity: collectivity)
+          create_list(:report, 1, :reported_for_office, :assigned_by_ddfip, ddfip: ddfip, office: offices[0], collectivity: collectivity)
+          create_list(:report, 1, :reported_for_office, :assigned_by_ddfip, ddfip: ddfip, office: offices[1], collectivity: collectivity)
 
           Office.update_all(reports_approved_count: 0)
         end
@@ -360,10 +360,10 @@ RSpec.describe Office do
         let!(:collectivity) { create(:collectivity) }
 
         before do
-          create_list(:report, 4, :reported_for_office, :package_assigned_by_ddfip, :rejected, ddfip: ddfip, office: offices[0], collectivity: collectivity)
-          create_list(:report, 2, :reported_for_office, :package_assigned_by_ddfip, :rejected, ddfip: ddfip, office: offices[1], collectivity: collectivity)
-          create_list(:report, 1, :reported_for_office, :package_assigned_by_ddfip, ddfip: ddfip, office: offices[0], collectivity: collectivity)
-          create_list(:report, 1, :reported_for_office, :package_assigned_by_ddfip, ddfip: ddfip, office: offices[1], collectivity: collectivity)
+          create_list(:report, 4, :reported_for_office, :assigned_by_ddfip, :rejected, ddfip: ddfip, office: offices[0], collectivity: collectivity)
+          create_list(:report, 2, :reported_for_office, :assigned_by_ddfip, :rejected, ddfip: ddfip, office: offices[1], collectivity: collectivity)
+          create_list(:report, 1, :reported_for_office, :assigned_by_ddfip, ddfip: ddfip, office: offices[0], collectivity: collectivity)
+          create_list(:report, 1, :reported_for_office, :assigned_by_ddfip, ddfip: ddfip, office: offices[1], collectivity: collectivity)
 
           Office.update_all(reports_rejected_count: 0)
         end
@@ -377,10 +377,10 @@ RSpec.describe Office do
         let!(:collectivity) { create(:collectivity) }
 
         before do
-          create_list(:report, 4, :reported_for_office, :package_assigned_by_ddfip, :debated, ddfip: ddfip, office: offices[0], collectivity: collectivity)
-          create_list(:report, 2, :reported_for_office, :package_assigned_by_ddfip, :debated, ddfip: ddfip, office: offices[1], collectivity: collectivity)
-          create_list(:report, 1, :reported_for_office, :package_assigned_by_ddfip, ddfip: ddfip, office: offices[0], collectivity: collectivity)
-          create_list(:report, 1, :reported_for_office, :package_assigned_by_ddfip, ddfip: ddfip, office: offices[1], collectivity: collectivity)
+          create_list(:report, 4, :reported_for_office, :assigned_by_ddfip, :debated, ddfip: ddfip, office: offices[0], collectivity: collectivity)
+          create_list(:report, 2, :reported_for_office, :assigned_by_ddfip, :debated, ddfip: ddfip, office: offices[1], collectivity: collectivity)
+          create_list(:report, 1, :reported_for_office, :assigned_by_ddfip, ddfip: ddfip, office: offices[0], collectivity: collectivity)
+          create_list(:report, 1, :reported_for_office, :assigned_by_ddfip, ddfip: ddfip, office: offices[1], collectivity: collectivity)
 
           Office.update_all(reports_debated_count: 0)
         end

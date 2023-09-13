@@ -21,12 +21,16 @@ module States
         !transmitted_at?
       end
 
+      def delivered?
+        transmitted? && out_of_sandbox?
+      end
+
       def transmitted?
         transmitted_at?
       end
 
       def unresolved?
-        transmitted? && kept? && assigned_at.nil? && returned_at.nil?
+        transmitted? && assigned_at.nil? && returned_at.nil?
       end
 
       def assigned?
