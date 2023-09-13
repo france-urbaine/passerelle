@@ -95,10 +95,12 @@ module Icon
 
     def transform_options
       options = @options.dup
+      options[:remove_attributes] ||= []
 
       if @title
         options[:title] = @title
         options[:aria] ||= true
+        options[:remove_attributes] << "aria_hidden" unless options[:aria_hidden]
       else
         options[:aria_hidden] = true
       end

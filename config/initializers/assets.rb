@@ -19,10 +19,3 @@ Rails.application.config.after_initialize do
   Rails.application.config.assets.precompile.delete("trix.js")
   Rails.application.config.assets.precompile.delete("trix.css")
 end
-
-# Setup inline_svg to cache SVG icons in production
-require "extras/icon_file_loader"
-
-InlineSvg.configure do |config|
-  config.asset_file = IconFileLoader.new(cache: true)
-end
