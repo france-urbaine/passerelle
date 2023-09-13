@@ -163,7 +163,7 @@ RSpec.describe "DashboardsController#index" do
       let!(:excluded_reports) do
         [
           create(:report, :transmitted, :sandbox),
-          create(:report, :transmitted, package_returned: true),
+          create(:report, :transmitted, discarded_at: DateTime.now),
           create(:report, :completed)
         ]
       end

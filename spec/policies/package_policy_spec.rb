@@ -529,8 +529,8 @@ RSpec.describe PackagePolicy, stub_factories: false do
           INNER JOIN      "reports"  ON "reports"."package_id" = "packages"."id"
           INNER JOIN      "communes" ON "communes"."code_insee" = "reports"."code_insee"
           WHERE  "packages"."discarded_at" IS NULL
-            AND  "packages"."sandbox" = FALSE
             AND  "packages"."transmitted_at" IS NOT NULL
+            AND  "packages"."sandbox" = FALSE
             AND  "packages"."returned_at" IS NULL
             AND  "reports"."discarded_at" IS NULL
             AND  "communes"."code_departement" = '#{current_organization.code_departement}'

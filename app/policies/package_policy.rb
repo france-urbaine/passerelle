@@ -144,6 +144,7 @@ class PackagePolicy < ApplicationPolicy
     Package
       .kept
       .delivered
+      .unreturned
       .with_reports(Report.kept.covered_by_ddfip(organization))
   end
 

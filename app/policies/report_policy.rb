@@ -143,6 +143,7 @@ class ReportPolicy < ApplicationPolicy
     Report
       .all_kept
       .delivered
+      .unreturned_packages
   end
 
   def reports_listed_to_ddfip_admins
@@ -151,6 +152,7 @@ class ReportPolicy < ApplicationPolicy
     Report
       .all_kept
       .delivered
+      .unreturned_packages
       .covered_by_ddfip(organization)
   end
 
@@ -159,6 +161,7 @@ class ReportPolicy < ApplicationPolicy
 
     Report
       .all_kept
+      .delivered
       .assigned
       .covered_by_office(user.offices)
   end
@@ -224,6 +227,7 @@ class ReportPolicy < ApplicationPolicy
   def report_updatable_by_ddfip_admin?(report)
     ddfip_admin? &&
       report.delivered? &&
+      report.unreturned_packages? &&
       report.covered_by_ddfip?(organization)
   end
 
@@ -259,6 +263,7 @@ class ReportPolicy < ApplicationPolicy
     return Report.none unless collectivity?
 
     Report
+      .kept
       .discarded
       .out_of_sandbox
       .sent_by_collectivity(organization)
@@ -270,6 +275,7 @@ class ReportPolicy < ApplicationPolicy
     return Report.none unless publisher?
 
     Report
+      .kept
       .discarded
       .sent_by_publisher(organization)
       .packing

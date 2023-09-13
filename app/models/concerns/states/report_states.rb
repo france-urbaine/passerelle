@@ -7,16 +7,17 @@ module States
     included do
       # Scopes
       # ----------------------------------------------------------------------------
-      scope :packing,          -> { joins(:package).merge(Package.unscoped.packing) }
-      scope :transmitted,      -> { joins(:package).merge(Package.unscoped.transmitted) }
-      scope :delivered,        -> { transmitted.all_kept.out_of_sandbox }
-      scope :assigned,         -> { joins(:package).merge(Package.unscoped.assigned) }
-      scope :returned,         -> { joins(:package).merge(Package.unscoped.returned) }
-      scope :pending,          -> { delivered.where(approved_at: nil, rejected_at: nil, debated_at: nil) }
-      scope :updated_by_ddfip, -> { approved.or(rejected).or(debated) }
-      scope :approved,         -> { delivered.where.not(approved_at: nil) }
-      scope :rejected,         -> { delivered.where.not(rejected_at: nil) }
-      scope :debated,          -> { delivered.where.not(debated_at: nil) }
+      scope :packing,             -> { joins(:package).merge(Package.unscoped.packing) }
+      scope :transmitted,         -> { joins(:package).merge(Package.unscoped.transmitted) }
+      scope :delivered,           -> { transmitted.all_kept.out_of_sandbox }
+      scope :assigned,            -> { joins(:package).merge(Package.unscoped.assigned) }
+      scope :returned,            -> { joins(:package).merge(Package.unscoped.returned) }
+      scope :pending,             -> { delivered.where(approved_at: nil, rejected_at: nil, debated_at: nil) }
+      scope :updated_by_ddfip,    -> { approved.or(rejected).or(debated) }
+      scope :approved,            -> { delivered.where.not(approved_at: nil) }
+      scope :rejected,            -> { delivered.where.not(rejected_at: nil) }
+      scope :debated,             -> { delivered.where.not(debated_at: nil) }
+      scope :unreturned_packages, -> { joins(:package).merge(Package.unscoped.unreturned) }
 
       # Predicates
       # ----------------------------------------------------------------------------
@@ -52,6 +53,10 @@ module States
 
       def debated?
         delivered? && debated_at?
+      end
+
+      def unreturned_packages?
+        package.unreturned?
       end
 
       # Updates methods

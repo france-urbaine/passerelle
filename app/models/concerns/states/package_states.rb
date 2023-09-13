@@ -13,6 +13,7 @@ module States
       scope :unresolved,   -> { transmitted.kept.where(assigned_at: nil, returned_at: nil) }
       scope :assigned,     -> { transmitted.where.not(assigned_at: nil).where(returned_at: nil) }
       scope :returned,     -> { transmitted.where.not(returned_at: nil) }
+      scope :unreturned,   -> { transmitted.where(returned_at: nil) }
 
       # Predicates
       # ----------------------------------------------------------------------------
@@ -34,6 +35,10 @@ module States
 
       def returned?
         transmitted? && returned_at?
+      end
+
+      def unreturned?
+        transmitted? && returned_at.nil?
       end
 
       # Updates methods

@@ -525,8 +525,8 @@ RSpec.describe ReportPolicy, stub_factories: false do
           FROM       "reports"
           INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
           INNER JOIN "communes" ON "communes"."code_insee" = "reports"."code_insee"
-          WHERE  "packages"."discarded_at" IS NULL
-            AND  "reports"."discarded_at" IS NULL
+          WHERE  "reports"."discarded_at" IS NULL
+            AND  "packages"."discarded_at" IS NULL
             AND  "packages"."sandbox" = FALSE
             AND  "packages"."transmitted_at" IS NOT NULL
             AND  "packages"."returned_at" IS NULL
@@ -546,8 +546,8 @@ RSpec.describe ReportPolicy, stub_factories: false do
           INNER JOIN "office_communes" ON "office_communes"."code_insee" = "reports"."code_insee"
           INNER JOIN "offices"         ON "offices"."id" = "office_communes"."office_id"
           INNER JOIN "office_users"    ON "offices"."id" = "office_users"."office_id"
-          WHERE  "packages"."discarded_at" IS NULL
-            AND  "reports"."discarded_at" IS NULL
+          WHERE  "reports"."discarded_at" IS NULL
+            AND  "packages"."discarded_at" IS NULL
             AND  "packages"."sandbox" = FALSE
             AND  "packages"."transmitted_at" IS NOT NULL
             AND  "packages"."assigned_at" IS NOT NULL
