@@ -1,0 +1,29 @@
+.copyable-text( data-controller="toggle" )
+  .copyable-text__value
+    - if @secret
+      code( data-toggle-target="item" )
+        = '•' * @value.length
+      code( data-toggle-target="item" hidden )
+        = @value
+
+    - else
+      code= @value
+
+  .copyable-text__buttons
+    - if @secret
+      button.icon-button(
+        type="button"
+        data-action="click->toggle#toggle"
+      )
+        = icon_component("eye",       "Révéler le texte", data: { toggle_target: "item" })
+        = icon_component("eye-slash", "Cacher le texte",  data: { toggle_target: "item" }, hidden: true)
+
+    button.icon-button(
+      type="button"
+      data-controller="copy-text toggle"
+      data-action="click->copy-text#copy click->toggle#toggle"
+      data-copy-text-source-value=@value
+      data-toggle-revert-delay-param=2000
+    )
+      = icon_component("clipboard-document-list",  "Copier le texte", data: { toggle_target: "item" })
+      = icon_component("check",                    "Texte copié",     data: { toggle_target: "item" }, hidden: true)

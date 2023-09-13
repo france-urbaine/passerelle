@@ -12,6 +12,9 @@ RSpec.describe User do
 
     it { is_expected.to have_many(:office_users) }
     it { is_expected.to have_many(:offices).through(:office_users) }
+
+    it { is_expected.to have_many(:access_grants) }
+    it { is_expected.to have_many(:access_tokens) }
   end
 
   # Validations

@@ -21,6 +21,13 @@ Rails.application.routes.draw do
     patch :update_all, on: :collection, path: "/", as: nil
   end
 
+  # Oauth
+  # ----------------------------------------------------------------------------
+  use_doorkeeper do
+    # only use :authorizations, :tokens and :token_info
+    skip_controllers :applications, :authorized_applications
+  end
+
   # User stuff
   # ----------------------------------------------------------------------------
   devise_for :users, path: "/", controllers: {
@@ -116,6 +123,8 @@ Rails.application.routes.draw do
           resources :collectivities, only: %i[index], path: "/collectivites"
         end
       end
+
+      resources :oauth_applications, concerns: %i[removable removable_collection]
 
       resources :users, concerns: %i[removable removable_collection], path: "/utilisateurs"
     end

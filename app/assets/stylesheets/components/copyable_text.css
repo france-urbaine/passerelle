@@ -1,0 +1,33 @@
+@layer components {
+  .copyable-text {
+    display: inline-flex;
+    box-sizing: border-box;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    align-items: center;
+    white-space: nowrap;
+    justify-content: space-between;
+
+    @apply h-10 leading-6 rounded-md border;
+    @apply subpixel-antialiased;
+    @apply bg-gray-200 border-gray-300;
+
+    & .copyable-text__value {
+      @apply py-2 px-4;
+    }
+
+    & .icon-button:not(:focus-visible) {
+      outline-style: none;
+    }
+
+    .datatable__row &,
+    .description-list__row & {
+      @apply -my-2 h-auto;
+
+      & .copyable-text__value {
+        @apply py-1 px-3;
+      }
+    }
+  }
+}

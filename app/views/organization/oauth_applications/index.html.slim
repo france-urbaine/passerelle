@@ -1,0 +1,9 @@
+= template_content_component do
+  = breadcrumbs_component do |breadcrumbs|
+    - breadcrumbs.with_path "Mon organisation"
+    - breadcrumbs.with_path "Applications"
+
+    - if allowed_to?(:create?, OauthApplication)
+      - breadcrumbs.with_action "Ajouter une application", new_organization_oauth_application_path, icon: "plus", modal: true, primary: true
+
+  = render Views::OauthApplications::ListComponent.new(@oauth_applications, @pagy, namespace: :organization)

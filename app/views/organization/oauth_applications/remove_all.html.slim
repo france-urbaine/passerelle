@@ -1,0 +1,33 @@
+= template_modal_component(referrer: @referrer_path) do |template|
+  - template.with_modal do |modal|
+    - modal.with_header do
+      - if @oauth_applications.count > 1
+        | Suppression des applications sélectionnés
+      - else
+        | Suppression du application sélectionné
+
+    - modal.with_form(url: organization_oauth_applications_path, method: :delete) do
+      - modal.with_hidden_field :redirect, @referrer_path
+      - modal.with_hidden_field :ids,    params[:ids]
+      - modal.with_hidden_field :search, params[:search]
+      - modal.with_hidden_field :order,  params[:order]
+      - modal.with_hidden_field :page,   params[:page]
+
+      - if @oauth_applications.count > 1
+        p
+          | Êtes-vous sûrs de vouloir supprimer les <b>#{@oauth_applications.count}</b> applications sélectionnées ?
+        p
+          | Par mesure de securité, les données de ces applications seront archivées pendant 1 jour.
+          br
+          | Toutes les données seront définitivement supprimées à la fin de ce délai.
+
+      - else
+        p
+          | Êtes-vous sûrs de vouloir supprimer l'application sélectionnée ?
+        p
+          | Par mesure de securité, les données de ce application seront archivées pendant 1 jour.
+          br
+          | Toutes les données seront définitivement supprimées à la fin de ce délai.
+
+    - modal.with_submit_action "Continuer", autofocus: true
+    - modal.with_close_action "Annuler"

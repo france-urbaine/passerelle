@@ -10,6 +10,7 @@ RSpec.describe Publisher do
     it { is_expected.to have_many(:collectivities) }
     it { is_expected.to have_many(:packages) }
     it { is_expected.to have_many(:reports) }
+    it { is_expected.to have_many(:oauth_applications) }
   end
 
   # Validations
