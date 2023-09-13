@@ -13,6 +13,10 @@
       position: relative;
       display: block;
       @apply m-0;
+
+      &[hidden] {
+        display: none;
+      }
     }
 
     &[disabled] {

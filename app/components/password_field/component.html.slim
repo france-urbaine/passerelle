@@ -1,13 +1,13 @@
-= tag.div **wrapper_html_attributes do
-  = helpers.password_field @object_name, @method, options
+= tag.div(**wrapper_html_attributes) do
+  = helpers.password_field(@object_name, @method, **input_html_attributes)
 
   button.icon-button.password-field__visibility-button(
     type="button"
     data-action="click->password-visibility#toggle"
     aria-label="Afficher ou masquer le mot de passe saisi"
   )
-    span( data-password-visibility-target="icon" )= icon_component("eye")
-    span.hidden( data-password-visibility-target="icon" )= icon_component("eye-slash")
+    = icon_component("eye", "Afficher le mot de passe saisi",      data: { password_visibility_target: "icon" })
+    = icon_component("eye-slash", "Masquer le mot de passe saisi", data: { password_visibility_target: "icon" }, hidden: true)
 
   - if @strength_test
     turbo-frame( id="password-strength-test-result" data-strength-test-target="frame" )

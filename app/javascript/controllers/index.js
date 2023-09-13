@@ -9,9 +9,6 @@ import { application } from "./application"
 import NestedForm from "stimulus-rails-nested-form"
 application.register("nested-form", NestedForm)
 
-import PasswordVisibility from 'stimulus-password-visibility'
-application.register('password-visibility', PasswordVisibility)
-
 // Components
 // -----------------------------------------------------------------------------
 import NavbarController from "./components/navbar_controller"
@@ -28,6 +25,9 @@ application.register("dropdown", DropdownController)
 
 import NotificationController from "./components/notification_controller"
 application.register("notification", NotificationController)
+
+import PasswordVisibility from "./components/password_visibility_controller"
+application.register('password-visibility', PasswordVisibility)
 
 import SelectionController from "./components/selection_controller"
 application.register("selection", SelectionController)

@@ -11,7 +11,7 @@ module PasswordField
       super()
     end
 
-    def options
+    def input_html_attributes
       options = @options.dup
 
       if @object_name == :user && @method == :password
