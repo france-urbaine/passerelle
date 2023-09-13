@@ -5,5 +5,4 @@ module ApplicationHelper
   include CurrentOrderParams
   include FormHelper
   include FormatHelper
-  include TurboHelper
 end

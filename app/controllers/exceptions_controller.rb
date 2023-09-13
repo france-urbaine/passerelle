@@ -7,8 +7,11 @@ class ExceptionsController < ApplicationController
 
   respond_to :json
 
-  # Overwrite methods from ControllerStatuses to make them public
-
+  # This controller is used by exceptions_app to render error pages
+  # in a context of a controller (with current_user, etc...)
+  #
+  # Methods from ControllerStatuses must be overrode to make them public.
+  #
   %i[
     not_found
     not_acceptable
@@ -20,6 +23,9 @@ class ExceptionsController < ApplicationController
     end
   end
 
+  # It is also used by components specs to provide a routed path independant from
+  # any behavior linked to URL.
+  #
   def testing
     return not_found unless Rails.env.test?
 

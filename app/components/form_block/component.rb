@@ -36,10 +36,6 @@ module FormBlock
       helpers.display_errors(@record, @attribute) if invalid?
     end
 
-    def autocomplete_results
-      helpers.autocomplete_results if @autocomplete
-    end
-
     def invalid?
       @record.respond_to?(:errors) && @record.errors.include?(@attribute)
     end
