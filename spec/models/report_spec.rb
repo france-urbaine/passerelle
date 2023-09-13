@@ -238,8 +238,6 @@ RSpec.describe Report do
           FROM       "reports"
           INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
           WHERE      "packages"."transmitted_at" IS NOT NULL
-            AND      "packages"."discarded_at" IS NULL
-            AND      "reports"."discarded_at" IS NULL
             AND      "packages"."sandbox" = FALSE
         SQL
       end
@@ -283,8 +281,6 @@ RSpec.describe Report do
           FROM       "reports"
           INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
           WHERE      "packages"."transmitted_at" IS NOT NULL
-            AND      "packages"."discarded_at" IS NULL
-            AND      "reports"."discarded_at" IS NULL
             AND      "packages"."sandbox" = FALSE
             AND      "reports"."approved_at" IS NULL
             AND      "reports"."rejected_at" IS NULL
@@ -302,8 +298,6 @@ RSpec.describe Report do
           FROM       "reports"
           INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
           WHERE      "packages"."transmitted_at" IS NOT NULL
-            AND      "packages"."discarded_at" IS NULL
-            AND      "reports"."discarded_at" IS NULL
             AND      "packages"."sandbox" = FALSE
             AND (
               "reports"."approved_at" IS NOT NULL
@@ -323,8 +317,6 @@ RSpec.describe Report do
           FROM       "reports"
           INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
           WHERE      "packages"."transmitted_at" IS NOT NULL
-            AND      "packages"."discarded_at" IS NULL
-            AND      "reports"."discarded_at" IS NULL
             AND      "packages"."sandbox" = FALSE
             AND      "reports"."approved_at" IS NOT NULL
         SQL
@@ -340,8 +332,6 @@ RSpec.describe Report do
           FROM       "reports"
           INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
           WHERE      "packages"."transmitted_at" IS NOT NULL
-            AND      "packages"."discarded_at" IS NULL
-            AND      "reports"."discarded_at" IS NULL
             AND      "packages"."sandbox" = FALSE
             AND      "reports"."rejected_at" IS NOT NULL
         SQL
@@ -357,8 +347,6 @@ RSpec.describe Report do
           FROM       "reports"
           INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
           WHERE      "packages"."transmitted_at" IS NOT NULL
-            AND      "packages"."discarded_at" IS NULL
-            AND      "reports"."discarded_at" IS NULL
             AND      "packages"."sandbox" = FALSE
             AND      "reports"."debated_at" IS NOT NULL
         SQL

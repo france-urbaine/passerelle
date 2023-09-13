@@ -9,7 +9,7 @@ module States
       # ----------------------------------------------------------------------------
       scope :packing,             -> { joins(:package).merge(Package.unscoped.packing) }
       scope :transmitted,         -> { joins(:package).merge(Package.unscoped.transmitted) }
-      scope :delivered,           -> { transmitted.all_kept.out_of_sandbox }
+      scope :delivered,           -> { transmitted.out_of_sandbox }
       scope :assigned,            -> { joins(:package).merge(Package.unscoped.assigned) }
       scope :returned,            -> { joins(:package).merge(Package.unscoped.returned) }
       scope :pending,             -> { delivered.where(approved_at: nil, rejected_at: nil, debated_at: nil) }

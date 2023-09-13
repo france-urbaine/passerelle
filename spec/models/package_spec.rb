@@ -88,7 +88,6 @@ RSpec.describe Package do
           SELECT "packages".*
           FROM   "packages"
           WHERE  "packages"."transmitted_at" IS NOT NULL
-            AND  "packages"."discarded_at" IS NULL
             AND  "packages"."assigned_at" IS NULL
             AND  "packages"."returned_at" IS NULL
         SQL
