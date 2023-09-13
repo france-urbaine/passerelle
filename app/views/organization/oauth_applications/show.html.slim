@@ -18,10 +18,26 @@
     dl.description-list
       .description-list__row
         dt Client UID
-        dd
-          = copyable_text_component @oauth_application.uid
+        dd= copyable_text_component @oauth_application.uid
 
       .description-list__row
         dt Client Secret
-        dd
-          = copyable_text_component @oauth_application.secret, hide: true
+        dd= copyable_text_component @oauth_application.secret, secret: true
+
+  .content__separator
+
+  h2.subheader
+    = icon_component("information-circle", "Nouvelle section")
+    | Documentation
+
+  = card_component(content_class: "card__content--empty")
+    | Bientôt disponible
+
+  .content__separator
+
+  h2.subheader
+    = icon_component("server-stack", "Nouvelle section")
+    | Activité
+
+  = card_component(content_class: "card__content--empty")
+    | Bientôt disponible

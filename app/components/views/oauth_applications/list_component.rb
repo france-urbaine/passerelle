@@ -5,6 +5,8 @@ module Views
     class ListComponent < ApplicationViewComponent
       DEFAULT_COLUMNS = %i[
         name
+        uid
+        secret
         created_at
       ].freeze
 

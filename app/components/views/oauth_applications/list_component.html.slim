@@ -6,7 +6,9 @@
     - if allow_action_to?(:destroy_all?, OauthApplication)
       - selection.with_action "Tout supprimer", polymorphic_path([:remove_all, @namespace, @parent, :oauth_applications]), modal: true
 
-  - datatable.with_column(:name,       sort: true ) { "Nom" }              if columns.include?(:name)
+  - datatable.with_column(:name, sort: true )       { "Nom" }              if columns.include?(:name)
+  - datatable.with_column(:uid)                     { "UID" }              if columns.include?(:uid)
+  - datatable.with_column(:secret)                  { "Secret" }           if columns.include?(:secret)
   - datatable.with_column(:created_at, sort: true ) { "Date de création" } if columns.include?(:created_at)
 
   - datatable.with_empty_message do
@@ -27,6 +29,12 @@
     - row.with_column(:name) do
       = authorized_link_to(oauth_application, namespace: @namespace, parent: @parent) do
         = oauth_application.name
+
+    - row.with_column(:uid) do
+      = copyable_text_component oauth_application.uid
+
+    - row.with_column(:secret) do
+      = copyable_text_component oauth_application.secret, secret: true
 
     - row.with_column(:created_at) do
       = oauth_application.created_at

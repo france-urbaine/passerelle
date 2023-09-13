@@ -4,5 +4,7 @@ require "rails_helper"
 
 RSpec.describe CopyableText::ComponentPreview, type: :component do
   it { is_expected.to render_preview_without_exception(:default) }
-  it { is_expected.to render_preview_without_exception(:hidden) }
+  it { is_expected.to render_preview_without_exception(:with_secret) }
+  it { is_expected.to render_preview_without_exception(:inside_table) }
+  it { is_expected.to render_preview_without_exception(:inside_description_list) }
 end

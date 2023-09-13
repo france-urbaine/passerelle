@@ -11,8 +11,20 @@ module CopyableText
     #
     def default; end
 
-    # @label Hidden
+    # @label With secret
     #
-    def hidden; end
+    def with_secret; end
+
+    # @!group Inside other elements
+    #
+    # @label Inside a table
+    #
+    def inside_table; end
+
+    # @label Inside a description list
+    #
+    def inside_description_list; end
+    #
+    # @!endgroup
   end
 end

@@ -1,40 +1,29 @@
-div.copyable-text.flex.flex-row.max-md:justify-between(
-    data-controller="toggle-class"
-    data-toggle-class-toggle-class="hidden"
-  )
-  span
-    - if @hide
-      code( data-toggle-class-target="item" )
+.copyable-text( data-controller="toggle" )
+  .copyable-text__value
+    - if @secret
+      code( data-toggle-target="item" )
         = '•' * @value.length
-      code.hidden( data-toggle-class-target="item" )
-        =@value
+      code( data-toggle-target="item" hidden )
+        = @value
+
     - else
-      code=@value
+      code= @value
 
-  span.flex.flex-row
-    - if @hide
-      button.copy-button.icon-button.md:max-2xl:order-last(
+  .copyable-text__buttons
+    - if @secret
+      button.icon-button(
         type="button"
-        data-action="click->toggle-class#toggle"
+        data-action="click->toggle#toggle"
       )
-        span.hidden( data-toggle-class-target="item" )
-          = icon_component("eye-slash")
-        span( data-toggle-class-target="item" )
-          = icon_component("eye")
-        span.tooltip Révéler de texte
+        = icon_component("eye",       "Révéler le texte", data: { toggle_target: "item" })
+        = icon_component("eye-slash", "Cacher le texte",  data: { toggle_target: "item" }, hidden: true)
 
-
-    button.copy-button.icon-button(
+    button.icon-button(
       type="button"
-      data-controller="copy-text toggle-class"
-      data-action="click->toggle-class#toggle click->copy-text#copy"
+      data-controller="copy-text toggle"
+      data-action="click->copy-text#copy click->toggle#toggle"
       data-copy-text-source-value=@value
-      data-toggle-class-revert-after-delay-param=4000
-      data-toggle-class-toggle-class="hidden"
+      data-toggle-revert-delay-param=2000
     )
-      span.hidden( data-toggle-class-target="item" )
-        = icon_component("clipboard-document-check")
-      span( data-toggle-class-target="item")
-        = icon_component("clipboard-document-list")
-      span.tooltip Copier le texte
-
+      = icon_component("clipboard-document-list",  "Copier le texte", data: { toggle_target: "item" })
+      = icon_component("clipboard-document-check", "Texte copié",     data: { toggle_target: "item" }, hidden: true)

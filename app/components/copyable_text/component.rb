@@ -2,9 +2,9 @@
 
 module CopyableText
   class Component < ApplicationViewComponent
-    def initialize(value, hide: false)
+    def initialize(value, secret: false)
       @value = value
-      @hide  = hide
+      @secret = secret
       super()
     end
   end
