@@ -533,10 +533,9 @@ RSpec.describe Report do
         build(:report, package: packages[3]),             # 3
         build(:report, package: packages[4]),             # 4
         build(:report, package: packages[5]),             # 5
-        build(:report, :discarded, package: packages[5]), # 6
-        build(:report, :approved,  package: packages[5]), # 7
-        build(:report, :rejected,  package: packages[5]), # 8
-        build(:report, :debated,   package: packages[5])  # 9
+        build(:report, :approved,  package: packages[5]), # 6
+        build(:report, :rejected,  package: packages[5]), # 7
+        build(:report, :debated,   package: packages[5])  # 8
       ]
     end
 
@@ -552,10 +551,9 @@ RSpec.describe Report do
       it { expect(reports[3]).to     be_delivered }
       it { expect(reports[4]).to     be_delivered }
       it { expect(reports[5]).to     be_delivered }
-      it { expect(reports[6]).not_to be_delivered }
+      it { expect(reports[6]).to     be_delivered }
       it { expect(reports[7]).to     be_delivered }
       it { expect(reports[8]).to     be_delivered }
-      it { expect(reports[9]).to     be_delivered }
     end
 
     describe "#pending?" do
@@ -563,31 +561,27 @@ RSpec.describe Report do
       it { expect(reports[6]).not_to be_pending }
       it { expect(reports[7]).not_to be_pending }
       it { expect(reports[8]).not_to be_pending }
-      it { expect(reports[9]).not_to be_pending }
     end
 
     describe "#approved?" do
       it { expect(reports[5]).not_to be_approved }
-      it { expect(reports[6]).not_to be_approved }
-      it { expect(reports[7]).to     be_approved }
+      it { expect(reports[6]).to     be_approved }
+      it { expect(reports[7]).not_to be_approved }
       it { expect(reports[8]).not_to be_approved }
-      it { expect(reports[9]).not_to be_approved }
     end
 
     describe "#rejected?" do
       it { expect(reports[5]).not_to be_rejected }
       it { expect(reports[6]).not_to be_rejected }
-      it { expect(reports[7]).not_to be_rejected }
-      it { expect(reports[8]).to     be_rejected }
-      it { expect(reports[9]).not_to be_rejected }
+      it { expect(reports[7]).to     be_rejected }
+      it { expect(reports[8]).not_to be_rejected }
     end
 
     describe "#debated?" do
       it { expect(reports[5]).not_to be_debated }
       it { expect(reports[6]).not_to be_debated }
       it { expect(reports[7]).not_to be_debated }
-      it { expect(reports[8]).not_to be_debated }
-      it { expect(reports[9]).to     be_debated }
+      it { expect(reports[8]).to     be_debated }
     end
   end
 
