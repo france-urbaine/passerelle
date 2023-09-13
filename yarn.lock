@@ -1003,11 +1003,6 @@ stimulus-autocomplete@^3.0.2:
   resolved "https://registry.yarnpkg.com/stimulus-autocomplete/-/stimulus-autocomplete-3.1.0.tgz#7c9292706556ed0a87abf60ea2688bf0ea1176a8"
   integrity sha512-SmVViCdA8yCl99oV2kzllNOqYjx7wruY+1OjAVsDTkZMNFZG5j+SqDKHMYbu+dRFy/SWq/PParzwZHvLAgH+YA==
 
-stimulus-password-visibility@^2.1.1:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/stimulus-password-visibility/-/stimulus-password-visibility-2.1.1.tgz#b366223c7650704507a38a3e5d126e8474abad3e"
-  integrity sha512-FnscC06Ux7mgfJo9s7OceOQ59yU1Tm8sWByG89hnMPcWvYSX/1yx3wFxNOgKhtxaDPdvtb+ERgmv6F9JvPJc7w==
-
 stimulus-rails-nested-form@^4.1.0:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/stimulus-rails-nested-form/-/stimulus-rails-nested-form-4.1.0.tgz#bfce185cff908170a4eb9973875b72517c3bc83a"

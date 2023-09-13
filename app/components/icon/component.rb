@@ -33,7 +33,6 @@ module Icon
     def call
       svg
         .strip
-        .gsub(%(aria-hidden="true"), "aria-hidden")
         .gsub(%r{></(path|circle|rect)>}, "/>")
         .html_safe # rubocop:disable Rails/OutputSafety
     end
@@ -95,10 +94,12 @@ module Icon
 
     def transform_options
       options = @options.dup
+      options[:remove_attributes] ||= []
 
       if @title
         options[:title] = @title
         options[:aria] ||= true
+        options[:remove_attributes] << "aria_hidden" unless options[:aria_hidden]
       else
         options[:aria_hidden] = true
       end
