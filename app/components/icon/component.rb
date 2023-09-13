@@ -33,7 +33,6 @@ module Icon
     def call
       svg
         .strip
-        .gsub(%(aria-hidden="true"), "aria-hidden")
         .gsub(%r{></(path|circle|rect)>}, "/>")
         .html_safe # rubocop:disable Rails/OutputSafety
     end

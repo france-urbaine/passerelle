@@ -23,9 +23,20 @@ RSpec.describe Icon::Component, type: :component do
 
     expect(page).to have_selector("svg", count: 1) do |svg|
       aggregate_failures do
-        expect(svg).to have_selector("title", text: "Supprimer")
+        expect(svg).not_to have_html_attribute("aria-hidden")
         expect(svg).to have_html_attribute("aria-labelledby")
+        expect(svg).to have_selector("title", text: "Supprimer") do |title|
+          expect(title).to have_html_attribute("id").with_value(svg["aria-labelledby"])
+        end
       end
+    end
+  end
+
+  it "renders an hidden icon" do
+    render_inline described_class.new("x-mark", "Supprimer", hidden: true)
+
+    expect(page).to have_selector("svg", count: 1, visible: :hidden) do |svg|
+      expect(svg).to have_html_attribute("hidden").boolean
     end
   end
 
