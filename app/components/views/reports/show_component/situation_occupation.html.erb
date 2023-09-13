@@ -30,7 +30,7 @@
         <dt>Application de la majoration sur les résidences secondaire</dt>
         <dd>
           <%= render_valid_content(:situation_majoration_rs) do %>
-            <%= @report.situation_majoration_rs %>
+            <%= t(@report.situation_majoration_rs, scope: 'boolean') %>
           <% end %>
         </dd>
       </div>

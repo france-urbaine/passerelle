@@ -57,7 +57,7 @@
         <dt>TLV à tort</dt>
         <dd>
           <%= render_valid_content(:proposition_erreur_tlv) do %>
-            <%= @report.proposition_erreur_tlv %>
+            <%= t(@report.proposition_erreur_tlv, scope: 'boolean') %>
           <% end %>
         </dd>
       </div>
@@ -68,7 +68,7 @@
         <dt>THLV à tort</dt>
         <dd>
           <%= render_valid_content(:proposition_erreur_thlv) do %>
-            <%= @report.proposition_erreur_thlv %>
+            <%= t(@report.proposition_erreur_thlv, scope: 'boolean') %>
           <% end %>
         </dd>
       </div>
@@ -79,7 +79,7 @@
         <dt>Meublé de tourisme</dt>
         <dd>
           <%= render_valid_content(:proposition_meuble_tourisme) do %>
-            <%= @report.proposition_meuble_tourisme %>
+            <%= t(@report.proposition_meuble_tourisme.to_s, scope: 'boolean') %>
           <% end %>
         </dd>
       </div>
@@ -90,7 +90,7 @@
         <dt>Application de la majoration sur les résidences secondaire</dt>
         <dd>
           <%= render_valid_content(:proposition_majoration_rs) do %>
-            <%= @report.proposition_majoration_rs %>
+            <%= t(@report.proposition_majoration_rs, scope: 'boolean') %>
           <% end %>
         </dd>
       </div>
