@@ -27,7 +27,11 @@
 
       .description-list__row
         dt Adresse mail de contact
-        dd= render Views::Users::ShowEmailComponent.new(@user)
+        dd.flex.justify-between
+          = render Views::Users::ShowEmailComponent.new(@user)
+
+          - if @user.confirmation_period_expired?
+            = button_component "Renouveler l'invitation", new_admin_user_invitation_path(@user), modal: true, icon: "arrow-path"
 
       .description-list__row
         dt Administrateur de l'organisation
