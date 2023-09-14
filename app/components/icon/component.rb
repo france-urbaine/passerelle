@@ -81,8 +81,8 @@ module Icon
     end
 
     def heroicon_path
-      path = "heroicons/outline/#{@icon}.svg"
-      path = "heroicons/solid/#{@icon}.svg" if @variant == :solid
+      path = "heroicons/optimized/24/outline/#{@icon}.svg"
+      path = "heroicons/optimized/24/solid/#{@icon}.svg" if @variant == :solid
       path
     end
 

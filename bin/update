@@ -97,14 +97,8 @@ def update_yarn
 end
 
 def update_icons
-  log "Downloading Heroicons set"
-  system! "rm -rf tmp/icons/heroicons"
-  system! "git clone git@github.com:tailwindlabs/heroicons.git tmp/icons/heroicons"
-
-  system! "rm -rf vendor/assets/icons/heroicons"
-  system! "mkdir -p vendor/assets/icons/heroicons"
-  system! "cp -r tmp/icons/heroicons/optimized/24/ vendor/assets/icons/heroicons/"
-  system! "rm -rf tmp/icons/heroicons"
+  log "Updating Heroicons set"
+  system! "git submodule update --remote vendor/submodules/heroicons"
 end
 
 def help

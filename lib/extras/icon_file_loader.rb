@@ -4,7 +4,7 @@ class IconFileLoader
   SEARCH_PATHS = [
     Rails.root.join("app/assets/icons"),
     Rails.root.join("app/assets/images"),
-    Rails.root.join("vendor/assets/icons")
+    Rails.root.join("vendor/submodules")
   ].freeze
 
   CACHE_MAX_SIZE = 100.kilobytes.freeze
