@@ -295,6 +295,10 @@ class User < ApplicationRecord
     self
   end
 
+  # Make Devise::Models::Confirmable#confirmation_period_expired? public
+  #
+  public :confirmation_period_expired?
+
   # Sourced from Devise.
   # See Devise::Models::Confirmable.confirm_by_token
   #
