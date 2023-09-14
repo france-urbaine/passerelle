@@ -549,7 +549,7 @@ RSpec.describe Package do
         end
 
         it "changes on creation when report is already completed" do
-          report.completed = true
+          report.completed_at = Time.current
 
           expect { report.save! }
             .to change { packages[0].reload.reports_completed_count }.from(0).to(1)
@@ -559,13 +559,13 @@ RSpec.describe Package do
         it "changes when report is completed" do
           report.save!
 
-          expect { report.update_columns(completed: true) }
+          expect { report.update_columns(completed_at: Time.current) }
             .to change { packages[0].reload.reports_completed_count }.from(0).to(1)
             .and not_change { packages[1].reload.reports_completed_count }.from(0)
         end
 
         it "changes when completed report is deleted" do
-          report.completed = true
+          report.completed_at = Time.current
           report.save!
 
           expect { report.delete }

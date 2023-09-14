@@ -92,7 +92,7 @@ FactoryBot.define do
     end
 
     trait :completed do
-      completed { true }
+      completed_at { Time.current }
     end
 
     trait :sandbox do

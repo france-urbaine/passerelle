@@ -1148,13 +1148,13 @@ CREATE TABLE public.packages (
     returned_at timestamp(6) without time zone,
     discarded_at timestamp(6) without time zone,
     due_on date,
-    completed boolean DEFAULT false NOT NULL,
     reports_count integer DEFAULT 0 NOT NULL,
     reports_completed_count integer DEFAULT 0 NOT NULL,
     reports_approved_count integer DEFAULT 0 NOT NULL,
     reports_rejected_count integer DEFAULT 0 NOT NULL,
     reports_debated_count integer DEFAULT 0 NOT NULL,
-    sandbox boolean DEFAULT false NOT NULL
+    sandbox boolean DEFAULT false NOT NULL,
+    completed_at timestamp(6) without time zone
 );
 
 
@@ -1213,7 +1213,7 @@ CREATE FUNCTION public.get_reports_completed_count_in_packages(packages public.p
       FROM   "reports"
       WHERE  "reports"."package_id" = packages."id"
         AND  "reports"."discarded_at" IS NULL
-        AND  "reports"."completed" IS TRUE
+        AND  "reports"."completed_at" IS NOT NULL
     );
   END;
 $$;
@@ -2578,7 +2578,10 @@ CREATE FUNCTION public.trigger_packages_changes() RETURNS trigger
     THEN
 
       UPDATE "packages"
-      SET    "completed" = ((NEW."reports_count" = NEW."reports_completed_count") AND NEW."reports_count" <> 0)
+      SET "completed_at" = CASE
+        WHEN (NEW."reports_count" = NEW."reports_completed_count") AND NEW."reports_count" <> 0 THEN CURRENT_TIMESTAMP
+        ELSE NULL
+      END
       WHERE  "packages"."id" IN (NEW."id", OLD."id");
 
     END IF;
@@ -2683,7 +2686,7 @@ CREATE FUNCTION public.trigger_reports_changes() RETURNS trigger
     IF (TG_OP = 'INSERT')
     OR (TG_OP = 'DELETE')
     OR (TG_OP = 'UPDATE' AND NEW."package_id" <> OLD."package_id")
-    OR (TG_OP = 'UPDATE' AND NEW."completed" <> OLD."completed")
+    OR (TG_OP = 'UPDATE' AND NEW."completed_at" IS DISTINCT FROM OLD."completed_at")
     OR (TG_OP = 'UPDATE' AND (NEW."approved_at" IS NULL) <> (OLD."approved_at" IS NULL))
     OR (TG_OP = 'UPDATE' AND (NEW."rejected_at" IS NULL) <> (OLD."rejected_at" IS NULL))
     OR (TG_OP = 'UPDATE' AND (NEW."debated_at" IS NULL) <> (OLD."debated_at" IS NULL))
@@ -2992,7 +2995,6 @@ CREATE TABLE public.reports (
     reference character varying NOT NULL,
     form_type public.form_type NOT NULL,
     anomalies public.anomaly[] NOT NULL,
-    completed boolean DEFAULT false NOT NULL,
     priority public.priority DEFAULT 'low'::public.priority NOT NULL,
     code_insee character varying,
     date_constat date,
@@ -3059,7 +3061,8 @@ CREATE TABLE public.reports (
     proposition_exoneration character varying,
     proposition_date_achevement character varying,
     proposition_numero_permis character varying,
-    proposition_nature_travaux character varying
+    proposition_nature_travaux character varying,
+    completed_at timestamp(6) without time zone
 );
 
 
@@ -4048,6 +4051,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230830170839'),
 ('20230901084754'),
 ('20230904105215'),
-('20230907151950');
+('20230907151950'),
+('20230914083547'),
+('20230914100806');
 
 

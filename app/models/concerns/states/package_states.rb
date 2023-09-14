@@ -45,6 +45,10 @@ module States
         transmitted? && returned_at.nil?
       end
 
+      def completed?
+        completed_at.present?
+      end
+
       # Updates methods
       # ----------------------------------------------------------------------------
       def transmit!
@@ -69,6 +73,12 @@ module States
           returned_at: Time.current,
           assigned_at: nil
         )
+      end
+
+      def complete!
+        return true if completed?
+
+        update_column(:completed_at, Time.current)
       end
     end
   end

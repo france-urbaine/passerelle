@@ -17,13 +17,13 @@
 #  returned_at             :datetime
 #  discarded_at            :datetime
 #  due_on                  :date
-#  completed               :boolean          default(FALSE), not null
 #  reports_count           :integer          default(0), not null
 #  reports_completed_count :integer          default(0), not null
 #  reports_approved_count  :integer          default(0), not null
 #  reports_rejected_count  :integer          default(0), not null
 #  reports_debated_count   :integer          default(0), not null
 #  sandbox                 :boolean          default(FALSE), not null
+#  completed_at            :datetime
 #
 # Indexes
 #

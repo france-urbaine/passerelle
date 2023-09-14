@@ -19,7 +19,6 @@
 #  reference                                      :string           not null
 #  form_type                                      :enum             not null
 #  anomalies                                      :enum             not null, is an Array
-#  completed                                      :boolean          default(FALSE), not null
 #  priority                                       :enum             default("low"), not null
 #  code_insee                                     :string
 #  date_constat                                   :date
@@ -87,6 +86,7 @@
 #  proposition_date_achevement                    :string
 #  proposition_numero_permis                      :string
 #  proposition_nature_travaux                     :string
+#  completed_at                                   :datetime
 #
 # Indexes
 #

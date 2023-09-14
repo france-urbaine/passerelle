@@ -41,7 +41,7 @@ FactoryBot.define do
     end
 
     trait :completed do
-      completed { true }
+      completed_at { Time.current }
     end
 
     trait :with_reports do
@@ -76,7 +76,7 @@ FactoryBot.define do
             publisher:    publisher,
             collectivity: collectivity,
             package:      instance,
-            completed:    completed,
+            completed_at: completed_at,
             commune:      communes.sample
         end
       end
