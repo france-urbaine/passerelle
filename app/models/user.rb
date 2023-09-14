@@ -259,6 +259,10 @@ class User < ApplicationRecord
     otp_method == "email" && organization&.allow_2fa_via_email?
   end
 
+  def otp_no_longer_permitted_by_email?
+    otp_method == "email" && !organization&.allow_2fa_via_email?
+  end
+
   # Devise delivery method
   # ----------------------------------------------------------------------------
   def send_devise_notification(notification, *)
