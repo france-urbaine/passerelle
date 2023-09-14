@@ -3065,6 +3065,13 @@ CREATE TABLE public.reports (
     completed_at timestamp(6) without time zone
     situation_occupation character varying,
     situation_majoration_rs boolean DEFAULT false NOT NULL,
+    situation_annee_fichier_cfe integer,
+    situation_vacances_fiscales boolean DEFAULT false NOT NULL,
+    situation_nombre_annee_vacances integer,
+    situation_siren_dernier_occupant character varying,
+    situation_nom_dernier_occupant character varying,
+    situation_vlf_cfe character varying,
+    situation_taxation_base_minimum boolean DEFAULT false NOT NULL,
     proposition_occupation_annee_concernee integer,
     proposition_occupation character varying,
     proposition_date_occupation date,
@@ -3072,9 +3079,16 @@ CREATE TABLE public.reports (
     proposition_erreur_thlv boolean DEFAULT false NOT NULL,
     proposition_meuble_tourisme boolean DEFAULT false NOT NULL,
     proposition_majoration_rs boolean DEFAULT false NOT NULL,
-    proposition_occupation_nom_occupant character varying,
-    proposition_occupation_prenom_occupant character varying,
-    proposition_occupation_adresse_occupant character varying
+    proposition_nom_occupant character varying,
+    proposition_prenom_occupant character varying,
+    proposition_adresse_occupant character varying,
+    proposition_numero_siren character varying,
+    proposition_nom_societe character varying,
+    proposition_nom_enseigne character varying,
+    proposition_etablissement_principal boolean DEFAULT false NOT NULL,
+    proposition_chantier_longue_duree boolean DEFAULT false NOT NULL,
+    proposition_code_naf character varying,
+    proposition_date_debut_activite date
 );
 
 
@@ -4063,6 +4077,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230830170839'),
 ('20230901084754'),
 ('20230904105215'),
+('20230905092502');
 ('20230907151950'),
 ('20230914083547'),
 ('20230914100806');

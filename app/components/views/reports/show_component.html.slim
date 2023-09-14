@@ -25,11 +25,10 @@
   .content__separator
   = render PropositionEvaluation.new(@report)
 
-- if require_situation_occupation?
+- if require_occupation?
   .content__separator
   = render SituationOccupation.new(@report)
 
-- if require_proposition_occupation?
   .content__separator
   = render PropositionOccupation.new(@report)
 

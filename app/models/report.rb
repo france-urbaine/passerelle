@@ -89,6 +89,13 @@
 #  completed_at                                   :datetime
 #  situation_occupation                           :string
 #  situation_majoration_rs                        :boolean          default(FALSE), not null
+#  situation_annee_fichier_cfe                    :integer
+#  situation_vacances_fiscales                    :boolean          default(FALSE), not null
+#  situation_nombre_annee_vacances                :integer
+#  situation_siren_dernier_occupant               :string
+#  situation_nom_dernier_occupant                 :string
+#  situation_vlf_cfe                              :string
+#  situation_taxation_base_minimum                :boolean          default(FALSE), not null
 #  proposition_occupation_annee_concernee         :integer
 #  proposition_occupation                         :string
 #  proposition_date_occupation                    :date
@@ -96,9 +103,16 @@
 #  proposition_erreur_thlv                        :boolean          default(FALSE), not null
 #  proposition_meuble_tourisme                    :boolean          default(FALSE), not null
 #  proposition_majoration_rs                      :boolean          default(FALSE), not null
-#  proposition_occupation_nom_occupant            :string
-#  proposition_occupation_prenom_occupant         :string
-#  proposition_occupation_adresse_occupant        :string
+#  proposition_nom_occupant                       :string
+#  proposition_prenom_occupant                    :string
+#  proposition_adresse_occupant                   :string
+#  proposition_numero_siren                       :string
+#  proposition_nom_societe                        :string
+#  proposition_nom_enseigne                       :string
+#  proposition_etablissement_principal            :boolean          default(FALSE), not null
+#  proposition_chantier_longue_duree              :boolean          default(FALSE), not null
+#  proposition_code_naf                           :string
+#  proposition_date_debut_activite                :date
 #
 # Indexes
 #

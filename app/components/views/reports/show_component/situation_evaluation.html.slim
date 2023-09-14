@@ -35,7 +35,7 @@
         = render_valid_content(:situation_categorie) do
           = situation_categorie
 
-    - if require_situation_evaluation_professionnel? || require_situation_evaluation_habitation?
+    - if require_situation_evaluation_professionnel? || require_situation_evaluation_habitation? || require_occupation_professionnel?
       .description-list__row
         dt Surface réelle
         dd

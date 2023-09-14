@@ -25,104 +25,173 @@
       </dd>
     </div>
 
-    <div class="description-list__row">
-      <dt>Année sur laquelle porte le signalement</dt>
-      <dd>
-        <%= render_valid_content(:proposition_occupation_annee_concernee) do %>
-          <%= @report.proposition_occupation_annee_concernee %>
-        <% end %>
-      </dd>
-    </div>
+    <% if require_occupation_habitation? %>
 
-    <div class="description-list__row">
-      <dt>Nature de l'occupation constatée</dt>
-      <dd>
-        <%= render_valid_content(:proposition_occupation) do %>
-          <%= proposition_occupation %>
-        <% end %>
-      </dd>
-    </div>
-
-    <div class="description-list__row">
-      <dt>Date du changement</dt>
-      <dd>
-        <%= render_valid_content(:proposition_date_occupation) do %>
-          <%= helpers.display_date(@report.proposition_date_occupation) %>
-        <% end %>
-      </dd>
-    </div>
-
-    <% if situation_occupation_vacant_tlv? %>
       <div class="description-list__row">
-        <dt>TLV à tort</dt>
+        <dt>Année sur laquelle porte le signalement</dt>
         <dd>
-          <%= render_valid_content(:proposition_erreur_tlv) do %>
-            <%= t(@report.proposition_erreur_tlv, scope: 'boolean') %>
-          <% end %>
-        </dd>
-      </div>
-    <% end %>
-
-    <% if situation_occupation_vacant_thlv? %>
-      <div class="description-list__row">
-        <dt>THLV à tort</dt>
-        <dd>
-          <%= render_valid_content(:proposition_erreur_thlv) do %>
-            <%= t(@report.proposition_erreur_thlv, scope: 'boolean') %>
-          <% end %>
-        </dd>
-      </div>
-    <% end %>
-
-    <% if proposition_occupation_non_vacant? %>
-      <div class="description-list__row">
-        <dt>Meublé de tourisme</dt>
-        <dd>
-          <%= render_valid_content(:proposition_meuble_tourisme) do %>
-            <%= t(@report.proposition_meuble_tourisme.to_s, scope: 'boolean') %>
-          <% end %>
-        </dd>
-      </div>
-    <% end %>
-
-    <% if proposition_occupation_rs? %>
-      <div class="description-list__row">
-        <dt>Application de la majoration sur les résidences secondaire</dt>
-        <dd>
-          <%= render_valid_content(:proposition_majoration_rs) do %>
-            <%= t(@report.proposition_majoration_rs, scope: 'boolean') %>
-          <% end %>
-        </dd>
-      </div>
-    <% end %>
-
-    <% if proposition_occupation_non_vacant? %>
-      <div class="description-list__row">
-        <dt>Nom de l'occupant</dt>
-        <dd>
-          <%= render_valid_content(:proposition_occupation_nom_occupant) do %>
-            <%= @report.proposition_occupation_nom_occupant %>
+          <%= render_valid_content(:proposition_occupation_annee_concernee) do %>
+            <%= @report.proposition_occupation_annee_concernee %>
           <% end %>
         </dd>
       </div>
 
       <div class="description-list__row">
-        <dt>Prénom de l'occupant</dt>
+        <dt>Nature de l'occupation constatée</dt>
         <dd>
-          <%= render_valid_content(:proposition_occupation_prenom_occupant) do %>
-            <%= @report.proposition_occupation_prenom_occupant %>
+          <%= render_valid_content(:proposition_occupation) do %>
+            <%= proposition_occupation %>
           <% end %>
         </dd>
       </div>
 
       <div class="description-list__row">
-        <dt>Adresse de l'occupant</dt>
+        <dt>Date du changement</dt>
         <dd>
-          <%= render_valid_content(:proposition_occupation_adresse_occupant) do %>
-            <%= @report.proposition_occupation_adresse_occupant %>
+          <%= render_valid_content(:proposition_date_occupation) do %>
+            <%= helpers.display_date(@report.proposition_date_occupation) %>
           <% end %>
         </dd>
       </div>
+
+      <% if situation_occupation_vacant_tlv? %>
+        <div class="description-list__row">
+          <dt>TLV à tort</dt>
+          <dd>
+            <%= render_valid_content(:proposition_erreur_tlv) do %>
+              <%= t(@report.proposition_erreur_tlv.to_s, scope: 'boolean') %>
+            <% end %>
+          </dd>
+        </div>
+      <% end %>
+
+      <% if situation_occupation_vacant_thlv? %>
+        <div class="description-list__row">
+          <dt>THLV à tort</dt>
+          <dd>
+            <%= render_valid_content(:proposition_erreur_thlv) do %>
+              <%= t(@report.proposition_erreur_thlv.to_s, scope: 'boolean') %>
+            <% end %>
+          </dd>
+        </div>
+      <% end %>
+
+      <% if proposition_occupation_non_vacant? %>
+        <div class="description-list__row">
+          <dt>Meublé de tourisme</dt>
+          <dd>
+            <%= render_valid_content(:proposition_meuble_tourisme) do %>
+              <%= t(@report.proposition_meuble_tourisme.to_s, scope: 'boolean') %>
+            <% end %>
+          </dd>
+        </div>
+      <% end %>
+
+      <% if proposition_occupation_rs? %>
+        <div class="description-list__row">
+          <dt>Application de la majoration sur les résidences secondaire</dt>
+          <dd>
+            <%= render_valid_content(:proposition_majoration_rs) do %>
+              <%= t(@report.proposition_majoration_rs.to_s, scope: 'boolean') %>
+            <% end %>
+          </dd>
+        </div>
+      <% end %>
+
+      <% if proposition_occupation_non_vacant? %>
+        <div class="description-list__row">
+          <dt>Nom de l'occupant</dt>
+          <dd>
+            <%= render_valid_content(:proposition_nom_occupant) do %>
+              <%= @report.proposition_nom_occupant %>
+            <% end %>
+          </dd>
+        </div>
+
+        <div class="description-list__row">
+          <dt>Prénom de l'occupant</dt>
+          <dd>
+            <%= render_valid_content(:proposition_prenom_occupant) do %>
+              <%= @report.proposition_prenom_occupant %>
+            <% end %>
+          </dd>
+        </div>
+
+        <div class="description-list__row">
+          <dt>Adresse de l'occupant</dt>
+          <dd>
+            <%= render_valid_content(:proposition_adresse_occupant) do %>
+              <%= @report.proposition_adresse_occupant %>
+            <% end %>
+          </dd>
+        </div>
+      <% end %>
+
+    <% elsif require_occupation_professionnel? %>
+
+      <div class="description-list__row">
+        <dt>N° SIREN</dt>
+        <dd>
+          <%= render_valid_content(:proposition_numero_siren) do %>
+            <%= @report.proposition_numero_siren %>
+          <% end %>
+        </dd>
+      </div>
+
+      <div class="description-list__row">
+        <dt>Nom de la société</dt>
+        <dd>
+          <%= render_valid_content(:proposition_nom_societe) do %>
+            <%= @report.proposition_nom_societe %>
+          <% end %>
+        </dd>
+      </div>
+
+      <div class="description-list__row">
+        <dt>Nom de l'enseigne</dt>
+        <dd>
+          <%= render_valid_content(:proposition_nom_enseigne) do %>
+            <%= @report.proposition_nom_enseigne %>
+          <% end %>
+        </dd>
+      </div>
+
+      <div class="description-list__row">
+        <dt>Etablissement principal</dt>
+        <dd>
+          <%= render_valid_content(:proposition_etablissement_principal) do %>
+            <%= t(@report.proposition_etablissement_principal.to_s, scope: 'boolean') %>
+          <% end %>
+        </dd>
+      </div>
+
+      <div class="description-list__row">
+        <dt>Chantier longue durée</dt>
+        <dd>
+          <%= render_valid_content(:proposition_chantier_longue_duree) do %>
+            <%= t(@report.proposition_chantier_longue_duree.to_s, scope: 'boolean') %>
+          <% end %>
+        </dd>
+      </div>
+
+      <div class="description-list__row">
+        <dt>Activité code Naf</dt>
+        <dd>
+          <%= render_valid_content(:proposition_code_naf) do %>
+            <%= @report.proposition_code_naf %>
+          <% end %>
+        </dd>
+      </div>
+
+      <div class="description-list__row">
+        <dt>Date de début de l'activité</dt>
+        <dd>
+          <%= render_valid_content(:proposition_date_debut_activite) do %>
+            <%= helpers.display_date(@report.proposition_date_debut_activite) %>
+          <% end %>
+        </dd>
+      </div>
+
     <% end %>
   </dl>
 </div>
