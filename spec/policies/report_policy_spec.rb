@@ -527,9 +527,8 @@ RSpec.describe ReportPolicy, stub_factories: false do
           INNER JOIN "communes" ON "communes"."code_insee" = "reports"."code_insee"
           WHERE  "packages"."discarded_at" IS NULL
             AND  "reports"."discarded_at" IS NULL
-            AND  "packages"."sandbox" = FALSE
             AND  "packages"."transmitted_at" IS NOT NULL
-            AND  "packages"."returned_at" IS NULL
+            AND  "packages"."sandbox" = FALSE
             AND  "communes"."code_departement" = '#{current_organization.code_departement}'
         SQL
       end
@@ -548,8 +547,8 @@ RSpec.describe ReportPolicy, stub_factories: false do
           INNER JOIN "office_users"    ON "offices"."id" = "office_users"."office_id"
           WHERE  "packages"."discarded_at" IS NULL
             AND  "reports"."discarded_at" IS NULL
-            AND  "packages"."sandbox" = FALSE
             AND  "packages"."transmitted_at" IS NOT NULL
+            AND  "packages"."sandbox" = FALSE
             AND  "packages"."assigned_at" IS NOT NULL
             AND  "packages"."returned_at" IS NULL
             AND  "office_users"."user_id" = '#{current_user.id}'

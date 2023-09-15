@@ -88,6 +88,7 @@ RSpec.describe Package do
           SELECT "packages".*
           FROM   "packages"
           WHERE  "packages"."transmitted_at" IS NOT NULL
+            AND  "packages"."sandbox" = FALSE
             AND  "packages"."assigned_at" IS NULL
             AND  "packages"."returned_at" IS NULL
         SQL
@@ -102,6 +103,7 @@ RSpec.describe Package do
           SELECT "packages".*
           FROM   "packages"
           WHERE  "packages"."transmitted_at" IS NOT NULL
+            AND  "packages"."sandbox" = FALSE
             AND  "packages"."assigned_at" IS NOT NULL
             AND  "packages"."returned_at" IS NULL
         SQL
@@ -116,6 +118,7 @@ RSpec.describe Package do
           SELECT "packages".*
           FROM   "packages"
           WHERE  "packages"."transmitted_at" IS NOT NULL
+            AND  "packages"."sandbox" = FALSE
             AND  "packages"."returned_at" IS NOT NULL
         SQL
       end

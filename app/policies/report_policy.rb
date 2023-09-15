@@ -109,192 +109,196 @@ class ReportPolicy < ApplicationPolicy
 
   private
 
-  # List reports that can be listed to an user
+  # Authorizations for collectivities
   # ----------------------------------------------------------------------------
-  def reports_listed_to_collectivity
-    return Report.none unless collectivity?
+  concerning :Collectivities do
+    def report_shown_to_collectivity?(report)
+      # Discarded packages are not listed but are still accessible
+      #
+      collectivity? &&
+        report.out_of_sandbox? &&
+        report.sent_by_collectivity?(organization) &&
+        (report.packed_through_web_ui? || report.transmitted?)
+    end
 
-    # Collectivities can see all reports they've packed through the web UI and
-    # those fully transmitted by their publishers.
-    #
-    Report
-      .joins(:package)
-      .all_kept
-      .out_of_sandbox
-      .sent_by_collectivity(organization)
-      .merge(Package.packed_through_web_ui.or(Package.transmitted))
+    def report_updatable_by_collectivity?(report)
+      collectivity? &&
+        report.out_of_sandbox? &&
+        report.packing? &&
+        report.sent_by_collectivity?(organization) &&
+        report.packed_through_web_ui?
+    end
+
+    def report_destroyable_by_collectivity?(report)
+      collectivity? &&
+        report.out_of_sandbox? &&
+        report.packing? &&
+        report.sent_by_collectivity?(organization) &&
+        report.packed_through_web_ui?
+    end
+
+    def reports_listed_to_collectivity
+      return Report.none unless collectivity?
+
+      # Collectivities can list all reports they've packed through the web UI and
+      # those fully transmitted by their publishers.
+      #
+      Report
+        .joins(:package)
+        .all_kept
+        .out_of_sandbox
+        .sent_by_collectivity(organization)
+        .merge(Package.packed_through_web_ui.or(Package.transmitted))
+    end
+
+    def reports_destroyable_by_collectivity
+      return Report.none unless collectivity?
+
+      Report
+        .kept
+        .out_of_sandbox
+        .packing
+        .sent_by_collectivity(organization)
+        .packed_through_web_ui
+    end
+
+    def reports_undiscardable_by_collectivity
+      return Report.none unless collectivity?
+
+      Report
+        .discarded
+        .out_of_sandbox
+        .packing
+        .sent_by_collectivity(organization)
+        .packed_through_web_ui
+    end
   end
 
-  def reports_listed_to_publisher
-    return Report.none unless publisher?
-
-    # Publisher can only see reports they packed through their API.
-    # It excludes those packed though the web UI by their owned collectivities.
-    #
-    # The scope `packed_through_publisher_api` is implied by `sent_by_publisher`
-    # and will be redundant if added.
-    #
-    Report.all_kept.sent_by_publisher(organization)
-  end
-
-  def reports_listed_to_dgfip
-    return Report.none unless dgfip?
-
-    Report
-      .all_kept
-      .delivered
-      .unreturned
-  end
-
-  def reports_listed_to_ddfip_admins
-    return Report.none unless ddfip_admin?
-
-    Report
-      .all_kept
-      .delivered
-      .unreturned
-      .covered_by_ddfip(organization)
-  end
-
-  def reports_listed_to_office_users
-    return Report.none unless office_user?
-
-    Report
-      .all_kept
-      .delivered
-      .assigned
-      .covered_by_office(user.offices)
-  end
-
-  # Assert if a report can be shown to an user
+  # Authorizations for publishers
   # ----------------------------------------------------------------------------
-  def report_shown_to_dgfip?(report)
-    # Discarded packages are not listed but are still accessible
-    #
-    dgfip? &&
-      report.delivered?
+  concerning :Publishers do
+    def report_shown_to_publisher?(report)
+      # Discarded packages are not listed but are still accessible
+      #
+      publisher? &&
+        report.sent_by_publisher?(organization) &&
+        report.packed_through_publisher_api?
+    end
+
+    def report_updatable_by_publisher?(report)
+      publisher? &&
+        report.packing? &&
+        report.sent_by_publisher?(organization) &&
+        report.packed_through_publisher_api?
+    end
+
+    def report_destroyable_by_publisher?(report)
+      publisher? &&
+        report.packing? &&
+        report.sent_by_publisher?(organization) &&
+        report.packed_through_publisher_api?
+    end
+
+    def reports_listed_to_publisher
+      return Report.none unless publisher?
+
+      # Publisher can only list reports they packed through their API.
+      # It excludes those packed though the web UI by their owned collectivities.
+      #
+      # The scope `packed_through_publisher_api` is implied by `sent_by_publisher`
+      # and will be redundant if added.
+      #
+      Report
+        .all_kept
+        .sent_by_publisher(organization)
+    end
+
+    def reports_destroyable_by_publisher
+      return Report.none unless publisher?
+
+      Report
+        .kept
+        .packing
+        .sent_by_publisher(organization)
+    end
+
+    def reports_undiscardable_by_publisher
+      return Report.none unless publisher?
+
+      Report
+        .discarded
+        .packing
+        .sent_by_publisher(organization)
+    end
   end
 
-  def report_shown_to_collectivity?(report)
-    # Discarded packages are not listed but are still accessible
-    #
-    collectivity? &&
-      report.out_of_sandbox? &&
-      report.sent_by_collectivity?(organization) &&
-      (report.packed_through_web_ui? || report.transmitted?)
-  end
-
-  def report_shown_to_publisher?(report)
-    # Discarded packages are not listed but are still accessible
-    #
-    publisher? &&
-      report.sent_by_publisher?(organization) &&
-      report.packed_through_publisher_api?
-  end
-
-  def report_shown_to_ddfip_admin?(report)
-    # Returned packages are not listed but are still accessible
-    #
-    ddfip_admin? &&
-      report.delivered? &&
-      report.covered_by_ddfip?(organization)
-  end
-
-  def report_shown_to_office_user?(report)
-    office_user? &&
-      report.delivered? &&
-      report.assigned? &&
-      report.covered_by_offices?(user.offices)
-  end
-
-  # Assert if a report can be updated by an user
+  # Authorizations for DGFIPs
   # ----------------------------------------------------------------------------
-  def report_updatable_by_collectivity?(report)
-    collectivity? &&
-      report.out_of_sandbox? &&
-      report.sent_by_collectivity?(organization) &&
-      report.packed_through_web_ui? &&
-      report.packing?
+  concerning :DGFIPs do
+    def report_shown_to_dgfip?(report)
+      # Discarded packages are not listed but are still accessible
+      #
+      dgfip? &&
+        report.delivered?
+    end
+
+    def reports_listed_to_dgfip
+      return Report.none unless dgfip?
+
+      Report
+        .all_kept
+        .delivered
+    end
   end
 
-  def report_updatable_by_publisher?(report)
-    publisher? &&
-      report.sent_by_publisher?(organization) &&
-      report.packed_through_publisher_api? &&
-      report.packing?
-  end
-
-  def report_updatable_by_ddfip_admin?(report)
-    ddfip_admin? &&
-      report.delivered? &&
-      report.unreturned? &&
-      report.covered_by_ddfip?(organization)
-  end
-
-  def report_updatable_by_office_user?(report)
-    report_shown_to_office_user?(report)
-  end
-
-  # List reports that can be destroyed by an user
+  # Authorizations for DDFIPs
   # ----------------------------------------------------------------------------
-  def reports_destroyable_by_collectivity
-    return Report.none unless collectivity?
+  concerning :DDFIPAdmins do
+    def report_shown_to_ddfip_admin?(report)
+      # Returned packages are not listed but are still accessible
+      #
+      ddfip_admin? &&
+        report.delivered? &&
+        report.covered_by_ddfip?(organization)
+    end
 
-    Report
-      .kept
-      .out_of_sandbox
-      .sent_by_collectivity(organization)
-      .packed_through_web_ui
-      .packing
+    def report_updatable_by_ddfip_admin?(report)
+      ddfip_admin? &&
+        report.delivered? &&
+        report.unreturned? &&
+        report.covered_by_ddfip?(organization)
+    end
+
+    def reports_listed_to_ddfip_admins
+      return Report.none unless ddfip_admin?
+
+      Report
+        .all_kept
+        .delivered
+        .covered_by_ddfip(organization)
+    end
   end
 
-  def reports_destroyable_by_publisher
-    return Report.none unless publisher?
-
-    Report
-      .kept
-      .sent_by_publisher(organization)
-      .packing
-  end
-
-  # List reports that can be undiscarded by an user
+  # Authorizations for office users
   # ----------------------------------------------------------------------------
-  def reports_undiscardable_by_collectivity
-    return Report.none unless collectivity?
+  concerning :OfficeUsers do
+    def report_shown_to_office_user?(report)
+      office_user? &&
+        report.assigned? &&
+        report.covered_by_offices?(user.offices)
+    end
 
-    Report
-      .kept
-      .discarded
-      .out_of_sandbox
-      .sent_by_collectivity(organization)
-      .packed_through_web_ui
-      .packing
-  end
+    def report_updatable_by_office_user?(report)
+      report_shown_to_office_user?(report)
+    end
 
-  def reports_undiscardable_by_publisher
-    return Report.none unless publisher?
+    def reports_listed_to_office_users
+      return Report.none unless office_user?
 
-    Report
-      .kept
-      .discarded
-      .sent_by_publisher(organization)
-      .packing
-  end
-
-  # Assert if a report can be destroyed by an user
-  # ----------------------------------------------------------------------------
-  def report_destroyable_by_collectivity?(report)
-    collectivity? &&
-      report.out_of_sandbox? &&
-      report.sent_by_collectivity?(organization) &&
-      report.packed_through_web_ui? &&
-      report.packing?
-  end
-
-  def report_destroyable_by_publisher?(report)
-    publisher? &&
-      report.sent_by_publisher?(organization) &&
-      report.packed_through_publisher_api? &&
-      report.packing?
+      Report
+        .all_kept
+        .assigned
+        .covered_by_office(user.offices)
+    end
   end
 end

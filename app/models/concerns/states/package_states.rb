@@ -10,10 +10,10 @@ module States
       scope :packing,      -> { where(transmitted_at: nil) }
       scope :transmitted,  -> { where.not(transmitted_at: nil) }
       scope :delivered,    -> { transmitted.out_of_sandbox }
-      scope :unresolved,   -> { transmitted.where(assigned_at: nil, returned_at: nil) }
-      scope :assigned,     -> { transmitted.where.not(assigned_at: nil).where(returned_at: nil) }
-      scope :returned,     -> { transmitted.where.not(returned_at: nil) }
-      scope :unreturned,   -> { transmitted.where(returned_at: nil) }
+      scope :unresolved,   -> { delivered.where(assigned_at: nil, returned_at: nil) }
+      scope :assigned,     -> { delivered.where.not(assigned_at: nil).where(returned_at: nil) }
+      scope :returned,     -> { delivered.where.not(returned_at: nil) }
+      scope :unreturned,   -> { delivered.where(returned_at: nil) }
 
       # Predicates
       # ----------------------------------------------------------------------------
@@ -30,19 +30,19 @@ module States
       end
 
       def unresolved?
-        transmitted? && assigned_at.nil? && returned_at.nil?
+        delivered? && assigned_at.nil? && returned_at.nil?
       end
 
       def assigned?
-        transmitted? && assigned_at? && returned_at.nil?
+        delivered? && assigned_at? && returned_at.nil?
       end
 
       def returned?
-        transmitted? && returned_at?
+        delivered? && returned_at?
       end
 
       def unreturned?
-        transmitted? && returned_at.nil?
+        delivered? && returned_at.nil?
       end
 
       def completed?
