@@ -148,10 +148,10 @@ RSpec.describe "ReportsController#index" do
         [
           create(:report, :reported_for_ddfip,        **attributes),
           create(:report, :transmitted_to_ddfip,      **attributes),
-          create(:report, :package_approved_by_ddfip, **attributes, package_sandbox: true),
-          create(:report, :package_approved_by_ddfip, **attributes),
-          create(:report, :package_approved_by_ddfip, **attributes, collectivity: collectivities[1]),
-          create(:report, :package_approved_by_ddfip, **attributes, form_type: "evaluation_local_professionnel")
+          create(:report, :assigned_by_ddfip, **attributes, package_sandbox: true),
+          create(:report, :assigned_by_ddfip, **attributes),
+          create(:report, :assigned_by_ddfip, **attributes, collectivity: collectivities[1]),
+          create(:report, :assigned_by_ddfip, **attributes, form_type: "evaluation_local_professionnel")
         ]
       end
 
@@ -220,10 +220,10 @@ RSpec.describe "ReportsController#index" do
         [
           create(:report, :reported_for_ddfip,        **attributes),
           create(:report, :transmitted_to_ddfip,      **attributes),
-          create(:report, :package_approved_by_ddfip, **attributes, package_sandbox: true),
-          create(:report, :package_approved_by_ddfip, **attributes),
-          create(:report, :package_approved_by_ddfip, **attributes, collectivity: collectivities[1]),
-          create(:report, :package_approved_by_ddfip, **attributes, form_type: "evaluation_local_professionnel")
+          create(:report, :assigned_by_ddfip, **attributes, package_sandbox: true),
+          create(:report, :assigned_by_ddfip, **attributes),
+          create(:report, :assigned_by_ddfip, **attributes, collectivity: collectivities[1]),
+          create(:report, :assigned_by_ddfip, **attributes, form_type: "evaluation_local_professionnel")
         ]
       end
 

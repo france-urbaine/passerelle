@@ -7,15 +7,15 @@ fr:
     approved:            Signalement approuvé
     rejected:            Signalement rejeté
     debated:             Demande d'informations complémentaires
-    package_rejected:    Paquet refusé
-    package_approved:    Signalement transmis
+    returned:            Paquet refusé
+    assigned:            Signalement transmis
     transmitted:         Paquet transmis, en attente de confirmation
     completed:           Signalement en attente de transmission
     incomplete:          Signalement incomplet
 
   package_badge:
-    approved:            Paquet transmis
-    rejected:            Paquet refusé
+    assigned:            Paquet transmis
+    returned:            Paquet refusé
     transmitted:         Paquet transmis, en attente de confirmation
     completed:           Paquet prèt à être transmis
     incomplete:          Signalements incomplets

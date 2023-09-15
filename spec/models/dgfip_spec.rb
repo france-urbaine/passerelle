@@ -192,62 +192,62 @@ RSpec.describe DGFIP do
         end
       end
 
-      describe "#reports_published_count" do
+      describe "#reports_delivered_count" do
         let(:package) { create(:package, :transmitted) }
         let(:report) { create(:report, package: package) }
 
         it "changes on report creation" do
           expect { report }
-            .to change { dgfip.reload.reports_published_count }.from(0).to(1)
+            .to change { dgfip.reload.reports_delivered_count }.from(0).to(1)
         end
 
         it "changes on report deletion" do
           report
 
           expect { report.destroy }
-            .to change { dgfip.reload.reports_published_count }.from(1).to(0)
+            .to change { dgfip.reload.reports_delivered_count }.from(1).to(0)
         end
 
         it "changes on package deletion" do
           report
 
           expect { report.package.destroy }
-            .to change { dgfip.reload.reports_published_count }.from(1).to(0)
+            .to change { dgfip.reload.reports_delivered_count }.from(1).to(0)
         end
 
         it "changes when discarding report" do
           report
 
           expect { report.discard }
-            .to change { dgfip.reload.reports_published_count }.from(1).to(0)
+            .to change { dgfip.reload.reports_delivered_count }.from(1).to(0)
         end
 
         it "changes when discarding package" do
           report
 
           expect { report.package.discard }
-            .to change { dgfip.reload.reports_published_count }.from(1).to(0)
+            .to change { dgfip.reload.reports_delivered_count }.from(1).to(0)
         end
 
         it "changes when undiscarding report" do
           report.discard
 
           expect { report.undiscard }
-            .to change { dgfip.reload.reports_published_count }.from(0).to(1)
+            .to change { dgfip.reload.reports_delivered_count }.from(0).to(1)
         end
 
         it "changes when undiscarding package" do
           report.package.discard
 
           expect { report.package.undiscard }
-            .to change { dgfip.reload.reports_published_count }.from(0).to(1)
+            .to change { dgfip.reload.reports_delivered_count }.from(0).to(1)
         end
 
         it "changes when package is set to sandbox" do
           report
 
           expect { report.package.update(sandbox: true) }
-            .to  change { dgfip.reload.reports_published_count }.from(1).to(0)
+            .to  change { dgfip.reload.reports_delivered_count }.from(1).to(0)
         end
       end
 

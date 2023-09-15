@@ -262,7 +262,7 @@ CREATE TABLE public.ddfips (
     reports_approved_count integer DEFAULT 0 NOT NULL,
     reports_rejected_count integer DEFAULT 0 NOT NULL,
     reports_debated_count integer DEFAULT 0 NOT NULL,
-    auto_approve_packages boolean DEFAULT false NOT NULL,
+    auto_assign_packages boolean DEFAULT false NOT NULL,
     reports_pending_count integer DEFAULT 0 NOT NULL,
     CONSTRAINT collectivities_count_check CHECK ((collectivities_count >= 0)),
     CONSTRAINT offices_count_check CHECK ((offices_count >= 0)),
@@ -475,8 +475,8 @@ CREATE TABLE public.publishers (
     reports_rejected_count integer DEFAULT 0 NOT NULL,
     reports_debated_count integer DEFAULT 0 NOT NULL,
     packages_transmitted_count integer DEFAULT 0 NOT NULL,
-    packages_approved_count integer DEFAULT 0 NOT NULL,
-    packages_rejected_count integer DEFAULT 0 NOT NULL,
+    packages_assigned_count integer DEFAULT 0 NOT NULL,
+    packages_returned_count integer DEFAULT 0 NOT NULL,
     CONSTRAINT collectivities_count_check CHECK ((collectivities_count >= 0)),
     CONSTRAINT users_count_check CHECK ((users_count >= 0))
 );
@@ -874,8 +874,8 @@ CREATE TABLE public.collectivities (
     reports_rejected_count integer DEFAULT 0 NOT NULL,
     reports_debated_count integer DEFAULT 0 NOT NULL,
     packages_transmitted_count integer DEFAULT 0 NOT NULL,
-    packages_approved_count integer DEFAULT 0 NOT NULL,
-    packages_rejected_count integer DEFAULT 0 NOT NULL,
+    packages_assigned_count integer DEFAULT 0 NOT NULL,
+    packages_returned_count integer DEFAULT 0 NOT NULL,
     allow_publisher_management boolean DEFAULT false NOT NULL,
     reports_packing_count integer DEFAULT 0 NOT NULL,
     CONSTRAINT users_count_check CHECK ((users_count >= 0))
@@ -883,10 +883,10 @@ CREATE TABLE public.collectivities (
 
 
 --
--- Name: get_packages_approved_count_in_collectivities(public.collectivities); Type: FUNCTION; Schema: public; Owner: -
+-- Name: get_packages_assigned_count_in_collectivities(public.collectivities); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE FUNCTION public.get_packages_approved_count_in_collectivities(collectivities public.collectivities) RETURNS integer
+CREATE FUNCTION public.get_packages_assigned_count_in_collectivities(collectivities public.collectivities) RETURNS integer
     LANGUAGE plpgsql
     AS $$
   BEGIN
@@ -896,8 +896,8 @@ CREATE FUNCTION public.get_packages_approved_count_in_collectivities(collectivit
       WHERE  "packages"."collectivity_id" = collectivities."id"
         AND  "packages"."sandbox" = FALSE
         AND  "packages"."transmitted_at" IS NOT NULL
-        AND  "packages"."approved_at" IS NOT NULL
-        AND  "packages"."rejected_at" IS NULL
+        AND  "packages"."assigned_at" IS NOT NULL
+        AND  "packages"."returned_at" IS NULL
         AND  "packages"."discarded_at" IS NULL
     );
   END;
@@ -905,10 +905,10 @@ $$;
 
 
 --
--- Name: get_packages_approved_count_in_publishers(public.publishers); Type: FUNCTION; Schema: public; Owner: -
+-- Name: get_packages_assigned_count_in_publishers(public.publishers); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE FUNCTION public.get_packages_approved_count_in_publishers(publishers public.publishers) RETURNS integer
+CREATE FUNCTION public.get_packages_assigned_count_in_publishers(publishers public.publishers) RETURNS integer
     LANGUAGE plpgsql
     AS $$
   BEGIN
@@ -918,8 +918,8 @@ CREATE FUNCTION public.get_packages_approved_count_in_publishers(publishers publ
       WHERE  "packages"."publisher_id" = publishers."id"
         AND  "packages"."sandbox" = FALSE
         AND  "packages"."transmitted_at" IS NOT NULL
-        AND  "packages"."approved_at" IS NOT NULL
-        AND  "packages"."rejected_at" IS NULL
+        AND  "packages"."assigned_at" IS NOT NULL
+        AND  "packages"."returned_at" IS NULL
         AND  "packages"."discarded_at" IS NULL
     );
   END;
@@ -927,10 +927,10 @@ $$;
 
 
 --
--- Name: get_packages_rejected_count_in_collectivities(public.collectivities); Type: FUNCTION; Schema: public; Owner: -
+-- Name: get_packages_returned_count_in_collectivities(public.collectivities); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE FUNCTION public.get_packages_rejected_count_in_collectivities(collectivities public.collectivities) RETURNS integer
+CREATE FUNCTION public.get_packages_returned_count_in_collectivities(collectivities public.collectivities) RETURNS integer
     LANGUAGE plpgsql
     AS $$
   BEGIN
@@ -940,7 +940,7 @@ CREATE FUNCTION public.get_packages_rejected_count_in_collectivities(collectivit
       WHERE  "packages"."collectivity_id" = collectivities."id"
         AND  "packages"."sandbox" = FALSE
         AND  "packages"."transmitted_at" IS NOT NULL
-        AND  "packages"."rejected_at" IS NOT NULL
+        AND  "packages"."returned_at" IS NOT NULL
         AND  "packages"."discarded_at" IS NULL
     );
   END;
@@ -948,10 +948,10 @@ $$;
 
 
 --
--- Name: get_packages_rejected_count_in_publishers(public.publishers); Type: FUNCTION; Schema: public; Owner: -
+-- Name: get_packages_returned_count_in_publishers(public.publishers); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE FUNCTION public.get_packages_rejected_count_in_publishers(publishers public.publishers) RETURNS integer
+CREATE FUNCTION public.get_packages_returned_count_in_publishers(publishers public.publishers) RETURNS integer
     LANGUAGE plpgsql
     AS $$
   BEGIN
@@ -961,7 +961,7 @@ CREATE FUNCTION public.get_packages_rejected_count_in_publishers(publishers publ
       WHERE  "packages"."publisher_id" = publishers."id"
         AND  "packages"."sandbox" = FALSE
         AND  "packages"."transmitted_at" IS NOT NULL
-        AND  "packages"."rejected_at" IS NOT NULL
+        AND  "packages"."returned_at" IS NOT NULL
         AND  "packages"."discarded_at" IS NULL
     );
   END;
@@ -1049,7 +1049,7 @@ CREATE FUNCTION public.get_reports_approved_count_in_ddfips(ddfips public.ddfips
         AND      "reports"."discarded_at" IS NULL
         AND      "packages"."sandbox" = FALSE
         AND      "packages"."transmitted_at" IS NOT NULL
-        AND      "packages"."rejected_at" IS NULL
+        AND      "packages"."returned_at" IS NULL
         AND      "packages"."discarded_at" IS NULL
     );
   END;
@@ -1073,7 +1073,7 @@ CREATE TABLE public.dgfips (
     updated_at timestamp(6) without time zone NOT NULL,
     discarded_at timestamp(6) without time zone,
     users_count integer DEFAULT 0 NOT NULL,
-    reports_published_count integer DEFAULT 0 NOT NULL,
+    reports_delivered_count integer DEFAULT 0 NOT NULL,
     reports_approved_count integer DEFAULT 0 NOT NULL,
     reports_rejected_count integer DEFAULT 0 NOT NULL,
     CONSTRAINT users_count_check CHECK ((users_count >= 0))
@@ -1122,8 +1122,8 @@ CREATE FUNCTION public.get_reports_approved_count_in_offices(offices public.offi
         AND      "reports"."discarded_at" IS NULL
         AND      "packages"."sandbox" = FALSE
         AND      "packages"."transmitted_at" IS NOT NULL
-        AND      "packages"."approved_at" IS NOT NULL
-        AND      "packages"."rejected_at" IS NULL
+        AND      "packages"."assigned_at" IS NOT NULL
+        AND      "packages"."returned_at" IS NULL
         AND      "packages"."discarded_at" IS NULL
     );
   END;
@@ -1144,17 +1144,17 @@ CREATE TABLE public.packages (
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
     transmitted_at timestamp(6) without time zone,
-    approved_at timestamp(6) without time zone,
-    rejected_at timestamp(6) without time zone,
+    assigned_at timestamp(6) without time zone,
+    returned_at timestamp(6) without time zone,
     discarded_at timestamp(6) without time zone,
     due_on date,
-    completed boolean DEFAULT false NOT NULL,
     reports_count integer DEFAULT 0 NOT NULL,
     reports_completed_count integer DEFAULT 0 NOT NULL,
     reports_approved_count integer DEFAULT 0 NOT NULL,
     reports_rejected_count integer DEFAULT 0 NOT NULL,
     reports_debated_count integer DEFAULT 0 NOT NULL,
-    sandbox boolean DEFAULT false NOT NULL
+    sandbox boolean DEFAULT false NOT NULL,
+    completed_at timestamp(6) without time zone
 );
 
 
@@ -1213,7 +1213,7 @@ CREATE FUNCTION public.get_reports_completed_count_in_packages(packages public.p
       FROM   "reports"
       WHERE  "reports"."package_id" = packages."id"
         AND  "reports"."discarded_at" IS NULL
-        AND  "reports"."completed" IS TRUE
+        AND  "reports"."completed_at" IS NOT NULL
     );
   END;
 $$;
@@ -1236,7 +1236,7 @@ CREATE FUNCTION public.get_reports_count_in_ddfips(ddfips public.ddfips) RETURNS
         AND      "reports"."discarded_at" IS NULL
         AND      "packages"."sandbox" = FALSE
         AND      "packages"."transmitted_at" IS NOT NULL
-        AND      "packages"."rejected_at" IS NULL
+        AND      "packages"."returned_at" IS NULL
         AND      "packages"."discarded_at" IS NULL
     );
   END;
@@ -1262,8 +1262,8 @@ CREATE FUNCTION public.get_reports_count_in_offices(offices public.offices) RETU
         AND      "reports"."discarded_at" IS NULL
         AND      "packages"."sandbox" = FALSE
         AND      "packages"."transmitted_at" IS NOT NULL
-        AND      "packages"."approved_at" IS NOT NULL
-        AND      "packages"."rejected_at" IS NULL
+        AND      "packages"."assigned_at" IS NOT NULL
+        AND      "packages"."returned_at" IS NULL
         AND      "packages"."discarded_at" IS NULL
     );
   END;
@@ -1329,7 +1329,7 @@ CREATE FUNCTION public.get_reports_debated_count_in_ddfips(ddfips public.ddfips)
         AND      "reports"."discarded_at" IS NULL
         AND      "packages"."sandbox" = FALSE
         AND      "packages"."transmitted_at" IS NOT NULL
-        AND      "packages"."rejected_at" IS NULL
+        AND      "packages"."returned_at" IS NULL
         AND      "packages"."discarded_at" IS NULL
     );
   END;
@@ -1356,8 +1356,8 @@ CREATE FUNCTION public.get_reports_debated_count_in_offices(offices public.offic
         AND      "reports"."discarded_at" IS NULL
         AND      "packages"."sandbox" = FALSE
         AND      "packages"."transmitted_at" IS NOT NULL
-        AND      "packages"."approved_at" IS NOT NULL
-        AND      "packages"."rejected_at" IS NULL
+        AND      "packages"."assigned_at" IS NOT NULL
+        AND      "packages"."returned_at" IS NULL
         AND      "packages"."discarded_at" IS NULL
     );
   END;
@@ -1407,6 +1407,27 @@ $$;
 
 
 --
+-- Name: get_reports_delivered_count_in_dgfips(public.dgfips); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.get_reports_delivered_count_in_dgfips(dgfips public.dgfips) RETURNS integer
+    LANGUAGE plpgsql
+    AS $$
+  BEGIN
+    RETURN (
+      SELECT COUNT(*)
+      FROM   "reports"
+      INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
+      WHERE      "reports"."discarded_at" IS NULL
+        AND      "packages"."sandbox" = FALSE
+        AND      "packages"."discarded_at" IS NULL
+        AND      "packages"."transmitted_at" IS NOT NULL
+    );
+  END;
+$$;
+
+
+--
 -- Name: get_reports_packing_count_in_collectivities(public.collectivities); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -1444,12 +1465,12 @@ CREATE FUNCTION public.get_reports_pending_count_in_ddfips(ddfips public.ddfips)
       INNER JOIN "communes" ON "communes"."code_insee" = "reports"."code_insee"
       WHERE      "communes"."code_departement" = ddfips."code_departement"
         AND      "reports"."discarded_at" IS NULL
-        AND      "packages"."sandbox" = FALSE
-        AND      "packages"."transmitted_at" IS NOT NULL
         AND      "reports"."debated_at" IS NULL
         AND      "reports"."rejected_at" IS NULL
         AND      "reports"."approved_at" IS NULL
-        AND      "packages"."rejected_at" IS NULL
+        AND      "packages"."sandbox" = FALSE
+        AND      "packages"."transmitted_at" IS NOT NULL
+        AND      "packages"."returned_at" IS NULL
         AND      "packages"."discarded_at" IS NULL
     );
   END;
@@ -1475,31 +1496,10 @@ CREATE FUNCTION public.get_reports_pending_count_in_offices(offices public.offic
         AND      "reports"."discarded_at" IS NULL
         AND      "packages"."sandbox" = FALSE
         AND      "packages"."transmitted_at" IS NOT NULL
-        AND      "packages"."approved_at" IS NULL
-        AND      "packages"."rejected_at" IS NULL
+        AND      "packages"."assigned_at" IS NULL
+        AND      "packages"."returned_at" IS NULL
         AND      "reports"."debated_at" IS NULL
         AND      "packages"."discarded_at" IS NULL
-    );
-  END;
-$$;
-
-
---
--- Name: get_reports_published_count_in_dgfips(public.dgfips); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION public.get_reports_published_count_in_dgfips(dgfips public.dgfips) RETURNS integer
-    LANGUAGE plpgsql
-    AS $$
-  BEGIN
-    RETURN (
-      SELECT COUNT(*)
-      FROM   "reports"
-      INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
-      WHERE      "reports"."discarded_at" IS NULL
-        AND      "packages"."sandbox" = FALSE
-        AND      "packages"."discarded_at" IS NULL
-        AND      "packages"."transmitted_at" IS NOT NULL
     );
   END;
 $$;
@@ -1546,7 +1546,7 @@ CREATE FUNCTION public.get_reports_rejected_count_in_ddfips(ddfips public.ddfips
         AND      "reports"."discarded_at" IS NULL
         AND      "packages"."sandbox" = FALSE
         AND      "packages"."transmitted_at" IS NOT NULL
-        AND      "packages"."rejected_at" IS NULL
+        AND      "packages"."returned_at" IS NULL
         AND      "packages"."discarded_at" IS NULL
     );
   END;
@@ -1595,8 +1595,8 @@ CREATE FUNCTION public.get_reports_rejected_count_in_offices(offices public.offi
         AND      "reports"."discarded_at" IS NULL
         AND      "packages"."sandbox" = FALSE
         AND      "packages"."transmitted_at" IS NOT NULL
-        AND      "packages"."approved_at" IS NOT NULL
-        AND      "packages"."rejected_at" IS NULL
+        AND      "packages"."assigned_at" IS NOT NULL
+        AND      "packages"."returned_at" IS NULL
         AND      "packages"."discarded_at" IS NULL
     );
   END;
@@ -1801,8 +1801,8 @@ CREATE FUNCTION public.reset_all_collectivities_counters() RETURNS integer
            "reports_rejected_count"     = get_reports_rejected_count_in_collectivities("collectivities".*),
            "reports_debated_count"      = get_reports_debated_count_in_collectivities("collectivities".*),
            "packages_transmitted_count" = get_packages_transmitted_count_in_collectivities("collectivities".*),
-           "packages_approved_count"    = get_packages_approved_count_in_collectivities("collectivities".*),
-           "packages_rejected_count"    = get_packages_rejected_count_in_collectivities("collectivities".*),
+           "packages_assigned_count"    = get_packages_assigned_count_in_collectivities("collectivities".*),
+           "packages_returned_count"    = get_packages_returned_count_in_collectivities("collectivities".*),
            "reports_packing_count"      = get_reports_packing_count_in_collectivities("collectivities".*);
 
     GET DIAGNOSTICS affected_rows = ROW_COUNT;
@@ -1899,7 +1899,7 @@ CREATE FUNCTION public.reset_all_dgfips_counters() RETURNS integer
   BEGIN
     UPDATE "dgfips"
     SET    "users_count"             = get_users_count_in_dgfips("dgfips".*),
-           "reports_published_count" = get_reports_published_count_in_dgfips("dgfips".*),
+           "reports_delivered_count" = get_reports_delivered_count_in_dgfips("dgfips".*),
            "reports_approved_count"  = get_reports_approved_count_in_dgfips("dgfips".*),
            "reports_rejected_count"  = get_reports_rejected_count_in_dgfips("dgfips".*);
 
@@ -2003,8 +2003,8 @@ CREATE FUNCTION public.reset_all_publishers_counters() RETURNS integer
            "reports_rejected_count"     = get_reports_rejected_count_in_publishers("publishers".*),
            "reports_debated_count"      = get_reports_debated_count_in_publishers("publishers".*),
            "packages_transmitted_count" = get_packages_transmitted_count_in_publishers("publishers".*),
-           "packages_approved_count"    = get_packages_approved_count_in_publishers("publishers".*),
-           "packages_rejected_count"    = get_packages_rejected_count_in_publishers("publishers".*);
+           "packages_assigned_count"    = get_packages_assigned_count_in_publishers("publishers".*),
+           "packages_returned_count"    = get_packages_returned_count_in_publishers("publishers".*);
 
     GET DIAGNOSTICS affected_rows = ROW_COUNT;
     RAISE NOTICE 'UPDATE %', affected_rows;
@@ -2578,7 +2578,10 @@ CREATE FUNCTION public.trigger_packages_changes() RETURNS trigger
     THEN
 
       UPDATE "packages"
-      SET    "completed" = ((NEW."reports_count" = NEW."reports_completed_count") AND NEW."reports_count" <> 0)
+      SET "completed_at" = CASE
+        WHEN (NEW."reports_count" = NEW."reports_completed_count") AND NEW."reports_count" <> 0 THEN CURRENT_TIMESTAMP
+        ELSE NULL
+      END
       WHERE  "packages"."id" IN (NEW."id", OLD."id");
 
     END IF;
@@ -2590,23 +2593,23 @@ CREATE FUNCTION public.trigger_packages_changes() RETURNS trigger
     -- * when publisher_id changed
     -- * when publisher_id changed from NULL
     -- * when publisher_id changed to NULL
-    -- * when (transmitted_at|approved_at|rejected_at|discarded_at) changed from NULL
-    -- * when (transmitted_at|approved_at|rejected_at|discarded_at) changed to NULL
+    -- * when (transmitted_at|approved_at|returned_at|discarded_at) changed from NULL
+    -- * when (transmitted_at|approved_at|returned_at|discarded_at) changed to NULL
 
     IF (TG_OP = 'INSERT')
     OR (TG_OP = 'DELETE')
     OR (TG_OP = 'UPDATE' AND NEW."sandbox" <> OLD."sandbox")
     OR (TG_OP = 'UPDATE' AND ((NEW."publisher_id" IS NULL) <> (OLD."publisher_id" IS NULL) OR (NEW."publisher_id" <> OLD."publisher_id")))
     OR (TG_OP = 'UPDATE' AND (NEW."transmitted_at" IS NULL) <> (OLD."transmitted_at" IS NULL))
-    OR (TG_OP = 'UPDATE' AND (NEW."approved_at" IS NULL) <> (OLD."approved_at" IS NULL))
-    OR (TG_OP = 'UPDATE' AND (NEW."rejected_at" IS NULL) <> (OLD."rejected_at" IS NULL))
+    OR (TG_OP = 'UPDATE' AND (NEW."assigned_at" IS NULL) <> (OLD."assigned_at" IS NULL))
+    OR (TG_OP = 'UPDATE' AND (NEW."returned_at" IS NULL) <> (OLD."returned_at" IS NULL))
     OR (TG_OP = 'UPDATE' AND (NEW."discarded_at" IS NULL) <> (OLD."discarded_at" IS NULL))
     THEN
 
       UPDATE "publishers"
       SET    "packages_transmitted_count" = get_packages_transmitted_count_in_publishers("publishers".*),
-             "packages_approved_count"    = get_packages_approved_count_in_publishers("publishers".*),
-             "packages_rejected_count"    = get_packages_rejected_count_in_publishers("publishers".*),
+             "packages_assigned_count"    = get_packages_assigned_count_in_publishers("publishers".*),
+             "packages_returned_count"    = get_packages_returned_count_in_publishers("publishers".*),
              "reports_transmitted_count"  = get_reports_transmitted_count_in_publishers("publishers".*),
              "reports_approved_count"     = get_reports_approved_count_in_publishers("publishers".*),
              "reports_rejected_count"     = get_reports_rejected_count_in_publishers("publishers".*),
@@ -2615,8 +2618,8 @@ CREATE FUNCTION public.trigger_packages_changes() RETURNS trigger
 
       UPDATE "collectivities"
       SET    "packages_transmitted_count" = get_packages_transmitted_count_in_collectivities("collectivities".*),
-             "packages_approved_count"    = get_packages_approved_count_in_collectivities("collectivities".*),
-             "packages_rejected_count"    = get_packages_rejected_count_in_collectivities("collectivities".*),
+             "packages_assigned_count"    = get_packages_assigned_count_in_collectivities("collectivities".*),
+             "packages_returned_count"    = get_packages_returned_count_in_collectivities("collectivities".*),
              "reports_transmitted_count"  = get_reports_transmitted_count_in_collectivities("collectivities".*),
              "reports_approved_count"     = get_reports_approved_count_in_collectivities("collectivities".*),
              "reports_rejected_count"     = get_reports_rejected_count_in_collectivities("collectivities".*),
@@ -2651,7 +2654,7 @@ CREATE FUNCTION public.trigger_packages_changes() RETURNS trigger
       );
 
       UPDATE "dgfips"
-      SET    "reports_published_count" = get_reports_published_count_in_dgfips("dgfips".*),
+      SET    "reports_delivered_count" = get_reports_delivered_count_in_dgfips("dgfips".*),
              "reports_approved_count"  = get_reports_approved_count_in_dgfips("dgfips".*),
              "reports_rejected_count"  = get_reports_rejected_count_in_dgfips("dgfips".*);
 
@@ -2683,7 +2686,7 @@ CREATE FUNCTION public.trigger_reports_changes() RETURNS trigger
     IF (TG_OP = 'INSERT')
     OR (TG_OP = 'DELETE')
     OR (TG_OP = 'UPDATE' AND NEW."package_id" <> OLD."package_id")
-    OR (TG_OP = 'UPDATE' AND NEW."completed" <> OLD."completed")
+    OR (TG_OP = 'UPDATE' AND NEW."completed_at" IS DISTINCT FROM OLD."completed_at")
     OR (TG_OP = 'UPDATE' AND (NEW."approved_at" IS NULL) <> (OLD."approved_at" IS NULL))
     OR (TG_OP = 'UPDATE' AND (NEW."rejected_at" IS NULL) <> (OLD."rejected_at" IS NULL))
     OR (TG_OP = 'UPDATE' AND (NEW."debated_at" IS NULL) <> (OLD."debated_at" IS NULL))
@@ -2743,7 +2746,7 @@ CREATE FUNCTION public.trigger_reports_changes() RETURNS trigger
          OR  "ddfips"."code_departement" IN (SELECT "communes"."code_departement" FROM "communes" WHERE "communes"."code_insee" = OLD."code_insee" );
 
       UPDATE "dgfips"
-      SET    "reports_published_count" = get_reports_published_count_in_dgfips("dgfips".*),
+      SET    "reports_delivered_count" = get_reports_delivered_count_in_dgfips("dgfips".*),
              "reports_approved_count"  = get_reports_approved_count_in_dgfips("dgfips".*),
              "reports_rejected_count"  = get_reports_rejected_count_in_dgfips("dgfips".*);
 
@@ -2992,7 +2995,6 @@ CREATE TABLE public.reports (
     reference character varying NOT NULL,
     form_type public.form_type NOT NULL,
     anomalies public.anomaly[] NOT NULL,
-    completed boolean DEFAULT false NOT NULL,
     priority public.priority DEFAULT 'low'::public.priority NOT NULL,
     code_insee character varying,
     date_constat date,
@@ -3059,7 +3061,8 @@ CREATE TABLE public.reports (
     proposition_exoneration character varying,
     proposition_date_achevement character varying,
     proposition_numero_permis character varying,
-    proposition_nature_travaux character varying
+    proposition_nature_travaux character varying,
+    completed_at timestamp(6) without time zone
 );
 
 
@@ -4047,6 +4050,9 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230829153550'),
 ('20230830170839'),
 ('20230901084754'),
-('20230904105215');
+('20230904105215'),
+('20230907151950'),
+('20230914083547'),
+('20230914100806');
 
 

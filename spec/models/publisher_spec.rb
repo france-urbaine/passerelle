@@ -213,31 +213,31 @@ RSpec.describe Publisher do
         it { expect { reset_all_counters }.to not_change { publishers[1].reload.packages_transmitted_count }.from(0) }
       end
 
-      describe "on packages_approved_count" do
+      describe "on packages_assigned_count" do
         before do
-          create_list(:package, 2, :approved, publisher: publishers[0])
+          create_list(:package, 2, :assigned, publisher: publishers[0])
 
-          Publisher.update_all(packages_approved_count: 0)
+          Publisher.update_all(packages_assigned_count: 0)
           Publisher.update_all(packages_transmitted_count: 0)
         end
 
-        it { expect { reset_all_counters }.to change { publishers[0].reload.packages_approved_count }.from(0).to(2) }
+        it { expect { reset_all_counters }.to change { publishers[0].reload.packages_assigned_count }.from(0).to(2) }
         it { expect { reset_all_counters }.to change { publishers[0].reload.packages_transmitted_count }.from(0).to(2) }
-        it { expect { reset_all_counters }.to not_change { publishers[1].reload.packages_approved_count }.from(0) }
+        it { expect { reset_all_counters }.to not_change { publishers[1].reload.packages_assigned_count }.from(0) }
         it { expect { reset_all_counters }.to not_change { publishers[1].reload.packages_transmitted_count }.from(0) }
       end
 
-      describe "on packages_rejected_count" do
+      describe "on packages_returned_count" do
         before do
-          create_list(:package, 2, :rejected, publisher: publishers[0])
+          create_list(:package, 2, :returned, publisher: publishers[0])
 
-          Publisher.update_all(packages_rejected_count: 0)
+          Publisher.update_all(packages_returned_count: 0)
           Publisher.update_all(packages_transmitted_count: 0)
         end
 
-        it { expect { reset_all_counters }.to change { publishers[0].reload.packages_rejected_count }.from(0).to(2) }
+        it { expect { reset_all_counters }.to change { publishers[0].reload.packages_returned_count }.from(0).to(2) }
         it { expect { reset_all_counters }.to change { publishers[0].reload.packages_transmitted_count }.from(0).to(2) }
-        it { expect { reset_all_counters }.to not_change { publishers[1].reload.packages_rejected_count }.from(0) }
+        it { expect { reset_all_counters }.to not_change { publishers[1].reload.packages_returned_count }.from(0) }
         it { expect { reset_all_counters }.to not_change { publishers[1].reload.packages_transmitted_count }.from(0) }
       end
     end
@@ -607,79 +607,79 @@ RSpec.describe Publisher do
         end
       end
 
-      describe "#packages_approved_count" do
+      describe "#packages_assigned_count" do
         let(:package) { create(:package, :transmitted, publisher: publishers[0]) }
 
         it "doesn't change on package creation" do
           expect { package }
-            .to  not_change { publishers[0].reload.packages_approved_count }.from(0)
-            .and not_change { publishers[1].reload.packages_approved_count }.from(0)
+            .to  not_change { publishers[0].reload.packages_assigned_count }.from(0)
+            .and not_change { publishers[1].reload.packages_assigned_count }.from(0)
         end
 
-        it "changes when package is approved" do
+        it "changes when package is assigned" do
           package
-          expect { package.approve! }
-            .to change { publishers[0].reload.packages_approved_count }.from(0).to(1)
-            .and not_change { publishers[1].reload.packages_approved_count }.from(0)
+          expect { package.assign! }
+            .to change { publishers[0].reload.packages_assigned_count }.from(0).to(1)
+            .and not_change { publishers[1].reload.packages_assigned_count }.from(0)
         end
 
-        it "changes when approved package is discarded" do
-          package.approve!
+        it "changes when assigned package is discarded" do
+          package.assign!
           expect { package.discard }
-            .to change { publishers[0].reload.packages_approved_count }.from(1).to(0)
-            .and not_change { publishers[1].reload.packages_approved_count }.from(0)
+            .to change { publishers[0].reload.packages_assigned_count }.from(1).to(0)
+            .and not_change { publishers[1].reload.packages_assigned_count }.from(0)
         end
 
-        it "changes when approved package is undiscarded" do
-          package.touch(:approved_at, :discarded_at)
+        it "changes when assigned package is undiscarded" do
+          package.touch(:assigned_at, :discarded_at)
           expect { package.undiscard }
-            .to change { publishers[0].reload.packages_approved_count }.from(0).to(1)
-            .and not_change { publishers[1].reload.packages_approved_count }.from(0)
+            .to change { publishers[0].reload.packages_assigned_count }.from(0).to(1)
+            .and not_change { publishers[1].reload.packages_assigned_count }.from(0)
         end
 
-        it "changes when approved package is deleted" do
-          package.approve!
+        it "changes when assigned package is deleted" do
+          package.assign!
           expect { package.delete }
-            .to change { publishers[0].reload.packages_approved_count }.from(1).to(0)
-            .and not_change { publishers[1].reload.packages_approved_count }.from(0)
+            .to change { publishers[0].reload.packages_assigned_count }.from(1).to(0)
+            .and not_change { publishers[1].reload.packages_assigned_count }.from(0)
         end
       end
 
-      describe "#packages_rejected_count" do
+      describe "#packages_returned_count" do
         let(:package) { create(:package, :transmitted, publisher: publishers[0]) }
 
         it "doesn't change on report creation" do
           expect { package }
-            .to  not_change { publishers[0].reload.packages_rejected_count }.from(0)
-            .and not_change { publishers[1].reload.packages_rejected_count }.from(0)
+            .to  not_change { publishers[0].reload.packages_returned_count }.from(0)
+            .and not_change { publishers[1].reload.packages_returned_count }.from(0)
         end
 
-        it "changes when package is rejected" do
+        it "changes when package is returned" do
           package
-          expect { package.reject! }
-            .to change { publishers[0].reload.packages_rejected_count }.from(0).to(1)
-            .and not_change { publishers[1].reload.packages_rejected_count }.from(0)
+          expect { package.return! }
+            .to change { publishers[0].reload.packages_returned_count }.from(0).to(1)
+            .and not_change { publishers[1].reload.packages_returned_count }.from(0)
         end
 
-        it "changes when rejected package is discarded" do
-          package.reject!
+        it "changes when returned package is discarded" do
+          package.return!
           expect { package.discard }
-            .to change { publishers[0].reload.packages_rejected_count }.from(1).to(0)
-            .and not_change { publishers[1].reload.packages_rejected_count }.from(0)
+            .to change { publishers[0].reload.packages_returned_count }.from(1).to(0)
+            .and not_change { publishers[1].reload.packages_returned_count }.from(0)
         end
 
-        it "changes when rejected package is undiscarded" do
-          package.touch(:rejected_at, :discarded_at)
+        it "changes when returned package is undiscarded" do
+          package.touch(:returned_at, :discarded_at)
           expect { package.undiscard }
-            .to change { publishers[0].reload.packages_rejected_count }.from(0).to(1)
-            .and not_change { publishers[1].reload.packages_rejected_count }.from(0)
+            .to change { publishers[0].reload.packages_returned_count }.from(0).to(1)
+            .and not_change { publishers[1].reload.packages_returned_count }.from(0)
         end
 
-        it "changes when rejected package is deleted" do
-          package.reject!
+        it "changes when returned package is deleted" do
+          package.return!
           expect { package.delete }
-            .to change { publishers[0].reload.packages_rejected_count }.from(1).to(0)
-            .and not_change { publishers[1].reload.packages_rejected_count }.from(0)
+            .to change { publishers[0].reload.packages_returned_count }.from(1).to(0)
+            .and not_change { publishers[1].reload.packages_returned_count }.from(0)
         end
       end
     end

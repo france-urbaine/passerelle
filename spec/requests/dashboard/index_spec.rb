@@ -90,14 +90,14 @@ RSpec.describe "DashboardsController#index" do
 
     context "when signed in as a DDFIP user" do
       let(:ddfip)            { create(:ddfip) }
-      let(:included_reports) { create_list(:report, 1, :package_approved_to_office, ddfip: ddfip) }
+      let(:included_reports) { create_list(:report, 1, :assigned_to_office, ddfip: ddfip) }
       let(:excluded_reports) do
         [
-          create(:report, :package_approved_to_office, :approved, ddfip: ddfip, commune: included_reports.first.commune, office: included_reports.first.commune.offices.first),
-          create(:report, :package_approved_to_office, :sandbox, ddfip: ddfip, commune: included_reports.first.commune, office: included_reports.first.commune.offices.first),
-          create(:report, :package_approved_to_office, :rejected, ddfip: ddfip, commune: included_reports.first.commune, office: included_reports.first.commune.offices.first),
-          create(:report, :package_approved_to_office, :debated, ddfip: ddfip, commune: included_reports.first.commune, office: included_reports.first.commune.offices.first),
-          create(:report, :package_approved_to_office, :discarded, ddfip: ddfip, commune: included_reports.first.commune, office: included_reports.first.commune.offices.first)
+          create(:report, :assigned_to_office, :approved, ddfip: ddfip, commune: included_reports.first.commune, office: included_reports.first.commune.offices.first),
+          create(:report, :assigned_to_office, :sandbox, ddfip: ddfip, commune: included_reports.first.commune, office: included_reports.first.commune.offices.first),
+          create(:report, :assigned_to_office, :rejected, ddfip: ddfip, commune: included_reports.first.commune, office: included_reports.first.commune.offices.first),
+          create(:report, :assigned_to_office, :debated, ddfip: ddfip, commune: included_reports.first.commune, office: included_reports.first.commune.offices.first),
+          create(:report, :assigned_to_office, :discarded, ddfip: ddfip, commune: included_reports.first.commune, office: included_reports.first.commune.offices.first)
         ]
       end
 
@@ -127,8 +127,8 @@ RSpec.describe "DashboardsController#index" do
 
     context "when signed in as a DDFIP admin" do
       let(:ddfip)           { create(:ddfip) }
-      let(:included_report) { create(:report, :package_approved_to_office, ddfip: ddfip) }
-      let(:excluded_report) { create(:report, :package_approved_to_office, :approved, ddfip: ddfip, commune: included_report.commune, office: included_report.commune.offices.first) }
+      let(:included_report) { create(:report, :assigned_to_office, ddfip: ddfip) }
+      let(:excluded_report) { create(:report, :assigned_to_office, :approved, ddfip: ddfip, commune: included_report.commune, office: included_report.commune.offices.first) }
 
       before do
         sign_in_as(:organization_admin, organization: ddfip)
@@ -163,7 +163,7 @@ RSpec.describe "DashboardsController#index" do
       let!(:excluded_reports) do
         [
           create(:report, :transmitted, :sandbox),
-          create(:report, :transmitted, package_rejected: true),
+          create(:report, :transmitted, discarded_at: DateTime.now),
           create(:report, :completed)
         ]
       end

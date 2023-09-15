@@ -71,7 +71,7 @@
           ' En tant qu'administrateur, vous pouvez décider de confirmer ou rejeter chaque paquet dés sa réception,
           ' avant que ceux-ci soient assignés aux guichets.
 
-        = form_block_component(@organisation, :auto_approve_packages) do |block|
+        = form_block_component(@organisation, :auto_assign_packages) do |block|
           input( id="package_approval" type="checkbox" disabled checked )
           label( for="package_approval" ) Confirmer les paquets à la réception
 

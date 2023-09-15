@@ -22,14 +22,14 @@ FactoryBot.define do
       transmitted_at { Time.current }
     end
 
-    trait :approved do
+    trait :assigned do
       transmitted_at { Time.current }
-      approved_at    { Time.current }
+      assigned_at    { Time.current }
     end
 
-    trait :rejected do
+    trait :returned do
       transmitted_at { Time.current }
-      rejected_at    { Time.current }
+      returned_at    { Time.current }
     end
 
     trait :discarded do
@@ -41,7 +41,7 @@ FactoryBot.define do
     end
 
     trait :completed do
-      completed { true }
+      completed_at { Time.current }
     end
 
     trait :with_reports do
@@ -76,7 +76,7 @@ FactoryBot.define do
             publisher:    publisher,
             collectivity: collectivity,
             package:      instance,
-            completed:    completed,
+            completed_at: completed_at,
             commune:      communes.sample
         end
       end

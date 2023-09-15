@@ -5,7 +5,7 @@ module Reports
     alias_record :report
 
     before_save do
-      record.completed = Reports::CheckCompletenessService.new(record).valid?
+      record.complete! if Reports::CheckCompletenessService.new(record).valid?
     end
 
     def anomalies=(value)

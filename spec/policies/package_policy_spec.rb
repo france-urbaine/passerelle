@@ -529,9 +529,8 @@ RSpec.describe PackagePolicy, stub_factories: false do
           INNER JOIN      "reports"  ON "reports"."package_id" = "packages"."id"
           INNER JOIN      "communes" ON "communes"."code_insee" = "reports"."code_insee"
           WHERE  "packages"."discarded_at" IS NULL
-            AND  "packages"."sandbox" = FALSE
             AND  "packages"."transmitted_at" IS NOT NULL
-            AND  "packages"."rejected_at" IS NULL
+            AND  "packages"."sandbox" = FALSE
             AND  "reports"."discarded_at" IS NULL
             AND  "communes"."code_departement" = '#{current_organization.code_departement}'
         SQL
@@ -607,9 +606,9 @@ RSpec.describe PackagePolicy, stub_factories: false do
           SELECT "packages".*
           FROM   "packages"
           WHERE  "packages"."discarded_at" IS NULL
+            AND  "packages"."transmitted_at" IS NULL
             AND  "packages"."collectivity_id" = '#{current_organization.id}'
             AND  "packages"."publisher_id" IS NULL
-            AND  "packages"."transmitted_at" IS NULL
         SQL
       end
     end
@@ -645,9 +644,9 @@ RSpec.describe PackagePolicy, stub_factories: false do
           SELECT "packages".*
           FROM   "packages"
           WHERE  "packages"."discarded_at" IS NOT NULL
+            AND  "packages"."transmitted_at" IS NULL
             AND  "packages"."collectivity_id" = '#{current_organization.id}'
             AND  "packages"."publisher_id" IS NULL
-            AND  "packages"."transmitted_at" IS NULL
         SQL
       end
     end

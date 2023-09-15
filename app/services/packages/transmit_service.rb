@@ -14,8 +14,8 @@ module Packages
       @package.transmit!
 
       # The workflow is simplified :
-      # packages are auto-approved.
-      @package.approve!
+      # packages are auto-assigned.
+      @package.assign!
 
       true
     end

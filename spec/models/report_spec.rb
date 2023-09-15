@@ -229,67 +229,53 @@ RSpec.describe Report do
       end
     end
 
-    describe ".published" do
+    describe ".delivered" do
       it "scopes on transmitted reports, not discarded and not tagged as sandbox" do
         expect {
-          described_class.published.load
+          described_class.delivered.load
         }.to perform_sql_query(<<~SQL)
           SELECT     "reports".*
           FROM       "reports"
           INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
           WHERE      "packages"."transmitted_at" IS NOT NULL
-            AND      "packages"."discarded_at" IS NULL
-            AND      "reports"."discarded_at" IS NULL
             AND      "packages"."sandbox" = FALSE
         SQL
       end
     end
 
-    describe ".approved_packages" do
-      it "scopes on transmitted reports with package approved by DDFIP" do
+    describe ".assigned" do
+      it "scopes on transmitted reports with package assigned by DDFIP" do
         expect {
-          described_class.approved_packages.load
+          described_class.assigned.load
         }.to perform_sql_query(<<~SQL)
           SELECT     "reports".*
           FROM       "reports"
           INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
           WHERE      "packages"."transmitted_at" IS NOT NULL
-            AND      "packages"."approved_at" IS NOT NULL
-            AND      "packages"."rejected_at" IS NULL
+            AND      "packages"."sandbox" = FALSE
+            AND      "packages"."assigned_at" IS NOT NULL
+            AND      "packages"."returned_at" IS NULL
         SQL
       end
     end
 
-    describe ".rejected_packages" do
-      it "scopes on transmitted reports with package rejected by DDFIP" do
+    describe ".returned" do
+      it "scopes on transmitted reports with package returned by DDFIP" do
         expect {
-          described_class.rejected_packages.load
+          described_class.returned.load
         }.to perform_sql_query(<<~SQL)
           SELECT     "reports".*
           FROM       "reports"
           INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
           WHERE      "packages"."transmitted_at" IS NOT NULL
-            AND      "packages"."rejected_at" IS NOT NULL
-        SQL
-      end
-    end
-
-    describe ".unrejected_packages" do
-      it "scopes on transmitted reports with package not yet rejected by DDFIP" do
-        expect {
-          described_class.unrejected_packages.load
-        }.to perform_sql_query(<<~SQL)
-          SELECT     "reports".*
-          FROM       "reports"
-          INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
-          WHERE      "packages"."transmitted_at" IS NOT NULL
-            AND      "packages"."rejected_at" IS NULL
+            AND      "packages"."sandbox" = FALSE
+            AND      "packages"."returned_at" IS NOT NULL
         SQL
       end
     end
 
     describe ".pending" do
-      it "scopes on published reports waiting for decision" do
+      it "scopes on delivered reports waiting for decision" do
         expect {
           described_class.pending.load
         }.to perform_sql_query(<<~SQL)
@@ -297,8 +283,6 @@ RSpec.describe Report do
           FROM       "reports"
           INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
           WHERE      "packages"."transmitted_at" IS NOT NULL
-            AND      "packages"."discarded_at" IS NULL
-            AND      "reports"."discarded_at" IS NULL
             AND      "packages"."sandbox" = FALSE
             AND      "reports"."approved_at" IS NULL
             AND      "reports"."rejected_at" IS NULL
@@ -316,8 +300,6 @@ RSpec.describe Report do
           FROM       "reports"
           INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
           WHERE      "packages"."transmitted_at" IS NOT NULL
-            AND      "packages"."discarded_at" IS NULL
-            AND      "reports"."discarded_at" IS NULL
             AND      "packages"."sandbox" = FALSE
             AND (
               "reports"."approved_at" IS NOT NULL
@@ -337,8 +319,6 @@ RSpec.describe Report do
           FROM       "reports"
           INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
           WHERE      "packages"."transmitted_at" IS NOT NULL
-            AND      "packages"."discarded_at" IS NULL
-            AND      "reports"."discarded_at" IS NULL
             AND      "packages"."sandbox" = FALSE
             AND      "reports"."approved_at" IS NOT NULL
         SQL
@@ -354,8 +334,6 @@ RSpec.describe Report do
           FROM       "reports"
           INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
           WHERE      "packages"."transmitted_at" IS NOT NULL
-            AND      "packages"."discarded_at" IS NULL
-            AND      "reports"."discarded_at" IS NULL
             AND      "packages"."sandbox" = FALSE
             AND      "reports"."rejected_at" IS NOT NULL
         SQL
@@ -371,8 +349,6 @@ RSpec.describe Report do
           FROM       "reports"
           INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
           WHERE      "packages"."transmitted_at" IS NOT NULL
-            AND      "packages"."discarded_at" IS NULL
-            AND      "reports"."discarded_at" IS NULL
             AND      "packages"."sandbox" = FALSE
             AND      "reports"."debated_at" IS NOT NULL
         SQL
@@ -545,9 +521,9 @@ RSpec.describe Report do
         build(:package, collectivity: collectivity),
         build(:package, :transmitted, collectivity: collectivity),
         build(:package, :transmitted, collectivity: collectivity, publisher: publisher, sandbox: true),
-        build(:package, :rejected,            collectivity: collectivity),
-        build(:package, :approved, :rejected, collectivity: collectivity),
-        build(:package, :approved,            collectivity: collectivity)
+        build(:package, :returned,            collectivity: collectivity),
+        build(:package, :assigned, :returned, collectivity: collectivity),
+        build(:package, :assigned,            collectivity: collectivity)
       ]
     end
 
@@ -559,10 +535,9 @@ RSpec.describe Report do
         build(:report, package: packages[3]),             # 3
         build(:report, package: packages[4]),             # 4
         build(:report, package: packages[5]),             # 5
-        build(:report, :discarded, package: packages[5]), # 6
-        build(:report, :approved,  package: packages[5]), # 7
-        build(:report, :rejected,  package: packages[5]), # 8
-        build(:report, :debated,   package: packages[5])  # 9
+        build(:report, :approved,  package: packages[5]), # 6
+        build(:report, :rejected,  package: packages[5]), # 7
+        build(:report, :debated,   package: packages[5])  # 8
       ]
     end
 
@@ -571,17 +546,16 @@ RSpec.describe Report do
       it { expect(reports[1..]).to all(be_transmitted) }
     end
 
-    describe "#published?" do
-      it { expect(reports[0]).not_to be_published }
-      it { expect(reports[1]).to     be_published }
-      it { expect(reports[2]).not_to be_published }
-      it { expect(reports[3]).to     be_published }
-      it { expect(reports[4]).to     be_published }
-      it { expect(reports[5]).to     be_published }
-      it { expect(reports[6]).not_to be_published }
-      it { expect(reports[7]).to     be_published }
-      it { expect(reports[8]).to     be_published }
-      it { expect(reports[9]).to     be_published }
+    describe "#delivered?" do
+      it { expect(reports[0]).not_to be_delivered }
+      it { expect(reports[1]).to     be_delivered }
+      it { expect(reports[2]).not_to be_delivered }
+      it { expect(reports[3]).to     be_delivered }
+      it { expect(reports[4]).to     be_delivered }
+      it { expect(reports[5]).to     be_delivered }
+      it { expect(reports[6]).to     be_delivered }
+      it { expect(reports[7]).to     be_delivered }
+      it { expect(reports[8]).to     be_delivered }
     end
 
     describe "#pending?" do
@@ -589,31 +563,27 @@ RSpec.describe Report do
       it { expect(reports[6]).not_to be_pending }
       it { expect(reports[7]).not_to be_pending }
       it { expect(reports[8]).not_to be_pending }
-      it { expect(reports[9]).not_to be_pending }
     end
 
     describe "#approved?" do
       it { expect(reports[5]).not_to be_approved }
-      it { expect(reports[6]).not_to be_approved }
-      it { expect(reports[7]).to     be_approved }
+      it { expect(reports[6]).to     be_approved }
+      it { expect(reports[7]).not_to be_approved }
       it { expect(reports[8]).not_to be_approved }
-      it { expect(reports[9]).not_to be_approved }
     end
 
     describe "#rejected?" do
       it { expect(reports[5]).not_to be_rejected }
       it { expect(reports[6]).not_to be_rejected }
-      it { expect(reports[7]).not_to be_rejected }
-      it { expect(reports[8]).to     be_rejected }
-      it { expect(reports[9]).not_to be_rejected }
+      it { expect(reports[7]).to     be_rejected }
+      it { expect(reports[8]).not_to be_rejected }
     end
 
     describe "#debated?" do
       it { expect(reports[5]).not_to be_debated }
       it { expect(reports[6]).not_to be_debated }
       it { expect(reports[7]).not_to be_debated }
-      it { expect(reports[8]).not_to be_debated }
-      it { expect(reports[9]).to     be_debated }
+      it { expect(reports[8]).to     be_debated }
     end
   end
 

@@ -41,7 +41,7 @@ class PackagePolicy < ApplicationPolicy
     end
   end
 
-  def approve?
+  def assign?
     false
     # if record == Package
     #   ddfip_admin?
@@ -111,171 +111,170 @@ class PackagePolicy < ApplicationPolicy
 
   private
 
-  # List packages that can be listed to an user
+  # Authorizations for collectivities
   # ----------------------------------------------------------------------------
-  def packages_listed_to_collectivity
-    return Package.none unless collectivity?
+  concerning :Collectivities do
+    def package_shown_to_collectivity?(package)
+      collectivity? &&
+        package.out_of_sandbox? &&
+        package.sent_by_collectivity?(organization) &&
+        (package.packed_through_web_ui? || package.transmitted?)
+    end
 
-    # Collectivities can see all packages they've packed through the web UI and
-    # those fully transmitted by their publishers
-    #
-    Package
-      .kept
-      .out_of_sandbox
-      .sent_by_collectivity(organization)
-      .merge(Package.packed_through_web_ui.or(Package.transmitted))
+    def package_updatable_by_collectivity?(package)
+      collectivity? &&
+        package.packing? &&
+        package.sent_by_collectivity?(organization) &&
+        package.packed_through_web_ui?
+    end
+
+    def package_transmittable_by_collectivity?(package)
+      package_updatable_by_collectivity?(package) && package.completed?
+    end
+
+    def package_destroyable_by_collectivity?(package)
+      collectivity? &&
+        package.packing? &&
+        package.sent_by_collectivity?(organization) &&
+        package.packed_through_web_ui?
+    end
+
+    def packages_listed_to_collectivity
+      return Package.none unless collectivity?
+
+      # Collectivities can list all packages they've packed through the web UI
+      # and those fully transmitted by their publishers.
+      #
+      Package
+        .kept
+        .out_of_sandbox
+        .sent_by_collectivity(organization)
+        .merge(Package.packed_through_web_ui.or(Package.transmitted))
+    end
+
+    def packages_destroyable_by_collectivity
+      return Package.none unless collectivity?
+
+      Package
+        .kept
+        .packing
+        .sent_by_collectivity(organization)
+        .packed_through_web_ui
+    end
+
+    def packages_undiscardable_by_collectivity
+      return Package.none unless collectivity?
+
+      Package
+        .discarded
+        .packing
+        .sent_by_collectivity(organization)
+        .packed_through_web_ui
+    end
+
+    def packages_to_pack_report_by_collectivity(report)
+      return Package.none unless collectivity? && organization == report.collectivity
+
+      Package
+        .kept
+        .packing
+        .sent_by_collectivity(organization)
+        .packed_through_web_ui
+        .where(form_type: report.form_type)
+    end
   end
 
-  def packages_listed_to_publisher
-    return Package.none unless publisher?
-
-    # Publisher can only see packages they packed through their API.
-    # It excludes those packed though the web UI by their owned collectivities.
-    #
-    # The scope `packed_through_publisher_api` is implied by `sent_by_publisher`
-    # and will be redundant if added.
-    #
-    Package.kept.sent_by_publisher(organization)
-  end
-
-  def packages_listed_to_ddfip_admins
-    return Package.none unless ddfip_admin?
-
-    Package
-      .kept
-      .out_of_sandbox
-      .unrejected
-      .with_reports(Report.kept.covered_by_ddfip(organization))
-  end
-
-  # Assert if a package can be shown to an user
+  # Authorizations for publishers
   # ----------------------------------------------------------------------------
-  def package_shown_to_collectivity?(package)
-    collectivity? &&
-      package.sent_by_collectivity?(organization) &&
-      package.out_of_sandbox? &&
-      (package.packed_through_web_ui? || package.transmitted?)
+  concerning :Publishers do
+    def package_shown_to_publisher?(package)
+      publisher? &&
+        package.sent_by_publisher?(organization)
+    end
+
+    def package_updatable_by_publisher?(package)
+      publisher? &&
+        package.packing? &&
+        package.sent_by_publisher?(organization) &&
+        package.packed_through_publisher_api?
+    end
+
+    def package_transmittable_by_publisher?(package)
+      package_updatable_by_publisher?(package) && package.completed?
+    end
+
+    def package_destroyable_by_publisher?(package)
+      publisher? &&
+        package.sent_by_publisher?(organization) &&
+        package.packed_through_publisher_api? &&
+        (package.packing? || package.sandbox?)
+    end
+
+    def packages_listed_to_publisher
+      return Package.none unless publisher?
+
+      # Publisher can only list packages they packed through their API.
+      # It excludes those packed though the web UI by their owned collectivities.
+      #
+      # The scope `packed_through_publisher_api` is implied by `sent_by_publisher`
+      # and will be redundant if added.
+      #
+      Package
+        .kept
+        .sent_by_publisher(organization)
+    end
+
+    def packages_destroyable_by_publisher
+      return Package.none unless publisher?
+
+      Package
+        .kept
+        .sent_by_publisher(organization)
+        .merge(Package.packing.or(Package.sandbox))
+    end
+
+    def packages_undiscardable_by_publisher
+      return Package.none unless publisher?
+
+      Package
+        .discarded
+        .sent_by_publisher(organization)
+        .merge(Package.packing.or(Package.sandbox))
+    end
+
+    def packages_to_pack_report_by_publisher(report)
+      return Package.none unless publisher? && organization == report.publisher
+
+      Package
+        .kept
+        .packing
+        .sent_by_publisher(organization)
+        .sent_by_collectivity(report.collectivity)
+        .where(form_type: report.form_type)
+    end
   end
 
-  def package_shown_to_publisher?(package)
-    publisher? &&
-      package.sent_by_publisher?(organization) &&
-      package.packed_through_publisher_api?
-  end
-
-  def package_shown_to_ddfip_admin?(package)
-    ddfip_admin? &&
-      package.kept? &&
-      package.out_of_sandbox? &&
-      package.transmitted? &&
-      package.reports.covered_by_ddfip(organization).any?
-  end
-
-  # List packages that can receive reports by an user
+  # Authorizations for DDFIPs
   # ----------------------------------------------------------------------------
-  def packages_to_pack_report_by_collectivity(report)
-    return Package.none unless collectivity? && organization == report.collectivity
+  concerning :DDFIPs do
+    def packages_listed_to_ddfip_admins
+      return Package.none unless ddfip_admin?
 
-    Package.kept.packing
-      .sent_by_collectivity(organization)
-      .packed_through_web_ui
-      .where(form_type: report.form_type)
-  end
+      Package
+        .kept
+        .delivered
+        .with_reports(Report.kept.covered_by_ddfip(organization))
+    end
 
-  def packages_to_pack_report_by_publisher(report)
-    return Package.none unless publisher? && organization == report.publisher
+    def package_shown_to_ddfip_admin?(package)
+      ddfip_admin? &&
+        package.kept? &&
+        package.delivered? &&
+        package.reports.covered_by_ddfip(organization).any?
+    end
 
-    Package.kept.packing
-      .sent_by_publisher(organization)
-      .sent_by_collectivity(report.collectivity)
-      .where(form_type: report.form_type)
-  end
-
-  # Assert if a package can be updated by an user
-  # ----------------------------------------------------------------------------
-  def package_updatable_by_collectivity?(package)
-    collectivity? &&
-      package.sent_by_collectivity?(organization) &&
-      package.packed_through_web_ui? &&
-      package.packing?
-  end
-
-  def package_updatable_by_publisher?(package)
-    publisher? &&
-      package.sent_by_publisher?(organization) &&
-      package.packed_through_publisher_api? &&
-      package.packing?
-  end
-
-  # Assert if a package can be transmitted by an user
-  # ----------------------------------------------------------------------------
-  def package_transmittable_by_collectivity?(package)
-    package_updatable_by_collectivity?(package) && package.completed?
-  end
-
-  def package_transmittable_by_publisher?(package)
-    package_updatable_by_publisher?(package) && package.completed?
-  end
-
-  def package_approvable_by_ddfip_admin?(package)
-    package_shown_to_ddfip_admin?(package)
-  end
-
-  # List packages that can be destroyed by an user
-  # ----------------------------------------------------------------------------
-  def packages_destroyable_by_collectivity
-    return Package.none unless collectivity?
-
-    Package
-      .kept
-      .sent_by_collectivity(organization)
-      .packed_through_web_ui
-      .packing
-  end
-
-  def packages_destroyable_by_publisher
-    return Package.none unless publisher?
-
-    Package
-      .kept
-      .sent_by_publisher(organization)
-      .merge(Package.packing.or(Package.sandbox))
-  end
-
-  # List packages that can be undiscarded by an user
-  # ----------------------------------------------------------------------------
-  def packages_undiscardable_by_collectivity
-    return Package.none unless collectivity?
-
-    Package
-      .discarded
-      .sent_by_collectivity(organization)
-      .packed_through_web_ui
-      .packing
-  end
-
-  def packages_undiscardable_by_publisher
-    return Package.none unless publisher?
-
-    Package
-      .discarded
-      .sent_by_publisher(organization)
-      .merge(Package.packing.or(Package.sandbox))
-  end
-
-  # Assert if a package can be destroyed by an user
-  # ----------------------------------------------------------------------------
-  def package_destroyable_by_collectivity?(package)
-    collectivity? &&
-      package.sent_by_collectivity?(organization) &&
-      package.packed_through_web_ui? &&
-      package.packing?
-  end
-
-  def package_destroyable_by_publisher?(package)
-    publisher? &&
-      package.sent_by_publisher?(organization) &&
-      package.packed_through_publisher_api? &&
-      (package.packing? || package.sandbox?)
+    def package_assignable_by_ddfip_admin?(package)
+      package_shown_to_ddfip_admin?(package)
+    end
   end
 end

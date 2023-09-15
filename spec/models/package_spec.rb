@@ -80,57 +80,46 @@ RSpec.describe Package do
       end
     end
 
-    describe ".to_approve" do
+    describe ".unresolved" do
       it "scopes on transmitted and undiscarded packages waiting for approval" do
         expect {
-          described_class.to_approve.load
+          described_class.unresolved.load
         }.to perform_sql_query(<<~SQL)
           SELECT "packages".*
           FROM   "packages"
           WHERE  "packages"."transmitted_at" IS NOT NULL
-            AND  "packages"."discarded_at" IS NULL
-            AND  "packages"."approved_at" IS NULL
-            AND  "packages"."rejected_at" IS NULL
+            AND  "packages"."sandbox" = FALSE
+            AND  "packages"."assigned_at" IS NULL
+            AND  "packages"."returned_at" IS NULL
         SQL
       end
     end
 
-    describe ".approved" do
-      it "scopes on packages approved by a DDFIP" do
+    describe ".assigned" do
+      it "scopes on packages assigned by a DDFIP" do
         expect {
-          described_class.approved.load
+          described_class.assigned.load
         }.to perform_sql_query(<<~SQL)
           SELECT "packages".*
           FROM   "packages"
           WHERE  "packages"."transmitted_at" IS NOT NULL
-            AND  "packages"."approved_at" IS NOT NULL
-            AND  "packages"."rejected_at" IS NULL
+            AND  "packages"."sandbox" = FALSE
+            AND  "packages"."assigned_at" IS NOT NULL
+            AND  "packages"."returned_at" IS NULL
         SQL
       end
     end
 
-    describe ".rejected" do
-      it "scopes on packages rejected by a DDFIP" do
+    describe ".returned" do
+      it "scopes on packages returned by a DDFIP" do
         expect {
-          described_class.rejected.load
+          described_class.returned.load
         }.to perform_sql_query(<<~SQL)
           SELECT "packages".*
           FROM   "packages"
           WHERE  "packages"."transmitted_at" IS NOT NULL
-            AND  "packages"."rejected_at" IS NOT NULL
-        SQL
-      end
-    end
-
-    describe ".unrejected" do
-      it "scopes on packages rejected by a DDFIP" do
-        expect {
-          described_class.unrejected.load
-        }.to perform_sql_query(<<~SQL)
-          SELECT "packages".*
-          FROM   "packages"
-          WHERE  "packages"."transmitted_at" IS NOT NULL
-            AND  "packages"."rejected_at" IS NULL
+            AND  "packages"."sandbox" = FALSE
+            AND  "packages"."returned_at" IS NOT NULL
         SQL
       end
     end
@@ -249,9 +238,9 @@ RSpec.describe Package do
       [
         build_stubbed(:package, collectivity: collectivities[0]),
         build_stubbed(:package, :transmitted, collectivity: collectivities[0], publisher: publisher),
-        build_stubbed(:package, :approved, collectivity: collectivities[0]),
-        build_stubbed(:package, :rejected, collectivity: collectivities[0]),
-        build_stubbed(:package, :approved, :rejected, collectivity: collectivities[1]),
+        build_stubbed(:package, :assigned, collectivity: collectivities[0]),
+        build_stubbed(:package, :returned, collectivity: collectivities[0]),
+        build_stubbed(:package, :assigned, :returned, collectivity: collectivities[1]),
         build_stubbed(:package, :transmitted, collectivity: collectivities[0], publisher: publisher, sandbox: true),
         build(:package, collectivity: collectivities[0]),
         build(:package, collectivity: collectivities[1], publisher: publisher)
@@ -283,36 +272,28 @@ RSpec.describe Package do
       it { expect(packages[4]).to be_transmitted }
     end
 
-    describe "#to_approve?" do
-      it { expect(packages[0]).not_to be_to_approve }
-      it { expect(packages[1]).to be_to_approve }
-      it { expect(packages[2]).not_to be_to_approve }
-      it { expect(packages[3]).not_to be_to_approve }
-      it { expect(packages[4]).not_to be_to_approve }
+    describe "#unresolved?" do
+      it { expect(packages[0]).not_to be_unresolved }
+      it { expect(packages[1]).to be_unresolved }
+      it { expect(packages[2]).not_to be_unresolved }
+      it { expect(packages[3]).not_to be_unresolved }
+      it { expect(packages[4]).not_to be_unresolved }
     end
 
-    describe "#approved?" do
-      it { expect(packages[0]).not_to be_approved }
-      it { expect(packages[1]).not_to be_approved }
-      it { expect(packages[2]).to be_approved }
-      it { expect(packages[3]).not_to be_approved }
-      it { expect(packages[4]).not_to be_approved }
+    describe "#assigned?" do
+      it { expect(packages[0]).not_to be_assigned }
+      it { expect(packages[1]).not_to be_assigned }
+      it { expect(packages[2]).to be_assigned }
+      it { expect(packages[3]).not_to be_assigned }
+      it { expect(packages[4]).not_to be_assigned }
     end
 
-    describe "#rejected?" do
-      it { expect(packages[0]).not_to be_rejected }
-      it { expect(packages[1]).not_to be_rejected }
-      it { expect(packages[2]).not_to be_rejected }
-      it { expect(packages[3]).to be_rejected }
-      it { expect(packages[4]).to be_rejected }
-    end
-
-    describe "#unrejected?" do
-      it { expect(packages[0]).not_to be_unrejected }
-      it { expect(packages[1]).to be_unrejected }
-      it { expect(packages[2]).to be_unrejected }
-      it { expect(packages[3]).not_to be_unrejected }
-      it { expect(packages[4]).not_to be_unrejected }
+    describe "#returned?" do
+      it { expect(packages[0]).not_to be_returned }
+      it { expect(packages[1]).not_to be_returned }
+      it { expect(packages[2]).not_to be_returned }
+      it { expect(packages[3]).to be_returned }
+      it { expect(packages[4]).to be_returned }
     end
 
     describe "#packed_through_publisher_api?" do
@@ -379,85 +360,85 @@ RSpec.describe Package do
       end
     end
 
-    describe "#approve!" do
+    describe "#assign!" do
       it "returns true" do
         package = create(:package, :transmitted)
-        expect(package.approve!).to be(true)
+        expect(package.assign!).to be(true)
       end
 
-      it "returns true when package was already approved" do
-        package = create(:package, :approved)
-        expect(package.approve!).to be(true)
+      it "returns true when package was already assigned" do
+        package = create(:package, :assigned)
+        expect(package.assign!).to be(true)
       end
 
-      it "marks the package as approved" do
+      it "marks the package as assigned" do
         package = create(:package, :transmitted)
 
         expect {
-          package.approve!
+          package.assign!
           package.reload
-        }.to change(package, :approved_at).to(be_present)
+        }.to change(package, :assigned_at).to(be_present)
       end
 
-      it "resets rejection time" do
-        package = create(:package, :rejected)
+      it "resets return time" do
+        package = create(:package, :returned)
 
         expect {
-          package.approve!
+          package.assign!
           package.reload
-        }.to change(package, :rejected_at).to(nil)
+        }.to change(package, :returned_at).to(nil)
       end
 
       it "doesn't update previous approval time" do
         package = Timecop.freeze(2.minutes.ago) do
-          create(:package, :approved)
+          create(:package, :assigned)
         end
 
         expect {
-          package.approve!
+          package.assign!
           package.reload
-        }.not_to change(package, :approved_at)
+        }.not_to change(package, :assigned_at)
       end
     end
 
-    describe "#reject!" do
+    describe "#return!" do
       it "returns true" do
         package = create(:package, :transmitted)
-        expect(package.reject!).to be(true)
+        expect(package.return!).to be(true)
       end
 
-      it "returns true when package was already rejected" do
-        package = create(:package, :rejected)
-        expect(package.reject!).to be(true)
+      it "returns true when package was already returned" do
+        package = create(:package, :returned)
+        expect(package.return!).to be(true)
       end
 
-      it "marks the package as approved" do
+      it "marks the package as assigned" do
         package = create(:package, :transmitted)
 
         expect {
-          package.reject!
+          package.return!
           package.reload
-        }.to change(package, :rejected_at).to(be_present)
+        }.to change(package, :returned_at).to(be_present)
       end
 
       it "reset approval time" do
-        package = create(:package, :approved)
+        package = create(:package, :assigned)
 
         expect {
-          package.reject!
+          package.return!
           package.reload
-        }.to change(package, :approved_at).to(nil)
+        }.to change(package, :assigned_at).to(nil)
       end
 
-      it "doesn't update previous rejection time" do
+      it "doesn't update previous return time" do
         package = Timecop.freeze(2.minutes.ago) do
-          create(:package, :rejected)
+          create(:package, :returned)
         end
 
         expect {
-          package.reject!
+          package.return!
           package.reload
-        }.not_to change(package, :rejected_at)
+        }.not_to change(package, :returned_at)
       end
     end
 
@@ -571,7 +552,7 @@ RSpec.describe Package do
         end
 
         it "changes on creation when report is already completed" do
-          report.completed = true
+          report.completed_at = Time.current
 
           expect { report.save! }
             .to change { packages[0].reload.reports_completed_count }.from(0).to(1)
@@ -581,13 +562,13 @@ RSpec.describe Package do
         it "changes when report is completed" do
           report.save!
 
-          expect { report.update_columns(completed: true) }
+          expect { report.update_columns(completed_at: Time.current) }
             .to change { packages[0].reload.reports_completed_count }.from(0).to(1)
             .and not_change { packages[1].reload.reports_completed_count }.from(0)
         end
 
         it "changes when completed report is deleted" do
-          report.completed = true
+          report.completed_at = Time.current
           report.save!
 
           expect { report.delete }

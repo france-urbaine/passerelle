@@ -24,8 +24,8 @@ FactoryBot.define do
     transient do
       package_sandbox       { false }
       package_transmitted   { false }
-      package_approved      { false }
-      package_rejected      { false }
+      assigned              { false }
+      returned              { false }
       packed_through_web_ui { publisher.nil? }
     end
 
@@ -33,8 +33,8 @@ FactoryBot.define do
       package_traits = []
       package_traits << :sandbox               if package_sandbox
       package_traits << :transmitted           if package_transmitted
-      package_traits << :approved              if package_approved
-      package_traits << :rejected              if package_rejected
+      package_traits << :assigned              if assigned
+      package_traits << :returned              if returned
       package_traits << :packed_through_web_ui if packed_through_web_ui
 
       attributes = { form_type: form_type }
@@ -92,7 +92,7 @@ FactoryBot.define do
     end
 
     trait :completed do
-      completed { true }
+      completed_at { Time.current }
     end
 
     trait :sandbox do
@@ -187,22 +187,22 @@ FactoryBot.define do
       reported_for_ddfip
     end
 
-    trait :package_approved_to_office do
+    trait :assigned_to_office do
       transmitted
       reported_for_office
-      package_approved { true }
+      assigned { true }
     end
 
-    trait :package_approved_by_ddfip do
+    trait :assigned_by_ddfip do
       transmitted
       reported_for_ddfip
-      package_approved { true }
+      assigned { true }
     end
 
-    trait :package_rejected_by_ddfip do
+    trait :returned_by_ddfip do
       transmitted
       reported_for_ddfip
-      package_rejected { true }
+      returned { true }
     end
   end
 end

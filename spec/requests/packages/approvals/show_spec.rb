@@ -60,15 +60,15 @@ RSpec.describe "Packages::ApprovalsController#show" do
       it_behaves_like "it allows access to DDFIP admin"
     end
 
-    context "when package has been approved to current user DDFIP" do
-      let(:package) { create(:package, :transmitted_to_ddfip, :approved, ddfip: current_user.organization) }
+    context "when package has been assigned to current user DDFIP" do
+      let(:package) { create(:package, :transmitted_to_ddfip, :assigned, ddfip: current_user.organization) }
 
       it_behaves_like "it denies access to DDFIP user"
       it_behaves_like "it allows access to DDFIP admin"
     end
 
-    context "when package has been rejected to current user DDFIP" do
-      let(:package) { create(:package, :transmitted_to_ddfip, :rejected, ddfip: current_user.organization) }
+    context "when package has been returned to current user DDFIP" do
+      let(:package) { create(:package, :transmitted_to_ddfip, :returned, ddfip: current_user.organization) }
 
       it_behaves_like "it denies access to DDFIP user"
       it_behaves_like "it allows access to DDFIP admin"
