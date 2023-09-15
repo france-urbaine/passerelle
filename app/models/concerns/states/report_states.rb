@@ -12,12 +12,12 @@ module States
       scope :delivered,           -> { joins(:package).merge(Package.unscoped.delivered) }
       scope :assigned,            -> { joins(:package).merge(Package.unscoped.assigned) }
       scope :returned,            -> { joins(:package).merge(Package.unscoped.returned) }
+      scope :unreturned,          -> { joins(:package).merge(Package.unscoped.unreturned) }
       scope :pending,             -> { delivered.where(approved_at: nil, rejected_at: nil, debated_at: nil) }
       scope :updated_by_ddfip,    -> { approved.or(rejected).or(debated) }
       scope :approved,            -> { delivered.where.not(approved_at: nil) }
       scope :rejected,            -> { delivered.where.not(rejected_at: nil) }
       scope :debated,             -> { delivered.where.not(debated_at: nil) }
-      scope :unreturned, -> { joins(:package).merge(Package.unscoped.unreturned) }
 
       # Predicates
       # ----------------------------------------------------------------------------

@@ -8,8 +8,8 @@ module States
       # Scopes
       # ----------------------------------------------------------------------------
       scope :packing,      -> { where(transmitted_at: nil) }
-      scope :delivered,    -> { transmitted.out_of_sandbox }
       scope :transmitted,  -> { where.not(transmitted_at: nil) }
+      scope :delivered,    -> { transmitted.out_of_sandbox }
       scope :unresolved,   -> { transmitted.where(assigned_at: nil, returned_at: nil) }
       scope :assigned,     -> { transmitted.where.not(assigned_at: nil).where(returned_at: nil) }
       scope :returned,     -> { transmitted.where.not(returned_at: nil) }
@@ -21,12 +21,12 @@ module States
         !transmitted_at?
       end
 
-      def delivered?
-        transmitted? && out_of_sandbox?
-      end
-
       def transmitted?
         transmitted_at?
+      end
+
+      def delivered?
+        transmitted? && out_of_sandbox?
       end
 
       def unresolved?

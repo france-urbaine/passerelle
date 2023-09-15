@@ -5,7 +5,7 @@ module BadgeHelper
     approved:         "badge--green",
     rejected:         "badge--red",
     debated:          "badge--orange",
-    returned: "badge--red",
+    returned:         "badge--red",
     assigned:         "badge--blue",
     transmitted:      "badge--violet",
     completed:        "badge--pink",
