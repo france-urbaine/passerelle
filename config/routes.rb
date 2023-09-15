@@ -102,7 +102,11 @@ Rails.application.routes.draw do
       resources :collectivities, concerns: %i[removable removable_collection], path: "/collectivites" do
         scope module: "collectivities" do
           resources :offices, only: %i[index], path: "/guichets"
-          resources :users,   concerns: %i[removable removable_collection], path: "/utilisateurs"
+          resources :users,   concerns: %i[removable removable_collection], path: "/utilisateurs" do
+            scope module: "users" do
+              resource :invitation, only: %i[new create]
+            end
+          end
         end
       end
 
@@ -126,7 +130,11 @@ Rails.application.routes.draw do
 
       resources :oauth_applications, concerns: %i[removable removable_collection]
 
-      resources :users, concerns: %i[removable removable_collection], path: "/utilisateurs"
+      resources :users, concerns: %i[removable removable_collection], path: "/utilisateurs" do
+        scope module: "users" do
+          resource :invitation, only: %i[new create]
+        end
+      end
     end
 
     # Admin stuff
@@ -178,7 +186,12 @@ Rails.application.routes.draw do
         end
       end
 
-      resources :users, concerns: %i[removable removable_collection], path: "/utilisateurs"
+      resources :users, concerns: %i[removable removable_collection], path: "/utilisateurs" do
+        scope module: "users" do
+          resource :invitation, only: %i[new create]
+        end
+      end
+
       resources :users_offices, only: %i[index], controller: "users/offices", path: "/utilisateurs/guichets"
     end
 

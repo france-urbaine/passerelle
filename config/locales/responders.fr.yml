@@ -325,6 +325,13 @@ fr:
           title:        "La suppression des utilisateurs sélectionnés a été annulée."
           delay:        3000
 
+      invitations:
+        create:
+          notice:
+            type:       "success"
+            title:      "L'invitation a été envoyée."
+            delay:      3000
+
     territories:
       updates:
         update:

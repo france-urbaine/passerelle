@@ -259,8 +259,8 @@ fr:
               invalid:   Un nom de domaine valide est requis (sans @)
 
         user:
+          confirmation_period_expired: Votre invitation est expirée.
           already_confirmed:           Votre compte a déjà été validé, veuillez essayer de vous connecter
-          confirmation_period_expired: Votre compte à expiré, merci de faire une nouvelle demande
           expired:                     Votre compte à expiré, merci de faire une nouvelle demande
           not_found:                   Votre compte n'a pas été trouvé
           not_locked:                  Votre compte n'est plus verrouillé
