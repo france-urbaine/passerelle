@@ -77,6 +77,32 @@ RSpec.describe Views::Reports::EditComponent, type: :component do
         end
       end
     end
+
+    it "renders a form to edit a new `occupation_local_habitation`" do
+      report = render_with_report(:occupation_local_habitation)
+
+      expect(page).to have_selector(".modal form") do |form|
+        aggregate_failures do
+          expect(form).to have_html_attribute("action").with_value("/signalements/#{report.id}")
+          expect(form).to have_field("Date du constat")
+          expect(form).to have_field("Priorité")
+          expect(form).to have_unchecked_field("Occupation du local")
+        end
+      end
+    end
+
+    it "renders a form to edit a new `occupation_local_professionnel`" do
+      report = render_with_report(:occupation_local_professionnel)
+
+      expect(page).to have_selector(".modal form") do |form|
+        aggregate_failures do
+          expect(form).to have_html_attribute("action").with_value("/signalements/#{report.id}")
+          expect(form).to have_field("Date du constat")
+          expect(form).to have_field("Priorité")
+          expect(form).to have_unchecked_field("Occupation du local")
+        end
+      end
+    end
   end
 
   describe "`situation_majic` fields" do
@@ -230,6 +256,65 @@ RSpec.describe Views::Reports::EditComponent, type: :component do
           expect(form).to have_html_attribute("action").with_value("/signalements/#{report.id}")
           expect(form).to have_field("Date de mutation")
           expect(form).to have_field("Affectation")
+        end
+      end
+    end
+
+    it "renders a form to edit a new `occupation_local_habitation` with a `occupation` anomalies" do
+      report = render_with_report(:occupation_local_habitation, anomalies: %w[occupation])
+
+      expect(page).to have_selector(".modal form") do |form|
+        aggregate_failures do
+          expect(form).to have_html_attribute("action").with_value("/signalements/#{report.id}")
+          expect(form).to have_field("Affectation")
+          expect(form).to have_field("Nature du local")
+          expect(form).to have_field("Catégorie du local")
+        end
+      end
+    end
+
+    it "renders a form to edit a new `occupation_local_professionnel` with a `occupation` anomalies" do
+      report = render_with_report(:occupation_local_professionnel, anomalies: %w[occupation])
+
+      expect(page).to have_selector(".modal form") do |form|
+        aggregate_failures do
+          expect(form).to have_html_attribute("action").with_value("/signalements/#{report.id}")
+          expect(form).to have_field("Affectation")
+          expect(form).to have_field("Nature du local")
+          expect(form).to have_field("Catégorie du local")
+          expect(form).to have_field("Surface réelle")
+        end
+      end
+    end
+  end
+
+  describe "`situation_occupation` fields" do
+    let(:fields) { "situation_occupation" }
+
+    it "renders a form to edit a new `occupation_local_habitation` with a `occupation` anomalies" do
+      report = render_with_report(:occupation_local_habitation, anomalies: %w[occupation])
+
+      expect(page).to have_selector(".modal form") do |form|
+        aggregate_failures do
+          expect(form).to have_html_attribute("action").with_value("/signalements/#{report.id}")
+          expect(form).to have_field("Nature de l'occupation actuelle")
+        end
+      end
+    end
+
+    it "renders a form to edit a new `occupation_local_professionnel` with a `occupation` anomalies" do
+      report = render_with_report(:occupation_local_professionnel, anomalies: %w[occupation])
+
+      expect(page).to have_selector(".modal form") do |form|
+        aggregate_failures do
+          expect(form).to have_html_attribute("action").with_value("/signalements/#{report.id}")
+          expect(form).to have_field("Année du fichier CFE")
+          expect(form).to have_field("Vacance fiscale ?")
+          expect(form).to have_field("Nombre d'année de vacances")
+          expect(form).to have_field("N° SIREN du dernier occupant")
+          expect(form).to have_field("Nom du dernier occupant")
+          expect(form).to have_field("VLF Cotisation foncière des entreprises")
+          expect(form).to have_field("Taxation base minimum ?")
         end
       end
     end
@@ -422,6 +507,42 @@ RSpec.describe Views::Reports::EditComponent, type: :component do
           expect(form).to have_field("Nature du local")
           expect(form).to have_field("Catégorie du local")
           expect(form).to have_field("Surface réelle")
+        end
+      end
+    end
+  end
+
+  describe "`proposition_occupation` fields" do
+    let(:fields) { "proposition_occupation" }
+
+    it "renders a form to edit a new `occupation_local_habitation` with a `occupation` anomalies" do
+      report = render_with_report(:occupation_local_habitation, anomalies: %w[occupation])
+
+      expect(page).to have_selector(".modal form") do |form|
+        aggregate_failures do
+          expect(form).to have_html_attribute("action").with_value("/signalements/#{report.id}")
+          expect(form).to have_field("Date du constat")
+          expect(form).to have_field("Année sur laquelle porte le signalement")
+          expect(form).to have_field("Nature de l'occupation constatée")
+          expect(form).to have_field("Date du changement")
+        end
+      end
+    end
+
+    it "renders a form to edit a new `occupation_local_professionnel` with a `occupation` anomalies" do
+      report = render_with_report(:occupation_local_professionnel, anomalies: %w[occupation])
+
+      expect(page).to have_selector(".modal form") do |form|
+        aggregate_failures do
+          expect(form).to have_html_attribute("action").with_value("/signalements/#{report.id}")
+          expect(form).to have_field("Date du constat")
+          expect(form).to have_field("N° SIREN")
+          expect(form).to have_field("Nom de la société")
+          expect(form).to have_field("Nom de l'enseigne")
+          expect(form).to have_field("Etablissement principal ?")
+          expect(form).to have_field("Chantier longue durée ?")
+          expect(form).to have_field("Code NAF")
+          expect(form).to have_field("Date de début de l'activité")
         end
       end
     end

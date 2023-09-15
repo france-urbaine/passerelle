@@ -99,10 +99,22 @@ RSpec.describe Report do
       end
     end
 
-    it "validates that :anomalies accept only combinaison of valid values when reporting an occupation form" do
+    it "validates that :anomalies accept only combinaison of valid values when reporting a habitation local occupation form" do
       report = build(:report, :occupation_local_habitation)
 
-      allowed_arrays = random_combinaison(%w[occupation adresse])
+      allowed_arrays = random_combinaison(%w[occupation])
+      invalid_arrays = random_combinaison(%w[consistance affectation])
+
+      aggregate_failures do
+        expect(report).to     allow_values(*allowed_arrays).for(:anomalies)
+        expect(report).not_to allow_values(*invalid_arrays).for(:anomalies)
+      end
+    end
+
+    it "validates that :anomalies accept only combinaison of valid values when reporting a professionnel local occupation form" do
+      report = build(:report, :occupation_local_professionnel)
+
+      allowed_arrays = random_combinaison(%w[occupation])
       invalid_arrays = random_combinaison(%w[consistance affectation])
 
       aggregate_failures do

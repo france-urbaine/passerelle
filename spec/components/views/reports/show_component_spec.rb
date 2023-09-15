@@ -211,4 +211,30 @@ RSpec.describe Views::Reports::ShowComponent, type: :component do
       expect(page).to have_selector("h2", text: "Observations")
     end
   end
+
+  it "composes report details of a new `occupation_local_habitation` with a `occupation` anomaly" do
+    render_with_report(:occupation_local_habitation, anomalies: %w[occupation])
+
+    aggregate_failures do
+      expect(page).to have_selector("h2", text: "Objet du signalement")
+      expect(page).to have_selector("h2", text: "Identification MAJIC")
+      expect(page).to have_selector("h2", text: "Évaluation actuelle")
+      expect(page).to have_selector("h2", text: "Situation actuelle de l'occupation")
+      expect(page).to have_selector("h2", text: "Proposition de mise à jour de l'occupation")
+      expect(page).to have_selector("h2", text: "Observations")
+    end
+  end
+
+  it "composes report details of a new `occupation_local_professionnel` with a `occupation` anomaly" do
+    render_with_report(:occupation_local_professionnel, anomalies: %w[occupation])
+
+    aggregate_failures do
+      expect(page).to have_selector("h2", text: "Objet du signalement")
+      expect(page).to have_selector("h2", text: "Identification MAJIC")
+      expect(page).to have_selector("h2", text: "Évaluation actuelle")
+      expect(page).to have_selector("h2", text: "Situation actuelle de l'occupation")
+      expect(page).to have_selector("h2", text: "Proposition de mise à jour de l'occupation")
+      expect(page).to have_selector("h2", text: "Observations")
+    end
+  end
 end

@@ -133,7 +133,7 @@
         <dt>N° SIREN</dt>
         <dd>
           <%= render_valid_content(:proposition_numero_siren) do %>
-            <%= @report.proposition_numero_siren %>
+            <%= helpers.display_siren(@report.proposition_numero_siren) %>
           <% end %>
         </dd>
       </div>
@@ -175,7 +175,7 @@
       </div>
 
       <div class="description-list__row">
-        <dt>Activité code Naf</dt>
+        <dt>Code NAF</dt>
         <dd>
           <%= render_valid_content(:proposition_code_naf) do %>
             <%= @report.proposition_code_naf %>

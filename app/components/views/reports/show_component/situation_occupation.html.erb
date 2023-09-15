@@ -71,7 +71,7 @@
         <dt>N° SIREN du dernier occupant</dt>
         <dd>
           <%= render_valid_content(:situation_siren_dernier_occupant) do %>
-            <%= @report.situation_siren_dernier_occupant %>
+            <%= helpers.display_siren(@report.situation_siren_dernier_occupant) %>
           <% end %>
         </dd>
       </div>

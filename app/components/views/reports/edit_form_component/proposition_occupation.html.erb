@@ -101,9 +101,12 @@
         <%= form.label :proposition_chantier_longue_duree, "Chantier longue durée ?" %>
       <% end %>
 
-      <%= form.block :proposition_code_naf do %>
-        <%= form.label :proposition_code_naf, "Activité code Naf" %>
+      <%= form.block :proposition_code_naf do |block| %>
+        <%= form.label :proposition_code_naf, "Code NAF" %>
         <%= form.text_field :proposition_code_naf %>
+        <% block.with_hint do %>
+          Le Code NAF doit respecter le format suivant : 00.00A
+        <% end %>
       <% end %>
 
       <%= form.block :proposition_date_debut_activite do %>
