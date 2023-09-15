@@ -5,7 +5,7 @@ module Views
     class EditFormComponent
       class PropositionOccupation < self
         def proposition_occupation
-          enum_options(:occupation_local_habitation)
+          enum_options(:local_habitation_occupation)
         end
 
         def situation_occupation_vacant_tlv?

@@ -5,7 +5,7 @@ module Views
     class EditFormComponent
       class SituationOccupation < self
         def situation_occupation
-          enum_options(:occupation_local_habitation)
+          enum_options(:local_habitation_occupation)
         end
       end
     end

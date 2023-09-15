@@ -249,7 +249,7 @@ fr:
       TS: Taxe spéciale d'équipement (TSE)
       OM: Taxe sur l'enlèvement des ordures ménagères (TEOM)
 
-    occupation_local_habitation:
+    local_habitation_occupation:
       RP:          Résidence principale ouvrant droit aux abattements et aux dégrèvement éventuels
       RS:          Résidence secondaire
       RE:          Dépendance principale n'ouvrant droit qu'aux dégrèvements éventuels

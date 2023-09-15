@@ -67,6 +67,29 @@ module Reports
       validates_inclusion_of :situation_categorie, in: :valid_local_professionnel_categories
     end
 
+    with_options if: :require_occupation_habitation? do
+      validates_inclusion_of :situation_occupation,   in: :valid_local_habitation_occupations
+      validates_inclusion_of :proposition_occupation, in: :valid_local_habitation_occupations
+      validates_presence_of  :proposition_occupation_annee_concernee
+      validates_presence_of  :proposition_date_occupation
+      validates_presence_of  :proposition_nom_occupant
+      validates_presence_of  :proposition_prenom_occupant
+      validates_presence_of  :proposition_adresse_occupant
+    end
+
+    with_options if: :require_occupation_professionnel? do
+      validates_presence_of :situation_annee_fichier_cfe
+      validates_presence_of :situation_nombre_annee_vacances
+      validates_presence_of :situation_siren_dernier_occupant
+      validates_presence_of :situation_nom_dernier_occupant
+      validates_presence_of :situation_vlf_cfe
+      validates_presence_of :proposition_numero_siren
+      validates_presence_of :proposition_nom_societe
+      validates_presence_of :proposition_nom_enseigne
+      validates_presence_of :proposition_code_naf
+      validates_presence_of :proposition_date_debut_activite
+    end
+
     validates_presence_of :proposition_affectation,              if: :require_proposition_affectation?
     validates_presence_of :proposition_nature,                   if: :require_proposition_nature?
     validates_presence_of :proposition_nature_dependance,        if: :require_proposition_nature_dependance?
@@ -134,7 +157,8 @@ module Reports
       valid_local_habitation_natures:       "enum.local_habitation_nature",
       valid_local_professionnel_natures:    "enum.local_professionnel_nature",
       valid_local_habitation_categories:    "enum.local_habitation_categorie",
-      valid_local_professionnel_categories: "enum.local_professionnel_categorie"
+      valid_local_professionnel_categories: "enum.local_professionnel_categorie",
+      valid_local_habitation_occupations:   "enum.local_habitation_occupation"
     }.each do |method_name, enum_key|
       define_method method_name do
         I18n.t(enum_key).keys.map(&:to_s)

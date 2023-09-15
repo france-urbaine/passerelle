@@ -5,7 +5,7 @@ module Views
     class ShowComponent
       class SituationOccupation < self
         def situation_occupation
-          t(@report.situation_occupation, scope: "enum.occupation_local_habitation")
+          t(@report.situation_occupation, scope: "enum.local_habitation_occupation")
         end
 
         def situation_occupation_rs?
