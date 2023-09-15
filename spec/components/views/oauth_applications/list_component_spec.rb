@@ -56,8 +56,6 @@ RSpec.describe Views::OauthApplications::ListComponent, type: :component do
       before { sign_in(user) }
 
       it "renders users links & actions" do
-        ap oauth_applications.first.owner.id
-        ap user.organization.id
         render_inline described_class.new(OauthApplication.all, pagy, namespace: :organization)
 
         expect(page).to have_selector(:table_row, "Nom" => oauth_applications.first.name) do |row|
