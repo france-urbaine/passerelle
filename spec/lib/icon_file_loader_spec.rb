@@ -24,9 +24,9 @@ RSpec.describe IconFileLoader do
 
     it "finds and return SVG content from vendorized icons" do
       expect(
-        icon_file_loader.named("heroicons/outline/x-mark.svg")
+        icon_file_loader.named("heroicons/src/24/outline/x-mark.svg")
       ).to eq(
-        Rails.root.join("vendor/assets/icons/heroicons/outline/x-mark.svg").read
+        Rails.root.join("vendor/submodules/heroicons/src/24/outline/x-mark.svg").read
       )
     end
 
@@ -58,9 +58,9 @@ RSpec.describe IconFileLoader do
 
     it "finds and return SVG content from vendorized icons" do
       expect(
-        icon_file_loader.named("heroicons/outline/x-mark.svg")
+        icon_file_loader.named("heroicons/src/24/outline/x-mark.svg")
       ).to eq(
-        Rails.root.join("vendor/assets/icons/heroicons/outline/x-mark.svg").read
+        Rails.root.join("vendor/submodules/heroicons/src/24/outline/x-mark.svg").read
       )
     end
 

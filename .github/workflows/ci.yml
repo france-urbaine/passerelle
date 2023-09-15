@@ -47,6 +47,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+      with:
+        submodules: recursive
 
     - name: Set up Ruby & install gems bundle
       uses: ruby/setup-ruby@v1
@@ -110,6 +112,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+      with:
+        submodules: recursive
 
     - name: Set up Ruby & install gems bundle
       uses: ruby/setup-ruby@v1

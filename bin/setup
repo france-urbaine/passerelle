@@ -61,6 +61,7 @@ def setup
   log "Dropping & recreating the development & test databases"
   system!({ "SETUP_SEED" => "true" }, "bin/rails db:reset")
   setup_test
+  setup_submodules
 
   log "Removing old logs and tempfiles"
   system! "bin/rails log:clear tmp:clear"
@@ -133,8 +134,12 @@ def setup_test
   # They are required to start the test suite
   system! "yarn build:css"
   system! "yarn build:js"
+end
 
-  log "Ready to test !"
+def setup_submodules
+  log "Update vendorized submodules"
+  system! "git submodule init"
+  system! "git submodule update"
 end
 
 def setup_territories
@@ -214,6 +219,7 @@ else
   when "territories"  then setup_territories
   when "mailcatcher"  then setup_mailcatcher
   when "test"         then setup_test
+  when "submodules"   then setup_submodules
   else help
   end
 end

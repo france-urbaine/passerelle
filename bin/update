@@ -39,6 +39,9 @@ def update_check
   log "Verifying JS packages"
   system! "yarn"
 
+  log "Verifying submodule"
+  system! "bin/setup submodules"
+
   log "Verifying database migration"
   system! "bin/rails db:migrate"
 end
@@ -94,37 +97,36 @@ def update_yarn
 end
 
 def update_icons
-  log "Downloading Heroicons set"
-  system! "rm -rf tmp/icons/heroicons"
-  system! "git clone git@github.com:tailwindlabs/heroicons.git tmp/icons/heroicons"
-
-  system! "rm -rf vendor/assets/icons/heroicons"
-  system! "mkdir -p vendor/assets/icons/heroicons"
-  system! "cp -r tmp/icons/heroicons/optimized/24/ vendor/assets/icons/heroicons/"
-  system! "rm -rf tmp/icons/heroicons"
+  log "Updating Heroicons set"
+  system! "git submodule update --remote vendor/submodules/heroicons"
 end
 
 def help
   log "Update commands:"
   log ""
-  log "    bin/update check       # Update dependencies & database after getting new code version"
-  log "    bin/update bundle      # Update gems through an interactive command"
-  log "    bin/update yarn        # Update JS packages through an interactive command"
-  log "    bin/update icons       # Update icons sets (heroicons)"
-  log "    bin/update help        # Show this help"
+  log "    bin/update         # Check for changes on dependencies, submodules and database"
+  log "    bin/update bundle  # Update gems through an interactive command"
+  log "    bin/update yarn    # Update JS packages through an interactive command"
+  log "    bin/update icons   # Update icons sets (heroicons)"
+  log "    bin/update help    # Show this help"
   log ""
   log "To automate update checks after switching to a branch or after pulling code from remote,"
   log "open or create the file `.git/hooks/post-merge` and add the following lines:"
   log ""
   log "    #!/bin/sh"
-  log "    bin/update check"
+  log "    bin/update"
   log ""
 end
 
-case ARGV[0]
-when "bundle" then update_bundle
-when "yarn"   then update_yarn
-when "check"  then update_check
-when "icons"  then update_icons
-else help
+# Command parser
+# ------------------------------------------------------------------------------
+if ARGV[0].nil?
+  update_check
+else
+  case ARGV[0]
+  when "bundle" then update_bundle
+  when "yarn"   then update_yarn
+  when "icons"  then update_icons
+  else help
+  end
 end
