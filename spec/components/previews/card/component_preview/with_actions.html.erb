@@ -1,0 +1,16 @@
+<%= card_component do |card| %>
+  <% card.with_header do %>
+    Dialog title
+  <% end %>
+
+  <% card.with_body do %>
+    <p>
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.
+      <br>
+      Ut labore et dolore magna aliqua. Ut enim ad minim veniam.
+    </p>
+  <% end %>
+
+  <% card.with_action "Continue", primary: true %>
+  <% card.with_action "Do something else" %>
+<% end %>

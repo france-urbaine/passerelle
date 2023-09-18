@@ -1,0 +1,11 @@
+<%= modal_component(referrer:) do |modal| %>
+  <% modal.with_header do %>
+    Dialog title
+  <% end %>
+
+  <% modal.with_body do %>
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+  <% end %>
+
+  <% modal.with_close_action "Close" %>
+<% end %>
