@@ -3062,7 +3062,6 @@ CREATE TABLE public.reports (
     proposition_date_achevement character varying,
     proposition_numero_permis character varying,
     proposition_nature_travaux character varying,
-    completed_at timestamp(6) without time zone
     situation_occupation character varying,
     situation_majoration_rs boolean DEFAULT false NOT NULL,
     situation_annee_fichier_cfe integer,
@@ -3088,7 +3087,8 @@ CREATE TABLE public.reports (
     proposition_etablissement_principal boolean DEFAULT false NOT NULL,
     proposition_chantier_longue_duree boolean DEFAULT false NOT NULL,
     proposition_code_naf character varying,
-    proposition_date_debut_activite date
+    proposition_date_debut_activite date,
+    completed_at timestamp(6) without time zone
 );
 
 
@@ -4077,7 +4077,9 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230830170839'),
 ('20230901084754'),
 ('20230904105215'),
-('20230905092502');
+('20230905092502'),
 ('20230907151950'),
 ('20230914083547'),
 ('20230914100806');
+
+
