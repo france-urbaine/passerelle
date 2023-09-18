@@ -93,7 +93,9 @@ RSpec.describe TemplateStatus::Component, type: :component do
     end
   end
 
-  it "renders a custom breadcrumbs" do
+  it "renders a custom breadcrumbs when signed in" do
+    sign_in
+
     render_inline described_class.new do |card|
       card.with_breadcrumbs do |breadcrumbs|
         breadcrumbs.with_path("Root path")
@@ -114,7 +116,21 @@ RSpec.describe TemplateStatus::Component, type: :component do
     end
   end
 
+  it "doesn't render custom breadcrumbs when signed out" do
+    render_inline described_class.new do |card|
+      card.with_breadcrumbs do |breadcrumbs|
+        breadcrumbs.with_path("Root path")
+      end
+
+      card.with_body("Hello World")
+    end
+
+    expect(page).not_to have_selector(".header-bar > .breadcrumbs")
+  end
+
   it "doesn't render any breadcrumbs by default" do
+    sign_in
+
     render_inline described_class.new do
       tag.p "Hello World"
     end
@@ -123,6 +139,8 @@ RSpec.describe TemplateStatus::Component, type: :component do
   end
 
   it "doesn't render breadcrumbs when a modal is requested" do
+    sign_in
+
     with_variant :modal do
       render_inline described_class.new do
         tag.p "Hello World"
