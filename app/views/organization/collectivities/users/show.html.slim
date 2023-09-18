@@ -42,34 +42,4 @@
     = icon_component("server-stack", "Nouvelle section")
     | Informations de connexion
 
-  .card
-    dl.description-list
-      .description-list__row
-        dt Création du compte
-        dd= @user.created_at
-
-      .description-list__row
-        dt Confirmation du compte
-        dd= @user.confirmed_at
-
-      .description-list__row
-        dt Dernière connexion
-        dd
-          = @user.current_sign_in_at
-          = " @ " if @user.current_sign_in_at && @user.current_sign_in_ip
-          = @user.current_sign_in_ip
-
-      .description-list__row
-        dt Précédente connexion
-        dd
-          = @user.last_sign_in_at
-          = " @ " if @user.last_sign_in_at && @user.last_sign_in_ip
-          = @user.last_sign_in_ip
-
-      .description-list__row
-        dt Demande de réinitialisation du mot de passe
-        dd= @user.reset_password_sent_at
-
-      .description-list__row
-        dt Verrouillage du compte
-        dd= @user.locked_at
+  = render Views::Users::ShowSessionData.new(@user)

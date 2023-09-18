@@ -129,9 +129,9 @@ def setup_test
     system!("bin/rails parallel:prepare")
   end
 
-  log "Compile assets to run system tests"
   # Compile assets in case they were missing.
   # They are required to start the test suite
+  log "Compile assets to run system tests"
   system! "yarn build:css"
   system! "yarn build:js"
 end
