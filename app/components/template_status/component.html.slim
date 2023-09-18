@@ -1,5 +1,6 @@
 = render TemplateContent::Component.new do |template|
-  = breadcrumbs || raw_breadcrumbs
+  - if signed_in?
+    = breadcrumbs || raw_breadcrumbs
 
   = render Card::Component.new(**CARD_OPTIONS) do |card|
     - if header?
