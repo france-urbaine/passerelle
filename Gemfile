@@ -102,6 +102,7 @@ group :development do
   gem "web-console"
 
   # Linting
+  gem "erb_lint",            require: false
   gem "rubocop",             require: false
   gem "rubocop-performance", require: false
   gem "rubocop-rails",       require: false
@@ -111,6 +112,7 @@ group :development do
   # Tests & lint automation
   gem "guard"
   gem "guard-brakeman", require: false
+  gem "guard-erb_lint", require: false
   gem "guard-rspec",    require: false
   gem "guard-rubocop",  require: false
 

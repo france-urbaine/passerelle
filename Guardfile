@@ -23,6 +23,7 @@ Guard::FactoryBot = Class.new(Guard::Run)
 factory_bot_options = { all_on_start:, cmd: "bundle exec bin/rails factory_bot:lint RAILS_ENV='test'" }
 rspec_options       = { all_on_start:, cmd: "bundle exec rspec --no-profile" }
 rubocop_options     = { all_on_start:, cli: %w[--display-cop-names --server] }
+erb_lint_options    = { all_on_start: }
 brakeman_options    = { run_on_start: all_on_start, quiet: true }
 
 if parallel_rspec
@@ -70,6 +71,11 @@ group :red_green_refactor, halt_on_fail: true do
     watch("Guardfile")
     watch(/.+\.rb$/)
     watch(%r{(?:.+/)?\.rubocop(?:_todo)?\.yml$}) { |m| File.dirname(m[0]) }
+  end
+
+  guard :erb_lint, erb_lint_options do
+    watch(/.+\.erb$/)
+    watch(/.+\.html$/)
   end
 
   guard :brakeman, brakeman_options do

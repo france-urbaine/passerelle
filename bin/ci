@@ -106,7 +106,7 @@ def test_command(scope, paths)
     command += " --no-profile --format RSpec::Github::Formatter --format progress" if ENV["CI"] == "true"
   end
 
-  command += " #{paths.join(' ')}" if paths
+  command += " #{paths.join(' ')}" if paths.any?
   command
 end
 #
@@ -118,7 +118,17 @@ def rubocop(paths = [])
 
   command = "bundle exec rubocop"
   command += " --server --display-cop-names" unless ENV["CI"] == "true"
-  command += " #{paths.join(' ')}" if paths
+  command += " #{paths.join(' ')}" if paths.any?
+
+  system! command
+end
+
+def erblint(paths = [])
+  log "Lint ERB templates"
+
+  command = "bundle exec erblint"
+  command += " --format compact"
+  command += paths.empty? ? " --lint-all" : " #{paths.join(' ')}"
 
   system! command
 end
@@ -172,6 +182,7 @@ def help
   log "    bin/ci test:unit     # Run non-system tests"
   log "    bin/ci test:system   # Run system tests"
   log "    bin/ci rubocop       # Analyzing code issues with Rubocop"
+  log "    bin/ci erb           # Lint ERB templates"
   log "    bin/ci brakeman      # Analyzing code for security vulnerabilities."
   log "    bin/ci audit         # Analyzing ruby gems for security vulnerabilities"
   log ""
@@ -195,6 +206,7 @@ else
   when "factories"      then lint_factories
   when /test(?::(.*))?/ then test(Regexp.last_match[1], ARGV[1..])
   when "rubocop"        then rubocop(ARGV[1..])
+  when "erb"            then erblint(ARGV[1..])
   when "brakeman"       then brakeman
   when "audit"          then audit
   else help

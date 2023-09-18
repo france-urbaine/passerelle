@@ -130,6 +130,13 @@ GEM
       aws-eventstream (~> 1, >= 1.0.2)
     base64 (0.1.1)
     bcrypt (3.1.19)
+    better_html (2.0.2)
+      actionview (>= 6.0)
+      activesupport (>= 6.0)
+      ast (~> 2.0)
+      erubi (~> 1.4)
+      parser (>= 2.4)
+      smart_properties
     bindex (0.8.1)
     bootsnap (1.16.0)
       msgpack (~> 1.2)
@@ -190,6 +197,13 @@ GEM
     doorkeeper-i18n (5.2.6)
       doorkeeper (>= 5.2)
     dotenv (2.8.1)
+    erb_lint (0.5.0)
+      activesupport
+      better_html (>= 2.0.1)
+      parser (>= 2.7.1.4)
+      rainbow
+      rubocop
+      smart_properties
     erubi (1.12.0)
     factory_bot (6.2.1)
       activesupport (>= 5.0.0)
@@ -231,6 +245,10 @@ GEM
       guard (>= 2.0.0)
       guard-compat (~> 1.0)
     guard-compat (1.2.1)
+    guard-erb_lint (1.0.1)
+      activesupport
+      erb_lint
+      guard-compat (>= 1)
     guard-rspec (4.7.3)
       guard (~> 2.1)
       guard-compat (~> 1.1)
@@ -489,6 +507,7 @@ GEM
     slim (5.1.1)
       temple (~> 0.10.0)
       tilt (>= 2.1.0)
+    smart_properties (1.17.0)
     sprockets (4.2.1)
       concurrent-ruby (~> 1.0)
       rack (>= 2.2.4, < 4)
@@ -571,6 +590,7 @@ DEPENDENCIES
   doorkeeper
   doorkeeper-i18n
   dotenv
+  erb_lint
   factory_bot
   factory_bot-awesome_linter
   factory_bot_rails
@@ -580,6 +600,7 @@ DEPENDENCIES
   fx
   guard
   guard-brakeman
+  guard-erb_lint
   guard-rspec
   guard-rubocop
   htmlbeautifier!
