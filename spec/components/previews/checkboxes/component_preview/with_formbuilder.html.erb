@@ -1,0 +1,3 @@
+<%= fields model: Office.new do |form| %>
+  <%= form.checkboxes_component :user_ids, User.take(10) %>
+<% end %>

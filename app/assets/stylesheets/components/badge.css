@@ -1,13 +1,4 @@
 @layer components {
-  .badges {
-    display: flex;
-    flew-wrap: wrap;
-
-    & .badge {
-      @apply mr-4;
-    }
-  }
-
   .badge {
     display: inline-flex;
     box-sizing: border-box;

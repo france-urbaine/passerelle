@@ -1,0 +1,5 @@
+<%= fields model: User.new do |form| %>
+  <div class="form-block">
+    <%= form.password_field_component :password, strength_test: true %>
+  </div>
+<% end %>
