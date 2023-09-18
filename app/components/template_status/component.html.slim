@@ -16,3 +16,10 @@
           = action
 
         = raw_actions
+
+  - unless signed_in?
+    p
+      = link_to new_user_session_path do
+        = icon_component "chevron-left-small", "Retour", class: "inline"
+        | Retour au formulaire de connexion
+      | .
