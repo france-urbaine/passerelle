@@ -32,7 +32,7 @@
           <dt>Application de la majoration sur les résidences secondaire</dt>
           <dd>
             <%= render_valid_content(:situation_majoration_rs) do %>
-              <%= t(@report.situation_majoration_rs.to_s, scope: 'boolean') %>
+              <%= t(@report.situation_majoration_rs.to_s, scope: 'enum.boolean') %>
             <% end %>
           </dd>
         </div>
@@ -53,7 +53,7 @@
         <dt>Vacances fiscales</dt>
         <dd>
           <%= render_valid_content(:situation_vacances_fiscales) do %>
-            <%= t(@report.situation_vacances_fiscales.to_s, scope: 'boolean') %>
+            <%= t(@report.situation_vacances_fiscales.to_s, scope: 'enum.boolean') %>
           <% end %>
         </dd>
       </div>
@@ -98,7 +98,7 @@
         <dt>Taxation base minimum</dt>
         <dd>
           <%= render_valid_content(:situation_taxation_base_minimum) do %>
-            <%= t(@report.situation_taxation_base_minimum.to_s, scope: 'boolean') %>
+            <%= t(@report.situation_taxation_base_minimum.to_s, scope: 'enum.boolean') %>
           <% end %>
         </dd>
       </div>

@@ -309,12 +309,12 @@ RSpec.describe Views::Reports::EditComponent, type: :component do
         aggregate_failures do
           expect(form).to have_html_attribute("action").with_value("/signalements/#{report.id}")
           expect(form).to have_field("Année du fichier CFE")
-          expect(form).to have_field("Vacance fiscale ?")
+          expect(form).to have_field("Vacance fiscale")
           expect(form).to have_field("Nombre d'année de vacances")
           expect(form).to have_field("N° SIREN du dernier occupant")
           expect(form).to have_field("Nom du dernier occupant")
           expect(form).to have_field("VLF Cotisation foncière des entreprises")
-          expect(form).to have_field("Taxation base minimum ?")
+          expect(form).to have_field("Taxation base minimum")
         end
       end
     end
@@ -539,8 +539,8 @@ RSpec.describe Views::Reports::EditComponent, type: :component do
           expect(form).to have_field("N° SIREN")
           expect(form).to have_field("Nom de la société")
           expect(form).to have_field("Nom de l'enseigne")
-          expect(form).to have_field("Etablissement principal ?")
-          expect(form).to have_field("Chantier longue durée ?")
+          expect(form).to have_field("Etablissement principal")
+          expect(form).to have_field("Chantier longue durée")
           expect(form).to have_field("Code NAF")
           expect(form).to have_field("Date de début de l'activité")
         end

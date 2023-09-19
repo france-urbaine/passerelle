@@ -5,6 +5,10 @@ fr:
       medium:  Moyenne
       high:    Haute
 
+    boolean:
+      true:  Oui
+      false: Non
+
     competence:
       evaluation_local_habitation:           "Évaluation des locaux d'habitation"
       evaluation_local_professionnel:        "Évaluation des locaux professionnels"
@@ -249,9 +253,9 @@ fr:
       OM: Taxe sur l'enlèvement des ordures ménagères (TEOM)
 
     local_habitation_occupation:
-      RP:          Résidence principale ouvrant droit aux abattements et aux dégrèvement éventuels
+      RP:          Résidence principale
       RS:          Résidence secondaire
-      RE:          Dépendance principale n'ouvrant droit qu'aux dégrèvements éventuels
+      RE:          Dépendance principale isolée
       vacant:      Local vacant non taxé
       vacant_tlv:  Local vacant taxé TLV
       vacant_thlv: Local vacant taxé THLV

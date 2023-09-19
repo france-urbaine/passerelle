@@ -68,26 +68,35 @@ module Reports
     end
 
     with_options if: :require_occupation_habitation? do
-      validates_inclusion_of :situation_occupation,   in: :valid_local_habitation_occupations
-      validates_inclusion_of :proposition_occupation, in: :valid_local_habitation_occupations
+      validates_inclusion_of :situation_occupation,    in: :valid_local_habitation_occupations
+      validates_inclusion_of :situation_majoration_rs, in: [true, false]
+      validates_inclusion_of :proposition_occupation,  in: :valid_local_habitation_occupations
       validates_presence_of  :proposition_occupation_annee_concernee
       validates_presence_of  :proposition_date_occupation
+      validates_inclusion_of :proposition_erreur_tlv,      in: [true, false]
+      validates_inclusion_of :proposition_erreur_thlv,     in: [true, false]
+      validates_inclusion_of :proposition_meuble_tourisme, in: [true, false]
+      validates_inclusion_of :proposition_majoration_rs,   in: [true, false]
       validates_presence_of  :proposition_nom_occupant
       validates_presence_of  :proposition_prenom_occupant
       validates_presence_of  :proposition_adresse_occupant
     end
 
     with_options if: :require_occupation_professionnel? do
-      validates_presence_of :situation_annee_fichier_cfe
-      validates_presence_of :situation_nombre_annee_vacances
-      validates_presence_of :situation_siren_dernier_occupant
-      validates_presence_of :situation_nom_dernier_occupant
-      validates_presence_of :situation_vlf_cfe
-      validates_presence_of :proposition_numero_siren
-      validates_presence_of :proposition_nom_societe
-      validates_presence_of :proposition_nom_enseigne
-      validates_presence_of :proposition_code_naf
-      validates_presence_of :proposition_date_debut_activite
+      validates_presence_of  :situation_annee_fichier_cfe
+      validates_inclusion_of :situation_vacances_fiscales, in: [true, false]
+      validates_presence_of  :situation_nombre_annee_vacances
+      validates_presence_of  :situation_siren_dernier_occupant
+      validates_presence_of  :situation_nom_dernier_occupant
+      validates_presence_of  :situation_vlf_cfe
+      validates_inclusion_of :situation_taxation_base_minimum, in: [true, false]
+      validates_presence_of  :proposition_numero_siren
+      validates_presence_of  :proposition_nom_societe
+      validates_presence_of  :proposition_nom_enseigne
+      validates_inclusion_of :proposition_etablissement_principal, in: [true, false]
+      validates_inclusion_of :proposition_chantier_longue_duree,   in: [true, false]
+      validates_presence_of  :proposition_code_naf
+      validates_presence_of  :proposition_date_debut_activite
     end
 
     validates_presence_of :proposition_affectation,              if: :require_proposition_affectation?

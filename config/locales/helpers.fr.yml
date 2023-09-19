@@ -21,7 +21,3 @@ fr:
     transmitted:         Paquet transmis, en attente de confirmation
     completed:           Paquet prèt à être transmis
     incomplete:          Signalements incomplets
-
-  boolean:
-    true:  Oui
-    false: Non

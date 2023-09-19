@@ -86,33 +86,33 @@
 #  proposition_date_achevement                    :string
 #  proposition_numero_permis                      :string
 #  proposition_nature_travaux                     :string
-#  completed_at                                   :datetime
 #  situation_occupation                           :string
-#  situation_majoration_rs                        :boolean          default(FALSE), not null
-#  situation_annee_fichier_cfe                    :integer
-#  situation_vacances_fiscales                    :boolean          default(FALSE), not null
-#  situation_nombre_annee_vacances                :integer
+#  situation_majoration_rs                        :boolean
+#  situation_annee_fichier_cfe                    :string
+#  situation_vacances_fiscales                    :boolean
+#  situation_nombre_annee_vacances                :string
 #  situation_siren_dernier_occupant               :string
 #  situation_nom_dernier_occupant                 :string
 #  situation_vlf_cfe                              :string
-#  situation_taxation_base_minimum                :boolean          default(FALSE), not null
-#  proposition_occupation_annee_concernee         :integer
+#  situation_taxation_base_minimum                :boolean
+#  proposition_occupation_annee_concernee         :string
 #  proposition_occupation                         :string
-#  proposition_date_occupation                    :date
-#  proposition_erreur_tlv                         :boolean          default(FALSE), not null
-#  proposition_erreur_thlv                        :boolean          default(FALSE), not null
-#  proposition_meuble_tourisme                    :boolean          default(FALSE), not null
-#  proposition_majoration_rs                      :boolean          default(FALSE), not null
+#  proposition_date_occupation                    :string
+#  proposition_erreur_tlv                         :boolean
+#  proposition_erreur_thlv                        :boolean
+#  proposition_meuble_tourisme                    :boolean
+#  proposition_majoration_rs                      :boolean
 #  proposition_nom_occupant                       :string
 #  proposition_prenom_occupant                    :string
 #  proposition_adresse_occupant                   :string
 #  proposition_numero_siren                       :string
 #  proposition_nom_societe                        :string
 #  proposition_nom_enseigne                       :string
-#  proposition_etablissement_principal            :boolean          default(FALSE), not null
-#  proposition_chantier_longue_duree              :boolean          default(FALSE), not null
+#  proposition_etablissement_principal            :boolean
+#  proposition_chantier_longue_duree              :boolean
 #  proposition_code_naf                           :string
-#  proposition_date_debut_activite                :date
+#  proposition_date_debut_activite                :string
+#  completed_at                                   :datetime
 #
 # Indexes
 #

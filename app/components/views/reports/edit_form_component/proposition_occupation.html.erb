@@ -25,34 +25,38 @@
 
         <%= form.block :proposition_date_occupation do %>
           <%= form.label :proposition_date_occupation, "Date du changement" %>
-          <%= form.date_field :proposition_date_occupation %>
+          <% if proposition_date_occupation.is_a?(String) && proposition_date_occupation.present? %>
+            <%= form.text_field :proposition_date_occupation %>
+          <% else %>
+            <%= form.date_field :proposition_date_occupation, value: proposition_date_occupation %>
+          <% end %>
         <% end %>
 
         <% if situation_occupation_vacant_tlv? %>
           <%= form.block :proposition_erreur_tlv do %>
-            <%= form.check_box :proposition_erreur_tlv %>
-            <%= form.label :proposition_erreur_tlv, "TLV à tort ?" %>
+            <%= form.label :proposition_erreur_tlv, "TLV appliquée à tort" %>
+            <%= form.select :proposition_erreur_tlv, boolean_options, { include_blank: true } %>
           <% end %>
         <% end  %>
 
         <% if situation_occupation_vacant_thlv? %>
           <%= form.block :proposition_erreur_thlv do %>
-            <%= form.check_box :proposition_erreur_thlv %>
-            <%= form.label :proposition_erreur_thlv, "THLV à tort ?" %>
+            <%= form.label :proposition_erreur_thlv, "THLV appliquée à tort" %>
+            <%= form.select :proposition_erreur_thlv, boolean_options, { include_blank: true } %>
           <% end %>
         <% end %>
 
         <div data-switch-target="target" data-switch-value="RP, RS, RE" data-switch-value-separator=", " hidden>
           <%= form.block :proposition_meuble_tourisme do %>
-            <%= form.check_box :proposition_meuble_tourisme %>
-            <%= form.label :proposition_meuble_tourisme, "Meublé de tourisme ?" %>
+            <%= form.label :proposition_meuble_tourisme, "Meublé de tourisme" %>
+            <%= form.select :proposition_meuble_tourisme, boolean_options, { include_blank: true } %>
           <% end %>
         </div>
 
         <div data-switch-target="target" data-switch-value="RS" hidden>
           <%= form.block :proposition_majoration_rs do %>
-            <%= form.check_box :proposition_majoration_rs %>
             <%= form.label :proposition_majoration_rs, "Application de la majoration sur les résidences secondaire" %>
+            <%= form.select :proposition_majoration_rs, boolean_options, { include_blank: true } %>
           <% end %>
         </div>
 
@@ -92,13 +96,13 @@
       <% end %>
 
       <%= form.block :proposition_etablissement_principal do %>
-        <%= form.check_box :proposition_etablissement_principal %>
-        <%= form.label :proposition_etablissement_principal, "Etablissement principal ?" %>
+        <%= form.label :proposition_etablissement_principal, "Etablissement principal" %>
+        <%= form.select :proposition_etablissement_principal, boolean_options, { include_blank: true } %>
       <% end %>
 
       <%= form.block :proposition_chantier_longue_duree do %>
-        <%= form.check_box :proposition_chantier_longue_duree %>
-        <%= form.label :proposition_chantier_longue_duree, "Chantier longue durée ?" %>
+        <%= form.label :proposition_chantier_longue_duree, "Chantier longue durée" %>
+        <%= form.select :proposition_chantier_longue_duree, boolean_options, { include_blank: true } %>
       <% end %>
 
       <%= form.block :proposition_code_naf do |block| %>
@@ -111,7 +115,11 @@
 
       <%= form.block :proposition_date_debut_activite do %>
         <%= form.label :proposition_date_debut_activite, "Date de début de l'activité" %>
-        <%= form.date_field :proposition_date_debut_activite %>
+        <% if proposition_date_debut_activite.is_a?(String) && proposition_date_debut_activite.present? %>
+          <%= form.text_field :proposition_date_debut_activite %>
+        <% else %>
+          <%= form.date_field :proposition_date_debut_activite, value: proposition_date_debut_activite %>
+        <% end %>
       <% end %>
 
     <% end %>

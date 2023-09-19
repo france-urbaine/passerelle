@@ -7,6 +7,10 @@ module Views
         def situation_occupation
           enum_options(:local_habitation_occupation)
         end
+
+        def boolean_options
+          enum_options(:boolean)
+        end
       end
     end
   end

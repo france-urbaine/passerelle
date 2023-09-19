@@ -14,8 +14,8 @@
 
         <div data-switch-target="target" data-switch-value="RS" hidden>
           <%= form.block :situation_majoration_rs do %>
-            <%= form.check_box :situation_majoration_rs %>
-            <%= form.label :situation_majoration_rs, "Application de la majoration sur les résidences secondaire ?" %>
+            <%= form.label :situation_majoration_rs, "Application de la majoration sur les résidences secondaire" %>
+            <%= form.select :situation_majoration_rs, boolean_options, { include_blank: true } %>
           <% end %>
         </div>
       </div>
@@ -28,8 +28,8 @@
       <% end %>
 
       <%= form.block :situation_vacances_fiscales do %>
-        <%= form.check_box :situation_vacances_fiscales %>
-        <%= form.label :situation_vacances_fiscales, "Vacance fiscale ?" %>
+        <%= form.label :situation_vacances_fiscales, "Vacance fiscale" %>
+        <%= form.select :situation_vacances_fiscales, boolean_options, { include_blank: true } %>
       <% end %>
 
       <%= form.block :situation_nombre_annee_vacances do %>
@@ -53,8 +53,8 @@
       <% end %>
 
       <%= form.block :situation_taxation_base_minimum do %>
-        <%= form.check_box :situation_taxation_base_minimum %>
-        <%= form.label :situation_taxation_base_minimum, "Taxation base minimum ?" %>
+        <%= form.label :situation_taxation_base_minimum, "Taxation base minimum" %>
+        <%= form.select :situation_taxation_base_minimum, boolean_options, { include_blank: true } %>
       <% end %>
 
     <% end %>

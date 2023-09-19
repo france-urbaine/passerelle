@@ -26,11 +26,11 @@ module Reports
     end
 
     def require_situation_adresse?
-      evaluation_local? || creation_local?
+      evaluation_local? || creation_local? || require_occupation?
     end
 
     def require_situation_porte?
-      evaluation_local?
+      evaluation_local? || require_occupation?
     end
 
     def require_situation_proprietaire?
@@ -66,6 +66,15 @@ module Reports
 
     def require_situation_coefficient_localisation?
       require_situation_evaluation_professionnel? && !situation_nature_industriel?
+    end
+
+    def require_situation_date_mutation?
+      require_situation_evaluation_professionnel? || require_situation_evaluation_habitation?
+    end
+
+    def require_situation_surface_reelle?
+      require_situation_evaluation_professionnel? || require_situation_evaluation_habitation? ||
+        require_occupation_professionnel?
     end
 
     # Requirements for new evaluation
