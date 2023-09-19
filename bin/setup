@@ -126,7 +126,7 @@ def setup_test
     end
 
     log "Setup test databases for parallel testing"
-    system!("bin/rails parallel:prepare")
+    system!({ "PARALLEL_TEST_FIRST_IS_1" => "true" }, "bin/rails parallel:prepare")
   end
 
   # Compile assets in case they were missing.

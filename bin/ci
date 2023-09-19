@@ -48,6 +48,9 @@ def test(scope = nil)
   log "Running tests"
   clear_coverage unless @coverage_cleared
 
+  require "dotenv"
+  Dotenv.load(".env.test")
+
   env     = test_env(scope)
   command = test_command(scope)
 
@@ -55,11 +58,10 @@ def test(scope = nil)
 end
 
 def test_env(scope)
-  node_total = ENV.fetch("CI_NODE_TOTAL", 1).to_i
+  parallel = ENV.fetch("CI_PARALLEL", "false") != "false"
 
   env = { "SIMPLE_COV_COMMAND" => "bin/ci test" }
-
-  env["SIMPLE_COV_COMMAND"] += ":parallel" if node_total > 1
+  env["SIMPLE_COV_COMMAND"] += ":parallel" if parallel
   env["SIMPLE_COV_COMMAND"] += ":#{scope}" if scope
 
   if ENV["CI"] == "true"
@@ -72,12 +74,20 @@ def test_env(scope)
 end
 
 def test_command(scope)
-  node_total = ENV.fetch("CI_NODE_TOTAL", 1).to_i
+  parallel   = ENV.fetch("CI_PARALLEL", "false")
+  node_total = ENV.fetch("CI_NODE_TOTAL", nil)
   node_index = ENV.fetch("CI_NODE_INDEX", nil)
 
-  if node_total > 1
+  if parallel == "turbo_tests"
+    command  = "bundle exec turbo_tests"
+    command += " -n #{node_total}"              if node_total
+    command += " -r ./lib/refinements/turbo_fuubar.rb"
+    command += " -f Fuubar"
+    command += " spec/components spec/jobs spec/lib spec/mailers spec/models spec/policies spec/requests spec/routing spec/services" if scope == "unit"
+    command += " spec/system"                   if scope == "system"
+  elsif parallel != "false"
     command  = "bundle exec parallel_rspec"
-    command += " -n #{node_total}"
+    command += " -n #{node_total}"              if node_total
     command += " --only-group #{node_index}"    if node_index
     command += " --exclude-pattern spec/system" if scope == "unit"
     command += " --pattern spec/system"         if scope == "system"
@@ -152,13 +162,13 @@ def help
   log "    bin/ci brakeman      # Analyzing code for security vulnerabilities."
   log "    bin/ci audit         # Analyzing ruby gems for security vulnerabilities"
   log ""
+  log "To run tests in parallel, add `CI_PARALLEL=true` to your .env.test or call it with the command:"
+  log ""
+  log "    CI_PARALLEL=true bin/ci test"
+  log ""
   log "To run the commands in CI environnement (ex: on Github), use the CI variable:"
   log ""
   log "    CI=true bin/ci"
-  log ""
-  log "To run tests in parallel, use the CI_NODE_TOTAL variable (or add it to your .env.test)"
-  log ""
-  log "    CI_NODE_TOTAL=4 bin/ci test"
   log ""
 end
 
