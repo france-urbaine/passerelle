@@ -63,6 +63,7 @@ def test_env(scope)
   env = { "SIMPLE_COV_COMMAND" => "bin/ci test" }
   env["SIMPLE_COV_COMMAND"] += ":parallel" if parallel
   env["SIMPLE_COV_COMMAND"] += ":#{scope}" if scope
+  env["PARALLEL_TEST_FIRST_IS_1"] = "true" if parallel
 
   if ENV["CI"] == "true"
     env["SIMPLE_COV"] = "false"
@@ -78,19 +79,15 @@ def test_command(scope)
   node_total = ENV.fetch("CI_NODE_TOTAL", nil)
   node_index = ENV.fetch("CI_NODE_INDEX", nil)
 
-  if parallel == "turbo_tests"
-    command  = "bundle exec turbo_tests"
-    command += " -n #{node_total}"              if node_total
-    command += " -r ./lib/refinements/turbo_fuubar.rb"
-    command += " -f Fuubar"
-    command += " spec/components spec/jobs spec/lib spec/mailers spec/models spec/policies spec/requests spec/routing spec/services" if scope == "unit"
-    command += " spec/system"                   if scope == "system"
-  elsif parallel != "false"
+  if parallel
     command  = "bundle exec parallel_rspec"
+    command  = "bundle exec turbo_tests" if parallel == "turbo_tests"
+
     command += " -n #{node_total}"              if node_total
     command += " --only-group #{node_index}"    if node_index
     command += " --exclude-pattern spec/system" if scope == "unit"
     command += " --pattern spec/system"         if scope == "system"
+    command += " -f Fuubar"                     if parallel == "turbo_tests" && ENV["CI"] != "true"
   else
     command  = "bundle exec rspec"
     command += " --exclude-pattern 'system/**/*_spec.rb'" if scope == "unit"

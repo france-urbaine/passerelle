@@ -92,7 +92,7 @@ group :development, :test do
 
   # Parallel testing
   gem "parallel_tests"
-  gem "turbo_tests"
+  gem "turbo_tests", github: "inkstak/turbo_tests", branch: "feature-handle_fuubar"
 end
 
 group :development do

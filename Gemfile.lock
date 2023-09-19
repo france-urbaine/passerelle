@@ -16,6 +16,16 @@ GIT
   specs:
     htmlbeautifier (1.4.1)
 
+GIT
+  remote: https://github.com/inkstak/turbo_tests.git
+  revision: cf48ed0e9a95f2c61da3ad05ccda3c0a717d5afd
+  branch: feature-handle_fuubar
+  specs:
+    turbo_tests (2.1.1)
+      bundler (>= 2.1)
+      parallel_tests (>= 3.3.0, < 5)
+      rspec (>= 3.10)
+
 GEM
   remote: https://gems.contribsys.com/
   specs:
@@ -503,10 +513,6 @@ GEM
       actionpack (>= 6.0.0)
       activejob (>= 6.0.0)
       railties (>= 6.0.0)
-    turbo_tests (2.1.1)
-      bundler (>= 2.1)
-      parallel_tests (>= 3.3.0, < 5)
-      rspec (>= 3.10)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.4.2)
@@ -618,7 +624,7 @@ DEPENDENCIES
   test-prof
   timecop
   turbo-rails
-  turbo_tests
+  turbo_tests!
   tzinfo-data
   view_component
   web-console
