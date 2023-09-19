@@ -42,7 +42,7 @@ TEST_SCOPES = %w[
   system
 ].freeze
 
-def test(scope = nil)
+def test(scope = nil, paths = [])
   raise "unknown command `bin/ci test:#{scope}`" unless scope.nil? || TEST_SCOPES.include?(scope)
 
   log "Running tests"
@@ -52,7 +52,7 @@ def test(scope = nil)
   Dotenv.load(".env.test")
 
   env     = test_env(scope)
-  command = test_command(scope)
+  command = test_command(scope, paths)
 
   system!(env, command)
 end
@@ -74,7 +74,7 @@ def test_env(scope)
   env
 end
 
-def test_command(scope)
+def test_command(scope, paths)
   parallel   = ENV.fetch("CI_PARALLEL", "false")
   node_total = ENV.fetch("CI_NODE_TOTAL", nil)
   node_index = ENV.fetch("CI_NODE_INDEX", nil)
@@ -95,14 +95,17 @@ def test_command(scope)
     command += " --no-profile --format RSpec::Github::Formatter --format progress" if ENV["CI"] == "true"
   end
 
+  command += " #{paths.join(" ")}" if paths
+
   command
 end
 
-def rubocop
+def rubocop(paths = [])
   log "Analyzing code issues with Rubocop"
 
   command = "bundle exec rubocop"
   command += " --server --display-cop-names" unless ENV["CI"] == "true"
+  command += " #{paths.join(" ")}" if paths
 
   system! command
 end
@@ -177,8 +180,8 @@ else
   case ARGV[0]
   when "watch"          then watch
   when "factories"      then lint_factories
-  when /test(?::(.*))?/ then test(Regexp.last_match[1])
-  when "rubocop"        then rubocop
+  when /test(?::(.*))?/ then test(Regexp.last_match[1], ARGV[1..])
+  when "rubocop"        then rubocop(ARGV[1..])
   when "brakeman"       then brakeman
   when "audit"          then audit
   else help
