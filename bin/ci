@@ -75,11 +75,13 @@ def test_env(scope)
 end
 
 def test_command(scope, paths)
-  parallel   = ENV.fetch("CI_PARALLEL", "false")
-  node_total = ENV.fetch("CI_NODE_TOTAL", nil)
-  node_index = ENV.fetch("CI_NODE_INDEX", nil)
+  parallel = ENV.fetch("CI_PARALLEL", "false")
+  parallel = false if parallel == "false"
 
   if parallel
+    node_total = ENV.fetch("CI_NODE_TOTAL", nil)
+    node_index = ENV.fetch("CI_NODE_INDEX", nil)
+
     command  = "bundle exec parallel_rspec"
     command  = "bundle exec turbo_tests" if parallel == "turbo_tests"
 
