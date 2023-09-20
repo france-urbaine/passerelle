@@ -1,5 +1,0 @@
-= fields model: User.new do |form|
-  = form.block :organization, autocomplete: organizations_path do
-    = form.label :organization
-    = form.search_field :organization,      data: { autocomplete_target: "input" }
-    = form.hidden_field :organization_data, data: { autocomplete_target: "hidden" }

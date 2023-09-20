@@ -1,8 +1,8 @@
 module.exports = {
   content: [
     './app/views/**/*.html.erb',
-    './app/views/**/*.html+*.erb',
     './app/views/**/*.html.slim',
+    './app/views/**/*.html+*.erb',
     './app/views/**/*.html+*.slim',
     './app/helpers/**/*.rb',
     './app/components/**/*.html.erb',
@@ -10,6 +10,7 @@ module.exports = {
     './app/components/**/*.rb',
     './app/javascript/**/*.js',
     './spec/components/previews/**/*.rb',
-    './spec/components/previews/**/*.html.slim'
+    './spec/components/previews/**/*.html.slim',
+    './spec/components/previews/**/*.html.erb'
   ]
 }

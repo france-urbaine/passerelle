@@ -29,8 +29,18 @@ module Card
       super()
     end
 
+    DEFAULT_CSS_CLASSES = {
+      class:         "card",
+      content_class: "card__content",
+      body_class:    "card__body",
+      actions_class: "card__actions"
+    }.freeze
+
     def css_classes(key)
-      { class: Array.wrap(@options.fetch(key, [])) }
+      values = @options.fetch(key, [])
+      values = Array.wrap(values)
+      values << DEFAULT_CSS_CLASSES[key]
+      values.compact.join(" ")
     end
 
     # Slots

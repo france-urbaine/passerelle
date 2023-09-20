@@ -1,4 +1,13 @@
 GIT
+  remote: https://github.com/Driversnote-Dev/guard-erb_lint.git
+  revision: 2ba3c5d21f5e891df97a3b7c03e56d7d19bf15a2
+  specs:
+    guard-erb_lint (1.0.0)
+      activesupport
+      erb_lint
+      guard-compat (>= 1)
+
+GIT
   remote: https://github.com/inkstak/devise-two-factor.git
   revision: 61ca1a0af6c093e3816b0ee7e2fcb57702e22366
   branch: bugfix-insert_two_factor_authenticatable_on_top
@@ -130,6 +139,13 @@ GEM
       aws-eventstream (~> 1, >= 1.0.2)
     base64 (0.1.1)
     bcrypt (3.1.19)
+    better_html (2.0.2)
+      actionview (>= 6.0)
+      activesupport (>= 6.0)
+      ast (~> 2.0)
+      erubi (~> 1.4)
+      parser (>= 2.4)
+      smart_properties
     bindex (0.8.1)
     bootsnap (1.16.0)
       msgpack (~> 1.2)
@@ -190,6 +206,13 @@ GEM
     doorkeeper-i18n (5.2.6)
       doorkeeper (>= 5.2)
     dotenv (2.8.1)
+    erb_lint (0.5.0)
+      activesupport
+      better_html (>= 2.0.1)
+      parser (>= 2.7.1.4)
+      rainbow
+      rubocop
+      smart_properties
     erubi (1.12.0)
     factory_bot (6.2.1)
       activesupport (>= 5.0.0)
@@ -489,6 +512,7 @@ GEM
     slim (5.1.1)
       temple (~> 0.10.0)
       tilt (>= 2.1.0)
+    smart_properties (1.17.0)
     sprockets (4.2.1)
       concurrent-ruby (~> 1.0)
       rack (>= 2.2.4, < 4)
@@ -571,6 +595,7 @@ DEPENDENCIES
   doorkeeper
   doorkeeper-i18n
   dotenv
+  erb_lint
   factory_bot
   factory_bot-awesome_linter
   factory_bot_rails
@@ -580,6 +605,7 @@ DEPENDENCIES
   fx
   guard
   guard-brakeman
+  guard-erb_lint!
   guard-rspec
   guard-rubocop
   htmlbeautifier!

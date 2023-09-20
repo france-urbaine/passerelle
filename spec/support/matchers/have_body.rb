@@ -38,7 +38,7 @@ module Matchers
 
       def actual_body_matches?(body)
         body.present? &&
-          body.match?(%r{\A(<!DOCTYPE[^>]+>)?<html(.|\s)+<body(.|\s)+</body>\s*</html>\Z}) &&
+          body.match?(%r{\A(<!DOCTYPE[^>]+>)?\s*<html(.|\s)+<body(.|\s)+</body>\s*</html>\Z}) &&
           actual_body_include_expected_turbo_frame?(body)
       end
     end
