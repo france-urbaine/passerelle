@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <title>FiscaHub</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <%= stylesheet_link_tag "mailer" %>
+  </head>
+
+  <body>
+    <div class="brand">
+      <%= inline_svg_tag("logo.svg", alt: "Logo de FiscaHub", aria: true) %>
+      <span class="brand__left">Fisca</span><span class="brand__right">Hub</span>
+    </div>
+    <div class="card">
+      <%= yield %>
+    </div>
+  </body>
+</html>
