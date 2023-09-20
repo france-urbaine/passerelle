@@ -117,6 +117,9 @@ def setup_test
   log "Setup test database"
   system!({ "RAILS_ENV" => "test" }, "bin/rails db:test:prepare")
 
+  log "Setup test databases for parallel testing"
+  system!({ "PARALLEL_TEST_FIRST_IS_1" => "true" }, "bin/rails parallel:prepare")
+
   unless ENV["CI"] == "true"
     if ENV.include?("POSTGRESQL_DATABASE")
       log "Setup test database for guard testing ignore due to presence of POSTGRESQL_DATABASE"
@@ -124,9 +127,6 @@ def setup_test
       log "Setup test database for guard testing"
       system!({ "RAILS_ENV" => "test", "POSTGRESQL_DATABASE" => "fiscahub_test_watch" }, "bin/rails db:test:prepare")
     end
-
-    log "Setup test databases for parallel testing"
-    system!("bin/rails parallel:prepare")
   end
 
   # Compile assets in case they were missing.

@@ -19,7 +19,9 @@ Capybara.register_driver(:better_cuprite) do |app|
     inspector: true,
     # Allow running Chrome in a headful mode by setting HEADLESS env
     # var to a falsey value
-    headless: !ENV["HEADLESS"].in?(%w[n 0 no false])
+    headless: !ENV["HEADLESS"].in?(%w[n 0 no false]),
+    # Better handle parallel testing
+    port: 9515 + ENV.fetch("TEST_ENV_NUMBER", 1).to_i
   )
 end
 

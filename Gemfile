@@ -87,9 +87,12 @@ group :development, :test do
   gem "factory_bot"
   gem "factory_bot-awesome_linter"
   gem "factory_bot_rails"
-  gem "parallel_tests"
   gem "rspec"
   gem "rspec-rails"
+
+  # Parallel testing
+  gem "parallel_tests"
+  gem "turbo_tests", github: "inkstak/turbo_tests", branch: "feature-handle_fuubar"
 end
 
 group :development do
