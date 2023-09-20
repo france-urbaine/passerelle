@@ -1,0 +1,85 @@
+<div data-controller="navbar">
+
+  <%# Full navbar %>
+
+  <nav class="navbar" data-navbar-target="expanded">
+    <div class="navbar__brand brand">
+      <%= image_tag("logo.svg", alt: "Logo de FiscaHub", height: 30) %>
+      <span class="brand__left">Fisca</span><span class="brand__right">Hub</span>
+
+      <div class="flex-auto"></div>
+      <div class="navbar__close-button">
+        <%= button_component "Fermer le menu", icon: "x-mark", icon_only: true, data: { action: "click->navbar#minify" } %>
+      </div>
+    </div>
+
+    <% sections.each do |section| %>
+      <div class="navbar__header"><%= section.title %></div>
+      <div class="navbar__links">
+        <% section.links.each do |link| %>
+          <%= render_link(link) %>
+        <% end %>
+      </div>
+    <% end %>
+
+    <div class="flex-auto"></div>
+
+    <div class="navbar__user">
+      <%= button_component(user_settings_path, title: "Gestion du compte", class: "navbar__link") do %>
+        <div class="navbar__user-avatar">
+          <%= icon_component "user-circle" %>
+        </div>
+
+        <div class="navbar__user-name">
+          <div class="navbar__user-text"><%= current_user&.name %></div>
+          <div class="navbar__user-text"><%= current_user&.organization&.name %></div>
+        </div>
+      <% end %>
+    </div>
+  </nav>
+
+  <div class="navbar__overlay" data-action="click->navbar#minify" role="button" aria-label="Fermer le menu">
+  </div>
+
+  <%# Tablet navbar %>
+
+  <nav class="navbar navbar--tablet" data-navbar-target="minified">
+    <div class="navbar__brand brand">
+      <%= image_tag("logo.svg", alt: "Logo de FiscaHub", height: 30) %>
+    </div>
+
+    <% @links[0..4].each do |link| %>
+      <%= render_icon_link(link) %>
+    <% end %>
+
+    <div class="navbar__icon-link">
+      <%= button_component "Afficher tout le menu", icon: "ellipsis-horizontal", icon_only: true, data: { action: "click->navbar#expand" } %>
+    </div>
+
+    <div class="flex-auto"></div>
+
+    <div class="navbar__icon-link">
+      <%= button_component "Gestion du compte", user_settings_path, icon: "user-circle", icon_only: true %>
+    </div>
+  </nav>
+
+  <%# Mobile navbar %>
+
+  <nav class="navbar navbar--mobile" data-navbar-target="minified">
+    <div class="navbar__icon-link">
+      <%= button_component "Afficher tout le menu", icon: "bars-3", icon_only: true, data: { action: "click->navbar#expand" } %>
+    </div>
+
+    <div class="flex-auto"></div>
+
+    <% @links[0..4].each do |link| %>
+      <%= render_icon_link(link) %>
+    <% end %>
+
+    <div class="flex-auto"></div>
+
+    <div class="navbar__icon-link">
+      <%= button_component "Gestion du compte", user_settings_path, icon: "user-circle", icon_only: true %>
+    </div>
+  </nav>
+</div>
