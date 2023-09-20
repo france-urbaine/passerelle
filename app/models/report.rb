@@ -97,7 +97,7 @@
 #  situation_taxation_base_minimum                :boolean
 #  proposition_occupation_annee_concernee         :string
 #  proposition_occupation                         :string
-#  proposition_date_occupation                    :string
+#  proposition_date_occupation                    :date
 #  proposition_erreur_tlv                         :boolean
 #  proposition_erreur_thlv                        :boolean
 #  proposition_meuble_tourisme                    :boolean
@@ -111,7 +111,7 @@
 #  proposition_etablissement_principal            :boolean
 #  proposition_chantier_longue_duree              :boolean
 #  proposition_code_naf                           :string
-#  proposition_date_debut_activite                :string
+#  proposition_date_debut_activite                :date
 #  completed_at                                   :datetime
 #
 # Indexes
@@ -269,7 +269,6 @@ class Report < ApplicationRecord
 
     validates :proposition_occupation_annee_concernee, numericality: { in: 2018..Time.current.year }
     validates :proposition_occupation,                 inclusion: { in: :valid_occupations }
-    validates :proposition_date_occupation,            format: { with: DATE_REGEXP }
     validates :proposition_erreur_tlv,                 inclusion: [true, false]
     validates :proposition_erreur_thlv,                inclusion: [true, false]
     validates :proposition_meuble_tourisme,            inclusion: [true, false]
@@ -278,7 +277,6 @@ class Report < ApplicationRecord
     validates :proposition_etablissement_principal,    inclusion: [true, false]
     validates :proposition_chantier_longue_duree,      inclusion: [true, false]
     validates :proposition_code_naf,                   format: { with: NAF_REGEXP }
-    validates :proposition_date_debut_activite,        format: { with: DATE_REGEXP }
   end
 
   def valid_affectations

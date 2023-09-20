@@ -3073,7 +3073,7 @@ CREATE TABLE public.reports (
     situation_taxation_base_minimum boolean,
     proposition_occupation_annee_concernee character varying,
     proposition_occupation character varying,
-    proposition_date_occupation character varying,
+    proposition_date_occupation date,
     proposition_erreur_tlv boolean,
     proposition_erreur_thlv boolean,
     proposition_meuble_tourisme boolean,
@@ -3087,7 +3087,7 @@ CREATE TABLE public.reports (
     proposition_etablissement_principal boolean,
     proposition_chantier_longue_duree boolean,
     proposition_code_naf character varying,
-    proposition_date_debut_activite character varying,
+    proposition_date_debut_activite date,
     completed_at timestamp(6) without time zone
 );
 

@@ -12,12 +12,12 @@
           <%= form.select :situation_occupation, situation_occupation, { include_blank: true }, data: { switch_target: "input" } %>
         <% end %>
 
-        <div data-switch-target="target" data-switch-value="RS" hidden>
+        <%= residence_secondaire_fields do %>
           <%= form.block :situation_majoration_rs do %>
             <%= form.label :situation_majoration_rs, "Application de la majoration sur les résidences secondaire" %>
             <%= form.select :situation_majoration_rs, boolean_options, { include_blank: true } %>
           <% end %>
-        </div>
+        <% end %>
       </div>
 
     <% elsif require_occupation_professionnel? %>

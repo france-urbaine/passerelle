@@ -11,6 +11,15 @@ module Views
         def boolean_options
           enum_options(:boolean)
         end
+
+        def residence_secondaire_fields(&)
+          data = {
+            switch_target:          "target",
+            switch_value:           "RS"
+          }
+
+          tag.div(data:, hidden: @report.situation_occupation != "RS", &)
+        end
       end
     end
   end

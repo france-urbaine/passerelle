@@ -17,7 +17,7 @@ class AddOccupationsColumnsToReports < ActiveRecord::Migration[7.0]
 
       t.string  :proposition_occupation_annee_concernee
       t.string  :proposition_occupation
-      t.string  :proposition_date_occupation
+      t.date    :proposition_date_occupation
       t.boolean :proposition_erreur_tlv
       t.boolean :proposition_erreur_thlv
       t.boolean :proposition_meuble_tourisme
@@ -31,7 +31,7 @@ class AddOccupationsColumnsToReports < ActiveRecord::Migration[7.0]
       t.boolean :proposition_etablissement_principal
       t.boolean :proposition_chantier_longue_duree
       t.string  :proposition_code_naf
-      t.string  :proposition_date_debut_activite
+      t.date    :proposition_date_debut_activite
       # rubocop:enable Rails/ThreeStateBooleanColumn
     end
   end

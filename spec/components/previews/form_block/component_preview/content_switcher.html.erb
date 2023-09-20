@@ -1,8 +1,11 @@
 <%= fields model: User.new do |form| %>
   <div data-controller="switch">
-    <%= form.block :affectaction do %>
+    <%= form.block :affectaction do |block| %>
       <%= form.label :affectaction, "Select a value" %>
       <%= form.select :affectaction, { "Habitation" => "hab", "Professionel" => "pro" }, { include_blank: true }, data: { switch_target: "input" } %>
+      <% block.with_hint do %>
+        L'application étant pensée pour fonctionner sans JS, une étape de configuration supplémentaire est nécessaire pour afficher les champs liés à une valeur du select à l'affichage d'un formulaire déjà sauvegardé.
+      <% end %>
     <% end %>
 
     <div data-switch-target="target" data-switch-value="hab" hidden>

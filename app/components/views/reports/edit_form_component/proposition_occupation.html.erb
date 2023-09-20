@@ -25,11 +25,7 @@
 
         <%= form.block :proposition_date_occupation do %>
           <%= form.label :proposition_date_occupation, "Date du changement" %>
-          <% if proposition_date_occupation.is_a?(String) && proposition_date_occupation.present? %>
-            <%= form.text_field :proposition_date_occupation %>
-          <% else %>
-            <%= form.date_field :proposition_date_occupation, value: proposition_date_occupation %>
-          <% end %>
+          <%= form.date_field :proposition_date_occupation %>
         <% end %>
 
         <% if situation_occupation_vacant_tlv? %>
@@ -46,21 +42,21 @@
           <% end %>
         <% end %>
 
-        <div data-switch-target="target" data-switch-value="RP, RS, RE" data-switch-value-separator=", " hidden>
+        <%= local_non_vacant_fields do %>
           <%= form.block :proposition_meuble_tourisme do %>
             <%= form.label :proposition_meuble_tourisme, "Meublé de tourisme" %>
             <%= form.select :proposition_meuble_tourisme, boolean_options, { include_blank: true } %>
           <% end %>
-        </div>
+        <% end %>
 
-        <div data-switch-target="target" data-switch-value="RS" hidden>
+        <%= residence_secondaire_fields do %>
           <%= form.block :proposition_majoration_rs do %>
             <%= form.label :proposition_majoration_rs, "Application de la majoration sur les résidences secondaire" %>
             <%= form.select :proposition_majoration_rs, boolean_options, { include_blank: true } %>
           <% end %>
-        </div>
+        <% end %>
 
-        <div data-switch-target="target" data-switch-value="RP, RS, RE" data-switch-value-separator=", " hidden>
+        <%= local_non_vacant_fields do %>
           <%= form.block :proposition_nom_occupant do %>
             <%= form.label :proposition_nom_occupant, "Nom de l'occupant" %>
             <%= form.text_field :proposition_nom_occupant %>
@@ -75,7 +71,7 @@
             <%= form.label :proposition_adresse_occupant, "Adresse de l'occupant" %>
             <%= form.text_field :proposition_adresse_occupant %>
           <% end %>
-        </div>
+        <% end %>
       </div>
 
     <% elsif require_occupation_professionnel? %>
@@ -115,11 +111,7 @@
 
       <%= form.block :proposition_date_debut_activite do %>
         <%= form.label :proposition_date_debut_activite, "Date de début de l'activité" %>
-        <% if proposition_date_debut_activite.is_a?(String) && proposition_date_debut_activite.present? %>
-          <%= form.text_field :proposition_date_debut_activite %>
-        <% else %>
-          <%= form.date_field :proposition_date_debut_activite, value: proposition_date_debut_activite %>
-        <% end %>
+        <%= form.date_field :proposition_date_debut_activite %>
       <% end %>
 
     <% end %>
