@@ -1,4 +1,13 @@
 GIT
+  remote: https://github.com/Driversnote-Dev/guard-erb_lint.git
+  revision: 2ba3c5d21f5e891df97a3b7c03e56d7d19bf15a2
+  specs:
+    guard-erb_lint (1.0.0)
+      activesupport
+      erb_lint
+      guard-compat (>= 1)
+
+GIT
   remote: https://github.com/inkstak/devise-two-factor.git
   revision: 61ca1a0af6c093e3816b0ee7e2fcb57702e22366
   branch: bugfix-insert_two_factor_authenticatable_on_top
@@ -245,10 +254,6 @@ GEM
       guard (>= 2.0.0)
       guard-compat (~> 1.0)
     guard-compat (1.2.1)
-    guard-erb_lint (1.0.1)
-      activesupport
-      erb_lint
-      guard-compat (>= 1)
     guard-rspec (4.7.3)
       guard (~> 2.1)
       guard-compat (~> 1.1)
@@ -600,7 +605,7 @@ DEPENDENCIES
   fx
   guard
   guard-brakeman
-  guard-erb_lint
+  guard-erb_lint!
   guard-rspec
   guard-rubocop
   htmlbeautifier!

@@ -112,7 +112,8 @@ group :development do
   # Tests & lint automation
   gem "guard"
   gem "guard-brakeman", require: false
-  gem "guard-erb_lint", require: false
+  # FIXME: https://github.com/Driversnote-Dev/guard-erb_lint/issues/1
+  gem "guard-erb_lint", require: false, github: "Driversnote-Dev/guard-erb_lint"
   gem "guard-rspec",    require: false
   gem "guard-rubocop",  require: false
 

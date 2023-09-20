@@ -74,8 +74,12 @@ group :red_green_refactor, halt_on_fail: true do
   end
 
   guard :erb_lint, erb_lint_options do
-    watch(/.+\.erb$/)
-    watch(/.+\.html$/)
+    watch(%r{^app/.+\.erb$})
+    watch(%r{^spec/.+\.html$})
+
+    # If we need to watch any *.html files in the future
+    # we cannot just watch /.+\.html$/ because it may hang on coverage files.
+    # Instead, we need to add watcher per folder.
   end
 
   guard :brakeman, brakeman_options do
