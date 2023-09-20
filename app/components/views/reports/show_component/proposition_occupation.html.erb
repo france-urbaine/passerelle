@@ -59,7 +59,7 @@
           <dt>TLV à tort</dt>
           <dd>
             <%= render_valid_content(:proposition_erreur_tlv) do %>
-              <%= t(@report.proposition_erreur_tlv.to_s, scope: 'enum.boolean') %>
+              <%= t(@report.proposition_erreur_tlv.to_s, scope: "enum.boolean") %>
             <% end %>
           </dd>
         </div>
@@ -70,7 +70,7 @@
           <dt>THLV à tort</dt>
           <dd>
             <%= render_valid_content(:proposition_erreur_thlv) do %>
-              <%= t(@report.proposition_erreur_thlv.to_s, scope: 'enum.boolean') %>
+              <%= t(@report.proposition_erreur_thlv.to_s, scope: "enum.boolean") %>
             <% end %>
           </dd>
         </div>
@@ -81,7 +81,7 @@
           <dt>Meublé de tourisme</dt>
           <dd>
             <%= render_valid_content(:proposition_meuble_tourisme) do %>
-              <%= t(@report.proposition_meuble_tourisme.to_s, scope: 'enum.boolean') %>
+              <%= t(@report.proposition_meuble_tourisme.to_s, scope: "enum.boolean") %>
             <% end %>
           </dd>
         </div>
@@ -92,7 +92,7 @@
           <dt>Application de la majoration sur les résidences secondaire</dt>
           <dd>
             <%= render_valid_content(:proposition_majoration_rs) do %>
-              <%= t(@report.proposition_majoration_rs.to_s, scope: 'enum.boolean') %>
+              <%= t(@report.proposition_majoration_rs.to_s, scope: "enum.boolean") %>
             <% end %>
           </dd>
         </div>
@@ -160,7 +160,7 @@
         <dt>Etablissement principal</dt>
         <dd>
           <%= render_valid_content(:proposition_etablissement_principal) do %>
-            <%= t(@report.proposition_etablissement_principal.to_s, scope: 'enum.boolean') %>
+            <%= t(@report.proposition_etablissement_principal.to_s, scope: "enum.boolean") %>
           <% end %>
         </dd>
       </div>
@@ -169,7 +169,7 @@
         <dt>Chantier longue durée</dt>
         <dd>
           <%= render_valid_content(:proposition_chantier_longue_duree) do %>
-            <%= t(@report.proposition_chantier_longue_duree.to_s, scope: 'enum.boolean') %>
+            <%= t(@report.proposition_chantier_longue_duree.to_s, scope: "enum.boolean") %>
           <% end %>
         </dd>
       </div>

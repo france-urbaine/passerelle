@@ -33,7 +33,7 @@
             <%= form.label :proposition_erreur_tlv, "TLV appliquée à tort" %>
             <%= form.select :proposition_erreur_tlv, boolean_options, { include_blank: true } %>
           <% end %>
-        <% end  %>
+        <% end %>
 
         <% if situation_occupation_vacant_thlv? %>
           <%= form.block :proposition_erreur_thlv do %>
