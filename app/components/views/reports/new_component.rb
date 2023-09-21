@@ -14,8 +14,8 @@ module Views
         "evaluation_local_professionnel" => true,
         "creation_local_habitation"      => true,
         "creation_local_professionnel"   => true,
-        "occupation_local_habitation"    => false,
-        "occupation_local_professionnel" => false
+        "occupation_local_habitation"    => true,
+        "occupation_local_professionnel" => true
       }.freeze
 
       def form_type_choices

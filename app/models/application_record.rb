@@ -23,6 +23,7 @@ class ApplicationRecord < ActiveRecord::Base
   PHONE_REGEXP  = /\A(0|\+(33|590|594|596|262|269))?[0-9]{9}\Z/
   EMAIL_REGEXP  = URI::MailTo::EMAIL_REGEXP
   DOMAIN_REGEXP = /\A#{EMAIL_REGEXP.source.split('@').last}/
+  NAF_REGEXP    = /\A[0-9]{2}\.[0-9]{2}[A-Z]\Z/
 
   CODE_REGION_REGEXP      = /\A[0-9]{2}\Z/
   CODE_DEPARTEMENT_REGEXP = /\A(2[AB]|[0-9]{2}|9[0-9]{2})\Z/

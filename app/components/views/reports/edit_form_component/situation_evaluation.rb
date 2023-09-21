@@ -9,9 +9,9 @@ module Views
         end
 
         def affectation_choices
-          if require_situation_evaluation_habitation?
+          if require_situation_evaluation_habitation? || require_occupation_habitation?
             enum_options(:local_habitation_affectation)
-          elsif require_situation_evaluation_professionnel?
+          elsif require_situation_evaluation_professionnel? || require_occupation_professionnel?
             enum_options(:local_professionnel_affectation)
           else
             []
@@ -19,9 +19,9 @@ module Views
         end
 
         def nature_choices
-          if require_situation_evaluation_habitation?
+          if require_situation_evaluation_habitation? || require_occupation_habitation?
             enum_options(:local_habitation_nature)
-          elsif require_situation_evaluation_professionnel?
+          elsif require_situation_evaluation_professionnel? || require_occupation_professionnel?
             enum_options(:local_professionnel_nature)
           else
             []
@@ -29,9 +29,9 @@ module Views
         end
 
         def categorie_choices
-          if require_situation_evaluation_habitation?
+          if require_situation_evaluation_habitation? || require_occupation_habitation?
             enum_options(:local_habitation_categorie)
-          elsif require_situation_evaluation_professionnel?
+          elsif require_situation_evaluation_professionnel? || require_occupation_professionnel?
             enum_options(:local_professionnel_categorie)
           else
             []

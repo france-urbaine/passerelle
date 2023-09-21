@@ -1,0 +1,62 @@
+<%= modal_component do |modal| %>
+  <% modal.with_header do %>
+    Situation actuelle de l'occupation
+  <% end %>
+
+  <% modal.with_form(model: @report) do |form| %>
+    <% if require_occupation_habitation? %>
+
+      <div data-controller="switch">
+        <%= form.block :situation_occupation do %>
+          <%= form.label :situation_occupation, "Nature de l'occupation actuelle" %>
+          <%= form.select :situation_occupation, situation_occupation, { include_blank: true }, data: { switch_target: "input" } %>
+        <% end %>
+
+        <%= residence_secondaire_fields do %>
+          <%= form.block :situation_majoration_rs do %>
+            <%= form.label :situation_majoration_rs, "Application de la majoration sur les résidences secondaire" %>
+            <%= form.select :situation_majoration_rs, boolean_options, { include_blank: true } %>
+          <% end %>
+        <% end %>
+      </div>
+
+    <% elsif require_occupation_professionnel? %>
+
+      <%= form.block :situation_annee_fichier_cfe do %>
+        <%= form.label :situation_annee_fichier_cfe, "Année du fichier CFE" %>
+        <%= form.number_field :situation_annee_fichier_cfe, step: "any", min: 0 %>
+      <% end %>
+
+      <%= form.block :situation_vacances_fiscales do %>
+        <%= form.label :situation_vacances_fiscales, "Vacance fiscale" %>
+        <%= form.select :situation_vacances_fiscales, boolean_options, { include_blank: true } %>
+      <% end %>
+
+      <%= form.block :situation_nombre_annee_vacances do %>
+        <%= form.label :situation_nombre_annee_vacances, "Nombre d'année de vacances" %>
+        <%= form.number_field :situation_nombre_annee_vacances, step: "any", min: 0 %>
+      <% end %>
+
+      <%= form.block :situation_siren_dernier_occupant do %>
+        <%= form.label :situation_siren_dernier_occupant, "N° SIREN du dernier occupant" %>
+        <%= form.text_field :situation_siren_dernier_occupant %>
+      <% end %>
+
+      <%= form.block :situation_nom_dernier_occupant do %>
+        <%= form.label :situation_nom_dernier_occupant, "Nom du dernier occupant" %>
+        <%= form.text_field :situation_nom_dernier_occupant %>
+      <% end %>
+
+      <%= form.block :situation_vlf_cfe do %>
+        <%= form.label :situation_vlf_cfe, "VLF Cotisation foncière des entreprises" %>
+        <%= form.text_field :situation_vlf_cfe %>
+      <% end %>
+
+      <%= form.block :situation_taxation_base_minimum do %>
+        <%= form.label :situation_taxation_base_minimum, "Taxation base minimum" %>
+        <%= form.select :situation_taxation_base_minimum, boolean_options, { include_blank: true } %>
+      <% end %>
+
+    <% end %>
+  <% end %>
+<% end %>

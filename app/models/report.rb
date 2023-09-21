@@ -86,6 +86,32 @@
 #  proposition_date_achevement                    :string
 #  proposition_numero_permis                      :string
 #  proposition_nature_travaux                     :string
+#  situation_occupation                           :string
+#  situation_majoration_rs                        :boolean
+#  situation_annee_fichier_cfe                    :string
+#  situation_vacances_fiscales                    :boolean
+#  situation_nombre_annee_vacances                :string
+#  situation_siren_dernier_occupant               :string
+#  situation_nom_dernier_occupant                 :string
+#  situation_vlf_cfe                              :string
+#  situation_taxation_base_minimum                :boolean
+#  proposition_occupation_annee_concernee         :string
+#  proposition_occupation                         :string
+#  proposition_date_occupation                    :date
+#  proposition_erreur_tlv                         :boolean
+#  proposition_erreur_thlv                        :boolean
+#  proposition_meuble_tourisme                    :boolean
+#  proposition_majoration_rs                      :boolean
+#  proposition_nom_occupant                       :string
+#  proposition_prenom_occupant                    :string
+#  proposition_adresse_occupant                   :string
+#  proposition_numero_siren                       :string
+#  proposition_nom_societe                        :string
+#  proposition_nom_enseigne                       :string
+#  proposition_etablissement_principal            :boolean
+#  proposition_chantier_longue_duree              :boolean
+#  proposition_code_naf                           :string
+#  proposition_date_debut_activite                :date
 #  completed_at                                   :datetime
 #
 # Indexes
@@ -163,8 +189,8 @@ class Report < ApplicationRecord
     "evaluation_local_professionnel" => %w[consistance affectation categorie exoneration adresse],
     "creation_local_habitation"      => %w[omission_batie construction_neuve],
     "creation_local_professionnel"   => %w[omission_batie construction_neuve],
-    "occupation_local_habitation"    => %w[occupation adresse],
-    "occupation_local_professionnel" => %w[occupation adresse]
+    "occupation_local_habitation"    => %w[occupation],
+    "occupation_local_professionnel" => %w[occupation]
   }.freeze
 
   validates :reference, presence: true, uniqueness: { unless: :skip_uniqueness_validation_of_reference? }
@@ -231,6 +257,26 @@ class Report < ApplicationRecord
     validates :proposition_surface_pk1,      numericality: { greater_than_or_equal_to: 0 }
     validates :proposition_surface_pk2,      numericality: { greater_than_or_equal_to: 0 }
     validates :proposition_surface_ponderee, numericality: { greater_than: 0 }
+
+    validates :situation_occupation,             inclusion: { in: :valid_occupations }
+    validates :situation_majoration_rs,          inclusion: [true, false]
+    validates :situation_annee_fichier_cfe,      numericality: { in: 2018..Time.current.year }
+    validates :situation_vacances_fiscales,      inclusion: [true, false]
+    validates :situation_nombre_annee_vacances,  numericality: { greater_than_or_equal_to: 0 }
+    validates :situation_siren_dernier_occupant, format: { with: SIREN_REGEXP }
+    validates :situation_vlf_cfe,                numericality: { greater_than_or_equal_to: 0 }
+    validates :situation_taxation_base_minimum,  inclusion: [true, false]
+
+    validates :proposition_occupation_annee_concernee, numericality: { in: 2018..Time.current.year }
+    validates :proposition_occupation,                 inclusion: { in: :valid_occupations }
+    validates :proposition_erreur_tlv,                 inclusion: [true, false]
+    validates :proposition_erreur_thlv,                inclusion: [true, false]
+    validates :proposition_meuble_tourisme,            inclusion: [true, false]
+    validates :proposition_majoration_rs,              inclusion: [true, false]
+    validates :proposition_numero_siren,               format: { with: SIREN_REGEXP }
+    validates :proposition_etablissement_principal,    inclusion: [true, false]
+    validates :proposition_chantier_longue_duree,      inclusion: [true, false]
+    validates :proposition_code_naf,                   format: { with: NAF_REGEXP }
   end
 
   def valid_affectations
@@ -243,6 +289,10 @@ class Report < ApplicationRecord
 
   def valid_categories
     (I18n.t("enum.local_habitation_categorie").keys + I18n.t("enum.local_professionnel_categorie").keys).map(&:to_s)
+  end
+
+  def valid_occupations
+    I18n.t("enum.local_habitation_occupation").keys.map(&:to_s)
   end
 
   # Callbacks

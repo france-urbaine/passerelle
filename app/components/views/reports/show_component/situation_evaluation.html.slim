@@ -10,11 +10,12 @@
 
 .card
   dl.description-list
-    .description-list__row
-      dt Date de mutation
-      dd
-        = render_valid_content(:situation_date_mutation) do
-          = helpers.display_date(@report.situation_date_mutation)
+    - if require_situation_date_mutation?
+      .description-list__row
+        dt Date de mutation
+        dd
+          = render_valid_content(:situation_date_mutation) do
+            = helpers.display_date(@report.situation_date_mutation)
 
     .description-list__row
       dt Affectation
@@ -34,11 +35,12 @@
         = render_valid_content(:situation_categorie) do
           = situation_categorie
 
-    .description-list__row
-      dt Surface réelle
-      dd
-        = render_valid_content(:situation_surface_reelle) do
-          = helpers.display_surface(@report.situation_surface_reelle)
+    - if require_situation_surface_reelle?
+      .description-list__row
+        dt Surface réelle
+        dd
+          = render_valid_content(:situation_surface_reelle) do
+            = helpers.display_surface(@report.situation_surface_reelle)
 
     - if require_situation_evaluation_professionnel?
       .description-list__row
