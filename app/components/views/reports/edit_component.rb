@@ -12,8 +12,7 @@ module Views
         proposition_evaluation
         proposition_exoneration
         proposition_adresse
-        proposition_omission_batie
-        proposition_construction_neuve
+        proposition_creation_local
         proposition_occupation
         observations
         enjeu

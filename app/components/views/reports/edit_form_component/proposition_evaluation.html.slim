@@ -16,7 +16,7 @@
       div( data-controller="switch" )
         = form.block :proposition_affectation do
           = form.label :proposition_affectation, "Affectation"
-          = form.select :proposition_affectation, affectation_choices, { include_blank: true }, data: { switch_target: "input" }
+          = form.select :proposition_affectation, affectation_choices, { include_blank: true }, data: { action: "switch#toggle" }
 
         = habitation_fields do
           = form.block :proposition_nature do

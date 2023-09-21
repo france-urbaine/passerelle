@@ -4,31 +4,33 @@ module Views
   module Reports
     class EditFormComponent
       class PropositionOccupation < self
-        def proposition_occupation
+        def proposition_nature_occupation_choices
           enum_options(:local_habitation_occupation)
         end
 
-        def boolean_options
+        def boolean_choices
           enum_options(:boolean)
         end
 
         def residence_secondaire_fields(&)
+          hidden = disabled = (@report.proposition_nature_occupation != "RS")
           data = {
             switch_target: "target",
             switch_value:  "RS"
           }
 
-          tag.div(data:, hidden: !require_proposition_occupation_residence_secondaire?, &)
+          tag.fieldset(data:, hidden:, disabled:, &)
         end
 
         def local_non_vacant_fields(&)
+          hidden = disabled = %w[RP RS RE].exclude?(@report.proposition_nature_occupation)
           data = {
             switch_target:          "target",
             switch_value:           %w[RP RS RE].join(","),
             switch_value_separator: ","
           }
 
-          tag.div(data:, hidden: !require_proposition_occupation_local_non_vacant?, &)
+          tag.fieldset(data:, hidden:, disabled:, &)
         end
       end
     end

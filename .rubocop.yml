@@ -43,6 +43,7 @@ Layout/LineLength:
     - !ruby/regexp /\A\s*has_many/
     - !ruby/regexp /\A\s*has_one/
     - !ruby/regexp /\A\s*resources?/
+    - !ruby/regexp /\A\s*validates_.+/
 
 Layout/MultilineMethodCallIndentation:
   EnforcedStyle: indented

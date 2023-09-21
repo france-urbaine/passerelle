@@ -3063,17 +3063,17 @@ CREATE TABLE public.reports (
     proposition_numero_permis character varying,
     proposition_nature_travaux character varying,
     completed_at timestamp(6) without time zone,
-    situation_occupation character varying,
+    situation_nature_occupation character varying,
     situation_majoration_rs boolean,
-    situation_annee_fichier_cfe character varying,
-    situation_vacances_fiscales boolean,
-    situation_nombre_annee_vacances character varying,
+    situation_annee_cfe character varying,
+    situation_vacance_fiscale boolean,
+    situation_nombre_annees_vacance character varying,
     situation_siren_dernier_occupant character varying,
     situation_nom_dernier_occupant character varying,
     situation_vlf_cfe character varying,
     situation_taxation_base_minimum boolean,
-    proposition_occupation_annee_concernee character varying,
-    proposition_occupation character varying,
+    proposition_occupation_annee character varying,
+    proposition_nature_occupation character varying,
     proposition_date_occupation date,
     proposition_erreur_tlv boolean,
     proposition_erreur_thlv boolean,
@@ -4080,6 +4080,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230905092502'),
 ('20230907151950'),
 ('20230914083547'),
-('20230914100806');
+('20230914100806'),
+('20230921145204');
 
 

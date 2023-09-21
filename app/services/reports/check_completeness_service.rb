@@ -16,14 +16,11 @@ module Reports
     validates_presence_of :code_insee
     validates_presence_of :date_constat
 
-    with_options if: :require_situation_majic? do
-      validates_presence_of :situation_annee_majic
-      validates_presence_of :situation_invariant
-    end
-
-    with_options if: :require_situation_parcelle? do
-      validates_presence_of :situation_parcelle
-    end
+    # Situation MAJIC
+    # --------------------------------------------------------------------------
+    validates_presence_of :situation_annee_majic, if: :require_situation_annee_majic?
+    validates_presence_of :situation_invariant,   if: :require_situation_invariant?
+    validates_presence_of :situation_parcelle,    if: :require_situation_parcelle?
 
     with_options if: :require_situation_adresse? do
       validates_presence_of :situation_libelle_voie
@@ -46,6 +43,8 @@ module Reports
       validate :situation_proprietaire_must_be_complete
     end
 
+    # Situation evaluation
+    # --------------------------------------------------------------------------
     validates_presence_of :situation_date_mutation,            if: :require_situation_date_mutation?
     validates_presence_of :situation_affectation,              if: :require_situation_affectation?
     validates_presence_of :situation_nature,                   if: :require_situation_nature?
@@ -64,45 +63,10 @@ module Reports
       validates_inclusion_of :situation_categorie, in: :valid_local_professionnel_categories
     end
 
-    with_options if: :require_occupation_habitation? do
-      validates_inclusion_of :situation_occupation,    in: :valid_local_habitation_occupations
-      validates_inclusion_of :proposition_occupation,  in: :valid_local_habitation_occupations
-      validates_presence_of  :proposition_occupation_annee_concernee
-      validates_presence_of  :proposition_date_occupation
-    end
-
-    validates_presence_of :proposition_erreur_tlv,    if: :require_proposition_erreur_tlv?
-    validates_presence_of :proposition_erreur_thlv,   if: :require_proposition_erreur_thlv?
-    validates_presence_of :situation_majoration_rs,   if: :require_situation_occupation_residence_secondaire?
-    validates_presence_of :proposition_majoration_rs, if: :require_proposition_occupation_residence_secondaire?
-
-    with_options if: :require_proposition_occupation_local_non_vacant? do
-      validates_presence_of  :proposition_meuble_tourisme
-      validates_presence_of  :proposition_nom_occupant
-      validates_presence_of  :proposition_prenom_occupant
-      validates_presence_of  :proposition_adresse_occupant
-    end
-
-    with_options if: :require_occupation_professionnel? do
-      validates_presence_of  :situation_annee_fichier_cfe
-      validates_presence_of  :situation_vacances_fiscales
-      validates_presence_of  :situation_nombre_annee_vacances
-      validates_presence_of  :situation_siren_dernier_occupant
-      validates_presence_of  :situation_nom_dernier_occupant
-      validates_presence_of  :situation_vlf_cfe
-      validates_presence_of  :situation_taxation_base_minimum
-      validates_presence_of  :proposition_numero_siren
-      validates_presence_of  :proposition_nom_societe
-      validates_presence_of  :proposition_nom_enseigne
-      validates_presence_of  :proposition_etablissement_principal
-      validates_presence_of  :proposition_chantier_longue_duree
-      validates_presence_of  :proposition_code_naf
-      validates_presence_of  :proposition_date_debut_activite
-    end
-
+    # Proposition evaluation
+    # --------------------------------------------------------------------------
     validates_presence_of :proposition_affectation,              if: :require_proposition_affectation?
     validates_presence_of :proposition_nature,                   if: :require_proposition_nature?
-    validates_presence_of :proposition_nature_dependance,        if: :require_proposition_nature_dependance?
     validates_presence_of :proposition_categorie,                if: :require_proposition_categorie?
     validates_presence_of :proposition_surface_reelle,           if: :require_proposition_surface_reelle?
     validates_presence_of :proposition_coefficient_entretien,    if: :require_proposition_coefficient_entretien?
@@ -118,22 +82,45 @@ module Reports
       validates_inclusion_of :proposition_categorie, in: :valid_local_professionnel_categories
     end
 
-    with_options if: :require_proposition_exoneration? do
-      validates_presence_of :exonerations
-    end
+    validates_presence_of :exonerations,             if: :require_proposition_exoneration?
+    validates_presence_of :proposition_libelle_voie, if: :require_proposition_adresse?
 
-    with_options if: :require_proposition_adresse? do
-      validates_presence_of :proposition_libelle_voie
-    end
+    # Proposition creation
+    # --------------------------------------------------------------------------
+    validates_presence_of :proposition_nature_dependance, if: :require_proposition_nature_dependance?
+    validates_presence_of :proposition_date_achevement,   if: :require_proposition_date_achevement?
+    validates_presence_of :proposition_numero_permis,     if: :require_proposition_numero_permis?
+    validates_presence_of :proposition_nature_travaux,    if: :require_proposition_nature_travaux?
 
-    with_options if: :require_proposition_date_achevement? do
-      validates_presence_of :proposition_date_achevement
-    end
+    # Situation occupation
+    # --------------------------------------------------------------------------
+    validates_presence_of  :situation_nature_occupation,      if: :require_situation_nature_occupation?
+    validates_exclusion_of :situation_majoration_rs,          if: :require_situation_majoration_rs?, in: [nil], message: :blank
+    validates_presence_of  :situation_annee_cfe,              if: :require_situation_annee_cfe?
+    validates_exclusion_of :situation_vacance_fiscale,        if: :require_situation_vacance_fiscale?, in: [nil], message: :blank
+    validates_presence_of  :situation_nombre_annees_vacance,  if: :require_situation_nombre_annees_vacance?
+    validates_presence_of  :situation_siren_dernier_occupant, if: :require_situation_siren_dernier_occupant?
+    validates_presence_of  :situation_nom_dernier_occupant,   if: :require_situation_nom_dernier_occupant?
+    validates_presence_of  :situation_vlf_cfe,                if: :require_situation_vlf_cfe?
+    validates_exclusion_of :situation_taxation_base_minimum,  if: :require_situation_taxation_base_minimum?, in: [nil], message: :blank
 
-    with_options if: :require_proposition_construction_neuve? do
-      validates_presence_of :proposition_numero_permis
-      validates_presence_of :proposition_nature_travaux
-    end
+    # Proposition occupation
+    # --------------------------------------------------------------------------
+    validates_presence_of  :proposition_occupation_annee,        if: :require_proposition_occupation_annee?
+    validates_presence_of  :proposition_nature_occupation,       if: :require_proposition_nature_occupation?
+    validates_presence_of  :proposition_date_occupation,         if: :require_proposition_date_occupation?
+    validates_exclusion_of :proposition_erreur_tlv,              if: :require_proposition_erreur_tlv?,      in: [nil], message: :blank
+    validates_exclusion_of :proposition_erreur_thlv,             if: :require_proposition_erreur_thlv?,     in: [nil], message: :blank
+    validates_exclusion_of :proposition_meuble_tourisme,         if: :require_proposition_meuble_tourisme?, in: [nil], message: :blank
+    validates_exclusion_of :proposition_majoration_rs,           if: :require_proposition_majoration_rs?,   in: [nil], message: :blank
+    validates_presence_of  :proposition_nom_occupant,            if: :require_proposition_nom_occupant?
+    validates_presence_of  :proposition_prenom_occupant,         if: :require_proposition_prenom_occupant?
+    validates_presence_of  :proposition_numero_siren,            if: :require_proposition_numero_siren?
+    validates_presence_of  :proposition_nom_societe,             if: :require_proposition_nom_societe?
+    validates_exclusion_of :proposition_etablissement_principal, if: :require_proposition_etablissement_principal?, in: [nil], message: :blank
+    validates_exclusion_of :proposition_chantier_longue_duree,   if: :require_proposition_chantier_longue_duree?,   in: [nil], message: :blank
+    validates_presence_of  :proposition_code_naf,                if: :require_proposition_code_naf?
+    validates_presence_of  :proposition_date_debut_activite,     if: :require_proposition_date_debut_activite?
 
     private
 

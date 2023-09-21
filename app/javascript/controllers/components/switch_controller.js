@@ -1,22 +1,10 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["input", "target"]
+  static targets = ["target"]
 
-  initialize () {
-    this.toggle = this.toggle.bind(this)
-  }
-
-  connect() {
-    if (this.hasInputTarget) this.inputTarget.addEventListener("change", this.toggle)
-  }
-
-  disconnect () {
-    if (this.hasInputTarget) this.inputTarget.removeEventListener('change', this.toggle)
-  }
-
-  toggle () {
-    const value = this.inputTarget.value + ""
+  toggle (event) {
+    const value = event.target.value + ""
 
     this.targetTargets.forEach((target) => {
       let targetValue = target.dataset.switchValue + ""
@@ -30,9 +18,7 @@ export default class extends Controller {
       }
 
       target.hidden = !enabled
-      target.querySelectorAll("input, select, textarea").forEach((input) => {
-        input.disabled = !enabled
-      })
+      target.disabled = !enabled
     })
   }
 }

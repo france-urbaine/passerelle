@@ -23,6 +23,10 @@ module States
       # ----------------------------------------------------------------------------
       delegate :transmitted?, :delivered?, :assigned?, :returned?, :unreturned?, to: :package, allow_nil: true
 
+      def completed?
+        completed_at.present?
+      end
+
       def packing?
         package&.packing? || new_record?
       end
@@ -43,12 +47,18 @@ module States
         delivered? && debated_at?
       end
 
-      def completed?
-        completed_at.present?
-      end
-
       # Updates methods
       # ----------------------------------------------------------------------------
+      def complete!
+        return true if completed?
+
+        update_column(:completed_at, Time.current)
+      end
+
+      def incomplete!
+        update_column(:completed_at, nil)
+      end
+
       def approve!
         return true if approved?
 
@@ -74,12 +84,6 @@ module States
         return false if approved? || rejected?
 
         update_columns(debated_at: Time.current)
-      end
-
-      def complete!
-        return true if completed?
-
-        update_column(:completed_at, Time.current)
       end
     end
   end

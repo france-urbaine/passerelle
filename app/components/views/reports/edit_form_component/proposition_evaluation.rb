@@ -7,23 +7,25 @@ module Views
         SWITCH_SEPARATOR = ","
 
         def habitation_fields(&)
+          hidden = disabled = !require_proposition_evaluation_habitation?
           data = {
             switch_target:          "target",
             switch_value:           I18n.t("enum.local_habitation_affectation").keys.join(SWITCH_SEPARATOR),
             switch_value_separator: SWITCH_SEPARATOR
           }
 
-          tag.div(data:, hidden: !require_proposition_evaluation_habitation?, &)
+          tag.fieldset(data:, hidden:, disabled:, &)
         end
 
         def professionnel_fields(&)
+          hidden = disabled = !require_proposition_evaluation_professionnel?
           data = {
             switch_target:          "target",
             switch_value:           I18n.t("enum.local_professionnel_affectation").keys.join(SWITCH_SEPARATOR),
             switch_value_separator: SWITCH_SEPARATOR
           }
 
-          tag.div(data:, hidden: !require_proposition_evaluation_professionnel?, &)
+          tag.fieldset(data:, hidden:, disabled:, &)
         end
 
         def affectation_choices

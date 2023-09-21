@@ -10,17 +10,19 @@
       <%= form.date_field :date_constat %>
     <% end %>
 
-    <% if require_occupation_habitation? %>
+    <% if require_proposition_occupation_habitation? %>
 
-      <%= form.block :proposition_occupation_annee_concernee do %>
-        <%= form.label :proposition_occupation_annee_concernee, "Année sur laquelle porte le signalement" %>
-        <%= form.number_field :proposition_occupation_annee_concernee %>
+      <% if display_proposition_occupation_annee? %>
+        <%= form.block :proposition_occupation_annee do %>
+          <%= form.label :proposition_occupation_annee, "Année sur laquelle porte le signalement" %>
+          <%= form.number_field :proposition_occupation_annee %>
+        <% end %>
       <% end %>
 
       <div data-controller="switch">
-        <%= form.block :proposition_occupation do %>
-          <%= form.label :proposition_occupation, "Nature de l'occupation constatée" %>
-          <%= form.select :proposition_occupation, proposition_occupation, { include_blank: true }, data: { switch_target: "input" } %>
+        <%= form.block :proposition_nature_occupation do %>
+          <%= form.label :proposition_nature_occupation, "Nature de l'occupation constatée" %>
+          <%= form.select :proposition_nature_occupation, proposition_nature_occupation_choices, { include_blank: true }, data: { action: "switch#toggle" } %>
         <% end %>
 
         <%= form.block :proposition_date_occupation do %>
@@ -28,31 +30,31 @@
           <%= form.date_field :proposition_date_occupation %>
         <% end %>
 
-        <% if require_proposition_erreur_tlv? %>
+        <% if display_proposition_erreur_tlv? %>
           <%= form.block :proposition_erreur_tlv do %>
             <%= form.label :proposition_erreur_tlv, "TLV appliquée à tort" %>
-            <%= form.select :proposition_erreur_tlv, boolean_options, { include_blank: true } %>
+            <%= form.select :proposition_erreur_tlv, boolean_choices, { include_blank: true } %>
           <% end %>
         <% end %>
 
-        <% if require_proposition_erreur_thlv? %>
+        <% if display_proposition_erreur_thlv? %>
           <%= form.block :proposition_erreur_thlv do %>
             <%= form.label :proposition_erreur_thlv, "THLV appliquée à tort" %>
-            <%= form.select :proposition_erreur_thlv, boolean_options, { include_blank: true } %>
+            <%= form.select :proposition_erreur_thlv, boolean_choices, { include_blank: true } %>
           <% end %>
         <% end %>
 
         <%= local_non_vacant_fields do %>
           <%= form.block :proposition_meuble_tourisme do %>
             <%= form.label :proposition_meuble_tourisme, "Meublé de tourisme" %>
-            <%= form.select :proposition_meuble_tourisme, boolean_options, { include_blank: true } %>
+            <%= form.select :proposition_meuble_tourisme, boolean_choices, { include_blank: true } %>
           <% end %>
         <% end %>
 
         <%= residence_secondaire_fields do %>
           <%= form.block :proposition_majoration_rs do %>
             <%= form.label :proposition_majoration_rs, "Application de la majoration sur les résidences secondaire" %>
-            <%= form.select :proposition_majoration_rs, boolean_options, { include_blank: true } %>
+            <%= form.select :proposition_majoration_rs, boolean_choices, { include_blank: true } %>
           <% end %>
         <% end %>
 
@@ -74,44 +76,60 @@
         <% end %>
       </div>
 
-    <% elsif require_occupation_professionnel? %>
+    <% end %>
 
-      <%= form.block :proposition_numero_siren do %>
-        <%= form.label :proposition_numero_siren, "N° SIREN" %>
-        <%= form.number_field :proposition_numero_siren %>
-      <% end %>
+    <% if require_proposition_occupation_professionnel? %>
 
-      <%= form.block :proposition_nom_societe do %>
-        <%= form.label :proposition_nom_societe, "Nom de la société" %>
-        <%= form.text_field :proposition_nom_societe %>
-      <% end %>
-
-      <%= form.block :proposition_nom_enseigne do %>
-        <%= form.label :proposition_nom_enseigne, "Nom de l'enseigne" %>
-        <%= form.text_field :proposition_nom_enseigne %>
-      <% end %>
-
-      <%= form.block :proposition_etablissement_principal do %>
-        <%= form.label :proposition_etablissement_principal, "Etablissement principal" %>
-        <%= form.select :proposition_etablissement_principal, boolean_options, { include_blank: true } %>
-      <% end %>
-
-      <%= form.block :proposition_chantier_longue_duree do %>
-        <%= form.label :proposition_chantier_longue_duree, "Chantier longue durée" %>
-        <%= form.select :proposition_chantier_longue_duree, boolean_options, { include_blank: true } %>
-      <% end %>
-
-      <%= form.block :proposition_code_naf do |block| %>
-        <%= form.label :proposition_code_naf, "Code NAF" %>
-        <%= form.text_field :proposition_code_naf %>
-        <% block.with_hint do %>
-          Le Code NAF doit respecter le format suivant : 00.00A
+      <% if display_proposition_numero_siren? %>
+        <%= form.block :proposition_numero_siren do %>
+          <%= form.label :proposition_numero_siren, "N° SIREN" %>
+          <%= form.text_field :proposition_numero_siren %>
         <% end %>
       <% end %>
 
-      <%= form.block :proposition_date_debut_activite do %>
-        <%= form.label :proposition_date_debut_activite, "Date de début de l'activité" %>
-        <%= form.date_field :proposition_date_debut_activite %>
+      <% if display_proposition_nom_societe? %>
+        <%= form.block :proposition_nom_societe do %>
+          <%= form.label :proposition_nom_societe, "Nom de la société" %>
+          <%= form.text_field :proposition_nom_societe %>
+        <% end %>
+      <% end %>
+
+      <% if display_proposition_nom_enseigne? %>
+        <%= form.block :proposition_nom_enseigne do %>
+          <%= form.label :proposition_nom_enseigne, "Nom de l'enseigne" %>
+          <%= form.text_field :proposition_nom_enseigne %>
+        <% end %>
+      <% end %>
+
+      <% if display_proposition_etablissement_principal? %>
+        <%= form.block :proposition_etablissement_principal do %>
+          <%= form.label :proposition_etablissement_principal, "Etablissement principal" %>
+          <%= form.select :proposition_etablissement_principal, boolean_choices, { include_blank: true } %>
+        <% end %>
+      <% end %>
+
+      <% if display_proposition_chantier_longue_duree? %>
+        <%= form.block :proposition_chantier_longue_duree do %>
+          <%= form.label :proposition_chantier_longue_duree, "Chantier longue durée" %>
+          <%= form.select :proposition_chantier_longue_duree, boolean_choices, { include_blank: true } %>
+        <% end %>
+      <% end %>
+
+      <% if display_proposition_code_naf? %>
+        <%= form.block :proposition_code_naf do |block| %>
+          <%= form.label :proposition_code_naf, "Code NAF" %>
+          <%= form.text_field :proposition_code_naf %>
+          <% block.with_hint do %>
+            Le Code NAF doit respecter le format suivant : 00.00A
+          <% end %>
+        <% end %>
+      <% end %>
+
+      <% if display_proposition_date_debut_activite? %>
+        <%= form.block :proposition_date_debut_activite do %>
+          <%= form.label :proposition_date_debut_activite, "Date de début de l'activité" %>
+          <%= form.date_field :proposition_date_debut_activite %>
+        <% end %>
       <% end %>
 
     <% end %>
