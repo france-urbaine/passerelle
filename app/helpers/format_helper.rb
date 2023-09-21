@@ -30,6 +30,8 @@ module FormatHelper
   end
 
   def display_siren(siren)
+    return if siren.nil?
+
     capture do
       parts = siren.scan(/\d{3}/)
       parts[0..-2].each do |part|
