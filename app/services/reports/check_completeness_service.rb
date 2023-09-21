@@ -46,16 +46,13 @@ module Reports
       validate :situation_proprietaire_must_be_complete
     end
 
-    with_options if: :require_situation_evaluation? do
-      validates_presence_of :situation_date_mutation
-      validates_presence_of :situation_affectation
-      validates_presence_of :situation_nature
-    end
-
+    validates_presence_of :situation_date_mutation,            if: :require_situation_date_mutation?
+    validates_presence_of :situation_affectation,              if: :require_situation_affectation?
+    validates_presence_of :situation_nature,                   if: :require_situation_nature?
     validates_presence_of :situation_categorie,                if: :require_situation_categorie?
-    validates_presence_of :situation_surface_reelle,           if: :require_situation_surface?
+    validates_presence_of :situation_surface_reelle,           if: :require_situation_surface_reelle?
     validates_presence_of :situation_coefficient_localisation, if: :require_situation_coefficient_localisation?
-    validates_presence_of :situation_coefficient_entretien,    if: :require_situation_evaluation_habitation?
+    validates_presence_of :situation_coefficient_entretien,    if: :require_situation_coefficient_entretien?
 
     with_options if: :require_situation_evaluation_habitation?, allow_blank: true do
       validates_inclusion_of :situation_nature,    in: :valid_local_habitation_natures
@@ -69,14 +66,18 @@ module Reports
 
     with_options if: :require_occupation_habitation? do
       validates_inclusion_of :situation_occupation,    in: :valid_local_habitation_occupations
-      validates_inclusion_of :situation_majoration_rs, in: [true, false]
       validates_inclusion_of :proposition_occupation,  in: :valid_local_habitation_occupations
       validates_presence_of  :proposition_occupation_annee_concernee
       validates_presence_of  :proposition_date_occupation
-      validates_inclusion_of :proposition_erreur_tlv,      in: [true, false]
-      validates_inclusion_of :proposition_erreur_thlv,     in: [true, false]
-      validates_inclusion_of :proposition_meuble_tourisme, in: [true, false]
-      validates_inclusion_of :proposition_majoration_rs,   in: [true, false]
+    end
+
+    validates_presence_of :proposition_erreur_tlv,    if: :require_proposition_erreur_tlv?
+    validates_presence_of :proposition_erreur_thlv,   if: :require_proposition_erreur_thlv?
+    validates_presence_of :situation_majoration_rs,   if: :require_situation_occupation_residence_secondaire?
+    validates_presence_of :proposition_majoration_rs, if: :require_proposition_occupation_residence_secondaire?
+
+    with_options if: :require_proposition_occupation_local_non_vacant? do
+      validates_presence_of  :proposition_meuble_tourisme
       validates_presence_of  :proposition_nom_occupant
       validates_presence_of  :proposition_prenom_occupant
       validates_presence_of  :proposition_adresse_occupant
@@ -84,17 +85,17 @@ module Reports
 
     with_options if: :require_occupation_professionnel? do
       validates_presence_of  :situation_annee_fichier_cfe
-      validates_inclusion_of :situation_vacances_fiscales, in: [true, false]
+      validates_presence_of  :situation_vacances_fiscales
       validates_presence_of  :situation_nombre_annee_vacances
       validates_presence_of  :situation_siren_dernier_occupant
       validates_presence_of  :situation_nom_dernier_occupant
       validates_presence_of  :situation_vlf_cfe
-      validates_inclusion_of :situation_taxation_base_minimum, in: [true, false]
+      validates_presence_of  :situation_taxation_base_minimum
       validates_presence_of  :proposition_numero_siren
       validates_presence_of  :proposition_nom_societe
       validates_presence_of  :proposition_nom_enseigne
-      validates_inclusion_of :proposition_etablissement_principal, in: [true, false]
-      validates_inclusion_of :proposition_chantier_longue_duree,   in: [true, false]
+      validates_presence_of  :proposition_etablissement_principal
+      validates_presence_of  :proposition_chantier_longue_duree
       validates_presence_of  :proposition_code_naf
       validates_presence_of  :proposition_date_debut_activite
     end
@@ -103,8 +104,8 @@ module Reports
     validates_presence_of :proposition_nature,                   if: :require_proposition_nature?
     validates_presence_of :proposition_nature_dependance,        if: :require_proposition_nature_dependance?
     validates_presence_of :proposition_categorie,                if: :require_proposition_categorie?
-    validates_presence_of :proposition_surface_reelle,           if: :require_proposition_surface?
-    validates_presence_of :proposition_coefficient_entretien,    if: :require_proposition_correctif?
+    validates_presence_of :proposition_surface_reelle,           if: :require_proposition_surface_reelle?
+    validates_presence_of :proposition_coefficient_entretien,    if: :require_proposition_coefficient_entretien?
     validates_presence_of :proposition_coefficient_localisation, if: :require_proposition_coefficient_localisation?
 
     with_options if: :require_proposition_evaluation_habitation?, allow_blank: true do

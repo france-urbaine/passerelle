@@ -18,7 +18,7 @@ module Views
             switch_value:           "RS"
           }
 
-          tag.div(data:, hidden: @report.situation_occupation != "RS", &)
+          tag.div(data:, hidden: !require_situation_occupation_residence_secondaire?, &)
         end
       end
     end

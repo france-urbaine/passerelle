@@ -28,14 +28,14 @@
           <%= form.date_field :proposition_date_occupation %>
         <% end %>
 
-        <% if situation_occupation_vacant_tlv? %>
+        <% if require_proposition_erreur_tlv? %>
           <%= form.block :proposition_erreur_tlv do %>
             <%= form.label :proposition_erreur_tlv, "TLV appliquée à tort" %>
             <%= form.select :proposition_erreur_tlv, boolean_options, { include_blank: true } %>
           <% end %>
         <% end %>
 
-        <% if situation_occupation_vacant_thlv? %>
+        <% if require_proposition_erreur_thlv? %>
           <%= form.block :proposition_erreur_thlv do %>
             <%= form.label :proposition_erreur_thlv, "THLV appliquée à tort" %>
             <%= form.select :proposition_erreur_thlv, boolean_options, { include_blank: true } %>
