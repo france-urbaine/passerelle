@@ -23,6 +23,7 @@
 @import "./components/notifications";
 @import "./components/priority_icon";
 @import "./components/copyable_text.css";
+@import "./components/dropdown";
 
 /* Forms */
 @import "./components/form_block";
@@ -31,6 +32,12 @@
 @import "./components/choices_collection";
 @import "./components/direct_upload";
 @import "./components/password_field";
+
+/* Data display */
+@import "./components/badge";
+@import "./components/dashboard_number";
+@import "./components/datatable";
+@import "./components/description_list";
 
 /* Layouts */
 @import "./components/navbar";
@@ -41,12 +48,5 @@
 @import "./components/card";
 @import "./components/modal";
 @import "./components/breadcrumbs";
-@import "./components/dropdown";
 @import "./components/skeleton_loader";
 @import "./components/public";
-
-/* Data display */
-@import "./components/badge";
-@import "./components/dashboard_number";
-@import "./components/datatable";
-@import "./components/description_list";

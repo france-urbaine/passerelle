@@ -1,0 +1,22 @@
+<% if turbo_frame_request? %>
+  <%= tag.turbo_frame id: "modal" do %>
+    <% if modal? %>
+      <%= modal %>
+    <% else %>
+      <%= content %>
+    <% end %>
+  <% end %>
+
+<% else %>
+  <main class="content">
+    <%= tag.turbo_frame id: "content", src: @referrer, target: "_top", data: { turbo_action: "advance" } %>
+  </main>
+
+  <%= tag.turbo_frame id: "modal", target: "_top" do %>
+    <% if modal? %>
+      <%= modal %>
+    <% else %>
+      <%= content %>
+    <% end %>
+  <% end %>
+<% end %>

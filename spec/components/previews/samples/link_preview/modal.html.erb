@@ -1,0 +1,11 @@
+<%= tag.turbo_frame id: request.headers["Turbo-Frame"] do %>
+  <%= modal_component do |modal| %>
+    <% modal.with_body do %>
+      This content is rendered after being redirected to:
+      <br>
+      /rails/view_components/samples/link/modal
+    <% end %>
+
+    <% modal.with_close_action "Close" %>
+  <% end %>
+<% end %>
