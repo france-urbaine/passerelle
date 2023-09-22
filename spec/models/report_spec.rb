@@ -8,7 +8,7 @@ RSpec.describe Report do
   describe "associations" do
     it { is_expected.to belong_to(:collectivity).required }
     it { is_expected.to belong_to(:publisher).optional }
-    it { is_expected.to belong_to(:package).required }
+    it { is_expected.to belong_to(:package).optional }
     it { is_expected.to belong_to(:transmission).optional }
     it { is_expected.to belong_to(:workshop).optional }
     it { is_expected.to belong_to(:commune).optional }
@@ -30,7 +30,6 @@ RSpec.describe Report do
   # Validations
   # ----------------------------------------------------------------------------
   describe "validations" do
-    it { is_expected.to validate_presence_of(:reference) }
     it { is_expected.to validate_presence_of(:form_type) }
 
     it { is_expected.to validate_inclusion_of(:form_type).in_array(Report::FORM_TYPES) }
@@ -194,10 +193,16 @@ RSpec.describe Report do
         expect {
           described_class.sandbox.load
         }.to perform_sql_query(<<~SQL)
-          SELECT     "reports".*
-          FROM       "reports"
-          INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
-          WHERE      "packages"."sandbox" = TRUE
+          SELECT "reports".*
+          FROM   "reports"
+          LEFT OUTER JOIN "packages" ON "packages"."id" = "reports"."package_id"
+          LEFT OUTER JOIN "transmissions" ON "transmissions"."id" = "reports"."transmission_id"
+          WHERE
+            (
+              ("packages"."id" IS NOT NULL AND "packages"."sandbox" IS TRUE)
+              OR
+              ("packages"."id" IS NULL AND "transmissions"."sandbox" IS TRUE)
+            )
         SQL
       end
     end
@@ -207,10 +212,19 @@ RSpec.describe Report do
         expect {
           described_class.out_of_sandbox.load
         }.to perform_sql_query(<<~SQL)
-          SELECT     "reports".*
-          FROM       "reports"
-          INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
-          WHERE      "packages"."sandbox" = FALSE
+          SELECT "reports".*
+          FROM "reports"
+          LEFT OUTER JOIN "packages" ON "packages"."id" = "reports"."package_id"
+          LEFT OUTER JOIN "transmissions" ON "transmissions"."id" = "reports"."transmission_id"
+          WHERE
+            (
+              ("packages"."id" IS NOT NULL AND "packages"."sandbox" IS FALSE)
+              OR
+              ("packages"."id" IS NULL AND "transmissions"."sandbox" IS FALSE)
+              OR
+              ("packages"."id" IS NULL AND "transmissions"."id" IS NULL)
+            )
+          )
         SQL
       end
     end
@@ -233,11 +247,14 @@ RSpec.describe Report do
         expect {
           described_class.all_kept.load
         }.to perform_sql_query(<<~SQL)
-          SELECT     "reports".*
-          FROM       "reports"
-          INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
-          WHERE      "packages"."discarded_at" IS NULL
-            AND      "reports"."discarded_at" IS NULL
+          SELECT "reports".*
+          FROM "reports"
+          LEFT OUTER JOIN "packages" ON "packages"."id" = "reports"."package_id"
+          WHERE (
+            "reports"."discarded_at" IS NULL
+            AND
+            ("packages"."id" IS NULL OR "packages"."discarded_at" IS NULL)
+          )
         SQL
       end
     end
@@ -315,7 +332,7 @@ RSpec.describe Report do
           WHERE      "packages"."transmitted_at" IS NOT NULL
             AND      "packages"."sandbox" = FALSE
             AND (
-              "reports"."approved_at" IS NOT NULL
+                 "reports"."approved_at" IS NOT NULL
               OR "reports"."rejected_at" IS NOT NULL
               OR "reports"."debated_at" IS NOT NULL
             )

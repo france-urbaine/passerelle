@@ -1153,8 +1153,8 @@ CREATE TABLE public.packages (
     reports_approved_count integer DEFAULT 0 NOT NULL,
     reports_rejected_count integer DEFAULT 0 NOT NULL,
     reports_debated_count integer DEFAULT 0 NOT NULL,
-    sandbox boolean DEFAULT false NOT NULL,
     completed_at timestamp(6) without time zone,
+    sandbox boolean DEFAULT false NOT NULL,
     transmission_id uuid
 );
 
@@ -2984,7 +2984,7 @@ CREATE TABLE public.reports (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
     collectivity_id uuid NOT NULL,
     publisher_id uuid,
-    package_id uuid NOT NULL,
+    package_id uuid,
     workshop_id uuid,
     sibling_id character varying,
     created_at timestamp(6) without time zone NOT NULL,
@@ -2993,7 +2993,7 @@ CREATE TABLE public.reports (
     rejected_at timestamp(6) without time zone,
     debated_at timestamp(6) without time zone,
     discarded_at timestamp(6) without time zone,
-    reference character varying NOT NULL,
+    reference character varying,
     form_type public.form_type NOT NULL,
     anomalies public.anomaly[] NOT NULL,
     priority public.priority DEFAULT 'low'::public.priority NOT NULL,
@@ -4200,6 +4200,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230914100806'),
 ('20230921145204'),
 ('20230922120732'),
-('20230922132331');
+('20230922132331'),
+('20230922140136');
 
 

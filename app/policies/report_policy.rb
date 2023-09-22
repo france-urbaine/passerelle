@@ -144,11 +144,10 @@ class ReportPolicy < ApplicationPolicy
       # those fully transmitted by their publishers.
       #
       Report
-        .joins(:package)
         .all_kept
         .out_of_sandbox
         .sent_by_collectivity(organization)
-        .merge(Package.packed_through_web_ui.or(Package.transmitted))
+        .packing_through_web_ui_or_transmitted
     end
 
     def reports_destroyable_by_collectivity

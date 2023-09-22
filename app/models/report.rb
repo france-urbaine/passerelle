@@ -7,7 +7,7 @@
 #  id                                             :uuid             not null, primary key
 #  collectivity_id                                :uuid             not null
 #  publisher_id                                   :uuid
-#  package_id                                     :uuid             not null
+#  package_id                                     :uuid
 #  workshop_id                                    :uuid
 #  sibling_id                                     :string
 #  created_at                                     :datetime         not null
@@ -16,7 +16,7 @@
 #  rejected_at                                    :datetime
 #  debated_at                                     :datetime
 #  discarded_at                                   :datetime
-#  reference                                      :string           not null
+#  reference                                      :string
 #  form_type                                      :enum             not null
 #  anomalies                                      :enum             not null, is an Array
 #  priority                                       :enum             default("low"), not null
@@ -139,11 +139,11 @@ class Report < ApplicationRecord
   # Associations
   # ----------------------------------------------------------------------------
   belongs_to :collectivity
-  belongs_to :publisher, optional: true
-  belongs_to :package
+  belongs_to :publisher,    optional: true
+  belongs_to :package,      optional: true
   belongs_to :transmission, optional: true
-  belongs_to :workshop, optional: true
-  belongs_to :commune,  optional: true, primary_key: :code_insee, foreign_key: :code_insee, inverse_of: :reports
+  belongs_to :workshop,     optional: true
+  belongs_to :commune,      optional: true, primary_key: :code_insee, foreign_key: :code_insee, inverse_of: :reports
 
   has_many :siblings, ->(report) { where.not(id: report.id) }, class_name: "Report", primary_key: :sibling_id, foreign_key: :sibling_id, inverse_of: false, dependent: false
 
@@ -197,7 +197,7 @@ class Report < ApplicationRecord
     "occupation_local_professionnel" => %w[occupation]
   }.freeze
 
-  validates :reference, presence: true, uniqueness: { unless: :skip_uniqueness_validation_of_reference? }
+  validates :reference, uniqueness: { unless: :skip_uniqueness_validation_of_reference?, allow_blank: true }
   validates :form_type, presence: true, inclusion: { in: FORM_TYPES, allow_blank: true }
   validates :anomalies, array: true
 
@@ -309,9 +309,30 @@ class Report < ApplicationRecord
 
   # Scopes
   # ----------------------------------------------------------------------------
-  scope :sandbox,             -> { joins(:package).merge(Package.unscoped.sandbox) }
-  scope :out_of_sandbox,      -> { joins(:package).merge(Package.unscoped.out_of_sandbox) }
-  scope :all_kept,            -> { joins(:package).merge(Package.unscoped.kept).kept }
+  scope :sandbox, lambda {
+    left_outer_joins(:package, :transmission).where(<<~SQL.squish)
+      ("packages"."id" IS NOT NULL AND "packages"."sandbox" IS TRUE)
+      OR
+      ("packages"."id" IS NULL AND "transmissions"."sandbox" IS TRUE)
+    SQL
+  }
+
+  scope :out_of_sandbox, lambda {
+    left_outer_joins(:package, :transmission).where(<<~SQL.squish)
+      ("packages"."id" IS NOT NULL AND "packages"."sandbox" IS FALSE)
+      OR
+      ("packages"."id" IS NULL AND "transmissions"."sandbox" IS FALSE)
+      OR
+      ("packages"."id" IS NULL AND "transmissions"."id" IS NULL)
+    SQL
+  }
+
+  scope :all_kept, lambda {
+    left_outer_joins(:package).where(<<~SQL.squish)
+      "reports"."discarded_at" IS NULL
+      AND ("packages"."id" IS NULL OR "packages"."discarded_at" IS NULL)
+    SQL
+  }
 
   scope :packed_through_publisher_api, -> { where.not(publisher_id: nil) }
   scope :packed_through_web_ui,        -> { where(publisher_id: nil) }
@@ -341,6 +362,14 @@ class Report < ApplicationRecord
     end
   }
 
+  scope :packing_through_web_ui_or_transmitted, lambda {
+    left_outer_joins(:package).where(<<~SQL.squish)
+      ("packages"."id" IS NULL AND "reports"."publisher_id" IS NULL)
+      OR
+      "packages"."transmitted_at" IS NOT NULL
+    SQL
+  }
+
   scope :search, lambda { |input|
     advanced_search(
       input,
@@ -365,10 +394,18 @@ class Report < ApplicationRecord
 
   # Predicates
   # ----------------------------------------------------------------------------
-  delegate :sandbox?, :out_of_sandbox?, to: :package, allow_nil: true
+  def sandbox?
+    package&.sandbox? || (package.nil? && transmission&.sandbox?)
+  end
+
+  def out_of_sandbox?
+    package&.out_of_sandbox? ||
+      (package.nil? && transmission&.out_of_sandbox?) ||
+      (package.nil? && transmission.nil?)
+  end
 
   def all_kept?
-    kept? && package&.kept?
+    kept? && (package.nil? || package.kept?)
   end
 
   def packed_through_publisher_api?

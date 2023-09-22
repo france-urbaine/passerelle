@@ -491,12 +491,26 @@ RSpec.describe ReportPolicy, stub_factories: false do
         }.to perform_sql_query(<<~SQL)
           SELECT     "reports".*
           FROM       "reports"
-          INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
-          WHERE  "packages"."discarded_at" IS NULL
-            AND  "reports"."discarded_at" IS NULL
-            AND  "packages"."sandbox" = FALSE
+          LEFT OUTER JOIN "packages"      ON "packages"."id" = "reports"."package_id"
+          LEFT OUTER JOIN "transmissions" ON "transmissions"."id" = "reports"."transmission_id"
+          WHERE
+            (
+                  "reports"."discarded_at" IS NULL
+              AND ("packages"."id" IS NULL OR "packages"."discarded_at" IS NULL)
+            )
+            AND (
+              ("packages"."id" IS NOT NULL AND "packages"."sandbox" IS FALSE)
+              OR
+              ("packages"."id" IS NULL AND "transmissions"."sandbox" IS FALSE)
+              OR
+              ("packages"."id" IS NULL AND "transmissions"."id" IS NULL)
+            )
             AND  "reports"."collectivity_id" = '#{current_organization.id}'
-            AND  ("packages"."publisher_id" IS NULL OR "packages"."transmitted_at" IS NOT NULL)
+            AND (
+              ("packages"."id" IS NULL AND "reports"."publisher_id" IS NULL)
+              OR
+              "packages"."transmitted_at" IS NOT NULL
+            )
         SQL
       end
     end
@@ -506,11 +520,14 @@ RSpec.describe ReportPolicy, stub_factories: false do
         expect {
           scope.load
         }.to perform_sql_query(<<~SQL)
-          SELECT     "reports".*
-          FROM       "reports"
-          INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
-          WHERE  "packages"."discarded_at" IS NULL
-            AND  "reports"."discarded_at" IS NULL
+          SELECT "reports".*
+          FROM   "reports"
+          LEFT OUTER JOIN "packages" ON "packages"."id" = "reports"."package_id"
+          WHERE
+            (
+                  "reports"."discarded_at" IS NULL
+              AND ("packages"."id" IS NULL OR "packages"."discarded_at" IS NULL)
+            )
             AND  "reports"."publisher_id" = '#{current_organization.id}'
         SQL
       end
@@ -525,8 +542,11 @@ RSpec.describe ReportPolicy, stub_factories: false do
           FROM       "reports"
           INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
           INNER JOIN "communes" ON "communes"."code_insee" = "reports"."code_insee"
-          WHERE  "packages"."discarded_at" IS NULL
-            AND  "reports"."discarded_at" IS NULL
+          WHERE
+            (
+                  "reports"."discarded_at" IS NULL
+              AND ("packages"."id" IS NULL OR "packages"."discarded_at" IS NULL)
+            )
             AND  "packages"."transmitted_at" IS NOT NULL
             AND  "packages"."sandbox" = FALSE
             AND  "communes"."code_departement" = '#{current_organization.code_departement}'
@@ -545,8 +565,11 @@ RSpec.describe ReportPolicy, stub_factories: false do
           INNER JOIN "office_communes" ON "office_communes"."code_insee" = "reports"."code_insee"
           INNER JOIN "offices"         ON "offices"."id" = "office_communes"."office_id"
           INNER JOIN "office_users"    ON "offices"."id" = "office_users"."office_id"
-          WHERE  "packages"."discarded_at" IS NULL
-            AND  "reports"."discarded_at" IS NULL
+          WHERE
+            (
+                  "reports"."discarded_at" IS NULL
+              AND ("packages"."id" IS NULL OR "packages"."discarded_at" IS NULL)
+            )
             AND  "packages"."transmitted_at" IS NOT NULL
             AND  "packages"."sandbox" = FALSE
             AND  "packages"."assigned_at" IS NOT NULL
