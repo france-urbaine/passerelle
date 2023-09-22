@@ -131,17 +131,17 @@ module Reports
       # * any `occupation_local_*` form
       #
       def display_situation_evaluation?
-        evaluation_local_with_any_anomaly_but_address? || occupation_local?
+        evaluation_local_with_any_anomaly_but?("adresse") || occupation_local?
       end
 
       # This fieldset must be evaluatated as an habitation or a professional local
       #
       def require_situation_evaluation_habitation?
-        evaluation_local_habitation_with_any_anomaly_but_address? || form_type == "occupation_local_habitation"
+        evaluation_local_habitation_with_any_anomaly_but?("adresse") || form_type == "occupation_local_habitation"
       end
 
       def require_situation_evaluation_professionnel?
-        evaluation_local_professionnel_with_any_anomaly_but_address? || form_type == "occupation_local_professionnel"
+        evaluation_local_professionnel_with_any_anomaly_but?("adresse") || form_type == "occupation_local_professionnel"
       end
 
       # @attribute situation_date_mutation
@@ -150,7 +150,7 @@ module Reports
       # * any `evaluation_local_*` form with any anomalies but `adresse`
       #
       def display_situation_date_mutation?
-        evaluation_local_with_any_anomaly_but_address?
+        evaluation_local_with_any_anomaly_but?("adresse")
       end
 
       def require_situation_date_mutation?
@@ -164,7 +164,7 @@ module Reports
       # * any `occupation_local_*` form
       #
       def display_situation_affectation?
-        evaluation_local_with_any_anomaly_but_address? || occupation_local?
+        evaluation_local_with_any_anomaly_but?("adresse") || occupation_local?
       end
 
       def require_situation_affectation?
@@ -178,7 +178,7 @@ module Reports
       # * any `occupation_local_*` form
       #
       def display_situation_nature?
-        evaluation_local_with_any_anomaly_but_address? || occupation_local?
+        evaluation_local_with_any_anomaly_but?("adresse") || occupation_local?
       end
 
       def require_situation_nature?
@@ -195,7 +195,7 @@ module Reports
       # * any `evaluation_local_*` form with an "industrial" nature
       #
       def display_situation_categorie?
-        evaluation_local_with_any_anomaly_but_address? || occupation_local?
+        evaluation_local_with_any_anomaly_but?("adresse") || occupation_local?
       end
 
       def require_situation_categorie?
@@ -213,7 +213,7 @@ module Reports
       # * any `occupation_local_habitation` form
       #
       def display_situation_surface_reelle?
-        evaluation_local_with_any_anomaly_but_address? || occupation_local?
+        evaluation_local_with_any_anomaly_but?("adresse") || occupation_local?
       end
 
       def require_situation_surface_reelle?
@@ -236,7 +236,7 @@ module Reports
       # They are never required.
       #
       def display_other_situation_surface?
-        evaluation_local_professionnel_with_any_anomaly_but_address?
+        evaluation_local_professionnel_with_any_anomaly_but?("adresse")
       end
 
       # @attribute situation_coefficient_localisation
@@ -248,7 +248,7 @@ module Reports
       # * an "industrial" nature
       #
       def display_situation_coefficient_localisation?
-        evaluation_local_professionnel_with_any_anomaly_but_address?
+        evaluation_local_professionnel_with_any_anomaly_but?("adresse")
       end
 
       def require_situation_coefficient_localisation?
@@ -261,7 +261,7 @@ module Reports
       # * any `evaluation_local_hab` form with any anomalies but `adresse`
       #
       def display_situation_coefficient_entretien?
-        evaluation_local_habitation_with_any_anomaly_but_address?
+        evaluation_local_habitation_with_any_anomaly_but?("adresse")
       end
 
       def require_situation_coefficient_entretien?
@@ -277,7 +277,7 @@ module Reports
       # They are never required.
       #
       def display_situation_coefficient_situation?
-        evaluation_local_habitation_with_any_anomaly_but_address?
+        evaluation_local_habitation_with_any_anomaly_but?("adresse")
       end
     end
 
@@ -285,10 +285,10 @@ module Reports
     # --------------------------------------------------------------------------
     concerning :PropositionEvaluation do
       # This fieldset is displayed for:
-      # * any `evaluation_local_*` form with any anomalies but `adresse`
+      # * any `evaluation_local_*` form with any anomalies but `adresse` or `exoneration`
       #
       def display_proposition_evaluation?
-        evaluation_local_with_any_anomaly_but_address?
+        evaluation_local_with_any_anomaly_but?("adresse", "exoneration")
       end
 
       # This fieldset must be evaluatated as an habitation or a professional local
@@ -564,6 +564,19 @@ module Reports
         occupation_local_professionnel?
       end
 
+      # @attribute situation_occupation_annee
+      #
+      # This attribute is displayed and required for:
+      # * any `occupation_local_habitation` form
+      #
+      def display_situation_occupation_annee?
+        occupation_local_habitation?
+      end
+
+      def require_situation_occupation_annee?
+        display_situation_occupation_annee?
+      end
+
       # @attribute situation_nature_occupation
       #
       # This attribute is displayed and required for:
@@ -697,19 +710,6 @@ module Reports
 
       def require_proposition_occupation_professionnel?
         occupation_local_professionnel?
-      end
-
-      # @attribute proposition_occupation_annee
-      #
-      # This attribute is displayed and required for:
-      # * any `occupation_local_habitation` form
-      #
-      def display_proposition_occupation_annee?
-        occupation_local_habitation?
-      end
-
-      def require_proposition_occupation_annee?
-        display_proposition_occupation_annee?
       end
 
       # @attribute proposition_nature_occupation
@@ -927,22 +927,28 @@ module Reports
       @evaluation_local ||= form_type.start_with?("evaluation_local_")
     end
 
-    def evaluation_local_with_any_anomaly_but_address?
-      @evaluation_local_with_any_anomaly_but_address ||=
-        evaluation_local? &&
-        anomalies.intersect?(%w[affectation categorie consistance correctif exoneration])
+    def evaluation_local_with_any_anomaly_but?(*exclusions)
+      evaluation_local? &&
+        anomalies.any? &&
+        anomalies.intersect?(
+          %w[affectation consistance categorie correctif exoneration adresse].without(exclusions.flatten)
+        )
     end
 
-    def evaluation_local_habitation_with_any_anomaly_but_address?
-      @evaluation_local_habitation_with_any_anomaly_but_address ||=
-        form_type == "evaluation_local_habitation" &&
-        anomalies.intersect?(%w[affectation consistance correctif exoneration])
+    def evaluation_local_habitation_with_any_anomaly_but?(*exclusions)
+      form_type == "evaluation_local_habitation" &&
+        anomalies.any? &&
+        anomalies.intersect?(
+          %w[affectation consistance correctif exoneration adresse].without(exclusions.flatten)
+        )
     end
 
-    def evaluation_local_professionnel_with_any_anomaly_but_address?
-      @evaluation_local_professionnel_with_any_anomaly_but_address ||=
-        form_type == "evaluation_local_professionnel" &&
-        anomalies.intersect?(%w[affectation consistance categorie exoneration])
+    def evaluation_local_professionnel_with_any_anomaly_but?(*exclusions)
+      form_type == "evaluation_local_professionnel" &&
+        anomalies.any? &&
+        anomalies.intersect?(
+          %w[affectation consistance categorie exoneration adresse].without(exclusions.flatten)
+        )
     end
 
     def evaluation_local_with_nature_changed_to_industrial?

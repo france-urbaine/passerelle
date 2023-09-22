@@ -6,7 +6,6 @@
 - if display_situation_majic?
   .content__separator
   = render SituationMajic.new(@report)
-
 - elsif display_situation_parcelle?
   .content__separator
   = render SituationParcelle.new(@report)
@@ -25,11 +24,17 @@
   .content__separator
   = render PropositionEvaluation.new(@report)
 
-- if display_situation_occupation?
+- if display_situation_occupation? && display_proposition_occupation?
+  .content__separator
+  .content__grid.content__grid--cols-2
+    div= render SituationOccupation.new(@report)
+    div= render PropositionOccupation.new(@report)
+
+- elsif display_situation_occupation?
   .content__separator
   = render SituationOccupation.new(@report)
 
-- if display_proposition_occupation?
+- elsif display_proposition_occupation?
   .content__separator
   = render PropositionOccupation.new(@report)
 

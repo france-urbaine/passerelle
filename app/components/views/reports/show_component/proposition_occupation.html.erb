@@ -15,25 +15,6 @@
 
 <div class="card">
   <dl class="description-list">
-    <div class="description-list__row">
-      <dt>Date du constat</dt>
-      <dd><%= render_valid_content(:date_constat) { helpers.display_date(@report.date_constat) } %></dd>
-    </div>
-
-    <% if display_proposition_occupation_annee? %>
-      <div class="description-list__row">
-        <dt>Année sur laquelle porte le signalement</dt>
-        <dd><%= render_valid_content(:proposition_occupation_annee) { @report.proposition_occupation_annee } %></dd>
-      </div>
-    <% end %>
-
-    <% if display_proposition_nature_occupation? %>
-      <div class="description-list__row">
-        <dt>Nature de l'occupation constatée</dt>
-        <dd><%= render_valid_content(:proposition_nature_occupation) { proposition_nature_occupation } %></dd>
-      </div>
-    <% end %>
-
     <% if display_proposition_date_occupation? %>
       <div class="description-list__row">
         <dt>Date du changement</dt>
@@ -41,16 +22,23 @@
       </div>
     <% end %>
 
+    <% if display_proposition_nature_occupation? %>
+      <div class="description-list__row">
+        <dt>Nature de l'occupation</dt>
+        <dd><%= render_valid_content(:proposition_nature_occupation) { proposition_nature_occupation } %></dd>
+      </div>
+    <% end %>
+
     <% if display_proposition_erreur_tlv? %>
       <div class="description-list__row">
-        <dt>TLV à tort</dt>
+        <dt>TLV appliquée à tort</dt>
         <dd><%= render_valid_content(:proposition_erreur_tlv) { t(@report.proposition_erreur_tlv.to_s, scope: "enum.boolean") } %></dd>
       </div>
     <% end %>
 
     <% if display_proposition_erreur_thlv? %>
       <div class="description-list__row">
-        <dt>THLV à tort</dt>
+        <dt>THLV appliquée à tort</dt>
         <dd><%= render_valid_content(:proposition_erreur_thlv) { t(@report.proposition_erreur_thlv.to_s, scope: "enum.boolean") } %></dd>
       </div>
     <% end %>
@@ -99,14 +87,14 @@
 
     <% if display_proposition_nom_societe? %>
       <div class="description-list__row">
-        <dt>Nom de la société</dt>
+        <dt>Nom de l'entreprise</dt>
         <dd><%= render_valid_content(:proposition_nom_societe) { @report.proposition_nom_societe } %></dd>
       </div>
     <% end %>
 
     <% if display_proposition_nom_enseigne? %>
       <div class="description-list__row">
-        <dt>Nom de l'enseigne</dt>
+        <dt>Enseigne</dt>
         <dd><%= render_valid_content(:proposition_nom_enseigne) { @report.proposition_nom_enseigne } %></dd>
       </div>
     <% end %>

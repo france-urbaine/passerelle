@@ -297,7 +297,8 @@ RSpec.describe Views::Reports::EditComponent, type: :component do
       expect(page).to have_selector(".modal form") do |form|
         aggregate_failures do
           expect(form).to have_html_attribute("action").with_value("/signalements/#{report.id}")
-          expect(form).to have_field("Nature de l'occupation actuelle")
+          expect(form).to have_field("Année du fichier d'occupation")
+          expect(form).to have_field("Nature de l'occupation")
         end
       end
     end
@@ -516,10 +517,8 @@ RSpec.describe Views::Reports::EditComponent, type: :component do
       expect(page).to have_selector(".modal form") do |form|
         aggregate_failures do
           expect(form).to have_html_attribute("action").with_value("/signalements/#{report.id}")
-          expect(form).to have_field("Date du constat")
-          expect(form).to have_field("Année sur laquelle porte le signalement")
-          expect(form).to have_field("Nature de l'occupation constatée")
           expect(form).to have_field("Date du changement")
+          expect(form).to have_field("Nature de l'occupation")
         end
       end
     end
@@ -530,10 +529,9 @@ RSpec.describe Views::Reports::EditComponent, type: :component do
       expect(page).to have_selector(".modal form") do |form|
         aggregate_failures do
           expect(form).to have_html_attribute("action").with_value("/signalements/#{report.id}")
-          expect(form).to have_field("Date du constat")
           expect(form).to have_field("N° SIREN")
-          expect(form).to have_field("Nom de la société")
-          expect(form).to have_field("Nom de l'enseigne")
+          expect(form).to have_field("Nom de l'entreprise")
+          expect(form).to have_field("Enseigne")
           expect(form).to have_field("Etablissement principal")
           expect(form).to have_field("Chantier longue durée")
           expect(form).to have_field("Code NAF")

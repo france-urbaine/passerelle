@@ -94,6 +94,7 @@ module Reports
 
     # Situation occupation
     # --------------------------------------------------------------------------
+    validates_presence_of  :situation_occupation_annee,       if: :require_situation_occupation_annee?
     validates_presence_of  :situation_nature_occupation,      if: :require_situation_nature_occupation?
     validates_exclusion_of :situation_majoration_rs,          if: :require_situation_majoration_rs?, in: [nil], message: :blank
     validates_presence_of  :situation_annee_cfe,              if: :require_situation_annee_cfe?
@@ -106,7 +107,6 @@ module Reports
 
     # Proposition occupation
     # --------------------------------------------------------------------------
-    validates_presence_of  :proposition_occupation_annee,        if: :require_proposition_occupation_annee?
     validates_presence_of  :proposition_nature_occupation,       if: :require_proposition_nature_occupation?
     validates_presence_of  :proposition_date_occupation,         if: :require_proposition_date_occupation?
     validates_exclusion_of :proposition_erreur_tlv,              if: :require_proposition_erreur_tlv?,      in: [nil], message: :blank

@@ -5,10 +5,16 @@
 
   <% modal.with_form(model: @report) do |form| %>
     <% if require_situation_occupation_habitation? %>
+      <% if display_situation_occupation_annee? %>
+        <%= form.block :situation_occupation_annee do %>
+          <%= form.label :situation_occupation_annee, "Année du fichier d'occupation" %>
+          <%= form.number_field :situation_occupation_annee %>
+        <% end %>
+      <% end %>
 
       <div data-controller="switch">
         <%= form.block :situation_nature_occupation do %>
-          <%= form.label :situation_nature_occupation, "Nature de l'occupation actuelle" %>
+          <%= form.label :situation_nature_occupation, "Nature de l'occupation" %>
           <%= form.select :situation_nature_occupation, situation_nature_occupation_choices, { include_blank: true }, data: { action: "switch#toggle" } %>
         <% end %>
 

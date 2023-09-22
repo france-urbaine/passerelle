@@ -15,9 +15,16 @@
 
 <div class="card">
   <dl class="description-list">
+    <% if display_situation_occupation_annee? %>
+      <div class="description-list__row">
+        <dt>Année du fichier d'occupation</dt>
+        <dd><%= render_valid_content(:situation_occupation_annee) { @report.situation_occupation_annee } %></dd>
+      </div>
+    <% end %>
+
     <% if display_situation_nature_occupation? %>
       <div class="description-list__row">
-        <dt>Nature de l'occupation actuelle</dt>
+        <dt>Nature de l'occupation</dt>
         <dd><%= render_valid_content(:situation_nature_occupation) { situation_nature_occupation } %></dd>
       </div>
     <% end %>

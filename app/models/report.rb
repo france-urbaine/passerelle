@@ -86,6 +86,7 @@
 #  proposition_date_achevement                    :string
 #  proposition_numero_permis                      :string
 #  proposition_nature_travaux                     :string
+#  completed_at                                   :datetime
 #  situation_nature_occupation                    :string
 #  situation_majoration_rs                        :boolean
 #  situation_annee_cfe                            :string
@@ -95,7 +96,7 @@
 #  situation_nom_dernier_occupant                 :string
 #  situation_vlf_cfe                              :string
 #  situation_taxation_base_minimum                :boolean
-#  proposition_occupation_annee                   :string
+#  situation_occupation_annee                     :string
 #  proposition_nature_occupation                  :string
 #  proposition_date_occupation                    :date
 #  proposition_erreur_tlv                         :boolean
@@ -112,7 +113,6 @@
 #  proposition_chantier_longue_duree              :boolean
 #  proposition_code_naf                           :string
 #  proposition_date_debut_activite                :date
-#  completed_at                                   :datetime
 #
 # Indexes
 #
@@ -258,6 +258,7 @@ class Report < ApplicationRecord
     validates :proposition_surface_pk2,      numericality: { greater_than_or_equal_to: 0 }
     validates :proposition_surface_ponderee, numericality: { greater_than: 0 }
 
+    validates :situation_occupation_annee,       numericality: { in: 2018..Time.current.year }
     validates :situation_nature_occupation,      inclusion: { in: :valid_occupations }
     validates :situation_majoration_rs,          inclusion: [true, false]
     validates :situation_annee_cfe,              numericality: { in: 2018..Time.current.year }
@@ -267,7 +268,6 @@ class Report < ApplicationRecord
     validates :situation_vlf_cfe,                numericality: { greater_than_or_equal_to: 0 }
     validates :situation_taxation_base_minimum,  inclusion: [true, false]
 
-    validates :proposition_occupation_annee,           numericality: { in: 2018..Time.current.year }
     validates :proposition_nature_occupation,          inclusion: { in: :valid_occupations }
     validates :proposition_erreur_tlv,                 inclusion: [true, false]
     validates :proposition_erreur_thlv,                inclusion: [true, false]

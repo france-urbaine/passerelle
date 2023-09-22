@@ -4,30 +4,16 @@
   <% end %>
 
   <% modal.with_form(model: @report) do |form| %>
-
-    <%= form.block :date_constat do %>
-      <%= form.label :date_constat, "Date du constat" %>
-      <%= form.date_field :date_constat %>
-    <% end %>
-
     <% if require_proposition_occupation_habitation? %>
-
-      <% if display_proposition_occupation_annee? %>
-        <%= form.block :proposition_occupation_annee do %>
-          <%= form.label :proposition_occupation_annee, "Année sur laquelle porte le signalement" %>
-          <%= form.number_field :proposition_occupation_annee %>
-        <% end %>
+      <%= form.block :proposition_date_occupation do %>
+        <%= form.label :proposition_date_occupation, "Date du changement" %>
+        <%= form.date_field :proposition_date_occupation %>
       <% end %>
 
       <div data-controller="switch">
         <%= form.block :proposition_nature_occupation do %>
-          <%= form.label :proposition_nature_occupation, "Nature de l'occupation constatée" %>
+          <%= form.label :proposition_nature_occupation, "Nature de l'occupation" %>
           <%= form.select :proposition_nature_occupation, proposition_nature_occupation_choices, { include_blank: true }, data: { action: "switch#toggle" } %>
-        <% end %>
-
-        <%= form.block :proposition_date_occupation do %>
-          <%= form.label :proposition_date_occupation, "Date du changement" %>
-          <%= form.date_field :proposition_date_occupation %>
         <% end %>
 
         <% if display_proposition_erreur_tlv? %>
@@ -89,14 +75,14 @@
 
       <% if display_proposition_nom_societe? %>
         <%= form.block :proposition_nom_societe do %>
-          <%= form.label :proposition_nom_societe, "Nom de la société" %>
+          <%= form.label :proposition_nom_societe, "Nom de l'entreprise" %>
           <%= form.text_field :proposition_nom_societe %>
         <% end %>
       <% end %>
 
       <% if display_proposition_nom_enseigne? %>
         <%= form.block :proposition_nom_enseigne do %>
-          <%= form.label :proposition_nom_enseigne, "Nom de l'enseigne" %>
+          <%= form.label :proposition_nom_enseigne, "Enseigne" %>
           <%= form.text_field :proposition_nom_enseigne %>
         <% end %>
       <% end %>

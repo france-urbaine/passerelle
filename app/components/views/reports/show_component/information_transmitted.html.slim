@@ -30,5 +30,5 @@
       dd= helpers.list(@report.anomalies) { |value| t(value, scope: ["enum.anomalies", @report.form_type]) }
 
     .description-list__row
-      dt Date de contat
+      dt Date du constat
       dd= helpers.display_date(@report.date_constat)

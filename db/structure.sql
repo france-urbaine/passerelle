@@ -3072,7 +3072,7 @@ CREATE TABLE public.reports (
     situation_nom_dernier_occupant character varying,
     situation_vlf_cfe character varying,
     situation_taxation_base_minimum boolean,
-    proposition_occupation_annee character varying,
+    situation_occupation_annee character varying,
     proposition_nature_occupation character varying,
     proposition_date_occupation date,
     proposition_erreur_tlv boolean,
@@ -4081,6 +4081,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230907151950'),
 ('20230914083547'),
 ('20230914100806'),
-('20230921145204');
+('20230921145204'),
+('20230922120732');
 
 
