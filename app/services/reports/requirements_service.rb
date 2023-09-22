@@ -19,8 +19,8 @@ module Reports
     # --------------------------------------------------------------------------
     concerning :SituationMajic do
       # This fieldset is displayed for:
-      # * every `evaluation_local_*` form
-      # * every `occupation_local_*` form
+      # * any `evaluation_local_*` form
+      # * any `occupation_local_*` form
       #
       def display_situation_majic?
         evaluation_local? || occupation_local?
@@ -29,8 +29,8 @@ module Reports
       # @attribute situation_annee_majic
       #
       # This attribute is displayed and required for:
-      # * every `evaluation_local_*` form
-      # * every `occupation_local_*` form
+      # * any `evaluation_local_*` form
+      # * any `occupation_local_*` form
       #
       def display_situation_annee_majic?
         evaluation_local? || occupation_local?
@@ -43,8 +43,8 @@ module Reports
       # @attribute situation_invariant
       #
       # This attribute is displayed and required for:
-      # * every `evaluation_local_*` form
-      # * every `occupation_local_*` form
+      # * any `evaluation_local_*` form
+      # * any `occupation_local_*` form
       #
       def display_situation_invariant?
         evaluation_local? || occupation_local?
@@ -56,10 +56,10 @@ module Reports
 
       # @attribute situation_parcelle
       #
-      # This fieldset is displayed and required for:
-      # * every `evaluation_local_*` form
-      # * every `creation_local_*` form
-      # * every `occupation_local_*` form
+      # This attribute is displayed and required for:
+      # * any `evaluation_local_*` form
+      # * any `creation_local_*` form
+      # * any `occupation_local_*` form
       #
       def display_situation_parcelle?
         evaluation_local? || creation_local? || occupation_local?
@@ -72,10 +72,10 @@ module Reports
       # @attribute situation_libelle_voie
       # @attribute situation_code_rivoli
       #
-      # This fieldset is displayed and required for:
-      # * every `evaluation_local_*` form
-      # * every `creation_local_*` form
-      # * every `occupation_local_*` form
+      # These attributes are displayed and required for:
+      # * any `evaluation_local_*` form
+      # * any `creation_local_*` form
+      # * any `occupation_local_*` form
       #
       def display_situation_adresse?
         evaluation_local? || creation_local? || occupation_local?
@@ -91,9 +91,9 @@ module Reports
       # @attribute situation_numero_porte
       # @attribute situation_numero_ordre_porte
       #
-      # This fieldset is displayed and required for:
-      # * every `evaluation_local_*` form
-      # * every `occupation_local_*` form
+      # These attributes are displayed and required for:
+      # * any `evaluation_local_*` form
+      # * any `occupation_local_*` form
       #
       def display_situation_porte?
         evaluation_local? || occupation_local?
@@ -106,13 +106,13 @@ module Reports
       # @attribute situation_proprietaire
       # @attribute situation_numero_ordre_proprietaire
       #
-      # This fieldset is displayed for:
-      # * every `evaluation_local_*` form
-      # * every `creation_local_*` form
-      # * every `occupation_local_*` form
+      # These attributes are displayed for:
+      # * any `evaluation_local_*` form
+      # * any `creation_local_*` form
+      # * any `occupation_local_*` form
       #
-      # This attribute is always required except for:
-      # * every `occupation_local_*` form
+      # They are required except for:
+      # * any `occupation_local_*` form
       #
       def display_situation_proprietaire?
         evaluation_local? || creation_local? || occupation_local?
@@ -127,14 +127,14 @@ module Reports
     # --------------------------------------------------------------------------
     concerning :SituationEvaluation do
       # This fieldset is displayed for:
-      # * every `evaluation_local_*` form with any anomalies but address
-      # * every `occupation_local_*` form
+      # * any `evaluation_local_*` form with any anomalies but `adresse`
+      # * any `occupation_local_*` form
       #
       def display_situation_evaluation?
         evaluation_local_with_any_anomaly_but_address? || occupation_local?
       end
 
-      # This fieldset is evaluatation as an habitation of a professional local
+      # This fieldset must be evaluatated as an habitation or a professional local
       #
       def require_situation_evaluation_habitation?
         evaluation_local_habitation_with_any_anomaly_but_address? || form_type == "occupation_local_habitation"
@@ -146,8 +146,8 @@ module Reports
 
       # @attribute situation_date_mutation
       #
-      # This attribute is only displayed and required for:
-      # * every `evaluation_local_*` form with any anomalies but address
+      # This attribute is displayed and required for:
+      # * any `evaluation_local_*` form with any anomalies but `adresse`
       #
       def display_situation_date_mutation?
         evaluation_local_with_any_anomaly_but_address?
@@ -159,10 +159,12 @@ module Reports
 
       # @attribute situation_affectation
       #
-      # This attribute is always displayed and required on the fieldset.
+      # This attribute is displayed and required for:
+      # * any `evaluation_local_*` form with any anomalies but `adresse`
+      # * any `occupation_local_*` form
       #
       def display_situation_affectation?
-        display_situation_evaluation?
+        evaluation_local_with_any_anomaly_but_address? || occupation_local?
       end
 
       def require_situation_affectation?
@@ -171,10 +173,12 @@ module Reports
 
       # @attribute situation_nature
       #
-      # This attribute is always displayed and required on the fieldset.
+      # This attribute is displayed and required for:
+      # * any `evaluation_local_*` form with any anomalies but `adresse`
+      # * any `occupation_local_*` form
       #
       def display_situation_nature?
-        display_situation_evaluation?
+        evaluation_local_with_any_anomaly_but_address? || occupation_local?
       end
 
       def require_situation_nature?
@@ -183,30 +187,38 @@ module Reports
 
       # @attribute situation_categorie
       #
-      # This attribute is always displayed on this fieldset except for:
-      # * an "industrial" nature is selected
+      # This attribute is displayed for:
+      # * any `evaluation_local_*` form with any anomalies but `adresse`
+      # * any `occupation_local_*` form
+      #
+      # It is required except for:
+      # * any `evaluation_local_*` form with an "industrial" nature
       #
       def display_situation_categorie?
-        display_situation_evaluation?
+        evaluation_local_with_any_anomaly_but_address? || occupation_local?
       end
 
       def require_situation_categorie?
-        display_situation_categorie? && !situation_nature_industriel?
+        display_situation_categorie? && !situation_nature_industrial?
       end
 
       # @attribute situation_surface_reelle
       #
-      # This attribute is always displayed on this fieldset except for:
-      # * an "industrial" nature is selected
-      # * a `occupation_local_habitation` form
+      # This attribute is displayed for:
+      # * any `evaluation_local_*` form with any anomalies but `adresse`
+      # * any `occupation_local_*` form
+      #
+      # It is required except for:
+      # * any `evaluation_local_*` form with an "industrial" nature
+      # * any `occupation_local_habitation` form
       #
       def display_situation_surface_reelle?
-        display_situation_evaluation?
+        evaluation_local_with_any_anomaly_but_address? || occupation_local?
       end
 
       def require_situation_surface_reelle?
         display_situation_surface_reelle? && !(
-          situation_nature_industriel? ||
+          situation_nature_industrial? ||
           occupation_local_habitation?
         )
       end
@@ -218,8 +230,8 @@ module Reports
       # @attribute situation_surface_pk2
       # @attribute situation_surface_ponderee
       #
-      # Other `situation_surface_*` attributes are displayed for:
-      # * every `evaluation_local_pro` form with any anomalies but address
+      # These attributes are displayed for:
+      # * any `evaluation_local_pro` form with any anomalies but `adresse`
       #
       # They are never required.
       #
@@ -229,24 +241,24 @@ module Reports
 
       # @attribute situation_coefficient_localisation
       #
-      # This attribute is only displayed for:
-      # * every `evaluation_local_pro` form with any anomalies but address
+      # This attribute is displayed for:
+      # * any `evaluation_local_pro` form with any anomalies but `adresse`
       #
-      # This attribute is always required except for:
-      # * an "industrial" nature is selected
+      # It is required except for:
+      # * an "industrial" nature
       #
       def display_situation_coefficient_localisation?
         evaluation_local_professionnel_with_any_anomaly_but_address?
       end
 
       def require_situation_coefficient_localisation?
-        display_situation_coefficient_localisation? && !situation_nature_industriel?
+        display_situation_coefficient_localisation? && !situation_nature_industrial?
       end
 
       # @attribute situation_coefficient_entretien
       #
-      # This attribute is only displayed and required for:
-      # *  a `evaluation_local_hab` form with any anomalies but address
+      # This attribute is displayed and required for:
+      # * any `evaluation_local_hab` form with any anomalies but `adresse`
       #
       def display_situation_coefficient_entretien?
         evaluation_local_habitation_with_any_anomaly_but_address?
@@ -259,8 +271,8 @@ module Reports
       # @attribute situation_coefficient_situation_generale
       # @attribute situation_coefficient_situation_particuliere
       #
-      # All attributes `situation_coefficient_situation_*` are displayed for:
-      # *  a `evaluation_local_hab` form with any anomalies but address
+      # These attributes are displayed or:
+      # * any `evaluation_local_hab` form with any anomalies but `adresse`
       #
       # They are never required.
       #
@@ -272,14 +284,14 @@ module Reports
     # Requirements for new evaluation
     # --------------------------------------------------------------------------
     concerning :PropositionEvaluation do
-      # This fieldset is displayed and required for:
-      # * every `evaluation_local_*` form, with any anomalies but adresse
+      # This fieldset is displayed for:
+      # * any `evaluation_local_*` form with any anomalies but `adresse`
       #
       def display_proposition_evaluation?
         evaluation_local_with_any_anomaly_but_address?
       end
 
-      # This fieldset is considered as an habitation of a professional local
+      # This fieldset must be evaluatated as an habitation or a professional local
       #
       def require_proposition_evaluation_habitation?
         @require_proposition_evaluation_habitation ||=
@@ -305,8 +317,8 @@ module Reports
 
       # @attribute proposition_affectation
       #
-      # This attribute is only displayed and required for:
-      # * every `evaluation_local_*` form with an `affectation` anomaly
+      # This attribute is displayed and required for:
+      # * any `evaluation_local_*` form with the anomaly `affectation`
       #
       def display_proposition_affectation?
         evaluation_local? &&
@@ -319,10 +331,10 @@ module Reports
 
       # @attribute proposition_nature
       #
-      # This attribute is only displayed and required for:
-      # * a `creation_local_*`
-      # * a `affectation` anomaly on a `evaluation_local_*` form
-      # * a `consistance` or `categorie` anomaly on a `evaluation_local_habitation` form
+      # This attribute is displayed and required for:
+      # * any `creation_local_*`
+      # * any `evaluation_local_*` form with the anomaly `affectation`
+      # * any `evaluation_local_habitation` form with the anomalies `consistance` or `categorie`
       #
       def display_proposition_nature?
         creation_local? || (
@@ -339,13 +351,12 @@ module Reports
       # @attribute proposition_categorie
       #
       # This attribute is displayed for:
-      # * a `creation_local_*`
-      # * every `evaluation_local_*` form with of the anomalies `affectation`, `consistance` or `categorie`
+      # * any `creation_local_*`
+      # * any `evaluation_local_*` form with the anomalies `affectation`, `consistance` or `categorie`
       #
-      # This attribute always required except for:
-      # * a `creation_local_*` with 'industrial' nature selected in proposition
-      # * a `evaluation_local_*` form with of the anomalies `affectation` and 'industrial' nature selected in proposition
-      # * a `evaluation_local_*` form with of the anomalies `consistance` or `categorie` and 'industrial' nature selected in situation
+      # This attribute required except for:
+      # * any `creation_local_*` form with 'industrial' nature
+      # * any `evaluation_local_*` form that has changed to or remained on an "industrial" nature
       #
       def display_proposition_categorie?
         creation_local? || (
@@ -355,21 +366,20 @@ module Reports
 
       def require_proposition_categorie?
         display_proposition_categorie? &&
-          !(creation_local? && proposition_nature_industriel?) &&
-          !(evaluation_local? && anomalies.include?("affectation") && proposition_nature_industriel?) &&
-          !(evaluation_local? && anomalies.intersect?(%w[consistance categorie]) && situation_nature_industriel?)
+          !creation_local_industrial? &&
+          !evaluation_local_with_nature_changed_to_industrial? &&
+          !evaluation_local_with_nature_remained_to_industrial?
       end
 
       # @attribute proposition_surface_reelle
       #
-      # This attribute is only displayed for:
-      # * a `creation_local_*`
-      # * every `evaluation_local_*` form with of the anomalies `affectation`, `consistance` or `categorie`
+      # This attribute is displayed for:
+      # * any `creation_local_*`
+      # * any `evaluation_local_*` form with the anomalies `affectation`, `consistance` or `categorie`
       #
-      # This attribute always required except for:
-      # * a `creation_local_*` with 'industrial' nature selected in proposition
-      # * a `evaluation_local_*` form with of the anomalies `affectation` and 'industrial' nature selected in proposition
-      # * a `evaluation_local_*` form with of the anomalies `consistance` or `categorie` and 'industrial' nature selected in situation
+      # This attribute required except for:
+      # * any `creation_local_*` form with 'industrial' nature
+      # * any `evaluation_local_*` form that has changed to or remained on an "industrial" nature
       #
       def display_proposition_surface_reelle?
         creation_local? || (
@@ -379,9 +389,9 @@ module Reports
 
       def require_proposition_surface_reelle?
         display_proposition_surface_reelle? &&
-          !(creation_local? && proposition_nature_industriel?) &&
-          !(evaluation_local? && anomalies.include?("affectation") && proposition_nature_industriel?) &&
-          !(evaluation_local? && anomalies.intersect?(%w[consistance categorie]) && situation_nature_industriel?)
+          !creation_local_industrial? &&
+          !evaluation_local_with_nature_changed_to_industrial? &&
+          !evaluation_local_with_nature_remained_to_industrial?
       end
 
       # @attribute proposition_surface_p1
@@ -392,7 +402,7 @@ module Reports
       # @attribute proposition_surface_ponderee
       #
       # These attributes are displayed for:
-      # * any proposition of a professional evaluation
+      # * any `evaluation_local_*` form that propose a "professional" evaluation
       #
       # They are never required.
       #
@@ -402,13 +412,11 @@ module Reports
 
       # @attribute proposition_coefficient_localisation
       #
-      # This attribute is only displayed for:
-      # * any proposition of a professional evaluation
+      # This attribute is displayed for:
+      # * any `evaluation_local_*` form that propose a "professional" evaluation
       #
-      # This attribute always required except for:
-      # * a `creation_local_*` with 'industrial' nature selected in proposition
-      # * a `evaluation_local_*` form with of the anomalies `affectation` and 'industrial' nature selected in proposition
-      # * a `evaluation_local_*` form with of the anomalies `consistance` or `categorie` and 'industrial' nature selected in situation
+      # This attribute is required except for:
+      # * any `evaluation_local_*` form that has changed to or remained on an "industrial" nature
       #
       def display_proposition_coefficient_localisation?
         require_proposition_evaluation_professionnel?
@@ -416,15 +424,14 @@ module Reports
 
       def require_proposition_coefficient_localisation?
         display_proposition_coefficient_localisation? &&
-          !(creation_local? && proposition_nature_industriel?) &&
-          !(evaluation_local? && anomalies.include?("affectation") && proposition_nature_industriel?) &&
-          !(evaluation_local? && anomalies.intersect?(%w[consistance categorie]) && situation_nature_industriel?)
+          !evaluation_local_with_nature_changed_to_industrial? &&
+          !evaluation_local_with_nature_remained_to_industrial?
       end
 
       # @attribute proposition_coefficient_entretien
       #
-      # This attribute is only displayed and required for:
-      # * any proposition of a habitation evaluation form
+      # This attribute is displayed and required for:
+      # * any `evaluation_local_*` form that propose an "habitation" evaluation
       #
       def display_proposition_coefficient_entretien?
         require_proposition_evaluation_habitation?
@@ -438,7 +445,7 @@ module Reports
       # @attribute proposition_coefficient_situation_particuliere
       #
       # These attributes are displayed for:
-      # * any proposition of a habitation evaluation form
+      # * any `evaluation_local_*` form that propose an "habitation" evaluation
       #
       # They are never required.
       #
@@ -446,8 +453,10 @@ module Reports
         require_proposition_evaluation_habitation?
       end
 
-      # This fieldset is displayed and required for:
-      # * every `evaluation_local_*` form with of the anomalies `exoneration`
+      # @attribute exonerations_attributes
+      #
+      # This attribute is displayed and required for:
+      # * any `evaluation_local_*` form with the anomaly `exoneration`
       #
       def display_proposition_exoneration?
         evaluation_local? && anomalies.include?("exoneration")
@@ -459,8 +468,8 @@ module Reports
 
       # @attribute proposition_libelle_voie
       #
-      # This fieldset is displayed and required for:
-      # * every `evaluation_local_*` form with of the anomalies `adresse`
+      # This attribute is displayed and required for:
+      # * any `evaluation_local_*` form with the anomaly `adresse`
       #
       def display_proposition_adresse?
         evaluation_local? && anomalies.include?("adresse")
@@ -475,7 +484,7 @@ module Reports
     # --------------------------------------------------------------------------
     concerning :PropositionCreation do
       # This fieldset is displayed for:
-      # * every `creation_local_*` form
+      # * any `creation_local_*` form
       #
       def display_proposition_creation_local?
         creation_local?
@@ -484,7 +493,7 @@ module Reports
       # @attribute proposition_nature_dependance
       #
       # This attribute is displayed and required for:
-      # * a 'creation_local_habitation' form with a 'dependency' nature
+      # * any 'creation_local_habitation' form with a "dependency" nature
       #
       def display_proposition_nature_dependance?
         form_type == "creation_local_habitation" &&
@@ -498,7 +507,7 @@ module Reports
       # @attribute proposition_date_achevement
       #
       # This attribute is displayed and required for:
-      # * a 'creation_local_*' form
+      # * any 'creation_local_*' form
       #
       def display_proposition_date_achevement?
         creation_local?
@@ -511,7 +520,7 @@ module Reports
       # @attribute proposition_numero_permis
       #
       # This attribute is displayed and required for:
-      # * a 'creation_local_*' form with a `construction_neuve` anomaly
+      # * any 'creation_local_*' form with the anomaly `construction_neuve``
       #
       def display_proposition_numero_permis?
         creation_local? && anomalies.include?("construction_neuve")
@@ -524,7 +533,7 @@ module Reports
       # @attribute proposition_nature_travaux
       #
       # This attribute is displayed and required for:
-      # * a 'creation_local_*' form with a `construction_neuve` anomaly
+      # * any 'creation_local_*' form with the anomaly `construction_neuve``
       #
       def display_proposition_nature_travaux?
         creation_local? && anomalies.include?("construction_neuve")
@@ -539,12 +548,14 @@ module Reports
     # --------------------------------------------------------------------------
     concerning :SituationOccupation do
       # This fieldset is displayed for:
-      # * every `occupation_local_*` form
+      # * any `occupation_local_*` form
       #
       def display_situation_occupation?
         occupation_local?
       end
 
+      # This fieldset must be evaluatated as an habitation or a professional occupation
+      #
       def require_situation_occupation_habitation?
         occupation_local_habitation?
       end
@@ -556,7 +567,7 @@ module Reports
       # @attribute situation_nature_occupation
       #
       # This attribute is displayed and required for:
-      # * every `occupation_local_habitation` form
+      # * any `occupation_local_habitation` form
       #
       def display_situation_nature_occupation?
         occupation_local_habitation?
@@ -569,7 +580,7 @@ module Reports
       # @attribute situation_majoration_rs
       #
       # This attribute is displayed and required for:
-      # * every `occupation_local_habitation` form with `résidence secondaire` as situation_nature_occupation
+      # * any `occupation_local_habitation` form that has set `situation_nature_occupation` to `RS` ("résidence secondaire")
       #
       def display_situation_majoration_rs?
         occupation_local_habitation? && @report.situation_nature_occupation == "RS"
@@ -582,7 +593,7 @@ module Reports
       # @attribute situation_annee_cfe
       #
       # This attribute is displayed and required for:
-      # * every `occupation_local_professionnel` form
+      # * any `occupation_local_professionnel` form
       #
       def display_situation_annee_cfe?
         occupation_local_professionnel?
@@ -595,7 +606,7 @@ module Reports
       # @attribute situation_vacance_fiscale
       #
       # This attribute is displayed and required for:
-      # * every `occupation_local_professionnel` form
+      # * any `occupation_local_professionnel` form
       #
       def display_situation_vacance_fiscale?
         occupation_local_professionnel?
@@ -608,7 +619,7 @@ module Reports
       # @attribute situation_nombre_annees_vacance
       #
       # This attribute is displayed and required for:
-      # * every `occupation_local_professionnel` form where situation_vacance_fiscale is true
+      # * any `occupation_local_professionnel` form that has set `situation_vacance_fiscale` to `true`
       #
       def display_situation_nombre_annees_vacance?
         occupation_local_professionnel? && @report.situation_vacance_fiscale?
@@ -621,7 +632,7 @@ module Reports
       # @attribute situation_siren_dernier_occupant
       #
       # This attribute is displayed and required for:
-      # * every `occupation_local_professionnel` form
+      # * any `occupation_local_professionnel` form
       #
       def display_situation_siren_dernier_occupant?
         occupation_local_professionnel?
@@ -634,7 +645,7 @@ module Reports
       # @attribute situation_nom_dernier_occupant
       #
       # This attribute is displayed and required for:
-      # * every `occupation_local_professionnel` form
+      # * any `occupation_local_professionnel` form
       #
       def display_situation_nom_dernier_occupant?
         occupation_local_professionnel?
@@ -647,7 +658,7 @@ module Reports
       # @attribute situation_vlf_cfe
       #
       # This attribute is displayed and required for:
-      # * every `occupation_local_professionnel` form
+      # * any `occupation_local_professionnel` form
       #
       def display_situation_vlf_cfe?
         occupation_local_professionnel?
@@ -660,7 +671,7 @@ module Reports
       # @attribute situation_taxation_base_minimum
       #
       # This attribute is displayed and required for:
-      # * every `occupation_local_professionnel` form
+      # * any `occupation_local_professionnel` form
       #
       def display_situation_taxation_base_minimum?
         occupation_local_professionnel?
@@ -673,7 +684,7 @@ module Reports
 
     concerning :PropostionOccupation do
       # This fieldset is displayed for:
-      # * every `occupation_local_*` form
+      # * any `occupation_local_*` form
       #
       def display_proposition_occupation?
         occupation_local?
@@ -690,7 +701,7 @@ module Reports
       # @attribute proposition_occupation_annee
       #
       # This attribute is displayed and required for:
-      # * every `occupation_local_habitation` form
+      # * any `occupation_local_habitation` form
       #
       def display_proposition_occupation_annee?
         occupation_local_habitation?
@@ -703,7 +714,7 @@ module Reports
       # @attribute proposition_nature_occupation
       #
       # This attribute is displayed and required for:
-      # * every `occupation_local_habitation` form
+      # * any `occupation_local_habitation` form
       #
       def display_proposition_nature_occupation?
         occupation_local_habitation?
@@ -716,7 +727,7 @@ module Reports
       # @attribute proposition_date_occupation
       #
       # This attribute is displayed and required for:
-      # * every `occupation_local_habitation` form
+      # * any `occupation_local_habitation` form
       #
       def display_proposition_date_occupation?
         occupation_local_habitation?
@@ -729,7 +740,7 @@ module Reports
       # @attribute proposition_erreur_tlv
       #
       # This attribute is displayed and required for:
-      # * every `occupation_local_habitation` form with `vacant tlv` as situation_nature_occupation
+      # * any `occupation_local_habitation` form that has set `situation_nature_occupation` to `vacant_tlv`
       #
       def display_proposition_erreur_tlv?
         occupation_local_habitation? && @report.situation_nature_occupation == "vacant_tlv"
@@ -742,7 +753,7 @@ module Reports
       # @attribute proposition_erreur_thlv
       #
       # This attribute is displayed and required for:
-      # * every `occupation_local_habitation` form with `vacant thlv` as situation_nature_occupation
+      # * any `occupation_local_habitation` form that has set `situation_nature_occupation` to `vacant_thlv`
       #
       def display_proposition_erreur_thlv?
         occupation_local_habitation? && @report.situation_nature_occupation == "vacant_thlv"
@@ -755,7 +766,7 @@ module Reports
       # @attribute proposition_meuble_tourisme
       #
       # This attribute is displayed and required for:
-      # * every `occupation_local_habitation` form without any `vacant` values as proposition_nature_occupation
+      # * any `occupation_local_habitation` form that has set `proposition_nature_occupation` to a non-vacant state.
       #
       def display_proposition_meuble_tourisme?
         occupation_local_habitation? && %w[RP RS RE].include?(@report.proposition_nature_occupation)
@@ -768,7 +779,7 @@ module Reports
       # @attribute proposition_majoration_rs
       #
       # This attribute is displayed and required for:
-      # * every `occupation_local_habitation` form with `résidence secondaire` as proposition_nature_occupation
+      # * any `occupation_local_habitation` form that has set `proposition_nature_occupation` to `RS` ("résidence secondaire")
       #
       def display_proposition_majoration_rs?
         occupation_local_habitation? && @report.proposition_nature_occupation == "RS"
@@ -781,7 +792,7 @@ module Reports
       # @attribute proposition_nom_occupant
       #
       # This attribute is displayed and required for:
-      # * every `occupation_local_habitation` form without any `vacant` values as proposition_nature_occupation
+      # * any `occupation_local_habitation` form that has set `proposition_nature_occupation` to a non-vacant state.
       #
       def display_proposition_nom_occupant?
         occupation_local_habitation? && %w[RP RS RE].include?(@report.proposition_nature_occupation)
@@ -794,7 +805,7 @@ module Reports
       # @attribute proposition_prenom_occupant
       #
       # This attribute is displayed and required for:
-      # * every `occupation_local_habitation` form without any `vacant` values as proposition_nature_occupation
+      # * any `occupation_local_habitation` form that has set `proposition_nature_occupation` to a non-vacant state.
       #
       def display_proposition_prenom_occupant?
         occupation_local_habitation? && %w[RP RS RE].include?(@report.proposition_nature_occupation)
@@ -807,7 +818,7 @@ module Reports
       # @attribute proposition_adresse_occupant
       #
       # This attribute is displayed for:
-      # * every `occupation_local_habitation` form without any `vacant` values as proposition_nature_occupation
+      # * any `occupation_local_habitation` form that has set `proposition_nature_occupation` to a non-vacant state.
       #
       # It is never required.
       #
@@ -818,7 +829,7 @@ module Reports
       # @attribute proposition_numero_siren
       #
       # This attribute is displayed and required for:
-      # * every `occupation_local_professionnel` form
+      # * any `occupation_local_professionnel` form
       #
       def display_proposition_numero_siren?
         occupation_local_professionnel?
@@ -831,7 +842,7 @@ module Reports
       # @attribute proposition_nom_societe
       #
       # This attribute is displayed and required for:
-      # * every `occupation_local_professionnel` form
+      # * any `occupation_local_professionnel` form
       #
       def display_proposition_nom_societe?
         occupation_local_professionnel?
@@ -844,7 +855,7 @@ module Reports
       # @attribute proposition_nom_enseigne
       #
       # This attribute is displayed for:
-      # * every `occupation_local_professionnel` form
+      # * any `occupation_local_professionnel` form
       #
       # It is never required.
       #
@@ -855,7 +866,7 @@ module Reports
       # @attribute proposition_etablissement_principal
       #
       # This attribute is displayed and required for:
-      # * every `occupation_local_professionnel` form
+      # * any `occupation_local_professionnel` form
       #
       def display_proposition_etablissement_principal?
         occupation_local_professionnel?
@@ -868,7 +879,7 @@ module Reports
       # @attribute proposition_chantier_longue_duree
       #
       # This attribute is displayed and required for:
-      # * every `occupation_local_professionnel` form
+      # * any `occupation_local_professionnel` form
       #
       def display_proposition_chantier_longue_duree?
         occupation_local_professionnel?
@@ -881,7 +892,7 @@ module Reports
       # @attribute proposition_code_naf
       #
       # This attribute is displayed and required for:
-      # * every `occupation_local_professionnel` form
+      # * any `occupation_local_professionnel` form
       #
       def display_proposition_code_naf?
         occupation_local_professionnel?
@@ -894,7 +905,7 @@ module Reports
       # @attribute proposition_date_debut_activite
       #
       # This attribute is displayed and required for:
-      # * every `occupation_local_professionnel` form
+      # * any `occupation_local_professionnel` form
       #
       def display_proposition_date_debut_activite?
         occupation_local_professionnel?
@@ -932,8 +943,20 @@ module Reports
         anomalies.intersect?(%w[affectation consistance categorie exoneration])
     end
 
+    def evaluation_local_with_nature_changed_to_industrial?
+      evaluation_local? && anomalies.include?("affectation") && proposition_nature_industrial?
+    end
+
+    def evaluation_local_with_nature_remained_to_industrial?
+      evaluation_local? && anomalies.intersect?(%w[consistance categorie exoneration]) && situation_nature_industrial?
+    end
+
     def creation_local?
       @creation_local ||= form_type.start_with?("creation_local_")
+    end
+
+    def creation_local_industrial?
+      creation_local? && proposition_nature_industrial?
     end
 
     def proposition_affectation_habitation?
@@ -950,11 +973,11 @@ module Reports
         .include?(@report.proposition_affectation)
     end
 
-    def situation_nature_industriel?
+    def situation_nature_industrial?
       @report.situation_nature == "U"
     end
 
-    def proposition_nature_industriel?
+    def proposition_nature_industrial?
       @report.proposition_nature == "U"
     end
 
