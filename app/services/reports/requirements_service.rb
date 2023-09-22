@@ -928,7 +928,7 @@ module Reports
     def evaluation_local_with_any_anomaly_but_address?
       @evaluation_local_with_any_anomaly_but_address ||=
         evaluation_local? &&
-        anomalies.intersect?(%w[affectation consistance correctif exoneration])
+        anomalies.intersect?(%w[affectation categorie consistance correctif exoneration])
     end
 
     def evaluation_local_habitation_with_any_anomaly_but_address?
