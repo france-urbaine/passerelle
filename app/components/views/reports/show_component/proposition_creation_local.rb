@@ -3,7 +3,7 @@
 module Views
   module Reports
     class ShowComponent
-      class PropositionConstructionNeuve < self
+      class PropositionCreationLocal < self
         def proposition_nature
           case @report.form_type
           when "creation_local_habitation"

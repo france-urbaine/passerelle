@@ -10,11 +10,12 @@
 
 .card
   dl.description-list
-    .description-list__row
-      dt Année du fichier MAJIC
-      dd
-        = render_valid_content(:situation_annee_majic) do
-          = @report.situation_annee_majic.presence
+    - if display_situation_annee_majic?
+      .description-list__row
+        dt Année du fichier MAJIC
+        dd
+          = render_valid_content(:situation_annee_majic) do
+            = @report.situation_annee_majic.presence
 
     .description-list__row.description-list__row--with-reference
       dt Commune
@@ -23,35 +24,40 @@
           span= @report.commune&.name
           span= "Code INSEE : #{@report.code_insee}"
 
-    .description-list__row
-      dt Invariant
-      dd
-        = render_valid_content(:situation_invariant) do
-          = @report.situation_invariant
+    - if display_situation_invariant?
+      .description-list__row
+        dt Invariant
+        dd
+          = render_valid_content(:situation_invariant) do
+            = @report.situation_invariant
 
-    .description-list__row
-      dt Parcelle
-      dd
-        = render_valid_content(:situation_parcelle) do
-          = helpers.display_parcelle(@report.situation_parcelle)
+    - if display_situation_parcelle?
+      .description-list__row
+        dt Parcelle
+        dd
+          = render_valid_content(:situation_parcelle) do
+            = helpers.display_parcelle(@report.situation_parcelle)
 
-    .description-list__row.description-list__row--with-reference
-      dt Adresse du local
-      dd
-        = render_valid_content(:situation_adresse) do
-          span= situation_adresse
-          span= "Code RIVOLI : #{@report.situation_code_rivoli}"
+    - if display_situation_adresse?
+      .description-list__row.description-list__row--with-reference
+        dt Adresse du local
+        dd
+          = render_valid_content(:situation_adresse) do
+            span= situation_adresse
+            span= "Code RIVOLI : #{@report.situation_code_rivoli}"
 
-    .description-list__row.description-list__row--with-reference
-      dt Numéro de porte
-      dd
-        = render_valid_content(:situation_porte) do
-          span= situation_porte
-          span= "Numéro d'ordre : #{situation_numero_ordre_porte}"
+    - if display_situation_porte?
+      .description-list__row.description-list__row--with-reference
+        dt Numéro de porte
+        dd
+          = render_valid_content(:situation_porte) do
+            span= situation_porte
+            span= "Numéro d'ordre : #{situation_numero_ordre_porte}"
 
-    .description-list__row.description-list__row--with-reference
-      dt Propriétaire
-      dd
-        = render_valid_content(:situation_proprietaire) do
-          span= @report.situation_proprietaire
-          span= "Numéro d'ordre : #{@report.situation_numero_ordre_proprietaire}"
+    - if display_situation_proprietaire?
+      .description-list__row.description-list__row--with-reference
+        dt Propriétaire
+        dd
+          = render_valid_content(:situation_proprietaire) do
+            span= @report.situation_proprietaire
+            span= "Numéro d'ordre : #{@report.situation_numero_ordre_proprietaire}"

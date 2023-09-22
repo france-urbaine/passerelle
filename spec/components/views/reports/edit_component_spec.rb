@@ -297,7 +297,8 @@ RSpec.describe Views::Reports::EditComponent, type: :component do
       expect(page).to have_selector(".modal form") do |form|
         aggregate_failures do
           expect(form).to have_html_attribute("action").with_value("/signalements/#{report.id}")
-          expect(form).to have_field("Nature de l'occupation actuelle")
+          expect(form).to have_field("Année du fichier d'occupation")
+          expect(form).to have_field("Nature de l'occupation")
         end
       end
     end
@@ -310,7 +311,6 @@ RSpec.describe Views::Reports::EditComponent, type: :component do
           expect(form).to have_html_attribute("action").with_value("/signalements/#{report.id}")
           expect(form).to have_field("Année du fichier CFE")
           expect(form).to have_field("Vacance fiscale")
-          expect(form).to have_field("Nombre d'année de vacances")
           expect(form).to have_field("N° SIREN du dernier occupant")
           expect(form).to have_field("Nom du dernier occupant")
           expect(form).to have_field("VLF Cotisation foncière des entreprises")
@@ -452,40 +452,10 @@ RSpec.describe Views::Reports::EditComponent, type: :component do
     end
   end
 
-  describe "`proposition_omission_batie` fields" do
-    let(:fields) { "proposition_omission_batie" }
+  describe "`proposition_creation_local` fields" do
+    let(:fields) { "proposition_creation_local" }
 
-    it "renders a form to edit a new `creation_local_habitation`" do
-      report = render_with_report(:creation_local_habitation, anomalies: %w[omission_batie])
-
-      expect(page).to have_selector(".modal form") do |form|
-        aggregate_failures do
-          expect(form).to have_html_attribute("action").with_value("/signalements/#{report.id}")
-          expect(form).to have_field("Nature du local")
-          expect(form).to have_field("Catégorie du local")
-          expect(form).to have_field("Surface réelle")
-        end
-      end
-    end
-
-    it "renders a form to edit a new `creation_local_professionnel`" do
-      report = render_with_report(:creation_local_professionnel, anomalies: %w[omission_batie])
-
-      expect(page).to have_selector(".modal form") do |form|
-        aggregate_failures do
-          expect(form).to have_html_attribute("action").with_value("/signalements/#{report.id}")
-          expect(form).to have_field("Nature du local")
-          expect(form).to have_field("Catégorie du local")
-          expect(form).to have_field("Surface réelle")
-        end
-      end
-    end
-  end
-
-  describe "`proposition_construction_neuve` fields" do
-    let(:fields) { "proposition_construction_neuve" }
-
-    it "renders a form to edit a new `creation_local_habitation`" do
+    it "renders a form to edit a new `creation_local_habitation` with a `construction_neuve` anomalies" do
       report = render_with_report(:creation_local_habitation, anomalies: %w[construction_neuve])
 
       expect(page).to have_selector(".modal form") do |form|
@@ -498,8 +468,34 @@ RSpec.describe Views::Reports::EditComponent, type: :component do
       end
     end
 
-    it "renders a form to edit a new `creation_local_professionnel`" do
+    it "renders a form to edit a new `creation_local_professionnel` with a `construction_neuve` anomalies" do
       report = render_with_report(:creation_local_professionnel, anomalies: %w[construction_neuve])
+
+      expect(page).to have_selector(".modal form") do |form|
+        aggregate_failures do
+          expect(form).to have_html_attribute("action").with_value("/signalements/#{report.id}")
+          expect(form).to have_field("Nature du local")
+          expect(form).to have_field("Catégorie du local")
+          expect(form).to have_field("Surface réelle")
+        end
+      end
+    end
+
+    it "renders a form to edit a new `creation_local_habitation` with a `omission_batie` anomalies" do
+      report = render_with_report(:creation_local_habitation, anomalies: %w[omission_batie])
+
+      expect(page).to have_selector(".modal form") do |form|
+        aggregate_failures do
+          expect(form).to have_html_attribute("action").with_value("/signalements/#{report.id}")
+          expect(form).to have_field("Nature du local")
+          expect(form).to have_field("Catégorie du local")
+          expect(form).to have_field("Surface réelle")
+        end
+      end
+    end
+
+    it "renders a form to edit a new `creation_local_professionnel` with a `omission_batie` anomalies" do
+      report = render_with_report(:creation_local_professionnel, anomalies: %w[omission_batie])
 
       expect(page).to have_selector(".modal form") do |form|
         aggregate_failures do
@@ -521,10 +517,8 @@ RSpec.describe Views::Reports::EditComponent, type: :component do
       expect(page).to have_selector(".modal form") do |form|
         aggregate_failures do
           expect(form).to have_html_attribute("action").with_value("/signalements/#{report.id}")
-          expect(form).to have_field("Date du constat")
-          expect(form).to have_field("Année sur laquelle porte le signalement")
-          expect(form).to have_field("Nature de l'occupation constatée")
           expect(form).to have_field("Date du changement")
+          expect(form).to have_field("Nature de l'occupation")
         end
       end
     end
@@ -535,10 +529,9 @@ RSpec.describe Views::Reports::EditComponent, type: :component do
       expect(page).to have_selector(".modal form") do |form|
         aggregate_failures do
           expect(form).to have_html_attribute("action").with_value("/signalements/#{report.id}")
-          expect(form).to have_field("Date du constat")
           expect(form).to have_field("N° SIREN")
-          expect(form).to have_field("Nom de la société")
-          expect(form).to have_field("Nom de l'enseigne")
+          expect(form).to have_field("Nom de l'entreprise")
+          expect(form).to have_field("Enseigne")
           expect(form).to have_field("Etablissement principal")
           expect(form).to have_field("Chantier longue durée")
           expect(form).to have_field("Code NAF")

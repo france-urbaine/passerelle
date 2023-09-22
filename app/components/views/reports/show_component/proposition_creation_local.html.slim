@@ -1,0 +1,63 @@
+.subheader-bar
+  h2.subheader
+    = icon_component("presentation-chart-bar", "Icône d'illustration")
+    - if @report.anomalies.include?("omission_batie")
+      | Signalement d'une omission bâtie
+    - else
+      | Signalement de l'achèvement de travaux
+
+  .subheader-bar__actions
+    - if allowed_to?(:update?, @report) && @report.packing?
+      .subheader-bar__action
+        = button_component "Compléter", edit_report_path(@report, "proposition_creation_local"), icon: "pencil-square", modal: true
+
+.card
+  dl.description-list
+    - if display_proposition_nature?
+      .description-list__row
+        dt Nature du local
+        dd
+          = render_valid_content(:proposition_nature) do
+            = proposition_nature
+
+    - if display_proposition_nature_dependance?
+      .description-list__row
+        dt Nature de dépendance
+        dd
+          = render_valid_content(:proposition_nature_dependance) do
+            = proposition_nature_dependance
+
+    - if display_proposition_categorie?
+      .description-list__row
+        dt Catégorie proposée
+        dd
+          = render_valid_content(:proposition_categorie) do
+            = proposition_categorie
+
+    - if display_proposition_surface_reelle?
+      .description-list__row
+        dt Surface réelle
+        dd
+          = render_valid_content(:proposition_surface_reelle) do
+            = helpers.display_surface(@report.proposition_surface_reelle)
+
+    - if display_proposition_date_achevement?
+      .description-list__row
+        dt Date d’achèvement
+        dd
+          = render_valid_content(:proposition_date_achevement) do
+            = helpers.display_date(@report.proposition_date_achevement)
+
+    - if display_proposition_numero_permis?
+      .description-list__row
+        dt N° de permis
+        dd
+          = render_valid_content(:proposition_numero_permis) do
+            = @report.proposition_numero_permis
+
+    - if display_proposition_nature_travaux?
+      .description-list__row
+        dt Nature de travaux
+        dd
+          = render_valid_content(:proposition_nature_travaux) do
+            = @report.proposition_nature_travaux

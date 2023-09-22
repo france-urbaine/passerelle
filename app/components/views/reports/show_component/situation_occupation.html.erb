@@ -15,95 +15,74 @@
 
 <div class="card">
   <dl class="description-list">
-
-    <% if require_occupation_habitation? %>
-
+    <% if display_situation_occupation_annee? %>
       <div class="description-list__row">
-        <dt>Nature de l'occupation actuelle</dt>
-        <dd>
-          <%= render_valid_content(:situation_occupation) do %>
-            <%= situation_occupation %>
-          <% end %>
-        </dd>
+        <dt>Année du fichier d'occupation</dt>
+        <dd><%= render_valid_content(:situation_occupation_annee) { @report.situation_occupation_annee } %></dd>
       </div>
-
-      <% if situation_occupation_rs? %>
-        <div class="description-list__row">
-          <dt>Application de la majoration sur les résidences secondaire</dt>
-          <dd>
-            <%= render_valid_content(:situation_majoration_rs) do %>
-              <%= t(@report.situation_majoration_rs.to_s, scope: "enum.boolean") %>
-            <% end %>
-          </dd>
-        </div>
-      <% end %>
-
-    <% elsif require_occupation_professionnel? %>
-
-      <div class="description-list__row">
-        <dt>Année du fichier CFE</dt>
-        <dd>
-          <%= render_valid_content(:situation_annee_fichier_cfe) do %>
-            <%= @report.situation_annee_fichier_cfe %>
-          <% end %>
-        </dd>
-      </div>
-
-      <div class="description-list__row">
-        <dt>Vacances fiscales</dt>
-        <dd>
-          <%= render_valid_content(:situation_vacances_fiscales) do %>
-            <%= t(@report.situation_vacances_fiscales.to_s, scope: "enum.boolean") %>
-          <% end %>
-        </dd>
-      </div>
-
-      <div class="description-list__row">
-        <dt>Nombre d"année de vacances</dt>
-        <dd>
-          <%= render_valid_content(:situation_nombre_annee_vacances) do %>
-            <%= @report.situation_nombre_annee_vacances %>
-          <% end %>
-        </dd>
-      </div>
-
-      <div class="description-list__row">
-        <dt>N° SIREN du dernier occupant</dt>
-        <dd>
-          <%= render_valid_content(:situation_siren_dernier_occupant) do %>
-            <%= helpers.display_siren(@report.situation_siren_dernier_occupant) %>
-          <% end %>
-        </dd>
-      </div>
-
-      <div class="description-list__row">
-        <dt>Nom du dernier occupant</dt>
-        <dd>
-          <%= render_valid_content(:situation_nom_dernier_occupant) do %>
-            <%= @report.situation_nom_dernier_occupant %>
-          <% end %>
-        </dd>
-      </div>
-
-      <div class="description-list__row">
-        <dt>VLF Cotisation foncière des entreprises</dt>
-        <dd>
-          <%= render_valid_content(:situation_vlf_cfe) do %>
-            <%= @report.situation_vlf_cfe %>
-          <% end %>
-        </dd>
-      </div>
-
-      <div class="description-list__row">
-        <dt>Taxation base minimum</dt>
-        <dd>
-          <%= render_valid_content(:situation_taxation_base_minimum) do %>
-            <%= t(@report.situation_taxation_base_minimum.to_s, scope: "enum.boolean") %>
-          <% end %>
-        </dd>
-      </div>
-
     <% end %>
 
+    <% if display_situation_nature_occupation? %>
+      <div class="description-list__row">
+        <dt>Nature de l'occupation</dt>
+        <dd><%= render_valid_content(:situation_nature_occupation) { situation_nature_occupation } %></dd>
+      </div>
+    <% end %>
+
+    <% if display_situation_majoration_rs? %>
+      <div class="description-list__row">
+        <dt>Application de la majoration sur les résidences secondaire</dt>
+        <dd><%= render_valid_content(:situation_majoration_rs) { t(@report.situation_majoration_rs.to_s, scope: "enum.boolean") } %></dd>
+      </div>
+    <% end %>
+
+    <% if display_situation_annee_cfe? %>
+      <div class="description-list__row">
+        <dt>Année du fichier CFE</dt>
+        <dd><%= render_valid_content(:situation_annee_cfe) { @report.situation_annee_cfe } %></dd>
+      </div>
+    <% end %>
+
+    <% if display_situation_vacance_fiscale? %>
+      <div class="description-list__row">
+        <dt>Vacance fiscale</dt>
+        <dd><%= render_valid_content(:situation_vacance_fiscale) { t(@report.situation_vacance_fiscale.to_s, scope: "enum.boolean") } %></dd>
+      </div>
+    <% end %>
+
+    <% if display_situation_nombre_annees_vacance? %>
+      <div class="description-list__row">
+        <dt>Nombre d'années de vacance</dt>
+        <dd><%= render_valid_content(:situation_nombre_annees_vacance) { @report.situation_nombre_annees_vacance } %></dd>
+      </div>
+    <% end %>
+
+    <% if display_situation_siren_dernier_occupant? %>
+      <div class="description-list__row">
+        <dt>N° SIREN du dernier occupant</dt>
+        <dd><%= render_valid_content(:situation_siren_dernier_occupant) { helpers.display_siren(@report.situation_siren_dernier_occupant) } %></dd>
+      </div>
+    <% end %>
+
+    <% if display_situation_nom_dernier_occupant? %>
+      <div class="description-list__row">
+        <dt>Nom du dernier occupant</dt>
+        <dd><%= render_valid_content(:situation_nom_dernier_occupant) { @report.situation_nom_dernier_occupant } %></dd>
+      </div>
+    <% end %>
+
+    <% if display_situation_vlf_cfe? %>
+      <div class="description-list__row">
+        <dt>VLF Cotisation foncière des entreprises</dt>
+        <dd><%= render_valid_content(:situation_vlf_cfe) { number_with_delimiter(@report.situation_vlf_cfe) } %></dd>
+      </div>
+    <% end %>
+
+    <% if display_situation_taxation_base_minimum? %>
+      <div class="description-list__row">
+        <dt>Taxation base minimum</dt>
+        <dd><%= render_valid_content(:situation_taxation_base_minimum) { t(@report.situation_taxation_base_minimum.to_s, scope: "enum.boolean") } %></dd>
+      </div>
+    <% end %>
   </dl>
 </div>

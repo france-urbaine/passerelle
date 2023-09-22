@@ -3,15 +3,16 @@
 module Views
   module Reports
     class EditFormComponent
-      class PropositionConstructionNeuve < self
+      class PropositionCreationLocal < self
         def dependance_fields(&)
+          hidden = disabled = !require_proposition_nature_dependance?
           data = {
             switch_target:          "target",
             switch_value:           %w[DA DM].join(","),
             switch_value_separator: ","
           }
 
-          tag.div(data:, hidden: !require_proposition_nature_dependance?, &)
+          tag.fieldset(data:, hidden:, disabled:, &)
         end
 
         def nature_habitation_choices

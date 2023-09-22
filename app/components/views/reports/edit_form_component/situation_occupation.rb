@@ -4,21 +4,32 @@ module Views
   module Reports
     class EditFormComponent
       class SituationOccupation < self
-        def situation_occupation
+        def situation_nature_occupation_choices
           enum_options(:local_habitation_occupation)
         end
 
-        def boolean_options
+        def boolean_choices
           enum_options(:boolean)
         end
 
         def residence_secondaire_fields(&)
+          hidden = disabled = (@report.situation_nature_occupation != "RS")
           data = {
-            switch_target:          "target",
-            switch_value:           "RS"
+            switch_target: "target",
+            switch_value:  "RS"
           }
 
-          tag.div(data:, hidden: @report.situation_occupation != "RS", &)
+          tag.fieldset(data:, hidden:, disabled:, &)
+        end
+
+        def vacance_fiscale_fields(&)
+          hidden = disabled = !@report.situation_vacance_fiscale
+          data = {
+            switch_target: "target",
+            switch_value:  "true"
+          }
+
+          tag.fieldset(data:, hidden:, disabled:, &)
         end
       end
     end

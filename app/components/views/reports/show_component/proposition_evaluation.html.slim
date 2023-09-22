@@ -19,34 +19,35 @@
 
 .card
   dl.description-list
-    - if require_proposition_affectation?
+    - if display_proposition_affectation?
       .description-list__row
         dt Affectation
         dd
           = render_valid_content(:proposition_affectation) do
             = proposition_affectation
 
-    - if require_proposition_nature?
+    - if display_proposition_nature?
       .description-list__row
         dt Nature du local
         dd
           = render_valid_content(:proposition_nature) do
             = proposition_nature
 
-    - if require_proposition_consistance?
+    - if display_proposition_categorie?
       .description-list__row
         dt Catégorie du local
         dd
           = render_valid_content(:proposition_categorie) do
             = proposition_categorie
 
+    - if display_proposition_surface_reelle?
       .description-list__row
         dt Surface réelle
         dd
           = render_valid_content(:proposition_surface_reelle) do
             = helpers.display_surface(@report.proposition_surface_reelle)
 
-    - if require_proposition_evaluation_professionnel?
+    - if display_other_proposition_surface?
       .description-list__row
         dt= "(P1) Surface des parties principales"
         dd
@@ -83,19 +84,21 @@
           = render_valid_content(:proposition_surface_ponderee) do
             = helpers.display_surface(@report.proposition_surface_ponderee)
 
+    - if display_proposition_coefficient_localisation?
       .description-list__row
         dt Coefficient de localisation
         dd
           = render_valid_content(:proposition_coefficient_localisation) do
             = @report.proposition_coefficient_localisation
 
-    - if require_proposition_correctif?
+    - if display_proposition_coefficient_entretien?
       .description-list__row
         dt Coefficient d'entretien
         dd
           = render_valid_content(:proposition_coefficient_entretien) do
             = proposition_coefficient_entretien
 
+    - if display_proposition_coefficient_situation?
       .description-list__row
         dt Coefficient de situation générale
         dd

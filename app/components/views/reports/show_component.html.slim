@@ -3,48 +3,50 @@
 - else
   = render InformationTransmitted.new(@report)
 
-- if require_situation_majic?
+- if display_situation_majic?
   .content__separator
   = render SituationMajic.new(@report)
-
-- if require_situation_parcelle?
+- elsif display_situation_parcelle?
   .content__separator
   = render SituationParcelle.new(@report)
 
-- if require_situation_evaluation? && require_proposition_evaluation?
+- if display_situation_evaluation? && display_proposition_evaluation?
   .content__separator
   .content__grid.content__grid--cols-2
     div= render SituationEvaluation.new(@report)
     div= render PropositionEvaluation.new(@report)
 
-- elsif require_situation_evaluation?
+- elsif display_situation_evaluation?
   .content__separator
   = render SituationEvaluation.new(@report)
 
-- elsif require_proposition_evaluation?
+- elsif display_proposition_evaluation?
   .content__separator
   = render PropositionEvaluation.new(@report)
 
-- if require_occupation?
+- if display_situation_occupation? && display_proposition_occupation?
+  .content__separator
+  .content__grid.content__grid--cols-2
+    div= render SituationOccupation.new(@report)
+    div= render PropositionOccupation.new(@report)
+
+- elsif display_situation_occupation?
   .content__separator
   = render SituationOccupation.new(@report)
 
+- elsif display_proposition_occupation?
   .content__separator
   = render PropositionOccupation.new(@report)
 
-- if require_proposition_exoneration?
+- if display_proposition_creation_local?
+  .content__separator
+  = render PropositionCreationLocal.new(@report)
+
+- if display_proposition_exoneration?
   .content__separator
   = render PropositionExoneration.new(@report)
 
-- if require_proposition_omission_batie?
-  .content__separator
-  = render PropositionOmissionBatie.new(@report)
-
-- if require_proposition_construction_neuve?
-  .content__separator
-  = render PropositionConstructionNeuve.new(@report)
-
-- if require_proposition_adresse?
+- if display_proposition_adresse?
   .content__separator
   = render PropositionAdresse.new(@report)
 

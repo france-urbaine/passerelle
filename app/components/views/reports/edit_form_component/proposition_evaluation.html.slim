@@ -12,11 +12,11 @@
       | Proposition de mise à jour de l'évaluation
 
   - modal.with_form(model: @report) do |form|
-    - if require_proposition_affectation?
+    - if display_proposition_affectation?
       div( data-controller="switch" )
         = form.block :proposition_affectation do
           = form.label :proposition_affectation, "Affectation"
-          = form.select :proposition_affectation, affectation_choices, { include_blank: true }, data: { switch_target: "input" }
+          = form.select :proposition_affectation, affectation_choices, { include_blank: true }, data: { action: "switch#toggle" }
 
         = habitation_fields do
           = form.block :proposition_nature do
@@ -85,26 +85,27 @@
             = form.number_field :proposition_coefficient_localisation, step: "any", min: 0
 
     - else
-      - if require_proposition_nature?
+      - if display_proposition_nature?
         = form.block :proposition_nature do
           = form.label :proposition_nature, "Nature du local"
           = form.select :proposition_nature, nature_choices, { include_blank: true }
 
-      - if require_proposition_categorie?
+      - if display_proposition_categorie?
         = form.block :proposition_categorie do
           = form.label :proposition_categorie,"Catégorie du local"
           = form.select :proposition_categorie, categorie_choices, { include_blank: true }
 
-      - if require_proposition_surface?
+      - if display_proposition_surface_reelle?
         = form.block :proposition_surface_reelle do
           = form.label :proposition_surface_reelle, "Surface réelle"
           = form.number_field :proposition_surface_reelle, step: "any", min: 0
 
-      - if require_proposition_correctif?
+      - if display_proposition_coefficient_entretien?
         = form.block :proposition_coefficient_entretien do
           = form.label :proposition_coefficient_entretien, "Coefficient d'entretien"
           = form.select :proposition_coefficient_entretien, coefficient_entretien_choices, { include_blank: true }
 
+      - if display_proposition_coefficient_situation?
         = form.block :proposition_coefficient_situation_generale do
           = form.label :proposition_coefficient_situation_generale, "Coefficient de situation générale"
           = form.select :proposition_coefficient_situation_generale, coefficient_situation_choices, { include_blank: true }
@@ -113,7 +114,7 @@
           = form.label :proposition_coefficient_situation_particuliere, "Coefficient de situation particuliere"
           = form.select :proposition_coefficient_situation_particuliere, coefficient_situation_choices, { include_blank: true }
 
-      - if require_proposition_evaluation_professionnel?
+      - if display_other_proposition_surface?
         = form.block :proposition_surface_p1 do
           = form.label :proposition_surface_p1, "(P1)Surface des parties principales"
           = form.number_field :proposition_surface_p1, step: "any", min: 0
@@ -138,6 +139,7 @@
           = form.label :proposition_surface_ponderee, "Surface pondérée"
           = form.number_field :proposition_surface_ponderee, step: "any", min: 0
 
+      - if display_proposition_coefficient_localisation?
         = form.block :proposition_coefficient_localisation do
           = form.label :proposition_coefficient_localisation, "Coefficient de localisation"
           = form.number_field :proposition_coefficient_localisation, step: "any", min: 0

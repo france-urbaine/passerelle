@@ -10,39 +10,42 @@
 
 .card
   dl.description-list
-    - if require_situation_date_mutation?
+    - if display_situation_date_mutation?
       .description-list__row
         dt Date de mutation
         dd
           = render_valid_content(:situation_date_mutation) do
             = helpers.display_date(@report.situation_date_mutation)
 
-    .description-list__row
-      dt Affectation
-      dd
-        = render_valid_content(:situation_affectation) do
-          = situation_affectation
+    - if display_situation_affectation?
+      .description-list__row
+        dt Affectation
+        dd
+          = render_valid_content(:situation_affectation) do
+            = situation_affectation
 
-    .description-list__row
-      dt Nature du local
-      dd
-        = render_valid_content(:situation_nature) do
-          = situation_nature
+    - if display_situation_nature?
+      .description-list__row
+        dt Nature du local
+        dd
+          = render_valid_content(:situation_nature) do
+            = situation_nature
 
-    .description-list__row
-      dt Catégorie du local
-      dd
-        = render_valid_content(:situation_categorie) do
-          = situation_categorie
+    - if display_situation_categorie?
+      .description-list__row
+        dt Catégorie du local
+        dd
+          = render_valid_content(:situation_categorie) do
+            = situation_categorie
 
-    - if require_situation_surface_reelle?
+    - if display_situation_surface_reelle?
       .description-list__row
         dt Surface réelle
         dd
           = render_valid_content(:situation_surface_reelle) do
             = helpers.display_surface(@report.situation_surface_reelle)
 
-    - if require_situation_evaluation_professionnel?
+    - if display_other_situation_surface?
       .description-list__row
         dt= "(P1) Surface des parties principales"
         dd
@@ -79,19 +82,21 @@
           = render_valid_content(:situation_surface_ponderee) do
             = helpers.display_surface(@report.situation_surface_ponderee)
 
+    - if display_situation_coefficient_localisation?
       .description-list__row
         dt Coefficient de localisation
         dd
           = render_valid_content(:situation_coefficient_localisation) do
             = @report.situation_coefficient_localisation
 
-    - if require_situation_evaluation_habitation?
+    - if display_situation_coefficient_entretien?
       .description-list__row
         dt Coefficient d'entretien
         dd
           = render_valid_content(:situation_coefficient_entretien) do
             = situation_coefficient_entretien
 
+    - if display_situation_coefficient_situation?
       .description-list__row
         dt Coefficient de situation générale
         dd
