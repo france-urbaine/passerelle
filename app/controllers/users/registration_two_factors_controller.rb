@@ -28,11 +28,7 @@ module Users
     end
 
     def edit
-      @user.otp_secret = User.generate_otp_secret
-      @user.otp_method = params[:otp_method] if params[:otp_method]
-      @user.otp_method = "2fa" unless @user.organization&.allow_2fa_via_email?
-
-      Users::Mailer.two_factor_setup_code(@user).deliver_later if @user.send_otp_code_by_email?
+      @user.verify_two_factor(params[:otp_method])
     end
 
     def update

@@ -3062,6 +3062,7 @@ CREATE TABLE public.reports (
     proposition_date_achevement character varying,
     proposition_numero_permis character varying,
     proposition_nature_travaux character varying,
+    completed_at timestamp(6) without time zone,
     situation_occupation character varying,
     situation_majoration_rs boolean,
     situation_annee_fichier_cfe character varying,
@@ -3087,8 +3088,7 @@ CREATE TABLE public.reports (
     proposition_etablissement_principal boolean,
     proposition_chantier_longue_duree boolean,
     proposition_code_naf character varying,
-    proposition_date_debut_activite date,
-    completed_at timestamp(6) without time zone
+    proposition_date_debut_activite date
 );
 
 

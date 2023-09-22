@@ -104,16 +104,9 @@ RSpec.describe User do
     it { expect(user).not_to be_confirmed }
     it { expect(user).not_to be_active_for_authentication }
 
-    it { expect { user }.not_to have_sent_emails }
-    it { expect { user }.to have_enqueued_job.once }
-    it { expect { user }.to have_enqueued_job(ActionMailer::MailDeliveryJob) }
-
-    describe "asynchronous deliveries" do
-      before { user }
-
-      it { expect { perform_enqueued_jobs }.to have_sent_emails.by(1) }
-      it { expect { perform_enqueued_jobs }.to have_sent_email.to(user.email).with_subject("Votre inscription sur FiscaHub") }
-    end
+    it { expect { user }.to have_sent_emails.by(1) }
+    it { expect { user }.to have_sent_email.to { user.email }.with_subject("Votre inscription sur FiscaHub") }
+    it { expect { user }.not_to have_enqueued_job }
   end
 
   # Confirmation process
@@ -149,16 +142,9 @@ RSpec.describe User do
       it { expect { user }.not_to have_sent_emails }
       it { expect { user }.not_to have_enqueued_job }
 
-      it { expect { user.save }.not_to have_sent_emails }
-      it { expect { user.save }.to have_enqueued_job.once }
-      it { expect { user.save }.to have_enqueued_job(ActionMailer::MailDeliveryJob) }
-
-      describe "asynchronous deliveries" do
-        before { user.save }
-
-        it { expect { perform_enqueued_jobs }.to have_sent_emails.by(1) }
-        it { expect { perform_enqueued_jobs }.to have_sent_email.to(user.email).with_subject("Votre inscription sur FiscaHub") }
-      end
+      it { expect { user.save }.to have_sent_emails.by(1) }
+      it { expect { user.save }.to have_sent_email.to(user.email).with_subject("Votre inscription sur FiscaHub") }
+      it { expect { user.save }.not_to have_enqueued_job }
     end
 
     describe "#accept_invitation" do

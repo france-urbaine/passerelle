@@ -26,7 +26,7 @@ module AuthenticateWithOtpTwoFactor
     user = self.resource = find_user_for_authentication
     return unless user&.valid_password?(user_params[:password])
 
-    Users::Mailer.two_factor_sign_in_code(user).deliver_later if user.send_otp_code_by_email?
+    Users::Mailer.two_factor_sign_in_code(user).deliver_now if user.send_otp_code_by_email?
     prompt_for_two_factor(user)
   end
 

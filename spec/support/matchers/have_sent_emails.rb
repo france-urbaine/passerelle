@@ -53,20 +53,20 @@ module Matchers
         "expected #{actual_description} to #{expected_description}"
       end
 
-      chain :to do |value|
-        @recipient = value
+      chain :to do |value = nil, &block|
+        @recipient = value || block
       end
 
-      chain :from do |value|
-        @sender = value
+      chain :from do |value = nil, &block|
+        @sender = value || block
       end
 
-      chain :with_subject do |value|
-        @email_subject = value
+      chain :with_subject do |value = nil, &block|
+        @email_subject = value || block
       end
 
-      chain :with_body do |value|
-        @email_body = value
+      chain :with_body do |value = nil, &block|
+        @email_body = value || block
       end
 
       private
@@ -91,6 +91,7 @@ module Matchers
         return true unless instance_variable_defined?(expected_var)
 
         expected = instance_variable_get(expected_var)
+        expected = expected.call if expected.is_a?(Proc)
 
         if actual.is_a?(Array)
           if expected.is_a?(Regexp) || expected.respond_to?(:matches?)

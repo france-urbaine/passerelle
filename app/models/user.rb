@@ -213,6 +213,17 @@ class User < ApplicationRecord
 
   attr_accessor :otp_code
 
+  def verify_two_factor(otp_method = "2fa")
+    self.otp_secret = User.generate_otp_secret
+    self.otp_method = otp_method if otp_method
+    self.otp_method = "2fa" unless organization&.allow_2fa_via_email?
+
+    # Do not deliver this emails later
+    # Otherwise, me might expose the OTP in sidekiq jobs & logs
+    #
+    Users::Mailer.two_factor_setup_code(self).deliver_now if send_otp_code_by_email?
+  end
+
   def enable_two_factor(params)
     self.otp_secret  = params.fetch(:otp_secret, "")
     self.otp_code    = params.fetch(:otp_code, "")
@@ -225,7 +236,10 @@ class User < ApplicationRecord
       return false
     end
 
-    Users::Mailer.two_factor_change(self).deliver_later
+    # Do not deliver this emails later
+    # Otherwise, me might expose the OTP in sidekiq jobs & logs
+    #
+    Users::Mailer.two_factor_change(self).deliver_now
 
     self.otp_code = nil
     true
@@ -261,12 +275,6 @@ class User < ApplicationRecord
 
   def otp_no_longer_permitted_by_email?
     otp_method == "email" && !organization&.allow_2fa_via_email?
-  end
-
-  # Devise delivery method
-  # ----------------------------------------------------------------------------
-  def send_devise_notification(notification, *)
-    devise_mailer.send(notification, self, *).deliver_later
   end
 
   # Devise reconfirmation

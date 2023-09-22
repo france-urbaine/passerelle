@@ -53,14 +53,8 @@ RSpec.describe "Admin::Users::InvitationsController#create" do
         )
       end
 
-      it "enqueues a job to deliver notification" do
+      it "delivers confirmation instructions" do
         expect { request }
-          .to have_enqueued_job.once
-          .and have_enqueued_job(ActionMailer::MailDeliveryJob)
-      end
-
-      it "sent instructions to confirm" do
-        expect { request && perform_enqueued_jobs }
           .to have_sent_emails.by(1)
           .and have_sent_email.with_subject("Votre inscription sur FiscaHub")
       end
@@ -88,14 +82,8 @@ RSpec.describe "Admin::Users::InvitationsController#create" do
         )
       end
 
-      it "enqueues a job to deliver notification" do
+      it "delivers confirmation instructions" do
         expect { request }
-          .to have_enqueued_job.once
-          .and have_enqueued_job(ActionMailer::MailDeliveryJob)
-      end
-
-      it "sent instructions to confirm" do
-        expect { request && perform_enqueued_jobs }
           .to have_sent_emails.by(1)
           .and have_sent_email.with_subject("Votre inscription sur FiscaHub")
       end
