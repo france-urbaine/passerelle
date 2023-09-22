@@ -7,6 +7,10 @@ FactoryBot.define do
       association(:collectivity, publisher: factored_publisher)
     end
 
+    user do
+      association(:user) unless publisher
+    end
+
     trait :completed do
       completed_at { Time.current }
     end
@@ -20,10 +24,12 @@ FactoryBot.define do
         publisher { association(:publisher) }
       end
 
+      user         { association(:user) }
       collectivity { association(:collectivity, publisher: publisher) }
     end
 
     trait :made_through_api do
+      user         { nil }
       publisher    { association(:publisher) }
       collectivity { association(:collectivity, publisher: publisher) }
     end

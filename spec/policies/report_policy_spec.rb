@@ -505,11 +505,11 @@ RSpec.describe ReportPolicy, stub_factories: false do
               OR
               ("packages"."id" IS NULL AND "transmissions"."id" IS NULL)
             )
-            AND  "reports"."collectivity_id" = '#{current_organization.id}'
+            AND "reports"."collectivity_id" = '#{current_organization.id}'
             AND (
-              ("packages"."id" IS NULL AND "reports"."publisher_id" IS NULL)
-              OR
               "packages"."transmitted_at" IS NOT NULL
+              OR
+              "reports"."publisher_id" IS NULL
             )
         SQL
       end

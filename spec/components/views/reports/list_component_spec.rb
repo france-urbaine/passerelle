@@ -93,7 +93,8 @@ RSpec.describe Views::Reports::ListComponent, type: :component do
       render_inline described_class.new(Report.all, pagy)
 
       expect(page).to have_selector(:table_row, "Reference" => reports.first.reference) do |row|
-        expect(row).to have_link(reports.first.reference, href: "/signalements/#{reports.first.id}")
+        title = I18n.t(reports.first.form_type, scope: "components.reports/name.blank")
+        expect(row).to have_link(title, href: "/signalements/#{reports.first.id}")
       end
     end
   end

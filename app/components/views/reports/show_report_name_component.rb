@@ -5,6 +5,7 @@ module Views
     class ShowReportNameComponent < ApplicationViewComponent
       def initialize(report)
         @report = report
+        super()
       end
 
       def call

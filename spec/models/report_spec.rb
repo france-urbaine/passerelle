@@ -224,7 +224,6 @@ RSpec.describe Report do
               OR
               ("packages"."id" IS NULL AND "transmissions"."id" IS NULL)
             )
-          )
         SQL
       end
     end
