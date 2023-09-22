@@ -580,7 +580,8 @@ module Reports
       # @attribute situation_majoration_rs
       #
       # This attribute is displayed and required for:
-      # * any `occupation_local_habitation` form that has set `situation_nature_occupation` to `RS` ("résidence secondaire")
+      # * any `occupation_local_habitation` form that has set `situation_nature_occupation`
+      #   to `RS` ("résidence secondaire")
       #
       def display_situation_majoration_rs?
         occupation_local_habitation? && @report.situation_nature_occupation == "RS"
@@ -779,7 +780,8 @@ module Reports
       # @attribute proposition_majoration_rs
       #
       # This attribute is displayed and required for:
-      # * any `occupation_local_habitation` form that has set `proposition_nature_occupation` to `RS` ("résidence secondaire")
+      # * any `occupation_local_habitation` form that has set `proposition_nature_occupation`
+      #   to `RS` ("résidence secondaire")
       #
       def display_proposition_majoration_rs?
         occupation_local_habitation? && @report.proposition_nature_occupation == "RS"
