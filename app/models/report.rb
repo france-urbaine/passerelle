@@ -362,11 +362,11 @@ class Report < ApplicationRecord
     end
   }
 
-  scope :packing_through_web_ui_or_transmitted, lambda {
+  scope :transmitted_or_reported_through_web_ui, lambda {
     left_outer_joins(:package).where(<<~SQL.squish)
-      ("packages"."id" IS NULL AND "reports"."publisher_id" IS NULL)
-      OR
       "packages"."transmitted_at" IS NOT NULL
+      OR
+      "reports"."publisher_id" IS NULL
     SQL
   }
 

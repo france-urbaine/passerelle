@@ -7,7 +7,15 @@ module States
     included do
       # Scopes
       # ----------------------------------------------------------------------------
-      scope :packing,             -> { joins(:package).merge(Package.unscoped.packing) }
+      scope :packing, lambda {
+        left_outer_joins(:package).where(<<~SQL.squish)
+          "reports"."package_id" IS NULL
+          OR
+          "packages"."transmitted_at" IS NULL
+        SQL
+      }
+
+      scope :packing,             -> { left_outer_joins(:package).merge(Package.unscoped.packing) }
       scope :transmitted,         -> { joins(:package).merge(Package.unscoped.transmitted) }
       scope :delivered,           -> { joins(:package).merge(Package.unscoped.delivered) }
       scope :assigned,            -> { joins(:package).merge(Package.unscoped.assigned) }
@@ -28,7 +36,7 @@ module States
       end
 
       def packing?
-        package&.packing? || new_record?
+        package.nil? || package.packing? || new_record?
       end
 
       def pending?

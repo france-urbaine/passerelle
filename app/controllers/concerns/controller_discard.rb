@@ -15,6 +15,7 @@ module ControllerDiscard
   # will be pushed into @gone_records
   #
   def only_kept!(*records, **)
+    records.compact!
     return unless (first_index = records.index(&:discarded?))
 
     gone_records = records[first_index..]

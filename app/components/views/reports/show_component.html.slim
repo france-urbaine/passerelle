@@ -1,6 +1,6 @@
 - if @report.packing?
   = render InformationPacking.new(@report)
-- else
+- elsif @report.package
   = render InformationTransmitted.new(@report)
 
 - if display_situation_majic?

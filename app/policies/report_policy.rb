@@ -147,7 +147,7 @@ class ReportPolicy < ApplicationPolicy
         .all_kept
         .out_of_sandbox
         .sent_by_collectivity(organization)
-        .packing_through_web_ui_or_transmitted
+        .transmitted_or_reported_through_web_ui
     end
 
     def reports_destroyable_by_collectivity
