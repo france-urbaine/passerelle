@@ -51,3 +51,25 @@ fr:
         show_otp_method:
           2fa:    "Via une application tierce"
           email:  "Via email"
+
+      reports:
+        show_report_name:
+          blank:
+            evaluation_local_habitation:           "Évaluation d'un local d'habitation"
+            evaluation_local_professionnel:        "Évaluation d'un local professionnel"
+            creation_local_habitation:             "Création d'un local d'habitation"
+            creation_local_professionnel:          "Création d'un local professionnel"
+            occupation_local_habitation:           "Occupation d'un local d'habitation"
+            occupation_local_professionnel:        "Occupation d'un local professionnel"
+          with_invariant:
+            evaluation_local_habitation:           "Évaluation du local d'habitation %{invariant}"
+            evaluation_local_professionnel:        "Évaluation du local professionnel %{invariant}"
+            occupation_local_habitation:           "Occupation du local d'habitation %{invariant}"
+            occupation_local_professionnel:        "Occupation du local professionnel %{invariant}"
+          with_address:
+            evaluation_local_habitation:           "Évaluation d'un local situé %{address}"
+            evaluation_local_professionnel:        "Évaluation d'un local situé %{address}"
+            creation_local_habitation:             "Création d'un local situé %{address}"
+            creation_local_professionnel:          "Création d'un local situé %{address}"
+            occupation_local_habitation:           "Occupation d'un local situé %{address}"
+            occupation_local_professionnel:        "Occupation d'un local situé %{address}"

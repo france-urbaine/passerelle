@@ -26,8 +26,10 @@ module AuthorizedLink
     def label
       content ||
         case @resource
-        when Package, Report
+        when Package
           @resource.reference
+        when Report
+          render Views::Reports::ShowReportNameComponent.new(@resource)
         else
           @resource&.name
         end
