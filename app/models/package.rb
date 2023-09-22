@@ -24,6 +24,7 @@
 #  reports_debated_count   :integer          default(0), not null
 #  sandbox                 :boolean          default(FALSE), not null
 #  completed_at            :datetime
+#  transmission_id         :uuid
 #
 # Indexes
 #
@@ -31,11 +32,13 @@
 #  index_packages_on_discarded_at     (discarded_at)
 #  index_packages_on_publisher_id     (publisher_id)
 #  index_packages_on_reference        (reference) UNIQUE
+#  index_packages_on_transmission_id  (transmission_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (collectivity_id => collectivities.id) ON DELETE => cascade
 #  fk_rails_...  (publisher_id => publishers.id) ON DELETE => cascade
+#  fk_rails_...  (transmission_id => transmissions.id)
 #
 class Package < ApplicationRecord
   include States::PackageStates
@@ -44,6 +47,8 @@ class Package < ApplicationRecord
   # ----------------------------------------------------------------------------
   belongs_to :collectivity
   belongs_to :publisher, optional: true
+  belongs_to :transmission, optional: true
+
   has_many :reports, dependent: false
 
   # Validations

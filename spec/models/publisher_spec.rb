@@ -8,6 +8,7 @@ RSpec.describe Publisher do
   describe "associations" do
     it { is_expected.to have_many(:users) }
     it { is_expected.to have_many(:collectivities) }
+    it { is_expected.to have_many(:transmissions) }
     it { is_expected.to have_many(:packages) }
     it { is_expected.to have_many(:reports) }
     it { is_expected.to have_many(:oauth_applications) }

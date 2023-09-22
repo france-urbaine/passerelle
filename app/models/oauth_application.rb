@@ -26,6 +26,7 @@ class OauthApplication < ApplicationRecord
   include ::Doorkeeper::Orm::ActiveRecord::Mixins::Application
 
   belongs_to :owner, polymorphic: true, inverse_of: :oauth_applications
+  has_many :transmissions, dependent: false
 
   # Scopes
   # ----------------------------------------------------------------------------

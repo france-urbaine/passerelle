@@ -9,6 +9,7 @@ RSpec.describe Report do
     it { is_expected.to belong_to(:collectivity).required }
     it { is_expected.to belong_to(:publisher).optional }
     it { is_expected.to belong_to(:package).required }
+    it { is_expected.to belong_to(:transmission).optional }
     it { is_expected.to belong_to(:workshop).optional }
     it { is_expected.to belong_to(:commune).optional }
 

@@ -1154,7 +1154,8 @@ CREATE TABLE public.packages (
     reports_rejected_count integer DEFAULT 0 NOT NULL,
     reports_debated_count integer DEFAULT 0 NOT NULL,
     sandbox boolean DEFAULT false NOT NULL,
-    completed_at timestamp(6) without time zone
+    completed_at timestamp(6) without time zone,
+    transmission_id uuid
 );
 
 
@@ -3062,7 +3063,6 @@ CREATE TABLE public.reports (
     proposition_date_achevement character varying,
     proposition_numero_permis character varying,
     proposition_nature_travaux character varying,
-    completed_at timestamp(6) without time zone,
     situation_nature_occupation character varying,
     situation_majoration_rs boolean,
     situation_annee_cfe character varying,
@@ -3088,7 +3088,9 @@ CREATE TABLE public.reports (
     proposition_etablissement_principal boolean,
     proposition_chantier_longue_duree boolean,
     proposition_code_naf character varying,
-    proposition_date_debut_activite date
+    proposition_date_debut_activite date,
+    completed_at timestamp(6) without time zone,
+    transmission_id uuid
 );
 
 
@@ -3098,6 +3100,23 @@ CREATE TABLE public.reports (
 
 CREATE TABLE public.schema_migrations (
     version character varying NOT NULL
+);
+
+
+--
+-- Name: transmissions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.transmissions (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    user_id uuid,
+    publisher_id uuid,
+    collectivity_id uuid NOT NULL,
+    oauth_application_id uuid,
+    completed_at timestamp(6) without time zone,
+    sandbox boolean DEFAULT false NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
 );
 
 
@@ -3290,6 +3309,14 @@ ALTER TABLE ONLY public.reports
 
 ALTER TABLE ONLY public.schema_migrations
     ADD CONSTRAINT schema_migrations_pkey PRIMARY KEY (version);
+
+
+--
+-- Name: transmissions transmissions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.transmissions
+    ADD CONSTRAINT transmissions_pkey PRIMARY KEY (id);
 
 
 --
@@ -3610,6 +3637,13 @@ CREATE UNIQUE INDEX index_packages_on_reference ON public.packages USING btree (
 
 
 --
+-- Name: index_packages_on_transmission_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_packages_on_transmission_id ON public.packages USING btree (transmission_id);
+
+
+--
 -- Name: index_publishers_on_discarded_at; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3680,10 +3714,45 @@ CREATE INDEX index_reports_on_sibling_id ON public.reports USING btree (sibling_
 
 
 --
+-- Name: index_reports_on_transmission_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_reports_on_transmission_id ON public.reports USING btree (transmission_id);
+
+
+--
 -- Name: index_reports_on_workshop_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_reports_on_workshop_id ON public.reports USING btree (workshop_id);
+
+
+--
+-- Name: index_transmissions_on_collectivity_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_transmissions_on_collectivity_id ON public.transmissions USING btree (collectivity_id);
+
+
+--
+-- Name: index_transmissions_on_oauth_application_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_transmissions_on_oauth_application_id ON public.transmissions USING btree (oauth_application_id);
+
+
+--
+-- Name: index_transmissions_on_publisher_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_transmissions_on_publisher_id ON public.transmissions USING btree (publisher_id);
+
+
+--
+-- Name: index_transmissions_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_transmissions_on_user_id ON public.transmissions USING btree (user_id);
 
 
 --
@@ -3866,6 +3935,14 @@ ALTER TABLE ONLY public.offices
 
 
 --
+-- Name: transmissions fk_rails_19db02e97a; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.transmissions
+    ADD CONSTRAINT fk_rails_19db02e97a FOREIGN KEY (collectivity_id) REFERENCES public.collectivities(id);
+
+
+--
 -- Name: oauth_access_grants fk_rails_330c32d8d9; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3890,11 +3967,27 @@ ALTER TABLE ONLY public.reports
 
 
 --
+-- Name: reports fk_rails_4983720dc4; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.reports
+    ADD CONSTRAINT fk_rails_4983720dc4 FOREIGN KEY (transmission_id) REFERENCES public.transmissions(id);
+
+
+--
 -- Name: reports fk_rails_4bfc052571; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.reports
     ADD CONSTRAINT fk_rails_4bfc052571 FOREIGN KEY (publisher_id) REFERENCES public.publishers(id) ON DELETE CASCADE;
+
+
+--
+-- Name: packages fk_rails_4d9176af60; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.packages
+    ADD CONSTRAINT fk_rails_4d9176af60 FOREIGN KEY (transmission_id) REFERENCES public.transmissions(id);
 
 
 --
@@ -3911,6 +4004,14 @@ ALTER TABLE ONLY public.office_users
 
 ALTER TABLE ONLY public.epcis
     ADD CONSTRAINT fk_rails_606b12a072 FOREIGN KEY (code_departement) REFERENCES public.departements(code_departement);
+
+
+--
+-- Name: transmissions fk_rails_65784bea92; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.transmissions
+    ADD CONSTRAINT fk_rails_65784bea92 FOREIGN KEY (oauth_application_id) REFERENCES public.oauth_applications(id);
 
 
 --
@@ -3954,6 +4055,14 @@ ALTER TABLE ONLY public.active_storage_variant_records
 
 
 --
+-- Name: transmissions fk_rails_a3319cd57a; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.transmissions
+    ADD CONSTRAINT fk_rails_a3319cd57a FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
 -- Name: reports fk_rails_a7a6115818; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3967,6 +4076,14 @@ ALTER TABLE ONLY public.reports
 
 ALTER TABLE ONLY public.office_communes
     ADD CONSTRAINT fk_rails_b43ade12e1 FOREIGN KEY (office_id) REFERENCES public.offices(id) ON DELETE CASCADE;
+
+
+--
+-- Name: transmissions fk_rails_b443b039c7; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.transmissions
+    ADD CONSTRAINT fk_rails_b443b039c7 FOREIGN KEY (publisher_id) REFERENCES public.publishers(id);
 
 
 --
@@ -4082,6 +4199,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230914083547'),
 ('20230914100806'),
 ('20230921145204'),
-('20230922120732');
+('20230922120732'),
+('20230922132331');
 
 

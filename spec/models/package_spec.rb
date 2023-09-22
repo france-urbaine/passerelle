@@ -8,6 +8,7 @@ RSpec.describe Package do
   describe "associations" do
     it { is_expected.to belong_to(:collectivity).required }
     it { is_expected.to belong_to(:publisher).optional }
+    it { is_expected.to belong_to(:transmission).optional }
     it { is_expected.to have_many(:reports) }
   end
 

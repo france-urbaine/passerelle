@@ -38,6 +38,7 @@ class Publisher < ApplicationRecord
   has_many :users, as: :organization, dependent: :delete_all
   has_many :collectivities, dependent: false
 
+  has_many :transmissions, dependent: false
   has_many :packages, dependent: false
   has_many :reports, dependent: false
 

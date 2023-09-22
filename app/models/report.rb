@@ -86,7 +86,6 @@
 #  proposition_date_achevement                    :string
 #  proposition_numero_permis                      :string
 #  proposition_nature_travaux                     :string
-#  completed_at                                   :datetime
 #  situation_nature_occupation                    :string
 #  situation_majoration_rs                        :boolean
 #  situation_annee_cfe                            :string
@@ -113,6 +112,8 @@
 #  proposition_chantier_longue_duree              :boolean
 #  proposition_code_naf                           :string
 #  proposition_date_debut_activite                :date
+#  completed_at                                   :datetime
+#  transmission_id                                :uuid
 #
 # Indexes
 #
@@ -121,6 +122,7 @@
 #  index_reports_on_publisher_id     (publisher_id)
 #  index_reports_on_reference        (reference) UNIQUE
 #  index_reports_on_sibling_id       (sibling_id)
+#  index_reports_on_transmission_id  (transmission_id)
 #  index_reports_on_workshop_id      (workshop_id)
 #
 # Foreign Keys
@@ -128,6 +130,7 @@
 #  fk_rails_...  (collectivity_id => collectivities.id) ON DELETE => cascade
 #  fk_rails_...  (package_id => packages.id) ON DELETE => cascade
 #  fk_rails_...  (publisher_id => publishers.id) ON DELETE => cascade
+#  fk_rails_...  (transmission_id => transmissions.id)
 #  fk_rails_...  (workshop_id => workshops.id) ON DELETE => nullify
 #
 class Report < ApplicationRecord
@@ -138,6 +141,7 @@ class Report < ApplicationRecord
   belongs_to :collectivity
   belongs_to :publisher, optional: true
   belongs_to :package
+  belongs_to :transmission, optional: true
   belongs_to :workshop, optional: true
   belongs_to :commune,  optional: true, primary_key: :code_insee, foreign_key: :code_insee, inverse_of: :reports
 

@@ -52,8 +52,10 @@ class Collectivity < ApplicationRecord
   belongs_to :publisher, optional: true
 
   has_many :users, as: :organization, dependent: :delete_all
+
+  has_many :transmissions, dependent: false
   has_many :packages, dependent: false
-  has_many :reports,  dependent: false
+  has_many :reports, dependent: false
 
   # Validations
   # ----------------------------------------------------------------------------
