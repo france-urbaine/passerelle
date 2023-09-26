@@ -97,6 +97,10 @@ Rails.application.routes.draw do
       end
     end
 
+    resource :transmissions, only: %i[show create] do
+      post :complete
+    end
+
     # Organization stuff
     # ----------------------------------------------------------------------------
     namespace :organization, path: "/organisation" do

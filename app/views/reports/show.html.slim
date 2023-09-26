@@ -4,6 +4,8 @@
     - breadcrumbs.with_path "Signalements", reports_path
     - breadcrumbs.with_path(render Views::Reports::ShowReportNameComponent.new(@report))
 
+    - breadcrumbs.with_action "Ajouter à la transmission", transmissions_path, params: { report_ids: [@report.id] }, method: :post, icon: "bookmark", modal: true
+
     - if allowed_to?(:approve?, @report)
       - unless @report.approved?
         - breadcrumbs.with_action "Approuver", report_approval_path(@report), icon: "hand-thumb-up", accent: true, method: "patch"

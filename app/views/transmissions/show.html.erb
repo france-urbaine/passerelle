@@ -1,0 +1,20 @@
+<%= template_modal_component(referrer: @referrer_path) do |template| %>
+  <% template.with_modal do |modal| %>
+    <% modal.with_header do %>
+      Transmission de signalement(s)
+    <% end %>
+
+    <% modal.with_form(url: complete_transmissions_path, method: :post) do %>
+      <p>
+        Vous avez <%= @transmission.reports.count %> signalement(s) prêt(s) à être transmis.
+      </p>
+      <p>
+        Souhaitez-vous le(s) transmettre immédiatement ou souhaitez-vous le(s) transmettre plus tard ?
+      </p>
+
+    <% end %>
+
+    <% modal.with_submit_action "Transmettre immédiatement", autofocus: true %>
+    <% modal.with_close_action "Transmettre plus tard" %>
+  <% end %>
+<% end %>

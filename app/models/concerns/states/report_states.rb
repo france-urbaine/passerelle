@@ -94,6 +94,10 @@ module States
         approved? || rejected? || debated?
       end
 
+      def transmissible?
+        completed? && package.nil? && transmission.nil?
+      end
+
       # Updates methods
       # ----------------------------------------------------------------------------
       def complete!

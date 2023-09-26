@@ -1,0 +1,44 @@
+<%= template_modal_component(referrer: @referrer_path) do |template| %>
+  <% template.with_modal do |modal| %>
+    <% modal.with_header do %>
+      Transmission de signalement(s) en attente
+    <% end %>
+
+    <% modal.with_form(url: complete_transmissions_path, method: :post) do %>
+
+      <p>
+        Vous avez avec actuellement <%= @transmission.reports.count %> signalement(s) en attente.
+      </p>
+
+      <% if @transmissible_reports.any? %>
+        <h2>
+          Vous avez ajouté le(s) signalement(s) suivant(s) à votre transmission :
+        </h2>
+        <ul class="list-inside list-disc">
+          <% @transmissible_reports.each do |report| %>
+            <li><%= report.id %></li>
+          <% end %>
+        </ul>
+      <% end %>
+
+      <% if @intransmissible_reports.any? %>
+        <h2>
+          Le(s) signalement(s) suivant(s) n'ont pas pu être ajouté(s) :
+        </h2>
+        <ul class="list-inside list-disc">
+          <% @intransmissible_reports.each do |report, reason| %>
+            <li><%= report.id %> (<%= reason %>)</li>
+          <% end %>
+        </ul>
+      <% end %>
+
+      <p>
+        Souhaitez-vous le(s) transmettre immédiatement ou souhaitez-vous le(s) transmettre plus tard ?
+      </p>
+
+    <% end %>
+
+    <% modal.with_submit_action "Transmettre immédiatement", autofocus: true %>
+    <% modal.with_close_action "Transmettre plus tard" %>
+  <% end %>
+<% end %>
