@@ -13,11 +13,7 @@ class TransmissionPolicy < ApplicationPolicy
     end
   end
 
-  def completed?
-    user? && collectivity?
-  end
-
-  def manage?
+  def complete?
     user? && collectivity?
   end
 end
