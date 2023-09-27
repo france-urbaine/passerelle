@@ -43,7 +43,7 @@ module Datatable
       def selected_inflections_options
         model        = datatable.records.model
         key          = model.model_name.element
-        translations = I18n.t(key, scope: "components.data_table/selection", default: nil)
+        translations = I18n.t(key, scope: i18n_component_path, default: nil)
 
         if translations
           InflectionsOptions.new(**translations)

@@ -34,7 +34,11 @@ class ApplicationViewComponent < ViewComponent::Base
   end
 
   def i18n_component_path
-    component_path = self.class.name.delete_suffix("Component").underscore.tr("/", ".")
+    component_path = self.class.name
+      .delete_suffix("::Component")
+      .delete_suffix("Component")
+      .underscore
+      .tr("/", ".")
 
     "components.#{component_path}"
   end

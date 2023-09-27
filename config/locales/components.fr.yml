@@ -1,48 +1,53 @@
 fr:
   components:
-    data_table/selection:
-      report:
-        singular: "signalement sélectionné"
-        plural:   "signalements sélectionnés"
+    datatable:
+      selection:
+        report:
+          singular: "signalement sélectionné"
+          plural:   "signalements sélectionnés"
 
-      package:
-        singular: "paquet sélectionné"
-        plural:   "paquets sélectionnés"
+        package:
+          singular: "paquet sélectionné"
+          plural:   "paquets sélectionnés"
 
-      collectivity:
-        singular: "collectivité sélectionnée"
-        plural:   "collectivités sélectionnées"
+        collectivity:
+          singular: "collectivité sélectionnée"
+          plural:   "collectivités sélectionnées"
 
-      commune:
-        singular: "commune sélectionnée"
-        plural:   "communes sélectionnées"
+        commune:
+          singular: "commune sélectionnée"
+          plural:   "communes sélectionnées"
 
-      ddfip:
-        singular: "DDFIP sélectionnée"
-        plural:   "DDFIPs sélectionnées"
+        ddfip:
+          singular: "DDFIP sélectionnée"
+          plural:   "DDFIPs sélectionnées"
 
-      dgfip:
-        singular: "DGFIP sélectionnée"
-        plural:   "DGFIPs sélectionnées"
+        dgfip:
+          singular: "DGFIP sélectionnée"
+          plural:   "DGFIPs sélectionnées"
 
-      office:
-        singular: "guichet sélectionné"
-        plural:   "guichets sélectionnés"
+        office:
+          singular: "guichet sélectionné"
+          plural:   "guichets sélectionnés"
 
-      publisher:
-        singular: "éditeur sélectionné"
-        plural:   "éditeurs sélectionnés"
+        publisher:
+          singular: "éditeur sélectionné"
+          plural:   "éditeurs sélectionnés"
 
-      user:
-        singular: "utilisateur sélectionné"
-        plural:   "utilisateurs sélectionnés"
+        user:
+          singular: "utilisateur sélectionné"
+          plural:   "utilisateurs sélectionnés"
 
-      oauth_application:
-        singular: "application sélectionnée"
-        plural:   "applications sélectionnées"
+        oauth_application:
+          singular: "application sélectionnée"
+          plural:   "applications sélectionnées"
 
     views:
       users:
+        show_check_badge:
+          super_admin:        "Administrateur de FiscaHub"
+          organization_admin: "Administrateur de l'organisation"
+
         show_otp_method:
           2fa:    "Via une application tierce"
           email:  "Via email"
