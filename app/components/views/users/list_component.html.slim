@@ -14,6 +14,7 @@
   - datatable.with_column(:organization, sort: true) { "Organisation" }             if columns.include?(:organization)
   - datatable.with_column(:organization_admin)       { "Admin. de l'organisation" } if columns.include?(:organization_admin)
   - datatable.with_column(:super_admin)              { "Admin. de FiscaHub" }       if columns.include?(:super_admin)
+  - datatable.with_column(:otp_method)               { "Authentification" }         if columns.include?(:otp_method)
   - datatable.with_column(:offices)                  { "Guichets" }                 if columns.include?(:offices)
 
   - datatable.with_empty_message do
@@ -48,6 +49,9 @@
 
     - row.with_column(:super_admin) do
       = render Views::Users::ShowCheckBadgeComponent.new(user, :super_admin)
+
+    - row.with_column(:otp_method) do
+      = render Views::Users::ShowOtpMethodComponent.new(user)
 
     - row.with_column(:offices) do
       = render Views::Users::ShowOfficesShortListComponent.new(user, namespace: @namespace)

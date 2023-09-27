@@ -40,3 +40,9 @@ fr:
       oauth_application:
         singular: "application sélectionnée"
         plural:   "applications sélectionnées"
+
+    views:
+      users:
+        show_otp_method:
+          2fa:    "Via une application tierce"
+          email:  "Via email"
