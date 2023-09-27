@@ -30,11 +30,13 @@ module Matchers
       end
 
       failure_message do
-        "expected to #{description}\n#{other_matcher&.failure_message}"
+        message = "expected to #{description}\n#{other_matcher&.failure_message}"
+        message += "the attribute was found but with value #{@actual_attribute.inspect}" if @actual_attribute
+        message
       end
 
       def validate_actual_type!(actual)
-        raise TypeError, "#{actual} is expected to  be a Capybara node" unless actual.is_a?(Capybara::Node::Simple)
+        raise TypeError, "#{actual} is expected to be a Capybara node" unless actual.is_a?(Capybara::Node::Simple)
       end
 
       def actual_attribute_match?
