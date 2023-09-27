@@ -1,14 +1,12 @@
 <%= template_modal_component(referrer: @referrer_path) do |template| %>
   <% template.with_modal do |modal| %>
     <% modal.with_header do %>
-      Transmission de signalement(s) en attente
+      Transmission en attente
     <% end %>
 
     <% modal.with_form(url: complete_transmissions_path, method: :post) do %>
 
-      <p>
-        Vous avez avec actuellement <%= @transmission.reports.count %> signalement(s) en attente.
-      </p>
+      <p>Vous avez avec actuellement <%= @transmission.reports.count %> signalement(s) en attente.</p>
 
       <% if @transmissible_reports.any? %>
         <h2>
@@ -32,9 +30,7 @@
         </ul>
       <% end %>
 
-      <p>
-        Souhaitez-vous le(s) transmettre immédiatement ou souhaitez-vous le(s) transmettre plus tard ?
-      </p>
+      <p class="mt-3"> Souhaitez-vous le(s) transmettre immédiatement ou souhaitez-vous le(s) transmettre plus tard ? </p>
 
     <% end %>
 

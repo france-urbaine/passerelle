@@ -3,6 +3,9 @@
     - breadcrumbs.with_path "Echanges"
     - breadcrumbs.with_path "Signalements"
 
+    - if allowed_to?(:show?, Transmission)
+      - breadcrumbs.with_action "Voir la transmission en attente", transmissions_path, icon: "envelope-open", modal: true
+
     - if allowed_to?(:create?, Report, with: ReportPolicy)
       - breadcrumbs.with_action "Ajouter un signalement", new_report_path, icon: "plus", modal: true, primary: true
 

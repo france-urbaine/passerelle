@@ -2,18 +2,22 @@
 
 class TransmissionPolicy < ApplicationPolicy
   def show?
-    true
+    user? && collectivity?
   end
 
   def create?
-    true
+    if record.is_a?(Report)
+      user? && collectivity? && record.transmissible?
+    else
+      user? && collectivity?
+    end
   end
 
   def completed?
-    true
+    user? && collectivity?
   end
 
   def manage?
-    true
+    user? && collectivity?
   end
 end

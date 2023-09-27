@@ -1,20 +1,36 @@
 <%= template_modal_component(referrer: @referrer_path) do |template| %>
   <% template.with_modal do |modal| %>
     <% modal.with_header do %>
-      Transmission de signalement(s)
+        Transmission en attente
     <% end %>
 
-    <% modal.with_form(url: complete_transmissions_path, method: :post) do %>
-      <p>
-        Vous avez <%= @transmission.reports.count %> signalement(s) prêt(s) à être transmis.
-      </p>
-      <p>
-        Souhaitez-vous le(s) transmettre immédiatement ou souhaitez-vous le(s) transmettre plus tard ?
-      </p>
+    <% if @transmission.reports.any? %>
+      <% modal.with_form(url: complete_transmissions_path, method: :post) do %>
+        <% if @transmission.reports.many? %>
+          <p>Vous avez <%= @transmission.reports.count %> signalements prêts à être transmis :</p>
+        <% else %>
+          <p>Vous avez <%= @transmission.reports.count %> signalement prêt à être transmis :</p>
+        <% end %>
+        <ul class="list-inside list-disc">
+          <% @transmission.reports.each do |report| %>
+            <li><%= report.id %></li>
+          <% end %>
+        </ul>
+        <% if @transmission.reports.many? %>
+          <p class="mt-3">Souhaitez-vous les transmettre immédiatement ou souhaitez-vous les transmettre plus tard ?</p>
+        <% else %>
+          <p class="mt-3">Souhaitez-vous le transmettre immédiatement ou souhaitez-vous le transmettre plus tard ?</p>
+        <% end %>
+      <% end %>
 
+      <% modal.with_submit_action "Transmettre immédiatement", autofocus: true %>
+      <% modal.with_close_action "Transmettre plus tard" %>
+    <% else %>
+      <% modal.with_body do %>
+        <p>
+          Vous n'avez aucun signalement en attente de transmission.
+        </p>
+      <% end %>
     <% end %>
-
-    <% modal.with_submit_action "Transmettre immédiatement", autofocus: true %>
-    <% modal.with_close_action "Transmettre plus tard" %>
   <% end %>
 <% end %>
