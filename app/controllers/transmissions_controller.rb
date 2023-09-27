@@ -23,7 +23,7 @@ class TransmissionsController < ApplicationController
   def complete
     @transmission = find_or_initialize_transmission
 
-    service = Transmissions::CompleteService.new(@transmission, current_user)
+    service = Transmissions::CompleteService.new(@transmission)
     result  = service.save
 
     respond_with result,
@@ -41,7 +41,7 @@ class TransmissionsController < ApplicationController
   end
 
   def find_and_authorize_reports
-    reports = Report.where(id: params[:report_ids])
+    reports = Report.where(id: params[:ids])
 
     authorized(reports)
   end

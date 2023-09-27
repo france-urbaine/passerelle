@@ -12,4 +12,8 @@ class TransmissionPolicy < ApplicationPolicy
   def completed?
     true
   end
+
+  def manage?
+    true
+  end
 end

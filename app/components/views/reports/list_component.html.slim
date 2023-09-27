@@ -3,6 +3,9 @@
     - datatable.with_pagination(@pagy, options: !nested?) if @pagy
 
     - datatable.with_selection do |selection|
+      - if allowed_to?(:create?, Transmission)
+        -selection.with_action "Tout ajouter à la transmission", transmissions_path, method: :post, modal: true
+
       - if allowed_to?(:create?, Package)
         - selection.with_action "Tout regrouper", disabled: true
 

@@ -13,19 +13,15 @@ module Reports
     def intransmissibles
       intransmissibles_reports = @reports - transmissibles
 
-      intransmissibles_hash = {}
-
-      intransmissibles_reports.each do |report|
+      intransmissibles_reports.each_with_object({}) do |report, hash|
         if !report.completed?
-          intransmissibles_hash[report] = "Incomplet"
+          hash[report] = "Incomplet"
         elsif report.package.present?
-          intransmissibles_hash[report] = "Déjà transmis"
+          hash[report] = "Déjà transmis"
         elsif report.transmission.present?
-          intransmissibles_hash[report] = "Déjà dans la transmission en cours"
+          hash[report] = "Déjà dans la transmission en cours"
         end
       end
-
-      intransmissibles_hash
     end
   end
 end
