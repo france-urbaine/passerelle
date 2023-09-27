@@ -77,7 +77,7 @@ class Rack::Attack
   # Block pentesting requests such as `/etc/password`, wordpress paths or SQL injections.
   # After 3 blocked requests in 10 minutes, block all requests from that IP for 1 day.
   #
-  # Key: "fail2ban:ban:pentesters:<IP address>"
+  # Key: "rack::attack:fail2ban:ban:pentesters:<IP address>"
   #
   # To manually unban an IP :
   #   Rack::Attack.cache.delete("fail2ban:ban:pentesters:<IP address>")
