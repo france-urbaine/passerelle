@@ -58,7 +58,7 @@ module Icon
     # SVG reading
     # --------------------------------------------------------------------------
     def svg
-      inline_svg_tag(icon_path, **transform_options)
+      inline_svg_tag(icon_path, **icon_options)
     end
 
     def icon_path
@@ -92,10 +92,13 @@ module Icon
       false
     end
 
-    def transform_options
+    def icon_options
       options = @options.dup
+      options[:data]              ||= {}
       options[:remove_attributes] ||= []
 
+      # Define ARIA when title is present
+      #
       if @title
         options[:title] = @title
         options[:aria] ||= true
@@ -104,8 +107,13 @@ module Icon
         options[:aria_hidden] = true
       end
 
+      # Add the source for testing & debugging purpose
+      #
+      options[:data][:source] ||= icon_path unless Rails.env.production?
+
       # Set default size, overwriten by CSS to avoid render full-page icons
       # when CSS take time to load.
+      #
       options[:height] ||= 24
       options[:width]  ||= 24
       options

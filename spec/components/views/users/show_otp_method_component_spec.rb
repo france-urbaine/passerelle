@@ -8,6 +8,7 @@ RSpec.describe Views::Users::ShowOtpMethodComponent, type: :component do
     render_inline described_class.new(user)
 
     expect(page).to have_selector("svg") do |svg|
+      expect(svg).to have_html_attribute("data-source").with_value("heroicons/optimized/24/outline/device-phone-mobile.svg")
       expect(svg).to have_selector("title", text: "Via une application tierce")
     end
   end
@@ -17,6 +18,7 @@ RSpec.describe Views::Users::ShowOtpMethodComponent, type: :component do
     render_inline described_class.new(user)
 
     expect(page).to have_selector("svg") do |svg|
+      expect(svg).to have_html_attribute("data-source").with_value("heroicons/optimized/24/outline/envelope.svg")
       expect(svg).to have_selector("title", text: "Via email")
     end
   end

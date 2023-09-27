@@ -278,12 +278,12 @@ RSpec.describe Datatable::Component, type: :component do
       aggregate_failures do
         expect(table).to have_selector("thead tr th:first-child", text: "Code INSEE") do |cell|
           expect(cell).to have_link("Trier par ordre croissant", href: "/test/components?order=code")
-          expect(cell).to have_selector("svg title", text: "Trier par ordre croissant")
+          expect(cell).to have_selector("svg > title", text: "Trier par ordre croissant")
         end
 
         expect(table).to have_selector("thead tr th:nth-child(2)", text: "Commune") do |cell|
           expect(cell).to have_link("Trier par ordre croissant", href: "/test/components?order=name")
-          expect(cell).to have_selector("svg title", text: "Trier par ordre croissant")
+          expect(cell).to have_selector("svg > title", text: "Trier par ordre croissant")
         end
       end
     end
@@ -306,12 +306,12 @@ RSpec.describe Datatable::Component, type: :component do
       aggregate_failures do
         expect(table).to have_selector("thead tr th:first-child", text: "Code INSEE") do |cell|
           expect(cell).to have_link("Trier par ordre croissant", href: "/test/components?order=code")
-          expect(cell).to have_selector("svg title", text: "Trier par ordre croissant")
+          expect(cell).to have_selector("svg > title", text: "Trier par ordre croissant")
         end
 
         expect(table).to have_selector("thead tr th:nth-child(2)", text: "Commune") do |cell|
           expect(cell).to have_link("Trier par ordre décroissant", href: "/test/components?order=-name")
-          expect(cell).to have_selector("svg title", text: "Trier par ordre décroissant")
+          expect(cell).to have_selector("svg > title", text: "Trier par ordre décroissant")
         end
       end
     end
