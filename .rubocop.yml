@@ -21,6 +21,13 @@ AllCops:
     - 'tmp/**/*'
     - 'vendor/bundle/**/*'
 
+# Capybara -----------------------------------------------------------------------
+Capybara/ClickLinkOrButtonStyle:
+  Enabled: false
+
+Capybara/RSpec/HaveSelector:
+  Enabled: false
+
 # Layout -----------------------------------------------------------------------
 Layout/ArgumentAlignment:
   EnforcedStyle: with_fixed_indentation
@@ -130,11 +137,10 @@ RSpec/ExpectActual:
     - 'spec/routing/**/*'  # expect(get: "/path) is a common pattern
     - 'spec/policies/**/*' # expect(:create?) is a common pattern
 
-RSpec/SpecFilePathFormat:
-  CustomTransform:
-    ImportEPCIsDepartementsJob: import_epcis_departements_job
-    ImportEPCIsJob: import_epcis_job
-    DDFIPs: ddfips
+RSpec/FilePath:
+  Enabled: false
+  # FIXME: This cop would be removed in the future, but is still enabled by default
+  # https://github.com/rubocop/rubocop-rspec/releases/tag/v2.24.1
 
 RSpec/ImplicitSubject:
   EnforcedStyle: require_implicit
@@ -151,6 +157,12 @@ RSpec/NestedGroups:
 RSpec/RepeatedExampleGroupBody:
   Exclude:
     - 'spec/policies/**/*'
+
+RSpec/SpecFilePathFormat:
+  CustomTransform:
+    ImportEPCIsDepartementsJob: import_epcis_departements_job
+    ImportEPCIsJob: import_epcis_job
+    DDFIPs: ddfips
 
 # Style ------------------------------------------------------------------------
 Style/BlockDelimiters:
