@@ -5,15 +5,26 @@ module Transmissions
     alias_record :transmission
     delegate :collectivity, to: :transmission
 
-    before_validation do
-      @packages = create_packages
-      assign_reports_to_packages
+    validate :validate_reports
 
-      @packages.each_value do |package|
-        Packages::TransmitService.new(package).transmit
+    def validate_reports
+      # TODO: validate that every reports are transmissible
+    end
+
+    def complete
+      return build_result unless valid?
+
+      transaction do
+        @completed_at = Time.current
+        @packages     = create_packages
+
+        assign_reports_to_packages
+        transmission.update(completed_at: @completed_at)
       end
 
-      transmission.completed_at = Time.current
+      handle_auto_assignement
+
+      build_result
     end
 
     private
@@ -24,14 +35,18 @@ module Transmissions
     #   "evaluation_local_hab" => <Package form_type="evaluation_local_hab">
     #   "evaluation_local_pro" => <Package form_type="evaluation_local_pro">
     # }
+    #
+    # TODO: create a package for each targeted office
+    #
     def create_packages
       form_types = transmission.reports.distinct.pluck(:form_type)
       form_types.to_h do |form_type|
         package = Package.create!(
-          collectivity: collectivity,
-          transmission: transmission,
-          form_type:    form_type,
-          reference:    Packages::GenerateReferenceService.new.generate
+          collectivity:   collectivity,
+          transmission:   transmission,
+          form_type:      form_type,
+          reference:      Packages::GenerateReferenceService.new.generate,
+          transmitted_at: @completed_at
         )
 
         [form_type, package]
@@ -78,6 +93,12 @@ module Transmissions
         # TODO: perform update in one query per batch
 
         Report.update(reports.keys, reports.values)
+      end
+    end
+
+    def handle_auto_assignement
+      @packages.each_value do |package|
+        Packages::AutoAssignService.new(package).verify
       end
     end
   end
