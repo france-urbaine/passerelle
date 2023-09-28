@@ -45,21 +45,30 @@ ENV["DOTENV_QUIET"] = "true"
 # Programs
 # ------------------------------------------------------------------------------
 def setup
-  log "Installing gems"
-
-  # Install bundler it it's missing but don't attempt
+  # Install bundler if it's missing but don't attempt
   # to upgrade already existing version
-  system! "gem install bundler --conservative"
-
+  #
   # Only do bundle install if the much-faster bundle check
   # indicates we need to
+  #
+  log "Installing gems"
+  system! "gem install bundler --conservative"
   system! "bundle check || bundle install"
 
   log "Installing JS packages"
   system! "yarn"
 
+  log ""
+  log "✓ All dependencies are satisfied."
+  log ""
+
   log "Dropping & recreating the development & test databases"
   system!({ "SETUP_SEED" => "true" }, "bin/rails db:reset")
+
+  log ""
+  log "✓ Development database is ready."
+  log ""
+
   setup_test
   setup_submodules
 
@@ -75,7 +84,7 @@ def setup
   log "    bin/setup territories    # Import all EPCIs and communes from a remote source"
   log "    bin/setup mailcatcher    # Install mailcatcher"
   log ""
-  log "Once you're ready, you can start working:"
+  log "Once you're ready, you can start working with the following commands:"
   log ""
   log "    bin/dev                  # Start all process to run the app"
   log "    bin/ci                   # Run all tests and checks as CI would"
@@ -134,6 +143,10 @@ def setup_test
   log "Compile assets to run system tests"
   system! "yarn build:css"
   system! "yarn build:js"
+
+  log ""
+  log "✓ You're ready to launch the CI !"
+  log ""
 end
 
 def setup_submodules
@@ -179,11 +192,8 @@ def help
   log "    bin/setup territories    # Import all EPCIs and communes from a remote source"
   log "    bin/setup mailcatcher    # Install mailcatcher"
   log "    bin/setup test           # Reset all databases for testing"
+  log "    bin/setup submodules     # Get submodules"
   log "    bin/setup help           # Show this help"
-  log ""
-  log "To overwrite the default databases used for testing, add a POSTGRESQL_DATABASE to .env.test or send:"
-  log ""
-  log "    POSTGRESQL_DATABASE=test bin/setup test"
   log ""
   log "Here are some other useful commands:"
   log ""
@@ -196,16 +206,6 @@ def help
   log "    bin/ci help"
   log "    bin/update help"
   log ""
-end
-
-def master_key_exist?
-  path = File.expand_path("../config/master.key", __dir__)
-  return true if File.exist?(path)
-
-  require_relative "../config/dotenv"
-  return true if ENV.key?("RAILS_MASTER_KEY")
-
-  false
 end
 
 # Command parser

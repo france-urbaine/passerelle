@@ -4,12 +4,12 @@ inherit_gem:
   action_policy: config/rubocop-rspec.yml
 
 require:
+  - rubocop-capybara
+  - rubocop-factory_bot
   - rubocop-performance
   - rubocop-rails
   - rubocop-rake
   - rubocop-rspec
-  - rubocop-capybara
-  - rubocop-factory_bot
 
 AllCops:
   NewCops:           enable

@@ -84,6 +84,7 @@ group :development, :test do
   gem "debug", platforms: %i[mri mingw x64_mingw]
   gem "dotenv"
 
+  # Test frameworks
   gem "factory_bot"
   gem "factory_bot-awesome_linter"
   gem "factory_bot_rails"
@@ -97,13 +98,14 @@ end
 
 group :development do
   gem "annotate"
-  gem "foreman"
   gem "rack-mini-profiler"
   gem "web-console"
 
   # Linting
   gem "erb_lint",            require: false
   gem "rubocop",             require: false
+  gem "rubocop-capybara",    require: false
+  gem "rubocop-factory_bot", require: false
   gem "rubocop-performance", require: false
   gem "rubocop-rails",       require: false
   gem "rubocop-rake",        require: false
@@ -117,6 +119,7 @@ group :development do
   gem "guard-rspec",    require: false
   gem "guard-rubocop",  require: false
 
+  # Audit dependencies and common vulnerabilities
   gem "brakeman"
   gem "bundler-audit"
   gem "bundleup"
@@ -126,18 +129,22 @@ group :development do
 end
 
 group :test do
+  # Test helpers
+  gem "database_cleaner"
   gem "database_cleaner-active_record"
-  gem "simplecov", require: false
   gem "timecop"
   gem "webmock"
 
   # RSpec extensions
   gem "fuubar"
   gem "rspec-collection_matchers"
-  gem "rspec-github", require: false
   gem "saharspec"
   gem "shoulda-matchers"
   gem "super_diff"
+
+  # Test analysis
+  gem "rspec-github", require: false
+  gem "simplecov", require: false
 
   # System tests
   gem "capybara"

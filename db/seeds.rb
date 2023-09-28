@@ -192,7 +192,7 @@ OfficeCommune.insert_all(
 )
 
 log ""
-log "All seeds are ready."
+log "✓ All seeds are ready."
 log ""
 log "-------------------------------------------------------------------------------------"
 log "For performances reasons, only few communes and EPCIs are created."
