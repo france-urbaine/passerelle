@@ -33,6 +33,7 @@ module Icon
     def call
       svg
         .strip
+        # Convert self-closed tags
         .gsub(%r{></(path|circle|rect)>}, "/>")
         .html_safe # rubocop:disable Rails/OutputSafety
     end
@@ -97,8 +98,16 @@ module Icon
       options[:data]              ||= {}
       options[:remove_attributes] ||= []
 
-      # Define ARIA when title is present
-      #
+      merge_aria_attributes(options)
+      merge_default_size(options)
+      merge_data_source(options)
+
+      options
+    end
+
+    # Define ARIA when title is present
+    #
+    def merge_aria_attributes(options)
       if @title
         options[:title] = @title
         options[:aria] ||= true
@@ -106,17 +115,24 @@ module Icon
       else
         options[:aria_hidden] = true
       end
+    end
 
-      # Add the source for testing & debugging purpose
-      #
-      options[:data][:source] ||= icon_path unless Rails.env.production?
+    # Set default size, overwriten by CSS to avoid render full-page icons
+    # when CSS take time to load.
+    #
+    DEFAULT_SIZE = 24
 
-      # Set default size, overwriten by CSS to avoid render full-page icons
-      # when CSS take time to load.
-      #
-      options[:height] ||= 24
-      options[:width]  ||= 24
-      options
+    def merge_default_size(options)
+      return if options.key?(:height) || options.key?(:width)
+
+      options[:height] ||= DEFAULT_SIZE
+      options[:width]  ||= DEFAULT_SIZE
+    end
+
+    # Add the source for testing & debugging purpose
+    #
+    def merge_data_source(options)
+      options[:data][:source] = icon_path unless Rails.env.production?
     end
   end
 end
