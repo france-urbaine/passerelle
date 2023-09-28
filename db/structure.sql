@@ -1143,7 +1143,7 @@ CREATE TABLE public.packages (
     form_type public.form_type NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
-    transmitted_at timestamp(6) without time zone,
+    transmitted_at timestamp(6) without time zone NOT NULL,
     assigned_at timestamp(6) without time zone,
     returned_at timestamp(6) without time zone,
     discarded_at timestamp(6) without time zone,
@@ -1153,7 +1153,6 @@ CREATE TABLE public.packages (
     reports_approved_count integer DEFAULT 0 NOT NULL,
     reports_rejected_count integer DEFAULT 0 NOT NULL,
     reports_debated_count integer DEFAULT 0 NOT NULL,
-    completed_at timestamp(6) without time zone,
     sandbox boolean DEFAULT false NOT NULL,
     transmission_id uuid
 );
@@ -3089,8 +3088,8 @@ CREATE TABLE public.reports (
     proposition_chantier_longue_duree boolean,
     proposition_code_naf character varying,
     proposition_date_debut_activite date,
+    transmission_id uuid,
     completed_at timestamp(6) without time zone,
-    transmission_id uuid
 );
 
 
@@ -3947,7 +3946,7 @@ ALTER TABLE ONLY public.transmissions
 --
 
 ALTER TABLE ONLY public.oauth_access_grants
-    ADD CONSTRAINT fk_rails_330c32d8d9 FOREIGN KEY (resource_owner_id) REFERENCES public.users(id);
+    ADD CONSTRAINT fk_rails_330c32d8d9 FOREIGN KEY (resource_owner_id) REFERENCES public.publishers(id);
 
 
 --
@@ -4139,7 +4138,7 @@ ALTER TABLE ONLY public.ddfips
 --
 
 ALTER TABLE ONLY public.oauth_access_tokens
-    ADD CONSTRAINT fk_rails_ee63f25419 FOREIGN KEY (resource_owner_id) REFERENCES public.users(id);
+    ADD CONSTRAINT fk_rails_ee63f25419 FOREIGN KEY (resource_owner_id) REFERENCES public.publishers(id);
 
 
 --
@@ -4201,6 +4200,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230921145204'),
 ('20230922120732'),
 ('20230922132331'),
-('20230922140136');
+('20230922140136'),
+('20230928141212');
 
 
