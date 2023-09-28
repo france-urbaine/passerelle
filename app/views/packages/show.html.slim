@@ -4,11 +4,6 @@
     - breadcrumbs.with_path "Paquets", packages_path
     - breadcrumbs.with_path @package.reference
 
-    - if allowed_to?(:transmit?, @package)
-      - breadcrumbs.with_action "Transmettre", package_transmission_path(@package), icon: "cloud-arrow-up", primary: true, modal: true
-    - elsif @package.packing? && allowed_to?(:transmit?, Package)
-      - breadcrumbs.with_action "Transmettre", icon: "cloud-arrow-up", primary: true, disabled: true
-
     - if allowed_to?(:assign?, @package)
       - unless @package.assigned?
         - breadcrumbs.with_action "Approuver", package_approval_path(@package), icon: "hand-thumb-up", accent: true, method: "patch"
