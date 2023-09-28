@@ -8,6 +8,10 @@ module States
       # Scopes
       # ----------------------------------------------------------------------------
       scope :packing, lambda {
+        # TODO: this condition is for migration only.
+        # After completely reworking and deploying the new transmission model,
+        # a report would be considered as "packing" when package_id IS NULL
+        #
         left_outer_joins(:package).where(<<~SQL.squish)
           "reports"."package_id" IS NULL
           OR

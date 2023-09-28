@@ -49,6 +49,8 @@ class Transmission < ApplicationRecord
   scope :sandbox,        -> { where(sandbox: true) }
   scope :out_of_sandbox, -> { where(sandbox: false) }
 
+  scope :active, -> { where(completed_at: nil) }
+
   scope :made_through_publisher_api, -> { where.not(publisher_id: nil) }
   scope :made_through_web_ui,        -> { where(publisher_id: nil) }
 

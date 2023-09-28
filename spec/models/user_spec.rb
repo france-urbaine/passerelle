@@ -10,7 +10,8 @@ RSpec.describe User do
     it { is_expected.to belong_to(:inviter).optional }
     it { is_expected.to have_many(:invitees) }
 
-    it { is_expected.to have_one(:transmission) }
+    it { is_expected.to have_many(:transmissions) }
+    it { is_expected.to have_one(:active_transmission) }
 
     it { is_expected.to have_many(:office_users) }
     it { is_expected.to have_many(:offices).through(:office_users) }

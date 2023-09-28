@@ -9,9 +9,9 @@ RSpec.describe Collectivity do
     it { is_expected.to belong_to(:territory).required }
     it { is_expected.to belong_to(:publisher).optional }
     it { is_expected.to have_many(:users) }
+    it { is_expected.to have_many(:transmissions) }
     it { is_expected.to have_many(:packages) }
     it { is_expected.to have_many(:reports) }
-    it { is_expected.to have_many(:transmissions) }
   end
 
   # Validations
