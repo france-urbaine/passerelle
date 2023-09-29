@@ -3090,6 +3090,7 @@ CREATE TABLE public.reports (
     proposition_date_debut_activite date,
     transmission_id uuid,
     completed_at timestamp(6) without time zone,
+    sandbox boolean DEFAULT false NOT NULL
 );
 
 
@@ -4201,6 +4202,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230922120732'),
 ('20230922132331'),
 ('20230922140136'),
-('20230928141212');
+('20230928141212'),
+('20230928162717');
 
 

@@ -12,7 +12,7 @@
 #  form_type               :enum             not null
 #  created_at              :datetime         not null
 #  updated_at              :datetime         not null
-#  transmitted_at          :datetime
+#  transmitted_at          :datetime         not null
 #  assigned_at             :datetime
 #  returned_at             :datetime
 #  discarded_at            :datetime
@@ -23,7 +23,6 @@
 #  reports_rejected_count  :integer          default(0), not null
 #  reports_debated_count   :integer          default(0), not null
 #  sandbox                 :boolean          default(FALSE), not null
-#  completed_at            :datetime
 #  transmission_id         :uuid
 #
 # Indexes
@@ -41,7 +40,9 @@
 #  fk_rails_...  (transmission_id => transmissions.id)
 #
 class Package < ApplicationRecord
+  include States::Sandbox
   include States::PackageStates
+  include States::MadeBy
 
   # Associations
   # ----------------------------------------------------------------------------
@@ -58,38 +59,7 @@ class Package < ApplicationRecord
 
   # Scopes
   # ----------------------------------------------------------------------------
-  scope :sandbox,        -> { where(sandbox: true) }
-  scope :out_of_sandbox, -> { where(sandbox: false) }
-
-  scope :packed_through_publisher_api, -> { where.not(publisher_id: nil) }
-  scope :packed_through_web_ui,        -> { where(publisher_id: nil) }
-
-  scope :sent_by_collectivity, ->(collectivity) { where(collectivity: collectivity) }
-  scope :sent_by_publisher,    ->(publisher)    { where(publisher: publisher) }
-
   scope :with_reports, ->(reports = Report.kept) { distinct.joins(:reports).merge(reports) }
-
-  # Predicates
-  # ----------------------------------------------------------------------------
-  def out_of_sandbox?
-    !sandbox?
-  end
-
-  def packed_through_publisher_api?
-    publisher_id? || (new_record? && publisher)
-  end
-
-  def packed_through_web_ui?
-    !packed_through_publisher_api?
-  end
-
-  def sent_by_collectivity?(collectivity)
-    (collectivity_id == collectivity.id) || (new_record? && collectivity == self.collectivity)
-  end
-
-  def sent_by_publisher?(publisher)
-    (publisher_id == publisher.id) || (new_record? && publisher == self.publisher)
-  end
 
   # Updates methods
   # ----------------------------------------------------------------------------

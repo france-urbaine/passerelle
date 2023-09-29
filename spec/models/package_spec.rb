@@ -34,7 +34,7 @@ RSpec.describe Package do
   # ----------------------------------------------------------------------------
   describe "scopes" do
     describe ".sandbox" do
-      it "scopes packages not yet transmitted" do
+      it "scopes packages tagged as sandbox" do
         expect {
           described_class.sandbox.load
         }.to perform_sql_query(<<~SQL)
@@ -46,7 +46,7 @@ RSpec.describe Package do
     end
 
     describe ".out_of_sandbox" do
-      it "scopes packages not yet transmitted" do
+      it "scopes packages by excluding those tagged as sandbox" do
         expect {
           described_class.out_of_sandbox.load
         }.to perform_sql_query(<<~SQL)
@@ -57,41 +57,58 @@ RSpec.describe Package do
       end
     end
 
-    describe ".packing" do
-      it "scopes packages not yet transmitted" do
-        expect {
-          described_class.packing.load
-        }.to perform_sql_query(<<~SQL)
-          SELECT "packages".*
-          FROM   "packages"
-          WHERE  "packages"."transmitted_at" IS NULL
-        SQL
-      end
-    end
-
     describe ".transmitted" do
-      it "scopes on transmitted packages" do
+      it "scopes on transmitted packages (not in sandbox)" do
         expect {
           described_class.transmitted.load
         }.to perform_sql_query(<<~SQL)
           SELECT "packages".*
           FROM   "packages"
-          WHERE  "packages"."transmitted_at" IS NOT NULL
+          WHERE  "packages"."sandbox" = FALSE
         SQL
       end
     end
 
     describe ".unresolved" do
-      it "scopes on transmitted and undiscarded packages waiting for approval" do
+      it "scopes on packages waiting to be assigned or returned" do
         expect {
           described_class.unresolved.load
         }.to perform_sql_query(<<~SQL)
           SELECT "packages".*
           FROM   "packages"
-          WHERE  "packages"."transmitted_at" IS NOT NULL
-            AND  "packages"."sandbox" = FALSE
+          WHERE  "packages"."sandbox" = FALSE
             AND  "packages"."assigned_at" IS NULL
             AND  "packages"."returned_at" IS NULL
+        SQL
+      end
+    end
+
+    describe ".missed" do
+      it "scopes on packages not seen by DDFIP admins" do
+        pending "not yet implemented"
+
+        expect {
+          described_class.missed.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "packages".*
+          FROM   "packages"
+          WHERE  "packages"."sandbox" = FALSE
+            AND  "packages"."acknowledged_at" IS NULL
+        SQL
+      end
+    end
+
+    describe ".acknowledged" do
+      it "scopes on packages seen by DDFIP admins but not yet resolved" do
+        pending "not yet implemented"
+
+        expect {
+          described_class.acknowledged.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "packages".*
+          FROM   "packages"
+          WHERE  "packages"."sandbox" = FALSE
+            AND  "packages"."acknowledged_at" IS NOT NULL
         SQL
       end
     end
@@ -103,8 +120,7 @@ RSpec.describe Package do
         }.to perform_sql_query(<<~SQL)
           SELECT "packages".*
           FROM   "packages"
-          WHERE  "packages"."transmitted_at" IS NOT NULL
-            AND  "packages"."sandbox" = FALSE
+          WHERE  "packages"."sandbox" = FALSE
             AND  "packages"."assigned_at" IS NOT NULL
             AND  "packages"."returned_at" IS NULL
         SQL
@@ -118,17 +134,29 @@ RSpec.describe Package do
         }.to perform_sql_query(<<~SQL)
           SELECT "packages".*
           FROM   "packages"
-          WHERE  "packages"."transmitted_at" IS NOT NULL
-            AND  "packages"."sandbox" = FALSE
+          WHERE  "packages"."sandbox" = FALSE
             AND  "packages"."returned_at" IS NOT NULL
         SQL
       end
     end
 
-    describe ".packed_through_publisher_api" do
-      it "scopes on packages packed through publisher API" do
+    describe ".unreturned" do
+      it "scopes on packages not returned by a DDFIP" do
         expect {
-          described_class.packed_through_publisher_api.load
+          described_class.unreturned.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "packages".*
+          FROM   "packages"
+          WHERE  "packages"."sandbox" = FALSE
+            AND  "packages"."returned_at" IS NULL
+        SQL
+      end
+    end
+
+    describe ".made_through_publisher_api" do
+      it "scopes on packages made through publisher API" do
+        expect {
+          described_class.made_through_publisher_api.load
         }.to perform_sql_query(<<~SQL)
           SELECT "packages".*
           FROM   "packages"
@@ -137,10 +165,10 @@ RSpec.describe Package do
       end
     end
 
-    describe ".packed_through_web_ui" do
-      it "scopes on packages packed byt the collectivity through web UI" do
+    describe ".made_through_web_ui" do
+      it "scopes on packages made byt the collectivity through web UI" do
         expect {
-          described_class.packed_through_web_ui.load
+          described_class.made_through_web_ui.load
         }.to perform_sql_query(<<~SQL)
           SELECT "packages".*
           FROM   "packages"
@@ -149,12 +177,12 @@ RSpec.describe Package do
       end
     end
 
-    describe ".sent_by_collectivity" do
-      it "scopes on packages sent by one single collectivity" do
+    describe ".made_by_collectivity" do
+      it "scopes on packages made by one single collectivity" do
         collectivity = create(:collectivity)
 
         expect {
-          described_class.sent_by_collectivity(collectivity).load
+          described_class.made_by_collectivity(collectivity).load
         }.to perform_sql_query(<<~SQL)
           SELECT "packages".*
           FROM   "packages"
@@ -162,9 +190,9 @@ RSpec.describe Package do
         SQL
       end
 
-      it "scopes on packages sent by many collectivities" do
+      it "scopes on packages made by many collectivities" do
         expect {
-          described_class.sent_by_collectivity(Collectivity.where(name: "A")).load
+          described_class.made_by_collectivity(Collectivity.where(name: "A")).load
         }.to perform_sql_query(<<~SQL)
           SELECT "packages".*
           FROM   "packages"
@@ -177,12 +205,12 @@ RSpec.describe Package do
       end
     end
 
-    describe ".sent_by_publisher" do
-      it "scopes on packages sent by one single publisher" do
+    describe ".made_by_publisher" do
+      it "scopes on packages made by one single publisher" do
         publisher = create(:publisher)
 
         expect {
-          described_class.sent_by_publisher(publisher).load
+          described_class.made_by_publisher(publisher).load
         }.to perform_sql_query(<<~SQL)
           SELECT "packages".*
           FROM   "packages"
@@ -190,9 +218,9 @@ RSpec.describe Package do
         SQL
       end
 
-      it "scopes on packages sent by many publishers" do
+      it "scopes on packages made by many publishers" do
         expect {
-          described_class.sent_by_publisher(Publisher.where(name: "A")).load
+          described_class.made_by_publisher(Publisher.where(name: "A")).load
         }.to perform_sql_query(<<~SQL)
           SELECT "packages".*
           FROM   "packages"
@@ -236,144 +264,129 @@ RSpec.describe Package do
     let_it_be(:publisher)      { build_stubbed(:publisher) }
     let_it_be(:collectivities) { build_stubbed_list(:collectivity, 2, publisher: publisher) }
     let_it_be(:packages) do
+      collectivity = collectivities[0]
+
       [
-        build_stubbed(:package, collectivity: collectivities[0]),
-        build_stubbed(:package, :transmitted, collectivity: collectivities[0], publisher: publisher),
-        build_stubbed(:package, :assigned, collectivity: collectivities[0]),
-        build_stubbed(:package, :returned, collectivity: collectivities[0]),
-        build_stubbed(:package, :assigned, :returned, collectivity: collectivities[1]),
-        build_stubbed(:package, :transmitted, collectivity: collectivities[0], publisher: publisher, sandbox: true),
-        build(:package, collectivity: collectivities[0]),
-        build(:package, collectivity: collectivities[1], publisher: publisher)
+        build_stubbed(:package, collectivity:),                                         # 0
+        build_stubbed(:package, collectivity:, publisher:),                             # 1
+        build_stubbed(:package, :sandbox, collectivity:, publisher:),                   # 2
+        build_stubbed(:package, :assigned, collectivity:),                              # 3
+        build_stubbed(:package, :returned, collectivity:),                              # 4
+        build_stubbed(:package, :assigned, :returned, collectivity: collectivities[1]), # 5
+        build(:package, collectivity:),                                                 # 6
+        build(:package, collectivity: collectivities[1], publisher:)                    # 7
       ]
     end
 
     describe "#out_of_sandbox?" do
-      it { expect(packages[0]).to be_out_of_sandbox }
-      it { expect(packages[1]).to be_out_of_sandbox }
-      it { expect(packages[2]).to be_out_of_sandbox }
-      it { expect(packages[3]).to be_out_of_sandbox }
-      it { expect(packages[4]).to be_out_of_sandbox }
-      it { expect(packages[5]).not_to be_out_of_sandbox }
-    end
-
-    describe "#packing?" do
-      it { expect(packages[0]).to be_packing }
-      it { expect(packages[1]).not_to be_packing }
-      it { expect(packages[2]).not_to be_packing }
-      it { expect(packages[3]).not_to be_packing }
-      it { expect(packages[4]).not_to be_packing }
+      it { expect(packages[0]).to     be_out_of_sandbox }
+      it { expect(packages[1]).to     be_out_of_sandbox }
+      it { expect(packages[2]).not_to be_out_of_sandbox }
+      it { expect(packages[3]).to     be_out_of_sandbox }
+      it { expect(packages[4]).to     be_out_of_sandbox }
+      it { expect(packages[5]).to     be_out_of_sandbox }
     end
 
     describe "#transmitted?" do
-      it { expect(packages[0]).not_to be_transmitted }
-      it { expect(packages[1]).to be_transmitted }
-      it { expect(packages[2]).to be_transmitted }
-      it { expect(packages[3]).to be_transmitted }
-      it { expect(packages[4]).to be_transmitted }
+      it { expect(packages[0]).to     be_transmitted }
+      it { expect(packages[1]).to     be_transmitted }
+      it { expect(packages[2]).not_to be_transmitted }
+      it { expect(packages[3]).to     be_transmitted }
+      it { expect(packages[4]).to     be_transmitted }
+      it { expect(packages[5]).to     be_transmitted }
     end
 
     describe "#unresolved?" do
-      it { expect(packages[0]).not_to be_unresolved }
-      it { expect(packages[1]).to be_unresolved }
+      it { expect(packages[0]).to     be_unresolved }
+      it { expect(packages[1]).to     be_unresolved }
       it { expect(packages[2]).not_to be_unresolved }
       it { expect(packages[3]).not_to be_unresolved }
       it { expect(packages[4]).not_to be_unresolved }
+      it { expect(packages[5]).not_to be_unresolved }
+    end
+
+    describe "#missed?" do
+      pending "Not yet implemented"
+    end
+
+    describe "#acknowledged?" do
+      pending "Not yet implemented"
     end
 
     describe "#assigned?" do
       it { expect(packages[0]).not_to be_assigned }
       it { expect(packages[1]).not_to be_assigned }
-      it { expect(packages[2]).to be_assigned }
-      it { expect(packages[3]).not_to be_assigned }
+      it { expect(packages[2]).not_to be_assigned }
+      it { expect(packages[3]).to     be_assigned }
       it { expect(packages[4]).not_to be_assigned }
+      it { expect(packages[5]).not_to be_assigned }
     end
 
     describe "#returned?" do
       it { expect(packages[0]).not_to be_returned }
       it { expect(packages[1]).not_to be_returned }
       it { expect(packages[2]).not_to be_returned }
-      it { expect(packages[3]).to be_returned }
-      it { expect(packages[4]).to be_returned }
+      it { expect(packages[3]).not_to be_returned }
+      it { expect(packages[4]).to     be_returned }
+      it { expect(packages[5]).to     be_returned }
     end
 
-    describe "#packed_through_publisher_api?" do
-      it { expect(packages[0]).not_to be_packed_through_publisher_api }
-      it { expect(packages[1]).to     be_packed_through_publisher_api }
-      it { expect(packages[6]).not_to be_packed_through_publisher_api }
-      it { expect(packages[7]).to     be_packed_through_publisher_api }
+    describe "#unreturned?" do
+      it { expect(packages[0]).to     be_unreturned }
+      it { expect(packages[1]).to     be_unreturned }
+      it { expect(packages[2]).not_to be_unreturned }
+      it { expect(packages[3]).to     be_unreturned }
+      it { expect(packages[4]).not_to be_unreturned }
+      it { expect(packages[5]).not_to be_unreturned }
     end
 
-    describe "#packed_through_web_ui?" do
-      it { expect(packages[0]).to     be_packed_through_web_ui }
-      it { expect(packages[1]).not_to be_packed_through_web_ui }
-      it { expect(packages[6]).to     be_packed_through_web_ui }
-      it { expect(packages[7]).not_to be_packed_through_web_ui }
+    describe "#made_through_publisher_api?" do
+      it { expect(packages[0]).not_to be_made_through_publisher_api }
+      it { expect(packages[1]).to     be_made_through_publisher_api }
+      it { expect(packages[6]).not_to be_made_through_publisher_api }
+      it { expect(packages[7]).to     be_made_through_publisher_api }
     end
 
-    describe "#sent_by_collectivity?" do
-      it { expect(packages[0]).to     be_sent_by_collectivity(collectivities[0]) }
-      it { expect(packages[1]).to     be_sent_by_collectivity(collectivities[0]) }
-      it { expect(packages[6]).to     be_sent_by_collectivity(collectivities[0]) }
-      it { expect(packages[7]).not_to be_sent_by_collectivity(collectivities[0]) }
+    describe "#made_through_web_ui?" do
+      it { expect(packages[0]).to     be_made_through_web_ui }
+      it { expect(packages[1]).not_to be_made_through_web_ui }
+      it { expect(packages[6]).to     be_made_through_web_ui }
+      it { expect(packages[7]).not_to be_made_through_web_ui }
     end
 
-    describe "#sent_by_publisher?" do
-      it { expect(packages[0]).not_to be_sent_by_publisher(publisher) }
-      it { expect(packages[1]).to     be_sent_by_publisher(publisher) }
-      it { expect(packages[6]).not_to be_sent_by_publisher(publisher) }
-      it { expect(packages[7]).to     be_sent_by_publisher(publisher) }
+    describe "#made_by_collectivity?" do
+      it { expect(packages[0]).to     be_made_by_collectivity(collectivities[0]) }
+      it { expect(packages[1]).to     be_made_by_collectivity(collectivities[0]) }
+      it { expect(packages[6]).to     be_made_by_collectivity(collectivities[0]) }
+      it { expect(packages[7]).not_to be_made_by_collectivity(collectivities[0]) }
+    end
+
+    describe "#made_by_publisher?" do
+      it { expect(packages[0]).not_to be_made_by_publisher(publisher) }
+      it { expect(packages[1]).to     be_made_by_publisher(publisher) }
+      it { expect(packages[6]).not_to be_made_by_publisher(publisher) }
+      it { expect(packages[7]).to     be_made_by_publisher(publisher) }
     end
   end
 
   # Updates methods
   # ----------------------------------------------------------------------------
   describe "update methods" do
-    describe "#transmit!" do
-      it "returns true" do
-        package = create(:package)
-        expect(package.transmit!).to be(true)
-      end
-
-      it "returns true when package was already transmitted" do
-        package = create(:package, :transmitted)
-        expect(package.transmit!).to be(true)
-      end
-
-      it "marks the package as transmitted" do
-        package = create(:package)
-
-        expect {
-          package.transmit!
-          package.reload
-        }.to change(package, :transmitted_at).to(be_present)
-      end
-
-      it "doesn't update previous transmission time" do
-        package = Timecop.freeze(2.minutes.ago) do
-          create(:package, :transmitted)
-        end
-
-        expect {
-          package.transmit!
-          package.reload
-        }.not_to change(package, :transmitted_at)
-      end
-    end
-
     describe "#assign!" do
       it "returns true" do
-        package = create(:package, :transmitted)
+        package = create(:package)
+
         expect(package.assign!).to be(true)
       end
 
       it "returns true when package was already assigned" do
         package = create(:package, :assigned)
+
         expect(package.assign!).to be(true)
       end
 
       it "marks the package as assigned" do
-        package = create(:package, :transmitted)
+        package = create(:package)
 
         expect {
           package.assign!
@@ -404,17 +417,19 @@ RSpec.describe Package do
 
     describe "#return!" do
       it "returns true" do
-        package = create(:package, :transmitted)
+        package = create(:package)
+
         expect(package.return!).to be(true)
       end
 
       it "returns true when package was already returned" do
         package = create(:package, :returned)
+
         expect(package.return!).to be(true)
       end
 
       it "marks the package as assigned" do
-        package = create(:package, :transmitted)
+        package = create(:package)
 
         expect {
           package.return!
@@ -491,28 +506,6 @@ RSpec.describe Package do
   end
 
   describe "database triggers" do
-    describe "about completed state" do
-      let!(:package) { create(:package) }
-
-      describe "#completed?" do
-        it "is false by default until reports_count is equal to zero" do
-          expect(package.completed?).to be(false)
-        end
-
-        it "is false when reports_count is superior than reports_completed_count" do
-          expect {
-            package.update_columns(reports_count: 3, reports_completed_count: 0)
-          }.not_to change { package.reload.completed? }.from(false)
-        end
-
-        it "is updated to true when reports_count is equal to reports_completed_count" do
-          expect {
-            package.update_columns(reports_count: 3, reports_completed_count: 3)
-          }.to change { package.reload.completed? }.to(true)
-        end
-      end
-    end
-
     describe "about reports counters caches" do
       let!(:collectivity) { create(:collectivity) }
       let!(:packages)     { create_list(:package, 2, collectivity: collectivity) }

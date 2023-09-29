@@ -29,6 +29,9 @@
 #  fk_rails_...  (user_id => users.id)
 #
 class Transmission < ApplicationRecord
+  include States::Sandbox
+  include States::MadeBy
+
   # Associations
   # ----------------------------------------------------------------------------
   belongs_to :user, optional: true
@@ -46,36 +49,5 @@ class Transmission < ApplicationRecord
 
   # Scopes
   # ----------------------------------------------------------------------------
-  scope :sandbox,        -> { where(sandbox: true) }
-  scope :out_of_sandbox, -> { where(sandbox: false) }
-
   scope :active, -> { where(completed_at: nil) }
-
-  scope :made_through_publisher_api, -> { where.not(publisher_id: nil) }
-  scope :made_through_web_ui,        -> { where(publisher_id: nil) }
-
-  scope :made_by_collectivity, ->(collectivity) { where(collectivity: collectivity) }
-  scope :made_by_publisher,    ->(publisher)    { where(publisher: publisher) }
-
-  # Predicates
-  # ----------------------------------------------------------------------------
-  def out_of_sandbox?
-    !sandbox?
-  end
-
-  def made_through_publisher_api?
-    publisher_id? || (new_record? && publisher)
-  end
-
-  def made_through_web_ui?
-    !made_through_publisher_api?
-  end
-
-  def made_by_collectivity?(collectivity)
-    (collectivity_id == collectivity.id) || (new_record? && collectivity == self.collectivity)
-  end
-
-  def made_by_publisher?(publisher)
-    (publisher_id == publisher.id) || (new_record? && publisher == self.publisher)
-  end
 end

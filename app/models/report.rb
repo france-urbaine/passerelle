@@ -112,8 +112,9 @@
 #  proposition_chantier_longue_duree              :boolean
 #  proposition_code_naf                           :string
 #  proposition_date_debut_activite                :date
-#  completed_at                                   :datetime
 #  transmission_id                                :uuid
+#  completed_at                                   :datetime
+#  sandbox                                        :boolean          default(FALSE), not null
 #
 # Indexes
 #
@@ -135,6 +136,8 @@
 #
 class Report < ApplicationRecord
   include States::ReportStates
+  include States::Sandbox
+  include States::MadeBy
 
   # Associations
   # ----------------------------------------------------------------------------
@@ -309,36 +312,12 @@ class Report < ApplicationRecord
 
   # Scopes
   # ----------------------------------------------------------------------------
-  scope :sandbox, lambda {
-    left_outer_joins(:package, :transmission).where(<<~SQL.squish)
-      ("packages"."id" IS NOT NULL AND "packages"."sandbox" IS TRUE)
-      OR
-      ("packages"."id" IS NULL AND "transmissions"."sandbox" IS TRUE)
-    SQL
-  }
-
-  scope :out_of_sandbox, lambda {
-    left_outer_joins(:package, :transmission).where(<<~SQL.squish)
-      ("packages"."id" IS NOT NULL AND "packages"."sandbox" IS FALSE)
-      OR
-      ("packages"."id" IS NULL AND "transmissions"."sandbox" IS FALSE)
-      OR
-      ("packages"."id" IS NULL AND "transmissions"."id" IS NULL)
-    SQL
-  }
-
   scope :all_kept, lambda {
-    left_outer_joins(:package).where(<<~SQL.squish)
-      "reports"."discarded_at" IS NULL
-      AND ("packages"."id" IS NULL OR "packages"."discarded_at" IS NULL)
+    kept.left_outer_joins(:package).where(<<~SQL.squish)
+         "packages"."id" IS NULL
+      OR "packages"."discarded_at" IS NULL
     SQL
   }
-
-  scope :packed_through_publisher_api, -> { where.not(publisher_id: nil) }
-  scope :packed_through_web_ui,        -> { where(publisher_id: nil) }
-
-  scope :sent_by_collectivity, ->(collectivity) { where(collectivity: collectivity) }
-  scope :sent_by_publisher,    ->(publisher)    { where(publisher: publisher) }
 
   scope :covered_by_ddfip, lambda { |ddfip|
     if ddfip.is_a?(ActiveRecord::Relation)
@@ -394,34 +373,8 @@ class Report < ApplicationRecord
 
   # Predicates
   # ----------------------------------------------------------------------------
-  def sandbox?
-    package&.sandbox? || (package.nil? && transmission&.sandbox?)
-  end
-
-  def out_of_sandbox?
-    package&.out_of_sandbox? ||
-      (package.nil? && transmission&.out_of_sandbox?) ||
-      (package.nil? && transmission.nil?)
-  end
-
   def all_kept?
     kept? && (package.nil? || package.kept?)
-  end
-
-  def packed_through_publisher_api?
-    publisher_id? || (new_record? && publisher)
-  end
-
-  def packed_through_web_ui?
-    !packed_through_publisher_api?
-  end
-
-  def sent_by_collectivity?(collectivity)
-    (collectivity_id == collectivity.id) || (new_record? && collectivity == self.collectivity)
-  end
-
-  def sent_by_publisher?(publisher)
-    (publisher_id == publisher.id) || (new_record? && publisher == self.publisher)
   end
 
   def covered_by_ddfip?(ddfip)

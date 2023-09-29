@@ -2,53 +2,26 @@
 
 FactoryBot.define do
   factory :report do
-    # We first build a report without collectivity,
-    # we'll assign it in an after(:build) callback to ensure conformity.
-    #
-    #   build(:report)
-    #     - No collectivity assigned to the report
-    #     - A new collectivity is assigned to the package
-    #     - The package collectivity is assigned to the report after build
-    #
-    #   build(:report, package: one_package)
-    #     - No collectivity assigned to the report
-    #     - The package should already have a collectivity
-    #     - The package collectivity is assigned to the report after build
-    #
-    #   build(:report, collectivity: one_collectivity)
-    #     - A collectivity is assigned to the report
-    #     - The new package inherits the same collectivity
-    #
-    # We also allow to define the status of the package through transient attributes
-    #
     transient do
-      package_sandbox       { false }
-      package_transmitted   { false }
-      assigned              { false }
-      returned              { false }
-      packed_through_web_ui { publisher.nil? }
+      # Let you define the collectivity publisher without specifying
+      # the collectivity or assigning the publisher to the report.
+      #
+      # Example:
+      #   report = create(:report, collectivity_publisher: publisher)
+      #   expect(report.collectivity.publisher).to be(publisher)
+      #
+      collectivity_publisher { publisher || association(:publisher) }
     end
 
-    package do
-      package_traits = []
-      package_traits << :sandbox               if package_sandbox
-      package_traits << :transmitted           if package_transmitted
-      package_traits << :assigned              if assigned
-      package_traits << :returned              if returned
-      package_traits << :packed_through_web_ui if packed_through_web_ui
+    collectivity { association(:collectivity, publisher: collectivity_publisher) }
 
-      attributes = { form_type: form_type }
-      attributes[:collectivity] = collectivity if collectivity
-      attributes[:publisher]    = publisher    if publisher
+    form_type { Report::FORM_TYPES.sample }
+    anomalies { [] }
 
-      association :package, *package_traits, **attributes
-    end
+    traits_for_enum :form_type, Report::FORM_TYPES
 
-    # The commune shoud be on the territory of the package collectivity
-    # It will save time by reducing the number of factories to create and SQL queries to perform.
-    #
     commune do
-      territory = package.collectivity.territory
+      territory = collectivity.territory
 
       case territory
       when Commune
@@ -64,21 +37,6 @@ FactoryBot.define do
       end
     end
 
-    form_type { Report::FORM_TYPES.sample }
-    anomalies { [] }
-
-    traits_for_enum :form_type, Report::FORM_TYPES
-
-    sequence :reference do |n|
-      index = n.to_s.rjust(5, "0")
-      "#{package.reference}-#{index}"
-    end
-
-    after :build, :stub do |report|
-      report.collectivity ||= report.package.collectivity
-      report.publisher    ||= report.package.publisher
-    end
-
     trait :low_priority do
       priority { "low" }
     end
@@ -91,63 +49,95 @@ FactoryBot.define do
       priority { "high" }
     end
 
+    # Report status
+
     trait :completed do
       completed_at { Time.current }
     end
 
     trait :sandbox do
-      package_sandbox { true }
+      completed
+      made_through_api
+      sandbox { true }
+    end
+
+    trait :in_active_transmission do
+      completed
+      transmission { association(:transmission, collectivity:, publisher:, sandbox:) }
     end
 
     trait :transmitted do
-      package_transmitted{ true }
+      completed
+      transmission { association(:transmission, :completed, collectivity:, publisher:, sandbox:) }
+      package      { association(:package, collectivity:, publisher:, transmission:, sandbox:) }
+
+      sequence :reference do |n|
+        index = n.to_s.rjust(5, "0")
+        "#{package.reference}-#{index}"
+      end
     end
 
     trait :discarded do
       discarded_at { Time.current }
     end
 
-    trait :approved do
+    trait :assigned do
       transmitted
+      package { association(:package, :assigned, collectivity:, publisher:, transmission:) }
+    end
+
+    trait :returned do
+      transmitted
+      package { association(:package, :returned, collectivity:, publisher:, transmission:) }
+    end
+
+    trait :approved do
+      assigned
       approved_at { Time.current }
     end
 
     trait :rejected do
-      transmitted
+      assigned
       rejected_at { Time.current }
     end
 
     trait :debated do
-      transmitted
+      assigned
       debated_at { Time.current }
     end
 
-    trait :reported_through_web_ui do
-      transient do
-        publisher             { association(:publisher) }
-        packed_through_web_ui { true }
-      end
+    # Report origin
 
-      collectivity { association(:collectivity, publisher: publisher) }
-
+    trait :made_through_web_ui do
       after :build, :stub do |report|
-        raise "invalid factory: a publisher is assigned to report" if report.publisher
-        raise "invalid factory: a publisher is assigned to package" if report.package.publisher
+        raise "invalid factory: a publisher is assigned to the report"  if report.publisher
+        raise "invalid factory: a publisher is assigned to the package" if report.package&.publisher
       end
     end
 
-    trait :reported_through_api do
-      publisher    { association(:publisher) }
-      collectivity { association(:collectivity, publisher: publisher) }
+    trait :made_through_api do
+      in_active_transmission
+      publisher { association(:publisher) }
     end
 
-    trait :reported_for_ddfip do
+    trait :transmitted_through_web_ui do
+      made_through_web_ui
+      transmitted
+    end
+
+    trait :transmitted_through_api do
+      made_through_api
+      transmitted
+    end
+
+    # Report destination
+
+    trait :made_for_ddfip do
       transient do
         ddfip { association(:ddfip) }
       end
 
       collectivity do
-        publisher = self.publisher || build(:publisher)
         departement = ddfip.departement
         territory =
           case %i[commune epci departement].sample
@@ -156,53 +146,39 @@ FactoryBot.define do
           when :commune     then association :commune, departement: departement
           end
 
-        association(:collectivity, :commune, territory:, publisher:)
+        association(:collectivity, :commune, territory:, publisher: collectivity_publisher)
       end
     end
 
-    trait :reported_for_office do
-      reported_for_ddfip
+    trait :made_for_office do
+      made_for_ddfip
 
       transient do
-        ddfip  { association(:ddfip) }
-        office { association(:office, :with_communes, ddfip: ddfip) }
+        office { association(:office, :with_communes, ddfip:) }
       end
 
       commune   { office.communes.sample }
       form_type { office.competences.sample }
     end
 
-    trait :transmitted_through_web_ui do
-      transmitted
-      reported_through_web_ui
-    end
-
-    trait :transmitted_through_api do
-      transmitted
-      reported_through_api
-    end
-
     trait :transmitted_to_ddfip do
+      made_for_ddfip
       transmitted
-      reported_for_ddfip
-    end
-
-    trait :assigned_to_office do
-      transmitted
-      reported_for_office
-      assigned { true }
     end
 
     trait :assigned_by_ddfip do
-      transmitted
-      reported_for_ddfip
-      assigned { true }
+      made_for_ddfip
+      assigned
     end
 
     trait :returned_by_ddfip do
-      transmitted
-      reported_for_ddfip
-      returned { true }
+      made_for_ddfip
+      returned
+    end
+
+    trait :assigned_to_office do
+      made_for_office
+      assigned
     end
   end
 end

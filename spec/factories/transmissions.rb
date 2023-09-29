@@ -2,46 +2,53 @@
 
 FactoryBot.define do
   factory :transmission do
-    collectivity do
-      factored_publisher = publisher || build(:publisher)
-      association(:collectivity, publisher: factored_publisher)
+    transient do
+      # Let you define the collectivity publisher without specifying
+      # the collectivity or assigning the publisher to the transmission.
+      #
+      # Example:
+      #   transmisssion = create(:transmisssion, collectivity_publisher: publisher)
+      #   expect(transmisssion.collectivity.publisher).to be(publisher)
+      #
+      collectivity_publisher { association(:publisher) }
     end
+
+    collectivity { association(:collectivity, publisher: collectivity_publisher) }
 
     user do
-      association(:user) unless publisher
-    end
-
-    trait :completed do
-      completed_at { Time.current }
+      collectivity.users.first || association(:user, organization: collectivity) unless publisher
     end
 
     trait :sandbox do
       sandbox { true }
     end
 
-    trait :made_through_web_ui do
-      transient do
-        publisher { association(:publisher) }
-      end
+    trait :completed do
+      completed_at { Time.current }
+    end
 
-      user         { association(:user) }
-      collectivity { association(:collectivity, publisher: publisher) }
+    trait :made_through_web_ui do
+      after :build, :stub do |transmission|
+        raise "invalid factory: a publisher is assigned to the transmission" if transmission.publisher
+      end
     end
 
     trait :made_through_api do
-      user         { nil }
-      publisher    { association(:publisher) }
-      collectivity { association(:collectivity, publisher: publisher) }
+      publisher { association(:publisher) }
+
+      after :build, :stub do |transmission|
+        raise "invalid factory: an user is assigned to the transmission" if transmission.user
+      end
     end
 
     trait :completed_through_web_ui do
-      completed
       made_through_web_ui
+      completed
     end
 
     trait :completed_through_api do
-      completed
       made_through_api
+      completed
     end
   end
 end

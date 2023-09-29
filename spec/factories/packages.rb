@@ -2,34 +2,38 @@
 
 FactoryBot.define do
   factory :package do
-    collectivity do
-      factored_publisher = publisher || build(:publisher)
-      association(:collectivity, publisher: factored_publisher)
+    transient do
+      # Let you define the collectivity publisher without specifying
+      # the collectivity or assigning the publisher to the package.
+      #
+      # Example:
+      #   package = create(:package, collectivity_publisher: publisher)
+      #   expect(package.collectivity.publisher).to be(publisher)
+      #
+      collectivity_publisher { publisher || association(:publisher) }
     end
 
-    name      { Faker::Book.title }
-    form_type { Report::FORM_TYPES.sample }
+    collectivity { association(:collectivity, publisher: collectivity_publisher) }
+    transmission { association(:transmission, :completed, collectivity:, publisher:, sandbox:) }
+
+    name           { Faker::Book.title }
+    form_type      { Report::FORM_TYPES.sample }
+    transmitted_at { Time.current }
 
     traits_for_enum :form_type, Report::FORM_TYPES
 
-    sequence(:reference) do |n|
+    sequence :reference do |n|
       month = Time.current.strftime("%Y-%m")
       index = n.to_s.rjust(4, "0")
       "#{month}-#{index}"
     end
 
-    trait :transmitted do
-      transmitted_at { Time.current }
-    end
-
     trait :assigned do
-      transmitted_at { Time.current }
-      assigned_at    { Time.current }
+      assigned_at { Time.current }
     end
 
     trait :returned do
-      transmitted_at { Time.current }
-      returned_at    { Time.current }
+      returned_at { Time.current }
     end
 
     trait :discarded do
@@ -38,10 +42,6 @@ FactoryBot.define do
 
     trait :sandbox do
       sandbox { true }
-    end
-
-    trait :completed do
-      completed_at { Time.current }
     end
 
     trait :with_reports do
@@ -72,30 +72,29 @@ FactoryBot.define do
         # Finally, build the list of reports, randomly assigning one the communes.
         #
         Array.new(report_size) do
-          association :report,
+          association :report, :transmitted,
             publisher:    publisher,
             collectivity: collectivity,
             package:      instance,
-            completed_at: completed_at,
+            transmission: transmission,
+            sandbox:      sandbox,
             commune:      communes.sample
         end
       end
     end
 
-    trait :packed_through_web_ui do
-      transient do
-        publisher { association(:publisher) }
+    trait :transmitted_through_web_ui do
+      after :build, :stub do |package|
+        raise "invalid factory: a publisher is assigned to the package" if package.publisher
       end
-
-      collectivity { association(:collectivity, publisher: publisher) }
     end
 
-    trait :packed_through_api do
+    trait :transmitted_through_api do
       publisher    { association(:publisher) }
       collectivity { association(:collectivity, publisher: publisher) }
     end
 
-    trait :packed_for_ddfip do
+    trait :transmitted_to_ddfip do
       transient do
         ddfip { association(:ddfip) }
       end
@@ -109,27 +108,12 @@ FactoryBot.define do
         territory      = departement if territory_type == :departement
         territory    ||= association(territory_type, departement: departement)
 
-        association(:collectivity, :commune, territory: territory)
+        association(:collectivity, :commune, territory: territory, publisher: collectivity_publisher)
       end
 
       # Then build reports using `with_reports` traits
       # The trait will build reports on communes which are respecting the collectivity territory
       with_reports
-    end
-
-    trait :transmitted_through_web_ui do
-      transmitted
-      packed_through_web_ui
-    end
-
-    trait :transmitted_through_api do
-      transmitted
-      packed_through_api
-    end
-
-    trait :transmitted_to_ddfip do
-      transmitted
-      packed_for_ddfip
     end
   end
 end
