@@ -28,7 +28,7 @@ class TransmissionsController < ApplicationController
 
     respond_with result,
       flash: true,
-      location: -> { referrer_path }
+      location: referrer_path || reports_path
   end
 
   private
