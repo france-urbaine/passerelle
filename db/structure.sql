@@ -1149,7 +1149,6 @@ CREATE TABLE public.packages (
     discarded_at timestamp(6) without time zone,
     due_on date,
     reports_count integer DEFAULT 0 NOT NULL,
-    reports_completed_count integer DEFAULT 0 NOT NULL,
     reports_approved_count integer DEFAULT 0 NOT NULL,
     reports_rejected_count integer DEFAULT 0 NOT NULL,
     reports_debated_count integer DEFAULT 0 NOT NULL,
@@ -1195,25 +1194,6 @@ CREATE FUNCTION public.get_reports_approved_count_in_publishers(publishers publi
         AND      "packages"."sandbox" = FALSE
         AND      "packages"."transmitted_at" IS NOT NULL
         AND      "packages"."discarded_at" IS NULL
-    );
-  END;
-$$;
-
-
---
--- Name: get_reports_completed_count_in_packages(public.packages); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION public.get_reports_completed_count_in_packages(packages public.packages) RETURNS integer
-    LANGUAGE plpgsql
-    AS $$
-  BEGIN
-    RETURN (
-      SELECT COUNT(*)
-      FROM   "reports"
-      WHERE  "reports"."package_id" = packages."id"
-        AND  "reports"."discarded_at" IS NULL
-        AND  "reports"."completed_at" IS NOT NULL
     );
   END;
 $$;
@@ -1972,7 +1952,6 @@ CREATE FUNCTION public.reset_all_packages_counters() RETURNS integer
   BEGIN
     UPDATE "packages"
     SET    "reports_count"           = get_reports_count_in_packages("packages".*),
-           "reports_completed_count" = get_reports_completed_count_in_packages("packages".*),
            "reports_approved_count"  = get_reports_approved_count_in_packages("packages".*),
            "reports_rejected_count"  = get_reports_rejected_count_in_packages("packages".*),
            "reports_debated_count"   = get_reports_debated_count_in_packages("packages".*);
@@ -2568,24 +2547,6 @@ CREATE FUNCTION public.trigger_packages_changes() RETURNS trigger
     AS $$
   BEGIN
 
-    -- Reset all completed
-    -- * on creation
-    -- * when reports_count or reports_completed_count changed
-
-    IF (TG_OP = 'INSERT')
-    OR (TG_OP = 'UPDATE' AND NEW."reports_count" <> OLD."reports_count")
-    OR (TG_OP = 'UPDATE' AND NEW."reports_completed_count" <> OLD."reports_completed_count")
-    THEN
-
-      UPDATE "packages"
-      SET "completed_at" = CASE
-        WHEN (NEW."reports_count" = NEW."reports_completed_count") AND NEW."reports_count" <> 0 THEN CURRENT_TIMESTAMP
-        ELSE NULL
-      END
-      WHERE  "packages"."id" IN (NEW."id", OLD."id");
-
-    END IF;
-
     -- Reset all packages and reports counts on publishers, collectivities, ddfips, dgfips & offices
     -- * on creation
     -- * on deletion
@@ -2675,18 +2636,18 @@ CREATE FUNCTION public.trigger_reports_changes() RETURNS trigger
     AS $$
   BEGIN
 
-    -- Reset all reports counts on packages
+    -- Reset all reports counts in packages
     -- * on creation
     -- * on deletion
     -- * when package_id changed
-    -- * when completed changed
+    -- * when package_id changed from NULL
+    -- * when package_id changed to NULL
     -- * when (approved_at|rejected_at|debated_at|discarded_at) changed from NULL
     -- * when (approved_at|rejected_at|debated_at|discarded_at) changed to NULL
 
     IF (TG_OP = 'INSERT')
     OR (TG_OP = 'DELETE')
-    OR (TG_OP = 'UPDATE' AND NEW."package_id" <> OLD."package_id")
-    OR (TG_OP = 'UPDATE' AND NEW."completed_at" IS DISTINCT FROM OLD."completed_at")
+    OR (TG_OP = 'UPDATE' AND NEW."package_id" IS DISTINCT FROM OLD."package_id")
     OR (TG_OP = 'UPDATE' AND (NEW."approved_at" IS NULL) <> (OLD."approved_at" IS NULL))
     OR (TG_OP = 'UPDATE' AND (NEW."rejected_at" IS NULL) <> (OLD."rejected_at" IS NULL))
     OR (TG_OP = 'UPDATE' AND (NEW."debated_at" IS NULL) <> (OLD."debated_at" IS NULL))
@@ -2695,7 +2656,6 @@ CREATE FUNCTION public.trigger_reports_changes() RETURNS trigger
 
       UPDATE "packages"
       SET    "reports_count"           = get_reports_count_in_packages("packages".*),
-             "reports_completed_count" = get_reports_completed_count_in_packages("packages".*),
              "reports_approved_count"  = get_reports_approved_count_in_packages("packages".*),
              "reports_rejected_count"  = get_reports_rejected_count_in_packages("packages".*),
              "reports_debated_count"   = get_reports_debated_count_in_packages("packages".*)
@@ -2714,7 +2674,8 @@ CREATE FUNCTION public.trigger_reports_changes() RETURNS trigger
 
     IF (TG_OP = 'INSERT')
     OR (TG_OP = 'DELETE')
-    OR (TG_OP = 'UPDATE' AND ((NEW."publisher_id" IS NULL) <> (OLD."publisher_id" IS NULL) OR (NEW."publisher_id" <> OLD."publisher_id")))
+    OR (TG_OP = 'UPDATE' AND NEW."publisher_id" IS DISTINCT FROM OLD."publisher_id")
+    OR (TG_OP = 'UPDATE' AND (NEW."package_id" IS NULL) <> (OLD."package_id" IS NULL))
     OR (TG_OP = 'UPDATE' AND (NEW."approved_at" IS NULL) <> (OLD."approved_at" IS NULL))
     OR (TG_OP = 'UPDATE' AND (NEW."rejected_at" IS NULL) <> (OLD."rejected_at" IS NULL))
     OR (TG_OP = 'UPDATE' AND (NEW."debated_at" IS NULL) <> (OLD."debated_at" IS NULL))
@@ -2728,6 +2689,26 @@ CREATE FUNCTION public.trigger_reports_changes() RETURNS trigger
              "reports_debated_count"     = get_reports_debated_count_in_publishers("publishers".*)
       WHERE  "publishers"."id" IN (NEW."publisher_id", OLD."publisher_id");
 
+    END IF;
+
+    -- Reset all reports counts in collectivities
+    -- * on creation
+    -- * on deletion
+    -- * when package_id changed from NULL
+    -- * when package_id changed to NULL
+    -- * when (completed_at|approved_at|rejected_at|debated_at|discarded_at) changed from NULL
+    -- * when (completed_at|approved_at|rejected_at|debated_at|discarded_at) changed to NULL
+
+    IF (TG_OP = 'INSERT')
+    OR (TG_OP = 'DELETE')
+    OR (TG_OP = 'UPDATE' AND (NEW."package_id" IS NULL) <> (OLD."package_id" IS NULL))
+    OR (TG_OP = 'UPDATE' AND (NEW."completed_at" IS NULL) <> (OLD."completed_at" IS NULL))
+    OR (TG_OP = 'UPDATE' AND (NEW."approved_at" IS NULL) <> (OLD."approved_at" IS NULL))
+    OR (TG_OP = 'UPDATE' AND (NEW."rejected_at" IS NULL) <> (OLD."rejected_at" IS NULL))
+    OR (TG_OP = 'UPDATE' AND (NEW."debated_at" IS NULL) <> (OLD."debated_at" IS NULL))
+    OR (TG_OP = 'UPDATE' AND (NEW."discarded_at" IS NULL) <> (OLD."discarded_at" IS NULL))
+    THEN
+
       UPDATE "collectivities"
       SET    "reports_transmitted_count" = get_reports_transmitted_count_in_collectivities("collectivities".*),
              "reports_approved_count"    = get_reports_approved_count_in_collectivities("collectivities".*),
@@ -2735,6 +2716,25 @@ CREATE FUNCTION public.trigger_reports_changes() RETURNS trigger
              "reports_debated_count"     = get_reports_debated_count_in_collectivities("collectivities".*),
              "reports_packing_count"     = get_reports_packing_count_in_collectivities("collectivities".*)
       WHERE  "collectivities"."id" IN (NEW."collectivity_id", OLD."collectivity_id");
+
+    END IF;
+
+    -- Reset all reports counts in ddfips &offices
+    -- * on creation
+    -- * on deletion
+    -- * when package_id changed from NULL
+    -- * when package_id changed to NULL
+    -- * when (approved_at|rejected_at|debated_at|discarded_at) changed from NULL
+    -- * when (approved_at|rejected_at|debated_at|discarded_at) changed to NULL
+
+    IF (TG_OP = 'INSERT')
+    OR (TG_OP = 'DELETE')
+    OR (TG_OP = 'UPDATE' AND (NEW."package_id" IS NULL) <> (OLD."package_id" IS NULL))
+    OR (TG_OP = 'UPDATE' AND (NEW."approved_at" IS NULL) <> (OLD."approved_at" IS NULL))
+    OR (TG_OP = 'UPDATE' AND (NEW."rejected_at" IS NULL) <> (OLD."rejected_at" IS NULL))
+    OR (TG_OP = 'UPDATE' AND (NEW."debated_at" IS NULL) <> (OLD."debated_at" IS NULL))
+    OR (TG_OP = 'UPDATE' AND (NEW."discarded_at" IS NULL) <> (OLD."discarded_at" IS NULL))
+    THEN
 
       UPDATE "ddfips"
       SET    "reports_count"          = get_reports_count_in_ddfips("ddfips".*),
@@ -2745,11 +2745,6 @@ CREATE FUNCTION public.trigger_reports_changes() RETURNS trigger
       WHERE  "ddfips"."code_departement" IN (SELECT "communes"."code_departement" FROM "communes" WHERE "communes"."code_insee" = NEW."code_insee")
          OR  "ddfips"."code_departement" IN (SELECT "communes"."code_departement" FROM "communes" WHERE "communes"."code_insee" = OLD."code_insee" );
 
-      UPDATE "dgfips"
-      SET    "reports_delivered_count" = get_reports_delivered_count_in_dgfips("dgfips".*),
-             "reports_approved_count"  = get_reports_approved_count_in_dgfips("dgfips".*),
-             "reports_rejected_count"  = get_reports_rejected_count_in_dgfips("dgfips".*);
-
       UPDATE "offices"
       SET    "reports_count"          = get_reports_count_in_offices("offices".*),
              "reports_approved_count" = get_reports_approved_count_in_offices("offices".*),
@@ -2758,6 +2753,30 @@ CREATE FUNCTION public.trigger_reports_changes() RETURNS trigger
              "reports_pending_count"  = get_reports_pending_count_in_offices("offices".*)
       WHERE  "offices"."id" IN (SELECT "office_communes"."office_id" FROM "office_communes" WHERE "office_communes"."code_insee" = NEW."code_insee")
          OR  "offices"."id" IN (SELECT "office_communes"."office_id" FROM "office_communes" WHERE "office_communes"."code_insee" = OLD."code_insee");
+
+    END IF;
+
+    -- Reset all reports counts in dgfips
+    -- * on creation
+    -- * on deletion
+    -- * when package_id changed from NULL
+    -- * when package_id changed to NULL
+    -- * when (approved_at|rejected_at|discarded_at) changed from NULL
+    -- * when (approved_at|rejected_at|discarded_at) changed to NULL
+
+    IF (TG_OP = 'INSERT')
+    OR (TG_OP = 'DELETE')
+    OR (TG_OP = 'UPDATE' AND (NEW."package_id" IS NULL) <> (OLD."package_id" IS NULL))
+    OR (TG_OP = 'UPDATE' AND (NEW."approved_at" IS NULL) <> (OLD."approved_at" IS NULL))
+    OR (TG_OP = 'UPDATE' AND (NEW."rejected_at" IS NULL) <> (OLD."rejected_at" IS NULL))
+    OR (TG_OP = 'UPDATE' AND (NEW."discarded_at" IS NULL) <> (OLD."discarded_at" IS NULL))
+    THEN
+
+      UPDATE "dgfips"
+      SET    "reports_delivered_count" = get_reports_delivered_count_in_dgfips("dgfips".*),
+             "reports_approved_count"  = get_reports_approved_count_in_dgfips("dgfips".*),
+             "reports_rejected_count"  = get_reports_rejected_count_in_dgfips("dgfips".*);
+
     END IF;
 
     -- result is ignored since this is an AFTER trigger
@@ -4203,6 +4222,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230922132331'),
 ('20230922140136'),
 ('20230928141212'),
-('20230928162717');
+('20230928162717'),
+('20230929034420');
 
 

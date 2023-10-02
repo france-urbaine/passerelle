@@ -54,9 +54,12 @@ class CleanupReportsAndPackages < ActiveRecord::Migration[7.0]
           collectivity_id:,
           form_type:
         ).find_each.with_index do |report, index|
+          reference_index = index.to_s.rjust(5, "0")
+          reference       = "#{package.reference}-#{reference_index}"
+
           report.update!(
             package_id: package.id,
-            reference:  "#{package.reference}-#{index.to_s.rjust(5, "0")}"
+            reference:  reference
           )
         end
       end
@@ -65,6 +68,5 @@ class CleanupReportsAndPackages < ActiveRecord::Migration[7.0]
       t.change_null :package_id, false
       t.change_null :reference,  false
     end
-
   end
 end
