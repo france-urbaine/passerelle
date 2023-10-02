@@ -11,4 +11,12 @@
     <% section.with_link("A propos", api_documentation_path("guides/a_propos"), icon: "bookmark") %>
     <% section.with_link("Authentification", api_documentation_path("guides/authentification"), icon: "key") %>
   <% end %>
+
+  <% if doc = apipie_documentation %>
+    <% navbar.with_section("References") do |section| %>
+      <% doc[:resources].each do |_resource, data| %>
+        <% section.with_link(data[:name], data[:doc_url], icon: data[:metadata][:icon]) %>
+      <% end %>
+    <% end %>
+  <% end %>
 <% end %>
