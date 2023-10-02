@@ -73,3 +73,9 @@ fr:
             creation_local_professionnel:          "Création d'un local situé %{address}"
             occupation_local_habitation:           "Occupation d'un local situé %{address}"
             occupation_local_professionnel:        "Occupation d'un local situé %{address}"
+
+      transmissions:
+        button_label:
+          zero:   "Aucun signalement en attente de transmission"
+          one:    "1 signalement en attente de transmission"
+          other:  "%{count} signalements en attente de transmission"
