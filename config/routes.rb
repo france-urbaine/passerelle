@@ -249,6 +249,7 @@ Rails.application.routes.draw do
 
       authenticated :user do
         get "/", to: redirect("/documentation")
+        apipie
       end
 
       get "/documentation(/*id)", to: "documentation#api", as: :api_documentation
