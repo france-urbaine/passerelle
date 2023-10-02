@@ -18,6 +18,7 @@
 # end
 
 ActiveSupport::Inflector.inflections(:en) do |inflect|
+  inflect.acronym "API"
   inflect.acronym "DDFIP"
   inflect.acronym "DDFIPs"
   inflect.acronym "DGFIP"

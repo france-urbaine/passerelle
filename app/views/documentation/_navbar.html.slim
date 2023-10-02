@@ -1,0 +1,23 @@
+div( data-controller="navbar" )
+  nav.navbar( data-navbar-target="expanded" )
+    .navbar__brand.brand
+      = link_to documentation_api_path do
+        = image_tag("logo.svg", alt: "Logo de FiscaHub", height: 30)
+      span API
+
+      .flex-auto
+      .navbar__close-button
+        = button_component "Fermer le menu", icon: "x-mark", data: { action: "click->navbar#minify" }
+
+    .navbar__header Guides
+    .navbar__links
+      = navbar_link_to "A propos", documentation_api_path("guides/a_propos"), icon: "bookmark"
+      = navbar_link_to "Authentification", documentation_api_path("guides/authentification"), icon: "key"
+
+  nav.navbar.navbar--tablet( data-navbar-target="minified" )
+    .navbar__brand.brand
+      = image_tag("logo.svg", alt: "Logo de FiscaHub", height: 30)
+
+  nav.navbar.navbar--mobile( data-navbar-target="minified" )
+    = navbar_icon_link_to "Afficher tout le menu",       icon: "bars-3", data: { action: "click->navbar#expand" }
+    .flex-auto

@@ -7,6 +7,7 @@
     "@rails/activestorage": "^7.0.5",
     "autoprefixer": "^10.4.14",
     "esbuild": "^0.19.2",
+    "highlight.js": "^11.8.0",
     "hotkeys-js": "^3.10.2",
     "postcss": "^8.4.16",
     "postcss-cli": "^10.0.0",
