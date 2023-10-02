@@ -131,6 +131,8 @@ class ReportsController < ApplicationController
   end
 
   def find_or_initialize_transmission
+    return unless current_user.organization.is_a?(Collectivity)
+
     current_user.transmissions.find_or_create_by(
       completed_at: nil,
       collectivity: current_user.organization

@@ -7,19 +7,9 @@
     <% if @transmission.reports.any? %>
       <% modal.with_form(url: complete_transmissions_path, method: :post) do %>
         <% if @transmission.reports.many? %>
-          <p>Vous avez <%= @transmission.reports.count %> signalements prêts à être transmis :</p>
+          <p>Vous avez <b><%= @transmission.reports.count %> signalements</b> prêts à être transmis.</p>
         <% else %>
-          <p>Vous avez <%= @transmission.reports.count %> signalement prêt à être transmis :</p>
-        <% end %>
-        <ul class="list-inside list-disc">
-          <% @transmission.reports.each do |report| %>
-            <li><%= report.id %></li>
-          <% end %>
-        </ul>
-        <% if @transmission.reports.many? %>
-          <p class="mt-3">Souhaitez-vous les transmettre immédiatement ou souhaitez-vous les transmettre plus tard ?</p>
-        <% else %>
-          <p class="mt-3">Souhaitez-vous le transmettre immédiatement ou souhaitez-vous le transmettre plus tard ?</p>
+          <p>Vous avez <b><%= @transmission.reports.count %> signalement</b> prêt à être transmis.</p>
         <% end %>
       <% end %>
 

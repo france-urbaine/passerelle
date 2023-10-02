@@ -95,7 +95,7 @@ module States
       end
 
       def transmissible?
-        completed? && package.nil? && transmission.nil?
+        completed? && package.nil?
       end
 
       # Updates methods

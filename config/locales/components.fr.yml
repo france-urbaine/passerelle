@@ -76,6 +76,6 @@ fr:
 
       transmissions:
         button_label:
-          zero:   "Aucun signalement en attente de transmission"
-          one:    "1 signalement en attente de transmission"
-          other:  "%{count} signalements en attente de transmission"
+          zero:   "Transmettre (0 signalement)"
+          one:    "Transmettre (1 signalement)"
+          other:  "Transmettre (%{count} signalements)"

@@ -3,7 +3,7 @@
     - breadcrumbs.with_path "Echanges"
     - breadcrumbs.with_path "Signalements"
 
-    - if allowed_to?(:show?, Transmission)
+    - if allowed_to?(:show?, Transmission) && @transmission&.reports&.any?
       - breadcrumbs.with_action transmissions_path, icon: "envelope-open", modal: true do
         = render Views::Transmissions::ButtonLabelComponent.new(@transmission)
     - if allowed_to?(:create?, Report, with: ReportPolicy)

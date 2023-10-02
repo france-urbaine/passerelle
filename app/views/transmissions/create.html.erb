@@ -5,33 +5,23 @@
     <% end %>
 
     <% modal.with_form(url: complete_transmissions_path, method: :post) do %>
-
-      <p>Vous avez avec actuellement <%= @transmission.reports.count %> signalement(s) en attente.</p>
-
-      <% if @transmissible_reports.any? %>
-        <h2>
-          Vous avez ajouté le(s) signalement(s) suivant(s) à votre transmission :
-        </h2>
-        <ul class="list-inside list-disc">
-          <% @transmissible_reports.each do |report| %>
-            <li><%= report.id %></li>
-          <% end %>
-        </ul>
+      <% if @transmissible_reports.many? %>
+        <p><b><%= @transmissible_reports.count %> nouveaux signalements</b> ont été ajoutés à votre transmission (total en attente: <b><%= @transmission.reports.count %></b>).</p>
+      <% elsif @transmissible_reports.any? %>
+        <p><b><%= @transmissible_reports.count %> nouveau signalement</b> a été ajouté à votre transmission (total en attente: <b><%= @transmission.reports.count %></b>).</p>
       <% end %>
 
-      <% if @intransmissible_reports.any? %>
-        <h2>
-          Le(s) signalement(s) suivant(s) n'ont pas pu être ajouté(s) :
-        </h2>
-        <ul class="list-inside list-disc">
-          <% @intransmissible_reports.each do |report, reason| %>
-            <li><%= report.id %> (<%= reason %>)</li>
-          <% end %>
-        </ul>
+      <% if @intransmissible_reports[:incomplete].many? %>
+        <p><b><%= @intransmissible_reports[:incomplete].count %> signalements</b> n'ont pas pu être ajoutés à votre transmission parce que leurs <b>formulaires sont incomplets</b>.</p>
+      <% elsif @intransmissible_reports[:incomplete].any? %>
+        <p><b><%= @intransmissible_reports[:incomplete].count %> signalement</b> n'a pas pu être ajouté à votre transmission parce que son <b>formulaire est incomplet</b>.</p>
       <% end %>
 
-      <p class="mt-3"> Souhaitez-vous le(s) transmettre immédiatement ou souhaitez-vous le(s) transmettre plus tard ? </p>
-
+      <% if @intransmissible_reports[:transmitted].many? %>
+        <p><b><%= @intransmissible_reports[:transmitted].count %> signalements</b> n'ont pas pu être ajoutés à votre transmission parce qu'ils sont <b>déjà transmis</b>.</p>
+      <% elsif @intransmissible_reports[:transmitted].any? %>
+        <p><b><%= @intransmissible_reports[:transmitted].count %> signalement</b> n'a pas pu être ajouté à votre transmission parce qu'il est <b>déjà transmis</b>.</p>
+      <% end %>
     <% end %>
 
     <% modal.with_submit_action "Transmettre immédiatement", autofocus: true %>

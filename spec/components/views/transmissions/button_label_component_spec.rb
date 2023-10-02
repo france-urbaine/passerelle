@@ -11,7 +11,7 @@ RSpec.describe Views::Transmissions::ButtonLabelComponent, type: :component do
     it "renders blank label" do
       render_inline described_class.new(transmission)
 
-      expect(page).to have_text("Aucun signalement en attente de transmission")
+      expect(page).to have_text("Transmettre (0 signalement)")
     end
   end
 
@@ -27,7 +27,7 @@ RSpec.describe Views::Transmissions::ButtonLabelComponent, type: :component do
     it "renders singular label" do
       render_inline described_class.new(transmission)
 
-      expect(page).to have_text("1 signalement en attente de transmission")
+      expect(page).to have_text("Transmettre (1 signalement)")
     end
   end
 
@@ -45,7 +45,7 @@ RSpec.describe Views::Transmissions::ButtonLabelComponent, type: :component do
     it "renders plural label" do
       render_inline described_class.new(transmission)
 
-      expect(page).to have_text("2 signalements en attente de transmission")
+      expect(page).to have_text("Transmettre (2 signalements)")
     end
   end
 end

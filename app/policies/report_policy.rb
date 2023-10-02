@@ -45,6 +45,10 @@ class ReportPolicy < ApplicationPolicy
     end
   end
 
+  def transmit?
+    report_transmissible_by_collectivity?(record) if record.is_a?(Report)
+  end
+
   def destroy?
     if record == Report
       collectivity? || publisher?
@@ -135,6 +139,12 @@ class ReportPolicy < ApplicationPolicy
         report.packing? &&
         report.made_by_collectivity?(organization) &&
         report.made_through_web_ui?
+    end
+
+    def report_transmissible_by_collectivity?(report)
+      collectivity? &&
+        report.transmissible? &&
+        report.sent_by_collectivity?(organization)
     end
 
     def reports_listed_to_collectivity

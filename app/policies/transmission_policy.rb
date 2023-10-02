@@ -1,19 +1,9 @@
 # frozen_string_literal: true
 
 class TransmissionPolicy < ApplicationPolicy
-  def show?
-    user? && collectivity?
-  end
+  alias_rule :show?, :create?, :complete?, to: :manage?
 
-  def create?
-    if record.is_a?(Report)
-      user? && collectivity? && record.transmissible?
-    else
-      user? && collectivity?
-    end
-  end
-
-  def complete?
-    user? && collectivity?
+  def manage?
+    collectivity?
   end
 end

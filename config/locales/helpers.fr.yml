@@ -12,8 +12,8 @@ fr:
     returned:            Paquet refusé
     assigned:            Signalement transmis
     transmitted:         Paquet transmis, en attente de confirmation
-    completed:           Signalement en attente de transmission
-    incomplete:          Signalement incomplet
+    completed:           Formulaire complété
+    incomplete:          Formulaire incomplet
 
   package_badge:
     assigned:            Paquet transmis

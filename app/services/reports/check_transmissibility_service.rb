@@ -11,17 +11,19 @@ module Reports
     end
 
     def intransmissibles
-      intransmissibles_reports = @reports - transmissibles
+      intransmissibles_reports = @reports.reject(&:transmissible?)
 
-      intransmissibles_reports.each_with_object({}) do |report, hash|
+      result = { incomplete: [], transmitted: [] }
+
+      intransmissibles_reports.each do |report|
         if !report.completed?
-          hash[report] = "Incomplet"
+          result[:incomplete] << report
         elsif report.package.present?
-          hash[report] = "Déjà transmis"
-        elsif report.transmission.present?
-          hash[report] = "Déjà dans la transmission en cours"
+          result[:transmitted] << report
         end
       end
+
+      result
     end
   end
 end
