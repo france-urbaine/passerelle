@@ -22,7 +22,7 @@ RSpec.describe Transmissions::CompleteService do
 
   it "creates packages, assigns reports and complete transmission" do
     expect {
-      service.save
+      service.complete
       reports.each(&:reload)
     }
       .to  change(Package, :count).by(2)

@@ -2,13 +2,20 @@
 
 require "htmlbeautifier"
 
-module InspectHTML
+module InspectHTMLCapybara
   def inspect_html(node = page)
     puts HtmlBeautifier.beautify(node.native.inner_html)
   end
 end
 
+module InspectHTMLResponse
+  def inspect_html(html = response.body)
+    puts HtmlBeautifier.beautify(html)
+  end
+end
+
 RSpec.configure do |config|
-  config.include InspectHTML, type: :system
-  config.include InspectHTML, type: :component
+  config.include InspectHTMLCapybara, type: :system
+  config.include InspectHTMLCapybara, type: :component
+  config.include InspectHTMLResponse, type: :request
 end

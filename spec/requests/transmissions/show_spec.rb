@@ -11,9 +11,12 @@ RSpec.describe "TransmissionsController#show" do
   let(:headers) { |e| e.metadata[:headers] }
   let(:params)  { |e| e.metadata[:params] }
 
-  let!(:transmission) { create(:transmission, :made_through_web_ui) }
-  let!(:report)       { create(:report, :completed, collectivity: transmission.collectivity) }
-  let!(:reports)      { create_list(:report, 2, :completed, collectivity: transmission.collectivity) }
+  let!(:collectivity) { create(:collectivity) }
+  let!(:transmission) { create(:transmission, :made_through_web_ui, collectivity:) }
+
+  before do
+    create_list(:report, 2, :completed, collectivity:)
+  end
 
   describe "authorizations" do
     it_behaves_like "it requires to be signed in in HTML"
@@ -30,22 +33,16 @@ RSpec.describe "TransmissionsController#show" do
 
   describe "responses" do
     context "when signed in as a collectivity user" do
-      before { sign_in transmission.user }
+      before { sign_in(transmission.user) }
 
-      context "when the transmission doesn't have any report" do
+      context "when the transmission doesn't have any reports" do
         it { expect(response).to have_http_status(:success) }
         it { expect(response).to have_content_type(:html) }
         it { expect(response).to have_html_body.to include("Vous n'avez aucun signalement en attente de transmission.") }
       end
 
-      context "when the transmission has one report" do
-        before do
-          report.update(
-            transmission: transmission,
-            package: nil,
-            reference: nil
-          )
-        end
+      context "when the transmission has only one report" do
+        before { create(:report, :in_active_transmission, transmission:, collectivity:) }
 
         it { expect(response).to have_http_status(:success) }
         it { expect(response).to have_content_type(:html) }
@@ -53,15 +50,7 @@ RSpec.describe "TransmissionsController#show" do
       end
 
       context "when the transmission has multiple reports" do
-        before do
-          reports.each do |report|
-            report.update(
-              transmission: transmission,
-              package: nil,
-              reference: nil
-            )
-          end
-        end
+        before { create_list(:report, 2, :in_active_transmission, transmission:, collectivity:) }
 
         it { expect(response).to have_http_status(:success) }
         it { expect(response).to have_content_type(:html) }

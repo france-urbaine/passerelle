@@ -11,13 +11,13 @@ RSpec.describe "TransmissionsController#create" do
   let(:headers) { |e| e.metadata[:headers] }
   let(:params)  { |e| e.metadata.fetch(:params, { ids: ids }) }
 
-  let!(:transmission) { create(:transmission, :made_through_web_ui) }
-  let!(:report)       { create(:report, :completed, collectivity: transmission.collectivity) }
+  let!(:collectivity) { create(:collectivity) }
   let!(:reports) do
     [
-      create(:report, :completed,   collectivity: transmission.collectivity),
-      create(:report, :completed,   collectivity: transmission.collectivity),
-      create(:report, :transmitted, collectivity: transmission.collectivity)
+      create(:report, collectivity:),
+      create(:report, :completed, collectivity:),
+      create(:report, :completed, collectivity:),
+      create(:report, :transmitted, collectivity:)
     ]
   end
 
@@ -38,41 +38,89 @@ RSpec.describe "TransmissionsController#create" do
 
   describe "responses" do
     context "when signed in as a collectivity user" do
-      before { sign_in transmission.user }
+      before { sign_in_as(organization: collectivity) }
 
       context "when adding a transmissible report" do
-        let(:ids) { [report.id] }
+        let(:ids) { [reports[1].id] }
 
-        before do
-          report.update(package: nil, reference: nil)
+        it { expect(response).to have_http_status(:success) }
+        it { expect { request }.to change(Transmission, :count).by(1) }
+
+        it "assigns expected attributes to the new user's transmission" do
+          request
+          expect(Transmission.last).to have_attributes(
+            collectivity_id:  collectivity.id,
+            user_id:          current_user.id
+          )
         end
 
-        it { expect{ request }.to change(transmission.reports, :count).to(1) }
+        it "add report to new user's transmission" do
+          expect {
+            request
+            current_user.reload_active_transmission
+          }.to change { current_user.active_transmission&.reports&.count }.from(nil).to(1)
+        end
       end
 
-      context "when adding an intransmissible report" do
-        let(:ids) { [report.id] }
+      context "when adding a transmissible report to an active transmission" do
+        let!(:transmission) { current_user.transmissions.create(collectivity:) }
+        let(:ids) { [reports[1].id] }
 
-        it { expect{ request }.not_to change(transmission.reports, :count) }
+        it { expect(response).to have_http_status(:success) }
+        it { expect { request }.not_to change(Transmission, :count) }
+
+        it "add report to new user's transmission" do
+          expect {
+            request
+            transmission.reload
+          }.to change(transmission.reports, :count).from(0).to(1)
+        end
+      end
+
+      context "when adding an incomplete report" do
+        let(:ids) { [reports[0].id] }
+
+        it { expect(response).to have_http_status(:success) }
+        it { expect { request }.to change(Transmission, :count).by(1) }
+
+        it "doesn't add report to new user's transmission" do
+          expect {
+            request
+            current_user.reload_active_transmission
+          }.to change { current_user.active_transmission&.reports&.count }.from(nil).to(0)
+        end
+      end
+
+      context "when adding a transmitted report" do
+        let(:ids) { [reports[3].id] }
+
+        it { expect(response).to have_http_status(:success) }
+        it { expect { request }.to change(Transmission, :count).by(1) }
+
+        it "doesn't add report to new user's transmission" do
+          expect {
+            request
+            current_user.reload_active_transmission
+          }.to change { current_user.active_transmission&.reports&.count }.from(nil).to(0)
+        end
       end
 
       context "when adding multiple reports" do
         let(:ids) { reports.map(&:id) }
 
-        before do
-          reports[0].update(package: nil, reference: nil)
-          reports[1].update(package: nil, reference: nil)
-        end
+        it { expect(response).to have_http_status(:success) }
+        it { expect { request }.to change(Transmission, :count).by(1) }
 
-        it "only adds transmissibles reports" do
-          expect{
+        it "only adds transmissibles reports to user's transmission" do
+          expect {
             request
+            current_user.reload_active_transmission
             reports.each(&:reload)
-          }
-            .to change(transmission.reports, :count).to(2)
-            .and change(reports[0], :transmission_id).to(transmission.id)
-            .and change(reports[1], :transmission_id).to(transmission.id)
-            .and not_change(reports[2], :transmission_id)
+          }.to change { current_user.active_transmission&.reports&.count }.from(nil).to(2)
+            .and not_change(reports[0], :transmission_id).from(nil)
+            .and change(reports[1], :transmission_id).to(be_present)
+            .and change(reports[2], :transmission_id).to(be_present)
+            .and not_change(reports[3], :transmission_id).from(be_present)
         end
       end
     end
