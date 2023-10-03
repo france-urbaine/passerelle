@@ -36,7 +36,7 @@ RSpec.describe "API::TransmissionController#create", :api do
     it { expect(response).to have_http_status(:success) }
     it { expect { request }.to change(Transmission, :count).by(1) }
 
-    it "assigns expected attributes to the new record" do
+    it "assigns expected attributes to the new record", :show_in_doc do
       request
       expect(Transmission.last).to have_attributes(
         collectivity_id:      collectivity.id,

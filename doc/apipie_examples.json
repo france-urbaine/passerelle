@@ -1,0 +1,23 @@
+{
+  "transmission#create": [
+    {
+      "verb": "POST",
+      "path": "/api/collectivites/8fdf60cc-b5f6-4057-af59-6acb9559008f/transmissions",
+      "versions": [
+        "1.0"
+      ],
+      "query": null,
+      "request_data": {
+        "transmission": {
+          "sandbox": false
+        }
+      },
+      "response_data": {
+        "id": "38011313-402f-46a9-9e9c-3607152ea211"
+      },
+      "code": 200,
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ]
+}
