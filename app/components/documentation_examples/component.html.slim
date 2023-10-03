@@ -1,0 +1,27 @@
+- examples.each do |example|
+  = render_http_code_badge(example["code"])
+  pre.documentation__pre(
+    data-controller="highlight"
+    data-highlight-language-value="shell"
+  )
+    | curl -X GET #{request.base_url}#{example["path"]}\
+      -H "Accept: application/json" \
+      -H "Authorization: Bearer $ACCESS_TOKEN" \
+      -d "#{example["request_data"]}"
+
+  pre.documentation__pre
+    div(
+        data-controller="highlight"
+        data-highlight-language-value="http"
+      )
+        | #{example["verb"]} #{full_path(example)}
+          Accept: application/json
+          Authorization: Bearer HgAxkdHZUvlBjuuWweLKwsJ6InRfZoZ-GHyFtbrS03k
+
+        br
+        br
+        | HTTP/1.1 #{example["code"]} #{Rack::Utils::HTTP_STATUS_CODES[example["code"]]}
+          Content-Type: application/json; charset=utf-8
+    br
+    div( data-controller="highlight" data-highlight-language-value="json" )
+      = JSON.pretty_generate(example["response_data"])
