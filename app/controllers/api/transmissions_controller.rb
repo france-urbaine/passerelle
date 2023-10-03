@@ -4,6 +4,24 @@ module API
   class TransmissionsController < ApplicationController
     before_action :authorize!
 
+    resource_description do
+      resource_id "transmission"
+      name  "Transmission"
+      short "Transmissions"
+      formats ["json"]
+      deprecated false
+      meta icon: "archive-box"
+      description <<-DESC
+        Une transmission de plusieurs signalements à une DDFIP
+      DESC
+    end
+
+    api! "Créer une transmission"
+    returns code: 201, desc: "La transmission nouvellement créée."
+    param :sandbox, String, required: false, deprecated: true
+    description <<-DESC
+      Ce endpoint permet de créer une transmission au nom d'une collectivité.
+    DESC
     def create
       collectivity = find_and_authorize_collectivity
 
@@ -15,6 +33,7 @@ module API
       respond_with @transmission
     end
 
+    api!
     def complete
       @transmission = find_and_authorize_transmission
 
