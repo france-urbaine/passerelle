@@ -27,6 +27,7 @@ module ComponentsHelper
     priority_icon_component:      "PriorityIcon::Component",
     radio_buttons_component:      "RadioButtons::Component",
     search_component:             "Search::Component",
+    tabs_component:               "Tabs::Component",
     template_content_component:   "TemplateContent::Component",
     template_modal_component:     "TemplateModal::Component",
     template_status_component:    "TemplateStatus::Component",

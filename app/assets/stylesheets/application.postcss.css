@@ -19,6 +19,7 @@
 /* Interactive elements */
 @import "./components/button";
 @import "./components/icon_button";
+@import "./components/tabs";
 @import "./components/tooltip";
 @import "./components/notifications";
 @import "./components/priority_icon";

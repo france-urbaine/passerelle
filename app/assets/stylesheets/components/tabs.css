@@ -1,0 +1,13 @@
+@layer components {
+  .tabs__tabs {
+    @apply flex;
+  }
+  .tabs__tab {
+    @apply px-4 py-2 m-2;
+    @apply border-b-2 border-slate-200;
+    @apply transition-all duration-500;
+  }
+  .tabs__tab--current {
+    @apply border-blue-500;
+  }
+}
