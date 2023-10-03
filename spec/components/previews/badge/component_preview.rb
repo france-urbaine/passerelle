@@ -10,6 +10,10 @@ module Badge
     #
     def default; end
 
+    # @label All colors
+    #
+    def all_colors; end
+
     # @label Reports
     #
     def report_badges; end

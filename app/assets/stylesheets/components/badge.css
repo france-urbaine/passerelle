@@ -26,9 +26,34 @@
       @apply dark:bg-slate-500 text-black;
     }
 
+    &--gray {
+      @apply bg-gray-300 text-gray-900;
+      @apply dark:bg-gray-500 text-black;
+    }
+
+    &--zinc {
+      @apply bg-zinc-300 text-zinc-900;
+      @apply dark:bg-zinc-500 text-black;
+    }
+
+    &--neutral {
+      @apply bg-neutral-300 text-neutral-900;
+      @apply dark:bg-neutral-500 text-black;
+    }
+
+    &--stone {
+      @apply bg-stone-300 text-stone-900;
+      @apply dark:bg-stone-500 text-black;
+    }
+
     &--yellow {
       @apply bg-yellow-300 text-yellow-900;
       @apply dark:bg-yellow-500 text-black;
+    }
+
+    &--amber {
+      @apply bg-amber-300 text-amber-900;
+      @apply dark:bg-amber-500 text-black;
     }
 
     &--orange {
@@ -41,14 +66,34 @@
       @apply dark:bg-red-500 text-black;
     }
 
+    &--rose {
+      @apply bg-rose-300 text-rose-900;
+      @apply dark:bg-rose-500 text-black;
+    }
+
     &--pink {
       @apply bg-pink-300 text-pink-900;
       @apply dark:bg-pink-500 text-black;
     }
 
+    &--fuchsia {
+      @apply bg-fuchsia-300 text-fuchsia-900;
+      @apply dark:bg-fuchsia-500 text-black;
+    }
+
+    &--pruple {
+      @apply bg-pruple-300 text-pruple-900;
+      @apply dark:bg-pruple-500 text-black;
+    }
+
     &--violet {
       @apply bg-violet-300 text-violet-900;
       @apply dark:bg-violet-500 text-black;
+    }
+
+    &--indigo {
+      @apply bg-indigo-300 text-indigo-900;
+      @apply dark:bg-indigo-500 text-black;
     }
 
     &--blue {
@@ -59,6 +104,21 @@
     &--sky {
       @apply bg-sky-300 text-sky-900;
       @apply dark:bg-sky-500 text-black;
+    }
+
+    &--cyan {
+      @apply bg-cyan-300 text-cyan-900;
+      @apply dark:bg-cyan-500 text-black;
+    }
+
+    &--teal {
+      @apply bg-teal-300 text-teal-900;
+      @apply dark:bg-teal-500 text-black;
+    }
+
+    &--emerald {
+      @apply bg-emerald-300 text-emerald-900;
+      @apply dark:bg-emerald-500 text-black;
     }
 
     &--green {

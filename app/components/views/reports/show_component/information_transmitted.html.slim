@@ -4,8 +4,8 @@
     | Informations relatives au signalement
 
   .subheader-bar__actions
-    .subheader-bar__action= helpers.priority_badge(@report.priority)
-    .subheader-bar__action= helpers.report_badge(@report)
+    .subheader-bar__action= priority_badge(@report)
+    .subheader-bar__action= report_badge(@report)
 
 .card
   dl.description-list

@@ -98,6 +98,10 @@ module States
         completed? && package.nil?
       end
 
+      def in_active_transmission?
+        transmissible? && transmission_id? && !transmitted?
+      end
+
       # Updates methods
       # ----------------------------------------------------------------------------
       def complete!

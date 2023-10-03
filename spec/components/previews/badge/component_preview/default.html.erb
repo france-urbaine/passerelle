@@ -1,11 +1,8 @@
 <div class="flex flex-col space-y-4">
-  <div class="badge badge--yellow">Badge "yellow"</div>
-  <div class="badge badge--orange">Badge "orange"</div>
-  <div class="badge badge--red">Badge "red"</div>
-  <div class="badge badge--pink">Badge "pink"</div>
-  <div class="badge badge--violet">Badge "violet"</div>
-  <div class="badge badge--blue">Badge "blue"</div>
-  <div class="badge badge--sky">Badge "sky"</div>
-  <div class="badge badge--green">Badge "green"</div>
-  <div class="badge badge--lime">Badge "lime"</div>
+  <%= badge_component "Badge default" %>
+  <%= badge_component "Badge yellow", :yellow %>
+  <%= badge_component "Badge orange", :orange %>
+  <%= badge_component "Badge red",    :red %>
+  <%= badge_component "Badge blue",   :blue %>
+  <%= badge_component "Badge green",  :green %>
 </div>

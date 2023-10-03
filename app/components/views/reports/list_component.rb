@@ -4,7 +4,6 @@ module Views
   module Reports
     class ListComponent < ApplicationViewComponent
       include FormatHelper
-      include BadgeHelper
 
       DEFAULT_COLUMNS = %i[
         reference

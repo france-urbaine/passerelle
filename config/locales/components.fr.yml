@@ -74,6 +74,25 @@ fr:
             occupation_local_habitation:           "Occupation d'un local situé %{address}"
             occupation_local_professionnel:        "Occupation d'un local situé %{address}"
 
+        status_badge:
+          incomplete:             Formulaire incomplet
+          completed:              Formulaire complété
+          in_active_transmission: Transmission en attente
+          transmitted:            Paquet transmis, en attente de confirmation
+          returned:               Paquet retourné
+          assigned:               Signalement transmis
+          pending:                Signalement non traité
+          debated:                Demande d'informations complémentaires
+          approved:               Signalement approuvé
+          rejected:               Signalement rejeté
+
+      packages:
+        status_badge:
+          transmitted:            Paquet transmis, en attente de confirmation
+          unresolved:             Paquet reçu, en attente de confirmation
+          assigned:               Paquet assigné
+          returned:               Paquet retourné
+
       transmissions:
         button_label:
           zero:   "Transmettre (0 signalement)"
