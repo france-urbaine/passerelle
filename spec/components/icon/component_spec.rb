@@ -8,6 +8,7 @@ RSpec.describe Icon::Component, type: :component do
 
     expect(page).to have_selector("svg", count: 1) do |svg|
       aggregate_failures do
+        expect(svg).to     have_html_attribute("data-source").with_value("heroicons/optimized/24/outline/x-mark.svg")
         expect(svg).to     have_html_attribute("stroke").with_value("currentColor")
         expect(svg).to     have_html_attribute("fill").with_value("none")
         expect(svg).to     have_html_attribute("aria-hidden").boolean
@@ -44,6 +45,7 @@ RSpec.describe Icon::Component, type: :component do
     render_inline described_class.new("priority")
 
     expect(page).to have_selector("svg", count: 1) do |svg|
+      expect(svg).to have_html_attribute("data-source").with_value("priority.svg")
       expect(svg).to have_selector("path", count: 3)
     end
   end
@@ -53,6 +55,7 @@ RSpec.describe Icon::Component, type: :component do
 
     expect(page).to have_selector("svg", count: 1) do |svg|
       aggregate_failures do
+        expect(svg).to     have_html_attribute("data-source").with_value("heroicons/optimized/24/solid/x-mark.svg")
         expect(svg).to     have_html_attribute("fill").with_value("currentColor")
         expect(svg).not_to have_html_attribute("stroke")
 

@@ -72,7 +72,9 @@ RSpec.describe Button::Component, type: :component do
     expect(page).to have_button(class: "button") do |button|
       aggregate_failures do
         expect(button).to have_text("Click me!")
-        expect(button).to have_selector("svg > path[d='M12 4.5v15m7.5-7.5h-15']")
+        expect(button).to have_selector("svg") do |svg|
+          expect(svg).to have_html_attribute("data-source").with_value("heroicons/optimized/24/outline/plus.svg")
+        end
       end
     end
   end
@@ -81,7 +83,9 @@ RSpec.describe Button::Component, type: :component do
     render_inline described_class.new(icon: "plus")
 
     expect(page).to have_button(class: "icon-button") do |button|
-      expect(button).to have_selector("svg > path[d='M12 4.5v15m7.5-7.5h-15']")
+      expect(button).to have_selector("svg") do |svg|
+        expect(svg).to have_html_attribute("data-source").with_value("heroicons/optimized/24/outline/plus.svg")
+      end
     end
   end
 
@@ -93,7 +97,7 @@ RSpec.describe Button::Component, type: :component do
         expect(button).to have_selector(".tooltip", text: "Click me!")
         expect(button).to have_selector("svg") do |svg|
           aggregate_failures do
-            expect(svg).to have_selector("path[d='M12 4.5v15m7.5-7.5h-15']")
+            expect(svg).to have_html_attribute("data-source").with_value("heroicons/optimized/24/outline/plus.svg")
             expect(svg).to have_selector("title", text: "Click me!")
           end
         end

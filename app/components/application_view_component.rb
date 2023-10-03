@@ -32,4 +32,14 @@ class ApplicationViewComponent < ViewComponent::Base
   def current_organization
     current_user&.organization
   end
+
+  def i18n_component_path
+    component_path = self.class.name
+      .delete_suffix("::Component")
+      .delete_suffix("Component")
+      .underscore
+      .tr("/", ".")
+
+    "components.#{component_path}"
+  end
 end

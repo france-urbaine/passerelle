@@ -41,6 +41,10 @@
         dt Administrateur de FiscaHub
         dd= render Views::Users::ShowCheckBadgeComponent.new(@user, :super_admin)
 
+      .description-list__row
+        dt Méthode d'authentification
+        dd= render Views::Users::ShowOtpMethodComponent.new(@user)
+
   h2.subheader
     = icon_component("server-stack", "Nouvelle section")
     | Informations de connexion

@@ -9,20 +9,21 @@ module Views
         super()
       end
 
-      def checked?
-        @user[@attribute.to_s]
-      end
-
-      TITLES = {
-        super_admin:        "Administrateur de FiscaHub",
-        organization_admin: "Administrateur de l'organisation"
-      }.freeze
-
       def call
         # Render a empty string to avoid empty placeholder
         return " " unless checked?
 
-        icon_component("check-badge", TITLES[@attribute])
+        icon_component(ICON, label)
+      end
+
+      ICON = "check-badge"
+
+      def label
+        t(@attribute, scope: i18n_component_path)
+      end
+
+      def checked?
+        @user[@attribute.to_s]
       end
     end
   end
