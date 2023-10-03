@@ -35,6 +35,7 @@
 
 /* Data display */
 @import "./components/badge";
+@import "./components/counter_badge";
 @import "./components/dashboard_number";
 @import "./components/datatable";
 @import "./components/description_list";

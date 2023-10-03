@@ -8,6 +8,7 @@ module ComponentsHelper
     button_component:             "Button::Component",
     checkboxes_component:         "Checkboxes::Component",
     card_component:               "Card::Component",
+    counter_badge_component:      "CounterBadge::Component",
     datatable_component:          "Datatable::Component",
     datatable_skeleton_component: "DatatableSkeleton::Component",
     dropdown_component:           "Dropdown::Component",
