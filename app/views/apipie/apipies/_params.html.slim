@@ -41,7 +41,6 @@
       - else
         .text-slate-500= param[:description].html_safe
 
-      / = Apipie.markup_to_html(param[:validator]).html_safe
       - if param[:validations].present?
         - param[:validations].each do |item|
           li

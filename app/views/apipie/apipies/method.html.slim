@@ -56,14 +56,12 @@
               | Retour
             code.badge.badge--green
               = item[:code]
-          .card.mb-4
-            .datatable
-              table.table
-                - if item[:description]
-                  caption.datatable__empty-caption
-                    = item[:description]
-                tbody
-                  = render(:partial => "params", :locals => {:params => item[:returns_object]})
+          .card.documentation__card
+            .card__content
+              - if item[:description]
+                caption.datatable__empty-caption
+                  = item[:description]
+              = render(:partial => "params", :locals => {:params => item[:returns_object]})
 
       - if lookup_context.exists?("#{@resource[:id]}/enums", ["documentation/api/references"], true)
         .content__separator
@@ -73,6 +71,8 @@
             | Valeurs des énumérations
         .card.mb-4
           = render "documentation/api/references/#{@resource[:id]}/enums"
+      - else
+        = render "enums"
 
       - unless @method[:errors].blank?
         - @method[:returns].each do |item|
