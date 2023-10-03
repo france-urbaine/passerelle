@@ -4,10 +4,11 @@
     - breadcrumbs.with_path "Signalements"
 
     - if allowed_to?(:show?, Transmission) && @transmission&.reports&.any?
-      - breadcrumbs.with_action transmissions_path, icon: "envelope-open", modal: true do
+      - breadcrumbs.with_action transmissions_path, icon: "cloud-arrow-up", modal: true, primary: true do
         = render Views::Transmissions::ButtonLabelComponent.new(@transmission)
+
     - if allowed_to?(:create?, Report, with: ReportPolicy)
-      - breadcrumbs.with_action "Ajouter un signalement", new_report_path, icon: "plus", modal: true, primary: true
+      - breadcrumbs.with_action "Ajouter un signalement", new_report_path, icon: "plus", modal: true, primary: "discrete"
 
   = render Views::Reports::ListComponent.new(@reports, @pagy) do |view|
       - view.with_column(:reference)

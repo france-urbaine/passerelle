@@ -144,7 +144,7 @@ class ReportPolicy < ApplicationPolicy
     def report_transmissible_by_collectivity?(report)
       collectivity? &&
         report.transmissible? &&
-        report.sent_by_collectivity?(organization)
+        report.made_by_collectivity?(organization)
     end
 
     def reports_listed_to_collectivity

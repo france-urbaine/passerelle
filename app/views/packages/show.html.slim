@@ -16,7 +16,7 @@
   .subheader-bar
     h2.subheader
       = icon_component("server-stack", "Nouvelle section")
-      | Informations relatives au signalement
+      | Informations relatives au paquet
 
     .subheader-bar__actions
       .subheader-bar__action
@@ -44,7 +44,7 @@
     .content__separator
 
     h2.subheader
-      = icon_component("rectangle-stack", "Nouvelle section")
+      = icon_component("clipboard-document", "Nouvelle section")
       | Signalements
 
     = turbo_frame_tag "datatable-reports", src: package_reports_path(@package) do

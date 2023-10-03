@@ -14,6 +14,10 @@
       dd= authorized_link_to @report.package
 
     .description-list__row
+      dt Référence du signalement
+      dd= @report.reference
+
+    .description-list__row
       dt Date de transmission
       dd= l(@report.package.transmitted_at.to_date)
 

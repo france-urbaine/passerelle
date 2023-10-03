@@ -24,7 +24,7 @@ class TransmissionsController < ApplicationController
     @transmission = find_or_initialize_transmission
 
     service = Transmissions::CompleteService.new(@transmission)
-    result  = service.save
+    result  = service.complete
 
     respond_with result,
       flash: true,

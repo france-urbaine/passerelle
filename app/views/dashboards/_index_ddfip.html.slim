@@ -14,7 +14,7 @@
 
 .content__separator
 h2.subheader
-  = icon_component("rectangle-stack", "Nouvelle section")
+  = icon_component("clipboard-document", "Nouvelle section")
   | Derniers signalements reçus
 
 = render Views::Reports::ListComponent.new(@reports.pending, dashboard: true) do |view|  #.order_by_last_transmission_date
