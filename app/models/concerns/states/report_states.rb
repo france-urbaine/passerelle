@@ -52,8 +52,19 @@ module States
         package&.sandbox?
       end
 
-      delegate :transmitted?, :unresolved?, :missed?, :acknowledged?,
-        :assigned?, :returned?, :unreturned?, to: :package, allow_nil: true
+      %i[
+        transmitted?
+        unresolved?
+        missed?
+        acknowledged?
+        assigned?
+        returned?
+        unreturned?
+      ].each do |method_name|
+        define_method method_name do
+          packed? && package.public_send(method_name)
+        end
+      end
 
       def operative?
         assigned? && approved_at.nil? && rejected_at.nil?

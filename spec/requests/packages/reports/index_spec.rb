@@ -26,25 +26,11 @@ RSpec.describe "Packages::Reports" do
     it_behaves_like "it denies access to collectivity user"
     it_behaves_like "it denies access to collectivity admin"
 
-    context "when package has been packed by current user collectivity" do
-      let(:package) { create(:package, :packed_through_web_ui, :with_reports, collectivity: current_user.organization) }
-
-      it_behaves_like "it allows access to collectivity user"
-      it_behaves_like "it allows access to collectivity admin"
-    end
-
     context "when package has been transmitted by current user collectivity" do
       let(:package) { create(:package, :transmitted_through_web_ui, :with_reports, collectivity: current_user.organization) }
 
       it_behaves_like "it allows access to collectivity user"
       it_behaves_like "it allows access to collectivity admin"
-    end
-
-    context "when package has been packed by current user publisher" do
-      let(:package) { create(:package, :packed_through_api, :with_reports, publisher: current_user.organization) }
-
-      it_behaves_like "it allows access to publisher user"
-      it_behaves_like "it allows access to publisher admin"
     end
 
     context "when package has been transmitted by current user publisher" do
@@ -63,7 +49,7 @@ RSpec.describe "Packages::Reports" do
   end
 
   describe "responses" do
-    let(:package) { create(:package, :packed_through_web_ui) }
+    let(:package) { create(:package, :transmitted_through_web_ui) }
 
     before { sign_in_as(organization: package.collectivity) }
 

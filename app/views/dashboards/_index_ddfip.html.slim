@@ -17,7 +17,7 @@ h2.subheader
   = icon_component("rectangle-stack", "Nouvelle section")
   | Derniers signalements reçus
 
-= render Views::Reports::ListComponent.new(@reports.includes(:package).pending.order('packages.transmitted_at DESC'), dashboard: true) do |view|
+= render Views::Reports::ListComponent.new(@reports.pending, dashboard: true) do |view|  #.order_by_last_transmission_date
   - view.with_column(:reference)
   - view.with_column(:package) if current_user.organization_admin?
   - view.with_column(:collectivity)

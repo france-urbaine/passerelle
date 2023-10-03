@@ -341,7 +341,7 @@ class Report < ApplicationRecord
     end
   }
 
-  scope :transmitted_or_reported_through_web_ui, lambda {
+  scope :transmitted_or_made_through_web_ui, lambda {
     left_outer_joins(:package).where(<<~SQL.squish)
       "packages"."transmitted_at" IS NOT NULL
       OR
@@ -369,6 +369,14 @@ class Report < ApplicationRecord
   scope :order_by_score, lambda { |_input|
     # TODO: Not implemented
     self
+  }
+
+  scope :order_by_last_examination_date, lambda {
+    order(Arel.sql(%{COALESCE("reports"."rejected_at", "reports"."approved_at", "reports"."debated_at") DESC}))
+  }
+
+  scope :order_by_last_transmission_date, lambda {
+    joins(:package).merge(Package.order(transmitted_at: :desc))
   }
 
   # Predicates

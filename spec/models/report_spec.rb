@@ -667,6 +667,31 @@ RSpec.describe Report do
         SQL
       end
     end
+
+    describe ".order_by_last_examination_date" do
+      it "orders reports by latest date of examination" do
+        expect {
+          described_class.order_by_last_examination_date.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT     "reports".*
+          FROM       "reports"
+          ORDER BY   COALESCE("reports"."rejected_at", "reports"."approved_at", "reports"."debated_at") DESC
+        SQL
+      end
+    end
+
+    describe ".order_by_last_transmission_date" do
+      it "orders reports by latest date of examination" do
+        expect {
+          described_class.order_by_last_transmission_date.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT     "reports".*
+          FROM       "reports"
+          INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
+          ORDER BY   "packages"."transmitted_at" DESC
+        SQL
+      end
+    end
   end
 
   # Predicates

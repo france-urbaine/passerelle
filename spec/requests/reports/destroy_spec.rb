@@ -26,7 +26,7 @@ RSpec.describe "ReportsController#update" do
     it_behaves_like "it denies access to collectivity admin"
 
     context "when report has been reported by current user collectivity" do
-      let(:report) { create(:report, :reported_through_web_ui, collectivity: current_user.organization) }
+      let(:report) { create(:report, :made_through_web_ui, collectivity: current_user.organization) }
 
       it_behaves_like "it allows access to collectivity user"
       it_behaves_like "it allows access to collectivity admin"
@@ -40,7 +40,7 @@ RSpec.describe "ReportsController#update" do
     end
 
     context "when report has been reported by current user publisher" do
-      let(:report) { create(:report, :reported_through_api, publisher: current_user.organization) }
+      let(:report) { create(:report, :made_through_api, publisher: current_user.organization) }
 
       it_behaves_like "it allows access to publisher user"
       it_behaves_like "it allows access to publisher admin"
@@ -63,6 +63,10 @@ RSpec.describe "ReportsController#update" do
 
   describe "responses" do
     context "when signed in as a collectivity user" do
+      let(:collectivity) { create(:collectivity) }
+      let(:report)       { create(:report, :made_through_web_ui, collectivity: collectivity) }
+      let(:package)      { create(:package, :transmitted_through_web_ui, collectivity: collectivity, reports: [report]) }
+
       before { sign_in_as(organization: report.collectivity) }
 
       context "when the report is accessible" do

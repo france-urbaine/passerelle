@@ -26,7 +26,7 @@ RSpec.describe "ReportsController#show" do
     it_behaves_like "it denies access to collectivity admin"
 
     context "when report has been created by current user collectivity" do
-      let(:report) { create(:report, :reported_through_web_ui, collectivity: current_user.organization) }
+      let(:report) { create(:report, :made_through_web_ui, collectivity: current_user.organization) }
 
       it_behaves_like "it allows access to collectivity user"
       it_behaves_like "it allows access to collectivity admin"
@@ -65,18 +65,19 @@ RSpec.describe "ReportsController#show" do
   describe "responses" do
     context "when signed in as a collectivity user" do
       let(:collectivity) { create(:collectivity) }
-      let(:report)       { create(:report, :reported_through_web_ui, collectivity: collectivity) }
+      let(:report)       { create(:report, :made_through_web_ui, collectivity: collectivity) }
+      let(:package)      { create(:package, :transmitted_through_web_ui, collectivity: collectivity, reports: [report]) }
 
       before { sign_in_as(organization: collectivity) }
 
-      context "when the report is active" do
+      context "when the report is packing" do
         it { expect(response).to have_http_status(:success) }
         it { expect(response).to have_content_type(:html) }
         it { expect(response).to have_html_body }
       end
 
       context "when the report is transmitted" do
-        before { report.package.touch(:transmitted_at) }
+        before { package }
 
         it { expect(response).to have_http_status(:success) }
         it { expect(response).to have_content_type(:html) }
@@ -92,7 +93,7 @@ RSpec.describe "ReportsController#show" do
       end
 
       context "when the package is discarded" do
-        before { report.package.discard }
+        before { package.discard }
 
         it { expect(response).to have_http_status(:gone) }
         it { expect(response).to have_content_type(:html) }

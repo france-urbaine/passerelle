@@ -30,7 +30,7 @@ RSpec.describe "Reports::AttachmentsController#destroy" do
     it_behaves_like "it denies access to collectivity admin"
 
     context "when report has been created by current user collectivity" do
-      let(:report) { create(:report, :reported_through_web_ui, collectivity: current_user.organization) }
+      let(:report) { create(:report, :made_through_web_ui, collectivity: current_user.organization) }
 
       it_behaves_like "it allows access to collectivity user"
       it_behaves_like "it allows access to collectivity admin"
@@ -48,7 +48,7 @@ RSpec.describe "Reports::AttachmentsController#destroy" do
     before { sign_in_as(organization: collectivity) }
 
     let(:collectivity) { create(:collectivity) }
-    let(:report)       { create(:report, :reported_through_web_ui, collectivity: collectivity) }
+    let(:report)       { create(:report, :made_through_web_ui, collectivity: collectivity) }
 
     context "when the report is accessible" do
       it { expect(response).to have_http_status(:see_other) }

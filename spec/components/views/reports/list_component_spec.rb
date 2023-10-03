@@ -5,8 +5,12 @@ require "rails_helper"
 RSpec.describe Views::Reports::ListComponent, type: :component do
   describe "rendered component" do
     let!(:collectivity) { create(:collectivity) }
-    let!(:reports)      { create_list(:report, 2, collectivity: collectivity) }
+    let!(:reports)      { create_list(:report, 2, :completed, collectivity:) }
     let(:pagy)          { Pagy.new(count: 56, page: 1, items: 20) }
+
+    def form_type_title(report)
+      I18n.t(report.form_type, scope: "enum.report_form_type")
+    end
 
     before { sign_in_as(organization: collectivity) }
 
@@ -30,7 +34,8 @@ RSpec.describe Views::Reports::ListComponent, type: :component do
           expect(table).to have_selector("th", text: "Adresse")
           expect(table).to have_selector("th", text: "Commune")
           expect(table).to have_selector(:table_row, {
-            "Reference"  => reports.first.reference
+            "Type de signalement" => form_type_title(reports.first),
+            "Adresse"             => reports.first.situation_adresse
           })
         end
       end
@@ -92,9 +97,15 @@ RSpec.describe Views::Reports::ListComponent, type: :component do
     it "renders reports links" do
       render_inline described_class.new(Report.all, pagy)
 
-      expect(page).to have_selector(:table_row, "Reference" => reports.first.reference) do |row|
-        title = I18n.t(reports.first.form_type, scope: "components.reports/name.blank")
-        expect(row).to have_link(title, href: "/signalements/#{reports.first.id}")
+      expect(page).to have_selector(
+        :table_row,
+        "Type de signalement" => form_type_title(reports.first),
+        "Adresse"             => reports.first.situation_adresse
+      ) do |row|
+        expect(row).to have_link(
+          form_type_title(reports.first),
+          href: "/signalements/#{reports.first.id}"
+        )
       end
     end
   end

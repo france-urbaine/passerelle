@@ -4,26 +4,25 @@
 #
 # Table name: packages
 #
-#  id                      :uuid             not null, primary key
-#  collectivity_id         :uuid             not null
-#  publisher_id            :uuid
-#  name                    :string
-#  reference               :string           not null
-#  form_type               :enum             not null
-#  created_at              :datetime         not null
-#  updated_at              :datetime         not null
-#  transmitted_at          :datetime         not null
-#  assigned_at             :datetime
-#  returned_at             :datetime
-#  discarded_at            :datetime
-#  due_on                  :date
-#  reports_count           :integer          default(0), not null
-#  reports_completed_count :integer          default(0), not null
-#  reports_approved_count  :integer          default(0), not null
-#  reports_rejected_count  :integer          default(0), not null
-#  reports_debated_count   :integer          default(0), not null
-#  sandbox                 :boolean          default(FALSE), not null
-#  transmission_id         :uuid
+#  id                     :uuid             not null, primary key
+#  collectivity_id        :uuid             not null
+#  publisher_id           :uuid
+#  name                   :string
+#  reference              :string           not null
+#  form_type              :enum             not null
+#  created_at             :datetime         not null
+#  updated_at             :datetime         not null
+#  transmitted_at         :datetime         not null
+#  assigned_at            :datetime
+#  returned_at            :datetime
+#  discarded_at           :datetime
+#  due_on                 :date
+#  reports_count          :integer          default(0), not null
+#  reports_approved_count :integer          default(0), not null
+#  reports_rejected_count :integer          default(0), not null
+#  reports_debated_count  :integer          default(0), not null
+#  sandbox                :boolean          default(FALSE), not null
+#  transmission_id        :uuid
 #
 # Indexes
 #

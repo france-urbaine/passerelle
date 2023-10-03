@@ -53,6 +53,14 @@ FactoryBot.define do
 
     trait :completed do
       completed_at { Time.current }
+
+      situation_invariant do
+        Faker::Number.leading_zero_number(digits: 10) unless form_type.start_with?("creation_")
+      end
+
+      situation_adresse do
+        Faker::Address.full_address
+      end
     end
 
     trait :sandbox do

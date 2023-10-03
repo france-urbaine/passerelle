@@ -25,25 +25,11 @@ RSpec.describe "Packages::ApprovalsController#show" do
     it_behaves_like "it denies access to collectivity user"
     it_behaves_like "it denies access to collectivity admin"
 
-    context "when package has been packed by current user collectivity" do
-      let(:package) { create(:package, :packed_through_web_ui, collectivity: current_user.organization) }
-
-      it_behaves_like "it denies access to collectivity user"
-      it_behaves_like "it denies access to collectivity admin"
-    end
-
     context "when package has been transmitted by current user collectivity" do
       let(:package) { create(:package, :transmitted_through_web_ui, collectivity: current_user.organization) }
 
       it_behaves_like "it denies access to collectivity user"
       it_behaves_like "it denies access to collectivity admin"
-    end
-
-    context "when package has been packed by current user publisher" do
-      let(:package) { create(:package, :packed_through_api, publisher: current_user.organization) }
-
-      it_behaves_like "it denies access to publisher user"
-      it_behaves_like "it denies access to publisher admin"
     end
 
     context "when package has been transmitted by current user publisher" do
