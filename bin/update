@@ -65,11 +65,16 @@ def update_bundle
     log "Would you like to run the CI ? [Yn]"
 
     if gets == "Y"
+      system! "rubocop --stop-server"
       system! "bin/ci"
     elsif bundleup.updated_gems.any? { |gem| gem.include?("rubocop") }
       log "Some rubocop gems have been updated."
       log "Would you like to run rubocop ? [Yn]"
-      system! "bin/ci rubocop" if gets == "Y"
+
+      if gets == "Y"
+        system! "rubocop --stop-server"
+        system! "bin/ci rubocop"
+      end
     end
   end
 
