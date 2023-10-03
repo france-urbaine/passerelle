@@ -1,0 +1,71 @@
+- level              ||= 0
+- is_params            = local_assigns[:is_params]
+- previous_param_group = nil
+
+- params.each do |param|
+  - param_group = param.dig(:metadata, :param_group)
+  - if !param[:show]
+    = render(:partial => "params", :locals => {:level => level, :params => param[:params], is_params: is_params}) unless param[:params].blank?
+    - next
+
+  - if param_group && param_group != previous_param_group
+    .bg-slate-100.p-4.text-slate-500.text-center
+      strong= param_group.humanize
+      p= report_requirements(param_group)
+
+  - previous_param_group = param_group
+
+  .flex.flex-row.mt-4
+    strong.basis-3/4
+      - if param[:deprecated].present?
+        code.code DEPRECATED
+
+      span
+        | 
+      = param[:full_name]
+
+      - if is_params && param[:required]
+        span.text-red-500
+          | *
+
+
+    .basis-1/4.flex.flex-row.justify-end
+      span
+        - if param[:expected_type]
+          code.code= param[:expected_type]
+
+  .flex.flex-row.flex-wrap.border-b.border-slate-100
+    .basis-full
+      - if param[:description].empty?
+        p
+      - else
+        .text-slate-500= param[:description].html_safe
+
+      / = Apipie.markup_to_html(param[:validator]).html_safe
+      - if param[:validations].present?
+        - param[:validations].each do |item|
+          li
+            = item.html_safe
+
+      - if enum = param.dig(:metadata, :enum)
+        p
+          | Doit être une valeur parmis 
+          = link_to "les valeurs possibles de l'énumération", nil, href: "##{enum}"
+
+
+    / div
+    /   - if param[:validations].present? || param[:validator].present?
+    /     ul
+    /       - if param[:validator].present?
+    /         - if is_params
+    /           = Apipie.markup_to_html(param[:validator]).html_safe
+    /         - if param[:validations].present?
+    /           - param[:validations].each do |item|
+    /             li
+    /               = item.html_safe
+    /     = render partial: 'deprecation', locals: { deprecation: param[:deprecation] }
+    /     - unless param[:metadata].blank?
+    /       br
+    /       |  Metadata: 
+    /       = render(:partial => "metadata", :locals => {:meta => param[:metadata]})
+  = render(:partial => "params", :locals => {:level => level + 1, :params => param[:params], is_params: is_params}) unless param[:params].blank?

@@ -1,0 +1,96 @@
+= template_content_component do
+  = breadcrumbs_component do |breadcrumbs|
+    - breadcrumbs.with_path "References", @doc[:doc_url]
+    - breadcrumbs.with_path @resource[:name], @resource[:doc_url]
+    - breadcrumbs.with_path @method[:name]
+
+  - @method[:apis].each do |api|
+    .subheader-bar
+      h2.subheader
+        = icon_component "link"
+        code
+          = api[:http_method]
+          |  –  
+          = api[:api_url]
+      - if api[:deprecated]
+        .badge.badge--red.justify-self-end
+          | DEPRECATED
+
+    .card.documentation__card
+      dl.description-list
+        .description-list__row
+          dt Formats supportés
+          dd= @method[:formats].join(', ')
+        .description-list__row
+          dt Méthode
+          dd
+            code.code= api[:http_method]
+        .description-list__row
+          dt URL
+          dd
+            code.code= "#{root_url.chomp('/')}#{api[:api_url]}"
+
+  .md:grid.grid-cols-2.gap-4.items-start
+    div
+      = render(:partial => "informations", :locals => {:resource => @method })
+
+      - if lookup_context.exists?("#{@resource[:id]}/#{@method[:name]}", ["documentation/api/references"], true)
+        = render "documentation/api/references/#{@resource[:id]}/#{@method[:name]}"
+
+      - unless @method[:params].blank?
+        .content__separator
+        .subheader-bar
+          h2.subheader
+            = icon_component "adjustments-vertical"
+            | Paramètres
+        .card.documentation__card
+          .card__content
+            = render(:partial => "params", :locals => {:params => @method[:params], is_params: true})
+
+      - unless @method[:returns].blank?
+        - @method[:returns].each do |item|
+          .content__separator
+          .subheader-bar
+            h2.subheader
+              = icon_component "arrows-right-left"
+              | Retour
+            code.badge.badge--green
+              = item[:code]
+          .card.mb-4
+            .datatable
+              table.table
+                - if item[:description]
+                  caption.datatable__empty-caption
+                    = item[:description]
+                tbody
+                  = render(:partial => "params", :locals => {:params => item[:returns_object]})
+
+      - if lookup_context.exists?("#{@resource[:id]}/enums", ["documentation/api/references"], true)
+        .content__separator
+        .subheader-bar
+          h2.subheader
+            = icon_component "document-text"
+            | Valeurs des énumérations
+        .card.mb-4
+          = render "documentation/api/references/#{@resource[:id]}/enums"
+
+      - unless @method[:errors].blank?
+        - @method[:returns].each do |item|
+          .content__separator
+          .subheader-bar
+            h2.subheader
+              = icon_component "exclamation-circle"
+              | Erreurs
+          .card.mb-4
+            .card__content.text-lg
+              = render(:partial => "errors", :locals => {:errors => @method[:errors]})
+
+    div
+      .content__separator
+      .subheader-bar
+        h2.subheader
+          = icon_component "command-line"
+          | Exemples
+      .card.mb-4
+        .card__content.text-lg
+          = documentation_examples_component(@resource, @method)
