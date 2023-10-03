@@ -1,7 +1,2 @@
 - unless method[:examples].blank?
-  - method[:examples].each do |example|
-    pre.documentation__pre(
-      data-controller="highlight"
-      data-highlight-language-value="json"
-    )
-      = example
+  = documentation_examples_component(@resource, method)
