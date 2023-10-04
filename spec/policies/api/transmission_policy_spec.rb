@@ -13,15 +13,6 @@ RSpec.describe API::TransmissionPolicy, stub_factories: false do
 
       succeed "when publisher is present"
     end
-
-    context "with transmission" do
-      let(:record) { build_stubbed(:transmission, :made_through_api, publisher: publisher) }
-
-      failed "without collectivity within publisher"
-      succeed "with collectivity within publisher" do
-        before { record.collectivity = publisher.collectivities.first }
-      end
-    end
   end
 
   describe_rule :complete? do
@@ -32,16 +23,13 @@ RSpec.describe API::TransmissionPolicy, stub_factories: false do
     end
 
     context "with transmission" do
-      let(:record) { create(:transmission, :made_through_api, publisher: publisher, collectivity: collectivity) }
-      let!(:report) { create(:report, :completed, collectivity: collectivity, transmission: record) }
+      let(:record) { create(:transmission, :made_through_api, collectivity_publisher: publisher) }
+      let!(:report) { create(:report, :completed, collectivity: collectivity, transmission: record, publisher: publisher) }
 
-      failed "without collectivity within publisher" do
-        before { collectivity.update_column(:publisher_id, nil) }
-      end
       failed "without reports linked to transmission" do
         before { report.update_column(:transmission_id, nil) }
       end
-      failed "with uncompleted reports" do
+      failed "with incomplete reports" do
         before { report.update_column(:completed_at, nil) }
       end
       succeed "with all requirements"
@@ -67,26 +55,14 @@ RSpec.describe API::TransmissionPolicy, stub_factories: false do
     let(:attributes) do
       {
         sandbox:         true,
-        collectivity_id: collectivity_id
+        collectivity_id:  "123456789"
       }
     end
-    let(:collectivity_id) { "123456789" }
 
-    it "ignore collectivity_id when collectivity attribute do not belongs to publisher" do
+    it "return sandbox attribute" do
       is_expected.to include(
         sandbox: attributes[:sandbox]
       ).and not_include(:collectivity_id)
-    end
-
-    context "with collectivity_id" do
-      let(:collectivity_id) { collectivity.id }
-
-      it do
-        is_expected.to include(
-          sandbox: attributes[:sandbox],
-          collectivity_id: attributes[:collectivity_id]
-        )
-      end
     end
   end
 end

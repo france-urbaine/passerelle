@@ -20,6 +20,8 @@ RSpec.describe "API::TransmissionController#create" do
     it_behaves_like "it requires an authentication through OAuth in JSON"
     it_behaves_like "it requires an authentication through OAuth in HTML"
 
+    it_behaves_like "it responds with not found when authorized through OAuth"
+
     it_behaves_like "it allows access when authorized through OAuth" do
       let(:current_publisher) { collectivity.publisher }
     end
@@ -42,7 +44,7 @@ RSpec.describe "API::TransmissionController#create" do
 
     it "returns the new transmission ID" do
       request
-      expect(response).to have_json_body(id: Transmission.last.id)
+      expect(response.parsed_body).to include("id" => Transmission.last.id)
     end
   end
 end
