@@ -35,13 +35,17 @@ FactoryBot.define do
     # When needed, you can always ovveride this behavior by passing a
     # `skip_uniqueness_validation` attribute.
     #
-    object.skip_uniqueness_validation = true unless evaluator.__override_names__.include?(:skip_uniqueness_validation)
+    if object.respond_to?(:skip_uniqueness_validation) && evaluator.__override_names__.exclude?(:skip_uniqueness_validation)
+      object.skip_uniqueness_validation = true
+    end
   end
 
   after(:create) do |object, evaluator|
     # Reset the skip_uniqueness_validation after being created.
     #
-    object.skip_uniqueness_validation = false unless evaluator.__override_names__.include?(:skip_uniqueness_validation)
+    if object.respond_to?(:skip_uniqueness_validation) && evaluator.__override_names__.exclude?(:skip_uniqueness_validation)
+      object.skip_uniqueness_validation = false
+    end
   end
 end
 

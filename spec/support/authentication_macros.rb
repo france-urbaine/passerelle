@@ -1,7 +1,10 @@
 # frozen_string_literal: true
 
 module AuthenticationMacros
-  attr_reader :current_user
+  attr_reader :current_user,
+    :current_publisher,
+    :current_application,
+    :current_access_token
 
   def sign_in(user = create(:user), reload_tracked_fields: false)
     raise ArgumentError, "use an user to sign in" unless user.is_a?(User)
@@ -30,6 +33,19 @@ module AuthenticationMacros
 
   def sign_in_as(...)
     sign_in create(:user, ...)
+  end
+
+  def setup_access_token(publisher = nil)
+    @current_publisher = publisher || create(:publisher)
+    @current_application ||= create(:oauth_application, owner: @current_publisher)
+
+    @current_access_token = create(:doorkeeper_access_token,
+      application:       @current_application,
+      resource_owner_id: @current_publisher&.id)
+  end
+
+  def authorization_header
+    @current_access_token ? { "Authorization" => "Bearer #{@current_access_token.token}" } : {}
   end
 end
 

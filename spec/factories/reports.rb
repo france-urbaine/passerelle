@@ -21,7 +21,7 @@ FactoryBot.define do
     traits_for_enum :form_type, Report::FORM_TYPES
 
     commune do
-      territory = collectivity.territory
+      territory = collectivity&.territory
 
       case territory
       when Commune

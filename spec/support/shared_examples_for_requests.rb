@@ -12,36 +12,6 @@ RSpec.shared_context "with requests shared examples" do
 
   # Reponses examples
   # ----------------------------------------------------------------------------
-  shared_examples "it requires to be signed in in HTML" do
-    let(:as) { :html }
-
-    it do
-      expect { subject }
-        .to invoke(:as).on(self).at_least(:once)
-
-      expect(response)
-        .to  have_http_status(:redirect)
-        .and redirect_to("/connexion")
-    end
-  end
-
-  shared_examples "it requires to be signed in in JSON" do
-    let(:as) { :json }
-
-    it do
-      expect { subject }
-        .to invoke(:as).on(self).at_least(:once)
-
-      expect(response)
-        .to  have_http_status(:unauthorized)
-        .and have_content_type(:json)
-    end
-  end
-
-  shared_examples "it allows access whithout being signed in" do
-    include_examples "it allows access"
-  end
-
   shared_examples "it allows access" do
     it do
       expect(response)
@@ -50,6 +20,8 @@ RSpec.shared_context "with requests shared examples" do
         .and not_redirect_to(new_user_session_path)
     end
   end
+
+  # 2xx - Any success
 
   shared_examples "it responds successfully in HTML" do
     let(:as) { :html }
@@ -65,13 +37,126 @@ RSpec.shared_context "with requests shared examples" do
     end
   end
 
-  shared_examples "it responds by redirecting to" do |expected_path|
+  shared_examples "it responds successfully in JSON" do
+    let(:as) { :json }
+
     it do
+      expect { subject }
+        .to invoke(:as).on(self).at_least(:once)
+
       expect(response)
-        .to  have_http_status(:see_other)
+        .to  have_http_status(:success)
+        .and have_content_type(:json)
+        .and have_json_body
+    end
+  end
+
+  # 3xx - Any redirection
+
+  shared_examples "it responds by redirecting in HTML to" do |expected_path|
+    let(:as) { :html }
+
+    it do
+      expect { subject }
+        .to invoke(:as).on(self).at_least(:once)
+
+      expect(response)
+        .to  have_http_status(:redirect)
         .and redirect_to(expected_path)
     end
   end
+
+  # 401 - Unauthorized
+
+  shared_examples "it responds with unauthorized in HTML" do
+    let(:as) { :html }
+
+    it do
+      expect { subject }
+        .to invoke(:as).on(self).at_least(:once)
+
+      expect(response)
+        .to  have_http_status(:unauthorized)
+        .and have_content_type(:html)
+        .and have_html_body
+    end
+  end
+
+  shared_examples "it responds with unauthorized in JSON" do
+    let(:as) { :json }
+
+    it do
+      expect { subject }
+        .to invoke(:as).on(self).at_least(:once)
+
+      expect(response)
+        .to  have_http_status(:unauthorized)
+        .and have_content_type(:json)
+        .and have_json_body(error: "Vous devez d'abord vous authentifier.")
+    end
+  end
+
+  # 403 - forbidden
+
+  shared_examples "it responds with forbidden in HTML" do
+    let(:as) { :html }
+
+    it do
+      expect { subject }
+        .to invoke(:as).on(self).at_least(:once)
+
+      expect(response)
+        .to  have_http_status(:forbidden)
+        .and have_content_type(:html)
+        .and have_html_body
+    end
+  end
+
+  shared_examples "it responds with forbidden in JSON" do
+    let(:as) { :json }
+
+    it do
+      expect { subject }
+        .to invoke(:as).on(self).at_least(:once)
+
+      expect(response)
+        .to  have_http_status(:forbidden)
+        .and have_content_type(:json)
+        .and have_json_body(error: "Vous ne disposez pas des permissions suffisantes pour accéder à cette resource.")
+    end
+  end
+
+  # 404 - Not Found
+
+  shared_examples "it responds with not found in HTML" do
+    let(:as) { :html }
+
+    it do
+      expect { subject }
+        .to invoke(:as).on(self).at_least(:once)
+
+      expect(response)
+        .to  have_http_status(:not_found)
+        .and have_content_type(:html)
+        .and have_html_body
+    end
+  end
+
+  shared_examples "it responds with not found in JSON" do
+    let(:as) { :json }
+
+    it do
+      expect { subject }
+        .to invoke(:as).on(self).at_least(:once)
+
+      expect(response)
+        .to  have_http_status(:not_found)
+        .and have_content_type(:json)
+        .and have_json_body(error: "La resource n'a pas été trouvée ou n'existe plus.")
+    end
+  end
+
+  # 406 - Not Acceptable
 
   shared_examples "it responds with not acceptable in HTML" do
     let(:as) { :html }
@@ -97,36 +182,11 @@ RSpec.shared_context "with requests shared examples" do
       expect(response)
         .to  have_http_status(:not_acceptable)
         .and have_content_type(:json)
+        .and have_json_body(error: "La resource ne peut être retournée dans le format demandé.")
     end
   end
 
-  shared_examples "it responds with not found in HTML" do
-    let(:as) { :html }
-
-    it do
-      expect { subject }
-        .to invoke(:as).on(self).at_least(:once)
-
-      expect(response)
-        .to  have_http_status(:not_found)
-        .and have_content_type(:html)
-        .and have_html_body
-    end
-  end
-
-  shared_examples "it responds with forbidden in HTML" do
-    let(:as) { :html }
-
-    it do
-      expect { subject }
-        .to invoke(:as).on(self).at_least(:once)
-
-      expect(response)
-        .to  have_http_status(:forbidden)
-        .and have_content_type(:html)
-        .and have_html_body
-    end
-  end
+  # 409 - Gone
 
   shared_examples "it responds with gone in HTML" do
     let(:as) { :html }
@@ -142,6 +202,22 @@ RSpec.shared_context "with requests shared examples" do
     end
   end
 
+  shared_examples "it responds with gone in JSON" do
+    let(:as) { :json }
+
+    it do
+      expect { subject }
+        .to invoke(:as).on(self).at_least(:once)
+
+      expect(response)
+        .to  have_http_status(:gone)
+        .and have_content_type(:json)
+        .and have_json_body(error: "La resource n'est plus disponible ou est en cours de suppression.")
+    end
+  end
+
+  # 422 - Unprocessable entity
+
   shared_examples "it responds with unprocessable entity in HTML" do
     let(:as) { :html }
 
@@ -155,6 +231,22 @@ RSpec.shared_context "with requests shared examples" do
         .and have_html_body
     end
   end
+
+  shared_examples "it responds with unprocessable entity in JSON" do
+    let(:as) { :json }
+
+    it do
+      expect { subject }
+        .to invoke(:as).on(self).at_least(:once)
+
+      expect(response)
+        .to  have_http_status(:unprocessable_entity)
+        .and have_content_type(:json)
+        .and have_json_body(include(:error))
+    end
+  end
+
+  # HTML variants: Turbo-Frame, autocompletion, ...
 
   shared_examples "it responds with requested Turbo-Frame" do |frame|
     let(:headers) { (super() || {}).merge("Turbo-Frame" => frame) }
@@ -188,8 +280,26 @@ RSpec.shared_context "with requests shared examples" do
     end
   end
 
+  # HTML UI
   # Compound examples with contexts & responses examples
   # ----------------------------------------------------------------------------
+  shared_examples "it requires to be signed in in HTML" do
+    include_examples "it responds by redirecting in HTML to", "/connexion"
+  end
+
+  shared_examples "it requires to be signed in in JSON" do
+    include_examples "it responds with unauthorized in JSON"
+  end
+
+  shared_examples "it allows access whithout being signed in" do
+    include_examples "it allows access"
+  end
+
+  shared_examples "it allows access when signed in" do
+    include_context "when signed in"
+    include_examples "it allows access"
+  end
+
   shared_examples "it responds with not acceptable in HTML whithout being signed in" do
     include_examples "it responds with not acceptable in HTML"
   end
@@ -206,11 +316,6 @@ RSpec.shared_context "with requests shared examples" do
   shared_examples "it responds with not acceptable in JSON when signed in" do
     include_context "when signed in"
     include_examples "it responds with not acceptable in JSON"
-  end
-
-  shared_examples "it allows access when signed in" do
-    include_context "when signed in"
-    include_examples "it allows access"
   end
 
   [
@@ -251,6 +356,31 @@ RSpec.shared_context "with requests shared examples" do
       include_context "when signed in as #{user_description}", **options
       include_examples "it responds with not acceptable in HTML"
     end
+  end
+
+  # JSON API : compound examples with contexts & responses examples
+  # ----------------------------------------------------------------------------
+  shared_examples "it requires an authentication through OAuth in JSON" do
+    include_examples "it responds with unauthorized in JSON"
+  end
+
+  shared_examples "it requires an authentication through OAuth in HTML" do
+    include_examples "it responds with unauthorized in HTML"
+  end
+
+  shared_examples "it allows access when authorized through OAuth" do
+    include_context "when authorized through OAuth"
+    include_examples "it responds successfully in JSON"
+  end
+
+  shared_examples "it denies access when authorized through OAuth" do
+    include_context "when authorized through OAuth"
+    include_examples "it responds with forbidden in JSON"
+  end
+
+  shared_examples "it responds with not found when authorized through OAuth" do
+    include_context "when authorized through OAuth"
+    include_examples "it responds with not found in JSON"
   end
 
   # rubocop:enable RSpec/MultipleExpectations
