@@ -185,6 +185,7 @@ Style/FormatStringToken:
 Style/FrozenStringLiteralComment:
   Exclude:
     - 'bin/*'
+    - '*.jbuilder'
 
 Style/HashSyntax:
   EnforcedShorthandSyntax: either
