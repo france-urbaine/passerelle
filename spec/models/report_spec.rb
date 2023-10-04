@@ -480,6 +480,18 @@ RSpec.describe Report do
       end
     end
 
+    describe ".uncompleted" do
+      it "scopes on uncompleted reports" do
+        expect {
+          described_class.uncompleted.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT     "reports".*
+          FROM       "reports"
+            WHERE    "reports"."completed_at" IS NULL
+        SQL
+      end
+    end
+
     describe ".examined" do
       it "scopes on reports concluded or debated by the DDFIP" do
         expect {
