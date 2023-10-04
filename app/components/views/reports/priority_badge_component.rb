@@ -24,7 +24,10 @@ module Views
         text  = "Priorité : "
         text += priority_icon_component(@priority)
 
-        badge_component(text.html_safe, class: ["priority-badge", COLORS[@priority]])
+        css_class = "priority-badge "
+        css_class += COLORS[@priority]
+
+        badge_component(text.html_safe, class: css_class) # rubocop:disable Rails/OutputSafety
       end
     end
   end

@@ -6,7 +6,7 @@ module Views
       COLORS = {
         transmitted: "badge--blue",
         assigned:    "badge--green",
-        returned:    "badge--red",
+        returned:    "badge--red"
       }.freeze
 
       def initialize(arg)

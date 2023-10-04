@@ -15,7 +15,7 @@ module Badge
       orange:  "badge--orange",
       red:     "badge--red",
       blue:    "badge--blue",
-      green:   "badge--green",
+      green:   "badge--green"
     }.freeze
 
     def initialize(label, color = nil, **options)
