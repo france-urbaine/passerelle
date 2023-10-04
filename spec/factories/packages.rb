@@ -80,6 +80,7 @@ FactoryBot.define do
             package:      instance,
             transmission: transmission,
             sandbox:      sandbox,
+            form_type:    form_type,
             commune:      communes.sample
         end
       end

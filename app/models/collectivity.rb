@@ -23,15 +23,19 @@
 #  users_count                :integer          default(0), not null
 #  domain_restriction         :string
 #  allow_2fa_via_email        :boolean          default(FALSE), not null
+#  allow_publisher_management :boolean          default(FALSE), not null
+#  reports_incomplete_count   :integer          default(0), not null
+#  reports_packing_count      :integer          default(0), not null
 #  reports_transmitted_count  :integer          default(0), not null
+#  reports_returned_count     :integer          default(0), not null
+#  reports_pending_count      :integer          default(0), not null
+#  reports_debated_count      :integer          default(0), not null
 #  reports_approved_count     :integer          default(0), not null
 #  reports_rejected_count     :integer          default(0), not null
-#  reports_debated_count      :integer          default(0), not null
 #  packages_transmitted_count :integer          default(0), not null
+#  packages_unresolved_count  :integer          default(0), not null
 #  packages_assigned_count    :integer          default(0), not null
 #  packages_returned_count    :integer          default(0), not null
-#  allow_publisher_management :boolean          default(FALSE), not null
-#  reports_packing_count      :integer          default(0), not null
 #
 # Indexes
 #
