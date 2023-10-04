@@ -15,6 +15,7 @@ class TransmissionsController < ApplicationController
     service                  = Reports::CheckTransmissibilityService.new(@reports)
     @transmissible_reports   = service.transmissibles
     @intransmissible_reports = service.intransmissibles
+    @intransmissible_count   = service.intransmissibles_count
     @referrer_path           = referrer_path
 
     @transmission.reports << @transmissible_reports

@@ -25,5 +25,9 @@ module Reports
 
       result
     end
+
+    def intransmissibles_count
+      @reports.reject(&:transmissible?).count
+    end
   end
 end

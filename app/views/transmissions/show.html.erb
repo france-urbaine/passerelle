@@ -1,15 +1,15 @@
 <%= template_modal_component(referrer: @referrer_path) do |template| %>
   <% template.with_modal do |modal| %>
     <% modal.with_header do %>
-        Transmission en attente
+        Transmission
     <% end %>
 
     <% if @transmission.reports.any? %>
       <% modal.with_form(url: complete_transmissions_path, method: :post) do %>
         <% if @transmission.reports.many? %>
-          <p>Vous avez <b><%= @transmission.reports.count %> signalements</b> prêts à être transmis.</p>
+          <p>Vous avez <b><%= @transmission.reports.count %> signalements</b> en attente de transmission.</p>
         <% else %>
-          <p>Vous avez <b><%= @transmission.reports.count %> signalement</b> prêt à être transmis.</p>
+          <p>Vous avez <b><%= @transmission.reports.count %> signalement</b> en attente de transmission.</p>
         <% end %>
       <% end %>
 

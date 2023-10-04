@@ -92,9 +92,3 @@ fr:
           unresolved:             Paquet reçu, en attente de confirmation
           assigned:               Paquet assigné
           returned:               Paquet retourné
-
-      transmissions:
-        button_label:
-          zero:   "Transmettre (0 signalement)"
-          one:    "Transmettre (1 signalement)"
-          other:  "Transmettre (%{count} signalements)"

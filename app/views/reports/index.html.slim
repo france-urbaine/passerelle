@@ -4,12 +4,12 @@
     - breadcrumbs.with_path "Signalements"
 
     - if allowed_to?(:show?, Transmission) && @transmission&.reports&.any?
-      - transmission_button = true
-      - breadcrumbs.with_action transmissions_path, icon: "cloud-arrow-up", modal: true, primary: true do
-        = render Views::Transmissions::ButtonLabelComponent.new(@transmission)
+      - breadcrumbs.with_action transmissions_path, modal: true do
+        | Transmission
+        = render CounterBadge::Component.new(@transmission.reports.count)
 
     - if allowed_to?(:create?, Report, with: ReportPolicy)
-      - breadcrumbs.with_action "Ajouter un signalement", new_report_path, icon: "plus", modal: true, primary: !transmission_button
+      - breadcrumbs.with_action "Ajouter un signalement", new_report_path, icon: "plus", modal: true, primary: true
 
   = render Views::Reports::ListComponent.new(@reports, @pagy) do |view|
       - view.with_column(:reference)
