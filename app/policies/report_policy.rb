@@ -130,7 +130,8 @@ class ReportPolicy < ApplicationPolicy
         report.out_of_sandbox? &&
         report.packing? &&
         report.made_by_collectivity?(organization) &&
-        report.made_through_web_ui?
+        report.made_through_web_ui? &&
+        !report.in_active_transmission?
     end
 
     def report_destroyable_by_collectivity?(report)
