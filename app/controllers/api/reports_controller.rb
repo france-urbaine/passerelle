@@ -5,9 +5,8 @@ module API
     before_action :authorize!
 
     resource_description do
-      resource_id "signalements"
-      name  "Signalements"
-      short "Signalements"
+      resource_id "report"
+      name  "Signalement"
       error 404, "Missing"
       formats ["json"]
       deprecated false
