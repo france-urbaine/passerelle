@@ -2,13 +2,13 @@
 
 FactoryBot.define do
   factory :office do
-    ddfip
-
     transient do
       name_pattern { "%{acronym} #%{sequence} de %{city}" }
     end
 
-    sequence(:name) do |n|
+    ddfip
+
+    sequence :name do |n|
       name_pattern % {
         acronym:  %w[SIE SIP PELP PELH SDIF].sample,
         city:     Faker::Address.city,
@@ -36,6 +36,18 @@ FactoryBot.define do
       communes do
         Array.new(communes_size) do
           association(:commune, departement: ddfip.departement)
+        end
+      end
+    end
+
+    trait :with_users do
+      transient do
+        users_size { 1 }
+      end
+
+      users do
+        Array.new(users_size) do
+          association(:user, organization: ddfip)
         end
       end
     end

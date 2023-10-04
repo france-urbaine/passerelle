@@ -2,6 +2,10 @@
 
 FactoryBot.define do
   factory :user do
+    transient do
+      skip_confirmation_notification { true }
+    end
+
     organization { association %i[publisher collectivity ddfip].sample }
 
     first_name   { Faker::Name.first_name }
@@ -9,7 +13,7 @@ FactoryBot.define do
     password     { Faker::Internet.password(min_length: Devise.password_length.min) }
     confirmed_at { Time.current }
 
-    sequence(:email) do |n|
+    sequence :email do |n|
       name   = "#{first_name} #{last_name} #{n}"
       domain = organization&.domain_restriction
 
@@ -20,15 +24,11 @@ FactoryBot.define do
     # - it produces less logs
     # - it avoids extending the unconfirmed period when manually set
     #
-    transient do
-      skip_confirmation_notification { true }
-    end
-
-    after(:build) do |user, evaluator|
+    after :build do |user, evaluator|
       user.skip_confirmation_notification! if evaluator.skip_confirmation_notification
     end
 
-    after(:stub) do |user, _evaluator|
+    after :stub do |user, _evaluator|
       user.generate_name
     end
 
@@ -39,7 +39,7 @@ FactoryBot.define do
     end
 
     trait :to_reconfirmed do
-      sequence(:unconfirmed_email) do |n|
+      sequence :unconfirmed_email do |n|
         name   = "#{first_name} #{last_name} #{n}"
         domain = organization&.domain_restriction
 
