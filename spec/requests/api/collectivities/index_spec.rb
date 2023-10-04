@@ -20,7 +20,10 @@ RSpec.describe "API::CollectivitiesController#index", :api do
   end
 
   describe "responses" do
-    before { setup_access_token(collectivity.publisher) }
+    before do
+      create_list(:collectivity, 2, publisher: collectivity.publisher)
+      setup_access_token(collectivity.publisher)
+    end
 
     it { expect(response).to have_http_status(:success) }
 
@@ -34,6 +37,10 @@ RSpec.describe "API::CollectivitiesController#index", :api do
           }
         ]
       )
+    end
+
+    it "lists all collectivities", :show_in_doc do
+      expect(JSON.parse(response.body)["collectivites"].length).to eq(3)
     end
   end
 end

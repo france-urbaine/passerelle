@@ -259,3 +259,9 @@ fr:
       vacant:      Local vacant non taxé
       vacant_tlv:  Local vacant taxé TLV
       vacant_thlv: Local vacant taxé THLV
+
+    territory_type:
+      Commune:     Commune
+      EPCI:        EPCI
+      Departement: Departement
+      Region:      Region

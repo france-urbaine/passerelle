@@ -4,6 +4,35 @@ module API
   class CollectivitiesController < ApplicationController
     before_action :authorize!
 
+    resource_description do
+      resource_id "collectivities"
+      name  "collectivities"
+      short "Collectivité"
+      formats ["json"]
+      deprecated false
+      meta icon: "building-library", enums: %w[territory_type]
+      description <<-DESC
+        Une collectivité
+      DESC
+    end
+
+    def_param_group :collectivity do
+      param :id, String, "ID de la collectivité"
+      param :name, String, "Nom de la collectivité"
+      param :territory_type, String, "Type de territoire", meta: { enum: "territory_type" }
+    end
+
+    api! "Lister les collectivités"
+    description <<-DESC
+      Ce endpoint permet de lister les collectivités.
+
+      Seules les collectivités associées à votre organisation sont retournées.
+    DESC
+    returns code: 200, desc: "En cas de succès, retourne la liste des collectivités." do
+      property :collectivites, array_of: Hash, desc: "Tableau de collectivités" do
+        param_group :collectivity
+      end
+    end
     def index
       @collectivities = build_and_authorize_scope
       @collectivities, @pagy = index_collection(@collectivities)
