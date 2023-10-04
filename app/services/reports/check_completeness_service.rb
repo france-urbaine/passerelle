@@ -12,7 +12,6 @@ module Reports
     end
 
     validates_presence_of :anomalies
-    validates_presence_of :anomalies
     validates_presence_of :code_insee
     validates_presence_of :date_constat
 
