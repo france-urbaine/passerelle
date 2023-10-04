@@ -29,6 +29,7 @@ module States
       scope :rejected,               -> { assigned.where.not(rejected_at: nil) }
       scope :concluded,              -> { approved.or(rejected) }
       scope :examined,               -> { approved.or(rejected).or(debated) }
+      scope :uncompleted,            -> { where(completed_at: nil) }
 
       # Predicates
       # ----------------------------------------------------------------------------
