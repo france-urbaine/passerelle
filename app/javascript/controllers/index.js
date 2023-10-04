@@ -50,9 +50,6 @@ application.register("copy-text", CopyTextController)
 import ToggleController from "./components/toggle_controller"
 application.register("toggle", ToggleController)
 
-import HighlightController from "./components/highlight_controller"
-application.register("highlight", HighlightController)
-
 // Forms
 // -----------------------------------------------------------------------------
 import DirectUploadFieldController from "./forms/direct_upload_field_controller"

@@ -18,6 +18,9 @@ html( lang="fr" )
     = stylesheet_link_tag "application", "data-turbo-track": "reload"
     = javascript_include_tag "application", "data-turbo-track": "reload", defer: true
 
+    = stylesheet_link_tag "api_documentation", "data-turbo-track": "reload"
+    = javascript_include_tag "api_documentation", "data-turbo-track": "reload", defer: true
+
   body.documentation
     = render "documentation/navbar"
     = yield
