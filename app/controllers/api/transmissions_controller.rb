@@ -6,8 +6,7 @@ module API
 
     resource_description do
       resource_id "transmission"
-      name  "Transmission"
-      short "Transmissions"
+      name "Transmission"
       formats ["json"]
       deprecated false
       meta icon: "archive-box"
@@ -18,10 +17,11 @@ module API
 
     api! "Créer une transmission"
     returns code: 201, desc: "La transmission nouvellement créée."
-    param :sandbox, String, required: false, deprecated: true
+    param :sandbox, :bool, required: false, default_value: false
     description <<-DESC
       Ce endpoint permet de créer une transmission au nom d'une collectivité.
     DESC
+    see "collectivities#index", "Lister les collectivités"
     def create
       collectivity = find_and_authorize_collectivity
 
