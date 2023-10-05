@@ -258,12 +258,12 @@ CREATE TABLE public.ddfips (
     contact_phone character varying,
     domain_restriction character varying,
     allow_2fa_via_email boolean DEFAULT false NOT NULL,
+    reports_count integer DEFAULT 0 NOT NULL,
+    reports_approved_count integer DEFAULT 0 NOT NULL,
+    reports_rejected_count integer DEFAULT 0 NOT NULL,
+    reports_debated_count integer DEFAULT 0 NOT NULL,
     auto_assign_packages boolean DEFAULT false NOT NULL,
     reports_pending_count integer DEFAULT 0 NOT NULL,
-    reports_debated_count integer DEFAULT 0 NOT NULL,
-    reports_rejected_count integer DEFAULT 0 NOT NULL,
-    reports_approved_count integer DEFAULT 0 NOT NULL,
-    reports_count integer DEFAULT 0 NOT NULL,
     CONSTRAINT collectivities_count_check CHECK ((collectivities_count >= 0)),
     CONSTRAINT offices_count_check CHECK ((offices_count >= 0)),
     CONSTRAINT users_count_check CHECK ((users_count >= 0))
@@ -618,11 +618,11 @@ CREATE TABLE public.offices (
     discarded_at timestamp(6) without time zone,
     users_count integer DEFAULT 0 NOT NULL,
     communes_count integer DEFAULT 0 NOT NULL,
-    reports_pending_count integer DEFAULT 0 NOT NULL,
-    reports_debated_count integer DEFAULT 0 NOT NULL,
-    reports_rejected_count integer DEFAULT 0 NOT NULL,
+    reports_count integer DEFAULT 0 NOT NULL,
     reports_approved_count integer DEFAULT 0 NOT NULL,
-    reports_count integer DEFAULT 0 NOT NULL
+    reports_rejected_count integer DEFAULT 0 NOT NULL,
+    reports_debated_count integer DEFAULT 0 NOT NULL,
+    reports_pending_count integer DEFAULT 0 NOT NULL
 );
 
 
@@ -869,15 +869,15 @@ CREATE TABLE public.collectivities (
     users_count integer DEFAULT 0 NOT NULL,
     domain_restriction character varying,
     allow_2fa_via_email boolean DEFAULT false NOT NULL,
-    allow_publisher_management boolean DEFAULT false NOT NULL,
-    packages_returned_count integer DEFAULT 0 NOT NULL,
-    packages_assigned_count integer DEFAULT 0 NOT NULL,
-    packages_transmitted_count integer DEFAULT 0 NOT NULL,
-    reports_packing_count integer DEFAULT 0 NOT NULL,
-    reports_debated_count integer DEFAULT 0 NOT NULL,
-    reports_rejected_count integer DEFAULT 0 NOT NULL,
-    reports_approved_count integer DEFAULT 0 NOT NULL,
     reports_transmitted_count integer DEFAULT 0 NOT NULL,
+    reports_approved_count integer DEFAULT 0 NOT NULL,
+    reports_rejected_count integer DEFAULT 0 NOT NULL,
+    reports_debated_count integer DEFAULT 0 NOT NULL,
+    packages_transmitted_count integer DEFAULT 0 NOT NULL,
+    packages_assigned_count integer DEFAULT 0 NOT NULL,
+    packages_returned_count integer DEFAULT 0 NOT NULL,
+    allow_publisher_management boolean DEFAULT false NOT NULL,
+    reports_packing_count integer DEFAULT 0 NOT NULL,
     CONSTRAINT users_count_check CHECK ((users_count >= 0))
 );
 
@@ -1073,9 +1073,9 @@ CREATE TABLE public.dgfips (
     updated_at timestamp(6) without time zone NOT NULL,
     discarded_at timestamp(6) without time zone,
     users_count integer DEFAULT 0 NOT NULL,
-    reports_rejected_count integer DEFAULT 0 NOT NULL,
-    reports_approved_count integer DEFAULT 0 NOT NULL,
     reports_delivered_count integer DEFAULT 0 NOT NULL,
+    reports_approved_count integer DEFAULT 0 NOT NULL,
+    reports_rejected_count integer DEFAULT 0 NOT NULL,
     CONSTRAINT users_count_check CHECK ((users_count >= 0))
 );
 
@@ -3966,7 +3966,7 @@ ALTER TABLE ONLY public.transmissions
 --
 
 ALTER TABLE ONLY public.oauth_access_grants
-    ADD CONSTRAINT fk_rails_330c32d8d9 FOREIGN KEY (resource_owner_id) REFERENCES public.publishers(id);
+    ADD CONSTRAINT fk_rails_330c32d8d9 FOREIGN KEY (resource_owner_id) REFERENCES public.publishers(id) ON DELETE CASCADE;
 
 
 --
@@ -4158,7 +4158,7 @@ ALTER TABLE ONLY public.ddfips
 --
 
 ALTER TABLE ONLY public.oauth_access_tokens
-    ADD CONSTRAINT fk_rails_ee63f25419 FOREIGN KEY (resource_owner_id) REFERENCES public.publishers(id);
+    ADD CONSTRAINT fk_rails_ee63f25419 FOREIGN KEY (resource_owner_id) REFERENCES public.publishers(id) ON DELETE CASCADE;
 
 
 --
