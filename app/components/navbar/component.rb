@@ -70,7 +70,7 @@ module Navbar
 
       attr_reader :title
 
-      def initialize(title)
+      def initialize(title = nil)
         @title = title
         super()
       end

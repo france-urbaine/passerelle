@@ -1,0 +1,14 @@
+<%= render Navbar::Component.new do |navbar| %>
+  <% navbar.with_header do %>
+    <%= link_to("API", api_documentation_path, class: "brand__right") %>
+  <% end %>
+
+  <% navbar.with_section do |section| %>
+    <% section.with_link("Retour à Fiscahub", root_url, icon: "arrow-uturn-left") %>
+  <% end %>
+
+  <% navbar.with_section("Guides") do |section| %>
+    <% section.with_link("A propos", api_documentation_path("guides/a_propos"), icon: "bookmark") %>
+    <% section.with_link("Authentification", api_documentation_path("guides/authentification"), icon: "key") %>
+  <% end %>
+<% end %>
