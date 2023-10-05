@@ -42,3 +42,9 @@ fr:
         success:
           type:   "success"
           title:  "Votre inscription est complétée. Vous pouvez dorénavant vous connecter."
+
+  api:
+    transmissions:
+      already_completed:  "Cette transmission est déjà complétée."
+      reports_empty:      "Aucun signalement présent dans cette transmision."
+      reports_incomplete: "Certains signalements ne sont pas complets."

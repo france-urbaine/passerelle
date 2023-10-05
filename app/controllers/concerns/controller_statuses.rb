@@ -12,8 +12,8 @@ module ControllerStatuses
     not_implemented
     internal_server_error
   ].each do |status|
-    define_method(status) do
-      render_status(status)
+    define_method(status) do |_exception = nil, **options|
+      render_status(status, **options)
     end
   end
 
@@ -27,7 +27,7 @@ module ControllerStatuses
     render_status(:gone)
   end
 
-  def render_status(status)
+  def render_status(status, error: nil)
     respond_to do |format|
       format.html do
         if turbo_frame_request_id == "modal"
@@ -41,7 +41,7 @@ module ControllerStatuses
       end
 
       format.json do
-        error = I18n.t(status, scope: "status", default: "")
+        error ||= I18n.t(status, scope: "status", default: "")
 
         if error.present?
           render status:, json: { error: }

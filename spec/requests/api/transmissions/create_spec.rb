@@ -8,9 +8,10 @@ RSpec.describe "API::TransmissionController#create" do
   end
 
   let(:as)      { |e| e.metadata.fetch(:as, :json) }
-  let(:headers) { |e| e.metadata.fetch(:headers, {}).merge(authorization_header) }
+  let(:headers) { |e| e.metadata.fetch(:headers, {}).reverse_merge(authorization_header) }
   let(:params)  { |e| e.metadata.fetch(:params, { transmission: attributes }) }
-  let(:collectivity) { create(:collectivity) }
+
+  let!(:collectivity) { create(:collectivity) }
 
   let(:attributes) do
     { sandbox: false }
@@ -22,8 +23,10 @@ RSpec.describe "API::TransmissionController#create" do
 
     it_behaves_like "it responds with not found when authorized through OAuth"
 
-    it_behaves_like "it allows access when authorized through OAuth" do
-      let(:current_publisher) { collectivity.publisher }
+    context "when the collectivity is owned by the current publisher" do
+      let(:collectivity) { create(:collectivity, publisher: current_publisher) }
+
+      it_behaves_like "it allows access when authorized through OAuth"
     end
   end
 
@@ -37,14 +40,16 @@ RSpec.describe "API::TransmissionController#create" do
       request
       expect(Transmission.last).to have_attributes(
         collectivity_id:      collectivity.id,
-        sandbox:              attributes[:sandbox],
-        oauth_application_id: current_application.id
+        oauth_application_id: current_application.id,
+        publisher_id:         current_publisher.id,
+        sandbox:              attributes[:sandbox]
       )
     end
 
     it "returns the new transmission ID" do
-      request
-      expect(response.parsed_body).to include("id" => Transmission.last.id)
+      expect(response.parsed_body).to eq(
+        "id" => Transmission.last.id
+      )
     end
   end
 end
