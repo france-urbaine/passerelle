@@ -8,10 +8,9 @@ module API
     def create
       build_report
 
-      service = API::Reports::UpdateService.new(@report)
-      result  = service.save
+      API::Reports::UpdateService.new(@report).save
 
-      respond_with result
+      respond_with @report
     end
 
     private
