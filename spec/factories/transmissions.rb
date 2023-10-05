@@ -13,7 +13,9 @@ FactoryBot.define do
       collectivity_publisher { publisher || association(:publisher) }
     end
 
-    collectivity { association(:collectivity, publisher: collectivity_publisher) }
+    collectivity do
+      association(:collectivity, publisher: collectivity_publisher)
+    end
 
     user do
       collectivity.users.first || association(:user, organization: collectivity) unless publisher
@@ -35,21 +37,11 @@ FactoryBot.define do
 
     trait :made_through_api do
       user              { nil }
-      publisher         { collectivity_publisher }
-      oauth_application { association(:oauth_application, owner: collectivity_publisher) }
+      publisher         { association(:publisher) }
+      oauth_application { association(:oauth_application, owner: publisher) }
 
       after :build, :stub do |transmission|
         raise "invalid factory: an user is assigned to the transmission" if transmission.user
-      end
-    end
-
-    trait :with_reports do
-      transient do
-        reports_count { 1 }
-      end
-
-      after(:create) do |transmission, evaluator|
-        create_list(:report, evaluator.reports_count, :completed, transmission: transmission, collectivity: transmission.collectivity, publisher: transmission.publisher)
       end
     end
 
@@ -61,6 +53,18 @@ FactoryBot.define do
     trait :completed_through_api do
       made_through_api
       completed
+    end
+
+    trait :with_reports do
+      transient do
+        reports_size { 1 }
+      end
+
+      reports do
+        Array.new(reports_size) do
+          association :report, :completed, transmission: instance, collectivity:, publisher:
+        end
+      end
     end
   end
 end
