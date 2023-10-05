@@ -269,6 +269,7 @@ Rails.application.routes.draw do
 
         resources :transmissions, only: [] do
           put :complete, on: :member
+          resources :reports, only: %i[create], path: "/signalements"
         end
       end
     end
