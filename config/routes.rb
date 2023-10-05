@@ -238,6 +238,18 @@ Rails.application.routes.draw do
     end
   end
 
+  # API
+  # ----------------------------------------------------------------------------
+  namespace :api do
+    resources :collectivities, only: %i[], path: "/collectivites" do
+      resources :transmissions, only: %i[create]
+    end
+
+    resources :transmissions, only: [] do
+      put :complete
+    end
+  end
+
   # Errors pages
   # ----------------------------------------------------------------------------
   get "404", to: "exceptions#not_found"
