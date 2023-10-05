@@ -16,7 +16,7 @@ RSpec.describe "OauthApplications managed by current organization" do
 
     # A table of owned oauth_applications should be present
     #
-    expect(page).to have_selector("h1", text: "Applications")
+    expect(page).to have_selector("h1", text: "API")
     expect(page).to have_link("Test Oauth Application")
 
     click_on "Test Oauth Application"
@@ -31,7 +31,7 @@ RSpec.describe "OauthApplications managed by current organization" do
     # The browser should redirect back to the index page
     #
     expect(page).to have_current_path(organization_oauth_applications_path)
-    expect(page).to have_selector("h1", text: "Applications")
+    expect(page).to have_selector("h1", text: "API")
   end
 
   it "creates an oauth_application from the index page" do
@@ -55,7 +55,7 @@ RSpec.describe "OauthApplications managed by current organization" do
     # The new oauth_application should appear
     #
     expect(page).to have_current_path(organization_oauth_applications_path)
-    expect(page).to have_selector("h1", text: "Applications")
+    expect(page).to have_selector("h1", text: "API")
     expect(page).to have_selector(:table_row, "Nom" => "Nouvelle App")
 
     # The dialog should be closed
@@ -88,7 +88,7 @@ RSpec.describe "OauthApplications managed by current organization" do
     # The oauth_application should have changed its name
     #
     expect(page).to have_current_path(organization_oauth_applications_path)
-    expect(page).to have_selector("h1", text: "Applications")
+    expect(page).to have_selector("h1", text: "API")
     expect(page).to have_selector(:table_row, "Nom" => "Test Oauth Application 2")
 
     # The dialog should be closed
@@ -151,7 +151,7 @@ RSpec.describe "OauthApplications managed by current organization" do
     # The oauth_application should not appears anymore
     #
     expect(page).to     have_current_path(organization_oauth_applications_path)
-    expect(page).to     have_selector("h1", text: "Applications")
+    expect(page).to     have_selector("h1", text: "API")
     expect(page).to     have_text("1 application | Page 1 sur 1")
     expect(page).not_to have_selector(:table_row, "Nom" => "Test Oauth Application")
 
@@ -171,7 +171,7 @@ RSpec.describe "OauthApplications managed by current organization" do
     # The oauth_application should be back again
     #
     expect(page).to have_current_path(organization_oauth_applications_path)
-    expect(page).to have_selector("h1", text: "Applications")
+    expect(page).to have_selector("h1", text: "API")
     expect(page).to have_text("2 applications | Page 1 sur 1")
     expect(page).to have_selector(:table_row, "Nom" => "Test Oauth Application")
 
@@ -201,7 +201,7 @@ RSpec.describe "OauthApplications managed by current organization" do
     # The oauth_application should not appears anymore
     #
     expect(page).to     have_current_path(organization_oauth_applications_path)
-    expect(page).to     have_selector("h1", text: "Applications")
+    expect(page).to     have_selector("h1", text: "API")
     expect(page).to     have_text("1 application | Page 1 sur 1")
     expect(page).not_to have_selector(:table_row, "Nom" => "Test Oauth Application")
 
@@ -221,7 +221,7 @@ RSpec.describe "OauthApplications managed by current organization" do
     # The oauth_application should be back again
     #
     expect(page).to have_current_path(organization_oauth_applications_path)
-    expect(page).to have_selector("h1", text: "Applications")
+    expect(page).to have_selector("h1", text: "API")
     expect(page).to have_text("2 applications | Page 1 sur 1")
     expect(page).to have_selector(:table_row, "Nom" => "Test Oauth Application")
 
@@ -261,7 +261,7 @@ RSpec.describe "OauthApplications managed by current organization" do
     # Other oauth_applications should remain
     #
     expect(page).to     have_current_path(organization_oauth_applications_path)
-    expect(page).to     have_selector("h1", text: "Applications")
+    expect(page).to     have_selector("h1", text: "API")
     expect(page).to     have_text("1 application | Page 1 sur 1")
     expect(page).not_to have_selector(:table_row, "Nom" => "Test Oauth Application")
     expect(page).to     have_selector(:table_row, "Nom" => "Oauth Application with URI")
@@ -284,7 +284,7 @@ RSpec.describe "OauthApplications managed by current organization" do
     # The remove oauth_applications should be back again
     #
     expect(page).to have_current_path(organization_oauth_applications_path)
-    expect(page).to have_selector("h1", text: "Applications")
+    expect(page).to have_selector("h1", text: "API")
     expect(page).to have_text("2 applications | Page 1 sur 1")
     expect(page).to have_selector(:table_row, "Nom" => "Test Oauth Application")
 
@@ -340,7 +340,7 @@ RSpec.describe "OauthApplications managed by current organization" do
     # The selected oauth_applications should have been removed
     #
     expect(page).to     have_current_path(organization_oauth_applications_path)
-    expect(page).to     have_selector("h1", text: "Applications")
+    expect(page).to     have_selector("h1", text: "API")
     expect(page).to     have_text("2 applications | Page 1 sur 1")
     expect(page).not_to have_selector(:table_row, "Nom" => "Test Oauth Application")
     expect(page).not_to have_selector(:table_row, "Nom" => "Oauth Application with URI")
@@ -362,7 +362,7 @@ RSpec.describe "OauthApplications managed by current organization" do
     # All oauth_applications should be back again
     #
     expect(page).to have_current_path(organization_oauth_applications_path)
-    expect(page).to have_selector("h1", text: "Applications")
+    expect(page).to have_selector("h1", text: "API")
     expect(page).to have_text("2 applications | Page 1 sur 2")
     expect(page).to have_selector(:table_row, "Nom" => "Test Oauth Application")
     expect(page).to have_selector(:table_row, "Nom" => "Oauth Application with URI")
@@ -423,7 +423,7 @@ RSpec.describe "OauthApplications managed by current organization" do
     # No oauth_applications should appear anymore
     #
     expect(page).to have_current_path(organization_oauth_applications_path)
-    expect(page).to have_selector("h1", text: "Applications")
+    expect(page).to have_selector("h1", text: "API")
     expect(page).to have_text("Aucune application disponible.")
 
     # The dialog should be closed
@@ -443,7 +443,7 @@ RSpec.describe "OauthApplications managed by current organization" do
     # All oauth_applications should be back again
     #
     expect(page).to have_current_path(organization_oauth_applications_path)
-    expect(page).to have_selector("h1", text: "Applications")
+    expect(page).to have_selector("h1", text: "API")
     expect(page).to have_text("2 applications | Page 1 sur 2")
     expect(page).to have_selector(:table_row, "Nom" => "Test Oauth Application")
     expect(page).to have_selector(:table_row, "Nom" => "Oauth Application with URI")

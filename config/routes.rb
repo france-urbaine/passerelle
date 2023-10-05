@@ -23,7 +23,7 @@ Rails.application.routes.draw do
 
   # Documentation
   # ----------------------------------------------------------------------------
-  get "/documentation/api(/*id)", to: "documentation#api", as: :documentation_api
+  get "/documentation/api(/*id)", to: "documentation#api", as: :api_documentation
 
   # Oauth
   # ----------------------------------------------------------------------------

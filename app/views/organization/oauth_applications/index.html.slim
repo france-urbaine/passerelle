@@ -1,9 +1,22 @@
 = template_content_component do
   = breadcrumbs_component do |breadcrumbs|
     - breadcrumbs.with_path "Mon organisation"
-    - breadcrumbs.with_path "Applications"
+    - breadcrumbs.with_path "API"
 
     - if allowed_to?(:create?, OauthApplication)
       - breadcrumbs.with_action "Ajouter une application", new_organization_oauth_application_path, icon: "plus", modal: true, primary: true
 
   = render Views::OauthApplications::ListComponent.new(@oauth_applications, @pagy, namespace: :organization)
+
+  .content__separator
+
+  h2.subheader
+    = icon_component("information-circle", "Nouvelle section")
+    | Documentation
+
+  = card_component do
+    | L'API de FiscaHub est une API RESTful qui implémente les spécifications du standard OAuth2 Pour l'authentification.
+    br
+    = link_to "Consultez la documentation", api_documentation_url
+    = " "
+    | pour en savoir plus.
