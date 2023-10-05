@@ -8,16 +8,6 @@ module API
       true
     end
 
-    def attach?
-      if record == Report
-        true
-      elsif record.is_a?(Report)
-        record.package.nil? &&
-          publisher.present? &&
-          record.publisher == publisher
-      end
-    end
-
     params_filter do |params|
       attributes = %i[form_type priority code_insee date_constat enjeu observations anomalies]
       attributes << { anomalies: [] }

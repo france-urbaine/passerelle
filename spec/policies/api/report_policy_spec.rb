@@ -16,23 +16,6 @@ RSpec.describe API::ReportPolicy, stub_factories: false do
     succeed "always"
   end
 
-  describe_rule :attach? do
-    context "without record" do
-      let(:record) { Report }
-
-      succeed "always"
-    end
-
-    context "with record" do
-      let(:record) { create(:report, :made_through_api, publisher: publisher) }
-
-      failed "when record has package" do
-        before { record.package = build(:package) }
-      end
-      succeed "with all requirements"
-    end
-  end
-
   describe "params scope" do
     subject(:params) { apply_params_scope(attributes) }
 
