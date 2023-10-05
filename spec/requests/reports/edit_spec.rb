@@ -27,7 +27,7 @@ RSpec.describe "ReportsController#edit" do
     it_behaves_like "it denies access to DDFIP admin"
 
     context "when report has been reported by current user collectivity" do
-      let(:report) { create(:report, :reported_through_web_ui, collectivity: current_user.organization) }
+      let(:report) { create(:report, :made_through_web_ui, collectivity: current_user.organization) }
 
       it_behaves_like "it allows access to collectivity user"
       it_behaves_like "it allows access to collectivity admin"
@@ -41,7 +41,7 @@ RSpec.describe "ReportsController#edit" do
     end
 
     context "when report has been reported through API for current user collectivity" do
-      let(:report) { create(:report, :reported_through_api, collectivity: current_user.organization) }
+      let(:report) { create(:report, :made_through_api, collectivity: current_user.organization) }
 
       it_behaves_like "it denies access to collectivity user"
       it_behaves_like "it denies access to collectivity admin"
@@ -55,7 +55,7 @@ RSpec.describe "ReportsController#edit" do
     end
 
     context "when report has been reported by current user publisher" do
-      let(:report) { create(:report, :reported_through_api, publisher: current_user.organization) }
+      let(:report) { create(:report, :made_through_api, publisher: current_user.organization) }
 
       it_behaves_like "it allows access to publisher user"
       it_behaves_like "it allows access to publisher admin"
@@ -96,38 +96,50 @@ RSpec.describe "ReportsController#edit" do
   end
 
   describe "responses" do
-    let(:report) { create(:report, :reported_through_web_ui) }
+    context "when signed in as a collectivity user" do
+      let(:collectivity) { create(:collectivity) }
+      let(:report)       { create(:report, :made_through_web_ui, collectivity: collectivity) }
+      let(:package)      { create(:package, :transmitted_through_web_ui, collectivity: collectivity, reports: [report]) }
 
-    before { sign_in_as(organization: report.collectivity) }
+      before { sign_in_as(organization: collectivity) }
 
-    context "when the report is accessible" do
-      it { expect(response).to have_http_status(:success) }
-      it { expect(response).to have_content_type(:html) }
-      it { expect(response).to have_html_body }
-    end
+      context "when the report is packing" do
+        it { expect(response).to have_http_status(:success) }
+        it { expect(response).to have_content_type(:html) }
+        it { expect(response).to have_html_body }
+      end
 
-    context "when the report is discarded" do
-      before { report.discard }
+      context "when the report is transmitted" do
+        before { package }
 
-      it { expect(response).to have_http_status(:gone) }
-      it { expect(response).to have_content_type(:html) }
-      it { expect(response).to have_html_body.to include("Ce signalement est en cours de suppression.") }
-    end
+        it { expect(response).to have_http_status(:forbidden) }
+        it { expect(response).to have_content_type(:html) }
+        it { expect(response).to have_html_body }
+      end
 
-    context "when the package is discarded" do
-      before { report.package.discard }
+      context "when the report is discarded" do
+        before { report.discard }
 
-      it { expect(response).to have_http_status(:gone) }
-      it { expect(response).to have_content_type(:html) }
-      it { expect(response).to have_html_body.to include("Le paquet de ce signalement est en cours de suppression.") }
-    end
+        it { expect(response).to have_http_status(:gone) }
+        it { expect(response).to have_content_type(:html) }
+        it { expect(response).to have_html_body.to include("Ce signalement est en cours de suppression.") }
+      end
 
-    context "when the report is missing" do
-      before { report.destroy }
+      context "when the package is discarded" do
+        before { package.discard }
 
-      it { expect(response).to have_http_status(:not_found) }
-      it { expect(response).to have_content_type(:html) }
-      it { expect(response).to have_html_body.to include("Ce signalement n'a pas été trouvé ou n'existe plus.") }
+        it { expect(response).to have_http_status(:forbidden) }
+        it { expect(response).to have_content_type(:html) }
+        it { expect(response).to have_html_body }
+      end
+
+      context "when the report is missing" do
+        before { report.destroy }
+
+        it { expect(response).to have_http_status(:not_found) }
+        it { expect(response).to have_content_type(:html) }
+        it { expect(response).to have_html_body.to include("Ce signalement n'a pas été trouvé ou n'existe plus.") }
+      end
     end
   end
 end

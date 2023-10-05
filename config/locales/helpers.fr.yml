@@ -4,20 +4,3 @@ fr:
     unconfirmed_user:             "Cet utilisateur n'a pas encore validé son inscription"
     locked:                       "Ce compte a été verrouillé par sécurité"
     confirmation_period_expired:  "L'invitation est expirée"
-
-  report_badge:
-    approved:            Signalement approuvé
-    rejected:            Signalement rejeté
-    debated:             Demande d'informations complémentaires
-    returned:            Paquet refusé
-    assigned:            Signalement transmis
-    transmitted:         Paquet transmis, en attente de confirmation
-    completed:           Signalement en attente de transmission
-    incomplete:          Signalement incomplet
-
-  package_badge:
-    assigned:            Paquet transmis
-    returned:            Paquet refusé
-    transmitted:         Paquet transmis, en attente de confirmation
-    completed:           Paquet prèt à être transmis
-    incomplete:          Signalements incomplets

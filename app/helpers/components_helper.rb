@@ -3,10 +3,12 @@
 module ComponentsHelper
   COMPONENT_HELPERS = {
     authorized_link_to:           "AuthorizedLink::Component",
+    badge_component:              "Badge::Component",
     breadcrumbs_component:        "Breadcrumbs::Component",
     button_component:             "Button::Component",
     checkboxes_component:         "Checkboxes::Component",
     card_component:               "Card::Component",
+    counter_badge_component:      "CounterBadge::Component",
     datatable_component:          "Datatable::Component",
     datatable_skeleton_component: "DatatableSkeleton::Component",
     dropdown_component:           "Dropdown::Component",
@@ -36,5 +38,17 @@ module ComponentsHelper
     define_method name do |*args, **kwargs, &block|
       render component.constantize.new(*args, **kwargs), &block
     end
+  end
+
+  def report_badge(...)
+    render Views::Reports::StatusBadgeComponent.new(...)
+  end
+
+  def package_badge(...)
+    render Views::Packages::StatusBadgeComponent.new(...)
+  end
+
+  def priority_badge(...)
+    render Views::Reports::PriorityBadgeComponent.new(...)
   end
 end

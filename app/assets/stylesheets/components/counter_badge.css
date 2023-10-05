@@ -1,0 +1,19 @@
+@layer components {
+  .counter-badge {
+    display: inline-flex;
+    box-sizing: border-box;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    align-items: center;
+    white-space: nowrap;
+
+    @apply px-2 py-1 text-xs font-medium rounded-full;
+    @apply subpixel-antialiased;
+    @apply bg-red-500 text-white;
+
+    .button & {
+      @apply ml-2;
+    }
+  }
+}

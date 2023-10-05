@@ -9,7 +9,6 @@ module Packages
         ddfip_admin? &&
           record.kept? &&
           record.out_of_sandbox? &&
-          record.transmitted? &&
           record.reports.covered_by_ddfip(organization).any?
       end
     end

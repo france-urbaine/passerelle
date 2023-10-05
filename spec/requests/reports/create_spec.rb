@@ -35,7 +35,6 @@ RSpec.describe "ReportsController#new" do
     it { expect(response).to have_http_status(:see_other) }
     it { expect(response).to redirect_to(%r{/signalements/[0-9a-f\-]{36}$}) }
     it { expect { request }.to change(Report, :count).by(1) }
-    it { expect { request }.to change(Package, :count).by(1) }
 
     it "assigns expected attributes to the new record" do
       request
@@ -44,17 +43,6 @@ RSpec.describe "ReportsController#new" do
         collectivity_id:  current_user.organization_id,
         publisher_id:     nil
       )
-    end
-
-    context "when an appropriate package is already availbale" do
-      let!(:package) { create(:package, :evaluation_local_habitation, collectivity: current_user.organization) }
-
-      it { expect { request }.not_to change(Package, :count) }
-
-      it "assigns the existing package" do
-        request
-        expect(Report.last.package).to eq(package)
-      end
     end
   end
 end

@@ -1,0 +1,26 @@
+<%= template_modal_component(referrer: @referrer_path) do |template| %>
+  <% template.with_modal do |modal| %>
+    <% modal.with_header do %>
+        Transmission
+    <% end %>
+
+    <% if @transmission.reports.any? %>
+      <% modal.with_form(url: complete_transmissions_path, method: :post) do %>
+        <% if @transmission.reports.many? %>
+          <p>Vous avez <b><%= @transmission.reports.count %> signalements</b> en attente de transmission.</p>
+        <% else %>
+          <p>Vous avez <b><%= @transmission.reports.count %> signalement</b> en attente de transmission.</p>
+        <% end %>
+      <% end %>
+
+      <% modal.with_submit_action "Transmettre immédiatement", autofocus: true %>
+      <% modal.with_close_action "Transmettre plus tard" %>
+    <% else %>
+      <% modal.with_body do %>
+        <p>
+          Vous n'avez aucun signalement en attente de transmission.
+        </p>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>

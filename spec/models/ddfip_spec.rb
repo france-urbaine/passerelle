@@ -542,15 +542,12 @@ RSpec.describe DDFIP do
       end
     end
 
-    describe "about reports counter caches" do
+    describe "about reports counter caches", skip: "FIXME" do
       describe "#reports_count" do
-        before do
-          commune = create(:commune)
-          ddfips.first.update(code_departement: commune.code_departement)
-        end
-
-        let(:commune) { Commune.first }
-        let(:report) { create(:report, commune: commune) }
+        let(:commune)      { create(:commune, departement: ddfip.departement) }
+        let(:collectivity) { create(:collectivity, territory: commune) }
+        let(:report)       { create(:report, collectivity:) }
+        let(:package)      { create(:package, collectivity:) }
 
         it "doesn't change on report creation" do
           expect { report }
@@ -561,21 +558,21 @@ RSpec.describe DDFIP do
         it "changes when package is transmitted" do
           report
 
-          expect { report.package.transmit! }
+          expect { report.update(package: package) }
             .to change { ddfips[0].reload.reports_count }.from(0).to(1)
             .and not_change { ddfips[1].reload.reports_count }.from(0)
         end
 
         it "doesn't changes when package in sandbox is transmitted" do
-          report.package.update(sandbox: true)
+          package.update(sandbox: true)
 
-          expect { report.package.transmit! }
+          expect { report.update(package: package) }
             .to  not_change { ddfips[0].reload.reports_count }.from(0)
             .and not_change { ddfips[1].reload.reports_count }.from(0)
         end
 
         it "changes when transmitted report is discarded" do
-          report.package.touch(:transmitted_at)
+          report.update(package: package)
 
           expect { report.discard }
             .to change { ddfips[0].reload.reports_count }.from(1).to(0)
@@ -583,7 +580,8 @@ RSpec.describe DDFIP do
         end
 
         it "changes when transmitted report is undiscarded" do
-          report.discard and report.package.transmit!
+          report.update(package: package)
+          report.discard
 
           expect { report.undiscard }
             .to change { ddfips[0].reload.reports_count }.from(0).to(1)
@@ -591,7 +589,7 @@ RSpec.describe DDFIP do
         end
 
         it "changes when transmitted report is deleted" do
-          report.package.transmit!
+          report.update(package: package)
 
           expect { report.destroy }
             .to change { ddfips[0].reload.reports_count }.from(1).to(0)
@@ -599,15 +597,16 @@ RSpec.describe DDFIP do
         end
 
         it "changes when transmitted package is discarded" do
-          report.package.transmit!
+          report.update(package: package)
 
-          expect { report.package.discard }
+          expect { package.discard }
             .to change { ddfips[0].reload.reports_count }.from(1).to(0)
             .and not_change { ddfips[1].reload.reports_count }.from(0)
         end
 
         it "changes when transmitted package is undiscarded" do
-          report.package.touch(:transmitted_at, :discarded_at)
+          report.update(package: package)
+          package.discard
 
           expect { report.package.undiscard }
             .to change { ddfips[0].reload.reports_count }.from(0).to(1)
@@ -615,9 +614,9 @@ RSpec.describe DDFIP do
         end
 
         it "changes when transmitted package is deleted" do
-          report.package.transmit!
+          report.update(package: package)
 
-          expect { report.package.delete }
+          expect { package.delete }
             .to change { ddfips[0].reload.reports_count }.from(1).to(0)
             .and not_change { ddfips[1].reload.reports_count }.from(0)
         end

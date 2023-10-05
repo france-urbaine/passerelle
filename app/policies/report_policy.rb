@@ -15,7 +15,7 @@ class ReportPolicy < ApplicationPolicy
 
   def show?
     if record == Report
-      user? || report_shown_to_dgfip?(record)
+      user?
     elsif record.is_a?(Report)
       report_shown_to_collectivity?(record) ||
         report_shown_to_publisher?(record) ||
@@ -43,6 +43,10 @@ class ReportPolicy < ApplicationPolicy
       report_updatable_by_ddfip_admin?(record) ||
         report_updatable_by_office_user?(record)
     end
+  end
+
+  def transmit?
+    report_transmissible_by_collectivity?(record) if record.is_a?(Report)
   end
 
   def destroy?
@@ -117,24 +121,31 @@ class ReportPolicy < ApplicationPolicy
       #
       collectivity? &&
         report.out_of_sandbox? &&
-        report.sent_by_collectivity?(organization) &&
-        (report.packed_through_web_ui? || report.transmitted?)
+        report.made_by_collectivity?(organization) &&
+        (report.made_through_web_ui? || report.transmitted?)
     end
 
     def report_updatable_by_collectivity?(report)
       collectivity? &&
         report.out_of_sandbox? &&
         report.packing? &&
-        report.sent_by_collectivity?(organization) &&
-        report.packed_through_web_ui?
+        report.made_by_collectivity?(organization) &&
+        report.made_through_web_ui? &&
+        !report.in_active_transmission?
     end
 
     def report_destroyable_by_collectivity?(report)
       collectivity? &&
         report.out_of_sandbox? &&
         report.packing? &&
-        report.sent_by_collectivity?(organization) &&
-        report.packed_through_web_ui?
+        report.made_by_collectivity?(organization) &&
+        report.made_through_web_ui?
+    end
+
+    def report_transmissible_by_collectivity?(report)
+      collectivity? &&
+        report.transmissible? &&
+        report.made_by_collectivity?(organization)
     end
 
     def reports_listed_to_collectivity
@@ -144,11 +155,10 @@ class ReportPolicy < ApplicationPolicy
       # those fully transmitted by their publishers.
       #
       Report
-        .joins(:package)
         .all_kept
         .out_of_sandbox
-        .sent_by_collectivity(organization)
-        .merge(Package.packed_through_web_ui.or(Package.transmitted))
+        .made_by_collectivity(organization)
+        .transmitted_or_made_through_web_ui
     end
 
     def reports_destroyable_by_collectivity
@@ -158,8 +168,8 @@ class ReportPolicy < ApplicationPolicy
         .kept
         .out_of_sandbox
         .packing
-        .sent_by_collectivity(organization)
-        .packed_through_web_ui
+        .made_by_collectivity(organization)
+        .made_through_web_ui
     end
 
     def reports_undiscardable_by_collectivity
@@ -169,8 +179,8 @@ class ReportPolicy < ApplicationPolicy
         .discarded
         .out_of_sandbox
         .packing
-        .sent_by_collectivity(organization)
-        .packed_through_web_ui
+        .made_by_collectivity(organization)
+        .made_through_web_ui
     end
   end
 
@@ -181,22 +191,22 @@ class ReportPolicy < ApplicationPolicy
       # Discarded packages are not listed but are still accessible
       #
       publisher? &&
-        report.sent_by_publisher?(organization) &&
-        report.packed_through_publisher_api?
+        report.made_by_publisher?(organization) &&
+        report.made_through_publisher_api?
     end
 
     def report_updatable_by_publisher?(report)
       publisher? &&
         report.packing? &&
-        report.sent_by_publisher?(organization) &&
-        report.packed_through_publisher_api?
+        report.made_by_publisher?(organization) &&
+        report.made_through_publisher_api?
     end
 
     def report_destroyable_by_publisher?(report)
       publisher? &&
         report.packing? &&
-        report.sent_by_publisher?(organization) &&
-        report.packed_through_publisher_api?
+        report.made_by_publisher?(organization) &&
+        report.made_through_publisher_api?
     end
 
     def reports_listed_to_publisher
@@ -205,12 +215,12 @@ class ReportPolicy < ApplicationPolicy
       # Publisher can only list reports they packed through their API.
       # It excludes those packed though the web UI by their owned collectivities.
       #
-      # The scope `packed_through_publisher_api` is implied by `sent_by_publisher`
+      # The scope `packed_through_publisher_api` is implied by `made_by_publisher`
       # and will be redundant if added.
       #
       Report
         .all_kept
-        .sent_by_publisher(organization)
+        .made_by_publisher(organization)
     end
 
     def reports_destroyable_by_publisher
@@ -219,7 +229,7 @@ class ReportPolicy < ApplicationPolicy
       Report
         .kept
         .packing
-        .sent_by_publisher(organization)
+        .made_by_publisher(organization)
     end
 
     def reports_undiscardable_by_publisher
@@ -228,7 +238,7 @@ class ReportPolicy < ApplicationPolicy
       Report
         .discarded
         .packing
-        .sent_by_publisher(organization)
+        .made_by_publisher(organization)
     end
   end
 
@@ -238,8 +248,7 @@ class ReportPolicy < ApplicationPolicy
     def report_shown_to_dgfip?(report)
       # Discarded packages are not listed but are still accessible
       #
-      dgfip? &&
-        report.delivered?
+      dgfip? && report.transmitted?
     end
 
     def reports_listed_to_dgfip
@@ -247,7 +256,7 @@ class ReportPolicy < ApplicationPolicy
 
       Report
         .all_kept
-        .delivered
+        .transmitted
     end
   end
 
@@ -258,13 +267,13 @@ class ReportPolicy < ApplicationPolicy
       # Returned packages are not listed but are still accessible
       #
       ddfip_admin? &&
-        report.delivered? &&
+        report.transmitted? &&
         report.covered_by_ddfip?(organization)
     end
 
     def report_updatable_by_ddfip_admin?(report)
       ddfip_admin? &&
-        report.delivered? &&
+        report.transmitted? &&
         report.unreturned? &&
         report.covered_by_ddfip?(organization)
     end
@@ -274,7 +283,7 @@ class ReportPolicy < ApplicationPolicy
 
       Report
         .all_kept
-        .delivered
+        .transmitted
         .covered_by_ddfip(organization)
     end
   end

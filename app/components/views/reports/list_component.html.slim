@@ -3,24 +3,28 @@
     - datatable.with_pagination(@pagy, options: !nested?) if @pagy
 
     - datatable.with_selection do |selection|
+      - if allowed_to?(:create?, Transmission)
+        - selection.with_action "Tout transmettre", transmissions_path, method: :post, modal: true
+
       - if allowed_to?(:create?, Package)
         - selection.with_action "Tout regrouper", disabled: true
 
       - if allowed_to?(:destroy_all?, Report)
         - selection.with_action "Tout supprimer", url_for([:remove_all, @parent, :reports]), modal: true
 
-    - datatable.with_column(:status,   compact: true)                        { "Etat" }                if columns.include?(:status)
-    - datatable.with_column(:reference, **(@dashboard ? {} : {sort: true})) { "Reference" }           if columns.include?(:reference)
-    - datatable.with_column(:package)                                        { "Paquet" }              if columns.include?(:package)
-    - datatable.with_column(:collectivity)                                   { "Collectivité" }        if columns.include?(:collectivity)
-    - datatable.with_column(:priority, compact: true)                        { "Priorité" }            if columns.include?(:priority)
-    / - datatable.with_column(:office)                                         { "Guichet" }             if columns.include?(:office)
-    / - datatable.with_column(:workshop)                                       { "Dossier" }             if columns.include?(:workshop)
-    - datatable.with_column(:form_type)                                      { "Type de signalement" } if columns.include?(:form_type)
-    - datatable.with_column(:anomalies)                                      { "Objet" }               if columns.include?(:anomalies)
-    - datatable.with_column(:invariant)                                      { "Invariant" }           if columns.include?(:invariant)
-    - datatable.with_column(:adresse)                                        { "Adresse" }             if columns.include?(:adresse)
-    - datatable.with_column(:commune)                                        { "Commune" }             if columns.include?(:commune)
+    - datatable.with_column(:status,   compact: true)      { "Etat" }                if columns.include?(:status)
+    - datatable.with_column(:form_type)                    { "Type de signalement" } if columns.include?(:form_type)
+    - datatable.with_column(:invariant)                    { "Invariant" }           if columns.include?(:invariant)
+    - datatable.with_column(:adresse)                      { "Adresse" }             if columns.include?(:adresse)
+    - datatable.with_column(:commune)                      { "Commune" }             if columns.include?(:commune)
+    - datatable.with_column(:anomalies)                    { "Objet" }               if columns.include?(:anomalies)
+    - datatable.with_column(:priority, compact: true)      { "Priorité" }            if columns.include?(:priority)
+    - datatable.with_column(:reference, sort: !@dashboard) { "Reference" }           if columns.include?(:reference)
+    - datatable.with_column(:package)                      { "Paquet" }              if columns.include?(:package)
+    - datatable.with_column(:collectivity)                 { "Collectivité" }        if columns.include?(:collectivity)
+
+    / - datatable.with_column(:office)   { "Guichet" } if columns.include?(:office)
+    / - datatable.with_column(:workshop) { "Dossier" } if columns.include?(:workshop)
 
     - datatable.with_empty_message do
       - if params[:search]
@@ -32,26 +36,15 @@
       - if allowed_to?(:create?, Package) || allowed_to?(:destroy_all?, Report)
         - row.with_checkbox "Sélectionner ce signalement", described_by: :name
 
-      - if allowed_to?(:destroy?, report)
+      - if !@dashboard && allowed_to?(:destroy?, report)
         - row.with_action "Supprimer ce signalement", remove_report_path(report), icon: "trash", modal: true
 
-      - row.with_column(:reference) do
-        = authorized_link_to report
-
-      - row.with_column(:collectivity) do
-        = authorized_link_to report.collectivity
-
-      - row.with_column(:package) do
-        = authorized_link_to report.package
+      - row.with_column(:status) do
+        = report_badge(report)
 
       - row.with_column(:form_type) do
-        = t(report.form_type, scope: "enum.report_form_type")
-
-      - row.with_column(:anomalies) do
-        = short_list(report.anomalies, humanize: true) { |value| t(value, scope: "enum.anomalies") }
-
-      - row.with_column(:workshop) do
-        = report.workshop&.name
+        = authorized_link_to report do
+          = t(report.form_type, scope: "enum.report_form_type")
 
       - row.with_column(:invariant) do
         = report.situation_invariant
@@ -65,8 +58,20 @@
       - row.with_column(:commune) do
         = report.commune&.name
 
+      - row.with_column(:anomalies) do
+        = short_list(report.anomalies, humanize: true) { |value| t(value, scope: "enum.anomalies") }
+
       - row.with_column(:priority) do
         = priority_icon_component(report.priority)
 
-      - row.with_column(:status) do
-        = report_badge(report)
+      - row.with_column(:reference) do
+        = report.reference
+
+      - row.with_column(:collectivity) do
+        = authorized_link_to report.collectivity
+
+      - row.with_column(:package) do
+        = authorized_link_to report.package
+
+      - row.with_column(:workshop) do
+        = report.workshop&.name

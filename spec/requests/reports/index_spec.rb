@@ -25,14 +25,14 @@ RSpec.describe "ReportsController#index" do
 
   let!(:reports) do
     [
-      create(:report, :reported_through_web_ui, collectivity: collectivities[0], publisher: publisher),
-      create(:report, :reported_through_web_ui, collectivity: collectivities[1], publisher: publisher),
-      create(:report, :reported_through_api,    collectivity: collectivities[0], publisher: publisher),
-      create(:report, :transmitted_through_web_ui, collectivity: collectivities[0], publisher: publisher),
-      create(:report, :transmitted_through_web_ui, collectivity: collectivities[1], publisher: publisher),
-      create(:report, :transmitted_through_api,    collectivity: collectivities[0], publisher: publisher),
-      create(:report, :transmitted_through_api, :sandbox, collectivity: collectivities[0], publisher: publisher),
-      create(:report, :reported_through_web_ui, :discarded, collectivity: collectivities[0], publisher: publisher)
+      create(:report, :completed, :made_through_web_ui, collectivity: collectivities[0]),
+      create(:report, :completed, :made_through_web_ui, collectivity: collectivities[1]),
+      create(:report, :completed, :made_through_api,    collectivity: collectivities[0], publisher: publisher),
+      create(:report, :completed, :transmitted_through_web_ui, collectivity: collectivities[0]),
+      create(:report, :completed, :transmitted_through_web_ui, collectivity: collectivities[1]),
+      create(:report, :completed, :transmitted_through_api,    collectivity: collectivities[0], publisher: publisher),
+      create(:report, :completed, :transmitted_through_api, :sandbox, collectivity: collectivities[0], publisher: publisher),
+      create(:report, :completed, :made_through_web_ui, :discarded, collectivity: collectivities[0])
     ]
   end
 
@@ -60,14 +60,14 @@ RSpec.describe "ReportsController#index" do
 
         it "returns only accessible reports" do
           aggregate_failures do
-            expect(response.parsed_body).to     include(CGI.escape_html(reports[0].reference))
-            expect(response.parsed_body).not_to include(CGI.escape_html(reports[1].reference))
-            expect(response.parsed_body).not_to include(CGI.escape_html(reports[2].reference))
-            expect(response.parsed_body).to     include(CGI.escape_html(reports[3].reference))
-            expect(response.parsed_body).not_to include(CGI.escape_html(reports[4].reference))
-            expect(response.parsed_body).to     include(CGI.escape_html(reports[5].reference))
-            expect(response.parsed_body).not_to include(CGI.escape_html(reports[6].reference))
-            expect(response.parsed_body).not_to include(CGI.escape_html(reports[7].reference))
+            expect(response.parsed_body).to     include(dom_id(reports[0]))
+            expect(response.parsed_body).not_to include(dom_id(reports[1]))
+            expect(response.parsed_body).not_to include(dom_id(reports[2]))
+            expect(response.parsed_body).to     include(dom_id(reports[3]))
+            expect(response.parsed_body).not_to include(dom_id(reports[4]))
+            expect(response.parsed_body).to     include(dom_id(reports[5]))
+            expect(response.parsed_body).not_to include(dom_id(reports[6]))
+            expect(response.parsed_body).not_to include(dom_id(reports[7]))
           end
         end
       end
@@ -95,14 +95,14 @@ RSpec.describe "ReportsController#index" do
 
         it "returns only accessible reports" do
           aggregate_failures do
-            expect(response.parsed_body).not_to include(CGI.escape_html(reports[0].reference))
-            expect(response.parsed_body).not_to include(CGI.escape_html(reports[1].reference))
-            expect(response.parsed_body).to     include(CGI.escape_html(reports[2].reference))
-            expect(response.parsed_body).not_to include(CGI.escape_html(reports[3].reference))
-            expect(response.parsed_body).not_to include(CGI.escape_html(reports[4].reference))
-            expect(response.parsed_body).to     include(CGI.escape_html(reports[5].reference))
-            expect(response.parsed_body).to     include(CGI.escape_html(reports[6].reference))
-            expect(response.parsed_body).not_to include(CGI.escape_html(reports[7].reference))
+            expect(response.parsed_body).not_to include(dom_id(reports[0]))
+            expect(response.parsed_body).not_to include(dom_id(reports[1]))
+            expect(response.parsed_body).to     include(dom_id(reports[2]))
+            expect(response.parsed_body).not_to include(dom_id(reports[3]))
+            expect(response.parsed_body).not_to include(dom_id(reports[4]))
+            expect(response.parsed_body).to     include(dom_id(reports[5]))
+            expect(response.parsed_body).to     include(dom_id(reports[6]))
+            expect(response.parsed_body).not_to include(dom_id(reports[7]))
           end
         end
       end
@@ -112,9 +112,9 @@ RSpec.describe "ReportsController#index" do
       let(:ddfip) { create(:ddfip, departement: departement) }
       let(:reports) do
         [
-          create(:report, :reported_for_ddfip,   ddfip: ddfip, collectivity: collectivities[0], publisher: publisher),
-          create(:report, :transmitted_to_ddfip, ddfip: ddfip, collectivity: collectivities[0], publisher: publisher),
-          create(:report, :transmitted_to_ddfip, ddfip: ddfip, collectivity: collectivities[0], publisher: publisher, package_sandbox: true)
+          create(:report, :made_for_ddfip,       ddfip: ddfip, collectivity: collectivities[0]),
+          create(:report, :transmitted_to_ddfip, ddfip: ddfip, collectivity: collectivities[0]),
+          create(:report, :transmitted_to_ddfip, ddfip: ddfip, collectivity: collectivities[0], sandbox: true)
         ]
       end
 
@@ -127,9 +127,9 @@ RSpec.describe "ReportsController#index" do
 
         it "returns only accessible reports" do
           aggregate_failures do
-            expect(response.parsed_body).not_to include(CGI.escape_html(reports[0].reference))
-            expect(response.parsed_body).to     include(CGI.escape_html(reports[1].reference))
-            expect(response.parsed_body).not_to include(CGI.escape_html(reports[2].reference))
+            expect(response.parsed_body).not_to include(dom_id(reports[0]))
+            expect(response.parsed_body).to     include(dom_id(reports[1]))
+            expect(response.parsed_body).not_to include(dom_id(reports[2]))
           end
         end
       end
@@ -141,14 +141,13 @@ RSpec.describe "ReportsController#index" do
         attributes = {
           ddfip:        ddfip,
           collectivity: collectivities[0],
-          publisher:    publisher,
           form_type:    "evaluation_local_habitation"
         }
 
         [
-          create(:report, :reported_for_ddfip,        **attributes),
-          create(:report, :transmitted_to_ddfip,      **attributes),
-          create(:report, :assigned_by_ddfip, **attributes, package_sandbox: true),
+          create(:report, :made_for_ddfip, **attributes),
+          create(:report, :transmitted_to_ddfip, **attributes),
+          create(:report, :transmitted_to_ddfip, **attributes, sandbox: true),
           create(:report, :assigned_by_ddfip, **attributes),
           create(:report, :assigned_by_ddfip, **attributes, collectivity: collectivities[1]),
           create(:report, :assigned_by_ddfip, **attributes, form_type: "evaluation_local_professionnel")
@@ -170,12 +169,12 @@ RSpec.describe "ReportsController#index" do
 
         it "returns only accessible reports" do
           aggregate_failures do
-            expect(response.parsed_body).not_to include(CGI.escape_html(reports[0].reference))
-            expect(response.parsed_body).not_to include(CGI.escape_html(reports[1].reference))
-            expect(response.parsed_body).not_to include(CGI.escape_html(reports[2].reference))
-            expect(response.parsed_body).to     include(CGI.escape_html(reports[3].reference))
-            expect(response.parsed_body).not_to include(CGI.escape_html(reports[4].reference))
-            expect(response.parsed_body).not_to include(CGI.escape_html(reports[5].reference))
+            expect(response.parsed_body).not_to include(dom_id(reports[0]))
+            expect(response.parsed_body).not_to include(dom_id(reports[1]))
+            expect(response.parsed_body).not_to include(dom_id(reports[2]))
+            expect(response.parsed_body).to     include(dom_id(reports[3]))
+            expect(response.parsed_body).not_to include(dom_id(reports[4]))
+            expect(response.parsed_body).not_to include(dom_id(reports[5]))
           end
         end
       end
@@ -185,9 +184,9 @@ RSpec.describe "ReportsController#index" do
       let(:dgfip) { DGFIP.kept.first || create(:dgfip) }
       let(:reports) do
         [
-          create(:report, :reported_for_ddfip,   collectivity: collectivities[0], publisher: publisher),
-          create(:report, :transmitted_to_ddfip, collectivity: collectivities[0], publisher: publisher),
-          create(:report, :transmitted_to_ddfip, collectivity: collectivities[0], publisher: publisher, package_sandbox: true)
+          create(:report, :made_for_ddfip,       collectivity: collectivities[0]),
+          create(:report, :transmitted_to_ddfip, collectivity: collectivities[0]),
+          create(:report, :transmitted_to_ddfip, collectivity: collectivities[0], sandbox: true)
         ]
       end
 
@@ -200,9 +199,9 @@ RSpec.describe "ReportsController#index" do
 
         it "returns only accessible reports" do
           aggregate_failures do
-            expect(response.parsed_body).not_to include(CGI.escape_html(reports[0].reference))
-            expect(response.parsed_body).to     include(CGI.escape_html(reports[1].reference))
-            expect(response.parsed_body).not_to include(CGI.escape_html(reports[2].reference))
+            expect(response.parsed_body).not_to include(dom_id(reports[0]))
+            expect(response.parsed_body).to     include(dom_id(reports[1]))
+            expect(response.parsed_body).not_to include(dom_id(reports[2]))
           end
         end
       end
@@ -218,9 +217,9 @@ RSpec.describe "ReportsController#index" do
         }
 
         [
-          create(:report, :reported_for_ddfip,        **attributes),
-          create(:report, :transmitted_to_ddfip,      **attributes),
-          create(:report, :assigned_by_ddfip, **attributes, package_sandbox: true),
+          create(:report, :made_for_ddfip, **attributes),
+          create(:report, :transmitted_to_ddfip, **attributes),
+          create(:report, :transmitted_to_ddfip, **attributes, sandbox: true),
           create(:report, :assigned_by_ddfip, **attributes),
           create(:report, :assigned_by_ddfip, **attributes, collectivity: collectivities[1]),
           create(:report, :assigned_by_ddfip, **attributes, form_type: "evaluation_local_professionnel")
@@ -236,12 +235,12 @@ RSpec.describe "ReportsController#index" do
 
         it "returns only accessible reports" do
           aggregate_failures do
-            expect(response.parsed_body).not_to include(CGI.escape_html(reports[0].reference))
-            expect(response.parsed_body).to     include(CGI.escape_html(reports[1].reference))
-            expect(response.parsed_body).not_to include(CGI.escape_html(reports[2].reference))
-            expect(response.parsed_body).to     include(CGI.escape_html(reports[3].reference))
-            expect(response.parsed_body).to     include(CGI.escape_html(reports[4].reference))
-            expect(response.parsed_body).to     include(CGI.escape_html(reports[5].reference))
+            expect(response.parsed_body).not_to include(dom_id(reports[0]))
+            expect(response.parsed_body).to     include(dom_id(reports[1]))
+            expect(response.parsed_body).not_to include(dom_id(reports[2]))
+            expect(response.parsed_body).to     include(dom_id(reports[3]))
+            expect(response.parsed_body).to     include(dom_id(reports[4]))
+            expect(response.parsed_body).to     include(dom_id(reports[5]))
           end
         end
       end

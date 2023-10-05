@@ -1,0 +1,64 @@
+<%= template_modal_component(referrer: @referrer_path) do |template| %>
+  <% template.with_modal do |modal| %>
+    <% modal.with_header do %>
+      Transmission
+    <% end %>
+
+    <% modal.with_form(url: complete_transmissions_path, method: :post) do %>
+      <% if @reports.many? %>
+
+        <% if @transmissible_reports.many? %>
+          <p><b><%= @transmissible_reports.count %> signalements</b> ont été ajoutés à votre transmission.</p>
+        <% elsif @transmissible_reports.any? %>
+          <p><b><%= @transmissible_reports.count %> signalement</b> a été ajouté à votre transmission.</p>
+        <% end %>
+
+        <% if @intransmissible_count > 0 %>
+          <% if @intransmissible_count > 1 %>
+            <p class="mb-1"><b><%= @intransmissible_count %> signalements</b> n'ont pas pu être ajoutés à votre transmission :</p>
+            <ul class="list-disc mb-4 pl-5">
+              <% if @intransmissible_reports[:incomplete].many? %>
+                <li><b><%= @intransmissible_reports[:incomplete].count %></b> car ils sont <b>incomplets</b>.</li>
+              <% elsif @intransmissible_reports[:incomplete].any? %>
+                <li><b>1</b> car il est <b>incomplets</b>.</li>
+              <% end %>
+
+              <% if @intransmissible_reports[:transmitted].many? %>
+                <li><b><%= @intransmissible_reports[:transmitted].count %></b> car ils ont déjà <b>été transmis</b>.</li>
+              <% elsif @intransmissible_reports[:transmitted].any? %>
+                <li><b>1</b> car il a déjà <b>été transmis</b>.</li>
+              <% end %>
+            </ul>
+          <% else %>
+            <% if @intransmissible_reports[:incomplete].any? %>
+              <p><b>1 signalement</b> n'a pas pu être ajouté à votre transmission car il est <b>incomplet</b>.</p>
+            <% elsif @intransmissible_reports[:transmitted].any? %>
+              <p><b>1 signalement</b> n'a pas pu être ajouté à votre transmission car il a déjà <b>été transmis</b>.</p>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% else %>
+        <% if @transmissible_reports.any? %>
+          <p>Le signalement a été ajouté à la transmission.</p>
+        <% elsif @intransmissible_reports[:incomplete].any? %>
+          <p>Le signalement n'a pas pu être ajouté à la transmission car il est <b>incomplet</b>.</p>
+        <% elsif @intransmissible_reports[:transmitted].any? %>
+          <p>Le signalement n'a pas pu être ajouté à la transmission car il a déjà <b>été transmis</b>.</p>
+        <% end %>
+      <% end %>
+
+      <% if @transmission.reports.many? %>
+        <p>Votre transmission a actuellement <b><%= @transmission.reports.count %> signalements</b> en attente.</p>
+      <% elsif @transmission.reports.any? %>
+        <p>Votre transmission a actuellement <b>1 signalement</b> en attente.</p>
+      <% else %>
+        <p>Votre transmission n'a pas de signalement en attente.</p>
+      <% end %>
+    <% end %>
+
+    <% if @transmission.reports.any? %>
+      <% modal.with_submit_action "Transmettre immédiatement", autofocus: true %>
+      <% modal.with_close_action "Transmettre plus tard" %>
+    <% end %>
+  <% end %>
+<% end %>

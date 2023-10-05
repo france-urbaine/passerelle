@@ -28,7 +28,11 @@ RSpec.describe "Territories::DepartementsController#index" do
   end
 
   describe "responses" do
-    before { sign_in_as(:super_admin) }
+    # Create a publisher user to avoid creating a random user
+    # in one the expected departements or a similar departement name
+    # (Midi-Pyrénées, Hautes-Pyrénées, ...)
+    #
+    before { sign_in_as(:super_admin, :publisher) }
 
     context "when requesting HTML" do
       it { expect(response).to have_http_status(:success) }

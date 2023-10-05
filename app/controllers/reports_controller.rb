@@ -7,7 +7,8 @@ class ReportsController < ApplicationController
   before_action :better_view_on_parent, only: :index
 
   def index
-    @reports = build_and_authorize_scope
+    @transmission   = find_or_initialize_transmission
+    @reports        = build_and_authorize_scope
     @reports, @pagy = index_collection(@reports, nested: @parent)
   end
 
@@ -127,5 +128,14 @@ class ReportsController < ApplicationController
 
   def parent_path
     url_for(@parent) if @parent
+  end
+
+  def find_or_initialize_transmission
+    return unless current_user.organization.is_a?(Collectivity)
+
+    current_user.transmissions.find_or_create_by(
+      completed_at: nil,
+      collectivity: current_user.organization
+    )
   end
 end

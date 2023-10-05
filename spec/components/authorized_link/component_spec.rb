@@ -637,11 +637,14 @@ RSpec.describe AuthorizedLink::Component, type: :component do
       before { sign_in_as(organization: collectivity) }
 
       it "renders report's link" do
-        report = create(:report, collectivity: collectivity)
+        report = create(:report, :completed, collectivity: collectivity, form_type: "evaluation_local_habitation")
 
         render_inline described_class.new(report)
 
-        expect(page).to have_link(report.reference, href: "/signalements/#{report.id}")
+        expect(page).to have_link(
+          "Évaluation du local d'habitation #{report.situation_invariant}",
+          href: "/signalements/#{report.id}"
+        )
       end
 
       it "renders package's link" do

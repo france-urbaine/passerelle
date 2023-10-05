@@ -7,7 +7,7 @@
 #  id                                             :uuid             not null, primary key
 #  collectivity_id                                :uuid             not null
 #  publisher_id                                   :uuid
-#  package_id                                     :uuid             not null
+#  package_id                                     :uuid
 #  workshop_id                                    :uuid
 #  sibling_id                                     :string
 #  created_at                                     :datetime         not null
@@ -16,7 +16,7 @@
 #  rejected_at                                    :datetime
 #  debated_at                                     :datetime
 #  discarded_at                                   :datetime
-#  reference                                      :string           not null
+#  reference                                      :string
 #  form_type                                      :enum             not null
 #  anomalies                                      :enum             not null, is an Array
 #  priority                                       :enum             default("low"), not null
@@ -86,7 +86,6 @@
 #  proposition_date_achevement                    :string
 #  proposition_numero_permis                      :string
 #  proposition_nature_travaux                     :string
-#  completed_at                                   :datetime
 #  situation_nature_occupation                    :string
 #  situation_majoration_rs                        :boolean
 #  situation_annee_cfe                            :string
@@ -113,6 +112,9 @@
 #  proposition_chantier_longue_duree              :boolean
 #  proposition_code_naf                           :string
 #  proposition_date_debut_activite                :date
+#  transmission_id                                :uuid
+#  completed_at                                   :datetime
+#  sandbox                                        :boolean          default(FALSE), not null
 #
 # Indexes
 #
@@ -121,6 +123,7 @@
 #  index_reports_on_publisher_id     (publisher_id)
 #  index_reports_on_reference        (reference) UNIQUE
 #  index_reports_on_sibling_id       (sibling_id)
+#  index_reports_on_transmission_id  (transmission_id)
 #  index_reports_on_workshop_id      (workshop_id)
 #
 # Foreign Keys
@@ -128,18 +131,22 @@
 #  fk_rails_...  (collectivity_id => collectivities.id) ON DELETE => cascade
 #  fk_rails_...  (package_id => packages.id) ON DELETE => cascade
 #  fk_rails_...  (publisher_id => publishers.id) ON DELETE => cascade
+#  fk_rails_...  (transmission_id => transmissions.id)
 #  fk_rails_...  (workshop_id => workshops.id) ON DELETE => nullify
 #
 class Report < ApplicationRecord
   include States::ReportStates
+  include States::Sandbox
+  include States::MadeBy
 
   # Associations
   # ----------------------------------------------------------------------------
   belongs_to :collectivity
-  belongs_to :publisher, optional: true
-  belongs_to :package
-  belongs_to :workshop, optional: true
-  belongs_to :commune,  optional: true, primary_key: :code_insee, foreign_key: :code_insee, inverse_of: :reports
+  belongs_to :publisher,    optional: true
+  belongs_to :package,      optional: true
+  belongs_to :transmission, optional: true
+  belongs_to :workshop,     optional: true
+  belongs_to :commune,      optional: true, primary_key: :code_insee, foreign_key: :code_insee, inverse_of: :reports
 
   has_many :siblings, ->(report) { where.not(id: report.id) }, class_name: "Report", primary_key: :sibling_id, foreign_key: :sibling_id, inverse_of: false, dependent: false
 
@@ -193,7 +200,7 @@ class Report < ApplicationRecord
     "occupation_local_professionnel" => %w[occupation]
   }.freeze
 
-  validates :reference, presence: true, uniqueness: { unless: :skip_uniqueness_validation_of_reference? }
+  validates :reference, uniqueness: { unless: :skip_uniqueness_validation_of_reference?, allow_blank: true }
   validates :form_type, presence: true, inclusion: { in: FORM_TYPES, allow_blank: true }
   validates :anomalies, array: true
 
@@ -305,15 +312,12 @@ class Report < ApplicationRecord
 
   # Scopes
   # ----------------------------------------------------------------------------
-  scope :sandbox,             -> { joins(:package).merge(Package.unscoped.sandbox) }
-  scope :out_of_sandbox,      -> { joins(:package).merge(Package.unscoped.out_of_sandbox) }
-  scope :all_kept,            -> { joins(:package).merge(Package.unscoped.kept).kept }
-
-  scope :packed_through_publisher_api, -> { where.not(publisher_id: nil) }
-  scope :packed_through_web_ui,        -> { where(publisher_id: nil) }
-
-  scope :sent_by_collectivity, ->(collectivity) { where(collectivity: collectivity) }
-  scope :sent_by_publisher,    ->(publisher)    { where(publisher: publisher) }
+  scope :all_kept, lambda {
+    kept.left_outer_joins(:package).where(<<~SQL.squish)
+         "packages"."id" IS NULL
+      OR "packages"."discarded_at" IS NULL
+    SQL
+  }
 
   scope :covered_by_ddfip, lambda { |ddfip|
     if ddfip.is_a?(ActiveRecord::Relation)
@@ -335,6 +339,14 @@ class Report < ApplicationRecord
         .merge(OfficeCommune.where(office: office))
         .where(form_type: office.competences)
     end
+  }
+
+  scope :transmitted_or_made_through_web_ui, lambda {
+    left_outer_joins(:package).where(<<~SQL.squish)
+      "packages"."transmitted_at" IS NOT NULL
+      OR
+      "reports"."publisher_id" IS NULL
+    SQL
   }
 
   scope :search, lambda { |input|
@@ -359,28 +371,18 @@ class Report < ApplicationRecord
     self
   }
 
+  scope :order_by_last_examination_date, lambda {
+    order(Arel.sql(%{COALESCE("reports"."rejected_at", "reports"."approved_at", "reports"."debated_at") DESC}))
+  }
+
+  scope :order_by_last_transmission_date, lambda {
+    joins(:package).merge(Package.order(transmitted_at: :desc))
+  }
+
   # Predicates
   # ----------------------------------------------------------------------------
-  delegate :sandbox?, :out_of_sandbox?, to: :package, allow_nil: true
-
   def all_kept?
-    kept? && package&.kept?
-  end
-
-  def packed_through_publisher_api?
-    publisher_id? || (new_record? && publisher)
-  end
-
-  def packed_through_web_ui?
-    !packed_through_publisher_api?
-  end
-
-  def sent_by_collectivity?(collectivity)
-    (collectivity_id == collectivity.id) || (new_record? && collectivity == self.collectivity)
-  end
-
-  def sent_by_publisher?(publisher)
-    (publisher_id == publisher.id) || (new_record? && publisher == self.publisher)
+    kept? && (package.nil? || package.kept?)
   end
 
   def covered_by_ddfip?(ddfip)

@@ -54,7 +54,7 @@ module Matchers
         subscriber  = ActiveSupport::Notifications.subscribe("sql.active_record") do |_, _, _, _, payload|
           next if payload[:sql].match?(/FROM (pg_class|pg_attribute|pg_index)/)
 
-          sql_queries << payload[:sql]
+          sql_queries << payload[:sql].squish.gsub(/((?<=\()\s+|\s+(?=\)))/, "")
         end
 
         ActiveRecord::Base.connection.unprepared_statement(&)

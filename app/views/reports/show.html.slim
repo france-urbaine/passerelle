@@ -2,7 +2,10 @@
   = breadcrumbs_component do |breadcrumbs|
     - breadcrumbs.with_path "Echanges"
     - breadcrumbs.with_path "Signalements", reports_path
-    - breadcrumbs.with_path @report.reference
+    - breadcrumbs.with_path(render Views::Reports::ShowReportNameComponent.new(@report))
+
+    - if allowed_to?(:create?, Transmission) && allowed_to?(:transmit?, @report)
+      - breadcrumbs.with_action "Transmettre", transmissions_path, params: { ids: [@report.id] }, method: :post, icon: "cloud-arrow-up", modal: true, primary: true
 
     - if allowed_to?(:approve?, @report)
       - unless @report.approved?

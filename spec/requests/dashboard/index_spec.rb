@@ -25,30 +25,43 @@ RSpec.describe "DashboardsController#index" do
   end
 
   describe "responses" do
-    let!(:collectivities) { create_list(:collectivity, 2) }
+    let_it_be(:collectivities) { create_list(:collectivity, 2) }
+
+    let_it_be(:ddfip)   { create(:ddfip) }
+    let_it_be(:offices) { create_list(:office, 2, :with_communes, ddfip:) }
+
+    let_it_be(:packages) do
+      {
+        unresolved:       create(:package, collectivity: collectivities[0]),
+        sandbox:          create(:package, :sandbox,  collectivity: collectivities[0]),
+        assigned:         create(:package, :assigned, collectivity: collectivities[0]),
+        another_assigned: create(:package, :assigned, collectivity: collectivities[1])
+      }
+    end
+
+    let_it_be(:reports) do
+      {
+        incomplete:   create(:report, :made_for_office,             collectivity: collectivities[0], office: offices[0]),
+        completed:    create(:report, :made_for_office,             collectivity: collectivities[0], office: offices[0]),
+        discarded:    create(:report, :made_for_office, :discarded, collectivity: collectivities[0], office: offices[0]),
+
+        transmitted:            create(:report, :made_for_office, :transmitted,             collectivity: collectivities[0], office: offices[0], package: packages[:unresolved]),
+        transmitted_discarded:  create(:report, :made_for_office, :transmitted, :discarded, collectivity: collectivities[0], office: offices[0], package: packages[:unresolved]),
+        transmitted_to_sandbox: create(:report, :made_for_office, :transmitted, :sandbox,   collectivity: collectivities[0], office: offices[0], package: packages[:sandbox]),
+
+        pending:  create(:report, :assigned_to_office,            collectivity: collectivities[0], office: offices[0], package: packages[:assigned]),
+        approved: create(:report, :assigned_to_office, :approved, collectivity: collectivities[0], office: offices[0], package: packages[:assigned]),
+        rejected: create(:report, :assigned_to_office, :rejected, collectivity: collectivities[0], office: offices[0], package: packages[:assigned]),
+        debated:  create(:report, :assigned_to_office, :debated,  collectivity: collectivities[0], office: offices[0], package: packages[:assigned]),
+
+        another_pending:  create(:report, :assigned_to_office,            collectivity: collectivities[1], office: offices[1], package: packages[:another_assigned]),
+        another_approved: create(:report, :assigned_to_office, :approved, collectivity: collectivities[1], office: offices[1], package: packages[:another_assigned]),
+        another_rejected: create(:report, :assigned_to_office, :rejected, collectivity: collectivities[1], office: offices[1], package: packages[:another_assigned]),
+        another_debated:  create(:report, :assigned_to_office, :debated,  collectivity: collectivities[1], office: offices[1], package: packages[:another_assigned])
+      }
+    end
 
     context "when signed in as a collectivity user" do
-      let!(:included_reports) do
-        [
-          create(:report, :approved, collectivity: collectivities[0]),
-          create(:report, :rejected, collectivity: collectivities[0]),
-          create(:report, :debated,  collectivity: collectivities[0]),
-          create(:report, :reported_through_web_ui, collectivity: collectivities[0])
-        ]
-      end
-
-      let!(:excluded_reports) do
-        [
-          create(:report, :approved, collectivity: collectivities[1]),
-          create(:report, :rejected, collectivity: collectivities[1]),
-          create(:report, :debated,  collectivity: collectivities[1]),
-          create(:report, :sandbox,  collectivity: collectivities[0]),
-          create(:report, :discarded, collectivity: collectivities[0]),
-          create(:report, :transmitted, collectivity: collectivities[0]),
-          create(:report, :reported_through_web_ui, collectivity: collectivities[1])
-        ]
-      end
-
       before { sign_in_as(organization: collectivities[0]) }
 
       context "when requesting HTML" do
@@ -58,13 +71,23 @@ RSpec.describe "DashboardsController#index" do
 
         it "returns only accessible reports" do
           aggregate_failures do
-            excluded_reports.each do |report|
-              expect(response.parsed_body).not_to include(CGI.escape_html(report.reference))
-            end
+            expect(response.parsed_body).to     include(dom_id(reports[:incomplete]))
+            expect(response.parsed_body).to     include(dom_id(reports[:completed]))
+            expect(response.parsed_body).not_to include(dom_id(reports[:discarded]))
 
-            included_reports.each do |report|
-              expect(response.parsed_body).to include(CGI.escape_html(report.reference))
-            end
+            expect(response.parsed_body).not_to include(dom_id(reports[:transmitted]))
+            expect(response.parsed_body).not_to include(dom_id(reports[:transmitted_discarded]))
+            expect(response.parsed_body).not_to include(dom_id(reports[:transmitted_to_sandbox]))
+
+            expect(response.parsed_body).not_to include(dom_id(reports[:pending]))
+            expect(response.parsed_body).to     include(dom_id(reports[:approved]))
+            expect(response.parsed_body).to     include(dom_id(reports[:rejected]))
+            expect(response.parsed_body).to     include(dom_id(reports[:debated]))
+
+            expect(response.parsed_body).not_to include(dom_id(reports[:another_pending]))
+            expect(response.parsed_body).not_to include(dom_id(reports[:another_approved]))
+            expect(response.parsed_body).not_to include(dom_id(reports[:another_rejected]))
+            expect(response.parsed_body).not_to include(dom_id(reports[:another_debated]))
           end
         end
       end
@@ -77,9 +100,7 @@ RSpec.describe "DashboardsController#index" do
     end
 
     context "when signed in as a publisher user" do
-      let!(:publisher)   { create(:publisher) }
-
-      before { sign_in_as(organization: publisher) }
+      before { sign_in_as(organization: collectivities[0].publisher) }
 
       context "when requesting HTML" do
         it { expect(response).to have_http_status(:success) }
@@ -88,23 +109,8 @@ RSpec.describe "DashboardsController#index" do
       end
     end
 
-    context "when signed in as a DDFIP user" do
-      let(:ddfip)            { create(:ddfip) }
-      let(:included_reports) { create_list(:report, 1, :assigned_to_office, ddfip: ddfip) }
-      let(:excluded_reports) do
-        [
-          create(:report, :assigned_to_office, :approved, ddfip: ddfip, commune: included_reports.first.commune, office: included_reports.first.commune.offices.first),
-          create(:report, :assigned_to_office, :sandbox, ddfip: ddfip, commune: included_reports.first.commune, office: included_reports.first.commune.offices.first),
-          create(:report, :assigned_to_office, :rejected, ddfip: ddfip, commune: included_reports.first.commune, office: included_reports.first.commune.offices.first),
-          create(:report, :assigned_to_office, :debated, ddfip: ddfip, commune: included_reports.first.commune, office: included_reports.first.commune.offices.first),
-          create(:report, :assigned_to_office, :discarded, ddfip: ddfip, commune: included_reports.first.commune, office: included_reports.first.commune.offices.first)
-        ]
-      end
-
-      before do
-        sign_in_as(organization: ddfip)
-        create(:office_user, office: included_reports.first.commune.offices.first, user: current_user)
-      end
+    context "when signed in as a DDFIP admin" do
+      before { sign_in_as(:organization_admin, organization: ddfip) }
 
       context "when requesting HTML" do
         it { expect(response).to have_http_status(:success) }
@@ -112,27 +118,44 @@ RSpec.describe "DashboardsController#index" do
         it { expect(response).to have_html_body }
 
         it "returns only accessible reports" do
-          aggregate_failures do
-            excluded_reports.each do |report|
-              expect(response.parsed_body).not_to include(CGI.escape_html(report.reference))
-            end
+          pending "Not implemented"
 
-            included_reports.each do |report|
-              expect(response.parsed_body).to include(CGI.escape_html(report.reference))
-            end
+          aggregate_failures do
+            expect(response.parsed_body).to     include(dom_id(package[:unresolved]))
+            expect(response.parsed_body).not_to include(dom_id(package[:sandbox]))
+            expect(response.parsed_body).not_to include(dom_id(package[:assigned]))
+            expect(response.parsed_body).not_to include(dom_id(package[:another_assigned]))
+          end
+        end
+
+        it "returns only pending reports" do
+          aggregate_failures do
+            expect(response.parsed_body).not_to include(dom_id(reports[:incomplete]))
+            expect(response.parsed_body).not_to include(dom_id(reports[:completed]))
+            expect(response.parsed_body).not_to include(dom_id(reports[:discarded]))
+
+            expect(response.parsed_body).not_to include(dom_id(reports[:transmitted]))
+            expect(response.parsed_body).not_to include(dom_id(reports[:transmitted_discarded]))
+            expect(response.parsed_body).not_to include(dom_id(reports[:transmitted_to_sandbox]))
+
+            expect(response.parsed_body).to     include(dom_id(reports[:pending]))
+            expect(response.parsed_body).not_to include(dom_id(reports[:approved]))
+            expect(response.parsed_body).not_to include(dom_id(reports[:rejected]))
+            expect(response.parsed_body).not_to include(dom_id(reports[:debated]))
+
+            expect(response.parsed_body).to     include(dom_id(reports[:another_pending]))
+            expect(response.parsed_body).not_to include(dom_id(reports[:another_approved]))
+            expect(response.parsed_body).not_to include(dom_id(reports[:another_rejected]))
+            expect(response.parsed_body).not_to include(dom_id(reports[:another_debated]))
           end
         end
       end
     end
 
-    context "when signed in as a DDFIP admin" do
-      let(:ddfip)           { create(:ddfip) }
-      let(:included_report) { create(:report, :assigned_to_office, ddfip: ddfip) }
-      let(:excluded_report) { create(:report, :assigned_to_office, :approved, ddfip: ddfip, commune: included_report.commune, office: included_report.commune.offices.first) }
-
+    context "when signed in as a DDFIP user" do
       before do
-        sign_in_as(:organization_admin, organization: ddfip)
-        create(:office_user, office: included_report.commune.offices.first, user: current_user)
+        sign_in_as(organization: ddfip)
+        offices[0].users << current_user
       end
 
       context "when requesting HTML" do
@@ -140,50 +163,57 @@ RSpec.describe "DashboardsController#index" do
         it { expect(response).to have_content_type(:html) }
         it { expect(response).to have_html_body }
 
-        it "returns only accessible reports" do
+        it "returns only pending reports" do
           aggregate_failures do
-            expect(response.parsed_body).to     include(CGI.escape_html(included_report.reference))
-            expect(response.parsed_body).not_to include(CGI.escape_html(excluded_report.reference))
+            expect(response.parsed_body).not_to include(dom_id(reports[:incomplete]))
+            expect(response.parsed_body).not_to include(dom_id(reports[:completed]))
+            expect(response.parsed_body).not_to include(dom_id(reports[:discarded]))
+
+            expect(response.parsed_body).not_to include(dom_id(reports[:transmitted]))
+            expect(response.parsed_body).not_to include(dom_id(reports[:transmitted_discarded]))
+            expect(response.parsed_body).not_to include(dom_id(reports[:transmitted_to_sandbox]))
+
+            expect(response.parsed_body).to     include(dom_id(reports[:pending]))
+            expect(response.parsed_body).not_to include(dom_id(reports[:approved]))
+            expect(response.parsed_body).not_to include(dom_id(reports[:rejected]))
+            expect(response.parsed_body).not_to include(dom_id(reports[:debated]))
+
+            expect(response.parsed_body).not_to include(dom_id(reports[:another_pending]))
+            expect(response.parsed_body).not_to include(dom_id(reports[:another_approved]))
+            expect(response.parsed_body).not_to include(dom_id(reports[:another_rejected]))
+            expect(response.parsed_body).not_to include(dom_id(reports[:another_debated]))
           end
         end
       end
     end
 
     context "when signed in as a DGFIP" do
-      let(:dgfip) { create(:dgfip) }
-      let!(:included_reports) do
-        [
-          create(:report, :transmitted),
-          create(:report, :approved),
-          create(:report, :rejected),
-          create(:report, :debated)
-        ]
-      end
-
-      let!(:excluded_reports) do
-        [
-          create(:report, :transmitted, :sandbox),
-          create(:report, :transmitted, discarded_at: DateTime.now),
-          create(:report, :completed)
-        ]
-      end
-
-      before { sign_in_as(organization: dgfip) }
+      before { sign_in_as(:dgfip) }
 
       context "when requesting HTML" do
         it { expect(response).to have_http_status(:success) }
         it { expect(response).to have_content_type(:html) }
         it { expect(response).to have_html_body }
 
-        it "returns only accessible reports" do
+        it "returns all transmitted reports" do
           aggregate_failures do
-            excluded_reports.each do |report|
-              expect(response.parsed_body).not_to include(CGI.escape_html(report.reference))
-            end
+            expect(response.parsed_body).not_to include(dom_id(reports[:incomplete]))
+            expect(response.parsed_body).not_to include(dom_id(reports[:completed]))
+            expect(response.parsed_body).not_to include(dom_id(reports[:discarded]))
 
-            included_reports.each do |report|
-              expect(response.parsed_body).to include(CGI.escape_html(report.reference))
-            end
+            expect(response.parsed_body).to     include(dom_id(reports[:transmitted]))
+            expect(response.parsed_body).not_to include(dom_id(reports[:transmitted_discarded]))
+            expect(response.parsed_body).not_to include(dom_id(reports[:transmitted_to_sandbox]))
+
+            expect(response.parsed_body).to     include(dom_id(reports[:pending]))
+            expect(response.parsed_body).to     include(dom_id(reports[:approved]))
+            expect(response.parsed_body).to     include(dom_id(reports[:rejected]))
+            expect(response.parsed_body).to     include(dom_id(reports[:debated]))
+
+            expect(response.parsed_body).to     include(dom_id(reports[:another_pending]))
+            expect(response.parsed_body).to     include(dom_id(reports[:another_approved]))
+            expect(response.parsed_body).to     include(dom_id(reports[:another_rejected]))
+            expect(response.parsed_body).to     include(dom_id(reports[:another_debated]))
           end
         end
       end

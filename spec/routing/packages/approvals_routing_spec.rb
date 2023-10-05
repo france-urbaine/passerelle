@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Packages::TransmissionsController do
+RSpec.describe Packages::ApprovalsController do
   it { expect(get:    "/paquets/9c6c00c4-0784-4ef8-8978-b1e0246882a7/approval").to route_to("packages/approvals#show", package_id: "9c6c00c4-0784-4ef8-8978-b1e0246882a7") }
   it { expect(post:   "/paquets/9c6c00c4-0784-4ef8-8978-b1e0246882a7/approval").to be_unroutable }
   it { expect(patch:  "/paquets/9c6c00c4-0784-4ef8-8978-b1e0246882a7/approval").to route_to("packages/approvals#update", package_id: "9c6c00c4-0784-4ef8-8978-b1e0246882a7") }

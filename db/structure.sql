@@ -258,12 +258,12 @@ CREATE TABLE public.ddfips (
     contact_phone character varying,
     domain_restriction character varying,
     allow_2fa_via_email boolean DEFAULT false NOT NULL,
-    reports_count integer DEFAULT 0 NOT NULL,
-    reports_approved_count integer DEFAULT 0 NOT NULL,
-    reports_rejected_count integer DEFAULT 0 NOT NULL,
-    reports_debated_count integer DEFAULT 0 NOT NULL,
     auto_assign_packages boolean DEFAULT false NOT NULL,
     reports_pending_count integer DEFAULT 0 NOT NULL,
+    reports_debated_count integer DEFAULT 0 NOT NULL,
+    reports_rejected_count integer DEFAULT 0 NOT NULL,
+    reports_approved_count integer DEFAULT 0 NOT NULL,
+    reports_count integer DEFAULT 0 NOT NULL,
     CONSTRAINT collectivities_count_check CHECK ((collectivities_count >= 0)),
     CONSTRAINT offices_count_check CHECK ((offices_count >= 0)),
     CONSTRAINT users_count_check CHECK ((users_count >= 0))
@@ -618,11 +618,11 @@ CREATE TABLE public.offices (
     discarded_at timestamp(6) without time zone,
     users_count integer DEFAULT 0 NOT NULL,
     communes_count integer DEFAULT 0 NOT NULL,
-    reports_count integer DEFAULT 0 NOT NULL,
-    reports_approved_count integer DEFAULT 0 NOT NULL,
-    reports_rejected_count integer DEFAULT 0 NOT NULL,
+    reports_pending_count integer DEFAULT 0 NOT NULL,
     reports_debated_count integer DEFAULT 0 NOT NULL,
-    reports_pending_count integer DEFAULT 0 NOT NULL
+    reports_rejected_count integer DEFAULT 0 NOT NULL,
+    reports_approved_count integer DEFAULT 0 NOT NULL,
+    reports_count integer DEFAULT 0 NOT NULL
 );
 
 
@@ -869,15 +869,15 @@ CREATE TABLE public.collectivities (
     users_count integer DEFAULT 0 NOT NULL,
     domain_restriction character varying,
     allow_2fa_via_email boolean DEFAULT false NOT NULL,
-    reports_transmitted_count integer DEFAULT 0 NOT NULL,
-    reports_approved_count integer DEFAULT 0 NOT NULL,
-    reports_rejected_count integer DEFAULT 0 NOT NULL,
-    reports_debated_count integer DEFAULT 0 NOT NULL,
-    packages_transmitted_count integer DEFAULT 0 NOT NULL,
-    packages_assigned_count integer DEFAULT 0 NOT NULL,
-    packages_returned_count integer DEFAULT 0 NOT NULL,
     allow_publisher_management boolean DEFAULT false NOT NULL,
+    packages_returned_count integer DEFAULT 0 NOT NULL,
+    packages_assigned_count integer DEFAULT 0 NOT NULL,
+    packages_transmitted_count integer DEFAULT 0 NOT NULL,
     reports_packing_count integer DEFAULT 0 NOT NULL,
+    reports_debated_count integer DEFAULT 0 NOT NULL,
+    reports_rejected_count integer DEFAULT 0 NOT NULL,
+    reports_approved_count integer DEFAULT 0 NOT NULL,
+    reports_transmitted_count integer DEFAULT 0 NOT NULL,
     CONSTRAINT users_count_check CHECK ((users_count >= 0))
 );
 
@@ -1073,9 +1073,9 @@ CREATE TABLE public.dgfips (
     updated_at timestamp(6) without time zone NOT NULL,
     discarded_at timestamp(6) without time zone,
     users_count integer DEFAULT 0 NOT NULL,
-    reports_delivered_count integer DEFAULT 0 NOT NULL,
-    reports_approved_count integer DEFAULT 0 NOT NULL,
     reports_rejected_count integer DEFAULT 0 NOT NULL,
+    reports_approved_count integer DEFAULT 0 NOT NULL,
+    reports_delivered_count integer DEFAULT 0 NOT NULL,
     CONSTRAINT users_count_check CHECK ((users_count >= 0))
 );
 
@@ -1143,18 +1143,17 @@ CREATE TABLE public.packages (
     form_type public.form_type NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
-    transmitted_at timestamp(6) without time zone,
+    transmitted_at timestamp(6) without time zone NOT NULL,
     assigned_at timestamp(6) without time zone,
     returned_at timestamp(6) without time zone,
     discarded_at timestamp(6) without time zone,
     due_on date,
     reports_count integer DEFAULT 0 NOT NULL,
-    reports_completed_count integer DEFAULT 0 NOT NULL,
     reports_approved_count integer DEFAULT 0 NOT NULL,
     reports_rejected_count integer DEFAULT 0 NOT NULL,
     reports_debated_count integer DEFAULT 0 NOT NULL,
     sandbox boolean DEFAULT false NOT NULL,
-    completed_at timestamp(6) without time zone
+    transmission_id uuid
 );
 
 
@@ -1195,25 +1194,6 @@ CREATE FUNCTION public.get_reports_approved_count_in_publishers(publishers publi
         AND      "packages"."sandbox" = FALSE
         AND      "packages"."transmitted_at" IS NOT NULL
         AND      "packages"."discarded_at" IS NULL
-    );
-  END;
-$$;
-
-
---
--- Name: get_reports_completed_count_in_packages(public.packages); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION public.get_reports_completed_count_in_packages(packages public.packages) RETURNS integer
-    LANGUAGE plpgsql
-    AS $$
-  BEGIN
-    RETURN (
-      SELECT COUNT(*)
-      FROM   "reports"
-      WHERE  "reports"."package_id" = packages."id"
-        AND  "reports"."discarded_at" IS NULL
-        AND  "reports"."completed_at" IS NOT NULL
     );
   END;
 $$;
@@ -1972,7 +1952,6 @@ CREATE FUNCTION public.reset_all_packages_counters() RETURNS integer
   BEGIN
     UPDATE "packages"
     SET    "reports_count"           = get_reports_count_in_packages("packages".*),
-           "reports_completed_count" = get_reports_completed_count_in_packages("packages".*),
            "reports_approved_count"  = get_reports_approved_count_in_packages("packages".*),
            "reports_rejected_count"  = get_reports_rejected_count_in_packages("packages".*),
            "reports_debated_count"   = get_reports_debated_count_in_packages("packages".*);
@@ -2568,24 +2547,6 @@ CREATE FUNCTION public.trigger_packages_changes() RETURNS trigger
     AS $$
   BEGIN
 
-    -- Reset all completed
-    -- * on creation
-    -- * when reports_count or reports_completed_count changed
-
-    IF (TG_OP = 'INSERT')
-    OR (TG_OP = 'UPDATE' AND NEW."reports_count" <> OLD."reports_count")
-    OR (TG_OP = 'UPDATE' AND NEW."reports_completed_count" <> OLD."reports_completed_count")
-    THEN
-
-      UPDATE "packages"
-      SET "completed_at" = CASE
-        WHEN (NEW."reports_count" = NEW."reports_completed_count") AND NEW."reports_count" <> 0 THEN CURRENT_TIMESTAMP
-        ELSE NULL
-      END
-      WHERE  "packages"."id" IN (NEW."id", OLD."id");
-
-    END IF;
-
     -- Reset all packages and reports counts on publishers, collectivities, ddfips, dgfips & offices
     -- * on creation
     -- * on deletion
@@ -2675,18 +2636,18 @@ CREATE FUNCTION public.trigger_reports_changes() RETURNS trigger
     AS $$
   BEGIN
 
-    -- Reset all reports counts on packages
+    -- Reset all reports counts in packages
     -- * on creation
     -- * on deletion
     -- * when package_id changed
-    -- * when completed changed
+    -- * when package_id changed from NULL
+    -- * when package_id changed to NULL
     -- * when (approved_at|rejected_at|debated_at|discarded_at) changed from NULL
     -- * when (approved_at|rejected_at|debated_at|discarded_at) changed to NULL
 
     IF (TG_OP = 'INSERT')
     OR (TG_OP = 'DELETE')
-    OR (TG_OP = 'UPDATE' AND NEW."package_id" <> OLD."package_id")
-    OR (TG_OP = 'UPDATE' AND NEW."completed_at" IS DISTINCT FROM OLD."completed_at")
+    OR (TG_OP = 'UPDATE' AND NEW."package_id" IS DISTINCT FROM OLD."package_id")
     OR (TG_OP = 'UPDATE' AND (NEW."approved_at" IS NULL) <> (OLD."approved_at" IS NULL))
     OR (TG_OP = 'UPDATE' AND (NEW."rejected_at" IS NULL) <> (OLD."rejected_at" IS NULL))
     OR (TG_OP = 'UPDATE' AND (NEW."debated_at" IS NULL) <> (OLD."debated_at" IS NULL))
@@ -2695,7 +2656,6 @@ CREATE FUNCTION public.trigger_reports_changes() RETURNS trigger
 
       UPDATE "packages"
       SET    "reports_count"           = get_reports_count_in_packages("packages".*),
-             "reports_completed_count" = get_reports_completed_count_in_packages("packages".*),
              "reports_approved_count"  = get_reports_approved_count_in_packages("packages".*),
              "reports_rejected_count"  = get_reports_rejected_count_in_packages("packages".*),
              "reports_debated_count"   = get_reports_debated_count_in_packages("packages".*)
@@ -2714,7 +2674,8 @@ CREATE FUNCTION public.trigger_reports_changes() RETURNS trigger
 
     IF (TG_OP = 'INSERT')
     OR (TG_OP = 'DELETE')
-    OR (TG_OP = 'UPDATE' AND ((NEW."publisher_id" IS NULL) <> (OLD."publisher_id" IS NULL) OR (NEW."publisher_id" <> OLD."publisher_id")))
+    OR (TG_OP = 'UPDATE' AND NEW."publisher_id" IS DISTINCT FROM OLD."publisher_id")
+    OR (TG_OP = 'UPDATE' AND (NEW."package_id" IS NULL) <> (OLD."package_id" IS NULL))
     OR (TG_OP = 'UPDATE' AND (NEW."approved_at" IS NULL) <> (OLD."approved_at" IS NULL))
     OR (TG_OP = 'UPDATE' AND (NEW."rejected_at" IS NULL) <> (OLD."rejected_at" IS NULL))
     OR (TG_OP = 'UPDATE' AND (NEW."debated_at" IS NULL) <> (OLD."debated_at" IS NULL))
@@ -2728,6 +2689,26 @@ CREATE FUNCTION public.trigger_reports_changes() RETURNS trigger
              "reports_debated_count"     = get_reports_debated_count_in_publishers("publishers".*)
       WHERE  "publishers"."id" IN (NEW."publisher_id", OLD."publisher_id");
 
+    END IF;
+
+    -- Reset all reports counts in collectivities
+    -- * on creation
+    -- * on deletion
+    -- * when package_id changed from NULL
+    -- * when package_id changed to NULL
+    -- * when (completed_at|approved_at|rejected_at|debated_at|discarded_at) changed from NULL
+    -- * when (completed_at|approved_at|rejected_at|debated_at|discarded_at) changed to NULL
+
+    IF (TG_OP = 'INSERT')
+    OR (TG_OP = 'DELETE')
+    OR (TG_OP = 'UPDATE' AND (NEW."package_id" IS NULL) <> (OLD."package_id" IS NULL))
+    OR (TG_OP = 'UPDATE' AND (NEW."completed_at" IS NULL) <> (OLD."completed_at" IS NULL))
+    OR (TG_OP = 'UPDATE' AND (NEW."approved_at" IS NULL) <> (OLD."approved_at" IS NULL))
+    OR (TG_OP = 'UPDATE' AND (NEW."rejected_at" IS NULL) <> (OLD."rejected_at" IS NULL))
+    OR (TG_OP = 'UPDATE' AND (NEW."debated_at" IS NULL) <> (OLD."debated_at" IS NULL))
+    OR (TG_OP = 'UPDATE' AND (NEW."discarded_at" IS NULL) <> (OLD."discarded_at" IS NULL))
+    THEN
+
       UPDATE "collectivities"
       SET    "reports_transmitted_count" = get_reports_transmitted_count_in_collectivities("collectivities".*),
              "reports_approved_count"    = get_reports_approved_count_in_collectivities("collectivities".*),
@@ -2735,6 +2716,25 @@ CREATE FUNCTION public.trigger_reports_changes() RETURNS trigger
              "reports_debated_count"     = get_reports_debated_count_in_collectivities("collectivities".*),
              "reports_packing_count"     = get_reports_packing_count_in_collectivities("collectivities".*)
       WHERE  "collectivities"."id" IN (NEW."collectivity_id", OLD."collectivity_id");
+
+    END IF;
+
+    -- Reset all reports counts in ddfips &offices
+    -- * on creation
+    -- * on deletion
+    -- * when package_id changed from NULL
+    -- * when package_id changed to NULL
+    -- * when (approved_at|rejected_at|debated_at|discarded_at) changed from NULL
+    -- * when (approved_at|rejected_at|debated_at|discarded_at) changed to NULL
+
+    IF (TG_OP = 'INSERT')
+    OR (TG_OP = 'DELETE')
+    OR (TG_OP = 'UPDATE' AND (NEW."package_id" IS NULL) <> (OLD."package_id" IS NULL))
+    OR (TG_OP = 'UPDATE' AND (NEW."approved_at" IS NULL) <> (OLD."approved_at" IS NULL))
+    OR (TG_OP = 'UPDATE' AND (NEW."rejected_at" IS NULL) <> (OLD."rejected_at" IS NULL))
+    OR (TG_OP = 'UPDATE' AND (NEW."debated_at" IS NULL) <> (OLD."debated_at" IS NULL))
+    OR (TG_OP = 'UPDATE' AND (NEW."discarded_at" IS NULL) <> (OLD."discarded_at" IS NULL))
+    THEN
 
       UPDATE "ddfips"
       SET    "reports_count"          = get_reports_count_in_ddfips("ddfips".*),
@@ -2745,11 +2745,6 @@ CREATE FUNCTION public.trigger_reports_changes() RETURNS trigger
       WHERE  "ddfips"."code_departement" IN (SELECT "communes"."code_departement" FROM "communes" WHERE "communes"."code_insee" = NEW."code_insee")
          OR  "ddfips"."code_departement" IN (SELECT "communes"."code_departement" FROM "communes" WHERE "communes"."code_insee" = OLD."code_insee" );
 
-      UPDATE "dgfips"
-      SET    "reports_delivered_count" = get_reports_delivered_count_in_dgfips("dgfips".*),
-             "reports_approved_count"  = get_reports_approved_count_in_dgfips("dgfips".*),
-             "reports_rejected_count"  = get_reports_rejected_count_in_dgfips("dgfips".*);
-
       UPDATE "offices"
       SET    "reports_count"          = get_reports_count_in_offices("offices".*),
              "reports_approved_count" = get_reports_approved_count_in_offices("offices".*),
@@ -2758,6 +2753,30 @@ CREATE FUNCTION public.trigger_reports_changes() RETURNS trigger
              "reports_pending_count"  = get_reports_pending_count_in_offices("offices".*)
       WHERE  "offices"."id" IN (SELECT "office_communes"."office_id" FROM "office_communes" WHERE "office_communes"."code_insee" = NEW."code_insee")
          OR  "offices"."id" IN (SELECT "office_communes"."office_id" FROM "office_communes" WHERE "office_communes"."code_insee" = OLD."code_insee");
+
+    END IF;
+
+    -- Reset all reports counts in dgfips
+    -- * on creation
+    -- * on deletion
+    -- * when package_id changed from NULL
+    -- * when package_id changed to NULL
+    -- * when (approved_at|rejected_at|discarded_at) changed from NULL
+    -- * when (approved_at|rejected_at|discarded_at) changed to NULL
+
+    IF (TG_OP = 'INSERT')
+    OR (TG_OP = 'DELETE')
+    OR (TG_OP = 'UPDATE' AND (NEW."package_id" IS NULL) <> (OLD."package_id" IS NULL))
+    OR (TG_OP = 'UPDATE' AND (NEW."approved_at" IS NULL) <> (OLD."approved_at" IS NULL))
+    OR (TG_OP = 'UPDATE' AND (NEW."rejected_at" IS NULL) <> (OLD."rejected_at" IS NULL))
+    OR (TG_OP = 'UPDATE' AND (NEW."discarded_at" IS NULL) <> (OLD."discarded_at" IS NULL))
+    THEN
+
+      UPDATE "dgfips"
+      SET    "reports_delivered_count" = get_reports_delivered_count_in_dgfips("dgfips".*),
+             "reports_approved_count"  = get_reports_approved_count_in_dgfips("dgfips".*),
+             "reports_rejected_count"  = get_reports_rejected_count_in_dgfips("dgfips".*);
+
     END IF;
 
     -- result is ignored since this is an AFTER trigger
@@ -2983,7 +3002,7 @@ CREATE TABLE public.reports (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
     collectivity_id uuid NOT NULL,
     publisher_id uuid,
-    package_id uuid NOT NULL,
+    package_id uuid,
     workshop_id uuid,
     sibling_id character varying,
     created_at timestamp(6) without time zone NOT NULL,
@@ -2992,7 +3011,7 @@ CREATE TABLE public.reports (
     rejected_at timestamp(6) without time zone,
     debated_at timestamp(6) without time zone,
     discarded_at timestamp(6) without time zone,
-    reference character varying NOT NULL,
+    reference character varying,
     form_type public.form_type NOT NULL,
     anomalies public.anomaly[] NOT NULL,
     priority public.priority DEFAULT 'low'::public.priority NOT NULL,
@@ -3062,7 +3081,6 @@ CREATE TABLE public.reports (
     proposition_date_achevement character varying,
     proposition_numero_permis character varying,
     proposition_nature_travaux character varying,
-    completed_at timestamp(6) without time zone,
     situation_nature_occupation character varying,
     situation_majoration_rs boolean,
     situation_annee_cfe character varying,
@@ -3088,7 +3106,10 @@ CREATE TABLE public.reports (
     proposition_etablissement_principal boolean,
     proposition_chantier_longue_duree boolean,
     proposition_code_naf character varying,
-    proposition_date_debut_activite date
+    proposition_date_debut_activite date,
+    transmission_id uuid,
+    completed_at timestamp(6) without time zone,
+    sandbox boolean DEFAULT false NOT NULL
 );
 
 
@@ -3098,6 +3119,23 @@ CREATE TABLE public.reports (
 
 CREATE TABLE public.schema_migrations (
     version character varying NOT NULL
+);
+
+
+--
+-- Name: transmissions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.transmissions (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    user_id uuid,
+    publisher_id uuid,
+    collectivity_id uuid NOT NULL,
+    oauth_application_id uuid,
+    completed_at timestamp(6) without time zone,
+    sandbox boolean DEFAULT false NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
 );
 
 
@@ -3290,6 +3328,14 @@ ALTER TABLE ONLY public.reports
 
 ALTER TABLE ONLY public.schema_migrations
     ADD CONSTRAINT schema_migrations_pkey PRIMARY KEY (version);
+
+
+--
+-- Name: transmissions transmissions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.transmissions
+    ADD CONSTRAINT transmissions_pkey PRIMARY KEY (id);
 
 
 --
@@ -3610,6 +3656,13 @@ CREATE UNIQUE INDEX index_packages_on_reference ON public.packages USING btree (
 
 
 --
+-- Name: index_packages_on_transmission_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_packages_on_transmission_id ON public.packages USING btree (transmission_id);
+
+
+--
 -- Name: index_publishers_on_discarded_at; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3680,10 +3733,45 @@ CREATE INDEX index_reports_on_sibling_id ON public.reports USING btree (sibling_
 
 
 --
+-- Name: index_reports_on_transmission_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_reports_on_transmission_id ON public.reports USING btree (transmission_id);
+
+
+--
 -- Name: index_reports_on_workshop_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_reports_on_workshop_id ON public.reports USING btree (workshop_id);
+
+
+--
+-- Name: index_transmissions_on_collectivity_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_transmissions_on_collectivity_id ON public.transmissions USING btree (collectivity_id);
+
+
+--
+-- Name: index_transmissions_on_oauth_application_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_transmissions_on_oauth_application_id ON public.transmissions USING btree (oauth_application_id);
+
+
+--
+-- Name: index_transmissions_on_publisher_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_transmissions_on_publisher_id ON public.transmissions USING btree (publisher_id);
+
+
+--
+-- Name: index_transmissions_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_transmissions_on_user_id ON public.transmissions USING btree (user_id);
 
 
 --
@@ -3866,11 +3954,19 @@ ALTER TABLE ONLY public.offices
 
 
 --
+-- Name: transmissions fk_rails_19db02e97a; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.transmissions
+    ADD CONSTRAINT fk_rails_19db02e97a FOREIGN KEY (collectivity_id) REFERENCES public.collectivities(id);
+
+
+--
 -- Name: oauth_access_grants fk_rails_330c32d8d9; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.oauth_access_grants
-    ADD CONSTRAINT fk_rails_330c32d8d9 FOREIGN KEY (resource_owner_id) REFERENCES public.users(id);
+    ADD CONSTRAINT fk_rails_330c32d8d9 FOREIGN KEY (resource_owner_id) REFERENCES public.publishers(id);
 
 
 --
@@ -3890,11 +3986,27 @@ ALTER TABLE ONLY public.reports
 
 
 --
+-- Name: reports fk_rails_4983720dc4; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.reports
+    ADD CONSTRAINT fk_rails_4983720dc4 FOREIGN KEY (transmission_id) REFERENCES public.transmissions(id);
+
+
+--
 -- Name: reports fk_rails_4bfc052571; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.reports
     ADD CONSTRAINT fk_rails_4bfc052571 FOREIGN KEY (publisher_id) REFERENCES public.publishers(id) ON DELETE CASCADE;
+
+
+--
+-- Name: packages fk_rails_4d9176af60; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.packages
+    ADD CONSTRAINT fk_rails_4d9176af60 FOREIGN KEY (transmission_id) REFERENCES public.transmissions(id);
 
 
 --
@@ -3911,6 +4023,14 @@ ALTER TABLE ONLY public.office_users
 
 ALTER TABLE ONLY public.epcis
     ADD CONSTRAINT fk_rails_606b12a072 FOREIGN KEY (code_departement) REFERENCES public.departements(code_departement);
+
+
+--
+-- Name: transmissions fk_rails_65784bea92; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.transmissions
+    ADD CONSTRAINT fk_rails_65784bea92 FOREIGN KEY (oauth_application_id) REFERENCES public.oauth_applications(id);
 
 
 --
@@ -3954,6 +4074,14 @@ ALTER TABLE ONLY public.active_storage_variant_records
 
 
 --
+-- Name: transmissions fk_rails_a3319cd57a; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.transmissions
+    ADD CONSTRAINT fk_rails_a3319cd57a FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
 -- Name: reports fk_rails_a7a6115818; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3967,6 +4095,14 @@ ALTER TABLE ONLY public.reports
 
 ALTER TABLE ONLY public.office_communes
     ADD CONSTRAINT fk_rails_b43ade12e1 FOREIGN KEY (office_id) REFERENCES public.offices(id) ON DELETE CASCADE;
+
+
+--
+-- Name: transmissions fk_rails_b443b039c7; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.transmissions
+    ADD CONSTRAINT fk_rails_b443b039c7 FOREIGN KEY (publisher_id) REFERENCES public.publishers(id);
 
 
 --
@@ -4022,7 +4158,7 @@ ALTER TABLE ONLY public.ddfips
 --
 
 ALTER TABLE ONLY public.oauth_access_tokens
-    ADD CONSTRAINT fk_rails_ee63f25419 FOREIGN KEY (resource_owner_id) REFERENCES public.users(id);
+    ADD CONSTRAINT fk_rails_ee63f25419 FOREIGN KEY (resource_owner_id) REFERENCES public.publishers(id);
 
 
 --
@@ -4082,6 +4218,12 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230914083547'),
 ('20230914100806'),
 ('20230921145204'),
-('20230922120732');
+('20230922120732'),
+('20230922132331'),
+('20230922140136'),
+('20230926152855'),
+('20230928141212'),
+('20230928162717'),
+('20230929034420');
 
 

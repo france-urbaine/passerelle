@@ -1,22 +1,18 @@
 # frozen_string_literal: true
 
 RSpec.shared_context "with requests shared contexts" do
-  # rubocop:disable RSpec/LetSetup
-  #
-  # This shared context accepts traits, raw and proc attributes:
+  # This shared context accepts traits and attributes:
   # Example:
   #
+  #   it_behaves_like "when signed in", :organization_admin
   #   it_behaves_like "when signed in", email: "foo@bar.com"
-  #   it_behaves_like "when signed in", :organization_admin, organisation: ->{ record.organization  }
   #
   shared_context "when signed in" do |*traits, **attributes|
-    let!(:current_user) do
-      attributes.transform_values! { |value| value.respond_to?(:call) ? instance_exec(&value) : value }
-
-      user = create(:user, *traits, **attributes)
-      sign_in(user)
-      user
+    let(:current_user) do
+      create(:user, *traits, **attributes)
     end
+
+    before { sign_in(current_user) }
   end
 
   {
@@ -42,8 +38,14 @@ RSpec.shared_context "with requests shared contexts" do
       include_context "when signed in", *user_traits, **options
     end
   end
-  #
-  # rubocop:enable RSpec/LetSetup
+
+  shared_context "when authorized through OAuth" do
+    let(:current_publisher) do
+      create(:publisher)
+    end
+
+    before { setup_access_token(current_publisher) }
+  end
 end
 
 RSpec.configure do |rspec|

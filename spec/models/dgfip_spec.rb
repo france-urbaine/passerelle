@@ -193,7 +193,7 @@ RSpec.describe DGFIP do
       end
 
       describe "#reports_delivered_count" do
-        let(:package) { create(:package, :transmitted) }
+        let(:package) { create(:package) }
         let(:report) { create(:report, package: package) }
 
         it "changes on report creation" do

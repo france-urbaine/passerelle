@@ -14,7 +14,7 @@
 
 .content__separator
 h2.subheader
-  = icon_component("rectangle-stack", "Nouvelle section")
+  = icon_component("clipboard-document", "Nouvelle section")
   | Signalements à compléter/transmettre
 
 = render Views::Reports::ListComponent.new(@reports.packing.order(created_at: :desc), dashboard: true) do |view|
@@ -30,10 +30,10 @@ h2.subheader
 
 .content__separator
 h2.subheader
-  = icon_component("server-stack", "Nouvelle section")
+  = icon_component("clipboard-document", "Nouvelle section")
   | Derniers signalements traités
 
-= render Views::Reports::ListComponent.new(@reports.includes(:package).updated_by_ddfip.order('packages.assigned_at DESC, packages.returned_at DESC, packages.discarded_at DESC'), dashboard: false) do |view|
+= render Views::Reports::ListComponent.new(@reports.examined.order_by_last_examination_date, dashboard: false) do |view|
   - view.with_column(:reference)
   - view.with_column(:package)
   - view.with_column(:form_type)

@@ -4,7 +4,6 @@ module Views
   module Reports
     class ListComponent < ApplicationViewComponent
       include FormatHelper
-      include BadgeHelper
 
       DEFAULT_COLUMNS = %i[
         reference
@@ -30,7 +29,7 @@ module Views
         @columns = DEFAULT_COLUMNS if columns.empty?
 
         # Always eager load package, it's may be used for policy check
-        @reports = @reports.preload(:package)
+        @reports = @reports.preload(:package, :transmission)
 
         @reports = @reports.preload(:commune)      if columns.include?(:commune)
         @reports = @reports.preload(:collectivity) if columns.include?(:collectivity)

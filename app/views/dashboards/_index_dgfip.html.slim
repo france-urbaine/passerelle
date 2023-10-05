@@ -11,10 +11,10 @@
 
 .content__separator
 h2.subheader
-  = icon_component("rectangle-stack", "Nouvelle section")
+  = icon_component("clipboard-document", "Nouvelle section")
   | Signalements transmis
 
-= render Views::Reports::ListComponent.new(@reports.includes(:package).transmitted.order('packages.transmitted_at DESC'), dashboard: true) do |view|
+= render Views::Reports::ListComponent.new(@reports.transmitted.order_by_last_transmission_date, dashboard: true) do |view|
   - view.with_column(:reference)
   - view.with_column(:package)
   - view.with_column(:collectivity)

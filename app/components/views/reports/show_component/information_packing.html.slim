@@ -5,7 +5,7 @@
 
   .subheader-bar__actions
     .subheader-bar__action
-      = helpers.report_badge(@report)
+      = report_badge(@report)
 
 .card
   dl.description-list
@@ -21,7 +21,7 @@
     .description-list__row
       dt Date d'échéance
       dd
-        - if @report.package.due_on
+        - if @report.package&.due_on
           = l(@report.package.due_on)
         - elsif @report.packing?
           em A spécifier dans le paquet
