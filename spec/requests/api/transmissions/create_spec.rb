@@ -2,9 +2,9 @@
 
 require "rails_helper"
 
-RSpec.describe "API::TransmissionController#create" do
+RSpec.describe "API::TransmissionController#create", :api do
   subject(:request) do
-    post "/api/collectivites/#{collectivity.id}/transmissions", as:, headers:, params:
+    post "/collectivites/#{collectivity.id}/transmissions", as:, headers:, params:
   end
 
   let(:as)      { |e| e.metadata.fetch(:as, :json) }

@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe ReportsController do
+RSpec.describe TransmissionsController do
   it { expect(get:    "/transmissions").to route_to("transmissions#show") }
   it { expect(post:   "/transmissions").to route_to("transmissions#create") }
   it { expect(patch:  "/transmissions").to be_unroutable }

@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "Doorkeeper::TokensController#create" do
+RSpec.describe "Doorkeeper::TokensController#create", :api do
   subject(:request) do
     post "/oauth/token", as: :json, headers:, params:, xhr:
   end
