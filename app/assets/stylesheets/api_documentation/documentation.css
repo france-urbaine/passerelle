@@ -1,0 +1,40 @@
+@layer components {
+  .documentation__title {
+    width: auto;
+    @apply text-4xl font-bold;
+    @apply mb-5;
+    @apply text-transparent bg-clip-text;
+    @apply bg-gradient-to-br from-blue-500 to-violet-600;
+  }
+
+  .documentation__subtitle {
+    width: auto;
+    @apply text-2xl font-bold;
+    @apply mb-5;
+    @apply text-transparent bg-clip-text;
+    @apply bg-gradient-to-br from-blue-500 to-violet-600;
+  }
+
+  .documentation__card {
+    @apply mb-5 text-lg;
+  }
+
+  code.code {
+    @apply inline-flex items-center rounded-md px-2;
+    @apply text-slate-600 bg-slate-100;
+    @apply dark:text-slate-300 dark:bg-slate-800;
+  }
+
+  pre.documentation__pre {
+    @apply rounded-xl;
+    @apply px-4 py-4 mt-2;
+    @apply text-slate-600 bg-slate-100;
+    @apply dark:text-slate-300 dark:bg-slate-800;
+  }
+
+  hr.documentation__hr {
+    @apply my-4;
+    @apply border-slate-400;
+    @apply dark:border-slate-300;
+  }
+}

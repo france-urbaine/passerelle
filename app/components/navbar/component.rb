@@ -2,6 +2,7 @@
 
 module Navbar
   class Component < ApplicationViewComponent
+    renders_one  :header
     renders_many :sections, "Section"
 
     def before_render

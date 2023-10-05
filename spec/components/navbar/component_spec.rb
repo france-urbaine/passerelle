@@ -19,6 +19,8 @@ RSpec.describe Navbar::Component, type: :component do
 
     expect(page).to have_selector(".navbar") do |navbar|
       aggregate_failures do
+        expect(navbar).to have_selector("span.brand__left", text: "Fisca")
+        expect(navbar).to have_selector("span.brand__right", text: "Hub")
         expect(navbar).to have_link("Tableau de bord")
         expect(navbar).to have_link("Signalements")
         expect(navbar).to have_link("Paquets")
@@ -48,6 +50,21 @@ RSpec.describe Navbar::Component, type: :component do
         expect(navbar).to have_link("Tableau de bord")
         expect(navbar).to have_link("Signalements")
         expect(navbar).to have_link("Paquets")
+      end
+    end
+  end
+
+  it "renders a navbar with header" do
+    render_inline described_class.new do |navbar|
+      navbar.with_header do
+        "<span class='brand__right'>API</span>".html_safe
+      end
+    end
+
+    expect(page).to have_selector(".navbar") do |navbar|
+      aggregate_failures do
+        expect(navbar).to     have_selector("span.brand__right", text: "API")
+        expect(navbar).not_to have_selector("span.brand__left")
       end
     end
   end

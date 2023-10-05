@@ -21,6 +21,10 @@ Rails.application.routes.draw do
     patch :update_all, on: :collection, path: "/", as: nil
   end
 
+  # Documentation
+  # ----------------------------------------------------------------------------
+  get "/documentation/api(/*id)", to: "documentation#api", as: :documentation_api
+
   # Oauth
   # ----------------------------------------------------------------------------
   use_doorkeeper do

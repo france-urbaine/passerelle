@@ -5,7 +5,11 @@
   <nav class="navbar" data-navbar-target="expanded">
     <div class="navbar__brand brand">
       <%= image_tag("logo.svg", alt: "Logo de FiscaHub", height: 30) %>
-      <span class="brand__left">Fisca</span><span class="brand__right">Hub</span>
+      <% if header? %>
+        <%= header %>
+      <% else %>
+        <span class="brand__left">Fisca</span><span class="brand__right">Hub</span>
+      <% end %>
 
       <div class="flex-auto"></div>
       <div class="navbar__close-button">

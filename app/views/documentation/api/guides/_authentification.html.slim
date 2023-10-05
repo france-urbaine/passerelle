@@ -1,0 +1,41 @@
+h1.documentation__title Authentification
+.card.documentation__card
+  .card__content
+    p
+      | Avant toute chose, assurez-vous d'avoir enregistré votre application depuis FiscaHub.
+      br
+      | Vous aurez besoin de votre <code class="code">Client ID</code> et <code class="code">Client Secret</code> pour vous authentifier.
+    p
+      | L'authentification s'effectue selon les spécifications du standard 
+      = link_to "OAuth2", "https://datatracker.ietf.org/doc/html/rfc6749"
+      br
+      | Seule l'authentification en 
+      = link_to "Client Credentials", "https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-22#section-4.4"
+      |  est disponible pour l'instant.
+
+h1.documentation__subtitle Client Credentials
+.card.documentation__card
+  .card__content
+    p La sélection de cette méthode se fait en assignant la valeur <code class="code">client_credentials</code> au paramètre <code class="code">grant_type</code>.
+    p
+    | Les identifiants client peuvent être transmis dans le corps de la requête ou sous forme d'en-tête (Authorization Basic).<br>
+    | La seconde méthode est recommandée.
+
+    pre.documentation__pre( data-controller="highlight" data-highlight-language-value="shell" )
+      | $ http -a "CLIENT_ID:CLIENT_SECRET" POST #{ oauth_token_url } \
+        Accept:"application/json" \
+        grant_type='client_credentials'
+    pre.documentation__pre
+      div( data-controller="highlight" data-highlight-language-value="http" )
+        | HTTP/1.1 200 OK
+          Content-Type: application/json; charset=utf-8
+      br
+
+      div( data-controller="highlight" data-highlight-language-value="json" )
+        | {
+              "access_token": "GXC7UbIwfK8R0sNgIDy0jljVXgPlV4TqwrDqqpSDXdI",
+              "created_at": 1694527892,
+              "expires_in": 7200,
+              "token_type": "Bearer"
+          }
+
