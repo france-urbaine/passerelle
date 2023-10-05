@@ -15,12 +15,12 @@ module API
     end
 
     def complete
-      @transmission = current_publisher.transmissions.includes(packages: :reports).find(params[:transmission_id])
+      @transmission = current_publisher.transmissions.find(params[:transmission_id])
       authorize! @transmission
       @service = Transmissions::CompleteService.new(@transmission)
       @result = @service.complete
 
-      @transmission.packages.reload if @result.success?
+      @transmission = Transmission.includes(packages: :reports).find(@transmission.id) if @result.success?
 
       respond_with @result
     end
