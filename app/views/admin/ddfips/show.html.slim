@@ -45,8 +45,8 @@
       .description-list__row
         dt Signalements
         dd
-          - if @ddfip.reports_count.positive?
-            = display_count(@ddfip.reports_count, "reçu")
+          - if @ddfip.reports_transmitted_count.positive?
+            = display_count(@ddfip.reports_transmitted_count, "reçu")
             = " / "
             = display_count(@ddfip.reports_approved_count, "approuvé")
             = " / "

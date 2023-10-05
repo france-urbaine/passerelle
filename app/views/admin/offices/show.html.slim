@@ -41,8 +41,8 @@
       .description-list__row
         dt Signalements
         dd
-          - if @office.reports_count.positive?
-            = display_count(@office.reports_count, "reçu")
+          - if @office.reports_assigned_count.positive?
+            = display_count(@office.reports_assigned_count, "assigné")
             = " / "
             = display_count(@office.reports_approved_count, "approuvé")
             = " / "

@@ -9,9 +9,7 @@ module Views
         competence
         users_count
         communes_count
-        reports_count
-        reports_approved_count
-        reports_rejected_count
+        reports_counts
       ].freeze
 
       def initialize(offices, pagy = nil, namespace:, parent: nil)
