@@ -355,7 +355,7 @@ RSpec.describe "DDFIP offices in admin" do
     #
     expect(page).to have_current_path(admin_ddfip_path(ddfip64))
     expect(page).to have_selector("h1", text: "DDFIP des Pyrénées-Atlantiques")
-    expect(page).to have_text("Aucun guichet disponible.")
+    expect(page).to have_text("Aucun guichet enregistré.")
 
     # The dialog should be closed
     # A notification should be displayed
