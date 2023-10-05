@@ -46,14 +46,16 @@ FactoryBot.define do
 
     trait :with_reports do
       transient do
-        report_size { 1 }
+        reports_size { 1 }
       end
 
       reports do
+        next [] unless reports_size&.positive?
+
         # First, build a collection of random communes which are respecting the collectivity territory.
         # It will save time by reducing the number of factories to create and SQL queries to perform.
         #
-        communes_size = [report_size, 5].min
+        communes_size = [reports_size, 5].min
         territory     = collectivity.territory
 
         case territory
@@ -71,13 +73,14 @@ FactoryBot.define do
 
         # Finally, build the list of reports, randomly assigning one the communes.
         #
-        Array.new(report_size) do
+        Array.new(reports_size) do
           association :report, :transmitted,
             publisher:    publisher,
             collectivity: collectivity,
             package:      instance,
             transmission: transmission,
             sandbox:      sandbox,
+            form_type:    form_type,
             commune:      communes.sample
         end
       end
@@ -90,8 +93,7 @@ FactoryBot.define do
     end
 
     trait :transmitted_through_api do
-      publisher    { association(:publisher) }
-      collectivity { association(:collectivity, publisher: publisher) }
+      publisher { association(:publisher) }
     end
 
     trait :transmitted_to_ddfip do

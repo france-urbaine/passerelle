@@ -10,7 +10,7 @@ FactoryBot.define do
       #   transmisssion = create(:transmisssion, collectivity_publisher: publisher)
       #   expect(transmisssion.collectivity.publisher).to be(publisher)
       #
-      collectivity_publisher { association(:publisher) }
+      collectivity_publisher { publisher || association(:publisher) }
     end
 
     collectivity { association(:collectivity, publisher: collectivity_publisher) }

@@ -5,6 +5,9 @@ FactoryBot.define do
 
   factory :departement do
     region do
+      # Use existing regions when enought regions already exists in database
+      # to avoid name congestion
+      #
       if @build_strategy.to_sym == :create && Region.count >= 4
         Region.order("RANDOM()").first
       else
@@ -19,11 +22,11 @@ FactoryBot.define do
       end
     end
 
-    sequence(:name) do |n|
-      "#{Faker::Address.state} ##{n}"
+    sequence :name do |sequence|
+      "#{Faker::Address.state} ##{sequence}"
     end
 
-    after(:stub) do |departement, _evaluator|
+    after :stub do |departement, _evaluator|
       departement.generate_qualified_name
     end
   end

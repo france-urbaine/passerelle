@@ -6,7 +6,7 @@ FactoryBot.define do
   factory :commune do
     departement
 
-    sequence(:name) do |n|
+    sequence :name do |n|
       "#{Faker::Address.city} ##{n}"
     end
 
@@ -21,7 +21,7 @@ FactoryBot.define do
       epci
     end
 
-    after(:stub) do |commune, _evaluator|
+    after :stub do |commune, _evaluator|
       commune.generate_qualified_name
     end
   end

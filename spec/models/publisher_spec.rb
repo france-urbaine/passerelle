@@ -116,130 +116,136 @@ RSpec.describe Publisher do
   # ----------------------------------------------------------------------------
   describe "update methods" do
     describe ".reset_all_counters" do
-      subject(:reset_all_counters) { described_class.reset_all_counters }
+      let_it_be(:publishers) { create_list(:publisher, 2) }
 
-      let!(:publishers) { create_list(:publisher, 2) }
+      it "performs a single SQL function" do
+        expect { described_class.reset_all_counters }
+          .to perform_sql_query("SELECT reset_all_publishers_counters()")
+      end
 
-      it { expect { reset_all_counters }.to ret(2) }
-      it { expect { reset_all_counters }.to perform_sql_query("SELECT reset_all_publishers_counters()") }
+      it "returns the number of concerned publishers" do
+        expect(described_class.reset_all_counters).to eq(2)
+      end
 
-      describe "on users_count" do
-        before do
+      describe "users counts" do
+        before_all do
+          create_list(:user, 2)
           create_list(:user, 4, organization: publishers[0])
           create_list(:user, 2, organization: publishers[1])
-          create_list(:user, 1, :publisher)
-          create_list(:user, 1, :collectivity)
+          create(:user, :discarded, organization: publishers[0])
 
-          Publisher.update_all(users_count: 0)
+          Publisher.update_all(users_count: 99)
         end
 
-        it { expect { reset_all_counters }.to change { publishers[0].reload.users_count }.from(0).to(4) }
-        it { expect { reset_all_counters }.to change { publishers[1].reload.users_count }.from(0).to(2) }
+        it "updates #users_count" do
+          expect {
+            described_class.reset_all_counters
+          }.to change { publishers[0].reload.users_count }.to(4)
+            .and change { publishers[1].reload.users_count }.to(2)
+        end
       end
 
-      describe "on collectivities_count" do
-        before do
-          create_list(:collectivity, 3, publisher: publishers[0])
-          create_list(:collectivity, 2, publisher: publishers[1])
-          create_list(:collectivity, 2, :discarded, publisher: publishers[1])
+      describe "collectivities counts" do
+        before_all do
+          create_list(:collectivity, 2)
+          create_list(:collectivity, 2, publisher: publishers[0])
+          create_list(:collectivity, 4, publisher: publishers[1])
+          create(:collectivity, :discarded, publisher: publishers[0])
 
-          Publisher.update_all(collectivities_count: 0)
+          Publisher.update_all(collectivities_count: 99)
         end
 
-        it { expect { reset_all_counters }.to change { publishers[0].reload.collectivities_count }.from(0).to(3) }
-        it { expect { reset_all_counters }.to change { publishers[1].reload.collectivities_count }.from(0).to(2) }
+        it "updates #collectivities_count" do
+          expect {
+            described_class.reset_all_counters
+          }.to change { publishers[0].reload.collectivities_count }.to(2)
+            .and change { publishers[1].reload.collectivities_count }.to(4)
+        end
       end
 
-      describe "on reports_transmitted_count" do
-        before do
-          create_list(:report, 2, :transmitted, publisher: publishers[0])
+      describe "reports & packages counts" do
+        before_all do
+          publishers[0].tap do |publisher|
+            create(:collectivity, :with_users, publisher:, users_size: 1).tap do |collectivity|
+              create_list(:report, 2, :completed, publisher:, collectivity:)
 
-          Publisher.update_all(reports_transmitted_count: 0)
+              create(:package, :with_reports, :transmitted_through_web_ui, collectivity:)
+              create(:package, :with_reports, :transmitted_through_api,    collectivity:, publisher:)
+              create(:package, :with_reports, :transmitted_through_api, :assigned, collectivity:, publisher:).tap do |package|
+                create_list(:report, 2, :approved, publisher:, collectivity:, package:)
+                create_list(:report, 3, :rejected, publisher:, collectivity:, package:)
+              end
+            end
+          end
+
+          publishers[1].tap do |publisher|
+            create(:collectivity, publisher:).tap do |collectivity|
+              create(:package, :with_reports, :transmitted_through_api, :returned, collectivity:, publisher:)
+              create(:package, :with_reports, :transmitted_through_api, :assigned, collectivity:, publisher:).tap do |package|
+                create_list(:report, 1, :debated, publisher:, collectivity:, package:)
+              end
+            end
+          end
+
+          Publisher.update_all(
+            reports_transmitted_count:  99,
+            reports_approved_count:     99,
+            reports_rejected_count:     99,
+            reports_debated_count:      99,
+            packages_transmitted_count: 99,
+            packages_assigned_count:    99,
+            packages_returned_count:    99
+          )
         end
 
-        it { expect { reset_all_counters }.to change { publishers[0].reload.reports_transmitted_count }.from(0).to(2) }
-        it { expect { reset_all_counters }.to not_change { publishers[1].reload.reports_transmitted_count }.from(0) }
-      end
-
-      describe "on reports_approved_count" do
-        before do
-          create_list(:report, 2, :approved, publisher: publishers[0])
-
-          Publisher.update_all(reports_approved_count: 0)
-          Publisher.update_all(reports_transmitted_count: 0)
+        it "updates #reports_transmitted_count" do
+          expect {
+            described_class.reset_all_counters
+          }.to   change { publishers[0].reload.reports_transmitted_count }.to(7)
+            .and change { publishers[1].reload.reports_transmitted_count }.to(3)
         end
 
-        it { expect { reset_all_counters }.to change { publishers[0].reload.reports_approved_count }.from(0).to(2) }
-        it { expect { reset_all_counters }.to change { publishers[0].reload.reports_transmitted_count }.from(0).to(2) }
-        it { expect { reset_all_counters }.to not_change { publishers[1].reload.reports_approved_count }.from(0) }
-        it { expect { reset_all_counters }.to not_change { publishers[1].reload.reports_transmitted_count }.from(0) }
-      end
-
-      describe "on reports_rejected_count" do
-        before do
-          create_list(:report, 2, :rejected, publisher: publishers[0])
-
-          Publisher.update_all(reports_rejected_count: 0)
-          Publisher.update_all(reports_transmitted_count: 0)
+        it "updates #reports_approved_count" do
+          expect {
+            described_class.reset_all_counters
+          }.to   change { publishers[0].reload.reports_approved_count }.to(2)
+            .and change { publishers[1].reload.reports_approved_count }.to(0)
         end
 
-        it { expect { reset_all_counters }.to change { publishers[0].reload.reports_rejected_count }.from(0).to(2) }
-        it { expect { reset_all_counters }.to change { publishers[0].reload.reports_transmitted_count }.from(0).to(2) }
-        it { expect { reset_all_counters }.to not_change { publishers[1].reload.reports_rejected_count }.from(0) }
-        it { expect { reset_all_counters }.to not_change { publishers[1].reload.reports_transmitted_count }.from(0) }
-      end
-
-      describe "on reports_debated_count" do
-        before do
-          create_list(:report, 2, :debated, publisher: publishers[0])
-
-          Publisher.update_all(reports_debated_count: 0)
-          Publisher.update_all(reports_transmitted_count: 0)
+        it "updates #reports_rejected_count" do
+          expect {
+            described_class.reset_all_counters
+          }.to   change { publishers[0].reload.reports_rejected_count }.to(3)
+            .and change { publishers[1].reload.reports_rejected_count }.to(0)
         end
 
-        it { expect { reset_all_counters }.to change { publishers[0].reload.reports_debated_count }.from(0).to(2) }
-        it { expect { reset_all_counters }.to change { publishers[0].reload.reports_transmitted_count }.from(0).to(2) }
-        it { expect { reset_all_counters }.to not_change { publishers[1].reload.reports_debated_count }.from(0) }
-        it { expect { reset_all_counters }.to not_change { publishers[1].reload.reports_transmitted_count }.from(0) }
-      end
-
-      describe "on packages_transmitted_count" do
-        before do
-          create_list(:package, 2, publisher: publishers[0])
-
-          Publisher.update_all(packages_transmitted_count: 0)
+        it "updates #reports_debated_count" do
+          expect {
+            described_class.reset_all_counters
+          }.to   change { publishers[0].reload.reports_debated_count }.to(0)
+            .and change { publishers[1].reload.reports_debated_count }.to(1)
         end
 
-        it { expect { reset_all_counters }.to change { publishers[0].reload.packages_transmitted_count }.from(0).to(2) }
-        it { expect { reset_all_counters }.to not_change { publishers[1].reload.packages_transmitted_count }.from(0) }
-      end
-
-      describe "on packages_assigned_count" do
-        before do
-          create_list(:package, 2, :assigned, publisher: publishers[0])
-
-          Publisher.update_all(packages_assigned_count: 0)
-          Publisher.update_all(packages_transmitted_count: 0)
+        it "updates #packages_transmitted_count" do
+          expect {
+            described_class.reset_all_counters
+          }.to   change { publishers[0].reload.packages_transmitted_count }.to(2)
+            .and change { publishers[1].reload.packages_transmitted_count }.to(2)
         end
 
-        it { expect { reset_all_counters }.to change { publishers[0].reload.packages_assigned_count }.from(0).to(2) }
-        it { expect { reset_all_counters }.to change { publishers[0].reload.packages_transmitted_count }.from(0).to(2) }
-        it { expect { reset_all_counters }.to not_change { publishers[1].reload.packages_assigned_count }.from(0) }
-        it { expect { reset_all_counters }.to not_change { publishers[1].reload.packages_transmitted_count }.from(0) }
-      end
-
-      describe "on packages_returned_count" do
-        before do
-          create_list(:package, 2, :returned, publisher: publishers[0])
-
-          Publisher.update_all(packages_returned_count: 0)
-          Publisher.update_all(packages_transmitted_count: 0)
+        it "updates #packages_assigned_count" do
+          expect {
+            described_class.reset_all_counters
+          }.to   change { publishers[0].reload.packages_assigned_count }.to(1)
+            .and change { publishers[1].reload.packages_assigned_count }.to(1)
         end
 
-        it { expect { reset_all_counters }.to change { publishers[0].reload.packages_returned_count }.from(0).to(2) }
-        it { expect { reset_all_counters }.to change { publishers[0].reload.packages_transmitted_count }.from(0).to(2) }
-        it { expect { reset_all_counters }.to not_change { publishers[1].reload.packages_returned_count }.from(0) }
-        it { expect { reset_all_counters }.to not_change { publishers[1].reload.packages_transmitted_count }.from(0) }
+        it "updates #packages_returned_count" do
+          expect {
+            described_class.reset_all_counters
+          }.to   change { publishers[0].reload.packages_returned_count }.to(0)
+            .and change { publishers[1].reload.packages_returned_count }.to(1)
+        end
       end
     end
   end
@@ -247,437 +253,445 @@ RSpec.describe Publisher do
   # Database constraints and triggers
   # ----------------------------------------------------------------------------
   describe "database triggers" do
-    let!(:publishers) { create_list(:publisher, 2) }
+    let!(:publisher) { create(:publisher) }
 
-    describe "about organization counter caches" do
-      describe "#users_count" do
-        let(:user) { create(:user, organization: publishers[0]) }
+    describe "#users_count" do
+      let(:user) { create(:user, organization: publisher) }
 
-        it "changes on creation" do
-          expect { user }
-            .to change { publishers[0].reload.users_count }.from(0).to(1)
-            .and not_change { publishers[1].reload.users_count }.from(0)
-        end
-
-        it "changes on deletion" do
-          user
-          expect { user.destroy }
-            .to change { publishers[0].reload.users_count }.from(1).to(0)
-            .and not_change { publishers[1].reload.users_count }.from(0)
-        end
-
-        it "changes when discarding" do
-          user
-          expect { user.discard }
-            .to change { publishers[0].reload.users_count }.from(1).to(0)
-            .and not_change { publishers[1].reload.users_count }.from(0)
-        end
-
-        it "changes when undiscarding" do
-          user.discard
-          expect { user.undiscard }
-            .to change { publishers[0].reload.users_count }.from(0).to(1)
-            .and not_change { publishers[1].reload.users_count }.from(0)
-        end
-
-        it "changes when updating organization" do
-          user
-          expect { user.update(organization: publishers[1]) }
-            .to  change { publishers[0].reload.users_count }.from(1).to(0)
-            .and change { publishers[1].reload.users_count }.from(0).to(1)
-        end
+      it "changes on creation" do
+        expect { user }
+          .to change { publisher.reload.users_count }.from(0).to(1)
       end
 
-      describe "#collectivities_count" do
-        let(:collectivity) { create(:collectivity, publisher: publishers[0]) }
+      it "changes on deletion" do
+        user
 
-        it "changes on creation" do
-          expect { collectivity }
-            .to change { publishers[0].reload.collectivities_count }.from(0).to(1)
-            .and not_change { publishers[1].reload.collectivities_count }.from(0)
-        end
+        expect { user.destroy }
+          .to change { publisher.reload.users_count }.from(1).to(0)
+      end
 
-        it "changes on discarding" do
-          collectivity
-          expect { collectivity.discard }
-            .to change { publishers[0].reload.collectivities_count }.from(1).to(0)
-            .and not_change { publishers[1].reload.collectivities_count }.from(0)
-        end
+      it "changes when user is discarded" do
+        user
 
-        it "changes on undiscarding" do
-          collectivity.discard
-          expect { collectivity.undiscard }
-            .to change { publishers[0].reload.collectivities_count }.from(0).to(1)
-            .and not_change { publishers[1].reload.collectivities_count }.from(0)
-        end
+        expect { user.discard }
+          .to change { publisher.reload.users_count }.from(1).to(0)
+      end
 
-        it "changes on deletion" do
-          collectivity
-          expect { collectivity.destroy }
-            .to change { publishers[0].reload.collectivities_count }.from(1).to(0)
-            .and not_change { publishers[1].reload.collectivities_count }.from(0)
-        end
+      it "changes when user is undiscarded" do
+        user.discard
 
-        it "doesn't change when deleting a discarded collectivity" do
-          collectivity.discard
-          expect { collectivity.destroy }
-            .to  not_change { publishers[0].reload.collectivities_count }.from(0)
-            .and not_change { publishers[1].reload.collectivities_count }.from(0)
-        end
+        expect { user.undiscard }
+          .to change { publisher.reload.users_count }.from(0).to(1)
+      end
 
-        it "changes when updating publisher" do
-          collectivity
-          expect { collectivity.update(publisher: publishers[1]) }
-            .to  change { publishers[0].reload.collectivities_count }.from(1).to(0)
-            .and change { publishers[1].reload.collectivities_count }.from(0).to(1)
-        end
+      it "changes when user switches to another organization" do
+        user
+        another_publisher = create(:publisher)
 
-        it "doesn't change when updating publisher of a discarded collectivity" do
-          collectivity.discard
-          expect { collectivity.update(publisher: publishers[1]) }
-            .to  not_change { publishers[0].reload.collectivities_count }.from(0)
-            .and not_change { publishers[1].reload.collectivities_count }.from(0)
-        end
-
-        it "changes when combining updating publisher and discarding" do
-          collectivity
-          expect { collectivity.update(publisher: publishers[1], discarded_at: Time.current) }
-            .to change { publishers[0].reload.collectivities_count }.from(1).to(0)
-            .and not_change { publishers[1].reload.collectivities_count }.from(0)
-        end
-
-        it "changes when combining updating publisher and undiscarding" do
-          collectivity.discard
-          expect { collectivity.update(publisher: publishers[1], discarded_at: nil) }
-            .to  not_change { publishers[0].reload.collectivities_count }.from(0)
-            .and change { publishers[1].reload.collectivities_count }.from(0).to(1)
-        end
+        expect { user.update(organization: another_publisher) }
+          .to change { publisher.reload.users_count }.from(1).to(0)
       end
     end
 
-    describe "about reports counter caches" do
-      describe "#reports_transmitted_count" do
-        let(:package) { create(:package, publisher: publishers[0]) }
-        let(:report)  { create(:report, publisher: publishers[0]) }
+    describe "#collectivities_count" do
+      let(:collectivity) { create(:collectivity, publisher:) }
 
-        it "doesn't change on report creation" do
-          expect { report }
-            .to  not_change { publishers[0].reload.reports_transmitted_count }.from(0)
-            .and not_change { publishers[1].reload.reports_transmitted_count }.from(0)
-        end
-
-        it "changes when package is transmitted" do
-          report
-
-          expect { report.update(package: package) }
-            .to change { publishers[0].reload.reports_transmitted_count }.from(0).to(1)
-            .and not_change { publishers[1].reload.reports_transmitted_count }.from(0)
-        end
-
-        it "doesn't changes when package in sandbox is transmitted" do
-          package.update(sandbox: true)
-
-          expect { report.update(package: package) }
-            .to  not_change { publishers[0].reload.reports_transmitted_count }.from(0)
-            .and not_change { publishers[1].reload.reports_transmitted_count }.from(0)
-        end
-
-        it "changes when transmitted report is discarded" do
-          report.update(package: package)
-
-          expect { report.discard }
-            .to change { publishers[0].reload.reports_transmitted_count }.from(1).to(0)
-            .and not_change { publishers[1].reload.reports_transmitted_count }.from(0)
-        end
-
-        it "changes when transmitted report is undiscarded" do
-          report.update(package: package)
-          report.discard
-
-          expect { report.undiscard }
-            .to change { publishers[0].reload.reports_transmitted_count }.from(0).to(1)
-            .and not_change { publishers[1].reload.reports_transmitted_count }.from(0)
-        end
-
-        it "changes when transmitted report is deleted" do
-          report.update(package: package)
-
-          expect { report.destroy }
-            .to change { publishers[0].reload.reports_transmitted_count }.from(1).to(0)
-            .and not_change { publishers[1].reload.reports_transmitted_count }.from(0)
-        end
-
-        it "changes when transmitted package is discarded" do
-          report.update(package: package)
-
-          expect { package.discard }
-            .to change { publishers[0].reload.reports_transmitted_count }.from(1).to(0)
-            .and not_change { publishers[1].reload.reports_transmitted_count }.from(0)
-        end
-
-        it "changes when transmitted package is undiscarded" do
-          report.update(package: package)
-          package.discard
-
-          expect { package.undiscard }
-            .to change { publishers[0].reload.reports_transmitted_count }.from(0).to(1)
-            .and not_change { publishers[1].reload.reports_transmitted_count }.from(0)
-        end
-
-        it "changes when transmitted package is deleted" do
-          report.update(package: package)
-
-          expect { package.delete }
-            .to change { publishers[0].reload.reports_transmitted_count }.from(1).to(0)
-            .and not_change { publishers[1].reload.reports_transmitted_count }.from(0)
-        end
+      it "changes on creation" do
+        expect { collectivity }
+          .to change { publisher.reload.collectivities_count }.from(0).to(1)
       end
 
-      describe "#reports_approved_count" do
-        let(:package) { create(:package, publisher: publishers[0]) }
-        let(:report)  { create(:report, package: package, publisher: publishers[0]) }
+      it "changes on deletion" do
+        collectivity
 
-        it "doesn't change on report creation" do
-          expect { report }
-            .to  not_change { publishers[0].reload.reports_approved_count }.from(0)
-            .and not_change { publishers[1].reload.reports_approved_count }.from(0)
-        end
-
-        it "changes when report is approved" do
-          report
-
-          expect { report.approve! }
-            .to change { publishers[0].reload.reports_approved_count }.from(0).to(1)
-            .and not_change { publishers[1].reload.reports_approved_count }.from(0)
-        end
-
-        it "changes when approved report is discarded" do
-          report.approve!
-
-          expect { report.discard }
-            .to change { publishers[0].reload.reports_approved_count }.from(1).to(0)
-            .and not_change { publishers[1].reload.reports_approved_count }.from(0)
-        end
-
-        it "changes when approved report is undiscarded" do
-          report.touch(:approved_at, :discarded_at)
-
-          expect { report.undiscard }
-            .to change { publishers[0].reload.reports_approved_count }.from(0).to(1)
-            .and not_change { publishers[1].reload.reports_approved_count }.from(0)
-        end
-
-        it "changes when approved report is deleted" do
-          report.touch(:approved_at)
-
-          expect { report.delete }
-            .to change { publishers[0].reload.reports_approved_count }.from(1).to(0)
-            .and not_change { publishers[1].reload.reports_approved_count }.from(0)
-        end
+        expect { collectivity.destroy }
+          .to change { publisher.reload.collectivities_count }.from(1).to(0)
       end
 
-      describe "#reports_rejected_count" do
-        let(:package) { create(:package, publisher: publishers[0]) }
-        let(:report)  { create(:report, package: package, publisher: publishers[0]) }
+      it "changes when user is discarded" do
+        collectivity
 
-        it "doesn't change on report creation" do
-          expect { report }
-            .to  not_change { publishers[0].reload.reports_rejected_count }.from(0)
-            .and not_change { publishers[1].reload.reports_rejected_count }.from(0)
-        end
-
-        it "changes when report is rejected" do
-          report
-
-          expect { report.reject! }
-            .to change { publishers[0].reload.reports_rejected_count }.from(0).to(1)
-            .and not_change { publishers[1].reload.reports_rejected_count }.from(0)
-        end
-
-        it "changes when rejected report is discarded" do
-          report.reject!
-
-          expect { report.discard }
-            .to change { publishers[0].reload.reports_rejected_count }.from(1).to(0)
-            .and not_change { publishers[1].reload.reports_rejected_count }.from(0)
-        end
-
-        it "changes when rejected report is undiscarded" do
-          report.touch(:rejected_at, :discarded_at)
-
-          expect { report.undiscard }
-            .to change { publishers[0].reload.reports_rejected_count }.from(0).to(1)
-            .and not_change { publishers[1].reload.reports_rejected_count }.from(0)
-        end
-
-        it "changes when rejected report is deleted" do
-          report.touch(:rejected_at)
-
-          expect { report.delete }
-            .to change { publishers[0].reload.reports_rejected_count }.from(1).to(0)
-            .and not_change { publishers[1].reload.reports_rejected_count }.from(0)
-        end
+        expect { collectivity.discard }
+          .to change { publisher.reload.collectivities_count }.from(1).to(0)
       end
 
-      describe "#reports_debated_count" do
-        let(:package) { create(:package, publisher: publishers[0]) }
-        let(:report)  { create(:report, package: package, publisher: publishers[0]) }
+      it "changes when collectivity is undiscarded" do
+        collectivity.discard
 
-        it "doesn't change on report creation" do
-          expect { report }
-            .to  not_change { publishers[0].reload.reports_debated_count }.from(0)
-            .and not_change { publishers[1].reload.reports_debated_count }.from(0)
-        end
+        expect { collectivity.undiscard }
+          .to change { publisher.reload.collectivities_count }.from(0).to(1)
+      end
 
-        it "changes when report is marked as debated" do
-          report
+      it "changes when collectivity switches to another publisher" do
+        collectivity
+        another_publisher = create(:publisher)
 
-          expect { report.debate! }
-            .to change { publishers[0].reload.reports_debated_count }.from(0).to(1)
-            .and not_change { publishers[1].reload.reports_debated_count }.from(0)
-        end
-
-        it "changes when debated report is discarded" do
-          report.debate!
-
-          expect { report.discard }
-            .to change { publishers[0].reload.reports_debated_count }.from(1).to(0)
-            .and not_change { publishers[1].reload.reports_debated_count }.from(0)
-        end
-
-        it "changes when debated report is undiscarded" do
-          report.touch(:debated_at, :discarded_at)
-
-          expect { report.undiscard }
-            .to change { publishers[0].reload.reports_debated_count }.from(0).to(1)
-            .and not_change { publishers[1].reload.reports_debated_count }.from(0)
-        end
-
-        it "changes when debated report is deleted" do
-          report.touch(:debated_at)
-
-          expect { report.delete }
-            .to change { publishers[0].reload.reports_debated_count }.from(1).to(0)
-            .and not_change { publishers[1].reload.reports_debated_count }.from(0)
-        end
+        expect { collectivity.update(publisher: another_publisher) }
+          .to change { publisher.reload.collectivities_count }.from(1).to(0)
       end
     end
 
-    describe "about packages counter caches" do
-      describe "#packages_transmitted_count" do
-        let(:package) { create(:package, publisher: publishers[0]) }
+    describe "#reports_transmitted_count" do
+      let(:collectivity) { create(:collectivity, publisher:) }
+      let(:package)      { create(:package, :transmitted_through_api, publisher:, collectivity:) }
+      let(:report)       { create(:report, :made_through_api, publisher:, collectivity:) }
 
-        it "changes on package creation" do
-          expect { package }
-            .to change { publishers[0].reload.packages_transmitted_count }.from(0).to(1)
-            .and not_change { publishers[1].reload.packages_transmitted_count }.from(0)
-        end
-
-        it "doesn't changes when package in sandbox is transmitted" do
-          expect { create(:package, publisher: publishers[0], sandbox: true) }
-            .to  not_change { publishers[0].reload.packages_transmitted_count }.from(0)
-            .and not_change { publishers[1].reload.packages_transmitted_count }.from(0)
-        end
-
-        it "changes when transmitted package is discarded" do
-          package
-
-          expect { package.discard }
-            .to change { publishers[0].reload.packages_transmitted_count }.from(1).to(0)
-            .and not_change { publishers[1].reload.packages_transmitted_count }.from(0)
-        end
-
-        it "changes when transmitted package is undiscarded" do
-          package.discard
-
-          expect { package.undiscard }
-            .to change { publishers[0].reload.packages_transmitted_count }.from(0).to(1)
-            .and not_change { publishers[1].reload.packages_transmitted_count }.from(0)
-        end
-
-        it "changes when transmitted package is deleted" do
-          package
-
-          expect { package.delete }
-            .to change { publishers[0].reload.packages_transmitted_count }.from(1).to(0)
-            .and not_change { publishers[1].reload.packages_transmitted_count }.from(0)
-        end
+      it "doesn't change when report is created" do
+        expect { report }
+          .not_to change { publisher.reload.reports_transmitted_count }.from(0)
       end
 
-      describe "#packages_assigned_count" do
-        let(:package) { create(:package, publisher: publishers[0]) }
+      it "changes when report is transmitted" do
+        report
 
-        it "doesn't change on package creation" do
-          expect { package }
-            .to  not_change { publishers[0].reload.packages_assigned_count }.from(0)
-            .and not_change { publishers[1].reload.packages_assigned_count }.from(0)
-        end
-
-        it "changes when package is assigned" do
-          package
-          expect { package.assign! }
-            .to change { publishers[0].reload.packages_assigned_count }.from(0).to(1)
-            .and not_change { publishers[1].reload.packages_assigned_count }.from(0)
-        end
-
-        it "changes when assigned package is discarded" do
-          package.assign!
-          expect { package.discard }
-            .to change { publishers[0].reload.packages_assigned_count }.from(1).to(0)
-            .and not_change { publishers[1].reload.packages_assigned_count }.from(0)
-        end
-
-        it "changes when assigned package is undiscarded" do
-          package.touch(:assigned_at, :discarded_at)
-          expect { package.undiscard }
-            .to change { publishers[0].reload.packages_assigned_count }.from(0).to(1)
-            .and not_change { publishers[1].reload.packages_assigned_count }.from(0)
-        end
-
-        it "changes when assigned package is deleted" do
-          package.assign!
-          expect { package.delete }
-            .to change { publishers[0].reload.packages_assigned_count }.from(1).to(0)
-            .and not_change { publishers[1].reload.packages_assigned_count }.from(0)
-        end
+        expect { report.update(package:) }
+          .to change { publisher.reload.reports_transmitted_count }.from(0).to(1)
       end
 
-      describe "#packages_returned_count" do
-        let(:package) { create(:package, publisher: publishers[0]) }
+      it "doesn't change when report is transmitted to a sandbox" do
+        report
+        package.update(sandbox: true)
 
-        it "doesn't change on report creation" do
-          expect { package }
-            .to  not_change { publishers[0].reload.packages_returned_count }.from(0)
-            .and not_change { publishers[1].reload.packages_returned_count }.from(0)
-        end
+        expect { report.update(package:) }
+          .not_to change { publisher.reload.reports_transmitted_count }.from(0)
+      end
 
-        it "changes when package is returned" do
-          package
-          expect { package.return! }
-            .to change { publishers[0].reload.packages_returned_count }.from(0).to(1)
-            .and not_change { publishers[1].reload.packages_returned_count }.from(0)
-        end
+      it "changes when report is discarded" do
+        report.update(package:)
 
-        it "changes when returned package is discarded" do
-          package.return!
-          expect { package.discard }
-            .to change { publishers[0].reload.packages_returned_count }.from(1).to(0)
-            .and not_change { publishers[1].reload.packages_returned_count }.from(0)
-        end
+        expect { report.discard }
+          .to change { publisher.reload.reports_transmitted_count }.from(1).to(0)
+      end
 
-        it "changes when returned package is undiscarded" do
-          package.touch(:returned_at, :discarded_at)
-          expect { package.undiscard }
-            .to change { publishers[0].reload.packages_returned_count }.from(0).to(1)
-            .and not_change { publishers[1].reload.packages_returned_count }.from(0)
-        end
+      it "changes when report is undiscarded" do
+        report.update(package:)
+        report.discard
 
-        it "changes when returned package is deleted" do
-          package.return!
-          expect { package.delete }
-            .to change { publishers[0].reload.packages_returned_count }.from(1).to(0)
-            .and not_change { publishers[1].reload.packages_returned_count }.from(0)
-        end
+        expect { report.undiscard }
+          .to change { publisher.reload.reports_transmitted_count }.from(0).to(1)
+      end
+
+      it "changes when report is deleted" do
+        report.update(package:)
+
+        expect { report.destroy }
+          .to change { publisher.reload.reports_transmitted_count }.from(1).to(0)
+      end
+
+      it "changes when package is discarded" do
+        report.update(package:)
+
+        expect { package.discard }
+          .to change { publisher.reload.reports_transmitted_count }.from(1).to(0)
+      end
+
+      it "changes when package is undiscarded" do
+        report.update(package:)
+        package.discard
+
+        expect { package.undiscard }
+          .to change { publisher.reload.reports_transmitted_count }.from(0).to(1)
+      end
+
+      it "changes when package is deleted" do
+        report.update(package:)
+
+        expect { package.delete }
+          .to change { publisher.reload.reports_transmitted_count }.from(1).to(0)
+      end
+    end
+
+    describe "#reports_debated_count" do
+      let(:collectivity) { create(:collectivity, publisher:) }
+      let(:package)      { create(:package, :transmitted_through_api, :assigned, publisher:, collectivity:) }
+      let(:report)       { create(:report, :made_through_api, publisher:, collectivity:, package:) }
+
+      it "doesn't change when package is assigned" do
+        expect { report }
+          .not_to change { publisher.reload.reports_debated_count }.from(0)
+      end
+
+      it "doesn't changes when report is approved" do
+        report
+
+        expect { report.approve! }
+          .not_to change { publisher.reload.reports_debated_count }.from(0)
+      end
+
+      it "doesn't changes when report is rejected" do
+        report
+
+        expect { report.reject! }
+          .not_to change { publisher.reload.reports_debated_count }.from(0)
+      end
+
+      it "changes when report is debated" do
+        report
+
+        expect { report.debate! }
+          .to change { publisher.reload.reports_debated_count }.from(0).to(1)
+      end
+
+      it "changes when debated report is reseted" do
+        report.debate!
+
+        expect { report.update(debated_at: nil) }
+          .to change { publisher.reload.reports_debated_count }.from(1).to(0)
+      end
+
+      it "changes when debated report is approved" do
+        report.debate!
+
+        expect { report.approve! }
+          .to change { publisher.reload.reports_debated_count }.from(1).to(0)
+      end
+
+      it "changes when debated report is rejected" do
+        report.debate!
+
+        expect { report.reject! }
+          .to change { publisher.reload.reports_debated_count }.from(1).to(0)
+      end
+    end
+
+    describe "#reports_approved_count" do
+      let(:collectivity) { create(:collectivity, publisher:) }
+      let(:package)      { create(:package, :transmitted_through_api, :assigned, publisher:, collectivity:) }
+      let(:report)       { create(:report, :made_through_api, publisher:, collectivity:, package:) }
+
+      it "doesn't change when package is assigned" do
+        expect { report }
+          .not_to change { publisher.reload.reports_approved_count }.from(0)
+      end
+
+      it "doesn't changes when report is rejected" do
+        report
+
+        expect { report.reject! }
+          .not_to change { publisher.reload.reports_approved_count }.from(0)
+      end
+
+      it "doesn't changes when report is debated" do
+        report
+
+        expect { report.debate! }
+          .not_to change { publisher.reload.reports_approved_count }.from(0)
+      end
+
+      it "changes when report is approved" do
+        report
+
+        expect { report.approve! }
+          .to change { publisher.reload.reports_approved_count }.from(0).to(1)
+      end
+
+      it "changes when approved report is reseted" do
+        report.approve!
+
+        expect { report.update(approved_at: nil) }
+          .to change { publisher.reload.reports_approved_count }.from(1).to(0)
+      end
+
+      it "changes when approved report is rejected" do
+        report.approve!
+
+        expect { report.reject! }
+          .to change { publisher.reload.reports_approved_count }.from(1).to(0)
+      end
+    end
+
+    describe "#reports_rejected_count" do
+      let(:collectivity) { create(:collectivity, publisher:) }
+      let(:package)      { create(:package, :transmitted_through_api, :assigned, publisher:, collectivity:) }
+      let(:report)       { create(:report, :made_through_api, publisher:, collectivity:, package:) }
+
+      it "doesn't change when package is assigned" do
+        expect { report }
+          .not_to change { publisher.reload.reports_rejected_count }.from(0)
+      end
+
+      it "doesn't changes when report is approved" do
+        report
+
+        expect { report.approve! }
+          .not_to change { publisher.reload.reports_rejected_count }.from(0)
+      end
+
+      it "doesn't changes when report is debated" do
+        report
+
+        expect { report.debate! }
+          .not_to change { publisher.reload.reports_rejected_count }.from(0)
+      end
+
+      it "changes when report is rejected" do
+        report
+
+        expect { report.reject! }
+          .to change { publisher.reload.reports_rejected_count }.from(0).to(1)
+      end
+
+      it "changes when rejected report is reseted" do
+        report.reject!
+
+        expect { report.update(rejected_at: nil) }
+          .to change { publisher.reload.reports_rejected_count }.from(1).to(0)
+      end
+
+      it "changes when rejected report is approved" do
+        report.reject!
+
+        expect { report.approve! }
+          .to change { publisher.reload.reports_rejected_count }.from(1).to(0)
+      end
+    end
+
+    describe "#packages_transmitted_count" do
+      let(:collectivity) { create(:collectivity, publisher:) }
+      let(:package)      { create(:package, publisher:, collectivity:) }
+
+      it "changes on package creation" do
+        expect { package }
+          .to change { publisher.reload.packages_transmitted_count }.from(0).to(1)
+      end
+
+      it "doesn't changes when package is created in sandbox" do
+        expect { create(:package, publisher:, sandbox: true) }
+          .not_to change { publisher.reload.packages_transmitted_count }.from(0)
+      end
+
+      it "doesn't changes when package switches to sandbox" do
+        package
+
+        expect { package.update(sandbox: true) }
+          .to change { publisher.reload.packages_transmitted_count }.from(1).to(0)
+      end
+
+      it "doesn't changes when package is assigned" do
+        package
+
+        expect { package.assign! }
+          .not_to change { publisher.reload.packages_transmitted_count }.from(1)
+      end
+
+      it "doesn't changes when package is returned" do
+        package
+
+        expect { package.return! }
+          .not_to change { publisher.reload.packages_transmitted_count }.from(1)
+      end
+
+      it "changes when package is discarded" do
+        package
+
+        expect { package.discard }
+          .to change { publisher.reload.packages_transmitted_count }.from(1).to(0)
+      end
+
+      it "changes when package is undiscarded" do
+        package.discard
+
+        expect { package.undiscard }
+          .to change { publisher.reload.packages_transmitted_count }.from(0).to(1)
+      end
+
+      it "changes when package is deleted" do
+        package
+
+        expect { package.delete }
+          .to change { publisher.reload.packages_transmitted_count }.from(1).to(0)
+      end
+    end
+
+    describe "#packages_assigned_count" do
+      let(:collectivity) { create(:collectivity, publisher:) }
+      let(:package)      { create(:package, publisher:, collectivity:) }
+
+      it "doesn't changes on package creation" do
+        expect { package }
+          .to not_change { publisher.reload.packages_assigned_count }.from(0)
+      end
+
+      it "changes when package is assigned" do
+        package
+
+        expect { package.assign! }
+          .to change { publisher.reload.packages_assigned_count }.from(0).to(1)
+      end
+
+      it "changes when assigned package is then returned" do
+        package.assign!
+
+        expect { package.return! }
+          .to change { publisher.reload.packages_assigned_count }.from(1).to(0)
+      end
+
+      it "changes when assigned package is discarded" do
+        package.assign!
+
+        expect { package.discard }
+          .to change { publisher.reload.packages_assigned_count }.from(1).to(0)
+      end
+
+      it "changes when assigned package is undiscarded" do
+        package.assign!
+        package.discard
+
+        expect { package.undiscard }
+          .to change { publisher.reload.packages_assigned_count }.from(0).to(1)
+      end
+
+      it "changes when assigned package is deleted" do
+        package.assign!
+
+        expect { package.delete }
+          .to change { publisher.reload.packages_assigned_count }.from(1).to(0)
+      end
+    end
+
+    describe "#packages_returned_count" do
+      let(:collectivity) { create(:collectivity, publisher:) }
+      let(:package)      { create(:package, publisher:, collectivity:) }
+
+      it "doesn't change on package creation" do
+        expect { package }
+          .to not_change { publisher.reload.packages_returned_count }.from(0)
+      end
+
+      it "changes when package is returned" do
+        package
+
+        expect { package.return! }
+          .to change { publisher.reload.packages_returned_count }.from(0).to(1)
+      end
+
+      it "changes when returned package is assigned" do
+        package.return!
+
+        expect { package.assign! }
+          .to change { publisher.reload.packages_returned_count }.from(1).to(0)
+      end
+
+      it "changes when returned package is discarded" do
+        package.return!
+
+        expect { package.discard }
+          .to change { publisher.reload.packages_returned_count }.from(1).to(0)
+      end
+
+      it "changes when returned package is undiscarded" do
+        package.return!
+        package.discard
+
+        expect { package.undiscard }
+          .to change { publisher.reload.packages_returned_count }.from(0).to(1)
+      end
+
+      it "changes when returned package is deleted" do
+        package.return!
+
+        expect { package.delete }
+          .to change { publisher.reload.packages_returned_count }.from(1).to(0)
       end
     end
   end

@@ -76,8 +76,8 @@ FactoryBot.define do
 
     trait :transmitted do
       completed
-      transmission { association(:transmission, :completed, collectivity:, publisher:, sandbox:) }
-      package      { association(:package, collectivity:, publisher:, transmission:, sandbox:) }
+      package      { association(:package, collectivity:, publisher:, sandbox:) }
+      transmission { package.transmission }
 
       sequence :reference do |n|
         index = n.to_s.rjust(5, "0")
@@ -91,12 +91,12 @@ FactoryBot.define do
 
     trait :assigned do
       transmitted
-      package { association(:package, :assigned, collectivity:, publisher:, transmission:) }
+      package { association(:package, :assigned, collectivity:, publisher:) }
     end
 
     trait :returned do
       transmitted
-      package { association(:package, :returned, collectivity:, publisher:, transmission:) }
+      package { association(:package, :returned, collectivity:, publisher:) }
     end
 
     trait :approved do

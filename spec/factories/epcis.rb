@@ -2,13 +2,13 @@
 
 FactoryBot.define do
   factory :epci do
-    siren { Faker::Company.french_siren_number }
-
     transient do
       name_pattern { "%{type} %{city} #%{sequence}" }
     end
 
-    sequence(:name) do |n|
+    siren { Faker::Company.french_siren_number }
+
+    sequence :name do |n|
       name_pattern % {
         type:     %w[CA CC CU Agglomération Metropole].sample,
         city:     Faker::Address.city,

@@ -2,15 +2,20 @@
 
 FactoryBot.define do
   factory :collectivity do
+    transient do
+      name_pattern { "%{territory} #%{sequence}" }
+    end
+
     publisher
     territory { association %i[commune epci departement].sample }
     siren     { Faker::Company.unique.french_siren_number }
 
     sequence :name do |n|
-      # Remove the sequence number added by territories (if it exists)
-      # and replace it by the sequence number of this factory
-      name = territory.name.gsub(/\s*#\d+/, "")
-      "#{name} ##{n}"
+      # Remove the sequence number added by territory factory (if it exists)
+      # before interpolating it to the name pattern
+      territory_name = territory.name.gsub(/\s*#\d+/, "")
+
+      name_pattern % { territory: territory_name, sequence: n }
     end
 
     trait :orphan do
@@ -46,6 +51,18 @@ FactoryBot.define do
 
     trait :region do
       territory factory: :region
+    end
+
+    trait :with_users do
+      transient do
+        users_size { 1 }
+      end
+
+      users do
+        Array.new(users_size) do
+          association :user, organization: instance
+        end
+      end
     end
   end
 end

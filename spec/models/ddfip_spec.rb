@@ -257,143 +257,198 @@ RSpec.describe DDFIP do
   # ----------------------------------------------------------------------------
   describe "update methods" do
     describe ".reset_all_counters" do
-      subject(:reset_all_counters) { described_class.reset_all_counters }
+      let_it_be(:ddfips) { create_list(:ddfip, 2) }
 
-      let!(:ddfips) { create_list(:ddfip, 2) }
-
-      it { expect { reset_all_counters }.to perform_sql_query("SELECT reset_all_ddfips_counters()") }
-
-      it "returns the count of DDFIPs" do
-        expect(reset_all_counters).to eq(2)
+      it "performs a single SQL function" do
+        expect { described_class.reset_all_counters }
+          .to perform_sql_query("SELECT reset_all_ddfips_counters()")
       end
 
-      describe "on users_count" do
-        before do
+      it "returns the number of concerned collectivities" do
+        expect(described_class.reset_all_counters).to eq(2)
+      end
+
+      describe "users counts" do
+        before_all do
+          create_list(:user, 2)
           create_list(:user, 4, organization: ddfips[0])
           create_list(:user, 2, organization: ddfips[1])
-          create_list(:user, 1, :publisher)
-          create_list(:user, 1, :collectivity)
+          create(:user, :discarded, organization: ddfips[0])
 
-          DDFIP.update_all(users_count: 0)
+          DDFIP.update_all(users_count: 99)
         end
 
-        it "resets counters" do
-          expect { reset_all_counters }
-            .to  change { ddfips[0].reload.users_count }.from(0).to(4)
-            .and change { ddfips[1].reload.users_count }.from(0).to(2)
+        it "updates #users_count" do
+          expect {
+            described_class.reset_all_counters
+          }.to change { ddfips[0].reload.users_count }.to(4)
+            .and change { ddfips[1].reload.users_count }.to(2)
         end
       end
 
-      describe "on collectivities_count" do
-        before do
-          epcis    = create_list(:epci, 3)
-          communes =
-            create_list(:commune, 3, epci: epcis[0], departement: ddfips[0].departement) +
-            create_list(:commune, 2, epci: epcis[1], departement: ddfips[0].departement)
-
-          create(:collectivity, territory: communes[0])
-          create(:collectivity, territory: communes[1])
-          create(:collectivity, territory: communes[3])
-          create(:collectivity, :discarded, territory: communes[2])
-          create(:collectivity, :discarded, territory: communes[4])
+      describe "collectivities counts" do
+        before_all do
           create(:collectivity, :commune)
-          create(:collectivity, territory: epcis[0])
-          create(:collectivity, territory: epcis[1])
-          create(:collectivity, territory: epcis[2])
-          create(:collectivity, territory: ddfips[0].departement)
-          create(:collectivity, territory: ddfips[1].departement.region)
 
-          DDFIP.update_all(collectivities_count: 0)
+          ddfips[0].tap do |ddfip|
+            epcis     = create_list(:epci, 3)
+            communes  = create_list(:commune, 3, epci: epcis[0], departement: ddfip.departement)
+            communes += create_list(:commune, 2, epci: epcis[1], departement: ddfip.departement)
+
+            create(:collectivity, territory: epcis[0])
+            create(:collectivity, territory: epcis[1])
+            create(:collectivity, territory: communes[0])
+            create(:collectivity, territory: communes[1])
+            create(:collectivity, territory: communes[3])
+            create(:collectivity, :discarded, territory: communes[2])
+            create(:collectivity, :discarded, territory: communes[4])
+          end
+
+          ddfips[1].tap do |ddfip|
+            create(:collectivity, territory: ddfip.departement)
+            create(:collectivity, territory: ddfip.departement.region)
+          end
+
+          DDFIP.update_all(collectivities_count: 99)
         end
 
-        it "resets counters" do
-          expect { reset_all_counters }
-            .to  change { ddfips[0].reload.collectivities_count }.from(0).to(6)
-            .and change { ddfips[1].reload.collectivities_count }.from(0).to(1)
-        end
-      end
-
-      describe "on offices_count" do
-        before do
-          create_list(:office, 4, ddfip: ddfips[0])
-          create_list(:office, 2, ddfip: ddfips[1])
-          create_list(:office, 1)
-
-          DDFIP.update_all(offices_count: 0)
-        end
-
-        it "resets counters" do
-          expect { reset_all_counters }
-            .to  change { ddfips[0].reload.offices_count }.from(0).to(4)
-            .and change { ddfips[1].reload.offices_count }.from(0).to(2)
-        end
-      end
-
-      describe "on reports_count" do
-        before do
-          create_list(:commune, 4, code_departement: ddfips[0].code_departement)
-          create_list(:commune, 2, code_departement: ddfips[1].code_departement)
-
-          Commune.find_each { |commune| create(:report, :transmitted, commune: commune) }
-
-          DDFIP.update_all(reports_count: 0)
-        end
-
-        it "resets counters" do
-          expect { reset_all_counters }
-            .to  change { ddfips[0].reload.reports_count }.from(0).to(4)
-            .and change { ddfips[1].reload.reports_count }.from(0).to(2)
+        it "updates #collectivities_count" do
+          expect {
+            described_class.reset_all_counters
+          }.to change { ddfips[0].reload.collectivities_count }.to(5)
+            .and change { ddfips[1].reload.collectivities_count }.to(2)
         end
       end
 
-      describe "on reports_approved_count" do
-        before do
-          create_list(:commune, 4, code_departement: ddfips[0].code_departement)
-          create_list(:commune, 2, code_departement: ddfips[1].code_departement)
+      describe "offices counts" do
+        before_all do
+          create_list(:office, 2)
+          create_list(:office, 2, ddfip: ddfips[0])
+          create_list(:office, 4, ddfip: ddfips[1])
+          create(:office, :discarded, ddfip: ddfips[0])
 
-          Commune.find_each { |commune| create(:report, :approved, commune: commune) }
-
-          DDFIP.update_all(reports_approved_count: 0)
+          DDFIP.update_all(offices_count: 99)
         end
 
-        it "resets counters" do
-          expect { reset_all_counters }
-            .to  change { ddfips[0].reload.reports_approved_count }.from(0).to(4)
-            .and change { ddfips[1].reload.reports_approved_count }.from(0).to(2)
-        end
-      end
-
-      describe "on reports_rejected_count" do
-        before do
-          create_list(:commune, 4, code_departement: ddfips[0].code_departement)
-          create_list(:commune, 2, code_departement: ddfips[1].code_departement)
-
-          Commune.find_each { |commune| create(:report, :rejected, commune: commune) }
-
-          DDFIP.update_all(reports_rejected_count: 0)
-        end
-
-        it "resets counters" do
-          expect { reset_all_counters }
-            .to  change { ddfips[0].reload.reports_rejected_count }.from(0).to(4)
-            .and change { ddfips[1].reload.reports_rejected_count }.from(0).to(2)
+        it "updates #offices_count" do
+          expect {
+            described_class.reset_all_counters
+          }.to change { ddfips[0].reload.offices_count }.to(2)
+            .and change { ddfips[1].reload.offices_count }.to(4)
         end
       end
 
-      describe "on reports_debated_count" do
-        before do
-          create_list(:commune, 4, code_departement: ddfips[0].code_departement)
-          create_list(:commune, 2, code_departement: ddfips[1].code_departement)
+      describe "reports & packages counts" do
+        before_all do
+          ddfips[0].tap do |ddfip|
+            create(:commune, departement: ddfip.departement).tap do |commune|
+              create(:collectivity, territory: commune).tap do |collectivity|
+                create(:report, collectivity:)
+                create(:report, :completed, collectivity:)
 
-          Commune.find_each { |commune| create(:report, :debated, commune: commune) }
+                create(:package, :with_reports, collectivity:)
+                create(:package, :with_reports, :sandbox, collectivity:)
+                create(:package, :with_reports, :assigned, collectivity:) do |package|
+                  create_list(:report, 2, :approved, collectivity:, package:)
+                  create_list(:report, 3, :rejected, collectivity:, package:)
+                end
+              end
+            end
+          end
 
-          DDFIP.update_all(reports_debated_count: 0)
+          ddfips[1].tap do |ddfip|
+            create(:commune, departement: ddfip.departement).tap do |commune|
+              create(:collectivity, territory: commune).tap do |collectivity|
+                create(:package, :with_reports, :returned, collectivity:)
+                create(:package, :assigned, collectivity:) do |package|
+                  create(:report, :debated, collectivity:, package:)
+                end
+              end
+            end
+          end
+
+          DDFIP.update_all(
+            reports_transmitted_count:  99,
+            reports_returned_count:     99,
+            reports_pending_count:      99,
+            reports_debated_count:      99,
+            reports_approved_count:     99,
+            reports_rejected_count:     99,
+            packages_transmitted_count: 99,
+            packages_unresolved_count:  99,
+            packages_assigned_count:    99,
+            packages_returned_count:    99
+          )
         end
 
-        it "resets counters" do
-          expect { reset_all_counters }
-            .to  change { ddfips[0].reload.reports_debated_count }.from(0).to(4)
-            .and change { ddfips[1].reload.reports_debated_count }.from(0).to(2)
+        it "updates #reports_transmitted_count" do
+          expect {
+            described_class.reset_all_counters
+          }.to change { ddfips[0].reload.reports_transmitted_count }.to(7)
+            .and change { ddfips[1].reload.reports_transmitted_count }.to(2)
+        end
+
+        it "updates #reports_returned_count" do
+          expect {
+            described_class.reset_all_counters
+          }.to change { ddfips[0].reload.reports_returned_count }.to(0)
+            .and change { ddfips[1].reload.reports_returned_count }.to(1)
+        end
+
+        it "updates #reports_pending_count" do
+          expect {
+            described_class.reset_all_counters
+          }.to change { ddfips[0].reload.reports_pending_count }.to(1)
+            .and change { ddfips[1].reload.reports_pending_count }.to(0)
+        end
+
+        it "updates #reports_debated_count" do
+          expect {
+            described_class.reset_all_counters
+          }.to change { ddfips[0].reload.reports_debated_count }.to(0)
+            .and change { ddfips[1].reload.reports_debated_count }.to(1)
+        end
+
+        it "updates #reports_approved_count" do
+          expect {
+            described_class.reset_all_counters
+          }.to change { ddfips[0].reload.reports_approved_count }.to(2)
+            .and change { ddfips[1].reload.reports_approved_count }.to(0)
+        end
+
+        it "updates #reports_rejected_count" do
+          expect {
+            described_class.reset_all_counters
+          }.to change { ddfips[0].reload.reports_rejected_count }.to(3)
+            .and change { ddfips[1].reload.reports_rejected_count }.to(0)
+        end
+
+        it "updates #packages_transmitted_count" do
+          expect {
+            described_class.reset_all_counters
+          }.to change { ddfips[0].reload.packages_transmitted_count }.to(2)
+            .and change { ddfips[1].reload.packages_transmitted_count }.to(2)
+        end
+
+        it "updates #packages_unresolved_count" do
+          expect {
+            described_class.reset_all_counters
+          }.to change { ddfips[0].reload.packages_unresolved_count }.to(1)
+            .and change { ddfips[1].reload.packages_unresolved_count }.to(0)
+        end
+
+        it "updates #packages_assigned_count" do
+          expect {
+            described_class.reset_all_counters
+          }.to change { ddfips[0].reload.packages_assigned_count }.to(1)
+            .and change { ddfips[1].reload.packages_assigned_count }.to(1)
+        end
+
+        it "updates #packages_returned_count" do
+          expect {
+            described_class.reset_all_counters
+          }.to change { ddfips[0].reload.packages_returned_count }.to(0)
+            .and change { ddfips[1].reload.packages_returned_count }.to(1)
         end
       end
     end
@@ -428,390 +483,783 @@ RSpec.describe DDFIP do
   end
 
   describe "database triggers" do
-    let!(:ddfips) { create_list(:ddfip, 2) }
+    let!(:ddfip) { create(:ddfip) }
 
-    describe "about organization counter caches" do
-      describe "#users_count" do
-        let(:user) { create(:user, organization: ddfips[0]) }
+    describe "#users_count" do
+      let(:user) { create(:user, organization: ddfip) }
+
+      it "changes on creation" do
+        expect { user }
+          .to change { ddfip.reload.users_count }.from(0).to(1)
+      end
+
+      it "changes on deletion" do
+        user
+
+        expect { user.destroy }
+          .to change { ddfip.reload.users_count }.from(1).to(0)
+      end
+
+      it "changes when user is discarded" do
+        user
+
+        expect { user.discard }
+          .to change { ddfip.reload.users_count }.from(1).to(0)
+      end
+
+      it "changes when user is undiscarded" do
+        user.discard
+
+        expect { user.undiscard }
+          .to change { ddfip.reload.users_count }.from(0).to(1)
+      end
+
+      it "changes when user switches to another organization" do
+        user
+        another_ddfip = create(:ddfip)
+
+        expect { user.update(organization: another_ddfip) }
+          .to change { ddfip.reload.users_count }.from(1).to(0)
+      end
+    end
+
+    describe "#collectivities_count" do
+      context "with communes" do
+        let(:commune)      { create(:commune, departement: ddfip.departement) }
+        let(:collectivity) { create(:collectivity, territory: commune) }
 
         it "changes on creation" do
-          expect { user }
-            .to change { ddfips[0].reload.users_count }.from(0).to(1)
-            .and not_change { ddfips[1].reload.users_count }.from(0)
+          expect { collectivity }
+            .to change { ddfip.reload.collectivities_count }.from(0).to(1)
         end
 
-        it "changes on deletion" do
-          user
-          expect { user.destroy }
-            .to change { ddfips[0].reload.users_count }.from(1).to(0)
-            .and not_change { ddfips[1].reload.users_count }.from(0)
+        it "changes when collectivity is discarded" do
+          collectivity
+
+          expect { collectivity.discard }
+            .to change { ddfip.reload.collectivities_count }.from(1).to(0)
         end
 
-        it "changes when discarding" do
-          user
-          expect { user.discard }
-            .to change { ddfips[0].reload.users_count }.from(1).to(0)
-            .and not_change { ddfips[1].reload.users_count }.from(0)
+        it "changes when collectivity is undiscarded" do
+          collectivity.discard
+
+          expect { collectivity.undiscard }
+            .to change { ddfip.reload.collectivities_count }.from(0).to(1)
         end
 
-        it "changes when undiscarding" do
-          user.discard
-          expect { user.undiscard }
-            .to change { ddfips[0].reload.users_count }.from(0).to(1)
-            .and not_change { ddfips[1].reload.users_count }.from(0)
+        it "changes when collectivity is deleted" do
+          collectivity
+
+          expect { collectivity.destroy }
+            .to change { ddfip.reload.collectivities_count }.from(1).to(0)
         end
 
-        it "changes when updating organization" do
-          user
-          expect { user.update(organization: ddfips[1]) }
-            .to  change { ddfips[0].reload.users_count }.from(1).to(0)
-            .and change { ddfips[1].reload.users_count }.from(0).to(1)
+        it "changes when collectivity switches to another territory" do
+          collectivity
+          another_commune = create(:commune)
+
+          expect { collectivity.update(territory: another_commune) }
+            .to change { ddfip.reload.collectivities_count }.from(1).to(0)
         end
       end
 
-      describe "#collectivities_count" do
-        let(:communes) do
-          [
-            create(:commune, :with_epci, departement: ddfips[0].departement),
-            create(:commune, :with_epci, departement: ddfips[1].departement)
-          ]
+      context "with EPCIs having communes in the departements" do
+        let(:commune)      { create(:commune, :with_epci, departement: ddfip.departement) }
+        let(:collectivity) { create(:collectivity, territory: commune.epci) }
+
+        it "changes on creation" do
+          expect { collectivity }
+            .to change { ddfip.reload.collectivities_count }.from(0).to(1)
         end
 
-        context "with communes" do
-          it_behaves_like "it changes collectivities count" do
-            let(:subjects)    { ddfips }
-            let(:territories) { communes }
-          end
+        it "changes when collectivity is discarded" do
+          collectivity
+
+          expect { collectivity.discard }
+            .to change { ddfip.reload.collectivities_count }.from(1).to(0)
         end
 
-        context "with EPCIs having communes in the departements" do
-          it_behaves_like "it changes collectivities count" do
-            let(:subjects)    { ddfips }
-            let(:territories) { communes.map(&:epci) }
-          end
+        it "changes when collectivity is undiscarded" do
+          collectivity.discard
+
+          expect { collectivity.undiscard }
+            .to change { ddfip.reload.collectivities_count }.from(0).to(1)
         end
 
-        context "with an EPCI belonging to the departement but without communes in it" do
-          let(:epci)         { create(:epci, departement: ddfips[0].departement) }
-          let(:collectivity) { create(:collectivity, territory: epci) }
+        it "changes when collectivity is deleted" do
+          collectivity
 
-          it do
-            expect { collectivity }
-              .to  not_change { ddfips[0].reload.collectivities_count }.from(0)
-              .and not_change { ddfips[1].reload.collectivities_count }.from(0)
-          end
+          expect { collectivity.destroy }
+            .to change { ddfip.reload.collectivities_count }.from(1).to(0)
         end
 
-        context "with departements" do
-          it_behaves_like "it changes collectivities count" do
-            let(:subjects)    { ddfips }
-            let(:territories) { communes.map(&:departement) }
-          end
-        end
+        it "changes when collectivity switches to another territory" do
+          collectivity
+          another_epci = create(:epci)
 
-        context "with regions" do
-          it_behaves_like "it changes collectivities count" do
-            let(:subjects)    { ddfips }
-            let(:territories) { communes.map(&:region) }
-          end
+          expect { collectivity.update(territory: another_epci) }
+            .to change { ddfip.reload.collectivities_count }.from(1).to(0)
         end
       end
 
-      describe "#offices_count" do
-        let(:office) { create(:office, ddfip: ddfips[0]) }
+      context "with an EPCI belonging to the departement but without communes in it" do
+        let(:epci)         { create(:epci, departement: ddfip.departement) }
+        let(:collectivity) { create(:collectivity, territory: epci) }
+
+        it "doesn't changes on creation" do
+          expect { collectivity }
+            .not_to change { ddfip.reload.collectivities_count }.from(0)
+        end
+      end
+
+      context "with departements" do
+        let(:collectivity) { create(:collectivity, territory: ddfip.departement) }
 
         it "changes on creation" do
-          expect { office }
-            .to change { ddfips[0].reload.offices_count }.from(0).to(1)
-            .and not_change { ddfips[1].reload.offices_count }.from(0)
+          expect { collectivity }
+            .to change { ddfip.reload.collectivities_count }.from(0).to(1)
         end
 
-        it "changes on deletion" do
-          office
-          expect { office.destroy }
-            .to change { ddfips[0].reload.offices_count }.from(1).to(0)
-            .and not_change { ddfips[1].reload.offices_count }.from(0)
+        it "changes when collectivity is discarded" do
+          collectivity
+
+          expect { collectivity.discard }
+            .to change { ddfip.reload.collectivities_count }.from(1).to(0)
         end
 
-        it "changes on updating" do
-          office
-          expect { office.update(ddfip: ddfips[1]) }
-            .to  change { ddfips[0].reload.offices_count }.from(1).to(0)
-            .and change { ddfips[1].reload.offices_count }.from(0).to(1)
+        it "changes when collectivity is undiscarded" do
+          collectivity.discard
+
+          expect { collectivity.undiscard }
+            .to change { ddfip.reload.collectivities_count }.from(0).to(1)
+        end
+
+        it "changes when collectivity is deleted" do
+          collectivity
+
+          expect { collectivity.destroy }
+            .to change { ddfip.reload.collectivities_count }.from(1).to(0)
+        end
+
+        it "changes when collectivity switches to another territory" do
+          collectivity
+          another_departement = create(:departement)
+
+          expect { collectivity.update(territory: another_departement) }
+            .to change { ddfip.reload.collectivities_count }.from(1).to(0)
+        end
+      end
+
+      context "with regions" do
+        let(:collectivity) { create(:collectivity, territory: ddfip.departement.region) }
+
+        it "changes on creation" do
+          expect { collectivity }
+            .to change { ddfip.reload.collectivities_count }.from(0).to(1)
+        end
+
+        it "changes when collectivity is discarded" do
+          collectivity
+
+          expect { collectivity.discard }
+            .to change { ddfip.reload.collectivities_count }.from(1).to(0)
+        end
+
+        it "changes when collectivity is undiscarded" do
+          collectivity.discard
+
+          expect { collectivity.undiscard }
+            .to change { ddfip.reload.collectivities_count }.from(0).to(1)
+        end
+
+        it "changes when collectivity is deleted" do
+          collectivity
+
+          expect { collectivity.destroy }
+            .to change { ddfip.reload.collectivities_count }.from(1).to(0)
+        end
+
+        it "changes when collectivity switches to another territory" do
+          collectivity
+          another_region = create(:region)
+
+          expect { collectivity.update(territory: another_region) }
+            .to change { ddfip.reload.collectivities_count }.from(1).to(0)
         end
       end
     end
 
-    describe "about reports counter caches", skip: "FIXME" do
-      describe "#reports_count" do
-        let(:commune)      { create(:commune, departement: ddfip.departement) }
-        let(:collectivity) { create(:collectivity, territory: commune) }
-        let(:report)       { create(:report, collectivity:) }
-        let(:package)      { create(:package, collectivity:) }
+    describe "#offices_count" do
+      let(:office) { create(:office, ddfip:) }
 
-        it "doesn't change on report creation" do
-          expect { report }
-            .to  not_change { ddfips[0].reload.reports_count }.from(0)
-            .and not_change { ddfips[1].reload.reports_count }.from(0)
-        end
-
-        it "changes when package is transmitted" do
-          report
-
-          expect { report.update(package: package) }
-            .to change { ddfips[0].reload.reports_count }.from(0).to(1)
-            .and not_change { ddfips[1].reload.reports_count }.from(0)
-        end
-
-        it "doesn't changes when package in sandbox is transmitted" do
-          package.update(sandbox: true)
-
-          expect { report.update(package: package) }
-            .to  not_change { ddfips[0].reload.reports_count }.from(0)
-            .and not_change { ddfips[1].reload.reports_count }.from(0)
-        end
-
-        it "changes when transmitted report is discarded" do
-          report.update(package: package)
-
-          expect { report.discard }
-            .to change { ddfips[0].reload.reports_count }.from(1).to(0)
-            .and not_change { ddfips[1].reload.reports_count }.from(0)
-        end
-
-        it "changes when transmitted report is undiscarded" do
-          report.update(package: package)
-          report.discard
-
-          expect { report.undiscard }
-            .to change { ddfips[0].reload.reports_count }.from(0).to(1)
-            .and not_change { ddfips[1].reload.reports_count }.from(0)
-        end
-
-        it "changes when transmitted report is deleted" do
-          report.update(package: package)
-
-          expect { report.destroy }
-            .to change { ddfips[0].reload.reports_count }.from(1).to(0)
-            .and not_change { ddfips[1].reload.reports_count }.from(0)
-        end
-
-        it "changes when transmitted package is discarded" do
-          report.update(package: package)
-
-          expect { package.discard }
-            .to change { ddfips[0].reload.reports_count }.from(1).to(0)
-            .and not_change { ddfips[1].reload.reports_count }.from(0)
-        end
-
-        it "changes when transmitted package is undiscarded" do
-          report.update(package: package)
-          package.discard
-
-          expect { report.package.undiscard }
-            .to change { ddfips[0].reload.reports_count }.from(0).to(1)
-            .and not_change { ddfips[1].reload.reports_count }.from(0)
-        end
-
-        it "changes when transmitted package is deleted" do
-          report.update(package: package)
-
-          expect { package.delete }
-            .to change { ddfips[0].reload.reports_count }.from(1).to(0)
-            .and not_change { ddfips[1].reload.reports_count }.from(0)
-        end
+      it "changes on creation" do
+        expect { office }
+          .to change { ddfip.reload.offices_count }.from(0).to(1)
       end
 
-      describe "#reports_approved_count" do
-        before do
-          commune = create(:commune)
-          ddfips.first.update(code_departement: commune.code_departement)
-        end
+      it "changes on deletion" do
+        office
 
-        let(:commune) { Commune.first }
-        let(:report) { create(:report, commune: commune) }
-
-        it "doesn't change on report creation" do
-          expect { report }
-            .to  not_change { ddfips[0].reload.reports_approved_count }.from(0)
-            .and not_change { ddfips[1].reload.reports_approved_count }.from(0)
-        end
-
-        it "changes when transmitted report is approved" do
-          report.package.touch(:transmitted_at)
-
-          expect { report.approve! }
-            .to change { ddfips[0].reload.reports_approved_count }.from(0).to(1)
-            .and not_change { ddfips[1].reload.reports_approved_count }.from(0)
-        end
-
-        it "changes when approved and transmitted report is discarded" do
-          report.approve! and report.package.touch(:transmitted_at)
-
-          expect { report.discard }
-            .to change { ddfips[0].reload.reports_approved_count }.from(1).to(0)
-            .and not_change { ddfips[1].reload.reports_approved_count }.from(0)
-        end
-
-        it "changes when approved and transmitted report is undiscarded" do
-          report.touch(:approved_at, :discarded_at) and report.package.touch(:transmitted_at)
-
-          expect { report.undiscard }
-            .to change { ddfips[0].reload.reports_approved_count }.from(0).to(1)
-            .and not_change { ddfips[1].reload.reports_approved_count }.from(0)
-        end
-
-        it "changes when approved and transmitted report is deleted" do
-          report.touch(:approved_at) and report.package.touch(:transmitted_at)
-
-          expect { report.delete }
-            .to change { ddfips[0].reload.reports_approved_count }.from(1).to(0)
-            .and not_change { ddfips[1].reload.reports_approved_count }.from(0)
-        end
+        expect { office.destroy }
+          .to change { ddfip.reload.offices_count }.from(1).to(0)
       end
 
-      describe "#reports_rejected_count" do
-        before do
-          commune = create(:commune)
-          ddfips.first.update(code_departement: commune.code_departement)
-        end
+      it "changes when office is discarded" do
+        office
 
-        let(:commune) { Commune.first }
-        let(:report) { create(:report, commune: commune) }
-
-        it "doesn't change on report creation" do
-          expect { report }
-            .to  not_change { ddfips[0].reload.reports_rejected_count }.from(0)
-            .and not_change { ddfips[1].reload.reports_rejected_count }.from(0)
-        end
-
-        it "changes when transmitted report is rejected" do
-          report.package.touch(:transmitted_at)
-
-          expect { report.reject! }
-            .to change { ddfips[0].reload.reports_rejected_count }.from(0).to(1)
-            .and not_change { ddfips[1].reload.reports_rejected_count }.from(0)
-        end
-
-        it "changes when rejected and transmitted report is discarded" do
-          report.reject! and report.package.touch(:transmitted_at)
-
-          expect { report.discard }
-            .to change { ddfips[0].reload.reports_rejected_count }.from(1).to(0)
-            .and not_change { ddfips[1].reload.reports_rejected_count }.from(0)
-        end
-
-        it "changes when rejected and transmitted report is undiscarded" do
-          report.touch(:rejected_at, :discarded_at) and report.package.touch(:transmitted_at)
-
-          expect { report.undiscard }
-            .to change { ddfips[0].reload.reports_rejected_count }.from(0).to(1)
-            .and not_change { ddfips[1].reload.reports_rejected_count }.from(0)
-        end
-
-        it "changes when rejected and transmitted report is deleted" do
-          report.touch(:rejected_at) and report.package.touch(:transmitted_at)
-
-          expect { report.delete }
-            .to change { ddfips[0].reload.reports_rejected_count }.from(1).to(0)
-            .and not_change { ddfips[1].reload.reports_rejected_count }.from(0)
-        end
+        expect { office.discard }
+          .to change { ddfip.reload.offices_count }.from(1).to(0)
       end
 
-      describe "#reports_debated_count" do
-        before do
-          commune = create(:commune)
-          ddfips.first.update(code_departement: commune.code_departement)
-        end
+      it "changes when office is undiscarded" do
+        office.discard
 
-        let(:commune) { Commune.first }
-        let(:report) { create(:report, commune: commune) }
-
-        it "doesn't change on report creation" do
-          expect { report }
-            .to  not_change { ddfips[0].reload.reports_debated_count }.from(0)
-            .and not_change { ddfips[1].reload.reports_debated_count }.from(0)
-        end
-
-        it "changes when transmitted report is marked as debated" do
-          report.package.touch(:transmitted_at)
-
-          expect { report.debate! }
-            .to change { ddfips[0].reload.reports_debated_count }.from(0).to(1)
-            .and not_change { ddfips[1].reload.reports_debated_count }.from(0)
-        end
-
-        it "changes when debated and transmitted report is discarded" do
-          report.debate! and report.package.touch(:transmitted_at)
-
-          expect { report.discard }
-            .to change { ddfips[0].reload.reports_debated_count }.from(1).to(0)
-            .and not_change { ddfips[1].reload.reports_debated_count }.from(0)
-        end
-
-        it "changes when debated and transmitted report is undiscarded" do
-          report.touch(:debated_at, :discarded_at) and report.package.touch(:transmitted_at)
-
-          expect { report.undiscard }
-            .to change { ddfips[0].reload.reports_debated_count }.from(0).to(1)
-            .and not_change { ddfips[1].reload.reports_debated_count }.from(0)
-        end
-
-        it "changes when debated and transmitted report is deleted" do
-          report.touch(:debated_at) and report.package.touch(:transmitted_at)
-
-          expect { report.delete }
-            .to change { ddfips[0].reload.reports_debated_count }.from(1).to(0)
-            .and not_change { ddfips[1].reload.reports_debated_count }.from(0)
-        end
+        expect { office.undiscard }
+          .to change { ddfip.reload.offices_count }.from(0).to(1)
       end
 
-      describe "#reports_pending_count" do
-        before do
-          commune = create(:commune)
-          ddfips.first.update(code_departement: commune.code_departement)
-        end
+      it "changes when office switches to another ddfip" do
+        office
+        another_ddfip = create(:ddfip)
 
-        let(:commune) { Commune.first }
-        let(:report) { create(:report, :transmitted, commune: commune) }
+        expect { office.update(ddfip: another_ddfip) }
+          .to change { ddfip.reload.offices_count }.from(1).to(0)
+      end
+    end
 
-        it "change on report creation" do
-          expect { report }
-            .to  change { ddfips[0].reload.reports_pending_count }.from(0).to(1)
-            .and not_change { ddfips[1].reload.reports_pending_count }.from(0)
-        end
+    describe "#reports_transmitted_count" do
+      let(:commune)      { create(:commune, departement: ddfip.departement) }
+      let(:collectivity) { create(:collectivity, territory: commune) }
+      let(:package)      { create(:package, collectivity:) }
+      let(:report)       { create(:report, collectivity:) }
 
-        it "changes when report is approved" do
-          report
+      it "doesn't change when report is created" do
+        expect { report }
+          .not_to change { ddfip.reload.reports_transmitted_count }.from(0)
+      end
 
-          expect { report.approve! }
-            .to change { ddfips[0].reload.reports_pending_count }.from(1).to(0)
-            .and not_change { ddfips[1].reload.reports_pending_count }.from(0)
-        end
+      it "changes when report is transmitted" do
+        report
 
-        it "changes when report is discarded" do
-          report
+        expect { report.update(package:) }
+          .to change { ddfip.reload.reports_transmitted_count }.from(0).to(1)
+      end
 
-          expect { report.discard }
-            .to change { ddfips[0].reload.reports_pending_count }.from(1).to(0)
-            .and not_change { ddfips[1].reload.reports_pending_count }.from(0)
-        end
+      it "doesn't change when report is transmitted to a sandbox" do
+        report
+        package.update(sandbox: true)
 
-        it "changes when report is undiscarded" do
-          report.discard
+        expect { report.update(package:) }
+          .not_to change { ddfip.reload.reports_transmitted_count }.from(0)
+      end
 
-          expect { report.undiscard }
-            .to change { ddfips[0].reload.reports_pending_count }.from(0).to(1)
-            .and not_change { ddfips[1].reload.reports_pending_count }.from(0)
-        end
+      it "changes when report is discarded" do
+        report.update(package:)
 
-        it "changes when report is deleted" do
-          report
+        expect { report.discard }
+          .to change { ddfip.reload.reports_transmitted_count }.from(1).to(0)
+      end
 
-          expect { report.delete }
-            .to change { ddfips[0].reload.reports_pending_count }.from(1).to(0)
-            .and not_change { ddfips[1].reload.reports_pending_count }.from(0)
-        end
+      it "changes when report is undiscarded" do
+        report.update(package:)
+        report.discard
+
+        expect { report.undiscard }
+          .to change { ddfip.reload.reports_transmitted_count }.from(0).to(1)
+      end
+
+      it "changes when report is deleted" do
+        report.update(package:)
+
+        expect { report.destroy }
+          .to change { ddfip.reload.reports_transmitted_count }.from(1).to(0)
+      end
+
+      it "changes when package is discarded" do
+        report.update(package:)
+
+        expect { package.discard }
+          .to change { ddfip.reload.reports_transmitted_count }.from(1).to(0)
+      end
+
+      it "changes when package is undiscarded" do
+        report.update(package:)
+        package.discard
+
+        expect { package.undiscard }
+          .to change { ddfip.reload.reports_transmitted_count }.from(0).to(1)
+      end
+
+      it "changes when package is deleted" do
+        report.update(package:)
+
+        expect { package.delete }
+          .to change { ddfip.reload.reports_transmitted_count }.from(1).to(0)
+      end
+    end
+
+    describe "#reports_returned_count" do
+      let(:commune)      { create(:commune, departement: ddfip.departement) }
+      let(:collectivity) { create(:collectivity, territory: commune) }
+      let(:package)      { create(:package, :with_reports, collectivity:, reports_size: 2) }
+
+      it "doesn't change when reports are transmitted" do
+        expect { package }
+          .not_to change { ddfip.reload.reports_returned_count }.from(0)
+      end
+
+      it "changes when package is returned" do
+        package
+
+        expect { package.return! }
+          .to change { ddfip.reload.reports_returned_count }.from(0).to(2)
+      end
+
+      it "doesn't change when package is assigned" do
+        package
+
+        expect { package.assign! }
+          .not_to change { ddfip.reload.reports_returned_count }.from(0)
+      end
+
+      it "changes when returned package is then assigned" do
+        package.return!
+
+        expect { package.assign! }
+          .to change { ddfip.reload.reports_returned_count }.from(2).to(0)
+      end
+
+      it "changes when returned package is discarded" do
+        package.return!
+
+        expect { package.discard }
+          .to change { ddfip.reload.reports_returned_count }.from(2).to(0)
+      end
+
+      it "changes when returned package is undiscarded" do
+        package.return!
+        package.discard
+
+        expect { package.undiscard }
+          .to change { ddfip.reload.reports_returned_count }.from(0).to(2)
+      end
+
+      it "changes when returned package is deleted" do
+        package.return!
+
+        expect { package.delete }
+          .to change { ddfip.reload.reports_returned_count }.from(2).to(0)
+      end
+    end
+
+    describe "#reports_pending_count" do
+      let(:commune)      { create(:commune, departement: ddfip.departement) }
+      let(:collectivity) { create(:collectivity, territory: commune) }
+      let(:package)      { create(:package, :with_reports, collectivity:, reports_size: 2) }
+
+      it "doesn't change when reports are transmitted" do
+        expect { package }
+          .not_to change { ddfip.reload.reports_pending_count }.from(0)
+      end
+
+      it "changes when package is assigned" do
+        package
+
+        expect { package.assign! }
+          .to change { ddfip.reload.reports_pending_count }.from(0).to(2)
+      end
+
+      it "doesn't change when package is returned" do
+        package
+
+        expect { package.return! }
+          .not_to change { ddfip.reload.reports_pending_count }.from(0)
+      end
+
+      it "changes when assigned package is then returned" do
+        package.assign!
+
+        expect { package.return! }
+          .to change { ddfip.reload.reports_pending_count }.from(2).to(0)
+      end
+
+      it "changes when reports are approved" do
+        package.assign!
+
+        expect { package.reports.first.approve! }
+          .to change { ddfip.reload.reports_pending_count }.from(2).to(1)
+      end
+
+      it "changes when reports are rejected" do
+        package.assign!
+
+        expect { package.reports.first.reject! }
+          .to change { ddfip.reload.reports_pending_count }.from(2).to(1)
+      end
+
+      it "changes when reports are debated" do
+        package.assign!
+
+        expect { package.reports.first.debate! }
+          .to change { ddfip.reload.reports_pending_count }.from(2).to(1)
+      end
+    end
+
+    describe "#reports_debated_count" do
+      let(:commune)      { create(:commune, departement: ddfip.departement) }
+      let(:collectivity) { create(:collectivity, territory: commune) }
+      let(:package)      { create(:package, :assigned, collectivity:) }
+      let(:report)       { create(:report, collectivity:, package:) }
+
+      it "doesn't change when package is assigned" do
+        expect { report }
+          .not_to change { ddfip.reload.reports_debated_count }.from(0)
+      end
+
+      it "doesn't changes when report is approved" do
+        report
+
+        expect { report.approve! }
+          .not_to change { ddfip.reload.reports_debated_count }.from(0)
+      end
+
+      it "doesn't changes when report is rejected" do
+        report
+
+        expect { report.reject! }
+          .not_to change { ddfip.reload.reports_debated_count }.from(0)
+      end
+
+      it "changes when report is debated" do
+        report
+
+        expect { report.debate! }
+          .to change { ddfip.reload.reports_debated_count }.from(0).to(1)
+      end
+
+      it "changes when debated report is reseted" do
+        report.debate!
+
+        expect { report.update(debated_at: nil) }
+          .to change { ddfip.reload.reports_debated_count }.from(1).to(0)
+      end
+
+      it "changes when debated report is approved" do
+        report.debate!
+
+        expect { report.approve! }
+          .to change { ddfip.reload.reports_debated_count }.from(1).to(0)
+      end
+
+      it "changes when debated report is rejected" do
+        report.debate!
+
+        expect { report.reject! }
+          .to change { ddfip.reload.reports_debated_count }.from(1).to(0)
+      end
+    end
+
+    describe "#reports_approved_count" do
+      let(:commune)      { create(:commune, departement: ddfip.departement) }
+      let(:collectivity) { create(:collectivity, territory: commune) }
+      let(:package)      { create(:package, :assigned, collectivity:) }
+      let(:report)       { create(:report, collectivity:, package:) }
+
+      it "doesn't change when package is assigned" do
+        expect { report }
+          .not_to change { ddfip.reload.reports_approved_count }.from(0)
+      end
+
+      it "doesn't changes when report is rejected" do
+        report
+
+        expect { report.reject! }
+          .not_to change { ddfip.reload.reports_approved_count }.from(0)
+      end
+
+      it "doesn't changes when report is debated" do
+        report
+
+        expect { report.debate! }
+          .not_to change { ddfip.reload.reports_approved_count }.from(0)
+      end
+
+      it "changes when report is approved" do
+        report
+
+        expect { report.approve! }
+          .to change { ddfip.reload.reports_approved_count }.from(0).to(1)
+      end
+
+      it "changes when approved report is reseted" do
+        report.approve!
+
+        expect { report.update(approved_at: nil) }
+          .to change { ddfip.reload.reports_approved_count }.from(1).to(0)
+      end
+
+      it "changes when approved report is rejected" do
+        report.approve!
+
+        expect { report.reject! }
+          .to change { ddfip.reload.reports_approved_count }.from(1).to(0)
+      end
+    end
+
+    describe "#reports_rejected_count" do
+      let(:commune)      { create(:commune, departement: ddfip.departement) }
+      let(:collectivity) { create(:collectivity, territory: commune) }
+      let(:package)      { create(:package, :assigned, collectivity:) }
+      let(:report)       { create(:report, collectivity:, package:) }
+
+      it "doesn't change when package is assigned" do
+        expect { report }
+          .not_to change { ddfip.reload.reports_rejected_count }.from(0)
+      end
+
+      it "doesn't changes when report is approved" do
+        report
+
+        expect { report.approve! }
+          .not_to change { ddfip.reload.reports_rejected_count }.from(0)
+      end
+
+      it "doesn't changes when report is debated" do
+        report
+
+        expect { report.debate! }
+          .not_to change { ddfip.reload.reports_rejected_count }.from(0)
+      end
+
+      it "changes when report is rejected" do
+        report
+
+        expect { report.reject! }
+          .to change { ddfip.reload.reports_rejected_count }.from(0).to(1)
+      end
+
+      it "changes when rejected report is reseted" do
+        report.reject!
+
+        expect { report.update(rejected_at: nil) }
+          .to change { ddfip.reload.reports_rejected_count }.from(1).to(0)
+      end
+
+      it "changes when rejected report is approved" do
+        report.reject!
+
+        expect { report.approve! }
+          .to change { ddfip.reload.reports_rejected_count }.from(1).to(0)
+      end
+    end
+
+    describe "#packages_transmitted_count" do
+      let(:commune)      { create(:commune, departement: ddfip.departement) }
+      let(:collectivity) { create(:collectivity, territory: commune) }
+      let(:package)      { create(:package, :with_reports, collectivity:) }
+
+      it "changes on package creation" do
+        expect { package }
+          .to change { ddfip.reload.packages_transmitted_count }.from(0).to(1)
+      end
+
+      it "doesn't changes when package is created in sandbox" do
+        expect { create(:package, collectivity:, sandbox: true) }
+          .not_to change { ddfip.reload.packages_transmitted_count }.from(0)
+      end
+
+      it "doesn't changes when package switches to sandbox" do
+        package
+
+        expect { package.update(sandbox: true) }
+          .to change { ddfip.reload.packages_transmitted_count }.from(1).to(0)
+      end
+
+      it "doesn't changes when package is assigned" do
+        package
+
+        expect { package.assign! }
+          .not_to change { ddfip.reload.packages_transmitted_count }.from(1)
+      end
+
+      it "doesn't changes when package is returned" do
+        package
+
+        expect { package.return! }
+          .not_to change { ddfip.reload.packages_transmitted_count }.from(1)
+      end
+
+      it "changes when package is discarded" do
+        package
+
+        expect { package.discard }
+          .to change { ddfip.reload.packages_transmitted_count }.from(1).to(0)
+      end
+
+      it "changes when package is undiscarded" do
+        package.discard
+
+        expect { package.undiscard }
+          .to change { ddfip.reload.packages_transmitted_count }.from(0).to(1)
+      end
+
+      it "changes when package is deleted" do
+        package
+
+        expect { package.delete }
+          .to change { ddfip.reload.packages_transmitted_count }.from(1).to(0)
+      end
+    end
+
+    describe "#packages_unresolved_count" do
+      let(:commune)      { create(:commune, departement: ddfip.departement) }
+      let(:collectivity) { create(:collectivity, territory: commune) }
+      let(:package)      { create(:package, :with_reports, collectivity:) }
+
+      it "changes on package creation" do
+        expect { package }
+          .to change { ddfip.reload.packages_unresolved_count }.from(0).to(1)
+      end
+
+      it "doesn't changes when package is created in sandbox" do
+        expect { create(:package, collectivity:, sandbox: true) }
+          .not_to change { ddfip.reload.packages_unresolved_count }.from(0)
+      end
+
+      it "doesn't changes when package switches to sandbox" do
+        package
+
+        expect { package.update(sandbox: true) }
+          .to change { ddfip.reload.packages_unresolved_count }.from(1).to(0)
+      end
+
+      it "changes when package is assigned" do
+        package
+
+        expect { package.assign! }
+          .to change { ddfip.reload.packages_unresolved_count }.from(1).to(0)
+      end
+
+      it "changes when package is returned" do
+        package
+
+        expect { package.return! }
+          .to change { ddfip.reload.packages_unresolved_count }.from(1).to(0)
+      end
+
+      it "changes when package is discarded" do
+        package
+
+        expect { package.discard }
+          .to change { ddfip.reload.packages_unresolved_count }.from(1).to(0)
+      end
+
+      it "changes when package is undiscarded" do
+        package.discard
+
+        expect { package.undiscard }
+          .to change { ddfip.reload.packages_unresolved_count }.from(0).to(1)
+      end
+
+      it "changes when package is deleted" do
+        package
+
+        expect { package.delete }
+          .to change { ddfip.reload.packages_unresolved_count }.from(1).to(0)
+      end
+    end
+
+    describe "#packages_assigned_count" do
+      let(:commune)      { create(:commune, departement: ddfip.departement) }
+      let(:collectivity) { create(:collectivity, territory: commune) }
+      let(:package)      { create(:package, :with_reports, collectivity:) }
+
+      it "doesn't changes on package creation" do
+        expect { package }
+          .to not_change { ddfip.reload.packages_assigned_count }.from(0)
+      end
+
+      it "changes when package is assigned" do
+        package
+
+        expect { package.assign! }
+          .to change { ddfip.reload.packages_assigned_count }.from(0).to(1)
+      end
+
+      it "changes when assigned package is then returned" do
+        package.assign!
+
+        expect { package.return! }
+          .to change { ddfip.reload.packages_assigned_count }.from(1).to(0)
+      end
+
+      it "changes when assigned package is discarded" do
+        package.assign!
+
+        expect { package.discard }
+          .to change { ddfip.reload.packages_assigned_count }.from(1).to(0)
+      end
+
+      it "changes when assigned package is undiscarded" do
+        package.assign!
+        package.discard
+
+        expect { package.undiscard }
+          .to change { ddfip.reload.packages_assigned_count }.from(0).to(1)
+      end
+
+      it "changes when assigned package is deleted" do
+        package.assign!
+
+        expect { package.delete }
+          .to change { ddfip.reload.packages_assigned_count }.from(1).to(0)
+      end
+    end
+
+    describe "#packages_returned_count" do
+      let(:commune)      { create(:commune, departement: ddfip.departement) }
+      let(:collectivity) { create(:collectivity, territory: commune) }
+      let(:package)      { create(:package, :with_reports, collectivity:) }
+
+      it "doesn't change on package creation" do
+        expect { package }
+          .to not_change { ddfip.reload.packages_returned_count }.from(0)
+      end
+
+      it "changes when package is returned" do
+        package
+
+        expect { package.return! }
+          .to change { ddfip.reload.packages_returned_count }.from(0).to(1)
+      end
+
+      it "changes when returned package is assigned" do
+        package.return!
+
+        expect { package.assign! }
+          .to change { ddfip.reload.packages_returned_count }.from(1).to(0)
+      end
+
+      it "changes when returned package is discarded" do
+        package.return!
+
+        expect { package.discard }
+          .to change { ddfip.reload.packages_returned_count }.from(1).to(0)
+      end
+
+      it "changes when returned package is undiscarded" do
+        package.return!
+        package.discard
+
+        expect { package.undiscard }
+          .to change { ddfip.reload.packages_returned_count }.from(0).to(1)
+      end
+
+      it "changes when returned package is deleted" do
+        package.return!
+
+        expect { package.delete }
+          .to change { ddfip.reload.packages_returned_count }.from(1).to(0)
       end
     end
   end

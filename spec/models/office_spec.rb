@@ -287,106 +287,123 @@ RSpec.describe Office do
     end
 
     describe ".reset_all_counters" do
-      subject(:reset_all_counters) { described_class.reset_all_counters }
+      let_it_be(:ddfip)   { create(:ddfip) }
+      let_it_be(:offices) { create_list(:office, 2, ddfip:) }
 
-      let!(:ddfip)   { create(:ddfip) }
-      let!(:offices) { create_list(:office, 2, ddfip: ddfip) }
+      it "performs a single SQL function" do
+        expect { described_class.reset_all_counters }
+          .to perform_sql_query("SELECT reset_all_offices_counters()")
+      end
 
-      it { expect { reset_all_counters }.to ret(2) }
-      it { expect { reset_all_counters }.to perform_sql_query("SELECT reset_all_offices_counters()") }
+      it "returns the number of concerned collectivities" do
+        expect(described_class.reset_all_counters).to eq(2)
+      end
 
-      describe "on users_count" do
-        before do
-          users = create_list(:user, 6)
-
+      describe "users counts" do
+        before_all do
+          users = create_list(:user, 6, organization: ddfip)
           offices[0].users = users.shuffle.take(4)
           offices[1].users = users.shuffle.take(2)
 
-          Office.update_all(users_count: 0)
+          Office.update_all(users_count: 99)
         end
 
-        it { expect { reset_all_counters }.to change { offices[0].reload.users_count }.from(0).to(4) }
-        it { expect { reset_all_counters }.to change { offices[1].reload.users_count }.from(0).to(2) }
+        it "updates #users_count" do
+          expect {
+            described_class.reset_all_counters
+          }.to change { offices[0].reload.users_count }.to(4)
+            .and change { offices[1].reload.users_count }.to(2)
+        end
       end
 
-      describe "on communes_count" do
+      describe "communes count" do
         before do
           communes = create_list(:commune, 6, departement: ddfip.departement)
+          offices[0].communes = communes.shuffle.take(2)
+          offices[1].communes = communes.shuffle.take(4)
 
-          offices[0].communes = communes.shuffle.take(4)
-          offices[1].communes = communes.shuffle.take(2)
-
-          Office.update_all(communes_count: 0)
+          Office.update_all(communes_count: 99)
         end
 
-        it { expect { reset_all_counters }.to change { offices[0].reload.communes_count }.from(0).to(4) }
-        it { expect { reset_all_counters }.to change { offices[1].reload.communes_count }.from(0).to(2) }
+        it "updates #communes_count" do
+          expect {
+            described_class.reset_all_counters
+          }.to change { offices[0].reload.communes_count }.to(2)
+            .and change { offices[1].reload.communes_count }.to(4)
+        end
       end
 
-      describe "on reports_count" do
-        let!(:offices) { create_list(:office, 2, :with_communes, ddfip: ddfip) }
-        let!(:collectivity) { create(:collectivity) }
+      describe "reports & packages counts" do
+        before_all do
+          create(:commune, departement: ddfip.departement).tap do |commune|
+            offices[0].communes << commune
+            form_type = offices[0].competences.sample
 
-        before do
-          create_list(:report, 4, :made_for_office, :assigned_by_ddfip, ddfip: ddfip, office: offices[0], collectivity: collectivity)
-          create_list(:report, 2, :made_for_office, :assigned_by_ddfip, ddfip: ddfip, office: offices[1], collectivity: collectivity)
+            create(:collectivity, territory: commune).tap do |collectivity|
+              create(:package, :with_reports, collectivity:, form_type:)
+              create(:package, :with_reports, :sandbox, collectivity:, form_type:)
+              create(:package, :with_reports, :assigned, collectivity:, form_type:) do |package|
+                create_list(:report, 2, :approved, collectivity:, package:, form_type:)
+                create_list(:report, 3, :rejected, collectivity:, package:, form_type:)
+              end
+            end
+          end
 
-          Office.update_all(reports_count: 0)
+          create(:commune, departement: ddfip.departement).tap do |commune|
+            offices[1].communes << commune
+            form_type = offices[1].competences.sample
+
+            create(:collectivity, territory: commune).tap do |collectivity|
+              create(:package, :with_reports, :returned, collectivity:, form_type:)
+              create(:package, :assigned, collectivity:, form_type:) do |package|
+                create(:report, :debated, collectivity:, package:, form_type:)
+              end
+            end
+          end
+
+          Office.update_all(
+            reports_assigned_count: 99,
+            reports_pending_count:  99,
+            reports_debated_count:  99,
+            reports_approved_count: 99,
+            reports_rejected_count: 99
+          )
         end
 
-        it { expect { reset_all_counters }.to change { offices[0].reload.reports_count }.from(0).to(4) }
-        it { expect { reset_all_counters }.to change { offices[1].reload.reports_count }.from(0).to(2) }
-      end
-
-      describe "on reports_approved_count" do
-        let!(:offices) { create_list(:office, 2, :with_communes, ddfip: ddfip) }
-        let!(:collectivity) { create(:collectivity) }
-
-        before do
-          create_list(:report, 4, :made_for_office, :assigned_by_ddfip, :approved, ddfip: ddfip, office: offices[0], collectivity: collectivity)
-          create_list(:report, 2, :made_for_office, :assigned_by_ddfip, :approved, ddfip: ddfip, office: offices[1], collectivity: collectivity)
-          create_list(:report, 1, :made_for_office, :assigned_by_ddfip, ddfip: ddfip, office: offices[0], collectivity: collectivity)
-          create_list(:report, 1, :made_for_office, :assigned_by_ddfip, ddfip: ddfip, office: offices[1], collectivity: collectivity)
-
-          Office.update_all(reports_approved_count: 0)
+        it "updates #reports_assigned_count" do
+          expect {
+            described_class.reset_all_counters
+          }.to change { offices[0].reload.reports_assigned_count }.to(6)
+            .and change { offices[1].reload.reports_assigned_count }.to(1)
         end
 
-        it { expect { reset_all_counters }.to change { offices[0].reload.reports_approved_count }.from(0).to(4) }
-        it { expect { reset_all_counters }.to change { offices[1].reload.reports_approved_count }.from(0).to(2) }
-      end
-
-      describe "on reports_rejected_count" do
-        let!(:offices) { create_list(:office, 2, :with_communes, ddfip: ddfip) }
-        let!(:collectivity) { create(:collectivity) }
-
-        before do
-          create_list(:report, 4, :made_for_office, :assigned_by_ddfip, :rejected, ddfip: ddfip, office: offices[0], collectivity: collectivity)
-          create_list(:report, 2, :made_for_office, :assigned_by_ddfip, :rejected, ddfip: ddfip, office: offices[1], collectivity: collectivity)
-          create_list(:report, 1, :made_for_office, :assigned_by_ddfip, ddfip: ddfip, office: offices[0], collectivity: collectivity)
-          create_list(:report, 1, :made_for_office, :assigned_by_ddfip, ddfip: ddfip, office: offices[1], collectivity: collectivity)
-
-          Office.update_all(reports_rejected_count: 0)
+        it "updates #reports_pending_count" do
+          expect {
+            described_class.reset_all_counters
+          }.to change { offices[0].reload.reports_pending_count }.to(1)
+            .and change { offices[1].reload.reports_pending_count }.to(0)
         end
 
-        it { expect { reset_all_counters }.to change { offices[0].reload.reports_rejected_count }.from(0).to(4) }
-        it { expect { reset_all_counters }.to change { offices[1].reload.reports_rejected_count }.from(0).to(2) }
-      end
-
-      describe "on reports_debated_count" do
-        let!(:offices) { create_list(:office, 2, :with_communes, ddfip: ddfip) }
-        let!(:collectivity) { create(:collectivity) }
-
-        before do
-          create_list(:report, 4, :made_for_office, :assigned_by_ddfip, :debated, ddfip: ddfip, office: offices[0], collectivity: collectivity)
-          create_list(:report, 2, :made_for_office, :assigned_by_ddfip, :debated, ddfip: ddfip, office: offices[1], collectivity: collectivity)
-          create_list(:report, 1, :made_for_office, :assigned_by_ddfip, ddfip: ddfip, office: offices[0], collectivity: collectivity)
-          create_list(:report, 1, :made_for_office, :assigned_by_ddfip, ddfip: ddfip, office: offices[1], collectivity: collectivity)
-
-          Office.update_all(reports_debated_count: 0)
+        it "updates #reports_debated_count" do
+          expect {
+            described_class.reset_all_counters
+          }.to change { offices[0].reload.reports_debated_count }.to(0)
+            .and change { offices[1].reload.reports_debated_count }.to(1)
         end
 
-        it { expect { reset_all_counters }.to change { offices[0].reload.reports_debated_count }.from(0).to(4) }
-        it { expect { reset_all_counters }.to change { offices[1].reload.reports_debated_count }.from(0).to(2) }
+        it "updates #reports_approved_count" do
+          expect {
+            described_class.reset_all_counters
+          }.to change { offices[0].reload.reports_approved_count }.to(2)
+            .and change { offices[1].reload.reports_approved_count }.to(0)
+        end
+
+        it "updates #reports_rejected_count" do
+          expect {
+            described_class.reset_all_counters
+          }.to change { offices[0].reload.reports_rejected_count }.to(3)
+            .and change { offices[1].reload.reports_rejected_count }.to(0)
+        end
       end
     end
   end
@@ -419,599 +436,324 @@ RSpec.describe Office do
 
   describe "database triggers" do
     describe "about users counter cache" do
-      let!(:ddfip)   { create(:ddfip) }
-      let!(:offices) { create_list(:office, 2, ddfip: ddfip) }
-      let!(:user)    { create(:user) }
+      let!(:ddfip)  { create(:ddfip) }
+      let!(:office) { create(:office, ddfip:) }
 
       describe "#users_count" do
+        let!(:user) { create(:user, organization: ddfip) }
+
         it "changes when users is assigned to the office" do
-          expect { offices[0].users << user }
-            .to change { offices[0].reload.users_count }.from(0).to(1)
-            .and not_change { offices[1].reload.users_count }.from(0)
+          expect { office.users << user }
+            .to change { office.reload.users_count }.from(0).to(1)
         end
 
         it "changes when users is removed from the office" do
-          offices[0].users << user
+          office.users << user
 
-          expect { offices[0].users.delete(user) }
-            .to change { offices[0].reload.users_count }.from(1).to(0)
-            .and not_change { offices[1].reload.users_count }.from(0)
+          expect { office.users.delete(user) }
+            .to change { office.reload.users_count }.from(1).to(0)
         end
 
-        it "changes when users is destroyed" do
-          offices[0].users << user
-
-          expect { user.destroy }
-            .to change { offices[0].reload.users_count }.from(1).to(0)
-            .and not_change { offices[1].reload.users_count }.from(0)
-        end
-
-        it "changes when discarding" do
-          offices[0].users << user
+        it "changes when user is discarded" do
+          office.users << user
 
           expect { user.discard }
-            .to change { offices[0].reload.users_count }.from(1).to(0)
-            .and not_change { offices[1].reload.users_count }.from(0)
+            .to change { office.reload.users_count }.from(1).to(0)
         end
 
-        it "changes when undiscarding" do
-          offices[0].users << user
+        it "changes when is undiscarded" do
+          office.users << user
           user.discard
 
           expect { user.undiscard }
-            .to change { offices[0].reload.users_count }.from(0).to(1)
-            .and not_change { offices[1].reload.users_count }.from(0)
+            .to change { office.reload.users_count }.from(0).to(1)
+        end
+
+        it "changes when users is destroyed" do
+          office.users << user
+
+          expect { user.destroy }
+            .to change { office.reload.users_count }.from(1).to(0)
         end
       end
-    end
-
-    describe "about communes counter cache" do
-      let!(:ddfip)   { create(:ddfip) }
-      let!(:offices) { create_list(:office, 2, ddfip: ddfip) }
-      let!(:commune) { create(:commune, code_insee: "64102") }
 
       describe "#communes_count" do
+        let!(:commune) { create(:commune, code_insee: "64102") }
+
         it "changes when communes is assigned to the office" do
-          expect { offices[0].communes << commune }
-            .to change { offices[0].reload.communes_count }.from(0).to(1)
-            .and not_change { offices[1].reload.communes_count }.from(0)
+          expect { office.communes << commune }
+            .to change { office.reload.communes_count }.from(0).to(1)
         end
 
         it "changes when an existing code_insee is assigned to the office" do
-          expect { offices[0].office_communes.create(code_insee: "64102") }
-            .to change { offices[0].reload.communes_count }.from(0).to(1)
-            .and not_change { offices[1].reload.communes_count }.from(0)
+          expect { office.office_communes.create(code_insee: "64102") }
+            .to change { office.reload.communes_count }.from(0).to(1)
         end
 
         it "doesn't change when an unknown code_insee is assigned to the office" do
-          expect { offices[0].office_communes.create(code_insee: "64024") }
-            .to  not_change { offices[0].reload.communes_count }.from(0)
-            .and not_change { offices[1].reload.communes_count }.from(0)
+          expect { office.office_communes.create(code_insee: "64024") }
+            .to  not_change { office.reload.communes_count }.from(0)
         end
 
         it "changes when commune is removed from the office" do
-          offices[0].communes << commune
+          office.communes << commune
 
-          expect { offices[0].communes.delete(commune) }
-            .to change { offices[0].reload.communes_count }.from(1).to(0)
-            .and not_change { offices[1].reload.communes_count }.from(0)
+          expect { office.communes.delete(commune) }
+            .to change { office.reload.communes_count }.from(1).to(0)
         end
 
         it "changes when commune is destroyed" do
-          offices[0].communes << commune
+          office.communes << commune
 
           expect { commune.destroy }
-            .to change { offices[0].reload.communes_count }.from(1).to(0)
-            .and not_change { offices[1].reload.communes_count }.from(0)
+            .to change { office.reload.communes_count }.from(1).to(0)
         end
 
         it "changes when commune updates its code_insee" do
-          offices[0].communes << commune
+          office.communes << commune
 
           expect { commune.update(code_insee: "64024") }
-            .to change { offices[0].reload.communes_count }.from(1).to(0)
-            .and not_change { offices[1].reload.communes_count }.from(0)
+            .to change { office.reload.communes_count }.from(1).to(0)
         end
       end
-    end
 
-    describe "about reports counter caches", skip: "FIXME" do
-      let!(:ddfip) { create(:ddfip) }
-      let!(:offices) do
-        # Create tree offices:
-        # - one with the right competence and territory
-        # - one with the right competence but wrong territory
-        # - one with the right territory but wrong competence
-        #
-        offices = []
-        offices << create(:office, :evaluation_local_habitation, :with_communes, ddfip: ddfip)
-        offices << create(:office, :evaluation_local_habitation, :with_communes, ddfip: ddfip)
-        offices << create(:office, :evaluation_local_professionnel, ddfip: ddfip, communes: offices[0].communes)
-        offices
-      end
+      describe "#reports_assigned_count" do
+        let(:office) { create(:office, :with_communes, ddfip:) }
+        let(:report) { create(:report, :transmitted, :made_for_office, office:) }
 
-      describe "#reports_count" do
-        let(:report) { create(:report, :made_for_office, office: offices[0]) }
-
-        it "doesn't change on report creation" do
+        it "doesn't change when report is created" do
           expect { report }
-            .to  not_change { offices[0].reload.reports_count }.from(0)
-            .and not_change { offices[1].reload.reports_count }.from(0)
-            .and not_change { offices[2].reload.reports_count }.from(0)
+            .not_to change { office.reload.reports_assigned_count }.from(0)
         end
 
-        it "doesn't change when package is transmitted" do
+        it "changes when report is assigned" do
           report
 
-          expect { report.package.transmit! }
-            .to  not_change { offices[0].reload.reports_count }.from(0)
-            .and not_change { offices[1].reload.reports_count }.from(0)
-            .and not_change { offices[2].reload.reports_count }.from(0)
-        end
-
-        it "changes when transmitted package is assigned" do
-          report.package.transmit!
-
           expect { report.package.assign! }
-            .to change { offices[0].reload.reports_count }.from(0).to(1)
-            .and not_change { offices[1].reload.reports_count }.from(0)
-            .and not_change { offices[2].reload.reports_count }.from(0)
+            .to change { office.reload.reports_assigned_count }.from(0).to(1)
         end
 
-        it "doesn't changes when package in sandbox is transmitted" do
-          report.package.update(sandbox: true)
-
-          expect { report.package.transmit! }
-            .to  not_change { offices[0].reload.reports_count }.from(0)
-            .and not_change { offices[1].reload.reports_count }.from(0)
-            .and not_change { offices[2].reload.reports_count }.from(0)
-        end
-
-        it "doesn't changes when transmitted package in sandbox is assigned" do
-          report.package.update(sandbox: true) and report.package.transmit!
-
-          expect { report.package.assign! }
-            .to  not_change { offices[0].reload.reports_count }.from(0)
-            .and not_change { offices[1].reload.reports_count }.from(0)
-            .and not_change { offices[2].reload.reports_count }.from(0)
-        end
-
-        it "changes when transmitted report in approved package is discarded" do
-          report.package.touch(:transmitted_at) and report.package.assign!
+        it "changes when assigned report is discarded" do
+          report.package.assign!
 
           expect { report.discard }
-            .to change { offices[0].reload.reports_count }.from(1).to(0)
-            .and not_change { offices[1].reload.reports_count }.from(0)
-            .and not_change { offices[2].reload.reports_count }.from(0)
+            .to change { office.reload.reports_assigned_count }.from(1).to(0)
         end
 
-        it "changes when transmitted report in assigned package is undiscarded" do
-          report.discard and report.package.transmit! and report.package.assign!
+        it "changes when assigned report is undiscarded" do
+          report.package.assign!
+          report.discard
 
           expect { report.undiscard }
-            .to change { offices[0].reload.reports_count }.from(0).to(1)
-            .and not_change { offices[1].reload.reports_count }.from(0)
-            .and not_change { offices[2].reload.reports_count }.from(0)
+            .to change { office.reload.reports_assigned_count }.from(0).to(1)
         end
 
-        it "changes when transmitted report in assigned package is deleted" do
-          report.package.transmit! and report.package.assign!
-
-          expect { report.destroy }
-            .to change { offices[0].reload.reports_count }.from(1).to(0)
-            .and not_change { offices[1].reload.reports_count }.from(0)
-            .and not_change { offices[2].reload.reports_count }.from(0)
-        end
-
-        it "doesn't change when transmitted package is discarded" do
-          report.package.transmit!
-
-          expect { report.package.discard }
-            .to  not_change { offices[0].reload.reports_count }.from(0)
-            .and not_change { offices[1].reload.reports_count }.from(0)
-            .and not_change { offices[2].reload.reports_count }.from(0)
-        end
-
-        it "changes when transmitted and assigned package is discarded" do
-          report.package.transmit! and report.package.assign!
-
-          expect { report.package.discard }
-            .to change { offices[0].reload.reports_count }.from(1).to(0)
-            .and not_change { offices[1].reload.reports_count }.from(0)
-            .and not_change { offices[2].reload.reports_count }.from(0)
-        end
-
-        it "doesn't change when transmitted package is undiscarded" do
-          report.package.touch(:transmitted_at, :discarded_at)
-
-          expect { report.package.undiscard }
-            .to  not_change { offices[0].reload.reports_count }.from(0)
-            .and not_change { offices[1].reload.reports_count }.from(0)
-            .and not_change { offices[2].reload.reports_count }.from(0)
-        end
-
-        it "changes when transmitted and assigned package is undiscarded" do
-          report.package.touch(:transmitted_at, :discarded_at, :assigned_at)
-
-          expect { report.package.undiscard }
-            .to change { offices[0].reload.reports_count }.from(0).to(1)
-            .and not_change { offices[1].reload.reports_count }.from(0)
-            .and not_change { offices[2].reload.reports_count }.from(0)
-        end
-
-        it "doesn't change when transmitted package is deleted" do
-          report.package.transmit!
-
-          expect { report.package.delete }
-            .to  not_change { offices[0].reload.reports_count }.from(0)
-            .and not_change { offices[1].reload.reports_count }.from(0)
-            .and not_change { offices[2].reload.reports_count }.from(0)
-        end
-
-        it "changes when transmitted and assigned package is deleted" do
-          report.package.transmit! and report.package.assign!
-
-          expect { report.package.delete }
-            .to change { offices[0].reload.reports_count }.from(1).to(0)
-            .and not_change { offices[1].reload.reports_count }.from(0)
-            .and not_change { offices[2].reload.reports_count }.from(0)
-        end
-      end
-
-      describe "#reports_approved_count" do
-        let(:report) { create(:report, :made_for_office, office: offices[0]) }
-
-        it "doesn't change on report creation" do
-          expect { report }
-            .to  not_change { offices[0].reload.reports_approved_count }.from(0)
-            .and not_change { offices[1].reload.reports_approved_count }.from(0)
-            .and not_change { offices[2].reload.reports_approved_count }.from(0)
-        end
-
-        it "doesn't change when transmitted report is approved" do
-          report.package.touch(:transmitted_at)
-
-          expect { report.approve! }
-            .to  not_change { offices[0].reload.reports_approved_count }.from(0)
-            .and not_change { offices[1].reload.reports_approved_count }.from(0)
-            .and not_change { offices[2].reload.reports_approved_count }.from(0)
-        end
-
-        it "changes when transmitted report in assigned package is approved" do
-          report.package.touch(:transmitted_at, :assigned_at)
-
-          expect { report.approve! }
-            .to change { offices[0].reload.reports_approved_count }.from(0).to(1)
-            .and not_change { offices[1].reload.reports_approved_count }.from(0)
-            .and not_change { offices[2].reload.reports_approved_count }.from(0)
-        end
-
-        it "doesn't change when approved and transmitted report is discarded" do
-          report.approve! and report.package.touch(:transmitted_at)
-
-          expect { report.discard }
-            .to  not_change { offices[0].reload.reports_approved_count }.from(0)
-            .and not_change { offices[1].reload.reports_approved_count }.from(0)
-            .and not_change { offices[2].reload.reports_approved_count }.from(0)
-        end
-
-        it "changes when approved and transmitted report in assigned package is discarded" do
-          report.approve! and report.package.touch(:transmitted_at, :assigned_at)
-
-          expect { report.discard }
-            .to change { offices[0].reload.reports_approved_count }.from(1).to(0)
-            .and not_change { offices[1].reload.reports_approved_count }.from(0)
-            .and not_change { offices[2].reload.reports_approved_count }.from(0)
-        end
-
-        it "doesn't change when approved and transmitted report is undiscarded" do
-          report.touch(:approved_at, :discarded_at) and report.package.touch(:transmitted_at)
-
-          expect { report.undiscard }
-            .to  not_change { offices[0].reload.reports_approved_count }.from(0)
-            .and not_change { offices[1].reload.reports_approved_count }.from(0)
-            .and not_change { offices[2].reload.reports_approved_count }.from(0)
-        end
-
-        it "changes when approved and transmitted report in assigned package is undiscarded" do
-          report.touch(:approved_at, :discarded_at) and report.package.touch(:transmitted_at, :assigned_at)
-
-          expect { report.undiscard }
-            .to change { offices[0].reload.reports_approved_count }.from(0).to(1)
-            .and not_change { offices[1].reload.reports_approved_count }.from(0)
-            .and not_change { offices[2].reload.reports_approved_count }.from(0)
-        end
-
-        it "doesn't change when approved and transmitted report is deleted" do
-          report.approve! and report.package.touch(:transmitted_at)
+        it "changes when assigned report is deleted" do
+          report.package.assign!
 
           expect { report.delete }
-            .to  not_change { offices[0].reload.reports_approved_count }.from(0)
-            .and not_change { offices[1].reload.reports_approved_count }.from(0)
-            .and not_change { offices[2].reload.reports_approved_count }.from(0)
+            .to change { office.reload.reports_assigned_count }.from(1).to(0)
         end
 
-        it "changes when approved and transmitted report in assigned package is deleted" do
-          report.approve! and report.package.touch(:transmitted_at, :assigned_at)
-
-          expect { report.delete }
-            .to change { offices[0].reload.reports_approved_count }.from(1).to(0)
-            .and not_change { offices[1].reload.reports_approved_count }.from(0)
-            .and not_change { offices[2].reload.reports_approved_count }.from(0)
-        end
-      end
-
-      describe "#reports_rejected_count" do
-        let(:report) { create(:report, :made_for_office, office: offices[0]) }
-
-        it "doesn't change on report creation" do
-          expect { report }
-            .to  not_change { offices[0].reload.reports_rejected_count }.from(0)
-            .and not_change { offices[1].reload.reports_rejected_count }.from(0)
-            .and not_change { offices[2].reload.reports_rejected_count }.from(0)
-        end
-
-        it "doesn't change when transmitted report is rejected" do
-          report.package.touch(:transmitted_at)
-
-          expect { report.reject! }
-            .to  not_change { offices[0].reload.reports_rejected_count }.from(0)
-            .and not_change { offices[1].reload.reports_rejected_count }.from(0)
-            .and not_change { offices[2].reload.reports_rejected_count }.from(0)
-        end
-
-        it "changes when transmitted report in assigned package is rejected" do
-          report.package.touch(:transmitted_at, :assigned_at)
-
-          expect { report.reject! }
-            .to change { offices[0].reload.reports_rejected_count }.from(0).to(1)
-            .and not_change { offices[1].reload.reports_rejected_count }.from(0)
-            .and not_change { offices[2].reload.reports_rejected_count }.from(0)
-        end
-
-        it "doesn't change when rejected and transmitted report is discarded" do
-          report.reject! and report.package.touch(:transmitted_at)
-
-          expect { report.discard }
-            .to  not_change { offices[0].reload.reports_rejected_count }.from(0)
-            .and not_change { offices[1].reload.reports_rejected_count }.from(0)
-            .and not_change { offices[2].reload.reports_rejected_count }.from(0)
-        end
-
-        it "changes when rejected and transmitted report in assigned package is discarded" do
-          report.reject! and report.package.touch(:transmitted_at, :assigned_at)
-
-          expect { report.discard }
-            .to change { offices[0].reload.reports_rejected_count }.from(1).to(0)
-            .and not_change { offices[1].reload.reports_rejected_count }.from(0)
-            .and not_change { offices[2].reload.reports_rejected_count }.from(0)
-        end
-
-        it "doesn't change when rejected and transmitted report is undiscarded" do
-          report.touch(:rejected_at, :discarded_at) and report.package.touch(:transmitted_at)
-
-          expect { report.undiscard }
-            .to  not_change { offices[0].reload.reports_rejected_count }.from(0)
-            .and not_change { offices[1].reload.reports_rejected_count }.from(0)
-            .and not_change { offices[2].reload.reports_rejected_count }.from(0)
-        end
-
-        it "changes when rejected and transmitted report in assigned package is undiscarded" do
-          report.touch(:rejected_at, :discarded_at) and report.package.touch(:transmitted_at, :assigned_at)
-
-          expect { report.undiscard }
-            .to change { offices[0].reload.reports_rejected_count }.from(0).to(1)
-            .and not_change { offices[1].reload.reports_rejected_count }.from(0)
-            .and not_change { offices[2].reload.reports_rejected_count }.from(0)
-        end
-
-        it "doesn't change when rejected and transmitted report is deleted" do
-          report.reject! and report.package.touch(:transmitted_at)
-
-          expect { report.delete }
-            .to  not_change { offices[0].reload.reports_rejected_count }.from(0)
-            .and not_change { offices[1].reload.reports_rejected_count }.from(0)
-            .and not_change { offices[2].reload.reports_rejected_count }.from(0)
-        end
-
-        it "changes when rejected and transmitted report in assigned package is deleted" do
-          report.reject! and report.package.touch(:transmitted_at, :assigned_at)
-
-          expect { report.delete }
-            .to change { offices[0].reload.reports_rejected_count }.from(1).to(0)
-            .and not_change { offices[1].reload.reports_rejected_count }.from(0)
-            .and not_change { offices[2].reload.reports_rejected_count }.from(0)
-        end
-      end
-
-      describe "#reports_debated_count" do
-        let(:report) { create(:report, :made_for_office, office: offices[0]) }
-
-        it "doesn't change on report creation" do
-          expect { report }
-            .to  not_change { offices[0].reload.reports_debated_count }.from(0)
-            .and not_change { offices[1].reload.reports_debated_count }.from(0)
-            .and not_change { offices[2].reload.reports_debated_count }.from(0)
-        end
-
-        it "doesn't change when transmitted report is debated" do
-          report.package.touch(:transmitted_at)
+        it "doesn't changes when report is debated" do
+          report.package.assign!
 
           expect { report.debate! }
-            .to  not_change { offices[0].reload.reports_debated_count }.from(0)
-            .and not_change { offices[1].reload.reports_debated_count }.from(0)
-            .and not_change { offices[2].reload.reports_debated_count }.from(0)
+            .not_to change { office.reload.reports_assigned_count }.from(1)
         end
 
-        it "changes when transmitted report in assigned package is debated" do
-          report.package.touch(:transmitted_at, :assigned_at)
+        it "doesn't changes when report is approved" do
+          report.package.assign!
 
-          expect { report.debate! }
-            .to change { offices[0].reload.reports_debated_count }.from(0).to(1)
-            .and not_change { offices[1].reload.reports_debated_count }.from(0)
-            .and not_change { offices[2].reload.reports_debated_count }.from(0)
+          expect { report.approve! }
+            .not_to change { office.reload.reports_assigned_count }.from(1)
         end
 
-        it "doesn't change when debated and transmitted report is discarded" do
-          report.debate! and report.package.touch(:transmitted_at)
+        it "doesn't changes when report is rejected" do
+          report.package.assign!
 
-          expect { report.discard }
-            .to  not_change { offices[0].reload.reports_debated_count }.from(0)
-            .and not_change { offices[1].reload.reports_debated_count }.from(0)
-            .and not_change { offices[2].reload.reports_debated_count }.from(0)
-        end
-
-        it "changes when debated and transmitted report in assigned package is discarded" do
-          report.debate! and report.package.touch(:transmitted_at, :assigned_at)
-
-          expect { report.discard }
-            .to change { offices[0].reload.reports_debated_count }.from(1).to(0)
-            .and not_change { offices[1].reload.reports_debated_count }.from(0)
-            .and not_change { offices[2].reload.reports_debated_count }.from(0)
-        end
-
-        it "doesn't change when debated and transmitted report is undiscarded" do
-          report.touch(:debated_at, :discarded_at) and report.package.touch(:transmitted_at)
-
-          expect { report.undiscard }
-            .to  not_change { offices[0].reload.reports_debated_count }.from(0)
-            .and not_change { offices[1].reload.reports_debated_count }.from(0)
-            .and not_change { offices[2].reload.reports_debated_count }.from(0)
-        end
-
-        it "changes when debated and transmitted report in assigned package is undiscarded" do
-          report.touch(:debated_at, :discarded_at) and report.package.touch(:transmitted_at, :assigned_at)
-
-          expect { report.undiscard }
-            .to change { offices[0].reload.reports_debated_count }.from(0).to(1)
-            .and not_change { offices[1].reload.reports_debated_count }.from(0)
-            .and not_change { offices[2].reload.reports_debated_count }.from(0)
-        end
-
-        it "doesn't change when debated and transmitted report is deleted" do
-          report.debate! and report.package.touch(:transmitted_at)
-
-          expect { report.delete }
-            .to  not_change { offices[0].reload.reports_debated_count }.from(0)
-            .and not_change { offices[1].reload.reports_debated_count }.from(0)
-            .and not_change { offices[2].reload.reports_debated_count }.from(0)
-        end
-
-        it "changes when debated and transmitted report in assigned package is deleted" do
-          report.debate! and report.package.touch(:transmitted_at, :assigned_at)
-
-          expect { report.delete }
-            .to change { offices[0].reload.reports_debated_count }.from(1).to(0)
-            .and not_change { offices[1].reload.reports_debated_count }.from(0)
-            .and not_change { offices[2].reload.reports_debated_count }.from(0)
+          expect { report.reject! }
+            .not_to change { office.reload.reports_assigned_count }.from(1)
         end
       end
 
       describe "#reports_pending_count" do
-        let(:report) { create(:report, :made_for_office, office: offices[0]) }
+        let(:office) { create(:office, :with_communes, ddfip:) }
+        let(:report) { create(:report, :transmitted, :made_for_office, office:) }
 
-        it "doesn't change on report creation" do
+        it "doesn't change when report is created" do
           expect { report }
-            .to  not_change { offices[0].reload.reports_pending_count }.from(0)
-            .and not_change { offices[1].reload.reports_pending_count }.from(0)
-            .and not_change { offices[2].reload.reports_pending_count }.from(0)
+            .not_to change { office.reload.reports_pending_count }.from(0)
         end
 
-        it "change when report is transmitted" do
-          expect { report.package.transmit! }
-            .to  change { offices[0].reload.reports_pending_count }.from(0).to(1)
-            .and not_change { offices[1].reload.reports_pending_count }.from(0)
-            .and not_change { offices[2].reload.reports_pending_count }.from(0)
-        end
-
-        it "doesn't changes when transmitted report is approved" do
-          report.package.touch(:transmitted_at)
-
-          expect { report.approve! }
-            .to not_change { offices[0].reload.reports_pending_count }.from(1)
-            .and not_change { offices[1].reload.reports_pending_count }.from(0)
-            .and not_change { offices[2].reload.reports_pending_count }.from(0)
-        end
-
-        it "changes when transmitted package is assigned" do
-          report.package.touch(:transmitted_at)
+        it "changes when report is assigned" do
+          report
 
           expect { report.package.assign! }
-            .to change { offices[0].reload.reports_pending_count }.from(1).to(0)
-            .and not_change { offices[1].reload.reports_pending_count }.from(0)
-            .and not_change { offices[2].reload.reports_pending_count }.from(0)
+            .to change { office.reload.reports_pending_count }.from(0).to(1)
         end
 
-        it "changes when transmitted report is added to office" do
-          report.package.touch(:transmitted_at)
+        it "changes when report is debated" do
+          report.package.assign!
 
-          expect { create(:report, :made_for_office, :transmitted, office: offices[0]) }
-            .to change { offices[0].reload.reports_pending_count }.from(1).to(2)
-            .and not_change { offices[1].reload.reports_pending_count }.from(0)
-            .and not_change { offices[2].reload.reports_pending_count }.from(0)
+          expect { report.debate! }
+            .to change { office.reload.reports_pending_count }.from(1).to(0)
         end
 
-        it "changes when office commune is deleted" do
-          report.package.touch(:transmitted_at)
+        it "changes when report is approved" do
+          report.package.assign!
 
-          expect { offices[0].office_communes.where(code_insee: report.code_insee).first.destroy }
-            .to change { offices[0].reload.reports_pending_count }.from(1).to(0)
-            .and not_change { offices[1].reload.reports_pending_count }.from(0)
-            .and not_change { offices[2].reload.reports_pending_count }.from(0)
+          expect { report.approve! }
+            .to change { office.reload.reports_pending_count }.from(1).to(0)
         end
 
-        it "change when transmitted report is discarded" do
-          report.package.touch(:transmitted_at)
+        it "changes when report is rejected" do
+          report.package.assign!
 
-          expect { report.discard }
-            .to  change { offices[0].reload.reports_pending_count }.from(1).to(0)
-            .and not_change { offices[1].reload.reports_pending_count }.from(0)
-            .and not_change { offices[2].reload.reports_pending_count }.from(0)
+          expect { report.reject! }
+            .to change { office.reload.reports_pending_count }.from(1).to(0)
+        end
+      end
+
+      describe "#reports_debated_count" do
+        let(:office) { create(:office, :with_communes, ddfip:) }
+        let(:report) { create(:report, :assigned_to_office, office:) }
+
+        it "doesn't change when package is assigned" do
+          expect { report }
+            .not_to change { office.reload.reports_debated_count }.from(0)
         end
 
-        it "changes when transmitted package is discarded" do
-          report.package.touch(:transmitted_at)
+        it "doesn't changes when report is approved" do
+          report
 
-          expect { report.package.discard }
-            .to change { offices[0].reload.reports_pending_count }.from(1).to(0)
-            .and not_change { offices[1].reload.reports_pending_count }.from(0)
-            .and not_change { offices[2].reload.reports_pending_count }.from(0)
+          expect { report.approve! }
+            .not_to change { office.reload.reports_debated_count }.from(0)
         end
 
-        it "change when transmitted report is undiscarded" do
-          report.touch(:discarded_at) and report.package.touch(:transmitted_at)
+        it "doesn't changes when report is rejected" do
+          report
 
-          expect { report.undiscard }
-            .to  change { offices[0].reload.reports_pending_count }.from(0).to(1)
-            .and not_change { offices[1].reload.reports_pending_count }.from(0)
-            .and not_change { offices[2].reload.reports_pending_count }.from(0)
+          expect { report.reject! }
+            .not_to change { office.reload.reports_debated_count }.from(0)
         end
 
-        it "changes when transmitted package is undiscarded" do
-          report.package.touch(:transmitted_at, :discarded_at)
+        it "changes when report is debated" do
+          report
 
-          expect { report.package.undiscard }
-            .to change { offices[0].reload.reports_pending_count }.from(0).to(1)
-            .and not_change { offices[1].reload.reports_pending_count }.from(0)
-            .and not_change { offices[2].reload.reports_pending_count }.from(0)
+          expect { report.debate! }
+            .to change { office.reload.reports_debated_count }.from(0).to(1)
         end
 
-        it "change when transmitted report is deleted" do
-          report.package.touch(:transmitted_at)
+        it "changes when debated report is reseted" do
+          report.debate!
 
-          expect { report.delete }
-            .to  change { offices[0].reload.reports_pending_count }.from(1).to(0)
-            .and not_change { offices[1].reload.reports_pending_count }.from(0)
-            .and not_change { offices[2].reload.reports_pending_count }.from(0)
+          expect { report.update(debated_at: nil) }
+            .to change { office.reload.reports_debated_count }.from(1).to(0)
         end
 
-        it "changes transmitted package is deleted" do
-          report.package.touch(:transmitted_at)
+        it "changes when debated report is approved" do
+          report.debate!
 
-          expect { report.package.delete }
-            .to change { offices[0].reload.reports_pending_count }.from(1).to(0)
-            .and not_change { offices[1].reload.reports_pending_count }.from(0)
-            .and not_change { offices[2].reload.reports_pending_count }.from(0)
+          expect { report.approve! }
+            .to change { office.reload.reports_debated_count }.from(1).to(0)
+        end
+
+        it "changes when debated report is rejected" do
+          report.debate!
+
+          expect { report.reject! }
+            .to change { office.reload.reports_debated_count }.from(1).to(0)
+        end
+      end
+
+      describe "#reports_approved_count" do
+        let(:office) { create(:office, :with_communes, ddfip:) }
+        let(:report) { create(:report, :assigned_to_office, office:) }
+
+        it "doesn't change when package is assigned" do
+          expect { report }
+            .not_to change { office.reload.reports_approved_count }.from(0)
+        end
+
+        it "doesn't changes when report is rejected" do
+          report
+
+          expect { report.reject! }
+            .not_to change { office.reload.reports_approved_count }.from(0)
+        end
+
+        it "doesn't changes when report is debated" do
+          report
+
+          expect { report.debate! }
+            .not_to change { office.reload.reports_approved_count }.from(0)
+        end
+
+        it "changes when report is approved" do
+          report
+
+          expect { report.approve! }
+            .to change { office.reload.reports_approved_count }.from(0).to(1)
+        end
+
+        it "changes when approved report is reseted" do
+          report.approve!
+
+          expect { report.update(approved_at: nil) }
+            .to change { office.reload.reports_approved_count }.from(1).to(0)
+        end
+
+        it "changes when approved report is rejected" do
+          report.approve!
+
+          expect { report.reject! }
+            .to change { office.reload.reports_approved_count }.from(1).to(0)
+        end
+      end
+
+      describe "#reports_rejected_count" do
+        let(:office) { create(:office, :with_communes, ddfip:) }
+        let(:report) { create(:report, :assigned_to_office, office:) }
+
+        it "doesn't change when package is assigned" do
+          expect { report }
+            .not_to change { office.reload.reports_rejected_count }.from(0)
+        end
+
+        it "doesn't changes when report is approved" do
+          report
+
+          expect { report.approve! }
+            .not_to change { office.reload.reports_rejected_count }.from(0)
+        end
+
+        it "doesn't changes when report is debated" do
+          report
+
+          expect { report.debate! }
+            .not_to change { office.reload.reports_rejected_count }.from(0)
+        end
+
+        it "changes when report is rejected" do
+          report
+
+          expect { report.reject! }
+            .to change { office.reload.reports_rejected_count }.from(0).to(1)
+        end
+
+        it "changes when rejected report is reseted" do
+          report.reject!
+
+          expect { report.update(rejected_at: nil) }
+            .to change { office.reload.reports_rejected_count }.from(1).to(0)
+        end
+
+        it "changes when rejected report is approved" do
+          report.reject!
+
+          expect { report.approve! }
+            .to change { office.reload.reports_rejected_count }.from(1).to(0)
         end
       end
     end
