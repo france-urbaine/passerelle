@@ -11,14 +11,24 @@ RSpec.describe "API::ReportsController#create" do
   let(:headers) { |e| e.metadata.fetch(:headers, {}).merge(authorization_header) }
   let(:params)  { |e| e.metadata.fetch(:params, { report: attributes }) }
   let!(:transmission) { create(:transmission, :made_through_api) }
-  let!(:attributes) { attributes_for(:report) }
-  let(:report) { create(:report, transmission: transmission) }
-  let(:update_service) { instance_double(API::Reports::UpdateService, save: true, report: report) }
-
-  let!(:completeness_service) { instance_double(Reports::CheckCompletenessService, valid?: true, errors: []) }
-
-  before do
-    allow(Reports::CheckCompletenessService).to receive(:new).and_return(completeness_service)
+  let(:attributes) do
+    {
+      form_type: "creation_local_habitation",
+      anomalies: ["omission_batie"],
+      priority: "low",
+      code_insee: "64019",
+      date_constat: "2023-01-02",
+      situation_proprietaire: "Doe",
+      situation_numero_ordre_proprietaire: "A12345",
+      situation_parcelle: "AA 0000",
+      situation_numero_voie: "1",
+      situation_libelle_voie: "rue de la Liberté",
+      situation_code_rivoli: "0000",
+      proposition_nature: "AP",
+      proposition_categorie: "1",
+      proposition_surface_reelle: 70.0,
+      proposition_date_achevement: "2023-01-01"
+    }
   end
 
   describe "authorizations" do
@@ -27,8 +37,17 @@ RSpec.describe "API::ReportsController#create" do
 
     it_behaves_like "it responds with not found when authorized through OAuth"
 
-    it_behaves_like "it allows access when authorized through OAuth" do
-      let(:current_publisher) { transmission.publisher }
+    context "when the transmission is linked to the current publisher" do
+      it_behaves_like "it allows access when authorized through OAuth" do
+        let(:current_publisher) { transmission.publisher }
+      end
+    end
+
+    context "when the transmission is already completed" do
+      it_behaves_like "it denies access when authorized through OAuth" do
+        let(:current_publisher) { transmission.publisher }
+        let(:transmission) { create(:transmission, :made_through_api, :completed) }
+      end
     end
   end
 
@@ -44,9 +63,12 @@ RSpec.describe "API::ReportsController#create" do
       it "assigns expected attributes to the new record" do
         request
         expect(Report.last).to have_attributes(
-          collectivity_id: transmission.collectivity_id,
-          publisher_id:    transmission.publisher.id,
-          transmission_id: transmission.id
+          collectivity_id:                     transmission.collectivity_id,
+          publisher_id:                        transmission.publisher.id,
+          transmission_id:                     transmission.id,
+          date_constat:                        be_a(Date),
+          situation_numero_ordre_proprietaire: "A12345",
+          situation_parcelle:                  "AA 0000"
         )
       end
 
@@ -57,10 +79,7 @@ RSpec.describe "API::ReportsController#create" do
     end
 
     context "with invalid report parameters" do
-      before do
-        allow(Reports::CheckCompletenessService).to receive(:new).and_call_original
-        attributes[:code_insee] = "invalid"
-      end
+      before { attributes[:code_insee] = "invalid" }
 
       it { expect(response).to have_http_status(:unprocessable_entity) }
       it { expect { request }.not_to change(Report, :count) }
@@ -71,16 +90,33 @@ RSpec.describe "API::ReportsController#create" do
     end
 
     context "with invalid report completeness" do
-      before { allow(Reports::CheckCompletenessService).to receive(:new).and_call_original }
+      before do
+        attributes.delete(:date_constat)
+      end
 
       it { expect(response).to have_http_status(:unprocessable_entity) }
       it { expect { request }.not_to change(Report, :count) }
 
       it "responds with completeness errors" do
         expect(response).to have_json_body.to include("errors" => hash_including(
-          "anomalies" => ["Ce champs est requis"],
-          "code_insee" => ["Ce champs est requis"],
           "date_constat" => ["Ce champs est requis"]
+        ))
+      end
+    end
+
+    context "with invalid report model and completeness" do
+      before do
+        attributes.delete(:date_constat)
+        attributes[:code_insee] = "invalid"
+      end
+
+      it { expect(response).to have_http_status(:unprocessable_entity) }
+      it { expect { request }.not_to change(Report, :count) }
+
+      it "responds with completeness errors" do
+        expect(response).to have_json_body.to include("errors" => hash_including(
+          "date_constat" => ["Ce champs est requis"],
+          "code_insee" => ["n'est pas valide"]
         ))
       end
     end

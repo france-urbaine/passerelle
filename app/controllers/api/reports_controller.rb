@@ -6,9 +6,11 @@ module API
     before_action :find_transmission
 
     def create
-      build_report
+      @report = @transmission.reports.build
+      @report.collectivity = @transmission.collectivity
+      @report.publisher    = current_publisher
 
-      API::Reports::UpdateService.new(@report).save
+      API::Reports::CreateService.new(@report, reports_params).save
 
       respond_with @report
     end
@@ -23,14 +25,6 @@ module API
       @transmission = current_publisher.transmissions.find(params[:transmission_id])
 
       authorize! @transmission, to: :fill?
-    end
-
-    def build_report
-      @report = Report.new(reports_params)
-      @report.collectivity = @transmission.collectivity
-      @report.completed_at = Time.zone.now
-      @report.transmission = @transmission
-      @report.publisher    = current_publisher
     end
   end
 end
