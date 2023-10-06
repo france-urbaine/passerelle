@@ -246,7 +246,7 @@ Rails.application.routes.draw do
     end
 
     resources :transmissions, only: [] do
-      put :complete
+      put :complete, on: :member
     end
   end
 

@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Territories::DDFIPPolicy do
+RSpec.describe Territories::DDFIPPolicy, type: :policy do
   describe_rule :index? do
     let(:record) { Collectivity }
 

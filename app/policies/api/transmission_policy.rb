@@ -3,22 +3,29 @@
 module API
   class TransmissionPolicy < ApplicationPolicy
     def create?
-      publisher.present?
+      publisher?
     end
 
     def complete?
       if record == Transmission
-        publisher.present?
+        publisher?
       elsif record.is_a?(Transmission)
-        record.completed_at.nil? &&
+        publisher? &&
+          record.publisher_id == publisher.id &&
+          record.active? &&
           record.reports.any? &&
           record.reports.incomplete.none?
       end
     end
 
     def fill?
-      record.completed_at.nil? &&
-        record.collectivity.publisher_id == publisher.id
+      if record == Transmission
+        publisher?
+      elsif record.is_a?(Transmission)
+        publisher? &&
+          record.publisher_id == publisher.id &&
+          record.active?
+      end
     end
 
     params_filter do |params|

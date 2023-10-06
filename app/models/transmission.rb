@@ -49,5 +49,16 @@ class Transmission < ApplicationRecord
 
   # Scopes
   # ----------------------------------------------------------------------------
-  scope :active, -> { where(completed_at: nil) }
+  scope :active,    -> { where(completed_at: nil) }
+  scope :completed, -> { where.not(completed_at: nil) }
+
+  # Predicates
+  # ----------------------------------------------------------------------------
+  def active?
+    completed_at.nil?
+  end
+
+  def completed?
+    completed_at?
+  end
 end

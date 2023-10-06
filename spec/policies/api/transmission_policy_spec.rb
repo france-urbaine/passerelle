@@ -2,51 +2,60 @@
 
 require "rails_helper"
 
-RSpec.describe API::TransmissionPolicy, stub_factories: false do
-  let!(:publisher) { create(:publisher) }
-  let!(:collectivity) { create(:collectivity, publisher: publisher) }
-  let(:context) { { user: nil, publisher: publisher } }
+RSpec.describe API::TransmissionPolicy, type: :policy do
+  let(:current_publisher) { build_stubbed(:publisher) }
+  let(:context)           { { user: nil, publisher: current_publisher } }
 
   describe_rule :create? do
-    context "without record" do
+    succeed "without record" do
       let(:record) { Transmission }
-
-      succeed "when publisher is present"
     end
   end
 
-  describe_rule :complete? do
-    context "without record" do
-      let(:record) { Transmission }
+  describe_rule :complete?, stub_factories: false do
+    let(:current_publisher) { create(:publisher) }
 
-      succeed "when publisher is present"
+    succeed "without record" do
+      let(:record) { Transmission }
     end
 
-    context "with transmission" do
-      let(:record) { create(:transmission, :made_through_api, collectivity_publisher: publisher) }
-      let!(:report) { create(:report, :completed, collectivity: collectivity, transmission: record, publisher: publisher) }
+    context "with transmission owned by current publisher" do
+      let(:record) { create(:transmission, :made_through_api, :with_reports, publisher: current_publisher) }
 
-      failed "without reports linked to transmission" do
-        before { report.update_column(:transmission_id, nil) }
+      failed "when already completed" do
+        let(:record) { create(:transmission, :made_through_api, :completed, publisher: current_publisher) }
       end
+
+      failed "without reports" do
+        let(:record) { create(:transmission, :made_through_api, publisher: current_publisher) }
+      end
+
       failed "with incomplete reports" do
-        before { report.update_column(:completed_at, nil) }
+        let(:record) { create(:transmission, :made_through_api, :with_incomplete_reports, publisher: current_publisher) }
       end
-      succeed "with all requirements"
+    end
+
+    failed "with transmission not owned by current publisher" do
+      let(:record) { create(:transmission, :made_through_api) }
     end
   end
 
   describe_rule :fill? do
-    let(:record) { build_stubbed(:transmission, :made_through_api, publisher: publisher, collectivity: collectivity) }
-
-    failed "with completed transmission" do
-      before { record.completed_at = DateTime.current }
+    succeed "without record" do
+      let(:record) { Transmission }
     end
 
-    failed "with collectivity not linked to publisher" do
-      before { collectivity.update_column(:publisher_id, nil) }
+    succeed "with transmission owned by current publisher" do
+      let(:record) { build_stubbed(:transmission, :made_through_api, :with_reports, publisher: current_publisher) }
+
+      failed "when transmission is already completed" do
+        let(:record) { build_stubbed(:transmission, :made_through_api, :completed, publisher: current_publisher) }
+      end
     end
-    succeed "with all requirements"
+
+    failed "with transmission not owned by current publisher" do
+      let(:record) { build_stubbed(:transmission, :made_through_api) }
+    end
   end
 
   describe "params scope" do
@@ -59,10 +68,10 @@ RSpec.describe API::TransmissionPolicy, stub_factories: false do
       }
     end
 
-    it "return sandbox attribute" do
-      is_expected.to include(
+    it "accepts only sandbox attribute" do
+      is_expected.to eq(
         sandbox: attributes[:sandbox]
-      ).and not_include(:collectivity_id)
+      )
     end
   end
 end

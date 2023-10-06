@@ -2,9 +2,9 @@
 
 require "rails_helper"
 
-RSpec.describe Organization::Collectivities::UserPolicy do
+RSpec.describe Organization::Collectivities::UserPolicy, type: :policy do
   let(:collectivity) { build_stubbed(:collectivity) }
-  let(:context)      { { collectivity: collectivity } }
+  let(:context)      { { user: current_user, collectivity: collectivity } }
 
   shared_context "when the collectivity allowed to be managed by its publisher" do
     let(:collectivity) { build_stubbed(:collectivity, allow_publisher_management: true) }
@@ -142,9 +142,7 @@ RSpec.describe Organization::Collectivities::UserPolicy do
   it { expect(:undiscard_all?).to be_an_alias_of(policy, :manage?) }
 
   describe "default relation scope" do
-    subject!(:scope) { apply_relation_scope(target) }
-
-    let(:target) { User.all }
+    subject!(:scope) { apply_relation_scope(User.all) }
 
     it_behaves_like "when the collectivity disallowed to be managed by the current publisher" do
       it_behaves_like("when current user is a publisher admin")       { it { is_expected.to be_a_null_relation } }
@@ -190,10 +188,7 @@ RSpec.describe Organization::Collectivities::UserPolicy do
   end
 
   describe "destroyable relation scope" do
-    subject!(:scope) { apply_relation_scope(target, name: :destroyable, scope_options:) }
-
-    let(:target)        { User.all }
-    let(:scope_options) { |e| e.metadata.fetch(:scope_options, {}) }
+    subject!(:scope) { apply_relation_scope(User.all, name: :destroyable) }
 
     it_behaves_like "when the collectivity disallowed to be managed by the current publisher" do
       it_behaves_like("when current user is a publisher admin")       { it { is_expected.to be_a_null_relation } }
@@ -241,9 +236,7 @@ RSpec.describe Organization::Collectivities::UserPolicy do
   end
 
   describe "undiscardable relation scope" do
-    subject!(:scope) { apply_relation_scope(target, name: :undiscardable) }
-
-    let(:target) { User.all }
+    subject!(:scope) { apply_relation_scope(User.all, name: :undiscardable) }
 
     it_behaves_like "when the collectivity disallowed to be managed by the current publisher" do
       it_behaves_like("when current user is a publisher admin")       { it { is_expected.to be_a_null_relation } }

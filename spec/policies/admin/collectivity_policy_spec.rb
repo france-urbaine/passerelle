@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Admin::CollectivityPolicy do
+RSpec.describe Admin::CollectivityPolicy, type: :policy do
   describe_rule :manage? do
     context "without record" do
       let(:record) { Collectivity }
@@ -59,9 +59,7 @@ RSpec.describe Admin::CollectivityPolicy do
   it { expect(:undiscard_all?).to be_an_alias_of(policy, :manage?) }
 
   describe "default relation scope" do
-    subject!(:scope) { apply_relation_scope(target) }
-
-    let(:target) { Collectivity.all }
+    subject!(:scope) { apply_relation_scope(Collectivity.all) }
 
     it_behaves_like "when current user is a super admin" do
       it "scopes all kept collectivities" do
@@ -84,10 +82,7 @@ RSpec.describe Admin::CollectivityPolicy do
   end
 
   describe "destroyable relation scope" do
-    subject!(:scope) { apply_relation_scope(target, name: :destroyable, scope_options:) }
-
-    let(:target)        { Collectivity.all }
-    let(:scope_options) { |e| e.metadata.fetch(:scope_options, {}) }
+    subject!(:scope) { apply_relation_scope(Collectivity.all, name: :destroyable) }
 
     it_behaves_like "when current user is a collectivity super admin" do
       it "scopes all kept collectivities" do
@@ -145,9 +140,7 @@ RSpec.describe Admin::CollectivityPolicy do
   end
 
   describe "undiscardable relation scope" do
-    subject!(:scope) { apply_relation_scope(target, name: :undiscardable) }
-
-    let(:target) { Collectivity.all }
+    subject!(:scope) { apply_relation_scope(Collectivity.all, name: :undiscardable) }
 
     it_behaves_like "when current user is a super admin" do
       it "scopes all discarded collectivities" do

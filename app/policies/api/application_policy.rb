@@ -19,5 +19,11 @@ module API
     def not_supported
       false
     end
+
+    protected
+
+    def publisher?
+      !publisher.nil?
+    end
   end
 end

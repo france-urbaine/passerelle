@@ -25,7 +25,7 @@ class ApplicationPolicy < ActionPolicy::Base
   # Common predicates to identify which kind of user is used
   #
   def user?
-    user.present?
+    !user.nil?
   end
 
   def organization_admin?

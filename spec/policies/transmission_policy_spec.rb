@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe TransmissionPolicy, stub_factories: false do
+RSpec.describe TransmissionPolicy, stub_factories: false, type: :policy do
   describe_rule :show? do
     it_behaves_like("when current user is a DDFIP admin")        { failed }
     it_behaves_like("when current user is a DDFIP user")         { failed }

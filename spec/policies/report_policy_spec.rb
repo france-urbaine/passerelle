@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe ReportPolicy, stub_factories: false do
+RSpec.describe ReportPolicy, stub_factories: false, type: :policy do
   shared_context "when current user is member of targeted office" do
     include_context "when current user is a DDFIP user"
     before do
@@ -480,9 +480,7 @@ RSpec.describe ReportPolicy, stub_factories: false do
   it { expect(:undiscard_all?).to be_an_alias_of(policy, :destroy_all?) }
 
   describe "relation scope" do
-    subject!(:scope) { apply_relation_scope(target) }
-
-    let(:target) { Report.all }
+    subject!(:scope) { apply_relation_scope(Report.all) }
 
     it_behaves_like("when current user is a collectivity user") do
       it "scopes on reports reported through the web UI or transmitted through API" do
