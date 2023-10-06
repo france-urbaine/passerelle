@@ -2,11 +2,11 @@
 
 require "rails_helper"
 
-RSpec.describe API::ReportPolicy, stub_factories: false do
-  let!(:publisher) { create(:publisher) }
-  let(:context) { { user: nil, publisher: publisher } }
+RSpec.describe API::ReportPolicy, type: :policy do
+  let(:current_publisher) { create(:publisher) }
+  let(:context) { { user: nil, publisher: current_publisher } }
 
-  before { create(:collectivity, publisher: publisher) }
+  before { create(:collectivity, publisher: current_publisher) }
 
   describe_rule :index? do
     succeed "always"
