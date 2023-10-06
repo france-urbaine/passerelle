@@ -44,18 +44,24 @@ module Fiscahub
     config.active_job.queue_adapter = :sidekiq
 
     # Define domain strategy.
-    # Default domain is `localhost`
+    # In development, the default host is `localhost` or `127.0.0.1`, but it doesn't
+    # allow to use subdomains. To use subdomains (such as `api.`), we need a domain with
+    # a longer TLD.
     #
-    # To be able to use subdomains (such as api.), you need a domain with a longer TLD.
-    # For example, use:
+    # The free DNS resolver `lvh.me` allows to use subdomains out of the box in development & test.
+    # If you doesn't want to depends on third-party resolver, use:
     #
     #   DOMAIN_APP = localhost.local
-    #   or
-    #   DOMAIN_APP = lvh.me
     #
-    # You'll then be able to run api.localhost.local
+    # In production, DOMAIN_APP is mandatory.
     #
-    config.x.domain = ENV.fetch("DOMAIN_APP", "localhost")
+    config.x.domain =
+      if Rails.env.production?
+        ENV.fetch("DOMAIN_APP")
+      else
+        ENV.fetch("DOMAIN_APP", "lvh.me")
+      end
+
     config.hosts << ".#{config.x.domain}"
     config.hosts += %w[.example.com] if Rails.env.test?
 
