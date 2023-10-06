@@ -50,13 +50,14 @@ module Fiscahub
     # For example, use:
     #
     #   DOMAIN_APP = localhost.local
+    #   or
+    #   DOMAIN_APP = lvh.me
     #
     # You'll then be able to run api.localhost.local
     #
-    unless Rails.env.test?
-      config.x.domain = ENV.fetch("DOMAIN_APP", "localhost")
-      config.hosts << ".#{config.x.domain}"
-    end
+    config.x.domain = ENV.fetch("DOMAIN_APP", "localhost")
+    config.hosts << ".#{config.x.domain}"
+    config.hosts += %w[.example.com] if Rails.env.test?
 
     # If your main domain is already a subdomain (such as alpha.fiscahub.fr),
     # you should also define TLD length:

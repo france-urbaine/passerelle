@@ -17,6 +17,14 @@ RSpec.configure do |config|
   #
   config.fixture_path = Rails.root.join("spec/fixtures/records")
 
+  # Set default host to the right URL with `_url` routes helpers
+  #
+  config.before type: :system do
+    Rails.application.routes.default_url_options[:host] = Rails.application.config.x.domain
+  end
+
+  # Configure database cleaning strategy
+  #
   config.before :context, type: :system do
     self.use_transactional_tests = false
 
