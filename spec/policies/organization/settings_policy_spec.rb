@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Organization::SettingsPolicy do
+RSpec.describe Organization::SettingsPolicy, type: :policy do
   describe_rule :manage? do
     it_behaves_like("when current user is a super admin")        { failed }
     it_behaves_like("when current user is a DDFIP admin")        { succeed }

@@ -66,5 +66,17 @@ FactoryBot.define do
         end
       end
     end
+
+    trait :with_incomplete_reports do
+      transient do
+        reports_size { 1 }
+      end
+
+      reports do
+        Array.new(reports_size) do
+          association :report, transmission: instance, collectivity:, publisher:
+        end
+      end
+    end
   end
 end

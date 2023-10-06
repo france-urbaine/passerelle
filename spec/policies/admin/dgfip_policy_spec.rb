@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Admin::DGFIPPolicy do
+RSpec.describe Admin::DGFIPPolicy, type: :policy do
   describe_rule :manage? do
     context "without record" do
       let(:record) { DGFIP }
@@ -49,9 +49,7 @@ RSpec.describe Admin::DGFIPPolicy do
   it { expect(:update?).to        be_an_alias_of(policy, :manage?) }
 
   describe "default relation scope" do
-    subject!(:scope) { apply_relation_scope(target) }
-
-    let(:target) { DGFIP.all }
+    subject!(:scope) { apply_relation_scope(DGFIP.all) }
 
     it_behaves_like "when current user is a super admin" do
       it "scopes on kept DGFIPs" do

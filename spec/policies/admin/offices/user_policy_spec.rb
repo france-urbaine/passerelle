@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Admin::Offices::UserPolicy do
+RSpec.describe Admin::Offices::UserPolicy, type: :policy do
   describe_rule :manage? do
     context "without record" do
       let(:record) { User }

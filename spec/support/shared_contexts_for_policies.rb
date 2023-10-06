@@ -1,20 +1,9 @@
 # frozen_string_literal: true
 
-RSpec.shared_context "with policies shared contexts" do
+RSpec.shared_context "with user context in policies" do
   let(:current_user)         { build_stubbed(:user) }
   let(:current_organization) { current_user&.organization }
-  let(:context)              { super().merge(user: current_user) }
-  let(:scope_options)        { |e| e.metadata.fetch(:scope_options, {}) }
-
-  def apply_params_scope(params, type: :action_controller_params, **)
-    params = ActionController::Parameters.new(params)
-    params = policy.apply_scope(params, type:, **)
-    params&.to_hash&.symbolize_keys
-  end
-
-  def apply_relation_scope(target, type: :active_record_relation, **)
-    policy.apply_scope(target, type:, scope_options:, **)
-  end
+  let(:context)              { { user: current_user } }
 
   shared_context "without current user" do
     let(:current_user) { nil }
@@ -40,22 +29,33 @@ RSpec.shared_context "with policies shared contexts" do
     "a collectivity admin"               => %i[collectivity organization_admin],
     "a collectivity user"                => %i[collectivity]
   }.each do |user_description, user_traits|
-    shared_context "when current user is #{user_description}" do |**options|
+    shared_context "when current user is #{user_description}" do
       let(:current_user) do |example|
-        options.each do |key, value|
-          options[key] = instance_exec(&value) if value.respond_to?(:call)
-        end
-
         if example.metadata[:stub_factories] == false
-          create(:user, *user_traits, **options)
+          create(:user, *user_traits)
         else
-          build_stubbed(:user, *user_traits, **options)
+          build_stubbed(:user, *user_traits)
         end
       end
     end
   end
 end
 
-RSpec.configure do |rspec|
-  rspec.include_context "with policies shared contexts", type: :policy
+RSpec.shared_context "with policies scopes helpers" do
+  let(:scope_options) { |e| e.metadata.fetch(:scope_options, {}) }
+
+  def apply_params_scope(params, type: :action_controller_params, **)
+    params = ActionController::Parameters.new(params)
+    params = policy.apply_scope(params, type:, **)
+    params&.to_hash&.symbolize_keys
+  end
+
+  def apply_relation_scope(target, type: :active_record_relation, **)
+    policy.apply_scope(target, type:, scope_options:, **)
+  end
+end
+
+RSpec.configure do |config|
+  config.include_context "with user context in policies", type: :policy
+  config.include_context "with policies scopes helpers",  type: :policy
 end

@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Organization::CollectivityPolicy do
+RSpec.describe Organization::CollectivityPolicy, type: :policy do
   describe_rule :index? do
     let(:record) { Collectivity }
 
@@ -146,9 +146,7 @@ RSpec.describe Organization::CollectivityPolicy do
   it { expect(:undiscard_all?).to be_an_alias_of(policy, :manage?) }
 
   describe "default relation scope" do
-    subject!(:scope) { apply_relation_scope(target) }
-
-    let(:target) { Collectivity.all }
+    subject!(:scope) { apply_relation_scope(Collectivity.all) }
 
     it_behaves_like "when current user is a publisher super admin" do
       it "scopes all kept collectivities" do
@@ -230,10 +228,7 @@ RSpec.describe Organization::CollectivityPolicy do
   end
 
   describe "destroyable relation scope" do
-    subject!(:scope) { apply_relation_scope(target, name: :destroyable, scope_options:) }
-
-    let(:target)        { Collectivity.all }
-    let(:scope_options) { |e| e.metadata.fetch(:scope_options, {}) }
+    subject!(:scope) { apply_relation_scope(Collectivity.all, name: :destroyable) }
 
     it_behaves_like "when current user is a publisher super admin" do
       it "scopes all kept collectivities" do
@@ -286,9 +281,7 @@ RSpec.describe Organization::CollectivityPolicy do
   end
 
   describe "undiscardable relation scope" do
-    subject!(:scope) { apply_relation_scope(target, name: :undiscardable) }
-
-    let(:target) { Collectivity.all }
+    subject!(:scope) { apply_relation_scope(Collectivity.all, name: :undiscardable) }
 
     it_behaves_like "when current user is a publisher super admin" do
       it "scopes all kept collectivities" do

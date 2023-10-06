@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Admin::UserPolicy do
+RSpec.describe Admin::UserPolicy, type: :policy do
   describe_rule :manage? do
     context "without record" do
       let(:record) { User }
@@ -55,9 +55,7 @@ RSpec.describe Admin::UserPolicy do
   it { expect(:undiscard_all?).to be_an_alias_of(policy, :manage?) }
 
   describe "default relation scope" do
-    subject!(:scope) { apply_relation_scope(target) }
-
-    let(:target) { User.all }
+    subject!(:scope) { apply_relation_scope(User.all) }
 
     it_behaves_like "when current user is a super admin" do
       it "scopes all kept users" do
@@ -80,10 +78,7 @@ RSpec.describe Admin::UserPolicy do
   end
 
   describe "destroyable relation scope" do
-    subject!(:scope) { apply_relation_scope(target, name: :destroyable, scope_options:) }
-
-    let(:target)        { User.all }
-    let(:scope_options) { |e| e.metadata.fetch(:scope_options, {}) }
+    subject!(:scope) { apply_relation_scope(User.all, name: :destroyable) }
 
     it_behaves_like "when current user is a super admin" do
       it "scopes all kept users excluding himself" do
@@ -117,9 +112,7 @@ RSpec.describe Admin::UserPolicy do
   end
 
   describe "undiscardable relation scope" do
-    subject!(:scope) { apply_relation_scope(target, name: :undiscardable) }
-
-    let(:target) { User.all }
+    subject!(:scope) { apply_relation_scope(User.all, name: :undiscardable) }
 
     it_behaves_like "when current user is a super admin" do
       it "scopes all discarded users" do

@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Territories::UpdatesPolicy do
+RSpec.describe Territories::UpdatesPolicy, type: :policy do
   describe_rule :update? do
     it_behaves_like("when current user is a super admin")        { succeed }
     it_behaves_like("when current user is a DDFIP admin")        { failed }

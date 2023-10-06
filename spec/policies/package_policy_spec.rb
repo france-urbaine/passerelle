@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe PackagePolicy, stub_factories: false do
+RSpec.describe PackagePolicy, stub_factories: false, type: :policy do
   describe_rule :index? do
     it_behaves_like("when current user is a DDFIP admin")        { succeed }
     it_behaves_like("when current user is a DDFIP user")         { failed }
@@ -104,9 +104,7 @@ RSpec.describe PackagePolicy, stub_factories: false do
   it { expect(:undiscard_all?).to be_an_alias_of(policy, :not_supported) }
 
   describe "default relation scope" do
-    subject!(:scope) { apply_relation_scope(target) }
-
-    let(:target) { Package.all }
+    subject!(:scope) { apply_relation_scope(Package.all) }
 
     it_behaves_like "when current user is a collectivity user" do
       it "scopes on packages packed through the web UI or transmitted through API" do

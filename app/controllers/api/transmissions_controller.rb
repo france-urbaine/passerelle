@@ -36,7 +36,7 @@ module API
 
     def find_and_authorize_collectivity
       current_publisher.collectivities.find(params[:collectivity_id]).tap do |collectivity|
-        authorize! collectivity
+        authorize! collectivity, to: :read?
       end
     end
 

@@ -19,8 +19,13 @@ module API
     end
 
     def fill?
-      record.completed_at.nil? &&
-        record.collectivity.publisher_id == publisher.id
+      if record == Transmission
+        publisher?
+      elsif record.is_a?(Transmission)
+        publisher? &&
+          record.publisher_id == publisher.id &&
+          record.active?
+      end
     end
 
     params_filter do |params|
