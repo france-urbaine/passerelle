@@ -22,4 +22,20 @@ RSpec.describe API::CollectivityPolicy, type: :policy do
 
   it { expect(:index?).to be_an_alias_of(policy, :read?) }
   it { expect(:show?).to  be_an_alias_of(policy, :not_supported) }
+
+  describe "relation scope" do
+    subject!(:scope) { apply_relation_scope(target) }
+
+    let(:target) { Collectivity.all }
+
+    it "scopes on collectivities owned_by publisher" do
+      expect {
+        scope.load
+      }.to perform_sql_query(<<~SQL)
+        SELECT "collectivities".*
+        FROM   "collectivities"
+        WHERE  "collectivities"."publisher_id" = '#{current_publisher.id}'
+      SQL
+    end
+  end
 end

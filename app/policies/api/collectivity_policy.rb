@@ -12,5 +12,17 @@ module API
         publisher? && record.publisher_id == publisher.id
       end
     end
+
+    relation_scope do |relation|
+      relation.merge(collectivities_listed_to_publisher)
+    end
+
+    private
+
+    def collectivities_listed_to_publisher
+      return Collectivity.none if publisher.blank?
+
+      Collectivity.owned_by(publisher)
+    end
   end
 end

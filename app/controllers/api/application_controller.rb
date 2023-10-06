@@ -6,6 +6,8 @@ module API
 
     include ControllerDiscard
     include ControllerStatuses
+    include ControllerCollections
+    include ControllerVariants
 
     skip_forgery_protection
 

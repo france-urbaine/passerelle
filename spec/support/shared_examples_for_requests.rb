@@ -147,7 +147,7 @@ RSpec.shared_context "with requests shared examples" do
 
     it do
       expect { subject }
-        .to invoke(:as).on(self).at_least(:once)
+      .to invoke(:as).on(self).at_least(:once)
 
       expect(response)
         .to  have_http_status(:not_found)
