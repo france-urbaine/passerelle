@@ -15,7 +15,7 @@ module API
     end
 
     def complete
-      @transmission = current_publisher.transmissions.find(params[:transmission_id])
+      @transmission = current_publisher.transmissions.find(params[:id])
       authorize! @transmission
       @service = Transmissions::CompleteService.new(@transmission)
       @result = @service.complete
