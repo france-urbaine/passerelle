@@ -63,6 +63,28 @@ bin/rails credentials:help
 
 ## Development
 
+### Subdomains
+
+Some part of the application, use subdomains, such as `api.`.  
+In development, the default host is `localhost` or `127.0.0.1` and it doesn't allow to use subdomains.
+
+* The free DNS resolver `lvh.me` allow you to use subdomains out of the box in development & test.
+  Once the server is running, go to http://lvh.me:3000
+
+* To avoid depending on a third-party resolver or to use a custom domain, you need to setup one.
+  Add yout domain to `.env`:
+  
+  ```
+  DOMAIN_APP = localhost.local
+  ```
+  
+  Then configure your `/etc/hosts` file to add the corresponding domains:
+
+  ```
+  127.0.0.1 localhost.local
+  127.0.0.1 api.localhost.local
+  ```
+
 ### Previews
 
 Components and UI can be previewed at [http://localhost:3000/lookbook](http://localhost:3000/lookbook)
