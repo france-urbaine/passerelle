@@ -109,9 +109,9 @@ RSpec.describe "Admin::DDFIPsController#undiscard_all" do
       it { expect { request }.not_to change(DDFIP.discarded, :count) }
     end
 
-    context "with referrer header", headers: { "Referer" => "http://www.example.com/other/path" } do
+    context "with referrer header", headers: { "Referer" => "http://example.com/other/path" } do
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("http://www.example.com/other/path") }
+      it { expect(response).to redirect_to("http://example.com/other/path") }
       it { expect(flash).to have_flash_notice }
     end
 

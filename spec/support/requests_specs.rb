@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module RequestMacros
+module RequestSpecsMacros
   # Expose #dom_id helper to requests specs
   # config.include ActionView::RecordIdentifier, type: :request
 
@@ -14,5 +14,15 @@ module RequestMacros
 end
 
 RSpec.configure do |config|
-  config.include RequestMacros, type: :request
+  config.include RequestSpecsMacros, type: :request
+
+  # Set default host for routing & request specs
+  #
+  config.before type: :request do
+    host! "example.com"
+  end
+
+  config.before type: :request, api: true do
+    host! "api.example.com"
+  end
 end

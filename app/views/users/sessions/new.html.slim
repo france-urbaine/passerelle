@@ -19,10 +19,10 @@
   - card.with_multipart do |card_content|
     p.text-center Votre collectivité n'est pas encore inscrite sur FiscaHub ?
     .flex.justify-center
-      = button_component "Inscription", new_user_enrollment_path
+      = button_component "Inscription", new_user_enrollment_url
 
 p
   | Vous rencontrez des difficultés pour vous connecter ?
   br
-  = link_to "Réinitialisez votre mot de passe", new_password_path(resource_name)
+  = link_to "Réinitialisez votre mot de passe", new_password_url(resource_name)
   | .

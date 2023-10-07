@@ -24,7 +24,7 @@
     - card.with_submit_action "Connexion"
 
 p
-  = link_to new_session_path(resource_name) do
+  = link_to new_session_url(resource_name) do
     = icon_component "chevron-left-small", "Retour", class: "inline"
     | Retour au formulaire de connexion
   | .

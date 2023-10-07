@@ -3,8 +3,12 @@
 require "system_helper"
 
 RSpec.describe "API Documentation" do
+  fixtures :publishers, :users
+
+  before { sign_in(users(:marc)) }
+
   it "visits homepage" do
-    visit documentation_api_path
+    visit api_documentation_url
 
     # Homepage should be "A propos"
     #
@@ -21,25 +25,25 @@ RSpec.describe "API Documentation" do
 
     # The browser should visit the Authentification page
     #
-    expect(page).to have_current_path(documentation_api_path("guides/authentification"))
+    expect(page).to have_current_path(api_documentation_path("guides/authentification"))
     expect(page).to have_selector("h1", text: "Authentification")
   end
 
   it "visits a missing page" do
-    visit documentation_api_path("guides/jenexistepas")
+    visit api_documentation_url("guides/jenexistepas")
     expect(page).to have_selector("h1", text: "La page que vous recherchez n'est pas disponible.")
 
-    visit documentation_api_path("jenexistepas")
+    visit api_documentation_url("jenexistepas")
     expect(page).to have_selector("h1", text: "La page que vous recherchez n'est pas disponible.")
   end
 
   it "visits A Propos" do
-    visit documentation_api_path("guides/a_propos")
+    visit api_documentation_url("guides/a_propos")
     expect(page).to have_selector("h1", text: "A propos")
   end
 
   it "visits Authentification" do
-    visit documentation_api_path("guides/authentification")
+    visit api_documentation_url("guides/authentification")
     expect(page).to have_selector("h1", text: "Authentification")
   end
 end

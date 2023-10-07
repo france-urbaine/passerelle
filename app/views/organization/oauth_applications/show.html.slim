@@ -30,8 +30,12 @@
     = icon_component("information-circle", "Nouvelle section")
     | Documentation
 
-  = card_component(content_class: "card__content--empty")
-    | Bientôt disponible
+  = card_component do
+    | L'API de FiscaHub est une API RESTful qui implémente les spécifications du standard OAuth2 Pour l'authentification.
+    br
+    = link_to "Consultez la documentation", api_documentation_url
+    = " "
+    | pour en savoir plus.
 
   .content__separator
 

@@ -18,6 +18,11 @@ Capybara.save_path = ENV.fetch("CAPYBARA_ARTIFACTS", "./tmp/capybara")
 # Otherwise, it'll raise only exception get from browser.
 Capybara.raise_server_errors = ENV.fetch("CAPYBARA_RAISE_SERVER_ERRORS", "true") == "true"
 
+# the default host ('127.0.0.1`) does not accept subdomains.
+# We need to setup a local domain that accepting subdomain.
+# See config/application.rb for more details
+Capybara.app_host = "http://#{Rails.application.config.x.domain}"
+
 # To run system specs with parallel tests, we need to set up several ports to run
 # concurrent headless browsers.
 if ENV["TEST_ENV_NUMBER"]

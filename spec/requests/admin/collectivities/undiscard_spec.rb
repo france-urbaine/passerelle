@@ -81,9 +81,9 @@ RSpec.describe "Admin::CollectivitiesController#undiscard" do
       it { expect(response).to have_html_body }
     end
 
-    context "with referrer header", headers: { "Referer" => "http://www.example.com/other/path" } do
+    context "with referrer header", headers: { "Referer" => "http://example.com/other/path" } do
       it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("http://www.example.com/other/path") }
+      it { expect(response).to redirect_to("http://example.com/other/path") }
       it { expect(flash).to have_flash_notice }
     end
 

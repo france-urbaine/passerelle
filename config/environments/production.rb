@@ -85,9 +85,7 @@ Rails.application.configure do
 
   config.action_mailer.delivery_method     = :smtp
   config.action_mailer.smtp_settings       = Rails.application.credentials.smtp_settings
-  config.action_mailer.default_url_options = {
-    host: ENV.fetch("RAILS_DOMAIN", "fiscahub.fr")
-  }
+  config.action_mailer.default_url_options = { host: config.x.domain }
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).

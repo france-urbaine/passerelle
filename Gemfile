@@ -150,6 +150,9 @@ group :test do
   gem "capybara"
   gem "cuprite"
 
+  # Alternative system test browser
+  # gem "webdrivers", ">= 5.3.0"
+
   # Analyse and improve test performances
   gem "test-prof"
 end

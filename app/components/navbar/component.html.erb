@@ -18,7 +18,9 @@
     </div>
 
     <% sections.each do |section| %>
-      <div class="navbar__header"><%= section.title %></div>
+      <% if section.title %>
+        <div class="navbar__header"><%= section.title %></div>
+      <% end %>
       <div class="navbar__links">
         <% section.links.each do |link| %>
           <%= render_link(link) %>
@@ -29,7 +31,8 @@
     <div class="flex-auto"></div>
 
     <div class="navbar__user">
-      <%= button_component(user_settings_path, title: "Gestion du compte", class: "navbar__link") do %>
+      <%# Url `_url` instead of `_path` to ensure using the right domain %>
+      <%= button_component(user_settings_url, title: "Gestion du compte", class: "navbar__link") do %>
         <div class="navbar__user-avatar">
           <%= icon_component "user-circle" %>
         </div>
@@ -63,7 +66,8 @@
     <div class="flex-auto"></div>
 
     <div class="navbar__icon-link">
-      <%= button_component "Gestion du compte", user_settings_path, icon: "user-circle", icon_only: true %>
+      <%# Url `_url` instead of `_path` to ensure using the right domain %>
+      <%= button_component "Gestion du compte", user_settings_url, icon: "user-circle", icon_only: true %>
     </div>
   </nav>
 
@@ -83,7 +87,8 @@
     <div class="flex-auto"></div>
 
     <div class="navbar__icon-link">
-      <%= button_component "Gestion du compte", user_settings_path, icon: "user-circle", icon_only: true %>
+      <%# Url `_url` instead of `_path` to ensure using the right domain %>
+      <%= button_component "Gestion du compte", user_settings_url, icon: "user-circle", icon_only: true %>
     </div>
   </nav>
 </div>
