@@ -120,7 +120,8 @@ module Datatable
           tag.td(
             id: id,
             class: css_class,
-            colspan: colspan
+            colspan: colspan,
+            is: "turbo-frame"
           ) do
             content
           end
