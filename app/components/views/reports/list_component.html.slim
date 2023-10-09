@@ -4,7 +4,10 @@
 
     - datatable.with_selection do |selection|
       - if allowed_to?(:create?, Transmission)
-        - selection.with_action "Tout transmettre", transmissions_path, method: :post, modal: true
+        - selection.with_action "Tout ajouter à la transmission en attente", transmissions_path, method: :post, modal: true
+
+      - if allowed_to?(:remove?, Transmission)
+        - selection.with_action "Tout retirer de la transmission en attente", remove_transmissions_path, method: :post, modal: true
 
       - if allowed_to?(:create?, Package)
         - selection.with_action "Tout regrouper", disabled: true

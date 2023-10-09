@@ -8,6 +8,7 @@ RSpec.describe TransmissionsController do
   it { expect(patch:  "/transmissions").to be_unroutable }
   it { expect(delete: "/transmissions").to be_unroutable }
 
+  it { expect(post:   "/transmissions/remove").to    route_to("transmissions#remove") }
   it { expect(post:   "/transmissions/complete").to  route_to("transmissions#complete") }
   it { expect(get:    "/transmissions/new").to       be_unroutable }
   it { expect(get:    "/transmissions/edit").to      be_unroutable }

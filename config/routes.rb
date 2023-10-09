@@ -97,6 +97,7 @@ Rails.application.routes.draw do
 
       resource :transmissions, only: %i[show create] do
         post :complete
+        post :remove
       end
 
       # Organization stuff

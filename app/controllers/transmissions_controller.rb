@@ -32,6 +32,16 @@ class TransmissionsController < ApplicationController
       location: referrer_path || reports_path
   end
 
+  def remove
+    @transmission          = find_or_initialize_transmission
+    reports                = find_and_authorize_reports
+    removable_reports      = @transmission.reports.where(id: reports.ids)
+    @removed_reports_count = removable_reports.count
+    @referrer_path         = referrer_path
+
+    removable_reports.update_all(transmission_id: nil)
+  end
+
   private
 
   def find_or_initialize_transmission
