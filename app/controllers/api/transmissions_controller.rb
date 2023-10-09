@@ -16,13 +16,7 @@ module API
     end
 
     def complete
-      @transmission = current_publisher.transmissions.find(params[:id])
-
-      return forbidden(error: t(".already_completed"))    if @transmission.completed?
-      return bad_request(error: t(".reports_empty"))      if @transmission.reports.none?
-      return bad_request(error: t(".reports_incomplete")) if @transmission.reports.incomplete.any?
-
-      authorize! @transmission
+      @transmission = find_and_authorize_transmission
 
       @service = Transmissions::CompleteService.new(@transmission)
       @result = @service.complete
@@ -37,6 +31,16 @@ module API
     def find_and_authorize_collectivity
       current_publisher.collectivities.find(params[:collectivity_id]).tap do |collectivity|
         authorize! collectivity, to: :read?
+      end
+    end
+
+    def find_and_authorize_transmission
+      current_publisher.transmissions.find(params[:id]).tap do |transmission|
+        authorize! transmission, to: :read?
+        forbidden! t(".already_completed")    if transmission.completed?
+        bad_request! t(".reports_empty")      if transmission.reports.none?
+        bad_request! t(".reports_incomplete") if transmission.reports.incomplete.any?
+        authorize! transmission, to: :complete?
       end
     end
 

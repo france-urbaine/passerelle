@@ -20,9 +20,10 @@ class ApplicationController < ActionController::Base
   before_action :verify_requested_format!
   after_action  :verify_authorized, if: -> { signed_in? && !devise_controller? }
 
-  rescue_from "ActionPolicy::Unauthorized",         with: :forbidden
-  rescue_from "ActiveRecord::RecordNotFound",       with: :not_found
-  rescue_from "ControllerDiscard::RecordDiscarded", with: :gone
+  rescue_from "ActionPolicy::Unauthorized",          with: :forbidden
+  rescue_from "ActiveRecord::RecordNotFound",        with: :not_found
+  rescue_from "ControllerDiscard::RecordDiscarded",  with: :gone
+  rescue_from "ControllerStatuses::InterruptAction", with: -> {}
 
   unless Rails.env.development?
     rescue_from "ActionController::ParameterMissing", with: :bad_request

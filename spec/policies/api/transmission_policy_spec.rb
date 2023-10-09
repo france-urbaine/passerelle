@@ -12,6 +12,30 @@ RSpec.describe API::TransmissionPolicy, type: :policy do
     end
   end
 
+  describe_rule :read?, stub_factories: false do
+    let(:current_publisher) { create(:publisher) }
+
+    succeed "without record" do
+      let(:record) { Transmission }
+    end
+
+    succeed "with transmission owned by current publisher" do
+      let(:record) { create(:transmission, :made_through_api, :with_reports, publisher: current_publisher) }
+
+      succeed "when already completed" do
+        let(:record) { create(:transmission, :made_through_api, :completed, publisher: current_publisher) }
+      end
+
+      succeed "without reports" do
+        let(:record) { create(:transmission, :made_through_api, publisher: current_publisher) }
+      end
+    end
+
+    failed "with transmission not owned by current publisher" do
+      let(:record) { create(:transmission, :made_through_api) }
+    end
+  end
+
   describe_rule :complete?, stub_factories: false do
     let(:current_publisher) { create(:publisher) }
 
@@ -19,7 +43,7 @@ RSpec.describe API::TransmissionPolicy, type: :policy do
       let(:record) { Transmission }
     end
 
-    context "with transmission owned by current publisher" do
+    succeed "with transmission owned by current publisher" do
       let(:record) { create(:transmission, :made_through_api, :with_reports, publisher: current_publisher) }
 
       failed "when already completed" do
