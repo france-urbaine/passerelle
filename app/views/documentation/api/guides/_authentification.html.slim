@@ -5,9 +5,9 @@
 .card.documentation__card
   .card__content
     p
-      | L'authentification s'effectue selon les spécifications du standard
+      ' L'authentification s'effectue selon les spécifications du standard
       = link_to "OAuth2", "https://datatracker.ietf.org/doc/html/rfc6749"
-      | et la méthode
+      '  et la méthode
       = link_to "Client Credentials", "https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-22#section-4.4"
       | .
     p
@@ -70,6 +70,6 @@ h2.subheader
 
 
     pre.documentation__pre( data-controller="highlight" data-highlight-language-value="shell" )
-      | $ http -v GET https://api.fiscahub.fr/datasets \
+      | $ http -v GET https://api.fiscahub.fr/collectivites \
             Accept:"application/json" \
             Authorization:"Bearer $ACCESS_TOKEN"
