@@ -263,7 +263,7 @@ Rails.application.routes.draw do
       get "/", to: "home#index"
 
       constraints id: %r{(?!(new|edit|remove|discard|undiscard|guichets))[^/]+} do
-        resources :collectivities, only: [], path: "/collectivites" do
+        resources :collectivities, only: %i[index], path: "/collectivites" do
           resources :transmissions, only: %i[create]
         end
 

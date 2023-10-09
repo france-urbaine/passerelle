@@ -2,8 +2,8 @@
 
 require "rails_helper"
 
-RSpec.describe "API::CollectivitiesController", :api do
-  it { expect(get:    "http://api.example.com/collectivites").to be_unroutable }
+RSpec.describe API::CollectivitiesController, :api do
+  it { expect(get:    "http://api.example.com/collectivites").to route_to("api/collectivities#index") }
   it { expect(post:   "http://api.example.com/collectivites").to be_unroutable }
   it { expect(put:    "http://api.example.com/collectivites").to be_unroutable }
   it { expect(patch:  "http://api.example.com/collectivites").to be_unroutable }
