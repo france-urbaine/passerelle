@@ -272,6 +272,12 @@ Rails.application.routes.draw do
           put :complete, on: :member
           resources :reports, only: %i[create], path: "/signalements"
         end
+
+        resources :reports, only: [], path: "/signalements" do
+          scope module: "reports" do
+            resources :attachments, only: %i[create destroy], path: "/documents"
+          end
+        end
       end
     end
   end
