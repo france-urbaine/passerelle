@@ -3,6 +3,8 @@
 module ControllerStatuses
   private
 
+  InterruptAction = Class.new(StandardError)
+
   %i[
     bad_request
     unauthorized
@@ -14,6 +16,11 @@ module ControllerStatuses
   ].each do |status|
     define_method(status) do |_exception = nil, **options|
       render_status(status, **options)
+    end
+
+    define_method("#{status}!") do |error_message = nil|
+      render_status(status, error: error_message)
+      raise InterruptAction
     end
   end
 

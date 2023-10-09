@@ -6,12 +6,19 @@ module API
       publisher?
     end
 
+    def read?
+      if record == Transmission
+        publisher?
+      elsif record.is_a?(Transmission)
+        publisher? && record.publisher_id == publisher.id
+      end
+    end
+
     def complete?
       if record == Transmission
         publisher?
       elsif record.is_a?(Transmission)
-        publisher? &&
-          record.publisher_id == publisher.id &&
+        read? &&
           record.active? &&
           record.reports.any? &&
           record.reports.incomplete.none?
@@ -22,8 +29,7 @@ module API
       if record == Transmission
         publisher?
       elsif record.is_a?(Transmission)
-        publisher? &&
-          record.publisher_id == publisher.id &&
+        read? &&
           record.active?
       end
     end
