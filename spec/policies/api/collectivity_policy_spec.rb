@@ -24,9 +24,7 @@ RSpec.describe API::CollectivityPolicy, type: :policy do
   it { expect(:show?).to  be_an_alias_of(policy, :not_supported) }
 
   describe "relation scope" do
-    subject!(:scope) { apply_relation_scope(target) }
-
-    let(:target) { Collectivity.all }
+    subject!(:scope) { apply_relation_scope(Collectivity.all) }
 
     it "scopes on collectivities owned_by publisher" do
       expect {

@@ -13,8 +13,8 @@ module API
 
     private
 
-    def build_and_authorize_scope(as: :default)
-      authorized(Collectivity.all, as:).strict_loading
+    def build_and_authorize_scope
+      authorized(Collectivity.all).strict_loading
     end
   end
 end

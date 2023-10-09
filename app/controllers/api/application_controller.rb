@@ -25,7 +25,7 @@ module API
     rescue_from "ActionPolicy::Unauthorized",          with: :forbidden
     rescue_from "ActiveRecord::RecordNotFound",        with: :not_found
     rescue_from "ControllerDiscard::RecordDiscarded",  with: :gone
-    rescue_from "ControllerStatuses::InterruptAction", with: -> { }
+    rescue_from "ControllerStatuses::InterruptAction", with: -> {}
 
     unless Rails.env.development?
       rescue_from "ActionController::ParameterMissing", with: :bad_request

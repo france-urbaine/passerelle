@@ -2,14 +2,15 @@
 
 require "rails_helper"
 
-RSpec.describe "API::CollectivitiesController#index" do
+RSpec.describe "API::CollectivitiesController#index", :api do
   subject(:request) do
-    get "/api/collectivites", as:, headers:, params:
+    get "/collectivites", as:, headers:, params:
   end
 
   let(:as)      { |e| e.metadata.fetch(:as, :json) }
   let(:headers) { |e| e.metadata.fetch(:headers, {}).merge(authorization_header) }
   let(:params)  { |e| e.metadata.fetch(:params, {}) }
+
   let(:collectivity) { create(:collectivity) }
 
   describe "authorizations" do
@@ -22,6 +23,17 @@ RSpec.describe "API::CollectivitiesController#index" do
     before { setup_access_token(collectivity.publisher) }
 
     it { expect(response).to have_http_status(:success) }
-    it { expect(response).to have_json_body.to include("collectivites"=>[hash_including("id"=>collectivity.id)]) }
+
+    it "returns a list of collectivities" do
+      expect(response).to have_json_body.to include(
+        "collectivites" => [
+          {
+            "id"    => collectivity.id,
+            "name"  => collectivity.name,
+            "siren" => collectivity.siren
+          }
+        ]
+      )
+    end
   end
 end
