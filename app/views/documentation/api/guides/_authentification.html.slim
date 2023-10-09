@@ -1,41 +1,75 @@
-h1.documentation__title Authentification
+= breadcrumbs_component do |breadcrumbs|
+  - breadcrumbs.with_path "Guides"
+  - breadcrumbs.with_path "Authentification"
+
 .card.documentation__card
   .card__content
+    p
+      | L'authentification s'effectue selon les spécifications du standard
+      = link_to "OAuth2", "https://datatracker.ietf.org/doc/html/rfc6749"
+      | et la méthode
+      = link_to "Client Credentials", "https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-22#section-4.4"
+      | .
     p
       | Avant toute chose, assurez-vous d'avoir enregistré votre application depuis FiscaHub.
       br
       | Vous aurez besoin de votre <code class="code">Client ID</code> et <code class="code">Client Secret</code> pour vous authentifier.
-    p
-      | L'authentification s'effectue selon les spécifications du standard 
-      = link_to "OAuth2", "https://datatracker.ietf.org/doc/html/rfc6749"
-      br
-      | Seule l'authentification en 
-      = link_to "Client Credentials", "https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-22#section-4.4"
-      |  est disponible pour l'instant.
 
-h1.documentation__subtitle Client Credentials
+.content__separator
+
+h2.subheader
+  = icon_component("command-line")
+  | Exemple avec la commande cURL
+
 .card.documentation__card
   .card__content
-    p La sélection de cette méthode se fait en assignant la valeur <code class="code">client_credentials</code> au paramètre <code class="code">grant_type</code>.
-    p
-    | Les identifiants client peuvent être transmis dans le corps de la requête ou sous forme d'en-tête (Authorization Basic).<br>
-    | La seconde méthode est recommandée.
+    pre.documentation__pre( data-controller="highlight" data-highlight-language-value="shell" )
+      | $ echo "Please enter your client ID:" && read CLIENT_ID && \
+            echo "Please enter your client secret:" && read CLIENT_SECRET
 
     pre.documentation__pre( data-controller="highlight" data-highlight-language-value="shell" )
-      | $ http -a "CLIENT_ID:CLIENT_SECRET" POST #{ oauth_token_url } \
-        Accept:"application/json" \
-        grant_type='client_credentials'
-    pre.documentation__pre
-      div( data-controller="highlight" data-highlight-language-value="http" )
-        | HTTP/1.1 200 OK
-          Content-Type: application/json; charset=utf-8
-      br
+      | $ ACCESS_TOKEN=$( \
+            curl -X POST \
+              -H "Accept: application/json" \
+              -H "Content-Type: application/json" \
+              -d '{
+                "grant_type": "client_credentials",
+                "client_id": "'$CLIENT_ID'",
+                "client_secret": "'$CLIENT_SECRET'"
+              }' https://api.fiscahub.fr/oauth/token | jq -r .access_token \
+          ) && echo "Acces Token:$ACCESS_TOKEN"
 
-      div( data-controller="highlight" data-highlight-language-value="json" )
-        | {
-              "access_token": "GXC7UbIwfK8R0sNgIDy0jljVXgPlV4TqwrDqqpSDXdI",
-              "created_at": 1694527892,
-              "expires_in": 7200,
-              "token_type": "Bearer"
-          }
+    pre.documentation__pre( data-controller="highlight" data-highlight-language-value="shell" )
+      | $ curl -X GET \
+            -H "Accept: application/json" \
+            -H "Authorization: Bearer $ACCESS_TOKEN" \
+            https://api.fiscahub.fr/collectivites
 
+.content__separator
+
+h2.subheader
+  = icon_component("command-line")
+  span
+    ' Exemple avec la commande
+    = link_to "http", "https://httpie.io/", target: "_blank"
+
+.card.documentation__card
+  .card__content
+    pre.documentation__pre( data-controller="highlight" data-highlight-language-value="shell" )
+      | $ echo "Please enter your client ID:" && read CLIENT_ID && \
+            echo "Please enter your client secret:" && read CLIENT_SECRET
+
+    pre.documentation__pre( data-controller="highlight" data-highlight-language-value="shell" )
+      | $ ACCESS_TOKEN=$( \
+            http -j POST https://api.fiscahub.fr/oauth/token \
+              Accept:"application/json" \
+              grant_type='client_credentials' \
+              client_id=$CLIENT_ID \
+              client_secret=$CLIENT_SECRET | jq -r .access_token \
+          ) && echo "Acces Token:$ACCESS_TOKEN"
+
+
+    pre.documentation__pre( data-controller="highlight" data-highlight-language-value="shell" )
+      | $ http -v GET https://api.fiscahub.fr/datasets \
+            Accept:"application/json" \
+            Authorization:"Bearer $ACCESS_TOKEN"
