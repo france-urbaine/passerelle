@@ -1,0 +1,2 @@
+<%= turbo_stream.replace dom_id(@transmission), partial: "transmissions/transmission_button", locals: { transmission: @transmission } %>
+<%= turbo_stream.replace "modal", partial: "transmissions/create" %>

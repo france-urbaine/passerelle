@@ -1,0 +1,8 @@
+<%= turbo_frame_tag dom_id(@transmission) do %>
+  <% if transmission.reports.any? %>
+    <%= render Button::Component.new(transmissions_path, modal: true) do %>
+      Transmission en attente
+      <%= render CounterBadge::Component.new(transmission.reports.count) %>
+    <% end %>
+  <% end %>
+<% end %>
