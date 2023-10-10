@@ -124,4 +124,16 @@ RSpec.describe Breadcrumbs::Component, type: :component do
       expect(node).to have_selector(".header-bar__action > a[data-turbo-frame='modal']", text: "Update")
     end
   end
+
+  it "renders an action with a block" do
+    render_inline described_class.new do |breadcrumbs|
+      breadcrumbs.with_action do
+        tag.p "Hello world"
+      end
+    end
+
+    expect(page).to have_selector(".header-bar > .header-bar__actions") do |node|
+      expect(node).to have_selector(".header-bar__action > p", text: "Hello world")
+    end
+  end
 end

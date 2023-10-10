@@ -7,7 +7,7 @@ RSpec.describe "TransmissionsController#create" do
     post "/transmissions", as:, headers:, params:
   end
 
-  let(:as)      { |e| e.metadata[:as] }
+  let(:as)      { |e| e.metadata.fetch(:as, :turbo_stream) }
   let(:headers) { |e| e.metadata[:headers] }
   let(:params)  { |e| e.metadata.fetch(:params, { ids: ids }) }
 

@@ -4,10 +4,10 @@ module Breadcrumbs
   class Component < ApplicationViewComponent
     renders_many :paths, "Path"
     renders_many :actions, lambda { |*args, **options, &block|
-      if args.empty? || options.empty?
-        block.call
-      else
+      if args.any? || options.any?
         ::Button::Component.new(*args, **options)
+      else
+        block.call
       end
     }
 
