@@ -45,6 +45,7 @@ RSpec.describe "API::Reports::AttachmentsController#destroy", :api do
           filename: "present.pdf"
         )
       end
+
       it { expect(response).to have_http_status(:success) }
       it { expect { request }.to change(report.documents, :count).by(-1) }
 

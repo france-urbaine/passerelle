@@ -2,5 +2,5 @@
 
 json.id @report.id
 json.documents @report.documents.map do |document|
-  json.partial! 'show', document: document
+  json.partial! "show", document: document
 end
