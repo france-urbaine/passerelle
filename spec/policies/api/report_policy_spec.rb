@@ -3,7 +3,7 @@
 require "rails_helper"
 
 RSpec.describe API::ReportPolicy, type: :policy do
-  let(:current_publisher) { build_stubbed(:publisher) }
+  let(:current_publisher) { create(:publisher) }
   let(:context)           { { user: nil, publisher: current_publisher } }
 
   describe_rule :index? do
@@ -12,6 +12,26 @@ RSpec.describe API::ReportPolicy, type: :policy do
 
   describe_rule :create? do
     succeed "always"
+  end
+
+  describe_rule :attach? do
+    context "without record" do
+      let(:record) { Report }
+
+      succeed "always"
+    end
+
+    context "with record" do
+      let(:record) { create(:report, :made_through_api, publisher: current_publisher) }
+
+      failed "when record has package" do
+        before { record.package = build(:package) }
+      end
+      failed "when record publisher is not current_publisher" do
+        before { record.publisher = build(:publisher) }
+      end
+      succeed "with all requirements"
+    end
   end
 
   describe "params scope" do
