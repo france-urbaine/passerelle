@@ -53,8 +53,7 @@ RSpec.describe "API::TransmissionController#create", :api do
     end
 
     context "when sandbox is not provided" do
-      let(:attributes) { {} }
-      let(:params)     { {} }
+      let(:params) { {} }
 
       it { expect(response).to have_http_status(:success) }
       it { expect { request }.to change(Transmission, :count).by(1) }
