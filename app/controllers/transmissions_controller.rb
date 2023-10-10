@@ -9,14 +9,13 @@ class TransmissionsController < ApplicationController
   end
 
   def create
-    @transmission = find_or_initialize_transmission
-
-    @reports                 = find_and_authorize_reports
-    service                  = Reports::CheckTransmissibilityService.new(@reports)
-    @transmissible_reports   = service.transmissibles
-    @intransmissible_reports = service.intransmissibles
-    @intransmissible_count   = service.intransmissibles_count
-    @referrer_path           = referrer_path
+    @transmission                      = find_or_initialize_transmission
+    @reports                           = find_and_authorize_reports
+    result                             = Reports::CheckTransmissibilityService.new(@reports, @transmission.reports)
+    @transmissible_reports             = result.transmissible_reports
+    @intransmissible_reports           = result.intransmissible_reports
+    @intransmissible_reports_by_reason = result.intransmissible_reports_by_reason
+    @referrer_path                     = referrer_path
 
     @transmission.reports << @transmissible_reports
   end

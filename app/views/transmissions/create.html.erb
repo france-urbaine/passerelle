@@ -6,44 +6,53 @@
 
     <% modal.with_form(url: complete_transmissions_path, method: :post) do %>
       <% if @reports.many? %>
-
         <% if @transmissible_reports.many? %>
           <p><b><%= @transmissible_reports.count %> signalements</b> ont été ajoutés à votre transmission.</p>
         <% elsif @transmissible_reports.any? %>
           <p><b><%= @transmissible_reports.count %> signalement</b> a été ajouté à votre transmission.</p>
         <% end %>
 
-        <% if @intransmissible_count > 0 %>
-          <% if @intransmissible_count > 1 %>
-            <p class="mb-1"><b><%= @intransmissible_count %> signalements</b> n'ont pas pu être ajoutés à votre transmission :</p>
+        <% if @intransmissible_reports.any? %>
+          <% if @intransmissible_reports.many? %>
+            <p class="mb-1"><b><%= @intransmissible_reports.count %> signalements</b> n'ont pas pu être ajoutés à votre transmission :</p>
             <ul class="list-disc mb-4 pl-5">
-              <% if @intransmissible_reports[:incomplete].many? %>
-                <li><b><%= @intransmissible_reports[:incomplete].count %></b> car ils sont <b>incomplets</b>.</li>
-              <% elsif @intransmissible_reports[:incomplete].any? %>
-                <li><b>1</b> car il est <b>incomplets</b>.</li>
+              <% if @intransmissible_reports_by_reason[:incomplete].many? %>
+                <li><b><%= @intransmissible_reports_by_reason[:incomplete].count %></b> car ils sont <b>incomplets</b>.</li>
+              <% elsif @intransmissible_reports_by_reason[:incomplete].any? %>
+                <li><b>1</b> car il est <b>incomplet</b>.</li>
               <% end %>
 
-              <% if @intransmissible_reports[:transmitted].many? %>
-                <li><b><%= @intransmissible_reports[:transmitted].count %></b> car ils ont déjà <b>été transmis</b>.</li>
-              <% elsif @intransmissible_reports[:transmitted].any? %>
+              <% if @intransmissible_reports_by_reason[:transmitted].many? %>
+                <li><b><%= @intransmissible_reports_by_reason[:transmitted].count %></b> car ils ont déjà <b>été transmis</b>.</li>
+              <% elsif @intransmissible_reports_by_reason[:transmitted].any? %>
                 <li><b>1</b> car il a déjà <b>été transmis</b>.</li>
+              <% end %>
+
+              <% if @intransmissible_reports_by_reason[:in_transmission].many? %>
+                <li><b><%= @intransmissible_reports_by_reason[:in_transmission].count %></b> car ils sont déjà <b>dans votre transmission</b>.</li>
+              <% elsif @intransmissible_reports_by_reason[:in_transmission].any? %>
+                <li><b>1</b> car il est déjà <b>dans votre transmission</b>.</li>
               <% end %>
             </ul>
           <% else %>
-            <% if @intransmissible_reports[:incomplete].any? %>
+            <% if @intransmissible_reports_by_reason[:incomplete].any? %>
               <p><b>1 signalement</b> n'a pas pu être ajouté à votre transmission car il est <b>incomplet</b>.</p>
-            <% elsif @intransmissible_reports[:transmitted].any? %>
+            <% elsif @intransmissible_reports_by_reason[:transmitted].any? %>
               <p><b>1 signalement</b> n'a pas pu être ajouté à votre transmission car il a déjà <b>été transmis</b>.</p>
+            <% elsif @intransmissible_reports_by_reason[:in_transmission].any? %>
+              <p><b>1 signalement</b> n'a pas pu être ajouté à votre transmission car il est déjà <b>dans votre transmission</b>.</p>
             <% end %>
           <% end %>
         <% end %>
       <% else %>
         <% if @transmissible_reports.any? %>
           <p>Le signalement a été ajouté à la transmission.</p>
-        <% elsif @intransmissible_reports[:incomplete].any? %>
+        <% elsif @intransmissible_reports_by_reason[:incomplete].any? %>
           <p>Le signalement n'a pas pu être ajouté à la transmission car il est <b>incomplet</b>.</p>
-        <% elsif @intransmissible_reports[:transmitted].any? %>
+        <% elsif @intransmissible_reports_by_reason[:transmitted].any? %>
           <p>Le signalement n'a pas pu être ajouté à la transmission car il a déjà <b>été transmis</b>.</p>
+        <% elsif @intransmissible_reports_by_reason[:in_transmission].any? %>
+          <p>Le signalement n'a pas pu être ajouté à la transmission car il est déjà <b>dans votre transmission</b>.</p>
         <% end %>
       <% end %>
 

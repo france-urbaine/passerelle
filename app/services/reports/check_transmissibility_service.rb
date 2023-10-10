@@ -2,32 +2,33 @@
 
 module Reports
   class CheckTransmissibilityService
-    def initialize(reports)
+    def initialize(reports, transmission_reports)
       @reports = reports
+      @transmission_reports = transmission_reports
     end
 
-    def transmissibles
-      @reports.select(&:transmissible?)
+    def transmissible_reports
+      @reports.reject { |report| !report.transmissible? || @transmission_reports.include?(report) }
     end
 
-    def intransmissibles
-      intransmissibles_reports = @reports.reject(&:transmissible?)
+    def intransmissible_reports
+      @reports - transmissible_reports
+    end
 
-      result = { incomplete: [], transmitted: [] }
+    def intransmissible_reports_by_reason
+      result = { incomplete: [], transmitted: [], in_transmission: [] }
 
-      intransmissibles_reports.each do |report|
+      intransmissible_reports.each do |report|
         if !report.completed?
           result[:incomplete] << report
         elsif report.package.present?
           result[:transmitted] << report
+        elsif @transmission_reports.include?(report)
+          result[:in_transmission] << report
         end
       end
 
       result
-    end
-
-    def intransmissibles_count
-      @reports.count { |report| !report.transmissible? }
     end
   end
 end
