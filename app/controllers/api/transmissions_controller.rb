@@ -45,7 +45,7 @@ module API
     end
 
     def transmission_params
-      authorized(params.require(:transmission))
+      authorized(params.fetch(:transmission, {}))
     end
   end
 end
