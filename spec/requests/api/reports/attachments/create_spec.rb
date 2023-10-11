@@ -33,9 +33,7 @@ RSpec.describe "API::Reports::AttachmentsController#create", :api do
   end
 
   describe "responses" do
-    before do
-      setup_access_token(publisher)
-    end
+    before { setup_access_token(publisher) }
 
     context "with valid parameters" do
       it { expect(response).to have_http_status(:success) }
@@ -50,16 +48,38 @@ RSpec.describe "API::Reports::AttachmentsController#create", :api do
         request
         parsed_response = response.parsed_body
 
-        expect(parsed_response).to have_key("id")
-        expect(parsed_response["id"]).to eq(report.id)
-        expect(parsed_response).to have_key("documents")
-        expect(parsed_response["documents"]).to be_an(Array)
+        expect(parsed_response).to include("id" => report.id)
+        expect(parsed_response["documents"].first).to include("filename" => "sample.pdf")
+          .and have_key("url")
+      end
+    end
 
-        attachment = parsed_response["documents"].first
+    context "with already attached documents" do
+      before do
+        report.documents.attach(ActiveStorage::Blob.create_and_upload!(
+          io:       file_fixture("sample.pdf").open,
+          filename: "first.pdf"
+        ))
+        report.documents.attach(ActiveStorage::Blob.create_and_upload!(
+          io:       file_fixture("sample.pdf").open,
+          filename: "second.pdf"
+        ))
+      end
 
-        expect(attachment["filename"]).to eq("sample.pdf")
+      it { expect(response).to have_http_status(:success) }
+      it { expect { request }.to change(report.documents, :count).from(2).to(3) }
 
-        expect(attachment).to have_key("url")
+      it "returns expected response structure" do
+        request
+        parsed_response = response.parsed_body
+
+        expect(parsed_response).to include("id" => report.id)
+        expect(parsed_response["documents"].first).to include("filename" => "first.pdf")
+          .and have_key("url")
+        expect(parsed_response["documents"].second).to include("filename" => "second.pdf")
+          .and have_key("url")
+        expect(parsed_response["documents"][2]).to include("filename" => "sample.pdf")
+          .and have_key("url")
       end
     end
 

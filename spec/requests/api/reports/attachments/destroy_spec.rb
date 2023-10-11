@@ -27,8 +27,10 @@ RSpec.describe "API::Reports::AttachmentsController#destroy", :api do
     it_behaves_like "it denies access when authorized through OAuth"
 
     context "when current publisher is the owner of the report" do
-      it_behaves_like "it allows access when authorized through OAuth" do
-        let(:current_publisher) { publisher }
+      before { setup_access_token(publisher) }
+
+      it "respond with success" do
+        expect(response).to have_http_status(:success)
       end
     end
   end
@@ -36,34 +38,16 @@ RSpec.describe "API::Reports::AttachmentsController#destroy", :api do
   describe "responses" do
     before do
       setup_access_token(publisher)
+      report.documents.attach(
+        io:       file_fixture("sample.pdf").open,
+        filename: "present.pdf"
+      )
     end
 
     context "with valid parameters" do
-      before do
-        report.documents.attach(
-          io:       file_fixture("sample.pdf").open,
-          filename: "present.pdf"
-        )
-      end
-
       it { expect(response).to have_http_status(:success) }
       it { expect { request }.to change(report.documents, :count).by(-1) }
-
-      it "returns expected response structure" do
-        request
-        parsed_response = response.parsed_body
-
-        expect(parsed_response).to have_key("id")
-        expect(parsed_response["id"]).to eq(report.id)
-        expect(parsed_response).to have_key("documents")
-        expect(parsed_response["documents"]).to be_an(Array)
-
-        attachment = parsed_response["documents"].first
-
-        expect(attachment["filename"]).to eq("present.pdf")
-
-        expect(attachment).to have_key("url")
-      end
+      it { expect(response).not_to have_json_body }
     end
 
     context "when report has package" do
