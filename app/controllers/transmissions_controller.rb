@@ -9,15 +9,23 @@ class TransmissionsController < ApplicationController
   end
 
   def create
-    @transmission                      = find_or_initialize_transmission
-    @reports                           = find_and_authorize_reports
-    result                             = Reports::CheckTransmissibilityService.new(@reports, @transmission.reports)
-    @transmissible_reports             = result.transmissible_reports
-    @intransmissible_reports           = result.intransmissible_reports
-    @intransmissible_reports_by_reason = result.intransmissible_reports_by_reason
-    @referrer_path                     = referrer_path
+    @transmission  = find_or_initialize_transmission
+    @reports       = build_and_authorize_scope
+    @reports       = filter_collection(@reports)
+    @referrer_path = referrer_path
 
-    @transmission.reports << @transmissible_reports
+    @service = Transmissions::CreateService.new(@transmission)
+    @result  = @service.add(@reports)
+  end
+
+  def remove
+    @transmission          = find_or_initialize_transmission
+    @reports               = build_and_authorize_scope
+    @reports               = filter_collection(@reports)
+    @referrer_path         = referrer_path
+
+    @service = Transmissions::RemoveService.new(@transmission)
+    @result  = @service.remove(@reports)
   end
 
   def complete
@@ -31,28 +39,16 @@ class TransmissionsController < ApplicationController
       location: referrer_path || reports_path
   end
 
-  def remove
-    @transmission          = find_or_initialize_transmission
-    reports                = find_and_authorize_reports
-    removable_reports      = @transmission.reports.where(id: reports.ids)
-    @removed_reports_count = removable_reports.count
-    @referrer_path         = referrer_path
-
-    removable_reports.update_all(transmission_id: nil)
-  end
-
   private
+
+  def build_and_authorize_scope
+    authorized(Report.preload(:package), as: :default).strict_loading
+  end
 
   def find_or_initialize_transmission
     current_user.transmissions.find_or_create_by(
       completed_at: nil,
       collectivity: current_user.organization
     )
-  end
-
-  def find_and_authorize_reports
-    reports = Report.where(id: params[:ids])
-
-    authorized(reports)
   end
 end

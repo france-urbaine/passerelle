@@ -4,16 +4,13 @@
 
     - datatable.with_selection do |selection|
       - if allowed_to?(:create?, Transmission)
-        - selection.with_action "Tout ajouter à la transmission en attente", transmissions_path, method: :post, modal: true
+        - selection.with_action "Transmettre", transmissions_path, method: :post, modal: true
 
       - if allowed_to?(:remove?, Transmission)
-        - selection.with_action "Tout retirer de la transmission en attente", remove_transmissions_path, method: :post, modal: true
-
-      - if allowed_to?(:create?, Package)
-        - selection.with_action "Tout regrouper", disabled: true
+        - selection.with_action "Conserver", remove_transmissions_path, method: :post, modal: true
 
       - if allowed_to?(:destroy_all?, Report)
-        - selection.with_action "Tout supprimer", url_for([:remove_all, @parent, :reports]), modal: true
+        - selection.with_action "Supprimer", url_for([:remove_all, @parent, :reports]), modal: true
 
     - datatable.with_column(:status,   compact: true)      { "Etat" }                if columns.include?(:status)
     - datatable.with_column(:form_type)                    { "Type de signalement" } if columns.include?(:form_type)
@@ -36,7 +33,7 @@
         | Aucun signalement disponible.
 
     - datatable.each_row do |row, report|
-      - if allowed_to?(:create?, Package) || allowed_to?(:destroy_all?, Report)
+      - if allowed_to?(:create?, Transmission) || allowed_to?(:remove?, Transmission) || allowed_to?(:destroy_all?, Report)
         - row.with_checkbox "Sélectionner ce signalement", described_by: :name
 
       - if !@dashboard && allowed_to?(:destroy?, report)

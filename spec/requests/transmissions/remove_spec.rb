@@ -72,22 +72,8 @@ RSpec.describe "TransmissionsController#remove" do
         end
       end
 
-      context "when removing all reports from current transmission" do
-        let(:ids) { [reports[1].id, reports[2].id, reports[3].id] }
-
-        it { expect(response).to have_http_status(:success) }
-        it { expect { request }.to change(transmission.reports, :count).by(-3) }
-
-        it "remove all reports from user's transmission" do
-          expect {
-            request
-            current_user.reload_active_transmission
-          }.to change { current_user.active_transmission.reports.count }.from(3).to(0)
-        end
-      end
-
       context "when removing reports from differents transmissions" do
-        let(:ids) { [reports[1].id, reports[4].id,] }
+        let(:ids) { [reports[1].id, reports[4].id] }
 
         it { expect(response).to have_http_status(:success) }
         it { expect { request }.to change(transmission.reports, :count).by(-1) }
@@ -101,6 +87,20 @@ RSpec.describe "TransmissionsController#remove" do
         end
       end
 
+      context "when removing all available reports from current transmission" do
+        let(:ids) { "all" }
+
+        it { expect(response).to have_http_status(:success) }
+        it { expect { request }.to change(transmission.reports, :count).by(-3) }
+
+        it "remove only reports from user's active transmission" do
+          expect {
+            request
+            current_user.reload_active_transmission
+          }.to change(current_user.active_transmission.reports, :count).from(3).to(0)
+            .and not_change(completed_transmission.reports, :count)
+        end
+      end
     end
   end
 end
