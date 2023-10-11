@@ -26,6 +26,7 @@
   }
 
   pre.documentation__pre {
+    overflow: scroll;
     @apply rounded-xl;
     @apply px-4 py-4 mt-2;
     @apply text-slate-600 bg-slate-100;
