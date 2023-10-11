@@ -7,7 +7,7 @@
     <% modal.with_form(url: complete_transmissions_path, method: :post) do %>
       <% if @result.removed_reports_count > 1 %>
         <p><b><%= @result.removed_reports_count %> signalements</b> ont été retirés de votre transmission.</p>
-      <% elsif @result.removed_reports_count == 1 %>
+      <% elsif @result.removed_reports_count > 0 %>
         <p><b>1 signalement</b> a été retiré de votre transmission.</p>
       <% else %>
         <p>Aucun signalement n'a été retiré de votre transmission.</p>
