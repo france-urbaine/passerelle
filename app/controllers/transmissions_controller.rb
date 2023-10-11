@@ -17,7 +17,10 @@ class TransmissionsController < ApplicationController
     @service = Transmissions::CreateService.new(@transmission)
     @result  = @service.add(@reports)
 
-    respond_to(:turbo_stream)
+    respond_to do |format|
+      format.turbo_stream { render :create }
+      format.html         { render :create }
+    end
   end
 
   def destroy
@@ -29,7 +32,10 @@ class TransmissionsController < ApplicationController
     @service = Transmissions::RemoveService.new(@transmission)
     @result  = @service.remove(@reports)
 
-    respond_to(:turbo_stream)
+    respond_to do |format|
+      format.turbo_stream { render :remove }
+      format.html         { render :remove }
+    end
   end
 
   def complete

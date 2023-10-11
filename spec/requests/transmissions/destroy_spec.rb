@@ -7,7 +7,7 @@ RSpec.describe "TransmissionsController#destroy" do
     delete "/transmissions", as:, headers:, params:
   end
 
-  let(:as)      { |e| e.metadata.fetch(:as, :turbo_stream) }
+  let(:as)      { |e| e.metadata[:as] }
   let(:headers) { |e| e.metadata[:headers] }
   let(:params)  { |e| e.metadata.fetch(:params, { ids: ids }) }
 
@@ -100,6 +100,20 @@ RSpec.describe "TransmissionsController#destroy" do
           }.to change(current_user.active_transmission.reports, :count).from(3).to(0)
             .and not_change(completed_transmission.reports, :count)
         end
+      end
+
+      context "when responds with Turbo Stream format", as: :turbo_stream do
+        let(:ids) { "all" }
+
+        it { expect(response).to have_http_status(:success) }
+        it { expect(response.content_type).to eq("text/vnd.turbo-stream.html; charset=utf-8") }
+        it { expect(response.body).to include("target=\"transmission_#{current_user.active_transmission.id}\"") }
+        it { expect(response.body).to not_include("target=\"status_report_#{reports[0].id}\"") }
+        it { expect(response.body).to include("target=\"status_report_#{reports[1].id}\"") }
+        it { expect(response.body).to include("target=\"status_report_#{reports[2].id}\"") }
+        it { expect(response.body).to include("target=\"status_report_#{reports[3].id}\"") }
+        it { expect(response.body).to not_include("target=\"status_report_#{reports[4].id}\"") }
+        it { expect(response.body).to include("target=\"modal\"") }
       end
     end
   end
