@@ -16,7 +16,7 @@ module API
         attachment = @report.documents.find(params[:id])
         attachment.purge
 
-        respond_with @report
+        head :no_content
       end
 
       private
