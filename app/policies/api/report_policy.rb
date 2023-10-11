@@ -12,7 +12,7 @@ module API
       if record == Report
         true
       elsif record.is_a?(Report)
-        record.package.nil? &&
+        record.packing? &&
           publisher.present? &&
           record.publisher_id == publisher.id
       end
