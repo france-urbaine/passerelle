@@ -1,9 +1,0 @@
-@import "tailwindcss/components";
-
-/* Highlight.js */
-@import "highlight.js/styles/github";
-@import "highlight.js/styles/github-dark-dimmed" (prefers-color-scheme: dark);
-
-/* API Documentation Specific */
-@import "./api_documentation/documentation";
-@import "./api_documentation/http_code";
