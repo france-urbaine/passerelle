@@ -16,18 +16,7 @@ module DocumentationExamples
     end
 
     def render_http_code_badge(http_code)
-      css_class = case http_code
-                  when 200..299
-                    "badge badge--green"
-                  when 300..399
-                    "badge badge--violet"
-                  when 400..499
-                    "badge badge--pink"
-                  when 500..599
-                    "badge badge--red"
-                  else
-                    "badge badge--blue"
-                  end
+      css_class = "http-code http-code--#{http_code.floor(-2)}"
 
       tag.code(class: css_class) do
         http_code.to_s

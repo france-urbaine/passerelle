@@ -54,7 +54,9 @@
             h2.subheader
               = icon_component "arrows-right-left"
               | Retour
-            code.badge.badge--green
+            code.http-code(
+              class="http-code--#{item[:code].floor(-2)}"
+            )
               = item[:code]
           .card.documentation__card
             .card__content

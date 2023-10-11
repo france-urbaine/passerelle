@@ -1,5 +1,4 @@
 @import "tailwindcss/components";
-@import "tailwindcss/utilities";
 
 /* Highlight.js */
 @import "highlight.js/styles/github";
@@ -7,3 +6,4 @@
 
 /* API Documentation Specific */
 @import "./api_documentation/documentation";
+@import "./api_documentation/http_code";
