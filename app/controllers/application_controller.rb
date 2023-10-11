@@ -40,7 +40,11 @@ class ApplicationController < ActionController::Base
     if turbo_frame_request?
       "turbo_rails/frame"
     elsif signed_in?
-      "application"
+      if request.subdomain == "api"
+        "documentation"
+      else
+        "application"
+      end
     else
       "public"
     end
