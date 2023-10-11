@@ -20,27 +20,40 @@ RSpec.describe "API::CollectivitiesController#index", :api do
   end
 
   describe "responses" do
-    before do
-      create_list(:collectivity, 2, publisher: collectivity.publisher)
-      setup_access_token(collectivity.publisher)
+    context "with publisher having collectivities" do
+      before do
+        create_list(:collectivity, 2, publisher: collectivity.publisher)
+        setup_access_token(collectivity.publisher)
+      end
+
+      it { expect(response).to have_http_status(:success) }
+
+      it "returns a list of collectivities" do
+        expect(response).to have_json_body.to include(
+          "collectivites" => array_including(
+            "id"             => collectivity.id,
+            "name"           => collectivity.name,
+            "siren"          => collectivity.siren,
+            "territory_type" => collectivity.territory_type
+          )
+        )
+      end
+
+      it "lists all collectivities", :show_in_doc do
+        expect(JSON.parse(response.body)["collectivites"].length).to eq(3)
+      end
     end
 
-    it { expect(response).to have_http_status(:success) }
+    context "when publisher has no collectivities" do
+      before do
+        setup_access_token(create(:publisher))
+      end
 
-    it "returns a list of collectivities" do
-      expect(response).to have_json_body.to include(
-        "collectivites" => [
-          {
-            "id"    => collectivity.id,
-            "name"  => collectivity.name,
-            "siren" => collectivity.siren
-          }
-        ]
-      )
-    end
+      it { expect(response).to have_http_status(:success) }
 
-    it "lists all collectivities", :show_in_doc do
-      expect(JSON.parse(response.body)["collectivites"].length).to eq(3)
+      it "returns a list of collectivities" do
+        expect(response).to have_json_body.to eq("collectivites" => [])
+      end
     end
   end
 end
