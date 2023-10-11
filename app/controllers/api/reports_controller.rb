@@ -5,7 +5,7 @@ module API
     before_action :authorize!
 
     resource_description do
-      resource_id "report"
+      resource_id "reports"
       name  "Signalement"
       error 404, "Missing"
       formats ["json"]
@@ -17,6 +17,15 @@ module API
     end
 
     api :POST, "/transmissions/:transmission_id/signalements"
+    description <<-DESC
+      Ce endpoint permet de créer un signalement.
+
+      Seul un signalement à la fois peut être créé.
+    DESC
+    returns code: 200, desc: "En cas de succès, retourne l'identifiant du signalement."
+    returns code: 404, desc: "Transmission n'existe pas ou n'appartient pas à l'éditeur."
+    returns code: 422, desc: "Signalement invalide."
+    returns code: 403, desc: "Transmission est déja complétée."
     def create
       transmission = find_and_authorize_transmission
 
