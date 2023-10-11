@@ -89,10 +89,4 @@
 
     div
       .content__separator
-      .subheader-bar
-        h2.subheader
-          = icon_component "command-line"
-          | Exemples
-      .card.mb-4
-        .card__content.text-lg
-          = documentation_examples_component(@resource, @method)
+      = documentation_examples_component(@resource, @method)
