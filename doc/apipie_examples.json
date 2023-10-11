@@ -2,7 +2,7 @@
   "collectivities#index": [
     {
       "verb": "GET",
-      "path": "/api/collectivites",
+      "path": "/collectivites",
       "versions": [
         "1.0"
       ],
@@ -15,31 +15,19 @@
             "id": "d8985191-9c2c-4183-bd5f-90fc056842bb",
             "name": "Mayotte #1",
             "territory_type": "Departement",
-            "territory_id": "3592d827-a20d-4c46-8989-091feef99f17",
-            "contact_first_name": null,
-            "contact_last_name": null,
-            "contact_email": null,
-            "contact_phone": null
+            "siren": "200093201"
           },
           {
             "id": "d09b52a9-6f01-4a59-975f-169401fd3e47",
             "name": "CA Pessac #2",
             "territory_type": "EPCI",
-            "territory_id": "037c5254-9f9c-429d-8a31-18d0d5f299bb",
-            "contact_first_name": null,
-            "contact_last_name": null,
-            "contact_email": null,
-            "contact_phone": null
+            "siren": "200093202"
           },
           {
             "id": "eed729fd-b1bc-46bb-8df6-55bc79e56116",
             "name": "Agglomération Palaiseau #3",
             "territory_type": "EPCI",
-            "territory_id": "16759000-cf7e-4fe6-8918-90c2b485e2bc",
-            "contact_first_name": null,
-            "contact_last_name": null,
-            "contact_email": null,
-            "contact_phone": null
+            "siren": "200093203"
           }
         ]
       },
@@ -48,10 +36,62 @@
       "recorded": true
     }
   ],
-  "transmission#create": [
+  "transmissions#create": [
     {
       "verb": "POST",
-      "path": "/api/collectivites/8fdf60cc-b5f6-4057-af59-6acb9559008f/transmissions",
+      "path": "/collectivites/8fdf60cc-b5f6-4057-af59-6acb9559008f/transmissions",
+      "versions": [
+        "1.0"
+      ],
+      "query": null,
+      "request_data": {
+        "transmission": {
+          "sandbox": false
+        }
+      },
+      "response_data": {
+        "id": "38011313-402f-46a9-9e9c-3607152ea211"
+      },
+      "code": 200,
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ],
+  "transmissions#complete": [
+    {
+      "verb": "PUT",
+      "path": "/transmissions/8fdf60cc-b5f6-4057-af59-6acb9559008f/complete",
+      "versions": [
+        "1.0"
+      ],
+      "query": null,
+      "request_data": {},
+      "response_data": {
+        "id": "db99db17-bfed-4813-a89c-a89e8f333e14",
+        "completed_at": "2023-10-10T15:36:40.852Z",
+        "packages": [
+          {
+            "id": "5569378e-28ce-4772-a1b0-6a56b9c9879f",
+            "name": "package name",
+            "reference": "2023-10-0005",
+            "reports": [
+              {
+                "id": "f2188ed6-9c6a-4d65-b7ed-345addf49dc0",
+                "reference": "2023-10-0005-00001"
+              }
+            ]
+          }
+        ]
+      },
+      "code": 200,
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ],
+  "reports#create": [
+    {
+      "verb": "POST",
+      "path": "/transmissions/8fdf60cc-b5f6-4057-af59-6acb9559008f/signalements",
       "versions": [
         "1.0"
       ],
