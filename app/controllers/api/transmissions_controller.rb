@@ -36,7 +36,8 @@ module API
     end
 
     api! "Completer une transmission"
-    returns code: 200, desc: "La transmission à été complétée. Les signalements sont entre les mains des DDFIPs concernées." do
+    returns code: 200, desc: "La transmission à été complétée.
+      Les signalements sont entre les mains des DDFIPs concernées." do
       property :id, String, desc: "ID de la transmission"
       property :completed_at, DateTime, desc: "Date de la complétion de la transmission"
       property :packages, array_of: Hash, desc: "Liste des paquets" do

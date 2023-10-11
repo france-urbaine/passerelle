@@ -40,7 +40,7 @@ RSpec.describe "API::CollectivitiesController#index", :api do
       end
 
       it "lists all collectivities", :show_in_doc do
-        expect(JSON.parse(response.body)["collectivites"].length).to eq(3)
+        expect(response.parsed_body["collectivites"].length).to eq(3)
       end
     end
 
