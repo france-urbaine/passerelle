@@ -8,11 +8,11 @@
           data-highlight-language-value="shell"
         )
           - if example["request_data"].empty?
-            | $ curl -X #{example["verb"]} #{request.base_url}#{example["path"]} \
+            | $ curl -X #{example["verb"]} #{api_url.chomp('/')}#{example["path"]} \
               -H "Accept: application/json" \
               -H "Authorization: Bearer $ACCESS_TOKEN" \
           - else
-            | $ curl -X #{example["verb"]} #{request.base_url}#{example["path"]} \
+            | $ curl -X #{example["verb"]} #{api_url.chomp('/')}#{example["path"]} \
               -H "Accept: application/json" \
               -H "Authorization: Bearer $ACCESS_TOKEN" \
               -d '#{example["request_data"]}'
@@ -23,12 +23,12 @@
           data-highlight-language-value="shell"
         )
           - if example["request_data"].empty?
-            | $ http #{example["verb"]} #{request.base_url}#{example["path"]} \
+            | $ http #{example["verb"]} #{api_url.chomp('/')}#{example["path"]} \
               Accept:"application/json" \
               Authorization:"Bearer $ACCESS_TOKEN"
           - else
             | $ echo -n '#{example["request_data"]}' \
-              http #{example["verb"]} #{request.base_url}#{example["path"]} \
+              http #{example["verb"]} #{api_url.chomp('/')}#{example["path"]} \
               Accept:"application/json" \
               Authorization:"Bearer $ACCESS_TOKEN"
 
