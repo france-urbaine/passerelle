@@ -9,7 +9,7 @@ module DocumentationExamples
     end
 
     def examples
-      @examples ||= Apipie.recorded_examples["#{@resource[:id]}##{@method[:name]}"].select do |example|
+      @examples ||= (Apipie.recorded_examples["#{@resource[:id]}##{@method[:name]}"] || []).select do |example|
         example["show_in_doc"] != 0 &&
           (example["versions"].nil? || example["versions"].include?(@resource[:version]))
       end
