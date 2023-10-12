@@ -1,8 +1,13 @@
 = template_content_component do
   = breadcrumbs_component do |breadcrumbs|
     - breadcrumbs.with_path "References", @doc[:doc_url]
-    - breadcrumbs.with_path @resource[:name], @resource[:doc_url]
-    - breadcrumbs.with_path @method[:name]
+
+    - title = []
+    - title << @method.dig(:apis, 0, :http_method)
+    - title << @method.dig(:apis, 0, :api_url)
+
+    - breadcrumbs.with_path title.join(" ")
+
 
   - @method[:apis].each do |api|
     .subheader-bar
@@ -10,8 +15,9 @@
         = icon_component "link"
         code
           = api[:http_method]
-          |  –  
+          |  –
           = api[:api_url]
+
       - if api[:deprecated]
         .badge.badge--red.justify-self-end
           | DEPRECATED

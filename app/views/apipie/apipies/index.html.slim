@@ -8,9 +8,11 @@
 
   - @doc[:resources].sort_by(&:first).each do |key, api|
     h2.subheader
-      = icon_component api[:metadata][:icon]
-      = link_to api[:doc_url]
-        = api[:name]
+      - if api.dig(:metadata, :icon)
+        = icon_component api.dig(:metadata, :icon)
+
+      = api[:name]
+
       - if api[:deprecated]
         code.code DEPRECATED
 

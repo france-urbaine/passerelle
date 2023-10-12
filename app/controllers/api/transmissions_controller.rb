@@ -9,7 +9,6 @@ module API
       name "Transmission"
       formats ["json"]
       deprecated false
-      meta icon: "archive-box"
       description <<-DESC
         Une transmission d'un ou plusieurs signalements à une DDFIP
       DESC

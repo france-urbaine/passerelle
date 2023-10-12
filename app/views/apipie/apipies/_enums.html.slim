@@ -1,4 +1,4 @@
-- enums = @resource[:metadata][:enums]
+- enums = @resource.dig(:metadata, :enums)
 - if enums&.any?
   .content__separator
   .subheader-bar

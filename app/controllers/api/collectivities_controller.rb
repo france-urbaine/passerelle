@@ -9,7 +9,6 @@ module API
       name "Collectivités"
       short "Collectivité"
       formats ["json"]
-      meta icon: "building-library"
 
       description <<-DESC
         Une collectivité territoriale

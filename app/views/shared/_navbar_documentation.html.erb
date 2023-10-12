@@ -1,22 +1,33 @@
-<%= render Navbar::Component.new do |navbar| %>
+<%= render Navbar::Component.new(class: "navbar--api") do |navbar| %>
   <% navbar.with_header do %>
-    <%= link_to("API", api_documentation_path, class: "brand__right") %>
+    <span class="brand__left">API Fisca</span><span class="brand__right">Hub</span>
   <% end %>
 
-  <% navbar.with_section do |section| %>
-    <% section.with_link("Retour à Fiscahub", root_url, icon: "arrow-uturn-left") %>
-  <% end %>
+  <%
+    navbar.with_section do |section|
+      section.with_link("Retour à Fiscahub", root_url, icon: "arrow-uturn-left")
+    end
 
-  <% navbar.with_section("Guides") do |section| %>
-    <% section.with_link("A propos", api_documentation_path("guides/a_propos"), icon: "bookmark") %>
-    <% section.with_link("Authentification", api_documentation_path("guides/authentification"), icon: "key") %>
-  <% end %>
+    navbar.with_section("Guides") do |section|
+      section.with_link("A propos", api_documentation_path("guides/a_propos"))
+      section.with_link("Authentification", api_documentation_path("guides/authentification"))
+      section.with_link("Transmettre des signalements", api_documentation_path("guides/transmettre_des_signalements"))
+      section.with_link("Transmettre des pièces jointes", api_documentation_path("guides/transmettre_des_pieces_jointes"))
+    end
 
-  <% if doc = apipie_documentation %>
-    <% navbar.with_section("References") do |section| %>
-      <% doc[:resources].each do |_resource, data| %>
-        <% section.with_link(data[:name], data[:doc_url], icon: data[:metadata][:icon]) %>
-      <% end %>
-    <% end %>
-  <% end %>
+    navbar.with_section("References") do |section|
+      next unless apipie_documentation
+
+      apipie_documentation[:resources].each_value do |resource|
+        resource[:methods].sort_by { |endpoint| endpoint[:doc_url] }.each do |endpoint|
+          section.with_link endpoint[:doc_url] do
+            %>
+              <span class="navbar__method-bagde"><%= endpoint.dig(:apis, 0, :http_method) %></span>
+              <%= endpoint.dig(:apis, 0, :api_url) %>
+            <%
+          end
+        end
+      end
+    end
+  %>
 <% end %>
