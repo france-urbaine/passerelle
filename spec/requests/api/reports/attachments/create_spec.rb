@@ -26,8 +26,10 @@ RSpec.describe "API::Reports::AttachmentsController#create", :api do
     it_behaves_like "it denies access when authorized through OAuth"
 
     context "when current publisher is the owner of the report" do
-      it_behaves_like "it allows access when authorized through OAuth" do
-        let(:current_publisher) { publisher }
+      before { setup_access_token(publisher) }
+
+      it "respond with success" do
+        expect(response).to have_http_status(:success)
       end
     end
   end
@@ -41,16 +43,7 @@ RSpec.describe "API::Reports::AttachmentsController#create", :api do
 
       it "assigns expected attributes to the new record" do
         request
-        expect(Report.last.documents.last.filename).to eq("sample.pdf")
-      end
-
-      it "returns expected response structure" do
-        request
-        parsed_response = response.parsed_body
-
-        expect(parsed_response).to include("id" => report.id)
-        expect(parsed_response["documents"].first).to include("filename" => "sample.pdf")
-          .and have_key("url")
+        expect(report.documents.last.filename).to eq("sample.pdf")
       end
     end
 
@@ -68,19 +61,6 @@ RSpec.describe "API::Reports::AttachmentsController#create", :api do
 
       it { expect(response).to have_http_status(:success) }
       it { expect { request }.to change(report.documents, :count).from(2).to(3) }
-
-      it "returns expected response structure" do
-        request
-        parsed_response = response.parsed_body
-
-        expect(parsed_response).to include("id" => report.id)
-        expect(parsed_response["documents"].first).to include("filename" => "first.pdf")
-          .and have_key("url")
-        expect(parsed_response["documents"].second).to include("filename" => "second.pdf")
-          .and have_key("url")
-        expect(parsed_response["documents"][2]).to include("filename" => "sample.pdf")
-          .and have_key("url")
-      end
     end
 
     context "when report has package" do

@@ -9,7 +9,7 @@ module API
       def create
         @report.documents.attach(params[:documents])
 
-        respond_with @report
+        head :no_content
       end
 
       def destroy

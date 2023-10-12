@@ -21,6 +21,7 @@
 
   <body>
     <%= render "shared/navbar" %>
+    <%= file_field :attachments, multiple: true, direct_upload: true %>
     <%= yield %>
     <%= render "shared/notifications" %>
   </body>
