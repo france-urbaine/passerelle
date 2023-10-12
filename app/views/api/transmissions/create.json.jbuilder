@@ -3,5 +3,5 @@
 if @transmission.errors.any?
   json.errors @transmission.errors.messages
 else
-  json.id @transmission.id
+  json.transmission @transmission, :id
 end

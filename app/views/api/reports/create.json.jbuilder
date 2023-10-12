@@ -3,5 +3,5 @@
 if @report.errors.any?
   json.errors @report.errors.messages
 else
-  json.id @report.id
+  json.report @report, :id
 end

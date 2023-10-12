@@ -6,12 +6,13 @@ module API
 
     resource_description do
       resource_id "collectivities"
-      name  "Collectivité"
+      name "Collectivités"
       short "Collectivité"
       formats ["json"]
-      meta icon: "building-library", enums: %w[territory_type]
+      meta icon: "building-library"
+
       description <<-DESC
-        Une collectivité térritoriale
+        Une collectivité territoriale
       DESC
     end
 

@@ -33,23 +33,27 @@ RSpec.describe "API::TransmissionController#create", :api do
   describe "responses" do
     before { setup_access_token(collectivity.publisher) }
 
-    it { expect(response).to have_http_status(:success) }
-    it { expect { request }.to change(Transmission, :count).by(1) }
+    context "with valid attributes" do
+      it { expect(response).to have_http_status(:success) }
+      it { expect { request }.to change(Transmission, :count).by(1) }
 
-    it "assigns expected attributes to the new record", :show_in_doc do
-      request
-      expect(Transmission.last).to have_attributes(
-        collectivity_id:      collectivity.id,
-        oauth_application_id: current_application.id,
-        publisher_id:         current_publisher.id,
-        sandbox:              attributes[:sandbox]
-      )
-    end
+      it "assigns expected attributes to the new record" do
+        request
+        expect(Transmission.last).to have_attributes(
+          collectivity_id:      collectivity.id,
+          oauth_application_id: current_application.id,
+          publisher_id:         current_publisher.id,
+          sandbox:              attributes[:sandbox]
+        )
+      end
 
-    it "returns the new transmission ID" do
-      expect(response.parsed_body).to eq(
-        "id" => Transmission.last.id
-      )
+      it "returns the new transmission ID", :show_in_doc do
+        expect(response).to have_json_body.to eq(
+          "transmission" => {
+            "id" => Transmission.last.id
+          }
+        )
+      end
     end
 
     context "with empty attributes" do

@@ -65,10 +65,12 @@ RSpec.describe "API::ReportsController#create", :api do
         )
       end
 
-      it "returns the new report ID" do
+      it "returns the new report ID", :show_in_doc do
         request
-        expect(response.parsed_body).to eq(
-          "id" => Report.last.id
+        expect(response).to have_json_body.to eq(
+          "report" => {
+            "id" => Report.last.id
+          }
         )
       end
     end
@@ -88,7 +90,7 @@ RSpec.describe "API::ReportsController#create", :api do
         expect(response).to have_json_body.to include(
           "errors" => hash_including(
             "date_constat" => ["Ce champs est requis"],
-            "code_insee" => ["n'est pas valide"]
+            "code_insee"   => ["n'est pas valide"]
           )
         )
       end
@@ -101,7 +103,7 @@ RSpec.describe "API::ReportsController#create", :api do
       it { expect { request }.not_to change(Package, :count) }
 
       it "responds with the report errors" do
-        expect(response.parsed_body).to eq(
+        expect(response).to have_json_body.to include(
           "error" => "Cette transmission est déjà complétée."
         )
       end
