@@ -14,7 +14,7 @@ RSpec.describe "API::TransmissionController#create", :api do
   let!(:collectivity) { create(:collectivity) }
 
   let(:attributes) do
-    { sandbox: false }
+    { sandbox: true }
   end
 
   describe "authorizations" do
@@ -52,13 +52,27 @@ RSpec.describe "API::TransmissionController#create", :api do
       )
     end
 
-    context "when sandbox is not provided" do
+    context "with empty attributes" do
+      let(:attributes) { {} }
+
+      it { expect(response).to have_http_status(:success) }
+      it { expect { request }.to change(Transmission, :count).by(1) }
+
+      it "lets the transmission out of sandbox by default" do
+        request
+        expect(Transmission.last).to have_attributes(
+          sandbox: false
+        )
+      end
+    end
+
+    context "with empty params" do
       let(:params) { {} }
 
       it { expect(response).to have_http_status(:success) }
       it { expect { request }.to change(Transmission, :count).by(1) }
 
-      it "defaults to false" do
+      it "lets the transmission out of sandbox by default" do
         request
         expect(Transmission.last).to have_attributes(
           sandbox: false

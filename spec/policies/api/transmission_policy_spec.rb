@@ -19,6 +19,10 @@ RSpec.describe API::TransmissionPolicy, type: :policy do
       let(:record) { Transmission }
     end
 
+    failed "with any transmission not owned by current publisher" do
+      let(:record) { create(:transmission, :made_through_api) }
+    end
+
     succeed "with transmission owned by current publisher" do
       let(:record) { create(:transmission, :made_through_api, :with_reports, publisher: current_publisher) }
 
@@ -30,10 +34,6 @@ RSpec.describe API::TransmissionPolicy, type: :policy do
         let(:record) { create(:transmission, :made_through_api, publisher: current_publisher) }
       end
     end
-
-    failed "with transmission not owned by current publisher" do
-      let(:record) { create(:transmission, :made_through_api) }
-    end
   end
 
   describe_rule :complete?, stub_factories: false do
@@ -41,6 +41,10 @@ RSpec.describe API::TransmissionPolicy, type: :policy do
 
     succeed "without record" do
       let(:record) { Transmission }
+    end
+
+    failed "with any transmission not owned by current publisher" do
+      let(:record) { create(:transmission, :made_through_api) }
     end
 
     succeed "with transmission owned by current publisher" do
@@ -58,15 +62,15 @@ RSpec.describe API::TransmissionPolicy, type: :policy do
         let(:record) { create(:transmission, :made_through_api, :with_incomplete_reports, publisher: current_publisher) }
       end
     end
-
-    failed "with transmission not owned by current publisher" do
-      let(:record) { create(:transmission, :made_through_api) }
-    end
   end
 
   describe_rule :fill? do
     succeed "without record" do
       let(:record) { Transmission }
+    end
+
+    failed "with transmission not owned by current publisher" do
+      let(:record) { build_stubbed(:transmission, :made_through_api) }
     end
 
     succeed "with transmission owned by current publisher" do
@@ -76,18 +80,19 @@ RSpec.describe API::TransmissionPolicy, type: :policy do
         let(:record) { build_stubbed(:transmission, :made_through_api, :completed, publisher: current_publisher) }
       end
     end
-
-    failed "with transmission not owned by current publisher" do
-      let(:record) { build_stubbed(:transmission, :made_through_api) }
-    end
   end
 
   describe "params scope" do
     subject(:params) { apply_params_scope(attributes) }
 
-    let(:attributes) { { sandbox: true, not_included: true } }
+    let(:attributes) do
+      {
+        sandbox:         true,
+        collectivity_id:  "123456789"
+      }
+    end
 
-    it do
+    it "accepts only sandbox attribute" do
       is_expected.to eq(sandbox: true)
     end
   end
