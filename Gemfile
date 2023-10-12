@@ -20,9 +20,9 @@ gem "sidekiq"
 gem "sidekiq-pro", source: "https://gems.contribsys.com"
 
 # API
+gem "apipie-rails"
 gem "doorkeeper"
 gem "doorkeeper-i18n"
-gem "apipie-rails"
 
 # Models
 gem "devise"

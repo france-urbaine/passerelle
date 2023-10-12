@@ -2,7 +2,7 @@
   "collectivities#index": [
     {
       "verb": "GET",
-      "path": "/api/collectivites",
+      "path": "/collectivites",
       "versions": [
         "1.0"
       ],
@@ -12,34 +12,14 @@
       "response_data": {
         "collectivites": [
           {
-            "id": "d8985191-9c2c-4183-bd5f-90fc056842bb",
-            "name": "Mayotte #1",
-            "territory_type": "Departement",
-            "territory_id": "3592d827-a20d-4c46-8989-091feef99f17",
-            "contact_first_name": null,
-            "contact_last_name": null,
-            "contact_email": null,
-            "contact_phone": null
+            "id": "a1ed3a5a-d557-4f74-8cc3-e3ca1bc48065",
+            "name": "Martinique #3",
+            "siren": "925552176"
           },
           {
-            "id": "d09b52a9-6f01-4a59-975f-169401fd3e47",
-            "name": "CA Pessac #2",
-            "territory_type": "EPCI",
-            "territory_id": "037c5254-9f9c-429d-8a31-18d0d5f299bb",
-            "contact_first_name": null,
-            "contact_last_name": null,
-            "contact_email": null,
-            "contact_phone": null
-          },
-          {
-            "id": "eed729fd-b1bc-46bb-8df6-55bc79e56116",
-            "name": "Agglomération Palaiseau #3",
-            "territory_type": "EPCI",
-            "territory_id": "16759000-cf7e-4fe6-8918-90c2b485e2bc",
-            "contact_first_name": null,
-            "contact_last_name": null,
-            "contact_email": null,
-            "contact_phone": null
+            "id": "6b156c9d-fa5c-4b49-a48a-f9b41459bd70",
+            "name": "Cherbourg-en-Cotentin #4",
+            "siren": "086691458"
           }
         ]
       },
@@ -48,21 +28,96 @@
       "recorded": true
     }
   ],
-  "transmission#create": [
+  "reports#create": [
     {
       "verb": "POST",
-      "path": "/api/collectivites/8fdf60cc-b5f6-4057-af59-6acb9559008f/transmissions",
+      "path": "/transmissions/65d137bc-7163-490e-93e7-eef4feb4284e/signalements",
+      "versions": [
+        "1.0"
+      ],
+      "query": null,
+      "request_data": {
+        "report": {
+          "form_type": "creation_local_habitation",
+          "anomalies": [
+            "omission_batie"
+          ],
+          "priority": "low",
+          "code_insee": "64019",
+          "date_constat": "2023-01-02",
+          "situation_proprietaire": "Doe",
+          "situation_numero_ordre_proprietaire": "A12345",
+          "situation_parcelle": "AA 0000",
+          "situation_numero_voie": "1",
+          "situation_libelle_voie": "rue de la Liberté",
+          "situation_code_rivoli": "0000",
+          "proposition_nature": "AP",
+          "proposition_categorie": "1",
+          "proposition_surface_reelle": 70.0,
+          "proposition_date_achevement": "2023-01-01"
+        }
+      },
+      "response_data": {
+        "report": {
+          "id": "8c1c2ff7-0f56-4080-923a-62f0d9e8eb0f"
+        }
+      },
+      "code": 200,
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ],
+  "transmissions#complete": [
+    {
+      "verb": "PUT",
+      "path": "/transmissions/7bacb4f2-b37b-442f-9cbb-15481bbac9dd/complete",
+      "versions": [
+        "1.0"
+      ],
+      "query": null,
+      "request_data": {
+      },
+      "response_data": {
+        "transmission": {
+          "id": "7bacb4f2-b37b-442f-9cbb-15481bbac9dd",
+          "completed_at": "2023-10-12T07:06:42.032Z",
+          "packages": [
+            {
+              "id": "c9e73d19-6ad7-4818-b3a8-fde00d8dbdcb",
+              "name": null,
+              "reference": "2023-10-0001",
+              "reports": [
+                {
+                  "id": "846c520a-1b28-41bd-813d-41b628290fa3",
+                  "reference": "2023-10-0001-00001"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "code": 200,
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ],
+  "transmissions#create": [
+    {
+      "verb": "POST",
+      "path": "/collectivites/bb65eeb3-3343-480e-bfc3-6c7d4c554b99/transmissions",
       "versions": [
         "1.0"
       ],
       "query": null,
       "request_data": {
         "transmission": {
-          "sandbox": false
+          "sandbox": true
         }
       },
       "response_data": {
-        "id": "38011313-402f-46a9-9e9c-3607152ea211"
+        "transmission": {
+          "id": "b4947776-057b-442f-9bb1-18b7ecadd0ba"
+        }
       },
       "code": 200,
       "show_in_doc": 1,

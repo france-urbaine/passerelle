@@ -10,6 +10,7 @@ RSpec.describe DocumentationExamples::Component, type: :component do
     { name: "index" }
   end
 
+  # rubocop:disable RSpec/AnyInstance
   before do
     allow_any_instance_of(described_class).to receive(:examples).and_return(
       [
@@ -18,8 +19,8 @@ RSpec.describe DocumentationExamples::Component, type: :component do
           "path"=>"/articles",
           "versions"=>["1.0"],
           "query"=>nil,
-          "request_data"=>{"search"=>{"title"=>"Titre"}},
-          "response_data"=>{"id"=>"3aad2916-5560-4ce6-9d1e-726fa7b5cfc8"},
+          "request_data"=>{ "search"=>{ "title"=>"Titre" } },
+          "response_data"=>{ "id"=>"3aad2916-5560-4ce6-9d1e-726fa7b5cfc8" },
           "code"=>200,
           "show_in_doc"=>1,
           "recorded"=>true
@@ -28,6 +29,7 @@ RSpec.describe DocumentationExamples::Component, type: :component do
     )
     Apipie.reload_examples
   end
+  # rubocop:enable RSpec/AnyInstance
 
   it "renders the example" do
     render_inline described_class.new(resource, method)
