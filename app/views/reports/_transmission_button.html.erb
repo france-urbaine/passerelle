@@ -1,0 +1,5 @@
+<% if allowed_to?(:create?, Transmission) && current_user.active_transmission != report.transmission %>
+  <%= render Button::Component.new("Transmettre", transmissions_path, params: { ids: [report.id] }, method: :post, icon: "cloud-arrow-up", modal: true, primary: true) %>
+<% elsif allowed_to?(:create?, Transmission) && current_user.active_transmission == report.transmission %>
+  <%= render Button::Component.new("Ne plus transmettre", transmissions_path, params: { ids: [report.id] }, method: :delete, icon: "cloud-arrow-down", modal: true, primary: true) %>
+<% end %>

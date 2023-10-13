@@ -153,6 +153,10 @@ RSpec.describe "TransmissionsController#create" do
         it { expect(response.body).to include("target=\"status_report_#{reports[1].id}\"") }
         it { expect(response.body).to include("target=\"status_report_#{reports[2].id}\"") }
         it { expect(response.body).to not_include("target=\"status_report_#{reports[3].id}\"") }
+        it { expect(response.body).to not_include("target=\"transmission_button_report_#{reports[0].id}\"") }
+        it { expect(response.body).to include("target=\"transmission_button_report_#{reports[1].id}\"") }
+        it { expect(response.body).to include("target=\"transmission_button_report_#{reports[2].id}\"") }
+        it { expect(response.body).to not_include("target=\"transmission_button_report_#{reports[3].id}\"") }
         it { expect(response.body).to include("target=\"modal\"") }
       end
     end

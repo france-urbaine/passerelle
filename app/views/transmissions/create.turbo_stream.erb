@@ -7,6 +7,8 @@
       <%= report_badge(report) %>
     </template>
   </turbo-stream>
+
+  <%= turbo_stream.update dom_id(report, :transmission_button), partial: "reports/transmission_button", locals: { report: report } %>
 <% end %>
 
 <%= turbo_stream.update "modal", partial: "transmissions/create" %>
