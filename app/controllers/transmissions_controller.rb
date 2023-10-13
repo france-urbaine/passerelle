@@ -18,7 +18,7 @@ class TransmissionsController < ApplicationController
     @result  = @service.add(@reports)
   end
 
-  def remove
+  def destroy
     @transmission          = find_or_initialize_transmission
     @reports               = build_and_authorize_scope
     @reports               = filter_collection(@reports)

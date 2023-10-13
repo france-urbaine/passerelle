@@ -6,8 +6,8 @@
       - if allowed_to?(:create?, Transmission)
         - selection.with_action "Transmettre", transmissions_path, method: :post, modal: true
 
-      - if allowed_to?(:remove?, Transmission)
-        - selection.with_action "Conserver", remove_transmissions_path, method: :post, modal: true
+      - if allowed_to?(:destroy?, Transmission)
+        - selection.with_action "Ne plus transmettre", transmissions_path, method: :delete, modal: true
 
       - if allowed_to?(:destroy_all?, Report)
         - selection.with_action "Supprimer", url_for([:remove_all, @parent, :reports]), modal: true

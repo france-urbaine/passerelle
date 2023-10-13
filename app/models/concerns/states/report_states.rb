@@ -13,6 +13,14 @@ module States
       scope :packing,                -> { where(package_id: nil) }
       scope :packed,                 -> { where.not(package_id: nil) }
 
+      scope :in_transmission,        ->(transmission_id) { where(transmission_id: transmission_id) }
+      scope :not_in_transmission,    lambda { |transmission_id|
+                                       where.not(transmission_id: transmission_id)
+                                         .or(where(transmission_id: nil))
+                                     }
+
+      scope :transmissible,          ->(transmission_id) { completed.packing.not_in_transmission(transmission_id) }
+
       scope :transmitted_to_sandbox, -> { joins(:package).merge(Package.unscoped.sandbox) }
       scope :transmitted,            -> { joins(:package).merge(Package.unscoped.transmitted) }
       scope :unresolved,             -> { joins(:package).merge(Package.unscoped.unresolved) }

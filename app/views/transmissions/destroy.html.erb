@@ -1,7 +1,7 @@
 <%= template_modal_component(referrer: @referrer_path) do |template| %>
   <% template.with_modal do |modal| %>
     <% modal.with_header do %>
-      Transmission
+      Préparation de la transmission
     <% end %>
 
     <% modal.with_form(url: complete_transmissions_path, method: :post) do %>
@@ -25,6 +25,8 @@
     <% if @result.after_transmission_reports_count > 0 %>
       <% modal.with_submit_action "Transmettre immédiatement", autofocus: true %>
       <% modal.with_close_action "Transmettre plus tard" %>
+    <% else %>
+      <% modal.with_close_action "Fermer" %>
     <% end %>
   <% end %>
 <% end %>

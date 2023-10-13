@@ -2,9 +2,9 @@
 
 require "rails_helper"
 
-RSpec.describe "TransmissionsController#remove" do
+RSpec.describe "TransmissionsController#destroy" do
   subject(:request) do
-    post "/transmissions/remove", as:, headers:, params:
+    delete "/transmissions", as:, headers:, params:
   end
 
   let(:as)      { |e| e.metadata[:as] }

@@ -1,15 +1,15 @@
 <%= template_modal_component(referrer: @referrer_path) do |template| %>
   <% template.with_modal do |modal| %>
     <% modal.with_header do %>
-      Transmission
+      Préparation de la transmission
     <% end %>
 
     <% modal.with_form(url: complete_transmissions_path, method: :post) do %>
       <% if @reports.many? %>
-        <% if @result.added_reports_count > 0 %>
-          <p><b><%= @result.added_reports_count %> signalement</b> a été ajouté à votre transmission.</p>
-        <% elsif @result.added_reports_count > 1 %>
+        <% if @result.added_reports_count > 1 %>
           <p><b><%= @result.added_reports_count %> signalements</b> ont été ajoutés à votre transmission.</p>
+        <% elsif @result.added_reports_count > 0 %>
+          <p><b><%= @result.added_reports_count %> signalement</b> a été ajouté à votre transmission.</p>
         <% end %>
 
         <% if @result.not_added_reports_count > 0 %>
@@ -78,6 +78,8 @@
     <% if @result.after_transmission_reports_count > 0 %>
       <% modal.with_submit_action "Transmettre immédiatement", autofocus: true %>
       <% modal.with_close_action "Transmettre plus tard" %>
+    <% else %>
+      <% modal.with_close_action "Fermer" %>
     <% end %>
   <% end %>
 <% end %>
