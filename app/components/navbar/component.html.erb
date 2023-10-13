@@ -2,7 +2,7 @@
 
   <%# Full navbar %>
 
-  <nav class="navbar" data-navbar-target="expanded">
+  <%= tag.nav **navbar_html_attributes, data_navbar_target: "expanded" do %>
     <div class="navbar__brand brand">
       <%= image_tag("logo.svg", alt: "Logo de FiscaHub", height: 30) %>
       <% if header? %>
@@ -21,9 +21,24 @@
       <% if section.title %>
         <div class="navbar__header"><%= section.title %></div>
       <% end %>
+
       <div class="navbar__links">
         <% section.links.each do |link| %>
           <%= render_link(link) %>
+        <% end %>
+
+        <% section.subsections.each do |subsection| %>
+          <% if subsection.title %>
+            <div class="navbar__subheader">
+              <%= subsection.title %>
+            </div>
+          <% end %>
+
+          <div class="navbar__links">
+            <% subsection.links.each do |link| %>
+              <%= render_link(link) %>
+            <% end %>
+          </div>
         <% end %>
       </div>
     <% end %>
@@ -43,7 +58,7 @@
         </div>
       <% end %>
     </div>
-  </nav>
+  <% end %>
 
   <div class="navbar__overlay" data-action="click->navbar#minify" role="button" aria-label="Fermer le menu">
   </div>

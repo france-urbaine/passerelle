@@ -13,6 +13,10 @@
     @apply w-60 pt-2;
     @apply bg-white shadow;
     @apply dark:bg-black dark:shadow-gray-700;
+
+    &--api {
+      @apply w-96;
+    }
   }
 
   .navbar__brand  {
@@ -26,6 +30,10 @@
 
   .navbar__header {
     @apply px-4 py-2 text-xl;
+  }
+
+  .navbar__subheader {
+    @apply px-4 py-2 text-lg;
   }
 
   .navbar__links {
@@ -98,6 +106,11 @@
         @apply dark:text-sky-300 dark:border-sky-300 dark:outline-blue-300;
       }
     }
+  }
+
+  .navbar__method {
+    font-weight: bold;
+    min-width: 3.5rem;
   }
 
   .navbar__user {

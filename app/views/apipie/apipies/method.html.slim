@@ -1,0 +1,105 @@
+= template_content_component do
+  = breadcrumbs_component do |breadcrumbs|
+    - breadcrumbs.with_path "References" #, @doc[:doc_url]
+    - breadcrumbs.with_path @method.dig(:apis, 0, :short_description)
+
+  - @method[:apis].each do |api|
+    .subheader-bar
+      h2.subheader
+        = icon_component "link"
+        .font-mono
+          strong= api[:http_method]
+          = " "
+          = api[:api_url]
+
+      - if api[:deprecated]
+        .badge.badge--red.justify-self-end
+          | DEPRECATED
+
+    .card
+      dl.description-list
+        .description-list__row
+          dt Formats supportés
+          dd= @method[:formats].join(', ')
+
+        .description-list__row
+          dt Méthode
+          dd
+            code.code= api[:http_method]
+
+        .description-list__row
+          dt URL
+          dd
+            code.code= URI.join(api_url, api[:api_url])
+
+  .lg:grid.grid-cols-2.gap-12.items-start
+    div
+      .content__separator
+      = render partial: "informations", locals: { resource: @method }
+
+      - if lookup_context.exists?("#{@resource[:id]}/#{@method[:name]}", ["documentation/api/references"], true)
+        = render "documentation/api/references/#{@resource[:id]}/#{@method[:name]}"
+
+      - if @method[:params].present?
+        .content__separator
+        .subheader-bar
+          h2.subheader
+            = icon_component "adjustments-vertical"
+            | Paramètres
+
+        .datatable
+          table
+            thead
+              tr
+                th Paramètre
+                th Description
+                th
+            tbody
+              = render partial: "params", locals: { params: @method[:params], is_params: true }
+
+      - if @method[:returns].present?
+        - @method[:returns].each do |item|
+          .content__separator
+          .subheader-bar
+            h2.subheader
+              = icon_component "arrows-right-left"
+              ' Réponse :
+              = item[:description]
+
+            code.http-code( class="http-code--#{item[:code].floor(-2)}" )
+              = item[:code]
+
+          .datatable
+            table
+              thead
+                tr
+                  th Paramètre
+                  th Description
+                  th
+              tbody
+                = render partial: "params", locals: { params: item[:returns_object] }
+
+      - if lookup_context.exists?("#{@resource[:id]}/enums", ["documentation/api/references"], true)
+        .content__separator
+        .subheader-bar
+          h2.subheader
+            = icon_component "document-text"
+            | Valeurs des énumérations
+
+        .card
+          = render "documentation/api/references/#{@resource[:id]}/enums"
+
+      - else
+        = render "enums"
+
+      - if @method[:errors].present?
+        .content__separator
+        .subheader-bar
+          h2.subheader
+            = icon_component "exclamation-circle"
+            | Erreurs possibles
+
+        = render partial: "errors", locals: { errors: @method[:errors] }
+
+    div
+      = render Views::Documentation::ExamplesComponent.new(@resource[:id], @method[:name], @resource[:version])

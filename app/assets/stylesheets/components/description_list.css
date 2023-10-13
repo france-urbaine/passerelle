@@ -23,7 +23,7 @@
 
       @apply md:col-span-2;
 
-      &:after {
+      &:not([class*="after:content"]):after {
         content: " :"
       }
     }

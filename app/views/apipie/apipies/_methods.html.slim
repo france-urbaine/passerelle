@@ -1,0 +1,22 @@
+.datatable
+  table
+    thead
+      tr.datatable__row
+        th Nom
+        th Méthode
+        th URL
+        th
+    tbody
+      - methods.each do |m|
+        - if !m[:show]
+          - next
+        - m[:apis].each do |a|
+          tr.datatable__row
+            td
+              b= link_to m[:name], m[:doc_url]
+            td
+              code.code= a[:http_method]
+            td= a[:api_url]
+            td
+              - if a[:deprecated]
+                code.text-red-300 DEPRECATED

@@ -1,0 +1,12 @@
+= template_content_component do
+  = breadcrumbs_component do |breadcrumbs|
+    - breadcrumbs.with_path "References", @doc[:doc_url]
+    - breadcrumbs.with_path @resource[:name]
+
+  = render(:partial => "informations", :locals => {:resource => @resource })
+
+  h2.subheader
+    = icon_component "link"
+    | Endpoints
+  .card.documentation__card
+    = render(:partial => "methods", :locals => {:methods => @resource[:methods] })

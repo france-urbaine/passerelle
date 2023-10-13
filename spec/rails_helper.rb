@@ -92,6 +92,9 @@ RSpec.configure do |config|
   config.include ActionView::Helpers::TagHelper, type: :component
   config.include ActiveJob::TestHelper
 
+  # run specs with APIPIE_RECORD=examples to catch examples for api doc
+  config.filter_run show_in_doc: true if ENV["APIPIE_RECORD"]
+
   config.after do
     ActionMailer::Base.deliveries.clear
     ActiveJob::Base.queue_adapter.enqueued_jobs.clear

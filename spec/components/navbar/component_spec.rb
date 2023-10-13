@@ -68,4 +68,32 @@ RSpec.describe Navbar::Component, type: :component do
       end
     end
   end
+
+  it "renders a mobile options" do
+    sign_in
+    render_inline described_class.new(class: "navbar--api")
+
+    expect(page).to have_selector(".navbar.navbar--api")
+  end
+
+  it "renders links with custom html content" do
+    sign_in
+
+    render_inline described_class.new do |navbar|
+      navbar.with_section("References") do |section|
+        section.with_link("/some_references") do
+          # rubocop:disable Style/StringConcatenation
+          # String concatenation escape html tags
+          tag.div("GET", class: "method") + " /collectivities"
+          # rubocop:enable Style/StringConcatenation
+        end
+      end
+    end
+
+    expect(page).to have_selector(".navbar") do |navbar|
+      expect(navbar).to have_link("GET /collectivities") do |link|
+        expect(link).to have_selector(".method", text: "GET")
+      end
+    end
+  end
 end

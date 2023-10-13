@@ -1,0 +1,169 @@
+{
+  "collectivities#index": [
+    {
+      "verb": "GET",
+      "path": "/collectivites",
+      "versions": [
+        "1.0"
+      ],
+      "query": null,
+      "request_data": {
+      },
+      "response_data": {
+        "collectivites": [
+          {
+            "id": "66e78f7c-b066-4587-b3cf-348b1696ae98",
+            "name": "Colombes #4",
+            "siren": "536981061"
+          },
+          {
+            "id": "3df32f1b-0082-4059-b565-70353ef24546",
+            "name": "Thonon-les-Bains #5",
+            "siren": "379518046"
+          }
+        ]
+      },
+      "code": 200,
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ],
+  "reports#create": [
+    {
+      "verb": "POST",
+      "path": "/transmissions/5e43e222-ac72-47ac-a2f6-883c548f6ec2/signalements",
+      "versions": [
+        "1.0"
+      ],
+      "query": null,
+      "request_data": {
+        "report": {
+          "form_type": "creation_local_habitation",
+          "anomalies": [
+            "omission_batie"
+          ],
+          "priority": "low",
+          "code_insee": "64019",
+          "date_constat": "2023-01-02",
+          "situation_proprietaire": "Doe",
+          "situation_numero_ordre_proprietaire": "A12345",
+          "situation_parcelle": "AA 0000",
+          "situation_numero_voie": "1",
+          "situation_libelle_voie": "rue de la Liberté",
+          "situation_code_rivoli": "0000",
+          "proposition_nature": "AP",
+          "proposition_categorie": "1",
+          "proposition_surface_reelle": 70.0,
+          "proposition_date_achevement": "2023-01-01"
+        }
+      },
+      "response_data": {
+        "report": {
+          "id": "26d3db62-8a89-43af-8a16-d1e3044eb73d"
+        }
+      },
+      "code": 200,
+      "show_in_doc": 1,
+      "recorded": true
+    },
+    {
+      "verb": "POST",
+      "path": "/transmissions/40a3130f-639d-418a-837a-1f9c68894118/signalements",
+      "versions": [
+        "1.0"
+      ],
+      "query": null,
+      "request_data": {
+        "report": {
+          "form_type": "creation_local_habitation",
+          "anomalies": [
+            "omission_batie"
+          ],
+          "priority": "low",
+          "code_insee": "invalid",
+          "date_constat": null,
+          "situation_proprietaire": "Doe",
+          "situation_numero_ordre_proprietaire": "A12345",
+          "situation_parcelle": "AA 0000",
+          "situation_numero_voie": "1",
+          "situation_libelle_voie": "rue de la Liberté",
+          "situation_code_rivoli": "0000",
+          "proposition_nature": "AP",
+          "proposition_categorie": "1",
+          "proposition_surface_reelle": 70.0,
+          "proposition_date_achevement": "2023-01-01"
+        }
+      },
+      "response_data": {
+        "errors": {
+          "code_insee": [
+            "n'est pas valide"
+          ],
+          "date_constat": [
+            "Ce champs est requis"
+          ]
+        }
+      },
+      "code": 422,
+      "show_in_doc": 0,
+      "recorded": true
+    }
+  ],
+  "transmissions#complete": [
+    {
+      "verb": "PUT",
+      "path": "/transmissions/36c75b0d-9db3-4b55-b411-6178c12e58c4/complete",
+      "versions": [
+        "1.0"
+      ],
+      "query": null,
+      "request_data": {
+      },
+      "response_data": {
+        "transmission": {
+          "id": "36c75b0d-9db3-4b55-b411-6178c12e58c4",
+          "completed_at": "2023-10-13T06:00:41.822Z",
+          "packages": [
+            {
+              "id": "2db1ffe2-09ee-4ee4-be61-a2ecb0642df0",
+              "name": null,
+              "reference": "2023-10-0001",
+              "reports": [
+                {
+                  "id": "b09f6604-a2e0-491b-96e7-7b86d3f0b8cd",
+                  "reference": "2023-10-0001-00001"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "code": 200,
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ],
+  "transmissions#create": [
+    {
+      "verb": "POST",
+      "path": "/collectivites/b4831b76-8e96-439e-b9bd-1ef46b1c9e35/transmissions",
+      "versions": [
+        "1.0"
+      ],
+      "query": null,
+      "request_data": {
+        "transmission": {
+          "sandbox": true
+        }
+      },
+      "response_data": {
+        "transmission": {
+          "id": "08e6bb7e-9431-4b61-8de5-92cfdddc6cc8"
+        }
+      },
+      "code": 200,
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ]
+}

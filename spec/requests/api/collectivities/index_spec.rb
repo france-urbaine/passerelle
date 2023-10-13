@@ -11,8 +11,6 @@ RSpec.describe "API::CollectivitiesController#index", :api do
   let(:headers) { |e| e.metadata.fetch(:headers, {}).merge(authorization_header) }
   let(:params)  { |e| e.metadata.fetch(:params, {}) }
 
-  let(:collectivity) { create(:collectivity) }
-
   describe "authorizations" do
     it_behaves_like "it requires an authentication through OAuth in JSON"
     it_behaves_like "it requires an authentication through OAuth in HTML"
@@ -20,20 +18,34 @@ RSpec.describe "API::CollectivitiesController#index", :api do
   end
 
   describe "responses" do
-    before { setup_access_token(collectivity.publisher) }
+    before { setup_access_token }
 
-    it { expect(response).to have_http_status(:success) }
+    context "when publisher have collectivities" do
+      let!(:collectivities) { create_list(:collectivity, 2, publisher: current_publisher) }
 
-    it "returns a list of collectivities" do
-      expect(response).to have_json_body.to include(
-        "collectivites" => [
-          {
-            "id"    => collectivity.id,
-            "name"  => collectivity.name,
-            "siren" => collectivity.siren
-          }
-        ]
-      )
+      it { expect(response).to have_http_status(:success) }
+
+      it "returns a list of collectivities", :show_in_doc do
+        expect(response).to have_json_body.to include(
+          "collectivites" => be_an(Array).and(have(2).items).and(include(
+            {
+              "id"    => collectivities[0].id,
+              "name"  => collectivities[0].name,
+              "siren" => collectivities[0].siren
+            }
+          ))
+        )
+      end
+    end
+
+    context "when publisher has no collectivities" do
+      it { expect(response).to have_http_status(:success) }
+
+      it "returns a empty list of collectivities" do
+        expect(response).to have_json_body.to eq(
+          "collectivites" => []
+        )
+      end
     end
   end
 end

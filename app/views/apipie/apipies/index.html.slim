@@ -1,0 +1,25 @@
+= template_content_component do
+  = breadcrumbs_component do |breadcrumbs|
+    - breadcrumbs.with_path "References"
+
+  / - if @versions
+  /   li.pull-right
+  /     = @versions.collect { |v| link_to v, Apipie.full_url(v+@doc[:link_extension]) }.join(' / ').html_safe
+
+  - @doc[:resources].sort_by(&:first).each do |key, api|
+    h2.subheader
+      - if api.dig(:metadata, :icon)
+        = icon_component api.dig(:metadata, :icon)
+
+      = api[:name]
+
+      - if api[:deprecated]
+        code.code DEPRECATED
+
+    .card.documentation__card
+      .card__content
+        p= raw api[:short_description]
+        p= raw api[:full_description]
+
+    .content__separator
+

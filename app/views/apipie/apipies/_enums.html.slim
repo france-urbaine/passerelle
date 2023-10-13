@@ -1,0 +1,19 @@
+- enums = @resource.dig(:metadata, :enums)
+- if enums&.any?
+  .content__separator
+  .subheader-bar
+    h2.subheader
+      = icon_component "document-text"
+      | Valeurs des énumérations
+  .card.documentation__card
+    .card__content
+      - enums.each do |enum|
+        .card__header
+          h1.card__title( id=enum )
+            code.code= enum
+        dl.description-list
+          - I18n.t("enum.#{enum}").each do |key, value|
+            .description-list__row
+              dt= value
+              dd
+                code.code= key

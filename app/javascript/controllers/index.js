@@ -47,8 +47,14 @@ application.register("switch", SwitchController)
 import CopyTextController from "./components/copy_text_controller"
 application.register("copy-text", CopyTextController)
 
+import TabsController from "./components/tabs_controller"
+application.register("tabs", TabsController)
+
 import ToggleController from "./components/toggle_controller"
 application.register("toggle", ToggleController)
+
+import HighlightController from "./components/highlight_controller"
+application.register("highlight", HighlightController)
 
 // Forms
 // -----------------------------------------------------------------------------

@@ -40,29 +40,31 @@ RSpec.describe "API::TransmissionsController#complete", :api do
         }.to change(transmission, :completed_at).from(nil).to(be_present)
       end
 
-      it "returns the transmitted packages & reports" do
+      it "returns the transmitted packages & reports", :show_in_doc do
         request
 
         transmission.reload
-        package = transmission.packages.last
-        report  = package.reports.last
+        package = Package.last
+        report  = Report.last
 
-        expect(response.parsed_body).to include(
-          "id"           => transmission.id,
-          "completed_at" => be_present.and(eq(transmission.completed_at.iso8601(3))),
-          "packages"     => [
-            {
-              "id" => package.id,
-              "name" => package.name,
-              "reference" => package.reference,
-              "reports" => [
-                {
-                  "id" => report.id,
-                  "reference" => report.reference
-                }
-              ]
-            }
-          ]
+        expect(response).to have_json_body.to include(
+          "transmission"   => {
+            "id"            => transmission.id,
+            "completed_at"  => be_present.and(eq(transmission.completed_at.iso8601(3))),
+            "packages"      => [
+              {
+                "id"          => package.id,
+                "name"        => package.name,
+                "reference"   => package.reference,
+                "reports"       => [
+                  {
+                    "id"          => report.id,
+                    "reference"   => report.reference
+                  }
+                ]
+              }
+            ]
+          }
         )
       end
     end

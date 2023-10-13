@@ -2,6 +2,10 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+/* Highlight.js */
+@import "highlight.js/styles/github";
+@import "highlight.js/styles/github-dark-dimmed" (prefers-color-scheme: dark);
+
 /* Tags */
 @import "./tags/body";
 @import "./tags/text";
@@ -11,6 +15,7 @@
 @import "./tags/buttons";
 @import "./tags/tables";
 @import "./tags/svg";
+@import "./tags/code";
 
 /* Texts */
 @import "./components/brand";
@@ -19,6 +24,7 @@
 /* Interactive elements */
 @import "./components/button";
 @import "./components/icon_button";
+@import "./components/tabs";
 @import "./components/tooltip";
 @import "./components/notifications";
 @import "./components/priority_icon";
@@ -51,3 +57,7 @@
 @import "./components/breadcrumbs";
 @import "./components/skeleton_loader";
 @import "./components/public";
+
+/* API Documentation */
+@import "./components/documentation";
+@import "./components/http_code";

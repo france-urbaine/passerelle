@@ -49,6 +49,22 @@ RSpec.describe Breadcrumbs::Component, type: :component do
     end
   end
 
+  it "renders last breacrumbs path using blocks" do
+    render_inline described_class.new do |breadcrumbs|
+      breadcrumbs.with_path do
+        tag.div("Main title", class: "some_class")
+      end
+    end
+
+    expect(page).to have_selector(".header-bar > .breadcrumbs") do |node|
+      aggregate_failures do
+        expect(node).to have_selector(".breadcrumbs__path:last-child > h1", text: "Main title") do |header|
+          expect(header).to have_selector(".some_class", text: "Main title")
+        end
+      end
+    end
+  end
+
   it "renders actions" do
     render_inline described_class.new do |breadcrumbs|
       breadcrumbs.with_action "Update"

@@ -1,14 +1,34 @@
-<%= render Navbar::Component.new do |navbar| %>
+<%= render Navbar::Component.new(class: "navbar--api") do |navbar| %>
   <% navbar.with_header do %>
-    <%= link_to("API", api_documentation_path, class: "brand__right") %>
+    <span class="brand__left">API Fisca</span><span class="brand__right">Hub</span>
   <% end %>
 
-  <% navbar.with_section do |section| %>
-    <% section.with_link("Retour à Fiscahub", root_url, icon: "arrow-uturn-left") %>
-  <% end %>
+  <%
+    navbar.with_section do |section|
+      section.with_link("Retour à Fiscahub", root_url, icon: "arrow-uturn-left")
+    end
 
-  <% navbar.with_section("Guides") do |section| %>
-    <% section.with_link("A propos", api_documentation_path("guides/a_propos"), icon: "bookmark") %>
-    <% section.with_link("Authentification", api_documentation_path("guides/authentification"), icon: "key") %>
-  <% end %>
+    navbar.with_section("Guides") do |section|
+      section.with_link("A propos", api_documentation_path("guides/a_propos"))
+      section.with_link("Authentification", api_documentation_path("guides/authentification"))
+      section.with_link("Transmettre des signalements", api_documentation_path("guides/transmettre_des_signalements"))
+      section.with_link("Transmettre des pièces jointes", api_documentation_path("guides/transmettre_des_pieces_jointes"))
+    end
+
+    navbar.with_section("References") do |section|
+      apipie_documentation[:resources].each_value do |resource|
+        section.with_subsection(resource[:name]) do |subsection|
+          resource[:methods].each do |endpoint|
+            # subsection.with_link endpoint.dig(:apis, 0, :short_description), endpoint[:doc_url]
+            subsection.with_link endpoint[:doc_url] do
+              %>
+                <span class="navbar__method"><%= endpoint.dig(:apis, 0, :http_method) %></span>
+                <%= endpoint.dig(:apis, 0, :api_url) %>
+              <%
+            end
+          end
+        end
+      end
+    end
+  %>
 <% end %>

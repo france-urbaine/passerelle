@@ -1,0 +1,72 @@
+- level      ||= 0
+- is_params  ||= false
+/ - previous_param_group = nil
+
+- params.each do |param|
+  - if !param[:show]
+    - if param[:params].present?
+      = render "params", locals: { params: param[:params], level:, is_params: }
+
+    - next
+
+  / - param_group = param.dig(:metadata, :param_group)
+
+  / - if param_group && param_group != previous_param_group
+  /   .bg-slate-100.p-4.text-slate-500.text-center
+  /     strong= param_group.humanize
+  /     p= report_requirements(param_group)
+
+  / - previous_param_group = param_group
+
+  tr
+    - tab_class = "pl-4" if level == 1
+    - tab_class = "pl-8" if level > 1
+
+    th( class=tab_class )
+      code= param[:full_name]
+
+    td
+      div( class="[&>p]:mb-0" )
+        - if param[:description].present?
+          = param[:description].html_safe
+
+        - if param[:validations].present?
+          ul
+            - param[:validations].each do |item|
+              li= item.html_safe
+
+        - if param.dig(:metadata, :enum).present?
+          p
+            ' Doit être une valeur parmis
+            = link_to "les valeurs possibles de l'énumération", nil, href: "##{enum}"
+
+    td
+      .flex.justify-end.space-x-4
+        - if param[:deprecated]
+          code.badge.badge--yellow déprécié
+
+        - if is_params && param[:required]
+          code.badge.badge--orange requis
+
+        - if param[:expected_type]
+          code.badge.badge--blue
+            = param[:expected_type]
+
+  - if param[:params].present?
+    = render partial: "params", locals: { params: param[:params], level: level + 1, is_params: }
+
+      / div
+      /   - if param[:validations].present? || param[:validator].present?
+      /     ul
+      /       - if param[:validator].present?
+      /         - if is_params
+      /           = Apipie.markup_to_html(param[:validator]).html_safe
+      /         - if param[:validations].present?
+      /           - param[:validations].each do |item|
+      /             li
+      /               = item.html_safe
+      /     = render partial: 'deprecation', locals: { deprecation: param[:deprecation] }
+      /     - unless param[:metadata].blank?
+      /       br
+      /       |  Metadata:
+      /       = render(:partial => "metadata", :locals => {:meta => param[:metadata]})
