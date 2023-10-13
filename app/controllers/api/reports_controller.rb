@@ -59,7 +59,7 @@ module API
 
       API::Reports::CreateService.new(@report, reports_params).save
 
-      respond_with @report
+      respond_with @report, status: :created
     end
 
     private

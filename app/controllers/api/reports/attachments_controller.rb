@@ -3,31 +3,28 @@
 module API
   module Reports
     class AttachmentsController < ApplicationController
-      before_action :find_report
-      before_action :authorize_report
-
       def create
+        @report = find_and_authorize_report
         @report.documents.attach(params[:documents])
 
         head :no_content
       end
 
       def destroy
-        attachment = @report.documents.find(params[:id])
-        attachment.purge
+        @report = find_and_authorize_report
+        @report.documents.find(params[:id]).purge_later
 
         head :no_content
       end
 
       private
 
-      def find_report
-        @report = Report.find(params[:report_id])
-      end
-
-      def authorize_report
-        only_kept! @report
-        authorize! @report, to: :attach?, with: ReportPolicy
+      def find_and_authorize_report
+        Report.find(params[:report_id]).tap do |report|
+          only_kept! report
+          forbidden! t(".already_packed") if report.packed?
+          authorize! report, to: :attach?, with: API::ReportPolicy
+        end
       end
     end
   end

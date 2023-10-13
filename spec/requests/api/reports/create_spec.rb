@@ -50,7 +50,7 @@ RSpec.describe "API::ReportsController#create", :api do
     before { setup_access_token(transmission.publisher) }
 
     context "with valid attributes" do
-      it { expect(response).to have_http_status(:success) }
+      it { expect(response).to have_http_status(:created) }
       it { expect { request }.to change(Report, :count).by(1) }
 
       it "assigns expected attributes to the new record" do
@@ -102,8 +102,8 @@ RSpec.describe "API::ReportsController#create", :api do
       it { expect(response).to have_http_status(:forbidden) }
       it { expect { request }.not_to change(Package, :count) }
 
-      it "responds with the report errors" do
-        expect(response).to have_json_body.to include(
+      it "returns a specific error message" do
+        expect(response).to have_json_body.to eq(
           "error" => "Cette transmission est déjà complétée."
         )
       end

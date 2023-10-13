@@ -12,14 +12,14 @@
       "response_data": {
         "collectivites": [
           {
-            "id": "66e78f7c-b066-4587-b3cf-348b1696ae98",
-            "name": "Colombes #4",
-            "siren": "536981061"
+            "id": "f97179b3-53e4-4705-a6d8-08496cb702fc",
+            "name": "Metropole Bordeaux #1",
+            "siren": "690435680"
           },
           {
-            "id": "3df32f1b-0082-4059-b565-70353ef24546",
-            "name": "Thonon-les-Bains #5",
-            "siren": "379518046"
+            "id": "7a25cfb7-cd85-4bbd-9dad-ce1e7c030dbc",
+            "name": "Île-de-France #2",
+            "siren": "962845392"
           }
         ]
       },
@@ -31,7 +31,7 @@
   "reports#create": [
     {
       "verb": "POST",
-      "path": "/transmissions/5e43e222-ac72-47ac-a2f6-883c548f6ec2/signalements",
+      "path": "/transmissions/91c2619f-90dd-4c40-aa11-55d991da309f/signalements",
       "versions": [
         "1.0"
       ],
@@ -59,16 +59,16 @@
       },
       "response_data": {
         "report": {
-          "id": "26d3db62-8a89-43af-8a16-d1e3044eb73d"
+          "id": "321478ea-260e-4268-a74e-9d72e662724f"
         }
       },
-      "code": 200,
+      "code": 201,
       "show_in_doc": 1,
       "recorded": true
     },
     {
       "verb": "POST",
-      "path": "/transmissions/40a3130f-639d-418a-837a-1f9c68894118/signalements",
+      "path": "/transmissions/6b95905a-b7d5-4c64-abf1-1f75633da44d/signalements",
       "versions": [
         "1.0"
       ],
@@ -112,7 +112,7 @@
   "transmissions#complete": [
     {
       "verb": "PUT",
-      "path": "/transmissions/36c75b0d-9db3-4b55-b411-6178c12e58c4/complete",
+      "path": "/transmissions/6b597916-23d5-4a45-b661-f71e0659e32c/complete",
       "versions": [
         "1.0"
       ],
@@ -121,16 +121,16 @@
       },
       "response_data": {
         "transmission": {
-          "id": "36c75b0d-9db3-4b55-b411-6178c12e58c4",
-          "completed_at": "2023-10-13T06:00:41.822Z",
+          "id": "6b597916-23d5-4a45-b661-f71e0659e32c",
+          "completed_at": "2023-10-13T07:08:44.653Z",
           "packages": [
             {
-              "id": "2db1ffe2-09ee-4ee4-be61-a2ecb0642df0",
+              "id": "7cd54a22-d84b-4b14-bb47-8e64bc2aaea4",
               "name": null,
               "reference": "2023-10-0001",
               "reports": [
                 {
-                  "id": "b09f6604-a2e0-491b-96e7-7b86d3f0b8cd",
+                  "id": "d7d7db1a-e6bb-483e-b126-7f1e82a5f776",
                   "reference": "2023-10-0001-00001"
                 }
               ]
@@ -146,7 +146,7 @@
   "transmissions#create": [
     {
       "verb": "POST",
-      "path": "/collectivites/b4831b76-8e96-439e-b9bd-1ef46b1c9e35/transmissions",
+      "path": "/collectivites/678a5f09-07e1-49e3-af1a-e42b48bb8756/transmissions",
       "versions": [
         "1.0"
       ],
@@ -158,10 +158,10 @@
       },
       "response_data": {
         "transmission": {
-          "id": "08e6bb7e-9431-4b61-8de5-92cfdddc6cc8"
+          "id": "e43b8276-53e6-40df-a683-fb02ee74d6f5"
         }
       },
-      "code": 200,
+      "code": 201,
       "show_in_doc": 1,
       "recorded": true
     }

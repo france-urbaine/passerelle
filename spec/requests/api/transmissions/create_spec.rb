@@ -34,7 +34,7 @@ RSpec.describe "API::TransmissionController#create", :api do
     before { setup_access_token(collectivity.publisher) }
 
     context "with valid attributes" do
-      it { expect(response).to have_http_status(:success) }
+      it { expect(response).to have_http_status(:created) }
       it { expect { request }.to change(Transmission, :count).by(1) }
 
       it "assigns expected attributes to the new record" do
@@ -73,7 +73,7 @@ RSpec.describe "API::TransmissionController#create", :api do
     context "with empty params" do
       let(:params) { {} }
 
-      it { expect(response).to have_http_status(:success) }
+      it { expect(response).to have_http_status(:created) }
       it { expect { request }.to change(Transmission, :count).by(1) }
 
       it "lets the transmission out of sandbox by default" do

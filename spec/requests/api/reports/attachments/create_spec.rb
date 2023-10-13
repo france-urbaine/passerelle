@@ -11,8 +11,8 @@ RSpec.describe "API::Reports::AttachmentsController#create", :api do
   let(:headers) { |e| e.metadata.fetch(:headers, {}).merge(authorization_header) }
   let(:params)  { |e| e.metadata.fetch(:params, { documents: blob.signed_id }) }
 
-  let!(:publisher) { create(:publisher) }
-  let!(:report) { create(:report, publisher: publisher) }
+  let!(:report) { create(:report, :made_through_api) }
+
   let!(:blob) do
     ActiveStorage::Blob.create_and_upload!(
       io:       file_fixture("sample.pdf").open,
@@ -25,20 +25,24 @@ RSpec.describe "API::Reports::AttachmentsController#create", :api do
     it_behaves_like "it requires an authentication through OAuth in HTML"
     it_behaves_like "it denies access when authorized through OAuth"
 
-    context "when current publisher is the owner of the report" do
-      before { setup_access_token(publisher) }
+    context "when report has been sent by current publisher" do
+      let(:report) { create(:report, :made_through_api, publisher: current_publisher) }
 
-      it "respond with success" do
-        expect(response).to have_http_status(:success)
-      end
+      it_behaves_like "it allows access when authorized through OAuth"
+    end
+
+    context "when report has been created by a collectivity owned by current publisher" do
+      let(:report) { create(:report, :made_through_web_ui, collectivity_publisher: current_publisher) }
+
+      it_behaves_like "it denies access when authorized through OAuth"
     end
   end
 
   describe "responses" do
-    before { setup_access_token(publisher) }
+    before { setup_access_token(report.publisher) }
 
     context "with valid parameters" do
-      it { expect(response).to have_http_status(:success) }
+      it { expect(response).to have_http_status(:no_content) }
       it { expect { request }.to change(report.documents, :count).by(1) }
 
       it "assigns expected attributes to the new record" do
@@ -47,7 +51,7 @@ RSpec.describe "API::Reports::AttachmentsController#create", :api do
       end
     end
 
-    context "with already attached documents" do
+    context "when report has other attachements" do
       before do
         report.documents.attach(ActiveStorage::Blob.create_and_upload!(
           io:       file_fixture("sample.pdf").open,
@@ -59,19 +63,19 @@ RSpec.describe "API::Reports::AttachmentsController#create", :api do
         ))
       end
 
-      it { expect(response).to have_http_status(:success) }
+      it { expect(response).to have_http_status(:no_content) }
       it { expect { request }.to change(report.documents, :count).from(2).to(3) }
     end
 
-    context "when report has package" do
-      let(:report) { create(:report, publisher: publisher, package: build(:package)) }
+    context "when report is already transmitted" do
+      let(:report) { create(:report, :transmitted_through_api) }
 
       it { expect(response).to have_http_status(:forbidden) }
       it { expect { request }.not_to change(report.documents, :count) }
 
-      it "responds with the report unauthorized error" do
-        expect(response).to have_json_body.to include(
-          "error" => "Vous ne disposez pas des permissions suffisantes pour accéder à cette resource."
+      it "returns a specific error message" do
+        expect(response).to have_json_body.to eq(
+          "error" => "Ce signalement est déjà transmis et ne peux plus être modifié."
         )
       end
     end
