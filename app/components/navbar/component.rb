@@ -64,7 +64,9 @@ module Navbar
       attr_reader :href, :options
 
       def initialize(*args, disabled: false, **options)
-        raise ArgumentError, "wrong number of arguments (given #{args.size}, expected 1..2)" unless (1..2).include?(args.size)
+        unless (1..2).cover?(args.size)
+          raise ArgumentError, "wrong number of arguments (given #{args.size}, expected 1..2)"
+        end
 
         if args.size == 1
           @href = args[0]
@@ -89,6 +91,7 @@ module Navbar
 
     class Section < ApplicationViewComponent
       renders_many :links, Link
+      renders_many :subsections, self
 
       attr_reader :title
 
@@ -99,6 +102,7 @@ module Navbar
 
       def before_render
         content
+        subsections.each(&:to_s)
       end
 
       def call

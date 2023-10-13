@@ -11,7 +11,6 @@ module ComponentsHelper
     counter_badge_component:          "CounterBadge::Component",
     datatable_component:              "Datatable::Component",
     datatable_skeleton_component:     "DatatableSkeleton::Component",
-    documentation_examples_component: "DocumentationExamples::Component",
     dropdown_component:               "Dropdown::Component",
     hidden_field_component:           "HiddenField::Component",
     form_block_component:             "FormBlock::Component",

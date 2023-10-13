@@ -32,6 +32,10 @@
     @apply px-4 py-2 text-xl;
   }
 
+  .navbar__subheader {
+    @apply px-4 py-2 text-lg;
+  }
+
   .navbar__links {
     @apply p-1 mb-4;
     @apply border-gray-300;
@@ -104,7 +108,8 @@
     }
   }
 
-  .navbar__method-bagde {
+  .navbar__method {
+    font-weight: bold;
     min-width: 3.5rem;
   }
 

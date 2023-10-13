@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe DocumentationExamples::Component, type: :component do
+RSpec.describe Views::Documentation::ExamplesComponent, type: :component do
   let(:resource) do
     { id: "article" }
   end

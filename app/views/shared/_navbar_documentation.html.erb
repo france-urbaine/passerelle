@@ -16,15 +16,16 @@
     end
 
     navbar.with_section("References") do |section|
-      next unless apipie_documentation
-
       apipie_documentation[:resources].each_value do |resource|
-        resource[:methods].sort_by { |endpoint| endpoint[:doc_url] }.each do |endpoint|
-          section.with_link endpoint[:doc_url] do
-            %>
-              <span class="navbar__method-bagde"><%= endpoint.dig(:apis, 0, :http_method) %></span>
-              <%= endpoint.dig(:apis, 0, :api_url) %>
-            <%
+        section.with_subsection(resource[:name]) do |subsection|
+          resource[:methods].each do |endpoint|
+            # subsection.with_link endpoint.dig(:apis, 0, :short_description), endpoint[:doc_url]
+            subsection.with_link endpoint[:doc_url] do
+              %>
+                <span class="navbar__method"><%= endpoint.dig(:apis, 0, :http_method) %></span>
+                <%= endpoint.dig(:apis, 0, :api_url) %>
+              <%
+            end
           end
         end
       end

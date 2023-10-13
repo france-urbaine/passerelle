@@ -11,7 +11,7 @@ module Breadcrumbs
     end
 
     class Path < ApplicationViewComponent
-      def initialize(title, href_arg = nil, href: nil)
+      def initialize(title = nil, href_arg = nil, href: nil)
         @title = title
         @href = href_arg || href
         super()
@@ -20,6 +20,8 @@ module Breadcrumbs
       def call
         if @href
           link_to @title, @href, data: { turbo_frame: "_top" }
+        elsif content?
+          content
         else
           @title
         end

@@ -2,7 +2,7 @@
 
 Apipie.configure do |config|
   config.app_name                = "Fiscahub"
-  config.api_base_url            = "/api"
+  config.api_base_url            = ""
   config.doc_base_url            = "/documentation/references"
   config.default_locale          = "fr"
   config.validate                = false

@@ -11,6 +11,7 @@
     @apply py-2 px-4 h-10 leading-6 font-medium rounded-xl;
     @apply subpixel-antialiased;
 
+    &--compact,
     table & {
       @apply py-1 px-3 -my-1 h-auto;
     }

@@ -21,9 +21,24 @@
       <% if section.title %>
         <div class="navbar__header"><%= section.title %></div>
       <% end %>
+
       <div class="navbar__links">
         <% section.links.each do |link| %>
           <%= render_link(link) %>
+        <% end %>
+
+        <% section.subsections.each do |subsection| %>
+          <% if subsection.title %>
+            <div class="navbar__subheader">
+              <%= subsection.title %>
+            </div>
+          <% end %>
+
+          <div class="navbar__links">
+            <% subsection.links.each do |link| %>
+              <%= render_link(link) %>
+            <% end %>
+          </div>
         <% end %>
       </div>
     <% end %>

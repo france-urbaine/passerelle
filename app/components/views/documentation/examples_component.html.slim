@@ -1,0 +1,58 @@
+- examples.each do |example|
+  .content__separator
+  .subheader-bar
+    h2.subheader
+      = icon_component "command-line"
+      | Exemple
+    = render_http_code_badge(example["code"])
+
+  .card
+    .card__content
+      .documentation-examples
+        = tabs_component do |tabs|
+          = tabs.with_tab("CURL") do
+            pre.documentation__pre(
+              data-controller="highlight"
+              data-highlight-language-value="shell"
+            )
+              - if example["request_data"].empty?
+                | $ curl -X #{example["verb"]} #{api_url.chomp('/')}#{example["path"]} \
+                      -H "Accept: application/json" \
+                      -H "Authorization: Bearer $ACCESS_TOKEN" \
+              - else
+                | $ curl -X #{example["verb"]} #{api_url.chomp('/')}#{example["path"]} \
+                      -H "Accept: application/json" \
+                      -H "Authorization: Bearer $ACCESS_TOKEN" \
+                      -d '#{example["request_data"]}'
+
+          = tabs.with_tab("httpie") do
+            pre.documentation__pre(
+              data-controller="highlight"
+              data-highlight-language-value="shell"
+            )
+              - if example["request_data"].empty?
+                | $ http #{example["verb"]} #{api_url.chomp('/')}#{example["path"]} \
+                      Accept:"application/json" \
+                      Authorization:"Bearer $ACCESS_TOKEN"
+              - else
+                | $ echo -n '#{example["request_data"]}' | \
+                      http #{example["verb"]} #{api_url.chomp('/')}#{example["path"]} \
+                      Accept:"application/json" \
+                      Authorization:"Bearer $ACCESS_TOKEN"
+
+        pre.documentation__pre
+          div(
+              data-controller="highlight"
+              data-highlight-language-value="http"
+            )
+              | #{example["verb"]} #{full_path(example)}
+                Accept: application/json
+                Authorization: Bearer HgAxkdHZUvlBjuuWweLKwsJ6InRfZoZ-GHyFtbrS03k
+
+              br
+              br
+              | HTTP/1.1 #{example["code"]} #{Rack::Utils::HTTP_STATUS_CODES[example["code"]]}
+                Content-Type: application/json; charset=utf-8
+          br
+          div( data-controller="highlight" data-highlight-language-value="json" )
+            = JSON.pretty_generate(example["response_data"])

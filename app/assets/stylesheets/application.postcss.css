@@ -15,6 +15,7 @@
 @import "./tags/buttons";
 @import "./tags/tables";
 @import "./tags/svg";
+@import "./tags/code";
 
 /* Texts */
 @import "./components/brand";
