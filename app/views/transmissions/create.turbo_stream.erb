@@ -1,4 +1,4 @@
-<%= turbo_stream.update dom_id(@transmission), partial: "transmissions/transmission_button", locals: { transmission: @transmission } %>
+<%= turbo_stream.update dom_id(@transmission, :button), partial: "transmissions/transmission_button", locals: { transmission: @transmission } %>
 
 <%# Watch out when there're many transmissible_reports %>
 <% @result.added_reports.find_each do |report| %>

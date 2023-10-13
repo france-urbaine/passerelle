@@ -148,7 +148,7 @@ RSpec.describe "TransmissionsController#create" do
 
         it { expect(response).to have_http_status(:success) }
         it { expect(response.content_type).to eq("text/vnd.turbo-stream.html; charset=utf-8") }
-        it { expect(response.body).to include("target=\"transmission_#{current_user.active_transmission.id}\"") }
+        it { expect(response.body).to include("target=\"button_transmission_#{current_user.active_transmission.id}\"") }
         it { expect(response.body).to not_include("target=\"status_report_#{reports[0].id}\"") }
         it { expect(response.body).to include("target=\"status_report_#{reports[1].id}\"") }
         it { expect(response.body).to include("target=\"status_report_#{reports[2].id}\"") }
