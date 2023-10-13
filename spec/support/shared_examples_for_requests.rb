@@ -370,7 +370,7 @@ RSpec.shared_context "with requests shared examples" do
 
   shared_examples "it allows access when authorized through OAuth" do
     include_context "when authorized through OAuth"
-    include_examples "it responds successfully in JSON"
+    include_examples "it allows access"
   end
 
   shared_examples "it denies access when authorized through OAuth" do

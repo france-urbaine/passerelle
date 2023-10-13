@@ -61,7 +61,7 @@ module API
       @transmission.oauth_application = current_application
       @transmission.save
 
-      respond_with @transmission
+      respond_with @transmission, status: :created
     end
 
     api :PUT, "/transmissions/:id/complete", "Validation d'une transmission"

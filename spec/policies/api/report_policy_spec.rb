@@ -14,6 +14,26 @@ RSpec.describe API::ReportPolicy, type: :policy do
     succeed "always"
   end
 
+  describe_rule :attach? do
+    context "without record" do
+      let(:record) { Report }
+
+      succeed "always"
+    end
+
+    context "with record" do
+      let(:record) { build_stubbed(:report, :made_through_api, publisher: current_publisher) }
+
+      failed "when record has package" do
+        let(:record) { build_stubbed(:report, :transmitted, publisher: current_publisher) }
+      end
+      failed "when record publisher is not current_publisher" do
+        before { record.publisher = build(:publisher) }
+      end
+      succeed "with all requirements"
+    end
+  end
+
   describe "params scope" do
     subject(:params) { apply_params_scope(attributes) }
 

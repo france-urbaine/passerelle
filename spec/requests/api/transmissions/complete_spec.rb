@@ -75,8 +75,10 @@ RSpec.describe "API::TransmissionsController#complete", :api do
       it { expect(response).to have_http_status(:forbidden) }
       it { expect { request }.not_to change(Package, :count) }
 
-      it "responds with the report errors" do
-        expect(response.parsed_body).to eq("error" => "Cette transmission est déjà complétée.")
+      it "returns a specific error message" do
+        expect(response).to have_json_body.to eq(
+          "error" => "Cette transmission est déjà complétée."
+        )
       end
     end
 
@@ -86,8 +88,10 @@ RSpec.describe "API::TransmissionsController#complete", :api do
       it { expect(response).to have_http_status(:bad_request) }
       it { expect { request }.not_to change(Package, :count) }
 
-      it "responds with the report errors" do
-        expect(response.parsed_body).to eq("error" => "Aucun signalement présent dans cette transmision.")
+      it "returns a specific error message" do
+        expect(response).to have_json_body.to eq(
+          "error" => "Aucun signalement présent dans cette transmision."
+        )
       end
     end
 
@@ -97,8 +101,10 @@ RSpec.describe "API::TransmissionsController#complete", :api do
       it { expect(response).to have_http_status(:bad_request) }
       it { expect { request }.not_to change(Package, :count) }
 
-      it "responds with the report errors" do
-        expect(response.parsed_body).to eq("error" => "Certains signalements ne sont pas complets.")
+      it "returns a specific error message" do
+        expect(response).to have_json_body.to eq(
+          "error" => "Certains signalements ne sont pas complets."
+        )
       end
     end
   end
