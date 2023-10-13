@@ -33,8 +33,8 @@ class TransmissionsController < ApplicationController
     @result  = @service.remove(@reports)
 
     respond_to do |format|
-      format.turbo_stream { render :remove }
-      format.html         { render :remove }
+      format.turbo_stream { render :destroy }
+      format.html         { render :destroy }
     end
   end
 
