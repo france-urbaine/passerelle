@@ -33,7 +33,7 @@
         | Aucun signalement disponible.
 
     - datatable.each_row do |row, report|
-      - if allowed_to?(:create?, Transmission) || allowed_to?(:remove?, Transmission) || allowed_to?(:destroy_all?, Report)
+      - if allowed_to?(:create?, Transmission) || allowed_to?(:destroy?, Transmission) || allowed_to?(:destroy_all?, Report)
         - row.with_checkbox "Sélectionner ce signalement", described_by: :name
 
       - if !@dashboard && allowed_to?(:destroy?, report)
