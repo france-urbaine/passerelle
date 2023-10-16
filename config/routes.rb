@@ -95,7 +95,7 @@ Rails.application.routes.draw do
         end
       end
 
-      resource :transmissions, only: %i[show create] do
+      resource :transmissions, only: %i[show create destroy] do
         post :complete
       end
 

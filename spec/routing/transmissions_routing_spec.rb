@@ -5,8 +5,8 @@ require "rails_helper"
 RSpec.describe TransmissionsController do
   it { expect(get:    "/transmissions").to route_to("transmissions#show") }
   it { expect(post:   "/transmissions").to route_to("transmissions#create") }
+  it { expect(delete: "/transmissions").to route_to("transmissions#destroy") }
   it { expect(patch:  "/transmissions").to be_unroutable }
-  it { expect(delete: "/transmissions").to be_unroutable }
 
   it { expect(post:   "/transmissions/complete").to  route_to("transmissions#complete") }
   it { expect(get:    "/transmissions/new").to       be_unroutable }

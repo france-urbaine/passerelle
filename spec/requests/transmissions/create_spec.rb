@@ -123,6 +123,25 @@ RSpec.describe "TransmissionsController#create" do
             .and not_change(reports[3], :transmission_id).from(be_present)
         end
       end
+
+      context "when adding all available reports" do
+        let(:ids) { "all" }
+
+        it { expect(response).to have_http_status(:success) }
+        it { expect { request }.to change(Transmission, :count).by(1) }
+
+        it "only adds transmissibles reports to user's transmission" do
+          expect {
+            request
+            current_user.reload_active_transmission
+            reports.each(&:reload)
+          }.to change { current_user.active_transmission&.reports&.count }.from(nil).to(2)
+            .and not_change(reports[0], :transmission_id).from(nil)
+            .and change(reports[1], :transmission_id).to(be_present)
+            .and change(reports[2], :transmission_id).to(be_present)
+            .and not_change(reports[3], :transmission_id).from(be_present)
+        end
+      end
     end
   end
 end

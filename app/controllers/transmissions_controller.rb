@@ -9,16 +9,23 @@ class TransmissionsController < ApplicationController
   end
 
   def create
-    @transmission = find_or_initialize_transmission
+    @transmission  = find_or_initialize_transmission
+    @reports       = build_and_authorize_scope
+    @reports       = filter_collection(@reports)
+    @referrer_path = referrer_path
 
-    @reports                 = find_and_authorize_reports
-    service                  = Reports::CheckTransmissibilityService.new(@reports)
-    @transmissible_reports   = service.transmissibles
-    @intransmissible_reports = service.intransmissibles
-    @intransmissible_count   = service.intransmissibles_count
-    @referrer_path           = referrer_path
+    @service = Transmissions::CreateService.new(@transmission)
+    @result  = @service.add(@reports)
+  end
 
-    @transmission.reports << @transmissible_reports
+  def destroy
+    @transmission          = find_or_initialize_transmission
+    @reports               = build_and_authorize_scope
+    @reports               = filter_collection(@reports)
+    @referrer_path         = referrer_path
+
+    @service = Transmissions::RemoveService.new(@transmission)
+    @result  = @service.remove(@reports)
   end
 
   def complete
@@ -34,16 +41,14 @@ class TransmissionsController < ApplicationController
 
   private
 
+  def build_and_authorize_scope
+    authorized(Report.preload(:package), as: :default).strict_loading
+  end
+
   def find_or_initialize_transmission
     current_user.transmissions.find_or_create_by(
       completed_at: nil,
       collectivity: current_user.organization
     )
-  end
-
-  def find_and_authorize_reports
-    reports = Report.where(id: params[:ids])
-
-    authorized(reports)
   end
 end
