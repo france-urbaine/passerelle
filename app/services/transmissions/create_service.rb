@@ -12,6 +12,7 @@ module Transmissions
 
     def initialize(transmission)
       @transmission                          = transmission
+      @added_report_ids                      = []
       @before_transmission_reports_count     = 0
       @after_transmission_reports_count      = 0
       @transmissible_reports_count           = 0
@@ -28,11 +29,18 @@ module Transmissions
       transmissible_reports   = reports.transmissible
       intransmissible_reports = reports.where.not(id: transmissible_reports.select(:id))
 
+      # TODO: potential performances issues
+      @added_report_ids += transmissible_reports.ids
+
       calculate_before_counters(transmissible_reports, intransmissible_reports)
       transmissible_reports.update_all(transmission_id: @transmission.id)
       calculate_after_counters
 
       self
+    end
+
+    def added_reports
+      Report.where(id: @added_report_ids)
     end
 
     def calculate_before_counters(transmissible_reports, intransmissible_reports)

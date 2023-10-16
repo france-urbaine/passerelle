@@ -4,8 +4,10 @@
     - breadcrumbs.with_path "Signalements", reports_path
     - breadcrumbs.with_path(render Views::Reports::ShowReportNameComponent.new(@report))
 
-    - if allowed_to?(:create?, Transmission) && allowed_to?(:transmit?, @report)
-      - breadcrumbs.with_action "Transmettre", transmissions_path, params: { ids: [@report.id] }, method: :post, icon: "cloud-arrow-up", modal: true, primary: true
+    - if allowed_to?(:transmit?, @report)
+      - breadcrumbs.with_action do
+        = turbo_frame_tag dom_id(@report, :transmission_button) do
+          = render "reports/transmission_button", report: @report
 
     - if allowed_to?(:approve?, @report)
       - unless @report.approved?
@@ -15,5 +17,10 @@
 
     - if allowed_to?(:destroy?, @report)
       - breadcrumbs.with_action "Supprimer", remove_report_path(@report), icon: "trash", modal: true, destructive: "discrete"
+
+    - if allowed_to?(:show?, Transmission)
+      - breadcrumbs.with_action do
+        = turbo_frame_tag dom_id(current_user, :active_transmission_button) do
+          = render "transmissions/transmission_button", transmission: current_user.active_transmission
 
   = render Views::Reports::ShowComponent.new(@report)

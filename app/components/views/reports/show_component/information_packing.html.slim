@@ -5,7 +5,8 @@
 
   .subheader-bar__actions
     .subheader-bar__action
-      = report_badge(@report)
+      div id=dom_id(@report, :status) is="turbo-frame"
+        = report_badge(@report)
 
 .card
   dl.description-list

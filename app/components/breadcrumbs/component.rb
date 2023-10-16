@@ -3,7 +3,13 @@
 module Breadcrumbs
   class Component < ApplicationViewComponent
     renders_many :paths, "Path"
-    renders_many :actions, ::Button::Component
+    renders_many :actions, lambda { |*args, **options, &block|
+      if args.any? || options.any?
+        ::Button::Component.new(*args, **options)
+      else
+        block.call
+      end
+    }
 
     def initialize(heading: true)
       @heading = heading
