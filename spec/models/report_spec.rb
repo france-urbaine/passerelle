@@ -262,6 +262,90 @@ RSpec.describe Report do
       end
     end
 
+    describe ".transmissible" do
+      it "scopes on completed reports not yet transmitted" do
+        expect {
+          described_class.transmissible.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "reports".*
+          FROM   "reports"
+          WHERE  "reports"."completed_at" IS NOT NULL
+            AND  "reports"."package_id" IS NULL
+            AND  "reports"."transmission_id" IS NULL
+        SQL
+      end
+    end
+
+    describe ".in_active_transmission" do
+      it "scopes on reports in an active transmission not yet transmitted" do
+        expect {
+          described_class.in_active_transmission.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "reports".*
+          FROM   "reports"
+          WHERE  "reports"."package_id" IS NULL
+            AND  "reports"."transmission_id" IS NOT NULL
+        SQL
+      end
+    end
+
+    describe ".not_in_active_transmission" do
+      it "scopes on reports out of an active transmission" do
+        expect {
+          described_class.not_in_active_transmission.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "reports".*
+          FROM   "reports"
+          WHERE  "reports"."transmission_id" IS NULL
+        SQL
+      end
+    end
+
+    describe ".in_transmission" do
+      let(:transmission) { create(:transmission) }
+
+      it "scopes on reports in a given transmission" do
+        expect {
+          described_class.in_transmission(transmission).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "reports".*
+          FROM   "reports"
+          WHERE  "reports"."transmission_id" = '#{transmission.id}'
+        SQL
+      end
+    end
+
+    describe ".not_in_transmission" do
+      let(:transmission) { create(:transmission) }
+
+      it "scopes on reports not in a given transmission" do
+        expect {
+          described_class.not_in_transmission(transmission).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "reports".*
+          FROM   "reports"
+          WHERE  (
+                 "reports"."transmission_id" != '#{transmission.id}'
+            OR   "reports"."transmission_id" IS NULL
+          )
+        SQL
+      end
+
+      it "is mergeable with another scope" do
+        expect {
+          described_class.completed.not_in_transmission(transmission).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "reports".*
+          FROM   "reports"
+          WHERE  "reports"."completed_at" IS NOT NULL
+            AND  (
+                       "reports"."transmission_id" != '#{transmission.id}'
+                    OR "reports"."transmission_id" IS NULL
+                 )
+        SQL
+      end
+    end
+
     describe ".transmitted_to_sandbox" do
       it "scopes reports transmitted in a sandbox" do
         expect {

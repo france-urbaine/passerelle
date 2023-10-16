@@ -25,7 +25,7 @@ module Transmissions
     end
 
     def add(reports)
-      transmissible_reports   = reports.transmissible.not_in_transmission(@transmission)
+      transmissible_reports   = reports.transmissible
       intransmissible_reports = reports.where.not(id: transmissible_reports.select(:id))
 
       calculate_before_counters(transmissible_reports, intransmissible_reports)
@@ -38,6 +38,7 @@ module Transmissions
     def calculate_before_counters(transmissible_reports, intransmissible_reports)
       @before_transmission_reports_count     = @transmission.reports.count
       @transmissible_reports_count           = transmissible_reports.count
+
       @intransmissible_reports_count         = intransmissible_reports.count
       @incomplete_reports_count              = intransmissible_reports.incomplete.count
       @transmitted_reports_count             = intransmissible_reports.transmitted.count

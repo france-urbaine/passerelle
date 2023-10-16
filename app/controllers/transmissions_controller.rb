@@ -19,10 +19,10 @@ class TransmissionsController < ApplicationController
   end
 
   def destroy
-    @transmission          = find_or_initialize_transmission
-    @reports               = build_and_authorize_scope
-    @reports               = filter_collection(@reports)
-    @referrer_path         = referrer_path
+    @transmission  = find_or_initialize_transmission
+    @reports       = build_and_authorize_scope
+    @reports       = filter_collection(@reports)
+    @referrer_path = referrer_path
 
     @service = Transmissions::RemoveService.new(@transmission)
     @result  = @service.remove(@reports)

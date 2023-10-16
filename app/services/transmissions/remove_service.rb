@@ -12,12 +12,12 @@ module Transmissions
     end
 
     def remove(reports)
-      @before_transmission_reports_count = Report.in_transmission(@transmission.id).count
-      removable_reports                  = @transmission.reports.where(id: reports.ids)
+      @before_transmission_reports_count = @transmission.reports.count
 
+      removable_reports = @transmission.reports.merge(reports)
       removable_reports.update_all(transmission_id: nil)
 
-      @after_transmission_reports_count = Report.in_transmission(@transmission.id).count
+      @after_transmission_reports_count = @transmission.reports.count
       @removed_reports_count            = @before_transmission_reports_count - @after_transmission_reports_count
 
       self
