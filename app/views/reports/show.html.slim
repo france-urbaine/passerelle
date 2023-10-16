@@ -20,7 +20,7 @@
 
     - if allowed_to?(:show?, Transmission)
       - breadcrumbs.with_action do
-        = turbo_frame_tag dom_id(current_user.active_transmission, :button) do
+        = turbo_frame_tag dom_id(current_user, :active_transmission_button) do
           = render "transmissions/transmission_button", transmission: current_user.active_transmission
 
   = render Views::Reports::ShowComponent.new(@report)
