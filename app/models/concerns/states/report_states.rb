@@ -13,13 +13,12 @@ module States
       scope :packing,                -> { where(package_id: nil) }
       scope :packed,                 -> { where.not(package_id: nil) }
 
-      scope :in_transmission,        ->(transmission_id) { where(transmission_id: transmission_id) }
-      scope :not_in_transmission,    lambda { |transmission_id|
-                                       where.not(transmission_id: transmission_id)
-                                         .or(where(transmission_id: nil))
-                                     }
+      scope :transmissible,              -> { completed.packing }
+      scope :in_active_transmission,     -> { packing.where.not(transmission_id: nil) }
+      scope :not_in_active_transmission, -> { packing.where(transmission_id: nil) }
 
-      scope :transmissible,          ->(transmission_id) { completed.packing.not_in_transmission(transmission_id) }
+      scope :in_transmission,        -> (transmission) { where(transmission_id: transmission.id) }
+      scope :not_in_transmission,    -> (transmission) { where.not(transmission_id: transmission.id) }
 
       scope :transmitted_to_sandbox, -> { joins(:package).merge(Package.unscoped.sandbox) }
       scope :transmitted,            -> { joins(:package).merge(Package.unscoped.transmitted) }
@@ -103,11 +102,11 @@ module States
       end
 
       def transmissible?
-        completed? && package.nil?
+        completed? && packing?
       end
 
       def in_active_transmission?
-        transmissible? && transmission_id? && !transmitted?
+        completed? && packing? && transmission_id?
       end
 
       # Updates methods
