@@ -26,5 +26,6 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.acronym "EPCI"
   inflect.acronym "EPCIs"
   inflect.acronym "SVG"
+  inflect.acronym "UI"
   inflect.acronym "XLSX"
 end

@@ -1,13 +1,26 @@
 @layer components {
-  .tabs__tabs {
-    @apply flex;
+  .tabs__nav {
+    @apply mb-4 flex space-x-4;
   }
+
   .tabs__tab {
-    @apply px-4 py-2 m-2;
-    @apply border-b-2 border-slate-200;
-    @apply transition-all duration-500;
-  }
-  .tabs__tab--current {
-    @apply border-blue-500;
+    @apply px-4 py-2;
+    @apply border-x-0 border-t-0 border-b-2 rounded-none;
+    @apply bg-transparent;
+    @apply border-gray-300;
+
+    &:not([disabled]) {
+      &:is(:focus, :focus-visible) {
+        outline-offset: -2px;
+      }
+    }
+
+    &:first-child {
+      margin-left: 0;
+    }
+
+    &--current {
+      @apply border-blue-500;
+    }
   }
 }

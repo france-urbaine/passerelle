@@ -1,0 +1,12 @@
+<%=
+  lookup_context.variants = :modal if modal
+
+  not_found_status_page_component(model_not_found, referrer:) do |page|
+    page.with_breadcrumbs do |breadcrumbs|
+      breadcrumbs.with_path "..."
+      breadcrumbs.with_path model_not_found
+    end
+
+    page.with_action "Retour", icon: "arrow-uturn-left"
+  end
+%>

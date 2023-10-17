@@ -8,7 +8,7 @@ module NotificationsHelper
 
       actions = FlashAction.read_multi(flash[:actions])
 
-      render Notification::Component.new(notice, actions)
+      render UI::NotificationComponent.new(notice, actions)
     end
   end
 end

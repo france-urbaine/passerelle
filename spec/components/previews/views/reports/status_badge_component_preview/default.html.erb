@@ -1,0 +1,11 @@
+<div class="flex flex-col space-y-4">
+  <%= render Views::Reports::StatusBadgeComponent.new(:incomplete) %>
+  <%= render Views::Reports::StatusBadgeComponent.new(:completed) %>
+  <%= render Views::Reports::StatusBadgeComponent.new(:in_active_transmission) %>
+  <%= render Views::Reports::StatusBadgeComponent.new(:transmitted) %>
+  <%= render Views::Reports::StatusBadgeComponent.new(:assigned) %>
+  <%= render Views::Reports::StatusBadgeComponent.new(:returned) %>
+  <%= render Views::Reports::StatusBadgeComponent.new(:debated) %>
+  <%= render Views::Reports::StatusBadgeComponent.new(:approved) %>
+  <%= render Views::Reports::StatusBadgeComponent.new(:rejected) %>
+</div>

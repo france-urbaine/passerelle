@@ -2,37 +2,43 @@
 
 module ComponentsHelper
   COMPONENT_HELPERS = {
-    authorized_link_to:               "AuthorizedLink::Component",
-    badge_component:                  "Badge::Component",
-    breadcrumbs_component:            "Breadcrumbs::Component",
-    button_component:                 "Button::Component",
-    checkboxes_component:             "Checkboxes::Component",
-    card_component:                   "Card::Component",
-    counter_badge_component:          "CounterBadge::Component",
-    datatable_component:              "Datatable::Component",
-    datatable_skeleton_component:     "DatatableSkeleton::Component",
-    dropdown_component:               "Dropdown::Component",
-    hidden_field_component:           "HiddenField::Component",
-    form_block_component:             "FormBlock::Component",
-    icon_component:                   "Icon::Component",
-    modal_component:                  "Modal::Component",
-    noscript_component:               "Noscript::Component",
-    notification_component:           "Notification::Component",
-    pagination_component:             "Pagination::Component",
-    pagination_counts_component:      "Pagination::Counts::Component",
-    pagination_options_component:     "Pagination::Options::Component",
-    pagination_buttons_component:     "Pagination::Buttons::Component",
-    password_field_component:         "PasswordField::Component",
-    copyable_text_component:          "CopyableText::Component",
-    priority_icon_component:          "PriorityIcon::Component",
-    radio_buttons_component:          "RadioButtons::Component",
-    search_component:                 "Search::Component",
-    tabs_component:                   "Tabs::Component",
-    template_content_component:       "TemplateContent::Component",
-    template_modal_component:         "TemplateModal::Component",
-    template_status_component:        "TemplateStatus::Component",
-    template_gone_component:          "TemplateStatus::Gone::Component",
-    template_not_found_component:     "TemplateStatus::NotFound::Component"
+    # UI generic components
+    badge_component:                  "UI::BadgeComponent",
+    breadcrumbs_component:            "UI::BreadcrumbsComponent",
+    button_component:                 "UI::ButtonComponent",
+    card_component:                   "UI::CardComponent",
+    copyable_component:               "UI::CopyableComponent",
+    counter_component:                "UI::CounterComponent",
+    dropdown_component:               "UI::DropdownComponent",
+    icon_component:                   "UI::IconComponent",
+    modal_component:                  "UI::ModalComponent",
+    noscript_component:               "UI::NoscriptComponent",
+    notification_component:           "UI::NotificationComponent",
+    tabs_component:                   "UI::TabsComponent",
+
+    # UI form components
+    checkboxes_component:             "UI::Form::CheckboxesComponent",
+    hidden_field_component:           "UI::Form::HiddenFieldComponent",
+    form_block_component:             "UI::Form::BlockComponent",
+    radio_buttons_component:          "UI::Form::RadioButtonsComponent",
+    password_field_component:         "UI::Form::PasswordFieldComponent",
+
+    # Layout components
+    content_frame_component:          "Layout::ContentFrameComponent",
+    modal_frame_component:            "Layout::ModalFrameComponent",
+    datatable_component:              "Layout::DatatableComponent",
+    datatable_skeleton_component:     "Layout::Datatable::SkeletonComponent",
+    pagination_component:             "Layout::PaginationComponent",
+    pagination_counts_component:      "Layout::Pagination::CountsComponent",
+    pagination_options_component:     "Layout::Pagination::OptionsComponent",
+    pagination_buttons_component:     "Layout::Pagination::ButtonsComponent",
+    search_form_component:            "Layout::SearchFormComponent",
+    status_page_component:            "Layout::StatusPageComponent",
+    gone_status_page_component:       "Layout::StatusPage::GoneComponent",
+    not_found_status_page_component:  "Layout::StatusPage::NotFoundComponent",
+
+    # App-specific helpers as components
+    authorized_link_to:               "Helpers::AuthorizedLinkComponent"
   }.freeze
 
   COMPONENT_HELPERS.each do |name, component|

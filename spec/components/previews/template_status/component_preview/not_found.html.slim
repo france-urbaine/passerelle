@@ -1,8 +1,0 @@
-- lookup_context.variants = :modal if modal
-
-= template_not_found_component(model_not_found, referrer:) do |template|
-  - template.with_breadcrumbs do |breadcrumbs|
-    - breadcrumbs.with_path "..."
-    - breadcrumbs.with_path model_not_found
-
-  - template.with_action "Retour", icon: "arrow-uturn-left"

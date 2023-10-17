@@ -58,4 +58,4 @@
 
     .description-list__row
       dt Priorité
-      dd= priority_icon_component @report.priority
+      dd= Views::Reports::PriorityIconComponent.new(@report)

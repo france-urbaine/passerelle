@@ -2,7 +2,6 @@
 
 module Samples
   # @hidden
-  #
   class TurboPreview < ViewComponent::Preview
     def card; end
     def modal; end

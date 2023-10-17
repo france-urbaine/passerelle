@@ -6,6 +6,7 @@ RSpec.describe Views::Documentation::ExamplesComponent, type: :component do
   let(:resource) do
     { id: "article" }
   end
+
   let(:method) do
     { name: "index" }
   end
@@ -36,16 +37,16 @@ RSpec.describe Views::Documentation::ExamplesComponent, type: :component do
 
     expect(page).to have_selector(".http-code.http-code--200", text: "200")
 
-    expect(page).to have_selector(".tabs .tabs__tabs .tabs__tab", count: 2)
+    expect(page).to have_selector(".documentation-examples .tabs__tab", count: 2)
     expect(page).to have_selector(".documentation-examples .tabs") do |tabs|
       aggregate_failures do
-        expect(tabs).to have_link("CURL", href: "#curl")
-        expect(tabs).to have_link("httpie", href: "#httpie")
+        expect(tabs).to have_button("cURL")
+        expect(tabs).to have_button("httpie")
       end
     end
 
     expect(page).to have_selector(".documentation-examples") do |element|
-      expect(element).to have_selector("pre.documentation__pre", count: 3)
+      expect(element).to have_selector("pre", count: 3, visible: :all)
     end
   end
 end

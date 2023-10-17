@@ -43,13 +43,13 @@
     td
       .flex.justify-end.space-x-4
         - if param[:deprecated]
-          code.badge.badge--yellow déprécié
+          .badge.badge--yellow.badge--mono déprécié
 
         - if is_params && param[:required]
-          code.badge.badge--orange requis
+          .badge.badge--orange.badge--mono requis
 
         - if param[:expected_type]
-          code.badge.badge--blue
+          .badge.badge--blue.badge--mono
             = param[:expected_type]
 
   - if param[:params].present?

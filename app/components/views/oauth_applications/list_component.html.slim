@@ -31,10 +31,10 @@
         = oauth_application.name
 
     - row.with_column(:uid) do
-      = copyable_text_component oauth_application.uid
+      = copyable_component oauth_application.uid
 
     - row.with_column(:secret) do
-      = copyable_text_component oauth_application.secret, secret: true
+      = copyable_component oauth_application.secret, secret: true
 
     - row.with_column(:created_at) do
       = oauth_application.created_at

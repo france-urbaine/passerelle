@@ -1,4 +1,4 @@
-= template_modal_component(referrer: @referrer) do |template|
+= modal_frame_component(referrer: @referrer) do |template|
   - template.with_modal do |modal|
     - modal.with_header do
       - if @office.new_record?
@@ -15,7 +15,7 @@
           = form.search_field :ddfip,    data: { autocomplete_target: "input" }, **ddfip_input_html_attributes
           = form.hidden_field :ddfip_id, data: { autocomplete_target: "hidden" }
 
-        = render Noscript::Component.new do
+        = noscript_component do
           = form.block :ddfip do |block|
             = form.label :ddfip_name
             = form.text_field :ddfip_name, required: true, value: ddfip_name

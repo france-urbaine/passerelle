@@ -2,8 +2,8 @@
   - breadcrumbs.with_path "Guides"
   - breadcrumbs.with_path "A propos"
 
-.card
-  .card__content.text-lg
+.documentation
+  = card_component do
     p
       ' L'API de FiscaHub est une API
       = link_to "RESTful", "https://fr.wikipedia.org/wiki/Representational_state_transfer"
@@ -16,32 +16,30 @@
       br
       | Les requêtes non sécurisées sont rejetées par l'API.
 
-.content__separator
+  .content__separator
 
-h2.subheader Format de requête
+  h2.subheader Format de requête
 
-.card.documentation__card
-  .card__content
+  = card_component do
     ' Sauf mentions contraires, le format JSON est le format attendu et retourné par défaut.
     br
     ' Lors de l'envoi de chaque requête, n'oubliez pas les en-têtes suivants :
 
-    pre.documentation__pre( data-controller="highlight" data-highlight-language-value="http" )
+    pre( data-controller="highlight" data-highlight-language-value="http" )
       | Content-Type: application/json
         Accept: application/json
 
-.content__separator
+  .content__separator
 
-h2.subheader Code HTTP
+  h2.subheader Code HTTP
 
-.card.documentation__card
-  .card__content
+  = card_component do
     p.mb-4
       ' Vous pouvez déterminer le résultat de chaque requête en vérifiant le code HTTP de sa réponse.
       br
       ' Ces codes sont standards et bien documentés sur <a href="https://fr.wikipedia.org/wiki/Liste_des_codes_HTTP">wikipedia</a>, mais vous trouverez ci-dessous une liste des codes récurrents.
 
-    h3.mb-4 Succès
+    h3.subheader Succès
     table.mb-4
       tr
         th.w-20 200
@@ -62,7 +60,7 @@ h2.subheader Code HTTP
           br
           | Requête traitée avec succès. Aucun contenu n'est renvoyé.
 
-    h4.mb-4 Erreurs du client
+    h4.subheader Erreurs du client
     table.mb-4
       tr
         th.w-20 400

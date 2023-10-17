@@ -11,7 +11,7 @@
     <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
   </head>
 
-  <body class="p-6 overflow-auto">
+  <body class="overflow-auto">
     <%
       frame = params.dig(:lookbook, :display, :frame)
       width_class =

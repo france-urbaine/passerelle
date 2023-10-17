@@ -1,4 +1,4 @@
-= template_content_component do
+= content_frame_component do
   = breadcrumbs_component do |breadcrumbs|
     - breadcrumbs.with_path "Mon organisation"
     - breadcrumbs.with_path "Applications", organization_oauth_applications_path
@@ -18,11 +18,11 @@
     dl.description-list
       .description-list__row
         dt Client UID
-        dd= copyable_text_component @oauth_application.uid
+        dd= copyable_component @oauth_application.uid
 
       .description-list__row
         dt Client Secret
-        dd= copyable_text_component @oauth_application.secret, secret: true
+        dd= copyable_component @oauth_application.secret, secret: true
 
   .content__separator
 

@@ -1,0 +1,45 @@
+= render Layout::Datatable::WrapperComponent.new(self) do |wrapper|
+  .datatable
+    - if records.empty?
+      = card_component(content_class: "card__content--empty")
+        = empty_message || "Aucune donnée disponible."
+
+    - else
+      table
+        - if columns.any?(&:colgroup?)
+          colgroup
+            - if checkboxes?
+              col
+            - if actions?
+              col
+            - columns.each do |column|
+              col( span=(column.colspan if column.colgroup?) )
+
+        thead
+          tr.datatable__row
+            - if checkboxes?
+              th.datatable__row-actions( scope="col" )
+                input(
+                  type="checkbox"
+                  aria-label="Tout sélectionner"
+                  data-selection-target="checkall"
+                )
+
+            - if actions?
+              th(
+                aria-label="Actions"
+                scope="col"
+              )
+
+            - columns.each do |column|
+              th(
+                class=column.css_class
+                scope=(column.colgroup? ? "colgroup" : "col")
+                colspan=(column.colspan if column.colgroup?)
+              )
+                = column
+                = render OrderColumn.new(column.key, turbo_frame:) if column.sort?
+
+        tbody
+          - rows.each do |row|
+            = render row

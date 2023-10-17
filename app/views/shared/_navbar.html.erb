@@ -1,11 +1,11 @@
 <%=
-  render Navbar::Component.new do |navbar|
+  render Layout::NavbarComponent.new do |navbar|
     navbar.with_section("Echanges") do |section|
       section.with_link("Tableau de bord", root_path,     icon: "home")               if allowed_to?(:index?, Report, with: ReportPolicy)
       section.with_link("Signalements",    reports_path,  icon: "clipboard-document") if allowed_to?(:index?, Report, with: ReportPolicy)
       section.with_link("Paquets",         packages_path, icon: "archive-box")        if allowed_to?(:index?, Package, with: PackagePolicy)
-      section.with_link("Dossiers",                       icon: "folder",           disabled: true) unless current_user.organization_type == "Publisher"
-      section.with_link("Fichiers",                       icon: "cloud-arrow-down", disabled: true)
+      section.with_link("Dossiers", icon: "folder",           disabled: true) unless current_user.organization_type == "Publisher"
+      section.with_link("Fichiers", icon: "cloud-arrow-down", disabled: true)
     end
 
     navbar.with_section("Mon organisation") do |section|

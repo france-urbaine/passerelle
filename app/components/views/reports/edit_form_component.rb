@@ -16,7 +16,7 @@ module Views
       private
 
       def modal_component
-        render TemplateModal::Component.new(referrer: @referrer) do |template|
+        render Layout::ModalFrameComponent.new(referrer: @referrer) do |template|
           template.with_modal do |modal|
             yield(modal)
 
