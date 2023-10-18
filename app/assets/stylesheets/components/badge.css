@@ -12,8 +12,13 @@
     @apply subpixel-antialiased;
 
     &--compact,
-    table & {
+    table &,
+    .description-list & {
       @apply py-1 px-3 -my-1 h-auto;
+    }
+
+    &--mono {
+      @apply font-mono;
     }
 
     & svg {

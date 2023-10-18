@@ -1,47 +1,32 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["content", "tab"]
-
-  initialize() {
-    this.hideAllTabs = this.hideAllTabs.bind(this)
-    this.showTab = this.showTab.bind(this)
-  }
+  static targets = ["tab", "panel"]
 
   connect() {
-    if (this.anchor) {
-      this.hideAllTabs()
-      this.showTab(this.anchor)
-    }
+    console.log(this.tabTargets)
+    console.log(this.panelTargets)
   }
 
   select(event) {
-    this.hideAllTabs()
-    this.showTab(event.params.id)
-  }
+    const id = event.params.id
 
-  hideAllTabs() {
-    this.tabTargets.forEach( function(child) {
-      child.classList.remove("tabs__tab--current")
-    } )
-    this.contentTargets.forEach( function(child) {
-      child.classList.add("hidden")
-    } )
-  }
-
-  showTab(tabId) {
-    this.tabTargets.forEach( function(child) {
-      if ( child.children[0].attributes["href"].value == `#${tabId}`) {
-        child.classList.add("tabs__tab--current")
+    this.tabTargets.forEach((tab) => {
+      if (tab.id == id) {
+        tab.classList.add("tabs__tab--current")
+        tab.setAttribute("aria-selected", true)
+      } else {
+        tab.classList.remove("tabs__tab--current")
+        tab.setAttribute("aria-selected", false)
       }
-    } )
-    this.element.querySelector(`#${tabId}`).classList.remove("hidden")
-  }
+    })
 
-  get anchor() {
-    let anchor =  (document.URL.split('#').length > 1) ? document.URL.split('#')[1] : null
-    if (this.element.querySelector(`[href='#${anchor}']`)) {
-      return anchor
-    }
+    this.panelTargets.forEach((panel) => {
+      if (panel.id == id + "-panel") {
+        panel.hidden = false
+      } else {
+        panel.hidden = true
+      }
+    })
   }
 }

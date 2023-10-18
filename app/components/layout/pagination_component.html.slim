@@ -1,0 +1,5 @@
+.header-bar__actions
+  .header-bar__text= render Layout::Pagination::CountsComponent.new(pagy, inflections_options)
+  .header-bar__action= render Layout::Pagination::ButtonsComponent.new(pagy, turbo_frame:)
+  - if options?
+    .header-bar__action= render Layout::Pagination::OptionsComponent.new(pagy, turbo_frame:, direction:, order:)

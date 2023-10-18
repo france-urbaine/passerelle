@@ -1,4 +1,4 @@
-= template_gone_component(@gone_records, referrer: @referrer_path) do |template|
+= gone_status_page_component(@gone_records, referrer: @referrer_path) do |template|
   - template.with_breadcrumbs do |breadcrumbs|
     - breadcrumbs.with_path "Administration"
     - breadcrumbs.with_path "Utilisateurs", admin_users_path

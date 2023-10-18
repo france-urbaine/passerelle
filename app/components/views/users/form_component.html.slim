@@ -1,4 +1,4 @@
-= template_modal_component(referrer: @referrer) do |template|
+= modal_frame_component(referrer: @referrer) do |template|
   - template.with_modal do |modal|
     - modal.with_header do
       - if @user.new_record?
@@ -15,7 +15,7 @@
           = form.search_field :organization,      **organization_input_html_attributes
           = form.hidden_field :organization_data, **organization_hidden_html_attributes
 
-        = render Noscript::Component.new do
+        = noscript_component do
           = form.block :organization_type do
             = form.label :organization_type
             = form.select :organization_type, organization_type_choice, autofocus: true, required: true

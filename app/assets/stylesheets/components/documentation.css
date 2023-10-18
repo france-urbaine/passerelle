@@ -1,29 +1,18 @@
 @layer components {
-  .documentation__title {
-    width: auto;
-    @apply text-4xl font-bold;
-    @apply mb-5;
-    @apply text-transparent bg-clip-text;
-    @apply bg-gradient-to-br from-blue-500 to-violet-600;
-  }
+  .documentation {
+    & pre,
+    & code {
+      @apply text-slate-600 bg-slate-100;
+      @apply dark:text-slate-300 dark:bg-slate-800;
+    }
 
-  .documentation__subtitle {
-    width: auto;
-    @apply text-2xl font-bold;
-    @apply mb-5;
-    @apply text-transparent bg-clip-text;
-    @apply bg-gradient-to-br from-blue-500 to-violet-600;
-  }
+    & code {
+      @apply inline-flex items-center rounded-md px-2;
+    }
 
-  pre.documentation__pre {
-    overflow: scroll;
-    @apply rounded-xl;
-    @apply px-4 py-4 mt-2;
-    @apply text-slate-600 bg-slate-100;
-    @apply dark:text-slate-300 dark:bg-slate-800;
-  }
-
-  hr.documentation__hr {
-    @apply my-6;
+    & pre {
+      overflow: scroll;
+      @apply px-4 py-4 mt-2 rounded-xl;
+    }
   }
 }

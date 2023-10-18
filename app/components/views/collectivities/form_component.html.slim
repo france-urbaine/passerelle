@@ -1,4 +1,4 @@
-= template_modal_component(referrer: @referrer) do |template|
+= modal_frame_component(referrer: @referrer) do |template|
   - template.with_modal do |modal|
     - modal.with_header do
       - if @collectivity.new_record?
@@ -19,7 +19,7 @@
         = form.search_field :territory,      data: { autocomplete_target: "input" }, **territory_input_html_attributes
         = form.hidden_field :territory_data, data: { autocomplete_target: "hidden" }, **territory_hidden_html_attributes
 
-      = render Noscript::Component.new do
+      = noscript_component do
         = form.block :territory_type do
           = form.label :territory_type
           = form.select :territory_type, territory_type_choice, autofocus: true, required: true

@@ -1,7 +1,5 @@
 @layer base {
-  code {
-    @apply inline-flex items-center rounded-md px-2;
-    @apply text-slate-600 bg-slate-100;
-    @apply dark:text-slate-300 dark:bg-slate-800;
+  code, pre {
+    @apply font-mono;
   }
 }

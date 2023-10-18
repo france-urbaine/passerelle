@@ -62,7 +62,7 @@
         = short_list(report.anomalies, humanize: true) { |value| t(value, scope: "enum.anomalies") }
 
       - row.with_column(:priority) do
-        = priority_icon_component(report.priority)
+        = render Views::Reports::PriorityIconComponent.new(report)
 
       - row.with_column(:reference) do
         = report.reference
