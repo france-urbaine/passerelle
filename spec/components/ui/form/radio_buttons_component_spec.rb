@@ -5,7 +5,7 @@ require "rails_helper"
 RSpec.describe UI::Form::RadioButtonsComponent, type: :component do
   it "renders checkboxes with a collection of records" do
     users = create_list(:user, 3)
-    render_inline described_class.new(:office, :user_ids, users)
+    render_inline described_class.new(:user, :inviter_id, users)
 
     expect(page).to have_selector(".choices-collection") do |div|
       aggregate_failures do
@@ -18,7 +18,7 @@ RSpec.describe UI::Form::RadioButtonsComponent, type: :component do
 
   it "renders checkboxes with a collection of records and custom properties" do
     users = create_list(:user, 3)
-    render_inline described_class.new(:office, :user_ids, users, value_method: :first_name, text_method: :first_name)
+    render_inline described_class.new(:user, :inviter_id, users, value_method: :first_name, text_method: :first_name)
 
     expect(page).to have_selector(".choices-collection") do |div|
       aggregate_failures do
@@ -33,7 +33,7 @@ RSpec.describe UI::Form::RadioButtonsComponent, type: :component do
     users  = create_list(:user, 3)
     values = users.map { |o| [o.first_name, o.name] }
 
-    render_inline described_class.new(:office, :user_ids, values)
+    render_inline described_class.new(:user, :inviter_id, values)
 
     expect(page).to have_selector(".choices-collection") do |div|
       aggregate_failures do
@@ -48,7 +48,7 @@ RSpec.describe UI::Form::RadioButtonsComponent, type: :component do
     users  = create_list(:user, 3)
     values = users.map(&:name)
 
-    render_inline described_class.new(:office, :user_ids, values)
+    render_inline described_class.new(:user, :inviter_id, values)
 
     expect(page).to have_selector(".choices-collection") do |div|
       aggregate_failures do
@@ -61,19 +61,37 @@ RSpec.describe UI::Form::RadioButtonsComponent, type: :component do
 
   it "renders a radio button to reset the choice" do
     users = create_list(:user, 3)
-    render_inline described_class.new(:office, :user_ids, users, resettable: true)
+    render_inline described_class.new(:user, :inviter_id, users, resettable: true)
 
     expect(page).to have_selector(".choices-collection") do |div|
-      expect(div).to have_unchecked_field("Annuler l'option saisie", type: "radio")
+      aggregate_failures do
+        expect(div).to have_unchecked_field("Annuler l'option saisie", type: "radio") do |field|
+          expect(field).to have_html_attribute("name").with_value("user[inviter_id]")
+          expect(field).to have_html_attribute("id").with_value("user_inviter_id_reset")
+        end
+
+        expect(div).to have_selector("label", text: "Annuler l'option saisie") do |label|
+          expect(label).to have_html_attribute("for").with_value("user_inviter_id_reset")
+        end
+      end
     end
   end
 
   it "renders a radio button to reset the choice and a custom label" do
     users = create_list(:user, 3)
-    render_inline described_class.new(:office, :user_ids, users, resettable: "Reset value")
+    render_inline described_class.new(:user, :inviter_id, users, resettable: "Reset value")
 
     expect(page).to have_selector(".choices-collection") do |div|
-      expect(div).to have_unchecked_field("Reset value", type: "radio")
+      aggregate_failures do
+        expect(div).to have_unchecked_field("Reset value", type: "radio") do |field|
+          expect(field).to have_html_attribute("name").with_value("user[inviter_id]")
+          expect(field).to have_html_attribute("id").with_value("user_inviter_id_reset")
+        end
+
+        expect(div).to have_selector("label", text: "Reset value") do |label|
+          expect(label).to have_html_attribute("for").with_value("user_inviter_id_reset")
+        end
+      end
     end
   end
 end

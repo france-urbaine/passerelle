@@ -46,7 +46,7 @@ module UI
       end
 
       def radio_button_reset_tag
-        radio_button(reset_field_name, "", false, id: reset_field_id)
+        radio_button_tag(reset_field_name, "", false, id: reset_field_id)
       end
 
       def label_reset_tag
