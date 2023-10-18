@@ -12,11 +12,7 @@ RSpec.describe "Organization::OauthApplicationsController#create" do
   let(:params)  { |e| e.metadata.fetch(:params, { oauth_application: attributes }) }
 
   let!(:publisher) { create(:publisher) }
-  let(:attributes) do
-    {
-      name: Faker::Company.name
-    }
-  end
+  let(:attributes) { { name: Faker::Company.name, sandbox: false } }
 
   describe "authorizations" do
     it_behaves_like "it requires to be signed in in HTML"
@@ -49,8 +45,34 @@ RSpec.describe "Organization::OauthApplicationsController#create" do
       it "assigns expected attributes to the new record" do
         request
         expect(OauthApplication.last).to have_attributes(
-          owner: publisher,
-          name:  attributes[:name]
+          owner:   publisher,
+          name:    attributes[:name],
+          sandbox: true
+        )
+      end
+
+      it "sets a flash notice" do
+        expect(flash).to have_flash_notice.to eq(
+          type:  "success",
+          title: "Une nouvelle application a été ajoutée avec succés.",
+          delay: 3000
+        )
+      end
+    end
+
+    context "when the publisher is confirmed" do
+      before { publisher.update(confirmed: true) }
+
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/organisation/oauth_applications") }
+      it { expect { request }.to change(OauthApplication, :count).by(1) }
+
+      it "assigns expected attributes to the new record" do
+        request
+        expect(OauthApplication.last).to have_attributes(
+          owner:   publisher,
+          name:    attributes[:name],
+          sandbox: false
         )
       end
 

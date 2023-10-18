@@ -9,13 +9,9 @@ RSpec.describe "API::TransmissionController#create", :api do
 
   let(:as)      { |e| e.metadata.fetch(:as, :json) }
   let(:headers) { |e| e.metadata.fetch(:headers, {}).reverse_merge(authorization_header) }
-  let(:params)  { |e| e.metadata.fetch(:params, { transmission: attributes }) }
+  let(:params)  { |e| e.metadata.fetch(:params, {}) }
 
   let!(:collectivity) { create(:collectivity) }
-
-  let(:attributes) do
-    { sandbox: true }
-  end
 
   describe "authorizations" do
     it_behaves_like "it requires an authentication through OAuth in JSON"
@@ -33,7 +29,9 @@ RSpec.describe "API::TransmissionController#create", :api do
   describe "responses" do
     before { setup_access_token(collectivity.publisher) }
 
-    context "with valid attributes" do
+    context "with sandbox true on oauth_application" do
+      before { current_application.update!(sandbox: true) }
+
       it { expect(response).to have_http_status(:created) }
       it { expect { request }.to change(Transmission, :count).by(1) }
 
@@ -43,7 +41,7 @@ RSpec.describe "API::TransmissionController#create", :api do
           collectivity_id:      collectivity.id,
           oauth_application_id: current_application.id,
           publisher_id:         current_publisher.id,
-          sandbox:              attributes[:sandbox]
+          sandbox:              true
         )
       end
 
@@ -56,30 +54,27 @@ RSpec.describe "API::TransmissionController#create", :api do
       end
     end
 
-    context "with empty attributes" do
-      let(:attributes) { {} }
-
-      it { expect(response).to have_http_status(:success) }
-      it { expect { request }.to change(Transmission, :count).by(1) }
-
-      it "lets the transmission out of sandbox by default" do
-        request
-        expect(Transmission.last).to have_attributes(
-          sandbox: false
-        )
-      end
-    end
-
-    context "with empty params" do
-      let(:params) { {} }
+    context "with sandbox false on oauth_application" do
+      before { current_application.update!(sandbox: false) }
 
       it { expect(response).to have_http_status(:created) }
       it { expect { request }.to change(Transmission, :count).by(1) }
 
-      it "lets the transmission out of sandbox by default" do
+      it "assigns expected attributes to the new record" do
         request
         expect(Transmission.last).to have_attributes(
-          sandbox: false
+          collectivity_id:      collectivity.id,
+          oauth_application_id: current_application.id,
+          publisher_id:         current_publisher.id,
+          sandbox:              false
+        )
+      end
+
+      it "returns the new transmission ID", :show_in_doc do
+        expect(response).to have_json_body.to eq(
+          "transmission" => {
+            "id" => Transmission.last.id
+          }
         )
       end
     end

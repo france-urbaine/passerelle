@@ -40,11 +40,10 @@ RSpec.shared_context "with requests shared contexts" do
   end
 
   shared_context "when authorized through OAuth" do
-    let(:current_publisher) do
-      create(:publisher)
-    end
+    let(:current_publisher) { create(:publisher) }
+    let(:current_application) { create(:oauth_application, owner: current_publisher) }
 
-    before { setup_access_token(current_publisher) }
+    before { setup_access_token(current_publisher, current_application) }
   end
 end
 
