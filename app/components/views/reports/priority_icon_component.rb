@@ -3,8 +3,14 @@
 module Views
   module Reports
     class PriorityIconComponent < ApplicationViewComponent
-      def initialize(priority)
-        @priority = priority
+      def initialize(arg)
+        @priority =
+          case arg
+          when Report then arg.priority.to_sym
+          when Symbol then arg
+          else raise TypeError, "invalid argument: #{arg.inspect}"
+          end
+
         super()
       end
 
