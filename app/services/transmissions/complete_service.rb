@@ -46,7 +46,8 @@ module Transmissions
           transmission:   transmission,
           form_type:      form_type,
           reference:      Packages::GenerateReferenceService.new.generate,
-          transmitted_at: @completed_at
+          transmitted_at: @completed_at,
+          sandbox:        transmission.sandbox
         )
 
         [form_type, package]

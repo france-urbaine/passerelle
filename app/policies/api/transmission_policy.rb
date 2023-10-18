@@ -33,9 +33,5 @@ module API
           record.active?
       end
     end
-
-    params_filter do |params|
-      params.permit(:sandbox)
-    end
   end
 end

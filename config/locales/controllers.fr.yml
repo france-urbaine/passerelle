@@ -47,7 +47,7 @@ fr:
     transmissions:
       complete:
         already_completed:  "Cette transmission est déjà complétée."
-        reports_empty:      "Aucun signalement présent dans cette transmision."
+        reports_empty:      "Aucun signalement présent dans cette transmission."
         reports_incomplete: "Certains signalements ne sont pas complets."
 
     reports:

@@ -32,9 +32,13 @@ module API
       <br>
       Vous pouvez initialiser plusieurs transmissions en parallèle, mais chaque transmission expire aprés 24 heures.
 
-      Pour découvrir l'API en toute sécurité, une transmission peut être initialisée en mode <code>sandbox</code> :
+      Pour découvrir l'API en toute sécurité, une application peut être initialisée en mode <code>sandbox</code> :
       <br>
-      les signalements ainsi transmis ne seront jamais visibles dans FiscaHub par la collectivité ou les DDFIPs.
+      les signalements créer par une application sandbox ne seront jamais visibles dans FiscaHub par la collectivité ou les DDFIPs.
+      <br>
+      Par default un éditeur ne peut initialisée que des applications en mode <code>sandbox</code> jusqu'a ce que France Urbaine décide de débrider l'éditeur concerner.
+      <br>
+      Si vous êtes concerné par le bridage le paramètre <code>sandbox</code> est ignoré.
     DESC
 
     see "collectivities#index", "Index des collectivités"
@@ -56,9 +60,10 @@ module API
 
     def create
       collectivity = find_and_authorize_collectivity
-      @transmission = collectivity.transmissions.build(transmission_params)
+      @transmission = collectivity.transmissions.build
       @transmission.publisher = current_publisher
       @transmission.oauth_application = current_application
+      @transmission.sandbox = current_application.sandbox?
       @transmission.save
 
       respond_with @transmission, status: :created
@@ -124,17 +129,13 @@ module API
     end
 
     def find_and_authorize_transmission
-      current_publisher.transmissions.find(params[:id]).tap do |transmission|
+      current_application.transmissions.find(params[:id]).tap do |transmission|
         authorize! transmission, to: :read?
         forbidden! t(".already_completed")    if transmission.completed?
         bad_request! t(".reports_empty")      if transmission.reports.none?
         bad_request! t(".reports_incomplete") if transmission.reports.incomplete.any?
         authorize! transmission, to: :complete?
       end
-    end
-
-    def transmission_params
-      authorized(params.fetch(:transmission, {}))
     end
   end
 end

@@ -16,6 +16,7 @@
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
 #  discarded_at :datetime
+#  sandbox      :boolean          default(FALSE), not null
 #
 # Indexes
 #
@@ -24,8 +25,12 @@
 #
 class OauthApplication < ApplicationRecord
   include ::Doorkeeper::Orm::ActiveRecord::Mixins::Application
+  include States::Sandbox
 
+  # Associations
+  # ----------------------------------------------------------------------------
   belongs_to :owner, polymorphic: true, inverse_of: :oauth_applications
+
   has_many :transmissions, dependent: false
 
   # Scopes

@@ -33,7 +33,7 @@ module Organization
     params_filter do |params|
       return unless publisher?
 
-      params.permit(:name)
+      params.permit(:name, :sandbox)
     end
   end
 end
