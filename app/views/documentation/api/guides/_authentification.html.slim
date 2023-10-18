@@ -25,43 +25,62 @@
     = tabs_component do |tabs|
       - tabs.with_tab "cURL" do
         pre( data-controller="highlight" data-highlight-language-value="shell" )
-          | $ echo "Please enter your client ID:" && read CLIENT_ID && \
-                echo "Please enter your client secret:" && read CLIENT_SECRET
+          | $ echo "Please enter your client ID:" && read -s CLIENT_ID && \
+                echo "Please enter your client secret:" && read -s CLIENT_SECRET
 
-        pre( data-controller="highlight" data-highlight-language-value="shell" )
-          | $ ACCESS_TOKEN=$( \
-                curl -X POST \
+            $ ACCESS_TOKEN=$( \
+                curl -X POST #{ URI.join(api_url, "/oauth/token") } \
                   -H "Accept: application/json" \
                   -H "Content-Type: application/json" \
                   -d '{
                     "grant_type": "client_credentials",
                     "client_id": "'$CLIENT_ID'",
                     "client_secret": "'$CLIENT_SECRET'"
-                  }' https://api.fiscahub.fr/oauth/token | jq -r .access_token \
-              ) && echo "Acces Token:$ACCESS_TOKEN"
+                  }' | jq -r .access_token
+              )
 
-        pre( data-controller="highlight" data-highlight-language-value="shell" )
-          | $ curl -X GET \
+            $ curl -X GET #{ URI.join(api_url, "/collectivites") } \
                 -H "Accept: application/json" \
-                -H "Authorization: Bearer $ACCESS_TOKEN" \
-                https://api.fiscahub.fr/collectivites
+                -H "Authorization: Bearer $ACCESS_TOKEN"
 
       - tabs.with_tab "httpie" do
         pre( data-controller="highlight" data-highlight-language-value="shell" )
-          | $ echo "Please enter your client ID:" && read CLIENT_ID && \
-                echo "Please enter your client secret:" && read CLIENT_SECRET
+          | $ echo "Please enter your client ID:" && read -s CLIENT_ID && \
+                echo "Please enter your client secret:" && read -s CLIENT_SECRET
 
-        pre( data-controller="highlight" data-highlight-language-value="shell" )
-          | $ ACCESS_TOKEN=$( \
-                http -j POST https://api.fiscahub.fr/oauth/token \
+            $ ACCESS_TOKEN=$( \
+                http -j POST #{ URI.join(api_url, "/oauth/token") } \
                   Accept:"application/json" \
                   grant_type='client_credentials' \
                   client_id=$CLIENT_ID \
-                  client_secret=$CLIENT_SECRET | jq -r .access_token \
-              ) && echo "Acces Token:$ACCESS_TOKEN"
+                  client_secret=$CLIENT_SECRET | jq -r .access_token
+              )
 
-
-        pre( data-controller="highlight" data-highlight-language-value="shell" )
-          | $ http -v GET https://api.fiscahub.fr/collectivites \
+            $ http -v GET #{ URI.join(api_url, "/collectivites") } \
                 Accept:"application/json" \
                 Authorization:"Bearer $ACCESS_TOKEN"
+
+    pre
+      div( data-controller="highlight" data-highlight-language-value="http" )
+        | GET /collectivites HTTP/1.1
+          Accept: application/json
+          Authorization: Bearer HgAxkdHZUvlBjuuWweLKwsJ6InRfZoZ-GHyFtbrS03k
+
+          HTTP/1.1 200 OK
+          Content-Type: application/json; charset=utf-8
+
+      div( data-controller="highlight" data-highlight-language-value="json" )
+        | {
+            "collectivites": [
+              {
+                "id": "f97179b3-53e4-4705-a6d8-08496cb702fc",
+                "name": "Metropole Bordeaux",
+                "siren": "690435680"
+              },
+              {
+                "id": "7a25cfb7-cd85-4bbd-9dad-ce1e7c030dbc",
+                "name": "CA Pays Basque",
+                "siren": "962845392"
+              }
+            ]
+          }
