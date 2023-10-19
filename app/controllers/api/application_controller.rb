@@ -27,13 +27,19 @@ module API
     rescue_from "ControllerDiscard::RecordDiscarded",  with: :gone
     rescue_from "ControllerStatuses::InterruptAction", with: -> {}
 
+    # Those errors might be only rescued in production in ::ApplicationController
+    # In the API context, they are rescued anytime because we are expecting
+    # http status code when malformed even in development.
+    #
+    rescue_from "ActionDispatch::Http::Parameters::ParseError", with: :bad_request
+    rescue_from "ActionController::ParameterMissing",           with: :bad_request
+    rescue_from "ActionController::BadRequest",                 with: :bad_request
+    rescue_from "ActionController::UnknownFormat",              with: :not_acceptable
+    rescue_from "Pagy::VariableError",                          with: :bad_request
+
     unless Rails.env.development?
-      rescue_from "ActionController::ParameterMissing", with: :bad_request
-      rescue_from "ActionController::BadRequest",       with: :bad_request
       rescue_from "AbstractController::ActionNotFound", with: :not_found
       rescue_from "ActionController::RoutingError",     with: :not_found
-      rescue_from "ActionController::UnknownFormat",    with: :not_acceptable
-      rescue_from "Pagy::VariableError",                with: :bad_request
     end
 
     respond_to :json
