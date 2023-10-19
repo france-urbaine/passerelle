@@ -26,15 +26,20 @@ module API
       <br>
       Les DDFIPs ne recevront les signalements qu'une fois la transmission complétée.
 
-      Une transmission est initialisée pour une et une seul collectivité.
+      Une transmission est initialisée pour une et une seule collectivité.
       <br>
       Tout les signalements ajoutés dans une transmission sont donc automatiquement associés à cette même collectivité.
       <br>
       Vous pouvez initialiser plusieurs transmissions en parallèle, mais chaque transmission expire aprés 24 heures.
 
-      Pour découvrir l'API en toute sécurité, une transmission peut être initialisée en mode <code>sandbox</code> :
+      Pour découvrir l'API en toute sécurité, vous pouvez configurer une application en mode <code>sandbox</code> :
       <br>
-      les signalements ainsi transmis ne seront jamais visibles dans FiscaHub par la collectivité ou les DDFIPs.
+      les transmissions initialisées à travers cette applications ne seront jamais transmises aux services de la DGFIP,
+      et les signalements ainsi créés ne seront jamais visibles dans FiscaHub par toute autre organisation.
+
+      Dans certains cas, votre compte éditeur peut être bridé en mode sandbox par défaut : consultez France Urbaine pour en savoir plus.
+      <br>
+      Lorsque ce bridage est en place, toute les tranmissions seront initialisée en mode sandbox, quelques soit le mode choisi sur votre application.
     DESC
 
     see "collectivities#index", "Index des collectivités"
@@ -56,9 +61,10 @@ module API
 
     def create
       collectivity = find_and_authorize_collectivity
-      @transmission = collectivity.transmissions.build(transmission_params)
+      @transmission = collectivity.transmissions.build
       @transmission.publisher = current_publisher
       @transmission.oauth_application = current_application
+      @transmission.sandbox = current_application.sandbox?
       @transmission.save
 
       respond_with @transmission, status: :created
@@ -124,17 +130,13 @@ module API
     end
 
     def find_and_authorize_transmission
-      current_publisher.transmissions.find(params[:id]).tap do |transmission|
+      current_application.transmissions.find(params[:id]).tap do |transmission|
         authorize! transmission, to: :read?
         forbidden! t(".already_completed")    if transmission.completed?
         bad_request! t(".reports_empty")      if transmission.reports.none?
         bad_request! t(".reports_incomplete") if transmission.reports.incomplete.any?
         authorize! transmission, to: :complete?
       end
-    end
-
-    def transmission_params
-      authorized(params.fetch(:transmission, {}))
     end
   end
 end

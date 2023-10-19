@@ -81,19 +81,4 @@ RSpec.describe API::TransmissionPolicy, type: :policy do
       end
     end
   end
-
-  describe "params scope" do
-    subject(:params) { apply_params_scope(attributes) }
-
-    let(:attributes) do
-      {
-        sandbox:         true,
-        collectivity_id:  "123456789"
-      }
-    end
-
-    it "accepts only sandbox attribute" do
-      is_expected.to eq(sandbox: true)
-    end
-  end
 end

@@ -1729,6 +1729,7 @@ CREATE TABLE public.publishers (
     packages_transmitted_count integer DEFAULT 0 NOT NULL,
     packages_assigned_count integer DEFAULT 0 NOT NULL,
     packages_returned_count integer DEFAULT 0 NOT NULL,
+    sandbox boolean DEFAULT false NOT NULL,
     CONSTRAINT collectivities_count_check CHECK ((collectivities_count >= 0)),
     CONSTRAINT users_count_check CHECK ((users_count >= 0))
 );
@@ -3357,7 +3358,8 @@ CREATE TABLE public.oauth_applications (
     confidential boolean DEFAULT true NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
-    discarded_at timestamp(6) without time zone
+    discarded_at timestamp(6) without time zone,
+    sandbox boolean DEFAULT false NOT NULL
 );
 
 
@@ -3543,9 +3545,9 @@ CREATE TABLE public.transmissions (
     collectivity_id uuid NOT NULL,
     oauth_application_id uuid,
     completed_at timestamp(6) without time zone,
-    sandbox boolean DEFAULT false NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    sandbox boolean DEFAULT false NOT NULL
 );
 
 
@@ -4635,6 +4637,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230928141212'),
 ('20230928162717'),
 ('20230929034420'),
-('20231004101953');
+('20231004101953'),
+('20231016144839');
 
 

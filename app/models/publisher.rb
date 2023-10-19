@@ -25,6 +25,7 @@
 #  packages_transmitted_count :integer          default(0), not null
 #  packages_assigned_count    :integer          default(0), not null
 #  packages_returned_count    :integer          default(0), not null
+#  sandbox                    :boolean          default(FALSE), not null
 #
 # Indexes
 #

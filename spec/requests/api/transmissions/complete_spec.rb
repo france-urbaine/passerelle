@@ -19,15 +19,21 @@ RSpec.describe "API::TransmissionsController#complete", :api do
 
     it_behaves_like "it responds with not found when authorized through OAuth"
 
-    context "when the transmission is owned by the current publisher" do
-      let(:transmission) { create(:transmission, :made_through_api, :with_reports, publisher: current_publisher) }
+    context "when the transmission do not belongs to current application" do
+      it_behaves_like "it responds with not found when authorized through OAuth" do
+        let(:current_publisher) { transmission.publisher }
+      end
+    end
 
-      it_behaves_like "it allows access when authorized through OAuth"
+    context "when the transmission belongs to the current application" do
+      it_behaves_like "it allows access when authorized through OAuth" do
+        let(:current_application) { transmission.oauth_application }
+      end
     end
   end
 
   describe "responses" do
-    before { setup_access_token(transmission.publisher) }
+    before { setup_access_token(transmission.publisher, transmission.oauth_application) }
 
     context "when transmission is still active" do
       it { expect(response).to have_http_status(:success) }
@@ -90,7 +96,7 @@ RSpec.describe "API::TransmissionsController#complete", :api do
 
       it "returns a specific error message" do
         expect(response).to have_json_body.to eq(
-          "error" => "Aucun signalement présent dans cette transmision."
+          "error" => "Aucun signalement présent dans cette transmission."
         )
       end
     end

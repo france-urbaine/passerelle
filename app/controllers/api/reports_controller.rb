@@ -53,8 +53,9 @@ module API
     def create
       transmission = find_and_authorize_transmission
 
-      @report = transmission.reports.build
+      @report              = transmission.reports.build
       @report.collectivity = transmission.collectivity
+      @report.sandbox      = transmission.sandbox
       @report.publisher    = current_publisher
 
       API::Reports::CreateService.new(@report, reports_params).save
@@ -65,7 +66,7 @@ module API
     private
 
     def find_and_authorize_transmission
-      current_publisher.transmissions.find(params[:transmission_id]).tap do |transmission|
+      current_application.transmissions.find(params[:transmission_id]).tap do |transmission|
         authorize! transmission, to: :read?
         forbidden! t(".already_completed") if transmission.completed?
         authorize! transmission, to: :fill?

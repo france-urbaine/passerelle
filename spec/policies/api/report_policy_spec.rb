@@ -10,9 +10,7 @@ RSpec.describe API::ReportPolicy, type: :policy do
     succeed "always"
   end
 
-  describe_rule :create? do
-    succeed "always"
-  end
+  it { expect(:create?).to be_an_alias_of(policy, :index?) }
 
   describe_rule :attach? do
     context "without record" do

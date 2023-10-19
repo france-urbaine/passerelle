@@ -39,15 +39,21 @@ RSpec.describe "API::ReportsController#create", :api do
 
     it_behaves_like "it responds with not found when authorized through OAuth"
 
-    context "when the transmission is owned by the current publisher" do
-      let(:transmission) { create(:transmission, :made_through_api, :with_reports, publisher: current_publisher) }
+    context "when the transmission do not belongs to current application" do
+      it_behaves_like "it responds with not found when authorized through OAuth" do
+        let(:current_publisher) { transmission.publisher }
+      end
+    end
 
-      it_behaves_like "it allows access when authorized through OAuth"
+    context "when the transmission is owned by the current publisher and belongs to current application" do
+      it_behaves_like "it allows access when authorized through OAuth" do
+        let(:current_application) { transmission.oauth_application }
+      end
     end
   end
 
   describe "responses" do
-    before { setup_access_token(transmission.publisher) }
+    before { setup_access_token(transmission.publisher, transmission.oauth_application) }
 
     context "with valid attributes" do
       it { expect(response).to have_http_status(:created) }
@@ -62,6 +68,35 @@ RSpec.describe "API::ReportsController#create", :api do
           date_constat:                        be_a(Date),
           situation_numero_ordre_proprietaire: "A12345",
           situation_parcelle:                  "AA 0000"
+        )
+      end
+
+      it "returns the new report ID", :show_in_doc do
+        request
+        expect(response).to have_json_body.to eq(
+          "report" => {
+            "id" => Report.last.id
+          }
+        )
+      end
+    end
+
+    context "when transmission is set to sandbox" do
+      let(:transmission) { create(:transmission, :made_through_api, :with_reports, :sandbox) }
+
+      it { expect(response).to have_http_status(:created) }
+      it { expect { request }.to change(Report, :count).by(1) }
+
+      it "assigns expected attributes to the new record" do
+        request
+        expect(Report.last).to have_attributes(
+          collectivity_id:                     transmission.collectivity_id,
+          publisher_id:                        transmission.publisher.id,
+          transmission_id:                     transmission.id,
+          date_constat:                        be_a(Date),
+          situation_numero_ordre_proprietaire: "A12345",
+          situation_parcelle:                  "AA 0000",
+          sandbox:                             true
         )
       end
 
