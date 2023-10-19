@@ -2,7 +2,7 @@
 
   <%# Full navbar %>
 
-  <%= tag.nav **navbar_html_attributes, data_navbar_target: "expanded" do %>
+  <%= tag.nav(**navbar_html_attributes, data_navbar_target: "expanded") do %>
     <div class="navbar__brand brand">
       <%= image_tag("logo.svg", alt: "Logo de FiscaHub", height: 30) %>
       <% if header? %>

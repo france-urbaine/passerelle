@@ -25,10 +25,10 @@
           resource[:methods].each do |endpoint|
             # subsection.with_link endpoint.dig(:apis, 0, :short_description), endpoint[:doc_url]
             subsection.with_link endpoint[:doc_url] do
-              %>
-                <span class="navbar__method"><%= endpoint.dig(:apis, 0, :http_method) %></span>
-                <%= endpoint.dig(:apis, 0, :api_url) %>
-              <%
+  %>
+              <span class="navbar__method"><%= endpoint.dig(:apis, 0, :http_method) %></span>
+              <%= endpoint.dig(:apis, 0, :api_url) %>
+  <%
             end
           end
         end

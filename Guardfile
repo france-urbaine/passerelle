@@ -74,12 +74,17 @@ group :red_green_refactor, halt_on_fail: true do
   end
 
   guard :erb_lint, erb_lint_options do
-    watch(%r{^app/.+\.erb$})
-    watch(%r{^spec/.+\.html$})
-
-    # If we need to watch any *.html files in the future
-    # we cannot just watch /.+\.html$/ because it may hang on coverage files.
-    # Instead, we need to add watcher per folder.
+    # Do not use `watch(/.+\.html$/)` as described in documentation.
+    # Watching all HTML files may cause hanging on coverage files.
+    #
+    # If you need to watch more HTML files in the future,
+    # you'll have to add one watcher per folder.
+    # Ex:
+    #   watch(%r{^app/views/.+\.html$})
+    #
+    watch(%r{^app/components/.+\.erb$})
+    watch(%r{^app/views/.+\.erb$})
+    watch(%r{^spec/components/previews/.+\.erb$})
   end
 
   guard :brakeman, brakeman_options do

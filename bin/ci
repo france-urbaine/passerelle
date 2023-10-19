@@ -161,6 +161,7 @@ def run_all
   test("unit")
   test("system")
   rubocop
+  erblint
   brakeman
   audit
   log ""
