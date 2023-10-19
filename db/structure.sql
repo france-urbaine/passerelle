@@ -1729,7 +1729,7 @@ CREATE TABLE public.publishers (
     packages_transmitted_count integer DEFAULT 0 NOT NULL,
     packages_assigned_count integer DEFAULT 0 NOT NULL,
     packages_returned_count integer DEFAULT 0 NOT NULL,
-    confirmed boolean DEFAULT false NOT NULL,
+    sandbox boolean DEFAULT false NOT NULL,
     CONSTRAINT collectivities_count_check CHECK ((collectivities_count >= 0)),
     CONSTRAINT users_count_check CHECK ((users_count >= 0))
 );

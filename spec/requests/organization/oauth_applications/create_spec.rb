@@ -60,8 +60,8 @@ RSpec.describe "Organization::OauthApplicationsController#create" do
       end
     end
 
-    context "when the publisher is confirmed" do
-      before { publisher.update(confirmed: true) }
+    context "when the publisher is sandbox" do
+      before { publisher.update(sandbox: true) }
 
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/organisation/oauth_applications") }
