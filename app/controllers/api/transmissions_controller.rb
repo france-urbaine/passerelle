@@ -26,19 +26,20 @@ module API
       <br>
       Les DDFIPs ne recevront les signalements qu'une fois la transmission complétée.
 
-      Une transmission est initialisée pour une et une seul collectivité.
+      Une transmission est initialisée pour une et une seule collectivité.
       <br>
       Tout les signalements ajoutés dans une transmission sont donc automatiquement associés à cette même collectivité.
       <br>
       Vous pouvez initialiser plusieurs transmissions en parallèle, mais chaque transmission expire aprés 24 heures.
 
-      Pour découvrir l'API en toute sécurité, une application peut être initialisée en mode <code>sandbox</code> :
+      Pour découvrir l'API en toute sécurité, vous pouvez configurer une application en mode <code>sandbox</code> :
       <br>
-      les signalements créer par une application sandbox ne seront jamais visibles dans FiscaHub par la collectivité ou les DDFIPs.
+      les transmissions initialisées à travers cette applications ne seront jamais transmises aux services de la DGFIP,
+      et les signalements ainsi créés ne seront jamais visibles dans FiscaHub par toute autre organisation.
+
+      Dans certains cas, votre compte éditeur peut être bridé en mode sandbox par défaut : consultez France Urbaine pour en savoir plus.
       <br>
-      Par default un éditeur ne peut initialisée que des applications en mode <code>sandbox</code> jusqu'a ce que France Urbaine décide de débrider l'éditeur concerner.
-      <br>
-      Si vous êtes concerné par le bridage le paramètre <code>sandbox</code> est ignoré.
+      Lorsque ce bridage est en place, toute les tranmissions seront initialisée en mode sandbox, quelques soit le mode choisi sur votre application.
     DESC
 
     see "collectivities#index", "Index des collectivités"
