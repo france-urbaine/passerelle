@@ -83,20 +83,4 @@ RSpec.describe UI::Form::CheckboxesComponent, type: :component do
       expect(div).not_to have_unchecked_field("Tout sélectionner")
     end
   end
-
-  #   def default_input_methods
-  #     case @collection
-  #     in [ApplicationRecord, *]
-  #       if @collection.first.respond_to?(:name)
-  #         %i[id name]
-  #       else
-  #         %i[id to_s]
-  #       end
-  #     in [Array, *]
-  #       %i[first second]
-  #     else
-  #       %i[to_s to_s]
-  #     end
-  #   end
-  # end
 end
