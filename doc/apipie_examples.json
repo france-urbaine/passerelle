@@ -12,14 +12,14 @@
       "response_data": {
         "collectivites": [
           {
-            "id": "f97179b3-53e4-4705-a6d8-08496cb702fc",
-            "name": "Metropole Bordeaux #1",
-            "siren": "690435680"
+            "id": "55310c0d-2501-451f-9853-754ba998c685",
+            "name": "CA de Mâcon",
+            "siren": "633160833"
           },
           {
-            "id": "7a25cfb7-cd85-4bbd-9dad-ce1e7c030dbc",
-            "name": "Île-de-France #2",
-            "siren": "962845392"
+            "id": "9e6c14d5-1fbc-4dcc-a792-030ce0bb3882",
+            "name": "Metropole de Angoulême",
+            "siren": "181980178"
           }
         ]
       },
@@ -31,7 +31,7 @@
   "reports#create": [
     {
       "verb": "POST",
-      "path": "/transmissions/91c2619f-90dd-4c40-aa11-55d991da309f/signalements",
+      "path": "/transmissions/f40cd7ed-b945-43b2-ad2b-ca4aadea7bc6/signalements",
       "versions": [
         "1.0"
       ],
@@ -59,7 +59,7 @@
       },
       "response_data": {
         "report": {
-          "id": "321478ea-260e-4268-a74e-9d72e662724f"
+          "id": "68f3b09a-d846-4616-9a03-03b018840bda"
         }
       },
       "code": 201,
@@ -68,7 +68,7 @@
     },
     {
       "verb": "POST",
-      "path": "/transmissions/6b95905a-b7d5-4c64-abf1-1f75633da44d/signalements",
+      "path": "/transmissions/b63ff5a3-9880-4823-b5fe-667e1e87509f/signalements",
       "versions": [
         "1.0"
       ],
@@ -112,7 +112,7 @@
   "transmissions#complete": [
     {
       "verb": "PUT",
-      "path": "/transmissions/6b597916-23d5-4a45-b661-f71e0659e32c/complete",
+      "path": "/transmissions/7f33f0b6-f2bf-49d0-ba1e-9eedbe80af18/complete",
       "versions": [
         "1.0"
       ],
@@ -121,16 +121,16 @@
       },
       "response_data": {
         "transmission": {
-          "id": "6b597916-23d5-4a45-b661-f71e0659e32c",
-          "completed_at": "2023-10-13T07:08:44.653Z",
+          "id": "7f33f0b6-f2bf-49d0-ba1e-9eedbe80af18",
+          "completed_at": "2023-10-23T09:23:09.325Z",
           "packages": [
             {
-              "id": "7cd54a22-d84b-4b14-bb47-8e64bc2aaea4",
+              "id": "c6b9c897-fa03-4ad8-a272-53ef0093c8dc",
               "name": null,
               "reference": "2023-10-0001",
               "reports": [
                 {
-                  "id": "d7d7db1a-e6bb-483e-b126-7f1e82a5f776",
+                  "id": "aff23acb-dea3-43a3-9fca-3318a7dcdeb3",
                   "reference": "2023-10-0001-00001"
                 }
               ]
@@ -146,19 +146,16 @@
   "transmissions#create": [
     {
       "verb": "POST",
-      "path": "/collectivites/678a5f09-07e1-49e3-af1a-e42b48bb8756/transmissions",
+      "path": "/collectivites/97b55045-f7a3-4c34-b166-be78290d62bc/transmissions",
       "versions": [
         "1.0"
       ],
       "query": null,
       "request_data": {
-        "transmission": {
-          "sandbox": true
-        }
       },
       "response_data": {
         "transmission": {
-          "id": "e43b8276-53e6-40df-a683-fb02ee74d6f5"
+          "id": "138bd26a-f6c9-46d9-825a-9b935351169e"
         }
       },
       "code": 201,

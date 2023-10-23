@@ -29,34 +29,7 @@ RSpec.describe "API::TransmissionController#create", :api do
   describe "responses" do
     before { setup_access_token(collectivity.publisher) }
 
-    context "with sandbox true on oauth_application" do
-      before { current_application.update!(sandbox: true) }
-
-      it { expect(response).to have_http_status(:created) }
-      it { expect { request }.to change(Transmission, :count).by(1) }
-
-      it "assigns expected attributes to the new record" do
-        request
-        expect(Transmission.last).to have_attributes(
-          collectivity_id:      collectivity.id,
-          oauth_application_id: current_application.id,
-          publisher_id:         current_publisher.id,
-          sandbox:              true
-        )
-      end
-
-      it "returns the new transmission ID", :show_in_doc do
-        expect(response).to have_json_body.to eq(
-          "transmission" => {
-            "id" => Transmission.last.id
-          }
-        )
-      end
-    end
-
-    context "with sandbox false on oauth_application" do
-      before { current_application.update!(sandbox: false) }
-
+    context "when out of any sandboxes" do
       it { expect(response).to have_http_status(:created) }
       it { expect { request }.to change(Transmission, :count).by(1) }
 
@@ -75,6 +48,40 @@ RSpec.describe "API::TransmissionController#create", :api do
           "transmission" => {
             "id" => Transmission.last.id
           }
+        )
+      end
+    end
+
+    context "when oauth_application is a sandbox" do
+      before { current_application.update!(sandbox: true) }
+
+      it { expect(response).to have_http_status(:created) }
+      it { expect { request }.to change(Transmission, :count).by(1) }
+
+      it "assigns expected attributes to the new record" do
+        request
+        expect(Transmission.last).to have_attributes(
+          collectivity_id:      collectivity.id,
+          oauth_application_id: current_application.id,
+          publisher_id:         current_publisher.id,
+          sandbox:              true
+        )
+      end
+    end
+
+    context "when publisher is in sandbox but oauth_application is not" do
+      before { current_publisher.update!(sandbox: true) }
+
+      it { expect(response).to have_http_status(:created) }
+      it { expect { request }.to change(Transmission, :count).by(1) }
+
+      it "assigns expected attributes to the new record" do
+        request
+        expect(Transmission.last).to have_attributes(
+          collectivity_id:      collectivity.id,
+          oauth_application_id: current_application.id,
+          publisher_id:         current_publisher.id,
+          sandbox:              true
         )
       end
     end

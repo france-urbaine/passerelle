@@ -21,8 +21,6 @@ module Organization
 
     def create
       @oauth_application = build_oauth_application(oauth_application_params)
-      @oauth_application.sandbox = true unless current_organization.sandbox?
-
       @oauth_application.save
 
       respond_with @oauth_application,

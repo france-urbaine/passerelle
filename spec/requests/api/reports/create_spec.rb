@@ -100,7 +100,7 @@ RSpec.describe "API::ReportsController#create", :api do
         )
       end
 
-      it "returns the new report ID", :show_in_doc do
+      it "returns the new report ID" do
         request
         expect(response).to have_json_body.to eq(
           "report" => {

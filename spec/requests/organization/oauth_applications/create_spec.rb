@@ -47,7 +47,7 @@ RSpec.describe "Organization::OauthApplicationsController#create" do
         expect(OauthApplication.last).to have_attributes(
           owner:   publisher,
           name:    attributes[:name],
-          sandbox: true
+          sandbox: false
         )
       end
 
@@ -60,7 +60,7 @@ RSpec.describe "Organization::OauthApplicationsController#create" do
       end
     end
 
-    context "when the publisher is sandbox" do
+    context "when the publisher is in sandbox" do
       before { publisher.update(sandbox: true) }
 
       it { expect(response).to have_http_status(:see_other) }
