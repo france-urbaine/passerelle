@@ -13,7 +13,7 @@ module API
     api :GET, "/collectivites", "Index des collectivités"
     description <<-DESC
       Cette ressource permet de lister les collectivités qui vous ont déclaré comme éditeur pour transmettre
-      des données à FiscaHub.
+      des données à Passerelle.
 
       L'UUID d'une collectivité est requis pour initialiser une transmission.
 

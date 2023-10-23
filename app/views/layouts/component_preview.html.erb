@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="fr">
   <head>
-    <title>Lookbook de Fiscahub</title>
+    <title>Lookbook de Passerelle</title>
     <meta content="width=device-width,initial-scale=1" name="viewport">
 
     <%= csrf_meta_tags %>
@@ -23,7 +23,7 @@
 
     <%= yield unless frame %>
 
-    <% if frame ==  "content" %>
+    <% if frame == "content" %>
       <main class="content">
         <%= turbo_frame_tag(:content, target: "_top") do %>
           <% if width_class %>
@@ -39,7 +39,7 @@
       <%= turbo_frame_tag(:modal, target: "_top") %>
     <% end %>
 
-    <% if frame ==  "modal" %>
+    <% if frame == "modal" %>
       <main class="content">
         <%= turbo_frame_tag(:content, target: "_top") %>
       </main>

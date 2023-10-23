@@ -108,7 +108,7 @@ RSpec.describe User do
     it { expect(user).not_to be_active_for_authentication }
 
     it { expect { user }.to have_sent_emails.by(1) }
-    it { expect { user }.to have_sent_email.to { user.email }.with_subject("Votre inscription sur FiscaHub") }
+    it { expect { user }.to have_sent_email.to { user.email }.with_subject("Votre inscription sur Passerelle") }
     it { expect { user }.not_to have_enqueued_job }
   end
 
@@ -146,7 +146,7 @@ RSpec.describe User do
       it { expect { user }.not_to have_enqueued_job }
 
       it { expect { user.save }.to have_sent_emails.by(1) }
-      it { expect { user.save }.to have_sent_email.to(user.email).with_subject("Votre inscription sur FiscaHub") }
+      it { expect { user.save }.to have_sent_email.to(user.email).with_subject("Votre inscription sur Passerelle") }
       it { expect { user.save }.not_to have_enqueued_job }
     end
 

@@ -63,7 +63,7 @@ RSpec.describe "Users::TwoFactorSettingsController#update" do
           request
           perform_enqueued_jobs
         }.to have_sent_emails.by(1)
-          .and have_sent_email.with_subject("Modification de vos paramètres de sécurité sur FiscaHub").to(current_user.email)
+          .and have_sent_email.with_subject("Modification de vos paramètres de sécurité sur Passerelle").to(current_user.email)
       end
     end
 
@@ -98,7 +98,7 @@ RSpec.describe "Users::TwoFactorSettingsController#update" do
           request
           perform_enqueued_jobs
         }.to have_sent_emails.by(1)
-          .and have_sent_email.with_subject("Modification de vos paramètres de sécurité sur FiscaHub").to(current_user.email)
+          .and have_sent_email.with_subject("Modification de vos paramètres de sécurité sur Passerelle").to(current_user.email)
       end
     end
 

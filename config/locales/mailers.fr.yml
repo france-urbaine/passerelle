@@ -2,8 +2,8 @@ fr:
   users:
     mailer:
       two_factor_setup_code:
-        subject: "Activation de l'authentification en 2 étapes sur FiscaHub"
+        subject: "Activation de l'authentification en 2 étapes sur Passerelle"
       two_factor_sign_in_code:
-        subject: "Connexion à FiscaHub"
+        subject: "Connexion à Passerelle"
       two_factor_change:
-        subject: "Modification de vos paramètres de sécurité sur FiscaHub"
+        subject: "Modification de vos paramètres de sécurité sur Passerelle"

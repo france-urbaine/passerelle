@@ -90,7 +90,7 @@ fr:
         password_confirmation:  Confirmation du mot de passe
         otp_code:               Code unique de vérification
         organization_admin:     Administrateur de l'organisation
-        super_admin:            Administrateur de la plateforme FiscaHub
+        super_admin:            Administrateur de la plateforme Passerelle
         office_ids:             Guichets
 
       commune:

@@ -35,7 +35,7 @@ module API
       Pour découvrir l'API en toute sécurité, vous pouvez configurer une application en mode <code>sandbox</code> :
       <br>
       les transmissions initialisées à travers cette applications ne seront jamais transmises aux services de la DGFIP,
-      et les signalements ainsi créés ne seront jamais visibles dans FiscaHub par toute autre organisation.
+      et les signalements ainsi créés ne seront jamais visibles dans Passerelle par toute autre organisation.
 
       Dans certains cas, votre compte éditeur peut être bridé en mode sandbox par défaut : consultez France Urbaine pour en savoir plus.
       <br>

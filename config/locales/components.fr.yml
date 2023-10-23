@@ -46,7 +46,7 @@ fr:
     views:
       users:
         show_check_badge:
-          super_admin:        "Administrateur de FiscaHub"
+          super_admin:        "Administrateur de Passerelle"
           organization_admin: "Administrateur de l'organisation"
 
         show_otp_method:
