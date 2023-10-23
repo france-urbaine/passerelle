@@ -16,13 +16,11 @@ module API
 
       Une transmission doit être préalablement établie :
       l'UUID de la transmission est ainsi requis pour créer un signalement.
-      <br>
       Il n'y a aucune limite au nombre de signalements qui peuvent être créés dans une même transmission.
 
       La liste des champs requis dépends du type de signalement, de l'anomalie signalée et parfois de certains autres
       champs.
-      <br>
-      Consultez la liste des champs requis pour plus de détails.
+      Consultez la liste des champs requis pour plus de détails (bientôt disponible).
 
       L'UUID du signalement nouvellement créé est retourné.
       <br>

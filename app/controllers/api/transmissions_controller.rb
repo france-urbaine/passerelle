@@ -19,26 +19,20 @@ module API
       Cette ressource permet d'initialiser une nouvelle transmission.
 
       Une transmission est requise pour transmettre des signalements :
-      <br>
       une fois initialisée, vous pouvez y ajouter un ou plusieurs signalements ainsi que des pièces jointes.
 
       Une fois toutes les données ajoutées, vous pouvez terminer la transmission avec la ressource <code>/complete</code>.
-      <br>
       Les DDFIPs ne recevront les signalements qu'une fois la transmission complétée.
 
       Une transmission est initialisée pour une et une seule collectivité.
-      <br>
       Tout les signalements ajoutés dans une transmission sont donc automatiquement associés à cette même collectivité.
-      <br>
       Vous pouvez initialiser plusieurs transmissions en parallèle, mais chaque transmission expire aprés 24 heures.
 
       Pour découvrir l'API en toute sécurité, vous pouvez configurer une application en mode <code>sandbox</code> :
-      <br>
       les transmissions initialisées à travers cette applications ne seront jamais transmises aux services de la DGFIP,
       et les signalements ainsi créés ne seront jamais visibles dans Passerelle par toute autre organisation.
 
       Dans certains cas, votre compte éditeur peut être bridé en mode sandbox par défaut : consultez France Urbaine pour en savoir plus.
-      <br>
       Lorsque ce bridage est en place, toute les tranmissions seront initialisée en mode sandbox, quelques soit le mode choisi sur votre application.
     DESC
 
@@ -73,14 +67,12 @@ module API
 
       Une fois les signalements ajoutés à une transmission préalablement initialisée,
       vous pouvez valider la transmission :
-      <br>
       les signalements seront automatiquement répartis dans des paquets avant d'être remis
       aux DDFIPs concernées qui se réservent le droit d'assigner les paquets aux guichets
       ou de retourner le paquet.
 
       En réponse, vous obtenez la liste des paquets transmis ainsi que les numéros
       de référence attribués à chaque signalement.
-      <br>
       Les numéros de référence peuvent être utilisé dans les échanges entre DDFIPs et collectivités.
 
       La transmission doit contenir au moins un signalement pour être validée.
