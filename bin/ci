@@ -43,7 +43,7 @@ TEST_SCOPES = %w[
 ].freeze
 
 def test(scope = nil, paths = [])
-  raise "unknown command `bin/ci test:#{scope}`" unless scope.nil? || TEST_SCOPES.include?(scope)
+  raise ArgumentError, "unknown command `bin/ci test:#{scope}`" unless scope.nil? || TEST_SCOPES.include?(scope)
 
   log "Running tests"
   clear_coverage unless @coverage_cleared

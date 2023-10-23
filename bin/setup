@@ -165,6 +165,10 @@ def setup_submodules
   log "Update vendorized submodules"
   system! "git submodule init"
   system! "git submodule update"
+
+  log ""
+  log "✓ Submodules updated !"
+  log ""
 end
 
 def setup_territories
@@ -204,7 +208,7 @@ def help
   log "    bin/setup territories    # Import all EPCIs and communes from a remote source"
   log "    bin/setup mailcatcher    # Install mailcatcher"
   log "    bin/setup test           # Reset all databases for testing, it also accepts [rspec|parallel|watch|assets]"
-  log "    bin/setup submodules     # Get submodules"
+  log "    bin/setup submodules     # Initialize submodules"
   log "    bin/setup help           # Show this help"
   log ""
   log "Here are some other useful commands:"
