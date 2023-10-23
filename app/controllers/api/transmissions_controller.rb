@@ -47,9 +47,6 @@ module API
     see "transmissions#complete", "Validation d'une transmission"
 
     param :id, String, "UUID de la collectivité", required: true
-    param :transmission, Hash, "Attributs relatifs à la transmission" do
-      param :sandbox, :bool, "Transmission en mode sandbox", default_value: false
-    end
 
     returns code: 201, desc: "La transmission est initialisée" do
       param :transmission, Hash, "Attributs relatifs à la transmission" do

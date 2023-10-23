@@ -3,7 +3,7 @@
 FactoryBot.define do
   factory :epci do
     transient do
-      name_pattern { "%{type} %{city} #%{sequence}" }
+      name_pattern { "%{type} de %{city} #%{sequence}" }
     end
 
     siren { Faker::Company.french_siren_number }

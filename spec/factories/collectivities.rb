@@ -3,7 +3,7 @@
 FactoryBot.define do
   factory :collectivity do
     transient do
-      name_pattern { "%{territory} #%{sequence}" }
+      name_pattern { ENV["APIPIE_RECORD"] ? "%{territory}" : "%{territory} #%{sequence}" }
     end
 
     publisher

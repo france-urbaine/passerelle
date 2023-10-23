@@ -21,7 +21,7 @@ RSpec.describe "API::CollectivitiesController#index", :api do
     before { setup_access_token }
 
     context "when publisher have collectivities" do
-      let!(:collectivities) { create_list(:collectivity, 2, publisher: current_publisher) }
+      let!(:collectivities) { create_list(:collectivity, 2, :epci, publisher: current_publisher) }
 
       it { expect(response).to have_http_status(:success) }
 
