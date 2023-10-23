@@ -1,0 +1,16 @@
+= breadcrumbs_component do |breadcrumbs|
+  - breadcrumbs.with_path "Guides"
+  - breadcrumbs.with_path "Mode"
+
+.card
+  .card__content
+    | Bientôt disponible
+
+    / p
+    /   ' Pour découvrir l'API en toute sécurité, vous pouvez configurer une application en mode <code>sandbox</code> :
+    /   <br>
+    /   ' les transmissions initialisées à travers cette applications ne seront jamais transmises aux services de la DGFIP,
+    /   ' et les signalements ainsi créés ne seront jamais visibles dans Passerelle par toute autre organisation.
+    / p
+    /    ' Dans certains cas, votre compte éditeur peut être bridé en mode sandbox par défaut : consultez France Urbaine pour en savoir plus.
+    /    ' Lorsque ce bridage est en place, toute les tranmissions seront initialisée en mode sandbox, quelques soit le mode choisi sur votre application.
