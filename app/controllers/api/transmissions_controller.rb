@@ -64,7 +64,7 @@ module API
       @transmission = collectivity.transmissions.build
       @transmission.publisher = current_publisher
       @transmission.oauth_application = current_application
-      @transmission.sandbox = current_application.sandbox?
+      @transmission.sandbox = current_publisher.sandbox? || current_application.sandbox?
       @transmission.save
 
       respond_with @transmission, status: :created
