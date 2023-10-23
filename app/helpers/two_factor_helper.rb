@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module TwoFactorHelper
-  OTP_ISSUER = "FiscaHub"
+  OTP_ISSUER = "Passerelle"
 
   def otp_provisioning_uri(user = current_user)
     user.otp_provisioning_uri(user.email, issuer: OTP_ISSUER)

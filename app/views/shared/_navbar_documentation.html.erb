@@ -1,14 +1,14 @@
 <%= render Layout::NavbarComponent.new(class: "navbar--api") do |navbar| %>
   <% navbar.with_header do %>
-    <span class="brand__left">API Fisca</span><span class="brand__right">Hub</span>
+    <span class="brand__left">API Passe</span><span class="brand__right">relle</span>
   <% end %>
 
   <%
     navbar.with_section do |section|
       if allowed_to?(:index?, OauthApplication, with: Organization::OauthApplicationPolicy)
-        section.with_link("Retour à Fiscahub", organization_oauth_applications_url, icon: "arrow-uturn-left")
+        section.with_link("Retour à Passerelle", organization_oauth_applications_url, icon: "arrow-uturn-left")
       else
-        section.with_link("Retour à Fiscahub", root_url, icon: "arrow-uturn-left")
+        section.with_link("Retour à Passerelle", root_url, icon: "arrow-uturn-left")
       end
     end
 

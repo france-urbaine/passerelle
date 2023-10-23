@@ -4,11 +4,11 @@
 
   <%= tag.nav(**navbar_html_attributes, data_navbar_target: "expanded") do %>
     <div class="navbar__brand brand">
-      <%= image_tag("logo.svg", alt: "Logo de FiscaHub", height: 30) %>
+      <%= image_tag("logo.svg", alt: "Logo de Passerelle", height: 30) %>
       <% if header? %>
         <%= header %>
       <% else %>
-        <span class="brand__left">Fisca</span><span class="brand__right">Hub</span>
+        <span class="brand__left">Passe</span><span class="brand__right">relle</span>
       <% end %>
 
       <div class="flex-auto"></div>
@@ -67,7 +67,7 @@
 
   <nav class="navbar navbar--tablet" data-navbar-target="minified">
     <div class="navbar__brand brand">
-      <%= image_tag("logo.svg", alt: "Logo de FiscaHub", height: 30) %>
+      <%= image_tag("logo.svg", alt: "Logo de Passerelle", height: 30) %>
     </div>
 
     <% @links[0..4].each do |link| %>

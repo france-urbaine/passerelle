@@ -70,7 +70,7 @@ RSpec.describe "Organization::UsersController#create" do
       it "delivers confirmation instructions" do
         expect { request }
           .to have_sent_emails.by(1)
-          .and have_sent_email.with_subject("Votre inscription sur FiscaHub")
+          .and have_sent_email.with_subject("Votre inscription sur Passerelle")
       end
     end
 

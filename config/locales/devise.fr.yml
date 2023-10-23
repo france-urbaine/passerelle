@@ -15,17 +15,17 @@ fr:
 
     mailer:
       confirmation_instructions:
-        subject: "Votre inscription sur FiscaHub"
+        subject: "Votre inscription sur Passerelle"
       reconfirmation_instructions:
-        subject: "Modification de votre adresse e-mail sur FiscaHub"
+        subject: "Modification de votre adresse e-mail sur Passerelle"
       reset_password_instructions:
-        subject: "Modification de votre mot de passe sur FiscaHub"
+        subject: "Modification de votre mot de passe sur Passerelle"
       unlock_instructions:
-        subject: "Verrouillage de votre compte FiscaHub"
+        subject: "Verrouillage de votre compte Passerelle"
       email_changed:
-        subject: "Modification de votre adresse e-mail sur FiscaHub"
+        subject: "Modification de votre adresse e-mail sur Passerelle"
       password_change:
-        subject: "Modification de votre mot de passe sur FiscaHub"
+        subject: "Modification de votre mot de passe sur Passerelle"
 
     omniauth_callbacks:
       failure: "Nous n'avons pas pu vous authentifier via %{kind} : '%{reason}'."

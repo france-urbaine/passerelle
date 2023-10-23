@@ -68,7 +68,7 @@ RSpec.describe "Signing in" do
 
     expect(Users::Mailer).to have_sent_email
       .to("mdebomy@fiscalite-territoire.fr")
-      .with_subject("Connexion à FiscaHub")
+      .with_subject("Connexion à Passerelle")
       .with_body(include(marc.current_otp))
 
     # Fill the 2FA form

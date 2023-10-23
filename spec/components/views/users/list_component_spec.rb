@@ -24,7 +24,7 @@ RSpec.describe Views::Users::ListComponent, type: :component do
           expect(table).to have_selector("th", text: "Adresse mail")
           expect(table).to have_selector("th", text: "Organisation")
           expect(table).to have_selector("th", text: "Admin. de l'organisation")
-          expect(table).to have_selector("th", text: "Admin. de FiscaHub")
+          expect(table).to have_selector("th", text: "Admin. de Passerelle")
           expect(table).to have_selector("th", text: "Guichets")
 
           expect(table).to have_selector(:table_row, {
@@ -48,7 +48,7 @@ RSpec.describe Views::Users::ListComponent, type: :component do
           expect(table).to have_selector("th", text: "Adresse mail")
           expect(table).not_to have_selector("th", text: "Organisation")
           expect(table).not_to have_selector("th", text: "Admin. de l'organisation")
-          expect(table).not_to have_selector("th", text: "Admin. de FiscaHub")
+          expect(table).not_to have_selector("th", text: "Admin. de Passerelle")
           expect(table).not_to have_selector("th", text: "Guichets")
 
           expect(table).to have_selector(:table_row, {

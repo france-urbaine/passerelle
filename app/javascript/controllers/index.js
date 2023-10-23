@@ -11,17 +11,17 @@ application.register("nested-form", NestedForm)
 
 // Components
 // -----------------------------------------------------------------------------
-import NavbarController from "./components/navbar_controller"
-application.register("navbar", NavbarController)
-
 import AutocompleteController from "./components/autocomplete_controller"
 application.register("autocomplete", AutocompleteController)
+
+import DropdownController from "./components/dropdown_controller"
+application.register("dropdown", DropdownController)
 
 import ModalController from "./components/modal_controller"
 application.register("modal", ModalController)
 
-import DropdownController from "./components/dropdown_controller"
-application.register("dropdown", DropdownController)
+import NavbarController from "./components/navbar_controller"
+application.register("navbar", NavbarController)
 
 import NotificationController from "./components/notification_controller"
 application.register("notification", NotificationController)

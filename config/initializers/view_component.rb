@@ -14,7 +14,7 @@ Rails.application.configure do
   end
 
   if defined?(Lookbook)
-    config.lookbook.project_name = "FiscaHub"
+    config.lookbook.project_name = "Passerelle"
 
     HtmlBeautifier::HtmlParser.block_elements << "a"
     HtmlBeautifier::HtmlParser.block_elements << "button"

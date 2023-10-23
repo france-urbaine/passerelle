@@ -3545,9 +3545,9 @@ CREATE TABLE public.transmissions (
     collectivity_id uuid NOT NULL,
     oauth_application_id uuid,
     completed_at timestamp(6) without time zone,
+    sandbox boolean DEFAULT false NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL,
-    sandbox boolean DEFAULT false NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL
 );
 
 

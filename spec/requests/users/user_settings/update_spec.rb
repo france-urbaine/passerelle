@@ -79,8 +79,8 @@ RSpec.describe "Users::UserSettingsController#update" do
       it "delivers notifications about change to new and old user's addresses" do
         expect { request }
           .to have_sent_emails.by(2)
-          .and have_sent_email.with_subject("Modification de votre adresse e-mail sur FiscaHub").to("paul.lefebvre@legende.fr")
-          .and have_sent_email.with_subject("Modification de votre adresse e-mail sur FiscaHub").to(user.email)
+          .and have_sent_email.with_subject("Modification de votre adresse e-mail sur Passerelle").to("paul.lefebvre@legende.fr")
+          .and have_sent_email.with_subject("Modification de votre adresse e-mail sur Passerelle").to(user.email)
       end
     end
 
@@ -128,7 +128,7 @@ RSpec.describe "Users::UserSettingsController#update" do
       it "delivers a notification about change to user" do
         expect { request && perform_enqueued_jobs }
           .to have_sent_emails.by(1)
-          .and have_sent_email.with_subject("Modification de votre mot de passe sur FiscaHub").to(user.email)
+          .and have_sent_email.with_subject("Modification de votre mot de passe sur Passerelle").to(user.email)
       end
     end
 

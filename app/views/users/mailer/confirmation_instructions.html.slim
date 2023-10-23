@@ -3,7 +3,7 @@ p
 
 - if @resource.confirmed? && @resource.pending_reconfirmation?
   p
-    | Vous avez demandé à changer d'adresse email sur <strong>FiscaHub</strong>.
+    | Vous avez demandé à changer d'adresse email sur <strong>Passerelle</strong>.
     br
     | Veuillez confirmer votre nouvelle adresse :
   p
@@ -18,7 +18,7 @@ p
     = mail_to "contact@fiscahub.fr"
 - else
   p
-    | Nous vous invitons à rejoindre <strong>FiscaHub</strong>.
+    | Nous vous invitons à rejoindre <strong>Passerelle</strong>.
     br
     | Pour cela, veuillez suivre le lien ci-dessous :
   p
@@ -28,5 +28,5 @@ p
   p
     | Ce lien est valable #{distance_of_time_in_words(Devise.confirm_within)}.
     br
-    | Si vous n'avez pas demandé à rejoindre FiscaHub, veuillez ignorer ce message.
+    | Si vous n'avez pas demandé à rejoindre Passerelle, veuillez ignorer ce message.
 

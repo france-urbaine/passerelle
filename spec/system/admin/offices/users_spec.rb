@@ -63,7 +63,7 @@ RSpec.describe "Office users in admin" do
       expect(dialog).to have_field("Nom")
       expect(dialog).to have_field("Adresse mail")
       expect(dialog).to have_unchecked_field("Administrateur de l'organisation")
-      expect(dialog).to have_unchecked_field("Administrateur de la plateforme FiscaHub")
+      expect(dialog).to have_unchecked_field("Administrateur de la plateforme Passerelle")
 
       within ".form-block", text: "Guichets" do |block|
         expect(block).to have_checked_field("PELP de Bayonne")
@@ -111,7 +111,7 @@ RSpec.describe "Office users in admin" do
       expect(dialog).to have_field("Nom",          with: "Gauthier")
       expect(dialog).to have_field("Adresse mail", with: "maxime.gauthier@dgfip.finances.gouv.fr")
       expect(dialog).to have_checked_field("Administrateur de l'organisation")
-      expect(dialog).to have_unchecked_field("Administrateur de la plateforme FiscaHub")
+      expect(dialog).to have_unchecked_field("Administrateur de la plateforme Passerelle")
 
       within ".form-block", text: "Guichets" do |block|
         expect(block).to have_checked_field("PELP de Bayonne")
