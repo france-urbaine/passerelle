@@ -1,0 +1,91 @@
+div( data-controller="navbar" )
+
+  -# Full navbar
+  -# ---------------------------------------------------------------------------
+
+  = tag.nav(**navbar_html_attributes, data_navbar_target: "expanded") do
+    .navbar__brand.brand
+      = image_tag("logo.svg", alt: "Logo de Passerelle", height: 30)
+
+      - if header?
+        = header
+      - else
+        span.brand__left Passe
+        span.brand__right relle
+
+      .flex-auto
+      .navbar__close-button
+        = button_component "Fermer le menu", icon: "x-mark", icon_only: true, data: { action: "click->navbar#minify" }
+
+    - sections.each do |section|
+      - next if section.empty_links?
+
+      - if section.title
+        .navbar__header
+          = section.title
+
+      .navbar__links
+        - section.links.each do |link|
+          = render_link(link)
+
+        - section.subsections.each do |subsection|
+          - next if subsection.empty_links?
+
+          - if subsection.title
+            .navbar__subheader
+              = subsection.title
+
+          .navbar__links
+            - subsection.links.each do |link|
+              = render_link(link)
+
+    .flex-auto
+
+    .navbar__user
+      - # Use `_url` instead of `_path` to ensure using the right domain
+      = button_component(user_settings_url, title: "Gestion du compte", class: "navbar__link") do
+        .navbar__user-avatar
+          = icon_component "user-circle"
+
+        .navbar__user-name
+          .navbar__user-text= current_user&.name
+          .navbar__user-text= current_user&.organization&.name
+
+  .navbar__overlay( data-action="click->navbar#minify" role="button" aria-label="Fermer le menu" )
+
+  -# Tablet navbar
+  -# ---------------------------------------------------------------------------
+
+  nav.navbar.navbar--tablet( data-navbar-target="minified" )
+    .navbar__brand.brand
+      = image_tag("logo.svg", alt: "Logo de Passerelle", height: 30)
+
+    - links_with_icons[0..4].each do |link|
+      = render_icon_link(link)
+
+    .navbar__icon-link
+      = button_component "Afficher tout le menu", icon: "ellipsis-horizontal", icon_only: true, data: { action: "click->navbar#expand" }
+
+    .flex-auto
+
+    .navbar__icon-link
+      - # Use `_url` instead of `_path` to ensure using the right domain
+      = button_component "Gestion du compte", user_settings_url, icon: "user-circle", icon_only: true
+
+  -# Mobile navbar
+  -# ---------------------------------------------------------------------------
+
+  nav.navbar.navbar--mobile( data-navbar-target="minified")
+    .navbar__icon-link
+      = button_component "Afficher tout le menu", icon: "bars-3", icon_only: true, data: { action: "click->navbar#expand" }
+
+    .flex-auto
+
+    - links_with_icons[0..4].each do |link|
+      = render_icon_link(link)
+
+    .flex-auto
+
+    .navbar__icon-link
+      - # Use `_url` instead of `_path` to ensure using the right domain
+      = button_component "Gestion du compte", user_settings_url, icon: "user-circle", icon_only: true

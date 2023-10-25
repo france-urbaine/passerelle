@@ -24,6 +24,10 @@ module Layout
       options
     end
 
+    def links_with_icons
+      @links.select(&:icon?)
+    end
+
     def render_link(link)
       href = link.href
 
@@ -78,6 +82,10 @@ module Layout
         @disabled || href.nil?
       end
 
+      def icon?
+        @options[:icon]
+      end
+
       def before_render
         if @args.size == 1 && content?
           @href = @args[0]
@@ -115,6 +123,10 @@ module Layout
 
       def call
         ""
+      end
+
+      def empty_links?
+        links.empty? && subsections.all?(&:empty_links?)
       end
     end
   end

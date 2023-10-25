@@ -180,4 +180,50 @@ RSpec.describe Layout::NavbarComponent, type: :component do
       end
     }.to raise_exception(ArgumentError, "wrong number of arguments (given 0, expected 1..2)")
   end
+
+  it "doesn't render a section without links" do
+    sign_in
+    render_inline described_class.new do |navbar|
+      navbar.with_section("Part 1") do |section|
+        section.with_link("Link 1.1")
+      end
+
+      navbar.with_section("Part 2") do |_section|
+        # No links
+      end
+    end
+
+    expect(page).to have_selector(".navbar") do |navbar|
+      expect(navbar).to     have_text("Part 1")
+      expect(navbar).not_to have_text("Part 2")
+    end
+  end
+
+  it "doesn't render a section when subsections have no links" do
+    sign_in
+    render_inline described_class.new do |navbar|
+      navbar.with_section("Part 1") do |section|
+        section.with_subsection("Part 1.1") do |subsection|
+          subsection.with_link("Link 1.1.1")
+        end
+
+        section.with_subsection("Part 1.2") do |_subsection|
+          # No links
+        end
+      end
+
+      navbar.with_section("Part 2") do |section|
+        section.with_subsection("Part 2.1") do |_subsection|
+          # No links
+        end
+      end
+    end
+
+    expect(page).to have_selector(".navbar") do |navbar|
+      expect(navbar).to     have_text("Part 1")
+      expect(navbar).to     have_text("Part 1.1")
+      expect(navbar).not_to have_text("Part 1.2")
+      expect(navbar).not_to have_text("Part 2")
+    end
+  end
 end
