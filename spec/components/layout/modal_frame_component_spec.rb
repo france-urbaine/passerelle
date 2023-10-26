@@ -47,13 +47,15 @@ RSpec.describe Layout::ModalFrameComponent, type: :component do
       end
     end
 
-    aggregate_failures do
-      within "turbo-frame#modal > .modal > .modal__content > .modal__body" do |node|
-        expect(node).to have_link(class: "icon-button", href: "/home/root")
-      end
+    expect(page).to have_selector("turbo-frame#modal > .modal > .modal__content") do |modal|
+      aggregate_failures do
+        expect(modal).to have_selector(".modal__header-toolbar > a.modal__close-button") do |link|
+          expect(link).to have_html_attribute(:href).with_value("/home/root")
+        end
 
-      within "turbo-frame#modal > .modal > .modal__content > .modal__actions" do |node|
-        expect(node).to have_link("Close", class: "button", href: "/home/root")
+        expect(modal).to have_selector(".modal__actions > a.modal__close-action") do |link|
+          expect(link).to have_html_attribute(:href).with_value("/home/root")
+        end
       end
     end
   end
