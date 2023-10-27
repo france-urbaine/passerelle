@@ -10,7 +10,6 @@ name: CI
 on:
   workflow_dispatch:
   pull_request:
-    types: [ready_for_review]
     paths:
       - "**"
       - "!bin/*"
