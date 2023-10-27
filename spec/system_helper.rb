@@ -17,12 +17,6 @@ RSpec.configure do |config|
   #
   config.fixture_path = Rails.root.join("spec/fixtures/records")
 
-  # Set default host to the right URL with `_url` routes helpers
-  #
-  config.before type: :system do
-    Rails.application.routes.default_url_options[:host] = Rails.application.config.x.domain
-  end
-
   # Configure database cleaning strategy
   #
   config.before :context, type: :system do
@@ -36,12 +30,21 @@ RSpec.configure do |config|
     DatabaseCleaner.clean
   end
 
+  # Set default host to the right URL when using `_url` routes helpers in system specs
+  #
+  config.around :each, type: :system do |example|
+    previous_host = Rails.application.routes.default_url_options[:host]
+    Rails.application.routes.default_url_options[:host] = Capybara.app_host
+    example.run
+    Rails.application.routes.default_url_options[:host] = previous_host
+  end
+
   # Make urls in mailers contain the correct server host.
   # This is required for testing links in emails (e.g., via capybara-email).
   #
   config.around :each, type: :system do |example|
     previous_host = Rails.application.default_url_options[:host]
-    Rails.application.default_url_options[:host] = Capybara.server_host
+    Rails.application.default_url_options[:host] = Capybara.app_host
     example.run
     Rails.application.default_url_options[:host] = previous_host
   end

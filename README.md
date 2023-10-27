@@ -66,13 +66,20 @@ bin/rails credentials:help
 ### Subdomains
 
 Some part of the application, use subdomains, such as `api.`.  
-In development, the default host is `localhost` or `127.0.0.1` and it doesn't allow to use subdomains.
+The default Rails host is `localhost` or `127.0.0.1` but it doesn't allow to use subdomains.  
+We need a domain with a longer TLD:
 
 * The free DNS resolver `lvh.me` allow you to use subdomains out of the box in development & test.
   Once the server is running, go to http://lvh.me:3000
 
-* To avoid depending on a third-party resolver or to use a custom domain, you need to setup one.
-  Add yout domain to `.env`:
+* To avoid depending on a third-party resolver, you can add "lvh.me" to your `/etc/hosts`:
+
+  ```
+  127.0.0.1 lvh.me
+  127.0.0.1 api.lvh.me
+  ```
+
+* You can also setup a custom domain by adding it to your domain to `.env.development`:
   
   ```
   DOMAIN_APP = localhost.local
@@ -84,6 +91,9 @@ In development, the default host is `localhost` or `127.0.0.1` and it doesn't al
   127.0.0.1 localhost.local
   127.0.0.1 api.localhost.local
   ```
+
+NOTE: `localhost.local` may not working when running system specs.
+You'd better use `lvh.me` or any other custom domain.
 
 ### Previews
 

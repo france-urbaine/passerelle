@@ -48,10 +48,6 @@ module Fiscahub
     # a longer TLD.
     #
     # The free DNS resolver `lvh.me` allows to use subdomains out of the box in development & test.
-    # If you doesn't want to depends on third-party resolver, use:
-    #
-    #   DOMAIN_APP = localhost.local
-    #
     # In production, DOMAIN_APP is mandatory.
     #
     config.x.domain =
@@ -62,7 +58,7 @@ module Fiscahub
       end
 
     config.hosts << ".#{config.x.domain}"
-    config.hosts += %w[.example.com] if Rails.env.test?
+    config.hosts << ".example.com" if Rails.env.test?
 
     # If your main domain is already a subdomain (such as alpha.fiscahub.fr),
     # you should also define TLD length:
