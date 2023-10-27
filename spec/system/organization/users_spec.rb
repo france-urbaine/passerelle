@@ -44,9 +44,13 @@ RSpec.describe "Manage users from organization" do
       # On the user page, we expect only one email link.
       # It should not have link to organization
       #
-      expect(page).to     have_selector("h1", text: "Marc Debomy")
-      expect(page).to     have_link("mdebomy@fiscalite-territoire.fr")
-      expect(page).not_to have_link("Fiscalité & Territoire")
+      # Scope to main content to exclude link from the navbar
+      #
+      within "main.content" do
+        expect(page).to     have_selector("h1", text: "Marc Debomy")
+        expect(page).to     have_link("mdebomy@fiscalite-territoire.fr")
+        expect(page).not_to have_link("Fiscalité & Territoire")
+      end
     end
 
     it "invites an user from the index page" do
@@ -574,9 +578,13 @@ RSpec.describe "Manage users from organization" do
       # On the user page, we expect only one email link.
       # It should not have link to organization
       #
-      expect(page).to     have_selector("h1", text: "Christelle Droitier")
-      expect(page).to     have_link("christelle.droitier@paysbasque.fr")
-      expect(page).not_to have_link("CA du Pays Basque")
+      # Scope to main content to exclude link from the navbar
+      #
+      within "main.content" do
+        expect(page).to     have_selector("h1", text: "Christelle Droitier")
+        expect(page).to     have_link("christelle.droitier@paysbasque.fr")
+        expect(page).not_to have_link("CA du Pays Basque")
+      end
     end
   end
 

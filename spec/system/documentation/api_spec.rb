@@ -16,10 +16,10 @@ RSpec.describe "API Documentation" do
 
     # There should be a navbar
     #
-    navbar = find(".navbar")
-
-    expect(navbar).to have_link("A propos")
-    expect(navbar).to have_link("Authentification")
+    within ".navbar" do |navbar|
+      expect(navbar).to have_link("A propos")
+      expect(navbar).to have_link("Authentification")
+    end
 
     click_on "Authentification"
 

@@ -13,6 +13,6 @@ RSpec.configure do |config|
 
     driven_by :selenium,
       using: ENV.fetch("WEBDRIVER", "headless_firefox").to_sym,
-      screen_size: [1200, 800]
+      screen_size: [1280, 800]
   end
 end

@@ -15,7 +15,7 @@ end
 Capybara.register_driver(:better_cuprite) do |app|
   Capybara::Cuprite::Driver.new(
     app,
-    window_size: [1200, 800],
+    window_size: [1280, 800],
     # See additional options for Dockerized environment in the respective section of this article
     browser_options: {},
     # Increase Chrome startup wait time (required for stable CI builds)
