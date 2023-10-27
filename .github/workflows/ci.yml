@@ -35,7 +35,7 @@ jobs:
       postgres:
         image: postgres:14.8
         env:
-          POSTGRES_DB:       fiscahub_test
+          POSTGRES_DB:       passerelle_test
           POSTGRES_PASSWORD: postgres
         ports:
           - 5432:5432
@@ -74,7 +74,7 @@ jobs:
         POSTGRESQL_PORT:     5432
         POSTGRESQL_USER:     postgres
         POSTGRESQL_PASSWORD: postgres
-        POSTGRESQL_DATABASE: fiscahub_test
+        POSTGRESQL_DATABASE: passerelle_test
       run: |
         bin/setup test
 
@@ -89,7 +89,7 @@ jobs:
         POSTGRESQL_PORT:     5432
         POSTGRESQL_USER:     postgres
         POSTGRESQL_PASSWORD: postgres
-        POSTGRESQL_DATABASE: fiscahub_test
+        POSTGRESQL_DATABASE: passerelle_test
       run: |
         bin/ci test:unit
 
@@ -102,7 +102,7 @@ jobs:
       postgres:
         image: postgres:14.8
         env:
-          POSTGRES_DB:       fiscahub_test
+          POSTGRES_DB:       passerelle_test
           POSTGRES_PASSWORD: postgres
         ports:
           - 5432:5432
@@ -140,7 +140,7 @@ jobs:
         POSTGRESQL_PORT:     5432
         POSTGRESQL_USER:     postgres
         POSTGRESQL_PASSWORD: postgres
-        POSTGRESQL_DATABASE: fiscahub_test
+        POSTGRESQL_DATABASE: passerelle_test
       run: |
         bin/setup test
 
@@ -152,7 +152,7 @@ jobs:
         POSTGRESQL_PORT:     5432
         POSTGRESQL_USER:     postgres
         POSTGRESQL_PASSWORD: postgres
-        POSTGRESQL_DATABASE: fiscahub_test
+        POSTGRESQL_DATABASE: passerelle_test
       run: |
         bin/ci test:system
 

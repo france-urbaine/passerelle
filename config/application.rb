@@ -9,7 +9,7 @@ require "active_storage/engine"
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
-module Fiscahub
+module Passerelle
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.0
@@ -80,7 +80,7 @@ module Fiscahub
     #   DOMAIN_COOKIE = fiscahub.fr
     #
     config.session_store :cookie_store,
-      key:        "_fiscahub_session",
+      key:        "_passerelle_session",
       domain:     ENV.fetch("DOMAIN_COOKIE", :all),
       tld_length: 2
 
