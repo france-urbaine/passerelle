@@ -15,6 +15,7 @@ module ComponentsHelper
     noscript_component:               "UI::NoscriptComponent",
     notification_component:           "UI::NotificationComponent",
     tabs_component:                   "UI::TabsComponent",
+    attributes_list_component:        "UI::AttributesListComponent",
 
     # UI form components
     checkboxes_component:             "UI::Form::CheckboxesComponent",

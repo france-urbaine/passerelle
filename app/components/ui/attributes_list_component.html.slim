@@ -1,0 +1,13 @@
+.attributes-list.card
+  dl.description-list
+    - attributes.each do |attribute|
+      .description-list__row
+        dt
+          - if record && record.respond_to?(attribute.label)
+            = record.class.human_attribute_name(attribute.label)
+          - else
+            = attribute.label
+        dd[class="#{attribute.css_class}"]
+          = attribute
+          - attribute.actions.each do |action|
+            = action

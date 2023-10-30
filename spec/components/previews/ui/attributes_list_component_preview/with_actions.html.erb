@@ -1,0 +1,9 @@
+<div class="flex flex-col space-y-4">
+  <%= attributes_list_component do |list| %>
+    <% list.with_attribute("Utilisateur") do |attribute| %>
+      <%= "fake@solutions-territoire.fr" %>
+      <% attribute.with_action("Inviter", new_admin_user_invitation_path(user_id: 1)) %>
+      <% attribute.with_action("Supprimer", remove_admin_user_path(id: 1)) %>
+    <% end %>
+  <% end %>
+</div>
