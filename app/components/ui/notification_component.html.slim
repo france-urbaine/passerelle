@@ -27,7 +27,12 @@
             = simple_format(description) if description.present?
 
           .notification__closing
-            button.icon-button.notification__closing-button( data-action="notification#hide" )
+            a.icon-button.notification__closing-button(
+              role="button"
+              data-action="notification#hide"
+              aria-label="Masquer cette notification"
+              href=request.url
+            )
               = icon_component("x-mark", "Masquer cette notification")
 
         - if actions.any?

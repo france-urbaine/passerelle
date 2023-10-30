@@ -2,7 +2,7 @@
 
 module Layout
   class ModalFrameComponent < ApplicationViewComponent
-    renders_one :modal, UI::ModalComponent
+    renders_one :modal, -> { UI::ModalComponent.new(referrer: @referrer) }
 
     def initialize(referrer: nil)
       @referrer = referrer

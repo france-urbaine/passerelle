@@ -10,8 +10,10 @@ export default class extends Controller {
     if (this.delayValue) this.timeout = setTimeout(this.hide.bind(this), this.delayValue)
   }
 
-  async hide () {
+  async hide (event) {
+    if (event) event.preventDefault()
     if (this.timeout) clearTimeout(this.timeout)
+
     await this.leave()
     this.element.remove()
   }
