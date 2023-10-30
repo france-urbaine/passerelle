@@ -30,13 +30,13 @@ module Views
 
       def communes_url
         @communes_url ||= @params.fetch(:communes_url) do
-          Fiscahub::Application::DEFAULT_COMMUNES_URL.gsub(URL_ROOT_REGEXP, "")
+          Passerelle::Application::DEFAULT_COMMUNES_URL.gsub(URL_ROOT_REGEXP, "")
         end
       end
 
       def epcis_url
         @epcis_url ||= @params.fetch(:epcis_url) do
-          Fiscahub::Application::DEFAULT_EPCIS_URL.gsub(URL_ROOT_REGEXP, "")
+          Passerelle::Application::DEFAULT_EPCIS_URL.gsub(URL_ROOT_REGEXP, "")
         end
       end
     end

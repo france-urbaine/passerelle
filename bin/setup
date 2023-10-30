@@ -144,7 +144,7 @@ def setup_test(subject = nil)
       log "Setup test database for guard testing ignore due to presence of POSTGRESQL_DATABASE"
     else
       log "Setup test database for guard testing"
-      system!({ "RAILS_ENV" => "test", "POSTGRESQL_DATABASE" => "fiscahub_test_watch" }, "bin/rails db:test:prepare")
+      system!({ "RAILS_ENV" => "test", "POSTGRESQL_DATABASE" => "passerelle_test_watch" }, "bin/rails db:test:prepare")
     end
   end
 

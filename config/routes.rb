@@ -74,7 +74,7 @@ Rails.application.routes.draw do
     resources :organizations, only: %i[index], path: "/organisations"
     resources :territories,   only: %i[index], path: "/territoires"
 
-    # Fiscahub features
+    # Passerelle features
     #
     resources :dashboards, only: %i[index], path: "/"
 

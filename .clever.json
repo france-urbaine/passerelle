@@ -3,9 +3,16 @@
     {
       "app_id": "app_cdac2714-3b60-4406-b7db-817d4a50a719",
       "org_id": "orga_8988f58e-5491-49dd-8e65-0e2a28249cd5",
-      "deploy_url": "https://push-n2-par-clevercloud-customers.services.clever-cloud.com/app_cdac2714-3b60-4406-b7db-817d4a50a719.git",
-      "name": "Fiscahub (v2)",
-      "alias": "Fiscahub-(v2)"
+      "deploy_url": "https://push-n3-par-clevercloud-customers.services.clever-cloud.com/app_cdac2714-3b60-4406-b7db-817d4a50a719.git",
+      "name": "Passerelle",
+      "alias": "production"
+    },
+    {
+      "app_id": "app_dfabf65b-ded1-42c2-80d6-708790dd6ca9",
+      "org_id": "orga_8988f58e-5491-49dd-8e65-0e2a28249cd5",
+      "deploy_url": "https://push-n3-par-clevercloud-customers.services.clever-cloud.com/app_dfabf65b-ded1-42c2-80d6-708790dd6ca9.git",
+      "name": "Passerelle (alpha)",
+      "alias": "alpha"
     }
   ]
 }

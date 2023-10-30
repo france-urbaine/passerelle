@@ -9,7 +9,7 @@ default: &default
 
 development:
   <<: *default
-  database: <%= ENV.fetch("POSTGRESQL_DATABASE", "fiscahub_development") %>
+  database: <%= ENV.fetch("POSTGRESQL_DATABASE", "passerelle_development") %>
   # Minimum log levels, in increasing order:
   #   debug5, debug4, debug3, debug2, debug1,
   #   log, notice, warning, error, fatal, and panic
@@ -21,7 +21,7 @@ development:
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  database: <%= ENV.fetch("POSTGRESQL_DATABASE", "fiscahub_test") %><%= ENV["TEST_ENV_NUMBER"] %>
+  database: <%= ENV.fetch("POSTGRESQL_DATABASE", "passerelle_test") %><%= ENV["TEST_ENV_NUMBER"] %>
 
 production:
   <<: *default

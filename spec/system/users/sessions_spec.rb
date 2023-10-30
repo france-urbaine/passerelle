@@ -12,14 +12,14 @@ RSpec.describe "Signing in" do
   it "logs in" do
     # Setup user credentials
     #
-    marc.update(password: "fiscahub/fiscahub", otp_method: "2fa", otp_secret: User.generate_otp_secret)
+    marc.update(password: "passerelle/passerelle", otp_method: "2fa", otp_secret: User.generate_otp_secret)
 
     visit new_user_session_path
 
     # Fill the login form
     #
     fill_in "Adresse mail", with: "mdebomy@fiscalite-territoire.fr"
-    fill_in "Mot de passe", with: "fiscahub/fiscahub"
+    fill_in "Mot de passe", with: "passerelle/passerelle"
     click_on "Connexion"
 
     # The browser should stay on the same page
@@ -45,14 +45,14 @@ RSpec.describe "Signing in" do
     # Setup user credentials to receive OTP code by email
     #
     fiscalite_territoire.update(allow_2fa_via_email: true)
-    marc.update(password: "fiscahub/fiscahub", otp_method: "email", otp_secret: User.generate_otp_secret)
+    marc.update(password: "passerelle/passerelle", otp_method: "email", otp_secret: User.generate_otp_secret)
 
     visit new_user_session_path
 
     # Fill the login form
     #
     fill_in "Adresse mail", with: "mdebomy@fiscalite-territoire.fr"
-    fill_in "Mot de passe", with: "fiscahub/fiscahub"
+    fill_in "Mot de passe", with: "passerelle/passerelle"
     click_on "Connexion"
 
     # The browser should stay on the same page
@@ -89,7 +89,7 @@ RSpec.describe "Signing in" do
     # Fill the login form
     #
     fill_in "Adresse mail", with: "leonard@fiscalite-territoire.fr"
-    fill_in "Mot de passe", with: "fiscahub/fiscahub"
+    fill_in "Mot de passe", with: "passerelle/passerelle"
     click_on "Connexion"
 
     # The browser should stay on the same page
@@ -123,14 +123,14 @@ RSpec.describe "Signing in" do
   it "rejects OTP attempt" do
     # Setup user credentials
     #
-    marc.update(password: "fiscahub/fiscahub", otp_method: "2fa", otp_secret: User.generate_otp_secret)
+    marc.update(password: "passerelle/passerelle", otp_method: "2fa", otp_secret: User.generate_otp_secret)
 
     visit new_user_session_path
 
     # Fill the login form
     #
     fill_in "Adresse mail", with: "mdebomy@fiscalite-territoire.fr"
-    fill_in "Mot de passe", with: "fiscahub/fiscahub"
+    fill_in "Mot de passe", with: "passerelle/passerelle"
     click_on "Connexion"
 
     # The browser should stay on the same page
@@ -169,15 +169,15 @@ RSpec.describe "Signing in" do
   it "allows to interrupt login process at OTP step, and then logs in with another user" do
     # Setup users credentials
     #
-    marc.update(password: "fiscahub/fiscahub", otp_method: "2fa", otp_secret: User.generate_otp_secret)
-    elise.update(password: "fiscahub/fiscahub", otp_method: "2fa", otp_secret: User.generate_otp_secret)
+    marc.update(password: "passerelle/passerelle", otp_method: "2fa", otp_secret: User.generate_otp_secret)
+    elise.update(password: "passerelle/passerelle", otp_method: "2fa", otp_secret: User.generate_otp_secret)
 
     visit new_user_session_path
 
     # Fill the login form
     #
     fill_in "Adresse mail", with: "mdebomy@fiscalite-territoire.fr"
-    fill_in "Mot de passe", with: "fiscahub/fiscahub"
+    fill_in "Mot de passe", with: "passerelle/passerelle"
     click_on "Connexion"
 
     # The browser should stay on the same page
@@ -202,7 +202,7 @@ RSpec.describe "Signing in" do
     # Fill the login form
     #
     fill_in "Adresse mail", with: "elacroix@fiscalite-territoire.fr"
-    fill_in "Mot de passe", with: "fiscahub/fiscahub"
+    fill_in "Mot de passe", with: "passerelle/passerelle"
     click_on "Connexion"
 
     # The browser should stay on the same page
