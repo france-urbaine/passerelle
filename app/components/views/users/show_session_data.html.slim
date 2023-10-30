@@ -1,39 +1,22 @@
-.card
-  dl.description-list
-    .description-list__row
-      dt Création du compte
-      dd= @user.created_at
+= attributes_list_component(@user) do |list|
+  - list.with_attribute(:created_at)
 
-    - if @user.confirmed?
-      .description-list__row
-        dt Confirmation du compte
-        dd= @user.confirmed_at
+  - if @user.confirmed?
+    - list.with_attribute(:confirmed_at)
 
-      .description-list__row
-        dt Dernière connexion
-        dd
-          = @user.current_sign_in_at
-          = " @ " if @user.current_sign_in_at && @user.current_sign_in_ip
-          = @user.current_sign_in_ip
+    - list.with_attribute(:current_sign_in_at) do |attribute|
+      = @user.current_sign_in_at
+      = " @ " if @user.current_sign_in_at && @user.current_sign_in_ip
+      = @user.current_sign_in_ip
 
-      .description-list__row
-        dt Précédente connexion
-        dd
-          = @user.last_sign_in_at
-          = " @ " if @user.last_sign_in_at && @user.last_sign_in_ip
-          = @user.last_sign_in_ip
+    - list.with_attribute(:last_sign_in_at) do |attribute|
+      = @user.last_sign_in_at
+      = " @ " if @user.last_sign_in_at && @user.last_sign_in_ip
+      = @user.last_sign_in_ip
 
-      .description-list__row
-        dt Demande de réinitialisation du mot de passe
-        dd= @user.reset_password_sent_at
+    - list.with_attribute(:reset_password_sent_at)
 
-      .description-list__row
-        dt Verrouillage du compte
-        dd= @user.locked_at
-
-    - else
-      .description-list__row
-        dt Expiration de l'invitation
-        dd= @user.confirmation_sent_at + User.confirm_within
-
-
+    - list.with_attribute(:locked_at)
+  - else
+    - list.with_attribute("Expiration de l'invitation") do |attribute|
+      = @user.confirmation_sent_at + User.confirm_within

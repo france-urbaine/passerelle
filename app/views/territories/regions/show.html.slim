@@ -11,31 +11,29 @@
     = icon_component("identification", "Nouvelle section")
     | Description
 
-  .card
-    dl.description-list
-      .description-list__row
-        dt Code INSEE de la région
-        dd= @region.code_region
+  = attributes_list_component(@region) do |list|
+    - list.with_attribute(:code_region) do |attribute|
+      = @region.code_region
 
-      .description-list__row
-        dt Départements
-        dd= display_count(@region.departements_count, "département") if @region.departements_count.positive?
+    - list.with_attribute("Départements") do |attribute|
+      - if @region.departements_count.positive?
+        = display_count(@region.departements_count, "département")
 
-      .description-list__row
-        dt EPCI
-        dd= display_count(@region.epcis_count, "EPCI") if @region.epcis_count.positive?
+    - list.with_attribute("EPCI") do |attribute|
+      - if @region.epcis_count.positive?
+        = display_count(@region.epcis_count, "EPCI")
 
-      .description-list__row
-        dt Communes
-        dd= display_count(@region.communes_count, "commune") if @region.communes_count.positive?
+    - list.with_attribute("Communes") do |attribute|
+      - if @region.communes_count.positive?
+        = display_count(@region.communes_count, "commune")
 
-      .description-list__row
-        dt DDFIP enregistrées
-        dd= display_count(@region.ddfips_count, "DDFIP") if @region.ddfips_count.positive?
+    - list.with_attribute("DDFIP enregistrées") do |attribute|
+      - if @region.ddfips_count.positive?
+        = display_count(@region.ddfips_count, "DDFIP")
 
-      .description-list__row
-        dt Collectivités enregistrées
-        dd= display_count(@region.collectivities_count, "collectivité") if @region.collectivities_count.positive?
+    - list.with_attribute("Collectivités enregistrées") do |attribute|
+      - if @region.collectivities_count.positive?
+        = display_count(@region.collectivities_count, "collectivité")
 
   - if allowed_to?(:index?, Departement)
     .content__separator

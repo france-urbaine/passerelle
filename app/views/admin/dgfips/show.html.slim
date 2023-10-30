@@ -13,23 +13,21 @@
     = icon_component("identification", "Nouvelle section")
     | Description
 
-  .card
-    dl.description-list
-      .description-list__row
-        dt Contact
-        dd= "#{@dgfip.contact_first_name} #{@dgfip.contact_last_name}".strip.presence
+  = attributes_list_component(@dgfip) do |list|
+    - list.with_attribute("Contact") do |attribute|
+      = "#{@dgfip.contact_first_name} #{@dgfip.contact_last_name}".strip.presence
 
-      .description-list__row
-        dt Adresse mail de contact
-        dd= mail_to(@dgfip.contact_email) if @dgfip.contact_email?
+    - list.with_attribute("Adresse mail de contact") do |attribute|
+      - if @dgfip.contact_email?
+        = mail_to(@dgfip.contact_email)
 
-      .description-list__row
-        dt Numéro de téléphone
-        dd= phone_to(@dgfip.contact_phone) if @dgfip.contact_phone?
+    - list.with_attribute("Numéro de téléphone") do |attribute|
+      - if @dgfip.contact_phone?
+        = phone_to(@dgfip.contact_phone)
 
-      .description-list__row
-        dt Utilisateurs
-        dd= display_count(@dgfip.users_count, "utilisateur") if @dgfip.users_count.positive?
+    - list.with_attribute("Utilisateurs") do |attribute|
+      - if @dgfip.users_count.positive?
+        = display_count(@dgfip.users_count, "utilisateur")
 
   - if allowed_to?(:index?, User)
     .content__separator

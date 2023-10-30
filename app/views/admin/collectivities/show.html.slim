@@ -14,48 +14,40 @@
     = icon_component("identification", "Nouvelle section")
     | Description
 
-  .card
-    dl.description-list
-      .description-list__row
-        dt Éditeur
-        dd= authorized_link_to @collectivity.publisher, namespace: :admin
+  = attributes_list_component(@collectivity) do |list|
+    - list.with_attribute(:publisher) do |attribute|
+      = authorized_link_to(@collectivity.publisher, namespace: :admin)
+    
+    - list.with_attribute(:territory) do |attribute|
+      = authorized_link_to @collectivity.territory, namespace: :admin do
+        = @collectivity.territory.qualified_name
+        = " (#{@collectivity.territory.model_name.human})"
 
-      .description-list__row
-        dt Territoire
-        dd
-          = authorized_link_to @collectivity.territory, namespace: :admin do
-            = @collectivity.territory.qualified_name
-            = " (#{@collectivity.territory.model_name.human})"
+    - list.with_attribute(:siren) do |attribute|
+        = display_siren(@collectivity.siren)
 
-      .description-list__row
-        dt Numéro SIREN de la collectivité
-        dd= display_siren(@collectivity.siren)
+    - list.with_attribute("Contact") do |attribute|
+        = "#{@collectivity.contact_first_name} #{@collectivity.contact_last_name}".strip.presence
 
-      .description-list__row
-        dt Contact
-        dd= "#{@collectivity.contact_first_name} #{@collectivity.contact_last_name}".strip.presence
+    - list.with_attribute(:contact_email) do |attribute|
+        - if @collectivity.contact_email?
+          = mail_to(@collectivity.contact_email)
 
-      .description-list__row
-        dt Adresse mail de contact
-        dd= mail_to(@collectivity.contact_email) if @collectivity.contact_email?
+    - list.with_attribute(:contact_phone) do |attribute|
+        - if @collectivity.contact_phone?
+          = phone_to(@collectivity.contact_phone)
 
-      .description-list__row
-        dt Numéro de téléphone
-        dd= phone_to(@collectivity.contact_phone) if @collectivity.contact_phone?
+    - list.with_attribute("Utilisateurs") do |attribute|
+        - if @collectivity.users_count.positive?
+          = display_count(@collectivity.users_count, "utilisateur")
 
-      .description-list__row
-        dt Utilisateurs
-        dd= display_count(@collectivity.users_count, "utilisateur") if @collectivity.users_count.positive?
-
-      .description-list__row
-        dt Signalements
-        dd
-          - if @collectivity.reports_transmitted_count.positive?
-            = display_count(@collectivity.reports_transmitted_count, "transmis")
-            = " / "
-            = display_count(@collectivity.reports_approved_count, "approuvé")
-            = " / "
-            = display_count(@collectivity.reports_rejected_count, "rejeté")
+    - list.with_attribute("Signalements") do |attribute|
+      - if @collectivity.reports_transmitted_count.positive?
+        = display_count(@collectivity.reports_transmitted_count, "transmis")
+        = " / "
+        = display_count(@collectivity.reports_approved_count, "approuvé")
+        = " / "
+        = display_count(@collectivity.reports_rejected_count, "rejeté")
 
   - if allowed_to?(:index?, User)
     .content__separator

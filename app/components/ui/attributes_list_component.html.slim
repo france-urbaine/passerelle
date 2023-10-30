@@ -1,13 +1,24 @@
 .attributes-list.card
   dl.description-list
     - attributes.each do |attribute|
-      .description-list__row
+      = tag.div **attribute.row_html_attributes do
         dt
           - if record && record.respond_to?(attribute.label)
             = record.class.human_attribute_name(attribute.label)
           - else
             = attribute.label
-        dd[class="#{attribute.css_class}"]
-          = attribute
-          - attribute.actions.each do |action|
-            = action
+
+        dd
+          span
+            - if !attribute.content? && record && record.respond_to?(attribute.label)
+              = record.public_send(attribute.label)
+            - else
+              = attribute
+          
+          - if attribute.reference?
+            span= attribute.reference
+          
+          - if attribute.actions?
+            span
+              - attribute.actions.each do |action|
+                = action

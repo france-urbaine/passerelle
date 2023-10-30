@@ -17,21 +17,15 @@
         - if api[:deprecated]
           .badge.badge--red DEPRECATED
 
-      .card
-        dl.description-list
-          .description-list__row
-            dt Formats supportés
-            dd= @method[:formats].join(', ')
+      = attributes_list_component do |list|
+        - list.with_attribute("Formats supportés") do |attribute|
+          = @method[:formats].join(', ')
 
-          .description-list__row
-            dt Méthode
-            dd
-              code= api[:http_method]
+        - list.with_attribute("Méthode") do |attribute|
+          code= api[:http_method]
 
-          .description-list__row
-            dt URL
-            dd
-              code= URI.join(api_url, api[:api_url])
+        - list.with_attribute("URL") do |attribute|
+          code= URI.join(api_url, api[:api_url])
 
     .lg:grid.grid-cols-2.gap-12.items-start
       div

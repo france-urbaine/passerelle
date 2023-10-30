@@ -2,6 +2,7 @@
   <%=
     record= Collectivity.new(name: 'Toulouse')
     attributes_list_component(record) do |list|
+      list.with_attribute(:name)
       list.with_attribute(:name) do
         "#{record.name} (Haute-Garonne)"
       end

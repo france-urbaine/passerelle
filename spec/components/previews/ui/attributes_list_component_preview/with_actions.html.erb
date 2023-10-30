@@ -5,5 +5,9 @@
       <% attribute.with_action("Inviter", new_admin_user_invitation_path(user_id: 1)) %>
       <% attribute.with_action("Supprimer", remove_admin_user_path(id: 1)) %>
     <% end %>
+
+    <% list.with_attribute("Département") do |attribute| %>
+      <%= "Hérault" %>
+    <% end %>
   <% end %>
 </div>

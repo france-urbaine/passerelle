@@ -8,28 +8,21 @@
       div id=dom_id(@report, :status) is="turbo-frame"
         = report_badge(@report)
 
-.card
-  dl.description-list
-    .description-list__row
-      dt Référence du paquet
-      dd= authorized_link_to @report.package
+= attributes_list_component(@report) do |list|
+  - list.with_attribute("Référence du paquet") do |attribute|
+    = authorized_link_to @report.package
 
-    .description-list__row
-      dt Date de transmission
-      dd
-        em Non transmis
+  - list.with_attribute("Date de transmission") do |attribute|
+    em Non transmis
 
-    .description-list__row
-      dt Date d'échéance
-      dd
-        - if @report.package&.due_on
-          = l(@report.package.due_on)
-        - elsif @report.packing?
-          em A spécifier dans le paquet
+  - list.with_attribute("Date d'échéance") do |attribute|
+    - if @report.package&.due_on
+      = l(@report.package.due_on)
+    - elsif @report.packing?
+      em A spécifier dans le paquet
 
-    .description-list__row
-      dt Type de signalement
-      dd= t(@report.form_type, scope: "enum.report_form_type")
+  - list.with_attribute("Type de signalement") do |attribute|
+    = t(@report.form_type, scope: "enum.report_form_type")
 
 .content__separator
 .subheader-bar
@@ -42,20 +35,14 @@
       .subheader-bar__action
         = button_component "Modifier", edit_report_path(@report, "information"), icon: "pencil-square", modal: true
 
-.card
-  dl.description-list
-    .description-list__row
-      dt Objet(s)
-      dd
-        = render_valid_content(:anomalies) do
-          = helpers.list(@report.anomalies) { |value| t(value, scope: ["enum.anomalies", @report.form_type]) }
+= attributes_list_component(@report) do |list|
+  - list.with_attribute(:anomalies) do |attribute|
+    = render_valid_content(:anomalies) do
+      = helpers.list(@report.anomalies) { |value| t(value, scope: ["enum.anomalies", @report.form_type]) }
 
-    .description-list__row
-      dt Date du constat
-      dd
-        = render_valid_content(:date_constat) do
-          = helpers.display_date(@report.date_constat)
+  - list.with_attribute(:date_constat) do |attribute|
+    = render_valid_content(:date_constat) do
+      = helpers.display_date(@report.date_constat)
 
-    .description-list__row
-      dt Priorité
-      dd= render Views::Reports::PriorityIconComponent.new(@report)
+  - list.with_attribute(:priority) do |attribute|
+    = render Views::Reports::PriorityIconComponent.new(@report)

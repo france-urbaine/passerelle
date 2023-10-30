@@ -14,36 +14,33 @@
     = icon_component("identification", "Nouvelle section")
     | Description
 
-  .card.mb-12
-    dl.description-list
-      .description-list__row
-        dt Organisation
-        dd= authorized_link_to @user.organization, namespace: :admin
+  = attributes_list_component(@user) do |list|
+    - list.with_attribute(:organization) do |attribute|
+      = authorized_link_to @user.organization, namespace: :admin
 
-      - if @user.organization.is_a?(DDFIP)
-        .description-list__row
-          dt Guichets
-          dd= render Views::Users::ShowOfficesListComponent.new(@user, namespace: :admin)
+    - if @user.organization.is_a?(DDFIP)
+      - list.with_attribute("Guichets") do |attribute|
+        = render Views::Users::ShowOfficesListComponent.new(@user, namespace: :admin)
 
-      .description-list__row
-        dt Adresse mail de contact
-        dd.flex.justify-between
-          = render Views::Users::ShowEmailComponent.new(@user)
+    - list.with_attribute("Adresse mail de contact") do |attribute|
+      = render Views::Users::ShowEmailComponent.new(@user)
 
-          - if @user.confirmation_period_expired?
-            = button_component "Renouveler l'invitation", new_admin_user_invitation_path(@user), modal: true, icon: "arrow-path"
+      - if @user.confirmation_period_expired?
+        - attribute.with_action(\
+            "Renouveler l'invitation",\
+            new_admin_user_invitation_path(@user),\
+            modal: true,\
+            icon: "arrow-path"\
+          )
 
-      .description-list__row
-        dt Administrateur de l'organisation
-        dd= render Views::Users::ShowCheckBadgeComponent.new(@user, :organization_admin)
+    - list.with_attribute(:organization_admin) do |attribute|
+      = render Views::Users::ShowCheckBadgeComponent.new(@user, :organization_admin)
 
-      .description-list__row
-        dt Administrateur de Passerelle
-        dd= render Views::Users::ShowCheckBadgeComponent.new(@user, :super_admin)
+    - list.with_attribute(:super_admin) do |attribute|
+      = render Views::Users::ShowCheckBadgeComponent.new(@user, :super_admin)
 
-      .description-list__row
-        dt Méthode d'authentification
-        dd= render Views::Users::ShowOtpMethodComponent.new(@user)
+    - list.with_attribute("Méthode d'authentification") do |attribute|
+      = render Views::Users::ShowOtpMethodComponent.new(@user)
 
   h2.subheader
     = icon_component("server-stack", "Nouvelle section")

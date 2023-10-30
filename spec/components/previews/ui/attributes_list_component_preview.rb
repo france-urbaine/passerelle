@@ -16,5 +16,9 @@ module UI
     # @label With actions
     #
     def with_actions; end
+
+    # @label With reference
+    #
+    def with_reference; end
   end
 end

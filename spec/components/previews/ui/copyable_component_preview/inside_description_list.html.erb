@@ -1,12 +1,11 @@
-<div class="card">
-  <dl class="description-list">
-    <div class="description-list__row">
-      <dt>Regular</dt>
-      <dd><%= copyable_component "yD1pIyDz_hgV4Vtw4IwU2elmpB9LWrqUf3gkVQxv3i4" %></dd>
-    </div>
-    <div class="description-list__row">
-      <dt>Secret</dt>
-      <dd><%= copyable_component "yD1pIyDz_hgV4Vtw4IwU2elmpB9LWrqUf3gkVQxv3i4", secret: true %></dd>
-    </div>
-  </dl>
-</div>
+<%=
+attributes_list_component do |list|
+  list.with_attribute("Regular") do
+    copyable_component "yD1pIyDz_hgV4Vtw4IwU2elmpB9LWrqUf3gkVQxv3i4"
+  end
+
+  list.with_attribute("Secret") do
+    copyable_component "yD1pIyDz_hgV4Vtw4IwU2elmpB9LWrqUf3gkVQxv3i4", secret: true
+  end
+end
+%>

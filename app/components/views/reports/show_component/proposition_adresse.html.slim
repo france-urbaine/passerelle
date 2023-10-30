@@ -8,27 +8,20 @@
       .subheader-bar__action
         = button_component "Compléter", edit_report_path(@report, "proposition_adresse"), icon: "pencil-square", modal: true
 
-.card
-  dl.description-list
-    .description-list__row
-      dt Numéro de voie
-      dd
-        = render_valid_content(:proposition_numero_voie) do
-          = @report.proposition_numero_voie
+= attributes_list_component(@report) do |list|
+  - list.with_attribute(:proposition_numero_voie) do |attribute|
+    = render_valid_content(:proposition_numero_voie) do
+      = @report.proposition_numero_voie
 
-    .description-list__row
-      dt Indice de répétition
-      dd
-        = render_valid_content(:proposition_indice_repetition) do
-          = @report.proposition_indice_repetition
+  - list.with_attribute(:proposition_indice_repetition) do |attribute|
+    = render_valid_content(:proposition_indice_repetition) do
+      = @report.proposition_indice_repetition
 
-    .description-list__row.description-list__row--with-reference
-      dt Voie
-      dd
-        = render_valid_content(:proposition_libelle_voie) do
-          span= @report.proposition_libelle_voie
-          span
-            - if @report.proposition_code_rivoli?
-              = "Code RIVOLI : #{@report.proposition_code_rivoli}"
-            - else
-              | Aucun code RIVOLI fourni
+  - list.with_attribute(:proposition_libelle_voie) do |attribute|
+    = render_valid_content(:proposition_libelle_voie) do
+      = @report.proposition_libelle_voie
+      - attribute.with_reference do
+        - if @report.proposition_code_rivoli?
+          = "Code RIVOLI : #{@report.proposition_code_rivoli}"
+        - else
+          | Aucun code RIVOLI fourni

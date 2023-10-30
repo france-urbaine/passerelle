@@ -4,34 +4,39 @@ module UI
   class AttributesListComponent < ApplicationViewComponent
     renders_many :attributes, "AttributeRow"
 
-    def initialize(record= nil, **options)
+    attr_reader :record
+
+    def initialize(record = nil, **options)
       @record  = record
       @options = options
       super()
     end
 
-    def record
-      @record
+    def before_render
+      # Eager loading all attributes
+      content
+      attributes.each(&:to_s)
     end
 
     class AttributeRow < ApplicationViewComponent
       renders_many :actions, ::UI::ButtonComponent
+      renders_one  :reference
+
+      attr_reader :label
 
       def initialize(label, **options)
-        @label     = label
-        @css_class = nil
+        @label   = label
+        @options = options
+        super()
       end
 
-      def label
-        @label
-      end
-
-      def css_class
-        @css_class
-      end
-
-      def before_render
-        @css_class= "flex justify-between" if self.actions.any?
+      def row_html_attributes
+        options         = @options.dup
+        options[:class] = Array.wrap(options[:class])
+        options[:class].unshift("description-list__row")
+        options[:class].unshift("description-list__row--with-actions") if actions?
+        options[:class].unshift("description-list__row--with-reference") if reference?
+        options
       end
 
       def call

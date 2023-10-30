@@ -22,23 +22,19 @@
       .subheader-bar__action
         = package_badge(@package)
 
-  .card
-    dl.description-list
-      .description-list__row
-        dt Date de transmission
-        dd
-          - if @package.transmitted?
-            = l(@package.transmitted_at.to_date, format: :long)
-          - else
-            em Non transmis
+  = attributes_list_component(@package) do |list|
+    - list.with_attribute("Date de transmission") do |attribute|
+      - if @package.transmitted?
+        = l(@package.transmitted_at.to_date, format: :long)
+      - else
+        em Non transmis
 
-      .description-list__row.description-list__row--with-action
-        dt Date d'échéance
-        dd
-          span= l(@package.due_on, format: :long) if @package.due_on
+    - list.with_attribute("Date d'échéance") do |attribute|
+      - if @package.due_on
+        = l(@package.due_on, format: :long)
 
-          - if allowed_to?(:update?, @package) && @package.packing?
-            span= button_component "Modifier", edit_package_path(@package), icon: "pencil-square", modal: true
+      - if allowed_to?(:update?, @package) && @package.packing?
+        - attribute.with_action("Modifier", edit_package_path(@package), icon: "pencil-square", modal: true)
 
   - if allowed_to?(:index?, Report)
     .content__separator
