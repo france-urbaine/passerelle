@@ -55,7 +55,13 @@ def parse_users(data)
     hash[:last_name]  ||= Faker::Name.last_name
     hash[:name]         = hash.values_at(:first_name, :last_name).join(" ").strip
 
-    hash[:confirmed_at] = hash.delete(:confirmed) ? Time.current : nil
+    if hash.delete(:confirmed)
+      hash[:confirmed_at] = Time.current
+      hash[:confirmation_sent_at] = 1.hour.ago
+    else
+      hash[:confirmed_at] = nil
+      hash[:confirmation_sent_at] = Time.current
+    end
     hash
   end
 end
