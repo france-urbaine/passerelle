@@ -262,6 +262,7 @@ Rails.application.routes.draw do
 
     namespace :api, path: "/" do
       get "/", to: "home#index"
+      post "/upload", to: "upload#create"
 
       constraints id: %r{(?!(new|edit|remove|discard|undiscard|guichets))[^/]+} do
         resources :collectivities, only: %i[index], path: "/collectivites" do

@@ -7,5 +7,5 @@ Apipie.configure do |config|
   config.default_locale          = "fr"
   config.validate                = false
   config.layout                  = "documentation"
-  config.api_controllers_matcher = Rails.root.join("app/controllers/api/*.rb").to_s
+  config.api_controllers_matcher = Rails.root.join("app/controllers/api/**/*.rb").to_s
 end
