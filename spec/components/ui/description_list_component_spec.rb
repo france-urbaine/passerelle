@@ -39,8 +39,7 @@ RSpec.describe UI::DescriptionListComponent, type: :component do
   end
 
   it "renders an attribute with a string label" do
-    collectivity = create(:collectivity)
-    create(:user, organization: collectivity)
+    collectivity = create(:collectivity, :with_users)
     collectivity.reload
 
     render_inline described_class.new(collectivity) do |list|
@@ -125,9 +124,7 @@ RSpec.describe UI::DescriptionListComponent, type: :component do
     expect(page).to have_selector(".card") do |card|
       expect(card).to have_selector("dl.description-list") do |description_list|
         expect(description_list).to have_selector(".description-list__row") do |row|
-          expect(row).to have_selector("dd") do |dd|
-            expect(dd).not_to have_selector("span", text: "")
-          end
+          expect(row).to have_selector("dd:empty")
         end
       end
     end

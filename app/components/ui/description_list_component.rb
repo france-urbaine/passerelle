@@ -49,14 +49,14 @@ module UI
       end
 
       def value
-        if @value.nil?
-          @value = if !content? && @record && @record.respond_to?(@label)
-                     @record.public_send(@label)
-                   else
-                     content
-                   end
-        end
-        @value
+        return @value if defined?(@value)
+
+        @value =
+          if !content? && @record && @record.respond_to?(@label)
+            @record.public_send(@label)
+          else
+            content
+          end
       end
 
       def value?
