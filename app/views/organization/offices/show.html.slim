@@ -14,7 +14,7 @@
     = icon_component("identification", "Nouvelle section")
     | Description
 
-  = attributes_list_component(@office) do |list|
+  = description_list_component(@office) do |list|
     - list.with_attribute(:competences) do |attribute|
       = list(@office.competences) { |value| t(value, scope: "enum.competence") }
 

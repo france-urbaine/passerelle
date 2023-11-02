@@ -17,7 +17,7 @@
       .subheader-bar__action
         = button_component "Compléter", edit_report_path(@report, "proposition_evaluation"), icon: "pencil-square", modal: true
 
-= attributes_list_component(@report) do |list|
+= description_list_component(@report) do |list|
   - if display_proposition_affectation?
     - list.with_attribute(:proposition_affectation) do |attribute|
       = render_valid_content(:proposition_affectation) do

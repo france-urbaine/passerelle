@@ -8,7 +8,7 @@
       .subheader-bar__action
         = button_component "Compléter", edit_report_path(@report, "situation_majic"), icon: "pencil-square", modal: true
 
-= attributes_list_component(@report) do |list|
+= description_list_component(@report) do |list|
   - if display_situation_annee_majic?
     - list.with_attribute(:situation_annee_majic) do |attribute|
       = render_valid_content(:situation_annee_majic) do

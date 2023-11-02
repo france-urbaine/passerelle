@@ -14,7 +14,7 @@
     = icon_component("identification", "Nouvelle section")
     | Description
 
-  = attributes_list_component(@ddfip) do |list|
+  = description_list_component(@ddfip) do |list|
     - list.with_attribute(:departement) do |attribute|
       = authorized_link_to @ddfip.departement, namespace: :admin do
         = @ddfip.departement&.qualified_name

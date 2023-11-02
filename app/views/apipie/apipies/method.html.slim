@@ -17,7 +17,7 @@
         - if api[:deprecated]
           .badge.badge--red DEPRECATED
 
-      = attributes_list_component do |list|
+      = description_list_component do |list|
         - list.with_attribute("Formats supportés") do |attribute|
           = @method[:formats].join(', ')
 

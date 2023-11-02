@@ -1,7 +1,7 @@
 <div class="flex flex-col space-y-4">
   <%=
     record= Collectivity.new(name: 'Toulouse')
-    attributes_list_component(record) do |list|
+    description_list_component(record) do |list|
       list.with_attribute(:name)
       list.with_attribute(:name) do
         "#{record.name} (Haute-Garonne)"

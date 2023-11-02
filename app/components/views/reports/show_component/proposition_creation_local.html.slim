@@ -11,7 +11,7 @@
       .subheader-bar__action
         = button_component "Compléter", edit_report_path(@report, "proposition_creation_local"), icon: "pencil-square", modal: true
 
-= attributes_list_component(@report) do |list|
+= description_list_component(@report) do |list|
   - if display_proposition_nature?
     - list.with_attribute(:proposition_nature) do |attribute|
       = render_valid_content(:proposition_nature) do

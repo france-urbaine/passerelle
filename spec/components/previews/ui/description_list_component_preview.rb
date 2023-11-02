@@ -4,7 +4,7 @@ module UI
   # @display frame "content"
   # @display width "medium"
   #
-  class AttributesListComponentPreview < ::Lookbook::Preview
+  class DescriptionListComponentPreview < ::Lookbook::Preview
     # @label With attribute name
     #
     def with_attribute_name; end

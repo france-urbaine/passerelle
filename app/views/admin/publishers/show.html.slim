@@ -14,7 +14,7 @@
     = icon_component("identification", "Nouvelle section")
     | Description
 
-  = attributes_list_component(@publisher) do |list|
+  = description_list_component(@publisher) do |list|
     - list.with_attribute(:siren) do |attribute|
       = display_siren(@publisher.siren)
 

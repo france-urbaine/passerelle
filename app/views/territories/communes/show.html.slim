@@ -11,7 +11,7 @@
     = icon_component("identification", "Nouvelle section")
     | Description
 
-  = attributes_list_component(@commune) do |list|
+  = description_list_component(@commune) do |list|
     - list.with_attribute(:code_insee) do |attribute|
       = @commune.code_insee
 

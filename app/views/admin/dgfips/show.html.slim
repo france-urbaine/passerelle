@@ -13,7 +13,7 @@
     = icon_component("identification", "Nouvelle section")
     | Description
 
-  = attributes_list_component(@dgfip) do |list|
+  = description_list_component(@dgfip) do |list|
     - list.with_attribute("Contact") do |attribute|
       = "#{@dgfip.contact_first_name} #{@dgfip.contact_last_name}".strip.presence
 

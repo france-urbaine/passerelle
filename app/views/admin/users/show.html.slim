@@ -14,7 +14,7 @@
     = icon_component("identification", "Nouvelle section")
     | Description
 
-  = attributes_list_component(@user) do |list|
+  = description_list_component(@user) do |list|
     - list.with_attribute(:organization) do |attribute|
       = authorized_link_to @user.organization, namespace: :admin
 

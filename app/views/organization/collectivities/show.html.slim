@@ -15,7 +15,7 @@
     | Description
 
 
-  = attributes_list_component(@collectivity) do |list|
+  = description_list_component(@collectivity) do |list|
     - list.with_attribute(:territory) do |attribute|
       = authorized_link_to @collectivity.territory, namespace: :organization do
         = @collectivity.territory.qualified_name

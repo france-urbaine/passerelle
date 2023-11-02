@@ -22,7 +22,7 @@
       .subheader-bar__action
         = package_badge(@package)
 
-  = attributes_list_component(@package) do |list|
+  = description_list_component(@package) do |list|
     - list.with_attribute("Date de transmission") do |attribute|
       - if @package.transmitted?
         = l(@package.transmitted_at.to_date, format: :long)

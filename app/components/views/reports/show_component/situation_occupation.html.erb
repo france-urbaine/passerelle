@@ -14,7 +14,7 @@
 </div>
 
 <%=
-attributes_list_component(@report) do |list|
+description_list_component(@report) do |list|
   if display_situation_occupation_annee?
     list.with_attribute(:situation_occupation_annee) do
       render_valid_content(:situation_occupation_annee) { @report.situation_occupation_annee }

@@ -8,7 +8,7 @@
       .subheader-bar__action
         = button_component "Compléter", edit_report_path(@report, "situation_parcelle"), icon: "pencil-square", modal: true
 
-= attributes_list_component(@report) do |list|
+= description_list_component(@report) do |list|
   - list.with_attribute(:commune) do |attribute|
     = render_valid_content(:code_insee) do
       = @report.commune&.name

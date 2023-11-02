@@ -14,7 +14,7 @@
     = icon_component("identification", "Nouvelle section")
     | Description
 
-  = attributes_list_component(@oauth_application) do |list|
+  = description_list_component(@oauth_application) do |list|
     - list.with_attribute(:uid) do |attribute|
       = copyable_component @oauth_application.uid
 

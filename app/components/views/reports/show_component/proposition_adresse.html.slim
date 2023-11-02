@@ -8,7 +8,7 @@
       .subheader-bar__action
         = button_component "Compléter", edit_report_path(@report, "proposition_adresse"), icon: "pencil-square", modal: true
 
-= attributes_list_component(@report) do |list|
+= description_list_component(@report) do |list|
   - list.with_attribute(:proposition_numero_voie) do |attribute|
     = render_valid_content(:proposition_numero_voie) do
       = @report.proposition_numero_voie

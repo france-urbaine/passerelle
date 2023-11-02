@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 module UI
-  class AttributesListComponent < ApplicationViewComponent
-    renders_many :attributes, "AttributeRow"
+  class DescriptionListComponent < ApplicationViewComponent
+    renders_many :attributes, "DescriptionListAttribute"
 
     attr_reader :record
 
@@ -18,7 +18,7 @@ module UI
       attributes.each(&:to_s)
     end
 
-    class AttributeRow < ApplicationViewComponent
+    class DescriptionListAttribute < ApplicationViewComponent
       renders_many :actions, ::UI::ButtonComponent
       renders_one  :reference
 

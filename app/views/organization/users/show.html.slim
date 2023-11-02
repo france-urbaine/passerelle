@@ -14,7 +14,7 @@
     = icon_component("identification", "Nouvelle section")
     | Description
 
-  = attributes_list_component(@user) do |list|
+  = description_list_component(@user) do |list|
     - if current_organization.is_a?(DDFIP)
       - list.with_attribute("Guichets") do |attribute|
         = render Views::Users::ShowOfficesListComponent.new(@user, namespace: :organization)

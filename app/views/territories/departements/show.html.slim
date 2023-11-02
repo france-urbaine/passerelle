@@ -11,7 +11,7 @@
     = icon_component("identification", "Nouvelle section")
     | Description
 
-  = attributes_list_component(@departement) do |list|
+  = description_list_component(@departement) do |list|
     - list.with_attribute(:code_departement) do |attribute|
       = @departement.code_departement
 

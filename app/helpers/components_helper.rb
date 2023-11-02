@@ -9,13 +9,13 @@ module ComponentsHelper
     card_component:                   "UI::CardComponent",
     copyable_component:               "UI::CopyableComponent",
     counter_component:                "UI::CounterComponent",
+    description_list_component:       "UI::DescriptionListComponent",
     dropdown_component:               "UI::DropdownComponent",
     icon_component:                   "UI::IconComponent",
     modal_component:                  "UI::ModalComponent",
     noscript_component:               "UI::NoscriptComponent",
     notification_component:           "UI::NotificationComponent",
     tabs_component:                   "UI::TabsComponent",
-    attributes_list_component:        "UI::AttributesListComponent",
 
     # UI form components
     checkboxes_component:             "UI::Form::CheckboxesComponent",

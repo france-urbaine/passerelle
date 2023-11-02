@@ -14,7 +14,7 @@
 </div>
 
 <%=
-attributes_list_component(@report) do |list|
+description_list_component(@report) do |list|
   if display_proposition_date_occupation?
     list.with_attribute(:proposition_date_occupation) do
       render_valid_content(:proposition_date_occupation) { helpers.display_date(@report.proposition_date_occupation) }

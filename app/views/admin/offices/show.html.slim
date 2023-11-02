@@ -14,7 +14,7 @@
     = icon_component("identification", "Nouvelle section")
     | Description
 
-  = attributes_list_component(@office) do |list|
+  = description_list_component(@office) do |list|
     - list.with_attribute(:ddfip) do |attribute|
       = authorized_link_to @office.ddfip, namespace: :admin
 

@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe UI::AttributesListComponent, type: :component do
+RSpec.describe UI::DescriptionListComponent, type: :component do
   it "renders an attribute with a symbolized name" do
     collectivity = create(:collectivity)
 
@@ -10,7 +10,7 @@ RSpec.describe UI::AttributesListComponent, type: :component do
       list.with_attribute(:name) { collectivity.name }
     end
 
-    expect(page).to have_selector(".attributes-list") do |card|
+    expect(page).to have_selector(".card") do |card|
       expect(card).to have_selector("dl.description-list") do |description_list|
         expect(description_list).to have_selector(".description-list__row") do |row|
           expect(row).to have_selector("dt", text: "Nom de la collectivité")
@@ -29,7 +29,7 @@ RSpec.describe UI::AttributesListComponent, type: :component do
       list.with_attribute("Utilisateurs") { collectivity.users_count.to_s }
     end
 
-    expect(page).to have_selector(".attributes-list") do |card|
+    expect(page).to have_selector(".card") do |card|
       expect(card).to have_selector("dl.description-list") do |description_list|
         expect(description_list).to have_selector(".description-list__row") do |row|
           expect(row).to have_selector("dt", text: "Utilisateurs")
@@ -49,7 +49,7 @@ RSpec.describe UI::AttributesListComponent, type: :component do
       end
     end
 
-    expect(page).to have_selector(".attributes-list") do |card|
+    expect(page).to have_selector(".card") do |card|
       expect(card).to have_selector("dl.description-list") do |description_list|
         expect(description_list).to have_selector(".description-list__row") do |row|
           expect(row).to have_selector("dd") do |dd|
@@ -72,7 +72,7 @@ RSpec.describe UI::AttributesListComponent, type: :component do
       end
     end
 
-    expect(page).to have_selector(".attributes-list") do |card|
+    expect(page).to have_selector(".card") do |card|
       expect(card).to have_selector("dl.description-list") do |description_list|
         expect(description_list).to have_selector(".description-list__row--with-reference")
       end
