@@ -2,6 +2,98 @@
   - breadcrumbs.with_path "Guides"
   - breadcrumbs.with_path "Transmettre des signalements"
 
-.card
-  .card__content
-    | Bientôt disponible
+.documentation
+  .card
+    .card__content
+      | Pour créer et transmettre des signalements aux DDFIP's concernées, il faut créer une transmission et lui associer des signalements.
+
+  .content__separator
+
+  h2.subheader
+    = icon_component("envelope")
+    | Création d'une transmission
+
+  .card
+    .card__content
+      ' Pour créer une transmission, vous devez d'abord avoir la référence de la collectivité.
+      br
+      ' Vous pouvez la trouver dans la
+      = link_to "liste des collectivités.", "/documentation/references/1.0/collectivities/index"
+      br
+      ' Avec l'identifiant de la collectivité vous pouvez associer une transmission à celle-ci en vous aidant
+      = link_to "du point d'API.", "/documentation/references/1.0/transmissions/create"
+      .documentation-examples
+        = render UI::CodeRequestComponent.new("POST", "/collectivites/:collectivite_id/transmissions", json: true, authorization: true)
+
+  .content__separator
+
+  h2.subheader
+    = icon_component("clipboard-document")
+    | Création d'un signalement
+
+  .card
+    .card__content
+      ' La création d'un signalement nécessite une transmission en cours.
+      br
+      ' Pour créer un signalement valide il faut respecter les règles de validation. Vous pouvez les consulter dans notre documentation :
+      = link_to "Créer un signalement", apipie_apipie_path(version: 1.0, resource: "reports", method: "create")
+
+      .documentation-examples
+        ruby:
+          request = {
+            headers: {"Content-Type" => "application/json"},
+            body: {
+              "report": {
+                "form_type":"creation_local_habitation",
+                "anomalies":["omission_batie"],
+                "priority":"low",
+                "code_insee":"64019",
+                "date_constat":"2023-01-02",
+                "situation_proprietaire":"Doe",
+                "situation_numero_ordre_proprietaire":"A12345",
+                "situation_parcelle":"AA 0000",
+                "situation_numero_voie":"1",
+                "situation_libelle_voie":"rue de la Liberté",
+                "situation_code_rivoli":"0000",
+                "proposition_nature":"AP",
+                "proposition_categorie":"1",
+                "proposition_surface_reelle":70.0,
+                "proposition_date_achevement":"2023-01-01"
+              }
+            }
+          }
+
+          response = {
+            code: 201,
+            headers: {"Content-Type" => "application/json"}
+          }
+        = render UI::CodeRequestComponent.new("POST", "/transmissions/:transmission_id/signalements", json: true, authorization: true, request:, response:)
+      br
+      ' En cas d'erreurs dans les paramètres, notre API vous renverra une erreur avec des champs à modifier.
+
+  .content__separator
+
+  h2.subheader
+    = icon_component("envelope-open")
+    | Envoi d'une transmission aux DDFIP
+  .card
+    .card__content
+      ' Pour compléter une transmission, assurez-vous qu'elle n'a pas déjà été complété.
+      br
+      ' Consultez notre documentation pour plus d'informations :
+      = link_to "Compléter une transmission", "/documentation/references/1.0/transmissions/complete"
+      br
+      ' Veuillez noter que pour la complétion, tous les signalements associés à votre transmission doivent être valides. Vous n'avez pas besoin d'inclure un corps (body) pour cette requête.
+      .documentation-examples
+        ruby:
+          request = {
+            headers: {"Content-Type" => "application/json"}
+          }
+
+          response = {
+            code: 200,
+            headers: {"Content-Type" => "application/json"}
+          }
+        = render UI::CodeRequestComponent.new("PUT", "/transmissions/:transmission_id/complete", json: true, authorization: true, request:, response:)
+      br
+      ' En retour, vous recevrez la transmission complétée, les signalements associés et les paquets nouvellement créés.
