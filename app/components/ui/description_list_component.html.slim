@@ -3,17 +3,12 @@
     - attributes.each do |attribute|
       = tag.div **attribute.row_html_attributes do
         dt
-          - if record && record.respond_to?(attribute.label)
-            = record.class.human_attribute_name(attribute.label)
-          - else
-            = attribute.label
+          = attribute.label
 
         dd
-          span
-            - if !attribute.content? && record && record.respond_to?(attribute.label)
-              = record.public_send(attribute.label)
-            - else
-              = attribute
+          - if attribute.value?
+            span
+              = attribute.value
           
           - if attribute.reference?
             span= attribute.reference

@@ -2,7 +2,9 @@
 
 module UI
   class DescriptionListComponent < ApplicationViewComponent
-    renders_many :attributes, "DescriptionListAttribute"
+    renders_many :attributes, lambda { |*args, **options|
+      DescriptionListAttribute.new(@record, *args, **options)
+    }
 
     attr_reader :record
 
@@ -22,12 +24,19 @@ module UI
       renders_many :actions, ::UI::ButtonComponent
       renders_one  :reference
 
-      attr_reader :label
-
-      def initialize(label, **options)
+      def initialize(record, label, **options)
+        @record  = record
         @label   = label
         @options = options
         super()
+      end
+
+      def label
+        if @record && @label && @record.respond_to?(@label)
+          @record.class.human_attribute_name(@label)
+        else
+          @label
+        end
       end
 
       def row_html_attributes
@@ -37,6 +46,21 @@ module UI
         options[:class].unshift("description-list__row--with-actions") if actions?
         options[:class].unshift("description-list__row--with-reference") if reference?
         options
+      end
+
+      def value
+        if @value.nil?
+          @value = if !content? && @record && @record.respond_to?(@label)
+                     @record.public_send(@label)
+                   else
+                     content
+                   end
+        end
+        @value
+      end
+
+      def value?
+        value.present?
       end
 
       def call

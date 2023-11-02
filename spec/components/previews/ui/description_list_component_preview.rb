@@ -5,9 +5,13 @@ module UI
   # @display width "medium"
   #
   class DescriptionListComponentPreview < ::Lookbook::Preview
-    # @label With attribute name
+    # @label With attribute name only
     #
-    def with_attribute_name; end
+    def with_attribute_name_only; end
+
+    # @label With attribute name and content
+    #
+    def with_attribute_name_and_content; end
 
     # @label With string label
     #
@@ -20,5 +24,9 @@ module UI
     # @label With reference
     #
     def with_reference; end
+
+    # @label With blank value
+    #
+    def with_blank_value; end
   end
 end
