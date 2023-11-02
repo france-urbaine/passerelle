@@ -42,10 +42,11 @@ module Passerelle
     # Use a real queuing backend for Active Job
     config.active_job.queue_adapter = :sidekiq
 
-    # Define domain strategy.
-    # In development, the default host is `localhost` or `127.0.0.1`, but it doesn't
-    # allow to use subdomains. To use subdomains (such as `api.`), we need a domain with
-    # a longer TLD.
+    # Define default domain.
+    # This is used to allowlist hosts and generate some hard links (see config.action_mailer.default_url_options)
+    #
+    # In development, the default host defined by Rails is `localhost` or `127.0.0.1`, but it doesn't allow us
+    # to use subdomains. To use subdomains (such as `api.`), we need a domain with a longer TLD.
     #
     # The free DNS resolver `lvh.me` allows to use subdomains out of the box in development & test.
     # In production, DOMAIN_APP is mandatory.
@@ -58,7 +59,16 @@ module Passerelle
       end
 
     config.hosts << ".#{config.x.domain}"
-    config.hosts << ".example.com" if Rails.env.test?
+
+    # As soon as you add one host to the allow-list above, it became mandatory.
+    # So we also allow a few useful hosts in development & test to be used independently
+    # of DOMAIN_APP, out of the box.
+    #
+    if Rails.env.development? || Rails.env.test?
+      config.hosts << ".lvh.me"
+      config.hosts << ".localhost.local"
+      config.hosts << ".example.com"
+    end
 
     # If your main domain is already a subdomain (such as alpha.fiscahub.fr),
     # you should also define TLD length:
