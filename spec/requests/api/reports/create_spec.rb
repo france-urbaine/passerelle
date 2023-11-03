@@ -121,7 +121,7 @@ RSpec.describe "API::ReportsController#create", :api do
       it { expect(response).to have_http_status(:unprocessable_entity) }
       it { expect { request }.not_to change(Report, :count) }
 
-      it "responds with validations errors" do
+      it "responds with validations errors", :show_in_doc do
         expect(response).to have_json_body.to include(
           "errors" => hash_including(
             "date_constat" => ["Ce champs est requis"],
