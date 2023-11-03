@@ -2,13 +2,13 @@
   "attachments#create": [
     {
       "verb": "POST",
-      "path": "/signalements/88171c8e-55b8-44d9-b3cc-df65701e79ad/documents",
+      "path": "/signalements/49c4d4f2-aee5-48b4-880f-c1e755c6035c/documents",
       "versions": [
         "1.0"
       ],
       "query": null,
       "request_data": {
-        "documents": "eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaEpJaWxoWTJVd1lqZGtNQzA1WlRGakxUUTNZMll0T0RjMk1pMWhOVGd5Wm1FMllqYzNZVFVHT2daRlZBPT0iLCJleHAiOm51bGwsInB1ciI6ImJsb2JfaWQifX0=--281be5dfab126fecd870b5b8c2a2a71e95c5e6dc"
+        "documents": "eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaEpJaWs1T1RNNE5ETTNNQzAxT0Raa0xUUTFOMlF0WVdRM09DMHdZVGN4WlRWaU5UY3dabUlHT2daRlZBPT0iLCJleHAiOm51bGwsInB1ciI6ImJsb2JfaWQifX0=--db9f880e8180d976e359389ecb7de9e679f80cfb"
       },
       "response_data": null,
       "code": 204,
@@ -29,14 +29,14 @@
       "response_data": {
         "collectivites": [
           {
-            "id": "19212ab7-251d-4298-ad49-3c02f57f1b95",
-            "name": "Agglomération de Haguenau",
-            "siren": "413956350"
+            "id": "9389c859-a9d9-4f2d-b7b4-1a704bf57f6f",
+            "name": "CC de Saint-Herblain",
+            "siren": "579414947"
           },
           {
-            "id": "98098fa0-bfc9-4465-8ec9-2658d2281b60",
-            "name": "CC de Noisy-le-Grand",
-            "siren": "337359053"
+            "id": "d42dec2c-2cd9-4879-ba81-c2764123c207",
+            "name": "CC de Vigneux-sur-Seine",
+            "siren": "296235716"
           }
         ]
       },
@@ -48,7 +48,49 @@
   "reports#create": [
     {
       "verb": "POST",
-      "path": "/transmissions/c1e59f99-7a8a-4818-a352-77b0ea00d1b9/signalements",
+      "path": "/transmissions/f300c71d-a596-4d9b-b41c-830c54104e0a/signalements",
+      "versions": [
+        "1.0"
+      ],
+      "query": null,
+      "request_data": {
+        "report": {
+          "form_type": "creation_local_habitation",
+          "anomalies": [
+            "omission_batie"
+          ],
+          "priority": "low",
+          "code_insee": "invalid",
+          "date_constat": null,
+          "situation_proprietaire": "Doe",
+          "situation_numero_ordre_proprietaire": "A12345",
+          "situation_parcelle": "AA 0000",
+          "situation_numero_voie": "1",
+          "situation_libelle_voie": "rue de la Liberté",
+          "situation_code_rivoli": "0000",
+          "proposition_nature": "AP",
+          "proposition_categorie": "1",
+          "proposition_surface_reelle": 70.0,
+          "proposition_date_achevement": "2023-01-01"
+        }
+      },
+      "response_data": {
+        "errors": {
+          "code_insee": [
+            "n'est pas valide"
+          ],
+          "date_constat": [
+            "Ce champs est requis"
+          ]
+        }
+      },
+      "code": 422,
+      "show_in_doc": 1,
+      "recorded": true
+    },
+    {
+      "verb": "POST",
+      "path": "/transmissions/c500aabc-9b7c-4501-b666-563a3ed6d353/signalements",
       "versions": [
         "1.0"
       ],
@@ -76,18 +118,18 @@
       },
       "response_data": {
         "report": {
-          "id": "a0be93c4-dbce-4917-82b3-3837b8ae0b02"
+          "id": "6cbc5022-3bc9-40ce-ab20-b5fef3d88fae"
         }
       },
       "code": 201,
-      "show_in_doc": 1,
+      "show_in_doc": 0,
       "recorded": true
     }
   ],
   "transmissions#complete": [
     {
       "verb": "PUT",
-      "path": "/transmissions/af036fcf-a4ec-48e0-9955-cee5c6505b7f/complete",
+      "path": "/transmissions/d9b9359b-54e2-4736-a182-75a5d689aee2/complete",
       "versions": [
         "1.0"
       ],
@@ -96,17 +138,17 @@
       },
       "response_data": {
         "transmission": {
-          "id": "af036fcf-a4ec-48e0-9955-cee5c6505b7f",
-          "completed_at": "2023-10-25T09:33:31.081Z",
+          "id": "d9b9359b-54e2-4736-a182-75a5d689aee2",
+          "completed_at": "2023-11-03T14:34:13.706Z",
           "packages": [
             {
-              "id": "0f877e6f-11a9-4749-b9e6-373bb1504968",
+              "id": "82365cfd-46e1-406e-9daa-bd4b0081d827",
               "name": null,
-              "reference": "2023-10-0001",
+              "reference": "2023-11-0001",
               "reports": [
                 {
-                  "id": "e942c35e-d770-46d5-85cd-cfdbcb07ae01",
-                  "reference": "2023-10-0001-00001"
+                  "id": "a436744c-8c2b-44d7-a590-a5a0f0ced51d",
+                  "reference": "2023-11-0001-00001"
                 }
               ]
             }
@@ -121,7 +163,7 @@
   "transmissions#create": [
     {
       "verb": "POST",
-      "path": "/collectivites/ac8cc2fb-3ed0-4114-b179-80bef413591f/transmissions",
+      "path": "/collectivites/4c127ca8-ae2f-40b0-997d-fb816ff60592/transmissions",
       "versions": [
         "1.0"
       ],
@@ -130,7 +172,7 @@
       },
       "response_data": {
         "transmission": {
-          "id": "0238fe86-2667-421e-9166-df78795a9951"
+          "id": "7fdfbcee-0afc-44e2-b8e9-bbd359b59958"
         }
       },
       "code": 201,
@@ -155,8 +197,8 @@
         }
       },
       "response_data": {
-        "id": "93a5837f-53fe-4edd-9a32-20ed0ee907d5",
-        "key": "1v16dhmzvqfz0y4yja7wqsmqwyte",
+        "id": "334bba79-311c-4efb-a367-f5bc922af60c",
+        "key": "v4c12lu5zu6wtgztxcmbgrihp1kv",
         "filename": "test.png",
         "content_type": "application/pdf",
         "metadata": {
@@ -164,18 +206,18 @@
         "service_name": "test",
         "byte_size": 123456,
         "checksum": "keKnRxGllrNnMpX19UouVQ",
-        "created_at": "2023-11-03T10:39:54.774Z",
-        "signed_id": "eyJfcmFpbHMiOnsibWVzc2FnZ[...]61b9b6a253",
-        "attachable_sgid": "eyJfcmFpbHMiOnsibWV[...]449bb845cbcaaa7f",
+        "created_at": "2023-11-03T14:34:13.865Z",
+        "signed_id": "eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaEpJaWt6TXpSaVltRTNPUzB6TVRGakxUUmxabUl0WVRNMk55MW1OV0pqT1RJeVlXWTJNR01HT2daRlZBPT0iLCJleHAiOm51bGwsInB1ciI6ImJsb2JfaWQifX0=--fedd2c9f4a9c62783833455f674b12b687f71584",
+        "attachable_sgid": "eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaEpJbGRuYVdRNkx5OW1hWE5qWVdoMVlpOUJZM1JwZG1WVGRHOXlZV2RsT2pwQ2JHOWlMek16TkdKaVlUYzVMVE14TVdNdE5HVm1ZaTFoTXpZM0xXWTFZbU01TWpKaFpqWXdZejlsZUhCcGNtVnpYMmx1QmpvR1JWUT0iLCJleHAiOm51bGwsInB1ciI6ImF0dGFjaGFibGUifX0=--1f068311ec8de7c2e4e76467488c0e7586aa9d0a",
         "direct_upload": {
-          "url": "http://api.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsibWVzc2FnZS[...]f9",
+          "url": "http://api.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdDam9JYTJWNVNTSWhkalJqTVRKc2RUVjZkVFozZEdkNmRIaGpiV0puY21sb2NERnJkZ1k2QmtWVU9oRmpiMjUwWlc1MFgzUjVjR1ZKSWhSaGNIQnNhV05oZEdsdmJpOXdaR1lHT3daVU9oTmpiMjUwWlc1MFgyeGxibWQwYUdrRFFPSUJPZzFqYUdWamEzTjFiVWtpRzJ0bFMyNVNlRWRzYkhKT2JrMXdXREU1Vlc5MVZsRUdPd1pVT2hGelpYSjJhV05sWDI1aGJXVTZDWFJsYzNRPSIsImV4cCI6IjIwMjMtMTEtMDNUMTQ6Mzk6MTMuODY2WiIsInB1ciI6ImJsb2JfdG9rZW4ifX0=--9ddba0b0c3537638f8cb415187b66c3f94f29f64",
           "headers": {
             "Content-Type": "application/pdf"
           }
         }
       },
       "code": 200,
-      "show_in_doc": 0,
+      "show_in_doc": 1,
       "recorded": true
     }
   ]
