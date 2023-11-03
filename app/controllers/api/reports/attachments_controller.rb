@@ -12,8 +12,10 @@ module API
       description <<-DESC
         Cette ressource permet d'ajouter une pièce jointe à un signalement.
 
-        La pièce jointe doit préalablement avoir été télécharger sur notre serveur distant.
+        La pièce jointe doit préalablement avoir été téléchargée sur notre serveur distant.
       DESC
+
+      see "upload#create", "Obtenir un lien de téléchargement"
 
       param :documents, String, "Signed ID du document", required: true
 

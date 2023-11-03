@@ -10,10 +10,9 @@ RSpec.describe "API::UploadController#create", :api do
   let(:as) { |e| e.metadata.fetch(:as, :json) }
   let(:headers) { |e| e.metadata.fetch(:headers, {}).merge(authorization_header) }
   let(:params)  { { blob: { filename: "test.png", byte_size: 123_456, checksum: "keKnRxGllrNnMpX19UouVQ", content_type: "application/pdf" } } }
-  let!(:application) { create(:oauth_application) }
 
   describe "responses" do
-    before { setup_access_token(application.owner, application) }
+    before { setup_access_token }
 
     context "with valid parameters" do
       it "creates a new blob" do

@@ -17,6 +17,16 @@ module API
 
     api :POST, "/upload", "Creation d'un lien de téléchargement"
 
+    description <<-DESC
+      Cette ressource permet de créer un canal de téléchargement.
+
+      Afin de pouvoir attacher un document a un signalement il faut au préalable télécharger le fichier sur notre serveur distant.
+
+      Ce point d'API permet d'ouvrir un canal de téléchargement et de nous fournir un lien et un id en retours.
+    DESC
+
+    see "attachments#create", "Sauvegarde d'une pièce jointe"
+
     param :blob, Hash, "Attributs relatifs au fichier" do
       param :filename, String, "Nom du fichier", required: false
       param :byte_size, Integer, "Taille du fichier", required: false
@@ -25,23 +35,25 @@ module API
     end
 
     returns code: 200, desc: "Obtention de votre lien de téléchargement" do
-      param :id, String, "UUID du fichier"
-      param :key, String, "Clé de téléchargement"
-      param :filename, String, "Nom du fichier"
-      param :content_type, String, "Type du fichier"
-      param :metadata, Hash, "Métadonnées du fichier"
-      param :service_name, String, "Nom du service de stockage"
-      param :byte_size, Integer, "Taille du fichier"
-      param :checksum, String, "Checksum du fichier"
-      param :created_at, String, "Date de création du fichier"
-      param :signed_id, String, "ID signé du fichier"
-      param :attachable_sgid, String, "ID signé du fichier"
-      param :direct_upload, Hash, "Lien de téléchargement" do
-        param :url, String, "URL de téléchargement"
-        param :headers, Hash, "Headers de téléchargement"
+      property :id, String, "UUID du fichier"
+      property :key, String, "Clé de téléchargement"
+      property :filename, String, "Nom du fichier"
+      property :content_type, String, "Type du fichier"
+      property :metadata, Hash, "Métadonnées du fichier"
+      property :service_name, String, "Nom du service de stockage"
+      property :byte_size, Integer, "Taille du fichier"
+      property :checksum, String, "Checksum du fichier"
+      property :created_at, String, "Date de création du fichier"
+      property :signed_id, String, "ID signé du fichier"
+      property :attachable_sgid, String, "ID signé du fichier"
+      property :direct_upload, Hash, "Lien de téléchargement" do
+        property :url, String, "URL de téléchargement"
+        property :headers, Hash, "Headers de téléchargement"
       end
     end
 
-    def create; end
+    # rubocop:disable AutoCorrectLint/UselessMethodDefinition
+    def create = super()
+    # rubocop:enable AutoCorrectLint/UselessMethodDefinition
   end
 end
