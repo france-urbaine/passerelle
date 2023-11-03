@@ -8,9 +8,8 @@ module UI
 
     attr_reader :record
 
-    def initialize(record = nil, **options)
-      @record  = record
-      @options = options
+    def initialize(record = nil)
+      @record = record
       super()
     end
 
