@@ -1,17 +1,19 @@
-.subheader-bar
-  h2.subheader
-    = icon_component("chat-bubble-bottom-center-text", "Icône d'illustration")
-    | Observations
+= content_flow_component do |flow|
 
-  .subheader-bar__actions
-    - if allowed_to?(:update?, @report) && @report.packing?
-      .subheader-bar__action
-        = button_component "Compléter", edit_report_path(@report, "observations"), icon: "pencil-square", modal: true
+  - flow.with_section do |section|
 
-- if @report.observations.present?
-  = card_component(content_class: "text-lg") do |card|
-    = simple_format h(@report.observations)
+    - section.with_header do |header|
+      = icon_component("chat-bubble-bottom-center-text", "Icône d'illustration")
+      | Observations
 
-- else
-  = card_component(content_class: "card__content--empty h-24 flex-auto flex items-center justify-center") do |card|
-    | Aucune observation ajoutée pour ce signalement.
+      - header.with_action do |action|
+        - if allowed_to?(:update?, @report) && @report.packing?
+          = button_component "Compléter", edit_report_path(@report, "observations"), icon: "pencil-square", modal: true
+
+    - if @report.observations.present?
+      = card_component(content_class: "text-lg") do |card|
+        = simple_format h(@report.observations)
+
+    - else
+      = card_component(content_class: "card__content--empty h-24 flex-auto flex items-center justify-center") do |card|
+        | Aucune observation ajoutée pour ce signalement.

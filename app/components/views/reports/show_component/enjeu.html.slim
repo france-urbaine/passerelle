@@ -1,17 +1,19 @@
-.subheader-bar
-  h2.subheader
-    = icon_component("banknotes", "Icône d'illustration")
-    | Enjeu
+= content_flow_component do |flow|
 
-  .subheader-bar__actions
-    - if allowed_to?(:update?, @report) && @report.packing?
-      .subheader-bar__action
-        = button_component "Compléter", edit_report_path(@report, "enjeu"), icon: "pencil-square", modal: true
+  - flow.with_section do |section|
 
-- if @report.enjeu.present?
-  = card_component(content_class: "h-24 flex-auto flex items-center justify-center text-3xl") do |card|
-    = number_to_currency(@report.enjeu)
+    - section.with_header do |header|
+      = icon_component("banknotes", "Icône d'illustration")
+      | Enjeu
 
-- else
-  = card_component(content_class: "card__content--empty h-24 flex-auto flex items-center justify-center") do |card|
-    | Aucun enjeu fixé pour ce signalement.
+      - header.with_action do |action|
+        - if allowed_to?(:update?, @report) && @report.packing?
+          = button_component "Compléter", edit_report_path(@report, "enjeu"), icon: "pencil-square", modal: true
+
+    - if @report.enjeu.present?
+      = card_component(content_class: "h-24 flex-auto flex items-center justify-center text-3xl") do |card|
+        = number_to_currency(@report.enjeu)
+
+    - else
+      = card_component(content_class: "card__content--empty h-24 flex-auto flex items-center justify-center") do |card|
+        | Aucun enjeu fixé pour ce signalement.

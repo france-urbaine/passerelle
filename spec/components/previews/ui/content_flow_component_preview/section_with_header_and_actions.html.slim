@@ -1,0 +1,38 @@
+.flex.flex-col.space-y-4
+  = content_flow_component do |flow|
+
+    - flow.with_section do |section|
+
+      - section.with_header do |header|
+
+        = icon_component("server-stack", "Icône d'illustration")
+        | Transmissions DGFIP
+
+        - header.with_action do |action|
+          = badge_component "Pending", :yellow
+
+      = description_list_component do |list|
+        - list.with_attribute("Référence") do |attribute|
+          = "ABCDE123"
+
+        - list.with_attribute("Date de transmission") do |attribute|
+          em Non transmis
+
+    - flow.with_section do |section|
+
+      - section.with_header do |header|
+
+        = icon_component("server-stack", "Icône d'illustration")
+        | Transmissions DDFIP
+
+        - header.with_action do |action|
+          = badge_component "Echec", :red
+        - header.with_action do |action|
+          = button_component "Re-transmettre"
+
+      = description_list_component do |list|
+        - list.with_attribute("Référence") do |attribute|
+          = "MTXK554"
+
+        - list.with_attribute("Date de transmission") do |attribute|
+          em le 23/10/2023 à 11:48:31

@@ -1,0 +1,36 @@
+.flex.flex-col.space-y-4
+  = content_flow_component do |flow|
+
+    - flow.with_section do |section|
+
+      - section.with_header do |header|
+
+        = icon_component("server-stack", "Icône d'illustration")
+        | Section#1
+
+        - header.with_action do |action|
+          = badge_component "Sans séparateur", :blue
+
+      = description_list_component do |list|
+        - list.with_attribute("Référence") do |attribute|
+          = "ABCDE123"
+
+        - list.with_attribute("Libellé") do |attribute|
+          em Création de local professionnel
+
+    - flow.with_section(separator: true) do |section|
+
+      - section.with_header do |header|
+
+        = icon_component("server-stack", "Icône d'illustration")
+        | Section#2
+
+        - header.with_action do |action|
+          = badge_component "Avec séparateur", :orange
+
+      = description_list_component do |list|
+        - list.with_attribute("Référence") do |attribute|
+          = "MTXK554"
+
+        - list.with_attribute("Libellé") do |attribute|
+          em Création de local particulier

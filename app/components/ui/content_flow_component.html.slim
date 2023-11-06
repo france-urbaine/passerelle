@@ -1,0 +1,20 @@
+.content-flow
+  - sections.each do |section|
+
+    .section
+      - if section.header?
+
+        - if section.separator?
+          .content__separator
+
+        .subheader-bar
+          h2.subheader
+            = section.header
+
+          - if section.header.actions?
+            .subheader-bar__actions
+              - section.header.actions.each do |action|
+                .subheader-bar__action
+                  = action
+
+      = section
