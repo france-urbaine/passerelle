@@ -10,11 +10,11 @@
         |  \
               -H "#{key}: #{value}"
 
-      - if @request_file.present?
+      - if @request_file&.any?
         |  \
               --data-binary "@#{@request_file}"
 
-      - if request_body_formatted.present?
+      - if @request_body&.any?
         |  \
               -d '#{request_body_formatted}'
 
@@ -29,11 +29,11 @@
         |  \
               #{key}:"#{value}"
 
-      - if @request_file.present?
+      - if @request_file&.any?
         |  \
               @#{@request_file}
 
-      - if request_body_formatted.present?
+      - if @request_body&.any?
         |  \
               --raw='#{request_body_formatted}'
 
@@ -45,7 +45,7 @@ pre
       br
       | #{key}: #{value}
 
-  - if @json && @request_data.present?
+  - if @json && @request_body&.any?
     br
     div( data-controller="highlight" data-highlight-language-value="json" )
       = JSON.pretty_generate(JSON.parse(request_body_formatted))
@@ -58,7 +58,7 @@ pre
       br
       | #{key}: #{value}
 
-  - if @json && @response_data.present?
+  - if @json && @response_body&.any?
     br
     div( data-controller="highlight" data-highlight-language-value="json" )
       = JSON.pretty_generate(JSON.parse(response_body_formatted))

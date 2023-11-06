@@ -34,7 +34,9 @@ module UI
     end
 
     def request_body_formatted
-      if @json && @request_body.present? && (@request_body.is_a?(Hash) || @request_body.is_a?(Array))
+      return nil if @request_body.blank?
+
+      if @json && (@request_body.is_a?(Hash) || @request_body.is_a?(Array))
         @request_body.to_json
       else
         @request_body
@@ -42,7 +44,9 @@ module UI
     end
 
     def response_body_formatted
-      if @json && @request_body.present? && (@response_body.is_a?(Hash) || @response_body.is_a?(Array))
+      return nil if @response_body.blank?
+
+      if @json && (@response_body.is_a?(Hash) || @response_body.is_a?(Array))
         @response_body.to_json
       else
         @response_body
