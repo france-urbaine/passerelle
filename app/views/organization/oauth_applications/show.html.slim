@@ -14,15 +14,12 @@
     = icon_component("identification", "Nouvelle section")
     | Description
 
-  .card
-    dl.description-list
-      .description-list__row
-        dt Client UID
-        dd= copyable_component @oauth_application.uid
+  = description_list_component(@oauth_application) do |list|
+    - list.with_attribute(:uid) do |attribute|
+      = copyable_component @oauth_application.uid
 
-      .description-list__row
-        dt Client Secret
-        dd= copyable_component @oauth_application.secret, secret: true
+    - list.with_attribute(:secret) do |attribute|
+      = copyable_component @oauth_application.secret, secret: true
 
   .content__separator
 

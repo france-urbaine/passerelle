@@ -1,0 +1,19 @@
+.card
+  dl.description-list
+    - attributes.each do |attribute|
+      = tag.div **attribute.row_html_attributes do
+        dt
+          = attribute.label
+
+        dd
+          - if attribute.value?
+            span
+              = attribute.value
+          
+          - if attribute.reference?
+            span= attribute.reference
+          
+          - if attribute.actions?
+            span
+              - attribute.actions.each do |action|
+                = action

@@ -8,103 +8,50 @@
       .subheader-bar__action
         = button_component "Compléter", edit_report_path(@report, "situation_evaluation"), icon: "pencil-square", modal: true
 
-.card
-  dl.description-list
-    - if display_situation_date_mutation?
-      .description-list__row
-        dt Date de mutation
-        dd
-          = render_valid_content(:situation_date_mutation) do
-            = helpers.display_date(@report.situation_date_mutation)
+= description_list_component(@report) do |list|
+  - if display_situation_date_mutation?
+    - list.with_attribute(:situation_date_mutation) do |attribute|
+      = render_valid_content(:situation_date_mutation) do
+        = helpers.display_date(@report.situation_date_mutation)
 
-    - if display_situation_affectation?
-      .description-list__row
-        dt Affectation
-        dd
-          = render_valid_content(:situation_affectation) do
-            = situation_affectation
+  - if display_situation_affectation?
+    - list.with_attribute(:situation_affectation) do |attribute|
+      = render_valid_content(:situation_affectation) do
+        = situation_affectation
 
-    - if display_situation_nature?
-      .description-list__row
-        dt Nature du local
-        dd
-          = render_valid_content(:situation_nature) do
-            = situation_nature
+  - if display_situation_nature?
+    - list.with_attribute(:situation_nature) do |attribute|
+      = render_valid_content(:situation_nature) do
+        = situation_nature
 
-    - if display_situation_categorie?
-      .description-list__row
-        dt Catégorie du local
-        dd
-          = render_valid_content(:situation_categorie) do
-            = situation_categorie
+  - if display_situation_categorie?
+    - list.with_attribute(:situation_categorie) do |attribute|
+      = render_valid_content(:situation_categorie) do
+        = situation_categorie
 
-    - if display_situation_surface_reelle?
-      .description-list__row
-        dt Surface réelle
-        dd
-          = render_valid_content(:situation_surface_reelle) do
-            = helpers.display_surface(@report.situation_surface_reelle)
+  - if display_situation_surface_reelle?
+    - list.with_attribute(:situation_surface_reelle) do |attribute|
+      = render_valid_content(:situation_surface_reelle) do
+        = helpers.display_surface(@report.situation_surface_reelle)
 
-    - if display_other_situation_surface?
-      .description-list__row
-        dt= "(P1) Surface des parties principales"
-        dd
-          = render_valid_content(:situation_surface_p1) do
-            = helpers.display_surface(@report.situation_surface_p1)
+  - if display_other_situation_surface?
+    - %i(situation_surface_p1 situation_surface_p2 situation_surface_p3 situation_surface_pk1 situation_surface_pk2 situation_surface_ponderee).each do |situation_surface|
+      - list.with_attribute(situation_surface) do |attribute|
+        = render_valid_content(situation_surface) do
+          = helpers.display_surface(@report.public_send(situation_surface))
 
-      .description-list__row
-        dt= "(P2) Surface des parties secondaires couvertes"
-        dd
-          = render_valid_content(:situation_surface_p2) do
-            = helpers.display_surface(@report.situation_surface_p2)
+  - if display_situation_coefficient_localisation?
+    - list.with_attribute(:situation_coefficient_localisation) do |attribute|
+      = render_valid_content(:situation_coefficient_localisation) do
+        = @report.situation_coefficient_localisation
 
-      .description-list__row
-        dt= "(P3) Surface des parties secondaires non couvertes"
-        dd
-          = render_valid_content(:situation_surface_p3) do
-            = helpers.display_surface(@report.situation_surface_p3)
+  - if display_situation_coefficient_entretien?
+    - list.with_attribute(:situation_coefficient_entretien) do |attribute|
+      = render_valid_content(:situation_coefficient_entretien) do
+        = @report.situation_coefficient_entretien
 
-      .description-list__row
-        dt= "(PK1) Surface des stationnements couverts"
-        dd
-          = render_valid_content(:situation_surface_pk1) do
-            = helpers.display_surface(@report.situation_surface_pk1)
-
-      .description-list__row
-        dt= "(PK2) Surface des stationnements non couverts"
-        dd
-          = render_valid_content(:situation_surface_pk2) do
-            = helpers.display_surface(@report.situation_surface_pk2)
-
-      .description-list__row
-        dt Surface pondérée
-        dd
-          = render_valid_content(:situation_surface_ponderee) do
-            = helpers.display_surface(@report.situation_surface_ponderee)
-
-    - if display_situation_coefficient_localisation?
-      .description-list__row
-        dt Coefficient de localisation
-        dd
-          = render_valid_content(:situation_coefficient_localisation) do
-            = @report.situation_coefficient_localisation
-
-    - if display_situation_coefficient_entretien?
-      .description-list__row
-        dt Coefficient d'entretien
-        dd
-          = render_valid_content(:situation_coefficient_entretien) do
-            = situation_coefficient_entretien
-
-    - if display_situation_coefficient_situation?
-      .description-list__row
-        dt Coefficient de situation générale
-        dd
-          = render_valid_content(:situation_coefficient_situation_generale) do
-            = situation_coefficient_situation_generale
-
-      .description-list__row
-        dt Coefficient de situation particulière
-        dd
-          = render_valid_content(:situation_coefficient_situation_particuliere) do
-            = situation_coefficient_situation_particuliere
+  - if display_situation_coefficient_situation?
+    - %i(situation_coefficient_situation_generale situation_coefficient_situation_particuliere).each do |situation_coefficient|
+      - list.with_attribute(situation_coefficient) do |attribute|
+        = render_valid_content(situation_coefficient) do
+          = @report.public_send(situation_coefficient)

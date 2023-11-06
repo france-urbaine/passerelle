@@ -14,41 +14,36 @@
     = icon_component("identification", "Nouvelle section")
     | Description
 
-  .card
-    dl.description-list
-      .description-list__row
-        dt Numéro SIREN de l'éditeur
-        dd= display_siren(@publisher.siren)
+  = description_list_component(@publisher) do |list|
+    - list.with_attribute(:siren) do |attribute|
+      = display_siren(@publisher.siren)
 
-      .description-list__row
-        dt Contact
-        dd= "#{@publisher.contact_first_name} #{@publisher.contact_last_name}".strip.presence
+    - list.with_attribute("Contact") do |attribute|
+      = "#{@publisher.contact_first_name} #{@publisher.contact_last_name}".strip.presence
 
-      .description-list__row
-        dt Adresse mail de contact
-        dd= mail_to(@publisher.contact_email) if @publisher.contact_email?
+    - list.with_attribute("Adresse mail de contact") do |attribute|
+      - if @publisher.contact_email?
+        = mail_to(@publisher.contact_email)
 
-      .description-list__row
-        dt Numéro de téléphone
-        dd= phone_to(@publisher.contact_phone) if @publisher.contact_phone?
+    - list.with_attribute("Numéro de téléphone") do |attribute|
+      - if @publisher.contact_phone?
+        = phone_to(@publisher.contact_phone)
 
-      .description-list__row
-        dt Utilisateurs
-        dd= display_count(@publisher.users_count, "utilisateur") if @publisher.users_count.positive?
+    - list.with_attribute("Utilisateurs") do |attribute|
+      - if @publisher.users_count.positive?
+        = display_count(@publisher.users_count, "utilisateur")
 
-      .description-list__row
-        dt Collectivités enregistrées
-        dd= display_count(@publisher.collectivities_count, "collectivité") if @publisher.collectivities_count.positive?
+    - list.with_attribute("Collectivités enregistrées") do |attribute|
+      - if @publisher.collectivities_count.positive?
+        = display_count(@publisher.collectivities_count, "collectivité")
 
-      .description-list__row
-        dt Signalements
-        dd
-          - if @publisher.reports_transmitted_count.positive?
-            = display_count(@publisher.reports_transmitted_count, "transmis")
-            = " / "
-            = display_count(@publisher.reports_approved_count, "approuvé")
-            = " / "
-            = display_count(@publisher.reports_rejected_count, "rejeté")
+    - list.with_attribute("Signalements") do |attribute|
+      - if @publisher.reports_transmitted_count.positive?
+        = display_count(@publisher.reports_transmitted_count, "transmis")
+        = " / "
+        = display_count(@publisher.reports_approved_count, "approuvé")
+        = " / "
+        = display_count(@publisher.reports_rejected_count, "rejeté")
 
   - if allowed_to?(:index?, User)
     .content__separator

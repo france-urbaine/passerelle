@@ -8,56 +8,45 @@
       .subheader-bar__action
         = button_component "Compléter", edit_report_path(@report, "situation_majic"), icon: "pencil-square", modal: true
 
-.card
-  dl.description-list
-    - if display_situation_annee_majic?
-      .description-list__row
-        dt Année du fichier MAJIC
-        dd
-          = render_valid_content(:situation_annee_majic) do
-            = @report.situation_annee_majic.presence
+= description_list_component(@report) do |list|
+  - if display_situation_annee_majic?
+    - list.with_attribute(:situation_annee_majic) do |attribute|
+      = render_valid_content(:situation_annee_majic) do
+        = @report.situation_annee_majic.presence
 
-    .description-list__row.description-list__row--with-reference
-      dt Commune
-      dd
-        = render_valid_content(:code_insee) do
-          span= @report.commune&.name
-          span= "Code INSEE : #{@report.code_insee}"
+  - list.with_attribute(:commune) do |attribute|
+    = render_valid_content(:code_insee)
+      = @report.commune&.name
+      - attribute.with_reference do
+        = "Code INSEE : #{@report.code_insee}"
 
-    - if display_situation_invariant?
-      .description-list__row
-        dt Invariant
-        dd
-          = render_valid_content(:situation_invariant) do
-            = @report.situation_invariant
+  - if display_situation_invariant?
+    - list.with_attribute(:situation_invariant) do |attribute|
+      = render_valid_content(:situation_invariant) do
+        = @report.situation_invariant
 
-    - if display_situation_parcelle?
-      .description-list__row
-        dt Parcelle
-        dd
-          = render_valid_content(:situation_parcelle) do
-            = helpers.display_parcelle(@report.situation_parcelle)
+  - if display_situation_parcelle?
+    - list.with_attribute(:situation_parcelle) do |attribute|
+      = render_valid_content(:situation_parcelle) do
+        = helpers.display_parcelle(@report.situation_parcelle)
 
-    - if display_situation_adresse?
-      .description-list__row.description-list__row--with-reference
-        dt Adresse du local
-        dd
-          = render_valid_content(:situation_adresse) do
-            span= situation_adresse
-            span= "Code RIVOLI : #{@report.situation_code_rivoli}"
+  - if display_situation_adresse?
+    - list.with_attribute(:situation_adresse) do |attribute|
+      = render_valid_content(:situation_adresse) do
+        = situation_adresse
+        - attribute.with_reference do
+          = "Code RIVOLI : #{@report.situation_code_rivoli}"
 
-    - if display_situation_porte?
-      .description-list__row.description-list__row--with-reference
-        dt Numéro de porte
-        dd
-          = render_valid_content(:situation_porte) do
-            span= situation_porte
-            span= "Numéro d'ordre : #{situation_numero_ordre_porte}"
+  - if display_situation_porte?
+    - list.with_attribute(:situation_porte) do |attribute|
+      = render_valid_content(:situation_porte) do
+        = situation_porte
+        - attribute.with_reference do
+          = "Numéro d'ordre : #{situation_numero_ordre_porte}"
 
-    - if display_situation_proprietaire?
-      .description-list__row.description-list__row--with-reference
-        dt Propriétaire
-        dd
-          = render_valid_content(:situation_proprietaire) do
-            span= @report.situation_proprietaire
-            span= "Numéro d'ordre : #{@report.situation_numero_ordre_proprietaire}"
+  - if display_situation_proprietaire?
+    - list.with_attribute(:situation_proprietaire) do |attribute|
+      = render_valid_content(:situation_proprietaire) do
+        = @report.situation_proprietaire
+        - attribute.with_reference do
+          = "Numéro d'ordre : #{@report.situation_numero_ordre_proprietaire}"

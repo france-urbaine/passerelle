@@ -17,96 +17,45 @@
       .subheader-bar__action
         = button_component "Compléter", edit_report_path(@report, "proposition_evaluation"), icon: "pencil-square", modal: true
 
-.card
-  dl.description-list
-    - if display_proposition_affectation?
-      .description-list__row
-        dt Affectation
-        dd
-          = render_valid_content(:proposition_affectation) do
-            = proposition_affectation
+= description_list_component(@report) do |list|
+  - if display_proposition_affectation?
+    - list.with_attribute(:proposition_affectation) do |attribute|
+      = render_valid_content(:proposition_affectation) do
+        = proposition_affectation
 
-    - if display_proposition_nature?
-      .description-list__row
-        dt Nature du local
-        dd
-          = render_valid_content(:proposition_nature) do
-            = proposition_nature
+  - if display_proposition_nature?
+    - list.with_attribute(:proposition_nature) do |attribute|
+      = render_valid_content(:proposition_nature) do
+        = proposition_nature
 
-    - if display_proposition_categorie?
-      .description-list__row
-        dt Catégorie du local
-        dd
-          = render_valid_content(:proposition_categorie) do
-            = proposition_categorie
+  - if display_proposition_categorie?
+    - list.with_attribute(:proposition_categorie) do |attribute|
+      = render_valid_content(:proposition_categorie) do
+        = proposition_categorie
 
-    - if display_proposition_surface_reelle?
-      .description-list__row
-        dt Surface réelle
-        dd
-          = render_valid_content(:proposition_surface_reelle) do
-            = helpers.display_surface(@report.proposition_surface_reelle)
+  - if display_proposition_surface_reelle?
+    - list.with_attribute(:proposition_surface_reelle) do |attribute|
+      = render_valid_content(:proposition_surface_reelle) do
+        = helpers.display_surface(@report.proposition_surface_reelle)
 
-    - if display_other_proposition_surface?
-      .description-list__row
-        dt= "(P1) Surface des parties principales"
-        dd
-          = render_valid_content(:proposition_surface_p1) do
-            = helpers.display_surface(@report.proposition_surface_p1)
+  - if display_other_proposition_surface?
+    - %i(proposition_surface_p1 proposition_surface_p2 proposition_surface_p3 proposition_surface_pk1 proposition_surface_pk2 proposition_surface_ponderee).each do |proposition_surface|
+      - list.with_attribute(proposition_surface) do |attribute|
+        = render_valid_content(proposition_surface) do
+          = helpers.display_surface(@report.public_send(proposition_surface))
 
-      .description-list__row
-        dt= "(P2) Surface des parties secondaires couvertes"
-        dd
-          = render_valid_content(:proposition_surface_p2) do
-            = helpers.display_surface(@report.proposition_surface_p2)
+  - if display_proposition_coefficient_localisation?
+    - list.with_attribute(:proposition_coefficient_localisation) do |attribute|
+      = render_valid_content(:proposition_coefficient_localisation) do
+        = @report.proposition_coefficient_localisation
 
-      .description-list__row
-        dt= "(P3) Surface des parties secondaires non couvertes"
-        dd
-          = render_valid_content(:proposition_surface_p3) do
-            = helpers.display_surface(@report.proposition_surface_p3)
+  - if display_proposition_coefficient_entretien?
+    - list.with_attribute(:proposition_coefficient_entretien) do |attribute|
+      = render_valid_content(:proposition_coefficient_entretien) do
+        = @report.proposition_coefficient_entretien
 
-      .description-list__row
-        dt= "(PK1) Surface des stationnements couverts"
-        dd
-          = render_valid_content(:proposition_surface_pk1) do
-            = helpers.display_surface(@report.proposition_surface_pk1)
-
-      .description-list__row
-        dt= "(PK2) Surface des stationnements non couverts"
-        dd
-          = render_valid_content(:proposition_surface_pk2) do
-            = helpers.display_surface(@report.proposition_surface_pk2)
-
-      .description-list__row
-        dt Surface pondérée
-        dd
-          = render_valid_content(:proposition_surface_ponderee) do
-            = helpers.display_surface(@report.proposition_surface_ponderee)
-
-    - if display_proposition_coefficient_localisation?
-      .description-list__row
-        dt Coefficient de localisation
-        dd
-          = render_valid_content(:proposition_coefficient_localisation) do
-            = @report.proposition_coefficient_localisation
-
-    - if display_proposition_coefficient_entretien?
-      .description-list__row
-        dt Coefficient d'entretien
-        dd
-          = render_valid_content(:proposition_coefficient_entretien) do
-            = proposition_coefficient_entretien
-
-    - if display_proposition_coefficient_situation?
-      .description-list__row
-        dt Coefficient de situation générale
-        dd
-          = render_valid_content(:proposition_coefficient_situation_generale) do
-            = proposition_coefficient_situation_generale
-
-      .description-list__row
-        dt Coefficient de situation particulière
-        dd
-          = render_valid_content(:proposition_coefficient_situation_particuliere) do
-            = proposition_coefficient_situation_particuliere
+  - if display_proposition_coefficient_situation?
+    - %i(proposition_coefficient_situation_generale proposition_coefficient_situation_particuliere).each do |proposition_coefficient_situation|
+      - list.with_attribute(proposition_coefficient_situation) do |attribute|
+        = render_valid_content(proposition_coefficient_situation) do
+          = @report.public_send(proposition_coefficient_situation)

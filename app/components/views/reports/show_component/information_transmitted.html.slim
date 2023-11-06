@@ -7,32 +7,23 @@
     .subheader-bar__action= priority_badge(@report)
     .subheader-bar__action= report_badge(@report)
 
-.card
-  dl.description-list
-    .description-list__row
-      dt Référence du paquet
-      dd= authorized_link_to @report.package
+= description_list_component(@report) do |list|
+  - list.with_attribute("Référence du paquet") do |attribute|
+    = authorized_link_to @report.package
 
-    .description-list__row
-      dt Référence du signalement
-      dd= @report.reference
+  - list.with_attribute(:reference) do |attribute|
+    = @report.reference
 
-    .description-list__row
-      dt Date de transmission
-      dd= l(@report.package.transmitted_at.to_date)
+  - list.with_attribute("Date de transmission") do |attribute|
+    = l(@report.package.transmitted_at.to_date)
 
-    .description-list__row
-      dt Date d'échéance
-      dd
+  - list.with_attribute("Date d'échéance")
 
-    .description-list__row
-      dt Type de signalement
-      dd= t(@report.form_type, scope: "enum.report_form_type")
+  - list.with_attribute("Type de signalement") do |attribute|
+    = t(@report.form_type, scope: "enum.report_form_type")
 
-    .description-list__row
-      dt Objet du signalement
-      dd= helpers.list(@report.anomalies) { |value| t(value, scope: ["enum.anomalies", @report.form_type]) }
+  - list.with_attribute("Objet du signalement") do |attribute|
+    = helpers.list(@report.anomalies) { |value| t(value, scope: ["enum.anomalies", @report.form_type]) }
 
-    .description-list__row
-      dt Date du constat
-      dd= helpers.display_date(@report.date_constat)
+  - list.with_attribute("Date du constat") do |attribute|
+    = helpers.display_date(@report.date_constat)

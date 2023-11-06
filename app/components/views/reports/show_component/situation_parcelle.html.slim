@@ -8,31 +8,25 @@
       .subheader-bar__action
         = button_component "Compléter", edit_report_path(@report, "situation_parcelle"), icon: "pencil-square", modal: true
 
-.card
-  dl.description-list
-    .description-list__row.description-list__row--with-reference
-      dt Commune
-      dd
-        = render_valid_content(:code_insee) do
-          span= @report.commune&.name
-          span= "Code INSEE : #{@report.code_insee}"
+= description_list_component(@report) do |list|
+  - list.with_attribute(:commune) do |attribute|
+    = render_valid_content(:code_insee) do
+      = @report.commune&.name
+      - attribute.with_reference do
+        = "Code INSEE : #{@report.code_insee}"
 
-    .description-list__row
-      dt Parcelle
-      dd
-        = render_valid_content(:situation_parcelle) do
-          = helpers.display_parcelle(@report.situation_parcelle)
+  - list.with_attribute(:situation_parcelle) do |attribute|
+    = render_valid_content(:situation_parcelle) do
+      = helpers.display_parcelle(@report.situation_parcelle)
 
-    .description-list__row.description-list__row--with-reference
-      dt Adresse de la parcelle
-      dd
-        = render_valid_content(:situation_adresse) do
-          span= situation_adresse
-          span= "Code RIVOLI : #{@report.situation_code_rivoli}"
+  - list.with_attribute(:situation_adresse) do |attribute|
+    = render_valid_content(:situation_adresse) do
+      = situation_adresse
+      - attribute.with_reference do
+        = "Code RIVOLI : #{@report.situation_code_rivoli}"
 
-    .description-list__row.description-list__row--with-reference
-      dt Propriétaire
-      dd
-        = render_valid_content(:situation_proprietaire) do
-          span= @report.situation_proprietaire
-          span= "Numéro d'ordre : #{@report.situation_numero_ordre_proprietaire}"
+  - list.with_attribute(:situation_proprietaire) do |attribute|
+    = render_valid_content(:situation_proprietaire) do
+      = @report.situation_proprietaire
+      - attribute.with_reference do
+        = "Numéro d'ordre : #{@report.situation_numero_ordre_proprietaire}"

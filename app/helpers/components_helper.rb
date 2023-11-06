@@ -9,6 +9,7 @@ module ComponentsHelper
     card_component:                   "UI::CardComponent",
     copyable_component:               "UI::CopyableComponent",
     counter_component:                "UI::CounterComponent",
+    description_list_component:       "UI::DescriptionListComponent",
     dropdown_component:               "UI::DropdownComponent",
     icon_component:                   "UI::IconComponent",
     modal_component:                  "UI::ModalComponent",
