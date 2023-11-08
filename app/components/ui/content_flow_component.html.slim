@@ -1,12 +1,11 @@
 .content-flow
-  - sections.each do |section|
+  - sections.each.with_index do |section, i|
+
+    - if i > 0
+      .content__separator
 
     .section
       - if section.header?
-
-        - if section.separator?
-          .content__separator
-
         .subheader-bar
           h2.subheader
             = section.header

@@ -30,7 +30,7 @@
       - list.with_attribute("Type de signalement") do |attribute|
         = t(@report.form_type, scope: "enum.report_form_type")
 
-  - flow.with_section(separator: true) do |section|
+  - flow.with_section do |section|
 
     - section.with_header do |header|
       = icon_component("flag", "Icône d'illustration")

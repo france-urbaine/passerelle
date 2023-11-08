@@ -19,6 +19,10 @@ RSpec.describe UI::ContentFlowComponent, type: :component do
       end
     end
 
+    expect(page).to have_selector(".content-flow") do |flow|
+      expect(flow).not_to have_selector("div.content__separator")
+    end
+
     expect(page).to have_selector(".content-flow > .section > .subheader-bar") do |header|
       expect(header).to have_selector("h2.subheader", text: "Section#1")
       expect(header).to have_selector(".subheader-bar__actions") do |actions|
@@ -26,6 +30,17 @@ RSpec.describe UI::ContentFlowComponent, type: :component do
           expect(action).to have_selector(".badge", text: "Pending")
         end
       end
+    end
+  end
+
+  it "renders a contenu flow with 2 sections with a separator between" do
+    render_inline described_class.new do |flow|
+      flow.with_section
+      flow.with_section
+    end
+
+    expect(page).to have_selector(".content-flow") do |flow|
+      expect(flow).to have_selector("div.content__separator")
     end
   end
 end

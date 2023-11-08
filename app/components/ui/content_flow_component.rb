@@ -13,15 +13,6 @@ module UI
     class Section < ApplicationViewComponent
       renders_one :header, "Header"
 
-      def initialize(**options)
-        @options = options
-        super()
-      end
-
-      def separator?
-        @options[:separator]
-      end
-
       def call
         content
       end
