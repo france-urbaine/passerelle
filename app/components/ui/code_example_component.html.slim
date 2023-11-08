@@ -1,0 +1,17 @@
+- if languages?
+  pre.code-example
+    - languages.each.with_index do |section, index|
+      - unless index.zero?
+        br
+
+      div(
+        data-controller="highlight"
+        data-highlight-language-value=section.language
+      )= section
+
+- else
+  pre.code-example(
+    data-controller="highlight"
+    data-highlight-language-value=@language
+  )
+    = content

@@ -1,9 +1,6 @@
 = tabs_component do |tabs|
   - tabs.with_tab("cURL") do
-    pre(
-      data-controller="highlight"
-      data-highlight-language-value="shell"
-    )
+    = code_example_component(:shell) do
       | $ curl -X #{@verb} #{url}
 
       - @request_headers.sort_by(&:first).each do |(key, value)|
@@ -19,10 +16,7 @@
               -d '#{request_body_formatted}'
 
   - tabs.with_tab("httpie") do
-    pre(
-      data-controller="highlight"
-      data-highlight-language-value="shell"
-    )
+    = code_example_component(:shell) do
       | $ http -v #{@verb} #{url}
 
       - @request_headers.sort_by(&:first).each do |(key, value)|
@@ -37,8 +31,8 @@
         |  \
               --raw='#{request_body_formatted}'
 
-pre
-  div( data-controller="highlight" data-highlight-language-value="http" )
+= code_example_component do |code|
+  - code.with_language(:http) do
     | GET #{url.path} HTTP/1.1
 
     - request_headers_formatted.each do |(key, value)|
@@ -46,12 +40,10 @@ pre
       | #{key}: #{value}
 
   - if @json && @request_body&.any?
-    br
-    div( data-controller="highlight" data-highlight-language-value="json" )
+    - code.with_language(:json) do
       = JSON.pretty_generate(JSON.parse(request_body_formatted))
 
-  br
-  div( data-controller="highlight" data-highlight-language-value="http" )
+  - code.with_language(:http) do
     | HTTP/1.1 #{@response_code} #{Rack::Utils::HTTP_STATUS_CODES[@response_code]}
 
     - @response_headers.sort_by(&:first).each do |(key, value)|
@@ -59,6 +51,5 @@ pre
       | #{key}: #{value}
 
   - if @json && @response_body&.any?
-    br
-    div( data-controller="highlight" data-highlight-language-value="json" )
+    - code.with_language(:json) do
       = JSON.pretty_generate(JSON.parse(response_body_formatted))
