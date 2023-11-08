@@ -20,6 +20,7 @@
 /* Texts */
 @import "./components/brand";
 @import "./components/typography";
+@import "./components/code_example";
 
 /* Interactive elements */
 @import "./components/button";

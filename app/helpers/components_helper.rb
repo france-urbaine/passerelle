@@ -7,6 +7,7 @@ module ComponentsHelper
     breadcrumbs_component:            "UI::BreadcrumbsComponent",
     button_component:                 "UI::ButtonComponent",
     card_component:                   "UI::CardComponent",
+    code_example_component:           "UI::CodeExampleComponent",
     copyable_component:               "UI::CopyableComponent",
     counter_component:                "UI::CounterComponent",
     description_list_component:       "UI::DescriptionListComponent",
