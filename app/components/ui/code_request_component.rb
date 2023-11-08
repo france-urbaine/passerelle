@@ -2,6 +2,8 @@
 
 module UI
   class CodeRequestComponent < ApplicationViewComponent
+    DEFAULT_ACCESS_TOKEN = "HgAxkdHZUvlBjuuWweLKwsJ6InRfZoZ-GHyFtbrS03k"
+
     def initialize(verb, url, response: {}, request: {}, json: false, authorization: true)
       @verb             = verb
       @url              = url
@@ -17,8 +19,8 @@ module UI
       @request_headers  = request.fetch(:headers, {})
 
       if json
-        @response_headers["Content-Type"] ||= "application/json" if @response_body
-        @request_headers["Content-Type"]  ||= "application/json" if @request_body
+        @response_headers["Content-Type"] ||= "application/json; charset=utf-8" if @response_body.present?
+        @request_headers["Content-Type"]  ||= "application/json" if @request_body.present?
         @request_headers["Accept"]        ||= "application/json"
       end
 
@@ -31,6 +33,12 @@ module UI
 
     def url
       URI.join(api_url, @url)
+    end
+
+    def request_headers_formatted
+      headers = @request_headers.dup
+      headers["Authorization"] = headers["Authorization"].sub("$ACCESS_TOKEN", DEFAULT_ACCESS_TOKEN)
+      headers.sort_by(&:first)
     end
 
     def request_body_formatted

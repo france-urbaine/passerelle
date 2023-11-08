@@ -4,9 +4,9 @@
       data-controller="highlight"
       data-highlight-language-value="shell"
     )
-      | $ curl -v -X #{@verb} #{url}
+      | $ curl -X #{@verb} #{url}
 
-      - @request_headers.each do |key, value|
+      - @request_headers.sort_by(&:first).each do |(key, value)|
         |  \
               -H "#{key}: #{value}"
 
@@ -25,7 +25,7 @@
     )
       | $ http -v #{@verb} #{url}
 
-      - @request_headers.each do |key, value|
+      - @request_headers.sort_by(&:first).each do |(key, value)|
         |  \
               #{key}:"#{value}"
 
@@ -39,9 +39,9 @@
 
 pre
   div( data-controller="highlight" data-highlight-language-value="http" )
-    | GET #{@path} HTTP/1.1
+    | GET #{url.path} HTTP/1.1
 
-    - @request_headers.sort_by(&:first).each do |(key, value)|
+    - request_headers_formatted.each do |(key, value)|
       br
       | #{key}: #{value}
 
