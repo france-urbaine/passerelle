@@ -1,0 +1,7 @@
+.documentation
+  .card
+    .card__content
+      .documentation-examples
+        - request = { headers: {"CECI" => "est un header de requête"} }
+        - response = { headers: {"CECI" => "est un header de réponse"} }
+        = render UI::CodeRequestComponent.new("GET", "chemin/controller", json: true, authorization: true, request: request, response: response)
