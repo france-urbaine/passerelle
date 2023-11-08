@@ -1,7 +1,7 @@
 .flex.flex-col.space-y-4
   = content_flow_component do |flow|
 
-    - flow.with_section do |section|
+    - flow.with_section
 
       = description_list_component do |list|
         - list.with_attribute("Référence") do |attribute|
@@ -10,7 +10,7 @@
         - list.with_attribute("Date de transmission") do |attribute|
           em Non transmis
 
-    - flow.with_section do |section|
+    - flow.with_section
 
       = description_list_component do |list|
         - list.with_attribute("Référence") do |attribute|

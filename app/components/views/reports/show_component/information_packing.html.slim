@@ -1,18 +1,18 @@
 = content_flow_component do |flow|
 
-  - flow.with_section do |section|
+  - flow.with_header do |header|
 
-    - section.with_header do |header|
+    = icon_component("server-stack", "Icône d'illustration")
+    | Informations relatives au paquet
 
-      = icon_component("server-stack", "Icône d'illustration")
-      | Informations relatives au paquet
+    - header.with_custom(id: dom_id(@report, :status), is: "turbo-frame") do
+      = report_badge(@report)
 
-      - header.with_custom(id: dom_id(@report, :status), is: "turbo-frame") do
-        = report_badge(@report)
+    - if @report.sandbox?
+      - header.with_custom do
+        = badge_component("Bac à sable", :yellow)
 
-      - if @report.sandbox?
-        - header.with_custom do
-          = badge_component("Bac à sable", :yellow)
+  - flow.with_section do
 
     = description_list_component(@report) do |list|
       - list.with_attribute("Référence du paquet") do |attribute|
@@ -30,15 +30,15 @@
       - list.with_attribute("Type de signalement") do |attribute|
         = t(@report.form_type, scope: "enum.report_form_type")
 
-  - flow.with_section do |section|
+  - flow.with_header do |header|
+    = icon_component("flag", "Icône d'illustration")
+    | Objet du signalement
 
-    - section.with_header do |header|
-      = icon_component("flag", "Icône d'illustration")
-      | Objet du signalement
+    - header.with_action do
+      - if allowed_to?(:update?, @report) && @report.packing?
+        = button_component "Modifier", edit_report_path(@report, "information"), icon: "pencil-square", modal: true
 
-      - header.with_action do |action|
-        - if allowed_to?(:update?, @report) && @report.packing?
-          = button_component "Modifier", edit_report_path(@report, "information"), icon: "pencil-square", modal: true
+  - flow.with_section do
 
     = description_list_component(@report) do |list|
       - list.with_attribute(:anomalies) do |attribute|

@@ -1,15 +1,15 @@
 .flex.flex-col.space-y-4
   = content_flow_component do |flow|
 
-    - flow.with_section do |section|
+    - flow.with_header do |header|
 
-      - section.with_header do |header|
+      = icon_component("map-pin", "Communes")
+      | Informations
 
-        = icon_component("map-pin", "Communes")
-        | Informations
+      - header.with_action do |action|
+        = badge_component "Dernière mise à jour le 11/10/2023", :green
 
-        - header.with_action do |action|
-          = badge_component "Dernière mise à jour le 11/10/2023", :green
+    - flow.with_section do
 
       = datatable_component(records) do |datatable|
         - datatable.with_column(:code_insee, compact: true) { "#" }

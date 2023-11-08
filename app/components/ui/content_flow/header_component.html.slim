@@ -1,0 +1,12 @@
+- if separator?
+  .content__separator
+
+.header
+  .subheader-bar
+    h2.subheader
+      = content
+    - if actions?
+      .subheader-bar__actions
+        - actions.each do |action|
+          .subheader-bar__action
+            = action
