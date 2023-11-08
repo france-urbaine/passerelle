@@ -96,6 +96,7 @@ fr:
         contact_phone:        Numéro de téléphone
         domain_restriction:   Nom de domaine
         allow_2fa_via_email:  Autoriser l'email comme méthode d'authentification en 2 étapes
+        sandbox:              Mode bac à sable
 
       ddfip:
         name:                   Nom de la DDFIP
@@ -193,6 +194,7 @@ fr:
 
       oauth_application:
         name:         Nom de l'application
+        sandbox:      Mode bac à sable
         redirect_uri: URI de redirection
         uid:          Client UID
         secret:       Client Secret

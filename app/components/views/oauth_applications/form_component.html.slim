@@ -13,5 +13,9 @@
         = form.label :name
         = form.text_field :name, required: true
 
+      = form.block :sandbox do
+        = form.check_box :sandbox
+        = form.label :sandbox
+
     - modal.with_submit_action "Enregistrer"
     - modal.with_close_action "Annuler"

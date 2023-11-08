@@ -55,5 +55,8 @@
               br
               | comme méthode d'authentification, ces utilisateurs ne pourront plus accéder à la plateforme.
 
+      = form.block :sandbox do
+        = form.check_box :sandbox
+        = form.label :sandbox
     - modal.with_submit_action "Enregistrer"
     - modal.with_close_action "Annuler"

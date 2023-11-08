@@ -166,6 +166,7 @@ RSpec.describe Admin::PublisherPolicy, type: :policy do
         contact_email:       "marc.debomy@fiscalite-territoire.fr",
         contact_phone:       "+0000",
         allow_2fa_via_email: "true",
+        sandbox:             true,
         domain_restriction:  "@fiscalite-territoire.fr",
         something_else:      "true"
       }
@@ -180,7 +181,8 @@ RSpec.describe Admin::PublisherPolicy, type: :policy do
           contact_last_name:   attributes[:contact_last_name],
           contact_email:       attributes[:contact_email],
           contact_phone:       attributes[:contact_phone],
-          allow_2fa_via_email: attributes[:allow_2fa_via_email]
+          allow_2fa_via_email: attributes[:allow_2fa_via_email],
+          sandbox:             attributes[:sandbox]
         ).and not_include(
           :domain_restriction,
           :something_else
