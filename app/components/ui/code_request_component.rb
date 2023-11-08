@@ -37,7 +37,7 @@ module UI
 
     def request_headers_formatted
       headers = @request_headers.dup
-      headers["Authorization"] = headers["Authorization"].sub("$ACCESS_TOKEN", DEFAULT_ACCESS_TOKEN)
+      headers["Authorization"] = headers["Authorization"].sub("$ACCESS_TOKEN", DEFAULT_ACCESS_TOKEN) if @authorization
       headers.sort_by(&:first)
     end
 

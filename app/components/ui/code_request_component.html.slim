@@ -7,7 +7,7 @@
         |  \
               -H "#{key}: #{value}"
 
-      - if @request_file&.any?
+      - if @request_file&.present?
         |  \
               --data-binary "@#{@request_file}"
 
