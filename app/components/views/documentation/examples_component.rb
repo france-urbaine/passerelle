@@ -7,6 +7,7 @@ module Views
         @resource_name = resource_name
         @method_name   = method_name
         @version       = version
+
         super()
       end
 
