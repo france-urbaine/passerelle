@@ -45,7 +45,7 @@ RSpec.describe "API::Reports::AttachmentsController#create", :api do
       it { expect(response).to have_http_status(:no_content) }
       it { expect { request }.to change(report.documents, :count).by(1) }
 
-      it "assigns expected attributes to the new record" do
+      it "assigns expected attributes to the new record", :show_in_doc do
         request
         expect(report.documents.last.filename).to eq("sample.pdf")
       end

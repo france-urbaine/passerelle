@@ -3,6 +3,23 @@
 module API
   module Reports
     class AttachmentsController < ApplicationController
+      resource_description do
+        name "Pièces Jointes"
+        formats ["json"]
+      end
+
+      api :POST, "/signalements/:id/documents", "Ajout d'une pièce jointe à un signalement"
+      description <<-DESC
+        Cette ressource permet d'ajouter une pièce jointe à un signalement.
+
+        La pièce jointe doit préalablement avoir été téléchargée sur notre serveur distant.
+      DESC
+
+      see "upload#create", "Obtenir un lien de téléchargement"
+
+      param :documents, String, "Signed ID du document", required: true
+
+      returns code: 200, desc: "Document relier au signalement"
       def create
         @report = find_and_authorize_report
         @report.documents.attach(params[:documents])

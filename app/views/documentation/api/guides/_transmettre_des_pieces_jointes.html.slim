@@ -2,6 +2,128 @@
   - breadcrumbs.with_path "Guides"
   - breadcrumbs.with_path "Transmettre des pièces jointes"
 
-.card
-  .card__content
-    | Bientôt disponible
+.documentation
+  .card
+    .card__content
+      p
+        | La création et la publication d'une pièce jointe se fait en 3 étapes:
+        br
+        | - Demande de création de pièce jointe et retour du lien de téléchargement.
+        br
+        | - Téléchargement de pièce jointe sur le lien fournis.
+        br
+        | - Association de pièce jointe à un signalement.
+        br
+        ' Pour plus d'informations à propos du direct upload vous pouvez consulter
+        = link_to "la documentation ActiveStorage", "https://edgeguides.rubyonrails.org/active_storage_overview.html#direct-uploads"
+
+  .content__separator
+
+  h2.subheader
+    = icon_component("envelope")
+    | Demande de création de pièce jointe
+
+  .card
+    .card__content
+      ' Pour demander un l'accès à l'écriture sur notre serveur de stockage, il faut envoyer une requête HTTP POST sur l'endpoint suivant en passant un blob en paramètre
+      br
+      ' Un BLOB (Binary Large Object) est un type de données qui permet d'enregistrer des fichiers binaires.
+      br
+      ' Les BLOB sont volumineux et ont donc besoin d'un espace de stockage considérable.
+      br
+      ' Pour obtenir un lien de téléchargement pour un fichier donné il faut effectuer les requêtes:
+      .documentation-examples
+        ruby:
+          request = {
+            body: {
+              blob: {
+                byte_size: 267785,
+                checksum: "keKnRxGllrNnMpX19UouVQ==",
+                content_type: "application/pdf",
+                filename: "Facture_elec.pdf"
+              }
+            }
+          }
+
+          response = {
+            code:    200,
+            headers: {},
+            body: {
+              "id": "255dd254-7713-405a-9097-ca4e0424a536",
+              "key": "qsay79kfgukbuspqwfjvbmh8algd",
+              "filename": "Facture_elec.pdf",
+              "content_type": "application/pdf",
+              "metadata": {},
+              "service_name": "local",
+              "byte_size": 267785,
+              "checksum": "keKnRxGllrNnMpX19UouVQ==",
+              "created_at": "2023-10-25T10:00:26.328Z",
+              "signed_id": "eyJfcmFpbHM[...]eyJfcmFpbHM",
+              "attachable_sgid": "eyJfcmFpbHM[...]eyJfcmFpbHM",
+              "direct_upload": {
+                "url": "http://static.fiscahub.fr/eyJfcmFpbHM[...]eyJfcmFpbHM",
+                "headers": {
+                  "Content-Type": "application/pdf"
+                }
+              }
+            }
+          }
+
+        = render UI::CodeRequestComponent.new("POST", "/upload", json: true, authorization: true, request:, response:)
+
+      ' Vous aurez besoin de connaitre la taille de votre fichier, sur une machine Unix vous pouvez utiliser la commande suivante:
+      br
+      pre( data-controller="highlight" data-highlight-language-value="shell" )
+        | $ ls -l Chemin_fichier
+      ' Vous aurez besoin de connaitre le checksum de votre fichier dans ça version MD5 endoder en base64, il put être obtenu entre autre avec la commande:
+      br
+      pre( data-controller="highlight" data-highlight-language-value="shell" )
+        | $ openssl md5 -binary filename | base64
+      ' Vous obtiendrez en retour un JSON contenant une URL et un signed_id correspondant a l'identifiant unique de votre document.
+      br
+      ' Il faut conserver le signed_id ainsi que l'objet "direct_upload" pour la prochaine étape.
+
+  .content__separator
+
+  h2.subheader
+    = icon_component("envelope")
+    | Téléchargement de pièce jointe
+
+  .card
+    .card__content
+      ' Pour télécharger une pièce jointe sur notre serveur, il faut envoyer une requête HTTP PUT sur l'endpoint reçus dans la réponse de la première étape.
+      .documentation-examples
+        ruby:
+          request = {
+            headers: { "Content-Type" => "application/pdf" },
+            file:    "path/to/file.pdf"
+          }
+
+          response = {
+            code: 204
+          }
+
+        = render UI::CodeRequestComponent.new("PUT", "http://static.fiscahub.fr/eyJfcmFpbHM...eyJfcmFpbHM", request:, response:, authorization: false)
+
+      ' Si l'opération est un succès aucun retour n'est renvoyer.
+
+  .content__separator
+
+  h2.subheader
+    = icon_component("envelope")
+    | Association de pièce jointe à un signalement
+
+  .card
+    .card__content
+      ' Pour associé une pièce jointe a un signalement, il faut envoyer une requête HTTP POST sur l'endpoint suivant:
+      .documentation-examples
+        ruby:
+          request = {
+            body: { documents: "$SIGNED_ID"}
+          }
+
+          response = {
+            code: 204
+          }
+        = render UI::CodeRequestComponent.new("POST", "/signalements/:id/documents", json: true, authorization: true, request:, response:)
+      ' Si l'opération est un succès aucun retour n'est renvoyer.
