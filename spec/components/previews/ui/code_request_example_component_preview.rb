@@ -27,5 +27,9 @@ module UI
     # @label With file download
     #
     def with_file_download; end
+
+    # @label Inside other elements
+    #
+    def inside_card; end
   end
 end

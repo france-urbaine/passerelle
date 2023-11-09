@@ -1,25 +1,24 @@
-= card_component do
-  = code_example_component do |code|
-    - code.with_language(:shell) do
-      | $ curl -X GET https://api.fiscahub.fr/collectivites \
-            -H "Accept: application/json" \
-            -H "Authorization: Bearer $ACCESS_TOKEN"
+= code_example_component do |code|
+  - code.with_language(:shell) do
+    | $ curl -X GET https://api.fiscahub.fr/collectivites \
+          -H "Accept: application/json" \
+          -H "Authorization: Bearer $ACCESS_TOKEN"
 
-    - code.with_language(:http) do
-      | GET /collectivites HTTP/1.1
-        Accept: application/json
-        Authorization: Bearer HgAxkdHZUvlBjuuWweLKwsJ6InRfZoZ-GHyFtbrS03k
+  - code.with_language(:http) do
+    | GET /collectivites HTTP/1.1
+      Accept: application/json
+      Authorization: Bearer HgAxkdHZUvlBjuuWweLKwsJ6InRfZoZ-GHyFtbrS03k
 
-    - code.with_language(:http) do
-      | HTTP/1.1 200 OK
-        Content-Type: application/json; charset=utf-8
+  - code.with_language(:http) do
+    | HTTP/1.1 200 OK
+      Content-Type: application/json; charset=utf-8
 
-    - code.with_language(:json) do
-      | {
-          "collectivites": [
-            {
-              "id": "9e6c14d5-1fbc-4dcc-a792-030ce0bb3882",
-              "name": "Metropole de Montpellier"
-            }
-          ]
-        }
+  - code.with_language(:json) do
+    | {
+        "collectivites": [
+          {
+            "id": "9e6c14d5-1fbc-4dcc-a792-030ce0bb3882",
+            "name": "Metropole de Montpellier"
+          }
+        ]
+      }
