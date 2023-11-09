@@ -8,6 +8,7 @@ module ComponentsHelper
     button_component:                 "UI::ButtonComponent",
     card_component:                   "UI::CardComponent",
     code_example_component:           "UI::CodeExampleComponent",
+    code_request_example_component:   "UI::CodeRequestExampleComponent",
     copyable_component:               "UI::CopyableComponent",
     counter_component:                "UI::CounterComponent",
     description_list_component:       "UI::DescriptionListComponent",
