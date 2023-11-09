@@ -3,11 +3,9 @@
 
     - flow.with_header do |header|
 
-      = icon_component("map-pin", "Communes")
-      | Informations
+      - header.with_title "Informations", "map-pin", "Communes"
 
-      - header.with_action do |action|
-        = badge_component "Dernière mise à jour le 11/10/2023", :green
+      - header.with_status "Dernière mise à jour le 11/10/2023", :green
 
     - flow.with_section do
 

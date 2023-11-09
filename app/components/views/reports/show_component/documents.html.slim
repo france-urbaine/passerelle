@@ -1,12 +1,10 @@
 = content_flow_component do |flow|
 
   - flow.with_header do |header|
-    = icon_component("paper-clip", "Icône d'illustration")
-    | Pièces jointes
+    - header.with_title "Pièces jointes", "paper-clip", "Icône d'illustration"
 
-    - header.with_action do
-      - if allowed_to?(:update?, @report) && @report.packing?
-        = button_component "Ajouter des documents", new_report_attachment_path(@report), icon: "document-plus", modal: true
+    - if allowed_to?(:update?, @report) && @report.packing?
+      - header.with_action "Ajouter des documents", new_report_attachment_path(@report), icon: "document-plus", modal: true
 
   - flow.with_section do
 

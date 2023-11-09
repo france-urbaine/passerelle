@@ -4,9 +4,9 @@
 .header
   .subheader-bar
     h2.subheader
-      = content
-    - if actions?
+      = title
+    - if parts?
       .subheader-bar__actions
-        - actions.each do |action|
+        - parts.each do |part|
           .subheader-bar__action
-            = action
+            = part

@@ -7,7 +7,7 @@ module UI
   class ContentFlowComponentPreview < ViewComponent::Preview
     # @label Section with header and actions
     #
-    def section_with_header_and_actions; end
+    def section_with_header_and_parts; end
 
     # @label Section with datatable
     #

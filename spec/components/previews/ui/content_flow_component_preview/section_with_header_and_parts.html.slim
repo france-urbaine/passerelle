@@ -3,11 +3,11 @@
 
     - flow.with_header do |header|
 
-      = icon_component("server-stack", "Icône d'illustration")
-      | Transmissions DGFIP
-
-      - header.with_action do |action|
-        = badge_component "Pending", :yellow
+      - header.with_title "Transmissions DGFIP", "server-stack", "Icône d'illustration"
+      - header.with_status "Pending", :yellow
+      - header.with_custom do
+        div#report_badge is="turbo-frame"
+          = badge_component icon_component("eye") + "Custom part", :blue
 
     - flow.with_section do
 
@@ -20,13 +20,9 @@
 
     - flow.with_header do |header|
 
-        = icon_component("server-stack", "Icône d'illustration")
-        | Transmissions DDFIP
-
-        - header.with_action do |action|
-          = badge_component "Echec", :red
-        - header.with_action do |action|
-          = button_component "Re-transmettre"
+        - header.with_title "Transmissions DDFIP", "server-stack", "Icône d'illustration"
+        - header.with_status "Echec", :red
+        - header.with_action "Re-transmettre", "/resend/1234"
 
     - flow.with_section do
 

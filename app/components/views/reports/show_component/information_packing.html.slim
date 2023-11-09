@@ -2,8 +2,7 @@
 
   - flow.with_header do |header|
 
-    = icon_component("server-stack", "Icône d'illustration")
-    | Informations relatives au paquet
+    - header.with_title "Informations relatives au paquet", "server-stack", "Icône d'illustration"
 
     - header.with_custom(id: dom_id(@report, :status), is: "turbo-frame") do
       = report_badge(@report)
@@ -31,12 +30,11 @@
         = t(@report.form_type, scope: "enum.report_form_type")
 
   - flow.with_header do |header|
-    = icon_component("flag", "Icône d'illustration")
-    | Objet du signalement
 
-    - header.with_action do
-      - if allowed_to?(:update?, @report) && @report.packing?
-        = button_component "Modifier", edit_report_path(@report, "information"), icon: "pencil-square", modal: true
+    - header.with_title "Objet du signalement", "flag", "Icône d'illustration"
+
+    - if allowed_to?(:update?, @report) && @report.packing?
+      - header.with_action "Modifier", edit_report_path(@report, "information"), icon: "pencil-square", modal: true
 
   - flow.with_section do
 

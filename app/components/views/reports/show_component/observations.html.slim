@@ -1,12 +1,10 @@
 = content_flow_component do |flow|
 
   - flow.with_header do |header|
-    = icon_component("chat-bubble-bottom-center-text", "Icône d'illustration")
-    | Observations
+    - header.with_title "Observations", "chat-bubble-bottom-center-text", "Icône d'illustration"
 
-    - header.with_action do
-      - if allowed_to?(:update?, @report) && @report.packing?
-        = button_component "Compléter", edit_report_path(@report, "observations"), icon: "pencil-square", modal: true
+    - if allowed_to?(:update?, @report) && @report.packing?
+      - header.with_action "Compléter", edit_report_path(@report, "observations"), icon: "pencil-square", modal: true
 
   - flow.with_section do
 
