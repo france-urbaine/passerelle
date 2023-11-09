@@ -12,6 +12,7 @@
     @apply h-10 leading-6 rounded-md border;
     @apply subpixel-antialiased;
     @apply bg-gray-200 border-gray-300;
+    @apply dark:bg-gray-800 dark:border-gray-700;
 
     & .copyable__value {
       @apply py-2 px-4;
