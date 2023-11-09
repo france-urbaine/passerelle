@@ -1,0 +1,19 @@
+ruby:
+  example = UI::CodeRequestExampleComponent.new(
+    "GET", "/path",
+    request: {
+      headers: {
+        "Accept"        => "application/json",
+        "Cache-Control" => "only-if-cached"
+      }
+    },
+    response: {
+      headers: {
+        "Content-Type" => "application/json; charset=utf-8",
+        "ETag"         => 'W/"d457bff2d6ff135822bfd3f86f225060"'
+      }
+    }
+  )
+
+= card_component do
+  = render example

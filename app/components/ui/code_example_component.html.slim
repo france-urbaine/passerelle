@@ -1,10 +1,8 @@
 - if languages?
   pre.code-example
     - languages.each.with_index do |section, index|
-      - unless index.zero?
-        br
-
-      div(
+      = "\n\n" unless index.zero?
+      span(
         data-controller="highlight"
         data-highlight-language-value=section.language
       )= section

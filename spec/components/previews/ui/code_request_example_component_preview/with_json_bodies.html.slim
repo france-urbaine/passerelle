@@ -1,0 +1,24 @@
+ruby:
+  example = UI::CodeRequestExampleComponent.new(
+    "POST", "/path",
+    json: true,
+    request: {
+      body: {
+        report: {
+          form_type:  "creation_local_habitation",
+          code_insee: "64019"
+        }
+      }
+    },
+    response: {
+      code: 201,
+      body: {
+        report: {
+          id: "255dd254-7713-405a-9097-ca4e0424a536"
+        }
+      }
+    }
+  )
+
+= card_component do
+  = render example

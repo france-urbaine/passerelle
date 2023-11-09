@@ -1,0 +1,8 @@
+ruby:
+  example = UI::CodeRequestExampleComponent.new(
+    "POST", "/path",
+    authorization: true
+  )
+
+= card_component do
+  = render example

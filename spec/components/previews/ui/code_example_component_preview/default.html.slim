@@ -1,6 +1,5 @@
-.card
-  .card__content
-    = code_example_component(:shell) do
-      | $ curl -X GET https://api.fiscahub.fr/collectivites \
-            -H "Accept: application/json" \
-            -H "Authorization: Bearer $ACCESS_TOKEN"
+= card_component do
+  = code_example_component(:shell) do
+    | $ curl -X GET https://api.fiscahub.fr/collectivites \
+          -H "Accept: application/json" \
+          -H "Authorization: Bearer $ACCESS_TOKEN"

@@ -921,7 +921,11 @@ module Reports
     # --------------------------------------------------------------------------
     private
 
-    delegate :form_type, :anomalies, to: :report
+    delegate :form_type, to: :report
+
+    def anomalies
+      report.anomalies || []
+    end
 
     def evaluation_local?
       @evaluation_local ||= form_type.start_with?("evaluation_local_")

@@ -1,0 +1,70 @@
+= tabs_component do |tabs|
+  - tabs.with_tab("cURL") do
+    = code_example_component(:shell) do
+      | $ curl -X #{@verb} #{url}
+
+      - curl_headers.sort_by(&:first).each do |(key, value)|
+        = " \\\n"
+        |     -H "#{key}: #{value}"
+
+      - if @request_body.present?
+        = " \\\n"
+        |     -d '#{request_body}'
+
+      - if @request_file.present?
+        = " \\\n"
+        |     --data-binary @#{@request_file}
+
+  - tabs.with_tab("httpie") do
+    = code_example_component(:shell) do
+      - if @json
+        | $ http -jv #{@verb} #{url}
+      - else
+        | $ http -v #{@verb} #{url}
+
+      - httpie_headers.sort_by(&:first).each do |(key, value)|
+        = " \\\n"
+        |     #{key}:"#{value}"
+
+      - if @request_body.present?
+        = " \\\n"
+        |     --raw='#{request_body}'
+
+      - if @request_file.present?
+        = " \\\n"
+        |     @#{@request_file}
+
+= code_example_component do |code|
+  - code.with_language(:http) do
+    | #{@verb} #{url.path} HTTP/1.1
+
+    - request_headers_output.sort_by(&:first).each do |(key, value)|
+      = "\n"
+      | #{key}: #{value}
+
+    - if @request_file.present?
+      = "\n\n"
+      | +-----------------------------------------+
+        | NOTE: binary data not shown in terminal |
+        +-----------------------------------------+
+
+  - if @json && @request_body&.any?
+    - code.with_language(:json) do
+      = JSON.pretty_generate(JSON.parse(request_body))
+
+  - code.with_language(:http) do
+    | HTTP/1.1 #{@response_code} #{response_code_in_words}
+
+    - response_headers_output.sort_by(&:first).each do |(key, value)|
+      = "\n"
+      | #{key}: #{value}
+
+    - if @response_file.present?
+      = "\n\n"
+      | +-----------------------------------------+
+        | NOTE: binary data not shown in terminal |
+        +-----------------------------------------+
+
+  - if @json && @response_body&.any?
+    - code.with_language(:json) do
+      = JSON.pretty_generate(JSON.parse(response_body))
