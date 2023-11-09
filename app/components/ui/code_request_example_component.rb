@@ -5,11 +5,12 @@ module UI
     DEFAULT_ACCESS_TOKEN   = "HgAxkdHZUvlBjuuWweLKwsJ6InRfZoZ-GHyFtbrS03k"
     DEFAULT_CONTENT_LENGTH = 71_475
 
-    def initialize(verb, url, response: {}, request: {}, json: false, authorization: false)
+    def initialize(verb, url, response: {}, request: {}, json: false, authorization: false, interpolations: {})
       @verb             = verb
       @url              = url
       @json             = json
       @authorization    = authorization
+      @interpolations   = interpolations
 
       @request_body     = request.fetch(:body, nil)
       @request_file     = request.fetch(:file, nil)
@@ -31,6 +32,8 @@ module UI
 
     def before_render
       @request_headers["Authorization"] ||= "Bearer $ACCESS_TOKEN" if @authorization
+      @interpolations["ACCESS_TOKEN"]   ||= DEFAULT_ACCESS_TOKEN
+      @interpolations["CONTENT_LENGTH"] ||= DEFAULT_CONTENT_LENGTH
     end
 
     def curl_headers
@@ -58,10 +61,6 @@ module UI
     def request_headers_output
       headers = @request_headers.dup
 
-      if headers.key?("Authorization")
-        headers["Authorization"] = headers["Authorization"].sub("$ACCESS_TOKEN", DEFAULT_ACCESS_TOKEN)
-      end
-
       if @json
         headers["Accept"]       ||= "application/json"
         headers["Content-Type"] ||= "application/json" if @request_body.present?
@@ -87,6 +86,18 @@ module UI
       end
 
       headers
+    end
+
+    def interpolate(input)
+      return unless input
+
+      @interpolations.each do |key, value|
+        input = input.to_s
+          .sub("'$#{key}'", value.to_s)
+          .sub("$#{key}", value.to_s)
+      end
+
+      input
     end
 
     def response_code_in_words

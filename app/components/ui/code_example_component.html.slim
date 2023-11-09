@@ -7,9 +7,13 @@
         data-highlight-language-value=section.language
       )= section
 
-- else
+- elsif @language
   pre.code-example(
     data-controller="highlight"
     data-highlight-language-value=@language
   )
+    = content
+
+- else
+  pre.code-example
     = content

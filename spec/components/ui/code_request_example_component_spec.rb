@@ -3,15 +3,6 @@
 require "rails_helper"
 
 RSpec.describe UI::CodeRequestExampleComponent, type: :component do
-  let(:verb) { "GET" }
-  let(:url) { "https://api.example.com/resource" }
-  let(:response) do
-    { code: 200, body: { message: "Success" }, headers: { "Content-Length" => "0" } }
-  end
-  let(:request) do
-    { body: { param: "value" }, headers: { "Custom-Header" => "Custom Value" } }
-  end
-
   it "renders tabs with multiple commands" do
     render_inline described_class.new("GET", "/path")
 
@@ -342,48 +333,49 @@ RSpec.describe UI::CodeRequestExampleComponent, type: :component do
     end
   end
 
-  # it "displays a correct cURL command" do
-  #   render_inline described_class.new("GET", "/path", response: response, request: request, json: true)
+  context "with variable interpolations" do
+    before do
+      render_inline described_class.new(
+        "GET", "/path/$VARIABLE/path",
+        authorization: true,
+        request: {
+          headers: {
+            "X-Foo" => "ABC-$FOO"
+          }
+        },
+        interpolations: {
+          ACCESS_TOKEN: "88mVFHFMbZL08IFM",
+          VARIABLE:     "123456",
+          FOO:          "DEF"
+        }
+      )
+    end
 
-  #   # Test for cURL tab presence
-  #   expect(page).to have_selector("#curl-panel") do |pre|
-  #     aggregate_failures do
-  #       expect(pre).to have_text("$ curl -X #{verb} #{url}")
-  #       expect(pre).to have_text("Custom-Header: Custom Value")
-  #       expect(pre).to have_text("-d '#{request[:body].to_json}'")
-  #     end
-  #   end
-  # end
+    it "renders the correct cURL command" do
+      expect(page).to have_selector(".tabs > #curl-panel > pre", visible: :visible, text: <<~TEXT.strip)
+        $ curl -X GET http://api.test.host/path/$VARIABLE/path \\
+            -H "Authorization: Bearer $ACCESS_TOKEN" \\
+            -H "X-Foo: ABC-$FOO"
+      TEXT
+    end
 
-  # it "displays the correct httpie command" do
-  #   render_inline described_class.new(verb, url, response: response, request: request, json: true)
+    it "renders the correct httpie command" do
+      expect(page).to have_selector(".tabs > #httpie-panel > pre", visible: :hidden, text: <<~TEXT.strip)
+        $ http -v GET http://api.test.host/path/$VARIABLE/path \\
+            Authorization:"Bearer $ACCESS_TOKEN" \\
+            X-Foo:"ABC-$FOO"
+      TEXT
+    end
 
-  #   # Test for httpie tab presence
-  #   expect(page).to have_selector("#httpie-panel", visible: :all) do |pre|
-  #     aggregate_failures do
-  #       expect(pre).to have_text("$ http -v #{verb} #{url}")
-  #       expect(pre).to have_text("Custom-Header:\"Custom Value\"")
-  #       expect(pre).to have_text("--raw='#{request[:body].to_json}'")
-  #     end
-  #   end
-  # end
+    it "renders http output" do
+      expect(page).to have_selector(".tabs + pre", text: <<~TEXT.strip)
+        GET /path/123456/path HTTP/1.1
+        Accept: */*
+        Authorization: Bearer 88mVFHFMbZL08IFM
+        X-Foo: ABC-DEF
 
-  # it "formats the request headers correctly" do
-  #   component = described_class.new(verb, url, response: response, request: request, json: true, authorization: false)
-  #   render_inline component
-
-  #   expect(component.request_headers_formatted).to eq(request[:headers].map { |key, value|
-  #     [key, value]
-  #   }.sort_by(&:first))
-  # end
-
-  # it "formats the request body correctly" do
-  #   component = described_class.new(verb, url, response: response, request: request, json: true)
-  #   expect(component.request_body_formatted).to eq(request[:body].to_json)
-  # end
-
-  # it "formats the response body correctly" do
-  #   component = described_class.new(verb, url, response: response, request: request, json: true)
-  #   expect(component.response_body_formatted).to eq(response[:body].to_json)
-  # end
+        HTTP/1.1 200 OK
+      TEXT
+    end
+  end
 end
