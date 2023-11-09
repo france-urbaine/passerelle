@@ -5,7 +5,12 @@ export default class extends Controller {
     source: String
   }
 
-  connect() { }
+  connect() {
+    if (!(navigator.clipboard && window.isSecureContext)) {
+      this.element.disabled = true
+      this.element.firstChild.firstChild.innerHTML = "La copie du texte n'est pas disponible dans cet environnement."
+    }
+  }
 
   copy () {
     navigator.clipboard.writeText(this.sourceValue)
