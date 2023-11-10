@@ -6,6 +6,8 @@
   .subheader-bar__actions
     .subheader-bar__action= priority_badge(@report)
     .subheader-bar__action= report_badge(@report)
+    - if @report.sandbox?
+      .subheader-bar__action= badge_component("Bac à sable", :yellow)
 
 = description_list_component(@report) do |list|
   - list.with_attribute("Référence du paquet") do |attribute|

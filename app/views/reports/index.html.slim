@@ -21,6 +21,7 @@
         - view.with_column(:invariant)
         - view.with_column(:adresse)
         - view.with_column(:commune)
+        - view.with_column(:sandbox)
       - when "Publisher"
         - view.with_column(:package)
         - view.with_column(:collectivity)
@@ -29,6 +30,7 @@
         - view.with_column(:invariant)
         - view.with_column(:adresse)
         - view.with_column(:commune)
+        - view.with_column(:sandbox)
       - when "DDFIP"
         - if current_user.organization_admin?
           - view.with_column(:package)

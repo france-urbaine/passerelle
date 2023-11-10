@@ -12,6 +12,7 @@
       - if allowed_to?(:destroy_all?, Report)
         - selection.with_action "Supprimer", url_for([:remove_all, @parent, :reports]), modal: true
 
+    - datatable.with_column(:sandbox)                      { "" }                    if columns.include?(:sandbox)
     - datatable.with_column(:status,   compact: true)      { "Etat" }                if columns.include?(:status)
     - datatable.with_column(:form_type)                    { "Type de signalement" } if columns.include?(:form_type)
     - datatable.with_column(:invariant)                    { "Invariant" }           if columns.include?(:invariant)
@@ -41,6 +42,9 @@
 
       - row.with_column(:status) do
         = report_badge(report)
+
+      - row.with_column(:sandbox) do
+        = badge_component("Bac à sable", :yellow) if report.sandbox?
 
       - row.with_column(:form_type) do
         = authorized_link_to report do
