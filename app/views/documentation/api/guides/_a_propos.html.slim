@@ -21,11 +21,12 @@
   h2.subheader Format de requête
 
   = card_component do
-    ' Sauf mentions contraires, le format JSON est le format attendu et retourné par défaut.
-    br
-    ' Lors de l'envoi de chaque requête, n'oubliez pas les en-têtes suivants :
+    p
+      ' Sauf mentions contraires, le format JSON est le format attendu et retourné par défaut.
+      br
+      ' Lors de l'envoi de chaque requête, n'oubliez pas les en-têtes suivants :
 
-    pre( data-controller="highlight" data-highlight-language-value="http" )
+    = code_example_component do
       | Content-Type: application/json
         Accept: application/json
 
@@ -34,13 +35,13 @@
   h2.subheader Code HTTP
 
   = card_component do
-    p.mb-4
+    p
       ' Vous pouvez déterminer le résultat de chaque requête en vérifiant le code HTTP de sa réponse.
       br
       ' Ces codes sont standards et bien documentés sur <a href="https://fr.wikipedia.org/wiki/Liste_des_codes_HTTP">wikipedia</a>, mais vous trouverez ci-dessous une liste des codes récurrents.
 
-    h3.subheader Succès
-    table.mb-4
+    h3 Succès
+    table
       tr
         th.w-20 200
         td
@@ -60,8 +61,8 @@
           br
           | Requête traitée avec succès. Aucun contenu n'est renvoyé.
 
-    h4.subheader Erreurs du client
-    table.mb-4
+    h3 Erreurs du client
+    table
       tr
         th.w-20 400
         td

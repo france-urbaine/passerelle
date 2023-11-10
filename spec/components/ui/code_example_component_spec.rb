@@ -15,6 +15,18 @@ RSpec.describe UI::CodeExampleComponent, type: :component do
     end
   end
 
+  it "renders a code example without syntax highlighting" do
+    render_inline described_class.new do
+      "$ http -v GET https://api.example.com/path"
+    end
+
+    expect(page).to have_selector("pre.code-example") do |pre|
+      expect(pre).not_to have_html_attribute("data-controller")
+      expect(pre).not_to have_html_attribute("data-highlight-language-value")
+      expect(pre).to have_text("$ http -v GET https://api.example.com/path")
+    end
+  end
+
   it "renders a code example with a multiple languages" do
     render_inline described_class.new do |code|
       code.with_language(:shell) do

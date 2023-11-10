@@ -129,7 +129,7 @@
   "transmissions#complete": [
     {
       "verb": "PUT",
-      "path": "/transmissions/d9b9359b-54e2-4736-a182-75a5d689aee2/complete",
+      "path": "/transmissions/d9b9359b-54e2-4736-a182-75a5d689aee2/finalisation",
       "versions": [
         "1.0"
       ],
@@ -180,10 +180,10 @@
       "recorded": true
     }
   ],
-  "upload#create": [
+  "uploads#create": [
     {
       "verb": "POST",
-      "path": "/upload",
+      "path": "/documents",
       "versions": [
         "1.0"
       ],

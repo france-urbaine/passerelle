@@ -2,9 +2,9 @@
 
 require "rails_helper"
 
-RSpec.describe "API::UploadController#create", :api do
+RSpec.describe "API::UploadsController#create", :api do
   subject(:request) do
-    post "/upload", as: as, headers: headers, params: params
+    post "/documents", as: as, headers: headers, params: params
   end
 
   let(:as) { |e| e.metadata.fetch(:as, :json) }

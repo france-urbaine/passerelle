@@ -6,12 +6,8 @@ module API
 
     resource_description do
       resource_id "transmissions"
-      name "Transmission"
-      formats ["json"]
-      deprecated false
-      description <<-DESC
-        Une transmission d'un ou plusieurs signalements à une DDFIP
-      DESC
+      name        "Transmission"
+      formats     ["json"]
     end
 
     api :POST, "/collectivites/:id/transmissions", "Initialisation d'une transmission"
@@ -21,7 +17,7 @@ module API
       Une transmission est requise pour transmettre des signalements :
       une fois initialisée, vous pouvez y ajouter un ou plusieurs signalements ainsi que des pièces jointes.
 
-      Une fois toutes les données ajoutées, vous pouvez terminer la transmission avec la ressource <code>/complete</code>.
+      Une fois toutes les données ajoutées, vous pouvez terminer la transmission avec la ressource <code>/finalisation</code>.
       Les DDFIPs ne recevront les signalements qu'une fois la transmission complétée.
 
       Une transmission est initialisée pour une et une seule collectivité.
@@ -29,9 +25,9 @@ module API
       Vous pouvez initialiser plusieurs transmissions en parallèle, mais chaque transmission expire aprés 24 heures.
     DESC
 
-    see "collectivities#index", "Index des collectivités"
-    see "reports#create", "Création d'un signalement"
-    see "transmissions#complete", "Validation d'une transmission"
+    see "collectivities#index",   "Index des collectivités"
+    see "reports#create",         "Création d'un signalement"
+    see "transmissions#complete", "Finalisation d'une transmission"
 
     param :id, String, "UUID de la collectivité", required: true
 
@@ -54,7 +50,7 @@ module API
       respond_with @transmission, status: :created
     end
 
-    api :PUT, "/transmissions/:id/complete", "Validation d'une transmission"
+    api :PUT, "/transmissions/:id/finalisation", "Finalisation d'une transmission"
     description <<-DESC
       Cette ressource permet de finaliser une transmission.
 
@@ -72,7 +68,7 @@ module API
     DESC
 
     see "transmissions#create", "Initialisation d'une transmission"
-    see "reports#create", "Créer un signalement"
+    see "reports#create",       "Création d'un signalement"
 
     returns code: 200, desc: "La transmission est complétée" do
       property :id, String, desc: "UUID de la transmission"

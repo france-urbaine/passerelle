@@ -1,0 +1,45 @@
+= render Layout::NavbarComponent.new(class: "navbar--api") do |navbar|
+  - navbar.with_header do
+    span.brand__left API Passe
+    span.brand__right relle
+
+  - navbar.with_section do |section|
+    - if allowed_to?(:index?, OauthApplication, with: Organization::OauthApplicationPolicy)
+      - section.with_link("Retour à Passerelle", organization_oauth_applications_url, icon: "arrow-uturn-left")
+    - else
+      - section.with_link("Retour à Passerelle", root_url, icon: "arrow-uturn-left")
+
+  - navbar.with_section("Guides") do |section|
+    - section.with_link("A propos", api_documentation_path("guides/a_propos"))
+    - section.with_link("Authentification", api_documentation_path("guides/authentification"))
+    - section.with_link("Mode Sandbox", api_documentation_path("guides/sandbox"))
+    - section.with_link("Transmettre des signalements", api_documentation_path("guides/transmettre_des_signalements"))
+    - section.with_link("Transmettre des pièces jointes", api_documentation_path("guides/transmettre_des_pieces_jointes"))
+
+  - navbar.with_section("References") do |section|
+    - section.with_subsection("Collectivités") do |subsection|
+      - subsection.with_link apipie_apipie_path(version: "1.0", resource: :collectivities, method: :index) do
+        span.navbar__method GET
+        = api_collectivities_path
+
+    - section.with_subsection("Transmission de signalements") do |subsection|
+      - subsection.with_link apipie_apipie_path(version: "1.0", resource: :transmissions, method: :create) do
+        span.navbar__method POST
+        = api_collectivity_transmissions_path(":id")
+
+      - subsection.with_link apipie_apipie_path(version: "1.0", resource: :reports, method: :create) do
+        span.navbar__method POST
+        = api_transmission_reports_path(":id")
+
+      - subsection.with_link apipie_apipie_path(version: "1.0", resource: :transmissions, method: :complete) do
+        span.navbar__method PUT
+        = complete_api_transmission_path(":id")
+
+    - section.with_subsection("Transmission de pièces jointes") do |subsection|
+      - subsection.with_link apipie_apipie_path(version: "1.0", resource: :uploads, method: :create) do
+        span.navbar__method POST
+        = api_upload_path
+
+      - subsection.with_link apipie_apipie_path(version: "1.0", resource: :attachments, method: :create) do
+        span.navbar__method POST
+        = api_report_attachments_path(":id")
