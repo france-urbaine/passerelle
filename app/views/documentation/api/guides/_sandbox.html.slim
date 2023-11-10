@@ -1,16 +1,36 @@
 = breadcrumbs_component do |breadcrumbs|
   - breadcrumbs.with_path "Guides"
-  - breadcrumbs.with_path "Mode"
+  - breadcrumbs.with_path "Mode « Bac à sable »"
 
-.card
-  .card__content
-    | Bientôt disponible
+.documentation
+  = card_component do
+    p
+      ' L'API de Passerelle dispose d'un mode « Bac à sable ».
+    p
+      ' Lorsque ce mode est activé, vous pouvez découvrir, expérimenter et utiliser l'API en toute sécurité :
+      br
+      ' aucune donnée créé ne sera transmise aux services de la DGFIP.
+    p
+      ' L'activation du mode « Bac à sable » peut se faire de 2 façons :
 
-    / p
-    /   ' Pour découvrir l'API en toute sécurité, vous pouvez configurer une application en mode <code>sandbox</code> :
-    /   <br>
-    /   ' les transmissions initialisées à travers cette applications ne seront jamais transmises aux services de la DGFIP,
-    /   ' et les signalements ainsi créés ne seront jamais visibles dans Passerelle par toute autre organisation.
-    / p
-    /    ' Dans certains cas, votre compte éditeur peut être bridé en mode sandbox par défaut : consultez France Urbaine pour en savoir plus.
-    /    ' Lorsque ce bridage est en place, toute les tranmissions seront initialisée en mode sandbox, quelques soit le mode choisi sur votre application.
+    h3 1) Au niveau de l'application cliente :
+    p
+      ' Lorsque vous créez une #{link_to("application", organization_oauth_applications_url)} pour vous connecter
+      ' à l'API, vous pouvez opter pour le mode « Bac à sable ».
+      br
+      ' Toute les données créées grâce aux identifiants de cette application seront affectées.
+    p
+      strong Note :
+      '  vous pouvez créér plusieurs applications. Nous vous conseillons de créer plusieurs applications plutôt
+      ' que de désactiver le mode sur une application existante.
+
+    h3 2) Au niveau de votre organisation :
+    p
+      ' Les administrateurs de la plateforme Passerelle peuvent forcer le mode « Bac à sable » pour toutes ou plusieurs
+      ' organisations.
+      br
+      ' Lorsque le mode est ainsi activé, toutes les données transmises seront affectées, quelque soit le paramètre appliqué
+      ' au niveau de l'application cliente.
+    p
+      ' Seuls les administrateurs de la plateforme peuvent modifier ce paramètre.
+
