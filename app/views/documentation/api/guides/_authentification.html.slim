@@ -69,15 +69,9 @@
 
     = render example
 
-  .content__separator
-
-  h2.subheader
-    = icon_component("command-line")
-    | Exemple d'utilisation de l'Access Token
-
-  = card_component do
     p
-      ' Nous vous conseillons d'assigner cet Access Token dans une variable.
+      ' Pour pouvoir utiliser le même Access Token dans les différents exemples de cette documentation,
+      ' nous vous conseillons de l'assigner à une variable :
 
     = tabs_component do |tabs|
       - tabs.with_tab("cURL + jq") do
@@ -99,6 +93,13 @@
                 | jq -r .access_token
               ) && echo $ACCESS_TOKEN
 
+  .content__separator
+
+  h2.subheader
+    = icon_component("command-line")
+    | Exemple d'utilisation de l'Access Token
+
+  = card_component do
     p
       ' Une fois l'Access Token enregistré dans une variable, vous pouvez l'utiliser dans tout les examples
       ' de requête présents dans cette documentation :

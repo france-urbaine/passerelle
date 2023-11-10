@@ -27,8 +27,8 @@ module API
       Conservez-le pour surveiller et obtenir des mises à jour du signalement.
     DESC
 
-    see "transmissions#create", "Initialisation d'une transmission"
-    see "transmissions#complete", "Validation d'une transmission"
+    see "transmissions#create",   "Initialisation d'une transmission"
+    see "transmissions#complete", "Finalisation d'une transmission"
 
     param :id, String, "UUID de la transmission", required: true
     param :report, Hash, "Signalement", required: true

@@ -262,7 +262,7 @@ Rails.application.routes.draw do
 
     namespace :api, path: "/" do
       get "/", to: "home#index"
-      post "/upload", to: "upload#create"
+      post :upload, to: "uploads#create", path: "/documents"
 
       constraints id: %r{(?!(new|edit|remove|discard|undiscard|guichets))[^/]+} do
         resources :collectivities, only: %i[index], path: "/collectivites" do
@@ -270,7 +270,7 @@ Rails.application.routes.draw do
         end
 
         resources :transmissions, only: [] do
-          put :complete, on: :member
+          put :complete, on: :member, path: "/finalisation"
           resources :reports, only: %i[create], path: "/signalements"
         end
 

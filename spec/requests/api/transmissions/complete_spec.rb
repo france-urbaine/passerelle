@@ -4,7 +4,7 @@ require "rails_helper"
 
 RSpec.describe "API::TransmissionsController#complete", :api do
   subject(:request) do
-    put "/transmissions/#{transmission.id}/complete", as:, headers:, params:
+    put "/transmissions/#{transmission.id}/finalisation", as:, headers:, params:
   end
 
   let(:as)      { |e| e.metadata.fetch(:as, :json) }

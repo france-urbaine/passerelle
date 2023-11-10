@@ -8,14 +8,14 @@ module API
         formats ["json"]
       end
 
-      api :POST, "/signalements/:id/documents", "Ajout d'une pièce jointe à un signalement"
+      api :POST, "/signalements/:id/documents", "Association d'un fichier à un signalement"
       description <<-DESC
         Cette ressource permet d'ajouter une pièce jointe à un signalement.
 
         La pièce jointe doit préalablement avoir été téléchargée sur notre serveur distant.
       DESC
 
-      see "upload#create", "Obtenir un lien de téléchargement"
+      see "uploads#create", "Obtenir un lien de téléchargement"
 
       param :documents, String, "Signed ID du document", required: true
 
