@@ -12,33 +12,35 @@
     - if allowed_to?(:destroy?, @user)
       - breadcrumbs.with_action "Supprimer", remove_organization_collectivity_user_path(@collectivity, @user), icon: "trash", modal: true, destructive: "discrete"
 
-  h2.subheader
-    = icon_component("identification", "Nouvelle section")
-    | Description
+  = content_flow_component do |flow|
 
-  = description_list_component(@user) do |list|
-    - list.with_attribute("Collectivité") do |attribute|
-      = authorized_link_to @user.organization, namespace: :organization
+    - flow.with_header do |header|
+      - header.with_title "Description", "identification", "Nouvelle section"
 
-    - list.with_attribute("Adresse mail de contact") do |attribute|
-      = render Views::Users::ShowEmailComponent.new(@user)
+    - flow.with_section do
+      = description_list_component(@user) do |list|
+        - list.with_attribute("Collectivité") do |attribute|
+          = authorized_link_to @user.organization, namespace: :organization
 
-      - if @user.confirmation_period_expired?
-        - attribute.with_action(\
-            "Renouveler l'invitation",\
-            new_organization_collectivity_user_invitation_path(@collectivity, @user),\
-            modal: true,\
-            icon: "arrow-path"\
-          )
+        - list.with_attribute("Adresse mail de contact") do |attribute|
+          = render Views::Users::ShowEmailComponent.new(@user)
 
-    - list.with_attribute(:organization_admin) do |attribute|
-      = render Views::Users::ShowCheckBadgeComponent.new(@user, :organization_admin)
+          - if @user.confirmation_period_expired?
+            - attribute.with_action(\
+                "Renouveler l'invitation",\
+                new_organization_collectivity_user_invitation_path(@collectivity, @user),\
+                modal: true,\
+                icon: "arrow-path"\
+              )
 
-    - list.with_attribute(:super_admin) do |attribute|
-      = render Views::Users::ShowCheckBadgeComponent.new(@user, :super_admin)
+        - list.with_attribute(:organization_admin) do |attribute|
+          = render Views::Users::ShowCheckBadgeComponent.new(@user, :organization_admin)
 
-  h2.subheader
-    = icon_component("server-stack", "Nouvelle section")
-    | Informations de connexion
+        - list.with_attribute(:super_admin) do |attribute|
+          = render Views::Users::ShowCheckBadgeComponent.new(@user, :super_admin)
 
-  = render Views::Users::ShowSessionData.new(@user)
+    - flow.with_header do |header|
+      - header.with_title "Informations de connexion", "server-stack", "Nouvelle section"
+
+    - flow.with_section do
+      = render Views::Users::ShowSessionData.new(@user)

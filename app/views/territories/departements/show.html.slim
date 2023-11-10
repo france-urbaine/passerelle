@@ -7,83 +7,76 @@
     - if allowed_to?(:manage?, @departement)
       - breadcrumbs.with_action "Modifier", edit_territories_departement_path(@departement), icon: "pencil-square", modal: true
 
-  h2.subheader
-    = icon_component("identification", "Nouvelle section")
-    | Description
+  = content_flow_component do |flow|
 
-  = description_list_component(@departement) do |list|
-    - list.with_attribute(:code_departement) do |attribute|
-      = @departement.code_departement
+    - flow.with_header do |header|
+      - header.with_title "Description", "identification", "Nouvelle section"
 
-    - list.with_attribute(:region) do |attribute|
-      = authorized_link_to @departement.region, namespace: :territories
+    - flow.with_section do
+      = description_list_component(@departement) do |list|
+        - list.with_attribute(:code_departement) do |attribute|
+          = @departement.code_departement
 
-    - list.with_attribute("EPCI") do |attribute|
-      - if @departement.epcis_count.positive?
-        = display_count(@departement.epcis_count, "EPCI")
+        - list.with_attribute(:region) do |attribute|
+          = authorized_link_to @departement.region, namespace: :territories
 
-    - list.with_attribute("Communes") do |attribute|
-      - if @departement.communes_count.positive?
-        = display_count(@departement.communes_count, "commune")
+        - list.with_attribute("EPCI") do |attribute|
+          - if @departement.epcis_count.positive?
+            = display_count(@departement.epcis_count, "EPCI")
 
-    - list.with_attribute("DDFIP enregistrées") do |attribute|
-      - if @departement.ddfips_count.positive?
-        = display_count(@departement.ddfips_count, "DDFIP")
+        - list.with_attribute("Communes") do |attribute|
+          - if @departement.communes_count.positive?
+            = display_count(@departement.communes_count, "commune")
 
-    - list.with_attribute("Collectivités enregistrées") do |attribute|
-      - if @departement.collectivities_count.positive?
-        = display_count(@departement.collectivities_count, "collectivité")
+        - list.with_attribute("DDFIP enregistrées") do |attribute|
+          - if @departement.ddfips_count.positive?
+            = display_count(@departement.ddfips_count, "DDFIP")
 
-  - if allowed_to?(:index?, EPCI)
-    .content__separator
+        - list.with_attribute("Collectivités enregistrées") do |attribute|
+          - if @departement.collectivities_count.positive?
+            = display_count(@departement.collectivities_count, "collectivité")
 
-    .subheader-bar
-      h2.subheader
-        = icon_component("rectangle-stack", "Nouvelle section")
-        | EPCI
+    - if allowed_to?(:index?, EPCI)
+      - flow.with_header do |header|
+        - header.with_title "EPCI", "rectangle-stack", "Nouvelle section"
 
-    - if @departement.epcis_count.zero?
-      = card_component(content_class: "card__content--empty")
-        | Aucun epci dans ce département.
+      - flow.with_section do
+        - if @departement.epcis_count.zero?
+          = card_component(content_class: "card__content--empty")
+            | Aucun epci dans ce département.
 
-    - else
-      = turbo_frame_tag "datatable-epcis", src: territories_departement_epcis_path(@departement) do
-        = datatable_skeleton_component(nested: true, rows: @departement.epcis_count) do |skeleton|
-          - skeleton.with_search
-          - skeleton.with_pagination
+        - else
+          = turbo_frame_tag "datatable-epcis", src: territories_departement_epcis_path(@departement) do
+            = datatable_skeleton_component(nested: true, rows: @departement.epcis_count) do |skeleton|
+              - skeleton.with_search
+              - skeleton.with_pagination
 
-  - if allowed_to?(:index?, Commune)
-    .content__separator
+    - if allowed_to?(:index?, Commune)
+      - flow.with_header do |header|
+        - header.with_title "Communes", "rectangle-stack", "Nouvelle section"
 
-    .subheader-bar
-      h2.subheader
-        = icon_component("rectangle-stack", "Nouvelle section")
-        | Communes
+      - flow.with_section do
+        - if @departement.communes_count.zero?
+          = card_component(content_class: "card__content--empty")
+            | Aucune commune dans ce département.
 
-    - if @departement.communes_count.zero?
-      = card_component(content_class: "card__content--empty")
-        | Aucune commune dans ce département.
+        - else
+          = turbo_frame_tag "datatable-communes", src: territories_departement_communes_path(@departement) do
+            = datatable_skeleton_component(nested: true, rows: @departement.communes_count) do |skeleton|
+              - skeleton.with_search
+              - skeleton.with_pagination
 
-    - else
-      = turbo_frame_tag "datatable-communes", src: territories_departement_communes_path(@departement) do
-        = datatable_skeleton_component(nested: true, rows: @departement.communes_count) do |skeleton|
-          - skeleton.with_search
-          - skeleton.with_pagination
+    - if allowed_to?(:index?, Collectivity)
+      - flow.with_header do |header|
+        - header.with_title "Collectivités enregistrées", "rectangle-stack", "Nouvelle section"
 
-  - if allowed_to?(:index?, Collectivity)
-    .content__separator
+      - flow.with_section do
+        - if @departement.collectivities_count.zero?
+          = card_component(content_class: "card__content--empty")
+            | Aucune collectivité enregistrée dans ce département.
 
-    .subheader-bar
-      h2.subheader
-        = icon_component("rectangle-stack", "Nouvelle section")
-        | Collectivités enregistrées
-
-    - if @departement.collectivities_count.zero?
-      = card_component(content_class: "card__content--empty")
-        | Aucune collectivité enregistrée dans ce département.
-
-    - else
-      = turbo_frame_tag "datatable-collectivities", src: territories_departement_collectivities_path(@departement) do
-        = datatable_skeleton_component(nested: true, rows: @departement.collectivities_count) do |skeleton|
-          - skeleton.with_search
-          - skeleton.with_pagination
+        - else
+          = turbo_frame_tag "datatable-collectivities", src: territories_departement_collectivities_path(@departement) do
+            = datatable_skeleton_component(nested: true, rows: @departement.collectivities_count) do |skeleton|
+              - skeleton.with_search
+              - skeleton.with_pagination

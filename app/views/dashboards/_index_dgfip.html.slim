@@ -1,27 +1,29 @@
-.dashboard-numbers
-  .dashboard-number
-    = current_organization.reports_transmitted_count
-    span.dashboard-number__unit Signalements transmis
-  .dashboard-number
-    = current_organization.reports_approved_count
-    span.dashboard-number__unit Signalements approuvés
-  .dashboard-number
-    = current_organization.reports_rejected_count
-    span.dashboard-number__unit Signalements rejetés
+= content_flow_component do |flow|
 
-.content__separator
-h2.subheader
-  = icon_component("clipboard-document", "Nouvelle section")
-  | Signalements transmis
+  - flow.with_section do
+    .dashboard-numbers
+      .dashboard-number
+        = current_organization.reports_transmitted_count
+        span.dashboard-number__unit Signalements transmis
+      .dashboard-number
+        = current_organization.reports_approved_count
+        span.dashboard-number__unit Signalements approuvés
+      .dashboard-number
+        = current_organization.reports_rejected_count
+        span.dashboard-number__unit Signalements rejetés
 
-= render Views::Reports::ListComponent.new(@reports.transmitted.order_by_last_transmission_date, dashboard: true) do |view|
-  - view.with_column(:reference)
-  - view.with_column(:package)
-  - view.with_column(:collectivity)
-  - view.with_column(:form_type)
-  - view.with_column(:anomalies)
-  - view.with_column(:invariant)
-  - view.with_column(:adresse)
-  - view.with_column(:commune)
-  - view.with_column(:priority)
-  - view.with_column(:status)
+  - flow.with_header do |header|
+    - header.with_title "Signalements transmis", "clipboard-document", "Nouvelle section"
+
+  - flow.with_section do
+    = render Views::Reports::ListComponent.new(@reports.transmitted.order_by_last_transmission_date, dashboard: true) do |view|
+      - view.with_column(:reference)
+      - view.with_column(:package)
+      - view.with_column(:collectivity)
+      - view.with_column(:form_type)
+      - view.with_column(:anomalies)
+      - view.with_column(:invariant)
+      - view.with_column(:adresse)
+      - view.with_column(:commune)
+      - view.with_column(:priority)
+      - view.with_column(:status)

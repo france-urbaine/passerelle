@@ -10,35 +10,33 @@
     - if allowed_to?(:destroy?, @oauth_application)
       - breadcrumbs.with_action "Supprimer", remove_organization_oauth_application_path(@oauth_application), icon: "trash", modal: true, destructive: "discrete"
 
-  h2.subheader
-    = icon_component("identification", "Nouvelle section")
-    | Description
+  = content_flow_component do |flow|
 
-  = description_list_component(@oauth_application) do |list|
-    - list.with_attribute(:uid) do |attribute|
-      = copyable_component @oauth_application.uid
+    - flow.with_header do |header|
+      - header.with_title "Description", "identification", "Nouvelle section"
 
-    - list.with_attribute(:secret) do |attribute|
-      = copyable_component @oauth_application.secret, secret: true
+    - flow.with_section do
+      = description_list_component(@oauth_application) do |list|
+        - list.with_attribute(:uid) do |attribute|
+          = copyable_component @oauth_application.uid
 
-  .content__separator
+        - list.with_attribute(:secret) do |attribute|
+          = copyable_component @oauth_application.secret, secret: true
 
-  h2.subheader
-    = icon_component("information-circle", "Nouvelle section")
-    | Documentation
+    - flow.with_header do |header|
+      - header.with_title "Documentation", "information-circle", "Nouvelle section"
 
-  = card_component do
-    | L'API de Passerelle est une API RESTful qui implémente les spécifications du standard OAuth2 Pour l'authentification.
-    br
-    = link_to "Consultez la documentation", api_documentation_url
-    = " "
-    | pour en savoir plus.
+    - flow.with_section do
+      = card_component do
+        | L'API de Passerelle est une API RESTful qui implémente les spécifications du standard OAuth2 Pour l'authentification.
+        br
+        = link_to "Consultez la documentation", api_documentation_url
+        = " "
+        | pour en savoir plus.
 
-  .content__separator
+    - flow.with_header do |header|
+      - header.with_title "Activité", "server-stack", "Nouvelle section"
 
-  h2.subheader
-    = icon_component("server-stack", "Nouvelle section")
-    | Activité
-
-  = card_component(content_class: "card__content--empty")
-    | Bientôt disponible
+    - flow.with_section do
+      = card_component(content_class: "card__content--empty")
+        | Bientôt disponible

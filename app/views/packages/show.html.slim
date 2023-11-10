@@ -13,37 +13,34 @@
     - if allowed_to?(:destroy?, @package)
       - breadcrumbs.with_action "Supprimer", remove_package_path(@package), icon: "trash", modal: true, destructive: "discrete"
 
-  .subheader-bar
-    h2.subheader
-      = icon_component("server-stack", "Nouvelle section")
-      | Informations relatives au paquet
+  = content_flow_component do |flow|
 
-    .subheader-bar__actions
-      .subheader-bar__action
+    - flow.with_header do |header|
+      - header.with_title "Informations relatives au paquet", "server-stack", "Nouvelle section"
+      - header.with_custom do
         = package_badge(@package)
 
-  = description_list_component(@package) do |list|
-    - list.with_attribute("Date de transmission") do |attribute|
-      - if @package.transmitted?
-        = l(@package.transmitted_at.to_date, format: :long)
-      - else
-        em Non transmis
+    - flow.with_section do
+      = description_list_component(@package) do |list|
+        - list.with_attribute("Date de transmission") do |attribute|
+          - if @package.transmitted?
+            = l(@package.transmitted_at.to_date, format: :long)
+          - else
+            em Non transmis
 
-    - list.with_attribute("Date d'échéance") do |attribute|
-      - if @package.due_on
-        = l(@package.due_on, format: :long)
+        - list.with_attribute("Date d'échéance") do |attribute|
+          - if @package.due_on
+            = l(@package.due_on, format: :long)
 
-      - if allowed_to?(:update?, @package) && @package.packing?
-        - attribute.with_action("Modifier", edit_package_path(@package), icon: "pencil-square", modal: true)
+          - if allowed_to?(:update?, @package) && @package.packing?
+            - attribute.with_action("Modifier", edit_package_path(@package), icon: "pencil-square", modal: true)
 
-  - if allowed_to?(:index?, Report)
-    .content__separator
+    - if allowed_to?(:index?, Report)
+      - flow.with_header do |header|
+        - header.with_title "Signalements", "clipboard-document", "Nouvelle section"
 
-    h2.subheader
-      = icon_component("clipboard-document", "Nouvelle section")
-      | Signalements
-
-    = turbo_frame_tag "datatable-reports", src: package_reports_path(@package) do
-      = datatable_skeleton_component(nested: true, rows: 0) do |skeleton|
-        - skeleton.with_search
-        - skeleton.with_pagination
+      - flow.with_section do
+        = turbo_frame_tag "datatable-reports", src: package_reports_path(@package) do
+          = datatable_skeleton_component(nested: true, rows: 0) do |skeleton|
+            - skeleton.with_search
+            - skeleton.with_pagination

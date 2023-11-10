@@ -1,32 +1,30 @@
-.subheader-bar
-  h2.subheader
-    = icon_component("document-text", "Icône d'illustration")
-    | Identification de la parcelle
+= content_flow_component do |flow|
 
-  .subheader-bar__actions
+  - flow.with_header do |header|
+    - header.with_title "Identification de la parcelle", "document-text", "Icône d'illustration"
     - if allowed_to?(:update?, @report) && @report.packing?
-      .subheader-bar__action
-        = button_component "Compléter", edit_report_path(@report, "situation_parcelle"), icon: "pencil-square", modal: true
+      = header.with_action "Compléter", edit_report_path(@report, "situation_parcelle"), icon: "pencil-square", modal: true
 
-= description_list_component(@report) do |list|
-  - list.with_attribute(:commune) do |attribute|
-    = render_valid_content(:code_insee) do
-      = @report.commune&.name
-      - attribute.with_reference do
-        = "Code INSEE : #{@report.code_insee}"
+  - flow.with_section do
+    = description_list_component(@report) do |list|
+      - list.with_attribute(:commune) do |attribute|
+        = render_valid_content(:code_insee) do
+          = @report.commune&.name
+          - attribute.with_reference do
+            = "Code INSEE : #{@report.code_insee}"
 
-  - list.with_attribute(:situation_parcelle) do |attribute|
-    = render_valid_content(:situation_parcelle) do
-      = helpers.display_parcelle(@report.situation_parcelle)
+      - list.with_attribute(:situation_parcelle) do |attribute|
+        = render_valid_content(:situation_parcelle) do
+          = helpers.display_parcelle(@report.situation_parcelle)
 
-  - list.with_attribute(:situation_adresse) do |attribute|
-    = render_valid_content(:situation_adresse) do
-      = situation_adresse
-      - attribute.with_reference do
-        = "Code RIVOLI : #{@report.situation_code_rivoli}"
+      - list.with_attribute(:situation_adresse) do |attribute|
+        = render_valid_content(:situation_adresse) do
+          = situation_adresse
+          - attribute.with_reference do
+            = "Code RIVOLI : #{@report.situation_code_rivoli}"
 
-  - list.with_attribute(:situation_proprietaire) do |attribute|
-    = render_valid_content(:situation_proprietaire) do
-      = @report.situation_proprietaire
-      - attribute.with_reference do
-        = "Numéro d'ordre : #{@report.situation_numero_ordre_proprietaire}"
+      - list.with_attribute(:situation_proprietaire) do |attribute|
+        = render_valid_content(:situation_proprietaire) do
+          = @report.situation_proprietaire
+          - attribute.with_reference do
+            = "Numéro d'ordre : #{@report.situation_numero_ordre_proprietaire}"

@@ -3,128 +3,126 @@
   - breadcrumbs.with_path "Authentification"
 
 .documentation
-  = card_component do
-    p
-      ' L'authentification s'effectue selon les spécifications du standard
-      = link_to "OAuth2", "https://datatracker.ietf.org/doc/html/rfc6749"
-      '  et la méthode
-      = link_to "Client Credentials", "https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-22#section-4.4"
-      ' .
-      br
-      ' De nombreuses librairies sont disponibles dans presque tous les langages de programmation
-      ' pour intégrer OAuth et cette méthode dans vos clients.
+  = content_flow_component do |flow|
+    - flow.with_section do
+      = card_component do
+        p
+          ' L'authentification s'effectue selon les spécifications du standard
+          = link_to "OAuth2", "https://datatracker.ietf.org/doc/html/rfc6749"
+          '  et la méthode
+          = link_to "Client Credentials", "https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-22#section-4.4"
+          ' .
+          br
+          ' De nombreuses librairies sont disponibles dans presque tous les langages de programmation
+          ' pour intégrer OAuth et cette méthode dans vos clients.
 
-  .content__separator
+    - flow.with_header do |header|
+      - header.with_title "Exemples", "command-line"
 
-  h2.subheader
-    = icon_component("command-line")
-    | Exemples
+    - flow.with_section do
+      = card_component do
+        p
+          ' Pour vous authentifier en tant qu'éditeur, vous devez au préalable enregistrer
+          = link_to("une application", organization_oauth_applications_url)
+          '  dans Passerelle.
+          br
+          ' Une fois l'application créé, vous obtenez des identifiants :
 
-  = card_component do
-    p
-      ' Pour vous authentifier en tant qu'éditeur, vous devez au préalable enregistrer
-      = link_to("une application", organization_oauth_applications_url)
-      '  dans Passerelle.
-      br
-      ' Une fois l'application créé, vous obtenez des identifiants :
+        ul
+          li un <code class="code">Client ID</code>
+          li et un <code class="code">Client Secret</code>
 
-    ul
-      li un <code class="code">Client ID</code>
-      li et un <code class="code">Client Secret</code>
+        p
+          ' Dans l'exemple ci-dessous, nous commençons par assigner ces identifiants dans des variables.
+          br
+          ' Cela évite d'exposer ces identifiants dans du code ou dans votre historique de commandes.
 
-    p
-      ' Dans l'exemple ci-dessous, nous commençons par assigner ces identifiants dans des variables.
-      br
-      ' Cela évite d'exposer ces identifiants dans du code ou dans votre historique de commandes.
-
-    = code_example_component(:shell) do
-      | $ echo "Please enter your client ID:" && \
-            read CLIENT_ID && \
-            echo "Please enter your client secret:" && \
-            read CLIENT_SECRET
-
-    p
-      ' Une fois les identifiants enregistrés dans des variables, vous pouvez obtenir un Access Token :
-
-    ruby:
-      example = UI::CodeRequestExampleComponent.new(
-        "POST", "/oauth/token",
-        json: true,
-        request: {
-          body: {
-            grant_type:    "client_credentials",
-            client_id:     "'$CLIENT_ID'",
-            client_secret: "'$CLIENT_SECRET'"
-          }
-        },
-        response: {
-          body: {
-            access_token: "xPmgNWl7fOgT6xEBpq0zihx0SH2p-jHv13YAyc0L8Wg",
-            created_at:   1699522704,
-            expires_in:   7200,
-            token_type:   "Bearer"
-          }
-        }
-      )
-
-    = render example
-
-    p
-      ' Pour pouvoir utiliser le même Access Token dans les différents exemples de cette documentation,
-      ' nous vous conseillons de l'assigner à une variable :
-
-    = tabs_component do |tabs|
-      - tabs.with_tab("cURL + jq") do
         = code_example_component(:shell) do
-          | $ ACCESS_TOKEN=$( \
-                curl --fail -X POST #{oauth_token_url} \
-                  -H "Accept: application/json" \
-                  -H "Content-Type: application/json" \
-                  -d '{"grant_type":"client_credentials","client_id":"'$CLIENT_ID'","client_secret":"'$CLIENT_SECRET'"}' \
-                | jq -r .access_token
-              ) && echo $ACCESS_TOKEN
+          | $ echo "Please enter your client ID:" && \
+                read CLIENT_ID && \
+                echo "Please enter your client secret:" && \
+                read CLIENT_SECRET
 
-      - tabs.with_tab("httpie + jq") do
-        = code_example_component(:shell) do
-          | $ ACCESS_TOKEN=$( \
-                http --check-status --json POST #{oauth_token_url} \
-                  Accept:"application/json" \
-                  --raw='{"grant_type":"client_credentials","client_id":"'$CLIENT_ID'","client_secret":"'$CLIENT_SECRET'"}' \
-                | jq -r .access_token
-              ) && echo $ACCESS_TOKEN
+        p
+          ' Une fois les identifiants enregistrés dans des variables, vous pouvez obtenir un Access Token :
 
-  .content__separator
-
-  h2.subheader
-    = icon_component("command-line")
-    | Exemple d'utilisation de l'Access Token
-
-  = card_component do
-    p
-      ' Une fois l'Access Token enregistré dans une variable, vous pouvez l'utiliser dans tout les examples
-      ' de requête présents dans cette documentation :
-
-    ruby:
-      example = UI::CodeRequestExampleComponent.new(
-        "GET", "/collectivites",
-        json:          true,
-        authorization: true,
-        response: {
-          body: {
-            collectivites: [
-              {
-                id: "f97179b3-53e4-4705-a6d8-08496cb702fc",
-                name: "Métropole de Bordeaux",
-                siren: "690435680"
-              },
-              {
-                id: "7a25cfb7-cd85-4bbd-9dad-ce1e7c030dbc",
-                name: "CA Pays Basque",
-                siren: "962845392"
+        ruby:
+          example = UI::CodeRequestExampleComponent.new(
+            "POST", "/oauth/token",
+            json: true,
+            request: {
+              body: {
+                grant_type:    "client_credentials",
+                client_id:     "'$CLIENT_ID'",
+                client_secret: "'$CLIENT_SECRET'"
               }
-            ]
-          }
-        }
-      )
+            },
+            response: {
+              body: {
+                access_token: "xPmgNWl7fOgT6xEBpq0zihx0SH2p-jHv13YAyc0L8Wg",
+                created_at:   1699522704,
+                expires_in:   7200,
+                token_type:   "Bearer"
+              }
+            }
+          )
 
-    = render example
+        = render example
+
+        p
+          ' Pour pouvoir utiliser le même Access Token dans les différents exemples de cette documentation,
+          ' nous vous conseillons de l'assigner à une variable :
+
+        = tabs_component do |tabs|
+          - tabs.with_tab("cURL + jq") do
+            = code_example_component(:shell) do
+              | $ ACCESS_TOKEN=$( \
+                    curl --fail -X POST #{oauth_token_url} \
+                      -H "Accept: application/json" \
+                      -H "Content-Type: application/json" \
+                      -d '{"grant_type":"client_credentials","client_id":"'$CLIENT_ID'","client_secret":"'$CLIENT_SECRET'"}' \
+                    | jq -r .access_token
+                  ) && echo $ACCESS_TOKEN
+
+          - tabs.with_tab("httpie + jq") do
+            = code_example_component(:shell) do
+              | $ ACCESS_TOKEN=$( \
+                    http --check-status --json POST #{oauth_token_url} \
+                      Accept:"application/json" \
+                      --raw='{"grant_type":"client_credentials","client_id":"'$CLIENT_ID'","client_secret":"'$CLIENT_SECRET'"}' \
+                    | jq -r .access_token
+                  ) && echo $ACCESS_TOKEN
+
+    - flow.with_header do |header|
+      - header.with_title "Exemple d'utilisation de l'Access Token", "command-line"
+
+    - flow.with_section do
+      = card_component do
+        p
+          ' Une fois l'Access Token enregistré dans une variable, vous pouvez l'utiliser dans tout les examples
+          ' de requête présents dans cette documentation :
+
+        ruby:
+          example = UI::CodeRequestExampleComponent.new(
+            "GET", "/collectivites",
+            json:          true,
+            authorization: true,
+            response: {
+              body: {
+                collectivites: [
+                  {
+                    id: "f97179b3-53e4-4705-a6d8-08496cb702fc",
+                    name: "Métropole de Bordeaux",
+                    siren: "690435680"
+                  },
+                  {
+                    id: "7a25cfb7-cd85-4bbd-9dad-ce1e7c030dbc",
+                    name: "CA Pays Basque",
+                    siren: "962845392"
+                  }
+                ]
+              }
+            }
+          )
+
+        = render example

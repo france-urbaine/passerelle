@@ -5,8 +5,11 @@
 
   = render(:partial => "informations", :locals => {:resource => @resource })
 
-  h2.subheader
-    = icon_component "link"
-    | Endpoints
-  .card.documentation__card
-    = render(:partial => "methods", :locals => {:methods => @resource[:methods] })
+  = content_flow_component do |flow|
+
+    - flow.with_header do |header|
+      - header.with_title "Endpoints", "link"
+
+    - flow.with_section do
+      .card.documentation__card
+        = render(:partial => "methods", :locals => {:methods => @resource[:methods] })

@@ -7,41 +7,40 @@
     - if allowed_to?(:update?, @commune)
       - breadcrumbs.with_action "Modifier", edit_territories_commune_path(@commune), icon: "pencil-square", modal: true
 
-  h2.subheader
-    = icon_component("identification", "Nouvelle section")
-    | Description
+  = content_flow_component do |flow|
 
-  = description_list_component(@commune) do |list|
-    - list.with_attribute(:code_insee) do |attribute|
-      = @commune.code_insee
+    - flow.with_header do |header|
+      - header.with_title "Description", "identification", "Nouvelle section"
 
-    - list.with_attribute(:region) do |attribute|
-      = authorized_link_to @commune.region, namespace: :territories
+    - flow.with_section do
+      = description_list_component(@commune) do |list|
+        - list.with_attribute(:code_insee) do |attribute|
+          = @commune.code_insee
 
-    - list.with_attribute(:departement) do |attribute|
-      = authorized_link_to @commune.departement, namespace: :territories
+        - list.with_attribute(:region) do |attribute|
+          = authorized_link_to @commune.region, namespace: :territories
 
-    - list.with_attribute(:epci) do |attribute|
-      = authorized_link_to @commune.epci, namespace: :territories
+        - list.with_attribute(:departement) do |attribute|
+          = authorized_link_to @commune.departement, namespace: :territories
 
-    - list.with_attribute("Collectivités enregistrées") do |attribute|
-      - if @commune.collectivities_count.positive?
-        = display_count(@commune.collectivities_count, "collectivité")
+        - list.with_attribute(:epci) do |attribute|
+          = authorized_link_to @commune.epci, namespace: :territories
 
-  - if allowed_to?(:index?, Collectivity)
-    .content__separator
+        - list.with_attribute("Collectivités enregistrées") do |attribute|
+          - if @commune.collectivities_count.positive?
+            = display_count(@commune.collectivities_count, "collectivité")
 
-    .subheader-bar
-      h2.subheader
-        = icon_component("rectangle-stack", "Nouvelle section")
-        | Collectivités enregistrées
+    - if allowed_to?(:index?, Collectivity)
+      - flow.with_header do |header|
+        - header.with_title "Collectivités enregistrées", "rectangle-stack", "Nouvelle section"
 
-    - if @commune.collectivities_count.zero?
-      = card_component(content_class: "card__content--empty")
-        | Aucune collectivité enregistrée dans cette commune.
+      - flow.with_section do
+        - if @commune.collectivities_count.zero?
+          = card_component(content_class: "card__content--empty")
+            | Aucune collectivité enregistrée dans cette commune.
 
-    - else
-      = turbo_frame_tag "datatable-collectivities", src: territories_commune_collectivities_path(@commune) do
-        = datatable_skeleton_component(nested: true, rows: @commune.collectivities_count) do |skeleton|
-          - skeleton.with_search
-          - skeleton.with_pagination
+        - else
+          = turbo_frame_tag "datatable-collectivities", src: territories_commune_collectivities_path(@commune) do
+            = datatable_skeleton_component(nested: true, rows: @commune.collectivities_count) do |skeleton|
+              - skeleton.with_search
+              - skeleton.with_pagination

@@ -1,16 +1,15 @@
-- examples.each do |example|
-  .content__separator
-  .subheader-bar
-    h2.subheader
-      = icon_component "command-line"
-      | Exemple
+= content_flow_component do |flow|
+  - examples.each do |example|
+    - flow.with_header do |header|
+      - header.with_title "Exemple", "command-line"
+      - header.with_custom do
+        code.http-code( class=example.http_code_class )
+          = example.code
 
-    code.http-code( class=example.http_code_class )
-      = example.code
-
-  = card_component do
-    = code_request_example_component(example.verb, example.path,
-      json:          true,
-      authorization: true,
-      request:       example.request,
-      response:      example.response)
+    - flow.with_section do
+      = card_component do
+        = code_request_example_component(example.verb, example.path,
+          json:          true,
+          authorization: true,
+          request:       example.request,
+          response:      example.response)

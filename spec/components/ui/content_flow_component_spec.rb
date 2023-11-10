@@ -21,8 +21,8 @@ RSpec.describe UI::ContentFlowComponent, type: :component do
     expect(page).to have_selector(".content-flow > .header > .subheader-bar") do |header|
       expect(header).to have_selector("h2.subheader", text: "Section#1")
       expect(header).to have_selector("svg[data-source$='server-stack.svg']")
-      expect(header).to have_selector(".subheader-bar__actions") do |parts|
-        expect(parts).to have_selector(".subheader-bar__action") do |part|
+      expect(header).to have_selector(".subheader-bar__parts") do |parts|
+        expect(parts).to have_selector(".subheader-bar__part") do |part|
           expect(part).to have_selector(".badge", text: "Pending")
         end
       end

@@ -10,76 +10,70 @@
     - if allowed_to?(:destroy?, @collectivity)
       - breadcrumbs.with_action "Supprimer", remove_admin_collectivity_path(@collectivity), icon: "trash", modal: true, destructive: "discrete"
 
-  h2.subheader
-    = icon_component("identification", "Nouvelle section")
-    | Description
+  = content_flow_component do |flow|
 
-  = description_list_component(@collectivity) do |list|
-    - list.with_attribute(:publisher) do |attribute|
-      = authorized_link_to(@collectivity.publisher, namespace: :admin)
+    - flow.with_header do |header|
+      - header.with_title "Description", "identification", "Nouvelle section"
+
+    - flow.with_section do
+      = description_list_component(@collectivity) do |list|
+        - list.with_attribute(:publisher) do |attribute|
+          = authorized_link_to(@collectivity.publisher, namespace: :admin)
     
-    - list.with_attribute(:territory) do |attribute|
-      = authorized_link_to @collectivity.territory, namespace: :admin do
-        = @collectivity.territory.qualified_name
-        = " (#{@collectivity.territory.model_name.human})"
+        - list.with_attribute(:territory) do |attribute|
+          = authorized_link_to @collectivity.territory, namespace: :admin do
+            = @collectivity.territory.qualified_name
+            = " (#{@collectivity.territory.model_name.human})"
 
-    - list.with_attribute(:siren) do |attribute|
-        = display_siren(@collectivity.siren)
+        - list.with_attribute(:siren) do |attribute|
+            = display_siren(@collectivity.siren)
 
-    - list.with_attribute("Contact") do |attribute|
-        = "#{@collectivity.contact_first_name} #{@collectivity.contact_last_name}".strip.presence
+        - list.with_attribute("Contact") do |attribute|
+            = "#{@collectivity.contact_first_name} #{@collectivity.contact_last_name}".strip.presence
 
-    - list.with_attribute(:contact_email) do |attribute|
-        - if @collectivity.contact_email?
-          = mail_to(@collectivity.contact_email)
+        - list.with_attribute(:contact_email) do |attribute|
+            - if @collectivity.contact_email?
+              = mail_to(@collectivity.contact_email)
 
-    - list.with_attribute(:contact_phone) do |attribute|
-        - if @collectivity.contact_phone?
-          = phone_to(@collectivity.contact_phone)
+        - list.with_attribute(:contact_phone) do |attribute|
+            - if @collectivity.contact_phone?
+              = phone_to(@collectivity.contact_phone)
 
-    - list.with_attribute("Utilisateurs") do |attribute|
-        - if @collectivity.users_count.positive?
-          = display_count(@collectivity.users_count, "utilisateur")
+        - list.with_attribute("Utilisateurs") do |attribute|
+            - if @collectivity.users_count.positive?
+              = display_count(@collectivity.users_count, "utilisateur")
 
-    - list.with_attribute("Signalements") do |attribute|
-      - if @collectivity.reports_transmitted_count.positive?
-        = display_count(@collectivity.reports_transmitted_count, "transmis")
-        = " / "
-        = display_count(@collectivity.reports_approved_count, "approuvé")
-        = " / "
-        = display_count(@collectivity.reports_rejected_count, "rejeté")
+        - list.with_attribute("Signalements") do |attribute|
+          - if @collectivity.reports_transmitted_count.positive?
+            = display_count(@collectivity.reports_transmitted_count, "transmis")
+            = " / "
+            = display_count(@collectivity.reports_approved_count, "approuvé")
+            = " / "
+            = display_count(@collectivity.reports_rejected_count, "rejeté")
 
-  - if allowed_to?(:index?, User)
-    .content__separator
+      - if allowed_to?(:index?, User)
+        - flow.with_header do |header|
+          - header.with_title "Utilisateurs", "rectangle-stack", "Nouvelle section"
+          - if allowed_to?(:create?, User)
+            = header.with_action "Inviter un utilisateur", new_admin_collectivity_user_path(@collectivity), icon: "plus", modal: true
 
-    .subheader-bar
-      h2.subheader
-        = icon_component("rectangle-stack", "Nouvelle section")
-        | Utilisateurs
+        - flow.with_section do
+          - if @collectivity.users_count.zero?
+            = card_component(content_class: "card__content--empty")
+              | Aucun utilisateur assigné.
 
-      .subheader-bar__actions
-        - if allowed_to?(:create?, User)
-          .subheader-bar__action
-            = button_component "Inviter un utilisateur", new_admin_collectivity_user_path(@collectivity), icon: "plus", modal: true
+          - else
+            = turbo_frame_tag "datatable-users", src: admin_collectivity_users_path(@collectivity) do
+              = datatable_skeleton_component(nested: true, rows: @collectivity.users_count) do |skeleton|
+                - skeleton.with_search
+                - skeleton.with_pagination
 
-    - if @collectivity.users_count.zero?
-      = card_component(content_class: "card__content--empty")
-        | Aucun utilisateur assigné.
+      - if allowed_to?(:index?, Office)
+        - flow.with_header do |header|
+          - header.with_title "Guichets correspondants", "rectangle-stack", "Nouvelle section"
 
-    - else
-      = turbo_frame_tag "datatable-users", src: admin_collectivity_users_path(@collectivity) do
-        = datatable_skeleton_component(nested: true, rows: @collectivity.users_count) do |skeleton|
-          - skeleton.with_search
-          - skeleton.with_pagination
-
-  - if allowed_to?(:index?, Office)
-    .content__separator
-
-    h2.subheader
-      = icon_component("rectangle-stack", "Nouvelle section")
-      | Guichets correspondants
-
-    = turbo_frame_tag "datatable-offices", src: admin_collectivity_offices_path(@collectivity) do
-      = datatable_skeleton_component(nested: true, rows: 0) do |skeleton|
-        - skeleton.with_search
-        - skeleton.with_pagination
+        - flow.with_section do
+          = turbo_frame_tag "datatable-offices", src: admin_collectivity_offices_path(@collectivity) do
+            = datatable_skeleton_component(nested: true, rows: 0) do |skeleton|
+              - skeleton.with_search
+              - skeleton.with_pagination

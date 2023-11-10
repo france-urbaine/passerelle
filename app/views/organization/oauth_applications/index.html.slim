@@ -12,17 +12,16 @@
       br
       ' #{link_to "Consultez le guide", api_documentation_url("guides/sandbox")} pour en savoir plus.
 
-  .content__separator
+  = content_flow_component do |flow|
 
-  = render Views::OauthApplications::ListComponent.new(@oauth_applications, @pagy, namespace: :organization)
+    - flow.with_section do
+      = render Views::OauthApplications::ListComponent.new(@oauth_applications, @pagy, namespace: :organization)
 
-  .content__separator
+    - flow.with_header do |header|
+      - header.with_title "Documentation", "information-circle", "Nouvelle section"
 
-  h2.subheader
-    = icon_component("information-circle", "Nouvelle section")
-    | Documentation
-
-  = card_component do
-    ' L'API de Passerelle est une API RESTful qui implémente les spécifications du standard OAuth2 Pour l'authentification.
-    br
-    ' #{link_to "Consultez la documentation", api_documentation_url} pour en savoir plus.
+    - flow.with_section do
+      = card_component do
+        ' L'API de Passerelle est une API RESTful qui implémente les spécifications du standard OAuth2 Pour l'authentification.
+        br
+        ' #{link_to "Consultez la documentation", api_documentation_url} pour en savoir plus.

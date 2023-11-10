@@ -7,60 +7,56 @@
     - if allowed_to?(:manage?, @epci)
       - breadcrumbs.with_action "Modifier", edit_territories_epci_path(@epci), icon: "pencil-square", modal: true
 
-  h2.subheader
-    = icon_component("identification", "Nouvelle section")
-    | Description
+  = content_flow_component do |flow|
 
-  = description_list_component(@epci) do |list|
-    - list.with_attribute(:siren) do |attribute|
-      = display_siren(@epci.siren)
+    - flow.with_header do |header|
+      - header.with_title "Description", "identification", "Nouvelle section"
 
-    - list.with_attribute(:region) do |attribute|
-      = authorized_link_to @epci.region, namespace: :territories
+    - flow.with_section do
+      = description_list_component(@epci) do |list|
+        - list.with_attribute(:siren) do |attribute|
+          = display_siren(@epci.siren)
 
-    - list.with_attribute(:departement) do |attribute|
-      = authorized_link_to @epci.departement, namespace: :territories
+        - list.with_attribute(:region) do |attribute|
+          = authorized_link_to @epci.region, namespace: :territories
 
-    - list.with_attribute("Communes") do |attribute|
-      - if @epci.communes_count.positive?
-        = display_count(@epci.communes_count, "commune")
+        - list.with_attribute(:departement) do |attribute|
+          = authorized_link_to @epci.departement, namespace: :territories
 
-    - list.with_attribute("Collectivités enregistrées") do |attribute|
-      - if @epci.collectivities_count.positive?
-        = display_count(@epci.collectivities_count, "collectivité")
+        - list.with_attribute("Communes") do |attribute|
+          - if @epci.communes_count.positive?
+            = display_count(@epci.communes_count, "commune")
 
-  - if allowed_to?(:index?, Commune)
-    .content__separator
+        - list.with_attribute("Collectivités enregistrées") do |attribute|
+          - if @epci.collectivities_count.positive?
+            = display_count(@epci.collectivities_count, "collectivité")
 
-    .subheader-bar
-      h2.subheader
-        = icon_component("rectangle-stack", "Nouvelle section")
-        | Communes
+    - if allowed_to?(:index?, Commune)
+      - flow.with_header do |header|
+        - header.with_title "Communes", "rectangle-stack", "Nouvelle section"
 
-    - if @epci.communes_count.zero?
-      = card_component(content_class: "card__content--empty")
-        | Aucune commune dans cet EPCI.
+      - flow.with_section do
+        - if @epci.communes_count.zero?
+          = card_component(content_class: "card__content--empty")
+            | Aucune commune dans cet EPCI.
 
-    - else
-      = turbo_frame_tag "datatable-communes", src: territories_epci_communes_path(@epci) do
-        = datatable_skeleton_component(nested: true, rows: @epci.communes_count) do |skeleton|
-          - skeleton.with_search
-          - skeleton.with_pagination
+        - else
+          = turbo_frame_tag "datatable-communes", src: territories_epci_communes_path(@epci) do
+            = datatable_skeleton_component(nested: true, rows: @epci.communes_count) do |skeleton|
+              - skeleton.with_search
+              - skeleton.with_pagination
 
-  - if allowed_to?(:index?, Collectivity)
-    .content__separator
+    - if allowed_to?(:index?, Collectivity)
+      - flow.with_header do |header|
+        - header.with_title "Collectivités enregistrées", "rectangle-stack", "Nouvelle section"
 
-    .subheader-bar
-      h2.subheader
-        = icon_component("rectangle-stack", "Nouvelle section")
-        | Collectivités enregistrées
+      - flow.with_section do
+        - if @epci.collectivities_count.zero?
+          = card_component(content_class: "card__content--empty")
+            | Aucune collectivité enregistrée dans cet EPCI.
 
-    - if @epci.collectivities_count.zero?
-      = card_component(content_class: "card__content--empty")
-        | Aucune collectivité enregistrée dans cet EPCI.
-
-    - else
-      = turbo_frame_tag "datatable-collectivities", src: territories_epci_collectivities_path(@epci) do
-        = datatable_skeleton_component(nested: true, rows: @epci.collectivities_count) do |skeleton|
-          - skeleton.with_search
-          - skeleton.with_pagination
+        - else
+          = turbo_frame_tag "datatable-collectivities", src: territories_epci_collectivities_path(@epci) do
+            = datatable_skeleton_component(nested: true, rows: @epci.collectivities_count) do |skeleton|
+              - skeleton.with_search
+              - skeleton.with_pagination
