@@ -17,6 +17,15 @@
   = card_component do
     | L'API de Passerelle est une API RESTful qui implémente les spécifications du standard OAuth2 Pour l'authentification.
     br
+    br
+    p.alert.soft-warn
+      ' Lorsqu'une application est en 'Bac à sable', les signalements publiés par cette application ne sont pas transmis à la DGFIP.
+      br
+      ' Avec un éditeur en 'Bac à sable', tous les signalements ne seront pas transmis à la DGFIP et ne seront pas visibles dans l'application.
+      br
+      ' Si votre éditeur n'est pas en 'Bac à sable', l'application aura le contrôle sur le mode bac à sable des signalements.
+
     = link_to "Consultez la documentation", api_documentation_url
     = " "
     | pour en savoir plus.
+
