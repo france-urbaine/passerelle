@@ -5,28 +5,14 @@ module UI
     renders_many :blocks, types: {
 
       header: { renders: lambda { |**options|
-        (@blocks_list ||= []) << :header
-        if options[:separator].nil?
-          h_options = options.dup
-
-          # separator before each header, but the first one
-          h_options[:separator] = (@blocks_list.size > 1)
-        else
-          h_options = options
-        end
+        h_options = options.dup
+        h_options[:block_type] = :header
         ::UI::ContentFlow::HeaderComponent.new(**h_options)
       }, as: :header },
 
       section: { renders: lambda { |**options|
-        (@blocks_list ||= []) << :section
-        if options[:separator].nil?
-          s_options = options.dup
-
-          # separator before each section without header (previous block is also a section), but the first one
-          s_options[:separator] = (@blocks_list[-2] == :section)
-        else
-          s_options = options
-        end
+        s_options = options.dup
+        s_options[:block_type] = :section
         ::UI::ContentFlow::SectionComponent.new(**s_options)
       }, as: :section }
 
