@@ -1,0 +1,10 @@
+Valeur,Libellé
+AP,"Appartement"
+MA,"Maison"
+ME,"Maison exceptionnelle"
+MP,"Maison partagée par une limite territoriale"
+DA,"Dépendance d'appartement"
+DM,"Dépendance de maison"
+DE,"Dépendance bâtie isolée (ex. : garage)"
+LC,"Local commun (ex. : local à vélos)"
+SM,"Sol de maison (cas de construction sur sol d'autrui)"

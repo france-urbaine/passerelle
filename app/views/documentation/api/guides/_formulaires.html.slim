@@ -1,0 +1,92 @@
+= breadcrumbs_component do |breadcrumbs|
+  - breadcrumbs.with_path "Guides"
+  - breadcrumbs.with_path "Formulaires de signalement"
+
+.documentation
+  = card_component do
+    p
+      ' Un signalement est défini par son type de formulaire  :
+    ul
+      li= link_to "Evaluation d'un local d'habitation", api_documentation_path("guides/formulaire_evaluation_local_habitation")
+      li= link_to "Evaluation d'un local professionnel", api_documentation_path("guides/formulaire_evaluation_local_professionnel")
+      li Création d'un local d'habitation
+      li Création d'un local professionnel
+      li Occupation d'un local d'habitation
+      li Occupation d'un local professionnel
+    p
+      ' Chaque type de formulaire accepte un ou plusieurs objets (changement de consistance, d'affectation, éxonération à tort, etc.)
+      br
+      ' La combinaison de ces deux propriétés défini le reste des champs à fournir pour créér un signalement valide.
+
+    p Certaines propriétés sont communes à tout les signalements :
+    table
+      colgroup
+        col( width="25%" )
+        col( width="25%" )
+        col( width="25%" )
+        col( width="25%" )
+      thead
+        tr
+          th Paramètre
+          th Description
+          th Valeurs possibles ou exemples
+          th
+      tbody
+        tr
+          th <code>form_type</code>
+          td Type de formulaire
+          td Consultez la description de chaque formulaire
+          td
+            .flex.justify-end.space-x-4
+              .badge.badge--orange.badge--mono requis
+              .badge.badge--blue.badge--mono String
+        tr
+          th <code>anomalies</code>
+          td Objet du signalement
+          td Consultez la description de chaque formulaire
+          td
+            .flex.justify-end.space-x-4
+              .badge.badge--orange.badge--mono requis
+              .badge.badge--blue.badge--mono String | Array[String]
+
+        tr
+          th <code>code_insee</code>
+          td Code INSEE de la commune concernée
+          td Ex: <code>64019</code>
+          td
+            .flex.justify-end.space-x-4
+              .badge.badge--orange.badge--mono requis
+              .badge.badge--blue.badge--mono String
+
+        tr
+          th <code>date_constat</code>
+          td Date de constat
+          td Ex: <code>2023-01-02</code>
+          td
+            .flex.justify-end.space-x-4
+              .badge.badge--orange.badge--mono requis
+              .badge.badge--blue.badge--mono Date
+
+        tr
+          th <code>priority</code>
+          td Priorité de traitement
+          td <code>high</code>, <code>medium</code> ou <code>low</code> (valeur par défaut)
+          td
+            .flex.justify-end.space-x-4
+              .badge.badge--blue.badge--mono String
+
+        tr
+          th <code>observations</code>
+          td Observations diverses
+          td
+          td
+            .flex.justify-end.space-x-4
+              .badge.badge--blue.badge--mono String
+
+        tr
+          th <code>enjeu</code>
+          td Enjeu financier du signalement
+          td
+          td
+            .flex.justify-end.space-x-4
+              .badge.badge--blue.badge--mono Numeric

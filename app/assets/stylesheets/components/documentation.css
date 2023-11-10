@@ -39,6 +39,16 @@
           @apply mb-0;
         }
       }
+
+      table {
+        th, td {
+          vertical-align: top;
+        }
+
+        ul {
+          @apply ml-0;
+        }
+      }
     }
   }
 }

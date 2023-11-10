@@ -190,7 +190,7 @@
 
         p
           ' Pour créer un signalement valide, consultez
-          a.text-disabled( disabled ) les règles de validation d'un signalement (bientôt disponible)
+          = link_to("les règles de validation d'un signalement", api_documentation_path("guides/formulaires"))
           ' .
           br
           ' En cas d'erreurs de validation, la requête vous retournera une liste de message d'erreurs :
