@@ -24,6 +24,31 @@ RSpec.describe UI::DropdownComponent, type: :component do
     end
   end
 
+  it "renders a dropdown with dividers" do
+    render_inline described_class.new do |dropdown|
+      dropdown.with_button "Plus d'options"
+
+      dropdown.with_menu_item "Option 1"
+      dropdown.with_menu_item "Option 2"
+      dropdown.with_divider
+      dropdown.with_menu_item "Option 3"
+      dropdown.with_divider
+      dropdown.with_menu_item "Option 4"
+    end
+
+    expect(page).to have_selector(".dropdown") do |dropdown|
+      aggregate_failures do
+        expect(dropdown).to have_selector(".button", text: "Plus d'options")
+        expect(dropdown).to have_selector(".dropdown__menu > button:nth-child(1)", text: "Option 1")
+        expect(dropdown).to have_selector(".dropdown__menu > button:nth-child(2)", text: "Option 2")
+        expect(dropdown).to have_selector(".dropdown__menu > div:nth-child(3)")
+        expect(dropdown).to have_selector(".dropdown__menu > button:nth-child(4)", text: "Option 3")
+        expect(dropdown).to have_selector(".dropdown__menu > div:nth-child(5)")
+        expect(dropdown).to have_selector(".dropdown__menu > button:nth-child(6)", text: "Option 4")
+      end
+    end
+  end
+
   it "renders a dropdown with the menu next to the button" do
     render_inline described_class.new(position: "aside") do |dropdown|
       dropdown.with_button "Plus d'options"

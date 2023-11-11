@@ -1,0 +1,8 @@
+= tag.form(class: "search", autocomplete: "off", action: @url || request.path, data: { turbo_frame: @turbo_frame }) do
+  label.form-block.form-block--no-margin
+    .form-block__label--hiden= @label
+    .form-block__input
+      .form-block__input-icon= icon_component("magnifying-glass")
+      = tag.input type: "search", name: "search", value: @value || params[:search], placeholder: @label
+
+  = hidden_field_component :order, params[:order]

@@ -1,0 +1,14 @@
+.flex
+  = dropdown_component do |dropdown|
+    - dropdown.with_button "Plus d'options", icon: "adjustments-vertical", icon_only: true
+
+    - dropdown.with_menu_item "Option 1" do |item|
+      - item.with_menu_item "Option 1.a"
+      - item.with_menu_item "Option 1.b"
+
+    - dropdown.with_menu_item "Option 2" do |item|
+      - item.with_menu_item "Option 2.a"
+      - item.with_menu_item "Option 2.b"
+      - item.with_menu_item "Option 2.c" do |child_item|
+        - child_item.with_menu_item "Option 2.c (1)"
+        - child_item.with_menu_item "Option 2.c (2)"

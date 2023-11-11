@@ -17,19 +17,30 @@ module UI
       )
     }
 
-    renders_many :menu_items, lambda { |*args, **options|
-      item = MenuItem.new(direction: direction)
+    renders_many :items, types: {
+      divider: {
+        as:       :divider,
+        renders:  -> { tag.div(class: "dropdown__divider") }
+      },
+      menu_item: {
+        as:       :menu_item,
+        renders:  lambda { |*args, **options|
+          item = MenuItem.new(direction: direction)
 
-      if args.any? || options.any?
-        options[:role] = "menuitem"
-        options[:class] ||= "dropdown__menu-item"
-        icon_options = { icon: "chevron-left-small" }
-        icon_options = { icon: "chevron-right-small", icon_position: "right" } if direction == "right"
-        item.with_button(*args, **options)
-        item.with_dropdown.with_button(*args, **icon_options, **options)
-      end
+          if args.any? || options.any?
+            options[:role]  = options.fetch(:role, "menuitem")
+            options[:class] = Array.wrap(options[:class]) << "dropdown__menu-item"
+            options[:class] = options[:class].join(" ")
 
-      item
+            icon_options = { icon: "chevron-left-small" }
+            icon_options = { icon: "chevron-right-small", icon_position: "right" } if direction == "right"
+            item.with_button(*args, **options)
+            item.with_dropdown.with_button(*args, **icon_options, **options)
+          end
+
+          item
+        }
+      }
     }
 
     attr_reader :position, :direction
@@ -82,7 +93,7 @@ module UI
       end
 
       def call
-        if dropdown? && dropdown.menu_items.any?
+        if dropdown? && dropdown.items.any?
           dropdown
         elsif button?
           button
