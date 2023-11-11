@@ -2,6 +2,8 @@
 
 module UI
   class BreadcrumbsComponent < ApplicationViewComponent
+    define_component_helper :breadcrumbs_component
+
     renders_many :paths, "Path"
     renders_many :actions, lambda { |*args, **options, &block|
       if args.any? || options.any?

@@ -2,6 +2,8 @@
 
 module UI
   class CounterComponent < ApplicationViewComponent
+    define_component_helper :counter_component
+
     def initialize(count)
       @count = count
       super()

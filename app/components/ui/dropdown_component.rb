@@ -2,8 +2,7 @@
 
 module UI
   class DropdownComponent < ApplicationViewComponent
-    POSITIONS = %w[below aside].freeze
-    DIRECTIONS = %w[right left].freeze
+    define_component_helper :dropdown_component
 
     renders_one :button, lambda { |*args, **options|
       self.button_id = options.delete(:id)
@@ -42,6 +41,9 @@ module UI
         }
       }
     }
+
+    POSITIONS = %w[below aside].freeze
+    DIRECTIONS = %w[right left].freeze
 
     attr_reader :position, :direction
     attr_writer :button_id

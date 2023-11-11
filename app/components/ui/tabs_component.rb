@@ -2,6 +2,8 @@
 
 module UI
   class TabsComponent < ApplicationViewComponent
+    define_component_helper :tabs_component
+
     renders_many :tabs, "Tab"
 
     def before_render

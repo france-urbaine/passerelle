@@ -3,6 +3,8 @@
 module UI
   module Form
     class HiddenFieldComponent < ApplicationViewComponent
+      define_component_helper :hidden_field_component
+
       def initialize(name, value = nil, **options)
         @name = name
         @value = value

@@ -2,6 +2,8 @@
 
 module UI
   class CodeRequestExampleComponent < ApplicationViewComponent
+    define_component_helper :code_request_example_component
+
     DEFAULT_ACCESS_TOKEN   = "HgAxkdHZUvlBjuuWweLKwsJ6InRfZoZ-GHyFtbrS03k"
     DEFAULT_CONTENT_LENGTH = 71_475
 

@@ -2,6 +2,8 @@
 
 module UI
   class CardComponent < ApplicationViewComponent
+    define_component_helper :card_component
+
     renders_one :header, "LabelOrContent"
     renders_one :body, "LabelOrContent"
 

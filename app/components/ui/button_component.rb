@@ -2,6 +2,8 @@
 
 module UI
   class ButtonComponent < ApplicationViewComponent
+    define_component_helper :button_component
+
     def initialize(*args, **options)
       raise ArgumentError, "wrong number of arguments (given #{args.size}, expected 0..2)" if args.size > 2
 
@@ -123,9 +125,9 @@ module UI
       }.compact
 
       if @icon_only && @label
-        render UI::IconComponent.new(@icon, @label, **icon_options)
+        icon_component(@icon, @label, **icon_options)
       else
-        render UI::IconComponent.new(@icon, **icon_options)
+        icon_component(@icon, **icon_options)
       end
     end
 

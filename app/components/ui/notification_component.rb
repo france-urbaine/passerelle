@@ -2,6 +2,8 @@
 
 module UI
   class NotificationComponent < ApplicationViewComponent
+    define_component_helper :notification_component
+
     attr_reader :data, :actions
 
     def initialize(data, actions = nil)

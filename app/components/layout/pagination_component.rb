@@ -2,6 +2,8 @@
 
 module Layout
   class PaginationComponent < ApplicationViewComponent
+    define_component_helper :pagination_component
+
     attr_reader :pagy, :turbo_frame, :direction, :order, :inflections_options
 
     def initialize(pagy, *, turbo_frame: "_top", direction: "left", options: true, order: {}, **)
