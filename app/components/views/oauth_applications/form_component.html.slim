@@ -13,9 +13,15 @@
         = form.label :name
         = form.text_field :name, required: true
 
-      = form.block :sandbox do
+      = form.block :sandbox do |block|
         = form.check_box :sandbox
         = form.label :sandbox
+
+        - block.with_hint do
+          p
+            | Lorsque ce mode est activé, aucune donnée créée à travers cette application
+            br
+            | ne sera transmise aux DDFIPs.
 
     - modal.with_submit_action "Enregistrer"
     - modal.with_close_action "Annuler"

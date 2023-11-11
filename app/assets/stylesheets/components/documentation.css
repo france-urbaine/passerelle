@@ -16,7 +16,7 @@
       }
 
       ul {
-        @apply list-disc list-inside ml-6 mb-6;
+        @apply list-disc ml-6 mb-6;
       }
 
       ol {

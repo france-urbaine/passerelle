@@ -33,6 +33,25 @@
         = form.label :contact_phone
         = form.text_field :contact_phone
 
+      = form.block :sandbox do |block|
+        = form.check_box :sandbox
+        = form.label :sandbox
+
+        - block.with_hint do
+          p
+            | Lorsque ce mode est activé, aucune donnée créée par l'éditeur dans l'API ne sera transmise aux DDFIPs :
+            br
+            | l'éditeur peut expérimenter l'API en toute sécurité.
+          p
+            | Ce paramètre ne peut pas être désactivé par l'éditeur : seuls les administrateurs de la plateforme
+            br
+            | Passerelle peuvent le modifier.
+          p
+            | Lorsque ce mode est désactivé, l'éditeur peut créer lui-même une connection en mode « Bac à sable »
+            br
+            | si nécessaire.
+
+
       = form.block :allow_2fa_via_email do |block|
         = form.check_box :allow_2fa_via_email
         = form.label :allow_2fa_via_email
@@ -55,8 +74,5 @@
               br
               | comme méthode d'authentification, ces utilisateurs ne pourront plus accéder à la plateforme.
 
-      = form.block :sandbox do
-        = form.check_box :sandbox
-        = form.label :sandbox
     - modal.with_submit_action "Enregistrer"
     - modal.with_close_action "Annuler"
