@@ -55,10 +55,8 @@ RSpec.describe UI::ButtonComponent, type: :component do
     render_inline described_class.new("Click me!", "/communes", modal: true)
 
     expect(page).to have_link("Click me!", class: "button") do |button|
-      aggregate_failures do
-        expect(button).to have_html_attribute("href").with_value("/communes")
-        expect(button).to have_html_attribute("data-turbo-frame").with_value("modal")
-      end
+      expect(button).to have_html_attribute("href").with_value("/communes")
+      expect(button).to have_html_attribute("data-turbo-frame").with_value("modal")
     end
   end
 
@@ -102,11 +100,9 @@ RSpec.describe UI::ButtonComponent, type: :component do
     render_inline described_class.new("Click me!", icon: "plus")
 
     expect(page).to have_button(class: "button") do |button|
-      aggregate_failures do
-        expect(button).to have_text("Click me!")
-        expect(button).to have_selector("svg") do |svg|
-          expect(svg).to have_html_attribute("data-source").with_value("heroicons/optimized/24/outline/plus.svg")
-        end
+      expect(button).to have_text("Click me!")
+      expect(button).to have_selector("svg") do |svg|
+        expect(svg).to have_html_attribute("data-source").with_value("heroicons/optimized/24/outline/plus.svg")
       end
     end
   end
@@ -125,14 +121,10 @@ RSpec.describe UI::ButtonComponent, type: :component do
     render_inline described_class.new("Click me!", icon: "plus", icon_only: true)
 
     expect(page).to have_button(class: "icon-button") do |button|
-      aggregate_failures do
-        expect(button).to have_selector(".tooltip", text: "Click me!")
-        expect(button).to have_selector("svg") do |svg|
-          aggregate_failures do
-            expect(svg).to have_html_attribute("data-source").with_value("heroicons/optimized/24/outline/plus.svg")
-            expect(svg).to have_selector("title", text: "Click me!")
-          end
-        end
+      expect(button).to have_selector(".tooltip", text: "Click me!")
+      expect(button).to have_selector("svg") do |svg|
+        expect(svg).to have_html_attribute("data-source").with_value("heroicons/optimized/24/outline/plus.svg")
+        expect(svg).to have_selector("title", text: "Click me!")
       end
     end
   end
@@ -141,13 +133,11 @@ RSpec.describe UI::ButtonComponent, type: :component do
     render_inline described_class.new("Click me!", "/communes", method: :patch)
 
     expect(page).to have_selector("form") do |form|
-      aggregate_failures do
-        expect(form).to have_html_attribute("method").with_value("post")
-        expect(form).to have_html_attribute("action").with_value("/communes")
+      expect(form).to have_html_attribute("method").with_value("post")
+      expect(form).to have_html_attribute("action").with_value("/communes")
 
-        expect(form).to have_selector("input[type='hidden'][name='_method'][value='patch']", visible: :hidden)
-        expect(form).to have_button("Click me!")
-      end
+      expect(form).to have_selector("input[type='hidden'][name='_method'][value='patch']", visible: :hidden)
+      expect(form).to have_button("Click me!")
     end
   end
 
@@ -155,14 +145,12 @@ RSpec.describe UI::ButtonComponent, type: :component do
     render_inline described_class.new("Click me!", "/communes", method: :patch, params: { ids: "all" })
 
     expect(page).to have_selector("form") do |form|
-      aggregate_failures do
-        expect(form).to have_html_attribute("method").with_value("post")
-        expect(form).to have_html_attribute("action").with_value("/communes")
+      expect(form).to have_html_attribute("method").with_value("post")
+      expect(form).to have_html_attribute("action").with_value("/communes")
 
-        expect(form).to have_selector("input[type='hidden'][name='_method'][value='patch']", visible: :hidden)
-        expect(form).to have_selector("input[type='hidden'][name='ids'][value='all']", visible: :hidden)
-        expect(form).to have_button("Click me!")
-      end
+      expect(form).to have_selector("input[type='hidden'][name='_method'][value='patch']", visible: :hidden)
+      expect(form).to have_selector("input[type='hidden'][name='ids'][value='all']", visible: :hidden)
+      expect(form).to have_button("Click me!")
     end
   end
 end

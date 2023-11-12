@@ -25,14 +25,12 @@ RSpec.describe UI::ModalComponent, type: :component do
       end
     end
 
-    aggregate_failures do
-      expect(page).to have_selector(".modal > .modal__content > .modal__header") do |node|
-        expect(node).to have_selector("h1", text: "Dialog title")
-      end
+    expect(page).to have_selector(".modal > .modal__content > .modal__header") do |node|
+      expect(node).to have_selector("h1", text: "Dialog title")
+    end
 
-      expect(page).to have_selector(".modal > .modal__content > .modal__body") do |node|
-        expect(node).to have_selector("p", text: "Hello World")
-      end
+    expect(page).to have_selector(".modal > .modal__content > .modal__body") do |node|
+      expect(node).to have_selector("p", text: "Hello World")
     end
   end
 
@@ -73,13 +71,11 @@ RSpec.describe UI::ModalComponent, type: :component do
     end
 
     expect(page).to have_selector(".modal > .modal__content > .modal__actions") do |node|
-      aggregate_failures do
-        expect(node).to have_button("Action 1", class: "button--primary")
-        expect(node).to have_link("Action 2", class: "button", href: "/some/path")
+      expect(node).to have_button("Action 1", class: "button--primary")
+      expect(node).to have_link("Action 2", class: "button", href: "/some/path")
 
-        expect(node).to have_button("Close")
-        expect(node).to have_button("Action 2")
-      end
+      expect(node).to have_button("Close")
+      expect(node).to have_button("Action 2")
     end
   end
 
@@ -92,14 +88,12 @@ RSpec.describe UI::ModalComponent, type: :component do
       modal.with_close_action("Close")
     end
 
-    aggregate_failures do
-      expect(page).to have_selector(".modal > .modal__content > .modal__body") do |node|
-        expect(node).to have_link(class: "icon-button", href: "/home/root")
-      end
+    expect(page).to have_selector(".modal > .modal__content > .modal__body") do |node|
+      expect(node).to have_link(class: "icon-button", href: "/home/root")
+    end
 
-      expect(page).to have_selector(".modal > .modal__content > .modal__actions") do |node|
-        expect(node).to have_link("Close", class: "button", href: "/home/root")
-      end
+    expect(page).to have_selector(".modal > .modal__content > .modal__actions") do |node|
+      expect(node).to have_link("Close", class: "button", href: "/home/root")
     end
   end
 
@@ -121,15 +115,11 @@ RSpec.describe UI::ModalComponent, type: :component do
     end
 
     expect(page).to have_selector(".modal > .modal__content > turbo-frame > form[action='/form/path']") do |form|
-      aggregate_failures do
-        expect(form).to have_selector(".modal__header > h1.modal__title", text: "Dialog title")
-        expect(form).to have_selector(".modal__body > .form-block > input[name='commune[name]']")
-        expect(form).to have_selector(".modal__actions") do |actions|
-          aggregate_failures do
-            expect(actions).to have_button("Save", type: "submit")
-            expect(actions).to have_button("Dismiss", type: "button")
-          end
-        end
+      expect(form).to have_selector(".modal__header > h1.modal__title", text: "Dialog title")
+      expect(form).to have_selector(".modal__body > .form-block > input[name='commune[name]']")
+      expect(form).to have_selector(".modal__actions") do |actions|
+        expect(actions).to have_button("Save", type: "submit")
+        expect(actions).to have_button("Dismiss", type: "button")
       end
     end
   end

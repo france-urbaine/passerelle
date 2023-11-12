@@ -19,21 +19,19 @@ RSpec.describe Views::Offices::ListComponent, type: :component do
       render_inline described_class.new(Office.all, pagy, namespace: :admin)
 
       expect(page).to have_selector(".datatable table") do |table|
-        aggregate_failures do
-          expect(table).to have_selector("th", text: "Guichet")
-          expect(table).to have_selector("th", text: "DDFIP")
-          expect(table).to have_selector("th", text: "Compétence")
-          expect(table).to have_selector("th", text: "Utilisateurs")
-          expect(table).to have_selector("th", text: "Communes")
-          expect(table).to have_selector("th", text: "Signalements")
-          expect(table).to have_selector("th", text: "Approuvés")
-          expect(table).to have_selector("th", text: "Rejetés")
+        expect(table).to have_selector("th", text: "Guichet")
+        expect(table).to have_selector("th", text: "DDFIP")
+        expect(table).to have_selector("th", text: "Compétence")
+        expect(table).to have_selector("th", text: "Utilisateurs")
+        expect(table).to have_selector("th", text: "Communes")
+        expect(table).to have_selector("th", text: "Signalements")
+        expect(table).to have_selector("th", text: "Approuvés")
+        expect(table).to have_selector("th", text: "Rejetés")
 
-          expect(table).to have_selector(:table_row, {
-            "Guichet"  => offices.first.name,
-            "DDFIP" => offices.first.ddfip.name
-          })
-        end
+        expect(table).to have_selector(:table_row, {
+          "Guichet"  => offices.first.name,
+          "DDFIP" => offices.first.ddfip.name
+        })
       end
     end
 
@@ -44,21 +42,19 @@ RSpec.describe Views::Offices::ListComponent, type: :component do
       end
 
       expect(page).to have_selector(".datatable table") do |table|
-        aggregate_failures do
-          expect(table).to have_selector("th", text: "Guichet")
-          expect(table).to have_selector("th", text: "DDFIP")
-          expect(table).not_to have_selector("th", text: "Compétence")
-          expect(table).not_to have_selector("th", text: "Utilisateurs")
-          expect(table).not_to have_selector("th", text: "Communes")
-          expect(table).not_to have_selector("th", text: "Signalements")
-          expect(table).not_to have_selector("th", text: "Approuvés")
-          expect(table).not_to have_selector("th", text: "Rejetés")
+        expect(table).to have_selector("th", text: "Guichet")
+        expect(table).to have_selector("th", text: "DDFIP")
+        expect(table).not_to have_selector("th", text: "Compétence")
+        expect(table).not_to have_selector("th", text: "Utilisateurs")
+        expect(table).not_to have_selector("th", text: "Communes")
+        expect(table).not_to have_selector("th", text: "Signalements")
+        expect(table).not_to have_selector("th", text: "Approuvés")
+        expect(table).not_to have_selector("th", text: "Rejetés")
 
-          expect(table).to have_selector(:table_row, {
-            "Guichet"  => offices.first.name,
-            "DDFIP" => offices.first.ddfip.name
-          })
-        end
+        expect(table).to have_selector(:table_row, {
+          "Guichet"  => offices.first.name,
+          "DDFIP" => offices.first.ddfip.name
+        })
       end
     end
   end
@@ -75,11 +71,9 @@ RSpec.describe Views::Offices::ListComponent, type: :component do
           render_inline described_class.new(Office.all, pagy, namespace: :admin)
 
           expect(page).to have_selector(:table_row, "Guichet" => offices.first.name) do |row|
-            aggregate_failures do
-              expect(row).to have_link(offices.first.name,     href: "/admin/guichets/#{offices.first.id}")
-              expect(row).to have_link("Modifier ce guichet",  href: "/admin/guichets/#{offices.first.id}/edit")
-              expect(row).to have_link("Supprimer ce guichet", href: "/admin/guichets/#{offices.first.id}/remove")
-            end
+            expect(row).to have_link(offices.first.name,     href: "/admin/guichets/#{offices.first.id}")
+            expect(row).to have_link("Modifier ce guichet",  href: "/admin/guichets/#{offices.first.id}/edit")
+            expect(row).to have_link("Supprimer ce guichet", href: "/admin/guichets/#{offices.first.id}/remove")
           end
         end
       end
@@ -93,11 +87,9 @@ RSpec.describe Views::Offices::ListComponent, type: :component do
           render_inline described_class.new(Office.all, pagy, namespace: :admin, parent: collectivity)
 
           expect(page).to have_selector(:table_row, "Guichet" => office.name) do |row|
-            aggregate_failures do
-              expect(row).to have_link(office.name,            href: "/admin/guichets/#{office.id}")
-              expect(row).to have_link("Modifier ce guichet",  href: "/admin/guichets/#{office.id}/edit")
-              expect(row).to have_link("Supprimer ce guichet", href: "/admin/guichets/#{office.id}/remove")
-            end
+            expect(row).to have_link(office.name,            href: "/admin/guichets/#{office.id}")
+            expect(row).to have_link("Modifier ce guichet",  href: "/admin/guichets/#{office.id}/edit")
+            expect(row).to have_link("Supprimer ce guichet", href: "/admin/guichets/#{office.id}/remove")
           end
         end
       end
@@ -110,11 +102,9 @@ RSpec.describe Views::Offices::ListComponent, type: :component do
           render_inline described_class.new(Office.all, pagy, namespace: :admin, parent: ddfip)
 
           expect(page).to have_selector(:table_row, "Guichet" => offices.first.name) do |row|
-            aggregate_failures do
-              expect(row).to have_link(offices.first.name,     href: "/admin/guichets/#{offices.first.id}")
-              expect(row).to have_link("Modifier ce guichet",  href: "/admin/guichets/#{offices.first.id}/edit")
-              expect(row).to have_link("Supprimer ce guichet", href: "/admin/guichets/#{offices.first.id}/remove")
-            end
+            expect(row).to have_link(offices.first.name,     href: "/admin/guichets/#{offices.first.id}")
+            expect(row).to have_link("Modifier ce guichet",  href: "/admin/guichets/#{offices.first.id}/edit")
+            expect(row).to have_link("Supprimer ce guichet", href: "/admin/guichets/#{offices.first.id}/remove")
           end
         end
       end
@@ -131,11 +121,9 @@ RSpec.describe Views::Offices::ListComponent, type: :component do
           render_inline described_class.new(ddfip.offices, pagy, namespace: :organization)
 
           expect(page).to have_selector(:table_row, "Guichet" => offices.first.name) do |row|
-            aggregate_failures do
-              expect(row).to have_link(offices.first.name,     href: "/organisation/guichets/#{offices.first.id}")
-              expect(row).to have_link("Modifier ce guichet",  href: "/organisation/guichets/#{offices.first.id}/edit")
-              expect(row).to have_link("Supprimer ce guichet", href: "/organisation/guichets/#{offices.first.id}/remove")
-            end
+            expect(row).to have_link(offices.first.name,     href: "/organisation/guichets/#{offices.first.id}")
+            expect(row).to have_link("Modifier ce guichet",  href: "/organisation/guichets/#{offices.first.id}/edit")
+            expect(row).to have_link("Supprimer ce guichet", href: "/organisation/guichets/#{offices.first.id}/remove")
           end
         end
       end

@@ -7,11 +7,8 @@ RSpec.describe Views::OauthApplications::FormComponent, type: :component do
     render_inline described_class.new(OauthApplication.new, namespace: :organization)
 
     expect(page).to have_selector(".modal form") do |form|
-      aggregate_failures do
-        expect(form).to have_html_attribute("action").with_value("/organisation/oauth_applications")
-
-        expect(form).to have_field("Nom de l'application")
-      end
+      expect(form).to have_html_attribute("action").with_value("/organisation/oauth_applications")
+      expect(form).to have_field("Nom de l'application")
     end
   end
 
@@ -22,11 +19,8 @@ RSpec.describe Views::OauthApplications::FormComponent, type: :component do
     render_inline described_class.new(oauth_application, namespace: :organization)
 
     expect(page).to have_selector(".modal form") do |form|
-      aggregate_failures do
-        expect(form).to have_html_attribute("action").with_value("/organisation/oauth_applications/#{oauth_application.id}")
-
-        expect(form).to have_field("Nom de l'application")
-      end
+      expect(form).to have_html_attribute("action").with_value("/organisation/oauth_applications/#{oauth_application.id}")
+      expect(form).to have_field("Nom de l'application")
     end
   end
 end

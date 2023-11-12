@@ -51,17 +51,15 @@ RSpec.describe Layout::Pagination::OptionsComponent, type: :component do
       )
     end
 
-    aggregate_failures do
-      expect(page).to have_link("Afficher 10 lignes", href: "/test/components?items=10&order=-name&search=foo")
-      expect(page).to have_link("Afficher 20 lignes", href: "/test/components?items=20&order=-name&search=foo")
-      expect(page).to have_link("Afficher 50 lignes", href: "/test/components?items=50&order=-name&search=foo")
-      expect(page).to have_link("Afficher 100 lignes", href: "/test/components?items=100&order=-name&search=foo")
+    expect(page).to have_link("Afficher 10 lignes", href: "/test/components?items=10&order=-name&search=foo")
+    expect(page).to have_link("Afficher 20 lignes", href: "/test/components?items=20&order=-name&search=foo")
+    expect(page).to have_link("Afficher 50 lignes", href: "/test/components?items=50&order=-name&search=foo")
+    expect(page).to have_link("Afficher 100 lignes", href: "/test/components?items=100&order=-name&search=foo")
 
-      expect(page).to have_button("Trier par nom (desc.)")
-      expect(page).to have_link("Trier par nom, par ordre croissant",      href: "/test/components?order=name&search=foo")
-      expect(page).to have_link("Trier par nom, par ordre décroissant",    href: "/test/components?order=-name&search=foo")
-      expect(page).to have_link("Trier par nombre, par ordre croissant",   href: "/test/components?order=count&search=foo")
-      expect(page).to have_link("Trier par nombre, par ordre décroissant", href: "/test/components?order=-count&search=foo")
-    end
+    expect(page).to have_button("Trier par nom (desc.)")
+    expect(page).to have_link("Trier par nom, par ordre croissant",      href: "/test/components?order=name&search=foo")
+    expect(page).to have_link("Trier par nom, par ordre décroissant",    href: "/test/components?order=-name&search=foo")
+    expect(page).to have_link("Trier par nombre, par ordre croissant",   href: "/test/components?order=count&search=foo")
+    expect(page).to have_link("Trier par nombre, par ordre décroissant", href: "/test/components?order=-count&search=foo")
   end
 end

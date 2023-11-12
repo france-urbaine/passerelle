@@ -49,10 +49,8 @@ RSpec.describe Layout::SearchFormComponent, type: :component do
     end
 
     expect(page).to have_selector("form.search") do |form|
-      aggregate_failures do
-        expect(form).to have_selector("input[type='search'][name='search'][value='Pyrenees']")
-        expect(form).to have_selector("input[type='hidden'][name='order'][value='-departement']", visible: :all)
-      end
+      expect(form).to have_selector("input[type='search'][name='search'][value='Pyrenees']")
+      expect(form).to have_selector("input[type='hidden'][name='order'][value='-departement']", visible: :all)
     end
   end
 end

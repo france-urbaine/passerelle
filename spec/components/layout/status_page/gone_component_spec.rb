@@ -13,17 +13,13 @@ RSpec.describe Layout::StatusPage::GoneComponent, type: :component do
 
     render_inline described_class.new(publisher)
 
-    aggregate_failures do
-      expect(page).to have_selector(".card > .card__content > .card__header") do |node|
-        expect(node).to have_selector("h1.card__title", text: "La page que vous recherchez n'est pas disponible.")
-      end
+    expect(page).to have_selector(".card > .card__content > .card__header") do |node|
+      expect(node).to have_selector("h1.card__title", text: "La page que vous recherchez n'est pas disponible.")
+    end
 
-      expect(page).to have_selector(".card > .card__content > .card__body") do |node|
-        aggregate_failures do
-          expect(node).to have_text("Cet éditeur est en cours de suppression.")
-          expect(node).to have_text("Sa suppression sera effective dans 30 jours.")
-        end
-      end
+    expect(page).to have_selector(".card > .card__content > .card__body") do |node|
+      expect(node).to have_text("Cet éditeur est en cours de suppression.")
+      expect(node).to have_text("Sa suppression sera effective dans 30 jours.")
     end
   end
 
@@ -33,10 +29,8 @@ RSpec.describe Layout::StatusPage::GoneComponent, type: :component do
     render_inline described_class.new(user)
 
     expect(page).to have_selector(".card > .card__content > .card__body") do |node|
-      aggregate_failures do
-        expect(node).to have_text("Cet utilisateur est en cours de suppression.")
-        expect(node).to have_text("Sa suppression sera effective dans 1 jour.")
-      end
+      expect(node).to have_text("Cet utilisateur est en cours de suppression.")
+      expect(node).to have_text("Sa suppression sera effective dans 1 jour.")
     end
   end
 
@@ -47,10 +41,8 @@ RSpec.describe Layout::StatusPage::GoneComponent, type: :component do
     render_inline described_class.new(user)
 
     expect(page).to have_selector(".card > .card__content > .card__body") do |node|
-      aggregate_failures do
-        expect(node).to have_text("Cet utilisateur est en cours de suppression.")
-        expect(node).to have_text("Sa suppression sera effective dans moins de 24 heures.")
-      end
+      expect(node).to have_text("Cet utilisateur est en cours de suppression.")
+      expect(node).to have_text("Sa suppression sera effective dans moins de 24 heures.")
     end
   end
 
@@ -61,10 +53,8 @@ RSpec.describe Layout::StatusPage::GoneComponent, type: :component do
     render_inline described_class.new(user)
 
     expect(page).to have_selector(".card > .card__content > .card__body") do |node|
-      aggregate_failures do
-        expect(node).to have_text("Cet utilisateur est en cours de suppression.")
-        expect(node).to have_text("Sa suppression sera effective ce soir vers minuit.")
-      end
+      expect(node).to have_text("Cet utilisateur est en cours de suppression.")
+      expect(node).to have_text("Sa suppression sera effective ce soir vers minuit.")
     end
   end
 
@@ -75,10 +65,8 @@ RSpec.describe Layout::StatusPage::GoneComponent, type: :component do
     render_inline described_class.new(publisher, user)
 
     expect(page).to have_selector(".card > .card__content > .card__body") do |node|
-      aggregate_failures do
-        expect(node).to have_text("L'organisation de cet utilisateur est en cours de suppression.")
-        expect(node).to have_text("Sa suppression sera effective dans 30 jours.")
-      end
+      expect(node).to have_text("L'organisation de cet utilisateur est en cours de suppression.")
+      expect(node).to have_text("Sa suppression sera effective dans 30 jours.")
     end
   end
 
@@ -103,24 +91,18 @@ RSpec.describe Layout::StatusPage::GoneComponent, type: :component do
       end
     end
 
-    aggregate_failures do
-      expect(page).to     have_selector("main.content > turbo-frame[src='/background/path']")
-      expect(page).to     have_selector(".modal")
-      expect(page).not_to have_selector(".card")
+    expect(page).to     have_selector("main.content > turbo-frame[src='/background/path']")
+    expect(page).to     have_selector(".modal")
+    expect(page).not_to have_selector(".card")
+
+    expect(page).to have_selector(".modal > .modal__content > .modal__header", text: "La page que vous recherchez n'est pas disponible.")
+    expect(page).to have_selector(".modal > .modal__content > .modal__body") do |node|
+      expect(node).to have_text("Cet utilisateur est en cours de suppression.")
+      expect(node).to have_text("Sa suppression sera effective dans 1 jour.")
     end
 
-    aggregate_failures do
-      expect(page).to have_selector(".modal > .modal__content > .modal__header", text: "La page que vous recherchez n'est pas disponible.")
-      expect(page).to have_selector(".modal > .modal__content > .modal__body") do |node|
-        aggregate_failures do
-          expect(node).to have_text("Cet utilisateur est en cours de suppression.")
-          expect(node).to have_text("Sa suppression sera effective dans 1 jour.")
-        end
-      end
-
-      expect(page).to have_selector(".modal > .modal__content > .modal__actions") do |node|
-        expect(node).to have_button("Annuler")
-      end
+    expect(page).to have_selector(".modal > .modal__content > .modal__actions") do |node|
+      expect(node).to have_button("Annuler")
     end
   end
 end

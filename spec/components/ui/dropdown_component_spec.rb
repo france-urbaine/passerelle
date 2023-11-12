@@ -12,14 +12,10 @@ RSpec.describe UI::DropdownComponent, type: :component do
     end
 
     expect(page).to have_selector(".dropdown") do |dropdown|
-      aggregate_failures do
-        expect(dropdown).to have_selector(".button", text: "Plus d'options")
-        expect(dropdown).to have_selector(".dropdown__menu") do |menu|
-          aggregate_failures do
-            expect(menu).to have_selector(".button", text: "Option 1")
-            expect(menu).to have_selector(".button", text: "Option 2")
-          end
-        end
+      expect(dropdown).to have_selector(".button", text: "Plus d'options")
+      expect(dropdown).to have_selector(".dropdown__menu") do |menu|
+        expect(menu).to have_selector(".button", text: "Option 1")
+        expect(menu).to have_selector(".button", text: "Option 2")
       end
     end
   end
@@ -37,15 +33,13 @@ RSpec.describe UI::DropdownComponent, type: :component do
     end
 
     expect(page).to have_selector(".dropdown") do |dropdown|
-      aggregate_failures do
-        expect(dropdown).to have_selector(".button", text: "Plus d'options")
-        expect(dropdown).to have_selector(".dropdown__menu > button:nth-child(1)", text: "Option 1")
-        expect(dropdown).to have_selector(".dropdown__menu > button:nth-child(2)", text: "Option 2")
-        expect(dropdown).to have_selector(".dropdown__menu > div:nth-child(3)")
-        expect(dropdown).to have_selector(".dropdown__menu > button:nth-child(4)", text: "Option 3")
-        expect(dropdown).to have_selector(".dropdown__menu > div:nth-child(5)")
-        expect(dropdown).to have_selector(".dropdown__menu > button:nth-child(6)", text: "Option 4")
-      end
+      expect(dropdown).to have_selector(".button", text: "Plus d'options")
+      expect(dropdown).to have_selector(".dropdown__menu > button:nth-child(1)", text: "Option 1")
+      expect(dropdown).to have_selector(".dropdown__menu > button:nth-child(2)", text: "Option 2")
+      expect(dropdown).to have_selector(".dropdown__menu > div:nth-child(3)")
+      expect(dropdown).to have_selector(".dropdown__menu > button:nth-child(4)", text: "Option 3")
+      expect(dropdown).to have_selector(".dropdown__menu > div:nth-child(5)")
+      expect(dropdown).to have_selector(".dropdown__menu > button:nth-child(6)", text: "Option 4")
     end
   end
 
@@ -115,40 +109,32 @@ RSpec.describe UI::DropdownComponent, type: :component do
     expect(page).to have_selector(".dropdown") do |dropdown|
       expect(dropdown).to have_selector(".button", text: "Plus d'options")
       expect(dropdown).to have_selector(".dropdown__menu") do |menu|
-        aggregate_failures do
-          expect(menu).to have_selector(".button", text: "Option 1")
-          expect(menu).to have_selector(".button", text: "Option 2")
-        end
+        expect(menu).to have_selector(".button", text: "Option 1")
+        expect(menu).to have_selector(".button", text: "Option 2")
       end
     end
 
     expect(page).to have_selector(".dropdown > .dropdown__menu > .dropdown:nth-child(1)") do |dropdown|
       expect(dropdown).to have_selector(".button", text: "Option 1")
       expect(dropdown).to have_selector(".dropdown__menu") do |menu|
-        aggregate_failures do
-          expect(menu).to have_selector(".button", text: "Option 1.a")
-          expect(menu).to have_selector(".button", text: "Option 1.b")
-        end
+        expect(menu).to have_selector(".button", text: "Option 1.a")
+        expect(menu).to have_selector(".button", text: "Option 1.b")
       end
     end
 
     expect(page).to have_selector(".dropdown > .dropdown__menu > .dropdown:nth-child(2)") do |dropdown|
       expect(dropdown).to have_selector(".button", text: "Option 2")
       expect(dropdown).to have_selector(".dropdown__menu") do |menu|
-        aggregate_failures do
-          expect(menu).to have_selector(".button", text: "Option 2.a")
-          expect(menu).to have_selector(".button", text: "Option 2.b")
-        end
+        expect(menu).to have_selector(".button", text: "Option 2.a")
+        expect(menu).to have_selector(".button", text: "Option 2.b")
       end
     end
 
     expect(page).to have_selector(".dropdown > .dropdown__menu > .dropdown:nth-child(2) >  .dropdown__menu > .dropdown") do |dropdown|
       expect(dropdown).to have_selector(".button", text: "Option 2.c")
       expect(dropdown).to have_selector(".dropdown__menu") do |menu|
-        aggregate_failures do
-          expect(menu).to have_selector(".button", text: "Option 2.c (1)")
-          expect(menu).to have_selector(".button", text: "Option 2.c (2)")
-        end
+        expect(menu).to have_selector(".button", text: "Option 2.c (1)")
+        expect(menu).to have_selector(".button", text: "Option 2.c (2)")
       end
     end
   end

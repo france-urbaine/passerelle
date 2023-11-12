@@ -21,10 +21,8 @@ RSpec.describe UI::Form::BlockComponent, type: :component do
     end
 
     expect(page).to have_selector(".form-block.form-block--invalid") do |node|
-      aggregate_failures do
-        expect(node).to have_field("first_name")
-        expect(node).to have_selector(".form-block__errors", text: "Un prénom est requis")
-      end
+      expect(node).to have_field("first_name")
+      expect(node).to have_selector(".form-block__errors", text: "Un prénom est requis")
     end
   end
 
@@ -38,10 +36,8 @@ RSpec.describe UI::Form::BlockComponent, type: :component do
     end
 
     expect(page).to have_selector(".form-block") do |node|
-      aggregate_failures do
-        expect(node).to have_field("first_name")
-        expect(node).to have_selector(".form-block__errors", text: "A value is required")
-      end
+      expect(node).to have_field("first_name")
+      expect(node).to have_selector(".form-block__errors", text: "A value is required")
     end
   end
 
@@ -55,10 +51,8 @@ RSpec.describe UI::Form::BlockComponent, type: :component do
     end
 
     expect(page).to have_selector(".form-block") do |node|
-      aggregate_failures do
-        expect(node).to have_field("first_name")
-        expect(node).to have_selector(".form-block__hint", text: "You better have to fill this input")
-      end
+      expect(node).to have_field("first_name")
+      expect(node).to have_selector(".form-block__hint", text: "You better have to fill this input")
     end
   end
 
@@ -68,12 +62,10 @@ RSpec.describe UI::Form::BlockComponent, type: :component do
     end
 
     expect(page).to have_selector(".form-block.autocomplete") do |node|
-      aggregate_failures do
-        expect(node).to have_html_attribute("data-controller").with_value("autocomplete")
-        expect(node).to have_html_attribute("data-autocomplete-url-value").with_value("/communes")
-        expect(node).to have_html_attribute("data-autocomplete-selected-class").with_value("autocomplete__list-item--active")
-        expect(node).to have_field("search")
-      end
+      expect(node).to have_html_attribute("data-controller").with_value("autocomplete")
+      expect(node).to have_html_attribute("data-autocomplete-url-value").with_value("/communes")
+      expect(node).to have_html_attribute("data-autocomplete-selected-class").with_value("autocomplete__list-item--active")
+      expect(node).to have_field("search")
     end
   end
 end

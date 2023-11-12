@@ -19,14 +19,12 @@ RSpec.describe Views::Communes::ListComponent, type: :component do
       render_inline described_class.new(Commune.all, pagy, namespace: :admin)
 
       expect(page).to have_selector(".datatable table") do |table|
-        aggregate_failures do
-          expect(table).to have_selector("th", text: "Commune")
-          expect(table).to have_selector("th", text: "Département")
-          expect(table).to have_selector("th", text: "EPCI")
-          expect(table).to have_selector("th", text: "Collectivités")
+        expect(table).to have_selector("th", text: "Commune")
+        expect(table).to have_selector("th", text: "Département")
+        expect(table).to have_selector("th", text: "EPCI")
+        expect(table).to have_selector("th", text: "Collectivités")
 
-          expect(table).to have_selector(:table_row, { "Commune" => communes.first.code_insee }, text: communes.first.name)
-        end
+        expect(table).to have_selector(:table_row, { "Commune" => communes.first.code_insee }, text: communes.first.name)
       end
     end
 
@@ -37,14 +35,12 @@ RSpec.describe Views::Communes::ListComponent, type: :component do
       end
 
       expect(page).to have_selector(".datatable table") do |table|
-        aggregate_failures do
-          expect(table).to have_selector("th", text: "Commune")
-          expect(table).to have_selector("th", text: "Département")
-          expect(table).not_to have_selector("th", text: "EPCI")
-          expect(table).not_to have_selector("th", text: "Collectivités")
+        expect(table).to have_selector("th", text: "Commune")
+        expect(table).to have_selector("th", text: "Département")
+        expect(table).not_to have_selector("th", text: "EPCI")
+        expect(table).not_to have_selector("th", text: "Collectivités")
 
-          expect(table).to have_selector(:table_row, { "Commune" => communes.first.code_insee }, text: communes.first.name)
-        end
+        expect(table).to have_selector(:table_row, { "Commune" => communes.first.code_insee }, text: communes.first.name)
       end
     end
   end
@@ -62,11 +58,9 @@ RSpec.describe Views::Communes::ListComponent, type: :component do
           render_inline described_class.new(Commune.all, pagy, namespace: :admin, parent: office)
 
           expect(page).to have_selector(:table_row, "Commune" => communes.first.code_insee) do |row|
-            aggregate_failures do
-              expect(row).to have_link(communes.first.name,                href: "/territoires/communes/#{communes.first.id}")
-              expect(row).to have_link("Modifier cette commune",           href: "/territoires/communes/#{communes.first.id}/edit")
-              expect(row).to have_link("Exclure cette commune du guichet", href: "/admin/guichets/#{office.id}/communes/#{communes.first.id}/remove")
-            end
+            expect(row).to have_link(communes.first.name,                href: "/territoires/communes/#{communes.first.id}")
+            expect(row).to have_link("Modifier cette commune",           href: "/territoires/communes/#{communes.first.id}/edit")
+            expect(row).to have_link("Exclure cette commune du guichet", href: "/admin/guichets/#{office.id}/communes/#{communes.first.id}/remove")
           end
         end
       end
@@ -82,11 +76,9 @@ RSpec.describe Views::Communes::ListComponent, type: :component do
           render_inline described_class.new(Commune.all, pagy, namespace: :organization, parent: office)
 
           expect(page).to have_selector(:table_row, "Commune" => communes.first.code_insee) do |row|
-            aggregate_failures do
-              expect(row).not_to have_link(communes.first.name)
-              expect(row).not_to have_link("Modifier cette commune")
-              expect(row).to have_link("Exclure cette commune du guichet", href: "/organisation/guichets/#{office.id}/communes/#{communes.first.id}/remove")
-            end
+            expect(row).not_to have_link(communes.first.name)
+            expect(row).not_to have_link("Modifier cette commune")
+            expect(row).to have_link("Exclure cette commune du guichet", href: "/organisation/guichets/#{office.id}/communes/#{communes.first.id}/remove")
           end
         end
       end
@@ -100,12 +92,10 @@ RSpec.describe Views::Communes::ListComponent, type: :component do
           render_inline described_class.new(Commune.all, pagy, namespace: :territories)
 
           expect(page).to have_selector(:table_row, "Commune" => communes.first.code_insee) do |row|
-            aggregate_failures do
-              expect(row).to have_link(communes.first.name,             href: "/territoires/communes/#{communes.first.id}")
-              expect(row).to have_link("Modifier cette commune",        href: "/territoires/communes/#{communes.first.id}/edit")
-              expect(row).to have_link(communes.first.departement.name, href: "/territoires/departements/#{communes.first.departement.id}")
-              expect(row).to have_link(communes.first.epci.name,        href: "/territoires/epcis/#{communes.first.epci.id}")
-            end
+            expect(row).to have_link(communes.first.name,             href: "/territoires/communes/#{communes.first.id}")
+            expect(row).to have_link("Modifier cette commune",        href: "/territoires/communes/#{communes.first.id}/edit")
+            expect(row).to have_link(communes.first.departement.name, href: "/territoires/departements/#{communes.first.departement.id}")
+            expect(row).to have_link(communes.first.epci.name,        href: "/territoires/epcis/#{communes.first.epci.id}")
           end
         end
       end
@@ -118,12 +108,10 @@ RSpec.describe Views::Communes::ListComponent, type: :component do
           render_inline described_class.new(Commune.all, pagy, namespace: :territories, parent: departement)
 
           expect(page).to have_selector(:table_row, "Commune" => communes.first.code_insee) do |row|
-            aggregate_failures do
-              expect(row).to have_link(communes.first.name,             href: "/territoires/communes/#{communes.first.id}")
-              expect(row).to have_link("Modifier cette commune",        href: "/territoires/communes/#{communes.first.id}/edit")
-              expect(row).to have_link(communes.first.departement.name, href: "/territoires/departements/#{communes.first.departement.id}")
-              expect(row).to have_link(communes.first.epci.name,        href: "/territoires/epcis/#{communes.first.epci.id}")
-            end
+            expect(row).to have_link(communes.first.name,             href: "/territoires/communes/#{communes.first.id}")
+            expect(row).to have_link("Modifier cette commune",        href: "/territoires/communes/#{communes.first.id}/edit")
+            expect(row).to have_link(communes.first.departement.name, href: "/territoires/departements/#{communes.first.departement.id}")
+            expect(row).to have_link(communes.first.epci.name,        href: "/territoires/epcis/#{communes.first.epci.id}")
           end
         end
       end
@@ -136,12 +124,10 @@ RSpec.describe Views::Communes::ListComponent, type: :component do
           render_inline described_class.new(Commune.all, pagy, namespace: :territories, parent: epci)
 
           expect(page).to have_selector(:table_row, "Commune" => communes.first.code_insee) do |row|
-            aggregate_failures do
-              expect(row).to have_link(communes.first.name,             href: "/territoires/communes/#{communes.first.id}")
-              expect(row).to have_link("Modifier cette commune",        href: "/territoires/communes/#{communes.first.id}/edit")
-              expect(row).to have_link(communes.first.departement.name, href: "/territoires/departements/#{communes.first.departement.id}")
-              expect(row).to have_link(communes.first.epci.name,        href: "/territoires/epcis/#{communes.first.epci.id}")
-            end
+            expect(row).to have_link(communes.first.name,             href: "/territoires/communes/#{communes.first.id}")
+            expect(row).to have_link("Modifier cette commune",        href: "/territoires/communes/#{communes.first.id}/edit")
+            expect(row).to have_link(communes.first.departement.name, href: "/territoires/departements/#{communes.first.departement.id}")
+            expect(row).to have_link(communes.first.epci.name,        href: "/territoires/epcis/#{communes.first.epci.id}")
           end
         end
       end

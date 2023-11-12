@@ -18,13 +18,11 @@ RSpec.describe Layout::NavbarComponent, type: :component do
     render_default_navbar
 
     expect(page).to have_selector(".navbar") do |navbar|
-      aggregate_failures do
-        expect(navbar).to have_selector("span.brand__left", text: "Passe")
-        expect(navbar).to have_selector("span.brand__right", text: "relle")
-        expect(navbar).to have_link("Tableau de bord")
-        expect(navbar).to have_link("Signalements")
-        expect(navbar).to have_link("Paquets")
-      end
+      expect(navbar).to have_selector("span.brand__left", text: "Passe")
+      expect(navbar).to have_selector("span.brand__right", text: "relle")
+      expect(navbar).to have_link("Tableau de bord")
+      expect(navbar).to have_link("Signalements")
+      expect(navbar).to have_link("Paquets")
     end
   end
 
@@ -33,11 +31,9 @@ RSpec.describe Layout::NavbarComponent, type: :component do
     render_default_navbar
 
     expect(page).to have_selector(".navbar.navbar--tablet") do |navbar|
-      aggregate_failures do
-        expect(navbar).to have_link("Tableau de bord")
-        expect(navbar).to have_link("Signalements")
-        expect(navbar).to have_link("Paquets")
-      end
+      expect(navbar).to have_link("Tableau de bord")
+      expect(navbar).to have_link("Signalements")
+      expect(navbar).to have_link("Paquets")
     end
   end
 
@@ -46,11 +42,9 @@ RSpec.describe Layout::NavbarComponent, type: :component do
     render_default_navbar
 
     expect(page).to have_selector(".navbar.navbar--mobile") do |navbar|
-      aggregate_failures do
-        expect(navbar).to have_link("Tableau de bord")
-        expect(navbar).to have_link("Signalements")
-        expect(navbar).to have_link("Paquets")
-      end
+      expect(navbar).to have_link("Tableau de bord")
+      expect(navbar).to have_link("Signalements")
+      expect(navbar).to have_link("Paquets")
     end
   end
 
@@ -61,10 +55,8 @@ RSpec.describe Layout::NavbarComponent, type: :component do
     end
 
     expect(page).to have_selector(".navbar") do |navbar|
-      aggregate_failures do
-        expect(navbar).to have_selector(".navbar__link--current", count: 1)
-        expect(navbar).to have_selector("a.navbar__link--current", text: "Signalements")
-      end
+      expect(navbar).to have_selector(".navbar__link--current", count: 1)
+      expect(navbar).to have_selector("a.navbar__link--current", text: "Signalements")
     end
   end
 
@@ -75,10 +67,8 @@ RSpec.describe Layout::NavbarComponent, type: :component do
     end
 
     expect(page).to have_selector(".navbar") do |navbar|
-      aggregate_failures do
-        expect(navbar).to have_selector(".navbar__link--current", count: 1)
-        expect(navbar).to have_selector("a.navbar__link--current", text: "Signalements")
-      end
+      expect(navbar).to have_selector(".navbar__link--current", count: 1)
+      expect(navbar).to have_selector("a.navbar__link--current", text: "Signalements")
     end
   end
 
@@ -89,10 +79,8 @@ RSpec.describe Layout::NavbarComponent, type: :component do
     end
 
     expect(page).to have_selector(".navbar") do |navbar|
-      aggregate_failures do
-        expect(navbar).to have_selector(".navbar__link--current", count: 1)
-        expect(navbar).to have_selector("a.navbar__link--current", text: "Tableau de bord")
-      end
+      expect(navbar).to have_selector(".navbar__link--current", count: 1)
+      expect(navbar).to have_selector("a.navbar__link--current", text: "Tableau de bord")
     end
   end
 
@@ -103,10 +91,8 @@ RSpec.describe Layout::NavbarComponent, type: :component do
     end
 
     expect(page).to have_selector(".navbar") do |navbar|
-      aggregate_failures do
-        expect(navbar).to have_selector(".navbar__link--current", count: 1)
-        expect(navbar).to have_selector("a.navbar__link--current", text: "Tableau de bord")
-      end
+      expect(navbar).to have_selector(".navbar__link--current", count: 1)
+      expect(navbar).to have_selector("a.navbar__link--current", text: "Tableau de bord")
     end
   end
 
@@ -132,10 +118,8 @@ RSpec.describe Layout::NavbarComponent, type: :component do
     end
 
     expect(page).to have_selector(".navbar") do |navbar|
-      aggregate_failures do
-        expect(navbar).to     have_selector("span.brand__right", text: "API")
-        expect(navbar).not_to have_selector("span.brand__left")
-      end
+      expect(navbar).to     have_selector("span.brand__right", text: "API")
+      expect(navbar).not_to have_selector("span.brand__left")
     end
   end
 

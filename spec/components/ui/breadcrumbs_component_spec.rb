@@ -11,18 +11,16 @@ RSpec.describe UI::BreadcrumbsComponent, type: :component do
     end
 
     expect(page).to have_selector(".header-bar > .breadcrumbs") do |node|
-      aggregate_failures do
-        expect(node).to have_selector(".breadcrumbs__path:nth-child(1) > a.icon-button", text: "Retour à la page d'accueil")
+      expect(node).to have_selector(".breadcrumbs__path:nth-child(1) > a.icon-button", text: "Retour à la page d'accueil")
 
-        expect(node).to have_selector(".breadcrumbs__separator:nth-child(2)", text: "/")
-        expect(node).to have_selector(".breadcrumbs__path:nth-child(3)", text: "Path 1")
+      expect(node).to have_selector(".breadcrumbs__separator:nth-child(2)", text: "/")
+      expect(node).to have_selector(".breadcrumbs__path:nth-child(3)", text: "Path 1")
 
-        expect(node).to have_selector(".breadcrumbs__separator:nth-child(4)", text: "/")
-        expect(node).to have_selector(".breadcrumbs__path:nth-child(5) > a[href='/foo']", text: "Path 2")
+      expect(node).to have_selector(".breadcrumbs__separator:nth-child(4)", text: "/")
+      expect(node).to have_selector(".breadcrumbs__path:nth-child(5) > a[href='/foo']", text: "Path 2")
 
-        expect(node).to have_selector(".breadcrumbs__separator:nth-child(6)", text: "/")
-        expect(node).to have_selector(".breadcrumbs__path:nth-child(7) > h1", text: "Path 3")
-      end
+      expect(node).to have_selector(".breadcrumbs__separator:nth-child(6)", text: "/")
+      expect(node).to have_selector(".breadcrumbs__path:nth-child(7) > h1", text: "Path 3")
     end
   end
 
@@ -34,18 +32,16 @@ RSpec.describe UI::BreadcrumbsComponent, type: :component do
     end
 
     expect(page).to have_selector(".header-bar > .breadcrumbs") do |node|
-      aggregate_failures do
-        expect(node).to have_selector(".breadcrumbs__path:nth-child(1) > a.icon-button", text: "Retour à la page d'accueil")
+      expect(node).to have_selector(".breadcrumbs__path:nth-child(1) > a.icon-button", text: "Retour à la page d'accueil")
 
-        expect(node).to have_selector(".breadcrumbs__separator:nth-child(2)", text: "/")
-        expect(node).to have_selector(".breadcrumbs__path:nth-child(3)", text: "Path 1")
+      expect(node).to have_selector(".breadcrumbs__separator:nth-child(2)", text: "/")
+      expect(node).to have_selector(".breadcrumbs__path:nth-child(3)", text: "Path 1")
 
-        expect(node).to have_selector(".breadcrumbs__separator:nth-child(4)", text: "/")
-        expect(node).to have_selector(".breadcrumbs__path:nth-child(5) > a[href='/foo']", text: "Path 2")
+      expect(node).to have_selector(".breadcrumbs__separator:nth-child(4)", text: "/")
+      expect(node).to have_selector(".breadcrumbs__path:nth-child(5) > a[href='/foo']", text: "Path 2")
 
-        expect(node).to have_selector(".breadcrumbs__separator:nth-child(6)", text: "/")
-        expect(node).to have_selector(".breadcrumbs__path:nth-child(7) > h1", text: "Path 3")
-      end
+      expect(node).to have_selector(".breadcrumbs__separator:nth-child(6)", text: "/")
+      expect(node).to have_selector(".breadcrumbs__path:nth-child(7) > h1", text: "Path 3")
     end
   end
 
@@ -57,10 +53,8 @@ RSpec.describe UI::BreadcrumbsComponent, type: :component do
     end
 
     expect(page).to have_selector(".header-bar > .breadcrumbs") do |node|
-      aggregate_failures do
-        expect(node).to have_selector(".breadcrumbs__path:last-child > h1", text: "Main title") do |header|
-          expect(header).to have_selector(".some_class", text: "Main title")
-        end
+      expect(node).to have_selector(".breadcrumbs__path:last-child > h1", text: "Main title") do |header|
+        expect(header).to have_selector(".some_class", text: "Main title")
       end
     end
   end

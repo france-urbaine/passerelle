@@ -7,17 +7,15 @@ RSpec.describe Views::Publishers::FormComponent, type: :component do
     render_inline described_class.new(Publisher.new, namespace: :admin)
 
     expect(page).to have_selector(".modal form") do |form|
-      aggregate_failures do
-        expect(form).to have_html_attribute("action").with_value("/admin/editeurs")
+      expect(form).to have_html_attribute("action").with_value("/admin/editeurs")
 
-        expect(form).to have_field("Nom de l'éditeur")
-        expect(form).to have_field("Numéro SIREN de l'éditeur")
-        expect(form).to have_field("Prénom du contact")
-        expect(form).to have_field("Nom du contact")
-        expect(form).to have_field("Adresse mail de contact")
-        expect(form).to have_field("Numéro de téléphone")
-        expect(form).to have_unchecked_field("Autoriser l'email comme méthode d'authentification en 2 étapes")
-      end
+      expect(form).to have_field("Nom de l'éditeur")
+      expect(form).to have_field("Numéro SIREN de l'éditeur")
+      expect(form).to have_field("Prénom du contact")
+      expect(form).to have_field("Nom du contact")
+      expect(form).to have_field("Adresse mail de contact")
+      expect(form).to have_field("Numéro de téléphone")
+      expect(form).to have_unchecked_field("Autoriser l'email comme méthode d'authentification en 2 étapes")
     end
   end
 
@@ -26,12 +24,10 @@ RSpec.describe Views::Publishers::FormComponent, type: :component do
     render_inline described_class.new(publisher, namespace: :admin)
 
     expect(page).to have_selector(".modal form") do |form|
-      aggregate_failures do
-        expect(form).to have_html_attribute("action").with_value("/admin/editeurs/#{publisher.id}")
+      expect(form).to have_html_attribute("action").with_value("/admin/editeurs/#{publisher.id}")
 
-        expect(form).to have_field("Nom de l'éditeur",          with: publisher.name)
-        expect(form).to have_field("Numéro SIREN de l'éditeur", with: publisher.siren)
-      end
+      expect(form).to have_field("Nom de l'éditeur",          with: publisher.name)
+      expect(form).to have_field("Numéro SIREN de l'éditeur", with: publisher.siren)
     end
   end
 end

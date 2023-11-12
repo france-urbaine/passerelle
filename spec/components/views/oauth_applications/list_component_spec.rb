@@ -19,14 +19,12 @@ RSpec.describe Views::OauthApplications::ListComponent, type: :component do
       render_inline described_class.new(OauthApplication.all, pagy, namespace: :organization)
 
       expect(page).to have_selector(".datatable table") do |table|
-        aggregate_failures do
-          expect(table).to have_selector("th", text: "Nom")
-          expect(table).to have_selector("th", text: "Date de création")
+        expect(table).to have_selector("th", text: "Nom")
+        expect(table).to have_selector("th", text: "Date de création")
 
-          expect(table).to have_selector(:table_row, {
-            "Nom" => oauth_applications.first.name
-          })
-        end
+        expect(table).to have_selector(:table_row, {
+          "Nom" => oauth_applications.first.name
+        })
       end
     end
 
@@ -36,13 +34,11 @@ RSpec.describe Views::OauthApplications::ListComponent, type: :component do
       end
 
       expect(page).to have_selector(".datatable table") do |table|
-        aggregate_failures do
-          expect(table).to have_selector("th", text: "Nom")
+        expect(table).to have_selector("th", text: "Nom")
 
-          expect(table).to have_selector(:table_row, {
-            "Nom" => oauth_applications.first.name
-          })
-        end
+        expect(table).to have_selector(:table_row, {
+          "Nom" => oauth_applications.first.name
+        })
       end
     end
   end
@@ -59,11 +55,9 @@ RSpec.describe Views::OauthApplications::ListComponent, type: :component do
         render_inline described_class.new(OauthApplication.all, pagy, namespace: :organization)
 
         expect(page).to have_selector(:table_row, "Nom" => oauth_applications.first.name) do |row|
-          aggregate_failures do
-            expect(row).to have_link(oauth_applications.first.name, href: "/organisation/oauth_applications/#{oauth_applications.first.id}")
-            expect(row).to have_link("Modifier cette application",  href: "/organisation/oauth_applications/#{oauth_applications.first.id}/edit")
-            expect(row).to have_link("Supprimer cette application", href: "/organisation/oauth_applications/#{oauth_applications.first.id}/remove")
-          end
+          expect(row).to have_link(oauth_applications.first.name, href: "/organisation/oauth_applications/#{oauth_applications.first.id}")
+          expect(row).to have_link("Modifier cette application",  href: "/organisation/oauth_applications/#{oauth_applications.first.id}/edit")
+          expect(row).to have_link("Supprimer cette application", href: "/organisation/oauth_applications/#{oauth_applications.first.id}/remove")
         end
       end
     end

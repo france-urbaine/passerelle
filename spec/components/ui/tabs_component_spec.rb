@@ -11,17 +11,15 @@ RSpec.describe UI::TabsComponent, type: :component do
     end
 
     expect(page).to have_selector(".tabs") do |node|
-      aggregate_failures do
-        expect(node).to have_selector(".tabs__tab", count: 3)
-        expect(node).to have_selector(".tabs__tab", text: "Tab #1")
-        expect(node).to have_selector(".tabs__tab", text: "Tab #2")
-        expect(node).to have_selector(".tabs__tab", text: "Tab #3")
+      expect(node).to have_selector(".tabs__tab", count: 3)
+      expect(node).to have_selector(".tabs__tab", text: "Tab #1")
+      expect(node).to have_selector(".tabs__tab", text: "Tab #2")
+      expect(node).to have_selector(".tabs__tab", text: "Tab #3")
 
-        expect(node).to have_selector(".tabs__panel", count: 3, visible: :all)
-        expect(node).to have_selector(".tabs__panel", text: "Content of tab #1", visible: :visible)
-        expect(node).to have_selector(".tabs__panel", text: "Content of tab #2", visible: :hidden)
-        expect(node).to have_selector(".tabs__panel", text: "Content of tab #3", visible: :hidden)
-      end
+      expect(node).to have_selector(".tabs__panel", count: 3, visible: :all)
+      expect(node).to have_selector(".tabs__panel", text: "Content of tab #1", visible: :visible)
+      expect(node).to have_selector(".tabs__panel", text: "Content of tab #2", visible: :hidden)
+      expect(node).to have_selector(".tabs__panel", text: "Content of tab #3", visible: :hidden)
     end
   end
 end

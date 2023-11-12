@@ -95,6 +95,11 @@ RSpec.configure do |config|
   # run specs with APIPIE_RECORD=examples to catch examples for api doc
   config.filter_run show_in_doc: true if ENV["APIPIE_RECORD"]
 
+  # Enable failure aggregation globally on given spec types
+  config.define_derived_metadata do |meta|
+    meta[:aggregate_failures] = true if meta[:type] == :component
+  end
+
   config.after do
     ActionMailer::Base.deliveries.clear
     ActiveJob::Base.queue_adapter.enqueued_jobs.clear

@@ -18,16 +18,14 @@ RSpec.describe Layout::DatatableComponent, type: :component do
     end
 
     expect(page).to have_selector(".datatable table") do |table|
-      aggregate_failures do
-        expect(table).to have_selector("thead tr th", text: "Code INSEE")
-        expect(table).to have_selector("thead tr th", text: "Commune")
+      expect(table).to have_selector("thead tr th", text: "Code INSEE")
+      expect(table).to have_selector("thead tr th", text: "Commune")
 
-        expect(table).to have_selector("tbody tr:first-child td", text: communes[0].code_insee)
-        expect(table).to have_selector("tbody tr:first-child td", text: communes[0].name)
+      expect(table).to have_selector("tbody tr:first-child td", text: communes[0].code_insee)
+      expect(table).to have_selector("tbody tr:first-child td", text: communes[0].name)
 
-        expect(table).to have_selector("tbody tr:last-child td", text: communes[1].code_insee)
-        expect(table).to have_selector("tbody tr:last-child td", text: communes[1].name)
-      end
+      expect(table).to have_selector("tbody tr:last-child td", text: communes[1].code_insee)
+      expect(table).to have_selector("tbody tr:last-child td", text: communes[1].name)
     end
   end
 
@@ -43,10 +41,8 @@ RSpec.describe Layout::DatatableComponent, type: :component do
     end
 
     expect(page).to have_selector(".datatable table") do |table|
-      aggregate_failures do
-        expect(table).to have_selector("thead tr th.w-px", text: "Code INSEE")
-        expect(table).to have_selector("thead tr th", text: "Commune")
-      end
+      expect(table).to have_selector("thead tr th.w-px", text: "Code INSEE")
+      expect(table).to have_selector("thead tr th", text: "Commune")
     end
   end
 
@@ -62,13 +58,11 @@ RSpec.describe Layout::DatatableComponent, type: :component do
     end
 
     expect(page).to have_selector(".datatable table") do |table|
-      aggregate_failures do
-        expect(table).to have_selector("thead tr th",            text: "Commune")
-        expect(table).to have_selector("thead tr th.text-right", text: "Total")
+      expect(table).to have_selector("thead tr th",            text: "Commune")
+      expect(table).to have_selector("thead tr th.text-right", text: "Total")
 
-        expect(table).to have_selector("tbody tr:first-child td",            text: communes[0].name)
-        expect(table).to have_selector("tbody tr:first-child td.text-right", text: "3")
-      end
+      expect(table).to have_selector("tbody tr:first-child td",            text: communes[0].name)
+      expect(table).to have_selector("tbody tr:first-child td.text-right", text: "3")
     end
   end
 
@@ -87,18 +81,16 @@ RSpec.describe Layout::DatatableComponent, type: :component do
     end
 
     expect(page).to have_selector(".datatable table") do |table|
-      aggregate_failures do
-        expect(table).to have_selector("thead tr th", text: "Code INSEE")
-        expect(table).to have_selector("thead tr th", text: "Commune")
+      expect(table).to have_selector("thead tr th", text: "Code INSEE")
+      expect(table).to have_selector("thead tr th", text: "Commune")
 
-        expect(table).to have_selector("tbody tr:first-child td", count: 2)
-        expect(table).to have_selector("tbody tr:first-child td:first-child", text: "")
-        expect(table).to have_selector("tbody tr:first-child td:last-child", text: communes[0].name)
+      expect(table).to have_selector("tbody tr:first-child td", count: 2)
+      expect(table).to have_selector("tbody tr:first-child td:first-child", text: "")
+      expect(table).to have_selector("tbody tr:first-child td:last-child", text: communes[0].name)
 
-        expect(table).to have_selector("tbody tr:last-child td", count: 2)
-        expect(table).to have_selector("tbody tr:last-child td:first-child", text: communes[1].code_insee)
-        expect(table).to have_selector("tbody tr:last-child td:last-child", text: "")
-      end
+      expect(table).to have_selector("tbody tr:last-child td", count: 2)
+      expect(table).to have_selector("tbody tr:last-child td:first-child", text: communes[1].code_insee)
+      expect(table).to have_selector("tbody tr:last-child td:last-child", text: "")
     end
   end
 
@@ -113,13 +105,11 @@ RSpec.describe Layout::DatatableComponent, type: :component do
     end
 
     expect(page).to have_selector(".datatable table") do |table|
-      aggregate_failures do
-        expect(table).to have_selector("thead tr th", text: "Commune")
+      expect(table).to have_selector("thead tr th", text: "Commune")
 
-        expect(table).to have_selector("tbody tr:first-child td", count: 1)
-        expect(table).to have_selector("tbody tr:first-child td", text: communes[0].name)
-        expect(table).not_to have_selector("tbody tr:first-child td", text: communes[0].code_insee)
-      end
+      expect(table).to have_selector("tbody tr:first-child td", count: 1)
+      expect(table).to have_selector("tbody tr:first-child td", text: communes[0].name)
+      expect(table).not_to have_selector("tbody tr:first-child td", text: communes[0].code_insee)
     end
   end
 
@@ -135,20 +125,14 @@ RSpec.describe Layout::DatatableComponent, type: :component do
     end
 
     expect(page).to have_selector(".datatable table") do |table|
-      aggregate_failures do
-        expect(table).to have_selector("thead tr th:first-child") do |th|
-          aggregate_failures do
-            expect(th).to have_unchecked_field
-            expect(th).to have_selector("input[aria-label='Tout sélectionner']")
-          end
-        end
+      expect(table).to have_selector("thead tr th:first-child") do |th|
+        expect(th).to have_unchecked_field
+        expect(th).to have_selector("input[aria-label='Tout sélectionner']")
+      end
 
-        expect(table).to have_selector("tbody tr td:first-child") do |td|
-          aggregate_failures do
-            expect(td).to have_unchecked_field
-            expect(td).to have_selector("input[aria-label='Sélectionner cette ligne']")
-          end
-        end
+      expect(table).to have_selector("tbody tr td:first-child") do |td|
+        expect(td).to have_unchecked_field
+        expect(td).to have_selector("input[aria-label='Sélectionner cette ligne']")
       end
     end
   end
@@ -165,10 +149,8 @@ RSpec.describe Layout::DatatableComponent, type: :component do
 
     expect(page).to have_selector(".datatable table") do |table|
       expect(table).to have_selector("tbody tr td:first-child") do |td|
-        aggregate_failures do
-          expect(td).to have_selector("input[aria-label='Sélectionner cette commune'][aria-describedby='name_commune_#{communes[0].id}']")
-          expect(td).to have_selector(".tooltip", text: "Sélectionner cette commune")
-        end
+        expect(td).to have_selector("input[aria-label='Sélectionner cette commune'][aria-describedby='name_commune_#{communes[0].id}']")
+        expect(td).to have_selector(".tooltip", text: "Sélectionner cette commune")
       end
     end
   end
@@ -185,11 +167,9 @@ RSpec.describe Layout::DatatableComponent, type: :component do
     end
 
     expect(page).to have_selector(".datatable table") do |table|
-      aggregate_failures do
-        expect(table).to have_selector("tbody tr:first-child td:first-child:empty")
-        expect(table).to have_selector("tbody tr:last-child td:first-child") do |td|
-          expect(td).to have_unchecked_field
-        end
+      expect(table).to have_selector("tbody tr:first-child td:first-child:empty")
+      expect(table).to have_selector("tbody tr:last-child td:first-child") do |td|
+        expect(td).to have_unchecked_field
       end
     end
   end
@@ -205,11 +185,9 @@ RSpec.describe Layout::DatatableComponent, type: :component do
     end
 
     expect(page).to have_selector(".datatable table") do |table|
-      aggregate_failures do
-        expect(table).to have_selector("thead tr th:first-child[aria-label='Actions']")
-        expect(table).to have_selector("tbody tr td:first-child") do |td|
-          expect(td).to have_link("Modifier cette commune", href: "/communes/123")
-        end
+      expect(table).to have_selector("thead tr th:first-child[aria-label='Actions']")
+      expect(table).to have_selector("tbody tr td:first-child") do |td|
+        expect(td).to have_link("Modifier cette commune", href: "/communes/123")
       end
     end
   end
@@ -246,20 +224,18 @@ RSpec.describe Layout::DatatableComponent, type: :component do
     end
 
     expect(page).to have_selector(".datatable table") do |table|
-      aggregate_failures do
-        expect(table).to have_selector("colgroup col:first-child[span=2]")
-        expect(table).to have_selector("colgroup col:nth-child(2)[span=2]")
-        expect(table).to have_selector("colgroup col:nth-child(3):not([span])")
+      expect(table).to have_selector("colgroup col:first-child[span=2]")
+      expect(table).to have_selector("colgroup col:nth-child(2)[span=2]")
+      expect(table).to have_selector("colgroup col:nth-child(3):not([span])")
 
-        expect(table).to have_selector("thead tr th:first-child[colspan=2]", text: "Commune")
-        expect(table).to have_selector("thead tr th:nth-child(2)[colspan=2]", text: "EPCI")
-        expect(table).to have_selector("thead tr th:nth-child(3):not([colspan])", text: "Creation")
+      expect(table).to have_selector("thead tr th:first-child[colspan=2]", text: "Commune")
+      expect(table).to have_selector("thead tr th:nth-child(2)[colspan=2]", text: "EPCI")
+      expect(table).to have_selector("thead tr th:nth-child(3):not([colspan])", text: "Creation")
 
-        expect(table).to have_selector("tbody tr td:first-child", text: communes[0].code_insee)
-        expect(table).to have_selector("tbody tr td:nth-child(2)", text: communes[0].name)
-        expect(table).to have_selector("tbody tr td:nth-child(3)[colspan=2]", text: "")
-        expect(table).to have_selector("tbody tr td:nth-child(4)", text: "")
-      end
+      expect(table).to have_selector("tbody tr td:first-child", text: communes[0].code_insee)
+      expect(table).to have_selector("tbody tr td:nth-child(2)", text: communes[0].name)
+      expect(table).to have_selector("tbody tr td:nth-child(3)[colspan=2]", text: "")
+      expect(table).to have_selector("tbody tr td:nth-child(4)", text: "")
     end
   end
 
@@ -275,16 +251,14 @@ RSpec.describe Layout::DatatableComponent, type: :component do
     end
 
     expect(page).to have_selector(".datatable table") do |table|
-      aggregate_failures do
-        expect(table).to have_selector("thead tr th:first-child", text: "Code INSEE") do |cell|
-          expect(cell).to have_link("Trier par ordre croissant", href: "/test/components?order=code")
-          expect(cell).to have_selector("svg > title", text: "Trier par ordre croissant")
-        end
+      expect(table).to have_selector("thead tr th:first-child", text: "Code INSEE") do |cell|
+        expect(cell).to have_link("Trier par ordre croissant", href: "/test/components?order=code")
+        expect(cell).to have_selector("svg > title", text: "Trier par ordre croissant")
+      end
 
-        expect(table).to have_selector("thead tr th:nth-child(2)", text: "Commune") do |cell|
-          expect(cell).to have_link("Trier par ordre croissant", href: "/test/components?order=name")
-          expect(cell).to have_selector("svg > title", text: "Trier par ordre croissant")
-        end
+      expect(table).to have_selector("thead tr th:nth-child(2)", text: "Commune") do |cell|
+        expect(cell).to have_link("Trier par ordre croissant", href: "/test/components?order=name")
+        expect(cell).to have_selector("svg > title", text: "Trier par ordre croissant")
       end
     end
   end
@@ -303,16 +277,14 @@ RSpec.describe Layout::DatatableComponent, type: :component do
     end
 
     expect(page).to have_selector(".datatable table") do |table|
-      aggregate_failures do
-        expect(table).to have_selector("thead tr th:first-child", text: "Code INSEE") do |cell|
-          expect(cell).to have_link("Trier par ordre croissant", href: "/test/components?order=code")
-          expect(cell).to have_selector("svg > title", text: "Trier par ordre croissant")
-        end
+      expect(table).to have_selector("thead tr th:first-child", text: "Code INSEE") do |cell|
+        expect(cell).to have_link("Trier par ordre croissant", href: "/test/components?order=code")
+        expect(cell).to have_selector("svg > title", text: "Trier par ordre croissant")
+      end
 
-        expect(table).to have_selector("thead tr th:nth-child(2)", text: "Commune") do |cell|
-          expect(cell).to have_link("Trier par ordre décroissant", href: "/test/components?order=-name")
-          expect(cell).to have_selector("svg > title", text: "Trier par ordre décroissant")
-        end
+      expect(table).to have_selector("thead tr th:nth-child(2)", text: "Commune") do |cell|
+        expect(cell).to have_link("Trier par ordre décroissant", href: "/test/components?order=-name")
+        expect(cell).to have_selector("svg > title", text: "Trier par ordre décroissant")
       end
     end
   end

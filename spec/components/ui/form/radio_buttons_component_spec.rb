@@ -8,11 +8,9 @@ RSpec.describe UI::Form::RadioButtonsComponent, type: :component do
     render_inline described_class.new(:user, :inviter_id, users)
 
     expect(page).to have_selector(".choices-collection") do |div|
-      aggregate_failures do
-        expect(div).to have_unchecked_field(users.first.name,  type: "radio", with: users.first.id)
-        expect(div).to have_unchecked_field(users.second.name, type: "radio", with: users.second.id)
-        expect(div).to have_unchecked_field(users.third.name,  type: "radio", with: users.third.id)
-      end
+      expect(div).to have_unchecked_field(users.first.name,  type: "radio", with: users.first.id)
+      expect(div).to have_unchecked_field(users.second.name, type: "radio", with: users.second.id)
+      expect(div).to have_unchecked_field(users.third.name,  type: "radio", with: users.third.id)
     end
   end
 
@@ -21,11 +19,9 @@ RSpec.describe UI::Form::RadioButtonsComponent, type: :component do
     render_inline described_class.new(:user, :inviter_id, users, value_method: :first_name, text_method: :first_name)
 
     expect(page).to have_selector(".choices-collection") do |div|
-      aggregate_failures do
-        expect(div).to have_unchecked_field(users.first.first_name,  with: users.first.first_name)
-        expect(div).to have_unchecked_field(users.second.first_name, with: users.second.first_name)
-        expect(div).to have_unchecked_field(users.third.first_name,  with: users.third.first_name)
-      end
+      expect(div).to have_unchecked_field(users.first.first_name,  with: users.first.first_name)
+      expect(div).to have_unchecked_field(users.second.first_name, with: users.second.first_name)
+      expect(div).to have_unchecked_field(users.third.first_name,  with: users.third.first_name)
     end
   end
 
@@ -36,11 +32,9 @@ RSpec.describe UI::Form::RadioButtonsComponent, type: :component do
     render_inline described_class.new(:user, :inviter_id, values)
 
     expect(page).to have_selector(".choices-collection") do |div|
-      aggregate_failures do
-        expect(div).to have_unchecked_field(users.first.name,  with: users.first.first_name)
-        expect(div).to have_unchecked_field(users.second.name, with: users.second.first_name)
-        expect(div).to have_unchecked_field(users.third.name,  with: users.third.first_name)
-      end
+      expect(div).to have_unchecked_field(users.first.name,  with: users.first.first_name)
+      expect(div).to have_unchecked_field(users.second.name, with: users.second.first_name)
+      expect(div).to have_unchecked_field(users.third.name,  with: users.third.first_name)
     end
   end
 
@@ -51,11 +45,9 @@ RSpec.describe UI::Form::RadioButtonsComponent, type: :component do
     render_inline described_class.new(:user, :inviter_id, values)
 
     expect(page).to have_selector(".choices-collection") do |div|
-      aggregate_failures do
-        expect(div).to have_unchecked_field(users.first.name,  with: users.first.name)
-        expect(div).to have_unchecked_field(users.second.name, with: users.second.name)
-        expect(div).to have_unchecked_field(users.third.name,  with: users.third.name)
-      end
+      expect(div).to have_unchecked_field(users.first.name,  with: users.first.name)
+      expect(div).to have_unchecked_field(users.second.name, with: users.second.name)
+      expect(div).to have_unchecked_field(users.third.name,  with: users.third.name)
     end
   end
 
@@ -64,15 +56,13 @@ RSpec.describe UI::Form::RadioButtonsComponent, type: :component do
     render_inline described_class.new(:user, :inviter_id, users, resettable: true)
 
     expect(page).to have_selector(".choices-collection") do |div|
-      aggregate_failures do
-        expect(div).to have_unchecked_field("Annuler l'option saisie", type: "radio") do |field|
-          expect(field).to have_html_attribute("name").with_value("user[inviter_id]")
-          expect(field).to have_html_attribute("id").with_value("user_inviter_id_reset")
-        end
+      expect(div).to have_unchecked_field("Annuler l'option saisie", type: "radio") do |field|
+        expect(field).to have_html_attribute("name").with_value("user[inviter_id]")
+        expect(field).to have_html_attribute("id").with_value("user_inviter_id_reset")
+      end
 
-        expect(div).to have_selector("label", text: "Annuler l'option saisie") do |label|
-          expect(label).to have_html_attribute("for").with_value("user_inviter_id_reset")
-        end
+      expect(div).to have_selector("label", text: "Annuler l'option saisie") do |label|
+        expect(label).to have_html_attribute("for").with_value("user_inviter_id_reset")
       end
     end
   end
@@ -82,15 +72,13 @@ RSpec.describe UI::Form::RadioButtonsComponent, type: :component do
     render_inline described_class.new(:user, :inviter_id, users, resettable: "Reset value")
 
     expect(page).to have_selector(".choices-collection") do |div|
-      aggregate_failures do
-        expect(div).to have_unchecked_field("Reset value", type: "radio") do |field|
-          expect(field).to have_html_attribute("name").with_value("user[inviter_id]")
-          expect(field).to have_html_attribute("id").with_value("user_inviter_id_reset")
-        end
+      expect(div).to have_unchecked_field("Reset value", type: "radio") do |field|
+        expect(field).to have_html_attribute("name").with_value("user[inviter_id]")
+        expect(field).to have_html_attribute("id").with_value("user_inviter_id_reset")
+      end
 
-        expect(div).to have_selector("label", text: "Reset value") do |label|
-          expect(label).to have_html_attribute("for").with_value("user_inviter_id_reset")
-        end
+      expect(div).to have_selector("label", text: "Reset value") do |label|
+        expect(label).to have_html_attribute("for").with_value("user_inviter_id_reset")
       end
     end
   end
