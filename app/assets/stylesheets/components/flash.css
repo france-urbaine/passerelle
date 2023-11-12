@@ -1,0 +1,24 @@
+@layer components {
+  .flash {
+    position: relative;
+
+    @apply rounded-md border p-6;
+    @apply bg-blue-100 border-blue-300;
+    @apply dark:bg-blue-800 dark:border-blue-600;
+
+    &--warning {
+      @apply bg-yellow-100 border-yellow-300;
+      @apply dark:bg-yellow-800 dark:border-yellow-600;
+    }
+
+    &--danger {
+      @apply bg-red-100 border-red-300;
+      @apply dark:bg-red-800 dark:border-red-600;
+    }
+
+    &--success {
+      @apply bg-green-100 border-green-300;
+      @apply dark:bg-green-800 dark:border-green-600;
+    }
+  }
+}
