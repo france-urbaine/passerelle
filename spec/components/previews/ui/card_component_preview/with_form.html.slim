@@ -1,0 +1,14 @@
+= card_component do |card|
+  - card.with_header do
+    | Edit a record
+
+  - card.with_form(model: record, url: "/") do |form|
+    = form.block(:nom_insee) do
+      = form.label(:nom_insee)
+      = form.text_field(:nom_insee, autofocus: true, required: true)
+
+    = form.block(:codcom) do
+      = form.label(:codcom)
+      = form.text_field(:codcom, required: true)
+
+  - card.with_submit_action "Enregistrer"

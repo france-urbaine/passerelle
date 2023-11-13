@@ -2,6 +2,8 @@
 
 module UI
   class CodeExampleComponent < ApplicationViewComponent
+    define_component_helper :code_example_component
+
     renders_many :languages, "Language"
 
     def initialize(language = nil)

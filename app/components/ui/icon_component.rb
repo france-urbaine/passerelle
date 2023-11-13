@@ -2,6 +2,8 @@
 
 module UI
   class IconComponent < ApplicationViewComponent
+    define_component_helper :icon_component
+
     SETS = %i[
       auto
       assets

@@ -3,6 +3,8 @@
 module Views
   module Reports
     class StatusBadgeComponent < ApplicationViewComponent
+      define_component_helper :report_badge
+
       COLORS = {
         incomplete:             "badge--yellow",
         completed:              "badge--lime",

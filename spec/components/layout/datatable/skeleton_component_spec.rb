@@ -7,10 +7,8 @@ RSpec.describe Layout::Datatable::SkeletonComponent, type: :component do
     render_inline described_class.new
 
     expect(page).to have_selector(".datatable table") do |table|
-      aggregate_failures do
-        expect(table).to have_selector("thead tr th .text-skeleton-loader", count: 3)
-        expect(table).to have_selector("tbody tr td .text-skeleton-loader", count: 15)
-      end
+      expect(table).to have_selector("thead tr th .text-skeleton-loader", count: 3)
+      expect(table).to have_selector("tbody tr td .text-skeleton-loader", count: 15)
     end
   end
 
@@ -18,10 +16,8 @@ RSpec.describe Layout::Datatable::SkeletonComponent, type: :component do
     render_inline described_class.new(rows: 5, columns: 5, nested: false)
 
     expect(page).to have_selector(".datatable table") do |table|
-      aggregate_failures do
-        expect(table).to have_selector("thead tr th .text-skeleton-loader", count: 5)
-        expect(table).to have_selector("tbody tr td .text-skeleton-loader", count: 25)
-      end
+      expect(table).to have_selector("thead tr th .text-skeleton-loader", count: 5)
+      expect(table).to have_selector("tbody tr td .text-skeleton-loader", count: 25)
     end
   end
 
@@ -29,12 +25,10 @@ RSpec.describe Layout::Datatable::SkeletonComponent, type: :component do
     render_inline described_class.new(columns: %w[A B C])
 
     expect(page).to have_selector(".datatable table") do |table|
-      aggregate_failures do
-        expect(table).to have_selector("thead tr th .text-skeleton-loader", count: 3)
-        expect(table).to have_selector("thead tr th .text-skeleton-loader", text: "A")
-        expect(table).to have_selector("thead tr th .text-skeleton-loader", text: "B")
-        expect(table).to have_selector("thead tr th .text-skeleton-loader", text: "C")
-      end
+      expect(table).to have_selector("thead tr th .text-skeleton-loader", count: 3)
+      expect(table).to have_selector("thead tr th .text-skeleton-loader", text: "A")
+      expect(table).to have_selector("thead tr th .text-skeleton-loader", text: "B")
+      expect(table).to have_selector("thead tr th .text-skeleton-loader", text: "C")
     end
   end
 
@@ -52,13 +46,11 @@ RSpec.describe Layout::Datatable::SkeletonComponent, type: :component do
       skeleton.with_pagination
     end
 
-    aggregate_failures do
-      expect(page).to have_selector(".header-bar") do |header|
-        expect(header).to have_selector(".search .form-skeleton-loader input")
-        expect(header).to have_selector(".header-bar__actions .button-skeleton-loader", count: 2)
-      end
-
-      expect(page).to have_selector(".datatable table")
+    expect(page).to have_selector(".header-bar") do |header|
+      expect(header).to have_selector(".search .form-skeleton-loader input")
+      expect(header).to have_selector(".header-bar__actions .button-skeleton-loader", count: 2)
     end
+
+    expect(page).to have_selector(".datatable table")
   end
 end

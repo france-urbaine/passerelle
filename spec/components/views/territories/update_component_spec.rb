@@ -7,12 +7,10 @@ RSpec.describe Views::Territories::UpdateComponent, type: :component do
     render_inline described_class.new
 
     expect(page).to have_selector(".modal form") do |form|
-      aggregate_failures do
-        expect(form).to have_html_attribute("action").with_value("/territoires/mise-a-jour")
+      expect(form).to have_html_attribute("action").with_value("/territoires/mise-a-jour")
 
-        expect(form).to have_field("Fichier de découpage communal", with: "fr/statistiques/fichier/2028028/table-appartenance-geo-communes-23.zip")
-        expect(form).to have_field("Fichier des intercommunalités", with: "fr/statistiques/fichier/2510634/Intercommunalite_Metropole_au_01-01-2023.zip")
-      end
+      expect(form).to have_field("Fichier de découpage communal", with: "fr/statistiques/fichier/2028028/table-appartenance-geo-communes-23.zip")
+      expect(form).to have_field("Fichier des intercommunalités", with: "fr/statistiques/fichier/2510634/Intercommunalite_Metropole_au_01-01-2023.zip")
     end
   end
 
@@ -23,12 +21,10 @@ RSpec.describe Views::Territories::UpdateComponent, type: :component do
     })
 
     expect(page).to have_selector(".modal form") do |form|
-      aggregate_failures do
-        expect(form).to have_html_attribute("action").with_value("/territoires/mise-a-jour")
+      expect(form).to have_html_attribute("action").with_value("/territoires/mise-a-jour")
 
-        expect(form).to have_field("Fichier de découpage communal", with: "path/to/communes.zip")
-        expect(form).to have_field("Fichier des intercommunalités", with: "path/to/epcis.zip")
-      end
+      expect(form).to have_field("Fichier de découpage communal", with: "path/to/communes.zip")
+      expect(form).to have_field("Fichier des intercommunalités", with: "path/to/epcis.zip")
     end
   end
 
@@ -41,12 +37,10 @@ RSpec.describe Views::Territories::UpdateComponent, type: :component do
     render_inline described_class.new(params)
 
     expect(page).to have_selector(".modal form") do |form|
-      aggregate_failures do
-        expect(form).to have_html_attribute("action").with_value("/territoires/mise-a-jour")
+      expect(form).to have_html_attribute("action").with_value("/territoires/mise-a-jour")
 
-        expect(form).to have_field("Fichier de découpage communal", with: "path/to/communes.zip")
-        expect(form).to have_field("Fichier des intercommunalités", with: "path/to/epcis.zip")
-      end
+      expect(form).to have_field("Fichier de découpage communal", with: "path/to/communes.zip")
+      expect(form).to have_field("Fichier des intercommunalités", with: "path/to/epcis.zip")
     end
   end
 
@@ -61,18 +55,16 @@ RSpec.describe Views::Territories::UpdateComponent, type: :component do
     render_inline described_class.new(params, result)
 
     expect(page).to have_selector(".modal form") do |form|
-      aggregate_failures do
-        expect(form).to have_html_attribute("action").with_value("/territoires/mise-a-jour")
+      expect(form).to have_html_attribute("action").with_value("/territoires/mise-a-jour")
 
-        expect(form).to have_selector(".form-block", text: "Fichier de découpage communal") do |block|
-          expect(block).to have_field(with: "")
-          expect(block).to have_selector(".form-block__errors", text: "Une URL est requise")
-        end
+      expect(form).to have_selector(".form-block", text: "Fichier de découpage communal") do |block|
+        expect(block).to have_field(with: "")
+        expect(block).to have_selector(".form-block__errors", text: "Une URL est requise")
+      end
 
-        expect(form).to have_selector(".form-block", text: "Fichier des intercommunalités") do |block|
-          expect(block).to have_field(with: "path/to/epcis")
-          expect(block).to have_selector(".form-block__errors", text: "Le fichier cible doit être un fichier ZIP")
-        end
+      expect(form).to have_selector(".form-block", text: "Fichier des intercommunalités") do |block|
+        expect(block).to have_field(with: "path/to/epcis")
+        expect(block).to have_selector(".form-block__errors", text: "Le fichier cible doit être un fichier ZIP")
       end
     end
   end

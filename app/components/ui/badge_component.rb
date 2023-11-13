@@ -2,6 +2,8 @@
 
 module UI
   class BadgeComponent < ApplicationViewComponent
+    define_component_helper :badge_component
+
     # Colors are listed instead of being interpolated to be
     # be compiled by tailwind.
     #

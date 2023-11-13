@@ -2,6 +2,8 @@
 
 module Helpers
   class AuthorizedLinkComponent < ApplicationViewComponent
+    define_component_helper :authorized_link_to
+
     def initialize(resource, href = nil, namespace: nil, parent: nil, **options)
       @resource  = resource
       @href      = href

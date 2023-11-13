@@ -1,0 +1,44 @@
+- captured_content = capture do
+  - if header?
+    .card__header
+      h1.card__title= header
+
+  = tag.div class: css_classes(:body_class) do
+    - if form?
+      = form
+    - elsif body?
+      = body
+    - else
+      = content
+
+  - if form? || actions? || raw_actions?
+    = tag.div class: css_classes(:actions_class) do
+      = submit_action if form?
+
+      - actions.each do |action|
+        = action
+
+      = raw_actions
+
+- captured_content_wrapped = capture do
+  - if form?
+    = form_with(**form_options) do
+      = captured_content
+
+  - else
+    = captured_content
+
+- if self.is_a?(Multipart)
+  = captured_content_wrapped
+- else
+  = tag.div class: css_classes(:class) do
+    = tag.div class: css_classes(:content_class) do
+      - if multiparts?
+        - multiparts.each_with_index do |part, index|
+          - unless index.zero?
+            <hr class="content__separator">
+
+          = part
+
+      - else
+        = captured_content_wrapped

@@ -9,13 +9,11 @@ RSpec.describe UI::NotificationComponent, type: :component do
     render_inline described_class.new("Hello world !")
 
     expect(page).to have_selector(".notification[role='alert']") do |alert|
-      aggregate_failures do
-        expect(alert["aria-live"]).to eq("polite")
+      expect(alert["aria-live"]).to eq("polite")
 
-        expect(alert).to have_selector(".notification__title", text: "Hello world !")
-        expect(alert).to have_selector("svg") do |svg|
-          expect(svg).to have_selector("title", text: "Information")
-        end
+      expect(alert).to have_selector(".notification__title", text: "Hello world !")
+      expect(alert).to have_selector("svg") do |svg|
+        expect(svg).to have_selector("title", text: "Information")
       end
     end
   end
@@ -27,10 +25,8 @@ RSpec.describe UI::NotificationComponent, type: :component do
     })
 
     expect(page).to have_selector(".notification[role='alert']") do |alert|
-      aggregate_failures do
-        expect(alert).to have_selector(".notification__title", text: "Hello world !")
-        expect(alert).to have_selector(".notification__message", text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.")
-      end
+      expect(alert).to have_selector(".notification__title", text: "Hello world !")
+      expect(alert).to have_selector(".notification__message", text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.")
     end
   end
 
@@ -70,16 +66,12 @@ RSpec.describe UI::NotificationComponent, type: :component do
     })
 
     expect(page).to have_selector(".notification[role='alert']") do |alert|
-      aggregate_failures do
-        expect(alert).to have_selector(".notification__title", text: "Hello world !")
-        expect(alert).to have_selector(".notification__message", text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.")
-        expect(alert).to have_selector(".notification__actions") do |actions|
-          expect(actions).to have_link("En savoir plus") do |link|
-            aggregate_failures do
-              expect(link["href"]).to eq("/some/path")
-              expect(link["class"]).to include("button")
-            end
-          end
+      expect(alert).to have_selector(".notification__title", text: "Hello world !")
+      expect(alert).to have_selector(".notification__message", text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.")
+      expect(alert).to have_selector(".notification__actions") do |actions|
+        expect(actions).to have_link("En savoir plus") do |link|
+          expect(link["href"]).to eq("/some/path")
+          expect(link["class"]).to include("button")
         end
       end
     end
@@ -97,20 +89,16 @@ RSpec.describe UI::NotificationComponent, type: :component do
     })
 
     expect(page).to have_selector(".notification[role='alert']") do |alert|
-      aggregate_failures do
-        expect(alert).to have_selector(".notification__title", text: "Hello world !")
-        expect(alert).to have_selector(".notification__message", text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.")
-        expect(alert).to have_selector(".notification__actions") do |actions|
-          expect(actions).to have_selector("form") do |form|
-            aggregate_failures do
-              expect(form["method"]).to eq("post")
-              expect(form["action"]).to eq("/some/path")
+      expect(alert).to have_selector(".notification__title", text: "Hello world !")
+      expect(alert).to have_selector(".notification__message", text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.")
+      expect(alert).to have_selector(".notification__actions") do |actions|
+        expect(actions).to have_selector("form") do |form|
+          expect(form["method"]).to eq("post")
+          expect(form["action"]).to eq("/some/path")
 
-              expect(form).to have_selector("input[type='hidden'][name='_method'][value='patch']", visible: :hidden)
-              expect(form).to have_selector("input[type='hidden'][name='ids'][value='all']", visible: :hidden)
-              expect(form).to have_button("Continuer")
-            end
-          end
+          expect(form).to have_selector("input[type='hidden'][name='_method'][value='patch']", visible: :hidden)
+          expect(form).to have_selector("input[type='hidden'][name='ids'][value='all']", visible: :hidden)
+          expect(form).to have_button("Continuer")
         end
       end
     end

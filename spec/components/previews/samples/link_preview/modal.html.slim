@@ -1,0 +1,8 @@
+= modal_frame_component do |frame|
+  - frame.with_modal do |modal|
+    - modal.with_body do
+      | This content is rendered after being redirected to:
+      br
+      | /rails/view_components/samples/link/modal
+
+    - modal.with_close_action "Close"

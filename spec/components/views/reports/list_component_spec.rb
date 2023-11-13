@@ -24,20 +24,18 @@ RSpec.describe Views::Reports::ListComponent, type: :component do
       render_inline described_class.new(Report.all, pagy)
 
       expect(page).to have_selector(".datatable table") do |table|
-        aggregate_failures do
-          expect(table).to have_selector("th", text: "Etat")
-          expect(table).to have_selector("th", text: "Reference")
-          expect(table).to have_selector("th", text: "Priorité")
-          expect(table).to have_selector("th", text: "Type de signalement")
-          expect(table).to have_selector("th", text: "Objet")
-          expect(table).to have_selector("th", text: "Invariant")
-          expect(table).to have_selector("th", text: "Adresse")
-          expect(table).to have_selector("th", text: "Commune")
-          expect(table).to have_selector(:table_row, {
-            "Type de signalement" => form_type_title(reports.first),
-            "Adresse"             => reports.first.situation_adresse
-          })
-        end
+        expect(table).to have_selector("th", text: "Etat")
+        expect(table).to have_selector("th", text: "Reference")
+        expect(table).to have_selector("th", text: "Priorité")
+        expect(table).to have_selector("th", text: "Type de signalement")
+        expect(table).to have_selector("th", text: "Objet")
+        expect(table).to have_selector("th", text: "Invariant")
+        expect(table).to have_selector("th", text: "Adresse")
+        expect(table).to have_selector("th", text: "Commune")
+        expect(table).to have_selector(:table_row, {
+          "Type de signalement" => form_type_title(reports.first),
+          "Adresse"             => reports.first.situation_adresse
+        })
       end
     end
 
@@ -49,16 +47,14 @@ RSpec.describe Views::Reports::ListComponent, type: :component do
       end
 
       expect(page).to have_selector(".datatable table") do |table|
-        aggregate_failures do
-          expect(table).to have_selector("th", text: "Reference")
-          expect(table).to have_selector("th", text: "Type de signalement")
-          expect(table).to have_selector("th", text: "Objet")
+        expect(table).to have_selector("th", text: "Reference")
+        expect(table).to have_selector("th", text: "Type de signalement")
+        expect(table).to have_selector("th", text: "Objet")
 
-          expect(table).not_to have_selector("th", text: "Etat")
-          expect(table).not_to have_selector("th", text: "Priorité")
-          expect(table).not_to have_selector("th", text: "Invariant")
-          expect(table).not_to have_selector("th", text: "Adresse")
-        end
+        expect(table).not_to have_selector("th", text: "Etat")
+        expect(table).not_to have_selector("th", text: "Priorité")
+        expect(table).not_to have_selector("th", text: "Invariant")
+        expect(table).not_to have_selector("th", text: "Adresse")
       end
     end
 

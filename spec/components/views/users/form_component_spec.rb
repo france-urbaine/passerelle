@@ -13,19 +13,17 @@ RSpec.describe Views::Users::FormComponent, type: :component do
       render_inline described_class.new(User.new, namespace: :admin)
 
       expect(page).to have_selector(".modal form") do |form|
-        aggregate_failures do
-          expect(form).to have_html_attribute("action").with_value("/admin/utilisateurs")
+        expect(form).to have_html_attribute("action").with_value("/admin/utilisateurs")
 
-          expect(form).to have_field("Organisation")
-          expect(form).to have_field("Nom")
-          expect(form).to have_field("Prénom")
-          expect(form).to have_unchecked_field("Administrateur de l'organisation")
-          expect(form).to have_unchecked_field("Administrateur de la plateforme Passerelle")
+        expect(form).to have_field("Organisation")
+        expect(form).to have_field("Nom")
+        expect(form).to have_field("Prénom")
+        expect(form).to have_unchecked_field("Administrateur de l'organisation")
+        expect(form).to have_unchecked_field("Administrateur de la plateforme Passerelle")
 
-          expect(form).to     have_selector(".form-block", text: "Guichets",       visible: :hidden)
-          expect(form).to     have_selector("turbo-frame#user_offices_checkboxes", visible: :hidden)
-          expect(form).not_to have_selector("input[name='user[office_ids][]']",    visible: :all)
-        end
+        expect(form).to     have_selector(".form-block", text: "Guichets",       visible: :hidden)
+        expect(form).to     have_selector("turbo-frame#user_offices_checkboxes", visible: :hidden)
+        expect(form).not_to have_selector("input[name='user[office_ids][]']",    visible: :all)
       end
     end
 
@@ -34,19 +32,17 @@ RSpec.describe Views::Users::FormComponent, type: :component do
       render_inline described_class.new(User.new, namespace: :admin, organization: publisher)
 
       expect(page).to have_selector(".modal form") do |form|
-        aggregate_failures do
-          expect(form).to have_html_attribute("action").with_value("/admin/editeurs/#{publisher.id}/utilisateurs")
+        expect(form).to have_html_attribute("action").with_value("/admin/editeurs/#{publisher.id}/utilisateurs")
 
-          expect(form).not_to have_field("Organisation")
-          expect(form).to     have_field("Nom")
-          expect(form).to     have_field("Prénom")
-          expect(form).to     have_unchecked_field("Administrateur de l'organisation")
-          expect(form).to     have_unchecked_field("Administrateur de la plateforme Passerelle")
+        expect(form).not_to have_field("Organisation")
+        expect(form).to     have_field("Nom")
+        expect(form).to     have_field("Prénom")
+        expect(form).to     have_unchecked_field("Administrateur de l'organisation")
+        expect(form).to     have_unchecked_field("Administrateur de la plateforme Passerelle")
 
-          expect(form).not_to have_selector(".form-block", text: "Guichets",       visible: :all)
-          expect(form).not_to have_selector("turbo-frame#user_offices_checkboxes", visible: :all)
-          expect(form).not_to have_selector("input[name='user[office_ids][]']",    visible: :all)
-        end
+        expect(form).not_to have_selector(".form-block", text: "Guichets",       visible: :all)
+        expect(form).not_to have_selector("turbo-frame#user_offices_checkboxes", visible: :all)
+        expect(form).not_to have_selector("input[name='user[office_ids][]']",    visible: :all)
       end
     end
 
@@ -55,19 +51,17 @@ RSpec.describe Views::Users::FormComponent, type: :component do
       render_inline described_class.new(User.new, namespace: :admin, organization: collectivity)
 
       expect(page).to have_selector(".modal form") do |form|
-        aggregate_failures do
-          expect(form).to have_html_attribute("action").with_value("/admin/collectivites/#{collectivity.id}/utilisateurs")
+        expect(form).to have_html_attribute("action").with_value("/admin/collectivites/#{collectivity.id}/utilisateurs")
 
-          expect(form).not_to have_field("Organisation")
-          expect(form).to     have_field("Nom")
-          expect(form).to     have_field("Prénom")
-          expect(form).to     have_unchecked_field("Administrateur de l'organisation")
-          expect(form).to     have_unchecked_field("Administrateur de la plateforme Passerelle")
+        expect(form).not_to have_field("Organisation")
+        expect(form).to     have_field("Nom")
+        expect(form).to     have_field("Prénom")
+        expect(form).to     have_unchecked_field("Administrateur de l'organisation")
+        expect(form).to     have_unchecked_field("Administrateur de la plateforme Passerelle")
 
-          expect(form).not_to have_selector(".form-block", text: "Guichets",       visible: :all)
-          expect(form).not_to have_selector("turbo-frame#user_offices_checkboxes", visible: :all)
-          expect(form).not_to have_selector("input[name='user[office_ids][]']",    visible: :all)
-        end
+        expect(form).not_to have_selector(".form-block", text: "Guichets",       visible: :all)
+        expect(form).not_to have_selector("turbo-frame#user_offices_checkboxes", visible: :all)
+        expect(form).not_to have_selector("input[name='user[office_ids][]']",    visible: :all)
       end
     end
 
@@ -76,19 +70,17 @@ RSpec.describe Views::Users::FormComponent, type: :component do
       render_inline described_class.new(User.new, namespace: :admin, organization: ddfip)
 
       expect(page).to have_selector(".modal form") do |form|
-        aggregate_failures do
-          expect(form).to have_html_attribute("action").with_value("/admin/ddfips/#{ddfip.id}/utilisateurs")
+        expect(form).to have_html_attribute("action").with_value("/admin/ddfips/#{ddfip.id}/utilisateurs")
 
-          expect(form).not_to have_field("Organisation")
-          expect(form).to     have_field("Nom")
-          expect(form).to     have_field("Prénom")
-          expect(form).to     have_unchecked_field("Administrateur de l'organisation")
-          expect(form).to     have_unchecked_field("Administrateur de la plateforme Passerelle")
+        expect(form).not_to have_field("Organisation")
+        expect(form).to     have_field("Nom")
+        expect(form).to     have_field("Prénom")
+        expect(form).to     have_unchecked_field("Administrateur de l'organisation")
+        expect(form).to     have_unchecked_field("Administrateur de la plateforme Passerelle")
 
-          expect(form).to     have_selector(".form-block", text: "Guichets",       visible: :visible)
-          expect(form).not_to have_selector("turbo-frame#user_offices_checkboxes", visible: :all)
-          expect(form).to     have_selector("input[name='user[office_ids][]']",    visible: :all)
-        end
+        expect(form).to     have_selector(".form-block", text: "Guichets",       visible: :visible)
+        expect(form).not_to have_selector("turbo-frame#user_offices_checkboxes", visible: :all)
+        expect(form).to     have_selector("input[name='user[office_ids][]']",    visible: :all)
       end
     end
 
@@ -97,19 +89,17 @@ RSpec.describe Views::Users::FormComponent, type: :component do
       render_inline described_class.new(user, namespace: :admin)
 
       expect(page).to have_selector(".modal form") do |form|
-        aggregate_failures do
-          expect(form).to have_html_attribute("action").with_value("/admin/utilisateurs/#{user.id}")
+        expect(form).to have_html_attribute("action").with_value("/admin/utilisateurs/#{user.id}")
 
-          expect(form).to have_field("Organisation", with: user.organization&.name)
-          expect(form).to have_field("Nom",          with: user.last_name)
-          expect(form).to have_field("Prénom",       with: user.first_name)
-          expect(form).to have_unchecked_field("Administrateur de l'organisation")
-          expect(form).to have_unchecked_field("Administrateur de la plateforme Passerelle")
+        expect(form).to have_field("Organisation", with: user.organization&.name)
+        expect(form).to have_field("Nom",          with: user.last_name)
+        expect(form).to have_field("Prénom",       with: user.first_name)
+        expect(form).to have_unchecked_field("Administrateur de l'organisation")
+        expect(form).to have_unchecked_field("Administrateur de la plateforme Passerelle")
 
-          expect(form).to     have_selector(".form-block", text: "Guichets",       visible: :hidden)
-          expect(form).to     have_selector("turbo-frame#user_offices_checkboxes", visible: :hidden)
-          expect(form).not_to have_selector("input[name='user[office_ids][]']",    visible: :all)
-        end
+        expect(form).to     have_selector(".form-block", text: "Guichets",       visible: :hidden)
+        expect(form).to     have_selector("turbo-frame#user_offices_checkboxes", visible: :hidden)
+        expect(form).not_to have_selector("input[name='user[office_ids][]']",    visible: :all)
       end
     end
 
@@ -118,19 +108,17 @@ RSpec.describe Views::Users::FormComponent, type: :component do
       render_inline described_class.new(user, namespace: :admin)
 
       expect(page).to have_selector(".modal form") do |form|
-        aggregate_failures do
-          expect(form).to have_html_attribute("action").with_value("/admin/utilisateurs/#{user.id}")
+        expect(form).to have_html_attribute("action").with_value("/admin/utilisateurs/#{user.id}")
 
-          expect(form).to have_field("Organisation", with: user.organization&.name)
-          expect(form).to have_field("Nom",          with: user.last_name)
-          expect(form).to have_field("Prénom",       with: user.first_name)
-          expect(form).to have_unchecked_field("Administrateur de l'organisation")
-          expect(form).to have_unchecked_field("Administrateur de la plateforme Passerelle")
+        expect(form).to have_field("Organisation", with: user.organization&.name)
+        expect(form).to have_field("Nom",          with: user.last_name)
+        expect(form).to have_field("Prénom",       with: user.first_name)
+        expect(form).to have_unchecked_field("Administrateur de l'organisation")
+        expect(form).to have_unchecked_field("Administrateur de la plateforme Passerelle")
 
-          expect(form).to     have_selector(".form-block", text: "Guichets",       visible: :visible)
-          expect(form).to     have_selector("turbo-frame#user_offices_checkboxes", visible: :visible)
-          expect(form).not_to have_selector("input[name='user[office_ids][]']",    visible: :all)
-        end
+        expect(form).to     have_selector(".form-block", text: "Guichets",       visible: :visible)
+        expect(form).to     have_selector("turbo-frame#user_offices_checkboxes", visible: :visible)
+        expect(form).not_to have_selector("input[name='user[office_ids][]']",    visible: :all)
       end
     end
 
@@ -139,15 +127,13 @@ RSpec.describe Views::Users::FormComponent, type: :component do
       render_inline described_class.new(user, namespace: :admin)
 
       expect(page).to have_selector(".modal form") do |form|
-        aggregate_failures do
-          expect(form).to have_html_attribute("action").with_value("/admin/utilisateurs/#{user.id}")
+        expect(form).to have_html_attribute("action").with_value("/admin/utilisateurs/#{user.id}")
 
-          expect(form).to have_field("Organisation", with: user.organization&.name)
-          expect(form).to have_field("Nom",          with: user.last_name)
-          expect(form).to have_field("Prénom",       with: user.first_name)
-          expect(form).to have_checked_field("Administrateur de l'organisation")
-          expect(form).to have_checked_field("Administrateur de la plateforme Passerelle")
-        end
+        expect(form).to have_field("Organisation", with: user.organization&.name)
+        expect(form).to have_field("Nom",          with: user.last_name)
+        expect(form).to have_field("Prénom",       with: user.first_name)
+        expect(form).to have_checked_field("Administrateur de l'organisation")
+        expect(form).to have_checked_field("Administrateur de la plateforme Passerelle")
       end
     end
   end
@@ -159,19 +145,17 @@ RSpec.describe Views::Users::FormComponent, type: :component do
       render_inline described_class.new(User.new, namespace: :organization)
 
       expect(page).to have_selector(".modal form") do |form|
-        aggregate_failures do
-          expect(form).to have_html_attribute("action").with_value("/organisation/utilisateurs")
+        expect(form).to have_html_attribute("action").with_value("/organisation/utilisateurs")
 
-          expect(form).not_to have_field("Organisation")
-          expect(form).to     have_field("Nom")
-          expect(form).to     have_field("Prénom")
-          expect(form).to     have_field("Administrateur de l'organisation")
-          expect(form).not_to have_field("Administrateur de la plateforme Passerelle")
+        expect(form).not_to have_field("Organisation")
+        expect(form).to     have_field("Nom")
+        expect(form).to     have_field("Prénom")
+        expect(form).to     have_field("Administrateur de l'organisation")
+        expect(form).not_to have_field("Administrateur de la plateforme Passerelle")
 
-          expect(form).not_to have_selector(".form-block", text: "Guichets",       visible: :all)
-          expect(form).not_to have_selector("turbo-frame#user_offices_checkboxes", visible: :all)
-          expect(form).not_to have_selector("input[name='user[office_ids][]']",    visible: :all)
-        end
+        expect(form).not_to have_selector(".form-block", text: "Guichets",       visible: :all)
+        expect(form).not_to have_selector("turbo-frame#user_offices_checkboxes", visible: :all)
+        expect(form).not_to have_selector("input[name='user[office_ids][]']",    visible: :all)
       end
     end
 
@@ -180,19 +164,17 @@ RSpec.describe Views::Users::FormComponent, type: :component do
       render_inline described_class.new(user, namespace: :organization)
 
       expect(page).to have_selector(".modal form") do |form|
-        aggregate_failures do
-          expect(form).to have_html_attribute("action").with_value("/organisation/utilisateurs/#{user.id}")
+        expect(form).to have_html_attribute("action").with_value("/organisation/utilisateurs/#{user.id}")
 
-          expect(form).not_to have_field("Organisation")
-          expect(form).to     have_field("Nom",          with: user.last_name)
-          expect(form).to     have_field("Prénom",       with: user.first_name)
-          expect(form).to     have_unchecked_field("Administrateur de l'organisation")
-          expect(form).not_to have_field("Administrateur de la plateforme Passerelle")
+        expect(form).not_to have_field("Organisation")
+        expect(form).to     have_field("Nom",          with: user.last_name)
+        expect(form).to     have_field("Prénom",       with: user.first_name)
+        expect(form).to     have_unchecked_field("Administrateur de l'organisation")
+        expect(form).not_to have_field("Administrateur de la plateforme Passerelle")
 
-          expect(form).not_to have_selector(".form-block", text: "Guichets",       visible: :all)
-          expect(form).not_to have_selector("turbo-frame#user_offices_checkboxes", visible: :all)
-          expect(form).not_to have_selector("input[name='user[office_ids][]']",    visible: :all)
-        end
+        expect(form).not_to have_selector(".form-block", text: "Guichets",       visible: :all)
+        expect(form).not_to have_selector("turbo-frame#user_offices_checkboxes", visible: :all)
+        expect(form).not_to have_selector("input[name='user[office_ids][]']",    visible: :all)
       end
     end
 
@@ -201,15 +183,13 @@ RSpec.describe Views::Users::FormComponent, type: :component do
       render_inline described_class.new(user, namespace: :organization)
 
       expect(page).to have_selector(".modal form") do |form|
-        aggregate_failures do
-          expect(form).to have_html_attribute("action").with_value("/organisation/utilisateurs/#{user.id}")
+        expect(form).to have_html_attribute("action").with_value("/organisation/utilisateurs/#{user.id}")
 
-          expect(form).not_to have_field("Organisation")
-          expect(form).to     have_field("Nom",          with: user.last_name)
-          expect(form).to     have_field("Prénom",       with: user.first_name)
-          expect(form).to     have_checked_field("Administrateur de l'organisation")
-          expect(form).not_to have_field("Administrateur de la plateforme Passerelle")
-        end
+        expect(form).not_to have_field("Organisation")
+        expect(form).to     have_field("Nom",          with: user.last_name)
+        expect(form).to     have_field("Prénom",       with: user.first_name)
+        expect(form).to     have_checked_field("Administrateur de l'organisation")
+        expect(form).not_to have_field("Administrateur de la plateforme Passerelle")
       end
     end
 
@@ -229,19 +209,17 @@ RSpec.describe Views::Users::FormComponent, type: :component do
       render_inline described_class.new(User.new, namespace: :organization, organization: collectivity)
 
       expect(page).to have_selector(".modal form") do |form|
-        aggregate_failures do
-          expect(form).to have_html_attribute("action").with_value("/organisation/collectivites/#{collectivity.id}/utilisateurs")
+        expect(form).to have_html_attribute("action").with_value("/organisation/collectivites/#{collectivity.id}/utilisateurs")
 
-          expect(form).not_to have_field("Organisation")
-          expect(form).to     have_field("Nom")
-          expect(form).to     have_field("Prénom")
-          expect(form).to     have_field("Administrateur de l'organisation")
-          expect(form).not_to have_field("Administrateur de la plateforme Passerelle")
+        expect(form).not_to have_field("Organisation")
+        expect(form).to     have_field("Nom")
+        expect(form).to     have_field("Prénom")
+        expect(form).to     have_field("Administrateur de l'organisation")
+        expect(form).not_to have_field("Administrateur de la plateforme Passerelle")
 
-          expect(form).not_to have_selector(".form-block", text: "Guichets",       visible: :all)
-          expect(form).not_to have_selector("turbo-frame#user_offices_checkboxes", visible: :all)
-          expect(form).not_to have_selector("input[name='user[office_ids][]']",    visible: :all)
-        end
+        expect(form).not_to have_selector(".form-block", text: "Guichets",       visible: :all)
+        expect(form).not_to have_selector("turbo-frame#user_offices_checkboxes", visible: :all)
+        expect(form).not_to have_selector("input[name='user[office_ids][]']",    visible: :all)
       end
     end
 
@@ -252,19 +230,17 @@ RSpec.describe Views::Users::FormComponent, type: :component do
       render_inline described_class.new(user, namespace: :organization, organization: collectivity)
 
       expect(page).to have_selector(".modal form") do |form|
-        aggregate_failures do
-          expect(form).to have_html_attribute("action").with_value("/organisation/collectivites/#{collectivity.id}/utilisateurs/#{user.id}")
+        expect(form).to have_html_attribute("action").with_value("/organisation/collectivites/#{collectivity.id}/utilisateurs/#{user.id}")
 
-          expect(form).not_to have_field("Organisation")
-          expect(form).to     have_field("Nom",          with: user.last_name)
-          expect(form).to     have_field("Prénom",       with: user.first_name)
-          expect(form).to     have_unchecked_field("Administrateur de l'organisation")
-          expect(form).not_to have_field("Administrateur de la plateforme Passerelle")
+        expect(form).not_to have_field("Organisation")
+        expect(form).to     have_field("Nom",          with: user.last_name)
+        expect(form).to     have_field("Prénom",       with: user.first_name)
+        expect(form).to     have_unchecked_field("Administrateur de l'organisation")
+        expect(form).not_to have_field("Administrateur de la plateforme Passerelle")
 
-          expect(form).not_to have_selector(".form-block", text: "Guichets",       visible: :all)
-          expect(form).not_to have_selector("turbo-frame#user_offices_checkboxes", visible: :all)
-          expect(form).not_to have_selector("input[name='user[office_ids][]']",    visible: :all)
-        end
+        expect(form).not_to have_selector(".form-block", text: "Guichets",       visible: :all)
+        expect(form).not_to have_selector("turbo-frame#user_offices_checkboxes", visible: :all)
+        expect(form).not_to have_selector("input[name='user[office_ids][]']",    visible: :all)
       end
     end
   end
@@ -278,15 +254,13 @@ RSpec.describe Views::Users::FormComponent, type: :component do
       render_inline described_class.new(User.new, namespace: :organization, organization: collectivity)
 
       expect(page).to have_selector(".modal form") do |form|
-        aggregate_failures do
-          expect(form).to have_html_attribute("action").with_value("/organisation/collectivites/#{collectivity.id}/utilisateurs")
+        expect(form).to have_html_attribute("action").with_value("/organisation/collectivites/#{collectivity.id}/utilisateurs")
 
-          expect(form).not_to have_field("Organisation")
-          expect(form).to     have_field("Nom")
-          expect(form).to     have_field("Prénom")
-          expect(form).not_to have_field("Administrateur de l'organisation")
-          expect(form).not_to have_field("Administrateur de la plateforme Passerelle")
-        end
+        expect(form).not_to have_field("Organisation")
+        expect(form).to     have_field("Nom")
+        expect(form).to     have_field("Prénom")
+        expect(form).not_to have_field("Administrateur de l'organisation")
+        expect(form).not_to have_field("Administrateur de la plateforme Passerelle")
       end
     end
 
@@ -297,15 +271,13 @@ RSpec.describe Views::Users::FormComponent, type: :component do
       render_inline described_class.new(user, namespace: :organization, organization: collectivity)
 
       expect(page).to have_selector(".modal form") do |form|
-        aggregate_failures do
-          expect(form).to have_html_attribute("action").with_value("/organisation/collectivites/#{collectivity.id}/utilisateurs/#{user.id}")
+        expect(form).to have_html_attribute("action").with_value("/organisation/collectivites/#{collectivity.id}/utilisateurs/#{user.id}")
 
-          expect(form).not_to have_field("Organisation")
-          expect(form).to     have_field("Nom",          with: user.last_name)
-          expect(form).to     have_field("Prénom",       with: user.first_name)
-          expect(form).not_to have_field("Administrateur de l'organisation")
-          expect(form).not_to have_field("Administrateur de la plateforme Passerelle")
-        end
+        expect(form).not_to have_field("Organisation")
+        expect(form).to     have_field("Nom",          with: user.last_name)
+        expect(form).to     have_field("Prénom",       with: user.first_name)
+        expect(form).not_to have_field("Administrateur de l'organisation")
+        expect(form).not_to have_field("Administrateur de la plateforme Passerelle")
       end
     end
   end
@@ -317,19 +289,17 @@ RSpec.describe Views::Users::FormComponent, type: :component do
       render_inline described_class.new(User.new, namespace: :organization)
 
       expect(page).to have_selector(".modal form") do |form|
-        aggregate_failures do
-          expect(form).to have_html_attribute("action").with_value("/organisation/utilisateurs")
+        expect(form).to have_html_attribute("action").with_value("/organisation/utilisateurs")
 
-          expect(form).not_to have_field("Organisation")
-          expect(form).to     have_field("Nom")
-          expect(form).to     have_field("Prénom")
-          expect(form).to     have_field("Administrateur de l'organisation")
-          expect(form).not_to have_field("Administrateur de la plateforme Passerelle")
+        expect(form).not_to have_field("Organisation")
+        expect(form).to     have_field("Nom")
+        expect(form).to     have_field("Prénom")
+        expect(form).to     have_field("Administrateur de l'organisation")
+        expect(form).not_to have_field("Administrateur de la plateforme Passerelle")
 
-          expect(form).not_to have_selector(".form-block", text: "Guichets",       visible: :all)
-          expect(form).not_to have_selector("turbo-frame#user_offices_checkboxes", visible: :all)
-          expect(form).not_to have_selector("input[name='user[office_ids][]']",    visible: :all)
-        end
+        expect(form).not_to have_selector(".form-block", text: "Guichets",       visible: :all)
+        expect(form).not_to have_selector("turbo-frame#user_offices_checkboxes", visible: :all)
+        expect(form).not_to have_selector("input[name='user[office_ids][]']",    visible: :all)
       end
     end
 
@@ -338,19 +308,17 @@ RSpec.describe Views::Users::FormComponent, type: :component do
       render_inline described_class.new(user, namespace: :organization)
 
       expect(page).to have_selector(".modal form") do |form|
-        aggregate_failures do
-          expect(form).to have_html_attribute("action").with_value("/organisation/utilisateurs/#{user.id}")
+        expect(form).to have_html_attribute("action").with_value("/organisation/utilisateurs/#{user.id}")
 
-          expect(form).not_to have_field("Organisation")
-          expect(form).to     have_field("Nom",          with: user.last_name)
-          expect(form).to     have_field("Prénom",       with: user.first_name)
-          expect(form).to     have_unchecked_field("Administrateur de l'organisation")
-          expect(form).not_to have_field("Administrateur de la plateforme Passerelle")
+        expect(form).not_to have_field("Organisation")
+        expect(form).to     have_field("Nom",          with: user.last_name)
+        expect(form).to     have_field("Prénom",       with: user.first_name)
+        expect(form).to     have_unchecked_field("Administrateur de l'organisation")
+        expect(form).not_to have_field("Administrateur de la plateforme Passerelle")
 
-          expect(form).not_to have_selector(".form-block", text: "Guichets",       visible: :all)
-          expect(form).not_to have_selector("turbo-frame#user_offices_checkboxes", visible: :all)
-          expect(form).not_to have_selector("input[name='user[office_ids][]']",    visible: :all)
-        end
+        expect(form).not_to have_selector(".form-block", text: "Guichets",       visible: :all)
+        expect(form).not_to have_selector("turbo-frame#user_offices_checkboxes", visible: :all)
+        expect(form).not_to have_selector("input[name='user[office_ids][]']",    visible: :all)
       end
     end
 
@@ -359,15 +327,13 @@ RSpec.describe Views::Users::FormComponent, type: :component do
       render_inline described_class.new(user, namespace: :organization)
 
       expect(page).to have_selector(".modal form") do |form|
-        aggregate_failures do
-          expect(form).to have_html_attribute("action").with_value("/organisation/utilisateurs/#{user.id}")
+        expect(form).to have_html_attribute("action").with_value("/organisation/utilisateurs/#{user.id}")
 
-          expect(form).not_to have_field("Organisation")
-          expect(form).to     have_field("Nom",          with: user.last_name)
-          expect(form).to     have_field("Prénom",       with: user.first_name)
-          expect(form).to     have_checked_field("Administrateur de l'organisation")
-          expect(form).not_to have_field("Administrateur de la plateforme Passerelle")
-        end
+        expect(form).not_to have_field("Organisation")
+        expect(form).to     have_field("Nom",          with: user.last_name)
+        expect(form).to     have_field("Prénom",       with: user.first_name)
+        expect(form).to     have_checked_field("Administrateur de l'organisation")
+        expect(form).not_to have_field("Administrateur de la plateforme Passerelle")
       end
     end
 
@@ -389,19 +355,17 @@ RSpec.describe Views::Users::FormComponent, type: :component do
       render_inline described_class.new(User.new, namespace: :organization)
 
       expect(page).to have_selector(".modal form") do |form|
-        aggregate_failures do
-          expect(form).to have_html_attribute("action").with_value("/organisation/utilisateurs")
+        expect(form).to have_html_attribute("action").with_value("/organisation/utilisateurs")
 
-          expect(form).not_to have_field("Organisation")
-          expect(form).to     have_field("Nom")
-          expect(form).to     have_field("Prénom")
-          expect(form).to     have_field("Administrateur de l'organisation")
-          expect(form).not_to have_field("Administrateur de la plateforme Passerelle")
+        expect(form).not_to have_field("Organisation")
+        expect(form).to     have_field("Nom")
+        expect(form).to     have_field("Prénom")
+        expect(form).to     have_field("Administrateur de l'organisation")
+        expect(form).not_to have_field("Administrateur de la plateforme Passerelle")
 
-          expect(form).to     have_selector(".form-block", text: "Guichets",       visible: :visible)
-          expect(form).not_to have_selector("turbo-frame#user_offices_checkboxes", visible: :all)
-          expect(form).to     have_selector("input[name='user[office_ids][]']",    visible: :all)
-        end
+        expect(form).to     have_selector(".form-block", text: "Guichets",       visible: :visible)
+        expect(form).not_to have_selector("turbo-frame#user_offices_checkboxes", visible: :all)
+        expect(form).to     have_selector("input[name='user[office_ids][]']",    visible: :all)
       end
     end
 
@@ -410,21 +374,19 @@ RSpec.describe Views::Users::FormComponent, type: :component do
       render_inline described_class.new(user, namespace: :organization)
 
       expect(page).to have_selector(".modal form") do |form|
-        aggregate_failures do
-          expect(form).to have_html_attribute("action").with_value("/organisation/utilisateurs/#{user.id}")
+        expect(form).to have_html_attribute("action").with_value("/organisation/utilisateurs/#{user.id}")
 
-          expect(form).not_to have_field("Organisation")
-          expect(form).to     have_field("Nom",          with: user.last_name)
-          expect(form).to     have_field("Prénom",       with: user.first_name)
-          expect(form).to     have_unchecked_field("Administrateur de l'organisation")
-          expect(form).not_to have_field("Administrateur de la plateforme Passerelle")
+        expect(form).not_to have_field("Organisation")
+        expect(form).to     have_field("Nom",          with: user.last_name)
+        expect(form).to     have_field("Prénom",       with: user.first_name)
+        expect(form).to     have_unchecked_field("Administrateur de l'organisation")
+        expect(form).not_to have_field("Administrateur de la plateforme Passerelle")
 
-          expect(form).to have_selector("label", text: "Guichets")
-          expect(form).to have_field("user[office_ids][]", count: 3)
-          expect(form).to have_unchecked_field(offices[0].name)
-          expect(form).to have_unchecked_field(offices[1].name)
-          expect(form).to have_checked_field(offices[2].name)
-        end
+        expect(form).to have_selector("label", text: "Guichets")
+        expect(form).to have_field("user[office_ids][]", count: 3)
+        expect(form).to have_unchecked_field(offices[0].name)
+        expect(form).to have_unchecked_field(offices[1].name)
+        expect(form).to have_checked_field(offices[2].name)
       end
     end
 
@@ -433,15 +395,13 @@ RSpec.describe Views::Users::FormComponent, type: :component do
       render_inline described_class.new(user, namespace: :organization)
 
       expect(page).to have_selector(".modal form") do |form|
-        aggregate_failures do
-          expect(form).to have_html_attribute("action").with_value("/organisation/utilisateurs/#{user.id}")
+        expect(form).to have_html_attribute("action").with_value("/organisation/utilisateurs/#{user.id}")
 
-          expect(form).not_to have_field("Organisation")
-          expect(form).to     have_field("Nom",          with: user.last_name)
-          expect(form).to     have_field("Prénom",       with: user.first_name)
-          expect(form).to     have_checked_field("Administrateur de l'organisation")
-          expect(form).not_to have_field("Administrateur de la plateforme Passerelle")
-        end
+        expect(form).not_to have_field("Organisation")
+        expect(form).to     have_field("Nom",          with: user.last_name)
+        expect(form).to     have_field("Prénom",       with: user.first_name)
+        expect(form).to     have_checked_field("Administrateur de l'organisation")
+        expect(form).not_to have_field("Administrateur de la plateforme Passerelle")
       end
     end
 

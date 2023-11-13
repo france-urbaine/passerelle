@@ -22,7 +22,7 @@ module UI
     #
     def with_assets_set; end
 
-    # @label Heroicon set
+    # @label Heroicon set (outline)
     #
     def with_heroicon_outline_set; end
 

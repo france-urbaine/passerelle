@@ -3,6 +3,8 @@
 module Views
   module Packages
     class StatusBadgeComponent < ApplicationViewComponent
+      define_component_helper :package_badge
+
       COLORS = {
         transmitted: "badge--blue",
         assigned:    "badge--green",

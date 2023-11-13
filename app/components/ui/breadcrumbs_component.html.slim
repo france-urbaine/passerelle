@@ -1,0 +1,19 @@
+.header-bar
+  .breadcrumbs
+    .breadcrumbs__path
+      = button_component "Retour à la page d'accueil", root_path, icon: "home", icon_only: true, icon_variant: :solid
+
+    - paths.each.with_index do |path, index|
+      .breadcrumbs__separator= " / "
+      .breadcrumbs__path
+        - if @heading && index == paths.size - 1
+          h1= path
+        - else
+          = path
+
+  .flex-auto
+
+  .header-bar__actions
+    - actions.each do |action|
+      .header-bar__action
+        = action

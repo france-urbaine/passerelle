@@ -24,14 +24,12 @@ RSpec.describe Layout::StatusPageComponent, type: :component do
       end
     end
 
-    aggregate_failures do
-      expect(page).to have_selector(".card > .card__content > .card__header") do |node|
-        expect(node).to have_selector("h1.card__title", text: "Card title")
-      end
+    expect(page).to have_selector(".card > .card__content > .card__header") do |node|
+      expect(node).to have_selector("h1.card__title", text: "Card title")
+    end
 
-      expect(page).to have_selector(".card > .card__content > .card__body") do |node|
-        expect(node).to have_selector("p", text: "Hello World")
-      end
+    expect(page).to have_selector(".card > .card__content > .card__body") do |node|
+      expect(node).to have_selector("p", text: "Hello World")
     end
   end
 
@@ -41,14 +39,12 @@ RSpec.describe Layout::StatusPageComponent, type: :component do
       template.with_body("Hello World")
     end
 
-    aggregate_failures do
-      expect(page).to have_selector(".card > .card__content > .card__header") do |node|
-        expect(node).to have_selector("h1.card__title", text: "Card title")
-      end
+    expect(page).to have_selector(".card > .card__content > .card__header") do |node|
+      expect(node).to have_selector("h1.card__title", text: "Card title")
+    end
 
-      expect(page).to have_selector(".card > .card__content > .card__body") do |node|
-        expect(node).to have_text("Hello World")
-      end
+    expect(page).to have_selector(".card > .card__content > .card__body") do |node|
+      expect(node).to have_text("Hello World")
     end
   end
 
@@ -60,10 +56,8 @@ RSpec.describe Layout::StatusPageComponent, type: :component do
     end
 
     expect(page).to have_selector(".card > .card__content > .card__actions") do |node|
-      aggregate_failures do
-        expect(node).to have_button("Action 1", class: "button--primary")
-        expect(node).to have_link("Action 2", class: "button", href: "/some/path")
-      end
+      expect(node).to have_button("Action 1", class: "button--primary")
+      expect(node).to have_link("Action 2", class: "button", href: "/some/path")
     end
   end
 
@@ -86,10 +80,8 @@ RSpec.describe Layout::StatusPageComponent, type: :component do
     expect(page).to have_selector("main.content > turbo-frame[src='/background/path']")
 
     expect(page).to have_selector(".modal > .modal__content > .modal__actions") do |node|
-      aggregate_failures do
-        expect(node).to have_button("Action 1", class: "button--primary")
-        expect(node).to have_link("Action 2", class: "button", href: "/some/path")
-      end
+      expect(node).to have_button("Action 1", class: "button--primary")
+      expect(node).to have_link("Action 2", class: "button", href: "/some/path")
     end
   end
 
@@ -105,14 +97,12 @@ RSpec.describe Layout::StatusPageComponent, type: :component do
     end
 
     expect(page).to have_selector(".header-bar > .breadcrumbs") do |node|
-      aggregate_failures do
-        expect(node).to     have_selector(".breadcrumbs__path", count: 2)
-        expect(node).not_to have_selector("h1")
+      expect(node).to     have_selector(".breadcrumbs__path", count: 2)
+      expect(node).not_to have_selector("h1")
 
-        expect(node).to have_selector(".breadcrumbs__path:nth-child(1) > a.icon-button", text: "Retour à la page d'accueil")
-        expect(node).to have_selector(".breadcrumbs__separator:nth-child(2)", text: "/")
-        expect(node).to have_selector(".breadcrumbs__path:nth-child(3)", text: "Root path")
-      end
+      expect(node).to have_selector(".breadcrumbs__path:nth-child(1) > a.icon-button", text: "Retour à la page d'accueil")
+      expect(node).to have_selector(".breadcrumbs__separator:nth-child(2)", text: "/")
+      expect(node).to have_selector(".breadcrumbs__path:nth-child(3)", text: "Root path")
     end
   end
 

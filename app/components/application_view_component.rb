@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 class ApplicationViewComponent < ViewComponent::Base
-  include ComponentsHelper
+  module Helpers; end
+
+  include Helpers
   include ActionPolicy::Behaviour
 
   # Delegate devise methods
@@ -42,4 +44,18 @@ class ApplicationViewComponent < ViewComponent::Base
 
     "components.#{component_path}"
   end
+
+  def self.define_component_helper(method_name)
+    component_class_name = name
+
+    helper_module = Module.new do
+      define_method method_name do |*args, **kwargs, &block|
+        render component_class_name.constantize.new(*args, **kwargs), &block
+      end
+    end
+
+    Helpers.prepend helper_module
+  end
+
+  private_class_method :define_component_helper
 end

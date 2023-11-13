@@ -25,14 +25,12 @@ RSpec.describe UI::CardComponent, type: :component do
       end
     end
 
-    aggregate_failures do
-      expect(page).to have_selector(".card > .card__content > .card__header") do |node|
-        expect(node).to have_selector("h1.card__title", text: "Card title")
-      end
+    expect(page).to have_selector(".card > .card__content > .card__header") do |node|
+      expect(node).to have_selector("h1.card__title", text: "Card title")
+    end
 
-      expect(page).to have_selector(".card > .card__content > .card__body") do |node|
-        expect(node).to have_selector("p", text: "Hello World")
-      end
+    expect(page).to have_selector(".card > .card__content > .card__body") do |node|
+      expect(node).to have_selector("p", text: "Hello World")
     end
   end
 
@@ -42,14 +40,12 @@ RSpec.describe UI::CardComponent, type: :component do
       card.with_body("Hello World")
     end
 
-    aggregate_failures do
-      expect(page).to have_selector(".card > .card__content > .card__header") do |node|
-        expect(node).to have_selector("h1.card__title", text: "Card title")
-      end
+    expect(page).to have_selector(".card > .card__content > .card__header") do |node|
+      expect(node).to have_selector("h1.card__title", text: "Card title")
+    end
 
-      expect(page).to have_selector(".card > .card__content > .card__body") do |node|
-        expect(node).to have_text("Hello World")
-      end
+    expect(page).to have_selector(".card > .card__content > .card__body") do |node|
+      expect(node).to have_text("Hello World")
     end
   end
 
@@ -61,10 +57,8 @@ RSpec.describe UI::CardComponent, type: :component do
     end
 
     expect(page).to have_selector(".card > .card__content > .card__actions") do |node|
-      aggregate_failures do
-        expect(node).to have_button("Action 1", class: "button--primary")
-        expect(node).to have_link("Action 2", class: "button", href: "/some/path")
-      end
+      expect(node).to have_button("Action 1", class: "button--primary")
+      expect(node).to have_link("Action 2", class: "button", href: "/some/path")
     end
   end
 
@@ -103,12 +97,10 @@ RSpec.describe UI::CardComponent, type: :component do
     end
 
     expect(page).to have_selector(".card > .card__content > form[action='/form/path']") do |form|
-      aggregate_failures do
-        expect(form).to have_selector(".card__header > h1.card__title", text: "Card title")
-        expect(form).to have_selector(".card__body > .form-block > input[name='commune[name]']")
-        expect(form).to have_selector(".card__actions") do |actions|
-          expect(actions).to have_button("Save", type: "submit")
-        end
+      expect(form).to have_selector(".card__header > h1.card__title", text: "Card title")
+      expect(form).to have_selector(".card__body > .form-block > input[name='commune[name]']")
+      expect(form).to have_selector(".card__actions") do |actions|
+        expect(actions).to have_button("Save", type: "submit")
       end
     end
   end

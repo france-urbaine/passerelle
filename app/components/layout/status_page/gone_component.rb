@@ -3,6 +3,8 @@
 module Layout
   module StatusPage
     class GoneComponent < ApplicationViewComponent
+      define_component_helper :gone_status_page_component
+
       renders_one :header, "LabelOrContent"
       renders_one :body, "LabelOrContent"
 

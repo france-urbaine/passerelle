@@ -10,10 +10,8 @@ RSpec.describe UI::Form::HiddenFieldComponent, type: :component do
     render_inline described_class.new(:hello, "World")
 
     expect(page).to have_selector("input[type='hidden']", visible: :hidden, count: 1) do |input|
-      aggregate_failures do
-        expect(input).to have_html_attribute("name").with_value("hello")
-        expect(input).to have_html_attribute("value").with_value("World")
-      end
+      expect(input).to have_html_attribute("name").with_value("hello")
+      expect(input).to have_html_attribute("value").with_value("World")
     end
   end
 
@@ -21,21 +19,17 @@ RSpec.describe UI::Form::HiddenFieldComponent, type: :component do
     render_inline described_class.new(:hello, %w[1 2 3])
 
     expect(page).to have_selector("input[type='hidden']", visible: :hidden, count: 3)
-    aggregate_failures do
-      expect(page).to have_selector("input[type='hidden'][name='hello[]'][value='1']", visible: :hidden)
-      expect(page).to have_selector("input[type='hidden'][name='hello[]'][value='2']", visible: :hidden)
-      expect(page).to have_selector("input[type='hidden'][name='hello[]'][value='3']", visible: :hidden)
-    end
+    expect(page).to have_selector("input[type='hidden'][name='hello[]'][value='1']", visible: :hidden)
+    expect(page).to have_selector("input[type='hidden'][name='hello[]'][value='2']", visible: :hidden)
+    expect(page).to have_selector("input[type='hidden'][name='hello[]'][value='3']", visible: :hidden)
   end
 
   it "renders an hidden field with a Hash value" do
     render_inline described_class.new(:hello, { foo: 2, bar: 3 })
 
     expect(page).to have_selector("input[type='hidden']", visible: :hidden, count: 2)
-    aggregate_failures do
-      expect(page).to have_selector("input[type='hidden'][name='hello[foo]'][value='2']", visible: :hidden)
-      expect(page).to have_selector("input[type='hidden'][name='hello[bar]'][value='3']", visible: :hidden)
-    end
+    expect(page).to have_selector("input[type='hidden'][name='hello[foo]'][value='2']", visible: :hidden)
+    expect(page).to have_selector("input[type='hidden'][name='hello[bar]'][value='3']", visible: :hidden)
   end
 
   it "renders nothing when value is nil" do

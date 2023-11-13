@@ -1,0 +1,35 @@
+doctype html
+html
+  head
+    title Lookbook de Passerelle
+    meta name="viewport" content="width=device-width,initial-scale=1"
+
+    = csrf_meta_tags
+    = csp_meta_tag
+
+    = stylesheet_link_tag "application", "data-turbo-track": "reload"
+    = javascript_include_tag "application", "data-turbo-track": "reload", defer: true
+
+  body.overflow-auto
+    ruby:
+      frame = params.dig(:lookbook, :display, :frame)
+      width_class =
+        case params.dig(:lookbook, :display, :width)
+        when "medium" then "w-[48rem]"
+        when "small"  then "w-96"
+        end
+
+    - case frame
+    - when "content"
+      = content_frame_component do
+        - if width_class
+          div( class=width_class )= yield
+        - else
+          = yield
+
+    - when "modal"
+      = modal_frame_component do
+        = yield
+
+    - else
+      = yield

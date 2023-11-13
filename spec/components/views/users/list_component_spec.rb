@@ -19,20 +19,18 @@ RSpec.describe Views::Users::ListComponent, type: :component do
       render_inline described_class.new(User.all, pagy, namespace: :admin)
 
       expect(page).to have_selector(".datatable table") do |table|
-        aggregate_failures do
-          expect(table).to have_selector("th", text: "Utilisateur")
-          expect(table).to have_selector("th", text: "Adresse mail")
-          expect(table).to have_selector("th", text: "Organisation")
-          expect(table).to have_selector("th", text: "Admin. de l'organisation")
-          expect(table).to have_selector("th", text: "Admin. de Passerelle")
-          expect(table).to have_selector("th", text: "Guichets")
+        expect(table).to have_selector("th", text: "Utilisateur")
+        expect(table).to have_selector("th", text: "Adresse mail")
+        expect(table).to have_selector("th", text: "Organisation")
+        expect(table).to have_selector("th", text: "Admin. de l'organisation")
+        expect(table).to have_selector("th", text: "Admin. de Passerelle")
+        expect(table).to have_selector("th", text: "Guichets")
 
-          expect(table).to have_selector(:table_row, {
-            "Utilisateur"  => users.first.name,
-            "Adresse mail" => users.first.email,
-            "Organisation" => users.first.organization.name
-          })
-        end
+        expect(table).to have_selector(:table_row, {
+          "Utilisateur"  => users.first.name,
+          "Adresse mail" => users.first.email,
+          "Organisation" => users.first.organization.name
+        })
       end
     end
 
@@ -43,19 +41,17 @@ RSpec.describe Views::Users::ListComponent, type: :component do
       end
 
       expect(page).to have_selector(".datatable table") do |table|
-        aggregate_failures do
-          expect(table).to have_selector("th", text: "Utilisateur")
-          expect(table).to have_selector("th", text: "Adresse mail")
-          expect(table).not_to have_selector("th", text: "Organisation")
-          expect(table).not_to have_selector("th", text: "Admin. de l'organisation")
-          expect(table).not_to have_selector("th", text: "Admin. de Passerelle")
-          expect(table).not_to have_selector("th", text: "Guichets")
+        expect(table).to have_selector("th", text: "Utilisateur")
+        expect(table).to have_selector("th", text: "Adresse mail")
+        expect(table).not_to have_selector("th", text: "Organisation")
+        expect(table).not_to have_selector("th", text: "Admin. de l'organisation")
+        expect(table).not_to have_selector("th", text: "Admin. de Passerelle")
+        expect(table).not_to have_selector("th", text: "Guichets")
 
-          expect(table).to have_selector(:table_row, {
-            "Utilisateur"  => users.first.name,
-            "Adresse mail" => users.first.email
-          })
-        end
+        expect(table).to have_selector(:table_row, {
+          "Utilisateur"  => users.first.name,
+          "Adresse mail" => users.first.email
+        })
       end
     end
   end
@@ -100,12 +96,10 @@ RSpec.describe Views::Users::ListComponent, type: :component do
           render_inline described_class.new(User.all, pagy, namespace: :admin)
 
           expect(page).to have_selector(:table_row, "Utilisateur" => users.first.name) do |row|
-            aggregate_failures do
-              expect(row).to     have_link(users.first.name,            href: "/admin/utilisateurs/#{users.first.id}")
-              expect(row).to     have_link("Modifier cet utilisateur",  href: "/admin/utilisateurs/#{users.first.id}/edit")
-              expect(row).to     have_link("Supprimer cet utilisateur", href: "/admin/utilisateurs/#{users.first.id}/remove")
-              expect(row).not_to have_link("Exclure cet utilisateur du guichet")
-            end
+            expect(row).to     have_link(users.first.name,            href: "/admin/utilisateurs/#{users.first.id}")
+            expect(row).to     have_link("Modifier cet utilisateur",  href: "/admin/utilisateurs/#{users.first.id}/edit")
+            expect(row).to     have_link("Supprimer cet utilisateur", href: "/admin/utilisateurs/#{users.first.id}/remove")
+            expect(row).not_to have_link("Exclure cet utilisateur du guichet")
           end
         end
       end
@@ -118,12 +112,10 @@ RSpec.describe Views::Users::ListComponent, type: :component do
           render_inline described_class.new(User.all, pagy, namespace: :admin, parent: collectivity)
 
           expect(page).to have_selector(:table_row, "Utilisateur" => users.first.name) do |row|
-            aggregate_failures do
-              expect(row).to     have_link(users.first.name,            href: "/admin/utilisateurs/#{users.first.id}")
-              expect(row).to     have_link("Modifier cet utilisateur",  href: "/admin/utilisateurs/#{users.first.id}/edit")
-              expect(row).to     have_link("Supprimer cet utilisateur", href: "/admin/utilisateurs/#{users.first.id}/remove")
-              expect(row).not_to have_link("Exclure cet utilisateur du guichet")
-            end
+            expect(row).to     have_link(users.first.name,            href: "/admin/utilisateurs/#{users.first.id}")
+            expect(row).to     have_link("Modifier cet utilisateur",  href: "/admin/utilisateurs/#{users.first.id}/edit")
+            expect(row).to     have_link("Supprimer cet utilisateur", href: "/admin/utilisateurs/#{users.first.id}/remove")
+            expect(row).not_to have_link("Exclure cet utilisateur du guichet")
           end
         end
       end
@@ -137,12 +129,10 @@ RSpec.describe Views::Users::ListComponent, type: :component do
           render_inline described_class.new(User.all, pagy, namespace: :admin, parent: office)
 
           expect(page).to have_selector(:table_row, "Utilisateur" => users.first.name) do |row|
-            aggregate_failures do
-              expect(row).to have_link(users.first.name,                     href: "/admin/utilisateurs/#{users.first.id}")
-              expect(row).to have_link("Modifier cet utilisateur",           href: "/admin/utilisateurs/#{users.first.id}/edit")
-              expect(row).to have_link("Supprimer cet utilisateur",          href: "/admin/utilisateurs/#{users.first.id}/remove")
-              expect(row).to have_link("Exclure cet utilisateur du guichet", href: "/admin/guichets/#{office.id}/utilisateurs/#{users.first.id}/remove")
-            end
+            expect(row).to have_link(users.first.name,                     href: "/admin/utilisateurs/#{users.first.id}")
+            expect(row).to have_link("Modifier cet utilisateur",           href: "/admin/utilisateurs/#{users.first.id}/edit")
+            expect(row).to have_link("Supprimer cet utilisateur",          href: "/admin/utilisateurs/#{users.first.id}/remove")
+            expect(row).to have_link("Exclure cet utilisateur du guichet", href: "/admin/guichets/#{office.id}/utilisateurs/#{users.first.id}/remove")
           end
         end
       end
@@ -159,12 +149,10 @@ RSpec.describe Views::Users::ListComponent, type: :component do
           render_inline described_class.new(organization.users, pagy, namespace: :organization)
 
           expect(page).to have_selector(:table_row, "Utilisateur" => users.first.name) do |row|
-            aggregate_failures do
-              expect(row).to     have_link(users.first.name,            href: "/organisation/utilisateurs/#{users.first.id}")
-              expect(row).to     have_link("Modifier cet utilisateur",  href: "/organisation/utilisateurs/#{users.first.id}/edit")
-              expect(row).to     have_link("Supprimer cet utilisateur", href: "/organisation/utilisateurs/#{users.first.id}/remove")
-              expect(row).not_to have_link("Exclure cet utilisateur du guichet")
-            end
+            expect(row).to     have_link(users.first.name,            href: "/organisation/utilisateurs/#{users.first.id}")
+            expect(row).to     have_link("Modifier cet utilisateur",  href: "/organisation/utilisateurs/#{users.first.id}/edit")
+            expect(row).to     have_link("Supprimer cet utilisateur", href: "/organisation/utilisateurs/#{users.first.id}/remove")
+            expect(row).not_to have_link("Exclure cet utilisateur du guichet")
           end
         end
       end
@@ -179,12 +167,10 @@ RSpec.describe Views::Users::ListComponent, type: :component do
             render_inline described_class.new(collectivity.users, pagy, namespace: :organization, parent: collectivity)
 
             expect(page).to have_selector(:table_row, "Utilisateur" => users.first.name) do |row|
-              aggregate_failures do
-                expect(row).not_to have_link(users.first.name)
-                expect(row).not_to have_link("Modifier cet utilisateur")
-                expect(row).not_to have_link("Supprimer cet utilisateur")
-                expect(row).not_to have_link("Exclure cet utilisateur du guichet")
-              end
+              expect(row).not_to have_link(users.first.name)
+              expect(row).not_to have_link("Modifier cet utilisateur")
+              expect(row).not_to have_link("Supprimer cet utilisateur")
+              expect(row).not_to have_link("Exclure cet utilisateur du guichet")
             end
           end
         end
@@ -196,12 +182,10 @@ RSpec.describe Views::Users::ListComponent, type: :component do
             render_inline described_class.new(User.all, pagy, namespace: :organization, parent: collectivity)
 
             expect(page).to have_selector(:table_row, "Utilisateur" => users.first.name) do |row|
-              aggregate_failures do
-                expect(row).to     have_link(users.first.name,            href: "/organisation/collectivites/#{collectivity.id}/utilisateurs/#{users.first.id}")
-                expect(row).to     have_link("Modifier cet utilisateur",  href: "/organisation/collectivites/#{collectivity.id}/utilisateurs/#{users.first.id}/edit")
-                expect(row).to     have_link("Supprimer cet utilisateur", href: "/organisation/collectivites/#{collectivity.id}/utilisateurs/#{users.first.id}/remove")
-                expect(row).not_to have_link("Exclure cet utilisateur du guichet")
-              end
+              expect(row).to     have_link(users.first.name,            href: "/organisation/collectivites/#{collectivity.id}/utilisateurs/#{users.first.id}")
+              expect(row).to     have_link("Modifier cet utilisateur",  href: "/organisation/collectivites/#{collectivity.id}/utilisateurs/#{users.first.id}/edit")
+              expect(row).to     have_link("Supprimer cet utilisateur", href: "/organisation/collectivites/#{collectivity.id}/utilisateurs/#{users.first.id}/remove")
+              expect(row).not_to have_link("Exclure cet utilisateur du guichet")
             end
           end
         end
@@ -216,12 +200,10 @@ RSpec.describe Views::Users::ListComponent, type: :component do
           render_inline described_class.new(User.all, pagy, namespace: :organization, parent: office)
 
           expect(page).to have_selector(:table_row, "Utilisateur" => users.first.name) do |row|
-            aggregate_failures do
-              expect(row).to have_link(users.first.name,                     href: "/organisation/utilisateurs/#{users.first.id}")
-              expect(row).to have_link("Modifier cet utilisateur",           href: "/organisation/utilisateurs/#{users.first.id}/edit")
-              expect(row).to have_link("Supprimer cet utilisateur",          href: "/organisation/utilisateurs/#{users.first.id}/remove")
-              expect(row).to have_link("Exclure cet utilisateur du guichet", href: "/organisation/guichets/#{office.id}/utilisateurs/#{users.first.id}/remove")
-            end
+            expect(row).to have_link(users.first.name,                     href: "/organisation/utilisateurs/#{users.first.id}")
+            expect(row).to have_link("Modifier cet utilisateur",           href: "/organisation/utilisateurs/#{users.first.id}/edit")
+            expect(row).to have_link("Supprimer cet utilisateur",          href: "/organisation/utilisateurs/#{users.first.id}/remove")
+            expect(row).to have_link("Exclure cet utilisateur du guichet", href: "/organisation/guichets/#{office.id}/utilisateurs/#{users.first.id}/remove")
           end
         end
       end

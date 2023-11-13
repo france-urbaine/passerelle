@@ -2,6 +2,8 @@
 
 module Layout
   class DatatableComponent < ApplicationViewComponent
+    define_component_helper :datatable_component
+
     renders_many :columns, "Column"
     renders_one :empty_message
 

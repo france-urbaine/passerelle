@@ -7,14 +7,12 @@ RSpec.describe Views::Offices::FormComponent, type: :component do
     render_inline described_class.new(Office.new, namespace: :admin)
 
     expect(page).to have_selector(".modal form") do |form|
-      aggregate_failures do
-        expect(form).to have_html_attribute("action").with_value("/admin/guichets")
+      expect(form).to have_html_attribute("action").with_value("/admin/guichets")
 
-        expect(form).to have_field("DDFIP")
-        expect(form).to have_field("Nom du guichet")
-        expect(form).to have_unchecked_field("Évaluation des locaux d'habitation")
-        expect(form).to have_unchecked_field("Évaluation des locaux professionnels")
-      end
+      expect(form).to have_field("DDFIP")
+      expect(form).to have_field("Nom du guichet")
+      expect(form).to have_unchecked_field("Évaluation des locaux d'habitation")
+      expect(form).to have_unchecked_field("Évaluation des locaux professionnels")
     end
   end
 
@@ -23,14 +21,12 @@ RSpec.describe Views::Offices::FormComponent, type: :component do
     render_inline described_class.new(Office.new, namespace: :admin, ddfip: ddfip)
 
     expect(page).to have_selector(".modal form") do |form|
-      aggregate_failures do
-        expect(form).to have_html_attribute("action").with_value("/admin/ddfips/#{ddfip.id}/guichets")
+      expect(form).to have_html_attribute("action").with_value("/admin/ddfips/#{ddfip.id}/guichets")
 
-        expect(form).not_to have_field("DDFIP")
-        expect(form).to have_field("Nom du guichet")
-        expect(form).to have_unchecked_field("Évaluation des locaux d'habitation")
-        expect(form).to have_unchecked_field("Évaluation des locaux professionnels")
-      end
+      expect(form).not_to have_field("DDFIP")
+      expect(form).to have_field("Nom du guichet")
+      expect(form).to have_unchecked_field("Évaluation des locaux d'habitation")
+      expect(form).to have_unchecked_field("Évaluation des locaux professionnels")
     end
   end
 
@@ -38,14 +34,12 @@ RSpec.describe Views::Offices::FormComponent, type: :component do
     render_inline described_class.new(Office.new, namespace: :organization)
 
     expect(page).to have_selector(".modal form") do |form|
-      aggregate_failures do
-        expect(form).to have_html_attribute("action").with_value("/organisation/guichets")
+      expect(form).to have_html_attribute("action").with_value("/organisation/guichets")
 
-        expect(form).not_to have_field("DDFIP")
-        expect(form).to have_field("Nom du guichet")
-        expect(form).to have_unchecked_field("Évaluation des locaux d'habitation")
-        expect(form).to have_unchecked_field("Évaluation des locaux professionnels")
-      end
+      expect(form).not_to have_field("DDFIP")
+      expect(form).to have_field("Nom du guichet")
+      expect(form).to have_unchecked_field("Évaluation des locaux d'habitation")
+      expect(form).to have_unchecked_field("Évaluation des locaux professionnels")
     end
   end
 
@@ -55,14 +49,12 @@ RSpec.describe Views::Offices::FormComponent, type: :component do
     render_inline described_class.new(office, namespace: :admin)
 
     expect(page).to have_selector(".modal form") do |form|
-      aggregate_failures do
-        expect(form).to have_html_attribute("action").with_value("/admin/guichets/#{office.id}")
+      expect(form).to have_html_attribute("action").with_value("/admin/guichets/#{office.id}")
 
-        expect(form).to have_field("DDFIP",          with: ddfip.name)
-        expect(form).to have_field("Nom du guichet", with: office.name)
-        expect(form).to have_unchecked_field("Évaluation des locaux d'habitation")
-        expect(form).to have_checked_field("Évaluation des locaux professionnels")
-      end
+      expect(form).to have_field("DDFIP",          with: ddfip.name)
+      expect(form).to have_field("Nom du guichet", with: office.name)
+      expect(form).to have_unchecked_field("Évaluation des locaux d'habitation")
+      expect(form).to have_checked_field("Évaluation des locaux professionnels")
     end
   end
 
@@ -72,14 +64,12 @@ RSpec.describe Views::Offices::FormComponent, type: :component do
     render_inline described_class.new(office, namespace: :organization)
 
     expect(page).to have_selector(".modal form") do |form|
-      aggregate_failures do
-        expect(form).to have_html_attribute("action").with_value("/organisation/guichets/#{office.id}")
+      expect(form).to have_html_attribute("action").with_value("/organisation/guichets/#{office.id}")
 
-        expect(form).not_to have_field("DDFIP")
-        expect(form).to have_field("Nom du guichet", with: office.name)
-        expect(form).to have_unchecked_field("Évaluation des locaux d'habitation")
-        expect(form).to have_checked_field("Évaluation des locaux professionnels")
-      end
+      expect(form).not_to have_field("DDFIP")
+      expect(form).to have_field("Nom du guichet", with: office.name)
+      expect(form).to have_unchecked_field("Évaluation des locaux d'habitation")
+      expect(form).to have_checked_field("Évaluation des locaux professionnels")
     end
   end
 end

@@ -1,0 +1,7 @@
+.tabs( data-controller="tabs" )
+  .tabs__nav
+    - tabs.each_with_index do |tab, index|
+      = tab.button
+
+  - tabs.each_with_index do |tab, index|
+    = tab

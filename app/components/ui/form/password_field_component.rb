@@ -3,6 +3,8 @@
 module UI
   module Form
     class PasswordFieldComponent < ApplicationViewComponent
+      define_component_helper :password_field_component
+
       def initialize(object_name, method, value = nil, strength_test: false, **options)
         @object_name   = object_name
         @method        = method

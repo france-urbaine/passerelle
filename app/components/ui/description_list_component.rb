@@ -2,8 +2,10 @@
 
 module UI
   class DescriptionListComponent < ApplicationViewComponent
+    define_component_helper :description_list_component
+
     renders_many :attributes, lambda { |*args, **options|
-      DescriptionListAttribute.new(@record, *args, **options)
+      Attribute.new(@record, *args, **options)
     }
 
     attr_reader :record
@@ -19,7 +21,7 @@ module UI
       attributes.each(&:to_s)
     end
 
-    class DescriptionListAttribute < ApplicationViewComponent
+    class Attribute < ApplicationViewComponent
       renders_many :actions, ::UI::ButtonComponent
       renders_one  :reference
 

@@ -2,6 +2,8 @@
 
 module UI
   class ModalComponent < ApplicationViewComponent
+    define_component_helper :modal_component
+
     renders_one :header, "LabelOrContent"
     renders_one :body, "LabelOrContent"
 

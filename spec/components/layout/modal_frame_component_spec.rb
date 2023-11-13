@@ -48,14 +48,12 @@ RSpec.describe Layout::ModalFrameComponent, type: :component do
     end
 
     expect(page).to have_selector("turbo-frame#modal > .modal > .modal__content") do |modal|
-      aggregate_failures do
-        expect(modal).to have_selector(".modal__header-toolbar > a.modal__close-button") do |link|
-          expect(link).to have_html_attribute(:href).with_value("/home/root")
-        end
+      expect(modal).to have_selector(".modal__header-toolbar > a.modal__close-button") do |link|
+        expect(link).to have_html_attribute(:href).with_value("/home/root")
+      end
 
-        expect(modal).to have_selector(".modal__actions > a.modal__close-action") do |link|
-          expect(link).to have_html_attribute(:href).with_value("/home/root")
-        end
+      expect(modal).to have_selector(".modal__actions > a.modal__close-action") do |link|
+        expect(link).to have_html_attribute(:href).with_value("/home/root")
       end
     end
   end

@@ -3,7 +3,7 @@
 module Samples
   # @hidden
   class TurboPreview < ViewComponent::Preview
-    def card; end
+    def content; end
     def modal; end
   end
 end

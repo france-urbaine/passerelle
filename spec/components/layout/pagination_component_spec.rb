@@ -17,10 +17,8 @@ RSpec.describe Layout::PaginationComponent, type: :component do
     it "renders buttons" do
       render_inline component
 
-      aggregate_failures do
-        expect(page).to have_selector(".icon-button", text: "Page précédente")
-        expect(page).to have_selector(".icon-button", text: "Page suivante")
-      end
+      expect(page).to have_selector(".icon-button", text: "Page précédente")
+      expect(page).to have_selector(".icon-button", text: "Page suivante")
     end
 
     it "renders options" do
@@ -51,12 +49,10 @@ RSpec.describe Layout::PaginationComponent, type: :component do
 
       expect(page).to have_button("Options d'affichage")
       expect(page).to have_selector(".dropdown__menu") do |menu|
-        aggregate_failures do
-          expect(menu).to have_link("Trier par nom, par ordre croissant",      href: "/test/components?order=name")
-          expect(menu).to have_link("Trier par nom, par ordre décroissant",    href: "/test/components?order=-name")
-          expect(menu).to have_link("Trier par nombre, par ordre croissant",   href: "/test/components?order=count")
-          expect(menu).to have_link("Trier par nombre, par ordre décroissant", href: "/test/components?order=-count")
-        end
+        expect(menu).to have_link("Trier par nom, par ordre croissant",      href: "/test/components?order=name")
+        expect(menu).to have_link("Trier par nom, par ordre décroissant",    href: "/test/components?order=-name")
+        expect(menu).to have_link("Trier par nombre, par ordre croissant",   href: "/test/components?order=count")
+        expect(menu).to have_link("Trier par nombre, par ordre décroissant", href: "/test/components?order=-count")
       end
     end
   end
@@ -67,21 +63,17 @@ RSpec.describe Layout::PaginationComponent, type: :component do
     it "renders buttons" do
       render_inline component
 
-      aggregate_failures do
-        expect(page).to have_selector(".icon-button[data-turbo-frame='content']", text: "Page précédente")
-        expect(page).to have_selector(".icon-button[data-turbo-frame='content']", text: "Page suivante")
-      end
+      expect(page).to have_selector(".icon-button[data-turbo-frame='content']", text: "Page précédente")
+      expect(page).to have_selector(".icon-button[data-turbo-frame='content']", text: "Page suivante")
     end
 
     it "renders order options" do
       render_inline component
 
-      aggregate_failures do
-        expect(page).to have_selector(".icon-button[data-turbo-frame='content']", text: "Trier par nom, par ordre croissant")
-        expect(page).to have_selector(".icon-button[data-turbo-frame='content']", text: "Trier par nom, par ordre décroissant")
-        expect(page).to have_selector(".icon-button[data-turbo-frame='content']", text: "Trier par nombre, par ordre croissant")
-        expect(page).to have_selector(".icon-button[data-turbo-frame='content']", text: "Trier par nombre, par ordre décroissant")
-      end
+      expect(page).to have_selector(".icon-button[data-turbo-frame='content']", text: "Trier par nom, par ordre croissant")
+      expect(page).to have_selector(".icon-button[data-turbo-frame='content']", text: "Trier par nom, par ordre décroissant")
+      expect(page).to have_selector(".icon-button[data-turbo-frame='content']", text: "Trier par nombre, par ordre croissant")
+      expect(page).to have_selector(".icon-button[data-turbo-frame='content']", text: "Trier par nombre, par ordre décroissant")
     end
   end
 end

@@ -2,6 +2,8 @@
 
 module UI
   class ButtonComponent < ApplicationViewComponent
+    define_component_helper :button_component
+
     def initialize(*args, **options)
       raise ArgumentError, "wrong number of arguments (given #{args.size}, expected 0..2)" if args.size > 2
 
@@ -46,7 +48,9 @@ module UI
       options = @options.dup
       options.delete(:href)
 
-      @icon = options.delete(:icon)
+      @icon         = options.delete(:icon)
+      @icon_set     = options.delete(:icon_set)
+      @icon_variant = options.delete(:icon_variant)
 
       if options.key?(:icon_only)
         @icon_only = options.delete(:icon_only)
@@ -115,10 +119,15 @@ module UI
     end
 
     def icon
+      icon_options = {
+        set:     @icon_set,
+        variant: @icon_variant
+      }.compact
+
       if @icon_only && @label
-        render UI::IconComponent.new(@icon, @label)
+        icon_component(@icon, @label, **icon_options)
       else
-        render UI::IconComponent.new(@icon)
+        icon_component(@icon, **icon_options)
       end
     end
 

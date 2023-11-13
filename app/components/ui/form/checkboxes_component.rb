@@ -3,6 +3,8 @@
 module UI
   module Form
     class CheckboxesComponent < ApplicationViewComponent
+      define_component_helper :checkboxes_component
+
       def initialize(object_name, method, collection, value_method: nil, text_method: nil, **options)
         @object_name  = object_name
         @method       = method
@@ -28,6 +30,10 @@ module UI
         else
           %i[to_s to_s]
         end
+      end
+
+      def check_all_id
+        "#{@object_name}_#{@method}_check_all"
       end
     end
   end
