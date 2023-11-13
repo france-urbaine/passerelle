@@ -5,7 +5,10 @@
   - datatable.with_selection do |selection|
     - if allow_action_to?(:destroy_all?, OauthApplication)
       - selection.with_action "Tout supprimer", polymorphic_path([:remove_all, @namespace, @parent, :oauth_applications]), modal: true
-  - datatable.with_column(:sandbox)                 { "" }                 if columns.include?(:sandbox)
+
+  - if columns.include?(:sandbox) && @oauth_applications.any?(&:sandbox?)
+    - datatable.with_column(:sandbox, compact: true) { "Etat" }
+
   - datatable.with_column(:name, sort: true )       { "Nom" }              if columns.include?(:name)
   - datatable.with_column(:uid)                     { "UID" }              if columns.include?(:uid)
   - datatable.with_column(:secret)                  { "Secret" }           if columns.include?(:secret)
@@ -27,7 +30,11 @@
       - row.with_action "Supprimer cette application", polymorphic_path([:remove, @namespace, @parent, oauth_application]), icon: "trash", modal: true
 
     - row.with_column(:sandbox) do
-      = badge_component("Bac à sable", :yellow) if oauth_application.sandbox?
+      - if oauth_application.sandbox?
+        = badge_component("Bac à sable", :yellow)
+      - else
+        -# Render a empty string to avoid empty placeholder
+        = " "
 
     - row.with_column(:name) do
       = authorized_link_to(oauth_application, namespace: @namespace, parent: @parent) do

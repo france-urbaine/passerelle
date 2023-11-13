@@ -13,7 +13,10 @@
     - datatable.with_selection do |selection|
       - if allowed_to?(:destroy_all?, Publisher)
         - selection.with_action "Tout supprimer", remove_all_admin_publishers_path, modal: true
-    - datatable.with_column(:sandbox)           { "" }
+
+    - if @publishers.any?(&:sandbox?)
+      - datatable.with_column(:sandbox, compact: true) { "Etat" }
+
     - datatable.with_column(:name,  sort: true) { "Éditeur" }
     - datatable.with_column(:siren, sort: true) { "SIREN" }
 
@@ -44,7 +47,11 @@
         - row.with_action "Supprimer cet éditeur", remove_admin_publisher_path(publisher), icon: "trash", modal: true
 
       - row.with_column(:sandbox) do
-        = badge_component("Bac à sable", :yellow) if publisher.sandbox?
+        - if publisher.sandbox?
+          = badge_component("Bac à sable", :yellow)
+        - else
+          -# Render a empty string to avoid empty placeholder
+          = " "
 
       - row.with_column(:name) do
         = authorized_link_to publisher, namespace: :admin

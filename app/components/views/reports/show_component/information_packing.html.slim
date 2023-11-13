@@ -4,9 +4,11 @@
     | Informations relatives au paquet
 
   .subheader-bar__actions
-    .subheader-bar__action
-      div id=dom_id(@report, :status) is="turbo-frame"
-        = report_badge(@report)
+    .subheader-bar__action( id=dom_id(@report, :status) is="turbo-frame" )
+      = report_badge(@report)
+
+    - if @report.sandbox?
+      .subheader-bar__action= badge_component("Bac à sable", :yellow)
 
 = description_list_component(@report) do |list|
   - list.with_attribute("Référence du paquet") do |attribute|
