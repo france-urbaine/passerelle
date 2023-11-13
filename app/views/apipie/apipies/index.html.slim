@@ -6,20 +6,16 @@
   /   li.pull-right
   /     = @versions.collect { |v| link_to v, Apipie.full_url(v+@doc[:link_extension]) }.join(' / ').html_safe
 
-  - @doc[:resources].sort_by(&:first).each do |key, api|
-    h2.subheader
-      - if api.dig(:metadata, :icon)
-        = icon_component api.dig(:metadata, :icon)
+  = content_flow_component do |flow|
+    - @doc[:resources].sort_by(&:first).each do |key, api|
+      - flow.with_header do |header|
+        - header.with_title api[:name], api.dig(:metadata, :icon)
+        - header.with_custom do
+          - if api[:deprecated]
+            code.code DEPRECATED
 
-      = api[:name]
-
-      - if api[:deprecated]
-        code.code DEPRECATED
-
-    .card.documentation__card
-      .card__content
-        p= raw api[:short_description]
-        p= raw api[:full_description]
-
-    .content__separator
-
+      - flow.with_section do
+        .card.documentation__card
+          .card__content
+            p= raw api[:short_description]
+            p= raw api[:full_description]

@@ -3,201 +3,197 @@
   - breadcrumbs.with_path "Transmettre des pièces jointes"
 
 .documentation
-  = card_component do
-    p
-      ' La création et la publication d'une pièce jointe se fait en 3 étapes :
-    ul
-      li Autorisation pour le téléchargement d'un fichier.
-      li Téléchargement du fichier.
-      li Association du fichier au signalement.
+  = content_flow_component do |flow|
+    - flow.with_section do
+      = card_component do
+        p
+          ' La création et la publication d'une pièce jointe se fait en 3 étapes :
+        ul
+          li Autorisation pour le téléchargement d'un fichier.
+          li Téléchargement du fichier.
+          li Association du fichier au signalement.
 
-    p Chaque étape est détaillée ci-dessous.
+        p Chaque étape est détaillée ci-dessous.
 
-  .content__separator
+    - flow.with_header do |header|
+      - header.with_title "Autorisation de téléchargement", "code-bracket-square"
 
-  h2.subheader
-    = icon_component("code-bracket-square")
-    | Autorisation de téléchargement
+    - flow.with_section do
+      = card_component do
+        p
+          ' Le téléchargement de pièces jointes s'effectue sur un serveur dédié au stockage de fichiers.
+          br
+          ' Avant de pouvoir effectivement télécharger un fichier sur ce serveur, vous devez d'abord obtenir une
+          ' autorisation de téléchargement sous la forme d'une URL avec une signature.
+        p
+          ' Pour obtenir cette URL, vous devez transmettre les informations suivantes relatives au fichier :
 
-  = card_component do
-    p
-      ' Le téléchargement de pièces jointes s'effectue sur un serveur dédié au stockage de fichiers.
-      br
-      ' Avant de pouvoir effectivement télécharger un fichier sur ce serveur, vous devez d'abord obtenir une
-      ' autorisation de téléchargement sous la forme d'une URL avec une signature.
-    p
-      ' Pour obtenir cette URL, vous devez transmettre les informations suivantes relatives au fichier :
+        table
+          tbody
+            tr
+              th <code>blob[filename]</code>
+              td Le nom du fichier
+            tr
+              th <code>blob[byte_size]</code>
+              td La taille du fichier en octets
+            tr
+              th <code>blob[checksum]</code>
+              td Une signature du fichier au format MD5, encodée en base64
+            tr
+              th <code>blob[content_type]</code>
+              td Le type MIME du fichier
 
-    table
-      tbody
-        tr
-          th <code>blob[filename]</code>
-          td Le nom du fichier
-        tr
-          th <code>blob[byte_size]</code>
-          td La taille du fichier en octets
-        tr
-          th <code>blob[checksum]</code>
-          td Une signature du fichier au format MD5, encodée en base64
-        tr
-          th <code>blob[content_type]</code>
-          td Le type MIME du fichier
+        p
+          ' Vous pouvez extraire ces informations dans des variables avant de les passer dans une requête :
 
-    p
-      ' Vous pouvez extraire ces informations dans des variables avant de les passer dans une requête :
+        = code_example_component(:shell) do
+          | $ FILEPATH=./permis.pdf && \
+                FILENAME=$(basename -- $FILEPATH) && \
+                BYTESIZE=$(wc -c "$FILEPATH" | awk '{print $1}') && \
+                CHECKSUM=$(openssl md5 -binary $FILEPATH | base64) && \
+                CONTENT_TYPE=$(file -b --mime-type $FILEPATH)
 
-    = code_example_component(:shell) do
-      | $ FILEPATH=./permis.pdf && \
-            FILENAME=$(basename -- $FILEPATH) && \
-            BYTESIZE=$(wc -c "$FILEPATH" | awk '{print $1}') && \
-            CHECKSUM=$(openssl md5 -binary $FILEPATH | base64) && \
-            CONTENT_TYPE=$(file -b --mime-type $FILEPATH)
-
-    ruby:
-      example = UI::CodeRequestExampleComponent.new(
-        "POST", api_upload_path,
-        json:          true,
-        authorization: true,
-        request: {
-          body: {
-            blob: {
-              filename:     "'$FILENAME'",
-              byte_size:    "'$BYTESIZE'",
-              checksum:     "'$CHECKSUM'",
-              content_type: "'$CONTENT_TYPE'"
-            }
-          }
-        },
-        response: {
-          code:    200,
-          headers: {},
-          body: {
-            id:              "255dd254-7713-405a-9097-ca4e0424a536",
-            filename:        "permis_00001.pdf",
-            content_type:    "application/pdf",
-            byte_size:       267785,
-            checksum:        "keKnRxGllrNnMpX19UouVQ==",
-            created_at:      "2023-10-25T10:00:26.328Z",
-            signed_id:       "eyJfcmFpbHMiOnsib[..]23895ccaef5aab022bab62a5e4ea83769",
-            direct_upload:   {
-              url:     "http://static.fiscahub.fr/eyJfcmFpbHM[...]eyJfcmFpbHM",
-              headers: {
-                "Content-Type" => "application/pdf"
+        ruby:
+          example = UI::CodeRequestExampleComponent.new(
+            "POST", api_upload_path,
+            json:          true,
+            authorization: true,
+            request: {
+              body: {
+                blob: {
+                  filename:     "'$FILENAME'",
+                  byte_size:    "'$BYTESIZE'",
+                  checksum:     "'$CHECKSUM'",
+                  content_type: "'$CONTENT_TYPE'"
+                }
               }
+            },
+            response: {
+              code:    200,
+              headers: {},
+              body: {
+                id:              "255dd254-7713-405a-9097-ca4e0424a536",
+                filename:        "permis_00001.pdf",
+                content_type:    "application/pdf",
+                byte_size:       267785,
+                checksum:        "keKnRxGllrNnMpX19UouVQ==",
+                created_at:      "2023-10-25T10:00:26.328Z",
+                signed_id:       "eyJfcmFpbHMiOnsib[..]23895ccaef5aab022bab62a5e4ea83769",
+                direct_upload:   {
+                  url:     "http://static.fiscahub.fr/eyJfcmFpbHM[...]eyJfcmFpbHM",
+                  headers: {
+                    "Content-Type" => "application/pdf"
+                  }
+                }
+              }
+            },
+            interpolations: {
+              FILENAME:     "permis.pdf",
+              BYTESIZE:     26_7785,
+              CHECKSUM:     "keKnRxGllrNnMpX19UouVQ==",
+              CONTENT_TYPE: "application/pdf"
             }
-          }
-        },
-        interpolations: {
-          FILENAME:     "permis.pdf",
-          BYTESIZE:     26_7785,
-          CHECKSUM:     "keKnRxGllrNnMpX19UouVQ==",
-          CONTENT_TYPE: "application/pdf"
-        }
-      )
+          )
 
-    = render example
+        = render example
 
-    p
-      ' Enfin, vous pouvez extraire la signature et l'URL d'autorisation dans des variables :
+        p
+          ' Enfin, vous pouvez extraire la signature et l'URL d'autorisation dans des variables :
 
-    = tabs_component do |tabs|
-      - tabs.with_tab("cURL + jq") do
-        = code_example_component(:shell) do
-          | $ read SIGNED_ID UPLOAD_URL < <(echo $( \
-                curl --fail -X POST #{api_upload_url} \
-                  -H "Accept: application/json" \
-                  -H "Authorization: Bearer $ACCESS_TOKEN" \
-                  -H "Content-Type: application/json" \
-                  -d '{"blob":{"filename":"'$FILENAME'","byte_size":"'$BYTESIZE'","checksum":"'$CHECKSUM'","content_type":"'$CONTENT_TYPE'"}}' \
-                | jq -r '.signed_id, .direct_upload.url'
-              )) && echo "SIGNED_ID: $SIGNED_ID" \
-                 && echo "UPLOAD_URL: $UPLOAD_URL"
+        = tabs_component do |tabs|
+          - tabs.with_tab("cURL + jq") do
+            = code_example_component(:shell) do
+              | $ read SIGNED_ID UPLOAD_URL < <(echo $( \
+                    curl --fail -X POST #{api_upload_url} \
+                      -H "Accept: application/json" \
+                      -H "Authorization: Bearer $ACCESS_TOKEN" \
+                      -H "Content-Type: application/json" \
+                      -d '{"blob":{"filename":"'$FILENAME'","byte_size":"'$BYTESIZE'","checksum":"'$CHECKSUM'","content_type":"'$CONTENT_TYPE'"}}' \
+                    | jq -r '.signed_id, .direct_upload.url'
+                  )) && echo "SIGNED_ID: $SIGNED_ID" \
+                     && echo "UPLOAD_URL: $UPLOAD_URL"
 
-      - tabs.with_tab("httpie + jq") do
-        = code_example_component(:shell) do
-          | $ read SIGNED_ID UPLOAD_URL < <(echo $( \
-                http --check-status --json POST #{api_upload_url} \
-                  Accept:"application/json" \
-                  Authorization:"Bearer $ACCESS_TOKEN" \
-                  --raw='{"blob":{"filename":"'$FILENAME'","byte_size":"'$BYTESIZE'","checksum":"'$CHECKSUM'","content_type":"'$CONTENT_TYPE'"}}' \
-                | jq -r '.signed_id, .direct_upload.url'
-              )) && echo "SIGNED_ID: $SIGNED_ID" \
-                 && echo "UPLOAD_URL: $UPLOAD_URL"
+          - tabs.with_tab("httpie + jq") do
+            = code_example_component(:shell) do
+              | $ read SIGNED_ID UPLOAD_URL < <(echo $( \
+                    http --check-status --json POST #{api_upload_url} \
+                      Accept:"application/json" \
+                      Authorization:"Bearer $ACCESS_TOKEN" \
+                      --raw='{"blob":{"filename":"'$FILENAME'","byte_size":"'$BYTESIZE'","checksum":"'$CHECKSUM'","content_type":"'$CONTENT_TYPE'"}}' \
+                    | jq -r '.signed_id, .direct_upload.url'
+                  )) && echo "SIGNED_ID: $SIGNED_ID" \
+                     && echo "UPLOAD_URL: $UPLOAD_URL"
 
-  .content__separator
+    - flow.with_header do |header|
+      - header.with_title "Téléchargement du fichier", "code-bracket-square"
 
-  h2.subheader
-    = icon_component("code-bracket-square")
-    | Téléchargement du fichier
+    - flow.with_section do
+      = card_component do
+        p
+          ' Une fois l'URL de téléchargement obtenue, vous pouvez l'utilisez pour télécharger le fichier en question :
 
-  = card_component do
-    p
-      ' Une fois l'URL de téléchargement obtenue, vous pouvez l'utilisez pour télécharger le fichier en question :
+        ul
+          li Utilisez une requête <code>PUT</code>
+          li L'URL de téléchargement n'est utilisable qu'une seule fois
+          li En cas de succés, un code 204 est retourné
 
-    ul
-      li Utilisez une requête <code>PUT</code>
-      li L'URL de téléchargement n'est utilisable qu'une seule fois
-      li En cas de succés, un code 204 est retourné
+        .code-request-example
+          = tabs_component do |tabs|
+            - tabs.with_tab("cURL") do
+              = code_example_component(:shell) do
+                | $ curl -X PUT $UPLOAD_URL \
+                      -H "Content-Length: $BYTESIZE" \
+                      -H "Content-Type: $CONTENT_TYPE" \
+                      --data-binary @$FILEPATH
 
-    .code-request-example
-      = tabs_component do |tabs|
-        - tabs.with_tab("cURL") do
-          = code_example_component(:shell) do
-            | $ curl -X PUT $UPLOAD_URL \
-                  -H "Content-Length: $BYTESIZE" \
-                  -H "Content-Type: $CONTENT_TYPE" \
-                  --data-binary @$FILEPATH
+            - tabs.with_tab("httpie") do
+              = code_example_component(:shell) do
+                | $ http -v PUT $UPLOAD_URL \
+                      Content-Type:"$CONTENT_TYPE" \
+                      @$FILEPATH
 
-        - tabs.with_tab("httpie") do
-          = code_example_component(:shell) do
-            | $ http -v PUT $UPLOAD_URL \
-                  Content-Type:"$CONTENT_TYPE" \
-                  @$FILEPATH
+          = code_example_component do |code|
+            - code.with_language(:http) do
+              | PUT http://static.fiscahub.fr/eyJfcmFpbHM[...]eyJfcmFpbHM HTTP/1.1
+                Content-Length: 267785
+                Content-Type: application/pdf
 
-      = code_example_component do |code|
-        - code.with_language(:http) do
-          | PUT http://static.fiscahub.fr/eyJfcmFpbHM[...]eyJfcmFpbHM HTTP/1.1
-            Content-Length: 267785
-            Content-Type: application/pdf
+            - code.with_language(:text) do
+              | +-----------------------------------------+
+                | NOTE: binary data not shown in terminal |
+                +-----------------------------------------+
 
-        - code.with_language(:text) do
-          | +-----------------------------------------+
-            | NOTE: binary data not shown in terminal |
-            +-----------------------------------------+
+            - code.with_language(:http) do
+              | HTTP/1.1 204 No Content
 
-        - code.with_language(:http) do
-          | HTTP/1.1 204 No Content
+    - flow.with_header do |header|
+      - header.with_title "Association du fichier a un signalement", "code-bracket-square"
 
-  .content__separator
+    - flow.with_section do
+      = card_component do
+        p
+          ' Une fois le fichier téléchargé, vous pouvez l'associer à un signalement :
+        ul
+          li Utilisez dans l'URL l'ID retourné lors de la création de ce même signalement.
+          li Envoyez dans les paramètres le SIGNED_ID retourné lors de l'autorisation de téléchagement.
 
-  h2.subheader
-    = icon_component("code-bracket-square")
-    | Association du fichier a un signalement
+        ruby:
+          example = UI::CodeRequestExampleComponent.new(
+            "POST", api_report_attachments_path("$REPORT_ID"),
+            json:          true,
+            authorization: true,
+            request: {
+              body: {
+                documents: "'$SIGNED_ID'"
+              }
+            },
+            response: {
+              code: 204
+            },
+            interpolations: {
+              REPORT_ID: "6cbc5022-3bc9-40ce-ab20-b5fef3d88fae",
+              SIGNED_ID: "eyJfcmFpbHMiOnsib[..]23895ccaef5aab022bab62a5e4ea83769"
+            }
+          )
 
-  = card_component do
-    p
-      ' Une fois le fichier téléchargé, vous pouvez l'associer à un signalement :
-    ul
-      li Utilisez dans l'URL l'ID retourné lors de la création de ce même signalement.
-      li Envoyez dans les paramètres le SIGNED_ID retourné lors de l'autorisation de téléchagement.
-
-    ruby:
-      example = UI::CodeRequestExampleComponent.new(
-        "POST", api_report_attachments_path("$REPORT_ID"),
-        json:          true,
-        authorization: true,
-        request: {
-          body: {
-            documents: "'$SIGNED_ID'"
-          }
-        },
-        response: {
-          code: 204
-        },
-        interpolations: {
-          REPORT_ID: "6cbc5022-3bc9-40ce-ab20-b5fef3d88fae",
-          SIGNED_ID: "eyJfcmFpbHMiOnsib[..]23895ccaef5aab022bab62a5e4ea83769"
-        }
-      )
-
-    = render example
+        = render example

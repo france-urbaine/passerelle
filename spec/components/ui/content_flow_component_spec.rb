@@ -11,7 +11,9 @@ RSpec.describe UI::ContentFlowComponent, type: :component do
         header.with_title "Section#1", "server-stack"
         header.with_status "Pending", :yellow
       end
-      flow.with_section
+      flow.with_section do
+        "Contenu section"
+      end
     end
 
     expect(page).to have_selector(".content-flow") do |flow|
@@ -34,7 +36,9 @@ RSpec.describe UI::ContentFlowComponent, type: :component do
       flow.with_header do |header|
         header.with_custom(id: "custom-id", class: "custom-class", is: "turbo-frame")
       end
-      flow.with_section
+      flow.with_section do
+        "Contenu section"
+      end
     end
 
     expect(page).to have_selector(".content-flow > .header > .subheader-bar > .subheader-bar__parts") do |parts|
