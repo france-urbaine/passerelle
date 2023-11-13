@@ -77,7 +77,7 @@
       - tabs.with_tab("cURL + jq") do
         = code_example_component(:shell) do
           | $ ACCESS_TOKEN=$( \
-                curl --fail -X POST http://api.lvh.me:3000/oauth/token \
+                curl --fail -X POST #{oauth_token_url} \
                   -H "Accept: application/json" \
                   -H "Content-Type: application/json" \
                   -d '{"grant_type":"client_credentials","client_id":"'$CLIENT_ID'","client_secret":"'$CLIENT_SECRET'"}' \
@@ -87,7 +87,7 @@
       - tabs.with_tab("httpie + jq") do
         = code_example_component(:shell) do
           | $ ACCESS_TOKEN=$( \
-                http --check-status --json POST http://api.lvh.me:3000/oauth/token \
+                http --check-status --json POST #{oauth_token_url} \
                   Accept:"application/json" \
                   --raw='{"grant_type":"client_credentials","client_id":"'$CLIENT_ID'","client_secret":"'$CLIENT_SECRET'"}' \
                 | jq -r .access_token
