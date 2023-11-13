@@ -2,6 +2,8 @@
 
 module UI
   class ContentFlowComponent < ApplicationViewComponent
+    define_component_helper :content_flow_component
+
     renders_many :blocks, types: {
 
       header: { renders: lambda { |**options|
