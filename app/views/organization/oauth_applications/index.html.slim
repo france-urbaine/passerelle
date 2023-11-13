@@ -6,6 +6,14 @@
     - if allowed_to?(:create?, OauthApplication)
       - breadcrumbs.with_action "Ajouter une application", new_organization_oauth_application_path, icon: "plus", modal: true, primary: true
 
+  - if current_organization.is_a?(Publisher) && current_organization.sandbox?
+    = flash_component(:warning) do
+      ' Votre organisation est mode « Bac à sable » par défaut.
+      br
+      ' #{link_to "Consultez le guide", api_documentation_url("guides/sandbox")} pour en savoir plus.
+
+  .content__separator
+
   = render Views::OauthApplications::ListComponent.new(@oauth_applications, @pagy, namespace: :organization)
 
   .content__separator
@@ -15,8 +23,6 @@
     | Documentation
 
   = card_component do
-    | L'API de Passerelle est une API RESTful qui implémente les spécifications du standard OAuth2 Pour l'authentification.
+    ' L'API de Passerelle est une API RESTful qui implémente les spécifications du standard OAuth2 Pour l'authentification.
     br
-    = link_to "Consultez la documentation", api_documentation_url
-    = " "
-    | pour en savoir plus.
+    ' #{link_to "Consultez la documentation", api_documentation_url} pour en savoir plus.

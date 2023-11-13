@@ -4,6 +4,7 @@ module Views
   module OauthApplications
     class ListComponent < ApplicationViewComponent
       DEFAULT_COLUMNS = %i[
+        sandbox
         name
         uid
         secret
