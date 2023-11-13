@@ -4,6 +4,13 @@ module UI
   module ContentFlow
     class HeaderComponent < AbstractBlockComponent
       class CustomPart < ApplicationViewComponent
+        attr_reader :options
+
+        def initialize(**options)
+          @options = options
+          super()
+        end
+
         def call
           content
         end

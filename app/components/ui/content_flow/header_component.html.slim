@@ -5,5 +5,9 @@
     - if parts?
       .subheader-bar__parts
         - parts.each do |part|
-          .subheader-bar__part
-            = part
+          - if part.respond_to?(:options)
+            = tag.div(class: "subheader-bar__part #{part.options.delete(:class)}", **part.options) do
+              = part
+          - else
+            .subheader-bar__part
+              = part

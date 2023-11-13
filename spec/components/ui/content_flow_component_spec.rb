@@ -29,9 +29,26 @@ RSpec.describe UI::ContentFlowComponent, type: :component do
     end
   end
 
+  it "renders a contenu flow with a section that has a header with a custom part" do
+    render_inline described_class.new do |flow|
+      flow.with_header do |header|
+        header.with_custom(id: "custom-id", class: "custom-class", is: "turbo-frame")
+      end
+      flow.with_section
+    end
+
+    expect(page).to have_selector(".content-flow > .header > .subheader-bar > .subheader-bar__parts") do |parts|
+      expect(parts).to have_selector(".subheader-bar__part.custom-class")
+      expect(parts).to have_selector(".subheader-bar__part[is='turbo-frame']")
+      expect(parts).to have_selector("#custom-id")
+    end
+  end
+
   it "renders a contenu flow without header" do
     render_inline described_class.new do |flow|
-      flow.with_section
+      flow.with_section do
+        "Section#1"
+      end
     end
 
     expect(page).to have_selector(".content-flow") do |flow|
