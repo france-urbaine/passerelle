@@ -46,6 +46,7 @@
 @import "./components/dashboard_number";
 @import "./components/datatable";
 @import "./components/description_list";
+@import "./components/flash";
 
 /* Layouts */
 @import "./components/navbar";
