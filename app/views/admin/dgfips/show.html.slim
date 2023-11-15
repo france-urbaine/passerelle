@@ -9,45 +9,41 @@
     - if allowed_to?(:destroy?, @dgfip)
       - breadcrumbs.with_action "Supprimer", remove_admin_dgfip_path(@dgfip), icon: "trash", modal: true, destructive: "discrete"
 
-  h2.subheader
-    = icon_component("identification", "Nouvelle section")
-    | Description
+  = content_flow_component do |flow|
 
-  = description_list_component(@dgfip) do |list|
-    - list.with_attribute("Contact") do |attribute|
-      = "#{@dgfip.contact_first_name} #{@dgfip.contact_last_name}".strip.presence
+    - flow.with_header do |header|
+      - header.with_title "Description", "identification", "Nouvelle section"
 
-    - list.with_attribute("Adresse mail de contact") do |attribute|
-      - if @dgfip.contact_email?
-        = mail_to(@dgfip.contact_email)
+    - flow.with_section do
+      = description_list_component(@dgfip) do |list|
+        - list.with_attribute("Contact") do |attribute|
+          = "#{@dgfip.contact_first_name} #{@dgfip.contact_last_name}".strip.presence
 
-    - list.with_attribute("Numéro de téléphone") do |attribute|
-      - if @dgfip.contact_phone?
-        = phone_to(@dgfip.contact_phone)
+        - list.with_attribute("Adresse mail de contact") do |attribute|
+          - if @dgfip.contact_email?
+            = mail_to(@dgfip.contact_email)
 
-    - list.with_attribute("Utilisateurs") do |attribute|
-      - if @dgfip.users_count.positive?
-        = display_count(@dgfip.users_count, "utilisateur")
+        - list.with_attribute("Numéro de téléphone") do |attribute|
+          - if @dgfip.contact_phone?
+            = phone_to(@dgfip.contact_phone)
 
-  - if allowed_to?(:index?, User)
-    .content__separator
+        - list.with_attribute("Utilisateurs") do |attribute|
+          - if @dgfip.users_count.positive?
+            = display_count(@dgfip.users_count, "utilisateur")
 
-    .subheader-bar
-      h2.subheader
-        = icon_component("rectangle-stack", "Nouvelle section")
-        | Utilisateurs de l'organisation
-
-      .subheader-bar__actions
+    - if allowed_to?(:index?, User)
+      - flow.with_header do |header|
+        - header.with_title "Utilisateurs de l'organisation", "rectangle-stack", "Nouvelle section"
         - if allowed_to?(:create?, User)
-          .subheader-bar__action
-            = button_component "Inviter un utilisateur", new_admin_dgfip_user_path, icon: "plus", modal: true
+          = header.with_action "Inviter un utilisateur", new_admin_dgfip_user_path, icon: "plus", modal: true
 
-    - if @dgfip.users_count.zero?
-      = card_component(content_class: "card__content--empty")
-        | Aucun utilisateur assigné.
+      - flow.with_section do
+        - if @dgfip.users_count.zero?
+          = card_component(content_class: "card__content--empty")
+            | Aucun utilisateur assigné.
 
-    - else
-      = turbo_frame_tag "datatable-users", src: admin_dgfip_users_path do
-        = datatable_skeleton_component(nested: true, rows: @dgfip.users_count) do |skeleton|
-          - skeleton.with_search
-          - skeleton.with_pagination
+        - else
+          = turbo_frame_tag "datatable-users", src: admin_dgfip_users_path do
+            = datatable_skeleton_component(nested: true, rows: @dgfip.users_count) do |skeleton|
+              - skeleton.with_search
+              - skeleton.with_pagination

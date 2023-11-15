@@ -1,23 +1,22 @@
 - unless resource[:short_description].blank? && resource[:full_description].blank?
-  .subheader-bar
-    h2.subheader
-      = icon_component "circle-stack"
-      | Informations
+  - content_flow.with_header(separator: true) do |header|
+    - header.with_title "Informations", "circle-stack"
 
-  = card_component do
-    = resource[:short_description]
-    = raw resource[:full_description]
+  - content_flow.with_section do
+    = card_component do
+      = resource[:short_description]
+      = raw resource[:full_description]
 
-    - if resource[:see]&.any?
-      hr.my-6
-      h3.text-slate-500
-        span Voir aussi :
+      - if resource[:see]&.any?
+        hr.my-6
+        h3.text-slate-500
+          span Voir aussi :
 
-      - if resource[:see].size > 1
-        ul.list-disc.list-inside
+        - if resource[:see].size > 1
+          ul.list-disc.list-inside
+            - resource[:see].each do |see|
+              li= link_to(see[:description], see[:link])
+
+        - else
           - resource[:see].each do |see|
-            li= link_to(see[:description], see[:link])
-
-      - else
-        - resource[:see].each do |see|
-          = link_to(see[:description], see[:link])
+            = link_to(see[:description], see[:link])

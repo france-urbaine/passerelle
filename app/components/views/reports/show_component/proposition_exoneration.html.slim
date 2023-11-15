@@ -1,33 +1,31 @@
-.subheader-bar
-  h2.subheader
-    = icon_component("presentation-chart-bar", "Nouvelle section")
-    | Proposition de mise à jour des exonérations
+= content_flow_component do |flow|
 
-  .subheader-bar__actions
+  - flow.with_header do |header|
+    - header.with_title "Proposition de mise à jour des exonérations", "presentation-chart-bar", "Nouvelle section"
     - if allowed_to?(:update?, @report) && @report.packing?
-      .subheader-bar__action
-        = button_component "Compléter", edit_report_path(@report, "proposition_exoneration"), icon: "pencil-square", modal: true
+      - header.with_action "Compléter", edit_report_path(@report, "proposition_exoneration"), icon: "pencil-square", modal: true
 
-= datatable_component(@report.exonerations) do |datatable|
-  - datatable.with_column(:status)            { "Action" }
-  - datatable.with_column(:label)             { "Exonération" }
-  - datatable.with_column(:base)              { "Base applicable" }
-  - datatable.with_column(:code_collectivite) { "Collectivité concernée" }
+  - flow.with_section do
+    = datatable_component(@report.exonerations) do |datatable|
+      - datatable.with_column(:status)            { "Action" }
+      - datatable.with_column(:label)             { "Exonération" }
+      - datatable.with_column(:base)              { "Base applicable" }
+      - datatable.with_column(:code_collectivite) { "Collectivité concernée" }
 
-  - datatable.with_empty_message do
-    = render_valid_content(:exonerations)
+      - datatable.with_empty_message do
+        = render_valid_content(:exonerations)
 
-  - datatable.each_row do |row, exo|
-    - row.with_column(:status) do
-      = t(exo.status, scope: "enum.exoneration_status")
+      - datatable.each_row do |row, exo|
+        - row.with_column(:status) do
+          = t(exo.status, scope: "enum.exoneration_status")
 
-    - row.with_column(:label)  do
-      = exo.code
-      '  -
-      = exo.label
+        - row.with_column(:label)  do
+          = exo.code
+          '  -
+          = exo.label
 
-    - row.with_column(:base) do
-      = t(exo.base, scope: "enum.exoneration_base")
+        - row.with_column(:base) do
+          = t(exo.base, scope: "enum.exoneration_base")
 
-    - row.with_column(:code_collectivite) do
-      = t(exo.code_collectivite, scope: "enum.exoneration_code_collectivite")
+        - row.with_column(:code_collectivite) do
+          = t(exo.code_collectivite, scope: "enum.exoneration_code_collectivite")

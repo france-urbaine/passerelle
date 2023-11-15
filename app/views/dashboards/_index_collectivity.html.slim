@@ -1,45 +1,46 @@
-.dashboard-numbers
-  .dashboard-number
-    = current_organization.reports_packing_count
-    span.dashboard-number__unit Signalements non transmis
-  .dashboard-number
-    = current_organization.reports_transmitted_count
-    span.dashboard-number__unit Signalements transmis
-  .dashboard-number
-    = current_organization.reports_approved_count
-    span.dashboard-number__unit Signalements approuvés
-  .dashboard-number
-    = current_organization.reports_rejected_count
-    span.dashboard-number__unit Signalements rejetés
+= content_flow_component do |flow|
 
-.content__separator
-h2.subheader
-  = icon_component("clipboard-document", "Nouvelle section")
-  | Signalements à compléter/transmettre
+  - flow.with_section do
+    .dashboard-numbers
+      .dashboard-number
+        = current_organization.reports_packing_count
+        span.dashboard-number__unit Signalements non transmis
+      .dashboard-number
+        = current_organization.reports_transmitted_count
+        span.dashboard-number__unit Signalements transmis
+      .dashboard-number
+        = current_organization.reports_approved_count
+        span.dashboard-number__unit Signalements approuvés
+      .dashboard-number
+        = current_organization.reports_rejected_count
+        span.dashboard-number__unit Signalements rejetés
 
-= render Views::Reports::ListComponent.new(@reports.packing.order(created_at: :desc), dashboard: true) do |view|
-  - view.with_column(:reference)
-  - view.with_column(:package)
-  - view.with_column(:form_type)
-  - view.with_column(:anomalies)
-  - view.with_column(:invariant)
-  - view.with_column(:adresse)
-  - view.with_column(:commune)
-  - view.with_column(:priority)
-  - view.with_column(:status)
+  - flow.with_header do |header|
+    - header.with_title "Signalements à compléter/transmettre", "clipboard-document", "Nouvelle section"
 
-.content__separator
-h2.subheader
-  = icon_component("clipboard-document", "Nouvelle section")
-  | Derniers signalements traités
+  - flow.with_section do
+    = render Views::Reports::ListComponent.new(@reports.packing.order(created_at: :desc), dashboard: true) do |view|
+      - view.with_column(:reference)
+      - view.with_column(:package)
+      - view.with_column(:form_type)
+      - view.with_column(:anomalies)
+      - view.with_column(:invariant)
+      - view.with_column(:adresse)
+      - view.with_column(:commune)
+      - view.with_column(:priority)
+      - view.with_column(:status)
 
-= render Views::Reports::ListComponent.new(@reports.examined.order_by_last_examination_date, dashboard: false) do |view|
-  - view.with_column(:reference)
-  - view.with_column(:package)
-  - view.with_column(:form_type)
-  - view.with_column(:anomalies)
-  - view.with_column(:invariant)
-  - view.with_column(:adresse)
-  - view.with_column(:commune)
-  - view.with_column(:priority)
-  - view.with_column(:status)
+  - flow.with_header do |header|
+    - header.with_title "Derniers signalements traités", "clipboard-document", "Nouvelle section"
+
+  - flow.with_section do
+    = render Views::Reports::ListComponent.new(@reports.examined.order_by_last_examination_date, dashboard: false) do |view|
+      - view.with_column(:reference)
+      - view.with_column(:package)
+      - view.with_column(:form_type)
+      - view.with_column(:anomalies)
+      - view.with_column(:invariant)
+      - view.with_column(:adresse)
+      - view.with_column(:commune)
+      - view.with_column(:priority)
+      - view.with_column(:status)

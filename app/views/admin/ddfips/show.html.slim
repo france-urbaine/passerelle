@@ -10,101 +10,89 @@
     - if allowed_to?(:destroy?, @ddfip)
       - breadcrumbs.with_action "Supprimer", remove_admin_ddfip_path(@ddfip), icon: "trash", modal: true, destructive: "discrete"
 
-  h2.subheader
-    = icon_component("identification", "Nouvelle section")
-    | Description
+  = content_flow_component do |flow|
 
-  = description_list_component(@ddfip) do |list|
-    - list.with_attribute(:departement) do |attribute|
-      = authorized_link_to @ddfip.departement, namespace: :admin do
-        = @ddfip.departement&.qualified_name
+    - flow.with_header do |header|
+      - header.with_title "Description", "identification", "Nouvelle section"
 
-    - list.with_attribute("Contact") do |attribute|
-      = "#{@ddfip.contact_first_name} #{@ddfip.contact_last_name}".strip.presence
+    - flow.with_section do
+      = description_list_component(@ddfip) do |list|
+        - list.with_attribute(:departement) do |attribute|
+          = authorized_link_to @ddfip.departement, namespace: :admin do
+            = @ddfip.departement&.qualified_name
 
-    - list.with_attribute("Adresse mail de contact") do |attribute|
-      - if @ddfip.contact_email?
-        = mail_to(@ddfip.contact_email)
+        - list.with_attribute("Contact") do |attribute|
+          = "#{@ddfip.contact_first_name} #{@ddfip.contact_last_name}".strip.presence
 
-    - list.with_attribute("Numéro de téléphone") do |attribute|
-      - if @ddfip.contact_phone?
-        = phone_to(@ddfip.contact_phone)
+        - list.with_attribute("Adresse mail de contact") do |attribute|
+          - if @ddfip.contact_email?
+            = mail_to(@ddfip.contact_email)
 
-    - list.with_attribute("Utilisateurs") do |attribute|
-      - if @ddfip.users_count.positive?
-        = display_count(@ddfip.users_count, "utilisateur")
+        - list.with_attribute("Numéro de téléphone") do |attribute|
+          - if @ddfip.contact_phone?
+            = phone_to(@ddfip.contact_phone)
 
-    - list.with_attribute("Collectivités enregistrées") do |attribute|
-      - if @ddfip.collectivities_count.positive?
-        = display_count(@ddfip.collectivities_count, "collectivité")
+        - list.with_attribute("Utilisateurs") do |attribute|
+          - if @ddfip.users_count.positive?
+            = display_count(@ddfip.users_count, "utilisateur")
 
-    - list.with_attribute("Collectivités enregistrées") do |attribute|
-      - if @ddfip.reports_transmitted_count.positive?
-        = display_count(@ddfip.reports_transmitted_count, "reçu")
-        = " / "
-        = display_count(@ddfip.reports_approved_count, "approuvé")
-        = " / "
-        = display_count(@ddfip.reports_rejected_count, "rejeté")
+        - list.with_attribute("Collectivités enregistrées") do |attribute|
+          - if @ddfip.collectivities_count.positive?
+            = display_count(@ddfip.collectivities_count, "collectivité")
 
-  - if allowed_to?(:index?, Office)
-    .content__separator
+        - list.with_attribute("Collectivités enregistrées") do |attribute|
+          - if @ddfip.reports_transmitted_count.positive?
+            = display_count(@ddfip.reports_transmitted_count, "reçu")
+            = " / "
+            = display_count(@ddfip.reports_approved_count, "approuvé")
+            = " / "
+            = display_count(@ddfip.reports_rejected_count, "rejeté")
 
-    .subheader-bar
-      h2.subheader
-        = icon_component("rectangle-stack", "Nouvelle section")
-        | Guichets
-
-      .subheader-bar__actions
+    - if allowed_to?(:index?, Office)
+      - flow.with_header do |header|
+        - header.with_title "Guichets", "rectangle-stack", "Nouvelle section"
         - if allowed_to?(:create?, Office)
-          .subheader-bar__action
-            = button_component "Ajouter un guichet", new_admin_ddfip_office_path(@ddfip), icon: "plus", modal: true
+          - header.with_action "Ajouter un guichet", new_admin_ddfip_office_path(@ddfip), icon: "plus", modal: true
 
-    - if @ddfip.offices_count.zero?
-      = card_component(content_class: "card__content--empty")
-        | Aucun guichet enregistré.
+      - flow.with_section do
+        - if @ddfip.offices_count.zero?
+          = card_component(content_class: "card__content--empty")
+            | Aucun guichet enregistré.
 
-    - else
-      = turbo_frame_tag "datatable-offices", src: admin_ddfip_offices_path(@ddfip) do
-        = datatable_skeleton_component(nested: true, rows: @ddfip.offices_count) do |skeleton|
-          - skeleton.with_search
-          - skeleton.with_pagination
+        - else
+          = turbo_frame_tag "datatable-offices", src: admin_ddfip_offices_path(@ddfip) do
+            = datatable_skeleton_component(nested: true, rows: @ddfip.offices_count) do |skeleton|
+              - skeleton.with_search
+              - skeleton.with_pagination
 
-  - if allowed_to?(:index?, User)
-    .content__separator
-
-    .subheader-bar
-      h2.subheader
-        = icon_component("rectangle-stack", "Nouvelle section")
-        | Utilisateurs de l'organisation
-
-      .subheader-bar__actions
+    - if allowed_to?(:index?, User)
+      - flow.with_header do |header|
+        - header.with_title "Utilisateurs de l'organisation", "rectangle-stack", "Nouvelle section"
         - if allowed_to?(:create?, User)
-          .subheader-bar__action
-            = button_component "Inviter un utilisateur", new_admin_ddfip_user_path(@ddfip), icon: "plus", modal: true
+          - header.with_action "Inviter un utilisateur", new_admin_ddfip_user_path(@ddfip), icon: "plus", modal: true
 
-    - if @ddfip.users_count.zero?
-      = card_component(content_class: "card__content--empty")
-        | Aucun utilisateur assigné.
+      - flow.with_section do
+        - if @ddfip.users_count.zero?
+          = card_component(content_class: "card__content--empty")
+            | Aucun utilisateur assigné.
 
-    - else
-      = turbo_frame_tag "datatable-users", src: admin_ddfip_users_path(@ddfip) do
-        = datatable_skeleton_component(nested: true, rows: @ddfip.users_count) do |skeleton|
-          - skeleton.with_search
-          - skeleton.with_pagination
+        - else
+          = turbo_frame_tag "datatable-users", src: admin_ddfip_users_path(@ddfip) do
+            = datatable_skeleton_component(nested: true, rows: @ddfip.users_count) do |skeleton|
+              - skeleton.with_search
+              - skeleton.with_pagination
 
-  - if allowed_to?(:index?, Collectivity)
-    .content__separator
+    - if allowed_to?(:index?, Collectivity)
+      - flow.with_header do |header|
+        - header.with_title "Collectivités enregistrées", "rectangle-stack", "Nouvelle section"
 
-    h2.subheader
-      = icon_component("rectangle-stack", "Nouvelle section")
-      | Collectivités enregistrées
+      - flow.with_section do
+        - if @ddfip.collectivities_count.zero?
+          = card_component(content_class: "card__content--empty")
+            | Aucune collectivité enregistrée.
 
-    - if @ddfip.collectivities_count.zero?
-      = card_component(content_class: "card__content--empty")
-        | Aucune collectivité enregistrée.
-
-    - else
-      = turbo_frame_tag "datatable-collectivities", src: admin_ddfip_collectivities_path(@ddfip) do
-        = datatable_skeleton_component(nested: true, rows: @ddfip.collectivities_count) do |skeleton|
-          - skeleton.with_search
-          - skeleton.with_pagination
+        - else
+          = turbo_frame_tag "datatable-collectivities", src: admin_ddfip_collectivities_path(@ddfip) do
+            = datatable_skeleton_component(nested: true, rows: @ddfip.collectivities_count) do |skeleton|
+              - skeleton.with_search
+              - skeleton.with_pagination

@@ -10,93 +10,82 @@
     - if allowed_to?(:destroy?, @office)
       - breadcrumbs.with_action "Supprimer", remove_admin_office_path(@office), icon: "trash", modal: true, destructive: "discrete"
 
-  h2.subheader
-    = icon_component("identification", "Nouvelle section")
-    | Description
+  = content_flow_component do |flow|
 
-  = description_list_component(@office) do |list|
-    - list.with_attribute(:ddfip) do |attribute|
-      = authorized_link_to @office.ddfip, namespace: :admin
+    - flow.with_header do |header|
+      - header.with_title "Description", "identification", "Nouvelle section"
 
-    - list.with_attribute("Département") do |attribute|
-      = authorized_link_to @office.ddfip&.departement, namespace: :admin do
-        = @office.ddfip&.departement&.qualified_name
+    - flow.with_section do
+      = description_list_component(@office) do |list|
+        - list.with_attribute(:ddfip) do |attribute|
+          = authorized_link_to @office.ddfip, namespace: :admin
 
-    - list.with_attribute(:competences) do |attribute|
-      = list(@office.competences) { |value| t(value, scope: "enum.competence") }
+        - list.with_attribute("Département") do |attribute|
+          = authorized_link_to @office.ddfip&.departement, namespace: :admin do
+            = @office.ddfip&.departement&.qualified_name
 
-    - list.with_attribute("Utilisateurs") do |attribute|
-      - if @office.users_count.positive?
-        = display_count(@office.users_count, "utilisateur")
+        - list.with_attribute(:competences) do |attribute|
+          = list(@office.competences) { |value| t(value, scope: "enum.competence") }
 
-    - list.with_attribute("Communes assignées") do |attribute|
-      - if @office.communes_count.positive?
-        = display_count(@office.communes_count, "commune")
+        - list.with_attribute("Utilisateurs") do |attribute|
+          - if @office.users_count.positive?
+            = display_count(@office.users_count, "utilisateur")
 
-    - list.with_attribute("Signalements") do |attribute|
-      - if @office.reports_assigned_count.positive?
-        = display_count(@office.reports_assigned_count, "assigné")
-        = " / "
-        = display_count(@office.reports_approved_count, "approuvé")
-        = " / "
-        = display_count(@office.reports_rejected_count, "rejeté")
+        - list.with_attribute("Communes assignées") do |attribute|
+          - if @office.communes_count.positive?
+            = display_count(@office.communes_count, "commune")
 
-  - if allowed_to?(:index?, User)
-    .content__separator
+        - list.with_attribute("Signalements") do |attribute|
+          - if @office.reports_assigned_count.positive?
+            = display_count(@office.reports_assigned_count, "assigné")
+            = " / "
+            = display_count(@office.reports_approved_count, "approuvé")
+            = " / "
+            = display_count(@office.reports_rejected_count, "rejeté")
 
-    .subheader-bar
-      h2.subheader
-        = icon_component("rectangle-stack", "Nouvelle section")
-        | Utilisateurs
-
-      .subheader-bar__actions
+    - if allowed_to?(:index?, User)
+      - flow.with_header do |header|
+        - header.with_title "Utilisateurs", "rectangle-stack", "Nouvelle section"
         - if allowed_to?(:create?, User)
-          .subheader-bar__action= button_component "Inviter un utilisateur", new_admin_office_user_path(@office), icon: "plus", modal: true
+          - header.with_action "Inviter un utilisateur", new_admin_office_user_path(@office), icon: "plus", modal: true
 
         - if allowed_to?(:edit_all?, User, namespace: Admin::Offices)
-          .subheader-bar__action= button_component "Gérer les utilisateurs", edit_all_admin_office_users_path(@office), icon: "squares-plus", modal: true
+          - header.with_action "Gérer les utilisateurs", edit_all_admin_office_users_path(@office), icon: "squares-plus", modal: true
 
-    - if @office.users_count.zero?
-      = card_component(content_class: "card__content--empty")
-        | Aucun utilisateur assigné à ce guichet.
+      - flow.with_section do
+        - if @office.users_count.zero?
+          = card_component(content_class: "card__content--empty")
+            | Aucun utilisateur assigné à ce guichet.
 
-    - else
-      = turbo_frame_tag "datatable-users", src: admin_office_users_path(@office) do
-        = datatable_skeleton_component(nested: true, rows: @office.users_count) do |skeleton|
-          - skeleton.with_search
-          - skeleton.with_pagination
+        - else
+          = turbo_frame_tag "datatable-users", src: admin_office_users_path(@office) do
+            = datatable_skeleton_component(nested: true, rows: @office.users_count) do |skeleton|
+              - skeleton.with_search
+              - skeleton.with_pagination
 
-  - if allowed_to?(:index?, Commune, namespace: Admin::Offices)
-    .content__separator
-
-    .subheader-bar
-      h2.subheader
-        = icon_component("rectangle-stack", "Nouvelle section")
-        | Communes assignées
-
-      .subheader-bar__actions
+    - if allowed_to?(:index?, Commune, namespace: Admin::Offices)
+      - flow.with_header do |header|
+        - header.with_title "Communes assignées", "rectangle-stack", "Nouvelle section"
         - if allowed_to?(:manage?, Commune, namespace: Admin::Offices)
-          .subheader-bar__action= button_component "Gérer les communes", edit_all_admin_office_communes_path(@office), icon: "squares-plus", modal: true
+          - header.with_action "Gérer les communes", edit_all_admin_office_communes_path(@office), icon: "squares-plus", modal: true
 
-    - if @office.communes_count.zero?
-      = card_component(content_class: "card__content--empty")
-        | Aucune commune assignée à ce guichet.
+      - flow.with_section do
+        - if @office.communes_count.zero?
+          = card_component(content_class: "card__content--empty")
+            | Aucune commune assignée à ce guichet.
 
-    - else
-      = turbo_frame_tag "datatable-communes", src: admin_office_communes_path(@office) do
-        = datatable_skeleton_component(nested: true, rows: @office.communes_count) do |skeleton|
-          - skeleton.with_search
-          - skeleton.with_pagination
+        - else
+          = turbo_frame_tag "datatable-communes", src: admin_office_communes_path(@office) do
+            = datatable_skeleton_component(nested: true, rows: @office.communes_count) do |skeleton|
+              - skeleton.with_search
+              - skeleton.with_pagination
 
-  - if allowed_to?(:index?, Collectivity)
-    .content__separator
+    - if allowed_to?(:index?, Collectivity)
+      - flow.with_header do |header|
+        - header.with_title "Collectivités correspondantes", "rectangle-stack", "Nouvelle section"
 
-    .subheader-bar
-      h2.subheader
-        = icon_component("rectangle-stack", "Nouvelle section")
-        | Collectivités correspondantes
-
-    = turbo_frame_tag "datatable-collectivities", src: admin_office_collectivities_path(@office) do
-      = datatable_skeleton_component(nested: true, rows: 0) do |skeleton|
-        - skeleton.with_search
-        - skeleton.with_pagination
+      - flow.with_section do
+        = turbo_frame_tag "datatable-collectivities", src: admin_office_collectivities_path(@office) do
+          = datatable_skeleton_component(nested: true, rows: 0) do |skeleton|
+            - skeleton.with_search
+            - skeleton.with_pagination

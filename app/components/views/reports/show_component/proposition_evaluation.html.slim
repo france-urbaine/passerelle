@@ -1,61 +1,61 @@
-.subheader-bar
-  h2.subheader
-    = icon_component("presentation-chart-bar", "Icône d'illustration")
+= content_flow_component do |flow|
+
+  - flow.with_header do |header|
     - if @report.anomalies.include?("affectation")
-      | Proposition de mise à jour de l'affectation
+      - header_title = "Proposition de mise à jour de l'affectation"
     - elsif @report.anomalies.include?("categorie")
-      | Proposition de mise à jour de l'utilisation
+      - header_title = "Proposition de mise à jour de l'utilisation"
     - elsif @report.anomalies.include?("consistance")
-      | Proposition de mise à jour de la consistance
+      - header_title = "Proposition de mise à jour de la consistance"
     - elsif @report.anomalies.include?("correctif")
-      | Proposition de mise à jour du correctif
+      - header_title = "Proposition de mise à jour du correctif"
     - else
-      | Proposition de mise à jour de l'évaluation
+      - header_title = "Proposition de mise à jour de l'évaluation"
+    - header.with_title header_title, "presentation-chart-bar", "Icône d'illustration"
 
-  .subheader-bar__actions
-    - if allowed_to?(:update?, @report) && @report.packing?
-      .subheader-bar__action
-        = button_component "Compléter", edit_report_path(@report, "proposition_evaluation"), icon: "pencil-square", modal: true
+  - if allowed_to?(:update?, @report) && @report.packing?
+    - header.with_action "Compléter", edit_report_path(@report, "proposition_evaluation"), icon: "pencil-square", modal: true
 
-= description_list_component(@report) do |list|
-  - if display_proposition_affectation?
-    - list.with_attribute(:proposition_affectation) do |attribute|
-      = render_valid_content(:proposition_affectation) do
-        = proposition_affectation
+  - flow.with_section do
+    = description_list_component(@report) do |list|
+      - if display_proposition_affectation?
+        - list.with_attribute(:proposition_affectation) do |attribute|
+          = render_valid_content(:proposition_affectation) do
+            = proposition_affectation
 
-  - if display_proposition_nature?
-    - list.with_attribute(:proposition_nature) do |attribute|
-      = render_valid_content(:proposition_nature) do
-        = proposition_nature
+      - if display_proposition_nature?
+        - list.with_attribute(:proposition_nature) do |attribute|
+          = render_valid_content(:proposition_nature) do
+            = proposition_nature
 
-  - if display_proposition_categorie?
-    - list.with_attribute(:proposition_categorie) do |attribute|
-      = render_valid_content(:proposition_categorie) do
-        = proposition_categorie
+      - if display_proposition_categorie?
+        - list.with_attribute(:proposition_categorie) do |attribute|
+          = render_valid_content(:proposition_categorie) do
+            = proposition_categorie
 
-  - if display_proposition_surface_reelle?
-    - list.with_attribute(:proposition_surface_reelle) do |attribute|
-      = render_valid_content(:proposition_surface_reelle) do
-        = helpers.display_surface(@report.proposition_surface_reelle)
+      - if display_proposition_surface_reelle?
+        - list.with_attribute(:proposition_surface_reelle) do |attribute|
+          = render_valid_content(:proposition_surface_reelle) do
+            = helpers.display_surface(@report.proposition_surface_reelle)
 
-  - if display_other_proposition_surface?
-    - %i(proposition_surface_p1 proposition_surface_p2 proposition_surface_p3 proposition_surface_pk1 proposition_surface_pk2 proposition_surface_ponderee).each do |proposition_surface|
-      - list.with_attribute(proposition_surface) do |attribute|
-        = render_valid_content(proposition_surface) do
-          = helpers.display_surface(@report.public_send(proposition_surface))
+      - if display_other_proposition_surface?
+        - %i(proposition_surface_p1 proposition_surface_p2 proposition_surface_p3 proposition_surface_pk1 proposition_surface_pk2 proposition_surface_ponderee).each do |proposition_surface|
+          - list.with_attribute(proposition_surface) do |attribute|
+            = render_valid_content(proposition_surface) do
+              = helpers.display_surface(@report.public_send(proposition_surface))
 
-  - if display_proposition_coefficient_localisation?
-    - list.with_attribute(:proposition_coefficient_localisation) do |attribute|
-      = render_valid_content(:proposition_coefficient_localisation) do
-        = @report.proposition_coefficient_localisation
+      - if display_proposition_coefficient_localisation?
+        - list.with_attribute(:proposition_coefficient_localisation) do |attribute|
+          = render_valid_content(:proposition_coefficient_localisation) do
+            = @report.proposition_coefficient_localisation
 
-  - if display_proposition_coefficient_entretien?
-    - list.with_attribute(:proposition_coefficient_entretien) do |attribute|
-      = render_valid_content(:proposition_coefficient_entretien) do
-        = @report.proposition_coefficient_entretien
+      - if display_proposition_coefficient_entretien?
+        - list.with_attribute(:proposition_coefficient_entretien) do |attribute|
+          = render_valid_content(:proposition_coefficient_entretien) do
+            = @report.proposition_coefficient_entretien
 
-  - if display_proposition_coefficient_situation?
-    - %i(proposition_coefficient_situation_generale proposition_coefficient_situation_particuliere).each do |proposition_coefficient_situation|
-      - list.with_attribute(proposition_coefficient_situation) do |attribute|
-        = render_valid_content(proposition_coefficient_situation) do
-          = @report.public_send(proposition_coefficient_situation)
+      - if display_proposition_coefficient_situation?
+        - %i(proposition_coefficient_situation_generale proposition_coefficient_situation_particuliere).each do |proposition_coefficient_situation|
+          - list.with_attribute(proposition_coefficient_situation) do |attribute|
+            = render_valid_content(proposition_coefficient_situation) do
+              = @report.public_send(proposition_coefficient_situation)

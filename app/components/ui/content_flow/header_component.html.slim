@@ -1,0 +1,13 @@
+.header
+  .subheader-bar
+    h2.subheader
+      = title
+    - if parts?
+      .subheader-bar__parts
+        - parts.each do |part|
+          - if part.respond_to?(:options)
+            = tag.div(class: "subheader-bar__part #{part.options.delete(:class)}", **part.options) do
+              = part
+          - else
+            .subheader-bar__part
+              = part

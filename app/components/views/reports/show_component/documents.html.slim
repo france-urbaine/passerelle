@@ -1,28 +1,28 @@
-.subheader-bar
-  h2.subheader
-    = icon_component("paper-clip", "Icône d'illustration")
-    | Pièces jointes
+= content_flow_component do |flow|
 
-  .subheader-bar__actions
+  - flow.with_header do |header|
+    - header.with_title "Pièces jointes", "paper-clip", "Icône d'illustration"
+
     - if allowed_to?(:update?, @report) && @report.packing?
-      .subheader-bar__action
-        = button_component "Ajouter des documents", new_report_attachment_path(@report), icon: "document-plus", modal: true
+      - header.with_action "Ajouter des documents", new_report_attachment_path(@report), icon: "document-plus", modal: true
 
-- if @report.documents.empty?
-  = card_component(content_class: "card__content--empty h-24 flex-auto flex items-center justify-center")
-    | Aucun document ajouté pour ce signalement.
+  - flow.with_section do
 
-- else
-  = datatable_component(@report.documents) do |datatable|
-    - datatable.with_column(:name) { "Nom du fichier" }
-    - datatable.with_column(:type) { "Type de fichier" }
+    - if @report.documents.empty?
+      = card_component(content_class: "card__content--empty h-24 flex-auto flex items-center justify-center")
+        | Aucun document ajouté pour ce signalement.
 
-    - datatable.each_row do |row, document|
-      - if @report.packing? && allowed_to?(:update?, @report)
-        - row.with_action "Supprimer ce document", report_attachment_path(id: document.id, report_id: @report.id), icon: "trash", icon_only: true, method: "delete"
+    - else
+      = datatable_component(@report.documents) do |datatable|
+        - datatable.with_column(:name) { "Nom du fichier" }
+        - datatable.with_column(:type) { "Type de fichier" }
 
-      - row.with_column(:name) do
-        = link_to document.filename, url_for(document), target: :blank
+        - datatable.each_row do |row, document|
+          - if @report.packing? && allowed_to?(:update?, @report)
+            - row.with_action "Supprimer ce document", report_attachment_path(id: document.id, report_id: @report.id), icon: "trash", icon_only: true, method: "delete"
 
-      - row.with_column(:type) do
-        = document.content_type
+          - row.with_column(:name) do
+            = link_to document.filename, url_for(document), target: :blank
+
+          - row.with_column(:type) do
+            = document.content_type

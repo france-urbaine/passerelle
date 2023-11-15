@@ -1,48 +1,48 @@
-.subheader-bar
-  h2.subheader
-    = icon_component("presentation-chart-bar", "Icône d'illustration")
+= content_flow_component do |flow|
+
+  - flow.with_header do |header|
     - if @report.anomalies.include?("omission_batie")
-      | Signalement d'une omission bâtie
+      - header_title = "Signalement d'une omission bâtie"
     - else
-      | Signalement de l'achèvement de travaux
+      - header_title = "Signalement de l'achèvement de travaux"
+    - header.with_title header_title, "presentation-chart-bar", "Icône d'illustration"
 
-  .subheader-bar__actions
     - if allowed_to?(:update?, @report) && @report.packing?
-      .subheader-bar__action
-        = button_component "Compléter", edit_report_path(@report, "proposition_creation_local"), icon: "pencil-square", modal: true
+      - header.with_action "Compléter", edit_report_path(@report, "proposition_creation_local"), icon: "pencil-square", modal: true
 
-= description_list_component(@report) do |list|
-  - if display_proposition_nature?
-    - list.with_attribute(:proposition_nature) do |attribute|
-      = render_valid_content(:proposition_nature) do
-        = proposition_nature
+  - flow.with_section do
+    = description_list_component(@report) do |list|
+      - if display_proposition_nature?
+        - list.with_attribute(:proposition_nature) do |attribute|
+          = render_valid_content(:proposition_nature) do
+            = proposition_nature
 
-  - if display_proposition_nature_dependance?
-    - list.with_attribute(:proposition_nature_dependance) do |attribute|
-      = render_valid_content(:proposition_nature_dependance) do
-        = proposition_nature_dependance
+      - if display_proposition_nature_dependance?
+        - list.with_attribute(:proposition_nature_dependance) do |attribute|
+          = render_valid_content(:proposition_nature_dependance) do
+            = proposition_nature_dependance
 
-  - if display_proposition_categorie?
-    - list.with_attribute(:proposition_categorie) do |attribute|
-      = render_valid_content(:proposition_categorie) do
-        = proposition_categorie
+      - if display_proposition_categorie?
+        - list.with_attribute(:proposition_categorie) do |attribute|
+          = render_valid_content(:proposition_categorie) do
+            = proposition_categorie
 
-  - if display_proposition_surface_reelle?
-    - list.with_attribute(:proposition_surface_reelle) do |attribute|
-      = render_valid_content(:proposition_surface_reelle) do
-        = helpers.display_surface(@report.proposition_surface_reelle)
+      - if display_proposition_surface_reelle?
+        - list.with_attribute(:proposition_surface_reelle) do |attribute|
+          = render_valid_content(:proposition_surface_reelle) do
+            = helpers.display_surface(@report.proposition_surface_reelle)
 
-  - if display_proposition_date_achevement?
-    - list.with_attribute(:proposition_date_achevement) do |attribute|
-      = render_valid_content(:proposition_date_achevement) do
-        = helpers.display_date(@report.proposition_date_achevement)
+      - if display_proposition_date_achevement?
+        - list.with_attribute(:proposition_date_achevement) do |attribute|
+          = render_valid_content(:proposition_date_achevement) do
+            = helpers.display_date(@report.proposition_date_achevement)
 
-  - if display_proposition_numero_permis?
-    - list.with_attribute(:proposition_numero_permis) do |attribute|
-      = render_valid_content(:proposition_numero_permis) do
-        = @report.proposition_numero_permis
+      - if display_proposition_numero_permis?
+        - list.with_attribute(:proposition_numero_permis) do |attribute|
+          = render_valid_content(:proposition_numero_permis) do
+            = @report.proposition_numero_permis
 
-  - if display_proposition_nature_travaux?
-    - list.with_attribute(:proposition_nature_travaux) do |attribute|
-      = render_valid_content(:proposition_nature_travaux) do
-        = @report.proposition_nature_travaux
+      - if display_proposition_nature_travaux?
+        - list.with_attribute(:proposition_nature_travaux) do |attribute|
+          = render_valid_content(:proposition_nature_travaux) do
+            = @report.proposition_nature_travaux

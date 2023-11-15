@@ -1,50 +1,51 @@
-.subheader-bar
-  h2.subheader
-    = icon_component("server-stack", "Icône d'illustration")
-    | Informations relatives au paquet
+= content_flow_component do |flow|
 
-  .subheader-bar__actions
-    .subheader-bar__action( id=dom_id(@report, :status) is="turbo-frame" )
+  - flow.with_header do |header|
+
+    - header.with_title "Informations relatives au paquet", "server-stack", "Icône d'illustration"
+
+    - header.with_custom(id: dom_id(@report, :status), is: "turbo-frame") do
       = report_badge(@report)
 
     - if @report.sandbox?
-      .subheader-bar__action= badge_component("Bac à sable", :yellow)
+      - header.with_custom do
+        = badge_component("Bac à sable", :yellow)
 
-= description_list_component(@report) do |list|
-  - list.with_attribute("Référence du paquet") do |attribute|
-    = authorized_link_to @report.package
+  - flow.with_section do
 
-  - list.with_attribute("Date de transmission") do |attribute|
-    em Non transmis
+    = description_list_component(@report) do |list|
+      - list.with_attribute("Référence du paquet") do |attribute|
+        = authorized_link_to @report.package
 
-  - list.with_attribute("Date d'échéance") do |attribute|
-    - if @report.package&.due_on
-      = l(@report.package.due_on)
-    - elsif @report.packing?
-      em A spécifier dans le paquet
+      - list.with_attribute("Date de transmission") do |attribute|
+        em Non transmis
 
-  - list.with_attribute("Type de signalement") do |attribute|
-    = t(@report.form_type, scope: "enum.report_form_type")
+      - list.with_attribute("Date d'échéance") do |attribute|
+        - if @report.package&.due_on
+          = l(@report.package.due_on)
+        - elsif @report.packing?
+          em A spécifier dans le paquet
 
-.content__separator
-.subheader-bar
-  h2.subheader
-    = icon_component("flag", "Icône d'illustration")
-    | Objet du signalement
+      - list.with_attribute("Type de signalement") do |attribute|
+        = t(@report.form_type, scope: "enum.report_form_type")
 
-  .subheader-bar__actions
+  - flow.with_header do |header|
+
+    - header.with_title "Objet du signalement", "flag", "Icône d'illustration"
+
     - if allowed_to?(:update?, @report) && @report.packing?
-      .subheader-bar__action
-        = button_component "Modifier", edit_report_path(@report, "information"), icon: "pencil-square", modal: true
+      - header.with_action "Modifier", edit_report_path(@report, "information"), icon: "pencil-square", modal: true
 
-= description_list_component(@report) do |list|
-  - list.with_attribute(:anomalies) do |attribute|
-    = render_valid_content(:anomalies) do
-      = helpers.list(@report.anomalies) { |value| t(value, scope: ["enum.anomalies", @report.form_type]) }
+  - flow.with_section do
 
-  - list.with_attribute(:date_constat) do |attribute|
-    = render_valid_content(:date_constat) do
-      = helpers.display_date(@report.date_constat)
+    = description_list_component(@report) do |list|
+      - list.with_attribute(:anomalies) do |attribute|
+        = render_valid_content(:anomalies) do
+          = helpers.list(@report.anomalies) { |value| t(value, scope: ["enum.anomalies", @report.form_type]) }
 
-  - list.with_attribute(:priority) do |attribute|
-    = render Views::Reports::PriorityIconComponent.new(@report)
+      - list.with_attribute(:date_constat) do |attribute|
+        = render_valid_content(:date_constat) do
+          = helpers.display_date(@report.date_constat)
+
+      - list.with_attribute(:priority) do |attribute|
+        = render Views::Reports::PriorityIconComponent.new(@report)

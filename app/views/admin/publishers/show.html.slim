@@ -10,83 +10,73 @@
     - if allowed_to?(:destroy?, @publisher)
       - breadcrumbs.with_action "Supprimer", remove_admin_publisher_path(@publisher), icon: "trash", modal: true, destructive: "discrete"
 
-  h2.subheader
-    = icon_component("identification", "Nouvelle section")
-    | Description
+  = content_flow_component do |flow|
 
-  = description_list_component(@publisher) do |list|
-    - list.with_attribute(:siren) do |attribute|
-      = display_siren(@publisher.siren)
+    - flow.with_header do |header|
+      - header.with_title "Description", "identification", "Nouvelle section"
 
-    - list.with_attribute("Contact") do |attribute|
-      = "#{@publisher.contact_first_name} #{@publisher.contact_last_name}".strip.presence
+    - flow.with_section do
+      = description_list_component(@publisher) do |list|
+        - list.with_attribute(:siren) do |attribute|
+          = display_siren(@publisher.siren)
 
-    - list.with_attribute("Adresse mail de contact") do |attribute|
-      - if @publisher.contact_email?
-        = mail_to(@publisher.contact_email)
+        - list.with_attribute("Contact") do |attribute|
+          = "#{@publisher.contact_first_name} #{@publisher.contact_last_name}".strip.presence
 
-    - list.with_attribute("Numéro de téléphone") do |attribute|
-      - if @publisher.contact_phone?
-        = phone_to(@publisher.contact_phone)
+        - list.with_attribute("Adresse mail de contact") do |attribute|
+          - if @publisher.contact_email?
+            = mail_to(@publisher.contact_email)
 
-    - list.with_attribute("Utilisateurs") do |attribute|
-      - if @publisher.users_count.positive?
-        = display_count(@publisher.users_count, "utilisateur")
+        - list.with_attribute("Numéro de téléphone") do |attribute|
+          - if @publisher.contact_phone?
+            = phone_to(@publisher.contact_phone)
 
-    - list.with_attribute("Collectivités enregistrées") do |attribute|
-      - if @publisher.collectivities_count.positive?
-        = display_count(@publisher.collectivities_count, "collectivité")
+        - list.with_attribute("Utilisateurs") do |attribute|
+          - if @publisher.users_count.positive?
+            = display_count(@publisher.users_count, "utilisateur")
 
-    - list.with_attribute("Signalements") do |attribute|
-      - if @publisher.reports_transmitted_count.positive?
-        = display_count(@publisher.reports_transmitted_count, "transmis")
-        = " / "
-        = display_count(@publisher.reports_approved_count, "approuvé")
-        = " / "
-        = display_count(@publisher.reports_rejected_count, "rejeté")
+        - list.with_attribute("Collectivités enregistrées") do |attribute|
+          - if @publisher.collectivities_count.positive?
+            = display_count(@publisher.collectivities_count, "collectivité")
 
-  - if allowed_to?(:index?, User)
-    .content__separator
+        - list.with_attribute("Signalements") do |attribute|
+          - if @publisher.reports_transmitted_count.positive?
+            = display_count(@publisher.reports_transmitted_count, "transmis")
+            = " / "
+            = display_count(@publisher.reports_approved_count, "approuvé")
+            = " / "
+            = display_count(@publisher.reports_rejected_count, "rejeté")
 
-    .subheader-bar
-      h2.subheader
-        = icon_component("rectangle-stack", "Nouvelle section")
-        | Utilisateurs
-
-      .subheader-bar__actions
+    - if allowed_to?(:index?, User)
+      - flow.with_header do |header|
+        - header.with_title "Utilisateurs", "rectangle-stack", "Nouvelle section"
         - if allowed_to?(:create?, User)
-          .subheader-bar__action
-            = button_component "Inviter un utilisateur", new_admin_publisher_user_path(@publisher), icon: "plus", modal: true
+          = header.with_action "Inviter un utilisateur", new_admin_publisher_user_path(@publisher), icon: "plus", modal: true
 
-    - if @publisher.users_count.zero?
-      = card_component(content_class: "card__content--empty")
-        | Aucun utilisateur assigné.
+      - flow.with_section do
+        - if @publisher.users_count.zero?
+          = card_component(content_class: "card__content--empty")
+            | Aucun utilisateur assigné.
 
-    - else
-      = turbo_frame_tag "datatable-users", src: admin_publisher_users_path(@publisher) do
-        = datatable_skeleton_component(nested: true, rows: @publisher.users_count) do |skeleton|
-          - skeleton.with_search
-          - skeleton.with_pagination
+        - else
+          = turbo_frame_tag "datatable-users", src: admin_publisher_users_path(@publisher) do
+            = datatable_skeleton_component(nested: true, rows: @publisher.users_count) do |skeleton|
+              - skeleton.with_search
+              - skeleton.with_pagination
 
-  - if allowed_to?(:index?, Collectivity)
-    .content__separator
-
-    .subheader-bar
-      h2.subheader
-        = icon_component("rectangle-stack", "Nouvelle section")
-        | Collectivités
-
-      .subheader-bar__actions
+    - if allowed_to?(:index?, Collectivity)
+      - flow.with_header do |header|
+        - header.with_title "Collectivités", "rectangle-stack", "Nouvelle section"
         - if allowed_to?(:create?, Collectivity)
-          .subheader-bar__action
-            = button_component "Ajouter une collectivité", new_admin_publisher_collectivity_path(@publisher), icon: "plus", modal: true
+          = header.with_action "Ajouter une collectivité", new_admin_publisher_collectivity_path(@publisher), icon: "plus", modal: true
 
-    - if @publisher.collectivities_count.zero?
-      = card_component(content_class: "card__content--empty")
-        | Aucune collectivité enregistrée.
+      - flow.with_section do
+        - if @publisher.collectivities_count.zero?
+          = card_component(content_class: "card__content--empty")
+            | Aucune collectivité enregistrée.
 
-    - else
-      = turbo_frame_tag "datatable-collectivities", src: admin_publisher_collectivities_path(@publisher) do
-        = datatable_skeleton_component(nested: true, rows: @publisher.collectivities_count) do |skeleton|
-          - skeleton.with_search
-          - skeleton.with_pagination
+        - else
+          = turbo_frame_tag "datatable-collectivities", src: admin_publisher_collectivities_path(@publisher) do
+            = datatable_skeleton_component(nested: true, rows: @publisher.collectivities_count) do |skeleton|
+              - skeleton.with_search
+              - skeleton.with_pagination

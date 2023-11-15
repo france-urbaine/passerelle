@@ -3,266 +3,260 @@
   - breadcrumbs.with_path "Transmettre des signalements"
 
 .documentation
-  = card_component do
-    p La transmission de signalements dans l'API s'effectue en plusieurs étapes :
+  = content_flow_component do |flow|
+    - flow.with_section do
+      = card_component do
+        p La transmission de signalements dans l'API s'effectue en plusieurs étapes :
 
-    ol
-      li Identifier une collectivité
-      li Initialiser une nouvelle transmission.
-      li Créer un ou plusieurs signalements dans cette transmission, en autant de requêtes que necessaire.
-      li Ajouter une ou plusieurs pièces jointes à ces mêmes signalements.
-      li Finaliser la transmission pour l'envoyer aux services fiscaux.
+        ol
+          li Identifier une collectivité
+          li Initialiser une nouvelle transmission.
+          li Créer un ou plusieurs signalements dans cette transmission, en autant de requêtes que necessaire.
+          li Ajouter une ou plusieurs pièces jointes à ces mêmes signalements.
+          li Finaliser la transmission pour l'envoyer aux services fiscaux.
 
-    p Chaque étape est détaillée ci-dessous.
+        p Chaque étape est détaillée ci-dessous.
 
-  .content__separator
+    - flow.with_header do |header|
+      - header.with_title "Identification de la collectivité", "code-bracket-square"
 
-  h2.subheader
-    = icon_component("code-bracket-square")
-    | Identification de la collectivité
+    - flow.with_section do
+      = card_component do
+        p
+          ' Le processus de transmission s'effectue pour une et une seule collectivité à la fois.
+          br
+          ' Il faut donc au préalable identifier la collectivité en question.
 
-  = card_component do
-    p
-      ' Le processus de transmission s'effectue pour une et une seule collectivité à la fois.
-      br
-      ' Il faut donc au préalable identifier la collectivité en question.
+        p
+          ' Utilisez la
+          ' #{link_to("liste des collectivités", apipie_apipie_path(version: "1.0", resource: :collectivities, method: :index))}
+          ' pour obtenir l'ID de la collectivité :
 
-    p
-      ' Utilisez la
-      ' #{link_to("liste des collectivités", apipie_apipie_path(version: "1.0", resource: :collectivities, method: :index))}
-      ' pour obtenir l'ID de la collectivité :
-
-    ruby:
-      example = UI::CodeRequestExampleComponent.new(
-        "GET",
-        api_collectivities_path,
-        json:          true,
-        authorization: true,
-        request: {
-          body: {
-            search: "CA du Pays Basque"
-          }
-        },
-        response: {
-          body: {
-            collectivites: [
-              {
-                "id": "9389c859-a9d9-4f2d-b7b4-1a704bf57f6f",
-                "name": "CA du Pays Basque",
-                "siren": "200067106"
+        ruby:
+          example = UI::CodeRequestExampleComponent.new(
+            "GET",
+            api_collectivities_path,
+            json:          true,
+            authorization: true,
+            request: {
+              body: {
+                search: "CA du Pays Basque"
               }
-            ]
-          }
-        }
-      )
-
-    = render example
-
-    p
-      ' Vous pouvez assigner l'ID de la collectivité à une variable :
-
-    = tabs_component do |tabs|
-      - tabs.with_tab("cURL + jq") do
-        = code_example_component(:shell) do
-          | $ COLLECTIVITY_ID=$( \
-                curl --fail -X GET #{api_collectivities_url} \
-                  -H "Accept: application/json" \
-                  -H "Authorization: Bearer $ACCESS_TOKEN" \
-                  -H "Content-Type: application/json" \
-                  -d '{"search":"CA du Pays Basque"}' \
-                | jq -r '.collectivites[0].id'
-              ) && echo $COLLECTIVITY_ID
-
-      - tabs.with_tab("httpie + jq") do
-        = code_example_component(:shell) do
-          | $ COLLECTIVITY_ID=$( \
-                http --check-status --json GET #{api_collectivities_url} \
-                  Accept:"application/json" \
-                  Authorization:"Bearer $ACCESS_TOKEN" \
-                  --raw='{"search":"CA du Pays Basque"}' \
-                | jq -r '.collectivites[0].id'
-              ) && echo $COLLECTIVITY_ID
-
-  .content__separator
-
-  h2.subheader
-    = icon_component("code-bracket-square")
-    | Initialisation de la transmission
-
-  = card_component do
-    p
-      ' Utilisez l'ID de la collectivité dans l'URL pour
-      ' #{link_to("initialiser une transmission", apipie_apipie_path(version: "1.0", resource: :transmissions, method: :create))} :
-    p
-
-    ruby:
-      example = UI::CodeRequestExampleComponent.new(
-        "POST",
-        api_collectivity_transmissions_path("$COLLECTIVITY_ID"),
-        json: true,
-        authorization: true,
-        response: {
-          body: {
-            "transmission": {
-              "id": "7fdfbcee-0afc-44e2-b8e9-bbd359b59958"
+            },
+            response: {
+              body: {
+                collectivites: [
+                  {
+                    "id": "9389c859-a9d9-4f2d-b7b4-1a704bf57f6f",
+                    "name": "CA du Pays Basque",
+                    "siren": "200067106"
+                  }
+                ]
+              }
             }
-          }
-        },
-        interpolations: {
-          COLLECTIVITY_ID: "9389c859-a9d9-4f2d-b7b4-1a704bf57f6f"
-        }
-      )
+          )
 
-    = render example
+        = render example
 
-    p
-      ' Vous pouvez assigner l'ID de la transmission à une variable :
+        p
+          ' Vous pouvez assigner l'ID de la collectivité à une variable :
 
-    = tabs_component do |tabs|
-      - tabs.with_tab("cURL + jq") do
-        = code_example_component(:shell) do
-          | $ TRANSMISSION_ID=$( \
-                curl --fail -X POST #{api_collectivity_transmissions_url("$COLLECTIVITY_ID")} \
-                  -H "Accept: application/json" \
-                  -H "Authorization: Bearer $ACCESS_TOKEN" \
-                | jq -r '.transmission.id'
-              ) && echo $TRANSMISSION_ID
+        = tabs_component do |tabs|
+          - tabs.with_tab("cURL + jq") do
+            = code_example_component(:shell) do
+              | $ COLLECTIVITY_ID=$( \
+                    curl --fail -X GET #{api_collectivities_url} \
+                      -H "Accept: application/json" \
+                      -H "Authorization: Bearer $ACCESS_TOKEN" \
+                      -H "Content-Type: application/json" \
+                      -d '{"search":"CA du Pays Basque"}' \
+                    | jq -r '.collectivites[0].id'
+                  ) && echo $COLLECTIVITY_ID
 
-      - tabs.with_tab("httpie + jq") do
-        = code_example_component(:shell) do
-          | $ TRANSMISSION_ID=$( \
-                http --check-status --json POST #{api_collectivity_transmissions_url("$COLLECTIVITY_ID")} \
-                  Accept:"application/json" \
-                  Authorization:"Bearer $ACCESS_TOKEN" \
-                | jq -r '.transmission.id'
-              ) && echo $TRANSMISSION_ID
+          - tabs.with_tab("httpie + jq") do
+            = code_example_component(:shell) do
+              | $ COLLECTIVITY_ID=$( \
+                    http --check-status --json GET #{api_collectivities_url} \
+                      Accept:"application/json" \
+                      Authorization:"Bearer $ACCESS_TOKEN" \
+                      --raw='{"search":"CA du Pays Basque"}' \
+                    | jq -r '.collectivites[0].id'
+                  ) && echo $COLLECTIVITY_ID
 
-  .content__separator
+    - flow.with_header do |header|
+      - header.with_title "Initialisation de la transmission", "code-bracket-square"
 
-  h2.subheader
-    = icon_component("code-bracket-square")
-    | Création des signalements
+    - flow.with_section do
+      = card_component do
+        p
+          ' Utilisez l'ID de la collectivité dans l'URL pour
+          ' #{link_to("initialiser une transmission", apipie_apipie_path(version: "1.0", resource: :transmissions, method: :create))} :
+        p
 
-  = card_component do
-    p
-      ' Une fois la transmission initialisée, utiliser l'ID de cette nouvelle transmission pour
-      ' #{link_to("créer des signalements", apipie_apipie_path(version: "1.0", resource: :reports, method: :create))}.
-      br
-      ' Vous pouvez créer autant de signalements que nécessaire, en effectuant plusieurs requêtes avec la même transmission.
-
-    ruby:
-      example = UI::CodeRequestExampleComponent.new(
-        "POST",
-        api_transmission_reports_path("$TRANSMISSION_ID"),
-        json: true,
-        authorization: true,
-        request: {
-          body: {
-            report: {
-              form_type: "creation_local_habitation",
-              anomalies: ["omission_batie"],
-              priority: "low",
-              code_insee: "64019",
-              date_constat: "2023-01-02",
-              situation_proprietaire: "Doe",
-              situation_numero_ordre_proprietaire: "A12345",
-              situation_parcelle: "AA 0000",
-              situation_numero_voie: "1",
-              situation_libelle_voie: "rue de la Liberté",
-              situation_code_rivoli: "0000",
-              proposition_nature: "AP",
-              proposition_categorie: "1",
-              proposition_surface_reelle: 70.0,
-              proposition_date_achevement: "2023-01-01"
+        ruby:
+          example = UI::CodeRequestExampleComponent.new(
+            "POST",
+            api_collectivity_transmissions_path("$COLLECTIVITY_ID"),
+            json: true,
+            authorization: true,
+            response: {
+              body: {
+                "transmission": {
+                  "id": "7fdfbcee-0afc-44e2-b8e9-bbd359b59958"
+                }
+              }
+            },
+            interpolations: {
+              COLLECTIVITY_ID: "9389c859-a9d9-4f2d-b7b4-1a704bf57f6f"
             }
-          }
-        },
-        response:  {
-          code: 201,
-          body: {
-            report: {
-              id: "6cbc5022-3bc9-40ce-ab20-b5fef3d88fae"
+          )
+
+        = render example
+
+        p
+          ' Vous pouvez assigner l'ID de la transmission à une variable :
+
+        = tabs_component do |tabs|
+          - tabs.with_tab("cURL + jq") do
+            = code_example_component(:shell) do
+              | $ TRANSMISSION_ID=$( \
+                    curl --fail -X POST #{api_collectivity_transmissions_url("$COLLECTIVITY_ID")} \
+                      -H "Accept: application/json" \
+                      -H "Authorization: Bearer $ACCESS_TOKEN" \
+                    | jq -r '.transmission.id'
+                  ) && echo $TRANSMISSION_ID
+
+          - tabs.with_tab("httpie + jq") do
+            = code_example_component(:shell) do
+              | $ TRANSMISSION_ID=$( \
+                    http --check-status --json POST #{api_collectivity_transmissions_url("$COLLECTIVITY_ID")} \
+                      Accept:"application/json" \
+                      Authorization:"Bearer $ACCESS_TOKEN" \
+                    | jq -r '.transmission.id'
+                  ) && echo $TRANSMISSION_ID
+
+    - flow.with_header do |header|
+      - header.with_title "Création des signalements", "code-bracket-square"
+
+    - flow.with_section do
+      = card_component do
+        p
+          ' Une fois la transmission initialisée, utiliser l'ID de cette nouvelle transmission pour
+          ' #{link_to("créer des signalements", apipie_apipie_path(version: "1.0", resource: :reports, method: :create))}.
+          br
+          ' Vous pouvez créer autant de signalements que nécessaire, en effectuant plusieurs requêtes avec la même transmission.
+
+        ruby:
+          example = UI::CodeRequestExampleComponent.new(
+            "POST",
+            api_transmission_reports_path("$TRANSMISSION_ID"),
+            json: true,
+            authorization: true,
+            request: {
+              body: {
+                report: {
+                  form_type: "creation_local_habitation",
+                  anomalies: ["omission_batie"],
+                  priority: "low",
+                  code_insee: "64019",
+                  date_constat: "2023-01-02",
+                  situation_proprietaire: "Doe",
+                  situation_numero_ordre_proprietaire: "A12345",
+                  situation_parcelle: "AA 0000",
+                  situation_numero_voie: "1",
+                  situation_libelle_voie: "rue de la Liberté",
+                  situation_code_rivoli: "0000",
+                  proposition_nature: "AP",
+                  proposition_categorie: "1",
+                  proposition_surface_reelle: 70.0,
+                  proposition_date_achevement: "2023-01-01"
+                }
+              }
+            },
+            response:  {
+              code: 201,
+              body: {
+                report: {
+                  id: "6cbc5022-3bc9-40ce-ab20-b5fef3d88fae"
+                }
+              }
+            },
+            interpolations: {
+              "TRANSMISSION_ID" => "7fdfbcee-0afc-44e2-b8e9-bbd359b59958"
             }
-          }
-        },
-        interpolations: {
-          "TRANSMISSION_ID" => "7fdfbcee-0afc-44e2-b8e9-bbd359b59958"
-        }
-      )
+          )
 
-    = render example
+        = render example
 
-    p
-      ' Pour créer un signalement valide, consultez
-      a.text-disabled( disabled ) les règles de validation d'un signalement (bientôt disponible)
-      ' .
-      br
-      ' En cas d'erreurs de validation, la requête vous retournera une liste de message d'erreurs :
+        p
+          ' Pour créer un signalement valide, consultez
+          a.text-disabled( disabled ) les règles de validation d'un signalement (bientôt disponible)
+          ' .
+          br
+          ' En cas d'erreurs de validation, la requête vous retournera une liste de message d'erreurs :
 
-    = code_example_component do |code|
-      - code.with_language(:http) do
-        | HTTP/1.1 422 Unprocessable Entity
-          Content-Type: application/json; charset=utf-8
+        = code_example_component do |code|
+          - code.with_language(:http) do
+            | HTTP/1.1 422 Unprocessable Entity
+              Content-Type: application/json; charset=utf-8
 
-      - code.with_language(:json) do
-        | {
-            "errors": {
-              "code_insee": [
-                "n'est pas valide"
-              ],
-              "date_constat": [
-                "Ce champs est requis"
-              ]
-            }
-          }
+          - code.with_language(:json) do
+            | {
+                "errors": {
+                  "code_insee": [
+                    "n'est pas valide"
+                  ],
+                  "date_constat": [
+                    "Ce champs est requis"
+                  ]
+                }
+              }
 
-  .content__separator
+    - flow.with_header do |header|
+      - header.with_title "Finalisation de la transmission", "code-bracket-square"
 
-  h2.subheader
-    = icon_component("code-bracket-square")
-    | Finalisation de la transmission
+    - flow.with_section do
+      = card_component do
+        p
+          ' Une fois les signalement créés, vous pouvez
+          ' #{link_to("finaliser la transmission", apipie_apipie_path(version: "1.0", resource: :transmissions, method: :complete))}.
+          br
+          ' En retour, vous recevez une liste de reférences des paquets transmis ainsi que les références assignés à chaque signalement.
 
-  = card_component do
-    p
-      ' Une fois les signalement créés, vous pouvez
-      ' #{link_to("finaliser la transmission", apipie_apipie_path(version: "1.0", resource: :transmissions, method: :complete))}.
-      br
-      ' En retour, vous recevez une liste de reférences des paquets transmis ainsi que les références assignés à chaque signalement.
+        p
+          strong
+            ' Attention ! Suite à un changement de politique relative à la transmission des paquets,
+            ' le contenu de cette réponse est amené à être changé prochainement.
 
-    p
-      strong
-        ' Attention ! Suite à un changement de politique relative à la transmission des paquets,
-        ' le contenu de cette réponse est amené à être changé prochainement.
-
-    ruby:
-      example = UI::CodeRequestExampleComponent.new(
-        "PUT",
-        complete_api_transmission_path("$TRANSMISSION_ID"),
-        json: true,
-        authorization: true,
-        response: {
-          body: {
-            transmission: {
-              id:           "7fdfbcee-0afc-44e2-b8e9-bbd359b59958",
-              completed_at: "2023-11-03T14:34:13.706Z",
-              packages: [
-                {
-                  id:        "82365cfd-46e1-406e-9daa-bd4b0081d827",
-                  reference: "2023-11-0001",
-                  reports:   [
+        ruby:
+          example = UI::CodeRequestExampleComponent.new(
+            "PUT",
+            complete_api_transmission_path("$TRANSMISSION_ID"),
+            json: true,
+            authorization: true,
+            response: {
+              body: {
+                transmission: {
+                  id:           "7fdfbcee-0afc-44e2-b8e9-bbd359b59958",
+                  completed_at: "2023-11-03T14:34:13.706Z",
+                  packages: [
                     {
-                      id:        "a436744c-8c2b-44d7-a590-a5a0f0ced51d",
-                      reference: "2023-11-0001-00001"
+                      id:        "82365cfd-46e1-406e-9daa-bd4b0081d827",
+                      reference: "2023-11-0001",
+                      reports:   [
+                        {
+                          id:        "a436744c-8c2b-44d7-a590-a5a0f0ced51d",
+                          reference: "2023-11-0001-00001"
+                        }
+                      ]
                     }
                   ]
                 }
-              ]
+              }
+            },
+            interpolations: {
+              "TRANSMISSION_ID" => "7fdfbcee-0afc-44e2-b8e9-bbd359b59958"
             }
-          }
-        },
-        interpolations: {
-          "TRANSMISSION_ID" => "7fdfbcee-0afc-44e2-b8e9-bbd359b59958"
-        }
-      )
+          )
 
-    = render example
+        = render example

@@ -1,114 +1,111 @@
-<div class="subheader-bar">
-  <h2 class="subheader">
-    <%= icon_component("document-text", "Icône d'illustration") %>
-    Proposition de mise à jour de l'occupation
-  </h2>
+<%= content_flow_component do |flow| %>
 
-  <div class="subheader-bar__actions">
+  <% flow.with_header do |header| %>
+    <% header.with_title "Proposition de mise à jour de l'occupation", "document-text", "Icône d'illustration" %>
     <% if allowed_to?(:update?, @report) && @report.packing? %>
-      <div class="subheader-bar__action">
-        <%= button_component "Compléter", edit_report_path(@report, "proposition_occupation"), icon: "pencil-square", modal: true %>
-      </div>
+      <% header.with_action "Compléter", edit_report_path(@report, "proposition_occupation"), icon: "pencil-square", modal: true %>
     <% end %>
-  </div>
-</div>
+  <% end %>
 
-<%=
-description_list_component(@report) do |list|
-  if display_proposition_date_occupation?
-    list.with_attribute(:proposition_date_occupation) do
-      render_valid_content(:proposition_date_occupation) { helpers.display_date(@report.proposition_date_occupation) }
+  <%
+  flow.with_section do
+    description_list_component(@report) do |list|
+      if display_proposition_date_occupation?
+        list.with_attribute(:proposition_date_occupation) do
+          render_valid_content(:proposition_date_occupation) { helpers.display_date(@report.proposition_date_occupation) }
+        end
+      end
+
+      if display_proposition_nature_occupation?
+        list.with_attribute(:proposition_nature_occupation) do
+          render_valid_content(:proposition_nature_occupation) { proposition_nature_occupation }
+        end
+      end
+
+      if display_proposition_erreur_tlv?
+        list.with_attribute(:proposition_erreur_tlv) do
+          render_valid_content(:proposition_erreur_tlv) { t(@report.proposition_erreur_tlv.to_s, scope: "enum.boolean") }
+        end
+      end
+
+      if display_proposition_erreur_thlv?
+        list.with_attribute(:proposition_erreur_thlv) do
+          render_valid_content(:proposition_erreur_thlv) { t(@report.proposition_erreur_thlv.to_s, scope: "enum.boolean") }
+        end
+      end
+
+      if display_proposition_meuble_tourisme?
+        list.with_attribute(:proposition_meuble_tourisme) do
+          render_valid_content(:proposition_meuble_tourisme) { t(@report.proposition_meuble_tourisme.to_s, scope: "enum.boolean") }
+        end
+      end
+
+      if display_proposition_majoration_rs?
+        list.with_attribute(:proposition_majoration_rs) do
+          render_valid_content(:proposition_majoration_rs) { t(@report.proposition_majoration_rs.to_s, scope: "enum.boolean") }
+        end
+      end
+
+      if display_proposition_nom_occupant?
+        list.with_attribute(:proposition_nom_occupant) do
+          render_valid_content(:proposition_nom_occupant) { render_valid_content(:proposition_nom_occupant) { @report.proposition_nom_occupant } }
+        end
+      end
+
+      if display_proposition_prenom_occupant?
+        list.with_attribute(:proposition_prenom_occupant) do
+          render_valid_content(:proposition_prenom_occupant) { @report.proposition_prenom_occupant }
+        end
+      end
+
+      if display_proposition_adresse_occupant?
+        list.with_attribute(:proposition_adresse_occupant) do
+          render_valid_content(:proposition_adresse_occupant) { @report.proposition_adresse_occupant }
+        end
+      end
+
+      if display_proposition_numero_siren?
+        list.with_attribute(:proposition_numero_siren) do
+          render_valid_content(:proposition_numero_siren) { helpers.display_siren(@report.proposition_numero_siren) }
+        end
+      end
+
+      if display_proposition_nom_societe?
+        list.with_attribute(:proposition_nom_societe) do
+          render_valid_content(:proposition_nom_societe) { @report.proposition_nom_societe }
+        end
+      end
+
+      if display_proposition_nom_enseigne?
+        list.with_attribute(:proposition_nom_enseigne) do
+          render_valid_content(:proposition_nom_enseigne) { @report.proposition_nom_enseigne }
+        end
+      end
+
+      if display_proposition_etablissement_principal?
+        list.with_attribute(:proposition_etablissement_principal) do
+          render_valid_content(:proposition_etablissement_principal) { t(@report.proposition_etablissement_principal.to_s, scope: "enum.boolean") }
+        end
+      end
+
+      if display_proposition_chantier_longue_duree?
+        list.with_attribute(:proposition_chantier_longue_duree) do
+          render_valid_content(:proposition_chantier_longue_duree) { t(@report.proposition_chantier_longue_duree.to_s, scope: "enum.boolean") }
+        end
+      end
+
+      if display_proposition_code_naf?
+        list.with_attribute(:proposition_code_naf) do
+          render_valid_content(:proposition_code_naf) { @report.proposition_code_naf }
+        end
+      end
+
+      if display_proposition_date_debut_activite?
+        list.with_attribute(:proposition_date_debut_activite) do
+          render_valid_content(:proposition_date_debut_activite) { helpers.display_date(@report.proposition_date_debut_activite) }
+        end
+      end
     end
   end
-
-  if display_proposition_nature_occupation?
-    list.with_attribute(:proposition_nature_occupation) do
-      render_valid_content(:proposition_nature_occupation) { proposition_nature_occupation }
-    end
-  end
-
-  if display_proposition_erreur_tlv?
-    list.with_attribute(:proposition_erreur_tlv) do
-      render_valid_content(:proposition_erreur_tlv) { t(@report.proposition_erreur_tlv.to_s, scope: "enum.boolean") }
-    end
-  end
-
-  if display_proposition_erreur_thlv?
-    list.with_attribute(:proposition_erreur_thlv) do
-      render_valid_content(:proposition_erreur_thlv) { t(@report.proposition_erreur_thlv.to_s, scope: "enum.boolean") }
-    end
-  end
-
-  if display_proposition_meuble_tourisme?
-    list.with_attribute(:proposition_meuble_tourisme) do
-      render_valid_content(:proposition_meuble_tourisme) { t(@report.proposition_meuble_tourisme.to_s, scope: "enum.boolean") }
-    end
-  end
-
-  if display_proposition_majoration_rs?
-    list.with_attribute(:proposition_majoration_rs) do
-      render_valid_content(:proposition_majoration_rs) { t(@report.proposition_majoration_rs.to_s, scope: "enum.boolean") }
-    end
-  end
-
-  if display_proposition_nom_occupant?
-    list.with_attribute(:proposition_nom_occupant) do
-      render_valid_content(:proposition_nom_occupant) { render_valid_content(:proposition_nom_occupant) { @report.proposition_nom_occupant } }
-    end
-  end
-
-  if display_proposition_prenom_occupant?
-    list.with_attribute(:proposition_prenom_occupant) do
-      render_valid_content(:proposition_prenom_occupant) { @report.proposition_prenom_occupant }
-    end
-  end
-
-  if display_proposition_adresse_occupant?
-    list.with_attribute(:proposition_adresse_occupant) do
-      render_valid_content(:proposition_adresse_occupant) { @report.proposition_adresse_occupant }
-    end
-  end
-
-  if display_proposition_numero_siren?
-    list.with_attribute(:proposition_numero_siren) do
-      render_valid_content(:proposition_numero_siren) { helpers.display_siren(@report.proposition_numero_siren) }
-    end
-  end
-
-  if display_proposition_nom_societe?
-    list.with_attribute(:proposition_nom_societe) do
-      render_valid_content(:proposition_nom_societe) { @report.proposition_nom_societe }
-    end
-  end
-
-  if display_proposition_nom_enseigne?
-    list.with_attribute(:proposition_nom_enseigne) do
-      render_valid_content(:proposition_nom_enseigne) { @report.proposition_nom_enseigne }
-    end
-  end
-
-  if display_proposition_etablissement_principal?
-    list.with_attribute(:proposition_etablissement_principal) do
-      render_valid_content(:proposition_etablissement_principal) { t(@report.proposition_etablissement_principal.to_s, scope: "enum.boolean") }
-    end
-  end
-
-  if display_proposition_chantier_longue_duree?
-    list.with_attribute(:proposition_chantier_longue_duree) do
-      render_valid_content(:proposition_chantier_longue_duree) { t(@report.proposition_chantier_longue_duree.to_s, scope: "enum.boolean") }
-    end
-  end
-
-  if display_proposition_code_naf?
-    list.with_attribute(:proposition_code_naf) do
-      render_valid_content(:proposition_code_naf) { @report.proposition_code_naf }
-    end
-  end
-
-  if display_proposition_date_debut_activite?
-    list.with_attribute(:proposition_date_debut_activite) do
-      render_valid_content(:proposition_date_debut_activite) { helpers.display_date(@report.proposition_date_debut_activite) }
-    end
-  end
-end
-%>
+  %>
+<% end %>

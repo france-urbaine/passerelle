@@ -1,0 +1,16 @@
+.content-flow
+  - blocks.each.with_index do |block, i|
+    - separator = block.options[:separator]
+    - if separator.nil?
+      - if i.zero?
+        - separator = false
+      - else
+        - if block.block_type == :header
+          / separator before each header, but the first one
+          - separator = true
+        - else
+          / separator before each section without header (previous block is also a section), but the first one
+          - separator = blocks[i - 1].block_type == :section
+    - if separator
+      .content__separator
+    = block

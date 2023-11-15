@@ -4,106 +4,102 @@
     - breadcrumbs.with_path "Paramètres"
     - breadcrumbs.with_action "Déconnexion", destroy_user_session_path, method: :delete, destructive: true
 
-  h2.subheader
-    = icon_component("identification", "Nouvelle section")
-    | Informations personnelles
+  = content_flow_component do |flow|
 
-  = card_component do |card|
-    - card.with_form(model: @user, url: user_settings_path, method: :put) do |form|
-      = form.block(:first_name) do
-        = form.label(:first_name)
-        = form.text_field(:first_name, required: true)
+    - flow.with_header do |header|
+      - header.with_title "Informations personnelles", "identification", "Nouvelle section"
 
-      = form.block(:last_name) do
-        = form.label(:last_name)
-        = form.text_field(:last_name, required: true)
+    - flow.with_section do
+      = card_component do |card|
+        - card.with_form(model: @user, url: user_settings_path, method: :put) do |form|
+          = form.block(:first_name) do
+            = form.label(:first_name)
+            = form.text_field(:first_name, required: true)
 
-    - card.with_submit_action "Enregistrer"
+          = form.block(:last_name) do
+            = form.label(:last_name)
+            = form.text_field(:last_name, required: true)
 
-  .content__separator
+        - card.with_submit_action "Enregistrer"
 
-  h2.subheader
-    = icon_component("at-symbol", "Nouvelle section")
-    | Adresse email
+    - flow.with_header do |header|
+      - header.with_title "Adresse email", "at-symbol", "Nouvelle section"
 
-  = card_component do |card|
-    - if current_user.pending_reconfirmation?
-      - card.with_body do
-        p
-          | Votre adresse email actuelle est <strong>#{current_user.email}</strong>.
-          br
-          | Cette adresse est requise pour vous connecter.
+    - flow.with_section do
+      = card_component do |card|
+        - if current_user.pending_reconfirmation?
+          - card.with_body do
+            p
+              | Votre adresse email actuelle est <strong>#{current_user.email}</strong>.
+              br
+              | Cette adresse est requise pour vous connecter.
 
-        p
-          | Vous avez demander à changer d'adresse email pour <strong>#{current_user.unconfirmed_email}</strong>.
-          br
-          | Veuillez suivre les instructions recues par email pour finaliser la modification.
-      - card.with_action "Envoyer de nouvelles instructions", user_settings_path, method: :put, params: { send_reconfirmation_instructions: true }
-      - card.with_action "Annuler le changement d'email", user_settings_path, method: :put, params: { cancel_pending_reconfirmation: true }, destructive: "discrete"
+            p
+              | Vous avez demander à changer d'adresse email pour <strong>#{current_user.unconfirmed_email}</strong>.
+              br
+              | Veuillez suivre les instructions recues par email pour finaliser la modification.
+          - card.with_action "Envoyer de nouvelles instructions", user_settings_path, method: :put, params: { send_reconfirmation_instructions: true }
+          - card.with_action "Annuler le changement d'email", user_settings_path, method: :put, params: { cancel_pending_reconfirmation: true }, destructive: "discrete"
 
-    - else
-      - card.with_form(model: @user_email, url: user_settings_path, method: :put) do |form|
-        p
-          | Votre adresse email est <strong>#{current_user.email}</strong>.
-          br
-          | Cette adresse est requise pour vous connecter.
-        p
-          | Si vous souhaitez modifier votre adresse email, veuillez compléter le formulaire suivant.
-          br
-          | Vous recevrez des instructions par email pour valider le changement.
+        - else
+          - card.with_form(model: @user_email, url: user_settings_path, method: :put) do |form|
+            p
+              | Votre adresse email est <strong>#{current_user.email}</strong>.
+              br
+              | Cette adresse est requise pour vous connecter.
+            p
+              | Si vous souhaitez modifier votre adresse email, veuillez compléter le formulaire suivant.
+              br
+              | Vous recevrez des instructions par email pour valider le changement.
 
-        = form.block(:email) do
-          = form.label(:email, "Nouvelle adresse email")
-          = form.email_field(:email, required: true, autocomplete: "off")
+            = form.block(:email) do
+              = form.label(:email, "Nouvelle adresse email")
+              = form.email_field(:email, required: true, autocomplete: "off")
 
-        = form.block(:current_password) do
-          = form.label(:current_password, "Mot de passe actuel")
-          = form.password_field_component(:current_password, required: true, autocomplete: "new-password")
+            = form.block(:current_password) do
+              = form.label(:current_password, "Mot de passe actuel")
+              = form.password_field_component(:current_password, required: true, autocomplete: "new-password")
 
-      - card.with_submit_action "Enregistrer"
+          - card.with_submit_action "Enregistrer"
 
-  .content__separator
+    - flow.with_header do |header|
+      - header.with_title "Mot de passe", "lock-closed", "Nouvelle section"
 
-  h2.subheader
-    = icon_component("lock-closed", "Nouvelle section")
-    | Mot de passe
+    - flow.with_section do
+      = card_component do |card|
+        - card.with_form(model: @user, url: user_settings_path, method: :put) do |form|
+          p Utilisez le formulaire ci-dessous pour changer votre mot de passe.
 
-  = card_component do |card|
-    - card.with_form(model: @user, url: user_settings_path, method: :put) do |form|
-      p Utilisez le formulaire ci-dessous pour changer votre mot de passe.
+          = form.block(:password) do
+            = form.label(:password, "Nouveau mot de passe (#{Devise.password_length.min} caractères minimum)")
+            = form.password_field_component(:password, strength_test: true, required: true, autocomplete: "new-password")
 
-      = form.block(:password) do
-        = form.label(:password, "Nouveau mot de passe (#{Devise.password_length.min} caractères minimum)")
-        = form.password_field_component(:password, strength_test: true, required: true, autocomplete: "new-password")
+          = form.block(:password_confirmation) do
+            = form.label(:password_confirmation)
+            = form.password_field_component(:password_confirmation, required: true, autocomplete: "new-password")
 
-      = form.block(:password_confirmation) do
-        = form.label(:password_confirmation)
-        = form.password_field_component(:password_confirmation, required: true, autocomplete: "new-password")
+          = form.block(:current_password) do
+            = form.label(:current_password, "Mot de passe actuel")
+            = form.password_field_component(:current_password, required: true, autocomplete: "new-password")
 
-      = form.block(:current_password) do
-        = form.label(:current_password, "Mot de passe actuel")
-        = form.password_field_component(:current_password, required: true, autocomplete: "new-password")
+        - card.with_submit_action "Enregistrer"
 
-    - card.with_submit_action "Enregistrer"
+    - flow.with_header do |header|
+      - header.with_title "Authentification en 2 facteurs", "shield-check", "Nouvelle section"
 
-  .content__separator
+    - flow.with_section do
+      = card_component do |card|
+        - if current_user.otp_required_for_login?
+          - card.with_body do
+            p
+              = icon_component "shield-check", class: "inline text-green-500 h-8 w-8 mr-2"
+              | L'authentification en 2 facteurs est activée.
 
-  h2.subheader
-    = icon_component("shield-check", "Nouvelle section")
-    | Authentification en 2 facteurs
+          - card.with_action "Re-configurer", new_user_two_factor_settings_path, modal: true
+        - else
+          - card.with_body do
+            p
+              = icon_component "exclamation-circle", class: "inline text-red-500 h-8 w-8 mr-2"
+              | L'authentification en 2 facteurs n'est pas encore activée.
 
-  = card_component do |card|
-    - if current_user.otp_required_for_login?
-      - card.with_body do
-        p
-          = icon_component "shield-check", class: "inline text-green-500 h-8 w-8 mr-2"
-          | L'authentification en 2 facteurs est activée.
-
-      - card.with_action "Re-configurer", new_user_two_factor_settings_path, modal: true
-    - else
-      - card.with_body do
-        p
-          = icon_component "exclamation-circle", class: "inline text-red-500 h-8 w-8 mr-2"
-          | L'authentification en 2 facteurs n'est pas encore activée.
-
-      - card.with_action "Activer", new_user_two_factor_settings_path, modal: true, accent: true
+          - card.with_action "Activer", new_user_two_factor_settings_path, modal: true, accent: true

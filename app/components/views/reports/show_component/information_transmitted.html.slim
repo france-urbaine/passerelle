@@ -1,31 +1,35 @@
-.subheader-bar
-  h2.subheader
-    = icon_component("server-stack", "Icône d'illustration")
-    | Informations relatives au signalement
+= content_flow_component do |flow|
 
-  .subheader-bar__actions
-    .subheader-bar__action= priority_badge(@report)
-    .subheader-bar__action= report_badge(@report)
+  - flow.with_header do |header|
+
+    - header.with_title "Informations relatives au signalement", "server-stack", "Icône d'illustration"
+    - header.with_custom do
+      = priority_badge(@report)
+    - header.with_custom do
+      = report_badge(@report)
     - if @report.sandbox?
-      .subheader-bar__action= badge_component("Bac à sable", :yellow)
+      - header.with_custom do
+        = badge_component("Bac à sable", :yellow)
 
-= description_list_component(@report) do |list|
-  - list.with_attribute("Référence du paquet") do |attribute|
-    = authorized_link_to @report.package
+  - flow.with_section do
 
-  - list.with_attribute(:reference) do |attribute|
-    = @report.reference
+    = description_list_component(@report) do |list|
+      - list.with_attribute("Référence du paquet") do |attribute|
+        = authorized_link_to @report.package
 
-  - list.with_attribute("Date de transmission") do |attribute|
-    = l(@report.package.transmitted_at.to_date)
+      - list.with_attribute(:reference) do |attribute|
+        = @report.reference
 
-  - list.with_attribute("Date d'échéance")
+      - list.with_attribute("Date de transmission") do |attribute|
+        = l(@report.package.transmitted_at.to_date)
 
-  - list.with_attribute("Type de signalement") do |attribute|
-    = t(@report.form_type, scope: "enum.report_form_type")
+      - list.with_attribute("Date d'échéance")
 
-  - list.with_attribute("Objet du signalement") do |attribute|
-    = helpers.list(@report.anomalies) { |value| t(value, scope: ["enum.anomalies", @report.form_type]) }
+      - list.with_attribute("Type de signalement") do |attribute|
+        = t(@report.form_type, scope: "enum.report_form_type")
 
-  - list.with_attribute("Date du constat") do |attribute|
-    = helpers.display_date(@report.date_constat)
+      - list.with_attribute("Objet du signalement") do |attribute|
+        = helpers.list(@report.anomalies) { |value| t(value, scope: ["enum.anomalies", @report.form_type]) }
+
+      - list.with_attribute("Date du constat") do |attribute|
+        = helpers.display_date(@report.date_constat)

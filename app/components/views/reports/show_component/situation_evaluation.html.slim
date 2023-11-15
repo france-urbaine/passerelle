@@ -1,57 +1,55 @@
-.subheader-bar
-  h2.subheader
-    = icon_component("document-text", "Icône d'illustration")
-    | Évaluation actuelle
+= content_flow_component do |flow|
 
-  .subheader-bar__actions
+  - flow.with_header do |header|
+    - header.with_title "Évaluation actuelle", "document-text", "Icône d'illustration"
     - if allowed_to?(:update?, @report) && @report.packing?
-      .subheader-bar__action
-        = button_component "Compléter", edit_report_path(@report, "situation_evaluation"), icon: "pencil-square", modal: true
+      = header.with_action "Compléter", edit_report_path(@report, "situation_evaluation"), icon: "pencil-square", modal: true
 
-= description_list_component(@report) do |list|
-  - if display_situation_date_mutation?
-    - list.with_attribute(:situation_date_mutation) do |attribute|
-      = render_valid_content(:situation_date_mutation) do
-        = helpers.display_date(@report.situation_date_mutation)
+  - flow.with_section do
+    = description_list_component(@report) do |list|
+      - if display_situation_date_mutation?
+        - list.with_attribute(:situation_date_mutation) do |attribute|
+          = render_valid_content(:situation_date_mutation) do
+            = helpers.display_date(@report.situation_date_mutation)
 
-  - if display_situation_affectation?
-    - list.with_attribute(:situation_affectation) do |attribute|
-      = render_valid_content(:situation_affectation) do
-        = situation_affectation
+      - if display_situation_affectation?
+        - list.with_attribute(:situation_affectation) do |attribute|
+          = render_valid_content(:situation_affectation) do
+            = situation_affectation
 
-  - if display_situation_nature?
-    - list.with_attribute(:situation_nature) do |attribute|
-      = render_valid_content(:situation_nature) do
-        = situation_nature
+      - if display_situation_nature?
+        - list.with_attribute(:situation_nature) do |attribute|
+          = render_valid_content(:situation_nature) do
+            = situation_nature
 
-  - if display_situation_categorie?
-    - list.with_attribute(:situation_categorie) do |attribute|
-      = render_valid_content(:situation_categorie) do
-        = situation_categorie
+      - if display_situation_categorie?
+        - list.with_attribute(:situation_categorie) do |attribute|
+          = render_valid_content(:situation_categorie) do
+            = situation_categorie
 
-  - if display_situation_surface_reelle?
-    - list.with_attribute(:situation_surface_reelle) do |attribute|
-      = render_valid_content(:situation_surface_reelle) do
-        = helpers.display_surface(@report.situation_surface_reelle)
+      - if display_situation_surface_reelle?
+        - list.with_attribute(:situation_surface_reelle) do |attribute|
+          = render_valid_content(:situation_surface_reelle) do
+            = helpers.display_surface(@report.situation_surface_reelle)
 
-  - if display_other_situation_surface?
-    - %i(situation_surface_p1 situation_surface_p2 situation_surface_p3 situation_surface_pk1 situation_surface_pk2 situation_surface_ponderee).each do |situation_surface|
-      - list.with_attribute(situation_surface) do |attribute|
-        = render_valid_content(situation_surface) do
-          = helpers.display_surface(@report.public_send(situation_surface))
+      - if display_other_situation_surface?
+        - %i(situation_surface_p1 situation_surface_p2 situation_surface_p3 situation_surface_pk1 situation_surface_pk2 situation_surface_ponderee).each do |situation_surface|
+          - list.with_attribute(situation_surface) do |attribute|
+            = render_valid_content(situation_surface) do
+              = helpers.display_surface(@report.public_send(situation_surface))
 
-  - if display_situation_coefficient_localisation?
-    - list.with_attribute(:situation_coefficient_localisation) do |attribute|
-      = render_valid_content(:situation_coefficient_localisation) do
-        = @report.situation_coefficient_localisation
+      - if display_situation_coefficient_localisation?
+        - list.with_attribute(:situation_coefficient_localisation) do |attribute|
+          = render_valid_content(:situation_coefficient_localisation) do
+            = @report.situation_coefficient_localisation
 
-  - if display_situation_coefficient_entretien?
-    - list.with_attribute(:situation_coefficient_entretien) do |attribute|
-      = render_valid_content(:situation_coefficient_entretien) do
-        = @report.situation_coefficient_entretien
+      - if display_situation_coefficient_entretien?
+        - list.with_attribute(:situation_coefficient_entretien) do |attribute|
+          = render_valid_content(:situation_coefficient_entretien) do
+            = @report.situation_coefficient_entretien
 
-  - if display_situation_coefficient_situation?
-    - %i(situation_coefficient_situation_generale situation_coefficient_situation_particuliere).each do |situation_coefficient|
-      - list.with_attribute(situation_coefficient) do |attribute|
-        = render_valid_content(situation_coefficient) do
-          = @report.public_send(situation_coefficient)
+      - if display_situation_coefficient_situation?
+        - %i(situation_coefficient_situation_generale situation_coefficient_situation_particuliere).each do |situation_coefficient|
+          - list.with_attribute(situation_coefficient) do |attribute|
+            = render_valid_content(situation_coefficient) do
+              = @report.public_send(situation_coefficient)
