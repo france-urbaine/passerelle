@@ -81,6 +81,7 @@ module Reports
       validates_inclusion_of :proposition_categorie, in: :valid_local_professionnel_categories
     end
 
+    # TODO: creation_local_habitation => limiter les valeures possibles
     validates_presence_of :exonerations,             if: :require_proposition_exoneration?
     validates_presence_of :proposition_libelle_voie, if: :require_proposition_adresse?
 
