@@ -31,48 +31,61 @@ module UI
     #
     def default_with_method; end
 
-    # @!group Variants
+    # @!group With icon
     # --------------------------------------------------------------------------
+    # @label With leading icon
     #
-    # @label Colored buttons
-    #
-    def variants_colored; end
+    def with_icon; end
 
-    # @label Colored buttons disabled
+    # @label With icon only (with accessibility issues)
     #
-    def variants_disabled; end
+    def with_icon_only; end
 
-    # @label Discrete buttons
+    # @label With icon only, with accessibility cares
     #
-    def variants_discrete; end
+    def with_icon_only_and_label; end
 
-    # @label Discrete buttons disabled
+    # @label With more icon options (set, variant)
     #
-    def variants_discrete_disabled; end
-
-    # @label With icons
-    #
-    def variants_with_icon; end
-
-    # @label Disabled with icons
-    #
-    def variants_with_icon_disabled; end
+    def with_icon_options; end
     #
     # @!endgroup
 
-    # @!group Icon only
+    # @!group Variants
     # --------------------------------------------------------------------------
     #
-    # @label Default
+    # @label Default variants
     #
-    def icon_only; end
+    def variants_colored; end
 
-    # @label Disabled buttons
+    # @label Default variants (disabled)
     #
-    def icon_only_disabled; end
+    def variants_disabled; end
 
-    # @label With aria label and tooltip
+    # @label Discrete variants
     #
-    def icon_only_with_label; end
+    def variants_discrete; end
+
+    # @label Discrete variants (disabled)
+    #
+    def variants_discrete_disabled; end
+
+    # @label With icon variants
+    #
+    def variants_with_icon; end
+
+    # @label With icon variants (disabled)
+    #
+    def variants_with_icon_disabled; end
+
+    # @label Icon only
+    #
+    def variants_icon_only; end
+
+    # @label Icon only (disabled)
+    #
+    def variants_icon_only_disabled; end
+    #
+    # @!endgroup
   end
 end
