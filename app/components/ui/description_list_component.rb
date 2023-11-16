@@ -33,8 +33,8 @@ module UI
       end
 
       def label
-        if @record && @label && @record.respond_to?(@label)
-          @record.class.human_attribute_name(@label)
+        if @record.class.respond_to?(:human_attribute_name)
+          @record.class.human_attribute_name(@label, default: @label)
         else
           @label
         end
