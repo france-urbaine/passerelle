@@ -1,0 +1,7 @@
+@layer components {
+  .priority-badge {
+    & svg {
+      @apply ml-2 -mr-0;
+    }
+  }
+}

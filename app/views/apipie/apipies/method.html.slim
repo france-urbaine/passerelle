@@ -15,7 +15,8 @@
           - header.with_title header_title, "link"
 
           - if api[:deprecated]
-            - header.with_status "DEPRECATED", :red
+            - header.with_custom do
+              = badge_component "DEPRECATED", :warning
 
         - flow.with_section do
           = description_list_component do |list|

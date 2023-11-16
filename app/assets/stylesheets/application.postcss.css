@@ -28,7 +28,6 @@
 @import "./components/tabs";
 @import "./components/tooltip";
 @import "./components/notifications";
-@import "./components/priority_icon";
 @import "./components/copyable.css";
 @import "./components/dropdown";
 
@@ -59,6 +58,11 @@
 @import "./components/breadcrumbs";
 @import "./components/skeleton_loader";
 @import "./components/public";
+@import "./components/public";
+
+/* View specific components */
+@import "./components/priority_icon";
+@import "./components/priority_badge";
 
 /* API Documentation */
 @import "./components/documentation";

@@ -5,7 +5,8 @@
 
       - header.with_title "Informations", "map-pin", "Communes"
 
-      - header.with_status "Dernière mise à jour le 11/10/2023", :green
+      - header.with_custom do
+        = badge_component "Status", :success
 
     - flow.with_section do
 

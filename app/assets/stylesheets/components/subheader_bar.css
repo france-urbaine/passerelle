@@ -9,7 +9,7 @@
     display: flex;
     flex: none;
     flex-wrap: wrap;
-    align-items: flex-start;
+    align-items: center;
     max-width: 100%;
 
     @apply -m-1;

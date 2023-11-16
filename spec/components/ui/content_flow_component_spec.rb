@@ -9,8 +9,9 @@ RSpec.describe UI::ContentFlowComponent, type: :component do
     render_inline described_class.new do |flow|
       flow.with_header do |header|
         header.with_title "Section#1", "server-stack"
-        header.with_status "Pending", :yellow
+        header.with_action "Do something"
       end
+
       flow.with_section do
         "Contenu section"
       end
@@ -21,11 +22,13 @@ RSpec.describe UI::ContentFlowComponent, type: :component do
     end
 
     expect(page).to have_selector(".content-flow > .header > .subheader-bar") do |header|
-      expect(header).to have_selector("h2.subheader", text: "Section#1")
-      expect(header).to have_selector("svg[data-source$='server-stack.svg']")
+      expect(header).to have_selector("h2.subheader", text: "Section#1") do |subheader|
+        expect(subheader).to have_selector("svg[data-source$='server-stack.svg']")
+      end
+
       expect(header).to have_selector(".subheader-bar__parts") do |parts|
         expect(parts).to have_selector(".subheader-bar__part") do |part|
-          expect(part).to have_selector(".badge", text: "Pending")
+          expect(part).to have_button("Do something")
         end
       end
     end

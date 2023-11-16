@@ -48,7 +48,7 @@
 
       - row.with_column(:sandbox) do
         - if publisher.sandbox?
-          = badge_component("Bac à sable", :yellow)
+          = badge_component("Bac à sable", :warning)
         - else
           -# Render a empty string to avoid empty placeholder
           = " "

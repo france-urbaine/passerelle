@@ -31,7 +31,7 @@
 
     - row.with_column(:sandbox) do
       - if oauth_application.sandbox?
-        = badge_component("Bac à sable", :yellow)
+        = badge_component("Bac à sable", :warning)
       - else
         -# Render a empty string to avoid empty placeholder
         = " "
