@@ -23,7 +23,7 @@ module UI
       CloseAction.new(*args, **options, href: referrer)
     }
 
-    renders_many :actions,       "Action"
+    renders_many :actions, "GenericAction"
     renders_many :other_actions, "OtherAction"
     renders_one :raw_actions
 
@@ -71,9 +71,6 @@ module UI
 
         super(*args, **options)
       end
-    end
-
-    class Action < UI::ButtonComponent
     end
 
     class OtherAction < UI::ButtonComponent

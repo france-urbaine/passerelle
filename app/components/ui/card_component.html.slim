@@ -11,14 +11,12 @@
     - else
       = content
 
-  - if form? || actions? || raw_actions?
+  - if form? || actions?
     = tag.div class: css_classes(:actions_class) do
       = submit_action if form?
 
       - actions.each do |action|
         = action
-
-      = raw_actions
 
 - captured_content_wrapped = capture do
   - if form?

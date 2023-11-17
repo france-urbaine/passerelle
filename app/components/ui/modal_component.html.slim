@@ -14,14 +14,13 @@
     - else
       = content
 
-  - if form? || actions? || other_actions? || close_action? || raw_actions?
+  - if form? || actions? || other_actions? || close_action?
     .modal__actions
       = submit_action if form?
 
       - actions.each do |action|
         = action
 
-      = raw_actions
       = close_action
 
       .flex-grow
