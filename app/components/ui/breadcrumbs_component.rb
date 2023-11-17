@@ -18,6 +18,10 @@ module UI
       super()
     end
 
+    def home_label
+      I18n.t(:home, scope: i18n_component_path)
+    end
+
     class Path < ApplicationViewComponent
       def initialize(title = nil, href_arg = nil, href: nil)
         @title = title

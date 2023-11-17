@@ -1,5 +1,9 @@
 fr:
   components:
+    ui:
+      breadcrumbs:
+        home: Retour à la page d'accueil
+
     layout:
       datatable:
         selection:
