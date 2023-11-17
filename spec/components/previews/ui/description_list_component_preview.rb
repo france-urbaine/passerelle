@@ -2,20 +2,15 @@
 
 module UI
   # @display frame "content"
-  # @display width "medium"
   #
   class DescriptionListComponentPreview < ::Lookbook::Preview
-    # @label With attribute name only
+    # @label Default
     #
-    def with_attribute_name_only; end
+    def default; end
 
-    # @label With attribute name and content
+    # @label With record
     #
-    def with_attribute_name_and_content; end
-
-    # @label With string label
-    #
-    def with_string_label; end
+    def with_record; end
 
     # @label With actions
     #
@@ -24,9 +19,5 @@ module UI
     # @label With reference
     #
     def with_reference; end
-
-    # @label With blank value
-    #
-    def with_blank_value; end
   end
 end

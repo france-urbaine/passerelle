@@ -1,9 +1,19 @@
-.flex.flex-col.space-y-4
-  = description_list_component do |list|
-    - list.with_attribute("Utilisateur") do |attribute|
-      = "fake@solutions-territoire.fr"
-      - attribute.with_action("Inviter", new_admin_user_invitation_path(user_id: 1))
-      - attribute.with_action("Supprimer", remove_admin_user_path(id: 1))
+= description_list_component do |list|
 
-    - list.with_attribute("Département") do |attribute|
-      = "Hérault"
+  - list.with_attribute("Title #1") do |attribute|
+    | Value #1
+
+    - attribute.with_action "Add", icon: "plus", primary: true
+    - attribute.with_action "Edit", "/rails/view_components/samples/link/default"
+    - attribute.with_action "Open a modal", "/rails/view_components/samples/link/modal", modal: true
+
+  - list.with_attribute("Title #2") do |attribute|
+    | Value #2
+
+    - attribute.with_action do
+      = badge_component "Status"
+
+    - attribute.with_action do
+      = button_component "Do something else"
+
+  - list.with_attribute("Title #3")

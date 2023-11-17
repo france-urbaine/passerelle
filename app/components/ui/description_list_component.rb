@@ -22,7 +22,7 @@ module UI
     end
 
     class Attribute < ApplicationViewComponent
-      renders_many :actions, ::UI::ButtonComponent
+      renders_many :actions, "GenericAction"
       renders_one  :reference
 
       def initialize(record, label, **options)
@@ -41,11 +41,14 @@ module UI
       end
 
       def row_html_attributes
-        options         = @options.dup
-        options[:class] = Array.wrap(options[:class])
-        options[:class].unshift("description-list__row")
-        options[:class].unshift("description-list__row--with-actions") if actions?
-        options[:class].unshift("description-list__row--with-reference") if reference?
+        options = @options.dup
+
+        css_class = %w[description-list__row]
+        css_class << "description-list__row--with-actions" if actions?
+        css_class << "description-list__row--with-reference" if reference?
+        css_class << options[:class]
+
+        options[:class] = css_class.join(" ").squish
         options
       end
 

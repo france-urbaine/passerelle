@@ -1,0 +1,7 @@
+= description_list_component(User.first) do |list|
+
+  - list.with_attribute(:first_name)
+  - list.with_attribute(:last_name)
+
+  - list.with_attribute(:email) do
+    | Custom value @

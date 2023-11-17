@@ -76,7 +76,6 @@
       }
     }
 
-
     &--primary {
       @apply bg-blue-500 border-blue-500;
       @apply dark:bg-sky-500 dark:border-sky-500;
