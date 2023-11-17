@@ -19,7 +19,7 @@
       = description_list_component(@collectivity) do |list|
         - list.with_attribute(:publisher) do |attribute|
           = authorized_link_to(@collectivity.publisher, namespace: :admin)
-    
+
         - list.with_attribute(:territory) do |attribute|
           = authorized_link_to @collectivity.territory, namespace: :admin do
             = @collectivity.territory.qualified_name
@@ -51,29 +51,29 @@
             = " / "
             = display_count(@collectivity.reports_rejected_count, "rejeté")
 
-      - if allowed_to?(:index?, User)
-        - flow.with_header do |header|
-          - header.with_title "Utilisateurs", "rectangle-stack", "Nouvelle section"
-          - if allowed_to?(:create?, User)
-            = header.with_action "Inviter un utilisateur", new_admin_collectivity_user_path(@collectivity), icon: "plus", modal: true
+    - if allowed_to?(:index?, User)
+      - flow.with_header do |header|
+        - header.with_title "Utilisateurs", "rectangle-stack", "Nouvelle section"
+        - if allowed_to?(:create?, User)
+          = header.with_action "Inviter un utilisateur", new_admin_collectivity_user_path(@collectivity), icon: "plus", modal: true
 
-        - flow.with_section do
-          - if @collectivity.users_count.zero?
-            = card_component(content_class: "card__content--empty")
-              | Aucun utilisateur assigné.
+      - flow.with_section do
+        - if @collectivity.users_count.zero?
+          = card_component(content_class: "card__content--empty")
+            | Aucun utilisateur assigné.
 
-          - else
-            = turbo_frame_tag "datatable-users", src: admin_collectivity_users_path(@collectivity) do
-              = datatable_skeleton_component(nested: true, rows: @collectivity.users_count) do |skeleton|
-                - skeleton.with_search
-                - skeleton.with_pagination
-
-      - if allowed_to?(:index?, Office)
-        - flow.with_header do |header|
-          - header.with_title "Guichets correspondants", "rectangle-stack", "Nouvelle section"
-
-        - flow.with_section do
-          = turbo_frame_tag "datatable-offices", src: admin_collectivity_offices_path(@collectivity) do
-            = datatable_skeleton_component(nested: true, rows: 0) do |skeleton|
+        - else
+          = turbo_frame_tag "datatable-users", src: admin_collectivity_users_path(@collectivity) do
+            = datatable_skeleton_component(nested: true, rows: @collectivity.users_count) do |skeleton|
               - skeleton.with_search
               - skeleton.with_pagination
+
+    - if allowed_to?(:index?, Office)
+      - flow.with_header do |header|
+        - header.with_title "Guichets correspondants", "rectangle-stack", "Nouvelle section"
+
+      - flow.with_section do
+        = turbo_frame_tag "datatable-offices", src: admin_collectivity_offices_path(@collectivity) do
+          = datatable_skeleton_component(nested: true, rows: 0) do |skeleton|
+            - skeleton.with_search
+            - skeleton.with_pagination
