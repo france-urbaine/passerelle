@@ -4,7 +4,7 @@ module Layout
   # @display frame false
   #
   class StatusPageComponentPreview < ViewComponent::Preview
-    DEFAULT_REFERRER = "/rails/view_components/samples/turbo/card"
+    DEFAULT_REFERRER = "/rails/view_components/samples/turbo/content"
 
     # @label Default
     # @param modal toggle "View the template when requesting a modal"

@@ -19,7 +19,6 @@
         br
         | Sa suppression sera effective #{deletion_distance_from_now_in_words}.
 
-  - if actions?
-    - template.with_raw_actions do
-      - actions.each do |action|
-        = action
+  - actions.each do |action|
+    - template.with_action do
+      = action

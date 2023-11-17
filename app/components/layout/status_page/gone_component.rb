@@ -7,8 +7,7 @@ module Layout
 
       renders_one :header, "LabelOrContent"
       renders_one :body, "LabelOrContent"
-
-      renders_many :actions, UI::ButtonComponent
+      renders_many :actions, "GenericAction"
 
       renders_one :breadcrumbs, ->(**options) { UI::BreadcrumbsComponent.new(heading: false, **options) }
 
