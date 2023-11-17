@@ -82,4 +82,18 @@ Rails.application.configure do
 
   # Configure asset host to simulate CORS requests
   config.asset_host = ENV["RAILS_ASSET_HOST"] if ENV["RAILS_ASSET_HOST"]
+
+  # Redirect localhost:3000 to appropriate domain set in config.x.domain
+  # (DOMAIN_APP or `fiscahub.localhost` by default)
+  #
+  config.middleware.insert_before Rack::Runtime, Rack::Rewrite do
+    domain = Rails.application.config.x.domain
+    next if domain == "localhost"
+
+    r303(/(.*)/, lambda { |match, rack_env|
+      port = rack_env["SERVER_PORT"]
+      path = match.to_s
+      "http://#{domain}:#{port}#{path}"
+    }, host: "localhost")
+  end
 end
