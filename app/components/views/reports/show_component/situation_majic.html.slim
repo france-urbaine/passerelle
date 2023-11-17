@@ -48,5 +48,7 @@
         - list.with_attribute(:situation_proprietaire) do |attribute|
           = render_valid_content(:situation_proprietaire) do
             = @report.situation_proprietaire
-            - attribute.with_reference do
-              = "Numéro d'ordre : #{@report.situation_numero_ordre_proprietaire}"
+
+            - if @report.situation_numero_ordre_proprietaire?
+              - attribute.with_reference do
+                = "Numéro d'ordre : #{@report.situation_numero_ordre_proprietaire}"
