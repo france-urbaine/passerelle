@@ -1,0 +1,9 @@
+= description_list_component do |list|
+  - list.with_attribute("Regular") do
+    = copyable_component "4i3vxQVkg3fUqrWL"
+
+  - list.with_attribute("Secret") do
+    = copyable_component "4i3vxQVkg3fUqrWL", secret: true
+
+  - list.with_attribute("Anything else") do
+    | Some content to compare

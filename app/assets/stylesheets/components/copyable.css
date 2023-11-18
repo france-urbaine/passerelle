@@ -10,7 +10,6 @@
     justify-content: space-between;
 
     @apply h-10 leading-6 rounded-md border;
-    @apply subpixel-antialiased;
     @apply bg-gray-200 border-gray-300;
     @apply dark:bg-gray-800 dark:border-gray-700;
 
@@ -24,7 +23,7 @@
 
     table &,
     .description-list__row & {
-      @apply -my-2 h-auto;
+      @apply h-8 -my-2;
 
       & .copyable__value {
         @apply py-1 px-3;
