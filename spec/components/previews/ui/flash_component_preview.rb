@@ -10,18 +10,26 @@ module UI
     #
     def default; end
 
-    # @label Warning
+    # @label Warning scheme
     #
     def warning; end
 
-    # @label Danger
+    # @label Danger scheme
     #
     def danger; end
 
-    # @label Success
+    # @label Success scheme
     #
     def success; end
+
+    # @label Done scheme
+    #
+    def done; end
     #
     # @!endgroup
+
+    # @label With custom icon
+    #
+    def with_custom_icon; end
   end
 end
