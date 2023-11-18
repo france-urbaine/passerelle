@@ -10,64 +10,100 @@
     align-items: flex-end;
     justify-content: center;
 
-    @apply p-4;
+    @apply p-4 space-y-4;
   }
 
   .notification {
     pointer-events: auto;
+    max-width: 500px;
 
+    @apply p-4 pl-20;
     @apply transition transform duration-500;
-    @apply p-4 mb-4 rounded-md ring-1 shadow-lg;
-    @apply bg-white ring-gray-300;
+
+    @apply border-l-4 rounded-r-md ring-1 shadow-lg;
+    @apply bg-white ring-gray-300 border-blue-500;;
     @apply dark:bg-black dark:ring-gray-700;
-  }
 
-  .notification__icon {
-    @apply mr-4 w-10 h-10 text-blue-500;
-  }
+    &__icon {
+      position: absolute;
+      top: theme("spacing.3");
+      left: theme("spacing.4");
+      @apply p-1 text-blue-500;
 
-  .notification__icon--success {
-    @apply text-green-500;
-  }
+      & svg {
+        @apply w-8 h-8;
+      }
+    }
 
-  .notification__icon--error {
-    @apply text-red-500;
-  }
+    &__closing {
+      position: absolute;
+      top: theme("spacing.3");
+      right: theme("spacing.3");
 
-  .notification__icon--cancel {
-    @apply text-purple-500;
-  }
+      & svg {
+        @apply text-gray-500;
+      }
+    }
 
-  .notification__message {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    min-height: theme("spacing.10");
-  }
+    &__message {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: theme("spacing.8");
+      @apply pr-24;
+    }
 
-  .notification__title {
-    @apply text-lg leading-6 font-semibold;
-  }
+    &__title {
+      @apply text-lg leading-8 font-semibold;
+    }
 
-  .notification__closing {
-    @apply ml-6;
-  }
+    &--warning {
+      @apply border-amber-500;
+    }
 
-  .notification__closing-button svg {
-    @apply text-gray-500;
-  }
+    &--danger  {
+      @apply border-red-500;
+    }
 
-  .notification__actions {
-    @apply pt-4;
-  }
+    &--success {
+      @apply border-green-500;
+    }
 
-  .notification--enter-from,
-  .notification--leave-to {
-    @apply opacity-0 translate-x-6
-  }
+    &--done {
+      @apply border-violet-500;
+    }
 
-  .notification--enter-to,
-  .notification--leave-from {
-    @apply opacity-100 translate-x-0;
+    &--warning &__icon {
+      @apply text-amber-500;
+    }
+
+    &--danger &__icon {
+      @apply text-red-500;
+    }
+
+    &--success &__icon {
+      @apply text-green-500;
+    }
+
+    &--done &__icon {
+      @apply text-violet-500;
+    }
+
+    &__actions {
+      flex-grow: 0;
+      width: 100%;
+
+      @apply pt-4 space-x-4;
+    }
+
+    &--enter-from,
+    &--leave-to {
+      @apply opacity-0 translate-x-6
+    }
+
+    &--enter-to,
+    &--leave-from {
+      @apply opacity-100 translate-x-0;
+    }
   }
 }

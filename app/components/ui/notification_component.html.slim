@@ -1,41 +1,33 @@
-- if data.present?
-  .notification(
-    role="alert"
-    aria-live="polite"
-    data-controller="notification"
-    data-notification-delay-value=delay
-    data-transition-enter-from="notification--enter-from"
-    data-transition-enter-to="notification--enter-to"
-    data-transition-leave-from="notification--leave-from"
-    data-transition-leave-to="notification--leave-to"
-  )
-    .flex.items-start
-      - case type
-      - when "success"
-        = icon_component("check-circle", "Succés", class: "notification__icon notification__icon--success")
-      - when "error"
-        = icon_component("exclamation-circle", "Erreur", class: "notification__icon notification__icon--error")
-      - when "cancel"
-        = icon_component("arrow-path", "Annulation", class: "notification__icon notification__icon--cancel")
-      - else
-        = icon_component("information-circle", "Information", class: "notification__icon")
+.notification(
+  role="log"
+  aria-live="polite"
+  data-controller="notification"
+  data-notification-delay-value=delay
+  data-transition-enter-from="notification--enter-from"
+  data-transition-enter-to="notification--enter-to"
+  data-transition-leave-from="notification--leave-from"
+  data-transition-leave-to="notification--leave-to"
+  class=scheme_css_class
+)
+  .notification__icon
+    = icon
 
-      .flex.flex-col.grow
-        .flex.items-start
-          .notification__message.grow
-            .notification__title= title
-            = simple_format(description) if description.present?
+  .notification__message
+    - if header?
+      .notification__title= header
 
-          .notification__closing
-            a.icon-button.notification__closing-button(
-              role="button"
-              data-action="notification#hide"
-              aria-label="Masquer cette notification"
-              href=request.url
-            )
-              = icon_component("x-mark", "Masquer cette notification")
+    = body || content
 
-        - if actions.any?
-          .notification__actions
-            - actions.each do |action|
-              = render action
+  - if actions.any?
+    .notification__actions
+      - actions.each do |action|
+        = action
+
+  .notification__closing
+    a.icon-button.notification__closing-button(
+      role="button"
+      data-action="notification#hide"
+      aria-label="Masquer cette notification"
+      href=request.url
+    )
+      = icon_component("x-mark", "Masquer cette notification")

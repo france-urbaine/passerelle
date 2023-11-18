@@ -27,6 +27,7 @@ class ApplicationViewComponent < ViewComponent::Base
     def initialize(*args, **options)
       @args = args
       @options = options
+      super()
     end
 
     def call

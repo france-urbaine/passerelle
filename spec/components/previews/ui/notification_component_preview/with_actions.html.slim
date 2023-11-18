@@ -1,0 +1,15 @@
+.notifications
+  = notification_component do |notification|
+    - notification.with_header do
+      | Notification title
+
+    - notification.with_body do
+      | Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.
+      br
+      | Ut labore et dolore magna aliqua. Ut enim ad minim veniam.
+
+    - notification.with_action "Add", icon: "plus", primary: true
+    - notification.with_action "Edit", "/rails/view_components/samples/link/default"
+    - notification.with_action "Open a modal", "/rails/view_components/samples/link/modal", modal: true
+    - notification.with_action do
+      = button_component "Do something else"
