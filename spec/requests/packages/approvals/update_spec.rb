@@ -78,9 +78,9 @@ RSpec.describe "Packages::ApprovalsController#update" do
 
       it "sets a flash notice" do
         expect(flash).to have_flash_notice.to eq(
-          type:  "success",
-          title: "Le paquet a été approuvé et transmis aux guichets concernés.",
-          delay: 3000
+          scheme: "success",
+          header: "Le paquet a été approuvé et transmis aux guichets concernés.",
+          delay:  3000
         )
       end
     end

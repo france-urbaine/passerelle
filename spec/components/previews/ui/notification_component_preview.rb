@@ -8,9 +8,13 @@ module UI
     #
     def default; end
 
-    # @label With header
+    # @label With long text
     #
-    def with_header; end
+    def with_long_text; end
+
+    # @label With custom icon
+    #
+    def with_custom_icon; end
 
     # @label With actions
     #

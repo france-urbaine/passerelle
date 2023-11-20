@@ -54,9 +54,9 @@ RSpec.describe "Admin::DGFIPsController#update" do
 
       it "sets a flash notice" do
         expect(flash).to have_flash_notice.to eq(
-          type:  "success",
-          title: "Les modifications ont été enregistrées avec succés.",
-          delay: 3000
+          scheme: "success",
+          header: "Les modifications ont été enregistrées avec succés.",
+          delay:   3000
         )
       end
     end

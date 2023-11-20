@@ -89,7 +89,7 @@ RSpec.describe "Office users in admin" do
     # A notification should be displayed
     #
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "Un nouvel utilisateur a été ajouté avec succés.")
+    expect(page).to     have_selector("[role=log]", text: "Un nouvel utilisateur a été ajouté avec succés.")
   end
 
   it "updates an user from the office page" do
@@ -135,7 +135,7 @@ RSpec.describe "Office users in admin" do
     # A notification should be displayed
     #
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
+    expect(page).to     have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
   end
 
   it "manages users from the office page" do
@@ -173,7 +173,7 @@ RSpec.describe "Office users in admin" do
     # A notification should be displayed
     #
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
+    expect(page).to     have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
 
     # Re-open the modal to add another user
     #
@@ -204,7 +204,7 @@ RSpec.describe "Office users in admin" do
     # A notification should be displayed
     #
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.", count: 1)
+    expect(page).to     have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.", count: 1)
 
     # Re-open the modal to remove all users
     #
@@ -254,11 +254,11 @@ RSpec.describe "Office users in admin" do
     # A notification should be displayed
     #
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "L'utilisateur a été exclu du guichet.")
+    expect(page).to     have_selector("[role=log]", text: "L'utilisateur a été exclu du guichet.")
 
     # The notification doesn't propose to rollback the last action
     #
-    within "[role=alert]", text: "L'utilisateur a été exclu du guichet." do |alert|
+    within "[role=log]", text: "L'utilisateur a été exclu du guichet." do |alert|
       expect(alert).not_to have_button("Cancel")
     end
 
@@ -308,11 +308,11 @@ RSpec.describe "Office users in admin" do
     #
     expect(page).not_to have_selector(".header-bar--selection")
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "Les utilisateurs sélectionnés ont été exclus du guichet.")
+    expect(page).to     have_selector("[role=log]", text: "Les utilisateurs sélectionnés ont été exclus du guichet.")
 
     # The notification doesn't propose to rollback the last action
     #
-    within "[role=alert]", text: "Les utilisateurs sélectionnés ont été exclus du guichet." do |alert|
+    within "[role=log]", text: "Les utilisateurs sélectionnés ont été exclus du guichet." do |alert|
       expect(alert).not_to have_button("Cancel")
     end
 
@@ -367,11 +367,11 @@ RSpec.describe "Office users in admin" do
     #
     expect(page).not_to have_selector(".header-bar--selection")
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "Les utilisateurs sélectionnés ont été exclus du guichet.")
+    expect(page).to     have_selector("[role=log]", text: "Les utilisateurs sélectionnés ont été exclus du guichet.")
 
     # The notification doesn't propose to rollback the last action
     #
-    within "[role=alert]", text: "Les utilisateurs sélectionnés ont été exclus du guichet." do |alert|
+    within "[role=log]", text: "Les utilisateurs sélectionnés ont été exclus du guichet." do |alert|
       expect(alert).not_to have_button("Cancel")
     end
 
@@ -429,11 +429,11 @@ RSpec.describe "Office users in admin" do
     #
     expect(page).not_to have_selector(".header-bar--selection")
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "Les utilisateurs sélectionnés ont été exclus du guichet.")
+    expect(page).to     have_selector("[role=log]", text: "Les utilisateurs sélectionnés ont été exclus du guichet.")
 
     # The notification doesn't propose to rollback the last action
     #
-    within "[role=alert]", text: "Les utilisateurs sélectionnés ont été exclus du guichet." do |alert|
+    within "[role=log]", text: "Les utilisateurs sélectionnés ont été exclus du guichet." do |alert|
       expect(alert).not_to have_button("Cancel")
     end
 
@@ -474,11 +474,11 @@ RSpec.describe "Office users in admin" do
     # A notification should be displayed
     #
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "L'utilisateur a été supprimé.")
+    expect(page).to     have_selector("[role=log]", text: "L'utilisateur a été supprimé.")
 
     # The notification should include a button to cancel the last action
     #
-    within "[role=alert]", text: "L'utilisateur a été supprimé." do
+    within "[role=log]", text: "L'utilisateur a été supprimé." do
       click_on "Annuler"
     end
 
@@ -493,7 +493,7 @@ RSpec.describe "Office users in admin" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector("[role=alert]", text: "L'utilisateur a été supprimé.")
-    expect(page).to     have_selector("[role=alert]", text: "La suppression de l'utilisateur a été annulée.")
+    expect(page).not_to have_selector("[role=log]", text: "L'utilisateur a été supprimé.")
+    expect(page).to     have_selector("[role=log]", text: "La suppression de l'utilisateur a été annulée.")
   end
 end

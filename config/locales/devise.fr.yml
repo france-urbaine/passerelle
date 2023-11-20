@@ -34,52 +34,55 @@ fr:
     confirmations:
       send_instructions:          "Vous allez recevoir les instructions nécessaires à la confirmation de votre compte dans quelques minutes."
       send_paranoid_instructions: "Si votre e-mail existe dans notre base de données, vous allez bientôt recevoir un e-mail contenant les instructions de confirmation de votre compte."
+
       confirmed:
-        type:  "success"
-        title: "Votre compte a été validé. Vous pouvez dorénavant vous connecter."
+        scheme: "success"
+        header: "Votre compte a été validé. Vous pouvez dorénavant vous connecter."
 
       confirmed_already_signed_in:
-        type:  "success"
-        title: "Votre compte a été validé."
-        delay: 3000
+        scheme: "success"
+        header: "Votre compte a été validé."
+        delay:  3000
 
       reconfirmed:
-        type:  "success"
-        title: "Votre adresse mail a été validée. Vous pouvez dorénavant vous connecter."
+        scheme: "success"
+        header: "Votre adresse mail a été validée. Vous pouvez dorénavant vous connecter."
 
       reconfirmed_already_signed_in:
-        type:  "success"
-        title: "Votre adresse mail a été validée."
-        delay: 3000
+        scheme: "success"
+        header: "Votre adresse mail a été validée."
+        delay:  3000
 
     passwords:
       no_token:                   "Vous ne pouvez accéder à cette page sans passer par un e-mail de réinitialisation de mot de passe. Si vous êtes passé par un e-mail de ce type, assurez-vous d'utiliser l'URL complète."
       send_instructions:          "Vous allez recevoir par email les instructions nécessaires pour réinitialiser votre mot de passe dans quelques instants."
       send_paranoid_instructions: "Vous allez recevoir par email les instructions nécessaires pour réinitialiser votre mot de passe dans quelques instants."
+
       updated:
-        type:  "success"
-        title: "Votre mot de passe a été modifié avec succès"
+        scheme: "success"
+        header: "Votre mot de passe a été modifié avec succès"
       updated_not_active:
-        type:  "success"
-        title: "Votre mot de passe a été modifié avec succès. Vous pouvez dorénavant vous connecter."
+        scheme: "success"
+        header: "Votre mot de passe a été modifié avec succès. Vous pouvez dorénavant vous connecter."
 
     sessions:
       signed_in: "Connexion réalisée avec succés."
       signed_out:
-        scheme:       "done"
-        description:  "Vous avez été déconnecté."
-        delay:        5000
+        scheme:  "done"
+        header:  "Vous avez été déconnecté."
+        delay:   5000
       already_signed_out:
-        scheme:       "done"
-        description:  "Vous avez été déconnecté."
-        delay:        5000
+        scheme:  "done"
+        header:  "Vous avez été déconnecté."
+        delay:   5000
 
     unlocks:
       send_instructions:          "Vous allez recevoir par email les instructions nécessaires au déverrouillage de votre compte dans quelques instants."
       send_paranoid_instructions: "Vous allez recevoir par email les instructions nécessaires au déverrouillage de votre compte dans quelques instants."
       unlocked:
-        scheme: "success"
-        title:  "Votre compte a été déverrouillé avec succès. Vous pouvez dorénavant vous connecter."
+        scheme:  "success"
+        header:  "Votre compte a été déverrouillé avec succès. Vous pouvez dorénavant vous connecter."
+
   errors:
     messages:
       weak_password: "Le mot de passe n'est pas assez fort. Assurez-vous d'avoir un mot de passe avec un niveau de sécurité \"bon\" au minimum."

@@ -6,25 +6,25 @@ module NotificationsHelper
       notice = flash[:notice]
       return unless notice
 
-      case notice
-      when String
-        scheme = :default
-        title = notice
-        options = {}
-      when Hash
+      scheme  = :default
+      options = {}
+      header  = notice
+
+      if notice.is_a?(Hash)
         notice.symbolize_keys!
-        scheme      = notice.fetch(:scheme, :default).to_sym
-        title       = notice.fetch(:title, nil)
-        description = notice.fetch(:description, nil)
-        options     = notice.slice(:icon, :delay)
+
+        scheme  = notice.fetch(:scheme, :default).to_sym
+        options = notice.slice(:icon, :delay)
+        header  = notice.fetch(:header, nil)
+        body    = notice.fetch(:body, nil)
       end
 
       actions = FlashAction.read_multi(flash[:actions])
       actions = Array.wrap(actions).map(&:symbolize_keys)
 
       render UI::NotificationComponent.new(scheme, **options) do |notification|
-        notification.with_header { title } if title.present?
-        notification.with_body   { description } if description.present?
+        notification.with_header { header } if header.present?
+        notification.with_body   { body } if body.present?
 
         actions.each do |action|
           notification.with_action(

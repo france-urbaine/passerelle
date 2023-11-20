@@ -111,7 +111,7 @@ RSpec.describe "DDFIPs in admin" do
     # A notification should be displayed
     #
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "Une nouvelle DDFIP a été ajoutée avec succés.")
+    expect(page).to     have_selector("[role=log]", text: "Une nouvelle DDFIP a été ajoutée avec succés.")
   end
 
   it "updates a DDFIP from the index page" do
@@ -145,7 +145,7 @@ RSpec.describe "DDFIPs in admin" do
     # A notification should be displayed
     #
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
+    expect(page).to     have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
   end
 
   it "updates a DDFIP from the DDFIP page" do
@@ -178,7 +178,7 @@ RSpec.describe "DDFIPs in admin" do
     # A notification should be displayed
     #
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
+    expect(page).to     have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
   end
 
   it "discards a DDFIP from the index page & rollbacks" do
@@ -210,11 +210,11 @@ RSpec.describe "DDFIPs in admin" do
     # A notification should be displayed
     #
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "La DDFIP a été supprimée.")
+    expect(page).to     have_selector("[role=log]", text: "La DDFIP a été supprimée.")
 
     # The notification should include a button to cancel the last action
     #
-    within "[role=alert]", text: "La DDFIP a été supprimée." do
+    within "[role=log]", text: "La DDFIP a été supprimée." do
       click_on "Annuler"
     end
 
@@ -229,8 +229,8 @@ RSpec.describe "DDFIPs in admin" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector("[role=alert]", text: "La DDFIP a été supprimée.")
-    expect(page).to     have_selector("[role=alert]", text: "La suppression de la DDFIP a été annulée.")
+    expect(page).not_to have_selector("[role=log]", text: "La DDFIP a été supprimée.")
+    expect(page).to     have_selector("[role=log]", text: "La suppression de la DDFIP a été annulée.")
   end
 
   it "discards a DDFIP from the DDFIP page & rollbacks" do
@@ -260,11 +260,11 @@ RSpec.describe "DDFIPs in admin" do
     # A notification should be displayed
     #
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "La DDFIP a été supprimée.")
+    expect(page).to     have_selector("[role=log]", text: "La DDFIP a été supprimée.")
 
     # The notification should include a button to cancel the last action
     #
-    within "[role=alert]", text: "La DDFIP a été supprimée." do
+    within "[role=log]", text: "La DDFIP a été supprimée." do
       click_on "Annuler"
     end
 
@@ -279,8 +279,8 @@ RSpec.describe "DDFIPs in admin" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector("[role=alert]", text: "La DDFIP a été supprimée.")
-    expect(page).to     have_selector("[role=alert]", text: "La suppression de la DDFIP a été annulée.")
+    expect(page).not_to have_selector("[role=log]", text: "La DDFIP a été supprimée.")
+    expect(page).to     have_selector("[role=log]", text: "La suppression de la DDFIP a été annulée.")
   end
 
   it "selects and discards one DDFIP from the index page & rollbacks" do
@@ -324,11 +324,11 @@ RSpec.describe "DDFIPs in admin" do
     #
     expect(page).not_to have_selector(".header-bar--selection")
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "Les DDFIPs sélectionnées ont été supprimées.")
+    expect(page).to     have_selector("[role=log]", text: "Les DDFIPs sélectionnées ont été supprimées.")
 
     # The notification should include a button to cancel the last action
     #
-    within "[role=alert]", text: "Les DDFIPs sélectionnées ont été supprimées." do
+    within "[role=log]", text: "Les DDFIPs sélectionnées ont été supprimées." do
       click_on "Annuler"
     end
 
@@ -345,8 +345,8 @@ RSpec.describe "DDFIPs in admin" do
     # A new notification should be displayed
     #
     expect(page).not_to have_selector(".header-bar--selection")
-    expect(page).not_to have_selector("[role=alert]", text: "Les DDFIPs sélectionnées ont été supprimées.")
-    expect(page).to     have_selector("[role=alert]", text: "La suppression des DDFIPs sélectionnées a été annulée.")
+    expect(page).not_to have_selector("[role=log]", text: "Les DDFIPs sélectionnées ont été supprimées.")
+    expect(page).to     have_selector("[role=log]", text: "La suppression des DDFIPs sélectionnées a été annulée.")
   end
 
   it "selects and discards all DDFIPs from the current page on index page & rollbacks" do
@@ -403,11 +403,11 @@ RSpec.describe "DDFIPs in admin" do
     #
     expect(page).not_to have_selector(".header-bar--selection")
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "Les DDFIPs sélectionnées ont été supprimées.")
+    expect(page).to     have_selector("[role=log]", text: "Les DDFIPs sélectionnées ont été supprimées.")
 
     # The notification should include a button to cancel the last action
     #
-    within "[role=alert]", text: "Les DDFIPs sélectionnées ont été supprimées." do
+    within "[role=log]", text: "Les DDFIPs sélectionnées ont été supprimées." do
       click_on "Annuler"
     end
 
@@ -426,8 +426,8 @@ RSpec.describe "DDFIPs in admin" do
     # A new notification should be displayed
     #
     expect(page).not_to have_selector(".header-bar--selection")
-    expect(page).not_to have_selector("[role=alert]", text: "Les DDFIPs sélectionnées ont été supprimées.")
-    expect(page).to     have_selector("[role=alert]", text: "La suppression des DDFIPs sélectionnées a été annulée.")
+    expect(page).not_to have_selector("[role=log]", text: "Les DDFIPs sélectionnées ont été supprimées.")
+    expect(page).to     have_selector("[role=log]", text: "La suppression des DDFIPs sélectionnées a été annulée.")
   end
 
   it "selects and discards all DDFIPs through several pages on index page & rollbacks" do
@@ -485,11 +485,11 @@ RSpec.describe "DDFIPs in admin" do
     #
     expect(page).not_to have_selector(".header-bar--selection")
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "Les DDFIPs sélectionnées ont été supprimées.")
+    expect(page).to     have_selector("[role=log]", text: "Les DDFIPs sélectionnées ont été supprimées.")
 
     # The notification should include a button to cancel the last action
     #
-    within "[role=alert]", text: "Les DDFIPs sélectionnées ont été supprimées." do
+    within "[role=log]", text: "Les DDFIPs sélectionnées ont été supprimées." do
       click_on "Annuler"
     end
 
@@ -508,7 +508,7 @@ RSpec.describe "DDFIPs in admin" do
     # A new notification should be displayed
     #
     expect(page).not_to have_selector(".header-bar--selection")
-    expect(page).not_to have_selector("[role=alert]", text: "Les DDFIPs sélectionnées ont été supprimées.")
-    expect(page).to     have_selector("[role=alert]", text: "La suppression des DDFIPs sélectionnées a été annulée.")
+    expect(page).not_to have_selector("[role=log]", text: "Les DDFIPs sélectionnées ont été supprimées.")
+    expect(page).to     have_selector("[role=log]", text: "La suppression des DDFIPs sélectionnées a été annulée.")
   end
 end

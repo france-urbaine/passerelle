@@ -62,9 +62,9 @@ RSpec.describe "Admin::Offices::UsersController#destroy_all" do
 
       it "sets a flash notice" do
         expect(flash).to have_flash_notice.to eq(
-          type:        "success",
-          title:       "Les utilisateurs sélectionnés ont été exclus du guichet.",
-          delay:        10_000
+          scheme: "success",
+          header: "Les utilisateurs sélectionnés ont été exclus du guichet.",
+          delay:    10_000
         )
       end
 

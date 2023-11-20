@@ -65,9 +65,10 @@ RSpec.describe "Admin::DDFIPs::UsersController#undiscard_all" do
 
       it "sets a flash notice" do
         expect(flash).to have_flash_notice.to eq(
-          type:  "cancel",
-          title: "La suppression des utilisateurs sélectionnés a été annulée.",
-          delay: 3000
+          scheme: "done",
+          icon:   "arrow-path",
+          header: "La suppression des utilisateurs sélectionnés a été annulée.",
+          delay:   3000
         )
       end
     end

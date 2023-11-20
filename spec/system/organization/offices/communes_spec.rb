@@ -88,7 +88,7 @@ RSpec.describe "Communes assigned to offices managed bu current organization" do
     # The dialog should be closed
     #
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
+    expect(page).to     have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
 
     # Re-open the modal to add another EPCI
     #
@@ -131,7 +131,7 @@ RSpec.describe "Communes assigned to offices managed bu current organization" do
     # The dialog should be closed
     #
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
+    expect(page).to     have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
 
     # Re-open the modal to remove all communes
     #
@@ -160,7 +160,7 @@ RSpec.describe "Communes assigned to offices managed bu current organization" do
     # The dialog should be closed
     #
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
+    expect(page).to     have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
   end
 
   it "excludes a commune from the office without deleting it" do
@@ -189,11 +189,11 @@ RSpec.describe "Communes assigned to offices managed bu current organization" do
     # A notification should be displayed
     #
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "La commune a été exclue du guichet.")
+    expect(page).to     have_selector("[role=log]", text: "La commune a été exclue du guichet.")
 
     # The notification doesn't propose to rollback the last action
     #
-    within "[role=alert]", text: "La commune a été exclue du guichet." do |alert|
+    within "[role=log]", text: "La commune a été exclue du guichet." do |alert|
       expect(alert).not_to have_button("Cancel")
     end
 
@@ -238,11 +238,11 @@ RSpec.describe "Communes assigned to offices managed bu current organization" do
     #
     expect(page).not_to have_selector(".header-bar--selection")
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "Les communes sélectionnées ont été exclues du guichet.")
+    expect(page).to     have_selector("[role=log]", text: "Les communes sélectionnées ont été exclues du guichet.")
 
     # The notification doesn't propose to rollback the last action
     #
-    within "[role=alert]", text: "Les communes sélectionnées ont été exclues du guichet." do |alert|
+    within "[role=log]", text: "Les communes sélectionnées ont été exclues du guichet." do |alert|
       expect(alert).not_to have_button("Cancel")
     end
 
@@ -293,11 +293,11 @@ RSpec.describe "Communes assigned to offices managed bu current organization" do
     #
     expect(page).not_to have_selector(".header-bar--selection")
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "Les communes sélectionnées ont été exclues du guichet.")
+    expect(page).to     have_selector("[role=log]", text: "Les communes sélectionnées ont été exclues du guichet.")
 
     # The notification doesn't propose to rollback the last action
     #
-    within "[role=alert]", text: "Les communes sélectionnées ont été exclues du guichet." do |alert|
+    within "[role=log]", text: "Les communes sélectionnées ont été exclues du guichet." do |alert|
       expect(alert).not_to have_button("Cancel")
     end
 
@@ -350,11 +350,11 @@ RSpec.describe "Communes assigned to offices managed bu current organization" do
     #
     expect(page).not_to have_selector(".header-bar--selection")
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "Les communes sélectionnées ont été exclues du guichet.")
+    expect(page).to     have_selector("[role=log]", text: "Les communes sélectionnées ont été exclues du guichet.")
 
     # The notification doesn't propose to rollback the last action
     #
-    within "[role=alert]", text: "Les communes sélectionnées ont été exclues du guichet." do |alert|
+    within "[role=log]", text: "Les communes sélectionnées ont été exclues du guichet." do |alert|
       expect(alert).not_to have_button("Cancel")
     end
 

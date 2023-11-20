@@ -115,7 +115,7 @@ RSpec.describe "Offices in admin" do
     # A notification should be displayed
     #
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "Un nouveau guichet a été ajouté avec succés.")
+    expect(page).to     have_selector("[role=log]", text: "Un nouveau guichet a été ajouté avec succés.")
   end
 
   it "updates an office from the index page" do
@@ -154,7 +154,7 @@ RSpec.describe "Offices in admin" do
     # A notification should be displayed
     #
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
+    expect(page).to     have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
   end
 
   it "updates an office from the office page" do
@@ -192,7 +192,7 @@ RSpec.describe "Offices in admin" do
     # A notification should be displayed
     #
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
+    expect(page).to     have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
   end
 
   it "discards an office from the index page & rollbacks" do
@@ -224,11 +224,11 @@ RSpec.describe "Offices in admin" do
     # A notification should be displayed
     #
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "Le guichet a été supprimé.")
+    expect(page).to     have_selector("[role=log]", text: "Le guichet a été supprimé.")
 
     # The notification should include a button to cancel the last action
     #
-    within "[role=alert]", text: "Le guichet a été supprimé." do
+    within "[role=log]", text: "Le guichet a été supprimé." do
       click_on "Annuler"
     end
 
@@ -243,8 +243,8 @@ RSpec.describe "Offices in admin" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector("[role=alert]", text: "Le guichet a été supprimé.")
-    expect(page).to     have_selector("[role=alert]", text: "La suppression du guichet a été annulée.")
+    expect(page).not_to have_selector("[role=log]", text: "Le guichet a été supprimé.")
+    expect(page).to     have_selector("[role=log]", text: "La suppression du guichet a été annulée.")
   end
 
   it "discards an office from the office page & rollbacks" do
@@ -274,11 +274,11 @@ RSpec.describe "Offices in admin" do
     # A notification should be displayed
     #
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "Le guichet a été supprimé.")
+    expect(page).to     have_selector("[role=log]", text: "Le guichet a été supprimé.")
 
     # The notification should include a button to cancel the last action
     #
-    within "[role=alert]", text: "Le guichet a été supprimé." do
+    within "[role=log]", text: "Le guichet a été supprimé." do
       click_on "Annuler"
     end
 
@@ -293,8 +293,8 @@ RSpec.describe "Offices in admin" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector("[role=alert]", text: "Le guichet a été supprimé.")
-    expect(page).to     have_selector("[role=alert]", text: "La suppression du guichet a été annulée.")
+    expect(page).not_to have_selector("[role=log]", text: "Le guichet a été supprimé.")
+    expect(page).to     have_selector("[role=log]", text: "La suppression du guichet a été annulée.")
   end
 
   it "selects and discards one office from the index page & rollbacks" do
@@ -338,11 +338,11 @@ RSpec.describe "Offices in admin" do
     #
     expect(page).not_to have_selector(".header-bar--selection")
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "Les guichets sélectionnés ont été supprimés.")
+    expect(page).to     have_selector("[role=log]", text: "Les guichets sélectionnés ont été supprimés.")
 
     # The notification should include a button to cancel the last action
     #
-    within "[role=alert]", text: "Les guichets sélectionnés ont été supprimés." do
+    within "[role=log]", text: "Les guichets sélectionnés ont été supprimés." do
       click_on "Annuler"
     end
 
@@ -359,8 +359,8 @@ RSpec.describe "Offices in admin" do
     # A new notification should be displayed
     #
     expect(page).not_to have_selector(".header-bar--selection")
-    expect(page).not_to have_selector("[role=alert]", text: "Les guichets sélectionnés ont été supprimés.")
-    expect(page).to     have_selector("[role=alert]", text: "La suppression des guichets sélectionnés a été annulée.")
+    expect(page).not_to have_selector("[role=log]", text: "Les guichets sélectionnés ont été supprimés.")
+    expect(page).to     have_selector("[role=log]", text: "La suppression des guichets sélectionnés a été annulée.")
   end
 
   it "selects and discards all offices from the current page on index page & rollbacks" do
@@ -417,11 +417,11 @@ RSpec.describe "Offices in admin" do
     #
     expect(page).not_to have_selector(".header-bar--selection")
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "Les guichets sélectionnés ont été supprimés.")
+    expect(page).to     have_selector("[role=log]", text: "Les guichets sélectionnés ont été supprimés.")
 
     # The notification should include a button to cancel the last action
     #
-    within "[role=alert]", text: "Les guichets sélectionnés ont été supprimés." do
+    within "[role=log]", text: "Les guichets sélectionnés ont été supprimés." do
       click_on "Annuler"
     end
 
@@ -440,8 +440,8 @@ RSpec.describe "Offices in admin" do
     # A new notification should be displayed
     #
     expect(page).not_to have_selector(".header-bar--selection")
-    expect(page).not_to have_selector("[role=alert]", text: "Les guichets sélectionnés ont été supprimés.")
-    expect(page).to     have_selector("[role=alert]", text: "La suppression des guichets sélectionnés a été annulée.")
+    expect(page).not_to have_selector("[role=log]", text: "Les guichets sélectionnés ont été supprimés.")
+    expect(page).to     have_selector("[role=log]", text: "La suppression des guichets sélectionnés a été annulée.")
   end
 
   it "selects and discards all offices through several pages on index page & rollbacks" do
@@ -499,11 +499,11 @@ RSpec.describe "Offices in admin" do
     #
     expect(page).not_to have_selector(".header-bar--selection")
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "Les guichets sélectionnés ont été supprimés.")
+    expect(page).to     have_selector("[role=log]", text: "Les guichets sélectionnés ont été supprimés.")
 
     # The notification should include a button to cancel the last action
     #
-    within "[role=alert]", text: "Les guichets sélectionnés ont été supprimés." do
+    within "[role=log]", text: "Les guichets sélectionnés ont été supprimés." do
       click_on "Annuler"
     end
 
@@ -522,7 +522,7 @@ RSpec.describe "Offices in admin" do
     # A new notification should be displayed
     #
     expect(page).not_to have_selector(".header-bar--selection")
-    expect(page).not_to have_selector("[role=alert]", text: "Les guichets sélectionnés ont été supprimés.")
-    expect(page).to     have_selector("[role=alert]", text: "La suppression des guichets sélectionnés a été annulée.")
+    expect(page).not_to have_selector("[role=log]", text: "Les guichets sélectionnés ont été supprimés.")
+    expect(page).to     have_selector("[role=log]", text: "La suppression des guichets sélectionnés a été annulée.")
   end
 end

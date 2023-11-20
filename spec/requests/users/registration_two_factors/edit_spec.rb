@@ -38,8 +38,8 @@ RSpec.describe "Users::RegistrationTwoFactorsController#edit" do
 
     it "sets a flash notice" do
       expect(flash).to have_flash_notice.to eq(
-        type:  "error",
-        title: "Cette invitation est déjà complétée, a expirée ou n'a pas été trouvée."
+        scheme: "error",
+        header: "Cette invitation est déjà complétée, a expirée ou n'a pas été trouvée."
       )
     end
   end
@@ -52,8 +52,8 @@ RSpec.describe "Users::RegistrationTwoFactorsController#edit" do
 
     it "sets a flash notice" do
       expect(flash).to have_flash_notice.to eq(
-        type:  "error",
-        title: "Cette invitation est déjà complétée, a expirée ou n'a pas été trouvée."
+        scheme: "error",
+        header: "Cette invitation est déjà complétée, a expirée ou n'a pas été trouvée."
       )
     end
   end

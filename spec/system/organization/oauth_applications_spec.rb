@@ -62,7 +62,7 @@ RSpec.describe "OauthApplications managed by current organization" do
     # A notification should be displayed
     #
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "Une nouvelle application a été ajoutée avec succés.")
+    expect(page).to     have_selector("[role=log]", text: "Une nouvelle application a été ajoutée avec succés.")
   end
 
   it "updates an oauth_application from the index page" do
@@ -95,7 +95,7 @@ RSpec.describe "OauthApplications managed by current organization" do
     # A notification should be displayed
     #
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
+    expect(page).to     have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
   end
 
   it "updates an oauth_application from the oauth_application page" do
@@ -127,7 +127,7 @@ RSpec.describe "OauthApplications managed by current organization" do
     # A notification should be displayed
     #
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
+    expect(page).to     have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
   end
 
   it "discards an oauth_application from the index page & rollbacks" do
@@ -159,11 +159,11 @@ RSpec.describe "OauthApplications managed by current organization" do
     # A notification should be displayed
     #
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "L'application a été supprimée.")
+    expect(page).to     have_selector("[role=log]", text: "L'application a été supprimée.")
 
     # The notification should include a button to cancel the last action
     #
-    within "[role=alert]", text: "L'application a été supprimée." do
+    within "[role=log]", text: "L'application a été supprimée." do
       click_on "Annuler"
     end
 
@@ -178,8 +178,8 @@ RSpec.describe "OauthApplications managed by current organization" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector("[role=alert]", text: "L'application a été supprimé.")
-    expect(page).to     have_selector("[role=alert]", text: "La suppression de l'application a été annulée.")
+    expect(page).not_to have_selector("[role=log]", text: "L'application a été supprimé.")
+    expect(page).to     have_selector("[role=log]", text: "La suppression de l'application a été annulée.")
   end
 
   it "discards an oauth_application from the oauth_application page & rollbacks" do
@@ -209,11 +209,11 @@ RSpec.describe "OauthApplications managed by current organization" do
     # A notification should be displayed
     #
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "L'application a été supprimée.")
+    expect(page).to     have_selector("[role=log]", text: "L'application a été supprimée.")
 
     # The notification should include a button to cancel the last action
     #
-    within "[role=alert]", text: "L'application a été supprimée." do
+    within "[role=log]", text: "L'application a été supprimée." do
       click_on "Annuler"
     end
 
@@ -228,8 +228,8 @@ RSpec.describe "OauthApplications managed by current organization" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector("[role=alert]", text: "L'application a été supprimée.")
-    expect(page).to     have_selector("[role=alert]", text: "La suppression de l'application a été annulée.")
+    expect(page).not_to have_selector("[role=log]", text: "L'application a été supprimée.")
+    expect(page).to     have_selector("[role=log]", text: "La suppression de l'application a été annulée.")
   end
 
   it "selects and discards one oauth_application from the index page & rollbacks" do
@@ -272,11 +272,11 @@ RSpec.describe "OauthApplications managed by current organization" do
     #
     expect(page).not_to have_selector(".header-bar--selection")
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "Les applications sélectionnées ont été supprimées.")
+    expect(page).to     have_selector("[role=log]", text: "Les applications sélectionnées ont été supprimées.")
 
     # The notification should include a button to cancel the last action
     #
-    within "[role=alert]", text: "Les applications sélectionnées ont été supprimées." do
+    within "[role=log]", text: "Les applications sélectionnées ont été supprimées." do
       click_on "Annuler"
     end
 
@@ -293,8 +293,8 @@ RSpec.describe "OauthApplications managed by current organization" do
     # A new notification should be displayed
     #
     expect(page).not_to have_selector(".header-bar--selection")
-    expect(page).not_to have_selector("[role=alert]", text: "Les applications sélectionnées ont été supprimées.")
-    expect(page).to     have_selector("[role=alert]", text: "La suppression des applications sélectionnées a été annulée.")
+    expect(page).not_to have_selector("[role=log]", text: "Les applications sélectionnées ont été supprimées.")
+    expect(page).to     have_selector("[role=log]", text: "La suppression des applications sélectionnées a été annulée.")
   end
 
   it "selects and discards all oauth_applications from the current page on index page & rollbacks" do
@@ -350,11 +350,11 @@ RSpec.describe "OauthApplications managed by current organization" do
     #
     expect(page).not_to have_selector(".header-bar--selection")
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "Les applications sélectionnées ont été supprimées.")
+    expect(page).to     have_selector("[role=log]", text: "Les applications sélectionnées ont été supprimées.")
 
     # The notification should include a button to cancel the last action
     #
-    within "[role=alert]", text: "Les applications sélectionnées ont été supprimées." do
+    within "[role=log]", text: "Les applications sélectionnées ont été supprimées." do
       click_on "Annuler"
     end
 
@@ -372,8 +372,8 @@ RSpec.describe "OauthApplications managed by current organization" do
     # A new notification should be displayed
     #
     expect(page).not_to have_selector(".header-bar--selection")
-    expect(page).not_to have_selector("[role=alert]", text: "Les applications sélectionnées ont été supprimées.")
-    expect(page).to     have_selector("[role=alert]", text: "La suppression des applications sélectionnées a été annulée.")
+    expect(page).not_to have_selector("[role=log]", text: "Les applications sélectionnées ont été supprimées.")
+    expect(page).to     have_selector("[role=log]", text: "La suppression des applications sélectionnées a été annulée.")
   end
 
   it "selects and discards all oauth_applications through several pages on index page & rollbacks" do
@@ -431,11 +431,11 @@ RSpec.describe "OauthApplications managed by current organization" do
     #
     expect(page).not_to have_selector(".header-bar--selection")
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "Les applications sélectionnées ont été supprimées.")
+    expect(page).to     have_selector("[role=log]", text: "Les applications sélectionnées ont été supprimées.")
 
     # The notification should include a button to cancel the last action
     #
-    within "[role=alert]", text: "Les applications sélectionnées ont été supprimées." do
+    within "[role=log]", text: "Les applications sélectionnées ont été supprimées." do
       click_on "Annuler"
     end
 
@@ -453,7 +453,7 @@ RSpec.describe "OauthApplications managed by current organization" do
     # A new notification should be displayed
     #
     expect(page).not_to have_selector(".header-bar--selection")
-    expect(page).not_to have_selector("[role=alert]", text: "Les applications sélectionnées ont été supprimées.")
-    expect(page).to     have_selector("[role=alert]", text: "La suppression des applications sélectionnées a été annulée.")
+    expect(page).not_to have_selector("[role=log]", text: "Les applications sélectionnées ont été supprimées.")
+    expect(page).to     have_selector("[role=log]", text: "La suppression des applications sélectionnées a été annulée.")
   end
 end

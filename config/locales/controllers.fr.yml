@@ -2,46 +2,46 @@ fr:
   default: &default
     update:
       success:
-        type:         "success"
-        title:        "Les modifications ont été enregistrées avec succés."
-        delay:        3000
+        scheme: "success"
+        header: "Les modifications ont été enregistrées avec succés."
+        delay:  3000
 
   users:
     user_settings:
       update:
         send_reconfirmation_instructions:
-          type:         "success"
-          title:        "Les instructions ont été envoyées par email."
-          delay:        3000
+          scheme: "success"
+          header: "Les instructions ont été envoyées par email."
+          delay:  3000
 
         cancel_pending_reconfirmation:
-          type:         "success"
-          title:        "La modification de l'adresse email a été annulée."
-          delay:        3000
+          scheme: "success"
+          header: "La modification de l'adresse email a été annulée."
+          delay:  3000
 
     two_factor_settings:
       update:
         success:
-          type:         "success"
-          title:        "La configuration de l'authentification en 2 facteurs a été modifiée avec succés."
-          delay:        3000
+          scheme: "success"
+          header: "La configuration de l'authentification en 2 facteurs a été modifiée avec succés."
+          delay:  3000
 
     registrations:
       token_expired:
-        type:   "error"
-        title:  "Cette invitation est déjà complétée, a expirée ou n'a pas été trouvée."
+        scheme: "error"
+        header: "Cette invitation est déjà complétée, a expirée ou n'a pas été trouvée."
 
     registration_passwords:
       create:
         success:
-          type:   "success"
-          title:  "Votre mot de passe a été enregistré."
+          scheme: "success"
+          header: "Votre mot de passe a été enregistré."
 
     registration_two_factors:
       update:
         success:
-          type:   "success"
-          title:  "Votre inscription est complétée. Vous pouvez dorénavant vous connecter."
+          scheme: "success"
+          header: "Votre inscription est complétée. Vous pouvez dorénavant vous connecter."
 
   api:
     transmissions:

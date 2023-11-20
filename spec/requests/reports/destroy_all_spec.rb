@@ -61,10 +61,10 @@ RSpec.describe "ReportsController#destroy_all" do
 
       it "sets a flash notice" do
         expect(flash).to have_flash_notice.to eq(
-          type:        "success",
-          title:       "Les signalements sélectionnés ont été supprimés.",
-          description: "Toutes les données seront définitivement supprimées dans un délai de 30 jours.",
-          delay:       10_000
+          scheme: "success",
+          header: "Les signalements sélectionnés ont été supprimés.",
+          body:   "Toutes les données seront définitivement supprimées dans un délai de 30 jours.",
+          delay:   10_000
         )
       end
 

@@ -12,11 +12,13 @@
   .notification__icon
     = icon
 
-  .notification__message
-    - if header?
-      .notification__title= header
+  - if header? || content.present?
+    .notification__header
+      = header || content
 
-    = body || content
+  - if body?
+    .notification__body
+      = body
 
   - if actions.any?
     .notification__actions

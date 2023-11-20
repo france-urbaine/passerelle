@@ -70,10 +70,10 @@ RSpec.describe "Admin::Collectivities::UsersController#create" do
 
       it "sets a flash notice" do
         expect(flash).to have_flash_notice.to eq(
-          type:        "success",
-          title:       "Un nouvel utilisateur a été ajouté avec succés.",
-          description: "Un mail d'invitation a été envoyé avec les instructions nécessaires pour valider le compte.",
-          delay:       3000
+          scheme: "success",
+          header: "Un nouvel utilisateur a été ajouté avec succés.",
+          body:   "Un mail d'invitation a été envoyé avec les instructions nécessaires pour valider le compte.",
+          delay:  3000
         )
       end
 

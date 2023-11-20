@@ -52,9 +52,9 @@ RSpec.describe "Users::TwoFactorSettingsController#update" do
       it "sets a flash notice" do
         request
         expect(flash).to have_flash_notice.to eq(
-          type:  "success",
-          title: "La configuration de l'authentification en 2 facteurs a été modifiée avec succés.",
-          delay: 3000
+          scheme: "success",
+          header: "La configuration de l'authentification en 2 facteurs a été modifiée avec succés.",
+          delay:  3000
         )
       end
 
@@ -87,9 +87,9 @@ RSpec.describe "Users::TwoFactorSettingsController#update" do
       it "sets a flash notice" do
         request
         expect(flash).to have_flash_notice.to eq(
-          type:  "success",
-          title: "La configuration de l'authentification en 2 facteurs a été modifiée avec succés.",
-          delay: 3000
+          scheme: "success",
+          header: "La configuration de l'authentification en 2 facteurs a été modifiée avec succés.",
+          delay:  3000
         )
       end
 

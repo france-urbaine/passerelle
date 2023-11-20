@@ -62,9 +62,9 @@ RSpec.describe "Organization::Offices::UsersController#update_all" do
 
       it "sets a flash notice" do
         expect(flash).to have_flash_notice.to eq(
-          type:  "success",
-          title: "Les modifications ont été enregistrées avec succés.",
-          delay: 3000
+          scheme: "success",
+          header: "Les modifications ont été enregistrées avec succés.",
+          delay:  3000
         )
       end
     end

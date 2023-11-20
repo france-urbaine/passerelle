@@ -62,10 +62,10 @@ RSpec.describe "Admin::UsersController#destroy" do
 
       it "sets a flash notice" do
         expect(flash).to have_flash_notice.to eq(
-          type:        "success",
-          title:       "L'utilisateur a été supprimé.",
-          description: "Toutes les données seront définitivement supprimées dans un délai de 1 jour.",
-          delay:       10_000
+          scheme: "success",
+          header: "L'utilisateur a été supprimé.",
+          body:   "Toutes les données seront définitivement supprimées dans un délai de 1 jour.",
+          delay:   10_000
         )
       end
 
