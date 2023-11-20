@@ -2,7 +2,7 @@
   - examples.each.with_index do |example, i|
     - flow.with_header(separator: i.zero? ? true : nil) do |header|
       - header.with_title "Exemple", "command-line"
-      - header.with_custom do
+      - header.with_action do
         code.http-code( class=example.http_code_class )
           = example.code
 

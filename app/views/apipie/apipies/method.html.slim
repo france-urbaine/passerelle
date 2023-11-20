@@ -15,7 +15,7 @@
           - header.with_title header_title, "link"
 
           - if api[:deprecated]
-            - header.with_custom do
+            - header.with_action do
               = badge_component "DEPRECATED", :warning
 
         - flow.with_section do
@@ -56,7 +56,7 @@
             - @method[:returns].each do |item|
               - flow.with_header do |header|
                 - header.with_title "Réponse : #{item[:description]}", "arrows-right-left"
-                - header.with_custom do
+                - header.with_action do
                   code.http-code( class="http-code--#{item[:code].floor(-2)}" )
                     = item[:code]
 

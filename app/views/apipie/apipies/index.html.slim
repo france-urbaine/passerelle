@@ -10,7 +10,7 @@
     - @doc[:resources].sort_by(&:first).each do |key, api|
       - flow.with_header do |header|
         - header.with_title api[:name], api.dig(:metadata, :icon)
-        - header.with_custom do
+        - header.with_action do
           - if api[:deprecated]
             code.code DEPRECATED
 

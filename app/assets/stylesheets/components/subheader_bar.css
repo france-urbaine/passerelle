@@ -5,7 +5,7 @@
     justify-content: space-between;
   }
 
-  .subheader-bar__parts {
+  .subheader-bar__actions {
     display: flex;
     flex: none;
     flex-wrap: wrap;
@@ -15,7 +15,7 @@
     @apply -m-1;
   }
 
-  .subheader-bar__part {
+  .subheader-bar__action {
     @apply m-1;
   }
 }

@@ -4,7 +4,7 @@ module UI
   # @display frame "modal"
   #
   class ModalComponentPreview < ViewComponent::Preview
-    DEFAULT_REFERRER = "/rails/view_components/samples/turbo/card"
+    DEFAULT_REFERRER = "/rails/view_components/samples/turbo/content"
 
     # @label Default
     #
