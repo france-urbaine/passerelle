@@ -1,0 +1,18 @@
+= breadcrumbs_component do |breadcrumbs|
+  - breadcrumbs.with_path "Guides"
+  - breadcrumbs.with_path "Formulaires de signalement", api_documentation_path("guides/formulaires")
+  - breadcrumbs.with_path "Occupation d'un local professionnel"
+
+.documentation
+  = card_component do
+    = render "documentation/api/guides/formulaire_occupation_local_professionnel/objet"
+    = render "documentation/api/guides/formulaire_occupation_local_professionnel/identification_majic"
+
+  .content__separator
+
+  h2.subheader#occupation
+    = icon_component("clipboard-document")
+    | Occupation du local
+
+  = card_component do
+    = render "documentation/api/guides/formulaire_occupation_local_professionnel/occupation"

@@ -9,10 +9,10 @@
     ul
       li= link_to "Evaluation d'un local d'habitation", api_documentation_path("guides/formulaire_evaluation_local_habitation")
       li= link_to "Evaluation d'un local professionnel", api_documentation_path("guides/formulaire_evaluation_local_professionnel")
-      li Création d'un local d'habitation
-      li Création d'un local professionnel
-      li Occupation d'un local d'habitation
-      li Occupation d'un local professionnel
+      li= link_to "Création d'un local d'habitation", api_documentation_path("guides/formulaire_creation_local_habitation")
+      li= link_to "Création d'un local professionnel", api_documentation_path("guides/formulaire_creation_local_professionnel")
+      li= link_to "Occupation d'un local d'habitation", api_documentation_path("guides/formulaire_occupation_local_habitation")
+      li= link_to "Occupation d'un local professionnel", api_documentation_path("guides/formulaire_occupation_local_professionnel")
     p
       ' Chaque type de formulaire accepte un ou plusieurs objets (changement de consistance, d'affectation, éxonération à tort, etc.)
       br
@@ -21,10 +21,10 @@
     p Certaines propriétés sont communes à tout les signalements :
     table
       colgroup
-        col( width="25%" )
-        col( width="25%" )
-        col( width="25%" )
-        col( width="25%" )
+        col.w-1/4
+        col.w-1/4
+        col.w-1/4
+        col.w-1/4
       thead
         tr
           th Paramètre

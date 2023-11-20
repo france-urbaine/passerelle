@@ -1,0 +1,76 @@
+h3 Signalement de l'achèvement de travaux
+
+p
+  ' En fonction de la nature proposée, certains champs seront requis ou non :
+  br
+  ' les champs indiqué par un (*) ne sont pas requis pour les Établissement industriel (évalué par méthode comptable)
+  ' (<code>proposition_nature</code> vaut <code>U</code>).
+table
+  colgroup
+    col.w-1/5
+    col.w-1/5
+    col.w-1/5
+    col.w-1/5
+    col.w-1/5
+  thead
+    tr
+      th Paramètre
+      th Description
+      th Valeurs
+      th Commentaire
+      th
+  tbody
+    tr
+      th <code>proposition_nature</code>
+      td Nature du local proposée
+      td <code>CB</code>, <code>LC</code>, <code>DE</code>
+      td = link_to "Consulter toutes les valeurs", "/api/documentation/guides/local_professionnel_nature.csv"
+      td
+        .flex.justify-end.space-x-4
+          .badge.badge--orange.badge--mono requis
+          .badge.badge--blue.badge--mono String
+    tr
+      th <code>proposition_date_achevement</code>
+      td Date d’achèvement proposée
+      td <code>02/03/1994</code>
+      td
+      td
+        .flex.justify-end.space-x-4
+          .badge.badge--orange.badge--mono requis
+          .badge.badge--blue.badge--mono Date
+    tr
+      th <code>proposition_numero_permis</code>
+      td N° de permis proposé
+      td <code>PC 573401650004</code>
+      td
+      td
+        .flex.justify-end.space-x-4
+          .badge.badge--orange.badge--mono requis
+          .badge.badge--blue.badge--mono String
+    tr
+      th <code>proposition_nature_travaux</code>
+      td Nature de travaux proposé
+      td <code>Aménagement d'un local commercial</code>
+      td Description des travaux
+      td
+        .flex.justify-end.space-x-4
+          .badge.badge--orange.badge--mono requis
+          .badge.badge--blue.badge--mono String
+    tr
+      th <code>proposition_categorie</code>
+      td Catégorie proposée
+      td <code>1</code>, <code>2</code>, <code>3</code>
+      td = link_to "Consulter toutes les valeurs", "/api/documentation/guides/local_professionnel_categorie.csv"
+      td
+        .flex.justify-end.space-x-4
+          .badge.badge--orange.badge--mono requis (*)
+          .badge.badge--blue.badge--mono String
+    tr
+      th <code>proposition_surface_reelle</code>
+      td Surface réelle proposée
+      td <code>220.0</code>
+      td
+      td
+        .flex.justify-end.space-x-4
+          .badge.badge--orange.badge--mono requis (*)
+          .badge.badge--blue.badge--mono Float

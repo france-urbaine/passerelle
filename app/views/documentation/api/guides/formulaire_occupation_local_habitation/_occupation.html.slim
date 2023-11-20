@@ -1,0 +1,222 @@
+p En cas de modification de l'occupation, trois blocs sont requis :
+
+ul
+  li l'évaluation actuelle
+  li la situation actuelle de l'occupation
+  li la proposition de mise à jour de l'occupation
+
+h3 Évaluation actuelle
+
+p Ces champs reflètent la situation actuelle du local :
+
+table
+  colgroup
+    col.w-1/5
+    col.w-1/5
+    col.w-1/5
+    col.w-1/5
+    col.w-1/5
+  thead
+    tr
+      th Paramètre
+      th Description
+      th Exemples
+      th Commentaire
+      th
+  tbody
+    tr
+      th <code>situation_affectation</code>
+      td Usage principal du bien
+      td <code>H</code>
+      td Une seule valeur autorisée : Habitation.
+      td
+        .flex.justify-end.space-x-4
+          .badge.badge--orange.badge--mono requis
+          .badge.badge--blue.badge--mono String
+
+    tr
+      th <code>situation_nature</code>
+      td Nature du bien
+      td <code>AP</code>, <code>MA</code>, <code>ME</code>
+      td = link_to "Consulter toutes les valeurs", "/api/documentation/guides/local_habitation_nature.csv"
+      td
+        .flex.justify-end.space-x-4
+          .badge.badge--orange.badge--mono requis
+          .badge.badge--blue.badge--mono String
+
+    tr
+      th <code>situation_categorie</code>
+      td Catégorie du local
+      td <code>1</code>, <code>2</code>, <code>3</code>
+      td = link_to "Consulter toutes les valeurs", "/api/documentation/guides/local_habitation_categorie.csv"
+      td
+        .flex.justify-end.space-x-4
+          .badge.badge--orange.badge--mono requis
+          .badge.badge--blue.badge--mono String
+
+    tr
+      th <code>situation_surface_reelle</code>
+      td Surface réelle bâtie ou non bâtie
+      td <code>250</code>
+      td
+      td
+        .flex.justify-end.space-x-4
+          .badge.badge--orange.badge--mono requis
+          .badge.badge--blue.badge--mono Float
+
+h3 Situation actuelle de l'occupation
+
+p
+  ' En fonction de la nature de l'occupation, certains champs seront requis ou non :
+  br
+  ' les champs indiqué par (*) ne sont requis que dans le cas ou le local est une résidence secondaire.
+  ' (<code>situation_nature_occupation</code> vaut <code>RS</code>).
+table
+  colgroup
+    col.w-1/5
+    col.w-1/5
+    col.w-1/5
+    col.w-1/5
+    col.w-1/5
+  thead
+    tr
+      th Paramètre
+      th Description
+      th Exemples
+      th Commentaire
+      th
+  tbody
+    tr
+      th <code>situation_occupation_annee</code>
+      td Année du fichier d'occupation
+      td <code>2018</code>
+      td
+      td
+        .flex.justify-end.space-x-4
+          .badge.badge--orange.badge--mono requis
+          .badge.badge--blue.badge--mono String
+
+    tr
+      th <code>situation_nature_occupation</code>
+      td Nature de l'occupation
+      td <code>RP</code>, <code>RS</code>, <code>RE</code>
+      td = link_to "Consulter toutes les valeurs", "/api/documentation/guides/local_nature_occupation.csv"
+      td
+        .flex.justify-end.space-x-4
+          .badge.badge--orange.badge--mono requis
+          .badge.badge--blue.badge--mono String
+    tr
+      th <code>situation_majoration_rs</code>
+      td Application de la majoration sur les résidences secondaire
+      td <code>true</code>, <code>false</code>
+      td
+      td
+        .flex.justify-end.space-x-4
+          .badge.badge--orange.badge--mono requis (*)
+          .badge.badge--blue.badge--mono Boolean
+
+h3 Proposition de mise à jour de l'occupation
+
+p
+  ' En fonction de la nature de l'occupation, certains champs seront requis ou non :
+  br
+  ' les champs indiqué par (*) ne sont requis que dans le cas ou le local est vacant et taxé TLV.
+  ' (<code>situation_nature_occupation</code> vaut <code>vacant_tlv</code>).
+  br
+  ' les champs indiqué par (**) ne sont requis que dans le cas ou le local est vacant et taxé THLV.
+  ' (<code>situation_nature_occupation</code> vaut <code>vacant_thlv</code>).
+  br
+  ' les champs indiqué par (***) ne sont requis que dans le cas ou le local est habité.
+  ' (<code>proposition_nature_occupation</code> vaut <code>RP</code> <code>RS</code> <code>RE</code>).
+  br
+  ' les champs indiqué par (****) ne sont requis que dans le cas ou le local est une résidence secondaire.
+  ' (<code>proposition_nature_occupation</code> vaut <code>RS</code>).
+table
+  colgroup
+    col.w-1/5
+    col.w-1/5
+    col.w-1/5
+    col.w-1/5
+    col.w-1/5
+  thead
+    tr
+      th Paramètre
+      th Description
+      th Exemples
+      th Commentaire
+      th
+  tbody
+    tr
+      th <code>proposition_nature_occupation</code>
+      td Nature de l'occupation proposée
+      td <code>RP</code>, <code>RS</code>, <code>RE</code>
+      td = link_to "Consulter toutes les valeurs", "/api/documentation/guides/local_nature_occupation.csv"
+      td
+        .flex.justify-end.space-x-4
+          .badge.badge--orange.badge--mono requis
+          .badge.badge--blue.badge--mono String
+
+    tr
+      th <code>proposition_date_occupation</code>
+      td Date du changement proposée
+      td <code>02/11/2018</code>
+      td
+      td
+        .flex.justify-end.space-x-4
+          .badge.badge--orange.badge--mono requis
+          .badge.badge--blue.badge--mono Date
+    tr
+      th <code>proposition_erreur_tlv</code>
+      td TLV appliquée à tort proposée
+      td <code>true</code>, <code>false</code>
+      td
+      td
+        .flex.justify-end.space-x-4
+          .badge.badge--orange.badge--mono requis (*)
+          .badge.badge--blue.badge--mono Boolean
+    tr
+      th <code>proposition_erreur_thlv</code>
+      td THLV appliquée à tort proposée
+      td <code>true</code>, <code>false</code>
+      td
+      td
+        .flex.justify-end.space-x-4
+          .badge.badge--orange.badge--mono requis (**)
+          .badge.badge--blue.badge--mono Boolean
+
+    tr
+      th <code>proposition_meuble_tourisme</code>
+      td Meublé de tourisme proposée
+      td <code>true</code>, <code>false</code>
+      td
+      td
+        .flex.justify-end.space-x-4
+          .badge.badge--orange.badge--mono requis (***)
+          .badge.badge--blue.badge--mono Boolean
+    tr
+      th <code>proposition_nom_occupant</code>
+      td Nom de l'occupant proposée
+      td <code>Moulin</code>
+      td
+      td
+        .flex.justify-end.space-x-4
+          .badge.badge--orange.badge--mono requis (***)
+          .badge.badge--blue.badge--mono String
+    tr
+      th <code>proposition_prenom_occupant</code>
+      td Prénom de l'occupant proposée
+      td <code>Jean</code>
+      td
+      td
+        .flex.justify-end.space-x-4
+          .badge.badge--orange.badge--mono requis (***)
+          .badge.badge--blue.badge--mono String
+    tr
+      th <code>proposition_majoration_rs</code>
+      td Application de la majoration sur les résidences secondaire proposée
+      td <code>true</code>, <code>false</code>
+      td
+      td
+        .flex.justify-end.space-x-4
+          .badge.badge--orange.badge--mono requis (****)
+          .badge.badge--blue.badge--mono Boolean
