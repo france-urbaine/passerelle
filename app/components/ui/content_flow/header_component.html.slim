@@ -1,10 +1,9 @@
-.header
-  .subheader-bar
-    h2.subheader
-      = title || content
+.content__header
+  h2.content__header-title
+    = title || content
 
-    - if actions?
-      .subheader-bar__actions
-        - actions.each do |action|
-          .subheader-bar__action
-            = action
+  - if actions?
+    .content__header-actions
+      - actions.each do |action|
+        .content__header-action
+          = action

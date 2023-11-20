@@ -5,84 +5,73 @@ require "rails_helper"
 # TODO : more tests
 
 RSpec.describe UI::ContentFlowComponent, type: :component do
-  it "renders the contenu flow with an header, a section and an action" do
+  it "renders content with headers & sections" do
+    render_inline described_class.new do |flow|
+      flow.with_header  { "Section title #1" }
+      flow.with_section { "Section content #1" }
+      flow.with_header  { "Section title #2" }
+      flow.with_section { "Section content #2" }
+      flow.with_section { "Section content #3" }
+    end
+
+    expect(page).to have_selector(".content-flow") do |flow|
+      expect(flow).to have_selector(".content__header:nth-child(1)",  text: "Section title #1")
+      expect(flow).to have_selector(".content__section:nth-child(2)", text: "Section content #1")
+      expect(flow).to have_selector(".content__separator:nth-child(3)")
+      expect(flow).to have_selector(".content__header:nth-child(4)",  text: "Section title #2")
+      expect(flow).to have_selector(".content__section:nth-child(5)", text: "Section content #2")
+      expect(flow).to have_selector(".content__separator:nth-child(6)")
+      expect(flow).to have_selector(".content__section:nth-child(7)", text: "Section content #3")
+    end
+  end
+
+  it "renders content without headers" do
+    render_inline described_class.new do |flow|
+      flow.with_section { "Section content #1" }
+      flow.with_section { "Section content #2" }
+      flow.with_section { "Section content #3" }
+    end
+
+    expect(page).to have_selector(".content-flow") do |flow|
+      expect(flow).to have_selector(".content__section:nth-child(1)", text: "Section content #1")
+      expect(flow).to have_selector(".content__separator:nth-child(2)")
+      expect(flow).to have_selector(".content__section:nth-child(3)", text: "Section content #2")
+      expect(flow).to have_selector(".content__separator:nth-child(4)")
+      expect(flow).to have_selector(".content__section:nth-child(5)", text: "Section content #3")
+    end
+  end
+
+  it "renders content an header with title" do
     render_inline described_class.new do |flow|
       flow.with_header do |header|
-        header.with_title "Section#1", "server-stack"
+        header.with_title "Section #1", "server-stack"
+      end
+
+      flow.with_section { "Section content" }
+    end
+
+    expect(page).to have_selector(".content-flow > .content__header > h2.content__header-title") do |h2|
+      expect(h2).to have_selector("svg[data-source$='server-stack.svg']")
+      expect(h2).to have_text("Section #1")
+    end
+  end
+
+  it "renders content an header with actions" do
+    render_inline described_class.new do |flow|
+      flow.with_header do |header|
+        header.with_title "Section #1", "server-stack"
         header.with_action "Do something"
-      end
-
-      flow.with_section do
-        "Contenu section"
-      end
-    end
-
-    expect(page).to have_selector(".content-flow") do |flow|
-      expect(flow).not_to have_selector("div.content__separator")
-    end
-
-    expect(page).to have_selector(".content-flow > .header > .subheader-bar") do |header|
-      expect(header).to have_selector("h2.subheader", text: "Section#1") do |subheader|
-        expect(subheader).to have_selector("svg[data-source$='server-stack.svg']")
-      end
-
-      expect(header).to have_selector(".subheader-bar__actions") do |actions|
-        expect(actions).to have_selector(".subheader-bar__action") do |action|
-          expect(action).to have_button("Do something")
-        end
-      end
-    end
-  end
-
-  it "renders the contenu flow with a custom action" do
-    render_inline described_class.new do |flow|
-      flow.with_header do |header|
         header.with_action do
-          tag.p "Hello world"
+          tag.div("Hello world", class: "badge")
         end
       end
 
-      flow.with_section do
-        "Contenu section"
-      end
+      flow.with_section { "Section content" }
     end
 
-    expect(page).to have_selector(".content-flow > .header > .subheader-bar > .subheader-bar__actions") do |actions|
-      expect(actions).to have_selector(".subheader-bar__action > p", text: "Hello world")
-    end
-  end
-
-  it "renders a contenu flow without header" do
-    render_inline described_class.new do |flow|
-      flow.with_section do
-        "Section#1"
-      end
-    end
-
-    expect(page).to have_selector(".content-flow") do |flow|
-      expect(flow).not_to have_selector(".header")
-    end
-  end
-
-  it "renders a contenu flow with 2 sections with a separator before the second" do
-    render_inline described_class.new do |flow|
-      flow.with_section # first section : should not have separator
-      flow.with_section # second section : should have separator
-    end
-
-    expect(page).to have_selector(".content-flow") do |flow|
-      expect(flow).to have_selector("div.content__separator")
-    end
-  end
-
-  it "renders a contenu flow with 2 sections with no separator" do
-    render_inline described_class.new do |flow|
-      flow.with_section # first section : should not have separator
-      flow.with_section separator: false # no separator
-    end
-
-    expect(page).to have_selector(".content-flow") do |flow|
-      expect(flow).not_to have_selector("div.content__separator")
+    expect(page).to have_selector(".content-flow > .content__header > .content__header-actions") do |actions|
+      expect(actions).to have_button("Do something")
+      expect(actions).to have_selector(".content__header-action > .badge", text: "Hello world")
     end
   end
 end

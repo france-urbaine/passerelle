@@ -3,6 +3,14 @@
     @apply italic text-gray-500;
   }
 
+  .header {
+    @apply text-2xl leading-10;
+  }
+
+  .subheader {
+    @apply text-xl leading-8;
+  }
+
   .prose {
     h1, h2 {
       @apply text-xl mb-6;
