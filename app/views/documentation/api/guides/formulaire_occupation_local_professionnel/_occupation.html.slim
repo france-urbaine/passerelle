@@ -1,19 +1,14 @@
-p En cas de modification de l'occupation, trois blocs sont requis :
-
-ul
-  li l'évaluation actuelle
-  li la situation actuelle de l'occupation
-  li la proposition de mise à jour de l'occupation
-
 h3 Évaluation actuelle
 
 p
   ' Ces champs reflètent la situation actuelle du local.
   br
   ' En fonction de la nature de l'occupation, certains champs seront requis ou non :
-  br
-  ' les champs indiqué par (*) ne sont requis que dans le cas ou le local n'est pas un Établissement industriel (évalué par méthode comptable).
-  ' (<code>situation_nature</code> ne vaut pas <code>U</code>).
+ul
+  li#reference_1
+    ' (1) ne sont pas requis dans le cas d'un local industriel évalué par méthode comptable
+    ' (<code>proposition_nature</code> vaut <code>U</code>).
+
 table
   colgroup
     col.w-1/5
@@ -27,60 +22,61 @@ table
       th Description
       th Exemples
       th Commentaire
-      th
       th
   tbody
     tr
       th <code>situation_affectation</code>
-      td Usage principal du bien
-      td <code>C</code>, <code>L</code>, <code>P</code>
-      td = link_to "Consulter toutes les valeurs", "/api/documentation/guides/local_affectation_professionnel.csv"
+      td Affectation du local
+      td <code>C</code>, <code>L</code>
       td
-      td
-        .flex.justify-end.space-x-4
-          .badge.badge--orange.badge--mono requis
-          .badge.badge--blue.badge--mono String
+        = link_to "Consulter toutes les valeurs", "/api/documentation/guides/local_professionnel_affectation.csv"
+        '  - seules les affectations professionnelles sont acceptées.
+
+      td.text-right.space-x-4
+        .badge.badge--orange.badge--mono requis
+        .badge.badge--blue.badge--mono String
 
     tr
       th <code>situation_nature</code>
-      td Nature du bien
+      td Nature du local
       td <code>CB</code>, <code>LC</code>, <code>DE</code>
-      td = link_to "Consulter toutes les valeurs", "/api/documentation/guides/local_professionnel_nature.csv"
       td
-      td
-        .flex.justify-end.space-x-4
-          .badge.badge--orange.badge--mono requis
-          .badge.badge--blue.badge--mono String
+        = link_to "Consulter toutes les valeurs", "/api/documentation/guides/local_professionnel_nature.csv"
+        '  - seules les natures professionnelles sont acceptées.
+
+      td.text-right.space-x-4
+        .badge.badge--orange.badge--mono requis
+        .badge.badge--blue.badge--mono String
 
     tr
       th <code>situation_categorie</code>
       td Catégorie du local
-      td <code>MAG1</code>, <code>MAG2</code>, <code>MAG3</code>
-      td = link_to "Consulter toutes les valeurs", "/api/documentation/guides/local_professionnel_categorie.csv"
+      td <code>MAG1</code>, <code>MAG2</code>, <code>SPE1</code>
       td
-      td
-        .flex.justify-end.space-x-4
-          .badge.badge--orange.badge--mono requis (*)
-          .badge.badge--blue.badge--mono String
+        = link_to "Consulter toutes les valeurs", "/api/documentation/guides/local_professionnel_categorie.csv"
+        ' - seules des catégories professionelles sont acceptées.
+
+      td.text-right.space-x-4
+        .badge.badge--orange.badge--mono requis (1)
+        .badge.badge--blue.badge--mono String
 
     tr
       th <code>situation_surface_reelle</code>
-      td Surface réelle bâtie ou non bâtie
-      td <code>250</code>
+      td Surface réelle
+      td <code>250.0</code>
       td
-      td
-      td
-        .flex.justify-end.space-x-4
-          .badge.badge--orange.badge--mono requis (*)
-          .badge.badge--blue.badge--mono Float
+      td.text-right.space-x-4
+        .badge.badge--orange.badge--mono requis (1)
+        .badge.badge--blue.badge--mono Numeric
 
 h3 Situation actuelle de l'occupation
 
-p
-  ' En fonction de la nature de l'occupation, certains champs seront requis ou non :
-  br
-  ' les champs indiqué par (*) ne sont requis que dans le cas ou le local est en vacance fiscal.
-  ' (<code>situation_vacance_fiscale</code> vaut <code>true</code>).
+p En fonction de la nature de l'occupation, certains champs seront requis ou non :
+ul
+  li#reference_2
+    ' (2) les champs sont requis dans le cas d'un local vacant
+    ' (<code>situation_vacance_fiscale</code> vaut <code>true</code>).
+
 table
   colgroup
     col.w-1/5
@@ -88,14 +84,12 @@ table
     col.w-1/5
     col.w-1/5
     col.w-1/5
-
   thead
     tr
       th Paramètre
       th Description
       th Exemples
       th Commentaire
-      th
       th
   tbody
     tr
@@ -103,71 +97,61 @@ table
       td Année du fichier CFE
       td <code>2018</code>, <code>2019</code>, <code>2023</code>
       td
-      td
-      td
-        .flex.justify-end.space-x-4
-          .badge.badge--orange.badge--mono requis
-          .badge.badge--blue.badge--mono String
+      td.text-right.space-x-4
+        .badge.badge--orange.badge--mono requis
+        .badge.badge--blue.badge--mono String
+
     tr
       th <code>situation_vacance_fiscale</code>
       td Vacance fiscale
       td <code>true</code>, <code>false</code>
       td
-      td
-      td
-        .flex.justify-end.space-x-4
-          .badge.badge--orange.badge--mono requis
-          .badge.badge--blue.badge--mono Boolean
+      td.text-right.space-x-4
+        .badge.badge--orange.badge--mono requis
+        .badge.badge--blue.badge--mono Boolean
+
     tr
       th <code>situation_nombre_annees_vacance</code>
       td Nombre d'années de vacance
       td <code>4</code>
-      td Dois être supérieur ou égal à 0
       td
-      td
-        .flex.justify-end.space-x-4
-          .badge.badge--orange.badge--mono requis (*)
-          .badge.badge--blue.badge--mono String
+      td.text-right.space-x-4
+        .badge.badge--orange.badge--mono requis (2)
+        .badge.badge--blue.badge--mono String
+
     tr
       th <code>situation_siren_dernier_occupant</code>
       td N° SIREN du dernier occupant
-      td <code>362 521 879</code>
-      td doit correspondre à <code>/\A[0-9]{9}\Z/</code>
-      td
-      td
-        .flex.justify-end.space-x-4
-          .badge.badge--orange.badge--mono requis
-          .badge.badge--blue.badge--mono String
+      td <code>362521879</code>
+      td Sans espaces - Regexp: <code>/\A[0-9]{9}\Z/</code>
+      td.text-right.space-x-4
+        .badge.badge--orange.badge--mono requis
+        .badge.badge--blue.badge--mono String
+
     tr
       th <code>situation_nom_dernier_occupant</code>
       td Nom du dernier occupant
       td <code>Dupont</code>
       td
-      td
-      td
-        .flex.justify-end.space-x-4
-          .badge.badge--orange.badge--mono requis
-          .badge.badge--blue.badge--mono String
-    tr
+      td.text-right.space-x-4
+        .badge.badge--orange.badge--mono requis
+        .badge.badge--blue.badge--mono String
+  tr
       th <code>situation_vlf_cfe</code>
       td VLF Cotisation foncière des entreprises
       td <code>78</code>
-      td Doit être supérieur ou égal à 0
       td
-      td
-        .flex.justify-end.space-x-4
-          .badge.badge--orange.badge--mono requis
-          .badge.badge--blue.badge--mono String
-    tr
+      td.text-right.space-x-4
+        .badge.badge--orange.badge--mono requis
+        .badge.badge--blue.badge--mono String
+  tr
       th <code>situation_taxation_base_minimum</code>
       td Taxation base minimum
       td <code>true</code>, <code>false</code>
       td
-      td
-      td
-        .flex.justify-end.space-x-4
-          .badge.badge--orange.badge--mono requis
-          .badge.badge--blue.badge--mono Boolean
+      td.text-right.space-x-4
+        .badge.badge--orange.badge--mono requis
+        .badge.badge--blue.badge--mono Boolean
 
 h3 Proposition de mise à jour de l'occupation
 
@@ -178,7 +162,6 @@ table
     col.w-1/5
     col.w-1/5
     col.w-1/5
-
   thead
     tr
       th Paramètre
@@ -186,74 +169,59 @@ table
       th Exemples
       th Commentaire
       th
-      th
   tbody
     tr
       th <code>proposition_numero_siren</code>
-      td N° SIREN proposée
-      td <code>362 521 879</code>
-      td Doit correspondre à <code>/\A[0-9]{9}\Z/</code>
-      td
-      td
-        .flex.justify-end.space-x-4
-          .badge.badge--orange.badge--mono requis
-          .badge.badge--blue.badge--mono String
+      td N° SIREN de l'occupant
+      td <code>362521879</code>
+      td Sans espaces - Regexp: <code>/\A[0-9]{9}\Z/</code>
+      td.text-right.space-x-4
+        .badge.badge--orange.badge--mono requis
+        .badge.badge--blue.badge--mono String
     tr
       th <code>proposition_nom_societe</code>
-      td Nom de l'entreprise proposée
+      td Nom de l'entreprise
       td <code>Orange</code>
       td
-      td
-      td
-        .flex.justify-end.space-x-4
-          .badge.badge--orange.badge--mono requis
-          .badge.badge--blue.badge--mono String
+      td.text-right.space-x-4
+        .badge.badge--orange.badge--mono requis
+        .badge.badge--blue.badge--mono String
     tr
       th <code>proposition_nom_enseigne</code>
-      td Nom de l'Enseigne proposée
-      td <code>Bouygue</code>
+      td Nom de l'enseigne
+      td <code>Centre technique</code>
       td
-      td
-      td
-        .flex.justify-end.space-x-4
-          .badge.badge--blue.badge--mono String
+      td.text-right.space-x-4
+        .badge.badge--blue.badge--mono String
     tr
       th <code>proposition_etablissement_principal</code>
-      td Etablissement principal proposée
+      td Etablissement principal ?
       td <code>true</code>, <code>false</code>
       td
-      td
-      td
-        .flex.justify-end.space-x-4
-          .badge.badge--orange.badge--mono requis
-          .badge.badge--blue.badge--mono Boolean
+      td.text-right.space-x-4
+        .badge.badge--orange.badge--mono requis
+        .badge.badge--blue.badge--mono Boolean
     tr
       th <code>proposition_chantier_longue_duree</code>
-      td Chantier longue durée proposée
+      td Chantier longue durée ?
       td <code>true</code>, <code>false</code>
       td
-      td
-      td
-        .flex.justify-end.space-x-4
-          .badge.badge--orange.badge--mono requis
-          .badge.badge--blue.badge--mono Boolean
+      td.text-right.space-x-4
+        .badge.badge--orange.badge--mono requis
+        .badge.badge--blue.badge--mono Boolean
     tr
       th <code>proposition_code_naf</code>
-      td Code NAF proposée
-      td <code>0111Z</code>, <code>1393Z</code>
-      td Doit correspondre à <code>/\A[0-9]{2}\.[0-9]{2}[A-Z]\Z/</code>
-      td
-      td
-        .flex.justify-end.space-x-4
-          .badge.badge--orange.badge--mono requis
-          .badge.badge--blue.badge--mono String
+      td Code NAF de l'établissement
+      td <code>01.11Z</code>, <code>13.93Z</code>
+      td Au format <code>00.00A</code> - Regexp: <code>/\A[0-9]{2}\.[0-9]{2}[A-Z]\Z/</code>
+      td.text-right.space-x-4
+        .badge.badge--orange.badge--mono requis
+        .badge.badge--blue.badge--mono String
     tr
       th <code>proposition_date_debut_activite</code>
-      td Date de début de l'activité proposée
+      td Date de début de l'activité
       td <code>03/04/2022</code>
       td
-      td
-      td
-        .flex.justify-end.space-x-4
-          .badge.badge--orange.badge--mono requis
-          .badge.badge--blue.badge--mono Date
+      td.text-right.space-x-4
+        .badge.badge--orange.badge--mono requis
+        .badge.badge--blue.badge--mono Date

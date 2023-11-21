@@ -28,16 +28,16 @@ table
         .badge.badge--blue.badge--mono String
     tr
       th <code>anomalies</code>
-      td Object(s) du signalement
+      td Object du signalement
       td
         ul
-          li <code>construction_neuve</code> : #{link_to("Construction neuve", "#construction_neuve")}
           li <code>omission_batie</code> : #{link_to("Omission bâtie", "#omission_batie")}
+          li <code>construction_neuve</code> : #{link_to("Construction neuve", "#construction_neuve")}
 
-      td Une ou plusieurs valeurs acceptées
+      td Une seule valeur acceptée
       td.text-right.space-x-4
         .badge.badge--orange.badge--mono requis
-        .badge.badge--blue.badge--mono Array[String]
+        .badge.badge--blue.badge--mono String
     tr
       td( colspan="5" )
         ' [...]

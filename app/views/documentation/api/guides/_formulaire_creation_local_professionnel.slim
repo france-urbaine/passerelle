@@ -10,18 +10,18 @@
 
   .content__separator
 
-  h2.subheader#construction_neuve
-    = icon_component("clipboard-document")
-    | Construction neuve
-
-  = card_component do
-    = render "documentation/api/guides/formulaire_creation_local_professionnel/construction_neuve"
-
-  .content__separator
-
   h2.subheader#omission_batie
     = icon_component("clipboard-document")
     | Omission bâtie
 
   = card_component do
     = render "documentation/api/guides/formulaire_creation_local_professionnel/omission_batie"
+
+  .content__separator
+
+  h2.subheader#construction_neuve
+    = icon_component("clipboard-document")
+    | Construction neuve
+
+  = card_component do
+    = render "documentation/api/guides/formulaire_creation_local_professionnel/construction_neuve"

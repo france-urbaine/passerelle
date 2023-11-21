@@ -93,7 +93,7 @@ fr:
         # Occupation actuelle
         situation_occupation_annee:       Année du fichier d'occupation
         situation_nature_occupation:      Nature de l'occupation
-        situation_majoration_rs:          Application de la majoration sur les résidences secondaire
+        situation_majoration_rs:          Application de la majoration sur les résidences secondaires
         situation_annee_cfe:              Année du fichier CFE
         situation_vacance_fiscale:        Vacance fiscale
         situation_nombre_annees_vacance:  Nombre d'années de vacance
@@ -108,7 +108,7 @@ fr:
         proposition_erreur_tlv:              TLV appliquée à tort
         proposition_erreur_thlv:             THLV appliquée à tort
         proposition_meuble_tourisme:         Meublé de tourisme
-        proposition_majoration_rs:           Application de la majoration sur les résidences secondaire
+        proposition_majoration_rs:           Application de la majoration sur les résidences secondaires
 
         proposition_nom_occupant:            Nom de l'occupant
         proposition_prenom_occupant:         Prénom de l'occupant

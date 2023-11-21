@@ -4,7 +4,7 @@ p
   ' En fonction de la nature proposée, certains champs seront requis ou non :
   br
   ' les champs indiqué par un (*) ne sont requis que dans le cas d'une dépendance de maison ou d'appartement
-  ' (<code>proposition_nature</code> vaut <code>DA</code>, <code>DM</code>).
+  ' (<code>proposition_nature</code> vaut <code>DA</code> ou <code>DM</code>).
 table
   colgroup
     col.w-1/5
@@ -16,7 +16,7 @@ table
     tr
       th Paramètre
       th Description
-      th Valeurs
+      th Exemples
       th Commentaire
       th
   tbody
@@ -24,62 +24,63 @@ table
       th <code>proposition_nature</code>
       td Nature du local proposée
       td <code>AP</code>, <code>MA</code>, <code>DA</code>, <code>DM</code>
-      td = link_to "Consulter toutes les valeurs", "/api/documentation/guides/local_habitation_nature_creation.csv"
-      td
-        .flex.justify-end.space-x-4
-          .badge.badge--orange.badge--mono requis
-          .badge.badge--blue.badge--mono String
+      td= link_to "Consulter toutes les valeurs", "/api/documentation/guides/local_habitation_nature_creation.csv"
+      td.text-right.space-x-4
+        .badge.badge--orange.badge--mono requis
+        .badge.badge--blue.badge--mono String
+
+    tr
+      th <code>proposition_nature_dependance</code>
+      td Nature de dépendance
+      td <code>BC</code>, <code>BD</code>, <code>BX</code>
+      td = link_to "Consulter toutes les valeurs", "/api/documentation/guides/local_nature_dependance.csv"
+      td.text-right.space-x-4
+        .badge.badge--orange.badge--mono requis (*)
+        .badge.badge--blue.badge--mono String
+
     tr
       th <code>proposition_categorie</code>
-      td Catégorie proposée
-      td <code>1</code>, <code>2</code>, <code>3</code>
-      td = link_to "Consulter toutes les valeurs", "/api/documentation/guides/local_habitation_categorie.csv"
+      td Catégorie du local
+      td <code>4</code>, <code>4M</code>, <code>5</code>
       td
-        .flex.justify-end.space-x-4
-          .badge.badge--orange.badge--mono requis
-          .badge.badge--blue.badge--mono String
+        = link_to "Consulter toutes les valeurs", "/api/documentation/guides/local_habitation_categorie.csv"
+        '  - seules les catégories d'habitation sont acceptées.
+      td.text-right.space-x-4
+        .badge.badge--orange.badge--mono requis
+        .badge.badge--blue.badge--mono String
+
     tr
       th <code>proposition_surface_reelle</code>
       td Surface réelle
-      td <code>220.0</code>
+      td <code>250.0</code>
       td
-      td
-        .flex.justify-end.space-x-4
-          .badge.badge--orange.badge--mono requis
-          .badge.badge--blue.badge--mono Float
+      td.text-right.space-x-4
+        .badge.badge--orange.badge--mono requis
+        .badge.badge--blue.badge--mono Numeric
+
     tr
       th <code>proposition_date_achevement</code>
-      td Date d’achèvement
+      td Date d'achèvement des travaux
       td <code>02/03/1994</code>
       td
-      td
-        .flex.justify-end.space-x-4
-          .badge.badge--orange.badge--mono requis
-          .badge.badge--blue.badge--mono Date
-    tr
-      th <code>proposition_nature_dependance</code>
-      td Nature de dépendance proposée
-      td <code>BC</code>, <code>BD</code>, <code>BX</code>
-      td = link_to "Consulter toutes les valeurs", "/api/documentation/guides/local_nature_dependance.csv"
-      td
-        .flex.justify-end.space-x-4
-          .badge.badge--orange.badge--mono requis (*)
-          .badge.badge--blue.badge--mono String
+      td.text-right.space-x-4
+        .badge.badge--orange.badge--mono requis
+        .badge.badge--blue.badge--mono Date
+
     tr
       th <code>proposition_numero_permis</code>
-      td N° de permis proposé
+      td Numéro de permis
       td <code>PC 573401650004</code>
       td
-      td
-        .flex.justify-end.space-x-4
-          .badge.badge--orange.badge--mono requis
-          .badge.badge--blue.badge--mono String
+      td.text-right.space-x-4
+        .badge.badge--orange.badge--mono requis
+        .badge.badge--blue.badge--mono String
+
     tr
       th <code>proposition_nature_travaux</code>
-      td Nature de travaux proposé
+      td Nature de travaux
       td <code>Aménagement d'un local commercial</code>
       td Description des travaux
-      td
-        .flex.justify-end.space-x-4
-          .badge.badge--orange.badge--mono requis
-          .badge.badge--blue.badge--mono String
+      td.text-right.space-x-4
+        .badge.badge--orange.badge--mono requis
+        .badge.badge--blue.badge--mono String

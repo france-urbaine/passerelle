@@ -15,12 +15,12 @@
         @apply leading-6 mb-6;
       }
 
-      ul {
-        @apply list-disc ml-6 mb-6;
+      ul, ol {
+        @apply list-disc list-inside ml-6 mb-6;
       }
 
       ol {
-        @apply list-decimal list-inside ml-6 mb-6;
+        @apply list-decimal;
       }
 
       table, .code-example, .tabs, .code-request-example {
@@ -45,7 +45,7 @@
           vertical-align: top;
         }
 
-        ul {
+        ul, ol {
           @apply ml-0;
         }
       }
