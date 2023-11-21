@@ -63,7 +63,7 @@ RSpec.describe "Publishers in admin" do
     # A notification should be displayed
     #
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "Un nouvel éditeur a été ajouté avec succés.")
+    expect(page).to     have_selector("[role=log]", text: "Un nouvel éditeur a été ajouté avec succés.")
   end
 
   it "updates a publisher from the index page" do
@@ -98,7 +98,7 @@ RSpec.describe "Publishers in admin" do
     # A notification should be displayed
     #
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
+    expect(page).to     have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
   end
 
   it "updates a publisher from the publisher page" do
@@ -132,7 +132,7 @@ RSpec.describe "Publishers in admin" do
     # A notification should be displayed
     #
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
+    expect(page).to     have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
   end
 
   it "discards a publisher from the index page & rollbacks" do
@@ -164,11 +164,11 @@ RSpec.describe "Publishers in admin" do
     # A notification should be displayed
     #
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "L'éditeur a été supprimé.")
+    expect(page).to     have_selector("[role=log]", text: "L'éditeur a été supprimé.")
 
     # The notification should include a button to cancel the last action
     #
-    within "[role=alert]", text: "L'éditeur a été supprimé." do
+    within "[role=log]", text: "L'éditeur a été supprimé." do
       click_on "Annuler"
     end
 
@@ -183,8 +183,8 @@ RSpec.describe "Publishers in admin" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector("[role=alert]", text: "L'éditeur a été supprimé.")
-    expect(page).to     have_selector("[role=alert]", text: "La suppression de l'éditeur a été annulée.")
+    expect(page).not_to have_selector("[role=log]", text: "L'éditeur a été supprimé.")
+    expect(page).to     have_selector("[role=log]", text: "La suppression de l'éditeur a été annulée.")
   end
 
   it "discards a publisher from the publisher page & rollbacks" do
@@ -214,11 +214,11 @@ RSpec.describe "Publishers in admin" do
     # A notification should be displayed
     #
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "L'éditeur a été supprimé.")
+    expect(page).to     have_selector("[role=log]", text: "L'éditeur a été supprimé.")
 
     # The notification should include a button to cancel the last action
     #
-    within "[role=alert]", text: "L'éditeur a été supprimé." do
+    within "[role=log]", text: "L'éditeur a été supprimé." do
       click_on "Annuler"
     end
 
@@ -233,8 +233,8 @@ RSpec.describe "Publishers in admin" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector("[role=alert]", text: "L'éditeur a été supprimé.")
-    expect(page).to     have_selector("[role=alert]", text: "La suppression de l'éditeur a été annulée.")
+    expect(page).not_to have_selector("[role=log]", text: "L'éditeur a été supprimé.")
+    expect(page).to     have_selector("[role=log]", text: "La suppression de l'éditeur a été annulée.")
   end
 
   it "selects and discards one publisher from the index page & rollbacks" do
@@ -277,11 +277,11 @@ RSpec.describe "Publishers in admin" do
     #
     expect(page).not_to have_selector(".header-bar--selection")
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "Les éditeurs sélectionnés ont été supprimés.")
+    expect(page).to     have_selector("[role=log]", text: "Les éditeurs sélectionnés ont été supprimés.")
 
     # The notification should include a button to cancel the last action
     #
-    within "[role=alert]", text: "Les éditeurs sélectionnés ont été supprimés." do
+    within "[role=log]", text: "Les éditeurs sélectionnés ont été supprimés." do
       click_on "Annuler"
     end
 
@@ -298,8 +298,8 @@ RSpec.describe "Publishers in admin" do
     # A new notification should be displayed
     #
     expect(page).not_to have_selector(".header-bar--selection")
-    expect(page).not_to have_selector("[role=alert]", text: "Les éditeurs sélectionnés ont été supprimés.")
-    expect(page).to     have_selector("[role=alert]", text: "La suppression des éditeurs sélectionnés a été annulée.")
+    expect(page).not_to have_selector("[role=log]", text: "Les éditeurs sélectionnés ont été supprimés.")
+    expect(page).to     have_selector("[role=log]", text: "La suppression des éditeurs sélectionnés a été annulée.")
   end
 
   it "selects and discards all publishers from the current page on index page & rollbacks" do
@@ -356,11 +356,11 @@ RSpec.describe "Publishers in admin" do
     #
     expect(page).not_to have_selector(".header-bar--selection")
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "Les éditeurs sélectionnés ont été supprimés.")
+    expect(page).to     have_selector("[role=log]", text: "Les éditeurs sélectionnés ont été supprimés.")
 
     # The notification should include a button to cancel the last action
     #
-    within "[role=alert]", text: "Les éditeurs sélectionnés ont été supprimés." do
+    within "[role=log]", text: "Les éditeurs sélectionnés ont été supprimés." do
       click_on "Annuler"
     end
 
@@ -378,8 +378,8 @@ RSpec.describe "Publishers in admin" do
     # A new notification should be displayed
     #
     expect(page).not_to have_selector(".header-bar--selection")
-    expect(page).not_to have_selector("[role=alert]", text: "Les éditeurs sélectionnés ont été supprimés.")
-    expect(page).to     have_selector("[role=alert]", text: "La suppression des éditeurs sélectionnés a été annulée.")
+    expect(page).not_to have_selector("[role=log]", text: "Les éditeurs sélectionnés ont été supprimés.")
+    expect(page).to     have_selector("[role=log]", text: "La suppression des éditeurs sélectionnés a été annulée.")
   end
 
   it "selects and discards all publishers through several pages on index page & rollbacks" do
@@ -438,11 +438,11 @@ RSpec.describe "Publishers in admin" do
     #
     expect(page).not_to have_selector(".header-bar--selection")
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "Les éditeurs sélectionnés ont été supprimés.")
+    expect(page).to     have_selector("[role=log]", text: "Les éditeurs sélectionnés ont été supprimés.")
 
     # The notification should include a button to cancel the last action
     #
-    within "[role=alert]", text: "Les éditeurs sélectionnés ont été supprimés." do
+    within "[role=log]", text: "Les éditeurs sélectionnés ont été supprimés." do
       click_on "Annuler"
     end
 
@@ -460,7 +460,7 @@ RSpec.describe "Publishers in admin" do
     # A new notification should be displayed
     #
     expect(page).not_to have_selector(".header-bar--selection")
-    expect(page).not_to have_selector("[role=alert]", text: "Les éditeurs sélectionnés ont été supprimés.")
-    expect(page).to     have_selector("[role=alert]", text: "La suppression des éditeurs sélectionnés a été annulée.")
+    expect(page).not_to have_selector("[role=log]", text: "Les éditeurs sélectionnés ont été supprimés.")
+    expect(page).to     have_selector("[role=log]", text: "La suppression des éditeurs sélectionnés a été annulée.")
   end
 end

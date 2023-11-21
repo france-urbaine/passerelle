@@ -50,10 +50,10 @@ RSpec.describe "Admin::OfficesController#destroy" do
 
       it "sets a flash notice" do
         expect(flash).to have_flash_notice.to eq(
-          type:        "success",
-          title:       "Le guichet a été supprimé.",
-          description: "Toutes les données seront définitivement supprimées dans un délai de 30 jours.",
-          delay:       10_000
+          scheme: "success",
+          header: "Le guichet a été supprimé.",
+          body:   "Toutes les données seront définitivement supprimées dans un délai de 30 jours.",
+          delay:   10_000
         )
       end
 

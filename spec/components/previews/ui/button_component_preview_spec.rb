@@ -10,14 +10,17 @@ RSpec.describe UI::ButtonComponentPreview, type: :component do
   it { is_expected.to render_preview_without_exception(:default_with_modal) }
   it { is_expected.to render_preview_without_exception(:default_with_method) }
 
+  it { is_expected.to render_preview_without_exception(:with_icon) }
+  it { is_expected.to render_preview_without_exception(:with_icon_only) }
+  it { is_expected.to render_preview_without_exception(:with_icon_only_and_label) }
+  it { is_expected.to render_preview_without_exception(:with_icon_options) }
+
   it { is_expected.to render_preview_without_exception(:variants_colored) }
   it { is_expected.to render_preview_without_exception(:variants_disabled) }
   it { is_expected.to render_preview_without_exception(:variants_discrete) }
   it { is_expected.to render_preview_without_exception(:variants_discrete_disabled) }
   it { is_expected.to render_preview_without_exception(:variants_with_icon) }
   it { is_expected.to render_preview_without_exception(:variants_with_icon_disabled) }
-
-  it { is_expected.to render_preview_without_exception(:icon_only) }
-  it { is_expected.to render_preview_without_exception(:icon_only_with_label) }
-  it { is_expected.to render_preview_without_exception(:icon_only_disabled) }
+  it { is_expected.to render_preview_without_exception(:variants_icon_only) }
+  it { is_expected.to render_preview_without_exception(:variants_icon_only_disabled) }
 end

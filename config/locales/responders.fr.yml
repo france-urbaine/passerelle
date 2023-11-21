@@ -3,373 +3,391 @@ fr:
     actions:
       update:
         notice:
-          type:         "success"
-          title:        "Les modifications ont été enregistrées avec succés."
-          delay:        3000
+          scheme: "success"
+          header: "Les modifications ont été enregistrées avec succés."
+          delay:  3000
 
       update_all:
         notice:
-          type:         "success"
-          title:        "Les modifications ont été enregistrées avec succés."
-          delay:        3000
+          scheme: "success"
+          header: "Les modifications ont été enregistrées avec succés."
+          delay:  3000
 
     collectivities:
       create:
         notice:
-          type:         "success"
-          title:        "Une nouvelle collectivité a été ajoutée avec succés."
-          delay:        3000
+          scheme: "success"
+          header: "Une nouvelle collectivité a été ajoutée avec succés."
+          delay:  3000
 
       destroy:
         notice:
-          type:         "success"
-          title:        "La collectivité a été supprimée."
-          description:  "Toutes les données seront définitivement supprimées dans un délai de 30 jours."
-          delay:        10000
+          scheme: "success"
+          header: "La collectivité a été supprimée."
+          body:   "Toutes les données seront définitivement supprimées dans un délai de 30 jours."
+          delay:  10000
 
       destroy_all:
         notice:
-          type:         "success"
-          title:        "Les collectivités sélectionnées ont été supprimées."
-          description:  "Toutes les données seront définitivement supprimées dans un délai de 30 jours."
-          delay:        10000
+          scheme: "success"
+          header: "Les collectivités sélectionnées ont été supprimées."
+          body:   "Toutes les données seront définitivement supprimées dans un délai de 30 jours."
+          delay:  10000
 
       undiscard:
         notice:
-          type:         "cancel"
-          title:        "La suppression de la collectivité a été annulée."
-          delay:        3000
+          scheme: "done"
+          icon:   "arrow-path"
+          header: "La suppression de la collectivité a été annulée."
+          delay:  3000
 
       undiscard_all:
         notice:
-          type:         "cancel"
-          title:        "La suppression des collectivités sélectionnées a été annulée."
-          delay:        3000
+          scheme: "done"
+          icon:   "arrow-path"
+          header: "La suppression des collectivités sélectionnées a été annulée."
+          delay:  3000
 
     ddfips:
       create:
         notice:
-          type:         "success"
-          title:        "Une nouvelle DDFIP a été ajoutée avec succés."
-          delay:        3000
+          scheme: "success"
+          header: "Une nouvelle DDFIP a été ajoutée avec succés."
+          delay:  3000
 
       destroy:
         notice:
-          type:         "success"
-          title:        "La DDFIP a été supprimée."
-          description:  "Toutes les données seront définitivement supprimées dans un délai de 30 jours."
-          delay:        10000
+          scheme: "success"
+          header: "La DDFIP a été supprimée."
+          body:   "Toutes les données seront définitivement supprimées dans un délai de 30 jours."
+          delay:  10000
 
       destroy_all:
         notice:
-          type:         "success"
-          title:        "Les DDFIPs sélectionnées ont été supprimées."
-          description:  "Toutes les données seront définitivement supprimées dans un délai de 30 jours."
-          delay:        10000
+          scheme: "success"
+          header: "Les DDFIPs sélectionnées ont été supprimées."
+          body:   "Toutes les données seront définitivement supprimées dans un délai de 30 jours."
+          delay:  10000
 
       undiscard:
         notice:
-          type:         "cancel"
-          title:        "La suppression de la DDFIP a été annulée."
-          delay:        3000
+          scheme: "done"
+          icon:   "arrow-path"
+          header: "La suppression de la DDFIP a été annulée."
+          delay:  3000
 
       undiscard_all:
         notice:
-          type:         "cancel"
-          title:        "La suppression des DDFIPs sélectionnées a été annulée."
-          delay:        3000
+          scheme: "done"
+          icon:   "arrow-path"
+          header: "La suppression des DDFIPs sélectionnées a été annulée."
+          delay:  3000
 
     dgfips:
       create:
         notice:
-          type:         "success"
-          title:        "Une nouvelle DGFIP a été ajoutée avec succés."
-          delay:        3000
+          scheme: "success"
+          header: "Une nouvelle DGFIP a été ajoutée avec succés."
+          delay:  3000
 
       destroy:
         notice:
-          type:         "success"
-          title:        "La DGFIP a été supprimée."
-          description:  "Toutes les données seront définitivement supprimées dans un délai de 30 jours."
-          delay:        10000
+          scheme: "success"
+          header: "La DGFIP a été supprimée."
+          body:   "Toutes les données seront définitivement supprimées dans un délai de 30 jours."
+          delay:  10000
 
       destroy_all:
         notice:
-          type:         "success"
-          title:        "Les DGFIPs sélectionnées ont été supprimées."
-          description:  "Toutes les données seront définitivement supprimées dans un délai de 30 jours."
-          delay:        10000
+          scheme: "success"
+          header: "Les DGFIPs sélectionnées ont été supprimées."
+          body:   "Toutes les données seront définitivement supprimées dans un délai de 30 jours."
+          delay:  10000
 
       undiscard:
         notice:
-          type:         "cancel"
-          title:        "La suppression de la DGFIP a été annulée."
-          delay:        3000
+          scheme: "done"
+          icon:   "arrow-path"
+          header: "La suppression de la DGFIP a été annulée."
+          delay:  3000
 
       undiscard_all:
         notice:
-          type:         "cancel"
-          title:        "La suppression des DGFIPs sélectionnées a été annulée."
-          delay:        3000
+          scheme: "done"
+          icon:   "arrow-path"
+          header: "La suppression des DGFIPs sélectionnées a été annulée."
+          delay:  3000
 
     offices:
       create:
         notice:
-          type:         "success"
-          title:        "Un nouveau guichet a été ajouté avec succés."
-          delay:        3000
+          scheme: "success"
+          header: "Un nouveau guichet a été ajouté avec succés."
+          delay:  3000
 
       destroy:
         notice:
-          type:         "success"
-          title:        "Le guichet a été supprimé."
-          description:  "Toutes les données seront définitivement supprimées dans un délai de 30 jours."
-          delay:        10000
+          scheme: "success"
+          header: "Le guichet a été supprimé."
+          body:   "Toutes les données seront définitivement supprimées dans un délai de 30 jours."
+          delay:  10000
 
       destroy_all:
         notice:
-          type:         "success"
-          title:        "Les guichets sélectionnés ont été supprimés."
-          description:  "Toutes les données seront définitivement supprimées dans un délai de 30 jours."
-          delay:        10000
+          scheme: "success"
+          header: "Les guichets sélectionnés ont été supprimés."
+          body:   "Toutes les données seront définitivement supprimées dans un délai de 30 jours."
+          delay:  10000
 
       undiscard:
         notice:
-          type:         "cancel"
-          title:        "La suppression du guichet a été annulée."
-          delay:        3000
+          scheme: "done"
+          icon:   "arrow-path"
+          header: "La suppression du guichet a été annulée."
+          delay:  3000
 
       undiscard_all:
         notice:
-          type:         "cancel"
-          title:        "La suppression des guichets sélectionnés a été annulée."
-          delay:        3000
+          scheme: "done"
+          icon:   "arrow-path"
+          header: "La suppression des guichets sélectionnés a été annulée."
+          delay:  3000
 
       communes:
         destroy:
           notice:
-            type:         "success"
-            title:        "La commune a été exclue du guichet."
-            delay:        10000
+            scheme: "success"
+            header: "La commune a été exclue du guichet."
+            delay:  10000
 
         destroy_all:
           notice:
-            type:         "success"
-            title:        "Les communes sélectionnées ont été exclues du guichet."
-            delay:        10000
+            scheme: "success"
+            header: "Les communes sélectionnées ont été exclues du guichet."
+            delay:  10000
 
       users:
         create:
           notice:
-            type:         "success"
-            title:        "Un nouvel utilisateur a été ajouté avec succés."
-            description:  "Un mail d'invitation a été envoyé avec les instructions nécessaires pour valider le compte."
-            delay:        3000
+            scheme: "success"
+            header: "Un nouvel utilisateur a été ajouté avec succés."
+            body:   "Un mail d'invitation a été envoyé avec les instructions nécessaires pour valider le compte."
+            delay:  3000
 
         destroy:
           notice:
-            type:         "success"
-            title:        "L'utilisateur a été exclu du guichet."
-            delay:        10000
+            scheme: "success"
+            header: "L'utilisateur a été exclu du guichet."
+            delay:  10000
 
         destroy_all:
           notice:
-            type:         "success"
-            title:        "Les utilisateurs sélectionnés ont été exclus du guichet."
-            delay:        10000
+            scheme: "success"
+            header: "Les utilisateurs sélectionnés ont été exclus du guichet."
+            delay:  10000
 
     packages:
       destroy:
         notice:
-          type:         "success"
-          title:        "Le paquet a été supprimé."
-          description:  "Toutes les données seront définitivement supprimées dans un délai de 30 jours."
-          delay:        10000
+          scheme: "success"
+          header: "Le paquet a été supprimé."
+          body:   "Toutes les données seront définitivement supprimées dans un délai de 30 jours."
+          delay:  10000
 
       destroy_all:
         notice:
-          type:         "success"
-          title:        "Les paquets sélectionnés ont été supprimés."
-          description:  "Toutes les données seront définitivement supprimées dans un délai de 30 jours."
-          delay:        10000
+          scheme: "success"
+          header: "Les paquets sélectionnés ont été supprimés."
+          body:   "Toutes les données seront définitivement supprimées dans un délai de 30 jours."
+          delay:  10000
 
       undiscard:
         notice:
-          type:         "cancel"
-          title:        "La suppression du paquet a été annulée."
-          delay:        3000
+          scheme: "done"
+          icon:   "arrow-path"
+          header: "La suppression du paquet a été annulée."
+          delay:  3000
 
       undiscard_all:
         notice:
-          type:         "cancel"
-          title:        "La suppression des paquets sélectionnés a été annulée."
-          delay:        3000
+          scheme: "done"
+          icon:   "arrow-path"
+          header: "La suppression des paquets sélectionnés a été annulée."
+          delay:  3000
 
       approvals:
         update:
           notice:
-            type:         "success"
-            title:        "Le paquet a été approuvé et transmis aux guichets concernés."
-            delay:        3000
+            scheme: "success"
+            header: "Le paquet a été approuvé et transmis aux guichets concernés."
+            delay:  3000
 
         destroy:
           notice:
-            type:         "success"
-            title:        "Le paquet a été rejeté."
-            delay:        3000
+            scheme: "success"
+            header: "Le paquet a été rejeté."
+            delay:  3000
 
     publishers:
       create:
         notice:
-          type:         "success"
-          title:        "Un nouvel éditeur a été ajouté avec succés."
-          delay:        3000
+          scheme: "success"
+          header: "Un nouvel éditeur a été ajouté avec succés."
+          delay:  3000
 
       destroy:
         notice:
-          type:         "success"
-          title:        "L'éditeur a été supprimé."
-          description:  "Toutes les données seront définitivement supprimées dans un délai de 30 jours."
-          delay:        10000
+          scheme: "success"
+          header: "L'éditeur a été supprimé."
+          body:   "Toutes les données seront définitivement supprimées dans un délai de 30 jours."
+          delay:  10000
 
       destroy_all:
         notice:
-          type:         "success"
-          title:        "Les éditeurs sélectionnés ont été supprimés."
-          description:  "Toutes les données seront définitivement supprimées dans un délai de 30 jours."
-          delay:        10000
+          scheme: "success"
+          header: "Les éditeurs sélectionnés ont été supprimés."
+          body:   "Toutes les données seront définitivement supprimées dans un délai de 30 jours."
+          delay:  10000
 
       undiscard:
         notice:
-          type:         "cancel"
-          title:        "La suppression de l'éditeur a été annulée."
-          delay:        3000
+          scheme: "done"
+          icon:   "arrow-path"
+          header: "La suppression de l'éditeur a été annulée."
+          delay:  3000
 
       undiscard_all:
         notice:
-          type:         "cancel"
-          title:        "La suppression des éditeurs sélectionnés a été annulée."
-          delay:        3000
+          scheme: "done"
+          icon:   "arrow-path"
+          header: "La suppression des éditeurs sélectionnés a été annulée."
+          delay:  3000
 
     reports:
       destroy:
         notice:
-          type:         "success"
-          title:        "Le signalement a été supprimé."
-          description:  "Toutes les données seront définitivement supprimées dans un délai de 30 jours."
-          delay:        10000
+          scheme: "success"
+          header: "Le signalement a été supprimé."
+          body:   "Toutes les données seront définitivement supprimées dans un délai de 30 jours."
+          delay:  10000
 
       destroy_all:
         notice:
-          type:         "success"
-          title:        "Les signalements sélectionnés ont été supprimés."
-          description:  "Toutes les données seront définitivement supprimées dans un délai de 30 jours."
-          delay:        10000
+          scheme: "success"
+          header: "Les signalements sélectionnés ont été supprimés."
+          body:   "Toutes les données seront définitivement supprimées dans un délai de 30 jours."
+          delay:  10000
 
       undiscard:
         notice:
-          type:         "cancel"
-          title:        "La suppression du signalement a été annulée."
-          delay:        3000
+          scheme: "done"
+          icon:   "arrow-path"
+          header: "La suppression du signalement a été annulée."
+          delay:  3000
 
       undiscard_all:
         notice:
-          type:         "cancel"
-          title:        "La suppression des signalements sélectionnés a été annulée."
-          delay:        3000
+          scheme: "done"
+          icon:   "arrow-path"
+          header: "La suppression des signalements sélectionnés a été annulée."
+          delay:  3000
 
       approvals:
         update:
           notice:
-            type:         "success"
-            title:        "Le signalement a été approuvé."
-            delay:        3000
+            scheme: "success"
+            header: "Le signalement a été approuvé."
+            delay:  3000
 
         destroy:
           notice:
-            type:         "success"
-            title:        "Le signalement a été rejeté."
-            delay:        3000
+            scheme: "success"
+            header: "Le signalement a été rejeté."
+            delay:  3000
 
     users:
       create:
         notice:
-          type:         "success"
-          title:        "Un nouvel utilisateur a été ajouté avec succés."
-          description:  "Un mail d'invitation a été envoyé avec les instructions nécessaires pour valider le compte."
-          delay:        3000
+          scheme: "success"
+          header: "Un nouvel utilisateur a été ajouté avec succés."
+          body:   "Un mail d'invitation a été envoyé avec les instructions nécessaires pour valider le compte."
+          delay:  3000
 
       destroy:
         notice:
-          type:         "success"
-          title:        "L'utilisateur a été supprimé."
-          description:  "Toutes les données seront définitivement supprimées dans un délai de 1 jour."
-          delay:        10000
+          scheme: "success"
+          header: "L'utilisateur a été supprimé."
+          body:   "Toutes les données seront définitivement supprimées dans un délai de 1 jour."
+          delay:  10000
 
       destroy_all:
         notice:
-          type:         "success"
-          title:        "Les utilisateurs sélectionnés ont été supprimés."
-          description:  "Toutes les données seront définitivement supprimées dans un délai de 1 jour."
-          delay:        10000
+          scheme: "success"
+          header: "Les utilisateurs sélectionnés ont été supprimés."
+          body:   "Toutes les données seront définitivement supprimées dans un délai de 1 jour."
+          delay:  10000
 
       undiscard:
         notice:
-          type:         "cancel"
-          title:        "La suppression de l'utilisateur a été annulée."
-          delay:        3000
+          scheme: "done"
+          icon:   "arrow-path"
+          header: "La suppression de l'utilisateur a été annulée."
+          delay:  3000
 
       undiscard_all:
         notice:
-          type:         "cancel"
-          title:        "La suppression des utilisateurs sélectionnés a été annulée."
-          delay:        3000
+          scheme: "done"
+          icon:   "arrow-path"
+          header: "La suppression des utilisateurs sélectionnés a été annulée."
+          delay:  3000
 
       invitations:
         create:
           notice:
-            type:       "success"
-            title:      "L'invitation a été envoyée."
-            delay:      3000
+            scheme: "success"
+            header: "L'invitation a été envoyée."
+            delay:  3000
 
     territories:
       updates:
         update:
           notice:
-            type:         "success"
-            title:        "La mise à jour a été lancée en arrière-plan."
-            description:  "Les données seront disponibles dans quelques minutes."
-            delay:        3000
+            scheme: "success"
+            header: "La mise à jour a été lancée en arrière-plan."
+            body:   "Les données seront disponibles dans quelques minutes."
+            delay:  3000
 
     oauth_applications:
       create:
         notice:
-          type:         "success"
-          title:        "Une nouvelle application a été ajoutée avec succés."
-          delay:        3000
+          scheme: "success"
+          header: "Une nouvelle application a été ajoutée avec succés."
+          delay:  3000
 
       destroy:
         notice:
-          type:         "success"
-          title:        "L'application a été supprimée."
-          description:  "Toutes les données seront définitivement supprimées dans un délai de 30 jours."
-          delay:        10000
+          scheme: "success"
+          header: "L'application a été supprimée."
+          body:   "Toutes les données seront définitivement supprimées dans un délai de 30 jours."
+          delay:  10000
 
       destroy_all:
         notice:
-          type:         "success"
-          title:        "Les applications sélectionnées ont été supprimées."
-          description:  "Toutes les données seront définitivement supprimées dans un délai de 30 jours."
-          delay:        10000
+          scheme: "success"
+          header: "Les applications sélectionnées ont été supprimées."
+          body:   "Toutes les données seront définitivement supprimées dans un délai de 30 jours."
+          delay:  10000
 
       undiscard:
         notice:
-          type:         "cancel"
-          title:        "La suppression de l'application a été annulée."
-          delay:        3000
+          scheme: "done"
+          icon:   "arrow-path"
+          header: "La suppression de l'application a été annulée."
+          delay:  3000
 
       undiscard_all:
         notice:
-          type:         "cancel"
-          title:        "La suppression des applications sélectionnées a été annulée."
-          delay:        3000
+          scheme: "done"
+          icon:   "arrow-path"
+          header: "La suppression des applications sélectionnées a été annulée."
+          delay:  3000

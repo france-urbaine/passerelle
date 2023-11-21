@@ -4,32 +4,20 @@ module UI
   # @display frame false
   #
   class NotificationComponentPreview < ViewComponent::Preview
-    DEFAULT_TITLE = "Hello world !"
-    DEFAULT_DESCRIPTION = <<~MESSAGE
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-      Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-    MESSAGE
-
     # @label Default
     #
     def default; end
 
-    # @label With types
+    # @label With long text
     #
-    def with_types; end
+    def with_long_text; end
 
-    # @label With description
-    # @param title text
-    # @param description textarea
+    # @label With custom icon
     #
-    def with_description(title: DEFAULT_TITLE, description: DEFAULT_DESCRIPTION)
-      render_with_template(locals: { title:, description: })
-    end
+    def with_custom_icon; end
 
     # @label With actions
     #
-    def with_actions(title: DEFAULT_TITLE, description: DEFAULT_DESCRIPTION)
-      render_with_template(locals: { title:, description: })
-    end
+    def with_actions; end
   end
 end

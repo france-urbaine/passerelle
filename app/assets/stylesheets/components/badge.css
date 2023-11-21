@@ -7,14 +7,14 @@
     vertical-align: middle;
     align-items: center;
     white-space: nowrap;
+    font-weight: 500;
 
-    @apply py-2 px-4 h-10 leading-6 font-medium rounded-xl;
-    @apply subpixel-antialiased;
+    @apply h-8 py-2 px-3 leading-6 rounded-2xl ring-1 ring-inset;
 
     &--compact,
     table &,
     .description-list & {
-      @apply py-1 px-3 -my-1 h-auto;
+      @apply -my-2;
     }
 
     &--mono {
@@ -28,121 +28,117 @@
     }
 
     & {
-      @apply bg-slate-300 text-slate-900;
-      @apply dark:bg-slate-500 text-black;
+      @apply bg-blue-50 text-blue-700 ring-blue-300;
+      @apply dark:bg-blue-950 dark:text-blue-300 dark:ring-blue-700;
     }
 
     &--gray {
-      @apply bg-gray-300 text-gray-900;
-      @apply dark:bg-gray-500 text-black;
+      @apply bg-gray-50 text-gray-700 ring-gray-300;
+      @apply dark:bg-gray-950 dark:text-gray-300 dark:ring-gray-700;
     }
 
     &--zinc {
-      @apply bg-zinc-300 text-zinc-900;
-      @apply dark:bg-zinc-500 text-black;
+      @apply bg-zinc-50 text-zinc-700 ring-zinc-300;
+      @apply dark:bg-zinc-950 dark:text-zinc-300 dark:ring-zinc-700;
     }
 
     &--neutral {
-      @apply bg-neutral-300 text-neutral-900;
-      @apply dark:bg-neutral-500 text-black;
+      @apply bg-neutral-50 text-neutral-700 ring-neutral-300;
+      @apply dark:bg-neutral-950 dark:text-neutral-300 dark:ring-neutral-700;
     }
 
     &--stone {
-      @apply bg-stone-300 text-stone-900;
-      @apply dark:bg-stone-500 text-black;
+      @apply bg-stone-50 text-stone-700 ring-stone-300;
+      @apply dark:bg-stone-950 dark:text-stone-300 dark:ring-stone-700;
     }
 
     &--yellow {
-      @apply bg-yellow-300 text-yellow-900;
-      @apply dark:bg-yellow-500 text-black;
+      @apply bg-yellow-50 text-yellow-700 ring-yellow-300;
+      @apply dark:bg-yellow-950 dark:text-yellow-300 dark:ring-yellow-700;
     }
 
+    &--warning,
     &--amber {
-      @apply bg-amber-300 text-amber-900;
-      @apply dark:bg-amber-500 text-black;
+      @apply bg-amber-50 text-amber-700 ring-amber-300;
+      @apply dark:bg-amber-950 dark:text-amber-300 dark:ring-amber-700;
     }
 
     &--orange {
-      @apply bg-orange-300 text-orange-900;
-      @apply dark:bg-orange-500 text-black;
+      @apply bg-orange-50 text-orange-700 ring-orange-300;
+      @apply dark:bg-orange-950 dark:text-orange-300 dark:ring-orange-700;
     }
 
+    &--danger,
     &--red {
-      @apply bg-red-300 text-red-900;
-      @apply dark:bg-red-500 text-black;
+      @apply bg-red-50 text-red-700 ring-red-300;
+      @apply dark:bg-red-950 dark:text-red-300 dark:ring-red-700;
     }
 
     &--rose {
-      @apply bg-rose-300 text-rose-900;
-      @apply dark:bg-rose-500 text-black;
+      @apply bg-rose-50 text-rose-700 ring-rose-300;
+      @apply dark:bg-rose-950 dark:text-rose-300 dark:ring-rose-700;
     }
 
     &--pink {
-      @apply bg-pink-300 text-pink-900;
-      @apply dark:bg-pink-500 text-black;
+      @apply bg-pink-50 text-pink-700 ring-pink-300;
+      @apply dark:bg-pink-950 dark:text-pink-300 dark:ring-pink-700;
     }
 
     &--fuchsia {
-      @apply bg-fuchsia-300 text-fuchsia-900;
-      @apply dark:bg-fuchsia-500 text-black;
+      @apply bg-fuchsia-50 text-fuchsia-700 ring-fuchsia-300;
+      @apply dark:bg-fuchsia-950 dark:text-fuchsia-300 dark:ring-fuchsia-700;
     }
 
     &--pruple {
-      @apply bg-pruple-300 text-pruple-900;
-      @apply dark:bg-pruple-500 text-black;
+      @apply bg-pruple-50 text-pruple-700 ring-pruple-300;
+      @apply dark:bg-pruple-950 dark:text-pruple-300 dark:ring-pruple-700;
     }
 
+    &--done,
     &--violet {
-      @apply bg-violet-300 text-violet-900;
-      @apply dark:bg-violet-500 text-black;
+      @apply bg-violet-50 text-violet-700 ring-violet-300;
+      @apply dark:bg-violet-950 dark:text-violet-300 dark:ring-violet-700;
     }
 
     &--indigo {
-      @apply bg-indigo-300 text-indigo-900;
-      @apply dark:bg-indigo-500 text-black;
+      @apply bg-indigo-50 text-indigo-700 ring-indigo-300;
+      @apply dark:bg-indigo-950 dark:text-indigo-300 dark:ring-indigo-700;
     }
 
     &--blue {
-      @apply bg-blue-300 text-blue-900;
-      @apply dark:bg-blue-500 text-black;
+      @apply bg-blue-50 text-blue-700 ring-blue-300;
+      @apply dark:bg-blue-950 dark:text-blue-300 dark:ring-blue-700;
     }
 
     &--sky {
-      @apply bg-sky-300 text-sky-900;
-      @apply dark:bg-sky-500 text-black;
+      @apply bg-sky-50 text-sky-700 ring-sky-300;
+      @apply dark:bg-sky-950 dark:text-sky-300 dark:ring-sky-700;
     }
 
     &--cyan {
-      @apply bg-cyan-300 text-cyan-900;
-      @apply dark:bg-cyan-500 text-black;
+      @apply bg-cyan-50 text-cyan-700 ring-cyan-300;
+      @apply dark:bg-cyan-950 dark:text-cyan-300 dark:ring-cyan-700;
     }
 
     &--teal {
-      @apply bg-teal-300 text-teal-900;
-      @apply dark:bg-teal-500 text-black;
+      @apply bg-teal-50 text-teal-700 ring-teal-300;
+      @apply dark:bg-teal-950 dark:text-teal-300 dark:ring-teal-700;
     }
 
     &--emerald {
-      @apply bg-emerald-300 text-emerald-900;
-      @apply dark:bg-emerald-500 text-black;
+      @apply bg-emerald-50 text-emerald-700 ring-emerald-300;
+      @apply dark:bg-emerald-950 dark:text-emerald-300 dark:ring-emerald-700;
     }
 
+    &--success,
     &--green {
-      @apply bg-green-300 text-green-900;
-      @apply dark:bg-green-500 text-black;
+      @apply bg-green-50 text-green-700 ring-green-300;
+      @apply dark:bg-green-950 dark:text-green-300 dark:ring-green-700;
     }
 
     &--lime {
-      @apply bg-lime-300 text-lime-900;
-      @apply dark:bg-lime-500 text-black;
-    }
-  }
-
-  .priority-badge {
-    @apply font-medium;
-
-    & svg {
-      @apply ml-2 -mr-0;
+      @apply bg-lime-50 text-lime-700 ring-lime-300;
+      @apply dark:bg-lime-950 dark:text-lime-300 dark:ring-lime-700;
     }
   }
 }

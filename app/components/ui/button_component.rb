@@ -49,8 +49,7 @@ module UI
       options.delete(:href)
 
       @icon         = options.delete(:icon)
-      @icon_set     = options.delete(:icon_set)
-      @icon_variant = options.delete(:icon_variant)
+      @icon_options = options.delete(:icon_options)
 
       if options.key?(:icon_only)
         @icon_only = options.delete(:icon_only)
@@ -119,10 +118,7 @@ module UI
     end
 
     def icon
-      icon_options = {
-        set:     @icon_set,
-        variant: @icon_variant
-      }.compact
+      icon_options = @icon_options || {}
 
       if @icon_only && @label
         icon_component(@icon, @label, **icon_options)

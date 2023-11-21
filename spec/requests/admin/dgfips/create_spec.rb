@@ -57,9 +57,9 @@ RSpec.describe "Admin::DGFIPsController#create", skip: "Disabled because of sing
 
       it "sets a flash notice" do
         expect(flash).to have_flash_notice.to eq(
-          type:  "success",
-          title: "Une nouvelle DGFIP a été ajoutée avec succés.",
-          delay: 3000
+          scheme: "success",
+          header: "Une nouvelle DGFIP a été ajoutée avec succés.",
+          delay:   3000
         )
       end
     end

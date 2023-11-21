@@ -23,6 +23,22 @@ class ApplicationViewComponent < ViewComponent::Base
     end
   end
 
+  class GenericAction < self
+    def initialize(*args, **options)
+      @args = args
+      @options = options
+      super()
+    end
+
+    def call
+      if @args.any? || @options.any?
+        render UI::ButtonComponent.new(*@args, **@options)
+      else
+        content
+      end
+    end
+  end
+
   def turbo_frame_request_id
     request.headers["Turbo-Frame"]
   end

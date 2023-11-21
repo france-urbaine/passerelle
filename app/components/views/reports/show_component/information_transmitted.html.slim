@@ -3,13 +3,16 @@
   - flow.with_header do |header|
 
     - header.with_title "Informations relatives au signalement", "server-stack", "Icône d'illustration"
-    - header.with_custom do
+
+    - header.with_action do
       = priority_badge(@report)
-    - header.with_custom do
+
+    - header.with_action do
       = report_badge(@report)
+
     - if @report.sandbox?
-      - header.with_custom do
-        = badge_component("Bac à sable", :yellow)
+      - header.with_action do
+        = badge_component("Bac à sable", :warning)
 
   - flow.with_section do
 

@@ -78,9 +78,10 @@ RSpec.describe "Organization::CollectivitiesController#undiscard" do
 
       it "sets a flash notice" do
         expect(flash).to have_flash_notice.to eq(
-          type:  "cancel",
-          title: "La suppression de la collectivité a été annulée.",
-          delay: 3000
+          scheme: "done",
+          icon:   "arrow-path",
+          header: "La suppression de la collectivité a été annulée.",
+          delay:  3000
         )
       end
     end

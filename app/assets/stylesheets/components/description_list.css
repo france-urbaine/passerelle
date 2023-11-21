@@ -1,15 +1,22 @@
 @layer components {
-  .description-list__row {
-    @apply grid gap-2 px-4 py-3 border-b;
-    @apply border-gray-200;
-    @apply dark:border-gray-800;
+  .description-list {
+    &__row {
+      @apply grid gap-2 px-4 py-3 border-b;
+      @apply border-gray-200;
+      @apply dark:border-gray-800;
 
-    @apply md:grid-cols-6;
-    @apply xl:grid-cols-7;
-    @apply 2xl:grid-cols-9;
+      @apply md:grid-cols-6;
+      @apply xl:grid-cols-7;
+      @apply 2xl:grid-cols-9;
 
-    &:last-child {
-      @apply border-none;
+      &:last-child {
+        @apply border-none;
+      }
+
+      &:hover {
+        @apply bg-gray-100;
+        @apply dark:bg-gray-900;
+      }
     }
 
     & dt {
@@ -17,7 +24,7 @@
       white-space: nowrap;
       text-overflow: ellipsis;
 
-      @apply font-semibold;
+      @apply font-semibold tracking-wide;
       @apply text-gray-600;
       @apply dark:text-gray-300;
 
@@ -29,46 +36,36 @@
     }
 
     & dd {
+      display: flex;
+      align-items: flex-start;
+      flex-direction: column;
+      justify-content: space-between;
+
+      @apply md:flex-row;
       @apply md:col-span-4;
       @apply xl:col-span-5;
       @apply 2xl:col-span-7;
     }
 
-    &:hover {
-      @apply bg-gray-100;
-      @apply dark:bg-gray-900;
-    }
-
-    &--with-actions dd,
-    &--with-reference dd {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-    }
-
-    &--with-reference dd {
-      flex-direction: column;
-      @apply md:flex-row;
-    }
-
-    & dd:empty:before,
-    &--with-actions dd > *:first-child:empty:before,
-    &--with-reference dd > *:first-child:empty:before {
+    &__details:empty:before {
       content: "-";
       @apply text-gray-500;
       @apply dark:text-gray-400;
     }
 
-    &--with-reference dd > *:last-child:not(:first-child) {
+    &__reference {
       @apply text-gray-600;
     }
 
-    &--with-actions dd > *:last-child {
-      @apply -my-2;
-    }
+    &__actions {
+      display: flex;
+      align-items: center;
 
-    &--with-actions dd > *:last-child > * {
-      @apply ml-4;
+      @apply -my-1 space-x-2;
+
+      & .button {
+        @apply px-3 h-8;
+      }
     }
   }
 

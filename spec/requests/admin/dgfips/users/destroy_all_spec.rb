@@ -70,10 +70,10 @@ RSpec.describe "Admin::DGFIPs::UsersController#destroy_all" do
 
       it "sets a flash notice" do
         expect(flash).to have_flash_notice.to eq(
-          type:        "success",
-          title:       "Les utilisateurs sélectionnés ont été supprimés.",
-          description: "Toutes les données seront définitivement supprimées dans un délai de 1 jour.",
-          delay:        10_000
+          scheme: "success",
+          header: "Les utilisateurs sélectionnés ont été supprimés.",
+          body:   "Toutes les données seront définitivement supprimées dans un délai de 1 jour.",
+          delay:   10_000
         )
       end
 

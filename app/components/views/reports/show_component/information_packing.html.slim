@@ -4,12 +4,13 @@
 
     - header.with_title "Informations relatives au paquet", "server-stack", "Icône d'illustration"
 
-    - header.with_custom(id: dom_id(@report, :status), is: "turbo-frame") do
-      = report_badge(@report)
+    - header.with_action do
+      div( id=dom_id(@report, :status) is="turbo-frame" )
+        = report_badge(@report)
 
     - if @report.sandbox?
-      - header.with_custom do
-        = badge_component("Bac à sable", :yellow)
+      - header.with_action do
+        = badge_component("Bac à sable", :warning)
 
   - flow.with_section do
 

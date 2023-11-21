@@ -51,9 +51,9 @@ RSpec.describe "Admin::PublishersController#create" do
 
       it "sets a flash notice" do
         expect(flash).to have_flash_notice.to eq(
-          type:  "success",
-          title: "Un nouvel éditeur a été ajouté avec succés.",
-          delay: 3000
+          scheme: "success",
+          header: "Un nouvel éditeur a été ajouté avec succés.",
+          delay:  3000
         )
       end
     end

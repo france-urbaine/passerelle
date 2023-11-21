@@ -68,9 +68,9 @@ RSpec.describe "Organization::Users::InvitationsController#create" do
 
       it "sets a flash notice" do
         expect(flash).to have_flash_notice.to eq(
-          type:  "success",
-          title: "L'invitation a été envoyée.",
-          delay: 3000
+          scheme: "success",
+          header: "L'invitation a été envoyée.",
+          delay:  3000
         )
       end
 
@@ -97,9 +97,9 @@ RSpec.describe "Organization::Users::InvitationsController#create" do
 
       it "sets a flash notice" do
         expect(flash).to have_flash_notice.to eq(
-          type:  "success",
-          title: "L'invitation a été envoyée.",
-          delay: 3000
+          scheme: "success",
+          header: "L'invitation a été envoyée.",
+          delay:  3000
         )
       end
 

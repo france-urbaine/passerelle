@@ -5,19 +5,18 @@ module UI
     define_component_helper :content_flow_component
 
     renders_many :blocks, types: {
-
-      header: { renders: lambda { |**options|
-        h_options = options.dup
-        h_options[:block_type] = :header
-        ::UI::ContentFlow::HeaderComponent.new(**h_options)
-      }, as: :header },
-
-      section: { renders: lambda { |**options|
-        s_options = options.dup
-        s_options[:block_type] = :section
-        ::UI::ContentFlow::SectionComponent.new(**s_options)
-      }, as: :section }
-
+      header: {
+        as: :header,
+        renders: lambda { |**options|
+          ::UI::ContentFlow::HeaderComponent.new(**options, block_type: :header)
+        }
+      },
+      section: {
+        as: :section,
+        renders: lambda { |**options|
+          ::UI::ContentFlow::SectionComponent.new(**options, block_type: :section)
+        }
+      }
     }
 
     def before_render

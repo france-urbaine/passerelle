@@ -54,10 +54,10 @@ RSpec.describe "Territories::TerritoriesController#update" do
 
       it "sets a flash notice" do
         expect(flash).to have_flash_notice.to eq(
-          type:         "success",
-          title:        "La mise à jour a été lancée en arrière-plan.",
-          description:  "Les données seront disponibles dans quelques minutes.",
-          delay:        3000
+          scheme: "success",
+          header: "La mise à jour a été lancée en arrière-plan.",
+          body:   "Les données seront disponibles dans quelques minutes.",
+          delay:  3000
         )
       end
     end

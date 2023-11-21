@@ -7,13 +7,15 @@
 
         dd
           - if attribute.value?
-            span
+            .description-list__details
               = attribute.value
-          
+
           - if attribute.reference?
-            span= attribute.reference
-          
+            .description-list__reference
+              = attribute.reference
+
           - if attribute.actions?
-            span
+            .description-list__actions
               - attribute.actions.each do |action|
-                = action
+                .description-list__action
+                  = action

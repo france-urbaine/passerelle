@@ -61,9 +61,9 @@ RSpec.describe "Admin::DDFIPs::OfficesController#create" do
 
       it "sets a flash notice" do
         expect(flash).to have_flash_notice.to eq(
-          type:  "success",
-          title: "Un nouveau guichet a été ajouté avec succés.",
-          delay: 3000
+          scheme: "success",
+          header: "Un nouveau guichet a été ajouté avec succés.",
+          delay:   3000
         )
       end
     end

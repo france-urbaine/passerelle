@@ -102,7 +102,7 @@ RSpec.describe "Collectivities managed by current organization" do
     # A notification should be displayed
     #
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "Une nouvelle collectivité a été ajoutée avec succés.")
+    expect(page).to     have_selector("[role=log]", text: "Une nouvelle collectivité a été ajoutée avec succés.")
   end
 
   it "updates a collectivity from the index page" do
@@ -139,7 +139,7 @@ RSpec.describe "Collectivities managed by current organization" do
     # A notification should be displayed
     #
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
+    expect(page).to     have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
   end
 
   it "updates a collectivity from the collectivity page" do
@@ -175,7 +175,7 @@ RSpec.describe "Collectivities managed by current organization" do
     # A notification should be displayed
     #
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
+    expect(page).to     have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
   end
 
   it "discards a collectivity from the index page & rollbacks" do
@@ -207,11 +207,11 @@ RSpec.describe "Collectivities managed by current organization" do
     # A notification should be displayed
     #
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "La collectivité a été supprimée.")
+    expect(page).to     have_selector("[role=log]", text: "La collectivité a été supprimée.")
 
     # The notification should include a button to cancel the last action
     #
-    within "[role=alert]", text: "La collectivité a été supprimée." do
+    within "[role=log]", text: "La collectivité a été supprimée." do
       click_on "Annuler"
     end
 
@@ -226,8 +226,8 @@ RSpec.describe "Collectivities managed by current organization" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector("[role=alert]", text: "La collectivité a été supprimée.")
-    expect(page).to     have_selector("[role=alert]", text: "La suppression de la collectivité a été annulée.")
+    expect(page).not_to have_selector("[role=log]", text: "La collectivité a été supprimée.")
+    expect(page).to     have_selector("[role=log]", text: "La suppression de la collectivité a été annulée.")
   end
 
   it "discards a collectivity from the collectivity page & rollbacks" do
@@ -257,11 +257,11 @@ RSpec.describe "Collectivities managed by current organization" do
     # A notification should be displayed
     #
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "La collectivité a été supprimée.")
+    expect(page).to     have_selector("[role=log]", text: "La collectivité a été supprimée.")
 
     # The notification should include a button to cancel the last action
     #
-    within "[role=alert]", text: "La collectivité a été supprimée." do
+    within "[role=log]", text: "La collectivité a été supprimée." do
       click_on "Annuler"
     end
 
@@ -276,8 +276,8 @@ RSpec.describe "Collectivities managed by current organization" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector("[role=alert]", text: "La collectivité a été supprimée.")
-    expect(page).to     have_selector("[role=alert]", text: "La suppression de la collectivité a été annulée.")
+    expect(page).not_to have_selector("[role=log]", text: "La collectivité a été supprimée.")
+    expect(page).to     have_selector("[role=log]", text: "La suppression de la collectivité a été annulée.")
   end
 
   it "selects and discards one collectivity from the index page & rollbacks" do
@@ -321,11 +321,11 @@ RSpec.describe "Collectivities managed by current organization" do
     #
     expect(page).not_to have_selector(".header-bar--selection")
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "Les collectivités sélectionnées ont été supprimées.")
+    expect(page).to     have_selector("[role=log]", text: "Les collectivités sélectionnées ont été supprimées.")
 
     # The notification should include a button to cancel the last action
     #
-    within "[role=alert]", text: "Les collectivités sélectionnées ont été supprimées." do
+    within "[role=log]", text: "Les collectivités sélectionnées ont été supprimées." do
       click_on "Annuler"
     end
 
@@ -342,8 +342,8 @@ RSpec.describe "Collectivities managed by current organization" do
     # A new notification should be displayed
     #
     expect(page).not_to have_selector(".header-bar--selection")
-    expect(page).not_to have_selector("[role=alert]", text: "Les collectivités sélectionnées ont été supprimées.")
-    expect(page).to     have_selector("[role=alert]", text: "La suppression des collectivités sélectionnées a été annulée.")
+    expect(page).not_to have_selector("[role=log]", text: "Les collectivités sélectionnées ont été supprimées.")
+    expect(page).to     have_selector("[role=log]", text: "La suppression des collectivités sélectionnées a été annulée.")
   end
 
   it "selects and discards all collectivities from the current page on index page & rollbacks" do
@@ -401,11 +401,11 @@ RSpec.describe "Collectivities managed by current organization" do
     #
     expect(page).not_to have_selector(".header-bar--selection")
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "Les collectivités sélectionnées ont été supprimées.")
+    expect(page).to     have_selector("[role=log]", text: "Les collectivités sélectionnées ont été supprimées.")
 
     # The notification should include a button to cancel the last action
     #
-    within "[role=alert]", text: "Les collectivités sélectionnées ont été supprimées." do
+    within "[role=log]", text: "Les collectivités sélectionnées ont été supprimées." do
       click_on "Annuler"
     end
 
@@ -424,8 +424,8 @@ RSpec.describe "Collectivities managed by current organization" do
     # A new notification should be displayed
     #
     expect(page).not_to have_selector(".header-bar--selection")
-    expect(page).not_to have_selector("[role=alert]", text: "Les collectivités sélectionnées ont été supprimées.")
-    expect(page).to     have_selector("[role=alert]", text: "La suppression des collectivités sélectionnées a été annulée.")
+    expect(page).not_to have_selector("[role=log]", text: "Les collectivités sélectionnées ont été supprimées.")
+    expect(page).to     have_selector("[role=log]", text: "La suppression des collectivités sélectionnées a été annulée.")
   end
 
   it "selects and discards all collectivities through several pages on index page & rollbacks" do
@@ -483,11 +483,11 @@ RSpec.describe "Collectivities managed by current organization" do
     #
     expect(page).not_to have_selector(".header-bar--selection")
     expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=alert]", text: "Les collectivités sélectionnées ont été supprimées.")
+    expect(page).to     have_selector("[role=log]", text: "Les collectivités sélectionnées ont été supprimées.")
 
     # The notification should include a button to cancel the last action
     #
-    within "[role=alert]", text: "Les collectivités sélectionnées ont été supprimées." do
+    within "[role=log]", text: "Les collectivités sélectionnées ont été supprimées." do
       click_on "Annuler"
     end
 
@@ -506,7 +506,7 @@ RSpec.describe "Collectivities managed by current organization" do
     # A new notification should be displayed
     #
     expect(page).not_to have_selector(".header-bar--selection")
-    expect(page).not_to have_selector("[role=alert]", text: "Les collectivités sélectionnées ont été supprimées.")
-    expect(page).to     have_selector("[role=alert]", text: "La suppression des collectivités sélectionnées a été annulée.")
+    expect(page).not_to have_selector("[role=log]", text: "Les collectivités sélectionnées ont été supprimées.")
+    expect(page).to     have_selector("[role=log]", text: "La suppression des collectivités sélectionnées a été annulée.")
   end
 end

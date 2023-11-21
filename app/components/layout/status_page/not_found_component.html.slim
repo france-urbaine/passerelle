@@ -43,7 +43,6 @@
       - else
         | Cette page n'existe plus ou a été déplacée.
 
-  - if actions?
-    - template.with_raw_actions do
-      - actions.each do |action|
-        = action
+  - actions.each do |action|
+    - template.with_action do
+      = action

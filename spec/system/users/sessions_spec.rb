@@ -98,7 +98,7 @@ RSpec.describe "Signing in" do
     expect(page).to have_current_path(new_user_session_path)
     expect(page).to have_field("Adresse mail", with: "")
     expect(page).to have_field("Mot de passe", with: "")
-    # expect(page).to have_selector("[role=alert]", text: "Email et/ou mot de passe incorrect(s).")
+    # expect(page).to have_selector("[role=log]", text: "Email et/ou mot de passe incorrect(s).")
   end
 
   it "rejects login attempt with invalid password" do
@@ -117,7 +117,7 @@ RSpec.describe "Signing in" do
     expect(page).to have_field("Adresse mail", with: "mdebomy@fiscalite-territoire.fr")
     expect(page).to have_field("Mot de passe", with: "")
 
-    # expect(page).to have_selector("[role=alert]", text: "Email et/ou mot de passe incorrect(s).")
+    # expect(page).to have_selector("[role=log]", text: "Email et/ou mot de passe incorrect(s).")
   end
 
   it "rejects OTP attempt" do

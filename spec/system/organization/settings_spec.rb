@@ -32,7 +32,7 @@ RSpec.describe "Settings of current organization" do
       # Some errors should be displayed
       #
       expect(page).to     have_current_path("/organisation/parametres")
-      expect(page).not_to have_selector("[role=alert]")
+      expect(page).not_to have_selector("[role=log]")
       expect(page).to     have_selector(".form-block__errors", text: "Un nom est requis")
       expect(page).to     have_selector(".form-block__errors", text: "Ce numéro SIREN n'est pas valide")
 
@@ -50,7 +50,7 @@ RSpec.describe "Settings of current organization" do
       # Errors should be removed
       #
       expect(page).to     have_current_path("/organisation/parametres")
-      expect(page).to     have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
+      expect(page).to     have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
       expect(page).not_to have_selector(".form-block__errors")
 
       # Reload the page
@@ -88,7 +88,7 @@ RSpec.describe "Settings of current organization" do
       # Some errors should be displayed
       #
       expect(page).to     have_current_path("/organisation/parametres")
-      expect(page).not_to have_selector("[role=alert]")
+      expect(page).not_to have_selector("[role=log]")
       expect(page).to     have_selector(".form-block__errors", text: "Un numéro de téléphone valide est requis")
 
       # Fill inputs with valid data
@@ -107,7 +107,7 @@ RSpec.describe "Settings of current organization" do
       # Errors should be removed
       #
       expect(page).to     have_current_path("/organisation/parametres")
-      expect(page).to     have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
+      expect(page).to     have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
       expect(page).not_to have_selector(".form-block__errors")
 
       # Reload the page
@@ -144,7 +144,7 @@ RSpec.describe "Settings of current organization" do
       # A notification should be displayed
       #
       expect(page).to have_current_path("/organisation/parametres")
-      expect(page).to have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
+      expect(page).to have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
 
       # Check box to authorized 2FA method
       #
@@ -159,7 +159,7 @@ RSpec.describe "Settings of current organization" do
       # Errors should be removed
       #
       expect(page).to have_current_path("/organisation/parametres")
-      expect(page).to have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
+      expect(page).to have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
 
       # Reload the page
       #
@@ -200,7 +200,7 @@ RSpec.describe "Settings of current organization" do
       # A notification should be displayed
       #
       expect(page).to have_current_path("/organisation/parametres")
-      expect(page).to have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
+      expect(page).to have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
 
       # Reload the page
       #
@@ -241,7 +241,7 @@ RSpec.describe "Settings of current organization" do
       # Errors should be removed
       #
       expect(page).to     have_current_path("/organisation/parametres")
-      expect(page).to     have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
+      expect(page).to     have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
 
       # Reload the page
       #
@@ -277,7 +277,7 @@ RSpec.describe "Settings of current organization" do
       # A notification should be displayed
       #
       expect(page).to have_current_path("/organisation/parametres")
-      expect(page).to have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
+      expect(page).to have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
 
       # Check box to authorized 2FA method
       #
@@ -292,7 +292,7 @@ RSpec.describe "Settings of current organization" do
       # Errors should be removed
       #
       expect(page).to have_current_path("/organisation/parametres")
-      expect(page).to have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
+      expect(page).to have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
 
       # Reload the page
       #
@@ -329,7 +329,7 @@ RSpec.describe "Settings of current organization" do
       # A notification should be displayed
       #
       expect(page).to have_current_path("/organisation/parametres")
-      expect(page).to have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
+      expect(page).to have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
 
       # Reload the page
       #
@@ -368,7 +368,7 @@ RSpec.describe "Settings of current organization" do
       # Errors should be removed
       #
       expect(page).to     have_current_path("/organisation/parametres")
-      expect(page).to     have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
+      expect(page).to     have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
 
       # Reload the page
       #
@@ -404,7 +404,7 @@ RSpec.describe "Settings of current organization" do
       # A notification should be displayed
       #
       expect(page).to have_current_path("/organisation/parametres")
-      expect(page).to have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
+      expect(page).to have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
 
       # Check box to authorized 2FA method
       #
@@ -419,7 +419,7 @@ RSpec.describe "Settings of current organization" do
       # Errors should be removed
       #
       expect(page).to have_current_path("/organisation/parametres")
-      expect(page).to have_selector("[role=alert]", text: "Les modifications ont été enregistrées avec succés.")
+      expect(page).to have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
 
       # Reload the page
       #

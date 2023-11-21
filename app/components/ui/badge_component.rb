@@ -4,35 +4,34 @@ module UI
   class BadgeComponent < ApplicationViewComponent
     define_component_helper :badge_component
 
-    # Colors are listed instead of being interpolated to be
-    # be compiled by tailwind.
-    #
-    # Only few colors are pre-compiled.
-    # If you need need another color, you need to pass the CSS class:
-    # Ex:
-    #   class: "badge--purple"
-    #
-    COLORS = {
-      yellow:  "badge--yellow",
-      orange:  "badge--orange",
-      red:     "badge--red",
-      blue:    "badge--blue",
-      green:   "badge--green"
+    SCHEME_CSS_CLASSES = {
+      default:   "",
+      warning:   "badge--warning",
+      danger:    "badge--danger",
+      success:   "badge--success",
+      done:      "badge--done"
     }.freeze
 
-    def initialize(label, color = nil, **options)
-      @label   = label
-      @color   = color
-      @options = options
+    def initialize(label, scheme = :default, **html_attributes)
+      @label           = label
+      @scheme          = scheme
+      @html_attributes = html_attributes
+
+      validate_arguments!
       super()
     end
 
-    def call
-      css_class = Array.wrap(@options[:class])
-      css_class.unshift("badge")
-      css_class.unshift(COLORS[@color]) if COLORS.include?(@color)
+    def validate_arguments!
+      raise ArgumentError, "unexpected scheme: #{@scheme.inspect}" unless SCHEME_CSS_CLASSES.include?(@scheme)
+    end
 
-      tag.div(@label, **@options, class: css_class.join(" "))
+    def call
+      css_class = %w[badge]
+      css_class << SCHEME_CSS_CLASSES[@scheme]
+      css_class << @html_attributes[:class]
+      css_class = css_class.join(" ").squish
+
+      tag.div(@label, **@html_attributes, class: css_class)
     end
   end
 end

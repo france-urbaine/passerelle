@@ -78,9 +78,9 @@ RSpec.describe "Packages::ApprovalsController#destroy" do
 
       it "sets a flash notice" do
         expect(flash).to have_flash_notice.to eq(
-          type:  "success",
-          title: "Le paquet a été rejeté.",
-          delay: 3000
+          scheme: "success",
+          header: "Le paquet a été rejeté.",
+          delay:  3000
         )
       end
     end

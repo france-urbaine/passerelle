@@ -56,9 +56,9 @@ RSpec.describe "Admin::Offices::CommunesController#destroy" do
 
       it "sets a flash notice" do
         expect(flash).to have_flash_notice.to eq(
-          type:  "success",
-          title: "La commune a été exclue du guichet.",
-          delay: 10_000
+          scheme: "success",
+          header: "La commune a été exclue du guichet.",
+          delay:   10_000
         )
       end
 

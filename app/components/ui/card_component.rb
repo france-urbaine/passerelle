@@ -19,8 +19,7 @@ module UI
     }
 
     renders_one  :submit_action, "SubmitAction"
-    renders_many :actions, "Action"
-    renders_one :raw_actions
+    renders_many :actions, "GenericAction"
 
     renders_many :multiparts, ->(**options) { Multipart.new(**@options, **options) }
 
@@ -51,9 +50,6 @@ module UI
       def initialize(*args, **options)
         super(*args, **options, primary: true, type: "submit")
       end
-    end
-
-    class Action < UI::ButtonComponent
     end
 
     class Multipart < self

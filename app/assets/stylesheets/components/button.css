@@ -13,7 +13,7 @@
     outline-style: solid;
     outline-width: 0px;
 
-    @apply py-2 px-4 h-10 leading-6 bg-transparent border rounded-full;
+    @apply py-2 px-4 h-10 leading-6 bg-transparent border rounded-2xl;
     @apply bg-white text-gray-900 border-gray-400;
     @apply dark:bg-black dark:text-gray-100 dark:border-gray-400 dark:border-2;
 
@@ -34,7 +34,7 @@
     }
 
     &:not([disabled]) {
-      &:is(:focus, :focus-visible) {
+      &:is(:focus-visible) {
         outline-width: 2px;
         outline-offset: 3px;
 
@@ -75,7 +75,6 @@
         @apply dark:text-black;
       }
     }
-
 
     &--primary {
       @apply bg-blue-500 border-blue-500;

@@ -9,9 +9,6 @@
 
     - modal.with_close_action "Fermer"
 
-    - if actions? || raw_actions?
-      - modal.with_raw_actions do
-        - actions.each do |action|
-          = action
-
-        = raw_actions
+    - actions.each do |action|
+      - modal.with_action do
+        = action

@@ -17,7 +17,7 @@
 
     - flow.with_header do |header|
       - header.with_title "Informations relatives au paquet", "server-stack", "Nouvelle section"
-      - header.with_custom do
+      - header.with_action do
         = package_badge(@package)
 
     - flow.with_section do

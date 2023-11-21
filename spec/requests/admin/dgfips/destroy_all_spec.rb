@@ -60,10 +60,10 @@ RSpec.describe "Admin::DGFIPsController#destroy_all", skip: "Disabled because of
 
       it "sets a flash notice" do
         expect(flash).to have_flash_notice.to eq(
-          type:        "success",
-          title:       "Les DGFIPs sélectionnées ont été supprimées.",
-          description: "Toutes les données seront définitivement supprimées dans un délai de 30 jours.",
-          delay:        10_000
+          scheme: "success",
+          header: "Les DGFIPs sélectionnées ont été supprimées.",
+          body:   "Toutes les données seront définitivement supprimées dans un délai de 30 jours.",
+          delay:   10_000
         )
       end
 

@@ -6,16 +6,16 @@
     - if allowed_to?(:create?, OauthApplication)
       - breadcrumbs.with_action "Ajouter une application", new_organization_oauth_application_path, icon: "plus", modal: true, primary: true
 
-  - if current_organization.is_a?(Publisher) && current_organization.sandbox?
-    = flash_component(:warning) do
-      ' Votre organisation est mode « Bac à sable » par défaut.
-      br
-      ' #{link_to "Consultez le guide", api_documentation_url("guides/sandbox")} pour en savoir plus.
-
   = content_flow_component do |flow|
-
     - flow.with_section do
       = render Views::OauthApplications::ListComponent.new(@oauth_applications, @pagy, namespace: :organization)
+
+    - if current_organization.is_a?(Publisher) && current_organization.sandbox?
+      - flow.with_section do
+        = flash_component(:warning) do
+          ' Le mode « Bac à sable » est activé sur l'intégralité de votre organisation.
+          br
+          ' #{link_to "Consultez le guide", api_documentation_url("guides/sandbox")} pour en savoir plus.
 
     - flow.with_header do |header|
       - header.with_title "Documentation", "information-circle", "Nouvelle section"
