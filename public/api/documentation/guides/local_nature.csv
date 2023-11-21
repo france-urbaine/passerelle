@@ -1,0 +1,18 @@
+Valeur,Libellé
+AP,Appartement
+AT,Shelters des antennes téléphones
+AU,Voies et éléments (ex. : péage) construits sur une autoroute
+CB,Local professionnel
+DA,Dépendance d'appartement
+DM,Dépendance de maison
+DE,Dépendance bâtie isolée (ex. : garage)
+LC,Local commun (ex. : local à vélos)
+MA,Maison
+ME,Maison exceptionnelle
+MP,Maison partagée par une limite territoriale
+PP,Port de plaisance
+SM,Sol de maison (cas de construction sur sol d'autrui)
+U,Établissement industriel (évalué par méthode comptable)
+UE,Transformateur électrique HBTA
+UG,Appareil à gaz
+UN,Usine nucléaire

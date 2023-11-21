@@ -1,0 +1,45 @@
+= breadcrumbs_component do |breadcrumbs|
+  - breadcrumbs.with_path "Guides"
+  - breadcrumbs.with_path "Formulaires de signalement", api_documentation_path("guides/formulaires")
+  - breadcrumbs.with_path "Evaluation d'un local professionnel"
+
+.documentation
+  = card_component do
+    = render "documentation/api/guides/formulaire_evaluation_local_professionel/objet"
+    = render "documentation/api/guides/formulaire_evaluation_local_professionel/identification_majic"
+
+  .content__separator
+
+  h2.subheader#consistance
+    = icon_component("clipboard-document")
+    | Changement de consistance ou d'utilisation
+
+  = card_component do
+    = render "documentation/api/guides/formulaire_evaluation_local_professionel/consistance"
+
+  .content__separator
+
+  h2.subheader#affectation
+    = icon_component("clipboard-document")
+    | Changement d'affectation
+
+  = card_component do
+    = render "documentation/api/guides/formulaire_evaluation_local_professionel/affectation"
+
+  .content__separator
+
+  h2.subheader#exoneration
+    = icon_component("clipboard-document")
+    | Exonération à tort
+
+  = card_component do
+    = render "documentation/api/guides/formulaire_evaluation_local_professionel/exoneration"
+
+  .content__separator
+
+  h2.subheader#adresse
+    = icon_component("clipboard-document")
+    | Changement d'adresse
+
+  = card_component do
+    = render "documentation/api/guides/formulaire_evaluation_local_professionel/adresse"

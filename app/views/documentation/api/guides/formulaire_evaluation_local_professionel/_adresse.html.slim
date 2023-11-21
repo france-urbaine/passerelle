@@ -1,0 +1,49 @@
+p En cas d'anomalie sur l'adresse, seule une proposition de mise à jour de l'adresse est requise :
+
+table
+  colgroup
+    col.w-1/5
+    col.w-1/5
+    col.w-1/5
+    col.w-1/5
+    col.w-1/5
+  thead
+    tr
+      th Paramètre
+      th Description
+      th Exemples
+      th Commentaire
+      th
+  tbody
+    tr
+      th <code>proposition_numero_voie</code>
+      td Numéro de voie
+      td <code>6</code>
+      td
+      td.text-right.space-x-4
+        .badge.badge--blue.badge--mono String
+
+    tr
+      th <code>proposition_indice_repetition</code>
+      td Indice de répétition
+      td <code>bis</code>, <code>ter</code>, <code>quater</code>
+      td
+      td.text-right.space-x-4
+        .badge.badge--blue.badge--mono String
+
+    tr
+      th <code>proposition_libelle_voie</code>
+      td Libellé de la voie
+      td <code>Rue de la paix</code>
+      td
+      td.text-right.space-x-4
+        .badge.badge--orange.badge--mono requis
+        .badge.badge--blue.badge--mono String
+
+    tr
+      th <code>proposition_code_rivoli</code>
+      td Code RIVOLI de la voie
+      td <code>0123</code>
+      td Code à 4 chiffres
+      td.text-right.space-x-4
+        .badge.badge--blue.badge--mono String

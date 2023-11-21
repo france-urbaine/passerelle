@@ -1,0 +1,68 @@
+h3 Signalement de l'achèvement de travaux
+
+p
+  ' En fonction de la nature proposée, certains champs seront requis ou non :
+  br
+  ' les champs indiqué par un (*) ne sont requis que dans le cas d'une dépendance de maison ou d'appartement
+  ' (<code>proposition_nature</code> vaut <code>DA</code> ou <code>DM</code>).
+table
+  colgroup
+    col.w-1/5
+    col.w-1/5
+    col.w-1/5
+    col.w-1/5
+    col.w-1/5
+  thead
+    tr
+      th Paramètre
+      th Description
+      th Exemples
+      th Commentaire
+      th
+  tbody
+    tr
+      th <code>proposition_nature</code>
+      td Nature du local proposée
+      td <code>AP</code>, <code>MA</code>, <code>DA</code>, <code>DM</code>
+      td= link_to "Consulter toutes les valeurs", "/api/documentation/guides/local_habitation_nature_creation.csv"
+      td.text-right.space-x-4
+        .badge.badge--orange.badge--mono requis
+        .badge.badge--blue.badge--mono String
+
+    tr
+      th <code>proposition_nature_dependance</code>
+      td Nature de dépendance
+      td <code>BC</code>, <code>BD</code>, <code>BX</code>
+      td = link_to "Consulter toutes les valeurs", "/api/documentation/guides/local_nature_dependance.csv"
+      td.text-right.space-x-4
+        .badge.badge--orange.badge--mono requis (*)
+        .badge.badge--blue.badge--mono String
+
+    tr
+      th <code>proposition_categorie</code>
+      td Catégorie du local
+      td <code>4</code>, <code>4M</code>, <code>5</code>
+      td
+        = link_to "Consulter toutes les valeurs", "/api/documentation/guides/local_habitation_categorie.csv"
+        '  - seules les catégories d'habitation sont acceptées.
+      td.text-right.space-x-4
+        .badge.badge--orange.badge--mono requis
+        .badge.badge--blue.badge--mono String
+
+    tr
+      th <code>proposition_surface_reelle</code>
+      td Surface réelle
+      td <code>250.0</code>
+      td
+      td.text-right.space-x-4
+        .badge.badge--orange.badge--mono requis
+        .badge.badge--blue.badge--mono Numeric
+
+    tr
+      th <code>proposition_date_achevement</code>
+      td Date d'achèvement des travaux
+      td <code>02/03/1994</code>
+      td
+      td.text-right.space-x-4
+        .badge.badge--orange.badge--mono requis
+        .badge.badge--blue.badge--mono Date

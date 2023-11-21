@@ -340,7 +340,7 @@ module Reports
         creation_local? || (
           evaluation_local? && anomalies.include?("affectation")
         ) || (
-          form_type == "evaluation_local_habitation" && anomalies.intersect?(%w[consistance categorie])
+          form_type == "evaluation_local_habitation" && anomalies.include?("consistance")
         )
       end
 

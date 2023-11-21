@@ -1,0 +1,12 @@
+Valeur,Libellé
+CB,"Local professionnel"
+LC,"Local commun (ex. : local à vélos)"
+DE,"Dépendance bâtie isolée (ex. : garage)"
+UG,"Appareil à gaz"
+UE,"Transformateur électrique HBTA"
+AT,"Shelters des antennes téléphones"
+PP,"Port de plaisance"
+UN,"Usine nucléaire"
+AU,"Voies et éléments (ex. : péage) construits sur une autoroute"
+SM,"Sol de maison (cas de construction sur sol d'autrui)"
+U,"Établissement industriel (évalué par méthode comptable)"

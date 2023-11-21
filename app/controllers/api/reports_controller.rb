@@ -20,7 +20,8 @@ module API
 
       La liste des champs requis dépends du type de signalement, de l'anomalie signalée et parfois de certains autres
       champs.
-      Consultez la liste des champs requis pour plus de détails (bientôt disponible).
+      <br>
+      Consultez la {liste des champs requis}[/documentation/guides/formulaires] pour plus de détails.
 
       L'UUID du signalement nouvellement créé est retourné.
       <br>

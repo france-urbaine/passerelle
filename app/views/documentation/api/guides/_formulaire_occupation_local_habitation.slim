@@ -1,0 +1,10 @@
+= breadcrumbs_component do |breadcrumbs|
+  - breadcrumbs.with_path "Guides"
+  - breadcrumbs.with_path "Formulaires de signalement", api_documentation_path("guides/formulaires")
+  - breadcrumbs.with_path "Occupation d'un local d'habitation"
+
+.documentation
+  = card_component do
+    = render "documentation/api/guides/formulaire_occupation_local_habitation/objet"
+    = render "documentation/api/guides/formulaire_occupation_local_habitation/identification_majic"
+    = render "documentation/api/guides/formulaire_occupation_local_habitation/occupation"

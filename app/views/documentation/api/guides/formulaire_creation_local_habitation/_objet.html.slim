@@ -1,0 +1,44 @@
+p
+  ' Ce formulaire est utilisé lorsque <code>form_type</code> vaut <code>creation_local_habitation</code>
+  br
+  ' Il accepte un ou plusieurs objets :
+
+table
+  colgroup
+    col.w-1/5
+    col.w-1/5
+    col.w-1/5
+    col.w-1/5
+    col.w-1/5
+  thead
+    tr
+      th Paramètre
+      th Description
+      th Valeurs
+      th Commentaire
+      th
+  tbody
+    tr
+      th <code>form_type</code>
+      td Type de formulaire
+      td <code>creation_local_habitation</code>
+      td
+      td.text-right.space-x-4
+        .badge.badge--orange.badge--mono requis
+        .badge.badge--blue.badge--mono String
+    tr
+      th <code>anomalies</code>
+      td Object du signalement
+      td
+        ul
+          li <code>omission_batie</code> : #{link_to("Omission bâtie", "#omission_batie")}
+          li <code>construction_neuve</code> : #{link_to("Construction neuve", "#construction_neuve")}
+
+      td Une seule valeur acceptée
+      td.text-right.space-x-4
+        .badge.badge--orange.badge--mono requis
+        .badge.badge--blue.badge--mono String
+    tr
+      td( colspan="5" )
+        ' [...]
+        = link_to "Consulter la liste des champs communs à tout les formulaires", api_documentation_path("guides/formulaires")
