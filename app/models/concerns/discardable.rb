@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
-module AdvancedDiscardable
+module Discardable
   extend ActiveSupport::Concern
 
   included do
+    include Discard::Model
+
     scope :discarded_over, ->(duration) { discarded.where("discarded_at < ?", duration.ago) }
   end
 
