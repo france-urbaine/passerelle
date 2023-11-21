@@ -36,8 +36,7 @@ Doorkeeper.configure do
   #
   # access_token_class "Doorkeeper::AccessToken"
   # access_grant_class "Doorkeeper::AccessGrant"
-  application_class  "OauthApplication"
-  access_token_class "OauthAccessToken"
+  # application_class "Doorkeeper::Application"
   #
   # Don't forget to include Doorkeeper ORM mixins into your custom models:
   #
@@ -58,6 +57,9 @@ Doorkeeper.configure do
   #     destroy
   #   end
   # end
+
+  application_class "OauthApplication"
+  access_token_class "OauthAccessToken"
 
   # Enables polymorphic Resource Owner association for Access Tokens and Access Grants.
   # By default this option is disabled.
@@ -226,6 +228,7 @@ Doorkeeper.configure do
   # to provide the necessary support
   #
   # enable_application_owner confirmation: false
+
   enable_application_owner
 
   # Define access token scopes for your provider
@@ -313,6 +316,8 @@ Doorkeeper.configure do
   #   Doorkeeper::Errors::TokenForbidden, Doorkeeper::Errors::TokenExpired,
   #   Doorkeeper::Errors::TokenRevoked, Doorkeeper::Errors::TokenUnknown
   #
+  # handle_auth_errors :raise
+
   handle_auth_errors :raise
 
   # Customize token introspection response.
@@ -349,6 +354,8 @@ Doorkeeper.configure do
   #   https://datatracker.ietf.org/doc/html/rfc6819#section-4.4.2
   #   https://datatracker.ietf.org/doc/html/rfc6819#section-4.4.3
   #
+  # grant_flows %w[authorization_code client_credentials]
+
   grant_flows %w[client_credentials]
 
   # Allows to customize OAuth grant flows that +each+ application support.
