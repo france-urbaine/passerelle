@@ -1,36 +1,57 @@
 @layer components {
   .breadcrumbs {
     display: flex;
-    flex: 1 0 auto;
-    align-items: center;
-    box-sizing: content-box;
-    min-width: 0px;
+    flex-wrap: wrap;
+    min-height: theme("height.10");
 
-    @apply text-2xl h-10;
-  }
-
-  .breadcrumbs__separator {
-    flex: 0 0 theme("spacing.6");
-    text-align: center;
-
-    @apply mx-1;
-    @apply text-gray-600;
-    @apply dark:text-gray-400;
-  }
-
-  .breadcrumbs__path {
-    @apply text-gray-600;
-    @apply dark:text-gray-400;
-
-    &:last-child {
-      color: unset;
-      @apply mr-4;
+    &__path {
+      display: flex;
+      flex: 1 0 auto;
+      flex-wrap: wrap;
+      align-items: center;
+      box-sizing: content-box;
+      min-width: 0px;
     }
 
-    & a:not([disabled]):not(:hover, :active, :focus, :focus-visible),
-    & .icon-button:not([disabled]):not(:hover, :active, :focus, :focus-visible) {
+    &__separator,
+    &__path-item {
+      @apply text-2xl;
       @apply text-gray-600;
       @apply dark:text-gray-400;
+    }
+
+    &__separator {
+      flex: 0 0 theme("spacing.6");
+      text-align: center;
+
+      @apply mx-1;
+    }
+
+    &__path-item {
+      &:last-child {
+        color: unset;
+        @apply mr-4;
+      }
+
+      & a:not([disabled]):not(:hover, :active, :focus, :focus-visible),
+      & .icon-button:not([disabled]):not(:hover, :active, :focus, :focus-visible) {
+        @apply text-gray-600;
+        @apply dark:text-gray-400;
+      }
+    }
+
+    &__actions {
+      display: flex;
+      flex: none;
+      flex-wrap: wrap;
+      align-items: center;
+      max-width: 100%;
+
+      @apply -m-1;
+    }
+
+    &__action {
+      @apply m-1;
     }
   }
 }

@@ -96,13 +96,13 @@ RSpec.describe Layout::StatusPageComponent, type: :component do
       card.with_body("Hello World")
     end
 
-    expect(page).to have_selector(".header-bar > .breadcrumbs") do |node|
-      expect(node).to     have_selector(".breadcrumbs__path", count: 2)
+    expect(page).to have_selector(".breadcrumbs > .breadcrumbs__path") do |node|
+      expect(node).to     have_selector(".breadcrumbs__path-item", count: 2)
       expect(node).not_to have_selector("h1")
 
-      expect(node).to have_selector(".breadcrumbs__path:nth-child(1) > a.icon-button", text: "Retour à la page d'accueil")
+      expect(node).to have_selector(".breadcrumbs__path-item:nth-child(1) > a.icon-button", text: "Retour à la page d'accueil")
       expect(node).to have_selector(".breadcrumbs__separator:nth-child(2)", text: "/")
-      expect(node).to have_selector(".breadcrumbs__path:nth-child(3)", text: "Root path")
+      expect(node).to have_selector(".breadcrumbs__path-item:nth-child(3)", text: "Root path")
     end
   end
 

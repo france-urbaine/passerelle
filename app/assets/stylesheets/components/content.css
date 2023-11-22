@@ -8,6 +8,11 @@
     @apply p-6;
   }
 
+  .breadcrumbs {
+    /* This is a temporary patch until breadcrumbs is fully included in content layout */
+    @apply mb-6;
+  }
+
   .content__grid {
     @apply grid gap-12;
 

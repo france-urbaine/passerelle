@@ -1,11 +1,11 @@
-.header-bar
-  .breadcrumbs
-    .breadcrumbs__path
+.breadcrumbs
+  .breadcrumbs__path
+    .breadcrumbs__path-item
       = button_component home_label, root_path, icon: "home", icon_only: true, icon_options: { variant: :solid }
 
     - paths.each.with_index do |path, index|
       .breadcrumbs__separator= " / "
-      .breadcrumbs__path
+      .breadcrumbs__path-item
         - if @heading && index == paths.size - 1
           h1= path
         - else
@@ -13,7 +13,7 @@
 
   .flex-auto
 
-  .header-bar__actions
+  .breadcrumbs__actions
     - actions.each do |action|
-      .header-bar__action
+      .breadcrumbs__action
         = action
