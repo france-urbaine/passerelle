@@ -1,0 +1,12 @@
+= content_layout_component do |layout|
+  - layout.with_section { card_component { "Section #1" } }
+  - layout.with_grid do |grid|
+    - grid.with_column do
+      = card_component do
+        | Section #2
+
+    - grid.with_column do
+      = card_component do
+        | Section #3
+
+  - layout.with_section { card_component { "Section #4" } }

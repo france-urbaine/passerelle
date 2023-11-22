@@ -10,11 +10,19 @@
 
   .breadcrumbs {
     /* This is a temporary patch until breadcrumbs is fully included in content layout */
-    @apply mb-6;
+    @apply mb-10;
+
+    &:last-child {
+      @apply mb-0;
+    }
+  }
+
+  .content__breadcrumbs {
+    @apply mb-10;
   }
 
   .content__grid {
-    @apply grid gap-12;
+    @apply grid gap-10;
 
     &--cols-2 {
       @apply xl:grid-cols-2;
@@ -22,7 +30,7 @@
   }
 
   .content__separator {
-    @apply my-12;
+    @apply my-10;
   }
 
   .content__header {
@@ -30,7 +38,7 @@
     flex-wrap: wrap;
     justify-content: space-between;
 
-    @apply mb-4
+    @apply mb-4 px-2;
   }
 
   .content__header-title {
@@ -41,8 +49,7 @@
     min-width: 0px;
     min-height: theme("height.10");
 
-    @apply px-2;
-    @apply text-xl leading-8;
+    @apply text-xl leading-10;
 
     & svg {
       position: relative;

@@ -1,0 +1,72 @@
+.content__layout*@html_attributes
+  - if breadcrumbs?
+    .content__breadcrumbs
+      = breadcrumbs
+
+  - if blocks.empty?
+    .content__section
+      = content
+
+  - blocks.each.with_index do |block, index|
+    - case block.component_class_name
+    - when "Header"
+      - if index.positive?
+        .content__separator
+
+      .content__header
+        .content__header-title
+          = block.icon
+          h2= block
+
+        - if block.actions?
+          .content__header-actions
+            - block.actions.each do |action|
+              .content__header-action
+                = action
+
+    - when "Section"
+      - if index.positive? && blocks[index - 1].component_class_name != "Header"
+        .content__separator
+
+      .content__section
+        = block
+
+    - when "Grid"
+      - if index.positive?
+        .content__separator
+
+      .content__grid*block.html_attributes
+        - block.columns.each do |column|
+          .content__grid-col
+            - if column.blocks.empty?
+              .content__section
+                = column.content
+
+            - column.blocks.each.with_index do |column_block, colum_block_index|
+              - case column_block.component_class_name
+              - when "Header"
+                - if colum_block_index.positive?
+                  .content__separator
+
+                .content__header
+                  .content__header-title
+                    = column_block.icon
+                    h2= column_block
+
+                  - if column_block.actions?
+                    .content__header-actions
+                      - column_block.actions.each do |action|
+                        .content__header-action
+                          = action
+
+              - when "Section"
+                - if colum_block_index.positive? && column.blocks[colum_block_index - 1].component_class_name != "Header"
+                  .content__separator
+
+                .content__section
+                  = column_block
+
+              - else
+                = column_block
+    - else
+      = block

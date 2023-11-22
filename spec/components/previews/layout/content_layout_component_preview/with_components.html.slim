@@ -1,0 +1,39 @@
+ruby:
+  sample_component = Class.new(ApplicationViewComponent) do
+    include ::Layout::ContentLayoutComponent::Current
+
+    def self.name
+      "SampleComponent"
+    end
+
+    def call
+      current_layout_component do |layout|
+        layout.with_header do
+          "Title from SampleComponent"
+        end
+
+        layout.with_section do
+          card_component do
+            "Section rendered from SampleComponent"
+          end
+        end
+      end
+    end
+  end
+
+= content_layout_component do |layout|
+  - layout.with_section do
+    = card_component do
+      | Not in a component
+
+  - layout.wrap do
+    = render sample_component.new
+
+  - layout.with_grid(class: "grid-cols-2") do |grid|
+    - grid.with_column do |column|
+      - column.wrap do
+        = render sample_component.new
+
+      - column.with_section do
+        = card_component do
+          | Not in a component
