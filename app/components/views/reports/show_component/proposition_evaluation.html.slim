@@ -1,23 +1,20 @@
-= content_flow_component do |flow|
-
-  - flow.with_header do |header|
+= current_layout_component do |layout|
+  - layout.with_header icon: "presentation-chart-bar" do |header|
     - if @report.anomalies.include?("affectation")
-      - header_title = "Proposition de mise à jour de l'affectation"
+      | Proposition de mise à jour de l'affectation
     - elsif @report.anomalies.include?("categorie")
-      - header_title = "Proposition de mise à jour de l'utilisation"
+      | Proposition de mise à jour de l'utilisation
     - elsif @report.anomalies.include?("consistance")
-      - header_title = "Proposition de mise à jour de la consistance"
+      | Proposition de mise à jour de la consistance
     - elsif @report.anomalies.include?("correctif")
-      - header_title = "Proposition de mise à jour du correctif"
+      | Proposition de mise à jour du correctif
     - else
-      - header_title = "Proposition de mise à jour de l'évaluation"
-
-    - header.with_title header_title, "presentation-chart-bar", "Icône d'illustration"
+      | Proposition de mise à jour de l'évaluation
 
     - if allowed_to?(:update?, @report) && @report.packing?
       - header.with_action "Compléter", edit_report_path(@report, "proposition_evaluation"), icon: "pencil-square", modal: true
 
-  - flow.with_section do
+  - layout.with_section do
     = description_list_component(@report) do |list|
       - if display_proposition_affectation?
         - list.with_attribute(:proposition_affectation) do |attribute|

@@ -1,8 +1,6 @@
-= content_flow_component do |flow|
-
-  - flow.with_header do |header|
-
-    - header.with_title "Informations relatives au signalement", "server-stack", "Icône d'illustration"
+= current_layout_component do |layout|
+  - layout.with_header icon: "server-stack" do |header|
+    | Informations relatives au signalement
 
     - header.with_action do
       = priority_badge(@report)
@@ -14,8 +12,7 @@
       - header.with_action do
         = badge_component("Bac à sable", :warning)
 
-  - flow.with_section do
-
+  - layout.with_section do
     = description_list_component(@report) do |list|
       - list.with_attribute("Référence du paquet") do |attribute|
         = authorized_link_to @report.package

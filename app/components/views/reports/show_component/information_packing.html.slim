@@ -1,8 +1,6 @@
-= content_flow_component do |flow|
-
-  - flow.with_header do |header|
-
-    - header.with_title "Informations relatives au paquet", "server-stack", "Icône d'illustration"
+= current_layout_component do |layout|
+  - layout.with_header icon: "server-stack" do |header|
+    | Informations relatives au paquet
 
     - header.with_action do
       div( id=dom_id(@report, :status) is="turbo-frame" )
@@ -12,8 +10,7 @@
       - header.with_action do
         = badge_component("Bac à sable", :warning)
 
-  - flow.with_section do
-
+  - layout.with_section do
     = description_list_component(@report) do |list|
       - list.with_attribute("Référence du paquet") do |attribute|
         = authorized_link_to @report.package
@@ -30,15 +27,13 @@
       - list.with_attribute("Type de signalement") do |attribute|
         = t(@report.form_type, scope: "enum.report_form_type")
 
-  - flow.with_header do |header|
-
-    - header.with_title "Objet du signalement", "flag", "Icône d'illustration"
+  - layout.with_header icon: "flag" do |header|
+    | Objet du signalement
 
     - if allowed_to?(:update?, @report) && @report.packing?
-      - header.with_action "Modifier", edit_report_path(@report, "information"), icon: "pencil-square", modal: true
+      - header.with_action "Compléter", edit_report_path(@report, "information"), icon: "pencil-square", modal: true
 
-  - flow.with_section do
-
+  - layout.with_section do
     = description_list_component(@report) do |list|
       - list.with_attribute(:anomalies) do |attribute|
         = render_valid_content(:anomalies) do

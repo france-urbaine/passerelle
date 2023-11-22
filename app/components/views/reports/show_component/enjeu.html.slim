@@ -1,13 +1,11 @@
-= content_flow_component do |flow|
-
-  - flow.with_header do |header|
-    - header.with_title "Enjeu", "banknotes", "Icône d'illustration"
+= current_layout_component do |layout|
+  - layout.with_header icon: "banknotes" do |header|
+    | Enjeu
 
     - if allowed_to?(:update?, @report) && @report.packing?
       - header.with_action "Compléter", edit_report_path(@report, "enjeu"), icon: "pencil-square", modal: true
 
-  - flow.with_section do
-
+  - layout.with_section do
     - if @report.enjeu.present?
       = card_component(content_class: "h-24 flex-auto flex items-center justify-center text-3xl") do |card|
         = number_to_currency(@report.enjeu)

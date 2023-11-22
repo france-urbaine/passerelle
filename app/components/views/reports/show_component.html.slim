@@ -1,59 +1,75 @@
-- if @report.packing?
-  = render InformationPacking.new(@report)
-- else
-  = render InformationTransmitted.new(@report)
+= current_layout_component do |layout|
 
-- if display_situation_majic?
-  .content__separator
-  = render SituationMajic.new(@report)
-- elsif display_situation_parcelle?
-  .content__separator
-  = render SituationParcelle.new(@report)
+  - if @report.packing?
+    - layout.wrap do
+      = render InformationPacking.new(@report)
+  - else
+    - layout.wrap do
+      = render InformationTransmitted.new(@report)
 
-- if display_situation_evaluation? && display_proposition_evaluation?
-  .content__separator
-  .content__grid.content__grid--cols-2
-    div= render SituationEvaluation.new(@report)
-    div= render PropositionEvaluation.new(@report)
+  - if display_situation_majic?
+    - layout.wrap do
+      = render SituationMajic.new(@report)
+  - elsif display_situation_parcelle?
+    - layout.wrap do
+      = render SituationParcelle.new(@report)
 
-- elsif display_situation_evaluation?
-  .content__separator
-  = render SituationEvaluation.new(@report)
+  - if display_situation_evaluation? && display_proposition_evaluation?
+    - layout.with_grid do |grid|
+      - grid.with_column do |column|
+        - column.wrap do
+          = render SituationEvaluation.new(@report)
 
-- elsif display_proposition_evaluation?
-  .content__separator
-  = render PropositionEvaluation.new(@report)
+      - grid.with_column do |column|
+        - column.wrap do
+          = render PropositionEvaluation.new(@report)
 
-- if display_situation_occupation? && display_proposition_occupation?
-  .content__separator
-  .content__grid.content__grid--cols-2
-    div= render SituationOccupation.new(@report)
-    div= render PropositionOccupation.new(@report)
+  - elsif display_situation_evaluation?
+    - layout.wrap do
+      = render SituationEvaluation.new(@report)
 
-- elsif display_situation_occupation?
-  .content__separator
-  = render SituationOccupation.new(@report)
+  - elsif display_proposition_evaluation?
+    - layout.wrap do
+      = render PropositionEvaluation.new(@report)
 
-- elsif display_proposition_occupation?
-  .content__separator
-  = render PropositionOccupation.new(@report)
+  - if display_situation_occupation? && display_proposition_occupation?
+    - layout.with_grid do |grid|
+      - grid.with_column do |column|
+        - column.wrap do
+          = render SituationOccupation.new(@report)
 
-- if display_proposition_creation_local?
-  .content__separator
-  = render PropositionCreationLocal.new(@report)
+      - grid.with_column do |column|
+        - column.wrap do
+          = render PropositionOccupation.new(@report)
 
-- if display_proposition_exoneration?
-  .content__separator
-  = render PropositionExoneration.new(@report)
+  - elsif display_situation_occupation?
+    - layout.wrap do
+      = render SituationOccupation.new(@report)
 
-- if display_proposition_adresse?
-  .content__separator
-  = render PropositionAdresse.new(@report)
+  - elsif display_proposition_occupation?
+    - layout.wrap do
+      = render PropositionOccupation.new(@report)
 
-.content__separator
-.content__grid.content__grid--cols-2
-  div= render Observations.new(@report)
-  div= render Enjeu.new(@report)
+  - if display_proposition_creation_local?
+    - layout.wrap do
+      = render PropositionCreationLocal.new(@report)
 
-.content__separator
-= render Documents.new(@report)
+  - if display_proposition_exoneration?
+    - layout.wrap do
+      = render PropositionExoneration.new(@report)
+
+  - if display_proposition_adresse?
+    - layout.wrap do
+      = render PropositionAdresse.new(@report)
+
+  - layout.with_grid do |grid|
+    - grid.with_column do |column|
+      - column.wrap do
+        = render Observations.new(@report)
+
+    - grid.with_column do |column|
+      - column.wrap do
+        = render Enjeu.new(@report)
+
+  - layout.wrap do
+    = render Documents.new(@report)

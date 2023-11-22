@@ -1,60 +1,67 @@
 = content_frame_component do
-  = breadcrumbs_component do |breadcrumbs|
-    - breadcrumbs.with_path "Echanges"
-    - breadcrumbs.with_path "Signalements"
+  = content_layout_component do |layout|
+    - layout.with_breadcrumbs do |breadcrumbs|
+      - breadcrumbs.with_path "Echanges"
+      - breadcrumbs.with_path "Signalements"
 
-    - if allowed_to?(:create?, Report, with: ReportPolicy)
-      - breadcrumbs.with_action "Ajouter un signalement", new_report_path, icon: "plus", modal: true, primary: true
+      - if allowed_to?(:create?, Report, with: ReportPolicy)
+        - breadcrumbs.with_action "Ajouter un signalement", new_report_path, icon: "plus", modal: true, primary: true
 
-    - if allowed_to?(:show?, Transmission)
-      - breadcrumbs.with_action do
-        = turbo_frame_tag dom_id(current_user, :active_transmission_button) do
-          = render "transmissions/transmission_button", transmission: @transmission
+      - if allowed_to?(:show?, Transmission)
+        - breadcrumbs.with_action do
+          = turbo_frame_tag dom_id(current_user, :active_transmission_button) do
+            = render "transmissions/transmission_button", transmission: @transmission
 
-  = render Views::Reports::ListComponent.new(@reports, @pagy) do |view|
-      - view.with_column(:reference)
-      - case current_user.organization_type
-      - when "Collectivity"
-        - view.with_column(:package)
-        - view.with_column(:form_type)
-        - view.with_column(:anomalies)
-        - view.with_column(:invariant)
-        - view.with_column(:adresse)
-        - view.with_column(:commune)
-      - when "Publisher"
-        - view.with_column(:package)
-        - view.with_column(:collectivity)
-        - view.with_column(:form_type)
-        - view.with_column(:anomalies)
-        - view.with_column(:invariant)
-        - view.with_column(:adresse)
-        - view.with_column(:commune)
-      - when "DDFIP"
-        - if current_user.organization_admin?
+    - layout.with_section do
+      = render Views::Reports::ListComponent.new(@reports, @pagy) do |view|
+        - view.with_column(:reference)
+
+        - case current_user.organization_type
+        - when "Collectivity"
+          - view.with_column(:package)
+          - view.with_column(:form_type)
+          - view.with_column(:anomalies)
+          - view.with_column(:invariant)
+          - view.with_column(:adresse)
+          - view.with_column(:commune)
+
+        - when "Publisher"
           - view.with_column(:package)
           - view.with_column(:collectivity)
-          - view.with_column(:office)
-          - view.with_column(:workshop)
           - view.with_column(:form_type)
           - view.with_column(:anomalies)
           - view.with_column(:invariant)
           - view.with_column(:adresse)
           - view.with_column(:commune)
-        - else
+
+        - when "DDFIP"
+          - if current_user.organization_admin?
+            - view.with_column(:package)
+            - view.with_column(:collectivity)
+            - view.with_column(:office)
+            - view.with_column(:workshop)
+            - view.with_column(:form_type)
+            - view.with_column(:anomalies)
+            - view.with_column(:invariant)
+            - view.with_column(:adresse)
+            - view.with_column(:commune)
+          - else
+            - view.with_column(:collectivity)
+            - view.with_column(:workshop)
+            - view.with_column(:form_type)
+            - view.with_column(:anomalies)
+            - view.with_column(:invariant)
+            - view.with_column(:adresse)
+            - view.with_column(:commune)
+
+        - when "DGFIP"
+          - view.with_column(:package)
           - view.with_column(:collectivity)
-          - view.with_column(:workshop)
           - view.with_column(:form_type)
           - view.with_column(:anomalies)
           - view.with_column(:invariant)
           - view.with_column(:adresse)
           - view.with_column(:commune)
-      - when "DGFIP"
-        - view.with_column(:package)
-        - view.with_column(:collectivity)
-        - view.with_column(:form_type)
-        - view.with_column(:anomalies)
-        - view.with_column(:invariant)
-        - view.with_column(:adresse)
-        - view.with_column(:commune)
-      - view.with_column(:priority)
-      - view.with_column(:status)
+
+        - view.with_column(:priority)
+        - view.with_column(:status)
