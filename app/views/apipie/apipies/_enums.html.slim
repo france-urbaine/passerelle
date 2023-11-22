@@ -1,7 +1,8 @@
 - enums = @resource.dig(:metadata, :enums)
 - if enums&.any?
   - content_flow.with_header do |header|
-    - header.with_title "Valeurs des énumérations", "document-text"
+    = icon_component "document-text"
+      | Valeurs des énumérations
 
   - content_flow.with_section do
     .card.documentation__card

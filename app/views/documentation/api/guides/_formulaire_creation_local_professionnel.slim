@@ -1,27 +1,26 @@
-= breadcrumbs_component do |breadcrumbs|
-  - breadcrumbs.with_path "Guides"
-  - breadcrumbs.with_path "Formulaires de signalement", api_documentation_path("guides/formulaires")
-  - breadcrumbs.with_path "Création d'un local professionnel"
+= content_layout_component(class: "documentation") do |layout|
+  - layout.with_breadcrumbs do |breadcrumbs|
+    - breadcrumbs.with_path "Guides"
+    - breadcrumbs.with_path "Formulaires de signalement", api_documentation_path("guides/formulaires")
+    - breadcrumbs.with_h1 "Création d'un local professionnel"
 
-.documentation
-  = card_component do
-    = render "documentation/api/guides/formulaire_creation_local_professionnel/objet"
-    = render "documentation/api/guides/formulaire_creation_local_professionnel/identification_majic"
+  - layout.with_section do
+    = card_component do
+      = render "documentation/api/guides/formulaire_creation_local_professionnel/objet"
+      = render "documentation/api/guides/formulaire_creation_local_professionnel/identification_majic"
 
-  .content__separator
-
-  h2.subheader#omission_batie
-    = icon_component("clipboard-document")
+  - layout.with_header icon: "clipboard-document" do
+    a#omission_batie
     | Omission bâtie
 
-  = card_component do
-    = render "documentation/api/guides/formulaire_creation_local_professionnel/omission_batie"
+  - layout.with_section do
+    = card_component do
+      = render "documentation/api/guides/formulaire_creation_local_professionnel/omission_batie"
 
-  .content__separator
-
-  h2.subheader#construction_neuve
-    = icon_component("clipboard-document")
+  - layout.with_header icon: "clipboard-document" do
+    a#construction_neuve
     | Construction neuve
 
-  = card_component do
-    = render "documentation/api/guides/formulaire_creation_local_professionnel/construction_neuve"
+  - layout.with_section do
+    = card_component do
+      = render "documentation/api/guides/formulaire_creation_local_professionnel/construction_neuve"

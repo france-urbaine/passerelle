@@ -55,18 +55,18 @@
   - if param[:params].present?
     = render partial: "params", locals: { params: param[:params], level: level + 1, is_params: }
 
-      / div
-      /   - if param[:validations].present? || param[:validator].present?
-      /     ul
-      /       - if param[:validator].present?
-      /         - if is_params
-      /           = Apipie.markup_to_html(param[:validator]).html_safe
-      /         - if param[:validations].present?
-      /           - param[:validations].each do |item|
-      /             li
-      /               = item.html_safe
-      /     = render partial: 'deprecation', locals: { deprecation: param[:deprecation] }
-      /     - unless param[:metadata].blank?
-      /       br
-      /       |  Metadata:
-      /       = render(:partial => "metadata", :locals => {:meta => param[:metadata]})
+    / div
+    /   - if param[:validations].present? || param[:validator].present?
+    /     ul
+    /       - if param[:validator].present?
+    /         - if is_params
+    /           = Apipie.markup_to_html(param[:validator]).html_safe
+    /         - if param[:validations].present?
+    /           - param[:validations].each do |item|
+    /             li
+    /               = item.html_safe
+    /     = render partial: 'deprecation', locals: { deprecation: param[:deprecation] }
+    /     - unless param[:metadata].blank?
+    /       br
+    /       |  Metadata:
+    /       = render(:partial => "metadata", :locals => {:meta => param[:metadata]})

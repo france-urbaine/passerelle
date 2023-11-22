@@ -6,17 +6,22 @@
         th Méthode
         th URL
         th
+
     tbody
-      - methods.each do |m|
-        - if !m[:show]
-          - next
-        - m[:apis].each do |a|
+      - methods.each do |method|
+        - next unless method[:show]
+
+        - method[:apis].each do |api|
           tr.datatable__row
             td
-              b= link_to m[:name], m[:doc_url]
+              b= link_to method[:name], method[:doc_url]
+
             td
-              code.code= a[:http_method]
-            td= a[:api_url]
+              code= api[:http_method]
+
             td
-              - if a[:deprecated]
-                code.text-red-300 DEPRECATED
+              = api[:api_url]
+
+            td
+              - if api[:deprecated]
+                = badge_component "DEPRECATED", :danger

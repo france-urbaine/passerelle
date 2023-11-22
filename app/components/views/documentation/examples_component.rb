@@ -3,6 +3,8 @@
 module Views
   module Documentation
     class ExamplesComponent < ApplicationViewComponent
+      include ::Layout::ContentLayoutComponent::Current
+
       def initialize(resource_name, method_name, version = nil)
         @resource_name = resource_name
         @method_name   = method_name
@@ -33,11 +35,7 @@ module Views
         end
 
         def code
-          @data["code"]
-        end
-
-        def http_code_class
-          "http-code--#{code.to_i.floor(-2)}"
+          @data["code"].to_i
         end
 
         def request
