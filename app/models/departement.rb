@@ -26,6 +26,8 @@
 #  fk_rails_...  (code_region => regions.code_region)
 #
 class Departement < ApplicationRecord
+  audited
+
   self.implicit_order_column = :code_departement
 
   # Associations

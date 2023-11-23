@@ -27,6 +27,8 @@
 #  fk_rails_...  (siren_epci => epcis.siren) ON UPDATE => cascade
 #
 class Commune < ApplicationRecord
+  audited
+
   self.implicit_order_column = :code_insee
 
   # Associations

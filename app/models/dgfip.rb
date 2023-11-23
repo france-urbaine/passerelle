@@ -33,6 +33,8 @@
 #  singleton_dgfip_constraint    ((1)) UNIQUE
 #
 class DGFIP < ApplicationRecord
+  audited
+
   # Associations
   # ----------------------------------------------------------------------------
   has_many :users, as: :organization, dependent: :delete_all

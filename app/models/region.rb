@@ -21,6 +21,8 @@
 #  index_regions_on_code_region  (code_region) UNIQUE
 #
 class Region < ApplicationRecord
+  audited
+
   self.implicit_order_column = :code_region
 
   # Associations

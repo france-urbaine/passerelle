@@ -70,6 +70,8 @@ gem "rack-rewrite"
 # Windows compatibility
 gem "tzinfo-data", platforms: %i[mingw mswin x64_mingw jruby]
 
+gem "audited"
+
 group :development, :test do
   gem "lookbook", ">= 2.0.0"
 

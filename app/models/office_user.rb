@@ -22,6 +22,8 @@
 #  fk_rails_...  (user_id => users.id) ON DELETE => cascade
 #
 class OfficeUser < ApplicationRecord
+  audited
+
   belongs_to :office
   belongs_to :user
 end

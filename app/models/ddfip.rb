@@ -42,6 +42,8 @@
 #  fk_rails_...  (code_departement => departements.code_departement)
 #
 class DDFIP < ApplicationRecord
+  audited
+
   # Associations
   # ----------------------------------------------------------------------------
   belongs_to :departement, primary_key: :code_departement, foreign_key: :code_departement, inverse_of: :ddfips

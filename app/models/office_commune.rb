@@ -21,6 +21,8 @@
 #  fk_rails_...  (office_id => offices.id) ON DELETE => cascade
 #
 class OfficeCommune < ApplicationRecord
+  audited
+
   belongs_to :office
   belongs_to :commune, primary_key: :code_insee, foreign_key: :code_insee, inverse_of: :office_communes, optional: true
 end

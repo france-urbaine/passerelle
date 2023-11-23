@@ -3308,6 +3308,34 @@ CREATE TABLE public.ar_internal_metadata (
 
 
 --
+-- Name: audits; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.audits (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    auditable_id uuid,
+    auditable_type character varying,
+    associated_id uuid,
+    associated_type character varying,
+    user_id uuid,
+    user_type character varying,
+    username character varying,
+    publisher_id uuid,
+    organization_id uuid,
+    organization_type character varying,
+    oauth_application_id uuid,
+    action character varying,
+    audited_changes jsonb,
+    version integer DEFAULT 0,
+    comment character varying,
+    remote_address character varying,
+    request_uuid character varying,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
 -- Name: oauth_access_grants; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -3599,6 +3627,14 @@ ALTER TABLE ONLY public.ar_internal_metadata
 
 
 --
+-- Name: audits audits_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.audits
+    ADD CONSTRAINT audits_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: collectivities collectivities_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3792,6 +3828,41 @@ CREATE UNIQUE INDEX index_active_storage_blobs_on_key ON public.active_storage_b
 --
 
 CREATE UNIQUE INDEX index_active_storage_variant_records_uniqueness ON public.active_storage_variant_records USING btree (blob_id, variation_digest);
+
+
+--
+-- Name: index_audits_on_associated_type_and_associated_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_audits_on_associated_type_and_associated_id ON public.audits USING btree (associated_type, associated_id);
+
+
+--
+-- Name: index_audits_on_auditable_type_and_auditable_id_and_version; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_audits_on_auditable_type_and_auditable_id_and_version ON public.audits USING btree (auditable_type, auditable_id, version);
+
+
+--
+-- Name: index_audits_on_created_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_audits_on_created_at ON public.audits USING btree (created_at);
+
+
+--
+-- Name: index_audits_on_request_uuid; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_audits_on_request_uuid ON public.audits USING btree (request_uuid);
+
+
+--
+-- Name: index_audits_on_user_id_and_user_type; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_audits_on_user_id_and_user_type ON public.audits USING btree (user_id, user_type);
 
 
 --
@@ -4638,6 +4709,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230928162717'),
 ('20230929034420'),
 ('20231004101953'),
-('20231016144839');
+('20231016144839'),
+('20231120150131'),
+('20231122090719');
 
 

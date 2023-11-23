@@ -27,6 +27,8 @@ class OauthApplication < ApplicationRecord
   include ::Doorkeeper::Orm::ActiveRecord::Mixins::Application
   include States::Sandbox
 
+  audited
+
   # Associations
   # ----------------------------------------------------------------------------
   belongs_to :owner, polymorphic: true, inverse_of: :oauth_applications

@@ -139,6 +139,8 @@ class Report < ApplicationRecord
   include States::Sandbox
   include States::MadeBy
 
+  audited
+
   # Associations
   # ----------------------------------------------------------------------------
   belongs_to :collectivity

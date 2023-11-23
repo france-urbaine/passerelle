@@ -32,6 +32,8 @@ class Transmission < ApplicationRecord
   include States::Sandbox
   include States::MadeBy
 
+  audited associated_with: :oauth_application
+
   # Associations
   # ----------------------------------------------------------------------------
   belongs_to :user, optional: true

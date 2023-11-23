@@ -30,6 +30,8 @@
 #  fk_rails_...  (ddfip_id => ddfips.id) ON DELETE => cascade
 #
 class Office < ApplicationRecord
+  audited
+
   # Associations
   # ----------------------------------------------------------------------------
   belongs_to :ddfip

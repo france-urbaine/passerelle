@@ -24,6 +24,8 @@
 #  fk_rails_...  (code_departement => departements.code_departement)
 #
 class EPCI < ApplicationRecord
+  audited
+
   self.implicit_order_column = :name
 
   # Associations

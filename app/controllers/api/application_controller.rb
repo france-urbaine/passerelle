@@ -15,6 +15,8 @@ module API
     before_action :verify_requested_format!
     after_action  :verify_authorized, if: -> { signed_in? && !devise_controller? }
 
+    before_action :store_publisher_and_application
+
     authorize :publisher, through: :current_publisher
 
     rescue_from "Doorkeeper::Errors::TokenForbidden", with: :forbidden
@@ -52,6 +54,11 @@ module API
 
     def current_publisher
       @current_publisher ||= current_application&.owner
+    end
+
+    def store_publisher_and_application
+      ::Audited.store[:current_publisher]   = current_publisher
+      ::Audited.store[:current_application] = current_application
     end
 
     %i[

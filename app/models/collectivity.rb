@@ -50,6 +50,8 @@
 #  fk_rails_...  (publisher_id => publishers.id) ON DELETE => nullify
 #
 class Collectivity < ApplicationRecord
+  audited
+
   # Associations
   # ----------------------------------------------------------------------------
   belongs_to :territory, polymorphic: true, inverse_of: :registered_collectivity

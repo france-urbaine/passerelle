@@ -43,6 +43,8 @@ class Package < ApplicationRecord
   include States::PackageStates
   include States::MadeBy
 
+  audited
+
   # Associations
   # ----------------------------------------------------------------------------
   belongs_to :collectivity

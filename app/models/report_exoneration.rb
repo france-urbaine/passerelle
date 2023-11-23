@@ -23,6 +23,8 @@
 #  fk_rails_...  (report_id => reports.id) ON DELETE => cascade
 #
 class ReportExoneration < ApplicationRecord
+  audited
+
   # Associations
   # ----------------------------------------------------------------------------
   belongs_to :report

@@ -65,6 +65,8 @@ class User < ApplicationRecord
     :zxcvbnable
   )
 
+  audited
+
   # Associations
   # ----------------------------------------------------------------------------
   belongs_to :organization, polymorphic: true, inverse_of: :users

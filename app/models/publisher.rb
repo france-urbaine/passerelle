@@ -34,6 +34,8 @@
 #  index_publishers_on_siren         (siren) UNIQUE WHERE (discarded_at IS NULL)
 #
 class Publisher < ApplicationRecord
+  audited
+
   # Associations
   # ----------------------------------------------------------------------------
   has_many :users, as: :organization, dependent: :delete_all
