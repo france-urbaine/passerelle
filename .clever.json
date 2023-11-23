@@ -14,5 +14,6 @@
       "name": "Passerelle (alpha)",
       "alias": "alpha"
     }
-  ]
+  ],
+  "default": "app_cdac2714-3b60-4406-b7db-817d4a50a719"
 }
