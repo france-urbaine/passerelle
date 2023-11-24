@@ -1,0 +1,14 @@
+- lookup_context.variants = :modal if modal
+
+= status_page_component(referrer:) do |page|
+  - page.with_breadcrumbs do |breadcrumbs|
+    - breadcrumbs.with_path "..."
+    - breadcrumbs.with_path "Path 1"
+
+  - page.with_header do
+    | L'accès à cette page n'est pas autorisé.
+
+  - page.with_body do
+    | Vous n'avez pas les droits suffisants pour accéder à la page demandée.
+
+  - page.with_action "Retour", icon: "arrow-uturn-left"

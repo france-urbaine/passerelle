@@ -8,9 +8,9 @@ RSpec.describe Layout::StatusPageComponent, type: :component do
       tag.p "Hello World"
     end
 
-    expect(page).to have_selector("main.content > turbo-frame > .card > .card__content > .card__body") do |node|
-      expect(node).to have_selector("p", text: "Hello World")
-    end
+    expect(page).to have_selector("main.content > turbo-frame > .content__layout > .content__section")
+    expect(page).to have_selector(".content__section > .card > .card__content > .card__body")
+    expect(page).to have_selector(".card__body > p", text: "Hello World")
   end
 
   it "renders a status template with header and body" do

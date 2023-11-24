@@ -1,22 +1,25 @@
 = content_frame_component do
-  - if signed_in?
-    = breadcrumbs
+  = content_layout_component do |layout|
+    - if signed_in? && breadcrumbs?
+      - layout.with_breadcrumbs do
+        = breadcrumbs
 
-  = card_component(**CARD_OPTIONS) do |card|
-    - if header?
-      - card.with_header do
-        = header
+    - layout.with_section do
+      = card_component(**CARD_OPTIONS) do |card|
+        - if header?
+          - card.with_header do
+            = header
 
-    - card.with_body do
-      = body || content
+        - card.with_body do
+          = body || content
 
-    - actions.each do |action|
-      - card.with_action do
-        = action
+        - actions.each do |action|
+          - card.with_action do
+            = action
 
-  - unless signed_in?
-    p
-      = link_to new_user_session_path do
-        = icon_component "chevron-left-small", "Retour", class: "inline"
-        | Retour au formulaire de connexion
-      | .
+      - unless signed_in?
+        p
+          = link_to new_user_session_path do
+            = icon_component "chevron-left-small", "Retour", class: "inline"
+            | Retour au formulaire de connexion
+          | .
