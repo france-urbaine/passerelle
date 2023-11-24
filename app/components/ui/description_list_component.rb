@@ -22,7 +22,7 @@ module UI
     end
 
     class Attribute < ApplicationViewComponent
-      renders_many :actions, "GenericAction"
+      renders_many :actions, "ActionSlot"
       renders_one  :reference
 
       def initialize(record, label, **options)

@@ -4,8 +4,8 @@ module UI
   class ModalComponent < ApplicationViewComponent
     define_component_helper :modal_component
 
-    renders_one :header, "LabelOrContent"
-    renders_one :body, "LabelOrContent"
+    renders_one :header, "ContentSlot"
+    renders_one :body, "ContentSlot"
 
     renders_one :form, lambda { |**options, &block|
       self.form_options = options
@@ -23,7 +23,7 @@ module UI
       CloseAction.new(*args, **options, href: referrer)
     }
 
-    renders_many :actions, "GenericAction"
+    renders_many :actions, "ActionSlot"
     renders_many :other_actions, "OtherAction"
     renders_one :raw_actions
 

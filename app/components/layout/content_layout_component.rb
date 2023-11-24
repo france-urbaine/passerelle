@@ -50,7 +50,7 @@ module Layout
     end
 
     class Header < Block
-      renders_many :actions, "GenericAction"
+      renders_many :actions, "ActionSlot"
 
       def initialize(icon: nil, icon_options: {})
         @icon = icon

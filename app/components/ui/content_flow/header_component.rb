@@ -4,7 +4,7 @@ module UI
   module ContentFlow
     class HeaderComponent < AbstractBlockComponent
       renders_one :title, "::UI::ContentFlow::TitleComponent"
-      renders_many :actions, "GenericAction"
+      renders_many :actions, "ActionSlot"
     end
   end
 end

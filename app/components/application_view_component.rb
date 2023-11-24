@@ -12,7 +12,7 @@ class ApplicationViewComponent < ViewComponent::Base
   # Setup policies context
   authorize :user, through: :current_user
 
-  class LabelOrContent < self
+  class ContentSlot < self
     def initialize(label = nil)
       @label = label
       super()
@@ -23,7 +23,7 @@ class ApplicationViewComponent < ViewComponent::Base
     end
   end
 
-  class GenericAction < self
+  class ActionSlot < self
     def initialize(*args, **options)
       @args = args
       @options = options

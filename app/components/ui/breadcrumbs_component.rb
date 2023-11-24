@@ -5,7 +5,7 @@ module UI
     define_component_helper :breadcrumbs_component
 
     renders_many :paths, "Path"
-    renders_many :actions, "GenericAction"
+    renders_many :actions, "ActionSlot"
 
     def initialize(heading: true)
       @heading = heading
