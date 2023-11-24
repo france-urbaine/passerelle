@@ -6,10 +6,12 @@
     - paths.each.with_index do |path, index|
       .breadcrumbs__separator= " / "
       .breadcrumbs__path-item
-        - if @heading && index == paths.size - 1
-          h1= path
-        - else
-          = path
+        = path
+
+    - if h1?
+      .breadcrumbs__separator= " / "
+      .breadcrumbs__path-item
+        h1= h1
 
   .flex-auto
 

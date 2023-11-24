@@ -39,6 +39,29 @@ class ApplicationViewComponent < ViewComponent::Base
     end
   end
 
+  class BreadcrumbsSlot < self
+    def initialize(**options)
+      @options = options
+      super()
+    end
+
+    delegate_missing_to :original_breadcrumbs
+
+    def original_breadcrumbs
+      @original_breadcrumbs ||= ::UI::BreadcrumbsComponent.new(**@options)
+    end
+
+    def call
+      content
+
+      if original_breadcrumbs.h1? || original_breadcrumbs.paths? || original_breadcrumbs.actions?
+        render original_breadcrumbs
+      else
+        content
+      end
+    end
+  end
+
   def turbo_frame_request_id
     request.headers["Turbo-Frame"]
   end

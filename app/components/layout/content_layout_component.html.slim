@@ -1,7 +1,7 @@
 .content__layout*@html_attributes
-  - if breadcrumbs?
+  - if breadcrumbs? || @wrapped_breadcrumbs
     .content__breadcrumbs
-      = breadcrumbs
+      = breadcrumbs || @wrapped_breadcrumbs
 
   - if blocks.empty?
     .content__section

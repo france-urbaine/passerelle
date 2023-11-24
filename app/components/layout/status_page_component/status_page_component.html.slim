@@ -1,6 +1,6 @@
 = content_frame_component do
   - if signed_in?
-    = breadcrumbs || raw_breadcrumbs
+    = breadcrumbs
 
   = card_component(**CARD_OPTIONS) do |card|
     - if header?

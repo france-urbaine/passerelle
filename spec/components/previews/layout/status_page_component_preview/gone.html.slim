@@ -5,7 +5,7 @@
       - breadcrumbs.with_path "..."
       - gone_records.last.try do |record|
         - breadcrumbs.with_path record.model_name.human
-        - breadcrumbs.with_path record.name
+        - breadcrumbs.with_h1 record.name
 
   - page.with_action "Annuler", icon: "arrow-path" if gone_records.any?
   - page.with_action "Retour", icon: "arrow-uturn-left"

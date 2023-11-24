@@ -7,7 +7,7 @@ RSpec.describe UI::BreadcrumbsComponent, type: :component do
     render_inline described_class.new do |breadcrumbs|
       breadcrumbs.with_path "Path 1"
       breadcrumbs.with_path "Path 2", "/foo"
-      breadcrumbs.with_path "Path 3"
+      breadcrumbs.with_h1 "Path 3"
     end
 
     expect(page).to have_selector(".breadcrumbs > .breadcrumbs__path") do |node|
@@ -28,7 +28,7 @@ RSpec.describe UI::BreadcrumbsComponent, type: :component do
     render_inline described_class.new do |breadcrumbs|
       breadcrumbs.with_path "Path 1"
       breadcrumbs.with_path "Path 2", href: "/foo"
-      breadcrumbs.with_path "Path 3"
+      breadcrumbs.with_h1 "Path 3"
     end
 
     expect(page).to have_selector(".breadcrumbs > .breadcrumbs__path") do |node|
@@ -45,16 +45,24 @@ RSpec.describe UI::BreadcrumbsComponent, type: :component do
     end
   end
 
-  it "renders last breacrumbs path using blocks" do
+  it "renders breacrumbs path using blocks" do
     render_inline described_class.new do |breadcrumbs|
       breadcrumbs.with_path do
-        tag.div("Main title", class: "some_class")
+        tag.span("Some path", class: "custom_class")
+      end
+
+      breadcrumbs.with_h1 do
+        tag.span("Main title", class: "another_custom_class")
       end
     end
 
-    expect(page).to have_selector(".breadcrumbs") do |node|
-      expect(node).to have_selector(".breadcrumbs__path-item:last-child > h1", text: "Main title") do |header|
-        expect(header).to have_selector(".some_class", text: "Main title")
+    expect(page).to have_selector(".breadcrumbs > .breadcrumbs__path") do |node|
+      expect(node).to have_selector(".breadcrumbs__path-item", text: "Some path") do |path|
+        expect(path).to have_selector(".custom_class", text: "Some path")
+      end
+
+      expect(node).to have_selector(".breadcrumbs__path-item", text: "Main title") do |path|
+        expect(path).to have_selector("h1 > .another_custom_class", text: "Main title")
       end
     end
   end

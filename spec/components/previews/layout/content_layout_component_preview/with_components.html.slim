@@ -22,6 +22,10 @@ ruby:
   end
 
 = content_layout_component do |layout|
+  - layout.with_breadcrumbs do
+    = breadcrumbs_component do |breadcrumbs|
+      - breadcrumbs.with_path "Path"
+
   - layout.with_section do
     = card_component do
       | Not in a component

@@ -5,11 +5,10 @@ module Layout
     class GoneComponent < ApplicationViewComponent
       define_component_helper :gone_status_page_component
 
+      renders_one :breadcrumbs, "BreadcrumbsSlot"
       renders_one :header, "ContentSlot"
       renders_one :body, "ContentSlot"
       renders_many :actions, "ActionSlot"
-
-      renders_one :breadcrumbs, ->(**options) { UI::BreadcrumbsComponent.new(heading: false, **options) }
 
       def initialize(*records, **options)
         @records = records.flatten
