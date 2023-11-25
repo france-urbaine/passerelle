@@ -43,7 +43,7 @@ module API
       collectivity = find_and_authorize_collectivity
       @transmission = collectivity.transmissions.build
       @transmission.publisher = current_publisher
-      @transmission.oauth_application_id = current_application.id
+      @transmission.oauth_application = current_application
       @transmission.sandbox = current_publisher.sandbox? || current_application.sandbox?
       @transmission.save
 

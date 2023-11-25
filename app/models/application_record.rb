@@ -1,10 +1,9 @@
 # frozen_string_literal: true
 
 class ApplicationRecord < ActiveRecord::Base
-  include Discard::Model
-  include AdvancedDiscardable
   include AdvancedOrder
   include AdvancedSearch
+  include Discardable
   include ScoredOrder
   include SkipUniquenessValidation
 
