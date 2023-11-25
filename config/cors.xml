@@ -1,0 +1,10 @@
+<!-- This file represents the current CORS config of the remote Cellar bucket -->
+
+<CORSConfiguration>
+  <CORSRule>
+    <AllowedOrigin>https://passerelle-fiscale.fr</AllowedOrigin>
+    <AllowedMethod>PUT</AllowedMethod>
+    <AllowedHeader>*</AllowedHeader>
+    <MaxAgeSeconds>3600</MaxAgeSeconds>
+  </CORSRule>
+</CORSConfiguration>
