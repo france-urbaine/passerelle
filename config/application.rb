@@ -46,36 +46,37 @@ module Passerelle
     # This is used to allowlist hosts and generate some hard links (see config.action_mailer.default_url_options)
     #
     # In production, DOMAIN_APP is mandatory.
-    # In development, we encourages you to use `fiscahub.localhost` to navigate between subdomains out of the box.
+    # In development, we encourages you to use `passerelle-fiscale.localhost` to navigate between subdomains
+    # out of the box.
     #
     config.x.domain =
       if Rails.env.production?
         ENV.fetch("DOMAIN_APP")
       else
-        ENV.fetch("DOMAIN_APP", "fiscahub.localhost")
+        ENV.fetch("DOMAIN_APP", "passerelle-fiscale.localhost")
       end
 
     config.hosts << ".#{config.x.domain}"
     config.hosts << ".example.com" if Rails.env.test?
 
-    # If your main domain is already a subdomain (such as alpha.fiscahub.fr),
+    # If your main domain is already a subdomain (such as alpha.passerelle-fiscale.fr),
     # you should also define TLD length:
     #
-    #   DOMAIN_APP = alpha.fiscahub.fr
+    #   DOMAIN_APP = alpha.passerelle-fiscale.fr
     #   DOMAIN_TLD_LENGTH = 2
     #
     config.action_dispatch.tld_length = Integer(ENV["DOMAIN_TLD_LENGTH"] || 1)
 
     # Session are linked to default domain (DOMAIN_APP)
-    # To share cookies between two main domains (fiscahub.fr & alpha.fiscahub.fr),
+    # To share cookies between two main domains (passerelle-fiscale.fr & alpha.passerelle-fiscale.fr),
     # you may define the same DOMAIN_COOKIE:
     #
     # - production:
-    #   DOMAIN_APP = fiscahub.fr
+    #   DOMAIN_APP = passerelle-fiscale.fr
     #
     # - staging:
-    #   DOMAIN_APP = alpha.fiscahub.fr
-    #   DOMAIN_COOKIE = fiscahub.fr
+    #   DOMAIN_APP = alpha.passerelle-fiscale.fr
+    #   DOMAIN_COOKIE = passerelle-fiscale.fr
     #
     config.session_store :cookie_store,
       key:        "_passerelle_session",
