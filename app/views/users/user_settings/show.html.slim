@@ -1,15 +1,15 @@
 = content_frame_component do
-  = breadcrumbs_component do |breadcrumbs|
-    - breadcrumbs.with_path "Mon compte"
-    - breadcrumbs.with_path "Paramètres"
-    - breadcrumbs.with_action "Déconnexion", destroy_user_session_path, method: :delete, destructive: true
+  = content_layout_component do |layout|
+    - layout.with_breadcrumbs do |breadcrumbs|
+      - breadcrumbs.with_path "Mon compte"
+      - breadcrumbs.with_h1 "Paramètres"
 
-  = content_flow_component do |flow|
+      - breadcrumbs.with_action "Déconnexion", destroy_user_session_path, method: :delete, destructive: true
 
-    - flow.with_header do |header|
-      - header.with_title "Informations personnelles", "identification", "Nouvelle section"
+    - layout.with_header icon: "identification" do
+      | Informations personnelles
 
-    - flow.with_section do
+    - layout.with_section do
       = card_component do |card|
         - card.with_form(model: @user, url: user_settings_path, method: :put) do |form|
           = form.block(:first_name) do
@@ -22,10 +22,10 @@
 
         - card.with_submit_action "Enregistrer"
 
-    - flow.with_header do |header|
-      - header.with_title "Adresse email", "at-symbol", "Nouvelle section"
+    - layout.with_header icon: "at-symbol" do
+      | Adresse email
 
-    - flow.with_section do
+    - layout.with_section do
       = card_component do |card|
         - if current_user.pending_reconfirmation?
           - card.with_body do
@@ -62,10 +62,10 @@
 
           - card.with_submit_action "Enregistrer"
 
-    - flow.with_header do |header|
-      - header.with_title "Mot de passe", "lock-closed", "Nouvelle section"
+    - layout.with_header icon: "lock-closed" do
+      | Mot de passe
 
-    - flow.with_section do
+    - layout.with_section do
       = card_component do |card|
         - card.with_form(model: @user, url: user_settings_path, method: :put) do |form|
           p Utilisez le formulaire ci-dessous pour changer votre mot de passe.
@@ -84,10 +84,10 @@
 
         - card.with_submit_action "Enregistrer"
 
-    - flow.with_header do |header|
-      - header.with_title "Authentification en 2 facteurs", "shield-check", "Nouvelle section"
+    - layout.with_header icon: "shield-check" do
+      | Authentification en 2 facteurs
 
-    - flow.with_section do
+    - layout.with_section do
       = card_component do |card|
         - if current_user.otp_required_for_login?
           - card.with_body do
