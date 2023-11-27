@@ -1,12 +1,14 @@
 = content_frame_component do
-  = breadcrumbs_component do |breadcrumbs|
-    - breadcrumbs.with_path "Mon organisation"
-    - breadcrumbs.with_path "Collectivités", organization_collectivities_path
-    - breadcrumbs.with_path @collectivity.name, organization_collectivity_path(@collectivity)
-    - breadcrumbs.with_path "Utilisateurs"
+  = content_layout_component do |layout|
+    - layout.with_breadcrumbs do |breadcrumbs|
+      - breadcrumbs.with_path "Mon organisation"
+      - breadcrumbs.with_path "Collectivités", organization_collectivities_path
+      - breadcrumbs.with_path @collectivity.name, organization_collectivity_path(@collectivity)
+      - breadcrumbs.with_h1 "Utilisateurs"
 
-  = render Views::Users::ListComponent.new(@users, @pagy, namespace: :organization, parent: @collectivity) do |view|
-    - view.with_column(:name)
-    - view.with_column(:email)
-    - view.with_column(:organization_admin)
-    - view.with_column(:super_admin)
+    - layout.with_section do
+      = render Views::Users::ListComponent.new(@users, @pagy, namespace: :organization, parent: @collectivity) do |view|
+        - view.with_column(:name)
+        - view.with_column(:email)
+        - view.with_column(:organization_admin)
+        - view.with_column(:super_admin)

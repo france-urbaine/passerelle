@@ -1,14 +1,16 @@
 = content_frame_component do
-  = breadcrumbs_component do |breadcrumbs|
-    - breadcrumbs.with_path "Mon organisation"
-    - breadcrumbs.with_path "Équipe"
+  = content_layout_component do |layout|
+    - layout.with_breadcrumbs do |breadcrumbs|
+      - breadcrumbs.with_path "Mon organisation"
+      - breadcrumbs.with_h1 "Équipe"
 
-    - if allowed_to?(:create?, User)
-      - breadcrumbs.with_action "Inviter un utilisateur", new_organization_user_path, icon: "plus", modal: true, primary: true
+      - if allowed_to?(:create?, User)
+        - breadcrumbs.with_action "Inviter un utilisateur", new_organization_user_path, icon: "plus", modal: true, primary: true
 
-  = render Views::Users::ListComponent.new(@users, @pagy, namespace: :organization) do |view|
-    - view.with_column(:name)
-    - view.with_column(:email)
-    - view.with_column(:organization_admin)
-    - view.with_column(:super_admin)
-    - view.with_column(:offices) if current_organization.is_a?(DDFIP)
+    - layout.with_section do
+      = render Views::Users::ListComponent.new(@users, @pagy, namespace: :organization) do |view|
+        - view.with_column(:name)
+        - view.with_column(:email)
+        - view.with_column(:organization_admin)
+        - view.with_column(:super_admin)
+        - view.with_column(:offices) if current_organization.is_a?(DDFIP)

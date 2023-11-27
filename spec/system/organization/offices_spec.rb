@@ -119,7 +119,7 @@ RSpec.describe "Offices managed by current organization" do
 
     # A button should be present to edit the office
     #
-    within ".header-bar", text: "PELP de Bayonne" do
+    within ".breadcrumbs", text: "PELP de Bayonne" do
       click_on "Modifier"
     end
 
@@ -209,7 +209,7 @@ RSpec.describe "Offices managed by current organization" do
 
     # A button should be present to remove the office
     #
-    within ".header-bar", text: "PELP de Bayonne" do
+    within ".breadcrumbs", text: "PELP de Bayonne" do
       click_on "Supprimer"
     end
 

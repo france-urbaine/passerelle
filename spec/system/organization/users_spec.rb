@@ -194,7 +194,7 @@ RSpec.describe "Manage users from organization" do
 
       # A button should be present to edit the user
       #
-      within ".header-bar", text: "Marc Debomy" do
+      within ".breadcrumbs", text: "Marc Debomy" do
         click_on "Modifier"
       end
 
@@ -299,7 +299,7 @@ RSpec.describe "Manage users from organization" do
 
       # A button should be present to edit the user
       #
-      within ".header-bar", text: "Elise Lacroix" do
+      within ".breadcrumbs", text: "Elise Lacroix" do
         click_on "Supprimer"
       end
 
@@ -718,7 +718,7 @@ RSpec.describe "Manage users from organization" do
 
       # A button should be present to edit the user
       #
-      within ".header-bar", text: "Maxime Gauthier" do
+      within ".breadcrumbs", text: "Maxime Gauthier" do
         click_on "Modifier"
       end
 

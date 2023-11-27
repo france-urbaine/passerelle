@@ -1,21 +1,20 @@
 = content_frame_component do
-  = breadcrumbs_component do |breadcrumbs|
-    - breadcrumbs.with_path "Mon organisation"
-    - breadcrumbs.with_path "Guichets", organization_offices_path
-    - breadcrumbs.with_path @office.name
+  = content_layout_component do |layout|
+    - layout.with_breadcrumbs do |breadcrumbs|
+      - breadcrumbs.with_path "Mon organisation"
+      - breadcrumbs.with_path "Guichets", organization_offices_path
+      - breadcrumbs.with_h1 @office.name
 
-    - if allowed_to?(:update?, @office)
-      - breadcrumbs.with_action "Modifier", edit_organization_office_path(@office), icon: "pencil-square", modal: true
+      - if allowed_to?(:update?, @office)
+        - breadcrumbs.with_action "Modifier", edit_organization_office_path(@office), icon: "pencil-square", modal: true
 
-    - if allowed_to?(:destroy?, @office)
-      - breadcrumbs.with_action "Supprimer", remove_organization_office_path(@office), icon: "trash", modal: true, destructive: "discrete"
+      - if allowed_to?(:destroy?, @office)
+        - breadcrumbs.with_action "Supprimer", remove_organization_office_path(@office), icon: "trash", modal: true, destructive: "discrete"
 
-  = content_flow_component do |flow|
+    - layout.with_header icon: "identification" do
+      | Description
 
-    - flow.with_header do |header|
-      - header.with_title "Description", "identification", "Nouvelle section"
-
-    - flow.with_section do
+    - layout.with_section do
       = description_list_component(@office) do |list|
         - list.with_attribute(:competences) do |attribute|
           = list(@office.competences) { |value| t(value, scope: "enum.competence") }
@@ -37,15 +36,16 @@
             = display_count(@office.reports_rejected_count, "rejeté")
 
     - if allowed_to?(:index?, User, namespace: Organization::Offices)
-      - flow.with_header do |header|
-        - header.with_title "Utilisateurs", "rectangle-stack", "Nouvelle section"
+      - layout.with_header icon: "users" do |header|
+        | Utilisateurs
+
         - if allowed_to?(:create?, User, namespace: Organization::Offices)
           - header.with_action "Inviter un utilisateur", new_organization_office_user_path(@office), icon: "plus", modal: true
 
         - if allowed_to?(:edit_all?, User, namespace: Organization::Offices)
           - header.with_action "Gérer les utilisateurs", edit_all_organization_office_users_path(@office), icon: "squares-plus", modal: true
 
-      - flow.with_section do
+      - layout.with_section do
         - if @office.users_count.zero?
           = card_component(content_class: "card__content--empty")
             | Aucun utilisateur assigné à ce guichet.
@@ -57,12 +57,13 @@
               - skeleton.with_pagination
 
     - if allowed_to?(:index?, Commune, namespace: Organization::Offices)
-      - flow.with_header do |header|
-        - header.with_title "Communes assignées", "rectangle-stack", "Nouvelle section"
+      - layout.with_header icon: "rectangle-stack" do |header|
+        | Communes assignées
+
         - if allowed_to?(:manage?, Commune, namespace: Organization::Offices)
           - header.with_action "Gérer les communes", edit_all_organization_office_communes_path(@office), icon: "squares-plus", modal: true
 
-      - flow.with_section do
+      - layout.with_section do
         - if @office.communes_count.zero?
           = card_component(content_class: "card__content--empty")
             | Aucune commune assignée à ce guichet.
@@ -74,10 +75,10 @@
               - skeleton.with_pagination
 
     - if allowed_to?(:index?, Collectivity)
-      - flow.with_header do |header|
-        - header.with_title "Collectivités correspondantes", "rectangle-stack", "Nouvelle section"
+      - layout.with_header icon: "rectangle-stack"
+        | Collectivités correspondantes
 
-      - flow.with_section do
+      - layout.with_section do
         = turbo_frame_tag "datatable-collectivities", src: organization_office_collectivities_path(@office) do
           = datatable_skeleton_component(nested: true, rows: 0) do |skeleton|
             - skeleton.with_search

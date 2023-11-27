@@ -1,14 +1,16 @@
 = content_frame_component do
-  = breadcrumbs_component do |breadcrumbs|
-    - breadcrumbs.with_path "Mon organisation"
-    - breadcrumbs.with_path "Guichets"
+  = content_layout_component do |layout|
+    - layout.with_breadcrumbs do |breadcrumbs|
+      - breadcrumbs.with_path "Mon organisation"
+      - breadcrumbs.with_h1 "Guichets"
 
-    - if allowed_to?(:create?, Office)
-      - breadcrumbs.with_action "Ajouter un guichet", new_organization_office_path, icon: "plus", modal: true, primary: true
+      - if allowed_to?(:create?, Office)
+        - breadcrumbs.with_action "Ajouter un guichet", new_organization_office_path, icon: "plus", modal: true, primary: true
 
-  = render Views::Offices::ListComponent.new(@offices, @pagy, namespace: :organization) do |view|
-    - view.with_column(:name)
-    - view.with_column(:competence)
-    - view.with_column(:users_count)
-    - view.with_column(:communes_count)
-    - view.with_column(:reports_counts)
+    - layout.with_section do
+      = render Views::Offices::ListComponent.new(@offices, @pagy, namespace: :organization) do |view|
+        - view.with_column(:name)
+        - view.with_column(:competence)
+        - view.with_column(:users_count)
+        - view.with_column(:communes_count)
+        - view.with_column(:reports_counts)

@@ -184,7 +184,7 @@ RSpec.describe "Manage users of collectivities managed by current organization" 
 
     # A button should be present to edit the user
     #
-    within ".header-bar", text: "Pierre Civil" do
+    within ".breadcrumbs", text: "Pierre Civil" do
       click_on "Modifier"
     end
 
@@ -288,7 +288,7 @@ RSpec.describe "Manage users of collectivities managed by current organization" 
 
     # A button should be present to edit the user
     #
-    within ".header-bar", text: "Pierre Civil" do
+    within ".breadcrumbs", text: "Pierre Civil" do
       click_on "Supprimer"
     end
 

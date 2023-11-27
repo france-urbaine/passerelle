@@ -1,21 +1,20 @@
 = content_frame_component do
-  = breadcrumbs_component do |breadcrumbs|
-    - breadcrumbs.with_path "Mon organisation"
-    - breadcrumbs.with_path "Collectivités", organization_collectivities_path
-    - breadcrumbs.with_path @collectivity.name
+  = content_layout_component do |layout|
+    - layout.with_breadcrumbs do |breadcrumbs|
+      - breadcrumbs.with_path "Mon organisation"
+      - breadcrumbs.with_path "Collectivités", organization_collectivities_path
+      - breadcrumbs.with_h1 @collectivity.name
 
-    - if allowed_to?(:update?, @collectivity)
-      - breadcrumbs.with_action "Modifier", edit_organization_collectivity_path(@collectivity), icon: "pencil-square", modal: true
+      - if allowed_to?(:update?, @collectivity)
+        - breadcrumbs.with_action "Modifier", edit_organization_collectivity_path(@collectivity), icon: "pencil-square", modal: true
 
-    - if allowed_to?(:destroy?, @collectivity)
-      - breadcrumbs.with_action "Supprimer", remove_organization_collectivity_path(@collectivity), icon: "trash", modal: true, destructive: "discrete"
+      - if allowed_to?(:destroy?, @collectivity)
+        - breadcrumbs.with_action "Supprimer", remove_organization_collectivity_path(@collectivity), icon: "trash", modal: true, destructive: "discrete"
 
-  = content_flow_component do |flow|
+    - layout.with_header icon: "identification" do
+      | Description
 
-    - flow.with_header do |header|
-      - header.with_title "Description", "identification", "Nouvelle section"
-
-    - flow.with_section do
+    - layout.with_section do
       = description_list_component(@collectivity) do |list|
         - list.with_attribute(:territory) do |attribute|
           = authorized_link_to @collectivity.territory, namespace: :organization do
@@ -66,12 +65,13 @@
           /       = display_count(@collectivity.reports_returned_count, "rejeté")
 
     - if allowed_to?(:index?, User, with: Organization::Collectivities::UserPolicy, context: { collectivity: @collectivity })
-      - flow.with_header do |header|
-        - header.with_title "Utilisateurs", "rectangle-stack", "Nouvelle section"
-        - if allowed_to?(:create?, User, with: Organization::Collectivities::UserPolicy, context: { collectivity: @collectivity })
-          = header.with_action "Inviter un utilisateur", new_organization_collectivity_user_path(@collectivity), icon: "plus", modal: true
+      - layout.with_header icon: "rectangle-stack" do |header|
+        | Utilisateurs
 
-      - flow.with_section do
+        - if allowed_to?(:create?, User, with: Organization::Collectivities::UserPolicy, context: { collectivity: @collectivity })
+          - header.with_action "Inviter un utilisateur", new_organization_collectivity_user_path(@collectivity), icon: "plus", modal: true
+
+      - layout.with_section do
         - if @collectivity.users_count.zero?
           = card_component(content_class: "card__content--empty")
             | Aucun utilisateur assigné.
@@ -83,6 +83,6 @@
               - skeleton.with_pagination
 
     - elsif current_organization.is_a?(Publisher)
-      - flow.with_section do
+      - layout.with_section do
         = card_component(content_class: "card__content--empty")
           | La collectivité ne vous a pas autorisé à gerer son compte et ses utilisateurs.
