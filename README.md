@@ -67,7 +67,7 @@ bin/rails credentials:help
 
 Some part of the application, use subdomains, such as `api.`.
 
-In development, uses the domain [fiscahub.localhost](http://fiscahub.localhost:3000) to navigate between subdomains out of the box.
+In development, uses the domain [passerelle-fiscale.localhost](http://passerelle-fiscale.localhost:3000) to navigate between subdomains out of the box.
 
 ### Previews
 

@@ -47,14 +47,14 @@ RSpec.describe UI::CodeRequestExampleComponent, type: :component do
 
   context "with another host & verb" do
     before do
-      render_inline described_class.new("PUT", "https://static.fiscahub.fr/some/path")
+      render_inline described_class.new("PUT", "https://storage.passerelle-fiscale.fr/some/path")
     end
 
     it "renders the correct cURL command" do
       expect(page).to have_selector(".tabs > #curl-panel > pre") do |pre|
         expect(pre).to have_html_attribute("data-highlight-language-value").with_value("shell")
         expect(pre).to have_text(<<~TEXT.strip, exact: true)
-          $ curl -X PUT https://static.fiscahub.fr/some/path
+          $ curl -X PUT https://storage.passerelle-fiscale.fr/some/path
         TEXT
       end
     end
@@ -63,7 +63,7 @@ RSpec.describe UI::CodeRequestExampleComponent, type: :component do
       expect(page).to have_selector(".tabs > #httpie-panel > pre", visible: :hidden) do |pre|
         expect(pre).to have_html_attribute("data-highlight-language-value").with_value("shell")
         expect(pre).to have_text(<<~TEXT.strip, exact: true)
-          $ http -v PUT https://static.fiscahub.fr/some/path
+          $ http -v PUT https://storage.passerelle-fiscale.fr/some/path
         TEXT
       end
     end

@@ -5,7 +5,7 @@
 #
 # :nocov:
 class ApplicationMailer < ActionMailer::Base
-  default from: "ne-pas-repondre@fiscahub.fr"
+  default from: "ne-pas-repondre@passerelle-fiscale.fr"
   layout "mailer"
 end
 # :nocov:
