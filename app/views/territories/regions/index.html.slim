@@ -1,48 +1,50 @@
 = content_frame_component do
-  = breadcrumbs_component do |breadcrumbs|
-    - breadcrumbs.with_path "Territoires"
-    - breadcrumbs.with_path "Régions"
+  = content_layout_component do |layout|
+    - layout.with_breadcrumbs do |breadcrumbs|
+      - breadcrumbs.with_path "Territoires"
+      - breadcrumbs.with_h1 "Régions"
 
-  = datatable_component(@regions) do |datatable|
-    - datatable.with_search
-    - datatable.with_pagination(@pagy)
+    - layout.with_section do
+      = datatable_component(@regions) do |datatable|
+        - datatable.with_search
+        - datatable.with_pagination(@pagy)
 
-    - datatable.with_column(:region, sort: true, span: 2) { "Région" }
-    - datatable.with_column(:communes_count,       numeric: true) { "Communes" }
-    - datatable.with_column(:epcis_count,          numeric: true) { "EPCI" }
-    - datatable.with_column(:departements_count,   numeric: true) { "Départements" }
-    - datatable.with_column(:collectivities_count, numeric: true) { "Collectivités" }
-    - datatable.with_column(:ddfips_count,         numeric: true) { "DDFIP" }
+        - datatable.with_column(:region, sort: true, span: 2) { "Région" }
+        - datatable.with_column(:communes_count,       numeric: true) { "Communes" }
+        - datatable.with_column(:epcis_count,          numeric: true) { "EPCI" }
+        - datatable.with_column(:departements_count,   numeric: true) { "Départements" }
+        - datatable.with_column(:collectivities_count, numeric: true) { "Collectivités" }
+        - datatable.with_column(:ddfips_count,         numeric: true) { "DDFIP" }
 
-    - datatable.with_empty_message do
-      - if params[:search]
-        | Aucune région ne correspont à votre recherche.
-      - else
-        | Aucune région disponible.
+        - datatable.with_empty_message do
+          - if params[:search]
+            | Aucune région ne correspont à votre recherche.
+          - else
+            | Aucune région disponible.
 
-    - datatable.each_row do |row, region|
-      - if allowed_to?(:update?, region)
-        - row.with_action "Modifier cette région", edit_territories_region_path(region), icon: "pencil-square", modal: true
+        - datatable.each_row do |row, region|
+          - if allowed_to?(:update?, region)
+            - row.with_action "Modifier cette région", edit_territories_region_path(region), icon: "pencil-square", modal: true
 
-      - row.with_column(:region) do |column|
-        - column.with_span do
-          = region.code_region
+          - row.with_column(:region) do |column|
+            - column.with_span do
+              = region.code_region
 
-        - column.with_span do
-          = authorized_link_to region, namespace: :territories
+            - column.with_span do
+              = authorized_link_to region, namespace: :territories
 
-      - row.with_column(:communes_count) do
-        = number_with_delimiter(region.communes_count) if region.communes_count.positive?
+          - row.with_column(:communes_count) do
+            = number_with_delimiter(region.communes_count) if region.communes_count.positive?
 
-      - row.with_column(:epcis_count) do
-        = number_with_delimiter(region.epcis_count) if region.epcis_count.positive?
+          - row.with_column(:epcis_count) do
+            = number_with_delimiter(region.epcis_count) if region.epcis_count.positive?
 
-      - row.with_column(:departements_count) do
-        = number_with_delimiter(region.departements_count) if region.departements_count.positive?
+          - row.with_column(:departements_count) do
+            = number_with_delimiter(region.departements_count) if region.departements_count.positive?
 
-      - row.with_column(:collectivities_count) do
-        = number_with_delimiter(region.collectivities_count) if region.collectivities_count.positive?
+          - row.with_column(:collectivities_count) do
+            = number_with_delimiter(region.collectivities_count) if region.collectivities_count.positive?
 
-      - row.with_column(:ddfips_count) do
-        = number_with_delimiter(region.ddfips_count) if region.ddfips_count.positive?
+          - row.with_column(:ddfips_count) do
+            = number_with_delimiter(region.ddfips_count) if region.ddfips_count.positive?
 

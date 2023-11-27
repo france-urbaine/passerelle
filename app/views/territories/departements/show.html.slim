@@ -1,18 +1,17 @@
 = content_frame_component do
-  = breadcrumbs_component do |breadcrumbs|
-    - breadcrumbs.with_path "Territoires"
-    - breadcrumbs.with_path "Départements", territories_departements_path
-    - breadcrumbs.with_path @departement.name
+  = content_layout_component do |layout|
+    - layout.with_breadcrumbs do |breadcrumbs|
+      - breadcrumbs.with_path "Territoires"
+      - breadcrumbs.with_path "Départements", territories_departements_path
+      - breadcrumbs.with_h1 @departement.name
 
-    - if allowed_to?(:manage?, @departement)
-      - breadcrumbs.with_action "Modifier", edit_territories_departement_path(@departement), icon: "pencil-square", modal: true
+      - if allowed_to?(:manage?, @departement)
+        - breadcrumbs.with_action "Modifier", edit_territories_departement_path(@departement), icon: "pencil-square", modal: true
 
-  = content_flow_component do |flow|
+    - layout.with_header icon: "identification" do
+      | Description
 
-    - flow.with_header do |header|
-      - header.with_title "Description", "identification", "Nouvelle section"
-
-    - flow.with_section do
+    - layout.with_section do
       = description_list_component(@departement) do |list|
         - list.with_attribute(:code_departement) do |attribute|
           = @departement.code_departement
@@ -37,10 +36,10 @@
             = display_count(@departement.collectivities_count, "collectivité")
 
     - if allowed_to?(:index?, EPCI)
-      - flow.with_header do |header|
-        - header.with_title "EPCI", "rectangle-stack", "Nouvelle section"
+      - layout.with_header icon: "rectangle-stack" do
+        | EPCI
 
-      - flow.with_section do
+      - layout.with_section do
         - if @departement.epcis_count.zero?
           = card_component(content_class: "card__content--empty")
             | Aucun epci dans ce département.
@@ -52,10 +51,10 @@
               - skeleton.with_pagination
 
     - if allowed_to?(:index?, Commune)
-      - flow.with_header do |header|
-        - header.with_title "Communes", "rectangle-stack", "Nouvelle section"
+      - layout.with_header icon: "rectangle-stack" do
+        | Communes
 
-      - flow.with_section do
+      - layout.with_section do
         - if @departement.communes_count.zero?
           = card_component(content_class: "card__content--empty")
             | Aucune commune dans ce département.
@@ -67,10 +66,10 @@
               - skeleton.with_pagination
 
     - if allowed_to?(:index?, Collectivity)
-      - flow.with_header do |header|
-        - header.with_title "Collectivités enregistrées", "rectangle-stack", "Nouvelle section"
+      - layout.with_header icon: "rectangle-stack" do
+        | Collectivités enregistrées
 
-      - flow.with_section do
+      - layout.with_section do
         - if @departement.collectivities_count.zero?
           = card_component(content_class: "card__content--empty")
             | Aucune collectivité enregistrée dans ce département.

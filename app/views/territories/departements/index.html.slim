@@ -1,53 +1,55 @@
 = content_frame_component do
-  = breadcrumbs_component do |breadcrumbs|
-    - breadcrumbs.with_path "Territoires"
-    - breadcrumbs.with_path "Départements"
+  = content_layout_component do |layout|
+    - layout.with_breadcrumbs do |breadcrumbs|
+      - breadcrumbs.with_path "Territoires"
+      - breadcrumbs.with_h1 "Départements"
 
-  = datatable_component(@departements) do |datatable|
-    - datatable.with_search
-    - datatable.with_pagination(@pagy)
+    - layout.with_section do
+      = datatable_component(@departements) do |datatable|
+        - datatable.with_search
+        - datatable.with_pagination(@pagy)
 
-    - datatable.with_column(:departement, sort: true, span: 2) { "Département" }
-    - datatable.with_column(:region,      sort: true, span: 2) { "Région" }
-    - datatable.with_column(:communes_count,       numeric: true) { "Communes" }
-    - datatable.with_column(:epcis_count,          numeric: true) { "EPCI" }
-    - datatable.with_column(:collectivities_count, numeric: true) { "Collectivités" }
-    - datatable.with_column(:ddfips_count,         numeric: true) { "DDFIP" }
+        - datatable.with_column(:departement, sort: true, span: 2) { "Département" }
+        - datatable.with_column(:region,      sort: true, span: 2) { "Région" }
+        - datatable.with_column(:communes_count,       numeric: true) { "Communes" }
+        - datatable.with_column(:epcis_count,          numeric: true) { "EPCI" }
+        - datatable.with_column(:collectivities_count, numeric: true) { "Collectivités" }
+        - datatable.with_column(:ddfips_count,         numeric: true) { "DDFIP" }
 
-    - datatable.with_empty_message do
-      - if params[:search]
-        | Aucun département ne correspont à votre recherche.
-      - else
-        | Aucun département disponible.
+        - datatable.with_empty_message do
+          - if params[:search]
+            | Aucun département ne correspont à votre recherche.
+          - else
+            | Aucun département disponible.
 
-    - datatable.each_row do |row, departement|
-      - if allowed_to?(:update?, departement)
-        - row.with_action "Modifier ce département", edit_territories_departement_path(departement), icon: "pencil-square", modal: true
+        - datatable.each_row do |row, departement|
+          - if allowed_to?(:update?, departement)
+            - row.with_action "Modifier ce département", edit_territories_departement_path(departement), icon: "pencil-square", modal: true
 
-      - row.with_column(:departement) do |column|
-        - column.with_span do
-          = departement.code_departement
+          - row.with_column(:departement) do |column|
+            - column.with_span do
+              = departement.code_departement
 
-        - column.with_span do
-          = authorized_link_to departement, namespace: :territories
+            - column.with_span do
+              = authorized_link_to departement, namespace: :territories
 
-      - row.with_column(:region) do |column|
-        - if departement.region
-          - column.with_span do
-            = departement.code_region
+          - row.with_column(:region) do |column|
+            - if departement.region
+              - column.with_span do
+                = departement.code_region
 
-          - column.with_span do
-            = authorized_link_to departement.region, namespace: :territories
+              - column.with_span do
+                = authorized_link_to departement.region, namespace: :territories
 
-      - row.with_column(:communes_count) do
-        = number_with_delimiter(departement.communes_count) if departement.communes_count.positive?
+          - row.with_column(:communes_count) do
+            = number_with_delimiter(departement.communes_count) if departement.communes_count.positive?
 
-      - row.with_column(:epcis_count) do
-        = number_with_delimiter(departement.epcis_count) if departement.epcis_count.positive?
+          - row.with_column(:epcis_count) do
+            = number_with_delimiter(departement.epcis_count) if departement.epcis_count.positive?
 
-      - row.with_column(:collectivities_count) do
-        = number_with_delimiter(departement.collectivities_count) if departement.collectivities_count.positive?
+          - row.with_column(:collectivities_count) do
+            = number_with_delimiter(departement.collectivities_count) if departement.collectivities_count.positive?
 
-      - row.with_column(:ddfips_count) do
-        = number_with_delimiter(departement.ddfips_count) if departement.ddfips_count.positive?
+          - row.with_column(:ddfips_count) do
+            = number_with_delimiter(departement.ddfips_count) if departement.ddfips_count.positive?
 

@@ -136,7 +136,7 @@ RSpec.describe "Managing communes" do
 
     # A button should be present to edit the commune
     #
-    within ".header-bar", text: "Bayonne" do
+    within ".breadcrumbs", text: "Bayonne" do
       click_on "Modifier"
     end
 

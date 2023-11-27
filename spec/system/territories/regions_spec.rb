@@ -75,7 +75,7 @@ RSpec.describe "Regions" do
 
     # A button should be present to edit the collectivity
     #
-    within ".header-bar", text: "Nouvelle-Aquitaine" do
+    within ".breadcrumbs", text: "Nouvelle-Aquitaine" do
       click_on "Modifier"
     end
 

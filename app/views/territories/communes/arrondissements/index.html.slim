@@ -1,8 +1,10 @@
 = content_frame_component do
-  = breadcrumbs_component do |breadcrumbs|
-    - breadcrumbs.with_path "Territoires"
-    - breadcrumbs.with_path "Communes", territories_communes_path
-    - breadcrumbs.with_path @commune.name, territories_commune_path(@commune)
-    - breadcrumbs.with_path "Arrondissements"
+  = content_layout_component do |layout|
+    - layout.with_breadcrumbs do |breadcrumbs|
+      - breadcrumbs.with_path "Territoires"
+      - breadcrumbs.with_path "Communes", territories_communes_path
+      - breadcrumbs.with_path @commune.name, territories_commune_path(@commune)
+      - breadcrumbs.with_h1 "Arrondissements"
 
-  = render Views::Communes::ListComponent.new(@arrondissements, @pagy, namespace: :territories, parent: @commune)
+    - layout.with_section do
+      = render Views::Communes::ListComponent.new(@arrondissements, @pagy, namespace: :territories, parent: @commune)
