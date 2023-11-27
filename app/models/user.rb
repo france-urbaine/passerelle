@@ -301,6 +301,10 @@ class User < ApplicationRecord
     invited_at? && !confirmed?
   end
 
+  def resetable?
+    confirmed?
+  end
+
   def accept_invitation(params = {})
     skip_password_change_notification!
     update(params)

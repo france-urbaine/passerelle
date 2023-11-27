@@ -194,6 +194,7 @@ Rails.application.routes.draw do
         resources :users, concerns: %i[removable removable_collection], path: "/utilisateurs" do
           scope module: "users" do
             resource :invitation, only: %i[new create]
+            resource :reset,      only: %i[new create]
           end
         end
 

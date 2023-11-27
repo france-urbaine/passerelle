@@ -1,0 +1,16 @@
+= modal_frame_component(referrer: @referrer) do |template|
+  - template.with_modal do |modal|
+    - modal.with_header do
+      | Réinitialisation de l'utilisateur
+
+    - modal.with_form(url: admin_user_reset_path(@user), method: :post) do
+      - modal.with_hidden_field :redirect, @redirect_path
+
+      p
+        ' La confirmation de l'utilisateur sera annulée et une nouvelle invitation sera envoyée à <b>#{@user.email}</b>.
+        br
+        ' Cette invitation annule toute invitation précédemment envoyée et est valable
+        ' pendant #{distance_of_time_in_words_to_now(User.confirm_within.from_now)}.
+
+    - modal.with_submit_action "Continuer", autofocus: true
+    - modal.with_close_action "Annuler"

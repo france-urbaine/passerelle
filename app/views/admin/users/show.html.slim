@@ -7,6 +7,9 @@
     - if allowed_to?(:update?, @user)
       - breadcrumbs.with_action "Modifier", edit_admin_user_path(@user), icon: "pencil-square", modal: true
 
+    - if allowed_to?(:reset?, @user)
+      - breadcrumbs.with_action "Réinitialiser", new_admin_user_reset_path(@user), icon: "arrow-path", modal: true
+
     - if allowed_to?(:destroy?, @user)
       - breadcrumbs.with_action "Supprimer", remove_admin_user_path(@user), icon: "trash", modal: true, destructive: "discrete"
 
