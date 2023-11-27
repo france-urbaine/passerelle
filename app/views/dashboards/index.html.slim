@@ -1,7 +1,4 @@
 = content_frame_component do
-  = breadcrumbs_component do |breadcrumbs|
-    - breadcrumbs.with_path "Tableau de bord"
-
   - case current_user.organization_type
   - when "Collectivity"
     = render "index_collectivity"
