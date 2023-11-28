@@ -7,7 +7,8 @@
       - modal.with_hidden_field :redirect, @redirect_path
 
       p
-        ' La confirmation de l'utilisateur sera annulée et une nouvelle invitation sera envoyée à <b>#{@user.email}</b>.
+        ' Une fois le compte de cet utilisateur ré-initialisé, celui-ci ne pourra plus s'y connecter.
+        ' Les instructions nécessaires seront envoyées à #{@user.email} pour re-finaliser le processus d'inscription.
         br
         ' Cette invitation annule toute invitation précédemment envoyée et est valable
         ' pendant #{distance_of_time_in_words_to_now(User.confirm_within.from_now)}.

@@ -16,9 +16,6 @@ module Admin
         )
         result = @user.resend_confirmation_instructions
 
-        # Devise may applies errors if user is already confirmed
-        @user.errors.clear
-
         respond_with @user,
           flash: result,
           location: -> { redirect_path || admin_user_path(@user) }

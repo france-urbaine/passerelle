@@ -12,9 +12,7 @@ RSpec.describe "Admin::Users::ResetsController#create" do
   let(:params)  { |e| e.metadata[:params] }
 
   let!(:user) do
-    Timecop.freeze(1.month.ago) do
-      create(:user, :invited)
-    end
+    create(:user)
   end
 
   describe "authorizations" do
@@ -30,59 +28,46 @@ RSpec.describe "Admin::Users::ResetsController#create" do
     it_behaves_like "it denies access to collectivity admin"
 
     it_behaves_like "it allows access to super admin"
+
+    context "when user self page" do
+      let(:as) { :html }
+
+      before do
+        user.update!(super_admin: true)
+        sign_in(user)
+      end
+
+      it do
+        expect { request }.to invoke(:as).on(self).at_least(:once)
+        expect(response).to   have_http_status(:forbidden)
+      end
+    end
   end
 
   describe "responses" do
     before { sign_in_as(:super_admin) }
 
-    context "when user is confirmed" do
-      let(:user) do
-        create(:user, :invited)
-      end
+    it { expect(response).to have_http_status(:see_other) }
+    it { expect(response).to redirect_to("/admin/utilisateurs/#{user.id}") }
 
-      it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/admin/utilisateurs/#{user.id}") }
-
-      it "updates confirmation token" do
-        expect { request and user.reload }
-          .to  change(user, :confirmation_token)
-          .and change(user, :confirmation_sent_at)
-      end
-
-      it "sets a flash notice" do
-        expect(flash).to have_flash_notice.to eq(
-          scheme: "success",
-          header: "L'invitation a été envoyée.",
-          delay:  3000
-        )
-      end
-
-      it "delivers confirmation instructions" do
-        expect { request }
-          .to have_sent_emails.by(1)
-          .and have_sent_email.with_subject("Votre inscription sur Passerelle")
-      end
+    it "updates confirmation token" do
+      expect { request and user.reload }
+        .to  change(user, :confirmation_token)
+        .and change(user, :confirmation_sent_at)
     end
 
-    context "when user is unconfirmed" do
-      let(:user) do
-        create(:user, :invited, :unconfirmed)
-      end
+    it "sets a flash notice" do
+      expect(flash).to have_flash_notice.to eq(
+        scheme: "success",
+        header: "L'invitation a été envoyée.",
+        delay:  3000
+      )
+    end
 
-      it { expect(response).to have_http_status(:forbidden) }
-
-      it "doesn't update the user" do
-        expect { request and user.reload }
-          .not_to change(user, :updated_at)
-      end
-
-      it "doesn't sets a flash notice" do
-        expect(flash).not_to have_flash_notice
-      end
-
-      it "doenst' enqueues any job to deliver notification" do
-        expect { request }.not_to have_enqueued_job
-      end
+    it "delivers confirmation instructions" do
+      expect { request }
+        .to have_sent_emails.by(1)
+        .and have_sent_email.with_subject("Votre inscription sur Passerelle")
     end
   end
 end

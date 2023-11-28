@@ -309,11 +309,7 @@ RSpec.describe "Users in admin" do
 
     expect(page).to have_selector("a.button", text: "Réinitialiser")
 
-    # A button should be present to edit the user
-    #
-    within ".header-bar", text: "Elise Lacroix" do
-      click_on "Réinitialiser"
-    end
+    click_on "Réinitialiser"
 
     # A dialog box should appear with a form
     # The form should be filled with user data
@@ -332,6 +328,8 @@ RSpec.describe "Users in admin" do
     #
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=log]", text: "L'invitation a été envoyée.")
+    expect(page).not_to have_selector("a.button", text: "Réinitialiser")
+    expect(page).to     have_selector("a.button", text: "Renouveler l'invitation")
   end
 
   it "does not display reset button on user self page" do

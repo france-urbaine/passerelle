@@ -10,9 +10,7 @@ module Admin
     end
 
     def reset?
-      manage? &&
-        user != record &&
-        record.resetable?
+      manage? && user != record
     end
 
     relation_scope do |relation|
