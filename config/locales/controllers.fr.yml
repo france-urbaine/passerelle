@@ -28,7 +28,7 @@ fr:
 
     registrations:
       token_expired:
-        scheme: "error"
+        scheme: "danger"
         header: "Cette invitation est déjà complétée, a expirée ou n'a pas été trouvée."
 
     registration_passwords:

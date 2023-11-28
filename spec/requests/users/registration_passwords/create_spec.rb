@@ -61,7 +61,7 @@ RSpec.describe "Users::RegistrationPasswordsController#new" do
 
     it "sets a flash notice" do
       expect(flash).to have_flash_notice.to eq(
-        scheme: "error",
+        scheme: "danger",
         header: "Cette invitation est déjà complétée, a expirée ou n'a pas été trouvée."
       )
     end
@@ -75,7 +75,7 @@ RSpec.describe "Users::RegistrationPasswordsController#new" do
 
     it "sets a flash notice" do
       expect(flash).to have_flash_notice.to eq(
-        scheme: "error",
+        scheme: "danger",
         header: "Cette invitation est déjà complétée, a expirée ou n'a pas été trouvée."
       )
     end
