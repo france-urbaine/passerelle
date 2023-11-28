@@ -158,7 +158,7 @@ class Commune < ApplicationRecord
     column = %("#{table_name}"."name")
 
     # Order properly arrondissements with numbers greater than 10
-    sql = "REGEXP_REPLACE(UNACCENT(#{column}), '(^|[^0-9])([0-9])([^0-9])', '\10\2\3') "
+    sql = "REGEXP_REPLACE(UNACCENT(#{column}), '(^|[^0-9])([0-9])([^0-9])', '\\10\\2\\3') "
     sql += direction == :asc ? "ASC" : "DESC"
 
     order(Arel.sql(sql))

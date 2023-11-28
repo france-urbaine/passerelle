@@ -441,7 +441,7 @@ RSpec.describe Commune do
         }.to perform_sql_query(<<~SQL)
           SELECT   "communes".*
           FROM     "communes"
-          ORDER BY REGEXP_REPLACE(UNACCENT("communes"."name"), '(^|[^0-9])([0-9])([^0-9])', '\10\2\3') ASC,
+          ORDER BY REGEXP_REPLACE(UNACCENT("communes"."name"), '(^|[^0-9])([0-9])([^0-9])', '\\10\\2\\3') ASC,
                    "communes"."code_insee" ASC
         SQL
       end
@@ -452,7 +452,7 @@ RSpec.describe Commune do
         }.to perform_sql_query(<<~SQL)
           SELECT   "communes".*
           FROM     "communes"
-          ORDER BY REGEXP_REPLACE(UNACCENT("communes"."name"), '(^|[^0-9])([0-9])([^0-9])', '\10\2\3') DESC,
+          ORDER BY REGEXP_REPLACE(UNACCENT("communes"."name"), '(^|[^0-9])([0-9])([^0-9])', '\\10\\2\\3') DESC,
                    "communes"."code_insee" DESC
         SQL
       end
@@ -465,7 +465,7 @@ RSpec.describe Commune do
         }.to perform_sql_query(<<~SQL)
           SELECT   "communes".*
           FROM     "communes"
-          ORDER BY REGEXP_REPLACE(UNACCENT("communes"."name"), '(^|[^0-9])([0-9])([^0-9])', '\10\2\3') ASC,
+          ORDER BY REGEXP_REPLACE(UNACCENT("communes"."name"), '(^|[^0-9])([0-9])([^0-9])', '\\10\\2\\3') ASC,
                    "communes"."code_insee" ASC
         SQL
       end
@@ -476,7 +476,7 @@ RSpec.describe Commune do
         }.to perform_sql_query(<<~SQL)
           SELECT   "communes".*
           FROM     "communes"
-          ORDER BY REGEXP_REPLACE(UNACCENT("communes"."name"), '(^|[^0-9])([0-9])([^0-9])', '\10\2\3') DESC,
+          ORDER BY REGEXP_REPLACE(UNACCENT("communes"."name"), '(^|[^0-9])([0-9])([^0-9])', '\\10\\2\\3') DESC,
                    "communes"."code_insee" DESC
         SQL
       end

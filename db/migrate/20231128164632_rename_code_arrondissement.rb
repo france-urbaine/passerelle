@@ -3,7 +3,7 @@
 class RenameCodeArrondissement < ActiveRecord::Migration[7.0]
   def change
     change_table :communes, bulk: true do |t|
-      t.rename  :code_arrondissement, :code_insee_parent
+      t.rename :code_arrondissement, :code_insee_parent
     end
 
     drop_trigger :trigger_communes_changes, on: :communes, revert_to_version: 1
