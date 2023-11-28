@@ -42,7 +42,7 @@ class Commune < ApplicationRecord
   has_one :region, through: :departement
 
   belongs_to :commune, class_name: "Commune", primary_key: :code_insee, foreign_key: :code_arrondissement, inverse_of: :arrondissements, optional: true
-  has_many :arrondissements, class_name: "Commune", primary_key: :code_insee, foreign_key: :code_arrondissement, inverse_of: :commune
+  has_many :arrondissements, class_name: "Commune", primary_key: :code_insee, foreign_key: :code_arrondissement, inverse_of: :commune, dependent: false
 
   has_one :registered_collectivity, class_name: "Collectivity", as: :territory, dependent: false
 
@@ -93,8 +93,11 @@ class Commune < ApplicationRecord
 
   # Scopes
   # ----------------------------------------------------------------------------
-  scope :arrondissements,        -> { where.not(code_arrondissement: nil) }
-  scope :having_arrondissements, -> { where(arrondissements_count: 1..) }
+  scope :arrondissements,      -> { where.not(code_arrondissement: nil) }
+  scope :arrondissements_from, ->(communes) { where(commune: communes) }
+
+  scope :having_arrondissements,     -> { where(arrondissements_count: 1..) }
+  scope :not_having_arrondissements, -> { where(arrondissements_count: 0) }
 
   scope :covered_by_ddfip, lambda { |ddfip|
     if ddfip.is_a?(ActiveRecord::Relation)

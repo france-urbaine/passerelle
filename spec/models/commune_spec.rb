@@ -107,6 +107,34 @@ RSpec.describe Commune do
       end
     end
 
+    describe ".arrondissements_from" do
+      it "scopes arrondissements belonging to a commune" do
+        commune = create(:commune)
+
+        expect {
+          described_class.arrondissements_from(commune).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "communes".*
+          FROM   "communes"
+          WHERE  "communes"."code_arrondissement" = '#{commune.code_insee}'
+        SQL
+      end
+
+      it "scopes arrondissements belonging to a communes relation" do
+        expect {
+          described_class.arrondissements_from(Commune.where(code_departement: "13")).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "communes".*
+          FROM   "communes"
+          WHERE  "communes"."code_arrondissement" IN (
+            SELECT "communes"."code_insee"
+            FROM   "communes"
+            WHERE  "communes"."code_departement" = '13'
+          )
+        SQL
+      end
+    end
+
     describe ".having_arrondissements" do
       it "scopes communes that have arrondissements" do
         expect {
@@ -115,6 +143,18 @@ RSpec.describe Commune do
           SELECT "communes".*
           FROM   "communes"
           WHERE  "communes"."arrondissements_count" >= 1
+        SQL
+      end
+    end
+
+    describe ".not_having_arrondissements" do
+      it "scopes communes that have arrondissements" do
+        expect {
+          described_class.not_having_arrondissements.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "communes".*
+          FROM   "communes"
+          WHERE  "communes"."arrondissements_count" = 0
         SQL
       end
     end
@@ -666,7 +706,7 @@ RSpec.describe Commune do
         end
       end
 
-      fdescribe "#arrondissements_count" do
+      describe "#arrondissements_count" do
         let(:arrondissement) { create(:commune) }
 
         it "changes when an arrondissement is created" do
@@ -697,7 +737,8 @@ RSpec.describe Commune do
         end
 
         it "changes when parent commune is created after arrondissements" do
-          arrondissement = create(:commune, code_arrondissement: "12345")
+          create(:commune, code_arrondissement: "12345")
+
           commune = create(:commune, code_insee: "12345")
           commune.reload
 

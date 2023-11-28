@@ -368,22 +368,34 @@ RSpec.describe Collectivity do
   # Other associations
   # ----------------------------------------------------------------------------
   describe "other associations" do
-    describe "#on_territory_communes" do
-      subject(:on_territory_communes) { collectivity.on_territory_communes }
+    describe "#reportable_communes" do
+      subject(:reportable_communes) { collectivity.reportable_communes }
 
       context "when collectivity is a commune" do
         let(:collectivity) { build_stubbed(:collectivity, :commune) }
 
-        it { expect(on_territory_communes).to be_an(ActiveRecord::Relation) }
-        it { expect(on_territory_communes.model).to eq(Commune) }
+        it { expect(reportable_communes).to be_an(ActiveRecord::Relation) }
+        it { expect(reportable_communes.model).to eq(Commune) }
 
         it "loads the commune matching the collectivity" do
           expect {
-            on_territory_communes.load
+            reportable_communes.load
           }.to perform_sql_query(<<~SQL)
             SELECT "communes".*
             FROM   "communes"
-            WHERE  "communes"."id" = '#{collectivity.territory_id}'
+            WHERE  (
+              "communes"."id" IN (
+                SELECT "communes"."id"
+                FROM   "communes"
+                WHERE  "communes"."id" = '#{collectivity.territory_id}'
+                AND    "communes"."arrondissements_count" = 0
+              )
+              OR "communes"."code_arrondissement" IN (
+                SELECT "communes"."code_insee"
+                FROM   "communes"
+                WHERE  "communes"."id" = '#{collectivity.territory_id}'
+              )
+            )
           SQL
         end
       end
@@ -391,17 +403,30 @@ RSpec.describe Collectivity do
       context "when collectivity is an EPCI" do
         let(:collectivity) { build_stubbed(:collectivity, :epci) }
 
-        it { expect(on_territory_communes).to be_an(ActiveRecord::Relation) }
-        it { expect(on_territory_communes.model).to eq(Commune) }
+        it { expect(reportable_communes).to be_an(ActiveRecord::Relation) }
+        it { expect(reportable_communes.model).to eq(Commune) }
 
         it "loads the communes inside the EPCI" do
           expect {
-            on_territory_communes.load
+            reportable_communes.load
           }.to perform_sql_query(<<~SQL)
-            SELECT DISTINCT "communes".*
-            FROM            "communes"
-            INNER JOIN      "epcis" ON "epcis"."siren" = "communes"."siren_epci"
-            WHERE           "epcis"."id" = '#{collectivity.territory_id}'
+            SELECT "communes".*
+            FROM   "communes"
+            WHERE  (
+              "communes"."id" IN (
+                SELECT     "communes"."id"
+                FROM       "communes"
+                INNER JOIN "epcis" ON "epcis"."siren" = "communes"."siren_epci"
+                WHERE      "epcis"."id" = '#{collectivity.territory_id}'
+                  AND      "communes"."arrondissements_count" = 0
+              )
+              OR "communes"."code_arrondissement" IN (
+                SELECT     "communes"."code_insee"
+                FROM       "communes"
+                INNER JOIN "epcis" ON "epcis"."siren" = "communes"."siren_epci"
+                WHERE      "epcis"."id" = '#{collectivity.territory_id}'
+              )
+            )
           SQL
         end
       end
@@ -409,17 +434,30 @@ RSpec.describe Collectivity do
       context "when collectivity is a Departement" do
         let(:collectivity) { build_stubbed(:collectivity, :departement) }
 
-        it { expect(on_territory_communes).to be_an(ActiveRecord::Relation) }
-        it { expect(on_territory_communes.model).to eq(Commune) }
+        it { expect(reportable_communes).to be_an(ActiveRecord::Relation) }
+        it { expect(reportable_communes.model).to eq(Commune) }
 
         it "loads the communes inside the departement" do
           expect {
-            on_territory_communes.load
+            reportable_communes.load
           }.to perform_sql_query(<<~SQL)
-            SELECT DISTINCT "communes".*
-            FROM            "communes"
-            INNER JOIN      "departements" ON "departements"."code_departement" = "communes"."code_departement"
-            WHERE           "departements"."id" = '#{collectivity.territory_id}'
+            SELECT "communes".*
+            FROM   "communes"
+            WHERE  (
+              "communes"."id" IN (
+                SELECT     "communes"."id"
+                FROM       "communes"
+                INNER JOIN "departements" ON "departements"."code_departement" = "communes"."code_departement"
+                WHERE      "departements"."id" = '#{collectivity.territory_id}'
+                  AND      "communes"."arrondissements_count" = 0
+              )
+              OR "communes"."code_arrondissement" IN (
+                SELECT     "communes"."code_insee"
+                FROM       "communes"
+                INNER JOIN "departements" ON "departements"."code_departement" = "communes"."code_departement"
+                WHERE      "departements"."id" = '#{collectivity.territory_id}'
+              )
+            )
           SQL
         end
       end
@@ -427,18 +465,32 @@ RSpec.describe Collectivity do
       context "when collectivity is a Region" do
         let(:collectivity) { build_stubbed(:collectivity, :region) }
 
-        it { expect(on_territory_communes).to be_an(ActiveRecord::Relation) }
-        it { expect(on_territory_communes.model).to eq(Commune) }
+        it { expect(reportable_communes).to be_an(ActiveRecord::Relation) }
+        it { expect(reportable_communes.model).to eq(Commune) }
 
         it "loads the communes inside the region" do
           expect {
-            on_territory_communes.load
+            reportable_communes.load
           }.to perform_sql_query(<<~SQL)
-            SELECT DISTINCT "communes".*
-            FROM            "communes"
-            INNER JOIN      "departements" ON "departements"."code_departement" = "communes"."code_departement"
-            INNER JOIN      "regions"      ON "regions"."code_region" = "departements"."code_region"
-            WHERE           "regions"."id" = '#{collectivity.territory_id}'
+            SELECT "communes".*
+            FROM   "communes"
+            WHERE  (
+              "communes"."id" IN (
+                SELECT     "communes"."id"
+                FROM       "communes"
+                INNER JOIN "departements" ON "departements"."code_departement" = "communes"."code_departement"
+                INNER JOIN "regions"      ON "regions"."code_region" = "departements"."code_region"
+                WHERE      "regions"."id" = '#{collectivity.territory_id}'
+                  AND      "communes"."arrondissements_count" = 0
+              )
+              OR "communes"."code_arrondissement" IN (
+                SELECT     "communes"."code_insee"
+                FROM       "communes"
+                INNER JOIN "departements" ON "departements"."code_departement" = "communes"."code_departement"
+                INNER JOIN "regions"      ON "regions"."code_region" = "departements"."code_region"
+                WHERE      "regions"."id" = '#{collectivity.territory_id}'
+              )
+            )
           SQL
         end
       end
@@ -462,7 +514,18 @@ RSpec.describe Collectivity do
             INNER JOIN      "office_communes" ON "office_communes"."office_id" = "offices"."id"
             INNER JOIN      "communes"        ON "communes"."code_insee" = "office_communes"."code_insee"
             WHERE           "offices"."discarded_at" IS NULL
-              AND           "communes"."id" = '#{collectivity.territory_id}'
+              AND           (
+                "communes"."id" IN (
+                  SELECT "communes"."id"
+                  FROM   "communes"
+                  WHERE  "communes"."id" = '#{collectivity.territory_id}'
+                    AND "communes"."arrondissements_count" = 0
+                ) OR  "communes"."code_arrondissement" IN (
+                  SELECT "communes"."code_insee"
+                  FROM   "communes"
+                  WHERE  "communes"."id" = '#{collectivity.territory_id}'
+                )
+              )
           SQL
         end
       end
@@ -481,9 +544,92 @@ RSpec.describe Collectivity do
             FROM            "offices"
             INNER JOIN      "office_communes" ON "office_communes"."office_id" = "offices"."id"
             INNER JOIN      "communes"        ON "communes"."code_insee" = "office_communes"."code_insee"
-            INNER JOIN      "epcis"           ON "epcis"."siren" = "communes"."siren_epci"
             WHERE           "offices"."discarded_at" IS NULL
-              AND           "epcis"."id" = '#{collectivity.territory_id}'
+              AND           (
+                "communes"."id" IN (
+                  SELECT     "communes"."id"
+                  FROM       "communes"
+                  INNER JOIN "epcis" ON "epcis"."siren" = "communes"."siren_epci"
+                  WHERE      "epcis"."id" = '#{collectivity.territory_id}'
+                    AND      "communes"."arrondissements_count" = 0
+                )
+                OR "communes"."code_arrondissement" IN (
+                  SELECT     "communes"."code_insee"
+                  FROM       "communes"
+                  INNER JOIN "epcis" ON "epcis"."siren" = "communes"."siren_epci"
+                  WHERE      "epcis"."id" = '#{collectivity.territory_id}'
+                )
+              )
+          SQL
+        end
+      end
+
+      context "when collectivity is a departement" do
+        let(:collectivity) { build_stubbed(:collectivity, :departement) }
+
+        it { expect(assigned_offices).to be_an(ActiveRecord::Relation) }
+        it { expect(assigned_offices.model).to eq(Office) }
+
+        it "loads the commune matching the collectivity" do
+          expect {
+            assigned_offices.load
+          }.to perform_sql_query(<<~SQL)
+            SELECT DISTINCT "offices".*
+            FROM            "offices"
+            INNER JOIN      "office_communes" ON "office_communes"."office_id" = "offices"."id"
+            INNER JOIN      "communes"        ON "communes"."code_insee" = "office_communes"."code_insee"
+            WHERE           "offices"."discarded_at" IS NULL
+              AND           (
+                "communes"."id" IN (
+                  SELECT     "communes"."id"
+                  FROM       "communes"
+                  INNER JOIN "departements" ON "departements"."code_departement" = "communes"."code_departement"
+                  WHERE      "departements"."id" = '#{collectivity.territory_id}'
+                    AND      "communes"."arrondissements_count" = 0
+                )
+                OR "communes"."code_arrondissement" IN (
+                  SELECT     "communes"."code_insee"
+                  FROM       "communes"
+                  INNER JOIN "departements" ON "departements"."code_departement" = "communes"."code_departement"
+                  WHERE      "departements"."id" = '#{collectivity.territory_id}'
+                )
+              )
+          SQL
+        end
+      end
+
+      context "when collectivity is a region" do
+        let(:collectivity) { build_stubbed(:collectivity, :region) }
+
+        it { expect(assigned_offices).to be_an(ActiveRecord::Relation) }
+        it { expect(assigned_offices.model).to eq(Office) }
+
+        it "loads the commune matching the collectivity" do
+          expect {
+            assigned_offices.load
+          }.to perform_sql_query(<<~SQL)
+            SELECT DISTINCT "offices".*
+            FROM            "offices"
+            INNER JOIN      "office_communes" ON "office_communes"."office_id" = "offices"."id"
+            INNER JOIN      "communes"        ON "communes"."code_insee" = "office_communes"."code_insee"
+            WHERE           "offices"."discarded_at" IS NULL
+              AND           (
+                "communes"."id" IN (
+                  SELECT     "communes"."id"
+                  FROM       "communes"
+                  INNER JOIN "departements" ON "departements"."code_departement" = "communes"."code_departement"
+                  INNER JOIN "regions"      ON "regions"."code_region" = "departements"."code_region"
+                  WHERE      "regions"."id" = '#{collectivity.territory_id}'
+                    AND      "communes"."arrondissements_count" = 0
+                )
+                OR "communes"."code_arrondissement" IN (
+                  SELECT     "communes"."code_insee"
+                  FROM       "communes"
+                  INNER JOIN "departements" ON "departements"."code_departement" = "communes"."code_departement"
+                  INNER JOIN "regions"      ON "regions"."code_region" = "departements"."code_region"
+                  WHERE      "regions"."id" = '#{collectivity.territory_id}'
+                )
+              )
           SQL
         end
       end
