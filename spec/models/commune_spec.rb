@@ -378,14 +378,14 @@ RSpec.describe Commune do
       end
     end
 
-    describe ".order_by_param" do
+    describe ".order_by_name" do
       it "orders communes by name" do
         expect {
           described_class.order_by_param("commune").load
         }.to perform_sql_query(<<~SQL)
           SELECT   "communes".*
           FROM     "communes"
-          ORDER BY UNACCENT("communes"."name") ASC,
+          ORDER BY REGEXP_REPLACE(UNACCENT("communes"."name"), '(^|[^0-9])([0-9])([^0-9])', '\10\2\3') ASC,
                    "communes"."code_insee" ASC
         SQL
       end
@@ -396,7 +396,32 @@ RSpec.describe Commune do
         }.to perform_sql_query(<<~SQL)
           SELECT   "communes".*
           FROM     "communes"
-          ORDER BY UNACCENT("communes"."name") DESC,
+          ORDER BY REGEXP_REPLACE(UNACCENT("communes"."name"), '(^|[^0-9])([0-9])([^0-9])', '\10\2\3') DESC,
+                   "communes"."code_insee" DESC
+        SQL
+      end
+
+    end
+
+    describe ".order_by_param" do
+      it "orders communes by name" do
+        expect {
+          described_class.order_by_param("commune").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "communes".*
+          FROM     "communes"
+          ORDER BY REGEXP_REPLACE(UNACCENT("communes"."name"), '(^|[^0-9])([0-9])([^0-9])', '\10\2\3') ASC,
+                   "communes"."code_insee" ASC
+        SQL
+      end
+
+      it "orders communes by name in descendant order" do
+        expect {
+          described_class.order_by_param("-commune").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "communes".*
+          FROM     "communes"
+          ORDER BY REGEXP_REPLACE(UNACCENT("communes"."name"), '(^|[^0-9])([0-9])([^0-9])', '\10\2\3') DESC,
                    "communes"."code_insee" DESC
         SQL
       end

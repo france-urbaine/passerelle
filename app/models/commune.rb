@@ -144,10 +144,20 @@ class Commune < ApplicationRecord
     )
   }
 
+  scope :order_by_name, lambda { |direction = :asc|
+    column = %("#{table_name}"."name")
+
+    # Order properly arrondissements with numbers greater than 10
+    sql = "REGEXP_REPLACE(UNACCENT(#{column}), '(^|[^0-9])([0-9])([^0-9])', '\10\2\3') "
+    sql += direction == :asc ? "ASC" : "DESC"
+
+    order(Arel.sql(sql))
+  }
+
   scope :order_by_param, lambda { |input|
     advanced_order(
       input,
-      commune:      ->(direction) { unaccent_order(:name, direction) },
+      commune:      ->(direction) { order_by_name(direction) },
       departement:  ->(direction) { order(code_departement: direction) },
       epci:         ->(direction) { left_joins(:epci).merge(EPCI.unaccent_order(:name, direction)) }
     )
