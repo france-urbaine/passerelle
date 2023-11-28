@@ -40,7 +40,8 @@ def update_check
   system! "yarn"
 
   log "Verifying submodule"
-  system! "bin/setup submodules"
+  system! "git submodule init"
+  system! "git submodule update"
 
   log "Verifying database migration"
   system! "bin/rails db:migrate"
@@ -115,11 +116,9 @@ def help
   log "    bin/update icons   # Update icons sets (heroicons)"
   log "    bin/update help    # Show this help"
   log ""
-  log "To automate update checks after switching to a branch or after pulling code from remote,"
-  log "open or create the file `.git/hooks/post-merge` and add the following lines:"
+  log "To add bin/update to your git hooks, run:"
   log ""
-  log "    #!/bin/sh"
-  log "    bin/update"
+  log "    bin/setup githooks"
   log ""
 end
 
