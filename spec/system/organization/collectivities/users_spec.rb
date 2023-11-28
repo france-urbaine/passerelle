@@ -5,9 +5,9 @@ require "system_helper"
 RSpec.describe "Manage users of collectivities managed by current organization" do
   fixtures :all
 
-  let(:pays_basque) { collectivities(:pays_basque) }
-  let(:christelle)  { users(:christelle) }
-  let(:pierre)      { users(:pierre) }
+  let(:pays_basque)          { collectivities(:pays_basque) }
+  let(:christelle)           { users(:christelle) }
+  let(:pierre)               { users(:pierre) }
 
   before { sign_in(users(:marc)) }
 
@@ -43,6 +43,34 @@ RSpec.describe "Manage users of collectivities managed by current organization" 
     #
     expect(page).to have_selector("h1", text: "Christelle Droitier")
     expect(page).to have_link("christelle.droitier@paysbasque.fr")
+  end
+
+  it "resets a user from the collectivity user page" do
+    visit organization_collectivity_user_path(pays_basque, christelle)
+
+    expect(page).to have_selector("a.button", text: "Réinitialiser")
+
+    click_on "Réinitialiser"
+
+    within "[role=dialog]", text: "Réinitialisation de l'utilisateur" do
+      click_on "Continuer"
+    end
+
+    expect(page).to have_current_path(organization_collectivity_user_path(pays_basque, christelle))
+
+    # The dialog should be closed
+    # A notification should be displayed
+    #
+    expect(page).not_to have_selector("[role=dialog]")
+    expect(page).to     have_selector("[role=log]", text: "L'invitation a été envoyée.")
+    expect(page).not_to have_selector("a.button", text: "Réinitialiser")
+    expect(page).to     have_selector("a.button", text: "Renouveler l'invitation")
+  end
+
+  it "does not display reset button on user self page" do
+    visit organization_collectivity_user_path(pays_basque, users(:marc))
+
+    expect(page).not_to have_selector("a.button", text: "Réinitialiser")
   end
 
   it "invites an user from the collectity page" do

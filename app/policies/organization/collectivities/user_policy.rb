@@ -21,6 +21,12 @@ module Organization
         end
       end
 
+      def reset?
+        can_reset = manage?
+        can_reset &= user != record if record.is_a?(User)
+        can_reset
+      end
+
       relation_scope do |relation|
         if publisher? && collectivity && allowed_to?(:manage?, collectivity, with: Organization::CollectivityPolicy)
           relation.kept.owned_by(collectivity)

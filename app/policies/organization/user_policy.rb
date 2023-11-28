@@ -22,6 +22,12 @@ module Organization
       end
     end
 
+    def reset?
+      can_reset = manage?
+      can_reset &= user != record if record.is_a?(User)
+      can_reset
+    end
+
     relation_scope do |relation|
       if organization_admin?
         relation.kept.owned_by(organization)

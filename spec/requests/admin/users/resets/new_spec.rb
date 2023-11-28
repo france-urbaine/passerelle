@@ -27,18 +27,10 @@ RSpec.describe "Admin::Users::ResetsController#new" do
 
     it_behaves_like "it allows access to super admin"
 
-    context "when user self page" do
-      let(:as) { :html }
+    context "when the user is the current user" do
+      let(:user) { current_user }
 
-      before do
-        user.update!(super_admin: true)
-        sign_in(user)
-      end
-
-      it do
-        expect { request }.to invoke(:as).on(self).at_least(:once)
-        expect(response).to   have_http_status(:forbidden)
-      end
+      it_behaves_like "it denies access to super admin"
     end
   end
 
