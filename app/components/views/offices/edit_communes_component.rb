@@ -19,7 +19,7 @@ module Views
       end
 
       def suggested_communes
-        @office.departement_communes.order(:code_insee)
+        @office.assignable_communes.order_by_name.order(:code_insee)
       end
     end
   end

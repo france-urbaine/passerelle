@@ -159,6 +159,62 @@ RSpec.describe Commune do
       end
     end
 
+    describe ".with_arrondissements_instead_of_communes" do
+      it "scopes all communes excluding those having arrondissements" do
+        expect {
+          Commune.with_arrondissements_instead_of_communes.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "communes".*
+          FROM   "communes"
+          WHERE  "communes"."arrondissements_count" = 0
+        SQL
+      end
+
+      it "scopes on given communes excluding those having arrondissements" do
+        expect {
+          Commune.with_arrondissements_instead_of_communes(Commune.where(code_departement: "13")).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "communes".*
+          FROM   "communes"
+          WHERE  (
+            "communes"."id" IN (
+              SELECT "communes"."id"
+              FROM   "communes"
+              WHERE  "communes"."code_departement" = '13'
+                AND  "communes"."arrondissements_count" = 0
+            )
+            OR "communes"."code_arrondissement" IN (
+              SELECT "communes"."code_insee"
+              FROM   "communes"
+              WHERE  "communes"."code_departement" = '13'
+            )
+          )
+        SQL
+      end
+
+      it "is compatibles with scopes having joins" do
+        expect {
+          Commune.with_arrondissements_instead_of_communes(Commune.joins(:epci)).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "communes".*
+          FROM   "communes"
+          WHERE  (
+            "communes"."id" IN (
+              SELECT     "communes"."id"
+              FROM       "communes"
+              INNER JOIN "epcis" ON "epcis"."siren" = "communes"."siren_epci"
+              WHERE      "communes"."arrondissements_count" = 0
+            )
+            OR "communes"."code_arrondissement" IN (
+              SELECT     "communes"."code_insee"
+              FROM       "communes"
+              INNER JOIN "epcis" ON "epcis"."siren" = "communes"."siren_epci"
+            )
+          )
+        SQL
+      end
+    end
+
     describe ".covered_by_ddfip" do
       it "scopes communes covered by one single DDFIP" do
         departement = create(:departement, code_departement: "64")
@@ -400,7 +456,6 @@ RSpec.describe Commune do
                    "communes"."code_insee" DESC
         SQL
       end
-
     end
 
     describe ".order_by_param" do

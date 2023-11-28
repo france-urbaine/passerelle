@@ -261,6 +261,41 @@ RSpec.describe Office do
         SQL
       end
     end
+
+    describe "#assignable_communes" do
+      subject(:assignable_communes) { office.assignable_communes }
+
+      let(:office) { build_stubbed(:office) }
+
+      it { expect(assignable_communes).to be_an(ActiveRecord::Relation) }
+      it { expect(assignable_communes.model).to eq(Commune) }
+
+      it "loads the assignable communes from the departement" do
+        expect {
+          assignable_communes.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "communes".*
+          FROM   "communes"
+          WHERE  (
+            "communes"."id" IN (
+              SELECT     "communes"."id"
+              FROM       "communes"
+              INNER JOIN "departements" ON "communes"."code_departement" = "departements"."code_departement"
+              INNER JOIN "ddfips"       ON "departements"."code_departement" = "ddfips"."code_departement"
+              WHERE      "ddfips"."id" = '#{office.ddfip_id}'
+                AND      "communes"."arrondissements_count" = 0
+            )
+            OR "communes"."code_arrondissement" IN (
+              SELECT     "communes"."code_insee"
+              FROM       "communes"
+              INNER JOIN "departements" ON "communes"."code_departement" = "departements"."code_departement"
+              INNER JOIN "ddfips"       ON "departements"."code_departement" = "ddfips"."code_departement"
+              WHERE      "ddfips"."id" = '#{office.ddfip_id}'
+            )
+          )
+        SQL
+      end
+    end
   end
 
   # Updates methods

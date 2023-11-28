@@ -99,6 +99,16 @@ class Commune < ApplicationRecord
   scope :having_arrondissements,     -> { where(arrondissements_count: 1..) }
   scope :not_having_arrondissements, -> { where(arrondissements_count: 0) }
 
+  scope :with_arrondissements_instead_of_communes, lambda { |communes = nil|
+    if communes.nil?
+      not_having_arrondissements
+    else
+      unscoped
+        .where(id: communes.not_having_arrondissements)
+        .or(unscoped.arrondissements_from(communes))
+    end
+  }
+
   scope :covered_by_ddfip, lambda { |ddfip|
     if ddfip.is_a?(ActiveRecord::Relation)
       where(code_departement: ddfip.select(:code_departement))

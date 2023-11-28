@@ -162,7 +162,7 @@ class Collectivity < ApplicationRecord
   # Other associations
   # ----------------------------------------------------------------------------
   def reportable_communes
-    communes_scope =
+    known_communes =
       case territory_type
       when "Commune"     then Commune.where(id: territory_id)
       when "EPCI"        then Commune.joins(:epci).merge(EPCI.where(id: territory_id))
@@ -170,8 +170,7 @@ class Collectivity < ApplicationRecord
       when "Region"      then Commune.joins(:region).merge(Region.where(id: territory_id))
       end
 
-    Commune.unscoped.where(id: communes_scope.not_having_arrondissements)
-      .or(Commune.unscoped.arrondissements_from(communes_scope))
+    Commune.with_arrondissements_instead_of_communes(known_communes)
   end
 
   def assigned_offices
