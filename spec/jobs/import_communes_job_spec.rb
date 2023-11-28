@@ -47,8 +47,8 @@ RSpec.describe ImportCommunesJob do
     aggregate_failures do
       expect { described_class.perform_now(url) }.to change(Commune.arrondissements, :count).by(16)
 
-      expect(Commune.where(code_insee: "13201", code_arrondissement: "13055", code_departement: "13", siren_epci: "200054807", name: "Marseille 1er Arrondissement")).to be_exist
-      expect(Commune.where(code_insee: "13216", code_arrondissement: "13055", code_departement: "13", siren_epci: "200054807", name: "Marseille 16e Arrondissement")).to be_exist
+      expect(Commune.where(code_insee: "13201", code_insee_parent: "13055", code_departement: "13", siren_epci: "200054807", name: "Marseille 1er Arrondissement")).to be_exist
+      expect(Commune.where(code_insee: "13216", code_insee_parent: "13055", code_departement: "13", siren_epci: "200054807", name: "Marseille 16e Arrondissement")).to be_exist
     end
   end
 end

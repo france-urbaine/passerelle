@@ -14,15 +14,15 @@
 #  updated_at            :datetime         not null
 #  collectivities_count  :integer          default(0), not null
 #  offices_count         :integer          default(0), not null
-#  code_arrondissement   :string
+#  code_insee_parent     :string
 #  arrondissements_count :integer          default(0), not null
 #
 # Indexes
 #
-#  index_communes_on_code_arrondissement  (code_arrondissement)
-#  index_communes_on_code_departement     (code_departement)
-#  index_communes_on_code_insee           (code_insee) UNIQUE
-#  index_communes_on_siren_epci           (siren_epci)
+#  index_communes_on_code_departement   (code_departement)
+#  index_communes_on_code_insee         (code_insee) UNIQUE
+#  index_communes_on_code_insee_parent  (code_insee_parent)
+#  index_communes_on_siren_epci         (siren_epci)
 #
 # Foreign Keys
 #
@@ -41,8 +41,8 @@ class Commune < ApplicationRecord
 
   has_one :region, through: :departement
 
-  belongs_to :commune, class_name: "Commune", primary_key: :code_insee, foreign_key: :code_arrondissement, inverse_of: :arrondissements, optional: true
-  has_many :arrondissements, class_name: "Commune", primary_key: :code_insee, foreign_key: :code_arrondissement, inverse_of: :commune, dependent: false
+  belongs_to :commune, class_name: "Commune", primary_key: :code_insee, foreign_key: :code_insee_parent, inverse_of: :arrondissements, optional: true
+  has_many :arrondissements, class_name: "Commune", primary_key: :code_insee, foreign_key: :code_insee_parent, inverse_of: :commune, dependent: false
 
   has_one :registered_collectivity, class_name: "Collectivity", as: :territory, dependent: false
 
@@ -59,10 +59,10 @@ class Commune < ApplicationRecord
   validates :code_insee,       presence: true
   validates :code_departement, presence: true
 
-  validates :code_insee,          format: { allow_blank: true, with: CODE_INSEE_REGEXP }
-  validates :code_arrondissement, format: { allow_blank: true, with: CODE_INSEE_REGEXP }
-  validates :code_departement,    format: { allow_blank: true, with: CODE_DEPARTEMENT_REGEXP }
-  validates :siren_epci,          format: { allow_blank: true, with: SIREN_REGEXP }
+  validates :code_insee,        format: { allow_blank: true, with: CODE_INSEE_REGEXP }
+  validates :code_insee_parent, format: { allow_blank: true, with: CODE_INSEE_REGEXP }
+  validates :code_departement,  format: { allow_blank: true, with: CODE_DEPARTEMENT_REGEXP }
+  validates :siren_epci,        format: { allow_blank: true, with: SIREN_REGEXP }
 
   validates :code_insee, uniqueness: { unless: :skip_uniqueness_validation_of_code_insee? }
 
@@ -93,7 +93,7 @@ class Commune < ApplicationRecord
 
   # Scopes
   # ----------------------------------------------------------------------------
-  scope :arrondissements,      -> { where.not(code_arrondissement: nil) }
+  scope :arrondissements,      -> { where.not(code_insee_parent: nil) }
   scope :arrondissements_from, ->(communes) { where(commune: communes) }
 
   scope :having_arrondissements,     -> { where(arrondissements_count: 1..) }

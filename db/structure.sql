@@ -515,7 +515,7 @@ CREATE TABLE public.communes (
     updated_at timestamp(6) without time zone NOT NULL,
     collectivities_count integer DEFAULT 0 NOT NULL,
     offices_count integer DEFAULT 0 NOT NULL,
-    code_arrondissement character varying,
+    code_insee_parent character varying,
     arrondissements_count integer DEFAULT 0 NOT NULL,
     CONSTRAINT collectivities_count_check CHECK ((collectivities_count >= 0)),
     CONSTRAINT offices_count_check CHECK ((offices_count >= 0))
@@ -533,7 +533,7 @@ CREATE FUNCTION public.get_communes_arrondissements_count(communes public.commun
     RETURN (
       SELECT COUNT(*)
       FROM   "communes" AS "arrondissements"
-      WHERE  "arrondissements"."code_arrondissement" = communes."code_insee"
+      WHERE  "arrondissements"."code_insee_parent" = communes."code_insee"
     );
   END;
 $$;
@@ -1630,9 +1630,6 @@ CREATE TABLE public.packages (
     form_type public.form_type NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
-    transmitted_at timestamp(6) without time zone NOT NULL,
-    assigned_at timestamp(6) without time zone,
-    returned_at timestamp(6) without time zone,
     discarded_at timestamp(6) without time zone,
     due_on date,
     reports_count integer DEFAULT 0 NOT NULL,
@@ -1640,7 +1637,10 @@ CREATE TABLE public.packages (
     reports_rejected_count integer DEFAULT 0 NOT NULL,
     reports_debated_count integer DEFAULT 0 NOT NULL,
     sandbox boolean DEFAULT false NOT NULL,
-    transmission_id uuid
+    transmission_id uuid,
+    transmitted_at timestamp(6) without time zone,
+    assigned_at timestamp(6) without time zone,
+    returned_at timestamp(6) without time zone
 );
 
 
@@ -2598,21 +2598,21 @@ CREATE FUNCTION public.trigger_communes_changes() RETURNS trigger
     END IF;
 
     -- Reset communes#arrondissement_count of parent communes
-    -- * on creation (when code_arrondissement is not NULL)
-    -- * on deletion (when code_arrondissement is not NULL)
-    -- * when code_arrondissement changed
-    -- * when code_arrondissement changed from NULL
-    -- * when code_arrondissement changed to NULL
+    -- * on creation (when code_insee_parent is not NULL)
+    -- * on deletion (when code_insee_parent is not NULL)
+    -- * when code_insee_parent changed
+    -- * when code_insee_parent changed from NULL
+    -- * when code_insee_parent changed to NULL
 
-    IF (TG_OP = 'INSERT' AND NEW."code_arrondissement" IS NOT NULL)
-    OR (TG_OP = 'DELETE' AND OLD."code_arrondissement" IS NOT NULL)
-    OR (TG_OP = 'UPDATE' AND NEW."code_arrondissement" <> OLD."code_arrondissement")
-    OR (TG_OP = 'UPDATE' AND (NEW."code_arrondissement" IS NULL) <> (OLD."code_arrondissement" IS NULL))
+    IF (TG_OP = 'INSERT' AND NEW."code_insee_parent" IS NOT NULL)
+    OR (TG_OP = 'DELETE' AND OLD."code_insee_parent" IS NOT NULL)
+    OR (TG_OP = 'UPDATE' AND NEW."code_insee_parent" <> OLD."code_insee_parent")
+    OR (TG_OP = 'UPDATE' AND (NEW."code_insee_parent" IS NULL) <> (OLD."code_insee_parent" IS NULL))
     THEN
 
       UPDATE "communes"
       SET    "arrondissements_count" = get_communes_arrondissements_count("communes".*)
-      WHERE  "communes"."code_insee" IN (NEW."code_arrondissement", OLD."code_arrondissement");
+      WHERE  "communes"."code_insee" IN (NEW."code_insee_parent", OLD."code_insee_parent");
 
     END IF;
 
@@ -3954,13 +3954,6 @@ CREATE INDEX index_collectivities_on_territory ON public.collectivities USING bt
 
 
 --
--- Name: index_communes_on_code_arrondissement; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_communes_on_code_arrondissement ON public.communes USING btree (code_arrondissement);
-
-
---
 -- Name: index_communes_on_code_departement; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3972,6 +3965,13 @@ CREATE INDEX index_communes_on_code_departement ON public.communes USING btree (
 --
 
 CREATE UNIQUE INDEX index_communes_on_code_insee ON public.communes USING btree (code_insee);
+
+
+--
+-- Name: index_communes_on_code_insee_parent; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_communes_on_code_insee_parent ON public.communes USING btree (code_insee_parent);
 
 
 --
@@ -4771,6 +4771,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20231004101953'),
 ('20231016144839'),
 ('20231122090719'),
-('20231128065805');
+('20231128065805'),
+('20231128164632');
 
 

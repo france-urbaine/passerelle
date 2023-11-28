@@ -26,7 +26,7 @@
         - list.with_attribute(:epci) do |attribute|
           = authorized_link_to @commune.epci, namespace: :territories
 
-        - if @commune.code_arrondissement?
+        - if @commune.code_insee_parent?
           - list.with_attribute(:commune) do |attribute|
             = authorized_link_to @commune.commune, namespace: :territories
 
@@ -43,7 +43,6 @@
           = datatable_skeleton_component(nested: true, rows: @commune.arrondissements_count) do |skeleton|
             - skeleton.with_search
             - skeleton.with_pagination
-
 
     - if allowed_to?(:index?, Collectivity)
       - flow.with_header do |header|

@@ -390,7 +390,7 @@ RSpec.describe Collectivity do
                 WHERE  "communes"."id" = '#{collectivity.territory_id}'
                 AND    "communes"."arrondissements_count" = 0
               )
-              OR "communes"."code_arrondissement" IN (
+              OR "communes"."code_insee_parent" IN (
                 SELECT "communes"."code_insee"
                 FROM   "communes"
                 WHERE  "communes"."id" = '#{collectivity.territory_id}'
@@ -420,7 +420,7 @@ RSpec.describe Collectivity do
                 WHERE      "epcis"."id" = '#{collectivity.territory_id}'
                   AND      "communes"."arrondissements_count" = 0
               )
-              OR "communes"."code_arrondissement" IN (
+              OR "communes"."code_insee_parent" IN (
                 SELECT     "communes"."code_insee"
                 FROM       "communes"
                 INNER JOIN "epcis" ON "epcis"."siren" = "communes"."siren_epci"
@@ -451,7 +451,7 @@ RSpec.describe Collectivity do
                 WHERE      "departements"."id" = '#{collectivity.territory_id}'
                   AND      "communes"."arrondissements_count" = 0
               )
-              OR "communes"."code_arrondissement" IN (
+              OR "communes"."code_insee_parent" IN (
                 SELECT     "communes"."code_insee"
                 FROM       "communes"
                 INNER JOIN "departements" ON "departements"."code_departement" = "communes"."code_departement"
@@ -483,7 +483,7 @@ RSpec.describe Collectivity do
                 WHERE      "regions"."id" = '#{collectivity.territory_id}'
                   AND      "communes"."arrondissements_count" = 0
               )
-              OR "communes"."code_arrondissement" IN (
+              OR "communes"."code_insee_parent" IN (
                 SELECT     "communes"."code_insee"
                 FROM       "communes"
                 INNER JOIN "departements" ON "departements"."code_departement" = "communes"."code_departement"
@@ -520,7 +520,7 @@ RSpec.describe Collectivity do
                   FROM   "communes"
                   WHERE  "communes"."id" = '#{collectivity.territory_id}'
                     AND "communes"."arrondissements_count" = 0
-                ) OR  "communes"."code_arrondissement" IN (
+                ) OR  "communes"."code_insee_parent" IN (
                   SELECT "communes"."code_insee"
                   FROM   "communes"
                   WHERE  "communes"."id" = '#{collectivity.territory_id}'
@@ -553,7 +553,7 @@ RSpec.describe Collectivity do
                   WHERE      "epcis"."id" = '#{collectivity.territory_id}'
                     AND      "communes"."arrondissements_count" = 0
                 )
-                OR "communes"."code_arrondissement" IN (
+                OR "communes"."code_insee_parent" IN (
                   SELECT     "communes"."code_insee"
                   FROM       "communes"
                   INNER JOIN "epcis" ON "epcis"."siren" = "communes"."siren_epci"
@@ -587,7 +587,7 @@ RSpec.describe Collectivity do
                   WHERE      "departements"."id" = '#{collectivity.territory_id}'
                     AND      "communes"."arrondissements_count" = 0
                 )
-                OR "communes"."code_arrondissement" IN (
+                OR "communes"."code_insee_parent" IN (
                   SELECT     "communes"."code_insee"
                   FROM       "communes"
                   INNER JOIN "departements" ON "departements"."code_departement" = "communes"."code_departement"
@@ -622,7 +622,7 @@ RSpec.describe Collectivity do
                   WHERE      "regions"."id" = '#{collectivity.territory_id}'
                     AND      "communes"."arrondissements_count" = 0
                 )
-                OR "communes"."code_arrondissement" IN (
+                OR "communes"."code_insee_parent" IN (
                   SELECT     "communes"."code_insee"
                   FROM       "communes"
                   INNER JOIN "departements" ON "departements"."code_departement" = "communes"."code_departement"
