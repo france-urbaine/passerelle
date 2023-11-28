@@ -100,6 +100,7 @@ group :development, :test do
 end
 
 group :development do
+  gem "actual_db_schema"
   gem "annotate"
   gem "rack-mini-profiler"
   gem "web-console"
