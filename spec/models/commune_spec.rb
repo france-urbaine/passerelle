@@ -31,7 +31,7 @@ RSpec.describe Commune do
     it { is_expected.to validate_presence_of(:code_insee) }
     it { is_expected.to validate_presence_of(:code_departement) }
     it { is_expected.not_to validate_presence_of(:siren_epci) }
-    it { is_expected.not_to validate_presence_of(:code_arrondissement) }
+    it { is_expected.not_to validate_presence_of(:code_insee_parent) }
 
     it { is_expected.to     allow_value("74123").for(:code_insee) }
     it { is_expected.to     allow_value("2A013").for(:code_insee) }
@@ -39,11 +39,11 @@ RSpec.describe Commune do
     it { is_expected.not_to allow_value("1A674").for(:code_insee) }
     it { is_expected.not_to allow_value("123456").for(:code_insee) }
 
-    it { is_expected.to     allow_value("74123").for(:code_arrondissement) }
-    it { is_expected.to     allow_value("2A013").for(:code_arrondissement) }
-    it { is_expected.to     allow_value("97102").for(:code_arrondissement) }
-    it { is_expected.not_to allow_value("1A674").for(:code_arrondissement) }
-    it { is_expected.not_to allow_value("123456").for(:code_arrondissement) }
+    it { is_expected.to     allow_value("74123").for(:code_insee_parent) }
+    it { is_expected.to     allow_value("2A013").for(:code_insee_parent) }
+    it { is_expected.to     allow_value("97102").for(:code_insee_parent) }
+    it { is_expected.not_to allow_value("1A674").for(:code_insee_parent) }
+    it { is_expected.not_to allow_value("123456").for(:code_insee_parent) }
 
     it { is_expected.to     allow_value("01").for(:code_departement) }
     it { is_expected.to     allow_value("2A").for(:code_departement) }
@@ -102,7 +102,7 @@ RSpec.describe Commune do
         }.to perform_sql_query(<<~SQL)
           SELECT "communes".*
           FROM   "communes"
-          WHERE  "communes"."code_arrondissement" IS NOT NULL
+          WHERE  "communes"."code_insee_parent" IS NOT NULL
         SQL
       end
     end
@@ -116,7 +116,7 @@ RSpec.describe Commune do
         }.to perform_sql_query(<<~SQL)
           SELECT "communes".*
           FROM   "communes"
-          WHERE  "communes"."code_arrondissement" = '#{commune.code_insee}'
+          WHERE  "communes"."code_insee_parent" = '#{commune.code_insee}'
         SQL
       end
 
@@ -126,7 +126,7 @@ RSpec.describe Commune do
         }.to perform_sql_query(<<~SQL)
           SELECT "communes".*
           FROM   "communes"
-          WHERE  "communes"."code_arrondissement" IN (
+          WHERE  "communes"."code_insee_parent" IN (
             SELECT "communes"."code_insee"
             FROM   "communes"
             WHERE  "communes"."code_departement" = '13'
@@ -183,7 +183,7 @@ RSpec.describe Commune do
               WHERE  "communes"."code_departement" = '13'
                 AND  "communes"."arrondissements_count" = 0
             )
-            OR "communes"."code_arrondissement" IN (
+            OR "communes"."code_insee_parent" IN (
               SELECT "communes"."code_insee"
               FROM   "communes"
               WHERE  "communes"."code_departement" = '13'
@@ -205,7 +205,7 @@ RSpec.describe Commune do
               INNER JOIN "epcis" ON "epcis"."siren" = "communes"."siren_epci"
               WHERE      "communes"."arrondissements_count" = 0
             )
-            OR "communes"."code_arrondissement" IN (
+            OR "communes"."code_insee_parent" IN (
               SELECT     "communes"."code_insee"
               FROM       "communes"
               INNER JOIN "epcis" ON "epcis"."siren" = "communes"."siren_epci"
@@ -441,7 +441,7 @@ RSpec.describe Commune do
         }.to perform_sql_query(<<~SQL)
           SELECT   "communes".*
           FROM     "communes"
-          ORDER BY REGEXP_REPLACE(UNACCENT("communes"."name"), '(^|[^0-9])([0-9])([^0-9])', '\10\2\3') ASC,
+          ORDER BY REGEXP_REPLACE(UNACCENT("communes"."name"), '(^|[^0-9])([0-9])([^0-9])', '\\10\\2\\3') ASC,
                    "communes"."code_insee" ASC
         SQL
       end
@@ -452,7 +452,7 @@ RSpec.describe Commune do
         }.to perform_sql_query(<<~SQL)
           SELECT   "communes".*
           FROM     "communes"
-          ORDER BY REGEXP_REPLACE(UNACCENT("communes"."name"), '(^|[^0-9])([0-9])([^0-9])', '\10\2\3') DESC,
+          ORDER BY REGEXP_REPLACE(UNACCENT("communes"."name"), '(^|[^0-9])([0-9])([^0-9])', '\\10\\2\\3') DESC,
                    "communes"."code_insee" DESC
         SQL
       end
@@ -465,7 +465,7 @@ RSpec.describe Commune do
         }.to perform_sql_query(<<~SQL)
           SELECT   "communes".*
           FROM     "communes"
-          ORDER BY REGEXP_REPLACE(UNACCENT("communes"."name"), '(^|[^0-9])([0-9])([^0-9])', '\10\2\3') ASC,
+          ORDER BY REGEXP_REPLACE(UNACCENT("communes"."name"), '(^|[^0-9])([0-9])([^0-9])', '\\10\\2\\3') ASC,
                    "communes"."code_insee" ASC
         SQL
       end
@@ -476,7 +476,7 @@ RSpec.describe Commune do
         }.to perform_sql_query(<<~SQL)
           SELECT   "communes".*
           FROM     "communes"
-          ORDER BY REGEXP_REPLACE(UNACCENT("communes"."name"), '(^|[^0-9])([0-9])([^0-9])', '\10\2\3') DESC,
+          ORDER BY REGEXP_REPLACE(UNACCENT("communes"."name"), '(^|[^0-9])([0-9])([^0-9])', '\\10\\2\\3') DESC,
                    "communes"."code_insee" DESC
         SQL
       end
@@ -664,7 +664,7 @@ RSpec.describe Commune do
 
       describe "on arrondissements count" do
         before do
-          communes[0].update(code_arrondissement: communes[1].code_insee)
+          communes[0].update(code_insee_parent: communes[1].code_insee)
 
           Commune.update_all(arrondissements_count: 99)
         end
@@ -817,7 +817,7 @@ RSpec.describe Commune do
         end
 
         it "changes when parent commune is created after arrondissements" do
-          create(:commune, code_arrondissement: "12345")
+          create(:commune, code_insee_parent: "12345")
 
           commune = create(:commune, code_insee: "12345")
           commune.reload

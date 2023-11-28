@@ -285,7 +285,7 @@ RSpec.describe Office do
               WHERE      "ddfips"."id" = '#{office.ddfip_id}'
                 AND      "communes"."arrondissements_count" = 0
             )
-            OR "communes"."code_arrondissement" IN (
+            OR "communes"."code_insee_parent" IN (
               SELECT     "communes"."code_insee"
               FROM       "communes"
               INNER JOIN "departements" ON "communes"."code_departement" = "departements"."code_departement"

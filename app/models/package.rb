@@ -12,9 +12,6 @@
 #  form_type              :enum             not null
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
-#  transmitted_at         :datetime         not null
-#  assigned_at            :datetime
-#  returned_at            :datetime
 #  discarded_at           :datetime
 #  due_on                 :date
 #  reports_count          :integer          default(0), not null
@@ -23,6 +20,9 @@
 #  reports_debated_count  :integer          default(0), not null
 #  sandbox                :boolean          default(FALSE), not null
 #  transmission_id        :uuid
+#  transmitted_at         :datetime
+#  assigned_at            :datetime
+#  returned_at            :datetime
 #
 # Indexes
 #

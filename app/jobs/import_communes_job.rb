@@ -36,12 +36,12 @@ class ImportCommunesJob < ApplicationJob
     row["EPCI"] = nil unless row["EPCI"].match?(Commune::SIREN_REGEXP)
 
     queue << {
-      code_insee:           row["CODGEO"],
-      name:                 row["LIBGEO"],
-      code_departement:     row["DEP"],
-      code_arrondissement:  row["COM"],
-      siren_epci:           row["EPCI"],
-      qualified_name:       Commune.generate_qualified_name(row["LIBGEO"])
+      code_insee:        row["CODGEO"],
+      name:              row["LIBGEO"],
+      code_departement:  row["DEP"],
+      code_insee_parent: row["COM"],
+      siren_epci:        row["EPCI"],
+      qualified_name:    Commune.generate_qualified_name(row["LIBGEO"])
     }
 
     flush if queue.size >= 100
