@@ -26,9 +26,24 @@
         - list.with_attribute(:epci) do |attribute|
           = authorized_link_to @commune.epci, namespace: :territories
 
+        - if @commune.code_arrondissement?
+          - list.with_attribute(:commune) do |attribute|
+            = authorized_link_to @commune.commune, namespace: :territories
+
         - list.with_attribute("Collectivités enregistrées") do |attribute|
           - if @commune.collectivities_count.positive?
             = display_count(@commune.collectivities_count, "collectivité")
+
+    - if allowed_to?(:index?, Commune) && @commune.arrondissements_count.positive?
+      - flow.with_header do |header|
+        - header.with_title "Arrondissements", "rectangle-stack", "Nouvelle section"
+
+      - flow.with_section do
+        = turbo_frame_tag "datatable-communes", src: territories_commune_arrondissements_path(@commune) do
+          = datatable_skeleton_component(nested: true, rows: @commune.arrondissements_count) do |skeleton|
+            - skeleton.with_search
+            - skeleton.with_pagination
+
 
     - if allowed_to?(:index?, Collectivity)
       - flow.with_header do |header|

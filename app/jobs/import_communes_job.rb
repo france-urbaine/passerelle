@@ -4,7 +4,7 @@
 #   https://www.insee.fr/fr/information/2028028
 #
 # You can launch the job using :
-#   ImportCommunesJob.perform_now("https://www.insee.fr/fr/statistiques/fichier/2028028/table-appartenance-geo-communes-22_V2.zip")
+#   ImportCommunesJob.perform_now(Passerelle::Application::DEFAULT_COMMUNES_URL)
 #
 # This job is called when seeding Data :
 #   rails db:seed
@@ -36,11 +36,12 @@ class ImportCommunesJob < ApplicationJob
     row["EPCI"] = nil unless row["EPCI"].match?(Commune::SIREN_REGEXP)
 
     queue << {
-      code_insee:       row["CODGEO"],
-      name:             row["LIBGEO"],
-      code_departement: row["DEP"],
-      siren_epci:       row["EPCI"],
-      qualified_name:   Commune.generate_qualified_name(row["LIBGEO"])
+      code_insee:           row["CODGEO"],
+      name:                 row["LIBGEO"],
+      code_departement:     row["DEP"],
+      code_arrondissement:  row["COM"],
+      siren_epci:           row["EPCI"],
+      qualified_name:       Commune.generate_qualified_name(row["LIBGEO"])
     }
 
     flush if queue.size >= 100

@@ -110,6 +110,10 @@ class Office < ApplicationRecord
     Collectivity.kept.where(territory: territories)
   end
 
+  def assignable_communes
+    Commune.with_arrondissements_instead_of_communes(departement_communes)
+  end
+
   # Updates methods
   # ----------------------------------------------------------------------------
   # When no selection is made for a collection of checkboxes, most web browsers

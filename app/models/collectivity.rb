@@ -161,17 +161,20 @@ class Collectivity < ApplicationRecord
 
   # Other associations
   # ----------------------------------------------------------------------------
-  def on_territory_communes
-    case territory_type
-    when "Commune"     then Commune.where(id: territory_id)
-    when "EPCI"        then Commune.distinct.joins(:epci).merge(EPCI.where(id: territory_id))
-    when "Departement" then Commune.distinct.joins(:departement).merge(Departement.where(id: territory_id))
-    when "Region"      then Commune.distinct.joins(:region).merge(Region.where(id: territory_id))
-    end
+  def reportable_communes
+    known_communes =
+      case territory_type
+      when "Commune"     then Commune.where(id: territory_id)
+      when "EPCI"        then Commune.joins(:epci).merge(EPCI.where(id: territory_id))
+      when "Departement" then Commune.joins(:departement).merge(Departement.where(id: territory_id))
+      when "Region"      then Commune.joins(:region).merge(Region.where(id: territory_id))
+      end
+
+    Commune.with_arrondissements_instead_of_communes(known_communes)
   end
 
   def assigned_offices
-    Office.kept.distinct.joins(:communes).merge(on_territory_communes)
+    Office.kept.distinct.joins(:communes).merge(reportable_communes)
   end
 
   # Updates methods

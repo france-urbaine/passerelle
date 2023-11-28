@@ -30,7 +30,7 @@ module Offices
       # performs one query per communes to insert
       #
       previous_commune_ids = office.commune_ids
-      new_commune_ids      = office.departement_communes
+      new_commune_ids      = office.assignable_communes
         .where(code_insee: commune_ids)
         .pluck(:code_insee)
 

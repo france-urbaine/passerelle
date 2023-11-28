@@ -206,6 +206,7 @@ Rails.application.routes.draw do
         resources :communes, only: %i[index show edit update] do
           scope module: "communes" do
             resources :collectivities, only: %i[index], path: "/collectivites"
+            resources :arrondissements, only: %i[index], path: "/arrondissements"
           end
         end
 

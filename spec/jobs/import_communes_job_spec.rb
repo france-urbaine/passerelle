@@ -40,7 +40,15 @@ RSpec.describe ImportCommunesJob do
       expect(Commune.where(code_insee: "01002", code_departement: "01", siren_epci: "240100883", name: "L'Abergement-de-Varey")).to be_exist
       expect(Commune.where(code_insee: "29155", code_departement: "29", siren_epci: nil, name: "Ouessant")).to be_exist
       expect(Commune.where(code_insee: "97601", code_departement: "976", siren_epci: "200060465", name: "Acoua")).to be_exist
-      expect(Commune.where(code_insee: ("13201".."13216")).count).to eq(16)
+    end
+  end
+
+  it "imports arrondissements" do
+    aggregate_failures do
+      expect { described_class.perform_now(url) }.to change(Commune.arrondissements, :count).by(16)
+
+      expect(Commune.where(code_insee: "13201", code_arrondissement: "13055", code_departement: "13", siren_epci: "200054807", name: "Marseille 1er Arrondissement")).to be_exist
+      expect(Commune.where(code_insee: "13216", code_arrondissement: "13055", code_departement: "13", siren_epci: "200054807", name: "Marseille 16e Arrondissement")).to be_exist
     end
   end
 end
