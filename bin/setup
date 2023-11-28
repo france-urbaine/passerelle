@@ -199,6 +199,54 @@ def setup_mailcatcher
   log " . https://github.com/sj26/mailcatcher#ruby"
 end
 
+def setup_githooks
+  log "Setup git hooks"
+
+  {
+    ".git/hooks/post-merge" => <<~HOOK,
+      #!/bin/sh
+      bin/update
+    HOOK
+
+    ".git/hooks/post-checkout" => <<~HOOK
+      #!/bin/sh
+      if [[ $3 == 1 ]]
+      then
+        bin/update
+      fi
+    HOOK
+  }.each do |path, code|
+    if File.exist?(path)
+      log "The file #{path} already exists:"
+      system! "cat #{path}"
+
+      log "Would you like to override it ? [Yn]"
+
+      if gets != "Y"
+        log "Skipped, you may have to add the following lines to the file:"
+        puts code
+        next
+      end
+
+      system! "rm #{path}"
+    end
+
+    system! "touch #{path}"
+    system! "chmod +x #{path}"
+
+    File.open(path, "w") do |file|
+      file.puts code
+      file.puts
+    end
+
+    log "#{path} created"
+    log ""
+  end
+
+  log "✓ Git hooks set up !"
+  log ""
+end
+
 def help
   log "Setup commands:"
   log ""
@@ -209,6 +257,7 @@ def help
   log "    bin/setup mailcatcher    # Install mailcatcher"
   log "    bin/setup test           # Reset all databases for testing, it also accepts [rspec|parallel|watch|assets]"
   log "    bin/setup submodules     # Initialize submodules"
+  log "    bin/setup githooks       # Setup git hooks to call bin/update automatically"
   log "    bin/setup help           # Show this help"
   log ""
   log "Here are some other useful commands:"
@@ -236,6 +285,7 @@ else
   when "mailcatcher"  then setup_mailcatcher
   when "test"         then setup_test(ARGV[1])
   when "submodules"   then setup_submodules
+  when "githooks"     then setup_githooks
   else help
   end
 end
