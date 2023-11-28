@@ -11,6 +11,9 @@ RSpec.describe Commune do
     it { is_expected.to belong_to(:epci).optional }
     it { is_expected.to have_one(:region).through(:departement) }
 
+    it { is_expected.to belong_to(:commune).optional }
+    it { is_expected.to respond_to(:arrondissements) }
+
     it { is_expected.to have_one(:registered_collectivity) }
     it { is_expected.to respond_to(:on_territory_collectivities) }
 
@@ -28,12 +31,19 @@ RSpec.describe Commune do
     it { is_expected.to validate_presence_of(:code_insee) }
     it { is_expected.to validate_presence_of(:code_departement) }
     it { is_expected.not_to validate_presence_of(:siren_epci) }
+    it { is_expected.not_to validate_presence_of(:code_arrondissement) }
 
     it { is_expected.to     allow_value("74123").for(:code_insee) }
     it { is_expected.to     allow_value("2A013").for(:code_insee) }
     it { is_expected.to     allow_value("97102").for(:code_insee) }
     it { is_expected.not_to allow_value("1A674").for(:code_insee) }
     it { is_expected.not_to allow_value("123456").for(:code_insee) }
+
+    it { is_expected.to     allow_value("74123").for(:code_arrondissement) }
+    it { is_expected.to     allow_value("2A013").for(:code_arrondissement) }
+    it { is_expected.to     allow_value("97102").for(:code_arrondissement) }
+    it { is_expected.not_to allow_value("1A674").for(:code_arrondissement) }
+    it { is_expected.not_to allow_value("123456").for(:code_arrondissement) }
 
     it { is_expected.to     allow_value("01").for(:code_departement) }
     it { is_expected.to     allow_value("2A").for(:code_departement) }
@@ -85,6 +95,30 @@ RSpec.describe Commune do
   # Search scope
   # ----------------------------------------------------------------------------
   describe "scopes" do
+    describe ".arrondissements" do
+      it "scopes communes that are arrondissements" do
+        expect {
+          described_class.arrondissements.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "communes".*
+          FROM   "communes"
+          WHERE  "communes"."code_arrondissement" IS NOT NULL
+        SQL
+      end
+    end
+
+    describe ".having_arrondissements" do
+      it "scopes communes that have arrondissements" do
+        expect {
+          described_class.having_arrondissements.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "communes".*
+          FROM   "communes"
+          WHERE  "communes"."arrondissements_count" >= 1
+        SQL
+      end
+    end
+
     describe ".covered_by_ddfip" do
       it "scopes communes covered by one single DDFIP" do
         departement = create(:departement, code_departement: "64")
@@ -507,6 +541,20 @@ RSpec.describe Commune do
             .and change { communes[1].reload.offices_count }.from(0).to(2)
         end
       end
+
+      describe "on arrondissements count" do
+        before do
+          communes[0].update(code_arrondissement: communes[1].code_insee)
+
+          Commune.update_all(arrondissements_count: 99)
+        end
+
+        it "resets counters" do
+          expect { reset_all_counters }
+            .to  change { communes[0].reload.arrondissements_count }.from(99).to(0)
+            .and change { communes[1].reload.arrondissements_count }.from(99).to(1)
+        end
+      end
     end
   end
 
@@ -615,6 +663,45 @@ RSpec.describe Commune do
           expect { office.communes << communes[1] }
             .to  not_change { communes[0].reload.offices_count }.from(1)
             .and change { communes[1].reload.offices_count }.from(0).to(1)
+        end
+      end
+
+      fdescribe "#arrondissements_count" do
+        let(:arrondissement) { create(:commune) }
+
+        it "changes when an arrondissement is created" do
+          expect {
+            create(:commune, commune: communes[0])
+          }
+            .to change { communes[0].reload.arrondissements_count }.from(0).to(1)
+            .and not_change { communes[1].reload.arrondissements_count }.from(0)
+        end
+
+        it "changes when a commune is updated to become an arrondissement" do
+          expect {
+            arrondissement = create(:commune)
+            arrondissement.update(commune: communes[0])
+          }
+            .to change { communes[0].reload.arrondissements_count }.from(0).to(1)
+            .and not_change { communes[1].reload.arrondissements_count }.from(0)
+        end
+
+        it "changes when an arrondissement is destroyed" do
+          arrondissement = create(:commune, commune: communes[0])
+
+          expect {
+            arrondissement.destroy
+          }
+            .to change { communes[0].reload.arrondissements_count }.from(1).to(0)
+            .and not_change { communes[1].reload.arrondissements_count }.from(0)
+        end
+
+        it "changes when parent commune is created after arrondissements" do
+          arrondissement = create(:commune, code_arrondissement: "12345")
+          commune = create(:commune, code_insee: "12345")
+          commune.reload
+
+          expect(commune.arrondissements_count).to eq(1)
         end
       end
     end

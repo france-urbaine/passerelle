@@ -4,7 +4,7 @@
 #   https://www.insee.fr/fr/information/2510634
 #
 # You can launch the job using :
-#   ImportEPCIsDepartementsJob.perform_now("https://www.insee.fr/fr/statistiques/fichier/2510634/Intercommunalite_Metropole_au_01-01-2022.zip")
+#   ImportEPCIsDepartementsJob.perform_now(Passerelle::Application::DEFAULT_EPCIS_URL)
 #
 # This job is called when seeding Data :
 #   rails db:seed

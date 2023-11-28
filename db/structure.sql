@@ -515,9 +515,28 @@ CREATE TABLE public.communes (
     updated_at timestamp(6) without time zone NOT NULL,
     collectivities_count integer DEFAULT 0 NOT NULL,
     offices_count integer DEFAULT 0 NOT NULL,
+    code_arrondissement character varying,
+    arrondissements_count integer DEFAULT 0 NOT NULL,
     CONSTRAINT collectivities_count_check CHECK ((collectivities_count >= 0)),
     CONSTRAINT offices_count_check CHECK ((offices_count >= 0))
 );
+
+
+--
+-- Name: get_communes_arrondissements_count(public.communes); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.get_communes_arrondissements_count(communes public.communes) RETURNS integer
+    LANGUAGE plpgsql
+    AS $$
+  BEGIN
+    RETURN (
+      SELECT COUNT(*)
+      FROM   "communes" AS "arrondissements"
+      WHERE  "arrondissements"."code_arrondissement" = communes."code_insee"
+    );
+  END;
+$$;
 
 
 --
@@ -2174,8 +2193,9 @@ CREATE FUNCTION public.reset_all_communes_counters() RETURNS integer
     affected_rows integer;
   BEGIN
     UPDATE "communes"
-    SET    "collectivities_count" = get_communes_collectivities_count("communes".*),
-           "offices_count"        = get_communes_offices_count("communes".*);
+    SET    "collectivities_count"  = get_communes_collectivities_count("communes".*),
+           "offices_count"         = get_communes_offices_count("communes".*),
+           "arrondissements_count" = get_communes_arrondissements_count("communes".*);
 
     GET DIAGNOSTICS affected_rows = ROW_COUNT;
     RAISE NOTICE 'UPDATE %', affected_rows;
@@ -2560,6 +2580,39 @@ CREATE FUNCTION public.trigger_communes_changes() RETURNS trigger
       UPDATE  "communes"
       SET     "offices_count" = get_communes_offices_count("communes".*)
       WHERE   "communes"."id" = NEW."id";
+
+    END IF;
+
+    -- Reset communes#arrondissement_count
+    -- * on creation
+    -- * when code_insee changed (it shouldn't)
+
+    IF (TG_OP = 'INSERT')
+    OR (TG_OP = 'UPDATE' AND NEW."code_insee" <> OLD."code_insee")
+    THEN
+
+      UPDATE "communes"
+      SET    "arrondissements_count" = get_communes_arrondissements_count("communes".*)
+      WHERE  "communes"."id" = NEW."id";
+
+    END IF;
+
+    -- Reset communes#arrondissement_count of parent communes
+    -- * on creation (when code_arrondissement is not NULL)
+    -- * on deletion (when code_arrondissement is not NULL)
+    -- * when code_arrondissement changed
+    -- * when code_arrondissement changed from NULL
+    -- * when code_arrondissement changed to NULL
+
+    IF (TG_OP = 'INSERT' AND NEW."code_arrondissement" IS NOT NULL)
+    OR (TG_OP = 'DELETE' AND OLD."code_arrondissement" IS NOT NULL)
+    OR (TG_OP = 'UPDATE' AND NEW."code_arrondissement" <> OLD."code_arrondissement")
+    OR (TG_OP = 'UPDATE' AND (NEW."code_arrondissement" IS NULL) <> (OLD."code_arrondissement" IS NULL))
+    THEN
+
+      UPDATE "communes"
+      SET    "arrondissements_count" = get_communes_arrondissements_count("communes".*)
+      WHERE  "communes"."code_insee" IN (NEW."code_arrondissement", OLD."code_arrondissement");
 
     END IF;
 
@@ -3901,6 +3954,13 @@ CREATE INDEX index_collectivities_on_territory ON public.collectivities USING bt
 
 
 --
+-- Name: index_communes_on_code_arrondissement; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_communes_on_code_arrondissement ON public.communes USING btree (code_arrondissement);
+
+
+--
 -- Name: index_communes_on_code_departement; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4710,7 +4770,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20230929034420'),
 ('20231004101953'),
 ('20231016144839'),
-('20231120150131'),
-('20231122090719');
+('20231122090719'),
+('20231128065805');
 
 

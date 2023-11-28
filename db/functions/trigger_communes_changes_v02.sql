@@ -33,6 +33,39 @@ AS $function$
 
     END IF;
 
+    -- Reset communes#arrondissement_count
+    -- * on creation
+    -- * when code_insee changed (it shouldn't)
+
+    IF (TG_OP = 'INSERT')
+    OR (TG_OP = 'UPDATE' AND NEW."code_insee" <> OLD."code_insee")
+    THEN
+
+      UPDATE "communes"
+      SET    "arrondissements_count" = get_communes_arrondissements_count("communes".*)
+      WHERE  "communes"."id" = NEW."id";
+
+    END IF;
+
+    -- Reset communes#arrondissement_count of parent communes
+    -- * on creation (when code_arrondissement is not NULL)
+    -- * on deletion (when code_arrondissement is not NULL)
+    -- * when code_arrondissement changed
+    -- * when code_arrondissement changed from NULL
+    -- * when code_arrondissement changed to NULL
+
+    IF (TG_OP = 'INSERT' AND NEW."code_arrondissement" IS NOT NULL)
+    OR (TG_OP = 'DELETE' AND OLD."code_arrondissement" IS NOT NULL)
+    OR (TG_OP = 'UPDATE' AND NEW."code_arrondissement" <> OLD."code_arrondissement")
+    OR (TG_OP = 'UPDATE' AND (NEW."code_arrondissement" IS NULL) <> (OLD."code_arrondissement" IS NULL))
+    THEN
+
+      UPDATE "communes"
+      SET    "arrondissements_count" = get_communes_arrondissements_count("communes".*)
+      WHERE  "communes"."code_insee" IN (NEW."code_arrondissement", OLD."code_arrondissement");
+
+    END IF;
+
     -- Reset offices#communes_count
     -- * on creation
     -- * on deletion

@@ -4,22 +4,25 @@
 #
 # Table name: communes
 #
-#  id                   :uuid             not null, primary key
-#  name                 :string           not null
-#  code_insee           :string           not null
-#  code_departement     :string           not null
-#  siren_epci           :string
-#  qualified_name       :string
-#  created_at           :datetime         not null
-#  updated_at           :datetime         not null
-#  collectivities_count :integer          default(0), not null
-#  offices_count        :integer          default(0), not null
+#  id                    :uuid             not null, primary key
+#  name                  :string           not null
+#  code_insee            :string           not null
+#  code_departement      :string           not null
+#  siren_epci            :string
+#  qualified_name        :string
+#  created_at            :datetime         not null
+#  updated_at            :datetime         not null
+#  collectivities_count  :integer          default(0), not null
+#  offices_count         :integer          default(0), not null
+#  code_arrondissement   :string
+#  arrondissements_count :integer          default(0), not null
 #
 # Indexes
 #
-#  index_communes_on_code_departement  (code_departement)
-#  index_communes_on_code_insee        (code_insee) UNIQUE
-#  index_communes_on_siren_epci        (siren_epci)
+#  index_communes_on_code_arrondissement  (code_arrondissement)
+#  index_communes_on_code_departement     (code_departement)
+#  index_communes_on_code_insee           (code_insee) UNIQUE
+#  index_communes_on_siren_epci           (siren_epci)
 #
 # Foreign Keys
 #
@@ -38,6 +41,9 @@ class Commune < ApplicationRecord
 
   has_one :region, through: :departement
 
+  belongs_to :commune, class_name: "Commune", primary_key: :code_insee, foreign_key: :code_arrondissement, inverse_of: :arrondissements, optional: true
+  has_many :arrondissements, class_name: "Commune", primary_key: :code_insee, foreign_key: :code_arrondissement, inverse_of: :commune
+
   has_one :registered_collectivity, class_name: "Collectivity", as: :territory, dependent: false
 
   has_many :ddfips, primary_key: :code_departement, foreign_key: :code_departement, inverse_of: false, dependent: false
@@ -53,9 +59,10 @@ class Commune < ApplicationRecord
   validates :code_insee,       presence: true
   validates :code_departement, presence: true
 
-  validates :code_insee,       format: { allow_blank: true, with: CODE_INSEE_REGEXP }
-  validates :code_departement, format: { allow_blank: true, with: CODE_DEPARTEMENT_REGEXP }
-  validates :siren_epci,       format: { allow_blank: true, with: SIREN_REGEXP }
+  validates :code_insee,          format: { allow_blank: true, with: CODE_INSEE_REGEXP }
+  validates :code_arrondissement, format: { allow_blank: true, with: CODE_INSEE_REGEXP }
+  validates :code_departement,    format: { allow_blank: true, with: CODE_DEPARTEMENT_REGEXP }
+  validates :siren_epci,          format: { allow_blank: true, with: SIREN_REGEXP }
 
   validates :code_insee, uniqueness: { unless: :skip_uniqueness_validation_of_code_insee? }
 
@@ -86,6 +93,9 @@ class Commune < ApplicationRecord
 
   # Scopes
   # ----------------------------------------------------------------------------
+  scope :arrondissements,        -> { where.not(code_arrondissement: nil) }
+  scope :having_arrondissements, -> { where(arrondissements_count: 1..) }
+
   scope :covered_by_ddfip, lambda { |ddfip|
     if ddfip.is_a?(ActiveRecord::Relation)
       where(code_departement: ddfip.select(:code_departement))
