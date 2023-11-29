@@ -51,6 +51,8 @@ RSpec.describe "Organization::Users::ResetsController#create" do
     context "when the user is the current user" do
       let(:user) { current_user }
 
+      it_behaves_like "it denies access to DDFIP admin"
+      it_behaves_like "it denies access to publisher admin"
       it_behaves_like "it denies access to collectivity admin"
     end
   end
@@ -64,7 +66,8 @@ RSpec.describe "Organization::Users::ResetsController#create" do
 
       it "updates its confirmation token" do
         expect { request and user.reload }
-          .to  change(user, :confirmation_token)
+          .to  change(user, :confirmed_at).to(nil)
+          .and change(user, :confirmation_token)
           .and change(user, :confirmation_sent_at)
       end
 
@@ -83,20 +86,16 @@ RSpec.describe "Organization::Users::ResetsController#create" do
       end
     end
 
-    context "when user is already reset" do
-      before do
-        user.update!(
-          confirmed_at: nil,
-          confirmation_token: nil
-        )
-      end
+    context "when user is not confirmed (yet or after being resetted)" do
+      let(:user) { create(:user, :unconfirmed) }
 
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/organisation/utilisateurs/#{user.id}") }
 
       it "updates its confirmation token" do
         expect { request and user.reload }
-          .to  change(user, :confirmation_token)
+          .to  not_change(user, :confirmed_at).from(nil)
+          .and change(user, :confirmation_token)
           .and change(user, :confirmation_sent_at)
       end
 

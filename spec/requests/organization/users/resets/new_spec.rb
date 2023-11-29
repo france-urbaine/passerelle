@@ -51,7 +51,9 @@ RSpec.describe "Organization::Users::ResetsController#new" do
     context "when the user is the current user" do
       let(:user) { current_user }
 
-      it_behaves_like "it denies access to admin"
+      it_behaves_like "it denies access to DDFIP admin"
+      it_behaves_like "it denies access to publisher admin"
+      it_behaves_like "it denies access to collectivity admin"
     end
   end
 

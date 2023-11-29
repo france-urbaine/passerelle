@@ -11,9 +11,7 @@ RSpec.describe "Admin::Users::ResetsController#create" do
   let(:headers) { |e| e.metadata[:headers] }
   let(:params)  { |e| e.metadata[:params] }
 
-  let!(:user) do
-    create(:user)
-  end
+  let!(:user) { create(:user) }
 
   describe "authorizations" do
     it_behaves_like "it requires to be signed in in HTML"
@@ -39,27 +37,58 @@ RSpec.describe "Admin::Users::ResetsController#create" do
   describe "responses" do
     before { sign_in_as(:super_admin) }
 
-    it { expect(response).to have_http_status(:see_other) }
-    it { expect(response).to redirect_to("/admin/utilisateurs/#{user.id}") }
+    context "when user is confirmed" do
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/admin/utilisateurs/#{user.id}") }
 
-    it "updates confirmation token" do
-      expect { request and user.reload }
-        .to  change(user, :confirmation_token)
-        .and change(user, :confirmation_sent_at)
+      it "updates confirmation token" do
+        expect { request and user.reload }
+          .to  change(user, :confirmed_at).to(nil)
+          .and change(user, :confirmation_token)
+          .and change(user, :confirmation_sent_at)
+      end
+
+      it "sets a flash notice" do
+        expect(flash).to have_flash_notice.to eq(
+          scheme: "success",
+          header: "L'invitation a été envoyée.",
+          delay:  3000
+        )
+      end
+
+      it "delivers confirmation instructions" do
+        expect { request }
+          .to have_sent_emails.by(1)
+          .and have_sent_email.with_subject("Votre inscription sur Passerelle")
+      end
     end
 
-    it "sets a flash notice" do
-      expect(flash).to have_flash_notice.to eq(
-        scheme: "success",
-        header: "L'invitation a été envoyée.",
-        delay:  3000
-      )
-    end
+    context "when user is not confirmed (yet or after being resetted)" do
+      let(:user) { create(:user, :unconfirmed) }
 
-    it "delivers confirmation instructions" do
-      expect { request }
-        .to have_sent_emails.by(1)
-        .and have_sent_email.with_subject("Votre inscription sur Passerelle")
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/admin/utilisateurs/#{user.id}") }
+
+      it "updates its confirmation token" do
+        expect { request and user.reload }
+          .to  not_change(user, :confirmed_at).from(nil)
+          .and change(user, :confirmation_token)
+          .and change(user, :confirmation_sent_at)
+      end
+
+      it "sets a flash notice" do
+        expect(flash).to have_flash_notice.to eq(
+          scheme: "success",
+          header: "L'invitation a été envoyée.",
+          delay:  3000
+        )
+      end
+
+      it "delivers confirmation instructions" do
+        expect { request }
+          .to have_sent_emails.by(1)
+          .and have_sent_email.with_subject("Votre inscription sur Passerelle")
+      end
     end
   end
 end

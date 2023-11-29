@@ -65,14 +65,11 @@ RSpec.describe "Organization::Collectivities::Users::ResetsController#new" do
     end
 
     context "when the user is the current user" do
-      let(:user) do
-        current_user.update!(
-          organization_admin: true
-        )
-        current_user
-      end
+      let(:user) { current_user }
 
-      it_behaves_like "it denies access to admin"
+      it_behaves_like "it denies access to DDFIP admin"
+      it_behaves_like "it denies access to collectivity admin"
+      it_behaves_like "it responds with not found to publisher admin"
     end
   end
 
