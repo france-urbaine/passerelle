@@ -22,9 +22,10 @@ module Organization
       end
 
       def reset?
-        can_reset = manage?
-        can_reset &= user != record if record.is_a?(User)
-        can_reset
+        manage? && (
+          (record == User) ||
+          (record.is_a?(User) && user != record)
+        )
       end
 
       relation_scope do |relation|
