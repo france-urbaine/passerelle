@@ -1,19 +1,19 @@
 {
   "apps": [
     {
-      "app_id": "app_cdac2714-3b60-4406-b7db-817d4a50a719",
-      "org_id": "orga_8988f58e-5491-49dd-8e65-0e2a28249cd5",
-      "deploy_url": "https://push-n3-par-clevercloud-customers.services.clever-cloud.com/app_cdac2714-3b60-4406-b7db-817d4a50a719.git",
+      "app_id": "app_798d46fc-eac9-4e13-bea3-49865434b4cf",
+      "org_id": "orga_db401f26-9bed-4f49-b3a8-ea2a455a898c",
+      "deploy_url": "https://push-n3-par-clevercloud-customers.services.clever-cloud.com/app_798d46fc-eac9-4e13-bea3-49865434b4cf.git",
       "name": "Passerelle",
       "alias": "production"
     },
     {
-      "app_id": "app_dfabf65b-ded1-42c2-80d6-708790dd6ca9",
-      "org_id": "orga_8988f58e-5491-49dd-8e65-0e2a28249cd5",
-      "deploy_url": "https://push-n3-par-clevercloud-customers.services.clever-cloud.com/app_dfabf65b-ded1-42c2-80d6-708790dd6ca9.git",
+      "app_id": "app_f7ca2640-a511-4485-b49a-6958fe9c429d",
+      "org_id": "orga_db401f26-9bed-4f49-b3a8-ea2a455a898c",
+      "deploy_url": "https://push-n3-par-clevercloud-customers.services.clever-cloud.com/app_f7ca2640-a511-4485-b49a-6958fe9c429d.git",
       "name": "Passerelle (alpha)",
       "alias": "alpha"
     }
   ],
-  "default": "app_cdac2714-3b60-4406-b7db-817d4a50a719"
+  "default": "app_798d46fc-eac9-4e13-bea3-49865434b4cf"
 }
