@@ -2,7 +2,15 @@
 
 require "htmlbeautifier"
 
+module InspectHTML
+  def inspect_html(html)
+    puts HtmlBeautifier.beautify(html)
+  end
+end
+
 module InspectHTMLCapybara
+  include InspectHTML
+
   def inspect_html(node = page)
     html =
       case node
@@ -11,13 +19,15 @@ module InspectHTMLCapybara
       when Capybara::Node::Base   then node.native["innerHTML"]
       end
 
-    puts HtmlBeautifier.beautify(html)
+    super(html)
   end
 end
 
 module InspectHTMLResponse
+  include InspectHTML
+
   def inspect_html(html = response.body)
-    puts HtmlBeautifier.beautify(html)
+    super(html)
   end
 end
 
@@ -25,4 +35,5 @@ RSpec.configure do |config|
   config.include InspectHTMLCapybara, type: :system
   config.include InspectHTMLCapybara, type: :component
   config.include InspectHTMLResponse, type: :request
+  config.include InspectHTML, type: :helper
 end

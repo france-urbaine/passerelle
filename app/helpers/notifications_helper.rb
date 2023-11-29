@@ -19,6 +19,8 @@ module NotificationsHelper
         body    = notice.fetch(:body, nil)
       end
 
+      return unless %i[default warning danger success done].include?(scheme)
+
       actions = FlashAction.read_multi(flash[:actions])
       actions = Array.wrap(actions).map(&:symbolize_keys)
 
