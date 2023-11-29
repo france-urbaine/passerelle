@@ -7,8 +7,11 @@
       - modal.with_hidden_field :redirect, @redirect_path
 
       p
-        ' Une fois le compte de cet utilisateur ré-initialisé, celui-ci ne pourra plus s'y connecter.
-        ' Les instructions nécessaires seront envoyées à #{@user.email} pour re-finaliser le processus d'inscription.
+        ' Les instructions nécessaires seront envoyées à <b>#{@user.email}</b> pour réinitialiser son compte,
+        br
+        ' son mot de passe ainsi que la méthode d'authentification en 2 étapes.
+      p
+        ' L'utilisateur ne pourra plus se connecter avant d'avoir finaliser le process de réinitialisation.
         br
         ' Cette invitation annule toute invitation précédemment envoyée et est valable
         ' pendant #{distance_of_time_in_words_to_now(User.confirm_within.from_now)}.
