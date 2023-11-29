@@ -1,7 +1,7 @@
 .code-request-example
   = tabs_component do |tabs|
     - tabs.with_tab("cURL") do
-      = code_example_component(:shell) do
+      = code_example_component(:shell, copyable: true) do
         | $ curl -X #{@verb} #{url}
 
         - curl_headers.sort_by(&:first).each do |(key, value)|
@@ -17,7 +17,7 @@
           |     --data-binary @#{@request_file}
 
     - tabs.with_tab("httpie") do
-      = code_example_component(:shell) do
+      = code_example_component(:shell, copyable: true) do
         - if @json
           | $ http -jv #{@verb} #{url}
         - else

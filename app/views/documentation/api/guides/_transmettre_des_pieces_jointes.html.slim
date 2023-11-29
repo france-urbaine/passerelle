@@ -45,7 +45,7 @@
       p
         ' Vous pouvez extraire ces informations dans des variables avant de les passer dans une requête :
 
-      = code_example_component(:shell) do
+      = code_example_component(:shell, copyable: true) do
         | $ FILEPATH=./permis.pdf && \
               FILENAME=$(basename -- $FILEPATH) && \
               BYTESIZE=$(wc -c "$FILEPATH" | awk '{print $1}') && \
@@ -101,7 +101,7 @@
 
       = tabs_component do |tabs|
         - tabs.with_tab("cURL + jq") do
-          = code_example_component(:shell) do
+          = code_example_component(:shell, copyable: true) do
             | $ read SIGNED_ID UPLOAD_URL < <(echo $( \
                   curl --fail -X POST #{api_upload_url} \
                     -H "Accept: application/json" \
@@ -113,7 +113,7 @@
                   && echo "UPLOAD_URL: $UPLOAD_URL"
 
         - tabs.with_tab("httpie + jq") do
-          = code_example_component(:shell) do
+          = code_example_component(:shell, copyable: true) do
             | $ read SIGNED_ID UPLOAD_URL < <(echo $( \
                   http --check-status --json POST #{api_upload_url} \
                     Accept:"application/json" \
@@ -139,14 +139,14 @@
       .code-request-example
         = tabs_component do |tabs|
           - tabs.with_tab("cURL") do
-            = code_example_component(:shell) do
+            = code_example_component(:shell, copyable: true) do
               | $ curl -X PUT $UPLOAD_URL \
                     -H "Content-Length: $BYTESIZE" \
                     -H "Content-Type: $CONTENT_TYPE" \
                     --data-binary @$FILEPATH
 
           - tabs.with_tab("httpie") do
-            = code_example_component(:shell) do
+            = code_example_component(:shell, copyable: true) do
               | $ http -v PUT $UPLOAD_URL \
                     Content-Type:"$CONTENT_TYPE" \
                     @$FILEPATH

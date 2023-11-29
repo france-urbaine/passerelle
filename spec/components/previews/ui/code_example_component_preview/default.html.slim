@@ -1,4 +1,13 @@
+= code_example_component do
+  | Content-Type: application/json
+    Accept: application/json
+
 = code_example_component(:shell) do
+  | $ curl -X GET https://api.passerelle-fiscale.fr/collectivites \
+        -H "Accept: application/json" \
+        -H "Authorization: Bearer $ACCESS_TOKEN"
+
+= code_example_component(:shell, copyable: true) do
   | $ curl -X GET https://api.passerelle-fiscale.fr/collectivites \
         -H "Accept: application/json" \
         -H "Authorization: Bearer $ACCESS_TOKEN"

@@ -1,4 +1,4 @@
-= code_example_component do |code|
+= code_example_component(copyable: false) do |code|
   - code.with_language(:shell) do
     | $ curl -X GET https://api.passerelle-fiscale.fr/collectivites \
           -H "Accept: application/json" \
@@ -22,3 +22,28 @@
           }
         ]
       }
+
+= code_example_component(copyable: true) do |code|
+  - code.with_language(:shell) do
+    | $ curl -X GET https://api.passerelle-fiscale.fr/collectivites \
+          -H "Accept: application/json" \
+          -H "Authorization: Bearer $ACCESS_TOKEN"
+
+  - code.with_language(:http, copyable: true) do
+    | GET /collectivites HTTP/1.1
+      Accept: application/json
+      Authorization: Bearer HgAxkdHZUvlBjuuWweLKwsJ6InRfZoZ-GHyFtbrS03k
+
+
+
+= code_example_component do |code|
+  - code.with_language(:shell, copyable: true) do
+    | $ curl -X GET https://api.passerelle-fiscale.fr/collectivites \
+          -H "Accept: application/json" \
+          -H "Authorization: Bearer $ACCESS_TOKEN"
+
+  - code.with_language(:http) do
+    | GET /collectivites HTTP/1.1
+      Accept: application/json
+      Authorization: Bearer HgAxkdHZUvlBjuuWweLKwsJ6InRfZoZ-GHyFtbrS03k
+
