@@ -288,6 +288,19 @@ class User < ApplicationRecord
     update(unconfirmed_email: nil)
   end
 
+  # Reset process
+  # ----------------------------------------------------------------------------
+  def resetable?
+    confirmed?
+  end
+
+  def reset_confirmation!
+    update(
+      confirmation_token: nil,
+      confirmed_at: nil
+    )
+  end
+
   # Invitation process
   # ----------------------------------------------------------------------------
   def invite(by: nil)
@@ -299,10 +312,6 @@ class User < ApplicationRecord
 
   def invited?
     invited_at? && !confirmed?
-  end
-
-  def resetable?
-    confirmed?
   end
 
   def accept_invitation(params = {})

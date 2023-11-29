@@ -14,10 +14,8 @@ module Organization
 
         def create
           @user = load_and_authorize_user
-          @user.update!(
-            confirmation_token: nil,
-            confirmed_at: nil
-          )
+          @user.reset_confirmation!
+
           result = @user.resend_confirmation_instructions
 
           respond_with @user,
