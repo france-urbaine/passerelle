@@ -106,6 +106,7 @@ RSpec.describe User do
     it { expect(user).not_to be_invited }
     it { expect(user).not_to be_confirmed }
     it { expect(user).not_to be_active_for_authentication }
+    it { expect(user).not_to be_resetable }
 
     it { expect { user }.to have_sent_emails.by(1) }
     it { expect { user }.to have_sent_email.to { user.email }.with_subject("Votre inscription sur Passerelle") }
@@ -119,6 +120,7 @@ RSpec.describe User do
 
     it { expect { user.confirm }.to change(user, :confirmed?).to(true) }
     it { expect { user.confirm }.to change(user, :active_for_authentication?).to(true) }
+    it { expect { user.confirm }.to change(user, :resetable?).to(true) }
     it { expect { user.confirm }.not_to have_sent_emails }
   end
 
@@ -137,6 +139,7 @@ RSpec.describe User do
       it { expect(user).not_to be_confirmed }
       it { expect(user).not_to be_persisted }
       it { expect(user).not_to be_active_for_authentication }
+      it { expect(user).not_to be_resetable }
 
       it { expect(user.password)  .to be_present }
       it { expect(user.invited_at).to be_present }
@@ -156,6 +159,7 @@ RSpec.describe User do
       it { expect { user.accept_invitation }.to change(user, :invited?).to(false) }
       it { expect { user.accept_invitation }.to change(user, :confirmed?).to(true) }
       it { expect { user.accept_invitation }.to change(user, :active_for_authentication?).to(true) }
+      it { expect { user.accept_invitation }.to change(user, :resetable?).to(true) }
 
       it { expect { user.accept_invitation }.not_to have_sent_emails }
       it { expect { user.accept_invitation }.not_to have_enqueued_job }

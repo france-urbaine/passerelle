@@ -304,6 +304,40 @@ RSpec.describe "Users in admin" do
     expect(page).to     have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
   end
 
+  it "resets a user from the user page" do
+    visit admin_user_path(elise)
+
+    expect(page).to have_selector("a.button", text: "Réinitialiser")
+
+    click_on "Réinitialiser"
+
+    # A dialog box should appear with a form
+    # The form should be filled with user data
+    #
+    within "[role=dialog]", text: "Réinitialisation de l'utilisateur" do
+      click_on "Continuer"
+    end
+
+    # The browser should stay on the user page
+    # The user should have changed its name
+    #
+    expect(page).to have_current_path(admin_user_path(elise))
+
+    # The dialog should be closed
+    # A notification should be displayed
+    #
+    expect(page).not_to have_selector("[role=dialog]")
+    expect(page).to     have_selector("[role=log]", text: "L'invitation a été envoyée.")
+    expect(page).not_to have_selector("a.button", text: "Réinitialiser")
+    expect(page).to     have_selector("a.button", text: "Renouveler l'invitation")
+  end
+
+  it "does not display reset button on user self page" do
+    visit admin_user_path(marc)
+
+    expect(page).not_to have_selector("a.button", text: "Réinitialiser")
+  end
+
   it "discards an user from the index page & rollbacks" do
     visit admin_users_path
 

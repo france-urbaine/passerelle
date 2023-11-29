@@ -1,0 +1,20 @@
+= modal_frame_component(referrer: @referrer) do |template|
+  - template.with_modal do |modal|
+    - modal.with_header do
+      | Réinitialisation de l'utilisateur
+
+    - modal.with_form(url: admin_user_reset_path(@user), method: :post) do
+      - modal.with_hidden_field :redirect, @redirect_path
+
+      p
+        ' Les instructions nécessaires seront envoyées à <b>#{@user.email}</b> pour réinitialiser son compte,
+        br
+        ' son mot de passe ainsi que la méthode d'authentification en 2 étapes.
+      p
+        ' L'utilisateur ne pourra plus se connecter avant d'avoir finaliser le process de réinitialisation.
+        br
+        ' Cette invitation annule toute invitation précédemment envoyée et est valable
+        ' pendant #{distance_of_time_in_words_to_now(User.confirm_within.from_now)}.
+
+    - modal.with_submit_action "Continuer", autofocus: true
+    - modal.with_close_action "Annuler"

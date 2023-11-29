@@ -348,6 +348,13 @@ fr:
             header: "L'invitation a été envoyée."
             delay:  3000
 
+      resets:
+        create:
+          notice:
+            scheme: "success"
+            header: "L'invitation a été envoyée."
+            delay:  3000
+
     territories:
       updates:
         update:

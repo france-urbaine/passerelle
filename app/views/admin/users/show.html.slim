@@ -27,7 +27,14 @@
         - list.with_attribute("Adresse mail de contact") do |attribute|
           = render Views::Users::ShowEmailComponent.new(@user)
 
-          - if @user.confirmation_period_expired?
+          - if allowed_to?(:reset?, @user) && @user.resetable?
+            - attribute.with_action(\
+                "Réinitialiser",\
+                new_admin_user_reset_path(@user),\
+                modal: true,\
+                icon: "arrow-path"\
+              )
+          - elsif !@user.confirmed?
             - attribute.with_action(\
                 "Renouveler l'invitation",\
                 new_admin_user_invitation_path(@user),\
