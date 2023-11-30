@@ -32,7 +32,7 @@ RSpec.describe "DGFIPs in admin" do
 
     # A button should be present to edit the DGFIP
     #
-    within ".header-bar", text: "Direction générale des Finances publiques" do
+    within ".breadcrumbs", text: "Direction générale des Finances publiques" do
       click_on "Modifier"
     end
 

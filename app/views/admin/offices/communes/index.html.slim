@@ -1,11 +1,13 @@
 = content_frame_component do
-  = breadcrumbs_component do |breadcrumbs|
-    - breadcrumbs.with_path "Administration"
-    - breadcrumbs.with_path "Guichets", admin_offices_path
-    - breadcrumbs.with_path @office.name, admin_office_path(@office)
-    - breadcrumbs.with_path "Communes"
+  = content_layout_component do |layout|
+    - layout.with_breadcrumbs do |breadcrumbs|
+      - breadcrumbs.with_path "Administration"
+      - breadcrumbs.with_path "Guichets", admin_offices_path
+      - breadcrumbs.with_path @office.name, admin_office_path(@office)
+      - breadcrumbs.with_h1 "Communes"
 
-  = render Views::Communes::ListComponent.new(@communes, @pagy, namespace: :admin, parent: @office) do |view|
-    - view.with_column(:name)
-    - view.with_column(:epci)
-    - view.with_column(:collectivities_count)
+    - layout.with_section do
+      = render Views::Communes::ListComponent.new(@communes, @pagy, namespace: :admin, parent: @office) do |view|
+        - view.with_column(:name)
+        - view.with_column(:epci)
+        - view.with_column(:collectivities_count)

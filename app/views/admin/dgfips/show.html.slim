@@ -1,20 +1,19 @@
 = content_frame_component do
-  = breadcrumbs_component do |breadcrumbs|
-    - breadcrumbs.with_path "Administration"
-    - breadcrumbs.with_path @dgfip.name, admin_dgfip_path
+  = content_layout_component do |layout|
+    - layout.with_breadcrumbs do |breadcrumbs|
+      - breadcrumbs.with_path "Administration"
+      - breadcrumbs.with_h1 @dgfip.name
 
-    - if allowed_to?(:update?, @dgfip)
-      - breadcrumbs.with_action "Modifier", edit_admin_dgfip_path, icon: "pencil-square", modal: true
+      - if allowed_to?(:update?, @dgfip)
+        - breadcrumbs.with_action "Modifier", edit_admin_dgfip_path, icon: "pencil-square", modal: true
 
-    - if allowed_to?(:destroy?, @dgfip)
-      - breadcrumbs.with_action "Supprimer", remove_admin_dgfip_path(@dgfip), icon: "trash", modal: true, destructive: "discrete"
+      - if allowed_to?(:destroy?, @dgfip)
+        - breadcrumbs.with_action "Supprimer", remove_admin_dgfip_path(@dgfip), icon: "trash", modal: true, destructive: "discrete"
 
-  = content_flow_component do |flow|
+    - layout.with_header icon: "identification" do
+      | Description
 
-    - flow.with_header do |header|
-      - header.with_title "Description", "identification", "Nouvelle section"
-
-    - flow.with_section do
+    - layout.with_section do
       = description_list_component(@dgfip) do |list|
         - list.with_attribute("Contact") do |attribute|
           = "#{@dgfip.contact_first_name} #{@dgfip.contact_last_name}".strip.presence
@@ -32,12 +31,13 @@
             = display_count(@dgfip.users_count, "utilisateur")
 
     - if allowed_to?(:index?, User)
-      - flow.with_header do |header|
-        - header.with_title "Utilisateurs de l'organisation", "rectangle-stack", "Nouvelle section"
-        - if allowed_to?(:create?, User)
-          = header.with_action "Inviter un utilisateur", new_admin_dgfip_user_path, icon: "plus", modal: true
+      - layout.with_header icon: "rectangle-stack" do |header|
+        | Utilisateurs de l'organisation
 
-      - flow.with_section do
+        - if allowed_to?(:create?, User)
+          - header.with_action "Inviter un utilisateur", new_admin_dgfip_user_path, icon: "plus", modal: true
+
+      - layout.with_section do
         - if @dgfip.users_count.zero?
           = card_component(content_class: "card__content--empty")
             | Aucun utilisateur assigné.

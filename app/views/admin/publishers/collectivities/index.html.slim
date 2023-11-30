@@ -1,18 +1,20 @@
 = content_frame_component do
-  = breadcrumbs_component do |breadcrumbs|
-    - breadcrumbs.with_path "Administration"
-    - breadcrumbs.with_path "Éditeurs", admin_publishers_path
-    - breadcrumbs.with_path @publisher.name, admin_publisher_path(@publisher)
-    - breadcrumbs.with_path "Collectivités"
+  = content_layout_component do |layout|
+    - layout.with_breadcrumbs do |breadcrumbs|
+      - breadcrumbs.with_path "Administration"
+      - breadcrumbs.with_path "Éditeurs", admin_publishers_path
+      - breadcrumbs.with_path @publisher.name, admin_publisher_path(@publisher)
+      - breadcrumbs.with_h1 "Collectivités"
 
-  = render Views::Collectivities::ListComponent.new(@collectivities, @pagy, namespace: :admin, parent: @publisher) do |view|
-    - view.with_column(:name)
-    - view.with_column(:siren)
-    - view.with_column(:contact)
-    - view.with_column(:contact_email)
-    - view.with_column(:contact_phone)
-    - view.with_column(:users_count)
-    - view.with_column(:packages_transmitted_count)
-    - view.with_column(:reports_transmitted_count)
-    - view.with_column(:reports_approved_count)
-    - view.with_column(:reports_rejected_count)
+    - layout.with_section do
+      = render Views::Collectivities::ListComponent.new(@collectivities, @pagy, namespace: :admin, parent: @publisher) do |view|
+        - view.with_column(:name)
+        - view.with_column(:siren)
+        - view.with_column(:contact)
+        - view.with_column(:contact_email)
+        - view.with_column(:contact_phone)
+        - view.with_column(:users_count)
+        - view.with_column(:packages_transmitted_count)
+        - view.with_column(:reports_transmitted_count)
+        - view.with_column(:reports_approved_count)
+        - view.with_column(:reports_rejected_count)

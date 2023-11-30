@@ -1,21 +1,20 @@
 = content_frame_component do
-  = breadcrumbs_component do |breadcrumbs|
-    - breadcrumbs.with_path "Administration"
-    - breadcrumbs.with_path "DDFIP", admin_ddfips_path
-    - breadcrumbs.with_path @ddfip.name
+  = content_layout_component do |layout|
+    - layout.with_breadcrumbs do |breadcrumbs|
+      - breadcrumbs.with_path "Administration"
+      - breadcrumbs.with_path "DDFIP", admin_ddfips_path
+      - breadcrumbs.with_h1 @ddfip.name
 
-    - if allowed_to?(:update?, @ddfip)
-      - breadcrumbs.with_action "Modifier", edit_admin_ddfip_path(@ddfip), icon: "pencil-square", modal: true
+      - if allowed_to?(:update?, @ddfip)
+        - breadcrumbs.with_action "Modifier", edit_admin_ddfip_path(@ddfip), icon: "pencil-square", modal: true
 
-    - if allowed_to?(:destroy?, @ddfip)
-      - breadcrumbs.with_action "Supprimer", remove_admin_ddfip_path(@ddfip), icon: "trash", modal: true, destructive: "discrete"
+      - if allowed_to?(:destroy?, @ddfip)
+        - breadcrumbs.with_action "Supprimer", remove_admin_ddfip_path(@ddfip), icon: "trash", modal: true, destructive: "discrete"
 
-  = content_flow_component do |flow|
+    - layout.with_header icon: "identification" do
+      | Description
 
-    - flow.with_header do |header|
-      - header.with_title "Description", "identification", "Nouvelle section"
-
-    - flow.with_section do
+    - layout.with_section do
       = description_list_component(@ddfip) do |list|
         - list.with_attribute(:departement) do |attribute|
           = authorized_link_to @ddfip.departement, namespace: :admin do
@@ -49,12 +48,13 @@
             = display_count(@ddfip.reports_rejected_count, "rejeté")
 
     - if allowed_to?(:index?, Office)
-      - flow.with_header do |header|
-        - header.with_title "Guichets", "rectangle-stack", "Nouvelle section"
+      - layout.with_header icon: "rectangle-stack" do |header|
+        | Guichets
+
         - if allowed_to?(:create?, Office)
           - header.with_action "Ajouter un guichet", new_admin_ddfip_office_path(@ddfip), icon: "plus", modal: true
 
-      - flow.with_section do
+      - layout.with_section do
         - if @ddfip.offices_count.zero?
           = card_component(content_class: "card__content--empty")
             | Aucun guichet enregistré.
@@ -66,12 +66,13 @@
               - skeleton.with_pagination
 
     - if allowed_to?(:index?, User)
-      - flow.with_header do |header|
-        - header.with_title "Utilisateurs de l'organisation", "rectangle-stack", "Nouvelle section"
+      - layout.with_header icon: "rectangle-stack" do |header|
+        | Utilisateurs de l'organisation
+
         - if allowed_to?(:create?, User)
           - header.with_action "Inviter un utilisateur", new_admin_ddfip_user_path(@ddfip), icon: "plus", modal: true
 
-      - flow.with_section do
+      - layout.with_section do
         - if @ddfip.users_count.zero?
           = card_component(content_class: "card__content--empty")
             | Aucun utilisateur assigné.
@@ -83,10 +84,10 @@
               - skeleton.with_pagination
 
     - if allowed_to?(:index?, Collectivity)
-      - flow.with_header do |header|
-        - header.with_title "Collectivités enregistrées", "rectangle-stack", "Nouvelle section"
+      - layout.with_header icon: "rectangle-stack" do
+        | Collectivités enregistrées
 
-      - flow.with_section do
+      - layout.with_section do
         - if @ddfip.collectivities_count.zero?
           = card_component(content_class: "card__content--empty")
             | Aucune collectivité enregistrée.

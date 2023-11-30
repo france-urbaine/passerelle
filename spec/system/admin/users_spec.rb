@@ -289,7 +289,7 @@ RSpec.describe "Users in admin" do
 
     # A button should be present to edit the user
     #
-    within ".header-bar", text: "Marc Debomy" do
+    within ".breadcrumbs", text: "Marc Debomy" do
       click_on "Modifier"
     end
 
@@ -412,7 +412,7 @@ RSpec.describe "Users in admin" do
 
     # A button should be present to edit the user
     #
-    within ".header-bar", text: "Elise Lacroix" do
+    within ".breadcrumbs", text: "Elise Lacroix" do
       click_on "Supprimer"
     end
 

@@ -1,82 +1,84 @@
 = content_frame_component do
-  = breadcrumbs_component do |breadcrumbs|
-    - breadcrumbs.with_path "Administration"
-    - breadcrumbs.with_path "DDFIP"
+  = content_layout_component do |layout|
+    - layout.with_breadcrumbs do |breadcrumbs|
+      - breadcrumbs.with_path "Administration"
+      - breadcrumbs.with_h1 "DDFIP"
 
-    - if allowed_to?(:create?, DDFIP)
-      - breadcrumbs.with_action "Ajouter une DDFIP", new_admin_ddfip_path, icon: "plus", modal: true, primary: true
+      - if allowed_to?(:create?, DDFIP)
+        - breadcrumbs.with_action "Ajouter une DDFIP", new_admin_ddfip_path, icon: "plus", modal: true, primary: true
 
-  = datatable_component(@ddfips) do |datatable|
-    - datatable.with_search
-    - datatable.with_pagination(@pagy)
+    - layout.with_section do
+      = datatable_component(@ddfips) do |datatable|
+        - datatable.with_search
+        - datatable.with_pagination(@pagy)
 
-    - datatable.with_selection do |selection|
-      - if allowed_to?(:destroy_all?, DDFIP)
-        - selection.with_action "Tout supprimer", remove_all_admin_ddfips_path, modal: true
+        - datatable.with_selection do |selection|
+          - if allowed_to?(:destroy_all?, DDFIP)
+            - selection.with_action "Tout supprimer", remove_all_admin_ddfips_path, modal: true
 
-    - datatable.with_column(:name,        sort: true)          { "DDFIP" }
-    - datatable.with_column(:departement, sort: true, span: 2) { "Département" }
+        - datatable.with_column(:name,        sort: true)          { "DDFIP" }
+        - datatable.with_column(:departement, sort: true, span: 2) { "Département" }
 
-    - datatable.with_column(:contact)       { "Contact" }
-    - datatable.with_column(:contact_email) { "Adresse mail de contact" }
-    - datatable.with_column(:contact_phone) { "Numéro de téléphone" }
+        - datatable.with_column(:contact)       { "Contact" }
+        - datatable.with_column(:contact_email) { "Adresse mail de contact" }
+        - datatable.with_column(:contact_phone) { "Numéro de téléphone" }
 
-    - datatable.with_column(:collectivities_count,      numeric: true) { "Collectivités" }
-    - datatable.with_column(:offices_count,             numeric: true) { "Guichets" }
-    - datatable.with_column(:users_count,               numeric: true) { "Utilisateurs" }
-    - datatable.with_column(:reports_transmitted_count, numeric: true) { "Signalements" }
-    - datatable.with_column(:reports_approved_count,    numeric: true) { "Approuvés" }
-    - datatable.with_column(:reports_rejected_count,    numeric: true) { "Rejetés" }
+        - datatable.with_column(:collectivities_count,      numeric: true) { "Collectivités" }
+        - datatable.with_column(:offices_count,             numeric: true) { "Guichets" }
+        - datatable.with_column(:users_count,               numeric: true) { "Utilisateurs" }
+        - datatable.with_column(:reports_transmitted_count, numeric: true) { "Signalements" }
+        - datatable.with_column(:reports_approved_count,    numeric: true) { "Approuvés" }
+        - datatable.with_column(:reports_rejected_count,    numeric: true) { "Rejetés" }
 
-    - datatable.with_empty_message do
-      - if params[:search]
-        | Aucune DDFIP ne correspont à votre recherche.
-      - else
-        | Aucune DDFIP disponible.
+        - datatable.with_empty_message do
+          - if params[:search]
+            | Aucune DDFIP ne correspont à votre recherche.
+          - else
+            | Aucune DDFIP disponible.
 
-    - datatable.each_row do |row, ddfip|
-      - row.with_checkbox "Sélectionner cette DDFIP", described_by: :name
+        - datatable.each_row do |row, ddfip|
+          - row.with_checkbox "Sélectionner cette DDFIP", described_by: :name
 
-      - if allowed_to?(:update?, ddfip)
-        - row.with_action "Modifier cette DDFIP", edit_admin_ddfip_path(ddfip), icon: "pencil-square", modal: true
+          - if allowed_to?(:update?, ddfip)
+            - row.with_action "Modifier cette DDFIP", edit_admin_ddfip_path(ddfip), icon: "pencil-square", modal: true
 
-      - if allowed_to?(:destroy?, ddfip)
-        - row.with_action "Supprimer cette DDFIP", remove_admin_ddfip_path(ddfip), icon: "trash", modal: true
+          - if allowed_to?(:destroy?, ddfip)
+            - row.with_action "Supprimer cette DDFIP", remove_admin_ddfip_path(ddfip), icon: "trash", modal: true
 
-      - row.with_column(:name) do
-        = authorized_link_to ddfip, namespace: :admin
+          - row.with_column(:name) do
+            = authorized_link_to ddfip, namespace: :admin
 
-      - row.with_column(:departement) do |column|
-        - if ddfip.departement
-          - column.with_span do
-            = ddfip.code_departement
+          - row.with_column(:departement) do |column|
+            - if ddfip.departement
+              - column.with_span do
+                = ddfip.code_departement
 
-          - column.with_span do
-            = authorized_link_to ddfip.departement, namespace: :admin
+              - column.with_span do
+                = authorized_link_to ddfip.departement, namespace: :admin
 
-      - row.with_column(:contact) do
-         = "#{ddfip.contact_first_name} #{ddfip.contact_last_name}".strip.presence
+          - row.with_column(:contact) do
+            = "#{ddfip.contact_first_name} #{ddfip.contact_last_name}".strip.presence
 
-      - row.with_column(:contact_email) do
-        = mail_to(ddfip.contact_email) if ddfip.contact_email?
+          - row.with_column(:contact_email) do
+            = mail_to(ddfip.contact_email) if ddfip.contact_email?
 
-      - row.with_column(:contact_phone) do
-        = phone_to(ddfip.contact_phone) if ddfip.contact_phone?
+          - row.with_column(:contact_phone) do
+            = phone_to(ddfip.contact_phone) if ddfip.contact_phone?
 
-      - row.with_column(:collectivities_count) do
-        = number_with_delimiter(ddfip.collectivities_count) if ddfip.collectivities_count.positive?
+          - row.with_column(:collectivities_count) do
+            = number_with_delimiter(ddfip.collectivities_count) if ddfip.collectivities_count.positive?
 
-      - row.with_column(:offices_count) do
-        = number_with_delimiter(ddfip.offices_count) if ddfip.offices_count.positive?
+          - row.with_column(:offices_count) do
+            = number_with_delimiter(ddfip.offices_count) if ddfip.offices_count.positive?
 
-      - row.with_column(:users_count) do
-        = number_with_delimiter(ddfip.users_count) if ddfip.users_count.positive?
+          - row.with_column(:users_count) do
+            = number_with_delimiter(ddfip.users_count) if ddfip.users_count.positive?
 
-      - row.with_column(:reports_transmitted_count) do
-        = number_with_delimiter(ddfip.reports_transmitted_count) if ddfip.reports_transmitted_count.positive?
+          - row.with_column(:reports_transmitted_count) do
+            = number_with_delimiter(ddfip.reports_transmitted_count) if ddfip.reports_transmitted_count.positive?
 
-      - row.with_column(:reports_approved_count) do
-        = number_with_delimiter(ddfip.reports_approved_count) if ddfip.reports_approved_count.positive?
+          - row.with_column(:reports_approved_count) do
+            = number_with_delimiter(ddfip.reports_approved_count) if ddfip.reports_approved_count.positive?
 
-      - row.with_column(:reports_rejected_count) do
-        = number_with_delimiter(ddfip.reports_rejected_count) if ddfip.reports_rejected_count.positive?
+          - row.with_column(:reports_rejected_count) do
+            = number_with_delimiter(ddfip.reports_rejected_count) if ddfip.reports_rejected_count.positive?

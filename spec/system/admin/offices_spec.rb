@@ -162,7 +162,7 @@ RSpec.describe "Offices in admin" do
 
     # A button should be present to edit the office
     #
-    within ".header-bar", text: "PELP de Bayonne" do
+    within ".breadcrumbs", text: "PELP de Bayonne" do
       click_on "Modifier"
     end
 
@@ -252,7 +252,7 @@ RSpec.describe "Offices in admin" do
 
     # A button should be present to remove the office
     #
-    within ".header-bar", text: "PELP de Bayonne" do
+    within ".breadcrumbs", text: "PELP de Bayonne" do
       click_on "Supprimer"
     end
 
