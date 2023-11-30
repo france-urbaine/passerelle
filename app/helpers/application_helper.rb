@@ -5,6 +5,7 @@ module ApplicationHelper
   include CurrentOrderParams
   include FormHelper
   include FormatHelper
+  include StorageHelper
 end
 
 # Eager load components to get all helpers methods available

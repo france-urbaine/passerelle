@@ -36,12 +36,6 @@ GIT
       rspec (>= 3.10)
 
 GEM
-  remote: https://gems.contribsys.com/
-  specs:
-    sidekiq-pro (7.1.6)
-      sidekiq (>= 7.1.5, < 8)
-
-GEM
   remote: https://rubygems.org/
   specs:
     action_policy (0.6.7)
@@ -656,7 +650,6 @@ DEPENDENCIES
   saharspec
   shoulda-matchers
   sidekiq
-  sidekiq-pro!
   simplecov
   slim
   sprockets-rails
