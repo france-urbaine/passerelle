@@ -1,15 +1,5 @@
-= content_frame_component do
-  = breadcrumbs_component do |breadcrumbs|
-    - breadcrumbs.with_path "References", @doc[:doc_url]
-    - breadcrumbs.with_path @resource[:name]
-
-  = render(:partial => "informations", :locals => {:resource => @resource })
-
-  = content_flow_component do |flow|
-
-    - flow.with_header do |header|
-      - header.with_title "Endpoints", "link"
-
-    - flow.with_section do
-      .card.documentation__card
-        = render(:partial => "methods", :locals => {:methods => @resource[:methods] })
+= not_found_status_page_component(@model_not_found, referrer: @referrer_path) do |template|
+  - template.with_breadcrumbs do |breadcrumbs|
+    - breadcrumbs.with_path "References"
+    - breadcrumbs.with_h1 do
+      = @resource[:name]

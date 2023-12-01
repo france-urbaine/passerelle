@@ -1,0 +1,21 @@
+= content_layout_component do |layout|
+  - layout.with_grid(class: "xl:grid-cols-4 md:grid-cols-2") do |grid|
+    - grid.with_column do |column|
+      - column.with_section do
+        = card_component do
+          | Section #2
+
+    - grid.with_column do |column|
+      - column.with_section do
+        = card_component do
+          | Section #3
+
+    - grid.with_column do |column|
+      - column.with_section do
+        = card_component do
+          | Section #4
+
+    - grid.with_column do |column|
+      - column.with_section do
+        = card_component do
+          | Section #5

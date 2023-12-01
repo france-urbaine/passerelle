@@ -1,13 +1,13 @@
 = content_frame_component do
-  = breadcrumbs_component do |breadcrumbs|
-    - breadcrumbs.with_path "Mon organisation"
-    - breadcrumbs.with_path "Paramètres"
+  = content_layout_component do |layout|
+    - layout.with_breadcrumbs do |breadcrumbs|
+      - breadcrumbs.with_path "Mon organisation"
+      - breadcrumbs.with_h1 "Paramètres"
 
-  = content_flow_component do |flow|
-    - flow.with_header do |header|
-      - header.with_title "Identification", "identification", "Nouvelle section"
+    - layout.with_header icon: "identification" do
+      | Identification
 
-    - flow.with_section do
+    - layout.with_section do
       = card_component do |card|
         - card.with_form(model: @organization, scope: :organization, url: organization_settings_path, id: "identification-form") do |form|
           = form.block :name do
@@ -26,10 +26,10 @@
 
         - card.with_submit_action "Enregistrer"
 
-    - flow.with_header do |header|
-      - header.with_title "Informations de contact", "chat-bubble-left-right", "Nouvelle section"
+    - layout.with_header icon: "chat-bubble-left-right" do
+      | Informations de contact
 
-    - flow.with_section do
+    - layout.with_section do
       = card_component do |card|
         - card.with_form(model: @organization, scope: :organization, url: organization_settings_path, id: "contact-form") do |form|
           = form.block :contact_first_name do
@@ -55,11 +55,10 @@
         - card.with_submit_action "Enregistrer"
 
     - if current_organization.is_a?(DDFIP)
+      - layout.with_header icon: "archive-box" do
+      | Traitement des signalements
 
-      - flow.with_header do |header|
-        - header.with_title "Traitement des signalements", "archive-box", "Nouvelle section"
-
-      - flow.with_section do
+      - layout.with_section do
         = card_component do |card|
           - card.with_body do
 
@@ -76,10 +75,10 @@
               - block.with_hint do
                 ' Cette fonctionnalité n'est pas encore disponible.
 
-    - flow.with_header do |header|
-      - header.with_title "Sécurité", "shield-check", "Nouvelle section"
+    - layout.with_header icon: "shield-check" do
+      | Sécurité
 
-    - flow.with_section do
+    - layout.with_section do
       = card_component do |card|
         - if current_organization.is_a?(Collectivity)
           - card.with_multipart do |card_content|

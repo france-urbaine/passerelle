@@ -1,18 +1,20 @@
 = content_frame_component do
-  = breadcrumbs_component do |breadcrumbs|
-    - breadcrumbs.with_path "Mon organisation"
-    - breadcrumbs.with_path "Guichets", organization_offices_path
-    - breadcrumbs.with_path @office.name, organization_office_path(@office)
-    - breadcrumbs.with_path "Collectivités"
+  = content_layout_component do |layout|
+    - layout.with_breadcrumbs do |breadcrumbs|
+      - breadcrumbs.with_path "Mon organisation"
+      - breadcrumbs.with_path "Guichets", organization_offices_path
+      - breadcrumbs.with_path @office.name, organization_office_path(@office)
+      - breadcrumbs.with_h1 "Collectivités"
 
-  = render Views::Collectivities::ListComponent.new(@collectivities, @pagy, namespace: :organization, parent: @office) do |view|
-    - view.with_column(:name)
-    - view.with_column(:siren)
-    - view.with_column(:publisher)
-    - view.with_column(:contact)
-    - view.with_column(:contact_email)
-    - view.with_column(:contact_phone)
-    - view.with_column(:packages_transmitted_count)
-    - view.with_column(:reports_transmitted_count)
-    - view.with_column(:reports_approved_count)
-    - view.with_column(:reports_rejected_count)
+    - layout.with_section do
+      = render Views::Collectivities::ListComponent.new(@collectivities, @pagy, namespace: :organization, parent: @office) do |view|
+        - view.with_column(:name)
+        - view.with_column(:siren)
+        - view.with_column(:publisher)
+        - view.with_column(:contact)
+        - view.with_column(:contact_email)
+        - view.with_column(:contact_phone)
+        - view.with_column(:packages_transmitted_count)
+        - view.with_column(:reports_transmitted_count)
+        - view.with_column(:reports_approved_count)
+        - view.with_column(:reports_rejected_count)

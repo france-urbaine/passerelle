@@ -8,9 +8,9 @@ RSpec.describe Layout::StatusPageComponent, type: :component do
       tag.p "Hello World"
     end
 
-    expect(page).to have_selector("main.content > turbo-frame > .card > .card__content > .card__body") do |node|
-      expect(node).to have_selector("p", text: "Hello World")
-    end
+    expect(page).to have_selector("main.content > turbo-frame > .content__layout > .content__section")
+    expect(page).to have_selector(".content__section > .card > .card__content > .card__body")
+    expect(page).to have_selector(".card__body > p", text: "Hello World")
   end
 
   it "renders a status template with header and body" do
@@ -96,13 +96,13 @@ RSpec.describe Layout::StatusPageComponent, type: :component do
       card.with_body("Hello World")
     end
 
-    expect(page).to have_selector(".header-bar > .breadcrumbs") do |node|
-      expect(node).to     have_selector(".breadcrumbs__path", count: 2)
+    expect(page).to have_selector(".breadcrumbs > .breadcrumbs__path") do |node|
+      expect(node).to     have_selector(".breadcrumbs__path-item", count: 2)
       expect(node).not_to have_selector("h1")
 
-      expect(node).to have_selector(".breadcrumbs__path:nth-child(1) > a.icon-button", text: "Retour à la page d'accueil")
+      expect(node).to have_selector(".breadcrumbs__path-item:nth-child(1) > a.icon-button", text: "Retour à la page d'accueil")
       expect(node).to have_selector(".breadcrumbs__separator:nth-child(2)", text: "/")
-      expect(node).to have_selector(".breadcrumbs__path:nth-child(3)", text: "Root path")
+      expect(node).to have_selector(".breadcrumbs__path-item:nth-child(3)", text: "Root path")
     end
   end
 

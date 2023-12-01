@@ -12,7 +12,7 @@ class ApplicationViewComponent < ViewComponent::Base
   # Setup policies context
   authorize :user, through: :current_user
 
-  class LabelOrContent < self
+  class ContentSlot < self
     def initialize(label = nil)
       @label = label
       super()
@@ -23,7 +23,7 @@ class ApplicationViewComponent < ViewComponent::Base
     end
   end
 
-  class GenericAction < self
+  class ActionSlot < self
     def initialize(*args, **options)
       @args = args
       @options = options
@@ -33,6 +33,29 @@ class ApplicationViewComponent < ViewComponent::Base
     def call
       if @args.any? || @options.any?
         render UI::ButtonComponent.new(*@args, **@options)
+      else
+        content
+      end
+    end
+  end
+
+  class BreadcrumbsSlot < self
+    def initialize(**options)
+      @options = options
+      super()
+    end
+
+    delegate_missing_to :original_breadcrumbs
+
+    def original_breadcrumbs
+      @original_breadcrumbs ||= ::UI::BreadcrumbsComponent.new(**@options)
+    end
+
+    def call
+      content
+
+      if original_breadcrumbs.h1? || original_breadcrumbs.paths? || original_breadcrumbs.actions?
+        render original_breadcrumbs
       else
         content
       end

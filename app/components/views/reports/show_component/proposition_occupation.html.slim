@@ -1,0 +1,88 @@
+= current_layout_component do |layout|
+  - layout.with_header icon: "presentation-chart-bar" do |header|
+    | Proposition de mise à jour de l'occupation
+
+    - if allowed_to?(:update?, @report) && @report.packing?
+      - header.with_action "Compléter", edit_report_path(@report, "proposition_occupation"), icon: "pencil-square", modal: true
+
+  - layout.with_section do
+    = description_list_component(@report) do |list|
+      - if display_proposition_date_occupation?
+        - list.with_attribute(:proposition_date_occupation) do
+          = render_valid_content(:proposition_date_occupation) do
+            = helpers.display_date(@report.proposition_date_occupation)
+
+      - if display_proposition_nature_occupation?
+        - list.with_attribute(:proposition_nature_occupation) do
+          = render_valid_content(:proposition_nature_occupation) do
+            = proposition_nature_occupation
+
+      - if display_proposition_erreur_tlv?
+        - list.with_attribute(:proposition_erreur_tlv) do
+          = render_valid_content(:proposition_erreur_tlv) do
+            = t(@report.proposition_erreur_tlv.to_s, scope: "enum.boolean")
+
+      - if display_proposition_erreur_thlv?
+        - list.with_attribute(:proposition_erreur_thlv) do
+          = render_valid_content(:proposition_erreur_thlv) do
+            = t(@report.proposition_erreur_thlv.to_s, scope: "enum.boolean")
+
+      - if display_proposition_meuble_tourisme?
+        - list.with_attribute(:proposition_meuble_tourisme) do
+          = render_valid_content(:proposition_meuble_tourisme) do
+            = t(@report.proposition_meuble_tourisme.to_s, scope: "enum.boolean")
+
+      - if display_proposition_majoration_rs?
+        - list.with_attribute(:proposition_majoration_rs) do
+          = render_valid_content(:proposition_majoration_rs) do
+            = t(@report.proposition_majoration_rs.to_s, scope: "enum.boolean")
+
+      - if display_proposition_nom_occupant?
+        - list.with_attribute(:proposition_nom_occupant) do
+          = render_valid_content(:proposition_nom_occupant) do
+            = render_valid_content(:proposition_nom_occupant) { @report.proposition_nom_occupant }
+
+      - if display_proposition_prenom_occupant?
+        - list.with_attribute(:proposition_prenom_occupant) do
+          = render_valid_content(:proposition_prenom_occupant) do
+            = @report.proposition_prenom_occupant
+
+      - if display_proposition_adresse_occupant?
+        - list.with_attribute(:proposition_adresse_occupant) do
+          = render_valid_content(:proposition_adresse_occupant) do
+            = @report.proposition_adresse_occupant
+
+      - if display_proposition_numero_siren?
+        - list.with_attribute(:proposition_numero_siren) do
+          = render_valid_content(:proposition_numero_siren) do
+            = helpers.display_siren(@report.proposition_numero_siren)
+
+      - if display_proposition_nom_societe?
+        - list.with_attribute(:proposition_nom_societe) do
+          = render_valid_content(:proposition_nom_societe) do
+            = @report.proposition_nom_societe
+
+      - if display_proposition_nom_enseigne?
+        - list.with_attribute(:proposition_nom_enseigne) do
+          = render_valid_content(:proposition_nom_enseigne) do
+            = @report.proposition_nom_enseigne
+
+      - if display_proposition_etablissement_principal?
+        - list.with_attribute(:proposition_etablissement_principal) do
+          = render_valid_content(:proposition_etablissement_principal) do
+            = t(@report.proposition_etablissement_principal.to_s, scope: "enum.boolean")
+
+      - if display_proposition_chantier_longue_duree?
+        - list.with_attribute(:proposition_chantier_longue_duree) do
+          = render_valid_content(:proposition_chantier_longue_duree) do
+            = t(@report.proposition_chantier_longue_duree.to_s, scope: "enum.boolean")
+
+      - if display_proposition_code_naf?
+        - list.with_attribute(:proposition_code_naf) do
+          = render_valid_content(:proposition_code_naf) do
+            = @report.proposition_code_naf
+
+      - if display_proposition_date_debut_activite?
+        - list.with_attribute(:proposition_date_debut_activite) do
+          = render_valid_content(:proposition_date_debut_activite) do
+            = helpers.display_date(@report.proposition_date_debut_activite)

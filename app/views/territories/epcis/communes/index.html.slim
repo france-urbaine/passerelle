@@ -1,11 +1,13 @@
 = content_frame_component do
-  = breadcrumbs_component do |breadcrumbs|
-    - breadcrumbs.with_path "Territoires"
-    - breadcrumbs.with_path "EPCI", territories_epcis_path
-    - breadcrumbs.with_path @epci.name, territories_epci_path(@epci)
-    - breadcrumbs.with_path "Communes"
+  = content_layout_component do |layout|
+    - layout.with_breadcrumbs do |breadcrumbs|
+      - breadcrumbs.with_path "Territoires"
+      - breadcrumbs.with_path "EPCI", territories_epcis_path
+      - breadcrumbs.with_path @epci.name, territories_epci_path(@epci)
+      - breadcrumbs.with_h1 "Communes"
 
-  = render Views::Communes::ListComponent.new(@communes, @pagy, namespace: :territories, parent: @epci) do |view|
-    - view.with_column(:name)
-    - view.with_column(:departement)
-    - view.with_column(:collectivities_count)
+    - layout.with_section do
+      = render Views::Communes::ListComponent.new(@communes, @pagy, namespace: :territories, parent: @epci) do |view|
+        - view.with_column(:name)
+        - view.with_column(:departement)
+        - view.with_column(:collectivities_count)

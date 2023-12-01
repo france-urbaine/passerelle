@@ -1,10 +1,19 @@
-.dashboard-numbers
-  .dashboard-number
-    = current_organization.collectivities_count
-    span.dashboard-number__unit Nombre de collectivités
-  .dashboard-number
-    = current_organization.packages_transmitted_count
-    span.dashboard-number__unit Nombre de paquets transmis
-  .dashboard-number
-    = current_organization.reports_transmitted_count
-    span.dashboard-number__unit Nombre de signalements transmis
+= content_layout_component do |layout|
+  - layout.with_breadcrumbs do |breadcrumbs|
+    - breadcrumbs.with_h1 "Tableau de bord"
+
+  - layout.with_grid(class: "lg:grid-cols-3") do |grid|
+    - grid.with_column do
+      .dashboard-number
+        = current_organization.collectivities_count
+        span.dashboard-number__unit Nombre de collectivités
+
+    - grid.with_column do
+      .dashboard-number
+        = current_organization.packages_transmitted_count
+        span.dashboard-number__unit Nombre de paquets transmis
+
+    - grid.with_column do
+      .dashboard-number
+        = current_organization.reports_transmitted_count
+        span.dashboard-number__unit Nombre de signalements transmis

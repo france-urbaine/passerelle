@@ -1,21 +1,20 @@
 = content_frame_component do
-  = breadcrumbs_component do |breadcrumbs|
-    - breadcrumbs.with_path "Administration"
-    - breadcrumbs.with_path "Utilisateurs", admin_users_path
-    - breadcrumbs.with_path @user.name
+  = content_layout_component do |layout|
+    - layout.with_breadcrumbs do |breadcrumbs|
+      - breadcrumbs.with_path "Administration"
+      - breadcrumbs.with_path "Utilisateurs", admin_users_path
+      - breadcrumbs.with_h1 @user.name
 
-    - if allowed_to?(:update?, @user)
-      - breadcrumbs.with_action "Modifier", edit_admin_user_path(@user), icon: "pencil-square", modal: true
+      - if allowed_to?(:update?, @user)
+        - breadcrumbs.with_action "Modifier", edit_admin_user_path(@user), icon: "pencil-square", modal: true
 
-    - if allowed_to?(:destroy?, @user)
-      - breadcrumbs.with_action "Supprimer", remove_admin_user_path(@user), icon: "trash", modal: true, destructive: "discrete"
+      - if allowed_to?(:destroy?, @user)
+        - breadcrumbs.with_action "Supprimer", remove_admin_user_path(@user), icon: "trash", modal: true, destructive: "discrete"
 
-  = content_flow_component do |flow|
+    - layout.with_header icon: "identification" do
+      | Description
 
-    - flow.with_header do |header|
-      - header.with_title "Description", "identification", "Nouvelle section"
-
-    - flow.with_section do
+    - layout.with_section do
       = description_list_component(@user) do |list|
         - list.with_attribute(:organization) do |attribute|
           = authorized_link_to @user.organization, namespace: :admin
@@ -51,16 +50,17 @@
         - list.with_attribute("Méthode d'authentification") do |attribute|
           = render Views::Users::ShowOtpMethodComponent.new(@user)
 
-    - flow.with_header do |header|
-      - header.with_title "Informations de connexion", "server-stack", "Nouvelle section"
+    - layout.with_header icon: "server-stack" do
+      | Informations de connexion
 
-    - flow.with_section do
+    - layout.with_section do
       = render Views::Users::ShowSessionData.new(@user)
 
     - if allowed_to?(:index?, with: Admin::AuditPolicy)
-      - flow.with_header do |header|
-        - header.with_title "Activité récente", "clock", "Nouvelle section"
+      - layout.with_header icon: "clock" do |header|
+        | Activité récente
+
         - header.with_action "Voir toute l'activité", admin_user_audits_path(@user), icon: "eye"
 
-      - flow.with_section do
+      - layout.with_section do
         = turbo_frame_tag "audits", src: admin_user_audits_path(@user)

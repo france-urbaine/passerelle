@@ -1,21 +1,23 @@
 = content_frame_component do
-  = breadcrumbs_component do |breadcrumbs|
-    - breadcrumbs.with_path "Mon organisation"
-    - breadcrumbs.with_path "Collectivités"
+  = content_layout_component do |layout|
+    - layout.with_breadcrumbs do |breadcrumbs|
+      - breadcrumbs.with_path "Mon organisation"
+      - breadcrumbs.with_h1 "Collectivités"
 
-    - if allowed_to?(:create?, Collectivity)
-      - breadcrumbs.with_action "Ajouter une collectivité", new_organization_collectivity_path, icon: "plus", modal: true, primary: true
+      - if allowed_to?(:create?, Collectivity)
+        - breadcrumbs.with_action "Ajouter une collectivité", new_organization_collectivity_path, icon: "plus", modal: true, primary: true
 
-  -# TODO: show only counts of packages & reports send through publisher API
-  = render Views::Collectivities::ListComponent.new(@collectivities, @pagy, namespace: :organization) do |view|
-    - view.with_column(:name)
-    - view.with_column(:siren)
-    - view.with_column(:publisher) unless current_organization.is_a?(Publisher)
-    - view.with_column(:contact)
-    - view.with_column(:contact_email)
-    - view.with_column(:contact_phone)
-    - view.with_column(:users_count)
-    - view.with_column(:packages_transmitted_count)
-    - view.with_column(:reports_transmitted_count)
-    - view.with_column(:reports_approved_count)
-    - view.with_column(:reports_rejected_count)
+    - layout.with_section do
+      -# TODO: show only counts of packages & reports send through publisher API
+      = render Views::Collectivities::ListComponent.new(@collectivities, @pagy, namespace: :organization) do |view|
+        - view.with_column(:name)
+        - view.with_column(:siren)
+        - view.with_column(:publisher) unless current_organization.is_a?(Publisher)
+        - view.with_column(:contact)
+        - view.with_column(:contact_email)
+        - view.with_column(:contact_phone)
+        - view.with_column(:users_count)
+        - view.with_column(:packages_transmitted_count)
+        - view.with_column(:reports_transmitted_count)
+        - view.with_column(:reports_approved_count)
+        - view.with_column(:reports_rejected_count)

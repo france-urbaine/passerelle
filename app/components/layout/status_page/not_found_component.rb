@@ -5,11 +5,10 @@ module Layout
     class NotFoundComponent < ApplicationViewComponent
       define_component_helper :not_found_status_page_component
 
-      renders_one :header, "LabelOrContent"
-      renders_one :body, "LabelOrContent"
-      renders_many :actions, "GenericAction"
-
-      renders_one :breadcrumbs, ->(**options) { UI::BreadcrumbsComponent.new(heading: false, **options) }
+      renders_one :breadcrumbs, "BreadcrumbsSlot"
+      renders_one :header, "ContentSlot"
+      renders_one :body, "ContentSlot"
+      renders_many :actions, "ActionSlot"
 
       def initialize(model, **options)
         @model = model

@@ -1,21 +1,27 @@
-= content_flow_component do |flow|
+= content_layout_component do |layout|
+  - layout.with_breadcrumbs do |breadcrumbs|
+    - breadcrumbs.with_h1 "Tableau de bord"
 
-  - flow.with_section do
-    .dashboard-numbers
+  - layout.with_grid(class: "lg:grid-cols-3") do |grid|
+    - grid.with_column do
       .dashboard-number
         = current_organization.reports_transmitted_count
         span.dashboard-number__unit Signalements transmis
+
+    - grid.with_column do
       .dashboard-number
         = current_organization.reports_approved_count
         span.dashboard-number__unit Signalements approuvés
+
+    - grid.with_column do
       .dashboard-number
         = current_organization.reports_rejected_count
         span.dashboard-number__unit Signalements rejetés
 
-  - flow.with_header do |header|
-    - header.with_title "Signalements transmis", "clipboard-document", "Nouvelle section"
+  - layout.with_header icon: "clipboard-document" do
+    | Signalements transmis
 
-  - flow.with_section do
+  - layout.with_section do
     = render Views::Reports::ListComponent.new(@reports.transmitted.order_by_last_transmission_date, dashboard: true) do |view|
       - view.with_column(:reference)
       - view.with_column(:package)

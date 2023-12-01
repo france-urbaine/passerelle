@@ -4,9 +4,9 @@ module UI
   class NotificationComponent < ApplicationViewComponent
     define_component_helper :notification_component
 
-    renders_one :header, "LabelOrContent"
-    renders_one :body, "LabelOrContent"
-    renders_many :actions, "GenericAction"
+    renders_one :header, "ContentSlot"
+    renders_one :body, "ContentSlot"
+    renders_many :actions, "ActionSlot"
 
     SCHEME_CSS_CLASSES = {
       default: "",

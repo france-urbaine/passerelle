@@ -1,24 +1,32 @@
-= content_flow_component do |flow|
+= content_layout_component do |layout|
+  - layout.with_breadcrumbs do |breadcrumbs|
+    - breadcrumbs.with_h1 "Tableau de bord"
 
-  - flow.with_section do
-    .dashboard-numbers
+  - layout.with_grid(class: "xl:grid-cols-4 md:grid-cols-2") do |grid|
+    - grid.with_column do
       .dashboard-number
         = current_organization.reports_packing_count
         span.dashboard-number__unit Signalements non transmis
+
+    - grid.with_column do
       .dashboard-number
         = current_organization.reports_transmitted_count
         span.dashboard-number__unit Signalements transmis
+
+    - grid.with_column do
       .dashboard-number
         = current_organization.reports_approved_count
         span.dashboard-number__unit Signalements approuvés
+
+    - grid.with_column do
       .dashboard-number
         = current_organization.reports_rejected_count
         span.dashboard-number__unit Signalements rejetés
 
-  - flow.with_header do |header|
-    - header.with_title "Signalements à compléter/transmettre", "clipboard-document", "Nouvelle section"
+  - layout.with_header icon: "clipboard-document" do
+    | Signalements à compléter/transmettre
 
-  - flow.with_section do
+  - layout.with_section do
     = render Views::Reports::ListComponent.new(@reports.packing.order(created_at: :desc), dashboard: true) do |view|
       - view.with_column(:reference)
       - view.with_column(:package)
@@ -30,10 +38,10 @@
       - view.with_column(:priority)
       - view.with_column(:status)
 
-  - flow.with_header do |header|
-    - header.with_title "Derniers signalements traités", "clipboard-document", "Nouvelle section"
+  - layout.with_header icon: "clipboard-document" do
+    | Derniers signalements traités
 
-  - flow.with_section do
+  - layout.with_section do
     = render Views::Reports::ListComponent.new(@reports.examined.order_by_last_examination_date, dashboard: false) do |view|
       - view.with_column(:reference)
       - view.with_column(:package)

@@ -1,15 +1,17 @@
 = content_frame_component do
-  = breadcrumbs_component do |breadcrumbs|
-    - breadcrumbs.with_path "Administration"
-    - breadcrumbs.with_path "Utilisateurs"
+  = content_layout_component do |layout|
+    - layout.with_breadcrumbs do |breadcrumbs|
+      - breadcrumbs.with_path "Administration"
+      - breadcrumbs.with_h1 "Utilisateurs"
 
-    - if allowed_to?(:create?, User)
-      - breadcrumbs.with_action "Inviter un utilisateur", new_admin_user_path, icon: "plus", modal: true, primary: true
+      - if allowed_to?(:create?, User)
+        - breadcrumbs.with_action "Inviter un utilisateur", new_admin_user_path, icon: "plus", modal: true, primary: true
 
-  = render Views::Users::ListComponent.new(@users, @pagy, namespace: :admin) do |view|
-    - view.with_column(:name)
-    - view.with_column(:email)
-    - view.with_column(:organization)
-    - view.with_column(:organization_admin)
-    - view.with_column(:super_admin)
-    - view.with_column(:otp_method)
+    - layout.with_section do
+      = render Views::Users::ListComponent.new(@users, @pagy, namespace: :admin) do |view|
+        - view.with_column(:name)
+        - view.with_column(:email)
+        - view.with_column(:organization)
+        - view.with_column(:organization_admin)
+        - view.with_column(:super_admin)
+        - view.with_column(:otp_method)

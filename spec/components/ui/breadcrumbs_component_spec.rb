@@ -7,20 +7,20 @@ RSpec.describe UI::BreadcrumbsComponent, type: :component do
     render_inline described_class.new do |breadcrumbs|
       breadcrumbs.with_path "Path 1"
       breadcrumbs.with_path "Path 2", "/foo"
-      breadcrumbs.with_path "Path 3"
+      breadcrumbs.with_h1 "Path 3"
     end
 
-    expect(page).to have_selector(".header-bar > .breadcrumbs") do |node|
-      expect(node).to have_selector(".breadcrumbs__path:nth-child(1) > a.icon-button", text: "Retour à la page d'accueil")
+    expect(page).to have_selector(".breadcrumbs > .breadcrumbs__path") do |node|
+      expect(node).to have_selector(".breadcrumbs__path-item:nth-child(1) > a.icon-button", text: "Retour à la page d'accueil")
 
       expect(node).to have_selector(".breadcrumbs__separator:nth-child(2)", text: "/")
-      expect(node).to have_selector(".breadcrumbs__path:nth-child(3)", text: "Path 1")
+      expect(node).to have_selector(".breadcrumbs__path-item:nth-child(3)", text: "Path 1")
 
       expect(node).to have_selector(".breadcrumbs__separator:nth-child(4)", text: "/")
-      expect(node).to have_selector(".breadcrumbs__path:nth-child(5) > a[href='/foo']", text: "Path 2")
+      expect(node).to have_selector(".breadcrumbs__path-item:nth-child(5) > a[href='/foo']", text: "Path 2")
 
       expect(node).to have_selector(".breadcrumbs__separator:nth-child(6)", text: "/")
-      expect(node).to have_selector(".breadcrumbs__path:nth-child(7) > h1", text: "Path 3")
+      expect(node).to have_selector(".breadcrumbs__path-item:nth-child(7) > h1", text: "Path 3")
     end
   end
 
@@ -28,33 +28,41 @@ RSpec.describe UI::BreadcrumbsComponent, type: :component do
     render_inline described_class.new do |breadcrumbs|
       breadcrumbs.with_path "Path 1"
       breadcrumbs.with_path "Path 2", href: "/foo"
-      breadcrumbs.with_path "Path 3"
+      breadcrumbs.with_h1 "Path 3"
     end
 
-    expect(page).to have_selector(".header-bar > .breadcrumbs") do |node|
-      expect(node).to have_selector(".breadcrumbs__path:nth-child(1) > a.icon-button", text: "Retour à la page d'accueil")
+    expect(page).to have_selector(".breadcrumbs > .breadcrumbs__path") do |node|
+      expect(node).to have_selector(".breadcrumbs__path-item:nth-child(1) > a.icon-button", text: "Retour à la page d'accueil")
 
       expect(node).to have_selector(".breadcrumbs__separator:nth-child(2)", text: "/")
-      expect(node).to have_selector(".breadcrumbs__path:nth-child(3)", text: "Path 1")
+      expect(node).to have_selector(".breadcrumbs__path-item:nth-child(3)", text: "Path 1")
 
       expect(node).to have_selector(".breadcrumbs__separator:nth-child(4)", text: "/")
-      expect(node).to have_selector(".breadcrumbs__path:nth-child(5) > a[href='/foo']", text: "Path 2")
+      expect(node).to have_selector(".breadcrumbs__path-item:nth-child(5) > a[href='/foo']", text: "Path 2")
 
       expect(node).to have_selector(".breadcrumbs__separator:nth-child(6)", text: "/")
-      expect(node).to have_selector(".breadcrumbs__path:nth-child(7) > h1", text: "Path 3")
+      expect(node).to have_selector(".breadcrumbs__path-item:nth-child(7) > h1", text: "Path 3")
     end
   end
 
-  it "renders last breacrumbs path using blocks" do
+  it "renders breacrumbs path using blocks" do
     render_inline described_class.new do |breadcrumbs|
       breadcrumbs.with_path do
-        tag.div("Main title", class: "some_class")
+        tag.span("Some path", class: "custom_class")
+      end
+
+      breadcrumbs.with_h1 do
+        tag.span("Main title", class: "another_custom_class")
       end
     end
 
-    expect(page).to have_selector(".header-bar > .breadcrumbs") do |node|
-      expect(node).to have_selector(".breadcrumbs__path:last-child > h1", text: "Main title") do |header|
-        expect(header).to have_selector(".some_class", text: "Main title")
+    expect(page).to have_selector(".breadcrumbs > .breadcrumbs__path") do |node|
+      expect(node).to have_selector(".breadcrumbs__path-item", text: "Some path") do |path|
+        expect(path).to have_selector(".custom_class", text: "Some path")
+      end
+
+      expect(node).to have_selector(".breadcrumbs__path-item", text: "Main title") do |path|
+        expect(path).to have_selector("h1 > .another_custom_class", text: "Main title")
       end
     end
   end
@@ -64,8 +72,8 @@ RSpec.describe UI::BreadcrumbsComponent, type: :component do
       breadcrumbs.with_action "Update"
     end
 
-    expect(page).to have_selector(".header-bar > .header-bar__actions") do |node|
-      expect(node).to have_selector(".header-bar__action > button", text: "Update")
+    expect(page).to have_selector(".breadcrumbs__actions") do |node|
+      expect(node).to have_selector(".breadcrumbs__action > button", text: "Update")
     end
   end
 
@@ -74,8 +82,8 @@ RSpec.describe UI::BreadcrumbsComponent, type: :component do
       breadcrumbs.with_action "Update", primary: true
     end
 
-    expect(page).to have_selector(".header-bar > .header-bar__actions") do |node|
-      expect(node).to have_selector(".header-bar__action > button.button--primary", text: "Update")
+    expect(page).to have_selector(".breadcrumbs__actions") do |node|
+      expect(node).to have_selector(".breadcrumbs__action > button.button--primary", text: "Update")
     end
   end
 
@@ -84,8 +92,8 @@ RSpec.describe UI::BreadcrumbsComponent, type: :component do
       breadcrumbs.with_action "Update", icon: "plus"
     end
 
-    expect(page).to have_selector(".header-bar > .header-bar__actions") do |node|
-      expect(node).to have_selector(".header-bar__action > button > svg")
+    expect(page).to have_selector(".breadcrumbs__actions") do |node|
+      expect(node).to have_selector(".breadcrumbs__action > button > svg")
     end
   end
 
@@ -94,8 +102,8 @@ RSpec.describe UI::BreadcrumbsComponent, type: :component do
       breadcrumbs.with_action "Update", "/foo"
     end
 
-    expect(page).to have_selector(".header-bar > .header-bar__actions") do |node|
-      expect(node).to have_selector(".header-bar__action > a[href='/foo']", text: "Update")
+    expect(page).to have_selector(".breadcrumbs__actions") do |node|
+      expect(node).to have_selector(".breadcrumbs__action > a[href='/foo']", text: "Update")
     end
   end
 
@@ -104,8 +112,8 @@ RSpec.describe UI::BreadcrumbsComponent, type: :component do
       breadcrumbs.with_action "Update", href: "/foo"
     end
 
-    expect(page).to have_selector(".header-bar > .header-bar__actions") do |node|
-      expect(node).to have_selector(".header-bar__action > a[href='/foo']", text: "Update")
+    expect(page).to have_selector(".breadcrumbs__actions") do |node|
+      expect(node).to have_selector(".breadcrumbs__action > a[href='/foo']", text: "Update")
     end
   end
 
@@ -114,8 +122,8 @@ RSpec.describe UI::BreadcrumbsComponent, type: :component do
       breadcrumbs.with_action "Update", "/foo", modal: true
     end
 
-    expect(page).to have_selector(".header-bar > .header-bar__actions") do |node|
-      expect(node).to have_selector(".header-bar__action > a[data-turbo-frame='modal']", text: "Update")
+    expect(page).to have_selector(".breadcrumbs__actions") do |node|
+      expect(node).to have_selector(".breadcrumbs__action > a[data-turbo-frame='modal']", text: "Update")
     end
   end
 
@@ -126,8 +134,8 @@ RSpec.describe UI::BreadcrumbsComponent, type: :component do
       end
     end
 
-    expect(page).to have_selector(".header-bar > .header-bar__actions") do |node|
-      expect(node).to have_selector(".header-bar__action > p", text: "Hello world")
+    expect(page).to have_selector(".breadcrumbs__actions") do |node|
+      expect(node).to have_selector(".breadcrumbs__action > p", text: "Hello world")
     end
   end
 end

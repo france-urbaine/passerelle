@@ -153,7 +153,7 @@ RSpec.describe "DDFIPs in admin" do
 
     # A button should be present to edit the DDFIP
     #
-    within ".header-bar", text: "DDFIP des Pyrénées-Atlantiques" do
+    within ".breadcrumbs", text: "DDFIP des Pyrénées-Atlantiques" do
       click_on "Modifier"
     end
 
@@ -238,7 +238,7 @@ RSpec.describe "DDFIPs in admin" do
 
     # A button should be present to remove the DDFIP
     #
-    within ".header-bar", text: "DDFIP des Pyrénées-Atlantiques" do
+    within ".breadcrumbs", text: "DDFIP des Pyrénées-Atlantiques" do
       click_on "Supprimer"
     end
 

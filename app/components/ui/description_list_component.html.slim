@@ -6,9 +6,8 @@
           = attribute.label
 
         dd
-          - if attribute.value?
-            .description-list__details
-              = attribute.value
+          .description-list__details
+            = attribute.value.presence
 
           - if attribute.reference?
             .description-list__reference

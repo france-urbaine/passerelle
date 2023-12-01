@@ -9,7 +9,7 @@ module Layout
 
       renders_many :actions, lambda { |*args, **options|
         if args.empty? && options.empty?
-          LabelOrContent.new
+          ContentSlot.new
         else
           UI::ButtonComponent.new(*args, **options, icon_only: true, data: { turbo_frame: "_top" })
         end

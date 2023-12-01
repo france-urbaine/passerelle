@@ -1,103 +1,106 @@
-= breadcrumbs_component do |breadcrumbs|
-  - breadcrumbs.with_path "Guides"
-  - breadcrumbs.with_path "A propos"
+= content_layout_component(class: "documentation") do |layout|
+  - layout.with_breadcrumbs do |breadcrumbs|
+    - breadcrumbs.with_path "Guides"
+    - breadcrumbs.with_h1 "A propos"
 
-.documentation
-  = content_flow_component do |flow|
-    - flow.with_section do
-      = card_component do
-        p
-          ' L'API de Passerelle est une API
-          = link_to "RESTful", "https://fr.wikipedia.org/wiki/Representational_state_transfer"
-          '  qui implémente les spécifications du standard
-          = link_to "OAuth2", "https://datatracker.ietf.org/doc/html/rfc6749"
-          '  pour l'authentification.
+  - layout.with_section do
+    = card_component do
+      p
+        ' L'API de Passerelle est une API
+        = link_to "RESTful", "https://fr.wikipedia.org/wiki/Representational_state_transfer"
+        '  qui implémente les spécifications du standard
+        = link_to "OAuth2", "https://datatracker.ietf.org/doc/html/rfc6749"
+        '  pour l'authentification.
 
-        p
-          | La communication avec le serveur s'effectue toujours en TLS (https).
-          br
-          | Les requêtes non sécurisées sont rejetées par l'API.
+      p
+        ' La communication avec le serveur s'effectue toujours en TLS (https).
+        br
+        ' Les requêtes non sécurisées sont rejetées par l'API.
 
-    - flow.with_header do |header|
-      - header.with_title "Format de requête"
+  - layout.with_header do
+    | Format de requête
 
-    - flow.with_section do
-      = card_component do
-        p
-          ' Sauf mentions contraires, le format JSON est le format attendu et retourné par défaut.
-          br
-          ' Lors de l'envoi de chaque requête, n'oubliez pas les en-têtes suivants :
+  - layout.with_section do
+    = card_component do
+      p
+        ' Sauf mentions contraires, le format JSON est le format attendu et retourné par défaut.
+        br
+        ' Lors de l'envoi de chaque requête, n'oubliez pas les en-têtes suivants :
 
-        = code_example_component do
-          | Content-Type: application/json
-            Accept: application/json
+      = code_example_component do
+        ' Content-Type: application/json
+          Accept: application/json
 
-    - flow.with_header do |header|
-      - header.with_title "Code HTTP"
+  - layout.with_header do
+    | Code HTTP
 
-    - flow.with_section do
-      = card_component do
-        p
-          ' Vous pouvez déterminer le résultat de chaque requête en vérifiant le code HTTP de sa réponse.
-          br
-          ' Ces codes sont standards et bien documentés sur <a href="https://fr.wikipedia.org/wiki/Liste_des_codes_HTTP">wikipedia</a>, mais vous trouverez ci-dessous une liste des codes récurrents.
+  - layout.with_section do
+    = card_component do
+      p
+        ' Vous pouvez déterminer le résultat de chaque requête en vérifiant le code HTTP de sa réponse.
+        br
+        ' Ces codes sont standards et bien documentés sur
+        = link_to "wikipedia", "https://fr.wikipedia.org/wiki/Liste_des_codes_HTTP", target: :_blank
+        ' , mais vous trouverez ci-dessous une liste des codes récurrents.
 
-        h3 Succès
-        table
-          tr
-            th.w-20 200
-            td
-              | OK
-              br
-              | Requête traitée avec succès
-          tr
-            th 201
-            td
-              | Created
-              br
-              | Requête traitée avec succès. Une ressource a été créée.
-          tr
-            th 204
-            td
-              | No Content
-              br
-              | Requête traitée avec succès. Aucun contenu n'est renvoyé.
+      h3 Succès
+      table
+        tr
+          th.w-20 200
+          td
+            | OK
+            br
+            | Requête traitée avec succès
+        tr
+          th 201
+          td
+            | Created
+            br
+            | Requête traitée avec succès. Une ressource a été créée.
+        tr
+          th 204
+          td
+            | No Content
+            br
+            | Requête traitée avec succès. Aucun contenu n'est renvoyé.
 
-        h3 Erreurs du client
-        table
-          tr
-            th.w-20 400
-            td
-              | OK
-              br
-              | La syntaxe de la requête est erronée, dû à une erreur lors de l'envoi.
-              br
-              | Le cas le plus fréquent est l'oubli d'un paramètre requis. Consultez la documentation du point d'API correspondant pour plus de détails.
-          tr
-            th 401
-            td
-              | Unauthorized
-              br
-              | Une authentification est nécessaire pour accéder à la ressource.
-              br
-              | Consultez la section Authentification pour plus de détails.
-          tr
-            th 403
-            td
-              | Forbidden
-              br
-              | Vous ne disposez pas d'un droit d'accès suffisant pour cette ressource.
-          tr
-            th 404
-            td
-              | Not Found
-              br
-              | Cette ressource n'a pas été trouvée ou n'est plus disponible.
-          tr
-            th 422
-            td
-              | Unprocessable
-              br
-              | La requête est correcte mais a été rejetée.
-              | Le cas le plus fréquent est l'absence de propriétés requises lors de l'enregistrement d'une ressource.
-              | Dans ce cas, le corps de la réponse peut vous fournir quelques détails.
+      h3 Erreurs du client
+      table
+        tr
+          th.w-20 400
+          td
+            ' OK
+            br
+            ' La syntaxe de la requête est erronée, dû à une erreur lors de l'envoi.
+            br
+            ' Le cas le plus fréquent est l'oubli d'un paramètre requis.
+            ' Consultez la documentation du point d'API correspondant pour plus de détails.
+        tr
+          th 401
+          td
+            ' Unauthorized
+            br
+            ' Une authentification est nécessaire pour accéder à la ressource.
+            br
+            ' Consultez la section Authentification pour plus de détails.
+        tr
+          th 403
+          td
+            ' Forbidden
+            br
+            ' Vous ne disposez pas d'un droit d'accès suffisant pour cette ressource.
+        tr
+          th 404
+          td
+            ' Not Found
+            br
+            ' Cette ressource n'a pas été trouvée ou n'est plus disponible.
+        tr
+          th 422
+          td
+            ' Unprocessable
+            br
+            ' La requête est correcte mais a été rejetée.
+            br
+            ' Le cas le plus fréquent est l'absence de propriétés requises lors de l'enregistrement d'une ressource.
+            ' Dans ce cas, le corps de la réponse peut vous fournir quelques détails.

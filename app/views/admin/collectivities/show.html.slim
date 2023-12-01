@@ -1,21 +1,20 @@
 = content_frame_component do
-  = breadcrumbs_component do |breadcrumbs|
-    - breadcrumbs.with_path "Administration"
-    - breadcrumbs.with_path "Collectivités", admin_collectivities_path
-    - breadcrumbs.with_path @collectivity.name
+  = content_layout_component do |layout|
+    - layout.with_breadcrumbs do |breadcrumbs|
+      - breadcrumbs.with_path "Administration"
+      - breadcrumbs.with_path "Collectivités", admin_collectivities_path
+      - breadcrumbs.with_h1 @collectivity.name
 
-    - if allowed_to?(:update?, @collectivity)
-      - breadcrumbs.with_action "Modifier", edit_admin_collectivity_path(@collectivity), icon: "pencil-square", modal: true
+      - if allowed_to?(:update?, @collectivity)
+        - breadcrumbs.with_action "Modifier", edit_admin_collectivity_path(@collectivity), icon: "pencil-square", modal: true
 
-    - if allowed_to?(:destroy?, @collectivity)
-      - breadcrumbs.with_action "Supprimer", remove_admin_collectivity_path(@collectivity), icon: "trash", modal: true, destructive: "discrete"
+      - if allowed_to?(:destroy?, @collectivity)
+        - breadcrumbs.with_action "Supprimer", remove_admin_collectivity_path(@collectivity), icon: "trash", modal: true, destructive: "discrete"
 
-  = content_flow_component do |flow|
+    - layout.with_header icon: "identification" do
+      | Description
 
-    - flow.with_header do |header|
-      - header.with_title "Description", "identification", "Nouvelle section"
-
-    - flow.with_section do
+    - layout.with_section do
       = description_list_component(@collectivity) do |list|
         - list.with_attribute(:publisher) do |attribute|
           = authorized_link_to(@collectivity.publisher, namespace: :admin)
@@ -52,12 +51,13 @@
             = display_count(@collectivity.reports_rejected_count, "rejeté")
 
     - if allowed_to?(:index?, User)
-      - flow.with_header do |header|
-        - header.with_title "Utilisateurs", "rectangle-stack", "Nouvelle section"
-        - if allowed_to?(:create?, User)
-          = header.with_action "Inviter un utilisateur", new_admin_collectivity_user_path(@collectivity), icon: "plus", modal: true
+      - layout.with_header icon: "rectangle-stack" do |header|
+        | Utilisateurs
 
-      - flow.with_section do
+        - if allowed_to?(:create?, User)
+          - header.with_action "Inviter un utilisateur", new_admin_collectivity_user_path(@collectivity), icon: "plus", modal: true
+
+      - layout.with_section do
         - if @collectivity.users_count.zero?
           = card_component(content_class: "card__content--empty")
             | Aucun utilisateur assigné.
@@ -69,10 +69,10 @@
               - skeleton.with_pagination
 
     - if allowed_to?(:index?, Office)
-      - flow.with_header do |header|
-        - header.with_title "Guichets correspondants", "rectangle-stack", "Nouvelle section"
+      - layout.with_header icon: "rectangle-stack" do
+        | Guichets correspondants
 
-      - flow.with_section do
+      - layout.with_section do
         = turbo_frame_tag "datatable-offices", src: admin_collectivity_offices_path(@collectivity) do
           = datatable_skeleton_component(nested: true, rows: 0) do |skeleton|
             - skeleton.with_search

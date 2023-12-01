@@ -103,7 +103,7 @@ RSpec.describe "OauthApplications managed by current organization" do
 
     # A button should be present to edit the oauth_application
     #
-    within ".header-bar", text: "Test Oauth Application" do
+    within ".breadcrumbs", text: "Test Oauth Application" do
       click_on "Modifier"
     end
 
@@ -187,7 +187,7 @@ RSpec.describe "OauthApplications managed by current organization" do
 
     # A button should be present to remove the oauth_application
     #
-    within ".header-bar", text: "Test Oauth Application" do
+    within ".breadcrumbs", text: "Test Oauth Application" do
       click_on "Supprimer"
     end
 

@@ -114,8 +114,8 @@ RSpec.describe UI::DescriptionListComponent, type: :component do
     end
   end
 
-  it "renders an attribute with an blank content" do
-    collectivity = create(:collectivity, contact_first_name: "")
+  it "renders an attribute with no content" do
+    collectivity = create(:collectivity, contact_first_name: "  ")
 
     render_inline described_class.new(collectivity) do |list|
       list.with_attribute(:contact_first_name)
@@ -124,7 +124,7 @@ RSpec.describe UI::DescriptionListComponent, type: :component do
     expect(page).to have_selector(".card") do |card|
       expect(card).to have_selector("dl.description-list") do |description_list|
         expect(description_list).to have_selector(".description-list__row") do |row|
-          expect(row).to have_selector("dd:empty")
+          expect(row).to have_selector(".description-list__details:empty")
         end
       end
     end

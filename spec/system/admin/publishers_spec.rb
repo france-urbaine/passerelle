@@ -106,7 +106,7 @@ RSpec.describe "Publishers in admin" do
 
     # A button should be present to edit the publisher
     #
-    within ".header-bar", text: "Fiscalité & Territoire" do
+    within ".breadcrumbs", text: "Fiscalité & Territoire" do
       click_on "Modifier"
     end
 
@@ -192,7 +192,7 @@ RSpec.describe "Publishers in admin" do
 
     # A button should be present to edit the publisher
     #
-    within ".header-bar", text: "Fiscalité & Territoire" do
+    within ".breadcrumbs", text: "Fiscalité & Territoire" do
       click_on "Supprimer"
     end
 

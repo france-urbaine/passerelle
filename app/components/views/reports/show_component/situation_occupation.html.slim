@@ -1,0 +1,58 @@
+= current_layout_component do |layout|
+  - layout.with_header icon: "document-text" do |header|
+    | Situation actuelle de l'occupation
+
+    - if allowed_to?(:update?, @report) && @report.packing?
+      - header.with_action "Compléter", edit_report_path(@report, "situation_occupation"), icon: "pencil-square", modal: true
+
+  - layout.with_section do
+    = description_list_component(@report) do |list|
+      - if display_situation_occupation_annee?
+        - list.with_attribute(:situation_occupation_annee) do
+          = render_valid_content(:situation_occupation_annee) do
+            = @report.situation_occupation_annee
+
+      - if display_situation_nature_occupation?
+        - list.with_attribute(:situation_nature_occupation) do
+          = render_valid_content(:situation_nature_occupation) do
+            = situation_nature_occupation
+
+      - if display_situation_majoration_rs?
+        - list.with_attribute(:situation_majoration_rs) do
+          = render_valid_content(:situation_majoration_rs) do
+            = t(@report.situation_majoration_rs.to_s, scope: "enum.boolean")
+
+      - if display_situation_annee_cfe?
+        - list.with_attribute(:situation_annee_cfe) do
+          = render_valid_content(:situation_annee_cfe) do
+            = @report.situation_annee_cfe
+
+      - if display_situation_vacance_fiscale?
+        - list.with_attribute(:situation_vacance_fiscale) do
+          = render_valid_content(:situation_vacance_fiscale) do
+            = t(@report.situation_vacance_fiscale.to_s, scope: "enum.boolean")
+
+      - if display_situation_nombre_annees_vacance?
+        - list.with_attribute(:situation_nombre_annees_vacance) do
+          = render_valid_content(:situation_nombre_annees_vacance) do
+            = @report.situation_nombre_annees_vacance
+
+      - if display_situation_siren_dernier_occupant?
+        - list.with_attribute(:situation_siren_dernier_occupant) do
+          = render_valid_content(:situation_siren_dernier_occupant) do
+            = helpers.display_siren(@report.situation_siren_dernier_occupant)
+
+      - if display_situation_nom_dernier_occupant?
+        - list.with_attribute(:situation_nom_dernier_occupant) do
+          = render_valid_content(:situation_nom_dernier_occupant) do
+            = @report.situation_nom_dernier_occupant
+
+      - if display_situation_vlf_cfe?
+        - list.with_attribute(:situation_vlf_cfe) do
+          = render_valid_content(:situation_vlf_cfe) do
+            = number_with_delimiter(@report.situation_vlf_cfe)
+
+      - if display_situation_taxation_base_minimum?
+        - list.with_attribute(:situation_taxation_base_minimum) do
+          = render_valid_content(:situation_taxation_base_minimum) do
+            = t(@report.situation_taxation_base_minimum.to_s, scope: "enum.boolean")

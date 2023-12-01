@@ -1,26 +1,29 @@
 = content_frame_component do
-  = breadcrumbs_component do |breadcrumbs|
-    - breadcrumbs.with_path "Echanges"
-    - breadcrumbs.with_path "Signalements", reports_path
-    - breadcrumbs.with_path(render Views::Reports::ShowReportNameComponent.new(@report))
+  = content_layout_component do |layout|
+    - layout.with_breadcrumbs do |breadcrumbs|
+      - breadcrumbs.with_path "Echanges"
+      - breadcrumbs.with_path "Signalements", reports_path
+      - breadcrumbs.with_path(render Views::Reports::ShowReportNameComponent.new(@report))
 
-    - if allowed_to?(:transmit?, @report)
-      - breadcrumbs.with_action do
-        = turbo_frame_tag dom_id(@report, :transmission_button) do
-          = render "reports/transmission_button", report: @report
+      - if allowed_to?(:transmit?, @report)
+        - breadcrumbs.with_action do
+          = turbo_frame_tag dom_id(@report, :transmission_button) do
+            = render "reports/transmission_button", report: @report
 
-    - if allowed_to?(:approve?, @report)
-      - unless @report.approved?
-        - breadcrumbs.with_action "Approuver", report_approval_path(@report), icon: "hand-thumb-up", accent: true, method: "patch"
-      - unless @report.rejected?
-        - breadcrumbs.with_action "Rejeter", report_approval_path(@report), icon: "hand-thumb-down", destructive: true, method: "delete"
+      - if allowed_to?(:approve?, @report)
+        - unless @report.approved?
+          - breadcrumbs.with_action "Approuver", report_approval_path(@report), icon: "hand-thumb-up", accent: true, method: "patch"
 
-    - if allowed_to?(:destroy?, @report)
-      - breadcrumbs.with_action "Supprimer", remove_report_path(@report), icon: "trash", modal: true, destructive: "discrete"
+        - unless @report.rejected?
+          - breadcrumbs.with_action "Rejeter", report_approval_path(@report), icon: "hand-thumb-down", destructive: true, method: "delete"
 
-    - if allowed_to?(:show?, Transmission)
-      - breadcrumbs.with_action do
-        = turbo_frame_tag dom_id(current_user, :active_transmission_button) do
-          = render "transmissions/transmission_button", transmission: current_user.active_transmission
+      - if allowed_to?(:destroy?, @report)
+        - breadcrumbs.with_action "Supprimer", remove_report_path(@report), icon: "trash", modal: true, destructive: "discrete"
 
-  = render Views::Reports::ShowComponent.new(@report)
+      - if allowed_to?(:show?, Transmission)
+        - breadcrumbs.with_action do
+          = turbo_frame_tag dom_id(current_user, :active_transmission_button) do
+            = render "transmissions/transmission_button", transmission: current_user.active_transmission
+
+    - layout.wrap do
+      = render Views::Reports::ShowComponent.new(@report)

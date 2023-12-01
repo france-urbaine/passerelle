@@ -1,38 +1,43 @@
 = content_frame_component do
-  = breadcrumbs_component do |breadcrumbs|
-    - breadcrumbs.with_path "Territoires"
-    - breadcrumbs.with_path "Départements", territories_departements_path
-    - breadcrumbs.with_path @departement.name, territories_departement_path(@departement)
-    - breadcrumbs.with_path "EPCI"
+  = content_layout_component do |layout|
+    - layout.with_breadcrumbs do |breadcrumbs|
+      - breadcrumbs.with_path "Territoires"
+      - breadcrumbs.with_path "Départements", territories_departements_path
+      - breadcrumbs.with_path @departement.name, territories_departement_path(@departement)
+      - breadcrumbs.with_h1 "EPCI"
 
-  = datatable_component(@epcis) do |datatable|
-    - datatable.with_search
-    - datatable.with_pagination(@pagy, options: false)
+    - layout.with_section do
+      = datatable_component(@epcis) do |datatable|
+        - datatable.with_search
+        - datatable.with_pagination(@pagy, options: false)
 
-    - datatable.with_column(:epci, sort: true, span: 2) { "EPCI" }
-    - datatable.with_column(:communes_count,       numeric: true) { "Communes" }
-    - datatable.with_column(:collectivities_count, numeric: true) { "Collectivités" }
+        - datatable.with_selection
 
-    - datatable.with_empty_message do
-      - if params[:search]
-        | Aucun EPCI ne correspont à votre recherche.
-      - else
-        | Aucun EPCI disponible.
+        - datatable.with_column(:epci, sort: true, span: 2) { "EPCI" }
+        - datatable.with_column(:communes_count,       numeric: true) { "Communes" }
+        - datatable.with_column(:collectivities_count, numeric: true) { "Collectivités" }
 
-    - datatable.each_row do |row, epci|
-      - if allowed_to?(:update?, epci)
-        - row.with_action "Modifier cet EPCI", edit_territories_epci_path(epci), icon: "pencil-square", modal: true
+        - datatable.with_empty_message do
+          - if params[:search]
+            | Aucun EPCI ne correspont à votre recherche.
+          - else
+            | Aucun EPCI disponible.
 
-      - row.with_column(:epci) do |column|
-        - column.with_span do
-          = display_siren(epci.siren)
+        - datatable.each_row do |row, epci|
+          - row.with_checkbox "Sélectionner cet EPCI", described_by: :epci, disabled: true
 
-        - column.with_span do
-          = authorized_link_to epci, namespace: :territories
+          - if allowed_to?(:update?, epci)
+            - row.with_action "Modifier cet EPCI", edit_territories_epci_path(epci), icon: "pencil-square", modal: true
 
-      - row.with_column(:communes_count) do
-        = number_with_delimiter(epci.communes_count) if epci.communes_count.positive?
+          - row.with_column(:epci) do |column|
+            - column.with_span do
+              = display_siren(epci.siren)
 
-      - row.with_column(:collectivities_count) do
-        = number_with_delimiter(epci.collectivities_count) if epci.collectivities_count.positive?
+            - column.with_span do
+              = authorized_link_to epci, namespace: :territories
 
+          - row.with_column(:communes_count) do
+            = number_with_delimiter(epci.communes_count) if epci.communes_count.positive?
+
+          - row.with_column(:collectivities_count) do
+            = number_with_delimiter(epci.collectivities_count) if epci.collectivities_count.positive?

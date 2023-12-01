@@ -1,21 +1,20 @@
 = content_frame_component do
-  = breadcrumbs_component do |breadcrumbs|
-    - breadcrumbs.with_path "Administration"
-    - breadcrumbs.with_path "Éditeurs", admin_publishers_path
-    - breadcrumbs.with_path @publisher.name
+  = content_layout_component do |layout|
+    - layout.with_breadcrumbs do |breadcrumbs|
+      - breadcrumbs.with_path "Administration"
+      - breadcrumbs.with_path "Éditeurs", admin_publishers_path
+      - breadcrumbs.with_h1 @publisher.name
 
-    - if allowed_to?(:update?, @publisher)
-      - breadcrumbs.with_action "Modifier", edit_admin_publisher_path(@publisher), icon: "pencil-square", modal: true
+      - if allowed_to?(:update?, @publisher)
+        - breadcrumbs.with_action "Modifier", edit_admin_publisher_path(@publisher), icon: "pencil-square", modal: true
 
-    - if allowed_to?(:destroy?, @publisher)
-      - breadcrumbs.with_action "Supprimer", remove_admin_publisher_path(@publisher), icon: "trash", modal: true, destructive: "discrete"
+      - if allowed_to?(:destroy?, @publisher)
+        - breadcrumbs.with_action "Supprimer", remove_admin_publisher_path(@publisher), icon: "trash", modal: true, destructive: "discrete"
 
-  = content_flow_component do |flow|
+    - layout.with_header icon: "identification" do
+      | Description
 
-    - flow.with_header do |header|
-      - header.with_title "Description", "identification", "Nouvelle section"
-
-    - flow.with_section do
+    - layout.with_section do
       = description_list_component(@publisher) do |list|
         - list.with_attribute(:siren) do |attribute|
           = display_siren(@publisher.siren)
@@ -48,12 +47,13 @@
             = display_count(@publisher.reports_rejected_count, "rejeté")
 
     - if allowed_to?(:index?, User)
-      - flow.with_header do |header|
-        - header.with_title "Utilisateurs", "rectangle-stack", "Nouvelle section"
-        - if allowed_to?(:create?, User)
-          = header.with_action "Inviter un utilisateur", new_admin_publisher_user_path(@publisher), icon: "plus", modal: true
+      - layout.with_header icon: "rectangle-stack" do |header|
+        | Utilisateurs
 
-      - flow.with_section do
+        - if allowed_to?(:create?, User)
+          - header.with_action "Inviter un utilisateur", new_admin_publisher_user_path(@publisher), icon: "plus", modal: true
+
+      - layout.with_section do
         - if @publisher.users_count.zero?
           = card_component(content_class: "card__content--empty")
             | Aucun utilisateur assigné.
@@ -65,12 +65,13 @@
               - skeleton.with_pagination
 
     - if allowed_to?(:index?, Collectivity)
-      - flow.with_header do |header|
-        - header.with_title "Collectivités", "rectangle-stack", "Nouvelle section"
-        - if allowed_to?(:create?, Collectivity)
-          = header.with_action "Ajouter une collectivité", new_admin_publisher_collectivity_path(@publisher), icon: "plus", modal: true
+      - layout.with_header icon: "rectangle-stack" do |header|
+        | Collectivités
 
-      - flow.with_section do
+        - if allowed_to?(:create?, Collectivity)
+          - header.with_action "Ajouter une collectivité", new_admin_publisher_collectivity_path(@publisher), icon: "plus", modal: true
+
+      - layout.with_section do
         - if @publisher.collectivities_count.zero?
           = card_component(content_class: "card__content--empty")
             | Aucune collectivité enregistrée.

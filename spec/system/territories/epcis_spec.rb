@@ -117,7 +117,7 @@ RSpec.describe "EPCIs" do
 
     # A button should be present to edit the collectivity
     #
-    within ".header-bar", text: "CA du Pays Basque" do
+    within ".breadcrumbs", text: "CA du Pays Basque" do
       click_on "Modifier"
     end
 

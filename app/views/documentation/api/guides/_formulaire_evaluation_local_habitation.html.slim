@@ -1,54 +1,50 @@
-= breadcrumbs_component do |breadcrumbs|
-  - breadcrumbs.with_path "Guides"
-  - breadcrumbs.with_path "Formulaires de signalement", api_documentation_path("guides/formulaires")
-  - breadcrumbs.with_path "Evaluation d'un local d'habitation"
+= content_layout_component(class: "documentation") do |layout|
+  - layout.with_breadcrumbs do |breadcrumbs|
+    - breadcrumbs.with_path "Guides"
+    - breadcrumbs.with_path "Formulaires de signalement", api_documentation_path("guides/formulaires")
+    - breadcrumbs.with_h1 "Evaluation d'un local d'habitation"
 
-.documentation
-  = card_component do
-    = render "documentation/api/guides/formulaire_evaluation_local_habitation/objet"
-    = render "documentation/api/guides/formulaire_evaluation_local_habitation/identification_majic"
+  - layout.with_section do
+    = card_component do
+      = render "documentation/api/guides/formulaire_evaluation_local_habitation/objet"
+      = render "documentation/api/guides/formulaire_evaluation_local_habitation/identification_majic"
 
-  .content__separator
-
-  h2.subheader#consistance
-    = icon_component("clipboard-document")
+  - layout.with_header icon: "clipboard-document" do
+    a#consistance
     | Changement de consistance
 
-  = card_component do
-    = render "documentation/api/guides/formulaire_evaluation_local_habitation/consistance"
+  - layout.with_section do
+    = card_component do
+      = render "documentation/api/guides/formulaire_evaluation_local_habitation/consistance"
 
-  .content__separator
-
-  h2.subheader#affectation
-    = icon_component("clipboard-document")
+  - layout.with_header icon: "clipboard-document" do
+    a#affectation
     | Changement d'affectation
 
-  = card_component do
-    = render "documentation/api/guides/formulaire_evaluation_local_habitation/affectation"
+  - layout.with_section do
+    = card_component do
+      = render "documentation/api/guides/formulaire_evaluation_local_habitation/affectation"
 
-  .content__separator
-
-  h2.subheader#exoneration
-    = icon_component("clipboard-document")
+  - layout.with_header icon: "clipboard-document" do
+    a#exoneration
     | Exonération à tort
 
-  = card_component do
-    = render "documentation/api/guides/formulaire_evaluation_local_habitation/exoneration"
+  - layout.with_section do
+    = card_component do
+      = render "documentation/api/guides/formulaire_evaluation_local_habitation/exoneration"
 
-  .content__separator
-
-  h2.subheader#correctif
-    = icon_component("clipboard-document")
+  - layout.with_header icon: "clipboard-document" do
+    a#correctif
     | Anomalie correctif d'ensemble
 
-  = card_component do
-    = render "documentation/api/guides/formulaire_evaluation_local_habitation/correctif"
+  - layout.with_section do
+    = card_component do
+      = render "documentation/api/guides/formulaire_evaluation_local_habitation/correctif"
 
-  .content__separator
-
-  h2.subheader#adresse
-    = icon_component("clipboard-document")
+  - layout.with_header icon: "clipboard-document" do
+    a#adresse
     | Changement d'adresse
 
-  = card_component do
-    = render "documentation/api/guides/formulaire_evaluation_local_habitation/adresse"
+  - layout.with_section do
+    = card_component do
+      = render "documentation/api/guides/formulaire_evaluation_local_habitation/adresse"

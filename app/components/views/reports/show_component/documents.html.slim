@@ -1,13 +1,11 @@
-= content_flow_component do |flow|
-
-  - flow.with_header do |header|
-    - header.with_title "Pièces jointes", "paper-clip", "Icône d'illustration"
+= current_layout_component do |layout|
+  - layout.with_header icon: "paper-clip" do |header|
+    | Pièces jointes
 
     - if allowed_to?(:update?, @report) && @report.packing?
       - header.with_action "Ajouter des documents", new_report_attachment_path(@report), icon: "document-plus", modal: true
 
-  - flow.with_section do
-
+  - layout.with_section do
     - if @report.documents.empty?
       = card_component(content_class: "card__content--empty h-24 flex-auto flex items-center justify-center")
         | Aucun document ajouté pour ce signalement.

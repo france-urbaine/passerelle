@@ -1,9 +1,11 @@
 = content_frame_component do
-  = breadcrumbs_component do |breadcrumbs|
-    - breadcrumbs.with_path "Territoires"
-    - breadcrumbs.with_path "Communes"
+  = content_layout_component do |layout|
+    - layout.with_breadcrumbs do |breadcrumbs|
+      - breadcrumbs.with_path "Territoires"
+      - breadcrumbs.with_h1 "Communes"
 
-    - if allowed_to?(:update?, with: Territories::UpdatesPolicy)
-      - breadcrumbs.with_action "Mettre à jour", territories_update_path, icon: "cloud-arrow-down", modal: true
+      - if allowed_to?(:update?, with: Territories::UpdatesPolicy)
+        - breadcrumbs.with_action "Mettre à jour", territories_update_path, icon: "cloud-arrow-down", modal: true
 
-  = render Views::Communes::ListComponent.new(@communes, @pagy, namespace: :territories)
+    - layout.with_section do
+      = render Views::Communes::ListComponent.new(@communes, @pagy, namespace: :territories)

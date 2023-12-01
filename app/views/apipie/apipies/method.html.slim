@@ -1,93 +1,99 @@
 = content_frame_component do
-  = breadcrumbs_component do |breadcrumbs|
-    - breadcrumbs.with_path "References"
-    - breadcrumbs.with_path @method.dig(:apis, 0, :short_description)
+  = content_layout_component(class: "documentation") do |layout|
+    - layout.with_breadcrumbs do |breadcrumbs|
+      - breadcrumbs.with_path "References"
+      - breadcrumbs.with_h1 do
+        = @method.dig(:apis, 0, :short_description)
 
-  .documentation
-    = content_flow_component do |flow|
-      - @method[:apis].each do |api|
-        - flow.with_header do |header|
-          - header_title = tag.div(class: "font-mono") do
-            = content_tag(:strong, api[:http_method])
-            = " "
-            = api[:api_url]
+    - @method[:apis].each do |api|
+      - layout.with_header icon: "link" do |header|
+        .font-mono
+          strong= api[:http_method]
+          = " "
+          = api[:api_url]
 
-          - header.with_title header_title, "link"
+        - if api[:deprecated]
+          - header.with_action do
+            = badge_component "DEPRECATED", :danger
 
-          - if api[:deprecated]
+      - layout.with_section do
+        = description_list_component do |list|
+          - list.with_attribute("Formats supportés") do |attribute|
+            = @method[:formats].join(', ')
+
+          - list.with_attribute("Méthode") do |attribute|
+            code= api[:http_method]
+
+          - list.with_attribute("URL") do |attribute|
+            code= URI.join(api_url, api[:api_url])
+
+    - layout.with_grid do |grid|
+      - grid.with_column do |column|
+
+        - if @method[:short_description].present? || @method[:full_description].present?
+          - column.with_header icon: "circle-stack" do
+            | Informations
+
+          - column.with_section do
+            = render partial: "informations", locals: { resource: @method }
+
+        / - if lookup_context.exists?("#{@resource[:id]}/#{@method[:name]}", ["documentation/api/references"], true)
+        /   = render "documentation/api/references/#{@resource[:id]}/#{@method[:name]}"
+
+        - if @method[:params].present?
+          - column.with_header icon: "adjustments-vertical" do
+            | Paramètres
+
+          - column.with_section do
+            .datatable
+              table
+                thead
+                  tr
+                    th Paramètre
+                    th Description
+                    th
+                tbody
+                  = render partial: "params", locals: { params: @method[:params], is_params: true }
+
+        - @method[:returns].each do |item|
+          - column.with_header icon: "arrows-right-left" do |header|
+            | Réponse : #{item[:description]}
+
             - header.with_action do
-              = badge_component "DEPRECATED", :warning
+              - case item[:code]
+              - when 200..399
+                = badge_component "Code : #{item[:code]}", :success
+              - when 400..
+                = badge_component "Code : #{item[:code]}", :danger
 
-        - flow.with_section do
-          = description_list_component do |list|
-            - list.with_attribute("Formats supportés") do |attribute|
-              = @method[:formats].join(', ')
+          - column.with_section do
+            .datatable
+              table
+                thead
+                  tr
+                    th Paramètre
+                    th Description
+                    th
+                tbody
+                  = render partial: "params", locals: { params: item[:returns_object] }
 
-            - list.with_attribute("Méthode") do |attribute|
-              code= api[:http_method]
+          / - if lookup_context.exists?("#{@resource[:id]}/enums", ["documentation/api/references"], true)
+          /   - column.with_header icon: "document-text" do |header|
+          /     | Valeurs des énumérations
 
-            - list.with_attribute("URL") do |attribute|
-              code= URI.join(api_url, api[:api_url])
+          /   - column.with_section do
+          /     .card
+          /       = render "documentation/api/references/#{@resource[:id]}/enums"
 
-    .lg:grid.grid-cols-2.gap-12.items-start
-      div
-        = content_flow_component do |flow|
-          = render partial: "informations", locals: { resource: @method, content_flow: flow }
-
-          - if lookup_context.exists?("#{@resource[:id]}/#{@method[:name]}", ["documentation/api/references"], true)
-            = render "documentation/api/references/#{@resource[:id]}/#{@method[:name]}"
-
-          - if @method[:params].present?
-            - flow.with_header do |header|
-              - header.with_title "Paramètres", "adjustments-vertical"
-
-            - flow.with_section do
-              .datatable
-                table
-                  thead
-                    tr
-                      th Paramètre
-                      th Description
-                      th
-                  tbody
-                    = render partial: "params", locals: { params: @method[:params], is_params: true }
-
-          - if @method[:returns].present?
-            - @method[:returns].each do |item|
-              - flow.with_header do |header|
-                - header.with_title "Réponse : #{item[:description]}", "arrows-right-left"
-                - header.with_action do
-                  code.http-code( class="http-code--#{item[:code].floor(-2)}" )
-                    = item[:code]
-
-              - flow.with_section do
-                .datatable
-                  table
-                    thead
-                      tr
-                        th Paramètre
-                        th Description
-                        th
-                    tbody
-                      = render partial: "params", locals: { params: item[:returns_object] }
-
-          - if lookup_context.exists?("#{@resource[:id]}/enums", ["documentation/api/references"], true)
-            - flow.with_header do |header|
-              - header.with_title "Valeurs des énumérations", "document-text"
-
-            - flow.with_section do
-              .card
-                = render "documentation/api/references/#{@resource[:id]}/enums"
-
-          - else
-            = render "enums", locals: { content_flow: flow }
+          / - else
+          /   = render "enums", locals: { content_flow: flow }
 
           - if @method[:errors].present?
-            - flow.with_header do |header|
-              - header.with_title "Erreurs possibles", "exclamation-circle"
+            - column.with_header icon: "exclamation-circle" do
+              | Erreurs possibles
 
-            - flow.with_section do
+            - column.with_section do
               = render partial: "errors", locals: { errors: @method[:errors] }
 
-      div
+      - grid.with_column do |column|
         = render Views::Documentation::ExamplesComponent.new(@resource[:id], @method[:name], @resource[:version])

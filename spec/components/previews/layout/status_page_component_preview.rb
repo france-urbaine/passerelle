@@ -14,6 +14,14 @@ module Layout
       render_with_template(locals: { modal:, referrer: })
     end
 
+    # @label With breadcrumbs
+    # @param modal toggle "View the template when requesting a modal"
+    # @param referrer text "Referrer URL (rendered in background of a modal)"
+    #
+    def with_breadcrumbs(modal: false, referrer: DEFAULT_REFERRER)
+      render_with_template(locals: { modal:, referrer: })
+    end
+
     # @label 404 Not Found
     # @param modal toggle "View the template when requesting a modal"
     # @param referrer text "Referrer URL (rendered in background of a modal)"

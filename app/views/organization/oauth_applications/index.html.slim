@@ -1,26 +1,26 @@
 = content_frame_component do
-  = breadcrumbs_component do |breadcrumbs|
-    - breadcrumbs.with_path "Mon organisation"
-    - breadcrumbs.with_path "API"
+  = content_layout_component do |layout|
+    - layout.with_breadcrumbs do |breadcrumbs|
+      - breadcrumbs.with_path "Mon organisation"
+      - breadcrumbs.with_h1 "API"
 
-    - if allowed_to?(:create?, OauthApplication)
-      - breadcrumbs.with_action "Ajouter une application", new_organization_oauth_application_path, icon: "plus", modal: true, primary: true
+      - if allowed_to?(:create?, OauthApplication)
+        - breadcrumbs.with_action "Ajouter une application", new_organization_oauth_application_path, icon: "plus", modal: true, primary: true
 
-  = content_flow_component do |flow|
-    - flow.with_section do
+    - layout.with_section do
       = render Views::OauthApplications::ListComponent.new(@oauth_applications, @pagy, namespace: :organization)
 
     - if current_organization.is_a?(Publisher) && current_organization.sandbox?
-      - flow.with_section do
+      - layout.with_section do
         = flash_component(:warning) do
           ' Le mode « Bac à sable » est activé sur l'intégralité de votre organisation.
           br
           ' #{link_to "Consultez le guide", api_documentation_url("guides/sandbox")} pour en savoir plus.
 
-    - flow.with_header do |header|
-      - header.with_title "Documentation", "information-circle", "Nouvelle section"
+    - layout.with_header icon: "information-circle" do
+      | Documentation
 
-    - flow.with_section do
+    - layout.with_section do
       = card_component do
         ' L'API de Passerelle est une API RESTful qui implémente les spécifications du standard OAuth2 Pour l'authentification.
         br

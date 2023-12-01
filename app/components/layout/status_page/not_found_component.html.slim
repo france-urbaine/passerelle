@@ -1,6 +1,6 @@
-= render Layout::StatusPageComponent.new(**@options) do |template|
+= status_page_component(**@options) do |template|
   - if breadcrumbs?
-    - template.with_raw_breadcrumbs do
+    - template.with_breadcrumbs do
       = breadcrumbs
 
   - template.with_header do
@@ -12,6 +12,7 @@
   - template.with_body do
     - if body?
       = body
+
     - else
       - case @model
       - when "Publisher"

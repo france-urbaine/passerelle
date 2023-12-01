@@ -1,11 +1,11 @@
-= content_flow_component do |flow|
+= current_layout_component do |layout|
+  - layout.with_header icon: "map-pin" do |header|
+    | Proposition de mise à jour de l'adresse
 
-  - flow.with_header do |header|
-    - header.with_title "Proposition de mise à jour de l'adresse", "map-pin", "Icône d'illustration"
     - if allowed_to?(:update?, @report) && @report.packing?
       - header.with_action "Compléter", edit_report_path(@report, "proposition_adresse"), icon: "pencil-square", modal: true
 
-  - flow.with_section do
+  - layout.with_section do
     = description_list_component(@report) do |list|
       - list.with_attribute(:proposition_numero_voie) do |attribute|
         = render_valid_content(:proposition_numero_voie) do

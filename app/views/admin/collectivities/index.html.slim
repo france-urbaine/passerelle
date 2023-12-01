@@ -1,9 +1,11 @@
 = content_frame_component do
-  = breadcrumbs_component do |breadcrumbs|
-    - breadcrumbs.with_path "Administration"
-    - breadcrumbs.with_path "Collectivités"
+  = content_layout_component do |layout|
+    - layout.with_breadcrumbs do |breadcrumbs|
+      - breadcrumbs.with_path "Administration"
+      - breadcrumbs.with_h1 "Collectivités"
 
-    - if allowed_to?(:create?, Collectivity)
-      - breadcrumbs.with_action "Ajouter une collectivité", new_admin_collectivity_path, icon: "plus", modal: true, primary: true
+      - if allowed_to?(:create?, Collectivity)
+        - breadcrumbs.with_action "Ajouter une collectivité", new_admin_collectivity_path, icon: "plus", modal: true, primary: true
 
-  = render Views::Collectivities::ListComponent.new(@collectivities, @pagy, namespace: :admin)
+    - layout.with_section do
+      = render Views::Collectivities::ListComponent.new(@collectivities, @pagy, namespace: :admin)

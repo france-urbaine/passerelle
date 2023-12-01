@@ -100,7 +100,7 @@ RSpec.describe "Departements" do
 
     # A button should be present to edit the collectivity
     #
-    within ".header-bar", text: "Nord" do
+    within ".breadcrumbs", text: "Nord" do
       click_on "Modifier"
     end
 
