@@ -56,3 +56,11 @@
 
     - flow.with_section do
       = render Views::Users::ShowSessionData.new(@user)
+
+    - if allowed_to?(:index?, with: Admin::AuditPolicy)
+      - flow.with_header do |header|
+        - header.with_title "Activité récente", "clock", "Nouvelle section"
+        - header.with_action "Voir toute l'activité", admin_user_audits_path(@user), icon: "eye"
+
+      - flow.with_section do
+        = turbo_frame_tag "audits", src: admin_user_audits_path(@user)

@@ -48,6 +48,23 @@ fr:
             plural:   "applications sélectionnées"
 
     views:
+      audits:
+        message:
+          unknown_part:
+            application: "[application inconnue]"
+            username:    "[utilisateur inconnu]"
+
+          default:
+            create:                         "Création réalisée par <b>%{username}</b>"
+            update:                         "Mise à jour réalisée par <b>%{username}</b>"
+            destroy:                        "Suppression réalisée par <b>%{username}</b>"
+
+          user:
+            change_organization:            "Changement d'organisation réalisé par <b>%{username}</b>"
+            change_organization_and_update: "Changement d'organisation et mise à jour réalisés par <b>%{username}</b>"
+            login:                          "<b>%{username}</b> s'est connecté(e) à l'application"
+            two_factors:                    "<b>%{username}</b> a utilisé la double authentification"
+
       users:
         show_check_badge:
           super_admin:        "Administrateur de Passerelle"

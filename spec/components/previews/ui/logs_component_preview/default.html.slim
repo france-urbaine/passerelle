@@ -1,0 +1,7 @@
+= logs_component do |logs|
+  - logs.with_log 10.seconds.ago, "<b>Augustin Bouvet</b> s'est déconnecté(e)"
+  - logs.with_log 25.seconds.ago, "Mise à jour du compte réalisée par Augustin Bouvet"
+  - logs.with_log 33.seconds.ago, "Mise à jour du compte réalisée par Augustin Bouvet"
+  - logs.with_log 60.seconds.ago, "<b>Augustin Bouvet</b> a utilisé la double authentification"
+  - logs.with_log 61.seconds.ago, "<b>Augustin Bouvet</b> s'est connecté(e) à l'application"
+  - logs.with_log 99.seconds.ago, "Mise à jour réalisée par Stanislas Lefort"

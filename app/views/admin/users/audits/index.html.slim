@@ -1,0 +1,8 @@
+= content_frame_component do
+  = breadcrumbs_component do |breadcrumbs|
+    - breadcrumbs.with_path "Administration"
+    - breadcrumbs.with_path "Utilisateurs", admin_users_path
+    - breadcrumbs.with_path @user.name, admin_user_path(@user)
+    - breadcrumbs.with_path "Activité"
+
+  = audits_list_component @audits, @pagy

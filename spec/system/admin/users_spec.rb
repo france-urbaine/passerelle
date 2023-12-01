@@ -43,6 +43,23 @@ RSpec.describe "Users in admin" do
     expect(page).to have_selector("h1", text: "Utilisateurs")
   end
 
+  it "visits user & audits pages" do
+    visit admin_users_path
+    click_on "Marc Debomy"
+
+    # The browser should visit the user page
+    #
+    expect(page).to have_current_path(admin_user_path(marc))
+    expect(page).to have_selector("a.button", text: "Voir toute l'activité")
+
+    click_on "Voir toute l'activité"
+
+    # The browser should visit the user audits page
+    #
+    expect(page).to have_current_path(admin_user_audits_path(marc))
+    expect(page).to have_selector("pre.logs")
+  end
+
   it "visits the links on a publisher user page & comes back" do
     visit admin_user_path(marc)
 

@@ -38,14 +38,11 @@ class Audit < Audited::Audit
   belongs_to :organization,      optional: true, polymorphic: true
   belongs_to :oauth_application, optional: true
 
-  AUDIT_ACTION_COMPLETE = "complete"
-  AUDIT_ACTION_DISCARD  = "discard"
-
   before_create do
     set_organization
     set_current_publisher
     set_current_application
-    compute_action
+    resolve_action
   end
 
   private
@@ -66,18 +63,11 @@ class Audit < Audited::Audit
     self.oauth_application ||= associated if associated.is_a?(OauthApplication)
   end
 
-  def compute_action
-    if changed_attribute?(attribute: "completed_at")
-      self.action = AUDIT_ACTION_COMPLETE
-    elsif changed_attribute?(attribute: "discarded_at")
-      self.action = AUDIT_ACTION_DISCARD
-    end
-  end
+  def resolve_action
+    resolved_action = AuditResolver.resolve_action(self)
+    return if resolved_action.nil?
 
-  def changed_attribute?(attribute:)
-    auditable.respond_to?(attribute) &&
-      auditable.public_send(attribute).present? &&
-      audited_changes.key?(attribute) &&
-      !audited_changes[attribute].nil?
+    self.action = resolved_action
+    self.user   ||= auditable if action == AuditResolver::ACTION_LOGIN || action == AuditResolver::ACTION_TWO_FACTORS
   end
 end

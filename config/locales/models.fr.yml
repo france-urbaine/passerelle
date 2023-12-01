@@ -1,6 +1,7 @@
 fr:
   activerecord:
     models:
+      audit:             Activité
       report:            Signalement
       package:           Paquet
       dossier:           Dossier

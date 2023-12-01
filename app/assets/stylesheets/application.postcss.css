@@ -46,6 +46,7 @@
 @import "./components/datatable";
 @import "./components/description_list";
 @import "./components/flash";
+@import "./components/logs";
 
 /* Layouts */
 @import "./components/navbar";

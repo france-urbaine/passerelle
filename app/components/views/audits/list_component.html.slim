@@ -1,0 +1,19 @@
+turbo-frame#audits
+  - if pagy && audits.any?
+    .header-bar
+      / FIXME: subheader & pagination doesn't align well
+      / h2.subheader
+      /   = icon_component "server-stack"
+      /   | Activité
+
+      .flex-auto
+      = pagination_component(pagy, Audit)
+
+  - if audits.none?
+    = card_component(content_class: "card__content--empty")
+      | Aucune donnée disponible
+
+  - else
+    = logs_component(time_zone: "Europe/Paris", time_format: "%d/%m/%Y %H:%M:%S") do |logs|
+      - audits.each do |audit|
+        - logs.with_log audit.created_at, render(Views::Audits::MessageComponent.new(audit))
