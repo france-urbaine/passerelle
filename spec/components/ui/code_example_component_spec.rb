@@ -126,7 +126,7 @@ RSpec.describe UI::CodeExampleComponent, type: :component do
       expect(pre).to have_button(class: "icon-button") do |copy_button|
         expect(copy_button).to have_html_attribute("data-controller").with_value("copy-text toggle")
         expect(copy_button).to have_html_attribute("data-action").with_value("click->copy-text#copy click->toggle#toggle")
-        expect(copy_button).to have_html_attribute("data-copy-text-source-value").with_value("http -v GET https://api.example.com/path\n\n  { &quot;foo&quot;: &quot;bar&quot; }")
+        expect(copy_button).to have_html_attribute("data-copy-text-source-value").with_value("http -v GET https://api.example.com/path\n\n  { \"foo\": \"bar\" }")
       end
 
       expect(pre).not_to have_html_attribute("data-controller")

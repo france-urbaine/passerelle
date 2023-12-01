@@ -72,6 +72,10 @@ module UI
         @value = value
         super()
       end
+
+      def value
+        sanitize(@value.to_s)
+      end
     end
   end
 end
