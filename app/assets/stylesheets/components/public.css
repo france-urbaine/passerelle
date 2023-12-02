@@ -18,6 +18,10 @@
     & .card__content {
       @apply p-8;
     }
+
+    & .card__separator {
+      @apply my-8;
+    }
   }
 
   .public__wrapper {

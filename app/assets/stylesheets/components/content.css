@@ -8,29 +8,20 @@
     @apply p-6;
   }
 
-  .breadcrumbs {
-    /* This is a temporary patch until breadcrumbs is fully included in content layout */
-    @apply mb-10;
+  .content__layout,
+  .content__grid-col {
+    display: flex;
+    flex-direction: column;
 
-    &:last-child {
-      @apply mb-0;
-    }
-  }
-
-  .content__breadcrumbs {
-    @apply mb-10;
+    @apply gap-6;
   }
 
   .content__grid {
-    @apply grid gap-10;
+    @apply grid gap-6;
 
     &--cols-2 {
       @apply xl:grid-cols-2;
     }
-  }
-
-  .content__separator {
-    @apply my-10;
   }
 
   .content__header {
@@ -38,23 +29,26 @@
     flex-wrap: wrap;
     justify-content: space-between;
 
-    @apply mb-4 px-2;
-  }
+    /* &--title {
+      @apply mt-2;
+    } */
 
-  .content__header-title {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    box-sizing: content-box;
-    min-width: 0px;
-    min-height: theme("height.10");
+    & h2 {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      box-sizing: content-box;
+      min-width: 0px;
+      min-height: theme("height.10");
 
-    @apply text-xl leading-10;
+      @apply pl-2;
+      @apply text-xl leading-10;
 
-    & svg {
-      position: relative;
-      display: block;
-      @apply m-0 mr-4;
+      & svg {
+        position: relative;
+        display: block;
+        @apply m-0 mr-4;
+      }
     }
   }
 
@@ -65,7 +59,7 @@
     align-items: center;
     max-width: 100%;
 
-    @apply -m-1;
+    @apply -m-1 pr-2;
   }
 
   .content__header-action {

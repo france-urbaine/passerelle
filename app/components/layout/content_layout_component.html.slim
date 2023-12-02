@@ -1,7 +1,5 @@
 .content__layout*@html_attributes
-  - if breadcrumbs? || @wrapped_breadcrumbs
-    .content__breadcrumbs
-      = breadcrumbs || @wrapped_breadcrumbs
+  = breadcrumbs || @wrapped_breadcrumbs
 
   - if blocks.empty?
     .content__section
@@ -9,14 +7,9 @@
 
   - blocks.each.with_index do |block, index|
     - case block.component_class_name
-    - when "Header"
-      - if index.positive?
-        .content__separator
-
-      .content__header
-        .content__header-title
-          = block.icon
-          h2= block
+    - when "Header", "HeaderBar"
+      .content__header*block.html_attributes
+        = block
 
         - if block.actions?
           .content__header-actions
@@ -25,33 +18,22 @@
                 = action
 
     - when "Section"
-      - if index.positive? && blocks[index - 1].component_class_name != "Header"
-        .content__separator
-
-      .content__section
+      .content__section*block.html_attributes
         = block
 
     - when "Grid"
-      - if index.positive?
-        .content__separator
-
       .content__grid*block.html_attributes
         - block.columns.each do |column|
-          .content__grid-col
+          .content__grid-col*column.html_attributes
             - if column.blocks.empty?
               .content__section
                 = column.content
 
             - column.blocks.each.with_index do |column_block, colum_block_index|
               - case column_block.component_class_name
-              - when "Header"
-                - if colum_block_index.positive?
-                  .content__separator
-
-                .content__header
-                  .content__header-title
-                    = column_block.icon
-                    h2= column_block
+              - when "Header", "HeaderBar"
+                .content__header*column_block.html_attributes
+                  = column_block
 
                   - if column_block.actions?
                     .content__header-actions
@@ -60,10 +42,7 @@
                           = action
 
               - when "Section"
-                - if colum_block_index.positive? && column.blocks[colum_block_index - 1].component_class_name != "Header"
-                  .content__separator
-
-                .content__section
+                .content__section*column_block.html_attributes
                   = column_block
 
               - else

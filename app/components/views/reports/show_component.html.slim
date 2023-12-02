@@ -1,75 +1,59 @@
-= current_layout_component do |layout|
+= content_layout_component do |layout|
 
   - if @report.packing?
-    - layout.wrap do
+    - layout.with_section do
       = render InformationPacking.new(@report)
   - else
-    - layout.wrap do
+    - layout.with_section do
       = render InformationTransmitted.new(@report)
 
   - if display_situation_majic?
-    - layout.wrap do
+    - layout.with_section do
       = render SituationMajic.new(@report)
   - elsif display_situation_parcelle?
-    - layout.wrap do
+    - layout.with_section do
       = render SituationParcelle.new(@report)
 
   - if display_situation_evaluation? && display_proposition_evaluation?
     - layout.with_grid do |grid|
-      - grid.with_column do |column|
-        - column.wrap do
-          = render SituationEvaluation.new(@report)
-
-      - grid.with_column do |column|
-        - column.wrap do
-          = render PropositionEvaluation.new(@report)
+      - grid.with_column { render SituationEvaluation.new(@report) }
+      - grid.with_column { render PropositionEvaluation.new(@report) }
 
   - elsif display_situation_evaluation?
-    - layout.wrap do
+    - layout.with_section do
       = render SituationEvaluation.new(@report)
-
   - elsif display_proposition_evaluation?
-    - layout.wrap do
+    - layout.with_section do
       = render PropositionEvaluation.new(@report)
 
   - if display_situation_occupation? && display_proposition_occupation?
     - layout.with_grid do |grid|
-      - grid.with_column do |column|
-        - column.wrap do
-          = render SituationOccupation.new(@report)
-
-      - grid.with_column do |column|
-        - column.wrap do
-          = render PropositionOccupation.new(@report)
+      - grid.with_column { render SituationOccupation.new(@report) }
+      - grid.with_column { render PropositionOccupation.new(@report) }
 
   - elsif display_situation_occupation?
-    - layout.wrap do
+    - layout.with_section do
       = render SituationOccupation.new(@report)
 
   - elsif display_proposition_occupation?
-    - layout.wrap do
+    - layout.with_section do
       = render PropositionOccupation.new(@report)
 
   - if display_proposition_creation_local?
-    - layout.wrap do
+    - layout.with_section do
       = render PropositionCreationLocal.new(@report)
 
   - if display_proposition_exoneration?
-    - layout.wrap do
+    - layout.with_section do
       = render PropositionExoneration.new(@report)
 
   - if display_proposition_adresse?
-    - layout.wrap do
+    - layout.with_section do
       = render PropositionAdresse.new(@report)
 
   - layout.with_grid do |grid|
-    - grid.with_column do |column|
-      - column.wrap do
-        = render Observations.new(@report)
+    - grid.with_column { render Observations.new(@report) }
+    - grid.with_column { render Enjeu.new(@report) }
 
-    - grid.with_column do |column|
-      - column.wrap do
-        = render Enjeu.new(@report)
-
-  - layout.wrap do
+  - layout.with_section do
     = render Documents.new(@report)

@@ -1,22 +1,13 @@
 ruby:
   sample_component = Class.new(ApplicationViewComponent) do
-    include ::Layout::ContentLayoutComponent::Current
-
     def self.name
       "SampleComponent"
     end
 
     def call
-      current_layout_component do |layout|
-        layout.with_header do
-          "Title from SampleComponent"
-        end
-
-        layout.with_section do
-          card_component do
-            "Section rendered from SampleComponent"
-          end
-        end
+      content_layout_component do |layout|
+        layout.with_header { "SampleComponent title" }
+        layout.with_section { card_component(class: "ring-red-500") }
       end
     end
   end
@@ -27,17 +18,18 @@ ruby:
       - breadcrumbs.with_path "Path"
 
   - layout.with_section do
-    = card_component do
-      | Not in a component
+    = card_component
 
-  - layout.wrap do
+  - layout.with_section do
     = render sample_component.new
 
-  - layout.with_grid(class: "grid-cols-2") do |grid|
+  - layout.with_grid do |grid|
     - grid.with_column do |column|
-      - column.wrap do
+      - column.with_section do
         = render sample_component.new
 
       - column.with_section do
-        = card_component do
-          | Not in a component
+        = card_component
+
+    - grid.with_column do
+      = render sample_component.new

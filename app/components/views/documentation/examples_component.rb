@@ -3,8 +3,6 @@
 module Views
   module Documentation
     class ExamplesComponent < ApplicationViewComponent
-      include ::Layout::ContentLayoutComponent::Current
-
       def initialize(resource_name, method_name, version = nil)
         @resource_name = resource_name
         @method_name   = method_name

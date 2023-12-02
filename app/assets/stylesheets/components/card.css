@@ -27,6 +27,10 @@
     /* nothing yet */
   }
 
+  .card__separator {
+    @apply my-6;
+  }
+
   .card__actions {
     display: flex;
 
