@@ -30,12 +30,10 @@ RSpec.describe UI::CodeExampleComponent, type: :component do
         expect(span).to have_text("$ http -v GET https://api.example.com/path")
       end
 
-      expect(pre).to have_selector("div:nth-child(1)") do |div|
-        expect(div).to have_button(class: "icon-button") do |copy_button|
-          expect(copy_button).to have_html_attribute("data-controller").with_value("copy-text toggle")
-          expect(copy_button).to have_html_attribute("data-action").with_value("click->copy-text#copy click->toggle#toggle")
-          expect(copy_button).to have_html_attribute("data-copy-text-source-value").with_value("http -v GET https://api.example.com/path")
-        end
+      expect(pre).to have_button(class: "icon-button") do |copy_button|
+        expect(copy_button).to have_html_attribute("data-controller").with_value("copy-text toggle")
+        expect(copy_button).to have_html_attribute("data-action").with_value("click->copy-text#copy click->toggle#toggle")
+        expect(copy_button).to have_html_attribute("data-copy-text-source-value").with_value("http -v GET https://api.example.com/path")
       end
     end
   end
@@ -65,12 +63,10 @@ RSpec.describe UI::CodeExampleComponent, type: :component do
         expect(span).to have_text("$ http -v GET https://api.example.com/path")
       end
 
-      expect(pre).to have_selector("div:nth-child(1)") do |div|
-        expect(div).to have_button(class: "icon-button") do |copy_button|
-          expect(copy_button).to have_html_attribute("data-controller").with_value("copy-text toggle")
-          expect(copy_button).to have_html_attribute("data-action").with_value("click->copy-text#copy click->toggle#toggle")
-          expect(copy_button).to have_html_attribute("data-copy-text-source-value").with_value("$ http -v GET https://api.example.com/path")
-        end
+      expect(pre).to have_button(class: "icon-button") do |copy_button|
+        expect(copy_button).to have_html_attribute("data-controller").with_value("copy-text toggle")
+        expect(copy_button).to have_html_attribute("data-action").with_value("click->copy-text#copy click->toggle#toggle")
+        expect(copy_button).to have_html_attribute("data-copy-text-source-value").with_value("$ http -v GET https://api.example.com/path")
       end
     end
   end
@@ -154,6 +150,43 @@ RSpec.describe UI::CodeExampleComponent, type: :component do
 
           { "foo": "bar" }
       TEXT
+    end
+  end
+
+  it "renders a code copying button with proper unescaped content" do
+    # FYI: We use `with_content` instead of a block:
+    #
+    # Text wrapped in a block will be escaped by ActionView rendering
+    # If we want to expose HTML escaped characters, they will be over-escaped
+    #
+    # When passed as an argument to `with_content`, content is not escaped again.
+    #
+    render_inline described_class.new(:shell, copyable: true).with_content(<<~HTML)
+      $ curl -X POST http://api.passerelle-fiscale.localhost:3000/oauth/token
+        -H "Accept: application/json"
+        -H "Content-Type: application/json"
+        -d '{&quot;a&quot;:&quot;'$A'&quot;, &quot;b&quot;:&quot;'$B'&quot;}'
+    HTML
+
+    expect(page).to have_button(class: "icon-button") do |copy_button|
+      expect(copy_button).to have_html_attribute("data-copy-text-source-value").with_value(
+        <<~TEXT
+          curl -X POST http://api.passerelle-fiscale.localhost:3000/oauth/token
+            -H "Accept: application/json"
+            -H "Content-Type: application/json"
+            -d '{"a":"'$A'", "b":"'$B'"}'
+        TEXT
+      )
+
+      # FYI: using `have_html_attribute` can be confusing:
+      # the attribute value we are testing is already unsescaped by Nokogiri.
+      #
+      # If we want to test the raw value of the attribute, we need to
+      # perform the following macth:
+      #
+      expect(copy_button.native.to_html).to include(<<~HTML.strip)
+        data-copy-text-source-value="curl -X POST http://api.passerelle-fiscale.localhost:3000/oauth/token\n  -H &quot;Accept: application/json&quot;\n  -H &quot;Content-Type: application/json&quot;\n  -d '{&quot;a&quot;:&quot;'$A'&quot;, &quot;b&quot;:&quot;'$B'&quot;}'\n"
+      HTML
     end
   end
 end

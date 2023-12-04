@@ -1,12 +1,14 @@
 pre.code-example
   - if copyable?
-    = copyable_code_component(copyable_content)
+    = copyable_button(copyable_content)
 
   - if languages?
     - languages.each.with_index do |section, index|
       = "\n\n" unless index.zero?
+
       - if section.copyable? && !copyable?
-        = copyable_code_component(section.copyable_content)
+        = copyable_button(section.copyable_content)
+
       span.code(
         data-controller="highlight"
         data-highlight-language-value=section.language
