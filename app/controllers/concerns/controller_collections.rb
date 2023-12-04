@@ -7,7 +7,7 @@ module ControllerCollections
 
   private
 
-  def index_collection(relation, nested: false)
+  def index_collection(relation, nested: false, items: nil)
     return autocomplete_collection(relation), nil if autocomplete_request?
 
     relation = search_collection(relation)
@@ -16,7 +16,7 @@ module ControllerCollections
     if nested
       paginate_collection(relation, items: NESTED_ITEMS)
     else
-      paginate_collection(relation)
+      paginate_collection(relation, items:)
     end
   end
 
