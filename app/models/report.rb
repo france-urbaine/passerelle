@@ -351,35 +351,11 @@ class Report < ApplicationRecord
     SQL
   }
 
-  scope :covered_by_ddfip, lambda { |ddfip|
-    if ddfip.is_a?(ActiveRecord::Relation)
-      joins(:commune).merge(Commune.where(code_departement: ddfip.select(:code_departement)))
-    else
-      joins(:commune).merge(Commune.where(code_departement: ddfip.code_departement))
-    end
-  }
+  scope :covered_by_ddfip, ->(ddfip) { where(ddfip: ddfip) }
 
-  scope :covered_by_office, lambda { |office|
-    if office.is_a?(ActiveRecord::Relation)
-      distinct
-        .joins(:potential_offices)
-        .merge(office)
-        .where(%{"reports"."form_type" = ANY ("offices"."competences")})
-    else
-      distinct
-        .joins(:potential_office_communes)
-        .merge(OfficeCommune.where(office: office))
-        .where(form_type: office.competences)
-    end
-  }
+  scope :covered_by_office, ->(office) { where(office: office) }
 
-  scope :transmitted_or_made_through_web_ui, lambda {
-    left_outer_joins(:package).where(<<~SQL.squish)
-      "packages"."transmitted_at" IS NOT NULL
-      OR
-      "reports"."publisher_id" IS NULL
-    SQL
-  }
+  scope :transmitted_or_made_through_web_ui, -> { transmitted.or(where(publisher_id: nil)) }
 
   scope :search, lambda { |input|
     advanced_search(
@@ -455,8 +431,15 @@ class Report < ApplicationRecord
     order(Arel.sql(%{COALESCE("reports"."rejected_at", "reports"."approved_at", "reports"."debated_at") DESC}))
   }
 
-  scope :order_by_last_transmission_date, lambda {
-    joins(:package).merge(Package.order(transmitted_at: :desc))
+  scope :order_by_last_transmission_date, -> { order(transmitted_at: :desc) }
+
+  scope :transmissible,              -> { ready.not_in_active_transmission }
+  scope :in_active_transmission,     -> { packing.where.not(transmission_id: nil) }
+  scope :not_in_active_transmission, -> { where(transmission_id: nil) }
+
+  scope :in_transmission,        ->(transmission) { where(transmission_id: transmission.id) }
+  scope :not_in_transmission,    lambda { |transmission|
+    where.not(transmission_id: transmission.id).or(where(transmission_id: nil))
   }
 
   # Predicates
@@ -466,18 +449,23 @@ class Report < ApplicationRecord
   end
 
   def covered_by_ddfip?(ddfip)
-    ddfip.code_departement == commune.code_departement
+    ddfip_id == ddfip&.id
   end
 
   def covered_by_office?(office)
-    office.competences.include?(form_type) && office.communes.where(code_insee: code_insee).exist?
+    office_id == office&.id
   end
 
   def covered_by_offices?(offices)
-    offices.joins(:communes)
-      .where(%{? = ANY ("offices"."competences")}, form_type)
-      .merge(Commune.where(code_insee: code_insee))
-      .exists?
+    offices&.map(&:id)&.include?(office_id)
+  end
+
+  def transmissible?
+    packing?
+  end
+
+  def in_active_transmission?
+    ready? && transmission_id?
   end
 
   # Updates methods

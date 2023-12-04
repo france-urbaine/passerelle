@@ -4,139 +4,155 @@ module States
   module ReportStates
     extend ActiveSupport::Concern
 
+    STATES = %w[draft
+                ready
+                sent
+                acknowledged
+                denied
+                processing
+                approved
+                rejected].freeze
+
     included do
+      # Validations
+      # ----------------------------------------------------------------------------
+      validates :state, inclusion: { in: STATES }
+
       # Scopes
       # ----------------------------------------------------------------------------
-      scope :incomplete,             -> { where(completed_at: nil) }
-      scope :completed,              -> { where.not(completed_at: nil) }
+      scope :draft,        -> { where(state: :draft) }
+      scope :ready,        -> { where(state: :ready) }
+      scope :sent,         -> { where(state: :sent) }
+      scope :acknowledged, -> { where(state: :acknowledged) }
+      scope :denied,       -> { where(state: :denied) }
+      scope :processing,   -> { where(state: :processing) }
+      scope :approved,     -> { where(state: :approved) }
+      scope :rejected,     -> { where(state: :rejected) }
 
-      scope :packing,                -> { where(package_id: nil) }
-      scope :packed,                 -> { where.not(package_id: nil) }
-
-      scope :transmissible,              -> { completed.packing.not_in_active_transmission }
-      scope :in_active_transmission,     -> { packing.where.not(transmission_id: nil) }
-      scope :not_in_active_transmission, -> { where(transmission_id: nil) }
-
-      scope :in_transmission,        ->(transmission) { where(transmission_id: transmission.id) }
-      scope :not_in_transmission,    lambda { |transmission|
-        where.not(transmission_id: transmission.id).or(where(transmission_id: nil))
-      }
-
-      scope :transmitted_to_sandbox, -> { joins(:package).merge(Package.unscoped.sandbox) }
-      scope :transmitted,            -> { joins(:package).merge(Package.unscoped.transmitted) }
-      scope :unresolved,             -> { joins(:package).merge(Package.unscoped.unresolved) }
-      scope :missed,                 -> { joins(:package).merge(Package.unscoped.missed) }
-      scope :acknowledged,           -> { joins(:package).merge(Package.unscoped.acknowledged) }
-      scope :assigned,               -> { joins(:package).merge(Package.unscoped.assigned) }
-      scope :returned,               -> { joins(:package).merge(Package.unscoped.returned) }
-      scope :unreturned,             -> { joins(:package).merge(Package.unscoped.unreturned) }
-
-      scope :operative,              -> { assigned.where(approved_at: nil, rejected_at: nil) }
-      scope :pending,                -> { assigned.where(approved_at: nil, rejected_at: nil, debated_at: nil) }
-      scope :debated,                -> { assigned.where.not(debated_at: nil) }
-      scope :approved,               -> { assigned.where.not(approved_at: nil) }
-      scope :rejected,               -> { assigned.where.not(rejected_at: nil) }
-      scope :concluded,              -> { approved.or(rejected) }
-      scope :examined,               -> { approved.or(rejected).or(debated) }
+      scope :packing,     -> { where(state: %w[draft ready]) }
+      scope :unassigned,  -> { where(state: %w[sent acknowledged]) }
+      scope :assigned,    -> { where(state: %w[processing approved rejected]) }
+      scope :unresolved,  -> { where(state: %w[sent acknowledged processing]) }
+      scope :undenied,    -> { where(state: %w[sent acknowledged processing approved rejected]) }
+      scope :transmitted, -> { where(state: %w[sent acknowledged denied processing approved rejected]) }
+      scope :resolved,    -> { where(state: %w[approved rejected]) }
 
       # Predicates
       # ----------------------------------------------------------------------------
-      def incomplete?
-        completed_at.nil?
+      def draft?
+        state == "draft"
       end
 
-      def completed?
-        completed_at?
+      def ready?
+        state == "ready"
       end
 
-      def packing?
-        package_id.nil?
+      def sent?
+        state == "sent"
       end
 
-      def packed?
-        package_id?
+      def acknowledged?
+        state == "acknowledged"
       end
 
-      def transmitted_to_sandbox?
-        package&.sandbox?
+      def denied?
+        state == "denied"
       end
 
-      %i[
-        transmitted?
-        unresolved?
-        missed?
-        acknowledged?
-        assigned?
-        returned?
-        unreturned?
-      ].each do |method_name|
-        define_method method_name do
-          packed? && package.public_send(method_name)
-        end
-      end
-
-      def operative?
-        assigned? && approved_at.nil? && rejected_at.nil?
-      end
-
-      def pending?
-        assigned? && approved_at.nil? && rejected_at.nil? && debated_at.nil?
-      end
-
-      def debated?
-        assigned? && debated_at?
+      def processing?
+        state == "processing"
       end
 
       def approved?
-        assigned? && approved_at?
+        state == "approved"
       end
 
       def rejected?
-        assigned? && rejected_at?
+        state == "rejected"
       end
 
-      def concluded?
+      def packing?
+        draft? || ready?
+      end
+
+      def unassigned?
+        sent? || acknowledged?
+      end
+
+      def assigned?
+        processing? || approved? || rejected?
+      end
+
+      def unresolved?
+        sent? || acknowledged? || processing?
+      end
+
+      def undenied?
+        sent? || acknowledged? || processing? || approved? || rejected?
+      end
+
+      def transmitted?
+        sent? || acknowledged? || denied? || processing? || approved? || rejected?
+      end
+
+      def resolved?
         approved? || rejected?
-      end
-
-      def examined?
-        approved? || rejected? || debated?
-      end
-
-      def transmissible?
-        completed? && packing?
-      end
-
-      def in_active_transmission?
-        completed? && packing? && transmission_id?
       end
 
       # Updates methods
       # ----------------------------------------------------------------------------
-      def complete!
-        return true if completed?
+      def ready!
+        return true if ready?
 
-        touch(:completed_at)
+        update(
+          state: "ready",
+          ready_at: Time.current
+        )
       end
 
-      def incomplete!
-        update(completed_at: nil)
+      def transmit!
+        return true if transmitted?
+
+        update(
+          state: "sent",
+          transmitted_at: Time.current
+        )
       end
 
-      def debate!
-        return false if approved? || rejected?
-        return true if debated?
+      def deny!
+        return true if denied?
 
-        touch(:debated_at)
+        update(
+          state: "denied",
+          denied_at: Time.current
+        )
+      end
+
+      def acknowledge!
+        return true if acknowledged?
+
+        update(
+          state: "acknowledged",
+          acknowledged_at: Time.current
+        )
+      end
+
+      def assign!
+        return true if assigned?
+
+        update(
+          state: "processing",
+          assigned_at: Time.current
+        )
       end
 
       def approve!
         return true if approved?
 
         update(
+          state: "approved",
           approved_at: Time.current,
-          rejected_at: nil,
-          debated_at:  nil
+          rejected_at: nil
         )
       end
 
@@ -144,9 +160,8 @@ module States
         return true if rejected?
 
         update(
-          rejected_at: Time.current,
-          approved_at: nil,
-          debated_at:  nil
+          state: "rejected",
+          rejected_at: Time.current
         )
       end
     end
