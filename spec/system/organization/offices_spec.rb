@@ -268,7 +268,7 @@ RSpec.describe "Offices managed by current organization" do
     # A message should diplay the number of selected offices
     # with a button to remove them
     #
-    within ".header-bar--selection", text: "1 guichet sélectionné" do
+    within ".datatable__selection", text: "1 guichet sélectionné" do
       click_on "Tout supprimer"
     end
 
@@ -293,7 +293,7 @@ RSpec.describe "Offices managed by current organization" do
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector(".header-bar--selection")
+    expect(page).not_to have_selector(".datatable__selection")
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=log]", text: "Les guichets sélectionnés ont été supprimés.")
 
@@ -315,7 +315,7 @@ RSpec.describe "Offices managed by current organization" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector(".header-bar--selection")
+    expect(page).not_to have_selector(".datatable__selection")
     expect(page).not_to have_selector("[role=log]", text: "Les guichets sélectionnés ont été supprimés.")
     expect(page).to     have_selector("[role=log]", text: "La suppression des guichets sélectionnés a été annulée.")
   end
@@ -349,7 +349,7 @@ RSpec.describe "Offices managed by current organization" do
     # A message should diplay the number of selected offices
     # with a button to remove them
     #
-    within ".header-bar--selection", text: "10 guichets sélectionnés" do
+    within ".datatable__selection", text: "10 guichets sélectionnés" do
       click_on "Tout supprimer"
     end
 
@@ -372,7 +372,7 @@ RSpec.describe "Offices managed by current organization" do
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector(".header-bar--selection")
+    expect(page).not_to have_selector(".datatable__selection")
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=log]", text: "Les guichets sélectionnés ont été supprimés.")
 
@@ -396,7 +396,7 @@ RSpec.describe "Offices managed by current organization" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector(".header-bar--selection")
+    expect(page).not_to have_selector(".datatable__selection")
     expect(page).not_to have_selector("[role=log]", text: "Les guichets sélectionnés ont été supprimés.")
     expect(page).to     have_selector("[role=log]", text: "La suppression des guichets sélectionnés a été annulée.")
   end
@@ -430,11 +430,11 @@ RSpec.describe "Offices managed by current organization" do
     # A link to select any offices from any page should be present
     # A link to remove all of them should be present
     #
-    within ".header-bar--selection", text: "10 guichets sélectionnés" do
+    within ".datatable__selection", text: "10 guichets sélectionnés" do
       click_on "Sélectionner les 13 guichets des 2 pages"
     end
 
-    within ".header-bar--selection", text: "13 guichets sélectionnés" do
+    within ".datatable__selection", text: "13 guichets sélectionnés" do
       click_on "Tout supprimer"
     end
 
@@ -454,7 +454,7 @@ RSpec.describe "Offices managed by current organization" do
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector(".header-bar--selection")
+    expect(page).not_to have_selector(".datatable__selection")
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=log]", text: "Les guichets sélectionnés ont été supprimés.")
 
@@ -478,7 +478,7 @@ RSpec.describe "Offices managed by current organization" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector(".header-bar--selection")
+    expect(page).not_to have_selector(".datatable__selection")
     expect(page).not_to have_selector("[role=log]", text: "Les guichets sélectionnés ont été supprimés.")
     expect(page).to     have_selector("[role=log]", text: "La suppression des guichets sélectionnés a été annulée.")
   end

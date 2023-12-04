@@ -35,46 +35,76 @@ module Layout
       blocks.each(&:to_s)
     end
 
-    def wrap(&)
-      Current.wrap(self, &)
+    def div(main_class, other_atributes, &)
+      css_class = [main_class]
+      css_class << other_atributes[:class]
+      css_class = css_class.join(" ").squish
+
+      tag.div(**other_atributes, class: css_class, &)
     end
 
     class Block < ApplicationViewComponent
-      def component_class_name
-        self.class.name.demodulize
+      attr_reader :html_attributes
+
+      def initialize(**html_attributes)
+        @html_attributes = html_attributes
+        super()
       end
 
       def call
         content
       end
-    end
 
-    class Header < Block
-      renders_many :actions, "ActionSlot"
-
-      def initialize(icon: nil, icon_options: {})
-        @icon = icon
-        @icon_options = icon_options
-        super()
+      def component_class_name
+        self.class.name.demodulize
       end
 
-      def icon
-        # TODO: Should we add an ARIA label to the icon ?
-
-        icon_component(@icon, **@icon_options) if @icon
+      def header?
+        false
       end
     end
 
     class Section < Block
     end
 
+    class Header < Block
+      renders_many :actions, "ActionSlot"
+
+      def initialize(title: true, icon: nil, icon_options: {}, **)
+        @title = title
+        @icon = icon
+        @icon_options = icon_options
+        super(**)
+      end
+
+      def header?
+        true
+      end
+
+      def call
+        if @title
+          tag.h2 do
+            concat icon_component(@icon, **@icon_options) if @icon
+            concat content
+          end
+        else
+          concat icon_component(@icon, **@icon_options) if @icon
+          concat content
+        end
+      end
+
+      def html_attributes
+        css_class = []
+        css_class << "content__header--title" if @title
+        css_class << @html_attributes[:class]
+        css_class = css_class.join(" ").squish
+
+        @html_attributes.merge(class: css_class)
+      end
+    end
+
     class Grid < Block
       renders_many :columns, "Layout::ContentLayoutComponent::Column"
-
-      def initialize(**html_attributes)
-        @html_attributes = html_attributes
-        super()
-      end
 
       def before_render
         # Eager loading all column blocks
@@ -108,6 +138,10 @@ module Layout
           as:      :header,
           renders: "Layout::ContentLayoutComponent::Header"
         },
+        header_bar: {
+          as:      :header_bar,
+          renders: "Layout::ContentLayoutComponent::HeaderBar"
+        },
         section: {
           as:      :section,
           renders: "Layout::ContentLayoutComponent::Section"
@@ -122,31 +156,6 @@ module Layout
         # Eager loading all column blocks
         content
         blocks.each(&:to_s)
-      end
-
-      def wrap(&)
-        Current.wrap(self, &)
-      end
-    end
-
-    module Current
-      def current_layout_component(&)
-        if Current.current
-          yield Current.current
-          ""
-        else
-          render Layout::ContentLayoutComponent.new, &
-        end
-      end
-
-      def self.wrap(instance)
-        Thread.current[:current_layout_component] = instance
-        yield
-        Thread.current[:current_layout_component] = nil
-      end
-
-      def self.current
-        Thread.current[:current_layout_component]
       end
     end
   end

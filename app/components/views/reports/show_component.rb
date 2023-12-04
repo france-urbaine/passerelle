@@ -3,8 +3,6 @@
 module Views
   module Reports
     class ShowComponent < ApplicationViewComponent
-      include ::Layout::ContentLayoutComponent::Current
-
       # FIXME: https://github.com/ViewComponent/view_component/issues/387
       # The PR on ViewComponent will eliminate the need to
       # create Subclasses to render other templates:

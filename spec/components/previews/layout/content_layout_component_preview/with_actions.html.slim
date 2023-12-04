@@ -5,19 +5,23 @@
     - header.with_action "Add", icon: "plus", primary: true
     - header.with_action "Edit", "/rails/view_components/samples/link/default"
     - header.with_action "Open a modal", "/rails/view_components/samples/link/modal", modal: true
-    - header.with_action do
-      = badge_component "Status"
 
   - layout.with_section do
-    = card_component do
-      | Section #1
+    = card_component
 
   - layout.with_header do |header|
     | Section #2
 
     - header.with_action do
+      = badge_component "Status"
+    - header.with_action do
       = button_component "Do something else"
 
+  - layout.with_header(title: false) do |header|
+    = search_form_component
+
+    - header.with_action do
+      = pagination_buttons_component(Pagy.new(count: 125, page: 3, items: 20))
+
   - layout.with_section do
-    = card_component do
-      | Section #2
+    = card_component

@@ -17,11 +17,9 @@ RSpec.describe Layout::ContentLayoutComponent, type: :component do
     expect(page).to have_selector(".content__layout") do |layout|
       expect(layout).to have_selector(".content__header:nth-child(1)",  text: "Section title #1")
       expect(layout).to have_selector(".content__section:nth-child(2)", text: "Section content #1")
-      expect(layout).to have_selector(".content__separator:nth-child(3)")
-      expect(layout).to have_selector(".content__header:nth-child(4)",  text: "Section title #2")
-      expect(layout).to have_selector(".content__section:nth-child(5)", text: "Section content #2")
-      expect(layout).to have_selector(".content__separator:nth-child(6)")
-      expect(layout).to have_selector(".content__section:nth-child(7)", text: "Section content #3")
+      expect(layout).to have_selector(".content__header:nth-child(3)",  text: "Section title #2")
+      expect(layout).to have_selector(".content__section:nth-child(4)", text: "Section content #2")
+      expect(layout).to have_selector(".content__section:nth-child(5)", text: "Section content #3")
     end
   end
 
@@ -34,10 +32,8 @@ RSpec.describe Layout::ContentLayoutComponent, type: :component do
 
     expect(page).to have_selector(".content__layout") do |layout|
       expect(layout).to have_selector(".content__section:nth-child(1)", text: "Section content #1")
-      expect(layout).to have_selector(".content__separator:nth-child(2)")
-      expect(layout).to have_selector(".content__section:nth-child(3)", text: "Section content #2")
-      expect(layout).to have_selector(".content__separator:nth-child(4)")
-      expect(layout).to have_selector(".content__section:nth-child(5)", text: "Section content #3")
+      expect(layout).to have_selector(".content__section:nth-child(2)", text: "Section content #2")
+      expect(layout).to have_selector(".content__section:nth-child(3)", text: "Section content #3")
     end
   end
 
@@ -50,8 +46,8 @@ RSpec.describe Layout::ContentLayoutComponent, type: :component do
       layout.with_section { "Section content" }
     end
 
-    expect(page).to have_selector(".content__layout > .content__header > .content__header-title") do |h2|
-      expect(h2).to have_selector("h2", text: "Section #1")
+    expect(page).to have_selector(".content__layout > .content__header > h2") do |h2|
+      expect(h2).to have_text("Section #1")
       expect(h2).to have_selector("svg") do |svg|
         expect(svg).to have_html_attribute("data-source").with_value("heroicons/optimized/24/outline/server-stack.svg")
         expect(svg).to have_html_attribute("aria-hidden").boolean
@@ -68,12 +64,25 @@ RSpec.describe Layout::ContentLayoutComponent, type: :component do
       layout.with_section { "Section content" }
     end
 
-    expect(page).to have_selector(".content__layout > .content__header > .content__header-title") do |h2|
-      expect(h2).to have_selector("h2", text: "Section #1")
+    expect(page).to have_selector(".content__layout > .content__header > h2") do |h2|
+      expect(h2).to have_text("Section #1")
       expect(h2).to have_selector("svg") do |svg|
         expect(svg).to have_html_attribute("data-source").with_value("heroicons/optimized/24/solid/server-stack.svg")
         expect(svg).to have_html_attribute("aria-hidden").boolean
       end
+    end
+  end
+
+  it "renders content an header without title" do
+    render_inline described_class.new do |layout|
+      layout.with_header title: false do
+        tag.div "Section #1"
+      end
+    end
+
+    expect(page).to have_selector(".content__layout > .content__header") do |header|
+      expect(header).to     have_selector("div", text: "Section #1")
+      expect(header).not_to have_selector("h2")
     end
   end
 
@@ -115,8 +124,7 @@ RSpec.describe Layout::ContentLayoutComponent, type: :component do
 
     expect(page).to have_selector(".content__layout") do |layout|
       expect(layout).to have_selector(".content__section:nth-child(1)", text: "Section content #1")
-      expect(layout).to have_selector(".content__separator:nth-child(2)")
-      expect(layout).to have_selector(".content__grid:nth-child(3)") do |grid|
+      expect(layout).to have_selector(".content__grid:nth-child(2)") do |grid|
         expect(grid).to have_html_attribute("class").with_value("content__grid content__grid--cols-2")
 
         expect(grid).to have_selector(".content__grid-col:nth-child(1)") do |column|
@@ -195,70 +203,102 @@ RSpec.describe Layout::ContentLayoutComponent, type: :component do
     end
   end
 
-  context "with a component implementing current layout" do
-    let!(:sample_component) do
-      Class.new(ApplicationViewComponent) do
-        include Layout::ContentLayoutComponent::Current
+  it "merges default & custom CSS classes" do
+    render_inline described_class.new(class: "custom-layout") do |layout|
+      layout.with_header(class: "custom-header")   { "Section title #1" }
+      layout.with_section(class: "custom-section") { "Section content #1" }
 
+      layout.with_grid(class: "custom-grid") do |grid|
+        grid.with_column(class: "custom-column") do |column|
+          column.with_header(class: "custom-column-header")
+          column.with_section(class: "custom-column-section")
+        end
+      end
+    end
+
+    expect(page).to have_selector(".content__layout.custom-layout") do |layout|
+      expect(layout).to have_selector(".content__header.custom-header")
+      expect(layout).to have_selector(".content__section.custom-section")
+      expect(layout).to have_selector(".content__grid.custom-grid") do |grid|
+        expect(grid).to have_selector(".content__grid-col.custom-column") do |column|
+          expect(column).to have_selector(".content__header.custom-column-header:not(.custom-header)")
+          expect(column).to have_selector(".content__section.custom-column-section:not(.custom-section)")
+        end
+      end
+    end
+  end
+
+  context "when wrapping a component with its own layout" do
+    let!(:sample_component_class) do
+      Class.new(ApplicationViewComponent) do
         def self.name
           "SampleComponent"
         end
 
         def call
-          current_layout_component do |layout|
-            layout.with_header do
-              "Title from SampleComponent"
-            end
-
-            layout.with_section do
-              card_component do
-                "Section rendered from SampleComponent"
-              end
-            end
+          content_layout_component do |layout|
+            layout.with_header { "Title from SampleComponent" }
+            layout.with_section { card_component { "Section rendered from SampleComponent" } }
           end
         end
       end
     end
 
-    it "wrap the component and renders a continuous layout" do
-      render_inline described_class.new do |layout|
-        layout.with_section { "Not in a component" }
-        layout.wrap { render_inline sample_component.new }
-        layout.with_section { "Still not in a component" }
+    it "wraps the component and renders its layout" do
+      # Use #render_in_view_context to render 2 components
+      render_in_view_context(
+        described_class,
+        sample_component_class
+      ) do |a, b|
+        render a.new do |layout|
+          layout.with_section { "Not in a component" }
+          layout.with_section { render(b.new) }
+          layout.with_section { "Still not in a component" }
+        end
       end
 
       expect(page).to have_selector(".content__layout") do |layout|
         expect(layout).to have_selector(".content__section:nth-child(1)", text: "Not in a component")
-        expect(layout).to have_selector(".content__separator:nth-child(2)")
-        expect(layout).to have_selector(".content__header:nth-child(3)",  text: "Title from SampleComponent")
-        expect(layout).to have_selector(".content__section:nth-child(4)", text: "Section rendered from SampleComponent")
-        expect(layout).to have_selector(".content__separator:nth-child(5)")
-        expect(layout).to have_selector(".content__section:nth-child(6)", text: "Still not in a component")
+        expect(layout).to have_selector(".content__section:nth-child(2) > .content__layout") do |div|
+          expect(div).to have_selector(".content__header:nth-child(1)", text: "Title from SampleComponent")
+          expect(div).to have_selector(".content__section:nth-child(2)", text: "Section rendered from SampleComponent")
+        end
+        expect(layout).to have_selector(".content__section:nth-child(3)", text: "Still not in a component")
       end
     end
 
-    it "wrap the component inside a grid and renders a continuous layout" do
-      render_inline described_class.new do |layout|
-        layout.with_grid do |grid|
-          grid.with_column do |column|
-            column.with_section { "Not in a component" }
-            column.wrap { render_inline sample_component.new }
+    it "wraps the component inside a grid and renders its layout" do
+      render_in_view_context(
+        described_class,
+        sample_component_class
+      ) do |a, b|
+        render a.new do |layout|
+          layout.with_grid do |grid|
+            grid.with_column do |column|
+              column.with_section { "Not in a component" }
+              column.with_section { render b.new }
+            end
+            grid.with_column do
+              render b.new
+            end
           end
-
-          grid.with_column { "Column #2" }
         end
       end
 
       expect(page).to have_selector(".content__layout > .content__grid") do |grid|
         expect(grid).to have_selector(".content__grid-col:nth-child(1)") do |column|
           expect(column).to have_selector(".content__section:nth-child(1)", text: "Not in a component")
-          expect(column).to have_selector(".content__separator:nth-child(2)")
-          expect(column).to have_selector(".content__header:nth-child(3)",  text: "Title from SampleComponent")
-          expect(column).to have_selector(".content__section:nth-child(4)", text: "Section rendered from SampleComponent")
+          expect(column).to have_selector(".content__section:nth-child(2) > .content__layout") do |div|
+            expect(div).to have_selector(".content__header:nth-child(1)", text: "Title from SampleComponent")
+            expect(div).to have_selector(".content__section:nth-child(2)", text: "Section rendered from SampleComponent")
+          end
         end
 
         expect(grid).to have_selector(".content__grid-col:nth-child(2)") do |column|
-          expect(column).to have_selector(".content__section:only-child", text: "Column #2")
+          expect(column).to have_selector(".content__section:nth-child(1) > .content__layout") do |div|
+            expect(div).to have_selector(".content__header:nth-child(1)", text: "Title from SampleComponent")
+            expect(div).to have_selector(".content__section:nth-child(2)", text: "Section rendered from SampleComponent")
+          end
         end
       end
     end

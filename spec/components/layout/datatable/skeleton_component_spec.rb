@@ -46,9 +46,9 @@ RSpec.describe Layout::Datatable::SkeletonComponent, type: :component do
       skeleton.with_pagination
     end
 
-    expect(page).to have_selector(".header-bar") do |header|
+    expect(page).to have_selector(".content__layout > .content__header") do |header|
       expect(header).to have_selector(".search .form-skeleton-loader input")
-      expect(header).to have_selector(".header-bar__actions .button-skeleton-loader", count: 2)
+      expect(header).to have_selector(".content__header-actions .button-skeleton-loader", count: 2)
     end
 
     expect(page).to have_selector(".datatable table")

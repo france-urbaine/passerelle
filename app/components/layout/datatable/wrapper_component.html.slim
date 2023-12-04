@@ -1,49 +1,46 @@
 - if render_selection_frame?
-  turbo-frame( id=turbo_frame_selection_bar )
+  turbo-frame.content__header.content__header--selection( id=turbo_frame_selection_bar )
     = datatable.selection
 
 - elsif render_header_frame?
-  turbo-frame( id=turbo_frame_selection_bar )
-    .header-bar
-      = datatable.search
-      .flex-auto
-      = datatable.pagination
+  turbo-frame.content__header( id=turbo_frame_selection_bar )
+    = datatable.search
+    = datatable.pagination
 
 - elsif selection_component?
   turbo-frame( id=turbo_frame )
-    div( data-controller="selection" data-selection-url-value=helpers.request.fullpath )
-      turbo-frame( id=turbo_frame_selection_bar data-selection-target="frame" )
-        - if render_selection_component?
+    .content__layout( data-controller="selection" data-selection-url-value=helpers.request.fullpath )
+      - if render_selection_component?
+        turbo-frame.content__header( id=turbo_frame_selection_bar data-selection-target="frame" )
           = datatable.selection
+      - elsif render_header?
+        turbo-frame.content__header( id=turbo_frame_selection_bar data-selection-target="frame" )
+          = datatable.search
+          = datatable.pagination
 
-        - elsif render_header?
-          .header-bar
-            = datatable.search
-            .flex-auto
-            = datatable.pagination
-
-      = content
+      .content__section
+        = content
 
 - elsif selection_controller?
   turbo-frame( id=turbo_frame )
-    div( data-controller="selection" data-selection-url-value=helpers.request.fullpath )
+    .content__layout( data-controller="selection" data-selection-url-value=helpers.request.fullpath )
       - if render_header?
-        .header-bar
+        .content__header
           = datatable.search
-          .flex-auto
           = datatable.pagination
 
-      = content
+      .content__section
+        = content
 
 - elsif wrapped_in_frame?
-  turbo-frame( id=turbo_frame )
+  turbo-frame.content__layout( id=turbo_frame )
     - if render_header?
-      .header-bar
+      .content__header
         = datatable.search
-        .flex-auto
         = datatable.pagination
 
-    = content
+    .content__section
+      = content
 
 - else
   = content

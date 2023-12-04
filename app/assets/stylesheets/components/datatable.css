@@ -84,4 +84,21 @@
       }
     }
   }
+
+  .datatable__selection {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    min-width: 100%;
+    min-height: theme("height.10");
+
+    @apply rounded-md;
+    @apply p-2 pl-3 -my-2;
+    @apply bg-blue-100;
+    @apply dark:bg-blue-900;
+
+    & .content__header-actions {
+      padding: 0;
+    }
+  }
 }

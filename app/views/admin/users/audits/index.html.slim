@@ -6,5 +6,10 @@
       - breadcrumbs.with_path @user.name, admin_user_path(@user)
       - breadcrumbs.with_h1 "Activité"
 
+      - breadcrumbs.with_action do
+        = page_count(@pagy)
+      - breadcrumbs.with_action do
+        = pagination_buttons_component(@pagy, turbo_frame: "content")
+
     - layout.with_section do
       = audits_list_component @audits, @pagy

@@ -9,13 +9,10 @@ module Admin
         @user = User.find(params[:user_id])
         authorize! @user
 
-        if turbo_frame_request?
-          @audits, = index_collection(
-            authorized_audits_scope,
-            nested: true
-          )
+        if turbo_frame_request_id == "audits"
+          @audits, @pagy = index_collection(authorized_audits_scope, nested: true)
         else
-          @pagy, @audits = pagy(authorized_audits_scope)
+          @audits, @pagy = index_collection(authorized_audits_scope, items: 100)
         end
       end
 

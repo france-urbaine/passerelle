@@ -51,7 +51,6 @@
 /* Layouts */
 @import "./components/navbar";
 @import "./components/content";
-@import "./components/header_bar";
 @import "./components/card";
 @import "./components/modal";
 @import "./components/breadcrumbs";

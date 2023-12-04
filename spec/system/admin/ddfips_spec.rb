@@ -297,7 +297,7 @@ RSpec.describe "DDFIPs in admin" do
     # A message should diplay the number of selected DDFIPs
     # with a button to remove them
     #
-    within ".header-bar--selection", text: "1 DDFIP sélectionnée" do
+    within ".datatable__selection", text: "1 DDFIP sélectionnée" do
       click_on "Tout supprimer"
     end
 
@@ -322,7 +322,7 @@ RSpec.describe "DDFIPs in admin" do
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector(".header-bar--selection")
+    expect(page).not_to have_selector(".datatable__selection")
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=log]", text: "Les DDFIPs sélectionnées ont été supprimées.")
 
@@ -344,7 +344,7 @@ RSpec.describe "DDFIPs in admin" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector(".header-bar--selection")
+    expect(page).not_to have_selector(".datatable__selection")
     expect(page).not_to have_selector("[role=log]", text: "Les DDFIPs sélectionnées ont été supprimées.")
     expect(page).to     have_selector("[role=log]", text: "La suppression des DDFIPs sélectionnées a été annulée.")
   end
@@ -378,7 +378,7 @@ RSpec.describe "DDFIPs in admin" do
     # A message should diplay the number of selected DDFIPs
     # with a button to remove them
     #
-    within ".header-bar--selection", text: "10 DDFIPs sélectionnées" do
+    within ".datatable__selection", text: "10 DDFIPs sélectionnées" do
       click_on "Tout supprimer"
     end
 
@@ -401,7 +401,7 @@ RSpec.describe "DDFIPs in admin" do
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector(".header-bar--selection")
+    expect(page).not_to have_selector(".datatable__selection")
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=log]", text: "Les DDFIPs sélectionnées ont été supprimées.")
 
@@ -425,7 +425,7 @@ RSpec.describe "DDFIPs in admin" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector(".header-bar--selection")
+    expect(page).not_to have_selector(".datatable__selection")
     expect(page).not_to have_selector("[role=log]", text: "Les DDFIPs sélectionnées ont été supprimées.")
     expect(page).to     have_selector("[role=log]", text: "La suppression des DDFIPs sélectionnées a été annulée.")
   end
@@ -459,11 +459,11 @@ RSpec.describe "DDFIPs in admin" do
     # A link to select any DDFIPs from any page should be present
     # A link to remove all of them should be present
     #
-    within ".header-bar--selection", text: "10 DDFIPs sélectionnées" do
+    within ".datatable__selection", text: "10 DDFIPs sélectionnées" do
       click_on "Sélectionner les 13 DDFIPs des 2 pages"
     end
 
-    within ".header-bar--selection", text: "13 DDFIPs sélectionnées" do
+    within ".datatable__selection", text: "13 DDFIPs sélectionnées" do
       click_on "Tout supprimer"
     end
 
@@ -483,7 +483,7 @@ RSpec.describe "DDFIPs in admin" do
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector(".header-bar--selection")
+    expect(page).not_to have_selector(".datatable__selection")
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=log]", text: "Les DDFIPs sélectionnées ont été supprimées.")
 
@@ -507,7 +507,7 @@ RSpec.describe "DDFIPs in admin" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector(".header-bar--selection")
+    expect(page).not_to have_selector(".datatable__selection")
     expect(page).not_to have_selector("[role=log]", text: "Les DDFIPs sélectionnées ont été supprimées.")
     expect(page).to     have_selector("[role=log]", text: "La suppression des DDFIPs sélectionnées a été annulée.")
   end

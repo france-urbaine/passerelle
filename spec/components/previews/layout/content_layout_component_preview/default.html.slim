@@ -3,23 +3,22 @@
     - breadcrumbs.with_path "Path"
 
   - layout.with_section do
-    = card_component do
-      | Section #1
+    = card_component
 
-  - layout.with_header do |header|
+  - layout.with_header do
     | Section title
 
   - layout.with_section do
-    = card_component do
-      | Section #2
+    = card_component
 
-  - layout.with_header do |header|
+  - layout.with_header do
     | Section title
 
-  - layout.with_section do
-    = card_component do
-      | Section #3
+  - layout.with_header(title: false) do
+    = search_form_component
 
   - layout.with_section do
-    = card_component do
-      | Section #4
+    = card_component
+
+  - layout.with_section do
+    = card_component
