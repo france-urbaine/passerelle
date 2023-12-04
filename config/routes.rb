@@ -151,6 +151,7 @@ Rails.application.routes.draw do
           scope module: "publishers" do
             resources :collectivities, only: %i[index new create], concerns: %i[removable_collection], path: "/collectivites"
             resources :users,          only: %i[index new create], concerns: %i[removable_collection], path: "/utilisateurs"
+            resources :audits,         only: %i[index]
           end
         end
 

@@ -33,6 +33,23 @@ RSpec.describe "Publishers in admin" do
     expect(page).to have_selector("h1", text: "Éditeurs")
   end
 
+  it "visits publisher & audits pages" do
+    visit admin_publishers_path
+    click_on "Fiscalité & Territoire"
+
+    # The browser should visit the publisher page
+    #
+    expect(page).to have_current_path(admin_publisher_path(fiscalite_territoire))
+    expect(page).to have_selector("a.button", text: "Voir toute l'activité")
+
+    click_on "Voir toute l'activité"
+
+    # The browser should visit the publisher audits page
+    #
+    expect(page).to have_current_path(admin_publisher_audits_path(fiscalite_territoire))
+    expect(page).to have_selector("pre.logs")
+  end
+
   it "creates a publisher from the index page" do
     visit admin_publishers_path
 
