@@ -1,37 +1,38 @@
-- if search? || pagination?
-  .header-bar( aria-hidden )
-    - if search
-      .search
-        .form-block.form-block--no-margin.form-skeleton-loader
-          .form-block__input
-            .form-block__input-icon= icon_component("search")
-            input( type="text" readonly )
+.content__layout( aria-hidden )
+  - if search? || pagination?
+    .content__header
+      - if search
+        .search
+          .form-block.form-block--no-margin.form-skeleton-loader
+            .form-block__input
+              .form-block__input-icon= icon_component("search")
+              input( type="text" readonly )
 
-    .flex-auto
-    - if pagination?
-      .header-bar__actions
-        .header-bar__text
-          span.text-skeleton-loader
-          '
-          span.text-skeleton-loader.mx-4 |
-          '
-          span.text-skeleton-loader
+      - if pagination?
+        .content__header-actions
+          .content__header-action
+            span.text-skeleton-loader
+            '
+            span.text-skeleton-loader.mx-4 |
+            '
+            span.text-skeleton-loader
 
-        .header-bar__action
-          span.icon-button.button-skeleton-loader= icon_component("chevron-left", "Page précédente")
-          span.icon-button.button-skeleton-loader= icon_component("chevron-right", "Page suivante")
+          .content__header-action
+            span.icon-button.button-skeleton-loader= icon_component("chevron-left", "Page précédente")
+            span.icon-button.button-skeleton-loader= icon_component("chevron-right", "Page suivante")
 
-.datatable( aria-hidden )
-  table
-    thead
-      tr.datatable__row
-        - columns.each do |column|
-          th
-            .text-skeleton-loader= column
+  .content__section
+    .datatable
+      table
+        thead
+          tr.datatable__row
+            - columns.each do |column|
+              th
+                .text-skeleton-loader= column
 
-    tbody
-      - rows.times do |row|
-        tr.datatable__row
-          - columns.each do |column|
-            td
-              .text-skeleton-loader
+        tbody
+          - rows.times do |row|
+            tr.datatable__row
+              - columns.each do |column|
+                td
+                  .text-skeleton-loader

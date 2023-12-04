@@ -194,7 +194,7 @@ RSpec.describe "DGFIP users in admin" do
     # A message should diplay the number of selected users
     # with a button to remove them
     #
-    within ".header-bar--selection", text: "1 utilisateur sélectionné" do
+    within ".datatable__selection", text: "1 utilisateur sélectionné" do
       click_on "Tout supprimer"
     end
 
@@ -218,7 +218,7 @@ RSpec.describe "DGFIP users in admin" do
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector(".header-bar--selection")
+    expect(page).not_to have_selector(".datatable__selection")
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=log]", text: "Les utilisateurs sélectionnés ont été supprimés.")
 
@@ -241,7 +241,7 @@ RSpec.describe "DGFIP users in admin" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector(".header-bar--selection")
+    expect(page).not_to have_selector(".datatable__selection")
     expect(page).not_to have_selector("[role=log]", text: "Les utilisateurs sélectionnés ont été supprimés.")
     expect(page).to     have_selector("[role=log]", text: "La suppression des utilisateurs sélectionnés a été annulée.")
   end
@@ -266,7 +266,7 @@ RSpec.describe "DGFIP users in admin" do
     # A message should diplay the number of selected users
     # with a button to remove them
     #
-    within ".header-bar--selection", text: "10 utilisateurs sélectionnés" do
+    within ".datatable__selection", text: "10 utilisateurs sélectionnés" do
       click_on "Tout supprimer"
     end
 
@@ -288,7 +288,7 @@ RSpec.describe "DGFIP users in admin" do
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector(".header-bar--selection")
+    expect(page).not_to have_selector(".datatable__selection")
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=log]", text: "Les utilisateurs sélectionnés ont été supprimés.")
 
@@ -313,7 +313,7 @@ RSpec.describe "DGFIP users in admin" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector(".header-bar--selection")
+    expect(page).not_to have_selector(".datatable__selection")
     expect(page).not_to have_selector("[role=log]", text: "Les utilisateurs sélectionnés ont été supprimés.")
     expect(page).to     have_selector("[role=log]", text: "La suppression des utilisateurs sélectionnés a été annulée.")
   end
@@ -338,11 +338,11 @@ RSpec.describe "DGFIP users in admin" do
     # A message should diplay the number of selected users
     # with a button to remove them
     #
-    within ".header-bar--selection", text: "10 utilisateurs sélectionnés" do
+    within ".datatable__selection", text: "10 utilisateurs sélectionnés" do
       click_on "Sélectionner les 12 utilisateurs des 2 pages"
     end
 
-    within ".header-bar--selection", text: "12 utilisateurs sélectionnés" do
+    within ".datatable__selection", text: "12 utilisateurs sélectionnés" do
       click_on "Tout supprimer"
     end
 
@@ -365,7 +365,7 @@ RSpec.describe "DGFIP users in admin" do
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector(".header-bar--selection")
+    expect(page).not_to have_selector(".datatable__selection")
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=log]", text: "Les utilisateurs sélectionnés ont été supprimés.")
 
@@ -390,7 +390,7 @@ RSpec.describe "DGFIP users in admin" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector(".header-bar--selection")
+    expect(page).not_to have_selector(".datatable__selection")
     expect(page).not_to have_selector("[role=log]", text: "Les utilisateurs sélectionnés ont été supprimés.")
     expect(page).to     have_selector("[role=log]", text: "La suppression des utilisateurs sélectionnés a été annulée.")
   end

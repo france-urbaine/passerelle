@@ -115,7 +115,7 @@ RSpec.describe Layout::StatusPageComponent, type: :component do
       card.with_body("Hello World")
     end
 
-    expect(page).not_to have_selector(".header-bar > .breadcrumbs")
+    expect(page).not_to have_selector(".breadcrumbs")
   end
 
   it "doesn't render any breadcrumbs by default" do

@@ -251,7 +251,7 @@ RSpec.describe "Publishers in admin" do
     # A message should diplay the number of selected publishers
     # with a button to remove them
     #
-    within ".header-bar--selection", text: "1 éditeur sélectionné" do
+    within ".datatable__selection", text: "1 éditeur sélectionné" do
       click_on "Tout supprimer"
     end
 
@@ -275,7 +275,7 @@ RSpec.describe "Publishers in admin" do
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector(".header-bar--selection")
+    expect(page).not_to have_selector(".datatable__selection")
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=log]", text: "Les éditeurs sélectionnés ont été supprimés.")
 
@@ -297,7 +297,7 @@ RSpec.describe "Publishers in admin" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector(".header-bar--selection")
+    expect(page).not_to have_selector(".datatable__selection")
     expect(page).not_to have_selector("[role=log]", text: "Les éditeurs sélectionnés ont été supprimés.")
     expect(page).to     have_selector("[role=log]", text: "La suppression des éditeurs sélectionnés a été annulée.")
   end
@@ -331,7 +331,7 @@ RSpec.describe "Publishers in admin" do
     # A message should diplay the number of selected publishers
     # with a button to remove them
     #
-    within ".header-bar--selection", text: "10 éditeurs sélectionnés" do
+    within ".datatable__selection", text: "10 éditeurs sélectionnés" do
       click_on "Tout supprimer"
     end
 
@@ -354,7 +354,7 @@ RSpec.describe "Publishers in admin" do
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector(".header-bar--selection")
+    expect(page).not_to have_selector(".datatable__selection")
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=log]", text: "Les éditeurs sélectionnés ont été supprimés.")
 
@@ -377,7 +377,7 @@ RSpec.describe "Publishers in admin" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector(".header-bar--selection")
+    expect(page).not_to have_selector(".datatable__selection")
     expect(page).not_to have_selector("[role=log]", text: "Les éditeurs sélectionnés ont été supprimés.")
     expect(page).to     have_selector("[role=log]", text: "La suppression des éditeurs sélectionnés a été annulée.")
   end
@@ -411,11 +411,11 @@ RSpec.describe "Publishers in admin" do
     # A link to select any publishers from any page should be present
     # A link to remove all of them should be present
     #
-    within ".header-bar--selection", text: "10 éditeurs sélectionnés" do
+    within ".datatable__selection", text: "10 éditeurs sélectionnés" do
       click_on "Sélectionner les 12 éditeurs des 2 pages"
     end
 
-    within ".header-bar--selection", text: "12 éditeurs sélectionnés" do
+    within ".datatable__selection", text: "12 éditeurs sélectionnés" do
       click_on "Tout supprimer"
     end
 
@@ -436,7 +436,7 @@ RSpec.describe "Publishers in admin" do
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector(".header-bar--selection")
+    expect(page).not_to have_selector(".datatable__selection")
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=log]", text: "Les éditeurs sélectionnés ont été supprimés.")
 
@@ -459,7 +459,7 @@ RSpec.describe "Publishers in admin" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector(".header-bar--selection")
+    expect(page).not_to have_selector(".datatable__selection")
     expect(page).not_to have_selector("[role=log]", text: "Les éditeurs sélectionnés ont été supprimés.")
     expect(page).to     have_selector("[role=log]", text: "La suppression des éditeurs sélectionnés a été annulée.")
   end

@@ -225,7 +225,7 @@ RSpec.describe "Office communes in admin" do
     # A message should diplay the number of selected communes
     # with a button to remove them
     #
-    within ".header-bar--selection", text: "1 commune sélectionnée" do
+    within ".datatable__selection", text: "1 commune sélectionnée" do
       click_on "Exclure les communes du guichet"
     end
 
@@ -247,7 +247,7 @@ RSpec.describe "Office communes in admin" do
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector(".header-bar--selection")
+    expect(page).not_to have_selector(".datatable__selection")
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=log]", text: "Les communes sélectionnées ont été exclues du guichet.")
 
@@ -280,7 +280,7 @@ RSpec.describe "Office communes in admin" do
     # A message should diplay the number of selected communes
     # with a button to remove them
     #
-    within ".header-bar--selection", text: "10 communes sélectionnées" do
+    within ".datatable__selection", text: "10 communes sélectionnées" do
       click_on "Exclure les communes du guichet"
     end
 
@@ -302,7 +302,7 @@ RSpec.describe "Office communes in admin" do
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector(".header-bar--selection")
+    expect(page).not_to have_selector(".datatable__selection")
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=log]", text: "Les communes sélectionnées ont été exclues du guichet.")
 
@@ -335,11 +335,11 @@ RSpec.describe "Office communes in admin" do
     # A message should diplay the number of selected communes
     # with a button to remove them
     #
-    within ".header-bar--selection", text: "10 communes sélectionnées" do
+    within ".datatable__selection", text: "10 communes sélectionnées" do
       click_on "Sélectionner les 12 communes des 2 pages"
     end
 
-    within ".header-bar--selection", text: "12 communes sélectionnées" do
+    within ".datatable__selection", text: "12 communes sélectionnées" do
       click_on "Exclure les communes du guichet"
     end
 
@@ -359,7 +359,7 @@ RSpec.describe "Office communes in admin" do
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector(".header-bar--selection")
+    expect(page).not_to have_selector(".datatable__selection")
     expect(page).not_to have_selector("[role=dialog]")
     expect(page).to     have_selector("[role=log]", text: "Les communes sélectionnées ont été exclues du guichet.")
 
