@@ -62,7 +62,7 @@
 
       = tabs_component do |tabs|
         - tabs.with_tab("cURL + jq") do
-          = code_example_component(:shell) do
+          = code_example_component(:shell, copyable: true) do
             | $ COLLECTIVITY_ID=$( \
                   curl --fail -X GET #{api_collectivities_url} \
                     -H "Accept: application/json" \
@@ -73,7 +73,7 @@
                 ) && echo $COLLECTIVITY_ID
 
         - tabs.with_tab("httpie + jq") do
-          = code_example_component(:shell) do
+          = code_example_component(:shell, copyable: true) do
             | $ COLLECTIVITY_ID=$( \
                   http --check-status --json GET #{api_collectivities_url} \
                     Accept:"application/json" \
@@ -117,7 +117,7 @@
 
       = tabs_component do |tabs|
         - tabs.with_tab("cURL + jq") do
-          = code_example_component(:shell) do
+          = code_example_component(:shell, copyable: true) do
             | $ TRANSMISSION_ID=$( \
                   curl --fail -X POST #{api_collectivity_transmissions_url("$COLLECTIVITY_ID")} \
                     -H "Accept: application/json" \
@@ -126,7 +126,7 @@
                 ) && echo $TRANSMISSION_ID
 
         - tabs.with_tab("httpie + jq") do
-          = code_example_component(:shell) do
+          = code_example_component(:shell, copyable: true) do
             | $ TRANSMISSION_ID=$( \
                   http --check-status --json POST #{api_collectivity_transmissions_url("$COLLECTIVITY_ID")} \
                     Accept:"application/json" \

@@ -19,19 +19,23 @@ RSpec.describe UI::CodeRequestExampleComponent, type: :component do
 
     it "renders the correct cURL command" do
       expect(page).to have_selector(".tabs > #curl-panel > pre") do |pre|
-        expect(pre).to have_html_attribute("data-highlight-language-value").with_value("shell")
-        expect(pre).to have_text(<<~TEXT.strip, exact: true)
-          $ curl -X GET http://api.test.host/path
-        TEXT
+        expect(pre).to have_selector("span.code") do |span|
+          expect(span).to have_html_attribute("data-highlight-language-value").with_value("shell")
+          expect(span).to have_text(<<~TEXT.strip, exact: true)
+            $ curl -X GET http://api.test.host/path
+          TEXT
+        end
       end
     end
 
     it "renders the correct httpie command" do
       expect(page).to have_selector(".tabs > #httpie-panel > pre", visible: :hidden) do |pre|
-        expect(pre).to have_html_attribute("data-highlight-language-value").with_value("shell")
-        expect(pre).to have_text(<<~TEXT.strip, exact: true)
-          $ http -v GET http://api.test.host/path
-        TEXT
+        expect(pre).to have_selector("span.code", visible: :hidden) do |span|
+          expect(span).to have_html_attribute("data-highlight-language-value").with_value("shell")
+          expect(span).to have_text(<<~TEXT.strip, exact: true)
+            $ http -v GET http://api.test.host/path
+          TEXT
+        end
       end
     end
 
@@ -52,19 +56,23 @@ RSpec.describe UI::CodeRequestExampleComponent, type: :component do
 
     it "renders the correct cURL command" do
       expect(page).to have_selector(".tabs > #curl-panel > pre") do |pre|
-        expect(pre).to have_html_attribute("data-highlight-language-value").with_value("shell")
-        expect(pre).to have_text(<<~TEXT.strip, exact: true)
-          $ curl -X PUT https://storage.passerelle-fiscale.fr/some/path
-        TEXT
+        expect(pre).to have_selector("span.code") do |span|
+          expect(span).to have_html_attribute("data-highlight-language-value").with_value("shell")
+          expect(span).to have_text(<<~TEXT.strip, exact: true)
+            $ curl -X PUT https://storage.passerelle-fiscale.fr/some/path
+          TEXT
+        end
       end
     end
 
     it "renders the correct httpie command" do
       expect(page).to have_selector(".tabs > #httpie-panel > pre", visible: :hidden) do |pre|
-        expect(pre).to have_html_attribute("data-highlight-language-value").with_value("shell")
-        expect(pre).to have_text(<<~TEXT.strip, exact: true)
-          $ http -v PUT https://storage.passerelle-fiscale.fr/some/path
-        TEXT
+        expect(pre).to have_selector("span.code", visible: :hidden) do |span|
+          expect(span).to have_html_attribute("data-highlight-language-value").with_value("shell")
+          expect(span).to have_text(<<~TEXT.strip, exact: true)
+            $ http -v PUT https://storage.passerelle-fiscale.fr/some/path
+          TEXT
+        end
       end
     end
 

@@ -36,7 +36,7 @@
         br
         ' Cela évite d'exposer ces identifiants dans du code ou dans votre historique de commandes.
 
-      = code_example_component(:shell) do
+      = code_example_component(:shell, copyable: true) do
         | $ echo "Please enter your client ID:" && \
               read CLIENT_ID && \
               echo "Please enter your client secret:" && \
@@ -74,7 +74,7 @@
 
       = tabs_component do |tabs|
         - tabs.with_tab("cURL + jq") do
-          = code_example_component(:shell) do
+          = code_example_component(:shell, copyable: true) do
             | $ ACCESS_TOKEN=$( \
                   curl --fail -X POST #{oauth_token_url} \
                     -H "Accept: application/json" \
@@ -84,7 +84,7 @@
                 ) && echo $ACCESS_TOKEN
 
         - tabs.with_tab("httpie + jq") do
-          = code_example_component(:shell) do
+          = code_example_component(:shell, copyable: true) do
             | $ ACCESS_TOKEN=$( \
                   http --check-status --json POST #{oauth_token_url} \
                     Accept:"application/json" \

@@ -1,0 +1,10 @@
+= tag.div(class: "float-right") do
+
+  = tag.button(class: "icon-button", data: {\
+    controller: "copy-text toggle",\
+    action: "click->copy-text#copy click->toggle#toggle",\
+    :"copy-text-source-value" => value,\
+    :"toggle-revert-delay-param" => 2000 }) do
+
+    = icon_component("clipboard-document-list",  "Copier le texte", data: { toggle_target: "item" })
+    = icon_component("check",                    "Texte copié",     data: { toggle_target: "item" }, hidden: true)
