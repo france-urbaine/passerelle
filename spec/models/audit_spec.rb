@@ -32,19 +32,19 @@ RSpec.describe Audit do
       expect(audit.oauth_application).to eq(oauth_application)
     end
 
-    it "fill acton attribute with 'complete' value" do
+    it "fill action attribute with 'complete' value" do
       report = create(:report)
       report.update!(completed_at: Time.now.utc)
       expect(report.audits.descending.first.action).to eq("complete")
     end
 
-    it "fill acton attribute with 'discard' value" do
+    it "fill action attribute with 'discard' value" do
       report = create(:report)
       report.discard
       expect(report.audits.descending.first.action).to eq("discard")
     end
 
-    it "fill acton attribute with 'login' value" do
+    it "fill action attribute with 'login' value" do
       user = create(:user)
       user.update!(
         sign_in_count: user.sign_in_count.to_i + 1,
@@ -54,7 +54,7 @@ RSpec.describe Audit do
       expect(user.audits.last.action).to eq("login")
     end
 
-    it "fill acton attribute with 'change_organization' value (update on organization_id)" do
+    it "fill action attribute with 'change_organization' value (update on organization_id)" do
       user = create(:user)
       user.update!(
         organization: create(:publisher)
@@ -62,13 +62,44 @@ RSpec.describe Audit do
       expect(user.audits.last.action).to eq("change_organization")
     end
 
-    it "fill acton attribute with 'change_organization' value (update on organization_id plus other attributes)" do
+    it "fill action attribute with 'change_organization' value (update on organization_id plus other attributes)" do
       user = create(:user)
       user.update!(
         last_name: "de #{user.last_name}",
         organization: create(:publisher)
       )
       expect(user.audits.last.action).to eq("change_organization_and_update")
+    end
+  end
+
+  describe "resolve_action!" do
+    let(:audit) do
+      user = create(:user)
+      create(
+        :audit,
+        auditable: user,
+        audited_changes: {
+          sign_in_count: [nil, 1],
+          last_sign_in_at: [nil, Time.now.utc - 1.hour],
+          current_sign_in_at: [nil, Time.now.utc]
+        }
+      )
+    end
+
+    it "updates action attribute when needed" do
+      audit.update!(action: "update")
+
+      expect {
+        audit.resolve_action!
+        audit.reload
+      }.to change(audit, :action).to("login").and change(audit, :updated_at)
+    end
+
+    it "does not update record when unnecessary" do
+      expect {
+        audit.resolve_action!
+        audit.reload
+      }.not_to change(audit, :updated_at)
     end
   end
 end

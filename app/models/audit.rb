@@ -45,6 +45,11 @@ class Audit < Audited::Audit
     resolve_action
   end
 
+  def resolve_action!
+    resolve_action
+    save! if changed?
+  end
+
   private
 
   def set_organization
