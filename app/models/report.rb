@@ -113,22 +113,37 @@
 #  proposition_code_naf                           :string
 #  proposition_date_debut_activite                :date
 #  transmission_id                                :uuid
-#  completed_at                                   :datetime
+#  ready_at                                       :datetime
 #  sandbox                                        :boolean          default(FALSE), not null
+#  transmitted_at                                 :datetime
+#  assigned_at                                    :datetime
+#  denied_at                                      :datetime
+#  office_id                                      :uuid
+#  assignee_id                                    :uuid
+#  acknowledged_at                                :datetime
+#  ddfip_id                                       :uuid
+#  state                                          :string           default("draft")
 #
 # Indexes
 #
+#  index_reports_on_assignee_id      (assignee_id)
 #  index_reports_on_collectivity_id  (collectivity_id)
+#  index_reports_on_ddfip_id         (ddfip_id)
+#  index_reports_on_office_id        (office_id)
 #  index_reports_on_package_id       (package_id)
 #  index_reports_on_publisher_id     (publisher_id)
 #  index_reports_on_reference        (reference) UNIQUE
 #  index_reports_on_sibling_id       (sibling_id)
+#  index_reports_on_state            (state)
 #  index_reports_on_transmission_id  (transmission_id)
 #  index_reports_on_workshop_id      (workshop_id)
 #
 # Foreign Keys
 #
+#  fk_rails_...  (assignee_id => users.id) ON DELETE => nullify
 #  fk_rails_...  (collectivity_id => collectivities.id) ON DELETE => cascade
+#  fk_rails_...  (ddfip_id => ddfips.id) ON DELETE => nullify
+#  fk_rails_...  (office_id => offices.id) ON DELETE => nullify
 #  fk_rails_...  (package_id => packages.id) ON DELETE => cascade
 #  fk_rails_...  (publisher_id => publishers.id) ON DELETE => cascade
 #  fk_rails_...  (transmission_id => transmissions.id)
@@ -149,6 +164,9 @@ class Report < ApplicationRecord
   belongs_to :transmission, optional: true
   belongs_to :workshop,     optional: true
   belongs_to :commune,      optional: true, primary_key: :code_insee, foreign_key: :code_insee, inverse_of: :reports
+  belongs_to :office,       optional: true
+  belongs_to :assignee,     optional: true, class_name: "User", inverse_of: :assigned_reports
+  belongs_to :ddfip,        optional: true
 
   has_many :siblings, ->(report) { where.not(id: report.id) }, class_name: "Report", primary_key: :sibling_id, foreign_key: :sibling_id, inverse_of: false, dependent: false
 

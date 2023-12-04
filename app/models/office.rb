@@ -38,6 +38,7 @@ class Office < ApplicationRecord
 
   has_many :office_users,    dependent: false
   has_many :office_communes, dependent: false
+  has_many :reports,         dependent: false
 
   has_many :users,    through: :office_users
   has_many :communes, through: :office_communes

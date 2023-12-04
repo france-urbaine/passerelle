@@ -21,11 +21,11 @@
 #  reports_transmitted_count  :integer          default(0), not null
 #  reports_approved_count     :integer          default(0), not null
 #  reports_rejected_count     :integer          default(0), not null
-#  reports_debated_count      :integer          default(0), not null
 #  packages_transmitted_count :integer          default(0), not null
 #  packages_assigned_count    :integer          default(0), not null
 #  packages_returned_count    :integer          default(0), not null
 #  sandbox                    :boolean          default(FALSE), not null
+#  reports_debated_count      :integer          default(0), not null
 #
 # Indexes
 #

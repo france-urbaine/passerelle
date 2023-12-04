@@ -1638,9 +1638,7 @@ CREATE TABLE public.packages (
     reports_debated_count integer DEFAULT 0 NOT NULL,
     sandbox boolean DEFAULT false NOT NULL,
     transmission_id uuid,
-    transmitted_at timestamp(6) without time zone,
-    assigned_at timestamp(6) without time zone,
-    returned_at timestamp(6) without time zone
+    ddfip_id uuid
 );
 
 
@@ -3601,8 +3599,16 @@ CREATE TABLE public.reports (
     proposition_code_naf character varying,
     proposition_date_debut_activite date,
     transmission_id uuid,
-    completed_at timestamp(6) without time zone,
-    sandbox boolean DEFAULT false NOT NULL
+    ready_at timestamp(6) without time zone,
+    sandbox boolean DEFAULT false NOT NULL,
+    transmitted_at timestamp(6) without time zone,
+    assigned_at timestamp(6) without time zone,
+    denied_at timestamp(6) without time zone,
+    office_id uuid,
+    assignee_id uuid,
+    acknowledged_at timestamp(6) without time zone,
+    ddfip_id uuid,
+    state character varying DEFAULT 'draft'::character varying
 );
 
 
@@ -4178,6 +4184,13 @@ CREATE INDEX index_packages_on_collectivity_id ON public.packages USING btree (c
 
 
 --
+-- Name: index_packages_on_ddfip_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_packages_on_ddfip_id ON public.packages USING btree (ddfip_id);
+
+
+--
 -- Name: index_packages_on_discarded_at; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4241,10 +4254,31 @@ CREATE INDEX index_report_exonerations_on_report_id ON public.report_exoneration
 
 
 --
+-- Name: index_reports_on_assignee_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_reports_on_assignee_id ON public.reports USING btree (assignee_id);
+
+
+--
 -- Name: index_reports_on_collectivity_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_reports_on_collectivity_id ON public.reports USING btree (collectivity_id);
+
+
+--
+-- Name: index_reports_on_ddfip_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_reports_on_ddfip_id ON public.reports USING btree (ddfip_id);
+
+
+--
+-- Name: index_reports_on_office_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_reports_on_office_id ON public.reports USING btree (office_id);
 
 
 --
@@ -4273,6 +4307,13 @@ CREATE UNIQUE INDEX index_reports_on_reference ON public.reports USING btree (re
 --
 
 CREATE INDEX index_reports_on_sibling_id ON public.reports USING btree (sibling_id);
+
+
+--
+-- Name: index_reports_on_state; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_reports_on_state ON public.reports USING btree (state);
 
 
 --
@@ -4481,6 +4522,14 @@ ALTER TABLE ONLY public.communes
 
 
 --
+-- Name: reports fk_rails_12eb92a4f5; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.reports
+    ADD CONSTRAINT fk_rails_12eb92a4f5 FOREIGN KEY (assignee_id) REFERENCES public.users(id) ON DELETE SET NULL;
+
+
+--
 -- Name: departements fk_rails_16088f7822; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4521,6 +4570,14 @@ ALTER TABLE ONLY public.office_users
 
 
 --
+-- Name: reports fk_rails_376ff8536a; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.reports
+    ADD CONSTRAINT fk_rails_376ff8536a FOREIGN KEY (ddfip_id) REFERENCES public.ddfips(id) ON DELETE SET NULL;
+
+
+--
 -- Name: reports fk_rails_4674dd48a1; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4553,6 +4610,14 @@ ALTER TABLE ONLY public.packages
 
 
 --
+-- Name: packages fk_rails_51051083e8; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.packages
+    ADD CONSTRAINT fk_rails_51051083e8 FOREIGN KEY (ddfip_id) REFERENCES public.ddfips(id) ON DELETE SET NULL;
+
+
+--
 -- Name: office_users fk_rails_528e1db265; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4582,6 +4647,14 @@ ALTER TABLE ONLY public.transmissions
 
 ALTER TABLE ONLY public.oauth_access_tokens
     ADD CONSTRAINT fk_rails_732cb83ab7 FOREIGN KEY (application_id) REFERENCES public.oauth_applications(id);
+
+
+--
+-- Name: reports fk_rails_75a22f3681; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.reports
+    ADD CONSTRAINT fk_rails_75a22f3681 FOREIGN KEY (office_id) REFERENCES public.offices(id) ON DELETE SET NULL;
 
 
 --
@@ -4714,6 +4787,13 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20231128164632'),
 ('20231128065805'),
 ('20231122090719'),
+('20231121152727'),
+('20231121133238'),
+('20231121133237'),
+('20231121133236'),
+('20231121133223'),
+('20231121133216'),
+('20231121083444'),
 ('20231016144839'),
 ('20231004101953'),
 ('20230929034420'),

@@ -50,6 +50,8 @@ class DDFIP < ApplicationRecord
 
   has_many :epcis,    primary_key: :code_departement, foreign_key: :code_departement, inverse_of: false, dependent: false
   has_many :communes, primary_key: :code_departement, foreign_key: :code_departement, inverse_of: false, dependent: false
+  has_many :reports, dependent: false
+  has_many :packages, dependent: false
   has_one  :region, through: :departement
 
   has_many :users, as: :organization, dependent: :delete_all
