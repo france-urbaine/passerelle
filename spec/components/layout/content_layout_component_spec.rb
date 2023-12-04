@@ -203,6 +203,31 @@ RSpec.describe Layout::ContentLayoutComponent, type: :component do
     end
   end
 
+  it "merges default & custom CSS classes" do
+    render_inline described_class.new(class: "custom-layout") do |layout|
+      layout.with_header(class: "custom-header")   { "Section title #1" }
+      layout.with_section(class: "custom-section") { "Section content #1" }
+
+      layout.with_grid(class: "custom-grid") do |grid|
+        grid.with_column(class: "custom-column") do |column|
+          column.with_header(class: "custom-column-header")
+          column.with_section(class: "custom-column-section")
+        end
+      end
+    end
+
+    expect(page).to have_selector(".content__layout.custom-layout") do |layout|
+      expect(layout).to have_selector(".content__header.custom-header")
+      expect(layout).to have_selector(".content__section.custom-section")
+      expect(layout).to have_selector(".content__grid.custom-grid") do |grid|
+        expect(grid).to have_selector(".content__grid-col.custom-column") do |column|
+          expect(column).to have_selector(".content__header.custom-column-header:not(.custom-header)")
+          expect(column).to have_selector(".content__section.custom-column-section:not(.custom-section)")
+        end
+      end
+    end
+  end
+
   context "when wrapping a component with its own layout" do
     let!(:sample_component_class) do
       Class.new(ApplicationViewComponent) do

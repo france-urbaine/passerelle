@@ -35,6 +35,14 @@ module Layout
       blocks.each(&:to_s)
     end
 
+    def div(main_class, other_atributes, &)
+      css_class = [main_class]
+      css_class << other_atributes[:class]
+      css_class = css_class.join(" ").squish
+
+      tag.div(**other_atributes, class: css_class, &)
+    end
+
     class Block < ApplicationViewComponent
       attr_reader :html_attributes
 

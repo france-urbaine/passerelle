@@ -1,4 +1,4 @@
-.content__layout*@html_attributes
+= div "content__layout", @html_attributes do
   = breadcrumbs || @wrapped_breadcrumbs
 
   - if blocks.empty?
@@ -7,8 +7,8 @@
 
   - blocks.each.with_index do |block, index|
     - case block.component_class_name
-    - when "Header", "HeaderBar"
-      .content__header*block.html_attributes
+    - when "Header"
+      = div "content__header", block.html_attributes do
         = block
 
         - if block.actions?
@@ -18,21 +18,21 @@
                 = action
 
     - when "Section"
-      .content__section*block.html_attributes
+      = div "content__section", block.html_attributes do
         = block
 
     - when "Grid"
-      .content__grid*block.html_attributes
+      = div :content__grid, block.html_attributes do
         - block.columns.each do |column|
-          .content__grid-col*column.html_attributes
+          = div "content__grid-col", column.html_attributes do
             - if column.blocks.empty?
               .content__section
                 = column.content
 
             - column.blocks.each.with_index do |column_block, colum_block_index|
               - case column_block.component_class_name
-              - when "Header", "HeaderBar"
-                .content__header*column_block.html_attributes
+              - when "Header"
+                = div "content__header", column_block.html_attributes do
                   = column_block
 
                   - if column_block.actions?
@@ -42,7 +42,7 @@
                           = action
 
               - when "Section"
-                .content__section*column_block.html_attributes
+                = div "content__section", column_block.html_attributes do
                   = column_block
 
               - else
