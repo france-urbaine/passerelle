@@ -191,6 +191,7 @@ Rails.application.routes.draw do
             end
 
             resources :collectivities, only: %i[index], path: "/collectivites"
+            resources :audits,         only: %i[index]
           end
         end
 
