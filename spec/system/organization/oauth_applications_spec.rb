@@ -3,7 +3,7 @@
 require "system_helper"
 
 RSpec.describe "OauthApplications managed by current organization" do
-  fixtures :publishers, :users, :oauth_applications
+  fixtures :publishers, :users, :oauth_applications, :oauth_access_tokens, :audits
 
   let(:test_app)         { oauth_applications(:test_app) }
   let(:publisher)        { publishers(:fiscalite_territoire) }
@@ -32,6 +32,27 @@ RSpec.describe "OauthApplications managed by current organization" do
     #
     expect(page).to have_current_path(organization_oauth_applications_path)
     expect(page).to have_selector("h1", text: "API")
+  end
+
+  it "visits oauth_application & audits pages" do
+    sign_in(users(:jean_michel))
+
+    visit organization_oauth_applications_path
+    click_on "Test Oauth Application"
+
+    # The browser should visit the user page
+    #
+    expect(page).to have_current_path(organization_oauth_application_path(test_app))
+    expect(page).to have_selector("a.button", text: "Voir toute l'activité")
+
+    click_on "Voir toute l'activité"
+
+    # The browser should visit the user audits page
+    #
+    expect(page).to have_current_path(organization_oauth_application_audits_path(test_app))
+    expect(page).to have_selector("pre.logs") do |logs|
+      expect(logs).to have_content("23/10/2023 11:15:00 - Création d'un jeton d'accès via l'API Test Oauth Application 23/10/2023 11:00:00 - Création réalisée par [utilisateur inconnu]")
+    end
   end
 
   it "creates an oauth_application from the index page" do

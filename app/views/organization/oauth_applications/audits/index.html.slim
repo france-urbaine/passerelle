@@ -1,0 +1,15 @@
+= content_frame_component do
+  = content_layout_component do |layout|
+    - layout.with_breadcrumbs do |breadcrumbs|
+      - breadcrumbs.with_path "Mon organisation"
+      - breadcrumbs.with_path "Clients API", organization_oauth_applications_path
+      - breadcrumbs.with_h1   @oauth_application.name
+      - breadcrumbs.with_h1   "Activité"
+
+      - breadcrumbs.with_action do
+        = page_count(@pagy)
+      - breadcrumbs.with_action do
+        = pagination_buttons_component(@pagy, turbo_frame: "content")
+
+    - layout.with_section do
+      = audits_list_component @audits, @pagy

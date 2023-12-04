@@ -134,7 +134,11 @@ Rails.application.routes.draw do
           end
         end
 
-        resources :oauth_applications, concerns: %i[removable removable_collection]
+        resources :oauth_applications, concerns: %i[removable removable_collection] do
+          scope module: "oauth_applications" do
+            resources :audits, only: %i[index]
+          end
+        end
 
         resources :users, concerns: %i[removable removable_collection], path: "/utilisateurs" do
           scope module: "users" do

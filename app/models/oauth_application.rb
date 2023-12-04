@@ -28,6 +28,7 @@ class OauthApplication < ApplicationRecord
   include States::Sandbox
 
   audited
+  has_associated_audits
 
   # Associations
   # ----------------------------------------------------------------------------

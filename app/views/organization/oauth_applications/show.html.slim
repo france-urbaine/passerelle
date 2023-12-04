@@ -39,3 +39,12 @@
     - layout.with_section do
       = card_component(content_class: "card__content--empty")
         | Bientôt disponible
+
+    - if allowed_to?(:index?, with: Organization::OauthApplications::AuditPolicy)
+      - layout.with_header icon: "clock" do |header|
+        | Activité récente
+
+        - header.with_action "Voir toute l'activité", organization_oauth_application_audits_path(@oauth_application), icon: "eye"
+
+      - layout.with_section do
+        = turbo_frame_tag "audits", src: organization_oauth_application_audits_path(@oauth_application)
