@@ -34,6 +34,21 @@ module UI
       end
     end
 
+    def copyable_button(content)
+      tag.button(
+        class: %w[icon-button code-example__copy-button],
+        data: {
+          controller: "copy-text toggle",
+          action:     "click->copy-text#copy click->toggle#toggle",
+          "copy-text-source-value"    => sanitize(content.to_s),
+          "toggle-revert-delay-param" => 2000
+        }
+      ) do
+        concat icon_component("clipboard-document-list", "Copier le texte", data: { toggle_target: "item" })
+        concat icon_component("check", "Texte copié", data: { toggle_target: "item" }, hidden: true)
+      end
+    end
+
     def self.filter_command_prompt(command)
       # Removing starting $ from command line
       command.gsub(/\A( )*\$( )*/, "")
@@ -62,19 +77,6 @@ module UI
 
       def call
         content
-      end
-    end
-
-    class CopyableCodeComponent < ApplicationViewComponent
-      define_component_helper :copyable_code_component
-
-      def initialize(value)
-        @value = value
-        super()
-      end
-
-      def value
-        sanitize(@value.to_s)
       end
     end
   end
