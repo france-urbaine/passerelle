@@ -77,3 +77,13 @@
           = datatable_skeleton_component(nested: true, rows: 0) do |skeleton|
             - skeleton.with_search
             - skeleton.with_pagination
+
+    - if allowed_to?(:index?, with: Admin::AuditPolicy)
+      - layout.with_header icon: "clock" do |header|
+        | Activité récente
+
+        - header.with_action "Voir toute l'activité", admin_collectivity_audits_path(@collectivity), icon: "eye"
+
+      - layout.with_section do
+        = turbo_frame_tag "audits", src: admin_collectivity_audits_path(@collectivity)
+

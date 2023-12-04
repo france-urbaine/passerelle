@@ -159,6 +159,7 @@ Rails.application.routes.draw do
           scope module: "collectivities" do
             resources :offices, only: %i[index], path: "/guichets"
             resources :users,   only: %i[index new create], concerns: %i[removable_collection], path: "/utilisateurs"
+            resources :audits,  only: %i[index]
           end
         end
 
