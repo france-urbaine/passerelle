@@ -165,7 +165,8 @@ Rails.application.routes.draw do
 
         resource :dgfip, only: %i[show edit update] do
           scope module: "dgfips" do
-            resources :users, only: %i[index new create], concerns: %i[removable_collection], path: "/utilisateurs"
+            resources :users,  only: %i[index new create], concerns: %i[removable_collection], path: "/utilisateurs"
+            resources :audits, only: %i[index]
           end
         end
 

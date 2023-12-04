@@ -27,6 +27,23 @@ RSpec.describe "DGFIPs in admin" do
     expect(page).to have_selector("h1", text: "Direction générale des Finances publiques")
   end
 
+  it "visits DGFIP & audits pages" do
+    visit admin_dgfip_path
+
+    dgfip.update!(name: "Direction Générale des FInances Publiques")
+
+    # The browser should visit the dgfip page
+    #
+    expect(page).to have_selector("a.button", text: "Voir toute l'activité")
+
+    click_on "Voir toute l'activité"
+
+    # The browser should visit the dgfip audits page
+    #
+    expect(page).to have_current_path(admin_dgfip_audits_path)
+    expect(page).to have_selector("pre.logs")
+  end
+
   it "updates the DGFIP" do
     visit admin_dgfip_path
 
