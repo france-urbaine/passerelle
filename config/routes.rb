@@ -174,6 +174,7 @@ Rails.application.routes.draw do
             resources :offices,        only: %i[index new create], concerns: %i[removable_collection], path: "/guichets"
             resources :users,          only: %i[index new create], concerns: %i[removable_collection], path: "/utilisateurs"
             resources :collectivities, only: %i[index], path: "/collectivites"
+            resources :audits,         only: %i[index]
           end
         end
 

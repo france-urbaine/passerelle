@@ -38,6 +38,23 @@ RSpec.describe "DDFIPs in admin" do
     expect(page).to have_selector("h1", text: "DDFIP")
   end
 
+  it "visits DDFIP & audits pages" do
+    visit admin_ddfips_path
+    click_on "DDFIP des Pyrénées-Atlantiques"
+
+    # The browser should visit the ddfip page
+    #
+    expect(page).to have_current_path(admin_ddfip_path(ddfip64))
+    expect(page).to have_selector("a.button", text: "Voir toute l'activité")
+
+    click_on "Voir toute l'activité"
+
+    # The browser should visit the ddfip audits page
+    #
+    expect(page).to have_current_path(admin_ddfip_audits_path(ddfip64))
+    expect(page).to have_selector("pre.logs")
+  end
+
   it "visits links on a DDFIP page & comes back" do
     visit admin_ddfip_path(ddfip64)
 
