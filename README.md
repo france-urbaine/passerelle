@@ -1,4 +1,4 @@
-# Passerelle (formerly known as Fiscahub)
+# Passerelle
 
 ## Requirements
 
