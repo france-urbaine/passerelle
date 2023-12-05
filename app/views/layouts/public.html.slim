@@ -35,3 +35,12 @@ html( lang="fr" )
       = yield
 
     = render "shared/notifications"
+
+    .public__footer
+      / a( disabled ) Conditions d'utilisation
+      / '  |
+      / a( disabled ) Protection des données
+      / '  |
+      = link_to "Code source", "https://github.com/france-urbaine/passerelle", target: :blank
+      '  |
+      = link_to "Documentation API", api_root_url
