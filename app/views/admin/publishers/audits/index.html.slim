@@ -2,7 +2,7 @@
   = content_layout_component do |layout|
     - layout.with_breadcrumbs do |breadcrumbs|
       - breadcrumbs.with_path "Administration"
-      - breadcrumbs.with_path "Utilisateurs", admin_publishers_path
+      - breadcrumbs.with_path "Éditeurs", admin_publishers_path
       - breadcrumbs.with_path @publisher.name, admin_publisher_path(@publisher)
       - breadcrumbs.with_h1 "Activité"
 

@@ -47,7 +47,7 @@ RSpec.describe "OauthApplications managed by current organization" do
 
     click_on "Voir toute l'activité"
 
-    # The browser should visit the user audits page
+    # The browser should visit the oauth_application audits page
     #
     expect(page).to have_current_path(organization_oauth_application_audits_path(test_app))
     expect(page).to have_selector("pre.logs") do |logs|
