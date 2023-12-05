@@ -3,11 +3,12 @@
     span.brand__left API Passe
     span.brand__right relle
 
-  - navbar.with_section do |section|
-    - if allowed_to?(:index?, OauthApplication, with: Organization::OauthApplicationPolicy)
-      - section.with_link("Retour à Passerelle", organization_oauth_applications_url, icon: "arrow-uturn-left")
-    - else
-      - section.with_link("Retour à Passerelle", root_url, icon: "arrow-uturn-left")
+  - if signed_in?
+    - navbar.with_section do |section|
+      - if allowed_to?(:index?, OauthApplication, with: Organization::OauthApplicationPolicy)
+        - section.with_link("Retour à Passerelle", organization_oauth_applications_url, icon: "arrow-uturn-left")
+      - else
+        - section.with_link("Retour à Passerelle", root_url, icon: "arrow-uturn-left")
 
   - navbar.with_section("Guides") do |section|
     - section.with_link("A propos", api_documentation_path("guides/a_propos"))

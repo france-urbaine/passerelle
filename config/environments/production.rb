@@ -124,8 +124,7 @@ Rails.application.configure do
     r301(/.*/, "//passerelle-fiscale.fr$&", host: "www.passerelle-fiscale.fr")
 
     # Former domains
-    r302(/.*/, "//passerelle-fiscale.fr$&", host: "fiscahub.fr")
-    r302(/.*/, "//passerelle-fiscale.fr$&", host: "www.fiscahub.fr")
-    r302(/.*/, "//api.passerelle-fiscale.fr$&", host: "api.fiscahub.fr")
+    r301(/.*/, "//passerelle-fiscale.fr$&", host: "fiscahub.fr")
+    r301(/.*/, "//passerelle-fiscale.fr$&", host: "www.fiscahub.fr")
   end
 end

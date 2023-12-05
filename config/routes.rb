@@ -246,17 +246,8 @@ Rails.application.routes.draw do
   # ----------------------------------------------------------------------------
   constraints subdomain: "api" do
     constraints ->(req) { req.format == :html } do
-      # Root routing
-      #
-      unauthenticated do
-        get "/", to: redirect("/connexion")
-      end
-
-      authenticated :user do
-        get "/", to: redirect("/documentation")
-        apipie
-      end
-
+      get "/", to: redirect("/documentation"), as: :api_root
+      apipie
       get "/documentation(/*id)", to: "documentation#api", as: :api_documentation
     end
 

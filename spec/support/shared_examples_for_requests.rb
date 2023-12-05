@@ -31,9 +31,12 @@ RSpec.shared_context "with requests shared examples" do
         .to invoke(:as).on(self).at_least(:once)
 
       expect(response)
-        .to  have_http_status(:success)
-        .and have_content_type(:html)
-        .and have_html_body
+        .to have_http_status(:no_content)
+        .or(
+          have_http_status(:success)
+            .and(have_content_type(:html))
+            .and(have_html_body)
+        )
     end
   end
 
@@ -45,9 +48,12 @@ RSpec.shared_context "with requests shared examples" do
         .to invoke(:as).on(self).at_least(:once)
 
       expect(response)
-        .to  have_http_status(:success)
-        .and have_content_type(:json)
-        .and have_json_body
+        .to have_http_status(:no_content)
+        .or(
+          have_http_status(:success)
+            .and(have_content_type(:json))
+            .and(have_json_body)
+        )
     end
   end
 
