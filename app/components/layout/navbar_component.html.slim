@@ -40,16 +40,26 @@ div( data-controller="navbar" )
               = render_link(link)
 
     .flex-auto
-
     .navbar__user
-      - # Use `_url` instead of `_path` to ensure using the right domain
-      = button_component(user_settings_url, title: "Gestion du compte", class: "navbar__link") do
-        .navbar__user-avatar
-          = icon_component "user-circle"
+      - if signed_in?
+        - # Use `_url` instead of `_path` to ensure using the right domain
+        = button_component(user_settings_url, title: "Gestion du compte", class: "navbar__link") do
+          .navbar__user-avatar
+            = icon_component "user-circle"
 
-        .navbar__user-name
-          .navbar__user-text= current_user&.name
-          .navbar__user-text= current_user&.organization&.name
+          .navbar__user-name
+            .navbar__user-text= current_user&.name
+            .navbar__user-text= current_user&.organization&.name
+
+      - else
+        - # Use `_url` instead of `_path` to ensure using the right domain
+        = button_component(new_user_session_url, title: "Connexion", class: "navbar__link") do
+          .navbar__user-avatar
+            = icon_component "user-circle"
+
+          .navbar__user-name
+            .navbar__user-text Connexion
+
 
   .navbar__overlay( data-action="click->navbar#minify" role="button" aria-label="Fermer le menu" )
 
