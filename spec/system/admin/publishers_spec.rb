@@ -3,7 +3,7 @@
 require "system_helper"
 
 RSpec.describe "Publishers in admin" do
-  fixtures :publishers, :collectivities, :users
+  fixtures :publishers, :collectivities, :users, :audits
 
   let(:fiscalite_territoire) { publishers(:fiscalite_territoire) }
   let(:pays_basque)          { collectivities(:pays_basque) }

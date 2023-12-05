@@ -4,7 +4,7 @@ require "system_helper"
 
 RSpec.describe "DDFIPs in admin" do
   fixtures :regions, :departements
-  fixtures :ddfips, :offices, :users
+  fixtures :ddfips, :offices, :users, :audits
 
   let(:ddfip64)              { ddfips(:pyrenees_atlantiques) }
   let(:pyrenees_atlantiques) { departements(:pyrenees_atlantiques) }

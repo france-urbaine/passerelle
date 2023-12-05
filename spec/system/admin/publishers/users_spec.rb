@@ -43,7 +43,7 @@ RSpec.describe "Publisher users in admin" do
 
     visit admin_publisher_path(fiscalite_territoire)
 
-    expect(page).to     have_text("12 utilisateurs | Page 1 sur 2")
+    expect(page).to     have_text("13 utilisateurs | Page 1 sur 2")
     expect(page).not_to have_button("Options d'affichage")
   end
 
@@ -128,7 +128,7 @@ RSpec.describe "Publisher users in admin" do
   it "discards an user from the publisher page & rollbacks" do
     visit admin_publisher_path(fiscalite_territoire)
 
-    expect(page).to have_text("2 utilisateurs | Page 1 sur 1")
+    expect(page).to have_text("3 utilisateurs | Page 1 sur 1")
 
     # A table of users should be present
     # with a button to remove them
@@ -148,7 +148,7 @@ RSpec.describe "Publisher users in admin" do
     #
     expect(page).to     have_current_path(admin_publisher_path(fiscalite_territoire))
     expect(page).to     have_selector("h1", text: "Fiscalité & Territoire")
-    expect(page).to     have_text("1 utilisateur | Page 1 sur 1")
+    expect(page).to     have_text("2 utilisateurs | Page 1 sur 1")
     expect(page).not_to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 
     # The dialog should be closed
@@ -169,7 +169,7 @@ RSpec.describe "Publisher users in admin" do
     #
     expect(page).to have_current_path(admin_publisher_path(fiscalite_territoire))
     expect(page).to have_selector("h1", text: "Fiscalité & Territoire")
-    expect(page).to have_text("2 utilisateurs | Page 1 sur 1")
+    expect(page).to have_text("3 utilisateurs | Page 1 sur 1")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 
     # The previous notification should be closed
@@ -182,7 +182,7 @@ RSpec.describe "Publisher users in admin" do
   it "selects and discards one user from the publisher page & rollbacks" do
     visit admin_publisher_path(fiscalite_territoire)
 
-    expect(page).to have_text("2 utilisateurs | Page 1 sur 1")
+    expect(page).to have_text("3 utilisateurs | Page 1 sur 1")
 
     # Checkboxes should be present to select users
     #
@@ -209,7 +209,7 @@ RSpec.describe "Publisher users in admin" do
     #
     expect(page).to     have_current_path(admin_publisher_path(fiscalite_territoire))
     expect(page).to     have_selector("h1", text: "Fiscalité & Territoire")
-    expect(page).to     have_text("1 utilisateur | Page 1 sur 1")
+    expect(page).to     have_text("2 utilisateurs | Page 1 sur 1")
     expect(page).not_to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
     expect(page).to     have_selector(:table_row, "Utilisateur" => "Marc Debomy")
 
@@ -232,7 +232,7 @@ RSpec.describe "Publisher users in admin" do
     #
     expect(page).to have_current_path(admin_publisher_path(fiscalite_territoire))
     expect(page).to have_selector("h1", text: "Fiscalité & Territoire")
-    expect(page).to have_text("2 utilisateurs | Page 1 sur 1")
+    expect(page).to have_text("3 utilisateurs | Page 1 sur 1")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 
     # The selection message should not appears again
@@ -253,7 +253,7 @@ RSpec.describe "Publisher users in admin" do
 
     visit admin_publisher_path(fiscalite_territoire)
 
-    expect(page).to have_text("12 utilisateurs | Page 1 sur 2")
+    expect(page).to have_text("13 utilisateurs | Page 1 sur 2")
 
     # Checkboxes should be present to select all users
     #
@@ -280,7 +280,7 @@ RSpec.describe "Publisher users in admin" do
     #
     expect(page).to     have_current_path(admin_publisher_path(fiscalite_territoire))
     expect(page).to     have_selector("h1", text: "Fiscalité & Territoire")
-    expect(page).to     have_text("3 utilisateurs | Page 1 sur 1")
+    expect(page).to     have_text("4 utilisateurs | Page 1 sur 1")
     expect(page).to     have_selector(:table_row, "Utilisateur" => "Marc Debomy")
     expect(page).not_to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 
@@ -302,7 +302,7 @@ RSpec.describe "Publisher users in admin" do
     #
     expect(page).to have_current_path(admin_publisher_path(fiscalite_territoire))
     expect(page).to have_selector("h1", text: "Fiscalité & Territoire")
-    expect(page).to have_text("12 utilisateurs | Page 1 sur 2")
+    expect(page).to have_text("13 utilisateurs | Page 1 sur 2")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 
@@ -326,7 +326,7 @@ RSpec.describe "Publisher users in admin" do
 
     visit admin_publisher_path(fiscalite_territoire)
 
-    expect(page).to have_text("12 utilisateurs | Page 1 sur 2")
+    expect(page).to have_text("13 utilisateurs | Page 1 sur 2")
 
     # Checkboxes should be present to select all users
     #
@@ -338,16 +338,16 @@ RSpec.describe "Publisher users in admin" do
     # with a button to remove them
     #
     within ".datatable__selection", text: "10 utilisateurs sélectionnés" do
-      click_on "Sélectionner les 12 utilisateurs des 2 pages"
+      click_on "Sélectionner les 13 utilisateurs des 2 pages"
     end
 
-    within ".datatable__selection", text: "12 utilisateurs sélectionnés" do
+    within ".datatable__selection", text: "13 utilisateurs sélectionnés" do
       click_on "Tout supprimer"
     end
 
     # A confirmation dialog should appear
     #
-    within "[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer les 12 utilisateurs sélectionnés ?" do
+    within "[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer les 13 utilisateurs sélectionnés ?" do
       click_on "Continuer"
     end
 
@@ -361,7 +361,7 @@ RSpec.describe "Publisher users in admin" do
     expect(page).to     have_selector(:table_row, "Utilisateur" => "Marc Debomy")
     expect(page).not_to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 
-    expect(User.discarded.count).to eq(16)
+    expect(User.discarded.count).to eq(17)
 
     # The dialog should be closed
     # A notification should be displayed
@@ -381,7 +381,7 @@ RSpec.describe "Publisher users in admin" do
     #
     expect(page).to have_current_path(admin_publisher_path(fiscalite_territoire))
     expect(page).to have_selector("h1", text: "Fiscalité & Territoire")
-    expect(page).to have_text("12 utilisateurs | Page 1 sur 2")
+    expect(page).to have_text("13 utilisateurs | Page 1 sur 2")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Marc Debomy")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 

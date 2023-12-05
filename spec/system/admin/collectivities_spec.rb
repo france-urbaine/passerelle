@@ -4,7 +4,7 @@ require "system_helper"
 
 RSpec.describe "Collectivities in admin" do
   fixtures :regions, :departements, :epcis, :communes
-  fixtures :collectivities, :publishers, :ddfips, :users
+  fixtures :collectivities, :publishers, :ddfips, :users, :audits
 
   let(:pays_basque)   { collectivities(:pays_basque) }
   let(:publisher)     { publishers(:fiscalite_territoire) }

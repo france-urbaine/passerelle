@@ -5,7 +5,7 @@ require "system_helper"
 RSpec.describe "Users in admin" do
   fixtures :regions, :departements, :epcis, :communes
   fixtures :publishers, :collectivities, :ddfips, :offices
-  fixtures :users, :office_users
+  fixtures :users, :office_users, :audits
 
   let(:fiscalite_territoire) { publishers(:fiscalite_territoire) }
   let(:pays_basque)          { collectivities(:pays_basque) }

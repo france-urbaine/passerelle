@@ -4,7 +4,7 @@ require "system_helper"
 
 RSpec.describe "Offices in admin" do
   fixtures :regions, :departements, :epcis, :communes
-  fixtures :ddfips, :offices, :users, :office_communes, :office_users
+  fixtures :ddfips, :offices, :users, :office_communes, :office_users, :audits
 
   let(:ddifp64)      { ddfips(:pyrenees_atlantiques) }
   let(:departement)  { departements(:pyrenees_atlantiques) }

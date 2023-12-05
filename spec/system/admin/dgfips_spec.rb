@@ -3,7 +3,7 @@
 require "system_helper"
 
 RSpec.describe "DGFIPs in admin" do
-  fixtures :dgfips, :users
+  fixtures :dgfips, :users, :audits
 
   let(:dgfip) { dgfips(:dgfip) }
 
