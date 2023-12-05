@@ -19,7 +19,6 @@
 #  reports_rejected_count :integer          default(0), not null
 #  sandbox                :boolean          default(FALSE), not null
 #  transmission_id        :uuid
-#  reports_debated_count  :integer          default(0), not null
 #  ddfip_id               :uuid
 #
 # Indexes
