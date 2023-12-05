@@ -3,7 +3,7 @@ div( data-controller="navbar" )
   -# Full navbar
   -# ---------------------------------------------------------------------------
 
-  = tag.nav(**navbar_html_attributes, data_navbar_target: "expanded") do
+  = tag.nav(**navbar_html_attributes, data: { navbar_target: "expanded" }) do
     .navbar__brand.brand
       = image_tag("logo.svg", alt: "Logo de Passerelle", height: 30)
 
