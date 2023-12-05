@@ -18,7 +18,6 @@ FactoryBot.define do
 
     name           { Faker::Book.title }
     form_type      { Report::FORM_TYPES.sample }
-    transmitted_at { Time.current }
 
     traits_for_enum :form_type, Report::FORM_TYPES
 
@@ -26,14 +25,6 @@ FactoryBot.define do
       month = Time.current.strftime("%Y-%m")
       index = n.to_s.rjust(4, "0")
       "#{month}-#{index}"
-    end
-
-    trait :assigned do
-      assigned_at { Time.current }
-    end
-
-    trait :returned do
-      returned_at { Time.current }
     end
 
     trait :discarded do
