@@ -104,52 +104,39 @@ RSpec.describe DGFIP do
         before_all do
           create(:publisher, :with_users, users_size: 1).tap do |publisher|
             create(:collectivity, :with_users, publisher:, users_size: 1).tap do |collectivity|
-              create(:package, :with_reports, collectivity:)
-              create(:package, :with_reports, :sandbox, collectivity:)
-              create(:package, :with_reports, :returned, :with_reports, collectivity:, reports_size: 2)
-              create(:package, :with_reports, :assigned, collectivity:).tap do |package|
-                create_list(:report, 2, :approved, collectivity:, package:)
-                create_list(:report, 3, :rejected, collectivity:, package:)
-                create_list(:report, 1, :debated,  collectivity:, package:)
-              end
+              create(:report, collectivity:)
+              create(:report, :sandbox, collectivity:)
+              create(:report, :denied, collectivity:)
+              create_list(:report, 2, :approved, collectivity:)
+              create_list(:report, 3, :rejected, collectivity:)
             end
           end
 
           DGFIP.update_all(
-            reports_transmitted_count:  99,
-            reports_returned_count:     99,
-            reports_pending_count:      99,
-            reports_debated_count:      99,
-            reports_approved_count:     99,
-            reports_rejected_count:     99,
-            packages_transmitted_count: 99,
-            packages_assigned_count:    99,
-            packages_returned_count:    99
+            reports_transmitted_count: 99,
+            reports_denied_count:      99,
+            reports_processing_count:  99,
+            reports_approved_count:    99,
+            reports_rejected_count:    99
           )
         end
 
         it "updates #reports_transmitted_count" do
           expect {
             described_class.reset_all_counters
-          }.to change { dgfip.reload.reports_transmitted_count }.to(10)
+          }.to change { dgfip.reload.reports_transmitted_count }.to(6)
         end
 
-        it "updates #reports_returned_count" do
+        it "updates #reports_denied_count" do
           expect {
             described_class.reset_all_counters
-          }.to change { dgfip.reload.reports_returned_count }.to(2)
+          }.to change { dgfip.reload.reports_denied_count }.to(1)
         end
 
-        it "updates #reports_pending_count" do
+        it "updates #reports_processing_count" do
           expect {
             described_class.reset_all_counters
-          }.to change { dgfip.reload.reports_pending_count }.to(1)
-        end
-
-        it "updates #reports_debated_count" do
-          expect {
-            described_class.reset_all_counters
-          }.to change { dgfip.reload.reports_debated_count }.to(1)
+          }.to change { dgfip.reload.reports_processing_count }.to(0)
         end
 
         it "updates #reports_approved_count" do
@@ -162,24 +149,6 @@ RSpec.describe DGFIP do
           expect {
             described_class.reset_all_counters
           }.to change { dgfip.reload.reports_rejected_count }.to(3)
-        end
-
-        it "updates #packages_transmitted_count" do
-          expect {
-            described_class.reset_all_counters
-          }.to change { dgfip.reload.packages_transmitted_count }.to(3)
-        end
-
-        it "updates #packages_assigned_count" do
-          expect {
-            described_class.reset_all_counters
-          }.to change { dgfip.reload.packages_assigned_count }.to(1)
-        end
-
-        it "updates #packages_returned_count" do
-          expect {
-            described_class.reset_all_counters
-          }.to change { dgfip.reload.packages_returned_count }.to(1)
         end
       end
     end
@@ -278,7 +247,6 @@ RSpec.describe DGFIP do
 
     describe "#reports_transmitted_count" do
       let(:collectivity) { create(:collectivity) }
-      let(:package)      { create(:package, collectivity:) }
       let(:report)       { create(:report, collectivity:) }
 
       it "doesn't change when report is created" do
@@ -289,27 +257,26 @@ RSpec.describe DGFIP do
       it "changes when report is transmitted" do
         report
 
-        expect { report.update(package: package) }
+        expect { report.transmit! }
           .to change { dgfip.reload.reports_transmitted_count }.from(0).to(1)
       end
 
       it "doesn't change when report is transmitted to a sandbox" do
-        report
-        package.update(sandbox: true)
+        report.update(sandbox: true)
 
-        expect { report.update(package: package) }
+        expect { report.transmit! }
           .not_to change { dgfip.reload.reports_transmitted_count }.from(0)
       end
 
       it "changes when transmitted report is discarded" do
-        report.update(package: package)
+        report.transmit!
 
         expect { report.discard }
           .to change { dgfip.reload.reports_transmitted_count }.from(1).to(0)
       end
 
       it "changes when transmitted report is undiscarded" do
-        report.update(package: package)
+        report.transmit!
         report.discard
 
         expect { report.undiscard }
@@ -317,199 +284,145 @@ RSpec.describe DGFIP do
       end
 
       it "changes when transmitted report is deleted" do
-        report.update(package: package)
+        report.transmit!
 
         expect { report.destroy }
           .to change { dgfip.reload.reports_transmitted_count }.from(1).to(0)
       end
-
-      it "changes when package is discarded" do
-        report.update(package: package)
-
-        expect { package.discard }
-          .to change { dgfip.reload.reports_transmitted_count }.from(1).to(0)
-      end
-
-      it "changes when package is undiscarded" do
-        report.update(package: package)
-        package.discard
-
-        expect { package.undiscard }
-          .to change { dgfip.reload.reports_transmitted_count }.from(0).to(1)
-      end
-
-      it "changes when package is deleted" do
-        report.update(package: package)
-
-        expect { package.delete }
-          .to change { dgfip.reload.reports_transmitted_count }.from(1).to(0)
-      end
     end
 
-    describe "#reports_returned_count" do
+    describe "#reports_denied_count" do
       let(:collectivity) { create(:collectivity) }
-      let(:package)      { create(:package, :with_reports, collectivity:, reports_size: 2) }
+      let(:report)       { create(:report, :transmitted, collectivity:) }
 
       it "doesn't change when report are transmitted" do
-        expect { package }
-          .not_to change { dgfip.reload.reports_returned_count }.from(0)
-      end
-
-      it "changes when package is returned" do
-        package
-
-        expect { package.return! }
-          .to change { dgfip.reload.reports_returned_count }.from(0).to(2)
-      end
-
-      it "doesn't change when package is assigned" do
-        package
-
-        expect { package.assign! }
-          .not_to change { dgfip.reload.reports_returned_count }.from(0)
-      end
-
-      it "changes when returned package is then assigned" do
-        package.return!
-
-        expect { package.assign! }
-          .to change { dgfip.reload.reports_returned_count }.from(2).to(0)
-      end
-
-      it "changes when returned package is discarded" do
-        package.return!
-
-        expect { package.discard }
-          .to change { dgfip.reload.reports_returned_count }.from(2).to(0)
-      end
-
-      it "changes when returned package is undiscarded" do
-        package.return!
-        package.discard
-
-        expect { package.undiscard }
-          .to change { dgfip.reload.reports_returned_count }.from(0).to(2)
-      end
-
-      it "changes when returned package is deleted" do
-        package.return!
-
-        expect { package.delete }
-          .to change { dgfip.reload.reports_returned_count }.from(2).to(0)
-      end
-    end
-
-    describe "#reports_pending_count" do
-      let(:collectivity) { create(:collectivity) }
-      let(:package)      { create(:package, :with_reports, collectivity:, reports_size: 2) }
-
-      it "doesn't change when reports are transmitted" do
-        expect { package }
-          .not_to change { dgfip.reload.reports_pending_count }.from(0)
-      end
-
-      it "changes when package is assigned" do
-        package
-
-        expect { package.assign! }
-          .to change { dgfip.reload.reports_pending_count }.from(0).to(2)
-      end
-
-      it "doesn't change when package is returned" do
-        package
-
-        expect { package.return! }
-          .not_to change { dgfip.reload.reports_pending_count }.from(0)
-      end
-
-      it "changes when assigned package is then returned" do
-        package.assign!
-
-        expect { package.return! }
-          .to change { dgfip.reload.reports_pending_count }.from(2).to(0)
-      end
-
-      it "changes when reports are approved" do
-        package.assign!
-
-        expect { package.reports.first.approve! }
-          .to change { dgfip.reload.reports_pending_count }.from(2).to(1)
-      end
-
-      it "changes when reports are rejected" do
-        package.assign!
-
-        expect { package.reports.first.reject! }
-          .to change { dgfip.reload.reports_pending_count }.from(2).to(1)
-      end
-
-      it "changes when reports are debated" do
-        package.assign!
-
-        expect { package.reports.first.debate! }
-          .to change { dgfip.reload.reports_pending_count }.from(2).to(1)
-      end
-    end
-
-    describe "#reports_debated_count" do
-      let(:collectivity) { create(:collectivity) }
-      let(:package)      { create(:package, :assigned, collectivity:) }
-      let(:report)       { create(:report, collectivity:, package:) }
-
-      it "doesn't change when package is assigned" do
         expect { report }
-          .not_to change { dgfip.reload.reports_debated_count }.from(0)
+          .not_to change { dgfip.reload.reports_denied_count }.from(0)
       end
 
-      it "doesn't changes when report is approved" do
+      it "changes when report is denied" do
         report
+
+        expect { report.deny! }
+          .to change { dgfip.reload.reports_denied_count }.from(0).to(1)
+      end
+
+      it "doesn't change when report is assigned" do
+        report
+
+        expect { report.assign! }
+          .not_to change { dgfip.reload.reports_denied_count }.from(0)
+      end
+
+      it "changes when denied report is then assigned" do
+        report.deny!
+
+        expect { report.assign! }
+          .to change { dgfip.reload.reports_denied_count }.from(1).to(0)
+      end
+
+      it "changes when denied report is discarded" do
+        report.deny!
+
+        expect { report.discard }
+          .to change { dgfip.reload.reports_denied_count }.from(1).to(0)
+      end
+
+      it "changes when denied report is undiscarded" do
+        report.deny!
+        report.discard
+
+        expect { report.undiscard }
+          .to change { dgfip.reload.reports_denied_count }.from(0).to(1)
+      end
+
+      it "changes when denied report is deleted" do
+        report.deny!
+
+        expect { report.delete }
+          .to change { dgfip.reload.reports_denied_count }.from(1).to(0)
+      end
+
+      it "change when denied report is sandboxed" do
+        report.deny!
+
+        expect { report.update(sandbox: true) }
+          .to change { dgfip.reload.reports_denied_count }.from(1).to(0)
+      end
+    end
+
+    describe "#reports_processing_count" do
+      let(:collectivity) { create(:collectivity) }
+      let(:report)       { create(:report, collectivity:) }
+
+      it "doesn't change when report is transmitted" do
+        expect { report }
+          .not_to change { dgfip.reload.reports_processing_count }.from(0)
+      end
+
+      it "changes when report is assigned" do
+        report
+
+        expect { report.assign! }
+          .to change { dgfip.reload.reports_processing_count }.from(0).to(1)
+      end
+
+      it "doesn't change when report is denied" do
+        report
+
+        expect { report.deny! }
+          .not_to change { dgfip.reload.reports_processing_count }.from(0)
+      end
+
+      it "changes when assigned report is then denied" do
+        report.assign!
+
+        expect { report.deny! }
+          .to change { dgfip.reload.reports_processing_count }.from(1).to(0)
+      end
+
+      it "changes when report is approved" do
+        report.assign!
 
         expect { report.approve! }
-          .not_to change { dgfip.reload.reports_debated_count }.from(0)
+          .to change { dgfip.reload.reports_processing_count }.from(1).to(0)
       end
 
-      it "doesn't changes when report is rejected" do
-        report
+      it "changes when report is rejected" do
+        report.assign!
 
         expect { report.reject! }
-          .not_to change { dgfip.reload.reports_debated_count }.from(0)
+          .to change { dgfip.reload.reports_processing_count }.from(1).to(0)
       end
 
-      it "changes when report is debated" do
-        report
+      it "changes when assigned report is then discarded" do
+        report.assign!
 
-        expect { report.debate! }
-          .to change { dgfip.reload.reports_debated_count }.from(0).to(1)
+        expect { report.discard }
+          .to change { dgfip.reload.reports_processing_count }.from(1).to(0)
       end
 
-      it "changes when debated report is reseted" do
-        report.debate!
+      it "changes when assigned report is undiscarded" do
+        report.assign!
+        report.discard
 
-        expect { report.update(debated_at: nil) }
-          .to change { dgfip.reload.reports_debated_count }.from(1).to(0)
+        expect { report.undiscard }
+          .to change { dgfip.reload.reports_processing_count }.from(0).to(1)
       end
 
-      it "changes when debated report is approved" do
-        report.debate!
+      it "changes when assigned report is sandboxed" do
+        report.assign!
 
-        expect { report.approve! }
-          .to change { dgfip.reload.reports_debated_count }.from(1).to(0)
-      end
-
-      it "changes when debated report is rejected" do
-        report.debate!
-
-        expect { report.reject! }
-          .to change { dgfip.reload.reports_debated_count }.from(1).to(0)
+        expect { report.update(sandbox: true) }
+          .to change { dgfip.reload.reports_processing_count }.from(1).to(0)
       end
     end
 
     describe "#reports_approved_count" do
       let(:collectivity) { create(:collectivity) }
-      let(:package)      { create(:package, :assigned, collectivity:) }
-      let(:report)       { create(:report, collectivity:, package:) }
+      let(:report)       { create(:report, :assigned, collectivity:) }
 
-      it "doesn't change when package is assigned" do
+      it "doesn't change when report is assigned" do
         expect { report }
           .not_to change { dgfip.reload.reports_approved_count }.from(0)
       end
@@ -518,13 +431,6 @@ RSpec.describe DGFIP do
         report
 
         expect { report.reject! }
-          .not_to change { dgfip.reload.reports_approved_count }.from(0)
-      end
-
-      it "doesn't changes when report is debated" do
-        report
-
-        expect { report.debate! }
           .not_to change { dgfip.reload.reports_approved_count }.from(0)
       end
 
@@ -538,7 +444,7 @@ RSpec.describe DGFIP do
       it "changes when approved report is reseted" do
         report.approve!
 
-        expect { report.update(approved_at: nil) }
+        expect { report.update(approved_at: nil, state: "processing") }
           .to change { dgfip.reload.reports_approved_count }.from(1).to(0)
       end
 
@@ -548,14 +454,35 @@ RSpec.describe DGFIP do
         expect { report.reject! }
           .to change { dgfip.reload.reports_approved_count }.from(1).to(0)
       end
+
+      it "changes when approved report is then discarded" do
+        report.approve!
+
+        expect { report.discard }
+          .to change { dgfip.reload.reports_approved_count }.from(1).to(0)
+      end
+
+      it "changes when approved report is undiscarded" do
+        report.approve!
+        report.discard
+
+        expect { report.undiscard }
+          .to change { dgfip.reload.reports_approved_count }.from(0).to(1)
+      end
+
+      it "changes when approved report is sandboxed" do
+        report.approve!
+
+        expect { report.update(sandbox: true) }
+          .to change { dgfip.reload.reports_approved_count }.from(1).to(0)
+      end
     end
 
     describe "#reports_rejected_count" do
       let(:collectivity) { create(:collectivity) }
-      let(:package)      { create(:package, :assigned, collectivity:) }
-      let(:report)       { create(:report, collectivity:, package:) }
+      let(:report)       { create(:report, :assigned, collectivity:) }
 
-      it "doesn't change when package is assigned" do
+      it "doesn't change when report is assigned" do
         expect { report }
           .not_to change { dgfip.reload.reports_rejected_count }.from(0)
       end
@@ -564,13 +491,6 @@ RSpec.describe DGFIP do
         report
 
         expect { report.approve! }
-          .not_to change { dgfip.reload.reports_rejected_count }.from(0)
-      end
-
-      it "doesn't changes when report is debated" do
-        report
-
-        expect { report.debate! }
           .not_to change { dgfip.reload.reports_rejected_count }.from(0)
       end
 
@@ -584,7 +504,7 @@ RSpec.describe DGFIP do
       it "changes when rejected report is reseted" do
         report.reject!
 
-        expect { report.update(rejected_at: nil) }
+        expect { report.update(rejected_at: nil, state: "processing") }
           .to change { dgfip.reload.reports_rejected_count }.from(1).to(0)
       end
 
@@ -594,154 +514,27 @@ RSpec.describe DGFIP do
         expect { report.approve! }
           .to change { dgfip.reload.reports_rejected_count }.from(1).to(0)
       end
-    end
 
-    describe "#packages_transmitted_count" do
-      let(:collectivity) { create(:collectivity) }
-      let(:package)      { create(:package, collectivity:) }
+      it "changes when rejected report is then discarded" do
+        report.reject!
 
-      it "changes on package creation" do
-        expect { package }
-          .to change { dgfip.reload.packages_transmitted_count }.from(0).to(1)
+        expect { report.discard }
+          .to change { dgfip.reload.reports_rejected_count }.from(1).to(0)
       end
 
-      it "doesn't changes when package is created in sandbox" do
-        expect { create(:package, collectivity:, sandbox: true) }
-          .not_to change { dgfip.reload.packages_transmitted_count }.from(0)
+      it "changes when rejected report is undiscarded" do
+        report.reject!
+        report.discard
+
+        expect { report.undiscard }
+          .to change { dgfip.reload.reports_rejected_count }.from(0).to(1)
       end
 
-      it "doesn't changes when package switches to sandbox" do
-        package
+      it "changes when rejected report is sandboxed" do
+        report.reject!
 
-        expect { package.update(sandbox: true) }
-          .to change { dgfip.reload.packages_transmitted_count }.from(1).to(0)
-      end
-
-      it "doesn't changes when package is assigned" do
-        package
-
-        expect { package.assign! }
-          .not_to change { dgfip.reload.packages_transmitted_count }.from(1)
-      end
-
-      it "doesn't changes when package is returned" do
-        package
-
-        expect { package.return! }
-          .not_to change { dgfip.reload.packages_transmitted_count }.from(1)
-      end
-
-      it "changes when package is discarded" do
-        package
-
-        expect { package.discard }
-          .to change { dgfip.reload.packages_transmitted_count }.from(1).to(0)
-      end
-
-      it "changes when package is undiscarded" do
-        package.discard
-
-        expect { package.undiscard }
-          .to change { dgfip.reload.packages_transmitted_count }.from(0).to(1)
-      end
-
-      it "changes when package is deleted" do
-        package
-
-        expect { package.delete }
-          .to change { dgfip.reload.packages_transmitted_count }.from(1).to(0)
-      end
-    end
-
-    describe "#packages_assigned_count" do
-      let(:collectivity) { create(:collectivity) }
-      let(:package)      { create(:package, collectivity:) }
-
-      it "doesn't changes on package creation" do
-        expect { package }
-          .to not_change { dgfip.reload.packages_assigned_count }.from(0)
-      end
-
-      it "changes when package is assigned" do
-        package
-
-        expect { package.assign! }
-          .to change { dgfip.reload.packages_assigned_count }.from(0).to(1)
-      end
-
-      it "changes when assigned package is then returned" do
-        package.assign!
-
-        expect { package.return! }
-          .to change { dgfip.reload.packages_assigned_count }.from(1).to(0)
-      end
-
-      it "changes when assigned package is discarded" do
-        package.assign!
-
-        expect { package.discard }
-          .to change { dgfip.reload.packages_assigned_count }.from(1).to(0)
-      end
-
-      it "changes when assigned package is undiscarded" do
-        package.assign!
-        package.discard
-
-        expect { package.undiscard }
-          .to change { dgfip.reload.packages_assigned_count }.from(0).to(1)
-      end
-
-      it "changes when assigned package is deleted" do
-        package.assign!
-
-        expect { package.delete }
-          .to change { dgfip.reload.packages_assigned_count }.from(1).to(0)
-      end
-    end
-
-    describe "#packages_returned_count" do
-      let(:collectivity) { create(:collectivity) }
-      let(:package)      { create(:package, collectivity:) }
-
-      it "doesn't change on package creation" do
-        expect { package }
-          .to not_change { dgfip.reload.packages_returned_count }.from(0)
-      end
-
-      it "changes when package is returned" do
-        package
-
-        expect { package.return! }
-          .to change { dgfip.reload.packages_returned_count }.from(0).to(1)
-      end
-
-      it "changes when returned package is assigned" do
-        package.return!
-
-        expect { package.assign! }
-          .to change { dgfip.reload.packages_returned_count }.from(1).to(0)
-      end
-
-      it "changes when returned package is discarded" do
-        package.return!
-
-        expect { package.discard }
-          .to change { dgfip.reload.packages_returned_count }.from(1).to(0)
-      end
-
-      it "changes when returned package is undiscarded" do
-        package.return!
-        package.discard
-
-        expect { package.undiscard }
-          .to change { dgfip.reload.packages_returned_count }.from(0).to(1)
-      end
-
-      it "changes when returned package is deleted" do
-        package.return!
-
-        expect { package.delete }
-          .to change { dgfip.reload.packages_returned_count }.from(1).to(0)
+        expect { report.update(sandbox: true) }
+          .to change { dgfip.reload.reports_rejected_count }.from(1).to(0)
       end
     end
   end

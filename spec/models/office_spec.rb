@@ -368,19 +368,17 @@ RSpec.describe Office do
         end
       end
 
-      describe "reports & packages counts" do
+      describe "reports counts" do
         before_all do
           create(:commune, departement: ddfip.departement).tap do |commune|
             offices[0].communes << commune
             form_type = offices[0].competences.sample
 
             create(:collectivity, territory: commune).tap do |collectivity|
-              create(:package, :with_reports, collectivity:, form_type:)
-              create(:package, :with_reports, :sandbox, collectivity:, form_type:)
-              create(:package, :with_reports, :assigned, collectivity:, form_type:) do |package|
-                create_list(:report, 2, :approved, collectivity:, package:, form_type:)
-                create_list(:report, 3, :rejected, collectivity:, package:, form_type:)
-              end
+              create(:report, :ready, collectivity:, form_type:, office: offices[0])
+              create(:report, :sandbox, collectivity:, form_type:, office: offices[0])
+              create_list(:report, 2, :approved, collectivity:, form_type:, office: offices[0])
+              create_list(:report, 3, :rejected, collectivity:, form_type:, office: offices[0])
             end
           end
 
@@ -389,41 +387,29 @@ RSpec.describe Office do
             form_type = offices[1].competences.sample
 
             create(:collectivity, territory: commune).tap do |collectivity|
-              create(:package, :with_reports, :returned, collectivity:, form_type:)
-              create(:package, :assigned, collectivity:, form_type:) do |package|
-                create(:report, :debated, collectivity:, package:, form_type:)
-              end
+              create(:report, :denied, collectivity:, form_type:, office: offices[1])
             end
           end
 
           Office.update_all(
-            reports_assigned_count: 99,
-            reports_pending_count:  99,
-            reports_debated_count:  99,
-            reports_approved_count: 99,
-            reports_rejected_count: 99
+            reports_assigned_count:    99,
+            reports_processing_count:  99,
+            reports_approved_count:    99,
+            reports_rejected_count:    99
           )
         end
 
         it "updates #reports_assigned_count" do
           expect {
             described_class.reset_all_counters
-          }.to change { offices[0].reload.reports_assigned_count }.to(6)
-            .and change { offices[1].reload.reports_assigned_count }.to(1)
+          }.to change { offices[0].reload.reports_assigned_count }.to(5)
         end
 
-        it "updates #reports_pending_count" do
+        it "updates #reports_processing_count" do
           expect {
             described_class.reset_all_counters
-          }.to change { offices[0].reload.reports_pending_count }.to(1)
-            .and change { offices[1].reload.reports_pending_count }.to(0)
-        end
-
-        it "updates #reports_debated_count" do
-          expect {
-            described_class.reset_all_counters
-          }.to change { offices[0].reload.reports_debated_count }.to(0)
-            .and change { offices[1].reload.reports_debated_count }.to(1)
+          }.to change { offices[0].reload.reports_processing_count }.to(0)
+            .and change { offices[1].reload.reports_processing_count }.to(0)
         end
 
         it "updates #reports_approved_count" do
@@ -554,7 +540,7 @@ RSpec.describe Office do
 
       describe "#reports_assigned_count" do
         let(:office) { create(:office, :with_communes, ddfip:) }
-        let(:report) { create(:report, :transmitted, :made_for_office, office:) }
+        let(:report) { create(:report, :transmitted, office:, ddfip:) }
 
         it "doesn't change when report is created" do
           expect { report }
@@ -564,149 +550,112 @@ RSpec.describe Office do
         it "changes when report is assigned" do
           report
 
-          expect { report.package.assign! }
+          expect { report.assign! }
             .to change { office.reload.reports_assigned_count }.from(0).to(1)
         end
 
         it "changes when assigned report is discarded" do
-          report.package.assign!
+          report.assign!
 
           expect { report.discard }
             .to change { office.reload.reports_assigned_count }.from(1).to(0)
         end
 
         it "changes when assigned report is undiscarded" do
-          report.package.assign!
+          report.assign!
           report.discard
 
           expect { report.undiscard }
             .to change { office.reload.reports_assigned_count }.from(0).to(1)
         end
 
+        it "changes when assigned report is sandboxed" do
+          report.assign!
+
+          expect { report.update(sandbox: true) }
+            .to change { office.reload.reports_assigned_count }.from(1).to(0)
+        end
+
         it "changes when assigned report is deleted" do
-          report.package.assign!
+          report.assign!
 
           expect { report.delete }
             .to change { office.reload.reports_assigned_count }.from(1).to(0)
         end
 
-        it "doesn't changes when report is debated" do
-          report.package.assign!
-
-          expect { report.debate! }
-            .not_to change { office.reload.reports_assigned_count }.from(1)
-        end
-
         it "doesn't changes when report is approved" do
-          report.package.assign!
+          report.assign!
 
           expect { report.approve! }
             .not_to change { office.reload.reports_assigned_count }.from(1)
         end
 
         it "doesn't changes when report is rejected" do
-          report.package.assign!
+          report.assign!
 
           expect { report.reject! }
             .not_to change { office.reload.reports_assigned_count }.from(1)
         end
       end
 
-      describe "#reports_pending_count" do
+      describe "#reports_processing_count" do
         let(:office) { create(:office, :with_communes, ddfip:) }
-        let(:report) { create(:report, :transmitted, :made_for_office, office:) }
+        let(:report) { create(:report, :transmitted, office:, ddfip:) }
 
         it "doesn't change when report is created" do
           expect { report }
-            .not_to change { office.reload.reports_pending_count }.from(0)
+            .not_to change { office.reload.reports_processing_count }.from(0)
         end
 
         it "changes when report is assigned" do
           report
 
-          expect { report.package.assign! }
-            .to change { office.reload.reports_pending_count }.from(0).to(1)
+          expect { report.assign! }
+            .to change { office.reload.reports_processing_count }.from(0).to(1)
         end
 
-        it "changes when report is debated" do
-          report.package.assign!
-
-          expect { report.debate! }
-            .to change { office.reload.reports_pending_count }.from(1).to(0)
-        end
-
-        it "changes when report is approved" do
-          report.package.assign!
+        it "changes when assigned report is approved" do
+          report.assign!
 
           expect { report.approve! }
-            .to change { office.reload.reports_pending_count }.from(1).to(0)
+            .to change { office.reload.reports_processing_count }.from(1).to(0)
         end
 
-        it "changes when report is rejected" do
-          report.package.assign!
+        it "changes when assigned report is rejected" do
+          report.assign!
 
           expect { report.reject! }
-            .to change { office.reload.reports_pending_count }.from(1).to(0)
-        end
-      end
-
-      describe "#reports_debated_count" do
-        let(:office) { create(:office, :with_communes, ddfip:) }
-        let(:report) { create(:report, :assigned_to_office, office:) }
-
-        it "doesn't change when package is assigned" do
-          expect { report }
-            .not_to change { office.reload.reports_debated_count }.from(0)
+            .to change { office.reload.reports_processing_count }.from(1).to(0)
         end
 
-        it "doesn't changes when report is approved" do
-          report
+        it "changes when assigned report is discarded" do
+          report.assign!
 
-          expect { report.approve! }
-            .not_to change { office.reload.reports_debated_count }.from(0)
+          expect { report.discard }
+            .to change { office.reload.reports_processing_count }.from(1).to(0)
         end
 
-        it "doesn't changes when report is rejected" do
-          report
+        it "changes when assigned report is undiscarded" do
+          report.assign!
+          report.discard
 
-          expect { report.reject! }
-            .not_to change { office.reload.reports_debated_count }.from(0)
+          expect { report.undiscard }
+            .to change { office.reload.reports_processing_count }.from(0).to(1)
         end
 
-        it "changes when report is debated" do
-          report
+        it "changes when assigned report is sandboxed" do
+          report.assign!
 
-          expect { report.debate! }
-            .to change { office.reload.reports_debated_count }.from(0).to(1)
-        end
-
-        it "changes when debated report is reseted" do
-          report.debate!
-
-          expect { report.update(debated_at: nil) }
-            .to change { office.reload.reports_debated_count }.from(1).to(0)
-        end
-
-        it "changes when debated report is approved" do
-          report.debate!
-
-          expect { report.approve! }
-            .to change { office.reload.reports_debated_count }.from(1).to(0)
-        end
-
-        it "changes when debated report is rejected" do
-          report.debate!
-
-          expect { report.reject! }
-            .to change { office.reload.reports_debated_count }.from(1).to(0)
+          expect { report.update(sandbox: true) }
+            .to change { office.reload.reports_processing_count }.from(1).to(0)
         end
       end
 
       describe "#reports_approved_count" do
         let(:office) { create(:office, :with_communes, ddfip:) }
-        let(:report) { create(:report, :assigned_to_office, office:) }
+        let(:report) { create(:report, :assigned, office:, ddfip:) }
 
-        it "doesn't change when package is assigned" do
+        it "doesn't change when report is assigned" do
           expect { report }
             .not_to change { office.reload.reports_approved_count }.from(0)
         end
@@ -715,13 +664,6 @@ RSpec.describe Office do
           report
 
           expect { report.reject! }
-            .not_to change { office.reload.reports_approved_count }.from(0)
-        end
-
-        it "doesn't changes when report is debated" do
-          report
-
-          expect { report.debate! }
             .not_to change { office.reload.reports_approved_count }.from(0)
         end
 
@@ -735,7 +677,7 @@ RSpec.describe Office do
         it "changes when approved report is reseted" do
           report.approve!
 
-          expect { report.update(approved_at: nil) }
+          expect { report.update(approved_at: nil, state: "processing") }
             .to change { office.reload.reports_approved_count }.from(1).to(0)
         end
 
@@ -745,13 +687,35 @@ RSpec.describe Office do
           expect { report.reject! }
             .to change { office.reload.reports_approved_count }.from(1).to(0)
         end
+
+        it "changes when approved report is discarded" do
+          report.approve!
+
+          expect { report.discard }
+            .to change { office.reload.reports_approved_count }.from(1).to(0)
+        end
+
+        it "changes when approved report is undiscarded" do
+          report.approve!
+          report.discard
+
+          expect { report.undiscard }
+            .to change { office.reload.reports_approved_count }.from(0).to(1)
+        end
+
+        it "changes when approved report is sandboxed" do
+          report.approve!
+
+          expect { report.update(sandbox: true) }
+            .to change { office.reload.reports_approved_count }.from(1).to(0)
+        end
       end
 
       describe "#reports_rejected_count" do
         let(:office) { create(:office, :with_communes, ddfip:) }
-        let(:report) { create(:report, :assigned_to_office, office:) }
+        let(:report) { create(:report, :assigned, office:, ddfip:) }
 
-        it "doesn't change when package is assigned" do
+        it "doesn't change when report is assigned" do
           expect { report }
             .not_to change { office.reload.reports_rejected_count }.from(0)
         end
@@ -760,13 +724,6 @@ RSpec.describe Office do
           report
 
           expect { report.approve! }
-            .not_to change { office.reload.reports_rejected_count }.from(0)
-        end
-
-        it "doesn't changes when report is debated" do
-          report
-
-          expect { report.debate! }
             .not_to change { office.reload.reports_rejected_count }.from(0)
         end
 
@@ -780,7 +737,7 @@ RSpec.describe Office do
         it "changes when rejected report is reseted" do
           report.reject!
 
-          expect { report.update(rejected_at: nil) }
+          expect { report.update(rejected_at: nil, state: "processing") }
             .to change { office.reload.reports_rejected_count }.from(1).to(0)
         end
 
@@ -788,6 +745,28 @@ RSpec.describe Office do
           report.reject!
 
           expect { report.approve! }
+            .to change { office.reload.reports_rejected_count }.from(1).to(0)
+        end
+
+        it "changes when rejected report is discarded" do
+          report.reject!
+
+          expect { report.discard }
+            .to change { office.reload.reports_rejected_count }.from(1).to(0)
+        end
+
+        it "changes when rejected report is undiscarded" do
+          report.reject!
+          report.discard
+
+          expect { report.undiscard }
+            .to change { office.reload.reports_rejected_count }.from(0).to(1)
+        end
+
+        it "changes when rejected report is sandboxed" do
+          report.reject!
+
+          expect { report.update(sandbox: true) }
             .to change { office.reload.reports_rejected_count }.from(1).to(0)
         end
       end

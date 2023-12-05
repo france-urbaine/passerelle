@@ -670,40 +670,28 @@ RSpec.describe Collectivity do
         end
       end
 
-      describe "reports & packages counts" do
+      describe "reports counts" do
         before_all do
           collectivities[0].tap do |collectivity|
             create(:report, collectivity:)
-            create(:report, :completed, collectivity:)
-
-            create(:package, :with_reports, collectivity:)
-            create(:package, :with_reports, :sandbox, collectivity:, publisher:)
-            create(:package, :with_reports, :assigned, collectivity:) do |package|
-              create_list(:report, 2, :approved, collectivity:, package:)
-              create_list(:report, 3, :rejected, collectivity:, package:)
-            end
+            create(:report, :ready, collectivity:)
+            create(:report, :sandbox, collectivity:, publisher:)
+            create_list(:report, 2, :approved, collectivity:)
+            create_list(:report, 3, :rejected, collectivity:)
           end
 
           collectivities[1].tap do |collectivity|
-            create(:package, :with_reports, :returned, collectivity:)
-            create(:package, :assigned, collectivity:) do |package|
-              create(:report, :debated, collectivity:, package:)
-            end
+            create(:report, :denied, collectivity:)
           end
 
           Collectivity.update_all(
-            reports_incomplete_count:   99,
-            reports_packing_count:      99,
-            reports_transmitted_count:  99,
-            reports_returned_count:     99,
-            reports_pending_count:      99,
-            reports_debated_count:      99,
-            reports_approved_count:     99,
-            reports_rejected_count:     99,
-            packages_transmitted_count: 99,
-            packages_unresolved_count:  99,
-            packages_assigned_count:    99,
-            packages_returned_count:    99
+            reports_incomplete_count:  99,
+            reports_packing_count:     99,
+            reports_transmitted_count: 99,
+            reports_denied_count:      99,
+            reports_processing_count:  99,
+            reports_approved_count:    99,
+            reports_rejected_count:    99
           )
         end
 
@@ -724,29 +712,22 @@ RSpec.describe Collectivity do
         it "updates #reports_transmitted_count" do
           expect {
             described_class.reset_all_counters
-          }.to change { collectivities[0].reload.reports_transmitted_count }.to(7)
-            .and change { collectivities[1].reload.reports_transmitted_count }.to(2)
+          }.to change { collectivities[0].reload.reports_transmitted_count }.to(5)
+            .and change { collectivities[1].reload.reports_transmitted_count }.to(1)
         end
 
-        it "updates #reports_returned_count" do
+        it "updates #reports_denied_count" do
           expect {
             described_class.reset_all_counters
-          }.to change { collectivities[0].reload.reports_returned_count }.to(0)
-            .and change { collectivities[1].reload.reports_returned_count }.to(1)
+          }.to change { collectivities[0].reload.reports_denied_count }.to(0)
+            .and change { collectivities[1].reload.reports_denied_count }.to(1)
         end
 
-        it "updates #reports_pending_count" do
+        it "updates #reports_processing_count" do
           expect {
             described_class.reset_all_counters
-          }.to change { collectivities[0].reload.reports_pending_count }.to(1)
-            .and change { collectivities[1].reload.reports_pending_count }.to(0)
-        end
-
-        it "updates #reports_debated_count" do
-          expect {
-            described_class.reset_all_counters
-          }.to change { collectivities[0].reload.reports_debated_count }.to(0)
-            .and change { collectivities[1].reload.reports_debated_count }.to(1)
+          }.to change { collectivities[0].reload.reports_processing_count }.to(0)
+            .and change { collectivities[1].reload.reports_processing_count }.to(0)
         end
 
         it "updates #reports_approved_count" do
@@ -761,34 +742,6 @@ RSpec.describe Collectivity do
             described_class.reset_all_counters
           }.to change { collectivities[0].reload.reports_rejected_count }.to(3)
             .and change { collectivities[1].reload.reports_rejected_count }.to(0)
-        end
-
-        it "updates #packages_transmitted_count" do
-          expect {
-            described_class.reset_all_counters
-          }.to change { collectivities[0].reload.packages_transmitted_count }.to(2)
-            .and change { collectivities[1].reload.packages_transmitted_count }.to(2)
-        end
-
-        it "updates #packages_unresolved_count" do
-          expect {
-            described_class.reset_all_counters
-          }.to change { collectivities[0].reload.packages_unresolved_count }.to(1)
-            .and change { collectivities[1].reload.packages_unresolved_count }.to(0)
-        end
-
-        it "updates #packages_assigned_count" do
-          expect {
-            described_class.reset_all_counters
-          }.to change { collectivities[0].reload.packages_assigned_count }.to(1)
-            .and change { collectivities[1].reload.packages_assigned_count }.to(1)
-        end
-
-        it "updates #packages_returned_count" do
-          expect {
-            described_class.reset_all_counters
-          }.to change { collectivities[0].reload.packages_returned_count }.to(0)
-            .and change { collectivities[1].reload.packages_returned_count }.to(1)
         end
       end
     end
@@ -873,17 +826,17 @@ RSpec.describe Collectivity do
           .to change { collectivity.reload.reports_incomplete_count }.from(0).to(1)
       end
 
-      it "changes when report becomes completed" do
+      it "changes when report becomes ready" do
         report
 
-        expect { report.complete! }
+        expect { report.ready! }
           .to change { collectivity.reload.reports_incomplete_count }.from(1).to(0)
       end
 
-      it "changes when report becomes incomplete" do
-        report.complete!
+      it "changes when report becomes draft" do
+        report.ready!
 
-        expect { report.incomplete! }
+        expect { report.update(ready_at: nil, state: "draft") }
           .to change { collectivity.reload.reports_incomplete_count }.from(0).to(1)
       end
 
@@ -891,6 +844,13 @@ RSpec.describe Collectivity do
         report
 
         expect { report.discard }
+          .to change { collectivity.reload.reports_incomplete_count }.from(1).to(0)
+      end
+
+      it "changes when report is sandboxed" do
+        report
+
+        expect { report.update(sandbox: true) }
           .to change { collectivity.reload.reports_incomplete_count }.from(1).to(0)
       end
 
@@ -910,8 +870,7 @@ RSpec.describe Collectivity do
     end
 
     describe "#reports_packing_count" do
-      let(:report)  { create(:report, collectivity:) }
-      let(:package) { create(:package, collectivity:) }
+      let(:report) { create(:report, collectivity:) }
 
       it "changes when report is created" do
         expect { report }
@@ -921,15 +880,14 @@ RSpec.describe Collectivity do
       it "changes when report is transmitted" do
         report
 
-        expect { report.update(package: package) }
+        expect { report.transmit! }
           .to change { collectivity.reload.reports_packing_count }.from(1).to(0)
       end
 
-      it "changes when report is transmitted to a sandbox" do
+      it "changes when report is sandboxed" do
         report
-        package.update(sandbox: true)
 
-        expect { report.update(package: package) }
+        expect { report.update(sandbox: true) }
           .to change { collectivity.reload.reports_packing_count }.from(1).to(0)
       end
 
@@ -956,8 +914,7 @@ RSpec.describe Collectivity do
     end
 
     describe "#reports_transmitted_count" do
-      let(:package) { create(:package, collectivity:) }
-      let(:report)  { create(:report, collectivity:) }
+      let(:report) { create(:report, collectivity:) }
 
       it "doesn't change when report is created" do
         expect { report }
@@ -967,27 +924,26 @@ RSpec.describe Collectivity do
       it "changes when report is transmitted" do
         report
 
-        expect { report.update(package:) }
+        expect { report.transmit! }
           .to change { collectivity.reload.reports_transmitted_count }.from(0).to(1)
       end
 
       it "doesn't change when report is transmitted to a sandbox" do
-        report
-        package.update(sandbox: true)
+        report.update(sandbox: true)
 
-        expect { report.update(package:) }
+        expect { report.transmit! }
           .not_to change { collectivity.reload.reports_transmitted_count }.from(0)
       end
 
       it "changes when report is discarded" do
-        report.update(package:)
+        report.transmit!
 
         expect { report.discard }
           .to change { collectivity.reload.reports_transmitted_count }.from(1).to(0)
       end
 
       it "changes when report is undiscarded" do
-        report.update(package:)
+        report.transmit!
         report.discard
 
         expect { report.undiscard }
@@ -995,200 +951,142 @@ RSpec.describe Collectivity do
       end
 
       it "changes when report is deleted" do
-        report.update(package:)
+        report.transmit!
 
         expect { report.destroy }
           .to change { collectivity.reload.reports_transmitted_count }.from(1).to(0)
       end
-
-      it "changes when package is discarded" do
-        report.update(package:)
-
-        expect { package.discard }
-          .to change { collectivity.reload.reports_transmitted_count }.from(1).to(0)
-      end
-
-      it "changes when package is undiscarded" do
-        report.update(package:)
-        package.discard
-
-        expect { package.undiscard }
-          .to change { collectivity.reload.reports_transmitted_count }.from(0).to(1)
-      end
-
-      it "changes when package is deleted" do
-        report.update(package:)
-
-        expect { package.delete }
-          .to change { collectivity.reload.reports_transmitted_count }.from(1).to(0)
-      end
     end
 
-    describe "#reports_returned_count" do
-      let(:package) { create(:package, :with_reports, collectivity:, reports_size: 2) }
+    describe "#reports_denied_count" do
+      let(:report) { create(:report, :transmitted, collectivity:) }
 
       it "doesn't change when report are transmitted" do
-        expect { package }
-          .not_to change { collectivity.reload.reports_returned_count }.from(0)
+        expect { report }
+          .not_to change { collectivity.reload.reports_denied_count }.from(0)
       end
 
-      it "changes when package is returned" do
-        package
+      it "changes when report is returned" do
+        report
 
-        expect { package.return! }
-          .to change { collectivity.reload.reports_returned_count }.from(0).to(2)
+        expect { report.deny! }
+          .to change { collectivity.reload.reports_denied_count }.from(0).to(1)
       end
 
-      it "doesn't change when package is assigned" do
-        package
+      it "doesn't change when report is assigned" do
+        report
 
-        expect { package.assign! }
-          .not_to change { collectivity.reload.reports_returned_count }.from(0)
+        expect { report.assign! }
+          .not_to change { collectivity.reload.reports_denied_count }.from(0)
       end
 
-      it "changes when returned package is then assigned" do
-        package.return!
+      it "changes when denied report is then assigned" do
+        report.deny!
 
-        expect { package.assign! }
-          .to change { collectivity.reload.reports_returned_count }.from(2).to(0)
+        expect { report.assign! }
+          .to change { collectivity.reload.reports_denied_count }.from(1).to(0)
       end
 
-      it "changes when returned package is discarded" do
-        package.return!
+      it "changes when denied report is sandboxed" do
+        report.deny!
 
-        expect { package.discard }
-          .to change { collectivity.reload.reports_returned_count }.from(2).to(0)
+        expect { report.update(sandbox: true) }
+          .to change { collectivity.reload.reports_denied_count }.from(1).to(0)
       end
 
-      it "changes when returned package is undiscarded" do
-        package.return!
-        package.discard
+      it "changes when denied report is discarded" do
+        report.deny!
 
-        expect { package.undiscard }
-          .to change { collectivity.reload.reports_returned_count }.from(0).to(2)
+        expect { report.discard }
+          .to change { collectivity.reload.reports_denied_count }.from(1).to(0)
       end
 
-      it "changes when returned package is deleted" do
-        package.return!
+      it "changes when denied report is undiscarded" do
+        report.deny!
+        report.discard
 
-        expect { package.delete }
-          .to change { collectivity.reload.reports_returned_count }.from(2).to(0)
+        expect { report.undiscard }
+          .to change { collectivity.reload.reports_denied_count }.from(0).to(1)
+      end
+
+      it "changes when denied report is deleted" do
+        report.deny!
+
+        expect { report.destroy }
+          .to change { collectivity.reload.reports_denied_count }.from(1).to(0)
       end
     end
 
-    describe "#reports_pending_count" do
-      let(:package) { create(:package, collectivity:) }
-      let(:report)  { create(:report, collectivity:, package:) }
+    describe "#reports_processing_count" do
+      let(:report) { create(:report, :transmitted, collectivity:) }
 
       it "doesn't change when report is transmitted" do
         expect { report }
-          .not_to change { collectivity.reload.reports_pending_count }.from(0)
+          .not_to change { collectivity.reload.reports_processing_count }.from(0)
       end
 
-      it "changes when package is assigned" do
+      it "changes when report is assigned" do
         report
 
-        expect { package.assign! }
-          .to change { collectivity.reload.reports_pending_count }.from(0).to(1)
+        expect { report.assign! }
+          .to change { collectivity.reload.reports_processing_count }.from(0).to(1)
       end
 
-      it "doesn't changes when package is returned" do
+      it "doesn't changes when report is denied" do
         report
 
-        expect { package.return! }
-          .not_to change { collectivity.reload.reports_pending_count }.from(0)
+        expect { report.deny! }
+          .not_to change { collectivity.reload.reports_processing_count }.from(0)
       end
 
-      it "changes when assigned package is then returned" do
-        report
-        package.assign!
+      it "changes when assigned report is then denied" do
+        report.assign!
 
-        expect { package.return! }
-          .to change { collectivity.reload.reports_pending_count }.from(1).to(0)
+        expect { report.deny! }
+          .to change { collectivity.reload.reports_processing_count }.from(1).to(0)
       end
 
-      it "changes when pending report is debated" do
-        report
-        package.assign!
-
-        expect { report.debate! }
-          .to change { collectivity.reload.reports_pending_count }.from(1).to(0)
-      end
-
-      it "changes when pending report is approved" do
-        report
-        package.assign!
+      it "changes when assigned report is approved" do
+        report.assign!
 
         expect { report.approve! }
-          .to change { collectivity.reload.reports_pending_count }.from(1).to(0)
+          .to change { collectivity.reload.reports_processing_count }.from(1).to(0)
       end
 
       it "changes when pending report is rejected" do
-        report
-        package.assign!
+        report.assign!
 
         expect { report.reject! }
-          .to change { collectivity.reload.reports_pending_count }.from(1).to(0)
-      end
-    end
-
-    describe "#reports_debated_count" do
-      let(:package) { create(:package, :assigned, collectivity:) }
-      let(:report)  { create(:report, collectivity:, package:) }
-
-      it "doesn't change when package is assigned" do
-        expect { report }
-          .not_to change { collectivity.reload.reports_debated_count }.from(0)
+          .to change { collectivity.reload.reports_processing_count }.from(1).to(0)
       end
 
-      it "doesn't changes when report is approved" do
-        report
+      it "changes when assigned report is sandboxed" do
+        report.assign!
 
-        expect { report.approve! }
-          .not_to change { collectivity.reload.reports_debated_count }.from(0)
+        expect { report.update(sandbox: true) }
+          .to change { collectivity.reload.reports_processing_count }.from(1).to(0)
       end
 
-      it "doesn't changes when report is rejected" do
-        report
+      it "changes when assigned report is discarded" do
+        report.assign!
 
-        expect { report.reject! }
-          .not_to change { collectivity.reload.reports_debated_count }.from(0)
+        expect { report.discard }
+          .to change { collectivity.reload.reports_processing_count }.from(1).to(0)
       end
 
-      it "changes when report is debated" do
-        report
+      it "changes when assigned report is undiscarded" do
+        report.assign!
+        report.discard
 
-        expect { report.debate! }
-          .to change { collectivity.reload.reports_debated_count }.from(0).to(1)
-      end
-
-      it "changes when debated report is reseted" do
-        report.debate!
-
-        expect { report.update(debated_at: nil) }
-          .to change { collectivity.reload.reports_debated_count }.from(1).to(0)
-      end
-
-      it "changes when debated report is approved" do
-        report.debate!
-
-        expect { report.approve! }
-          .to change { collectivity.reload.reports_debated_count }.from(1).to(0)
-      end
-
-      it "changes when debated report is rejected" do
-        report.debate!
-
-        expect { report.reject! }
-          .to change { collectivity.reload.reports_debated_count }.from(1).to(0)
+        expect { report.undiscard }
+          .to change { collectivity.reload.reports_processing_count }.from(0).to(1)
       end
     end
 
     describe "#reports_approved_count" do
-      let(:package) { create(:package, :assigned, collectivity:) }
-      let(:report)  { create(:report, collectivity:, package:) }
+      let(:report) { create(:report, :assigned, collectivity:) }
 
-      it "doesn't change when package is assigned" do
+      it "doesn't change when report is assigned" do
         expect { report }
           .not_to change { collectivity.reload.reports_approved_count }.from(0)
       end
@@ -1197,13 +1095,6 @@ RSpec.describe Collectivity do
         report
 
         expect { report.reject! }
-          .not_to change { collectivity.reload.reports_approved_count }.from(0)
-      end
-
-      it "doesn't changes when report is debated" do
-        report
-
-        expect { report.debate! }
           .not_to change { collectivity.reload.reports_approved_count }.from(0)
       end
 
@@ -1217,7 +1108,7 @@ RSpec.describe Collectivity do
       it "changes when approved report is reseted" do
         report.approve!
 
-        expect { report.update(approved_at: nil) }
+        expect { report.update(approved_at: nil, state: "processing") }
           .to change { collectivity.reload.reports_approved_count }.from(1).to(0)
       end
 
@@ -1227,13 +1118,34 @@ RSpec.describe Collectivity do
         expect { report.reject! }
           .to change { collectivity.reload.reports_approved_count }.from(1).to(0)
       end
+
+      it "changes when approved report is sandboxed" do
+        report.approve!
+
+        expect { report.update(sandbox: true) }
+          .to change { collectivity.reload.reports_approved_count }.from(1).to(0)
+      end
+
+      it "changes when approved report is discarded" do
+        report.approve!
+
+        expect { report.discard }
+          .to change { collectivity.reload.reports_approved_count }.from(1).to(0)
+      end
+
+      it "changes when approved report is undiscarded" do
+        report.approve!
+        report.discard
+
+        expect { report.undiscard }
+          .to change { collectivity.reload.reports_approved_count }.from(0).to(1)
+      end
     end
 
     describe "#reports_rejected_count" do
-      let(:package) { create(:package, :assigned, collectivity:) }
-      let(:report)  { create(:report, collectivity:, package:) }
+      let(:report) { create(:report, :assigned, collectivity:) }
 
-      it "doesn't change when package is assigned" do
+      it "doesn't change when report is assigned" do
         expect { report }
           .not_to change { collectivity.reload.reports_rejected_count }.from(0)
       end
@@ -1242,13 +1154,6 @@ RSpec.describe Collectivity do
         report
 
         expect { report.approve! }
-          .not_to change { collectivity.reload.reports_rejected_count }.from(0)
-      end
-
-      it "doesn't changes when report is debated" do
-        report
-
-        expect { report.debate! }
           .not_to change { collectivity.reload.reports_rejected_count }.from(0)
       end
 
@@ -1262,7 +1167,7 @@ RSpec.describe Collectivity do
       it "changes when rejected report is reseted" do
         report.reject!
 
-        expect { report.update(rejected_at: nil) }
+        expect { report.update(rejected_at: nil, state: "processing") }
           .to change { collectivity.reload.reports_rejected_count }.from(1).to(0)
       end
 
@@ -1272,207 +1177,27 @@ RSpec.describe Collectivity do
         expect { report.approve! }
           .to change { collectivity.reload.reports_rejected_count }.from(1).to(0)
       end
-    end
 
-    describe "#packages_transmitted_count" do
-      let(:package) { create(:package, collectivity:) }
+      it "changes when rejected report is sandboxed" do
+        report.reject!
 
-      it "changes on package creation" do
-        expect { package }
-          .to change { collectivity.reload.packages_transmitted_count }.from(0).to(1)
+        expect { report.update(sandbox: true) }
+          .to change { collectivity.reload.reports_rejected_count }.from(1).to(0)
       end
 
-      it "doesn't changes when package is created in sandbox" do
-        expect { create(:package, collectivity:, sandbox: true) }
-          .not_to change { collectivity.reload.packages_transmitted_count }.from(0)
+      it "changes when rejected report is discarded" do
+        report.reject!
+
+        expect { report.discard }
+          .to change { collectivity.reload.reports_rejected_count }.from(1).to(0)
       end
 
-      it "doesn't changes when package switches to sandbox" do
-        package
+      it "changes when rejected report is undiscarded" do
+        report.reject!
+        report.discard
 
-        expect { package.update(sandbox: true) }
-          .to change { collectivity.reload.packages_transmitted_count }.from(1).to(0)
-      end
-
-      it "doesn't changes when package is assigned" do
-        package
-
-        expect { package.assign! }
-          .not_to change { collectivity.reload.packages_transmitted_count }.from(1)
-      end
-
-      it "doesn't changes when package is returned" do
-        package
-
-        expect { package.return! }
-          .not_to change { collectivity.reload.packages_transmitted_count }.from(1)
-      end
-
-      it "changes when package is discarded" do
-        package
-
-        expect { package.discard }
-          .to change { collectivity.reload.packages_transmitted_count }.from(1).to(0)
-      end
-
-      it "changes when package is undiscarded" do
-        package.discard
-
-        expect { package.undiscard }
-          .to change { collectivity.reload.packages_transmitted_count }.from(0).to(1)
-      end
-
-      it "changes when package is deleted" do
-        package
-
-        expect { package.delete }
-          .to change { collectivity.reload.packages_transmitted_count }.from(1).to(0)
-      end
-    end
-
-    describe "#packages_unresolved_count" do
-      let(:package) { create(:package, collectivity:) }
-
-      it "changes on package creation" do
-        expect { package }
-          .to change { collectivity.reload.packages_unresolved_count }.from(0).to(1)
-      end
-
-      it "doesn't changes when package is created in sandbox" do
-        expect { create(:package, collectivity:, sandbox: true) }
-          .not_to change { collectivity.reload.packages_unresolved_count }.from(0)
-      end
-
-      it "doesn't changes when package switches to sandbox" do
-        package
-
-        expect { package.update(sandbox: true) }
-          .to change { collectivity.reload.packages_unresolved_count }.from(1).to(0)
-      end
-
-      it "changes when package is assigned" do
-        package
-
-        expect { package.assign! }
-          .to change { collectivity.reload.packages_unresolved_count }.from(1).to(0)
-      end
-
-      it "changes when package is returned" do
-        package
-
-        expect { package.return! }
-          .to change { collectivity.reload.packages_unresolved_count }.from(1).to(0)
-      end
-
-      it "changes when package is discarded" do
-        package
-
-        expect { package.discard }
-          .to change { collectivity.reload.packages_unresolved_count }.from(1).to(0)
-      end
-
-      it "changes when package is undiscarded" do
-        package.discard
-
-        expect { package.undiscard }
-          .to change { collectivity.reload.packages_unresolved_count }.from(0).to(1)
-      end
-
-      it "changes when package is deleted" do
-        package
-
-        expect { package.delete }
-          .to change { collectivity.reload.packages_unresolved_count }.from(1).to(0)
-      end
-    end
-
-    describe "#packages_assigned_count" do
-      let(:package) { create(:package, collectivity:) }
-
-      it "doesn't changes on package creation" do
-        expect { package }
-          .to not_change { collectivity.reload.packages_assigned_count }.from(0)
-      end
-
-      it "changes when package is assigned" do
-        package
-
-        expect { package.assign! }
-          .to change { collectivity.reload.packages_assigned_count }.from(0).to(1)
-      end
-
-      it "changes when assigned package is then returned" do
-        package.assign!
-
-        expect { package.return! }
-          .to change { collectivity.reload.packages_assigned_count }.from(1).to(0)
-      end
-
-      it "changes when assigned package is discarded" do
-        package.assign!
-
-        expect { package.discard }
-          .to change { collectivity.reload.packages_assigned_count }.from(1).to(0)
-      end
-
-      it "changes when assigned package is undiscarded" do
-        package.assign!
-        package.discard
-
-        expect { package.undiscard }
-          .to change { collectivity.reload.packages_assigned_count }.from(0).to(1)
-      end
-
-      it "changes when assigned package is deleted" do
-        package.assign!
-
-        expect { package.delete }
-          .to change { collectivity.reload.packages_assigned_count }.from(1).to(0)
-      end
-    end
-
-    describe "#packages_returned_count" do
-      let(:package) { create(:package, collectivity:) }
-
-      it "doesn't change on package creation" do
-        expect { package }
-          .to not_change { collectivity.reload.packages_returned_count }.from(0)
-      end
-
-      it "changes when package is returned" do
-        package
-
-        expect { package.return! }
-          .to change { collectivity.reload.packages_returned_count }.from(0).to(1)
-      end
-
-      it "changes when returned package is assigned" do
-        package.return!
-
-        expect { package.assign! }
-          .to change { collectivity.reload.packages_returned_count }.from(1).to(0)
-      end
-
-      it "changes when returned package is discarded" do
-        package.return!
-
-        expect { package.discard }
-          .to change { collectivity.reload.packages_returned_count }.from(1).to(0)
-      end
-
-      it "changes when returned package is undiscarded" do
-        package.return!
-        package.discard
-
-        expect { package.undiscard }
-          .to change { collectivity.reload.packages_returned_count }.from(0).to(1)
-      end
-
-      it "changes when returned package is deleted" do
-        package.return!
-
-        expect { package.delete }
-          .to change { collectivity.reload.packages_returned_count }.from(1).to(0)
+        expect { report.undiscard }
+          .to change { collectivity.reload.reports_rejected_count }.from(0).to(1)
       end
     end
   end
