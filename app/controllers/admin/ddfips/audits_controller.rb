@@ -2,14 +2,22 @@
 
 module Admin
   module DDFIPs
-    class AuditsController < Admin::AuditsController
+    class AuditsController < ApplicationController
+      before_action :authorize!
+
+      def index
+        @audits, @pagy = load_audits_collection(
+          load_and_authorize_ddfip.audits.descending
+        )
+      end
+
       protected
 
-      def load_and_authorize_resource
-        if @ddfip.nil?
-          @ddfip = DDFIP.find(params[:ddfip_id])
-          authorize! @ddfip
-        end
+      def load_and_authorize_ddfip
+        @ddfip = DDFIP.find(params[:ddfip_id])
+
+        authorize! @ddfip, to: :show?
+
         @ddfip
       end
     end

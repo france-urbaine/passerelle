@@ -3,41 +3,27 @@
 module Organization
   module OauthApplications
     class AuditsController < ApplicationController
+      before_action :authorize!
+
       def index
-        authorize!(:index?, with: Organization::OauthApplications::AuditPolicy)
-        load_and_authorize_resource
-        load_audits
+        @audits, @pagy = load_audits_collection(
+          load_and_authorize_oauth_application
+            .own_and_associated_audits
+            .order(created_at: :desc)
+        )
       end
 
       protected
 
-      def authorized_audits_scope
-        authorized_scope(
-          load_and_authorize_resource.own_and_associated_audits.order(created_at: :desc),
-          with: Organization::OauthApplications::AuditPolicy
-        )
-      end
+      def load_and_authorize_oauth_application
+        @oauth_application = current_organization
+          .oauth_applications
+          .with_discarded
+          .find(params[:oauth_application_id])
 
-      def load_and_authorize_resource
-        if @oauth_application.nil?
-          scope =
-            case current_organization
-            when Publisher then current_organization.oauth_applications.with_discarded
-            else OauthApplication.none
-            end
+        authorize! @oauth_application, to: :show?
 
-          @oauth_application = scope.find(params[:oauth_application_id])
-          authorize! @oauth_application
-        end
         @oauth_application
-      end
-
-      def load_audits
-        if turbo_frame_request_id == "audits"
-          @audits, @pagy = index_collection(authorized_audits_scope, nested: true)
-        else
-          @audits, @pagy = index_collection(authorized_audits_scope, items: 100)
-        end
       end
     end
   end

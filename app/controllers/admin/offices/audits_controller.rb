@@ -2,14 +2,22 @@
 
 module Admin
   module Offices
-    class AuditsController < Admin::AuditsController
+    class AuditsController < ApplicationController
+      before_action :authorize!
+
+      def index
+        @audits, @pagy = load_audits_collection(
+          load_and_authorize_office.audits.descending
+        )
+      end
+
       protected
 
-      def load_and_authorize_resource
-        if @office.nil?
-          @office = Office.find(params[:office_id])
-          authorize! @office
-        end
+      def load_and_authorize_office
+        @office = Office.find(params[:office_id])
+
+        authorize! @office, to: :show?
+
         @office
       end
     end

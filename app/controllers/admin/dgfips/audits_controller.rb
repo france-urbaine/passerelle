@@ -2,14 +2,22 @@
 
 module Admin
   module DGFIPs
-    class AuditsController < Admin::AuditsController
+    class AuditsController < ApplicationController
+      before_action :authorize!
+
+      def index
+        @audits, @pagy = load_audits_collection(
+          load_and_authorize_dgfip.audits.descending
+        )
+      end
+
       protected
 
-      def load_and_authorize_resource
-        if @dgfip.nil?
-          @dgfip = DGFIP.find_or_create_singleton_record
-          authorize! @dgfip
-        end
+      def load_and_authorize_dgfip
+        @dgfip = DGFIP.find_or_create_singleton_record
+
+        authorize! @dgfip, to: :show?
+
         @dgfip
       end
     end
