@@ -3,7 +3,7 @@
     - layout.with_breadcrumbs do |breadcrumbs|
       - breadcrumbs.with_path "Mon organisation"
       - breadcrumbs.with_path "Clients API", organization_oauth_applications_path
-      - breadcrumbs.with_h1   @oauth_application.name
+      - breadcrumbs.with_path @oauth_application.name, organization_oauth_application_path(@oauth_application)
       - breadcrumbs.with_h1   "Activité"
 
       - breadcrumbs.with_action do
