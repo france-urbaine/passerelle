@@ -58,6 +58,7 @@ fr:
             create:                         "Création réalisée par <b>%{username}</b>"
             update:                         "Mise à jour réalisée par <b>%{username}</b>"
             destroy:                        "Suppression réalisée par <b>%{username}</b>"
+            discard:                        "Suppression réalisée par <b>%{username}</b>"
 
           oauth_access_token:
             create:                         "Création d'un jeton d'accès via l'API <b>%{application}</b>"
