@@ -4,17 +4,13 @@ module Organization
   module OauthApplications
     class AuditPolicy < ApplicationPolicy
       def index?
-        super_admin? || publisher_admin?
+        publisher?
       end
 
       relation_scope do |relation|
-        return relation.none if !super_admin? && !publisher?
+        return relation.none unless publisher?
 
-        if super_admin?
-          relation
-        else
-          relation.where(publisher: organization)
-        end
+        relation.where(publisher: organization)
       end
     end
   end

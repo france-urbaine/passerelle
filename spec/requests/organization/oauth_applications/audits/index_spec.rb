@@ -22,22 +22,23 @@ RSpec.describe "Organization::OauthApplications::AuditsController#index" do
     it_behaves_like "it denies access to DDFIP admin"
     it_behaves_like "it denies access to collectivity user"
     it_behaves_like "it denies access to collectivity admin"
+    it_behaves_like "it denies access to super admin"
 
-    it_behaves_like "it denies access to publisher user"
-
+    it_behaves_like "it responds with not found to publisher user"
     it_behaves_like "it responds with not found to publisher admin"
     it_behaves_like "it responds with not found to publisher super admin"
 
     context "when the oauth application is owned by the current publisher" do
       let(:oauth_application) { create(:oauth_application, owner: current_user.organization) }
 
+      it_behaves_like "it allows access to publisher user"
       it_behaves_like "it allows access to publisher admin"
       it_behaves_like "it allows access to publisher super admin"
     end
   end
 
   describe "responses" do
-    before { sign_in_as(:organization_admin, organization: oauth_application.owner) }
+    before { sign_in_as(:publisher, organization: oauth_application.owner) }
 
     context "when requesting HTML" do
       it { expect(response).to have_http_status(:success) }
