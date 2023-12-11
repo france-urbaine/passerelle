@@ -100,9 +100,7 @@ end
 
 def setup_master_key
   log "Setup Rails master key"
-  log "You can find the key in a Dashlane card:"
-  log ""
-  log "    \"Applications Master Keys\""
+  log "The key is shared in Dashlane."
   log ""
   log "Please enter the master key:"
   master_key = gets(secret: true)
