@@ -38,34 +38,11 @@ RSpec.describe Admin::AuditPolicy, type: :policy do
       end
     end
 
-    it_behaves_like "when current user is a collectivity admin" do
-      # TODO
-      it { is_expected.to be_a_null_relation }
-    end
-
-    it_behaves_like "when current user is a collectivity user" do
-      # TODO
-      it { is_expected.to be_a_null_relation }
-    end
-
-    it_behaves_like "when current user is a publisher admin" do
-      # TODO
-      it { is_expected.to be_a_null_relation }
-    end
-
-    it_behaves_like "when current user is a publisher user" do
-      # TODO
-      it { is_expected.to be_a_null_relation }
-    end
-
-    it_behaves_like "when current user is a DDFIP admin" do
-      # TODO
-      it { is_expected.to be_a_null_relation }
-    end
-
-    it_behaves_like "when current user is a DDFIP user" do
-      # TODO
-      it { is_expected.to be_a_null_relation }
-    end
+    it_behaves_like("when current user is a DDFIP admin")        { it { is_expected.to be_a_null_relation } }
+    it_behaves_like("when current user is a DDFIP user")         { it { is_expected.to be_a_null_relation } }
+    it_behaves_like("when current user is a publisher admin")    { it { is_expected.to be_a_null_relation } }
+    it_behaves_like("when current user is a publisher user")     { it { is_expected.to be_a_null_relation } }
+    it_behaves_like("when current user is a collectivity admin") { it { is_expected.to be_a_null_relation } }
+    it_behaves_like("when current user is a collectivity user")  { it { is_expected.to be_a_null_relation } }
   end
 end

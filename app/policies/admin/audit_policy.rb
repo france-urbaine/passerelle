@@ -10,7 +10,6 @@ module Admin
       if super_admin?
         relation
       else
-        # TODO
         relation.none
       end
     end

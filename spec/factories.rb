@@ -1,13 +1,6 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  after(:stub) do |object|
-    # FactoryBot doesn't set up primary key on stubbed records
-    # because we use UUID everywhere instead of integers.
-    #
-    object.id ||= SecureRandom.uuid
-  end
-
   before(:create) do |object, evaluator|
     # Skip uniqueness validations to perform less SQL queries.
     #
