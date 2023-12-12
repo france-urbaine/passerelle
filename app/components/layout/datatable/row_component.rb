@@ -162,7 +162,7 @@ module Layout
             checked:      checked?,
             disabled:     disabled?,
             aria: {
-              label:       (label || "Sélectionner cette ligne"),
+              label:       label || "Sélectionner cette ligne",
               describedby: aria_describedby
             },
             data: {

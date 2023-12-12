@@ -2,8 +2,6 @@
 
 require "rails_helper"
 
-# TODO : more tests
-
 RSpec.describe Layout::ContentLayoutComponent, type: :component do
   it "renders content with headers & sections" do
     render_inline described_class.new do |layout|

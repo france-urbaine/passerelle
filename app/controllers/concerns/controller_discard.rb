@@ -6,7 +6,7 @@ module ControllerDiscard
 
     def initialize(records)
       @records = records
-      super "Record is discarded: #{records.last.inspect}"
+      super("Record is discarded: #{records.last.inspect}")
     end
   end
 
