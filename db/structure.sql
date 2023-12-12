@@ -1177,13 +1177,10 @@ CREATE TABLE public.packages (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
     collectivity_id uuid NOT NULL,
     publisher_id uuid,
-    name character varying,
     reference character varying NOT NULL,
-    form_type public.form_type NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
     discarded_at timestamp(6) without time zone,
-    due_on date,
     reports_count integer DEFAULT 0 NOT NULL,
     reports_approved_count integer DEFAULT 0 NOT NULL,
     reports_rejected_count integer DEFAULT 0 NOT NULL,
@@ -4178,6 +4175,7 @@ ALTER TABLE ONLY public.oauth_access_tokens
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20231212162710'),
 ('20231128164632'),
 ('20231128065805'),
 ('20231122110844'),

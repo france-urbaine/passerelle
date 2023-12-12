@@ -62,7 +62,7 @@ FactoryBot.define do
 
       reports do
         Array.new(reports_size) do
-          association :report, :completed, transmission: instance, collectivity:, publisher:
+          association :report, :transmitted, transmission: instance, collectivity:, publisher:
         end
       end
     end

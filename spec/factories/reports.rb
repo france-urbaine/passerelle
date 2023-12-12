@@ -91,8 +91,8 @@ FactoryBot.define do
     end
 
     trait :transmitted do
-      package        { association(:package, collectivity:, publisher:, sandbox:) }
-      transmission   { package.transmission }
+      in_active_transmission
+      package        { association(:package, collectivity:, publisher:, sandbox:, transmission:, ddfip:) }
       ready_at       { Time.current }
       transmitted_at { Time.current }
       state          { "sent" }
@@ -109,14 +109,12 @@ FactoryBot.define do
 
     trait :assigned do
       transmitted
-      package { association(:package, collectivity:, publisher:) }
       assigned_at { Time.current }
       state { "processing" }
     end
 
     trait :denied do
       transmitted
-      package { association(:package, collectivity:, publisher:) }
       denied_at { Time.current }
       state { "denied" }
     end
@@ -160,31 +158,14 @@ FactoryBot.define do
     # Report destination
 
     trait :made_for_ddfip do
-      transient do
-        ddfip { association(:ddfip) }
-      end
-
-      collectivity do
-        departement = ddfip.departement
-        territory =
-          case %i[commune epci departement].sample
-          when :departement then departement
-          when :epci        then association :epci, departement: departement
-          when :commune     then association :commune, departement: departement
-          end
-
-        association(:collectivity, :commune, territory:, publisher: collectivity_publisher)
-      end
+      ddfip { association(:ddfip) }
     end
 
     trait :made_for_office do
       made_for_ddfip
 
-      transient do
-        office { association(:office, :with_communes, ddfip:) }
-      end
-
-      commune   { office.communes.sample }
+      office { association(:office, :with_communes, ddfip:) }
+      commune { office.communes.sample }
       form_type { office.competences.sample }
     end
 
@@ -198,9 +179,9 @@ FactoryBot.define do
       assigned
     end
 
-    trait :returned_by_ddfip do
+    trait :denied_by_ddfip do
       made_for_ddfip
-      returned
+      denied
     end
 
     trait :assigned_to_office do

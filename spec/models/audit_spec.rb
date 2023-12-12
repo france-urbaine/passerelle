@@ -34,7 +34,8 @@ RSpec.describe Audit do
 
     it "fill action attribute with 'complete' value" do
       report = create(:report)
-      report.update!(completed_at: Time.now.utc)
+      report.ready!
+
       expect(report.audits.descending.first.action).to eq("complete")
     end
 

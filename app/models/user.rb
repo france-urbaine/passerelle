@@ -79,7 +79,7 @@ class User < ApplicationRecord
   has_many :transmissions, dependent: false
   has_one  :active_transmission, -> { active }, class_name: "Transmission", dependent: false, inverse_of: :user
 
-  has_many :assigned_reports, class_name: "Report"
+  has_many :assigned_reports, class_name: "Report", dependent: false
 
   # API applications
   has_many :access_grants, class_name: "Doorkeeper::AccessGrant", foreign_key: :resource_owner_id, dependent: :delete_all, inverse_of: false

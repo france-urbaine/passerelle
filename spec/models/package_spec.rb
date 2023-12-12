@@ -17,8 +17,6 @@ RSpec.describe Package do
   # ----------------------------------------------------------------------------
   describe "validations" do
     it { is_expected.to validate_presence_of(:reference) }
-    it { is_expected.to validate_presence_of(:form_type) }
-    it { is_expected.to validate_inclusion_of(:form_type).in_array(Report::FORM_TYPES) }
 
     it "validates uniqueness of :reference" do
       create(:package)
@@ -278,20 +276,6 @@ RSpec.describe Package do
 
       expect { another_package.save(validate: false) }
         .to raise_error(ActiveRecord::RecordNotUnique).with_message(/PG::UniqueViolation/)
-    end
-
-    it "asserts a form_type is allowed by not triggering DB constraints" do
-      package = build(:package, form_type: "evaluation_local_habitation")
-
-      expect { package.save(validate: false) }
-        .not_to raise_error
-    end
-
-    it "asserts a form_type is not allowed by triggering DB constraints" do
-      package = build(:package, form_type: "foo")
-
-      expect { package.save(validate: false) }
-        .to raise_error(ActiveRecord::StatementInvalid).with_message(/PG::InvalidTextRepresentation/)
     end
   end
 

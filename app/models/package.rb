@@ -7,13 +7,10 @@
 #  id                     :uuid             not null, primary key
 #  collectivity_id        :uuid             not null
 #  publisher_id           :uuid
-#  name                   :string
 #  reference              :string           not null
-#  form_type              :enum             not null
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #  discarded_at           :datetime
-#  due_on                 :date
 #  reports_count          :integer          default(0), not null
 #  reports_approved_count :integer          default(0), not null
 #  reports_rejected_count :integer          default(0), not null
@@ -55,7 +52,6 @@ class Package < ApplicationRecord
   # Validations
   # ----------------------------------------------------------------------------
   validates :reference, presence: true, uniqueness: { unless: :skip_uniqueness_validation_of_reference? }
-  validates :form_type, presence: true, inclusion: { in: ->(_) { Report::FORM_TYPES }, allow_blank: true }
 
   # Scopes
   # ----------------------------------------------------------------------------
