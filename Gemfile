@@ -8,7 +8,7 @@ ruby "3.2.2"
 # Core gems
 gem "bootsnap", require: false
 gem "puma", "~> 6.0"
-gem "rails", "~> 7.0.2", ">= 7.0.2.3"
+gem "rails", "~> 7.1.0"
 
 # Database
 gem "fx"
