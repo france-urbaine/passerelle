@@ -170,3 +170,8 @@ RSpec::Matchers.define_negated_matcher :not_send_message,      :send_message
 RSpec::Matchers.define_negated_matcher :not_have_enqueued_job, :have_enqueued_job
 RSpec::Matchers.define_negated_matcher :not_redirect_to,       :redirect_to
 RSpec::Matchers.define_negated_matcher :be_unroutable,         :be_routable
+
+# FIXME: https://github.com/rails/rails/issues/50345
+ActionDispatch::IntegrationTest.register_encoder :html,
+  response_parser: ->(body) { Rails::Dom::Testing.html_document.parse(body) },
+  param_encoder: ->(params) { params }
