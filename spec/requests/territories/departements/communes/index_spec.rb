@@ -48,8 +48,8 @@ RSpec.describe "Territories::Departements::Communes#index" do
 
         it "includes kept communes" do
           aggregate_failures do
-            expect(response.parsed_body).to include(CGI.escape_html(communes[0].name))
-            expect(response.parsed_body).to include(CGI.escape_html(communes[1].name))
+            expect(response).to have_html_body.to have_text(communes[0].name)
+            expect(response).to have_html_body.to have_text(communes[1].name)
           end
         end
       end

@@ -71,23 +71,23 @@ RSpec.describe "DashboardsController#index" do
 
         it "returns only accessible reports" do
           aggregate_failures do
-            expect(response.parsed_body).to     include(dom_id(reports[:incomplete]))
-            expect(response.parsed_body).to     include(dom_id(reports[:completed]))
-            expect(response.parsed_body).not_to include(dom_id(reports[:discarded]))
+            expect(response).to have_html_body.to     have_selector(:id, dom_id(reports[:incomplete]))
+            expect(response).to have_html_body.to     have_selector(:id, dom_id(reports[:completed]))
+            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:discarded]))
 
-            expect(response.parsed_body).not_to include(dom_id(reports[:transmitted]))
-            expect(response.parsed_body).not_to include(dom_id(reports[:transmitted_discarded]))
-            expect(response.parsed_body).not_to include(dom_id(reports[:transmitted_to_sandbox]))
+            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:transmitted]))
+            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:transmitted_discarded]))
+            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:transmitted_to_sandbox]))
 
-            expect(response.parsed_body).not_to include(dom_id(reports[:pending]))
-            expect(response.parsed_body).to     include(dom_id(reports[:approved]))
-            expect(response.parsed_body).to     include(dom_id(reports[:rejected]))
-            expect(response.parsed_body).to     include(dom_id(reports[:debated]))
+            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:pending]))
+            expect(response).to have_html_body.to     have_selector(:id, dom_id(reports[:approved]))
+            expect(response).to have_html_body.to     have_selector(:id, dom_id(reports[:rejected]))
+            expect(response).to have_html_body.to     have_selector(:id, dom_id(reports[:debated]))
 
-            expect(response.parsed_body).not_to include(dom_id(reports[:another_pending]))
-            expect(response.parsed_body).not_to include(dom_id(reports[:another_approved]))
-            expect(response.parsed_body).not_to include(dom_id(reports[:another_rejected]))
-            expect(response.parsed_body).not_to include(dom_id(reports[:another_debated]))
+            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:another_pending]))
+            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:another_approved]))
+            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:another_rejected]))
+            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:another_debated]))
           end
         end
       end
@@ -121,32 +121,32 @@ RSpec.describe "DashboardsController#index" do
           pending "Not implemented"
 
           aggregate_failures do
-            expect(response.parsed_body).to     include(dom_id(package[:unresolved]))
-            expect(response.parsed_body).not_to include(dom_id(package[:sandbox]))
-            expect(response.parsed_body).not_to include(dom_id(package[:assigned]))
-            expect(response.parsed_body).not_to include(dom_id(package[:another_assigned]))
+            expect(response).to have_html_body.to     have_selector(:id, dom_id(package[:unresolved]))
+            expect(response).to have_html_body.not_to have_selector(:id, dom_id(package[:sandbox]))
+            expect(response).to have_html_body.not_to have_selector(:id, dom_id(package[:assigned]))
+            expect(response).to have_html_body.not_to have_selector(:id, dom_id(package[:another_assigned]))
           end
         end
 
         it "returns only pending reports" do
           aggregate_failures do
-            expect(response.parsed_body).not_to include(dom_id(reports[:incomplete]))
-            expect(response.parsed_body).not_to include(dom_id(reports[:completed]))
-            expect(response.parsed_body).not_to include(dom_id(reports[:discarded]))
+            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:incomplete]))
+            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:completed]))
+            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:discarded]))
 
-            expect(response.parsed_body).not_to include(dom_id(reports[:transmitted]))
-            expect(response.parsed_body).not_to include(dom_id(reports[:transmitted_discarded]))
-            expect(response.parsed_body).not_to include(dom_id(reports[:transmitted_to_sandbox]))
+            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:transmitted]))
+            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:transmitted_discarded]))
+            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:transmitted_to_sandbox]))
 
-            expect(response.parsed_body).to     include(dom_id(reports[:pending]))
-            expect(response.parsed_body).not_to include(dom_id(reports[:approved]))
-            expect(response.parsed_body).not_to include(dom_id(reports[:rejected]))
-            expect(response.parsed_body).not_to include(dom_id(reports[:debated]))
+            expect(response).to have_html_body.to     have_selector(:id, dom_id(reports[:pending]))
+            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:approved]))
+            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:rejected]))
+            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:debated]))
 
-            expect(response.parsed_body).to     include(dom_id(reports[:another_pending]))
-            expect(response.parsed_body).not_to include(dom_id(reports[:another_approved]))
-            expect(response.parsed_body).not_to include(dom_id(reports[:another_rejected]))
-            expect(response.parsed_body).not_to include(dom_id(reports[:another_debated]))
+            expect(response).to have_html_body.to     have_selector(:id, dom_id(reports[:another_pending]))
+            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:another_approved]))
+            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:another_rejected]))
+            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:another_debated]))
           end
         end
       end
@@ -165,23 +165,23 @@ RSpec.describe "DashboardsController#index" do
 
         it "returns only pending reports" do
           aggregate_failures do
-            expect(response.parsed_body).not_to include(dom_id(reports[:incomplete]))
-            expect(response.parsed_body).not_to include(dom_id(reports[:completed]))
-            expect(response.parsed_body).not_to include(dom_id(reports[:discarded]))
+            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:incomplete]))
+            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:completed]))
+            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:discarded]))
 
-            expect(response.parsed_body).not_to include(dom_id(reports[:transmitted]))
-            expect(response.parsed_body).not_to include(dom_id(reports[:transmitted_discarded]))
-            expect(response.parsed_body).not_to include(dom_id(reports[:transmitted_to_sandbox]))
+            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:transmitted]))
+            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:transmitted_discarded]))
+            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:transmitted_to_sandbox]))
 
-            expect(response.parsed_body).to     include(dom_id(reports[:pending]))
-            expect(response.parsed_body).not_to include(dom_id(reports[:approved]))
-            expect(response.parsed_body).not_to include(dom_id(reports[:rejected]))
-            expect(response.parsed_body).not_to include(dom_id(reports[:debated]))
+            expect(response).to have_html_body.to     have_selector(:id, dom_id(reports[:pending]))
+            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:approved]))
+            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:rejected]))
+            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:debated]))
 
-            expect(response.parsed_body).not_to include(dom_id(reports[:another_pending]))
-            expect(response.parsed_body).not_to include(dom_id(reports[:another_approved]))
-            expect(response.parsed_body).not_to include(dom_id(reports[:another_rejected]))
-            expect(response.parsed_body).not_to include(dom_id(reports[:another_debated]))
+            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:another_pending]))
+            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:another_approved]))
+            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:another_rejected]))
+            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:another_debated]))
           end
         end
       end
@@ -197,23 +197,23 @@ RSpec.describe "DashboardsController#index" do
 
         it "returns all transmitted reports" do
           aggregate_failures do
-            expect(response.parsed_body).not_to include(dom_id(reports[:incomplete]))
-            expect(response.parsed_body).not_to include(dom_id(reports[:completed]))
-            expect(response.parsed_body).not_to include(dom_id(reports[:discarded]))
+            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:incomplete]))
+            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:completed]))
+            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:discarded]))
 
-            expect(response.parsed_body).to     include(dom_id(reports[:transmitted]))
-            expect(response.parsed_body).not_to include(dom_id(reports[:transmitted_discarded]))
-            expect(response.parsed_body).not_to include(dom_id(reports[:transmitted_to_sandbox]))
+            expect(response).to have_html_body.to     have_selector(:id, dom_id(reports[:transmitted]))
+            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:transmitted_discarded]))
+            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:transmitted_to_sandbox]))
 
-            expect(response.parsed_body).to     include(dom_id(reports[:pending]))
-            expect(response.parsed_body).to     include(dom_id(reports[:approved]))
-            expect(response.parsed_body).to     include(dom_id(reports[:rejected]))
-            expect(response.parsed_body).to     include(dom_id(reports[:debated]))
+            expect(response).to have_html_body.to     have_selector(:id, dom_id(reports[:pending]))
+            expect(response).to have_html_body.to     have_selector(:id, dom_id(reports[:approved]))
+            expect(response).to have_html_body.to     have_selector(:id, dom_id(reports[:rejected]))
+            expect(response).to have_html_body.to     have_selector(:id, dom_id(reports[:debated]))
 
-            expect(response.parsed_body).to     include(dom_id(reports[:another_pending]))
-            expect(response.parsed_body).to     include(dom_id(reports[:another_approved]))
-            expect(response.parsed_body).to     include(dom_id(reports[:another_rejected]))
-            expect(response.parsed_body).to     include(dom_id(reports[:another_debated]))
+            expect(response).to have_html_body.to     have_selector(:id, dom_id(reports[:another_pending]))
+            expect(response).to have_html_body.to     have_selector(:id, dom_id(reports[:another_approved]))
+            expect(response).to have_html_body.to     have_selector(:id, dom_id(reports[:another_rejected]))
+            expect(response).to have_html_body.to     have_selector(:id, dom_id(reports[:another_debated]))
           end
         end
       end

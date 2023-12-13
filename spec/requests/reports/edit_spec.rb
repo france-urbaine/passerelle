@@ -122,7 +122,7 @@ RSpec.describe "ReportsController#edit" do
 
         it { expect(response).to have_http_status(:gone) }
         it { expect(response).to have_content_type(:html) }
-        it { expect(response).to have_html_body.to include("Ce signalement est en cours de suppression.") }
+        it { expect(response).to have_html_body.to have_text("Ce signalement est en cours de suppression.") }
       end
 
       context "when the package is discarded" do
@@ -138,7 +138,7 @@ RSpec.describe "ReportsController#edit" do
 
         it { expect(response).to have_http_status(:not_found) }
         it { expect(response).to have_content_type(:html) }
-        it { expect(response).to have_html_body.to include("Ce signalement n'a pas été trouvé ou n'existe plus.") }
+        it { expect(response).to have_html_body.to have_text("Ce signalement n'a pas été trouvé ou n'existe plus.") }
       end
     end
   end

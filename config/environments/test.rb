@@ -71,4 +71,7 @@ Rails.application.configure do
   # Set an alternative log file
   # Useful for running `bin/ci watch` and `bin/ci` in parallel
   config.logger = ActiveSupport::Logger.new(ENV["LOG_PATH"]) if ENV["LOG_PATH"]
+
+  # Parse HTML as HTML5 when using parsed_body
+  config.dom_testing_default_html_version = :html5
 end

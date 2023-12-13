@@ -82,7 +82,7 @@ RSpec.describe "Organization::Offices::CollectivitiesController#index" do
 
         it { expect(response).to have_http_status(:gone) }
         it { expect(response).to have_content_type(:html) }
-        it { expect(response).to have_html_body.to include("Ce guichet est en cours de suppression.") }
+        it { expect(response).to have_html_body.to have_text("Ce guichet est en cours de suppression.") }
       end
 
       context "when the office is missing" do
@@ -90,7 +90,7 @@ RSpec.describe "Organization::Offices::CollectivitiesController#index" do
 
         it { expect(response).to have_http_status(:not_found) }
         it { expect(response).to have_content_type(:html) }
-        it { expect(response).to have_html_body.to include("Ce guichet n'a pas été trouvé ou n'existe plus.") }
+        it { expect(response).to have_html_body.to have_text("Ce guichet n'a pas été trouvé ou n'existe plus.") }
       end
     end
 
@@ -103,11 +103,11 @@ RSpec.describe "Organization::Offices::CollectivitiesController#index" do
 
       it "returns only kept collectivities on the territory assigned to the office" do
         aggregate_failures do
-          expect(response.parsed_body).to not_include(CGI.escape_html(collectivities[0].name))
-          expect(response.parsed_body).to include(CGI.escape_html(collectivities[1].name))
-          expect(response.parsed_body).to not_include(CGI.escape_html(collectivities[2].name))
-          expect(response.parsed_body).to include(CGI.escape_html(collectivities[3].name))
-          expect(response.parsed_body).to not_include(CGI.escape_html(collectivities[4].name))
+          expect(response).to have_html_body.not_to have_text(collectivities[0].name)
+          expect(response).to have_html_body.to     have_text(collectivities[1].name)
+          expect(response).to have_html_body.not_to have_text(collectivities[2].name)
+          expect(response).to have_html_body.to     have_text(collectivities[3].name)
+          expect(response).to have_html_body.not_to have_text(collectivities[4].name)
         end
       end
 
@@ -116,7 +116,7 @@ RSpec.describe "Organization::Offices::CollectivitiesController#index" do
 
         it { expect(response).to have_http_status(:gone) }
         it { expect(response).to have_content_type(:html) }
-        it { expect(response).to have_html_body.to include("Ce guichet est en cours de suppression.") }
+        it { expect(response).to have_html_body.to have_text("Ce guichet est en cours de suppression.") }
       end
 
       context "when the office is missing" do
@@ -124,7 +124,7 @@ RSpec.describe "Organization::Offices::CollectivitiesController#index" do
 
         it { expect(response).to have_http_status(:not_found) }
         it { expect(response).to have_content_type(:html) }
-        it { expect(response).to have_html_body.to include("Ce guichet n'a pas été trouvé ou n'existe plus.") }
+        it { expect(response).to have_html_body.to have_text("Ce guichet n'a pas été trouvé ou n'existe plus.") }
       end
     end
 

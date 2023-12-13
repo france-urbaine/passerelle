@@ -48,7 +48,7 @@ RSpec.describe "Territories::Communes::Collectivities#index" do
 
         it "includes kept collectivities" do
           aggregate_failures do
-            expect(response.parsed_body).to include(CGI.escape_html(collectivity.name))
+            expect(response).to have_html_body.to have_text(collectivity.name)
           end
         end
       end

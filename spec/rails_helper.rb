@@ -87,9 +87,9 @@ RSpec.configure do |config|
   config.include Matchers::HaveHTMLAttribute, type: :component
   config.include Matchers::HaveHTMLAttribute, type: :helper
   config.include Matchers::RenderPreviewWithoutException, type: :component
-
-  config.include ViewComponent::TestHelpers, type: :component
+  config.include Capybara::RSpecMatchers, type: :request
   config.include Capybara::RSpecMatchers, type: :component
+  config.include ViewComponent::TestHelpers, type: :component
   config.include ActionView::Helpers::TagHelper, type: :component
   config.include ActiveJob::TestHelper
 

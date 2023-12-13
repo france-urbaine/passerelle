@@ -49,8 +49,8 @@ RSpec.describe "Territories::Regions::DDFIPs#index" do
 
         it "includes kept ddfips" do
           aggregate_failures do
-            expect(response.parsed_body).to include(CGI.escape_html(ddfips[0].name))
-            expect(response.parsed_body).to include(CGI.escape_html(ddfips[1].name))
+            expect(response).to have_html_body.to have_text(ddfips[0].name)
+            expect(response).to have_html_body.to have_text(ddfips[1].name)
           end
         end
       end

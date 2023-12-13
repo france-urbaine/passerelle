@@ -45,9 +45,9 @@ RSpec.describe "Admin::OfficesController#index" do
 
       it "returns only kept offices" do
         aggregate_failures do
-          expect(response.parsed_body).to     include(CGI.escape_html(offices[0].name))
-          expect(response.parsed_body).not_to include(CGI.escape_html(offices[1].name))
-          expect(response.parsed_body).to     include(CGI.escape_html(offices[2].name))
+          expect(response).to have_html_body.to     have_text(offices[0].name)
+          expect(response).to have_html_body.not_to have_text(offices[1].name)
+          expect(response).to have_html_body.to     have_text(offices[2].name)
         end
       end
     end

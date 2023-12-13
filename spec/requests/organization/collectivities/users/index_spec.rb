@@ -88,7 +88,7 @@ RSpec.describe "Organization::Collectivities::UsersController#index" do
 
         it { expect(response).to have_http_status(:gone) }
         it { expect(response).to have_content_type(:html) }
-        it { expect(response).to have_html_body.to include("Cette collectivité est en cours de suppression.") }
+        it { expect(response).to have_html_body.to have_text("Cette collectivité est en cours de suppression.") }
       end
 
       context "when the collectivity is missing" do
@@ -96,7 +96,7 @@ RSpec.describe "Organization::Collectivities::UsersController#index" do
 
         it { expect(response).to have_http_status(:not_found) }
         it { expect(response).to have_content_type(:html) }
-        it { expect(response).to have_html_body.to include("Cette collectivité n'a pas été trouvée ou n'existe plus.") }
+        it { expect(response).to have_html_body.to have_text("Cette collectivité n'a pas été trouvée ou n'existe plus.") }
       end
     end
 
@@ -108,11 +108,11 @@ RSpec.describe "Organization::Collectivities::UsersController#index" do
 
         it "returns only kept users owned by collectivity" do
           aggregate_failures do
-            expect(response.body).to not_include(CGI.escape_html(users[0].name))
-            expect(response.body).to not_include(CGI.escape_html(users[1].name))
-            expect(response.body).to not_include(CGI.escape_html(users[2].name))
-            expect(response.body).to include(CGI.escape_html(users[3].name))
-            expect(response.body).to include(CGI.escape_html(users[4].name))
+            expect(response).to have_html_body.not_to have_text(users[0].name)
+            expect(response).to have_html_body.not_to have_text(users[1].name)
+            expect(response).to have_html_body.not_to have_text(users[2].name)
+            expect(response).to have_html_body.to     have_text(users[3].name)
+            expect(response).to have_html_body.to     have_text(users[4].name)
           end
         end
       end
@@ -122,7 +122,7 @@ RSpec.describe "Organization::Collectivities::UsersController#index" do
 
         it { expect(response).to have_http_status(:gone) }
         it { expect(response).to have_content_type(:html) }
-        it { expect(response).to have_html_body.to include("Cette collectivité est en cours de suppression.") }
+        it { expect(response).to have_html_body.to have_text("Cette collectivité est en cours de suppression.") }
       end
 
       context "when the collectivity is missing" do
@@ -130,7 +130,7 @@ RSpec.describe "Organization::Collectivities::UsersController#index" do
 
         it { expect(response).to have_http_status(:not_found) }
         it { expect(response).to have_content_type(:html) }
-        it { expect(response).to have_html_body.to include("Cette collectivité n'a pas été trouvée ou n'existe plus.") }
+        it { expect(response).to have_html_body.to have_text("Cette collectivité n'a pas été trouvée ou n'existe plus.") }
       end
     end
 

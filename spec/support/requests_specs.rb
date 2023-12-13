@@ -7,10 +7,6 @@ module RequestSpecsMacros
   def dom_id(...)
     ActionView::RecordIdentifier.dom_id(...)
   end
-
-  def escape_html(...)
-    ERB::Util.html_escape(...)
-  end
 end
 
 RSpec.configure do |config|

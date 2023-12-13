@@ -48,8 +48,8 @@ RSpec.describe "Territories::Regions::Departements#index" do
 
         it "includes kept departements" do
           aggregate_failures do
-            expect(response.parsed_body).to include(CGI.escape_html(departements[0].name))
-            expect(response.parsed_body).to include(CGI.escape_html(departements[1].name))
+            expect(response).to have_html_body.to have_text(departements[0].name)
+            expect(response).to have_html_body.to have_text(departements[1].name)
           end
         end
       end
