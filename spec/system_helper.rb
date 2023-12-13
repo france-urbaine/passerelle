@@ -15,7 +15,9 @@ RSpec.configure do |config|
   # Instead of using transactional fixtures, we'll use DataCleaner around each
   # context to cleanup data.
   #
-  config.fixture_path = Rails.root.join("spec/fixtures/records")
+  config.fixture_paths = [
+    Rails.root.join("spec/fixtures/records")
+  ]
 
   # Configure database cleaning strategy
   #
