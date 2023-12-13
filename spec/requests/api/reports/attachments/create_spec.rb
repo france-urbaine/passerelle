@@ -9,16 +9,18 @@ RSpec.describe "API::Reports::AttachmentsController#create", :api do
 
   let(:as)      { |e| e.metadata.fetch(:as, :json) }
   let(:headers) { |e| e.metadata.fetch(:headers, {}).merge(authorization_header) }
-  let(:params)  { |e| e.metadata.fetch(:params, { documents: blob.signed_id }) }
+  let(:params) do |e|
+    e.metadata.fetch(:params, {
+      blob: {
+        filename: "sample.pdf",
+        byte_size: 3_849,
+        checksum: "keKnRxGllrNnMpX19UouVQ",
+        content_type: "application/pdf"
+      }
+    })
+  end
 
   let!(:report) { create(:report, :made_through_api) }
-
-  let!(:blob) do
-    ActiveStorage::Blob.create_and_upload!(
-      io:       file_fixture("sample.pdf").open,
-      filename: "sample.pdf"
-    )
-  end
 
   describe "authorizations" do
     it_behaves_like "it requires an authentication through OAuth in JSON"
@@ -42,7 +44,22 @@ RSpec.describe "API::Reports::AttachmentsController#create", :api do
     before { setup_access_token(report.publisher) }
 
     context "with valid parameters" do
-      it { expect(response).to have_http_status(:no_content) }
+      it "creates a new blob" do
+        expect { request }.to change(ActiveStorage::Blob, :count).by(1)
+      end
+
+      it "responds with success" do
+        request
+        expect(response).to have_http_status(:success)
+      end
+
+      it "returns the signed ID of the blob", :show_in_doc do
+        request
+        expect(response).to have_json_body.to include(
+          "signed_id" => ActiveStorage::Blob.last.signed_id
+        )
+      end
+
       it { expect { request }.to change(report.documents, :count).by(1) }
 
       it "assigns expected attributes to the new record", :show_in_doc do
@@ -63,7 +80,13 @@ RSpec.describe "API::Reports::AttachmentsController#create", :api do
         ))
       end
 
-      it { expect(response).to have_http_status(:no_content) }
+      it "returns the signed ID of the blob", :show_in_doc do
+        request
+        expect(response).to have_json_body.to include(
+          "signed_id" => ActiveStorage::Blob.order(created_at: :desc).first.signed_id
+        )
+      end
+
       it { expect { request }.to change(report.documents, :count).from(2).to(3) }
     end
 
