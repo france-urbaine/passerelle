@@ -24,6 +24,8 @@ class PackagePolicy < ApplicationPolicy
       relation.merge(packages_listed_to_publisher)
     elsif ddfip_admin?
       relation.merge(packages_listed_to_ddfip_admins)
+    elsif ddfip?
+      relation.merge(packages_listed_to_ddfip_admins).with_reports(authorized(Report.all))
     else
       relation.none
     end

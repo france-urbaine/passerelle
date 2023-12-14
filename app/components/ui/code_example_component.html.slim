@@ -1,24 +1,13 @@
 pre.code-example
-  - if copyable?
-    = copyable_button(copyable_content)
+  - if languages.empty?
+    span.code-example__block
+      = copyable_button(copyable_content) if copyable?
+      = highlight(content, @language)
 
-  - if languages?
-    - languages.each.with_index do |section, index|
-      = "\n\n" unless index.zero?
+  - languages.each.with_index do |section, index|
+    = "\n\n" unless index.zero?
 
-      - if section.copyable? && !copyable?
-        = copyable_button(section.copyable_content)
-
-      span.code(
-        data-controller="highlight"
-        data-highlight-language-value=section.language
-      )= section
-
-  - elsif @language
-    span.code(
-      data-controller="highlight"
-      data-highlight-language-value=@language
-    )= content
-
-  - else
-    span.code= content
+    span.code-example__block
+      = copyable_button(copyable_content)         if copyable? && index.zero?
+      = copyable_button(section.copyable_content) if section.copyable? && !copyable?
+      = highlight(section.to_s, section.language)

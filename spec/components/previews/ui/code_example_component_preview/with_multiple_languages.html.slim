@@ -1,49 +1,34 @@
-= code_example_component(copyable: false) do |code|
-  - code.with_language(:shell) do
-    | $ curl -X GET https://api.passerelle-fiscale.fr/collectivites \
-          -H "Accept: application/json" \
-          -H "Authorization: Bearer $ACCESS_TOKEN"
-
-  - code.with_language(:http) do
-    | GET /collectivites HTTP/1.1
-      Accept: application/json
-      Authorization: Bearer HgAxkdHZUvlBjuuWweLKwsJ6InRfZoZ-GHyFtbrS03k
+= code_example_component do |code|
+  - code.with_language(:command) do
+    | http -jv GET http://api.passerelle-fiscale.localhost:3000/collectivites
 
   - code.with_language(:http) do
     | HTTP/1.1 200 OK
-      Content-Type: application/json; charset=utf-8
 
   - code.with_language(:json) do
-    | {
-        "collectivites": [
-          {
-            "id": "9e6c14d5-1fbc-4dcc-a792-030ce0bb3882",
-            "name": "Metropole de Montpellier"
-          }
-        ]
-      }
+    | { "collectivites": [ { "id": "9e6c14d5-1fbc-4dcc-a792-030ce0bb3882" } ] }
 
 = code_example_component(copyable: true) do |code|
-  - code.with_language(:shell) do
-    | $ curl -X GET https://api.passerelle-fiscale.fr/collectivites \
-          -H "Accept: application/json" \
-          -H "Authorization: Bearer $ACCESS_TOKEN"
-
-  - code.with_language(:http, copyable: true) do
-    | GET /collectivites HTTP/1.1
-      Accept: application/json
-      Authorization: Bearer HgAxkdHZUvlBjuuWweLKwsJ6InRfZoZ-GHyFtbrS03k
-
-
-
-= code_example_component do |code|
-  - code.with_language(:shell, copyable: true) do
-    | $ curl -X GET https://api.passerelle-fiscale.fr/collectivites \
-          -H "Accept: application/json" \
-          -H "Authorization: Bearer $ACCESS_TOKEN"
+  - code.with_language(:command) do
+    | http -jv GET http://api.passerelle-fiscale.localhost:3000/collectivites
 
   - code.with_language(:http) do
-    | GET /collectivites HTTP/1.1
-      Accept: application/json
-      Authorization: Bearer HgAxkdHZUvlBjuuWweLKwsJ6InRfZoZ-GHyFtbrS03k
+    | HTTP/1.1 200 OK
 
+  - code.with_language(:json) do
+    | { "collectivites": [ { "id": "9e6c14d5-1fbc-4dcc-a792-030ce0bb3882" } ] }
+
+= code_example_component do |code|
+  - code.with_language(:command, copyable: true) do
+    | http -jv GET http://api.passerelle-fiscale.localhost:3000/collectivites
+
+  - code.with_language(:http) do
+    | HTTP/1.1 200 OK
+
+  - code.with_language(:json, copyable: true) do
+    | { "collectivites": [ { "id": "9e6c14d5-1fbc-4dcc-a792-030ce0bb3882" } ] }
+
+
+.form-block.mt-12
+  label( for="paste" ) Paste copied code here :
+  textarea.font-mono( id="paste" rows=10 )

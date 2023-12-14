@@ -1,0 +1,10 @@
+= code_example_component(:command, copyable: true) do
+  | curl -X GET https://api.passerelle-fiscale.fr/collectivites \
+      -H "Accept: application/json" \
+      -H "Authorization: Bearer $ACCESS_TOKEN"
+
+
+.form-block.mt-12
+  label( for="paste" ) Paste copied code here :
+  textarea.font-mono( id="paste" rows=5 )
+

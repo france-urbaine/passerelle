@@ -1,14 +1,16 @@
 = code_example_component do
-  | Content-Type: application/json
-    Accept: application/json
+  | Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+    sed do eiusmod tempor incididunt ut labore et dolore
+    magna aliqua. Ut enim ad minim veniam
 
-= code_example_component(:shell) do
-  | $ curl -X GET https://api.passerelle-fiscale.fr/collectivites \
-        -H "Accept: application/json" \
-        -H "Authorization: Bearer $ACCESS_TOKEN"
+= code_example_component(:json) do
+  | { "foo": "bar" }
 
 = code_example_component(:shell, copyable: true) do
-  | $ curl -X POST http://api.passerelle-fiscale.localhost:3000/oauth/token \
-        -H "Accept: application/json" \
-        -H "Content-Type: application/json" \
-        -d '{"grant_type":"client_credentials","client_id":"'$CLIENT_ID'","client_secret":"'$CLIENT_SECRET'"}'
+  | $ echo "Please enter your username:" && read USERNAME
+    $ echo "Please enter your password:" && read PASSWORD
+
+
+.form-block.mt-12
+  label( for="paste" ) Paste copied code here :
+  textarea.font-mono( id="paste" rows=5 )
