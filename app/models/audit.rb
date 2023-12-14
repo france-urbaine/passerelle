@@ -40,8 +40,7 @@ class Audit < Audited::Audit
 
   before_create do
     set_organization
-    set_current_publisher
-    set_current_application
+    set_current_application_and_publisher
     resolve_action
   end
 
@@ -59,13 +58,12 @@ class Audit < Audited::Audit
     self.organization_type = user.organization_type
   end
 
-  def set_current_publisher
-    self.publisher = ::Audited.store[:current_publisher]
-  end
-
-  def set_current_application
+  def set_current_application_and_publisher
     self.oauth_application = ::Audited.store[:current_application]
     self.oauth_application ||= associated if associated.is_a?(OauthApplication)
+
+    self.publisher = ::Audited.store[:current_publisher]
+    self.publisher ||= oauth_application&.owner if oauth_application&.owner_type == "Publisher"
   end
 
   def resolve_action
