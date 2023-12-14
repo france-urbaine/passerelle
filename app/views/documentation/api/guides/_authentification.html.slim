@@ -71,14 +71,14 @@
         ' nous vous conseillons de l'assigner à une variable :
 
       = tabs_component do |tabs|
-        - tabs.with_tab("cURL + jq") do
+        - tabs.with_tab("cURL + jq", sync_all: "curl") do
           = code_example_component(:command, copyable: true) do
             | ACCESS_TOKEN=$( \
               #{example.curl_command(indent: 2, options: %w[fail])} \
                 | jq -r .access_token
               ) && echo $ACCESS_TOKEN
 
-        - tabs.with_tab("httpie + jq") do
+        - tabs.with_tab("httpie + jq", sync_all: "httpie") do
           = code_example_component(:command, copyable: true) do
             | ACCESS_TOKEN=$( \
               #{example.httpie_command(indent: 2, options: %w[check-status b])} \

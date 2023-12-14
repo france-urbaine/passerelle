@@ -1,10 +1,10 @@
 .code-request-example
   = tabs_component do |tabs|
-    - tabs.with_tab("cURL") do
+    - tabs.with_tab("cURL", sync_all: "curl") do
       = code_example_component(:command, copyable: true) do
         = curl_command
 
-    - tabs.with_tab("httpie") do
+    - tabs.with_tab("httpie", sync_all: "httpie") do
       = code_example_component(:command, copyable: true) do
         = httpie_command
 

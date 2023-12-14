@@ -106,7 +106,7 @@
         ' Enfin, vous pouvez extraire la signature et l'URL d'autorisation dans des variables :
 
       = tabs_component do |tabs|
-        - tabs.with_tab("cURL + jq") do
+        - tabs.with_tab("cURL + jq", sync_all: "curl") do
           = code_example_component(:command, copyable: true) do
             | read SIGNED_ID UPLOAD_URL < <(echo $( \
               #{example.curl_command(indent: 2, options: %w[fail])} \
@@ -114,7 +114,7 @@
               )) && echo "SIGNED_ID: $SIGNED_ID" \
                 && echo "UPLOAD_URL: $UPLOAD_URL"
 
-        - tabs.with_tab("httpie + jq") do
+        - tabs.with_tab("httpie + jq", sync_all: "httpie") do
           = code_example_component(:command, copyable: true) do
             | read SIGNED_ID UPLOAD_URL < <(echo $( \
               #{example.httpie_command(indent: 2, options: %w[check-status b])} \

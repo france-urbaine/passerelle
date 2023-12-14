@@ -22,4 +22,21 @@ RSpec.describe UI::TabsComponent, type: :component do
       expect(node).to have_selector(".tabs__panel", text: "Content of tab #3", visible: :hidden)
     end
   end
+
+  it "links tabs to panels for proper ARIA" do
+    render_inline described_class.new do |tabs|
+      tabs.with_tab("Tab #1") { "Content of tab #1" }
+      tabs.with_tab("Tab #2") { "Content of tab #2" }
+    end
+
+    expect(page).to have_selector(".tabs__tab", text: "Tab #1") do |tab1|
+      expect(tab1).to have_html_attribute("role").with_value("tab")
+      expect(tab1).to have_html_attribute("aria-selected").boolean
+
+      expect(page).to have_selector(".tabs__panel", text: "Content of tab #1") do |panel1|
+        expect(panel1).to have_html_attribute("role").with_value("tabpanel")
+        expect(panel1).to have_html_attribute("aria-labelledby").with_value(tab1["id"])
+      end
+    end
+  end
 end

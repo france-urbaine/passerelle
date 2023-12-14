@@ -64,14 +64,14 @@
         ' Pour la suite de ce guide, vous pouvez assigner l'ID de la collectivité à une variable :
 
       = tabs_component do |tabs|
-        - tabs.with_tab("cURL + jq") do
+        - tabs.with_tab("cURL + jq", sync_all: "curl") do
           = code_example_component(:command, copyable: true) do
             | COLLECTIVITY_ID=$( \
               #{example.curl_command(indent: 2, options: %w[fail])} \
                 | jq -r '.collectivites[0].id'
               ) && echo $COLLECTIVITY_ID
 
-        - tabs.with_tab("httpie + jq") do
+        - tabs.with_tab("httpie + jq", sync_all: "httpie") do
           = code_example_component(:command, copyable: true) do
             | COLLECTIVITY_ID=$( \
               #{example.httpie_command(indent: 2, options: %w[check-status b])} \
@@ -109,14 +109,14 @@
         ' Pour la suite de ce guide, vous pouvez assigner l'ID de la transmission à une variable :
 
       = tabs_component do |tabs|
-        - tabs.with_tab("cURL + jq") do
+        - tabs.with_tab("cURL + jq", sync_all: "curl") do
           = code_example_component(:command, copyable: true) do
             | TRANSMISSION_ID=$( \
               #{example.curl_command(indent: 2, options: %w[fail])} \
                 | jq -r '.transmission.id'
               ) && echo $TRANSMISSION_ID
 
-        - tabs.with_tab("httpie + jq") do
+        - tabs.with_tab("httpie + jq", sync_all: "httpie") do
           = code_example_component(:command, copyable: true) do
             | TRANSMISSION_ID=$( \
               #{example.httpie_command(indent: 2, options: %w[check-status b])} \
@@ -203,14 +203,14 @@
         '  :
 
       = tabs_component do |tabs|
-        - tabs.with_tab("cURL + jq") do
+        - tabs.with_tab("cURL + jq", sync_all: "curl") do
           = code_example_component(:command, copyable: true) do
             | REPORT_ID=$( \
               #{example.curl_command(indent: 2, options: %w[fail])} \
                 | jq -r '.report.id'
               ) && echo $REPORT_ID
 
-        - tabs.with_tab("httpie + jq") do
+        - tabs.with_tab("httpie + jq", sync_all: "httpie") do
           = code_example_component(:command, copyable: true) do
             | REPORT_ID=$( \
               #{example.httpie_command(indent: 2, options: %w[check-status b])} \
