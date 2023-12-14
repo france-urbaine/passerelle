@@ -4,11 +4,12 @@ AS $function$
   BEGIN
 
     UPDATE  "offices"
-    SET     "communes_count"           = get_offices_communes_count("offices".*),
-            "reports_assigned_count"   = get_offices_reports_assigned_count("offices".*),
-            "reports_processing_count" = get_offices_reports_processing_count("offices".*),
-            "reports_approved_count"   = get_offices_reports_approved_count("offices".*),
-            "reports_rejected_count"   = get_offices_reports_rejected_count("offices".*)
+    SET     "communes_count"         = get_offices_communes_count("offices".*),
+            "reports_assigned_count" = get_offices_reports_assigned_count("offices".*),
+            "reports_pending_count"  = get_offices_reports_pending_count("offices".*),
+            "reports_debated_count"  = get_offices_reports_debated_count("offices".*),
+            "reports_approved_count" = get_offices_reports_approved_count("offices".*),
+            "reports_rejected_count" = get_offices_reports_rejected_count("offices".*)
     WHERE   "offices"."id" IN (NEW."office_id", OLD."office_id");
 
     UPDATE  "communes"

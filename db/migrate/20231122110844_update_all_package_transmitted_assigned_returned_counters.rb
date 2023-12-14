@@ -123,7 +123,7 @@ class UpdateAllPackageTransmittedAssignedReturnedCounters < ActiveRecord::Migrat
     update_function :reset_all_publishers_counters, version: 6, revert_to_version: 5
     update_function :reset_all_offices_counters, version: 5, revert_to_version: 4
     update_function :reset_all_packages_counters, version: 4, revert_to_version: 3
-    update_function :trigger_office_communes_changes, version: 4, revert_to_version: 3
+    update_function :trigger_office_communes_changes, version: 5, revert_to_version: 4
 
     create_trigger :trigger_office_communes_changes, on: :office_communes
     create_trigger :trigger_packages_changes,        on: :packages
