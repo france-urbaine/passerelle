@@ -4,7 +4,7 @@ require "system_helper"
 
 RSpec.describe "Collectivities in admin" do
   fixtures :regions, :departements, :epcis, :communes
-  fixtures :collectivities, :publishers, :ddfips, :users
+  fixtures :collectivities, :publishers, :ddfips, :users, :audits
 
   let(:pays_basque)   { collectivities(:pays_basque) }
   let(:publisher)     { publishers(:fiscalite_territoire) }
@@ -35,6 +35,23 @@ RSpec.describe "Collectivities in admin" do
     #
     expect(page).to have_current_path(admin_collectivities_path)
     expect(page).to have_selector("h1", text: "Collectivités")
+  end
+
+  it "visits collectivity & audits pages" do
+    visit admin_collectivities_path
+    click_on "CA du Pays Basque"
+
+    # The browser should visit the collectivity page
+    #
+    expect(page).to have_current_path(admin_collectivity_path(pays_basque))
+    expect(page).to have_selector("a.button", text: "Voir toute l'activité")
+
+    click_on "Voir toute l'activité"
+
+    # The browser should visit the collectivity audits page
+    #
+    expect(page).to have_current_path(admin_collectivity_audits_path(pays_basque))
+    expect(page).to have_selector("pre.logs")
   end
 
   it "visits links on a collectivity page & comes back" do

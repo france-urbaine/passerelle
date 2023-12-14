@@ -1,0 +1,15 @@
+= content_frame_component do
+  = content_layout_component do |layout|
+    - layout.with_breadcrumbs do |breadcrumbs|
+      - breadcrumbs.with_path "Administration"
+      - breadcrumbs.with_path "Éditeurs", admin_publishers_path
+      - breadcrumbs.with_path @publisher.name, admin_publisher_path(@publisher)
+      - breadcrumbs.with_h1 "Activité"
+
+      - breadcrumbs.with_action do
+        = page_count(@pagy)
+      - breadcrumbs.with_action do
+        = pagination_buttons_component(@pagy, turbo_frame: "content")
+
+    - layout.with_section do
+      = audits_list_component @audits, @pagy

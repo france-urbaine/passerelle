@@ -4,7 +4,7 @@ require "system_helper"
 
 RSpec.describe "Offices in admin" do
   fixtures :regions, :departements, :epcis, :communes
-  fixtures :ddfips, :offices, :users, :office_communes, :office_users
+  fixtures :ddfips, :offices, :users, :office_communes, :office_users, :audits
 
   let(:ddifp64)      { ddfips(:pyrenees_atlantiques) }
   let(:departement)  { departements(:pyrenees_atlantiques) }
@@ -34,6 +34,23 @@ RSpec.describe "Offices in admin" do
     #
     expect(page).to have_current_path(admin_offices_path)
     expect(page).to have_selector("h1", text: "Guichets")
+  end
+
+  it "visits office & audits pages" do
+    visit admin_offices_path
+    click_on "PELP de Bayonne"
+
+    # The browser should visit the office page
+    #
+    expect(page).to have_current_path(admin_office_path(pelp_bayonne))
+    expect(page).to have_selector("a.button", text: "Voir toute l'activité")
+
+    click_on "Voir toute l'activité"
+
+    # The browser should visit the office audits page
+    #
+    expect(page).to have_current_path(admin_office_audits_path(pelp_bayonne))
+    expect(page).to have_selector("pre.logs")
   end
 
   it "visits the links on the office page & comes back" do

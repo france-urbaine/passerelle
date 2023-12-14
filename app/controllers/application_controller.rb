@@ -9,6 +9,7 @@ class ApplicationController < ActionController::Base
   include ControllerParams
   include ControllerStatuses
   include ControllerVariants
+  include ControllerAudits
 
   prepend_before_action do
     Rails.logger.debug { "  Turbo-frame: #{turbo_frame_request_id.inspect}" } if turbo_frame_request?

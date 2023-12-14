@@ -19,7 +19,7 @@ RSpec.describe "Manage users from organization" do
       # A table of all organization users should be present
       #
       expect(page).to have_selector("h1", text: "Équipe")
-      expect(page).to have_text("2 utilisateurs | Page 1 sur 1")
+      expect(page).to have_text("3 utilisateurs | Page 1 sur 1")
       expect(page).to have_selector(:table_row, "Utilisateur" => "Marc Debomy")
       expect(page).to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 
@@ -245,7 +245,7 @@ RSpec.describe "Manage users from organization" do
     it "discards an user from the index page & rollbacks" do
       visit organization_users_path
 
-      expect(page).to have_text("2 utilisateurs | Page 1 sur 1")
+      expect(page).to have_text("3 utilisateurs | Page 1 sur 1")
 
       # A button should be present to remove the user
       #
@@ -264,7 +264,7 @@ RSpec.describe "Manage users from organization" do
       #
       expect(page).to     have_current_path(organization_users_path)
       expect(page).to     have_selector("h1", text: "Équipe")
-      expect(page).to     have_text("1 utilisateur | Page 1 sur 1")
+      expect(page).to     have_text("2 utilisateurs | Page 1 sur 1")
       expect(page).not_to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 
       # The dialog should be closed
@@ -284,7 +284,7 @@ RSpec.describe "Manage users from organization" do
       #
       expect(page).to have_current_path(organization_users_path)
       expect(page).to have_selector("h1", text: "Équipe")
-      expect(page).to have_text("2 utilisateurs | Page 1 sur 1")
+      expect(page).to have_text("3 utilisateurs | Page 1 sur 1")
       expect(page).to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 
       # The previous notification should be closed
@@ -314,7 +314,7 @@ RSpec.describe "Manage users from organization" do
       #
       expect(page).to     have_current_path(organization_users_path)
       expect(page).to     have_selector("h1", text: "Équipe")
-      expect(page).to     have_text("1 utilisateur | Page 1 sur 1")
+      expect(page).to     have_text("2 utilisateurs | Page 1 sur 1")
       expect(page).not_to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 
       # The dialog should be closed
@@ -334,7 +334,7 @@ RSpec.describe "Manage users from organization" do
       #
       expect(page).to have_current_path(organization_users_path)
       expect(page).to have_selector("h1", text: "Équipe")
-      expect(page).to have_text("2 utilisateurs | Page 1 sur 1")
+      expect(page).to have_text("3 utilisateurs | Page 1 sur 1")
       expect(page).to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 
       # The previous notification should be closed
@@ -347,7 +347,7 @@ RSpec.describe "Manage users from organization" do
     it "discards himself and been disconnected" do
       visit organization_users_path
 
-      expect(page).to have_text("2 utilisateurs | Page 1 sur 1")
+      expect(page).to have_text("3 utilisateurs | Page 1 sur 1")
 
       # A button should be present to remove the user
       #
@@ -371,7 +371,7 @@ RSpec.describe "Manage users from organization" do
     it "selects and discards one user from the index page & rollbacks" do
       visit organization_users_path
 
-      expect(page).to have_text("2 utilisateurs | Page 1 sur 1")
+      expect(page).to have_text("3 utilisateurs | Page 1 sur 1")
 
       # Checkboxes should be present to select users
       #
@@ -398,7 +398,7 @@ RSpec.describe "Manage users from organization" do
       #
       expect(page).to     have_current_path(organization_users_path)
       expect(page).to     have_selector("h1", text: "Équipe")
-      expect(page).to     have_text("1 utilisateur | Page 1 sur 1")
+      expect(page).to     have_text("2 utilisateurs | Page 1 sur 1")
       expect(page).not_to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
       expect(page).to     have_selector(:table_row, "Utilisateur" => "Marc Debomy")
 
@@ -421,7 +421,7 @@ RSpec.describe "Manage users from organization" do
       #
       expect(page).to have_current_path(organization_users_path)
       expect(page).to have_selector("h1", text: "Équipe")
-      expect(page).to have_text("2 utilisateurs | Page 1 sur 1")
+      expect(page).to have_text("3 utilisateurs | Page 1 sur 1")
       expect(page).to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 
       # The selection message should not appears again
@@ -443,7 +443,7 @@ RSpec.describe "Manage users from organization" do
 
       visit organization_users_path
 
-      expect(page).to have_text("12 utilisateurs | Page 1 sur 1")
+      expect(page).to have_text("13 utilisateurs | Page 1 sur 1")
 
       # Paginate users by 10
       # More than one page should exist
@@ -452,7 +452,7 @@ RSpec.describe "Manage users from organization" do
       click_on "Afficher 50 lignes par page"
       click_on "Afficher 10 lignes"
 
-      expect(page).to have_text("12 utilisateurs | Page 1 sur 2")
+      expect(page).to have_text("13 utilisateurs | Page 1 sur 2")
 
       # Checkboxes should be present to select all users
       #
@@ -483,7 +483,7 @@ RSpec.describe "Manage users from organization" do
       #
       expect(page).to have_current_path(organization_users_path)
       expect(page).to have_selector("h1", text: "Équipe")
-      expect(page).to have_text("3 utilisateurs | Page 1 sur 1")
+      expect(page).to have_text("4 utilisateurs | Page 1 sur 1")
       expect(page).to have_selector(:table_row, "Utilisateur" => "Marc Debomy")
 
       # The dialog should be closed
@@ -504,7 +504,7 @@ RSpec.describe "Manage users from organization" do
       #
       expect(page).to have_current_path(organization_users_path)
       expect(page).to have_selector("h1", text: "Équipe")
-      expect(page).to have_text("12 utilisateurs | Page 1 sur 2")
+      expect(page).to have_text("13 utilisateurs | Page 1 sur 2")
       expect(page).to have_selector(:table_row, "Utilisateur" => "Marc Debomy")
       expect(page).to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 
@@ -526,7 +526,7 @@ RSpec.describe "Manage users from organization" do
 
       visit organization_users_path
 
-      expect(page).to have_text("12 utilisateurs | Page 1 sur 1")
+      expect(page).to have_text("13 utilisateurs | Page 1 sur 1")
 
       # Paginate users by 10
       # More than one page should exist
@@ -535,7 +535,7 @@ RSpec.describe "Manage users from organization" do
       click_on "Afficher 50 lignes par page"
       click_on "Afficher 10 lignes"
 
-      expect(page).to have_text("12 utilisateurs | Page 1 sur 2")
+      expect(page).to have_text("13 utilisateurs | Page 1 sur 2")
 
       # Checkboxes should be present to select all users
       #
@@ -548,10 +548,10 @@ RSpec.describe "Manage users from organization" do
       # A link to remove all of them should be present
       #
       within ".datatable__selection", text: "10 utilisateurs sélectionnés" do
-        click_on "Sélectionner les 12 utilisateurs des 2 pages"
+        click_on "Sélectionner les 13 utilisateurs des 2 pages"
       end
 
-      within ".datatable__selection", text: "12 utilisateurs sélectionnés" do
+      within ".datatable__selection", text: "13 utilisateurs sélectionnés" do
         click_on "Tout supprimer"
       end
 
@@ -559,7 +559,7 @@ RSpec.describe "Manage users from organization" do
       #
       pending "TODO: display a proper message when current user is selected"
 
-      within "[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer les 12 utilisateurs sélectionnés ?" do |dialog|
+      within "[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer les 13 utilisateurs sélectionnés ?" do |dialog|
         expect(dialog).to have_text("Attention : votre compte utilisateur est inclus dans la liste")
         click_on "Continuer"
       end

@@ -18,6 +18,16 @@ elise:
   email:              elacroix@fiscalite-territoire.fr
   confirmed_at:       <%= Time.current %>
 
+jean_michel:
+  organization:       fiscalite_territoire (Publisher)
+  first_name:         Jean-Michel
+  last_name:          Torché
+  name:               Jean-Michel Torché
+  super_admin:        false
+  organization_admin: true
+  email:              jmtorche@fiscalite-territoire.fr
+  confirmed_at:       <%= Time.current %>
+
 maxime:
   organization:       pyrenees_atlantiques (DDFIP)
   first_name:         Maxime

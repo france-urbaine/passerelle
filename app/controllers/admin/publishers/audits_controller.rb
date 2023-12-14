@@ -1,24 +1,24 @@
 # frozen_string_literal: true
 
 module Admin
-  module Users
+  module Publishers
     class AuditsController < ApplicationController
       before_action :authorize!
 
       def index
         @audits, @pagy = load_audits_collection(
-          load_and_authorize_user.audits.descending
+          load_and_authorize_publisher.audits.descending
         )
       end
 
       protected
 
-      def load_and_authorize_user
-        @user = User.find(params[:user_id])
+      def load_and_authorize_publisher
+        @publisher = Publisher.find(params[:publisher_id])
 
-        authorize! @user, to: :show?
+        authorize! @publisher, to: :show?
 
-        @user
+        @publisher
       end
     end
   end

@@ -134,7 +134,11 @@ Rails.application.routes.draw do
           end
         end
 
-        resources :oauth_applications, concerns: %i[removable removable_collection]
+        resources :oauth_applications, concerns: %i[removable removable_collection] do
+          scope module: "oauth_applications" do
+            resources :audits, only: %i[index]
+          end
+        end
 
         resources :users, concerns: %i[removable removable_collection], path: "/utilisateurs" do
           scope module: "users" do
@@ -151,6 +155,7 @@ Rails.application.routes.draw do
           scope module: "publishers" do
             resources :collectivities, only: %i[index new create], concerns: %i[removable_collection], path: "/collectivites"
             resources :users,          only: %i[index new create], concerns: %i[removable_collection], path: "/utilisateurs"
+            resources :audits,         only: %i[index]
           end
         end
 
@@ -158,12 +163,14 @@ Rails.application.routes.draw do
           scope module: "collectivities" do
             resources :offices, only: %i[index], path: "/guichets"
             resources :users,   only: %i[index new create], concerns: %i[removable_collection], path: "/utilisateurs"
+            resources :audits,  only: %i[index]
           end
         end
 
         resource :dgfip, only: %i[show edit update] do
           scope module: "dgfips" do
-            resources :users, only: %i[index new create], concerns: %i[removable_collection], path: "/utilisateurs"
+            resources :users,  only: %i[index new create], concerns: %i[removable_collection], path: "/utilisateurs"
+            resources :audits, only: %i[index]
           end
         end
 
@@ -172,6 +179,7 @@ Rails.application.routes.draw do
             resources :offices,        only: %i[index new create], concerns: %i[removable_collection], path: "/guichets"
             resources :users,          only: %i[index new create], concerns: %i[removable_collection], path: "/utilisateurs"
             resources :collectivities, only: %i[index], path: "/collectivites"
+            resources :audits,         only: %i[index]
           end
         end
 
@@ -190,6 +198,7 @@ Rails.application.routes.draw do
             end
 
             resources :collectivities, only: %i[index], path: "/collectivites"
+            resources :audits,         only: %i[index]
           end
         end
 

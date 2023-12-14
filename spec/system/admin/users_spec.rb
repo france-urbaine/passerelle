@@ -5,7 +5,7 @@ require "system_helper"
 RSpec.describe "Users in admin" do
   fixtures :regions, :departements, :epcis, :communes
   fixtures :publishers, :collectivities, :ddfips, :offices
-  fixtures :users, :office_users
+  fixtures :users, :office_users, :audits
 
   let(:fiscalite_territoire) { publishers(:fiscalite_territoire) }
   let(:pays_basque)          { collectivities(:pays_basque) }
@@ -358,7 +358,7 @@ RSpec.describe "Users in admin" do
   it "discards an user from the index page & rollbacks" do
     visit admin_users_path
 
-    expect(page).to have_text("8 utilisateurs | Page 1 sur 1")
+    expect(page).to have_text("9 utilisateurs | Page 1 sur 1")
 
     # A button should be present to remove the user
     #
@@ -377,7 +377,7 @@ RSpec.describe "Users in admin" do
     #
     expect(page).to     have_current_path(admin_users_path)
     expect(page).to     have_selector("h1", text: "Utilisateurs")
-    expect(page).to     have_text("7 utilisateurs | Page 1 sur 1")
+    expect(page).to     have_text("8 utilisateurs | Page 1 sur 1")
     expect(page).not_to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 
     # The dialog should be closed
@@ -397,7 +397,7 @@ RSpec.describe "Users in admin" do
     #
     expect(page).to have_current_path(admin_users_path)
     expect(page).to have_selector("h1", text: "Utilisateurs")
-    expect(page).to have_text("8 utilisateurs | Page 1 sur 1")
+    expect(page).to have_text("9 utilisateurs | Page 1 sur 1")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 
     # The previous notification should be closed
@@ -427,7 +427,7 @@ RSpec.describe "Users in admin" do
     #
     expect(page).to     have_current_path(admin_users_path)
     expect(page).to     have_selector("h1", text: "Utilisateurs")
-    expect(page).to     have_text("7 utilisateurs | Page 1 sur 1")
+    expect(page).to     have_text("8 utilisateurs | Page 1 sur 1")
     expect(page).not_to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 
     # The dialog should be closed
@@ -447,7 +447,7 @@ RSpec.describe "Users in admin" do
     #
     expect(page).to have_current_path(admin_users_path)
     expect(page).to have_selector("h1", text: "Utilisateurs")
-    expect(page).to have_text("8 utilisateurs | Page 1 sur 1")
+    expect(page).to have_text("9 utilisateurs | Page 1 sur 1")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 
     # The previous notification should be closed
@@ -460,7 +460,7 @@ RSpec.describe "Users in admin" do
   it "discards himself and been disconnected" do
     visit admin_users_path
 
-    expect(page).to have_text("8 utilisateurs | Page 1 sur 1")
+    expect(page).to have_text("9 utilisateurs | Page 1 sur 1")
 
     # A button should be present to remove the user
     #
@@ -482,7 +482,7 @@ RSpec.describe "Users in admin" do
   it "selects and discards one user from the index page & rollbacks" do
     visit admin_users_path
 
-    expect(page).to have_text("8 utilisateurs | Page 1 sur 1")
+    expect(page).to have_text("9 utilisateurs | Page 1 sur 1")
 
     # Checkboxes should be present to select users
     #
@@ -509,7 +509,7 @@ RSpec.describe "Users in admin" do
     #
     expect(page).to     have_current_path(admin_users_path)
     expect(page).to     have_selector("h1", text: "Utilisateurs")
-    expect(page).to     have_text("7 utilisateurs | Page 1 sur 1")
+    expect(page).to     have_text("8 utilisateurs | Page 1 sur 1")
     expect(page).not_to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
     expect(page).to     have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
     expect(page).to     have_selector(:table_row, "Utilisateur" => "Christelle Droitier")
@@ -533,7 +533,7 @@ RSpec.describe "Users in admin" do
     #
     expect(page).to have_current_path(admin_users_path)
     expect(page).to have_selector("h1", text: "Utilisateurs")
-    expect(page).to have_text("8 utilisateurs | Page 1 sur 1")
+    expect(page).to have_text("9 utilisateurs | Page 1 sur 1")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 
     # The selection message should not appears again
@@ -554,7 +554,7 @@ RSpec.describe "Users in admin" do
 
     visit admin_users_path
 
-    expect(page).to have_text("18 utilisateurs | Page 1 sur 1")
+    expect(page).to have_text("19 utilisateurs | Page 1 sur 1")
 
     # Paginate users by 10
     # More than one page should exist
@@ -563,7 +563,7 @@ RSpec.describe "Users in admin" do
     click_on "Afficher 50 lignes par page"
     click_on "Afficher 10 lignes"
 
-    expect(page).to have_text("18 utilisateurs | Page 1 sur 2")
+    expect(page).to have_text("19 utilisateurs | Page 1 sur 2")
 
     # Checkboxes should be present to select all users
     #
@@ -590,7 +590,7 @@ RSpec.describe "Users in admin" do
     #
     expect(page).to     have_current_path(admin_users_path)
     expect(page).to     have_selector("h1", text: "Utilisateurs")
-    expect(page).to     have_text("9 utilisateurs | Page 1 sur 1")
+    expect(page).to     have_text("10 utilisateurs | Page 1 sur 1")
     expect(page).to     have_selector(:table_row, "Utilisateur" => "Marc Debomy")
     expect(page).not_to have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
     expect(page).not_to have_selector(:table_row, "Utilisateur" => "Christelle Droitier")
@@ -613,7 +613,7 @@ RSpec.describe "Users in admin" do
     #
     expect(page).to have_current_path(admin_users_path)
     expect(page).to have_selector("h1", text: "Utilisateurs")
-    expect(page).to have_text("18 utilisateurs | Page 1 sur 2")
+    expect(page).to have_text("19 utilisateurs | Page 1 sur 2")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Marc Debomy")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Christelle Droitier")
@@ -635,7 +635,7 @@ RSpec.describe "Users in admin" do
 
     visit admin_users_path
 
-    expect(page).to have_text("18 utilisateurs | Page 1 sur 1")
+    expect(page).to have_text("19 utilisateurs | Page 1 sur 1")
 
     # Paginate users by 10
     # More than one page should exist
@@ -644,7 +644,7 @@ RSpec.describe "Users in admin" do
     click_on "Afficher 50 lignes par page"
     click_on "Afficher 10 lignes"
 
-    expect(page).to have_text("18 utilisateurs | Page 1 sur 2")
+    expect(page).to have_text("19 utilisateurs | Page 1 sur 2")
 
     # Checkboxes should be present to select all users
     #
@@ -657,16 +657,16 @@ RSpec.describe "Users in admin" do
     # A link to remove all of them should be present
     #
     within ".datatable__selection", text: "10 utilisateurs sélectionnés" do
-      click_on "Sélectionner les 18 utilisateurs des 2 pages"
+      click_on "Sélectionner les 19 utilisateurs des 2 pages"
     end
 
-    within ".datatable__selection", text: "18 utilisateurs sélectionnés" do
+    within ".datatable__selection", text: "19 utilisateurs sélectionnés" do
       click_on "Tout supprimer"
     end
 
     # A confirmation dialog should appear
     #
-    within "[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer les 18 utilisateurs sélectionnés ?" do
+    within "[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer les 19 utilisateurs sélectionnés ?" do
       click_on "Continuer"
     end
 
@@ -698,7 +698,7 @@ RSpec.describe "Users in admin" do
     #
     expect(page).to have_current_path(admin_users_path)
     expect(page).to have_selector("h1", text: "Utilisateurs")
-    expect(page).to have_text("18 utilisateurs | Page 1 sur 2")
+    expect(page).to have_text("19 utilisateurs | Page 1 sur 2")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Marc Debomy")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Christelle Droitier")
