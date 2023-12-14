@@ -32,9 +32,7 @@
         ' pour obtenir l'ID de la collectivité :
 
       ruby:
-        example = UI::CodeRequestExampleComponent.new(
-          "GET",
-          api_collectivities_path,
+        example = UI::CodeRequestExampleComponent.new "GET", api_collectivities_url,
           json:          true,
           authorization: true,
           request: {
@@ -53,7 +51,6 @@
               ]
             }
           }
-        )
 
       = render example
 
@@ -93,9 +90,7 @@
       p
 
       ruby:
-        example = UI::CodeRequestExampleComponent.new(
-          "POST",
-          api_collectivity_transmissions_path("$COLLECTIVITY_ID"),
+        example = UI::CodeRequestExampleComponent.new "POST", api_collectivity_transmissions_url("$COLLECTIVITY_ID"),
           json: true,
           authorization: true,
           response: {
@@ -108,7 +103,6 @@
           interpolations: {
             COLLECTIVITY_ID: "9389c859-a9d9-4f2d-b7b4-1a704bf57f6f"
           }
-        )
 
       = render example
 
@@ -146,9 +140,7 @@
         ' Vous pouvez créer autant de signalements que nécessaire, en effectuant plusieurs requêtes avec la même transmission.
 
       ruby:
-        example = UI::CodeRequestExampleComponent.new(
-          "POST",
-          api_transmission_reports_path("$TRANSMISSION_ID"),
+        example = UI::CodeRequestExampleComponent.new "POST", api_transmission_reports_url("$TRANSMISSION_ID"),
           json: true,
           authorization: true,
           request: {
@@ -183,7 +175,6 @@
           interpolations: {
             "TRANSMISSION_ID" => "7fdfbcee-0afc-44e2-b8e9-bbd359b59958"
           }
-        )
 
       = render example
 
@@ -228,9 +219,7 @@
       p Vous pourrez récupérer, assigner et utiliser ces numéros de reférence dans les échanges futurs avec la DDFIP.
 
       ruby:
-        example = UI::CodeRequestExampleComponent.new(
-          "PUT",
-          complete_api_transmission_path("$TRANSMISSION_ID"),
+        example = UI::CodeRequestExampleComponent.new "PUT", complete_api_transmission_url("$TRANSMISSION_ID"),
           json: true,
           authorization: true,
           interpolations: {
@@ -260,6 +249,5 @@
               }
             }
           }
-        )
 
       = render example

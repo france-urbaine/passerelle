@@ -53,8 +53,7 @@
               CONTENT_TYPE=$(file -b --mime-type $FILEPATH)
 
       ruby:
-        example = UI::CodeRequestExampleComponent.new(
-          "POST", api_upload_path,
+        example = UI::CodeRequestExampleComponent.new "POST", api_upload_url,
           json:          true,
           authorization: true,
           request: {
@@ -92,7 +91,6 @@
             CHECKSUM:     "keKnRxGllrNnMpX19UouVQ==",
             CONTENT_TYPE: "application/pdf"
           }
-        )
 
       = render example
 
@@ -177,8 +175,7 @@
         li Envoyez dans les paramètres le SIGNED_ID retourné lors de l'autorisation de téléchagement.
 
       ruby:
-        example = UI::CodeRequestExampleComponent.new(
-          "POST", api_report_attachments_path("$REPORT_ID"),
+        example = UI::CodeRequestExampleComponent.new "POST", api_report_attachments_url("$REPORT_ID"),
           json:          true,
           authorization: true,
           request: {
@@ -193,6 +190,5 @@
             REPORT_ID: "6cbc5022-3bc9-40ce-ab20-b5fef3d88fae",
             SIGNED_ID: "eyJfcmFpbHMiOnsib[..]23895ccaef5aab022bab62a5e4ea83769"
           }
-        )
 
       = render example

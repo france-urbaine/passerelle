@@ -29,7 +29,7 @@ module UI
     end
 
     def url
-      URI.join(api_url, @url)
+      URI(@url)
     end
 
     def before_render
