@@ -60,7 +60,7 @@ RSpec.describe "Admin::Offices::UsersController#index" do
 
         it { expect(response).to have_http_status(:gone) }
         it { expect(response).to have_content_type(:html) }
-        it { expect(response).to have_html_body.to include("Ce guichet est en cours de suppression.") }
+        it { expect(response).to have_html_body.to have_text("Ce guichet est en cours de suppression.") }
       end
 
       context "when the DDFIP is discarded" do
@@ -68,7 +68,7 @@ RSpec.describe "Admin::Offices::UsersController#index" do
 
         it { expect(response).to have_http_status(:gone) }
         it { expect(response).to have_content_type(:html) }
-        it { expect(response).to have_html_body.to include("La DDFIP de ce guichet est en cours de suppression.") }
+        it { expect(response).to have_html_body.to have_text("La DDFIP de ce guichet est en cours de suppression.") }
       end
 
       context "when the office is missing" do
@@ -76,7 +76,7 @@ RSpec.describe "Admin::Offices::UsersController#index" do
 
         it { expect(response).to have_http_status(:not_found) }
         it { expect(response).to have_content_type(:html) }
-        it { expect(response).to have_html_body.to include("Ce guichet n'a pas été trouvé ou n'existe plus.") }
+        it { expect(response).to have_html_body.to have_text("Ce guichet n'a pas été trouvé ou n'existe plus.") }
       end
     end
 
@@ -88,10 +88,10 @@ RSpec.describe "Admin::Offices::UsersController#index" do
 
         it "returns only kept members of the offices" do
           aggregate_failures do
-            expect(response.parsed_body).to not_include(CGI.escape_html(users[0].name))
-            expect(response.parsed_body).to include(CGI.escape_html(users[1].name))
-            expect(response.parsed_body).to not_include(CGI.escape_html(users[2].name))
-            expect(response.parsed_body).to not_include(CGI.escape_html(users[3].name))
+            expect(response).to have_html_body.not_to have_text(users[0].name)
+            expect(response).to have_html_body.to     have_text(users[1].name)
+            expect(response).to have_html_body.not_to have_text(users[2].name)
+            expect(response).to have_html_body.not_to have_text(users[3].name)
           end
         end
       end
@@ -101,7 +101,7 @@ RSpec.describe "Admin::Offices::UsersController#index" do
 
         it { expect(response).to have_http_status(:gone) }
         it { expect(response).to have_content_type(:html) }
-        it { expect(response).to have_html_body.to include("Ce guichet est en cours de suppression.") }
+        it { expect(response).to have_html_body.to have_text("Ce guichet est en cours de suppression.") }
       end
 
       context "when the DDFIP is discarded" do
@@ -109,7 +109,7 @@ RSpec.describe "Admin::Offices::UsersController#index" do
 
         it { expect(response).to have_http_status(:gone) }
         it { expect(response).to have_content_type(:html) }
-        it { expect(response).to have_html_body.to include("La DDFIP de ce guichet est en cours de suppression.") }
+        it { expect(response).to have_html_body.to have_text("La DDFIP de ce guichet est en cours de suppression.") }
       end
 
       context "when the office is missing" do
@@ -117,7 +117,7 @@ RSpec.describe "Admin::Offices::UsersController#index" do
 
         it { expect(response).to have_http_status(:not_found) }
         it { expect(response).to have_content_type(:html) }
-        it { expect(response).to have_html_body.to include("Ce guichet n'a pas été trouvé ou n'existe plus.") }
+        it { expect(response).to have_html_body.to have_text("Ce guichet n'a pas été trouvé ou n'existe plus.") }
       end
     end
 

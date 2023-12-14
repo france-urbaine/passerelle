@@ -47,7 +47,7 @@ RSpec.describe "Territories::CommunesController#index" do
 
       it { expect(response).to have_http_status(:success) }
       it { expect(response).to have_content_type(:html) }
-      it { expect(response).to have_partial_html.to match(%r{\A<li.*>Bayonne</li>\Z}) }
+      it { expect(response).to have_html_body.to have_selector("li", text: "Bayonne") }
     end
   end
 end

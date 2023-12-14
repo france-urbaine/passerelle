@@ -45,9 +45,9 @@ RSpec.describe "Admin::DDFIPsController#index" do
 
       it "returns only kept users" do
         aggregate_failures do
-          expect(response.parsed_body).to     include(CGI.escape_html(ddfips[0].name))
-          expect(response.parsed_body).not_to include(CGI.escape_html(ddfips[1].name))
-          expect(response.parsed_body).to     include(CGI.escape_html(ddfips[2].name))
+          expect(response).to have_html_body.to     have_text(ddfips[0].name)
+          expect(response).to have_html_body.not_to have_text(ddfips[1].name)
+          expect(response).to have_html_body.to     have_text(ddfips[2].name)
         end
       end
     end
@@ -63,7 +63,7 @@ RSpec.describe "Admin::DDFIPsController#index" do
 
       it { expect(response).to have_http_status(:success) }
       it { expect(response).to have_content_type(:html) }
-      it { expect(response).to have_partial_html.to match(%r{\A<li.*>#{CGI.escape_html(ddfips[0].name)}</li>\Z}) }
+      it { expect(response).to have_html_body.to have_selector("li", text: ddfips[0].name) }
     end
   end
 end

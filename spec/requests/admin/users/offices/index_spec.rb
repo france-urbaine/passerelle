@@ -66,7 +66,7 @@ RSpec.describe "Admin::Users::OfficesController#index" do
     context "with ddfip_id params" do
       it { expect(response).to have_http_status(:success) }
       it { expect(response).to have_content_type(:html) }
-      it { expect(response).to have_partial_html.with_turbo_frame("user_offices_checkboxes") }
+      it { expect(response).to have_html_body.with_turbo_frame("user_offices_checkboxes") }
     end
 
     context "with ddfip_id and pre-check offices params" do
@@ -79,7 +79,7 @@ RSpec.describe "Admin::Users::OfficesController#index" do
 
       it { expect(response).to have_http_status(:success) }
       it { expect(response).to have_content_type(:html) }
-      it { expect(response).to have_partial_html.with_turbo_frame("user_offices_checkboxes") }
+      it { expect(response).to have_html_body.with_turbo_frame("user_offices_checkboxes") }
     end
 
     context "with ddfip_id and user_id params" do
@@ -92,7 +92,7 @@ RSpec.describe "Admin::Users::OfficesController#index" do
 
       it { expect(response).to have_http_status(:success) }
       it { expect(response).to have_content_type(:html) }
-      it { expect(response).to have_partial_html.with_turbo_frame("user_offices_checkboxes") }
+      it { expect(response).to have_html_body.with_turbo_frame("user_offices_checkboxes") }
     end
   end
 end

@@ -76,10 +76,10 @@ RSpec.describe "Admin::DGFIPs::UsersController#index" do
 
         it "returns only kept members of the organization" do
           aggregate_failures do
-            expect(response.parsed_body).to not_include(CGI.escape_html(users[0].name))
-            expect(response.parsed_body).to not_include(CGI.escape_html(users[1].name))
-            expect(response.parsed_body).to not_include(CGI.escape_html(users[2].name))
-            expect(response.parsed_body).to include(CGI.escape_html(users[3].name))
+            expect(response).to have_html_body.not_to have_text(users[0].name)
+            expect(response).to have_html_body.not_to have_text(users[1].name)
+            expect(response).to have_html_body.not_to have_text(users[2].name)
+            expect(response).to have_html_body.to     have_text(users[3].name)
           end
         end
       end

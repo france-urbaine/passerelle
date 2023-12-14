@@ -49,10 +49,10 @@ RSpec.describe "Organization::CollectivitiesController#index" do
 
       it "returns only kept collectivities" do
         aggregate_failures do
-          expect(response.parsed_body).to     include(CGI.escape_html(collectivities[0].name))
-          expect(response.parsed_body).not_to include(CGI.escape_html(collectivities[1].name))
-          expect(response.parsed_body).to     include(CGI.escape_html(collectivities[2].name))
-          expect(response.parsed_body).not_to include(CGI.escape_html(collectivities[3].name))
+          expect(response).to have_html_body.to     have_text(collectivities[0].name)
+          expect(response).to have_html_body.not_to have_text(collectivities[1].name)
+          expect(response).to have_html_body.to     have_text(collectivities[2].name)
+          expect(response).to have_html_body.not_to have_text(collectivities[3].name)
         end
       end
     end

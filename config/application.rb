@@ -14,6 +14,14 @@ module Passerelle
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.0
 
+    # Please, add to the `ignore` list any other `lib` subdirectories that do
+    # not contain `.rb` files, or that should not be reloaded or eager loaded.
+    # Common ones are `templates`, `generators`, or `middleware`, for example.
+    config.autoload_lib(ignore: %w[assets tasks guard])
+
+    # Autoload extra classes defined in lib/extras
+    config.autoload_paths << "#{root}/lib/extras"
+
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files
@@ -23,8 +31,11 @@ module Passerelle
     # config.eager_load_paths << Rails.root.join("extras")
 
     # Avoid generating useless files with controllers
-    config.generators.helper = false
-    config.generators.assets = false
+    config.generators do |g|
+      g.helper = false
+      g.assets = false
+      g.orm :active_record, primary_key_type: :uuid
+    end
 
     # Default (and only) locale
     config.i18n.default_locale = :fr
@@ -35,9 +46,6 @@ module Passerelle
 
     # Routes exceptions tp ApplicationController via config/routes
     config.exceptions_app = routes
-
-    # Autoload extra classes defined in lib/extra
-    config.autoload_paths << "#{root}/lib/extras"
 
     # Use a real queuing backend for Active Job
     config.active_job.queue_adapter = :sidekiq

@@ -77,7 +77,6 @@ RSpec.configure do |config|
   # config.filter_gems_from_backtrace("gem name")
 
   config.include FactoryBot::Syntax::Methods
-  config.include Matchers::BeANullRelation
   config.include Matchers::Invoke
   config.include Matchers::HaveBody
   config.include Matchers::HaveContentType
@@ -87,9 +86,9 @@ RSpec.configure do |config|
   config.include Matchers::HaveHTMLAttribute, type: :component
   config.include Matchers::HaveHTMLAttribute, type: :helper
   config.include Matchers::RenderPreviewWithoutException, type: :component
-
-  config.include ViewComponent::TestHelpers, type: :component
+  config.include Capybara::RSpecMatchers, type: :request
   config.include Capybara::RSpecMatchers, type: :component
+  config.include ViewComponent::TestHelpers, type: :component
   config.include ActionView::Helpers::TagHelper, type: :component
   config.include ActiveJob::TestHelper
 
@@ -170,3 +169,8 @@ RSpec::Matchers.define_negated_matcher :not_send_message,      :send_message
 RSpec::Matchers.define_negated_matcher :not_have_enqueued_job, :have_enqueued_job
 RSpec::Matchers.define_negated_matcher :not_redirect_to,       :redirect_to
 RSpec::Matchers.define_negated_matcher :be_unroutable,         :be_routable
+
+# FIXME: https://github.com/rails/rails/issues/50345
+ActionDispatch::IntegrationTest.register_encoder :html,
+  response_parser: ->(body) { Rails::Dom::Testing.html_document.parse(body) },
+  param_encoder: ->(params) { params }

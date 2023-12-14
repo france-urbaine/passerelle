@@ -38,7 +38,7 @@ RSpec.describe "TransmissionsController#show" do
       context "when the transmission doesn't have any reports" do
         it { expect(response).to have_http_status(:success) }
         it { expect(response).to have_content_type(:html) }
-        it { expect(response).to have_html_body.to include("Vous n'avez aucun signalement en attente de transmission.") }
+        it { expect(response).to have_html_body.to have_text("Vous n'avez aucun signalement en attente de transmission.") }
       end
 
       context "when the transmission has only one report" do
@@ -46,7 +46,7 @@ RSpec.describe "TransmissionsController#show" do
 
         it { expect(response).to have_http_status(:success) }
         it { expect(response).to have_content_type(:html) }
-        it { expect(response).to have_html_body.to include("Vous avez <b>1 signalement</b> en attente de transmission.") }
+        it { expect(response).to have_html_body.to have_text("Vous avez 1 signalement en attente de transmission.") }
       end
 
       context "when the transmission has multiple reports" do
@@ -54,7 +54,7 @@ RSpec.describe "TransmissionsController#show" do
 
         it { expect(response).to have_http_status(:success) }
         it { expect(response).to have_content_type(:html) }
-        it { expect(response).to have_html_body.to include("Vous avez <b>2 signalements</b> en attente de transmission.") }
+        it { expect(response).to have_html_body.to have_text("Vous avez 2 signalements en attente de transmission.") }
       end
     end
   end

@@ -48,7 +48,7 @@ RSpec.describe "Territories::Communes::Arrondissements#index" do
 
         it "includes arrondissements" do
           aggregate_failures do
-            expect(response.parsed_body).to include(CGI.escape_html(arrondissement.name))
+            expect(response).to have_html_body.to have_text(arrondissement.name)
           end
         end
       end

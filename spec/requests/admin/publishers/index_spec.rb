@@ -45,9 +45,9 @@ RSpec.describe "Admin::PublishersController#index" do
 
       it "returns only kept publishers" do
         aggregate_failures do
-          expect(response.parsed_body).to     include(CGI.escape_html(publishers[0].name))
-          expect(response.parsed_body).not_to include(CGI.escape_html(publishers[1].name))
-          expect(response.parsed_body).to     include(CGI.escape_html(publishers[2].name))
+          expect(response).to have_html_body.to     have_text(publishers[0].name)
+          expect(response).to have_html_body.not_to have_text(publishers[1].name)
+          expect(response).to have_html_body.to     have_text(publishers[2].name)
         end
       end
     end

@@ -52,8 +52,8 @@ RSpec.describe "Territories::Departements::EPCIs#index" do
 
         it "includes kept epcis" do
           aggregate_failures do
-            expect(response.parsed_body).to     include(CGI.escape_html(epcis[0].name))
-            expect(response.parsed_body).not_to include(CGI.escape_html(epcis[1].name))
+            expect(response).to have_html_body.to     have_text(epcis[0].name)
+            expect(response).to have_html_body.not_to have_text(epcis[1].name)
           end
         end
       end

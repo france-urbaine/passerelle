@@ -46,7 +46,7 @@ RSpec.describe "Territories::EpcisController#index" do
 
       it { expect(response).to have_http_status(:success) }
       it { expect(response).to have_content_type(:html) }
-      it { expect(response).to have_partial_html.to match(%r{\A<li.*>CA du Pays Basque</li>\Z}) }
+      it { expect(response).to have_html_body.to have_selector("li", text: "CA du Pays Basque") }
     end
   end
 end

@@ -45,9 +45,9 @@ RSpec.describe "Admin::UsersController#index" do
 
       it "returns only kept users" do
         aggregate_failures do
-          expect(response.parsed_body).to     include(CGI.escape_html(users[0].name))
-          expect(response.parsed_body).not_to include(CGI.escape_html(users[1].name))
-          expect(response.parsed_body).to     include(CGI.escape_html(users[2].name))
+          expect(response).to have_html_body.to     have_text(users[0].name)
+          expect(response).to have_html_body.not_to have_text(users[1].name)
+          expect(response).to have_html_body.to     have_text(users[2].name)
         end
       end
     end
