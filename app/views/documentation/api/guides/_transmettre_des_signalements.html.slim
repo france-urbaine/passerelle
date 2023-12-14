@@ -220,12 +220,12 @@
         ' Une fois les signalement créés, vous pouvez
         ' #{link_to("finaliser la transmission", apipie_apipie_path(version: "1.0", resource: :transmissions, method: :complete))}.
         br
-        ' En retour, vous recevez une liste de reférences des paquets transmis ainsi que les références assignés à chaque signalement.
+        ' Lors de la finalisation :
+      ul
+        li un paquet est créé et transmis à chaque DDFIP destinataire
+        li un numéro de reférence unique est attribué à chaque signalement
 
-      p
-        strong
-          ' Attention ! Suite à un changement de politique relative à la transmission des paquets,
-          ' le contenu de cette réponse est amené à être changé prochainement.
+      p Vous pourrez récupérer, assigner et utiliser ces numéros de reférence dans les échanges futurs avec la DDFIP.
 
       ruby:
         example = UI::CodeRequestExampleComponent.new(
@@ -233,6 +233,9 @@
           complete_api_transmission_path("$TRANSMISSION_ID"),
           json: true,
           authorization: true,
+          interpolations: {
+            "TRANSMISSION_ID" => "7fdfbcee-0afc-44e2-b8e9-bbd359b59958"
+          },
           response: {
             body: {
               transmission: {
@@ -246,14 +249,17 @@
                       {
                         id:        "a436744c-8c2b-44d7-a590-a5a0f0ced51d",
                         reference: "2023-11-0001-00001"
+                      },
+                      {
+                        id:        "18d7eccc-ef46-448a-a5b3-2d8d63c6b9f2",
+                        reference: "2023-11-0001-00002"
                       }
                     ]
                   }
                 ]
               }
             }
-          },
-          interpolations: {
-            "TRANSMISSION_ID" => "7fdfbcee-0afc-44e2-b8e9-bbd359b59958"
           }
         )
+
+      = render example
