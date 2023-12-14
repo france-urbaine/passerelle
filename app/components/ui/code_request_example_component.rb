@@ -38,6 +38,26 @@ module UI
       @interpolations["CONTENT_LENGTH"] ||= DEFAULT_CONTENT_LENGTH
     end
 
+    def curl_command(indent: 0, options: [])
+      options = command_options(options)
+
+      command = []
+      command << "curl #{options} -X #{@verb} #{url}".squish
+
+      curl_headers.sort_by(&:first).each do |(key, value)|
+        command << "  -H \"#{key}: #{value}\""
+      end
+
+      command << "  -d '#{request_body}'" if @request_body.present?
+      command << "  --data-binary @#{@request_file}" if @request_file.present?
+
+      command.map! do |line|
+        (" " * indent) + line
+      end
+
+      sanitize(command.join(" \\\n"))
+    end
+
     def curl_headers
       headers = @request_headers.dup
 
@@ -54,10 +74,40 @@ module UI
       headers
     end
 
+    def httpie_command(indent: 0, options: %w[v])
+      options << "j" if @json
+      options = command_options(options)
+
+      command = []
+      command << "http #{options} #{@verb} #{url}".squish
+
+      httpie_headers.sort_by(&:first).each do |(key, value)|
+        command << "  #{key}:\"#{value}\""
+      end
+
+      command << "  --raw='#{request_body}'" if @request_body.present?
+      command << "  @#{@request_file}" if @request_file.present?
+
+      command.map! do |line|
+        (" " * indent) + line
+      end
+
+      sanitize(command.join(" \\\n"))
+    end
+
     def httpie_headers
       headers = @request_headers.dup
       headers["Accept"] ||= "application/json" if @json
       headers
+    end
+
+    def command_options(options)
+      single_letters = options.select { |o| o.size == 1 }.sort
+
+      output = []
+      output += (options - single_letters).map { |o| "--#{o}" }
+      output << "-#{single_letters.join}" if single_letters.any?
+      output.join(" ")
     end
 
     def request_headers_output

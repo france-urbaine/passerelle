@@ -1,39 +1,12 @@
 .code-request-example
   = tabs_component do |tabs|
     - tabs.with_tab("cURL") do
-      = code_example_component(:shell, copyable: true) do
-        | $ curl -X #{@verb} #{url}
-
-        - curl_headers.sort_by(&:first).each do |(key, value)|
-          = " \\\n"
-          |     -H "#{key}: #{value}"
-
-        - if @request_body.present?
-          = " \\\n"
-          |     -d '#{request_body}'
-
-        - if @request_file.present?
-          = " \\\n"
-          |     --data-binary @#{@request_file}
+      = code_example_component(:command, copyable: true) do
+        = curl_command
 
     - tabs.with_tab("httpie") do
-      = code_example_component(:shell, copyable: true) do
-        - if @json
-          | $ http -jv #{@verb} #{url}
-        - else
-          | $ http -v #{@verb} #{url}
-
-        - httpie_headers.sort_by(&:first).each do |(key, value)|
-          = " \\\n"
-          |     #{key}:"#{value}"
-
-        - if @request_body.present?
-          = " \\\n"
-          |     --raw='#{request_body}'
-
-        - if @request_file.present?
-          = " \\\n"
-          |     @#{@request_file}
+      = code_example_component(:command, copyable: true) do
+        = httpie_command
 
   = code_example_component do |code|
     - code.with_language(:http) do

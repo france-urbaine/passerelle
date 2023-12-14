@@ -4,7 +4,7 @@ require "rails_helper"
 
 RSpec.describe UI::CodeRequestExampleComponent, type: :component do
   it "renders tabs with multiple commands" do
-    render_inline described_class.new("GET", "/path")
+    render_inline described_class.new("GET", "http://api.test.host/path")
 
     expect(page).to have_selector(".tabs > .tabs__nav") do |nav|
       expect(nav).to have_button("cURL")
@@ -14,12 +14,12 @@ RSpec.describe UI::CodeRequestExampleComponent, type: :component do
 
   context "without optional arguments" do
     before do
-      render_inline described_class.new("GET", "/path")
+      render_inline described_class.new("GET", "http://api.test.host/path")
     end
 
     it "renders the correct cURL command" do
       expect(page).to have_selector(".tabs > #curl-panel > pre") do |pre|
-        expect(pre).to have_selector("span.code") do |span|
+        expect(pre).to have_selector("span.code-example__block > span") do |span|
           expect(span).to have_html_attribute("data-highlight-language-value").with_value("shell")
           expect(span).to have_text(<<~TEXT.strip, exact: true)
             $ curl -X GET http://api.test.host/path
@@ -30,7 +30,7 @@ RSpec.describe UI::CodeRequestExampleComponent, type: :component do
 
     it "renders the correct httpie command" do
       expect(page).to have_selector(".tabs > #httpie-panel > pre", visible: :hidden) do |pre|
-        expect(pre).to have_selector("span.code", visible: :hidden) do |span|
+        expect(pre).to have_selector("span.code-example__block > span", visible: :hidden) do |span|
           expect(span).to have_html_attribute("data-highlight-language-value").with_value("shell")
           expect(span).to have_text(<<~TEXT.strip, exact: true)
             $ http -v GET http://api.test.host/path
@@ -56,7 +56,7 @@ RSpec.describe UI::CodeRequestExampleComponent, type: :component do
 
     it "renders the correct cURL command" do
       expect(page).to have_selector(".tabs > #curl-panel > pre") do |pre|
-        expect(pre).to have_selector("span.code") do |span|
+        expect(pre).to have_selector("span.code-example__block > span") do |span|
           expect(span).to have_html_attribute("data-highlight-language-value").with_value("shell")
           expect(span).to have_text(<<~TEXT.strip, exact: true)
             $ curl -X PUT https://storage.passerelle-fiscale.fr/some/path
@@ -67,7 +67,7 @@ RSpec.describe UI::CodeRequestExampleComponent, type: :component do
 
     it "renders the correct httpie command" do
       expect(page).to have_selector(".tabs > #httpie-panel > pre", visible: :hidden) do |pre|
-        expect(pre).to have_selector("span.code", visible: :hidden) do |span|
+        expect(pre).to have_selector("span.code-example__block > span", visible: :hidden) do |span|
           expect(span).to have_html_attribute("data-highlight-language-value").with_value("shell")
           expect(span).to have_text(<<~TEXT.strip, exact: true)
             $ http -v PUT https://storage.passerelle-fiscale.fr/some/path
@@ -89,7 +89,7 @@ RSpec.describe UI::CodeRequestExampleComponent, type: :component do
   context "with custom headers" do
     before do
       render_inline described_class.new(
-        "GET", "/path",
+        "GET", "http://api.test.host/path",
         request: {
           headers: {
             "Accept"        => "application/json",
@@ -136,7 +136,7 @@ RSpec.describe UI::CodeRequestExampleComponent, type: :component do
 
   context "with authorization header" do
     before do
-      render_inline described_class.new("GET", "/path", authorization: true)
+      render_inline described_class.new("GET", "http://api.test.host/path", authorization: true)
     end
 
     it "renders the correct cURL command" do
@@ -166,7 +166,7 @@ RSpec.describe UI::CodeRequestExampleComponent, type: :component do
 
   context "with JSON headers" do
     before do
-      render_inline described_class.new("GET", "/path", json: true)
+      render_inline described_class.new("GET", "http://api.test.host/path", json: true)
     end
 
     it "renders the correct cURL command" do
@@ -195,7 +195,7 @@ RSpec.describe UI::CodeRequestExampleComponent, type: :component do
   context "with JSON bodies" do
     before do
       render_inline described_class.new(
-        "GET", "/path",
+        "GET", "http://api.test.host/path",
         json: true,
         request: {
           body: {
@@ -261,7 +261,7 @@ RSpec.describe UI::CodeRequestExampleComponent, type: :component do
   context "with file upload" do
     before do
       render_inline described_class.new(
-        "PUT", "/path",
+        "PUT", "http://api.test.host/path",
         request: {
           file: "relative/path/to/file.pdf"
         },
@@ -306,7 +306,7 @@ RSpec.describe UI::CodeRequestExampleComponent, type: :component do
   context "with file download" do
     before do
       render_inline described_class.new(
-        "GET", "/path",
+        "GET", "http://api.test.host/path",
         response: {
           file: "relative/path/to/file.pdf"
         }
@@ -344,7 +344,7 @@ RSpec.describe UI::CodeRequestExampleComponent, type: :component do
   context "with variable interpolations" do
     before do
       render_inline described_class.new(
-        "GET", "/path/$VARIABLE/path",
+        "GET", "http://api.test.host/path/$VARIABLE/path",
         authorization: true,
         request: {
           headers: {
