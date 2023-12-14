@@ -43,6 +43,11 @@ html( lang="fr" )
       / '  |
       / a( disabled ) Protection des données
       / '  |
+
+      - if Passerelle::Application::VERSION.present?
+        = link_to Passerelle::Application::VERSION, "https://github.com/france-urbaine/passerelle/releases", target: :blank
+        '  |
+
       = link_to "Code source", "https://github.com/france-urbaine/passerelle", target: :blank
       '  |
       = link_to "Documentation API", api_root_url
