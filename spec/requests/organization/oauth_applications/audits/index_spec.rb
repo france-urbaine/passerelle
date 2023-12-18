@@ -20,9 +20,10 @@ RSpec.describe "Organization::OauthApplications::AuditsController#index" do
 
     it_behaves_like "it denies access to DDFIP user"
     it_behaves_like "it denies access to DDFIP admin"
+    it_behaves_like "it denies access to DDFIP super admin"
     it_behaves_like "it denies access to collectivity user"
     it_behaves_like "it denies access to collectivity admin"
-    it_behaves_like "it denies access to super admin"
+    it_behaves_like "it denies access to collectivity super admin"
 
     it_behaves_like "it responds with not found to publisher user"
     it_behaves_like "it responds with not found to publisher admin"
