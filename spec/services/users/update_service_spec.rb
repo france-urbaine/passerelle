@@ -7,12 +7,10 @@ RSpec.describe Users::UpdateService do
     described_class.new(user, attributes)
   end
 
-  let!(:user) { create(:user) }
+  let!(:user) { create(:user, first_name: "Guillaume", last_name: "Debailly") }
+
   let!(:attributes) do
-    {
-      first_name: Faker::Name.first_name,
-      last_name:  Faker::Name.last_name
-    }
+    { first_name: "Paul", last_name: "Lefebvre" }
   end
 
   let(:other_organization) do
