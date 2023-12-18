@@ -27,7 +27,7 @@ module API
         La pièce jointe sera associée au signalement après avoir été téléchargée sur notre serveur distant.
       DESC
 
-      param :blob, Hash, "Attributs relatifs au fichier" do
+      param :file, Hash, "Attributs relatifs au fichier" do
         param :filename,     String,  "Nom du fichier",                      required: true
         param :byte_size,    Integer, "Taille du fichier (en octets)",       required: true
         param :checksum,     String,  "Checksum du fichier (MD5 en base64)", required: true
@@ -37,7 +37,7 @@ module API
       param :documents, String, "Signed ID du document", required: true
 
       returns code: 200, desc: "Autorisation de téléchargement" do
-        property :attachment, Hash do
+        property :document, Hash do
           property :id, String, "UUID de la pièce jointe"
         end
         property :direct_upload, Hash do
@@ -50,7 +50,7 @@ module API
         @report = find_and_authorize_report
 
         blob_args = params
-          .require(:blob)
+          .require(:file)
           .permit(:filename, :byte_size, :checksum, :content_type, metadata: {})
           .to_h
           .symbolize_keys
@@ -63,10 +63,10 @@ module API
           blob_id:     blob.id
         )
 
-        #  render json: blob.as_json(root: false, methods: :signed_id).merge(direct_upload: {
-
         render json: {
-          attachment:    { id: attachment.id },
+          document:    {
+            id: attachment.id
+          },
           direct_upload: {
             url:     blob.service_url_for_direct_upload,
             headers: blob.service_headers_for_direct_upload

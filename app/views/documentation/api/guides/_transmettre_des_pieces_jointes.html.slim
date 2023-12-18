@@ -37,16 +37,16 @@
       table
         tbody
           tr
-            th <code>blob[filename]</code>
+            th <code>file[filename]</code>
             td Le nom du fichier
           tr
-            th <code>blob[byte_size]</code>
+            th <code>file[byte_size]</code>
             td La taille du fichier en octets
           tr
-            th <code>blob[checksum]</code>
+            th <code>file[checksum]</code>
             td Une signature du fichier au format MD5, encodée en base64
           tr
-            th <code>blob[content_type]</code>
+            th <code>file[content_type]</code>
             td Le type MIME du fichier
 
       p
@@ -65,7 +65,7 @@
           authorization: true,
           request: {
             body: {
-              blob: {
+              file: {
                 filename:     "'$FILENAME'",
                 byte_size:    "'$BYTESIZE'",
                 checksum:     "'$CHECKSUM'",
@@ -77,7 +77,7 @@
             code:    200,
             headers: {},
             body: {
-              attachment: {
+              document: {
                 id: "255dd254-7713-405a-9097-ca4e0424a536"
               },
               direct_upload:   {
