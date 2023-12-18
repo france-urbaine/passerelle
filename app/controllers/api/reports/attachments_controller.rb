@@ -3,6 +3,8 @@
 module API
   module Reports
     class AttachmentsController < ApplicationController
+      include ActiveStorage::SetCurrent
+
       resource_description do
         name "Pièces Jointes"
         formats ["json"]
@@ -35,13 +37,9 @@ module API
       param :documents, String, "Signed ID du document", required: true
 
       returns code: 200, desc: "Autorisation de téléchargement" do
-        property :id, String, "UUID du fichier"
-        property :filename, String, "Nom du fichier"
-        property :content_type, String, "Type du fichier"
-        property :byte_size, Integer, "Taille du fichier"
-        property :checksum, String, "Checksum du fichier"
-        property :created_at, String, "Date de création du fichier"
-        property :signed_id, String, "ID signé du fichier"
+        property :attachment, Hash do
+          property :id, String, "UUID de la pièce jointe"
+        end
         property :direct_upload, Hash do
           property :url,     String, "URL de téléchargement"
           property :headers, Hash,   "En-têtes de téléchargement"
@@ -57,22 +55,23 @@ module API
           .to_h
           .symbolize_keys
 
-        # NOTE : preventing 'FileNotFound' issue when attaching blob to report
-        @tempfile = Tempfile.new(blob_args[:filename])
-
-        blob = ActiveStorage::Blob.create_and_upload!(
-          filename: blob_args[:filename],
-          io: File.open(@tempfile.path)
+        blob = ActiveStorage::Blob.create_before_direct_upload!(**blob_args)
+        attachment = ActiveStorage::Attachment.create(
+          name:        "documents",
+          record_type: @report.class.name,
+          record_id:   @report.id,
+          blob_id:     blob.id
         )
 
-        @report.documents.attach(blob.signed_id)
+        #  render json: blob.as_json(root: false, methods: :signed_id).merge(direct_upload: {
 
-        render json: blob.as_json(root: false, methods: :signed_id).merge(direct_upload: {
-          url: blob.service_url_for_direct_upload,
-          headers: blob.service_headers_for_direct_upload
-        })
-      ensure
-        @tempfile&.unlink
+        render json: {
+          attachment:    { id: attachment.id },
+          direct_upload: {
+            url:     blob.service_url_for_direct_upload,
+            headers: blob.service_headers_for_direct_upload
+          }
+        }
       end
 
       def destroy

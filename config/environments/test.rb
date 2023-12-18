@@ -74,6 +74,4 @@ Rails.application.configure do
 
   # Parse HTML as HTML5 when using parsed_body
   config.dom_testing_default_html_version = :html5
-
-  routes.default_url_options[:host] = "localhost:3000"
 end
