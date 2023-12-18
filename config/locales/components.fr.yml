@@ -63,6 +63,9 @@ fr:
           oauth_access_token:
             create:                         "Création d'un jeton d'accès via l'API <b>%{application}</b>"
 
+          transmission:
+            create:                         "Initialisation d'une transmission via l'API <b>%{application}</b>"
+
           user:
             change_organization:            "Changement d'organisation réalisé par <b>%{username}</b>"
             change_organization_and_update: "Changement d'organisation et mise à jour réalisés par <b>%{username}</b>"

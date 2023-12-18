@@ -10,7 +10,7 @@ module Organization
       relation_scope do |relation|
         return relation.none unless publisher?
 
-        relation.where(publisher: organization)
+        relation.where(oauth_application_id: organization.oauth_application_ids)
       end
     end
   end
