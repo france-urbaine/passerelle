@@ -4,13 +4,36 @@ export default class extends Controller {
   static targets = ["tab", "panel"]
 
   connect() {
-    console.log(this.tabTargets)
-    console.log(this.panelTargets)
+    this.boundSync = this.sync.bind(this)
+    document.addEventListener("tabs:sync", this.boundSync)
+  }
+
+  disconnect() {
+    document.removeEventListener("tabs:sync", this.boundFindFoo)
   }
 
   select(event) {
     const id = event.params.id
+    const sync = event.params.sync
 
+    this.activate(id)
+    if (sync) this.dispatch("sync", { detail: { syncWith: sync } })
+  }
+
+  sync ({ detail: { syncWith } }) {
+    this.tabTargets.some((tab) => {
+      if (tab.getAttribute("data-tabs-sync-param") == syncWith) {
+        const id = tab.getAttribute("data-tabs-id-param")
+        this.activate(id)
+
+        return true
+      } else {
+        return false
+      }
+    })
+  }
+
+  activate (id) {
     this.tabTargets.forEach((tab) => {
       if (tab.id == id) {
         tab.classList.add("tabs__tab--current")

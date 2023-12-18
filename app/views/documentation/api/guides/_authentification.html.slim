@@ -36,18 +36,17 @@
         br
         ' Cela évite d'exposer ces identifiants dans du code ou dans votre historique de commandes.
 
-      = code_example_component(:shell, copyable: true) do
-        | $ echo "Please enter your client ID:" && \
-              read CLIENT_ID && \
-              echo "Please enter your client secret:" && \
-              read CLIENT_SECRET
+      = code_example_component(:command, copyable: true) do
+        | echo "Please enter your client ID:" && \
+            read CLIENT_ID && \
+            echo "Please enter your client secret:" && \
+            read CLIENT_SECRET
 
       p
         ' Une fois les identifiants enregistrés dans des variables, vous pouvez obtenir un Access Token :
 
       ruby:
-        example = UI::CodeRequestExampleComponent.new(
-          "POST", "/oauth/token",
+        example = UI::CodeRequestExampleComponent.new "POST", oauth_token_url,
           json: true,
           request: {
             body: {
@@ -64,7 +63,6 @@
               token_type:   "Bearer"
             }
           }
-        )
 
       = render example
 
@@ -73,24 +71,19 @@
         ' nous vous conseillons de l'assigner à une variable :
 
       = tabs_component do |tabs|
-        - tabs.with_tab("cURL + jq") do
-          = code_example_component(:shell, copyable: true) do
-            | $ ACCESS_TOKEN=$( \
-                  curl --fail -X POST #{oauth_token_url} \
-                    -H "Accept: application/json" \
-                    -H "Content-Type: application/json" \
-                    -d '{"grant_type":"client_credentials","client_id":"'$CLIENT_ID'","client_secret":"'$CLIENT_SECRET'"}' \
-                  | jq -r .access_token
-                ) && echo $ACCESS_TOKEN
+        - tabs.with_tab("cURL + jq", sync_all: "curl") do
+          = code_example_component(:command, copyable: true) do
+            | ACCESS_TOKEN=$( \
+              #{example.curl_command(indent: 2, options: %w[fail])} \
+                | jq -r .access_token
+              ) && echo $ACCESS_TOKEN
 
-        - tabs.with_tab("httpie + jq") do
-          = code_example_component(:shell, copyable: true) do
-            | $ ACCESS_TOKEN=$( \
-                  http --check-status --json POST #{oauth_token_url} \
-                    Accept:"application/json" \
-                    --raw='{"grant_type":"client_credentials","client_id":"'$CLIENT_ID'","client_secret":"'$CLIENT_SECRET'"}' \
-                  | jq -r .access_token
-                ) && echo $ACCESS_TOKEN
+        - tabs.with_tab("httpie + jq", sync_all: "httpie") do
+          = code_example_component(:command, copyable: true) do
+            | ACCESS_TOKEN=$( \
+              #{example.httpie_command(indent: 2, options: %w[check-status b])} \
+                | jq -r .access_token
+              ) && echo $ACCESS_TOKEN
 
   - layout.with_header icon: "code-bracket-square" do
     | Exemple d'utilisation de l'Access Token
@@ -102,8 +95,7 @@
         ' de requête présents dans cette documentation :
 
       ruby:
-        example = UI::CodeRequestExampleComponent.new(
-          "GET", "/collectivites",
+        example = UI::CodeRequestExampleComponent.new "GET", api_collectivities_url,
           json:          true,
           authorization: true,
           response: {
@@ -122,6 +114,5 @@
               ]
             }
           }
-        )
 
       = render example

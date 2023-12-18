@@ -8,11 +8,19 @@
     @apply dark:text-slate-200 dark:bg-slate-800 dark:border-slate-700;
   }
 
+  .code-example__block {
+    display: inline-block;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+  }
+
   .code-example__copy-button[disabled],
   .code-example__copy-button:not([disabled]) {
     /* [disabled] must be set to override position set by icon-button */
     position: absolute;
+    z-index: 2;
 
-    @apply top-2 right-2;
+    @apply -top-2 -right-2;
   }
 }

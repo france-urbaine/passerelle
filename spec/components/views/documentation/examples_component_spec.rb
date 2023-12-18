@@ -41,7 +41,7 @@ RSpec.describe Views::Documentation::ExamplesComponent, type: :component do
   it "renders curl example" do
     render_inline described_class.new("resources", "index")
 
-    expect(page).to have_selector(".tabs__panel[aria-labelledby='curl'] > pre", text: <<~TEXT.strip)
+    expect(page).to have_selector(".tabs__panel[aria-labelledby$='-curl'] > pre", text: <<~TEXT.strip)
       $ curl -X GET http://api.test.host/articles \\
           -H "Accept: application/json" \\
           -H "Authorization: Bearer $ACCESS_TOKEN" \\
@@ -53,7 +53,7 @@ RSpec.describe Views::Documentation::ExamplesComponent, type: :component do
   it "renders httpie example in a hidden tab panel" do
     render_inline described_class.new("resources", "index")
 
-    expect(page).to have_selector(".tabs__panel[aria-labelledby='httpie'] > pre", text: <<~TEXT.strip, visible: :hidden)
+    expect(page).to have_selector(".tabs__panel[aria-labelledby$='-httpie'] > pre", text: <<~TEXT.strip, visible: :hidden)
       $ http -jv GET http://api.test.host/articles \\
           Accept:"application/json" \\
           Authorization:"Bearer $ACCESS_TOKEN" \\

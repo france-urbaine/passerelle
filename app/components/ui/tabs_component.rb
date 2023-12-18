@@ -7,16 +7,22 @@ module UI
     renders_many :tabs, "Tab"
 
     def before_render
+      tabs.each { _1.random_id = random_id }
       tabs.first&.selected = true unless tabs.any?(&:selected)
       tabs.each(&:to_s)
     end
 
-    class Tab < ApplicationViewComponent
-      attr_accessor :selected
+    def random_id
+      @random_id ||= SecureRandom.alphanumeric(6)
+    end
 
-      def initialize(title, selected: false, **options)
+    class Tab < ApplicationViewComponent
+      attr_accessor :selected, :random_id
+
+      def initialize(title, selected: false, sync_all: nil, **options)
         @title    = title
         @selected = selected
+        @sync_all = sync_all
         @options  = options
         super()
       end
@@ -26,7 +32,6 @@ module UI
           id:       "#{tab_id}-panel",
           class:    "tabs__panel",
           role:     "tabpanel",
-          tabindex: 0,
           hidden:   !@selected,
           aria:     { labelledby: tab_id },
           data:     { tabs_target: "panel" }
@@ -46,15 +51,18 @@ module UI
             selected: @selected
           },
           data: {
-            action:        "click->tabs#select:prevent",
-            tabs_target:   "tab",
-            tabs_id_param: tab_id
+            action:          "click->tabs#select:prevent",
+            tabs_target:     "tab",
+            tabs_id_param:   tab_id,
+            tabs_sync_param: @sync_all
           }
         )
       end
 
       def tab_id
-        @tab_id ||= @options.fetch(:id) { @title.parameterize }
+        @tab_id ||= @options.fetch(:id) do
+          [random_id, @title.parameterize].join("-")
+        end
       end
     end
   end

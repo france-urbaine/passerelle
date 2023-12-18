@@ -6,9 +6,9 @@ module UI
 
     renders_many :languages, "Language"
 
-    def initialize(language = nil, **options)
+    def initialize(language = nil, copyable: false)
       @language = language
-      @copyable = options[:copyable]
+      @copyable = copyable
       super()
     end
 
@@ -23,12 +23,8 @@ module UI
     end
 
     def copyable_content
-      return nil unless copyable?
-
       if languages?
         languages.map(&:copyable_content).join("\n\n")
-      elsif @language == :shell
-        self.class.filter_command_prompt(content)
       else
         content
       end
@@ -49,18 +45,45 @@ module UI
       end
     end
 
-    def self.filter_command_prompt(command)
-      # Removing starting $ from command line
-      command.gsub(/\A( )*\$( )*/, "")
+    def highlight(content, language)
+      data = { controller: "highlight", highlight_language_value: language } if language
+
+      if language == :command
+        data[:highlight_language_value] = "shell"
+        content = add_command_line_prompt(content)
+      end
+
+      tag.span(data:) do
+        content
+      end
+    end
+
+    def add_command_line_prompt(content)
+      return "" if content.blank?
+
+      lines  = content.split("\n")
+      output = []
+
+      output << "$ #{lines[0]}"
+
+      lines[1..].each do |line|
+        output << "  #{line}"
+      end
+
+      output.join("\n")
     end
 
     class Language < ApplicationViewComponent
       attr_reader :language
 
-      def initialize(language, **options)
+      def initialize(language = nil, copyable: false)
         @language = language
-        @copyable = options[:copyable]
+        @copyable = copyable
         super()
+      end
+
+      def call
+        content
       end
 
       def copyable?
@@ -68,14 +91,6 @@ module UI
       end
 
       def copyable_content
-        if @language == :shell
-          CodeExampleComponent.filter_command_prompt(content)
-        else
-          content
-        end
-      end
-
-      def call
         content
       end
     end

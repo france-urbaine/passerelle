@@ -1,6 +1,5 @@
 ruby:
-  example = UI::CodeRequestExampleComponent.new(
-    "GET", "/path",
+  example = UI::CodeRequestExampleComponent.new "GET", "/path",
     request: {
       headers: {
         "Accept"        => "application/json",
@@ -13,6 +12,10 @@ ruby:
         "ETag"         => 'W/"d457bff2d6ff135822bfd3f86f225060"'
       }
     }
-  )
 
 = render example
+
+
+.form-block.mt-12
+  label( for="paste" ) Paste copied code here to verify conformity :
+  textarea.font-mono( id="paste" rows=10 )

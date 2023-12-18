@@ -1,6 +1,5 @@
 ruby:
-  example = UI::CodeRequestExampleComponent.new(
-    "POST", "/path",
+  example = UI::CodeRequestExampleComponent.new "POST", "/path",
     json: true,
     request: {
       body: {
@@ -18,6 +17,10 @@ ruby:
         }
       }
     }
-  )
 
 = render example
+
+
+.form-block.mt-12
+  label( for="paste" ) Paste copied code here to verify conformity :
+  textarea.font-mono( id="paste" rows=10 )

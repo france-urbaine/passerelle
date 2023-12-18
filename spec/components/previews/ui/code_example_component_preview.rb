@@ -8,6 +8,10 @@ module UI
     #
     def default; end
 
+    # @label With command lines
+    #
+    def with_command_lines; end
+
     # @label With multiple languages
     #
     def with_multiple_languages; end

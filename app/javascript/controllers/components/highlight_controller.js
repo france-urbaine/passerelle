@@ -11,7 +11,6 @@ export default class extends Controller {
   }
 
   connect () {
-    console.log("3")
     let language = this.registerLanguage(this.languageValue)
 
     this.element.innerHTML = hljs.highlight(
