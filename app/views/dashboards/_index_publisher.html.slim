@@ -10,10 +10,5 @@
 
     - grid.with_column do
       .dashboard-number
-        = current_organization.packages_transmitted_count
-        span.dashboard-number__unit Nombre de paquets transmis
-
-    - grid.with_column do
-      .dashboard-number
         = current_organization.reports_transmitted_count
         span.dashboard-number__unit Nombre de signalements transmis
