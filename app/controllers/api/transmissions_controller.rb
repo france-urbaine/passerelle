@@ -75,7 +75,6 @@ module API
       property :completed_at, DateTime, desc: "Date effective de la transmission"
       property :packages, Array, desc: "Liste des paquets" do
         property :id, String, desc: "ID du paquet"
-        property :name, String, desc: "Nom du paquet"
         property :reference, String, desc: "Numéro de référence du paquet"
         property :reports, Array, desc: "Liste des signalements" do
           property :id, String, desc: "ID du signalement"
@@ -112,7 +111,7 @@ module API
         authorize! transmission, to: :read?
         forbidden! t(".already_completed")    if transmission.completed?
         bad_request! t(".reports_empty")      if transmission.reports.none?
-        bad_request! t(".reports_incomplete") if transmission.reports.incomplete.any?
+        bad_request! t(".reports_incomplete") if transmission.reports.draft.any?
         authorize! transmission, to: :complete?
       end
     end

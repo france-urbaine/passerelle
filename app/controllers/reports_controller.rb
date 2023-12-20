@@ -106,7 +106,7 @@ class ReportsController < ApplicationController
   end
 
   def build_and_authorize_scope(as: :default)
-    authorized(Report.all, as:).strict_loading
+    authorized(Report.preload(:ddfip, :office).all, as:).strict_loading
   end
 
   def build_report(...)
@@ -117,7 +117,7 @@ class ReportsController < ApplicationController
     report = Report.find(params[:id])
 
     authorize! report
-    only_kept! report.package, report unless allow_discarded
+    only_kept! report unless allow_discarded
 
     report
   end

@@ -69,7 +69,7 @@ module API
       def find_and_authorize_report
         Report.find(params[:report_id]).tap do |report|
           only_kept! report
-          forbidden! t(".already_packed") if report.packed?
+          forbidden! t(".already_transmitted") if report.packed?
           authorize! report, to: :attach?, with: API::ReportPolicy
         end
       end
