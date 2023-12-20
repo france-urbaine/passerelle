@@ -12,11 +12,14 @@ RSpec.describe "TransmissionsController#complete" do
   let(:params)  { |e| e.metadata[:params] }
 
   let(:transmission) { create(:transmission, :made_through_web_ui) }
+  let(:ddfip)    { create(:ddfip) }
+  let(:communes) { create_list(:commune, 2, departement: ddfip.departement) }
+  let(:office)   { create(:office, competences: %w[evaluation_local_habitation creation_local_habitation], ddfip: ddfip, communes: communes[0..0]) }
   let(:reports) do
     [
-      create(:report, :completed, :evaluation_local_habitation, transmission: transmission, collectivity: transmission.collectivity),
-      create(:report, :completed, :evaluation_local_habitation, transmission: transmission, collectivity: transmission.collectivity),
-      create(:report, :completed, :creation_local_habitation,   transmission: transmission, collectivity: transmission.collectivity)
+      create(:report, :ready, :evaluation_local_habitation, commune: communes[0], transmission: transmission, collectivity: transmission.collectivity),
+      create(:report, :ready, :evaluation_local_habitation, commune: communes[1], transmission: transmission, collectivity: transmission.collectivity),
+      create(:report, :ready, :creation_local_habitation,   commune: communes[0], transmission: transmission, collectivity: transmission.collectivity)
     ]
   end
 
@@ -34,10 +37,7 @@ RSpec.describe "TransmissionsController#complete" do
   end
 
   describe "response" do
-    before do
-      sign_in transmission.user
-      reports.each { |report| report.update(package: nil, reference: nil) }
-    end
+    before { sign_in transmission.user }
 
     it "creates packages, assigns reports and completes transmission" do
       expect {
@@ -45,7 +45,7 @@ RSpec.describe "TransmissionsController#complete" do
         transmission.reload
         reports.each(&:reload)
       }
-        .to  change(Package, :count).by(2)
+        .to  change(Package, :count).by(1)
         .and change(reports[0], :reference).to(be_present)
         .and change(reports[1], :reference).to(be_present)
         .and change(reports[2], :reference).to(be_present)

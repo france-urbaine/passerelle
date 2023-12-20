@@ -50,11 +50,12 @@ RSpec.describe "ReportsController#show" do
       let(:report) { create(:report, :assigned_by_ddfip, ddfip: current_user.organization) }
 
       before do
-        create(:office,
+        office = create(:office,
           ddfip:       current_user.organization,
           competences: [report.form_type],
           communes:    [report.commune],
           users:       [current_user])
+        report.update(office:)
       end
 
       it_behaves_like "it allows access to DDFIP user"
@@ -66,7 +67,6 @@ RSpec.describe "ReportsController#show" do
     context "when signed in as a collectivity user" do
       let(:collectivity) { create(:collectivity) }
       let(:report)       { create(:report, :made_through_web_ui, collectivity: collectivity) }
-      let(:package)      { create(:package, :transmitted_through_web_ui, collectivity: collectivity, reports: [report]) }
 
       before { sign_in_as(organization: collectivity) }
 
@@ -77,7 +77,7 @@ RSpec.describe "ReportsController#show" do
       end
 
       context "when the report is transmitted" do
-        before { package }
+        before { report.transmit! }
 
         it { expect(response).to have_http_status(:success) }
         it { expect(response).to have_content_type(:html) }
@@ -90,14 +90,6 @@ RSpec.describe "ReportsController#show" do
         it { expect(response).to have_http_status(:gone) }
         it { expect(response).to have_content_type(:html) }
         it { expect(response).to have_html_body.to have_text("Ce signalement est en cours de suppression.") }
-      end
-
-      context "when the package is discarded" do
-        before { package.discard }
-
-        it { expect(response).to have_http_status(:gone) }
-        it { expect(response).to have_content_type(:html) }
-        it { expect(response).to have_html_body.to have_text("Le paquet de ce signalement est en cours de suppression.") }
       end
 
       context "when the report is missing" do

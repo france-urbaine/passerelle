@@ -30,34 +30,23 @@ RSpec.describe "DashboardsController#index" do
     let_it_be(:ddfip)   { create(:ddfip) }
     let_it_be(:offices) { create_list(:office, 2, :with_communes, ddfip:) }
 
-    let_it_be(:packages) do
-      {
-        unresolved:       create(:package, collectivity: collectivities[0]),
-        sandbox:          create(:package, :sandbox,  collectivity: collectivities[0]),
-        assigned:         create(:package, :assigned, collectivity: collectivities[0]),
-        another_assigned: create(:package, :assigned, collectivity: collectivities[1])
-      }
-    end
-
     let_it_be(:reports) do
       {
         incomplete:   create(:report, :made_for_office,             collectivity: collectivities[0], office: offices[0]),
         completed:    create(:report, :made_for_office,             collectivity: collectivities[0], office: offices[0]),
         discarded:    create(:report, :made_for_office, :discarded, collectivity: collectivities[0], office: offices[0]),
 
-        transmitted:            create(:report, :made_for_office, :transmitted,             collectivity: collectivities[0], office: offices[0], package: packages[:unresolved]),
-        transmitted_discarded:  create(:report, :made_for_office, :transmitted, :discarded, collectivity: collectivities[0], office: offices[0], package: packages[:unresolved]),
-        transmitted_to_sandbox: create(:report, :made_for_office, :transmitted, :sandbox,   collectivity: collectivities[0], office: offices[0], package: packages[:sandbox]),
+        transmitted:            create(:report, :made_for_office, :transmitted,             collectivity: collectivities[0], office: offices[0]),
+        transmitted_discarded:  create(:report, :made_for_office, :transmitted, :discarded, collectivity: collectivities[0], office: offices[0]),
+        transmitted_to_sandbox: create(:report, :made_for_office, :transmitted, :sandbox,   collectivity: collectivities[0], office: offices[0]),
 
-        pending:  create(:report, :assigned_to_office,            collectivity: collectivities[0], office: offices[0], package: packages[:assigned]),
-        approved: create(:report, :assigned_to_office, :approved, collectivity: collectivities[0], office: offices[0], package: packages[:assigned]),
-        rejected: create(:report, :assigned_to_office, :rejected, collectivity: collectivities[0], office: offices[0], package: packages[:assigned]),
-        debated:  create(:report, :assigned_to_office, :debated,  collectivity: collectivities[0], office: offices[0], package: packages[:assigned]),
+        processing: create(:report, :assigned_to_office,            collectivity: collectivities[0], office: offices[0], ddfip: ddfip),
+        approved:   create(:report, :assigned_to_office, :approved, collectivity: collectivities[0], office: offices[0]),
+        rejected:   create(:report, :assigned_to_office, :rejected, collectivity: collectivities[0], office: offices[0]),
 
-        another_pending:  create(:report, :assigned_to_office,            collectivity: collectivities[1], office: offices[1], package: packages[:another_assigned]),
-        another_approved: create(:report, :assigned_to_office, :approved, collectivity: collectivities[1], office: offices[1], package: packages[:another_assigned]),
-        another_rejected: create(:report, :assigned_to_office, :rejected, collectivity: collectivities[1], office: offices[1], package: packages[:another_assigned]),
-        another_debated:  create(:report, :assigned_to_office, :debated,  collectivity: collectivities[1], office: offices[1], package: packages[:another_assigned])
+        another_processing: create(:report, :assigned_to_office,            collectivity: collectivities[1], office: offices[1], ddfip: ddfip),
+        another_approved:   create(:report, :assigned_to_office, :approved, collectivity: collectivities[1], office: offices[1]),
+        another_rejected:   create(:report, :assigned_to_office, :rejected, collectivity: collectivities[1], office: offices[1])
       }
     end
 
@@ -79,15 +68,13 @@ RSpec.describe "DashboardsController#index" do
             expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:transmitted_discarded]))
             expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:transmitted_to_sandbox]))
 
-            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:pending]))
+            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:processing]))
             expect(response).to have_html_body.to     have_selector(:id, dom_id(reports[:approved]))
             expect(response).to have_html_body.to     have_selector(:id, dom_id(reports[:rejected]))
-            expect(response).to have_html_body.to     have_selector(:id, dom_id(reports[:debated]))
 
-            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:another_pending]))
+            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:another_processing]))
             expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:another_approved]))
             expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:another_rejected]))
-            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:another_debated]))
           end
         end
       end
@@ -117,18 +104,7 @@ RSpec.describe "DashboardsController#index" do
         it { expect(response).to have_content_type(:html) }
         it { expect(response).to have_html_body }
 
-        it "returns only accessible reports" do
-          pending "Not implemented"
-
-          aggregate_failures do
-            expect(response).to have_html_body.to     have_selector(:id, dom_id(package[:unresolved]))
-            expect(response).to have_html_body.not_to have_selector(:id, dom_id(package[:sandbox]))
-            expect(response).to have_html_body.not_to have_selector(:id, dom_id(package[:assigned]))
-            expect(response).to have_html_body.not_to have_selector(:id, dom_id(package[:another_assigned]))
-          end
-        end
-
-        it "returns only pending reports" do
+        it "returns only processing reports" do
           aggregate_failures do
             expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:incomplete]))
             expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:completed]))
@@ -138,15 +114,13 @@ RSpec.describe "DashboardsController#index" do
             expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:transmitted_discarded]))
             expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:transmitted_to_sandbox]))
 
-            expect(response).to have_html_body.to     have_selector(:id, dom_id(reports[:pending]))
+            expect(response).to have_html_body.to     have_selector(:id, dom_id(reports[:processing]))
             expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:approved]))
             expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:rejected]))
-            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:debated]))
 
-            expect(response).to have_html_body.to     have_selector(:id, dom_id(reports[:another_pending]))
+            expect(response).to have_html_body.to     have_selector(:id, dom_id(reports[:another_processing]))
             expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:another_approved]))
             expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:another_rejected]))
-            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:another_debated]))
           end
         end
       end
@@ -163,7 +137,7 @@ RSpec.describe "DashboardsController#index" do
         it { expect(response).to have_content_type(:html) }
         it { expect(response).to have_html_body }
 
-        it "returns only pending reports" do
+        it "returns only processing reports linked to user offices" do
           aggregate_failures do
             expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:incomplete]))
             expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:completed]))
@@ -173,15 +147,13 @@ RSpec.describe "DashboardsController#index" do
             expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:transmitted_discarded]))
             expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:transmitted_to_sandbox]))
 
-            expect(response).to have_html_body.to     have_selector(:id, dom_id(reports[:pending]))
+            expect(response).to have_html_body.to     have_selector(:id, dom_id(reports[:processing]))
             expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:approved]))
             expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:rejected]))
-            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:debated]))
 
-            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:another_pending]))
+            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:another_processing]))
             expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:another_approved]))
             expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:another_rejected]))
-            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:another_debated]))
           end
         end
       end
@@ -205,15 +177,13 @@ RSpec.describe "DashboardsController#index" do
             expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:transmitted_discarded]))
             expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[:transmitted_to_sandbox]))
 
-            expect(response).to have_html_body.to     have_selector(:id, dom_id(reports[:pending]))
+            expect(response).to have_html_body.to     have_selector(:id, dom_id(reports[:processing]))
             expect(response).to have_html_body.to     have_selector(:id, dom_id(reports[:approved]))
             expect(response).to have_html_body.to     have_selector(:id, dom_id(reports[:rejected]))
-            expect(response).to have_html_body.to     have_selector(:id, dom_id(reports[:debated]))
 
-            expect(response).to have_html_body.to     have_selector(:id, dom_id(reports[:another_pending]))
+            expect(response).to have_html_body.to     have_selector(:id, dom_id(reports[:another_processing]))
             expect(response).to have_html_body.to     have_selector(:id, dom_id(reports[:another_approved]))
             expect(response).to have_html_body.to     have_selector(:id, dom_id(reports[:another_rejected]))
-            expect(response).to have_html_body.to     have_selector(:id, dom_id(reports[:another_debated]))
           end
         end
       end

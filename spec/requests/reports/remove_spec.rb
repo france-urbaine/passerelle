@@ -65,7 +65,6 @@ RSpec.describe "ReportsController#remove" do
     context "when signed in as a collectivity user" do
       let(:collectivity) { create(:collectivity) }
       let(:report)       { create(:report, :made_through_web_ui, collectivity: collectivity) }
-      let(:package)      { create(:package, :transmitted_through_web_ui, collectivity: collectivity, reports: [report]) }
 
       before { sign_in_as(organization: report.collectivity) }
 
@@ -76,7 +75,7 @@ RSpec.describe "ReportsController#remove" do
       end
 
       context "when the report is transmitted" do
-        before { package }
+        before { report.transmit! }
 
         it { expect(response).to have_http_status(:forbidden) }
         it { expect(response).to have_content_type(:html) }
@@ -87,14 +86,6 @@ RSpec.describe "ReportsController#remove" do
         before { report.discard }
 
         it { expect(response).to have_http_status(:gone) }
-        it { expect(response).to have_content_type(:html) }
-        it { expect(response).to have_html_body }
-      end
-
-      context "when the package is discarded" do
-        before { package.discard }
-
-        it { expect(response).to have_http_status(:forbidden) }
         it { expect(response).to have_content_type(:html) }
         it { expect(response).to have_html_body }
       end

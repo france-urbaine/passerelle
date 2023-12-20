@@ -78,7 +78,10 @@ RSpec.describe "ReportsController#update" do
       it_behaves_like "it allows access to DDFIP admin"
       it_behaves_like "it denies access to DDFIP user" do
         context "when current user is member of targeted office" do
-          before { create(:office, competences: [report.form_type], users: [current_user], communes: [report.commune]) }
+          before do
+            office = create(:office, competences: [report.form_type], users: [current_user])
+            report.update(office: office)
+          end
 
           it { expect(response).to have_http_status(:forbidden) }
         end
@@ -91,7 +94,10 @@ RSpec.describe "ReportsController#update" do
       it_behaves_like "it allows access to DDFIP admin"
       it_behaves_like "it denies access to DDFIP user" do
         context "when current user is member of targeted office" do
-          before { create(:office, competences: [report.form_type], users: [current_user], communes: [report.commune]) }
+          before do
+            office = create(:office, competences: [report.form_type], users: [current_user])
+            report.update(office: office)
+          end
 
           include_examples "it allows access"
         end
@@ -128,7 +134,6 @@ RSpec.describe "ReportsController#update" do
 
       context "with invalid date" do
         let!(:report) { create(:report, form_type: "evaluation_local_habitation", anomalies: %w[consistance]) }
-        let(:package) { create(:package, :transmitted_through_web_ui, collectivity: collectivity, reports: [report]) }
 
         let(:form_template) { "situation_evaluation" }
         let(:attributes) do
@@ -142,7 +147,7 @@ RSpec.describe "ReportsController#update" do
       end
 
       context "when the report is transmitted" do
-        before { package }
+        before { report.transmit! }
 
         it { expect(response).to have_http_status(:forbidden) }
         it { expect(response).to have_content_type(:html) }
@@ -153,14 +158,6 @@ RSpec.describe "ReportsController#update" do
         before { report.discard }
 
         it { expect(response).to have_http_status(:gone) }
-        it { expect(response).to have_content_type(:html) }
-        it { expect(response).to have_html_body }
-      end
-
-      context "when the package is discarded" do
-        before { package.discard }
-
-        it { expect(response).to have_http_status(:forbidden) }
         it { expect(response).to have_content_type(:html) }
         it { expect(response).to have_html_body }
       end

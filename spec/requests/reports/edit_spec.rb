@@ -81,13 +81,16 @@ RSpec.describe "ReportsController#edit" do
       end
     end
 
-    context "when report package has been assigned by the current DDFIP" do
+    context "when report has been assigned by the current DDFIP" do
       let(:report) { create(:report, :assigned_by_ddfip, ddfip: current_user.organization) }
 
       it_behaves_like "it allows access to DDFIP admin"
       it_behaves_like "it denies access to DDFIP user" do
         context "when current user is member of targeted office" do
-          before { create(:office, competences: [report.form_type], users: [current_user], communes: [report.commune]) }
+          before do
+            office = create(:office, competences: [report.form_type], users: [current_user], communes: [report.commune])
+            report.update(office: office)
+          end
 
           include_examples "it allows access"
         end
@@ -110,7 +113,7 @@ RSpec.describe "ReportsController#edit" do
       end
 
       context "when the report is transmitted" do
-        before { package }
+        before { report.transmit! }
 
         it { expect(response).to have_http_status(:forbidden) }
         it { expect(response).to have_content_type(:html) }
@@ -123,14 +126,6 @@ RSpec.describe "ReportsController#edit" do
         it { expect(response).to have_http_status(:gone) }
         it { expect(response).to have_content_type(:html) }
         it { expect(response).to have_html_body.to have_text("Ce signalement est en cours de suppression.") }
-      end
-
-      context "when the package is discarded" do
-        before { package.discard }
-
-        it { expect(response).to have_http_status(:forbidden) }
-        it { expect(response).to have_content_type(:html) }
-        it { expect(response).to have_html_body }
       end
 
       context "when the report is missing" do
