@@ -21,9 +21,7 @@
         = @report.reference
 
       - list.with_attribute("Date de transmission") do |attribute|
-        = l(@report.package.transmitted_at.to_date)
-
-      - list.with_attribute("Date d'échéance")
+        = l(@report.transmitted_at.to_date)
 
       - list.with_attribute("Type de signalement") do |attribute|
         = translate_enum(@report.form_type, scope: "enum.report_form_type")

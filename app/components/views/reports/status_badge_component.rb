@@ -6,15 +6,14 @@ module Views
       define_component_helper :report_badge
 
       COLORS = {
-        incomplete:             "badge--yellow",
-        completed:              "badge--lime",
+        draft:                  "badge--yellow",
+        ready:                  "badge--lime",
         in_active_transmission: "badge--violet",
         transmitted:            "badge--blue",
         assigned:               "badge--sky",
-        returned:               "badge--red",
+        denied:                 "badge--red",
         approved:               "badge--green",
-        rejected:               "badge--red",
-        debated:                "badge--orange"
+        rejected:               "badge--red"
       }.freeze
 
       def initialize(arg)
@@ -41,24 +40,22 @@ module Views
       end
 
       def report_status(report)
-        if report.returned?
-          :returned
+        if report.denied?
+          :denied
         elsif report.rejected?
           :rejected
         elsif report.approved?
           :approved
-        elsif report.debated?
-          :debated
         elsif report.assigned?
           :assigned
         elsif report.transmitted?
           :transmitted
         elsif report.in_active_transmission?
           :in_active_transmission
-        elsif report.completed?
-          :completed
+        elsif report.ready?
+          :ready
         else
-          :incomplete
+          :draft
         end
       end
     end

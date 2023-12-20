@@ -8,7 +8,7 @@ module Views
       COLORS = {
         transmitted: "badge--blue",
         assigned:    "badge--green",
-        returned:    "badge--red"
+        denied:      "badge--red"
       }.freeze
 
       def initialize(arg)
@@ -35,9 +35,9 @@ module Views
       end
 
       def package_status(package)
-        if package.returned?
-          :returned
-        elsif package.assigned?
+        if package.reports&.all?(&:denied?)
+          :denied
+        elsif package.reports&.all?(&:assigned?)
           :assigned
         else
           :transmitted
