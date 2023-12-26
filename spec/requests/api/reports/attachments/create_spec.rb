@@ -11,7 +11,7 @@ RSpec.describe "API::Reports::AttachmentsController#create", :api do
   let(:headers) { |e| e.metadata.fetch(:headers, {}).merge(authorization_header) }
   let(:params) do |e|
     e.metadata.fetch(:params, {
-      blob: {
+      file: {
         filename: "sample.pdf",
         byte_size: 3_849,
         checksum: "keKnRxGllrNnMpX19UouVQ",
@@ -53,10 +53,18 @@ RSpec.describe "API::Reports::AttachmentsController#create", :api do
         expect(response).to have_http_status(:success)
       end
 
-      it "returns the signed ID of the blob", :show_in_doc do
+      it "returns the ID of the attachment", :show_in_doc do
         request
         expect(response).to have_json_body.to include(
-          "signed_id" => ActiveStorage::Blob.last.signed_id
+          "document" => {
+            "id" => ActiveStorage::Attachment.order(created_at: :desc).first.id
+          },
+          "direct_upload" => {
+            "url" => %r{^http://api\.example\.com/rails/active_storage/disk/[a-zA-Z0-9-=]{342}$},
+            "headers" => {
+              "Content-Type" => "application/pdf"
+            }
+          }
         )
       end
 
@@ -83,7 +91,15 @@ RSpec.describe "API::Reports::AttachmentsController#create", :api do
       it "returns the signed ID of the blob", :show_in_doc do
         request
         expect(response).to have_json_body.to include(
-          "signed_id" => ActiveStorage::Blob.order(created_at: :desc).first.signed_id
+          "document" => {
+            "id" => ActiveStorage::Attachment.order(created_at: :desc).first.id
+          },
+          "direct_upload" => {
+            "url" => %r{^http://api\.example\.com/rails/active_storage/disk/[a-zA-Z0-9-=]{342}$},
+            "headers" => {
+              "Content-Type" => "application/pdf"
+            }
+          }
         )
       end
 
