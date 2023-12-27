@@ -189,6 +189,87 @@ RSpec.describe Report do
   # Scopes
   # ----------------------------------------------------------------------------
   describe "scopes" do
+    describe ".order_by_param" do
+      it do
+        expect {
+          described_class.order_by_param("invariant").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "reports".*
+          FROM   "reports"
+          ORDER BY "reports"."situation_invariant" ASC, "reports"."created_at" ASC
+        SQL
+      end
+
+      it do
+        expect {
+          described_class.order_by_param("priority").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "reports".*
+          FROM   "reports"
+          ORDER BY "reports"."priority" ASC, "reports"."created_at" ASC
+        SQL
+      end
+
+      it do
+        expect {
+          described_class.order_by_param("reference").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "reports".*
+          FROM   "reports"
+          ORDER BY "reports"."reference" ASC, "reports"."created_at" ASC
+        SQL
+      end
+
+      it do
+        expect {
+          described_class.order_by_param("adresse").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "reports".*
+          FROM   "reports"
+          ORDER BY CONCAT(situation_adresse, situation_numero_voie, situation_indice_repetition, situation_libelle_voie) ASC, "reports"."created_at" ASC
+        SQL
+      end
+
+      it do
+        expect {
+          described_class.order_by_param("commune").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "reports".*
+          FROM   "reports"
+          LEFT OUTER JOIN "communes" ON "communes"."code_insee" = "reports"."code_insee"
+          ORDER BY UNACCENT("communes"."name") ASC NULLS FIRST, "reports"."created_at" ASC
+        SQL
+      end
+
+      it do
+        expect {
+          described_class.order_by_param("package").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "reports".*
+          FROM   "reports"
+          LEFT OUTER JOIN "packages" ON "packages"."id" = "reports"."package_id"
+          ORDER BY "packages"."reference" ASC, "reports"."created_at" ASC
+        SQL
+      end
+
+      it do
+        expect {
+          described_class.order_by_param("form_type").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "reports".*
+          FROM   "reports"
+          ORDER BY CASE reports.form_type
+            WHEN 'evaluation_local_habitation' THEN UNACCENT('Évaluation dun local dhabitation')
+            WHEN 'evaluation_local_professionnel' THEN UNACCENT('Évaluation dun local professionnel')
+            WHEN 'creation_local_habitation' THEN UNACCENT('Création dun local dhabitation')
+            WHEN 'creation_local_professionnel' THEN UNACCENT('Création dun local professionnel')
+            WHEN 'occupation_local_habitation' THEN UNACCENT('Occupation dun local dhabitation')
+            WHEN 'occupation_local_professionnel' THEN UNACCENT('Occupation dun local professionnel')
+            END ASC, "reports"."created_at" ASC
+        SQL
+      end
+    end
+
     describe ".sandbox" do
       it "scopes reports tagged as sandbox" do
         expect {

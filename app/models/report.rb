@@ -363,6 +363,46 @@ class Report < ApplicationRecord
   scope :order_by_param, lambda { |input|
     advanced_order(
       input,
+      form_type: lambda { |direction|
+        form_type_whens = FORM_TYPES.map do |form_type|
+          form_type_label = I18n.t(
+            form_type,
+            scope: "enum.report_form_type"
+          )
+          form_type_label.delete!("'")
+
+          "WHEN '#{form_type}' THEN UNACCENT('#{form_type_label}')"
+        end
+
+        form_type_case = <<-SQL.squish
+          CASE reports.form_type
+            #{sanitize_sql(form_type_whens.join(' '))}
+          END
+        SQL
+
+        order(
+          Arel.sql(form_type_case) => direction
+        )
+      },
+      adresse:   lambda { |direction|
+        order(
+          Arel.sql(
+            "CONCAT(situation_adresse, situation_numero_voie, situation_indice_repetition, situation_libelle_voie)"
+          ) => direction
+        )
+      },
+      invariant: ->(direction) { order(situation_invariant: direction) },
+      commune:   lambda { |direction|
+        left_joins(:commune).merge(
+          Commune.unaccent_order(:name, direction, nulls: true)
+        )
+      },
+      priority:  ->(direction) { order(priority: direction) },
+      package:   lambda { |direction|
+        left_joins(:package).merge(
+          Package.order(reference: direction)
+        )
+      },
       reference: ->(direction) { order(reference: direction) }
     )
   }
