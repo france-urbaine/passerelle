@@ -2,14 +2,24 @@
 
 module Reports
   class DocumentsController < ApplicationController
-    before_action :find_report
-    before_action :authorize_report
+    include ActiveStorage::SetCurrent
+
+    def show
+      @report = find_and_authorize_report(to: :show?)
+      @document = @report.documents.find(params[:id])
+
+      url = @document.url(disposition: params[:disposition], virtual_host: true)
+
+      redirect_to url, allow_other_host: true
+    end
 
     def new
+      @report = find_and_authorize_report(to: :update?)
       @referrer_path = referrer_path || report_path(@report)
     end
 
     def create
+      @report = find_and_authorize_report(to: :update?)
       @report.documents.attach(params[:documents])
 
       respond_with @report,
@@ -18,23 +28,25 @@ module Reports
     end
 
     def destroy
-      attachment = @report.documents.find(params[:id])
-      attachment.purge
+      @report = find_and_authorize_report(to: :update?)
+      @document = @report.documents.find(params[:id])
 
-      respond_with @report,
+      @document.purge
+
+      respond_with @document,
         flash: true,
         location: -> { report_path(@report) }
     end
 
     private
 
-    def find_report
-      @report = Report.find(params[:report_id])
-    end
+    def find_and_authorize_report(to: :show?)
+      report = Report.find(params[:report_id])
 
-    def authorize_report
-      only_kept! @report
-      authorize! @report, to: :update?, with: ReportPolicy
+      authorize! report, to: to, with: ReportPolicy
+      only_kept! report
+
+      report
     end
   end
 end
