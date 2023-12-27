@@ -396,11 +396,7 @@ class Report < ApplicationRecord
         )
       },
       priority:  ->(direction) { order(priority: direction) },
-      package:   lambda { |direction|
-        left_joins(:package).merge(
-          Package.order(reference: direction)
-        )
-      },
+      package:   ->(direction) { order(reference: direction) },
       reference: ->(direction) { order(reference: direction) }
     )
   }

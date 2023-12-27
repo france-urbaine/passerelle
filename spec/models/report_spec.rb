@@ -265,8 +265,7 @@ RSpec.describe Report do
         }.to perform_sql_query(<<~SQL)
           SELECT "reports".*
           FROM   "reports"
-          LEFT OUTER JOIN "packages" ON "packages"."id" = "reports"."package_id"
-          ORDER BY "packages"."reference" ASC, "reports"."created_at" ASC
+          ORDER BY "reports"."reference" ASC, "reports"."created_at" ASC
         SQL
       end
 
