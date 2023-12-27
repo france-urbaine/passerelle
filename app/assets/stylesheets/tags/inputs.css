@@ -186,7 +186,8 @@
   }
 
   input[type=file] {
-    @apply py-2.5 h-14;
+    height: auto;
+    @apply py-2.5;
   }
 
   input[type=file][data-direct-upload-url][disabled] {

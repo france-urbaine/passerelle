@@ -14,3 +14,5 @@ cellar:
   bucket:             <%= ENV.fetch("CELLAR_BUCKET") { Rails.application.credentials.dig(:cellar, :storage_bucket) } %>
   region:             eu-west
   force_path_style:   true
+  upload:
+    virtual_host: true
