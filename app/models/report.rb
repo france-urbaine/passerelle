@@ -180,6 +180,19 @@ class Report < ApplicationRecord
     occupation_local_professionnel
   ].freeze
 
+  SORTED_FORM_TYPES_BY_LABEL = %i[fr].to_h { |locale|
+    unless I18n.exists?("enum.report_form_type", locale: locale)
+      raise "missing form_type enum values for locale #{locale}"
+    end
+
+    [
+      locale,
+      I18n.t("enum.report_form_type")
+        .sort_by { |k, _| k }
+        .map     { |(form_type, _)| form_type.to_s }
+    ]
+  }.freeze
+
   ANOMALIES = %w[
     consistance
     affectation
@@ -364,24 +377,9 @@ class Report < ApplicationRecord
     advanced_order(
       input,
       form_type: lambda { |direction|
-        form_type_whens = FORM_TYPES.map do |form_type|
-          form_type_label = I18n.t(
-            form_type,
-            scope: "enum.report_form_type"
-          )
-          form_type_label.delete!("'")
-
-          "WHEN '#{form_type}' THEN UNACCENT('#{form_type_label}')"
-        end
-
-        form_type_case = <<-SQL.squish
-          CASE reports.form_type
-            #{sanitize_sql(form_type_whens.join(' '))}
-          END
-        SQL
-
-        order(
-          Arel.sql(form_type_case) => direction
+        in_order_of(
+          :form_type,
+          direction == :asc ? SORTED_FORM_TYPES_BY_LABEL[I18n.locale] : SORTED_FORM_TYPES_BY_LABEL[I18n.locale].reverse
         )
       },
       adresse:   lambda { |direction|

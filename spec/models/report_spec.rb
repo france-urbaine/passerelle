@@ -158,6 +158,24 @@ RSpec.describe Report do
     it { is_expected.not_to allow_values("123", "-123").for(:proposition_code_rivoli) }
   end
 
+  # Constants
+  describe "constants" do
+    describe "SORTED_FORM_TYPES_BY_LABEL" do
+      it do
+        expect(Report::SORTED_FORM_TYPES_BY_LABEL).to eq({
+          fr: %w[
+            creation_local_habitation
+            creation_local_professionnel
+            evaluation_local_habitation
+            evaluation_local_professionnel
+            occupation_local_habitation
+            occupation_local_professionnel
+          ]
+        })
+      end
+    end
+  end
+
   # Callbacks
   # ----------------------------------------------------------------------------
   describe "callbacks" do
@@ -258,14 +276,33 @@ RSpec.describe Report do
         }.to perform_sql_query(<<~SQL)
           SELECT "reports".*
           FROM   "reports"
-          ORDER BY CASE reports.form_type
-            WHEN 'evaluation_local_habitation' THEN UNACCENT('Évaluation dun local dhabitation')
-            WHEN 'evaluation_local_professionnel' THEN UNACCENT('Évaluation dun local professionnel')
-            WHEN 'creation_local_habitation' THEN UNACCENT('Création dun local dhabitation')
-            WHEN 'creation_local_professionnel' THEN UNACCENT('Création dun local professionnel')
-            WHEN 'occupation_local_habitation' THEN UNACCENT('Occupation dun local dhabitation')
-            WHEN 'occupation_local_professionnel' THEN UNACCENT('Occupation dun local professionnel')
+          WHERE  "reports"."form_type" IN ('creation_local_habitation', 'creation_local_professionnel', 'evaluation_local_habitation', 'evaluation_local_professionnel', 'occupation_local_habitation', 'occupation_local_professionnel')
+          ORDER BY CASE
+            WHEN "reports"."form_type" = 'creation_local_habitation' THEN 1
+            WHEN "reports"."form_type" = 'creation_local_professionnel' THEN 2
+            WHEN "reports"."form_type" = 'evaluation_local_habitation' THEN 3
+            WHEN "reports"."form_type" = 'evaluation_local_professionnel' THEN 4
+            WHEN "reports"."form_type" = 'occupation_local_habitation' THEN 5
+            WHEN "reports"."form_type" = 'occupation_local_professionnel' THEN 6
             END ASC, "reports"."created_at" ASC
+        SQL
+      end
+
+      it do
+        expect {
+          described_class.order_by_param("-form_type").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "reports".*
+          FROM   "reports"
+          WHERE  "reports"."form_type" IN ('occupation_local_professionnel', 'occupation_local_habitation', 'evaluation_local_professionnel', 'evaluation_local_habitation', 'creation_local_professionnel', 'creation_local_habitation')
+          ORDER BY CASE
+            WHEN "reports"."form_type" = 'occupation_local_professionnel' THEN 1
+            WHEN "reports"."form_type" = 'occupation_local_habitation' THEN 2
+            WHEN "reports"."form_type" = 'evaluation_local_professionnel' THEN 3
+            WHEN "reports"."form_type" = 'evaluation_local_habitation' THEN 4
+            WHEN "reports"."form_type" = 'creation_local_professionnel' THEN 5
+            WHEN "reports"."form_type" = 'creation_local_habitation' THEN 6
+            END ASC, "reports"."created_at" DESC
         SQL
       end
     end
