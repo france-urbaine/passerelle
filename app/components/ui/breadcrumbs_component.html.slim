@@ -1,7 +1,7 @@
 .breadcrumbs
   .breadcrumbs__path
     .breadcrumbs__path-item
-      = button_component home_label, root_path, icon: "home", icon_only: true, icon_options: { variant: :solid }
+      = button_component t(".home"), root_path, icon: "home", icon_only: true, icon_options: { variant: :solid }
 
     - paths.each.with_index do |path, index|
       .breadcrumbs__separator= " / "

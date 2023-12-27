@@ -23,10 +23,15 @@ module Views
       end
 
       def call
-        badge_component(
-          I18n.t(@status, scope: i18n_component_path),
-          class: COLORS[@status]
-        )
+        badge_component(label, class: css_class)
+      end
+
+      def label
+        t(".#{@status}")
+      end
+
+      def css_class
+        COLORS[@status]
       end
 
       def package_status(package)

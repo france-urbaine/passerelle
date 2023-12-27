@@ -9,29 +9,27 @@ module Views
       end
 
       def call
-        I18n.t(
-          @report.form_type,
-          scope: i18n_scope,
-          address: situation_adresse,
-          invariant: @report.situation_invariant
-        )
+        key = ".#{i18n_prefix}.#{@report.form_type}."
+
+        t(key, address:, invariant:)
       end
 
-      def i18n_scope
-        scope =
-          if @report.situation_invariant? && !@report.form_type.start_with?("creation_local_")
-            "with_invariant"
-          elsif situation_adresse.present?
-            "with_address"
-          else
-            "blank"
-          end
-
-        [*i18n_component_path, scope]
+      def i18n_prefix
+        if @report.situation_invariant? && !@report.form_type.start_with?("creation_local_")
+          "with_invariant"
+        elsif address.present?
+          "with_address"
+        else
+          "blank"
+        end
       end
 
-      def situation_adresse
-        @situation_adresse ||=
+      def invariant
+        @report.situation_invariant
+      end
+
+      def address
+        @address ||=
           if @report.situation_adresse?
             @report.situation_adresse
           elsif @report.situation_libelle_voie?

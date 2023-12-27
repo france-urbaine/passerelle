@@ -29,7 +29,7 @@ RSpec.describe Views::Reports::ShowReportNameComponent, type: :component do
 
     render_inline described_class.new(report)
 
-    expect(page).to have_text("Évaluation d'un local situé Avenue des Champs")
+    expect(page).to have_text("Évaluation d'un local d'habitation situé Avenue des Champs")
   end
 
   it "renders the report form type with its compiled address" do
@@ -40,6 +40,6 @@ RSpec.describe Views::Reports::ShowReportNameComponent, type: :component do
 
     render_inline described_class.new(report)
 
-    expect(page).to have_text("Création d'un local situé 40 Avenue des Champs")
+    expect(page).to have_text("Création d'un local d'habitation situé 40 Avenue des Champs")
   end
 end

@@ -34,6 +34,8 @@
 #  index_audits_on_user_id_and_user_type                        (user_id,user_type)
 #
 class Audit < Audited::Audit
+  self.implicit_order_column = :created_at
+
   belongs_to :publisher,         optional: true
   belongs_to :organization,      optional: true, polymorphic: true
   belongs_to :oauth_application, optional: true

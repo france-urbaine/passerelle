@@ -19,7 +19,7 @@ module Views
       ICON = "check-badge"
 
       def label
-        t(@attribute, scope: i18n_component_path)
+        t(".#{@attribute}")
       end
 
       def checked?
