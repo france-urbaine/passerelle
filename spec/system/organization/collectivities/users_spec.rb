@@ -107,7 +107,7 @@ RSpec.describe "Manage users of collectivities managed by current organization" 
       #
       fill_in "Prénom",       with: "Elliot"
       fill_in "Nom",          with: "Alderson"
-      fill_in "Adresse mail", with: "robot@fiscalite-territoire.fr"
+      fill_in "Adresse mail", with: "robot@solutions-territoire.fr"
 
       click_on "Enregistrer"
     end

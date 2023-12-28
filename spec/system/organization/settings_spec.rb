@@ -15,7 +15,7 @@ RSpec.describe "Settings of current organization" do
 
       # On the settings page, inputs should be filled with identification data
       #
-      expect(page).to have_field("Nom de l'éditeur",          with: "Fiscalité & Territoire")
+      expect(page).to have_field("Nom de l'éditeur",          with: "Solutions & Territoire")
       expect(page).to have_field("Numéro SIREN de l'éditeur", with: "511022394")
 
       # Fill inputs with invalid data
@@ -184,7 +184,7 @@ RSpec.describe "Settings of current organization" do
       #
       expect(page).to have_field("Nom de la collectivité",          with: "CA du Pays Basque")
       expect(page).to have_field("Numéro SIREN de la collectivité", with: "200067106")
-      expect(page).to have_select("Éditeur",                        selected: "Fiscalité & Territoire")
+      expect(page).to have_select("Éditeur",                        selected: "Solutions & Territoire")
 
       # Fill inputs with valid data
       #

@@ -7,7 +7,7 @@ RSpec.describe "Users in admin" do
   fixtures :publishers, :collectivities, :ddfips, :offices
   fixtures :users, :office_users, :audits
 
-  let(:fiscalite_territoire) { publishers(:fiscalite_territoire) }
+  let(:solutions_territoire) { publishers(:solutions_territoire) }
   let(:pays_basque)          { collectivities(:pays_basque) }
   let(:ddfip64)              { ddfips(:pyrenees_atlantiques) }
   let(:pelp_bayonne)         { offices(:pelp_bayonne) }
@@ -66,14 +66,14 @@ RSpec.describe "Users in admin" do
     # On the user page, we expect a link to the publisher
     #
     expect(page).to have_selector("h1", text: "Marc Debomy")
-    expect(page).to have_link("Fiscalité & Territoire")
+    expect(page).to have_link("Solutions & Territoire")
 
-    click_on "Fiscalité & Territoire"
+    click_on "Solutions & Territoire"
 
     # The browser should visit the publisher page
     #
-    expect(page).to have_current_path(admin_publisher_path(fiscalite_territoire))
-    expect(page).to have_selector("h1", text: "Fiscalité & Territoire")
+    expect(page).to have_current_path(admin_publisher_path(solutions_territoire))
+    expect(page).to have_selector("h1", text: "Solutions & Territoire")
 
     go_back
 
@@ -163,12 +163,12 @@ RSpec.describe "Users in admin" do
       expect(dialog).to have_unchecked_field("Administrateur de l'organisation")
       expect(dialog).to have_unchecked_field("Administrateur de la plateforme Passerelle")
 
-      fill_in "Organisation", with: "Fiscalité"
-      select_option "Fiscalité & Territoire", from: "Organisation"
+      fill_in "Organisation", with: "Solutions"
+      select_option "Solutions & Territoire", from: "Organisation"
 
       fill_in "Prénom",       with: "Elliot"
       fill_in "Nom",          with: "Alderson"
-      fill_in "Adresse mail", with: "robot@fiscalite-territoire.fr"
+      fill_in "Adresse mail", with: "robot@solutions-territoire.fr"
 
       click_on "Enregistrer"
     end
@@ -217,7 +217,7 @@ RSpec.describe "Users in admin" do
 
       fill_in "Prénom",       with: "Elliot"
       fill_in "Nom",          with: "Alderson"
-      fill_in "Adresse mail", with: "robot@fiscalite-territoire.fr"
+      fill_in "Adresse mail", with: "robot@solutions-territoire.fr"
 
       check "PELP de Bayonne"
       check "PELH de Bayonne"
@@ -259,10 +259,10 @@ RSpec.describe "Users in admin" do
     # The form should be filled with user data
     #
     within "[role=dialog]", text: "Modification de l'utilisateur" do |dialog|
-      expect(dialog).to have_field("Organisation", with: "Fiscalité & Territoire")
+      expect(dialog).to have_field("Organisation", with: "Solutions & Territoire")
       expect(dialog).to have_field("Prénom",       with: "Marc")
       expect(dialog).to have_field("Nom",          with: "Debomy")
-      expect(dialog).to have_field("Adresse mail", with: "mdebomy@fiscalite-territoire.fr")
+      expect(dialog).to have_field("Adresse mail", with: "mdebomy@solutions-territoire.fr")
       expect(dialog).to have_checked_field("Administrateur de l'organisation")
       expect(dialog).to have_checked_field("Administrateur de la plateforme Passerelle")
 
@@ -297,10 +297,10 @@ RSpec.describe "Users in admin" do
     # The form should be filled with user data
     #
     within "[role=dialog]", text: "Modification de l'utilisateur" do |dialog|
-      expect(dialog).to have_field("Organisation", with: "Fiscalité & Territoire")
+      expect(dialog).to have_field("Organisation", with: "Solutions & Territoire")
       expect(dialog).to have_field("Prénom",       with: "Marc")
       expect(dialog).to have_field("Nom",          with: "Debomy")
-      expect(dialog).to have_field("Adresse mail", with: "mdebomy@fiscalite-territoire.fr")
+      expect(dialog).to have_field("Adresse mail", with: "mdebomy@solutions-territoire.fr")
       expect(dialog).to have_checked_field("Administrateur de l'organisation")
       expect(dialog).to have_checked_field("Administrateur de la plateforme Passerelle")
 

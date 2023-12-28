@@ -6,7 +6,7 @@ RSpec.describe "OauthApplications managed by current organization" do
   fixtures :publishers, :users, :oauth_applications, :oauth_access_tokens, :audits
 
   let(:test_app)         { oauth_applications(:test_app) }
-  let(:publisher)        { publishers(:fiscalite_territoire) }
+  let(:publisher)        { publishers(:solutions_territoire) }
   let(:redirect_uri_app) { oauth_applications(:redirect_uri_app) }
 
   before { sign_in(users(:elise)) }

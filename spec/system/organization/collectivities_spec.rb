@@ -7,7 +7,7 @@ RSpec.describe "Collectivities managed by current organization" do
   fixtures :collectivities, :publishers, :ddfips, :users
 
   let(:pays_basque)   { collectivities(:pays_basque) }
-  let(:publisher)     { publishers(:fiscalite_territoire) }
+  let(:publisher)     { publishers(:solutions_territoire) }
   let(:epci)          { epcis(:pays_basque) }
 
   before { sign_in(users(:marc)) }

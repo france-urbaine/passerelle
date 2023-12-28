@@ -22,14 +22,14 @@ RSpec.describe Organization::SettingsPolicy, type: :policy do
 
     let(:attributes) do
       {
-        name:                "Fiscalité & Territoire",
+        name:                "Solutions & Territoire",
         siren:               "123456789",
         contact_first_name:  "Marc",
         contact_last_name:   "Debomy",
-        contact_email:       "marc.debomy@fiscalite-territoire.fr",
+        contact_email:       "marc.debomy@solutions-territoire.fr",
         contact_phone:       "+0000",
         allow_2fa_via_email: "true",
-        domain_restriction:  "fiscalite-territoire.fr",
+        domain_restriction:  "solutions-territoire.fr",
         something_else:      "true"
       }
     end

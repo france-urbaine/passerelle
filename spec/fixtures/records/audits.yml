@@ -6,8 +6,8 @@ ddfip64_creation_audit:
   auditable:          pyrenees_atlantiques (DDFIP)
   action:             create
 
-fiscalite_territoire_creation_audit:
-  auditable:          fiscalite_territoire (Publisher)
+solutions_territoire_creation_audit:
+  auditable:          solutions_territoire (Publisher)
   action:             create
 
 pays_basque_creation_audit:
@@ -24,7 +24,7 @@ marc_creation_audit:
 
 test_app_creation_audit:
   auditable:          test_app (OauthApplication)
-  publisher:          fiscalite_territoire
+  publisher:          solutions_territoire
   oauth_application:  test_app
   action:             create
   created_at:         <%= Time.utc(2023, 10, 23, 9, 0, 0) %>
@@ -32,7 +32,7 @@ test_app_creation_audit:
 test_app_token_creation_audit:
   auditable:          test_app_token (OauthAccessToken)
   associated:         test_app (OauthApplication)
-  publisher:          fiscalite_territoire
+  publisher:          solutions_territoire
   oauth_application:  test_app
   action:             create
   created_at:         <%= Time.utc(2023, 10, 23, 9, 15, 0) %>
