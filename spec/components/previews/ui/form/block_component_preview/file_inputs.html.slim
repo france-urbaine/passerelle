@@ -1,0 +1,12 @@
+= fields do |form|
+  = form.block :document do
+    = form.label :document, "File"
+    = form.file_field :document
+
+  = form.block :document do
+    = form.label :document, "Direct Upload"
+    = form.file_field :document, direct_upload: true, data: { controller: "direct-upload-field" }
+
+  = form.block :document do
+    = form.label :document, "Direct upload multiple files"
+    = form.file_field :document, direct_upload: true, data: { controller: "direct-upload-field" }

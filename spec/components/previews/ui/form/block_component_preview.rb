@@ -20,6 +20,13 @@ module UI
 
       # --------------------------------------------------------------------------
 
+      # @label Files inputs
+      # @display width "small"
+      #
+      def file_inputs; end
+
+      # --------------------------------------------------------------------------
+
       # @!group Check boxes
       # @display width "small"
       #
