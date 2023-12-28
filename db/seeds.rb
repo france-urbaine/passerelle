@@ -192,6 +192,25 @@ OfficeCommune.insert_all(
   ])
 )
 
+# Seed some reports
+# ----------------------------------------------------------------------------
+log "Seed reports"
+
+publisher    = Publisher.find_by!(name: "Solutions & Territoire")
+collectivity = Collectivity.find_by!(name: "CA du Pays Basque")
+
+unless Report.any?
+  Report::FORM_TYPES.each do |form_type|
+    FactoryBot.create(:report, :completed, collectivity:, form_type:)
+    FactoryBot.create(:report, :completed, :sandbox, collectivity:, form_type:, publisher:)
+  end
+
+  FactoryBot.create(:report, :transmitted, collectivity:)
+  FactoryBot.create(:report, :transmitted, collectivity:)
+end
+
+# The END
+# ----------------------------------------------------------------------------
 log ""
 log "✓ All seeds are ready."
 log ""
