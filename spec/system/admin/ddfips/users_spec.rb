@@ -73,7 +73,7 @@ RSpec.describe "DDFIP users in admin" do
 
       fill_in "Prénom",       with: "Elliot"
       fill_in "Nom",          with: "Alderson"
-      fill_in "Adresse mail", with: "robot@fiscalite-territoire.fr"
+      fill_in "Adresse mail", with: "robot@solutions-territoire.fr"
       check "PELP de Bayonne"
       check "PELH de Bayonne"
 

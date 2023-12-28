@@ -5,7 +5,7 @@ require "system_helper"
 RSpec.describe "Signing in" do
   fixtures :publishers, :users
 
-  let(:fiscalite_territoire) { publishers(:fiscalite_territoire) }
+  let(:solutions_territoire) { publishers(:solutions_territoire) }
   let(:marc) { users(:marc) }
   let(:elise) { users(:elise) }
 
@@ -18,7 +18,7 @@ RSpec.describe "Signing in" do
 
     # Fill the login form
     #
-    fill_in "Adresse mail", with: "mdebomy@fiscalite-territoire.fr"
+    fill_in "Adresse mail", with: "mdebomy@solutions-territoire.fr"
     fill_in "Mot de passe", with: "passerelle/passerelle"
     click_on "Connexion"
 
@@ -44,14 +44,14 @@ RSpec.describe "Signing in" do
   it "logs in with an OTP code received by email" do
     # Setup user credentials to receive OTP code by email
     #
-    fiscalite_territoire.update(allow_2fa_via_email: true)
+    solutions_territoire.update(allow_2fa_via_email: true)
     marc.update(password: "passerelle/passerelle", otp_method: "email", otp_secret: User.generate_otp_secret)
 
     visit new_user_session_path
 
     # Fill the login form
     #
-    fill_in "Adresse mail", with: "mdebomy@fiscalite-territoire.fr"
+    fill_in "Adresse mail", with: "mdebomy@solutions-territoire.fr"
     fill_in "Mot de passe", with: "passerelle/passerelle"
     click_on "Connexion"
 
@@ -67,7 +67,7 @@ RSpec.describe "Signing in" do
     perform_enqueued_jobs
 
     expect(Users::Mailer).to have_sent_email
-      .to("mdebomy@fiscalite-territoire.fr")
+      .to("mdebomy@solutions-territoire.fr")
       .with_subject("Connexion à Passerelle")
       .with_body(include(marc.current_otp))
 
@@ -88,7 +88,7 @@ RSpec.describe "Signing in" do
 
     # Fill the login form
     #
-    fill_in "Adresse mail", with: "leonard@fiscalite-territoire.fr"
+    fill_in "Adresse mail", with: "leonard@solutions-territoire.fr"
     fill_in "Mot de passe", with: "passerelle/passerelle"
     click_on "Connexion"
 
@@ -106,7 +106,7 @@ RSpec.describe "Signing in" do
 
     # Fill the login form
     #
-    fill_in "Adresse mail", with: "mdebomy@fiscalite-territoire.fr"
+    fill_in "Adresse mail", with: "mdebomy@solutions-territoire.fr"
     fill_in "Mot de passe", with: "hackme"
     click_on "Connexion"
 
@@ -114,7 +114,7 @@ RSpec.describe "Signing in" do
     # and refresh the login form
     #
     expect(page).to have_current_path(new_user_session_path)
-    expect(page).to have_field("Adresse mail", with: "mdebomy@fiscalite-territoire.fr")
+    expect(page).to have_field("Adresse mail", with: "mdebomy@solutions-territoire.fr")
     expect(page).to have_field("Mot de passe", with: "")
 
     # expect(page).to have_selector("[role=log]", text: "Email et/ou mot de passe incorrect(s).")
@@ -129,7 +129,7 @@ RSpec.describe "Signing in" do
 
     # Fill the login form
     #
-    fill_in "Adresse mail", with: "mdebomy@fiscalite-territoire.fr"
+    fill_in "Adresse mail", with: "mdebomy@solutions-territoire.fr"
     fill_in "Mot de passe", with: "passerelle/passerelle"
     click_on "Connexion"
 
@@ -176,7 +176,7 @@ RSpec.describe "Signing in" do
 
     # Fill the login form
     #
-    fill_in "Adresse mail", with: "mdebomy@fiscalite-territoire.fr"
+    fill_in "Adresse mail", with: "mdebomy@solutions-territoire.fr"
     fill_in "Mot de passe", with: "passerelle/passerelle"
     click_on "Connexion"
 
@@ -201,7 +201,7 @@ RSpec.describe "Signing in" do
 
     # Fill the login form
     #
-    fill_in "Adresse mail", with: "elacroix@fiscalite-territoire.fr"
+    fill_in "Adresse mail", with: "elacroix@solutions-territoire.fr"
     fill_in "Mot de passe", with: "passerelle/passerelle"
     click_on "Connexion"
 

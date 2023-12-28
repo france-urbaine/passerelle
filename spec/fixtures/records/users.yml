@@ -1,31 +1,31 @@
 marc:
-  organization:       fiscalite_territoire (Publisher)
+  organization:       solutions_territoire (Publisher)
   first_name:         Marc
   last_name:          Debomy
   name:               Marc Debomy
   super_admin:        true
   organization_admin: true
-  email:              mdebomy@fiscalite-territoire.fr
+  email:              mdebomy@solutions-territoire.fr
   confirmed_at:       <%= Time.current %>
 
 elise:
-  organization:       fiscalite_territoire (Publisher)
+  organization:       solutions_territoire (Publisher)
   first_name:         Elise
   last_name:          Lacroix
   name:               Elise Lacroix
   super_admin:        false
   organization_admin: false
-  email:              elacroix@fiscalite-territoire.fr
+  email:              elacroix@solutions-territoire.fr
   confirmed_at:       <%= Time.current %>
 
 jean_michel:
-  organization:       fiscalite_territoire (Publisher)
+  organization:       solutions_territoire (Publisher)
   first_name:         Jean-Michel
   last_name:          Torché
   name:               Jean-Michel Torché
   super_admin:        false
   organization_admin: true
-  email:              jmtorche@fiscalite-territoire.fr
+  email:              jmtorche@solutions-territoire.fr
   confirmed_at:       <%= Time.current %>
 
 maxime:

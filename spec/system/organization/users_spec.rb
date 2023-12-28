@@ -48,8 +48,8 @@ RSpec.describe "Manage users from organization" do
       #
       within "main.content" do
         expect(page).to     have_selector("h1", text: "Marc Debomy")
-        expect(page).to     have_link("mdebomy@fiscalite-territoire.fr")
-        expect(page).not_to have_link("Fiscalité & Territoire")
+        expect(page).to     have_link("mdebomy@solutions-territoire.fr")
+        expect(page).not_to have_link("Solutions & Territoire")
       end
     end
 
@@ -116,7 +116,7 @@ RSpec.describe "Manage users from organization" do
         #
         fill_in "Prénom",       with: "Elliot"
         fill_in "Nom",          with: "Alderson"
-        fill_in "Adresse mail", with: "robot@fiscalite-territoire.fr"
+        fill_in "Adresse mail", with: "robot@solutions-territoire.fr"
 
         click_on "Enregistrer"
       end
@@ -151,7 +151,7 @@ RSpec.describe "Manage users from organization" do
         expect(dialog).not_to have_field("Organisation")
         expect(dialog).to have_field("Prénom",       with: "Marc")
         expect(dialog).to have_field("Nom",          with: "Debomy")
-        expect(dialog).to have_field("Adresse mail", with: "mdebomy@fiscalite-territoire.fr")
+        expect(dialog).to have_field("Adresse mail", with: "mdebomy@solutions-territoire.fr")
         expect(dialog).to have_checked_field("Administrateur de l'organisation")
         expect(dialog).to have_checked_field("Administrateur de la plateforme Passerelle")
 
@@ -205,7 +205,7 @@ RSpec.describe "Manage users from organization" do
         expect(dialog).not_to have_field("Organisation")
         expect(dialog).to have_field("Prénom",       with: "Marc")
         expect(dialog).to have_field("Nom",          with: "Debomy")
-        expect(dialog).to have_field("Adresse mail", with: "mdebomy@fiscalite-territoire.fr")
+        expect(dialog).to have_field("Adresse mail", with: "mdebomy@solutions-territoire.fr")
         expect(dialog).to have_checked_field("Administrateur de l'organisation")
         expect(dialog).to have_checked_field("Administrateur de la plateforme Passerelle")
 
@@ -437,7 +437,7 @@ RSpec.describe "Manage users from organization" do
       # Create a bunch of users to have several pages
       # Create discarded users to verify they are not rollbacked
       #
-      publisher = publishers(:fiscalite_territoire)
+      publisher = publishers(:solutions_territoire)
       create_list(:user, 10, organization: publisher)
       create_list(:user, 5, :discarded, organization: publisher)
 
@@ -521,7 +521,7 @@ RSpec.describe "Manage users from organization" do
       # Create a bunch of users to have several pages
       # TODO: Create discarded users to verify they are not rollbacked
       #
-      publisher = publishers(:fiscalite_territoire)
+      publisher = publishers(:solutions_territoire)
       create_list(:user, 10, organization: publisher)
 
       visit organization_users_path
@@ -680,7 +680,7 @@ RSpec.describe "Manage users from organization" do
 
         fill_in "Prénom",       with: "Elliot"
         fill_in "Nom",          with: "Alderson"
-        fill_in "Adresse mail", with: "robot@fiscalite-territoire.fr"
+        fill_in "Adresse mail", with: "robot@solutions-territoire.fr"
 
         check "PELP de Bayonne"
         check "PELH de Bayonne"

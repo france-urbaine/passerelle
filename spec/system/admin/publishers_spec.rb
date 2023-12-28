@@ -5,7 +5,7 @@ require "system_helper"
 RSpec.describe "Publishers in admin" do
   fixtures :publishers, :collectivities, :users, :audits
 
-  let(:fiscalite_territoire) { publishers(:fiscalite_territoire) }
+  let(:solutions_territoire) { publishers(:solutions_territoire) }
   let(:pays_basque)          { collectivities(:pays_basque) }
 
   before { sign_in(users(:marc)) }
@@ -16,14 +16,14 @@ RSpec.describe "Publishers in admin" do
     # A table of all publishers should be present
     #
     expect(page).to have_selector("h1", text: "Éditeurs")
-    expect(page).to have_link("Fiscalité & Territoire")
+    expect(page).to have_link("Solutions & Territoire")
 
-    click_on "Fiscalité & Territoire"
+    click_on "Solutions & Territoire"
 
     # The browser should visit the publisher page
     #
-    expect(page).to have_selector("h1", text: "Fiscalité & Territoire")
-    expect(page).to have_current_path(admin_publisher_path(fiscalite_territoire))
+    expect(page).to have_selector("h1", text: "Solutions & Territoire")
+    expect(page).to have_current_path(admin_publisher_path(solutions_territoire))
 
     go_back
 
@@ -35,18 +35,18 @@ RSpec.describe "Publishers in admin" do
 
   it "visits publisher & audits pages" do
     visit admin_publishers_path
-    click_on "Fiscalité & Territoire"
+    click_on "Solutions & Territoire"
 
     # The browser should visit the publisher page
     #
-    expect(page).to have_current_path(admin_publisher_path(fiscalite_territoire))
+    expect(page).to have_current_path(admin_publisher_path(solutions_territoire))
     expect(page).to have_selector("a.button", text: "Voir toute l'activité")
 
     click_on "Voir toute l'activité"
 
     # The browser should visit the publisher audits page
     #
-    expect(page).to have_current_path(admin_publisher_audits_path(fiscalite_territoire))
+    expect(page).to have_current_path(admin_publisher_audits_path(solutions_territoire))
     expect(page).to have_selector("pre.logs")
   end
 
@@ -64,7 +64,7 @@ RSpec.describe "Publishers in admin" do
       expect(dialog).to have_field("Numéro SIREN de l'éditeur")
       expect(dialog).to have_field("Adresse mail de contact")
 
-      fill_in "Nom de l'éditeur",          with: "Solutions & Territoire"
+      fill_in "Nom de l'éditeur",          with: "Fiscalité & Territoire"
       fill_in "Numéro SIREN de l'éditeur", with: "848905758"
       click_on "Enregistrer"
     end
@@ -72,9 +72,9 @@ RSpec.describe "Publishers in admin" do
     # The browser should stay on the index page
     # The new publisher should appear
     #
-    expect(page).to     have_current_path(admin_publishers_path)
-    expect(page).to     have_selector("h1", text: "Éditeurs")
-    expect(page).to have_selector(:table_row, "Éditeur" => "Solutions & Territoire")
+    expect(page).to have_current_path(admin_publishers_path)
+    expect(page).to have_selector("h1", text: "Éditeurs")
+    expect(page).to have_selector(:table_row, "Éditeur" => "Fiscalité & Territoire")
 
     # The dialog should be closed
     # A notification should be displayed
@@ -88,7 +88,7 @@ RSpec.describe "Publishers in admin" do
 
     # A button should be present to edit the publisher
     #
-    within :table_row, { "Éditeur" => "Fiscalité & Territoire" } do
+    within :table_row, { "Éditeur" => "Solutions & Territoire" } do
       click_on "Modifier cet éditeur"
     end
 
@@ -96,7 +96,7 @@ RSpec.describe "Publishers in admin" do
     # The form should be filled with publisher data
     #
     within "[role=dialog]", text: "Modification de l'éditeur" do |dialog|
-      expect(dialog).to have_field("Nom de l'éditeur",          with: "Fiscalité & Territoire")
+      expect(dialog).to have_field("Nom de l'éditeur",          with: "Solutions & Territoire")
       expect(dialog).to have_field("Numéro SIREN de l'éditeur", with: "511022394")
       expect(dialog).to have_field("Adresse mail de contact")
 
@@ -119,11 +119,11 @@ RSpec.describe "Publishers in admin" do
   end
 
   it "updates a publisher from the publisher page" do
-    visit admin_publisher_path(fiscalite_territoire)
+    visit admin_publisher_path(solutions_territoire)
 
     # A button should be present to edit the publisher
     #
-    within ".breadcrumbs", text: "Fiscalité & Territoire" do
+    within ".breadcrumbs", text: "Solutions & Territoire" do
       click_on "Modifier"
     end
 
@@ -131,7 +131,7 @@ RSpec.describe "Publishers in admin" do
     # The form should be filled with publisher data
     #
     within "[role=dialog]", text: "Modification de l'éditeur" do |dialog|
-      expect(dialog).to have_field("Nom de l'éditeur",          with: "Fiscalité & Territoire")
+      expect(dialog).to have_field("Nom de l'éditeur",          with: "Solutions & Territoire")
       expect(dialog).to have_field("Numéro SIREN de l'éditeur", with: "511022394")
       expect(dialog).to have_field("Adresse mail de contact")
 
@@ -142,7 +142,7 @@ RSpec.describe "Publishers in admin" do
     # The browser should stay on the publisher show page
     # The publisher should have changed its name
     #
-    expect(page).to have_current_path(admin_publisher_path(fiscalite_territoire))
+    expect(page).to have_current_path(admin_publisher_path(solutions_territoire))
     expect(page).to have_selector("h1", text: "Solutions & Territoire")
 
     # The dialog should be closed
@@ -159,7 +159,7 @@ RSpec.describe "Publishers in admin" do
 
     # A button should be present to remove the publisher
     #
-    within :table_row, { "Éditeur" => "Fiscalité & Territoire" } do
+    within :table_row, { "Éditeur" => "Solutions & Territoire" } do
       click_on "Supprimer cet éditeur"
     end
 
@@ -175,7 +175,7 @@ RSpec.describe "Publishers in admin" do
     expect(page).to     have_current_path(admin_publishers_path)
     expect(page).to     have_selector("h1", text: "Éditeurs")
     expect(page).to     have_text("1 éditeur | Page 1 sur 1")
-    expect(page).not_to have_selector(:table_row, "Éditeur" => "Fiscalité & Territoire")
+    expect(page).not_to have_selector(:table_row, "Éditeur" => "Solutions & Territoire")
 
     # The dialog should be closed
     # A notification should be displayed
@@ -195,7 +195,7 @@ RSpec.describe "Publishers in admin" do
     expect(page).to have_current_path(admin_publishers_path)
     expect(page).to have_selector("h1", text: "Éditeurs")
     expect(page).to have_text("2 éditeurs | Page 1 sur 1")
-    expect(page).to have_selector(:table_row, "Éditeur" => "Fiscalité & Territoire")
+    expect(page).to have_selector(:table_row, "Éditeur" => "Solutions & Territoire")
 
     # The previous notification should be closed
     # A new notification should be displayed
@@ -205,11 +205,11 @@ RSpec.describe "Publishers in admin" do
   end
 
   it "discards a publisher from the publisher page & rollbacks" do
-    visit admin_publisher_path(fiscalite_territoire)
+    visit admin_publisher_path(solutions_territoire)
 
     # A button should be present to edit the publisher
     #
-    within ".breadcrumbs", text: "Fiscalité & Territoire" do
+    within ".breadcrumbs", text: "Solutions & Territoire" do
       click_on "Supprimer"
     end
 
@@ -225,7 +225,7 @@ RSpec.describe "Publishers in admin" do
     expect(page).to     have_current_path(admin_publishers_path)
     expect(page).to     have_selector("h1", text: "Éditeurs")
     expect(page).to     have_text("1 éditeur | Page 1 sur 1")
-    expect(page).not_to have_selector(:table_row, "Éditeur" => "Fiscalité & Territoire")
+    expect(page).not_to have_selector(:table_row, "Éditeur" => "Solutions & Territoire")
 
     # The dialog should be closed
     # A notification should be displayed
@@ -245,7 +245,7 @@ RSpec.describe "Publishers in admin" do
     expect(page).to have_current_path(admin_publishers_path)
     expect(page).to have_selector("h1", text: "Éditeurs")
     expect(page).to have_text("2 éditeurs | Page 1 sur 1")
-    expect(page).to have_selector(:table_row, "Éditeur" => "Fiscalité & Territoire")
+    expect(page).to have_selector(:table_row, "Éditeur" => "Solutions & Territoire")
 
     # The previous notification should be closed
     # A new notification should be displayed
@@ -286,7 +286,7 @@ RSpec.describe "Publishers in admin" do
     expect(page).to     have_selector("h1", text: "Éditeurs")
     expect(page).to     have_text("1 éditeur | Page 1 sur 1")
     expect(page).not_to have_selector(:table_row, "Éditeur" => "France Urbaine")
-    expect(page).to     have_selector(:table_row, "Éditeur" => "Fiscalité & Territoire")
+    expect(page).to     have_selector(:table_row, "Éditeur" => "Solutions & Territoire")
 
     # The selection message should not appears anymore
     # The dialog should be closed
@@ -365,7 +365,7 @@ RSpec.describe "Publishers in admin" do
     expect(page).to     have_current_path(admin_publishers_path)
     expect(page).to     have_selector("h1", text: "Éditeurs")
     expect(page).to     have_text("3 éditeurs | Page 1 sur 1")
-    expect(page).to     have_selector(:table_row, "Éditeur" => "Fiscalité & Territoire")
+    expect(page).to     have_selector(:table_row, "Éditeur" => "Solutions & Territoire")
     expect(page).not_to have_selector(:table_row, "Éditeur" => "France Urbaine")
 
     # The dialog should be closed
@@ -387,7 +387,7 @@ RSpec.describe "Publishers in admin" do
     expect(page).to have_current_path(admin_publishers_path)
     expect(page).to have_selector("h1", text: "Éditeurs")
     expect(page).to have_text("12 éditeurs | Page 1 sur 2")
-    expect(page).to have_selector(:table_row, "Éditeur" => "Fiscalité & Territoire")
+    expect(page).to have_selector(:table_row, "Éditeur" => "Solutions & Territoire")
     expect(page).to have_selector(:table_row, "Éditeur" => "France Urbaine")
 
     # The selection message should not appears again
@@ -448,7 +448,7 @@ RSpec.describe "Publishers in admin" do
     expect(page).to have_current_path(admin_publishers_path)
     expect(page).to have_selector("h1", text: "Éditeurs")
     expect(page).to have_text("1 éditeur | Page 1 sur 1")
-    expect(page).to have_selector(:table_row, "Éditeur" => "Fiscalité & Territoire")
+    expect(page).to have_selector(:table_row, "Éditeur" => "Solutions & Territoire")
 
     # The dialog should be closed
     # A notification should be displayed
@@ -469,7 +469,7 @@ RSpec.describe "Publishers in admin" do
     expect(page).to have_current_path(admin_publishers_path)
     expect(page).to have_selector("h1", text: "Éditeurs")
     expect(page).to have_text("12 éditeurs | Page 1 sur 2")
-    expect(page).to have_selector(:table_row, "Éditeur" => "Fiscalité & Territoire")
+    expect(page).to have_selector(:table_row, "Éditeur" => "Solutions & Territoire")
     expect(page).to have_selector(:table_row, "Éditeur" => "France Urbaine")
 
     # The selection message should not appears again

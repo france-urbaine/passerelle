@@ -48,7 +48,7 @@ elsif user
   log "This user already exists."
 else
   user = Publisher
-    .create_or_find_by(siren: "511022394", name: "Fiscalité & Territoire", &:skip_uniqueness_validation!)
+    .create_or_find_by(siren: "511022394", name: "Solutions & Territoire", &:skip_uniqueness_validation!)
     .users.create!(
       email:              email,
       first_name:         first_name,

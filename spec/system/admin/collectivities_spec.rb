@@ -7,7 +7,7 @@ RSpec.describe "Collectivities in admin" do
   fixtures :collectivities, :publishers, :ddfips, :users, :audits
 
   let(:pays_basque)   { collectivities(:pays_basque) }
-  let(:publisher)     { publishers(:fiscalite_territoire) }
+  let(:publisher)     { publishers(:solutions_territoire) }
   let(:epci)          { epcis(:pays_basque) }
 
   before { sign_in(users(:marc)) }
@@ -62,15 +62,15 @@ RSpec.describe "Collectivities in admin" do
     # - a link to the EPCI
     #
     expect(page).to have_selector("h1", text: "CA du Pays Basque")
-    expect(page).to have_link("Fiscalité & Territoire")
+    expect(page).to have_link("Solutions & Territoire")
     expect(page).to have_link("CA du Pays Basque (EPCI)")
 
-    click_on "Fiscalité & Territoire"
+    click_on "Solutions & Territoire"
 
     # The browser should visit the publisher page
     #
     expect(page).to have_current_path(admin_publisher_path(publisher))
-    expect(page).to have_selector("h1", text: "Fiscalité & Territoire")
+    expect(page).to have_selector("h1", text: "Solutions & Territoire")
 
     go_back
 
@@ -116,7 +116,7 @@ RSpec.describe "Collectivities in admin" do
       fill_in "Territoire", with: "Aix-Marseille"
       select_option "Métropole d'Aix-Marseille-Provence", from: "Territoire"
 
-      select "Fiscalité & Territoire", from: "Éditeur"
+      select "Solutions & Territoire", from: "Éditeur"
 
       fill_in "Nom de la collectivité",          with: "Métropole d'Aix-Marseille-Provence"
       fill_in "Numéro SIREN de la collectivité", with: "200054807"
@@ -151,7 +151,7 @@ RSpec.describe "Collectivities in admin" do
     # The form should be filled with collectivity data
     #
     within "[role=dialog]", text: "Modification de la collectivité" do |dialog|
-      expect(dialog).to have_select("Éditeur",                        selected: "Fiscalité & Territoire")
+      expect(dialog).to have_select("Éditeur",                        selected: "Solutions & Territoire")
       expect(dialog).to have_field("Territoire",                      with: "CA du Pays Basque")
       expect(dialog).to have_field("Nom de la collectivité",          with: "CA du Pays Basque")
       expect(dialog).to have_field("Numéro SIREN de la collectivité", with: "200067106")
@@ -188,7 +188,7 @@ RSpec.describe "Collectivities in admin" do
     #
     within "[role=dialog]", text: "Modification de la collectivité" do |dialog|
       expect(dialog).to have_field("Territoire",                      with: "CA du Pays Basque")
-      expect(dialog).to have_select("Éditeur",                        selected: "Fiscalité & Territoire")
+      expect(dialog).to have_select("Éditeur",                        selected: "Solutions & Territoire")
       expect(dialog).to have_field("Nom de la collectivité",          with: "CA du Pays Basque")
       expect(dialog).to have_field("Numéro SIREN de la collectivité", with: "200067106")
 

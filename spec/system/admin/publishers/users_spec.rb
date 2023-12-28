@@ -7,17 +7,17 @@ RSpec.describe "Publisher users in admin" do
   fixtures :publishers, :collectivities, :ddfips, :offices
   fixtures :users
 
-  let(:fiscalite_territoire) { publishers(:fiscalite_territoire) }
+  let(:solutions_territoire) { publishers(:solutions_territoire) }
   let(:marc)                 { users(:marc) }
 
   before { sign_in(users(:marc)) }
 
   it "visits an user page from the publisher page" do
-    visit admin_publisher_path(fiscalite_territoire)
+    visit admin_publisher_path(solutions_territoire)
 
     # A table of users should be present
     #
-    expect(page).to have_selector("h1", text: "Fiscalité & Territoire")
+    expect(page).to have_selector("h1", text: "Solutions & Territoire")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Marc Debomy")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 
@@ -32,23 +32,23 @@ RSpec.describe "Publisher users in admin" do
 
     # The browser should have redirect back to the publisher page
     #
-    expect(page).to have_current_path(admin_publisher_path(fiscalite_territoire))
-    expect(page).to have_selector("h1", text: "Fiscalité & Territoire")
+    expect(page).to have_current_path(admin_publisher_path(solutions_territoire))
+    expect(page).to have_selector("h1", text: "Solutions & Territoire")
   end
 
   it "paginate users on the publisher page" do
     # Create enough users to have several pages
     #
-    create_list(:user, 10, organization: fiscalite_territoire)
+    create_list(:user, 10, organization: solutions_territoire)
 
-    visit admin_publisher_path(fiscalite_territoire)
+    visit admin_publisher_path(solutions_territoire)
 
     expect(page).to     have_text("13 utilisateurs | Page 1 sur 2")
     expect(page).not_to have_button("Options d'affichage")
   end
 
   it "invites an user from the publisher page" do
-    visit admin_publisher_path(fiscalite_territoire)
+    visit admin_publisher_path(solutions_territoire)
 
     # A button should be present to add a new user
     #
@@ -67,7 +67,7 @@ RSpec.describe "Publisher users in admin" do
 
       fill_in "Prénom",       with: "Elliot"
       fill_in "Nom",          with: "Alderson"
-      fill_in "Adresse mail", with: "robot@fiscalite-territoire.fr"
+      fill_in "Adresse mail", with: "robot@solutions-territoire.fr"
 
       click_on "Enregistrer"
     end
@@ -75,8 +75,8 @@ RSpec.describe "Publisher users in admin" do
     # The browser should stay on the publisher page
     # The new user should appear
     #
-    expect(page).to have_current_path(admin_publisher_path(fiscalite_territoire))
-    expect(page).to have_selector("h1", text: "Fiscalité & Territoire")
+    expect(page).to have_current_path(admin_publisher_path(solutions_territoire))
+    expect(page).to have_selector("h1", text: "Solutions & Territoire")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Elliot Alderson")
 
     # The dialog should be closed
@@ -87,7 +87,7 @@ RSpec.describe "Publisher users in admin" do
   end
 
   it "updates an user from the publisher page" do
-    visit admin_publisher_path(fiscalite_territoire)
+    visit admin_publisher_path(solutions_territoire)
 
     # A table of users should be present
     # with a button to edit them
@@ -100,10 +100,10 @@ RSpec.describe "Publisher users in admin" do
     # The form should be filled with user data
     #
     within "[role=dialog]", text: "Modification de l'utilisateur" do |dialog|
-      expect(dialog).to have_field("Organisation", with: "Fiscalité & Territoire")
+      expect(dialog).to have_field("Organisation", with: "Solutions & Territoire")
       expect(dialog).to have_field("Prénom",       with: "Marc")
       expect(dialog).to have_field("Nom",          with: "Debomy")
-      expect(dialog).to have_field("Adresse mail", with: "mdebomy@fiscalite-territoire.fr")
+      expect(dialog).to have_field("Adresse mail", with: "mdebomy@solutions-territoire.fr")
       expect(dialog).to have_checked_field("Administrateur de l'organisation")
       expect(dialog).to have_checked_field("Administrateur de la plateforme Passerelle")
 
@@ -114,8 +114,8 @@ RSpec.describe "Publisher users in admin" do
     # The browser should stay on the publisher page
     # The user's name should have been updated
     #
-    expect(page).to have_current_path(admin_publisher_path(fiscalite_territoire))
-    expect(page).to have_selector("h1", text: "Fiscalité & Territoire")
+    expect(page).to have_current_path(admin_publisher_path(solutions_territoire))
+    expect(page).to have_selector("h1", text: "Solutions & Territoire")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Marc-André Debomy")
 
     # The dialog should be closed
@@ -126,7 +126,7 @@ RSpec.describe "Publisher users in admin" do
   end
 
   it "discards an user from the publisher page & rollbacks" do
-    visit admin_publisher_path(fiscalite_territoire)
+    visit admin_publisher_path(solutions_territoire)
 
     expect(page).to have_text("3 utilisateurs | Page 1 sur 1")
 
@@ -146,8 +146,8 @@ RSpec.describe "Publisher users in admin" do
     # The browser should stay on the publisher page
     # The user should not appears anymore
     #
-    expect(page).to     have_current_path(admin_publisher_path(fiscalite_territoire))
-    expect(page).to     have_selector("h1", text: "Fiscalité & Territoire")
+    expect(page).to     have_current_path(admin_publisher_path(solutions_territoire))
+    expect(page).to     have_selector("h1", text: "Solutions & Territoire")
     expect(page).to     have_text("2 utilisateurs | Page 1 sur 1")
     expect(page).not_to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 
@@ -167,8 +167,8 @@ RSpec.describe "Publisher users in admin" do
     # The user should not appears anymore
     # The user should be back again
     #
-    expect(page).to have_current_path(admin_publisher_path(fiscalite_territoire))
-    expect(page).to have_selector("h1", text: "Fiscalité & Territoire")
+    expect(page).to have_current_path(admin_publisher_path(solutions_territoire))
+    expect(page).to have_selector("h1", text: "Solutions & Territoire")
     expect(page).to have_text("3 utilisateurs | Page 1 sur 1")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 
@@ -180,7 +180,7 @@ RSpec.describe "Publisher users in admin" do
   end
 
   it "selects and discards one user from the publisher page & rollbacks" do
-    visit admin_publisher_path(fiscalite_territoire)
+    visit admin_publisher_path(solutions_territoire)
 
     expect(page).to have_text("3 utilisateurs | Page 1 sur 1")
 
@@ -207,8 +207,8 @@ RSpec.describe "Publisher users in admin" do
     # The selected users should not appears anymore
     # Other users should remain
     #
-    expect(page).to     have_current_path(admin_publisher_path(fiscalite_territoire))
-    expect(page).to     have_selector("h1", text: "Fiscalité & Territoire")
+    expect(page).to     have_current_path(admin_publisher_path(solutions_territoire))
+    expect(page).to     have_selector("h1", text: "Solutions & Territoire")
     expect(page).to     have_text("2 utilisateurs | Page 1 sur 1")
     expect(page).not_to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
     expect(page).to     have_selector(:table_row, "Utilisateur" => "Marc Debomy")
@@ -230,8 +230,8 @@ RSpec.describe "Publisher users in admin" do
     # The browser should stay on the publisher page
     # The removed users should be back again
     #
-    expect(page).to have_current_path(admin_publisher_path(fiscalite_territoire))
-    expect(page).to have_selector("h1", text: "Fiscalité & Territoire")
+    expect(page).to have_current_path(admin_publisher_path(solutions_territoire))
+    expect(page).to have_selector("h1", text: "Solutions & Territoire")
     expect(page).to have_text("3 utilisateurs | Page 1 sur 1")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 
@@ -248,10 +248,10 @@ RSpec.describe "Publisher users in admin" do
     # Create a bunch of users to have several pages
     # Also create discarded users on other organizations to ensure there are not rollbacked
     #
-    create_list(:user, 10, organization: fiscalite_territoire)
+    create_list(:user, 10, organization: solutions_territoire)
     create_list(:user, 5, :discarded)
 
-    visit admin_publisher_path(fiscalite_territoire)
+    visit admin_publisher_path(solutions_territoire)
 
     expect(page).to have_text("13 utilisateurs | Page 1 sur 2")
 
@@ -278,8 +278,8 @@ RSpec.describe "Publisher users in admin" do
     # The selected users should have been removed
     # The current user should not have been removed
     #
-    expect(page).to     have_current_path(admin_publisher_path(fiscalite_territoire))
-    expect(page).to     have_selector("h1", text: "Fiscalité & Territoire")
+    expect(page).to     have_current_path(admin_publisher_path(solutions_territoire))
+    expect(page).to     have_selector("h1", text: "Solutions & Territoire")
     expect(page).to     have_text("4 utilisateurs | Page 1 sur 1")
     expect(page).to     have_selector(:table_row, "Utilisateur" => "Marc Debomy")
     expect(page).not_to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
@@ -300,8 +300,8 @@ RSpec.describe "Publisher users in admin" do
     # The browser should stay on the publisher page
     # The removed users should be back again
     #
-    expect(page).to have_current_path(admin_publisher_path(fiscalite_territoire))
-    expect(page).to have_selector("h1", text: "Fiscalité & Territoire")
+    expect(page).to have_current_path(admin_publisher_path(solutions_territoire))
+    expect(page).to have_selector("h1", text: "Solutions & Territoire")
     expect(page).to have_text("13 utilisateurs | Page 1 sur 2")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
@@ -321,10 +321,10 @@ RSpec.describe "Publisher users in admin" do
     # Create a bunch of users to have several pages
     # Also create discarded users on other organizations to ensure there are not rollbacked
     #
-    create_list(:user, 10, organization: fiscalite_territoire)
+    create_list(:user, 10, organization: solutions_territoire)
     create_list(:user, 5, :discarded)
 
-    visit admin_publisher_path(fiscalite_territoire)
+    visit admin_publisher_path(solutions_territoire)
 
     expect(page).to have_text("13 utilisateurs | Page 1 sur 2")
 
@@ -355,8 +355,8 @@ RSpec.describe "Publisher users in admin" do
     # The current user is the only one remaining user
     # Other users from other organizations should remain
     #
-    expect(page).to     have_current_path(admin_publisher_path(fiscalite_territoire))
-    expect(page).to     have_selector("h1", text: "Fiscalité & Territoire")
+    expect(page).to     have_current_path(admin_publisher_path(solutions_territoire))
+    expect(page).to     have_selector("h1", text: "Solutions & Territoire")
     expect(page).to     have_text("1 utilisateur | Page 1 sur 1")
     expect(page).to     have_selector(:table_row, "Utilisateur" => "Marc Debomy")
     expect(page).not_to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
@@ -379,8 +379,8 @@ RSpec.describe "Publisher users in admin" do
     # The browser should stay on the publisher page
     # The removed users should be back again
     #
-    expect(page).to have_current_path(admin_publisher_path(fiscalite_territoire))
-    expect(page).to have_selector("h1", text: "Fiscalité & Territoire")
+    expect(page).to have_current_path(admin_publisher_path(solutions_territoire))
+    expect(page).to have_selector("h1", text: "Solutions & Territoire")
     expect(page).to have_text("13 utilisateurs | Page 1 sur 2")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Marc Debomy")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")

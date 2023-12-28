@@ -84,10 +84,10 @@ log "Seed publishers"
 
 Publisher.insert_all([
   { siren: "301463253", name: "France Urbaine",         contact_email: "franceurbaine@franceurbaine.org" },
-  { siren: "511022394", name: "Fiscalité & Territoire", contact_email: "contact@fiscalite-territoire.fr" },
+  { siren: "511022394", name: "Solutions & Territoire", contact_email: "contact@solutions-territoire.fr" },
   { siren: "335273371", name: "FININDEV",               contact_email: "contact@finindev.com" },
   { siren: "385365713", name: "INETUM",                 contact_email: "contact@inetum.com" },
-  { siren: "383884574", name: "A6CMO",                  contact_email: "" }
+  { siren: "383884574", name: "A6CMO",                  contact_email: "contact@a6cmo.fr" }
 ])
 
 # Import collectivities
@@ -96,19 +96,20 @@ log "Seed collectivities"
 
 Collectivity.insert_all(
   parse_collectivities([
-    { publisher: "Fiscalité & Territoire", siren: "217500016", commune: "Paris" },
-    { publisher: "Fiscalité & Territoire", siren: "200067106", epci: "CA du Pays Basque" },
-    { publisher: "Fiscalité & Territoire", siren: "200093201", epci: "Métropole Européenne de Lille" },
-    { publisher: "Fiscalité & Territoire", siren: "200054807", epci: "Métropole d'Aix-Marseille-Provence" },
-    { publisher: "Fiscalité & Territoire", siren: "200067213", epci: "CU du Grand Reims" },
-    { publisher: "Fiscalité & Territoire", siren: "243300316", epci: "Bordeaux Métropole" },
-    { publisher: "Fiscalité & Territoire", siren: "243100518", epci: "Toulouse Métropole" },
-    { publisher: "Fiscalité & Territoire", siren: "200039865", epci: "Metz Métropole" },
-    { publisher: "Fiscalité & Territoire", siren: "249500109", epci: "CA de Cergy-Pontoise" },
-    { publisher: "FININDEV", siren: "200046977", epci: "Métropole de Lyon" },
-    { publisher: "FININDEV", siren: "243000643", epci: "CA de Nîmes Métropole" },
-    { publisher: "INETUM", siren: "242100410", epci: "Dijon Métropole" },
-    { publisher: "INETUM", siren: "243400017", epci: "Montpellier Méditerranée Métropole" }
+    { publisher: "Solutions & Territoire", siren: "200067106", epci: "200067106", name: "CA du Pays Basque" },
+    { publisher: "Solutions & Territoire", siren: "200093201", epci: "200093201", name: "Métropole Européenne de Lille" },
+    { publisher: "Solutions & Territoire", siren: "200054807", epci: "200054807", name: "Métropole Aix-Marseille-Provence" },
+    { publisher: "Solutions & Territoire", siren: "217500016", commune: "75056",  name: "Ville de Paris"  },
+    { publisher: "Solutions & Territoire", siren: "243100518", epci: "243100518", name: "Ville et Métropole de Toulouse" },
+    { publisher: "Solutions & Territoire", siren: "243300316", epci: "243300316", name: "Bordeaux Métropole" },
+    { publisher: "Solutions & Territoire", siren: "200067213", epci: "200067213", name: "Ville de Reims et CU du Grand Reims" },
+    { publisher: "Solutions & Territoire", siren: "200039865", epci: "200039865", name: "Ville de Metz et Eurométropole de Metz" },
+    { publisher: "Solutions & Territoire", siren: "249500109", epci: "249500109", name: "CA de Cergy-Pontoise" },
+    { publisher: "France Urbaine",         siren: "200057958", epci: "200057958", name: "CA Paris-Vallée de la Marne", },
+    { publisher: "FININDEV",               siren: "243000643", epci: "243000643", name: "Métropole de Nîmes" },
+    { publisher: "INETUM",                 siren: "216901231", commune: "69123",  name: "Ville de Lyon" },
+    { publisher: "INETUM",                 siren: "242100410", epci: "242100410", name: "Ville et métropole de Dijon" },
+    { publisher: "INETUM",                 siren: "243400017", epci: "243400017", name: "Métropole Montpellier Méditerranée" }
   ])
 )
 
@@ -118,14 +119,14 @@ log "Seed users"
 
 User.insert_all(
   parse_users([
-    { email: "random@fu.example.org",            organization: "France Urbaine",                 organization_admin: true,  super_admin: true,  confirmed: true },
-    { email: "random@ft.example.org",            organization: "Fiscalité & Territoire",         organization_admin: true,  super_admin: true,  confirmed: true },
-    { email: "admin@pays-basque.example.org",    organization: "CA du Pays Basque",              organization_admin: true,  super_admin: false, confirmed: false },
-    { email: "user@pays-basque.example.org",     organization: "CA du Pays Basque",              organization_admin: false, super_admin: false, confirmed: false },
-    { email: "admin@ddfip-64.example.org",       organization: "DDFIP des Pyrénées-Atlantiques", organization_admin: true,  super_admin: false, confirmed: false },
-    { email: "sdif@ddfip-64.example.org",        organization: "DDFIP des Pyrénées-Atlantiques", organization_admin: false, super_admin: false, confirmed: false },
-    { email: "sip.bayonne@ddfip-64.example.org", organization: "DDFIP des Pyrénées-Atlantiques", organization_admin: false, super_admin: false, confirmed: false },
-    { email: "sip.pau@ddfip-64.example.org",     organization: "DDFIP des Pyrénées-Atlantiques", organization_admin: false, super_admin: false, confirmed: false },
+    { email: "random@fu.example.org",            organization: "France Urbaine",                            organization_admin: true,  super_admin: true,  confirmed: true },
+    { email: "random@ft.example.org",            organization: "Solutions & Territoire",                    organization_admin: true,  super_admin: true,  confirmed: true },
+    { email: "admin@pays-basque.example.org",    organization: "CA du Pays Basque",                         organization_admin: true,  super_admin: false, confirmed: false },
+    { email: "user@pays-basque.example.org",     organization: "CA du Pays Basque",                         organization_admin: false, super_admin: false, confirmed: false },
+    { email: "admin@ddfip-64.example.org",       organization: "DDFIP des Pyrénées-Atlantiques",            organization_admin: true,  super_admin: false, confirmed: false },
+    { email: "sdif@ddfip-64.example.org",        organization: "DDFIP des Pyrénées-Atlantiques",            organization_admin: false, super_admin: false, confirmed: false },
+    { email: "sip.bayonne@ddfip-64.example.org", organization: "DDFIP des Pyrénées-Atlantiques",            organization_admin: false, super_admin: false, confirmed: false },
+    { email: "sip.pau@ddfip-64.example.org",     organization: "DDFIP des Pyrénées-Atlantiques",            organization_admin: false, super_admin: false, confirmed: false },
     { email: "admin@dgfip.example.org",          organization: "Direction générale des Finances publiques", organization_admin: false, super_admin: false, confirmed: false }
   ])
 )
@@ -191,6 +192,25 @@ OfficeCommune.insert_all(
   ])
 )
 
+# Seed some reports
+# ----------------------------------------------------------------------------
+log "Seed reports"
+
+publisher    = Publisher.find_by!(name: "Solutions & Territoire")
+collectivity = Collectivity.find_by!(name: "CA du Pays Basque")
+
+unless Report.any?
+  Report::FORM_TYPES.each do |form_type|
+    FactoryBot.create(:report, :completed, collectivity:, form_type:)
+    FactoryBot.create(:report, :completed, :sandbox, collectivity:, form_type:, publisher:)
+  end
+
+  FactoryBot.create(:report, :transmitted, collectivity:)
+  FactoryBot.create(:report, :transmitted, collectivity:)
+end
+
+# The END
+# ----------------------------------------------------------------------------
 log ""
 log "✓ All seeds are ready."
 log ""
