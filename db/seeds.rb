@@ -198,15 +198,32 @@ log "Seed reports"
 
 publisher    = Publisher.find_by!(name: "Solutions & Territoire")
 collectivity = Collectivity.find_by!(name: "CA du Pays Basque")
+communes     = collectivity.reportable_communes
 
 unless Report.any?
+  # rubocop:disable Style/CombinableLoops
+  # It is preferable that loops be consecutive to maintain the order in which
+  # sample records are created.
+  #
   Report::FORM_TYPES.each do |form_type|
-    FactoryBot.create(:report, :completed, collectivity:, form_type:)
-    FactoryBot.create(:report, :completed, :sandbox, collectivity:, form_type:, publisher:)
+    FactoryBot.create(:report, :completed, collectivity:, form_type:, commune: communes.sample)
   end
 
-  FactoryBot.create(:report, :transmitted, collectivity:)
-  FactoryBot.create(:report, :transmitted, collectivity:)
+  Report::FORM_TYPES.each do |form_type|
+    FactoryBot.create(:report, collectivity:, form_type:, commune: communes.sample)
+  end
+
+  FactoryBot.create(:package, collectivity:).tap do |package|
+    FactoryBot.create_list(:report, 2, :transmitted, collectivity:, package:, commune: communes.sample)
+  end
+
+  FactoryBot.create(:package, :sandbox, collectivity:, publisher:).tap do |package|
+    Report::FORM_TYPES.each do |form_type|
+      FactoryBot.create(:report, :transmitted, :sandbox, collectivity:, publisher:, package:, form_type:, commune: communes.sample)
+    end
+  end
+
+  # rubocop:enable Style/CombinableLoops
 end
 
 # The END
