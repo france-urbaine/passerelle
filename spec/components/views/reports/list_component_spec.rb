@@ -12,6 +12,14 @@ RSpec.describe Views::Reports::ListComponent, type: :component do
       I18n.t(report.form_type, scope: "enum.report_form_type")
     end
 
+    def concat_address(report)
+      [
+        report.situation_numero_voie,
+        report.situation_indice_repetition,
+        report.situation_libelle_voie
+      ].compact.join(" ")
+    end
+
     before { sign_in_as(organization: collectivity) }
 
     it "renders pagination" do
@@ -34,7 +42,7 @@ RSpec.describe Views::Reports::ListComponent, type: :component do
         expect(table).to have_selector("th", text: "Commune")
         expect(table).to have_selector(:table_row, {
           "Type de signalement" => form_type_title(reports.first),
-          "Adresse"             => reports.first.situation_adresse
+          "Adresse"             => concat_address(reports.first)
         })
       end
     end
@@ -96,7 +104,7 @@ RSpec.describe Views::Reports::ListComponent, type: :component do
       expect(page).to have_selector(
         :table_row,
         "Type de signalement" => form_type_title(reports.first),
-        "Adresse"             => reports.first.situation_adresse
+        "Adresse"             => concat_address(reports.first)
       ) do |row|
         expect(row).to have_link(
           form_type_title(reports.first),

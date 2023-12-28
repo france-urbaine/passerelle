@@ -24,7 +24,7 @@
         span.dashboard-number__unit Signalements rejetés
 
   - layout.with_header icon: "clipboard-document" do
-    | Signalements à compléter/transmettre
+    | Derniers signalements non transmis
 
   - layout.with_section do
     = render Views::Reports::ListComponent.new(@reports.packing.order(created_at: :desc), dashboard: true) do |view|
@@ -39,10 +39,10 @@
       - view.with_column(:status)
 
   - layout.with_header icon: "clipboard-document" do
-    | Derniers signalements traités
+    | Derniers signalements traités par la DDFIP
 
   - layout.with_section do
-    = render Views::Reports::ListComponent.new(@reports.examined.order_by_last_examination_date, dashboard: false) do |view|
+    = render Views::Reports::ListComponent.new(@reports.examined.order_by_last_examination_date, dashboard: true) do |view|
       - view.with_column(:reference)
       - view.with_column(:package)
       - view.with_column(:form_type)

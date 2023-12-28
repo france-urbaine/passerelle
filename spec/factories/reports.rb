@@ -53,14 +53,27 @@ FactoryBot.define do
 
     trait :completed do
       completed_at { Time.current }
+      anomalies    { Report::FORM_TYPE_ANOMALIES[form_type][0, 1] }
+      date_constat { rand(0..5).days.ago }
 
       situation_invariant do
         Faker::Number.leading_zero_number(digits: 10) unless form_type.start_with?("creation_")
       end
 
-      situation_adresse do
-        Faker::Address.full_address
+      situation_annee_majic do
+        6.months.ago.year
       end
+
+      situation_parcelle do
+        [
+          Array("A".."Z").sample(2).join,
+          Faker::Number.leading_zero_number(digits: 4)
+        ].join(" ")
+      end
+
+      situation_numero_voie  { Faker::Address.building_number }
+      situation_libelle_voie { Faker::Address.street_name }
+      situation_code_rivoli  { Faker::Number.leading_zero_number(digits: 4) }
     end
 
     trait :sandbox do

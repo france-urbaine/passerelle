@@ -11,6 +11,7 @@
   [type="tel"],
   [type="time"],
   [type="week"],
+  [type="file"],
   [multiple],
   textarea,
   select {
@@ -181,16 +182,13 @@
     }
   }
 
-  [type='radio'] {
+  [type="radio"] {
     @apply rounded-full;
   }
 
-  input[type=file] {
+  [type="file"] {
     height: auto;
-    @apply py-2.5;
-  }
 
-  input[type=file][data-direct-upload-url][disabled] {
-    display: none;
+    @apply py-2.5;
   }
 }
