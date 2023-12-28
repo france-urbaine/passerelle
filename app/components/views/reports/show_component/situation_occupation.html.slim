@@ -20,7 +20,7 @@
       - if display_situation_majoration_rs?
         - list.with_attribute(:situation_majoration_rs) do
           = render_valid_content(:situation_majoration_rs) do
-            = t(@report.situation_majoration_rs.to_s, scope: "enum.boolean")
+            = translate_enum(@report.situation_majoration_rs.to_s, scope: "enum.boolean")
 
       - if display_situation_annee_cfe?
         - list.with_attribute(:situation_annee_cfe) do
@@ -30,7 +30,7 @@
       - if display_situation_vacance_fiscale?
         - list.with_attribute(:situation_vacance_fiscale) do
           = render_valid_content(:situation_vacance_fiscale) do
-            = t(@report.situation_vacance_fiscale.to_s, scope: "enum.boolean")
+            = translate_enum(@report.situation_vacance_fiscale.to_s, scope: "enum.boolean")
 
       - if display_situation_nombre_annees_vacance?
         - list.with_attribute(:situation_nombre_annees_vacance) do
@@ -55,4 +55,4 @@
       - if display_situation_taxation_base_minimum?
         - list.with_attribute(:situation_taxation_base_minimum) do
           = render_valid_content(:situation_taxation_base_minimum) do
-            = t(@report.situation_taxation_base_minimum.to_s, scope: "enum.boolean")
+            = translate_enum(@report.situation_taxation_base_minimum.to_s, scope: "enum.boolean")

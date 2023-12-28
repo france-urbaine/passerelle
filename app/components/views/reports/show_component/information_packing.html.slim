@@ -25,7 +25,7 @@
           em A spécifier dans le paquet
 
       - list.with_attribute("Type de signalement") do |attribute|
-        = t(@report.form_type, scope: "enum.report_form_type")
+        = translate_enum(@report.form_type, scope: "enum.report_form_type")
 
   - layout.with_header icon: "flag" do |header|
     | Objet du signalement
@@ -37,7 +37,7 @@
     = description_list_component(@report) do |list|
       - list.with_attribute(:anomalies) do |attribute|
         = render_valid_content(:anomalies) do
-          = helpers.list(@report.anomalies) { |value| t(value, scope: ["enum.anomalies", @report.form_type]) }
+          = helpers.list(@report.anomalies) { |value| translate_enum(value, scope: ["enum.anomalies", @report.form_type]) }
 
       - list.with_attribute(:date_constat) do |attribute|
         = render_valid_content(:date_constat) do
