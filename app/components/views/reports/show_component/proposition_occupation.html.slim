@@ -20,22 +20,22 @@
       - if display_proposition_erreur_tlv?
         - list.with_attribute(:proposition_erreur_tlv) do
           = render_valid_content(:proposition_erreur_tlv) do
-            = t(@report.proposition_erreur_tlv.to_s, scope: "enum.boolean")
+            = translate_enum(@report.proposition_erreur_tlv.to_s, scope: "enum.boolean")
 
       - if display_proposition_erreur_thlv?
         - list.with_attribute(:proposition_erreur_thlv) do
           = render_valid_content(:proposition_erreur_thlv) do
-            = t(@report.proposition_erreur_thlv.to_s, scope: "enum.boolean")
+            = translate_enum(@report.proposition_erreur_thlv.to_s, scope: "enum.boolean")
 
       - if display_proposition_meuble_tourisme?
         - list.with_attribute(:proposition_meuble_tourisme) do
           = render_valid_content(:proposition_meuble_tourisme) do
-            = t(@report.proposition_meuble_tourisme.to_s, scope: "enum.boolean")
+            = translate_enum(@report.proposition_meuble_tourisme.to_s, scope: "enum.boolean")
 
       - if display_proposition_majoration_rs?
         - list.with_attribute(:proposition_majoration_rs) do
           = render_valid_content(:proposition_majoration_rs) do
-            = t(@report.proposition_majoration_rs.to_s, scope: "enum.boolean")
+            = translate_enum(@report.proposition_majoration_rs.to_s, scope: "enum.boolean")
 
       - if display_proposition_nom_occupant?
         - list.with_attribute(:proposition_nom_occupant) do
@@ -70,12 +70,12 @@
       - if display_proposition_etablissement_principal?
         - list.with_attribute(:proposition_etablissement_principal) do
           = render_valid_content(:proposition_etablissement_principal) do
-            = t(@report.proposition_etablissement_principal.to_s, scope: "enum.boolean")
+            = translate_enum(@report.proposition_etablissement_principal.to_s, scope: "enum.boolean")
 
       - if display_proposition_chantier_longue_duree?
         - list.with_attribute(:proposition_chantier_longue_duree) do
           = render_valid_content(:proposition_chantier_longue_duree) do
-            = t(@report.proposition_chantier_longue_duree.to_s, scope: "enum.boolean")
+            = translate_enum(@report.proposition_chantier_longue_duree.to_s, scope: "enum.boolean")
 
       - if display_proposition_code_naf?
         - list.with_attribute(:proposition_code_naf) do

@@ -1,0 +1,5 @@
+fr:
+  transmitted:            Paquet transmis, en attente de confirmation
+  unresolved:             Paquet reçu, en attente de confirmation
+  assigned:               Paquet assigné
+  returned:               Paquet retourné

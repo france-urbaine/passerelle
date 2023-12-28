@@ -11,28 +11,23 @@ module Views
       end
 
       def call
-        class_name = audit.auditable.class.name.underscore
+        type    = audit.auditable_type.underscore
+        key     = ".#{type}.#{audit.action}"
+        default = ".default.#{audit.action}"
+        options = {
+          application_name: ->(*) { application_name },
+          user_name:        ->(*) { user_name }
+        }
 
-        i18n_keys = [
-          :"#{class_name}.#{audit.action}",
-          :"default.#{audit.action}"
-        ]
-
-        t(
-          i18n_keys.shift,
-          scope:       i18n_component_path,
-          default:     i18n_keys,
-          application: application_name,
-          username:    user_name
-        ).html_safe
+        t(key, **options, default: ->(*) { t(default, **options) })
       end
 
       def application_name
-        @audit.oauth_application&.name || t("unknown_part.application", scope: i18n_component_path)
+        @audit.oauth_application&.name || t(".unknown_part.application_name")
       end
 
       def user_name
-        @audit.user&.name || @audit.username.presence || t("unknown_part.username", scope: i18n_component_path)
+        @audit.user&.name || @audit.username.presence || t(".unknown_part.user_name")
       end
     end
   end

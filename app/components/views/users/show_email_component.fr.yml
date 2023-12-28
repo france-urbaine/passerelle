@@ -1,0 +1,5 @@
+fr:
+  unconfirmed_email:            "La modification de l'adresse mail est en cours et n'a pas été validée par l'utilisateur"
+  unconfirmed_user:             "Cet utilisateur n'a pas encore validé son inscription"
+  locked:                       "Ce compte a été verrouillé par sécurité"
+  confirmation_period_expired:  "L'invitation est expirée"

@@ -17,7 +17,7 @@
 
       - datatable.each_row do |row, exo|
         - row.with_column(:status) do
-          = t(exo.status, scope: "enum.exoneration_status")
+          = translate_enum(exo.status, scope: "enum.exoneration_status")
 
         - row.with_column(:label)  do
           = exo.code
@@ -25,7 +25,7 @@
           = exo.label
 
         - row.with_column(:base) do
-          = t(exo.base, scope: "enum.exoneration_base")
+          = translate_enum(exo.base, scope: "enum.exoneration_base")
 
         - row.with_column(:code_collectivite) do
-          = t(exo.code_collectivite, scope: "enum.exoneration_code_collectivite")
+          = translate_enum(exo.code_collectivite, scope: "enum.exoneration_code_collectivite")

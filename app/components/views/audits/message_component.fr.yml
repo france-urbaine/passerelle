@@ -1,0 +1,22 @@
+fr:
+  unknown_part:
+    application_name: "[application inconnue]"
+    user_name:        "[utilisateur inconnu]"
+
+  default:
+    create:      "Création réalisée par <b>%{user_name}</b>"
+    update:      "Mise à jour réalisée par <b>%{user_name}</b>"
+    destroy:     "Suppression réalisée par <b>%{user_name}</b>"
+    discard:     "Suppression réalisée par <b>%{user_name}</b>"
+
+  oauth_access_token:
+    create:      "Création d'un jeton d'accès via l'API <b>%{application_name}</b>"
+
+  transmission:
+    create:      "Initialisation d'une transmission via l'API <b>%{application_name}</b>"
+
+  user:
+    change_organization:            "Changement d'organisation réalisé par <b>%{user_name}</b>"
+    change_organization_and_update: "Changement d'organisation et mise à jour réalisés par <b>%{user_name}</b>"
+    login:                          "<b>%{user_name}</b> s'est connecté(e) à l'application"
+    two_factors:                    "<b>%{user_name}</b> a utilisé la double authentification"

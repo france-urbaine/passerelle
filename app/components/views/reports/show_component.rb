@@ -64,7 +64,7 @@ module Views
         end
       end
 
-      def t(value, **)
+      def translate_enum(value, **)
         I18n.t(value, **, default: "") if value.present?
       end
     end

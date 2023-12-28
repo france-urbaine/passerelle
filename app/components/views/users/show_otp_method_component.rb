@@ -25,7 +25,7 @@ module Views
       end
 
       def label
-        t(@user.otp_method, scope: i18n_component_path)
+        t(".#{@user.otp_method}")
       end
     end
   end
