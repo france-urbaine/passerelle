@@ -7,9 +7,11 @@ Files added to `app/views/documentation/api/guides/` are automatically routed, b
 ## Generating exemples
 Exemples are generated using rspec :
 ```
-APIPIE_RECORD=examples rspec spec/requests/api/
+APIPIE_RECORD=examples rspec --order defined spec/requests/api/
 ```
+
 Only specs with the `:show_in_doc` keyword will be run to generate the documentation :
+
 ```ruby
 it "lists all collectivities", :show_in_doc do
   expect(JSON.parse(response.body)["collectivites"].length).to eq(3)

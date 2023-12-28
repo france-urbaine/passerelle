@@ -6,10 +6,14 @@
   - layout.with_section do
     = card_component do
       p
-        ' La création et la publication d'une pièce jointe se fait en 3 étapes :
+        ' Le téléchargement (upload) de pièces jointes s'effectue sur un serveur dédié au stockage de fichiers.
+        br
+        ' Vous devez donc au préalable obtenir une autorisation de téléchargement sous la forme d'une URL pré-signée.
+      p
+        ' L'enregistrement d'une pièce jointe s'effectue donc en 2 étapes :
       ul
-        li Autorisation pour le téléchargement d'un fichier.
-        li Téléchargement du fichier.
+        li Identification de la pièce jointe et obtention de l'URL.
+        li Téléchargement (upload) du fichier sur le serveur dédié.
 
       p Chaque étape est détaillée ci-dessous.
 
@@ -22,17 +26,12 @@
       ' .
 
   - layout.with_header icon: "code-bracket-square" do
-    | Autorisation de téléchargement
+    | Identification de la pièce jointe
 
   - layout.with_section do
     = card_component do
       p
-        ' Le téléchargement de pièces jointes s'effectue sur un serveur dédié au stockage de fichiers.
-        br
-        ' Avant de pouvoir effectivement télécharger un fichier sur ce serveur, vous devez d'abord obtenir une
-        ' autorisation de téléchargement sous la forme d'une URL avec une signature.
-      p
-        ' Pour obtenir cette URL, vous devez transmettre les informations suivantes relatives au fichier :
+        ' Afin d'enregistrer une pièce jointe, vous devez transmettre les informations suivantes relatives au fichier :
 
       table
         tbody
@@ -59,8 +58,12 @@
             CHECKSUM=$(openssl md5 -binary $FILEPATH | base64) && \
             CONTENT_TYPE=$(file -b --mime-type $FILEPATH)
 
+      p
+        ' Une fois ces informations à disposition, vous pouvez enregistrer le document et obtenir en retour
+        ' une URL pré-signée :
+
       ruby:
-        example = UI::CodeRequestExampleComponent.new "POST", api_report_attachments_url("$REPORT_ID"),
+        example = UI::CodeRequestExampleComponent.new "POST", api_report_documents_url("$REPORT_ID"),
           json:          true,
           authorization: true,
           request: {
@@ -99,7 +102,7 @@
       = render example
 
       p
-        ' Enfin, vous pouvez extraire la signature et l'URL d'autorisation dans des variables :
+        ' Pour la suite de ce guide, vous pouvez extraire l'URL pré-signée dans une variable :
 
       = tabs_component do |tabs|
         - tabs.with_tab("cURL + jq", sync_all: "curl") do

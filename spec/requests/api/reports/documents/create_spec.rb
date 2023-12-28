@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "API::Reports::AttachmentsController#create", :api do
+RSpec.describe "API::Reports::DocumentsController#create", :api do
   subject(:request) do
     post "/signalements/#{report.id}/documents", as:, headers:, params:
   end
@@ -53,7 +53,7 @@ RSpec.describe "API::Reports::AttachmentsController#create", :api do
         expect(response).to have_http_status(:success)
       end
 
-      it "returns the ID of the attachment", :show_in_doc do
+      it "returns the ID of the document and a pre-signed URL", :show_in_doc do
         request
         expect(response).to have_json_body.to include(
           "document" => {
@@ -70,7 +70,7 @@ RSpec.describe "API::Reports::AttachmentsController#create", :api do
 
       it { expect { request }.to change(report.documents, :count).by(1) }
 
-      it "assigns expected attributes to the new record", :show_in_doc do
+      it "assigns expected attributes to the new record" do
         request
         expect(report.documents.last.filename).to eq("sample.pdf")
       end
@@ -88,7 +88,7 @@ RSpec.describe "API::Reports::AttachmentsController#create", :api do
         ))
       end
 
-      it "returns the signed ID of the blob", :show_in_doc do
+      it "returns the ID of the document and a pre-signed URL" do
         request
         expect(response).to have_json_body.to include(
           "document" => {

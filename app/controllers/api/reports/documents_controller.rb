@@ -2,7 +2,7 @@
 
 module API
   module Reports
-    class AttachmentsController < ApplicationController
+    class DocumentsController < ApplicationController
       include ActiveStorage::SetCurrent
 
       resource_description do
@@ -14,35 +14,25 @@ module API
       description <<-DESC
         Le téléchargement de pièces jointes s'effectue sur un serveur dédié au stockage de fichiers.
         <br>
-        Cette ressource permet d'obtenir une autorisation de téléchargement
-        avant de pouvoir effectivement télécharger un fichier sur ce serveur.
+        Cette ressource permet d'obtenir une URL pré-signée afin de pouvoir télécharger le fichier sur ce serveur.
 
-        L'autorisation de téléchargement prends la forme d'une URL à usage unique pour télécharger votre fichier.
-        <br>
-        L'URL obtenue peut être utilisée telle quelle, dans une requête <code>PUT</code>, sans utiliser d'Access Token.
-
-        Dans la réponse d'autorisation, vous obtenez aussi un <code>signed_id</code> qui permet d'associer
-        ce fichier à un signalement.
-
-        La pièce jointe sera associée au signalement après avoir été téléchargée sur notre serveur distant.
+        L'URL obtenue est à usage unique. Elle peut être utilisée telle quelle, dans une requête <code>PUT</code>, sans utiliser d'Access Token.
       DESC
 
       param :file, Hash, "Attributs relatifs au fichier" do
-        param :filename,     String,  "Nom du fichier",                      required: true
-        param :byte_size,    Integer, "Taille du fichier (en octets)",       required: true
-        param :checksum,     String,  "Checksum du fichier (MD5 en base64)", required: true
-        param :content_type, String,  "Type MIME du fichier",                required: true
+        param :filename,     String,  "Nom du fichier",                                required: true
+        param :byte_size,    Integer, "Taille du fichier (en octets)",                 required: true
+        param :checksum,     String,  "Checksum du fichier (MD5, converti en base64)", required: true
+        param :content_type, String,  "Type MIME du fichier",                          required: true
       end
-
-      param :documents, String, "Signed ID du document", required: true
 
       returns code: 200, desc: "Autorisation de téléchargement" do
         property :document, Hash do
           property :id, String, "UUID de la pièce jointe"
         end
         property :direct_upload, Hash do
-          property :url,     String, "URL de téléchargement"
-          property :headers, Hash,   "En-têtes de téléchargement"
+          property :url,     String, "URL pré-signée de téléchargement"
+          property :headers, Hash,   "En-têtes nécessaires au téléchargement"
         end
       end
 
@@ -72,13 +62,6 @@ module API
             headers: blob.service_headers_for_direct_upload
           }
         }
-      end
-
-      def destroy
-        @report = find_and_authorize_report
-        @report.documents.find(params[:id]).purge_later
-
-        head :no_content
       end
 
       private

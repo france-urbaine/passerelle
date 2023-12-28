@@ -290,7 +290,7 @@ Rails.application.routes.draw do
 
         resources :reports, only: [], path: "/signalements" do
           scope module: "reports" do
-            resources :attachments, only: %i[create destroy], path: "/documents"
+            resources :documents, only: %i[create]
           end
         end
       end
