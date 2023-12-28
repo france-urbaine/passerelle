@@ -369,7 +369,34 @@ class Report < ApplicationRecord
       reference:         ->(value) { where(reference: value) },
       invariant:         ->(value) { where(situation_invariant: value) },
       package_reference: ->(value) { where(package_id: Package.where(reference: value)) },
-      package_name:      ->(value) { where(package_id: Package.match(:name, value)) }
+      package_name:      ->(value) { where(package_id: Package.match(:name, value)) },
+      form_type:         ->(value) { match_enum(:form_type, value, :report_form_type) },
+      commune_name:      ->(value) { left_joins(:commune).merge(Commune.match(:name, value)) },
+      address:            lambda { |value|
+        stripped_sql_address_exp = <<-SQL.squish
+          LOWER(
+            UNACCENT(
+              REPLACE(
+                CONCAT(
+                  situation_adresse,
+                  ' ',
+                  situation_numero_voie,
+                  ' ',
+                  situation_indice_repetition,
+                  ' ',
+                  situation_libelle_voie
+                ),
+                '  ',
+                ' '
+              )
+            )
+          )
+        SQL
+        where(
+          "#{sanitize_sql(Arel.sql(stripped_sql_address_exp))} LIKE LOWER(UNACCENT(?))",
+          "%#{sanitize_sql_like(value).squish}%"
+        )
+      }
     )
   }
 

@@ -28,6 +28,18 @@ module AdvancedSearch
       )
     end
 
+    def match_enum(attribute, value, i18n_key)
+      raise "unknown enum I18n key #{i18n_key} (#{I18n.locale})" unless I18n.exists?(i18n_key, scope: "enum")
+
+      matchable_value = /#{I18n.transliterate(value).downcase.squish}/
+
+      eligible_enum_keys = I18n.t(i18n_key, scope: "enum").select { |_, enum_label|
+        I18n.transliterate(enum_label).downcase.match?(matchable_value)
+      }.keys
+
+      where(attribute => eligible_enum_keys)
+    end
+
     private
 
     def advanced_search_with_input_string(input, scopes)
