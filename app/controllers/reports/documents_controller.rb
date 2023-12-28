@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Reports
-  class AttachmentsController < ApplicationController
+  class DocumentsController < ApplicationController
     before_action :find_report
     before_action :authorize_report
 

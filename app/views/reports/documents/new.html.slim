@@ -3,7 +3,7 @@
     - modal.with_header do
       | Ajout de pièces jointes
 
-    - modal.with_form(url: report_attachments_path(@report), method: :post) do
+    - modal.with_form(url: report_documents_path(@report), method: :post) do
       = render "form"
 
     - modal.with_submit_action "Ajouter"

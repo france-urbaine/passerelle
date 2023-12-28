@@ -83,8 +83,15 @@ Rails.application.routes.draw do
       #
       resources :reports, path: "signalements", concerns: %i[removable removable_collection], path_names: { edit: "/edit/:form" } do
         scope module: "reports" do
-          resources :attachments, only: %i[new create destroy]
-          resource  :approval,    only: %i[show update destroy]
+          get "/documents/:id(/*filename)", to: "documents#show", as: :document, constraints: {
+            filename: %r{(?!(edit|remove|discard|undiscard))[^/]+}
+          }
+
+          resources :documents, only: %i[new create show destroy] do
+            concerns :removable, undiscard: false
+          end
+
+          resource :approval, only: %i[show update destroy]
         end
       end
 
