@@ -17,7 +17,7 @@
 
         - datatable.each_row do |row, document|
           - if @report.packing? && allowed_to?(:update?, @report)
-            - row.with_action "Supprimer ce document", report_document_path(id: document.id, report_id: @report.id), icon: "trash", icon_only: true, method: "delete"
+            - row.with_action "Supprimer ce document", remove_report_document_path(@report, document), icon: "trash", icon_only: true, modal: true
 
           - row.with_column(:name) do
             = link_to document.filename, report_document_path(@report, document, filename: document.filename), target: "_blank"

@@ -2,9 +2,9 @@
 
 require "rails_helper"
 
-RSpec.describe "Reports::DocumentsController#destroy" do
+RSpec.describe "Reports::DocumentsController#remove" do
   subject(:request) do
-    delete "/signalements/#{report.id}/documents/#{document.id}", as:, headers:, params:
+    get "/signalements/#{report.id}/documents/#{document.id}/remove", as:, headers:, params:
   end
 
   let(:as)      { |e| e.metadata[:as] }
@@ -52,9 +52,9 @@ RSpec.describe "Reports::DocumentsController#destroy" do
     let(:package)      { create(:package, :transmitted_through_web_ui, collectivity: collectivity, reports: [report]) }
 
     context "when the report is accessible" do
-      it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/signalements/#{report.id}") }
-      it { expect { request and report.documents.reload }.to change { report.documents.size }.by(-1) }
+      it { expect(response).to have_http_status(:success) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
     end
 
     context "when the report is transmitted" do

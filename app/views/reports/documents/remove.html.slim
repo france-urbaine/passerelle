@@ -1,0 +1,17 @@
+= modal_frame_component(referrer: @referrer_path) do |template|
+  - template.with_modal do |modal|
+    - modal.with_header do
+      | Suppression de pièce jointe
+
+    - modal.with_form(url: report_document_path(@report, @document), method: :delete) do
+      - modal.with_hidden_field :redirect, @redirect_path
+
+      p
+        | Êtes-vous sûrs de vouloir supprimer la pièce jointe suivante :
+        br
+        = link_to @document.filename, report_document_path(@report, @document, filename: @document.filename), target: "_blank"
+      p
+        | Cette action est définitive et irréversible.
+
+    - modal.with_submit_action "Continuer", autofocus: true
+    - modal.with_close_action "Annuler"

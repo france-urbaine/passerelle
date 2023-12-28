@@ -27,11 +27,17 @@ module Reports
         location: -> { report_path(@report) }
     end
 
-    def destroy
+    def remove
       @report = find_and_authorize_report(to: :update?)
       @document = @report.documents.find(params[:id])
 
-      @document.purge
+      respond_with @document
+    end
+
+    def destroy
+      @report = find_and_authorize_report(to: :update?)
+      @document = @report.documents.find(params[:id])
+      @document.purge_later
 
       respond_with @document,
         flash: true,
