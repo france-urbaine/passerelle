@@ -180,6 +180,19 @@ class Report < ApplicationRecord
     occupation_local_professionnel
   ].freeze
 
+  SORTED_FORM_TYPES_BY_LABEL = %i[fr].to_h { |locale|
+    unless I18n.exists?("enum.report_form_type", locale: locale)
+      raise "missing form_type enum values for locale #{locale}"
+    end
+
+    [
+      locale,
+      I18n.t("enum.report_form_type")
+        .sort_by { |k, _| k }
+        .map     { |(form_type, _)| form_type.to_s }
+    ]
+  }.freeze
+
   ANOMALIES = %w[
     consistance
     affectation
@@ -363,6 +376,27 @@ class Report < ApplicationRecord
   scope :order_by_param, lambda { |input|
     advanced_order(
       input,
+      form_type: lambda { |direction|
+        in_order_of(
+          :form_type,
+          direction == :asc ? SORTED_FORM_TYPES_BY_LABEL[I18n.locale] : SORTED_FORM_TYPES_BY_LABEL[I18n.locale].reverse
+        )
+      },
+      adresse:   lambda { |direction|
+        order(
+          Arel.sql(
+            "CONCAT(situation_libelle_voie, situation_numero_voie, situation_indice_repetition, situation_adresse)"
+          ) => direction
+        )
+      },
+      invariant: ->(direction) { order(situation_invariant: direction) },
+      commune:   lambda { |direction|
+        left_joins(:commune).merge(
+          Commune.unaccent_order(:name, direction, nulls: true)
+        )
+      },
+      priority:  ->(direction) { order(priority: direction) },
+      package:   ->(direction) { order(reference: direction) },
       reference: ->(direction) { order(reference: direction) }
     )
   }
