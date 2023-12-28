@@ -26,14 +26,14 @@ def parse_collectivities(data)
     publisher = publishers[hash.delete(:publisher)]
     territory =
       case hash
-      in commune: String then Commune.find_by!(name: hash.delete(:commune))
-      in epci: String    then EPCI.find_by!(name: hash.delete(:epci))
+      in commune: String then Commune.find_by!(code_insee: hash.delete(:commune))
+      in epci: String    then EPCI.find_by!(siren: hash.delete(:epci))
       end
 
     hash[:publisher_id]   = publisher
     hash[:territory_type] = territory.class.name
     hash[:territory_id]   = territory.id
-    hash[:name]           = territory.qualified_name
+    hash[:name]           ||= territory.qualified_name
     hash
   end
 end
