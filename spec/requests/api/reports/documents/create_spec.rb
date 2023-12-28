@@ -2,23 +2,25 @@
 
 require "rails_helper"
 
-RSpec.describe "API::Reports::AttachmentsController#create", :api do
+RSpec.describe "API::Reports::DocumentsController#create", :api do
   subject(:request) do
     post "/signalements/#{report.id}/documents", as:, headers:, params:
   end
 
   let(:as)      { |e| e.metadata.fetch(:as, :json) }
   let(:headers) { |e| e.metadata.fetch(:headers, {}).merge(authorization_header) }
-  let(:params)  { |e| e.metadata.fetch(:params, { documents: blob.signed_id }) }
+  let(:params) do |e|
+    e.metadata.fetch(:params, {
+      file: {
+        filename: "sample.pdf",
+        byte_size: 3_849,
+        checksum: "keKnRxGllrNnMpX19UouVQ",
+        content_type: "application/pdf"
+      }
+    })
+  end
 
   let!(:report) { create(:report, :made_through_api) }
-
-  let!(:blob) do
-    ActiveStorage::Blob.create_and_upload!(
-      io:       file_fixture("sample.pdf").open,
-      filename: "sample.pdf"
-    )
-  end
 
   describe "authorizations" do
     it_behaves_like "it requires an authentication through OAuth in JSON"
@@ -42,10 +44,33 @@ RSpec.describe "API::Reports::AttachmentsController#create", :api do
     before { setup_access_token(report.publisher) }
 
     context "with valid parameters" do
-      it { expect(response).to have_http_status(:no_content) }
+      it "creates a new blob" do
+        expect { request }.to change(ActiveStorage::Blob, :count).by(1)
+      end
+
+      it "responds with success" do
+        request
+        expect(response).to have_http_status(:success)
+      end
+
+      it "returns the ID of the document and a pre-signed URL", :show_in_doc do
+        request
+        expect(response).to have_json_body.to include(
+          "document" => {
+            "id" => ActiveStorage::Attachment.order(created_at: :desc).first.id
+          },
+          "direct_upload" => {
+            "url" => %r{^http://api\.example\.com/rails/active_storage/disk/[a-zA-Z0-9-=]{342}$},
+            "headers" => {
+              "Content-Type" => "application/pdf"
+            }
+          }
+        )
+      end
+
       it { expect { request }.to change(report.documents, :count).by(1) }
 
-      it "assigns expected attributes to the new record", :show_in_doc do
+      it "assigns expected attributes to the new record" do
         request
         expect(report.documents.last.filename).to eq("sample.pdf")
       end
@@ -63,7 +88,21 @@ RSpec.describe "API::Reports::AttachmentsController#create", :api do
         ))
       end
 
-      it { expect(response).to have_http_status(:no_content) }
+      it "returns the ID of the document and a pre-signed URL" do
+        request
+        expect(response).to have_json_body.to include(
+          "document" => {
+            "id" => ActiveStorage::Attachment.order(created_at: :desc).first.id
+          },
+          "direct_upload" => {
+            "url" => %r{^http://api\.example\.com/rails/active_storage/disk/[a-zA-Z0-9-=]{342}$},
+            "headers" => {
+              "Content-Type" => "application/pdf"
+            }
+          }
+        )
+      end
+
       it { expect { request }.to change(report.documents, :count).from(2).to(3) }
     end
 

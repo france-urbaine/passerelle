@@ -2,9 +2,9 @@
 
 require "rails_helper"
 
-RSpec.describe "Reports::AttachmentsController#new" do
+RSpec.describe "Reports::DocumentsController#remove" do
   subject(:request) do
-    get "/signalements/#{report.id}/attachments/new", as:, headers:, params:
+    get "/signalements/#{report.id}/documents/#{document.id}/remove", as:, headers:, params:
   end
 
   let(:as)      { |e| e.metadata[:as] }
@@ -12,6 +12,10 @@ RSpec.describe "Reports::AttachmentsController#new" do
   let(:params)  { |e| e.metadata[:params] }
 
   let!(:report) { create(:report) }
+  let!(:document) do
+    report.documents.attach(io: file_fixture("sample.pdf").open, filename: "sample.pdf")
+    report.documents.last
+  end
 
   describe "authorizations" do
     it_behaves_like "it requires to be signed in in HTML"
@@ -45,9 +49,18 @@ RSpec.describe "Reports::AttachmentsController#new" do
 
     let(:collectivity) { create(:collectivity) }
     let(:report)       { create(:report, :made_through_web_ui, collectivity: collectivity) }
+    let(:package)      { create(:package, :transmitted_through_web_ui, collectivity: collectivity, reports: [report]) }
 
     context "when the report is accessible" do
       it { expect(response).to have_http_status(:success) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
+    end
+
+    context "when the report is transmitted" do
+      before { package }
+
+      it { expect(response).to have_http_status(:forbidden) }
       it { expect(response).to have_content_type(:html) }
       it { expect(response).to have_html_body }
     end

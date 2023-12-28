@@ -1,0 +1,12 @@
+= modal_frame_component(referrer: @referrer_path) do |template|
+  - template.with_modal do |modal|
+    - modal.with_header do
+      | Ajout de pièces jointes
+
+    - modal.with_form(url: report_documents_path(@report), method: :post, multipart: true) do |form|
+      = form.block :documents do
+        = form.label :documents, "Documents", class: "hidden"
+        = form.file_field :documents, multiple: true, direct_upload: true, data: { controller: "direct-upload-field" }
+
+    - modal.with_submit_action "Continuer"
+    - modal.with_close_action "Annuler"

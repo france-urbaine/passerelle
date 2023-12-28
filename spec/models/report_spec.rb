@@ -25,7 +25,6 @@ RSpec.describe Report do
   # Attachments
   # ----------------------------------------------------------------------------
   describe "attachments" do
-    it { is_expected.to have_many_attached(:images) }
     it { is_expected.to have_many_attached(:documents) }
   end
 

@@ -3,7 +3,7 @@
     | Pièces jointes
 
     - if allowed_to?(:update?, @report) && @report.packing?
-      - header.with_action "Ajouter des documents", new_report_attachment_path(@report), icon: "document-plus", modal: true
+      - header.with_action "Ajouter des documents", new_report_document_path(@report), icon: "document-plus", modal: true
 
   - layout.with_section do
     - if @report.documents.empty?
@@ -17,10 +17,10 @@
 
         - datatable.each_row do |row, document|
           - if @report.packing? && allowed_to?(:update?, @report)
-            - row.with_action "Supprimer ce document", report_attachment_path(id: document.id, report_id: @report.id), icon: "trash", icon_only: true, method: "delete"
+            - row.with_action "Supprimer ce document", remove_report_document_path(@report, document), icon: "trash", icon_only: true, modal: true
 
           - row.with_column(:name) do
-            = link_to document.filename, helpers.storage_url(document), target: "_blank"
+            = link_to document.filename, report_document_path(@report, document, filename: document.filename), target: "_blank"
 
           - row.with_column(:type) do
             = document.content_type

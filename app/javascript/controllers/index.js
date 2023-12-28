@@ -14,6 +14,12 @@ application.register("nested-form", NestedForm)
 import AutocompleteController from "./components/autocomplete_controller"
 application.register("autocomplete", AutocompleteController)
 
+import CopyTextController from "./components/copy_text_controller"
+application.register("copy-text", CopyTextController)
+
+import DirectUploadFieldController from "./components/direct_upload_field_controller"
+application.register("direct-upload-field", DirectUploadFieldController)
+
 import DropdownController from "./components/dropdown_controller"
 application.register("dropdown", DropdownController)
 
@@ -44,9 +50,6 @@ application.register("strength-test", StrenghTestController)
 import SwitchController from "./components/switch_controller"
 application.register("switch", SwitchController)
 
-import CopyTextController from "./components/copy_text_controller"
-application.register("copy-text", CopyTextController)
-
 import TabsController from "./components/tabs_controller"
 application.register("tabs", TabsController)
 
@@ -58,8 +61,5 @@ application.register("highlight", HighlightController)
 
 // Forms
 // -----------------------------------------------------------------------------
-import DirectUploadFieldController from "./forms/direct_upload_field_controller"
-application.register("direct-upload-field", DirectUploadFieldController)
-
 import UserFormController from "./forms/user_form_controller"
 application.register("user-form", UserFormController)

@@ -54,9 +54,7 @@ fr:
       create:
         already_completed:  "Cette transmission est déjà complétée."
 
-      attachments:
+      documents:
         create:
-          already_packed: "Ce signalement est déjà transmis et ne peux plus être modifié."
-        destroy:
           already_packed: "Ce signalement est déjà transmis et ne peux plus être modifié."
 

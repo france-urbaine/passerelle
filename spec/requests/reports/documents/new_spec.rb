@@ -2,22 +2,16 @@
 
 require "rails_helper"
 
-RSpec.describe "Reports::AttachmentsController#create" do
+RSpec.describe "Reports::DocumentsController#new" do
   subject(:request) do
-    post "/signalements/#{report.id}/attachments", as:, headers:, params:
+    get "/signalements/#{report.id}/documents/new", as:, headers:, params:
   end
 
   let(:as)      { |e| e.metadata[:as] }
   let(:headers) { |e| e.metadata[:headers] }
-  let(:params)  { |e| e.metadata.fetch(:params, { documents: [blob.signed_id] }) }
+  let(:params)  { |e| e.metadata[:params] }
 
   let!(:report) { create(:report) }
-  let!(:blob) do
-    ActiveStorage::Blob.create_and_upload!(
-      io:       file_fixture("sample.pdf").open,
-      filename: "sample.pdf"
-    )
-  end
 
   describe "authorizations" do
     it_behaves_like "it requires to be signed in in HTML"
@@ -53,9 +47,9 @@ RSpec.describe "Reports::AttachmentsController#create" do
     let(:report)       { create(:report, :made_through_web_ui, collectivity: collectivity) }
 
     context "when the report is accessible" do
-      it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/signalements/#{report.id}") }
-      it { expect { request and report.documents.reload }.to change { report.documents.size }.by(1) }
+      it { expect(response).to have_http_status(:success) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
     end
 
     context "when the report is discarded" do

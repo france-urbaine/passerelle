@@ -45,10 +45,79 @@
       "recorded": true
     }
   ],
+  "documents#create": [
+    {
+      "verb": "POST",
+      "path": "/signalements/4b86a8f1-8277-40e9-b041-faf9c8a88368/documents",
+      "versions": [
+        "1.0"
+      ],
+      "query": null,
+      "request_data": {
+        "file": {
+          "filename": "sample.pdf",
+          "byte_size": 3849,
+          "checksum": "keKnRxGllrNnMpX19UouVQ",
+          "content_type": "application/pdf"
+        }
+      },
+      "response_data": {
+        "document": {
+          "id": "a4aa680b-3a58-4d15-9384-8d183231867b"
+        },
+        "direct_upload": {
+          "url": "http://api.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiIxbWhzY2pjZ2I2YXpyZTRuenpycTZ4bDNlaWQwIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjM4NDksImNoZWNrc3VtIjoia2VLblJ4R2xsck5uTXBYMTlVb3VWUSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyMy0xMi0yOFQwODowMzoyNi4zNjdaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--96a82a5e47636847c6e21a8df5f6f19635d7c1fa",
+          "headers": {
+            "Content-Type": "application/pdf"
+          }
+        }
+      },
+      "code": 200,
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ],
   "reports#create": [
     {
       "verb": "POST",
-      "path": "/transmissions/f300c71d-a596-4d9b-b41c-830c54104e0a/signalements",
+      "path": "/transmissions/31edca69-3961-4be5-990e-886cc06bde3f/signalements",
+      "versions": [
+        "1.0"
+      ],
+      "query": null,
+      "request_data": {
+        "report": {
+          "form_type": "creation_local_habitation",
+          "anomalies": [
+            "omission_batie"
+          ],
+          "priority": "low",
+          "code_insee": "64019",
+          "date_constat": "2023-01-02",
+          "situation_proprietaire": "Doe",
+          "situation_numero_ordre_proprietaire": "A12345",
+          "situation_parcelle": "AA 0000",
+          "situation_numero_voie": "1",
+          "situation_libelle_voie": "rue de la Liberté",
+          "situation_code_rivoli": "0000",
+          "proposition_nature": "AP",
+          "proposition_categorie": "1",
+          "proposition_surface_reelle": 70.0,
+          "proposition_date_achevement": "2023-01-01"
+        }
+      },
+      "response_data": {
+        "report": {
+          "id": "ded8596f-adb2-4bc8-9516-7222e88c83c0"
+        }
+      },
+      "code": 201,
+      "show_in_doc": 1,
+      "recorded": true
+    },
+    {
+      "verb": "POST",
+      "path": "/transmissions/5e4ac02a-0209-471a-ae12-439cc5aa31d2/signalements",
       "versions": [
         "1.0"
       ],
@@ -85,43 +154,6 @@
         }
       },
       "code": 422,
-      "show_in_doc": 1,
-      "recorded": true
-    },
-    {
-      "verb": "POST",
-      "path": "/transmissions/c500aabc-9b7c-4501-b666-563a3ed6d353/signalements",
-      "versions": [
-        "1.0"
-      ],
-      "query": null,
-      "request_data": {
-        "report": {
-          "form_type": "creation_local_habitation",
-          "anomalies": [
-            "omission_batie"
-          ],
-          "priority": "low",
-          "code_insee": "64019",
-          "date_constat": "2023-01-02",
-          "situation_proprietaire": "Doe",
-          "situation_numero_ordre_proprietaire": "A12345",
-          "situation_parcelle": "AA 0000",
-          "situation_numero_voie": "1",
-          "situation_libelle_voie": "rue de la Liberté",
-          "situation_code_rivoli": "0000",
-          "proposition_nature": "AP",
-          "proposition_categorie": "1",
-          "proposition_surface_reelle": 70.0,
-          "proposition_date_achevement": "2023-01-01"
-        }
-      },
-      "response_data": {
-        "report": {
-          "id": "6cbc5022-3bc9-40ce-ab20-b5fef3d88fae"
-        }
-      },
-      "code": 201,
       "show_in_doc": 0,
       "recorded": true
     }
@@ -129,7 +161,7 @@
   "transmissions#complete": [
     {
       "verb": "PUT",
-      "path": "/transmissions/d9b9359b-54e2-4736-a182-75a5d689aee2/finalisation",
+      "path": "/transmissions/e5828f6e-4a41-43e4-b34b-c933d8dc36e3/finalisation",
       "versions": [
         "1.0"
       ],
@@ -138,17 +170,17 @@
       },
       "response_data": {
         "transmission": {
-          "id": "d9b9359b-54e2-4736-a182-75a5d689aee2",
-          "completed_at": "2023-11-03T14:34:13.706Z",
+          "id": "e5828f6e-4a41-43e4-b34b-c933d8dc36e3",
+          "completed_at": "2023-12-28T07:58:26.445Z",
           "packages": [
             {
-              "id": "82365cfd-46e1-406e-9daa-bd4b0081d827",
+              "id": "52d258eb-1535-413a-ad43-b0cfec7d4b1f",
               "name": null,
-              "reference": "2023-11-0001",
+              "reference": "2023-12-0001",
               "reports": [
                 {
-                  "id": "a436744c-8c2b-44d7-a590-a5a0f0ced51d",
-                  "reference": "2023-11-0001-00001"
+                  "id": "3358179e-acf5-4e29-bae5-b835509da6c0",
+                  "reference": "2023-12-0001-00001"
                 }
               ]
             }
@@ -163,7 +195,7 @@
   "transmissions#create": [
     {
       "verb": "POST",
-      "path": "/collectivites/4c127ca8-ae2f-40b0-997d-fb816ff60592/transmissions",
+      "path": "/collectivites/6ed2fd77-5e04-4134-9265-980dbae03afa/transmissions",
       "versions": [
         "1.0"
       ],
@@ -172,7 +204,7 @@
       },
       "response_data": {
         "transmission": {
-          "id": "7fdfbcee-0afc-44e2-b8e9-bbd359b59958"
+          "id": "2512beb6-770b-40fe-8e19-631378c5c236"
         }
       },
       "code": 201,

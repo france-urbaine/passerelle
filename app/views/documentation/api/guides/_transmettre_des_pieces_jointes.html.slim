@@ -6,11 +6,14 @@
   - layout.with_section do
     = card_component do
       p
-        ' La création et la publication d'une pièce jointe se fait en 3 étapes :
+        ' Le téléchargement (upload) de pièces jointes s'effectue sur un serveur dédié au stockage de fichiers.
+        br
+        ' Vous devez donc au préalable obtenir une autorisation de téléchargement sous la forme d'une URL pré-signée.
+      p
+        ' L'enregistrement d'une pièce jointe s'effectue donc en 2 étapes :
       ul
-        li Autorisation pour le téléchargement d'un fichier.
-        li Téléchargement du fichier.
-        li Association du fichier au signalement.
+        li Identification de la pièce jointe et obtention de l'URL.
+        li Téléchargement (upload) du fichier sur le serveur dédié.
 
       p Chaque étape est détaillée ci-dessous.
 
@@ -23,31 +26,26 @@
       ' .
 
   - layout.with_header icon: "code-bracket-square" do
-    | Autorisation de téléchargement
+    | Identification de la pièce jointe
 
   - layout.with_section do
     = card_component do
       p
-        ' Le téléchargement de pièces jointes s'effectue sur un serveur dédié au stockage de fichiers.
-        br
-        ' Avant de pouvoir effectivement télécharger un fichier sur ce serveur, vous devez d'abord obtenir une
-        ' autorisation de téléchargement sous la forme d'une URL avec une signature.
-      p
-        ' Pour obtenir cette URL, vous devez transmettre les informations suivantes relatives au fichier :
+        ' Afin d'enregistrer une pièce jointe, vous devez transmettre les informations suivantes relatives au fichier :
 
       table
         tbody
           tr
-            th <code>blob[filename]</code>
+            th <code>file[filename]</code>
             td Le nom du fichier
           tr
-            th <code>blob[byte_size]</code>
+            th <code>file[byte_size]</code>
             td La taille du fichier en octets
           tr
-            th <code>blob[checksum]</code>
+            th <code>file[checksum]</code>
             td Une signature du fichier au format MD5, encodée en base64
           tr
-            th <code>blob[content_type]</code>
+            th <code>file[content_type]</code>
             td Le type MIME du fichier
 
       p
@@ -60,13 +58,17 @@
             CHECKSUM=$(openssl md5 -binary $FILEPATH | base64) && \
             CONTENT_TYPE=$(file -b --mime-type $FILEPATH)
 
+      p
+        ' Une fois ces informations à disposition, vous pouvez enregistrer le document et obtenir en retour
+        ' une URL pré-signée :
+
       ruby:
-        example = UI::CodeRequestExampleComponent.new "POST", api_upload_url,
+        example = UI::CodeRequestExampleComponent.new "POST", api_report_documents_url("$REPORT_ID"),
           json:          true,
           authorization: true,
           request: {
             body: {
-              blob: {
+              file: {
                 filename:     "'$FILENAME'",
                 byte_size:    "'$BYTESIZE'",
                 checksum:     "'$CHECKSUM'",
@@ -78,13 +80,9 @@
             code:    200,
             headers: {},
             body: {
-              id:              "255dd254-7713-405a-9097-ca4e0424a536",
-              filename:        "permis_00001.pdf",
-              content_type:    "application/pdf",
-              byte_size:       267785,
-              checksum:        "keKnRxGllrNnMpX19UouVQ==",
-              created_at:      "2023-10-25T10:00:26.328Z",
-              signed_id:       "eyJfcmFpbHMiOnsib[..]23895ccaef5aab022bab62a5e4ea83769",
+              document: {
+                id: "255dd254-7713-405a-9097-ca4e0424a536"
+              },
               direct_upload:   {
                 url:     "https://static.passerelle-fiscale.fr/eyJfcmFpbHM[...]eyJfcmFpbHM",
                 headers: {
@@ -94,6 +92,7 @@
             }
           },
           interpolations: {
+            REPORT_ID:    "6cbc5022-3bc9-40ce-ab20-b5fef3d88fae",
             FILENAME:     "permis.pdf",
             BYTESIZE:     26_7785,
             CHECKSUM:     "keKnRxGllrNnMpX19UouVQ==",
@@ -103,24 +102,22 @@
       = render example
 
       p
-        ' Enfin, vous pouvez extraire la signature et l'URL d'autorisation dans des variables :
+        ' Pour la suite de ce guide, vous pouvez extraire l'URL pré-signée dans une variable :
 
       = tabs_component do |tabs|
         - tabs.with_tab("cURL + jq", sync_all: "curl") do
           = code_example_component(:command, copyable: true) do
-            | read SIGNED_ID UPLOAD_URL < <(echo $( \
+            | UPLOAD_URL=$( \
               #{example.curl_command(indent: 2, options: %w[fail])} \
-                | jq -r '.signed_id, .direct_upload.url'
-              )) && echo "SIGNED_ID: $SIGNED_ID" \
-                && echo "UPLOAD_URL: $UPLOAD_URL"
+                | jq -r '.direct_upload.url'
+              ) && echo $UPLOAD_URL
 
         - tabs.with_tab("httpie + jq", sync_all: "httpie") do
           = code_example_component(:command, copyable: true) do
-            | read SIGNED_ID UPLOAD_URL < <(echo $( \
+            | UPLOAD_URL=$( \
               #{example.httpie_command(indent: 2, options: %w[check-status b])} \
-                | jq -r '.signed_id, .direct_upload.url'
-              )) && echo "SIGNED_ID: $SIGNED_ID" \
-                && echo "UPLOAD_URL: $UPLOAD_URL"
+                | jq -r '.direct_upload.url'
+              ) && echo $UPLOAD_URL
 
   - layout.with_header icon: "code-bracket-square" do
     | Téléchargement du fichier
@@ -152,36 +149,6 @@
             UPLOAD_URL:   "https://static.passerelle-fiscale.fr/eyJfcmFpbHM[...]eyJfcmFpbHM",
             BYTESIZE:     "267785",
             CONTENT_TYPE: "application/pdf"
-          }
-
-      = render example
-
-  - layout.with_header icon: "code-bracket-square" do
-    | Association du fichier a un signalement
-
-  - layout.with_section do
-    = card_component do
-      p
-        ' Une fois le fichier téléchargé, vous pouvez l'associer à un signalement :
-      ul
-        li Utilisez dans l'URL l'ID retourné lors de la création de ce même signalement.
-        li Envoyez dans les paramètres le SIGNED_ID retourné lors de l'autorisation de téléchagement.
-
-      ruby:
-        example = UI::CodeRequestExampleComponent.new "POST", api_report_attachments_url("$REPORT_ID"),
-          json:          true,
-          authorization: true,
-          request: {
-            body: {
-              documents: "'$SIGNED_ID'"
-            }
-          },
-          response: {
-            code: 204
-          },
-          interpolations: {
-            REPORT_ID: "6cbc5022-3bc9-40ce-ab20-b5fef3d88fae",
-            SIGNED_ID: "eyJfcmFpbHMiOnsib[..]23895ccaef5aab022bab62a5e4ea83769"
           }
 
       = render example

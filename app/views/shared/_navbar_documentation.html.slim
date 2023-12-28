@@ -38,10 +38,10 @@
         = complete_api_transmission_path(":id")
 
     - section.with_subsection("Transmission de pièces jointes") do |subsection|
-      - subsection.with_link apipie_apipie_path(version: "1.0", resource: :uploads, method: :create) do
-        span.navbar__method POST
-        = api_upload_path
+      / - subsection.with_link apipie_apipie_path(version: "1.0", resource: :uploads, method: :create) do
+      /   span.navbar__method POST
+      /   = api_upload_path
 
-      - subsection.with_link apipie_apipie_path(version: "1.0", resource: :attachments, method: :create) do
+      - subsection.with_link apipie_apipie_path(version: "1.0", resource: :documents, method: :create) do
         span.navbar__method POST
-        = api_report_attachments_path(":id")
+        = api_report_documents_path(":id")

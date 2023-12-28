@@ -2,17 +2,17 @@
 
 require "rails_helper"
 
-RSpec.describe "Reports::AttachmentsController#destroy" do
+RSpec.describe "Reports::DocumentsController#destroy" do
   subject(:request) do
-    delete "/signalements/#{report.id}/attachments/#{attachment.id}", as:, headers:, params:
+    delete "/signalements/#{report.id}/documents/#{document.id}", as:, headers:, params:
   end
 
   let(:as)      { |e| e.metadata[:as] }
   let(:headers) { |e| e.metadata[:headers] }
   let(:params)  { |e| e.metadata[:params] }
 
-  let!(:report)     { create(:report) }
-  let!(:attachment) do
+  let!(:report) { create(:report) }
+  let!(:document) do
     report.documents.attach(io: file_fixture("sample.pdf").open, filename: "sample.pdf")
     report.documents.last
   end
@@ -49,11 +49,20 @@ RSpec.describe "Reports::AttachmentsController#destroy" do
 
     let(:collectivity) { create(:collectivity) }
     let(:report)       { create(:report, :made_through_web_ui, collectivity: collectivity) }
+    let(:package)      { create(:package, :transmitted_through_web_ui, collectivity: collectivity, reports: [report]) }
 
     context "when the report is accessible" do
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/signalements/#{report.id}") }
       it { expect { request and report.documents.reload }.to change { report.documents.size }.by(-1) }
+    end
+
+    context "when the report is transmitted" do
+      before { package }
+
+      it { expect(response).to have_http_status(:forbidden) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
     end
 
     context "when the report is discarded" do

@@ -1,35 +1,61 @@
 @layer components {
-  .direct-upload {
-    display: inline-block;
-    position: relative;
-    padding: 2px 4px;
-    margin: 0 3px 3px 0;
-    border: 1px solid rgba(0, 0, 0, 0.3);
-    border-radius: 3px;
-    font-size: 11px;
-    line-height: 13px;
+  .direct-upload__list {
+    display: block;
+
+    & + input,
+    input + & {
+      @apply mt-4;
+    }
   }
 
-  .direct-upload--pending {
-    opacity: 0.6;
+  .direct-upload__list-item {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+
+    @apply pb-2 mb-2;
+
+    &:before {
+      content:  "";
+      display:  block;
+      position: absolute;
+      z-index:  1;
+      left:     0;
+      right:    0;
+      bottom:   0;
+
+      @apply h-1 rounded-md;
+      @apply bg-gray-100;
+      @apply dark:bg-gray-800;
+    }
+  }
+
+  .direct-upload__filename {
+    @apply h-5 leading-5 text-sm;
   }
 
   .direct-upload__progress {
     position: absolute;
-    top: 0;
+    z-index: 2;
     left: 0;
     bottom: 0;
-    opacity: 0.2;
-    background: #0076ff;
-    transition: width 120ms ease-out, opacity 60ms 60ms ease-in;
+    width: 0;
+
+    @apply h-1 rounded-md;
+    @apply bg-blue-400;
+    @apply dark:bg-blue-600;
+
+    transition: width 120ms ease-out, background-color 60ms 60ms ease-in;
     transform: translate3d(0, 0, 0);
-  }
 
-  .direct-upload--complete .direct-upload__progress {
-    opacity: 0.4;
-  }
+    &--complete {
+      @apply bg-green-400;
+      @apply dark:bg-green-600;
+    }
 
-  .direct-upload--error {
-    border-color: red;
+    &--failed {
+      @apply bg-red-400;
+      @apply dark:bg-red-600;
+    }
   }
 }
