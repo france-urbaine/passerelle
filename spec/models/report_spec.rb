@@ -244,7 +244,7 @@ RSpec.describe Report do
         }.to perform_sql_query(<<~SQL)
           SELECT "reports".*
           FROM   "reports"
-          ORDER BY CONCAT(situation_adresse, situation_numero_voie, situation_indice_repetition, situation_libelle_voie) ASC, "reports"."created_at" ASC
+          ORDER BY CONCAT(situation_libelle_voie, situation_numero_voie, situation_indice_repetition, situation_adresse) ASC, "reports"."created_at" ASC
         SQL
       end
 

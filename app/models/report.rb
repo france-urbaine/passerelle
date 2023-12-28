@@ -385,7 +385,7 @@ class Report < ApplicationRecord
       adresse:   lambda { |direction|
         order(
           Arel.sql(
-            "CONCAT(situation_adresse, situation_numero_voie, situation_indice_repetition, situation_libelle_voie)"
+            "CONCAT(situation_libelle_voie, situation_numero_voie, situation_indice_repetition, situation_adresse)"
           ) => direction
         )
       },
