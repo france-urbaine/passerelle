@@ -219,6 +219,7 @@ RSpec.describe Report do
           OR "reports"."situation_invariant" = 'Hello'
           OR "reports"."package_id" IN (SELECT "packages"."id" FROM "packages" WHERE "packages"."reference" = 'Hello')
           OR "reports"."package_id" IN (SELECT "packages"."id" FROM "packages" WHERE (LOWER(UNACCENT("packages"."name")) LIKE LOWER(UNACCENT('%Hello%'))))
+          OR 1=0
           OR LOWER(UNACCENT("communes"."name")) LIKE LOWER(UNACCENT('%Hello%'))
           OR LOWER(UNACCENT(REPLACE(CONCAT(situation_adresse, ' ', situation_numero_voie, ' ', situation_indice_repetition, ' ', situation_libelle_voie ), ' ', ' '))) LIKE LOWER(UNACCENT('%Hello%')))
         SQL
@@ -282,6 +283,16 @@ RSpec.describe Report do
           SELECT "reports".*
           FROM   "reports"
           WHERE  (LOWER(UNACCENT(REPLACE(CONCAT(situation_adresse, ' ', situation_numero_voie, ' ', situation_indice_repetition, ' ', situation_libelle_voie ), ' ', ' '))) LIKE LOWER(UNACCENT('%2 rue des arbres%')))
+        SQL
+      end
+
+      it "searches for reports by matching form_type" do
+        expect {
+          described_class.search(form_type: "local prof").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "reports".*
+          FROM   "reports"
+          WHERE  "reports"."form_type" IN ('evaluation_local_professionnel', 'creation_local_professionnel', 'occupation_local_professionnel')
         SQL
       end
     end

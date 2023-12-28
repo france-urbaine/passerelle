@@ -370,6 +370,7 @@ class Report < ApplicationRecord
       invariant:         ->(value) { where(situation_invariant: value) },
       package_reference: ->(value) { where(package_id: Package.where(reference: value)) },
       package_name:      ->(value) { where(package_id: Package.match(:name, value)) },
+      form_type:         ->(value) { match_enum(:form_type, value, :report_form_type) },
       commune_name:      ->(value) { left_joins(:commune).merge(Commune.match(:name, value)) },
       address:            lambda { |value|
         stripped_sql_address_exp = <<-SQL.squish
