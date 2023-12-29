@@ -16,9 +16,30 @@ on:
       - "!/*.md"
       - "!/**.md"
 
+concurrency:
+  group: ${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
+  cache_dependencies:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Ruby, install & cache Gems
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 3.2.2
+        bundler-cache: true
+    - name: Set up & cache Yarn
+      uses: actions/setup-node@v3
+      with:
+        cache: 'yarn'
+    - name: Install JS packages
+      run: yarn
+
   test_unit:
     name: test:unit
+    needs: cache_dependencies
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true
@@ -93,6 +114,7 @@ jobs:
 
   test_system:
     name: test:system
+    needs: cache_dependencies
     runs-on: ubuntu-latest
     services:
       # Setup a postgres database to run tests
@@ -161,6 +183,7 @@ jobs:
         path: ./tmp/capybara
 
   rubocop:
+    needs: cache_dependencies
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -176,6 +199,7 @@ jobs:
         bin/ci rubocop
 
   brakeman:
+    needs: cache_dependencies
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -191,6 +215,7 @@ jobs:
         bin/ci brakeman
 
   audit:
+    needs: cache_dependencies
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
