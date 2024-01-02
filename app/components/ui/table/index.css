@@ -1,0 +1,74 @@
+@layer components {
+  .table__wrapper {
+    max-width: 100%;
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+
+    @apply rounded-md ring-1;
+    @apply bg-white ring-gray-300;
+    @apply dark:bg-black dark:ring-gray-700;
+  }
+
+  .table__row {
+    &--selected {
+      @apply bg-blue-50;
+      @apply dark:bg-blue-900/50;
+    }
+  }
+
+  .table__cell {
+    &:empty:before {
+      content: "-";
+      @apply text-gray-500;
+    }
+
+    &--compact {
+      @apply w-px;
+    }
+
+    &--right {
+      text-align: right;
+    }
+
+    &--right:not(&--compact) {
+      @apply w-1 pl-12;
+    }
+  }
+
+  .table__checkbox,
+  .table__actions {
+    @apply w-px px-6;
+
+    &:first-child {
+      @apply pl-6;
+    }
+
+    & + .table__actions {
+      @apply pl-0;
+    }
+  }
+
+  .table__checkbox {
+    & [type="checkbox"] {
+      display: block;
+    }
+  }
+
+  .table__actions-buttons {
+    display: flex;
+
+    & .icon-button {
+      display: block;
+
+      &:first-child {
+        @apply -ml-2;
+      }
+
+      &:last-child {
+        @apply -mr-2;
+      }
+    }
+  }
+}
+

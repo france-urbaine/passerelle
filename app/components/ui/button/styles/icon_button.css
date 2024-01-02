@@ -24,6 +24,14 @@
       opacity: 0.3;
     }
 
+    table & {
+      @apply h-10 w-10 p-2 -my-2;
+
+      & svg {
+        @apply h-6 w-6;
+      }
+    }
+
     &:not([disabled]) {
       @apply text-gray-900;
       @apply dark:text-gray-100;

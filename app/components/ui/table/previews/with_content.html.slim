@@ -1,0 +1,17 @@
+= table_component(array_of_data) do |table|
+  - table.with_column(:id)       { "#" }
+  - table.with_column(:column_a) { "Title" }
+  - table.with_column(:column_b) { "Sub-title" }
+  - table.with_column(:size)     { "Size" }
+  - table.with_column(:amount)   { "Amount" }
+
+  - table.each_row do |row, datum|
+    - row.with_column(:id) { "##{datum[:id]}" }
+    - row.with_column(:column_a)
+    - row.with_column(:column_b)
+    - row.with_column(:size) do
+      = number_with_delimiter(datum[:number1]) if datum[:number1]&.positive?
+
+    - row.with_column(:amount) do
+      = number_to_currency(datum[:number2]) if datum[:number2]&.positive?
+

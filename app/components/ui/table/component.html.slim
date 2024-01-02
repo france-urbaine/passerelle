@@ -1,0 +1,47 @@
+.table__wrapper
+  table
+    - if columns.any?(&:multi_span?)
+      colgroup
+        - if checkboxes?
+          col
+        - if actions?
+          col
+        - columns.each do |column|
+          col( span=(column.span_size if column.multi_span?) )
+
+    thead
+      tr.table__row
+        - if checkboxes?
+          th.table__checkbox( scope="col" )
+            input(
+              type="checkbox"
+              aria-label=t(".check_all")
+              data-selection-target="checkall"
+            )
+
+        - if actions?
+          th.table__actions( scope="col" aria-label="Actions" )
+
+        - columns.each do |column|
+          th*column.html_attributes
+            = column
+
+    tbody
+      - rows.each do |row|
+        tr.table__row*row.html_attributes
+          - if checkboxes?
+            td.table__cell.table__checkbox
+              = row.checkbox
+
+              - if row.checkbox&.label
+                span.tooltip=row.checkbox.label
+
+          - if actions?
+            td.table__actions
+              .table__actions-buttons
+                - row.actions.each do |action|
+                  = action
+
+          - row.cells.each do |cell|
+            td*cell.html_attributes
+              = render cell

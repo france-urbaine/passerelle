@@ -29,6 +29,7 @@
 @import "../../components/ui/card";
 @import "../../components/ui/description_list";
 @import "../../components/ui/modal";
+@import "../../components/ui/table";
 
 /* UI components - may depends on top components */
 @import "../../components/ui/badge";

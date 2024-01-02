@@ -1,0 +1,11 @@
+= table_component(records) do |table|
+  - table.with_column(:last_name)  { "Nom" }
+  - table.with_column(:first_name) { "Prénom" }
+  - table.with_column(:email)      { "Email" }
+
+  - table.each_row do |row, record|
+    - row.with_checkbox("Sélectionner cet utilisateur", described_by: :last_name)
+
+    - row.with_column(:last_name)
+    - row.with_column(:first_name)
+    - row.with_column(:email) { mail_to(record.email) }
