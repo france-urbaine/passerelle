@@ -92,3 +92,6 @@ class ApplicationViewComponent < ViewComponent::Base
 
   private_class_method :define_component_helper
 end
+
+# Eager load components to get all helpers methods available
+Rails.autoloaders.main.eager_load_dir(__dir__)
