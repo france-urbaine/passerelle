@@ -21,7 +21,7 @@ module Layout
       end
 
       def previous_button
-        UI::ButtonComponent.new(
+        UI::Button::Component.new(
           "Page précédente",
           page_url(pagy.prev),
           rel:       "prev",
@@ -32,7 +32,7 @@ module Layout
       end
 
       def next_button
-        UI::ButtonComponent.new(
+        UI::Button::Component.new(
           "Page suivante",
           page_url(pagy.next),
           rel:       "next",

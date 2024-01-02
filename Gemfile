@@ -54,6 +54,7 @@ gem "jbuilder"
 gem "rails-i18n"
 gem "slim"
 gem "view_component"
+gem "view_component-contrib"
 
 # Data tools
 gem "faker"

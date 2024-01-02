@@ -1,0 +1,12 @@
+ruby:
+  example = UI::CodeRequestExample::Component.new "GET", "https://storage.passerelle-fiscale.fr/path",
+    response: {
+      file: "relative/path/to/file.pdf"
+    }
+
+= render example
+
+
+.form-block.mt-12
+  label( for="paste" ) Paste copied code here to verify conformity :
+  textarea.font-mono( id="paste" rows=10 )

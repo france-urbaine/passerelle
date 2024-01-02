@@ -1,7 +1,14 @@
 # frozen_string_literal: true
 
 Rails.application.configure do
-  config.view_component.preview_paths << Rails.root.join("spec/components/previews")
+  # FYI: We'd better have to use a String instead of a Pathname
+  # otherwise we might be  could lead to being unable to eager load the directory
+  #
+  config.view_component.preview_paths << Rails.root.join("app/components").to_s
+
+  # Keep this directory for legacy previews
+  config.view_component.preview_paths << Rails.root.join("spec/components/previews").to_s
+
   config.view_component.default_preview_layout = "component_preview"
   config.view_component.capture_compatibility_patch_enabled = true
 
@@ -26,4 +33,22 @@ Rails.application.configure do
     HtmlBeautifier::HtmlParser.block_elements << "turbo-frame"
     HtmlBeautifier::HtmlParser.block_elements << "colgroup"
   end
+end
+
+ActiveSupport.on_load(:view_component) do
+  # Extend your preview controller to support authentication and other
+  # application-specific stuff
+  #
+  # Rails.application.config.to_prepare do
+  #   ViewComponentsController.class_eval do
+  #     include Authenticated
+  #   end
+  # end
+
+  # Make it possible to store previews in sidecar folders
+  # See https://github.com/palkan/view_component-contrib#organizing-components-or-sidecar-pattern-extended
+  ViewComponent::Preview.extend ViewComponentContrib::Preview::Sidecarable
+
+  # Enable `self.abstract_class = true` to exclude previews from the list
+  ViewComponent::Preview.extend ViewComponentContrib::Preview::Abstract
 end

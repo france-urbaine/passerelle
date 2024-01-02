@@ -57,13 +57,10 @@ group :red_green_refactor, halt_on_fail: true do
     watch("config/routes.rb") { "spec/routing" }
     watch(%r{^spec/.+_spec\.rb$})
 
-    watch(%r{^app/(.+)\.rb$}) do |m|
-      "spec/#{m[1]}_spec.rb"
-    end
-
-    watch(%r{^app/controllers/(.+)_controller\.rb$}) do |m|
-      Dir[File.join("spec/requests/#{m[1]}/*_spec.rb")]
-    end
+    watch(%r{^app/(.+)\.rb$})                                { |m| "spec/#{m[1]}_spec.rb" }
+    watch(%r{^app/components/(.+)\.html\.slim$})             { |m| "spec/components/#{m[1]}_spec.rb" }
+    watch(%r{^app/components/(.+)/previews/.+\.html\.slim$}) { |m| "spec/components/#{m[1]}/preview_spec.rb" }
+    watch(%r{^app/controllers/(.+)_controller\.rb$})         { |m| Dir[File.join("spec/requests/#{m[1]}/*_spec.rb")] }
   end
 
   guard :rubocop, rubocop_options do

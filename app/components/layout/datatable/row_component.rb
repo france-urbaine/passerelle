@@ -11,7 +11,7 @@ module Layout
         if args.empty? && options.empty?
           ContentSlot.new
         else
-          UI::ButtonComponent.new(*args, **options, icon_only: true, data: { turbo_frame: "_top" })
+          UI::Button::Component.new(*args, **options, icon_only: true, data: { turbo_frame: "_top" })
         end
       }
 

@@ -63,7 +63,7 @@
         ' une URL pré-signée :
 
       ruby:
-        example = UI::CodeRequestExampleComponent.new "POST", api_report_documents_url("$REPORT_ID"),
+        example = UI::CodeRequestExample::Component.new "POST", api_report_documents_url("$REPORT_ID"),
           json:          true,
           authorization: true,
           request: {
@@ -133,7 +133,7 @@
         li En cas de succés, un code 204 est retourné
 
       ruby:
-        example = UI::CodeRequestExampleComponent.new "PUT", "$UPLOAD_URL",
+        example = UI::CodeRequestExample::Component.new "PUT", "$UPLOAD_URL",
           authorization: false,
           request: {
             headers: {
