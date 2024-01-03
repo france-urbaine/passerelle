@@ -112,7 +112,7 @@ RSpec.describe "ReportsController#index" do
       let(:ddfip) { create(:ddfip, departement: departement) }
       let(:reports) do
         [
-          create(:report, :made_for_ddfip,       ddfip: ddfip, collectivity: collectivities[0]),
+          create(:report, :made_for_ddfip, ddfip: ddfip, collectivity: collectivities[0]),
           create(:report, :transmitted_to_ddfip, ddfip: ddfip, collectivity: collectivities[0]),
           create(:report, :transmitted_to_ddfip, ddfip: ddfip, collectivity: collectivities[0], sandbox: true)
         ]
@@ -184,7 +184,7 @@ RSpec.describe "ReportsController#index" do
       let(:dgfip) { DGFIP.kept.first || create(:dgfip) }
       let(:reports) do
         [
-          create(:report, :made_for_ddfip,       collectivity: collectivities[0]),
+          create(:report, :made_for_ddfip, collectivity: collectivities[0]),
           create(:report, :transmitted_to_ddfip, collectivity: collectivities[0]),
           create(:report, :transmitted_to_ddfip, collectivity: collectivities[0], sandbox: true)
         ]

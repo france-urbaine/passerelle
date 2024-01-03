@@ -13,7 +13,8 @@ module API
         if errors.any?
           report.errors.merge!(completeness_service.errors)
         else
-          report.completed_at = Time.zone.now
+          report.state = "ready"
+          report.ready_at = Time.zone.now
         end
       end
 

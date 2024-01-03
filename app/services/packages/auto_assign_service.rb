@@ -11,7 +11,7 @@ module Packages
     def verify
       # The workflow is simplified :
       # packages are auto-assigned.
-      @package.assign!
+      @package.reports.assign_all!
 
       true
     end
