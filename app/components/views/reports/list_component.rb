@@ -29,7 +29,7 @@ module Views
         @columns = DEFAULT_COLUMNS if columns.empty?
 
         # Always eager load package, it's may be used for policy check
-        @reports = @reports.preload(:package, :transmission)
+        @reports = @reports.preload(:package, :transmission, :office, :ddfip)
 
         @reports = @reports.preload(:commune)      if columns.include?(:commune)
         @reports = @reports.preload(:collectivity) if columns.include?(:collectivity)

@@ -106,7 +106,7 @@ class ReportsController < ApplicationController
   end
 
   def build_and_authorize_scope(as: :default)
-    authorized(Report.preload(:ddfip, :office).all, as:).strict_loading
+    authorized(Report.all, as:).strict_loading
   end
 
   def build_report(...)
