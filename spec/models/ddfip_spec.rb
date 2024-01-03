@@ -209,6 +209,21 @@ RSpec.describe DDFIP do
         SQL
       end
     end
+
+    describe ".covering" do
+      let!(:reports) { create_list(:report, 3) }
+
+      it "returns ddfips covering specified reports" do
+        expect {
+          described_class.covering(reports)
+        }.to perform_sql_query(<<~SQL.squish)
+          SELECT DISTINCT "ddfips".*
+          FROM "ddfips"
+          INNER JOIN "communes" ON "communes"."code_departement" = "ddfips"."code_departement"
+          INNER JOIN "reports" ON "reports"."code_insee" = "communes"."code_insee"
+        SQL
+      end
+    end
   end
 
   # Other associations

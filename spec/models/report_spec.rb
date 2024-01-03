@@ -592,7 +592,7 @@ RSpec.describe Report do
     end
 
     describe ".transmissible" do
-      it "scopes on completed reports not yet transmitted" do
+      it "scopes on ready reports not yet transmitted" do
         expect {
           described_class.transmissible.load
         }.to perform_sql_query(<<~SQL)
@@ -754,16 +754,32 @@ RSpec.describe Report do
       end
     end
 
-    describe ".all_kept" do
-      it "scopes on kept reports without packages or within kept packages" do
+    describe ".transmitted_to_ddfip" do
+      it "scopes reports transmitted to a DDFIP" do
+        ddfip = create(:ddfip)
+
         expect {
-          described_class.all_kept.load
+          described_class.transmitted_to_ddfip(ddfip).load
         }.to perform_sql_query(<<~SQL)
-          SELECT          "reports".*
-          FROM            "reports"
-          LEFT OUTER JOIN "packages" ON "packages"."id" = "reports"."package_id"
-          WHERE           "reports"."discarded_at" IS NULL
-            AND           ("packages"."id" IS NULL OR "packages"."discarded_at" IS NULL)
+          SELECT     "reports".*
+          FROM       "reports"
+          WHERE      "reports"."state" IN ('sent', 'acknowledged', 'denied', 'processing', 'approved', 'rejected')
+            AND      "reports"."ddfip_id" = '#{ddfip.id}'
+        SQL
+      end
+    end
+
+    describe ".assigned_to_office" do
+      it "scopes reports assigned to Office" do
+        office = create(:office)
+
+        expect {
+          described_class.assigned_to_office(office).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT     "reports".*
+          FROM       "reports"
+          WHERE      "reports"."state" IN ('processing', 'approved', 'rejected')
+            AND      "reports"."office_id" = '#{office.id}'
         SQL
       end
     end
@@ -778,7 +794,8 @@ RSpec.describe Report do
         }.to perform_sql_query(<<~SQL)
           SELECT     "reports".*
           FROM       "reports"
-          WHERE      "reports"."ddfip_id" = '#{ddfip.id}'
+          INNER JOIN "communes" ON "communes"."code_insee" = "reports"."code_insee"
+          WHERE      "communes"."code_departement" = '64'
         SQL
       end
 
@@ -788,8 +805,9 @@ RSpec.describe Report do
         }.to perform_sql_query(<<~SQL)
           SELECT     "reports".*
           FROM       "reports"
-          WHERE      "reports"."ddfip_id" IN (
-            SELECT "ddfips"."id"
+          INNER JOIN "communes" ON "communes"."code_insee" = "reports"."code_insee"
+          WHERE      "communes"."code_departement" IN (
+            SELECT "ddfips"."code_departement"
             FROM   "ddfips"
             WHERE  "ddfips"."name" = 'A'
           )
@@ -804,9 +822,11 @@ RSpec.describe Report do
         expect {
           described_class.covered_by_office(office).load
         }.to perform_sql_query(<<~SQL)
-          SELECT     "reports".*
+          SELECT     DISTINCT "reports".*
           FROM       "reports"
-          WHERE      "reports"."office_id" = '#{office.id}'
+          INNER JOIN "office_communes" ON "office_communes"."code_insee" = "reports"."code_insee"
+          WHERE      "office_communes"."office_id" = '#{office.id}'
+            AND      "reports"."form_type" = 'evaluation_local_habitation'
         SQL
       end
 
@@ -816,9 +836,11 @@ RSpec.describe Report do
         expect {
           described_class.covered_by_office(office).load
         }.to perform_sql_query(<<~SQL)
-          SELECT     "reports".*
+          SELECT     DISTINCT "reports".*
           FROM       "reports"
-          WHERE      "reports"."office_id" = '#{office.id}'
+          INNER JOIN "office_communes" ON "office_communes"."code_insee" = "reports"."code_insee"
+          WHERE      "office_communes"."office_id" = '#{office.id}'
+            AND      "reports"."form_type" IN ('evaluation_local_habitation', 'evaluation_local_professionnel')
         SQL
       end
 
@@ -826,13 +848,12 @@ RSpec.describe Report do
         expect {
           described_class.covered_by_office(Office.where(name: "A")).load
         }.to perform_sql_query(<<~SQL)
-          SELECT     "reports".*
+          SELECT     DISTINCT "reports".*
           FROM       "reports"
-          WHERE      "reports"."office_id" IN (
-            SELECT "offices"."id"
-            FROM   "offices"
-            WHERE  "offices"."name" = 'A'
-          )
+          INNER JOIN "office_communes" ON "office_communes"."code_insee" = "reports"."code_insee"
+          INNER JOIN "offices" ON "offices"."id" = "office_communes"."office_id"
+          WHERE      "offices"."name" = 'A'
+            AND      ("reports"."form_type" = ANY ("offices"."competences"))
         SQL
       end
     end
@@ -867,12 +888,15 @@ RSpec.describe Report do
   describe "predicates" do
     let_it_be(:publisher)      { build_stubbed(:publisher) }
     let_it_be(:collectivities) { build_stubbed_list(:collectivity, 2, publisher: publisher) }
+    let_it_be(:departement) { create(:departement, code_departement: "64") }
+    let_it_be(:ddfip) { create(:ddfip, departement: departement) }
+    let_it_be(:commune) { create(:commune, departement: departement) }
     let_it_be(:reports) do
       collectivity = collectivities[0]
 
       {
-        draft:                             build_stubbed(:report, :draft, collectivity:),
-        ready:                             build_stubbed(:report, :ready, collectivity:),
+        draft:                             build_stubbed(:report, :draft, collectivity:, commune:),
+        ready:                             build_stubbed(:report, :ready, collectivity:, commune:),
         transmitting_through_web_ui:       build_stubbed(:report, :in_active_transmission, :made_through_web_ui, collectivity:),
         transmitting_through_api:          build_stubbed(:report, :in_active_transmission, :made_through_api, collectivity:, publisher:),
         transmitting_to_sandbox:           build_stubbed(:report, :in_active_transmission, :made_through_api, :sandbox, collectivity:, publisher:),
@@ -889,6 +913,35 @@ RSpec.describe Report do
         unsaved_from_api:                  build(:report, :made_through_api, collectivity:, publisher:),
         unsaved_from_another_collectivity: build(:report, collectivity: collectivities[1])
       }
+    end
+    describe "#covered_by_ddfip?" do
+      it { expect(reports[:draft])                      .to     be_covered_by_ddfip(ddfip) }
+      it { expect(reports[:ready])                      .to     be_covered_by_ddfip(ddfip) }
+      it { expect(reports[:transmitting_through_web_ui]).not_to be_covered_by_ddfip(ddfip) }
+      it { expect(reports[:transmitting_through_api])   .not_to be_covered_by_ddfip(ddfip) }
+      it { expect(reports[:transmitting_to_sandbox])    .not_to be_covered_by_ddfip(ddfip) }
+    end
+
+    describe "#covered_by_office?" do
+      let(:office) { create(:office, competences: Report::FORM_TYPES.dup, ddfip:, communes: [commune]) }
+
+      it { expect(reports[:draft])                      .to     be_covered_by_office(office) }
+      it { expect(reports[:ready])                      .to     be_covered_by_office(office) }
+      it { expect(reports[:transmitting_through_web_ui]).not_to be_covered_by_office(office) }
+      it { expect(reports[:transmitting_through_api])   .not_to be_covered_by_office(office) }
+      it { expect(reports[:transmitting_to_sandbox])    .not_to be_covered_by_office(office) }
+    end
+
+    describe "#covered_by_offices?" do
+      let(:offices) { create_list(:office, 3, ddfip:) }
+
+      before { reports[:assigned].office = offices[2] }
+
+      it { expect(reports[:draft])                      .not_to be_covered_by_offices(offices) }
+      it { expect(reports[:assigned])                   .to     be_covered_by_offices(offices) }
+      it { expect(reports[:transmitting_through_web_ui]).not_to be_covered_by_offices(offices) }
+      it { expect(reports[:transmitting_through_api])   .not_to be_covered_by_offices(offices) }
+      it { expect(reports[:transmitting_to_sandbox])    .not_to be_covered_by_offices(offices) }
     end
 
     describe "#out_of_sandbox?" do
@@ -1124,6 +1177,33 @@ RSpec.describe Report do
       end
     end
 
+    describe "#draft!" do
+      it "marks the report as draft" do
+        report = create(:report, :ready)
+
+        aggregate_failures do
+          expect {
+            expect(report.draft!).to be(true)
+            report.reload
+          }.to change(report, :ready_at).to(be_falsy)
+            .and change(report, :state).to eq("draft")
+        end
+      end
+
+      it "doesn't update ready_at time when already draft" do
+        report = Timecop.freeze(2.minutes.ago) do
+          create(:report, :draft)
+        end
+
+        aggregate_failures do
+          expect {
+            expect(report.draft!).to be(true)
+            report.reload
+          }.not_to change(report, :ready_at)
+        end
+      end
+    end
+
     describe "#ready!" do
       it "marks the report as ready" do
         report = create(:report)
@@ -1271,6 +1351,33 @@ RSpec.describe Report do
 
         expect {
           report.assign!
+          report.reload
+        }.not_to change(report, :assigned_at)
+      end
+    end
+
+    describe "#assign_all!" do
+      let!(:reports) { create_list(:report, 3, :transmitted) }
+      let(:report_relation) { Report.where(id: reports.map(&:id)) }
+
+      it "returns true" do
+        expect(report_relation.assign_all!).to eq(3)
+      end
+
+      it "marks the report as assigned" do
+        expect {
+          report_relation.assign_all!
+          report_relation.each(&:reload)
+        }.to change { report_relation.where(state: "processing").count }.from(0).to(3)
+          .and change { report_relation.where.not(assigned_at: nil).count }.from(0).to(3)
+      end
+
+      it "doesn't update previous assigned time" do
+        report = Timecop.freeze(2.minutes.ago) { create(:report, :assigned) }
+        single_report_relation = Report.where(id: report.id)
+
+        expect {
+          single_report_relation.assign_all!
           report.reload
         }.not_to change(report, :assigned_at)
       end

@@ -136,26 +136,16 @@ RSpec.describe Package do
       end
     end
 
-    describe ".with_reports" do
-      it "scopes on packages having kept reports" do
-        expect {
-          described_class.with_reports.load
-        }.to perform_sql_query(<<~SQL)
-          SELECT     DISTINCT "packages".*
-          FROM       "packages"
-          INNER JOIN "reports" ON "reports"."package_id" = "packages"."id"
-          WHERE      "reports"."discarded_at" IS NULL
-        SQL
-      end
+    describe ".with_ddfip" do
+      let(:ddfip) { create(:ddfip) }
 
-      it "scopes on packages having the expected reports (overriding default kept reports)" do
+      it "scopes on packages having asked ddfip" do
         expect {
-          described_class.with_reports(Report.where(code_insee: "64102")).load
+          described_class.with_ddfip(ddfip).load
         }.to perform_sql_query(<<~SQL)
-          SELECT     DISTINCT "packages".*
-          FROM       "packages"
-          INNER JOIN "reports" ON "reports"."package_id" = "packages"."id"
-          WHERE      "reports"."code_insee" = '64102'
+          SELECT "packages".*
+          FROM   "packages"
+          WHERE  "packages"."ddfip_id" = '#{ddfip.id}'
         SQL
       end
     end

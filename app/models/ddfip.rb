@@ -103,6 +103,10 @@ class DDFIP < ApplicationRecord
     scored_order(:name, input)
   }
 
+  scope :covering, lambda { |reports|
+    distinct.joins(communes: :reports).merge(reports)
+  }
+
   # Other associations
   # ----------------------------------------------------------------------------
   def on_territory_collectivities

@@ -344,16 +344,30 @@ class Report < ApplicationRecord
 
   # Scopes
   # ----------------------------------------------------------------------------
-  scope :all_kept, lambda {
-    kept.left_outer_joins(:package).where(<<~SQL.squish)
-         "packages"."id" IS NULL
-      OR "packages"."discarded_at" IS NULL
-    SQL
+  scope :transmitted_to_ddfip, ->(ddfip) { transmitted.where(ddfip: ddfip) }
+  scope :assigned_to_office, ->(office) { assigned.where(office: office) }
+
+  scope :covered_by_ddfip, lambda { |ddfip|
+    if ddfip.is_a?(ActiveRecord::Relation)
+      joins(:commune).merge(Commune.where(code_departement: ddfip.select(:code_departement)))
+    else
+      joins(:commune).merge(Commune.where(code_departement: ddfip.code_departement))
+    end
   }
 
-  scope :covered_by_ddfip, ->(ddfip) { where(ddfip: ddfip) }
-
-  scope :covered_by_office, ->(office) { where(office: office) }
+  scope :covered_by_office, lambda { |office|
+    if office.is_a?(ActiveRecord::Relation)
+      distinct
+        .joins(:potential_offices)
+        .merge(office)
+        .where(%{"reports"."form_type" = ANY ("offices"."competences")})
+    else
+      distinct
+        .joins(:potential_office_communes)
+        .merge(OfficeCommune.where(office: office))
+        .where(form_type: office.competences)
+    end
+  }
 
   scope :transmitted_or_made_through_web_ui, -> { transmitted.or(where(publisher_id: nil)) }
 
@@ -443,16 +457,15 @@ class Report < ApplicationRecord
 
   # Predicates
   # ----------------------------------------------------------------------------
-  def all_kept?
-    kept? && (package.nil? || package.kept?)
-  end
-
   def covered_by_ddfip?(ddfip)
-    ddfip_id == ddfip&.id
+    ddfip.code_departement == commune.code_departement
   end
 
   def covered_by_office?(office)
-    office_id == office&.id
+    office.competences.include?(form_type) && (
+      (office.office_communes.loaded? && office.office_communes.any? { |o| o.code_insee == code_insee }) ||
+      (!office.office_communes.loaded? && office.office_communes.exists?(code_insee: code_insee))
+    )
   end
 
   def covered_by_offices?(offices)

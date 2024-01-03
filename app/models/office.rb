@@ -99,6 +99,14 @@ class Office < ApplicationRecord
     scored_order(:name, input)
   }
 
+  scope :covering, lambda { |reports|
+    joins(:communes).merge(Commune.where(code_insee: reports.pluck(:code_insee)))
+  }
+
+  scope :with_competence, lambda { |competence|
+    where(%{? = ANY ("offices"."competences")}, competence)
+  }
+
   # Other associations
   # ----------------------------------------------------------------------------
   def on_territory_collectivities

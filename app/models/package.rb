@@ -57,6 +57,8 @@ class Package < ApplicationRecord
   # ----------------------------------------------------------------------------
   scope :with_reports, ->(reports = Report.kept) { distinct.joins(:reports).merge(reports) }
 
+  scope :with_ddfip, ->(ddfip_id) { where(ddfip_id: ddfip_id) }
+
   # Updates methods
   # ----------------------------------------------------------------------------
   def self.reset_all_counters

@@ -101,6 +101,15 @@ module States
 
       # Updates methods
       # ----------------------------------------------------------------------------
+      def draft!
+        return true if draft?
+
+        update(
+          state: "draft",
+          ready_at: nil
+        )
+      end
+
       def ready!
         return true if ready?
 
@@ -141,6 +150,13 @@ module States
         return true if assigned?
 
         update(
+          state: "processing",
+          assigned_at: Time.current
+        )
+      end
+
+      def self.assign_all!
+        unassigned.update_all(
           state: "processing",
           assigned_at: Time.current
         )

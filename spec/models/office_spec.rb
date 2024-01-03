@@ -215,6 +215,34 @@ RSpec.describe Office do
         SQL
       end
     end
+
+    describe ".covering" do
+      let!(:reports) { create_list(:report, 2) }
+
+      it "returns offices covering specified reports" do
+        expect {
+          described_class.covering(reports).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "offices".*
+          FROM     "offices"
+          INNER JOIN "office_communes" ON "office_communes"."office_id" = "offices"."id"
+          INNER JOIN "communes" ON "communes"."code_insee" = "office_communes"."code_insee"
+          WHERE "communes"."code_insee" IN ('#{reports[0].code_insee}', '#{reports[1].code_insee}')
+        SQL
+      end
+    end
+
+    describe ".with_competence" do
+      it "returns offices with specific competence" do
+        expect {
+          described_class.with_competence("evaluation_local_habitation").load
+        }.to perform_sql_query(<<~SQL.squish)
+          SELECT "offices".*
+          FROM "offices"
+          WHERE ('evaluation_local_habitation' = ANY ("offices"."competences"))
+        SQL
+      end
+    end
   end
 
   # Other associations
