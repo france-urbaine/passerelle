@@ -8,9 +8,6 @@
     - layout.with_header icon: "server-stack" do |header|
       | Informations relatives au paquet
 
-      - header.with_action do
-        = package_badge(@package)
-
     - if allowed_to?(:index?, Report)
       - layout.with_header icon: "clipboard-document" do
         | Signalements

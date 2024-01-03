@@ -11,7 +11,6 @@
         - datatable.with_search
         - datatable.with_pagination(@pagy, options: !@parent)
 
-        - datatable.with_column(:status, compact: true) { "Etat" }
         - datatable.with_column(:reference)             { "Reference" }
         - datatable.with_column(:collectivity)          { "Collectivité" } unless current_user.organization.is_a?(Collectivity)
 
@@ -33,9 +32,6 @@
 
           - row.with_column(:collectivity) do
             = authorized_link_to package.collectivity
-
-          - row.with_column(:status) do
-            = package_badge(package)
 
           - row.with_column(:reports_count) do
             = number_with_delimiter(package.reports_count) if package.reports_count.positive?
