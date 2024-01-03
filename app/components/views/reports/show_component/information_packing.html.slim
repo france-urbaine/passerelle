@@ -18,12 +18,6 @@
       - list.with_attribute("Date de transmission") do |attribute|
         em Non transmis
 
-      - list.with_attribute("Date d'échéance") do |attribute|
-        - if @report.package&.due_on
-          = l(@report.package.due_on)
-        - elsif @report.packing?
-          em A spécifier dans le paquet
-
       - list.with_attribute("Type de signalement") do |attribute|
         = translate_enum(@report.form_type, scope: "enum.report_form_type")
 
