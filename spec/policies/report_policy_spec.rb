@@ -6,7 +6,8 @@ RSpec.describe ReportPolicy, stub_factories: false, type: :policy do
   shared_context "when current user is member of targeted office" do
     include_context "when current user is a DDFIP user"
     before do
-      create(:office, competences: [record.form_type], users: [current_user], communes: [record.commune])
+      office = create(:office, competences: [record.form_type], users: [current_user])
+      record.update(office: office)
     end
   end
 
@@ -141,7 +142,7 @@ RSpec.describe ReportPolicy, stub_factories: false, type: :policy do
         it_behaves_like("when current user is member of targeted office") { failed }
       end
 
-      context "when package is assigned by the current DDFIP" do
+      context "when report is assigned by the current DDFIP" do
         let(:record) { create(:report, :assigned_by_ddfip, ddfip: current_organization) }
 
         it_behaves_like("when current user is a DDFIP admin")             { succeed }
@@ -149,8 +150,8 @@ RSpec.describe ReportPolicy, stub_factories: false, type: :policy do
         it_behaves_like("when current user is member of targeted office") { succeed }
       end
 
-      context "when package is returned by the current DDFIP" do
-        let(:record) { create(:report, :returned_by_ddfip, ddfip: current_organization) }
+      context "when report is denied by the current DDFIP" do
+        let(:record) { create(:report, :denied_by_ddfip, ddfip: current_organization) }
 
         it_behaves_like("when current user is a DDFIP admin")             { succeed }
         it_behaves_like("when current user is a DDFIP user")              { failed }
@@ -314,8 +315,8 @@ RSpec.describe ReportPolicy, stub_factories: false, type: :policy do
         it_behaves_like("when current user is member of targeted office") { succeed }
       end
 
-      context "when package is returned by the current DDFIP" do
-        let(:record) { create(:report, :returned_by_ddfip, ddfip: current_organization) }
+      context "when package is denied by the current DDFIP" do
+        let(:record) { create(:report, :denied_by_ddfip, ddfip: current_organization) }
 
         it_behaves_like("when current user is a DDFIP admin")             { failed }
         it_behaves_like("when current user is a DDFIP user")              { failed }
@@ -454,8 +455,8 @@ RSpec.describe ReportPolicy, stub_factories: false, type: :policy do
         it_behaves_like("when current user is member of targeted office") { failed }
       end
 
-      context "when package is returned by the current DDFIP" do
-        let(:record) { create(:report, :returned_by_ddfip, ddfip: current_organization) }
+      context "when package is denied by the current DDFIP" do
+        let(:record) { create(:report, :denied_by_ddfip, ddfip: current_organization) }
 
         it_behaves_like("when current user is a DDFIP admin")             { failed }
         it_behaves_like("when current user is a DDFIP user")              { failed }
@@ -468,7 +469,7 @@ RSpec.describe ReportPolicy, stub_factories: false, type: :policy do
   it { expect(:undiscard?).to be_an_alias_of(policy, :destroy?) }
 
   describe_rule :destroy_all? do
-    it_behaves_like("when current user is a DDFIP admin")        { failed }
+    it_behaves_like("when current user is a DDFIP admin") { failed }
     it_behaves_like("when current user is a DDFIP user")         { failed }
     it_behaves_like("when current user is a publisher admin")    { succeed }
     it_behaves_like("when current user is a publisher user")     { succeed }
@@ -489,12 +490,11 @@ RSpec.describe ReportPolicy, stub_factories: false, type: :policy do
         }.to perform_sql_query(<<~SQL)
           SELECT "reports".*
           FROM   "reports"
-          LEFT OUTER JOIN "packages" ON "packages"."id" = "reports"."package_id"
           WHERE "reports"."discarded_at" IS NULL
-            AND ("packages"."id" IS NULL OR "packages"."discarded_at" IS NULL)
             AND "reports"."sandbox" = FALSE
             AND "reports"."collectivity_id" = '#{current_organization.id}'
-            AND ("packages"."transmitted_at" IS NOT NULL OR "reports"."publisher_id" IS NULL)
+            AND ("reports"."state" IN ('sent', 'acknowledged', 'denied', 'processing', 'approved', 'rejected')
+              OR "reports"."publisher_id" IS NULL)
         SQL
       end
     end
@@ -506,9 +506,7 @@ RSpec.describe ReportPolicy, stub_factories: false, type: :policy do
         }.to perform_sql_query(<<~SQL)
           SELECT "reports".*
           FROM   "reports"
-          LEFT OUTER JOIN "packages" ON "packages"."id" = "reports"."package_id"
           WHERE "reports"."discarded_at" IS NULL
-            AND ("packages"."id" IS NULL OR "packages"."discarded_at" IS NULL)
             AND "reports"."publisher_id" = '#{current_organization.id}'
         SQL
       end
@@ -521,12 +519,10 @@ RSpec.describe ReportPolicy, stub_factories: false, type: :policy do
         }.to perform_sql_query(<<~SQL)
           SELECT     "reports".*
           FROM       "reports"
-          INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
-          INNER JOIN "communes" ON "communes"."code_insee" = "reports"."code_insee"
           WHERE "reports"."discarded_at" IS NULL
-            AND ("packages"."id" IS NULL OR "packages"."discarded_at" IS NULL)
-            AND "packages"."sandbox" = FALSE
-            AND "communes"."code_departement" = '#{current_organization.code_departement}'
+            AND "reports"."sandbox" = FALSE
+            AND "reports"."state" IN ('sent', 'acknowledged', 'denied', 'processing', 'approved', 'rejected')
+            AND "reports"."ddfip_id" = '#{current_organization.id}'
         SQL
       end
     end
@@ -536,19 +532,17 @@ RSpec.describe ReportPolicy, stub_factories: false, type: :policy do
         expect {
           scope.load
         }.to perform_sql_query(<<~SQL)
-          SELECT DISTINCT "reports".*
-          FROM       "reports"
-          INNER JOIN "packages"        ON "packages"."id" = "reports"."package_id"
-          INNER JOIN "office_communes" ON "office_communes"."code_insee" = "reports"."code_insee"
-          INNER JOIN "offices"         ON "offices"."id" = "office_communes"."office_id"
-          INNER JOIN "office_users"    ON "offices"."id" = "office_users"."office_id"
-          WHERE "reports"."discarded_at" IS NULL
-            AND ("packages"."id" IS NULL OR "packages"."discarded_at" IS NULL)
-            AND  "packages"."sandbox" = FALSE
-            AND  "packages"."assigned_at" IS NOT NULL
-            AND  "packages"."returned_at" IS NULL
-            AND  "office_users"."user_id" = '#{current_user.id}'
-            AND  ("reports"."form_type" = ANY ("offices"."competences"))
+          SELECT "reports".*
+          FROM   "reports"
+          WHERE  "reports"."discarded_at" IS NULL
+            AND  "reports"."state" IN ('processing', 'approved', 'rejected')
+            AND  "reports"."sandbox" = FALSE
+            AND  "reports"."office_id" IN (
+              SELECT "offices"."id"
+              FROM "offices"
+              INNER JOIN "office_users" ON "offices"."id" = "office_users"."office_id"
+              WHERE "office_users"."user_id" = '#{current_user.id}'
+            )
         SQL
       end
     end

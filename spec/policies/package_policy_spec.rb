@@ -80,8 +80,13 @@ RSpec.describe PackagePolicy, stub_factories: false, type: :policy do
     context "with package transmitted and covered by the current DDFIP" do
       let(:record) { create(:package, :transmitted_to_ddfip, ddfip: current_organization) }
 
+      before do
+        commune = create(:commune, code_departement: current_organization.code_departement)
+        create(:report, commune:, package: record)
+      end
+
       it_behaves_like("when current user is a DDFIP admin") { succeed }
-      it_behaves_like("when current user is a DDFIP user")  { failed }
+      it_behaves_like("when current user is a DDFIP user")  { succeed }
     end
 
     context "with package transmitted as sandbox and covered by the current DDFIP" do
@@ -91,17 +96,6 @@ RSpec.describe PackagePolicy, stub_factories: false, type: :policy do
       it_behaves_like("when current user is a DDFIP user")  { failed }
     end
   end
-
-  it { expect(:new?).to           be_an_alias_of(policy, :not_supported) }
-  it { expect(:create?).to        be_an_alias_of(policy, :not_supported) }
-  it { expect(:edit?).to          be_an_alias_of(policy, :not_supported) }
-  it { expect(:update?).to        be_an_alias_of(policy, :not_supported) }
-  it { expect(:remove?).to        be_an_alias_of(policy, :not_supported) }
-  it { expect(:destroy?).to       be_an_alias_of(policy, :not_supported) }
-  it { expect(:undiscard?).to     be_an_alias_of(policy, :not_supported) }
-  it { expect(:remove_all?).to    be_an_alias_of(policy, :not_supported) }
-  it { expect(:destroy_all?).to   be_an_alias_of(policy, :not_supported) }
-  it { expect(:undiscard_all?).to be_an_alias_of(policy, :not_supported) }
 
   describe "default relation scope" do
     subject!(:scope) { apply_relation_scope(Package.all) }
@@ -138,20 +132,37 @@ RSpec.describe PackagePolicy, stub_factories: false, type: :policy do
         expect {
           scope.load
         }.to perform_sql_query(<<~SQL)
-          SELECT DISTINCT "packages".*
-          FROM            "packages"
-          INNER JOIN      "reports"  ON "reports"."package_id" = "packages"."id"
-          INNER JOIN      "communes" ON "communes"."code_insee" = "reports"."code_insee"
-          WHERE  "packages"."discarded_at" IS NULL
-            AND  "packages"."sandbox" = FALSE
-            AND  "reports"."discarded_at" IS NULL
-            AND  "communes"."code_departement" = '#{current_organization.code_departement}'
+          SELECT     "packages".*
+          FROM       "packages"
+          WHERE      "packages"."discarded_at" IS NULL
+            AND      "packages"."sandbox" = FALSE
+            AND      "packages"."ddfip_id" = '#{current_user.organization_id}'
         SQL
       end
     end
 
     it_behaves_like "when current user is a DDFIP user" do
-      it { is_expected.to be_a_null_relation }
+      it "scopes on packages assinged to the DDFIP" do
+        expect {
+          scope.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT DISTINCT "packages".*
+          FROM            "packages"
+          INNER JOIN      "reports"  ON "reports"."package_id" = "packages"."id"
+          WHERE  "packages"."discarded_at" IS NULL
+            AND  "packages"."sandbox" = FALSE
+            AND  "packages"."ddfip_id" = '#{current_user.organization_id}'
+            AND  "reports"."discarded_at" IS NULL
+            AND  "reports"."state" IN ('processing', 'approved', 'rejected')
+            AND  "reports"."sandbox" = FALSE
+            AND  "reports"."office_id" IN (
+              SELECT "offices"."id"
+              FROM "offices"
+              INNER JOIN "office_users" ON "offices"."id" = "office_users"."office_id"
+              WHERE "office_users"."user_id" = '#{current_user.id}'
+            )
+        SQL
+      end
     end
   end
 end

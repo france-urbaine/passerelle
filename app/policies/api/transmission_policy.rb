@@ -21,7 +21,7 @@ module API
         read? &&
           record.active? &&
           record.reports.any? &&
-          record.reports.incomplete.none?
+          record.reports.draft.none?
       end
     end
 

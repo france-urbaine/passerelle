@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class PackagePolicy < ApplicationPolicy
-  alias_rule :new?, :create?, :edit?, :update?, :remove?, :destroy?, :undiscard?, to: :not_supported
-
   def index?
     collectivity? || publisher? || ddfip_admin?
   end
@@ -13,7 +11,7 @@ class PackagePolicy < ApplicationPolicy
     elsif record.is_a?(Package)
       package_shown_to_collectivity?(record) ||
         package_shown_to_publisher?(record) ||
-        package_shown_to_ddfip_admin?(record)
+        package_shown_to_ddfip?(record)
     end
   end
 
@@ -23,16 +21,12 @@ class PackagePolicy < ApplicationPolicy
     elsif publisher?
       relation.merge(packages_listed_to_publisher)
     elsif ddfip_admin?
-      relation.merge(packages_listed_to_ddfip_admins)
+      relation.merge(packages_listed_to_ddfip)
     elsif ddfip?
-      relation.merge(packages_listed_to_ddfip_admins).with_reports(authorized(Report.all))
+      relation.merge(packages_listed_to_ddfip).with_reports(authorized(Report.all))
     else
       relation.none
     end
-  end
-
-  params_filter do |params|
-    params.permit(:due_on) if collectivity? || publisher?
   end
 
   private
@@ -85,20 +79,20 @@ class PackagePolicy < ApplicationPolicy
   # Authorizations for DDFIPs
   # ----------------------------------------------------------------------------
   concerning :DDFIPs do
-    def packages_listed_to_ddfip_admins
-      return Package.none unless ddfip_admin?
+    def packages_listed_to_ddfip
+      return Package.none unless ddfip?
 
       Package
         .kept
-        .transmitted
-        .with_reports(Report.kept.covered_by_ddfip(organization))
+        .out_of_sandbox
+        .with_ddfip(user.organization_id)
     end
 
-    def package_shown_to_ddfip_admin?(package)
-      ddfip_admin? &&
+    def package_shown_to_ddfip?(package)
+      ddfip? &&
         package.kept? &&
-        package.transmitted? &&
-        package.reports.covered_by_ddfip(organization).any?
+        package.out_of_sandbox? &&
+        package.ddfip_id == user.organization_id
     end
   end
 end
