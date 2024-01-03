@@ -1,6 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
-export default class extends Controller {
+export let controllerName = "tabs"
+export default class TabsController extends Controller {
   static targets = ["tab", "panel"]
 
   connect() {

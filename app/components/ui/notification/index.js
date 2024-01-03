@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 import { useTransition } from "stimulus-use"
 
-export default class extends Controller {
+export default class NotificationController extends Controller {
   static values = { delay: Number }
 
   connect () {
