@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe UI::Form::BlockComponent do
+RSpec.describe UI::Form::Block::Component do
   it "wraps content in a div tag" do
     render_inline described_class.new(:user, :first_name) do
       tag.input(type: "text", name: "first_name")
