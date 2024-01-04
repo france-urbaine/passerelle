@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Layout::ContentFrameComponent, type: :component do
+RSpec.describe Layout::ContentFrame::Component do
   it "renders main content" do
     render_inline described_class.new do
       tag.p "Hello World"
