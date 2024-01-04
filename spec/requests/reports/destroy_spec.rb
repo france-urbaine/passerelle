@@ -25,7 +25,7 @@ RSpec.describe "ReportsController#update" do
     it_behaves_like "it denies access to collectivity user"
     it_behaves_like "it denies access to collectivity admin"
 
-    context "when report has been reported by current user collectivity" do
+    context "when report has been created by current user collectivity" do
       let(:report) { create(:report, :made_through_web_ui, collectivity: current_user.organization) }
 
       it_behaves_like "it allows access to collectivity user"
@@ -39,7 +39,21 @@ RSpec.describe "ReportsController#update" do
       it_behaves_like "it denies access to collectivity admin"
     end
 
-    context "when report has been reported by current user publisher" do
+    context "when report has been created through API for current user collectivity" do
+      let(:report) { create(:report, :made_through_api, collectivity: current_user.organization) }
+
+      it_behaves_like "it denies access to collectivity user"
+      it_behaves_like "it denies access to collectivity admin"
+    end
+
+    context "when report has been transmitted through API for current user collectivity" do
+      let(:report) { create(:report, :transmitted_through_api, collectivity: current_user.organization) }
+
+      it_behaves_like "it denies access to collectivity user"
+      it_behaves_like "it denies access to collectivity admin"
+    end
+
+    context "when report has been created by current user publisher" do
       let(:report) { create(:report, :made_through_api, publisher: current_user.organization) }
 
       it_behaves_like "it allows access to publisher user"
@@ -55,6 +69,15 @@ RSpec.describe "ReportsController#update" do
 
     context "when report has been transmitted to current user DDFIP" do
       let(:report) { create(:report, :transmitted_to_ddfip, ddfip: current_user.organization) }
+
+      it_behaves_like "it denies access to DDFIP admin"
+      it_behaves_like "it denies access to DDFIP user"
+    end
+
+    context "when report has been assigned to current user office" do
+      let(:ddfip)  { current_user.organization }
+      let(:office) { create(:office, ddfip:, users: [current_user]) }
+      let(:report) { create(:report, :assigned_to_office, ddfip:, office:) }
 
       it_behaves_like "it denies access to DDFIP admin"
       it_behaves_like "it denies access to DDFIP user"
