@@ -35,7 +35,7 @@ RSpec.describe Views::Reports::StatusBadgeComponent, type: :component do
     report = build_stubbed(:report, :assigned)
     render_inline described_class.new(report)
 
-    expect(page).to have_selector(".badge.badge--sky", text: "Signalement transmis")
+    expect(page).to have_selector(".badge.badge--sky", text: "Signalement non traité")
   end
 
   it "renders a badge for a denied report" do

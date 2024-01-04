@@ -10,7 +10,7 @@ module Views
         ready:                  "badge--lime",
         in_active_transmission: "badge--violet",
         transmitted:            "badge--blue",
-        assigned:               "badge--sky",
+        processing:             "badge--sky",
         denied:                 "badge--red",
         approved:               "badge--green",
         rejected:               "badge--red"
@@ -46,8 +46,8 @@ module Views
           :rejected
         elsif report.approved?
           :approved
-        elsif report.assigned?
-          :assigned
+        elsif report.processing?
+          :processing
         elsif report.transmitted?
           :transmitted
         elsif report.in_active_transmission?

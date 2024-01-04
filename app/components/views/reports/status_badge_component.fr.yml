@@ -4,7 +4,6 @@ fr:
   in_active_transmission: Transmission en attente
   transmitted:            Signalement transmis, en attente de confirmation
   denied:                 Signalement retourné
-  assigned:               Signalement transmis
   processing:             Signalement non traité
   approved:               Signalement approuvé
   rejected:               Signalement rejeté
