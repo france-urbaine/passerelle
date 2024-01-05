@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Layout::ContentLayoutComponent, type: :component do
+RSpec.describe Layout::ContentLayout::Component do
   it "renders content with headers & sections" do
     render_inline described_class.new do |layout|
       layout.with_header  { "Section title #1" }
