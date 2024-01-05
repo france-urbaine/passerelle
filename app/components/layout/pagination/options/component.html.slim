@@ -1,17 +1,17 @@
 = dropdown_component(direction: direction) do |dropdown|
-  - dropdown.with_button "Options d'affichage", icon: "adjustments-vertical", icon_only: true
+  - dropdown.with_button t(".display_settings"), icon: "adjustments-vertical", icon_only: true
 
-  - dropdown.with_menu_item "Afficher #{pagy.items} lignes par page" do |item|
-    - item.with_menu_item "Afficher 10 lignes", items_url(10), data: { turbo_frame: }
-    - item.with_menu_item "Afficher 20 lignes", items_url(20), data: { turbo_frame: }
-    - item.with_menu_item "Afficher 50 lignes", items_url(50), data: { turbo_frame: }
-    - item.with_menu_item "Afficher 100 lignes", items_url(100), data: { turbo_frame: }
+  - dropdown.with_menu_item t(".displayed_lines_count", count: pagy.items) do |item|
+    - item.with_menu_item t(".display_lines", count: 10), items_url(10), data: { turbo_frame: }
+    - item.with_menu_item t(".display_lines", count: 20), items_url(20), data: { turbo_frame: }
+    - item.with_menu_item t(".display_lines", count: 50), items_url(50), data: { turbo_frame: }
+    - item.with_menu_item t(".display_lines", count: 100), items_url(100), data: { turbo_frame: }
 
   - if order_options.any?
-    - dropdown.with_menu_item "Trier par #{current_order_label}" do |item|
+    - dropdown.with_menu_item t(".order_by", label: current_order_label) do |item|
       - order_options.each do |key, name|
         - item.with_menu_item do
-          .mr-2 Trier par #{name} :
+          .mr-2= t(".order_by", label: name) + " :"
           .flex-grow
           .-my-2=       render order_button(name, key, :asc)
           .-my-2.-mr-2= render order_button(name, key, :desc)

@@ -7,7 +7,7 @@
     - if header?
       = header
     - else
-      | La page que vous recherchez n'est pas disponible.
+      = t(".gone_message")
 
   - template.with_body do
     - if body?
@@ -17,7 +17,7 @@
 
       - if deletion_delay
         br
-        | Sa suppression sera effective #{deletion_distance_from_now_in_words}.
+        = t(".deletion_message", time_from_now: deletion_distance_from_now_in_words)
 
   - actions.each do |action|
     - template.with_action do

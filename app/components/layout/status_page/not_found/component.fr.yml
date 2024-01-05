@@ -1,0 +1,17 @@
+fr:
+  not_found_message: La page que vous recherchez n'est pas disponible.
+  not_found_submessage:
+    default: Cette page n'existe plus ou a été déplacée.
+    publisher: Cet éditeur n'a pas été trouvé ou n'existe plus.
+    collectivity: Cette collectivité n'a pas été trouvée ou n'existe plus.
+    ddfip: Cette DDFIP n'a pas été trouvée ou n'existe plus.
+    dgfip: Le compte de la DGFIP n'est pas disponible.
+    office: Ce guichet n'a pas été trouvé ou n'existe plus.
+    user: Cet utilisateur n'a pas été trouvé ou n'existe plus.
+    commune: Cette commune n'a pas été trouvée ou n'existe plus.
+    epci: Cet EPCI n'a pas été trouvé ou n'existe plus.
+    departement: Ce département n'a pas été trouvé ou n'existe plus.
+    region: Cette région n'a pas été trouvée ou n'existe plus.
+    report: Ce signalement n'a pas été trouvé ou n'existe plus.
+    package: Ce paquet n'a pas été trouvé ou n'existe plus.
+    oauth_app: Cette application n'a pas été trouvée ou n'existe plus.

@@ -1,0 +1,3 @@
+fr:
+  gone_message: La page que vous recherchez n'est pas disponible.
+  deletion_message: Sa suppression sera effective %{time_from_now}.

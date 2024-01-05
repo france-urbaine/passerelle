@@ -7,7 +7,7 @@
     - modal.with_body do
       = body || content
 
-    - modal.with_close_action "Fermer"
+    - modal.with_close_action t(".close")
 
     - actions.each do |action|
       - modal.with_action do
