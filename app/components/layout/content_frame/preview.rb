@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 module Layout
-  # @display frame false
-  #
   module ContentFrame
+    # @display frame false
+    #
     class Preview < ApplicationViewComponentPreview
       # @label Default
       #
