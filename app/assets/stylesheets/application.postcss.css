@@ -43,12 +43,12 @@
 @import "../../components/ui/tabs";
 
 /* Forms */
-@import "./components/form_block";
+@import "../../components/ui/form/block";
+@import "../../components/ui/form/password_field";
 @import "./components/autocomplete";
 @import "./components/search";
 @import "./components/choices_collection";
 @import "./components/direct_upload";
-@import "./components/password_field";
 
 /* Data display */
 @import "./components/tooltip";

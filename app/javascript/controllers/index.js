@@ -37,8 +37,15 @@ application.register("direct-upload-field", DirectUploadFieldController)
 import NavbarController from "./navbar_controller"
 application.register("navbar", NavbarController)
 
-import PasswordVisibility from "./password_visibility_controller"
-application.register('password-visibility', PasswordVisibility)
+import { PasswordVisibility, StrengthTestController } from "../../components/ui/form/password_field"
+
+application.register('password-visibility', PasswordVisibility);
+application.register("strength-test", StrengthTestController);
+// import PasswordVisibility from "../../password_visibility_controller"
+// application.register('password-visibility', PasswordVisibility)
+
+// import StrenghTestController from "../../strength_test_controller"
+// application.register("strength-test", StrenghTestController)
 
 import SelectionController from "./selection_controller"
 application.register("selection", SelectionController)
@@ -48,9 +55,6 @@ application.register("selection-group", SelectionGroupController)
 
 import SelectionRowController from "./selection_row_controller"
 application.register("selection-row", SelectionRowController)
-
-import StrenghTestController from "./strength_test_controller"
-application.register("strength-test", StrenghTestController)
 
 import SwitchController from "./switch_controller"
 application.register("switch", SwitchController)
