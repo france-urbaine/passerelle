@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Layout::ModalFrameComponent, type: :component do
+RSpec.describe Layout::ModalFrame::Component do
   it "renders a modal aside to main content" do
     render_inline described_class.new do |template|
       template.with_modal do |modal|
