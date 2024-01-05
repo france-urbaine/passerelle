@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Layout::NavbarComponent, type: :component do
+RSpec.describe Layout::Navbar::Component do
   subject(:render_default_navbar) do
     render_inline described_class.new do |navbar|
       navbar.with_section("Echanges") do |section|

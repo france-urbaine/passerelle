@@ -1,5 +1,5 @@
 <%=
-  render Layout::NavbarComponent.new do |navbar|
+  render Layout::Navbar::Component.new do |navbar|
     navbar.with_section("Territoires") do |section|
       section.with_link("Communes",     "/communes")
       section.with_link("EPCI",         "/epcis")
