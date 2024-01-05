@@ -4,8 +4,8 @@ module Layout
   module Pagination
     # @display frame "content"
     #
-    class OptionsComponentPreview < ViewComponent::Preview
-      # @!group Options
+    class Preview < ApplicationViewComponentPreview
+      # @!group Default
       #
       # @label Default
       #
@@ -13,15 +13,27 @@ module Layout
         render_with_template(locals: { pagy: })
       end
 
-      # @label With actions targeting a turbo-frame
+      # @label With countable model
       #
-      def with_turbo_frame
+      def with_countable_model
         render_with_template(locals: { pagy: })
       end
 
-      # @label With directions
+      # @label With countable word
       #
-      def with_direction
+      def with_countable_word
+        render_with_template(locals: { pagy: })
+      end
+
+      # @label With irregular inflections
+      #
+      def with_inflections
+        render_with_template(locals: { pagy: })
+      end
+
+      # @label Buttons targeting a turbo-frame
+      #
+      def with_turbo_frame
         render_with_template(locals: { pagy: })
       end
 

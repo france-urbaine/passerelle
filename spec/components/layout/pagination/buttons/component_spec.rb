@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Layout::Pagination::ButtonsComponent, type: :component do
+RSpec.describe Layout::Pagination::Buttons::Component do
   it "renders two buttons to navigate to previous and next pages" do
     render_inline described_class.new(
       Pagy.new(count: 125, page: 3, items: 20)

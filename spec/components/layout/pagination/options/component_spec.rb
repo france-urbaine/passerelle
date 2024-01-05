@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Layout::Pagination::OptionsComponent, type: :component do
+RSpec.describe Layout::Pagination::Options::Component do
   it "renders a dropdown" do
     render_inline described_class.new(
       Pagy.new(count: 10, page: 1, items: 20)

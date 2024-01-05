@@ -1,0 +1,6 @@
+.content__header-actions
+  .content__header-action= render Layout::Pagination::Counts::Component.new(pagy, inflections_options)
+  .content__header-action= render Layout::Pagination::Buttons::Component.new(pagy, turbo_frame:)
+
+  - if options?
+    .content__header-action= render Layout::Pagination::Options::Component.new(pagy, turbo_frame:, direction:, order:)

@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Layout::Pagination::ButtonsComponentPreview, type: :component do
+RSpec.describe Layout::Pagination::Buttons::Preview do
   it { is_expected.to render_preview_without_exception(:default) }
   it { is_expected.to render_preview_without_exception(:with_turbo_frame) }
 end

@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Layout::Pagination::CountsComponent, type: :component do
+RSpec.describe Layout::Pagination::Counts::Component do
   it "renders counts with only one page" do
     render_inline described_class.new(
       Pagy.new(count: 10, page: 1, items: 20)
