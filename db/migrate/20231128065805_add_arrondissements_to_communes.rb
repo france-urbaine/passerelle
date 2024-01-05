@@ -5,8 +5,16 @@ class AddArrondissementsToCommunes < ActiveRecord::Migration[7.0]
     change_table :communes, bulk: true do |t|
       t.string  :code_arrondissement
       t.integer :arrondissements_count, null: false, default: 0
+    end
 
-      t.index :code_arrondissement
+    reversible do |dir|
+      dir.up do
+        add_index :communes, :code_arrondissement
+      end
+
+      dir.down do
+        remove_index :communes, :code_arrondissement
+      end
     end
 
     drop_trigger :trigger_communes_changes, on: :communes, revert_to_version: 1
