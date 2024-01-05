@@ -1,4 +1,4 @@
-= render Layout::StatusPageComponent.new(**@options) do |template|
+= render Layout::StatusPage::Component.new(**@options) do |template|
   - if breadcrumbs?
     - template.with_breadcrumbs do
       = breadcrumbs

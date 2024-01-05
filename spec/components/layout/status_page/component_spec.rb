@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Layout::StatusPageComponent, type: :component do
+RSpec.describe Layout::StatusPage::Component do
   it "renders a status template within a card" do
     render_inline described_class.new do
       tag.p "Hello World"

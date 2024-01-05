@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Layout::StatusPage::NotFoundComponent, type: :component do
+RSpec.describe Layout::StatusPage::NotFound::Component do
   it "renders a status template for a missing record" do
     render_inline described_class.new("User")
 

@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Layout::StatusPage::GoneComponent, type: :component do
+RSpec.describe Layout::StatusPage::Gone::Component do
   before do
     # Set the current time to midday to simplify calculation of expected delays
     Timecop.travel(Time.zone.local(2023, 6, 2, 10, 0))
