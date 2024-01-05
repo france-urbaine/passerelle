@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe UI::Form::RadioButtonsComponent do
+RSpec.describe UI::Form::RadioButtons::Component do
   it "renders checkboxes with a collection of records" do
     users = create_list(:user, 3)
     render_inline described_class.new(:user, :inviter_id, users)
