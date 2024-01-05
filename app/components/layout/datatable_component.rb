@@ -57,7 +57,7 @@ module Layout
         options = { turbo_frame: @datatable.turbo_frame }
         options[:label] = @label if @label
 
-        render Layout::SearchFormComponent.new(**options)
+        render Layout::SearchForm::Component.new(**options)
       end
     end
 

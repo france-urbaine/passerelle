@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Layout::SearchFormComponent, type: :component do
+RSpec.describe Layout::SearchForm::Component do
   it "renders a form with an search input" do
     render_inline described_class.new
 

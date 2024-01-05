@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Layout::SearchFormComponentPreview, type: :component do
+RSpec.describe Layout::SearchForm::Preview do
   it { is_expected.to render_preview_without_exception(:default) }
   it { is_expected.to render_preview_without_exception(:with_label) }
   it { is_expected.to render_preview_without_exception(:with_url) }
