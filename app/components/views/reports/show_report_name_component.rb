@@ -11,7 +11,7 @@ module Views
       def call
         key = ".#{i18n_prefix}.#{@report.form_type}."
 
-        t(key, address:, invariant:)
+        t(key, address:, invariant:).html_safe
       end
 
       def i18n_prefix

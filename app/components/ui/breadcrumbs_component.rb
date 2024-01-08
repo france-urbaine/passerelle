@@ -21,7 +21,7 @@ module UI
         elsif content?
           content
         else
-          @title
+          html_escape(@title)
         end
       end
     end

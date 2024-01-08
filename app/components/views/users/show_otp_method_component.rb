@@ -10,7 +10,7 @@ module Views
 
       def call
         # Render a empty string to avoid empty placeholder
-        return " " unless @user.confirmed? && icon
+        return " ".html_safe unless @user.confirmed? && icon
 
         icon_component(icon, label) if icon
       end

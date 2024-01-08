@@ -95,10 +95,13 @@ module UI
       end
 
       def call
+        # FIXME: https://github.com/ViewComponent/view_component/issues/1955
+        # Add to_s as a workaround
+
         if dropdown? && dropdown.items.any?
-          dropdown
+          dropdown.to_s
         elsif button?
-          button
+          button.to_s
         else
           tag.div(class: "dropdown__menu-item") do
             content
