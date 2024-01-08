@@ -55,9 +55,6 @@
     - row.with_column(:users_count) do
       = number_with_delimiter(collectivity.users_count) if collectivity.users_count.positive?
 
-    - row.with_column(:packages_transmitted_count) do
-      = number_with_delimiter(collectivity.packages_transmitted_count) if collectivity.packages_transmitted_count.positive?
-
     - row.with_column(:reports_transmitted_count) do
       = number_with_delimiter(collectivity.reports_transmitted_count) if collectivity.reports_transmitted_count.positive?
 

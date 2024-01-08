@@ -11,16 +11,9 @@
         - datatable.with_search
         - datatable.with_pagination(@pagy, options: !@parent)
 
-        - datatable.with_selection do |selection|
-          - if allowed_to?(:destroy_all?, Package)
-            - selection.with_action "Tout supprimer", url_for([:remove_all, @parent, :packages]), modal: true
-
-        - datatable.with_column(:status, compact: true) { "Etat" }
         - datatable.with_column(:reference)             { "Reference" }
         - datatable.with_column(:collectivity)          { "Collectivité" } unless current_user.organization.is_a?(Collectivity)
 
-        - datatable.with_column(:form_type) { "Type de signalement" }
-        - datatable.with_column(:due_on)    { "Echéance" }
         - datatable.with_column(:reports_count,          numeric: true) { "Signalements" }
         - datatable.with_column(:reports_approved_count, numeric: true) { "Approuvés" }
         - datatable.with_column(:reports_rejected_count, numeric: true) { "Rejetés" }
@@ -34,26 +27,11 @@
         - datatable.each_row do |row, package|
           - row.with_checkbox "Sélectionner ce paquet", described_by: :name
 
-          - if allowed_to?(:update?, package, with: PackagePolicy)
-            - row.with_action "Modifier ce paquet", edit_package_path(package), icon: "pencil-square", modal: true
-
-          - if allowed_to?(:destroy?, package, with: PackagePolicy)
-            - row.with_action "Supprimer ce paquet", remove_package_path(package), icon: "trash", modal: true
-
           - row.with_column(:reference) do
             = authorized_link_to package
 
           - row.with_column(:collectivity) do
             = authorized_link_to package.collectivity
-
-          - row.with_column(:form_type) do
-            = t(package.form_type, scope: "enum.package_form_type")
-
-          - row.with_column(:due_on) do
-            = l(package.due_on, format: :long) if package.due_on
-
-          - row.with_column(:status) do
-            = package_badge(package)
 
           - row.with_column(:reports_count) do
             = number_with_delimiter(package.reports_count) if package.reports_count.positive?

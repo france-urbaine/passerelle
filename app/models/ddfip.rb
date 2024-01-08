@@ -4,32 +4,27 @@
 #
 # Table name: ddfips
 #
-#  id                         :uuid             not null, primary key
-#  name                       :string           not null
-#  code_departement           :string           not null
-#  created_at                 :datetime         not null
-#  updated_at                 :datetime         not null
-#  discarded_at               :datetime
-#  users_count                :integer          default(0), not null
-#  collectivities_count       :integer          default(0), not null
-#  offices_count              :integer          default(0), not null
-#  contact_first_name         :string
-#  contact_last_name          :string
-#  contact_email              :string
-#  contact_phone              :string
-#  domain_restriction         :string
-#  allow_2fa_via_email        :boolean          default(FALSE), not null
-#  auto_assign_packages       :boolean          default(FALSE), not null
-#  reports_transmitted_count  :integer          default(0), not null
-#  reports_returned_count     :integer          default(0), not null
-#  reports_pending_count      :integer          default(0), not null
-#  reports_debated_count      :integer          default(0), not null
-#  reports_approved_count     :integer          default(0), not null
-#  reports_rejected_count     :integer          default(0), not null
-#  packages_transmitted_count :integer          default(0), not null
-#  packages_unresolved_count  :integer          default(0), not null
-#  packages_assigned_count    :integer          default(0), not null
-#  packages_returned_count    :integer          default(0), not null
+#  id                        :uuid             not null, primary key
+#  name                      :string           not null
+#  code_departement          :string           not null
+#  created_at                :datetime         not null
+#  updated_at                :datetime         not null
+#  discarded_at              :datetime
+#  users_count               :integer          default(0), not null
+#  collectivities_count      :integer          default(0), not null
+#  offices_count             :integer          default(0), not null
+#  contact_first_name        :string
+#  contact_last_name         :string
+#  contact_email             :string
+#  contact_phone             :string
+#  domain_restriction        :string
+#  allow_2fa_via_email       :boolean          default(FALSE), not null
+#  auto_assign_packages      :boolean          default(FALSE), not null
+#  reports_transmitted_count :integer          default(0), not null
+#  reports_denied_count      :integer          default(0), not null
+#  reports_processing_count  :integer          default(0), not null
+#  reports_approved_count    :integer          default(0), not null
+#  reports_rejected_count    :integer          default(0), not null
 #
 # Indexes
 #
@@ -50,6 +45,8 @@ class DDFIP < ApplicationRecord
 
   has_many :epcis,    primary_key: :code_departement, foreign_key: :code_departement, inverse_of: false, dependent: false
   has_many :communes, primary_key: :code_departement, foreign_key: :code_departement, inverse_of: false, dependent: false
+  has_many :reports, dependent: false
+  has_many :packages, dependent: false
   has_one  :region, through: :departement
 
   has_many :users, as: :organization, dependent: :delete_all
@@ -104,6 +101,10 @@ class DDFIP < ApplicationRecord
 
   scope :order_by_score, lambda { |input|
     scored_order(:name, input)
+  }
+
+  scope :covering, lambda { |reports|
+    distinct.joins(communes: :reports).merge(reports)
   }
 
   # Other associations

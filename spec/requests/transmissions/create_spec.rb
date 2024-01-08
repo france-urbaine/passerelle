@@ -15,8 +15,8 @@ RSpec.describe "TransmissionsController#create" do
   let!(:reports) do
     [
       create(:report, collectivity:),
-      create(:report, :completed, collectivity:),
-      create(:report, :completed, collectivity:),
+      create(:report, :ready, collectivity:),
+      create(:report, :ready, collectivity:),
       create(:report, :transmitted, collectivity:)
     ]
   end

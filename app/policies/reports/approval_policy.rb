@@ -10,7 +10,7 @@ module Reports
           record.kept? &&
           record.out_of_sandbox? &&
           record.transmitted? &&
-          record.covered_by_ddfip?(organization)
+          record.ddfip = organization
       end
     end
   end

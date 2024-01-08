@@ -1,11 +1,9 @@
 fr:
-  incomplete:             Formulaire incomplet
-  completed:              Formulaire complété
+  draft:                  Formulaire incomplet
+  ready:                  Formulaire complété
   in_active_transmission: Transmission en attente
-  transmitted:            Paquet transmis, en attente de confirmation
-  returned:               Paquet retourné
-  assigned:               Signalement transmis
-  pending:                Signalement non traité
-  debated:                Demande d'informations complémentaires
+  transmitted:            Signalement transmis, en attente de confirmation
+  denied:                 Signalement retourné
+  processing:             Signalement non traité
   approved:               Signalement approuvé
   rejected:               Signalement rejeté

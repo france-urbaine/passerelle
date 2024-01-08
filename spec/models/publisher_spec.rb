@@ -167,42 +167,32 @@ RSpec.describe Publisher do
         before_all do
           publishers[0].tap do |publisher|
             create(:collectivity, :with_users, publisher:, users_size: 1).tap do |collectivity|
-              create_list(:report, 2, :completed, publisher:, collectivity:)
-
-              create(:package, :with_reports, :transmitted_through_web_ui, collectivity:)
-              create(:package, :with_reports, :transmitted_through_api,    collectivity:, publisher:)
-              create(:package, :with_reports, :transmitted_through_api, :assigned, collectivity:, publisher:).tap do |package|
-                create_list(:report, 2, :approved, publisher:, collectivity:, package:)
-                create_list(:report, 3, :rejected, publisher:, collectivity:, package:)
-              end
+              create_list(:report, 2, :ready, publisher:, collectivity:)
+              create(:report, :transmitted_through_web_ui, collectivity:)
+              create(:report, :transmitted_through_api, collectivity:, publisher:)
+              create_list(:report, 2, :approved, publisher:, collectivity:)
+              create_list(:report, 3, :rejected, publisher:, collectivity:)
             end
           end
 
           publishers[1].tap do |publisher|
             create(:collectivity, publisher:).tap do |collectivity|
-              create(:package, :with_reports, :transmitted_through_api, :returned, collectivity:, publisher:)
-              create(:package, :with_reports, :transmitted_through_api, :assigned, collectivity:, publisher:).tap do |package|
-                create_list(:report, 1, :debated, publisher:, collectivity:, package:)
-              end
+              create_list(:report, 1, publisher:, collectivity:)
             end
           end
 
           Publisher.update_all(
             reports_transmitted_count:  99,
             reports_approved_count:     99,
-            reports_rejected_count:     99,
-            reports_debated_count:      99,
-            packages_transmitted_count: 99,
-            packages_assigned_count:    99,
-            packages_returned_count:    99
+            reports_rejected_count:     99
           )
         end
 
         it "updates #reports_transmitted_count" do
           expect {
             described_class.reset_all_counters
-          }.to   change { publishers[0].reload.reports_transmitted_count }.to(7)
-            .and change { publishers[1].reload.reports_transmitted_count }.to(3)
+          }.to   change { publishers[0].reload.reports_transmitted_count }.to(6)
+            .and change { publishers[1].reload.reports_transmitted_count }.to(0)
         end
 
         it "updates #reports_approved_count" do
@@ -217,34 +207,6 @@ RSpec.describe Publisher do
             described_class.reset_all_counters
           }.to   change { publishers[0].reload.reports_rejected_count }.to(3)
             .and change { publishers[1].reload.reports_rejected_count }.to(0)
-        end
-
-        it "updates #reports_debated_count" do
-          expect {
-            described_class.reset_all_counters
-          }.to   change { publishers[0].reload.reports_debated_count }.to(0)
-            .and change { publishers[1].reload.reports_debated_count }.to(1)
-        end
-
-        it "updates #packages_transmitted_count" do
-          expect {
-            described_class.reset_all_counters
-          }.to   change { publishers[0].reload.packages_transmitted_count }.to(2)
-            .and change { publishers[1].reload.packages_transmitted_count }.to(2)
-        end
-
-        it "updates #packages_assigned_count" do
-          expect {
-            described_class.reset_all_counters
-          }.to   change { publishers[0].reload.packages_assigned_count }.to(1)
-            .and change { publishers[1].reload.packages_assigned_count }.to(1)
-        end
-
-        it "updates #packages_returned_count" do
-          expect {
-            described_class.reset_all_counters
-          }.to   change { publishers[0].reload.packages_returned_count }.to(0)
-            .and change { publishers[1].reload.packages_returned_count }.to(1)
         end
       end
     end
@@ -333,8 +295,7 @@ RSpec.describe Publisher do
 
     describe "#reports_transmitted_count" do
       let(:collectivity) { create(:collectivity, publisher:) }
-      let(:package)      { create(:package, :transmitted_through_api, publisher:, collectivity:) }
-      let(:report)       { create(:report, :made_through_api, publisher:, collectivity:) }
+      let(:report)       { create(:report, :made_through_api, :ready, publisher:, collectivity:) }
 
       it "doesn't change when report is created" do
         expect { report }
@@ -344,27 +305,26 @@ RSpec.describe Publisher do
       it "changes when report is transmitted" do
         report
 
-        expect { report.update(package:) }
+        expect { report.transmit! }
           .to change { publisher.reload.reports_transmitted_count }.from(0).to(1)
       end
 
-      it "doesn't change when report is transmitted to a sandbox" do
-        report
-        package.update(sandbox: true)
+      it "change when a transmitted report is sandboxed" do
+        report.transmit!
 
-        expect { report.update(package:) }
-          .not_to change { publisher.reload.reports_transmitted_count }.from(0)
+        expect { report.update(sandbox: true) }
+          .to change { publisher.reload.reports_transmitted_count }.from(1).to(0)
       end
 
       it "changes when report is discarded" do
-        report.update(package:)
+        report.transmit!
 
         expect { report.discard }
           .to change { publisher.reload.reports_transmitted_count }.from(1).to(0)
       end
 
       it "changes when report is undiscarded" do
-        report.update(package:)
+        report.transmit!
         report.discard
 
         expect { report.undiscard }
@@ -372,94 +332,18 @@ RSpec.describe Publisher do
       end
 
       it "changes when report is deleted" do
-        report.update(package:)
+        report.transmit!
 
         expect { report.destroy }
           .to change { publisher.reload.reports_transmitted_count }.from(1).to(0)
-      end
-
-      it "changes when package is discarded" do
-        report.update(package:)
-
-        expect { package.discard }
-          .to change { publisher.reload.reports_transmitted_count }.from(1).to(0)
-      end
-
-      it "changes when package is undiscarded" do
-        report.update(package:)
-        package.discard
-
-        expect { package.undiscard }
-          .to change { publisher.reload.reports_transmitted_count }.from(0).to(1)
-      end
-
-      it "changes when package is deleted" do
-        report.update(package:)
-
-        expect { package.delete }
-          .to change { publisher.reload.reports_transmitted_count }.from(1).to(0)
-      end
-    end
-
-    describe "#reports_debated_count" do
-      let(:collectivity) { create(:collectivity, publisher:) }
-      let(:package)      { create(:package, :transmitted_through_api, :assigned, publisher:, collectivity:) }
-      let(:report)       { create(:report, :made_through_api, publisher:, collectivity:, package:) }
-
-      it "doesn't change when package is assigned" do
-        expect { report }
-          .not_to change { publisher.reload.reports_debated_count }.from(0)
-      end
-
-      it "doesn't changes when report is approved" do
-        report
-
-        expect { report.approve! }
-          .not_to change { publisher.reload.reports_debated_count }.from(0)
-      end
-
-      it "doesn't changes when report is rejected" do
-        report
-
-        expect { report.reject! }
-          .not_to change { publisher.reload.reports_debated_count }.from(0)
-      end
-
-      it "changes when report is debated" do
-        report
-
-        expect { report.debate! }
-          .to change { publisher.reload.reports_debated_count }.from(0).to(1)
-      end
-
-      it "changes when debated report is reseted" do
-        report.debate!
-
-        expect { report.update(debated_at: nil) }
-          .to change { publisher.reload.reports_debated_count }.from(1).to(0)
-      end
-
-      it "changes when debated report is approved" do
-        report.debate!
-
-        expect { report.approve! }
-          .to change { publisher.reload.reports_debated_count }.from(1).to(0)
-      end
-
-      it "changes when debated report is rejected" do
-        report.debate!
-
-        expect { report.reject! }
-          .to change { publisher.reload.reports_debated_count }.from(1).to(0)
       end
     end
 
     describe "#reports_approved_count" do
       let(:collectivity) { create(:collectivity, publisher:) }
-      let(:package)      { create(:package, :transmitted_through_api, :assigned, publisher:, collectivity:) }
-      let(:report)       { create(:report, :made_through_api, publisher:, collectivity:, package:) }
+      let(:report)       { create(:report, :made_through_api, :assigned, publisher:, collectivity:) }
 
-      it "doesn't change when package is assigned" do
+      it "doesn't change when report is assigned" do
         expect { report }
           .not_to change { publisher.reload.reports_approved_count }.from(0)
       end
@@ -468,13 +352,6 @@ RSpec.describe Publisher do
         report
 
         expect { report.reject! }
-          .not_to change { publisher.reload.reports_approved_count }.from(0)
-      end
-
-      it "doesn't changes when report is debated" do
-        report
-
-        expect { report.debate! }
           .not_to change { publisher.reload.reports_approved_count }.from(0)
       end
 
@@ -488,7 +365,7 @@ RSpec.describe Publisher do
       it "changes when approved report is reseted" do
         report.approve!
 
-        expect { report.update(approved_at: nil) }
+        expect { report.update(approved_at: nil, state: "processing") }
           .to change { publisher.reload.reports_approved_count }.from(1).to(0)
       end
 
@@ -502,10 +379,9 @@ RSpec.describe Publisher do
 
     describe "#reports_rejected_count" do
       let(:collectivity) { create(:collectivity, publisher:) }
-      let(:package)      { create(:package, :transmitted_through_api, :assigned, publisher:, collectivity:) }
-      let(:report)       { create(:report, :made_through_api, publisher:, collectivity:, package:) }
+      let(:report)       { create(:report, :made_through_api, :assigned, publisher:, collectivity:) }
 
-      it "doesn't change when package is assigned" do
+      it "doesn't change when report is assigned" do
         expect { report }
           .not_to change { publisher.reload.reports_rejected_count }.from(0)
       end
@@ -514,13 +390,6 @@ RSpec.describe Publisher do
         report
 
         expect { report.approve! }
-          .not_to change { publisher.reload.reports_rejected_count }.from(0)
-      end
-
-      it "doesn't changes when report is debated" do
-        report
-
-        expect { report.debate! }
           .not_to change { publisher.reload.reports_rejected_count }.from(0)
       end
 
@@ -534,7 +403,7 @@ RSpec.describe Publisher do
       it "changes when rejected report is reseted" do
         report.reject!
 
-        expect { report.update(rejected_at: nil) }
+        expect { report.update(rejected_at: nil, state: "processing") }
           .to change { publisher.reload.reports_rejected_count }.from(1).to(0)
       end
 
@@ -543,155 +412,6 @@ RSpec.describe Publisher do
 
         expect { report.approve! }
           .to change { publisher.reload.reports_rejected_count }.from(1).to(0)
-      end
-    end
-
-    describe "#packages_transmitted_count" do
-      let(:collectivity) { create(:collectivity, publisher:) }
-      let(:package)      { create(:package, publisher:, collectivity:) }
-
-      it "changes on package creation" do
-        expect { package }
-          .to change { publisher.reload.packages_transmitted_count }.from(0).to(1)
-      end
-
-      it "doesn't changes when package is created in sandbox" do
-        expect { create(:package, publisher:, sandbox: true) }
-          .not_to change { publisher.reload.packages_transmitted_count }.from(0)
-      end
-
-      it "doesn't changes when package switches to sandbox" do
-        package
-
-        expect { package.update(sandbox: true) }
-          .to change { publisher.reload.packages_transmitted_count }.from(1).to(0)
-      end
-
-      it "doesn't changes when package is assigned" do
-        package
-
-        expect { package.assign! }
-          .not_to change { publisher.reload.packages_transmitted_count }.from(1)
-      end
-
-      it "doesn't changes when package is returned" do
-        package
-
-        expect { package.return! }
-          .not_to change { publisher.reload.packages_transmitted_count }.from(1)
-      end
-
-      it "changes when package is discarded" do
-        package
-
-        expect { package.discard }
-          .to change { publisher.reload.packages_transmitted_count }.from(1).to(0)
-      end
-
-      it "changes when package is undiscarded" do
-        package.discard
-
-        expect { package.undiscard }
-          .to change { publisher.reload.packages_transmitted_count }.from(0).to(1)
-      end
-
-      it "changes when package is deleted" do
-        package
-
-        expect { package.delete }
-          .to change { publisher.reload.packages_transmitted_count }.from(1).to(0)
-      end
-    end
-
-    describe "#packages_assigned_count" do
-      let(:collectivity) { create(:collectivity, publisher:) }
-      let(:package)      { create(:package, publisher:, collectivity:) }
-
-      it "doesn't changes on package creation" do
-        expect { package }
-          .to not_change { publisher.reload.packages_assigned_count }.from(0)
-      end
-
-      it "changes when package is assigned" do
-        package
-
-        expect { package.assign! }
-          .to change { publisher.reload.packages_assigned_count }.from(0).to(1)
-      end
-
-      it "changes when assigned package is then returned" do
-        package.assign!
-
-        expect { package.return! }
-          .to change { publisher.reload.packages_assigned_count }.from(1).to(0)
-      end
-
-      it "changes when assigned package is discarded" do
-        package.assign!
-
-        expect { package.discard }
-          .to change { publisher.reload.packages_assigned_count }.from(1).to(0)
-      end
-
-      it "changes when assigned package is undiscarded" do
-        package.assign!
-        package.discard
-
-        expect { package.undiscard }
-          .to change { publisher.reload.packages_assigned_count }.from(0).to(1)
-      end
-
-      it "changes when assigned package is deleted" do
-        package.assign!
-
-        expect { package.delete }
-          .to change { publisher.reload.packages_assigned_count }.from(1).to(0)
-      end
-    end
-
-    describe "#packages_returned_count" do
-      let(:collectivity) { create(:collectivity, publisher:) }
-      let(:package)      { create(:package, publisher:, collectivity:) }
-
-      it "doesn't change on package creation" do
-        expect { package }
-          .to not_change { publisher.reload.packages_returned_count }.from(0)
-      end
-
-      it "changes when package is returned" do
-        package
-
-        expect { package.return! }
-          .to change { publisher.reload.packages_returned_count }.from(0).to(1)
-      end
-
-      it "changes when returned package is assigned" do
-        package.return!
-
-        expect { package.assign! }
-          .to change { publisher.reload.packages_returned_count }.from(1).to(0)
-      end
-
-      it "changes when returned package is discarded" do
-        package.return!
-
-        expect { package.discard }
-          .to change { publisher.reload.packages_returned_count }.from(1).to(0)
-      end
-
-      it "changes when returned package is undiscarded" do
-        package.return!
-        package.discard
-
-        expect { package.undiscard }
-          .to change { publisher.reload.packages_returned_count }.from(0).to(1)
-      end
-
-      it "changes when returned package is deleted" do
-        package.return!
-
-        expect { package.delete }
-          .to change { publisher.reload.packages_returned_count }.from(1).to(0)
       end
     end
   end

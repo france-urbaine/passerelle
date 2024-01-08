@@ -48,7 +48,7 @@ module Transmissions
       @transmissible_reports_count           = transmissible_reports.count
 
       @intransmissible_reports_count         = intransmissible_reports.count
-      @incomplete_reports_count              = intransmissible_reports.incomplete.count
+      @incomplete_reports_count              = intransmissible_reports.draft.count
       @transmitted_reports_count             = intransmissible_reports.transmitted.count
       @in_current_transmission_reports_count = intransmissible_reports.in_transmission(@transmission).count
     end

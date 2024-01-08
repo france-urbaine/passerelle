@@ -11,6 +11,7 @@ RSpec.describe User do
     it { is_expected.to have_many(:invitees) }
 
     it { is_expected.to have_many(:transmissions) }
+    it { is_expected.to have_many(:assigned_reports) }
     it { is_expected.to have_one(:active_transmission) }
 
     it { is_expected.to have_many(:office_users) }

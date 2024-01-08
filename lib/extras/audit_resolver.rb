@@ -14,7 +14,7 @@ class AuditResolver
     case [audit.auditable_type, audit.audited_changes&.with_indifferent_access]
     in [_, { discarded_at: _ }]
       ACTION_DISCARD
-    in ["Report", { completed_at: _ }] | ["Transmission", { completed_at: _ }]
+    in ["Report", { ready_at: _ }] | ["Transmission", { completed_at: _ }]
       ACTION_COMPLETE
     in ["User", { consumed_timestep: _ }]
       ACTION_TWO_FACTORS

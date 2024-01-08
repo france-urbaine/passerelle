@@ -13,9 +13,9 @@ RSpec.describe Transmissions::CreateService do
       create(:report, :creation_local_habitation,                 collectivity: transmission.collectivity),
       create(:report, :evaluation_local_habitation,               collectivity: transmission.collectivity),
       create(:report, :creation_local_habitation,   :transmitted, collectivity: transmission.collectivity),
-      create(:report, :creation_local_habitation,   :completed,   collectivity: transmission.collectivity),
-      create(:report, :evaluation_local_habitation, :completed,   collectivity: transmission.collectivity),
-      create(:report, :evaluation_local_habitation, :completed,   collectivity: transmission.collectivity, transmission: transmission)
+      create(:report, :creation_local_habitation,   :ready,       collectivity: transmission.collectivity),
+      create(:report, :evaluation_local_habitation, :ready,       collectivity: transmission.collectivity),
+      create(:report, :evaluation_local_habitation, :ready,       collectivity: transmission.collectivity, transmission: transmission)
     ]
   end
 

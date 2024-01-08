@@ -113,22 +113,37 @@
 #  proposition_code_naf                           :string
 #  proposition_date_debut_activite                :date
 #  transmission_id                                :uuid
-#  completed_at                                   :datetime
+#  ready_at                                       :datetime
 #  sandbox                                        :boolean          default(FALSE), not null
+#  transmitted_at                                 :datetime
+#  assigned_at                                    :datetime
+#  denied_at                                      :datetime
+#  office_id                                      :uuid
+#  assignee_id                                    :uuid
+#  acknowledged_at                                :datetime
+#  ddfip_id                                       :uuid
+#  state                                          :string           default("draft")
 #
 # Indexes
 #
+#  index_reports_on_assignee_id      (assignee_id)
 #  index_reports_on_collectivity_id  (collectivity_id)
+#  index_reports_on_ddfip_id         (ddfip_id)
+#  index_reports_on_office_id        (office_id)
 #  index_reports_on_package_id       (package_id)
 #  index_reports_on_publisher_id     (publisher_id)
 #  index_reports_on_reference        (reference) UNIQUE
 #  index_reports_on_sibling_id       (sibling_id)
+#  index_reports_on_state            (state)
 #  index_reports_on_transmission_id  (transmission_id)
 #  index_reports_on_workshop_id      (workshop_id)
 #
 # Foreign Keys
 #
+#  fk_rails_...  (assignee_id => users.id) ON DELETE => nullify
 #  fk_rails_...  (collectivity_id => collectivities.id) ON DELETE => cascade
+#  fk_rails_...  (ddfip_id => ddfips.id) ON DELETE => nullify
+#  fk_rails_...  (office_id => offices.id) ON DELETE => nullify
 #  fk_rails_...  (package_id => packages.id) ON DELETE => cascade
 #  fk_rails_...  (publisher_id => publishers.id) ON DELETE => cascade
 #  fk_rails_...  (transmission_id => transmissions.id)
@@ -149,6 +164,9 @@ class Report < ApplicationRecord
   belongs_to :transmission, optional: true
   belongs_to :workshop,     optional: true
   belongs_to :commune,      optional: true, primary_key: :code_insee, foreign_key: :code_insee, inverse_of: :reports
+  belongs_to :office,       optional: true
+  belongs_to :assignee,     optional: true, class_name: "User", inverse_of: :assigned_reports
+  belongs_to :ddfip,        optional: true
 
   has_many :siblings, ->(report) { where.not(id: report.id) }, class_name: "Report", primary_key: :sibling_id, foreign_key: :sibling_id, inverse_of: false, dependent: false
 
@@ -326,12 +344,8 @@ class Report < ApplicationRecord
 
   # Scopes
   # ----------------------------------------------------------------------------
-  scope :all_kept, lambda {
-    kept.left_outer_joins(:package).where(<<~SQL.squish)
-         "packages"."id" IS NULL
-      OR "packages"."discarded_at" IS NULL
-    SQL
-  }
+  scope :transmitted_to_ddfip, ->(ddfip) { transmitted.where(ddfip: ddfip) }
+  scope :assigned_to_office, ->(office) { assigned.where(office: office) }
 
   scope :covered_by_ddfip, lambda { |ddfip|
     if ddfip.is_a?(ActiveRecord::Relation)
@@ -355,13 +369,7 @@ class Report < ApplicationRecord
     end
   }
 
-  scope :transmitted_or_made_through_web_ui, lambda {
-    left_outer_joins(:package).where(<<~SQL.squish)
-      "packages"."transmitted_at" IS NOT NULL
-      OR
-      "reports"."publisher_id" IS NULL
-    SQL
-  }
+  scope :transmitted_or_made_through_web_ui, -> { transmitted.or(where(publisher_id: nil)) }
 
   scope :search, lambda { |input|
     advanced_search(
@@ -369,7 +377,6 @@ class Report < ApplicationRecord
       reference:         ->(value) { where(reference: value) },
       invariant:         ->(value) { where(situation_invariant: value) },
       package_reference: ->(value) { where(package_id: Package.where(reference: value)) },
-      package_name:      ->(value) { where(package_id: Package.match(:name, value)) },
       form_type:         ->(value) { match_enum(:form_type, value, :report_form_type) },
       commune_name:      ->(value) { left_joins(:commune).merge(Commune.match(:name, value)) },
       address:            lambda { |value|
@@ -437,29 +444,40 @@ class Report < ApplicationRecord
     order(Arel.sql(%{COALESCE("reports"."rejected_at", "reports"."approved_at", "reports"."debated_at") DESC}))
   }
 
-  scope :order_by_last_transmission_date, lambda {
-    joins(:package).merge(Package.order(transmitted_at: :desc))
+  scope :order_by_last_transmission_date, -> { order(transmitted_at: :desc) }
+
+  scope :transmissible,              -> { ready.not_in_active_transmission }
+  scope :in_active_transmission,     -> { packing.where.not(transmission_id: nil) }
+  scope :not_in_active_transmission, -> { where(transmission_id: nil) }
+
+  scope :in_transmission,        ->(transmission) { where(transmission_id: transmission.id) }
+  scope :not_in_transmission,    lambda { |transmission|
+    where.not(transmission_id: transmission.id).or(where(transmission_id: nil))
   }
 
   # Predicates
   # ----------------------------------------------------------------------------
-  def all_kept?
-    kept? && (package.nil? || package.kept?)
-  end
-
   def covered_by_ddfip?(ddfip)
     ddfip.code_departement == commune.code_departement
   end
 
   def covered_by_office?(office)
-    office.competences.include?(form_type) && office.communes.where(code_insee: code_insee).exist?
+    office.competences.include?(form_type) && (
+      (office.office_communes.loaded? && office.office_communes.any? { |o| o.code_insee == code_insee }) ||
+      (!office.office_communes.loaded? && office.office_communes.exists?(code_insee: code_insee))
+    )
   end
 
   def covered_by_offices?(offices)
-    offices.joins(:communes)
-      .where(%{? = ANY ("offices"."competences")}, form_type)
-      .merge(Commune.where(code_insee: code_insee))
-      .exists?
+    offices&.map(&:id)&.include?(office_id)
+  end
+
+  def transmissible?
+    packing?
+  end
+
+  def in_active_transmission?
+    ready? && transmission_id?
   end
 
   # Updates methods

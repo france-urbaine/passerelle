@@ -3,15 +3,15 @@
 require "rails_helper"
 
 RSpec.describe Views::Reports::StatusBadgeComponent, type: :component do
-  it "renders a badge for an incomplete report" do
+  it "renders a badge for an draft report" do
     report = build_stubbed(:report)
     render_inline described_class.new(report)
 
     expect(page).to have_selector(".badge.badge--yellow", text: "Formulaire incomplet")
   end
 
-  it "renders a badge for an completed report" do
-    report = build_stubbed(:report, :completed)
+  it "renders a badge for an ready report" do
+    report = build_stubbed(:report, :ready)
     render_inline described_class.new(report)
 
     expect(page).to have_selector(".badge.badge--lime", text: "Formulaire complété")
@@ -28,28 +28,21 @@ RSpec.describe Views::Reports::StatusBadgeComponent, type: :component do
     report = build_stubbed(:report, :transmitted)
     render_inline described_class.new(report)
 
-    expect(page).to have_selector(".badge.badge--blue", text: "Paquet transmis, en attente de confirmation")
+    expect(page).to have_selector(".badge.badge--blue", text: "Signalement transmis, en attente de confirmation")
   end
 
-  it "renders a badge for a pending report" do
+  it "renders a badge for a processing report" do
     report = build_stubbed(:report, :assigned)
     render_inline described_class.new(report)
 
-    expect(page).to have_selector(".badge.badge--sky", text: "Signalement transmis")
+    expect(page).to have_selector(".badge.badge--sky", text: "Signalement non traité")
   end
 
-  it "renders a badge for a returned report" do
-    report = build_stubbed(:report, :returned)
+  it "renders a badge for a denied report" do
+    report = build_stubbed(:report, :denied)
     render_inline described_class.new(report)
 
-    expect(page).to have_selector(".badge.badge--red", text: "Paquet retourné")
-  end
-
-  it "renders a badge for a debated report" do
-    report = build_stubbed(:report, :debated)
-    render_inline described_class.new(report)
-
-    expect(page).to have_selector(".badge.badge--orange", text: "Demande d'informations complémentaires")
+    expect(page).to have_selector(".badge.badge--red", text: "Signalement retourné")
   end
 
   it "renders a badge for an approved report" do

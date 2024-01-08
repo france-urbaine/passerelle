@@ -4,20 +4,19 @@
 #
 # Table name: offices
 #
-#  id                     :uuid             not null, primary key
-#  ddfip_id               :uuid             not null
-#  name                   :string           not null
-#  competences            :enum             not null, is an Array
-#  created_at             :datetime         not null
-#  updated_at             :datetime         not null
-#  discarded_at           :datetime
-#  users_count            :integer          default(0), not null
-#  communes_count         :integer          default(0), not null
-#  reports_assigned_count :integer          default(0), not null
-#  reports_pending_count  :integer          default(0), not null
-#  reports_debated_count  :integer          default(0), not null
-#  reports_approved_count :integer          default(0), not null
-#  reports_rejected_count :integer          default(0), not null
+#  id                       :uuid             not null, primary key
+#  ddfip_id                 :uuid             not null
+#  name                     :string           not null
+#  competences              :enum             not null, is an Array
+#  created_at               :datetime         not null
+#  updated_at               :datetime         not null
+#  discarded_at             :datetime
+#  users_count              :integer          default(0), not null
+#  communes_count           :integer          default(0), not null
+#  reports_assigned_count   :integer          default(0), not null
+#  reports_processing_count :integer          default(0), not null
+#  reports_approved_count   :integer          default(0), not null
+#  reports_rejected_count   :integer          default(0), not null
 #
 # Indexes
 #
@@ -38,6 +37,7 @@ class Office < ApplicationRecord
 
   has_many :office_users,    dependent: false
   has_many :office_communes, dependent: false
+  has_many :reports,         dependent: false
 
   has_many :users,    through: :office_users
   has_many :communes, through: :office_communes
@@ -97,6 +97,14 @@ class Office < ApplicationRecord
 
   scope :order_by_score, lambda { |input|
     scored_order(:name, input)
+  }
+
+  scope :covering, lambda { |reports|
+    joins(:communes).merge(Commune.where(code_insee: reports.pluck(:code_insee)))
+  }
+
+  scope :with_competence, lambda { |competence|
+    where(%{? = ANY ("offices"."competences")}, competence)
   }
 
   # Other associations

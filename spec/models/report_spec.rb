@@ -12,6 +12,8 @@ RSpec.describe Report do
     it { is_expected.to belong_to(:transmission).optional }
     it { is_expected.to belong_to(:workshop).optional }
     it { is_expected.to belong_to(:commune).optional }
+    it { is_expected.to belong_to(:office).optional }
+    it { is_expected.to belong_to(:assignee).optional }
 
     it { is_expected.to have_many(:siblings) }
 
@@ -218,7 +220,6 @@ RSpec.describe Report do
           WHERE ("reports"."reference" = 'Hello'
           OR "reports"."situation_invariant" = 'Hello'
           OR "reports"."package_id" IN (SELECT "packages"."id" FROM "packages" WHERE "packages"."reference" = 'Hello')
-          OR "reports"."package_id" IN (SELECT "packages"."id" FROM "packages" WHERE (LOWER(UNACCENT("packages"."name")) LIKE LOWER(UNACCENT('%Hello%'))))
           OR 1=0
           OR LOWER(UNACCENT("communes"."name")) LIKE LOWER(UNACCENT('%Hello%'))
           OR LOWER(UNACCENT(REPLACE(CONCAT(situation_adresse, ' ', situation_numero_voie, ' ', situation_indice_repetition, ' ', situation_libelle_voie ), ' ', ' '))) LIKE LOWER(UNACCENT('%Hello%')))
@@ -252,16 +253,6 @@ RSpec.describe Report do
           SELECT "reports".*
           FROM   "reports"
           WHERE  "reports"."package_id" IN (SELECT "packages"."id" FROM "packages" WHERE "packages"."reference" = 'Hello')
-        SQL
-      end
-
-      it "searches for reports by matching package name" do
-        expect {
-          described_class.search(package_name: "Hello").load
-        }.to perform_sql_query(<<~SQL)
-          SELECT "reports".*
-          FROM   "reports"
-          WHERE  "reports"."package_id" IN (SELECT "packages"."id" FROM "packages" WHERE (LOWER(UNACCENT("packages"."name")) LIKE LOWER(UNACCENT('%Hello%'))))
         SQL
       end
 
@@ -420,26 +411,98 @@ RSpec.describe Report do
       end
     end
 
-    describe ".incomplete" do
+    describe ".draft" do
       it "scopes reports with incomplete form" do
         expect {
-          described_class.incomplete.load
+          described_class.draft.load
         }.to perform_sql_query(<<~SQL)
           SELECT "reports".*
           FROM   "reports"
-          WHERE  "reports"."completed_at" IS NULL
+          WHERE  "reports"."state" = 'draft'
         SQL
       end
     end
 
-    describe ".completed" do
+    describe ".ready" do
       it "scopes reports with completed form" do
         expect {
-          described_class.completed.load
+          described_class.ready.load
         }.to perform_sql_query(<<~SQL)
           SELECT "reports".*
           FROM   "reports"
-          WHERE  "reports"."completed_at" IS NOT NULL
+          WHERE  "reports"."state" = 'ready'
+        SQL
+      end
+    end
+
+    describe ".sent" do
+      it "scopes reports sent to ddfip" do
+        expect {
+          described_class.sent.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "reports".*
+          FROM   "reports"
+          WHERE  "reports"."state" = 'sent'
+        SQL
+      end
+    end
+
+    describe ".acknowledged" do
+      it "scopes reports acknowledged by ddfip" do
+        expect {
+          described_class.acknowledged.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "reports".*
+          FROM   "reports"
+          WHERE  "reports"."state" = 'acknowledged'
+        SQL
+      end
+    end
+
+    describe ".denied" do
+      it "scopes reports denied by ddfip" do
+        expect {
+          described_class.denied.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "reports".*
+          FROM   "reports"
+          WHERE  "reports"."state" = 'denied'
+        SQL
+      end
+    end
+
+    describe ".processing" do
+      it "scopes reports processing by dgfip" do
+        expect {
+          described_class.processing.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "reports".*
+          FROM   "reports"
+          WHERE  "reports"."state" = 'processing'
+        SQL
+      end
+    end
+
+    describe ".approved" do
+      it "scopes reports approved by dgfip" do
+        expect {
+          described_class.approved.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "reports".*
+          FROM   "reports"
+          WHERE  "reports"."state" = 'approved'
+        SQL
+      end
+    end
+
+    describe ".rejected" do
+      it "scopes reports rejected by dgfip" do
+        expect {
+          described_class.rejected.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "reports".*
+          FROM   "reports"
+          WHERE  "reports"."state" = 'rejected'
         SQL
       end
     end
@@ -451,32 +514,91 @@ RSpec.describe Report do
         }.to perform_sql_query(<<~SQL)
           SELECT "reports".*
           FROM   "reports"
-          WHERE  "reports"."package_id" IS NULL
+          WHERE  "reports"."state" IN ('draft', 'ready')
         SQL
       end
     end
 
-    describe ".packed" do
-      it "scopes packed reports (transmitted or transmitted in sandbox)" do
+    describe ".unassigned" do
+      it "scopes on unassigned report" do
         expect {
-          described_class.packed.load
+          described_class.unassigned.load
         }.to perform_sql_query(<<~SQL)
-          SELECT "reports".*
-          FROM   "reports"
-          WHERE  "reports"."package_id" IS NOT NULL
+          SELECT     "reports".*
+          FROM       "reports"
+          WHERE      "reports"."state" IN ('sent', 'acknowledged')
+        SQL
+      end
+    end
+
+    describe ".assigned" do
+      it "scopes on assigned report" do
+        expect {
+          described_class.assigned.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT     "reports".*
+          FROM       "reports"
+          WHERE      "reports"."state" IN ('processing', 'approved', 'rejected')
+        SQL
+      end
+    end
+
+    describe ".unresolved" do
+      it "scopes transmitted reports from unresolved packages" do
+        expect {
+          described_class.unresolved.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT     "reports".*
+          FROM       "reports"
+          WHERE      "reports"."state" IN ('sent', 'acknowledged', 'processing')
+        SQL
+      end
+    end
+
+    describe ".undenied" do
+      it "scopes on reports approved ot rejected by the DDFIP" do
+        expect {
+          described_class.undenied.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT      "reports".*
+          FROM        "reports"
+          WHERE       "reports"."state" IN ('sent', 'acknowledged', 'processing', 'approved', 'rejected')
+        SQL
+      end
+    end
+
+    describe ".transmitted" do
+      it "scopes transmitted reports" do
+        expect {
+          described_class.transmitted.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT     "reports".*
+          FROM       "reports"
+          WHERE      "reports"."state" IN ('sent', 'acknowledged', 'denied', 'processing', 'approved', 'rejected')
+        SQL
+      end
+    end
+
+    describe ".resolved" do
+      it "scopes on reports approved ot rejected by the DDFIP" do
+        expect {
+          described_class.resolved.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT      "reports".*
+          FROM        "reports"
+          WHERE       "reports"."state" IN ('approved', 'rejected')
         SQL
       end
     end
 
     describe ".transmissible" do
-      it "scopes on completed reports not yet transmitted" do
+      it "scopes on ready reports not yet transmitted" do
         expect {
           described_class.transmissible.load
         }.to perform_sql_query(<<~SQL)
           SELECT "reports".*
           FROM   "reports"
-          WHERE  "reports"."completed_at" IS NOT NULL
-            AND  "reports"."package_id" IS NULL
+          WHERE  "reports"."state" = 'ready'
             AND  "reports"."transmission_id" IS NULL
         SQL
       end
@@ -489,7 +611,7 @@ RSpec.describe Report do
         }.to perform_sql_query(<<~SQL)
           SELECT "reports".*
           FROM   "reports"
-          WHERE  "reports"."package_id" IS NULL
+          WHERE  "reports"."state" IN ('draft', 'ready')
             AND  "reports"."transmission_id" IS NOT NULL
         SQL
       end
@@ -539,253 +661,15 @@ RSpec.describe Report do
 
       it "is mergeable with another scope" do
         expect {
-          described_class.completed.not_in_transmission(transmission).load
+          described_class.ready.not_in_transmission(transmission).load
         }.to perform_sql_query(<<~SQL)
           SELECT "reports".*
           FROM   "reports"
-          WHERE  "reports"."completed_at" IS NOT NULL
+          WHERE  "reports"."state" = 'ready'
             AND  (
                        "reports"."transmission_id" != '#{transmission.id}'
                     OR "reports"."transmission_id" IS NULL
                  )
-        SQL
-      end
-    end
-
-    describe ".transmitted_to_sandbox" do
-      it "scopes reports transmitted in a sandbox" do
-        expect {
-          described_class.transmitted_to_sandbox.load
-        }.to perform_sql_query(<<~SQL)
-          SELECT     "reports".*
-          FROM       "reports"
-          INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
-          WHERE      "packages"."sandbox" = TRUE
-        SQL
-      end
-    end
-
-    describe ".transmitted" do
-      it "scopes transmitted reports (but not in sandbox)" do
-        expect {
-          described_class.transmitted.load
-        }.to perform_sql_query(<<~SQL)
-          SELECT     "reports".*
-          FROM       "reports"
-          INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
-          WHERE      "packages"."sandbox" = FALSE
-        SQL
-      end
-    end
-
-    describe ".unresolved" do
-      it "scopes transmitted reports from unresolved packages" do
-        expect {
-          described_class.unresolved.load
-        }.to perform_sql_query(<<~SQL)
-          SELECT     "reports".*
-          FROM       "reports"
-          INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
-          WHERE      "packages"."sandbox" = FALSE
-            AND      "packages"."assigned_at" IS NULL
-            AND      "packages"."returned_at" IS NULL
-        SQL
-      end
-    end
-
-    describe ".missed" do
-      it "scopes on transmitted report from missed packages" do
-        pending "not yet implemented"
-
-        expect {
-          described_class.missed.load
-        }.to perform_sql_query(<<~SQL)
-          SELECT     "reports".*
-          FROM       "reports"
-          INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
-          WHERE      "packages"."sandbox" = FALSE
-            AND      "packages"."acknowledged_at" IS NULL
-        SQL
-      end
-    end
-
-    describe ".acknowledged" do
-      it "scopes on transmitted report from acknowledged packages" do
-        pending "not yet implemented"
-
-        expect {
-          described_class.acknowledged.load
-        }.to perform_sql_query(<<~SQL)
-          SELECT     "reports".*
-          FROM       "reports"
-          INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
-          WHERE      "packages"."sandbox" = FALSE
-            AND      "packages"."acknowledged_at" IS NOT NULL
-        SQL
-      end
-    end
-
-    describe ".assigned" do
-      it "scopes on assigned report" do
-        expect {
-          described_class.assigned.load
-        }.to perform_sql_query(<<~SQL)
-          SELECT     "reports".*
-          FROM       "reports"
-          INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
-          WHERE      "packages"."sandbox" = FALSE
-            AND      "packages"."assigned_at" IS NOT NULL
-            AND      "packages"."returned_at" IS NULL
-        SQL
-      end
-    end
-
-    describe ".returned" do
-      it "scopes on assigned reports" do
-        expect {
-          described_class.returned.load
-        }.to perform_sql_query(<<~SQL)
-          SELECT     "reports".*
-          FROM       "reports"
-          INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
-          WHERE      "packages"."sandbox" = FALSE
-            AND      "packages"."returned_at" IS NOT NULL
-        SQL
-      end
-    end
-
-    describe ".unreturned" do
-      it "scopes on reports not returned by a DDFIP" do
-        expect {
-          described_class.unreturned.load
-        }.to perform_sql_query(<<~SQL)
-          SELECT     "reports".*
-          FROM       "reports"
-          INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
-          WHERE      "packages"."sandbox" = FALSE
-            AND      "packages"."returned_at" IS NULL
-        SQL
-      end
-    end
-
-    describe ".operative" do
-      it "scopes on assigned reports without approval or rejection" do
-        expect {
-          described_class.operative.load
-        }.to perform_sql_query(<<~SQL)
-          SELECT     "reports".*
-          FROM       "reports"
-          INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
-          WHERE      "packages"."sandbox" = FALSE
-            AND      "packages"."assigned_at" IS NOT NULL
-            AND      "packages"."returned_at" IS NULL
-            AND      "reports"."approved_at" IS NULL
-            AND      "reports"."rejected_at" IS NULL
-        SQL
-      end
-    end
-
-    describe ".pending" do
-      it "scopes on assigned reports without any decision" do
-        expect {
-          described_class.pending.load
-        }.to perform_sql_query(<<~SQL)
-          SELECT     "reports".*
-          FROM       "reports"
-          INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
-          WHERE      "packages"."sandbox" = FALSE
-            AND      "packages"."assigned_at" IS NOT NULL
-            AND      "packages"."returned_at" IS NULL
-            AND      "reports"."approved_at" IS NULL
-            AND      "reports"."rejected_at" IS NULL
-            AND      "reports"."debated_at" IS NULL
-        SQL
-      end
-    end
-
-    describe ".debated" do
-      it "scopes on debated reports" do
-        expect {
-          described_class.debated.load
-        }.to perform_sql_query(<<~SQL)
-          SELECT     "reports".*
-          FROM       "reports"
-          INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
-          WHERE      "packages"."sandbox" = FALSE
-            AND      "packages"."assigned_at" IS NOT NULL
-            AND      "packages"."returned_at" IS NULL
-            AND      "reports"."debated_at" IS NOT NULL
-        SQL
-      end
-    end
-
-    describe ".approved" do
-      it "scopes on approved reports" do
-        expect {
-          described_class.approved.load
-        }.to perform_sql_query(<<~SQL)
-          SELECT     "reports".*
-          FROM       "reports"
-          INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
-          WHERE      "packages"."sandbox" = FALSE
-            AND      "packages"."assigned_at" IS NOT NULL
-            AND      "packages"."returned_at" IS NULL
-            AND      "reports"."approved_at" IS NOT NULL
-        SQL
-      end
-    end
-
-    describe ".rejected" do
-      it "scopes on rejected reports" do
-        expect {
-          described_class.rejected.load
-        }.to perform_sql_query(<<~SQL)
-          SELECT     "reports".*
-          FROM       "reports"
-          INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
-          WHERE      "packages"."sandbox" = FALSE
-            AND      "packages"."assigned_at" IS NOT NULL
-            AND      "packages"."returned_at" IS NULL
-            AND      "reports"."rejected_at" IS NOT NULL
-        SQL
-      end
-    end
-
-    describe ".concluded" do
-      it "scopes on reports approved ot rejected by the DDFIP" do
-        expect {
-          described_class.concluded.load
-        }.to perform_sql_query(<<~SQL)
-          SELECT      "reports".*
-          FROM        "reports"
-          INNER JOIN  "packages" ON "packages"."id" = "reports"."package_id"
-          WHERE       "packages"."sandbox" = FALSE
-            AND       "packages"."assigned_at" IS NOT NULL
-            AND       "packages"."returned_at" IS NULL
-            AND       (
-                           "reports"."approved_at" IS NOT NULL
-                        OR "reports"."rejected_at" IS NOT NULL
-                      )
-        SQL
-      end
-    end
-
-    describe ".examined" do
-      it "scopes on reports concluded or debated by the DDFIP" do
-        expect {
-          described_class.examined.load
-        }.to perform_sql_query(<<~SQL)
-          SELECT      "reports".*
-          FROM        "reports"
-          INNER JOIN  "packages" ON "packages"."id" = "reports"."package_id"
-          WHERE       "packages"."sandbox" = FALSE
-            AND       "packages"."assigned_at" IS NOT NULL
-            AND       "packages"."returned_at" IS NULL
-            AND       (
-                           "reports"."approved_at" IS NOT NULL
-                        OR "reports"."rejected_at" IS NOT NULL
-                        OR "reports"."debated_at" IS NOT NULL
-                      )
         SQL
       end
     end
@@ -870,16 +754,32 @@ RSpec.describe Report do
       end
     end
 
-    describe ".all_kept" do
-      it "scopes on kept reports without packages or within kept packages" do
+    describe ".transmitted_to_ddfip" do
+      it "scopes reports transmitted to a DDFIP" do
+        ddfip = create(:ddfip)
+
         expect {
-          described_class.all_kept.load
+          described_class.transmitted_to_ddfip(ddfip).load
         }.to perform_sql_query(<<~SQL)
-          SELECT          "reports".*
-          FROM            "reports"
-          LEFT OUTER JOIN "packages" ON "packages"."id" = "reports"."package_id"
-          WHERE           "reports"."discarded_at" IS NULL
-            AND           ("packages"."id" IS NULL OR "packages"."discarded_at" IS NULL)
+          SELECT     "reports".*
+          FROM       "reports"
+          WHERE      "reports"."state" IN ('sent', 'acknowledged', 'denied', 'processing', 'approved', 'rejected')
+            AND      "reports"."ddfip_id" = '#{ddfip.id}'
+        SQL
+      end
+    end
+
+    describe ".assigned_to_office" do
+      it "scopes reports assigned to Office" do
+        office = create(:office)
+
+        expect {
+          described_class.assigned_to_office(office).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT     "reports".*
+          FROM       "reports"
+          WHERE      "reports"."state" IN ('processing', 'approved', 'rejected')
+            AND      "reports"."office_id" = '#{office.id}'
         SQL
       end
     end
@@ -977,8 +877,7 @@ RSpec.describe Report do
         }.to perform_sql_query(<<~SQL)
           SELECT     "reports".*
           FROM       "reports"
-          INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
-          ORDER BY   "packages"."transmitted_at" DESC
+          ORDER BY   "reports"."transmitted_at" DESC
         SQL
       end
     end
@@ -989,190 +888,125 @@ RSpec.describe Report do
   describe "predicates" do
     let_it_be(:publisher)      { build_stubbed(:publisher) }
     let_it_be(:collectivities) { build_stubbed_list(:collectivity, 2, publisher: publisher) }
+    let_it_be(:departement) { create(:departement, code_departement: "64") }
+    let_it_be(:ddfip) { create(:ddfip, departement: departement) }
+    let_it_be(:commune) { create(:commune, departement: departement) }
     let_it_be(:reports) do
       collectivity = collectivities[0]
 
       {
-        incomplete:                         build_stubbed(:report, collectivity:),
-        completed:                          build_stubbed(:report, :completed, collectivity:),
-        transmitting_through_web_ui:        build_stubbed(:report, :in_active_transmission, :made_through_web_ui, collectivity:),
-        transmitting_through_api:           build_stubbed(:report, :in_active_transmission, :made_through_api, collectivity:, publisher:),
-        transmitting_to_sandbox:            build_stubbed(:report, :in_active_transmission, :made_through_api, :sandbox, collectivity:, publisher:),
-        transmitted_through_web_ui:         build_stubbed(:report, :transmitted_through_web_ui, collectivity:),
-        transmitted_through_api:            build_stubbed(:report, :transmitted_through_api, collectivity:, publisher:),
-        transmitted_to_sandbox:             build_stubbed(:report, :transmitted_through_api, :sandbox, collectivity:, publisher:),
-        assigned:                           build_stubbed(:report, :assigned, collectivity:),
-        returned:                           build_stubbed(:report, :returned, collectivity:),
-        debated:                            build_stubbed(:report, :debated,  collectivity:),
-        approved:                           build_stubbed(:report, :approved, collectivity:),
-        rejected:                           build_stubbed(:report, :rejected, collectivity:),
-        from_another_collectivity:          build_stubbed(:report, collectivity: collectivities[1]),
-        unsaved:                            build(:report, collectivity:),
-        unsaved_from_api:                   build(:report, :made_through_api, collectivity:, publisher:),
-        unsaved_from_another_collectivity:  build(:report, collectivity: collectivities[1])
+        draft:                             build_stubbed(:report, :draft, collectivity:, commune:),
+        ready:                             build_stubbed(:report, :ready, collectivity:, commune:),
+        transmitting_through_web_ui:       build_stubbed(:report, :in_active_transmission, :made_through_web_ui, collectivity:),
+        transmitting_through_api:          build_stubbed(:report, :in_active_transmission, :made_through_api, collectivity:, publisher:),
+        transmitting_to_sandbox:           build_stubbed(:report, :in_active_transmission, :made_through_api, :sandbox, collectivity:, publisher:),
+        transmitted_through_web_ui:        build_stubbed(:report, :transmitted_through_web_ui, collectivity:),
+        transmitted_through_api:           build_stubbed(:report, :transmitted_through_api, collectivity:, publisher:),
+        transmitted_to_sandbox:            build_stubbed(:report, :transmitted_through_api, :sandbox, collectivity:, publisher:),
+        acknowledged:                      build_stubbed(:report, :transmitted, state: "acknowledged", collectivity:),
+        assigned:                          build_stubbed(:report, :assigned, collectivity:),
+        denied:                            build_stubbed(:report, :denied, collectivity:),
+        approved:                          build_stubbed(:report, :approved, collectivity:),
+        rejected:                          build_stubbed(:report, :rejected, collectivity:),
+        from_another_collectivity:         build_stubbed(:report, collectivity: collectivities[1]),
+        unsaved:                           build(:report, collectivity:),
+        unsaved_from_api:                  build(:report, :made_through_api, collectivity:, publisher:),
+        unsaved_from_another_collectivity: build(:report, collectivity: collectivities[1])
       }
+    end
+    describe "#covered_by_ddfip?" do
+      it { expect(reports[:draft])                      .to     be_covered_by_ddfip(ddfip) }
+      it { expect(reports[:ready])                      .to     be_covered_by_ddfip(ddfip) }
+      it { expect(reports[:transmitting_through_web_ui]).not_to be_covered_by_ddfip(ddfip) }
+      it { expect(reports[:transmitting_through_api])   .not_to be_covered_by_ddfip(ddfip) }
+      it { expect(reports[:transmitting_to_sandbox])    .not_to be_covered_by_ddfip(ddfip) }
+    end
+
+    describe "#covered_by_office?" do
+      let(:office) { create(:office, competences: Report::FORM_TYPES.dup, ddfip:, communes: [commune]) }
+
+      it { expect(reports[:draft])                      .to     be_covered_by_office(office) }
+      it { expect(reports[:ready])                      .to     be_covered_by_office(office) }
+      it { expect(reports[:transmitting_through_web_ui]).not_to be_covered_by_office(office) }
+      it { expect(reports[:transmitting_through_api])   .not_to be_covered_by_office(office) }
+      it { expect(reports[:transmitting_to_sandbox])    .not_to be_covered_by_office(office) }
+    end
+
+    describe "#covered_by_offices?" do
+      let(:offices) { create_list(:office, 3, ddfip:) }
+
+      before { reports[:assigned].office = offices[2] }
+
+      it { expect(reports[:draft])                      .not_to be_covered_by_offices(offices) }
+      it { expect(reports[:assigned])                   .to     be_covered_by_offices(offices) }
+      it { expect(reports[:transmitting_through_web_ui]).not_to be_covered_by_offices(offices) }
+      it { expect(reports[:transmitting_through_api])   .not_to be_covered_by_offices(offices) }
+      it { expect(reports[:transmitting_to_sandbox])    .not_to be_covered_by_offices(offices) }
     end
 
     describe "#out_of_sandbox?" do
-      it { expect(reports[:incomplete])                 .to     be_out_of_sandbox }
-      it { expect(reports[:completed])                  .to     be_out_of_sandbox }
+      it { expect(reports[:draft])                      .to     be_out_of_sandbox }
+      it { expect(reports[:ready])                      .to     be_out_of_sandbox }
       it { expect(reports[:transmitting_through_web_ui]).to     be_out_of_sandbox }
       it { expect(reports[:transmitting_through_api])   .to     be_out_of_sandbox }
       it { expect(reports[:transmitting_to_sandbox])    .not_to be_out_of_sandbox }
       it { expect(reports[:transmitted_through_web_ui]) .to     be_out_of_sandbox }
       it { expect(reports[:transmitted_through_api])    .to     be_out_of_sandbox }
-      it { expect(reports[:transmitted_to_sandbox])     .not_to be_out_of_sandbox }
     end
 
-    describe "#incomplete?" do
-      it { expect(reports[:incomplete])                 .to     be_incomplete }
-      it { expect(reports[:completed])                  .not_to be_incomplete }
-      it { expect(reports[:transmitting_through_web_ui]).not_to be_incomplete }
-      it { expect(reports[:transmitting_through_api])   .not_to be_incomplete }
+    describe "#draft?" do
+      it { expect(reports[:draft])                      .to     be_draft }
+      it { expect(reports[:ready])                      .not_to be_draft }
+      it { expect(reports[:transmitting_through_web_ui]).not_to be_draft }
+      it { expect(reports[:transmitting_through_api])   .not_to be_draft }
     end
 
-    describe "#completed?" do
-      it { expect(reports[:incomplete])                 .not_to be_completed }
-      it { expect(reports[:completed])                  .to     be_completed }
-      it { expect(reports[:transmitting_through_web_ui]).to     be_completed }
-      it { expect(reports[:transmitting_through_api])   .to     be_completed }
+    describe "#ready?" do
+      it { expect(reports[:draft])                      .not_to be_ready }
+      it { expect(reports[:ready])                      .to     be_ready }
+      it { expect(reports[:transmitting_through_web_ui]).to     be_ready }
+      it { expect(reports[:transmitting_through_api])   .to     be_ready }
     end
 
-    describe "#packing?" do
-      it { expect(reports[:incomplete])                 .to     be_packing }
-      it { expect(reports[:completed])                  .to     be_packing }
-      it { expect(reports[:transmitting_through_web_ui]).to     be_packing }
-      it { expect(reports[:transmitting_through_api])   .to     be_packing }
-      it { expect(reports[:transmitting_to_sandbox])    .to     be_packing }
-      it { expect(reports[:transmitted_through_web_ui]) .not_to be_packing }
-      it { expect(reports[:transmitted_through_api])    .not_to be_packing }
-      it { expect(reports[:transmitted_to_sandbox])     .not_to be_packing }
-    end
-
-    describe "#packed?" do
-      it { expect(reports[:incomplete])                 .not_to be_packed }
-      it { expect(reports[:completed])                  .not_to be_packed }
-      it { expect(reports[:transmitting_through_web_ui]).not_to be_packed }
-      it { expect(reports[:transmitting_through_api])   .not_to be_packed }
-      it { expect(reports[:transmitting_to_sandbox])    .not_to be_packed }
-      it { expect(reports[:transmitted_through_web_ui]) .to     be_packed }
-      it { expect(reports[:transmitted_through_api])    .to     be_packed }
-      it { expect(reports[:transmitted_to_sandbox])     .to     be_packed }
-    end
-
-    describe "#transmitted_to_sandbox?" do
-      it { expect(reports[:incomplete])                 .not_to be_transmitted_to_sandbox }
-      it { expect(reports[:completed])                  .not_to be_transmitted_to_sandbox }
-      it { expect(reports[:transmitting_through_web_ui]).not_to be_transmitted_to_sandbox }
-      it { expect(reports[:transmitting_through_api])   .not_to be_transmitted_to_sandbox }
-      it { expect(reports[:transmitting_to_sandbox])    .not_to be_transmitted_to_sandbox }
-      it { expect(reports[:transmitted_through_web_ui]) .not_to be_transmitted_to_sandbox }
-      it { expect(reports[:transmitted_through_api])    .not_to be_transmitted_to_sandbox }
-      it { expect(reports[:transmitted_to_sandbox])     .to     be_transmitted_to_sandbox }
-    end
-
-    describe "#transmitted?" do
-      it { expect(reports[:incomplete])                 .not_to be_transmitted }
-      it { expect(reports[:completed])                  .not_to be_transmitted }
-      it { expect(reports[:transmitting_through_web_ui]).not_to be_transmitted }
-      it { expect(reports[:transmitting_through_api])   .not_to be_transmitted }
-      it { expect(reports[:transmitting_to_sandbox])    .not_to be_transmitted }
-      it { expect(reports[:transmitted_through_web_ui]) .to     be_transmitted }
-      it { expect(reports[:transmitted_through_api])    .to     be_transmitted }
-      it { expect(reports[:transmitted_to_sandbox])     .not_to be_transmitted }
-      it { expect(reports[:assigned])                   .to     be_transmitted }
-      it { expect(reports[:returned])                   .to     be_transmitted }
-      it { expect(reports[:debated])                    .to     be_transmitted }
-      it { expect(reports[:approved])                   .to     be_transmitted }
-      it { expect(reports[:rejected])                   .to     be_transmitted }
-    end
-
-    describe "#unresolved?" do
-      it { expect(reports[:transmitting_through_web_ui]).not_to be_unresolved }
-      it { expect(reports[:transmitting_through_api])   .not_to be_unresolved }
-      it { expect(reports[:transmitting_to_sandbox])    .not_to be_unresolved }
-      it { expect(reports[:transmitted_through_web_ui]) .to     be_unresolved }
-      it { expect(reports[:transmitted_through_api])    .to     be_unresolved }
-      it { expect(reports[:transmitted_to_sandbox])     .not_to be_unresolved }
-      it { expect(reports[:assigned])                   .not_to be_unresolved }
-      it { expect(reports[:returned])                   .not_to be_unresolved }
-      it { expect(reports[:debated])                    .not_to be_unresolved }
-      it { expect(reports[:approved])                   .not_to be_unresolved }
-      it { expect(reports[:rejected])                   .not_to be_unresolved }
-    end
-
-    describe "#missed?" do
-      pending "Not yet implemented"
+    describe "#sent?" do
+      it { expect(reports[:draft])                      .not_to be_sent }
+      it { expect(reports[:ready])                      .not_to be_sent }
+      it { expect(reports[:transmitting_through_web_ui]).not_to be_sent }
+      it { expect(reports[:transmitting_through_api])   .not_to be_sent }
+      it { expect(reports[:transmitted_through_api])    .to     be_sent }
+      it { expect(reports[:transmitted_to_sandbox])     .to     be_sent }
+      it { expect(reports[:assigned])                   .not_to be_sent }
     end
 
     describe "#acknowledged?" do
-      pending "Not yet implemented"
+      it { expect(reports[:transmitted_through_web_ui]) .not_to be_acknowledged }
+      it { expect(reports[:transmitted_through_api])    .not_to be_acknowledged }
+      it { expect(reports[:transmitted_to_sandbox])     .not_to be_acknowledged }
+      it { expect(reports[:assigned])                   .not_to be_acknowledged }
+      it { expect(reports[:denied])                     .not_to be_acknowledged }
+      it { expect(reports[:approved])                   .not_to be_acknowledged }
+      it { expect(reports[:rejected])                   .not_to be_acknowledged }
+      it { expect(reports[:acknowledged])               .to     be_acknowledged }
     end
 
-    describe "#assigned?" do
-      it { expect(reports[:transmitted_through_web_ui]) .not_to be_assigned }
-      it { expect(reports[:transmitted_through_api])    .not_to be_assigned }
-      it { expect(reports[:transmitted_to_sandbox])     .not_to be_assigned }
-      it { expect(reports[:assigned])                   .to     be_assigned }
-      it { expect(reports[:returned])                   .not_to be_assigned }
-      it { expect(reports[:debated])                    .to     be_assigned }
-      it { expect(reports[:approved])                   .to     be_assigned }
-      it { expect(reports[:rejected])                   .to     be_assigned }
+    describe "#processing?" do
+      it { expect(reports[:transmitted_through_web_ui]) .not_to be_processing }
+      it { expect(reports[:transmitted_through_api])    .not_to be_processing }
+      it { expect(reports[:transmitted_to_sandbox])     .not_to be_processing }
+      it { expect(reports[:assigned])                   .to     be_processing }
+      it { expect(reports[:denied])                     .not_to be_processing }
+      it { expect(reports[:approved])                   .not_to be_processing }
+      it { expect(reports[:rejected])                   .not_to be_processing }
     end
 
-    describe "#returned?" do
-      it { expect(reports[:transmitted_through_web_ui]) .not_to be_returned }
-      it { expect(reports[:transmitted_through_api])    .not_to be_returned }
-      it { expect(reports[:transmitted_to_sandbox])     .not_to be_returned }
-      it { expect(reports[:assigned])                   .not_to be_returned }
-      it { expect(reports[:returned])                   .to     be_returned }
-      it { expect(reports[:debated])                    .not_to be_returned }
-      it { expect(reports[:approved])                   .not_to be_returned }
-      it { expect(reports[:rejected])                   .not_to be_returned }
-    end
-
-    describe "#unreturned?" do
-      it { expect(reports[:transmitted_through_web_ui]) .to     be_unreturned }
-      it { expect(reports[:transmitted_through_api])    .to     be_unreturned }
-      it { expect(reports[:transmitted_to_sandbox])     .not_to be_unreturned }
-      it { expect(reports[:assigned])                   .to     be_unreturned }
-      it { expect(reports[:returned])                   .not_to be_unreturned }
-      it { expect(reports[:debated])                    .to     be_unreturned }
-      it { expect(reports[:approved])                   .to     be_unreturned }
-      it { expect(reports[:rejected])                   .to     be_unreturned }
-    end
-
-    describe "#operative?" do
-      it { expect(reports[:transmitted_through_web_ui]) .not_to be_operative }
-      it { expect(reports[:transmitted_through_api])    .not_to be_operative }
-      it { expect(reports[:transmitted_to_sandbox])     .not_to be_operative }
-      it { expect(reports[:assigned])                   .to     be_operative }
-      it { expect(reports[:returned])                   .not_to be_operative }
-      it { expect(reports[:debated])                    .to     be_operative }
-      it { expect(reports[:approved])                   .not_to be_operative }
-      it { expect(reports[:rejected])                   .not_to be_operative }
-    end
-
-    describe "#pending?" do
-      it { expect(reports[:transmitted_through_web_ui]) .not_to be_pending }
-      it { expect(reports[:transmitted_through_api])    .not_to be_pending }
-      it { expect(reports[:transmitted_to_sandbox])     .not_to be_pending }
-      it { expect(reports[:assigned])                   .to     be_pending }
-      it { expect(reports[:returned])                   .not_to be_pending }
-      it { expect(reports[:debated])                    .not_to be_pending }
-      it { expect(reports[:approved])                   .not_to be_pending }
-      it { expect(reports[:rejected])                   .not_to be_pending }
-    end
-
-    describe "#debated?" do
-      it { expect(reports[:transmitted_through_web_ui]) .not_to be_debated }
-      it { expect(reports[:transmitted_through_api])    .not_to be_debated }
-      it { expect(reports[:transmitted_to_sandbox])     .not_to be_debated }
-      it { expect(reports[:assigned])                   .not_to be_debated }
-      it { expect(reports[:returned])                   .not_to be_debated }
-      it { expect(reports[:debated])                    .to     be_debated }
-      it { expect(reports[:approved])                   .not_to be_debated }
-      it { expect(reports[:rejected])                   .not_to be_debated }
+    describe "#denied?" do
+      it { expect(reports[:transmitted_through_web_ui]) .not_to be_denied }
+      it { expect(reports[:transmitted_through_api])    .not_to be_denied }
+      it { expect(reports[:transmitted_to_sandbox])     .not_to be_denied }
+      it { expect(reports[:assigned])                   .not_to be_denied }
+      it { expect(reports[:denied])                     .to     be_denied }
+      it { expect(reports[:approved])                   .not_to be_denied }
+      it { expect(reports[:rejected])                   .not_to be_denied }
     end
 
     describe "#approved?" do
@@ -1180,8 +1014,7 @@ RSpec.describe Report do
       it { expect(reports[:transmitted_through_api])    .not_to be_approved }
       it { expect(reports[:transmitted_to_sandbox])     .not_to be_approved }
       it { expect(reports[:assigned])                   .not_to be_approved }
-      it { expect(reports[:returned])                   .not_to be_approved }
-      it { expect(reports[:debated])                    .not_to be_approved }
+      it { expect(reports[:denied])                     .not_to be_approved }
       it { expect(reports[:approved])                   .to     be_approved }
       it { expect(reports[:rejected])                   .not_to be_approved }
     end
@@ -1191,32 +1024,85 @@ RSpec.describe Report do
       it { expect(reports[:transmitted_through_api])    .not_to be_rejected }
       it { expect(reports[:transmitted_to_sandbox])     .not_to be_rejected }
       it { expect(reports[:assigned])                   .not_to be_rejected }
-      it { expect(reports[:returned])                   .not_to be_rejected }
-      it { expect(reports[:debated])                    .not_to be_rejected }
+      it { expect(reports[:denied])                     .not_to be_rejected }
       it { expect(reports[:approved])                   .not_to be_rejected }
       it { expect(reports[:rejected])                   .to     be_rejected }
     end
 
-    describe "#concluded?" do
-      it { expect(reports[:transmitted_through_web_ui]) .not_to be_concluded }
-      it { expect(reports[:transmitted_through_api])    .not_to be_concluded }
-      it { expect(reports[:transmitted_to_sandbox])     .not_to be_concluded }
-      it { expect(reports[:assigned])                   .not_to be_concluded }
-      it { expect(reports[:returned])                   .not_to be_concluded }
-      it { expect(reports[:debated])                    .not_to be_concluded }
-      it { expect(reports[:approved])                   .to     be_concluded }
-      it { expect(reports[:rejected])                   .to     be_concluded }
+    describe "#packing?" do
+      it { expect(reports[:draft])                      .to     be_packing }
+      it { expect(reports[:ready])                      .to     be_packing }
+      it { expect(reports[:transmitting_through_web_ui]).to     be_packing }
+      it { expect(reports[:transmitting_through_api])   .to     be_packing }
+      it { expect(reports[:transmitting_to_sandbox])    .to     be_packing }
+      it { expect(reports[:transmitted_through_web_ui]) .not_to be_packing }
+      it { expect(reports[:transmitted_through_api])    .not_to be_packing }
+      it { expect(reports[:transmitted_to_sandbox])     .not_to be_packing }
     end
 
-    describe "#examined?" do
-      it { expect(reports[:transmitted_through_web_ui]) .not_to be_examined }
-      it { expect(reports[:transmitted_through_api])    .not_to be_examined }
-      it { expect(reports[:transmitted_to_sandbox])     .not_to be_examined }
-      it { expect(reports[:assigned])                   .not_to be_examined }
-      it { expect(reports[:returned])                   .not_to be_examined }
-      it { expect(reports[:debated])                    .to     be_examined }
-      it { expect(reports[:approved])                   .to     be_examined }
-      it { expect(reports[:rejected])                   .to     be_examined }
+    describe "#unassigned?" do
+      it { expect(reports[:transmitted_through_web_ui]) .to     be_unassigned }
+      it { expect(reports[:transmitted_through_api])    .to     be_unassigned }
+      it { expect(reports[:transmitted_to_sandbox])     .to     be_unassigned }
+      it { expect(reports[:assigned])                   .not_to be_unassigned }
+      it { expect(reports[:denied])                     .not_to be_unassigned }
+      it { expect(reports[:approved])                   .not_to be_unassigned }
+      it { expect(reports[:rejected])                   .not_to be_unassigned }
+    end
+
+    describe "#assigned?" do
+      it { expect(reports[:transmitted_through_web_ui]) .not_to be_assigned }
+      it { expect(reports[:transmitted_through_api])    .not_to be_assigned }
+      it { expect(reports[:transmitted_to_sandbox])     .not_to be_assigned }
+      it { expect(reports[:assigned])                   .to     be_assigned }
+      it { expect(reports[:denied])                     .not_to be_assigned }
+      it { expect(reports[:approved])                   .to     be_assigned }
+      it { expect(reports[:rejected])                   .to     be_assigned }
+    end
+
+    describe "#unresolved?" do
+      it { expect(reports[:transmitted_through_web_ui]) .to     be_unresolved }
+      it { expect(reports[:transmitted_through_api])    .to     be_unresolved }
+      it { expect(reports[:transmitted_to_sandbox])     .to     be_unresolved }
+      it { expect(reports[:assigned])                   .to     be_unresolved }
+      it { expect(reports[:denied])                     .not_to be_unresolved }
+      it { expect(reports[:approved])                   .not_to be_unresolved }
+      it { expect(reports[:rejected])                   .not_to be_unresolved }
+    end
+
+    describe "#undenied?" do
+      it { expect(reports[:transmitted_through_web_ui]) .to     be_undenied }
+      it { expect(reports[:transmitted_through_api])    .to     be_undenied }
+      it { expect(reports[:transmitted_to_sandbox])     .to     be_undenied }
+      it { expect(reports[:assigned])                   .to     be_undenied }
+      it { expect(reports[:denied])                     .not_to be_undenied }
+      it { expect(reports[:approved])                   .to     be_undenied }
+      it { expect(reports[:rejected])                   .to     be_undenied }
+    end
+
+    describe "#transmitted?" do
+      it { expect(reports[:draft])                      .not_to be_transmitted }
+      it { expect(reports[:ready])                      .not_to be_transmitted }
+      it { expect(reports[:transmitting_through_web_ui]).not_to be_transmitted }
+      it { expect(reports[:transmitting_through_api])   .not_to be_transmitted }
+      it { expect(reports[:transmitting_to_sandbox])    .not_to be_transmitted }
+      it { expect(reports[:transmitted_through_web_ui]) .to     be_transmitted }
+      it { expect(reports[:transmitted_through_api])    .to     be_transmitted }
+      it { expect(reports[:transmitted_to_sandbox])     .to     be_transmitted }
+      it { expect(reports[:assigned])                   .to     be_transmitted }
+      it { expect(reports[:denied])                     .to     be_transmitted }
+      it { expect(reports[:approved])                   .to     be_transmitted }
+      it { expect(reports[:rejected])                   .to     be_transmitted }
+    end
+
+    describe "#resolved?" do
+      it { expect(reports[:transmitted_through_web_ui]) .not_to be_resolved }
+      it { expect(reports[:transmitted_through_api])    .not_to be_resolved }
+      it { expect(reports[:transmitted_to_sandbox])     .not_to be_resolved }
+      it { expect(reports[:assigned])                   .not_to be_resolved }
+      it { expect(reports[:denied])                     .not_to be_resolved }
+      it { expect(reports[:approved])                   .to     be_resolved }
+      it { expect(reports[:rejected])                   .to     be_resolved }
     end
 
     describe "#made_through_publisher_api?" do
@@ -1291,15 +1177,222 @@ RSpec.describe Report do
       end
     end
 
+    describe "#draft!" do
+      it "marks the report as draft" do
+        report = create(:report, :ready)
+
+        aggregate_failures do
+          expect {
+            expect(report.draft!).to be(true)
+            report.reload
+          }.to change(report, :ready_at).to(be_falsy)
+            .and change(report, :state).to eq("draft")
+        end
+      end
+
+      it "doesn't update ready_at time when already draft" do
+        report = Timecop.freeze(2.minutes.ago) do
+          create(:report, :draft)
+        end
+
+        aggregate_failures do
+          expect {
+            expect(report.draft!).to be(true)
+            report.reload
+          }.not_to change(report, :ready_at)
+        end
+      end
+    end
+
+    describe "#ready!" do
+      it "marks the report as ready" do
+        report = create(:report)
+
+        aggregate_failures do
+          expect {
+            expect(report.ready!).to be(true)
+            report.reload
+          }.to change(report, :ready_at).to(be_truthy)
+        end
+      end
+
+      it "doesn't update previous ready_at time when already ready" do
+        report = Timecop.freeze(2.minutes.ago) do
+          create(:report, :ready)
+        end
+
+        aggregate_failures do
+          expect {
+            expect(report.ready!).to be(true)
+            report.reload
+          }.not_to change(report, :ready_at)
+        end
+      end
+    end
+
+    describe "#transmit!" do
+      it "marks the report as transmitted" do
+        report = create(:report, :ready)
+
+        aggregate_failures do
+          expect {
+            expect(report.transmit!).to be(true)
+            report.reload
+          }.to change(report, :transmitted_at).to(be_present)
+            .and change(report, :state).to("sent")
+        end
+      end
+
+      it "doesn't update previous transmitted_at time when already transmitted" do
+        report = Timecop.freeze(2.minutes.ago) do
+          create(:report, :transmitted)
+        end
+
+        aggregate_failures do
+          expect {
+            expect(report.transmit!).to be(true)
+            report.reload
+          }.not_to change(report, :transmitted_at)
+        end
+      end
+    end
+
+    describe "#deny!" do
+      it "returns true" do
+        report = create(:report)
+
+        expect(report.deny!).to be(true)
+      end
+
+      it "returns true when report was already denied" do
+        report = create(:report, :denied)
+
+        expect(report.deny!).to be(true)
+      end
+
+      it "marks the report as denied" do
+        report = create(:report)
+
+        expect {
+          report.deny!
+          report.reload
+        }.to change(report, :denied_at).to(be_present)
+          .and change(report, :state).to("denied")
+      end
+
+      it "doesn't update previous return time" do
+        report = Timecop.freeze(2.minutes.ago) do
+          create(:report, :denied)
+        end
+
+        expect {
+          report.deny!
+          report.reload
+        }.not_to change(report, :denied_at)
+      end
+    end
+
+    describe "#acknowledge!" do
+      it "marks the report as acknowledged" do
+        report = create(:report, :transmitted)
+
+        expect {
+          report.acknowledge!
+          report.reload
+        }.to change(report, :acknowledged_at).to(be_present)
+          .and change(report, :state).to("acknowledged")
+      end
+
+      it "returns true when report was already acknowledged" do
+        report = create(:report, :transmitted, state: "acknowledged")
+
+        expect(report.acknowledge!).to be(true)
+      end
+
+      it "doesn't update previous acknowledged time when already acknowledged" do
+        report = Timecop.freeze(2.minutes.ago) do
+          create(:report, :transmitted, state: "acknowledged")
+        end
+
+        expect {
+          report.acknowledge!
+          report.reload
+        }.not_to change(report, :acknowledged_at)
+      end
+    end
+
+    describe "#assign!" do
+      it "returns true" do
+        report = create(:report, :transmitted)
+
+        expect(report.assign!).to be(true)
+      end
+
+      it "returns true when report was already assigned" do
+        report = create(:report, :assigned)
+
+        expect(report.assign!).to be(true)
+      end
+
+      it "marks the report as assigned" do
+        report = create(:report)
+
+        expect {
+          report.assign!
+          report.reload
+        }.to change(report, :assigned_at).to(be_present)
+          .and change(report, :state).to("processing")
+      end
+
+      it "doesn't update previous assigned time" do
+        report = Timecop.freeze(2.minutes.ago) do
+          create(:report, :assigned)
+        end
+
+        expect {
+          report.assign!
+          report.reload
+        }.not_to change(report, :assigned_at)
+      end
+    end
+
+    describe "#assign_all!" do
+      let!(:reports) { create_list(:report, 3, :transmitted) }
+      let(:report_relation) { Report.where(id: reports.map(&:id)) }
+
+      it "returns true" do
+        expect(report_relation.assign_all!).to eq(3)
+      end
+
+      it "marks the report as assigned" do
+        expect {
+          report_relation.assign_all!
+          report_relation.each(&:reload)
+        }.to change { report_relation.where(state: "processing").count }.from(0).to(3)
+          .and change { report_relation.where.not(assigned_at: nil).count }.from(0).to(3)
+      end
+
+      it "doesn't update previous assigned time" do
+        report = Timecop.freeze(2.minutes.ago) { create(:report, :assigned) }
+        single_report_relation = Report.where(id: report.id)
+
+        expect {
+          single_report_relation.assign_all!
+          report.reload
+        }.not_to change(report, :assigned_at)
+      end
+    end
+
     describe "#approve!" do
       it "marks the report as approved" do
-        report = create(:report, :transmitted)
+        report = create(:report, :assigned)
 
         aggregate_failures do
           expect {
             expect(report.approve!).to be(true)
             report.reload
           }.to change(report, :approved_at).to(be_present)
+            .and change(report, :state).to("approved")
         end
       end
 
@@ -1331,13 +1424,14 @@ RSpec.describe Report do
 
     describe "#reject!" do
       it "marks the report as rejected" do
-        report = create(:report, :transmitted)
+        report = create(:report, :assigned)
 
         aggregate_failures do
           expect {
             expect(report.reject!).to be(true)
             report.reload
           }.to change(report, :rejected_at).to(be_present)
+            .and change(report, :state).to("rejected")
         end
       end
 
@@ -1348,7 +1442,7 @@ RSpec.describe Report do
           expect {
             expect(report.reject!).to be(true)
             report.reload
-          }.to change(report, :approved_at).to(nil)
+          }.to change(report, :state).to("rejected")
             .and change(report, :rejected_at).to(be_present)
         end
       end
@@ -1363,56 +1457,6 @@ RSpec.describe Report do
             expect(report.reject!).to be(true)
             report.reload
           }.not_to change(report, :rejected_at)
-        end
-      end
-    end
-
-    describe "#debate!" do
-      it "marks the report as debated" do
-        report = create(:report, :transmitted)
-
-        aggregate_failures do
-          expect {
-            expect(report.debate!).to be(true)
-            report.reload
-          }.to change(report, :debated_at).to(be_present)
-        end
-      end
-
-      it "doesn't overwrite previous debated time" do
-        report = Timecop.freeze(2.minutes.ago) do
-          create(:report, :debated)
-        end
-
-        aggregate_failures do
-          expect {
-            expect(report.debate!).to be(true)
-            report.reload
-          }.not_to change(report, :debated_at)
-        end
-      end
-
-      it "doesn't update an approved report" do
-        report = create(:report, :approved)
-
-        aggregate_failures do
-          expect {
-            expect(report.debate!).to be(false)
-            report.reload
-          }.to not_change(report, :debated_at).from(nil)
-            .and not_change(report, :approved_at).from(be_present)
-        end
-      end
-
-      it "doesn't update a rejected report" do
-        report = create(:report, :rejected)
-
-        aggregate_failures do
-          expect {
-            expect(report.debate!).to be(false)
-            report.reload
-          }.to not_change(report, :debated_at).from(nil)
-            .and not_change(report, :rejected_at).from(be_present)
         end
       end
     end

@@ -637,7 +637,7 @@ RSpec.describe Helpers::AuthorizedLinkComponent, type: :component do
       before { sign_in_as(organization: collectivity) }
 
       it "renders report's link" do
-        report = create(:report, :completed, collectivity: collectivity, form_type: "evaluation_local_habitation")
+        report = create(:report, :ready, collectivity: collectivity, form_type: "evaluation_local_habitation")
 
         render_inline described_class.new(report)
 

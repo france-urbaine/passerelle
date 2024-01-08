@@ -6,9 +6,9 @@ module Reports
 
     before_save do
       if Reports::CheckCompletenessService.new(record).valid?
-        record.complete!
+        record.ready!
       else
-        record.incomplete!
+        record.draft!
       end
     end
 

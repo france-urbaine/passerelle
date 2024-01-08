@@ -117,7 +117,7 @@ class ReportsController < ApplicationController
     report = Report.find(params[:id])
 
     authorize! report
-    only_kept! report.package, report unless allow_discarded
+    only_kept! report unless allow_discarded
 
     report
   end

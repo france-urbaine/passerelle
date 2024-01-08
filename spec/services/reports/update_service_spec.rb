@@ -32,23 +32,23 @@ RSpec.describe Reports::UpdateService do
     }
   end
 
-  context "when report is incomplete and updated with complete form" do
+  context "when report is draft and updated with complete form" do
     it "marks report as complete" do
-      expect { service.new(report, attributes).save }.to change(report, :completed_at).from(nil)
+      expect { service.new(report, attributes).save }.to change(report, :ready_at).from(nil)
     end
   end
 
-  context "when report is incomplete and updated with incomplete form" do
+  context "when report is draft and updated with incomplete form" do
     it "doesn't mark report as complete" do
-      expect { service.new(report, incomplete_attributes).save }.not_to change(report, :completed_at).from(nil)
+      expect { service.new(report, incomplete_attributes).save }.not_to change(report, :ready_at).from(nil)
     end
   end
 
   context "when report is complete and updated with incomplete form" do
     before { service.new(report, attributes).save }
 
-    it "marks report as incomplete" do
-      expect { service.new(report, incomplete_attributes).save }.to change(report, :completed_at).to(nil)
+    it "marks report as draft" do
+      expect { service.new(report, incomplete_attributes).save }.to change(report, :ready_at).to(nil)
     end
   end
 end

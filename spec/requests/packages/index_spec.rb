@@ -91,17 +91,21 @@ RSpec.describe "PackagesController#index" do
       end
     end
 
-    context "when signed in as a DDFIP admin" do
+    context "when signed in as a DDFIP" do
       let(:ddfip) { create(:ddfip) }
       let(:packages) do
         [
-          create(:package),
-          create(:package, :transmitted_to_ddfip, ddfip: ddfip),
-          create(:package, :transmitted_to_ddfip)
+          create(:package, :with_reports),
+          create(:package, :transmitted_to_ddfip, :with_reports, ddfip: ddfip),
+          create(:package, :transmitted_to_ddfip, :with_reports)
         ]
       end
 
-      before { sign_in_as(:organization_admin, organization: ddfip) }
+      before do
+        sign_in_as(:organization_admin, organization: ddfip)
+        commune = create(:commune, code_departement: ddfip.code_departement)
+        packages[1].reports.update_all(code_insee: commune.code_insee)
+      end
 
       context "when requesting HTML" do
         it { expect(response).to have_http_status(:success) }

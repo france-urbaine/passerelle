@@ -16,24 +16,11 @@ FactoryBot.define do
     collectivity { association(:collectivity, publisher: collectivity_publisher) }
     transmission { association(:transmission, :completed, collectivity:, publisher:, sandbox:) }
 
-    name           { Faker::Book.title }
-    form_type      { Report::FORM_TYPES.sample }
-    transmitted_at { Time.current }
-
-    traits_for_enum :form_type, Report::FORM_TYPES
-
     sequence :reference do |n|
       month = Time.current.strftime("%Y-%m")
       index = n.to_s.rjust(4, "0")
+
       "#{month}-#{index}"
-    end
-
-    trait :assigned do
-      assigned_at { Time.current }
-    end
-
-    trait :returned do
-      returned_at { Time.current }
     end
 
     trait :discarded do
@@ -75,12 +62,12 @@ FactoryBot.define do
         #
         Array.new(reports_size) do
           association :report, :transmitted,
+            package:      instance,
             publisher:    publisher,
             collectivity: collectivity,
-            package:      instance,
             transmission: transmission,
+            ddfip:        ddfip,
             sandbox:      sandbox,
-            form_type:    form_type,
             commune:      communes.sample
         end
       end
@@ -97,25 +84,7 @@ FactoryBot.define do
     end
 
     trait :transmitted_to_ddfip do
-      transient do
-        ddfip { association(:ddfip) }
-      end
-
-      # First, create a random collectivity
-      # The collectivity territory should be on the DDIP departement and respect the build strategy.
-      #
-      collectivity do
-        departement    = ddfip.departement
-        territory_type = %i[commune epci departement].sample
-        territory      = departement if territory_type == :departement
-        territory    ||= association(territory_type, departement: departement)
-
-        association(:collectivity, :commune, territory: territory, publisher: collectivity_publisher)
-      end
-
-      # Then build reports using `with_reports` traits
-      # The trait will build reports on communes which are respecting the collectivity territory
-      with_reports
+      ddfip { association(:ddfip) }
     end
   end
 end

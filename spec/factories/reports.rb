@@ -51,8 +51,13 @@ FactoryBot.define do
 
     # Report status
 
-    trait :completed do
-      completed_at { Time.current }
+    trait :draft do
+      state { "draft" }
+    end
+
+    trait :ready do
+      state        { "ready" }
+      ready_at     { Time.current }
       anomalies    { Report::FORM_TYPE_ANOMALIES[form_type][0, 1] }
       date_constat { rand(0..5).days.ago }
 
@@ -77,20 +82,20 @@ FactoryBot.define do
     end
 
     trait :sandbox do
-      completed
-      made_through_api
       sandbox { true }
     end
 
     trait :in_active_transmission do
-      completed
+      ready
       transmission { association(:transmission, collectivity:, publisher:, sandbox:) }
     end
 
     trait :transmitted do
-      completed
-      package      { association(:package, collectivity:, publisher:, sandbox:) }
-      transmission { package.transmission }
+      in_active_transmission
+      package        { association(:package, collectivity:, publisher:, sandbox:, transmission:, ddfip:) }
+      ready_at       { Time.current }
+      transmitted_at { Time.current }
+      state          { "sent" }
 
       sequence :reference do |n|
         index = n.to_s.rjust(5, "0")
@@ -104,27 +109,26 @@ FactoryBot.define do
 
     trait :assigned do
       transmitted
-      package { association(:package, :assigned, collectivity:, publisher:) }
+      assigned_at { Time.current }
+      state { "processing" }
     end
 
-    trait :returned do
+    trait :denied do
       transmitted
-      package { association(:package, :returned, collectivity:, publisher:) }
+      denied_at { Time.current }
+      state { "denied" }
     end
 
     trait :approved do
       assigned
       approved_at { Time.current }
+      state { "approved" }
     end
 
     trait :rejected do
       assigned
       rejected_at { Time.current }
-    end
-
-    trait :debated do
-      assigned
-      debated_at { Time.current }
+      state { "rejected" }
     end
 
     # Report origin
@@ -154,31 +158,14 @@ FactoryBot.define do
     # Report destination
 
     trait :made_for_ddfip do
-      transient do
-        ddfip { association(:ddfip) }
-      end
-
-      collectivity do
-        departement = ddfip.departement
-        territory =
-          case %i[commune epci departement].sample
-          when :departement then departement
-          when :epci        then association :epci, departement: departement
-          when :commune     then association :commune, departement: departement
-          end
-
-        association(:collectivity, :commune, territory:, publisher: collectivity_publisher)
-      end
+      ddfip { association(:ddfip) }
     end
 
     trait :made_for_office do
       made_for_ddfip
 
-      transient do
-        office { association(:office, :with_communes, ddfip:) }
-      end
-
-      commune   { office.communes.sample }
+      office { association(:office, :with_communes, ddfip:) }
+      commune { office.communes.sample }
       form_type { office.competences.sample }
     end
 
@@ -192,9 +179,9 @@ FactoryBot.define do
       assigned
     end
 
-    trait :returned_by_ddfip do
+    trait :denied_by_ddfip do
       made_for_ddfip
-      returned
+      denied
     end
 
     trait :assigned_to_office do

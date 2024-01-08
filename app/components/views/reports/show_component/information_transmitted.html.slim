@@ -1,6 +1,6 @@
 = content_layout_component do |layout|
   - layout.with_header icon: "server-stack" do |header|
-    | Informations relatives au signalement
+    | Informations générales
 
     - header.with_action do
       = priority_badge(@report)
@@ -14,22 +14,20 @@
 
   - layout.with_section do
     = description_list_component(@report) do |list|
-      - list.with_attribute("Référence du paquet") do |attribute|
-        = authorized_link_to @report.package
-
       - list.with_attribute(:reference) do |attribute|
         = @report.reference
 
-      - list.with_attribute("Date de transmission") do |attribute|
-        = l(@report.package.transmitted_at.to_date)
+        - if allowed_to?(:show?, @report.package)
+          - attribute.with_action "Voir le paquet", package_path(@report.package), icon: "magnifying-glass"
 
-      - list.with_attribute("Date d'échéance")
-
-      - list.with_attribute("Type de signalement") do |attribute|
+      - list.with_attribute("Type de signalement") do
         = translate_enum(@report.form_type, scope: "enum.report_form_type")
 
-      - list.with_attribute("Objet du signalement") do |attribute|
+      - list.with_attribute("Objet du signalement") do
         = helpers.list(@report.anomalies) { |value| translate_enum(value, scope: ["enum.anomalies", @report.form_type]) }
 
-      - list.with_attribute("Date du constat") do |attribute|
+      - list.with_attribute("Date du constat") do
         = helpers.display_date(@report.date_constat)
+
+      - list.with_attribute("Date de transmission") do
+        = helpers.display_date(@report.transmitted_at.to_date)

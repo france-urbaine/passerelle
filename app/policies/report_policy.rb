@@ -117,7 +117,7 @@ class ReportPolicy < ApplicationPolicy
   # ----------------------------------------------------------------------------
   concerning :Collectivities do
     def report_shown_to_collectivity?(report)
-      # Discarded packages are not listed but are still accessible
+      # Discarded reports are not listed but are still accessible
       #
       collectivity? &&
         report.out_of_sandbox? &&
@@ -155,7 +155,7 @@ class ReportPolicy < ApplicationPolicy
       # those fully transmitted by their publishers.
       #
       Report
-        .all_kept
+        .kept
         .out_of_sandbox
         .made_by_collectivity(organization)
         .transmitted_or_made_through_web_ui
@@ -188,7 +188,7 @@ class ReportPolicy < ApplicationPolicy
   # ----------------------------------------------------------------------------
   concerning :Publishers do
     def report_shown_to_publisher?(report)
-      # Discarded packages are not listed but are still accessible
+      # Discarded reports are not listed but are still accessible
       #
       publisher? &&
         report.made_by_publisher?(organization) &&
@@ -219,7 +219,7 @@ class ReportPolicy < ApplicationPolicy
       # and will be redundant if added.
       #
       Report
-        .all_kept
+        .kept
         .made_by_publisher(organization)
     end
 
@@ -246,16 +246,19 @@ class ReportPolicy < ApplicationPolicy
   # ----------------------------------------------------------------------------
   concerning :DGFIPs do
     def report_shown_to_dgfip?(report)
-      # Discarded packages are not listed but are still accessible
+      # Discarded reports are not listed but are still accessible
       #
-      dgfip? && report.transmitted?
+      dgfip? &&
+        report.out_of_sandbox? &&
+        report.transmitted?
     end
 
     def reports_listed_to_dgfip
       return Report.none unless dgfip?
 
       Report
-        .all_kept
+        .kept
+        .out_of_sandbox
         .transmitted
     end
   end
@@ -264,27 +267,30 @@ class ReportPolicy < ApplicationPolicy
   # ----------------------------------------------------------------------------
   concerning :DDFIPAdmins do
     def report_shown_to_ddfip_admin?(report)
-      # Returned packages are not listed but are still accessible
+      # Denied reports are not listed but are still accessible
       #
       ddfip_admin? &&
+        report.out_of_sandbox? &&
         report.transmitted? &&
-        report.covered_by_ddfip?(organization)
+        report.ddfip == organization
     end
 
     def report_updatable_by_ddfip_admin?(report)
       ddfip_admin? &&
+        report.out_of_sandbox? &&
         report.transmitted? &&
-        report.unreturned? &&
-        report.covered_by_ddfip?(organization)
+        report.undenied? &&
+        report.ddfip_id == user.organization_id
     end
 
     def reports_listed_to_ddfip_admins
       return Report.none unless ddfip_admin?
 
       Report
-        .all_kept
+        .kept
+        .out_of_sandbox
         .transmitted
-        .covered_by_ddfip(organization)
+        .transmitted_to_ddfip(organization)
     end
   end
 
@@ -293,6 +299,7 @@ class ReportPolicy < ApplicationPolicy
   concerning :OfficeUsers do
     def report_shown_to_office_user?(report)
       office_user? &&
+        report.out_of_sandbox? &&
         report.assigned? &&
         report.covered_by_offices?(user.offices)
     end
@@ -305,9 +312,10 @@ class ReportPolicy < ApplicationPolicy
       return Report.none unless office_user?
 
       Report
-        .all_kept
+        .kept
         .assigned
-        .covered_by_office(user.offices)
+        .out_of_sandbox
+        .assigned_to_office(user.offices)
     end
   end
 end
