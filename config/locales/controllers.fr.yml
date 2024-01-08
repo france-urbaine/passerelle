@@ -56,5 +56,4 @@ fr:
 
       documents:
         create:
-          already_packed: "Ce signalement est déjà transmis et ne peux plus être modifié."
-
+          already_transmitted: "Ce signalement est déjà transmis et ne peux plus être modifié."

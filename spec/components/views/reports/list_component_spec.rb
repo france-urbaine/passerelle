@@ -5,7 +5,7 @@ require "rails_helper"
 RSpec.describe Views::Reports::ListComponent, type: :component do
   describe "rendered component" do
     let!(:collectivity) { create(:collectivity) }
-    let!(:reports)      { create_list(:report, 2, :completed, collectivity:) }
+    let!(:reports)      { create_list(:report, 2, :ready, collectivity:) }
     let(:pagy)          { Pagy.new(count: 56, page: 1, items: 20) }
 
     def form_type_title(report)

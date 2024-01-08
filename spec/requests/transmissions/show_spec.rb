@@ -15,7 +15,7 @@ RSpec.describe "TransmissionsController#show" do
   let!(:transmission) { create(:transmission, :made_through_web_ui, collectivity:) }
 
   before do
-    create_list(:report, 2, :completed, collectivity:)
+    create_list(:report, 2, :ready, collectivity:)
   end
 
   describe "authorizations" do

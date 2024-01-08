@@ -11,7 +11,13 @@ RSpec.describe "API::TransmissionsController#complete", :api do
   let(:headers) { |e| e.metadata.fetch(:headers, {}).reverse_merge(authorization_header) }
   let(:params)  { |e| e.metadata.fetch(:params, {}) }
 
-  let(:transmission) { create(:transmission, :made_through_api, :with_reports) }
+  let(:transmission) { create(:transmission, :made_through_api) }
+
+  let!(:ddfip) { create(:ddfip) }
+  let!(:commune) { create(:commune, departement: ddfip.departement) }
+  let!(:report) { create(:report, :made_through_api, :ready, :evaluation_local_habitation, commune: commune, transmission:, collectivity: transmission.collectivity) }
+
+  before { create(:office, competences: %w[evaluation_local_habitation], ddfip:, communes: [commune]) }
 
   describe "authorizations" do
     it_behaves_like "it requires an authentication through OAuth in JSON"
@@ -50,8 +56,8 @@ RSpec.describe "API::TransmissionsController#complete", :api do
         request
 
         transmission.reload
-        package = Package.last
-        report  = Report.last
+        report.reload
+        package = report.package
 
         expect(response).to have_json_body.to include(
           "transmission"   => {
@@ -60,7 +66,6 @@ RSpec.describe "API::TransmissionsController#complete", :api do
             "packages"      => [
               {
                 "id"          => package.id,
-                "name"        => package.name,
                 "reference"   => package.reference,
                 "reports"       => [
                   {
@@ -76,7 +81,7 @@ RSpec.describe "API::TransmissionsController#complete", :api do
     end
 
     context "when transmission is already completed" do
-      let(:transmission) { create(:transmission, :made_through_api, :with_reports, :completed) }
+      let(:transmission) { create(:transmission, :made_through_api, :completed) }
 
       it { expect(response).to have_http_status(:forbidden) }
       it { expect { request }.not_to change(Package, :count) }
@@ -91,6 +96,8 @@ RSpec.describe "API::TransmissionsController#complete", :api do
     context "without reports" do
       let(:transmission) { create(:transmission, :made_through_api) }
 
+      before { transmission.reports.delete_all }
+
       it { expect(response).to have_http_status(:bad_request) }
       it { expect { request }.not_to change(Package, :count) }
 
@@ -102,7 +109,7 @@ RSpec.describe "API::TransmissionsController#complete", :api do
     end
 
     context "with incomplete reports" do
-      before { transmission.reports.update_all(completed_at: nil) }
+      before { transmission.reports.update_all(ready_at: nil, state: "draft") }
 
       it { expect(response).to have_http_status(:bad_request) }
       it { expect { request }.not_to change(Package, :count) }

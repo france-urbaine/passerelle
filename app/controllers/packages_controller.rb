@@ -15,87 +15,6 @@ class PackagesController < ApplicationController
     @package = find_and_authorize_package
   end
 
-  def new
-    @package = build_package
-    @referrer_path = referrer_path || parent_path || packages_path
-  end
-
-  def create
-    @package = build_package(package_params)
-    @package.save
-
-    respond_with @package,
-      flash: true,
-      location: -> { package_path(@package) }
-  end
-
-  def edit
-    @package = find_and_authorize_package
-    @referrer_path = referrer_path || package_path(@package)
-  end
-
-  def update
-    @package = find_and_authorize_package
-    @package.update(package_params)
-
-    respond_with @package,
-      flash: true,
-      location: -> { redirect_path || package_path(@package) }
-  end
-
-  def remove
-    @package = find_and_authorize_package
-    @referrer_path = referrer_path || package_path(@package)
-    @redirect_path = @referrer_path unless @referrer_path.include?(package_path(@package))
-  end
-
-  def destroy
-    @package = find_and_authorize_package(allow_discarded: true)
-    @package.discard
-
-    respond_with @package,
-      flash: true,
-      actions: undiscard_package_action(@package),
-      location: redirect_path || packages_path
-  end
-
-  def undiscard
-    @package = find_and_authorize_package(allow_discarded: true)
-    @package.undiscard
-
-    respond_with @package,
-      flash: true,
-      location: redirect_path || referrer_path || packages_path
-  end
-
-  def remove_all
-    @packages = build_and_authorize_scope(as: :destroyable)
-    @packages = filter_collection(@packages)
-    @referrer_path = referrer_path || packages_path(**selection_params)
-    @redirect_path = referrer_path
-  end
-
-  def destroy_all
-    @packages = build_and_authorize_scope(as: :destroyable)
-    @packages = filter_collection(@packages)
-    @packages.quickly_discard_all
-
-    respond_with @packages,
-      flash: true,
-      actions: undiscard_all_packages_action,
-      location: redirect_path || parent_path || packages_path
-  end
-
-  def undiscard_all
-    @packages = build_and_authorize_scope(as: :undiscardable)
-    @packages = filter_collection(@packages)
-    @packages.quickly_undiscard_all
-
-    respond_with @packages,
-      flash: true,
-      location: redirect_path || referrer_path || parent_path || packages_path
-  end
-
   private
 
   def load_and_authorize_parent
@@ -103,11 +22,7 @@ class PackagesController < ApplicationController
   end
 
   def build_and_authorize_scope(as: :default)
-    authorized(Package.all, as:).strict_loading
-  end
-
-  def build_package(...)
-    build_and_authorize_scope.build(...)
+    authorized(Package.preload(:reports).all, as:).strict_loading
   end
 
   def find_and_authorize_package(allow_discarded: false)
@@ -117,10 +32,6 @@ class PackagesController < ApplicationController
     only_kept! package unless allow_discarded
 
     package
-  end
-
-  def package_params
-    authorized(params.fetch(:package, {}))
   end
 
   def parent_path

@@ -10,7 +10,7 @@
 
     - grid.with_column do
       .dashboard-number
-        = current_organization.reports_pending_count
+        = current_organization.reports_processing_count
         span.dashboard-number__unit Signalements non traités
 
     - grid.with_column do
@@ -27,7 +27,7 @@
     | Derniers signalements reçus
 
   - layout.with_section do
-    = render Views::Reports::ListComponent.new(@reports.pending, dashboard: true) do |view|  #.order_by_last_transmission_date
+    = render Views::Reports::ListComponent.new(@reports.processing, dashboard: true) do |view|  #.order_by_last_transmission_date
       - view.with_column(:reference)
       - view.with_column(:package) if current_user.organization_admin?
       - view.with_column(:collectivity)

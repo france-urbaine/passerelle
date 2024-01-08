@@ -42,6 +42,11 @@ RSpec.describe "PackagesController#show" do
     context "when package has been transmitted to current user DDFIP" do
       let(:package) { create(:package, :transmitted_to_ddfip, ddfip: current_user.organization) }
 
+      before do
+        report = create(:report, package:)
+        current_user.organization.update(code_departement: report.commune.code_departement)
+      end
+
       it_behaves_like "it denies access to DDFIP user"
       it_behaves_like "it allows access to DDFIP admin"
     end

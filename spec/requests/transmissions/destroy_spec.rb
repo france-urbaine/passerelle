@@ -16,10 +16,10 @@ RSpec.describe "TransmissionsController#destroy" do
   let!(:completed_transmission) { create(:transmission, :made_through_web_ui, :completed, user: transmission.user, collectivity:) }
   let!(:reports) do
     [
-      create(:report, collectivity:),
-      create(:report, :completed, collectivity:, transmission:),
-      create(:report, :completed, collectivity:, transmission:),
-      create(:report, :completed, collectivity:, transmission:),
+      create(:report,               collectivity:),
+      create(:report, :ready,       collectivity:, transmission:),
+      create(:report, :ready,       collectivity:, transmission:),
+      create(:report, :ready,       collectivity:, transmission:),
       create(:report, :transmitted, collectivity:, transmission: completed_transmission),
       create(:report, :transmitted, collectivity:, transmission: completed_transmission)
     ]

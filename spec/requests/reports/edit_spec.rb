@@ -26,7 +26,7 @@ RSpec.describe "ReportsController#edit" do
     it_behaves_like "it denies access to DDFIP user"
     it_behaves_like "it denies access to DDFIP admin"
 
-    context "when report has been reported by current user collectivity" do
+    context "when report has been created by current user collectivity" do
       let(:report) { create(:report, :made_through_web_ui, collectivity: current_user.organization) }
 
       it_behaves_like "it allows access to collectivity user"
@@ -40,7 +40,7 @@ RSpec.describe "ReportsController#edit" do
       it_behaves_like "it denies access to collectivity admin"
     end
 
-    context "when report has been reported through API for current user collectivity" do
+    context "when report has been created through API for current user collectivity" do
       let(:report) { create(:report, :made_through_api, collectivity: current_user.organization) }
 
       it_behaves_like "it denies access to collectivity user"
@@ -54,7 +54,7 @@ RSpec.describe "ReportsController#edit" do
       it_behaves_like "it denies access to collectivity admin"
     end
 
-    context "when report has been reported by current user publisher" do
+    context "when report has been created by current user publisher" do
       let(:report) { create(:report, :made_through_api, publisher: current_user.organization) }
 
       it_behaves_like "it allows access to publisher user"
@@ -72,26 +72,16 @@ RSpec.describe "ReportsController#edit" do
       let(:report) { create(:report, :transmitted_to_ddfip, ddfip: current_user.organization) }
 
       it_behaves_like "it allows access to DDFIP admin"
-      it_behaves_like "it denies access to DDFIP user" do
-        context "when current user is member of targeted office" do
-          before { create(:office, competences: [report.form_type], users: [current_user], communes: [report.commune]) }
-
-          it { expect(response).to have_http_status(:forbidden) }
-        end
-      end
+      it_behaves_like "it denies access to DDFIP user"
     end
 
-    context "when report package has been assigned by the current DDFIP" do
-      let(:report) { create(:report, :assigned_by_ddfip, ddfip: current_user.organization) }
+    context "when report has been assigned to current user office" do
+      let(:ddfip)  { current_user.organization }
+      let(:office) { create(:office, ddfip:, users: [current_user]) }
+      let(:report) { create(:report, :assigned_to_office, ddfip:, office:) }
 
       it_behaves_like "it allows access to DDFIP admin"
-      it_behaves_like "it denies access to DDFIP user" do
-        context "when current user is member of targeted office" do
-          before { create(:office, competences: [report.form_type], users: [current_user], communes: [report.commune]) }
-
-          include_examples "it allows access"
-        end
-      end
+      it_behaves_like "it allows access to DDFIP user"
     end
   end
 
@@ -110,7 +100,7 @@ RSpec.describe "ReportsController#edit" do
       end
 
       context "when the report is transmitted" do
-        before { package }
+        before { report.transmit! }
 
         it { expect(response).to have_http_status(:forbidden) }
         it { expect(response).to have_content_type(:html) }
@@ -123,14 +113,6 @@ RSpec.describe "ReportsController#edit" do
         it { expect(response).to have_http_status(:gone) }
         it { expect(response).to have_content_type(:html) }
         it { expect(response).to have_html_body.to have_text("Ce signalement est en cours de suppression.") }
-      end
-
-      context "when the package is discarded" do
-        before { package.discard }
-
-        it { expect(response).to have_http_status(:forbidden) }
-        it { expect(response).to have_content_type(:html) }
-        it { expect(response).to have_html_body }
       end
 
       context "when the report is missing" do

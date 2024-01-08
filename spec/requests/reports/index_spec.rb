@@ -7,34 +7,32 @@ RSpec.describe "ReportsController#index" do
     get "/signalements", as:, headers:, params:, xhr:
   end
 
-  let(:as)      { |e| e.metadata[:as] }
-  let(:headers) { |e| e.metadata[:headers] }
-  let(:params)  { |e| e.metadata[:params] }
-  let(:xhr)     { |e| e.metadata[:xhr] }
-
-  let!(:departement) { create(:departement) }
-  let!(:communes)    { create_list(:commune, 2, departement: departement) }
-
-  let!(:publisher)   { create(:publisher) }
+  let(:as) { |e| e.metadata[:as] }
+  let!(:publisher) { create(:publisher) }
   let!(:collectivities) do
     [
       create(:collectivity, publisher: publisher, territory: communes[0]),
       create(:collectivity, publisher: publisher, territory: communes[1])
     ]
   end
-
   let!(:reports) do
     [
-      create(:report, :completed, :made_through_web_ui, collectivity: collectivities[0]),
-      create(:report, :completed, :made_through_web_ui, collectivity: collectivities[1]),
-      create(:report, :completed, :made_through_api,    collectivity: collectivities[0], publisher: publisher),
-      create(:report, :completed, :transmitted_through_web_ui, collectivity: collectivities[0]),
-      create(:report, :completed, :transmitted_through_web_ui, collectivity: collectivities[1]),
-      create(:report, :completed, :transmitted_through_api,    collectivity: collectivities[0], publisher: publisher),
-      create(:report, :completed, :transmitted_through_api, :sandbox, collectivity: collectivities[0], publisher: publisher),
-      create(:report, :completed, :made_through_web_ui, :discarded, collectivity: collectivities[0])
+      create(:report, :ready, :made_through_web_ui, collectivity: collectivities[0]),
+      create(:report, :ready, :made_through_web_ui, collectivity: collectivities[1]),
+      create(:report, :ready, :made_through_api,    collectivity: collectivities[0], publisher: publisher),
+      create(:report, :ready, :transmitted_through_web_ui, collectivity: collectivities[0]),
+      create(:report, :ready, :transmitted_through_web_ui, collectivity: collectivities[1]),
+      create(:report, :ready, :transmitted_through_api,    collectivity: collectivities[0], publisher: publisher),
+      create(:report, :ready, :transmitted_through_api, :sandbox, collectivity: collectivities[0], publisher: publisher),
+      create(:report, :ready, :made_through_web_ui, :discarded, collectivity: collectivities[0])
     ]
   end
+  let(:headers) { |e| e.metadata[:headers] }
+  let(:params)  { |e| e.metadata[:params] }
+  let(:xhr)     { |e| e.metadata[:xhr] }
+
+  let_it_be(:departement) { create(:departement) }
+  let_it_be(:communes)    { create_list(:commune, 2, departement: departement) }
 
   describe "authorizations" do
     it_behaves_like "it requires to be signed in in HTML"
@@ -136,7 +134,8 @@ RSpec.describe "ReportsController#index" do
     end
 
     context "when signed in as a DDFIP user" do
-      let(:ddfip) { create(:ddfip, departement: departement) }
+      let!(:ddfip) { create(:ddfip, departement: departement) }
+      let!(:office) { create(:office, :evaluation_local_habitation, ddfip:) }
       let(:reports) do
         attributes = {
           ddfip:        ddfip,
@@ -148,18 +147,16 @@ RSpec.describe "ReportsController#index" do
           create(:report, :made_for_ddfip, **attributes),
           create(:report, :transmitted_to_ddfip, **attributes),
           create(:report, :transmitted_to_ddfip, **attributes, sandbox: true),
-          create(:report, :assigned_by_ddfip, **attributes),
+          create(:report, :assigned_by_ddfip, **attributes, office:),
           create(:report, :assigned_by_ddfip, **attributes, collectivity: collectivities[1]),
-          create(:report, :assigned_by_ddfip, **attributes, form_type: "evaluation_local_professionnel")
+          create(:report, :assigned_by_ddfip, **attributes, form_type: "evaluation_local_professionnel"),
+          create(:report, :assigned_by_ddfip, **attributes)
         ]
       end
 
       before do
         sign_in_as(organization: ddfip)
-        create(:office, :evaluation_local_habitation,
-          ddfip:       ddfip,
-          communes:    [communes[0]],
-          users:       [current_user])
+        current_user.offices << office
       end
 
       context "when requesting HTML" do
@@ -175,6 +172,7 @@ RSpec.describe "ReportsController#index" do
             expect(response).to have_html_body.to     have_selector(:id, dom_id(reports[3]))
             expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[4]))
             expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[5]))
+            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[6]))
           end
         end
       end
