@@ -23,6 +23,10 @@ application.register("notification", NotificationController)
 import TabsController from "../../components/ui/tabs"
 application.register("tabs", TabsController)
 
+import { PasswordVisibility, StrengthTestController } from "../../components/ui/form/password_field"
+application.register('password-visibility', PasswordVisibility);
+application.register("strength-test", StrengthTestController);
+
 // Controllers
 // -----------------------------------------------------------------------------
 import AutocompleteController from "./autocomplete_controller"
@@ -36,16 +40,6 @@ application.register("direct-upload-field", DirectUploadFieldController)
 
 import NavbarController from "./navbar_controller"
 application.register("navbar", NavbarController)
-
-import { PasswordVisibility, StrengthTestController } from "../../components/ui/form/password_field"
-
-application.register('password-visibility', PasswordVisibility);
-application.register("strength-test", StrengthTestController);
-// import PasswordVisibility from "../../password_visibility_controller"
-// application.register('password-visibility', PasswordVisibility)
-
-// import StrenghTestController from "../../strength_test_controller"
-// application.register("strength-test", StrenghTestController)
 
 import SelectionController from "./selection_controller"
 application.register("selection", SelectionController)
