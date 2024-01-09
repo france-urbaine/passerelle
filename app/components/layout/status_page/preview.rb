@@ -27,8 +27,12 @@ module Layout
       # @param modal toggle "View the template when requesting a modal"
       # @param referrer text "Referrer URL (rendered in background of a modal)"
       # @param model select {
-      #   choices: [[Publisher, publisher], [Collectivity, collectivity], [User, user], other]
-      # } "Model not found"
+      #   choices: [
+      #     [Publisher, publisher],
+      #     [Collectivity, collectivity],
+      #     [User, user],
+      #     other
+      #   ] } "Model not found"
       #
       def not_found(modal: false, referrer: DEFAULT_REFERRER, model: "user")
         model_not_found = model.classify
