@@ -1,0 +1,10 @@
+= table_component(array_of_data) do |table|
+  - table.with_column(:column_a) { "Title" }
+  - table.with_column(:column_b) { "Sub-title" }
+
+  - table.each_row do |row, datum|
+    - row.with_action("Modifier cette ligne",  "/rails/view_components/samples/link/default", icon: "pencil-square")
+    - row.with_action("Supprimer cette ligne", "/rails/view_components/samples/link/modal", icon: "magnifying-glass", modal: true)
+
+    - row.with_column(:column_a)
+    - row.with_column(:column_b)

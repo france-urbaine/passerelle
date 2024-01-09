@@ -1,0 +1,9 @@
+= table_component(array_of_data) do |table|
+  - table.with_column(:column_a) { "Title" }
+  - table.with_column(:column_b) { "Sub-title" }
+
+  - table.each_row do |row, datum|
+    - row.with_checkbox(described_by: :column_a)
+
+    - row.with_column(:column_a)
+    - row.with_column(:column_b)

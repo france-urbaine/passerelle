@@ -11,55 +11,55 @@ application.register("nested-form", NestedForm)
 
 // Components
 // -----------------------------------------------------------------------------
-import AutocompleteController from "./components/autocomplete_controller"
-application.register("autocomplete", AutocompleteController)
-
-import CopyTextController from "./components/copy_text_controller"
-application.register("copy-text", CopyTextController)
-
-import DirectUploadFieldController from "./components/direct_upload_field_controller"
-application.register("direct-upload-field", DirectUploadFieldController)
-
-import DropdownController from "./components/dropdown_controller"
+import DropdownController from "../../components/ui/dropdown"
 application.register("dropdown", DropdownController)
 
-import ModalController from "./components/modal_controller"
+import ModalController from "../../components/ui/modal"
 application.register("modal", ModalController)
 
-import NavbarController from "./components/navbar_controller"
-application.register("navbar", NavbarController)
-
-import NotificationController from "./components/notification_controller"
+import NotificationController from "../../components/ui/notification"
 application.register("notification", NotificationController)
 
-import PasswordVisibility from "./components/password_visibility_controller"
-application.register('password-visibility', PasswordVisibility)
-
-import SelectionController from "./components/selection_controller"
-application.register("selection", SelectionController)
-
-import SelectionGroupController from "./components/selection_group_controller"
-application.register("selection-group", SelectionGroupController)
-
-import SelectionRowController from "./components/selection_row_controller"
-application.register("selection-row", SelectionRowController)
-
-import StrenghTestController from "./components/strength_test_controller"
-application.register("strength-test", StrenghTestController)
-
-import SwitchController from "./components/switch_controller"
-application.register("switch", SwitchController)
-
-import TabsController from "./components/tabs_controller"
+import TabsController from "../../components/ui/tabs"
 application.register("tabs", TabsController)
 
-import ToggleController from "./components/toggle_controller"
+// Controllers
+// -----------------------------------------------------------------------------
+import AutocompleteController from "./autocomplete_controller"
+application.register("autocomplete", AutocompleteController)
+
+import CopyTextController from "./copy_text_controller"
+application.register("copy-text", CopyTextController)
+
+import DirectUploadFieldController from "./direct_upload_field_controller"
+application.register("direct-upload-field", DirectUploadFieldController)
+
+import NavbarController from "./navbar_controller"
+application.register("navbar", NavbarController)
+
+import PasswordVisibility from "./password_visibility_controller"
+application.register('password-visibility', PasswordVisibility)
+
+import SelectionController from "./selection_controller"
+application.register("selection", SelectionController)
+
+import SelectionGroupController from "./selection_group_controller"
+application.register("selection-group", SelectionGroupController)
+
+import SelectionRowController from "./selection_row_controller"
+application.register("selection-row", SelectionRowController)
+
+import StrenghTestController from "./strength_test_controller"
+application.register("strength-test", StrenghTestController)
+
+import SwitchController from "./switch_controller"
+application.register("switch", SwitchController)
+
+import ToggleController from "./toggle_controller"
 application.register("toggle", ToggleController)
 
-import HighlightController from "./components/highlight_controller"
+import HighlightController from "./highlight_controller"
 application.register("highlight", HighlightController)
 
-// Forms
-// -----------------------------------------------------------------------------
-import UserFormController from "./forms/user_form_controller"
+import UserFormController from "./user_form_controller"
 application.register("user-form", UserFormController)

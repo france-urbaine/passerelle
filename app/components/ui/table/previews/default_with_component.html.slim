@@ -1,0 +1,11 @@
+= table_component(array_of_data) do |table|
+  - table.with_column(:id)
+  - table.with_column(:column_a)
+  - table.with_column(:column_b)
+  - table.with_column(:number1)
+
+  - table.each_row do |row, datum|
+    - row.with_column(:id)
+    - row.with_column(:column_a)
+    - row.with_column(:column_b)
+    - row.with_column(:number1)

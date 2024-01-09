@@ -46,7 +46,7 @@
         ' Une fois les identifiants enregistrés dans des variables, vous pouvez obtenir un Access Token :
 
       ruby:
-        example = UI::CodeRequestExampleComponent.new "POST", oauth_token_url,
+        example = UI::CodeRequestExample::Component.new "POST", oauth_token_url,
           json: true,
           request: {
             body: {
@@ -95,7 +95,7 @@
         ' de requête présents dans cette documentation :
 
       ruby:
-        example = UI::CodeRequestExampleComponent.new "GET", api_collectivities_url,
+        example = UI::CodeRequestExample::Component.new "GET", api_collectivities_url,
           json:          true,
           authorization: true,
           response: {

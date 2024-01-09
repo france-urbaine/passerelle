@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe UI::Form::HiddenFieldComponent, type: :component do
+RSpec.describe UI::Form::HiddenFieldComponent do
   # Disable Capybara/SpecificMatcher to match exact HTML output
   # rubocop:disable Capybara/SpecificMatcher
   #

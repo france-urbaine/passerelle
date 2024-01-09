@@ -52,7 +52,7 @@ module Layout
         end
       end
 
-      class Action < UI::ButtonComponent
+      class Action < UI::Button::Component
         def href_params
           super.merge(
             params.slice(:ids, :search, :order, :page).permit!

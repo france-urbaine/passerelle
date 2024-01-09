@@ -30,7 +30,7 @@ class ApplicationViewComponent < ViewComponent::Base
 
     def call
       if @args.any? || @options.any?
-        render UI::ButtonComponent.new(*@args, **@options)
+        render UI::Button::Component.new(*@args, **@options)
       else
         content
       end
@@ -46,7 +46,7 @@ class ApplicationViewComponent < ViewComponent::Base
     delegate_missing_to :original_breadcrumbs
 
     def original_breadcrumbs
-      @original_breadcrumbs ||= ::UI::BreadcrumbsComponent.new(**@options)
+      @original_breadcrumbs ||= ::UI::Breadcrumbs::Component.new(**@options)
     end
 
     def call
@@ -92,3 +92,6 @@ class ApplicationViewComponent < ViewComponent::Base
 
   private_class_method :define_component_helper
 end
+
+# Eager load components to get all helpers methods available
+Rails.autoloaders.main.eager_load_dir(__dir__)

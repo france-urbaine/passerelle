@@ -151,7 +151,7 @@ module Layout
       end
 
       def button
-        UI::ButtonComponent.new(
+        UI::Button::Component.new(
           label,
           url,
           icon:      icon,

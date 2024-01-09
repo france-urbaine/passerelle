@@ -24,7 +24,7 @@ module NotificationsHelper
       actions = FlashAction.read_multi(flash[:actions])
       actions = Array.wrap(actions).map(&:symbolize_keys)
 
-      render UI::NotificationComponent.new(scheme, **options) do |notification|
+      render UI::Notification::Component.new(scheme, **options) do |notification|
         notification.with_header { header } if header.present?
         notification.with_body   { body } if body.present?
 

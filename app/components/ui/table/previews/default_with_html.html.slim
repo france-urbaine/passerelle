@@ -1,0 +1,15 @@
+table
+  thead
+    tr
+      th #
+      th Column A
+      th Column B
+      th Number
+
+  tbody
+    - array_of_data.each do |data|
+      tr
+        th= data[:id]
+        td= data[:column_a]
+        td= data[:column_b]
+        td= data[:number1]

@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe UI::Form::BlockComponentPreview, type: :component do
+RSpec.describe UI::Form::BlockComponentPreview do
   it { is_expected.to render_preview_without_exception(:text_inputs) }
   it { is_expected.to render_preview_without_exception(:selectors) }
   it { is_expected.to render_preview_without_exception(:check_box) }

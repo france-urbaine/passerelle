@@ -38,7 +38,7 @@ module Layout
           icon  = "bars-arrow-down"
         end
 
-        UI::ButtonComponent.new(
+        UI::Button::Component.new(
           label,
           order_url(key, direction),
           role:      "menuitem",
