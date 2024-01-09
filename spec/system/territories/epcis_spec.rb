@@ -108,8 +108,8 @@ RSpec.describe "EPCIs" do
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
   end
 
   it "updates an EPCI from the EPCI page" do
@@ -136,13 +136,13 @@ RSpec.describe "EPCIs" do
     # The browser should stay on show page
     # The collectivity should have changed its name
     #
-    expect(page).to     have_current_path(territories_epci_path(pays_basque))
-    expect(page).to     have_selector("h1", text: "Agglomération Pays Basque")
+    expect(page).to have_current_path(territories_epci_path(pays_basque))
+    expect(page).to have_selector("h1", text: "Agglomération Pays Basque")
 
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
   end
 end

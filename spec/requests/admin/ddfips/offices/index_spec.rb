@@ -78,10 +78,10 @@ RSpec.describe "Admin::DDFIPs::OfficesController#index" do
 
         it "returns only kept offices on the DDFIP" do
           aggregate_failures do
-            expect(response).to have_html_body.not_to have_text(offices[0].name)
-            expect(response).to have_html_body.to     have_text(offices[1].name)
-            expect(response).to have_html_body.not_to have_text(offices[2].name)
-            expect(response).to have_html_body.to     have_text(offices[3].name)
+            expect(response).to have_html_body.to have_no_text(offices[0].name)
+            expect(response).to have_html_body.to have_text(offices[1].name)
+            expect(response).to have_html_body.to have_no_text(offices[2].name)
+            expect(response).to have_html_body.to have_text(offices[3].name)
           end
         end
       end

@@ -24,9 +24,9 @@ RSpec.describe UI::CodeExampleComponent, type: :component do
 
     expect(page).to have_selector("pre.code-example") do |pre|
       expect(pre).to have_selector("span.code-example__block > span") do |span|
-        expect(span).to     have_text("echo 'Hello world'")
-        expect(span).not_to have_html_attribute("data-controller")
-        expect(span).not_to have_html_attribute("data-highlight-language-value")
+        expect(span).to have_text("echo 'Hello world'")
+        expect(span).to have_no_html_attribute("data-controller")
+        expect(span).to have_no_html_attribute("data-highlight-language-value")
       end
     end
   end

@@ -43,8 +43,8 @@ RSpec.describe "DDFIP offices in admin" do
 
     visit admin_ddfip_path(ddfip64)
 
-    expect(page).to     have_text("13 guichets | Page 1 sur 2")
-    expect(page).not_to have_button("Options d'affichage")
+    expect(page).to have_text("13 guichets | Page 1 sur 2")
+    expect(page).to have_no_button("Options d'affichage")
   end
 
   it "creates an office from the DDFIP page" do
@@ -57,7 +57,7 @@ RSpec.describe "DDFIP offices in admin" do
     # A dialog box should appear with a form to fill
     #
     within "[role=dialog]", text: "Création d'un nouveau guichet" do |dialog|
-      expect(dialog).not_to have_field("DDFIP")
+      expect(dialog).to have_no_field("DDFIP")
 
       expect(dialog).to have_field("Nom du guichet", with: nil)
 
@@ -76,15 +76,15 @@ RSpec.describe "DDFIP offices in admin" do
     # The browser should stay on the DDFIP page
     # The new office should appear
     #
-    expect(page).to  have_current_path(admin_ddfip_path(ddfip64))
-    expect(page).to  have_selector("h1", text: "DDFIP des Pyrénées-Atlantiques")
+    expect(page).to have_current_path(admin_ddfip_path(ddfip64))
+    expect(page).to have_selector("h1", text: "DDFIP des Pyrénées-Atlantiques")
     expect(page).to have_selector(:table_row, "Guichet" => "SIP de Pau")
 
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Un nouveau guichet a été ajouté avec succés.")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Un nouveau guichet a été ajouté avec succés.")
   end
 
   it "updates an office from the DDFIP page" do
@@ -122,8 +122,8 @@ RSpec.describe "DDFIP offices in admin" do
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
   end
 
   it "discards an office from the DDFIP page & rollbacks" do
@@ -146,16 +146,16 @@ RSpec.describe "DDFIP offices in admin" do
     # The browser should stay on the DDFIP page
     # The office should not appears anymore
     #
-    expect(page).to     have_current_path(admin_ddfip_path(ddfip64))
-    expect(page).to     have_selector("h1", text: "DDFIP des Pyrénées-Atlantiques")
-    expect(page).to     have_text("2 guichets | Page 1 sur 1")
-    expect(page).not_to have_selector(:table_row, "Guichet" => "PELP de Bayonne")
+    expect(page).to have_current_path(admin_ddfip_path(ddfip64))
+    expect(page).to have_selector("h1", text: "DDFIP des Pyrénées-Atlantiques")
+    expect(page).to have_text("2 guichets | Page 1 sur 1")
+    expect(page).to have_no_selector(:table_row, "Guichet" => "PELP de Bayonne")
 
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Le guichet a été supprimé.")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Le guichet a été supprimé.")
 
     # The notification should include a button to cancel the last action
     #
@@ -174,8 +174,8 @@ RSpec.describe "DDFIP offices in admin" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector("[role=log]", text: "Le guichet a été supprimé.")
-    expect(page).to     have_selector("[role=log]", text: "La suppression du guichet a été annulée.")
+    expect(page).to have_no_selector("[role=log]", text: "Le guichet a été supprimé.")
+    expect(page).to have_selector("[role=log]", text: "La suppression du guichet a été annulée.")
   end
 
   it "selects and discards one office from the DDFIP page & rollbacks" do
@@ -206,20 +206,20 @@ RSpec.describe "DDFIP offices in admin" do
     # The selected offices should not appears anymore
     # Other offices should remain
     #
-    expect(page).to     have_current_path(admin_ddfip_path(ddfip64))
-    expect(page).to     have_selector("h1", text: "DDFIP des Pyrénées-Atlantiques")
-    expect(page).to     have_text("2 guichets | Page 1 sur 1")
-    expect(page).not_to have_selector(:table_row, "Guichet" => "PELP de Bayonne")
-    expect(page).to     have_selector(:table_row, "Guichet" => "PELH de Bayonne")
-    expect(page).to     have_selector(:table_row, "Guichet" => "SIP de Bayonne")
+    expect(page).to have_current_path(admin_ddfip_path(ddfip64))
+    expect(page).to have_selector("h1", text: "DDFIP des Pyrénées-Atlantiques")
+    expect(page).to have_text("2 guichets | Page 1 sur 1")
+    expect(page).to have_no_selector(:table_row, "Guichet" => "PELP de Bayonne")
+    expect(page).to have_selector(:table_row, "Guichet" => "PELH de Bayonne")
+    expect(page).to have_selector(:table_row, "Guichet" => "SIP de Bayonne")
 
     # The selection message should not appears anymore
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector(".datatable__selection")
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Les guichets sélectionnés ont été supprimés.")
+    expect(page).to have_no_selector(".datatable__selection")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Les guichets sélectionnés ont été supprimés.")
 
     # The notification should include a button to cancel the last action
     #
@@ -239,9 +239,9 @@ RSpec.describe "DDFIP offices in admin" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector(".datatable__selection")
-    expect(page).not_to have_selector("[role=log]", text: "Les guichets sélectionnés ont été supprimés.")
-    expect(page).to     have_selector("[role=log]", text: "La suppression des guichets sélectionnés a été annulée.")
+    expect(page).to have_no_selector(".datatable__selection")
+    expect(page).to have_no_selector("[role=log]", text: "Les guichets sélectionnés ont été supprimés.")
+    expect(page).to have_selector("[role=log]", text: "La suppression des guichets sélectionnés a été annulée.")
   end
 
   it "selects and discards all offices from the current page on index page & rollbacks" do
@@ -277,19 +277,19 @@ RSpec.describe "DDFIP offices in admin" do
     # The browser should stay on index page
     # The selected offices should have been removed
     #
-    expect(page).to     have_current_path(admin_ddfip_path(ddfip64))
-    expect(page).to     have_selector("h1", text: "DDFIP des Pyrénées-Atlantiques")
-    expect(page).to     have_text("3 guichets | Page 1 sur 1")
-    expect(page).not_to have_selector(:table_row, "Guichet" => "PELP de Bayonne")
-    expect(page).not_to have_selector(:table_row, "Guichet" => "PELH de Bayonne")
-    expect(page).not_to have_selector(:table_row, "Guichet" => "SIP de Bayonne")
+    expect(page).to have_current_path(admin_ddfip_path(ddfip64))
+    expect(page).to have_selector("h1", text: "DDFIP des Pyrénées-Atlantiques")
+    expect(page).to have_text("3 guichets | Page 1 sur 1")
+    expect(page).to have_no_selector(:table_row, "Guichet" => "PELP de Bayonne")
+    expect(page).to have_no_selector(:table_row, "Guichet" => "PELH de Bayonne")
+    expect(page).to have_no_selector(:table_row, "Guichet" => "SIP de Bayonne")
 
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector(".datatable__selection")
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Les guichets sélectionnés ont été supprimés.")
+    expect(page).to have_no_selector(".datatable__selection")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Les guichets sélectionnés ont été supprimés.")
 
     # The notification should include a button to cancel the last action
     #
@@ -311,9 +311,9 @@ RSpec.describe "DDFIP offices in admin" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector(".datatable__selection")
-    expect(page).not_to have_selector("[role=log]", text: "Les guichets sélectionnés ont été supprimés.")
-    expect(page).to     have_selector("[role=log]", text: "La suppression des guichets sélectionnés a été annulée.")
+    expect(page).to have_no_selector(".datatable__selection")
+    expect(page).to have_no_selector("[role=log]", text: "Les guichets sélectionnés ont été supprimés.")
+    expect(page).to have_selector("[role=log]", text: "La suppression des guichets sélectionnés a été annulée.")
   end
 
   it "selects and discards all offices through several pages on index page & rollbacks" do
@@ -360,9 +360,9 @@ RSpec.describe "DDFIP offices in admin" do
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector(".datatable__selection")
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Les guichets sélectionnés ont été supprimés.")
+    expect(page).to have_no_selector(".datatable__selection")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Les guichets sélectionnés ont été supprimés.")
 
     # The notification should include a button to cancel the last action
     #
@@ -384,8 +384,8 @@ RSpec.describe "DDFIP offices in admin" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector(".datatable__selection")
-    expect(page).not_to have_selector("[role=log]", text: "Les guichets sélectionnés ont été supprimés.")
-    expect(page).to     have_selector("[role=log]", text: "La suppression des guichets sélectionnés a été annulée.")
+    expect(page).to have_no_selector(".datatable__selection")
+    expect(page).to have_no_selector("[role=log]", text: "Les guichets sélectionnés ont été supprimés.")
+    expect(page).to have_selector("[role=log]", text: "La suppression des guichets sélectionnés a été annulée.")
   end
 end

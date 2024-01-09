@@ -21,7 +21,7 @@ RSpec.describe Views::Users::ShowEmailComponent, type: :component do
     user = build_stubbed(:user, confirmed_at: nil)
     render_inline described_class.new(user)
 
-    expect(page).not_to have_link
+    expect(page).to have_no_link
     expect(page).to have_selector(".text-disabled") do |div|
       expect(div).to have_text(user.email)
       expect(div).to have_text("Cet utilisateur n'a pas encore validé son inscription")
@@ -32,7 +32,7 @@ RSpec.describe Views::Users::ShowEmailComponent, type: :component do
     user = build_stubbed(:user, unconfirmed_email: "unconfirmed@example.com")
     render_inline described_class.new(user)
 
-    expect(page).not_to have_link
+    expect(page).to have_no_link
     expect(page).to have_selector(".text-disabled") do |div|
       expect(div).to have_text("unconfirmed@example.com")
       expect(div).to have_text("La modification de l'adresse mail est en cours et n'a pas été validée par l'utilisateur")

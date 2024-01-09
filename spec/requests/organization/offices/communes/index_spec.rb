@@ -82,9 +82,9 @@ RSpec.describe "Organization::Offices::CommunesController#index" do
 
       it "returns only kept collectivities on the territory assigned to the office" do
         aggregate_failures do
-          expect(response).to have_html_body.to     have_text(communes[0].name)
-          expect(response).to have_html_body.to     have_text(communes[1].name)
-          expect(response).to have_html_body.not_to have_text(communes[2].name)
+          expect(response).to have_html_body.to have_text(communes[0].name)
+          expect(response).to have_html_body.to have_text(communes[1].name)
+          expect(response).to have_html_body.to have_no_text(communes[2].name)
         end
       end
 

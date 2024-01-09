@@ -38,7 +38,7 @@ RSpec.describe "Office collectivities in organization" do
 
     visit organization_office_path(pelp_bayonne)
 
-    expect(page).to     have_text("12 collectivités | Page 1 sur 2")
-    expect(page).not_to have_button("Options d'affichage")
+    expect(page).to have_text("12 collectivités | Page 1 sur 2")
+    expect(page).to have_no_button("Options d'affichage")
   end
 end

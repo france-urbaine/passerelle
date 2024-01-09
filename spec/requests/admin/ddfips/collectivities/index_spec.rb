@@ -93,10 +93,10 @@ RSpec.describe "Admin::DDFIPs::CollectivitiesController#index" do
 
       it "returns only kept collectivities on the DDFIP departement territory" do
         aggregate_failures do
-          expect(response).to have_html_body.to     have_text(collectivities[0].name)
-          expect(response).to have_html_body.to     have_text(collectivities[1].name)
-          expect(response).to have_html_body.not_to have_text(collectivities[2].name)
-          expect(response).to have_html_body.not_to have_text(collectivities[3].name)
+          expect(response).to have_html_body.to have_text(collectivities[0].name)
+          expect(response).to have_html_body.to have_text(collectivities[1].name)
+          expect(response).to have_html_body.to have_no_text(collectivities[2].name)
+          expect(response).to have_html_body.to have_no_text(collectivities[3].name)
         end
       end
 

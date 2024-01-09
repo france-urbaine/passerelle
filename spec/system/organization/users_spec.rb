@@ -47,9 +47,9 @@ RSpec.describe "Manage users from organization" do
       # Scope to main content to exclude link from the navbar
       #
       within "main.content" do
-        expect(page).to     have_selector("h1", text: "Marc Debomy")
-        expect(page).to     have_link("mdebomy@solutions-territoire.fr")
-        expect(page).not_to have_link("Solutions & Territoire")
+        expect(page).to have_selector("h1", text: "Marc Debomy")
+        expect(page).to have_link("mdebomy@solutions-territoire.fr")
+        expect(page).to have_no_link("Solutions & Territoire")
       end
     end
 
@@ -69,16 +69,16 @@ RSpec.describe "Manage users from organization" do
       # The dialog should be closed
       # A notification should be displayed
       #
-      expect(page).not_to have_selector("[role=dialog]")
-      expect(page).to     have_selector("[role=log]", text: "L'invitation a été envoyée.")
-      expect(page).not_to have_selector("a.button", text: "Réinitialiser")
-      expect(page).to     have_selector("a.button", text: "Renouveler l'invitation")
+      expect(page).to have_no_selector("[role=dialog]")
+      expect(page).to have_selector("[role=log]", text: "L'invitation a été envoyée.")
+      expect(page).to have_no_selector("a.button", text: "Réinitialiser")
+      expect(page).to have_selector("a.button", text: "Renouveler l'invitation")
     end
 
     it "does not display reset button on user self page" do
       visit organization_user_path(marc)
 
-      expect(page).not_to have_selector("a.button", text: "Réinitialiser")
+      expect(page).to have_no_selector("a.button", text: "Réinitialiser")
     end
 
     it "invites an user from the index page" do
@@ -91,7 +91,7 @@ RSpec.describe "Manage users from organization" do
       # A dialog box should appear with a form to fill
       #
       within "[role=dialog]", text: "Invitation d'un nouvel utilisateur" do |dialog|
-        expect(dialog).not_to have_field("Organisation")
+        expect(dialog).to have_no_field("Organisation")
         expect(dialog).to have_field("Prénom")
         expect(dialog).to have_field("Nom")
         expect(dialog).to have_field("Adresse mail")
@@ -131,8 +131,8 @@ RSpec.describe "Manage users from organization" do
       # The dialog should be closed
       # A notification should be displayed
       #
-      expect(page).not_to have_selector("[role=dialog]")
-      expect(page).to     have_selector("[role=log]", text: "Un nouvel utilisateur a été ajouté avec succés.")
+      expect(page).to have_no_selector("[role=dialog]")
+      expect(page).to have_selector("[role=log]", text: "Un nouvel utilisateur a été ajouté avec succés.")
     end
 
     it "updates an user from the index page" do
@@ -148,7 +148,7 @@ RSpec.describe "Manage users from organization" do
       # The form should be filled with user data
       #
       within "[role=dialog]", text: "Modification de l'utilisateur" do |dialog|
-        expect(dialog).not_to have_field("Organisation")
+        expect(dialog).to have_no_field("Organisation")
         expect(dialog).to have_field("Prénom",       with: "Marc")
         expect(dialog).to have_field("Nom",          with: "Debomy")
         expect(dialog).to have_field("Adresse mail", with: "mdebomy@solutions-territoire.fr")
@@ -185,8 +185,8 @@ RSpec.describe "Manage users from organization" do
       # The dialog should be closed
       # A notification should be displayed
       #
-      expect(page).not_to have_selector("[role=dialog]")
-      expect(page).to     have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
+      expect(page).to have_no_selector("[role=dialog]")
+      expect(page).to have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
     end
 
     it "updates an user from the user page" do
@@ -202,7 +202,7 @@ RSpec.describe "Manage users from organization" do
       # The form should be filled with user data
       #
       within "[role=dialog]", text: "Modification de l'utilisateur" do |dialog|
-        expect(dialog).not_to have_field("Organisation")
+        expect(dialog).to have_no_field("Organisation")
         expect(dialog).to have_field("Prénom",       with: "Marc")
         expect(dialog).to have_field("Nom",          with: "Debomy")
         expect(dialog).to have_field("Adresse mail", with: "mdebomy@solutions-territoire.fr")
@@ -238,8 +238,8 @@ RSpec.describe "Manage users from organization" do
       # The dialog should be closed
       # A notification should be displayed
       #
-      expect(page).not_to have_selector("[role=dialog]")
-      expect(page).to     have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
+      expect(page).to have_no_selector("[role=dialog]")
+      expect(page).to have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
     end
 
     it "discards an user from the index page & rollbacks" do
@@ -262,16 +262,16 @@ RSpec.describe "Manage users from organization" do
       # The browser should stay on the index page
       # The user should not appears anymore
       #
-      expect(page).to     have_current_path(organization_users_path)
-      expect(page).to     have_selector("h1", text: "Équipe")
-      expect(page).to     have_text("2 utilisateurs | Page 1 sur 1")
-      expect(page).not_to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
+      expect(page).to have_current_path(organization_users_path)
+      expect(page).to have_selector("h1", text: "Équipe")
+      expect(page).to have_text("2 utilisateurs | Page 1 sur 1")
+      expect(page).to have_no_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 
       # The dialog should be closed
       # A notification should be displayed
       #
-      expect(page).not_to have_selector("[role=dialog]")
-      expect(page).to     have_selector("[role=log]", text: "L'utilisateur a été supprimé.")
+      expect(page).to have_no_selector("[role=dialog]")
+      expect(page).to have_selector("[role=log]", text: "L'utilisateur a été supprimé.")
 
       # The notification should include a button to cancel the last action
       #
@@ -290,8 +290,8 @@ RSpec.describe "Manage users from organization" do
       # The previous notification should be closed
       # A new notification should be displayed
       #
-      expect(page).not_to have_selector("[role=log]", text: "L'utilisateur a été supprimé.")
-      expect(page).to     have_selector("[role=log]", text: "La suppression de l'utilisateur a été annulée.")
+      expect(page).to have_no_selector("[role=log]", text: "L'utilisateur a été supprimé.")
+      expect(page).to have_selector("[role=log]", text: "La suppression de l'utilisateur a été annulée.")
     end
 
     it "discards an user from the user page & rollbacks" do
@@ -312,16 +312,16 @@ RSpec.describe "Manage users from organization" do
       # The browser should redirect to the index page
       # The user should not appears anymore
       #
-      expect(page).to     have_current_path(organization_users_path)
-      expect(page).to     have_selector("h1", text: "Équipe")
-      expect(page).to     have_text("2 utilisateurs | Page 1 sur 1")
-      expect(page).not_to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
+      expect(page).to have_current_path(organization_users_path)
+      expect(page).to have_selector("h1", text: "Équipe")
+      expect(page).to have_text("2 utilisateurs | Page 1 sur 1")
+      expect(page).to have_no_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 
       # The dialog should be closed
       # A notification should be displayed
       #
-      expect(page).not_to have_selector("[role=dialog]")
-      expect(page).to     have_selector("[role=log]", text: "L'utilisateur a été supprimé.")
+      expect(page).to have_no_selector("[role=dialog]")
+      expect(page).to have_selector("[role=log]", text: "L'utilisateur a été supprimé.")
 
       # The notification should include a button to cancel the last action
       #
@@ -340,8 +340,8 @@ RSpec.describe "Manage users from organization" do
       # The previous notification should be closed
       # A new notification should be displayed
       #
-      expect(page).not_to have_selector("[role=log]", text: "L'utilisateur a été supprimé.")
-      expect(page).to     have_selector("[role=log]", text: "La suppression de l'utilisateur a été annulée.")
+      expect(page).to have_no_selector("[role=log]", text: "L'utilisateur a été supprimé.")
+      expect(page).to have_selector("[role=log]", text: "La suppression de l'utilisateur a été annulée.")
     end
 
     it "discards himself and been disconnected" do
@@ -364,8 +364,8 @@ RSpec.describe "Manage users from organization" do
       # The browser should sign out and redirect to login form
       # The dialog should have disappeared
       #
-      expect(page).to     have_current_path(new_user_session_path)
-      expect(page).not_to have_selector("[role=dialog]")
+      expect(page).to have_current_path(new_user_session_path)
+      expect(page).to have_no_selector("[role=dialog]")
     end
 
     it "selects and discards one user from the index page & rollbacks" do
@@ -396,19 +396,19 @@ RSpec.describe "Manage users from organization" do
       # The selected users should not appears anymore
       # Other users should remain
       #
-      expect(page).to     have_current_path(organization_users_path)
-      expect(page).to     have_selector("h1", text: "Équipe")
-      expect(page).to     have_text("2 utilisateurs | Page 1 sur 1")
-      expect(page).not_to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
-      expect(page).to     have_selector(:table_row, "Utilisateur" => "Marc Debomy")
+      expect(page).to have_current_path(organization_users_path)
+      expect(page).to have_selector("h1", text: "Équipe")
+      expect(page).to have_text("2 utilisateurs | Page 1 sur 1")
+      expect(page).to have_no_selector(:table_row, "Utilisateur" => "Elise Lacroix")
+      expect(page).to have_selector(:table_row, "Utilisateur" => "Marc Debomy")
 
       # The selection message should not appears anymore
       # The dialog should be closed
       # A notification should be displayed
       #
-      expect(page).not_to have_selector(".datatable__selection")
-      expect(page).not_to have_selector("[role=dialog]")
-      expect(page).to     have_selector("[role=log]", text: "Les utilisateurs sélectionnés ont été supprimés.")
+      expect(page).to have_no_selector(".datatable__selection")
+      expect(page).to have_no_selector("[role=dialog]")
+      expect(page).to have_selector("[role=log]", text: "Les utilisateurs sélectionnés ont été supprimés.")
 
       # The notification should include a button to cancel the last action
       #
@@ -428,9 +428,9 @@ RSpec.describe "Manage users from organization" do
       # The previous notification should be closed
       # A new notification should be displayed
       #
-      expect(page).not_to have_selector(".datatable__selection")
-      expect(page).not_to have_selector("[role=log]", text: "Les utilisateurs sélectionnés ont été supprimés.")
-      expect(page).to     have_selector("[role=log]", text: "La suppression des utilisateurs sélectionnés a été annulée.")
+      expect(page).to have_no_selector(".datatable__selection")
+      expect(page).to have_no_selector("[role=log]", text: "Les utilisateurs sélectionnés ont été supprimés.")
+      expect(page).to have_selector("[role=log]", text: "La suppression des utilisateurs sélectionnés a été annulée.")
     end
 
     it "selects and discards all users but himself from the current page on index page & rollbacks" do
@@ -489,9 +489,9 @@ RSpec.describe "Manage users from organization" do
       # The dialog should be closed
       # A notification should be displayed
       #
-      expect(page).not_to have_selector(".datatable__selection")
-      expect(page).not_to have_selector("[role=dialog]")
-      expect(page).to     have_selector("[role=log]", text: "Les utilisateurs sélectionnés ont été supprimés.")
+      expect(page).to have_no_selector(".datatable__selection")
+      expect(page).to have_no_selector("[role=dialog]")
+      expect(page).to have_selector("[role=log]", text: "Les utilisateurs sélectionnés ont été supprimés.")
 
       # The notification should include a button to cancel the last action
       #
@@ -512,9 +512,9 @@ RSpec.describe "Manage users from organization" do
       # The previous notification should be closed
       # A new notification should be displayed
       #
-      expect(page).not_to have_selector(".datatable__selection")
-      expect(page).not_to have_selector("[role=log]", text: "Les utilisateurs sélectionnés ont été supprimés.")
-      expect(page).to     have_selector("[role=log]", text: "La suppression des utilisateurs sélectionnés a été annulée.")
+      expect(page).to have_no_selector(".datatable__selection")
+      expect(page).to have_no_selector("[role=log]", text: "Les utilisateurs sélectionnés ont été supprimés.")
+      expect(page).to have_selector("[role=log]", text: "La suppression des utilisateurs sélectionnés a été annulée.")
     end
 
     it "selects and discards all users including himself through several pages on index page and been disconnected" do
@@ -567,8 +567,8 @@ RSpec.describe "Manage users from organization" do
       # The browser should sign out and redirect to login form
       # The dialog should have disappeared
       #
-      expect(page).to     have_current_path(new_user_session_path)
-      expect(page).not_to have_selector("[role=dialog]")
+      expect(page).to have_current_path(new_user_session_path)
+      expect(page).to have_no_selector("[role=dialog]")
     end
   end
 
@@ -609,9 +609,9 @@ RSpec.describe "Manage users from organization" do
       # Scope to main content to exclude link from the navbar
       #
       within "main.content" do
-        expect(page).to     have_selector("h1", text: "Christelle Droitier")
-        expect(page).to     have_link("christelle.droitier@paysbasque.fr")
-        expect(page).not_to have_link("CA du Pays Basque")
+        expect(page).to have_selector("h1", text: "Christelle Droitier")
+        expect(page).to have_link("christelle.droitier@paysbasque.fr")
+        expect(page).to have_no_link("CA du Pays Basque")
       end
     end
   end
@@ -665,12 +665,12 @@ RSpec.describe "Manage users from organization" do
       # A dialog box should appear with a form to fill
       #
       within "[role=dialog]", text: "Invitation d'un nouvel utilisateur" do |dialog|
-        expect(dialog).not_to have_field("Organisation")
-        expect(dialog).to     have_field("Prénom")
-        expect(dialog).to     have_field("Nom")
-        expect(dialog).to     have_field("Adresse mail")
-        expect(dialog).to     have_unchecked_field("Administrateur de l'organisation")
-        expect(dialog).not_to have_unchecked_field("Administrateur de la plateforme Passerelle")
+        expect(dialog).to have_no_field("Organisation")
+        expect(dialog).to have_field("Prénom")
+        expect(dialog).to have_field("Nom")
+        expect(dialog).to have_field("Adresse mail")
+        expect(dialog).to have_unchecked_field("Administrateur de l'organisation")
+        expect(dialog).to have_no_unchecked_field("Administrateur de la plateforme Passerelle")
 
         within ".form-block", text: "Guichets" do |block|
           expect(block).to have_unchecked_field("PELP de Bayonne")
@@ -698,8 +698,8 @@ RSpec.describe "Manage users from organization" do
       # The dialog should be closed
       # A notification should be displayed
       #
-      expect(page).not_to have_selector("[role=dialog]")
-      expect(page).to     have_selector("[role=log]", text: "Un nouvel utilisateur a été ajouté avec succés.")
+      expect(page).to have_no_selector("[role=dialog]")
+      expect(page).to have_selector("[role=log]", text: "Un nouvel utilisateur a été ajouté avec succés.")
 
       # The new user should belong to checked offices
       #
@@ -712,9 +712,9 @@ RSpec.describe "Manage users from organization" do
     it "updates an user offices" do
       visit organization_user_path(maxime)
 
-      expect(page).to     have_link("PELP de Bayonne")
-      expect(page).not_to have_link("PELH de Bayonne")
-      expect(page).not_to have_link("SIP de Bayonne")
+      expect(page).to have_link("PELP de Bayonne")
+      expect(page).to have_no_link("PELH de Bayonne")
+      expect(page).to have_no_link("SIP de Bayonne")
 
       # A button should be present to edit the user
       #
@@ -742,11 +742,11 @@ RSpec.describe "Manage users from organization" do
       # The browser should stay on the user page
       # The user offices should have been updated
       #
-      expect(page).to     have_current_path(organization_user_path(maxime))
-      expect(page).to     have_selector("h1", text: "Maxime Gauthier")
-      expect(page).not_to have_link("PELP de Bayonne")
-      expect(page).to     have_link("PELH de Bayonne")
-      expect(page).to     have_link("SIP de Bayonne")
+      expect(page).to have_current_path(organization_user_path(maxime))
+      expect(page).to have_selector("h1", text: "Maxime Gauthier")
+      expect(page).to have_no_link("PELP de Bayonne")
+      expect(page).to have_link("PELH de Bayonne")
+      expect(page).to have_link("SIP de Bayonne")
     end
   end
 end

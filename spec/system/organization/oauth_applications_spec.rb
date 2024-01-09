@@ -65,7 +65,7 @@ RSpec.describe "OauthApplications managed by current organization" do
     # A dialog box should appear with a form to fill
     #
     within "[role=dialog]", text: "Création d'une nouvelle application" do |dialog|
-      expect(dialog).to     have_field("Nom de l'application", with: nil)
+      expect(dialog).to have_field("Nom de l'application", with: nil)
 
       fill_in "Nom", with: "Nouvelle App"
 
@@ -82,8 +82,8 @@ RSpec.describe "OauthApplications managed by current organization" do
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Une nouvelle application a été ajoutée avec succés.")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Une nouvelle application a été ajoutée avec succés.")
   end
 
   it "updates an oauth_application from the index page" do
@@ -115,8 +115,8 @@ RSpec.describe "OauthApplications managed by current organization" do
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
   end
 
   it "updates an oauth_application from the oauth_application page" do
@@ -132,7 +132,7 @@ RSpec.describe "OauthApplications managed by current organization" do
     # The form should be filled with oauth_application data
     #
     within "[role=dialog]", text: "Modification de l'application" do |dialog|
-      expect(dialog).to     have_field("Nom", with: "Test Oauth Application")
+      expect(dialog).to have_field("Nom", with: "Test Oauth Application")
 
       fill_in "Nom", with: "Test Oauth Application 2"
       click_on "Enregistrer"
@@ -147,8 +147,8 @@ RSpec.describe "OauthApplications managed by current organization" do
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
   end
 
   it "discards an oauth_application from the index page & rollbacks" do
@@ -171,16 +171,16 @@ RSpec.describe "OauthApplications managed by current organization" do
     # The browser should stay on the index page
     # The oauth_application should not appears anymore
     #
-    expect(page).to     have_current_path(organization_oauth_applications_path)
-    expect(page).to     have_selector("h1", text: "API")
-    expect(page).to     have_text("1 application | Page 1 sur 1")
-    expect(page).not_to have_selector(:table_row, "Nom" => "Test Oauth Application")
+    expect(page).to have_current_path(organization_oauth_applications_path)
+    expect(page).to have_selector("h1", text: "API")
+    expect(page).to have_text("1 application | Page 1 sur 1")
+    expect(page).to have_no_selector(:table_row, "Nom" => "Test Oauth Application")
 
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "L'application a été supprimée.")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "L'application a été supprimée.")
 
     # The notification should include a button to cancel the last action
     #
@@ -199,8 +199,8 @@ RSpec.describe "OauthApplications managed by current organization" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector("[role=log]", text: "L'application a été supprimé.")
-    expect(page).to     have_selector("[role=log]", text: "La suppression de l'application a été annulée.")
+    expect(page).to have_no_selector("[role=log]", text: "L'application a été supprimé.")
+    expect(page).to have_selector("[role=log]", text: "La suppression de l'application a été annulée.")
   end
 
   it "discards an oauth_application from the oauth_application page & rollbacks" do
@@ -221,16 +221,16 @@ RSpec.describe "OauthApplications managed by current organization" do
     # The browser should redirect to the index page
     # The oauth_application should not appears anymore
     #
-    expect(page).to     have_current_path(organization_oauth_applications_path)
-    expect(page).to     have_selector("h1", text: "API")
-    expect(page).to     have_text("1 application | Page 1 sur 1")
-    expect(page).not_to have_selector(:table_row, "Nom" => "Test Oauth Application")
+    expect(page).to have_current_path(organization_oauth_applications_path)
+    expect(page).to have_selector("h1", text: "API")
+    expect(page).to have_text("1 application | Page 1 sur 1")
+    expect(page).to have_no_selector(:table_row, "Nom" => "Test Oauth Application")
 
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "L'application a été supprimée.")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "L'application a été supprimée.")
 
     # The notification should include a button to cancel the last action
     #
@@ -249,8 +249,8 @@ RSpec.describe "OauthApplications managed by current organization" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector("[role=log]", text: "L'application a été supprimée.")
-    expect(page).to     have_selector("[role=log]", text: "La suppression de l'application a été annulée.")
+    expect(page).to have_no_selector("[role=log]", text: "L'application a été supprimée.")
+    expect(page).to have_selector("[role=log]", text: "La suppression de l'application a été annulée.")
   end
 
   it "selects and discards one oauth_application from the index page & rollbacks" do
@@ -281,19 +281,19 @@ RSpec.describe "OauthApplications managed by current organization" do
     # The selected oauth_applications should not appears anymore
     # Other oauth_applications should remain
     #
-    expect(page).to     have_current_path(organization_oauth_applications_path)
-    expect(page).to     have_selector("h1", text: "API")
-    expect(page).to     have_text("1 application | Page 1 sur 1")
-    expect(page).not_to have_selector(:table_row, "Nom" => "Test Oauth Application")
-    expect(page).to     have_selector(:table_row, "Nom" => "Oauth Application with URI")
+    expect(page).to have_current_path(organization_oauth_applications_path)
+    expect(page).to have_selector("h1", text: "API")
+    expect(page).to have_text("1 application | Page 1 sur 1")
+    expect(page).to have_no_selector(:table_row, "Nom" => "Test Oauth Application")
+    expect(page).to have_selector(:table_row, "Nom" => "Oauth Application with URI")
 
     # The selection message should not appears anymore
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector(".datatable__selection")
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Les applications sélectionnées ont été supprimées.")
+    expect(page).to have_no_selector(".datatable__selection")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Les applications sélectionnées ont été supprimées.")
 
     # The notification should include a button to cancel the last action
     #
@@ -313,9 +313,9 @@ RSpec.describe "OauthApplications managed by current organization" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector(".datatable__selection")
-    expect(page).not_to have_selector("[role=log]", text: "Les applications sélectionnées ont été supprimées.")
-    expect(page).to     have_selector("[role=log]", text: "La suppression des applications sélectionnées a été annulée.")
+    expect(page).to have_no_selector(".datatable__selection")
+    expect(page).to have_no_selector("[role=log]", text: "Les applications sélectionnées ont été supprimées.")
+    expect(page).to have_selector("[role=log]", text: "La suppression des applications sélectionnées a été annulée.")
   end
 
   it "selects and discards all oauth_applications from the current page on index page & rollbacks" do
@@ -360,18 +360,18 @@ RSpec.describe "OauthApplications managed by current organization" do
     # The browser should stay on index page
     # The selected oauth_applications should have been removed
     #
-    expect(page).to     have_current_path(organization_oauth_applications_path)
-    expect(page).to     have_selector("h1", text: "API")
-    expect(page).to     have_text("2 applications | Page 1 sur 1")
-    expect(page).not_to have_selector(:table_row, "Nom" => "Test Oauth Application")
-    expect(page).not_to have_selector(:table_row, "Nom" => "Oauth Application with URI")
+    expect(page).to have_current_path(organization_oauth_applications_path)
+    expect(page).to have_selector("h1", text: "API")
+    expect(page).to have_text("2 applications | Page 1 sur 1")
+    expect(page).to have_no_selector(:table_row, "Nom" => "Test Oauth Application")
+    expect(page).to have_no_selector(:table_row, "Nom" => "Oauth Application with URI")
 
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector(".datatable__selection")
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Les applications sélectionnées ont été supprimées.")
+    expect(page).to have_no_selector(".datatable__selection")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Les applications sélectionnées ont été supprimées.")
 
     # The notification should include a button to cancel the last action
     #
@@ -392,9 +392,9 @@ RSpec.describe "OauthApplications managed by current organization" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector(".datatable__selection")
-    expect(page).not_to have_selector("[role=log]", text: "Les applications sélectionnées ont été supprimées.")
-    expect(page).to     have_selector("[role=log]", text: "La suppression des applications sélectionnées a été annulée.")
+    expect(page).to have_no_selector(".datatable__selection")
+    expect(page).to have_no_selector("[role=log]", text: "Les applications sélectionnées ont été supprimées.")
+    expect(page).to have_selector("[role=log]", text: "La suppression des applications sélectionnées a été annulée.")
   end
 
   it "selects and discards all oauth_applications through several pages on index page & rollbacks" do
@@ -450,9 +450,9 @@ RSpec.describe "OauthApplications managed by current organization" do
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector(".datatable__selection")
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Les applications sélectionnées ont été supprimées.")
+    expect(page).to have_no_selector(".datatable__selection")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Les applications sélectionnées ont été supprimées.")
 
     # The notification should include a button to cancel the last action
     #
@@ -473,8 +473,8 @@ RSpec.describe "OauthApplications managed by current organization" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector(".datatable__selection")
-    expect(page).not_to have_selector("[role=log]", text: "Les applications sélectionnées ont été supprimées.")
-    expect(page).to     have_selector("[role=log]", text: "La suppression des applications sélectionnées a été annulée.")
+    expect(page).to have_no_selector(".datatable__selection")
+    expect(page).to have_no_selector("[role=log]", text: "Les applications sélectionnées ont été supprimées.")
+    expect(page).to have_selector("[role=log]", text: "La suppression des applications sélectionnées a été annulée.")
   end
 end

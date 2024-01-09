@@ -45,7 +45,7 @@ RSpec.describe "Collectivities assigned to a DDFIP in admin" do
 
     visit admin_ddfip_path(ddfip64)
 
-    expect(page).to     have_text("12 collectivités | Page 1 sur 2")
-    expect(page).not_to have_button("Options d'affichage")
+    expect(page).to have_text("12 collectivités | Page 1 sur 2")
+    expect(page).to have_no_button("Options d'affichage")
   end
 end

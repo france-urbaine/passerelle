@@ -17,6 +17,6 @@ RSpec.describe Views::Users::ShowSessionData, type: :component do
 
     expect(page).to have_text("Création du compte")
     expect(page).to have_text("Expiration de l'invitation")
-    expect(page).not_to have_text("Confirmation du compte")
+    expect(page).to have_no_text("Confirmation du compte")
   end
 end

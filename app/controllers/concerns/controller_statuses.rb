@@ -14,11 +14,11 @@ module ControllerStatuses
     not_implemented
     internal_server_error
   ].each do |status|
-    define_method(status) do |_exception = nil, **options|
+    define_method status do |_exception = nil, **options|
       render_status(status, **options)
     end
 
-    define_method("#{status}!") do |error_message = nil|
+    define_method :"#{status}!" do |error_message = nil|
       render_status(status, error: error_message)
       raise InterruptAction
     end

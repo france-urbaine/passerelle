@@ -43,8 +43,8 @@ RSpec.describe "Publisher collectivities in admin" do
 
     visit admin_publisher_path(solutions_territoire)
 
-    expect(page).to     have_text("16 collectivités | Page 1 sur 2")
-    expect(page).not_to have_button("Options d'affichage")
+    expect(page).to have_text("16 collectivités | Page 1 sur 2")
+    expect(page).to have_no_button("Options d'affichage")
   end
 
   it "creates a collectivity from the publisher page" do
@@ -57,7 +57,7 @@ RSpec.describe "Publisher collectivities in admin" do
     # A dialog box should appear with a form to fill
     #
     within "[role=dialog]", text: "Création d'une nouvelle collectivité" do |dialog|
-      expect(dialog).not_to have_select("Éditeur")
+      expect(dialog).to have_no_select("Éditeur")
 
       expect(dialog).to have_field("Territoire")
       expect(dialog).to have_field("Nom de la collectivité")
@@ -86,8 +86,8 @@ RSpec.describe "Publisher collectivities in admin" do
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Une nouvelle collectivité a été ajoutée avec succés.")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Une nouvelle collectivité a été ajoutée avec succés.")
   end
 
   it "updates a collectivity from the publisher page" do
@@ -123,8 +123,8 @@ RSpec.describe "Publisher collectivities in admin" do
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
   end
 
   it "discards a collectivity from the publisher page & rollbacks" do
@@ -148,16 +148,16 @@ RSpec.describe "Publisher collectivities in admin" do
     # The browser should stay on the publisher page
     # The collectivity should not appears anymore
     #
-    expect(page).to     have_current_path(admin_publisher_path(solutions_territoire))
-    expect(page).to     have_selector("h1", text: "Solutions & Territoire")
-    expect(page).to     have_text("5 collectivités | Page 1 sur 1")
-    expect(page).not_to have_selector(:table_row, "Collectivité" => "CA du Pays Basque")
+    expect(page).to have_current_path(admin_publisher_path(solutions_territoire))
+    expect(page).to have_selector("h1", text: "Solutions & Territoire")
+    expect(page).to have_text("5 collectivités | Page 1 sur 1")
+    expect(page).to have_no_selector(:table_row, "Collectivité" => "CA du Pays Basque")
 
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "La collectivité a été supprimée.")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "La collectivité a été supprimée.")
 
     # The notification should include a button to cancel the last action
     #
@@ -176,8 +176,8 @@ RSpec.describe "Publisher collectivities in admin" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector("[role=log]", text: "La collectivité a été supprimée.")
-    expect(page).to     have_selector("[role=log]", text: "La suppression de la collectivité a été annulée.")
+    expect(page).to have_no_selector("[role=log]", text: "La collectivité a été supprimée.")
+    expect(page).to have_selector("[role=log]", text: "La suppression de la collectivité a été annulée.")
   end
 
   it "selects and discards one collectivity from the publisher page & rollbacks" do
@@ -207,18 +207,18 @@ RSpec.describe "Publisher collectivities in admin" do
     # The browser should stay on the publisher page
     # The selected collectivities should not appears anymore
     #
-    expect(page).to     have_current_path(admin_publisher_path(solutions_territoire))
-    expect(page).to     have_selector("h1", text: "Solutions & Territoire")
-    expect(page).to     have_text("5 collectivités | Page 1 sur 1")
-    expect(page).not_to have_selector(:table_row, "Collectivité" => "CA du Pays Basque")
+    expect(page).to have_current_path(admin_publisher_path(solutions_territoire))
+    expect(page).to have_selector("h1", text: "Solutions & Territoire")
+    expect(page).to have_text("5 collectivités | Page 1 sur 1")
+    expect(page).to have_no_selector(:table_row, "Collectivité" => "CA du Pays Basque")
 
     # The selection message should not appears anymore
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector(".datatable__selection")
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Les collectivités sélectionnées ont été supprimées.")
+    expect(page).to have_no_selector(".datatable__selection")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Les collectivités sélectionnées ont été supprimées.")
 
     # The notification should include a button to cancel the last action
     #
@@ -238,9 +238,9 @@ RSpec.describe "Publisher collectivities in admin" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector(".datatable__selection")
-    expect(page).not_to have_selector("[role=log]", text: "Les collectivités sélectionnées ont été supprimées.")
-    expect(page).to     have_selector("[role=log]", text: "La suppression des collectivités sélectionnées a été annulée.")
+    expect(page).to have_no_selector(".datatable__selection")
+    expect(page).to have_no_selector("[role=log]", text: "Les collectivités sélectionnées ont été supprimées.")
+    expect(page).to have_selector("[role=log]", text: "La suppression des collectivités sélectionnées a été annulée.")
   end
 
   it "selects and discards all collectivities from the current page on the publisher page & rollbacks" do
@@ -276,19 +276,19 @@ RSpec.describe "Publisher collectivities in admin" do
     # The browser should stay on the publisher page
     # The selected collectivities should have been removed
     #
-    expect(page).to     have_current_path(admin_publisher_path(solutions_territoire))
-    expect(page).to     have_selector("h1", text: "Solutions & Territoire")
-    expect(page).to     have_text("6 collectivités | Page 1 sur 1")
-    expect(page).not_to have_text("16 collectivités")
-    expect(page).not_to have_selector(:table_row, "Collectivité" => "CA du Pays Basque")
-    expect(page).not_to have_selector(:table_row, "Collectivité" => "Métropole Européenne de Lille")
+    expect(page).to have_current_path(admin_publisher_path(solutions_territoire))
+    expect(page).to have_selector("h1", text: "Solutions & Territoire")
+    expect(page).to have_text("6 collectivités | Page 1 sur 1")
+    expect(page).to have_no_text("16 collectivités")
+    expect(page).to have_no_selector(:table_row, "Collectivité" => "CA du Pays Basque")
+    expect(page).to have_no_selector(:table_row, "Collectivité" => "Métropole Européenne de Lille")
 
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector(".datatable__selection")
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Les collectivités sélectionnées ont été supprimées.")
+    expect(page).to have_no_selector(".datatable__selection")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Les collectivités sélectionnées ont été supprimées.")
 
     # The notification should include a button to cancel the last action
     #
@@ -311,9 +311,9 @@ RSpec.describe "Publisher collectivities in admin" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector(".datatable__selection")
-    expect(page).not_to have_selector("[role=log]", text: "Les collectivités sélectionnées ont été supprimées.")
-    expect(page).to     have_selector("[role=log]", text: "La suppression des collectivités sélectionnées a été annulée.")
+    expect(page).to have_no_selector(".datatable__selection")
+    expect(page).to have_no_selector("[role=log]", text: "Les collectivités sélectionnées ont été supprimées.")
+    expect(page).to have_selector("[role=log]", text: "La suppression des collectivités sélectionnées a été annulée.")
   end
 
   it "selects and discards all collectivities through several pages on the publisher page & rollbacks" do
@@ -363,9 +363,9 @@ RSpec.describe "Publisher collectivities in admin" do
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector(".datatable__selection")
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Les collectivités sélectionnées ont été supprimées.")
+    expect(page).to have_no_selector(".datatable__selection")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Les collectivités sélectionnées ont été supprimées.")
 
     # The notification should include a button to cancel the last action
     #
@@ -388,8 +388,8 @@ RSpec.describe "Publisher collectivities in admin" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector(".datatable__selection")
-    expect(page).not_to have_selector("[role=log]", text: "Les collectivités sélectionnées ont été supprimées.")
-    expect(page).to     have_selector("[role=log]", text: "La suppression des collectivités sélectionnées a été annulée.")
+    expect(page).to have_no_selector(".datatable__selection")
+    expect(page).to have_no_selector("[role=log]", text: "Les collectivités sélectionnées ont été supprimées.")
+    expect(page).to have_selector("[role=log]", text: "La suppression des collectivités sélectionnées a été annulée.")
   end
 end

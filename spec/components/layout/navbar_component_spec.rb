@@ -118,8 +118,8 @@ RSpec.describe Layout::NavbarComponent, type: :component do
     end
 
     expect(page).to have_selector(".navbar") do |navbar|
-      expect(navbar).to     have_selector("span.brand__right", text: "API")
-      expect(navbar).not_to have_selector("span.brand__left")
+      expect(navbar).to have_selector("span.brand__right", text: "API")
+      expect(navbar).to have_no_selector("span.brand__left")
     end
   end
 
@@ -178,8 +178,8 @@ RSpec.describe Layout::NavbarComponent, type: :component do
     end
 
     expect(page).to have_selector(".navbar") do |navbar|
-      expect(navbar).to     have_text("Part 1")
-      expect(navbar).not_to have_text("Part 2")
+      expect(navbar).to have_text("Part 1")
+      expect(navbar).to have_no_text("Part 2")
     end
   end
 
@@ -204,10 +204,10 @@ RSpec.describe Layout::NavbarComponent, type: :component do
     end
 
     expect(page).to have_selector(".navbar") do |navbar|
-      expect(navbar).to     have_text("Part 1")
-      expect(navbar).to     have_text("Part 1.1")
-      expect(navbar).not_to have_text("Part 1.2")
-      expect(navbar).not_to have_text("Part 2")
+      expect(navbar).to have_text("Part 1")
+      expect(navbar).to have_text("Part 1.1")
+      expect(navbar).to have_no_text("Part 1.2")
+      expect(navbar).to have_no_text("Part 2")
     end
   end
 end

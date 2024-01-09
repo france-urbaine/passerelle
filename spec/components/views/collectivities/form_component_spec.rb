@@ -36,7 +36,7 @@ RSpec.describe Views::Collectivities::FormComponent, type: :component do
     expect(page).to have_selector(".modal form") do |form|
       expect(form).to have_html_attribute("action").with_value("/admin/editeurs/#{publisher.id}/collectivites")
 
-      expect(form).not_to have_select("Éditeur")
+      expect(form).to have_no_select("Éditeur")
       expect(form).to have_field("Territoire de la collectivité")
       expect(form).to have_field("Nom de la collectivité")
       expect(form).to have_field("Numéro SIREN de la collectivité")
@@ -49,7 +49,7 @@ RSpec.describe Views::Collectivities::FormComponent, type: :component do
     expect(page).to have_selector(".modal form") do |form|
       expect(form).to have_html_attribute("action").with_value("/organisation/collectivites")
 
-      expect(form).not_to have_select("Éditeur")
+      expect(form).to have_no_select("Éditeur")
       expect(form).to have_field("Territoire de la collectivité")
       expect(form).to have_field("Nom de la collectivité")
       expect(form).to have_field("Numéro SIREN de la collectivité")
@@ -86,7 +86,7 @@ RSpec.describe Views::Collectivities::FormComponent, type: :component do
     expect(page).to have_selector(".modal form") do |form|
       expect(form).to have_html_attribute("action").with_value("/organisation/collectivites/#{collectivity.id}")
 
-      expect(form).not_to have_select("Éditeur")
+      expect(form).to have_no_select("Éditeur")
       expect(form).to have_field("Territoire de la collectivité",   with: collectivity.territory.name)
       expect(form).to have_field("Nom de la collectivité",          with: collectivity.name)
       expect(form).to have_field("Numéro SIREN de la collectivité", with: collectivity.siren)

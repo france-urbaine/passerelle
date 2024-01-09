@@ -107,11 +107,11 @@ RSpec.describe "Admin::Offices::CollectivitiesController#index" do
 
       it "returns only kept collectivities on the territory assigned to the office" do
         aggregate_failures do
-          expect(response).to have_html_body.not_to have_text(collectivities[0].name)
-          expect(response).to have_html_body.to     have_text(collectivities[1].name)
-          expect(response).to have_html_body.not_to have_text(collectivities[2].name)
-          expect(response).to have_html_body.to     have_text(collectivities[3].name)
-          expect(response).to have_html_body.not_to have_text(collectivities[4].name)
+          expect(response).to have_html_body.to have_no_text(collectivities[0].name)
+          expect(response).to have_html_body.to have_text(collectivities[1].name)
+          expect(response).to have_html_body.to have_no_text(collectivities[2].name)
+          expect(response).to have_html_body.to have_text(collectivities[3].name)
+          expect(response).to have_html_body.to have_no_text(collectivities[4].name)
         end
       end
 

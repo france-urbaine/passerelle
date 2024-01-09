@@ -12,16 +12,16 @@ RSpec.describe Layout::Pagination::ButtonsComponent, type: :component do
       expect(button).to have_html_attribute("href").with_value("/test/components?page=2")
       expect(button).to have_html_attribute("rel").with_value("prev")
 
-      expect(button).not_to have_html_attribute("aria-hidden")
-      expect(button).not_to have_html_attribute("disabled")
+      expect(button).to have_no_html_attribute("aria-hidden")
+      expect(button).to have_no_html_attribute("disabled")
     end
 
     expect(page).to have_selector(".icon-button", text: "Page suivante") do |button|
       expect(button).to have_html_attribute("href").with_value("/test/components?page=4")
       expect(button).to have_html_attribute("rel").with_value("next")
 
-      expect(button).not_to have_html_attribute("aria-hidden")
-      expect(button).not_to have_html_attribute("disabled")
+      expect(button).to have_no_html_attribute("aria-hidden")
+      expect(button).to have_no_html_attribute("disabled")
     end
   end
 
@@ -31,8 +31,8 @@ RSpec.describe Layout::Pagination::ButtonsComponent, type: :component do
     )
 
     expect(page).to have_selector(".icon-button", text: "Page précédente") do |button|
-      expect(button).not_to have_html_attribute("href")
-      expect(button).not_to have_html_attribute("rel")
+      expect(button).to have_no_html_attribute("href")
+      expect(button).to have_no_html_attribute("rel")
 
       expect(button).to have_html_attribute("aria-hidden").boolean
       expect(button).to have_html_attribute("disabled").boolean
@@ -42,8 +42,8 @@ RSpec.describe Layout::Pagination::ButtonsComponent, type: :component do
       expect(button).to have_html_attribute("href").with_value("/test/components?page=2")
       expect(button).to have_html_attribute("rel").with_value("next")
 
-      expect(button).not_to have_html_attribute("aria-hidden")
-      expect(button).not_to have_html_attribute("disabled")
+      expect(button).to have_no_html_attribute("aria-hidden")
+      expect(button).to have_no_html_attribute("disabled")
     end
   end
 
@@ -56,13 +56,13 @@ RSpec.describe Layout::Pagination::ButtonsComponent, type: :component do
       expect(button).to have_html_attribute("href").with_value("/test/components?page=6")
       expect(button).to have_html_attribute("rel").with_value("prev")
 
-      expect(button).not_to have_html_attribute("aria-hidden")
-      expect(button).not_to have_html_attribute("disabled")
+      expect(button).to have_no_html_attribute("aria-hidden")
+      expect(button).to have_no_html_attribute("disabled")
     end
 
     expect(page).to have_selector(".icon-button", text: "Page suivante") do |button|
-      expect(button).not_to have_html_attribute("href")
-      expect(button).not_to have_html_attribute("rel")
+      expect(button).to have_no_html_attribute("href")
+      expect(button).to have_no_html_attribute("rel")
 
       expect(button).to have_html_attribute("aria-hidden").boolean
       expect(button).to have_html_attribute("disabled").boolean
@@ -75,16 +75,16 @@ RSpec.describe Layout::Pagination::ButtonsComponent, type: :component do
     )
 
     expect(page).to have_selector(".icon-button", text: "Page précédente") do |button|
-      expect(button).not_to have_html_attribute("href")
-      expect(button).not_to have_html_attribute("rel")
+      expect(button).to have_no_html_attribute("href")
+      expect(button).to have_no_html_attribute("rel")
 
       expect(button).to have_html_attribute("aria-hidden").boolean
       expect(button).to have_html_attribute("disabled").boolean
     end
 
     expect(page).to have_selector(".icon-button", text: "Page suivante") do |button|
-      expect(button).not_to have_html_attribute("href")
-      expect(button).not_to have_html_attribute("rel")
+      expect(button).to have_no_html_attribute("href")
+      expect(button).to have_no_html_attribute("rel")
 
       expect(button).to have_html_attribute("aria-hidden").boolean
       expect(button).to have_html_attribute("disabled").boolean

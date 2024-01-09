@@ -43,8 +43,8 @@ RSpec.describe "DGFIP users in admin" do
 
     visit admin_dgfip_path(dgfip)
 
-    expect(page).to     have_text("12 utilisateurs | Page 1 sur 2")
-    expect(page).not_to have_button("Options d'affichage")
+    expect(page).to have_text("12 utilisateurs | Page 1 sur 2")
+    expect(page).to have_no_button("Options d'affichage")
   end
 
   it "invites an user from the DGFIP page" do
@@ -57,7 +57,7 @@ RSpec.describe "DGFIP users in admin" do
     # A dialog box should appear with a form to fill
     #
     within "[role=dialog]", text: "Invitation d'un nouvel utilisateur" do |dialog|
-      expect(dialog).not_to have_field("Organisation")
+      expect(dialog).to have_no_field("Organisation")
 
       expect(dialog).to have_field("Prénom")
       expect(dialog).to have_field("Nom")
@@ -82,8 +82,8 @@ RSpec.describe "DGFIP users in admin" do
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Un nouvel utilisateur a été ajouté avec succés.")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Un nouvel utilisateur a été ajouté avec succés.")
   end
 
   it "updates an user from the DGFIP page" do
@@ -122,8 +122,8 @@ RSpec.describe "DGFIP users in admin" do
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
   end
 
   it "discards an user from the DGFIP page & rollbacks" do
@@ -147,16 +147,16 @@ RSpec.describe "DGFIP users in admin" do
     # The browser should stay on the DGFIP page
     # The user should not appears anymore
     #
-    expect(page).to     have_current_path(admin_dgfip_path(dgfip))
-    expect(page).to     have_selector("h1", text: "Direction générale des Finances publiques")
-    expect(page).to     have_text("1 utilisateur | Page 1 sur 1")
-    expect(page).not_to have_selector(:table_row, "Utilisateur" => "Bruno Le Maire")
+    expect(page).to have_current_path(admin_dgfip_path(dgfip))
+    expect(page).to have_selector("h1", text: "Direction générale des Finances publiques")
+    expect(page).to have_text("1 utilisateur | Page 1 sur 1")
+    expect(page).to have_no_selector(:table_row, "Utilisateur" => "Bruno Le Maire")
 
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "L'utilisateur a été supprimé.")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "L'utilisateur a été supprimé.")
 
     # The notification should include a button to cancel the last action
     #
@@ -176,8 +176,8 @@ RSpec.describe "DGFIP users in admin" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector("[role=log]", text: "L'utilisateur a été supprimé.")
-    expect(page).to     have_selector("[role=log]", text: "La suppression de l'utilisateur a été annulée.")
+    expect(page).to have_no_selector("[role=log]", text: "L'utilisateur a été supprimé.")
+    expect(page).to have_selector("[role=log]", text: "La suppression de l'utilisateur a été annulée.")
   end
 
   it "selects and discards one user from the DGFIP page & rollbacks" do
@@ -208,19 +208,19 @@ RSpec.describe "DGFIP users in admin" do
     # The selected users should not appears anymore
     # Other users should remain
     #
-    expect(page).to     have_current_path(admin_dgfip_path(dgfip))
-    expect(page).to     have_selector("h1", text: "Direction générale des Finances publiques")
-    expect(page).to     have_text("1 utilisateur | Page 1 sur 1")
-    expect(page).not_to have_selector(:table_row, "Utilisateur" => "Bruno Le Maire")
-    expect(page).to     have_selector(:table_row, "Utilisateur" => "Nicolas Fouquet")
+    expect(page).to have_current_path(admin_dgfip_path(dgfip))
+    expect(page).to have_selector("h1", text: "Direction générale des Finances publiques")
+    expect(page).to have_text("1 utilisateur | Page 1 sur 1")
+    expect(page).to have_no_selector(:table_row, "Utilisateur" => "Bruno Le Maire")
+    expect(page).to have_selector(:table_row, "Utilisateur" => "Nicolas Fouquet")
 
     # The selection message should not appears anymore
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector(".datatable__selection")
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Les utilisateurs sélectionnés ont été supprimés.")
+    expect(page).to have_no_selector(".datatable__selection")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Les utilisateurs sélectionnés ont été supprimés.")
 
     # The notification should include a button to cancel the last action
     #
@@ -241,9 +241,9 @@ RSpec.describe "DGFIP users in admin" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector(".datatable__selection")
-    expect(page).not_to have_selector("[role=log]", text: "Les utilisateurs sélectionnés ont été supprimés.")
-    expect(page).to     have_selector("[role=log]", text: "La suppression des utilisateurs sélectionnés a été annulée.")
+    expect(page).to have_no_selector(".datatable__selection")
+    expect(page).to have_no_selector("[role=log]", text: "Les utilisateurs sélectionnés ont été supprimés.")
+    expect(page).to have_selector("[role=log]", text: "La suppression des utilisateurs sélectionnés a été annulée.")
   end
 
   it "selects and discards all users from the current page on the DGFIP page & rollbacks" do
@@ -279,18 +279,18 @@ RSpec.describe "DGFIP users in admin" do
     # The browser should stay on the DGFIP page
     # The selected users should have been removed
     #
-    expect(page).to     have_current_path(admin_dgfip_path(dgfip))
-    expect(page).to     have_selector("h1", text: "Direction générale des Finances publiques")
-    expect(page).to     have_text("2 utilisateurs | Page 1 sur 1")
-    expect(page).not_to have_selector(:table_row, "Utilisateur" => "Bruno Le Maire")
-    expect(page).not_to have_selector(:table_row, "Utilisateur" => "Nicolas Fouquet")
+    expect(page).to have_current_path(admin_dgfip_path(dgfip))
+    expect(page).to have_selector("h1", text: "Direction générale des Finances publiques")
+    expect(page).to have_text("2 utilisateurs | Page 1 sur 1")
+    expect(page).to have_no_selector(:table_row, "Utilisateur" => "Bruno Le Maire")
+    expect(page).to have_no_selector(:table_row, "Utilisateur" => "Nicolas Fouquet")
 
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector(".datatable__selection")
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Les utilisateurs sélectionnés ont été supprimés.")
+    expect(page).to have_no_selector(".datatable__selection")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Les utilisateurs sélectionnés ont été supprimés.")
 
     # The notification should include a button to cancel the last action
     #
@@ -313,9 +313,9 @@ RSpec.describe "DGFIP users in admin" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector(".datatable__selection")
-    expect(page).not_to have_selector("[role=log]", text: "Les utilisateurs sélectionnés ont été supprimés.")
-    expect(page).to     have_selector("[role=log]", text: "La suppression des utilisateurs sélectionnés a été annulée.")
+    expect(page).to have_no_selector(".datatable__selection")
+    expect(page).to have_no_selector("[role=log]", text: "Les utilisateurs sélectionnés ont été supprimés.")
+    expect(page).to have_selector("[role=log]", text: "La suppression des utilisateurs sélectionnés a été annulée.")
   end
 
   it "selects and discards all users through several pages on the DGFIP page & rollbacks" do
@@ -365,9 +365,9 @@ RSpec.describe "DGFIP users in admin" do
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector(".datatable__selection")
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Les utilisateurs sélectionnés ont été supprimés.")
+    expect(page).to have_no_selector(".datatable__selection")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Les utilisateurs sélectionnés ont été supprimés.")
 
     # The notification should include a button to cancel the last action
     #
@@ -390,8 +390,8 @@ RSpec.describe "DGFIP users in admin" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector(".datatable__selection")
-    expect(page).not_to have_selector("[role=log]", text: "Les utilisateurs sélectionnés ont été supprimés.")
-    expect(page).to     have_selector("[role=log]", text: "La suppression des utilisateurs sélectionnés a été annulée.")
+    expect(page).to have_no_selector(".datatable__selection")
+    expect(page).to have_no_selector("[role=log]", text: "Les utilisateurs sélectionnés ont été supprimés.")
+    expect(page).to have_selector("[role=log]", text: "La suppression des utilisateurs sélectionnés a été annulée.")
   end
 end

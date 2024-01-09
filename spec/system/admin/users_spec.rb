@@ -183,8 +183,8 @@ RSpec.describe "Users in admin" do
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Un nouvel utilisateur a été ajouté avec succés.")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Un nouvel utilisateur a été ajouté avec succés.")
   end
 
   it "invites an user from the index page to join some offices" do
@@ -235,8 +235,8 @@ RSpec.describe "Users in admin" do
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Un nouvel utilisateur a été ajouté avec succés.")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Un nouvel utilisateur a été ajouté avec succés.")
 
     # The new user should belong to checked offices
     #
@@ -280,8 +280,8 @@ RSpec.describe "Users in admin" do
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
   end
 
   it "updates an user from the user page" do
@@ -317,8 +317,8 @@ RSpec.describe "Users in admin" do
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
   end
 
   it "resets a user from the user page" do
@@ -343,16 +343,16 @@ RSpec.describe "Users in admin" do
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "L'invitation a été envoyée.")
-    expect(page).not_to have_selector("a.button", text: "Réinitialiser")
-    expect(page).to     have_selector("a.button", text: "Renouveler l'invitation")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "L'invitation a été envoyée.")
+    expect(page).to have_no_selector("a.button", text: "Réinitialiser")
+    expect(page).to have_selector("a.button", text: "Renouveler l'invitation")
   end
 
   it "does not display reset button on user self page" do
     visit admin_user_path(marc)
 
-    expect(page).not_to have_selector("a.button", text: "Réinitialiser")
+    expect(page).to have_no_selector("a.button", text: "Réinitialiser")
   end
 
   it "discards an user from the index page & rollbacks" do
@@ -375,16 +375,16 @@ RSpec.describe "Users in admin" do
     # The browser should stay on the index page
     # The user should not appears anymore
     #
-    expect(page).to     have_current_path(admin_users_path)
-    expect(page).to     have_selector("h1", text: "Utilisateurs")
-    expect(page).to     have_text("8 utilisateurs | Page 1 sur 1")
-    expect(page).not_to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
+    expect(page).to have_current_path(admin_users_path)
+    expect(page).to have_selector("h1", text: "Utilisateurs")
+    expect(page).to have_text("8 utilisateurs | Page 1 sur 1")
+    expect(page).to have_no_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "L'utilisateur a été supprimé.")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "L'utilisateur a été supprimé.")
 
     # The notification should include a button to cancel the last action
     #
@@ -403,8 +403,8 @@ RSpec.describe "Users in admin" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector("[role=log]", text: "L'utilisateur a été supprimé.")
-    expect(page).to     have_selector("[role=log]", text: "La suppression de l'utilisateur a été annulée.")
+    expect(page).to have_no_selector("[role=log]", text: "L'utilisateur a été supprimé.")
+    expect(page).to have_selector("[role=log]", text: "La suppression de l'utilisateur a été annulée.")
   end
 
   it "discards an user from the user page & rollbacks" do
@@ -425,16 +425,16 @@ RSpec.describe "Users in admin" do
     # The browser should redirect to the index page
     # The user should not appears anymore
     #
-    expect(page).to     have_current_path(admin_users_path)
-    expect(page).to     have_selector("h1", text: "Utilisateurs")
-    expect(page).to     have_text("8 utilisateurs | Page 1 sur 1")
-    expect(page).not_to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
+    expect(page).to have_current_path(admin_users_path)
+    expect(page).to have_selector("h1", text: "Utilisateurs")
+    expect(page).to have_text("8 utilisateurs | Page 1 sur 1")
+    expect(page).to have_no_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "L'utilisateur a été supprimé.")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "L'utilisateur a été supprimé.")
 
     # The notification should include a button to cancel the last action
     #
@@ -453,8 +453,8 @@ RSpec.describe "Users in admin" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector("[role=log]", text: "L'utilisateur a été supprimé.")
-    expect(page).to     have_selector("[role=log]", text: "La suppression de l'utilisateur a été annulée.")
+    expect(page).to have_no_selector("[role=log]", text: "L'utilisateur a été supprimé.")
+    expect(page).to have_selector("[role=log]", text: "La suppression de l'utilisateur a été annulée.")
   end
 
   it "discards himself and been disconnected" do
@@ -507,20 +507,20 @@ RSpec.describe "Users in admin" do
     # The selected users should not appears anymore
     # Other users should remain
     #
-    expect(page).to     have_current_path(admin_users_path)
-    expect(page).to     have_selector("h1", text: "Utilisateurs")
-    expect(page).to     have_text("8 utilisateurs | Page 1 sur 1")
-    expect(page).not_to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
-    expect(page).to     have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
-    expect(page).to     have_selector(:table_row, "Utilisateur" => "Christelle Droitier")
+    expect(page).to have_current_path(admin_users_path)
+    expect(page).to have_selector("h1", text: "Utilisateurs")
+    expect(page).to have_text("8 utilisateurs | Page 1 sur 1")
+    expect(page).to have_no_selector(:table_row, "Utilisateur" => "Elise Lacroix")
+    expect(page).to have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
+    expect(page).to have_selector(:table_row, "Utilisateur" => "Christelle Droitier")
 
     # The selection message should not appears anymore
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector(".datatable__selection")
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Les utilisateurs sélectionnés ont été supprimés.")
+    expect(page).to have_no_selector(".datatable__selection")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Les utilisateurs sélectionnés ont été supprimés.")
 
     # The notification should include a button to cancel the last action
     #
@@ -540,9 +540,9 @@ RSpec.describe "Users in admin" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector(".datatable__selection")
-    expect(page).not_to have_selector("[role=log]", text: "Les utilisateurs sélectionnés ont été supprimés.")
-    expect(page).to     have_selector("[role=log]", text: "La suppression des utilisateurs sélectionnés a été annulée.")
+    expect(page).to have_no_selector(".datatable__selection")
+    expect(page).to have_no_selector("[role=log]", text: "Les utilisateurs sélectionnés ont été supprimés.")
+    expect(page).to have_selector("[role=log]", text: "La suppression des utilisateurs sélectionnés a été annulée.")
   end
 
   it "selects and discards all users from the current page on index page & rollbacks" do
@@ -588,19 +588,19 @@ RSpec.describe "Users in admin" do
     # The selected users should have been removed
     # The current user should not have been removed
     #
-    expect(page).to     have_current_path(admin_users_path)
-    expect(page).to     have_selector("h1", text: "Utilisateurs")
-    expect(page).to     have_text("10 utilisateurs | Page 1 sur 1")
-    expect(page).to     have_selector(:table_row, "Utilisateur" => "Marc Debomy")
-    expect(page).not_to have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
-    expect(page).not_to have_selector(:table_row, "Utilisateur" => "Christelle Droitier")
+    expect(page).to have_current_path(admin_users_path)
+    expect(page).to have_selector("h1", text: "Utilisateurs")
+    expect(page).to have_text("10 utilisateurs | Page 1 sur 1")
+    expect(page).to have_selector(:table_row, "Utilisateur" => "Marc Debomy")
+    expect(page).to have_no_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
+    expect(page).to have_no_selector(:table_row, "Utilisateur" => "Christelle Droitier")
 
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector(".datatable__selection")
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Les utilisateurs sélectionnés ont été supprimés.")
+    expect(page).to have_no_selector(".datatable__selection")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Les utilisateurs sélectionnés ont été supprimés.")
 
     # The notification should include a button to cancel the last action
     #
@@ -622,9 +622,9 @@ RSpec.describe "Users in admin" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector(".datatable__selection")
-    expect(page).not_to have_selector("[role=log]", text: "Les utilisateurs sélectionnés ont été supprimés.")
-    expect(page).to     have_selector("[role=log]", text: "La suppression des utilisateurs sélectionnés a été annulée.")
+    expect(page).to have_no_selector(".datatable__selection")
+    expect(page).to have_no_selector("[role=log]", text: "Les utilisateurs sélectionnés ont été supprimés.")
+    expect(page).to have_selector("[role=log]", text: "La suppression des utilisateurs sélectionnés a été annulée.")
   end
 
   it "selects and discards all users through several pages on index page & rollbacks" do
@@ -673,19 +673,19 @@ RSpec.describe "Users in admin" do
     # The browser should stay on index page
     # The current user is the only one remaining user
     #
-    expect(page).to     have_current_path(admin_users_path)
-    expect(page).to     have_selector("h1", text: "Utilisateurs")
-    expect(page).to     have_text("1 utilisateur | Page 1 sur 1")
-    expect(page).to     have_selector(:table_row, "Utilisateur" => "Marc Debomy")
-    expect(page).not_to have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
-    expect(page).not_to have_selector(:table_row, "Utilisateur" => "Christelle Droitier")
+    expect(page).to have_current_path(admin_users_path)
+    expect(page).to have_selector("h1", text: "Utilisateurs")
+    expect(page).to have_text("1 utilisateur | Page 1 sur 1")
+    expect(page).to have_selector(:table_row, "Utilisateur" => "Marc Debomy")
+    expect(page).to have_no_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
+    expect(page).to have_no_selector(:table_row, "Utilisateur" => "Christelle Droitier")
 
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector(".datatable__selection")
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Les utilisateurs sélectionnés ont été supprimés.")
+    expect(page).to have_no_selector(".datatable__selection")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Les utilisateurs sélectionnés ont été supprimés.")
 
     # The notification should include a button to cancel the last action
     #
@@ -707,8 +707,8 @@ RSpec.describe "Users in admin" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector(".datatable__selection")
-    expect(page).not_to have_selector("[role=log]", text: "Les utilisateurs sélectionnés ont été supprimés.")
-    expect(page).to     have_selector("[role=log]", text: "La suppression des utilisateurs sélectionnés a été annulée.")
+    expect(page).to have_no_selector(".datatable__selection")
+    expect(page).to have_no_selector("[role=log]", text: "Les utilisateurs sélectionnés ont été supprimés.")
+    expect(page).to have_selector("[role=log]", text: "La suppression des utilisateurs sélectionnés a été annulée.")
   end
 end

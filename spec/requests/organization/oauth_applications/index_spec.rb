@@ -53,11 +53,11 @@ RSpec.describe "Organization::OauthApplicationController#index" do
 
       it "returns only kept oauth_applications owned by current organization" do
         aggregate_failures do
-          expect(response).to have_html_body.not_to have_text(oauth_applications[0].name)
-          expect(response).to have_html_body.not_to have_text(oauth_applications[1].name)
-          expect(response).to have_html_body.not_to have_text(oauth_applications[2].name)
-          expect(response).to have_html_body.to     have_text(oauth_applications[3].name)
-          expect(response).to have_html_body.to     have_text(oauth_applications[4].name)
+          expect(response).to have_html_body.to have_no_text(oauth_applications[0].name)
+          expect(response).to have_html_body.to have_no_text(oauth_applications[1].name)
+          expect(response).to have_html_body.to have_no_text(oauth_applications[2].name)
+          expect(response).to have_html_body.to have_text(oauth_applications[3].name)
+          expect(response).to have_html_body.to have_text(oauth_applications[4].name)
         end
       end
     end

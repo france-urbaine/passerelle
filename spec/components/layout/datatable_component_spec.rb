@@ -109,7 +109,7 @@ RSpec.describe Layout::DatatableComponent, type: :component do
 
       expect(table).to have_selector("tbody tr:first-child td", count: 1)
       expect(table).to have_selector("tbody tr:first-child td", text: communes[0].name)
-      expect(table).not_to have_selector("tbody tr:first-child td", text: communes[0].code_insee)
+      expect(table).to have_no_selector("tbody tr:first-child td", text: communes[0].code_insee)
     end
   end
 

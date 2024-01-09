@@ -37,8 +37,8 @@ RSpec.describe Views::Communes::ListComponent, type: :component do
       expect(page).to have_selector(".datatable table") do |table|
         expect(table).to have_selector("th", text: "Commune")
         expect(table).to have_selector("th", text: "Département")
-        expect(table).not_to have_selector("th", text: "EPCI")
-        expect(table).not_to have_selector("th", text: "Collectivités")
+        expect(table).to have_no_selector("th", text: "EPCI")
+        expect(table).to have_no_selector("th", text: "Collectivités")
 
         expect(table).to have_selector(:table_row, { "Commune" => communes.first.code_insee }, text: communes.first.name)
       end
@@ -76,8 +76,8 @@ RSpec.describe Views::Communes::ListComponent, type: :component do
           render_inline described_class.new(Commune.all, pagy, namespace: :organization, parent: office)
 
           expect(page).to have_selector(:table_row, "Commune" => communes.first.code_insee) do |row|
-            expect(row).not_to have_link(communes.first.name)
-            expect(row).not_to have_link("Modifier cette commune")
+            expect(row).to have_no_link(communes.first.name)
+            expect(row).to have_no_link("Modifier cette commune")
             expect(row).to have_link("Exclure cette commune du guichet", href: "/organisation/guichets/#{office.id}/communes/#{communes.first.id}/remove")
           end
         end

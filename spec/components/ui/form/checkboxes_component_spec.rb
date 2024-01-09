@@ -72,7 +72,7 @@ RSpec.describe UI::Form::CheckboxesComponent, type: :component do
     render_inline described_class.new(:office, :user_ids, users)
 
     expect(page).to have_selector(".choices-collection[data-controller='selection']") do |div|
-      expect(div).not_to have_unchecked_field("Tout sélectionner")
+      expect(div).to have_no_unchecked_field("Tout sélectionner")
     end
   end
 end

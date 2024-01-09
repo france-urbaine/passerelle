@@ -45,9 +45,9 @@ RSpec.describe "Admin::DGFIPsController#index", skip: "Disabled because of singl
 
       it "returns only kept users" do
         aggregate_failures do
-          expect(response).to have_html_body.to     have_text(dgfips[0].name)
-          expect(response).to have_html_body.not_to have_text(dgfips[1].name)
-          expect(response).to have_html_body.to     have_text(dgfips[2].name)
+          expect(response).to have_html_body.to have_text(dgfips[0].name)
+          expect(response).to have_html_body.to have_no_text(dgfips[1].name)
+          expect(response).to have_html_body.to have_text(dgfips[2].name)
         end
       end
     end

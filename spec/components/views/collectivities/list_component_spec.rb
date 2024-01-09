@@ -46,17 +46,17 @@ RSpec.describe Views::Collectivities::ListComponent, type: :component do
       end
 
       expect(page).to have_selector(".datatable table") do |table|
-        expect(table).to have_selector("th",     text: "Collectivité")
-        expect(table).to have_selector("th",     text: "SIREN")
-        expect(table).not_to have_selector("th", text: "Éditeur")
-        expect(table).not_to have_selector("th", text: "Contact")
-        expect(table).not_to have_selector("th", text: "Adresse mail de contact")
-        expect(table).not_to have_selector("th", text: "Numéro de téléphone")
-        expect(table).not_to have_selector("th", text: "Utilisateurs")
-        expect(table).not_to have_selector("th", text: "Paquets")
-        expect(table).not_to have_selector("th", text: "Signalements")
-        expect(table).not_to have_selector("th", text: "Approuvés")
-        expect(table).not_to have_selector("th", text: "Rejetés")
+        expect(table).to have_selector("th", text: "Collectivité")
+        expect(table).to have_selector("th", text: "SIREN")
+        expect(table).to have_no_selector("th", text: "Éditeur")
+        expect(table).to have_no_selector("th", text: "Contact")
+        expect(table).to have_no_selector("th", text: "Adresse mail de contact")
+        expect(table).to have_no_selector("th", text: "Numéro de téléphone")
+        expect(table).to have_no_selector("th", text: "Utilisateurs")
+        expect(table).to have_no_selector("th", text: "Paquets")
+        expect(table).to have_no_selector("th", text: "Signalements")
+        expect(table).to have_no_selector("th", text: "Approuvés")
+        expect(table).to have_no_selector("th", text: "Rejetés")
 
         expect(table).to have_selector(:table_row, {
           "Collectivité"  => collectivities.first.name,
@@ -78,9 +78,9 @@ RSpec.describe Views::Collectivities::ListComponent, type: :component do
           render_inline described_class.new(Collectivity.all, pagy, namespace: :admin)
 
           expect(page).to have_selector(:table_row, "Collectivité" => collectivities.first.name) do |row|
-            expect(row).to     have_link(collectivities.first.name,      href: "/admin/collectivites/#{collectivities.first.id}")
-            expect(row).to     have_link("Modifier cette collectivité",  href: "/admin/collectivites/#{collectivities.first.id}/edit")
-            expect(row).to     have_link("Supprimer cette collectivité", href: "/admin/collectivites/#{collectivities.first.id}/remove")
+            expect(row).to have_link(collectivities.first.name,      href: "/admin/collectivites/#{collectivities.first.id}")
+            expect(row).to have_link("Modifier cette collectivité",  href: "/admin/collectivites/#{collectivities.first.id}/edit")
+            expect(row).to have_link("Supprimer cette collectivité", href: "/admin/collectivites/#{collectivities.first.id}/remove")
           end
         end
       end
@@ -146,9 +146,9 @@ RSpec.describe Views::Collectivities::ListComponent, type: :component do
           render_inline described_class.new(Collectivity.all, pagy, namespace: :organization)
 
           expect(page).to have_selector(:table_row, "Collectivité" => collectivity.name) do |row|
-            expect(row).to     have_link(collectivity.name,              href: "/organisation/collectivites/#{collectivity.id}")
-            expect(row).not_to have_link("Modifier cette collectivité",  href: "/organisation/collectivites/#{collectivity.id}/edit")
-            expect(row).not_to have_link("Supprimer cette collectivité", href: "/organisation/collectivites/#{collectivity.id}/remove")
+            expect(row).to have_link(collectivity.name,                 href: "/organisation/collectivites/#{collectivity.id}")
+            expect(row).to have_no_link("Modifier cette collectivité",  href: "/organisation/collectivites/#{collectivity.id}/edit")
+            expect(row).to have_no_link("Supprimer cette collectivité", href: "/organisation/collectivites/#{collectivity.id}/remove")
           end
         end
       end
@@ -165,9 +165,9 @@ RSpec.describe Views::Collectivities::ListComponent, type: :component do
           render_inline described_class.new(Collectivity.all, pagy, namespace: :organization, parent: office)
 
           expect(page).to have_selector(:table_row, "Collectivité" => collectivity.name) do |row|
-            expect(row).to     have_link(collectivity.name,              href: "/organisation/collectivites/#{collectivity.id}")
-            expect(row).not_to have_link("Modifier cette collectivité",  href: "/organisation/collectivites/#{collectivity.id}/edit")
-            expect(row).not_to have_link("Supprimer cette collectivité", href: "/organisation/collectivites/#{collectivity.id}/remove")
+            expect(row).to have_link(collectivity.name,                 href: "/organisation/collectivites/#{collectivity.id}")
+            expect(row).to have_no_link("Modifier cette collectivité",  href: "/organisation/collectivites/#{collectivity.id}/edit")
+            expect(row).to have_no_link("Supprimer cette collectivité", href: "/organisation/collectivites/#{collectivity.id}/remove")
           end
         end
       end
@@ -184,9 +184,9 @@ RSpec.describe Views::Collectivities::ListComponent, type: :component do
           render_inline described_class.new(Collectivity.all, pagy, namespace: :territories, parent: commune)
 
           expect(page).to have_selector(:table_row, "Collectivité" => collectivity.name) do |row|
-            expect(row).to     have_link(collectivity.name,              href: "/admin/collectivites/#{collectivity.id}")
-            expect(row).not_to have_link("Modifier cette collectivité",  href: "/admin/collectivites/#{collectivity.id}/edit")
-            expect(row).not_to have_link("Supprimer cette collectivité", href: "/admin/collectivites/#{collectivity.id}/remove")
+            expect(row).to have_link(collectivity.name,                 href: "/admin/collectivites/#{collectivity.id}")
+            expect(row).to have_no_link("Modifier cette collectivité",  href: "/admin/collectivites/#{collectivity.id}/edit")
+            expect(row).to have_no_link("Supprimer cette collectivité", href: "/admin/collectivites/#{collectivity.id}/remove")
           end
         end
       end
@@ -199,9 +199,9 @@ RSpec.describe Views::Collectivities::ListComponent, type: :component do
           render_inline described_class.new(Collectivity.all, pagy, namespace: :territories, parent: departement)
 
           expect(page).to have_selector(:table_row, "Collectivité" => collectivity.name) do |row|
-            expect(row).to     have_link(collectivity.name,              href: "/admin/collectivites/#{collectivity.id}")
-            expect(row).not_to have_link("Modifier cette collectivité",  href: "/admin/collectivites/#{collectivity.id}/edit")
-            expect(row).not_to have_link("Supprimer cette collectivité", href: "/admin/collectivites/#{collectivity.id}/remove")
+            expect(row).to have_link(collectivity.name,                 href: "/admin/collectivites/#{collectivity.id}")
+            expect(row).to have_no_link("Modifier cette collectivité",  href: "/admin/collectivites/#{collectivity.id}/edit")
+            expect(row).to have_no_link("Supprimer cette collectivité", href: "/admin/collectivites/#{collectivity.id}/remove")
           end
         end
       end
@@ -214,9 +214,9 @@ RSpec.describe Views::Collectivities::ListComponent, type: :component do
           render_inline described_class.new(Collectivity.all, pagy, namespace: :territories, parent: epci)
 
           expect(page).to have_selector(:table_row, "Collectivité" => collectivity.name) do |row|
-            expect(row).to     have_link(collectivity.name,              href: "/admin/collectivites/#{collectivity.id}")
-            expect(row).not_to have_link("Modifier cette collectivité",  href: "/admin/collectivites/#{collectivity.id}/edit")
-            expect(row).not_to have_link("Supprimer cette collectivité", href: "/admin/collectivites/#{collectivity.id}/remove")
+            expect(row).to have_link(collectivity.name,                 href: "/admin/collectivites/#{collectivity.id}")
+            expect(row).to have_no_link("Modifier cette collectivité",  href: "/admin/collectivites/#{collectivity.id}/edit")
+            expect(row).to have_no_link("Supprimer cette collectivité", href: "/admin/collectivites/#{collectivity.id}/remove")
           end
         end
       end
@@ -229,9 +229,9 @@ RSpec.describe Views::Collectivities::ListComponent, type: :component do
           render_inline described_class.new(Collectivity.all, pagy, namespace: :territories, parent: region)
 
           expect(page).to have_selector(:table_row, "Collectivité" => collectivity.name) do |row|
-            expect(row).to     have_link(collectivity.name,              href: "/admin/collectivites/#{collectivity.id}")
-            expect(row).not_to have_link("Modifier cette collectivité",  href: "/admin/collectivites/#{collectivity.id}/edit")
-            expect(row).not_to have_link("Supprimer cette collectivité", href: "/admin/collectivites/#{collectivity.id}/remove")
+            expect(row).to have_link(collectivity.name,                 href: "/admin/collectivites/#{collectivity.id}")
+            expect(row).to have_no_link("Modifier cette collectivité",  href: "/admin/collectivites/#{collectivity.id}/edit")
+            expect(row).to have_no_link("Supprimer cette collectivité", href: "/admin/collectivites/#{collectivity.id}/remove")
           end
         end
       end

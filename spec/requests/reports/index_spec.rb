@@ -58,14 +58,14 @@ RSpec.describe "ReportsController#index" do
 
         it "returns only accessible reports" do
           aggregate_failures do
-            expect(response).to have_html_body.to     have_selector(:id, dom_id(reports[0]))
-            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[1]))
-            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[2]))
-            expect(response).to have_html_body.to     have_selector(:id, dom_id(reports[3]))
-            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[4]))
-            expect(response).to have_html_body.to     have_selector(:id, dom_id(reports[5]))
-            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[6]))
-            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[7]))
+            expect(response).to have_html_body.to have_selector(:id, dom_id(reports[0]))
+            expect(response).to have_html_body.to have_no_selector(:id, dom_id(reports[1]))
+            expect(response).to have_html_body.to have_no_selector(:id, dom_id(reports[2]))
+            expect(response).to have_html_body.to have_selector(:id, dom_id(reports[3]))
+            expect(response).to have_html_body.to have_no_selector(:id, dom_id(reports[4]))
+            expect(response).to have_html_body.to have_selector(:id, dom_id(reports[5]))
+            expect(response).to have_html_body.to have_no_selector(:id, dom_id(reports[6]))
+            expect(response).to have_html_body.to have_no_selector(:id, dom_id(reports[7]))
           end
         end
       end
@@ -93,14 +93,14 @@ RSpec.describe "ReportsController#index" do
 
         it "returns only accessible reports" do
           aggregate_failures do
-            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[0]))
-            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[1]))
-            expect(response).to have_html_body.to     have_selector(:id, dom_id(reports[2]))
-            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[3]))
-            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[4]))
-            expect(response).to have_html_body.to     have_selector(:id, dom_id(reports[5]))
-            expect(response).to have_html_body.to     have_selector(:id, dom_id(reports[6]))
-            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[7]))
+            expect(response).to have_html_body.to have_no_selector(:id, dom_id(reports[0]))
+            expect(response).to have_html_body.to have_no_selector(:id, dom_id(reports[1]))
+            expect(response).to have_html_body.to have_selector(:id, dom_id(reports[2]))
+            expect(response).to have_html_body.to have_no_selector(:id, dom_id(reports[3]))
+            expect(response).to have_html_body.to have_no_selector(:id, dom_id(reports[4]))
+            expect(response).to have_html_body.to have_selector(:id, dom_id(reports[5]))
+            expect(response).to have_html_body.to have_selector(:id, dom_id(reports[6]))
+            expect(response).to have_html_body.to have_no_selector(:id, dom_id(reports[7]))
           end
         end
       end
@@ -125,9 +125,9 @@ RSpec.describe "ReportsController#index" do
 
         it "returns only accessible reports" do
           aggregate_failures do
-            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[0]))
-            expect(response).to have_html_body.to     have_selector(:id, dom_id(reports[1]))
-            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[2]))
+            expect(response).to have_html_body.to have_no_selector(:id, dom_id(reports[0]))
+            expect(response).to have_html_body.to have_selector(:id, dom_id(reports[1]))
+            expect(response).to have_html_body.to have_no_selector(:id, dom_id(reports[2]))
           end
         end
       end
@@ -166,13 +166,13 @@ RSpec.describe "ReportsController#index" do
 
         it "returns only accessible reports" do
           aggregate_failures do
-            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[0]))
-            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[1]))
-            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[2]))
-            expect(response).to have_html_body.to     have_selector(:id, dom_id(reports[3]))
-            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[4]))
-            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[5]))
-            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[6]))
+            expect(response).to have_html_body.to have_no_selector(:id, dom_id(reports[0]))
+            expect(response).to have_html_body.to have_no_selector(:id, dom_id(reports[1]))
+            expect(response).to have_html_body.to have_no_selector(:id, dom_id(reports[2]))
+            expect(response).to have_html_body.to have_selector(:id, dom_id(reports[3]))
+            expect(response).to have_html_body.to have_no_selector(:id, dom_id(reports[4]))
+            expect(response).to have_html_body.to have_no_selector(:id, dom_id(reports[5]))
+            expect(response).to have_html_body.to have_no_selector(:id, dom_id(reports[6]))
           end
         end
       end
@@ -197,9 +197,9 @@ RSpec.describe "ReportsController#index" do
 
         it "returns only accessible reports" do
           aggregate_failures do
-            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[0]))
-            expect(response).to have_html_body.to     have_selector(:id, dom_id(reports[1]))
-            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[2]))
+            expect(response).to have_html_body.to have_no_selector(:id, dom_id(reports[0]))
+            expect(response).to have_html_body.to have_selector(:id, dom_id(reports[1]))
+            expect(response).to have_html_body.to have_no_selector(:id, dom_id(reports[2]))
           end
         end
       end
@@ -233,12 +233,12 @@ RSpec.describe "ReportsController#index" do
 
         it "returns only accessible reports" do
           aggregate_failures do
-            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[0]))
-            expect(response).to have_html_body.to     have_selector(:id, dom_id(reports[1]))
-            expect(response).to have_html_body.not_to have_selector(:id, dom_id(reports[2]))
-            expect(response).to have_html_body.to     have_selector(:id, dom_id(reports[3]))
-            expect(response).to have_html_body.to     have_selector(:id, dom_id(reports[4]))
-            expect(response).to have_html_body.to     have_selector(:id, dom_id(reports[5]))
+            expect(response).to have_html_body.to have_no_selector(:id, dom_id(reports[0]))
+            expect(response).to have_html_body.to have_selector(:id, dom_id(reports[1]))
+            expect(response).to have_html_body.to have_no_selector(:id, dom_id(reports[2]))
+            expect(response).to have_html_body.to have_selector(:id, dom_id(reports[3]))
+            expect(response).to have_html_body.to have_selector(:id, dom_id(reports[4]))
+            expect(response).to have_html_body.to have_selector(:id, dom_id(reports[5]))
           end
         end
       end
