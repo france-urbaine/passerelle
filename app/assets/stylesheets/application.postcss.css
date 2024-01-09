@@ -56,7 +56,7 @@
 @import "./components/dashboard_number";
 
 /* Layouts */
-@import "./components/navbar";
+@import "../../components/layout/navbar";
 @import "./components/content";
 @import "./components/datatable";
 @import "./components/skeleton_loader";

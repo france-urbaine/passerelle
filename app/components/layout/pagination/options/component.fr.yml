@@ -1,0 +1,5 @@
+fr:
+  display_settings: Options d'affichage
+  displayed_lines_count: Afficher %{count} lignes par page
+  display_lines: Afficher %{count} lignes
+  order_by: Trier par %{label}

@@ -27,6 +27,9 @@ import { PasswordVisibility, StrengthTestController } from "../../components/ui/
 application.register('password-visibility', PasswordVisibility);
 application.register("strength-test", StrengthTestController);
 
+import NavbarController from "../../components/layout/navbar"
+application.register("navbar", NavbarController)
+
 // Controllers
 // -----------------------------------------------------------------------------
 import AutocompleteController from "./autocomplete_controller"
@@ -37,9 +40,6 @@ application.register("copy-text", CopyTextController)
 
 import DirectUploadFieldController from "./direct_upload_field_controller"
 application.register("direct-upload-field", DirectUploadFieldController)
-
-import NavbarController from "./navbar_controller"
-application.register("navbar", NavbarController)
 
 import SelectionController from "./selection_controller"
 application.register("selection", SelectionController)

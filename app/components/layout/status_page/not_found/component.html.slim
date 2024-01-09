@@ -1,0 +1,49 @@
+= status_page_component(**@options) do |template|
+  - if breadcrumbs?
+    - template.with_breadcrumbs do
+      = breadcrumbs
+
+  - template.with_header do
+    - if header?
+      = header
+    - else
+      = t(".not_found_message")
+
+  - template.with_body do
+    - if body?
+      = body
+
+    - else
+      - case @model
+      - when "Publisher"
+        = t(".not_found_submessage.publisher")
+      - when "Collectivity"
+        = t(".not_found_submessage.collectivity")
+      - when "DDFIP"
+        = t(".not_found_submessage.ddfip")
+      - when "DGFIP"
+        = t(".not_found_submessage.dgfip")
+      - when "Office"
+        = t(".not_found_submessage.office")
+      - when "User"
+        = t(".not_found_submessage.user")
+      - when "Commune"
+        = t(".not_found_submessage.commune")
+      - when "EPCI"
+        = t(".not_found_submessage.epci")
+      - when "Departement"
+        = t(".not_found_submessage.departement")
+      - when "Region"
+        = t(".not_found_submessage.region")
+      - when "Report"
+        = t(".not_found_submessage.report")
+      - when "Package"
+        = t(".not_found_submessage.package")
+      - when "OauthApplication"
+        = t(".not_found_submessage.oauth_app")
+      - else
+        = t(".not_found_submessage.default")
+
+  - actions.each do |action|
+    - template.with_action do
+      = action

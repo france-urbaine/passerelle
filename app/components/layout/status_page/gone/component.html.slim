@@ -1,0 +1,24 @@
+= render Layout::StatusPage::Component.new(**@options) do |template|
+  - if breadcrumbs?
+    - template.with_breadcrumbs do
+      = breadcrumbs
+
+  - template.with_header do
+    - if header?
+      = header
+    - else
+      = t(".gone_message")
+
+  - template.with_body do
+    - if body?
+      = body
+    - else
+      = gone_resource_message
+
+      - if deletion_delay
+        br
+        = t(".deletion_message", time_from_now: deletion_distance_from_now_in_words)
+
+  - actions.each do |action|
+    - template.with_action do
+      = action

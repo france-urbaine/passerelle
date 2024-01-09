@@ -57,7 +57,7 @@ module Layout
         options = { turbo_frame: @datatable.turbo_frame }
         options[:label] = @label if @label
 
-        render Layout::SearchFormComponent.new(**options)
+        render Layout::SearchForm::Component.new(**options)
       end
     end
 
@@ -71,7 +71,7 @@ module Layout
       end
 
       def call
-        render Layout::PaginationComponent.new(
+        render Layout::Pagination::Component.new(
           @pagy,
           @inflections,
           turbo_frame: @datatable.turbo_frame,
