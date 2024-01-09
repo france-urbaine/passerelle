@@ -92,7 +92,9 @@ module Passerelle
       tld_length: 2
 
     # Application-wide constants
-    VERSION = `git describe --tags --abbrev=0`.strip
+    VERSION = ENV.fetch("APP_VERSION") do
+      `git describe --tags --abbrev=0`.strip
+    end
 
     DEFAULT_COMMUNES_URL = "https://www.insee.fr/fr/statistiques/fichier/2028028/table-appartenance-geo-communes-23.zip"
     DEFAULT_EPCIS_URL    = "https://www.insee.fr/fr/statistiques/fichier/2510634/Intercommunalite_Metropole_au_01-01-2023.zip"
