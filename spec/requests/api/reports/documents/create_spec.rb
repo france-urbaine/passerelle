@@ -60,7 +60,7 @@ RSpec.describe "API::Reports::DocumentsController#create", :api do
             "id" => ActiveStorage::Attachment.order(created_at: :desc).first.id
           },
           "direct_upload" => {
-            "url" => %r{^http://api\.example\.com/rails/active_storage/disk/[a-zA-Z0-9-=]{342}$},
+            "url" => %r{^http://api\.example\.com/rails/active_storage/disk/[a-zA-Z0-9\-=]{342}$},
             "headers" => {
               "Content-Type" => "application/pdf"
             }
@@ -95,7 +95,7 @@ RSpec.describe "API::Reports::DocumentsController#create", :api do
             "id" => ActiveStorage::Attachment.order(created_at: :desc).first.id
           },
           "direct_upload" => {
-            "url" => %r{^http://api\.example\.com/rails/active_storage/disk/[a-zA-Z0-9-=]{342}$},
+            "url" => %r{^http://api\.example\.com/rails/active_storage/disk/[a-zA-Z0-9\-=]{342}$},
             "headers" => {
               "Content-Type" => "application/pdf"
             }
