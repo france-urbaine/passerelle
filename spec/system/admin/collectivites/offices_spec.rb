@@ -44,7 +44,7 @@ RSpec.describe "Offices assigned to a collectivity in admin" do
 
     visit admin_collectivity_path(pays_basque)
 
-    expect(page).to     have_text("12 guichets | Page 1 sur 2")
-    expect(page).not_to have_button("Options d'affichage")
+    expect(page).to have_text("12 guichets | Page 1 sur 2")
+    expect(page).to have_no_button("Options d'affichage")
   end
 end

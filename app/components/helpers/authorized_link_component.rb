@@ -29,11 +29,11 @@ module Helpers
       content ||
         case @resource
         when Package
-          @resource.reference
+          html_escape(@resource.reference)
         when Report
           render Views::Reports::ShowReportNameComponent.new(@resource)
         else
-          @resource&.name
+          html_escape(@resource&.name)
         end
     end
 

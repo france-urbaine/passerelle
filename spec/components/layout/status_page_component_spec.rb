@@ -74,8 +74,8 @@ RSpec.describe Layout::StatusPageComponent, type: :component do
       end
     end
 
-    expect(page).not_to have_selector(".card")
-    expect(page).not_to have_selector(".breadcrumbs")
+    expect(page).to have_no_selector(".card")
+    expect(page).to have_no_selector(".breadcrumbs")
 
     expect(page).to have_selector("main.content > turbo-frame[src='/background/path']")
 
@@ -97,8 +97,8 @@ RSpec.describe Layout::StatusPageComponent, type: :component do
     end
 
     expect(page).to have_selector(".breadcrumbs > .breadcrumbs__path") do |node|
-      expect(node).to     have_selector(".breadcrumbs__path-item", count: 2)
-      expect(node).not_to have_selector("h1")
+      expect(node).to have_selector(".breadcrumbs__path-item", count: 2)
+      expect(node).to have_no_selector("h1")
 
       expect(node).to have_selector(".breadcrumbs__path-item:nth-child(1) > a.icon-button", text: "Retour à la page d'accueil")
       expect(node).to have_selector(".breadcrumbs__separator:nth-child(2)", text: "/")
@@ -115,7 +115,7 @@ RSpec.describe Layout::StatusPageComponent, type: :component do
       card.with_body("Hello World")
     end
 
-    expect(page).not_to have_selector(".breadcrumbs")
+    expect(page).to have_no_selector(".breadcrumbs")
   end
 
   it "doesn't render any breadcrumbs by default" do
@@ -125,7 +125,7 @@ RSpec.describe Layout::StatusPageComponent, type: :component do
       tag.p "Hello World"
     end
 
-    expect(page).not_to have_selector(".breadcrumbs")
+    expect(page).to have_no_selector(".breadcrumbs")
   end
 
   it "doesn't render breadcrumbs when a modal is requested" do
@@ -137,6 +137,6 @@ RSpec.describe Layout::StatusPageComponent, type: :component do
       end
     end
 
-    expect(page).not_to have_selector(".breadcrumbs")
+    expect(page).to have_no_selector(".breadcrumbs")
   end
 end

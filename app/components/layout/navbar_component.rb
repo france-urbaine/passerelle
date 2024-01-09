@@ -99,7 +99,7 @@ module Layout
       end
 
       def call
-        @text
+        html_escape(@text)
       end
     end
 

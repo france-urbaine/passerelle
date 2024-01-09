@@ -49,11 +49,11 @@ RSpec.describe "PackagesController#index" do
 
         it "returns only accessible packages" do
           aggregate_failures do
-            expect(response).to have_html_body.to     have_text(packages[0].reference)
-            expect(response).to have_html_body.not_to have_text(packages[1].reference)
-            expect(response).to have_html_body.to     have_text(packages[2].reference)
-            expect(response).to have_html_body.not_to have_text(packages[3].reference)
-            expect(response).to have_html_body.not_to have_text(packages[4].reference)
+            expect(response).to have_html_body.to have_text(packages[0].reference)
+            expect(response).to have_html_body.to have_no_text(packages[1].reference)
+            expect(response).to have_html_body.to have_text(packages[2].reference)
+            expect(response).to have_html_body.to have_no_text(packages[3].reference)
+            expect(response).to have_html_body.to have_no_text(packages[4].reference)
           end
         end
       end
@@ -81,11 +81,11 @@ RSpec.describe "PackagesController#index" do
 
         it "returns only accessible packages" do
           aggregate_failures do
-            expect(response).to have_html_body.not_to have_text(packages[0].reference)
-            expect(response).to have_html_body.not_to have_text(packages[1].reference)
-            expect(response).to have_html_body.to     have_text(packages[2].reference)
-            expect(response).to have_html_body.to     have_text(packages[3].reference)
-            expect(response).to have_html_body.not_to have_text(packages[4].reference)
+            expect(response).to have_html_body.to have_no_text(packages[0].reference)
+            expect(response).to have_html_body.to have_no_text(packages[1].reference)
+            expect(response).to have_html_body.to have_text(packages[2].reference)
+            expect(response).to have_html_body.to have_text(packages[3].reference)
+            expect(response).to have_html_body.to have_no_text(packages[4].reference)
           end
         end
       end
@@ -114,9 +114,9 @@ RSpec.describe "PackagesController#index" do
 
         it "returns only accessible packages" do
           aggregate_failures do
-            expect(response).to have_html_body.not_to have_text(packages[0].reference)
-            expect(response).to have_html_body.to     have_text(packages[1].reference)
-            expect(response).to have_html_body.not_to have_text(packages[2].reference)
+            expect(response).to have_html_body.to have_no_text(packages[0].reference)
+            expect(response).to have_html_body.to have_text(packages[1].reference)
+            expect(response).to have_html_body.to have_no_text(packages[2].reference)
           end
         end
       end

@@ -13,7 +13,11 @@ class ApplicationViewComponent < ViewComponent::Base
     end
 
     def call
-      @label || content
+      if @label
+        html_escape(@label)
+      else
+        content
+      end
     end
   end
 

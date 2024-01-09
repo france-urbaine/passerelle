@@ -17,7 +17,7 @@
       - list.with_attribute(:reference) do |attribute|
         = @report.reference
 
-        - if allowed_to?(:show?, @report.package)
+        - if @report.package && allowed_to?(:show?, @report.package)
           - attribute.with_action "Voir le paquet", package_path(@report.package), icon: "magnifying-glass"
 
       - list.with_attribute("Type de signalement") do

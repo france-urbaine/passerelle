@@ -127,8 +127,8 @@ RSpec.describe "DDFIPs in admin" do
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Une nouvelle DDFIP a été ajoutée avec succés.")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Une nouvelle DDFIP a été ajoutée avec succés.")
   end
 
   it "updates a DDFIP from the index page" do
@@ -161,8 +161,8 @@ RSpec.describe "DDFIPs in admin" do
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
   end
 
   it "updates a DDFIP from the DDFIP page" do
@@ -194,8 +194,8 @@ RSpec.describe "DDFIPs in admin" do
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
   end
 
   it "discards a DDFIP from the index page & rollbacks" do
@@ -218,16 +218,16 @@ RSpec.describe "DDFIPs in admin" do
     # The browser should stay on the index page
     # The DDFIP should not appears anymore
     #
-    expect(page).to     have_current_path(admin_ddfips_path)
-    expect(page).to     have_selector("h1", text: "DDFIP")
-    expect(page).to     have_text("2 DDFIPs | Page 1 sur 1")
-    expect(page).not_to have_selector(:table_row, "DDFIP" => "DDFIP des Pyrénées-Atlantiques")
+    expect(page).to have_current_path(admin_ddfips_path)
+    expect(page).to have_selector("h1", text: "DDFIP")
+    expect(page).to have_text("2 DDFIPs | Page 1 sur 1")
+    expect(page).to have_no_selector(:table_row, "DDFIP" => "DDFIP des Pyrénées-Atlantiques")
 
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "La DDFIP a été supprimée.")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "La DDFIP a été supprimée.")
 
     # The notification should include a button to cancel the last action
     #
@@ -246,8 +246,8 @@ RSpec.describe "DDFIPs in admin" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector("[role=log]", text: "La DDFIP a été supprimée.")
-    expect(page).to     have_selector("[role=log]", text: "La suppression de la DDFIP a été annulée.")
+    expect(page).to have_no_selector("[role=log]", text: "La DDFIP a été supprimée.")
+    expect(page).to have_selector("[role=log]", text: "La suppression de la DDFIP a été annulée.")
   end
 
   it "discards a DDFIP from the DDFIP page & rollbacks" do
@@ -268,16 +268,16 @@ RSpec.describe "DDFIPs in admin" do
     # The browser should redirect to the index page
     # The DDFIP should not appears anymore
     #
-    expect(page).to     have_current_path(admin_ddfips_path)
-    expect(page).to     have_selector("h1", text: "DDFIP")
-    expect(page).to     have_text("2 DDFIPs | Page 1 sur 1")
-    expect(page).not_to have_selector(:table_row, "DDFIP" => "DDFIP des Pyrénées-Atlantiques")
+    expect(page).to have_current_path(admin_ddfips_path)
+    expect(page).to have_selector("h1", text: "DDFIP")
+    expect(page).to have_text("2 DDFIPs | Page 1 sur 1")
+    expect(page).to have_no_selector(:table_row, "DDFIP" => "DDFIP des Pyrénées-Atlantiques")
 
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "La DDFIP a été supprimée.")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "La DDFIP a été supprimée.")
 
     # The notification should include a button to cancel the last action
     #
@@ -296,8 +296,8 @@ RSpec.describe "DDFIPs in admin" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector("[role=log]", text: "La DDFIP a été supprimée.")
-    expect(page).to     have_selector("[role=log]", text: "La suppression de la DDFIP a été annulée.")
+    expect(page).to have_no_selector("[role=log]", text: "La DDFIP a été supprimée.")
+    expect(page).to have_selector("[role=log]", text: "La suppression de la DDFIP a été annulée.")
   end
 
   it "selects and discards one DDFIP from the index page & rollbacks" do
@@ -328,20 +328,20 @@ RSpec.describe "DDFIPs in admin" do
     # The selected DDFIPs should not appears anymore
     # Other DDFIPs should remain
     #
-    expect(page).to     have_current_path(admin_ddfips_path)
-    expect(page).to     have_selector("h1", text: "DDFIP")
-    expect(page).to     have_text("2 DDFIPs | Page 1 sur 1")
-    expect(page).not_to have_selector(:table_row, "DDFIP" => "DDFIP des Pyrénées-Atlantiques")
-    expect(page).to     have_selector(:table_row, "DDFIP" => "DDFIP du Nord")
-    expect(page).to     have_selector(:table_row, "DDFIP" => "DDFIP de Paris")
+    expect(page).to have_current_path(admin_ddfips_path)
+    expect(page).to have_selector("h1", text: "DDFIP")
+    expect(page).to have_text("2 DDFIPs | Page 1 sur 1")
+    expect(page).to have_no_selector(:table_row, "DDFIP" => "DDFIP des Pyrénées-Atlantiques")
+    expect(page).to have_selector(:table_row, "DDFIP" => "DDFIP du Nord")
+    expect(page).to have_selector(:table_row, "DDFIP" => "DDFIP de Paris")
 
     # The selection message should not appears anymore
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector(".datatable__selection")
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Les DDFIPs sélectionnées ont été supprimées.")
+    expect(page).to have_no_selector(".datatable__selection")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Les DDFIPs sélectionnées ont été supprimées.")
 
     # The notification should include a button to cancel the last action
     #
@@ -361,9 +361,9 @@ RSpec.describe "DDFIPs in admin" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector(".datatable__selection")
-    expect(page).not_to have_selector("[role=log]", text: "Les DDFIPs sélectionnées ont été supprimées.")
-    expect(page).to     have_selector("[role=log]", text: "La suppression des DDFIPs sélectionnées a été annulée.")
+    expect(page).to have_no_selector(".datatable__selection")
+    expect(page).to have_no_selector("[role=log]", text: "Les DDFIPs sélectionnées ont été supprimées.")
+    expect(page).to have_selector("[role=log]", text: "La suppression des DDFIPs sélectionnées a été annulée.")
   end
 
   it "selects and discards all DDFIPs from the current page on index page & rollbacks" do
@@ -408,19 +408,19 @@ RSpec.describe "DDFIPs in admin" do
     # The browser should stay on index page
     # The selected DDFIPs should have been removed
     #
-    expect(page).to     have_current_path(admin_ddfips_path)
-    expect(page).to     have_selector("h1", text: "DDFIP")
-    expect(page).to     have_text("3 DDFIPs | Page 1 sur 1")
-    expect(page).not_to have_selector(:table_row, "DDFIP" => "DDFIP des Pyrénées-Atlantiques")
-    expect(page).not_to have_selector(:table_row, "DDFIP" => "DDFIP du Nord")
-    expect(page).not_to have_selector(:table_row, "DDFIP" => "DDFIP de Paris")
+    expect(page).to have_current_path(admin_ddfips_path)
+    expect(page).to have_selector("h1", text: "DDFIP")
+    expect(page).to have_text("3 DDFIPs | Page 1 sur 1")
+    expect(page).to have_no_selector(:table_row, "DDFIP" => "DDFIP des Pyrénées-Atlantiques")
+    expect(page).to have_no_selector(:table_row, "DDFIP" => "DDFIP du Nord")
+    expect(page).to have_no_selector(:table_row, "DDFIP" => "DDFIP de Paris")
 
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector(".datatable__selection")
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Les DDFIPs sélectionnées ont été supprimées.")
+    expect(page).to have_no_selector(".datatable__selection")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Les DDFIPs sélectionnées ont été supprimées.")
 
     # The notification should include a button to cancel the last action
     #
@@ -442,9 +442,9 @@ RSpec.describe "DDFIPs in admin" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector(".datatable__selection")
-    expect(page).not_to have_selector("[role=log]", text: "Les DDFIPs sélectionnées ont été supprimées.")
-    expect(page).to     have_selector("[role=log]", text: "La suppression des DDFIPs sélectionnées a été annulée.")
+    expect(page).to have_no_selector(".datatable__selection")
+    expect(page).to have_no_selector("[role=log]", text: "Les DDFIPs sélectionnées ont été supprimées.")
+    expect(page).to have_selector("[role=log]", text: "La suppression des DDFIPs sélectionnées a été annulée.")
   end
 
   it "selects and discards all DDFIPs through several pages on index page & rollbacks" do
@@ -500,9 +500,9 @@ RSpec.describe "DDFIPs in admin" do
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector(".datatable__selection")
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Les DDFIPs sélectionnées ont été supprimées.")
+    expect(page).to have_no_selector(".datatable__selection")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Les DDFIPs sélectionnées ont été supprimées.")
 
     # The notification should include a button to cancel the last action
     #
@@ -524,8 +524,8 @@ RSpec.describe "DDFIPs in admin" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector(".datatable__selection")
-    expect(page).not_to have_selector("[role=log]", text: "Les DDFIPs sélectionnées ont été supprimées.")
-    expect(page).to     have_selector("[role=log]", text: "La suppression des DDFIPs sélectionnées a été annulée.")
+    expect(page).to have_no_selector(".datatable__selection")
+    expect(page).to have_no_selector("[role=log]", text: "Les DDFIPs sélectionnées ont été supprimées.")
+    expect(page).to have_selector("[role=log]", text: "La suppression des DDFIPs sélectionnées a été annulée.")
   end
 end

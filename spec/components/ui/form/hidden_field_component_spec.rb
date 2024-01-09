@@ -35,7 +35,7 @@ RSpec.describe UI::Form::HiddenFieldComponent, type: :component do
   it "renders nothing when value is nil" do
     render_inline described_class.new(:hello, nil)
 
-    expect(page).not_to have_selector("input[type='hidden']", visible: :hidden)
+    expect(page).to have_no_selector("input[type='hidden']", visible: :hidden)
   end
   #
   # rubocop:enable Capybara/SpecificMatcher

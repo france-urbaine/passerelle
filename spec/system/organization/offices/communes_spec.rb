@@ -23,7 +23,7 @@ RSpec.describe "Communes assigned to offices managed bu current organization" do
     expect(page).to have_selector(:table_row, { "Commune" => "64122" }, text: "Biarritz")
 
     # Links to communes should be missing because maxime is not a super admin
-    expect(page).not_to have_link("Bayonne")
+    expect(page).to have_no_link("Bayonne")
   end
 
   it "paginate communes on the office page" do
@@ -33,8 +33,8 @@ RSpec.describe "Communes assigned to offices managed bu current organization" do
 
     visit organization_office_path(pelp_bayonne)
 
-    expect(page).to     have_text("12 communes | Page 1 sur 2")
-    expect(page).not_to have_button("Options d'affichage")
+    expect(page).to have_text("12 communes | Page 1 sur 2")
+    expect(page).to have_no_button("Options d'affichage")
   end
 
   it "manages communes from the office page" do
@@ -87,8 +87,8 @@ RSpec.describe "Communes assigned to offices managed bu current organization" do
     # A notification should be displayed
     # The dialog should be closed
     #
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
 
     # Re-open the modal to add another EPCI
     #
@@ -130,8 +130,8 @@ RSpec.describe "Communes assigned to offices managed bu current organization" do
     # A notification should be displayed
     # The dialog should be closed
     #
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
 
     # Re-open the modal to remove all communes
     #
@@ -159,8 +159,8 @@ RSpec.describe "Communes assigned to offices managed bu current organization" do
     # A notification should be displayed
     # The dialog should be closed
     #
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
   end
 
   it "excludes a commune from the office without deleting it" do
@@ -181,20 +181,20 @@ RSpec.describe "Communes assigned to offices managed bu current organization" do
 
     # The browser should stay on the office page
     # The user should not appears anymore
-    expect(page).to     have_current_path(organization_office_path(pelp_bayonne))
-    expect(page).to     have_selector("h1", text: "PELP de Bayonne")
-    expect(page).not_to have_selector(:table_row, { "Commune" => "64102" }, text: "Bayonne")
+    expect(page).to have_current_path(organization_office_path(pelp_bayonne))
+    expect(page).to have_selector("h1", text: "PELP de Bayonne")
+    expect(page).to have_no_selector(:table_row, { "Commune" => "64102" }, text: "Bayonne")
 
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "La commune a été exclue du guichet.")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "La commune a été exclue du guichet.")
 
     # The notification doesn't propose to rollback the last action
     #
     within "[role=log]", text: "La commune a été exclue du guichet." do |alert|
-      expect(alert).not_to have_button("Cancel")
+      expect(alert).to have_no_button("Cancel")
     end
 
     # The commune should remains in database
@@ -228,22 +228,22 @@ RSpec.describe "Communes assigned to offices managed bu current organization" do
     # The selected communes should not appears anymore
     # Other communes should remain
     #
-    expect(page).to     have_current_path(organization_office_path(pelp_bayonne))
-    expect(page).to     have_selector("h1", text: "PELP de Bayonne")
-    expect(page).not_to have_selector(:table_row, { "Commune" => "64102" }, text: "Bayonne")
+    expect(page).to have_current_path(organization_office_path(pelp_bayonne))
+    expect(page).to have_selector("h1", text: "PELP de Bayonne")
+    expect(page).to have_no_selector(:table_row, { "Commune" => "64102" }, text: "Bayonne")
 
     # The selection message should not appears anymore
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector(".datatable__selection")
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Les communes sélectionnées ont été exclues du guichet.")
+    expect(page).to have_no_selector(".datatable__selection")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Les communes sélectionnées ont été exclues du guichet.")
 
     # The notification doesn't propose to rollback the last action
     #
     within "[role=log]", text: "Les communes sélectionnées ont été exclues du guichet." do |alert|
-      expect(alert).not_to have_button("Cancel")
+      expect(alert).to have_no_button("Cancel")
     end
 
     # The commune should remains in database
@@ -282,23 +282,23 @@ RSpec.describe "Communes assigned to offices managed bu current organization" do
     # The browser should stay on the office page
     # The selected communes should have been removed
     #
-    expect(page).to     have_current_path(organization_office_path(pelp_bayonne))
-    expect(page).to     have_selector("h1", text: "PELP de Bayonne")
-    expect(page).to     have_text("2 communes | Page 1 sur 1")
-    expect(page).not_to have_selector(:table_row, { "Commune" => "64102" }, text: "Bayonne")
-    expect(page).not_to have_selector(:table_row, { "Commune" => "64122" }, text: "Biarritz")
+    expect(page).to have_current_path(organization_office_path(pelp_bayonne))
+    expect(page).to have_selector("h1", text: "PELP de Bayonne")
+    expect(page).to have_text("2 communes | Page 1 sur 1")
+    expect(page).to have_no_selector(:table_row, { "Commune" => "64102" }, text: "Bayonne")
+    expect(page).to have_no_selector(:table_row, { "Commune" => "64122" }, text: "Biarritz")
 
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector(".datatable__selection")
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Les communes sélectionnées ont été exclues du guichet.")
+    expect(page).to have_no_selector(".datatable__selection")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Les communes sélectionnées ont été exclues du guichet.")
 
     # The notification doesn't propose to rollback the last action
     #
     within "[role=log]", text: "Les communes sélectionnées ont été exclues du guichet." do |alert|
-      expect(alert).not_to have_button("Cancel")
+      expect(alert).to have_no_button("Cancel")
     end
 
     # The communes should remains in database
@@ -348,14 +348,14 @@ RSpec.describe "Communes assigned to offices managed bu current organization" do
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector(".datatable__selection")
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Les communes sélectionnées ont été exclues du guichet.")
+    expect(page).to have_no_selector(".datatable__selection")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Les communes sélectionnées ont été exclues du guichet.")
 
     # The notification doesn't propose to rollback the last action
     #
     within "[role=log]", text: "Les communes sélectionnées ont été exclues du guichet." do |alert|
-      expect(alert).not_to have_button("Cancel")
+      expect(alert).to have_no_button("Cancel")
     end
 
     # The communes should remains in database

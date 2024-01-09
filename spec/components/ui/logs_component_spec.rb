@@ -66,8 +66,8 @@ RSpec.describe UI::LogsComponent, type: :component do
     end
 
     expect(page).to have_selector("pre.logs") do |logs|
-      expect(logs).to     have_text("Log alert('hello')")
-      expect(logs).not_to have_selector("script")
+      expect(logs).to have_text("Log alert('hello')")
+      expect(logs).to have_no_selector("script")
     end
   end
 end

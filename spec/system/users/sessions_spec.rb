@@ -194,10 +194,10 @@ RSpec.describe "Signing in" do
     # The browser should stay on the same page
     # but the login form should be back
     #
-    expect(page).to     have_current_path(new_user_session_path)
-    expect(page).not_to have_selector("h1", text: "Authentification en 2 facteurs")
-    expect(page).to     have_field("Adresse mail")
-    expect(page).to     have_field("Mot de passe")
+    expect(page).to have_current_path(new_user_session_path)
+    expect(page).to have_no_selector("h1", text: "Authentification en 2 facteurs")
+    expect(page).to have_field("Adresse mail")
+    expect(page).to have_field("Mot de passe")
 
     # Fill the login form
     #

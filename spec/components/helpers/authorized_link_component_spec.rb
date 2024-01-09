@@ -32,8 +32,8 @@ RSpec.describe Helpers::AuthorizedLinkComponent, type: :component do
 
         render_inline described_class.new(user, namespace: :organization, parent: collectivity)
 
-        expect(page).to     have_text(user.name)
-        expect(page).not_to have_link
+        expect(page).to have_text(user.name)
+        expect(page).to have_no_link
       end
 
       it "renders user's name when user is not a member of the current organization" do
@@ -42,7 +42,7 @@ RSpec.describe Helpers::AuthorizedLinkComponent, type: :component do
         render_inline described_class.new(user, namespace: :organization)
 
         expect(page).to have_text(user.name)
-        expect(page).not_to have_link
+        expect(page).to have_no_link
       end
 
       it "renders user's name when user is discarded" do
@@ -51,7 +51,7 @@ RSpec.describe Helpers::AuthorizedLinkComponent, type: :component do
         render_inline described_class.new(user, namespace: :organization)
 
         expect(page).to have_selector(".text-disabled", text: "#{user.name} (utilisateur supprimé)")
-        expect(page).not_to have_link
+        expect(page).to have_no_link
       end
 
       it "renders collectivity's link when collectivity is owned by current organization" do
@@ -68,7 +68,7 @@ RSpec.describe Helpers::AuthorizedLinkComponent, type: :component do
         render_inline described_class.new(collectivity, namespace: :organization)
 
         expect(page).to have_text(collectivity.name)
-        expect(page).not_to have_link
+        expect(page).to have_no_link
       end
 
       it "renders collectivity's name when organization is discarded" do
@@ -77,7 +77,7 @@ RSpec.describe Helpers::AuthorizedLinkComponent, type: :component do
         render_inline described_class.new(collectivity, namespace: :organization)
 
         expect(page).to have_selector(".text-disabled", text: "#{collectivity.name} (organisation supprimée)")
-        expect(page).not_to have_link
+        expect(page).to have_no_link
       end
 
       it "renders territory's name" do
@@ -86,7 +86,7 @@ RSpec.describe Helpers::AuthorizedLinkComponent, type: :component do
         render_inline described_class.new(commune, namespace: :organization)
 
         expect(page).to have_text(commune.name)
-        expect(page).not_to have_link
+        expect(page).to have_no_link
       end
 
       it "renders DDFIP's name" do
@@ -95,7 +95,7 @@ RSpec.describe Helpers::AuthorizedLinkComponent, type: :component do
         render_inline described_class.new(ddfip, namespace: :organization)
 
         expect(page).to have_text(ddfip.name)
-        expect(page).not_to have_link
+        expect(page).to have_no_link
       end
 
       it "renders office's name" do
@@ -104,7 +104,7 @@ RSpec.describe Helpers::AuthorizedLinkComponent, type: :component do
         render_inline described_class.new(office, namespace: :organization)
 
         expect(page).to have_text(office.name)
-        expect(page).not_to have_link
+        expect(page).to have_no_link
       end
     end
 
@@ -119,7 +119,7 @@ RSpec.describe Helpers::AuthorizedLinkComponent, type: :component do
         render_inline described_class.new(user, namespace: :organization)
 
         expect(page).to have_text(user.name)
-        expect(page).not_to have_link
+        expect(page).to have_no_link
       end
 
       it "renders user's link when user is a member of a collectivity managed by the current organization" do
@@ -137,8 +137,8 @@ RSpec.describe Helpers::AuthorizedLinkComponent, type: :component do
 
         render_inline described_class.new(user, namespace: :organization, parent: collectivity)
 
-        expect(page).to     have_text(user.name)
-        expect(page).not_to have_link
+        expect(page).to have_text(user.name)
+        expect(page).to have_no_link
       end
 
       it "renders user's name when user is discarded" do
@@ -147,7 +147,7 @@ RSpec.describe Helpers::AuthorizedLinkComponent, type: :component do
         render_inline described_class.new(user, namespace: :organization)
 
         expect(page).to have_selector(".text-disabled", text: "#{user.name} (utilisateur supprimé)")
-        expect(page).not_to have_link
+        expect(page).to have_no_link
       end
 
       it "renders collectivity's link when collectivity is owned by current organization" do
@@ -164,7 +164,7 @@ RSpec.describe Helpers::AuthorizedLinkComponent, type: :component do
         render_inline described_class.new(collectivity, namespace: :organization)
 
         expect(page).to have_text(collectivity.name)
-        expect(page).not_to have_link
+        expect(page).to have_no_link
       end
 
       it "renders collectivity's name when organization is discarded" do
@@ -173,7 +173,7 @@ RSpec.describe Helpers::AuthorizedLinkComponent, type: :component do
         render_inline described_class.new(collectivity, namespace: :organization)
 
         expect(page).to have_selector(".text-disabled", text: "#{collectivity.name} (organisation supprimée)")
-        expect(page).not_to have_link
+        expect(page).to have_no_link
       end
     end
 
@@ -205,7 +205,7 @@ RSpec.describe Helpers::AuthorizedLinkComponent, type: :component do
         render_inline described_class.new(user, namespace: :organization)
 
         expect(page).to have_text(user.name)
-        expect(page).not_to have_link
+        expect(page).to have_no_link
       end
 
       it "renders user's name when user is discarded" do
@@ -214,7 +214,7 @@ RSpec.describe Helpers::AuthorizedLinkComponent, type: :component do
         render_inline described_class.new(user, namespace: :organization)
 
         expect(page).to have_selector(".text-disabled", text: "#{user.name} (utilisateur supprimé)")
-        expect(page).not_to have_link
+        expect(page).to have_no_link
       end
 
       it "renders office's link when office is part of the current DDFIP" do
@@ -231,7 +231,7 @@ RSpec.describe Helpers::AuthorizedLinkComponent, type: :component do
         render_inline described_class.new(office, namespace: :organization)
 
         expect(page).to have_text(office.name)
-        expect(page).not_to have_link
+        expect(page).to have_no_link
       end
 
       it "renders office's name when office is discarded" do
@@ -240,7 +240,7 @@ RSpec.describe Helpers::AuthorizedLinkComponent, type: :component do
         render_inline described_class.new(office, namespace: :organization)
 
         expect(page).to have_selector(".text-disabled", text: "#{office.name} (guichet supprimé)")
-        expect(page).not_to have_link
+        expect(page).to have_no_link
       end
 
       it "renders collectivity's link when collectivity is on DDFIP's territory" do
@@ -258,7 +258,7 @@ RSpec.describe Helpers::AuthorizedLinkComponent, type: :component do
         render_inline described_class.new(collectivity, namespace: :organization)
 
         expect(page).to have_text(collectivity.name)
-        expect(page).not_to have_link
+        expect(page).to have_no_link
       end
 
       it "renders publisher's name" do
@@ -267,7 +267,7 @@ RSpec.describe Helpers::AuthorizedLinkComponent, type: :component do
         render_inline described_class.new(publisher, namespace: :organization)
 
         expect(page).to have_text(publisher.name)
-        expect(page).not_to have_link
+        expect(page).to have_no_link
       end
 
       it "renders territory's name" do
@@ -276,7 +276,7 @@ RSpec.describe Helpers::AuthorizedLinkComponent, type: :component do
         render_inline described_class.new(commune, namespace: :organization)
 
         expect(page).to have_text(commune.name)
-        expect(page).not_to have_link
+        expect(page).to have_no_link
       end
     end
 
@@ -291,7 +291,7 @@ RSpec.describe Helpers::AuthorizedLinkComponent, type: :component do
         render_inline described_class.new(user, namespace: :organization)
 
         expect(page).to have_text(user.name)
-        expect(page).not_to have_link
+        expect(page).to have_no_link
       end
 
       it "renders office's name when office is part of the current DDFIP" do
@@ -300,7 +300,7 @@ RSpec.describe Helpers::AuthorizedLinkComponent, type: :component do
         render_inline described_class.new(office, namespace: :organization)
 
         expect(page).to have_text(office.name)
-        expect(page).not_to have_link
+        expect(page).to have_no_link
       end
     end
 
@@ -323,7 +323,7 @@ RSpec.describe Helpers::AuthorizedLinkComponent, type: :component do
         render_inline described_class.new(user, namespace: :organization)
 
         expect(page).to have_text(user.name)
-        expect(page).not_to have_link
+        expect(page).to have_no_link
       end
 
       it "renders user's name when user is discarded" do
@@ -332,21 +332,21 @@ RSpec.describe Helpers::AuthorizedLinkComponent, type: :component do
         render_inline described_class.new(user, namespace: :organization)
 
         expect(page).to have_selector(".text-disabled", text: "#{user.name} (utilisateur supprimé)")
-        expect(page).not_to have_link
+        expect(page).to have_no_link
       end
 
       it "renders collectivity's name" do
         render_inline described_class.new(collectivity, namespace: :organization)
 
         expect(page).to have_text(collectivity.name)
-        expect(page).not_to have_link
+        expect(page).to have_no_link
       end
 
       it "renders territory's name" do
         render_inline described_class.new(collectivity.territory, namespace: :organization)
 
         expect(page).to have_text(collectivity.territory.name)
-        expect(page).not_to have_link
+        expect(page).to have_no_link
       end
 
       it "renders DDFIP's name" do
@@ -355,7 +355,7 @@ RSpec.describe Helpers::AuthorizedLinkComponent, type: :component do
         render_inline described_class.new(ddfip, namespace: :organization)
 
         expect(page).to have_text(ddfip.name)
-        expect(page).not_to have_link
+        expect(page).to have_no_link
       end
 
       it "renders office's name" do
@@ -364,7 +364,7 @@ RSpec.describe Helpers::AuthorizedLinkComponent, type: :component do
         render_inline described_class.new(office, namespace: :organization)
 
         expect(page).to have_text(office.name)
-        expect(page).not_to have_link
+        expect(page).to have_no_link
       end
     end
 
@@ -456,7 +456,7 @@ RSpec.describe Helpers::AuthorizedLinkComponent, type: :component do
       render_inline described_class.new(user, namespace: :admin)
 
       expect(page).to have_selector(".text-disabled", text: "#{user.name} (utilisateur supprimé)")
-      expect(page).not_to have_link
+      expect(page).to have_no_link
     end
 
     it "renders publisher's link" do
@@ -473,7 +473,7 @@ RSpec.describe Helpers::AuthorizedLinkComponent, type: :component do
       render_inline described_class.new(publisher, namespace: :admin)
 
       expect(page).to have_selector(".text-disabled", text: "#{publisher.name} (organisation supprimée)")
-      expect(page).not_to have_link
+      expect(page).to have_no_link
     end
 
     it "renders collectivity's link" do
@@ -490,7 +490,7 @@ RSpec.describe Helpers::AuthorizedLinkComponent, type: :component do
       render_inline described_class.new(collectivity, namespace: :admin)
 
       expect(page).to have_selector(".text-disabled", text: "#{collectivity.name} (organisation supprimée)")
-      expect(page).not_to have_link
+      expect(page).to have_no_link
     end
 
     it "renders DDFIP's link" do
@@ -507,7 +507,7 @@ RSpec.describe Helpers::AuthorizedLinkComponent, type: :component do
       render_inline described_class.new(ddfip, namespace: :admin)
 
       expect(page).to have_selector(".text-disabled", text: "#{ddfip.name} (organisation supprimée)")
-      expect(page).not_to have_link
+      expect(page).to have_no_link
     end
 
     it "renders office's link" do
@@ -524,7 +524,7 @@ RSpec.describe Helpers::AuthorizedLinkComponent, type: :component do
       render_inline described_class.new(office, namespace: :admin)
 
       expect(page).to have_selector(".text-disabled", text: "#{office.name} (guichet supprimé)")
-      expect(page).not_to have_link
+      expect(page).to have_no_link
     end
 
     it "renders commune's link" do
@@ -661,7 +661,7 @@ RSpec.describe Helpers::AuthorizedLinkComponent, type: :component do
         render_inline described_class.new(publisher)
 
         expect(page).to have_text(publisher.name)
-        expect(page).not_to have_link
+        expect(page).to have_no_link
       end
 
       it "renders DDFIP's name" do
@@ -670,14 +670,14 @@ RSpec.describe Helpers::AuthorizedLinkComponent, type: :component do
         render_inline described_class.new(ddfip)
 
         expect(page).to have_text(ddfip.name)
-        expect(page).not_to have_link
+        expect(page).to have_no_link
       end
 
       it "renders collectivity's name" do
         render_inline described_class.new(collectivity)
 
         expect(page).to have_text(collectivity.name)
-        expect(page).not_to have_link
+        expect(page).to have_no_link
       end
 
       it "renders office's link" do
@@ -686,7 +686,7 @@ RSpec.describe Helpers::AuthorizedLinkComponent, type: :component do
         render_inline described_class.new(office)
 
         expect(page).to have_text(office.name)
-        expect(page).not_to have_link
+        expect(page).to have_no_link
       end
     end
   end

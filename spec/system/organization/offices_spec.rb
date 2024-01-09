@@ -46,8 +46,8 @@ RSpec.describe "Offices managed by current organization" do
     # A dialog box should appear with a form to fill
     #
     within "[role=dialog]", text: "Création d'un nouveau guichet" do |dialog|
-      expect(dialog).not_to have_field("DDFIP")
-      expect(dialog).to     have_field("Nom du guichet", with: nil)
+      expect(dialog).to have_no_field("DDFIP")
+      expect(dialog).to have_field("Nom du guichet", with: nil)
 
       within ".form-block", text: "Compétences" do |block|
         expect(block).to have_unchecked_field("Tout sélectionner")
@@ -71,8 +71,8 @@ RSpec.describe "Offices managed by current organization" do
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Un nouveau guichet a été ajouté avec succés.")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Un nouveau guichet a été ajouté avec succés.")
   end
 
   it "updates an office from the index page" do
@@ -88,8 +88,8 @@ RSpec.describe "Offices managed by current organization" do
     # The form should be filled with office data
     #
     within "[role=dialog]", text: "Modification du guichet" do |dialog|
-      expect(dialog).not_to have_field("DDFIP")
-      expect(dialog).to     have_field("Nom du guichet", with: "PELP de Bayonne")
+      expect(dialog).to have_no_field("DDFIP")
+      expect(dialog).to have_field("Nom du guichet", with: "PELP de Bayonne")
 
       within ".form-block", text: "Compétences" do |block|
         expect(block).to have_unchecked_field("Évaluation des locaux d'habitation")
@@ -110,8 +110,8 @@ RSpec.describe "Offices managed by current organization" do
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
   end
 
   it "updates an office from the office page" do
@@ -127,8 +127,8 @@ RSpec.describe "Offices managed by current organization" do
     # The form should be filled with office data
     #
     within "[role=dialog]", text: "Modification du guichet" do |dialog|
-      expect(dialog).not_to have_field("DDFIP")
-      expect(dialog).to     have_field("Nom du guichet", with: "PELP de Bayonne")
+      expect(dialog).to have_no_field("DDFIP")
+      expect(dialog).to have_field("Nom du guichet", with: "PELP de Bayonne")
 
       within ".form-block", text: "Compétences" do |block|
         expect(block).to have_unchecked_field("Évaluation des locaux d'habitation")
@@ -148,8 +148,8 @@ RSpec.describe "Offices managed by current organization" do
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
   end
 
   it "discards an office from the index page & rollbacks" do
@@ -172,16 +172,16 @@ RSpec.describe "Offices managed by current organization" do
     # The browser should stay on the index page
     # The office should not appears anymore
     #
-    expect(page).to     have_current_path(organization_offices_path)
-    expect(page).to     have_selector("h1", text: "Guichets")
-    expect(page).to     have_text("2 guichets | Page 1 sur 1")
-    expect(page).not_to have_selector(:table_row, "Guichet" => "PELP de Bayonne")
+    expect(page).to have_current_path(organization_offices_path)
+    expect(page).to have_selector("h1", text: "Guichets")
+    expect(page).to have_text("2 guichets | Page 1 sur 1")
+    expect(page).to have_no_selector(:table_row, "Guichet" => "PELP de Bayonne")
 
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Le guichet a été supprimé.")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Le guichet a été supprimé.")
 
     # The notification should include a button to cancel the last action
     #
@@ -200,8 +200,8 @@ RSpec.describe "Offices managed by current organization" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector("[role=log]", text: "Le guichet a été supprimé.")
-    expect(page).to     have_selector("[role=log]", text: "La suppression du guichet a été annulée.")
+    expect(page).to have_no_selector("[role=log]", text: "Le guichet a été supprimé.")
+    expect(page).to have_selector("[role=log]", text: "La suppression du guichet a été annulée.")
   end
 
   it "discards an office from the office page & rollbacks" do
@@ -222,16 +222,16 @@ RSpec.describe "Offices managed by current organization" do
     # The browser should redirect to the index page
     # The office should not appears anymore
     #
-    expect(page).to     have_current_path(organization_offices_path)
-    expect(page).to     have_selector("h1", text: "Guichets")
-    expect(page).to     have_text("2 guichets | Page 1 sur 1")
-    expect(page).not_to have_selector(:table_row, "Guichet" => "PELP de Bayonne")
+    expect(page).to have_current_path(organization_offices_path)
+    expect(page).to have_selector("h1", text: "Guichets")
+    expect(page).to have_text("2 guichets | Page 1 sur 1")
+    expect(page).to have_no_selector(:table_row, "Guichet" => "PELP de Bayonne")
 
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Le guichet a été supprimé.")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Le guichet a été supprimé.")
 
     # The notification should include a button to cancel the last action
     #
@@ -250,8 +250,8 @@ RSpec.describe "Offices managed by current organization" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector("[role=log]", text: "Le guichet a été supprimé.")
-    expect(page).to     have_selector("[role=log]", text: "La suppression du guichet a été annulée.")
+    expect(page).to have_no_selector("[role=log]", text: "Le guichet a été supprimé.")
+    expect(page).to have_selector("[role=log]", text: "La suppression du guichet a été annulée.")
   end
 
   it "selects and discards one office from the index page & rollbacks" do
@@ -282,20 +282,20 @@ RSpec.describe "Offices managed by current organization" do
     # The selected offices should not appears anymore
     # Other offices should remain
     #
-    expect(page).to     have_current_path(organization_offices_path)
-    expect(page).to     have_selector("h1", text: "Guichets")
-    expect(page).to     have_text("2 guichets | Page 1 sur 1")
-    expect(page).not_to have_selector(:table_row, "Guichet" => "PELP de Bayonne")
-    expect(page).to     have_selector(:table_row, "Guichet" => "PELH de Bayonne")
-    expect(page).to     have_selector(:table_row, "Guichet" => "SIP de Bayonne")
+    expect(page).to have_current_path(organization_offices_path)
+    expect(page).to have_selector("h1", text: "Guichets")
+    expect(page).to have_text("2 guichets | Page 1 sur 1")
+    expect(page).to have_no_selector(:table_row, "Guichet" => "PELP de Bayonne")
+    expect(page).to have_selector(:table_row, "Guichet" => "PELH de Bayonne")
+    expect(page).to have_selector(:table_row, "Guichet" => "SIP de Bayonne")
 
     # The selection message should not appears anymore
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector(".datatable__selection")
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Les guichets sélectionnés ont été supprimés.")
+    expect(page).to have_no_selector(".datatable__selection")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Les guichets sélectionnés ont été supprimés.")
 
     # The notification should include a button to cancel the last action
     #
@@ -315,9 +315,9 @@ RSpec.describe "Offices managed by current organization" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector(".datatable__selection")
-    expect(page).not_to have_selector("[role=log]", text: "Les guichets sélectionnés ont été supprimés.")
-    expect(page).to     have_selector("[role=log]", text: "La suppression des guichets sélectionnés a été annulée.")
+    expect(page).to have_no_selector(".datatable__selection")
+    expect(page).to have_no_selector("[role=log]", text: "Les guichets sélectionnés ont été supprimés.")
+    expect(page).to have_selector("[role=log]", text: "La suppression des guichets sélectionnés a été annulée.")
   end
 
   it "selects and discards all offices from the current page on index page & rollbacks" do
@@ -362,19 +362,19 @@ RSpec.describe "Offices managed by current organization" do
     # The browser should stay on index page
     # The selected offices should have been removed
     #
-    expect(page).to     have_current_path(organization_offices_path)
-    expect(page).to     have_selector("h1", text: "Guichets")
-    expect(page).to     have_text("3 guichets | Page 1 sur 1")
-    expect(page).not_to have_selector(:table_row, "Guichet" => "PELP de Bayonne")
-    expect(page).not_to have_selector(:table_row, "Guichet" => "PELH de Bayonne")
-    expect(page).not_to have_selector(:table_row, "Guichet" => "SIP de Bayonne")
+    expect(page).to have_current_path(organization_offices_path)
+    expect(page).to have_selector("h1", text: "Guichets")
+    expect(page).to have_text("3 guichets | Page 1 sur 1")
+    expect(page).to have_no_selector(:table_row, "Guichet" => "PELP de Bayonne")
+    expect(page).to have_no_selector(:table_row, "Guichet" => "PELH de Bayonne")
+    expect(page).to have_no_selector(:table_row, "Guichet" => "SIP de Bayonne")
 
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector(".datatable__selection")
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Les guichets sélectionnés ont été supprimés.")
+    expect(page).to have_no_selector(".datatable__selection")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Les guichets sélectionnés ont été supprimés.")
 
     # The notification should include a button to cancel the last action
     #
@@ -396,9 +396,9 @@ RSpec.describe "Offices managed by current organization" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector(".datatable__selection")
-    expect(page).not_to have_selector("[role=log]", text: "Les guichets sélectionnés ont été supprimés.")
-    expect(page).to     have_selector("[role=log]", text: "La suppression des guichets sélectionnés a été annulée.")
+    expect(page).to have_no_selector(".datatable__selection")
+    expect(page).to have_no_selector("[role=log]", text: "Les guichets sélectionnés ont été supprimés.")
+    expect(page).to have_selector("[role=log]", text: "La suppression des guichets sélectionnés a été annulée.")
   end
 
   it "selects and discards all offices through several pages on index page & rollbacks" do
@@ -454,9 +454,9 @@ RSpec.describe "Offices managed by current organization" do
     # The dialog should be closed
     # A notification should be displayed
     #
-    expect(page).not_to have_selector(".datatable__selection")
-    expect(page).not_to have_selector("[role=dialog]")
-    expect(page).to     have_selector("[role=log]", text: "Les guichets sélectionnés ont été supprimés.")
+    expect(page).to have_no_selector(".datatable__selection")
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Les guichets sélectionnés ont été supprimés.")
 
     # The notification should include a button to cancel the last action
     #
@@ -478,8 +478,8 @@ RSpec.describe "Offices managed by current organization" do
     # The previous notification should be closed
     # A new notification should be displayed
     #
-    expect(page).not_to have_selector(".datatable__selection")
-    expect(page).not_to have_selector("[role=log]", text: "Les guichets sélectionnés ont été supprimés.")
-    expect(page).to     have_selector("[role=log]", text: "La suppression des guichets sélectionnés a été annulée.")
+    expect(page).to have_no_selector(".datatable__selection")
+    expect(page).to have_no_selector("[role=log]", text: "Les guichets sélectionnés ont été supprimés.")
+    expect(page).to have_selector("[role=log]", text: "La suppression des guichets sélectionnés a été annulée.")
   end
 end

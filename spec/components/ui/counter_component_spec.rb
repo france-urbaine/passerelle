@@ -18,6 +18,6 @@ RSpec.describe UI::CounterComponent, type: :component do
   it "doesn't render a badge with a zero number" do
     render_inline described_class.new(0)
 
-    expect(page).not_to have_selector(".counter-badge")
+    expect(page).to have_no_selector(".counter-badge")
   end
 end

@@ -59,10 +59,10 @@ RSpec.describe Views::Reports::ListComponent, type: :component do
         expect(table).to have_selector("th", text: "Type de signalement")
         expect(table).to have_selector("th", text: "Objet")
 
-        expect(table).not_to have_selector("th", text: "Etat")
-        expect(table).not_to have_selector("th", text: "Priorité")
-        expect(table).not_to have_selector("th", text: "Invariant")
-        expect(table).not_to have_selector("th", text: "Adresse")
+        expect(table).to have_no_selector("th", text: "Etat")
+        expect(table).to have_no_selector("th", text: "Priorité")
+        expect(table).to have_no_selector("th", text: "Invariant")
+        expect(table).to have_no_selector("th", text: "Adresse")
       end
     end
 
@@ -75,7 +75,7 @@ RSpec.describe Views::Reports::ListComponent, type: :component do
     it "allows to not render search form" do
       render_inline described_class.new(Report.all, pagy, dashboard: true)
 
-      expect(page).not_to have_selector("form.search")
+      expect(page).to have_no_selector("form.search")
     end
 
     it "renders sort links by default" do
@@ -93,7 +93,7 @@ RSpec.describe Views::Reports::ListComponent, type: :component do
 
       expect(page).to have_selector(".datatable table") do |table|
         expect(table).to have_selector("th", text: "Reference") do |row|
-          expect(row).not_to have_link("Trier par ordre croissant")
+          expect(row).to have_no_link("Trier par ordre croissant")
         end
       end
     end

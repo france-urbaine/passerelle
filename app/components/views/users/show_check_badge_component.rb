@@ -11,7 +11,7 @@ module Views
 
       def call
         # Render a empty string to avoid empty placeholder
-        return " " unless checked?
+        return " ".html_safe unless checked?
 
         icon_component(ICON, label)
       end

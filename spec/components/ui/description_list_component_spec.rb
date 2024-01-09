@@ -107,7 +107,7 @@ RSpec.describe UI::DescriptionListComponent, type: :component do
       expect(card).to have_selector("dl.description-list") do |description_list|
         expect(description_list).to have_selector(".description-list__row") do |row|
           expect(row).to have_selector("dd") do |dd|
-            expect(dd).not_to have_selector("span", text: "")
+            expect(dd).to have_no_selector("span", text: "")
           end
         end
       end

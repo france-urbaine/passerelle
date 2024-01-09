@@ -45,9 +45,9 @@ RSpec.describe "Admin::DDFIPsController#index" do
 
       it "returns only kept users" do
         aggregate_failures do
-          expect(response).to have_html_body.to     have_text(ddfips[0].name)
-          expect(response).to have_html_body.not_to have_text(ddfips[1].name)
-          expect(response).to have_html_body.to     have_text(ddfips[2].name)
+          expect(response).to have_html_body.to have_text(ddfips[0].name)
+          expect(response).to have_html_body.to have_no_text(ddfips[1].name)
+          expect(response).to have_html_body.to have_text(ddfips[2].name)
         end
       end
     end

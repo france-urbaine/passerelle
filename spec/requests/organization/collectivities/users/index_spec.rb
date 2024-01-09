@@ -108,11 +108,11 @@ RSpec.describe "Organization::Collectivities::UsersController#index" do
 
         it "returns only kept users owned by collectivity" do
           aggregate_failures do
-            expect(response).to have_html_body.not_to have_text(users[0].name)
-            expect(response).to have_html_body.not_to have_text(users[1].name)
-            expect(response).to have_html_body.not_to have_text(users[2].name)
-            expect(response).to have_html_body.to     have_text(users[3].name)
-            expect(response).to have_html_body.to     have_text(users[4].name)
+            expect(response).to have_html_body.to have_no_text(users[0].name)
+            expect(response).to have_html_body.to have_no_text(users[1].name)
+            expect(response).to have_html_body.to have_no_text(users[2].name)
+            expect(response).to have_html_body.to have_text(users[3].name)
+            expect(response).to have_html_body.to have_text(users[4].name)
           end
         end
       end

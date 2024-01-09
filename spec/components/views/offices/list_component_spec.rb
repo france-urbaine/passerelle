@@ -44,12 +44,12 @@ RSpec.describe Views::Offices::ListComponent, type: :component do
       expect(page).to have_selector(".datatable table") do |table|
         expect(table).to have_selector("th", text: "Guichet")
         expect(table).to have_selector("th", text: "DDFIP")
-        expect(table).not_to have_selector("th", text: "Compétence")
-        expect(table).not_to have_selector("th", text: "Utilisateurs")
-        expect(table).not_to have_selector("th", text: "Communes")
-        expect(table).not_to have_selector("th", text: "Signalements")
-        expect(table).not_to have_selector("th", text: "Approuvés")
-        expect(table).not_to have_selector("th", text: "Rejetés")
+        expect(table).to have_no_selector("th", text: "Compétence")
+        expect(table).to have_no_selector("th", text: "Utilisateurs")
+        expect(table).to have_no_selector("th", text: "Communes")
+        expect(table).to have_no_selector("th", text: "Signalements")
+        expect(table).to have_no_selector("th", text: "Approuvés")
+        expect(table).to have_no_selector("th", text: "Rejetés")
 
         expect(table).to have_selector(:table_row, {
           "Guichet"  => offices.first.name,

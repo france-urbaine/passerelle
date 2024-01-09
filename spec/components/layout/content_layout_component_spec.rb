@@ -79,8 +79,8 @@ RSpec.describe Layout::ContentLayoutComponent, type: :component do
     end
 
     expect(page).to have_selector(".content__layout > .content__header") do |header|
-      expect(header).to     have_selector("div", text: "Section #1")
-      expect(header).not_to have_selector("h2")
+      expect(header).to have_selector("div", text: "Section #1")
+      expect(header).to have_no_selector("h2")
     end
   end
 

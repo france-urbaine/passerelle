@@ -91,9 +91,9 @@ RSpec.describe Layout::StatusPage::GoneComponent, type: :component do
       end
     end
 
-    expect(page).to     have_selector("main.content > turbo-frame[src='/background/path']")
-    expect(page).to     have_selector(".modal")
-    expect(page).not_to have_selector(".card")
+    expect(page).to have_selector("main.content > turbo-frame[src='/background/path']")
+    expect(page).to have_selector(".modal")
+    expect(page).to have_no_selector(".card")
 
     expect(page).to have_selector(".modal > .modal__content > .modal__header", text: "La page que vous recherchez n'est pas disponible.")
     expect(page).to have_selector(".modal > .modal__content > .modal__body") do |node|
