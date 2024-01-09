@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe UI::Form::PasswordFieldComponent do
+RSpec.describe UI::Form::PasswordField::Component do
   it "renders a password field with password visibiliy button" do
     render_inline described_class.new(:user, :password)
 

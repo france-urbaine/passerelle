@@ -23,6 +23,10 @@
 
 /* UI components - basic component */
 @import "../../components/ui/button";
+@import "../../components/ui/form/block";
+@import "../../components/ui/form/password_field";
+@import "../../components/ui/form/checkboxes";
+@import "../../components/ui/form/radio_buttons";
 
 /* UI components - top components, may depends on basic component */
 @import "../../components/ui/breadcrumbs";
@@ -43,12 +47,9 @@
 @import "../../components/ui/tabs";
 
 /* Forms */
-@import "./components/form_block";
 @import "./components/autocomplete";
 @import "./components/search";
-@import "./components/choices_collection";
 @import "./components/direct_upload";
-@import "./components/password_field";
 
 /* Data display */
 @import "./components/tooltip";

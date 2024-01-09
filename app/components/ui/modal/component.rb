@@ -28,7 +28,7 @@ module UI
       renders_many :other_actions, "OtherAction"
       renders_one :raw_actions
 
-      renders_many :hidden_fields, UI::Form::HiddenFieldComponent
+      renders_many :hidden_fields, UI::Form::HiddenField::Component
 
       attr_reader :referrer
       attr_accessor :form_options
