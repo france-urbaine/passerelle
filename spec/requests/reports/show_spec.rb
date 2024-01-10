@@ -121,5 +121,26 @@ RSpec.describe "ReportsController#show" do
         it { expect(response).to have_html_body.to have_text("Ce signalement n'a pas été trouvé ou n'existe plus.") }
       end
     end
+
+    context "when signed in as a ddfip admin" do
+      let(:ddfip)  { create(:ddfip) }
+      let(:report) { create(:report, :transmitted, ddfip: ddfip) }
+
+      before { sign_in_as(:organization_admin, organization: ddfip) }
+
+      context "when the report is open for first time" do
+        it { expect(response).to have_http_status(:success) }
+        it { expect(response).to have_content_type(:html) }
+        it { expect(response).to have_html_body }
+
+        it "acknowledge the report" do
+          expect {
+            request
+            report.reload
+          }.to change(report, :state).from("sent").to("acknowledged")
+            .and change(report, :acknowledged_at).to be_present
+        end
+      end
+    end
   end
 end

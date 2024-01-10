@@ -14,6 +14,7 @@ class ReportsController < ApplicationController
 
   def show
     @report = find_and_authorize_report
+    @report.acknowledge! if first_opening_by_ddfip?
   end
 
   def new
@@ -137,5 +138,9 @@ class ReportsController < ApplicationController
       completed_at: nil,
       collectivity: current_user.organization
     )
+  end
+
+  def first_opening_by_ddfip?
+    current_organization.is_a?(DDFIP) && @report.sent?
   end
 end
