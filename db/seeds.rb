@@ -199,6 +199,7 @@ log "Seed reports"
 publisher    = Publisher.find_by!(name: "Solutions & Territoire")
 collectivity = Collectivity.find_by!(name: "CA du Pays Basque")
 communes     = collectivity.reportable_communes
+ddfip        = DDFIP.find_by!(code_departement: 64)
 
 unless Report.any?
   # rubocop:disable Style/CombinableLoops
@@ -206,20 +207,26 @@ unless Report.any?
   # sample records are created.
   #
   Report::FORM_TYPES.each do |form_type|
-    FactoryBot.create(:report, :completed, collectivity:, form_type:, commune: communes.sample)
+    FactoryBot.create(:report, :ready, collectivity:, form_type:, commune: communes.sample)
   end
 
   Report::FORM_TYPES.each do |form_type|
     FactoryBot.create(:report, collectivity:, form_type:, commune: communes.sample)
   end
 
-  FactoryBot.create(:package, collectivity:).tap do |package|
-    FactoryBot.create_list(:report, 2, :transmitted, collectivity:, package:, commune: communes.sample)
+  FactoryBot.create(:package, collectivity:, ddfip:).tap do |package|
+    FactoryBot.create_list(:report, 2, :transmitted, collectivity:, package:, ddfip:, commune: communes.sample)
   end
 
-  FactoryBot.create(:package, :sandbox, collectivity:, publisher:).tap do |package|
+  FactoryBot.create(:package, :sandbox, collectivity:, publisher:, ddfip:).tap do |package|
     Report::FORM_TYPES.each do |form_type|
-      FactoryBot.create(:report, :transmitted, :sandbox, collectivity:, publisher:, package:, form_type:, commune: communes.sample)
+      FactoryBot.create(:report, :transmitted, :sandbox, collectivity:, publisher:, package:, form_type:, ddfip:, commune: communes.sample)
+    end
+  end
+
+  FactoryBot.create(:package, collectivity:, publisher:, ddfip:).tap do |package|
+    Report::FORM_TYPES[0..1].each do |form_type|
+      FactoryBot.create(:report, :transmitted, collectivity:, publisher:, package:, form_type:, ddfip:, commune: communes.sample)
     end
   end
 
