@@ -52,10 +52,14 @@ module ControllerDiscard
 
   private
 
-  def undiscard_action_method_to_path(method, *)
+  # FIXME: https://bugs.ruby-lang.org/issues/20090
+  # Anonymous parameters & blocks cannot be forwarded within block in Ruby 3.3.0
+  # May be fixed in Ruby 3.3.1
+  #
+  def undiscard_action_method_to_path(method, *args)
     method.match(/(undiscard_[_a-z]*)_action/).try do |m|
       path_method = "#{m[1]}_path"
-      send(path_method, *) if respond_to?(path_method)
+      send(path_method, *args) if respond_to?(path_method)
     end
   end
 end
