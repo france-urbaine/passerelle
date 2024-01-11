@@ -102,6 +102,10 @@ Rails.application.routes.draw do
         resource :assignment, only: %i[edit update destroy], controller: "reports/assignments", path: "/assignment" do
           concerns :removable, undiscard: false
         end
+
+        resource :denial, only: %i[edit update destroy], controller: "reports/denials", path: "/denial" do
+          concerns :removable, undiscard: false
+        end
       end
 
       resources :packages, only: %i[index show], path: "paquets" do

@@ -36,4 +36,14 @@ RSpec.describe ReportsController do
   it { expect(patch:  "/signalements/9c6c00c4-0784-4ef8-8978-b1e0246882a7/assignment").to route_to("reports/assignments#update", report_id: "9c6c00c4-0784-4ef8-8978-b1e0246882a7") }
   it { expect(put:    "/signalements/9c6c00c4-0784-4ef8-8978-b1e0246882a7/assignment").to route_to("reports/assignments#update", report_id: "9c6c00c4-0784-4ef8-8978-b1e0246882a7") }
   it { expect(delete: "/signalements/9c6c00c4-0784-4ef8-8978-b1e0246882a7/assignment").to route_to("reports/assignments#destroy", report_id: "9c6c00c4-0784-4ef8-8978-b1e0246882a7") }
+
+  it { expect(get:    "/signalements/9c6c00c4-0784-4ef8-8978-b1e0246882a7/denial/remove").to route_to("reports/denials#remove", report_id: "9c6c00c4-0784-4ef8-8978-b1e0246882a7") }
+
+  it { expect(get:    "/signalements/9c6c00c4-0784-4ef8-8978-b1e0246882a7/denial/edit").to route_to("reports/denials#edit", report_id: "9c6c00c4-0784-4ef8-8978-b1e0246882a7") }
+
+  it { expect(get:    "/signalements/9c6c00c4-0784-4ef8-8978-b1e0246882a7/denial").to be_unroutable }
+  it { expect(post:   "/signalements/9c6c00c4-0784-4ef8-8978-b1e0246882a7/denial").to be_unroutable }
+  it { expect(patch:  "/signalements/9c6c00c4-0784-4ef8-8978-b1e0246882a7/denial").to route_to("reports/denials#update", report_id: "9c6c00c4-0784-4ef8-8978-b1e0246882a7") }
+  it { expect(put:    "/signalements/9c6c00c4-0784-4ef8-8978-b1e0246882a7/denial").to route_to("reports/denials#update", report_id: "9c6c00c4-0784-4ef8-8978-b1e0246882a7") }
+  it { expect(delete: "/signalements/9c6c00c4-0784-4ef8-8978-b1e0246882a7/denial").to route_to("reports/denials#destroy", report_id: "9c6c00c4-0784-4ef8-8978-b1e0246882a7") }
 end
