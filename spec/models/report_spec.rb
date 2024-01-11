@@ -1197,7 +1197,7 @@ RSpec.describe Report do
 
         aggregate_failures do
           expect {
-            expect(report.draft!).to be(true)
+            expect(report.draft!).to be(false)
             report.reload
           }.not_to change(report, :ready_at)
         end
@@ -1223,7 +1223,7 @@ RSpec.describe Report do
 
         aggregate_failures do
           expect {
-            expect(report.ready!).to be(true)
+            expect(report.ready!).to be(false)
             report.reload
           }.not_to change(report, :ready_at)
         end
@@ -1250,7 +1250,7 @@ RSpec.describe Report do
 
         aggregate_failures do
           expect {
-            expect(report.transmit!).to be(true)
+            expect(report.transmit!).to be(false)
             report.reload
           }.not_to change(report, :transmitted_at)
         end
@@ -1264,10 +1264,15 @@ RSpec.describe Report do
         expect(report.deny!).to be(true)
       end
 
-      it "returns true when report was already denied" do
+      it "doesn't update previous denied_at time when already denied" do
         report = create(:report, :denied)
 
-        expect(report.deny!).to be(true)
+        aggregate_failures do
+          expect {
+            expect(report.deny!).to be(false)
+            report.reload
+          }.not_to change(report, :denied_at)
+        end
       end
 
       it "marks the report as denied" do
@@ -1278,17 +1283,6 @@ RSpec.describe Report do
           report.reload
         }.to change(report, :denied_at).to(be_present)
           .and change(report, :state).to("denied")
-      end
-
-      it "doesn't update previous return time" do
-        report = Timecop.freeze(2.minutes.ago) do
-          create(:report, :denied)
-        end
-
-        expect {
-          report.deny!
-          report.reload
-        }.not_to change(report, :denied_at)
       end
     end
 
@@ -1303,33 +1297,23 @@ RSpec.describe Report do
           .and change(report, :state).to("acknowledged")
       end
 
-      it "returns true when report was already acknowledged" do
-        report = create(:report, :transmitted, state: "acknowledged")
-
-        expect(report.acknowledge!).to be(true)
-      end
-
       it "doesn't update previous acknowledged time when already acknowledged" do
         report = Timecop.freeze(2.minutes.ago) do
           create(:report, :transmitted, state: "acknowledged")
         end
 
-        expect {
-          report.acknowledge!
-          report.reload
-        }.not_to change(report, :acknowledged_at)
+        aggregate_failures do
+          expect {
+            expect(report.acknowledge!).to be(false)
+            report.reload
+          }.not_to change(report, :acknowledged_at)
+        end
       end
     end
 
     describe "#assign!" do
       it "returns true" do
         report = create(:report, :transmitted)
-
-        expect(report.assign!).to be(true)
-      end
-
-      it "returns true when report was already assigned" do
-        report = create(:report, :assigned)
 
         expect(report.assign!).to be(true)
       end
@@ -1349,10 +1333,12 @@ RSpec.describe Report do
           create(:report, :assigned)
         end
 
-        expect {
-          report.assign!
-          report.reload
-        }.not_to change(report, :assigned_at)
+        aggregate_failures do
+          expect {
+            expect(report.assign!).to be(false)
+            report.reload
+          }.not_to change(report, :assigned_at)
+        end
       end
     end
 
@@ -1415,7 +1401,7 @@ RSpec.describe Report do
 
         aggregate_failures do
           expect {
-            expect(report.approve!).to be(true)
+            expect(report.approve!).to be(false)
             report.reload
           }.not_to change(report, :approved_at)
         end
@@ -1435,18 +1421,6 @@ RSpec.describe Report do
         end
       end
 
-      it "reset approval time when previously approved" do
-        report = create(:report, :approved)
-
-        aggregate_failures do
-          expect {
-            expect(report.reject!).to be(true)
-            report.reload
-          }.to change(report, :state).to("rejected")
-            .and change(report, :rejected_at).to(be_present)
-        end
-      end
-
       it "doesn't update previous rejection time when already rejected" do
         report = Timecop.freeze(2.minutes.ago) do
           create(:report, :rejected)
@@ -1454,7 +1428,7 @@ RSpec.describe Report do
 
         aggregate_failures do
           expect {
-            expect(report.reject!).to be(true)
+            expect(report.reject!).to be(false)
             report.reload
           }.not_to change(report, :rejected_at)
         end
