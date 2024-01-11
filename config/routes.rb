@@ -98,6 +98,12 @@ Rails.application.routes.draw do
         end
       end
 
+      resources :reports, path: "signalements", only: [] do
+        resource :assignment, only: %i[edit update destroy], controller: "reports/assignments", path: "/assignment" do
+          concerns :removable, undiscard: false
+        end
+      end
+
       resources :packages, only: %i[index show], path: "paquets" do
         scope module: "packages" do
           resources :reports, only: %i[index], concerns: %i[removable_collection], path: "signalements"
