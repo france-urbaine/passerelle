@@ -20,6 +20,12 @@
         - if @report.package && allowed_to?(:show?, @report.package)
           - attribute.with_action "Voir le paquet", package_path(@report.package), icon: "magnifying-glass"
 
+      - list.with_attribute("Guichet") do |attribute|
+        = @report.office&.name
+
+        - if @report.assigned? && allowed_to?(:assign?, @report)
+          - attribute.with_action "Changer de guichet", edit_report_assignment_path(@report), icon: "arrows-right-left", modal: true
+
       - list.with_attribute("Type de signalement") do
         = translate_enum(@report.form_type, scope: "enum.report_form_type")
 
