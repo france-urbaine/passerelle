@@ -20,7 +20,7 @@ module Reports
 
     def destroy
       @report = find_and_authorize_report
-      @report.reject!
+      @report.assign!
 
       respond_with @report,
         flash: true,
