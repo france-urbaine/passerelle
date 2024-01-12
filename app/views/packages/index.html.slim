@@ -20,13 +20,11 @@
 
         - datatable.with_empty_message do
           - if params[:search]
-            | Aucun signalement ne correspont à votre recherche.
+            | Aucun paquet ne correspont à votre recherche.
           - else
-            | Aucun signalement disponible.
+            | Aucun paquet disponible.
 
         - datatable.each_row do |row, package|
-          - row.with_checkbox "Sélectionner ce paquet", described_by: :name
-
           - row.with_column(:reference) do
             = authorized_link_to package
 
