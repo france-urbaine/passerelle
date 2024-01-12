@@ -10,7 +10,7 @@ module Reports
           record.kept? &&
           record.out_of_sandbox? &&
           record.assigned? &&
-          record.ddfip = organization
+          record.ddfip == organization
       end
     end
   end

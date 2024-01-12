@@ -37,12 +37,7 @@ class ReportPolicy < ApplicationPolicy
   end
 
   def approve?
-    if record == Report
-      ddfip_admin?
-    elsif record.is_a?(Report)
-      report_updatable_by_ddfip_admin?(record) ||
-        report_updatable_by_office_user?(record)
-    end
+    allowed_to?(:manage?, record, with: ::Reports::ApprovalPolicy)
   end
 
   def transmit?
