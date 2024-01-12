@@ -94,8 +94,6 @@ Rails.application.routes.draw do
             concerns :removable, undiscard: false
           end
 
-          resource :approval, only: %i[show update destroy]
-
           resource :assignment, only: %i[edit update destroy], path: "/assign" do
             concerns :removable, undiscard: false
           end
@@ -103,6 +101,9 @@ Rails.application.routes.draw do
           resource :denial, only: %i[edit update destroy], path: "/deny" do
             concerns :removable, undiscard: false
           end
+
+          resource :approval, only: %i[show update destroy]
+          resource :rejection, only: %i[show update]
         end
       end
 
