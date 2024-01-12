@@ -147,7 +147,7 @@ module States
       end
 
       def assign!
-        return false if assigned?
+        return false if processing?
 
         update(
           state: "processing",

@@ -1328,16 +1328,30 @@ RSpec.describe Report do
           .and change(report, :state).to("processing")
       end
 
-      it "doesn't update previous assigned time" do
-        report = Timecop.freeze(2.minutes.ago) do
-          create(:report, :assigned)
-        end
+      context "when already assigned" do
+        it "doesn't update previous assigned time" do
+          report = Timecop.freeze(2.minutes.ago) do
+            create(:report, :assigned)
+          end
 
-        aggregate_failures do
+          aggregate_failures do
+            expect {
+              expect(report.assign!).to be(false)
+              report.reload
+            }.not_to change(report, :assigned_at)
+          end
+        end
+      end
+
+      context "when resolved" do
+        it "marks the report as assigned" do
+          report = create(:report, :approved)
+
           expect {
-            expect(report.assign!).to be(false)
+            report.assign!
             report.reload
-          }.not_to change(report, :assigned_at)
+          }.to change(report, :assigned_at).to(be_present)
+            .and change(report, :state).to("processing")
         end
       end
     end
