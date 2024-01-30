@@ -9,9 +9,7 @@ module Packages
     end
 
     def verify
-      # The workflow is simplified :
-      # packages are auto-assigned.
-      @package.reports.assign_all!
+      @package.reports.assign_all! if @package.ddfip&.auto_assign_reports?
 
       true
     end

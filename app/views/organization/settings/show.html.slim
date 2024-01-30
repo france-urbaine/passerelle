@@ -56,24 +56,26 @@
 
     - if current_organization.is_a?(DDFIP)
       - layout.with_header icon: "archive-box" do
-        | Traitement des signalements
+        | Assignement des signalements
 
       - layout.with_section do
         = card_component do |card|
-          - card.with_body do
+          - card.with_form(model: @organization, scope: :organization, url: organization_settings_path, id: "assign-form") do |form|
 
             p
-              ' Par défaut, les signalements reçus sont automatiquement assignés aux guichets appropriés.
+              ' Par défaut, les signalements reçus doivent être affectés manuellement aux guichets pour être traités.
               br
-              ' En tant qu'administrateur, vous pouvez décider de confirmer ou rejeter chaque paquet dés sa réception,
-              ' avant que ceux-ci soient assignés aux guichets.
+              ' En tant que référent départemental, vous pouvez décider d'assigner automatiquement chaque signalement au guichet
+              ' le plus approprié.
 
-            = form_block_component(@organisation, :auto_assign_packages) do |block|
-              input( id="package_approval" type="checkbox" disabled checked )
-              label( for="package_approval" ) Confirmer les paquets à la réception
+            = form.block :auto_assign_reports do |block|
+              = form.check_box :auto_assign_reports
+              = form.label :auto_assign_reports
 
               - block.with_hint do
-                ' Cette fonctionnalité n'est pas encore disponible.
+                p La modification de ce paramètre n'affecte pas les signalements déjà reçus ou assignés.
+
+          - card.with_submit_action "Enregistrer"
 
     - layout.with_header icon: "shield-check" do
       | Sécurité
