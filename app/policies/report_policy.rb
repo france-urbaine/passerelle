@@ -49,6 +49,10 @@ class ReportPolicy < ApplicationPolicy
     report_transmissible_by_collectivity?(record) if record.is_a?(Report)
   end
 
+  def assign?
+    allowed_to?(:manage?, record, with: ::Reports::AssignmentPolicy)
+  end
+
   def destroy?
     if record == Report
       collectivity? || publisher?
@@ -278,7 +282,7 @@ class ReportPolicy < ApplicationPolicy
     def report_updatable_by_ddfip_admin?(report)
       ddfip_admin? &&
         report.out_of_sandbox? &&
-        report.transmitted? &&
+        report.kept? &&
         report.undenied? &&
         report.ddfip_id == user.organization_id
     end

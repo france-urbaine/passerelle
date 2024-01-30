@@ -492,7 +492,7 @@ CREATE TABLE public.ddfips (
     contact_phone character varying,
     domain_restriction character varying,
     allow_2fa_via_email boolean DEFAULT false NOT NULL,
-    auto_assign_packages boolean DEFAULT false NOT NULL,
+    auto_assign_reports boolean DEFAULT false NOT NULL,
     reports_transmitted_count integer DEFAULT 0 NOT NULL,
     reports_denied_count integer DEFAULT 0 NOT NULL,
     reports_processing_count integer DEFAULT 0 NOT NULL,
@@ -4175,6 +4175,7 @@ ALTER TABLE ONLY public.oauth_access_tokens
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20240130154031'),
 ('20231212162710'),
 ('20231128164632'),
 ('20231128065805'),

@@ -9,7 +9,7 @@ module Reports
         ddfip? &&
           record.kept? &&
           record.out_of_sandbox? &&
-          record.transmitted? &&
+          record.assigned? &&
           record.ddfip = organization
       end
     end

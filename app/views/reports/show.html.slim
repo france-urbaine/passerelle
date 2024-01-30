@@ -10,6 +10,12 @@
           = turbo_frame_tag dom_id(@report, :transmission_button) do
             = render "reports/transmission_button", report: @report
 
+      - if allowed_to?(:assign?, @report)
+        - if @report.unassigned?
+          - breadcrumbs.with_action "Assigner", edit_report_assignment_path(@report), icon: "arrows-right-left", modal: true, primary: true
+        - else
+          - breadcrumbs.with_action "Désassigner", remove_report_assignment_path(@report), icon: "arrow-uturn-left", modal: true, destructive: "discrete"
+
       - if allowed_to?(:approve?, @report)
         - unless @report.approved?
           - breadcrumbs.with_action "Approuver", report_approval_path(@report), icon: "hand-thumb-up", accent: true, method: "patch"

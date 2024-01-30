@@ -1,0 +1,14 @@
+= modal_frame_component(referrer: @referrer_path) do |template|
+  - template.with_modal do |modal|
+    - modal.with_header do
+      | Désassignement du signalement : #{@report.reference}
+
+    - modal.with_form(url:  report_assignment_path(@report), method: :delete) do
+      - modal.with_hidden_field :redirect, @redirect_path
+      p
+        | Êtes-vous sûrs de vouloir désassigner ce signalement ?
+      p
+        | Le signalement sera alors retiré des dossiers à traiter du guichet #{@report.office&.name}
+
+    - modal.with_submit_action "Continuer", autofocus: true
+    - modal.with_close_action "Annuler"

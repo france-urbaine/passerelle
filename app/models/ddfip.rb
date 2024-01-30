@@ -19,7 +19,7 @@
 #  contact_phone             :string
 #  domain_restriction        :string
 #  allow_2fa_via_email       :boolean          default(FALSE), not null
-#  auto_assign_packages      :boolean          default(FALSE), not null
+#  auto_assign_reports       :boolean          default(FALSE), not null
 #  reports_transmitted_count :integer          default(0), not null
 #  reports_denied_count      :integer          default(0), not null
 #  reports_processing_count  :integer          default(0), not null
