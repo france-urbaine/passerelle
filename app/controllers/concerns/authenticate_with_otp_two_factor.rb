@@ -1,7 +1,10 @@
 # frozen_string_literal: true
 
 # Controller concern to handle two-factor authentication
-# See https://github.com/gitlabhq/gitlabhq/blob/master/app/controllers/concerns/authenticates_with_two_factor.rb
+# This is copied from Gitlab concerns.
+#
+# See:
+#   https://github.com/gitlabhq/gitlabhq/blob/master/app/controllers/concerns/authenticates_with_two_factor.rb
 #
 module AuthenticateWithOtpTwoFactor
   extend ActiveSupport::Concern
@@ -26,6 +29,9 @@ module AuthenticateWithOtpTwoFactor
     user = self.resource = find_user_for_authentication
     return unless user&.valid_password?(user_params[:password])
 
+    # Do not deliver this mail asynchronously to avoid any latency due to
+    # busy queues.
+    #
     Users::Mailer.two_factor_sign_in_code(user).deliver_now if user.send_otp_code_by_email?
     prompt_for_two_factor(user)
   end
@@ -57,6 +63,7 @@ module AuthenticateWithOtpTwoFactor
       user.save!
       sign_in(user, event: :authentication)
     else
+      user.increment_failed_attempts!
       user.errors.add(:otp_attempt, :invalid)
       prompt_for_two_factor(user)
     end

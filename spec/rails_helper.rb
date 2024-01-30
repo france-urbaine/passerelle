@@ -172,6 +172,7 @@ RSpec::Matchers.define_negated_matcher :not_invoke,             :invoke
 RSpec::Matchers.define_negated_matcher :not_send_message,       :send_message
 RSpec::Matchers.define_negated_matcher :not_have_enqueued_job,  :have_enqueued_job
 RSpec::Matchers.define_negated_matcher :not_redirect_to,        :redirect_to
+RSpec::Matchers.define_negated_matcher :not_have_sent_emails,   :have_sent_emails
 RSpec::Matchers.define_negated_matcher :be_unroutable,          :be_routable
 RSpec::Matchers.define_negated_matcher :have_no_html_attribute, :have_html_attribute
 

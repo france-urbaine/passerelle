@@ -208,6 +208,7 @@ Devise.setup do |config|
   # :both  = Enables both strategies
   # :none  = No unlock strategy. You should handle unlocking by yourself.
   # config.unlock_strategy = :both
+  config.unlock_strategy = :email
 
   # Number of authentication tries before locking an account if lock_strategy
   # is failed attempts.
@@ -325,7 +326,9 @@ Devise.setup do |config|
   # config.sign_in_after_change_password = true
 
   # ==> OTP / Two factor Authentication configuration
-  # Make Code valid for 5 minutes
+  # The number of seconds before and after the current time for which codes will be accepted.
+  # Default to 30 seconds.
+  # Make it valid for 5 minutes because many users use the email strategy which might be subject to latencies.
   config.otp_allowed_drift = 5.minutes.to_i
 
   # ==> Configuration for :zxcvbnable
