@@ -28,7 +28,7 @@ module Users
     end
 
     def edit
-      @user.verify_two_factor(params[:otp_method])
+      @user.setup_two_factor(params[:otp_method])
     end
 
     def update

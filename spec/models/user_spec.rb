@@ -53,49 +53,51 @@ RSpec.describe User do
     end
   end
 
-  # Search
+  # Scopes
   # ----------------------------------------------------------------------------
-  describe ".search" do
-    it do
-      expect {
-        described_class.search("Hello").load
-      }.to perform_sql_query(<<~SQL.squish)
-        SELECT "users".*
-        FROM   "users"
-        WHERE (LOWER(UNACCENT("users"."last_name")) LIKE LOWER(UNACCENT('%Hello%'))
-          OR LOWER(UNACCENT("users"."first_name")) LIKE LOWER(UNACCENT('%Hello%')))
-      SQL
-    end
+  describe "scopes" do
+    describe ".search" do
+      it do
+        expect {
+          described_class.search("Hello").load
+        }.to perform_sql_query(<<~SQL.squish)
+          SELECT "users".*
+          FROM   "users"
+          WHERE (LOWER(UNACCENT("users"."last_name")) LIKE LOWER(UNACCENT('%Hello%'))
+            OR LOWER(UNACCENT("users"."first_name")) LIKE LOWER(UNACCENT('%Hello%')))
+        SQL
+      end
 
-    it do
-      expect {
-        described_class.search("Louis Funes").load
-      }.to perform_sql_query(<<~SQL.squish)
-        SELECT "users".*
-        FROM   "users"
-        WHERE (LOWER(UNACCENT(CONCAT("users"."last_name", ' ', "users"."first_name"))) LIKE LOWER(UNACCENT('%Louis% %Funes%'))
-          OR LOWER(UNACCENT(CONCAT("users"."first_name", ' ', "users"."last_name"))) LIKE LOWER(UNACCENT('%Louis% %Funes%')))
-      SQL
-    end
+      it do
+        expect {
+          described_class.search("Louis Funes").load
+        }.to perform_sql_query(<<~SQL.squish)
+          SELECT "users".*
+          FROM   "users"
+          WHERE (LOWER(UNACCENT(CONCAT("users"."last_name", ' ', "users"."first_name"))) LIKE LOWER(UNACCENT('%Louis% %Funes%'))
+            OR LOWER(UNACCENT(CONCAT("users"."first_name", ' ', "users"."last_name"))) LIKE LOWER(UNACCENT('%Louis% %Funes%')))
+        SQL
+      end
 
-    it do
-      expect {
-        described_class.search("ddfip-64@finances.gouv.fr").load
-      }.to perform_sql_query(<<~SQL.squish)
-        SELECT "users".*
-        FROM   "users"
-        WHERE ("users"."email" = 'ddfip-64@finances.gouv.fr' OR "users"."unconfirmed_email" = 'ddfip-64@finances.gouv.fr')
-      SQL
-    end
+      it do
+        expect {
+          described_class.search("ddfip-64@finances.gouv.fr").load
+        }.to perform_sql_query(<<~SQL.squish)
+          SELECT "users".*
+          FROM   "users"
+          WHERE ("users"."email" = 'ddfip-64@finances.gouv.fr' OR "users"."unconfirmed_email" = 'ddfip-64@finances.gouv.fr')
+        SQL
+      end
 
-    it do
-      expect {
-        described_class.search("@finances.gouv.fr").load
-      }.to perform_sql_query(<<~SQL.squish)
-        SELECT "users".*
-        FROM   "users"
-        WHERE ("users"."email" LIKE '%@finances.gouv.fr' OR "users"."unconfirmed_email" LIKE '%@finances.gouv.fr')
-      SQL
+      it do
+        expect {
+          described_class.search("@finances.gouv.fr").load
+        }.to perform_sql_query(<<~SQL.squish)
+          SELECT "users".*
+          FROM   "users"
+          WHERE ("users"."email" LIKE '%@finances.gouv.fr' OR "users"."unconfirmed_email" LIKE '%@finances.gouv.fr')
+        SQL
+      end
     end
   end
 
@@ -214,6 +216,380 @@ RSpec.describe User do
           expect(user).to be_a_new(User)
           expect(user.errors).to satisfy { |errors| errors.of_kind?(:confirmation_token, :blank) }
         end
+      end
+    end
+  end
+
+  # Authentication
+  # ----------------------------------------------------------------------------
+  describe "authentication process" do
+    describe ".find_for_authentication" do
+      it "ignores discarded records" do
+        expect {
+          described_class.find_for_authentication(email: "ddfip-64@finances.gouv.fr")
+        }.to perform_sql_query(<<~SQL.squish)
+          SELECT   "users".*
+          FROM     "users"
+          WHERE    "users"."discarded_at" IS NULL
+            AND    "users"."email" = 'ddfip-64@finances.gouv.fr'
+          ORDER BY "users"."created_at" ASC,
+                   "users"."id" ASC
+          LIMIT    1
+        SQL
+      end
+    end
+
+    describe "#active_for_authentication?" do
+      it "accepts kept records" do
+        user = create(:user)
+        expect(user).to be_active_for_authentication
+      end
+
+      it "rejects discarded records" do
+        user = create(:user, :discarded)
+        expect(user).not_to be_active_for_authentication
+      end
+
+      it "rejects unconfirmed users" do
+        user = create(:user, :unconfirmed)
+        expect(user).not_to be_active_for_authentication
+      end
+    end
+
+    describe "#update_with_password_protection" do
+      let(:user) { create(:user, first_name: "Jean", email: "jean@ddip.gouv.fr") }
+
+      it "updates attributes without current password" do
+        expect {
+          user.update_with_password_protection(first_name: "Louis")
+          user.reload
+        }.to change(user, :first_name).to("Louis")
+      end
+
+      it "updates password with current password" do
+        expect {
+          user.update_with_password_protection(password: "czdeTobV-Bub_yZ4Q7B8", current_password: user.password)
+          user.reload
+        }.to change(user, :password).to(satisfy { user.valid_password?("czdeTobV-Bub_yZ4Q7B8") })
+      end
+
+      it "doesn't update password without current password" do
+        expect {
+          user.update_with_password_protection(password: "czdeTobV-Bub_yZ4Q7B8")
+          user.reload
+        }.not_to change(user, :encrypted_password)
+      end
+
+      it "doesn't update email without current password" do
+        expect {
+          user.update_with_password_protection(email: "louis@ddip.gouv.fr")
+          user.reload
+        }.not_to change(user, :email)
+      end
+    end
+  end
+
+  # 2FA process
+  # ----------------------------------------------------------------------------
+  describe "2FA process" do
+    describe "#setup_two_factor" do
+      let(:organization) { create(:ddfip, allow_2fa_via_email: true) }
+      let(:user)         { create(:user, organization:) }
+
+      it "set up the 2FA method" do
+        expect {
+          user.setup_two_factor("2fa")
+        }.to not_change(user, :otp_method).from("2fa")
+          .and change(user, :otp_secret).to(be_present)
+          .and not_change(user, :updated_at)
+      end
+
+      it "set up the 2FA via email" do
+        expect {
+          user.setup_two_factor("email")
+        }.to change(user, :otp_method).to("email")
+          .and change(user, :otp_secret).to(be_present)
+          .and not_change(user, :updated_at)
+      end
+
+      it "sends instructions with OTP code by email" do
+        expect {
+          user.setup_two_factor("email")
+        }.to have_sent_emails.by(1)
+          .and have_sent_email.to(user.email).with_subject("Activation de l'authentification en 2 étapes sur Passerelle")
+      end
+
+      it "doesn't send instructions when setting up the 2FA method" do
+        expect {
+          user.setup_two_factor("2fa")
+        }.not_to have_sent_emails
+      end
+
+      it "ignores email method according to organization settings" do
+        organization = create(:ddfip, allow_2fa_via_email: false)
+        user         = create(:user, organization:)
+
+        expect {
+          user.setup_two_factor("email")
+          perform_enqueued_jobs
+        }.to not_change(user, :otp_method).from("2fa")
+          .and change(user, :otp_secret).to(be_present)
+          .and not_change(user, :updated_at)
+          .and not_have_sent_emails
+      end
+    end
+
+    describe "#enable_two_factor" do
+      let(:organization) { create(:ddfip, allow_2fa_via_email: true) }
+      let(:user)         { create(:user, organization:) }
+
+      it "activates 2FA method" do
+        expect {
+          user.enable_two_factor(
+            otp_method: "2fa",
+            otp_secret: "64MKG4S4GZ6W7MTEWB2EBDPR",
+            otp_code:   ROTP::TOTP.new("64MKG4S4GZ6W7MTEWB2EBDPR").at(Time.current)
+          )
+        }.to not_change(user, :otp_method).from("2fa")
+          .and change(user, :otp_secret).to("64MKG4S4GZ6W7MTEWB2EBDPR")
+          .and change(user, :updated_at)
+      end
+
+      it "activates 2FA method via email" do
+        expect {
+          user.enable_two_factor(
+            otp_method: "email",
+            otp_secret: "64MKG4S4GZ6W7MTEWB2EBDPR",
+            otp_code:   ROTP::TOTP.new("64MKG4S4GZ6W7MTEWB2EBDPR").at(Time.current)
+          )
+        }.to change(user, :otp_method).to("email")
+          .and change(user, :otp_secret).to("64MKG4S4GZ6W7MTEWB2EBDPR")
+          .and change(user, :updated_at)
+      end
+
+      it "sends a notification to user after updating its 2FA" do
+        expect {
+          user.enable_two_factor(
+            otp_method: "2fa",
+            otp_secret: "64MKG4S4GZ6W7MTEWB2EBDPR",
+            otp_code:   ROTP::TOTP.new("64MKG4S4GZ6W7MTEWB2EBDPR").at(Time.current)
+          )
+          perform_enqueued_jobs
+        }.to have_sent_emails.by(1)
+          .and have_sent_email.to(user.email).with_subject("Modification de vos paramètres de sécurité sur Passerelle")
+      end
+
+      it "doesn't activate 2FA when OTP code is invalid" do
+        expect {
+          user.enable_two_factor(
+            otp_method: "email",
+            otp_secret: "64MKG4S4GZ6W7MTEWB2EBDPR",
+            otp_code:   "123456"
+          )
+        }.to not_change(user, :updated_at)
+      end
+
+      it "doesn't activate 2FA when OTP code is missing" do
+        expect {
+          user.enable_two_factor(
+            otp_method: "email",
+            otp_secret: "64MKG4S4GZ6W7MTEWB2EBDPR"
+          )
+        }.to not_change(user, :updated_at)
+      end
+
+      it "doesn't send any notification when OTP code is invalid" do
+        expect {
+          user.enable_two_factor(
+            otp_method: "email",
+            otp_secret: "64MKG4S4GZ6W7MTEWB2EBDPR",
+            otp_code:   "123456"
+          )
+          perform_enqueued_jobs
+        }.to not_have_sent_emails
+      end
+
+      it "returns errors when OTP code is invalid" do
+        user.enable_two_factor(
+          otp_method: "email",
+          otp_secret: "64MKG4S4GZ6W7MTEWB2EBDPR",
+          otp_code:   "123456"
+        )
+
+        expect(user.errors).to satisfy { |errors| errors.of_kind?(:otp_code, :invalid) }
+      end
+
+      it "returns errors when OTP code is missing" do
+        user.enable_two_factor(
+          otp_method: "email",
+          otp_secret: "64MKG4S4GZ6W7MTEWB2EBDPR"
+        )
+
+        expect(user.errors).to satisfy { |errors| errors.of_kind?(:otp_code, :blank) }
+      end
+
+      it "ignores email method according to organization settings" do
+        organization = create(:ddfip, allow_2fa_via_email: false)
+        user         = create(:user, organization:)
+
+        expect {
+          user.enable_two_factor(
+            otp_method: "email",
+            otp_secret: "64MKG4S4GZ6W7MTEWB2EBDPR",
+            otp_code:   ROTP::TOTP.new("64MKG4S4GZ6W7MTEWB2EBDPR").at(Time.current)
+          )
+        }.to not_change(user, :otp_method).from("2fa")
+          .and change(user, :otp_secret).to("64MKG4S4GZ6W7MTEWB2EBDPR")
+          .and change(user, :updated_at)
+      end
+
+      it "resets OTP code after succeed" do
+        expect {
+          user.enable_two_factor(
+            otp_method: "email",
+            otp_secret: "64MKG4S4GZ6W7MTEWB2EBDPR",
+            otp_code:   ROTP::TOTP.new("64MKG4S4GZ6W7MTEWB2EBDPR").at(Time.current)
+          )
+        }.to not_change(user, :otp_code).from(nil)
+      end
+    end
+
+    describe "#enable_two_factor_with_password" do
+      let(:organization) { create(:ddfip, allow_2fa_via_email: true) }
+      let(:user)         { create(:user, organization:) }
+
+      it "activates 2FA method" do
+        expect {
+          user.enable_two_factor_with_password(
+            otp_method:       "2fa",
+            otp_secret:       "64MKG4S4GZ6W7MTEWB2EBDPR",
+            otp_code:         ROTP::TOTP.new("64MKG4S4GZ6W7MTEWB2EBDPR").at(Time.current),
+            current_password: user.password
+          )
+        }.to not_change(user, :otp_method).from("2fa")
+          .and change(user, :otp_secret).to("64MKG4S4GZ6W7MTEWB2EBDPR")
+          .and change(user, :updated_at)
+      end
+
+      it "activates 2FA method via email" do
+        expect {
+          user.enable_two_factor_with_password(
+            otp_method: "email",
+            otp_secret: "64MKG4S4GZ6W7MTEWB2EBDPR",
+            otp_code:   ROTP::TOTP.new("64MKG4S4GZ6W7MTEWB2EBDPR").at(Time.current),
+            current_password: user.password
+          )
+        }.to change(user, :otp_method).to("email")
+          .and change(user, :otp_secret).to("64MKG4S4GZ6W7MTEWB2EBDPR")
+          .and change(user, :updated_at)
+      end
+
+      it "sends a notification to user after updating its 2FA" do
+        expect {
+          user.enable_two_factor_with_password(
+            otp_method: "2fa",
+            otp_secret: "64MKG4S4GZ6W7MTEWB2EBDPR",
+            otp_code:   ROTP::TOTP.new("64MKG4S4GZ6W7MTEWB2EBDPR").at(Time.current),
+            current_password: user.password
+          )
+          perform_enqueued_jobs
+        }.to have_sent_emails.by(1)
+          .and have_sent_email.to(user.email).with_subject("Modification de vos paramètres de sécurité sur Passerelle")
+      end
+
+      it "doesn't activate 2FA when current password is invalid" do
+        expect {
+          user.enable_two_factor_with_password(
+            otp_method: "email",
+            otp_secret: "64MKG4S4GZ6W7MTEWB2EBDPR",
+            otp_code:   ROTP::TOTP.new("64MKG4S4GZ6W7MTEWB2EBDPR").at(Time.current),
+            current_password: "monkey-business"
+          )
+        }.to not_change(user, :updated_at)
+      end
+
+      it "doesn't activate 2FA when current password is missing" do
+        expect {
+          user.enable_two_factor_with_password(
+            otp_method: "email",
+            otp_secret: "64MKG4S4GZ6W7MTEWB2EBDPR",
+            otp_code:   ROTP::TOTP.new("64MKG4S4GZ6W7MTEWB2EBDPR").at(Time.current)
+          )
+        }.to not_change(user, :updated_at)
+      end
+
+      it "doesn't activate 2FA when current password is valid but OTP code is not" do
+        expect {
+          user.enable_two_factor_with_password(
+            otp_method: "email",
+            otp_secret: "64MKG4S4GZ6W7MTEWB2EBDPR",
+            otp_code:   "123456",
+            current_password: user.password
+          )
+        }.to not_change(user, :updated_at)
+      end
+
+      it "returns errors when current password is invalid" do
+        user.enable_two_factor_with_password(
+          otp_method: "email",
+          otp_secret: "64MKG4S4GZ6W7MTEWB2EBDPR",
+          otp_code:   ROTP::TOTP.new("64MKG4S4GZ6W7MTEWB2EBDPR").at(Time.current),
+          current_password: "monkey-business"
+        )
+
+        expect(user.errors).to satisfy { |errors| errors.of_kind?(:current_password, :invalid) }
+      end
+
+      it "returns errors when current password is missing" do
+        user.enable_two_factor_with_password(
+          otp_method: "email",
+          otp_secret: "64MKG4S4GZ6W7MTEWB2EBDPR",
+          otp_code:   ROTP::TOTP.new("64MKG4S4GZ6W7MTEWB2EBDPR").at(Time.current)
+        )
+
+        expect(user.errors).to satisfy { |errors| errors.of_kind?(:current_password, :blank) }
+      end
+    end
+
+    describe "#increment_failed_attempts!" do
+      let(:user) { create(:user) }
+
+      it "increments #failed_attempts by 1" do
+        expect {
+          user.increment_failed_attempts!
+          user.reload
+        }.to change(user, :failed_attempts).to(1)
+          .and not_change(user, :locked_at).from(nil)
+      end
+
+      it "locks user after exceed the maximum number of attempts" do
+        user = create(:user, failed_attempts: Devise.maximum_attempts - 1)
+
+        expect {
+          user.increment_failed_attempts!
+          user.reload
+        }.to change(user, :failed_attempts).by(1)
+          .and change(user, :locked_at).to(be_present)
+      end
+
+      it "doesn't lock again an already locked user" do
+        user = create(:user, failed_attempts: Devise.maximum_attempts - 1, locked_at: 1.day.ago)
+
+        expect {
+          user.increment_failed_attempts!
+          user.reload
+        }.to change(user, :failed_attempts).by(1)
+          .and not_change(user, :locked_at).from(be_present)
+      end
+
+      it "sends instructions to unlock user after exceed the maximum number of attempts" do
+        user = create(:user, failed_attempts: Devise.maximum_attempts - 1)
+
+        expect {
+          user.increment_failed_attempts!
+          perform_enqueued_jobs
+        }.to have_sent_emails.by(1)
+          .and have_sent_email.to(user.email).with_subject("Verrouillage de votre compte Passerelle")
       end
     end
   end

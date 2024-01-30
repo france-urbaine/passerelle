@@ -197,16 +197,38 @@ class User < ApplicationRecord
     scored_order(:name, input)
   }
 
-  # Security & 2FA
+  # Datatable authentication
   # ----------------------------------------------------------------------------
+  # Overwrite `Devise::Models::Authenticatable.find_for_authentication`
+  # to exclude discarded records
+  #
+  # See:
+  #   https://github.com/heartcombo/devise/blob/v4.9.3/lib/devise/models/authenticatable.rb#L275
+  #
   def self.find_for_authentication(tainted_conditions)
     undiscarded.find_first_by_auth_conditions(tainted_conditions)
   end
 
+  # Overwrite `Devise::Models::Authenticatable.active_for_authentication?`
+  # to exclude discarded records
+  #
+  # See:
+  #   https://github.com/heartcombo/devise/blob/v4.9.3/lib/devise/models/authenticatable.rb#L93
+  #
   def active_for_authentication?
     super() && !discarded?
   end
 
+  # Use either `#update_with_password` or `#update_without_password`
+  # depending on attributes to update.
+  #
+  # `update_without_password` never allows to change to the current password
+  # without asking for the current password.
+  #
+  # See:
+  #   https://github.com/heartcombo/devise/blob/v4.9.3/lib/devise/models/database_authenticatable.rb#L87
+  #   https://github.com/heartcombo/devise/blob/v4.9.3/lib/devise/models/database_authenticatable.rb#L120
+  #
   def update_with_password_protection(params)
     if params.include?(:email) || params.include?(:password)
       update_with_password(params)
@@ -218,15 +240,20 @@ class User < ApplicationRecord
     end
   end
 
+  # 2FA authentication
+  # ----------------------------------------------------------------------------
   attr_accessor :otp_code
 
-  def verify_two_factor(otp_method = "2fa")
+  def setup_two_factor(otp_method = "2fa")
     self.otp_secret = User.generate_otp_secret
     self.otp_method = otp_method if otp_method
     self.otp_method = "2fa" unless organization&.allow_2fa_via_email?
 
-    # Do not deliver this emails later
-    # Otherwise, me might expose the OTP in sidekiq jobs & logs
+    # Do not deliver this mail asynchronously,
+    # because the OTP secret it not yet persisted.
+    #
+    # To do it asynchronously, we would pass the OTP code as an argument,
+    # but it would expose the OTP code in jobs & logs.
     #
     Users::Mailer.two_factor_setup_code(self).deliver_now if send_otp_code_by_email?
   end
@@ -238,31 +265,9 @@ class User < ApplicationRecord
     self.otp_method  = "2fa" unless organization&.allow_2fa_via_email?
     self.otp_required_for_login = true
 
-    unless validate_and_consume_otp!(otp_code)
-      errors.add(:otp_code, otp_code.blank? ? :blank : :invalid)
-      return false
-    end
-
-    # Do not deliver this emails later
-    # Otherwise, me might expose the OTP in sidekiq jobs & logs
-    #
-    Users::Mailer.two_factor_change(self).deliver_now
-
-    self.otp_code = nil
-    true
-  end
-
-  def enable_two_factor_with_password(params)
-    current_password = params.fetch(:current_password, "")
-    self.otp_secret  = params.fetch(:otp_secret, "")
-    self.otp_code    = params.fetch(:otp_code, "")
-    self.otp_method  = params.fetch(:otp_method, "2fa")
-    self.otp_method  = "2fa" unless organization&.allow_2fa_via_email?
-    self.otp_required_for_login = true
-
-    unless valid_password?(current_password)
-      errors.add(:current_password, current_password.blank? ? :blank : :invalid)
-      return false
+    if block_given?
+      yield(self)
+      return false if errors.any?
     end
 
     unless validate_and_consume_otp!(otp_code)
@@ -276,12 +281,36 @@ class User < ApplicationRecord
     true
   end
 
+  def enable_two_factor_with_password(params)
+    current_password = params.fetch(:current_password, "")
+
+    enable_two_factor(params) do
+      unless valid_password?(current_password)
+        errors.add(:current_password, current_password.blank? ? :blank : :invalid)
+        return false
+      end
+    end
+  end
+
   def send_otp_code_by_email?
     otp_method == "email" && organization&.allow_2fa_via_email?
   end
 
   def otp_no_longer_permitted_by_email?
     otp_method == "email" && !organization&.allow_2fa_via_email?
+  end
+
+  # This is copied from `Devise::Models::Lockable#valid_for_authentication?` and
+  # inspired from Gitlab authentication flow.
+  # It allows to lock user after a given number of 2FA authentication attempts
+  #
+  # See:
+  #   https://github.com/plataformatec/devise/blob/v4.7.1/lib/devise/models/lockable.rb#L102
+  #   https://github.com/gitlabhq/gitlabhq/blob/1c3cf2e3cd824cde428b686333b6e7a78fba9f76/app/models/user.rb#L2002
+  #
+  def increment_failed_attempts!
+    increment_failed_attempts
+    lock_access! if attempts_exceeded? && !access_locked?
   end
 
   # Devise reconfirmation
