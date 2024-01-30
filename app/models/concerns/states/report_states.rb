@@ -102,7 +102,7 @@ module States
       # Updates methods
       # ----------------------------------------------------------------------------
       def draft!
-        return true if draft?
+        return false if draft?
 
         update(
           state: "draft",
@@ -111,7 +111,7 @@ module States
       end
 
       def ready!
-        return true if ready?
+        return false if ready?
 
         update(
           state: "ready",
@@ -120,7 +120,7 @@ module States
       end
 
       def transmit!
-        return true if transmitted?
+        return false if transmitted?
 
         update(
           state: "sent",
@@ -129,7 +129,7 @@ module States
       end
 
       def deny!
-        return true if denied?
+        return false if denied?
 
         update(
           state: "denied",
@@ -138,7 +138,7 @@ module States
       end
 
       def acknowledge!
-        return true if acknowledged?
+        return false if acknowledged?
 
         update(
           state: "acknowledged",
@@ -147,7 +147,7 @@ module States
       end
 
       def assign!
-        return true if assigned?
+        return false if assigned?
 
         update(
           state: "processing",
@@ -163,7 +163,7 @@ module States
       end
 
       def approve!
-        return true if approved?
+        return false if approved?
 
         update(
           state: "approved",
@@ -173,7 +173,7 @@ module States
       end
 
       def reject!
-        return true if rejected?
+        return false if rejected?
 
         update(
           state: "rejected",
