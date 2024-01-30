@@ -46,11 +46,9 @@ module Reports
     end
 
     def report_params
-      authorized(params.fetch(:report, {}))
-    end
+      input = params.fetch(:report, {})
 
-    def implicit_authorization_target
-      :assignment
+      authorized input, with: Reports::AssignmentPolicy
     end
   end
 end

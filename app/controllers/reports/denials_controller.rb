@@ -45,11 +45,9 @@ module Reports
     end
 
     def report_params
-      authorized(params.fetch(:report, {}))
-    end
+      input = params.fetch(:report, {})
 
-    def implicit_authorization_target
-      :denial
+      authorized input, with: Reports::DenialPolicy
     end
   end
 end
