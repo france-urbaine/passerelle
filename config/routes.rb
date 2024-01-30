@@ -82,7 +82,7 @@ Rails.application.routes.draw do
       # Reports stuff
       #
       resources :reports, path: "signalements", concerns: %i[removable removable_collection], path_names: { edit: "/edit/:form" } do
-        scope module: "reports" do
+        scope module: "reports", path_names: { edit: "/edit" } do
           get "/documents/:id(/*filename)",
             to:          "documents#show",
             as:          :document,
@@ -95,12 +95,14 @@ Rails.application.routes.draw do
           end
 
           resource :approval, only: %i[show update destroy]
-        end
-      end
 
-      resources :reports, path: "signalements", only: [] do
-        resource :assignment, only: %i[edit update destroy], controller: "reports/assignments", path: "/assignment" do
-          concerns :removable, undiscard: false
+          resource :assignment, only: %i[edit update destroy], path: "/assign" do
+            concerns :removable, undiscard: false
+          end
+
+          resource :denial, only: %i[edit update destroy], path: "/deny" do
+            concerns :removable, undiscard: false
+          end
         end
       end
 

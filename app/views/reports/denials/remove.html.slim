@@ -1,0 +1,14 @@
+= modal_frame_component(referrer: @referrer_path) do |template|
+  - template.with_modal do |modal|
+    - modal.with_header do
+      | Resoumission du signalement : #{@report.reference}
+
+    - modal.with_form(url: report_denial_path(@report), method: :delete) do
+      - modal.with_hidden_field :redirect, @redirect_path
+      p
+        | Êtes-vous sûrs de vouloir resoumettre ce signalement ?
+      p
+        | Le signalement sera remis dans la liste des signalement transmis
+
+    - modal.with_submit_action "Continuer", autofocus: true
+    - modal.with_close_action "Annuler"

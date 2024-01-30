@@ -16,6 +16,12 @@
         - else
           - breadcrumbs.with_action "Désassigner", remove_report_assignment_path(@report), icon: "arrow-uturn-left", modal: true, destructive: "discrete"
 
+      - if allowed_to?(:deny?, @report)
+        - if @report.denied?
+          - breadcrumbs.with_action "Resoumettre", remove_report_denial_path(@report), icon: "arrow-uturn-down", modal: true, primary: true
+        - else
+          - breadcrumbs.with_action "Retourner", edit_report_denial_path(@report), icon: "arrow-uturn-up", modal: true, destructive: true
+
       - if allowed_to?(:approve?, @report)
         - unless @report.approved?
           - breadcrumbs.with_action "Approuver", report_approval_path(@report), icon: "hand-thumb-up", accent: true, method: "patch"

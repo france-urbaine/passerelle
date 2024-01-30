@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 module Reports
-  class AssignmentsController < ApplicationController
-    before_action { authorize! Report, with: Reports::AssignmentPolicy }
+  class DenialsController < ApplicationController
+    before_action { authorize! Report, with: Reports::DenialPolicy }
 
     def edit
       @report = find_and_authorize_report
@@ -11,8 +11,7 @@ module Reports
 
     def update
       @report = find_and_authorize_report
-      @report.assign_attributes(report_params)
-      @report.assign! || @report.save
+      @report.deny!
 
       respond_with @report,
         flash: true,
@@ -39,7 +38,7 @@ module Reports
     def find_and_authorize_report
       report = Report.find(params[:report_id])
 
-      authorize! report, with: Reports::AssignmentPolicy
+      authorize! report, with: Reports::DenialPolicy
       only_kept! report
 
       report
@@ -48,7 +47,7 @@ module Reports
     def report_params
       input = params.fetch(:report, {})
 
-      authorized input, with: Reports::AssignmentPolicy
+      authorized input, with: Reports::DenialPolicy
     end
   end
 end

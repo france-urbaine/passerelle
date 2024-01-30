@@ -2,9 +2,9 @@
 
 require "rails_helper"
 
-RSpec.describe "Reports::AssignmentsController#edit" do
+RSpec.describe "Reports::DenialsController#edit" do
   subject(:request) do
-    get "/signalements/#{report.id}/assign/edit", as:, headers:, params:
+    get "/signalements/#{report.id}/deny/edit", as:, headers:, params:
   end
 
   let(:as)      { |e| e.metadata[:as] }
@@ -31,8 +31,8 @@ RSpec.describe "Reports::AssignmentsController#edit" do
       it_behaves_like "it allows access to DDFIP admin"
     end
 
-    context "when report is assigned" do
-      let(:report) { create(:report, :assigned) }
+    context "when report is denied" do
+      let(:report) { create(:report, :denied) }
 
       it_behaves_like "it allows access to DDFIP admin"
     end
@@ -55,6 +55,12 @@ RSpec.describe "Reports::AssignmentsController#edit" do
       it_behaves_like "it denies access to DDFIP admin"
     end
 
+    context "when report is assigned" do
+      let(:report) { create(:report, :assigned) }
+
+      it_behaves_like "it denies access to DDFIP admin"
+    end
+
     context "when report is approved" do
       let(:report) { create(:report, :approved) }
 
@@ -63,12 +69,6 @@ RSpec.describe "Reports::AssignmentsController#edit" do
 
     context "when report is rejected" do
       let(:report) { create(:report, :rejected) }
-
-      it_behaves_like "it denies access to DDFIP admin"
-    end
-
-    context "when report is denied" do
-      let(:report) { create(:report, :denied) }
 
       it_behaves_like "it denies access to DDFIP admin"
     end

@@ -53,6 +53,10 @@ class ReportPolicy < ApplicationPolicy
     allowed_to?(:manage?, record, with: ::Reports::AssignmentPolicy)
   end
 
+  def deny?
+    allowed_to?(:manage?, record, with: ::Reports::DenialPolicy)
+  end
+
   def destroy?
     if record == Report
       collectivity? || publisher?

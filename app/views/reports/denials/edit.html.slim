@@ -1,0 +1,14 @@
+= modal_frame_component(referrer: @referrer_path) do |template|
+  - template.with_modal do |modal|
+    - modal.with_header do
+      | Retourner le signalement : #{@report.reference} à la collectivité #{@report.collectivity&.name}
+
+    - modal.with_form(url: report_denial_path(@report), method: :patch) do
+      - modal.with_hidden_field :redirect, @redirect_path
+      p
+        | Êtes-vous sûr de vouloir retourner ce signalement ?
+      p
+        | Le signalement sera alors retiré des dossiers en attente de traitement afin que la collectivité le retravaille.
+
+    - modal.with_submit_action "Continuer", autofocus: true
+    - modal.with_close_action "Annuler"
