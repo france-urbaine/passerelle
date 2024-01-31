@@ -13,11 +13,11 @@ RSpec.describe Views::Reports::ListComponent, type: :component do
     end
 
     def concat_address(report)
+      # Squish address because Faker could return street names with multiple spaces.
       [
         report.situation_numero_voie,
-        report.situation_indice_repetition,
         report.situation_libelle_voie
-      ].compact.join(" ")
+      ].join(" ").squish
     end
 
     before { sign_in_as(organization: collectivity) }

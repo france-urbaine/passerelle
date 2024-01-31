@@ -722,4 +722,39 @@ RSpec.describe Helpers::AuthorizedLinkComponent, type: :component do
       end
     end
   end
+
+  describe "escaping" do
+    it "escapes once user input in link" do
+      sign_in_as(:super_admin)
+      collectivity = create(:collectivity, name: "<script>alert('hello!')</script>")
+
+      render_inline described_class.new(collectivity, namespace: :admin)
+
+      expect(page.native.to_html).to include(<<~HTML.strip)
+        &lt;script&gt;alert('hello!')&lt;/script&gt;
+      HTML
+    end
+
+    it "escapes once user input when rendered as text" do
+      sign_in_as(:ddfip)
+      collectivity = create(:collectivity, name: "<script>alert('hello!')</script>")
+
+      render_inline described_class.new(collectivity, namespace: :organization)
+
+      expect(page.native.to_html).to include(<<~HTML.strip)
+        &lt;script&gt;alert('hello!')&lt;/script&gt;
+      HTML
+    end
+
+    it "escapes once user input when wrapped in disabled div" do
+      sign_in_as(:ddfip)
+      collectivity = create(:collectivity, :discarded, name: "<script>alert('hello!')</script>")
+
+      render_inline described_class.new(collectivity, namespace: :admin)
+
+      expect(page.native.to_html).to include(<<~HTML.strip)
+        &lt;script&gt;alert('hello!')&lt;/script&gt; (organisation supprimée)
+      HTML
+    end
+  end
 end

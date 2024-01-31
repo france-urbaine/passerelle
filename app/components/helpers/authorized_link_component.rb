@@ -21,7 +21,7 @@ module Helpers
       elsif @resource && allowed?
         link
       else
-        label
+        html_escape_once(label)
       end
     end
 
@@ -29,11 +29,11 @@ module Helpers
       content ||
         case @resource
         when Package
-          html_escape(@resource.reference)
+          @resource.reference
         when Report
-          render Views::Reports::ShowReportNameComponent.new(@resource)
+          render(Views::Reports::ShowReportNameComponent.new(@resource))
         else
-          html_escape(@resource&.name)
+          @resource&.name
         end
     end
 
