@@ -91,11 +91,12 @@ FactoryBot.define do
     end
 
     trait :transmitted do
+      ready
       in_active_transmission
+
       package        { association(:package, collectivity:, publisher:, sandbox:, transmission:, ddfip:) }
-      ready_at       { Time.current }
-      transmitted_at { Time.current }
       state          { "sent" }
+      transmitted_at { Time.current }
 
       sequence :reference do |n|
         index = n.to_s.rjust(5, "0")
@@ -103,32 +104,43 @@ FactoryBot.define do
       end
     end
 
+    trait :acknowledged do
+      transmitted
+
+      state           { "acknowledged" }
+      acknowledged_at { Time.current }
+    end
+
     trait :discarded do
       discarded_at { Time.current }
     end
 
     trait :assigned do
-      transmitted
+      acknowledged
+
+      state       { "processing" }
       assigned_at { Time.current }
-      state { "processing" }
     end
 
     trait :denied do
-      transmitted
+      acknowledged
+
+      state     { "denied" }
       denied_at { Time.current }
-      state { "denied" }
     end
 
     trait :approved do
       assigned
+
+      state       { "approved" }
       approved_at { Time.current }
-      state { "approved" }
     end
 
     trait :rejected do
       assigned
+
+      state       { "rejected" }
       rejected_at { Time.current }
-      state { "rejected" }
     end
 
     # Report origin
