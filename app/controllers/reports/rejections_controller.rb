@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Reports
-  class ApprovalsController < ApplicationController
+  class RejectionsController < ApplicationController
     before_action { authorize! Report, with: Reports::ApprovalPolicy }
 
     def show
@@ -11,16 +11,7 @@ module Reports
 
     def update
       @report = find_and_authorize_report
-      @report.approve!
-
-      respond_with @report,
-        flash: true,
-        location: -> { redirect_path || report_path(@report) }
-    end
-
-    def destroy
-      @report = find_and_authorize_report
-      @report.assign!
+      @report.reject!
 
       respond_with @report,
         flash: true,

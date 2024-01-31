@@ -23,11 +23,11 @@
           - breadcrumbs.with_action "Retourner", edit_report_denial_path(@report), icon: "arrow-uturn-up", modal: true, destructive: true
 
       - if allowed_to?(:approve?, @report)
-        - unless @report.approved?
+        - if @report.resolved?
+          - breadcrumbs.with_action "Annuler", report_approval_path(@report), icon: "hand-raised", destructive: "discrete", method: "delete"
+        - else
           - breadcrumbs.with_action "Approuver", report_approval_path(@report), icon: "hand-thumb-up", accent: true, method: "patch"
-
-        - unless @report.rejected?
-          - breadcrumbs.with_action "Rejeter", report_approval_path(@report), icon: "hand-thumb-down", destructive: true, method: "delete"
+          - breadcrumbs.with_action "Rejeter", report_rejection_path(@report), icon: "hand-thumb-down", destructive: true, method: "patch"
 
       - if allowed_to?(:destroy?, @report)
         - breadcrumbs.with_action "Supprimer", remove_report_path(@report), icon: "trash", modal: true, destructive: "discrete"
