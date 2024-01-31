@@ -452,526 +452,534 @@ RSpec.describe DDFIP do
   describe "database triggers" do
     let!(:ddfip) { create(:ddfip) }
 
-    describe "#users_count" do
-      let(:user) { create(:user, organization: ddfip) }
+    def create_user(*traits, **attributes)
+      create(:user, *traits, organization: ddfip, **attributes)
+    end
 
+    describe "#users_count" do
       it "changes on creation" do
-        expect { user }
+        expect { create_user }
           .to change { ddfip.reload.users_count }.from(0).to(1)
       end
 
       it "changes on deletion" do
-        user
+        user = create_user
 
-        expect { user.destroy }
+        expect { user.delete }
           .to change { ddfip.reload.users_count }.from(1).to(0)
       end
 
       it "changes when user is discarded" do
-        user
+        user = create_user
 
-        expect { user.discard }
+        expect { user.update_columns(discarded_at: Time.current) }
           .to change { ddfip.reload.users_count }.from(1).to(0)
       end
 
       it "changes when user is undiscarded" do
-        user.discard
+        user = create_user(:discarded)
 
-        expect { user.undiscard }
+        expect { user.update_columns(discarded_at: nil) }
           .to change { ddfip.reload.users_count }.from(0).to(1)
       end
 
       it "changes when user switches to another organization" do
-        user
+        user = create_user
         another_ddfip = create(:ddfip)
 
-        expect { user.update(organization: another_ddfip) }
+        expect { user.update_columns(organization_id: another_ddfip.id) }
           .to change { ddfip.reload.users_count }.from(1).to(0)
       end
     end
 
     describe "#collectivities_count" do
       context "with communes" do
-        let(:commune)      { create(:commune, departement: ddfip.departement) }
-        let(:collectivity) { create(:collectivity, territory: commune) }
+        let(:commune) { create(:commune, departement: ddfip.departement) }
+
+        def create_collectivity(*traits, **attributes)
+          create(:collectivity, *traits, territory: commune, **attributes)
+        end
 
         it "changes on creation" do
-          expect { collectivity }
+          expect { create_collectivity }
             .to change { ddfip.reload.collectivities_count }.from(0).to(1)
         end
 
-        it "changes when collectivity is discarded" do
-          collectivity
+        it "changes on deletion" do
+          collectivity = create_collectivity
 
-          expect { collectivity.discard }
+          expect { collectivity.delete }
+            .to change { ddfip.reload.collectivities_count }.from(1).to(0)
+        end
+
+        it "changes when collectivity is discarded" do
+          collectivity = create_collectivity
+
+          expect { collectivity.update_columns(discarded_at: Time.current) }
             .to change { ddfip.reload.collectivities_count }.from(1).to(0)
         end
 
         it "changes when collectivity is undiscarded" do
-          collectivity.discard
+          collectivity = create_collectivity(:discarded)
 
-          expect { collectivity.undiscard }
+          expect { collectivity.update_columns(discarded_at: nil) }
             .to change { ddfip.reload.collectivities_count }.from(0).to(1)
         end
 
-        it "changes when collectivity is deleted" do
-          collectivity
-
-          expect { collectivity.destroy }
-            .to change { ddfip.reload.collectivities_count }.from(1).to(0)
-        end
-
         it "changes when collectivity switches to another territory" do
-          collectivity
-          another_commune = create(:commune)
+          collectivity = create_collectivity
+          another_territory = create(:commune)
 
-          expect { collectivity.update(territory: another_commune) }
+          expect { collectivity.update_columns(territory_id: another_territory.id) }
             .to change { ddfip.reload.collectivities_count }.from(1).to(0)
         end
       end
 
       context "with EPCIs having communes in the departements" do
-        let(:commune)      { create(:commune, :with_epci, departement: ddfip.departement) }
-        let(:collectivity) { create(:collectivity, territory: commune.epci) }
+        let(:commune) { create(:commune, :with_epci, departement: ddfip.departement) }
+
+        def create_collectivity(*traits, **attributes)
+          create(:collectivity, *traits, territory: commune.epci, **attributes)
+        end
 
         it "changes on creation" do
-          expect { collectivity }
+          expect { create_collectivity }
             .to change { ddfip.reload.collectivities_count }.from(0).to(1)
         end
 
-        it "changes when collectivity is discarded" do
-          collectivity
+        it "changes on deletion" do
+          collectivity = create_collectivity
 
-          expect { collectivity.discard }
+          expect { collectivity.delete }
+            .to change { ddfip.reload.collectivities_count }.from(1).to(0)
+        end
+
+        it "changes when collectivity is discarded" do
+          collectivity = create_collectivity
+
+          expect { collectivity.update_columns(discarded_at: Time.current) }
             .to change { ddfip.reload.collectivities_count }.from(1).to(0)
         end
 
         it "changes when collectivity is undiscarded" do
-          collectivity.discard
+          collectivity = create_collectivity(:discarded)
 
-          expect { collectivity.undiscard }
+          expect { collectivity.update_columns(discarded_at: nil) }
             .to change { ddfip.reload.collectivities_count }.from(0).to(1)
         end
 
-        it "changes when collectivity is deleted" do
-          collectivity
-
-          expect { collectivity.destroy }
-            .to change { ddfip.reload.collectivities_count }.from(1).to(0)
-        end
-
         it "changes when collectivity switches to another territory" do
-          collectivity
-          another_epci = create(:epci)
+          collectivity = create_collectivity
+          another_territory = create(:epci)
 
-          expect { collectivity.update(territory: another_epci) }
+          expect { collectivity.update_columns(territory_id: another_territory.id) }
             .to change { ddfip.reload.collectivities_count }.from(1).to(0)
         end
       end
 
       context "with an EPCI belonging to the departement but without communes in it" do
-        let(:epci)         { create(:epci, departement: ddfip.departement) }
-        let(:collectivity) { create(:collectivity, territory: epci) }
+        let(:epci) { create(:epci, departement: ddfip.departement) }
+
+        def create_collectivity(*traits, **attributes)
+          create(:collectivity, *traits, territory: epci, **attributes)
+        end
 
         it "doesn't changes on creation" do
-          expect { collectivity }
+          expect { create_collectivity }
             .not_to change { ddfip.reload.collectivities_count }.from(0)
         end
       end
 
       context "with departements" do
-        let(:collectivity) { create(:collectivity, territory: ddfip.departement) }
+        def create_collectivity(*traits, **attributes)
+          create(:collectivity, *traits, territory: ddfip.departement, **attributes)
+        end
 
         it "changes on creation" do
-          expect { collectivity }
+          expect { create_collectivity }
             .to change { ddfip.reload.collectivities_count }.from(0).to(1)
         end
 
-        it "changes when collectivity is discarded" do
-          collectivity
+        it "changes on deletion" do
+          collectivity = create_collectivity
 
-          expect { collectivity.discard }
+          expect { collectivity.delete }
+            .to change { ddfip.reload.collectivities_count }.from(1).to(0)
+        end
+
+        it "changes when collectivity is discarded" do
+          collectivity = create_collectivity
+
+          expect { collectivity.update_columns(discarded_at: Time.current) }
             .to change { ddfip.reload.collectivities_count }.from(1).to(0)
         end
 
         it "changes when collectivity is undiscarded" do
-          collectivity.discard
+          collectivity = create_collectivity(:discarded)
 
-          expect { collectivity.undiscard }
+          expect { collectivity.update_columns(discarded_at: nil) }
             .to change { ddfip.reload.collectivities_count }.from(0).to(1)
         end
 
-        it "changes when collectivity is deleted" do
-          collectivity
-
-          expect { collectivity.destroy }
-            .to change { ddfip.reload.collectivities_count }.from(1).to(0)
-        end
-
         it "changes when collectivity switches to another territory" do
-          collectivity
-          another_departement = create(:departement)
+          collectivity = create_collectivity
+          another_territory = create(:departement)
 
-          expect { collectivity.update(territory: another_departement) }
+          expect { collectivity.update_columns(territory_id: another_territory.id) }
             .to change { ddfip.reload.collectivities_count }.from(1).to(0)
         end
       end
 
       context "with regions" do
-        let(:collectivity) { create(:collectivity, territory: ddfip.departement.region) }
+        def create_collectivity(*traits, **attributes)
+          create(:collectivity, *traits, territory: ddfip.departement.region, **attributes)
+        end
 
         it "changes on creation" do
-          expect { collectivity }
+          expect { create_collectivity }
             .to change { ddfip.reload.collectivities_count }.from(0).to(1)
         end
 
-        it "changes when collectivity is discarded" do
-          collectivity
+        it "changes on deletion" do
+          collectivity = create_collectivity
 
-          expect { collectivity.discard }
+          expect { collectivity.delete }
+            .to change { ddfip.reload.collectivities_count }.from(1).to(0)
+        end
+
+        it "changes when collectivity is discarded" do
+          collectivity = create_collectivity
+
+          expect { collectivity.update_columns(discarded_at: Time.current) }
             .to change { ddfip.reload.collectivities_count }.from(1).to(0)
         end
 
         it "changes when collectivity is undiscarded" do
-          collectivity.discard
+          collectivity = create_collectivity(:discarded)
 
-          expect { collectivity.undiscard }
+          expect { collectivity.update_columns(discarded_at: nil) }
             .to change { ddfip.reload.collectivities_count }.from(0).to(1)
         end
 
-        it "changes when collectivity is deleted" do
-          collectivity
-
-          expect { collectivity.destroy }
-            .to change { ddfip.reload.collectivities_count }.from(1).to(0)
-        end
-
         it "changes when collectivity switches to another territory" do
-          collectivity
-          another_region = create(:region)
+          collectivity = create_collectivity
+          another_territory = create(:region)
 
-          expect { collectivity.update(territory: another_region) }
+          expect { collectivity.update_columns(territory_id: another_territory.id) }
             .to change { ddfip.reload.collectivities_count }.from(1).to(0)
         end
       end
     end
 
-    describe "#offices_count" do
-      let(:office) { create(:office, ddfip:) }
+    def create_office(*traits, **attributes)
+      create(:office, *traits, ddfip:, **attributes)
+    end
 
+    describe "#offices_count" do
       it "changes on creation" do
-        expect { office }
+        expect { create_office }
           .to change { ddfip.reload.offices_count }.from(0).to(1)
       end
 
       it "changes on deletion" do
-        office
+        office = create_office
 
-        expect { office.destroy }
+        expect { office.delete }
           .to change { ddfip.reload.offices_count }.from(1).to(0)
       end
 
       it "changes when office is discarded" do
-        office
+        office = create_office
 
-        expect { office.discard }
+        expect { office.update_columns(discarded_at: Time.current) }
           .to change { ddfip.reload.offices_count }.from(1).to(0)
       end
 
       it "changes when office is undiscarded" do
-        office.discard
+        office = create_office(:discarded)
 
-        expect { office.undiscard }
+        expect { office.update_columns(discarded_at: nil) }
           .to change { ddfip.reload.offices_count }.from(0).to(1)
       end
 
       it "changes when office switches to another ddfip" do
-        office
+        office = create_office
         another_ddfip = create(:ddfip)
 
-        expect { office.update(ddfip: another_ddfip) }
+        expect { office.update_columns(ddfip_id: another_ddfip.id) }
           .to change { ddfip.reload.offices_count }.from(1).to(0)
       end
     end
 
-    describe "#reports_transmitted_count" do
-      let!(:ddfip) { create(:ddfip) }
-      let(:commune)      { create(:commune, departement: ddfip.departement) }
-      let(:collectivity) { create(:collectivity, territory: commune) }
-      let(:report)       { create(:report, collectivity:, ddfip:) }
+    def create_report(*traits, **attributes)
+      create(:report, *traits, ddfip:, **attributes)
+    end
 
+    describe "#reports_transmitted_count" do
       it "doesn't change when report is created" do
-        expect { report }
+        expect { create_report }
           .not_to change { ddfip.reload.reports_transmitted_count }.from(0)
       end
 
       it "changes when report is transmitted" do
-        report
+        report = create_report
 
-        expect { report.transmit! }
+        expect { report.update_columns(state: "sent", transmitted_at: Time.current) }
           .to change { ddfip.reload.reports_transmitted_count }.from(0).to(1)
       end
 
-      it "doesn't change when report is transmitted to a sandbox" do
-        report.update(sandbox: true)
+      it "doesn't change when report is transmitted to another DDFIP" do
+        report = create_report
+        another_ddfip = create(:ddfip)
 
-        expect { report.transmit! }
+        expect { report.update_columns(state: "sent", transmitted_at: Time.current, ddfip_id: another_ddfip.id) }
+          .not_to change { ddfip.reload.reports_transmitted_count }.from(0)
+      end
+
+      it "doesn't change when report is transmitted to a sandbox" do
+        report = create_report
+
+        expect { report.update_columns(state: "sent", transmitted_at: Time.current, sandbox: true) }
           .not_to change { ddfip.reload.reports_transmitted_count }.from(0)
       end
 
       it "changes when report is discarded" do
-        report.transmit!
+        report = create_report(:transmitted)
 
-        expect { report.discard }
+        expect { report.update_columns(discarded_at: Time.current) }
           .to change { ddfip.reload.reports_transmitted_count }.from(1).to(0)
       end
 
       it "changes when report is undiscarded" do
-        report.transmit!
-        report.discard
+        report = create_report(:transmitted, :discarded)
 
-        expect { report.undiscard }
+        expect { report.update_columns(discarded_at: nil) }
           .to change { ddfip.reload.reports_transmitted_count }.from(0).to(1)
       end
 
       it "changes when report is deleted" do
-        report.transmit!
+        report = create_report(:transmitted)
 
-        expect { report.destroy }
+        expect { report.delete }
           .to change { ddfip.reload.reports_transmitted_count }.from(1).to(0)
       end
     end
 
     describe "#reports_denied_count" do
-      let!(:ddfip) { create(:ddfip) }
-      let(:commune)      { create(:commune, departement: ddfip.departement) }
-      let(:collectivity) { create(:collectivity, territory: commune) }
-      let(:report)       { create(:report, collectivity:, ddfip:) }
-
       it "doesn't change when reports are transmitted" do
-        expect { report.transmit! }
+        report = create_report
+
+        expect { report.update_columns(state: "sent", transmitted_at: Time.current) }
           .not_to change { ddfip.reload.reports_denied_count }.from(0)
       end
 
       it "changes when report is denied" do
-        report
+        report = create_report(:transmitted)
 
-        expect { report.deny! }
+        expect { report.update_columns(state: "denied") }
           .to change { ddfip.reload.reports_denied_count }.from(0).to(1)
       end
 
       it "doesn't change when report is assigned" do
-        report
+        report = create_report(:transmitted)
 
-        expect { report.assign! }
+        expect { report.update_columns(state: "processing") }
           .not_to change { ddfip.reload.reports_denied_count }.from(0)
       end
 
       it "changes when denied report is then assigned" do
-        report.deny!
+        report = create_report(:denied)
 
-        expect { report.assign! }
+        expect { report.update_columns(state: "processing") }
           .to change { ddfip.reload.reports_denied_count }.from(1).to(0)
       end
 
       it "changes when denied report is discarded" do
-        report.deny!
+        report = create_report(:denied)
 
-        expect { report.discard }
+        expect { report.update_columns(discarded_at: Time.current) }
           .to change { ddfip.reload.reports_denied_count }.from(1).to(0)
       end
 
       it "changes when denied report is undiscarded" do
-        report.deny!
-        report.discard
+        report = create_report(:denied, :discarded)
 
-        expect { report.undiscard }
+        expect { report.update_columns(discarded_at: nil) }
           .to change { ddfip.reload.reports_denied_count }.from(0).to(1)
       end
 
       it "changes when denied report is deleted" do
-        report.deny!
+        report = create_report(:denied)
 
         expect { report.delete }
           .to change { ddfip.reload.reports_denied_count }.from(1).to(0)
       end
 
       it "changes when denied report is sandboxed" do
-        report.deny!
+        report = create_report(:denied)
 
-        expect { report.update(sandbox: true) }
+        expect { report.update_columns(sandbox: true) }
           .to change { ddfip.reload.reports_denied_count }.from(1).to(0)
       end
     end
 
     describe "#reports_processing_count" do
-      let!(:ddfip) { create(:ddfip) }
-      let(:commune)      { create(:commune, departement: ddfip.departement) }
-      let(:collectivity) { create(:collectivity, territory: commune) }
-      let(:report)       { create(:report, collectivity:, ddfip:) }
-
       it "doesn't change when reports are transmitted" do
-        expect { report }
+        report = create_report
+
+        expect { report.update_columns(state: "sent", transmitted_at: Time.current) }
           .not_to change { ddfip.reload.reports_processing_count }.from(0)
       end
 
       it "changes when report is assigned" do
-        report
+        report = create_report(:transmitted)
 
-        expect { report.assign! }
+        expect { report.update_columns(state: "processing") }
           .to change { ddfip.reload.reports_processing_count }.from(0).to(1)
       end
 
       it "doesn't change when report is denied" do
-        report
+        report = create_report(:transmitted)
 
-        expect { report.deny! }
+        expect { report.update_columns(state: "denied") }
           .not_to change { ddfip.reload.reports_processing_count }.from(0)
       end
 
       it "changes when assigned report is then denied" do
-        report.assign!
+        report = create_report(:assigned)
 
-        expect { report.deny! }
+        expect { report.update_columns(state: "denied") }
           .to change { ddfip.reload.reports_processing_count }.from(1).to(0)
       end
 
       it "changes when reports are approved" do
-        report.assign!
+        report = create_report(:assigned)
 
-        expect { report.approve! }
+        expect { report.update_columns(state: "approved") }
           .to change { ddfip.reload.reports_processing_count }.from(1).to(0)
       end
 
       it "changes when reports are rejected" do
-        report.assign!
+        report = create_report(:assigned)
 
-        expect { report.reject! }
+        expect { report.update_columns(state: "rejected") }
           .to change { ddfip.reload.reports_processing_count }.from(1).to(0)
       end
     end
 
     describe "#reports_approved_count" do
-      let!(:ddfip) { create(:ddfip) }
-      let(:commune)      { create(:commune, departement: ddfip.departement) }
-      let(:collectivity) { create(:collectivity, territory: commune) }
-      let(:report)       { create(:report, :assigned, collectivity:, ddfip:) }
-
       it "doesn't change when report is assigned" do
-        expect { report }
+        report = create_report(:transmitted)
+
+        expect { report.update_columns(state: "processing") }
           .not_to change { ddfip.reload.reports_approved_count }.from(0)
       end
 
       it "doesn't changes when report is rejected" do
-        report
+        report = create_report(:assigned)
 
-        expect { report.reject! }
+        expect { report.update_columns(state: "rejected") }
           .not_to change { ddfip.reload.reports_approved_count }.from(0)
       end
 
       it "changes when report is approved" do
-        report
+        report = create_report(:assigned)
 
-        expect { report.approve! }
+        expect { report.update_columns(state: "approved") }
           .to change { ddfip.reload.reports_approved_count }.from(0).to(1)
       end
 
       it "changes when approved report is reseted" do
-        report.approve!
+        report = create_report(:approved)
 
-        expect { report.update(approved_at: nil, state: "processing") }
+        expect { report.update_columns(state: "processing") }
           .to change { ddfip.reload.reports_approved_count }.from(1).to(0)
       end
 
       it "changes when approved report is rejected" do
-        report.approve!
+        report = create_report(:approved)
 
-        expect { report.reject! }
+        expect { report.update_columns(state: "rejected") }
           .to change { ddfip.reload.reports_approved_count }.from(1).to(0)
       end
 
       it "changes when approved report is sandboxed" do
-        report.approve!
+        report = create_report(:approved)
 
-        expect { report.update(sandbox: true) }
-          .to change { collectivity.reload.reports_approved_count }.from(1).to(0)
+        expect { report.update_columns(sandbox: true) }
+          .to change { ddfip.reload.reports_approved_count }.from(1).to(0)
       end
 
       it "changes when approved report is discarded" do
-        report.approve!
+        report = create_report(:approved)
 
-        expect { report.discard }
-          .to change { collectivity.reload.reports_approved_count }.from(1).to(0)
+        expect { report.update_columns(discarded_at: Time.current) }
+          .to change { ddfip.reload.reports_approved_count }.from(1).to(0)
       end
 
       it "changes when approved report is undiscarded" do
-        report.approve!
-        report.discard
+        report = create_report(:approved, :discarded)
 
-        expect { report.undiscard }
-          .to change { collectivity.reload.reports_approved_count }.from(0).to(1)
+        expect { report.update_columns(discarded_at: nil) }
+          .to change { ddfip.reload.reports_approved_count }.from(0).to(1)
       end
     end
 
     describe "#reports_rejected_count" do
-      let!(:ddfip) { create(:ddfip) }
-      let(:commune)      { create(:commune, departement: ddfip.departement) }
-      let(:collectivity) { create(:collectivity, territory: commune) }
-      let(:report)       { create(:report, :assigned, collectivity:, ddfip:) }
-
       it "doesn't change when report is assigned" do
-        expect { report }
+        report = create_report(:transmitted)
+
+        expect { report.update_columns(state: "processing") }
           .not_to change { ddfip.reload.reports_rejected_count }.from(0)
       end
 
       it "doesn't changes when report is approved" do
-        report
+        report = create_report(:assigned)
 
-        expect { report.approve! }
+        expect { report.update_columns(state: "approved") }
           .not_to change { ddfip.reload.reports_rejected_count }.from(0)
       end
 
       it "changes when report is rejected" do
-        report
+        report = create_report(:assigned)
 
-        expect { report.reject! }
+        expect { report.update_columns(state: "rejected") }
           .to change { ddfip.reload.reports_rejected_count }.from(0).to(1)
       end
 
       it "changes when rejected report is reseted" do
-        report.reject!
+        report = create_report(:rejected)
 
-        expect { report.update(rejected_at: nil, state: "processing") }
+        expect { report.update_columns(state: "processing") }
           .to change { ddfip.reload.reports_rejected_count }.from(1).to(0)
       end
 
       it "changes when rejected report is approved" do
-        report.reject!
+        report = create_report(:rejected)
 
-        expect { report.approve! }
+        expect { report.update_columns(state: "approved") }
           .to change { ddfip.reload.reports_rejected_count }.from(1).to(0)
       end
 
       it "changes when rejected report is sandboxed" do
-        report.reject!
+        report = create_report(:rejected)
 
-        expect { report.update(sandbox: true) }
-          .to change { collectivity.reload.reports_rejected_count }.from(1).to(0)
+        expect { report.update_columns(sandbox: true) }
+          .to change { ddfip.reload.reports_rejected_count }.from(1).to(0)
       end
 
       it "changes when rejected report is discarded" do
-        report.reject!
+        report = create_report(:rejected)
 
-        expect { report.discard }
-          .to change { collectivity.reload.reports_rejected_count }.from(1).to(0)
+        expect { report.update_columns(discarded_at: Time.current) }
+          .to change { ddfip.reload.reports_rejected_count }.from(1).to(0)
       end
 
       it "changes when rejected report is undiscarded" do
-        report.reject!
-        report.discard
+        report = create_report(:rejected, :discarded)
 
-        expect { report.undiscard }
-          .to change { collectivity.reload.reports_rejected_count }.from(0).to(1)
+        expect { report.update_columns(discarded_at: nil) }
+          .to change { ddfip.reload.reports_rejected_count }.from(0).to(1)
       end
     end
   end
