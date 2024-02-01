@@ -31,10 +31,10 @@ RSpec.describe Transmissions::CompleteService do
   describe "#complete" do
     it "creates packages, set references and update transmission completed_at" do
       expect {
-        Timecop.freeze(2023, 12, 13)
-        service.complete
-        reports.each(&:reload)
-        Timecop.return
+        Timecop.travel(2023, 12, 13) do
+          service.complete
+          reports.each(&:reload)
+        end
       }
         .to change(Package,         :count).by(1)
         .and change(reports[0],     :reference).to("2023-12-0001-00001")
@@ -103,29 +103,29 @@ RSpec.describe Transmissions::CompleteService do
 
   describe "#generate_reference" do
     it "generates the first reference of the month" do
-      Timecop.travel(Time.zone.local(2023, 5, 26)) do
-        expect(service.send(:generate_reference)).to eq("2023-05-0001")
+      Timecop.travel(2023, 5, 26) do
+        expect(service.send(:generate_package_reference)).to eq("2023-05-0001")
       end
     end
 
     it "generates the next reference after existing packages" do
-      Timecop.travel(Time.zone.local(2023, 5, 26)) do
+      Timecop.travel(2023, 5, 26) do
         create(:package, reference: "2023-05-0001")
         create(:package, reference: "2023-05-0002")
         create(:package, reference: "2023-05-0003")
 
-        expect(service.send(:generate_reference)).to eq("2023-05-0004")
+        expect(service.send(:generate_package_reference)).to eq("2023-05-0004")
       end
     end
 
     it "generates the first reference of the next month" do
-      Timecop.travel(Time.zone.local(2023, 5, 26)) do
+      Timecop.travel(2023, 5, 26) do
         create(:package, reference: "2023-05-0001")
         create(:package, reference: "2023-05-0002")
         create(:package, reference: "2023-05-0003")
 
-        Timecop.travel(Time.zone.local(2023, 6, 1)) do
-          expect(service.send(:generate_reference)).to eq("2023-06-0001")
+        Timecop.travel(2023, 6, 1) do
+          expect(service.send(:generate_package_reference)).to eq("2023-06-0001")
         end
       end
     end
