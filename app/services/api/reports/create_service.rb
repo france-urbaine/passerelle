@@ -6,23 +6,16 @@ module API
       alias_record :report
 
       validate do
-        promote_errors(completeness_service) if completeness_service.invalid?
+        promote_errors(completeness_service.errors) if completeness_service.invalid?
       end
 
-      after_validation do
-        if errors.any?
-          report.errors.merge!(completeness_service.errors)
-        else
-          report.state = "ready"
-          report.ready_at = Time.zone.now
-        end
+      before_save do
+        report.complete if errors.empty?
       end
 
       def anomalies=(value)
         report.anomalies = Array.wrap(value)
       end
-
-      private
 
       def completeness_service
         @completeness_service ||= ::Reports::CheckCompletenessService.new(report)

@@ -4,11 +4,13 @@ require "rails_helper"
 
 RSpec.describe Reports::UpdateService do
   subject(:service) do
-    described_class
+    described_class.new(report, attributes)
   end
 
-  let!(:report) { create(:report, :creation_local_habitation, :low_priority) }
-  let!(:attributes) do
+  let(:report)     { create(:report, :creation_local_habitation) }
+  let(:attributes) { required_attributes }
+
+  let(:required_attributes) do
     {
       anomalies: ["omission_batie"],
       date_constat: Time.current,
@@ -24,31 +26,71 @@ RSpec.describe Reports::UpdateService do
       proposition_date_achevement: "2023-01-01"
     }
   end
-  let!(:incomplete_attributes) do
-    {
-      anomalies: ["omission_batie"],
-      date_constat: Time.current,
-      situation_parcelle: nil
-    }
-  end
 
-  context "when report is draft and updated with complete form" do
-    it "marks report as complete" do
-      expect { service.new(report, attributes).save }.to change(report, :ready_at).from(nil)
+  context "when report is draft and updated with required attributes" do
+    it "updates the report as ready" do
+      expect { service.save }
+        .to  ret(be_a(Result::Success))
+        .and change(report, :updated_at)
+        .and change(report, :state).to("ready")
+        .and change(report, :ready_at).to(be_present)
     end
   end
 
-  context "when report is draft and updated with incomplete form" do
-    it "doesn't mark report as complete" do
-      expect { service.new(report, incomplete_attributes).save }.not_to change(report, :ready_at).from(nil)
+  context "when report is draft and updated with missing attributes" do
+    let(:attributes) do
+      required_attributes.excluding(:situation_parcelle)
+    end
+
+    it "updates the report but it keep it as draft" do
+      expect { service.save }
+        .to  ret(be_a(Result::Success))
+        .and change(report, :updated_at)
+        .and not_change(report, :state).from("draft")
+        .and not_change(report, :ready_at).from(nil)
     end
   end
 
-  context "when report is complete and updated with incomplete form" do
-    before { service.new(report, attributes).save }
+  context "when report is already completed and updated with required attributes" do
+    let(:report) { create(:report, :creation_local_habitation, :ready) }
 
-    it "marks report as draft" do
-      expect { service.new(report, incomplete_attributes).save }.to change(report, :ready_at).to(nil)
+    it "updates the report back to draft" do
+      expect { service.save }
+        .to  ret(be_a(Result::Success))
+        .and change(report, :updated_at)
+        .and not_change(report, :state).from("ready")
+        .and not_change(report, :ready_at)
+    end
+  end
+
+  context "when report is already completed but updated with missing attributes" do
+    let(:report) { create(:report, :creation_local_habitation, :ready, **required_attributes) }
+
+    let(:attributes) do
+      required_attributes.merge(situation_parcelle: nil)
+    end
+
+    it "updates the report back to draft" do
+      expect { service.save }
+        .to  ret(be_a(Result::Success))
+        .and change(report, :updated_at)
+        .and change(report, :state).to("draft")
+        .and change(report, :ready_at).to(nil)
+    end
+  end
+
+  context "with validation errors at model level" do
+    let(:attributes) do
+      {
+        situation_parcelle: "AA"
+      }
+    end
+
+    it "return a failure monad with errors", :aggregate_failures do
+      result = service.save
+
+      expect(result).to be_a(Result::Failure)
+      expect(result.errors).to satisfy { |errors| errors.of_kind?(:situation_parcelle, :invalid) }
     end
   end
 end
