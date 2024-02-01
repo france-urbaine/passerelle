@@ -11,10 +11,10 @@ module Reports
 
     def update
       @report = find_and_authorize_report
-      @report.assign_attributes(report_params)
-      @report.assign! || @report.save
+      service = Reports::StateService.new(@report)
+      result  = service.assign(report_params)
 
-      respond_with @report,
+      respond_with result,
         flash: true,
         location: -> { redirect_path || report_path(@report) }
     end
@@ -27,11 +27,12 @@ module Reports
 
     def destroy
       @report = find_and_authorize_report
-      @report.acknowledge!
+      service = Reports::StateService.new(@report)
+      result  = service.unassign
 
-      respond_with @report,
+      respond_with result,
         flash: true,
-        location: -> { redirect_path || report_path(@report) }
+        location: redirect_path || report_path(@report)
     end
 
     private

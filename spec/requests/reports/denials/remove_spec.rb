@@ -2,16 +2,16 @@
 
 require "rails_helper"
 
-RSpec.describe "Reports::DenialsController#destroy" do
+RSpec.describe "Reports::DenialsController#edit" do
   subject(:request) do
-    delete "/signalements/#{report.id}/deny", as:, headers:, params:
+    get "/signalements/#{report.id}/deny/remove", as:, headers:, params:
   end
 
   let(:as)      { |e| e.metadata[:as] }
   let(:headers) { |e| e.metadata[:headers] }
   let(:params)  { |e| e.metadata[:params] }
 
-  let!(:report) { create(:report, :denied_by_ddfip) }
+  let!(:report) { create(:report, :denied) }
 
   describe "authorizations" do
     it_behaves_like "it requires to be signed in in HTML"
@@ -58,30 +58,6 @@ RSpec.describe "Reports::DenialsController#destroy" do
 
       it_behaves_like "it denies access to DDFIP user"
       it_behaves_like "it denies access to DDFIP admin"
-    end
-  end
-
-  describe "responses" do
-    before { sign_in_as(:organization_admin, organization: report.ddfip) }
-
-    context "with report is denied" do
-      it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/signalements/#{report.id}") }
-
-      it "undenies the report" do
-        expect { request and report.reload }
-          .to  change(report, :updated_at)
-          .and change(report, :state).to("acknowledged")
-          .and change(report, :denied_at).to(nil)
-      end
-
-      it "sets a flash notice" do
-        expect(flash).to have_flash_notice.to eq(
-          scheme: "success",
-          header: "Le signalement n'est plus retourné.",
-          delay:  3000
-        )
-      end
     end
   end
 end

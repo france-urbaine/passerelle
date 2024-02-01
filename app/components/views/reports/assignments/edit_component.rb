@@ -3,7 +3,7 @@
 module Views
   module Reports
     module Assignments
-      class FormComponent < ApplicationViewComponent
+      class EditComponent < ApplicationViewComponent
         def initialize(report, referrer: nil)
           @report   = report
           @referrer = referrer
@@ -24,7 +24,8 @@ module Views
 
         def office_id_options
           {}.tap do |options|
-            options[:prompt] = "Sélectionnez un guichet" if @report.office_id.nil? && @report.errors.empty?
+            options[:prompt] = "Sélectionnez un guichet"
+            options[:include_blank] = true
             options[:autofocus] = true
           end
         end

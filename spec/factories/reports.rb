@@ -196,6 +196,16 @@ FactoryBot.define do
       denied
     end
 
+    trait :approved_by_ddfip do
+      made_for_ddfip
+      approved
+    end
+
+    trait :rejected_by_ddfip do
+      made_for_ddfip
+      rejected
+    end
+
     trait :assigned_to_office do
       made_for_office
       assigned

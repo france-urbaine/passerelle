@@ -1,12 +1,12 @@
 = modal_frame_component(referrer: @referrer_path) do |template|
   - template.with_modal do |modal|
     - modal.with_header do
-      | Retour d'un signalement
+      | Rejet d'un signalement
 
-    - modal.with_form(model: @report, url: report_denial_path(@report)) do |form|
+    - modal.with_form(model: @report, url: report_rejection_path(@report)) do |form|
       - modal.with_hidden_field :redirect, @redirect_path
 
-      p Vous êtes sur le point de retourner le signalement suivant à la collectivité :
+      p Vous êtes sur le point de rejeter le signalement suivant à la collectivité :
       = render Views::Reports::ShortDetailsComponent.new(@report)
 
       = form.block :reponse do

@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Views::Reports::Assignments::FormComponent, type: :component do
+RSpec.describe Views::Reports::Assignments::EditComponent, type: :component do
   let!(:ddfip) { create(:ddfip) }
 
   before { sign_in_as(organization: ddfip) }
@@ -15,7 +15,7 @@ RSpec.describe Views::Reports::Assignments::FormComponent, type: :component do
     expect(page).to have_selector(".modal form") do |form|
       expect(form).to have_html_attribute("action").with_value("/signalements/#{report.id}/assign")
 
-      expect(form).to have_field("Guichet")
+      expect(form).to have_field("Veuillez sélectionner le guichet auquel sera assigné ce signalement :")
     end
   end
 end

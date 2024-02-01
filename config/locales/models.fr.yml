@@ -245,7 +245,6 @@ fr:
         uid:          Client UID
         secret:       Client Secret
 
-
     errors:
       models:
         report:
@@ -257,6 +256,9 @@ fr:
             anomalies:
               must_be_an_array: "Les anomalies doivent être soumis sous la forme d'un tableau de valeurs"
               inclusion:        "Certaines anomalies ne sont pas compatibles avec ce type de formulaire"
+
+            office_id:
+              blank:    Un guichet est requis
 
         report_exoneration:
           attributes:

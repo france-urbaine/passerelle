@@ -1,0 +1,27 @@
+= content_layout_component do |layout|
+  - layout.with_header icon: "chat-bubble-bottom-center-text" do |header|
+    - if @report.denied?
+      | Justification du retour
+    - elsif @report.rejected?
+      | Justification du rejet
+    - else
+      | Réponse
+
+    / TODO: use a dedicated modal to update the response
+    / - if allowed_to?(:update?, @report)
+    /   - header.with_action "Compléter", edit_report_path(@report, "observations"), icon: "pencil-square", modal: true
+
+    - if allowed_to?(:deny?, @report)
+      - header.with_action "Compléter", edit_report_denial_path(@report), icon: "pencil-square", modal: true
+
+    - if allowed_to?(:reject?, @report)
+        - header.with_action "Compléter", edit_report_rejection_path(@report), icon: "pencil-square", modal: true
+
+  - layout.with_section do
+    - if @report.reponse.present?
+      = card_component(content_class: "text-lg") do |card|
+        = simple_format h(@report.reponse)
+
+    - else
+      = card_component(content_class: "card__content--empty h-24 flex-auto flex items-center justify-center") do |card|
+        | Aucune justication transmise.
