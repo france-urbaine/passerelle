@@ -60,8 +60,8 @@ RSpec.describe "Reports::DocumentsController#remove" do
     context "when report has been created by current user publisher" do
       let(:report) { create(:report, :made_through_api, publisher: current_user.organization) }
 
-      it_behaves_like "it allows access to publisher user"
-      it_behaves_like "it allows access to publisher admin"
+      it_behaves_like "it denies access to publisher user"
+      it_behaves_like "it denies access to publisher admin"
     end
 
     context "when report has been transmitted by current user publisher" do
@@ -74,7 +74,7 @@ RSpec.describe "Reports::DocumentsController#remove" do
     context "when report has been transmitted to current user DDFIP" do
       let(:report) { create(:report, :transmitted_to_ddfip, ddfip: current_user.organization) }
 
-      it_behaves_like "it allows access to DDFIP admin"
+      it_behaves_like "it denies access to DDFIP admin"
       it_behaves_like "it denies access to DDFIP user"
     end
 
@@ -83,8 +83,8 @@ RSpec.describe "Reports::DocumentsController#remove" do
       let(:office) { create(:office, ddfip:, users: [current_user]) }
       let(:report) { create(:report, :assigned_to_office, ddfip:, office:) }
 
-      it_behaves_like "it allows access to DDFIP admin"
-      it_behaves_like "it allows access to DDFIP user"
+      it_behaves_like "it denies access to DDFIP admin"
+      it_behaves_like "it denies access to DDFIP user"
     end
   end
 
@@ -92,7 +92,7 @@ RSpec.describe "Reports::DocumentsController#remove" do
     before { sign_in_as(organization: collectivity) }
 
     let(:collectivity) { create(:collectivity) }
-    let(:report)       { create(:report, :made_through_web_ui, collectivity: collectivity) }
+    let(:report)       { create(:report, :made_through_web_ui, collectivity:) }
 
     context "when the report is accessible" do
       it { expect(response).to have_http_status(:success) }
@@ -101,7 +101,7 @@ RSpec.describe "Reports::DocumentsController#remove" do
     end
 
     context "when the report is transmitted" do
-      before { report.transmit! }
+      let(:report) { create(:report, :transmitted_through_web_ui, collectivity:) }
 
       it { expect(response).to have_http_status(:forbidden) }
       it { expect(response).to have_content_type(:html) }
@@ -109,7 +109,7 @@ RSpec.describe "Reports::DocumentsController#remove" do
     end
 
     context "when the report is discarded" do
-      before { report.discard }
+      let(:report) { create(:report, :made_through_web_ui, :discarded, collectivity:) }
 
       it { expect(response).to have_http_status(:gone) }
       it { expect(response).to have_content_type(:html) }

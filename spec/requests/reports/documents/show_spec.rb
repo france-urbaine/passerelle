@@ -95,8 +95,7 @@ RSpec.describe "Reports::DocumentsController#show" do
     before { sign_in_as(organization: collectivity) }
 
     let(:collectivity) { create(:collectivity) }
-    let(:report)       { create(:report, :made_through_web_ui, collectivity: collectivity) }
-    let(:package)      { create(:package, :transmitted_through_web_ui, collectivity: collectivity, reports: [report]) }
+    let(:report)       { create(:report, :made_through_web_ui, collectivity:) }
 
     context "when the report is accessible" do
       it { expect(response).to have_http_status(:found) }
@@ -104,14 +103,14 @@ RSpec.describe "Reports::DocumentsController#show" do
     end
 
     context "when the report is transmitted" do
-      before { report.transmit! }
+      let(:report) { create(:report, :transmitted_through_web_ui, collectivity:) }
 
       it { expect(response).to have_http_status(:found) }
       it { expect(response).to redirect_to(%r{http://example.com/rails/active_storage/disk/.{362}/sample.pdf}) }
     end
 
     context "when the report is discarded" do
-      before { report.discard }
+      let(:report) { create(:report, :made_through_web_ui, :discarded, collectivity:) }
 
       it { expect(response).to have_http_status(:gone) }
       it { expect(response).to have_content_type(:html) }

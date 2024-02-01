@@ -2,6 +2,8 @@
 
 module Reports
   class ApprovalPolicy < ApplicationPolicy
+    alias_rule :edit?, :update?, :remove?, :destroy?, to: :manage?
+
     def manage?
       if record == Report
         ddfip?
@@ -9,8 +11,8 @@ module Reports
         ddfip? &&
           record.kept? &&
           record.out_of_sandbox? &&
-          record.assigned? &&
-          record.ddfip == organization
+          record.ddfip_id == organization.id &&
+          record.assigned?
       end
     end
   end

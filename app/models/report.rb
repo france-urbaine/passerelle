@@ -472,10 +472,6 @@ class Report < ApplicationRecord
     offices&.map(&:id)&.include?(office_id)
   end
 
-  def transmissible?
-    packing?
-  end
-
   def in_active_transmission?
     ready? && transmission_id?
   end

@@ -62,8 +62,8 @@ RSpec.describe "Reports::DocumentsController#create" do
     context "when report has been created by current user publisher" do
       let(:report) { create(:report, :made_through_api, publisher: current_user.organization) }
 
-      it_behaves_like "it allows access to publisher user"
-      it_behaves_like "it allows access to publisher admin"
+      it_behaves_like "it denies access to publisher user"
+      it_behaves_like "it denies access to publisher admin"
     end
 
     context "when report has been transmitted by current user publisher" do
@@ -76,7 +76,7 @@ RSpec.describe "Reports::DocumentsController#create" do
     context "when report has been transmitted to current user DDFIP" do
       let(:report) { create(:report, :transmitted_to_ddfip, ddfip: current_user.organization) }
 
-      it_behaves_like "it allows access to DDFIP admin"
+      it_behaves_like "it denies access to DDFIP admin"
       it_behaves_like "it denies access to DDFIP user"
     end
 
@@ -85,8 +85,8 @@ RSpec.describe "Reports::DocumentsController#create" do
       let(:office) { create(:office, ddfip:, users: [current_user]) }
       let(:report) { create(:report, :assigned_to_office, ddfip:, office:) }
 
-      it_behaves_like "it allows access to DDFIP admin"
-      it_behaves_like "it allows access to DDFIP user"
+      it_behaves_like "it denies access to DDFIP admin"
+      it_behaves_like "it denies access to DDFIP user"
     end
   end
 
