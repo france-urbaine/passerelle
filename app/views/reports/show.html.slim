@@ -10,24 +10,17 @@
           = turbo_frame_tag dom_id(@report, :transmission_button) do
             = render "reports/transmission_button", report: @report
 
-      - if allowed_to?(:assign?, @report)
-        - if @report.unassigned?
-          - breadcrumbs.with_action "Assigner", edit_report_assignment_path(@report), icon: "arrows-right-left", modal: true, primary: true
-        - else
-          - breadcrumbs.with_action "Désassigner", remove_report_assignment_path(@report), icon: "arrow-uturn-left", modal: true, destructive: "discrete"
+      - if @report.unassigned?
+        - if allowed_to?(:assign?, @report)
+          - breadcrumbs.with_action "Assigner", report_assignment_path(@report), icon: "check", modal: true, primary: true
+        - if allowed_to?(:deny?, @report)
+          - breadcrumbs.with_action "Retourner", report_denial_path(@report), icon: "arrow-uturn-right", modal: true, destructive: true
 
-      - if allowed_to?(:deny?, @report)
-        - if @report.denied?
-          - breadcrumbs.with_action "Resoumettre", remove_report_denial_path(@report), icon: "arrow-uturn-down", modal: true, primary: true
-        - else
-          - breadcrumbs.with_action "Retourner", edit_report_denial_path(@report), icon: "arrow-uturn-up", modal: true, destructive: true
-
-      - if allowed_to?(:approve?, @report)
-        - if @report.resolved?
-          - breadcrumbs.with_action "Annuler", report_approval_path(@report), icon: "hand-raised", destructive: "discrete", method: "delete"
-        - else
-          - breadcrumbs.with_action "Approuver", report_approval_path(@report), icon: "hand-thumb-up", accent: true, method: "patch"
-          - breadcrumbs.with_action "Rejeter", report_rejection_path(@report), icon: "hand-thumb-down", destructive: true, method: "patch"
+      - elsif @report.processing?
+        - if allowed_to?(:approve?, @report)
+          - breadcrumbs.with_action "Approuver", report_approval_path(@report), icon: "hand-thumb-up", modal: true, accent: true, method: "patch"
+        - if allowed_to?(:reject?, @report)
+          - breadcrumbs.with_action "Rejeter", report_rejection_path(@report), icon: "hand-thumb-down", modal: true, destructive: true
 
       - if allowed_to?(:destroy?, @report)
         - breadcrumbs.with_action "Supprimer", remove_report_path(@report), icon: "trash", modal: true, destructive: "discrete"
