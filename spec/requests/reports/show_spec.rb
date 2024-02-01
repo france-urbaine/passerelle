@@ -86,8 +86,8 @@ RSpec.describe "ReportsController#show" do
 
   describe "responses" do
     context "when signed in as a collectivity user" do
-      let(:collectivity) { create(:collectivity) }
-      let(:report)       { create(:report, :made_through_web_ui, collectivity: collectivity) }
+      let!(:collectivity) { create(:collectivity) }
+      let!(:report)       { create(:report, :made_through_web_ui, collectivity:) }
 
       before { sign_in_as(organization: collectivity) }
 
@@ -98,7 +98,7 @@ RSpec.describe "ReportsController#show" do
       end
 
       context "when the report is transmitted" do
-        before { report.transmit! }
+        let(:report) { create(:report, :transmitted_through_web_ui, collectivity:) }
 
         it { expect(response).to have_http_status(:success) }
         it { expect(response).to have_content_type(:html) }
@@ -106,7 +106,7 @@ RSpec.describe "ReportsController#show" do
       end
 
       context "when the report is discarded" do
-        before { report.discard }
+        let(:report) { create(:report, :made_through_web_ui, :discarded, collectivity:) }
 
         it { expect(response).to have_http_status(:gone) }
         it { expect(response).to have_content_type(:html) }
@@ -123,8 +123,8 @@ RSpec.describe "ReportsController#show" do
     end
 
     context "when signed in as a ddfip admin" do
-      let(:ddfip)  { create(:ddfip) }
-      let(:report) { create(:report, :transmitted, ddfip: ddfip) }
+      let!(:ddfip)  { create(:ddfip) }
+      let!(:report) { create(:report, :transmitted, ddfip: ddfip) }
 
       before { sign_in_as(:organization_admin, organization: ddfip) }
 
@@ -134,10 +134,8 @@ RSpec.describe "ReportsController#show" do
         it { expect(response).to have_html_body }
 
         it "acknowledge the report" do
-          expect {
-            request
-            report.reload
-          }.to change(report, :state).from("sent").to("acknowledged")
+          expect { request and report.reload }
+            .to  change(report, :state).from("sent").to("acknowledged")
             .and change(report, :acknowledged_at).to be_present
         end
       end

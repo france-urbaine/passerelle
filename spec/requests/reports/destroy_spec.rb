@@ -86,11 +86,10 @@ RSpec.describe "ReportsController#update" do
 
   describe "responses" do
     context "when signed in as a collectivity user" do
-      let(:collectivity) { create(:collectivity) }
-      let(:report)       { create(:report, :made_through_web_ui, collectivity: collectivity) }
-      let(:package)      { create(:package, :transmitted_through_web_ui, collectivity: collectivity, reports: [report]) }
+      let!(:collectivity) { create(:collectivity) }
+      let!(:report)       { create(:report, :made_through_web_ui, collectivity: collectivity) }
 
-      before { sign_in_as(organization: report.collectivity) }
+      before { sign_in_as(organization: collectivity) }
 
       context "when the report is accessible" do
         it { expect(response).to have_http_status(:see_other) }
@@ -122,7 +121,7 @@ RSpec.describe "ReportsController#update" do
       end
 
       context "when the report is discarded" do
-        before { report.discard }
+        let(:report) { create(:report, :made_through_web_ui, :discarded, collectivity:) }
 
         it { expect(response).to have_http_status(:see_other) }
         it { expect(response).to redirect_to("/signalements") }

@@ -87,9 +87,8 @@ RSpec.describe "ReportsController#edit" do
 
   describe "responses" do
     context "when signed in as a collectivity user" do
-      let(:collectivity) { create(:collectivity) }
-      let(:report)       { create(:report, :made_through_web_ui, collectivity: collectivity) }
-      let(:package)      { create(:package, :transmitted_through_web_ui, collectivity: collectivity, reports: [report]) }
+      let!(:collectivity) { create(:collectivity) }
+      let!(:report)       { create(:report, :made_through_web_ui, collectivity:) }
 
       before { sign_in_as(organization: collectivity) }
 
@@ -100,7 +99,7 @@ RSpec.describe "ReportsController#edit" do
       end
 
       context "when the report is transmitted" do
-        before { report.transmit! }
+        let(:report) { create(:report, :transmitted_through_web_ui, collectivity:) }
 
         it { expect(response).to have_http_status(:forbidden) }
         it { expect(response).to have_content_type(:html) }
@@ -108,7 +107,7 @@ RSpec.describe "ReportsController#edit" do
       end
 
       context "when the report is discarded" do
-        before { report.discard }
+        let(:report) { create(:report, :made_through_web_ui, :discarded, collectivity:) }
 
         it { expect(response).to have_http_status(:gone) }
         it { expect(response).to have_content_type(:html) }
