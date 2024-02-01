@@ -26,13 +26,4 @@ RSpec.describe ReportsController do
 
   it { expect(get:    "/signalements/9c6c00c4/edit/situation_majic").to route_to("reports#edit", id: "9c6c00c4", form: "situation_majic") }
   it { expect(get:    "/signalements/9c6c00c4/edit/unknown").to         route_to("reports#edit", id: "9c6c00c4", form: "unknown") }
-
-  it { expect(get:    "/signalements/9c6c00c4-0784-4ef8-8978-b1e0246882a7/approval").to route_to("reports/approvals#show", report_id: "9c6c00c4-0784-4ef8-8978-b1e0246882a7") }
-  it { expect(patch:  "/signalements/9c6c00c4-0784-4ef8-8978-b1e0246882a7/approval").to route_to("reports/approvals#update", report_id: "9c6c00c4-0784-4ef8-8978-b1e0246882a7") }
-  it { expect(put:    "/signalements/9c6c00c4-0784-4ef8-8978-b1e0246882a7/approval").to route_to("reports/approvals#update", report_id: "9c6c00c4-0784-4ef8-8978-b1e0246882a7") }
-  it { expect(delete: "/signalements/9c6c00c4-0784-4ef8-8978-b1e0246882a7/approval").to route_to("reports/approvals#destroy", report_id: "9c6c00c4-0784-4ef8-8978-b1e0246882a7") }
-
-  it { expect(get:    "/signalements/9c6c00c4-0784-4ef8-8978-b1e0246882a7/rejection").to route_to("reports/rejections#show", report_id: "9c6c00c4-0784-4ef8-8978-b1e0246882a7") }
-  it { expect(patch:  "/signalements/9c6c00c4-0784-4ef8-8978-b1e0246882a7/rejection").to route_to("reports/rejections#update", report_id: "9c6c00c4-0784-4ef8-8978-b1e0246882a7") }
-  it { expect(put:    "/signalements/9c6c00c4-0784-4ef8-8978-b1e0246882a7/rejection").to route_to("reports/rejections#update", report_id: "9c6c00c4-0784-4ef8-8978-b1e0246882a7") }
 end
