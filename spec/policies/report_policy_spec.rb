@@ -1,16 +1,9 @@
 # frozen_string_literal: true
 
 require "rails_helper"
+require_relative "reports/shared_example_for_target_office"
 
-RSpec.describe ReportPolicy, stub_factories: false, type: :policy do
-  shared_context "when current user is member of targeted office" do
-    include_context "when current user is a DDFIP user"
-    before do
-      office = create(:office, competences: [record.form_type], users: [current_user])
-      record.update(office: office)
-    end
-  end
-
+RSpec.describe ReportPolicy, type: :policy do
   describe_rule :index? do
     it_behaves_like("when current user is a DDFIP admin")        { succeed }
     it_behaves_like("when current user is a DDFIP user")         { succeed }
@@ -49,77 +42,77 @@ RSpec.describe ReportPolicy, stub_factories: false, type: :policy do
       it_behaves_like("when current user is a collectivity user")  { failed }
 
       context "when reported through Web UI by the current collectivity" do
-        let(:record) { create(:report, :made_through_web_ui, collectivity: current_organization) }
+        let(:record) { build_stubbed(:report, :made_through_web_ui, collectivity: current_organization) }
 
         it_behaves_like("when current user is a collectivity admin") { succeed }
         it_behaves_like("when current user is a collectivity user")  { succeed }
       end
 
       context "when transmitted through Web UI by the current collectivity" do
-        let(:record) { create(:report, :transmitted_through_web_ui, collectivity: current_organization) }
+        let(:record) { build_stubbed(:report, :transmitted_through_web_ui, collectivity: current_organization) }
 
         it_behaves_like("when current user is a collectivity admin") { succeed }
         it_behaves_like("when current user is a collectivity user")  { succeed }
       end
 
       context "when reported through Web UI by a collectivity owned by the current publisher" do
-        let(:record) { create(:report, :made_through_web_ui, collectivity_publisher: current_organization) }
+        let(:record) { build_stubbed(:report, :made_through_web_ui, collectivity_publisher: current_organization) }
 
         it_behaves_like("when current user is a publisher admin") { failed }
         it_behaves_like("when current user is a publisher user")  { failed }
       end
 
       context "when transmitted through Web UI by a collectivity owned by the current publisher" do
-        let(:record) { create(:report, :transmitted_through_web_ui, collectivity_publisher: current_organization) }
+        let(:record) { build_stubbed(:report, :transmitted_through_web_ui, collectivity_publisher: current_organization) }
 
         it_behaves_like("when current user is a publisher admin") { failed }
         it_behaves_like("when current user is a publisher user")  { failed }
       end
 
       context "when reported through API for the current collectivity" do
-        let(:record) { create(:report, :made_through_api, collectivity: current_organization) }
+        let(:record) { build_stubbed(:report, :made_through_api, collectivity: current_organization) }
 
         it_behaves_like("when current user is a collectivity admin") { failed }
         it_behaves_like("when current user is a collectivity user")  { failed }
       end
 
       context "when transmitted through API for the current collectivity" do
-        let(:record) { create(:report, :transmitted_through_api, collectivity: current_organization) }
+        let(:record) { build_stubbed(:report, :transmitted_through_api, collectivity: current_organization) }
 
         it_behaves_like("when current user is a collectivity admin") { succeed }
         it_behaves_like("when current user is a collectivity user")  { succeed }
       end
 
       context "when transmitted as sandbox through API for the current collectivity" do
-        let(:record) { create(:report, :transmitted_through_api, collectivity: current_organization, sandbox: true) }
+        let(:record) { build_stubbed(:report, :transmitted_through_api, collectivity: current_organization, sandbox: true) }
 
         it_behaves_like("when current user is a collectivity admin") { failed }
         it_behaves_like("when current user is a collectivity user")  { failed }
       end
 
       context "when reported through API by the current publisher" do
-        let(:record) { create(:report, :made_through_api, publisher: current_organization) }
+        let(:record) { build_stubbed(:report, :made_through_api, publisher: current_organization) }
 
         it_behaves_like("when current user is a publisher admin") { succeed }
         it_behaves_like("when current user is a publisher user")  { succeed }
       end
 
       context "when transmitted through API by the current publisher" do
-        let(:record) { create(:report, :transmitted_through_api, publisher: current_organization) }
+        let(:record) { build_stubbed(:report, :transmitted_through_api, publisher: current_organization) }
 
         it_behaves_like("when current user is a publisher admin") { succeed }
         it_behaves_like("when current user is a publisher user")  { succeed }
       end
 
       context "when transmitted as sandbox through API by the current publisher" do
-        let(:record) { create(:report, :transmitted_through_api, publisher: current_organization, sandbox: true) }
+        let(:record) { build_stubbed(:report, :transmitted_through_api, publisher: current_organization, sandbox: true) }
 
         it_behaves_like("when current user is a publisher admin") { succeed }
         it_behaves_like("when current user is a publisher user")  { succeed }
       end
 
       context "when reported to the current DDFIP" do
-        let(:record) { create(:report, :made_for_office, ddfip: current_organization) }
+        let(:record) { build_stubbed(:report, :made_for_office, ddfip: current_organization) }
 
         it_behaves_like("when current user is a DDFIP admin")             { failed }
         it_behaves_like("when current user is a DDFIP user")              { failed }
@@ -127,7 +120,7 @@ RSpec.describe ReportPolicy, stub_factories: false, type: :policy do
       end
 
       context "when transmitted to the current DDFIP" do
-        let(:record) { create(:report, :transmitted_to_ddfip, ddfip: current_organization) }
+        let(:record) { build_stubbed(:report, :transmitted_to_ddfip, ddfip: current_organization) }
 
         it_behaves_like("when current user is a DDFIP admin")             { succeed }
         it_behaves_like("when current user is a DDFIP user")              { failed }
@@ -135,7 +128,7 @@ RSpec.describe ReportPolicy, stub_factories: false, type: :policy do
       end
 
       context "when transmitted as sandbox to the current DDFIP" do
-        let(:record) { create(:report, :transmitted_to_ddfip, ddfip: current_organization, sandbox: true) }
+        let(:record) { build_stubbed(:report, :transmitted_to_ddfip, ddfip: current_organization, sandbox: true) }
 
         it_behaves_like("when current user is a DDFIP admin")             { failed }
         it_behaves_like("when current user is a DDFIP user")              { failed }
@@ -143,7 +136,7 @@ RSpec.describe ReportPolicy, stub_factories: false, type: :policy do
       end
 
       context "when report is assigned by the current DDFIP" do
-        let(:record) { create(:report, :assigned_by_ddfip, ddfip: current_organization) }
+        let(:record) { build_stubbed(:report, :assigned_by_ddfip, ddfip: current_organization) }
 
         it_behaves_like("when current user is a DDFIP admin")             { succeed }
         it_behaves_like("when current user is a DDFIP user")              { failed }
@@ -151,7 +144,7 @@ RSpec.describe ReportPolicy, stub_factories: false, type: :policy do
       end
 
       context "when report is denied by the current DDFIP" do
-        let(:record) { create(:report, :denied_by_ddfip, ddfip: current_organization) }
+        let(:record) { build_stubbed(:report, :denied_by_ddfip, ddfip: current_organization) }
 
         it_behaves_like("when current user is a DDFIP admin")             { succeed }
         it_behaves_like("when current user is a DDFIP user")              { failed }
@@ -159,17 +152,17 @@ RSpec.describe ReportPolicy, stub_factories: false, type: :policy do
       end
 
       context "when transmitted to any DDFIP" do
-        let(:record) { create(:report, :transmitted_to_ddfip, sandbox: false) }
+        let(:record) { build_stubbed(:report, :transmitted_to_ddfip, sandbox: false) }
 
-        it_behaves_like("when current user is a DGFIP admin")             { succeed }
-        it_behaves_like("when current user is a DGFIP user")              { succeed }
+        it_behaves_like("when current user is a DGFIP admin") { succeed }
+        it_behaves_like("when current user is a DGFIP user")  { succeed }
       end
 
       context "when transmitted as sandbox to any DDFIP" do
-        let(:record) { create(:report, :transmitted_to_ddfip, sandbox: true) }
+        let(:record) { build_stubbed(:report, :transmitted_to_ddfip, sandbox: true) }
 
-        it_behaves_like("when current user is a DGFIP admin")             { failed }
-        it_behaves_like("when current user is a DGFIP user")              { failed }
+        it_behaves_like("when current user is a DGFIP admin") { failed }
+        it_behaves_like("when current user is a DGFIP user")  { failed }
       end
     end
   end
@@ -191,8 +184,148 @@ RSpec.describe ReportPolicy, stub_factories: false, type: :policy do
     context "without record" do
       let(:record) { Report }
 
-      it_behaves_like("when current user is a DDFIP admin")        { succeed }
-      it_behaves_like("when current user is a DDFIP user")         { succeed }
+      it_behaves_like("when current user is a DDFIP admin")        { failed }
+      it_behaves_like("when current user is a DDFIP user")         { failed }
+      it_behaves_like("when current user is a DGFIP admin")        { failed }
+      it_behaves_like("when current user is a DGFIP user")         { failed }
+      it_behaves_like("when current user is a publisher admin")    { failed }
+      it_behaves_like("when current user is a publisher user")     { failed }
+      it_behaves_like("when current user is a collectivity admin") { succeed }
+      it_behaves_like("when current user is a collectivity user")  { succeed }
+    end
+
+    context "with report" do
+      let(:record) { build_stubbed(:report) }
+
+      it_behaves_like("when current user is a DDFIP admin")        { failed }
+      it_behaves_like("when current user is a DDFIP user")         { failed }
+      it_behaves_like("when current user is a DGFIP admin")        { failed }
+      it_behaves_like("when current user is a DGFIP user")         { failed }
+      it_behaves_like("when current user is a publisher admin")    { failed }
+      it_behaves_like("when current user is a publisher user")     { failed }
+      it_behaves_like("when current user is a collectivity admin") { failed }
+      it_behaves_like("when current user is a collectivity user")  { failed }
+
+      context "when reported through Web UI by the current collectivity" do
+        let(:record) { build_stubbed(:report, :made_through_web_ui, collectivity: current_organization) }
+
+        it_behaves_like("when current user is a collectivity admin") { succeed }
+        it_behaves_like("when current user is a collectivity user")  { succeed }
+      end
+
+      context "when transmitted through Web UI by the current collectivity" do
+        let(:record) { build_stubbed(:report, :transmitted_through_web_ui, collectivity: current_organization) }
+
+        it_behaves_like("when current user is a collectivity admin") { failed }
+        it_behaves_like("when current user is a collectivity user")  { failed }
+      end
+
+      context "when reported through Web UI by a collectivity owned by the current publisher" do
+        let(:record) { build_stubbed(:report, :made_through_web_ui, collectivity_publisher: current_organization) }
+
+        it_behaves_like("when current user is a publisher admin") { failed }
+        it_behaves_like("when current user is a publisher user")  { failed }
+      end
+
+      context "when transmitted through Web UI by a collectivity owned by the current publisher" do
+        let(:record) { build_stubbed(:report, :transmitted_through_web_ui, collectivity_publisher: current_organization) }
+
+        it_behaves_like("when current user is a publisher admin") { failed }
+        it_behaves_like("when current user is a publisher user")  { failed }
+      end
+
+      context "when reported through API for the current collectivity" do
+        let(:record) { build_stubbed(:report, :made_through_api, collectivity: current_organization) }
+
+        it_behaves_like("when current user is a collectivity admin") { failed }
+        it_behaves_like("when current user is a collectivity user")  { failed }
+      end
+
+      context "when transmitted through API for the current collectivity" do
+        let(:record) { build_stubbed(:report, :transmitted_through_api, collectivity: current_organization) }
+
+        it_behaves_like("when current user is a collectivity admin") { failed }
+        it_behaves_like("when current user is a collectivity user")  { failed }
+      end
+
+      context "when transmitted as sandbox through API for the current collectivity" do
+        let(:record) { build_stubbed(:report, :transmitted_through_api, collectivity: current_organization, sandbox: true) }
+
+        it_behaves_like("when current user is a collectivity admin") { failed }
+        it_behaves_like("when current user is a collectivity user")  { failed }
+      end
+
+      context "when reported through API by the current publisher" do
+        let(:record) { build_stubbed(:report, :made_through_api, publisher: current_organization) }
+
+        it_behaves_like("when current user is a publisher admin") { failed }
+        it_behaves_like("when current user is a publisher user")  { failed }
+      end
+
+      context "when transmitted through API by the current publisher" do
+        let(:record) { build_stubbed(:report, :transmitted_through_api, publisher: current_organization) }
+
+        it_behaves_like("when current user is a publisher admin") { failed }
+        it_behaves_like("when current user is a publisher user")  { failed }
+      end
+
+      context "when transmitted as sandbox through API by the current publisher" do
+        let(:record) { build_stubbed(:report, :transmitted_through_api, publisher: current_organization, sandbox: true) }
+
+        it_behaves_like("when current user is a publisher admin") { failed }
+        it_behaves_like("when current user is a publisher user")  { failed }
+      end
+
+      context "when reported to the current DDFIP" do
+        let(:record) { build_stubbed(:report, :made_for_office, ddfip: current_organization) }
+
+        it_behaves_like("when current user is a DDFIP admin")             { failed }
+        it_behaves_like("when current user is a DDFIP user")              { failed }
+        it_behaves_like("when current user is member of targeted office") { failed }
+      end
+
+      context "when transmitted to the current DDFIP" do
+        let(:record) { build_stubbed(:report, :transmitted_to_ddfip, ddfip: current_organization) }
+
+        it_behaves_like("when current user is a DDFIP admin")             { failed }
+        it_behaves_like("when current user is a DDFIP user")              { failed }
+        it_behaves_like("when current user is member of targeted office") { failed }
+      end
+
+      context "when transmitted as sandbox to the current DDFIP" do
+        let(:record) { build_stubbed(:report, :transmitted_to_ddfip, ddfip: current_organization, sandbox: true) }
+
+        it_behaves_like("when current user is a DDFIP admin")             { failed }
+        it_behaves_like("when current user is a DDFIP user")              { failed }
+        it_behaves_like("when current user is member of targeted office") { failed }
+      end
+
+      context "when assigned by the current DDFIP" do
+        let(:record) { build_stubbed(:report, :assigned_by_ddfip, ddfip: current_organization) }
+
+        it_behaves_like("when current user is a DDFIP admin")             { failed }
+        it_behaves_like("when current user is a DDFIP user")              { failed }
+        it_behaves_like("when current user is member of targeted office") { failed }
+      end
+
+      context "when denied by the current DDFIP" do
+        let(:record) { build_stubbed(:report, :denied_by_ddfip, ddfip: current_organization) }
+
+        it_behaves_like("when current user is a DDFIP admin")             { failed }
+        it_behaves_like("when current user is a DDFIP user")              { failed }
+        it_behaves_like("when current user is member of targeted office") { failed }
+      end
+    end
+  end
+
+  it { expect(:edit?).to be_an_alias_of(policy, :update?) }
+
+  describe_rule :destroy? do
+    context "without record" do
+      let(:record) { Report }
+
+      it_behaves_like("when current user is a DDFIP admin")        { failed }
+      it_behaves_like("when current user is a DDFIP user")         { failed }
       it_behaves_like("when current user is a DGFIP admin")        { failed }
       it_behaves_like("when current user is a DGFIP user")         { failed }
       it_behaves_like("when current user is a publisher admin")    { succeed }
@@ -214,77 +347,77 @@ RSpec.describe ReportPolicy, stub_factories: false, type: :policy do
       it_behaves_like("when current user is a collectivity user")  { failed }
 
       context "when reported through Web UI by the current collectivity" do
-        let(:record) { create(:report, :made_through_web_ui, collectivity: current_organization) }
+        let(:record) { build_stubbed(:report, :made_through_web_ui, collectivity: current_organization) }
 
         it_behaves_like("when current user is a collectivity admin") { succeed }
         it_behaves_like("when current user is a collectivity user")  { succeed }
       end
 
       context "when transmitted through Web UI by the current collectivity" do
-        let(:record) { create(:report, :transmitted_through_web_ui, collectivity: current_organization) }
+        let(:record) { build_stubbed(:report, :transmitted_through_web_ui, collectivity: current_organization) }
 
         it_behaves_like("when current user is a collectivity admin") { failed }
         it_behaves_like("when current user is a collectivity user")  { failed }
       end
 
       context "when reported through Web UI by a collectivity owned by the current publisher" do
-        let(:record) { create(:report, :made_through_web_ui, collectivity_publisher: current_organization) }
+        let(:record) { build_stubbed(:report, :made_through_web_ui, collectivity_publisher: current_organization) }
 
         it_behaves_like("when current user is a publisher admin") { failed }
         it_behaves_like("when current user is a publisher user")  { failed }
       end
 
       context "when transmitted through Web UI by a collectivity owned by the current publisher" do
-        let(:record) { create(:report, :transmitted_through_web_ui, collectivity_publisher: current_organization) }
+        let(:record) { build_stubbed(:report, :transmitted_through_web_ui, collectivity_publisher: current_organization) }
 
         it_behaves_like("when current user is a publisher admin") { failed }
         it_behaves_like("when current user is a publisher user")  { failed }
       end
 
       context "when reported through API for the current collectivity" do
-        let(:record) { create(:report, :made_through_api, collectivity: current_organization) }
+        let(:record) { build_stubbed(:report, :made_through_api, collectivity: current_organization) }
 
         it_behaves_like("when current user is a collectivity admin") { failed }
         it_behaves_like("when current user is a collectivity user")  { failed }
       end
 
       context "when transmitted through API for the current collectivity" do
-        let(:record) { create(:report, :transmitted_through_api, collectivity: current_organization) }
+        let(:record) { build_stubbed(:report, :transmitted_through_api, collectivity: current_organization) }
 
         it_behaves_like("when current user is a collectivity admin") { failed }
         it_behaves_like("when current user is a collectivity user")  { failed }
       end
 
       context "when transmitted as sandbox through API for the current collectivity" do
-        let(:record) { create(:report, :transmitted_through_api, collectivity: current_organization, sandbox: true) }
+        let(:record) { build_stubbed(:report, :transmitted_through_api, collectivity: current_organization, sandbox: true) }
 
         it_behaves_like("when current user is a collectivity admin") { failed }
         it_behaves_like("when current user is a collectivity user")  { failed }
       end
 
       context "when reported through API by the current publisher" do
-        let(:record) { create(:report, :made_through_api, publisher: current_organization) }
+        let(:record) { build_stubbed(:report, :made_through_api, publisher: current_organization) }
 
         it_behaves_like("when current user is a publisher admin") { succeed }
         it_behaves_like("when current user is a publisher user")  { succeed }
       end
 
       context "when transmitted through API by the current publisher" do
-        let(:record) { create(:report, :transmitted_through_api, publisher: current_organization) }
+        let(:record) { build_stubbed(:report, :transmitted_through_api, publisher: current_organization) }
 
         it_behaves_like("when current user is a publisher admin") { failed }
         it_behaves_like("when current user is a publisher user")  { failed }
       end
 
       context "when transmitted as sandbox through API by the current publisher" do
-        let(:record) { create(:report, :transmitted_through_api, publisher: current_organization, sandbox: true) }
+        let(:record) { build_stubbed(:report, :transmitted_through_api, publisher: current_organization, sandbox: true) }
 
         it_behaves_like("when current user is a publisher admin") { failed }
         it_behaves_like("when current user is a publisher user")  { failed }
       end
 
       context "when reported to the current DDFIP" do
-        let(:record) { create(:report, :made_for_office, ddfip: current_organization) }
+        let(:record) { build_stubbed(:report, :made_for_office, ddfip: current_organization) }
 
         it_behaves_like("when current user is a DDFIP admin")             { failed }
         it_behaves_like("when current user is a DDFIP user")              { failed }
@@ -292,7 +425,146 @@ RSpec.describe ReportPolicy, stub_factories: false, type: :policy do
       end
 
       context "when transmitted to the current DDFIP" do
-        let(:record) { create(:report, :transmitted_to_ddfip, ddfip: current_organization) }
+        let(:record) { build_stubbed(:report, :transmitted_to_ddfip, ddfip: current_organization) }
+
+        it_behaves_like("when current user is a DDFIP admin")             { failed }
+        it_behaves_like("when current user is a DDFIP user")              { failed }
+        it_behaves_like("when current user is member of targeted office") { failed }
+      end
+
+      context "when transmitted as sandbox to the current DDFIP" do
+        let(:record) { build_stubbed(:report, :transmitted_to_ddfip, ddfip: current_organization, sandbox: true) }
+
+        it_behaves_like("when current user is a DDFIP admin")             { failed }
+        it_behaves_like("when current user is a DDFIP user")              { failed }
+        it_behaves_like("when current user is member of targeted office") { failed }
+      end
+
+      context "when assigned by the current DDFIP" do
+        let(:record) { build_stubbed(:report, :assigned_by_ddfip, ddfip: current_organization) }
+
+        it_behaves_like("when current user is a DDFIP admin")             { failed }
+        it_behaves_like("when current user is a DDFIP user")              { failed }
+        it_behaves_like("when current user is member of targeted office") { failed }
+      end
+
+      context "when denied by the current DDFIP" do
+        let(:record) { build_stubbed(:report, :denied_by_ddfip, ddfip: current_organization) }
+
+        it_behaves_like("when current user is a DDFIP admin")             { failed }
+        it_behaves_like("when current user is a DDFIP user")              { failed }
+        it_behaves_like("when current user is member of targeted office") { failed }
+      end
+    end
+  end
+
+  it { expect(:remove?).to    be_an_alias_of(policy, :destroy?) }
+  it { expect(:undiscard?).to be_an_alias_of(policy, :destroy?) }
+
+  describe_rule :destroy_all? do
+    it_behaves_like("when current user is a DDFIP admin") { failed }
+    it_behaves_like("when current user is a DDFIP user")         { failed }
+    it_behaves_like("when current user is a publisher admin")    { succeed }
+    it_behaves_like("when current user is a publisher user")     { succeed }
+    it_behaves_like("when current user is a collectivity admin") { succeed }
+    it_behaves_like("when current user is a collectivity user")  { succeed }
+  end
+
+  it { expect(:remove_all?).to    be_an_alias_of(policy, :destroy_all?) }
+  it { expect(:undiscard_all?).to be_an_alias_of(policy, :destroy_all?) }
+
+  describe_rule :transmit? do
+    context "without record" do
+      let(:record) { Report }
+
+      it_behaves_like("when current user is a DDFIP admin")        { failed }
+      it_behaves_like("when current user is a DDFIP user")         { failed }
+      it_behaves_like("when current user is a DGFIP admin")        { failed }
+      it_behaves_like("when current user is a DGFIP user")         { failed }
+      it_behaves_like("when current user is a publisher admin")    { failed }
+      it_behaves_like("when current user is a publisher user")     { failed }
+      it_behaves_like("when current user is a collectivity admin") { succeed }
+      it_behaves_like("when current user is a collectivity user")  { succeed }
+    end
+
+    context "with report" do
+      let(:record) { build_stubbed(:report) }
+
+      it_behaves_like("when current user is a DDFIP admin")        { failed }
+      it_behaves_like("when current user is a DDFIP user")         { failed }
+      it_behaves_like("when current user is a DGFIP admin")        { failed }
+      it_behaves_like("when current user is a DGFIP user")         { failed }
+      it_behaves_like("when current user is a publisher admin")    { failed }
+      it_behaves_like("when current user is a publisher user")     { failed }
+      it_behaves_like("when current user is a collectivity admin") { failed }
+      it_behaves_like("when current user is a collectivity user")  { failed }
+
+      context "when reported through Web UI by the current collectivity" do
+        let(:record) { build_stubbed(:report, :ready, :made_through_web_ui, collectivity: current_organization) }
+
+        it_behaves_like("when current user is a collectivity admin") { succeed }
+        it_behaves_like("when current user is a collectivity user")  { succeed }
+      end
+
+      context "when transmitted through Web UI by the current collectivity" do
+        let(:record) { build_stubbed(:report, :transmitted_through_web_ui, collectivity: current_organization) }
+
+        it_behaves_like("when current user is a collectivity admin") { failed }
+        it_behaves_like("when current user is a collectivity user")  { failed }
+      end
+
+      context "when reported through API for the current collectivity" do
+        let(:record) { build_stubbed(:report, :ready, :made_through_api, collectivity: current_organization) }
+
+        it_behaves_like("when current user is a collectivity admin") { failed }
+        it_behaves_like("when current user is a collectivity user")  { failed }
+      end
+
+      context "when reported as sandbox through API for the current collectivity" do
+        let(:record) { build_stubbed(:report, :ready, :made_through_api, collectivity: current_organization, sandbox: true) }
+
+        it_behaves_like("when current user is a collectivity admin") { failed }
+        it_behaves_like("when current user is a collectivity user")  { failed }
+      end
+    end
+  end
+
+  describe_rule :assign? do
+    context "without record" do
+      let(:record) { Report }
+
+      it_behaves_like("when current user is a DDFIP admin")        { succeed }
+      it_behaves_like("when current user is a DDFIP user")         { failed }
+      it_behaves_like("when current user is a DGFIP admin")        { failed }
+      it_behaves_like("when current user is a DGFIP user")         { failed }
+      it_behaves_like("when current user is a publisher admin")    { failed }
+      it_behaves_like("when current user is a publisher user")     { failed }
+      it_behaves_like("when current user is a collectivity admin") { failed }
+      it_behaves_like("when current user is a collectivity user")  { failed }
+    end
+
+    context "with report" do
+      let(:record) { build_stubbed(:report) }
+
+      it_behaves_like("when current user is a DDFIP admin")        { failed }
+      it_behaves_like("when current user is a DDFIP user")         { failed }
+      it_behaves_like("when current user is a DGFIP admin")        { failed }
+      it_behaves_like("when current user is a DGFIP user")         { failed }
+      it_behaves_like("when current user is a publisher admin")    { failed }
+      it_behaves_like("when current user is a publisher user")     { failed }
+      it_behaves_like("when current user is a collectivity admin") { failed }
+      it_behaves_like("when current user is a collectivity user")  { failed }
+
+      context "when reported to the current DDFIP" do
+        let(:record) { build_stubbed(:report, :made_for_office, ddfip: current_organization) }
+
+        it_behaves_like("when current user is a DDFIP admin")             { failed }
+        it_behaves_like("when current user is a DDFIP user")              { failed }
+        it_behaves_like("when current user is member of targeted office") { failed }
+      end
+
+      context "when transmitted to the current DDFIP" do
+        let(:record) { build_stubbed(:report, :transmitted_to_ddfip, ddfip: current_organization) }
 
         it_behaves_like("when current user is a DDFIP admin")             { succeed }
         it_behaves_like("when current user is a DDFIP user")              { failed }
@@ -300,23 +572,123 @@ RSpec.describe ReportPolicy, stub_factories: false, type: :policy do
       end
 
       context "when transmitted as sandbox to the current DDFIP" do
-        let(:record) { create(:report, :transmitted_to_ddfip, ddfip: current_organization, sandbox: true) }
+        let(:record) { build_stubbed(:report, :transmitted_to_ddfip, ddfip: current_organization, sandbox: true) }
 
         it_behaves_like("when current user is a DDFIP admin")             { failed }
         it_behaves_like("when current user is a DDFIP user")              { failed }
         it_behaves_like("when current user is member of targeted office") { failed }
       end
 
-      context "when package is assigned by the current DDFIP" do
-        let(:record) { create(:report, :assigned_by_ddfip, ddfip: current_organization) }
+      context "when assigned by the current DDFIP" do
+        let(:record) { build_stubbed(:report, :assigned_by_ddfip, ddfip: current_organization) }
 
         it_behaves_like("when current user is a DDFIP admin")             { succeed }
         it_behaves_like("when current user is a DDFIP user")              { failed }
-        it_behaves_like("when current user is member of targeted office") { succeed }
+        it_behaves_like("when current user is member of targeted office") { failed }
       end
 
-      context "when package is denied by the current DDFIP" do
-        let(:record) { create(:report, :denied_by_ddfip, ddfip: current_organization) }
+      context "when denied by the current DDFIP" do
+        let(:record) { build_stubbed(:report, :denied_by_ddfip, ddfip: current_organization) }
+
+        it_behaves_like("when current user is a DDFIP admin")             { succeed }
+        it_behaves_like("when current user is a DDFIP user")              { failed }
+        it_behaves_like("when current user is member of targeted office") { failed }
+      end
+
+      context "when approved by the current DDFIP" do
+        let(:record) { build_stubbed(:report, :assigned_by_ddfip, :approved, ddfip: current_organization) }
+
+        it_behaves_like("when current user is a DDFIP admin")             { failed }
+        it_behaves_like("when current user is a DDFIP user")              { failed }
+        it_behaves_like("when current user is member of targeted office") { failed }
+      end
+
+      context "when rejected by the current DDFIP" do
+        let(:record) { build_stubbed(:report, :assigned_by_ddfip, :rejected, ddfip: current_organization) }
+
+        it_behaves_like("when current user is a DDFIP admin")             { failed }
+        it_behaves_like("when current user is a DDFIP user")              { failed }
+        it_behaves_like("when current user is member of targeted office") { failed }
+      end
+    end
+  end
+
+  describe_rule :deny? do
+    context "without record" do
+      let(:record) { Report }
+
+      it_behaves_like("when current user is a DDFIP admin")        { succeed }
+      it_behaves_like("when current user is a DDFIP user")         { failed }
+      it_behaves_like("when current user is a DGFIP admin")        { failed }
+      it_behaves_like("when current user is a DGFIP user")         { failed }
+      it_behaves_like("when current user is a publisher admin")    { failed }
+      it_behaves_like("when current user is a publisher user")     { failed }
+      it_behaves_like("when current user is a collectivity admin") { failed }
+      it_behaves_like("when current user is a collectivity user")  { failed }
+    end
+
+    context "with report" do
+      let(:record) { build_stubbed(:report) }
+
+      it_behaves_like("when current user is a DDFIP admin")        { failed }
+      it_behaves_like("when current user is a DDFIP user")         { failed }
+      it_behaves_like("when current user is a DGFIP admin")        { failed }
+      it_behaves_like("when current user is a DGFIP user")         { failed }
+      it_behaves_like("when current user is a publisher admin")    { failed }
+      it_behaves_like("when current user is a publisher user")     { failed }
+      it_behaves_like("when current user is a collectivity admin") { failed }
+      it_behaves_like("when current user is a collectivity user")  { failed }
+
+      context "when reported to the current DDFIP" do
+        let(:record) { build_stubbed(:report, :made_for_office, ddfip: current_organization) }
+
+        it_behaves_like("when current user is a DDFIP admin")             { failed }
+        it_behaves_like("when current user is a DDFIP user")              { failed }
+        it_behaves_like("when current user is member of targeted office") { failed }
+      end
+
+      context "when transmitted to the current DDFIP" do
+        let(:record) { build_stubbed(:report, :transmitted_to_ddfip, ddfip: current_organization) }
+
+        it_behaves_like("when current user is a DDFIP admin")             { succeed }
+        it_behaves_like("when current user is a DDFIP user")              { failed }
+        it_behaves_like("when current user is member of targeted office") { failed }
+      end
+
+      context "when transmitted as sandbox to the current DDFIP" do
+        let(:record) { build_stubbed(:report, :transmitted_to_ddfip, ddfip: current_organization, sandbox: true) }
+
+        it_behaves_like("when current user is a DDFIP admin")             { failed }
+        it_behaves_like("when current user is a DDFIP user")              { failed }
+        it_behaves_like("when current user is member of targeted office") { failed }
+      end
+
+      context "when assigned by the current DDFIP" do
+        let(:record) { build_stubbed(:report, :assigned_by_ddfip, ddfip: current_organization) }
+
+        it_behaves_like("when current user is a DDFIP admin")             { succeed }
+        it_behaves_like("when current user is a DDFIP user")              { failed }
+        it_behaves_like("when current user is member of targeted office") { failed }
+      end
+
+      context "when denied by the current DDFIP" do
+        let(:record) { build_stubbed(:report, :denied_by_ddfip, ddfip: current_organization) }
+
+        it_behaves_like("when current user is a DDFIP admin")             { succeed }
+        it_behaves_like("when current user is a DDFIP user")              { failed }
+        it_behaves_like("when current user is member of targeted office") { failed }
+      end
+
+      context "when approved by the current DDFIP" do
+        let(:record) { build_stubbed(:report, :assigned_by_ddfip, :approved, ddfip: current_organization) }
+
+        it_behaves_like("when current user is a DDFIP admin")             { failed }
+        it_behaves_like("when current user is a DDFIP user")              { failed }
+        it_behaves_like("when current user is member of targeted office") { failed }
+      end
+
+      context "when rejected by the current DDFIP" do
+        let(:record) { build_stubbed(:report, :assigned_by_ddfip, :rejected, ddfip: current_organization) }
 
         it_behaves_like("when current user is a DDFIP admin")             { failed }
         it_behaves_like("when current user is a DDFIP user")              { failed }
@@ -351,363 +723,47 @@ RSpec.describe ReportPolicy, stub_factories: false, type: :policy do
       it_behaves_like("when current user is a collectivity admin") { failed }
       it_behaves_like("when current user is a collectivity user")  { failed }
 
-      context "when report is assigned" do
-        let(:record) { create(:report, :assigned) }
-
-        it_behaves_like("when current user is a DDFIP user")  { failed }
-        it_behaves_like("when current user is a DDFIP admin") { failed }
-      end
-
-      context "when report is assigned to user organization" do
-        let(:record) { create(:report, :assigned, ddfip: current_organization) }
-
-        it_behaves_like("when current user is a DDFIP user")  { succeed }
-        it_behaves_like("when current user is a DDFIP admin") { succeed }
-      end
-
-      context "when report is approved" do
-        let(:record) { create(:report, :approved, ddfip: current_organization) }
-
-        it_behaves_like("when current user is a DDFIP user")  { succeed }
-        it_behaves_like("when current user is a DDFIP admin") { succeed }
-      end
-
-      context "when report is rejected" do
-        let(:record) { create(:report, :rejected, ddfip: current_organization) }
-
-        it_behaves_like("when current user is a DDFIP user")  { succeed }
-        it_behaves_like("when current user is a DDFIP admin") { succeed }
-      end
-
-      context "when report is transmitted" do
-        let(:record) { create(:report, :transmitted, ddfip: current_organization) }
-
-        it_behaves_like("when current user is a DDFIP user")  { failed }
-        it_behaves_like("when current user is a DDFIP admin") { failed }
-      end
-
-      context "when report is sandboxed" do
-        let(:record) { create(:report, :assigned, :sandbox, ddfip: current_organization) }
-
-        it_behaves_like("when current user is a DDFIP user")  { failed }
-        it_behaves_like("when current user is a DDFIP admin") { failed }
-      end
-
-      context "when report is discarded" do
-        let(:record) { create(:report, :assigned, :discarded, ddfip: current_organization) }
-
-        it_behaves_like("when current user is a DDFIP user")  { failed }
-        it_behaves_like("when current user is a DDFIP admin") { failed }
-      end
-    end
-  end
-
-  it { expect(:edit?).to be_an_alias_of(policy, :update?) }
-
-  describe_rule :destroy? do
-    context "without record" do
-      let(:record) { Report }
-
-      it_behaves_like("when current user is a DDFIP admin")        { failed }
-      it_behaves_like("when current user is a DDFIP user")         { failed }
-      it_behaves_like("when current user is a DGFIP admin")        { failed }
-      it_behaves_like("when current user is a DGFIP user")         { failed }
-      it_behaves_like("when current user is a publisher admin")    { succeed }
-      it_behaves_like("when current user is a publisher user")     { succeed }
-      it_behaves_like("when current user is a collectivity admin") { succeed }
-      it_behaves_like("when current user is a collectivity user")  { succeed }
-    end
-
-    context "with report" do
-      let(:record) { build_stubbed(:report) }
-
-      it_behaves_like("when current user is a DDFIP admin")        { failed }
-      it_behaves_like("when current user is a DDFIP user")         { failed }
-      it_behaves_like("when current user is a DGFIP admin")        { failed }
-      it_behaves_like("when current user is a DGFIP user")         { failed }
-      it_behaves_like("when current user is a publisher admin")    { failed }
-      it_behaves_like("when current user is a publisher user")     { failed }
-      it_behaves_like("when current user is a collectivity admin") { failed }
-      it_behaves_like("when current user is a collectivity user")  { failed }
-
-      context "when reported through Web UI by the current collectivity" do
-        let(:record) { create(:report, :made_through_web_ui, collectivity: current_organization) }
-
-        it_behaves_like("when current user is a collectivity admin") { succeed }
-        it_behaves_like("when current user is a collectivity user")  { succeed }
-      end
-
-      context "when transmitted through Web UI by the current collectivity" do
-        let(:record) { create(:report, :transmitted_through_web_ui, collectivity: current_organization) }
-
-        it_behaves_like("when current user is a collectivity admin") { failed }
-        it_behaves_like("when current user is a collectivity user")  { failed }
-      end
-
-      context "when reported through Web UI by a collectivity owned by the current publisher" do
-        let(:record) { create(:report, :made_through_web_ui, collectivity_publisher: current_organization) }
-
-        it_behaves_like("when current user is a publisher admin") { failed }
-        it_behaves_like("when current user is a publisher user")  { failed }
-      end
-
-      context "when transmitted through Web UI by a collectivity owned by the current publisher" do
-        let(:record) { create(:report, :transmitted_through_web_ui, collectivity_publisher: current_organization) }
-
-        it_behaves_like("when current user is a publisher admin") { failed }
-        it_behaves_like("when current user is a publisher user")  { failed }
-      end
-
-      context "when reported through API for the current collectivity" do
-        let(:record) { create(:report, :made_through_api, collectivity: current_organization) }
-
-        it_behaves_like("when current user is a collectivity admin") { failed }
-        it_behaves_like("when current user is a collectivity user")  { failed }
-      end
-
-      context "when transmitted through API for the current collectivity" do
-        let(:record) { create(:report, :transmitted_through_api, collectivity: current_organization) }
-
-        it_behaves_like("when current user is a collectivity admin") { failed }
-        it_behaves_like("when current user is a collectivity user")  { failed }
-      end
-
-      context "when transmitted as sandbox through API for the current collectivity" do
-        let(:record) { create(:report, :transmitted_through_api, collectivity: current_organization, sandbox: true) }
-
-        it_behaves_like("when current user is a collectivity admin") { failed }
-        it_behaves_like("when current user is a collectivity user")  { failed }
-      end
-
-      context "when reported through API by the current publisher" do
-        let(:record) { create(:report, :made_through_api, publisher: current_organization) }
-
-        it_behaves_like("when current user is a publisher admin") { succeed }
-        it_behaves_like("when current user is a publisher user")  { succeed }
-      end
-
-      context "when transmitted through API by the current publisher" do
-        let(:record) { create(:report, :transmitted_through_api, publisher: current_organization) }
-
-        it_behaves_like("when current user is a publisher admin") { failed }
-        it_behaves_like("when current user is a publisher user")  { failed }
-      end
-
-      context "when transmitted as sandbox through API by the current publisher" do
-        let(:record) { create(:report, :transmitted_through_api, publisher: current_organization, sandbox: true) }
-
-        it_behaves_like("when current user is a publisher admin") { failed }
-        it_behaves_like("when current user is a publisher user")  { failed }
-      end
-
-      context "when reported to the current DDFIP" do
-        let(:record) { create(:report, :made_for_office, ddfip: current_organization) }
-
-        it_behaves_like("when current user is a DDFIP admin")             { failed }
-        it_behaves_like("when current user is a DDFIP user")              { failed }
-        it_behaves_like("when current user is member of targeted office") { failed }
-      end
-
       context "when transmitted to the current DDFIP" do
-        let(:record) { create(:report, :transmitted_to_ddfip, ddfip: current_organization) }
+        let(:record) { build_stubbed(:report, :transmitted_to_ddfip, ddfip: current_organization) }
 
         it_behaves_like("when current user is a DDFIP admin")             { failed }
         it_behaves_like("when current user is a DDFIP user")              { failed }
         it_behaves_like("when current user is member of targeted office") { failed }
       end
 
-      context "when transmitted as sandbox to the current DDFIP" do
-        let(:record) { create(:report, :transmitted_to_ddfip, ddfip: current_organization, sandbox: true) }
+      context "when assigned by the current DDFIP" do
+        let(:record) { build_stubbed(:report, :assigned_by_ddfip, ddfip: current_organization) }
+
+        it_behaves_like("when current user is a DDFIP admin")             { succeed }
+        it_behaves_like("when current user is a DDFIP user")              { succeed }
+        it_behaves_like("when current user is member of targeted office") { succeed }
+      end
+
+      context "when denied by the current DDFIP" do
+        let(:record) { build_stubbed(:report, :denied_by_ddfip, ddfip: current_organization) }
 
         it_behaves_like("when current user is a DDFIP admin")             { failed }
         it_behaves_like("when current user is a DDFIP user")              { failed }
         it_behaves_like("when current user is member of targeted office") { failed }
       end
 
-      context "when package is assigned by the current DDFIP" do
-        let(:record) { create(:report, :assigned_by_ddfip, ddfip: current_organization) }
+      context "when approved by the current DDFIP" do
+        let(:record) { build_stubbed(:report, :assigned_by_ddfip, :approved, ddfip: current_organization) }
 
-        it_behaves_like("when current user is a DDFIP admin")             { failed }
-        it_behaves_like("when current user is a DDFIP user")              { failed }
-        it_behaves_like("when current user is member of targeted office") { failed }
+        it_behaves_like("when current user is a DDFIP admin")             { succeed }
+        it_behaves_like("when current user is a DDFIP user")              { succeed }
+        it_behaves_like("when current user is member of targeted office") { succeed }
       end
 
-      context "when package is denied by the current DDFIP" do
-        let(:record) { create(:report, :denied_by_ddfip, ddfip: current_organization) }
+      context "when rejected by the current DDFIP" do
+        let(:record) { build_stubbed(:report, :assigned_by_ddfip, :rejected, ddfip: current_organization) }
 
-        it_behaves_like("when current user is a DDFIP admin")             { failed }
-        it_behaves_like("when current user is a DDFIP user")              { failed }
-        it_behaves_like("when current user is member of targeted office") { failed }
-      end
-    end
-  end
-
-  describe_rule :assign? do
-    context "without record" do
-      let(:record) { Report }
-
-      it_behaves_like("when current user is a DDFIP admin")        { succeed }
-      it_behaves_like("when current user is a DDFIP user")         { failed }
-      it_behaves_like("when current user is a DGFIP admin")        { failed }
-      it_behaves_like("when current user is a DGFIP user")         { failed }
-      it_behaves_like("when current user is a publisher admin")    { failed }
-      it_behaves_like("when current user is a publisher user")     { failed }
-      it_behaves_like("when current user is a collectivity admin") { failed }
-      it_behaves_like("when current user is a collectivity user")  { failed }
-    end
-
-    context "with report" do
-      let(:record) { build_stubbed(:report) }
-
-      it_behaves_like("when current user is a DDFIP admin")        { failed }
-      it_behaves_like("when current user is a DDFIP user")         { failed }
-      it_behaves_like("when current user is a DGFIP admin")        { failed }
-      it_behaves_like("when current user is a DGFIP user")         { failed }
-      it_behaves_like("when current user is a publisher admin")    { failed }
-      it_behaves_like("when current user is a publisher user")     { failed }
-      it_behaves_like("when current user is a collectivity admin") { failed }
-      it_behaves_like("when current user is a collectivity user")  { failed }
-
-      context "when report is transmitted" do
-        let(:record) { create(:report, :transmitted) }
-
-        it_behaves_like("when current user is a DDFIP admin") { succeed }
-      end
-
-      context "when report is transmitted in sandbox" do
-        let(:record) { create(:report, :transmitted, :sandbox) }
-
-        it_behaves_like("when current user is a DDFIP admin") { failed }
-      end
-
-      context "when report is transmitted and discarded" do
-        let(:record) { create(:report, :transmitted, :discarded) }
-
-        it_behaves_like("when current user is a DDFIP admin") { failed }
-      end
-
-      context "when report is not transmitted" do
-        let(:record) { create(:report, :ready) }
-
-        it_behaves_like("when current user is a DDFIP admin") { failed }
-      end
-
-      context "when report is assigned" do
-        let(:record) { create(:report, :assigned) }
-
-        it_behaves_like("when current user is a DDFIP admin") { succeed }
-      end
-
-      context "when report is denied" do
-        let(:record) { create(:report, :denied) }
-
-        it_behaves_like("when current user is a DDFIP admin") { failed }
-      end
-
-      context "when report is approved" do
-        let(:record) { create(:report, :approved) }
-
-        it_behaves_like("when current user is a DDFIP admin") { failed }
-      end
-
-      context "when report is rejected" do
-        let(:record) { create(:report, :rejected) }
-
-        it_behaves_like("when current user is a DDFIP admin") { failed }
+        it_behaves_like("when current user is a DDFIP admin")             { succeed }
+        it_behaves_like("when current user is a DDFIP user")              { succeed }
+        it_behaves_like("when current user is member of targeted office") { succeed }
       end
     end
   end
-
-  describe_rule :deny? do
-    context "without record" do
-      let(:record) { Report }
-
-      it_behaves_like("when current user is a DDFIP admin")        { succeed }
-      it_behaves_like("when current user is a DDFIP user")         { failed }
-      it_behaves_like("when current user is a DGFIP admin")        { failed }
-      it_behaves_like("when current user is a DGFIP user")         { failed }
-      it_behaves_like("when current user is a publisher admin")    { failed }
-      it_behaves_like("when current user is a publisher user")     { failed }
-      it_behaves_like("when current user is a collectivity admin") { failed }
-      it_behaves_like("when current user is a collectivity user")  { failed }
-    end
-
-    context "with report" do
-      let(:record) { build_stubbed(:report) }
-
-      it_behaves_like("when current user is a DDFIP admin")        { failed }
-      it_behaves_like("when current user is a DDFIP user")         { failed }
-      it_behaves_like("when current user is a DGFIP admin")        { failed }
-      it_behaves_like("when current user is a DGFIP user")         { failed }
-      it_behaves_like("when current user is a publisher admin")    { failed }
-      it_behaves_like("when current user is a publisher user")     { failed }
-      it_behaves_like("when current user is a collectivity admin") { failed }
-      it_behaves_like("when current user is a collectivity user")  { failed }
-
-      context "when report is transmitted" do
-        let(:record) { create(:report, :transmitted) }
-
-        it_behaves_like("when current user is a DDFIP admin") { succeed }
-      end
-
-      context "when report is transmitted in sandbox" do
-        let(:record) { create(:report, :transmitted, :sandbox) }
-
-        it_behaves_like("when current user is a DDFIP admin") { failed }
-      end
-
-      context "when report is transmitted and discarded" do
-        let(:record) { create(:report, :transmitted, :discarded) }
-
-        it_behaves_like("when current user is a DDFIP admin") { failed }
-      end
-
-      context "when report is not transmitted" do
-        let(:record) { create(:report, :ready) }
-
-        it_behaves_like("when current user is a DDFIP admin") { failed }
-      end
-
-      context "when report is assigned" do
-        let(:record) { create(:report, :assigned) }
-
-        it_behaves_like("when current user is a DDFIP admin") { failed }
-      end
-
-      context "when report is denied" do
-        let(:record) { create(:report, :denied) }
-
-        it_behaves_like("when current user is a DDFIP admin") { succeed }
-      end
-
-      context "when report is approved" do
-        let(:record) { create(:report, :approved) }
-
-        it_behaves_like("when current user is a DDFIP admin") { failed }
-      end
-
-      context "when report is rejected" do
-        let(:record) { create(:report, :rejected) }
-
-        it_behaves_like("when current user is a DDFIP admin") { failed }
-      end
-    end
-  end
-
-  it { expect(:remove?).to    be_an_alias_of(policy, :destroy?) }
-  it { expect(:undiscard?).to be_an_alias_of(policy, :destroy?) }
-
-  describe_rule :destroy_all? do
-    it_behaves_like("when current user is a DDFIP admin") { failed }
-    it_behaves_like("when current user is a DDFIP user")         { failed }
-    it_behaves_like("when current user is a publisher admin")    { succeed }
-    it_behaves_like("when current user is a publisher user")     { succeed }
-    it_behaves_like("when current user is a collectivity admin") { succeed }
-    it_behaves_like("when current user is a collectivity user")  { succeed }
-  end
-
-  it { expect(:remove_all?).to    be_an_alias_of(policy, :destroy_all?) }
-  it { expect(:undiscard_all?).to be_an_alias_of(policy, :destroy_all?) }
 
   describe "relation scope" do
     subject!(:scope) { apply_relation_scope(Report.all) }

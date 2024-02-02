@@ -1,0 +1,9 @@
+dl.grid.gap-2.grid-cols-3.mb-10
+  dt.font-bold Référence :
+  dd.col-span-2= @report.reference
+
+  dt.font-bold Description :
+  dd.col-span-2= render Views::Reports::ShowReportNameComponent.new(@report)
+
+  dt.font-bold Collectivité :
+  dd.col-span-2= @report.collectivity&.name

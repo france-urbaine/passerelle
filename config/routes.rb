@@ -93,17 +93,24 @@ Rails.application.routes.draw do
           resources :documents, only: %i[new create show destroy] do
             concerns :removable, undiscard: false
           end
+        end
 
-          resource :assignment, only: %i[edit update destroy], path: "/assign" do
+        scope module: "reports", only: %i[edit update destroy], path_names: { edit: "/" } do
+          resource :assignment, path: "/assign" do
             concerns :removable, undiscard: false
           end
 
-          resource :denial, only: %i[edit update destroy], path: "/deny" do
+          resource :denial, path: "/deny" do
             concerns :removable, undiscard: false
           end
 
-          resource :approval, only: %i[show update destroy]
-          resource :rejection, only: %i[show update]
+          resource :approval, path: "/approve" do
+            concerns :removable, undiscard: false
+          end
+
+          resource :rejection, path: "/reject" do
+            concerns :removable, undiscard: false
+          end
         end
       end
 

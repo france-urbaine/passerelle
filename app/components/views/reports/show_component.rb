@@ -13,6 +13,7 @@ module Views
       PropositionAdresse      = Class.new(self)
       Enjeu                   = Class.new(self)
       Observations            = Class.new(self)
+      Response                = Class.new(self)
       Documents               = Class.new(self)
 
       def initialize(report)

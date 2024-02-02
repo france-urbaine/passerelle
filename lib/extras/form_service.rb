@@ -68,11 +68,12 @@ class FormService
   end
 
   def validate_record
-    promote_errors(record) if record.invalid?
+    errors.merge!(record.errors) if record.invalid?
   end
 
-  def promote_errors(record)
-    errors.merge!(record.errors)
+  def promote_errors(others)
+    record.errors.merge!(others)
+    errors.merge!(others)
   end
 
   def build_result

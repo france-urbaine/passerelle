@@ -11,11 +11,13 @@ RSpec.describe "Reports::AssignmentsController#update" do
   let(:headers) { |e| e.metadata[:headers] }
   let(:params)  { |e| e.metadata.fetch(:params, { report: attributes }) }
 
-  let(:attributes) { { office_id: office.id } }
-
   let!(:ddfip)  { create(:ddfip) }
-  let!(:report) { create(:report, ddfip:) }
   let!(:office) { create(:office, ddfip:) }
+  let!(:report) { create(:report, :transmitted_to_ddfip, ddfip:) }
+
+  let(:attributes) do
+    { office_id: office.id }
+  end
 
   describe "authorizations" do
     it_behaves_like "it requires to be signed in in HTML"
@@ -29,87 +31,102 @@ RSpec.describe "Reports::AssignmentsController#update" do
     it_behaves_like "it denies access to DDFIP user"
     it_behaves_like "it denies access to DDFIP admin"
 
-    context "when report is transmitted" do
-      let(:report) { create(:report, :transmitted) }
+    context "when report has not yet been transmitted to the current DDFIP" do
+      let(:report) { create(:report, :ready, ddfip: current_user.organization) }
 
-      it_behaves_like "it allows access to DDFIP admin"
+      it_behaves_like "it denies access to DDFIP user"
+      it_behaves_like "it denies access to DDFIP admin"
     end
 
-    context "when report is assigned" do
-      let(:report) { create(:report, :assigned) }
+    context "when report has been transmitted to the current DDFIP" do
+      let(:report) { create(:report, :transmitted, ddfip: current_user.organization) }
 
+      it_behaves_like "it denies access to DDFIP user"
       it_behaves_like "it allows access to DDFIP admin"
     end
 
     context "when report is transmitted in sandbox" do
-      let(:report) { create(:report, :transmitted, :sandbox) }
+      let(:report) { create(:report, :transmitted, :sandbox, ddfip: current_user.organization) }
 
+      it_behaves_like "it denies access to DDFIP user"
       it_behaves_like "it denies access to DDFIP admin"
     end
 
-    context "when discarded report is transmitted" do
-      let(:report) { create(:report, :transmitted, :discarded) }
+    context "when report is already assigned" do
+      let(:report) { create(:report, :assigned, ddfip: current_user.organization) }
 
+      it_behaves_like "it denies access to DDFIP user"
+      it_behaves_like "it allows access to DDFIP admin"
+    end
+
+    context "when report is already denied" do
+      let(:report) { create(:report, :denied, ddfip: current_user.organization) }
+
+      it_behaves_like "it denies access to DDFIP user"
+      it_behaves_like "it allows access to DDFIP admin"
+    end
+
+    context "when report is already approved" do
+      let(:report) { create(:report, :approved, ddfip: current_user.organization) }
+
+      it_behaves_like "it denies access to DDFIP user"
       it_behaves_like "it denies access to DDFIP admin"
     end
 
-    context "when report is ready" do
-      let(:report) { create(:report, :ready) }
+    context "when report is already rejected" do
+      let(:report) { create(:report, :rejected, ddfip: current_user.organization) }
 
-      it_behaves_like "it denies access to DDFIP admin"
-    end
-
-    context "when report is approved" do
-      let(:report) { create(:report, :approved) }
-
-      it_behaves_like "it denies access to DDFIP admin"
-    end
-
-    context "when report is rejected" do
-      let(:report) { create(:report, :rejected) }
-
-      it_behaves_like "it denies access to DDFIP admin"
-    end
-
-    context "when report is denied" do
-      let(:report) { create(:report, :denied) }
-
+      it_behaves_like "it denies access to DDFIP user"
       it_behaves_like "it denies access to DDFIP admin"
     end
   end
 
   describe "responses" do
-    context "when signed in as a DDFIP admin" do
-      before { sign_in_as(organization: ddfip, organization_admin: true) }
+    before { sign_in_as(:organization_admin, organization: ddfip) }
 
-      context "with transmitted report" do
-        let(:report) { create(:report, :transmitted, ddfip: ddfip) }
+    context "with valid office" do
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/signalements/#{report.id}") }
 
-        it { expect(response).to have_http_status(:see_other) }
-
-        it "assign office, change report state and fill assigned_at" do
-          request
-
-          expect(report.reload.office_id).to eq(office.id)
-          expect(report.state).to eq("processing")
-          expect(report.assigned_at).to be_present
-        end
+      it "assigns the report" do
+        expect { request and report.reload }
+          .to  change(report, :updated_at)
+          .and change(report, :state).to("processing")
+          .and change(report, :assigned_at).to(be_present)
+          .and change(report, :office_id).to(office.id)
       end
 
-      context "with assigned report" do
-        let(:current_office) { create(:office, ddfip:) }
-        let(:report) { create(:report, :assigned, ddfip:, office: current_office) }
+      it "sets a flash notice" do
+        expect(flash).to have_flash_notice.to eq(
+          scheme: "success",
+          header: "Le signalement a été assigné au guichet sélectionné.",
+          delay:  3000
+        )
+      end
+    end
 
-        it { expect(response).to have_http_status(:see_other) }
+    context "with missing office" do
+      let(:attributes) { { office_id: nil } }
 
-        it "change office, keep report state and keep assigned_at" do
-          expect {
-            request
-            report.reload
-          }.to change(report, :office_id).from(current_office.id).to(office.id)
-            .and not_change(report, :assigned_at)
-            .and not_change(report, :state)
-        end
+      it { expect(response).to have_http_status(:unprocessable_entity) }
+      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_html_body }
+      it { expect { request and report.reload }.not_to change(report, :updated_at) }
+    end
+
+    context "when report is already assigned" do
+      let!(:another_office) { create(:office, ddfip:) }
+      let!(:report)         { create(:report, :assigned_by_ddfip, ddfip:, office: another_office) }
+
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/signalements/#{report.id}") }
+
+      it "updates the office" do
+        expect { request and report.reload }
+          .to  change(report, :updated_at)
+          .and change(report, :office_id).to(office.id)
+          .and not_change(report, :state).from("processing")
+          .and not_change(report, :assigned_at)
       end
     end
   end

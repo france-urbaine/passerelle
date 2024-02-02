@@ -35,8 +35,8 @@ RSpec.describe "Reports::DocumentsController#new" do
     context "when report has been created by current user publisher" do
       let(:report) { create(:report, publisher: current_user.organization) }
 
-      it_behaves_like "it allows access to publisher user"
-      it_behaves_like "it allows access to publisher admin"
+      it_behaves_like "it denies access to publisher user"
+      it_behaves_like "it denies access to publisher admin"
     end
   end
 

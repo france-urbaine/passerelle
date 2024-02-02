@@ -272,110 +272,120 @@ RSpec.describe Package do
   describe "database triggers" do
     let!(:collectivity) { create(:collectivity) }
     let!(:package)      { create(:package, collectivity:) }
-    let(:report)        { create(:report, collectivity:, package:) }
+
+    def create_report(*traits, **attributes)
+      create(:report, *traits, collectivity:, package:, **attributes)
+    end
 
     describe "#reports_count" do
       it "changes when report is created" do
-        expect { report }
+        expect { create_report }
+          .to change { package.reload.reports_count }.from(0).to(1)
+      end
+
+      it "changes when report is assigned to the package" do
+        report = create_report(package: nil)
+
+        expect { report.update_columns(package_id: package.id) }
           .to change { package.reload.reports_count }.from(0).to(1)
       end
 
       it "changes when report is assigned to another package" do
-        report
+        report = create_report
         another_package = create(:package, collectivity:)
 
-        expect { report.update(package: another_package) }
+        expect { report.update_columns(package_id: another_package.id) }
           .to change { package.reload.reports_count }.from(1).to(0)
       end
 
       it "changes when report is discarded" do
-        report
+        report = create_report
 
-        expect { report.discard }
+        expect { report.update_columns(discarded_at: Time.current) }
           .to change { package.reload.reports_count }.from(1).to(0)
       end
 
       it "changes when report is undiscarded" do
-        report.discard
+        report = create_report(:discarded)
 
-        expect { report.undiscard }
+        expect { report.update_columns(discarded_at: nil) }
           .to change { package.reload.reports_count }.from(0).to(1)
       end
 
       it "changes when report is deleted" do
-        report
+        report = create_report
 
-        expect { report.destroy }
+        expect { report.delete }
           .to change { package.reload.reports_count }.from(1).to(0)
       end
     end
 
     describe "#reports_approved_count" do
       it "doesn't change report is created" do
-        expect { report }
+        expect { create_report }
           .not_to change { package.reload.reports_approved_count }.from(0)
       end
 
       it "doesn't changes when report is rejected" do
-        report
+        report = create_report
 
-        expect { report.reject! }
+        expect { report.update_columns(state: "rejected") }
           .not_to change { package.reload.reports_approved_count }.from(0)
       end
 
       it "changes when report is approved" do
-        report
+        report = create_report
 
-        expect { report.approve! }
+        expect { report.update_columns(state: "approved") }
           .to change { package.reload.reports_approved_count }.from(0).to(1)
       end
 
       it "changes when approved report is reseted" do
-        report.approve!
+        report = create_report(state: "approved")
 
-        expect { report.update(state: :processing) }
+        expect { report.update_columns(state: "processing") }
           .to change { package.reload.reports_approved_count }.from(1).to(0)
       end
 
       it "changes when approved report is rejected" do
-        report.approve!
+        report = create_report(state: "approved")
 
-        expect { report.reject! }
+        expect { report.update_columns(state: "rejected") }
           .to change { package.reload.reports_approved_count }.from(1).to(0)
       end
     end
 
     describe "#reports_rejected_count" do
       it "doesn't change report is created" do
-        expect { report }
+        expect { create_report }
           .not_to change { package.reload.reports_rejected_count }.from(0)
       end
 
       it "doesn't changes when report is approved" do
-        report
+        report = create_report
 
-        expect { report.approve! }
+        expect { report.update_columns(state: "approved") }
           .not_to change { package.reload.reports_rejected_count }.from(0)
       end
 
       it "changes when report is rejected" do
-        report
+        report = create_report
 
-        expect { report.reject! }
+        expect { report.update_columns(state: "rejected") }
           .to change { package.reload.reports_rejected_count }.from(0).to(1)
       end
 
       it "changes when rejected report is reseted" do
-        report.reject!
+        report = create_report(state: "rejected")
 
-        expect { report.update(state: :processing) }
+        expect { report.update_columns(state: "processing") }
           .to change { package.reload.reports_rejected_count }.from(1).to(0)
       end
 
       it "changes when rejected report is approved" do
-        report.reject!
+        report = create_report(state: "rejected")
 
-        expect { report.approve! }
+        expect { report.update_columns(state: "approved") }
           .to change { package.reload.reports_rejected_count }.from(1).to(0)
       end
     end

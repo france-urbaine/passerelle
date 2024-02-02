@@ -207,334 +207,307 @@ RSpec.describe DGFIP do
   describe "database triggers" do
     let!(:dgfip) { create(:dgfip) }
 
-    describe "#users_count" do
-      let(:user) { create(:user, organization: dgfip) }
+    def create_user(*traits, **attributes)
+      create(:user, *traits, organization: dgfip, **attributes)
+    end
 
+    def create_report(*traits, **attributes)
+      create(:report, *traits, **attributes)
+    end
+
+    describe "#users_count" do
       it "changes on creation" do
-        expect { user }
+        expect { create_user }
           .to change { dgfip.reload.users_count }.from(0).to(1)
       end
 
       it "changes on deletion" do
-        user
+        user = create_user
 
-        expect { user.destroy }
+        expect { user.delete }
           .to change { dgfip.reload.users_count }.from(1).to(0)
       end
 
       it "changes when user is discarded" do
-        user
+        user = create_user
 
-        expect { user.discard }
+        expect { user.update_columns(discarded_at: Time.current) }
           .to change { dgfip.reload.users_count }.from(1).to(0)
       end
 
       it "changes when user is undiscarded" do
-        user.discard
+        user = create_user(:discarded)
 
-        expect { user.undiscard }
+        expect { user.update_columns(discarded_at: nil) }
           .to change { dgfip.reload.users_count }.from(0).to(1)
       end
 
       it "changes when user switches to another organization" do
-        user
+        user = create_user
         ddfip = create(:ddfip)
 
-        expect { user.update(organization: ddfip) }
+        expect { user.update_columns(organization_id: ddfip.id) }
           .to change { dgfip.reload.users_count }.from(1).to(0)
       end
     end
 
     describe "#reports_transmitted_count" do
-      let(:collectivity) { create(:collectivity) }
-      let(:report)       { create(:report, collectivity:) }
-
       it "doesn't change when report is created" do
-        expect { report }
+        expect { create_report }
           .not_to change { dgfip.reload.reports_transmitted_count }.from(0)
       end
 
       it "changes when report is transmitted" do
-        report
+        report = create_report
 
-        expect { report.transmit! }
+        expect { report.update_columns(state: "sent", transmitted_at: Time.current) }
           .to change { dgfip.reload.reports_transmitted_count }.from(0).to(1)
       end
 
       it "doesn't change when report is transmitted to a sandbox" do
-        report.update(sandbox: true)
+        report = create_report
 
-        expect { report.transmit! }
+        expect { report.update_columns(state: "sent", transmitted_at: Time.current, sandbox: true) }
           .not_to change { dgfip.reload.reports_transmitted_count }.from(0)
       end
 
-      it "changes when transmitted report is discarded" do
-        report.transmit!
+      it "changes when report is discarded" do
+        report = create_report(:transmitted)
 
-        expect { report.discard }
+        expect { report.update_columns(discarded_at: Time.current) }
           .to change { dgfip.reload.reports_transmitted_count }.from(1).to(0)
       end
 
-      it "changes when transmitted report is undiscarded" do
-        report.transmit!
-        report.discard
+      it "changes when report is undiscarded" do
+        report = create_report(:transmitted, :discarded)
 
-        expect { report.undiscard }
+        expect { report.update_columns(discarded_at: nil) }
           .to change { dgfip.reload.reports_transmitted_count }.from(0).to(1)
       end
 
-      it "changes when transmitted report is deleted" do
-        report.transmit!
+      it "changes when report is deleted" do
+        report = create_report(:transmitted)
 
-        expect { report.destroy }
+        expect { report.delete }
           .to change { dgfip.reload.reports_transmitted_count }.from(1).to(0)
       end
     end
 
     describe "#reports_denied_count" do
-      let(:collectivity) { create(:collectivity) }
-      let(:report)       { create(:report, :transmitted, collectivity:) }
+      it "doesn't change when reports are transmitted" do
+        report = create_report
 
-      it "doesn't change when report are transmitted" do
-        expect { report }
+        expect { report.update_columns(state: "sent", transmitted_at: Time.current) }
           .not_to change { dgfip.reload.reports_denied_count }.from(0)
       end
 
       it "changes when report is denied" do
-        report
+        report = create_report(:transmitted)
 
-        expect { report.deny! }
+        expect { report.update_columns(state: "denied") }
           .to change { dgfip.reload.reports_denied_count }.from(0).to(1)
       end
 
       it "doesn't change when report is assigned" do
-        report
+        report = create_report(:transmitted)
 
-        expect { report.assign! }
+        expect { report.update_columns(state: "processing") }
           .not_to change { dgfip.reload.reports_denied_count }.from(0)
       end
 
       it "changes when denied report is then assigned" do
-        report.deny!
+        report = create_report(:denied)
 
-        expect { report.assign! }
+        expect { report.update_columns(state: "processing") }
           .to change { dgfip.reload.reports_denied_count }.from(1).to(0)
       end
 
       it "changes when denied report is discarded" do
-        report.deny!
+        report = create_report(:denied)
 
-        expect { report.discard }
+        expect { report.update_columns(discarded_at: Time.current) }
           .to change { dgfip.reload.reports_denied_count }.from(1).to(0)
       end
 
       it "changes when denied report is undiscarded" do
-        report.deny!
-        report.discard
+        report = create_report(:denied, :discarded)
 
-        expect { report.undiscard }
+        expect { report.update_columns(discarded_at: nil) }
           .to change { dgfip.reload.reports_denied_count }.from(0).to(1)
       end
 
       it "changes when denied report is deleted" do
-        report.deny!
+        report = create_report(:denied)
 
         expect { report.delete }
           .to change { dgfip.reload.reports_denied_count }.from(1).to(0)
       end
 
-      it "change when denied report is sandboxed" do
-        report.deny!
+      it "changes when denied report is sandboxed" do
+        report = create_report(:denied)
 
-        expect { report.update(sandbox: true) }
+        expect { report.update_columns(sandbox: true) }
           .to change { dgfip.reload.reports_denied_count }.from(1).to(0)
       end
     end
 
     describe "#reports_processing_count" do
-      let(:collectivity) { create(:collectivity) }
-      let(:report)       { create(:report, collectivity:) }
+      it "doesn't change when reports are transmitted" do
+        report = create_report
 
-      it "doesn't change when report is transmitted" do
-        expect { report }
+        expect { report.update_columns(state: "sent", transmitted_at: Time.current) }
           .not_to change { dgfip.reload.reports_processing_count }.from(0)
       end
 
       it "changes when report is assigned" do
-        report
+        report = create_report(:transmitted)
 
-        expect { report.assign! }
+        expect { report.update_columns(state: "processing") }
           .to change { dgfip.reload.reports_processing_count }.from(0).to(1)
       end
 
       it "doesn't change when report is denied" do
-        report
+        report = create_report(:transmitted)
 
-        expect { report.deny! }
+        expect { report.update_columns(state: "denied") }
           .not_to change { dgfip.reload.reports_processing_count }.from(0)
       end
 
       it "changes when assigned report is then denied" do
-        report.assign!
+        report = create_report(:assigned)
 
-        expect { report.deny! }
+        expect { report.update_columns(state: "denied") }
           .to change { dgfip.reload.reports_processing_count }.from(1).to(0)
       end
 
-      it "changes when report is approved" do
-        report.assign!
+      it "changes when reports are approved" do
+        report = create_report(:assigned)
 
-        expect { report.approve! }
+        expect { report.update_columns(state: "approved") }
           .to change { dgfip.reload.reports_processing_count }.from(1).to(0)
       end
 
-      it "changes when report is rejected" do
-        report.assign!
+      it "changes when reports are rejected" do
+        report = create_report(:assigned)
 
-        expect { report.reject! }
-          .to change { dgfip.reload.reports_processing_count }.from(1).to(0)
-      end
-
-      it "changes when assigned report is then discarded" do
-        report.assign!
-
-        expect { report.discard }
-          .to change { dgfip.reload.reports_processing_count }.from(1).to(0)
-      end
-
-      it "changes when assigned report is undiscarded" do
-        report.assign!
-        report.discard
-
-        expect { report.undiscard }
-          .to change { dgfip.reload.reports_processing_count }.from(0).to(1)
-      end
-
-      it "changes when assigned report is sandboxed" do
-        report.assign!
-
-        expect { report.update(sandbox: true) }
+        expect { report.update_columns(state: "rejected") }
           .to change { dgfip.reload.reports_processing_count }.from(1).to(0)
       end
     end
 
     describe "#reports_approved_count" do
-      let(:collectivity) { create(:collectivity) }
-      let(:report)       { create(:report, :assigned, collectivity:) }
-
       it "doesn't change when report is assigned" do
-        expect { report }
+        report = create_report(:transmitted)
+
+        expect { report.update_columns(state: "processing") }
           .not_to change { dgfip.reload.reports_approved_count }.from(0)
       end
 
       it "doesn't changes when report is rejected" do
-        report
+        report = create_report(:assigned)
 
-        expect { report.reject! }
+        expect { report.update_columns(state: "rejected") }
           .not_to change { dgfip.reload.reports_approved_count }.from(0)
       end
 
       it "changes when report is approved" do
-        report
+        report = create_report(:assigned)
 
-        expect { report.approve! }
+        expect { report.update_columns(state: "approved") }
           .to change { dgfip.reload.reports_approved_count }.from(0).to(1)
       end
 
       it "changes when approved report is reseted" do
-        report.approve!
+        report = create_report(:approved)
 
-        expect { report.update(approved_at: nil, state: "processing") }
+        expect { report.update_columns(state: "processing") }
           .to change { dgfip.reload.reports_approved_count }.from(1).to(0)
       end
 
       it "changes when approved report is rejected" do
-        report.approve!
+        report = create_report(:approved)
 
-        expect { report.reject! }
+        expect { report.update_columns(state: "rejected") }
           .to change { dgfip.reload.reports_approved_count }.from(1).to(0)
       end
 
-      it "changes when approved report is then discarded" do
-        report.approve!
+      it "changes when approved report is sandboxed" do
+        report = create_report(:approved)
 
-        expect { report.discard }
+        expect { report.update_columns(sandbox: true) }
+          .to change { dgfip.reload.reports_approved_count }.from(1).to(0)
+      end
+
+      it "changes when approved report is discarded" do
+        report = create_report(:approved)
+
+        expect { report.update_columns(discarded_at: Time.current) }
           .to change { dgfip.reload.reports_approved_count }.from(1).to(0)
       end
 
       it "changes when approved report is undiscarded" do
-        report.approve!
-        report.discard
+        report = create_report(:approved, :discarded)
 
-        expect { report.undiscard }
+        expect { report.update_columns(discarded_at: nil) }
           .to change { dgfip.reload.reports_approved_count }.from(0).to(1)
-      end
-
-      it "changes when approved report is sandboxed" do
-        report.approve!
-
-        expect { report.update(sandbox: true) }
-          .to change { dgfip.reload.reports_approved_count }.from(1).to(0)
       end
     end
 
     describe "#reports_rejected_count" do
-      let(:collectivity) { create(:collectivity) }
-      let(:report)       { create(:report, :assigned, collectivity:) }
-
       it "doesn't change when report is assigned" do
-        expect { report }
+        report = create_report(:transmitted)
+
+        expect { report.update_columns(state: "processing") }
           .not_to change { dgfip.reload.reports_rejected_count }.from(0)
       end
 
       it "doesn't changes when report is approved" do
-        report
+        report = create_report(:assigned)
 
-        expect { report.approve! }
+        expect { report.update_columns(state: "approved") }
           .not_to change { dgfip.reload.reports_rejected_count }.from(0)
       end
 
       it "changes when report is rejected" do
-        report
+        report = create_report(:assigned)
 
-        expect { report.reject! }
+        expect { report.update_columns(state: "rejected") }
           .to change { dgfip.reload.reports_rejected_count }.from(0).to(1)
       end
 
       it "changes when rejected report is reseted" do
-        report.reject!
+        report = create_report(:rejected)
 
-        expect { report.update(rejected_at: nil, state: "processing") }
+        expect { report.update_columns(state: "processing") }
           .to change { dgfip.reload.reports_rejected_count }.from(1).to(0)
       end
 
       it "changes when rejected report is approved" do
-        report.reject!
+        report = create_report(:rejected)
 
-        expect { report.approve! }
+        expect { report.update_columns(state: "approved") }
           .to change { dgfip.reload.reports_rejected_count }.from(1).to(0)
       end
 
-      it "changes when rejected report is then discarded" do
-        report.reject!
+      it "changes when rejected report is sandboxed" do
+        report = create_report(:rejected)
 
-        expect { report.discard }
+        expect { report.update_columns(sandbox: true) }
+          .to change { dgfip.reload.reports_rejected_count }.from(1).to(0)
+      end
+
+      it "changes when rejected report is discarded" do
+        report = create_report(:rejected)
+
+        expect { report.update_columns(discarded_at: Time.current) }
           .to change { dgfip.reload.reports_rejected_count }.from(1).to(0)
       end
 
       it "changes when rejected report is undiscarded" do
-        report.reject!
-        report.discard
+        report = create_report(:rejected, :discarded)
 
-        expect { report.undiscard }
+        expect { report.update_columns(discarded_at: nil) }
           .to change { dgfip.reload.reports_rejected_count }.from(0).to(1)
-      end
-
-      it "changes when rejected report is sandboxed" do
-        report.reject!
-
-        expect { report.update(sandbox: true) }
-          .to change { dgfip.reload.reports_rejected_count }.from(1).to(0)
       end
     end
   end

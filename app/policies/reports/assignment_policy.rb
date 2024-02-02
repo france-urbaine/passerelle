@@ -2,7 +2,7 @@
 
 module Reports
   class AssignmentPolicy < ApplicationPolicy
-    alias_rule :edit?, :update?, :destroy?, to: :manage?
+    alias_rule :edit?, :update?, :remove?, :destroy?, to: :manage?
 
     def manage?
       if record == Report
@@ -11,7 +11,8 @@ module Reports
         ddfip_admin? &&
           record.kept? &&
           record.out_of_sandbox? &&
-          record.unresolved?
+          record.ddfip_id == organization.id &&
+          (record.unresolved? || record.denied?)
       end
     end
 

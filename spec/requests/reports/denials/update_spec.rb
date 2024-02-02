@@ -9,10 +9,13 @@ RSpec.describe "Reports::DenialsController#update" do
 
   let(:as)      { |e| e.metadata[:as] }
   let(:headers) { |e| e.metadata[:headers] }
-  let(:params)  { |e| e.metadata[:params] }
+  let(:params)  { |e| e.metadata.fetch(:params, { report: attributes }) }
 
-  let!(:ddfip)  { create(:ddfip) }
-  let!(:report) { create(:report) }
+  let!(:report) { create(:report, :transmitted_to_ddfip) }
+
+  let(:attributes) do
+    { reponse: "Lorem lipsum" }
+  end
 
   describe "authorizations" do
     it_behaves_like "it requires to be signed in in HTML"
@@ -26,85 +29,115 @@ RSpec.describe "Reports::DenialsController#update" do
     it_behaves_like "it denies access to DDFIP user"
     it_behaves_like "it denies access to DDFIP admin"
 
-    context "when report is transmitted" do
-      let(:report) { create(:report, :transmitted) }
+    context "when report has not yet been transmitted to the current DDFIP" do
+      let(:report) { create(:report, :ready, ddfip: current_user.organization) }
 
-      it_behaves_like "it allows access to DDFIP admin"
+      it_behaves_like "it denies access to DDFIP user"
+      it_behaves_like "it denies access to DDFIP admin"
     end
 
-    context "when report is denied" do
-      let(:report) { create(:report, :denied) }
+    context "when report has been transmitted to the current DDFIP" do
+      let(:report) { create(:report, :transmitted, ddfip: current_user.organization) }
 
+      it_behaves_like "it denies access to DDFIP user"
       it_behaves_like "it allows access to DDFIP admin"
     end
 
     context "when report is transmitted in sandbox" do
-      let(:report) { create(:report, :transmitted, :sandbox) }
+      let(:report) { create(:report, :transmitted, :sandbox, ddfip: current_user.organization) }
 
+      it_behaves_like "it denies access to DDFIP user"
       it_behaves_like "it denies access to DDFIP admin"
     end
 
-    context "when discarded report is transmitted" do
-      let(:report) { create(:report, :transmitted, :discarded) }
+    context "when report is already assigned" do
+      let(:report) { create(:report, :assigned, ddfip: current_user.organization) }
 
+      it_behaves_like "it denies access to DDFIP user"
+      it_behaves_like "it allows access to DDFIP admin"
+    end
+
+    context "when report is already denied" do
+      let(:report) { create(:report, :denied, ddfip: current_user.organization) }
+
+      it_behaves_like "it denies access to DDFIP user"
+      it_behaves_like "it allows access to DDFIP admin"
+    end
+
+    context "when report is already approved" do
+      let(:report) { create(:report, :approved, ddfip: current_user.organization) }
+
+      it_behaves_like "it denies access to DDFIP user"
       it_behaves_like "it denies access to DDFIP admin"
     end
 
-    context "when report is ready" do
-      let(:report) { create(:report, :ready) }
+    context "when report is already rejected" do
+      let(:report) { create(:report, :rejected, ddfip: current_user.organization) }
 
-      it_behaves_like "it denies access to DDFIP admin"
-    end
-
-    context "when report is approved" do
-      let(:report) { create(:report, :approved) }
-
-      it_behaves_like "it denies access to DDFIP admin"
-    end
-
-    context "when report is rejected" do
-      let(:report) { create(:report, :rejected) }
-
-      it_behaves_like "it denies access to DDFIP admin"
-    end
-
-    context "when report is assigned" do
-      let(:report) { create(:report, :assigned) }
-
+      it_behaves_like "it denies access to DDFIP user"
       it_behaves_like "it denies access to DDFIP admin"
     end
   end
 
   describe "responses" do
-    context "when signed in as a DDFIP admin" do
-      before { sign_in_as(organization: ddfip, organization_admin: true) }
+    before { sign_in_as(:organization_admin, organization: report.ddfip) }
 
-      context "with transmitted report" do
-        let(:report) { create(:report, :transmitted) }
+    context "when report is unassigned" do
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/signalements/#{report.id}") }
 
-        it { expect(response).to have_http_status(:see_other) }
-
-        it "change report state and fill denied_at" do
-          expect {
-            request
-            report.reload
-          }.to change(report, :state).from("sent").to("denied")
-            .and change(report, :denied_at)
-        end
+      it "denies the report" do
+        expect { request and report.reload }
+          .to  change(report, :updated_at)
+          .and change(report, :state).to("denied")
+          .and change(report, :denied_at).to(be_present)
+          .and change(report, :reponse).to("Lorem lipsum")
       end
 
-      context "with denied report" do
-        let(:report) { create(:report, :denied) }
+      it "sets a flash notice" do
+        expect(flash).to have_flash_notice.to eq(
+          scheme: "success",
+          header: "Le signalement a été retourné à la collectivité.",
+          delay:  3000
+        )
+      end
+    end
 
-        it { expect(response).to have_http_status(:see_other) }
+    context "when report is already denied" do
+      let(:report) { create(:report, :transmitted_to_ddfip, :denied) }
 
-        it "keep report state and keep denied_at" do
-          expect {
-            request
-            report.reload
-          }.to not_change(report, :denied_at)
-            .and not_change(report, :state)
-        end
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/signalements/#{report.id}") }
+
+      it "updates the denial response" do
+        expect { request and report.reload }
+          .to  change(report, :updated_at)
+          .and not_change(report, :state)
+          .and not_change(report, :denied_at)
+          .and change(report, :reponse).to("Lorem lipsum")
+      end
+    end
+
+    context "when report is already assigned" do
+      let!(:report) { create(:report, :assigned_by_ddfip) }
+
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/signalements/#{report.id}") }
+
+      it "approves the report" do
+        expect { request and report.reload }
+          .to  change(report, :updated_at)
+          .and change(report, :state).to("denied")
+          .and change(report, :denied_at).to(be_present)
+          .and change(report, :assigned_at).to(nil)
+      end
+
+      it "sets a flash notice" do
+        expect(flash).to have_flash_notice.to eq(
+          scheme: "success",
+          header: "Le signalement a été retourné à la collectivité.",
+          delay:  3000
+        )
       end
     end
   end

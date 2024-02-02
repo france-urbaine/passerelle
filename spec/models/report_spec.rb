@@ -891,6 +891,7 @@ RSpec.describe Report do
     let_it_be(:departement) { create(:departement, code_departement: "64") }
     let_it_be(:ddfip) { create(:ddfip, departement: departement) }
     let_it_be(:commune) { create(:commune, departement: departement) }
+
     let_it_be(:reports) do
       collectivity = collectivities[0]
 
@@ -914,6 +915,7 @@ RSpec.describe Report do
         unsaved_from_another_collectivity: build(:report, collectivity: collectivities[1])
       }
     end
+
     describe "#covered_by_ddfip?" do
       it { expect(reports[:draft])                      .to     be_covered_by_ddfip(ddfip) }
       it { expect(reports[:ready])                      .to     be_covered_by_ddfip(ddfip) }
@@ -1177,275 +1179,389 @@ RSpec.describe Report do
       end
     end
 
-    describe "#draft!" do
-      it "marks the report as draft" do
+    describe "#resume!" do
+      it "updates a ready report to be `draft`" do
         report = create(:report, :ready)
 
-        aggregate_failures do
-          expect {
-            expect(report.draft!).to be(true)
-            report.reload
-          }.to change(report, :ready_at).to(be_falsy)
-            .and change(report, :state).to eq("draft")
-        end
+        expect {
+          report.resume!
+        }.to ret(true)
+          .and change(report, :state).to("draft")
+          .and change(report, :ready_at).to(nil)
+          .and change(report, :updated_at)
       end
 
-      it "doesn't update ready_at time when already draft" do
-        report = Timecop.freeze(2.minutes.ago) do
-          create(:report, :draft)
-        end
+      it "doesn't update an already draft report but keeps returning true" do
+        report = create(:report, :draft)
 
-        aggregate_failures do
-          expect {
-            expect(report.draft!).to be(false)
-            report.reload
-          }.not_to change(report, :ready_at)
-        end
+        expect {
+          report.resume!
+        }.to ret(true)
+          .and not_change(report, :state).from("draft")
+          .and not_change(report, :ready_at)
+          .and not_change(report, :updated_at)
+      end
+
+      it "doesn't update an already transmitted report" do
+        report = create(:report, :transmitted)
+
+        expect {
+          report.resume!
+        }.to ret(false)
+          .and not_change(report, :state).from("sent")
+          .and not_change(report, :ready_at)
+          .and not_change(report, :updated_at)
       end
     end
 
-    describe "#ready!" do
-      it "marks the report as ready" do
+    describe "#complete!" do
+      it "updates a draft report to be `ready`" do
         report = create(:report)
 
-        aggregate_failures do
-          expect {
-            expect(report.ready!).to be(true)
-            report.reload
-          }.to change(report, :ready_at).to(be_truthy)
-        end
+        expect {
+          report.complete!
+        }.to ret(true)
+          .and change(report, :state).to("ready")
+          .and change(report, :ready_at).to(be_present)
+          .and change(report, :updated_at)
       end
 
-      it "doesn't update previous ready_at time when already ready" do
-        report = Timecop.freeze(2.minutes.ago) do
-          create(:report, :ready)
-        end
+      it "doesn't update an already ready report but keeps returning true" do
+        report = create(:report, :ready)
 
-        aggregate_failures do
-          expect {
-            expect(report.ready!).to be(false)
-            report.reload
-          }.not_to change(report, :ready_at)
-        end
+        expect {
+          report.complete!
+        }.to ret(true)
+          .and not_change(report, :state).from("ready")
+          .and not_change(report, :ready_at)
+          .and not_change(report, :updated_at)
+      end
+
+      it "doesn't update an already transmitted report" do
+        report = create(:report, :transmitted)
+
+        expect {
+          report.complete!
+        }.to ret(false)
+          .and not_change(report, :state).from("sent")
+          .and not_change(report, :ready_at)
+          .and not_change(report, :updated_at)
       end
     end
 
     describe "#transmit!" do
-      it "marks the report as transmitted" do
+      it "updates a report to be `sent`" do
         report = create(:report, :ready)
 
-        aggregate_failures do
-          expect {
-            expect(report.transmit!).to be(true)
-            report.reload
-          }.to change(report, :transmitted_at).to(be_present)
-            .and change(report, :state).to("sent")
-        end
+        expect {
+          report.transmit!
+        }.to ret(true)
+          .and change(report, :state).to("sent")
+          .and change(report, :transmitted_at).to(be_present)
+          .and change(report, :updated_at)
       end
 
-      it "doesn't update previous transmitted_at time when already transmitted" do
-        report = Timecop.freeze(2.minutes.ago) do
-          create(:report, :transmitted)
-        end
-
-        aggregate_failures do
-          expect {
-            expect(report.transmit!).to be(false)
-            report.reload
-          }.not_to change(report, :transmitted_at)
-        end
-      end
-    end
-
-    describe "#deny!" do
-      it "returns true" do
-        report = create(:report)
-
-        expect(report.deny!).to be(true)
-      end
-
-      it "doesn't update previous denied_at time when already denied" do
-        report = create(:report, :denied)
-
-        aggregate_failures do
-          expect {
-            expect(report.deny!).to be(false)
-            report.reload
-          }.not_to change(report, :denied_at)
-        end
-      end
-
-      it "marks the report as denied" do
-        report = create(:report)
+      it "doesn't update an already transmitted report but keeps returning true" do
+        report = create(:report, :transmitted)
 
         expect {
-          report.deny!
-          report.reload
-        }.to change(report, :denied_at).to(be_present)
-          .and change(report, :state).to("denied")
+          report.transmit!
+        }.to ret(true)
+          .and not_change(report, :state).from("sent")
+          .and not_change(report, :transmitted_at)
+          .and not_change(report, :updated_at)
+      end
+
+      it "doesn't update an already acknowledged report" do
+        report = create(:report, :acknowledged)
+
+        expect {
+          report.transmit!
+        }.to ret(false)
+          .and not_change(report, :state).from("acknowledged")
+          .and not_change(report, :transmitted_at)
+          .and not_change(report, :updated_at)
       end
     end
 
     describe "#acknowledge!" do
-      it "marks the report as acknowledged" do
+      it "updates a report to be `acknowledged`" do
         report = create(:report, :transmitted)
 
         expect {
           report.acknowledge!
-          report.reload
-        }.to change(report, :acknowledged_at).to(be_present)
+        }.to ret(true)
           .and change(report, :state).to("acknowledged")
+          .and change(report, :acknowledged_at).to(be_present)
+          .and change(report, :updated_at)
       end
 
-      it "doesn't update previous acknowledged time when already acknowledged" do
-        report = Timecop.freeze(2.minutes.ago) do
-          create(:report, :transmitted, state: "acknowledged")
-        end
+      it "doesn't update an already acknowledged report but keeps returning true" do
+        report = create(:report, :acknowledged)
 
-        aggregate_failures do
-          expect {
-            expect(report.acknowledge!).to be(false)
-            report.reload
-          }.not_to change(report, :acknowledged_at)
-        end
+        expect {
+          report.acknowledge!
+        }.to ret(true)
+          .and not_change(report, :state).from("acknowledged")
+          .and not_change(report, :acknowledged_at)
+          .and not_change(report, :updated_at)
+      end
+
+      it "doesn't update an already assigned report" do
+        report = create(:report, :assigned)
+
+        expect {
+          report.acknowledge!
+        }.to ret(false)
+          .and not_change(report, :state).from("processing")
+          .and not_change(report, :acknowledged_at)
+          .and not_change(report, :updated_at)
       end
     end
 
     describe "#assign!" do
-      it "returns true" do
+      it "updates a report to be `processing'" do
         report = create(:report, :transmitted)
-
-        expect(report.assign!).to be(true)
-      end
-
-      it "marks the report as assigned" do
-        report = create(:report)
 
         expect {
           report.assign!
-          report.reload
-        }.to change(report, :assigned_at).to(be_present)
+        }.to ret(true)
           .and change(report, :state).to("processing")
+          .and change(report, :assigned_at).to(be_present)
+          .and change(report, :acknowledged_at).to(be_present)
+          .and change(report, :updated_at)
       end
 
-      context "when already assigned" do
-        it "doesn't update previous assigned time" do
-          report = Timecop.freeze(2.minutes.ago) do
-            create(:report, :assigned)
-          end
+      it "updates an acknowledged report but keep the acknowledged date" do
+        report = create(:report, :acknowledged)
 
-          aggregate_failures do
-            expect {
-              expect(report.assign!).to be(false)
-              report.reload
-            }.not_to change(report, :assigned_at)
-          end
-        end
+        expect {
+          report.assign!
+        }.to ret(true)
+          .and change(report, :state).to("processing")
+          .and change(report, :assigned_at).to(be_present)
+          .and change(report, :updated_at)
+          .and not_change(report, :acknowledged_at)
       end
 
-      context "when resolved" do
-        it "marks the report as assigned" do
-          report = create(:report, :approved)
+      it "updates a denied report" do
+        report = create(:report, :denied)
 
-          expect {
-            report.assign!
-            report.reload
-          }.to change(report, :assigned_at).to(be_present)
-            .and change(report, :state).to("processing")
-        end
+        expect {
+          report.assign!
+        }.to ret(true)
+          .and change(report, :state).to("processing")
+          .and change(report, :denied_at).to(nil)
+          .and change(report, :assigned_at).to(be_present)
+          .and change(report, :updated_at)
+      end
+
+      it "doesn't update an already assigned report but keeps returning true" do
+        report = create(:report, :assigned)
+
+        expect {
+          report.assign!
+        }.to ret(true)
+          .and not_change(report, :state).from("processing")
+          .and not_change(report, :assigned_at)
+          .and not_change(report, :updated_at)
+      end
+
+      it "doesn't update an already resolved report" do
+        report = create(:report, :approved)
+
+        expect {
+          report.assign!
+        }.to ret(false)
+          .and not_change(report, :state).from("approved")
+          .and not_change(report, :assigned_at)
+          .and not_change(report, :updated_at)
       end
     end
 
-    describe "#assign_all!" do
-      let!(:reports) { create_list(:report, 3, :transmitted) }
-      let(:report_relation) { Report.where(id: reports.map(&:id)) }
-
-      it "returns true" do
-        expect(report_relation.assign_all!).to eq(3)
-      end
-
-      it "marks the report as assigned" do
-        expect {
-          report_relation.assign_all!
-          report_relation.each(&:reload)
-        }.to change { report_relation.where(state: "processing").count }.from(0).to(3)
-          .and change { report_relation.where.not(assigned_at: nil).count }.from(0).to(3)
-      end
-
-      it "doesn't update previous assigned time" do
-        report = Timecop.freeze(2.minutes.ago) { create(:report, :assigned) }
-        single_report_relation = Report.where(id: report.id)
+    describe "#unassign!" do
+      it "updates an assigned report back to `acknowledged`" do
+        report = create(:report, :assigned)
 
         expect {
-          single_report_relation.assign_all!
-          report.reload
-        }.not_to change(report, :assigned_at)
+          report.unassign!
+        }.to ret(true)
+          .and change(report, :state).to("acknowledged")
+          .and change(report, :assigned_at).to(nil)
+          .and change(report, :updated_at)
+          .and not_change(report, :acknowledged_at)
+      end
+    end
+
+    describe "#deny!" do
+      it "updates a report to be `denied'" do
+        report = create(:report, :transmitted)
+
+        expect {
+          report.deny!
+        }.to ret(true)
+          .and change(report, :state).to("denied")
+          .and change(report, :denied_at).to(be_present)
+          .and change(report, :acknowledged_at).to(be_present)
+          .and change(report, :updated_at)
+      end
+
+      it "updates an acknowledged report but keep the acknowledged date" do
+        report = create(:report, :acknowledged)
+
+        expect {
+          report.deny!
+        }.to ret(true)
+          .and change(report, :state).to("denied")
+          .and change(report, :denied_at).to(be_present)
+          .and change(report, :updated_at)
+          .and not_change(report, :acknowledged_at)
+      end
+
+      it "updates an assigned report" do
+        report = create(:report, :assigned)
+
+        expect {
+          report.deny!
+        }.to ret(true)
+          .and change(report, :state).to("denied")
+          .and change(report, :assigned_at).to(nil)
+          .and change(report, :denied_at).to(be_present)
+          .and change(report, :updated_at)
+      end
+
+      it "doesn't update an already denied report but keeps returning true" do
+        report = create(:report, :denied)
+
+        expect {
+          report.deny!
+        }.to ret(true)
+          .and not_change(report, :state).from("denied")
+          .and not_change(report, :denied_at)
+          .and not_change(report, :updated_at)
+      end
+
+      it "doesn't update an already resolved report" do
+        report = create(:report, :approved)
+
+        expect {
+          report.deny!
+        }.to ret(false)
+          .and not_change(report, :state).from("approved")
+          .and not_change(report, :denied_at)
+          .and not_change(report, :updated_at)
+      end
+    end
+
+    describe "#undeny!" do
+      it "updates a denied report back to `acknowledged`" do
+        report = create(:report, :denied)
+
+        expect {
+          report.undeny!
+        }.to ret(true)
+          .and change(report, :state).to("acknowledged")
+          .and change(report, :denied_at).to(nil)
+          .and change(report, :updated_at)
+          .and not_change(report, :acknowledged_at)
       end
     end
 
     describe "#approve!" do
-      it "marks the report as approved" do
+      it "updates a report to be `approved'" do
         report = create(:report, :assigned)
 
-        aggregate_failures do
-          expect {
-            expect(report.approve!).to be(true)
-            report.reload
-          }.to change(report, :approved_at).to(be_present)
-            .and change(report, :state).to("approved")
-        end
+        expect {
+          report.approve!
+        }.to ret(true)
+          .and change(report, :state).to("approved")
+          .and change(report, :approved_at).to(be_present)
+          .and change(report, :updated_at)
       end
 
-      it "resets rejection time when previously rejected" do
+      it "updates an already rejected report" do
         report = create(:report, :rejected)
 
-        aggregate_failures do
-          expect {
-            expect(report.approve!).to be(true)
-            report.reload
-          }.to change(report, :rejected_at).to(nil)
-            .and change(report, :approved_at).to(be_present)
-        end
+        expect {
+          report.approve!
+        }.to ret(true)
+          .and change(report, :state).to("approved")
+          .and change(report, :approved_at).to(be_present)
+          .and change(report, :rejected_at).to(nil)
+          .and change(report, :updated_at)
       end
 
-      it "doesn't update previous approval time when already approved" do
-        report = Timecop.freeze(2.minutes.ago) do
-          create(:report, :approved)
-        end
+      it "doesn't update an already approved report but keeps returning true" do
+        report = create(:report, :approved)
 
-        aggregate_failures do
-          expect {
-            expect(report.approve!).to be(false)
-            report.reload
-          }.not_to change(report, :approved_at)
-        end
+        expect {
+          report.approve!
+        }.to ret(true)
+          .and not_change(report, :state).from("approved")
+          .and not_change(report, :approved_at)
+          .and not_change(report, :updated_at)
+      end
+    end
+
+    describe "#unapproved!" do
+      it "updates an approved report back to `processing`" do
+        report = create(:report, :approved)
+
+        expect {
+          report.unapprove!
+        }.to ret(true)
+          .and change(report, :state).to("processing")
+          .and change(report, :approved_at).to(nil)
+          .and change(report, :updated_at)
       end
     end
 
     describe "#reject!" do
-      it "marks the report as rejected" do
+      it "updates a report to be `rejected'" do
         report = create(:report, :assigned)
 
-        aggregate_failures do
-          expect {
-            expect(report.reject!).to be(true)
-            report.reload
-          }.to change(report, :rejected_at).to(be_present)
-            .and change(report, :state).to("rejected")
-        end
+        expect {
+          report.reject!
+        }.to ret(true)
+          .and change(report, :state).to("rejected")
+          .and change(report, :rejected_at).to(be_present)
+          .and change(report, :updated_at)
       end
 
-      it "doesn't update previous rejection time when already rejected" do
-        report = Timecop.freeze(2.minutes.ago) do
-          create(:report, :rejected)
-        end
+      it "updates an approved report" do
+        report = create(:report, :approved)
 
-        aggregate_failures do
-          expect {
-            expect(report.reject!).to be(false)
-            report.reload
-          }.not_to change(report, :rejected_at)
-        end
+        expect {
+          report.reject!
+        }.to ret(true)
+          .and change(report, :state).to("rejected")
+          .and change(report, :rejected_at).to(be_present)
+          .and change(report, :approved_at).to(nil)
+          .and change(report, :updated_at)
+      end
+
+      it "doesn't update an already rejected report but keeps returning true" do
+        report = create(:report, :rejected)
+
+        expect {
+          report.reject!
+        }.to ret(true)
+          .and not_change(report, :state).from("rejected")
+          .and not_change(report, :rejected_at)
+          .and not_change(report, :updated_at)
+      end
+    end
+
+    describe "#unreject!" do
+      it "updates a rejected report back to `processing`" do
+        report = create(:report, :rejected)
+
+        expect {
+          report.unreject!
+        }.to ret(true)
+          .and change(report, :state).to("processing")
+          .and change(report, :rejected_at).to(nil)
+          .and change(report, :updated_at)
       end
     end
   end

@@ -2,7 +2,7 @@
 
 module Reports
   class DenialPolicy < ApplicationPolicy
-    alias_rule :edit?, :update?, :destroy?, to: :manage?
+    alias_rule :edit?, :update?, :remove?, :destroy?, to: :manage?
 
     def manage?
       if record == Report
@@ -11,9 +11,13 @@ module Reports
         ddfip_admin? &&
           record.kept? &&
           record.out_of_sandbox? &&
-          (record.unassigned? ||
-            record.denied?)
+          record.ddfip_id == organization.id &&
+          (record.unresolved? || record.denied?)
       end
+    end
+
+    params_filter do |params|
+      params.permit(:reponse) if ddfip_admin?
     end
   end
 end

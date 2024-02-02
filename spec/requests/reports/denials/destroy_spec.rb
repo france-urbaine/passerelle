@@ -11,8 +11,7 @@ RSpec.describe "Reports::DenialsController#destroy" do
   let(:headers) { |e| e.metadata[:headers] }
   let(:params)  { |e| e.metadata[:params] }
 
-  let!(:ddfip)  { create(:ddfip) }
-  let!(:report) { create(:report) }
+  let!(:report) { create(:report, :denied_by_ddfip) }
 
   describe "authorizations" do
     it_behaves_like "it requires to be signed in in HTML"
@@ -26,72 +25,62 @@ RSpec.describe "Reports::DenialsController#destroy" do
     it_behaves_like "it denies access to DDFIP user"
     it_behaves_like "it denies access to DDFIP admin"
 
-    context "when report is transmitted" do
-      let(:report) { create(:report, :transmitted) }
+    context "when report has been assigned by the current DDFIP" do
+      let(:report) { create(:report, :assigned, ddfip: current_user.organization) }
 
+      it_behaves_like "it denies access to DDFIP user"
       it_behaves_like "it allows access to DDFIP admin"
     end
 
-    context "when report is denied" do
-      let(:report) { create(:report, :denied) }
+    context "when report has been denied by the current DDFIP" do
+      let(:report) { create(:report, :denied, ddfip: current_user.organization) }
 
+      it_behaves_like "it denies access to DDFIP user"
       it_behaves_like "it allows access to DDFIP admin"
     end
 
-    context "when report is denied in sandbox" do
-      let(:report) { create(:report, :denied, :sandbox) }
+    context "when report has already been undenied by the current DDFIP" do
+      let(:report) { create(:report, :acknowledged, ddfip: current_user.organization) }
 
+      it_behaves_like "it denies access to DDFIP user"
+      it_behaves_like "it allows access to DDFIP admin"
+    end
+
+    context "when report has already been approved by the current DDFIP" do
+      let(:report) { create(:report, :approved, ddfip: current_user.organization) }
+
+      it_behaves_like "it denies access to DDFIP user"
       it_behaves_like "it denies access to DDFIP admin"
     end
 
-    context "when discarded report is denied" do
-      let(:report) { create(:report, :denied, :discarded) }
+    context "when report has already been rejected by the current DDFIP" do
+      let(:report) { create(:report, :rejected, ddfip: current_user.organization) }
 
-      it_behaves_like "it denies access to DDFIP admin"
-    end
-
-    context "when report is ready" do
-      let(:report) { create(:report, :ready) }
-
-      it_behaves_like "it denies access to DDFIP admin"
-    end
-
-    context "when report is approved" do
-      let(:report) { create(:report, :approved) }
-
-      it_behaves_like "it denies access to DDFIP admin"
-    end
-
-    context "when report is rejected" do
-      let(:report) { create(:report, :rejected) }
-
-      it_behaves_like "it denies access to DDFIP admin"
-    end
-
-    context "when report is assigned" do
-      let(:report) { create(:report, :assigned) }
-
+      it_behaves_like "it denies access to DDFIP user"
       it_behaves_like "it denies access to DDFIP admin"
     end
   end
 
   describe "responses" do
-    context "when signed in as a DDFIP admin" do
-      before { sign_in_as(organization: ddfip, organization_admin: true) }
+    before { sign_in_as(:organization_admin, organization: report.ddfip) }
 
-      context "with denied report" do
-        let(:report) { create(:report, :denied) }
+    context "with report is denied" do
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/signalements/#{report.id}") }
 
-        it { expect(response).to have_http_status(:see_other) }
+      it "undenies the report" do
+        expect { request and report.reload }
+          .to  change(report, :updated_at)
+          .and change(report, :state).to("acknowledged")
+          .and change(report, :denied_at).to(nil)
+      end
 
-        it "change state" do
-          expect {
-            request
-            report.reload
-          }.to change(report, :state).from("denied").to("acknowledged")
-            .and not_change(report, :denied_at)
-            .and change(report, :acknowledged_at)
-        end
+      it "sets a flash notice" do
+        expect(flash).to have_flash_notice.to eq(
+          scheme: "success",
+          header: "Le signalement n'est plus retourné.",
+          delay:  3000
+        )
       end
     end
   end

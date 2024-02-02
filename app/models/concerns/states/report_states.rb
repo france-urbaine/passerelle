@@ -4,14 +4,16 @@ module States
   module ReportStates
     extend ActiveSupport::Concern
 
-    STATES = %w[draft
-                ready
-                sent
-                acknowledged
-                denied
-                processing
-                approved
-                rejected].freeze
+    STATES = %w[
+      draft
+      ready
+      sent
+      acknowledged
+      denied
+      processing
+      approved
+      rejected
+    ].freeze
 
     included do
       # Validations
@@ -99,86 +101,187 @@ module States
         approved? || rejected?
       end
 
-      # Updates methods
+      # Transition methods
       # ----------------------------------------------------------------------------
-      def draft!
-        return false if draft?
-
-        update(
-          state: "draft",
-          ready_at: nil
-        )
+      def resume
+        validate_state("ready", "draft") do
+          self.state = "draft"
+          self.ready_at = nil
+        end
       end
 
-      def ready!
-        return false if ready?
-
-        update(
-          state: "ready",
-          ready_at: Time.current
-        )
+      def complete
+        validate_state("ready", "draft") do
+          self.state = "ready"
+          self.ready_at ||= Time.current
+        end
       end
 
-      def transmit!
-        return false if transmitted?
-
-        update(
-          state: "sent",
-          transmitted_at: Time.current
-        )
+      def transmit
+        validate_state("ready", "sent") do
+          self.state = "sent"
+          self.transmitted_at ||= Time.current
+        end
       end
 
-      def deny!
-        return false if denied?
-
-        update(
-          state: "denied",
-          denied_at: Time.current
-        )
+      def acknowledge
+        validate_state("sent", "acknowledged") do
+          self.state = "acknowledged"
+          self.acknowledged_at ||= Time.current
+        end
       end
 
-      def acknowledge!
-        return false if acknowledged?
-
-        update(
-          state: "acknowledged",
-          acknowledged_at: Time.current
-        )
+      def assign
+        validate_state("sent", "acknowledged", "processing", "denied") do
+          self.state = "processing"
+          self.acknowledged_at ||= Time.current
+          self.assigned_at ||= Time.current
+          self.denied_at = nil
+        end
       end
 
-      def assign!
-        return false if processing?
-
-        update(
-          state: "processing",
-          assigned_at: Time.current
-        )
+      def unassign
+        validate_state("processing", "acknowledged") do
+          self.state = "acknowledged"
+          self.assigned_at = nil
+          self.acknowledged_at ||= Time.current
+        end
       end
 
-      def self.assign_all!
-        unassigned.update_all(
-          state: "processing",
-          assigned_at: Time.current
-        )
+      def deny
+        validate_state("sent", "acknowledged", "processing", "denied") do
+          self.state = "denied"
+          self.acknowledged_at ||= Time.current
+          self.assigned_at = nil
+          self.denied_at ||= Time.current
+        end
       end
 
-      def approve!
-        return false if approved?
-
-        update(
-          state: "approved",
-          approved_at: Time.current,
-          rejected_at: nil
-        )
+      def undeny
+        validate_state("denied", "acknowledged") do
+          self.state = "acknowledged"
+          self.denied_at = nil
+          self.acknowledged_at ||= Time.current
+        end
       end
 
-      def reject!
-        return false if rejected?
+      def approve
+        validate_state("processing", "rejected", "approved") do
+          self.state = "approved"
+          self.approved_at ||= Time.current
+          self.rejected_at = nil
+        end
+      end
 
-        update(
-          state: "rejected",
-          rejected_at: Time.current
-        )
+      def unapprove
+        validate_state("approved", "processing") do
+          self.state = "processing"
+          self.approved_at = nil
+        end
+      end
+
+      def reject
+        validate_state("processing", "rejected", "approved") do
+          self.state = "rejected"
+          self.approved_at = nil
+          self.rejected_at ||= Time.current
+        end
+      end
+
+      def unreject
+        validate_state("rejected", "processing") do
+          self.state = "processing"
+          self.rejected_at = nil
+        end
+      end
+
+      %w[
+        resume!
+        complete!
+        transmit!
+        acknowledge!
+        assign!
+        unassign!
+        deny!
+        undeny!
+        approve!
+        unapprove!
+        reject!
+        unreject!
+      ].each do |method|
+        define_method method do
+          public_send(method.delete("!"))
+
+          if errors.empty?
+            save
+          else
+            false
+          end
+        end
+      end
+
+      alias_method :draft!, :resume!
+      alias_method :ready!, :complete!
+
+      def validate_state(*expected_states, &)
+        if expected_states.include?(state)
+          yield
+        else
+          errors.add(:state, :invalid_transition, current_state: state)
+        end
+
+        self
+      end
+
+      private :validate_state
+
+      # Transition of multiple records
+      # ----------------------------------------------------------------------------
+      def self.transmit_all(**attributes)
+        attributes[:state] = "sent"
+        attributes[:transmitted_at] ||= Time.current
+
+        packing.update_all(attributes)
+      end
+
+      def self.assign_all(**attributes)
+        attributes[:state] = "processing"
+        attributes[:denied_at] = nil
+        attributes[:assigned_at] ||= Time.current
+
+        where(
+          state: %w[sent acknowledged denied]
+        ).update_all(attributes)
+      end
+
+      def self.deny_all(**attributes)
+        attributes[:state] = "denied"
+        attributes[:assigned_at] = nil
+        attributes[:denied_at] ||= Time.current
+
+        where(
+          state: %w[sent acknowledged processing]
+        ).update_all(attributes)
+      end
+
+      def self.approve_all(**attributes)
+        attributes[:state] = "approved"
+        attributes[:rejected_at] = nil
+        attributes[:approved_at] ||= Time.current
+
+        where(
+          state: %w[processing rejected]
+        ).update_all(attributes)
+      end
+
+      def self.reject_all(**attributes)
+        attributes[:state] = "approved"
+        attributes[:approved_at] = nil
+        attributes[:rejected_at] ||= Time.current
+
+        where(
+          state: %w[processing approved]
+        ).update_all(attributes)
       end
     end
   end

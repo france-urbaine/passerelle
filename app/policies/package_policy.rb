@@ -43,8 +43,7 @@ class PackagePolicy < ApplicationPolicy
     def packages_listed_to_collectivity
       return Package.none unless collectivity?
 
-      # Collectivities can list all packages they've packed through the web UI
-      # and those fully transmitted by their publishers.
+      # Collectivities can list all packages they've created through the web UI.
       #
       Package
         .kept
@@ -64,7 +63,7 @@ class PackagePolicy < ApplicationPolicy
     def packages_listed_to_publisher
       return Package.none unless publisher?
 
-      # Publisher can only list packages they packed through their API.
+      # Publisher can only list packages they've created through their API.
       # It excludes those packed though the web UI by their owned collectivities.
       #
       # The scope `packed_through_publisher_api` is implied by `made_by_publisher`

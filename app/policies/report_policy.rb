@@ -27,29 +27,10 @@ class ReportPolicy < ApplicationPolicy
 
   def update?
     if record == Report
-      user? && !dgfip?
+      collectivity?
     elsif record.is_a?(Report)
-      report_updatable_by_collectivity?(record) ||
-        report_updatable_by_publisher?(record) ||
-        report_updatable_by_ddfip_admin?(record) ||
-        report_updatable_by_office_user?(record)
+      report_updatable_by_collectivity?(record)
     end
-  end
-
-  def approve?
-    allowed_to?(:manage?, record, with: ::Reports::ApprovalPolicy)
-  end
-
-  def transmit?
-    report_transmissible_by_collectivity?(record) if record.is_a?(Report)
-  end
-
-  def assign?
-    allowed_to?(:manage?, record, with: ::Reports::AssignmentPolicy)
-  end
-
-  def deny?
-    allowed_to?(:manage?, record, with: ::Reports::DenialPolicy)
   end
 
   def destroy?
@@ -63,6 +44,46 @@ class ReportPolicy < ApplicationPolicy
 
   def destroy_all?
     collectivity? || publisher?
+  end
+
+  def transmit?
+    if record == Report
+      collectivity?
+    elsif record.is_a?(Report)
+      report_transmissible_by_collectivity?(record)
+    end
+  end
+
+  def assign?
+    allowed_to?(:manage?, record, with: ::Reports::AssignmentPolicy)
+  end
+
+  def unassign?
+    allowed_to?(:destroy?, record, with: ::Reports::AssignmentPolicy)
+  end
+
+  def deny?
+    allowed_to?(:manage?, record, with: ::Reports::DenialPolicy)
+  end
+
+  def undeny?
+    allowed_to?(:destroy?, record, with: ::Reports::DenialPolicy)
+  end
+
+  def approve?
+    allowed_to?(:manage?, record, with: ::Reports::ApprovalPolicy)
+  end
+
+  def unapprove?
+    allowed_to?(:destroy?, record, with: ::Reports::ApprovalPolicy)
+  end
+
+  def reject?
+    allowed_to?(:manage?, record, with: ::Reports::RejectionPolicy)
+  end
+
+  def unreject?
+    allowed_to?(:destroy?, record, with: ::Reports::RejectionPolicy)
   end
 
   relation_scope do |relation|
@@ -130,8 +151,8 @@ class ReportPolicy < ApplicationPolicy
 
     def report_updatable_by_collectivity?(report)
       collectivity? &&
-        report.out_of_sandbox? &&
         report.packing? &&
+        report.out_of_sandbox? &&
         report.made_by_collectivity?(organization) &&
         report.made_through_web_ui? &&
         !report.in_active_transmission?
@@ -139,16 +160,17 @@ class ReportPolicy < ApplicationPolicy
 
     def report_destroyable_by_collectivity?(report)
       collectivity? &&
-        report.out_of_sandbox? &&
         report.packing? &&
+        report.out_of_sandbox? &&
         report.made_by_collectivity?(organization) &&
         report.made_through_web_ui?
     end
 
     def report_transmissible_by_collectivity?(report)
       collectivity? &&
-        report.transmissible? &&
-        report.made_by_collectivity?(organization)
+        report.ready? &&
+        report.made_by_collectivity?(organization) &&
+        report.made_through_web_ui?
     end
 
     def reports_listed_to_collectivity
@@ -194,13 +216,6 @@ class ReportPolicy < ApplicationPolicy
       # Discarded reports are not listed but are still accessible
       #
       publisher? &&
-        report.made_by_publisher?(organization) &&
-        report.made_through_publisher_api?
-    end
-
-    def report_updatable_by_publisher?(report)
-      publisher? &&
-        report.packing? &&
         report.made_by_publisher?(organization) &&
         report.made_through_publisher_api?
     end
@@ -278,14 +293,6 @@ class ReportPolicy < ApplicationPolicy
         report.ddfip == organization
     end
 
-    def report_updatable_by_ddfip_admin?(report)
-      ddfip_admin? &&
-        report.out_of_sandbox? &&
-        report.kept? &&
-        report.undenied? &&
-        report.ddfip_id == user.organization_id
-    end
-
     def reports_listed_to_ddfip_admins
       return Report.none unless ddfip_admin?
 
@@ -305,10 +312,6 @@ class ReportPolicy < ApplicationPolicy
         report.out_of_sandbox? &&
         report.assigned? &&
         report.covered_by_offices?(user.offices)
-    end
-
-    def report_updatable_by_office_user?(report)
-      report_shown_to_office_user?(report)
     end
 
     def reports_listed_to_office_users

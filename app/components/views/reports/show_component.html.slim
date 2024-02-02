@@ -7,6 +7,10 @@
     - layout.with_section do
       = render InformationTransmitted.new(@report)
 
+  - if @report.denied? || @report.rejected?
+    - layout.with_section do
+      = render Response.new(@report)
+
   - if display_situation_majic?
     - layout.with_section do
       = render SituationMajic.new(@report)

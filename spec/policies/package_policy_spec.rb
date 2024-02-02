@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe PackagePolicy, stub_factories: false, type: :policy do
+RSpec.describe PackagePolicy, type: :policy do
   describe_rule :index? do
     it_behaves_like("when current user is a DDFIP admin")        { succeed }
     it_behaves_like("when current user is a DDFIP user")         { failed }
@@ -36,53 +36,53 @@ RSpec.describe PackagePolicy, stub_factories: false, type: :policy do
     end
 
     context "with package transmitted through Web UI by the current collectivity" do
-      let(:record) { create(:package, :transmitted_through_web_ui, collectivity: current_organization) }
+      let(:record) { build_stubbed(:package, :transmitted_through_web_ui, collectivity: current_organization) }
 
       it_behaves_like("when current user is a collectivity admin") { succeed }
       it_behaves_like("when current user is a collectivity user")  { succeed }
     end
 
     context "with package transmitted through Web UI by a collectivity owned by the current publisher" do
-      let(:record) { create(:package, :transmitted_through_web_ui, collectivity_publisher: current_organization) }
+      let(:record) { build_stubbed(:package, :transmitted_through_web_ui, collectivity_publisher: current_organization) }
 
       it_behaves_like("when current user is a publisher admin") { failed }
       it_behaves_like("when current user is a publisher user")  { failed }
     end
 
     context "with package transmitted through API for the current collectivity" do
-      let(:record) { create(:package, :transmitted_through_api, collectivity: current_organization) }
+      let(:record) { build_stubbed(:package, :transmitted_through_api, collectivity: current_organization) }
 
       it_behaves_like("when current user is a collectivity admin") { succeed }
       it_behaves_like("when current user is a collectivity user")  { succeed }
     end
 
     context "with package transmitted as sandbox through API for the current collectivity" do
-      let(:record) { create(:package, :transmitted_through_api, collectivity: current_organization, sandbox: true) }
+      let(:record) { build_stubbed(:package, :transmitted_through_api, collectivity: current_organization, sandbox: true) }
 
       it_behaves_like("when current user is a collectivity admin") { failed }
       it_behaves_like("when current user is a collectivity user")  { failed }
     end
 
     context "with package transmitted through API by the current publisher" do
-      let(:record) { create(:package, :transmitted_through_api, publisher: current_organization) }
+      let(:record) { build_stubbed(:package, :transmitted_through_api, publisher: current_organization) }
 
       it_behaves_like("when current user is a publisher admin") { succeed }
       it_behaves_like("when current user is a publisher user")  { succeed }
     end
 
     context "with package transmitted as sandbox through API by the current publisher" do
-      let(:record) { create(:package, :transmitted_through_api, publisher: current_organization, sandbox: true) }
+      let(:record) { build_stubbed(:package, :transmitted_through_api, publisher: current_organization, sandbox: true) }
 
       it_behaves_like("when current user is a publisher admin") { succeed }
       it_behaves_like("when current user is a publisher user")  { succeed }
     end
 
     context "with package transmitted and covered by the current DDFIP" do
-      let(:record) { create(:package, :transmitted_to_ddfip, ddfip: current_organization) }
+      let(:record) { build_stubbed(:package, :transmitted_to_ddfip, ddfip: current_organization) }
 
       before do
-        commune = create(:commune, code_departement: current_organization.code_departement)
-        create(:report, commune:, package: record)
+        commune = build_stubbed(:commune, code_departement: current_organization.code_departement)
+        build_stubbed(:report, commune:, package: record)
       end
 
       it_behaves_like("when current user is a DDFIP admin") { succeed }
@@ -90,7 +90,7 @@ RSpec.describe PackagePolicy, stub_factories: false, type: :policy do
     end
 
     context "with package transmitted as sandbox and covered by the current DDFIP" do
-      let(:record) { create(:package, :transmitted_to_ddfip, ddfip: current_organization, sandbox: true) }
+      let(:record) { build_stubbed(:package, :transmitted_to_ddfip, ddfip: current_organization, sandbox: true) }
 
       it_behaves_like("when current user is a DDFIP admin") { failed }
       it_behaves_like("when current user is a DDFIP user")  { failed }

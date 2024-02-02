@@ -61,8 +61,8 @@ RSpec.describe "ReportsController#update" do
     context "when report has been created by current user publisher" do
       let(:report) { create(:report, :made_through_api, publisher: current_user.organization) }
 
-      it_behaves_like "it allows access to publisher user"
-      it_behaves_like "it allows access to publisher admin"
+      it_behaves_like "it denies access to publisher user"
+      it_behaves_like "it denies access to publisher admin"
     end
 
     context "when report has been transmitted by current user publisher" do
@@ -75,7 +75,7 @@ RSpec.describe "ReportsController#update" do
     context "when report has been transmitted to current user DDFIP" do
       let(:report) { create(:report, :transmitted_to_ddfip, ddfip: current_user.organization) }
 
-      it_behaves_like "it allows access to DDFIP admin"
+      it_behaves_like "it denies access to DDFIP admin"
       it_behaves_like "it denies access to DDFIP user"
     end
 
@@ -84,18 +84,17 @@ RSpec.describe "ReportsController#update" do
       let(:office) { create(:office, ddfip:, users: [current_user]) }
       let(:report) { create(:report, :assigned_to_office, ddfip:, office:) }
 
-      it_behaves_like "it allows access to DDFIP admin"
-      it_behaves_like "it allows access to DDFIP user"
+      it_behaves_like "it denies access to DDFIP admin"
+      it_behaves_like "it denies access to DDFIP user"
     end
   end
 
   describe "responses" do
     context "when signed in as a collectivity user" do
-      let(:collectivity) { create(:collectivity) }
-      let(:report)       { create(:report, :made_through_web_ui, collectivity: collectivity) }
-      let(:package)      { create(:package, :transmitted_through_web_ui, collectivity: collectivity, reports: [report]) }
+      let!(:collectivity) { create(:collectivity) }
+      let!(:report)       { create(:report, :made_through_web_ui, collectivity:) }
 
-      before { sign_in_as(organization: report.collectivity) }
+      before { sign_in_as(organization: collectivity) }
 
       context "with valid attributes" do
         it { expect(response).to have_http_status(:see_other) }
@@ -117,7 +116,12 @@ RSpec.describe "ReportsController#update" do
       end
 
       context "with invalid date" do
-        let!(:report) { create(:report, form_type: "evaluation_local_habitation", anomalies: %w[consistance]) }
+        let(:report) do
+          create(:report, :made_through_web_ui,
+            collectivity: collectivity,
+            form_type:    "evaluation_local_habitation",
+            anomalies:    %w[consistance])
+        end
 
         let(:form_template) { "situation_evaluation" }
         let(:attributes) do
@@ -131,7 +135,7 @@ RSpec.describe "ReportsController#update" do
       end
 
       context "when the report is transmitted" do
-        before { report.transmit! }
+        let(:report) { create(:report, :transmitted_through_web_ui, collectivity:) }
 
         it { expect(response).to have_http_status(:forbidden) }
         it { expect(response).to have_content_type(:html) }
@@ -139,7 +143,7 @@ RSpec.describe "ReportsController#update" do
       end
 
       context "when the report is discarded" do
-        before { report.discard }
+        let(:report) { create(:report, :made_through_web_ui, :discarded, collectivity:) }
 
         it { expect(response).to have_http_status(:gone) }
         it { expect(response).to have_content_type(:html) }
