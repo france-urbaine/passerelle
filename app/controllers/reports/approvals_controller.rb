@@ -6,6 +6,7 @@ module Reports
 
     def edit
       @report = find_and_authorize_report
+      # @referrer_path = referrer_path || report_path(@report)
       redirect_to report_path(@report), status: :see_other
     end
 
@@ -14,15 +15,17 @@ module Reports
       service = Reports::StateService.new(@report)
       result  = service.approve
 
+      # TODO: replace referrer_path by redircet_path
+      # if we implement the edit temlate
+      #
       respond_with result,
         flash: true,
-        location: -> { redirect_path || report_path(@report) }
+        location: referrer_path || report_path(@report)
     end
 
     def remove
       @report = find_and_authorize_report
       @referrer_path = referrer_path || report_path(@report)
-      @redirect_path = @referrer_path unless @referrer_path.include?(report_path(@report))
     end
 
     def destroy
@@ -30,9 +33,12 @@ module Reports
       service = Reports::StateService.new(@report)
       result  = service.unapprove
 
+      # TODO: replace referrer_path by redircet_path
+      # if we implement the remove temlate
+      #
       respond_with result,
         flash: true,
-        location: redirect_path || report_path(@report)
+        location: referrer_path || report_path(@report)
     end
 
     private

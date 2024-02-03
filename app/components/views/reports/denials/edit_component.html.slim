@@ -1,0 +1,17 @@
+= modal_frame_component(referrer: @referrer_path) do |template|
+  - template.with_modal do |modal|
+    - modal.with_header do
+      | Retour d'un signalement
+
+    - modal.with_form(model: @report, url: report_denial_path(@report)) do |form|
+      - modal.with_hidden_field :redirect, redirection_path
+
+      p Vous êtes sur le point de retourner le signalement suivant à la collectivité :
+      = render Views::Reports::ShortDetailsComponent.new(@report)
+
+      = form.block :reponse do
+        = form.label :reponse, "Vous pouvez transmettre une justification à la collectivité :"
+        = form.text_area :reponse
+
+    - modal.with_submit_action "Continuer", autofocus: true
+    - modal.with_close_action "Annuler"

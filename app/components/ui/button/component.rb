@@ -85,7 +85,7 @@ module UI
         options[:aria]   = extract_aria_attributes
         options[:method] = @method
         options[:params] = @params
-        options[:form_class] = ""
+        options[:form_class] = "#{base_class}-form"
 
         helpers.button_to href, options, &
       end
@@ -150,17 +150,18 @@ module UI
         button--destructive-discrete
       ].freeze
 
+      def base_class
+        if @icon_only
+          "icon-button"
+        else
+          "button"
+        end
+      end
+
       def extract_class_attributes
         classes = @options.fetch(:class, "")
-
-        if @icon_only
-          classes += " icon-button"
-          classes += " icon-button--#{button_class_modifier}" if button_class_modifier
-        else
-          classes += " button"
-          classes += " button--#{button_class_modifier}" if button_class_modifier
-        end
-
+        classes += " #{base_class}"
+        classes += " #{base_class}--#{button_class_modifier}" if button_class_modifier
         classes.strip
       end
 

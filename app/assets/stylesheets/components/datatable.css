@@ -74,14 +74,16 @@
 
     & .icon-button {
       display: block;
+    }
 
-      &:first-child {
-        @apply -ml-2;
-      }
+    & .icon-button:first-child,
+    & .icon-button-form:first-child .icon-button {
+      @apply -ml-2;
+    }
 
-      &:last-child {
-        @apply -mr-2;
-      }
+    & .icon-button:last-child,
+    & .icon-button-form:last-child .icon-button {
+      @apply -mr-2;
     }
   }
 
