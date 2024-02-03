@@ -4,7 +4,7 @@ require "rails_helper"
 
 RSpec.describe "Reports::RejectionsController#destroy" do
   subject(:request) do
-    delete "/signalements/#{report.id}/reject", as:, headers:, params:
+    delete "/signalements/reject/#{report.id}", as:, headers:, params:
   end
 
   let(:as)      { |e| e.metadata[:as] }

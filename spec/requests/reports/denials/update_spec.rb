@@ -4,7 +4,7 @@ require "rails_helper"
 
 RSpec.describe "Reports::DenialsController#update" do
   subject(:request) do
-    patch "/signalements/#{report.id}/deny", as:, headers:, params:
+    patch "/signalements/deny/#{report.id}", as:, headers:, params:
   end
 
   let(:as)      { |e| e.metadata[:as] }

@@ -3,21 +3,23 @@
 require "rails_helper"
 
 RSpec.describe API::TransmissionsController, :api do
+  let(:id) { SecureRandom.uuid }
+
   it { expect(get:    "http://api.example.com/transmissions").to be_unroutable }
   it { expect(post:   "http://api.example.com/transmissions").to be_unroutable }
   it { expect(put:    "http://api.example.com/transmissions").to be_unroutable }
   it { expect(patch:  "http://api.example.com/transmissions").to be_unroutable }
   it { expect(delete: "http://api.example.com/transmissions").to be_unroutable }
 
-  it { expect(get:    "http://api.example.com/transmissions/9c6c00c4").to be_unroutable }
-  it { expect(post:   "http://api.example.com/transmissions/9c6c00c4").to be_unroutable }
-  it { expect(put:    "http://api.example.com/transmissions/9c6c00c4").to be_unroutable }
-  it { expect(patch:  "http://api.example.com/transmissions/9c6c00c4").to be_unroutable }
-  it { expect(delete: "http://api.example.com/transmissions/9c6c00c4").to be_unroutable }
+  it { expect(get:    "http://api.example.com/transmissions/#{id}").to be_unroutable }
+  it { expect(post:   "http://api.example.com/transmissions/#{id}").to be_unroutable }
+  it { expect(put:    "http://api.example.com/transmissions/#{id}").to be_unroutable }
+  it { expect(patch:  "http://api.example.com/transmissions/#{id}").to be_unroutable }
+  it { expect(delete: "http://api.example.com/transmissions/#{id}").to be_unroutable }
 
-  it { expect(get:    "http://api.example.com/transmissions/9c6c00c4/finalisation").to be_unroutable }
-  it { expect(post:   "http://api.example.com/transmissions/9c6c00c4/finalisation").to be_unroutable }
-  it { expect(put:    "http://api.example.com/transmissions/9c6c00c4/finalisation").to route_to("api/transmissions#complete", id: "9c6c00c4") }
-  it { expect(patch:  "http://api.example.com/transmissions/9c6c00c4/finalisation").to be_unroutable }
-  it { expect(delete: "http://api.example.com/transmissions/9c6c00c4/finalisation").to be_unroutable }
+  it { expect(get:    "http://api.example.com/transmissions/#{id}/finalisation").to be_unroutable }
+  it { expect(post:   "http://api.example.com/transmissions/#{id}/finalisation").to be_unroutable }
+  it { expect(put:    "http://api.example.com/transmissions/#{id}/finalisation").to route_to("api/transmissions#complete", id:) }
+  it { expect(patch:  "http://api.example.com/transmissions/#{id}/finalisation").to be_unroutable }
+  it { expect(delete: "http://api.example.com/transmissions/#{id}/finalisation").to be_unroutable }
 end

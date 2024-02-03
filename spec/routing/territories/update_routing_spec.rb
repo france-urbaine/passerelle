@@ -3,6 +3,8 @@
 require "rails_helper"
 
 RSpec.describe Territories::UpdatesController do
+  let(:id) { SecureRandom.uuid }
+
   it { expect(get:    "/territoires/mise-a-jour").to route_to("territories/updates#edit") }
   it { expect(post:   "/territoires/mise-a-jour").to be_unroutable }
   it { expect(patch:  "/territoires/mise-a-jour").to route_to("territories/updates#update") }
@@ -14,8 +16,8 @@ RSpec.describe Territories::UpdatesController do
   it { expect(get:    "/territoires/mise-a-jour/undiscard").to be_unroutable }
   it { expect(patch:  "/territoires/mise-a-jour/undiscard").to be_unroutable }
 
-  it { expect(get:    "/territoires/mise-a-jour/9c6c00c4").to be_unroutable }
-  it { expect(post:   "/territoires/mise-a-jour/9c6c00c4").to be_unroutable }
-  it { expect(patch:  "/territoires/mise-a-jour/9c6c00c4").to be_unroutable }
-  it { expect(delete: "/territoires/mise-a-jour/9c6c00c4").to be_unroutable }
+  it { expect(get:    "/territoires/mise-a-jour/#{id}").to be_unroutable }
+  it { expect(post:   "/territoires/mise-a-jour/#{id}").to be_unroutable }
+  it { expect(patch:  "/territoires/mise-a-jour/#{id}").to be_unroutable }
+  it { expect(delete: "/territoires/mise-a-jour/#{id}").to be_unroutable }
 end

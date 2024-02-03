@@ -3,6 +3,8 @@
 require "rails_helper"
 
 RSpec.describe TransmissionsController do
+  let(:id) { SecureRandom.uuid }
+
   it { expect(get:    "/transmissions").to route_to("transmissions#show") }
   it { expect(post:   "/transmissions").to route_to("transmissions#create") }
   it { expect(delete: "/transmissions").to route_to("transmissions#destroy") }
@@ -15,13 +17,13 @@ RSpec.describe TransmissionsController do
   it { expect(get:    "/transmissions/undiscard").to be_unroutable }
   it { expect(patch:  "/transmissions/undiscard").to be_unroutable }
 
-  it { expect(get:    "/transmissions/9c6c00c4-0784-4ef8-8978-b1e0246882a7").to be_unroutable }
-  it { expect(post:   "/transmissions/9c6c00c4-0784-4ef8-8978-b1e0246882a7").to be_unroutable }
-  it { expect(patch:  "/transmissions/9c6c00c4-0784-4ef8-8978-b1e0246882a7").to be_unroutable }
-  it { expect(delete: "/transmissions/9c6c00c4-0784-4ef8-8978-b1e0246882a7").to be_unroutable }
+  it { expect(get:    "/transmissions/#{id}").to be_unroutable }
+  it { expect(post:   "/transmissions/#{id}").to be_unroutable }
+  it { expect(patch:  "/transmissions/#{id}").to be_unroutable }
+  it { expect(delete: "/transmissions/#{id}").to be_unroutable }
 
-  it { expect(get:    "/transmissions/9c6c00c4-0784-4ef8-8978-b1e0246882a7/edit").to      be_unroutable }
-  it { expect(get:    "/transmissions/9c6c00c4-0784-4ef8-8978-b1e0246882a7/remove").to    be_unroutable }
-  it { expect(get:    "/transmissions/9c6c00c4-0784-4ef8-8978-b1e0246882a7/undiscard").to be_unroutable }
-  it { expect(patch:  "/transmissions/9c6c00c4-0784-4ef8-8978-b1e0246882a7/undiscard").to be_unroutable }
+  it { expect(get:    "/transmissions/#{id}/edit").to      be_unroutable }
+  it { expect(get:    "/transmissions/#{id}/remove").to    be_unroutable }
+  it { expect(get:    "/transmissions/#{id}/undiscard").to be_unroutable }
+  it { expect(patch:  "/transmissions/#{id}/undiscard").to be_unroutable }
 end

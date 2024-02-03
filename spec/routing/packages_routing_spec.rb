@@ -3,6 +3,8 @@
 require "rails_helper"
 
 RSpec.describe PackagesController do
+  let(:id) { SecureRandom.uuid }
+
   it { expect(get:    "/paquets").to route_to("packages#index") }
   it { expect(post:   "/paquets").to be_unroutable }
   it { expect(patch:  "/paquets").to be_unroutable }
@@ -14,13 +16,13 @@ RSpec.describe PackagesController do
   it { expect(get:    "/paquets/undiscard").to be_unroutable }
   it { expect(patch:  "/paquets/undiscard").to be_unroutable }
 
-  it { expect(get:    "/paquets/9c6c00c4-0784-4ef8-8978-b1e0246882a7").to route_to("packages#show", id: "9c6c00c4-0784-4ef8-8978-b1e0246882a7") }
-  it { expect(post:   "/paquets/9c6c00c4-0784-4ef8-8978-b1e0246882a7").to be_unroutable }
-  it { expect(patch:  "/paquets/9c6c00c4-0784-4ef8-8978-b1e0246882a7").to be_unroutable }
-  it { expect(delete: "/paquets/9c6c00c4-0784-4ef8-8978-b1e0246882a7").to be_unroutable }
+  it { expect(get:    "/paquets/#{id}").to route_to("packages#show", id:) }
+  it { expect(post:   "/paquets/#{id}").to be_unroutable }
+  it { expect(patch:  "/paquets/#{id}").to be_unroutable }
+  it { expect(delete: "/paquets/#{id}").to be_unroutable }
 
-  it { expect(get:    "/paquets/9c6c00c4-0784-4ef8-8978-b1e0246882a7/edit").to      be_unroutable }
-  it { expect(get:    "/paquets/9c6c00c4-0784-4ef8-8978-b1e0246882a7/remove").to    be_unroutable }
-  it { expect(get:    "/paquets/9c6c00c4-0784-4ef8-8978-b1e0246882a7/undiscard").to be_unroutable }
-  it { expect(patch:  "/paquets/9c6c00c4-0784-4ef8-8978-b1e0246882a7/undiscard").to be_unroutable }
+  it { expect(get:    "/paquets/#{id}/edit").to      be_unroutable }
+  it { expect(get:    "/paquets/#{id}/remove").to    be_unroutable }
+  it { expect(get:    "/paquets/#{id}/undiscard").to be_unroutable }
+  it { expect(patch:  "/paquets/#{id}/undiscard").to be_unroutable }
 end
