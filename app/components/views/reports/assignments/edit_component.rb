@@ -19,7 +19,7 @@ module Views
         end
 
         def office_id_choice
-          current_ddfip.offices.pluck(:name, :id)
+          current_ddfip.offices.order(:name).pluck(:name, :id)
         end
 
         def office_id_options

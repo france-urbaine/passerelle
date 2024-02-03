@@ -86,7 +86,7 @@
 
       - list.with_attribute("Guichet") do |attribute|
         - if @report.assigned?
-          = @report.office&.name
+          = authorized_link_to @report.office
 
           - if allowed_to?(:assign?, @report)
             - attribute.with_action "Changer de guichet", edit_report_assignment_path(@report), icon: "arrows-right-left", modal: true

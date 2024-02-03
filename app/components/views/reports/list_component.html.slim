@@ -23,20 +23,23 @@
     - datatable.with_column(:reference, sort: !@dashboard)                { "Reference" }           if columns.include?(:reference)
     - datatable.with_column(:package,   sort: !@dashboard)                { "Paquet" }              if columns.include?(:package)
     - datatable.with_column(:collectivity)                                { "Collectivité" }        if columns.include?(:collectivity)
+    - datatable.with_column(:office)                                      { "Guichet" }             if columns.include?(:office)
 
-    / - datatable.with_column(:office)   { "Guichet" } if columns.include?(:office)
     / - datatable.with_column(:workshop) { "Dossier" } if columns.include?(:workshop)
 
     - datatable.with_empty_message do
-      - if params[:search]
+      - if @dashboard
+        | Aucun signalement.
+      - elsif params[:search]
         | Aucun signalement ne correspont à votre recherche.
       - else
         | Aucun signalement disponible.
 
     - datatable.each_row do |row, report|
-      - unless @dashboard
-        - if allowed_to?(:create?, Transmission) || allowed_to?(:destroy?, Transmission) || allowed_to?(:destroy_all?, Report)
-          - row.with_checkbox "Sélectionner ce signalement", described_by: :name
+      - if @dashboard
+        - row.with_checkbox "Sélectionner ce signalement", described_by: :name, disabled: true
+      - else
+        - row.with_checkbox "Sélectionner ce signalement", described_by: :name, disabled: (allowed_to?(:transmit?, Report) || allowed_to?(:destroy_all?, Report))
 
         - if allowed_to?(:destroy?, report)
           - row.with_action "Supprimer ce signalement", remove_report_path(report), icon: "trash", modal: true
@@ -75,6 +78,10 @@
 
       - row.with_column(:collectivity) do
         = authorized_link_to report.collectivity
+
+      - row.with_column(:office) do
+        - if report.assigned?
+          = authorized_link_to report.office
 
       - row.with_column(:package) do
         = authorized_link_to report.package

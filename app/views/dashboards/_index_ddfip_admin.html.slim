@@ -2,16 +2,23 @@
   - layout.with_breadcrumbs do |breadcrumbs|
     - breadcrumbs.with_h1 "Tableau de bord"
 
-  - layout.with_grid(class: "xl:grid-cols-4 md:grid-cols-2") do |grid|
-    - grid.with_column do
-      .dashboard-number
-        = current_organization.reports_packing_count
-        span.dashboard-number__unit Signalements non transmis
-
+  - layout.with_grid(class: "xl:grid-cols-5 md:grid-cols-2") do |grid|
     - grid.with_column do
       .dashboard-number
         = current_organization.reports_transmitted_count
-        span.dashboard-number__unit Signalements transmis
+        span.dashboard-number__unit Signalements reçus
+
+    - grid.with_column do
+      .dashboard-number
+        -# TODO: create a field calculated by triggers
+        = @reports.unassigned.count
+        span.dashboard-number__unit Signalements à assigner
+
+    - grid.with_column do
+      .dashboard-number
+        -# TODO: create a field calculated by triggers
+        = current_organization.reports_processing_count
+        span.dashboard-number__unit Signalements à traiter
 
     - grid.with_column do
       .dashboard-number
@@ -23,13 +30,17 @@
         = current_organization.reports_rejected_count
         span.dashboard-number__unit Signalements rejetés
 
-  - layout.with_header icon: "clipboard-document" do
-    | Derniers signalements à compléter
+  - layout.with_header icon: "clipboard-document" do |header|
+    | Derniers signalements reçus, à assigner
+
+    - header.with_action "Tout voir", icon: "magnifying-glass", disabled: true
 
   - layout.with_section do
-    = render Views::Reports::ListComponent.new(@reports.draft.order(created_at: :desc), dashboard: true) do |view|
+    = render Views::Reports::ListComponent.new(@reports.unassigned.order(transmitted_at: :desc), dashboard: true) do |view|  #.order_by_last_transmission_date
       - view.with_column(:reference)
       - view.with_column(:package)
+      - view.with_column(:collectivity)
+      - view.with_column(:workshop)
       - view.with_column(:form_type)
       - view.with_column(:anomalies)
       - view.with_column(:invariant)
@@ -38,28 +49,17 @@
       - view.with_column(:priority)
       - view.with_column(:status)
 
-  - layout.with_header icon: "clipboard-document" do
-    | Derniers signalements prêt à être transmis
+  - layout.with_header icon: "clipboard-document" do |header|
+    | Derniers signalements traités
 
-  - layout.with_section do
-    = render Views::Reports::ListComponent.new(@reports.ready.order(updated_at: :desc), dashboard: true) do |view|
-      - view.with_column(:reference)
-      - view.with_column(:package)
-      - view.with_column(:form_type)
-      - view.with_column(:anomalies)
-      - view.with_column(:invariant)
-      - view.with_column(:adresse)
-      - view.with_column(:commune)
-      - view.with_column(:priority)
-      - view.with_column(:status)
-
-  - layout.with_header icon: "clipboard-document" do
-    | Derniers signalements traités par la DDFIP
+    - header.with_action "Tout voir", icon: "magnifying-glass", disabled: true
 
   - layout.with_section do
     = render Views::Reports::ListComponent.new(@reports.resolved.order_by_resolved_date(:desc), dashboard: true) do |view|
       - view.with_column(:reference)
       - view.with_column(:package)
+      - view.with_column(:collectivity)
+      - view.with_column(:workshop)
       - view.with_column(:form_type)
       - view.with_column(:anomalies)
       - view.with_column(:invariant)

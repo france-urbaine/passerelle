@@ -1,0 +1,30 @@
+= content_layout_component do |layout|
+  - layout.with_breadcrumbs do |breadcrumbs|
+    - breadcrumbs.with_h1 "Tableau de bord"
+
+  - layout.with_grid(class: "md:grid-cols-2") do |grid|
+    - grid.with_column do
+      .dashboard-number
+        = @reports.processing.count
+        span.dashboard-number__unit Signalements non traités
+
+    - grid.with_column do
+      .dashboard-number
+        = @reports.resolved.count
+        span.dashboard-number__unit Signalements traités
+
+  - layout.with_header icon: "clipboard-document" do
+    | Derniers signalements à traiter
+
+  - layout.with_section do
+    = render Views::Reports::ListComponent.new(@reports.processing.order(updated_at: :desc), dashboard: true) do |view|  #.order_by_last_transmission_date
+      - view.with_column(:reference)
+      - view.with_column(:collectivity)
+      - view.with_column(:workshop)
+      - view.with_column(:form_type)
+      - view.with_column(:anomalies)
+      - view.with_column(:invariant)
+      - view.with_column(:adresse)
+      - view.with_column(:commune)
+      - view.with_column(:priority)
+      - view.with_column(:status)
