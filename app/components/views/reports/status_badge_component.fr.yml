@@ -1,9 +1,0 @@
-fr:
-  draft:                  Formulaire incomplet
-  ready:                  Formulaire complété
-  in_active_transmission: Transmission en attente
-  transmitted:            Signalement transmis, en attente de confirmation
-  denied:                 Signalement retourné
-  processing:             Signalement non traité
-  approved:               Signalement approuvé
-  rejected:               Signalement rejeté

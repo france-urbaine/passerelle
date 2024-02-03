@@ -1,0 +1,13 @@
+fr:
+  draft:          Formulaire incomplet
+  ready:          Formulaire complété
+  sent:           Signalement transmis
+  acknowledged:   Signalement transmis
+  denied:         Signalement retourné
+  processing:     Signalement en cours de traitement
+  approved:       Signalement approuvé
+  rejected:       Signalement rejeté
+
+  in_active_transmission: Transmission en attente
+  transmitted:            Signalement transmis
+  unassigned:             Signalement non assigné

@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Views::Reports::PriorityBadgeComponent, type: :component do
+RSpec.describe Views::Reports::PriorityBadge::Component, type: :component do
   it "renders a badge for a report with default prioriy" do
     report = build_stubbed(:report)
     render_inline described_class.new(report)
