@@ -1,3 +1,8 @@
 ---
 ignore:
+  # CVE-2024-0227
+  # See:
+  #   https://github.com/advisories/GHSA-chcr-x7hc-8fp8
+  #   https://github.com/france-urbaine/passerelle/releases/tag/v1.0-beta.6
+  #
   - GHSA-chcr-x7hc-8fp8

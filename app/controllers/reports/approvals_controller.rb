@@ -6,7 +6,12 @@ module Reports
 
     def edit
       @report = find_and_authorize_report
-      # @referrer_path = referrer_path || report_path(@report)
+
+      # FYI: If we implement the edit template, we'll have to
+      # uncomment to following line, and remove the redirection
+      #
+      #   @referrer_path = referrer_path || report_path(@report)
+      #
       redirect_to report_path(@report), status: :see_other
     end
 
@@ -15,8 +20,8 @@ module Reports
       service = Reports::StateService.new(@report)
       result  = service.approve
 
-      # TODO: replace referrer_path by redircet_path
-      # if we implement the edit temlate
+      # FYI: If we implement the edit template, we'll have to
+      # replace referrer_path by redirect_path
       #
       respond_with result,
         flash: true,
@@ -33,8 +38,8 @@ module Reports
       service = Reports::StateService.new(@report)
       result  = service.unapprove
 
-      # TODO: replace referrer_path by redircet_path
-      # if we implement the remove temlate
+      # FYI: If we implement the remove template, we'll have to
+      # replace referrer_path by redirect_path
       #
       respond_with result,
         flash: true,
