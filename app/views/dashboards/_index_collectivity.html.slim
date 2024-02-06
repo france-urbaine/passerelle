@@ -24,10 +24,25 @@
         span.dashboard-number__unit Signalements rejetés
 
   - layout.with_header icon: "clipboard-document" do
-    | Derniers signalements non transmis
+    | Derniers signalements à compléter
 
   - layout.with_section do
-    = render Views::Reports::ListComponent.new(@reports.packing.order(created_at: :desc), dashboard: true) do |view|
+    = render Views::Reports::ListComponent.new(@reports.draft.order(created_at: :desc), dashboard: true) do |view|
+      - view.with_column(:reference)
+      - view.with_column(:package)
+      - view.with_column(:form_type)
+      - view.with_column(:anomalies)
+      - view.with_column(:invariant)
+      - view.with_column(:adresse)
+      - view.with_column(:commune)
+      - view.with_column(:priority)
+      - view.with_column(:status)
+
+  - layout.with_header icon: "clipboard-document" do
+    | Derniers signalements prêt à être transmis
+
+  - layout.with_section do
+    = render Views::Reports::ListComponent.new(@reports.ready.order(updated_at: :desc), dashboard: true) do |view|
       - view.with_column(:reference)
       - view.with_column(:package)
       - view.with_column(:form_type)
@@ -42,7 +57,7 @@
     | Derniers signalements traités par la DDFIP
 
   - layout.with_section do
-    = render Views::Reports::ListComponent.new(@reports.resolved.order_by_last_examination_date, dashboard: true) do |view|
+    = render Views::Reports::ListComponent.new(@reports.resolved.order_by_resolved_date(:desc), dashboard: true) do |view|
       - view.with_column(:reference)
       - view.with_column(:package)
       - view.with_column(:form_type)

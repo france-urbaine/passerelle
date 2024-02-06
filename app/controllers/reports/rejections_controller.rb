@@ -22,7 +22,6 @@ module Reports
     def remove
       @report = find_and_authorize_report
       @referrer_path = referrer_path || report_path(@report)
-      @redirect_path = @referrer_path unless @referrer_path.include?(report_path(@report))
     end
 
     def destroy
@@ -30,9 +29,12 @@ module Reports
       service = Reports::StateService.new(@report)
       result  = service.unreject
 
+      # TODO: replace referrer_path by redircet_path
+      # if we implement the remove temlate
+      #
       respond_with result,
         flash: true,
-        location: redirect_path || report_path(@report)
+        location: referrer_path || report_path(@report)
     end
 
     private

@@ -3,6 +3,8 @@
 require "rails_helper"
 
 RSpec.describe Organization::OfficesController do
+  let(:id) { SecureRandom.uuid }
+
   it { expect(get:    "/organisation/guichets").to route_to("organization/offices#index") }
   it { expect(post:   "/organisation/guichets").to route_to("organization/offices#create") }
   it { expect(patch:  "/organisation/guichets").to be_unroutable }
@@ -14,13 +16,13 @@ RSpec.describe Organization::OfficesController do
   it { expect(get:    "/organisation/guichets/undiscard").to be_unroutable }
   it { expect(patch:  "/organisation/guichets/undiscard").to route_to("organization/offices#undiscard_all") }
 
-  it { expect(get:    "/organisation/guichets/9c6c00c4").to route_to("organization/offices#show", id: "9c6c00c4") }
-  it { expect(post:   "/organisation/guichets/9c6c00c4").to be_unroutable }
-  it { expect(patch:  "/organisation/guichets/9c6c00c4").to route_to("organization/offices#update", id: "9c6c00c4") }
-  it { expect(delete: "/organisation/guichets/9c6c00c4").to route_to("organization/offices#destroy", id: "9c6c00c4") }
+  it { expect(get:    "/organisation/guichets/#{id}").to route_to("organization/offices#show", id:) }
+  it { expect(post:   "/organisation/guichets/#{id}").to be_unroutable }
+  it { expect(patch:  "/organisation/guichets/#{id}").to route_to("organization/offices#update", id:) }
+  it { expect(delete: "/organisation/guichets/#{id}").to route_to("organization/offices#destroy", id:) }
 
-  it { expect(get:    "/organisation/guichets/9c6c00c4/edit").to      route_to("organization/offices#edit", id: "9c6c00c4") }
-  it { expect(get:    "/organisation/guichets/9c6c00c4/remove").to    route_to("organization/offices#remove", id: "9c6c00c4") }
-  it { expect(get:    "/organisation/guichets/9c6c00c4/undiscard").to be_unroutable }
-  it { expect(patch:  "/organisation/guichets/9c6c00c4/undiscard").to route_to("organization/offices#undiscard", id: "9c6c00c4") }
+  it { expect(get:    "/organisation/guichets/#{id}/edit").to      route_to("organization/offices#edit", id:) }
+  it { expect(get:    "/organisation/guichets/#{id}/remove").to    route_to("organization/offices#remove", id:) }
+  it { expect(get:    "/organisation/guichets/#{id}/undiscard").to be_unroutable }
+  it { expect(patch:  "/organisation/guichets/#{id}/undiscard").to route_to("organization/offices#undiscard", id:) }
 end

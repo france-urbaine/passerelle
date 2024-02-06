@@ -440,8 +440,12 @@ class Report < ApplicationRecord
     self
   }
 
-  scope :order_by_last_examination_date, lambda {
-    order(Arel.sql(%{COALESCE("reports"."rejected_at", "reports"."approved_at", "reports"."debated_at") DESC}))
+  scope :order_by_resolved_date, lambda { |direction = :asc|
+    if direction == :desc
+      order(Arel.sql(%{COALESCE("reports"."approved_at", "reports"."rejected_at") DESC}))
+    else
+      order(Arel.sql(%{COALESCE("reports"."approved_at", "reports"."rejected_at") ASC}))
+    end
   }
 
   scope :order_by_last_transmission_date, -> { order(transmitted_at: :desc) }

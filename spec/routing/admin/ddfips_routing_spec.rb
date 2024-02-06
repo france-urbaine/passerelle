@@ -3,6 +3,8 @@
 require "rails_helper"
 
 RSpec.describe Admin::DDFIPsController do
+  let(:id) { SecureRandom.uuid }
+
   it { expect(get:    "/admin/ddfips").to route_to("admin/ddfips#index") }
   it { expect(post:   "/admin/ddfips").to route_to("admin/ddfips#create") }
   it { expect(patch:  "/admin/ddfips").to be_unroutable }
@@ -14,13 +16,13 @@ RSpec.describe Admin::DDFIPsController do
   it { expect(get:    "/admin/ddfips/undiscard").to be_unroutable }
   it { expect(patch:  "/admin/ddfips/undiscard").to route_to("admin/ddfips#undiscard_all") }
 
-  it { expect(get:    "/admin/ddfips/9c6c00c4").to route_to("admin/ddfips#show", id: "9c6c00c4") }
-  it { expect(post:   "/admin/ddfips/9c6c00c4").to be_unroutable }
-  it { expect(patch:  "/admin/ddfips/9c6c00c4").to route_to("admin/ddfips#update", id: "9c6c00c4") }
-  it { expect(delete: "/admin/ddfips/9c6c00c4").to route_to("admin/ddfips#destroy", id: "9c6c00c4") }
+  it { expect(get:    "/admin/ddfips/#{id}").to route_to("admin/ddfips#show", id:) }
+  it { expect(post:   "/admin/ddfips/#{id}").to be_unroutable }
+  it { expect(patch:  "/admin/ddfips/#{id}").to route_to("admin/ddfips#update", id:) }
+  it { expect(delete: "/admin/ddfips/#{id}").to route_to("admin/ddfips#destroy", id:) }
 
-  it { expect(get:    "/admin/ddfips/9c6c00c4/edit").to      route_to("admin/ddfips#edit", id: "9c6c00c4") }
-  it { expect(get:    "/admin/ddfips/9c6c00c4/remove").to    route_to("admin/ddfips#remove", id: "9c6c00c4") }
-  it { expect(get:    "/admin/ddfips/9c6c00c4/undiscard").to be_unroutable }
-  it { expect(patch:  "/admin/ddfips/9c6c00c4/undiscard").to route_to("admin/ddfips#undiscard", id: "9c6c00c4") }
+  it { expect(get:    "/admin/ddfips/#{id}/edit").to      route_to("admin/ddfips#edit", id:) }
+  it { expect(get:    "/admin/ddfips/#{id}/remove").to    route_to("admin/ddfips#remove", id:) }
+  it { expect(get:    "/admin/ddfips/#{id}/undiscard").to be_unroutable }
+  it { expect(patch:  "/admin/ddfips/#{id}/undiscard").to route_to("admin/ddfips#undiscard", id:) }
 end

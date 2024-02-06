@@ -3,24 +3,27 @@
 require "rails_helper"
 
 RSpec.describe Admin::Publishers::AuditsController do
-  it { expect(get:    "/admin/editeurs/9c6c00c4/audits").to route_to("admin/publishers/audits#index", publisher_id: "9c6c00c4") }
-  it { expect(post:   "/admin/editeurs/9c6c00c4/audits").to be_unroutable }
-  it { expect(patch:  "/admin/editeurs/9c6c00c4/audits").to be_unroutable }
-  it { expect(delete: "/admin/editeurs/9c6c00c4/audits").to be_unroutable }
+  let(:publisher_id) { SecureRandom.uuid }
+  let(:id)           { SecureRandom.uuid }
 
-  it { expect(get:    "/admin/editeurs/9c6c00c4/audits/new").to       be_unroutable }
-  it { expect(get:    "/admin/editeurs/9c6c00c4/audits/edit").to      be_unroutable }
-  it { expect(get:    "/admin/editeurs/9c6c00c4/audits/remove").to    be_unroutable }
-  it { expect(get:    "/admin/editeurs/9c6c00c4/audits/undiscard").to be_unroutable }
-  it { expect(patch:  "/admin/editeurs/9c6c00c4/audits/undiscard").to be_unroutable }
+  it { expect(get:    "/admin/editeurs/#{publisher_id}/audits").to route_to("admin/publishers/audits#index", publisher_id:) }
+  it { expect(post:   "/admin/editeurs/#{publisher_id}/audits").to be_unroutable }
+  it { expect(patch:  "/admin/editeurs/#{publisher_id}/audits").to be_unroutable }
+  it { expect(delete: "/admin/editeurs/#{publisher_id}/audits").to be_unroutable }
 
-  it { expect(get:    "/admin/editeurs/9c6c00c4/audits/b12170f4").to be_unroutable }
-  it { expect(post:   "/admin/editeurs/9c6c00c4/audits/b12170f4").to be_unroutable }
-  it { expect(patch:  "/admin/editeurs/9c6c00c4/audits/b12170f4").to be_unroutable }
-  it { expect(delete: "/admin/editeurs/9c6c00c4/audits/b12170f4").to be_unroutable }
+  it { expect(get:    "/admin/editeurs/#{publisher_id}/audits/new").to       be_unroutable }
+  it { expect(get:    "/admin/editeurs/#{publisher_id}/audits/edit").to      be_unroutable }
+  it { expect(get:    "/admin/editeurs/#{publisher_id}/audits/remove").to    be_unroutable }
+  it { expect(get:    "/admin/editeurs/#{publisher_id}/audits/undiscard").to be_unroutable }
+  it { expect(patch:  "/admin/editeurs/#{publisher_id}/audits/undiscard").to be_unroutable }
 
-  it { expect(get:    "/admin/editeurs/9c6c00c4/audits/b12170f4/edit").to      be_unroutable }
-  it { expect(get:    "/admin/editeurs/9c6c00c4/audits/b12170f4/remove").to    be_unroutable }
-  it { expect(get:    "/admin/editeurs/9c6c00c4/audits/b12170f4/undiscard").to be_unroutable }
-  it { expect(patch:  "/admin/editeurs/9c6c00c4/audits/b12170f4/undiscard").to be_unroutable }
+  it { expect(get:    "/admin/editeurs/#{publisher_id}/audits/#{id}").to be_unroutable }
+  it { expect(post:   "/admin/editeurs/#{publisher_id}/audits/#{id}").to be_unroutable }
+  it { expect(patch:  "/admin/editeurs/#{publisher_id}/audits/#{id}").to be_unroutable }
+  it { expect(delete: "/admin/editeurs/#{publisher_id}/audits/#{id}").to be_unroutable }
+
+  it { expect(get:    "/admin/editeurs/#{publisher_id}/audits/#{id}/edit").to      be_unroutable }
+  it { expect(get:    "/admin/editeurs/#{publisher_id}/audits/#{id}/remove").to    be_unroutable }
+  it { expect(get:    "/admin/editeurs/#{publisher_id}/audits/#{id}/undiscard").to be_unroutable }
+  it { expect(patch:  "/admin/editeurs/#{publisher_id}/audits/#{id}/undiscard").to be_unroutable }
 end

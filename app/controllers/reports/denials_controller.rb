@@ -22,7 +22,6 @@ module Reports
     def remove
       @report = find_and_authorize_report
       @referrer_path = referrer_path || report_path(@report)
-      @redirect_path = @referrer_path unless @referrer_path.include?(report_path(@report))
     end
 
     def destroy

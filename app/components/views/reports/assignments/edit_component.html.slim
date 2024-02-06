@@ -6,12 +6,12 @@
     - modal.with_form(model: @report, url: report_assignment_path(@report)) do |form|
       - modal.with_hidden_field :redirect, redirection_path
 
-      p Vous êtes sur le point assigner le signalement suivant à un guichet :
+      p Vous êtes sur le point d'assigner le signalement suivant à un guichet :
       = render Views::Reports::ShortDetailsComponent.new(@report)
 
       = form.block :office_id do
-        = form.label :office_id, "Veuillez sélectionner le guichet auquel sera assigné ce signalement :"
+        = form.label :office_id, "Veuillez sélectionner un guichet :"
         = form.select :office_id, office_id_choice, office_id_options
 
-    - modal.with_submit_action "Enregistrer"
+    - modal.with_submit_action "Continuer"
     - modal.with_close_action "Annuler"

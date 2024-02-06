@@ -78,11 +78,23 @@ Rails.application.routes.draw do
     #
     resources :dashboards, only: %i[index], path: "/"
 
-    constraints id: %r{(?!(new|edit|remove|discard|undiscard|guichets))[^/]+} do
+    # FYI: We constrain IDs to valid UUIDs to avoid recognizing any words such
+    # as "/new", "/edit" as a valid path when the corresponding action is excluded.
+    # Otherwise, it might point to :show or some other unexpected action
+    #
+    # Example:
+    #   GET "/paquets/new"
+    #   GET "/admin/utilisateurs/guichets"
+    #
+    constraints id: /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/ do
       # Reports stuff
       #
-      resources :reports, path: "signalements", concerns: %i[removable removable_collection], path_names: { edit: "/edit/:form" } do
-        scope module: "reports", path_names: { edit: "/edit" } do
+      resources :reports, path: "signalements", except: %i[edit], concerns: %i[removable removable_collection] do
+        # FYI: Do not use `path_names: { edit: "/edit/:form" }`,
+        # or it'll apply to all nested resources and cause unexpected issues.
+        get :edit, on: :member, path: "/edit/:form"
+
+        scope module: "reports" do
           get "/documents/:id(/*filename)",
             to:          "documents#show",
             as:          :document,
@@ -95,21 +107,19 @@ Rails.application.routes.draw do
           end
         end
 
-        scope module: "reports", only: %i[edit update destroy], path_names: { edit: "/" } do
-          resource :assignment, path: "/assign" do
-            concerns :removable, undiscard: false
-          end
+        collection do
+          scope module: "reports", as: :report do
+            concern :report_state do
+              get   :edit,       on: :member, path: "/"
+              get   :remove,     on: :member
+              get   :edit_all,   on: :collection, path: "/"
+              patch :update_all, on: :collection, path: "/", as: nil
+            end
 
-          resource :denial, path: "/deny" do
-            concerns :removable, undiscard: false
-          end
-
-          resource :approval, path: "/approve" do
-            concerns :removable, undiscard: false
-          end
-
-          resource :rejection, path: "/reject" do
-            concerns :removable, undiscard: false
+            resources :assignments, path: "/assign",  only: %i[update destroy], concerns: %i[report_state], param: :report_id, report_id: /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/
+            resources :denials,     path: "/deny",    only: %i[update destroy], concerns: %i[report_state], param: :report_id, report_id: /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/
+            resources :approvals,   path: "/approve", only: %i[update destroy], concerns: %i[report_state], param: :report_id, report_id: /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/
+            resources :rejections,  path: "/reject",  only: %i[update destroy], concerns: %i[report_state], param: :report_id, report_id: /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/
           end
         end
       end
@@ -293,7 +303,14 @@ Rails.application.routes.draw do
     namespace :api, path: "/" do
       get "/", to: "home#index"
 
-      constraints id: %r{(?!(new|edit|remove|discard|undiscard|guichets))[^/]+} do
+      # FYI: Like on the main domain, we want to constrain IDs to valid UUIDs.
+      #
+      # However, we also need to allow IDs placeholders used in documentation.
+      # Example:
+      #     /signalements/:id
+      #     /signalements/$REPORT_ID
+      #
+      constraints id: /([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|:id|\$[A-Z_]+)/ do
         resources :collectivities, only: %i[index], path: "/collectivites" do
           resources :transmissions, only: %i[create]
         end

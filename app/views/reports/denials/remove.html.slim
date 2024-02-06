@@ -1,16 +1,1 @@
-= modal_frame_component(referrer: @referrer_path) do |template|
-  - template.with_modal do |modal|
-    - modal.with_header do
-      | Retour d'un signalement
-
-    - modal.with_form(url: report_denial_path(@report), method: :delete) do
-      - modal.with_hidden_field :redirect, @redirect_path
-
-      p Vous êtes sur le point d'annuler le retour à la collectivité du signalement suivant :
-      = render Views::Reports::ShortDetailsComponent.new(@report)
-
-      p
-        | Ce signalement sera de nouveau disponible dans la liste des signalements à assigner.
-
-    - modal.with_submit_action "Continuer", autofocus: true
-    - modal.with_close_action "Annuler"
+= render Views::Reports::Denials::RemoveComponent.new(@report, referrer: @referrer_path)

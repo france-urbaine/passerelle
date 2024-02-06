@@ -858,14 +858,24 @@ RSpec.describe Report do
       end
     end
 
-    describe ".order_by_last_examination_date" do
-      it "orders reports by latest date of examination" do
+    describe ".order_by_resolved_date" do
+      it "orders reports by resolved date" do
         expect {
-          described_class.order_by_last_examination_date.load
+          described_class.order_by_resolved_date.load
         }.to perform_sql_query(<<~SQL)
           SELECT     "reports".*
           FROM       "reports"
-          ORDER BY   COALESCE("reports"."rejected_at", "reports"."approved_at", "reports"."debated_at") DESC
+          ORDER BY   COALESCE("reports"."approved_at", "reports"."rejected_at") ASC
+        SQL
+      end
+
+      it "orders reports by resolved date in reversed order" do
+        expect {
+          described_class.order_by_resolved_date(:desc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT     "reports".*
+          FROM       "reports"
+          ORDER BY   COALESCE("reports"."approved_at", "reports"."rejected_at") DESC
         SQL
       end
     end

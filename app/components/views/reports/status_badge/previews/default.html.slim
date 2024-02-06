@@ -1,0 +1,14 @@
+.flex.flex-col.space-y-4.items-start.mb-16
+  = render Views::Reports::StatusBadge::Component.new(:draft)
+  = render Views::Reports::StatusBadge::Component.new(:ready)
+  = render Views::Reports::StatusBadge::Component.new(:sent)
+  = render Views::Reports::StatusBadge::Component.new(:acknowledged)
+  = render Views::Reports::StatusBadge::Component.new(:processing)
+  = render Views::Reports::StatusBadge::Component.new(:denied)
+  = render Views::Reports::StatusBadge::Component.new(:approved)
+  = render Views::Reports::StatusBadge::Component.new(:rejected)
+
+.flex.flex-col.space-y-4.items-start
+  = render Views::Reports::StatusBadge::Component.new(:in_active_transmission)
+  = render Views::Reports::StatusBadge::Component.new(:transmitted)
+  = render Views::Reports::StatusBadge::Component.new(:unassigned)

@@ -3,7 +3,7 @@
 require "rails_helper"
 
 RSpec.describe Admin::DGFIPs::UsersController do
-  it { expect(get:    "/admin/dgfips/9c6c00c4/utilisateurs").to be_unroutable }
+  let(:id) { SecureRandom.uuid }
 
   it { expect(get:    "/admin/dgfip/utilisateurs").to route_to("admin/dgfips/users#index") }
   it { expect(post:   "/admin/dgfip/utilisateurs").to route_to("admin/dgfips/users#create") }
@@ -16,13 +16,13 @@ RSpec.describe Admin::DGFIPs::UsersController do
   it { expect(get:    "/admin/dgfip/utilisateurs/undiscard").to be_unroutable }
   it { expect(patch:  "/admin/dgfip/utilisateurs/undiscard").to route_to("admin/dgfips/users#undiscard_all") }
 
-  it { expect(get:    "/admin/dgfip/utilisateurs/b12170f4").to be_unroutable }
-  it { expect(post:   "/admin/dgfip/utilisateurs/b12170f4").to be_unroutable }
-  it { expect(patch:  "/admin/dgfip/utilisateurs/b12170f4").to be_unroutable }
-  it { expect(delete: "/admin/dgfip/utilisateurs/b12170f4").to be_unroutable }
+  it { expect(get:    "/admin/dgfip/utilisateurs/#{id}").to be_unroutable }
+  it { expect(post:   "/admin/dgfip/utilisateurs/#{id}").to be_unroutable }
+  it { expect(patch:  "/admin/dgfip/utilisateurs/#{id}").to be_unroutable }
+  it { expect(delete: "/admin/dgfip/utilisateurs/#{id}").to be_unroutable }
 
-  it { expect(get:    "/admin/dgfip/utilisateurs/b12170f4/edit").to      be_unroutable }
-  it { expect(get:    "/admin/dgfip/utilisateurs/b12170f4/remove").to    be_unroutable }
-  it { expect(get:    "/admin/dgfip/utilisateurs/b12170f4/undiscard").to be_unroutable }
-  it { expect(patch:  "/admin/dgfip/utilisateurs/b12170f4/undiscard").to be_unroutable }
+  it { expect(get:    "/admin/dgfip/utilisateurs/#{id}/edit").to      be_unroutable }
+  it { expect(get:    "/admin/dgfip/utilisateurs/#{id}/remove").to    be_unroutable }
+  it { expect(get:    "/admin/dgfip/utilisateurs/#{id}/undiscard").to be_unroutable }
+  it { expect(patch:  "/admin/dgfip/utilisateurs/#{id}/undiscard").to be_unroutable }
 end

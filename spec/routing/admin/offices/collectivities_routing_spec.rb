@@ -3,24 +3,27 @@
 require "rails_helper"
 
 RSpec.describe Admin::Offices::CollectivitiesController do
-  it { expect(get:    "/admin/guichets/9c6c00c4/collectivites").to route_to("admin/offices/collectivities#index", office_id: "9c6c00c4") }
-  it { expect(post:   "/admin/guichets/9c6c00c4/collectivites").to be_unroutable }
-  it { expect(patch:  "/admin/guichets/9c6c00c4/collectivites").to be_unroutable }
-  it { expect(delete: "/admin/guichets/9c6c00c4/collectivites").to be_unroutable }
+  let(:office_id) { SecureRandom.uuid }
+  let(:id)        { SecureRandom.uuid }
 
-  it { expect(get:    "/admin/guichets/9c6c00c4/collectivites/new").to       be_unroutable }
-  it { expect(get:    "/admin/guichets/9c6c00c4/collectivites/edit").to      be_unroutable }
-  it { expect(get:    "/admin/guichets/9c6c00c4/collectivites/remove").to    be_unroutable }
-  it { expect(get:    "/admin/guichets/9c6c00c4/collectivites/undiscard").to be_unroutable }
-  it { expect(patch:  "/admin/guichets/9c6c00c4/collectivites/undiscard").to be_unroutable }
+  it { expect(get:    "/admin/guichets/#{office_id}/collectivites").to route_to("admin/offices/collectivities#index", office_id:) }
+  it { expect(post:   "/admin/guichets/#{office_id}/collectivites").to be_unroutable }
+  it { expect(patch:  "/admin/guichets/#{office_id}/collectivites").to be_unroutable }
+  it { expect(delete: "/admin/guichets/#{office_id}/collectivites").to be_unroutable }
 
-  it { expect(get:    "/admin/guichets/9c6c00c4/collectivites/b12170f4").to be_unroutable }
-  it { expect(post:   "/admin/guichets/9c6c00c4/collectivites/b12170f4").to be_unroutable }
-  it { expect(patch:  "/admin/guichets/9c6c00c4/collectivites/b12170f4").to be_unroutable }
-  it { expect(delete: "/admin/guichets/9c6c00c4/collectivites/b12170f4").to be_unroutable }
+  it { expect(get:    "/admin/guichets/#{office_id}/collectivites/new").to       be_unroutable }
+  it { expect(get:    "/admin/guichets/#{office_id}/collectivites/edit").to      be_unroutable }
+  it { expect(get:    "/admin/guichets/#{office_id}/collectivites/remove").to    be_unroutable }
+  it { expect(get:    "/admin/guichets/#{office_id}/collectivites/undiscard").to be_unroutable }
+  it { expect(patch:  "/admin/guichets/#{office_id}/collectivites/undiscard").to be_unroutable }
 
-  it { expect(get:    "/admin/guichets/9c6c00c4/collectivites/b12170f4/edit").to      be_unroutable }
-  it { expect(get:    "/admin/guichets/9c6c00c4/collectivites/b12170f4/remove").to    be_unroutable }
-  it { expect(get:    "/admin/guichets/9c6c00c4/collectivites/b12170f4/undiscard").to be_unroutable }
-  it { expect(patch:  "/admin/guichets/9c6c00c4/collectivites/b12170f4/undiscard").to be_unroutable }
+  it { expect(get:    "/admin/guichets/#{office_id}/collectivites/#{id}").to be_unroutable }
+  it { expect(post:   "/admin/guichets/#{office_id}/collectivites/#{id}").to be_unroutable }
+  it { expect(patch:  "/admin/guichets/#{office_id}/collectivites/#{id}").to be_unroutable }
+  it { expect(delete: "/admin/guichets/#{office_id}/collectivites/#{id}").to be_unroutable }
+
+  it { expect(get:    "/admin/guichets/#{office_id}/collectivites/#{id}/edit").to      be_unroutable }
+  it { expect(get:    "/admin/guichets/#{office_id}/collectivites/#{id}/remove").to    be_unroutable }
+  it { expect(get:    "/admin/guichets/#{office_id}/collectivites/#{id}/undiscard").to be_unroutable }
+  it { expect(patch:  "/admin/guichets/#{office_id}/collectivites/#{id}/undiscard").to be_unroutable }
 end
