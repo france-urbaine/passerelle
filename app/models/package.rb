@@ -11,12 +11,14 @@
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #  discarded_at           :datetime
-#  reports_count          :integer          default(0), not null
-#  reports_approved_count :integer          default(0), not null
-#  reports_rejected_count :integer          default(0), not null
 #  sandbox                :boolean          default(FALSE), not null
 #  transmission_id        :uuid
 #  ddfip_id               :uuid
+#  reports_count          :integer          default(0), not null
+#  reports_accepted_count :integer          default(0), not null
+#  reports_rejected_count :integer          default(0), not null
+#  reports_approved_count :integer          default(0), not null
+#  reports_canceled_count :integer          default(0), not null
 #
 # Indexes
 #

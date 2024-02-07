@@ -12,9 +12,6 @@
 #  sibling_id                                     :string
 #  created_at                                     :datetime         not null
 #  updated_at                                     :datetime         not null
-#  approved_at                                    :datetime
-#  rejected_at                                    :datetime
-#  debated_at                                     :datetime
 #  discarded_at                                   :datetime
 #  reference                                      :string
 #  form_type                                      :enum             not null
@@ -113,16 +110,18 @@
 #  proposition_code_naf                           :string
 #  proposition_date_debut_activite                :date
 #  transmission_id                                :uuid
-#  ready_at                                       :datetime
 #  sandbox                                        :boolean          default(FALSE), not null
-#  transmitted_at                                 :datetime
-#  assigned_at                                    :datetime
-#  denied_at                                      :datetime
 #  office_id                                      :uuid
 #  assignee_id                                    :uuid
-#  acknowledged_at                                :datetime
 #  ddfip_id                                       :uuid
-#  state                                          :string           default("draft")
+#  state                                          :enum             default("draft"), not null
+#  completed_at                                   :datetime
+#  transmitted_at                                 :datetime
+#  acknowledged_at                                :datetime
+#  accepted_at                                    :datetime
+#  assigned_at                                    :datetime
+#  resolved_at                                    :datetime
+#  returned_at                                    :datetime
 #
 # Indexes
 #
