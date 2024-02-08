@@ -69,10 +69,12 @@ module Matchers
       end
 
       def diff_queries(message)
-        ::RSpec::Matchers::ExpectedsForMultipleDiffs.from(@expected_queries || []).message_with_diff(
-          message,
-          RSpec::Expectations.differ,
+        ::RSpec::Matchers::MultiMatcherDiff.from(
+          @expected_queries || [],
           @actual_queries
+        ).message_with_diff(
+          message,
+          RSpec::Expectations.differ
         )
       end
     end
