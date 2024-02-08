@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Reports
-  class AssignmentPolicy < ApplicationPolicy
+  class AcceptancePolicy < ApplicationPolicy
     alias_rule :edit?, :update?, :remove?, :destroy?, to: :manage?
 
     def manage?
@@ -12,7 +12,7 @@ module Reports
           record.kept? &&
           record.out_of_sandbox? &&
           record.ddfip_id == organization.id &&
-          record.assignable?
+          record.acceptable?
       end
     end
 

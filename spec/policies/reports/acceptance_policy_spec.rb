@@ -3,7 +3,7 @@
 require "rails_helper"
 require_relative "shared_example_for_target_office"
 
-RSpec.describe Reports::AssignmentPolicy, type: :policy do
+RSpec.describe Reports::AcceptancePolicy, type: :policy do
   describe_rule :manage? do
     context "without record" do
       let(:record) { Report }
@@ -41,7 +41,7 @@ RSpec.describe Reports::AssignmentPolicy, type: :policy do
       context "when transmitted to the current DDFIP" do
         let(:record) { build_stubbed(:report, :transmitted_to_ddfip, ddfip: current_organization) }
 
-        it_behaves_like("when current user is a DDFIP admin")             { failed }
+        it_behaves_like("when current user is a DDFIP admin")             { succeed }
         it_behaves_like("when current user is a DDFIP user")              { failed }
         it_behaves_like("when current user is member of targeted office") { failed }
       end
@@ -65,7 +65,7 @@ RSpec.describe Reports::AssignmentPolicy, type: :policy do
       context "when assigned by the current DDFIP" do
         let(:record) { build_stubbed(:report, :assigned_by_ddfip, ddfip: current_organization) }
 
-        it_behaves_like("when current user is a DDFIP admin")             { succeed }
+        it_behaves_like("when current user is a DDFIP admin")             { failed }
         it_behaves_like("when current user is a DDFIP user")              { failed }
         it_behaves_like("when current user is member of targeted office") { failed }
       end
@@ -105,7 +105,7 @@ RSpec.describe Reports::AssignmentPolicy, type: :policy do
       context "when rejected by the current DDFIP" do
         let(:record) { build_stubbed(:report, :rejected_by_ddfip, ddfip: current_organization) }
 
-        it_behaves_like("when current user is a DDFIP admin")             { failed }
+        it_behaves_like("when current user is a DDFIP admin")             { succeed }
         it_behaves_like("when current user is a DDFIP user")              { failed }
         it_behaves_like("when current user is member of targeted office") { failed }
       end

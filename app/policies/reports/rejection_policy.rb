@@ -6,18 +6,18 @@ module Reports
 
     def manage?
       if record == Report
-        ddfip?
+        ddfip_admin?
       elsif record.is_a?(Report)
-        ddfip? &&
+        ddfip_admin? &&
           record.kept? &&
           record.out_of_sandbox? &&
           record.ddfip_id == organization.id &&
-          record.assigned?
+          record.rejectable?
       end
     end
 
     params_filter do |params|
-      params.permit(:reponse) if ddfip?
+      params.permit(:reponse) if ddfip_admin?
     end
   end
 end

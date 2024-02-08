@@ -1,19 +1,23 @@
 # frozen_string_literal: true
 
 module Reports
-  class ApprovalPolicy < ApplicationPolicy
+  class ConfirmationPolicy < ApplicationPolicy
     alias_rule :edit?, :update?, :remove?, :destroy?, to: :manage?
 
     def manage?
       if record == Report
-        ddfip?
+        ddfip_admin?
       elsif record.is_a?(Report)
-        ddfip? &&
+        ddfip_admin? &&
           record.kept? &&
           record.out_of_sandbox? &&
           record.ddfip_id == organization.id &&
-          record.assigned?
+          record.confirmable?
       end
+    end
+
+    params_filter do |_params|
+      nil
     end
   end
 end
