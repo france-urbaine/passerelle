@@ -72,7 +72,7 @@ def test_env(scope)
   if ENV["CI"] == "true"
     env["SIMPLE_COV"] = "false"
     env["SUPER_DIFF"] = "false"
-    env["CAPYBARA_MAX_WAIT_TIME"] = "4"
+    env["CAPYBARA_MAX_WAIT_TIME"] = "6"
   end
 
   env

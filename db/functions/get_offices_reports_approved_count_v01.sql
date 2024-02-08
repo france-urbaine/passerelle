@@ -3,20 +3,12 @@ RETURNS integer
 AS $function$
   BEGIN
     RETURN (
-      SELECT     COUNT(*)
-      FROM       "reports"
-      INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
-      INNER JOIN "office_communes"
-         ON      "office_communes"."code_insee" = "reports"."code_insee"
-        AND      "office_communes"."office_id" = offices."id"
-      WHERE      ARRAY["reports"."form_type"] <@ offices."competences"
-        AND      "packages"."sandbox" = FALSE
-        AND      "packages"."discarded_at" IS NULL
-        AND      "packages"."assigned_at"  IS NOT NULL
-        AND      "packages"."returned_at"  IS NULL
-        AND      "reports"."discarded_at"  IS NULL
-        AND      "reports"."approved_at"   IS NOT NULL
-        AND      "reports"."rejected_at"   IS NULL
+      SELECT COUNT(*)
+      FROM   "reports"
+      WHERE  "reports"."office_id" = offices."id"
+        AND  "reports"."discarded_at" IS NULL
+        AND  "reports"."sandbox" = FALSE
+        AND  "reports"."state" = 'approved'
     );
   END;
 $function$ LANGUAGE plpgsql;

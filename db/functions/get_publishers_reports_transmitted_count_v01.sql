@@ -5,11 +5,10 @@ AS $function$
     RETURN (
       SELECT     COUNT(*)
       FROM       "reports"
-      INNER JOIN "packages" ON "packages"."id" = "reports"."package_id"
-      WHERE      "packages"."sandbox" = FALSE
-        AND      "packages"."discarded_at" IS NULL
-        AND      "reports"."discarded_at"  IS NULL
-        AND      "reports"."publisher_id" = publishers."id"
+      WHERE      "reports"."publisher_id" = publishers."id"
+        AND      "reports"."sandbox" = FALSE
+        AND      "reports"."transmitted_at" IS NOT NULL
+        AND      "reports"."discarded_at" IS NULL
     );
   END;
 $function$ LANGUAGE plpgsql;

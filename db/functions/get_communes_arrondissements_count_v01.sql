@@ -5,7 +5,7 @@ AS $function$
     RETURN (
       SELECT COUNT(*)
       FROM   "communes" AS "arrondissements"
-      WHERE  "arrondissements"."code_arrondissement" = communes."code_insee"
+      WHERE  "arrondissements"."code_insee_parent" = communes."code_insee"
     );
   END;
 $function$ LANGUAGE plpgsql;

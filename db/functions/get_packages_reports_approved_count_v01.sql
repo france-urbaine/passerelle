@@ -6,8 +6,8 @@ AS $function$
       SELECT COUNT(*)
       FROM   "reports"
       WHERE  "reports"."discarded_at" IS NULL
-        AND  "reports"."approved_at"  IS NOT NULL
-        AND  "reports"."rejected_at"  IS NULL
+        AND  "reports"."sandbox" = FALSE
+        AND  "reports"."state" = 'approved'
         AND  "reports"."package_id" = packages."id"
     );
   END;

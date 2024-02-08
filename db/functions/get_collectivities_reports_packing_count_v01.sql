@@ -5,10 +5,11 @@ AS $function$
     RETURN (
       SELECT     COUNT(*)
       FROM       "reports"
-      WHERE      "reports"."discarded_at" IS NULL
-        AND      "reports"."package_id"   IS NULL
+      WHERE      "reports"."collectivity_id" = collectivities."id"
         AND      "reports"."publisher_id" IS NULL
-        AND      "reports"."collectivity_id" = collectivities."id"
+        AND      "reports"."discarded_at" IS NULL
+        AND      "reports"."sandbox" = FALSE
+        AND      ("reports"."state" = 'draft' OR "reports"."state" = 'ready')
     );
   END;
 $function$ LANGUAGE plpgsql;

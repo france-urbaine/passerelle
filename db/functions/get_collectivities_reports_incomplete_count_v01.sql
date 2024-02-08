@@ -3,13 +3,13 @@ RETURNS integer
 AS $function$
   BEGIN
     RETURN (
-      SELECT     COUNT(*)
-      FROM       "reports"
-      WHERE      "reports"."discarded_at" IS NULL
-        AND      "reports"."package_id"   IS NULL
-        AND      "reports"."completed_at" IS NULL
-        AND      "reports"."publisher_id" IS NULL
-        AND      "reports"."collectivity_id" = collectivities."id"
-    );
+      SELECT COUNT(*)
+      FROM   "reports"
+      WHERE  "reports"."collectivity_id" = collectivities."id"
+        AND  "reports"."state" = 'draft'
+        AND  "reports"."ready_at" IS NULL
+        AND  "reports"."discarded_at" IS NULL
+        AND  "reports"."sandbox" = FALSE
+      );
   END;
 $function$ LANGUAGE plpgsql;
