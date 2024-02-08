@@ -439,17 +439,6 @@ class Report < ApplicationRecord
     self
   }
 
-  scope :order_by_resolved_date, lambda { |direction = :asc|
-    if direction == :desc
-      order(Arel.sql(%{COALESCE("reports"."approved_at", "reports"."rejected_at") DESC}))
-    else
-      order(Arel.sql(%{COALESCE("reports"."approved_at", "reports"."rejected_at") ASC}))
-    end
-  }
-
-  scope :order_by_last_transmission_date, -> { order(transmitted_at: :desc) }
-
-  scope :transmissible,              -> { ready.not_in_active_transmission }
   scope :in_active_transmission,     -> { packing.where.not(transmission_id: nil) }
   scope :not_in_active_transmission, -> { where(transmission_id: nil) }
 

@@ -289,19 +289,7 @@ class TransformReportStateToEnum < ActiveRecord::Migration[7.1]
 
     # Updates report state
     #
-    create_enum :report_state, %w[
-      draft
-      ready
-      transmitted
-      acknowledged
-      accepted
-      assigned
-      applicable
-      inapplicable
-      approved
-      canceled
-      rejected
-    ]
+    create_enum :report_state, States::ReportStates::STATES
 
     change_table :reports do |t|
       t.rename :state, :old_state

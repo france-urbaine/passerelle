@@ -7,191 +7,207 @@ module States
     STATES = %w[
       draft
       ready
-      sent
+      transmitted
       acknowledged
-      denied
-      processing
+      accepted
+      assigned
+      applicable
+      inapplicable
       approved
+      canceled
       rejected
     ].freeze
 
     included do
       # Validations
       # ----------------------------------------------------------------------------
-      validates :state, inclusion: { in: STATES }
+      validates :state, presence: true, inclusion: { in: STATES }
 
       # Scopes
       # ----------------------------------------------------------------------------
-      scope :draft,        -> { where(state: :draft) }
-      scope :ready,        -> { where(state: :ready) }
-      scope :sent,         -> { where(state: :sent) }
-      scope :acknowledged, -> { where(state: :acknowledged) }
-      scope :denied,       -> { where(state: :denied) }
-      scope :processing,   -> { where(state: :processing) }
-      scope :approved,     -> { where(state: :approved) }
-      scope :rejected,     -> { where(state: :rejected) }
+      # rubocop:disable Layout/LineLength
+      # Long lines due one-liner definitions, more compact & more readable
+      #
+      scope :draft,        -> { where(state: "draft") }
+      scope :ready,        -> { where(state: "ready") }
+      scope :packing,      -> { where(state: %w[draft ready]) }
 
-      scope :packing,     -> { where(state: %w[draft ready]) }
-      scope :unassigned,  -> { where(state: %w[sent acknowledged]) }
-      scope :assigned,    -> { where(state: %w[processing approved rejected]) }
-      scope :unresolved,  -> { where(state: %w[sent acknowledged processing]) }
-      scope :undenied,    -> { where(state: %w[sent acknowledged processing approved rejected]) }
-      scope :transmitted, -> { where(state: %w[sent acknowledged denied processing approved rejected]) }
-      scope :resolved,    -> { where(state: %w[approved rejected]) }
+      scope :transmitted,  -> { where(state: %w[transmitted acknowledged accepted assigned applicable inapplicable approved canceled rejected]) }
+      scope :acknowledged, -> { where(state: %w[acknowledged accepted assigned applicable inapplicable approved canceled rejected]) }
+      scope :accepted,     -> { where(state: %w[accepted assigned applicable inapplicable approved canceled]) }
+      scope :assigned,     -> { where(state: %w[assigned applicable inapplicable approved canceled]) }
+      scope :resolved,     -> { where(state: %w[applicable inapplicable approved canceled]) }
+      scope :confirmed,    -> { where(state: %w[approved canceled]) }
+
+      scope :applicable,   -> { where(state: "applicable") }
+      scope :inapplicable, -> { where(state: "inapplicable") }
+      scope :approved,     -> { where(state: "approved") }
+      scope :rejected,     -> { where(state: "rejected") }
+      scope :canceled,     -> { where(state: "canceled") }
+      scope :returned,     -> { where(state: %w[approved canceled rejected]) }
+
+      scope :transmittable,   -> { where(state: "ready") }
+      scope :acceptable,      -> { where(state: %w[transmitted acknowledged accepted rejected]) }
+      scope :rejectable,      -> { where(state: %w[transmitted acknowledged accepted rejected]) }
+      scope :assignable,      -> { where(state: %w[accepted assigned]) }
+      scope :resolvable,      -> { where(state: %w[assigned applicable inapplicable]) }
+      scope :confirmable,     -> { where(state: %w[applicable inapplicable approved canceled]) }
+
+      scope :waiting_for_acceptance,   -> { where(state: %w[transmitted acknowledged]) }
+      scope :waiting_for_assignment,   -> { where(state: "accepted") }
+      scope :waiting_for_resolution,   -> { where(state: "assigned") }
+      scope :waiting_for_confirmation, -> { where(state: %w[applicable inapplicable]) }
+
+      # rubocop:enable Layout/LineLength
 
       # Predicates
       # ----------------------------------------------------------------------------
-      def draft?
-        state == "draft"
-      end
+      # rubocop:disable Layout/LineLength
+      # Long lines due one-liner definitions, more compact & more readable
+      #
+      def draft?        = state == "draft"
+      def ready?        = state == "ready"
+      def packing?      = %w[draft ready].include?(state)
 
-      def ready?
-        state == "ready"
-      end
+      def transmitted?  = %w[transmitted acknowledged accepted assigned applicable inapplicable approved canceled rejected].include?(state)
+      def acknowledged? = %w[acknowledged accepted assigned applicable inapplicable approved canceled rejected].include?(state)
+      def accepted?     = %w[accepted assigned applicable inapplicable approved canceled].include?(state)
+      def assigned?     = %w[assigned applicable inapplicable approved canceled].include?(state)
+      def resolved?     = %w[applicable inapplicable approved canceled].include?(state)
+      def confirmed?    = %w[approved canceled].include?(state)
 
-      def sent?
-        state == "sent"
-      end
+      def applicable?   = state == "applicable"
+      def inapplicable? = state == "inapplicable"
+      def approved?     = state == "approved"
+      def canceled?     = state == "canceled"
+      def rejected?     = state == "rejected"
+      def returned?     = %w[approved canceled rejected].include?(state)
 
-      def acknowledged?
-        state == "acknowledged"
-      end
+      def transmittable? = state == "ready"
+      def acceptable?    = %w[transmitted acknowledged accepted rejected].include?(state)
+      def rejectable?    = %w[transmitted acknowledged accepted rejected].include?(state)
+      def assignable?    = %w[accepted assigned].include?(state)
+      def resolvable?    = %w[assigned applicable inapplicable].include?(state)
+      def confirmable?   = %w[applicable inapplicable approved canceled].include?(state)
 
-      def denied?
-        state == "denied"
-      end
+      def wait_for_acceptance?    = %w[transmitted acknowledged].include?(state)
+      def wait_for_assignment?    = state == "accepted"
+      def wait_for_resolution?    = state == "assigned"
+      def wait_for_confirmation?  = %w[applicable inapplicable].include?(state)
 
-      def processing?
-        state == "processing"
-      end
-
-      def approved?
-        state == "approved"
-      end
-
-      def rejected?
-        state == "rejected"
-      end
-
-      def packing?
-        draft? || ready?
-      end
-
-      def unassigned?
-        sent? || acknowledged?
-      end
-
-      def assigned?
-        processing? || approved? || rejected?
-      end
-
-      def unresolved?
-        sent? || acknowledged? || processing?
-      end
-
-      def undenied?
-        sent? || acknowledged? || processing? || approved? || rejected?
-      end
-
-      def transmitted?
-        sent? || acknowledged? || denied? || processing? || approved? || rejected?
-      end
-
-      def resolved?
-        approved? || rejected?
-      end
+      # rubocop:enable Layout/LineLength
 
       # Transition methods
       # ----------------------------------------------------------------------------
+
       def resume
         validate_state("ready", "draft") do
           self.state = "draft"
-          self.ready_at = nil
+          self.completed_at = nil
         end
       end
 
       def complete
         validate_state("ready", "draft") do
           self.state = "ready"
-          self.ready_at ||= Time.current
+          self.completed_at ||= Time.current
         end
       end
 
       def transmit
-        validate_state("ready", "sent") do
-          self.state = "sent"
+        validate_state("ready", "transmitted") do
+          self.state = "transmitted"
           self.transmitted_at ||= Time.current
         end
       end
 
       def acknowledge
-        validate_state("sent", "acknowledged") do
+        validate_state("transmitted", "acknowledged") do
           self.state = "acknowledged"
           self.acknowledged_at ||= Time.current
+        end
+      end
+
+      def accept
+        validate_state("transmitted", "acknowledged", "accepted", "rejected") do
+          self.state = "accepted"
+          self.acknowledged_at ||= Time.current
+          self.accepted_at ||= Time.current
+          self.returned_at = nil
         end
       end
 
       def assign
-        validate_state("sent", "acknowledged", "processing", "denied") do
-          self.state = "processing"
-          self.acknowledged_at ||= Time.current
+        validate_state("accepted", "assigned") do
+          self.state = "assigned"
           self.assigned_at ||= Time.current
-          self.denied_at = nil
         end
       end
 
-      def unassign
-        validate_state("processing", "acknowledged") do
-          self.state = "acknowledged"
-          self.assigned_at = nil
-          self.acknowledged_at ||= Time.current
+      def resolve(state)
+        raise ArgumentError unless %w[applicable inapplicable].include?(state.to_s)
+
+        validate_state("assigned", "applicable", "inapplicable") do
+          self.state = state
+
+          if state_changed?
+            self.resolved_at = Time.current
+          else
+            self.resolved_at ||= Time.current
+          end
         end
       end
 
-      def deny
-        validate_state("sent", "acknowledged", "processing", "denied") do
-          self.state = "denied"
-          self.acknowledged_at ||= Time.current
-          self.assigned_at = nil
-          self.denied_at ||= Time.current
-        end
-      end
+      def confirm
+        validate_state("applicable", "inapplicable", "approved", "canceled") do
+          case state
+          when "applicable"   then self.state = "approved"
+          when "inapplicable" then self.state = "canceled"
+          end
 
-      def undeny
-        validate_state("denied", "acknowledged") do
-          self.state = "acknowledged"
-          self.denied_at = nil
-          self.acknowledged_at ||= Time.current
-        end
-      end
-
-      def approve
-        validate_state("processing", "rejected", "approved") do
-          self.state = "approved"
-          self.approved_at ||= Time.current
-          self.rejected_at = nil
-        end
-      end
-
-      def unapprove
-        validate_state("approved", "processing") do
-          self.state = "processing"
-          self.approved_at = nil
+          self.returned_at ||= Time.current
         end
       end
 
       def reject
-        validate_state("processing", "rejected", "approved") do
+        validate_state("transmitted", "acknowledged", "accepted", "rejected") do
           self.state = "rejected"
-          self.approved_at = nil
-          self.rejected_at ||= Time.current
+          self.acknowledged_at ||= Time.current
+          self.returned_at ||= Time.current
+          self.accepted_at = nil
         end
       end
 
-      def unreject
-        validate_state("rejected", "processing") do
-          self.state = "processing"
-          self.rejected_at = nil
+      def undo_acceptance
+        validate_state("accepted", "acknowledged") do
+          self.state = "acknowledged"
+          self.accepted_at = nil
+          self.assigned_at = nil
+          self.acknowledged_at ||= Time.current
+        end
+      end
+
+      def undo_assignment
+        validate_state("assigned", "accepted") do
+          self.state = "accepted"
+          self.assigned_at = nil
+          self.acknowledged_at ||= Time.current
+          self.accepted_at ||= Time.current
+        end
+      end
+
+      def undo_resolution
+        validate_state("applicable", "inapplicable", "assigned") do
+          self.state = "assigned"
+          self.resolved_at = nil
+        end
+      end
+
+      def undo_rejection
+        validate_state("rejected", "acknowledged") do
+          self.state = "acknowledged"
+          self.returned_at = nil
+          self.acknowledged_at ||= Time.current
         end
       end
 
@@ -200,28 +216,80 @@ module States
         complete!
         transmit!
         acknowledge!
+        accept!
         assign!
-        unassign!
-        deny!
-        undeny!
-        approve!
-        unapprove!
+        resolve!
+        confirm!
         reject!
-        unreject!
+        undo_acceptance!
+        undo_assignment!
+        undo_resolution!
+        undo_rejection!
       ].each do |method|
-        define_method method do
-          public_send(method.delete("!"))
-
-          if errors.empty?
-            save
-          else
-            false
-          end
+        define_method method do |*args|
+          public_send(method.delete("!"), *args)
+          errors.empty? && save
         end
       end
 
-      alias_method :draft!, :resume!
-      alias_method :ready!, :complete!
+      # Transition of multiple records
+      # ----------------------------------------------------------------------------
+      def self.transmit_all(**attributes)
+        attributes[:state]            = "transmitted"
+        attributes[:transmitted_at] ||= coalesce_sql_datetime(:transmitted_at)
+
+        transmittable.update_all(attributes)
+      end
+
+      def self.accept_all(**attributes)
+        attributes[:state]             = "accepted"
+        attributes[:acknowledged_at] ||= coalesce_sql_datetime(:acknowledged_at)
+        attributes[:accepted_at]     ||= coalesce_sql_datetime(:accepted_at)
+        attributes[:returned_at]       = nil
+
+        acceptable.update_all(attributes)
+      end
+
+      def self.assign_all(**attributes)
+        attributes[:state]         = "assigned"
+        attributes[:assigned_at] ||= coalesce_sql_datetime(:assigned_at)
+
+        assignable.update_all(attributes)
+      end
+
+      def self.reject_all(**attributes)
+        attributes[:state]             = "rejected"
+        attributes[:acknowledged_at] ||= coalesce_sql_datetime(:acknowledged_at)
+        attributes[:returned_at]     ||= coalesce_sql_datetime(:returned_at)
+        attributes[:accepted_at]       = nil
+
+        rejectable.update_all(attributes)
+      end
+
+      def self.resolve_all(state, **attributes)
+        raise ArgumentError unless %w[applicable inapplicable].include?(state)
+
+        attributes[:state]         = state
+        attributes[:resolved_at] ||= coalesce_sql_datetime(:resolved_at)
+
+        resolvable.update_all(attributes)
+      end
+
+      def self.confirm_all(**attributes)
+        attributes[:state] = Arel.sql(<<~SQL.squish)
+          CASE "reports"."state"
+          WHEN 'applicable'::report_state   THEN 'approved'::report_state
+          WHEN 'inapplicable'::report_state THEN 'canceled'::report_state
+          END
+        SQL
+
+        attributes[:returned_at] ||= coalesce_sql_datetime(:returned_at)
+
+        confirmable.update_all(attributes)
+      end
+
+      # ----------------------------------------------------------------------------
+      private
 
       def validate_state(*expected_states, &)
         if expected_states.include?(state)
@@ -233,55 +301,12 @@ module States
         self
       end
 
-      private :validate_state
+      def self.coalesce_sql_datetime(column, value = nil)
+        value ||= Time.current
 
-      # Transition of multiple records
-      # ----------------------------------------------------------------------------
-      def self.transmit_all(**attributes)
-        attributes[:state] = "sent"
-        attributes[:transmitted_at] ||= Time.current
-
-        packing.update_all(attributes)
-      end
-
-      def self.assign_all(**attributes)
-        attributes[:state] = "processing"
-        attributes[:denied_at] = nil
-        attributes[:assigned_at] ||= Time.current
-
-        where(
-          state: %w[sent acknowledged denied]
-        ).update_all(attributes)
-      end
-
-      def self.deny_all(**attributes)
-        attributes[:state] = "denied"
-        attributes[:assigned_at] = nil
-        attributes[:denied_at] ||= Time.current
-
-        where(
-          state: %w[sent acknowledged processing]
-        ).update_all(attributes)
-      end
-
-      def self.approve_all(**attributes)
-        attributes[:state] = "approved"
-        attributes[:rejected_at] = nil
-        attributes[:approved_at] ||= Time.current
-
-        where(
-          state: %w[processing rejected]
-        ).update_all(attributes)
-      end
-
-      def self.reject_all(**attributes)
-        attributes[:state] = "approved"
-        attributes[:approved_at] = nil
-        attributes[:rejected_at] ||= Time.current
-
-        where(
-          state: %w[processing approved]
-        ).update_all(attributes)
+        Arel.sql(sanitize_sql([<<~SQL.squish, value]))
+          COALESCE("reports"."#{column}", ?)
+        SQL
       end
     end
   end
