@@ -398,60 +398,57 @@ RSpec.describe Office do
 
       describe "reports counts" do
         before_all do
-          create(:commune, departement: ddfip.departement).tap do |commune|
-            offices[0].communes << commune
-            form_type = offices[0].competences.sample
-
-            create(:collectivity, territory: commune).tap do |collectivity|
-              create(:report, :ready, collectivity:, form_type:, office: offices[0])
-              create(:report, :sandbox, collectivity:, form_type:, office: offices[0])
-              create_list(:report, 2, :approved, collectivity:, form_type:, office: offices[0])
-              create_list(:report, 3, :rejected, collectivity:, form_type:, office: offices[0])
+          create(:collectivity).tap do |collectivity|
+            offices[0].tap do |office|
+              create(:report, :made_for_office, collectivity:, ddfip:, office:)
+              create(:report, :made_for_office, :ready, collectivity:, ddfip:, office:)
+              create(:report, :made_for_office, :transmitted_to_sandbox, collectivity:, ddfip:, office:)
+              create(:report, :made_for_office, :transmitted, collectivity:, ddfip:, office:)
+              create(:report, :assigned_to_office, collectivity:, ddfip:, office:)
+              create(:report, :assigned_to_office, :applicable, collectivity:, ddfip:, office:)
+              create(:report, :assigned_to_office, :approved, collectivity:, ddfip:, office:)
+              create(:report, :assigned_to_office, :canceled, collectivity:, ddfip:, office:)
+              create(:report, :made_for_office, :rejected, collectivity:, ddfip:, office:)
             end
-          end
 
-          create(:commune, departement: ddfip.departement).tap do |commune|
-            offices[1].communes << commune
-            form_type = offices[1].competences.sample
-
-            create(:collectivity, territory: commune).tap do |collectivity|
-              create(:report, :denied, collectivity:, form_type:, office: offices[1])
+            offices[1].tap do |office|
+              create(:report, :assigned_to_office, :canceled, collectivity:, ddfip:, office:)
             end
           end
 
           Office.update_all(
-            reports_assigned_count:    99,
-            reports_processing_count:  99,
-            reports_approved_count:    99,
-            reports_rejected_count:    99
+            reports_assigned_count: 99,
+            reports_resolved_count: 99,
+            reports_approved_count: 99,
+            reports_canceled_count: 99
           )
         end
 
         it "updates #reports_assigned_count" do
           expect {
             described_class.reset_all_counters
-          }.to change { offices[0].reload.reports_assigned_count }.to(5)
+          }.to change { offices[0].reload.reports_assigned_count }.to(4)
         end
 
-        it "updates #reports_processing_count" do
+        it "updates #reports_resolved_count" do
           expect {
             described_class.reset_all_counters
-          }.to change { offices[0].reload.reports_processing_count }.to(0)
-            .and change { offices[1].reload.reports_processing_count }.to(0)
+          }.to change { offices[0].reload.reports_resolved_count }.to(3)
+            .and change { offices[1].reload.reports_resolved_count }.to(1)
         end
 
         it "updates #reports_approved_count" do
           expect {
             described_class.reset_all_counters
-          }.to change { offices[0].reload.reports_approved_count }.to(2)
+          }.to change { offices[0].reload.reports_approved_count }.to(1)
             .and change { offices[1].reload.reports_approved_count }.to(0)
         end
 
-        it "updates #reports_rejected_count" do
+        it "updates #reports_canceled_count" do
           expect {
             described_class.reset_all_counters
-          }.to change { offices[0].reload.reports_rejected_count }.to(3)
-            .and change { offices[1].reload.reports_rejected_count }.to(0)
+          }.to change { offices[0].reload.reports_canceled_count }.to(1)
+            .and change { offices[1].reload.reports_canceled_count }.to(1)
         end
       end
     end
@@ -484,319 +481,334 @@ RSpec.describe Office do
   end
 
   describe "database triggers" do
-    describe "about users counter cache" do
-      let!(:ddfip)  { create(:ddfip) }
-      let!(:office) { create(:office, ddfip:) }
+    let!(:ddfip)  { create(:ddfip) }
+    let!(:office) { create(:office, ddfip:) }
 
-      describe "#users_count" do
-        let!(:user) { create(:user, organization: ddfip) }
+    def create_user(*traits, **attributes)
+      create(:user, *traits, organization: ddfip, **attributes)
+    end
 
-        it "changes when users is assigned to the office" do
-          expect { office.users << user }
-            .to change { office.reload.users_count }.from(0).to(1)
-        end
-
-        it "changes when users is removed from the office" do
-          office.users << user
-
-          expect { office.users.delete(user) }
-            .to change { office.reload.users_count }.from(1).to(0)
-        end
-
-        it "changes when user is discarded" do
-          office.users << user
-
-          expect { user.discard }
-            .to change { office.reload.users_count }.from(1).to(0)
-        end
-
-        it "changes when is undiscarded" do
-          office.users << user
-          user.discard
-
-          expect { user.undiscard }
-            .to change { office.reload.users_count }.from(0).to(1)
-        end
-
-        it "changes when users is destroyed" do
-          office.users << user
-
-          expect { user.destroy }
-            .to change { office.reload.users_count }.from(1).to(0)
-        end
+    describe "#users_count" do
+      it "doesn't change on creation" do
+        expect { create_user }
+          .not_to change { office.reload.users_count }.from(0)
       end
 
-      describe "#communes_count" do
-        let!(:commune) { create(:commune, code_insee: "64102") }
-
-        it "changes when communes is assigned to the office" do
-          expect { office.communes << commune }
-            .to change { office.reload.communes_count }.from(0).to(1)
-        end
-
-        it "changes when an existing code_insee is assigned to the office" do
-          expect { office.office_communes.create(code_insee: "64102") }
-            .to change { office.reload.communes_count }.from(0).to(1)
-        end
-
-        it "doesn't change when an unknown code_insee is assigned to the office" do
-          expect { office.office_communes.create(code_insee: "64024") }
-            .to  not_change { office.reload.communes_count }.from(0)
-        end
-
-        it "changes when commune is removed from the office" do
-          office.communes << commune
-
-          expect { office.communes.delete(commune) }
-            .to change { office.reload.communes_count }.from(1).to(0)
-        end
-
-        it "changes when commune is destroyed" do
-          office.communes << commune
-
-          expect { commune.destroy }
-            .to change { office.reload.communes_count }.from(1).to(0)
-        end
-
-        it "changes when commune updates its code_insee" do
-          office.communes << commune
-
-          expect { commune.update(code_insee: "64024") }
-            .to change { office.reload.communes_count }.from(1).to(0)
-        end
+      it "changes on creation when user is also assigned" do
+        expect { create_user(offices: [office]) }
+          .to change { office.reload.users_count }.from(0).to(1)
       end
 
-      describe "#reports_assigned_count" do
-        let(:office) { create(:office, :with_communes, ddfip:) }
-        let(:report) { create(:report, :transmitted, office:, ddfip:) }
+      it "changes when user is assigned to the office" do
+        user = create_user
 
-        it "doesn't change when report is created" do
-          expect { report }
-            .not_to change { office.reload.reports_assigned_count }.from(0)
-        end
-
-        it "changes when report is assigned" do
-          report
-
-          expect { report.assign! }
-            .to change { office.reload.reports_assigned_count }.from(0).to(1)
-        end
-
-        it "changes when assigned report is discarded" do
-          report.assign!
-
-          expect { report.discard }
-            .to change { office.reload.reports_assigned_count }.from(1).to(0)
-        end
-
-        it "changes when assigned report is undiscarded" do
-          report.assign!
-          report.discard
-
-          expect { report.undiscard }
-            .to change { office.reload.reports_assigned_count }.from(0).to(1)
-        end
-
-        it "changes when assigned report is sandboxed" do
-          report.assign!
-
-          expect { report.update(sandbox: true) }
-            .to change { office.reload.reports_assigned_count }.from(1).to(0)
-        end
-
-        it "changes when assigned report is deleted" do
-          report.assign!
-
-          expect { report.delete }
-            .to change { office.reload.reports_assigned_count }.from(1).to(0)
-        end
-
-        it "doesn't changes when report is approved" do
-          report.assign!
-
-          expect { report.approve! }
-            .not_to change { office.reload.reports_assigned_count }.from(1)
-        end
-
-        it "doesn't changes when report is rejected" do
-          report.assign!
-
-          expect { report.reject! }
-            .not_to change { office.reload.reports_assigned_count }.from(1)
-        end
+        expect { user.offices << office }
+          .to change { office.reload.users_count }.from(0).to(1)
       end
 
-      describe "#reports_processing_count" do
-        let(:office) { create(:office, :with_communes, ddfip:) }
-        let(:report) { create(:report, :transmitted, office:, ddfip:) }
+      it "changes when assigned user is removed from the office" do
+        user = create_user(offices: [office])
 
-        it "doesn't change when report is created" do
-          expect { report }
-            .not_to change { office.reload.reports_processing_count }.from(0)
-        end
-
-        it "changes when report is assigned" do
-          report
-
-          expect { report.assign! }
-            .to change { office.reload.reports_processing_count }.from(0).to(1)
-        end
-
-        it "changes when assigned report is approved" do
-          report.assign!
-
-          expect { report.approve! }
-            .to change { office.reload.reports_processing_count }.from(1).to(0)
-        end
-
-        it "changes when assigned report is rejected" do
-          report.assign!
-
-          expect { report.reject! }
-            .to change { office.reload.reports_processing_count }.from(1).to(0)
-        end
-
-        it "changes when assigned report is discarded" do
-          report.assign!
-
-          expect { report.discard }
-            .to change { office.reload.reports_processing_count }.from(1).to(0)
-        end
-
-        it "changes when assigned report is undiscarded" do
-          report.assign!
-          report.discard
-
-          expect { report.undiscard }
-            .to change { office.reload.reports_processing_count }.from(0).to(1)
-        end
-
-        it "changes when assigned report is sandboxed" do
-          report.assign!
-
-          expect { report.update(sandbox: true) }
-            .to change { office.reload.reports_processing_count }.from(1).to(0)
-        end
+        expect { user.offices.delete(office) }
+          .to change { office.reload.users_count }.from(1).to(0)
       end
 
-      describe "#reports_approved_count" do
-        let(:office) { create(:office, :with_communes, ddfip:) }
-        let(:report) { create(:report, :assigned, office:, ddfip:) }
+      it "changes when assigned user switches to another office" do
+        user = create_user(offices: [office])
+        another_office = create(:office, ddfip:)
 
-        it "doesn't change when report is assigned" do
-          expect { report }
-            .not_to change { office.reload.reports_approved_count }.from(0)
-        end
-
-        it "doesn't changes when report is rejected" do
-          report
-
-          expect { report.reject! }
-            .not_to change { office.reload.reports_approved_count }.from(0)
-        end
-
-        it "changes when report is approved" do
-          report
-
-          expect { report.approve! }
-            .to change { office.reload.reports_approved_count }.from(0).to(1)
-        end
-
-        it "changes when approved report is reseted" do
-          report.approve!
-
-          expect { report.update(approved_at: nil, state: "processing") }
-            .to change { office.reload.reports_approved_count }.from(1).to(0)
-        end
-
-        it "changes when approved report is rejected" do
-          report.approve!
-
-          expect { report.reject! }
-            .to change { office.reload.reports_approved_count }.from(1).to(0)
-        end
-
-        it "changes when approved report is discarded" do
-          report.approve!
-
-          expect { report.discard }
-            .to change { office.reload.reports_approved_count }.from(1).to(0)
-        end
-
-        it "changes when approved report is undiscarded" do
-          report.approve!
-          report.discard
-
-          expect { report.undiscard }
-            .to change { office.reload.reports_approved_count }.from(0).to(1)
-        end
-
-        it "changes when approved report is sandboxed" do
-          report.approve!
-
-          expect { report.update(sandbox: true) }
-            .to change { office.reload.reports_approved_count }.from(1).to(0)
-        end
+        expect { user.offices = [another_office] }
+          .to change { office.reload.users_count }.from(1).to(0)
       end
 
-      describe "#reports_rejected_count" do
-        let(:office) { create(:office, :with_communes, ddfip:) }
-        let(:report) { create(:report, :assigned, office:, ddfip:) }
+      it "changes when assigned user is discarded" do
+        user = create_user(offices: [office])
 
-        it "doesn't change when report is assigned" do
-          expect { report }
-            .not_to change { office.reload.reports_rejected_count }.from(0)
-        end
+        expect { user.update_columns(discarded_at: Time.current) }
+          .to change { office.reload.users_count }.from(1).to(0)
+      end
 
-        it "doesn't changes when report is approved" do
-          report
+      it "changes when assigned user is undiscarded" do
+        user = create_user(:discarded, offices: [office])
 
-          expect { report.approve! }
-            .not_to change { office.reload.reports_rejected_count }.from(0)
-        end
+        expect { user.update_columns(discarded_at: nil) }
+          .to change { office.reload.users_count }.from(0).to(1)
+      end
 
-        it "changes when report is rejected" do
-          report
+      it "changes when assigned user is deleted" do
+        user = create_user(offices: [office])
 
-          expect { report.reject! }
-            .to change { office.reload.reports_rejected_count }.from(0).to(1)
-        end
+        expect { user.delete }
+          .to change { office.reload.users_count }.from(1).to(0)
+      end
+    end
 
-        it "changes when rejected report is reseted" do
-          report.reject!
+    describe "#communes_count" do
+      let!(:commune) { create(:commune, code_insee: "64102") }
 
-          expect { report.update(rejected_at: nil, state: "processing") }
-            .to change { office.reload.reports_rejected_count }.from(1).to(0)
-        end
+      it "changes when communes is assigned to the office" do
+        expect { office.communes << commune }
+          .to change { office.reload.communes_count }.from(0).to(1)
+      end
 
-        it "changes when rejected report is approved" do
-          report.reject!
+      it "changes when an existing code_insee is assigned to the office" do
+        expect { office.office_communes.create(code_insee: "64102") }
+          .to change { office.reload.communes_count }.from(0).to(1)
+      end
 
-          expect { report.approve! }
-            .to change { office.reload.reports_rejected_count }.from(1).to(0)
-        end
+      it "doesn't change when an unknown code_insee is assigned to the office" do
+        expect { office.office_communes.create(code_insee: "64024") }
+          .to  not_change { office.reload.communes_count }.from(0)
+      end
 
-        it "changes when rejected report is discarded" do
-          report.reject!
+      it "changes when commune is removed from the office" do
+        office.communes << commune
 
-          expect { report.discard }
-            .to change { office.reload.reports_rejected_count }.from(1).to(0)
-        end
+        expect { office.communes.delete(commune) }
+          .to change { office.reload.communes_count }.from(1).to(0)
+      end
 
-        it "changes when rejected report is undiscarded" do
-          report.reject!
-          report.discard
+      it "changes when commune is destroyed" do
+        office.communes << commune
 
-          expect { report.undiscard }
-            .to change { office.reload.reports_rejected_count }.from(0).to(1)
-        end
+        expect { commune.destroy }
+          .to change { office.reload.communes_count }.from(1).to(0)
+      end
 
-        it "changes when rejected report is sandboxed" do
-          report.reject!
+      it "changes when commune updates its code_insee" do
+        office.communes << commune
 
-          expect { report.update(sandbox: true) }
-            .to change { office.reload.reports_rejected_count }.from(1).to(0)
-        end
+        expect { commune.update(code_insee: "64024") }
+          .to change { office.reload.communes_count }.from(1).to(0)
+      end
+    end
+
+    def create_report(*traits, **attributes)
+      create(:report, *traits, ddfip:, office:, **attributes)
+    end
+
+    describe "#reports_assigned_count" do
+      it "doesn't change when report is created" do
+        expect { create_report }
+          .not_to change { office.reload.reports_assigned_count }.from(0)
+      end
+
+      it "doesn't change when report is transmitted" do
+        report = create_report
+
+        expect { report.update_columns(state: "transmitted") }
+          .not_to change { office.reload.reports_assigned_count }.from(0)
+      end
+
+      it "changes when report is assigned to the office" do
+        report = create_report(:transmitted)
+
+        expect { report.update_columns(state: "assigned") }
+          .to change { office.reload.reports_assigned_count }.from(0).to(1)
+      end
+
+      it "changes when report is assigned to another office" do
+        report = create_report(:transmitted)
+        another_office = create(:office, ddfip:)
+
+        expect { report.update_columns(state: "assigned", office_id: another_office.id) }
+          .not_to change { office.reload.reports_assigned_count }.from(0)
+      end
+
+      it "changes when assigned report is assigned to another office" do
+        report = create_report(:assigned)
+        another_office = create(:office, ddfip:)
+
+        expect { report.update_columns(office_id: another_office.id) }
+          .to change { office.reload.reports_assigned_count }.from(1).to(0)
+      end
+
+      it "doesn't change when assigned report is resolved" do
+        report = create_report(:assigned)
+
+        expect { report.update_columns(state: "applicable") }
+          .not_to change { office.reload.reports_assigned_count }.from(1)
+      end
+
+      it "doesn't change when resolved report is confirmed" do
+        report = create_report(:applicable)
+
+        expect { report.update_columns(state: "approved") }
+          .not_to change { office.reload.reports_assigned_count }.from(1)
+      end
+
+      it "changes when assigned report is discarded" do
+        report = create_report(:assigned)
+
+        expect { report.update_columns(discarded_at: Time.current) }
+          .to change { office.reload.reports_assigned_count }.from(1).to(0)
+      end
+
+      it "changes when assigned report is undiscarded" do
+        report = create_report(:assigned, :discarded)
+
+        expect { report.update_columns(discarded_at: nil) }
+          .to change { office.reload.reports_assigned_count }.from(0).to(1)
+      end
+
+      it "changes when assigned report is deleted" do
+        report = create_report(:assigned)
+
+        expect { report.delete }
+          .to change { office.reload.reports_assigned_count }.from(1).to(0)
+      end
+    end
+
+    describe "#reports_resolved_count" do
+      it "doesn't change when report is transmitted" do
+        report = create_report
+
+        expect { report.update_columns(state: "transmitted") }
+          .not_to change { office.reload.reports_resolved_count }.from(0)
+      end
+
+      it "doesn't change when report is assigned to the office" do
+        report = create_report(:transmitted)
+
+        expect { report.update_columns(state: "assigned") }
+          .not_to change { office.reload.reports_resolved_count }.from(0)
+      end
+
+      it "changes when assigned report is resolved" do
+        report = create_report(:assigned)
+
+        expect { report.update_columns(state: "applicable") }
+          .to change { office.reload.reports_resolved_count }.to(1)
+      end
+
+      it "doesn't change when resolved report is confirmed" do
+        report = create_report(:applicable)
+
+        expect { report.update_columns(state: "approved") }
+          .not_to change { office.reload.reports_resolved_count }.from(1)
+      end
+
+      it "changes when resolved report is discarded" do
+        report = create_report(:applicable)
+
+        expect { report.update_columns(discarded_at: Time.current) }
+          .to change { office.reload.reports_resolved_count }.from(1).to(0)
+      end
+
+      it "changes when resolved report is undiscarded" do
+        report = create_report(:applicable, :discarded)
+
+        expect { report.update_columns(discarded_at: nil) }
+          .to change { office.reload.reports_resolved_count }.from(0).to(1)
+      end
+
+      it "changes when resolved report is deleted" do
+        report = create_report(:applicable)
+
+        expect { report.delete }
+          .to change { office.reload.reports_resolved_count }.from(1).to(0)
+      end
+    end
+
+    describe "#reports_approved_count" do
+      it "doesn't change when report is assigned" do
+        report = create_report
+
+        expect { report.update_columns(state: "transmitted") }
+          .not_to change { office.reload.reports_approved_count }.from(0)
+      end
+
+      it "doesn't change when assigned report is resolved" do
+        report = create_report(:assigned)
+
+        expect { report.update_columns(state: "applicable") }
+          .not_to change { office.reload.reports_approved_count }.from(0)
+      end
+
+      it "changes when applicable report is confirmed" do
+        report = create_report(:applicable)
+
+        expect { report.update_columns(state: "approved") }
+          .to change { office.reload.reports_approved_count }.to(1)
+      end
+
+      it "doesn't change when inapplicable report is confirmed" do
+        report = create_report(:inapplicable)
+
+        expect { report.update_columns(state: "canceled") }
+          .not_to change { office.reload.reports_approved_count }.from(0)
+      end
+
+      it "changes when approved report is discarded" do
+        report = create_report(:approved)
+
+        expect { report.update_columns(discarded_at: Time.current) }
+          .to change { office.reload.reports_approved_count }.from(1).to(0)
+      end
+
+      it "changes when approved report is undiscarded" do
+        report = create_report(:approved, :discarded)
+
+        expect { report.update_columns(discarded_at: nil) }
+          .to change { office.reload.reports_approved_count }.from(0).to(1)
+      end
+
+      it "changes when approved report is deleted" do
+        report = create_report(:approved)
+
+        expect { report.delete }
+          .to change { office.reload.reports_approved_count }.from(1).to(0)
+      end
+    end
+
+    describe "#reports_canceled_count" do
+      it "doesn't change when report is assigned" do
+        report = create_report
+
+        expect { report.update_columns(state: "transmitted") }
+          .not_to change { office.reload.reports_canceled_count }.from(0)
+      end
+
+      it "doesn't change when assigned report is resolved" do
+        report = create_report(:assigned)
+
+        expect { report.update_columns(state: "applicable") }
+          .not_to change { office.reload.reports_canceled_count }.from(0)
+      end
+
+      it "changes when inapplicable report is confirmed" do
+        report = create_report(:inapplicable)
+
+        expect { report.update_columns(state: "canceled") }
+          .to change { office.reload.reports_canceled_count }.to(1)
+      end
+
+      it "doesn't change when applicable report is confirmed" do
+        report = create_report(:applicable)
+
+        expect { report.update_columns(state: "approved") }
+          .not_to change { office.reload.reports_canceled_count }.from(0)
+      end
+
+      it "changes when canceled report is discarded" do
+        report = create_report(:canceled)
+
+        expect { report.update_columns(discarded_at: Time.current) }
+          .to change { office.reload.reports_canceled_count }.from(1).to(0)
+      end
+
+      it "changes when canceled report is undiscarded" do
+        report = create_report(:canceled, :discarded)
+
+        expect { report.update_columns(discarded_at: nil) }
+          .to change { office.reload.reports_canceled_count }.from(0).to(1)
+      end
+
+      it "changes when canceled report is deleted" do
+        report = create_report(:canceled)
+
+        expect { report.delete }
+          .to change { office.reload.reports_canceled_count }.from(1).to(0)
       end
     end
   end

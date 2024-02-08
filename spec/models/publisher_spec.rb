@@ -163,28 +163,41 @@ RSpec.describe Publisher do
         end
       end
 
-      describe "reports & packages counts" do
+      describe "reports counts" do
         before_all do
           publishers[0].tap do |publisher|
             create(:collectivity, :with_users, publisher:, users_size: 1).tap do |collectivity|
-              create_list(:report, 2, :ready, publisher:, collectivity:)
+              create(:report, :ready, collectivity:)
               create(:report, :transmitted_through_web_ui, collectivity:)
+              create(:report, :assigned, collectivity:)
+              create(:report, :applicable, collectivity:)
+              create(:report, :approved, collectivity:)
+              create(:report, :canceled, collectivity:)
+              create(:report, :rejected, collectivity:)
+              create(:report, :made_through_api, :ready, collectivity:, publisher:)
+              create(:report, :transmitted_to_sandbox, collectivity:, publisher:)
               create(:report, :transmitted_through_api, collectivity:, publisher:)
-              create_list(:report, 2, :approved, publisher:, collectivity:)
-              create_list(:report, 3, :rejected, publisher:, collectivity:)
+              create(:report, :transmitted_through_api, :assigned, collectivity:, publisher:)
+              create(:report, :transmitted_through_api, :applicable, collectivity:, publisher:)
+              create(:report, :transmitted_through_api, :approved, collectivity:, publisher:)
+              create(:report, :transmitted_through_api, :canceled, collectivity:, publisher:)
+              create(:report, :transmitted_through_api, :rejected, collectivity:, publisher:)
             end
           end
 
           publishers[1].tap do |publisher|
             create(:collectivity, publisher:).tap do |collectivity|
-              create_list(:report, 1, publisher:, collectivity:)
+              create(:report, :transmitted_through_api, :canceled, collectivity:, publisher:)
             end
           end
 
           Publisher.update_all(
-            reports_transmitted_count:  99,
-            reports_approved_count:     99,
-            reports_rejected_count:     99
+            reports_transmitted_count: 99,
+            reports_accepted_count:    99,
+            reports_rejected_count:    99,
+            reports_approved_count:    99,
+            reports_canceled_count:    99,
+            reports_returned_count:    99
           )
         end
 
@@ -192,21 +205,42 @@ RSpec.describe Publisher do
           expect {
             described_class.reset_all_counters
           }.to   change { publishers[0].reload.reports_transmitted_count }.to(6)
-            .and change { publishers[1].reload.reports_transmitted_count }.to(0)
+            .and change { publishers[1].reload.reports_transmitted_count }.to(1)
         end
 
-        it "updates #reports_approved_count" do
+        it "updates #reports_accepted_count" do
           expect {
             described_class.reset_all_counters
-          }.to   change { publishers[0].reload.reports_approved_count }.to(2)
-            .and change { publishers[1].reload.reports_approved_count }.to(0)
+          }.to   change { publishers[0].reload.reports_accepted_count }.to(4)
+            .and change { publishers[1].reload.reports_accepted_count }.to(1)
         end
 
         it "updates #reports_rejected_count" do
           expect {
             described_class.reset_all_counters
-          }.to   change { publishers[0].reload.reports_rejected_count }.to(3)
+          }.to   change { publishers[0].reload.reports_rejected_count }.to(1)
             .and change { publishers[1].reload.reports_rejected_count }.to(0)
+        end
+
+        it "updates #reports_approved_count" do
+          expect {
+            described_class.reset_all_counters
+          }.to   change { publishers[0].reload.reports_approved_count }.to(1)
+            .and change { publishers[1].reload.reports_approved_count }.to(0)
+        end
+
+        it "updates #reports_canceled_count" do
+          expect {
+            described_class.reset_all_counters
+          }.to   change { publishers[0].reload.reports_canceled_count }.to(1)
+            .and change { publishers[1].reload.reports_canceled_count }.to(1)
+        end
+
+        it "updates #reports_returned_count" do
+          expect {
+            described_class.reset_all_counters
+          }.to change { publishers[0].reload.reports_returned_count }.to(3)
+            .and change { publishers[1].reload.reports_returned_count }.to(1)
         end
       end
     end
@@ -217,40 +251,42 @@ RSpec.describe Publisher do
   describe "database triggers" do
     let!(:publisher) { create(:publisher) }
 
-    describe "#users_count" do
-      let(:user) { create(:user, organization: publisher) }
+    def create_user(*traits, **attributes)
+      create(:user, *traits, organization: publisher, **attributes)
+    end
 
+    describe "#users_count" do
       it "changes on creation" do
-        expect { user }
+        expect { create_user }
           .to change { publisher.reload.users_count }.from(0).to(1)
       end
 
       it "changes on deletion" do
-        user
+        user = create_user
 
-        expect { user.destroy }
+        expect { user.delete }
           .to change { publisher.reload.users_count }.from(1).to(0)
       end
 
       it "changes when user is discarded" do
-        user
+        user = create_user
 
-        expect { user.discard }
+        expect { user.update_columns(discarded_at: Time.current) }
           .to change { publisher.reload.users_count }.from(1).to(0)
       end
 
       it "changes when user is undiscarded" do
-        user.discard
+        user = create_user(:discarded)
 
-        expect { user.undiscard }
+        expect { user.update_columns(discarded_at: nil) }
           .to change { publisher.reload.users_count }.from(0).to(1)
       end
 
       it "changes when user switches to another organization" do
-        user
+        user = create_user
         another_publisher = create(:publisher)
 
-        expect { user.update(organization: another_publisher) }
+        expect { user.update_columns(organization_id: another_publisher.id) }
           .to change { publisher.reload.users_count }.from(1).to(0)
       end
     end
@@ -293,125 +329,339 @@ RSpec.describe Publisher do
       end
     end
 
-    describe "#reports_transmitted_count" do
-      let(:collectivity) { create(:collectivity, publisher:) }
-      let(:report)       { create(:report, :made_through_api, :ready, publisher:, collectivity:) }
+    def create_report(*traits, **attributes)
+      create(:report, :made_through_api, *traits, publisher:, **attributes)
+    end
 
+    describe "#reports_transmitted_count" do
       it "doesn't change when report is created" do
-        expect { report }
+        expect { create_report }
           .not_to change { publisher.reload.reports_transmitted_count }.from(0)
       end
 
       it "changes when report is transmitted" do
-        report
+        report = create_report
 
-        expect { report.transmit! }
+        expect { report.update_columns(state: "transmitted") }
           .to change { publisher.reload.reports_transmitted_count }.from(0).to(1)
       end
 
-      it "change when a transmitted report is sandboxed" do
-        report.transmit!
+      it "doesn't change when report is transmitted to a sandbox" do
+        report = create_report
 
-        expect { report.update(sandbox: true) }
+        expect { report.update_columns(state: "transmitted", sandbox: true) }
+          .not_to change { publisher.reload.reports_transmitted_count }.from(0)
+      end
+
+      it "doesn't change when report is transmitted through WEB UI" do
+        report = create_report(:made_through_web_ui, publisher: nil)
+
+        expect { report.update_columns(state: "transmitted") }
+          .not_to change { publisher.reload.reports_transmitted_count }.from(0)
+      end
+
+      it "doesn't change when transmitted report is assigned" do
+        report = create_report(:transmitted)
+
+        expect { report.update_columns(state: "assigned") }
+          .not_to change { publisher.reload.reports_transmitted_count }.from(1)
+      end
+
+      it "changes when transmitted report is discarded" do
+        report = create_report(:transmitted)
+
+        expect { report.update_columns(discarded_at: Time.current) }
           .to change { publisher.reload.reports_transmitted_count }.from(1).to(0)
       end
 
-      it "changes when report is discarded" do
-        report.transmit!
+      it "changes when transmitted report is undiscarded" do
+        report = create_report(:transmitted, :discarded)
 
-        expect { report.discard }
-          .to change { publisher.reload.reports_transmitted_count }.from(1).to(0)
-      end
-
-      it "changes when report is undiscarded" do
-        report.transmit!
-        report.discard
-
-        expect { report.undiscard }
+        expect { report.update_columns(discarded_at: nil) }
           .to change { publisher.reload.reports_transmitted_count }.from(0).to(1)
       end
 
-      it "changes when report is deleted" do
-        report.transmit!
+      it "changes when transmitted report is deleted" do
+        report = create_report(:transmitted)
 
-        expect { report.destroy }
+        expect { report.delete }
           .to change { publisher.reload.reports_transmitted_count }.from(1).to(0)
       end
     end
 
-    describe "#reports_approved_count" do
-      let(:collectivity) { create(:collectivity, publisher:) }
-      let(:report)       { create(:report, :made_through_api, :assigned, publisher:, collectivity:) }
+    describe "#reports_accepted_count" do
+      it "doesn't change when report is transmitted" do
+        report = create_report
 
-      it "doesn't change when report is assigned" do
-        expect { report }
-          .not_to change { publisher.reload.reports_approved_count }.from(0)
+        expect { report.update_columns(state: "transmitted") }
+          .not_to change { publisher.reload.reports_accepted_count }.from(0)
       end
 
-      it "doesn't changes when report is rejected" do
-        report
+      it "changes when report is accepted" do
+        report = create_report(:transmitted)
 
-        expect { report.reject! }
-          .not_to change { publisher.reload.reports_approved_count }.from(0)
+        expect { report.update_columns(state: "accepted") }
+          .to change { publisher.reload.reports_accepted_count }.from(0).to(1)
       end
 
-      it "changes when report is approved" do
-        report
+      it "changes when report is assigned" do
+        report = create_report(:transmitted)
 
-        expect { report.approve! }
-          .to change { publisher.reload.reports_approved_count }.from(0).to(1)
+        expect { report.update_columns(state: "assigned") }
+          .to change { publisher.reload.reports_accepted_count }.from(0).to(1)
       end
 
-      it "changes when approved report is reseted" do
-        report.approve!
+      it "changes when report is rejected" do
+        report = create_report(:transmitted)
 
-        expect { report.update(approved_at: nil, state: "processing") }
-          .to change { publisher.reload.reports_approved_count }.from(1).to(0)
+        expect { report.update_columns(state: "rejected") }
+          .not_to change { publisher.reload.reports_accepted_count }.from(0)
       end
 
-      it "changes when approved report is rejected" do
-        report.approve!
+      it "changes when accepted report is then rejected" do
+        report = create_report(:accepted)
 
-        expect { report.reject! }
-          .to change { publisher.reload.reports_approved_count }.from(1).to(0)
+        expect { report.update_columns(state: "rejected") }
+          .to change { publisher.reload.reports_accepted_count }.from(1).to(0)
+      end
+
+      it "doesn't change when accepted report is assigned" do
+        report = create_report(:accepted)
+
+        expect { report.update_columns(state: "assigned") }
+          .not_to change { publisher.reload.reports_accepted_count }.from(1)
+      end
+
+      it "doesn't change when resolved report is confirmed" do
+        report = create_report(:applicable)
+
+        expect { report.update_columns(state: "approved") }
+          .not_to change { publisher.reload.reports_accepted_count }.from(1)
+      end
+
+      it "changes when accepted report is discarded" do
+        report = create_report(:accepted)
+
+        expect { report.update_columns(discarded_at: Time.current) }
+          .to change { publisher.reload.reports_accepted_count }.from(1).to(0)
+      end
+
+      it "changes when accepted report is undiscarded" do
+        report = create_report(:accepted, :discarded)
+
+        expect { report.update_columns(discarded_at: nil) }
+          .to change { publisher.reload.reports_accepted_count }.from(0).to(1)
+      end
+
+      it "changes when accepted report is deleted" do
+        report = create_report(:accepted)
+
+        expect { report.delete }
+          .to change { publisher.reload.reports_accepted_count }.from(1).to(0)
       end
     end
 
     describe "#reports_rejected_count" do
-      let(:collectivity) { create(:collectivity, publisher:) }
-      let(:report)       { create(:report, :made_through_api, :assigned, publisher:, collectivity:) }
+      it "doesn't change when report is transmitted" do
+        report = create_report
 
-      it "doesn't change when report is assigned" do
-        expect { report }
-          .not_to change { publisher.reload.reports_rejected_count }.from(0)
-      end
-
-      it "doesn't changes when report is approved" do
-        report
-
-        expect { report.approve! }
+        expect { report.update_columns(state: "transmitted") }
           .not_to change { publisher.reload.reports_rejected_count }.from(0)
       end
 
       it "changes when report is rejected" do
-        report
+        report = create_report
 
-        expect { report.reject! }
+        expect { report.update_columns(state: "rejected") }
           .to change { publisher.reload.reports_rejected_count }.from(0).to(1)
       end
 
-      it "changes when rejected report is reseted" do
-        report.reject!
+      it "doesn't change when report is accepted" do
+        report = create_report
 
-        expect { report.update(rejected_at: nil, state: "processing") }
+        expect { report.update_columns(state: "accepted") }
+          .not_to change { publisher.reload.reports_rejected_count }.from(0)
+      end
+
+      it "changes when rejected report is then accepted" do
+        report = create_report(:rejected)
+
+        expect { report.update_columns(state: "assigned") }
           .to change { publisher.reload.reports_rejected_count }.from(1).to(0)
       end
 
-      it "changes when rejected report is approved" do
-        report.reject!
+      it "changes when rejected report is discarded" do
+        report = create_report(:rejected)
 
-        expect { report.approve! }
+        expect { report.update_columns(discarded_at: Time.current) }
           .to change { publisher.reload.reports_rejected_count }.from(1).to(0)
+      end
+
+      it "changes when rejected report is undiscarded" do
+        report = create_report(:rejected, :discarded)
+
+        expect { report.update_columns(discarded_at: nil) }
+          .to change { publisher.reload.reports_rejected_count }.from(0).to(1)
+      end
+
+      it "changes when rejected report is deleted" do
+        report = create_report(:rejected)
+
+        expect { report.delete }
+          .to change { publisher.reload.reports_rejected_count }.from(1).to(0)
+      end
+    end
+
+    describe "#reports_approved_count" do
+      it "doesn't change when report is assigned" do
+        report = create_report(:transmitted)
+
+        expect { report.update_columns(state: "assigned") }
+          .not_to change { publisher.reload.reports_approved_count }.from(0)
+      end
+
+      it "doesn't changes when report is rejected" do
+        report = create_report(:assigned)
+
+        expect { report.update_columns(state: "rejected") }
+          .not_to change { publisher.reload.reports_approved_count }.from(0)
+      end
+
+      it "changes when applicable report is confirmed" do
+        report = create_report(:applicable)
+
+        expect { report.update_columns(state: "approved") }
+          .to change { publisher.reload.reports_approved_count }.from(0).to(1)
+      end
+
+      it "doesn't changes when inapplicable report is confirmed" do
+        report = create_report(:inapplicable)
+
+        expect { report.update_columns(state: "canceled") }
+          .not_to change { publisher.reload.reports_approved_count }.from(0)
+      end
+
+      it "changes when approved report is discarded" do
+        report = create_report(:approved)
+
+        expect { report.update_columns(discarded_at: Time.current) }
+          .to change { publisher.reload.reports_approved_count }.from(1).to(0)
+      end
+
+      it "changes when approved report is undiscarded" do
+        report = create_report(:approved, :discarded)
+
+        expect { report.update_columns(discarded_at: nil) }
+          .to change { publisher.reload.reports_approved_count }.from(0).to(1)
+      end
+
+      it "changes when approved report is deleted" do
+        report = create_report(:approved)
+
+        expect { report.delete }
+          .to change { publisher.reload.reports_approved_count }.from(1).to(0)
+      end
+    end
+
+    describe "#reports_canceled_count" do
+      it "doesn't change when report is assigned" do
+        report = create_report(:transmitted)
+
+        expect { report.update_columns(state: "assigned") }
+          .not_to change { publisher.reload.reports_canceled_count }.from(0)
+      end
+
+      it "doesn't changes when report is rejected" do
+        report = create_report(:assigned)
+
+        expect { report.update_columns(state: "rejected") }
+          .not_to change { publisher.reload.reports_canceled_count }.from(0)
+      end
+
+      it "changes when inapplicable report is confirmed" do
+        report = create_report(:inapplicable)
+
+        expect { report.update_columns(state: "canceled") }
+          .to change { publisher.reload.reports_canceled_count }.from(0).to(1)
+      end
+
+      it "doesn't changes when applicable report is confirmed" do
+        report = create_report(:applicable)
+
+        expect { report.update_columns(state: "approved") }
+          .not_to change { publisher.reload.reports_canceled_count }.from(0)
+      end
+
+      it "changes when canceled report is discarded" do
+        report = create_report(:canceled)
+
+        expect { report.update_columns(discarded_at: Time.current) }
+          .to change { publisher.reload.reports_canceled_count }.from(1).to(0)
+      end
+
+      it "changes when canceled report is undiscarded" do
+        report = create_report(:canceled, :discarded)
+
+        expect { report.update_columns(discarded_at: nil) }
+          .to change { publisher.reload.reports_canceled_count }.from(0).to(1)
+      end
+
+      it "changes when canceled report is deleted" do
+        report = create_report(:canceled)
+
+        expect { report.delete }
+          .to change { publisher.reload.reports_canceled_count }.from(1).to(0)
+      end
+    end
+
+    describe "#reports_returned_count" do
+      it "doesn't change when report is assigned" do
+        report = create_report(:transmitted)
+
+        expect { report.update_columns(state: "assigned") }
+          .not_to change { publisher.reload.reports_returned_count }.from(0)
+      end
+
+      it "changes when report is rejected" do
+        report = create_report(:assigned)
+
+        expect { report.update_columns(state: "rejected") }
+          .to change { publisher.reload.reports_returned_count }.from(0).to(1)
+      end
+
+      it "changes when inapplicable report is confirmed" do
+        report = create_report(:inapplicable)
+
+        expect { report.update_columns(state: "canceled") }
+          .to change { publisher.reload.reports_returned_count }.from(0).to(1)
+      end
+
+      it "doesn't changes when applicable report is confirmed" do
+        report = create_report(:applicable)
+
+        expect { report.update_columns(state: "approved") }
+          .to change { publisher.reload.reports_returned_count }.from(0).to(1)
+      end
+
+      it "changes when returned report is discarded" do
+        report = create_report(:canceled)
+
+        expect { report.update_columns(discarded_at: Time.current) }
+          .to change { publisher.reload.reports_returned_count }.from(1).to(0)
+      end
+
+      it "changes when returned report is undiscarded" do
+        report = create_report(:canceled, :discarded)
+
+        expect { report.update_columns(discarded_at: nil) }
+          .to change { publisher.reload.reports_returned_count }.from(0).to(1)
+      end
+
+      it "changes when returned report is deleted" do
+        report = create_report(:canceled)
+
+        expect { report.delete }
+          .to change { publisher.reload.reports_returned_count }.from(1).to(0)
       end
     end
   end

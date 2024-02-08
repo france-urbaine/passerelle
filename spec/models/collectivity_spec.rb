@@ -675,73 +675,70 @@ RSpec.describe Collectivity do
           collectivities[0].tap do |collectivity|
             create(:report, collectivity:)
             create(:report, :ready, collectivity:)
-            create(:report, :sandbox, collectivity:, publisher:)
-            create_list(:report, 2, :approved, collectivity:)
-            create_list(:report, 3, :rejected, collectivity:)
+            create(:report, :transmitted_to_sandbox, collectivity:, publisher:)
+            create(:report, :transmitted_through_api, collectivity:, publisher:)
+            create(:report, :transmitted_through_web_ui, collectivity:)
+            create(:report, :assigned, collectivity:)
+            create(:report, :applicable, collectivity:)
+            create(:report, :approved, collectivity:)
+            create(:report, :canceled, collectivity:)
+            create(:report, :rejected, collectivity:)
           end
 
           collectivities[1].tap do |collectivity|
-            create(:report, :denied, collectivity:)
+            create(:report, :rejected, collectivity:)
           end
 
           Collectivity.update_all(
-            reports_incomplete_count:  99,
-            reports_packing_count:     99,
             reports_transmitted_count: 99,
-            reports_denied_count:      99,
-            reports_processing_count:  99,
+            reports_accepted_count:    99,
+            reports_rejected_count:    99,
             reports_approved_count:    99,
-            reports_rejected_count:    99
+            reports_canceled_count:    99,
+            reports_returned_count:    99
           )
-        end
-
-        it "updates #reports_incomplete_count" do
-          expect {
-            described_class.reset_all_counters
-          }.to change { collectivities[0].reload.reports_incomplete_count }.to(1)
-            .and change { collectivities[1].reload.reports_incomplete_count }.to(0)
-        end
-
-        it "updates #reports_packing_count" do
-          expect {
-            described_class.reset_all_counters
-          }.to change { collectivities[0].reload.reports_packing_count }.to(2)
-            .and change { collectivities[1].reload.reports_packing_count }.to(0)
         end
 
         it "updates #reports_transmitted_count" do
           expect {
             described_class.reset_all_counters
-          }.to change { collectivities[0].reload.reports_transmitted_count }.to(5)
+          }.to change { collectivities[0].reload.reports_transmitted_count }.to(7)
             .and change { collectivities[1].reload.reports_transmitted_count }.to(1)
         end
 
-        it "updates #reports_denied_count" do
+        it "updates #reports_accepted_count" do
           expect {
             described_class.reset_all_counters
-          }.to change { collectivities[0].reload.reports_denied_count }.to(0)
-            .and change { collectivities[1].reload.reports_denied_count }.to(1)
-        end
-
-        it "updates #reports_processing_count" do
-          expect {
-            described_class.reset_all_counters
-          }.to change { collectivities[0].reload.reports_processing_count }.to(0)
-            .and change { collectivities[1].reload.reports_processing_count }.to(0)
-        end
-
-        it "updates #reports_approved_count" do
-          expect {
-            described_class.reset_all_counters
-          }.to change { collectivities[0].reload.reports_approved_count }.to(2)
-            .and change { collectivities[1].reload.reports_approved_count }.to(0)
+          }.to change { collectivities[0].reload.reports_accepted_count }.to(4)
+            .and change { collectivities[1].reload.reports_accepted_count }.to(0)
         end
 
         it "updates #reports_rejected_count" do
           expect {
             described_class.reset_all_counters
-          }.to change { collectivities[0].reload.reports_rejected_count }.to(3)
-            .and change { collectivities[1].reload.reports_rejected_count }.to(0)
+          }.to change { collectivities[0].reload.reports_rejected_count }.to(1)
+            .and change { collectivities[1].reload.reports_rejected_count }.to(1)
+        end
+
+        it "updates #reports_approved_count" do
+          expect {
+            described_class.reset_all_counters
+          }.to change { collectivities[0].reload.reports_approved_count }.to(1)
+            .and change { collectivities[1].reload.reports_approved_count }.to(0)
+        end
+
+        it "updates #reports_canceled_count" do
+          expect {
+            described_class.reset_all_counters
+          }.to change { collectivities[0].reload.reports_canceled_count }.to(1)
+            .and change { collectivities[1].reload.reports_canceled_count }.to(0)
+        end
+
+        it "updates #reports_returned_count" do
+          expect {
+            described_class.reset_all_counters
+          }.to change { collectivities[0].reload.reports_returned_count }.to(3)
+            .and change { collectivities[1].reload.reports_returned_count }.to(1)
         end
       end
     end
@@ -784,10 +781,6 @@ RSpec.describe Collectivity do
       create(:user, *traits, organization: collectivity, **attributes)
     end
 
-    def create_report(*traits, **attributes)
-      create(:report, *traits, collectivity:, **attributes)
-    end
-
     describe "#users_count" do
       it "changes on creation" do
         expect { create_user }
@@ -824,95 +817,8 @@ RSpec.describe Collectivity do
       end
     end
 
-    describe "#reports_incomplete_count" do
-      it "changes when report is created" do
-        expect { create_report }
-          .to change { collectivity.reload.reports_incomplete_count }.from(0).to(1)
-      end
-
-      it "changes when report becomes ready" do
-        report = create_report
-
-        expect { report.update_columns(state: "ready") }
-          .to change { collectivity.reload.reports_incomplete_count }.from(1).to(0)
-      end
-
-      it "changes when report becomes draft" do
-        report = create_report(state: "ready")
-
-        expect { report.update_columns(state: "draft") }
-          .to change { collectivity.reload.reports_incomplete_count }.from(0).to(1)
-      end
-
-      it "changes when report is discarded" do
-        report = create_report
-
-        expect { report.update_columns(discarded_at: Time.current) }
-          .to change { collectivity.reload.reports_incomplete_count }.from(1).to(0)
-      end
-
-      it "changes when report is sandboxed" do
-        report = create_report
-
-        expect { report.update_columns(sandbox: true) }
-          .to change { collectivity.reload.reports_incomplete_count }.from(1).to(0)
-      end
-
-      it "changes when report is undiscarded" do
-        report = create_report(:discarded)
-
-        expect { report.update_columns(discarded_at: nil) }
-          .to change { collectivity.reload.reports_incomplete_count }.from(0).to(1)
-      end
-
-      it "changes when report is deleted" do
-        report = create_report
-
-        expect { report.delete }
-          .to change { collectivity.reload.reports_incomplete_count }.from(1).to(0)
-      end
-    end
-
-    describe "#reports_packing_count" do
-      it "changes when report is created" do
-        expect { create_report }
-          .to change { collectivity.reload.reports_packing_count }.from(0).to(1)
-      end
-
-      it "changes when report is transmitted" do
-        report = create_report
-
-        expect { report.update_columns(state: "sent") }
-          .to change { collectivity.reload.reports_packing_count }.from(1).to(0)
-      end
-
-      it "changes when report is sandboxed" do
-        report = create_report
-
-        expect { report.update_columns(sandbox: true) }
-          .to change { collectivity.reload.reports_packing_count }.from(1).to(0)
-      end
-
-      it "changes when report is discarded" do
-        report = create_report
-
-        expect { report.update_columns(discarded_at: Time.current) }
-          .to change { collectivity.reload.reports_packing_count }.from(1).to(0)
-      end
-
-      it "changes when report is undiscarded" do
-        report = create_report(:discarded)
-
-        expect { report.update_columns(discarded_at: nil) }
-          .to change { collectivity.reload.reports_packing_count }.from(0).to(1)
-      end
-
-      it "changes when report is deleted" do
-        report = create_report
-
-        expect { report.delete }
-          .to change { collectivity.reload.reports_packing_count }.from(1).to(0)
-      end
+    def create_report(*traits, **attributes)
+      create(:report, *traits, collectivity:, **attributes)
     end
 
     describe "#reports_transmitted_count" do
@@ -924,15 +830,22 @@ RSpec.describe Collectivity do
       it "changes when report is transmitted" do
         report = create_report
 
-        expect { report.update_columns(state: "sent", transmitted_at: Time.current) }
+        expect { report.update_columns(state: "transmitted") }
           .to change { collectivity.reload.reports_transmitted_count }.from(0).to(1)
       end
 
       it "doesn't change when report is transmitted to a sandbox" do
         report = create_report
 
-        expect { report.update_columns(state: "sent", transmitted_at: Time.current, sandbox: true) }
+        expect { report.update_columns(state: "transmitted", sandbox: true) }
           .not_to change { collectivity.reload.reports_transmitted_count }.from(0)
+      end
+
+      it "doesn't change when transmitted report is assigned" do
+        report = create_report(:transmitted)
+
+        expect { report.update_columns(state: "assigned") }
+          .not_to change { collectivity.reload.reports_transmitted_count }.from(1)
       end
 
       it "changes when transmitted report is discarded" do
@@ -957,126 +870,126 @@ RSpec.describe Collectivity do
       end
     end
 
-    describe "#reports_denied_count" do
-      it "doesn't change when report are transmitted" do
-        report = create_report
-
-        expect { report.update_columns(state: "sent", transmitted_at: Time.current) }
-          .not_to change { collectivity.reload.reports_denied_count }.from(0)
-      end
-
-      it "changes when report is returned" do
-        report = create_report
-
-        expect { report.update_columns(state: "denied") }
-          .to change { collectivity.reload.reports_denied_count }.from(0).to(1)
-      end
-
-      it "doesn't change when report is assigned" do
-        report = create_report
-
-        expect { report.update_columns(state: "assigned") }
-          .not_to change { collectivity.reload.reports_denied_count }.from(0)
-      end
-
-      it "changes when denied report is then assigned" do
-        report = create_report(:denied)
-
-        expect { report.update_columns(state: "assigned") }
-          .to change { collectivity.reload.reports_denied_count }.from(1).to(0)
-      end
-
-      it "changes when denied report is sandboxed" do
-        report = create_report(:denied)
-
-        expect { report.update_columns(sandbox: true) }
-          .to change { collectivity.reload.reports_denied_count }.from(1).to(0)
-      end
-
-      it "changes when denied report is discarded" do
-        report = create_report(:denied)
-
-        expect { report.update_columns(discarded_at: Time.current) }
-          .to change { collectivity.reload.reports_denied_count }.from(1).to(0)
-      end
-
-      it "changes when denied report is undiscarded" do
-        report = create_report(:denied, :discarded)
-
-        expect { report.update_columns(discarded_at: nil) }
-          .to change { collectivity.reload.reports_denied_count }.from(0).to(1)
-      end
-
-      it "changes when denied report is deleted" do
-        report = create_report(:denied)
-
-        expect { report.delete }
-          .to change { collectivity.reload.reports_denied_count }.from(1).to(0)
-      end
-    end
-
-    describe "#reports_processing_count" do
+    describe "#reports_accepted_count" do
       it "doesn't change when report is transmitted" do
         report = create_report
 
-        expect { report.update_columns(state: "sent", transmitted_at: Time.current) }
-          .not_to change { collectivity.reload.reports_processing_count }.from(0)
+        expect { report.update_columns(state: "transmitted") }
+          .not_to change { collectivity.reload.reports_accepted_count }.from(0)
+      end
+
+      it "changes when report is accepted" do
+        report = create_report(:transmitted)
+
+        expect { report.update_columns(state: "accepted") }
+          .to change { collectivity.reload.reports_accepted_count }.from(0).to(1)
       end
 
       it "changes when report is assigned" do
         report = create_report(:transmitted)
 
-        expect { report.update_columns(state: "processing") }
-          .to change { collectivity.reload.reports_processing_count }.from(0).to(1)
+        expect { report.update_columns(state: "assigned") }
+          .to change { collectivity.reload.reports_accepted_count }.from(0).to(1)
       end
 
-      it "doesn't changes when report is denied" do
+      it "changes when report is rejected" do
         report = create_report(:transmitted)
 
-        expect { report.update_columns(state: "denied") }
-          .not_to change { collectivity.reload.reports_processing_count }.from(0)
+        expect { report.update_columns(state: "rejected") }
+          .not_to change { collectivity.reload.reports_accepted_count }.from(0)
       end
 
-      it "changes when assigned report is then denied" do
-        report = create_report(:assigned)
-
-        expect { report.update_columns(state: "denied") }
-          .to change { collectivity.reload.reports_processing_count }.from(1).to(0)
-      end
-
-      it "changes when assigned report is approved" do
-        report = create_report(:assigned)
-
-        expect { report.update_columns(state: "approved") }
-          .to change { collectivity.reload.reports_processing_count }.from(1).to(0)
-      end
-
-      it "changes when pending report is rejected" do
-        report = create_report(:assigned)
+      it "changes when accepted report is then rejected" do
+        report = create_report(:accepted)
 
         expect { report.update_columns(state: "rejected") }
-          .to change { collectivity.reload.reports_processing_count }.from(1).to(0)
+          .to change { collectivity.reload.reports_accepted_count }.from(1).to(0)
       end
 
-      it "changes when assigned report is sandboxed" do
-        report = create_report(:assigned)
+      it "doesn't change when accepted report is assigned" do
+        report = create_report(:accepted)
 
-        expect { report.update_columns(sandbox: true) }
-          .to change { collectivity.reload.reports_processing_count }.from(1).to(0)
+        expect { report.update_columns(state: "assigned") }
+          .not_to change { collectivity.reload.reports_accepted_count }.from(1)
       end
 
-      it "changes when assigned report is discarded" do
-        report = create_report(:assigned)
+      it "doesn't change when resolved report is confirmed" do
+        report = create_report(:applicable)
+
+        expect { report.update_columns(state: "approved") }
+          .not_to change { collectivity.reload.reports_accepted_count }.from(1)
+      end
+
+      it "changes when accepted report is discarded" do
+        report = create_report(:accepted)
 
         expect { report.update_columns(discarded_at: Time.current) }
-          .to change { collectivity.reload.reports_processing_count }.from(1).to(0)
+          .to change { collectivity.reload.reports_accepted_count }.from(1).to(0)
       end
 
-      it "changes when assigned report is undiscarded" do
-        report = create_report(:assigned, :discarded)
+      it "changes when accepted report is undiscarded" do
+        report = create_report(:accepted, :discarded)
 
         expect { report.update_columns(discarded_at: nil) }
-          .to change { collectivity.reload.reports_processing_count }.from(0).to(1)
+          .to change { collectivity.reload.reports_accepted_count }.from(0).to(1)
+      end
+
+      it "changes when accepted report is deleted" do
+        report = create_report(:accepted)
+
+        expect { report.delete }
+          .to change { collectivity.reload.reports_accepted_count }.from(1).to(0)
+      end
+    end
+
+    describe "#reports_rejected_count" do
+      it "doesn't change when report is transmitted" do
+        report = create_report
+
+        expect { report.update_columns(state: "transmitted") }
+          .not_to change { collectivity.reload.reports_rejected_count }.from(0)
+      end
+
+      it "changes when report is rejected" do
+        report = create_report
+
+        expect { report.update_columns(state: "rejected") }
+          .to change { collectivity.reload.reports_rejected_count }.from(0).to(1)
+      end
+
+      it "doesn't change when report is accepted" do
+        report = create_report
+
+        expect { report.update_columns(state: "accepted") }
+          .not_to change { collectivity.reload.reports_rejected_count }.from(0)
+      end
+
+      it "changes when rejected report is then accepted" do
+        report = create_report(:rejected)
+
+        expect { report.update_columns(state: "assigned") }
+          .to change { collectivity.reload.reports_rejected_count }.from(1).to(0)
+      end
+
+      it "changes when rejected report is discarded" do
+        report = create_report(:rejected)
+
+        expect { report.update_columns(discarded_at: Time.current) }
+          .to change { collectivity.reload.reports_rejected_count }.from(1).to(0)
+      end
+
+      it "changes when rejected report is undiscarded" do
+        report = create_report(:rejected, :discarded)
+
+        expect { report.update_columns(discarded_at: nil) }
+          .to change { collectivity.reload.reports_rejected_count }.from(0).to(1)
+      end
+
+      it "changes when rejected report is deleted" do
+        report = create_report(:rejected)
+
+        expect { report.delete }
+          .to change { collectivity.reload.reports_rejected_count }.from(1).to(0)
       end
     end
 
@@ -1095,32 +1008,18 @@ RSpec.describe Collectivity do
           .not_to change { collectivity.reload.reports_approved_count }.from(0)
       end
 
-      it "changes when report is approved" do
-        report = create_report(:assigned)
+      it "changes when applicable report is confirmed" do
+        report = create_report(:applicable)
 
         expect { report.update_columns(state: "approved") }
           .to change { collectivity.reload.reports_approved_count }.from(0).to(1)
       end
 
-      it "changes when approved report is reseted" do
-        report = create_report(:approved)
+      it "doesn't changes when inapplicable report is confirmed" do
+        report = create_report(:inapplicable)
 
-        expect { report.update_columns(state: "processing") }
-          .to change { collectivity.reload.reports_approved_count }.from(1).to(0)
-      end
-
-      it "changes when approved report is rejected" do
-        report = create_report(:approved)
-
-        expect { report.update_columns(state: "rejected") }
-          .to change { collectivity.reload.reports_approved_count }.from(1).to(0)
-      end
-
-      it "changes when approved report is sandboxed" do
-        report = create_report(:approved)
-
-        expect { report.update_columns(sandbox: true) }
-          .to change { collectivity.reload.reports_approved_count }.from(1).to(0)
+        expect { report.update_columns(state: "canceled") }
+          .not_to change { collectivity.reload.reports_approved_count }.from(0)
       end
 
       it "changes when approved report is discarded" do
@@ -1136,63 +1035,114 @@ RSpec.describe Collectivity do
         expect { report.update_columns(discarded_at: nil) }
           .to change { collectivity.reload.reports_approved_count }.from(0).to(1)
       end
+
+      it "changes when approved report is deleted" do
+        report = create_report(:approved)
+
+        expect { report.delete }
+          .to change { collectivity.reload.reports_approved_count }.from(1).to(0)
+      end
     end
 
-    describe "#reports_rejected_count" do
+    describe "#reports_canceled_count" do
       it "doesn't change when report is assigned" do
         report = create_report(:transmitted)
 
         expect { report.update_columns(state: "assigned") }
-          .not_to change { collectivity.reload.reports_rejected_count }.from(0)
+          .not_to change { collectivity.reload.reports_canceled_count }.from(0)
       end
 
-      it "doesn't changes when report is approved" do
+      it "doesn't changes when report is rejected" do
         report = create_report(:assigned)
 
+        expect { report.update_columns(state: "rejected") }
+          .not_to change { collectivity.reload.reports_canceled_count }.from(0)
+      end
+
+      it "changes when inapplicable report is confirmed" do
+        report = create_report(:inapplicable)
+
+        expect { report.update_columns(state: "canceled") }
+          .to change { collectivity.reload.reports_canceled_count }.from(0).to(1)
+      end
+
+      it "doesn't changes when applicable report is confirmed" do
+        report = create_report(:applicable)
+
         expect { report.update_columns(state: "approved") }
-          .not_to change { collectivity.reload.reports_rejected_count }.from(0)
+          .not_to change { collectivity.reload.reports_canceled_count }.from(0)
+      end
+
+      it "changes when canceled report is discarded" do
+        report = create_report(:canceled)
+
+        expect { report.update_columns(discarded_at: Time.current) }
+          .to change { collectivity.reload.reports_canceled_count }.from(1).to(0)
+      end
+
+      it "changes when canceled report is undiscarded" do
+        report = create_report(:canceled, :discarded)
+
+        expect { report.update_columns(discarded_at: nil) }
+          .to change { collectivity.reload.reports_canceled_count }.from(0).to(1)
+      end
+
+      it "changes when canceled report is deleted" do
+        report = create_report(:canceled)
+
+        expect { report.delete }
+          .to change { collectivity.reload.reports_canceled_count }.from(1).to(0)
+      end
+    end
+
+    describe "#reports_returned_count" do
+      it "doesn't change when report is assigned" do
+        report = create_report(:transmitted)
+
+        expect { report.update_columns(state: "assigned") }
+          .not_to change { collectivity.reload.reports_returned_count }.from(0)
       end
 
       it "changes when report is rejected" do
         report = create_report(:assigned)
 
         expect { report.update_columns(state: "rejected") }
-          .to change { collectivity.reload.reports_rejected_count }.from(0).to(1)
+          .to change { collectivity.reload.reports_returned_count }.from(0).to(1)
       end
 
-      it "changes when rejected report is reseted" do
-        report = create_report(:rejected)
+      it "changes when inapplicable report is confirmed" do
+        report = create_report(:inapplicable)
 
-        expect { report.update_columns(state: "processing") }
-          .to change { collectivity.reload.reports_rejected_count }.from(1).to(0)
+        expect { report.update_columns(state: "canceled") }
+          .to change { collectivity.reload.reports_returned_count }.from(0).to(1)
       end
 
-      it "changes when rejected report is approved" do
-        report = create_report(:rejected)
+      it "doesn't changes when applicable report is confirmed" do
+        report = create_report(:applicable)
 
-        expect { report.update_columns(state: "apporved") }
-          .to change { collectivity.reload.reports_rejected_count }.from(1).to(0)
+        expect { report.update_columns(state: "approved") }
+          .to change { collectivity.reload.reports_returned_count }.from(0).to(1)
       end
 
-      it "changes when rejected report is sandboxed" do
-        report = create_report(:rejected)
-
-        expect { report.update_columns(sandbox: true) }
-          .to change { collectivity.reload.reports_rejected_count }.from(1).to(0)
-      end
-
-      it "changes when rejected report is discarded" do
-        report = create_report(:rejected)
+      it "changes when returned report is discarded" do
+        report = create_report(:canceled)
 
         expect { report.update_columns(discarded_at: Time.current) }
-          .to change { collectivity.reload.reports_rejected_count }.from(1).to(0)
+          .to change { collectivity.reload.reports_returned_count }.from(1).to(0)
       end
 
-      it "changes when rejected report is undiscarded" do
-        report = create_report(:rejected, :discarded)
+      it "changes when returned report is undiscarded" do
+        report = create_report(:canceled, :discarded)
 
         expect { report.update_columns(discarded_at: nil) }
-          .to change { collectivity.reload.reports_rejected_count }.from(0).to(1)
+          .to change { collectivity.reload.reports_returned_count }.from(0).to(1)
+      end
+
+      it "changes when returned report is deleted" do
+        report = create_report(:canceled)
+
+        expect { report.delete }
+          .to change { collectivity.reload.reports_returned_count }.from(1).to(0)
       end
     end
   end
