@@ -5,8 +5,8 @@
   - layout.with_grid(class: "md:grid-cols-2") do |grid|
     - grid.with_column do
       .dashboard-number
-        = @reports.processing.count
-        span.dashboard-number__unit Signalements non traités
+        = @reports.assigned.count
+        span.dashboard-number__unit Signalements à traiter
 
     - grid.with_column do
       .dashboard-number
@@ -14,10 +14,10 @@
         span.dashboard-number__unit Signalements traités
 
   - layout.with_header icon: "clipboard-document" do
-    | Derniers signalements à traiter
+    | Nouveaux signalements à traiter
 
   - layout.with_section do
-    = render Views::Reports::ListComponent.new(@reports.processing.order(updated_at: :desc), dashboard: true) do |view|  #.order_by_last_transmission_date
+    = render Views::Reports::List::Component.new(@reports.waiting_for_resolution.order(assigned_at: :desc), dashboard: true) do |view|
       - view.with_column(:reference)
       - view.with_column(:collectivity)
       - view.with_column(:workshop)

@@ -5,18 +5,18 @@
   - layout.with_grid(class: "xl:grid-cols-4 md:grid-cols-2") do |grid|
     - grid.with_column do
       .dashboard-number
-        = current_organization.reports_packing_count
-        span.dashboard-number__unit Signalements non transmis
-
-    - grid.with_column do
-      .dashboard-number
         = current_organization.reports_transmitted_count
         span.dashboard-number__unit Signalements transmis
 
     - grid.with_column do
       .dashboard-number
         = current_organization.reports_approved_count
-        span.dashboard-number__unit Signalements approuvés
+        span.dashboard-number__unit Mises à jour validées
+
+    - grid.with_column do
+      .dashboard-number
+        = current_organization.reports_canceled_count
+        span.dashboard-number__unit Absences d'incohérence
 
     - grid.with_column do
       .dashboard-number
@@ -24,10 +24,10 @@
         span.dashboard-number__unit Signalements rejetés
 
   - layout.with_header icon: "clipboard-document" do
-    | Derniers signalements à compléter
+    | Nouveaux signalements à compléter
 
   - layout.with_section do
-    = render Views::Reports::ListComponent.new(@reports.draft.order(created_at: :desc), dashboard: true) do |view|
+    = render Views::Reports::List::Component.new(@reports.draft.order(created_at: :desc), dashboard: true) do |view|
       - view.with_column(:reference)
       - view.with_column(:package)
       - view.with_column(:form_type)
@@ -39,10 +39,10 @@
       - view.with_column(:status)
 
   - layout.with_header icon: "clipboard-document" do
-    | Derniers signalements prêt à être transmis
+    | Nouveaux signalements prêt à être transmis
 
   - layout.with_section do
-    = render Views::Reports::ListComponent.new(@reports.ready.order(updated_at: :desc), dashboard: true) do |view|
+    = render Views::Reports::List::Component.new(@reports.ready.order(updated_at: :desc), dashboard: true) do |view|
       - view.with_column(:reference)
       - view.with_column(:package)
       - view.with_column(:form_type)
@@ -54,10 +54,10 @@
       - view.with_column(:status)
 
   - layout.with_header icon: "clipboard-document" do
-    | Derniers signalements traités par la DDFIP
+    | Derniers signalements complétés par la DDFIP
 
   - layout.with_section do
-    = render Views::Reports::ListComponent.new(@reports.resolved.order_by_resolved_date(:desc), dashboard: true) do |view|
+    = render Views::Reports::List::Component.new(@reports.returned.order(returned_at: :desc), dashboard: true) do |view|
       - view.with_column(:reference)
       - view.with_column(:package)
       - view.with_column(:form_type)

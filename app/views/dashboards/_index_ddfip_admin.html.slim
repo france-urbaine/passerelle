@@ -10,20 +10,18 @@
 
     - grid.with_column do
       .dashboard-number
-        -# TODO: create a field calculated by triggers
-        = @reports.unassigned.count
-        span.dashboard-number__unit Signalements à assigner
-
-    - grid.with_column do
-      .dashboard-number
-        -# TODO: create a field calculated by triggers
-        = current_organization.reports_processing_count
-        span.dashboard-number__unit Signalements à traiter
+        = current_organization.reports_unassigned_count
+        span.dashboard-number__unit Signalements non-assignés
 
     - grid.with_column do
       .dashboard-number
         = current_organization.reports_approved_count
-        span.dashboard-number__unit Signalements approuvés
+        span.dashboard-number__unit Mises à jour validées
+
+    - grid.with_column do
+      .dashboard-number
+        = current_organization.reports_canceled_count
+        span.dashboard-number__unit Absences d'incohérence
 
     - grid.with_column do
       .dashboard-number
@@ -31,12 +29,12 @@
         span.dashboard-number__unit Signalements rejetés
 
   - layout.with_header icon: "clipboard-document" do |header|
-    | Derniers signalements reçus, à assigner
+    | Nouveaux signalement
 
     - header.with_action "Tout voir", icon: "magnifying-glass", disabled: true
 
   - layout.with_section do
-    = render Views::Reports::ListComponent.new(@reports.unassigned.order(transmitted_at: :desc), dashboard: true) do |view|  #.order_by_last_transmission_date
+    = render Views::Reports::List::Component.new(@reports.waiting_for_acceptance.order(transmitted_at: :desc), dashboard: true) do |view|
       - view.with_column(:reference)
       - view.with_column(:package)
       - view.with_column(:collectivity)
@@ -50,12 +48,31 @@
       - view.with_column(:status)
 
   - layout.with_header icon: "clipboard-document" do |header|
-    | Derniers signalements traités
+    | Nouveaux signalements en attente d'une assignation
 
     - header.with_action "Tout voir", icon: "magnifying-glass", disabled: true
 
   - layout.with_section do
-    = render Views::Reports::ListComponent.new(@reports.resolved.order_by_resolved_date(:desc), dashboard: true) do |view|
+    = render Views::Reports::List::Component.new(@reports.waiting_for_assignment.order(accepted_at: :desc), dashboard: true) do |view|
+      - view.with_column(:reference)
+      - view.with_column(:package)
+      - view.with_column(:collectivity)
+      - view.with_column(:workshop)
+      - view.with_column(:form_type)
+      - view.with_column(:anomalies)
+      - view.with_column(:invariant)
+      - view.with_column(:adresse)
+      - view.with_column(:commune)
+      - view.with_column(:priority)
+      - view.with_column(:status)
+
+  - layout.with_header icon: "clipboard-document" do |header|
+    | Derniers signalements en attente d'une réponse à la collectivité
+
+    - header.with_action "Tout voir", icon: "magnifying-glass", disabled: true
+
+  - layout.with_section do
+    = render Views::Reports::List::Component.new(@reports.waiting_for_confirmation.order(resolved_at: :desc), dashboard: true) do |view|
       - view.with_column(:reference)
       - view.with_column(:package)
       - view.with_column(:collectivity)
