@@ -8,13 +8,8 @@ module Views
         siren
         publisher
         contact
-        contact_email
-        contact_phone
         users_count
-        packages_transmitted_count
-        reports_transmitted_count
-        reports_approved_count
-        reports_rejected_count
+        reports_counts
       ].freeze
 
       def initialize(collectivities, pagy = nil, namespace:, parent: nil)

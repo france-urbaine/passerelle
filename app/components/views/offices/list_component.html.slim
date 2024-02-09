@@ -13,7 +13,7 @@
   - datatable.with_column(:communes_count,         numeric: true) { "Communes" }     if columns.include?(:communes_count)
   - datatable.with_column(:reports_assigned_count, numeric: true) { "Signalements" } if columns.include?(:reports_counts)
   - datatable.with_column(:reports_approved_count, numeric: true) { "Approuvés" }    if columns.include?(:reports_counts)
-  - datatable.with_column(:reports_rejected_count, numeric: true) { "Rejetés" }      if columns.include?(:reports_counts)
+  - datatable.with_column(:reports_canceled_count, numeric: true) { "Annulés" }      if columns.include?(:reports_counts)
 
   - datatable.with_empty_message do
     - if params[:search]
@@ -33,7 +33,6 @@
     - row.with_column(:name) do
       = authorized_link_to(office, namespace: @namespace, parent: @parent)
 
-
     - row.with_column(:ddfip) do
       = authorized_link_to(office.ddfip, namespace: @namespace, parent: @parent)
 
@@ -52,5 +51,5 @@
     - row.with_column(:reports_approved_count) do
       = number_with_delimiter(office.reports_approved_count) if office.reports_approved_count.positive?
 
-    - row.with_column(:reports_rejected_count) do
-      = number_with_delimiter(office.reports_rejected_count) if office.reports_rejected_count.positive?
+    - row.with_column(:reports_canceled_count) do
+      = number_with_delimiter(office.reports_canceled_count) if office.reports_canceled_count.positive?

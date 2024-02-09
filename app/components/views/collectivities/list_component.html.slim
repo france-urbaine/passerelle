@@ -10,13 +10,13 @@
   - datatable.with_column(:siren, sort: true)                         { "SIREN" }                   if columns.include?(:siren)
   - datatable.with_column(:publisher, sort: true)                     { "Éditeur" }                 if columns.include?(:publisher)
   - datatable.with_column(:contact)                                   { "Contact" }                 if columns.include?(:contact)
-  - datatable.with_column(:contact_email)                             { "Adresse mail de contact" } if columns.include?(:contact_email)
-  - datatable.with_column(:contact_phone)                             { "Numéro de téléphone" }     if columns.include?(:contact_phone)
+  - datatable.with_column(:contact_email)                             { "Adresse mail de contact" } if columns.include?(:contact)
+  - datatable.with_column(:contact_phone)                             { "Numéro de téléphone" }     if columns.include?(:contact)
   - datatable.with_column(:users_count, numeric: true)                { "Utilisateurs" }            if columns.include?(:users_count)
-  - datatable.with_column(:packages_transmitted_count, numeric: true) { "Paquets" }                 if columns.include?(:packages_transmitted_count)
-  - datatable.with_column(:reports_transmitted_count, numeric: true)  { "Signalements" }            if columns.include?(:reports_transmitted_count)
-  - datatable.with_column(:reports_approved_count, numeric: true)     { "Approuvés" }               if columns.include?(:reports_approved_count)
-  - datatable.with_column(:reports_rejected_count, numeric: true)     { "Rejetés" }                 if columns.include?(:reports_rejected_count)
+  - datatable.with_column(:reports_transmitted_count,  numeric: true) { "Signalements" }            if columns.include?(:reports_counts)
+  - datatable.with_column(:reports_approved_count,     numeric: true) { "Approuvés" }               if columns.include?(:reports_counts)
+  - datatable.with_column(:reports_canceled_count,     numeric: true) { "Annulés" }                 if columns.include?(:reports_counts)
+  - datatable.with_column(:reports_rejected_count,     numeric: true) { "Rejetés" }                 if columns.include?(:reports_counts)
 
   - datatable.with_empty_message do
     - if params[:search]
@@ -60,6 +60,9 @@
 
     - row.with_column(:reports_approved_count) do
       = number_with_delimiter(collectivity.reports_approved_count) if collectivity.reports_approved_count.positive?
+
+    - row.with_column(:reports_canceled_count) do
+      = number_with_delimiter(collectivity.reports_canceled_count) if collectivity.reports_canceled_count.positive?
 
     - row.with_column(:reports_rejected_count) do
       = number_with_delimiter(collectivity.reports_rejected_count) if collectivity.reports_rejected_count.positive?

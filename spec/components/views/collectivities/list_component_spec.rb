@@ -26,9 +26,9 @@ RSpec.describe Views::Collectivities::ListComponent, type: :component do
         expect(table).to have_selector("th", text: "Adresse mail de contact")
         expect(table).to have_selector("th", text: "Numéro de téléphone")
         expect(table).to have_selector("th", text: "Utilisateurs")
-        expect(table).to have_selector("th", text: "Paquets")
         expect(table).to have_selector("th", text: "Signalements")
         expect(table).to have_selector("th", text: "Approuvés")
+        expect(table).to have_selector("th", text: "Annulés")
         expect(table).to have_selector("th", text: "Rejetés")
 
         expect(table).to have_selector(:table_row, {
