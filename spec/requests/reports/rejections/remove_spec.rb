@@ -2,9 +2,9 @@
 
 require "rails_helper"
 
-RSpec.describe "Reports::RejectionsController#destroy" do
+RSpec.describe "Reports::RejectionsController#remove" do
   subject(:request) do
-    delete "/signalements/reject/#{report.id}", as:, headers:, params:
+    get "/signalements/reject/#{report.id}/remove", as:, headers:, params:
   end
 
   let(:as)      { |e| e.metadata[:as] }
@@ -44,40 +44,6 @@ RSpec.describe "Reports::RejectionsController#destroy" do
 
       it_behaves_like "it denies access to DDFIP user"
       it_behaves_like "it denies access to DDFIP admin"
-    end
-  end
-
-  describe "responses" do
-    before { sign_in_as(:organization_admin, organization: report.ddfip) }
-
-    context "when report is rejected" do
-      it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/signalements/#{report.id}") }
-
-      it "undoes report assignment" do
-        expect {
-          request
-          report.reload
-        }
-          .to  change(report, :updated_at)
-          .and change(report, :state).to("acknowledged")
-          .and change(report, :returned_at).to(nil)
-      end
-
-      it "sets a flash notice" do
-        expect(flash).to have_flash_notice.to eq(
-          scheme: "success",
-          header: "Le signalement n'est plus rejeté.",
-          delay:  3000
-        )
-      end
-    end
-
-    context "when report is not rejected anymore" do
-      let(:report) { create(:report, :acknowledged_by_ddfip) }
-
-      it { expect(response).to have_http_status(:see_other) }
-      it { expect(response).to redirect_to("/signalements/#{report.id}") }
     end
   end
 end

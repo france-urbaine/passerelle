@@ -5,36 +5,38 @@ module Reports
     before_action { authorize! Report, with: Reports::RejectionPolicy }
 
     def edit
-      @report = find_and_authorize_report
-      @referrer_path = referrer_path || report_path(@report)
+      report   = find_and_authorize_report
+      referrer = referrer_path || report_path(report)
+
+      render Views::Reports::Rejections::EditComponent.new(report, referrer:)
     end
 
     def update
-      @report = find_and_authorize_report
-      service = Reports::StateService.new(@report)
-      result  = service.reject(report_params)
+      report   = find_and_authorize_report
+      referrer = redirect_path || report_path(report)
+      result   = Reports::States::RejectService.new(report).reject(report_params)
 
-      respond_with result,
-        flash: true,
-        location: -> { redirect_path || report_path(@report) }
+      if result.success?
+        respond_with result, flash: true, location: referrer
+      else
+        respond_with result, render: Views::Reports::Rejections::EditComponent.new(report, referrer:)
+      end
     end
 
     def remove
-      @report = find_and_authorize_report
-      @referrer_path = referrer_path || report_path(@report)
+      report   = find_and_authorize_report
+      referrer = referrer_path || report_path(report)
+
+      render Views::Reports::Rejections::RemoveComponent.new(report, referrer:)
     end
 
     def destroy
-      @report = find_and_authorize_report
-      service = Reports::StateService.new(@report)
-      result  = service.unreject
+      report   = find_and_authorize_report
+      referrer = redirect_path || report_path(report)
 
-      # TODO: replace referrer_path by redircet_path
-      # if we implement the remove temlate
-      #
-      respond_with result,
-        flash: true,
-        location: referrer_path || report_path(@report)
+      Reports::States::RejectService.new(report).undo
+
+      respond_with report, flash: true, location: referrer
     end
 
     private

@@ -2,9 +2,9 @@
 
 require "rails_helper"
 
-RSpec.describe "Reports::RejectionsController#edit" do
+RSpec.describe "Reports::AcceptancesController#update" do
   subject(:request) do
-    get "/signalements/reject/#{report.id}", as:, headers:, params:
+    patch "/signalements/accept/#{report.id}", as:, headers:, params:
   end
 
   let(:as)      { |e| e.metadata[:as] }
@@ -46,13 +46,6 @@ RSpec.describe "Reports::RejectionsController#edit" do
       it_behaves_like "it denies access to DDFIP admin"
     end
 
-    context "when report has already been rejected by the current DDFIP" do
-      let(:report) { create(:report, :rejected_by_ddfip, ddfip: current_user.organization) }
-
-      it_behaves_like "it denies access to DDFIP user"
-      it_behaves_like "it allows access to DDFIP admin"
-    end
-
     context "when report has already been accepted by the current DDFIP" do
       let(:report) { create(:report, :accepted_by_ddfip, ddfip: current_user.organization) }
 
@@ -65,6 +58,72 @@ RSpec.describe "Reports::RejectionsController#edit" do
 
       it_behaves_like "it denies access to DDFIP user"
       it_behaves_like "it denies access to DDFIP admin"
+    end
+
+    context "when report has already been rejected by the current DDFIP" do
+      let(:report) { create(:report, :rejected_by_ddfip, ddfip: current_user.organization) }
+
+      it_behaves_like "it denies access to DDFIP user"
+      it_behaves_like "it allows access to DDFIP admin"
+    end
+  end
+
+  describe "responses" do
+    before { sign_in_as(:organization_admin, organization: report.ddfip) }
+
+    context "when report is waiting for acceptance" do
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/signalements/#{report.id}") }
+
+      it "accepts the report" do
+        expect {
+          request
+          report.reload
+        }
+          .to  change(report, :updated_at)
+          .and change(report, :state).to("accepted")
+          .and change(report, :accepted_at).to(be_present)
+      end
+
+      it "sets a flash notice" do
+        expect(flash).to have_flash_notice.to eq(
+          scheme: "success",
+          header: "Le signalement a été accepté.",
+          delay:  3000
+        )
+      end
+    end
+
+    context "when report is already accepted" do
+      let(:report) { create(:report, :accepted_by_ddfip) }
+
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/signalements/#{report.id}") }
+    end
+
+    context "when report is already rejected" do
+      let!(:report) { create(:report, :rejected_by_ddfip) }
+
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/signalements/#{report.id}") }
+
+      it "accepts the report" do
+        expect {
+          request
+          report.reload
+        }
+          .to  change(report, :updated_at)
+          .and change(report, :state).to("accepted")
+          .and change(report, :accepted_at).to(be_present)
+      end
+
+      it "sets a flash notice" do
+        expect(flash).to have_flash_notice.to eq(
+          scheme: "success",
+          header: "Le signalement a été accepté.",
+          delay:  3000
+        )
+      end
     end
   end
 end

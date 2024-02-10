@@ -37,18 +37,23 @@ class ReportsController < ApplicationController
   end
 
   def edit
-    @report = find_and_authorize_report
-    @referrer_path = referrer_path || report_path(@report)
+    report   = find_and_authorize_report
+    form     = params.require(:form)
+    referrer = referrer_path || report_path(report)
+
+    render Views::Reports::Edit::Component.new(report, form, referrer:)
   end
 
   def update
-    @report = find_and_authorize_report
-    service = Reports::UpdateService.new(@report, report_params)
-    result  = service.save
+    report   = find_and_authorize_report
+    referrer = redirect_path || report_path(report)
+    result   = Reports::UpdateService.new(report, report_params).save
 
-    respond_with result,
-      flash: true,
-      location: -> { report_path(@report) }
+    if result.success?
+      respond_with result, flash: true, location: referrer
+    else
+      respond_with result, render: Views::Reports::Acceptances::EditComponent.new(report, referrer:)
+    end
   end
 
   def remove

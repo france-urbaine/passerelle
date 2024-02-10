@@ -86,10 +86,9 @@ RSpec.describe "ReportsController#show" do
 
   describe "responses" do
     context "when signed in as a collectivity user" do
-      let!(:collectivity) { create(:collectivity) }
-      let!(:report)       { create(:report, :made_through_web_ui, collectivity:) }
+      let!(:report) { create(:report, :made_through_web_ui) }
 
-      before { sign_in_as(organization: collectivity) }
+      before { sign_in_as(organization: report.collectivity) }
 
       context "when the report is packing" do
         it { expect(response).to have_http_status(:success) }
@@ -98,7 +97,7 @@ RSpec.describe "ReportsController#show" do
       end
 
       context "when the report is transmitted" do
-        let(:report) { create(:report, :transmitted_through_web_ui, collectivity:) }
+        let(:report) { create(:report, :transmitted_through_web_ui) }
 
         it { expect(response).to have_http_status(:success) }
         it { expect(response).to have_content_type(:html) }
@@ -106,7 +105,7 @@ RSpec.describe "ReportsController#show" do
       end
 
       context "when the report is discarded" do
-        let(:report) { create(:report, :made_through_web_ui, :discarded, collectivity:) }
+        let(:report) { create(:report, :made_through_web_ui, :discarded) }
 
         it { expect(response).to have_http_status(:gone) }
         it { expect(response).to have_content_type(:html) }
@@ -123,10 +122,9 @@ RSpec.describe "ReportsController#show" do
     end
 
     context "when signed in as a ddfip admin" do
-      let!(:ddfip)  { create(:ddfip) }
-      let!(:report) { create(:report, :transmitted, ddfip: ddfip) }
+      let!(:report) { create(:report, :transmitted_to_ddfip) }
 
-      before { sign_in_as(:organization_admin, organization: ddfip) }
+      before { sign_in_as(:organization_admin, organization: report.ddfip) }
 
       context "when the report is open for first time" do
         it { expect(response).to have_http_status(:success) }
@@ -135,7 +133,7 @@ RSpec.describe "ReportsController#show" do
 
         it "acknowledge the report" do
           expect { request and report.reload }
-            .to  change(report, :state).from("sent").to("acknowledged")
+            .to  change(report, :state).from("transmitted").to("acknowledged")
             .and change(report, :acknowledged_at).to be_present
         end
       end

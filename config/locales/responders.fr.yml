@@ -279,6 +279,19 @@ fr:
           header: "La suppression des signalements sélectionnés a été annulée."
           delay:  3000
 
+      acceptances:
+        update:
+          notice:
+            scheme: "success"
+            header: "Le signalement a été accepté."
+            delay:  3000
+
+        destroy:
+          notice:
+            scheme: "success"
+            header: "Le signalement n'est plus accepté."
+            delay:  3000
+
       assignments:
         update:
           notice:
@@ -292,30 +305,30 @@ fr:
             header: "Le signalement n'est plus assigné."
             delay:  3000
 
-      denials:
+      resolutions:
         update:
           notice:
             scheme: "success"
-            header: "Le signalement a été retourné à la collectivité."
+            header: "Le statut du signalement a mis à jour."
             delay:  3000
 
         destroy:
           notice:
             scheme: "success"
-            header: "Le signalement n'est plus retourné."
+            header: "Le statut du signalement a été réinitialisé."
             delay:  3000
 
-      approvals:
+      confirmations:
         update:
           notice:
             scheme: "success"
-            header: "Le signalement a été approuvé."
+            header: "La réponse a été transmise à la collectivité."
             delay:  3000
 
         destroy:
           notice:
             scheme: "success"
-            header: "Le signalement n'est plus approuvé."
+            header: "Le retour du signalement à la collectivité a été annulé."
             delay:  3000
 
       rejections:
