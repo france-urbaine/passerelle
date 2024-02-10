@@ -50,9 +50,7 @@ RSpec.describe AuditResolver do
       end
 
       it "resolves complete action (report)" do
-        report.update!(
-          ready_at: Time.now.utc
-        )
+        report.update!(completed_at: Time.now.utc)
 
         expect(AuditResolver.resolve_action(report.audits.last)).to eq("complete")
       end
