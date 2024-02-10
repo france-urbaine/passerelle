@@ -4,7 +4,7 @@
 
     - header.with_action do
       div( id=dom_id(@report, :status) is="turbo-frame" )
-        = report_badge(@report)
+        = report_status_badge(@report)
 
     - if @report.sandbox?
       - header.with_action do
@@ -32,4 +32,4 @@
           = helpers.display_date(@report.date_constat)
 
       - list.with_attribute(:priority) do
-        = render Views::Reports::PriorityIconComponent.new(@report)
+        = render Views::Reports::PriorityIcon::Component.new(@report)

@@ -1,11 +1,9 @@
 = content_layout_component do |layout|
   - layout.with_header icon: "chat-bubble-bottom-center-text" do |header|
-    - if @report.denied?
-      | Justification du retour
-    - elsif @report.rejected?
-      | Justification du rejet
+    - if current_organization.is_a?(DDFIP) || current_organization.is_a?(DGFIP)
+      | Observations
     - else
-      | Réponse
+      | Observations de la DDFIP
 
     / TODO: use a dedicated modal to update the response
     / - if allowed_to?(:update?, @report)

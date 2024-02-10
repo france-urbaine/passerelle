@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Views::Reports::ShowComponent, type: :component do
+RSpec.describe Views::Reports::Show::Component, type: :component do
   let(:collectivity) { build_stubbed(:collectivity) }
 
   before { sign_in_as(organization: collectivity) }

@@ -1,6 +1,9 @@
 = content_layout_component do |layout|
   - layout.with_header icon: "chat-bubble-bottom-center-text" do |header|
-    | Observations
+    - if current_organization.is_a?(DDFIP) || current_organization.is_a?(DGFIP)
+      | Observations de la collectivité
+    - else
+      | Observations
 
     - if allowed_to?(:update?, @report) && @report.packing?
       - header.with_action "Compléter", edit_report_path(@report, "observations"), icon: "pencil-square", modal: true

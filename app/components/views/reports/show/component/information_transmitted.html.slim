@@ -6,14 +6,38 @@
       = priority_badge(@report)
 
     - header.with_action do
-      = report_badge(@report)
+      = report_status_badge(@report)
 
     - if @report.sandbox?
       - header.with_action do
         = badge_component("Bac à sable", :warning)
 
-    - if @report.processing?
-      - if allowed_to?(:deny?, @report) || allowed_to?(:unassign?, @report)
+    - if @report.resolved?
+      - if allowed_to?(:undo_resolution?, @report)
+         - header.with_action do
+          = dropdown_component(position: "aside", direction: "left") do |dropdown|
+            - dropdown.with_button "Modifier le statut", icon: "ellipsis-horizontal-circle", icon_only: true
+            - dropdown.with_menu_item do |item|
+              | Une résolution a été prise pour ce signalement :
+              br
+              - if @report.applicable?
+                | la mise à jour a été validée
+              - else
+                | aucune incohérence n'a pu être identifiée.
+              br
+              | Vous pouvez néanmoins modifier cette décision :
+
+            - if allowed_to?(:resolve?, @report)
+              - if @report.applicable?
+                - dropdown.with_menu_item "Récuser le signalement", edit_report_resolution_path(@report, state: "inapplicable"), icon: "hand-thumb-down", modal: true
+              - else
+                - dropdown.with_menu_item "Valider le signalement", edit_report_resolution_path(@report, state: "applicable"), icon: "hand-thumb-up", modal: true
+
+            - if allowed_to?(:undo_resolution?, @report)
+              - dropdown.with_menu_item "Annuler la résolution", remove_report_resolution_path(@report), icon: "arrow-path", modal: true
+
+    - if @report.assigned?
+      - if allowed_to?(:undo_assignment?, @report)
         - header.with_action do
           = dropdown_component(position: "aside", direction: "left") do |dropdown|
             - dropdown.with_button "Modifier le statut", icon: "ellipsis-horizontal-circle", icon_only: true
@@ -22,43 +46,26 @@
               br
               | Vous pouvez néanmoins annuler cette décision :
 
-            - if allowed_to?(:deny?, @report)
-              - dropdown.with_menu_item "Retourner le signalement", report_denial_path(@report), icon: "no-symbol", modal: true
-            - if allowed_to?(:unassign?, @report)
+            - if allowed_to?(:undo_assignment?, @report)
               - dropdown.with_menu_item "Annuler l'asignation", remove_report_assignment_path(@report), icon: "arrow-path", modal: true
 
-    - elsif @report.denied?
-      - if allowed_to?(:assign?, @report) || allowed_to?(:undeny?, @report)
+    - elsif @report.accepted?
+      - if allowed_to?(:undo_acceptance?, @report) || allowed_to?(:reject?, @report)
         - header.with_action do
           = dropdown_component(position: "aside", direction: "left") do |dropdown|
             - dropdown.with_button "Modifier le statut", icon: "ellipsis-horizontal-circle", icon_only: true
             - dropdown.with_menu_item do |item|
-              | Ce signalement a été renvoyé à la collectivité.
-              br
-              | Vous pouvez néanmoins annuler cette décision :
-
-            - if allowed_to?(:assign?, @report)
-              - dropdown.with_menu_item "Assigner le signalement", report_assignment_path(@report), icon: "check-circle", modal: true
-            - if allowed_to?(:undeny?, @report)
-              - dropdown.with_menu_item "Annuler le retour", remove_report_denial_path(@report), icon: "arrow-path", modal: true
-
-    - elsif @report.approved?
-      - if allowed_to?(:reject?, @report) || allowed_to?(:unapprove?, @report)
-        - header.with_action do
-          = dropdown_component(position: "aside", direction: "left") do |dropdown|
-            - dropdown.with_button "Modifier le statut", icon: "ellipsis-horizontal-circle", icon_only: true
-            - dropdown.with_menu_item do |item|
-              | Ce signalement a été approuvé.
+              | Ce signalement a été accepté.
               br
               | Vous pouvez néanmoins annuler cette décision :
 
             - if allowed_to?(:reject?, @report)
-              - dropdown.with_menu_item "Rejeter le signalement", report_rejection_path(@report), icon: "hand-thumb-down", modal: true
-            - if allowed_to?(:unapprove?, @report)
-              - dropdown.with_menu_item "Annuler l'approbation", report_approval_path(@report), icon: "arrow-path", modal: true, method: "delete"
+              - dropdown.with_menu_item "Rejeter le signalement", edit_report_rejection_path(@report), icon: "no-symbol", modal: true
+            - if allowed_to?(:undo_acceptance?, @report)
+              - dropdown.with_menu_item "Annuler l'acceptation", remove_report_acceptance_path(@report), icon: "arrow-path", modal: true
 
     - elsif @report.rejected?
-      - if allowed_to?(:approve?, @report) || allowed_to?(:unreject?, @report)
+      - if allowed_to?(:undo_rejection?, @report) || allowed_to?(:accept?, @report)
         - header.with_action do
           = dropdown_component(position: "aside", direction: "left") do |dropdown|
             - dropdown.with_button "Modifier le statut", icon: "ellipsis-horizontal-circle", icon_only: true
@@ -67,11 +74,10 @@
               br
               | Vous pouvez néanmoins annuler cette décision :
 
-            - if allowed_to?(:approve?, @report)
-              - dropdown.with_menu_item "Approuver le signalement", report_approval_path(@report), icon: "hand-thumb-up", modal: true, method: "patch"
-            - if allowed_to?(:unreject?, @report)
-              - dropdown.with_menu_item "Annuler le rejet", report_rejection_path(@report), icon: "arrow-path", modal: true, method: "delete"
-
+            - if allowed_to?(:accept?, @report)
+              - dropdown.with_menu_item "Accepter le signalement", edit_report_acceptance_path(@report), icon: "check-circle", modal: true
+            - if allowed_to?(:undo_rejection?, @report)
+              - dropdown.with_menu_item "Annuler le rejet", remove_report_rejection_path(@report), icon: "arrow-path", modal: true
 
   - layout.with_section do
     = description_list_component(@report) do |list|
