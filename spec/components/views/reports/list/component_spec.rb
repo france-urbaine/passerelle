@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Views::Reports::ListComponent, type: :component do
+RSpec.describe Views::Reports::List::Component, type: :component do
   describe "rendered component" do
     let!(:collectivity) { create(:collectivity) }
     let!(:reports)      { create_list(:report, 2, :ready, collectivity:) }

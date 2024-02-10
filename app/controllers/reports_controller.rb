@@ -7,9 +7,11 @@ class ReportsController < ApplicationController
   before_action :better_view_on_parent, only: :index
 
   def index
-    @transmission   = find_or_initialize_transmission
-    @reports        = build_and_authorize_scope
-    @reports, @pagy = index_collection(@reports, nested: @parent)
+    reports       = build_and_authorize_scope
+    reports, pagy = index_collection(reports, nested: @parent)
+    transmission  = find_or_initialize_transmission
+
+    render Views::Reports::Index::Component.new(reports, pagy, transmission)
   end
 
   def show

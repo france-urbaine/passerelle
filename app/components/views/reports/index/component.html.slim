@@ -2,18 +2,18 @@
   = content_layout_component do |layout|
     - layout.with_breadcrumbs do |breadcrumbs|
       - breadcrumbs.with_path "Echanges"
-      - breadcrumbs.with_path "Signalements"
+      - breadcrumbs.with_h1 "Signalements"
 
       - if allowed_to?(:create?, Report, with: ReportPolicy)
         - breadcrumbs.with_action "Ajouter un signalement", new_report_path, icon: "plus", modal: true, primary: true
 
       - if allowed_to?(:show?, Transmission)
         - breadcrumbs.with_action do
-          = turbo_frame_tag dom_id(current_user, :active_transmission_button) do
+          = helpers.turbo_frame_tag dom_id(current_user, :active_transmission_button) do
             = render "transmissions/transmission_button", transmission: @transmission
 
     - layout.with_section do
-      = render Views::Reports::ListComponent.new(@reports, @pagy) do |view|
+      = render Views::Reports::List::Component.new(@reports, @pagy) do |view|
         - view.with_column(:reference)
 
         - case current_user.organization_type

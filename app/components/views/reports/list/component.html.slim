@@ -1,0 +1,101 @@
+= datatable_component(@reports) do |datatable|
+  - unless @dashboard
+    - datatable.with_search
+    - datatable.with_pagination(@pagy, options: !nested?) if @pagy
+
+    - datatable.with_selection do |selection|
+      - if allowed_to?(:create?, Transmission)
+        - selection.with_action "Transmettre", transmissions_path, method: :post, modal: true
+
+      - if allowed_to?(:destroy?, Transmission)
+        - selection.with_action "Ne plus transmettre", transmissions_path, method: :delete, modal: true
+
+      - if allowed_to?(:destroy_all?, Report)
+        - selection.with_action "Supprimer", url_for([:remove_all, @parent, :reports]), modal: true
+
+  - datatable.with_column(:status, compact: true)                       { "Etat" }                if columns.include?(:status)
+  - datatable.with_column(:form_type, sort: !@dashboard)                { "Type de signalement" } if columns.include?(:form_type)
+  - datatable.with_column(:invariant, sort: !@dashboard)                { "Invariant" }           if columns.include?(:invariant)
+  - datatable.with_column(:adresse,   sort: !@dashboard)                { "Adresse" }             if columns.include?(:adresse)
+  - datatable.with_column(:commune,   sort: !@dashboard)                { "Commune" }             if columns.include?(:commune)
+  - datatable.with_column(:anomalies)                                   { "Objet" }               if columns.include?(:anomalies)
+  - datatable.with_column(:priority,  sort: !@dashboard, compact: true) { "Priorité" }            if columns.include?(:priority)
+  - datatable.with_column(:reference, sort: !@dashboard)                { "Reference" }           if columns.include?(:reference)
+  - datatable.with_column(:package,   sort: !@dashboard)                { "Paquet" }              if columns.include?(:package)
+  - datatable.with_column(:collectivity)                                { "Collectivité" }        if columns.include?(:collectivity)
+  - datatable.with_column(:office)                                      { "Guichet" }             if columns.include?(:office)
+
+  - datatable.with_empty_message do
+    - if @dashboard
+      | Aucun signalement.
+    - elsif params[:search]
+      | Aucun signalement ne correspont à votre recherche.
+    - else
+      | Aucun signalement disponible.
+
+  - datatable.each_row do |row, report|
+    - if @dashboard
+      - row.with_checkbox "Sélectionner ce signalement", described_by: :name, disabled: true
+    - else
+      - row.with_checkbox "Sélectionner ce signalement", described_by: :name, disabled: !(allowed_to?(:create?, Transmission) || allowed_to?(:destroy_all?, Report))
+
+    - if report.wait_for_acceptance?
+      - if allowed_to?(:accept?, report)
+        - row.with_action "Accepter ce signalement", edit_report_acceptance_path(report, ), icon: "check-circle", modal: true
+      - if allowed_to?(:reject?, report)
+        - row.with_action "Rejeter ce signalement", edit_report_rejection_path(report, ), icon: "no-symbol", modal: true
+
+    - elsif report.wait_for_assignment?
+      - if allowed_to?(:assign?, report)
+        - row.with_action "Assigner à un guichet", edit_report_assignment_path(report, ), icon: "inbox-arrow-down", modal: true
+
+    - elsif report.wait_for_resolution?
+      - if allowed_to?(:resolve?, report)
+        - row.with_action "Valider le signalement", edit_report_resolution_path(report, state: "applicable"), icon: "hand-thumb-up", modal: true
+        - row.with_action "Récuser le signalement", edit_report_resolution_path(report, state: "inapplicable"), icon: "hand-thumb-down", modal: true
+
+    - elsif report.wait_for_confirmation?
+      - if allowed_to?(:confirm?, report)
+        - row.with_action "Transmettre la réponse", edit_report_confirmation_path(report), icon: "paper-airplane", modal: true
+
+    - row.with_column(:status) do
+      .space-x-4
+        = report_status_badge(report)
+
+        - if report.sandbox?
+          = badge_component("Bac à sable", :warning)
+
+    - row.with_column(:form_type) do
+      = authorized_link_to report do
+        = t(report.form_type, scope: "enum.report_form_type")
+
+    - row.with_column(:invariant) do
+      = report.situation_invariant
+
+    - row.with_column(:adresse) do
+      - if report.situation_adresse?
+        = report.situation_adresse
+      - else
+        = [report.situation_numero_voie, report.situation_indice_repetition, report.situation_libelle_voie].join(" ").squish
+
+    - row.with_column(:commune) do
+      = report.commune&.name
+
+    - row.with_column(:anomalies) do
+      = short_list(report.anomalies, humanize: true) { |value| t(value, scope: "enum.anomalies") }
+
+    - row.with_column(:priority) do
+      = render Views::Reports::PriorityIconComponent.new(report)
+
+    - row.with_column(:reference) do
+      = report.reference
+
+    - row.with_column(:package) do
+      = authorized_link_to report.package
+
+    - row.with_column(:collectivity) do
+      = authorized_link_to report.collectivity
+
+    - row.with_column(:office) do
+      - if report.assigned?
+        = authorized_link_to report.office
