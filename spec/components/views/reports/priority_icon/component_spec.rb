@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Views::Reports::PriorityIconComponent, type: :component do
+RSpec.describe Views::Reports::PriorityIcon::Component, type: :component do
   it "renders a low priority icon" do
     report = build_stubbed(:report)
     render_inline described_class.new(report)

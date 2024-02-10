@@ -25,7 +25,7 @@ module Views
 
         def call
           text  = "Priorité : "
-          text += render PriorityIconComponent.new(@priority)
+          text += render PriorityIcon::Component.new(@priority)
 
           css_class = "priority-badge "
           css_class += COLORS[@priority]
