@@ -4,14 +4,16 @@
       | Rejet d'un signalement
 
     - modal.with_form(model: @report, url: report_rejection_path(@report)) do |form|
-      - modal.with_hidden_field :redirect, redirection_path
+      - modal.with_hidden_field :redirect, @referrer
 
-      p Vous êtes sur le point de rejeter le signalement suivant à la collectivité :
+      p Vous êtes sur le point de rejeter le signalement suivant :
       = render Views::Reports::ShortDetailsComponent.new(@report)
 
-      = form.block :reponse do
-        = form.label :reponse, "Vous pouvez transmettre une justification à la collectivité :"
-        = form.text_area :reponse
+      p La collectivité pourra voir que le signalement a été rejeté.
 
-    - modal.with_submit_action "Continuer", autofocus: true
+      = form.block :reponse do
+        = form.label :reponse, "Vous pouvez transmettre des observations à la collectivité :"
+        = form.text_area :reponse, rows: 10, autofocus: true
+
+    - modal.with_submit_action "Continuer"
     - modal.with_close_action "Annuler"

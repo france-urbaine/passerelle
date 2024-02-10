@@ -2,16 +2,12 @@
 
 module Views
   module Reports
-    module Denials
+    module Resolutions
       class RemoveComponent < ApplicationViewComponent
         def initialize(report, referrer: nil)
           @report   = report
           @referrer = referrer
           super()
-        end
-
-        def redirection_path
-          @referrer
         end
       end
     end

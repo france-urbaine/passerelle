@@ -2,8 +2,8 @@
 
 module Views
   module Reports
-    module Assignments
-      class RemoveComponent < ApplicationViewComponent
+    module Acceptances
+      class EditComponent < ApplicationViewComponent
         def initialize(report, referrer: nil)
           @report   = report
           @referrer = referrer

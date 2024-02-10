@@ -1,0 +1,18 @@
+= modal_frame_component(referrer: @referrer) do |template|
+  - template.with_modal do |modal|
+    - modal.with_header do
+      | Accepation d'un signalement
+
+    - modal.with_form(model: @report, url: report_acceptance_path(@report)) do |form|
+      - modal.with_hidden_field :redirect, @referrer
+
+      p Vous êtes sur le point d'accepter le signalement suivant :
+      = render Views::Reports::ShortDetailsComponent.new(@report)
+
+      p
+        | L'acceptation est une étape préliminaire à l'assignation du signalement à un guichet.
+        br
+        | La collectivité pourra voir que le signalement a été accepté.
+
+    - modal.with_submit_action "Continuer", autofocus: true
+    - modal.with_close_action "Annuler"

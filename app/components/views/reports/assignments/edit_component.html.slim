@@ -4,14 +4,16 @@
       | Assignation d'un signalement
 
     - modal.with_form(model: @report, url: report_assignment_path(@report)) do |form|
-      - modal.with_hidden_field :redirect, redirection_path
+      - modal.with_hidden_field :redirect, @referrer
 
       p Vous êtes sur le point d'assigner le signalement suivant à un guichet :
       = render Views::Reports::ShortDetailsComponent.new(@report)
 
       = form.block :office_id do
         = form.label :office_id, "Veuillez sélectionner un guichet :"
-        = form.select :office_id, office_id_choice, office_id_options
+        = form.select :office_id, office_id_choices, office_id_options, autofocus: autofocus_on_select?
 
-    - modal.with_submit_action "Continuer"
+      p Le guichet sélectionné sera visible par la collectivité.
+
+    - modal.with_submit_action "Continuer", autofocus: autofocus_on_submit_button?
     - modal.with_close_action "Annuler"

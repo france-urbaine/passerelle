@@ -2,7 +2,7 @@
 
 module Views
   module Reports
-    module Denials
+    module Confirmations
       class EditComponent < ApplicationViewComponent
         def initialize(report, referrer: nil)
           @report   = report
@@ -10,12 +10,17 @@ module Views
           super()
         end
 
-        def redirection_path
-          if @referrer.nil? && @report.errors.any? && params[:redirect]
-            params[:redirect]
+        def resolution_choices
+          if @report.applicable? || @report.approved?
+            ["Mise à jour du local"]
           else
-            @referrer
+            ["Absence d’incohérence identifiée"]
           end
+        end
+
+        def resolution_options
+          # { prompt: "Sélectionnez un motif" }
+          {}
         end
       end
     end

@@ -1,0 +1,19 @@
+= modal_frame_component(referrer: @referrer_path) do |template|
+  - template.with_modal do |modal|
+    - modal.with_header do
+      | Rejet d'un signalement : annulation
+
+    - modal.with_form(model: @report, url: report_rejection_path(@report), method: :delete) do
+      - modal.with_hidden_field :redirect, @referrer
+
+      p Vous êtes sur le point d'annuler le rejet du signalement suivant :
+      = render Views::Reports::ShortDetailsComponent.new(@report)
+
+      p
+        | Ce signalement sera de nouveau disponible dans la liste des nouveaux signalements.
+        br
+        ' La collectivité pourra voir que le signalement n'est plus rejeté et il lui apparaîtra
+        ' comme simplement transmis.
+
+    - modal.with_submit_action "Continuer", autofocus: true
+    - modal.with_close_action "Annuler"

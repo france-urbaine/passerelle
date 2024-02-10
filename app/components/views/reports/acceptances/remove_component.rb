@@ -2,7 +2,7 @@
 
 module Views
   module Reports
-    module Assignments
+    module Acceptances
       class RemoveComponent < ApplicationViewComponent
         def initialize(report, referrer: nil)
           @report   = report

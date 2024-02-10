@@ -1,0 +1,13 @@
+= modal_frame_component(referrer: @referrer_path) do |template|
+  - template.with_modal do |modal|
+    - modal.with_header do
+      | Transmission d'une réponse à la collectivité : annulation
+
+    - modal.with_form(model: @report, url: report_confirmation_path(@report), method: :delete) do
+      - modal.with_hidden_field :redirect, @referrer
+
+      p Vous êtes sur le point d'annuler le retour du signalement suivant auprés de la collectivité :
+      = render Views::Reports::ShortDetailsComponent.new(@report)
+
+    - modal.with_submit_action "Continuer", autofocus: true
+    - modal.with_close_action "Annuler"

@@ -7,3 +7,9 @@ dl.grid.gap-2.grid-cols-3.mb-10
 
   dt.font-bold Collectivité :
   dd.col-span-2= @report.collectivity&.name
+
+  - attributes.each do |attribute|
+    dt.font-bold
+      = attribute.label
+      = " : "
+    dd.col-span-2= attribute.value.presence
