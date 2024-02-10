@@ -4,26 +4,48 @@ module Views
   module Reports
     module StatusBadge
       class Component < ApplicationViewComponent
-        define_component_helper :report_badge
+        define_component_helper :report_status_badge
 
         COLORS = {
-          draft:                  "badge--yellow",
-          ready:                  "badge--lime",
-          sent:                   "badge--blue",
-          acknowledged:           "badge--blue",
-          processing:             "badge--blue",
-          denied:                 "badge--red",
-          approved:               "badge--green",
-          rejected:               "badge--red",
-          in_active_transmission: "badge--violet",
-          transmitted:            "badge--blue",
-          unassigned:             "badge--yellow"
+          collectivity: {
+            draft:                  "badge--yellow",
+            ready:                  "badge--lime",
+            in_active_transmission: "badge--violet",
+            transmitted:            "badge--blue",
+            acknowledged:           "badge--blue",
+            accepted:               "badge--sky",
+            assigned:               "badge--sky",
+            applicable:             "badge--sky",
+            inapplicable:           "badge--sky",
+            approved:               "badge--green",
+            canceled:               "badge--red",
+            rejected:               "badge--red"
+          },
+          ddfip_admin: {
+            transmitted:            "badge--yellow",
+            acknowledged:           "badge--yellow",
+            accepted:               "badge--yellow",
+            assigned:               "badge--blue",
+            applicable:             "badge--lime",
+            inapplicable:           "badge--orange",
+            approved:               "badge--green",
+            canceled:               "badge--red",
+            rejected:               "badge--red"
+          },
+          ddfip_user: {
+            assigned:               "badge--yellow",
+            applicable:             "badge--lime",
+            inapplicable:           "badge--orange",
+            approved:               "badge--green",
+            canceled:               "badge--red"
+          }
         }.freeze
 
-        def initialize(arg)
+        def initialize(arg, as: nil)
           raise TypeError, "invalid argument: #{arg.inspect}" unless arg.is_a?(Report) || arg.is_a?(Symbol)
 
           @argument = arg
+          @organization_type = as
           super()
         end
 
@@ -32,41 +54,40 @@ module Views
         end
 
         def label
-          t(".#{status}")
+          t(".#{organization_type}.#{state}", default: "")
         end
 
         def css_class
-          COLORS[status]
-        end
-
-        def status
-          case @argument
-          when Symbol then @argument
-          when Report then report_state(@argument)
-          end
+          COLORS.dig(organization_type, state)
         end
 
         private
 
+        def organization_type
+          case @organization_type&.to_s || current_organization&.model_name&.element
+          when "collectivity", "publisher" then :collectivity
+          when "dgfip", "ddfip_admin"      then :ddfip_admin
+          when "ddfip_user"                then :ddfip_user
+          when "ddfip"                     then current_user.organization_admin? ? :ddfip_admin : :ddfip_user
+          end
+        end
+
+        def state
+          case @argument
+          when Symbol then @argument
+          when Report then report_state(@argument).to_sym
+          end
+        end
+
         def report_state(report)
-          case current_organization
-          when DDFIP
-            if report.unassigned?
-              :unassigned
-            else
-              report.state.to_sym
-            end
-          when Collectivity, Publisher
-            # TODO: handle resolved state confirmed by DDFIP admins
-            if report.denied?
-              :denied
-            elsif report.transmitted?
-              :transmitted
-            elsif report.in_active_transmission?
+          if organization_type == :collectivity
+            if report.packing? && report.in_active_transmission?
               :in_active_transmission
             else
-              report.state.to_sym
+              report.state
             end
+          else
+            report.state
           end
         end
       end

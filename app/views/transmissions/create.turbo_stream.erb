@@ -4,7 +4,7 @@
 <% @result.added_reports.find_each do |report| %>
   <turbo-stream action="update" target="<%= dom_id(report, :status) %>">
     <template>
-      <%= report_badge(report) %>
+      <%= report_status_badge(report) %>
     </template>
   </turbo-stream>
 

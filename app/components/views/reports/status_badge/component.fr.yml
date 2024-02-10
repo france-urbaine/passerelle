@@ -1,13 +1,32 @@
 fr:
-  draft:          Formulaire incomplet
-  ready:          Formulaire complété
-  sent:           Signalement transmis
-  acknowledged:   Signalement transmis
-  denied:         Signalement retourné
-  processing:     Signalement en cours de traitement
-  approved:       Signalement approuvé
-  rejected:       Signalement rejeté
+  collectivity:
+    draft:                  "Formulaire incomplet"
+    ready:                  "Formulaire complété"
+    in_active_transmission: "Transmission en attente"
+    transmitted:            "Signalement transmis"
+    acknowledged:           "Signalement transmis"
+    accepted:               "Signalement accepté"
+    assigned:               "Signalement accepté"
+    applicable:             "Signalement accepté"
+    inapplicable:           "Signalement accepté"
+    approved:               "Mise à jour validée"
+    canceled:               "Absence d'incohérence"
+    rejected:               "Signalement rejeté"
 
-  in_active_transmission: Transmission en attente
-  transmitted:            Signalement transmis
-  unassigned:             Signalement non assigné
+  ddfip_admin:
+    transmitted:            "Nouveau signalement"
+    acknowledged:           "Nouveau signalement"
+    accepted:               "Signalement accepté"
+    assigned:               "Signalement assigné"
+    applicable:             "Mise à jour validée"
+    inapplicable:           "Absence d’incohérence"
+    approved:               "Réponse validée"
+    canceled:               "Réponse négative"
+    rejected:               "Signalement rejeté"
+
+  ddfip_user:
+    assigned:               "Signalement à traiter"
+    applicable:             "Mise à jour validée"
+    inapplicable:           "Absence d’incohérence"
+    approved:               "Réponse validée"
+    canceled:               "Réponse négative"

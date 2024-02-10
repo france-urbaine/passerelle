@@ -4,7 +4,7 @@ module Views
   module Reports
     module StatusBadge
       # @display frame "content"
-      # @display width "small"
+      # @display width "medium"
       #
       class Preview < ApplicationViewComponentPreview
         def default; end
