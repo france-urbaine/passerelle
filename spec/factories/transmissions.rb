@@ -45,16 +45,6 @@ FactoryBot.define do
       end
     end
 
-    trait :completed_through_web_ui do
-      made_through_web_ui
-      completed
-    end
-
-    trait :completed_through_api do
-      made_through_api
-      completed
-    end
-
     trait :with_reports do
       transient do
         reports_size { 1 }
@@ -62,7 +52,11 @@ FactoryBot.define do
 
       reports do
         Array.new(reports_size) do
-          association :report, :transmitted, transmission: instance, collectivity:, publisher:
+          if completed_at
+            association :report, :transmitted, transmission: instance, collectivity:, publisher:
+          else
+            association :report, :ready, transmission: instance, collectivity:, publisher:
+          end
         end
       end
     end
@@ -77,6 +71,37 @@ FactoryBot.define do
           association :report, transmission: instance, collectivity:, publisher:
         end
       end
+    end
+
+    trait :made_for_ddfip do
+      transient do
+        ddfip        { association(:ddfip) }
+        reports_size { 1 }
+      end
+
+      reports do
+        commune = ddfip.communes[0] || association(:commune, departement: ddfip.departement)
+
+        Array.new(reports_size) do
+          if completed_at
+            association :report, :transmitted, transmission: instance, collectivity:, publisher:, commune:
+          else
+            association :report, :ready, transmission: instance, collectivity:, publisher:, commune:
+          end
+        end
+      end
+    end
+
+    trait :completed_through_web_ui do
+      made_through_web_ui
+      completed
+      with_reports
+    end
+
+    trait :completed_through_api do
+      made_through_api
+      completed
+      with_reports
     end
   end
 end
