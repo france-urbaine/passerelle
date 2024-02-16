@@ -28,8 +28,8 @@
         = current_organization.reports_rejected_count
         span.dashboard-number__unit Signalements rejetés
 
-  - layout.with_header icon: "clipboard-document" do |header|
-    | Nouveaux signalement
+  - layout.with_header icon: "envelope-open" do |header|
+    | Nouveaux signalements
 
     - header.with_action "Tout voir", icon: "magnifying-glass", disabled: true
 
@@ -47,8 +47,8 @@
       - view.with_column(:priority)
       - view.with_column(:status)
 
-  - layout.with_header icon: "clipboard-document" do |header|
-    | Nouveaux signalements en attente d'une assignation
+  - layout.with_header icon: "inbox-stack" do |header|
+    | Signalements en attente d'une assignation
 
     - header.with_action "Tout voir", icon: "magnifying-glass", disabled: true
 
@@ -66,8 +66,8 @@
       - view.with_column(:priority)
       - view.with_column(:status)
 
-  - layout.with_header icon: "clipboard-document" do |header|
-    | Derniers signalements en attente d'une réponse à la collectivité
+  - layout.with_header icon: "document-check" do |header|
+    | Derniers signalements traités, à transmettre à la collectivité
 
     - header.with_action "Tout voir", icon: "magnifying-glass", disabled: true
 
