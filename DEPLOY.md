@@ -11,8 +11,9 @@ Once you've got a deployable HEAD on main branch:
 2. Push the tags to github remotes:
 
     ```shell
-    git push origin
+    git push origin --tags
     git push france_urbaine
+    git push france_urbaine --tags
     ```
 
 3. Draft a release on [Github](https://github.com/france-urbaine/passerelle/releases)

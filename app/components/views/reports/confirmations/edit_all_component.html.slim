@@ -1,0 +1,56 @@
+= modal_frame_component(referrer: @referrer) do |template|
+  - template.with_modal do |modal|
+    - modal.with_header do
+      - if selected_count == 1
+        | Transmission du signalement sélectionné à la collectivité
+      - else
+        | Transmission des signalements sélectionnés aux collectivités
+
+    - if reports_count.zero?
+      - modal.with_body do
+        p
+          | Aucun des signalements sélectionnés ne peut être transmis :
+          br
+          | les signalements déjà transmis ou non-traités sont ignorés.
+
+      - modal.with_close_action "Fermer"
+
+    - else
+      - modal.with_form(model: @service, scope: :report, url: report_confirmations_path, method: "patch") do |form|
+        - modal.with_hidden_field :redirect, @referrer
+        - modal.with_hidden_field :ids,      params[:ids]
+        - modal.with_hidden_field :search,   params[:search]
+        - modal.with_hidden_field :order,    params[:order]
+        - modal.with_hidden_field :page,     params[:page]
+
+        .mb-10
+          - if ignored_count.zero?
+            - if reports_count == 1
+              p Vous êtes sur le point de transmettre <b>1</b> signalement à sa collectivité.
+            - elsif reports_count > 1
+              p Vous êtes sur le point de transmettre les <b>#{reports_count}</b> signalements sélectionnés à leur collectivités respectives.
+
+          - elsif ignored_count.positive?
+            p Vous avez sélectionné <b>#{selected_count}</b> signalements :
+
+            ul.list-disc.ml-6.mb-6
+              li
+                - if reports_count == 1
+                  ' <b>1</b> signalement sera transmis à sa collectivité.
+                - else
+                  ' <b>#{reports_count}</b> signalements seront transmis à leur collectivités respectives.
+
+              li
+                - if ignored_count == 1
+                  ' <b>1</b> signalement déjà déjà transmis ou non-traité sera ignoré.
+                - elsif ignored_count > 1
+                  ' <b>#{ignored_count}</b> signalements déjà transmis ou non-traités seront ignorés.
+
+            p
+              ' Les motifs et observations déjà définis seront eux-aussi transmis à la collectivité.
+              br
+              ' Cette action est définitive et ne peut être annulée par la suite.
+
+
+      - modal.with_submit_action "Continuer"
+      - modal.with_close_action "Annuler"

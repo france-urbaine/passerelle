@@ -3,10 +3,7 @@
 require "rails_helper"
 
 RSpec.describe Views::Reports::Resolutions::RemoveComponent, type: :component do
-  let(:ddfip)  { create(:ddfip) }
-  let(:report) { create(:report, :assigned, :applicable, ddfip:) }
-
-  before { sign_in_as(:ddfip) }
+  let(:report) { build_stubbed(:report, :resolved_as_applicable) }
 
   it "renders a modal form to undo report resolution" do
     render_inline described_class.new(report)

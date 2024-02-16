@@ -1,0 +1,73 @@
+= modal_frame_component(referrer: @referrer) do |template|
+  - template.with_modal do |modal|
+    - modal.with_header do
+      - if selected_count == 1
+        | Rejet du signalement sélectionné
+      - else
+        | Rejet des signalements sélectionnés
+
+    - if reports_count.zero?
+      - modal.with_body do
+        p
+          | Aucun des signalements sélectionnés ne peut être rejetés :
+          br
+          | les signalements déjà assignés ou traités sont ignorés.
+
+      - modal.with_close_action "Fermer"
+
+    - else
+      - modal.with_form(model: @service, scope: :report, url: report_rejections_path, method: "patch") do |form|
+        - modal.with_hidden_field :redirect, @referrer
+        - modal.with_hidden_field :ids,      params[:ids]
+        - modal.with_hidden_field :search,   params[:search]
+        - modal.with_hidden_field :order,    params[:order]
+        - modal.with_hidden_field :page,     params[:page]
+
+        .mb-10
+          - if ignored_count.zero?
+            - if reports_count == 1
+              p Vous êtes sur le point de rejeter <b>1</b> signalement.
+            - elsif reports_count > 1
+              p Vous êtes sur le point de rejeter les <b>#{reports_count}</b> signalements sélectionnés.
+
+          - elsif ignored_count.positive?
+            p Vous avez sélectionné <b>#{selected_count}</b> signalements :
+
+            ul.list-disc.ml-6.mb-6
+              li
+                - if reports_count == 1
+                  ' <b>1</b> signalement sera rejeté.
+                - else
+                  ' <b>#{reports_count}</b> signalements seront rejetés.
+
+              li
+                - if ignored_count == 1
+                  ' <b>1</b> signalement déjà assigné ou traité sera ignoré.
+                - elsif ignored_count > 1
+                  ' <b>#{ignored_count}</b> signalements déjà assignés ou traités seront ignorés.
+
+          - if accepted_count.positive?
+            p <b>Attention :</b>
+
+            ul.list-disc.ml-6.mb-6
+              li
+                - if accepted_count == 1
+                  ' <b>1</b> signalement selectionné est actuellement accepté.
+                  br
+                  ' Ce signalement sera aussi rejeté.
+                - else
+                  ' <b>#{accepted_count}</b> signalements selectionnés sont actuellement acceptés.
+                  br
+                  ' Ces signalements seront aussi rejetés.
+
+        p
+          ' Les signalements rejetés seront retournés aux collectivités.
+          br
+          ' Vous pouvez leur transmettre des observations quant au motif de rejet.
+
+        = form.block :reponse do |block|
+          = form.label :reponse, "Observations :"
+          = form.text_area :reponse, rows: 10
+
+      - modal.with_submit_action "Continuer", autofocus: true
+      - modal.with_close_action "Annuler"

@@ -1,7 +1,7 @@
 = modal_frame_component(referrer: @referrer_path) do |template|
   - template.with_modal do |modal|
     - modal.with_header do
-      | Transmission d'une réponse à la collectivité
+      | Transmission à la collectivité
 
     - modal.with_form(model: @report, url: report_confirmation_path(@report)) do |form|
       - modal.with_hidden_field :redirect, @referrer

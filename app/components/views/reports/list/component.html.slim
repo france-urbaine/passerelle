@@ -10,6 +10,15 @@
       - if allowed_to?(:destroy?, Transmission)
         - selection.with_action "Ne plus transmettre", transmissions_path, method: :delete, modal: true
 
+      - if allowed_to?(:accept?, Report)
+        - selection.with_action "Accepter", edit_all_report_acceptances_path, icon: "check-circle", modal: true
+      - if allowed_to?(:reject?, Report)
+        - selection.with_action "Rejeter", edit_all_report_rejections_path, icon: "no-symbol", modal: true
+      - if allowed_to?(:assign?, Report)
+        - selection.with_action "Assigner", edit_all_report_assignments_path, icon: "inbox-arrow-down", modal: true
+      - if allowed_to?(:confirm?, Report)
+        - selection.with_action "Transmettre", edit_all_report_confirmations_path, icon: "paper-airplane", modal: true
+
       - if allowed_to?(:destroy_all?, Report)
         - selection.with_action "Supprimer", url_for([:remove_all, @parent, :reports]), modal: true
 
@@ -37,7 +46,7 @@
     - if @dashboard
       - row.with_checkbox "Sélectionner ce signalement", described_by: :name, disabled: true
     - else
-      - row.with_checkbox "Sélectionner ce signalement", described_by: :name, disabled: !(allowed_to?(:create?, Transmission) || allowed_to?(:destroy_all?, Report))
+      - row.with_checkbox "Sélectionner ce signalement", described_by: :name
 
     - if report.wait_for_acceptance?
       - if allowed_to?(:accept?, report)

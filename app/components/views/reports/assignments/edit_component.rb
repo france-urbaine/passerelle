@@ -11,6 +11,8 @@ module Views
         end
 
         def office_id_choices
+          return [] unless current_user
+
           current_ddfip.offices.order(:name).pluck(:name, :id)
         end
 

@@ -237,6 +237,7 @@ module States
       def self.transmit_all(**attributes)
         attributes[:state]            = "transmitted"
         attributes[:transmitted_at] ||= coalesce_sql_datetime(:transmitted_at)
+        attributes[:updated_at]       = Time.current
 
         transmittable.update_all(attributes)
       end
@@ -246,6 +247,7 @@ module States
         attributes[:acknowledged_at] ||= coalesce_sql_datetime(:acknowledged_at)
         attributes[:accepted_at]     ||= coalesce_sql_datetime(:accepted_at)
         attributes[:returned_at]       = nil
+        attributes[:updated_at]        = Time.current
 
         acceptable.update_all(attributes)
       end
@@ -253,6 +255,7 @@ module States
       def self.assign_all(**attributes)
         attributes[:state]         = "assigned"
         attributes[:assigned_at] ||= coalesce_sql_datetime(:assigned_at)
+        attributes[:updated_at]    = Time.current
 
         assignable.update_all(attributes)
       end
@@ -262,6 +265,7 @@ module States
         attributes[:acknowledged_at] ||= coalesce_sql_datetime(:acknowledged_at)
         attributes[:returned_at]     ||= coalesce_sql_datetime(:returned_at)
         attributes[:accepted_at]       = nil
+        attributes[:updated_at]        = Time.current
 
         rejectable.update_all(attributes)
       end
@@ -271,6 +275,7 @@ module States
 
         attributes[:state]         = state
         attributes[:resolved_at] ||= coalesce_sql_datetime(:resolved_at)
+        attributes[:updated_at]    = Time.current
 
         resolvable.update_all(attributes)
       end
@@ -280,10 +285,12 @@ module States
           CASE "reports"."state"
           WHEN 'applicable'::report_state   THEN 'approved'::report_state
           WHEN 'inapplicable'::report_state THEN 'canceled'::report_state
+          ELSE "reports"."state"
           END
         SQL
 
         attributes[:returned_at] ||= coalesce_sql_datetime(:returned_at)
+        attributes[:updated_at]    = Time.current
 
         confirmable.update_all(attributes)
       end

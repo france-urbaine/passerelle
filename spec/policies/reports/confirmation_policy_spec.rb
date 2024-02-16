@@ -88,8 +88,60 @@ RSpec.describe Reports::ConfirmationPolicy, type: :policy do
     end
   end
 
-  it { expect(:update?).to be_an_alias_of(policy, :manage?) }
   it { expect(:edit?).to be_an_alias_of(policy, :manage?) }
+  it { expect(:update?).to be_an_alias_of(policy, :manage?) }
   it { expect(:remove?).to be_an_alias_of(policy, :manage?) }
   it { expect(:destroy?).to be_an_alias_of(policy, :manage?) }
+  it { expect(:edit_all?).to be_an_alias_of(policy, :manage?) }
+  it { expect(:update_all?).to be_an_alias_of(policy, :manage?) }
+
+  describe "relation scope" do
+    subject!(:scope) { apply_relation_scope(Report.all) }
+
+    it_behaves_like("when current user is a DDFIP admin") do
+      it "scopes all acceptable reports transmitted to its organization" do
+        expect {
+          scope.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT  "reports".*
+          FROM    "reports"
+          WHERE   "reports"."discarded_at" IS NULL
+            AND   "reports"."sandbox" = FALSE
+            AND   "reports"."state" IN ('transmitted', 'acknowledged', 'accepted', 'assigned', 'applicable', 'inapplicable', 'approved', 'canceled', 'rejected')
+            AND   "reports"."ddfip_id" = '#{current_organization.id}'
+            AND   "reports"."state" IN ('applicable', 'inapplicable', 'approved', 'canceled')
+        SQL
+      end
+    end
+
+    it_behaves_like("when current user is a DDFIP user")         { it { is_expected.to be_a_null_relation } }
+    it_behaves_like("when current user is a DGFIP admin")        { it { is_expected.to be_a_null_relation } }
+    it_behaves_like("when current user is a DGFIP user")         { it { is_expected.to be_a_null_relation } }
+    it_behaves_like("when current user is a publisher admin")    { it { is_expected.to be_a_null_relation } }
+    it_behaves_like("when current user is a publisher user")     { it { is_expected.to be_a_null_relation } }
+    it_behaves_like("when current user is a collectivity admin") { it { is_expected.to be_a_null_relation } }
+    it_behaves_like("when current user is a collectivity user")  { it { is_expected.to be_a_null_relation } }
+  end
+
+  describe "params scope" do
+    subject(:params) { apply_params_scope(attributes) }
+
+    let(:attributes) do
+      {
+        form_type: "occupation_local_habitation",
+        ddfip_id:  "50bd3322-5f43-4785-88cd-b05772c093fa",
+        office_id: "13420f31-3ac6-4b7e-858d-d5df8866f117",
+        reponse:   "Lorem lispum"
+      }
+    end
+
+    it_behaves_like("when current user is a DDFIP admin")        { it { is_expected.to be_nil } }
+    it_behaves_like("when current user is a DDFIP user")         { it { is_expected.to be_nil } }
+    it_behaves_like("when current user is a DGFIP admin")        { it { is_expected.to be_nil } }
+    it_behaves_like("when current user is a DGFIP user")         { it { is_expected.to be_nil } }
+    it_behaves_like("when current user is a publisher admin")    { it { is_expected.to be_nil } }
+    it_behaves_like("when current user is a publisher user")     { it { is_expected.to be_nil } }
+    it_behaves_like("when current user is a collectivity admin") { it { is_expected.to be_nil } }
+    it_behaves_like("when current user is a collectivity user")  { it { is_expected.to be_nil } }
+  end
 end

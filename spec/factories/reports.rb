@@ -151,6 +151,13 @@ FactoryBot.define do
       resolved_at { Time.current }
     end
 
+    trait :resolved do
+      assigned
+
+      state       { %w[applicable inapplicable].sample }
+      resolved_at { Time.current }
+    end
+
     trait :approved do
       applicable
 
@@ -235,6 +242,11 @@ FactoryBot.define do
     trait :assigned_to_office do
       made_for_office
       assigned
+    end
+
+    trait :resolved_by_ddfip do
+      assigned_by_ddfip
+      resolved
     end
 
     trait :resolved_as_applicable do

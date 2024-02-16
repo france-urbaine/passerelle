@@ -1,0 +1,68 @@
+= modal_frame_component(referrer: @referrer) do |template|
+  - template.with_modal do |modal|
+    - modal.with_header do
+      - if selected_count == 1
+        | Assignation du signalement sélectionné
+      - else
+        | Assignation des signalements sélectionnés
+
+    - if reports_count.zero?
+      - modal.with_body do
+        p
+          | Aucun des signalements sélectionnés ne peut être assigné :
+          br
+          | les signalements déjà traités ou rejetés sont ignorés.
+
+      - modal.with_close_action "Fermer"
+
+    - else
+      - modal.with_form(model: @service, scope: :report, url: report_assignments_path, method: "patch") do |form|
+        - modal.with_hidden_field :redirect, @referrer
+        - modal.with_hidden_field :ids,      params[:ids]
+        - modal.with_hidden_field :search,   params[:search]
+        - modal.with_hidden_field :order,    params[:order]
+        - modal.with_hidden_field :page,     params[:page]
+
+        .mb-10
+          - if ignored_count.zero?
+            - if reports_count == 1
+              p Vous êtes sur le point d'assigner <b>1</b> signalement à un guichet.
+            - elsif reports_count > 1
+              p Vous êtes sur le point d'assigner les <b>#{reports_count}</b> signalements sélectionnés à un guichet.
+
+          - elsif ignored_count.positive?
+            p Vous avez sélectionné <b>#{selected_count}</b> signalements :
+
+            ul.list-disc.ml-6.mb-6
+              li
+                - if reports_count == 1
+                  ' <b>1</b> signalement sera assigné à un guichet.
+                - else
+                  ' <b>#{reports_count}</b> signalements seront assignés à un guichet.
+
+              li
+                - if ignored_count == 1
+                  ' <b>1</b> signalement déjà traité ou rejeté sera ignoré.
+                - elsif ignored_count > 1
+                  ' <b>#{ignored_count}</b> signalements déjà traités ou rejetés seront ignorés.
+
+          - if assigned_count.positive?
+            p <b>Attention :</b>
+
+            ul.list-disc.ml-6.mb-6
+              li
+                - if assigned_count == 1
+                  ' <b>1</b> signalement selectionné est déjà assigné à un guichet.
+                  br
+                  ' Ce signalement sera ré-assigné.
+                - else
+                  ' <b>#{assigned_count}</b> signalements selectionnés sont déjà assignés à un guichet.
+                  br
+                  ' Ces signalements seront ré-assignés.
+
+        = form.block :office_id do
+          = form.label :office_id, "Veuillez sélectionner un guichet :"
+          = form.select :office_id, office_id_choice, office_id_options
+
+      - modal.with_submit_action "Continuer"
+      - modal.with_close_action "Annuler"
