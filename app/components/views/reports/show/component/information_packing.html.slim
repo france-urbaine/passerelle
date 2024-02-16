@@ -1,0 +1,35 @@
+= content_layout_component do |layout|
+  - layout.with_header icon: "server-stack" do |header|
+    | Informations générales
+
+    - header.with_action do
+      div( id=dom_id(@report, :status) is="turbo-frame" )
+        = report_status_badge(@report)
+
+    - if @report.sandbox?
+      - header.with_action do
+        = badge_component("Bac à sable", :warning)
+
+  - layout.with_section do
+    = description_list_component(@report) do |list|
+      - list.with_attribute("Type de signalement") do
+        = translate_enum(@report.form_type, scope: "enum.report_form_type")
+
+  - layout.with_header icon: "flag" do |header|
+    | Objet du signalement
+
+    - if allowed_to?(:update?, @report) && @report.packing?
+      - header.with_action "Compléter", edit_report_path(@report, "information"), icon: "pencil-square", modal: true
+
+  - layout.with_section do
+    = description_list_component(@report) do |list|
+      - list.with_attribute(:anomalies) do
+        = render_valid_content(:anomalies) do
+          = helpers.list(@report.anomalies) { |value| translate_enum(value, scope: ["enum.anomalies", @report.form_type]) }
+
+      - list.with_attribute(:date_constat) do
+        = render_valid_content(:date_constat) do
+          = helpers.display_date(@report.date_constat)
+
+      - list.with_attribute(:priority) do
+        = render Views::Reports::PriorityIcon::Component.new(@report)

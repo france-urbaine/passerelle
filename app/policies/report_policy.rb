@@ -54,35 +54,39 @@ class ReportPolicy < ApplicationPolicy
     end
   end
 
+  def accept?
+    allowed_to?(:manage?, record, with: ::Reports::AcceptancePolicy)
+  end
+
+  def undo_acceptance?
+    allowed_to?(:destroy?, record, with: ::Reports::AcceptancePolicy)
+  end
+
   def assign?
     allowed_to?(:manage?, record, with: ::Reports::AssignmentPolicy)
   end
 
-  def unassign?
+  def undo_assignment?
     allowed_to?(:destroy?, record, with: ::Reports::AssignmentPolicy)
   end
 
-  def deny?
-    allowed_to?(:manage?, record, with: ::Reports::DenialPolicy)
+  def resolve?
+    allowed_to?(:manage?, record, with: ::Reports::ResolutionPolicy)
   end
 
-  def undeny?
-    allowed_to?(:destroy?, record, with: ::Reports::DenialPolicy)
+  def undo_resolution?
+    allowed_to?(:destroy?, record, with: ::Reports::ResolutionPolicy)
   end
 
-  def approve?
-    allowed_to?(:manage?, record, with: ::Reports::ApprovalPolicy)
-  end
-
-  def unapprove?
-    allowed_to?(:destroy?, record, with: ::Reports::ApprovalPolicy)
+  def confirm?
+    allowed_to?(:manage?, record, with: ::Reports::ConfirmationPolicy)
   end
 
   def reject?
     allowed_to?(:manage?, record, with: ::Reports::RejectionPolicy)
   end
 
-  def unreject?
+  def undo_rejection?
     allowed_to?(:destroy?, record, with: ::Reports::RejectionPolicy)
   end
 
@@ -306,12 +310,15 @@ class ReportPolicy < ApplicationPolicy
 
   # Authorizations for office users
   # ----------------------------------------------------------------------------
+  # An office user can see every assigned reports
+  # but we'll list to him only the ones assigned to its offices
+  #
   concerning :OfficeUsers do
     def report_shown_to_office_user?(report)
       office_user? &&
         report.out_of_sandbox? &&
         report.assigned? &&
-        report.covered_by_offices?(user.offices)
+        report.ddfip == organization
     end
 
     def reports_listed_to_office_users

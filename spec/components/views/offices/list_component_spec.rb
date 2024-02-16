@@ -26,7 +26,7 @@ RSpec.describe Views::Offices::ListComponent, type: :component do
         expect(table).to have_selector("th", text: "Communes")
         expect(table).to have_selector("th", text: "Signalements")
         expect(table).to have_selector("th", text: "Approuvés")
-        expect(table).to have_selector("th", text: "Rejetés")
+        expect(table).to have_selector("th", text: "Annulés")
 
         expect(table).to have_selector(:table_row, {
           "Guichet"  => offices.first.name,

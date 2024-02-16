@@ -49,7 +49,16 @@ FactoryBot.define do
       priority { "high" }
     end
 
-    # Report status
+    trait :sandbox do
+      sandbox { true }
+    end
+
+    trait :discarded do
+      discarded_at { Time.current }
+    end
+
+    # Report state
+    # --------------------------------------------------------------------------
 
     trait :draft do
       state { "draft" }
@@ -57,7 +66,7 @@ FactoryBot.define do
 
     trait :ready do
       state        { "ready" }
-      ready_at     { Time.current }
+      completed_at { Time.current }
       anomalies    { Report::FORM_TYPE_ANOMALIES[form_type][0, 1] }
       date_constat { rand(0..5).days.ago }
 
@@ -81,10 +90,6 @@ FactoryBot.define do
       situation_code_rivoli  { Faker::Number.leading_zero_number(digits: 4) }
     end
 
-    trait :sandbox do
-      sandbox { true }
-    end
-
     trait :in_active_transmission do
       ready
       transmission { association(:transmission, collectivity:, publisher:, sandbox:) }
@@ -92,10 +97,10 @@ FactoryBot.define do
 
     trait :transmitted do
       ready
-      in_active_transmission
 
+      transmission   { association(:transmission, :completed, collectivity:, publisher:, sandbox:) }
       package        { association(:package, collectivity:, publisher:, sandbox:, transmission:, ddfip:) }
-      state          { "sent" }
+      state          { "transmitted" }
       transmitted_at { Time.current }
 
       sequence :reference do |n|
@@ -111,39 +116,57 @@ FactoryBot.define do
       acknowledged_at { Time.current }
     end
 
-    trait :discarded do
-      discarded_at { Time.current }
+    trait :accepted do
+      acknowledged
+
+      state       { "accepted" }
+      accepted_at { Time.current }
     end
 
     trait :assigned do
-      acknowledged
+      accepted
 
-      state       { "processing" }
+      state       { "assigned" }
       assigned_at { Time.current }
     end
 
-    trait :denied do
+    trait :rejected do
       acknowledged
 
-      state     { "denied" }
-      denied_at { Time.current }
+      state       { "rejected" }
+      returned_at { Time.current }
+    end
+
+    trait :applicable do
+      assigned
+
+      state       { "applicable" }
+      resolved_at { Time.current }
+    end
+
+    trait :inapplicable do
+      assigned
+
+      state       { "inapplicable" }
+      resolved_at { Time.current }
     end
 
     trait :approved do
-      assigned
+      applicable
 
       state       { "approved" }
-      approved_at { Time.current }
+      returned_at { Time.current }
     end
 
-    trait :rejected do
-      assigned
+    trait :canceled do
+      inapplicable
 
-      state       { "rejected" }
-      rejected_at { Time.current }
+      state       { "canceled" }
+      returned_at { Time.current }
     end
 
     # Report origin
+    # --------------------------------------------------------------------------
 
     trait :made_through_web_ui do
       after :build, :stub do |report|
@@ -167,7 +190,13 @@ FactoryBot.define do
       transmitted
     end
 
+    trait :transmitted_to_sandbox do
+      transmitted_through_api
+      sandbox
+    end
+
     # Report destination
+    # --------------------------------------------------------------------------
 
     trait :made_for_ddfip do
       ddfip { association(:ddfip) }
@@ -186,29 +215,51 @@ FactoryBot.define do
       transmitted
     end
 
+    # Report workflow by DDFIP & offices
+    # --------------------------------------------------------------------------
+    trait :acknowledged_by_ddfip do
+      made_for_ddfip
+      acknowledged
+    end
+
+    trait :accepted_by_ddfip do
+      made_for_ddfip
+      accepted
+    end
+
     trait :assigned_by_ddfip do
       made_for_ddfip
       assigned
     end
 
-    trait :denied_by_ddfip do
-      made_for_ddfip
-      denied
+    trait :assigned_to_office do
+      made_for_office
+      assigned
+    end
+
+    trait :resolved_as_applicable do
+      assigned_to_office
+      applicable
+    end
+
+    trait :resolved_as_inapplicable do
+      assigned_to_office
+      inapplicable
     end
 
     trait :approved_by_ddfip do
-      made_for_ddfip
+      resolved_as_applicable
       approved
+    end
+
+    trait :canceled_by_ddfip do
+      resolved_as_inapplicable
+      canceled
     end
 
     trait :rejected_by_ddfip do
       made_for_ddfip
       rejected
-    end
-
-    trait :assigned_to_office do
-      made_for_office
-      assigned
     end
   end
 end

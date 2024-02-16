@@ -20,17 +20,16 @@
 #  disapproved_at             :datetime
 #  desactivated_at            :datetime
 #  discarded_at               :datetime
-#  users_count                :integer          default(0), not null
 #  domain_restriction         :string
 #  allow_2fa_via_email        :boolean          default(FALSE), not null
 #  allow_publisher_management :boolean          default(FALSE), not null
-#  reports_incomplete_count   :integer          default(0), not null
-#  reports_packing_count      :integer          default(0), not null
+#  users_count                :integer          default(0), not null
 #  reports_transmitted_count  :integer          default(0), not null
-#  reports_denied_count       :integer          default(0), not null
-#  reports_processing_count   :integer          default(0), not null
-#  reports_approved_count     :integer          default(0), not null
+#  reports_accepted_count     :integer          default(0), not null
 #  reports_rejected_count     :integer          default(0), not null
+#  reports_approved_count     :integer          default(0), not null
+#  reports_canceled_count     :integer          default(0), not null
+#  reports_returned_count     :integer          default(0), not null
 #
 # Indexes
 #

@@ -12,7 +12,7 @@ module Reports
           record.kept? &&
           record.out_of_sandbox? &&
           record.ddfip_id == organization.id &&
-          (record.unresolved? || record.denied?)
+          record.assignable?
       end
     end
 

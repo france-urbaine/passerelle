@@ -2,10 +2,10 @@
 
 module Views
   module Reports
-    class ShortDetailsComponent < ApplicationViewComponent
+    class ShortDetailsComponent < ::UI::DescriptionList::Component
       def initialize(report)
         @report = report
-        super()
+        super(report)
       end
     end
   end

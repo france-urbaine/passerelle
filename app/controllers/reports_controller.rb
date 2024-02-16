@@ -7,14 +7,18 @@ class ReportsController < ApplicationController
   before_action :better_view_on_parent, only: :index
 
   def index
-    @transmission   = find_or_initialize_transmission
-    @reports        = build_and_authorize_scope
-    @reports, @pagy = index_collection(@reports, nested: @parent)
+    reports       = build_and_authorize_scope
+    reports, pagy = index_collection(reports, nested: @parent)
+    transmission  = find_or_initialize_transmission
+
+    render Views::Reports::Index::Component.new(reports, pagy, transmission)
   end
 
   def show
-    @report = find_and_authorize_report
-    @report.acknowledge! if first_opening_by_ddfip?
+    report = find_and_authorize_report
+    report.acknowledge! if current_organization.is_a?(DDFIP) && !report.acknowledged?
+
+    render Views::Reports::Show::Component.new(report)
   end
 
   def new
@@ -33,18 +37,23 @@ class ReportsController < ApplicationController
   end
 
   def edit
-    @report = find_and_authorize_report
-    @referrer_path = referrer_path || report_path(@report)
+    report   = find_and_authorize_report
+    form     = params.require(:form)
+    referrer = referrer_path || report_path(report)
+
+    render Views::Reports::Edit::Component.new(report, form, referrer:)
   end
 
   def update
-    @report = find_and_authorize_report
-    service = Reports::UpdateService.new(@report, report_params)
-    result  = service.save
+    report   = find_and_authorize_report
+    referrer = redirect_path || report_path(report)
+    result   = Reports::UpdateService.new(report, report_params).save
 
-    respond_with result,
-      flash: true,
-      location: -> { report_path(@report) }
+    if result.success?
+      respond_with result, flash: true, location: referrer
+    else
+      respond_with result, render: Views::Reports::Acceptances::EditComponent.new(report, referrer:)
+    end
   end
 
   def remove
@@ -138,9 +147,5 @@ class ReportsController < ApplicationController
       completed_at: nil,
       collectivity: current_user.organization
     )
-  end
-
-  def first_opening_by_ddfip?
-    current_organization.is_a?(DDFIP) && @report.sent?
   end
 end

@@ -26,7 +26,7 @@ module Transmissions
     end
 
     def add(reports)
-      transmissible_reports   = reports.transmissible
+      transmissible_reports   = reports.transmittable.not_in_active_transmission
       intransmissible_reports = reports.where.not(id: transmissible_reports.select(:id))
 
       # TODO: potential performances issues

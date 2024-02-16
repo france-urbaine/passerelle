@@ -1,0 +1,110 @@
+= content_layout_component do |layout|
+  - layout.with_header icon: "server-stack" do |header|
+    | Informations générales
+
+    - header.with_action do
+      = priority_badge(@report)
+
+    - header.with_action do
+      = report_status_badge(@report)
+
+    - if @report.sandbox?
+      - header.with_action do
+        = badge_component("Bac à sable", :warning)
+
+    - if @report.resolved?
+      - if allowed_to?(:undo_resolution?, @report)
+         - header.with_action do
+          = dropdown_component(position: "aside", direction: "left") do |dropdown|
+            - dropdown.with_button "Modifier le statut", icon: "ellipsis-horizontal-circle", icon_only: true
+            - dropdown.with_menu_item do |item|
+              | Une résolution a été prise pour ce signalement :
+              br
+              - if @report.applicable?
+                | la mise à jour a été validée
+              - else
+                | aucune incohérence n'a pu être identifiée.
+              br
+              | Vous pouvez néanmoins modifier cette décision :
+
+            - if allowed_to?(:resolve?, @report)
+              - if @report.applicable?
+                - dropdown.with_menu_item "Récuser le signalement", edit_report_resolution_path(@report, state: "inapplicable"), icon: "hand-thumb-down", modal: true
+              - else
+                - dropdown.with_menu_item "Valider le signalement", edit_report_resolution_path(@report, state: "applicable"), icon: "hand-thumb-up", modal: true
+
+            - if allowed_to?(:undo_resolution?, @report)
+              - dropdown.with_menu_item "Annuler la résolution", remove_report_resolution_path(@report), icon: "arrow-path", modal: true
+
+    - if @report.assigned?
+      - if allowed_to?(:undo_assignment?, @report)
+        - header.with_action do
+          = dropdown_component(position: "aside", direction: "left") do |dropdown|
+            - dropdown.with_button "Modifier le statut", icon: "ellipsis-horizontal-circle", icon_only: true
+            - dropdown.with_menu_item do |item|
+              | Ce signalement a été assigné à un guichet.
+              br
+              | Vous pouvez néanmoins annuler cette décision :
+
+            - if allowed_to?(:undo_assignment?, @report)
+              - dropdown.with_menu_item "Annuler l'asignation", remove_report_assignment_path(@report), icon: "arrow-path", modal: true
+
+    - elsif @report.accepted?
+      - if allowed_to?(:undo_acceptance?, @report) || allowed_to?(:reject?, @report)
+        - header.with_action do
+          = dropdown_component(position: "aside", direction: "left") do |dropdown|
+            - dropdown.with_button "Modifier le statut", icon: "ellipsis-horizontal-circle", icon_only: true
+            - dropdown.with_menu_item do |item|
+              | Ce signalement a été accepté.
+              br
+              | Vous pouvez néanmoins annuler cette décision :
+
+            - if allowed_to?(:reject?, @report)
+              - dropdown.with_menu_item "Rejeter le signalement", edit_report_rejection_path(@report), icon: "no-symbol", modal: true
+            - if allowed_to?(:undo_acceptance?, @report)
+              - dropdown.with_menu_item "Annuler l'acceptation", remove_report_acceptance_path(@report), icon: "arrow-path", modal: true
+
+    - elsif @report.rejected?
+      - if allowed_to?(:undo_rejection?, @report) || allowed_to?(:accept?, @report)
+        - header.with_action do
+          = dropdown_component(position: "aside", direction: "left") do |dropdown|
+            - dropdown.with_button "Modifier le statut", icon: "ellipsis-horizontal-circle", icon_only: true
+            - dropdown.with_menu_item do |item|
+              | Ce signalement a été rejeté.
+              br
+              | Vous pouvez néanmoins annuler cette décision :
+
+            - if allowed_to?(:accept?, @report)
+              - dropdown.with_menu_item "Accepter le signalement", edit_report_acceptance_path(@report), icon: "check-circle", modal: true
+            - if allowed_to?(:undo_rejection?, @report)
+              - dropdown.with_menu_item "Annuler le rejet", remove_report_rejection_path(@report), icon: "arrow-path", modal: true
+
+  - layout.with_section do
+    = description_list_component(@report) do |list|
+      - list.with_attribute(:reference) do |attribute|
+        = @report.reference
+
+        - if @report.package && allowed_to?(:show?, @report.package)
+          - attribute.with_action "Voir le paquet", package_path(@report.package), icon: "magnifying-glass"
+
+      - list.with_attribute("Collectivité") do |attribute|
+        = authorized_link_to @report.collectivity
+
+      - list.with_attribute("Guichet") do |attribute|
+        - if @report.assigned?
+          = authorized_link_to @report.office
+
+          - if allowed_to?(:assign?, @report)
+            - attribute.with_action "Changer de guichet", edit_report_assignment_path(@report), icon: "arrows-right-left", modal: true
+
+      - list.with_attribute("Type de signalement") do
+        = translate_enum(@report.form_type, scope: "enum.report_form_type")
+
+      - list.with_attribute("Objet du signalement") do
+        = helpers.list(@report.anomalies) { |value| translate_enum(value, scope: ["enum.anomalies", @report.form_type]) }
+
+      - list.with_attribute("Date du constat") do
+        = helpers.display_date(@report.date_constat)
+
+      - list.with_attribute("Date de transmission") do
+        = helpers.display_date(@report.transmitted_at.to_date)

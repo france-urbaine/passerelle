@@ -11,7 +11,7 @@ RSpec.describe "Reports::AssignmentsController#edit" do
   let(:headers) { |e| e.metadata[:headers] }
   let(:params)  { |e| e.metadata[:params] }
 
-  let!(:report) { create(:report, :transmitted) }
+  let!(:report) { create(:report, :transmitted_to_ddfip) }
 
   describe "authorizations" do
     it_behaves_like "it requires to be signed in in HTML"
@@ -25,50 +25,36 @@ RSpec.describe "Reports::AssignmentsController#edit" do
     it_behaves_like "it denies access to DDFIP user"
     it_behaves_like "it denies access to DDFIP admin"
 
-    context "when report has not yet been transmitted to the current DDFIP" do
-      let(:report) { create(:report, :ready, ddfip: current_user.organization) }
-
-      it_behaves_like "it denies access to DDFIP user"
-      it_behaves_like "it denies access to DDFIP admin"
-    end
-
-    context "when report has been transmitted to the current DDFIP" do
-      let(:report) { create(:report, :transmitted, ddfip: current_user.organization) }
+    context "when report has already been accepted by the current DDFIP" do
+      let(:report) { create(:report, :accepted_by_ddfip, ddfip: current_user.organization) }
 
       it_behaves_like "it denies access to DDFIP user"
       it_behaves_like "it allows access to DDFIP admin"
     end
 
-    context "when report has been transmitted to the current DDFIP in sandbox" do
-      let(:report) { create(:report, :transmitted, :sandbox, ddfip: current_user.organization) }
+    context "when report has not yet been accepted to the current DDFIP" do
+      let(:report) { create(:report, :acknowledged_by_ddfip, ddfip: current_user.organization) }
 
       it_behaves_like "it denies access to DDFIP user"
       it_behaves_like "it denies access to DDFIP admin"
     end
 
     context "when report has already been assigned by the current DDFIP" do
-      let(:report) { create(:report, :assigned, ddfip: current_user.organization) }
+      let(:report) { create(:report, :assigned_to_office, ddfip: current_user.organization) }
 
       it_behaves_like "it denies access to DDFIP user"
       it_behaves_like "it allows access to DDFIP admin"
     end
 
-    context "when report has already been denied by the current DDFIP" do
-      let(:report) { create(:report, :denied, ddfip: current_user.organization) }
-
-      it_behaves_like "it denies access to DDFIP user"
-      it_behaves_like "it allows access to DDFIP admin"
-    end
-
-    context "when report has already been approved by the current DDFIP" do
-      let(:report) { create(:report, :approved, ddfip: current_user.organization) }
+    context "when report has already been rejected by the current DDFIP" do
+      let(:report) { create(:report, :rejected_by_ddfip, ddfip: current_user.organization) }
 
       it_behaves_like "it denies access to DDFIP user"
       it_behaves_like "it denies access to DDFIP admin"
     end
 
-    context "when report has already been rejected by the current DDFIP" do
-      let(:report) { create(:report, :rejected, ddfip: current_user.organization) }
+    context "when report has already been resolved by the current DDFIP" do
+      let(:report) { create(:report, :resolved_as_applicable, ddfip: current_user.organization) }
 
       it_behaves_like "it denies access to DDFIP user"
       it_behaves_like "it denies access to DDFIP admin"

@@ -1,0 +1,31 @@
+= modal_frame_component(referrer: @referrer_path) do |template|
+  - template.with_modal do |modal|
+    - modal.with_header do
+      | Résolution d'un signalement
+
+    - modal.with_form(model: @report, url: report_resolution_path(@report)) do |form|
+      - modal.with_hidden_field :redirect, @referrer
+      - modal.with_hidden_field :state,    @state
+
+      - case @state
+      - when "applicable"
+        p Vous êtes sur le point de valider le signalement suivant :
+      - when "inapplicable"
+        p Vous êtes sur le point de récuser le signalement suivant :
+
+      = render Views::Reports::ShortDetailsComponent.new(@report)
+
+      = form.block :resolution do
+        = form.label :resolution, "Motif :"
+        = form.select :resolution, resolution_choices, resolution_options, autofocus: true
+
+      = form.block :reponse do
+        = form.label :reponse, "Vous pouvez transmettre des observations à la collectivité :"
+        = form.text_area :reponse, rows: 10
+
+      p
+        ' Les modifications ne seront visibles par la collectivité qu'une fois validée
+        ' par le référent fiabilisation.
+
+    - modal.with_submit_action "Continuer"
+    - modal.with_close_action "Annuler"

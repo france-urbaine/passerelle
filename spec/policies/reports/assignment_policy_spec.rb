@@ -41,7 +41,7 @@ RSpec.describe Reports::AssignmentPolicy, type: :policy do
       context "when transmitted to the current DDFIP" do
         let(:record) { build_stubbed(:report, :transmitted_to_ddfip, ddfip: current_organization) }
 
-        it_behaves_like("when current user is a DDFIP admin")             { succeed }
+        it_behaves_like("when current user is a DDFIP admin")             { failed }
         it_behaves_like("when current user is a DDFIP user")              { failed }
         it_behaves_like("when current user is member of targeted office") { failed }
       end
@@ -54,6 +54,14 @@ RSpec.describe Reports::AssignmentPolicy, type: :policy do
         it_behaves_like("when current user is member of targeted office") { failed }
       end
 
+      context "when accepted by the current DDFIP" do
+        let(:record) { build_stubbed(:report, :accepted_by_ddfip, ddfip: current_organization) }
+
+        it_behaves_like("when current user is a DDFIP admin")             { succeed }
+        it_behaves_like("when current user is a DDFIP user")              { failed }
+        it_behaves_like("when current user is member of targeted office") { failed }
+      end
+
       context "when assigned by the current DDFIP" do
         let(:record) { build_stubbed(:report, :assigned_by_ddfip, ddfip: current_organization) }
 
@@ -62,16 +70,32 @@ RSpec.describe Reports::AssignmentPolicy, type: :policy do
         it_behaves_like("when current user is member of targeted office") { failed }
       end
 
-      context "when denied by the current DDFIP" do
-        let(:record) { build_stubbed(:report, :denied_by_ddfip, ddfip: current_organization) }
+      context "when resolved as applicable by the current DDFIP" do
+        let(:record) { build_stubbed(:report, :assigned_by_ddfip, :applicable, ddfip: current_organization) }
 
-        it_behaves_like("when current user is a DDFIP admin")             { succeed }
+        it_behaves_like("when current user is a DDFIP admin")             { failed }
+        it_behaves_like("when current user is a DDFIP user")              { failed }
+        it_behaves_like("when current user is member of targeted office") { failed }
+      end
+
+      context "when resolved as inapplicable by the current DDFIP" do
+        let(:record) { build_stubbed(:report, :assigned_by_ddfip, :inapplicable, ddfip: current_organization) }
+
+        it_behaves_like("when current user is a DDFIP admin")             { failed }
         it_behaves_like("when current user is a DDFIP user")              { failed }
         it_behaves_like("when current user is member of targeted office") { failed }
       end
 
       context "when approved by the current DDFIP" do
-        let(:record) { build_stubbed(:report, :assigned_by_ddfip, :approved, ddfip: current_organization) }
+        let(:record) { build_stubbed(:report, :approved_by_ddfip, ddfip: current_organization) }
+
+        it_behaves_like("when current user is a DDFIP admin")             { failed }
+        it_behaves_like("when current user is a DDFIP user")              { failed }
+        it_behaves_like("when current user is member of targeted office") { failed }
+      end
+
+      context "when canceled by the current DDFIP" do
+        let(:record) { build_stubbed(:report, :canceled_by_ddfip, ddfip: current_organization) }
 
         it_behaves_like("when current user is a DDFIP admin")             { failed }
         it_behaves_like("when current user is a DDFIP user")              { failed }
@@ -79,7 +103,7 @@ RSpec.describe Reports::AssignmentPolicy, type: :policy do
       end
 
       context "when rejected by the current DDFIP" do
-        let(:record) { build_stubbed(:report, :assigned_by_ddfip, :rejected, ddfip: current_organization) }
+        let(:record) { build_stubbed(:report, :rejected_by_ddfip, ddfip: current_organization) }
 
         it_behaves_like("when current user is a DDFIP admin")             { failed }
         it_behaves_like("when current user is a DDFIP user")              { failed }

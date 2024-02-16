@@ -1,0 +1,37 @@
+= breadcrumbs_component do |breadcrumbs|
+  - breadcrumbs.with_path "Echanges"
+  - breadcrumbs.with_path "Signalements", reports_path
+  - breadcrumbs.with_h1 do
+    = render Views::Reports::ShowReportNameComponent.new(@report)
+
+  - if allowed_to?(:transmit?, @report)
+    - breadcrumbs.with_action do
+      = helpers.turbo_frame_tag dom_id(@report, :transmission_button) do
+        = render "reports/transmission_button", report: @report
+
+  - if @report.wait_for_acceptance?
+    - if allowed_to?(:accept?, @report)
+      - breadcrumbs.with_action "Accepter", edit_report_acceptance_path(@report, ), icon: "check-circle", modal: true, primary: true
+    - if allowed_to?(:reject?, @report)
+      - breadcrumbs.with_action "Rejeter", edit_report_rejection_path(@report, ), icon: "no-symbol", modal: true, destructive: true
+
+  - elsif @report.wait_for_assignment?
+    - if allowed_to?(:assign?, @report)
+      - breadcrumbs.with_action "Assigner à un guichet", edit_report_assignment_path(@report, ), icon: "arrow-down-on-square-stack", modal: true, primary: true
+
+  - elsif @report.wait_for_resolution?
+    - if allowed_to?(:resolve?, @report)
+      - breadcrumbs.with_action "Valider", edit_report_resolution_path(@report, state: "applicable"), icon: "hand-thumb-up", modal: true, accent: true
+      - breadcrumbs.with_action "Récuser", edit_report_resolution_path(@report, state: "inapplicable"), icon: "hand-thumb-down", modal: true, destructive: true
+
+  - elsif @report.wait_for_confirmation?
+    - if allowed_to?(:confirm?, @report)
+      - breadcrumbs.with_action "Transmettre la réponse", edit_report_confirmation_path(@report), icon: "paper-airplane", modal: true, primary: true
+
+  - if allowed_to?(:destroy?, @report)
+    - breadcrumbs.with_action "Supprimer", remove_report_path(@report), icon: "trash", modal: true, destructive: "discrete"
+
+  - if allowed_to?(:show?, Transmission)
+    - breadcrumbs.with_action do
+      = helpers.turbo_frame_tag dom_id(current_user, :active_transmission_button) do
+        = render "transmissions/transmission_button", transmission: current_user.active_transmission

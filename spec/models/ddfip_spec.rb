@@ -355,67 +355,82 @@ RSpec.describe DDFIP do
 
       describe "reports counts" do
         before_all do
-          ddfips[0].tap do |ddfip|
-            create(:commune, departement: ddfip.departement).tap do |commune|
-              create(:collectivity, territory: commune).tap do |collectivity|
-                create(:report, collectivity:, ddfip:)
-                create(:report, :ready, collectivity:, ddfip:)
-                create_list(:report, 2, :approved, collectivity:, ddfip:)
-                create_list(:report, 3, :rejected, collectivity:, ddfip:)
-              end
+          create(:collectivity).tap do |collectivity|
+            ddfips[0].tap do |ddfip|
+              create(:report, collectivity:, ddfip:)
+              create(:report, :ready, collectivity:, ddfip:)
+              create(:report, :transmitted_to_sandbox, collectivity:, ddfip:)
+              create(:report, :transmitted_to_ddfip, collectivity:, ddfip:)
+              create(:report, :assigned_by_ddfip, collectivity:, ddfip:)
+              create(:report, :assigned_by_ddfip, :applicable, collectivity:, ddfip:)
+              create(:report, :approved_by_ddfip, collectivity:, ddfip:)
+              create(:report, :canceled_by_ddfip, collectivity:, ddfip:)
+              create(:report, :rejected_by_ddfip, collectivity:, ddfip:)
             end
-          end
 
-          ddfips[1].tap do |ddfip|
-            create(:commune, departement: ddfip.departement).tap do |commune|
-              create(:collectivity, territory: commune).tap do |collectivity|
-                create(:report, :denied, collectivity:, ddfip:)
-              end
+            ddfips[1].tap do |ddfip|
+              create(:report, :canceled_by_ddfip, collectivity:, ddfip:)
             end
           end
 
           DDFIP.update_all(
             reports_transmitted_count: 99,
-            reports_denied_count:      99,
-            reports_processing_count:  99,
+            reports_unassigned_count:  99,
+            reports_accepted_count:    99,
+            reports_rejected_count:    99,
             reports_approved_count:    99,
-            reports_rejected_count:    99
+            reports_canceled_count:    99,
+            reports_returned_count:    99
           )
         end
 
         it "updates #reports_transmitted_count" do
           expect {
             described_class.reset_all_counters
-          }.to change { ddfips[0].reload.reports_transmitted_count }.to(5)
+          }.to change { ddfips[0].reload.reports_transmitted_count }.to(6)
             .and change { ddfips[1].reload.reports_transmitted_count }.to(1)
         end
 
-        it "updates #reports_denied_count" do
+        it "updates #reports_unassigned_count" do
           expect {
             described_class.reset_all_counters
-          }.to change { ddfips[0].reload.reports_denied_count }.to(0)
-            .and change { ddfips[1].reload.reports_denied_count }.to(1)
+          }.to change { ddfips[0].reload.reports_unassigned_count }.to(1)
+            .and change { ddfips[1].reload.reports_unassigned_count }.to(0)
         end
 
-        it "updates #reports_processing_count" do
+        it "updates #reports_accepted_count" do
           expect {
             described_class.reset_all_counters
-          }.to change { ddfips[0].reload.reports_processing_count }.to(0)
-            .and change { ddfips[1].reload.reports_processing_count }.to(0)
-        end
-
-        it "updates #reports_approved_count" do
-          expect {
-            described_class.reset_all_counters
-          }.to change { ddfips[0].reload.reports_approved_count }.to(2)
-            .and change { ddfips[1].reload.reports_approved_count }.to(0)
+          }.to change { ddfips[0].reload.reports_accepted_count }.to(4)
+            .and change { ddfips[1].reload.reports_accepted_count }.to(1)
         end
 
         it "updates #reports_rejected_count" do
           expect {
             described_class.reset_all_counters
-          }.to change { ddfips[0].reload.reports_rejected_count }.to(3)
+          }.to change { ddfips[0].reload.reports_rejected_count }.to(1)
             .and change { ddfips[1].reload.reports_rejected_count }.to(0)
+        end
+
+        it "updates #reports_approved_count" do
+          expect {
+            described_class.reset_all_counters
+          }.to change { ddfips[0].reload.reports_approved_count }.to(1)
+            .and change { ddfips[1].reload.reports_approved_count }.to(0)
+        end
+
+        it "updates #reports_canceled_count" do
+          expect {
+            described_class.reset_all_counters
+          }.to change { ddfips[0].reload.reports_canceled_count }.to(1)
+            .and change { ddfips[1].reload.reports_canceled_count }.to(1)
+        end
+
+        it "updates #reports_returned_count" do
+          expect {
+            described_class.reset_all_counters
+          }.to change { ddfips[0].reload.reports_returned_count }.to(3)
+            .and change { ddfips[1].reload.reports_returned_count }.to(1)
         end
       end
     end
@@ -724,40 +739,47 @@ RSpec.describe DDFIP do
       it "changes when report is transmitted" do
         report = create_report
 
-        expect { report.update_columns(state: "sent", transmitted_at: Time.current) }
+        expect { report.update_columns(state: "transmitted") }
           .to change { ddfip.reload.reports_transmitted_count }.from(0).to(1)
+      end
+
+      it "doesn't change when report is transmitted to a sandbox" do
+        report = create_report
+
+        expect { report.update_columns(state: "transmitted", sandbox: true) }
+          .not_to change { ddfip.reload.reports_transmitted_count }.from(0)
       end
 
       it "doesn't change when report is transmitted to another DDFIP" do
         report = create_report
         another_ddfip = create(:ddfip)
 
-        expect { report.update_columns(state: "sent", transmitted_at: Time.current, ddfip_id: another_ddfip.id) }
+        expect { report.update_columns(state: "transmitted", ddfip_id: another_ddfip.id) }
           .not_to change { ddfip.reload.reports_transmitted_count }.from(0)
       end
 
-      it "doesn't change when report is transmitted to a sandbox" do
-        report = create_report
+      it "doesn't change when transmitted report is assigned" do
+        report = create_report(:transmitted)
 
-        expect { report.update_columns(state: "sent", transmitted_at: Time.current, sandbox: true) }
-          .not_to change { ddfip.reload.reports_transmitted_count }.from(0)
+        expect { report.update_columns(state: "assigned") }
+          .not_to change { ddfip.reload.reports_transmitted_count }.from(1)
       end
 
-      it "changes when report is discarded" do
+      it "changes when transmitted report is discarded" do
         report = create_report(:transmitted)
 
         expect { report.update_columns(discarded_at: Time.current) }
           .to change { ddfip.reload.reports_transmitted_count }.from(1).to(0)
       end
 
-      it "changes when report is undiscarded" do
+      it "changes when transmitted report is undiscarded" do
         report = create_report(:transmitted, :discarded)
 
         expect { report.update_columns(discarded_at: nil) }
           .to change { ddfip.reload.reports_transmitted_count }.from(0).to(1)
       end
 
-      it "changes when report is deleted" do
+      it "changes when transmitted report is deleted" do
         report = create_report(:transmitted)
 
         expect { report.delete }
@@ -765,206 +787,175 @@ RSpec.describe DDFIP do
       end
     end
 
-    describe "#reports_denied_count" do
-      it "doesn't change when reports are transmitted" do
+    describe "#reports_unassigned_count" do
+      it "doesn't change when report is created" do
+        expect { create_report }
+          .not_to change { ddfip.reload.reports_unassigned_count }.from(0)
+      end
+
+      it "changes when report is transmitted" do
         report = create_report
 
-        expect { report.update_columns(state: "sent", transmitted_at: Time.current) }
-          .not_to change { ddfip.reload.reports_denied_count }.from(0)
+        expect { report.update_columns(state: "transmitted") }
+          .to change { ddfip.reload.reports_unassigned_count }.from(0).to(1)
       end
 
-      it "changes when report is denied" do
+      it "doesn't change when report is transmitted to a sandbox" do
+        report = create_report
+
+        expect { report.update_columns(state: "transmitted", sandbox: true) }
+          .not_to change { ddfip.reload.reports_unassigned_count }.from(0)
+      end
+
+      it "doesn't change when report is transmitted to another DDFIP" do
+        report = create_report
+        another_ddfip = create(:ddfip)
+
+        expect { report.update_columns(state: "transmitted", ddfip_id: another_ddfip.id) }
+          .not_to change { ddfip.reload.reports_unassigned_count }.from(0)
+      end
+
+      it "doesn't change when transmitted report is acknowledged" do
         report = create_report(:transmitted)
 
-        expect { report.update_columns(state: "denied") }
-          .to change { ddfip.reload.reports_denied_count }.from(0).to(1)
+        expect { report.update_columns(state: "acknowledged") }
+          .not_to change { ddfip.reload.reports_unassigned_count }.from(1)
       end
 
-      it "doesn't change when report is assigned" do
+      it "doesn't change when transmitted report is accepted" do
         report = create_report(:transmitted)
 
-        expect { report.update_columns(state: "processing") }
-          .not_to change { ddfip.reload.reports_denied_count }.from(0)
+        expect { report.update_columns(state: "accepted") }
+          .not_to change { ddfip.reload.reports_unassigned_count }.from(1)
       end
 
-      it "changes when denied report is then assigned" do
-        report = create_report(:denied)
+      it "change when accepted report is assigned" do
+        report = create_report(:accepted)
 
-        expect { report.update_columns(state: "processing") }
-          .to change { ddfip.reload.reports_denied_count }.from(1).to(0)
+        expect { report.update_columns(state: "assigned") }
+          .to change { ddfip.reload.reports_unassigned_count }.from(1).to(0)
       end
 
-      it "changes when denied report is discarded" do
-        report = create_report(:denied)
+      it "changes when transmitted report is discarded" do
+        report = create_report(:transmitted)
 
         expect { report.update_columns(discarded_at: Time.current) }
-          .to change { ddfip.reload.reports_denied_count }.from(1).to(0)
+          .to change { ddfip.reload.reports_unassigned_count }.from(1).to(0)
       end
 
-      it "changes when denied report is undiscarded" do
-        report = create_report(:denied, :discarded)
+      it "changes when transmitted report is undiscarded" do
+        report = create_report(:transmitted, :discarded)
 
         expect { report.update_columns(discarded_at: nil) }
-          .to change { ddfip.reload.reports_denied_count }.from(0).to(1)
+          .to change { ddfip.reload.reports_unassigned_count }.from(0).to(1)
       end
 
-      it "changes when denied report is deleted" do
-        report = create_report(:denied)
+      it "changes when transmitted report is deleted" do
+        report = create_report(:transmitted)
 
         expect { report.delete }
-          .to change { ddfip.reload.reports_denied_count }.from(1).to(0)
-      end
-
-      it "changes when denied report is sandboxed" do
-        report = create_report(:denied)
-
-        expect { report.update_columns(sandbox: true) }
-          .to change { ddfip.reload.reports_denied_count }.from(1).to(0)
+          .to change { ddfip.reload.reports_unassigned_count }.from(1).to(0)
       end
     end
 
-    describe "#reports_processing_count" do
-      it "doesn't change when reports are transmitted" do
+    describe "#reports_accepted_count" do
+      it "doesn't change when report is transmitted" do
         report = create_report
 
-        expect { report.update_columns(state: "sent", transmitted_at: Time.current) }
-          .not_to change { ddfip.reload.reports_processing_count }.from(0)
+        expect { report.update_columns(state: "transmitted") }
+          .not_to change { ddfip.reload.reports_accepted_count }.from(0)
+      end
+
+      it "changes when report is accepted" do
+        report = create_report(:transmitted)
+
+        expect { report.update_columns(state: "accepted") }
+          .to change { ddfip.reload.reports_accepted_count }.from(0).to(1)
       end
 
       it "changes when report is assigned" do
         report = create_report(:transmitted)
 
-        expect { report.update_columns(state: "processing") }
-          .to change { ddfip.reload.reports_processing_count }.from(0).to(1)
+        expect { report.update_columns(state: "assigned") }
+          .to change { ddfip.reload.reports_accepted_count }.from(0).to(1)
       end
 
-      it "doesn't change when report is denied" do
+      it "changes when report is rejected" do
         report = create_report(:transmitted)
 
-        expect { report.update_columns(state: "denied") }
-          .not_to change { ddfip.reload.reports_processing_count }.from(0)
+        expect { report.update_columns(state: "rejected") }
+          .not_to change { ddfip.reload.reports_accepted_count }.from(0)
       end
 
-      it "changes when assigned report is then denied" do
-        report = create_report(:assigned)
+      it "changes when accepted report is then rejected" do
+        report = create_report(:accepted)
 
-        expect { report.update_columns(state: "denied") }
-          .to change { ddfip.reload.reports_processing_count }.from(1).to(0)
+        expect { report.update_columns(state: "rejected") }
+          .to change { ddfip.reload.reports_accepted_count }.from(1).to(0)
       end
 
-      it "changes when reports are approved" do
-        report = create_report(:assigned)
+      it "doesn't change when accepted report is assigned" do
+        report = create_report(:accepted)
+
+        expect { report.update_columns(state: "assigned") }
+          .not_to change { ddfip.reload.reports_accepted_count }.from(1)
+      end
+
+      it "doesn't change when resolved report is confirmed" do
+        report = create_report(:applicable)
 
         expect { report.update_columns(state: "approved") }
-          .to change { ddfip.reload.reports_processing_count }.from(1).to(0)
+          .not_to change { ddfip.reload.reports_accepted_count }.from(1)
       end
 
-      it "changes when reports are rejected" do
-        report = create_report(:assigned)
-
-        expect { report.update_columns(state: "rejected") }
-          .to change { ddfip.reload.reports_processing_count }.from(1).to(0)
-      end
-    end
-
-    describe "#reports_approved_count" do
-      it "doesn't change when report is assigned" do
-        report = create_report(:transmitted)
-
-        expect { report.update_columns(state: "processing") }
-          .not_to change { ddfip.reload.reports_approved_count }.from(0)
-      end
-
-      it "doesn't changes when report is rejected" do
-        report = create_report(:assigned)
-
-        expect { report.update_columns(state: "rejected") }
-          .not_to change { ddfip.reload.reports_approved_count }.from(0)
-      end
-
-      it "changes when report is approved" do
-        report = create_report(:assigned)
-
-        expect { report.update_columns(state: "approved") }
-          .to change { ddfip.reload.reports_approved_count }.from(0).to(1)
-      end
-
-      it "changes when approved report is reseted" do
-        report = create_report(:approved)
-
-        expect { report.update_columns(state: "processing") }
-          .to change { ddfip.reload.reports_approved_count }.from(1).to(0)
-      end
-
-      it "changes when approved report is rejected" do
-        report = create_report(:approved)
-
-        expect { report.update_columns(state: "rejected") }
-          .to change { ddfip.reload.reports_approved_count }.from(1).to(0)
-      end
-
-      it "changes when approved report is sandboxed" do
-        report = create_report(:approved)
-
-        expect { report.update_columns(sandbox: true) }
-          .to change { ddfip.reload.reports_approved_count }.from(1).to(0)
-      end
-
-      it "changes when approved report is discarded" do
-        report = create_report(:approved)
+      it "changes when accepted report is discarded" do
+        report = create_report(:accepted)
 
         expect { report.update_columns(discarded_at: Time.current) }
-          .to change { ddfip.reload.reports_approved_count }.from(1).to(0)
+          .to change { ddfip.reload.reports_accepted_count }.from(1).to(0)
       end
 
-      it "changes when approved report is undiscarded" do
-        report = create_report(:approved, :discarded)
+      it "changes when accepted report is undiscarded" do
+        report = create_report(:accepted, :discarded)
 
         expect { report.update_columns(discarded_at: nil) }
-          .to change { ddfip.reload.reports_approved_count }.from(0).to(1)
+          .to change { ddfip.reload.reports_accepted_count }.from(0).to(1)
+      end
+
+      it "changes when accepted report is deleted" do
+        report = create_report(:accepted)
+
+        expect { report.delete }
+          .to change { ddfip.reload.reports_accepted_count }.from(1).to(0)
       end
     end
 
     describe "#reports_rejected_count" do
-      it "doesn't change when report is assigned" do
-        report = create_report(:transmitted)
+      it "doesn't change when report is transmitted" do
+        report = create_report
 
-        expect { report.update_columns(state: "processing") }
-          .not_to change { ddfip.reload.reports_rejected_count }.from(0)
-      end
-
-      it "doesn't changes when report is approved" do
-        report = create_report(:assigned)
-
-        expect { report.update_columns(state: "approved") }
+        expect { report.update_columns(state: "transmitted") }
           .not_to change { ddfip.reload.reports_rejected_count }.from(0)
       end
 
       it "changes when report is rejected" do
-        report = create_report(:assigned)
+        report = create_report
 
         expect { report.update_columns(state: "rejected") }
           .to change { ddfip.reload.reports_rejected_count }.from(0).to(1)
       end
 
-      it "changes when rejected report is reseted" do
-        report = create_report(:rejected)
+      it "doesn't change when report is accepted" do
+        report = create_report
 
-        expect { report.update_columns(state: "processing") }
-          .to change { ddfip.reload.reports_rejected_count }.from(1).to(0)
+        expect { report.update_columns(state: "accepted") }
+          .not_to change { ddfip.reload.reports_rejected_count }.from(0)
       end
 
-      it "changes when rejected report is approved" do
+      it "changes when rejected report is then accepted" do
         report = create_report(:rejected)
 
-        expect { report.update_columns(state: "approved") }
-          .to change { ddfip.reload.reports_rejected_count }.from(1).to(0)
-      end
-
-      it "changes when rejected report is sandboxed" do
-        report = create_report(:rejected)
-
-        expect { report.update_columns(sandbox: true) }
+        expect { report.update_columns(state: "assigned") }
           .to change { ddfip.reload.reports_rejected_count }.from(1).to(0)
       end
 
@@ -980,6 +971,166 @@ RSpec.describe DDFIP do
 
         expect { report.update_columns(discarded_at: nil) }
           .to change { ddfip.reload.reports_rejected_count }.from(0).to(1)
+      end
+
+      it "changes when rejected report is deleted" do
+        report = create_report(:rejected)
+
+        expect { report.delete }
+          .to change { ddfip.reload.reports_rejected_count }.from(1).to(0)
+      end
+    end
+
+    describe "#reports_approved_count" do
+      it "doesn't change when report is assigned" do
+        report = create_report(:transmitted)
+
+        expect { report.update_columns(state: "assigned") }
+          .not_to change { ddfip.reload.reports_approved_count }.from(0)
+      end
+
+      it "doesn't changes when report is rejected" do
+        report = create_report(:assigned)
+
+        expect { report.update_columns(state: "rejected") }
+          .not_to change { ddfip.reload.reports_approved_count }.from(0)
+      end
+
+      it "changes when applicable report is confirmed" do
+        report = create_report(:applicable)
+
+        expect { report.update_columns(state: "approved") }
+          .to change { ddfip.reload.reports_approved_count }.from(0).to(1)
+      end
+
+      it "doesn't changes when inapplicable report is confirmed" do
+        report = create_report(:inapplicable)
+
+        expect { report.update_columns(state: "canceled") }
+          .not_to change { ddfip.reload.reports_approved_count }.from(0)
+      end
+
+      it "changes when approved report is discarded" do
+        report = create_report(:approved)
+
+        expect { report.update_columns(discarded_at: Time.current) }
+          .to change { ddfip.reload.reports_approved_count }.from(1).to(0)
+      end
+
+      it "changes when approved report is undiscarded" do
+        report = create_report(:approved, :discarded)
+
+        expect { report.update_columns(discarded_at: nil) }
+          .to change { ddfip.reload.reports_approved_count }.from(0).to(1)
+      end
+
+      it "changes when approved report is deleted" do
+        report = create_report(:approved)
+
+        expect { report.delete }
+          .to change { ddfip.reload.reports_approved_count }.from(1).to(0)
+      end
+    end
+
+    describe "#reports_canceled_count" do
+      it "doesn't change when report is assigned" do
+        report = create_report(:transmitted)
+
+        expect { report.update_columns(state: "assigned") }
+          .not_to change { ddfip.reload.reports_canceled_count }.from(0)
+      end
+
+      it "doesn't changes when report is rejected" do
+        report = create_report(:assigned)
+
+        expect { report.update_columns(state: "rejected") }
+          .not_to change { ddfip.reload.reports_canceled_count }.from(0)
+      end
+
+      it "changes when inapplicable report is confirmed" do
+        report = create_report(:inapplicable)
+
+        expect { report.update_columns(state: "canceled") }
+          .to change { ddfip.reload.reports_canceled_count }.from(0).to(1)
+      end
+
+      it "doesn't changes when applicable report is confirmed" do
+        report = create_report(:applicable)
+
+        expect { report.update_columns(state: "approved") }
+          .not_to change { ddfip.reload.reports_canceled_count }.from(0)
+      end
+
+      it "changes when canceled report is discarded" do
+        report = create_report(:canceled)
+
+        expect { report.update_columns(discarded_at: Time.current) }
+          .to change { ddfip.reload.reports_canceled_count }.from(1).to(0)
+      end
+
+      it "changes when canceled report is undiscarded" do
+        report = create_report(:canceled, :discarded)
+
+        expect { report.update_columns(discarded_at: nil) }
+          .to change { ddfip.reload.reports_canceled_count }.from(0).to(1)
+      end
+
+      it "changes when canceled report is deleted" do
+        report = create_report(:canceled)
+
+        expect { report.delete }
+          .to change { ddfip.reload.reports_canceled_count }.from(1).to(0)
+      end
+    end
+
+    describe "#reports_returned_count" do
+      it "doesn't change when report is assigned" do
+        report = create_report(:transmitted)
+
+        expect { report.update_columns(state: "assigned") }
+          .not_to change { ddfip.reload.reports_returned_count }.from(0)
+      end
+
+      it "changes when report is rejected" do
+        report = create_report(:assigned)
+
+        expect { report.update_columns(state: "rejected") }
+          .to change { ddfip.reload.reports_returned_count }.from(0).to(1)
+      end
+
+      it "changes when inapplicable report is confirmed" do
+        report = create_report(:inapplicable)
+
+        expect { report.update_columns(state: "canceled") }
+          .to change { ddfip.reload.reports_returned_count }.from(0).to(1)
+      end
+
+      it "doesn't changes when applicable report is confirmed" do
+        report = create_report(:applicable)
+
+        expect { report.update_columns(state: "approved") }
+          .to change { ddfip.reload.reports_returned_count }.from(0).to(1)
+      end
+
+      it "changes when returned report is discarded" do
+        report = create_report(:canceled)
+
+        expect { report.update_columns(discarded_at: Time.current) }
+          .to change { ddfip.reload.reports_returned_count }.from(1).to(0)
+      end
+
+      it "changes when returned report is undiscarded" do
+        report = create_report(:canceled, :discarded)
+
+        expect { report.update_columns(discarded_at: nil) }
+          .to change { ddfip.reload.reports_returned_count }.from(0).to(1)
+      end
+
+      it "changes when returned report is deleted" do
+        report = create_report(:canceled)
+
+        expect { report.delete }
+          .to change { ddfip.reload.reports_returned_count }.from(1).to(0)
       end
     end
   end

@@ -9,10 +9,6 @@ module Views
           @referrer = referrer
           super()
         end
-
-        def redirection_path
-          @referrer
-        end
       end
     end
   end

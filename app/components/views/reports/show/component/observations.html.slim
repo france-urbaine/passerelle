@@ -1,0 +1,18 @@
+= content_layout_component do |layout|
+  - layout.with_header icon: "chat-bubble-bottom-center-text" do |header|
+    - if current_organization.is_a?(DDFIP) || current_organization.is_a?(DGFIP)
+      | Observations de la collectivité
+    - else
+      | Observations
+
+    - if allowed_to?(:update?, @report) && @report.packing?
+      - header.with_action "Compléter", edit_report_path(@report, "observations"), icon: "pencil-square", modal: true
+
+  - layout.with_section do
+    - if @report.observations.present?
+      = card_component(content_class: "text-lg") do |card|
+        = simple_format h(@report.observations)
+
+    - else
+      = card_component(content_class: "card__content--empty h-24 flex-auto flex items-center justify-center") do |card|
+        | Aucune observation ajoutée pour ce signalement.

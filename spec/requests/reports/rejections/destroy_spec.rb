@@ -18,54 +18,50 @@ RSpec.describe "Reports::RejectionsController#destroy" do
     it_behaves_like "it requires to be signed in in JSON"
     it_behaves_like "it responds with not acceptable in JSON when signed in"
 
+    it_behaves_like "it denies access to collectivity user"
+    it_behaves_like "it denies access to collectivity admin"
     it_behaves_like "it denies access to publisher user"
     it_behaves_like "it denies access to publisher admin"
     it_behaves_like "it denies access to DDFIP user"
     it_behaves_like "it denies access to DDFIP admin"
-    it_behaves_like "it denies access to collectivity user"
-    it_behaves_like "it denies access to collectivity admin"
-
-    context "when report has not yet been assigned by the current DDFIP" do
-      let(:report) { create(:report, :transmitted, ddfip: current_user.organization) }
-
-      it_behaves_like "it denies access to DDFIP user"
-      it_behaves_like "it denies access to DDFIP admin"
-    end
-
-    context "when report has been approved by the current DDFIP" do
-      let(:report) { create(:report, :approved, ddfip: current_user.organization) }
-
-      it_behaves_like "it allows access to DDFIP user"
-      it_behaves_like "it allows access to DDFIP admin"
-    end
 
     context "when report has been rejected by the current DDFIP" do
-      let(:report) { create(:report, :denied, ddfip: current_user.organization) }
+      let(:report) { create(:report, :rejected_by_ddfip, ddfip: current_user.organization) }
+
+      it_behaves_like "it denies access to DDFIP user"
+      it_behaves_like "it allows access to DDFIP admin"
+    end
+
+    context "when report is not rejected anymore by the current DDFIP" do
+      let(:report) { create(:report, :acknowledged_by_ddfip, ddfip: current_user.organization) }
+
+      it_behaves_like "it denies access to DDFIP user"
+      it_behaves_like "it allows access to DDFIP admin"
+    end
+
+    context "when report has already been assigned by the current DDFIP" do
+      let(:report) { create(:report, :assigned_to_office, ddfip: current_user.organization) }
 
       it_behaves_like "it denies access to DDFIP user"
       it_behaves_like "it denies access to DDFIP admin"
-    end
-
-    context "when report has already been unapproved by the current DDFIP" do
-      let(:report) { create(:report, :assigned, ddfip: current_user.organization) }
-
-      it_behaves_like "it allows access to DDFIP user"
-      it_behaves_like "it allows access to DDFIP admin"
     end
   end
 
   describe "responses" do
-    before { sign_in_as(organization: report.ddfip) }
+    before { sign_in_as(:organization_admin, organization: report.ddfip) }
 
-    context "with report is rejected" do
+    context "when report is rejected" do
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/signalements/#{report.id}") }
 
-      it "unrejects the report" do
-        expect { request and report.reload }
+      it "undoes report assignment" do
+        expect {
+          request
+          report.reload
+        }
           .to  change(report, :updated_at)
-          .and change(report, :state).to("processing")
-          .and change(report, :rejected_at).to(nil)
+          .and change(report, :state).to("acknowledged")
+          .and change(report, :returned_at).to(nil)
       end
 
       it "sets a flash notice" do
@@ -75,6 +71,13 @@ RSpec.describe "Reports::RejectionsController#destroy" do
           delay:  3000
         )
       end
+    end
+
+    context "when report is not rejected anymore" do
+      let(:report) { create(:report, :acknowledged_by_ddfip) }
+
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/signalements/#{report.id}") }
     end
   end
 end

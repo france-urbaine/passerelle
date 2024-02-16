@@ -11,17 +11,20 @@
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
 #  discarded_at              :datetime
-#  users_count               :integer          default(0), not null
-#  collectivities_count      :integer          default(0), not null
 #  contact_first_name        :string
 #  contact_last_name         :string
 #  contact_phone             :string
 #  domain_restriction        :string
 #  allow_2fa_via_email       :boolean          default(FALSE), not null
-#  reports_transmitted_count :integer          default(0), not null
-#  reports_approved_count    :integer          default(0), not null
-#  reports_rejected_count    :integer          default(0), not null
 #  sandbox                   :boolean          default(FALSE), not null
+#  users_count               :integer          default(0), not null
+#  collectivities_count      :integer          default(0), not null
+#  reports_transmitted_count :integer          default(0), not null
+#  reports_accepted_count    :integer          default(0), not null
+#  reports_rejected_count    :integer          default(0), not null
+#  reports_approved_count    :integer          default(0), not null
+#  reports_canceled_count    :integer          default(0), not null
+#  reports_returned_count    :integer          default(0), not null
 #
 # Indexes
 #

@@ -28,6 +28,7 @@
         - datatable.with_column(:users_count,               numeric: true) { "Utilisateurs" }
         - datatable.with_column(:reports_transmitted_count, numeric: true) { "Signalements" }
         - datatable.with_column(:reports_approved_count,    numeric: true) { "Approuvés" }
+        - datatable.with_column(:reports_canceled_count,    numeric: true) { "Annulés" }
         - datatable.with_column(:reports_rejected_count,    numeric: true) { "Rejetés" }
 
         - datatable.with_empty_message do
@@ -79,6 +80,9 @@
 
           - row.with_column(:reports_approved_count) do
             = number_with_delimiter(ddfip.reports_approved_count) if ddfip.reports_approved_count.positive?
+
+          - row.with_column(:reports_canceled_count) do
+            = number_with_delimiter(ddfip.reports_canceled_count) if ddfip.reports_canceled_count.positive?
 
           - row.with_column(:reports_rejected_count) do
             = number_with_delimiter(ddfip.reports_rejected_count) if ddfip.reports_rejected_count.positive?

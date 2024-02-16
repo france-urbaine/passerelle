@@ -116,10 +116,11 @@ Rails.application.routes.draw do
               patch :update_all, on: :collection, path: "/", as: nil
             end
 
-            resources :assignments, path: "/assign",  only: %i[update destroy], concerns: %i[report_state], param: :report_id, report_id: /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/
-            resources :denials,     path: "/deny",    only: %i[update destroy], concerns: %i[report_state], param: :report_id, report_id: /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/
-            resources :approvals,   path: "/approve", only: %i[update destroy], concerns: %i[report_state], param: :report_id, report_id: /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/
-            resources :rejections,  path: "/reject",  only: %i[update destroy], concerns: %i[report_state], param: :report_id, report_id: /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/
+            resources :acceptances,   path: "/accept",  only: %i[update destroy], concerns: %i[report_state], param: :report_id, report_id: /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/
+            resources :rejections,    path: "/reject",  only: %i[update destroy], concerns: %i[report_state], param: :report_id, report_id: /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/
+            resources :assignments,   path: "/assign",  only: %i[update destroy], concerns: %i[report_state], param: :report_id, report_id: /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/
+            resources :resolutions,   path: "/resolve", only: %i[update destroy], concerns: %i[report_state], param: :report_id, report_id: /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/
+            resources :confirmations, path: "/confirm", only: %i[update destroy], concerns: %i[report_state], param: :report_id, report_id: /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/
           end
         end
       end

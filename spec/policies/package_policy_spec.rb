@@ -142,7 +142,7 @@ RSpec.describe PackagePolicy, type: :policy do
     end
 
     it_behaves_like "when current user is a DDFIP user" do
-      it "scopes on packages assinged to the DDFIP" do
+      it "scopes on packages assigned to the DDFIP" do
         expect {
           scope.load
         }.to perform_sql_query(<<~SQL)
@@ -153,7 +153,7 @@ RSpec.describe PackagePolicy, type: :policy do
             AND  "packages"."sandbox" = FALSE
             AND  "packages"."ddfip_id" = '#{current_user.organization_id}'
             AND  "reports"."discarded_at" IS NULL
-            AND  "reports"."state" IN ('processing', 'approved', 'rejected')
+            AND  "reports"."state" IN ('assigned', 'applicable', 'inapplicable', 'approved', 'canceled')
             AND  "reports"."sandbox" = FALSE
             AND  "reports"."office_id" IN (
               SELECT "offices"."id"

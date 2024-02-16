@@ -1,14 +1,46 @@
-.flex.flex-col.space-y-4.items-start.mb-16
-  = render Views::Reports::StatusBadge::Component.new(:draft)
-  = render Views::Reports::StatusBadge::Component.new(:ready)
-  = render Views::Reports::StatusBadge::Component.new(:sent)
-  = render Views::Reports::StatusBadge::Component.new(:acknowledged)
-  = render Views::Reports::StatusBadge::Component.new(:processing)
-  = render Views::Reports::StatusBadge::Component.new(:denied)
-  = render Views::Reports::StatusBadge::Component.new(:approved)
-  = render Views::Reports::StatusBadge::Component.new(:rejected)
+.grid.grid-cols-3.gap-4
+  .grid.grid-rows-subgrid.gap-4.auto-rows-fr
+    div Displayed to a collectivity :
 
-.flex.flex-col.space-y-4.items-start
-  = render Views::Reports::StatusBadge::Component.new(:in_active_transmission)
-  = render Views::Reports::StatusBadge::Component.new(:transmitted)
-  = render Views::Reports::StatusBadge::Component.new(:unassigned)
+    = render Views::Reports::StatusBadge::Component.new(:draft,                  as: :collectivity)
+    = render Views::Reports::StatusBadge::Component.new(:ready,                  as: :collectivity)
+    = render Views::Reports::StatusBadge::Component.new(:in_active_transmission, as: :collectivity)
+    = render Views::Reports::StatusBadge::Component.new(:transmitted,            as: :collectivity)
+    = render Views::Reports::StatusBadge::Component.new(:acknowledged,           as: :collectivity)
+    = render Views::Reports::StatusBadge::Component.new(:accepted,               as: :collectivity)
+    = render Views::Reports::StatusBadge::Component.new(:assigned,               as: :collectivity)
+    = render Views::Reports::StatusBadge::Component.new(:applicable,             as: :collectivity)
+    = render Views::Reports::StatusBadge::Component.new(:inapplicable,           as: :collectivity)
+    = render Views::Reports::StatusBadge::Component.new(:approved,               as: :collectivity)
+    = render Views::Reports::StatusBadge::Component.new(:canceled,               as: :collectivity)
+    = render Views::Reports::StatusBadge::Component.new(:rejected,               as: :collectivity)
+
+  .grid.grid-rows-subgrid.gap-4.auto-rows-fr
+    div Displayed to a DDFIP admin :
+    div
+    div
+    div
+    = render Views::Reports::StatusBadge::Component.new(:transmitted,   as: :ddfip_admin)
+    = render Views::Reports::StatusBadge::Component.new(:acknowledged,  as: :ddfip_admin)
+    = render Views::Reports::StatusBadge::Component.new(:accepted,      as: :ddfip_admin)
+    = render Views::Reports::StatusBadge::Component.new(:assigned,      as: :ddfip_admin)
+    = render Views::Reports::StatusBadge::Component.new(:applicable,    as: :ddfip_admin)
+    = render Views::Reports::StatusBadge::Component.new(:inapplicable,  as: :ddfip_admin)
+    = render Views::Reports::StatusBadge::Component.new(:approved,      as: :ddfip_admin)
+    = render Views::Reports::StatusBadge::Component.new(:canceled,      as: :ddfip_admin)
+    = render Views::Reports::StatusBadge::Component.new(:rejected,      as: :ddfip_admin)
+
+  .grid.grid-rows-subgrid.gap-4.auto-rows-fr
+    div Displayed to an office user :
+    div
+    div
+    div
+    div
+    div
+    div
+    = render Views::Reports::StatusBadge::Component.new(:assigned,      as: :ddfip_user)
+    = render Views::Reports::StatusBadge::Component.new(:applicable,    as: :ddfip_user)
+    = render Views::Reports::StatusBadge::Component.new(:inapplicable,  as: :ddfip_user)
+    = render Views::Reports::StatusBadge::Component.new(:approved,      as: :ddfip_user)
+    = render Views::Reports::StatusBadge::Component.new(:canceled,      as: :ddfip_user)
+    div

@@ -33,7 +33,7 @@ RSpec.describe Reports::UpdateService do
         .to  ret(be_a(Result::Success))
         .and change(report, :updated_at)
         .and change(report, :state).to("ready")
-        .and change(report, :ready_at).to(be_present)
+        .and change(report, :completed_at).to(be_present)
     end
   end
 
@@ -47,7 +47,7 @@ RSpec.describe Reports::UpdateService do
         .to  ret(be_a(Result::Success))
         .and change(report, :updated_at)
         .and not_change(report, :state).from("draft")
-        .and not_change(report, :ready_at).from(nil)
+        .and not_change(report, :completed_at).from(nil)
     end
   end
 
@@ -59,7 +59,7 @@ RSpec.describe Reports::UpdateService do
         .to  ret(be_a(Result::Success))
         .and change(report, :updated_at)
         .and not_change(report, :state).from("ready")
-        .and not_change(report, :ready_at)
+        .and not_change(report, :completed_at)
     end
   end
 
@@ -75,7 +75,7 @@ RSpec.describe Reports::UpdateService do
         .to  ret(be_a(Result::Success))
         .and change(report, :updated_at)
         .and change(report, :state).to("draft")
-        .and change(report, :ready_at).to(nil)
+        .and change(report, :completed_at).to(nil)
     end
   end
 

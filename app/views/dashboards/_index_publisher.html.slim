@@ -6,9 +6,30 @@
     - grid.with_column do
       .dashboard-number
         = current_organization.collectivities_count
-        span.dashboard-number__unit Nombre de collectivités
+        span.dashboard-number__unit Collectivités
 
     - grid.with_column do
       .dashboard-number
         = current_organization.reports_transmitted_count
-        span.dashboard-number__unit Nombre de signalements transmis
+        span.dashboard-number__unit Signalements transmis
+
+    - grid.with_column do
+      .dashboard-number
+        = current_organization.reports_approved_count + current_organization.reports_canceled_count + current_organization.reports_rejected_count
+        span.dashboard-number__unit Signalements retournés
+
+  - layout.with_header icon: "clipboard-document" do
+    | Signalements transmis
+
+  - layout.with_section do
+    = render Views::Reports::List::Component.new(@reports.transmitted.order(transmitted_at: :desc), dashboard: true) do |view|
+      - view.with_column(:reference)
+      - view.with_column(:package)
+      - view.with_column(:collectivity)
+      - view.with_column(:form_type)
+      - view.with_column(:anomalies)
+      - view.with_column(:invariant)
+      - view.with_column(:adresse)
+      - view.with_column(:commune)
+      - view.with_column(:priority)
+      - view.with_column(:status)
