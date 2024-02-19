@@ -1,0 +1,18 @@
+fr:
+  collectivity:
+    transmitted_at:     "Date de transmission"
+    returned_at:        "Date de réponse"
+
+  ddfip:
+    full:
+      transmitted_at:   "Date de réception"
+      accepted_at:      "Date d'acceptation"
+      assigned_at:      "Date d'attribution"
+      resolved_at:      "Date réponse guichet"
+      returned_at:      "Date réponse DDFIP"
+    compact:
+      transmitted_at:   "Date de réception"
+      accepted_at:      "Acceptation"
+      assigned_at:      "Attribution"
+      resolved_at:      "Réponse guichet"
+      returned_at:      "Réponse DDFIP"

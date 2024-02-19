@@ -33,7 +33,7 @@ RSpec.describe Views::Reports::List::Component, type: :component do
 
       expect(page).to have_selector(".datatable table") do |table|
         expect(table).to have_selector("th", text: "Etat")
-        expect(table).to have_selector("th", text: "Reference")
+        expect(table).to have_selector("th", text: "Référence")
         expect(table).to have_selector("th", text: "Priorité")
         expect(table).to have_selector("th", text: "Type de signalement")
         expect(table).to have_selector("th", text: "Objet")
@@ -47,22 +47,40 @@ RSpec.describe Views::Reports::List::Component, type: :component do
       end
     end
 
-    it "renders a table with a limited set of columns" do
+    it "renders a table with a extra columns" do
       render_inline described_class.new(Report.all, pagy) do |list|
-        list.with_column(:reference)
-        list.with_column(:form_type)
-        list.with_column(:anomalies)
+        list.with_column(:package)
+        list.with_column(:collectivity)
+        list.with_column(:ddfip)
+        list.with_column(:office)
       end
 
       expect(page).to have_selector(".datatable table") do |table|
-        expect(table).to have_selector("th", text: "Reference")
+        expect(table).to have_selector("th", text: "Etat")
+        expect(table).to have_selector("th", text: "Référence")
         expect(table).to have_selector("th", text: "Type de signalement")
         expect(table).to have_selector("th", text: "Objet")
 
-        expect(table).to have_no_selector("th", text: "Etat")
+        expect(table).to have_selector("th", text: "Paquet")
+        expect(table).to have_selector("th", text: "Collectivité")
+        expect(table).to have_selector("th", text: "DDFIP")
+        expect(table).to have_selector("th", text: "Guichet")
+      end
+    end
+
+    it "renders a table without some of the default columns" do
+      render_inline described_class.new(Report.all, pagy) do |list|
+        list.remove_column(:priority)
+        list.remove_column(:reference)
+      end
+
+      expect(page).to have_selector(".datatable table") do |table|
+        expect(table).to have_selector("th", text: "Etat")
+        expect(table).to have_selector("th", text: "Type de signalement")
+        expect(table).to have_selector("th", text: "Objet")
+
         expect(table).to have_no_selector("th", text: "Priorité")
-        expect(table).to have_no_selector("th", text: "Invariant")
-        expect(table).to have_no_selector("th", text: "Adresse")
+        expect(table).to have_no_selector("th", text: "Référence")
       end
     end
 
@@ -82,7 +100,7 @@ RSpec.describe Views::Reports::List::Component, type: :component do
       render_inline described_class.new(Report.all, pagy)
 
       expect(page).to have_selector(".datatable table") do |table|
-        expect(table).to have_selector("th", text: "Reference") do |row|
+        expect(table).to have_selector("th", text: "Référence") do |row|
           expect(row).to have_link("Trier par ordre croissant")
         end
       end
@@ -92,7 +110,7 @@ RSpec.describe Views::Reports::List::Component, type: :component do
       render_inline described_class.new(Report.all, pagy, dashboard: true)
 
       expect(page).to have_selector(".datatable table") do |table|
-        expect(table).to have_selector("th", text: "Reference") do |row|
+        expect(table).to have_selector("th", text: "Référence") do |row|
           expect(row).to have_no_link("Trier par ordre croissant")
         end
       end

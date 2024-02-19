@@ -25,14 +25,7 @@
           - header.with_action "Tout voir", reports_path(q: { state: "assigned" }), icon: "magnifying-glass"
 
     - layout.with_section do
-      = render Views::Reports::List::Component.new(reports, dashboard: true) do |view|
-        - view.with_column(:reference)
-        - view.with_column(:collectivity)
-        - view.with_column(:workshop)
-        - view.with_column(:form_type)
-        - view.with_column(:anomalies)
-        - view.with_column(:invariant)
-        - view.with_column(:adresse)
-        - view.with_column(:commune)
-        - view.with_column(:priority)
-        - view.with_column(:status)
+      = render Views::Reports::List::Component.new(reports, dashboard: true) do |list|
+        - list.with_column(:package)
+        - list.with_column(:collectivity)
+        - list.with_column(:assigned_at)
