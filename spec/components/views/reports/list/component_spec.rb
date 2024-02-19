@@ -32,7 +32,7 @@ RSpec.describe Views::Reports::List::Component, type: :component do
       render_inline described_class.new(Report.all, pagy)
 
       expect(page).to have_selector(".datatable table") do |table|
-        expect(table).to have_selector("th", text: "Etat")
+        expect(table).to have_selector("th", text: "État")
         expect(table).to have_selector("th", text: "Référence")
         expect(table).to have_selector("th", text: "Priorité")
         expect(table).to have_selector("th", text: "Type de signalement")
@@ -56,7 +56,7 @@ RSpec.describe Views::Reports::List::Component, type: :component do
       end
 
       expect(page).to have_selector(".datatable table") do |table|
-        expect(table).to have_selector("th", text: "Etat")
+        expect(table).to have_selector("th", text: "État")
         expect(table).to have_selector("th", text: "Référence")
         expect(table).to have_selector("th", text: "Type de signalement")
         expect(table).to have_selector("th", text: "Objet")
@@ -75,7 +75,7 @@ RSpec.describe Views::Reports::List::Component, type: :component do
       end
 
       expect(page).to have_selector(".datatable table") do |table|
-        expect(table).to have_selector("th", text: "Etat")
+        expect(table).to have_selector("th", text: "État")
         expect(table).to have_selector("th", text: "Type de signalement")
         expect(table).to have_selector("th", text: "Objet")
 

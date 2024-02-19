@@ -22,22 +22,23 @@
       - if allowed_to?(:destroy_all?, Report)
         - selection.with_action "Supprimer", url_for([:remove_all, @parent, :reports]), modal: true
 
-  - datatable.with_column(:state,     compact: true)                    { "Etat" }                if columns.include?(:state)
+  - datatable.with_column(:state,     sort: !@dashboard, compact: true) { "État" }                if columns.include?(:state)
   - datatable.with_column(:form_type, sort: !@dashboard)                { "Type de signalement" } if columns.include?(:form_type)
   - datatable.with_column(:invariant, sort: !@dashboard)                { "Invariant" }           if columns.include?(:invariant)
   - datatable.with_column(:adresse,   sort: !@dashboard)                { "Adresse" }             if columns.include?(:adresse)
   - datatable.with_column(:commune,   sort: !@dashboard)                { "Commune" }             if columns.include?(:commune)
-  - datatable.with_column(:anomalies)                                   { "Objet" }               if columns.include?(:anomalies)
+  - datatable.with_column(:anomalies, sort: !@dashboard)                { "Objet" }               if columns.include?(:anomalies)
   - datatable.with_column(:priority,  sort: !@dashboard, compact: true) { "Priorité" }            if columns.include?(:priority)
   - datatable.with_column(:reference, sort: !@dashboard)                { "Référence" }           if columns.include?(:reference)
 
-  - datatable.with_column(:package)       { "Paquet" }       if columns.include?(:package)
-  - datatable.with_column(:collectivity)  { "Collectivité" } if columns.include?(:collectivity)
-  - datatable.with_column(:ddfip)         { "DDFIP" }        if columns.include?(:ddfip)
-  - datatable.with_column(:office)        { "Guichet" }      if columns.include?(:office)
+  - datatable.with_column(:package, sort: ("reference" unless @dashboard)) { "Paquet" } if columns.include?(:package)
+
+  - datatable.with_column(:collectivity, sort: !@dashboard) { "Collectivité" } if columns.include?(:collectivity)
+  - datatable.with_column(:ddfip,        sort: !@dashboard) { "DDFIP" }        if columns.include?(:ddfip)
+  - datatable.with_column(:office,       sort: !@dashboard) { "Guichet" }      if columns.include?(:office)
 
   - date_columns.each do |column|
-    - datatable.with_column(column, numeric: true) { date_label(column) }
+    - datatable.with_column(column, sort: !@dashboard, numeric: true) { date_label(column) }
 
   - datatable.with_empty_message do
     - if @dashboard

@@ -406,12 +406,22 @@ class Report < ApplicationRecord
   scope :order_by_param, lambda { |input|
     advanced_order(
       input,
-      invariant: ->(direction) { order(situation_invariant: direction) },
-      priority:  ->(direction) { order(priority: direction) },
-      reference: ->(direction) { order(reference: direction) },
-      form_type: ->(direction) { order_by_form_type(direction) },
-      adresse:   ->(direction) { order_by_address(direction) },
-      commune:   ->(direction) { order_by_commune(direction) }
+      invariant:      ->(direction) { order(situation_invariant: direction) },
+      priority:       ->(direction) { order(priority: direction) },
+      reference:      ->(direction) { order(reference: direction) },
+      state:          ->(direction) { order_by_state(direction) },
+      form_type:      ->(direction) { order_by_form_type(direction) },
+      anomalies:      ->(direction) { order_by_anomalies(direction) },
+      adresse:        ->(direction) { order_by_address(direction) },
+      commune:        ->(direction) { order_by_commune(direction) },
+      collectivity:   ->(direction) { order_by_collectivity(direction) },
+      ddfip:          ->(direction) { order_by_ddfip(direction) },
+      office:         ->(direction) { order_by_office(direction) },
+      accepted_at:    ->(direction) { order(accepted_at: direction) },
+      transmitted_at: ->(direction) { order(transmitted_at: direction) },
+      assigned_at:    ->(direction) { order(assigned_at: direction) },
+      resolved_at:    ->(direction) { order(resolved_at: direction) },
+      returned_at:    ->(direction) { order(returned_at: direction) }
     )
   }
 
@@ -419,6 +429,8 @@ class Report < ApplicationRecord
     # TODO: Not implemented
     self
   }
+
+  scope :order_by_state, ->(direction = :asc) { order(state: direction) }
 
   SORTED_FORM_TYPES_BY_LABEL = Rails.application.config.i18n.available_locales.index_with { |locale|
     I18n.t("enum.report_form_type", raise: true, locale:).to_a
@@ -433,6 +445,30 @@ class Report < ApplicationRecord
     in_order_of(:form_type, values)
   }
 
+  SORTED_ANOMALIES_BY_LABEL = Rails.application.config.i18n.available_locales.index_with { |locale|
+    I18n.t("enum.anomalies", raise: true, locale:).to_a
+      .select  { |(_, value)| value.is_a?(String) }
+      .sort_by { |(_, value)| I18n.transliterate(value) }
+      .map     { |(key, _)| key.to_s }
+  }.freeze
+
+  scope :order_by_anomalies, lambda { |direction = :asc|
+    desc   = direction.to_s == "desc"
+    values = SORTED_ANOMALIES_BY_LABEL[I18n.locale]
+    values = values.reverse if direction.to_s == "desc"
+
+    sql = "CASE"
+
+    values.each.with_index(1) do |value, order|
+      sql += %( WHEN "anomalies"[1] = '#{value}' THEN #{order})
+    end
+
+    sql += " ELSE #{desc ? 0 : values.size + 1}"
+    sql += " END"
+
+    order(Arel.sql(sql) => :asc)
+  }
+
   scope :order_by_address, lambda { |direction = :asc|
     order(Arel.sql(<<~SQL.squish) => direction)
       CONCAT(situation_libelle_voie, situation_numero_voie, situation_indice_repetition, situation_adresse)
@@ -441,6 +477,18 @@ class Report < ApplicationRecord
 
   scope :order_by_commune, lambda { |direction = :asc|
     left_joins(:commune).merge(Commune.order_by_name(direction))
+  }
+
+  scope :order_by_collectivity, lambda { |direction = :asc|
+    left_joins(:collectivity).merge(Collectivity.order_by_name(direction))
+  }
+
+  scope :order_by_ddfip, lambda { |direction = :asc|
+    left_joins(:ddfip).merge(DDFIP.order_by_name(direction))
+  }
+
+  scope :order_by_office, lambda { |direction = :asc|
+    left_joins(:office).merge(Office.order_by_name(direction))
   }
 
   # Predicates

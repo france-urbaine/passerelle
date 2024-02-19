@@ -642,6 +642,28 @@ RSpec.describe Report do
         SQL
       end
 
+      it "orders reports by state" do
+        expect {
+          described_class.order_by_param("state").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT    "reports".*
+          FROM      "reports"
+          ORDER BY  "reports"."state" ASC,
+                    "reports"."created_at" ASC
+        SQL
+      end
+
+      it "orders reports by state in reversed order" do
+        expect {
+          described_class.order_by_param("-state").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT    "reports".*
+          FROM      "reports"
+          ORDER BY  "reports"."state" DESC,
+                    "reports"."created_at" DESC
+        SQL
+      end
+
       it "sorts reports by form type" do
         expect {
           described_class.order_by_param("form_type").load
@@ -675,6 +697,50 @@ RSpec.describe Report do
                     WHEN "reports"."form_type" = 'evaluation_local_habitation'    THEN 4
                     WHEN "reports"."form_type" = 'creation_local_professionnel'   THEN 5
                     WHEN "reports"."form_type" = 'creation_local_habitation'      THEN 6
+                    END ASC,
+                    "reports"."created_at" DESC
+        SQL
+      end
+
+      it "orders reports by anomalies" do
+        expect {
+          described_class.order_by_param("anomalies").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT    "reports".*
+          FROM      "reports"
+          ORDER BY  CASE
+                    WHEN "anomalies"[1] = 'correctif'          THEN 1
+                    WHEN "anomalies"[1] = 'adresse'            THEN 2
+                    WHEN "anomalies"[1] = 'affectation'        THEN 3
+                    WHEN "anomalies"[1] = 'categorie'          THEN 4
+                    WHEN "anomalies"[1] = 'consistance'        THEN 5
+                    WHEN "anomalies"[1] = 'construction_neuve' THEN 6
+                    WHEN "anomalies"[1] = 'exoneration'        THEN 7
+                    WHEN "anomalies"[1] = 'occupation'         THEN 8
+                    WHEN "anomalies"[1] = 'omission_batie'     THEN 9
+                    ELSE 10
+                    END ASC,
+                    "reports"."created_at" ASC
+        SQL
+      end
+
+      it "orders reports by anomalies in reversed order" do
+        expect {
+          described_class.order_by_param("-anomalies").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT    "reports".*
+          FROM      "reports"
+          ORDER BY  CASE
+                    WHEN "anomalies"[1] = 'omission_batie'     THEN 1
+                    WHEN "anomalies"[1] = 'occupation'         THEN 2
+                    WHEN "anomalies"[1] = 'exoneration'        THEN 3
+                    WHEN "anomalies"[1] = 'construction_neuve' THEN 4
+                    WHEN "anomalies"[1] = 'consistance'        THEN 5
+                    WHEN "anomalies"[1] = 'categorie'          THEN 6
+                    WHEN "anomalies"[1] = 'affectation'        THEN 7
+                    WHEN "anomalies"[1] = 'adresse'            THEN 8
+                    WHEN "anomalies"[1] = 'correctif'          THEN 9
+                    ELSE 0
                     END ASC,
                     "reports"."created_at" DESC
         SQL

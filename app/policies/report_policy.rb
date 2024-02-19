@@ -294,7 +294,7 @@ class ReportPolicy < ApplicationPolicy
       ddfip_admin? &&
         report.out_of_sandbox? &&
         report.transmitted? &&
-        report.ddfip == organization
+        report.ddfip_id == organization.id
     end
 
     def reports_listed_to_ddfip_admins
@@ -318,7 +318,7 @@ class ReportPolicy < ApplicationPolicy
       office_user? &&
         report.out_of_sandbox? &&
         report.assigned? &&
-        report.ddfip == organization
+        report.ddfip_id == organization.id
     end
 
     def reports_listed_to_office_users

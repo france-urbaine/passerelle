@@ -36,12 +36,11 @@ module Views
         def before_render
           content
 
-          # Always eager load package, it's may be used for policy check
-          @reports = @reports.preload(:package, :transmission, :office, :ddfip)
-
+          @reports = @reports.preload(:package)      if columns.include?(:package)
           @reports = @reports.preload(:commune)      if columns.include?(:commune)
           @reports = @reports.preload(:collectivity) if columns.include?(:collectivity)
           @reports = @reports.preload(:ddfip)        if columns.include?(:ddfip)
+          @reports = @reports.preload(:office)       if columns.include?(:office)
         end
 
         def with_column(name)
