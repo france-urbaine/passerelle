@@ -23,47 +23,71 @@
         = current_organization.reports_rejected_count
         span.dashboard-number__unit Signalements rejetés
 
-  - layout.with_header icon: "clipboard-document" do
-    | Nouveaux signalements à compléter
+  - @reports.draft.order(created_at: :desc).tap do |reports|
+    - layout.with_header icon: "arrow-down-on-square-stack" do |header|
+      | Nouveaux signalements à compléter
 
-  - layout.with_section do
-    = render Views::Reports::List::Component.new(@reports.draft.order(created_at: :desc), dashboard: true) do |view|
-      - view.with_column(:reference)
-      - view.with_column(:package)
-      - view.with_column(:form_type)
-      - view.with_column(:anomalies)
-      - view.with_column(:invariant)
-      - view.with_column(:adresse)
-      - view.with_column(:commune)
-      - view.with_column(:priority)
-      - view.with_column(:status)
+      - reports.unscope(:limit).count.tap do |total_count|
+        - if total_count > reports.size
+          - header.with_action do
+            .mr-4 <b>#{reports.size}</b> signalements affichés sur <b>#{total_count}</b>
 
-  - layout.with_header icon: "clipboard-document" do
-    | Nouveaux signalements prêt à être transmis
+          - header.with_action "Tout voir", reports_path(q: { state: "draft" }), icon: "magnifying-glass"
 
-  - layout.with_section do
-    = render Views::Reports::List::Component.new(@reports.ready.order(updated_at: :desc), dashboard: true) do |view|
-      - view.with_column(:reference)
-      - view.with_column(:package)
-      - view.with_column(:form_type)
-      - view.with_column(:anomalies)
-      - view.with_column(:invariant)
-      - view.with_column(:adresse)
-      - view.with_column(:commune)
-      - view.with_column(:priority)
-      - view.with_column(:status)
+    - layout.with_section do
+      = render Views::Reports::List::Component.new(reports, dashboard: true) do |view|
+        - view.with_column(:reference)
+        - view.with_column(:package)
+        - view.with_column(:form_type)
+        - view.with_column(:anomalies)
+        - view.with_column(:invariant)
+        - view.with_column(:adresse)
+        - view.with_column(:commune)
+        - view.with_column(:priority)
+        - view.with_column(:status)
 
-  - layout.with_header icon: "clipboard-document" do
-    | Derniers signalements complétés par la DDFIP
+  - @reports.ready.order(updated_at: :desc).tap do |reports|
+    - layout.with_header icon: "cloud-arrow-up" do |header|
+      | Signalements prêt à être transmis
 
-  - layout.with_section do
-    = render Views::Reports::List::Component.new(@reports.returned.order(returned_at: :desc), dashboard: true) do |view|
-      - view.with_column(:reference)
-      - view.with_column(:package)
-      - view.with_column(:form_type)
-      - view.with_column(:anomalies)
-      - view.with_column(:invariant)
-      - view.with_column(:adresse)
-      - view.with_column(:commune)
-      - view.with_column(:priority)
-      - view.with_column(:status)
+      - reports.unscope(:limit).count.tap do |total_count|
+        - if total_count > reports.size
+          - header.with_action do
+            .mr-4 <b>#{reports.size}</b> signalements affichés sur <b>#{total_count}</b>
+
+          - header.with_action "Tout voir", reports_path(q: { state: "ready" }), icon: "magnifying-glass"
+
+    - layout.with_section do
+      = render Views::Reports::List::Component.new(reports, dashboard: true) do |view|
+        - view.with_column(:reference)
+        - view.with_column(:package)
+        - view.with_column(:form_type)
+        - view.with_column(:anomalies)
+        - view.with_column(:invariant)
+        - view.with_column(:adresse)
+        - view.with_column(:commune)
+        - view.with_column(:priority)
+        - view.with_column(:status)
+
+  - @reports.returned.order(returned_at: :desc).tap do |reports|
+    - layout.with_header icon: "document-check" do |header|
+      | Derniers signalements traités par la DDFIP
+
+      - reports.unscope(:limit).count.tap do |total_count|
+        - if total_count > reports.size
+          - header.with_action do
+            .mr-4 <b>#{reports.size}</b> signalements affichés sur <b>#{total_count}</b>
+
+          - header.with_action "Tout voir", reports_path(q: { state: "returned" }), icon: "magnifying-glass"
+
+    - layout.with_section do
+      = render Views::Reports::List::Component.new(reports, dashboard: true) do |view|
+        - view.with_column(:reference)
+        - view.with_column(:package)
+        - view.with_column(:form_type)
+        - view.with_column(:anomalies)
+        - view.with_column(:invariant)
+        - view.with_column(:adresse)
+        - view.with_column(:commune)
+        - view.with_column(:priority)
+        - view.with_column(:status)

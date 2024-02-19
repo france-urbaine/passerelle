@@ -28,59 +28,77 @@
         = current_organization.reports_rejected_count
         span.dashboard-number__unit Signalements rejetés
 
-  - layout.with_header icon: "envelope-open" do |header|
-    | Nouveaux signalements
+  - @reports.waiting_for_acceptance.order(transmitted_at: :desc).tap do |reports|
+    - layout.with_header icon: "envelope-open" do |header|
+      | Nouveaux signalements
 
-    - header.with_action "Tout voir", icon: "magnifying-glass", disabled: true
+      - reports.unscope(:limit).count.tap do |total_count|
+        - if total_count > reports.size
+          - header.with_action do
+            .mr-4 <b>#{reports.size}</b> signalements affichés sur <b>#{total_count}</b>
 
-  - layout.with_section do
-    = render Views::Reports::List::Component.new(@reports.waiting_for_acceptance.order(transmitted_at: :desc), dashboard: true) do |view|
-      - view.with_column(:reference)
-      - view.with_column(:package)
-      - view.with_column(:collectivity)
-      - view.with_column(:workshop)
-      - view.with_column(:form_type)
-      - view.with_column(:anomalies)
-      - view.with_column(:invariant)
-      - view.with_column(:adresse)
-      - view.with_column(:commune)
-      - view.with_column(:priority)
-      - view.with_column(:status)
+          - header.with_action "Tout voir", reports_path(q: { state: "transmitted" }), icon: "magnifying-glass"
 
-  - layout.with_header icon: "inbox-stack" do |header|
-    | Signalements en attente d'une assignation
+    - layout.with_section do
+      = render Views::Reports::List::Component.new(reports, dashboard: true) do |view|
+        - view.with_column(:reference)
+        - view.with_column(:package)
+        - view.with_column(:collectivity)
+        - view.with_column(:workshop)
+        - view.with_column(:form_type)
+        - view.with_column(:anomalies)
+        - view.with_column(:invariant)
+        - view.with_column(:adresse)
+        - view.with_column(:commune)
+        - view.with_column(:priority)
+        - view.with_column(:status)
 
-    - header.with_action "Tout voir", icon: "magnifying-glass", disabled: true
+  - @reports.waiting_for_assignment.order(accepted_at: :desc).tap do |reports|
+    - layout.with_header icon: "inbox-stack" do |header|
+      | Signalements en attente d'une assignation
 
-  - layout.with_section do
-    = render Views::Reports::List::Component.new(@reports.waiting_for_assignment.order(accepted_at: :desc), dashboard: true) do |view|
-      - view.with_column(:reference)
-      - view.with_column(:package)
-      - view.with_column(:collectivity)
-      - view.with_column(:workshop)
-      - view.with_column(:form_type)
-      - view.with_column(:anomalies)
-      - view.with_column(:invariant)
-      - view.with_column(:adresse)
-      - view.with_column(:commune)
-      - view.with_column(:priority)
-      - view.with_column(:status)
+      - reports.unscope(:limit).count.tap do |total_count|
+        - if total_count > reports.size
+          - header.with_action do
+            .mr-4 <b>#{reports.size}</b> signalements affichés sur <b>#{total_count}</b>
 
-  - layout.with_header icon: "document-check" do |header|
-    | Derniers signalements traités, à transmettre à la collectivité
+          - header.with_action "Tout voir", reports_path(q: { state: "accepted" }), icon: "magnifying-glass"
 
-    - header.with_action "Tout voir", icon: "magnifying-glass", disabled: true
+    - layout.with_section do
+      = render Views::Reports::List::Component.new(reports, dashboard: true) do |view|
+        - view.with_column(:reference)
+        - view.with_column(:package)
+        - view.with_column(:collectivity)
+        - view.with_column(:workshop)
+        - view.with_column(:form_type)
+        - view.with_column(:anomalies)
+        - view.with_column(:invariant)
+        - view.with_column(:adresse)
+        - view.with_column(:commune)
+        - view.with_column(:priority)
+        - view.with_column(:status)
 
-  - layout.with_section do
-    = render Views::Reports::List::Component.new(@reports.waiting_for_confirmation.order(resolved_at: :desc), dashboard: true) do |view|
-      - view.with_column(:reference)
-      - view.with_column(:package)
-      - view.with_column(:collectivity)
-      - view.with_column(:workshop)
-      - view.with_column(:form_type)
-      - view.with_column(:anomalies)
-      - view.with_column(:invariant)
-      - view.with_column(:adresse)
-      - view.with_column(:commune)
-      - view.with_column(:priority)
-      - view.with_column(:status)
+  - @reports.waiting_for_confirmation.order(resolved_at: :desc).tap do |reports|
+    - layout.with_header icon: "document-check" do |header|
+      | Derniers signalements traités, à transmettre à la collectivité
+
+      - reports.unscope(:limit).count.tap do |total_count|
+        - if total_count > reports.size
+          - header.with_action do
+            .mr-4 <b>#{reports.size}</b> signalements affichés sur <b>#{total_count}</b>
+
+          - header.with_action "Tout voir", reports_path(q: { state: "resolved" }), icon: "magnifying-glass"
+
+    - layout.with_section do
+      = render Views::Reports::List::Component.new(reports, dashboard: true) do |view|
+        - view.with_column(:reference)
+        - view.with_column(:package)
+        - view.with_column(:collectivity)
+        - view.with_column(:workshop)
+        - view.with_column(:form_type)
+        - view.with_column(:anomalies)
+        - view.with_column(:invariant)
+        - view.with_column(:adresse)
+        - view.with_column(:commune)
+        - view.with_column(:priority)
+        - view.with_column(:status)
