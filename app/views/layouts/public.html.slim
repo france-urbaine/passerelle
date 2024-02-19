@@ -27,13 +27,6 @@ html( lang="fr" )
         span.brand__left Passe
         span.brand__right relle
 
-      - if Rails.application.config.x.domain == "passerelle-fiscale.fr"
-        .mb-6
-          = flash_component do
-            ' Passerelle change de nom de domaine et devient :
-            br
-            ' passerelle-fiscale.fr
-
       = yield
 
     = render "shared/notifications"
