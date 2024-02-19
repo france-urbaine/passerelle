@@ -197,19 +197,6 @@ class Report < ApplicationRecord
     occupation_local_professionnel
   ].freeze
 
-  SORTED_FORM_TYPES_BY_LABEL = %i[fr].to_h { |locale|
-    unless I18n.exists?("enum.report_form_type", locale: locale)
-      raise "missing form_type enum values for locale #{locale}"
-    end
-
-    [
-      locale,
-      I18n.t("enum.report_form_type")
-        .sort_by { |k, _| k }
-        .map     { |(form_type, _)| form_type.to_s }
-    ]
-  }.freeze
-
   ANOMALIES = %w[
     consistance
     affectation
@@ -343,8 +330,16 @@ class Report < ApplicationRecord
 
   # Scopes
   # ----------------------------------------------------------------------------
-  scope :transmitted_to_ddfip, ->(ddfip) { transmitted.where(ddfip: ddfip) }
-  scope :assigned_to_office, ->(office) { assigned.where(office: office) }
+  scope :in_active_transmission,     -> { packing.where.not(transmission_id: nil) }
+  scope :not_in_active_transmission, -> { where(transmission_id: nil) }
+
+  scope :in_transmission,     ->(transmission) { where(transmission_id: transmission.id) }
+  scope :not_in_transmission, ->(transmission) { where.not(transmission_id: transmission.id).or(where(transmission_id: nil)) }
+
+  scope :transmitted_or_made_through_web_ui, -> { transmitted.or(where(publisher_id: nil)) }
+
+  scope :transmitted_to_ddfip, ->(ddfip)  { transmitted.where(ddfip: ddfip) }
+  scope :assigned_to_office,   ->(office) { assigned.where(office: office) }
 
   scope :covered_by_ddfip, lambda { |ddfip|
     if ddfip.is_a?(ActiveRecord::Relation)
@@ -367,8 +362,6 @@ class Report < ApplicationRecord
         .where(form_type: office.competences)
     end
   }
-
-  scope :transmitted_or_made_through_web_ui, -> { transmitted.or(where(publisher_id: nil)) }
 
   scope :search, lambda { |input|
     advanced_search(
@@ -406,31 +399,17 @@ class Report < ApplicationRecord
     )
   }
 
+  # Scopes: orders
+  # ----------------------------------------------------------------------------
   scope :order_by_param, lambda { |input|
     advanced_order(
       input,
-      form_type: lambda { |direction|
-        in_order_of(
-          :form_type,
-          direction == :asc ? SORTED_FORM_TYPES_BY_LABEL[I18n.locale] : SORTED_FORM_TYPES_BY_LABEL[I18n.locale].reverse
-        )
-      },
-      adresse:   lambda { |direction|
-        order(
-          Arel.sql(
-            "CONCAT(situation_libelle_voie, situation_numero_voie, situation_indice_repetition, situation_adresse)"
-          ) => direction
-        )
-      },
       invariant: ->(direction) { order(situation_invariant: direction) },
-      commune:   lambda { |direction|
-        left_joins(:commune).merge(
-          Commune.unaccent_order(:name, direction, nulls: true)
-        )
-      },
       priority:  ->(direction) { order(priority: direction) },
-      package:   ->(direction) { order(reference: direction) },
-      reference: ->(direction) { order(reference: direction) }
+      reference: ->(direction) { order(reference: direction) },
+      form_type: ->(direction) { order_by_form_type(direction) },
+      adresse:   ->(direction) { order_by_address(direction) },
+      commune:   ->(direction) { order_by_commune(direction) }
     )
   }
 
@@ -439,13 +418,29 @@ class Report < ApplicationRecord
     self
   }
 
-  scope :in_active_transmission,     -> { packing.where.not(transmission_id: nil) }
-  scope :not_in_active_transmission, -> { where(transmission_id: nil) }
+  SORTED_FORM_TYPES_BY_LABEL = Rails.application.config.i18n.available_locales.index_with { |locale|
+    I18n.t("enum.report_form_type", raise: true, locale:).to_a
+      .sort_by { |(_, value)| I18n.transliterate(value) }
+      .map     { |(key, _)| key.to_s }
+  }.freeze
 
-  scope :in_transmission,        ->(transmission) { where(transmission_id: transmission.id) }
-  scope :not_in_transmission,    lambda { |transmission|
-    where.not(transmission_id: transmission.id).or(where(transmission_id: nil))
+  scope :order_by_form_type, lambda { |direction = :asc|
+    values = SORTED_FORM_TYPES_BY_LABEL[I18n.locale]
+    values = values.reverse if direction.to_s == "desc"
+
+    in_order_of(:form_type, values)
   }
+
+  scope :order_by_address, lambda { |direction = :asc|
+    order(Arel.sql(<<~SQL.squish) => direction)
+      CONCAT(situation_libelle_voie, situation_numero_voie, situation_indice_repetition, situation_adresse)
+    SQL
+  }
+
+  scope :order_by_commune, lambda { |direction = :asc|
+    left_joins(:commune).merge(Commune.order_by_name(direction))
+  }
+
 
   # Predicates
   # ----------------------------------------------------------------------------

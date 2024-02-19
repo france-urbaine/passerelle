@@ -50,14 +50,18 @@ class OauthApplication < ApplicationRecord
     )
   }
 
+  # Scopes: orders
+  # ----------------------------------------------------------------------------
   scope :order_by_param, lambda { |input|
     advanced_order(
       input,
-      name: ->(direction) { unaccent_order(:name, direction) }
+      name: ->(direction) { order_by_name(direction) }
     )
   }
 
   scope :order_by_score, lambda { |input|
     scored_order(:name, input)
   }
+
+  scope :order_by_name, ->(direction = :asc) { unaccent_order(:name, direction) }
 end

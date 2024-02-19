@@ -70,6 +70,14 @@ class Office < ApplicationRecord
   # ----------------------------------------------------------------------------
   scope :owned_by, ->(ddfip) { where(ddfip: ddfip) }
 
+  scope :covering, lambda { |reports|
+    joins(:communes).merge(Commune.where(code_insee: reports.pluck(:code_insee)))
+  }
+
+  scope :with_competence, lambda { |competence|
+    where(%{? = ANY ("offices"."competences")}, competence)
+  }
+
   scope :search, lambda { |input|
     advanced_search(
       input,
@@ -86,12 +94,14 @@ class Office < ApplicationRecord
     )
   }
 
+  # Scopes: orders
+  # ----------------------------------------------------------------------------
   scope :order_by_param, lambda { |input|
     advanced_order(
       input,
-      name:        ->(direction) { unaccent_order(:name, direction) },
-      ddfip:       ->(direction) { left_joins(:ddfip).merge(DDFIP.unaccent_order(:name, direction)) },
-      competences: ->(direction) { order(competences: direction) }
+      name:        ->(direction) { order_by_name(direction) },
+      ddfip:       ->(direction) { order_by_ddfip(direction) },
+      competences: ->(direction) { order_by_competences(direction) }
     )
   }
 
@@ -99,13 +109,9 @@ class Office < ApplicationRecord
     scored_order(:name, input)
   }
 
-  scope :covering, lambda { |reports|
-    joins(:communes).merge(Commune.where(code_insee: reports.pluck(:code_insee)))
-  }
-
-  scope :with_competence, lambda { |competence|
-    where(%{? = ANY ("offices"."competences")}, competence)
-  }
+  scope :order_by_name,        ->(direction = :asc) { unaccent_order(:name, direction) }
+  scope :order_by_ddfip,       ->(direction = :asc) { left_joins(:ddfip).merge(DDFIP.order_by_name(direction)) }
+  scope :order_by_competences, ->(direction = :asc) { order(competences: direction) }
 
   # Other associations
   # ----------------------------------------------------------------------------

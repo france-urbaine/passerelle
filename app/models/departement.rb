@@ -63,8 +63,6 @@ class Departement < ApplicationRecord
     self.qualified_name = "Département de #{name}"
   end
 
-  # Scopes
-  # ----------------------------------------------------------------------------
   scope :search, lambda { |input|
     advanced_search(
       input,
@@ -82,17 +80,24 @@ class Departement < ApplicationRecord
     )
   }
 
+  # Scopes: orders
+  # ----------------------------------------------------------------------------
   scope :order_by_param, lambda { |input|
     advanced_order(
       input,
-      departement: ->(direction) { order(code_departement: direction) },
-      region:      ->(direction) { order(code_region: direction) }
+      name:    ->(direction) { order_by_name(direction) },
+      code:    ->(direction) { order_by_code(direction) },
+      region:  ->(direction) { order_by_region(direction) }
     )
   }
 
   scope :order_by_score, lambda { |input|
     scored_order(:name, input)
   }
+
+  scope :order_by_name,   ->(direction = :asc) { unaccent_order(:name, direction) }
+  scope :order_by_code,   ->(direction = :asc) { order(code_departement: direction) }
+  scope :order_by_region, ->(direction = :asc) { order(code_region: direction) }
 
   # Other associations
   # ----------------------------------------------------------------------------

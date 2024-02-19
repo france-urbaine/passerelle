@@ -159,31 +159,57 @@ RSpec.describe EPCI do
         SQL
       end
     end
+  end
 
+  # Scopes: orders
+  # ----------------------------------------------------------------------------
+  describe "order scopes" do
     describe ".order_by_param" do
-      it "orders EPCIs by names" do
+      it "sorts EPCIs by name" do
         expect {
-          described_class.order_by_param("epci").load
+          described_class.order_by_param("name").load
         }.to perform_sql_query(<<~SQL)
           SELECT   "epcis".*
           FROM     "epcis"
-          ORDER BY UNACCENT("epcis"."name") ASC,
+          ORDER BY UNACCENT("epcis"."name") ASC NULLS LAST,
                    "epcis"."name" ASC
         SQL
       end
 
-      it "orders EPCIs by names in descendant order" do
+      it "sorts EPCIs by name in reversed order" do
         expect {
-          described_class.order_by_param("-epci").load
+          described_class.order_by_param("-name").load
         }.to perform_sql_query(<<~SQL)
           SELECT   "epcis".*
           FROM     "epcis"
-          ORDER BY UNACCENT("epcis"."name") DESC,
+          ORDER BY UNACCENT("epcis"."name") DESC NULLS FIRST,
                    "epcis"."name" DESC
         SQL
       end
 
-      it "orders EPCIs by departement codes" do
+      it "sorts EPCIs by SIREN" do
+        expect {
+          described_class.order_by_param("siren").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "epcis".*
+          FROM     "epcis"
+          ORDER BY "epcis"."siren" ASC,
+                   "epcis"."name" ASC
+        SQL
+      end
+
+      it "sorts EPCIs by SIREN in reversed order" do
+        expect {
+          described_class.order_by_param("-siren").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "epcis".*
+          FROM     "epcis"
+          ORDER BY "epcis"."siren" DESC,
+                   "epcis"."name" DESC
+        SQL
+      end
+
+      it "sorts EPCIs by departement" do
         expect {
           described_class.order_by_param("departement").load
         }.to perform_sql_query(<<~SQL)
@@ -194,7 +220,7 @@ RSpec.describe EPCI do
         SQL
       end
 
-      it "orders EPCIs by departement codes in descendant order" do
+      it "sorts EPCIs by departement in reversed order" do
         expect {
           described_class.order_by_param("-departement").load
         }.to perform_sql_query(<<~SQL)
@@ -207,7 +233,7 @@ RSpec.describe EPCI do
     end
 
     describe ".order_by_score" do
-      it "orders EPCIs by search score" do
+      it "sorts EPCIs by search score" do
         expect {
           described_class.order_by_score("Hello").load
         }.to perform_sql_query(<<~SQL)
@@ -215,6 +241,102 @@ RSpec.describe EPCI do
           FROM     "epcis"
           ORDER BY ts_rank_cd(to_tsvector('french', "epcis"."name"), to_tsquery('french', 'Hello')) DESC,
                    "epcis"."name" ASC
+        SQL
+      end
+    end
+
+    describe ".order_by_name" do
+      it "sorts EPCIs by name without argument" do
+        expect {
+          described_class.order_by_name.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "epcis".*
+          FROM     "epcis"
+          ORDER BY UNACCENT("epcis"."name") ASC NULLS LAST
+        SQL
+      end
+
+      it "sorts EPCIs by name in ascending order" do
+        expect {
+          described_class.order_by_name(:asc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "epcis".*
+          FROM     "epcis"
+          ORDER BY UNACCENT("epcis"."name") ASC NULLS LAST
+        SQL
+      end
+
+      it "sorts EPCIs by name in descending order" do
+        expect {
+          described_class.order_by_name(:desc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "epcis".*
+          FROM     "epcis"
+          ORDER BY UNACCENT("epcis"."name") DESC NULLS FIRST
+        SQL
+      end
+    end
+
+    describe ".order_by_siren" do
+      it "sorts EPCIs by SIREN without argument" do
+        expect {
+          described_class.order_by_siren.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "epcis".*
+          FROM     "epcis"
+          ORDER BY "epcis"."siren" ASC
+        SQL
+      end
+
+      it "sorts EPCIs by SIREN in ascending order" do
+        expect {
+          described_class.order_by_siren(:asc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "epcis".*
+          FROM     "epcis"
+          ORDER BY "epcis"."siren" ASC
+        SQL
+      end
+
+      it "sorts EPCIs by SIREN in descending order" do
+        expect {
+          described_class.order_by_siren(:desc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "epcis".*
+          FROM     "epcis"
+          ORDER BY "epcis"."siren" DESC
+        SQL
+      end
+    end
+
+    describe ".order_by_departement" do
+      it "sorts EPCIs by departement's code without argument" do
+        expect {
+          described_class.order_by_departement.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "epcis".*
+          FROM     "epcis"
+          ORDER BY "epcis"."code_departement" ASC
+        SQL
+      end
+
+      it "sorts EPCIs by departement's code in ascending order" do
+        expect {
+          described_class.order_by_departement(:asc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "epcis".*
+          FROM     "epcis"
+          ORDER BY "epcis"."code_departement" ASC
+        SQL
+      end
+
+      it "sorts EPCIs by departement's code in descending order" do
+        expect {
+          described_class.order_by_departement(:desc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "epcis".*
+          FROM     "epcis"
+          ORDER BY "epcis"."code_departement" DESC
         SQL
       end
     end

@@ -83,17 +83,24 @@ class EPCI < ApplicationRecord
     )
   }
 
+  # Scopes: orders
+  # ----------------------------------------------------------------------------
   scope :order_by_param, lambda { |input|
     advanced_order(
       input,
-      epci:        ->(direction) { unaccent_order(:name, direction) },
-      departement: ->(direction) { order(code_departement: direction) }
+      name:        ->(direction) { order_by_name(direction) },
+      siren:       ->(direction) { order_by_siren(direction) },
+      departement: ->(direction) { order_by_departement(direction) }
     )
   }
 
   scope :order_by_score, lambda { |input|
     scored_order(:name, input)
   }
+
+  scope :order_by_name,        ->(direction = :asc) { unaccent_order(:name, direction) }
+  scope :order_by_siren,       ->(direction = :asc) { order(siren: direction) }
+  scope :order_by_departement, ->(direction = :asc) { order(code_departement: direction) }
 
   # Other associations
   # ----------------------------------------------------------------------------

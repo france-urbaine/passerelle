@@ -160,24 +160,6 @@ RSpec.describe Report do
     it { is_expected.not_to allow_values("123", "-123").for(:proposition_code_rivoli) }
   end
 
-  # Constants
-  describe "constants" do
-    describe "SORTED_FORM_TYPES_BY_LABEL" do
-      it do
-        expect(Report::SORTED_FORM_TYPES_BY_LABEL).to eq({
-          fr: %w[
-            creation_local_habitation
-            creation_local_professionnel
-            evaluation_local_habitation
-            evaluation_local_professionnel
-            occupation_local_habitation
-            occupation_local_professionnel
-          ]
-        })
-      end
-    end
-  end
-
   # Callbacks
   # ----------------------------------------------------------------------------
   describe "callbacks" do
@@ -284,105 +266,6 @@ RSpec.describe Report do
           SELECT "reports".*
           FROM   "reports"
           WHERE  "reports"."form_type" IN ('evaluation_local_professionnel', 'creation_local_professionnel', 'occupation_local_professionnel')
-        SQL
-      end
-    end
-
-    describe ".order_by_param" do
-      it do
-        expect {
-          described_class.order_by_param("invariant").load
-        }.to perform_sql_query(<<~SQL)
-          SELECT "reports".*
-          FROM   "reports"
-          ORDER BY "reports"."situation_invariant" ASC, "reports"."created_at" ASC
-        SQL
-      end
-
-      it do
-        expect {
-          described_class.order_by_param("priority").load
-        }.to perform_sql_query(<<~SQL)
-          SELECT "reports".*
-          FROM   "reports"
-          ORDER BY "reports"."priority" ASC, "reports"."created_at" ASC
-        SQL
-      end
-
-      it do
-        expect {
-          described_class.order_by_param("reference").load
-        }.to perform_sql_query(<<~SQL)
-          SELECT "reports".*
-          FROM   "reports"
-          ORDER BY "reports"."reference" ASC, "reports"."created_at" ASC
-        SQL
-      end
-
-      it do
-        expect {
-          described_class.order_by_param("adresse").load
-        }.to perform_sql_query(<<~SQL)
-          SELECT "reports".*
-          FROM   "reports"
-          ORDER BY CONCAT(situation_libelle_voie, situation_numero_voie, situation_indice_repetition, situation_adresse) ASC, "reports"."created_at" ASC
-        SQL
-      end
-
-      it do
-        expect {
-          described_class.order_by_param("commune").load
-        }.to perform_sql_query(<<~SQL)
-          SELECT "reports".*
-          FROM   "reports"
-          LEFT OUTER JOIN "communes" ON "communes"."code_insee" = "reports"."code_insee"
-          ORDER BY UNACCENT("communes"."name") ASC NULLS FIRST, "reports"."created_at" ASC
-        SQL
-      end
-
-      it do
-        expect {
-          described_class.order_by_param("package").load
-        }.to perform_sql_query(<<~SQL)
-          SELECT "reports".*
-          FROM   "reports"
-          ORDER BY "reports"."reference" ASC, "reports"."created_at" ASC
-        SQL
-      end
-
-      it do
-        expect {
-          described_class.order_by_param("form_type").load
-        }.to perform_sql_query(<<~SQL)
-          SELECT "reports".*
-          FROM   "reports"
-          WHERE  "reports"."form_type" IN ('creation_local_habitation', 'creation_local_professionnel', 'evaluation_local_habitation', 'evaluation_local_professionnel', 'occupation_local_habitation', 'occupation_local_professionnel')
-          ORDER BY CASE
-            WHEN "reports"."form_type" = 'creation_local_habitation' THEN 1
-            WHEN "reports"."form_type" = 'creation_local_professionnel' THEN 2
-            WHEN "reports"."form_type" = 'evaluation_local_habitation' THEN 3
-            WHEN "reports"."form_type" = 'evaluation_local_professionnel' THEN 4
-            WHEN "reports"."form_type" = 'occupation_local_habitation' THEN 5
-            WHEN "reports"."form_type" = 'occupation_local_professionnel' THEN 6
-            END ASC, "reports"."created_at" ASC
-        SQL
-      end
-
-      it do
-        expect {
-          described_class.order_by_param("-form_type").load
-        }.to perform_sql_query(<<~SQL)
-          SELECT "reports".*
-          FROM   "reports"
-          WHERE  "reports"."form_type" IN ('occupation_local_professionnel', 'occupation_local_habitation', 'evaluation_local_professionnel', 'evaluation_local_habitation', 'creation_local_professionnel', 'creation_local_habitation')
-          ORDER BY CASE
-            WHEN "reports"."form_type" = 'occupation_local_professionnel' THEN 1
-            WHEN "reports"."form_type" = 'occupation_local_habitation' THEN 2
-            WHEN "reports"."form_type" = 'evaluation_local_professionnel' THEN 3
-            WHEN "reports"."form_type" = 'evaluation_local_habitation' THEN 4
-            WHEN "reports"."form_type" = 'creation_local_professionnel' THEN 5
-            WHEN "reports"."form_type" = 'creation_local_habitation' THEN 6
-            END ASC, "reports"."created_at" DESC
         SQL
       end
     end
@@ -661,6 +544,162 @@ RSpec.describe Report do
           INNER JOIN "offices" ON "offices"."id" = "office_communes"."office_id"
           WHERE      "offices"."name" = 'A'
             AND      ("reports"."form_type" = ANY ("offices"."competences"))
+        SQL
+      end
+    end
+  end
+
+  # Scopes: orders
+  # ----------------------------------------------------------------------------
+  describe "order scopes" do
+    describe ".order_by_param" do
+      it "sorts reports by invariant" do
+        expect {
+          described_class.order_by_param("invariant").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT    "reports".*
+          FROM      "reports"
+          ORDER BY  "reports"."situation_invariant" ASC,
+                    "reports"."created_at" ASC
+        SQL
+      end
+
+      it "sorts reports by invariant in reversed order" do
+        expect {
+          described_class.order_by_param("-invariant").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT    "reports".*
+          FROM      "reports"
+          ORDER BY  "reports"."situation_invariant" DESC,
+                    "reports"."created_at" DESC
+        SQL
+      end
+
+      it "sorts reports by priority" do
+        expect {
+          described_class.order_by_param("priority").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT    "reports".*
+          FROM      "reports"
+          ORDER BY  "reports"."priority" ASC,
+                    "reports"."created_at" ASC
+        SQL
+      end
+
+      it "sorts reports by priority in reversed order" do
+        expect {
+          described_class.order_by_param("-priority").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT    "reports".*
+          FROM      "reports"
+          ORDER BY  "reports"."priority" DESC,
+                    "reports"."created_at" DESC
+        SQL
+      end
+
+      it "sorts reports by reference" do
+        expect {
+          described_class.order_by_param("reference").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT    "reports".*
+          FROM      "reports"
+          ORDER BY  "reports"."reference" ASC,
+                    "reports"."created_at" ASC
+        SQL
+      end
+
+      it "sorts reports by reference in reversed order" do
+        expect {
+          described_class.order_by_param("-reference").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT    "reports".*
+          FROM      "reports"
+          ORDER BY  "reports"."reference" DESC,
+                    "reports"."created_at" DESC
+        SQL
+      end
+
+      it "sorts reports by form type" do
+        expect {
+          described_class.order_by_param("form_type").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT    "reports".*
+          FROM      "reports"
+          WHERE     "reports"."form_type" IN ('creation_local_habitation', 'creation_local_professionnel', 'evaluation_local_habitation', 'evaluation_local_professionnel', 'occupation_local_habitation', 'occupation_local_professionnel')
+          ORDER BY  CASE
+                    WHEN "reports"."form_type" = 'creation_local_habitation'      THEN 1
+                    WHEN "reports"."form_type" = 'creation_local_professionnel'   THEN 2
+                    WHEN "reports"."form_type" = 'evaluation_local_habitation'    THEN 3
+                    WHEN "reports"."form_type" = 'evaluation_local_professionnel' THEN 4
+                    WHEN "reports"."form_type" = 'occupation_local_habitation'    THEN 5
+                    WHEN "reports"."form_type" = 'occupation_local_professionnel' THEN 6
+                    END ASC,
+                    "reports"."created_at" ASC
+        SQL
+      end
+
+      it "sorts reports by form type in reversed order" do
+        expect {
+          described_class.order_by_param("-form_type").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT    "reports".*
+          FROM      "reports"
+          WHERE     "reports"."form_type" IN ('occupation_local_professionnel', 'occupation_local_habitation', 'evaluation_local_professionnel', 'evaluation_local_habitation', 'creation_local_professionnel', 'creation_local_habitation')
+          ORDER BY  CASE
+                    WHEN "reports"."form_type" = 'occupation_local_professionnel' THEN 1
+                    WHEN "reports"."form_type" = 'occupation_local_habitation'    THEN 2
+                    WHEN "reports"."form_type" = 'evaluation_local_professionnel' THEN 3
+                    WHEN "reports"."form_type" = 'evaluation_local_habitation'    THEN 4
+                    WHEN "reports"."form_type" = 'creation_local_professionnel'   THEN 5
+                    WHEN "reports"."form_type" = 'creation_local_habitation'      THEN 6
+                    END ASC,
+                    "reports"."created_at" DESC
+        SQL
+      end
+
+      it "sorts reports by address" do
+        expect {
+          described_class.order_by_param("adresse").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT    "reports".*
+          FROM      "reports"
+          ORDER BY  CONCAT(situation_libelle_voie, situation_numero_voie, situation_indice_repetition, situation_adresse) ASC,
+                    "reports"."created_at" ASC
+        SQL
+      end
+
+      it "sorts reports by address in reversed order" do
+        expect {
+          described_class.order_by_param("-adresse").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT    "reports".*
+          FROM      "reports"
+          ORDER BY  CONCAT(situation_libelle_voie, situation_numero_voie, situation_indice_repetition, situation_adresse) DESC,
+                    "reports"."created_at" DESC
+        SQL
+      end
+
+      it "sorts reports by commune" do
+        expect {
+          described_class.order_by_param("commune").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT          "reports".*
+          FROM            "reports"
+          LEFT OUTER JOIN "communes" ON "communes"."code_insee" = "reports"."code_insee"
+          ORDER BY        REGEXP_REPLACE(UNACCENT("communes"."name"), '(^|[^0-9])([0-9])([^0-9])', '\\10\\2\\3') ASC NULLS LAST,
+                          "reports"."created_at" ASC
+        SQL
+      end
+
+      it "sorts reports by commune in reversed order" do
+        expect {
+          described_class.order_by_param("-commune").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT          "reports".*
+          FROM            "reports"
+          LEFT OUTER JOIN "communes" ON "communes"."code_insee" = "reports"."code_insee"
+          ORDER BY        REGEXP_REPLACE(UNACCENT("communes"."name"), '(^|[^0-9])([0-9])([^0-9])', '\\10\\2\\3') DESC NULLS FIRST,
+                          "reports"."created_at" DESC
         SQL
       end
     end

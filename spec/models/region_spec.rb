@@ -54,9 +54,57 @@ RSpec.describe Region do
         SQL
       end
     end
+  end
+
+  # Scopes: orders
+  # ----------------------------------------------------------------------------
+  describe "order scopes" do
+    describe ".order_by_param" do
+      it "sorts regions by name" do
+        expect {
+          described_class.order_by_param("name").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "regions".*
+          FROM     "regions"
+          ORDER BY UNACCENT("regions"."name") ASC NULLS LAST,
+                   "regions"."code_region" ASC
+        SQL
+      end
+
+      it "sorts regions by name in reversed order" do
+        expect {
+          described_class.order_by_param("-name").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "regions".*
+          FROM     "regions"
+          ORDER BY UNACCENT("regions"."name") DESC NULLS FIRST,
+                   "regions"."code_region" DESC
+        SQL
+      end
+
+      it "sorts regions by code" do
+        expect {
+          described_class.order_by_param("code").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "regions".*
+          FROM     "regions"
+          ORDER BY "regions"."code_region" ASC
+        SQL
+      end
+
+      it "sorts regions by code in reversed order" do
+        expect {
+          described_class.order_by_param("-code").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "regions".*
+          FROM     "regions"
+          ORDER BY "regions"."code_region" DESC
+        SQL
+      end
+    end
 
     describe ".order_by_score" do
-      it "orders regions by search score" do
+      it "sorts regions by search score" do
         expect {
           described_class.order_by_score("Hello").load
         }.to perform_sql_query(<<~SQL)
@@ -65,6 +113,70 @@ RSpec.describe Region do
           ORDER BY
             ts_rank_cd(to_tsvector('french', "regions"."name"), to_tsquery('french', 'Hello')) DESC,
             "regions"."code_region" ASC
+        SQL
+      end
+    end
+
+    describe ".order_by_name" do
+      it "sorts regions by name without argument" do
+        expect {
+          described_class.order_by_name.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "regions".*
+          FROM     "regions"
+          ORDER BY UNACCENT("regions"."name") ASC NULLS LAST
+        SQL
+      end
+
+      it "sorts regions by name in ascending order" do
+        expect {
+          described_class.order_by_name(:asc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "regions".*
+          FROM     "regions"
+          ORDER BY UNACCENT("regions"."name") ASC NULLS LAST
+        SQL
+      end
+
+      it "sorts regions by name in descending order" do
+        expect {
+          described_class.order_by_name(:desc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "regions".*
+          FROM     "regions"
+          ORDER BY UNACCENT("regions"."name") DESC NULLS FIRST
+        SQL
+      end
+    end
+
+    describe ".order_by_code" do
+      it "sorts regions by code without argument" do
+        expect {
+          described_class.order_by_code.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "regions".*
+          FROM     "regions"
+          ORDER BY "regions"."code_region" ASC
+        SQL
+      end
+
+      it "sorts regions by code in ascending order" do
+        expect {
+          described_class.order_by_code(:asc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "regions".*
+          FROM     "regions"
+          ORDER BY "regions"."code_region" ASC
+        SQL
+      end
+
+      it "sorts regions by code in descending order" do
+        expect {
+          described_class.order_by_code(:desc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "regions".*
+          FROM     "regions"
+          ORDER BY "regions"."code_region" DESC
         SQL
       end
     end

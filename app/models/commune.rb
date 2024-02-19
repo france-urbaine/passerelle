@@ -154,28 +154,37 @@ class Commune < ApplicationRecord
     )
   }
 
-  scope :order_by_name, lambda { |direction = :asc|
-    column = %("#{table_name}"."name")
-
-    # Order properly arrondissements with numbers greater than 10
-    sql = "REGEXP_REPLACE(UNACCENT(#{column}), '(^|[^0-9])([0-9])([^0-9])', '\\10\\2\\3') "
-    sql += direction == :asc ? "ASC" : "DESC"
-
-    order(Arel.sql(sql))
-  }
-
+  # Scopes: orders
+  # ----------------------------------------------------------------------------
   scope :order_by_param, lambda { |input|
     advanced_order(
       input,
-      commune:      ->(direction) { order_by_name(direction) },
-      departement:  ->(direction) { order(code_departement: direction) },
-      epci:         ->(direction) { left_joins(:epci).merge(EPCI.unaccent_order(:name, direction)) }
+      name:         ->(direction) { order_by_name(direction) },
+      code:         ->(direction) { order_by_code(direction) },
+      departement:  ->(direction) { order_by_departement(direction) },
+      epci:         ->(direction) { order_by_epci(direction) }
     )
   }
 
   scope :order_by_score, lambda { |input|
     scored_order(:name, input)
   }
+
+  scope :order_by_name, lambda { |direction = :asc|
+    desc   = direction.to_s == "desc"
+    column = %("#{table_name}"."name")
+
+    # Order properly arrondissements with numbers greater than 10
+    sql = "REGEXP_REPLACE(UNACCENT(#{column}), '(^|[^0-9])([0-9])([^0-9])', '\\10\\2\\3') "
+    sql += desc ? " DESC" : " ASC"
+    sql += desc ? " NULLS FIRST" : " NULLS LAST"
+
+    order(Arel.sql(sql))
+  }
+
+  scope :order_by_code,        ->(direction = :asc) { order(code_insee: direction) }
+  scope :order_by_departement, ->(direction = :asc) { order(code_departement: direction) }
+  scope :order_by_epci,        ->(direction = :asc) { left_joins(:epci).merge(EPCI.order_by_name(direction)) }
 
   # Other associations
   # ----------------------------------------------------------------------------

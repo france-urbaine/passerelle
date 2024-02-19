@@ -50,6 +50,21 @@ RSpec.describe DDFIP do
   # Scopes
   # ----------------------------------------------------------------------------
   describe "scopes" do
+    describe ".covering" do
+      let!(:reports) { create_list(:report, 3) }
+
+      it "returns ddfips covering specified reports" do
+        expect {
+          described_class.covering(reports)
+        }.to perform_sql_query(<<~SQL.squish)
+          SELECT DISTINCT "ddfips".*
+          FROM "ddfips"
+          INNER JOIN "communes" ON "communes"."code_departement" = "ddfips"."code_departement"
+          INNER JOIN "reports" ON "reports"."code_insee" = "communes"."code_insee"
+        SQL
+      end
+    end
+
     describe ".search" do
       it "searches for DDFIPs with all criteria" do
         expect {
@@ -126,31 +141,35 @@ RSpec.describe DDFIP do
         SQL
       end
     end
+  end
 
+  # Scopes: orders
+  # ----------------------------------------------------------------------------
+  describe "order scopes" do
     describe ".order_by_param" do
-      it "orders DDFIPs by name" do
+      it "sorts DDFIPs by name" do
         expect {
           described_class.order_by_param("name").load
         }.to perform_sql_query(<<~SQL)
           SELECT   "ddfips".*
           FROM     "ddfips"
-          ORDER BY UNACCENT("ddfips"."name") ASC,
+          ORDER BY UNACCENT("ddfips"."name") ASC NULLS LAST,
                    "ddfips"."created_at" ASC
         SQL
       end
 
-      it "orders DDFIPs by name in descendant order" do
+      it "sorts DDFIPs by name in reversed order" do
         expect {
           described_class.order_by_param("-name").load
         }.to perform_sql_query(<<~SQL)
           SELECT   "ddfips".*
           FROM     "ddfips"
-          ORDER BY UNACCENT("ddfips"."name") DESC,
+          ORDER BY UNACCENT("ddfips"."name") DESC NULLS FIRST,
                    "ddfips"."created_at" DESC
         SQL
       end
 
-      it "orders DDFIPs by departement" do
+      it "sorts DDFIPs by departement" do
         expect {
           described_class.order_by_param("departement").load
         }.to perform_sql_query(<<~SQL)
@@ -161,7 +180,7 @@ RSpec.describe DDFIP do
         SQL
       end
 
-      it "orders DDFIPs by departement in descendant order" do
+      it "sorts DDFIPs by departement in reversed order" do
         expect {
           described_class.order_by_param("-departement").load
         }.to perform_sql_query(<<~SQL)
@@ -172,7 +191,7 @@ RSpec.describe DDFIP do
         SQL
       end
 
-      it "orders DDFIPs by region" do
+      it "sorts DDFIPs by region" do
         expect {
           described_class.order_by_param("region").load
         }.to perform_sql_query(<<~SQL)
@@ -184,7 +203,7 @@ RSpec.describe DDFIP do
         SQL
       end
 
-      it "orders DDFIPs by region in descendant order" do
+      it "sorts DDFIPs by region in reversed order" do
         expect {
           described_class.order_by_param("-region").load
         }.to perform_sql_query(<<~SQL)
@@ -198,7 +217,7 @@ RSpec.describe DDFIP do
     end
 
     describe ".order_by_score" do
-      it "orders DDFIPs by search score" do
+      it "sorts DDFIPs by search score" do
         expect {
           described_class.order_by_score("Hello").load
         }.to perform_sql_query(<<~SQL)
@@ -210,17 +229,101 @@ RSpec.describe DDFIP do
       end
     end
 
-    describe ".covering" do
-      let!(:reports) { create_list(:report, 3) }
-
-      it "returns ddfips covering specified reports" do
+    describe ".order_by_name" do
+      it "sorts DDFIPs by name without argument" do
         expect {
-          described_class.covering(reports)
-        }.to perform_sql_query(<<~SQL.squish)
-          SELECT DISTINCT "ddfips".*
-          FROM "ddfips"
-          INNER JOIN "communes" ON "communes"."code_departement" = "ddfips"."code_departement"
-          INNER JOIN "reports" ON "reports"."code_insee" = "communes"."code_insee"
+          described_class.order_by_name.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "ddfips".*
+          FROM     "ddfips"
+          ORDER BY UNACCENT("ddfips"."name") ASC NULLS LAST
+        SQL
+      end
+
+      it "sorts DDFIPs by name in ascending order" do
+        expect {
+          described_class.order_by_name(:asc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "ddfips".*
+          FROM     "ddfips"
+          ORDER BY UNACCENT("ddfips"."name") ASC NULLS LAST
+        SQL
+      end
+
+      it "sorts DDFIPs by name in descending order" do
+        expect {
+          described_class.order_by_name(:desc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "ddfips".*
+          FROM     "ddfips"
+          ORDER BY UNACCENT("ddfips"."name") DESC NULLS FIRST
+        SQL
+      end
+    end
+
+    describe ".order_by_departement" do
+      it "sorts DDFIPs by departement's code without argument" do
+        expect {
+          described_class.order_by_departement.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "ddfips".*
+          FROM     "ddfips"
+          ORDER BY "ddfips"."code_departement" ASC
+        SQL
+      end
+
+      it "sorts DDFIPs by departement's code in ascending order" do
+        expect {
+          described_class.order_by_departement(:asc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "ddfips".*
+          FROM     "ddfips"
+          ORDER BY "ddfips"."code_departement" ASC
+        SQL
+      end
+
+      it "sorts DDFIPs by departement's code in descending order" do
+        expect {
+          described_class.order_by_departement(:desc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "ddfips".*
+          FROM     "ddfips"
+          ORDER BY "ddfips"."code_departement" DESC
+        SQL
+      end
+    end
+
+    describe ".order_by_region" do
+      it "sorts DDFIPs by region's code without argument" do
+        expect {
+          described_class.order_by_region.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT          "ddfips".*
+          FROM            "ddfips"
+          LEFT OUTER JOIN "departements" ON "departements"."code_departement" = "ddfips"."code_departement"
+          ORDER BY        "departements"."code_region" ASC
+        SQL
+      end
+
+      it "sorts DDFIPs by region's code in ascending order" do
+        expect {
+          described_class.order_by_region(:asc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT          "ddfips".*
+          FROM            "ddfips"
+          LEFT OUTER JOIN "departements" ON "departements"."code_departement" = "ddfips"."code_departement"
+          ORDER BY        "departements"."code_region" ASC
+        SQL
+      end
+
+      it "sorts DDFIPs by region's code in descending order" do
+        expect {
+          described_class.order_by_region(:desc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT          "ddfips".*
+          FROM            "ddfips"
+          LEFT OUTER JOIN "departements" ON "departements"."code_departement" = "ddfips"."code_departement"
+          ORDER BY        "departements"."code_region" DESC
         SQL
       end
     end
