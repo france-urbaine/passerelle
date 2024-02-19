@@ -11,8 +11,8 @@
         - datatable.with_search
         - datatable.with_pagination(@pagy, options: !@parent)
 
-        - datatable.with_column(:reference)             { "Reference" }
-        - datatable.with_column(:collectivity)          { "Collectivité" } unless current_user.organization.is_a?(Collectivity)
+        - datatable.with_column(:reference)    { "Références" }
+        - datatable.with_column(:collectivity) { "Collectivité" } unless current_user.organization.is_a?(Collectivity)
 
         - datatable.with_column(:reports_count,          numeric: true) { "Signalements" }
         - datatable.with_column(:reports_approved_count, numeric: true) { "Approuvés" }
