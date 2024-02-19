@@ -564,9 +564,43 @@ RSpec.describe Report do
         SQL
       end
 
-      it "returns a null relation when none of the enum values match the given one" do
+      it "returns a null relation when none of the enum match the given value" do
         expect(
           described_class.search_by_form_type("nope")
+        ).to be_a_null_relation
+      end
+    end
+
+    describe ".search_by_state" do
+      it "searches for reports matching given value" do
+        expect {
+          described_class.search_by_state("transmitted").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "reports".*
+          FROM   "reports"
+          WHERE  "reports"."state" = 'transmitted'
+        SQL
+      end
+
+      it "searches for reports matching multiple values, excluding unknown values" do
+        expect {
+          described_class.search_by_state(%w[transmitted foo assigned]).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "reports".*
+          FROM   "reports"
+          WHERE  "reports"."state" IN ('transmitted', 'assigned')
+        SQL
+      end
+
+      it "returns a null relation when none of the enum match the given value" do
+        expect(
+          described_class.search_by_state("Hello")
+        ).to be_a_null_relation
+      end
+
+      it "returns a null relation when none of the enum match all the given values" do
+        expect(
+          described_class.search_by_state(%w[Foo Bar])
         ).to be_a_null_relation
       end
     end

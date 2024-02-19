@@ -366,14 +366,35 @@ class Report < ApplicationRecord
   # Scopes: searches
   # ----------------------------------------------------------------------------
   scope :search, lambda { |input|
-    advanced_search(input, scopes: {
-      reference:         ->(value) { where(reference: value) },
-      invariant:         ->(value) { where(situation_invariant: value) },
-      package_reference: ->(value) { where(package_id: Package.where(reference: value)) },
-      form_type:         ->(value) { search_by_form_type(value) },
-      commune_name:      ->(value) { search_by_commune(value) },
-      address:           ->(value) { search_by_address(value) }
-    })
+    advanced_search(
+      input,
+      default: %i[
+        reference
+        invariant
+        package_reference
+        form_type
+        commune_name
+        address
+      ],
+      scopes: {
+        state:             ->(value) { search_by_state(value) },
+        reference:         ->(value) { where(reference: value) },
+        invariant:         ->(value) { where(situation_invariant: value) },
+        package_reference: ->(value) { where(package_id: Package.where(reference: value)) },
+        form_type:         ->(value) { search_by_form_type(value) },
+        commune_name:      ->(value) { search_by_commune(value) },
+        address:           ->(value) { search_by_address(value) }
+      }
+    )
+  }
+
+  scope :search_by_state, lambda { |value|
+    values = Array.wrap(value) & States::ReportStates::STATES
+    if values.any?
+      where(state: values)
+    else
+      none
+    end
   }
 
   scope :search_by_commune, lambda { |value|
