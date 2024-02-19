@@ -292,6 +292,12 @@ fr:
             header: "Le signalement n'est plus accepté."
             delay:  3000
 
+        update_all:
+          notice:
+            scheme: "success"
+            header: "Les signalements sélectionnés ont été acceptés."
+            delay:  3000
+
       assignments:
         update:
           notice:
@@ -303,6 +309,12 @@ fr:
           notice:
             scheme: "success"
             header: "Le signalement n'est plus assigné."
+            delay:  3000
+
+        update_all:
+          notice:
+            scheme: "success"
+            header: "Les signalements sélectionnés ont été assignés au guichet sélectionné."
             delay:  3000
 
       resolutions:
@@ -322,13 +334,19 @@ fr:
         update:
           notice:
             scheme: "success"
-            header: "La réponse a été transmise à la collectivité."
+            header: "Le signalement a été transmis à la collectivité."
             delay:  3000
 
         destroy:
           notice:
             scheme: "success"
             header: "Le retour du signalement à la collectivité a été annulé."
+            delay:  3000
+
+        update_all:
+          notice:
+            scheme: "success"
+            header: "Les signalements sélectionnés ont été transmis à leur collectivités respectives."
             delay:  3000
 
       rejections:
@@ -342,6 +360,12 @@ fr:
           notice:
             scheme: "success"
             header: "Le signalement n'est plus rejeté."
+            delay:  3000
+
+        update_all:
+          notice:
+            scheme: "success"
+            header: "Les signalements sélectionnés ont été rejetés."
             delay:  3000
 
     users:

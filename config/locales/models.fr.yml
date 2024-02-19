@@ -542,3 +542,8 @@ fr:
 
             exonerations:
               blank: La saisie des exonérations est requise
+
+        reports/states/assign_all_service:
+          attributes:
+            office_id:
+              blank: Un guichet est requis

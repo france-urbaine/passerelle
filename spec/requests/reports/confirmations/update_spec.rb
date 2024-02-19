@@ -67,7 +67,7 @@ RSpec.describe "Reports::ConfirmationsController#update" do
       it "sets a flash notice" do
         expect(flash).to have_flash_notice.to eq(
           scheme: "success",
-          header: "La réponse a été transmise à la collectivité.",
+          header: "Le signalement a été transmis à la collectivité.",
           delay:  3000
         )
       end
@@ -92,7 +92,7 @@ RSpec.describe "Reports::ConfirmationsController#update" do
       it "sets a flash notice" do
         expect(flash).to have_flash_notice.to eq(
           scheme: "success",
-          header: "La réponse a été transmise à la collectivité.",
+          header: "Le signalement a été transmis à la collectivité.",
           delay:  3000
         )
       end

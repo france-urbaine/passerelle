@@ -3,10 +3,7 @@
 require "rails_helper"
 
 RSpec.describe Views::Reports::Resolutions::EditComponent, type: :component do
-  let(:ddfip)  { create(:ddfip) }
-  let(:report) { create(:report, :transmitted, ddfip:) }
-
-  before { sign_in_as(:ddfip) }
+  let(:report) { build_stubbed(:report, :assigned_by_ddfip) }
 
   it "renders a modal form to resolve a report as applicable" do
     render_inline described_class.new(report, "applicable")

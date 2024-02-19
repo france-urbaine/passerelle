@@ -9,11 +9,14 @@
       p Vous êtes sur le point de rejeter le signalement suivant :
       = render Views::Reports::ShortDetailsComponent.new(@report)
 
-      p La collectivité pourra voir que le signalement a été rejeté.
+      p
+        ' Le signalement rejeté sera retourné à la collectivité.
+        br
+        ' Vous pouvez lui transmettre des observations quant au motif de rejet.
 
       = form.block :reponse do
-        = form.label :reponse, "Vous pouvez transmettre des observations à la collectivité :"
-        = form.text_area :reponse, rows: 10, autofocus: true
+        = form.label :reponse, "Observations :"
+        = form.text_area :reponse, rows: 10
 
-    - modal.with_submit_action "Continuer"
+    - modal.with_submit_action "Continuer", autofocus: true
     - modal.with_close_action "Annuler"

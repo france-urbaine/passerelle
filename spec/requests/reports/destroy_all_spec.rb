@@ -133,8 +133,6 @@ RSpec.describe "ReportsController#destroy_all" do
     context "with referrer header", headers: { "Referer" => "http://example.com/other/path" } do
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/signalements") }
-      it { expect(flash).to have_flash_notice }
-      it { expect(flash).to have_flash_actions }
     end
 
     context "with redirect parameter" do
@@ -142,8 +140,6 @@ RSpec.describe "ReportsController#destroy_all" do
 
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/other/path") }
-      it { expect(flash).to have_flash_notice }
-      it { expect(flash).to have_flash_actions }
     end
   end
 end

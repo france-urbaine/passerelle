@@ -1,0 +1,69 @@
+= modal_frame_component(referrer: @referrer) do |template|
+  - template.with_modal do |modal|
+    - modal.with_header do
+      - if selected_count == 1
+        | Acceptation du signalement sélectionné
+      - else
+        | Acceptation des signalements sélectionnés
+
+    - if reports_count.zero?
+      - modal.with_body do
+        p
+          | Aucun des signalements sélectionnés ne peut être accepté :
+          br
+          | les signalements déjà assignés ou traités sont ignorés.
+
+      - modal.with_close_action "Fermer"
+
+    - else
+      - modal.with_form(model: @service, scope: :report, url: report_acceptances_path, method: "patch") do |form|
+        - modal.with_hidden_field :redirect, @referrer
+        - modal.with_hidden_field :ids,      params[:ids]
+        - modal.with_hidden_field :search,   params[:search]
+        - modal.with_hidden_field :order,    params[:order]
+        - modal.with_hidden_field :page,     params[:page]
+
+        .mb-10
+          - if ignored_count.zero?
+            - if reports_count == 1
+              p Vous êtes sur le point d'accepter <b>1</b> signalement.
+            - elsif reports_count > 1
+              p Vous êtes sur le point d'accepter les <b>#{reports_count}</b> signalements sélectionnés.
+
+          - elsif ignored_count.positive?
+            p Vous avez sélectionné <b>#{selected_count}</b> signalements :
+
+            ul.list-disc.ml-6.mb-6
+              li
+                - if reports_count == 1
+                  ' <b>1</b> signalement sera accepté.
+                - else
+                  ' <b>#{reports_count}</b> signalements seront acceptés.
+
+              li
+                - if ignored_count == 1
+                  ' <b>1</b> signalement déjà assigné ou traité sera ignoré.
+                - elsif ignored_count > 1
+                  ' <b>#{ignored_count}</b> signalements déjà assignés ou traités seront ignorés.
+
+          - if rejected_count.positive?
+            p <b>Attention :</b>
+
+            ul.list-disc.ml-6.mb-6
+              li
+                - if rejected_count == 1
+                  ' <b>1</b> signalement selectionné est actuellement rejeté.
+                  br
+                  ' Ce signalement sera aussi accepté.
+                - else
+                  ' <b>#{rejected_count}</b> signalements selectionnés sont actuellement rejetés.
+                  br
+                  ' Ces signalements seront aussi acceptés.
+
+        p
+          ' L'acceptation est une étape préliminaire à l'assignation des signalements à un guichet.
+          br
+          ' Les collectivités pourront voir que leurs signalements ont été acceptés.
+
+      - modal.with_submit_action "Continuer"
+      - modal.with_close_action "Annuler"

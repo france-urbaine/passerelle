@@ -1,0 +1,59 @@
+# frozen_string_literal: true
+
+module Views
+  module Reports
+    module Assignments
+      class EditAllComponent < ApplicationViewComponent
+        def initialize(reports, selected: nil, service: nil, referrer: nil)
+          @reports  = reports
+          @selected = selected
+          @service  = service || ::Reports::States::AssignAllService.new(reports)
+          @referrer = referrer
+          super()
+        end
+
+        def before_render
+          return if @service.errors.any?
+
+          office_ids = @reports.distinct.pluck(:office_id).compact
+          @service.office_id ||= office_ids[0] if office_ids.size == 1
+        end
+
+        def reports_count
+          @reports_count ||= @reports.count
+        end
+
+        def selected_count
+          @selected_count ||= @selected || reports_count
+        end
+
+        def assigned_count
+          @assigned_count ||= @reports.assigned.count
+        end
+
+        def ignored_count
+          @ignored_count ||= selected_count - reports_count
+        end
+
+        def office_id_choice
+          return [] unless current_user
+
+          current_ddfip.offices.order(:name).pluck(:name, :id)
+        end
+
+        def office_id_options
+          {}.tap do |options|
+            options[:prompt] = "Sélectionnez un guichet"
+            options[:autofocus] = true
+          end
+        end
+
+        private
+
+        def current_ddfip
+          @current_ddfip ||= current_user.organization
+        end
+      end
+    end
+  end
+end

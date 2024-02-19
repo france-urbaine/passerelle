@@ -110,17 +110,26 @@ Rails.application.routes.draw do
         collection do
           scope module: "reports", as: :report do
             concern :report_state do
-              get   :edit,       on: :member, path: "/"
-              get   :remove,     on: :member
-              get   :edit_all,   on: :collection, path: "/"
-              patch :update_all, on: :collection, path: "/", as: nil
+              #      edit_report_acceptance_path => GET    /signalements/accept/:report_id
+              #           report_acceptance_path => PATCH  /signalements/accept/:report_id
+              #    remove_report_acceptance_path => GET    /signalements/accept/:report_id/remove
+              #                                     DELETE /signalements/accept/:report_id
+              # edit_all_report_acceptances_path => GET    /signalements/accept
+              #          report_acceptances_path => PATCH  /signalements/accept
+              #
+              get    :edit,   on: :member, path: "/"
+              patch  :update, on: :member, path: "/", as: ""
+              get    :remove,  on: :member
+              delete :destroy, on: :member, path: "/", as: nil
+              get    :edit_all,   on: :collection, path: "/"
+              patch  :update_all, on: :collection, path: "/", as: ""
             end
 
-            resources :acceptances,   path: "/accept",  only: %i[update destroy], concerns: %i[report_state], param: :report_id, report_id: /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/
-            resources :rejections,    path: "/reject",  only: %i[update destroy], concerns: %i[report_state], param: :report_id, report_id: /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/
-            resources :assignments,   path: "/assign",  only: %i[update destroy], concerns: %i[report_state], param: :report_id, report_id: /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/
-            resources :resolutions,   path: "/resolve", only: %i[update destroy], concerns: %i[report_state], param: :report_id, report_id: /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/
-            resources :confirmations, path: "/confirm", only: %i[update destroy], concerns: %i[report_state], param: :report_id, report_id: /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/
+            resources :acceptances,   path: "/accept",  only: [], concerns: %i[report_state], param: :report_id, report_id: /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/
+            resources :rejections,    path: "/reject",  only: [], concerns: %i[report_state], param: :report_id, report_id: /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/
+            resources :assignments,   path: "/assign",  only: [], concerns: %i[report_state], param: :report_id, report_id: /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/
+            resources :resolutions,   path: "/resolve", only: [], concerns: %i[report_state], param: :report_id, report_id: /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/
+            resources :confirmations, path: "/confirm", only: [], concerns: %i[report_state], param: :report_id, report_id: /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/
           end
         end
       end
