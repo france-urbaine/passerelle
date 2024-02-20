@@ -133,20 +133,23 @@ class User < ApplicationRecord
   # ----------------------------------------------------------------------------
   scope :owned_by, ->(organization) { where(organization: organization) }
 
+  # Scopes: searches
+  # ----------------------------------------------------------------------------
   scope :search, lambda { |input|
-    scopes = {
-      first_name:        ->(value) { match(:first_name, value) },
-      last_name:         ->(value) { match(:last_name, value) },
-      full_name:         ->(value) { search_by_full_name(value) },
-      email:             ->(value) { search_with_email_attribute(:email, value) },
-      unconfirmed_email: ->(value) { search_with_email_attribute(:unconfirmed_email, value) }
-    }
-
-    case input
-    when /@/    then advanced_search(input, scopes.slice(:email, :unconfirmed_email))
-    when String then advanced_search(input, scopes.slice(:full_name))
-    else             advanced_search(input, scopes)
-    end
+    advanced_search(
+      input,
+      default: %i[name],
+      matches: {
+        /@/ => %i[email unconfirmed_email]
+      },
+      scopes: {
+        first_name:        ->(value) { match(:first_name, value) },
+        last_name:         ->(value) { match(:last_name, value) },
+        name:              ->(value) { search_by_full_name(value) },
+        email:             ->(value) { search_with_email_attribute(:email, value) },
+        unconfirmed_email: ->(value) { search_with_email_attribute(:unconfirmed_email, value) }
+      }
+    )
   }
 
   scope :search_by_full_name, lambda { |value|

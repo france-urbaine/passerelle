@@ -17,11 +17,11 @@ RSpec.describe OauthApplication do
     it { is_expected.to have_many(:transmissions) }
   end
 
-  # Scopes
+  # Scopes: searches
   # ----------------------------------------------------------------------------
-  describe "scopes" do
+  describe "search scopes" do
     describe ".search" do
-      it "searches for OauthApplications with all criteria" do
+      it "searches for applications with all criteria" do
         expect {
           described_class.search("Hello").load
         }.to perform_sql_query(<<~SQL.squish)
@@ -32,7 +32,7 @@ RSpec.describe OauthApplication do
         SQL
       end
 
-      it "searches for OauthApplications with discarded with all criteria" do
+      it "searches for applications with discarded with all criteria" do
         expect {
           described_class.with_discarded.search("Hello").load
         }.to perform_sql_query(<<~SQL.squish)
@@ -42,7 +42,7 @@ RSpec.describe OauthApplication do
         SQL
       end
 
-      it "searches for OauthApplications by matching name" do
+      it "searches for applications by matching name" do
         expect {
           described_class.search(name: "Hello").load
         }.to perform_sql_query(<<~SQL.squish)

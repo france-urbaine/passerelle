@@ -99,21 +99,21 @@ class Collectivity < ApplicationRecord
   scope :orphans,      -> { where(publisher_id: nil) }
   scope :owned_by, ->(publisher) { where(publisher: publisher) }
 
+  # Scopes: searches
+  # ----------------------------------------------------------------------------
   scope :search, lambda { |input|
-    advanced_search(
-      input,
-      name:           ->(value) { match(:name, value) },
-      siren:          ->(value) { where(siren: value) },
-      publisher_name: ->(value) { left_joins(:publisher).merge(Publisher.where(name: value)) }
-    )
+    advanced_search(input, scopes: {
+      name:      ->(value) { match(:name, value) },
+      siren:     ->(value) { where(siren: value) },
+      publisher: ->(value) { left_joins(:publisher).merge(Publisher.search(name: value)) }
+    })
   }
 
   scope :autocomplete, lambda { |input|
-    advanced_search(
-      input,
+    advanced_search(input, scopes: {
       name:  ->(value) { match(:name, value) },
       siren: ->(value) { where(siren: value) }
-    )
+    })
   }
 
   # Scopes: orders

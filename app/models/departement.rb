@@ -63,21 +63,21 @@ class Departement < ApplicationRecord
     self.qualified_name = "Département de #{name}"
   end
 
+  # Scopes: searches
+  # ----------------------------------------------------------------------------
   scope :search, lambda { |input|
-    advanced_search(
-      input,
+    advanced_search(input, scopes: {
       name:             ->(value) { match(:name, value) },
       code_departement: ->(value) { where(code_departement: value) },
-      region_name:      ->(value) { left_joins(:region).merge(Region.match(:name, value)) }
-    )
+      region_name:      ->(value) { left_joins(:region).merge(Region.search(name: value)) }
+    })
   }
 
   scope :autocomplete, lambda { |input|
-    advanced_search(
-      input,
+    advanced_search(input, scopes: {
       name:             ->(value) { match(:qualified_name, value) },
       code_departement: ->(value) { where(code_departement: value) }
-    )
+    })
   }
 
   # Scopes: orders

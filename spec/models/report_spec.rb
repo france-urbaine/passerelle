@@ -191,85 +191,6 @@ RSpec.describe Report do
   # Scopes
   # ----------------------------------------------------------------------------
   describe "scopes" do
-    describe ".search" do
-      it "searches for reports with all criteria" do
-        expect {
-          described_class.search("Hello").load
-        }.to perform_sql_query(<<~SQL)
-          SELECT "reports".*
-          FROM   "reports"
-          LEFT OUTER JOIN "communes" ON "communes"."code_insee" = "reports"."code_insee"
-          WHERE ("reports"."reference" = 'Hello'
-          OR "reports"."situation_invariant" = 'Hello'
-          OR "reports"."package_id" IN (SELECT "packages"."id" FROM "packages" WHERE "packages"."reference" = 'Hello')
-          OR 1=0
-          OR LOWER(UNACCENT("communes"."name")) LIKE LOWER(UNACCENT('%Hello%'))
-          OR LOWER(UNACCENT(REPLACE(CONCAT(situation_adresse, ' ', situation_numero_voie, ' ', situation_indice_repetition, ' ', situation_libelle_voie ), ' ', ' '))) LIKE LOWER(UNACCENT('%Hello%')))
-        SQL
-      end
-
-      it "searches for reports by matching invariant" do
-        expect {
-          described_class.search(invariant: "Hello").load
-        }.to perform_sql_query(<<~SQL)
-          SELECT "reports".*
-          FROM   "reports"
-          WHERE  "reports"."situation_invariant" = 'Hello'
-        SQL
-      end
-
-      it "searches for reports by matching reference" do
-        expect {
-          described_class.search(reference: "Hello").load
-        }.to perform_sql_query(<<~SQL)
-          SELECT "reports".*
-          FROM   "reports"
-          WHERE  "reports"."reference" = 'Hello'
-        SQL
-      end
-
-      it "searches for reports by matching package reference" do
-        expect {
-          described_class.search(package_reference: "Hello").load
-        }.to perform_sql_query(<<~SQL)
-          SELECT "reports".*
-          FROM   "reports"
-          WHERE  "reports"."package_id" IN (SELECT "packages"."id" FROM "packages" WHERE "packages"."reference" = 'Hello')
-        SQL
-      end
-
-      it "searches for reports by matching commune name" do
-        expect {
-          described_class.search(commune_name: "Hello").load
-        }.to perform_sql_query(<<~SQL)
-          SELECT "reports".*
-          FROM   "reports"
-          LEFT OUTER JOIN "communes" ON "communes"."code_insee" = "reports"."code_insee"
-          WHERE  (LOWER(UNACCENT("communes"."name")) LIKE LOWER(UNACCENT('%Hello%')))
-        SQL
-      end
-
-      it "searches for reports by matching address" do
-        expect {
-          described_class.search(address: " 2   rue des arbres  ").load
-        }.to perform_sql_query(<<~SQL)
-          SELECT "reports".*
-          FROM   "reports"
-          WHERE  (LOWER(UNACCENT(REPLACE(CONCAT(situation_adresse, ' ', situation_numero_voie, ' ', situation_indice_repetition, ' ', situation_libelle_voie ), ' ', ' '))) LIKE LOWER(UNACCENT('%2 rue des arbres%')))
-        SQL
-      end
-
-      it "searches for reports by matching form_type" do
-        expect {
-          described_class.search(form_type: "local prof").load
-        }.to perform_sql_query(<<~SQL)
-          SELECT "reports".*
-          FROM   "reports"
-          WHERE  "reports"."form_type" IN ('evaluation_local_professionnel', 'creation_local_professionnel', 'occupation_local_professionnel')
-        SQL
-      end
-    end
-
     describe ".sandbox" do
       it "scopes reports tagged as sandbox" do
         expect {
@@ -545,6 +466,108 @@ RSpec.describe Report do
           WHERE      "offices"."name" = 'A'
             AND      ("reports"."form_type" = ANY ("offices"."competences"))
         SQL
+      end
+    end
+  end
+
+  # Scopes: searches
+  # ----------------------------------------------------------------------------
+  describe "search scopes" do
+    describe ".search" do
+      it "searches for reports with all criteria" do
+        expect {
+          described_class.search("Hello").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT          "reports".*
+          FROM            "reports"
+          LEFT OUTER JOIN "communes" ON "communes"."code_insee" = "reports"."code_insee"
+          WHERE (
+                      "reports"."reference" = 'Hello'
+                  OR  "reports"."situation_invariant" = 'Hello'
+                  OR  "reports"."package_id" IN (SELECT "packages"."id" FROM "packages" WHERE "packages"."reference" = 'Hello')
+                  OR  LOWER(UNACCENT("communes"."name")) LIKE LOWER(UNACCENT('%Hello%'))
+                  OR  LOWER(UNACCENT(REPLACE(CONCAT(situation_adresse, ' ', situation_numero_voie, ' ', situation_indice_repetition, ' ', situation_libelle_voie ), ' ', ' '))) LIKE LOWER(UNACCENT('%Hello%'))
+                )
+        SQL
+      end
+
+      it "searches for reports by matching invariant" do
+        expect {
+          described_class.search(invariant: "Hello").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "reports".*
+          FROM   "reports"
+          WHERE  "reports"."situation_invariant" = 'Hello'
+        SQL
+      end
+
+      it "searches for reports by matching reference" do
+        expect {
+          described_class.search(reference: "Hello").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "reports".*
+          FROM   "reports"
+          WHERE  "reports"."reference" = 'Hello'
+        SQL
+      end
+
+      it "searches for reports by matching package reference" do
+        expect {
+          described_class.search(package_reference: "Hello").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "reports".*
+          FROM   "reports"
+          WHERE  "reports"."package_id" IN (SELECT "packages"."id" FROM "packages" WHERE "packages"."reference" = 'Hello')
+        SQL
+      end
+
+      it "searches for reports by matching commune name" do
+        expect {
+          described_class.search(commune_name: "Hello").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT          "reports".*
+          FROM            "reports"
+          LEFT OUTER JOIN "communes" ON "communes"."code_insee" = "reports"."code_insee"
+          WHERE           (LOWER(UNACCENT("communes"."name")) LIKE LOWER(UNACCENT('%Hello%')))
+        SQL
+      end
+
+      it "searches for reports by matching address" do
+        expect {
+          described_class.search(address: " 2   rue des arbres  ").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "reports".*
+          FROM   "reports"
+          WHERE  (LOWER(UNACCENT(REPLACE(CONCAT(situation_adresse, ' ', situation_numero_voie, ' ', situation_indice_repetition, ' ', situation_libelle_voie ), ' ', ' '))) LIKE LOWER(UNACCENT('%2 rue des arbres%')))
+        SQL
+      end
+
+      it "searches for reports by matching form_type" do
+        expect {
+          described_class.search(form_type: "local pro").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "reports".*
+          FROM   "reports"
+          WHERE  "reports"."form_type" IN ('evaluation_local_professionnel', 'creation_local_professionnel', 'occupation_local_professionnel')
+        SQL
+      end
+    end
+
+    describe ".search_by_form_type" do
+      it "searches for reports matching given value" do
+        expect {
+          described_class.search_by_form_type("local pro").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "reports".*
+          FROM   "reports"
+          WHERE  "reports"."form_type" IN ('evaluation_local_professionnel', 'creation_local_professionnel', 'occupation_local_professionnel')
+        SQL
+      end
+
+      it "returns a null relation when none of the enum values match the given one" do
+        expect(
+          described_class.search_by_form_type("nope")
+        ).to be_a_null_relation
       end
     end
   end

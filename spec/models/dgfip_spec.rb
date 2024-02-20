@@ -31,9 +31,9 @@ RSpec.describe DGFIP do
     end
   end
 
-  # Scopes
+  # Scopes: searches
   # ----------------------------------------------------------------------------
-  describe "scopes" do
+  describe "search scopes" do
     describe ".search" do
       it "searches for DGFIPs with all criteria" do
         expect {
@@ -49,18 +49,6 @@ RSpec.describe DGFIP do
         expect {
           described_class.search(name: "Hello").load
         }.to perform_sql_query(<<~SQL.squish)
-          SELECT "dgfips".*
-          FROM   "dgfips"
-          WHERE  (LOWER(UNACCENT("dgfips"."name")) LIKE LOWER(UNACCENT('%Hello%')))
-        SQL
-      end
-    end
-
-    describe ".autocomplete" do
-      it "searches for DGFIPs with text matching the name" do
-        expect {
-          described_class.autocomplete("Hello").load
-        }.to perform_sql_query(<<~SQL)
           SELECT "dgfips".*
           FROM   "dgfips"
           WHERE  (LOWER(UNACCENT("dgfips"."name")) LIKE LOWER(UNACCENT('%Hello%')))

@@ -64,23 +64,23 @@ class EPCI < ApplicationRecord
   # ----------------------------------------------------------------------------
   scope :having_communes, ->(communes) { where(siren: communes.select(:siren_epci)) }
 
+  # Scopes: searches
+  # ----------------------------------------------------------------------------
   scope :search, lambda { |input|
-    advanced_search(
-      input,
+    advanced_search(input, scopes: {
       name:             ->(value) { match(:name, value) },
       siren:            ->(value) { where(siren: value) },
       code_departement: ->(value) { where(code_departement: value) },
-      departement_name: ->(value) { left_joins(:departement).merge(Departement.match(:name, value)) },
-      region_name:      ->(value) { left_joins(:region).merge(Region.match(:name, value)) }
-    )
+      departement_name: ->(value) { left_joins(:departement).merge(Departement.search(name: value)) },
+      region_name:      ->(value) { left_joins(:region).merge(Region.search(name: value)) }
+    })
   }
 
   scope :autocomplete, lambda { |input|
-    advanced_search(
-      input,
+    advanced_search(input, scopes: {
       name:  ->(value) { match(:name, value) },
       siren: ->(value) { where(siren: value) }
-    )
+    })
   }
 
   # Scopes: orders

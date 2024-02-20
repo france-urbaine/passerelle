@@ -64,7 +64,11 @@ RSpec.describe DDFIP do
         SQL
       end
     end
+  end
 
+  # Scopes: searches
+  # ----------------------------------------------------------------------------
+  describe "search scopes" do
     describe ".search" do
       it "searches for DDFIPs with all criteria" do
         expect {

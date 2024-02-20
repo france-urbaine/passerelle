@@ -43,11 +43,12 @@ class OauthApplication < ApplicationRecord
 
   scope :owned_by, ->(organization) { where(owner: organization) }
 
+  # Scopes: searches
+  # ----------------------------------------------------------------------------
   scope :search, lambda { |input|
-    advanced_search(
-      input,
+    advanced_search(input, scopes: {
       name: ->(value) { match(:name, value) }
-    )
+    })
   }
 
   # Scopes: orders

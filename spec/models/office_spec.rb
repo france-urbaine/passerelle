@@ -99,7 +99,11 @@ RSpec.describe Office do
         SQL
       end
     end
+  end
 
+  # Scopes: searches
+  # ----------------------------------------------------------------------------
+  describe "search scopes" do
     describe ".search" do
       it "searches for offices with all criteria" do
         expect {

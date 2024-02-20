@@ -56,46 +56,87 @@ RSpec.describe User do
   # Scopes
   # ----------------------------------------------------------------------------
   describe "scopes" do
+    describe ".owned_by" do
+      pending "TODO"
+    end
+  end
+
+  # Scopes: orders
+  # ----------------------------------------------------------------------------
+  describe "search scopes" do
     describe ".search" do
-      it do
+      it "searches for users whose names match a string" do
         expect {
           described_class.search("Hello").load
         }.to perform_sql_query(<<~SQL.squish)
-          SELECT "users".*
-          FROM   "users"
-          WHERE (LOWER(UNACCENT("users"."last_name")) LIKE LOWER(UNACCENT('%Hello%'))
-            OR LOWER(UNACCENT("users"."first_name")) LIKE LOWER(UNACCENT('%Hello%')))
+          SELECT  "users".*
+          FROM    "users"
+          WHERE   (
+                        LOWER(UNACCENT("users"."last_name")) LIKE LOWER(UNACCENT('%Hello%'))
+                    OR  LOWER(UNACCENT("users"."first_name")) LIKE LOWER(UNACCENT('%Hello%'))
+                  )
         SQL
       end
 
-      it do
+      it "searches for users whose names match a string with multiple words" do
         expect {
           described_class.search("Louis Funes").load
         }.to perform_sql_query(<<~SQL.squish)
-          SELECT "users".*
-          FROM   "users"
-          WHERE (LOWER(UNACCENT(CONCAT("users"."last_name", ' ', "users"."first_name"))) LIKE LOWER(UNACCENT('%Louis% %Funes%'))
-            OR LOWER(UNACCENT(CONCAT("users"."first_name", ' ', "users"."last_name"))) LIKE LOWER(UNACCENT('%Louis% %Funes%')))
+          SELECT  "users".*
+          FROM    "users"
+          WHERE   (
+                        LOWER(UNACCENT(CONCAT("users"."last_name", ' ', "users"."first_name"))) LIKE LOWER(UNACCENT('%Louis% %Funes%'))
+                    OR  LOWER(UNACCENT(CONCAT("users"."first_name", ' ', "users"."last_name"))) LIKE LOWER(UNACCENT('%Louis% %Funes%'))
+                  )
         SQL
       end
 
-      it do
+      it "searches for users whose emails match an email" do
         expect {
           described_class.search("ddfip-64@finances.gouv.fr").load
         }.to perform_sql_query(<<~SQL.squish)
-          SELECT "users".*
-          FROM   "users"
-          WHERE ("users"."email" = 'ddfip-64@finances.gouv.fr' OR "users"."unconfirmed_email" = 'ddfip-64@finances.gouv.fr')
+          SELECT  "users".*
+          FROM    "users"
+          WHERE   (
+                       "users"."email" = 'ddfip-64@finances.gouv.fr'
+                    OR "users"."unconfirmed_email" = 'ddfip-64@finances.gouv.fr'
+                  )
         SQL
       end
 
-      it do
+      it "searches for users whose emails match a domain" do
         expect {
           described_class.search("@finances.gouv.fr").load
         }.to perform_sql_query(<<~SQL.squish)
-          SELECT "users".*
-          FROM   "users"
-          WHERE ("users"."email" LIKE '%@finances.gouv.fr' OR "users"."unconfirmed_email" LIKE '%@finances.gouv.fr')
+          SELECT  "users".*
+          FROM    "users"
+          WHERE   (
+                        "users"."email" LIKE '%@finances.gouv.fr'
+                    OR  "users"."unconfirmed_email" LIKE '%@finances.gouv.fr'
+                  )
+        SQL
+      end
+
+      it "searches for users by matching a name" do
+        expect {
+          described_class.search(name: "Hello").load
+        }.to perform_sql_query(<<~SQL.squish)
+          SELECT  "users".*
+          FROM    "users"
+          WHERE   (
+                        LOWER(UNACCENT("users"."last_name")) LIKE LOWER(UNACCENT('%Hello%'))
+                    OR  LOWER(UNACCENT("users"."first_name")) LIKE LOWER(UNACCENT('%Hello%'))
+                  )
+        SQL
+      end
+
+      it "searches for users by matching a last name" do
+        expect {
+          described_class.search(last_name: "Hello").load
+        }.to perform_sql_query(<<~SQL.squish)
+          SELECT  "users".*
+          FROM    "users"
+          WHERE   (LOWER(UNACCENT("users"."last_name")) LIKE LOWER(UNACCENT('%Hello%')))
         SQL
       end
     end

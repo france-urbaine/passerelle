@@ -52,10 +52,9 @@ class DGFIP < ApplicationRecord
   # Scopes
   # ----------------------------------------------------------------------------
   scope :search, lambda { |input|
-    advanced_search(
-      input,
+    advanced_search(input, scopes: {
       name: ->(value) { match(:name, value) }
-    )
+    })
   }
 
   scope :autocomplete, ->(input) { search(input) }

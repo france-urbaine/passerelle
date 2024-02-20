@@ -29,18 +29,20 @@ RSpec.describe Region do
     end
   end
 
-  # Scopes
+  # Scopes: searches
   # ----------------------------------------------------------------------------
-  describe "scopes" do
+  describe "search scopes" do
     describe ".search" do
       it "searches for regions with text" do
         expect {
           described_class.search("Hello").load
         }.to perform_sql_query(<<~SQL)
-          SELECT "regions".*
-          FROM   "regions"
-          WHERE (LOWER(UNACCENT("regions"."name")) LIKE LOWER(UNACCENT('%Hello%'))
-            OR "regions"."code_region" = 'Hello')
+          SELECT  "regions".*
+          FROM    "regions"
+          WHERE   (
+                        LOWER(UNACCENT("regions"."name")) LIKE LOWER(UNACCENT('%Hello%'))
+                    OR  "regions"."code_region" = 'Hello'
+                  )
         SQL
       end
 
@@ -48,9 +50,9 @@ RSpec.describe Region do
         expect {
           described_class.search(name: "Hello").load
         }.to perform_sql_query(<<~SQL)
-          SELECT "regions".*
-          FROM   "regions"
-          WHERE  (LOWER(UNACCENT("regions"."name")) LIKE LOWER(UNACCENT('%Hello%')))
+          SELECT  "regions".*
+          FROM    "regions"
+          WHERE   (LOWER(UNACCENT("regions"."name")) LIKE LOWER(UNACCENT('%Hello%')))
         SQL
       end
     end

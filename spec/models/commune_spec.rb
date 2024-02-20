@@ -352,26 +352,30 @@ RSpec.describe Commune do
         }.to raise_error(TypeError)
       end
     end
+  end
 
+  # Scopes: searches
+  # ----------------------------------------------------------------------------
+  describe "search scopes" do
     describe ".search" do
-      it "searches for communes with all criteria" do
+      it "searches for communes with all default criteria" do
         expect {
           described_class.search("Hello").load
         }.to perform_sql_query(<<~SQL)
-          SELECT "communes".*
-          FROM   "communes"
+          SELECT          "communes".*
+          FROM            "communes"
           LEFT OUTER JOIN "epcis" ON "epcis"."siren" = "communes"."siren_epci"
           LEFT OUTER JOIN "departements" ON "departements"."code_departement" = "communes"."code_departement"
           LEFT OUTER JOIN "regions" ON "regions"."code_region" = "departements"."code_region"
-          WHERE (
-                LOWER(UNACCENT("communes"."name")) LIKE LOWER(UNACCENT('%Hello%'))
-            OR  "communes"."code_insee" = 'Hello'
-            OR  "communes"."siren_epci" = 'Hello'
-            OR  "communes"."code_departement" = 'Hello'
-            OR  LOWER(UNACCENT("epcis"."name")) LIKE LOWER(UNACCENT('%Hello%'))
-            OR  LOWER(UNACCENT("departements"."name")) LIKE LOWER(UNACCENT('%Hello%'))
-            OR  LOWER(UNACCENT("regions"."name")) LIKE LOWER(UNACCENT('%Hello%'))
-          )
+          WHERE           (
+                                LOWER(UNACCENT("communes"."name")) LIKE LOWER(UNACCENT('%Hello%'))
+                            OR  "communes"."code_insee" = 'Hello'
+                            OR  "communes"."code_departement" = 'Hello'
+                            OR  "communes"."siren_epci" = 'Hello'
+                            OR  LOWER(UNACCENT("epcis"."name")) LIKE LOWER(UNACCENT('%Hello%'))
+                            OR  LOWER(UNACCENT("departements"."name")) LIKE LOWER(UNACCENT('%Hello%'))
+                            OR  LOWER(UNACCENT("regions"."name")) LIKE LOWER(UNACCENT('%Hello%'))
+                          )
         SQL
       end
 
@@ -385,7 +389,7 @@ RSpec.describe Commune do
         SQL
       end
 
-      it "searches for DDFIPs by matching departement code" do
+      it "searches for communes by matching departement's code" do
         expect {
           described_class.search(code_departement: "64").load
         }.to perform_sql_query(<<~SQL)
@@ -395,18 +399,18 @@ RSpec.describe Commune do
         SQL
       end
 
-      it "searches for DDFIPs by matching departement name" do
+      it "searches for communes by matching departement's name" do
         expect {
-          described_class.search(departement_name: "Pyrén").load
+          described_class.search(departement_name: "Pyréne").load
         }.to perform_sql_query(<<~SQL)
           SELECT          "communes".*
           FROM            "communes"
           LEFT OUTER JOIN "departements" ON "departements"."code_departement" = "communes"."code_departement"
-          WHERE           (LOWER(UNACCENT("departements"."name")) LIKE LOWER(UNACCENT('%Pyrén%')))
+          WHERE           (LOWER(UNACCENT("departements"."name")) LIKE LOWER(UNACCENT('%Pyréne%')))
         SQL
       end
 
-      it "searches for DDFIPs by matching region name" do
+      it "searches for communes by matching region's name" do
         expect {
           described_class.search(region_name: "Sud").load
         }.to perform_sql_query(<<~SQL)

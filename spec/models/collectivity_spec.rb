@@ -165,20 +165,24 @@ RSpec.describe Collectivity do
         SQL
       end
     end
+  end
 
+  # Scopes: searches
+  # ----------------------------------------------------------------------------
+  describe "search scopes" do
     describe ".search" do
-      it "searches for collectivities with all criteria" do
+      it "searches for collectivities with all default criteria" do
         expect {
           described_class.search("Hello").load
         }.to perform_sql_query(<<~SQL.squish)
-          SELECT "collectivities".*
-          FROM   "collectivities"
+          SELECT          "collectivities".*
+          FROM            "collectivities"
           LEFT OUTER JOIN "publishers" ON "publishers"."id" = "collectivities"."publisher_id"
-          WHERE (
-                LOWER(UNACCENT("collectivities"."name")) LIKE LOWER(UNACCENT('%Hello%'))
-            OR  "collectivities"."siren" = 'Hello'
-            OR  "publishers"."name" = 'Hello'
-          )
+          WHERE           (
+                                LOWER(UNACCENT("collectivities"."name")) LIKE LOWER(UNACCENT('%Hello%'))
+                            OR  "collectivities"."siren" = 'Hello'
+                            OR  LOWER(UNACCENT("publishers"."name")) LIKE LOWER(UNACCENT('%Hello%'))
+                          )
         SQL
       end
 
@@ -202,14 +206,14 @@ RSpec.describe Collectivity do
         SQL
       end
 
-      it "searches for collectivities by matching publisher name" do
+      it "searches for collectivities by matching publisher's name" do
         expect {
-          described_class.search(publisher_name: "Hello").load
+          described_class.search(publisher: "Hello").load
         }.to perform_sql_query(<<~SQL.squish)
           SELECT          "collectivities".*
           FROM            "collectivities"
           LEFT OUTER JOIN "publishers" ON "publishers"."id" = "collectivities"."publisher_id"
-          WHERE           "publishers"."name" = 'Hello'
+          WHERE           (LOWER(UNACCENT("publishers"."name")) LIKE LOWER(UNACCENT('%Hello%')))
         SQL
       end
     end

@@ -52,7 +52,11 @@ RSpec.describe Departement do
       it { expect(create_record(name: "Guyanne")).to         have_attributes(qualified_name: "Département de Guyanne") }
       it { expect(create_record(name: "Hautes-Pyrénées")).to have_attributes(qualified_name: "Département de Hautes-Pyrénées") }
     end
+  end
 
+  # Scopes: searches
+  # ----------------------------------------------------------------------------
+  describe "search scopes" do
     describe ".search" do
       it "searches for departements with all criteria" do
         expect {

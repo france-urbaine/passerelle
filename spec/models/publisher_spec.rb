@@ -60,18 +60,20 @@ RSpec.describe Publisher do
     end
   end
 
-  # Scopes
+  # Scopes: searches
   # ----------------------------------------------------------------------------
-  describe "scopes" do
+  describe "search scopes" do
     describe ".search" do
-      it do
+      it "searches for publishers with all criteria" do
         expect {
           described_class.search("Hello").load
         }.to perform_sql_query(<<~SQL.squish)
-          SELECT "publishers".*
-          FROM   "publishers"
-          WHERE (LOWER(UNACCENT("publishers"."name")) LIKE LOWER(UNACCENT('%Hello%'))
-            OR "publishers"."siren" = 'Hello')
+          SELECT  "publishers".*
+          FROM    "publishers"
+          WHERE   (
+                        LOWER(UNACCENT("publishers"."name")) LIKE LOWER(UNACCENT('%Hello%'))
+                    OR  "publishers"."siren" = 'Hello'
+                  )
         SQL
       end
     end

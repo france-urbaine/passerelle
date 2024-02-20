@@ -69,12 +69,13 @@ class Publisher < ApplicationRecord
     unless: :skip_uniqueness_validation_of_siren?
   }
 
+  # Scopes: searches
+  # ----------------------------------------------------------------------------
   scope :search, lambda { |input|
-    advanced_search(
-      input,
+    advanced_search(input, scopes: {
       name:  ->(value) { match(:name, value) },
       siren: ->(value) { where(siren: value) }
-    )
+    })
   }
 
   scope :autocomplete, ->(input) { search(input) }

@@ -363,40 +363,42 @@ class Report < ApplicationRecord
     end
   }
 
+  # Scopes: searches
+  # ----------------------------------------------------------------------------
   scope :search, lambda { |input|
-    advanced_search(
-      input,
+    advanced_search(input, scopes: {
       reference:         ->(value) { where(reference: value) },
       invariant:         ->(value) { where(situation_invariant: value) },
       package_reference: ->(value) { where(package_id: Package.where(reference: value)) },
-      form_type:         ->(value) { match_enum(:form_type, value, :report_form_type) },
-      commune_name:      ->(value) { left_joins(:commune).merge(Commune.match(:name, value)) },
-      address:            lambda { |value|
-        stripped_sql_address_exp = <<-SQL.squish
-          LOWER(
-            UNACCENT(
-              REPLACE(
-                CONCAT(
-                  situation_adresse,
-                  ' ',
-                  situation_numero_voie,
-                  ' ',
-                  situation_indice_repetition,
-                  ' ',
-                  situation_libelle_voie
-                ),
-                '  ',
-                ' '
-              )
-            )
-          )
-        SQL
-        where(
-          "#{sanitize_sql(Arel.sql(stripped_sql_address_exp))} LIKE LOWER(UNACCENT(?))",
-          "%#{sanitize_sql_like(value).squish}%"
-        )
-      }
-    )
+      form_type:         ->(value) { search_by_form_type(value) },
+      commune_name:      ->(value) { search_by_commune(value) },
+      address:           ->(value) { search_by_address(value) }
+    })
+  }
+
+  scope :search_by_commune, lambda { |value|
+    left_joins(:commune).merge(Commune.search(name: value))
+  }
+
+  scope :search_by_form_type, lambda { |value|
+    match_enum(:form_type, value, i81n_path: "enum.report_form_type")
+  }
+
+  scope :search_by_address, lambda { |value|
+    value = sanitize_sql_like(value).squish
+    value = "%#{value}%"
+
+    where(<<~SQL.squish, value)
+      LOWER(UNACCENT(REPLACE(CONCAT(
+        situation_adresse,
+        ' ',
+        situation_numero_voie,
+        ' ',
+        situation_indice_repetition,
+        ' ',
+        situation_libelle_voie
+      ), '  ', ' ' ))) LIKE LOWER(UNACCENT(?))
+    SQL
   }
 
   # Scopes: orders
@@ -440,7 +442,6 @@ class Report < ApplicationRecord
   scope :order_by_commune, lambda { |direction = :asc|
     left_joins(:commune).merge(Commune.order_by_name(direction))
   }
-
 
   # Predicates
   # ----------------------------------------------------------------------------

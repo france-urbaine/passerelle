@@ -78,20 +78,20 @@ class Office < ApplicationRecord
     where(%{? = ANY ("offices"."competences")}, competence)
   }
 
+  # Scopes: searches
+  # ----------------------------------------------------------------------------
   scope :search, lambda { |input|
-    advanced_search(
-      input,
+    advanced_search(input, scopes: {
       name:             ->(value) { match(:name, value) },
-      ddfip_name:       ->(value) { left_joins(:ddfip).merge(DDFIP.match(:name, value)) },
+      ddfip_name:       ->(value) { left_joins(:ddfip).merge(DDFIP.search(name: value)) },
       code_departement: ->(value) { left_joins(:ddfip).merge(DDFIP.where(code_departement: value)) }
-    )
+    })
   }
 
   scope :autocomplete, lambda { |input|
-    advanced_search(
-      input,
+    advanced_search(input, scopes: {
       name: ->(value) { match(:name, value) }
-    )
+    })
   }
 
   # Scopes: orders
