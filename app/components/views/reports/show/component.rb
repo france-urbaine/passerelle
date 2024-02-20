@@ -29,7 +29,7 @@ module Views
         def show_response?
           case current_organization
           when DDFIP, DGFIP
-            @report.returned? || @report.resolved? || @report.confirmed?
+            true
           when Collectivity, Publisher
             @report.returned?
           end

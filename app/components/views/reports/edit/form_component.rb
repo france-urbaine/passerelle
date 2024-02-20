@@ -6,6 +6,7 @@ module Views
       class FormComponent < ApplicationViewComponent
         Enjeu              = Class.new(self)
         Observations       = Class.new(self)
+        Reponse            = Class.new(self)
         PropositionAdresse = Class.new(self)
 
         def initialize(report, referrer: nil)

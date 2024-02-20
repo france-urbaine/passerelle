@@ -5,15 +5,8 @@
     - else
       | Observations de la DDFIP
 
-    / TODO: use a dedicated modal to update the response
-    / - if allowed_to?(:update?, @report)
-    /   - header.with_action "Compléter", edit_report_path(@report, "observations"), icon: "pencil-square", modal: true
-
-    - if allowed_to?(:deny?, @report)
-      - header.with_action "Compléter", edit_report_denial_path(@report), icon: "pencil-square", modal: true
-
-    - if allowed_to?(:reject?, @report)
-        - header.with_action "Compléter", edit_report_rejection_path(@report), icon: "pencil-square", modal: true
+    - if allowed_to?(:update?, @report)
+      - header.with_action "Compléter", edit_report_path(@report, "reponse"), icon: "pencil-square", modal: true
 
   - layout.with_section do
     - if @report.reponse.present?

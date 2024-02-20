@@ -17,6 +17,7 @@ module Views
           proposition_occupation
           observations
           enjeu
+          reponse
         ].freeze
 
         def initialize(report, form, referrer: nil)
