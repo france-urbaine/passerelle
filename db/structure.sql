@@ -3193,6 +3193,7 @@ CREATE TABLE public.reports (
     assigned_at timestamp(6) without time zone,
     resolved_at timestamp(6) without time zone,
     returned_at timestamp(6) without time zone,
+    note text,
     computed_address character varying,
     computed_address_sort_key character varying
 );
@@ -4364,6 +4365,7 @@ SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
 ('20240220173415'),
+('20240220160936'),
 ('20240207165952'),
 ('20240206163652'),
 ('20240130154031'),

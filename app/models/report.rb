@@ -124,6 +124,7 @@
 #  returned_at                                    :datetime
 #  computed_address                               :string
 #  computed_address_sort_key                      :string
+#  note                                           :text
 #
 # Indexes
 #
