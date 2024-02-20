@@ -8,7 +8,7 @@
 
   - datatable.with_column(:name,                   sort: true)    { "Guichet" }      if columns.include?(:name)
   - datatable.with_column(:ddfip,                  sort: true)    { "DDFIP" }        if columns.include?(:ddfip)
-  - datatable.with_column(:competence,             sort: true)    { "Compétence" }   if columns.include?(:competence)
+  - datatable.with_column(:competences,            sort: true)    { "Compétence" }   if columns.include?(:competences)
   - datatable.with_column(:users_count,            numeric: true) { "Utilisateurs" } if columns.include?(:users_count)
   - datatable.with_column(:communes_count,         numeric: true) { "Communes" }     if columns.include?(:communes_count)
   - datatable.with_column(:reports_assigned_count, numeric: true) { "Signalements" } if columns.include?(:reports_counts)
@@ -36,7 +36,7 @@
     - row.with_column(:ddfip) do
       = authorized_link_to(office.ddfip, namespace: @namespace, parent: @parent)
 
-    - row.with_column(:competence) do
+    - row.with_column(:competences) do
       = helpers.short_list(office.competences, humanize: true) { |value| t(value, scope: "enum.competence") }
 
     - row.with_column(:users_count) do

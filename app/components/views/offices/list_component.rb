@@ -6,7 +6,7 @@ module Views
       DEFAULT_COLUMNS = %i[
         name
         ddfip
-        competence
+        competences
         users_count
         communes_count
         reports_counts

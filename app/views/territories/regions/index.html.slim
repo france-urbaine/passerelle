@@ -9,7 +9,7 @@
         - datatable.with_search
         - datatable.with_pagination(@pagy)
 
-        - datatable.with_column(:region, sort: true, span: 2) { "Région" }
+        - datatable.with_column(:name,           sort: true, span: 2) { "Région" }
         - datatable.with_column(:communes_count,       numeric: true) { "Communes" }
         - datatable.with_column(:epcis_count,          numeric: true) { "EPCI" }
         - datatable.with_column(:departements_count,   numeric: true) { "Départements" }
@@ -26,7 +26,7 @@
           - if allowed_to?(:update?, region)
             - row.with_action "Modifier cette région", edit_territories_region_path(region), icon: "pencil-square", modal: true
 
-          - row.with_column(:region) do |column|
+          - row.with_column(:name) do |column|
             - column.with_span do
               = region.code_region
 

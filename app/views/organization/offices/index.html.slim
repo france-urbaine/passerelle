@@ -10,7 +10,7 @@
     - layout.with_section do
       = render Views::Offices::ListComponent.new(@offices, @pagy, namespace: :organization) do |view|
         - view.with_column(:name)
-        - view.with_column(:competence)
+        - view.with_column(:competences)
         - view.with_column(:users_count)
         - view.with_column(:communes_count)
         - view.with_column(:reports_counts)
