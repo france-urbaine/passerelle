@@ -25,9 +25,6 @@ module States
 
       # Scopes
       # ----------------------------------------------------------------------------
-      # rubocop:disable Layout/LineLength
-      # Long lines due one-liner definitions, more compact & more readable
-      #
       scope :draft,        -> { where(state: "draft") }
       scope :ready,        -> { where(state: "ready") }
       scope :packing,      -> { where(state: %w[draft ready]) }
@@ -58,13 +55,8 @@ module States
       scope :waiting_for_resolution,   -> { where(state: "assigned") }
       scope :waiting_for_confirmation, -> { where(state: %w[applicable inapplicable]) }
 
-      # rubocop:enable Layout/LineLength
-
       # Predicates
       # ----------------------------------------------------------------------------
-      # rubocop:disable Layout/LineLength
-      # Long lines due one-liner definitions, more compact & more readable
-      #
       def draft?        = state == "draft"
       def ready?        = state == "ready"
       def packing?      = %w[draft ready].include?(state)
@@ -94,8 +86,6 @@ module States
       def wait_for_assignment?    = state == "accepted"
       def wait_for_resolution?    = state == "assigned"
       def wait_for_confirmation?  = %w[applicable inapplicable].include?(state)
-
-      # rubocop:enable Layout/LineLength
 
       # Transition methods
       # ----------------------------------------------------------------------------
