@@ -122,6 +122,8 @@
 #  assigned_at                                    :datetime
 #  resolved_at                                    :datetime
 #  returned_at                                    :datetime
+#  computed_address                               :string
+#  computed_address_sort_key                      :string
 #
 # Indexes
 #
@@ -323,9 +325,40 @@ class Report < ApplicationRecord
   # Callbacks
   # ----------------------------------------------------------------------------
   before_save :generate_sibling_id
+  before_save :compute_address
 
   def generate_sibling_id
     self.sibling_id = ("#{code_insee}#{situation_invariant}" if code_insee? && situation_invariant?)
+  end
+
+  # https://rubular.com/r/bBZc1SrJnkYHFC
+  SITUATION_ADRESSE_PARSER = /\A(?:(?<number>[0-9]+)(?: (?<indice>bis|ter|quat(?:er)?|[a-z]))?(?: |, ))?(?<street>.+)\Z/
+
+  def compute_address
+    if situation_libelle_voie?
+      self.computed_address = [situation_numero_voie, situation_indice_repetition, situation_libelle_voie]
+        .join(" ").squish
+
+      self.computed_address_sort_key = [situation_libelle_voie, situation_numero_voie, situation_indice_repetition]
+        .filter_map(&:presence)
+        .join(" / ").squish
+        .then { |s| I18n.transliterate(s).downcase }
+
+    elsif situation_adresse?
+      self.computed_address          = situation_adresse.squish
+      self.computed_address_sort_key = I18n.transliterate(computed_address).downcase
+
+      computed_address_sort_key.match(SITUATION_ADRESSE_PARSER).try do |match|
+        self.computed_address_sort_key = match
+          .values_at(:street, :number, :indice)
+          .filter_map(&:presence).join(" / ").squish
+      end
+    else
+      self.computed_address = nil
+      self.computed_address_sort_key = nil
+    end
+
+    self
   end
 
   # Scopes
@@ -406,20 +439,7 @@ class Report < ApplicationRecord
   }
 
   scope :search_by_address, lambda { |value|
-    value = sanitize_sql_like(value).squish
-    value = "%#{value}%"
-
-    where(<<~SQL.squish, value)
-      LOWER(UNACCENT(REPLACE(CONCAT(
-        situation_adresse,
-        ' ',
-        situation_numero_voie,
-        ' ',
-        situation_indice_repetition,
-        ' ',
-        situation_libelle_voie
-      ), '  ', ' ' ))) LIKE LOWER(UNACCENT(?))
-    SQL
+    match(:computed_address, value.squish)
   }
 
   # Scopes: orders
@@ -489,9 +509,7 @@ class Report < ApplicationRecord
   }
 
   scope :order_by_address, lambda { |direction = :asc|
-    order(Arel.sql(<<~SQL.squish) => direction)
-      CONCAT(situation_libelle_voie, situation_numero_voie, situation_indice_repetition, situation_adresse)
-    SQL
+    order(computed_address_sort_key: direction)
   }
 
   scope :order_by_commune, lambda { |direction = :asc|

@@ -88,10 +88,7 @@
       = report.situation_invariant
 
     - row.with_column(:adresse) do
-      - if report.situation_adresse?
-        = report.situation_adresse
-      - else
-        = [report.situation_numero_voie, report.situation_indice_repetition, report.situation_libelle_voie].join(" ").squish
+      = report.computed_address
 
     - row.with_column(:commune) do
       = report.commune&.name

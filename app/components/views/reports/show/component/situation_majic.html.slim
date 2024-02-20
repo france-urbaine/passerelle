@@ -31,7 +31,7 @@
       - if display_situation_adresse?
         - list.with_attribute(:situation_adresse) do |attribute|
           = render_valid_content(:situation_adresse) do
-            = situation_adresse
+            = @report.computed_address
             - attribute.with_reference do
               = "Code RIVOLI : #{@report.situation_code_rivoli}"
 

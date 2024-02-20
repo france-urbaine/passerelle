@@ -5,18 +5,6 @@ module Views
     module Show
       class Component
         class SituationMajic < self
-          def situation_adresse
-            if @report.situation_adresse?
-              @report.situation_adresse
-            elsif @report.situation_libelle_voie?
-              [
-                @report.situation_numero_voie,
-                @report.situation_indice_repetition,
-                @report.situation_libelle_voie
-              ].join(" ").squish
-            end
-          end
-
           def situation_porte
             value = []
             value << "Bâtiment #{@report.situation_numero_batiment}" if @report.situation_numero_batiment?

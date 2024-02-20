@@ -166,24 +166,77 @@ RSpec.describe Report do
     describe "#generate_sibling_id" do
       it "generates a sibling_id when code INSEE and invariant are provided" do
         report = create(:report, code_insee: "64102", situation_invariant: "1021234567")
+
         expect(report).to have_attributes(sibling_id: "641021021234567")
       end
 
       it "lets sibling_id null when code INSEE is missing" do
         report = create(:report, code_insee: nil, situation_invariant: "1021234567")
+
         expect(report).to have_attributes(sibling_id: nil)
       end
 
       it "lets sibling_id null when invariant is missing" do
         report = create(:report, code_insee: "64102")
+
         expect(report).to have_attributes(sibling_id: nil)
       end
 
       it "resets sibling_id when one of the attribute is removed" do
         report = create(:report, code_insee: "64102", situation_invariant: "1021234567")
+
         expect {
           report.update(situation_invariant: nil)
         }.to change(report, :sibling_id).to(nil)
+      end
+    end
+
+    describe "#compute_address", :aggregate_failures do
+      it "computes addresses" do
+        report = create(:report,
+          situation_libelle_voie: "Rue  du 18  mai",
+          situation_numero_voie: "45")
+
+        expect(report).to have_attributes(computed_address:          "45 Rue du 18 mai")
+        expect(report).to have_attributes(computed_address_sort_key: "rue du 18 mai / 45")
+      end
+
+      it "computes addresses with a indice of repetition" do
+        report = create(:report,
+          situation_libelle_voie:      "Rue du 18 MAI",
+          situation_numero_voie:       "45",
+          situation_indice_repetition: "Ter")
+
+        expect(report).to have_attributes(computed_address:          "45 Ter Rue du 18 MAI")
+        expect(report).to have_attributes(computed_address_sort_key: "rue du 18 mai / 45 / ter")
+      end
+
+      it "computes addresses from situation_adresse, without number" do
+        report = create(:report, situation_adresse: "Rue du 18 mai")
+
+        expect(report).to have_attributes(computed_address:          "Rue du 18 mai")
+        expect(report).to have_attributes(computed_address_sort_key: "rue du 18 mai")
+      end
+
+      it "computes addresses from situation_adresse, with a number" do
+        report = create(:report, situation_adresse: "15 Rue du 18 mai")
+
+        expect(report).to have_attributes(computed_address:          "15 Rue du 18 mai")
+        expect(report).to have_attributes(computed_address_sort_key: "rue du 18 mai / 15")
+      end
+
+      it "computes addresses from situation_adresse, with a number, separated by a comma" do
+        report = create(:report, situation_adresse: "15, Rue du  18 mai")
+
+        expect(report).to have_attributes(computed_address:          "15, Rue du 18 mai")
+        expect(report).to have_attributes(computed_address_sort_key: "rue du 18 mai / 15")
+      end
+
+      it "computes addresses from situation_adresse, with an indice" do
+        report = create(:report, situation_adresse: "15 TER  Rue du 18 mai")
+
+        expect(report).to have_attributes(computed_address:          "15 TER Rue du 18 mai")
+        expect(report).to have_attributes(computed_address_sort_key: "rue du 18 mai / 15 / ter")
       end
     end
   end
@@ -486,7 +539,7 @@ RSpec.describe Report do
                   OR  "reports"."situation_invariant" = 'Hello'
                   OR  "reports"."package_id" IN (SELECT "packages"."id" FROM "packages" WHERE "packages"."reference" = 'Hello')
                   OR  LOWER(UNACCENT("communes"."name")) LIKE LOWER(UNACCENT('%Hello%'))
-                  OR  LOWER(UNACCENT(REPLACE(CONCAT(situation_adresse, ' ', situation_numero_voie, ' ', situation_indice_repetition, ' ', situation_libelle_voie ), ' ', ' '))) LIKE LOWER(UNACCENT('%Hello%'))
+                  OR  LOWER(UNACCENT("reports"."computed_address")) LIKE LOWER(UNACCENT('%Hello%'))
                 )
         SQL
       end
@@ -538,7 +591,7 @@ RSpec.describe Report do
         }.to perform_sql_query(<<~SQL)
           SELECT "reports".*
           FROM   "reports"
-          WHERE  (LOWER(UNACCENT(REPLACE(CONCAT(situation_adresse, ' ', situation_numero_voie, ' ', situation_indice_repetition, ' ', situation_libelle_voie ), ' ', ' '))) LIKE LOWER(UNACCENT('%2 rue des arbres%')))
+          WHERE  (LOWER(UNACCENT("reports"."computed_address")) LIKE LOWER(UNACCENT('%2 rue des arbres%')))
         SQL
       end
 
@@ -786,7 +839,7 @@ RSpec.describe Report do
         }.to perform_sql_query(<<~SQL)
           SELECT    "reports".*
           FROM      "reports"
-          ORDER BY  CONCAT(situation_libelle_voie, situation_numero_voie, situation_indice_repetition, situation_adresse) ASC,
+          ORDER BY  "reports"."computed_address_sort_key" ASC,
                     "reports"."created_at" ASC
         SQL
       end
@@ -797,7 +850,7 @@ RSpec.describe Report do
         }.to perform_sql_query(<<~SQL)
           SELECT    "reports".*
           FROM      "reports"
-          ORDER BY  CONCAT(situation_libelle_voie, situation_numero_voie, situation_indice_repetition, situation_adresse) DESC,
+          ORDER BY  "reports"."computed_address_sort_key" DESC,
                     "reports"."created_at" DESC
         SQL
       end
