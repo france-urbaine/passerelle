@@ -224,12 +224,12 @@ RSpec.describe ReportPolicy, type: :policy do
     context "without record" do
       let(:record) { Report }
 
-      it_behaves_like("when current user is a DDFIP admin")        { failed }
-      it_behaves_like("when current user is a DDFIP user")         { failed }
       it_behaves_like("when current user is a DGFIP admin")        { failed }
       it_behaves_like("when current user is a DGFIP user")         { failed }
       it_behaves_like("when current user is a publisher admin")    { failed }
       it_behaves_like("when current user is a publisher user")     { failed }
+      it_behaves_like("when current user is a DDFIP admin")        { succeed }
+      it_behaves_like("when current user is a DDFIP user")         { succeed }
       it_behaves_like("when current user is a collectivity admin") { succeed }
       it_behaves_like("when current user is a collectivity user")  { succeed }
     end
@@ -327,7 +327,7 @@ RSpec.describe ReportPolicy, type: :policy do
       context "when transmitted to the current DDFIP" do
         let(:record) { build_stubbed(:report, :transmitted_to_ddfip, ddfip: current_organization) }
 
-        it_behaves_like("when current user is a DDFIP admin")             { failed }
+        it_behaves_like("when current user is a DDFIP admin")             { succeed }
         it_behaves_like("when current user is a DDFIP user")              { failed }
         it_behaves_like("when current user is member of targeted office") { failed }
       end
@@ -343,9 +343,9 @@ RSpec.describe ReportPolicy, type: :policy do
       context "when assigned by the current DDFIP" do
         let(:record) { build_stubbed(:report, :assigned_by_ddfip, ddfip: current_organization) }
 
-        it_behaves_like("when current user is a DDFIP admin")             { failed }
-        it_behaves_like("when current user is a DDFIP user")              { failed }
-        it_behaves_like("when current user is member of targeted office") { failed }
+        it_behaves_like("when current user is a DDFIP admin")             { succeed }
+        it_behaves_like("when current user is a DDFIP user")              { succeed }
+        it_behaves_like("when current user is member of targeted office") { succeed }
       end
 
       context "when rejected by the current DDFIP" do
