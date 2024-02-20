@@ -478,14 +478,12 @@ class Report < ApplicationRecord
     values = SORTED_ANOMALIES_BY_LABEL[I18n.locale]
     values = values.reverse if direction.to_s == "desc"
 
-    sql = "CASE"
+    sql = %w[CASE]
+    sql += Array.new(values.size) { |i| %(WHEN "anomalies"[1] = ? THEN #{i + 1}) }
+    sql << " ELSE #{desc ? 0 : values.size + 1}"
+    sql << " END"
 
-    values.each.with_index(1) do |value, order|
-      sql += %( WHEN "anomalies"[1] = '#{value}' THEN #{order})
-    end
-
-    sql += " ELSE #{desc ? 0 : values.size + 1}"
-    sql += " END"
+    sql = sanitize_sql([sql.join(" "), *values])
 
     order(Arel.sql(sql) => :asc)
   }
