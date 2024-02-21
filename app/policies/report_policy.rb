@@ -137,7 +137,7 @@ class ReportPolicy < ApplicationPolicy
 
       params.permit(*attributes)
     elsif ddfip_admin? || office_user?
-      params.permit(:reponse)
+      params.permit(:reponse, :note)
     end
   end
 

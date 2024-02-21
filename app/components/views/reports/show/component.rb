@@ -15,6 +15,7 @@ module Views
         Enjeu                   = Class.new(self)
         Observations            = Class.new(self)
         Response                = Class.new(self)
+        Note                    = Class.new(self)
         Documents               = Class.new(self)
 
         def initialize(report)
@@ -33,6 +34,10 @@ module Views
           when Collectivity, Publisher
             @report.returned?
           end
+        end
+
+        def show_note?
+          current_organization.is_a?(DDFIP)
         end
 
         private

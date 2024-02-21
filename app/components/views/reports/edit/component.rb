@@ -18,6 +18,7 @@ module Views
           observations
           enjeu
           reponse
+          note
         ].freeze
 
         def initialize(report, form, referrer: nil)

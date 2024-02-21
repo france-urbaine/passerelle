@@ -7,6 +7,7 @@ module Views
         Enjeu              = Class.new(self)
         Observations       = Class.new(self)
         Reponse            = Class.new(self)
+        Note               = Class.new(self)
         PropositionAdresse = Class.new(self)
 
         def initialize(report, referrer: nil)
