@@ -60,6 +60,29 @@ RSpec.describe "Users in admin" do
     expect(page).to have_selector("pre.logs")
   end
 
+  it "searches for users with simple string criterion" do
+    visit admin_users_path(search: "@solutions-territoire.fr")
+    expect(page).to have_link("Elise Lacroix")
+    expect(page).to have_link("Jean-Michel Torché")
+  end
+
+  it "searches for users with hash-like string criteria" do
+    visit admin_users_path(search: "name:lacroix email:@solutions-territoire.fr")
+    expect(page).to have_link("Elise Lacroix")
+    expect(page).to have_no_link("Jean-Michel Torché")
+  end
+
+  it "searches for users with hash-like string criteria and simple string criterion" do
+    visit admin_users_path(search: "email:@solutions-territoire.fr lacroix")
+    expect(page).to have_link("Elise Lacroix")
+    expect(page).to have_no_link("Jean-Michel Torché")
+  end
+
+  it "searches for users with unknown criterion" do
+    visit admin_users_path(search: "unknown:lacroix")
+    expect(page).to have_text("Aucun utilisateur ne correspont à votre recherche.")
+  end
+
   it "visits the links on a publisher user page & comes back" do
     visit admin_user_path(marc)
 

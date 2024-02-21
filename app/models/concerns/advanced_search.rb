@@ -3,21 +3,20 @@
 module AdvancedSearch
   extend ActiveSupport::Concern
 
+  # https://rubular.com/r/6BGs42O3MszcPf
+  MULTIPLE_CRITERIA_REGEXP = /(?<key>(?<=^|\s)[a-z0-9\-_]+):(?:\()?(?<value>((?<!\()[^\s]+|(?<=\()[^)]+(?=\))))(?:\))?/i
+
   class_methods do
     def advanced_search(input, default: nil, matches: {}, scopes: {})
       return all if input.blank?
 
-      case input
-      when String
-        _, keys = matches.find { |(regexp, _)| regexp.match?(input) }
-        keys ||= default || scopes.keys
+      string, hash = parse_advanced_search_input(input)
 
-        advanced_search_with_input_string(input, scopes.slice(*keys))
-      when Hash, ActionController::Parameters
-        advanced_search_with_input_hash(input, scopes)
-      else
-        raise TypeError, "invalid input #{input}"
-      end
+      relations = []
+      relations << advanced_search_relation_from_input_string(string, scopes, matches, default) if string.present?
+      relations << advanced_search_relation_from_input_hash(hash, scopes) if hash.present?
+
+      combine_advanced_search_relations(relations, :and)
     end
 
     def match(attribute, value)
@@ -32,6 +31,8 @@ module AdvancedSearch
     end
 
     def match_enum(attribute, value, i81n_path:)
+      raise ArgumentError unless column_for_attribute(attribute)
+
       enum_keys = I18n.t(i81n_path, raise: true)
       value     = I18n.transliterate(value).downcase.squish
 
@@ -46,15 +47,61 @@ module AdvancedSearch
       end
     end
 
+    def parse_advanced_search_input(input)
+      case input
+      when String
+        hash   = input.scan(MULTIPLE_CRITERIA_REGEXP).to_h
+        string = input.gsub(MULTIPLE_CRITERIA_REGEXP, "").squish
+
+        hash.transform_values! do |v|
+          v.include?(",") ? v.split(",").map(&:strip) : v
+        end
+      when Hash
+        hash = input.stringify_keys
+      when ActionController::Parameters
+        hash = input.to_unsafe_h
+      else
+        raise TypeError, "invalid input #{input}"
+      end
+
+      [string, hash]
+    end
+
     private
 
-    def advanced_search_with_input_string(input, scopes)
+    def advanced_search_relation_from_input_string(input, scopes, matches, default_keys)
+      _, keys = matches.find { |(regexp, _)| regexp.match?(input) }
+
+      keys ||= default_keys if default_keys
+      keys ||= scopes.keys
+
+      scopes    = scopes.slice(*keys)
+      relations = scopes.map do |(_, scope)|
+        unscoped.instance_exec(input, &scope)
+      end
+
+      combine_advanced_search_relations(relations, :or)
+    end
+
+    def advanced_search_relation_from_input_hash(input, scopes)
+      input     = input.stringify_keys
+      scopes    = scopes.stringify_keys
+
+      relations = scopes.filter_map do |key, scope|
+        unscoped.instance_exec(input[key], &scope) if input.key?(key)
+      end
+
+      combine_advanced_search_relations(relations, :and)
+    end
+
+    def combine_advanced_search_relations(relations, operator)
+      relations = exclude_advanced_search_null_relations(relations, operator)
+      return none if relations.empty?
+
       joins  = []
       wheres = []
 
-      scopes.each_value do |scope|
-        relation = unscoped.instance_exec(input, &scope)
-
+      relations.each do |relation|
         if relation.left_outer_joins_values.any?
           joins << relation.left_outer_joins_values
           relation = relation.unscope(:left_outer_joins)
@@ -63,22 +110,25 @@ module AdvancedSearch
         wheres << relation
       end
 
-      return none if wheres.all?(&:null_relation?)
+      combined =
+        case operator
+        when :and then merge(wheres.reduce(:merge))
+        when :or  then merge(wheres.reduce(:or))
+        end
 
-      combined = merge(wheres.reject(&:null_relation?).reduce(:or))
       combined = combined.left_joins(*joins) if joins.any?
       combined
     end
 
-    def advanced_search_with_input_hash(input, scopes)
-      input  = input.stringify_keys
-      scopes = scopes.stringify_keys
-
-      wheres = scopes.filter_map do |key, scope|
-        instance_exec(input[key], &scope) if input.key?(key)
+    def exclude_advanced_search_null_relations(relations, operator)
+      case operator
+      when :or
+        relations.reject(&:null_relation?)
+      when :and
+        relations.any?(&:null_relation?) ? [] : relations
+      else
+        raise ArgumentError, "invalid operator: #{operator.inspect}"
       end
-
-      wheres.any? ? merge(wheres.reduce(:or)) : none
     end
   end
 end

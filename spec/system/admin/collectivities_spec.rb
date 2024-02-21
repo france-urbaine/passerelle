@@ -54,6 +54,29 @@ RSpec.describe "Collectivities in admin" do
     expect(page).to have_selector("pre.logs")
   end
 
+  it "searches for collectivities with simple string criterion" do
+    visit admin_collectivities_path(search: "basque")
+    expect(page).to have_link("CA du Pays Basque")
+    expect(page).to have_no_link("Bayonne")
+  end
+
+  it "searches for collectivities with hash-like string criteria" do
+    visit admin_collectivities_path(search: "name:metropole siren:200054781 publisher:(Solutions & Territoire)")
+    expect(page).to have_link("Métropole du Grand Paris")
+    expect(page).to have_no_link("Métropole Européenne de Lille")
+  end
+
+  it "searches for collectivities with hash-like string criteria and simple string criterion" do
+    visit admin_collectivities_path(search: "name:metropole publisher:Solutions Paris")
+    expect(page).to have_link("Métropole du Grand Paris")
+    expect(page).to have_no_link("Métropole Européenne de Lille")
+  end
+
+  it "searches for collectivities with unknown criterion" do
+    visit admin_collectivities_path(search: "unknown:metropole")
+    expect(page).to have_text("Aucune collectivité ne correspont à votre recherche.")
+  end
+
   it "visits links on a collectivity page & comes back" do
     visit admin_collectivity_path(pays_basque)
 

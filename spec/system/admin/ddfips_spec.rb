@@ -55,6 +55,29 @@ RSpec.describe "DDFIPs in admin" do
     expect(page).to have_selector("pre.logs")
   end
 
+  it "searches for ddfips with simple string criterion" do
+    visit admin_ddfips_path(search: "Paris")
+    expect(page).to have_link("DDFIP de Paris")
+    expect(page).to have_no_link("DDFIP du Nord")
+  end
+
+  it "searches for ddfips with hash-like string criteria" do
+    visit admin_ddfips_path(search: "name:DDFIP code_departement:75")
+    expect(page).to have_link("DDFIP de Paris")
+    expect(page).to have_no_link("DDFIP du Nord")
+  end
+
+  it "searches for ddfips with hash-like string criteria and simple string criterion" do
+    visit admin_ddfips_path(search: "name:DDFIP atlantiques")
+    expect(page).to have_link("DDFIP des Pyrénées-Atlantiques")
+    expect(page).to have_no_link("DDFIP du Nord")
+  end
+
+  it "searches for ddfips with unknown criterion" do
+    visit admin_ddfips_path(search: "unknown:DDFIP")
+    expect(page).to have_text("Aucune DDFIP ne correspont à votre recherche.")
+  end
+
   it "visits links on a DDFIP page & comes back" do
     visit admin_ddfip_path(ddfip64)
 

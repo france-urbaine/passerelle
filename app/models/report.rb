@@ -404,19 +404,19 @@ class Report < ApplicationRecord
       default: %i[
         reference
         invariant
-        package_reference
+        package
         form_type
-        commune_name
+        commune
         address
       ],
       scopes: {
-        state:             ->(value) { search_by_state(value) },
-        reference:         ->(value) { where(reference: value) },
-        invariant:         ->(value) { where(situation_invariant: value) },
-        package_reference: ->(value) { where(package_id: Package.where(reference: value)) },
-        form_type:         ->(value) { search_by_form_type(value) },
-        commune_name:      ->(value) { search_by_commune(value) },
-        address:           ->(value) { search_by_address(value) }
+        state:     ->(value) { search_by_state(value) },
+        reference: ->(value) { where(reference: value) },
+        invariant: ->(value) { where(situation_invariant: value) },
+        package:   ->(value) { where(package_id: Package.where(reference: value)) },
+        form_type: ->(value) { search_by_form_type(value) },
+        commune:   ->(value) { search_by_commune(value) },
+        address:   ->(value) { search_by_address(value) }
       }
     )
   }
