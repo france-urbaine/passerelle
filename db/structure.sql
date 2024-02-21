@@ -178,6 +178,17 @@ CREATE TYPE public.report_state AS ENUM (
 
 
 --
+-- Name: resolution_motif; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.resolution_motif AS ENUM (
+    'maj_local',
+    'absence_incoherence',
+    'enjeu_insuffisant'
+);
+
+
+--
 -- Name: territory_type; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -3195,7 +3206,8 @@ CREATE TABLE public.reports (
     returned_at timestamp(6) without time zone,
     note text,
     computed_address character varying,
-    computed_address_sort_key character varying
+    computed_address_sort_key character varying,
+    resolution_motif public.resolution_motif
 );
 
 
@@ -4364,6 +4376,7 @@ ALTER TABLE ONLY public.oauth_access_tokens
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20240221092903'),
 ('20240220173415'),
 ('20240220160936'),
 ('20240207165952'),

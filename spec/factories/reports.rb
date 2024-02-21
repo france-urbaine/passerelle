@@ -145,22 +145,25 @@ FactoryBot.define do
     trait :applicable do
       assigned
 
-      state       { "applicable" }
-      resolved_at { Time.current }
+      state            { "applicable" }
+      resolution_motif { I18n.t("enum.resolution_motif_applicable").keys.sample }
+      resolved_at      { Time.current }
     end
 
     trait :inapplicable do
       assigned
 
-      state       { "inapplicable" }
-      resolved_at { Time.current }
+      state            { "inapplicable" }
+      resolution_motif { I18n.t("enum.resolution_motif_inapplicable").keys.sample }
+      resolved_at      { Time.current }
     end
 
     trait :resolved do
       assigned
 
-      state       { %w[applicable inapplicable].sample }
-      resolved_at { Time.current }
+      state            { %w[applicable inapplicable].sample }
+      resolution_motif { I18n.t("enum.resolution_motif_#{state}").keys.sample }
+      resolved_at      { Time.current }
     end
 
     trait :approved do
