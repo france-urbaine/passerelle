@@ -12,7 +12,7 @@ RSpec.describe Reports::States::ResolveService do
   describe "#resolve" do
     context "when resolving an assigned report as applicable" do
       it "updates the report as applicable" do
-        expect { service.resolve(:applicable) }
+        expect { service.resolve(:applicable, resolution_motif: "maj_local") }
           .to  ret(be_a(Result::Success))
           .and change(report, :state).to("applicable")
           .and change(report, :resolved_at).to(be_present)
@@ -22,7 +22,7 @@ RSpec.describe Reports::States::ResolveService do
 
     context "when resolving an assigned report as inapplicable" do
       it "updates the report as inapplicable" do
-        expect { service.resolve(:inapplicable) }
+        expect { service.resolve(:inapplicable, resolution_motif: "enjeu_insuffisant") }
           .to  ret(be_a(Result::Success))
           .and change(report, :state).to("inapplicable")
           .and change(report, :resolved_at).to(be_present)
@@ -32,7 +32,7 @@ RSpec.describe Reports::States::ResolveService do
 
     context "when resolving an assigned report, with valid attributes" do
       it "updates the report" do
-        expect { service.resolve(:applicable, reponse: "Lorem lipsum") }
+        expect { service.resolve(:applicable, resolution_motif: "maj_local", reponse: "Lorem lipsum") }
           .to  ret(be_a(Result::Success))
           .and change(report, :state).to("applicable")
           .and change(report, :reponse).to("Lorem lipsum")
@@ -43,7 +43,7 @@ RSpec.describe Reports::States::ResolveService do
 
     context "when resolving an assigned report, with invalid attributes" do
       it "fails to update the report" do
-        expect { service.resolve(:applicable, priority: "unkown") }
+        expect { service.resolve(:applicable, resolution_motif: "maj_local", priority: "unkown") }
           .to  ret(be_a(Result::Failure))
           .and not_change(report, :state).from("assigned")
           .and not_change(report, :resolved_at).from(nil)
@@ -51,11 +51,13 @@ RSpec.describe Reports::States::ResolveService do
       end
 
       it "assigns errors", :aggregate_failures do
-        result = service.resolve(:applicable, priority: "unkown")
+        result = service.resolve(:applicable, priority: "unkown", resolution_motif: "unkown")
 
         expect(report.errors).to satisfy  { |errors| errors.of_kind?(:priority, :inclusion) }
         expect(result.errors).to satisfy  { |errors| errors.of_kind?(:priority, :inclusion) }
         expect(service.errors).to satisfy { |errors| errors.of_kind?(:priority, :inclusion) }
+        expect(service.errors).to satisfy { |errors| errors.of_kind?(:resolution_motif, :inclusion) }
+        expect(result.errors).to satisfy  { |errors| errors.of_kind?(:resolution_motif, :inclusion) }
       end
     end
 
@@ -63,7 +65,7 @@ RSpec.describe Reports::States::ResolveService do
       let(:report) { create(:report, :resolved_as_applicable) }
 
       it "updates the report resolution" do
-        expect { service.resolve(:inapplicable) }
+        expect { service.resolve(:inapplicable, resolution_motif: "enjeu_insuffisant") }
           .to  ret(be_a(Result::Success))
           .and change(report, :state).to("inapplicable")
           .and change(report, :resolved_at)
@@ -92,7 +94,7 @@ RSpec.describe Reports::States::ResolveService do
       let(:report) { create(:report, :approved) }
 
       it "fails to update the report" do
-        expect { service.resolve(:inapplicable) }
+        expect { service.resolve(:inapplicable, resolution_motif: "enjeu_insuffisant") }
           .to  ret(be_a(Result::Failure))
           .and not_change(report, :state).from("approved")
           .and not_change(report, :resolved_at)
@@ -100,7 +102,7 @@ RSpec.describe Reports::States::ResolveService do
       end
 
       it "assigns errors about invalid state transition", :aggregate_failures do
-        result = service.resolve(:inapplicable)
+        result = service.resolve(:inapplicable, resolution_motif: "enjeu_insuffisant")
 
         expect(report.errors).to satisfy  { |errors| errors.of_kind?(:state, :invalid_transition) }
         expect(result.errors).to satisfy  { |errors| errors.of_kind?(:state, :invalid_transition) }
@@ -118,6 +120,7 @@ RSpec.describe Reports::States::ResolveService do
           .to  ret(be_a(Result::Success))
           .and change(report, :state).to("assigned")
           .and change(report, :resolved_at).to(nil)
+          .and change(report, :resolution_motif).to(nil)
           .and change(report, :updated_at)
       end
     end
@@ -130,6 +133,7 @@ RSpec.describe Reports::States::ResolveService do
           .to  ret(be_a(Result::Success))
           .and not_change(report, :state).from("assigned")
           .and not_change(report, :assigned_at)
+          .and not_change(report, :resolution_motif)
           .and not_change(report, :updated_at)
       end
     end

@@ -189,6 +189,7 @@ module States
       def undo_resolution
         validate_state("applicable", "inapplicable", "assigned") do
           self.state = "assigned"
+          self.resolution_motif = nil
           self.resolved_at = nil
         end
       end
