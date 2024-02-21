@@ -64,36 +64,43 @@ class EPCI < ApplicationRecord
   # ----------------------------------------------------------------------------
   scope :having_communes, ->(communes) { where(siren: communes.select(:siren_epci)) }
 
+  # Scopes: searches
+  # ----------------------------------------------------------------------------
   scope :search, lambda { |input|
-    advanced_search(
-      input,
+    advanced_search(input, scopes: {
       name:             ->(value) { match(:name, value) },
       siren:            ->(value) { where(siren: value) },
       code_departement: ->(value) { where(code_departement: value) },
-      departement_name: ->(value) { left_joins(:departement).merge(Departement.match(:name, value)) },
-      region_name:      ->(value) { left_joins(:region).merge(Region.match(:name, value)) }
-    )
+      departement_name: ->(value) { left_joins(:departement).merge(Departement.search(name: value)) },
+      region_name:      ->(value) { left_joins(:region).merge(Region.search(name: value)) }
+    })
   }
 
   scope :autocomplete, lambda { |input|
-    advanced_search(
-      input,
+    advanced_search(input, scopes: {
       name:  ->(value) { match(:name, value) },
       siren: ->(value) { where(siren: value) }
-    )
+    })
   }
 
+  # Scopes: orders
+  # ----------------------------------------------------------------------------
   scope :order_by_param, lambda { |input|
     advanced_order(
       input,
-      epci:        ->(direction) { unaccent_order(:name, direction) },
-      departement: ->(direction) { order(code_departement: direction) }
+      name:        ->(direction) { order_by_name(direction) },
+      siren:       ->(direction) { order_by_siren(direction) },
+      departement: ->(direction) { order_by_departement(direction) }
     )
   }
 
   scope :order_by_score, lambda { |input|
     scored_order(:name, input)
   }
+
+  scope :order_by_name,        ->(direction = :asc) { unaccent_order(:name, direction) }
+  scope :order_by_siren,       ->(direction = :asc) { order(siren: direction) }
+  scope :order_by_departement, ->(direction = :asc) { order(code_departement: direction) }
 
   # Other associations
   # ----------------------------------------------------------------------------

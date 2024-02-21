@@ -160,48 +160,83 @@ RSpec.describe Report do
     it { is_expected.not_to allow_values("123", "-123").for(:proposition_code_rivoli) }
   end
 
-  # Constants
-  describe "constants" do
-    describe "SORTED_FORM_TYPES_BY_LABEL" do
-      it do
-        expect(Report::SORTED_FORM_TYPES_BY_LABEL).to eq({
-          fr: %w[
-            creation_local_habitation
-            creation_local_professionnel
-            evaluation_local_habitation
-            evaluation_local_professionnel
-            occupation_local_habitation
-            occupation_local_professionnel
-          ]
-        })
-      end
-    end
-  end
-
   # Callbacks
   # ----------------------------------------------------------------------------
   describe "callbacks" do
     describe "#generate_sibling_id" do
       it "generates a sibling_id when code INSEE and invariant are provided" do
         report = create(:report, code_insee: "64102", situation_invariant: "1021234567")
+
         expect(report).to have_attributes(sibling_id: "641021021234567")
       end
 
       it "lets sibling_id null when code INSEE is missing" do
         report = create(:report, code_insee: nil, situation_invariant: "1021234567")
+
         expect(report).to have_attributes(sibling_id: nil)
       end
 
       it "lets sibling_id null when invariant is missing" do
         report = create(:report, code_insee: "64102")
+
         expect(report).to have_attributes(sibling_id: nil)
       end
 
       it "resets sibling_id when one of the attribute is removed" do
         report = create(:report, code_insee: "64102", situation_invariant: "1021234567")
+
         expect {
           report.update(situation_invariant: nil)
         }.to change(report, :sibling_id).to(nil)
+      end
+    end
+
+    describe "#compute_address", :aggregate_failures do
+      it "computes addresses" do
+        report = create(:report,
+          situation_libelle_voie: "Rue  du 18  mai",
+          situation_numero_voie: "45")
+
+        expect(report).to have_attributes(computed_address:          "45 Rue du 18 mai")
+        expect(report).to have_attributes(computed_address_sort_key: "rue du 18 mai / 45")
+      end
+
+      it "computes addresses with a indice of repetition" do
+        report = create(:report,
+          situation_libelle_voie:      "Rue du 18 MAI",
+          situation_numero_voie:       "45",
+          situation_indice_repetition: "Ter")
+
+        expect(report).to have_attributes(computed_address:          "45 Ter Rue du 18 MAI")
+        expect(report).to have_attributes(computed_address_sort_key: "rue du 18 mai / 45 / ter")
+      end
+
+      it "computes addresses from situation_adresse, without number" do
+        report = create(:report, situation_adresse: "Rue du 18 mai")
+
+        expect(report).to have_attributes(computed_address:          "Rue du 18 mai")
+        expect(report).to have_attributes(computed_address_sort_key: "rue du 18 mai")
+      end
+
+      it "computes addresses from situation_adresse, with a number" do
+        report = create(:report, situation_adresse: "15 Rue du 18 mai")
+
+        expect(report).to have_attributes(computed_address:          "15 Rue du 18 mai")
+        expect(report).to have_attributes(computed_address_sort_key: "rue du 18 mai / 15")
+      end
+
+      it "computes addresses from situation_adresse, with a number, separated by a comma" do
+        report = create(:report, situation_adresse: "15, Rue du  18 mai")
+
+        expect(report).to have_attributes(computed_address:          "15, Rue du 18 mai")
+        expect(report).to have_attributes(computed_address_sort_key: "rue du 18 mai / 15")
+      end
+
+      it "computes addresses from situation_adresse, with an indice" do
+        report = create(:report, situation_adresse: "15 TER  Rue du 18 mai")
+
+        expect(report).to have_attributes(computed_address:          "15 TER Rue du 18 mai")
+        expect(report).to have_attributes(computed_address_sort_key: "rue du 18 mai / 15 / ter")
       end
     end
   end
@@ -209,184 +244,6 @@ RSpec.describe Report do
   # Scopes
   # ----------------------------------------------------------------------------
   describe "scopes" do
-    describe ".search" do
-      it "searches for reports with all criteria" do
-        expect {
-          described_class.search("Hello").load
-        }.to perform_sql_query(<<~SQL)
-          SELECT "reports".*
-          FROM   "reports"
-          LEFT OUTER JOIN "communes" ON "communes"."code_insee" = "reports"."code_insee"
-          WHERE ("reports"."reference" = 'Hello'
-          OR "reports"."situation_invariant" = 'Hello'
-          OR "reports"."package_id" IN (SELECT "packages"."id" FROM "packages" WHERE "packages"."reference" = 'Hello')
-          OR 1=0
-          OR LOWER(UNACCENT("communes"."name")) LIKE LOWER(UNACCENT('%Hello%'))
-          OR LOWER(UNACCENT(REPLACE(CONCAT(situation_adresse, ' ', situation_numero_voie, ' ', situation_indice_repetition, ' ', situation_libelle_voie ), ' ', ' '))) LIKE LOWER(UNACCENT('%Hello%')))
-        SQL
-      end
-
-      it "searches for reports by matching invariant" do
-        expect {
-          described_class.search(invariant: "Hello").load
-        }.to perform_sql_query(<<~SQL)
-          SELECT "reports".*
-          FROM   "reports"
-          WHERE  "reports"."situation_invariant" = 'Hello'
-        SQL
-      end
-
-      it "searches for reports by matching reference" do
-        expect {
-          described_class.search(reference: "Hello").load
-        }.to perform_sql_query(<<~SQL)
-          SELECT "reports".*
-          FROM   "reports"
-          WHERE  "reports"."reference" = 'Hello'
-        SQL
-      end
-
-      it "searches for reports by matching package reference" do
-        expect {
-          described_class.search(package_reference: "Hello").load
-        }.to perform_sql_query(<<~SQL)
-          SELECT "reports".*
-          FROM   "reports"
-          WHERE  "reports"."package_id" IN (SELECT "packages"."id" FROM "packages" WHERE "packages"."reference" = 'Hello')
-        SQL
-      end
-
-      it "searches for reports by matching commune name" do
-        expect {
-          described_class.search(commune_name: "Hello").load
-        }.to perform_sql_query(<<~SQL)
-          SELECT "reports".*
-          FROM   "reports"
-          LEFT OUTER JOIN "communes" ON "communes"."code_insee" = "reports"."code_insee"
-          WHERE  (LOWER(UNACCENT("communes"."name")) LIKE LOWER(UNACCENT('%Hello%')))
-        SQL
-      end
-
-      it "searches for reports by matching address" do
-        expect {
-          described_class.search(address: " 2   rue des arbres  ").load
-        }.to perform_sql_query(<<~SQL)
-          SELECT "reports".*
-          FROM   "reports"
-          WHERE  (LOWER(UNACCENT(REPLACE(CONCAT(situation_adresse, ' ', situation_numero_voie, ' ', situation_indice_repetition, ' ', situation_libelle_voie ), ' ', ' '))) LIKE LOWER(UNACCENT('%2 rue des arbres%')))
-        SQL
-      end
-
-      it "searches for reports by matching form_type" do
-        expect {
-          described_class.search(form_type: "local prof").load
-        }.to perform_sql_query(<<~SQL)
-          SELECT "reports".*
-          FROM   "reports"
-          WHERE  "reports"."form_type" IN ('evaluation_local_professionnel', 'creation_local_professionnel', 'occupation_local_professionnel')
-        SQL
-      end
-    end
-
-    describe ".order_by_param" do
-      it do
-        expect {
-          described_class.order_by_param("invariant").load
-        }.to perform_sql_query(<<~SQL)
-          SELECT "reports".*
-          FROM   "reports"
-          ORDER BY "reports"."situation_invariant" ASC, "reports"."created_at" ASC
-        SQL
-      end
-
-      it do
-        expect {
-          described_class.order_by_param("priority").load
-        }.to perform_sql_query(<<~SQL)
-          SELECT "reports".*
-          FROM   "reports"
-          ORDER BY "reports"."priority" ASC, "reports"."created_at" ASC
-        SQL
-      end
-
-      it do
-        expect {
-          described_class.order_by_param("reference").load
-        }.to perform_sql_query(<<~SQL)
-          SELECT "reports".*
-          FROM   "reports"
-          ORDER BY "reports"."reference" ASC, "reports"."created_at" ASC
-        SQL
-      end
-
-      it do
-        expect {
-          described_class.order_by_param("adresse").load
-        }.to perform_sql_query(<<~SQL)
-          SELECT "reports".*
-          FROM   "reports"
-          ORDER BY CONCAT(situation_libelle_voie, situation_numero_voie, situation_indice_repetition, situation_adresse) ASC, "reports"."created_at" ASC
-        SQL
-      end
-
-      it do
-        expect {
-          described_class.order_by_param("commune").load
-        }.to perform_sql_query(<<~SQL)
-          SELECT "reports".*
-          FROM   "reports"
-          LEFT OUTER JOIN "communes" ON "communes"."code_insee" = "reports"."code_insee"
-          ORDER BY UNACCENT("communes"."name") ASC NULLS FIRST, "reports"."created_at" ASC
-        SQL
-      end
-
-      it do
-        expect {
-          described_class.order_by_param("package").load
-        }.to perform_sql_query(<<~SQL)
-          SELECT "reports".*
-          FROM   "reports"
-          ORDER BY "reports"."reference" ASC, "reports"."created_at" ASC
-        SQL
-      end
-
-      it do
-        expect {
-          described_class.order_by_param("form_type").load
-        }.to perform_sql_query(<<~SQL)
-          SELECT "reports".*
-          FROM   "reports"
-          WHERE  "reports"."form_type" IN ('creation_local_habitation', 'creation_local_professionnel', 'evaluation_local_habitation', 'evaluation_local_professionnel', 'occupation_local_habitation', 'occupation_local_professionnel')
-          ORDER BY CASE
-            WHEN "reports"."form_type" = 'creation_local_habitation' THEN 1
-            WHEN "reports"."form_type" = 'creation_local_professionnel' THEN 2
-            WHEN "reports"."form_type" = 'evaluation_local_habitation' THEN 3
-            WHEN "reports"."form_type" = 'evaluation_local_professionnel' THEN 4
-            WHEN "reports"."form_type" = 'occupation_local_habitation' THEN 5
-            WHEN "reports"."form_type" = 'occupation_local_professionnel' THEN 6
-            END ASC, "reports"."created_at" ASC
-        SQL
-      end
-
-      it do
-        expect {
-          described_class.order_by_param("-form_type").load
-        }.to perform_sql_query(<<~SQL)
-          SELECT "reports".*
-          FROM   "reports"
-          WHERE  "reports"."form_type" IN ('occupation_local_professionnel', 'occupation_local_habitation', 'evaluation_local_professionnel', 'evaluation_local_habitation', 'creation_local_professionnel', 'creation_local_habitation')
-          ORDER BY CASE
-            WHEN "reports"."form_type" = 'occupation_local_professionnel' THEN 1
-            WHEN "reports"."form_type" = 'occupation_local_habitation' THEN 2
-            WHEN "reports"."form_type" = 'evaluation_local_professionnel' THEN 3
-            WHEN "reports"."form_type" = 'evaluation_local_habitation' THEN 4
-            WHEN "reports"."form_type" = 'creation_local_professionnel' THEN 5
-            WHEN "reports"."form_type" = 'creation_local_habitation' THEN 6
-            END ASC, "reports"."created_at" DESC
-        SQL
-      end
-    end
-
     describe ".sandbox" do
       it "scopes reports tagged as sandbox" do
         expect {
@@ -661,6 +518,364 @@ RSpec.describe Report do
           INNER JOIN "offices" ON "offices"."id" = "office_communes"."office_id"
           WHERE      "offices"."name" = 'A'
             AND      ("reports"."form_type" = ANY ("offices"."competences"))
+        SQL
+      end
+    end
+  end
+
+  # Scopes: searches
+  # ----------------------------------------------------------------------------
+  describe "search scopes" do
+    describe ".search" do
+      it "searches for reports with all criteria" do
+        expect {
+          described_class.search("Hello").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT          "reports".*
+          FROM            "reports"
+          LEFT OUTER JOIN "communes" ON "communes"."code_insee" = "reports"."code_insee"
+          WHERE (
+                      "reports"."reference" = 'Hello'
+                  OR  "reports"."situation_invariant" = 'Hello'
+                  OR  "reports"."package_id" IN (SELECT "packages"."id" FROM "packages" WHERE "packages"."reference" = 'Hello')
+                  OR  LOWER(UNACCENT("communes"."name")) LIKE LOWER(UNACCENT('%Hello%'))
+                  OR  LOWER(UNACCENT("reports"."computed_address")) LIKE LOWER(UNACCENT('%Hello%'))
+                )
+        SQL
+      end
+
+      it "searches for reports by matching invariant" do
+        expect {
+          described_class.search(invariant: "Hello").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "reports".*
+          FROM   "reports"
+          WHERE  "reports"."situation_invariant" = 'Hello'
+        SQL
+      end
+
+      it "searches for reports by matching reference" do
+        expect {
+          described_class.search(reference: "Hello").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "reports".*
+          FROM   "reports"
+          WHERE  "reports"."reference" = 'Hello'
+        SQL
+      end
+
+      it "searches for reports by matching package reference" do
+        expect {
+          described_class.search(package_reference: "Hello").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "reports".*
+          FROM   "reports"
+          WHERE  "reports"."package_id" IN (SELECT "packages"."id" FROM "packages" WHERE "packages"."reference" = 'Hello')
+        SQL
+      end
+
+      it "searches for reports by matching commune name" do
+        expect {
+          described_class.search(commune_name: "Hello").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT          "reports".*
+          FROM            "reports"
+          LEFT OUTER JOIN "communes" ON "communes"."code_insee" = "reports"."code_insee"
+          WHERE           (LOWER(UNACCENT("communes"."name")) LIKE LOWER(UNACCENT('%Hello%')))
+        SQL
+      end
+
+      it "searches for reports by matching address" do
+        expect {
+          described_class.search(address: " 2   rue des arbres  ").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "reports".*
+          FROM   "reports"
+          WHERE  (LOWER(UNACCENT("reports"."computed_address")) LIKE LOWER(UNACCENT('%2 rue des arbres%')))
+        SQL
+      end
+
+      it "searches for reports by matching form_type" do
+        expect {
+          described_class.search(form_type: "local pro").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "reports".*
+          FROM   "reports"
+          WHERE  "reports"."form_type" IN ('evaluation_local_professionnel', 'creation_local_professionnel', 'occupation_local_professionnel')
+        SQL
+      end
+    end
+
+    describe ".search_by_form_type" do
+      it "searches for reports matching given value" do
+        expect {
+          described_class.search_by_form_type("local pro").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "reports".*
+          FROM   "reports"
+          WHERE  "reports"."form_type" IN ('evaluation_local_professionnel', 'creation_local_professionnel', 'occupation_local_professionnel')
+        SQL
+      end
+
+      it "returns a null relation when none of the enum match the given value" do
+        expect(
+          described_class.search_by_form_type("nope")
+        ).to be_a_null_relation
+      end
+    end
+
+    describe ".search_by_state" do
+      it "searches for reports matching given value" do
+        expect {
+          described_class.search_by_state("transmitted").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "reports".*
+          FROM   "reports"
+          WHERE  "reports"."state" = 'transmitted'
+        SQL
+      end
+
+      it "searches for reports matching multiple values, excluding unknown values" do
+        expect {
+          described_class.search_by_state(%w[transmitted foo assigned]).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "reports".*
+          FROM   "reports"
+          WHERE  "reports"."state" IN ('transmitted', 'assigned')
+        SQL
+      end
+
+      it "returns a null relation when none of the enum match the given value" do
+        expect(
+          described_class.search_by_state("Hello")
+        ).to be_a_null_relation
+      end
+
+      it "returns a null relation when none of the enum match all the given values" do
+        expect(
+          described_class.search_by_state(%w[Foo Bar])
+        ).to be_a_null_relation
+      end
+    end
+  end
+
+  # Scopes: orders
+  # ----------------------------------------------------------------------------
+  describe "order scopes" do
+    describe ".order_by_param" do
+      it "sorts reports by invariant" do
+        expect {
+          described_class.order_by_param("invariant").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT    "reports".*
+          FROM      "reports"
+          ORDER BY  "reports"."situation_invariant" ASC,
+                    "reports"."created_at" ASC
+        SQL
+      end
+
+      it "sorts reports by invariant in reversed order" do
+        expect {
+          described_class.order_by_param("-invariant").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT    "reports".*
+          FROM      "reports"
+          ORDER BY  "reports"."situation_invariant" DESC,
+                    "reports"."created_at" DESC
+        SQL
+      end
+
+      it "sorts reports by priority" do
+        expect {
+          described_class.order_by_param("priority").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT    "reports".*
+          FROM      "reports"
+          ORDER BY  "reports"."priority" ASC,
+                    "reports"."created_at" ASC
+        SQL
+      end
+
+      it "sorts reports by priority in reversed order" do
+        expect {
+          described_class.order_by_param("-priority").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT    "reports".*
+          FROM      "reports"
+          ORDER BY  "reports"."priority" DESC,
+                    "reports"."created_at" DESC
+        SQL
+      end
+
+      it "sorts reports by reference" do
+        expect {
+          described_class.order_by_param("reference").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT    "reports".*
+          FROM      "reports"
+          ORDER BY  "reports"."reference" ASC,
+                    "reports"."created_at" ASC
+        SQL
+      end
+
+      it "sorts reports by reference in reversed order" do
+        expect {
+          described_class.order_by_param("-reference").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT    "reports".*
+          FROM      "reports"
+          ORDER BY  "reports"."reference" DESC,
+                    "reports"."created_at" DESC
+        SQL
+      end
+
+      it "orders reports by state" do
+        expect {
+          described_class.order_by_param("state").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT    "reports".*
+          FROM      "reports"
+          ORDER BY  "reports"."state" ASC,
+                    "reports"."created_at" ASC
+        SQL
+      end
+
+      it "orders reports by state in reversed order" do
+        expect {
+          described_class.order_by_param("-state").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT    "reports".*
+          FROM      "reports"
+          ORDER BY  "reports"."state" DESC,
+                    "reports"."created_at" DESC
+        SQL
+      end
+
+      it "sorts reports by form type" do
+        expect {
+          described_class.order_by_param("form_type").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT    "reports".*
+          FROM      "reports"
+          WHERE     "reports"."form_type" IN ('creation_local_habitation', 'creation_local_professionnel', 'evaluation_local_habitation', 'evaluation_local_professionnel', 'occupation_local_habitation', 'occupation_local_professionnel')
+          ORDER BY  CASE
+                    WHEN "reports"."form_type" = 'creation_local_habitation'      THEN 1
+                    WHEN "reports"."form_type" = 'creation_local_professionnel'   THEN 2
+                    WHEN "reports"."form_type" = 'evaluation_local_habitation'    THEN 3
+                    WHEN "reports"."form_type" = 'evaluation_local_professionnel' THEN 4
+                    WHEN "reports"."form_type" = 'occupation_local_habitation'    THEN 5
+                    WHEN "reports"."form_type" = 'occupation_local_professionnel' THEN 6
+                    END ASC,
+                    "reports"."created_at" ASC
+        SQL
+      end
+
+      it "sorts reports by form type in reversed order" do
+        expect {
+          described_class.order_by_param("-form_type").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT    "reports".*
+          FROM      "reports"
+          WHERE     "reports"."form_type" IN ('occupation_local_professionnel', 'occupation_local_habitation', 'evaluation_local_professionnel', 'evaluation_local_habitation', 'creation_local_professionnel', 'creation_local_habitation')
+          ORDER BY  CASE
+                    WHEN "reports"."form_type" = 'occupation_local_professionnel' THEN 1
+                    WHEN "reports"."form_type" = 'occupation_local_habitation'    THEN 2
+                    WHEN "reports"."form_type" = 'evaluation_local_professionnel' THEN 3
+                    WHEN "reports"."form_type" = 'evaluation_local_habitation'    THEN 4
+                    WHEN "reports"."form_type" = 'creation_local_professionnel'   THEN 5
+                    WHEN "reports"."form_type" = 'creation_local_habitation'      THEN 6
+                    END ASC,
+                    "reports"."created_at" DESC
+        SQL
+      end
+
+      it "orders reports by anomalies" do
+        expect {
+          described_class.order_by_param("anomalies").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT    "reports".*
+          FROM      "reports"
+          ORDER BY  CASE
+                    WHEN "anomalies"[1] = 'correctif'          THEN 1
+                    WHEN "anomalies"[1] = 'adresse'            THEN 2
+                    WHEN "anomalies"[1] = 'affectation'        THEN 3
+                    WHEN "anomalies"[1] = 'categorie'          THEN 4
+                    WHEN "anomalies"[1] = 'consistance'        THEN 5
+                    WHEN "anomalies"[1] = 'construction_neuve' THEN 6
+                    WHEN "anomalies"[1] = 'exoneration'        THEN 7
+                    WHEN "anomalies"[1] = 'occupation'         THEN 8
+                    WHEN "anomalies"[1] = 'omission_batie'     THEN 9
+                    ELSE 10
+                    END ASC,
+                    "reports"."created_at" ASC
+        SQL
+      end
+
+      it "orders reports by anomalies in reversed order" do
+        expect {
+          described_class.order_by_param("-anomalies").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT    "reports".*
+          FROM      "reports"
+          ORDER BY  CASE
+                    WHEN "anomalies"[1] = 'omission_batie'     THEN 1
+                    WHEN "anomalies"[1] = 'occupation'         THEN 2
+                    WHEN "anomalies"[1] = 'exoneration'        THEN 3
+                    WHEN "anomalies"[1] = 'construction_neuve' THEN 4
+                    WHEN "anomalies"[1] = 'consistance'        THEN 5
+                    WHEN "anomalies"[1] = 'categorie'          THEN 6
+                    WHEN "anomalies"[1] = 'affectation'        THEN 7
+                    WHEN "anomalies"[1] = 'adresse'            THEN 8
+                    WHEN "anomalies"[1] = 'correctif'          THEN 9
+                    ELSE 0
+                    END ASC,
+                    "reports"."created_at" DESC
+        SQL
+      end
+
+      it "sorts reports by address" do
+        expect {
+          described_class.order_by_param("adresse").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT    "reports".*
+          FROM      "reports"
+          ORDER BY  "reports"."computed_address_sort_key" ASC,
+                    "reports"."created_at" ASC
+        SQL
+      end
+
+      it "sorts reports by address in reversed order" do
+        expect {
+          described_class.order_by_param("-adresse").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT    "reports".*
+          FROM      "reports"
+          ORDER BY  "reports"."computed_address_sort_key" DESC,
+                    "reports"."created_at" DESC
+        SQL
+      end
+
+      it "sorts reports by commune" do
+        expect {
+          described_class.order_by_param("commune").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT          "reports".*
+          FROM            "reports"
+          LEFT OUTER JOIN "communes" ON "communes"."code_insee" = "reports"."code_insee"
+          ORDER BY        REGEXP_REPLACE(UNACCENT("communes"."name"), '(^|[^0-9])([0-9])([^0-9])', '\\10\\2\\3') ASC NULLS LAST,
+                          "reports"."created_at" ASC
+        SQL
+      end
+
+      it "sorts reports by commune in reversed order" do
+        expect {
+          described_class.order_by_param("-commune").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT          "reports".*
+          FROM            "reports"
+          LEFT OUTER JOIN "communes" ON "communes"."code_insee" = "reports"."code_insee"
+          ORDER BY        REGEXP_REPLACE(UNACCENT("communes"."name"), '(^|[^0-9])([0-9])([^0-9])', '\\10\\2\\3') DESC NULLS FIRST,
+                          "reports"."created_at" DESC
         SQL
       end
     end

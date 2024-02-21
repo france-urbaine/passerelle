@@ -70,35 +70,6 @@ class Office < ApplicationRecord
   # ----------------------------------------------------------------------------
   scope :owned_by, ->(ddfip) { where(ddfip: ddfip) }
 
-  scope :search, lambda { |input|
-    advanced_search(
-      input,
-      name:             ->(value) { match(:name, value) },
-      ddfip_name:       ->(value) { left_joins(:ddfip).merge(DDFIP.match(:name, value)) },
-      code_departement: ->(value) { left_joins(:ddfip).merge(DDFIP.where(code_departement: value)) }
-    )
-  }
-
-  scope :autocomplete, lambda { |input|
-    advanced_search(
-      input,
-      name: ->(value) { match(:name, value) }
-    )
-  }
-
-  scope :order_by_param, lambda { |input|
-    advanced_order(
-      input,
-      name:        ->(direction) { unaccent_order(:name, direction) },
-      ddfip:       ->(direction) { left_joins(:ddfip).merge(DDFIP.unaccent_order(:name, direction)) },
-      competences: ->(direction) { order(competences: direction) }
-    )
-  }
-
-  scope :order_by_score, lambda { |input|
-    scored_order(:name, input)
-  }
-
   scope :covering, lambda { |reports|
     joins(:communes).merge(Commune.where(code_insee: reports.pluck(:code_insee)))
   }
@@ -106,6 +77,41 @@ class Office < ApplicationRecord
   scope :with_competence, lambda { |competence|
     where(%{? = ANY ("offices"."competences")}, competence)
   }
+
+  # Scopes: searches
+  # ----------------------------------------------------------------------------
+  scope :search, lambda { |input|
+    advanced_search(input, scopes: {
+      name:             ->(value) { match(:name, value) },
+      ddfip_name:       ->(value) { left_joins(:ddfip).merge(DDFIP.search(name: value)) },
+      code_departement: ->(value) { left_joins(:ddfip).merge(DDFIP.where(code_departement: value)) }
+    })
+  }
+
+  scope :autocomplete, lambda { |input|
+    advanced_search(input, scopes: {
+      name: ->(value) { match(:name, value) }
+    })
+  }
+
+  # Scopes: orders
+  # ----------------------------------------------------------------------------
+  scope :order_by_param, lambda { |input|
+    advanced_order(
+      input,
+      name:        ->(direction) { order_by_name(direction) },
+      ddfip:       ->(direction) { order_by_ddfip(direction) },
+      competences: ->(direction) { order_by_competences(direction) }
+    )
+  }
+
+  scope :order_by_score, lambda { |input|
+    scored_order(:name, input)
+  }
+
+  scope :order_by_name,        ->(direction = :asc) { unaccent_order(:name, direction) }
+  scope :order_by_ddfip,       ->(direction = :asc) { left_joins(:ddfip).merge(DDFIP.order_by_name(direction)) }
+  scope :order_by_competences, ->(direction = :asc) { order(competences: direction) }
 
   # Other associations
   # ----------------------------------------------------------------------------

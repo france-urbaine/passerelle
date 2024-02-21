@@ -13,7 +13,7 @@
 
         - datatable.with_selection
 
-        - datatable.with_column(:epci, sort: true, span: 2) { "EPCI" }
+        - datatable.with_column(:name,           sort: true, span: 2) { "EPCI" }
         - datatable.with_column(:communes_count,       numeric: true) { "Communes" }
         - datatable.with_column(:collectivities_count, numeric: true) { "Collectivités" }
 
@@ -29,7 +29,7 @@
           - if allowed_to?(:update?, epci)
             - row.with_action "Modifier cet EPCI", edit_territories_epci_path(epci), icon: "pencil-square", modal: true
 
-          - row.with_column(:epci) do |column|
+          - row.with_column(:name) do |column|
             - column.with_span do
               = display_siren(epci.siren)
 

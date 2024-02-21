@@ -74,30 +74,36 @@ class DDFIP < ApplicationRecord
 
   # Scopes
   # ----------------------------------------------------------------------------
+  scope :covering, lambda { |reports|
+    distinct.joins(communes: :reports).merge(reports)
+  }
+
+  # Scopes: searches
+  # ----------------------------------------------------------------------------
   scope :search, lambda { |input|
-    advanced_search(
-      input,
+    advanced_search(input, scopes: {
       name:             ->(value) { match(:name, value) },
       code_departement: ->(value) { where(code_departement: value) },
-      departement_name: ->(value) { left_joins(:departement).merge(Departement.match(:name, value)) },
-      region_name:      ->(value) { left_joins(:region).merge(Region.match(:name, value)) }
-    )
+      departement_name: ->(value) { left_joins(:departement).merge(Departement.search(name: value)) },
+      region_name:      ->(value) { left_joins(:region).merge(Region.search(name: value)) }
+    })
   }
 
   scope :autocomplete, lambda { |input|
-    advanced_search(
-      input,
+    advanced_search(input, scopes: {
       name:             ->(value) { match(:name, value) },
       code_departement: ->(value) { where(code_departement: value) }
-    )
+    })
   }
 
+  # Scopes: orders
+  # ----------------------------------------------------------------------------
   scope :order_by_param, lambda { |input|
     advanced_order(
       input,
-      name:        ->(direction) { unaccent_order(:name, direction) },
-      departement: ->(direction) { order(code_departement: direction) },
-      region:      ->(direction) { left_joins(:departement).merge(Departement.order(code_region: direction)) }
+      name:        ->(direction) { order_by_name(direction) },
+      departement: ->(direction) { order_by_departement(direction) },
+      region:      ->(direction) { order_by_region(direction) }
     )
   }
 
@@ -105,8 +111,11 @@ class DDFIP < ApplicationRecord
     scored_order(:name, input)
   }
 
-  scope :covering, lambda { |reports|
-    distinct.joins(communes: :reports).merge(reports)
+  scope :order_by_name,        ->(direction = :asc) { unaccent_order(:name, direction) }
+  scope :order_by_departement, ->(direction = :asc) { order(code_departement: direction) }
+
+  scope :order_by_region, lambda { |direction = :asc|
+    left_joins(:departement).merge(Departement.order_by_region(direction))
   }
 
   # Other associations

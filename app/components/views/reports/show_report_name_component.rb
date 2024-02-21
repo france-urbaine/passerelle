@@ -29,16 +29,7 @@ module Views
       end
 
       def address
-        @address ||=
-          if @report.situation_adresse?
-            @report.situation_adresse
-          elsif @report.situation_libelle_voie?
-            [
-              @report.situation_numero_voie,
-              @report.situation_indice_repetition,
-              @report.situation_libelle_voie
-            ].join(" ").squish
-          end
+        @report.computed_address
       end
     end
   end

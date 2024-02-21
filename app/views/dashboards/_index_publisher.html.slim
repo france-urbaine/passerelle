@@ -18,18 +18,19 @@
         = current_organization.reports_approved_count + current_organization.reports_canceled_count + current_organization.reports_rejected_count
         span.dashboard-number__unit Signalements retournés
 
-  - layout.with_header icon: "clipboard-document" do
-    | Signalements transmis
+  - @reports.transmitted.order(transmitted_at: :desc).tap do |reports|
+    - layout.with_header icon: "clipboard-document" do |header|
+      | Derniers signalements transmis
 
-  - layout.with_section do
-    = render Views::Reports::List::Component.new(@reports.transmitted.order(transmitted_at: :desc), dashboard: true) do |view|
-      - view.with_column(:reference)
-      - view.with_column(:package)
-      - view.with_column(:collectivity)
-      - view.with_column(:form_type)
-      - view.with_column(:anomalies)
-      - view.with_column(:invariant)
-      - view.with_column(:adresse)
-      - view.with_column(:commune)
-      - view.with_column(:priority)
-      - view.with_column(:status)
+      - reports.unscope(:limit).count.tap do |total_count|
+        - if total_count > reports.size
+          - header.with_action do
+            .mr-4 <b>#{reports.size}</b> signalements affichés sur <b>#{total_count}</b>
+
+          - header.with_action "Tout voir", reports_path, icon: "magnifying-glass"
+
+    - layout.with_section do
+      = render Views::Reports::List::Component.new(reports, dashboard: true) do |list|
+        - list.with_column(:package)
+        - list.with_column(:collectivity)
+        - list.with_column(:transmitted_at)

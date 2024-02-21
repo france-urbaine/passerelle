@@ -55,34 +55,33 @@ class Region < ApplicationRecord
     self.qualified_name = "Département de #{name}"
   end
 
-  # Scopes
+  # Scopes: searches
   # ----------------------------------------------------------------------------
   scope :search, lambda { |input|
-    advanced_search(
-      input,
+    advanced_search(input, scopes: {
       name:        ->(value) { match(:name, value) },
       code_region: ->(value) { where(code_region: value) }
-    )
+    })
   }
 
-  scope :autocomplete, lambda { |input|
-    advanced_search(
-      input,
-      name:        ->(value) { match(:qualified_name, value) },
-      code_region: ->(value) { where(code_region: value) }
-    )
-  }
+  scope :autocomplete, ->(input) { search(input) }
 
+  # Scopes: orders
+  # ----------------------------------------------------------------------------
   scope :order_by_param, lambda { |input|
     advanced_order(
       input,
-      region: ->(direction) { order(code_region: direction) }
+      name: ->(direction) { order_by_name(direction) },
+      code: ->(direction) { order_by_code(direction) }
     )
   }
 
   scope :order_by_score, lambda { |input|
     scored_order(:name, input)
   }
+
+  scope :order_by_name, ->(direction = :asc) { unaccent_order(:name, direction) }
+  scope :order_by_code, ->(direction = :asc) { order(code_region: direction) }
 
   # Other associations
   # ----------------------------------------------------------------------------

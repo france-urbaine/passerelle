@@ -133,20 +133,23 @@ class User < ApplicationRecord
   # ----------------------------------------------------------------------------
   scope :owned_by, ->(organization) { where(organization: organization) }
 
+  # Scopes: searches
+  # ----------------------------------------------------------------------------
   scope :search, lambda { |input|
-    scopes = {
-      first_name:        ->(value) { match(:first_name, value) },
-      last_name:         ->(value) { match(:last_name, value) },
-      full_name:         ->(value) { search_by_full_name(value) },
-      email:             ->(value) { search_with_email_attribute(:email, value) },
-      unconfirmed_email: ->(value) { search_with_email_attribute(:unconfirmed_email, value) }
-    }
-
-    case input
-    when /@/    then advanced_search(input, scopes.slice(:email, :unconfirmed_email))
-    when String then advanced_search(input, scopes.slice(:full_name))
-    else             advanced_search(input, scopes)
-    end
+    advanced_search(
+      input,
+      default: %i[name],
+      matches: {
+        /@/ => %i[email unconfirmed_email]
+      },
+      scopes: {
+        first_name:        ->(value) { match(:first_name, value) },
+        last_name:         ->(value) { match(:last_name, value) },
+        name:              ->(value) { search_by_full_name(value) },
+        email:             ->(value) { search_with_email_attribute(:email, value) },
+        unconfirmed_email: ->(value) { search_with_email_attribute(:unconfirmed_email, value) }
+      }
+    )
   }
 
   scope :search_by_full_name, lambda { |value|
@@ -177,24 +180,34 @@ class User < ApplicationRecord
     end
   }
 
+  # Scopes: orders
+  # ----------------------------------------------------------------------------
   scope :order_by_param, lambda { |input|
     advanced_order(
       input,
-      name:         ->(direction) { unaccent_order(:name, direction) },
-      organisation: lambda { |direction|
-        joins(<<~SQL.squish)
-          LEFT JOIN publishers     ON users.organization_type = 'Publisher'    AND users.organization_id = publishers.id
-          LEFT JOIN collectivities ON users.organization_type = 'Collectivity' AND users.organization_id = collectivities.id
-          LEFT JOIN ddfips         ON users.organization_type = 'DDFIP'        AND users.organization_id = ddfips.id
-          LEFT JOIN dgfips         ON users.organization_type = 'DGFIP'        AND users.organization_id = dgfips.id
-        SQL
-        .unaccent_order("COALESCE(publishers.name, collectivities.name, ddfips.name, dgfips.name)", direction)
-      }
+      name:         ->(direction) { order_by_name(direction) },
+      organisation: ->(direction) { order_by_organization(direction) }
     )
   }
 
   scope :order_by_score, lambda { |input|
     scored_order(:name, input)
+  }
+
+  scope :order_by_name, ->(direction = :asc) { unaccent_order(:name, direction) }
+  scope :order_by_organization, lambda { |direction = :asc|
+    joins(
+      <<~SQL.squish
+        LEFT JOIN "publishers"     ON "users"."organization_type" = 'Publisher'    AND "users"."organization_id" = "publishers"."id"
+        LEFT JOIN "collectivities" ON "users"."organization_type" = 'Collectivity' AND "users"."organization_id" = "collectivities"."id"
+        LEFT JOIN "ddfips"         ON "users"."organization_type" = 'DDFIP'        AND "users"."organization_id" = "ddfips"."id"
+        LEFT JOIN "dgfips"         ON "users"."organization_type" = 'DGFIP'        AND "users"."organization_id" = "dgfips"."id"
+      SQL
+    ).unaccent_order(
+      <<~SQL.squish, direction
+        COALESCE("publishers"."name", "collectivities"."name", "ddfips"."name", "dgfips"."name")
+      SQL
+    )
   }
 
   # Datatable authentication

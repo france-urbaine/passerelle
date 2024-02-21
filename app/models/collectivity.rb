@@ -99,37 +99,41 @@ class Collectivity < ApplicationRecord
   scope :orphans,      -> { where(publisher_id: nil) }
   scope :owned_by, ->(publisher) { where(publisher: publisher) }
 
+  # Scopes: searches
+  # ----------------------------------------------------------------------------
   scope :search, lambda { |input|
-    advanced_search(
-      input,
-      name:           ->(value) { match(:name, value) },
-      siren:          ->(value) { where(siren: value) },
-      publisher_name: ->(value) { left_joins(:publisher).merge(Publisher.where(name: value)) }
-    )
+    advanced_search(input, scopes: {
+      name:      ->(value) { match(:name, value) },
+      siren:     ->(value) { where(siren: value) },
+      publisher: ->(value) { left_joins(:publisher).merge(Publisher.search(name: value)) }
+    })
   }
 
   scope :autocomplete, lambda { |input|
-    advanced_search(
-      input,
+    advanced_search(input, scopes: {
       name:  ->(value) { match(:name, value) },
       siren: ->(value) { where(siren: value) }
-    )
+    })
   }
 
+  # Scopes: orders
+  # ----------------------------------------------------------------------------
   scope :order_by_param, lambda { |input|
     advanced_order(
       input,
-      name:      ->(direction) { unaccent_order(:name, direction) },
-      siren:     ->(direction) { order(siren: direction) },
-      publisher: lambda { |direction|
-        left_joins(:publisher).merge(
-          Publisher.unaccent_order(:name, direction, nulls: true)
-        )
-      }
+      name:      ->(direction) { order_by_name(direction) },
+      siren:     ->(direction) { order_by_siren(direction) },
+      publisher: ->(direction) { order_by_publisher(direction) }
     )
   }
 
-  scope :order_by_score, ->(input) { scored_order(:name, input) }
+  scope :order_by_score, lambda { |input|
+    scored_order(:name, input)
+  }
+
+  scope :order_by_name,      ->(direction = :asc) { unaccent_order(:name, direction) }
+  scope :order_by_siren,     ->(direction = :asc) { order(siren: direction) }
+  scope :order_by_publisher, ->(direction = :asc) { left_joins(:publisher).merge(Publisher.order_by_name(direction)) }
 
   # Predicates
   # ----------------------------------------------------------------------------

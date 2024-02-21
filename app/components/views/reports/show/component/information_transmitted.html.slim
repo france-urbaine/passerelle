@@ -106,5 +106,26 @@
       - list.with_attribute("Date du constat") do
         = helpers.display_date(@report.date_constat)
 
-      - list.with_attribute("Date de transmission") do
-        = helpers.display_date(@report.transmitted_at.to_date)
+      - case current_user.organization_type
+      - when "Collectivity", "Publisher"
+        - list.with_attribute("Date de transmission") do
+          = helpers.display_date(@report.transmitted_at)
+
+        - list.with_attribute("Date de réponse") do
+          = helpers.display_date(@report.returned_at)
+
+      - when "DDFIP", "DGFIP"
+        - list.with_attribute("Date de réception") do
+          = helpers.display_date(@report.transmitted_at)
+
+        - list.with_attribute("Date d'acceptation") do
+          = helpers.display_date(@report.accepted_at)
+
+        - list.with_attribute("Date d'attribution au guichet") do
+          = helpers.display_date(@report.assigned_at)
+
+        - list.with_attribute("Date de réponse guichet") do
+          = helpers.display_date(@report.resolved_at)
+
+        - list.with_attribute("Date de réponse DDFIP") do
+          = helpers.display_date(@report.returned_at)

@@ -92,7 +92,7 @@ RSpec.describe Commune do
     end
   end
 
-  # Search scope
+  # Scopes
   # ----------------------------------------------------------------------------
   describe "scopes" do
     describe ".arrondissements" do
@@ -352,26 +352,30 @@ RSpec.describe Commune do
         }.to raise_error(TypeError)
       end
     end
+  end
 
+  # Scopes: searches
+  # ----------------------------------------------------------------------------
+  describe "search scopes" do
     describe ".search" do
-      it "searches for communes with all criteria" do
+      it "searches for communes with all default criteria" do
         expect {
           described_class.search("Hello").load
         }.to perform_sql_query(<<~SQL)
-          SELECT "communes".*
-          FROM   "communes"
+          SELECT          "communes".*
+          FROM            "communes"
           LEFT OUTER JOIN "epcis" ON "epcis"."siren" = "communes"."siren_epci"
           LEFT OUTER JOIN "departements" ON "departements"."code_departement" = "communes"."code_departement"
           LEFT OUTER JOIN "regions" ON "regions"."code_region" = "departements"."code_region"
-          WHERE (
-                LOWER(UNACCENT("communes"."name")) LIKE LOWER(UNACCENT('%Hello%'))
-            OR  "communes"."code_insee" = 'Hello'
-            OR  "communes"."siren_epci" = 'Hello'
-            OR  "communes"."code_departement" = 'Hello'
-            OR  LOWER(UNACCENT("epcis"."name")) LIKE LOWER(UNACCENT('%Hello%'))
-            OR  LOWER(UNACCENT("departements"."name")) LIKE LOWER(UNACCENT('%Hello%'))
-            OR  LOWER(UNACCENT("regions"."name")) LIKE LOWER(UNACCENT('%Hello%'))
-          )
+          WHERE           (
+                                LOWER(UNACCENT("communes"."name")) LIKE LOWER(UNACCENT('%Hello%'))
+                            OR  "communes"."code_insee" = 'Hello'
+                            OR  "communes"."code_departement" = 'Hello'
+                            OR  "communes"."siren_epci" = 'Hello'
+                            OR  LOWER(UNACCENT("epcis"."name")) LIKE LOWER(UNACCENT('%Hello%'))
+                            OR  LOWER(UNACCENT("departements"."name")) LIKE LOWER(UNACCENT('%Hello%'))
+                            OR  LOWER(UNACCENT("regions"."name")) LIKE LOWER(UNACCENT('%Hello%'))
+                          )
         SQL
       end
 
@@ -385,7 +389,7 @@ RSpec.describe Commune do
         SQL
       end
 
-      it "searches for DDFIPs by matching departement code" do
+      it "searches for communes by matching departement's code" do
         expect {
           described_class.search(code_departement: "64").load
         }.to perform_sql_query(<<~SQL)
@@ -395,18 +399,18 @@ RSpec.describe Commune do
         SQL
       end
 
-      it "searches for DDFIPs by matching departement name" do
+      it "searches for communes by matching departement's name" do
         expect {
-          described_class.search(departement_name: "Pyrén").load
+          described_class.search(departement_name: "Pyréne").load
         }.to perform_sql_query(<<~SQL)
           SELECT          "communes".*
           FROM            "communes"
           LEFT OUTER JOIN "departements" ON "departements"."code_departement" = "communes"."code_departement"
-          WHERE           (LOWER(UNACCENT("departements"."name")) LIKE LOWER(UNACCENT('%Pyrén%')))
+          WHERE           (LOWER(UNACCENT("departements"."name")) LIKE LOWER(UNACCENT('%Pyréne%')))
         SQL
       end
 
-      it "searches for DDFIPs by matching region name" do
+      it "searches for communes by matching region's name" do
         expect {
           described_class.search(region_name: "Sud").load
         }.to perform_sql_query(<<~SQL)
@@ -433,55 +437,55 @@ RSpec.describe Commune do
         SQL
       end
     end
+  end
 
-    describe ".order_by_name" do
-      it "orders communes by name" do
-        expect {
-          described_class.order_by_param("commune").load
-        }.to perform_sql_query(<<~SQL)
-          SELECT   "communes".*
-          FROM     "communes"
-          ORDER BY REGEXP_REPLACE(UNACCENT("communes"."name"), '(^|[^0-9])([0-9])([^0-9])', '\\10\\2\\3') ASC,
-                   "communes"."code_insee" ASC
-        SQL
-      end
-
-      it "orders communes by name in descendant order" do
-        expect {
-          described_class.order_by_param("-commune").load
-        }.to perform_sql_query(<<~SQL)
-          SELECT   "communes".*
-          FROM     "communes"
-          ORDER BY REGEXP_REPLACE(UNACCENT("communes"."name"), '(^|[^0-9])([0-9])([^0-9])', '\\10\\2\\3') DESC,
-                   "communes"."code_insee" DESC
-        SQL
-      end
-    end
-
+  # Scopes: orders
+  # ----------------------------------------------------------------------------
+  describe "order scopes" do
     describe ".order_by_param" do
-      it "orders communes by name" do
+      it "sorts communes by name" do
         expect {
-          described_class.order_by_param("commune").load
+          described_class.order_by_param("name").load
         }.to perform_sql_query(<<~SQL)
           SELECT   "communes".*
           FROM     "communes"
-          ORDER BY REGEXP_REPLACE(UNACCENT("communes"."name"), '(^|[^0-9])([0-9])([^0-9])', '\\10\\2\\3') ASC,
+          ORDER BY REGEXP_REPLACE(UNACCENT("communes"."name"), '(^|[^0-9])([0-9])([^0-9])', '\\10\\2\\3') ASC NULLS LAST,
                    "communes"."code_insee" ASC
         SQL
       end
 
-      it "orders communes by name in descendant order" do
+      it "sorts communes by name in reversed order" do
         expect {
-          described_class.order_by_param("-commune").load
+          described_class.order_by_param("-name").load
         }.to perform_sql_query(<<~SQL)
           SELECT   "communes".*
           FROM     "communes"
-          ORDER BY REGEXP_REPLACE(UNACCENT("communes"."name"), '(^|[^0-9])([0-9])([^0-9])', '\\10\\2\\3') DESC,
+          ORDER BY REGEXP_REPLACE(UNACCENT("communes"."name"), '(^|[^0-9])([0-9])([^0-9])', '\\10\\2\\3') DESC NULLS FIRST,
                    "communes"."code_insee" DESC
         SQL
       end
 
-      it "orders communes by departement" do
+      it "sorts communes by code" do
+        expect {
+          described_class.order_by_param("code").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "communes".*
+          FROM     "communes"
+          ORDER BY "communes"."code_insee" ASC
+        SQL
+      end
+
+      it "sorts communes by code in reversed order" do
+        expect {
+          described_class.order_by_param("-code").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "communes".*
+          FROM     "communes"
+          ORDER BY "communes"."code_insee" DESC
+        SQL
+      end
+
+      it "sorts communes by departement" do
         expect {
           described_class.order_by_param("departement").load
         }.to perform_sql_query(<<~SQL)
@@ -492,7 +496,7 @@ RSpec.describe Commune do
         SQL
       end
 
-      it "orders communes by departement in descendant order" do
+      it "sorts communes by departement in reversed order" do
         expect {
           described_class.order_by_param("-departement").load
         }.to perform_sql_query(<<~SQL)
@@ -503,33 +507,33 @@ RSpec.describe Commune do
         SQL
       end
 
-      it "orders communes by EPCI" do
+      it "sorts communes by EPCI" do
         expect {
           described_class.order_by_param("epci").load
         }.to perform_sql_query(<<~SQL)
           SELECT          "communes".*
           FROM            "communes"
           LEFT OUTER JOIN "epcis" ON "epcis"."siren" = "communes"."siren_epci"
-          ORDER BY        UNACCENT("epcis"."name") ASC,
+          ORDER BY        UNACCENT("epcis"."name") ASC NULLS LAST,
                           "communes"."code_insee" ASC
         SQL
       end
 
-      it "orders communes by EPCI in descendant order" do
+      it "sorts communes by EPCI in reversed order" do
         expect {
           described_class.order_by_param("-epci").load
         }.to perform_sql_query(<<~SQL)
           SELECT          "communes".*
           FROM            "communes"
           LEFT OUTER JOIN "epcis" ON "epcis"."siren" = "communes"."siren_epci"
-          ORDER BY        UNACCENT("epcis"."name") DESC,
+          ORDER BY        UNACCENT("epcis"."name") DESC NULLS FIRST,
                           "communes"."code_insee" DESC
         SQL
       end
     end
 
     describe ".order_by_score" do
-      it "orders communes by search score" do
+      it "sorts communes by search score" do
         expect {
           described_class.order_by_score("Hello").load
         }.to perform_sql_query(<<~SQL)
@@ -537,6 +541,137 @@ RSpec.describe Commune do
           FROM     "communes"
           ORDER BY ts_rank_cd(to_tsvector('french', "communes"."name"), to_tsquery('french', 'Hello')) DESC,
                    "communes"."code_insee" ASC
+        SQL
+      end
+    end
+
+    describe ".order_by_name" do
+      it "sorts communes by name without argument" do
+        expect {
+          described_class.order_by_name.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "communes".*
+          FROM     "communes"
+          ORDER BY REGEXP_REPLACE(UNACCENT("communes"."name"), '(^|[^0-9])([0-9])([^0-9])', '\\10\\2\\3') ASC NULLS LAST
+        SQL
+      end
+
+      it "sorts communes by name in ascending order" do
+        expect {
+          described_class.order_by_name(:asc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "communes".*
+          FROM     "communes"
+          ORDER BY REGEXP_REPLACE(UNACCENT("communes"."name"), '(^|[^0-9])([0-9])([^0-9])', '\\10\\2\\3') ASC NULLS LAST
+        SQL
+      end
+
+      it "sorts communes by name in descending order" do
+        expect {
+          described_class.order_by_name(:desc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "communes".*
+          FROM     "communes"
+          ORDER BY REGEXP_REPLACE(UNACCENT("communes"."name"), '(^|[^0-9])([0-9])([^0-9])', '\\10\\2\\3') DESC NULLS FIRST
+        SQL
+      end
+    end
+
+    describe ".order_by_code" do
+      it "sorts communes by code INSEE without argument" do
+        expect {
+          described_class.order_by_code.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "communes".*
+          FROM     "communes"
+          ORDER BY "communes"."code_insee" ASC
+        SQL
+      end
+
+      it "sorts communes by code INSEE in ascending order" do
+        expect {
+          described_class.order_by_code(:asc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "communes".*
+          FROM     "communes"
+          ORDER BY "communes"."code_insee" ASC
+        SQL
+      end
+
+      it "sorts communes by code INSEE in descending order" do
+        expect {
+          described_class.order_by_code(:desc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "communes".*
+          FROM     "communes"
+          ORDER BY "communes"."code_insee" DESC
+        SQL
+      end
+    end
+
+    describe ".order_by_departement" do
+      it "sorts communes by departement's code without argument" do
+        expect {
+          described_class.order_by_departement.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "communes".*
+          FROM     "communes"
+          ORDER BY "communes"."code_departement" ASC
+        SQL
+      end
+
+      it "sorts communes by departement's code in ascending order" do
+        expect {
+          described_class.order_by_departement(:asc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "communes".*
+          FROM     "communes"
+          ORDER BY "communes"."code_departement" ASC
+        SQL
+      end
+
+      it "sorts communes by departement's code in descending order" do
+        expect {
+          described_class.order_by_departement(:desc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "communes".*
+          FROM     "communes"
+          ORDER BY "communes"."code_departement" DESC
+        SQL
+      end
+    end
+
+    describe ".order_by_epci" do
+      it "sorts communes by EPCI's name without argument" do
+        expect {
+          described_class.order_by_epci.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT          "communes".*
+          FROM            "communes"
+          LEFT OUTER JOIN "epcis" ON "epcis"."siren" = "communes"."siren_epci"
+          ORDER BY        UNACCENT("epcis"."name") ASC NULLS LAST
+        SQL
+      end
+
+      it "sorts communes by EPCI's name in ascending order" do
+        expect {
+          described_class.order_by_epci(:asc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT          "communes".*
+          FROM            "communes"
+          LEFT OUTER JOIN "epcis" ON "epcis"."siren" = "communes"."siren_epci"
+          ORDER BY        UNACCENT("epcis"."name") ASC NULLS LAST
+        SQL
+      end
+
+      it "sorts communes by EPCI's name in descending order" do
+        expect {
+          described_class.order_by_epci(:desc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT          "communes".*
+          FROM            "communes"
+          LEFT OUTER JOIN "epcis" ON "epcis"."siren" = "communes"."siren_epci"
+          ORDER BY        UNACCENT("epcis"."name") DESC NULLS FIRST
         SQL
       end
     end

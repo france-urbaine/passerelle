@@ -57,6 +57,11 @@ FactoryBot.define do
       discarded_at { Time.current }
     end
 
+    after :stub do |report|
+      report.generate_sibling_id
+      report.compute_address
+    end
+
     # Report state
     # --------------------------------------------------------------------------
 

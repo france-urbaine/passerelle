@@ -54,9 +54,9 @@ RSpec.describe Departement do
     end
   end
 
-  # Scopes
+  # Scopes: searches
   # ----------------------------------------------------------------------------
-  describe "scopes" do
+  describe "search scopes" do
     describe ".search" do
       it "searches for departements with all criteria" do
         expect {
@@ -119,11 +119,37 @@ RSpec.describe Departement do
         SQL
       end
     end
+  end
 
+  # Scopes: orders
+  # ----------------------------------------------------------------------------
+  describe "order scopes" do
     describe ".order_by_param" do
-      it "orders departements by code" do
+      it "sorts departements by name" do
         expect {
-          described_class.order_by_param("departement").load
+          described_class.order_by_param("name").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "departements".*
+          FROM     "departements"
+          ORDER BY UNACCENT("departements"."name") ASC NULLS LAST,
+                   "departements"."code_departement" ASC
+        SQL
+      end
+
+      it "sorts departements by name in reversed order" do
+        expect {
+          described_class.order_by_param("-name").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "departements".*
+          FROM     "departements"
+          ORDER BY UNACCENT("departements"."name") DESC NULLS FIRST,
+                   "departements"."code_departement" DESC
+        SQL
+      end
+
+      it "sorts departements by code" do
+        expect {
+          described_class.order_by_param("code").load
         }.to perform_sql_query(<<~SQL)
           SELECT   "departements".*
           FROM     "departements"
@@ -131,9 +157,9 @@ RSpec.describe Departement do
         SQL
       end
 
-      it "orders departements by code in descendant order" do
+      it "sorts departements by code in reversed order" do
         expect {
-          described_class.order_by_param("-departement").load
+          described_class.order_by_param("-code").load
         }.to perform_sql_query(<<~SQL)
           SELECT   "departements".*
           FROM     "departements"
@@ -141,7 +167,7 @@ RSpec.describe Departement do
         SQL
       end
 
-      it "orders departements by region" do
+      it "sorts departements by region" do
         expect {
           described_class.order_by_param("region").load
         }.to perform_sql_query(<<~SQL)
@@ -151,7 +177,7 @@ RSpec.describe Departement do
         SQL
       end
 
-      it "orders departements by region in descendant order" do
+      it "sorts departements by region in reversed order" do
         expect {
           described_class.order_by_param("-region").load
         }.to perform_sql_query(<<~SQL)
@@ -163,7 +189,7 @@ RSpec.describe Departement do
     end
 
     describe ".order_by_score" do
-      it "orders departements by search score" do
+      it "sorts departements by search score" do
         expect {
           described_class.order_by_score("Hello").load
         }.to perform_sql_query(<<~SQL)
@@ -171,6 +197,102 @@ RSpec.describe Departement do
           FROM     "departements"
           ORDER BY ts_rank_cd(to_tsvector('french', "departements"."name"), to_tsquery('french', 'Hello')) DESC,
                    "departements"."code_departement" ASC
+        SQL
+      end
+    end
+
+    describe ".order_by_name" do
+      it "sorts departements by name without argument" do
+        expect {
+          described_class.order_by_name.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "departements".*
+          FROM     "departements"
+          ORDER BY UNACCENT("departements"."name") ASC NULLS LAST
+        SQL
+      end
+
+      it "sorts departements by name in ascending order" do
+        expect {
+          described_class.order_by_name(:asc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "departements".*
+          FROM     "departements"
+          ORDER BY UNACCENT("departements"."name") ASC NULLS LAST
+        SQL
+      end
+
+      it "sorts departements by name in descending order" do
+        expect {
+          described_class.order_by_name(:desc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "departements".*
+          FROM     "departements"
+          ORDER BY UNACCENT("departements"."name") DESC NULLS FIRST
+        SQL
+      end
+    end
+
+    describe ".order_by_code" do
+      it "sorts departements by code without argument" do
+        expect {
+          described_class.order_by_code.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "departements".*
+          FROM     "departements"
+          ORDER BY "departements"."code_departement" ASC
+        SQL
+      end
+
+      it "sorts departements by code in ascending order" do
+        expect {
+          described_class.order_by_code(:asc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "departements".*
+          FROM     "departements"
+          ORDER BY "departements"."code_departement" ASC
+        SQL
+      end
+
+      it "sorts departements by code in descending order" do
+        expect {
+          described_class.order_by_code(:desc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "departements".*
+          FROM     "departements"
+          ORDER BY "departements"."code_departement" DESC
+        SQL
+      end
+    end
+
+    describe ".order_by_region" do
+      it "sorts departements by region's code without argument" do
+        expect {
+          described_class.order_by_region.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "departements".*
+          FROM     "departements"
+          ORDER BY "departements"."code_region" ASC
+        SQL
+      end
+
+      it "sorts departements by region's code in ascending order" do
+        expect {
+          described_class.order_by_region(:asc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "departements".*
+          FROM     "departements"
+          ORDER BY "departements"."code_region" ASC
+        SQL
+      end
+
+      it "sorts departements by region's code in descending order" do
+        expect {
+          described_class.order_by_region(:desc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "departements".*
+          FROM     "departements"
+          ORDER BY "departements"."code_region" DESC
         SQL
       end
     end

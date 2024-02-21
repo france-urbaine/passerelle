@@ -135,8 +135,7 @@ end
 
 def brakeman
   log "Analyzing code for security vulnerabilities"
-  log "Output will be in tmp/brakeman.html, which can be opened in your browser."
-  system! "bundle exec brakeman -q -o tmp/brakeman.html"
+  system! "bundle exec brakeman --color -o /dev/stdout -o tmp/brakeman.html"
 end
 
 def audit

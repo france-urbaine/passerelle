@@ -50,11 +50,6 @@
     &--current {
       transform: rotate(180deg);
     }
-
-    &--current:hover,
-    &--current:focus {
-      transform: rotate(0deg);
-    }
   }
 
   .datatable__row-actions {

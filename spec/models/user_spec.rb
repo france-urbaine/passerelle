@@ -56,46 +56,234 @@ RSpec.describe User do
   # Scopes
   # ----------------------------------------------------------------------------
   describe "scopes" do
+    describe ".owned_by" do
+      pending "TODO"
+    end
+  end
+
+  # Scopes: orders
+  # ----------------------------------------------------------------------------
+  describe "search scopes" do
     describe ".search" do
-      it do
+      it "searches for users whose names match a string" do
         expect {
           described_class.search("Hello").load
         }.to perform_sql_query(<<~SQL.squish)
-          SELECT "users".*
-          FROM   "users"
-          WHERE (LOWER(UNACCENT("users"."last_name")) LIKE LOWER(UNACCENT('%Hello%'))
-            OR LOWER(UNACCENT("users"."first_name")) LIKE LOWER(UNACCENT('%Hello%')))
+          SELECT  "users".*
+          FROM    "users"
+          WHERE   (
+                        LOWER(UNACCENT("users"."last_name")) LIKE LOWER(UNACCENT('%Hello%'))
+                    OR  LOWER(UNACCENT("users"."first_name")) LIKE LOWER(UNACCENT('%Hello%'))
+                  )
         SQL
       end
 
-      it do
+      it "searches for users whose names match a string with multiple words" do
         expect {
           described_class.search("Louis Funes").load
         }.to perform_sql_query(<<~SQL.squish)
-          SELECT "users".*
-          FROM   "users"
-          WHERE (LOWER(UNACCENT(CONCAT("users"."last_name", ' ', "users"."first_name"))) LIKE LOWER(UNACCENT('%Louis% %Funes%'))
-            OR LOWER(UNACCENT(CONCAT("users"."first_name", ' ', "users"."last_name"))) LIKE LOWER(UNACCENT('%Louis% %Funes%')))
+          SELECT  "users".*
+          FROM    "users"
+          WHERE   (
+                        LOWER(UNACCENT(CONCAT("users"."last_name", ' ', "users"."first_name"))) LIKE LOWER(UNACCENT('%Louis% %Funes%'))
+                    OR  LOWER(UNACCENT(CONCAT("users"."first_name", ' ', "users"."last_name"))) LIKE LOWER(UNACCENT('%Louis% %Funes%'))
+                  )
         SQL
       end
 
-      it do
+      it "searches for users whose emails match an email" do
         expect {
           described_class.search("ddfip-64@finances.gouv.fr").load
         }.to perform_sql_query(<<~SQL.squish)
-          SELECT "users".*
-          FROM   "users"
-          WHERE ("users"."email" = 'ddfip-64@finances.gouv.fr' OR "users"."unconfirmed_email" = 'ddfip-64@finances.gouv.fr')
+          SELECT  "users".*
+          FROM    "users"
+          WHERE   (
+                       "users"."email" = 'ddfip-64@finances.gouv.fr'
+                    OR "users"."unconfirmed_email" = 'ddfip-64@finances.gouv.fr'
+                  )
         SQL
       end
 
-      it do
+      it "searches for users whose emails match a domain" do
         expect {
           described_class.search("@finances.gouv.fr").load
         }.to perform_sql_query(<<~SQL.squish)
-          SELECT "users".*
-          FROM   "users"
-          WHERE ("users"."email" LIKE '%@finances.gouv.fr' OR "users"."unconfirmed_email" LIKE '%@finances.gouv.fr')
+          SELECT  "users".*
+          FROM    "users"
+          WHERE   (
+                        "users"."email" LIKE '%@finances.gouv.fr'
+                    OR  "users"."unconfirmed_email" LIKE '%@finances.gouv.fr'
+                  )
+        SQL
+      end
+
+      it "searches for users by matching a name" do
+        expect {
+          described_class.search(name: "Hello").load
+        }.to perform_sql_query(<<~SQL.squish)
+          SELECT  "users".*
+          FROM    "users"
+          WHERE   (
+                        LOWER(UNACCENT("users"."last_name")) LIKE LOWER(UNACCENT('%Hello%'))
+                    OR  LOWER(UNACCENT("users"."first_name")) LIKE LOWER(UNACCENT('%Hello%'))
+                  )
+        SQL
+      end
+
+      it "searches for users by matching a last name" do
+        expect {
+          described_class.search(last_name: "Hello").load
+        }.to perform_sql_query(<<~SQL.squish)
+          SELECT  "users".*
+          FROM    "users"
+          WHERE   (LOWER(UNACCENT("users"."last_name")) LIKE LOWER(UNACCENT('%Hello%')))
+        SQL
+      end
+    end
+  end
+
+  # Scopes: orders
+  # ----------------------------------------------------------------------------
+  describe "order scopes" do
+    describe ".order_by_param" do
+      it "sorts users by name" do
+        expect {
+          described_class.order_by_param("name").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "users".*
+          FROM     "users"
+          ORDER BY UNACCENT("users"."name") ASC NULLS LAST,
+                   "users"."created_at" ASC
+        SQL
+      end
+
+      it "sorts users by name in reversed order" do
+        expect {
+          described_class.order_by_param("-name").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT    "users".*
+          FROM      "users"
+          ORDER BY  UNACCENT("users"."name") DESC NULLS FIRST,
+                    "users"."created_at" DESC
+        SQL
+      end
+
+      it "sorts users by organisation" do
+        expect {
+          described_class.order_by_param("organisation").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT    "users".*
+          FROM      "users"
+          LEFT JOIN "publishers"     ON "users"."organization_type" = 'Publisher'    AND "users"."organization_id" = "publishers"."id"
+          LEFT JOIN "collectivities" ON "users"."organization_type" = 'Collectivity' AND "users"."organization_id" = "collectivities"."id"
+          LEFT JOIN "ddfips"         ON "users"."organization_type" = 'DDFIP'        AND "users"."organization_id" = "ddfips"."id"
+          LEFT JOIN "dgfips"         ON "users"."organization_type" = 'DGFIP'        AND "users"."organization_id" = "dgfips"."id"
+          ORDER BY  UNACCENT(COALESCE("publishers"."name", "collectivities"."name", "ddfips"."name", "dgfips"."name")) ASC NULLS LAST,
+                    "users"."created_at" ASC
+        SQL
+      end
+
+      it "sorts users by organisation in reversed order" do
+        expect {
+          described_class.order_by_param("-organisation").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT    "users".*
+          FROM      "users"
+          LEFT JOIN "publishers"     ON "users"."organization_type" = 'Publisher'    AND "users"."organization_id" = "publishers"."id"
+          LEFT JOIN "collectivities" ON "users"."organization_type" = 'Collectivity' AND "users"."organization_id" = "collectivities"."id"
+          LEFT JOIN "ddfips"         ON "users"."organization_type" = 'DDFIP'        AND "users"."organization_id" = "ddfips"."id"
+          LEFT JOIN "dgfips"         ON "users"."organization_type" = 'DGFIP'        AND "users"."organization_id" = "dgfips"."id"
+          ORDER BY  UNACCENT(COALESCE("publishers"."name", "collectivities"."name", "ddfips"."name", "dgfips"."name")) DESC NULLS FIRST,
+                    "users"."created_at" DESC
+        SQL
+      end
+    end
+
+    describe ".order_by_score" do
+      it "sorts users by search score" do
+        expect {
+          described_class.order_by_score("Hello").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT    "users".*
+          FROM      "users"
+          ORDER BY  ts_rank_cd(to_tsvector('french', "users"."name"), to_tsquery('french', 'Hello')) DESC,
+                    "users"."created_at" ASC
+        SQL
+      end
+    end
+
+    describe ".order_by_name" do
+      it "sorts users by name without argument" do
+        expect {
+          described_class.order_by_name.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT    "users".*
+          FROM      "users"
+          ORDER BY  UNACCENT("users"."name") ASC NULLS LAST
+        SQL
+      end
+
+      it "sorts users by name in ascending order" do
+        expect {
+          described_class.order_by_name(:asc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT    "users".*
+          FROM      "users"
+          ORDER BY  UNACCENT("users"."name") ASC NULLS LAST
+        SQL
+      end
+
+      it "sorts users by name in descending order" do
+        expect {
+          described_class.order_by_name(:desc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT    "users".*
+          FROM      "users"
+          ORDER BY  UNACCENT("users"."name") DESC NULLS FIRST
+        SQL
+      end
+    end
+
+    describe ".order_by_organization" do
+      it "sorts users by organization's name without argument" do
+        expect {
+          described_class.order_by_organization.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT    "users".*
+          FROM      "users"
+          LEFT JOIN "publishers"     ON "users"."organization_type" = 'Publisher'    AND "users"."organization_id" = "publishers"."id"
+          LEFT JOIN "collectivities" ON "users"."organization_type" = 'Collectivity' AND "users"."organization_id" = "collectivities"."id"
+          LEFT JOIN "ddfips"         ON "users"."organization_type" = 'DDFIP'        AND "users"."organization_id" = "ddfips"."id"
+          LEFT JOIN "dgfips"         ON "users"."organization_type" = 'DGFIP'        AND "users"."organization_id" = "dgfips"."id"
+          ORDER BY  UNACCENT(COALESCE("publishers"."name", "collectivities"."name", "ddfips"."name", "dgfips"."name")) ASC NULLS LAST
+        SQL
+      end
+
+      it "sorts users by organization's name in ascending order" do
+        expect {
+          described_class.order_by_organization(:asc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT    "users".*
+          FROM      "users"
+          LEFT JOIN "publishers"     ON "users"."organization_type" = 'Publisher'    AND "users"."organization_id" = "publishers"."id"
+          LEFT JOIN "collectivities" ON "users"."organization_type" = 'Collectivity' AND "users"."organization_id" = "collectivities"."id"
+          LEFT JOIN "ddfips"         ON "users"."organization_type" = 'DDFIP'        AND "users"."organization_id" = "ddfips"."id"
+          LEFT JOIN "dgfips"         ON "users"."organization_type" = 'DGFIP'        AND "users"."organization_id" = "dgfips"."id"
+          ORDER BY  UNACCENT(COALESCE("publishers"."name", "collectivities"."name", "ddfips"."name", "dgfips"."name")) ASC NULLS LAST
+        SQL
+      end
+
+      it "sorts users by organization's name in descending order" do
+        expect {
+          described_class.order_by_organization(:desc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT    "users".*
+          FROM      "users"
+          LEFT JOIN "publishers"     ON "users"."organization_type" = 'Publisher'    AND "users"."organization_id" = "publishers"."id"
+          LEFT JOIN "collectivities" ON "users"."organization_type" = 'Collectivity' AND "users"."organization_id" = "collectivities"."id"
+          LEFT JOIN "ddfips"         ON "users"."organization_type" = 'DDFIP'        AND "users"."organization_id" = "ddfips"."id"
+          LEFT JOIN "dgfips"         ON "users"."organization_type" = 'DGFIP'        AND "users"."organization_id" = "dgfips"."id"
+          ORDER BY  UNACCENT(COALESCE("publishers"."name", "collectivities"."name", "ddfips"."name", "dgfips"."name")) DESC NULLS FIRST
         SQL
       end
     end

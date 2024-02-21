@@ -112,6 +112,10 @@ module Layout
         @sort
       end
 
+      def sort_key
+        @sort.is_a?(String) ? @sort : @key
+      end
+
       def numeric?
         @numeric
       end

@@ -39,6 +39,12 @@ module Passerelle
 
     # Default (and only) locale
     config.i18n.default_locale = :fr
+    config.i18n.available_locales = %i[fr]
+
+    # FIXME: Faker will fail to generate some data when enforcing
+    # locales to the one available.
+    # See https://github.com/faker-ruby/faker/issues/278#issuecomment-519453199
+    config.i18n.enforce_available_locales = false
 
     # We want to be able to use any feature of our database,
     # and the SQL format makes that possible

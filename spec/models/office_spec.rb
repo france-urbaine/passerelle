@@ -72,6 +72,38 @@ RSpec.describe Office do
   # Scopes
   # ----------------------------------------------------------------------------
   describe "scopes" do
+    describe ".covering" do
+      let!(:reports) { create_list(:report, 2) }
+
+      it "returns offices covering specified reports" do
+        expect {
+          described_class.covering(reports).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "offices".*
+          FROM     "offices"
+          INNER JOIN "office_communes" ON "office_communes"."office_id" = "offices"."id"
+          INNER JOIN "communes" ON "communes"."code_insee" = "office_communes"."code_insee"
+          WHERE "communes"."code_insee" IN ('#{reports[0].code_insee}', '#{reports[1].code_insee}')
+        SQL
+      end
+    end
+
+    describe ".with_competence" do
+      it "returns offices with specific competence" do
+        expect {
+          described_class.with_competence("evaluation_local_habitation").load
+        }.to perform_sql_query(<<~SQL.squish)
+          SELECT "offices".*
+          FROM "offices"
+          WHERE ('evaluation_local_habitation' = ANY ("offices"."competences"))
+        SQL
+      end
+    end
+  end
+
+  # Scopes: searches
+  # ----------------------------------------------------------------------------
+  describe "search scopes" do
     describe ".search" do
       it "searches for offices with all criteria" do
         expect {
@@ -132,55 +164,59 @@ RSpec.describe Office do
         SQL
       end
     end
+  end
 
+  # Scopes: orders
+  # ----------------------------------------------------------------------------
+  describe "order scopes" do
     describe ".order_by_param" do
-      it "orders offices by name" do
+      it "sorts offices by name" do
         expect {
           described_class.order_by_param("name").load
         }.to perform_sql_query(<<~SQL)
           SELECT   "offices".*
           FROM     "offices"
-          ORDER BY UNACCENT("offices"."name") ASC,
+          ORDER BY UNACCENT("offices"."name") ASC NULLS LAST,
                    "offices"."created_at" ASC
         SQL
       end
 
-      it "orders offices by name in descendant order" do
+      it "sorts offices by name in reversed order" do
         expect {
           described_class.order_by_param("-name").load
         }.to perform_sql_query(<<~SQL)
           SELECT   "offices".*
           FROM     "offices"
-          ORDER BY UNACCENT("offices"."name") DESC,
+          ORDER BY UNACCENT("offices"."name") DESC NULLS FIRST,
                    "offices"."created_at" DESC
         SQL
       end
 
-      it "orders offices by DDFIP" do
+      it "sorts offices by DDFIP" do
         expect {
           described_class.order_by_param("ddfip").load
         }.to perform_sql_query(<<~SQL)
           SELECT          "offices".*
           FROM            "offices"
           LEFT OUTER JOIN "ddfips" ON "ddfips"."id" = "offices"."ddfip_id"
-          ORDER BY        UNACCENT("ddfips"."name") ASC,
+          ORDER BY        UNACCENT("ddfips"."name") ASC NULLS LAST,
                           "offices"."created_at" ASC
         SQL
       end
 
-      it "orders offices by DDFIP in descendant order" do
+      it "sorts offices by DDFIP in reversed order" do
         expect {
           described_class.order_by_param("-ddfip").load
         }.to perform_sql_query(<<~SQL)
           SELECT          "offices".*
           FROM            "offices"
           LEFT OUTER JOIN "ddfips" ON "ddfips"."id" = "offices"."ddfip_id"
-          ORDER BY        UNACCENT("ddfips"."name") DESC,
+          ORDER BY        UNACCENT("ddfips"."name") DESC NULLS FIRST,
                           "offices"."created_at" DESC
         SQL
       end
 
-      it "orders offices by competences" do
+      it "sorts offices by competences" do
         expect {
           described_class.order_by_param("competences").load
         }.to perform_sql_query(<<~SQL)
@@ -191,7 +227,7 @@ RSpec.describe Office do
         SQL
       end
 
-      it "orders offices by competences in descendant order" do
+      it "sorts offices by competences in reversed order" do
         expect {
           described_class.order_by_param("-competences").load
         }.to perform_sql_query(<<~SQL)
@@ -204,7 +240,7 @@ RSpec.describe Office do
     end
 
     describe ".order_by_score" do
-      it "orders offices by search score" do
+      it "sorts offices by search score" do
         expect {
           described_class.order_by_score("Hello").load
         }.to perform_sql_query(<<~SQL)
@@ -216,30 +252,101 @@ RSpec.describe Office do
       end
     end
 
-    describe ".covering" do
-      let!(:reports) { create_list(:report, 2) }
-
-      it "returns offices covering specified reports" do
+    describe ".order_by_name" do
+      it "sorts offices by name without argument" do
         expect {
-          described_class.covering(reports).load
+          described_class.order_by_name.load
         }.to perform_sql_query(<<~SQL)
           SELECT   "offices".*
           FROM     "offices"
-          INNER JOIN "office_communes" ON "office_communes"."office_id" = "offices"."id"
-          INNER JOIN "communes" ON "communes"."code_insee" = "office_communes"."code_insee"
-          WHERE "communes"."code_insee" IN ('#{reports[0].code_insee}', '#{reports[1].code_insee}')
+          ORDER BY UNACCENT("offices"."name") ASC NULLS LAST
+        SQL
+      end
+
+      it "sorts offices by name in ascending order" do
+        expect {
+          described_class.order_by_name(:asc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "offices".*
+          FROM     "offices"
+          ORDER BY UNACCENT("offices"."name") ASC NULLS LAST
+        SQL
+      end
+
+      it "sorts offices by name in descending order" do
+        expect {
+          described_class.order_by_name(:desc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "offices".*
+          FROM     "offices"
+          ORDER BY UNACCENT("offices"."name") DESC NULLS FIRST
         SQL
       end
     end
 
-    describe ".with_competence" do
-      it "returns offices with specific competence" do
+    describe ".order_by_ddfip" do
+      it "sorts offices by DDFIP's name without argument" do
         expect {
-          described_class.with_competence("evaluation_local_habitation").load
-        }.to perform_sql_query(<<~SQL.squish)
-          SELECT "offices".*
-          FROM "offices"
-          WHERE ('evaluation_local_habitation' = ANY ("offices"."competences"))
+          described_class.order_by_ddfip.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT          "offices".*
+          FROM            "offices"
+          LEFT OUTER JOIN "ddfips" ON "ddfips"."id" = "offices"."ddfip_id"
+          ORDER BY        UNACCENT("ddfips"."name") ASC NULLS LAST
+        SQL
+      end
+
+      it "sorts offices by DDFIP's name in ascending order" do
+        expect {
+          described_class.order_by_ddfip(:asc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT          "offices".*
+          FROM            "offices"
+          LEFT OUTER JOIN "ddfips" ON "ddfips"."id" = "offices"."ddfip_id"
+          ORDER BY        UNACCENT("ddfips"."name") ASC NULLS LAST
+        SQL
+      end
+
+      it "sorts offices by DDFIP's name in descending order" do
+        expect {
+          described_class.order_by_ddfip(:desc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT          "offices".*
+          FROM            "offices"
+          LEFT OUTER JOIN "ddfips" ON "ddfips"."id" = "offices"."ddfip_id"
+          ORDER BY        UNACCENT("ddfips"."name") DESC NULLS FIRST
+        SQL
+      end
+    end
+
+    describe ".order_by_competences" do
+      it "sorts offices by competences without argument" do
+        expect {
+          described_class.order_by_competences.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "offices".*
+          FROM     "offices"
+          ORDER BY "offices"."competences" ASC
+        SQL
+      end
+
+      it "sorts offices by competences in ascending order" do
+        expect {
+          described_class.order_by_competences(:asc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "offices".*
+          FROM     "offices"
+          ORDER BY "offices"."competences" ASC
+        SQL
+      end
+
+      it "sorts offices by competences in descending order" do
+        expect {
+          described_class.order_by_competences(:desc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "offices".*
+          FROM     "offices"
+          ORDER BY "offices"."competences" DESC
         SQL
       end
     end

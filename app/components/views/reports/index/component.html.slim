@@ -13,55 +13,29 @@
             = render "transmissions/transmission_button", transmission: @transmission
 
     - layout.with_section do
-      = render Views::Reports::List::Component.new(@reports, @pagy) do |view|
-        - view.with_column(:reference)
-
+      = render Views::Reports::List::Component.new(@reports, @pagy) do |list|
         - case current_user.organization_type
         - when "Collectivity"
-          - view.with_column(:package)
-          - view.with_column(:form_type)
-          - view.with_column(:anomalies)
-          - view.with_column(:invariant)
-          - view.with_column(:adresse)
-          - view.with_column(:commune)
+          - list.with_column(:package)
+          - list.with_column(:ddfip)
+          - list.with_column(:office)
 
         - when "Publisher"
-          - view.with_column(:package)
-          - view.with_column(:collectivity)
-          - view.with_column(:form_type)
-          - view.with_column(:anomalies)
-          - view.with_column(:invariant)
-          - view.with_column(:adresse)
-          - view.with_column(:commune)
-
-        - when "DDFIP"
-          - if current_user.organization_admin?
-            - view.with_column(:package)
-            - view.with_column(:collectivity)
-            - view.with_column(:office)
-            - view.with_column(:workshop)
-            - view.with_column(:form_type)
-            - view.with_column(:anomalies)
-            - view.with_column(:invariant)
-            - view.with_column(:adresse)
-            - view.with_column(:commune)
-          - else
-            - view.with_column(:collectivity)
-            - view.with_column(:workshop)
-            - view.with_column(:form_type)
-            - view.with_column(:anomalies)
-            - view.with_column(:invariant)
-            - view.with_column(:adresse)
-            - view.with_column(:commune)
+          - list.with_column(:package)
+          - list.with_column(:collectivity)
+          - list.with_column(:transmitted_at)
 
         - when "DGFIP"
-          - view.with_column(:package)
-          - view.with_column(:collectivity)
-          - view.with_column(:form_type)
-          - view.with_column(:anomalies)
-          - view.with_column(:invariant)
-          - view.with_column(:adresse)
-          - view.with_column(:commune)
+          - list.with_column(:collectivity)
+          - list.with_column(:ddfip)
+          - list.with_column(:transmitted_at)
 
-        - view.with_column(:priority)
-        - view.with_column(:status)
+        - when "DDFIP"
+          - list.with_column(:package)
+          - list.with_column(:collectivity)
+
+          - if current_user.organization_admin?
+            - list.with_column(:office)
+            - list.with_column(:transition_dates)
+          - else
+            - list.with_column(:assigned_at)

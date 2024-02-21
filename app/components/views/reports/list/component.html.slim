@@ -22,17 +22,23 @@
       - if allowed_to?(:destroy_all?, Report)
         - selection.with_action "Supprimer", url_for([:remove_all, @parent, :reports]), modal: true
 
-  - datatable.with_column(:status, compact: true)                       { "Etat" }                if columns.include?(:status)
+  - datatable.with_column(:state,     sort: !@dashboard, compact: true) { "État" }                if columns.include?(:state)
   - datatable.with_column(:form_type, sort: !@dashboard)                { "Type de signalement" } if columns.include?(:form_type)
   - datatable.with_column(:invariant, sort: !@dashboard)                { "Invariant" }           if columns.include?(:invariant)
   - datatable.with_column(:adresse,   sort: !@dashboard)                { "Adresse" }             if columns.include?(:adresse)
   - datatable.with_column(:commune,   sort: !@dashboard)                { "Commune" }             if columns.include?(:commune)
-  - datatable.with_column(:anomalies)                                   { "Objet" }               if columns.include?(:anomalies)
+  - datatable.with_column(:anomalies, sort: !@dashboard)                { "Objet" }               if columns.include?(:anomalies)
   - datatable.with_column(:priority,  sort: !@dashboard, compact: true) { "Priorité" }            if columns.include?(:priority)
-  - datatable.with_column(:reference, sort: !@dashboard)                { "Reference" }           if columns.include?(:reference)
-  - datatable.with_column(:package,   sort: !@dashboard)                { "Paquet" }              if columns.include?(:package)
-  - datatable.with_column(:collectivity)                                { "Collectivité" }        if columns.include?(:collectivity)
-  - datatable.with_column(:office)                                      { "Guichet" }             if columns.include?(:office)
+  - datatable.with_column(:reference, sort: !@dashboard)                { "Référence" }           if columns.include?(:reference)
+
+  - datatable.with_column(:package, sort: ("reference" unless @dashboard)) { "Paquet" } if columns.include?(:package)
+
+  - datatable.with_column(:collectivity, sort: !@dashboard) { "Collectivité" } if columns.include?(:collectivity)
+  - datatable.with_column(:ddfip,        sort: !@dashboard) { "DDFIP" }        if columns.include?(:ddfip)
+  - datatable.with_column(:office,       sort: !@dashboard) { "Guichet" }      if columns.include?(:office)
+
+  - date_columns.each do |column|
+    - datatable.with_column(column, sort: !@dashboard, numeric: true) { date_label(column) }
 
   - datatable.with_empty_message do
     - if @dashboard
@@ -67,7 +73,7 @@
       - if allowed_to?(:confirm?, report)
         - row.with_action "Transmettre la réponse", edit_report_confirmation_path(report), icon: "paper-airplane", modal: true
 
-    - row.with_column(:status) do
+    - row.with_column(:state) do
       .space-x-4
         = report_status_badge(report)
 
@@ -82,10 +88,7 @@
       = report.situation_invariant
 
     - row.with_column(:adresse) do
-      - if report.situation_adresse?
-        = report.situation_adresse
-      - else
-        = [report.situation_numero_voie, report.situation_indice_repetition, report.situation_libelle_voie].join(" ").squish
+      = report.computed_address
 
     - row.with_column(:commune) do
       = report.commune&.name
@@ -105,6 +108,24 @@
     - row.with_column(:collectivity) do
       = authorized_link_to report.collectivity
 
+    - row.with_column(:ddfip) do
+      = authorized_link_to report.ddfip
+
     - row.with_column(:office) do
       - if report.assigned?
         = authorized_link_to report.office
+
+    - row.with_column(:transmitted_at) do
+      = helpers.display_date(report.transmitted_at, format: "%d-%m-%Y")
+
+    - row.with_column(:accepted_at) do
+      = helpers.display_date(report.accepted_at, format: "%d-%m-%Y")
+
+    - row.with_column(:assigned_at) do
+      = helpers.display_date(report.assigned_at, format: "%d-%m-%Y")
+
+    - row.with_column(:resolved_at) do
+      = helpers.display_date(report.resolved_at, format: "%d-%m-%Y")
+
+    - row.with_column(:returned_at) do
+      = helpers.display_date(report.returned_at, format: "%d-%m-%Y")

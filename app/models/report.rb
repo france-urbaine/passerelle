@@ -122,6 +122,8 @@
 #  assigned_at                                    :datetime
 #  resolved_at                                    :datetime
 #  returned_at                                    :datetime
+#  computed_address                               :string
+#  computed_address_sort_key                      :string
 #
 # Indexes
 #
@@ -196,19 +198,6 @@ class Report < ApplicationRecord
     occupation_local_habitation
     occupation_local_professionnel
   ].freeze
-
-  SORTED_FORM_TYPES_BY_LABEL = %i[fr].to_h { |locale|
-    unless I18n.exists?("enum.report_form_type", locale: locale)
-      raise "missing form_type enum values for locale #{locale}"
-    end
-
-    [
-      locale,
-      I18n.t("enum.report_form_type")
-        .sort_by { |k, _| k }
-        .map     { |(form_type, _)| form_type.to_s }
-    ]
-  }.freeze
 
   ANOMALIES = %w[
     consistance
@@ -336,15 +325,54 @@ class Report < ApplicationRecord
   # Callbacks
   # ----------------------------------------------------------------------------
   before_save :generate_sibling_id
+  before_save :compute_address
 
   def generate_sibling_id
     self.sibling_id = ("#{code_insee}#{situation_invariant}" if code_insee? && situation_invariant?)
   end
 
+  # https://rubular.com/r/bBZc1SrJnkYHFC
+  SITUATION_ADRESSE_PARSER = /\A(?:(?<number>[0-9]+)(?: (?<indice>bis|ter|quat(?:er)?|[a-z]))?(?: |, ))?(?<street>.+)\Z/
+
+  def compute_address
+    if situation_libelle_voie?
+      self.computed_address = [situation_numero_voie, situation_indice_repetition, situation_libelle_voie]
+        .join(" ").squish
+
+      self.computed_address_sort_key = [situation_libelle_voie, situation_numero_voie, situation_indice_repetition]
+        .filter_map(&:presence)
+        .join(" / ").squish
+        .then { |s| I18n.transliterate(s).downcase }
+
+    elsif situation_adresse?
+      self.computed_address          = situation_adresse.squish
+      self.computed_address_sort_key = I18n.transliterate(computed_address).downcase
+
+      computed_address_sort_key.match(SITUATION_ADRESSE_PARSER).try do |match|
+        self.computed_address_sort_key = match
+          .values_at(:street, :number, :indice)
+          .filter_map(&:presence).join(" / ").squish
+      end
+    else
+      self.computed_address = nil
+      self.computed_address_sort_key = nil
+    end
+
+    self
+  end
+
   # Scopes
   # ----------------------------------------------------------------------------
-  scope :transmitted_to_ddfip, ->(ddfip) { transmitted.where(ddfip: ddfip) }
-  scope :assigned_to_office, ->(office) { assigned.where(office: office) }
+  scope :in_active_transmission,     -> { packing.where.not(transmission_id: nil) }
+  scope :not_in_active_transmission, -> { where(transmission_id: nil) }
+
+  scope :in_transmission,     ->(transmission) { where(transmission_id: transmission.id) }
+  scope :not_in_transmission, ->(transmission) { where.not(transmission_id: transmission.id).or(where(transmission_id: nil)) }
+
+  scope :transmitted_or_made_through_web_ui, -> { transmitted.or(where(publisher_id: nil)) }
+
+  scope :transmitted_to_ddfip, ->(ddfip)  { transmitted.where(ddfip: ddfip) }
+  scope :assigned_to_office,   ->(office) { assigned.where(office: office) }
 
   scope :covered_by_ddfip, lambda { |ddfip|
     if ddfip.is_a?(ActiveRecord::Relation)
@@ -368,69 +396,73 @@ class Report < ApplicationRecord
     end
   }
 
-  scope :transmitted_or_made_through_web_ui, -> { transmitted.or(where(publisher_id: nil)) }
-
+  # Scopes: searches
+  # ----------------------------------------------------------------------------
   scope :search, lambda { |input|
     advanced_search(
       input,
-      reference:         ->(value) { where(reference: value) },
-      invariant:         ->(value) { where(situation_invariant: value) },
-      package_reference: ->(value) { where(package_id: Package.where(reference: value)) },
-      form_type:         ->(value) { match_enum(:form_type, value, :report_form_type) },
-      commune_name:      ->(value) { left_joins(:commune).merge(Commune.match(:name, value)) },
-      address:            lambda { |value|
-        stripped_sql_address_exp = <<-SQL.squish
-          LOWER(
-            UNACCENT(
-              REPLACE(
-                CONCAT(
-                  situation_adresse,
-                  ' ',
-                  situation_numero_voie,
-                  ' ',
-                  situation_indice_repetition,
-                  ' ',
-                  situation_libelle_voie
-                ),
-                '  ',
-                ' '
-              )
-            )
-          )
-        SQL
-        where(
-          "#{sanitize_sql(Arel.sql(stripped_sql_address_exp))} LIKE LOWER(UNACCENT(?))",
-          "%#{sanitize_sql_like(value).squish}%"
-        )
+      default: %i[
+        reference
+        invariant
+        package_reference
+        form_type
+        commune_name
+        address
+      ],
+      scopes: {
+        state:             ->(value) { search_by_state(value) },
+        reference:         ->(value) { where(reference: value) },
+        invariant:         ->(value) { where(situation_invariant: value) },
+        package_reference: ->(value) { where(package_id: Package.where(reference: value)) },
+        form_type:         ->(value) { search_by_form_type(value) },
+        commune_name:      ->(value) { search_by_commune(value) },
+        address:           ->(value) { search_by_address(value) }
       }
     )
   }
 
+  scope :search_by_state, lambda { |value|
+    values = Array.wrap(value) & States::ReportStates::STATES
+    if values.any?
+      where(state: values)
+    else
+      none
+    end
+  }
+
+  scope :search_by_commune, lambda { |value|
+    left_joins(:commune).merge(Commune.search(name: value))
+  }
+
+  scope :search_by_form_type, lambda { |value|
+    match_enum(:form_type, value, i81n_path: "enum.report_form_type")
+  }
+
+  scope :search_by_address, lambda { |value|
+    match(:computed_address, value.squish)
+  }
+
+  # Scopes: orders
+  # ----------------------------------------------------------------------------
   scope :order_by_param, lambda { |input|
     advanced_order(
       input,
-      form_type: lambda { |direction|
-        in_order_of(
-          :form_type,
-          direction == :asc ? SORTED_FORM_TYPES_BY_LABEL[I18n.locale] : SORTED_FORM_TYPES_BY_LABEL[I18n.locale].reverse
-        )
-      },
-      adresse:   lambda { |direction|
-        order(
-          Arel.sql(
-            "CONCAT(situation_libelle_voie, situation_numero_voie, situation_indice_repetition, situation_adresse)"
-          ) => direction
-        )
-      },
-      invariant: ->(direction) { order(situation_invariant: direction) },
-      commune:   lambda { |direction|
-        left_joins(:commune).merge(
-          Commune.unaccent_order(:name, direction, nulls: true)
-        )
-      },
-      priority:  ->(direction) { order(priority: direction) },
-      package:   ->(direction) { order(reference: direction) },
-      reference: ->(direction) { order(reference: direction) }
+      invariant:      ->(direction) { order(situation_invariant: direction) },
+      priority:       ->(direction) { order(priority: direction) },
+      reference:      ->(direction) { order(reference: direction) },
+      state:          ->(direction) { order_by_state(direction) },
+      form_type:      ->(direction) { order_by_form_type(direction) },
+      anomalies:      ->(direction) { order_by_anomalies(direction) },
+      adresse:        ->(direction) { order_by_address(direction) },
+      commune:        ->(direction) { order_by_commune(direction) },
+      collectivity:   ->(direction) { order_by_collectivity(direction) },
+      ddfip:          ->(direction) { order_by_ddfip(direction) },
+      office:         ->(direction) { order_by_office(direction) },
+      accepted_at:    ->(direction) { order(accepted_at: direction) },
+      transmitted_at: ->(direction) { order(transmitted_at: direction) },
+      assigned_at:    ->(direction) { order(assigned_at: direction) },
+      resolved_at:    ->(direction) { order(resolved_at: direction) },
+      returned_at:    ->(direction) { order(returned_at: direction) }
     )
   }
 
@@ -439,12 +471,61 @@ class Report < ApplicationRecord
     self
   }
 
-  scope :in_active_transmission,     -> { packing.where.not(transmission_id: nil) }
-  scope :not_in_active_transmission, -> { where(transmission_id: nil) }
+  scope :order_by_state, ->(direction = :asc) { order(state: direction) }
 
-  scope :in_transmission,        ->(transmission) { where(transmission_id: transmission.id) }
-  scope :not_in_transmission,    lambda { |transmission|
-    where.not(transmission_id: transmission.id).or(where(transmission_id: nil))
+  SORTED_FORM_TYPES_BY_LABEL = Rails.application.config.i18n.available_locales.index_with { |locale|
+    I18n.t("enum.report_form_type", raise: true, locale:).to_a
+      .sort_by { |(_, value)| I18n.transliterate(value) }
+      .map     { |(key, _)| key.to_s }
+  }.freeze
+
+  scope :order_by_form_type, lambda { |direction = :asc|
+    values = SORTED_FORM_TYPES_BY_LABEL[I18n.locale]
+    values = values.reverse if direction.to_s == "desc"
+
+    in_order_of(:form_type, values)
+  }
+
+  SORTED_ANOMALIES_BY_LABEL = Rails.application.config.i18n.available_locales.index_with { |locale|
+    I18n.t("enum.anomalies", raise: true, locale:).to_a
+      .select  { |(_, value)| value.is_a?(String) }
+      .sort_by { |(_, value)| I18n.transliterate(value) }
+      .map     { |(key, _)| key.to_s }
+  }.freeze
+
+  scope :order_by_anomalies, lambda { |direction = :asc|
+    desc   = direction.to_s == "desc"
+    values = SORTED_ANOMALIES_BY_LABEL[I18n.locale]
+    values = values.reverse if direction.to_s == "desc"
+
+    sql = %w[CASE]
+    sql += Array.new(values.size) { |i| %(WHEN "anomalies"[1] = ? THEN #{i + 1}) }
+    sql << " ELSE #{desc ? 0 : values.size + 1}"
+    sql << " END"
+
+    sql = sanitize_sql([sql.join(" "), *values])
+
+    order(Arel.sql(sql) => :asc)
+  }
+
+  scope :order_by_address, lambda { |direction = :asc|
+    order(computed_address_sort_key: direction)
+  }
+
+  scope :order_by_commune, lambda { |direction = :asc|
+    left_joins(:commune).merge(Commune.order_by_name(direction))
+  }
+
+  scope :order_by_collectivity, lambda { |direction = :asc|
+    left_joins(:collectivity).merge(Collectivity.order_by_name(direction))
+  }
+
+  scope :order_by_ddfip, lambda { |direction = :asc|
+    left_joins(:ddfip).merge(DDFIP.order_by_name(direction))
+  }
+
+  scope :order_by_office, lambda { |direction = :asc|
+    left_joins(:office).merge(Office.order_by_name(direction))
   }
 
   # Predicates

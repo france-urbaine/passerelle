@@ -37,8 +37,12 @@
                 scope=(column.colgroup? ? "colgroup" : "col")
                 colspan=(column.colspan if column.colgroup?)
               )
-                = column
-                = render OrderColumn.new(column.key, turbo_frame:) if column.sort?
+                - if column.numeric?
+                  = render OrderColumn.new(column.sort_key, turbo_frame:) if column.sort?
+                  = column
+                - else
+                  = column
+                  = render OrderColumn.new(column.sort_key, turbo_frame:) if column.sort?
 
         tbody
           - rows.each do |row|

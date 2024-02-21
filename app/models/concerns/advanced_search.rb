@@ -4,12 +4,15 @@ module AdvancedSearch
   extend ActiveSupport::Concern
 
   class_methods do
-    def advanced_search(input, scopes)
+    def advanced_search(input, default: nil, matches: {}, scopes: {})
       return all if input.blank?
 
       case input
       when String
-        advanced_search_with_input_string(input, scopes)
+        _, keys = matches.find { |(regexp, _)| regexp.match?(input) }
+        keys ||= default || scopes.keys
+
+        advanced_search_with_input_string(input, scopes.slice(*keys))
       when Hash, ActionController::Parameters
         advanced_search_with_input_hash(input, scopes)
       else
@@ -28,16 +31,19 @@ module AdvancedSearch
       )
     end
 
-    def match_enum(attribute, value, i18n_key)
-      raise "unknown enum I18n key #{i18n_key} (#{I18n.locale})" unless I18n.exists?(i18n_key, scope: "enum")
+    def match_enum(attribute, value, i81n_path:)
+      enum_keys = I18n.t(i81n_path, raise: true)
+      value     = I18n.transliterate(value).downcase.squish
 
-      matchable_value = /#{I18n.transliterate(value).downcase.squish}/
+      enum_keys = enum_keys
+        .select { |_, label| I18n.transliterate(label).downcase.include?(value) }
+        .keys
 
-      eligible_enum_keys = I18n.t(i18n_key, scope: "enum").select { |_, enum_label|
-        I18n.transliterate(enum_label).downcase.match?(matchable_value)
-      }.keys
-
-      where(attribute => eligible_enum_keys)
+      if enum_keys.any?
+        where(attribute => enum_keys)
+      else
+        none
+      end
     end
 
     private
@@ -57,7 +63,9 @@ module AdvancedSearch
         wheres << relation
       end
 
-      combined = merge(wheres.reduce(:or))
+      return none if wheres.all?(&:null_relation?)
+
+      combined = merge(wheres.reject(&:null_relation?).reduce(:or))
       combined = combined.left_joins(*joins) if joins.any?
       combined
     end

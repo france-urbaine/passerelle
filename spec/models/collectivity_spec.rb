@@ -165,20 +165,24 @@ RSpec.describe Collectivity do
         SQL
       end
     end
+  end
 
+  # Scopes: searches
+  # ----------------------------------------------------------------------------
+  describe "search scopes" do
     describe ".search" do
-      it "searches for collectivities with all criteria" do
+      it "searches for collectivities with all default criteria" do
         expect {
           described_class.search("Hello").load
         }.to perform_sql_query(<<~SQL.squish)
-          SELECT "collectivities".*
-          FROM   "collectivities"
+          SELECT          "collectivities".*
+          FROM            "collectivities"
           LEFT OUTER JOIN "publishers" ON "publishers"."id" = "collectivities"."publisher_id"
-          WHERE (
-                LOWER(UNACCENT("collectivities"."name")) LIKE LOWER(UNACCENT('%Hello%'))
-            OR  "collectivities"."siren" = 'Hello'
-            OR  "publishers"."name" = 'Hello'
-          )
+          WHERE           (
+                                LOWER(UNACCENT("collectivities"."name")) LIKE LOWER(UNACCENT('%Hello%'))
+                            OR  "collectivities"."siren" = 'Hello'
+                            OR  LOWER(UNACCENT("publishers"."name")) LIKE LOWER(UNACCENT('%Hello%'))
+                          )
         SQL
       end
 
@@ -202,14 +206,14 @@ RSpec.describe Collectivity do
         SQL
       end
 
-      it "searches for collectivities by matching publisher name" do
+      it "searches for collectivities by matching publisher's name" do
         expect {
-          described_class.search(publisher_name: "Hello").load
+          described_class.search(publisher: "Hello").load
         }.to perform_sql_query(<<~SQL.squish)
           SELECT          "collectivities".*
           FROM            "collectivities"
           LEFT OUTER JOIN "publishers" ON "publishers"."id" = "collectivities"."publisher_id"
-          WHERE           "publishers"."name" = 'Hello'
+          WHERE           (LOWER(UNACCENT("publishers"."name")) LIKE LOWER(UNACCENT('%Hello%')))
         SQL
       end
     end
@@ -228,31 +232,35 @@ RSpec.describe Collectivity do
         SQL
       end
     end
+  end
 
+  # Scopes: orders
+  # ----------------------------------------------------------------------------
+  describe "order scopes" do
     describe ".order_by_param" do
-      it "orders collectivities by name" do
+      it "sorts collectivities by name" do
         expect {
           described_class.order_by_param("name").load
         }.to perform_sql_query(<<~SQL)
           SELECT   "collectivities".*
           FROM     "collectivities"
-          ORDER BY UNACCENT("collectivities"."name") ASC,
+          ORDER BY UNACCENT("collectivities"."name") ASC NULLS LAST,
                    "collectivities"."created_at" ASC
         SQL
       end
 
-      it "orders collectivities by name in reversed order" do
+      it "sorts collectivities by name in reversed order" do
         expect {
           described_class.order_by_param("-name").load
         }.to perform_sql_query(<<~SQL)
           SELECT   "collectivities".*
           FROM     "collectivities"
-          ORDER BY UNACCENT("collectivities"."name") DESC,
+          ORDER BY UNACCENT("collectivities"."name") DESC NULLS FIRST,
                    "collectivities"."created_at" DESC
         SQL
       end
 
-      it "orders collectivities by SIREN" do
+      it "sorts collectivities by SIREN" do
         expect {
           described_class.order_by_param("siren").load
         }.to perform_sql_query(<<~SQL)
@@ -263,7 +271,7 @@ RSpec.describe Collectivity do
         SQL
       end
 
-      it "orders collectivities by SIREN in reversed order" do
+      it "sorts collectivities by SIREN in reversed order" do
         expect {
           described_class.order_by_param("-siren").load
         }.to perform_sql_query(<<~SQL)
@@ -274,33 +282,33 @@ RSpec.describe Collectivity do
         SQL
       end
 
-      it "orders collectivities by publisher" do
+      it "sorts collectivities by publisher" do
         expect {
           described_class.order_by_param("publisher").load
         }.to perform_sql_query(<<~SQL)
           SELECT          "collectivities".*
           FROM            "collectivities"
           LEFT OUTER JOIN "publishers" ON "publishers"."id" = "collectivities"."publisher_id"
-          ORDER BY        UNACCENT("publishers"."name") ASC NULLS FIRST,
+          ORDER BY        UNACCENT("publishers"."name") ASC NULLS LAST,
                           "collectivities"."created_at" ASC
         SQL
       end
 
-      it "orders collectivities by publisher in reversed order" do
+      it "sorts collectivities by publisher in reversed order" do
         expect {
           described_class.order_by_param("-publisher").load
         }.to perform_sql_query(<<~SQL)
           SELECT          "collectivities".*
           FROM            "collectivities"
           LEFT OUTER JOIN "publishers" ON "publishers"."id" = "collectivities"."publisher_id"
-          ORDER BY        UNACCENT("publishers"."name") DESC NULLS LAST,
+          ORDER BY        UNACCENT("publishers"."name") DESC NULLS FIRST,
                           "collectivities"."created_at" DESC
         SQL
       end
     end
 
     describe ".order_by_score" do
-      it "orders communes by search score" do
+      it "sorts communes by search score" do
         expect {
           described_class.order_by_score("Hello").load
         }.to perform_sql_query(<<~SQL)
@@ -308,6 +316,105 @@ RSpec.describe Collectivity do
           FROM     "collectivities"
           ORDER BY ts_rank_cd(to_tsvector('french', "collectivities"."name"), to_tsquery('french', 'Hello')) DESC,
                    "collectivities"."created_at" ASC
+        SQL
+      end
+    end
+
+    describe ".order_by_name" do
+      it "sorts collectivities by name without argument" do
+        expect {
+          described_class.order_by_name.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "collectivities".*
+          FROM     "collectivities"
+          ORDER BY UNACCENT("collectivities"."name") ASC  NULLS LAST
+        SQL
+      end
+
+      it "sorts collectivities by name in ascending order" do
+        expect {
+          described_class.order_by_name(:asc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "collectivities".*
+          FROM     "collectivities"
+          ORDER BY UNACCENT("collectivities"."name") ASC  NULLS LAST
+        SQL
+      end
+
+      it "sorts collectivities by name in descending order" do
+        expect {
+          described_class.order_by_name(:desc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "collectivities".*
+          FROM     "collectivities"
+          ORDER BY UNACCENT("collectivities"."name") DESC  NULLS FIRST
+        SQL
+      end
+    end
+
+    describe ".order_by_siren" do
+      it "sorts collectivities by SIREN without argument" do
+        expect {
+          described_class.order_by_siren.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "collectivities".*
+          FROM     "collectivities"
+          ORDER BY "collectivities"."siren" ASC
+        SQL
+      end
+
+      it "sorts collectivities by SIREN in ascending order" do
+        expect {
+          described_class.order_by_siren(:asc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "collectivities".*
+          FROM     "collectivities"
+          ORDER BY "collectivities"."siren" ASC
+        SQL
+      end
+
+      it "sorts collectivities by SIREN in descending order" do
+        expect {
+          described_class.order_by_siren(:desc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "collectivities".*
+          FROM     "collectivities"
+          ORDER BY "collectivities"."siren" DESC
+        SQL
+      end
+    end
+
+    describe ".order_by_publisher" do
+      it "sorts collectivities by publisher's name without argument" do
+        expect {
+          described_class.order_by_publisher.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT          "collectivities".*
+          FROM            "collectivities"
+          LEFT OUTER JOIN "publishers" ON "publishers"."id" = "collectivities"."publisher_id"
+          ORDER BY        UNACCENT("publishers"."name") ASC NULLS LAST
+        SQL
+      end
+
+      it "sorts collectivities by publisher's name in ascending order" do
+        expect {
+          described_class.order_by_publisher(:asc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT          "collectivities".*
+          FROM            "collectivities"
+          LEFT OUTER JOIN "publishers" ON "publishers"."id" = "collectivities"."publisher_id"
+          ORDER BY        UNACCENT("publishers"."name") ASC NULLS LAST
+        SQL
+      end
+
+      it "sorts collectivities by publisher's name in descending order" do
+        expect {
+          described_class.order_by_publisher(:desc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT          "collectivities".*
+          FROM            "collectivities"
+          LEFT OUTER JOIN "publishers" ON "publishers"."id" = "collectivities"."publisher_id"
+          ORDER BY        UNACCENT("publishers"."name") DESC NULLS FIRST
         SQL
       end
     end

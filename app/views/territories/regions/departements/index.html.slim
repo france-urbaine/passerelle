@@ -12,7 +12,7 @@
         - datatable.with_pagination(@pagy)
         - datatable.with_selection
 
-        - datatable.with_column(:departement, sort: true, span: 2) { "Département" }
+        - datatable.with_column(:name,           sort: true, span: 2) { "Département" }
         - datatable.with_column(:communes_count,       numeric: true) { "Communes" }
         - datatable.with_column(:epcis_count,          numeric: true) { "EPCI" }
         - datatable.with_column(:collectivities_count, numeric: true) { "Collectivités" }
@@ -30,7 +30,7 @@
           - if allowed_to?(:update?, departement)
             - row.with_action "Modifier ce département", edit_territories_departement_path(departement), icon: "pencil-square", modal: true
 
-          - row.with_column(:departement) do |column|
+          - row.with_column(:name) do |column|
             - column.with_span do
               = departement.code_departement
 

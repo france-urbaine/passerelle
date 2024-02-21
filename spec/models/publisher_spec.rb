@@ -60,46 +60,76 @@ RSpec.describe Publisher do
     end
   end
 
-  # Scopes
+  # Scopes: searches
   # ----------------------------------------------------------------------------
-  describe "scopes" do
+  describe "search scopes" do
     describe ".search" do
-      it do
+      it "searches for publishers with all criteria" do
         expect {
           described_class.search("Hello").load
         }.to perform_sql_query(<<~SQL.squish)
-          SELECT "publishers".*
-          FROM   "publishers"
-          WHERE (LOWER(UNACCENT("publishers"."name")) LIKE LOWER(UNACCENT('%Hello%'))
-            OR "publishers"."siren" = 'Hello')
+          SELECT  "publishers".*
+          FROM    "publishers"
+          WHERE   (
+                        LOWER(UNACCENT("publishers"."name")) LIKE LOWER(UNACCENT('%Hello%'))
+                    OR  "publishers"."siren" = 'Hello'
+                  )
         SQL
       end
     end
+  end
 
+  # Scopes: orders
+  # ----------------------------------------------------------------------------
+  describe "order scopes" do
     describe ".order_by_param" do
-      it do
+      it "sorts publishers by name" do
         expect {
           described_class.order_by_param("name").load
         }.to perform_sql_query(<<~SQL)
-          SELECT "publishers".*
-          FROM   "publishers"
-          ORDER BY UNACCENT("publishers"."name") ASC, "publishers"."created_at" ASC
+          SELECT    "publishers".*
+          FROM      "publishers"
+          ORDER BY  UNACCENT("publishers"."name") ASC NULLS LAST,
+                    "publishers"."created_at" ASC
         SQL
       end
 
-      it do
+      it "sorts publishers by name in reversed order" do
         expect {
           described_class.order_by_param("-name").load
         }.to perform_sql_query(<<~SQL)
-          SELECT "publishers".*
-          FROM   "publishers"
-          ORDER BY UNACCENT("publishers"."name") DESC, "publishers"."created_at" DESC
+          SELECT    "publishers".*
+          FROM      "publishers"
+          ORDER BY  UNACCENT("publishers"."name") DESC NULLS FIRST,
+                    "publishers"."created_at" DESC
+        SQL
+      end
+
+      it "sorts publishers by SIREN" do
+        expect {
+          described_class.order_by_param("siren").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT    "publishers".*
+          FROM      "publishers"
+          ORDER BY  "publishers"."siren" ASC,
+                    "publishers"."created_at" ASC
+        SQL
+      end
+
+      it "sorts publishers by SIREN in reversed order" do
+        expect {
+          described_class.order_by_param("-siren").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT    "publishers".*
+          FROM      "publishers"
+          ORDER BY  "publishers"."siren" DESC,
+                    "publishers"."created_at" DESC
         SQL
       end
     end
 
     describe ".order_by_score" do
-      it do
+      it "sorts publishers by search score" do
         expect {
           described_class.order_by_score("Hello").load
         }.to perform_sql_query(<<~SQL)
@@ -107,6 +137,70 @@ RSpec.describe Publisher do
           FROM   "publishers"
           ORDER BY ts_rank_cd(to_tsvector('french', "publishers"."name"), to_tsquery('french', 'Hello')) DESC,
                   "publishers"."created_at" ASC
+        SQL
+      end
+    end
+
+    describe ".order_by_name" do
+      it "sorts publishers by name without argument" do
+        expect {
+          described_class.order_by_name.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "publishers".*
+          FROM     "publishers"
+          ORDER BY UNACCENT("publishers"."name") ASC  NULLS LAST
+        SQL
+      end
+
+      it "sorts publishers by name in ascending order" do
+        expect {
+          described_class.order_by_name(:asc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "publishers".*
+          FROM     "publishers"
+          ORDER BY UNACCENT("publishers"."name") ASC  NULLS LAST
+        SQL
+      end
+
+      it "sorts publishers by name in descending order" do
+        expect {
+          described_class.order_by_name(:desc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "publishers".*
+          FROM     "publishers"
+          ORDER BY UNACCENT("publishers"."name") DESC  NULLS FIRST
+        SQL
+      end
+    end
+
+    describe ".order_by_siren" do
+      it "sorts publishers by SIREN without argument" do
+        expect {
+          described_class.order_by_siren.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "publishers".*
+          FROM     "publishers"
+          ORDER BY "publishers"."siren" ASC
+        SQL
+      end
+
+      it "sorts publishers by SIREN in ascending order" do
+        expect {
+          described_class.order_by_siren(:asc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "publishers".*
+          FROM     "publishers"
+          ORDER BY "publishers"."siren" ASC
+        SQL
+      end
+
+      it "sorts publishers by SIREN in descending order" do
+        expect {
+          described_class.order_by_siren(:desc).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT   "publishers".*
+          FROM     "publishers"
+          ORDER BY "publishers"."siren" DESC
         SQL
       end
     end

@@ -56,10 +56,10 @@ module FormatHelper
     ].compact.join(" ")
   end
 
-  def display_date(date)
+  def display_date(date, format: "%-d %B %Y")
     case date
-    when Date
-      I18n.l(date, format: "%-d %B %Y")
+    when Date, Time
+      I18n.l(date, format:)
 
     when ApplicationRecord::DATE_REGEXP
       args   = $LAST_MATCH_INFO.values_at(:year, :month, :day).compact.map(&:to_i)
@@ -72,7 +72,7 @@ module FormatHelper
 
     when String
       date = Date.parse(date)
-      I18n.l(date, format: "%-d %B %Y")
+      I18n.l(date, format:)
     end
   end
 

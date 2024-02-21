@@ -134,7 +134,7 @@ RSpec.describe Layout::Navbar::Component do
     sign_in
 
     render_inline described_class.new do |navbar|
-      navbar.with_section("References") do |section|
+      navbar.with_section("Références") do |section|
         section.with_link("/some_references") do
           # rubocop:disable Style/StringConcatenation
           # String concatenation escape html tags
@@ -156,7 +156,7 @@ RSpec.describe Layout::Navbar::Component do
 
     expect {
       render_inline described_class.new do |navbar|
-        navbar.with_section("References") do |section|
+        navbar.with_section("Références") do |section|
           section.with_link do
             "Collectivities"
           end
