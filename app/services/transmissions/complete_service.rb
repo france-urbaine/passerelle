@@ -58,7 +58,12 @@ module Transmissions
           report.office    = office
           report.sandbox   = transmission.sandbox
           report.transmit
-          report.assign if ddfip.auto_assign_reports?
+
+          if ddfip.auto_assign_reports? && office
+            report.accept.state
+            report.assign.state
+          end
+
           report.save!
         end
       end
