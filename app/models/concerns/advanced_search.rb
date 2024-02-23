@@ -67,6 +67,19 @@ module AdvancedSearch
       [string, hash]
     end
 
+    def flatten_advanced_search_input(string, hash)
+      return string || "" if hash.blank?
+
+      output = hash.map do |(k, v)|
+        v = v.join(",") if v.is_a?(Array)
+        v = "(#{v})"    if v.include?(",") || v.include?(" ")
+        "#{k}:#{v}"
+      end
+
+      output << string if string.present?
+      output.join(" ")
+    end
+
     private
 
     def advanced_search_relation_from_input_string(input, scopes, matches, default_keys)

@@ -3,9 +3,7 @@
 require "system_helper"
 
 RSpec.describe "Reports" do
-  fixtures :regions, :departements, :epcis, :communes
-  fixtures :collectivities, :publishers, :ddfips, :users
-  fixtures :packages, :reports
+  fixtures :all
 
   before do
     sign_in(users(:christelle))
@@ -39,4 +37,15 @@ RSpec.describe "Reports" do
     expect(page).to have_no_selector(:table_row, { "Référence" => "2024-01-0001-00002" })
   end
 
+  it "searches for ddfips based on state the collectivity can see" do
+    visit reports_path(search: "etat:transmitted")
+
+    expect(page).to have_selector(:table_row, { "Référence" => "2024-01-0001-00001" })
+    expect(page).to have_no_selector(:table_row, { "Référence" => "2024-01-0001-00002" })
+
+    visit reports_path(search: "etat:accepted")
+
+    expect(page).to have_no_selector(:table_row, { "Référence" => "2024-01-0001-00001" })
+    expect(page).to have_selector(:table_row, { "Référence" => "2024-01-0001-00002" })
+  end
 end

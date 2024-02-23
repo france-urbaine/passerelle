@@ -166,4 +166,51 @@ RSpec.describe AdvancedSearch do
       ])
     end
   end
+
+  describe ".flatten_advanced_search_input" do
+    it "returns the same simple String" do
+      expect(
+        Publisher.flatten_advanced_search_input(
+          "Solutions",
+          {}
+        )
+      ).to eq("Solutions")
+    end
+
+    it "returns a String representation of a Hash" do
+      expect(
+        Publisher.flatten_advanced_search_input(
+          "",
+          { "name" => "Solutions & Territoire", "siren" => "123456789" }
+        )
+      ).to eq("name:(Solutions & Territoire) siren:123456789")
+    end
+
+    it "returns a String representation of a Hash+String" do
+      expect(
+        Publisher.flatten_advanced_search_input(
+          "Marc",
+          { "name" => "Solutions & Territoire" }
+        )
+      ).to eq("name:(Solutions & Territoire) Marc")
+    end
+
+    it "flattens an Hash with multiple values" do
+      expect(
+        Publisher.flatten_advanced_search_input(
+          "",
+          { "contact" => %w[marc jean thomas] }
+        )
+      ).to eq("contact:(marc,jean,thomas)")
+    end
+
+    it "flattens an Hash with a single-value Array" do
+      expect(
+        Publisher.flatten_advanced_search_input(
+          "",
+          { "contact" => %w[marc] }
+        )
+      ).to eq("contact:marc")
+    end
+  end
 end

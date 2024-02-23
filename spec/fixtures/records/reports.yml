@@ -2,6 +2,8 @@ local_habitation_1020660947:
   collectivity:  pays_basque
   package:       package_2024_01_0001
   reference:     2024-01-0001-00001
+  state:         acknowledged
+  ddfip:         pyrenees_atlantiques
   form_type:     evaluation_local_habitation
   anomalies:
     - consistance
@@ -17,6 +19,9 @@ local_pro_1020030272:
   collectivity:  pays_basque
   package:       package_2024_01_0001
   reference:     2024-01-0001-00002
+  state:         assigned
+  ddfip:         pyrenees_atlantiques
+  office:        pelp_bayonne
   form_type:     evaluation_local_professionnel
   anomalies:
     - categorie

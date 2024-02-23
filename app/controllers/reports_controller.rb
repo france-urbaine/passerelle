@@ -136,6 +136,12 @@ class ReportsController < ApplicationController
     authorized(params.fetch(:report, {}))
   end
 
+  def search_param
+    @search_param ||= Reports::SearchService
+      .new(as: current_user.organization_type)
+      .analyze_param(super)
+  end
+
   def parent_path
     url_for(@parent) if @parent
   end
