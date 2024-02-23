@@ -32,7 +32,7 @@
           - header.with_action do
             .mr-4 <b>#{reports.size}</b> signalements affichés sur <b>#{total_count}</b>
 
-      - header.with_action "Tout voir", reports_path(search: "state:draft"), icon: "magnifying-glass"
+      - header.with_action "Tout voir", reports_path(search: "etat:(#{t(:draft, scope: 'enum.search_state.collectivity')})"), icon: "magnifying-glass"
 
     - layout.with_section do
       = render Views::Reports::List::Component.new(reports, dashboard: true) do |list|
@@ -47,7 +47,7 @@
           - header.with_action do
             .mr-4 <b>#{reports.size}</b> signalements affichés sur <b>#{total_count}</b>
 
-      - header.with_action "Tout voir", reports_path(search: "state:ready"), icon: "magnifying-glass"
+      - header.with_action "Tout voir", reports_path(search: "etat:(#{t(:ready, scope: 'enum.search_state.collectivity')})"), icon: "magnifying-glass"
 
     - layout.with_section do
       = render Views::Reports::List::Component.new(reports, dashboard: true) do |list|
@@ -62,7 +62,7 @@
           - header.with_action do
             .mr-4 <b>#{reports.size}</b> signalements affichés sur <b>#{total_count}</b>
 
-      - header.with_action "Tout voir", reports_path(search: "state:returned"), icon: "magnifying-glass"
+      - header.with_action "Tout voir", reports_path(search: "etat:(#{t(:returned, scope: 'enum.search_state.collectivity')})"), icon: "magnifying-glass"
 
     - layout.with_section do
       = render Views::Reports::List::Component.new(reports, dashboard: true) do |list|
