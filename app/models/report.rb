@@ -444,8 +444,12 @@ class Report < ApplicationRecord
     elsif values.size == 1
       where(%{? = ANY ("reports"."anomalies")}, *values)
     else
-      sql_array = Array.new(values.size, "?::anomaly").join(", ")
-      where(%(ARRAY[#{sql_array}] && "reports"."anomalies"), *values)
+      sql  = "ARRAY["
+      sql += Array.new(values.size, "?::anomaly").join(", ")
+      sql += %(] && "reports"."anomalies")
+
+      sql = sanitize_sql([sql, *values])
+      where(sql)
     end
   }
 
@@ -516,13 +520,11 @@ class Report < ApplicationRecord
     values = SORTED_ANOMALIES_BY_LABEL[I18n.locale]
     values = values.reverse if direction.to_s == "desc"
 
-    sql = %w[CASE]
-    sql += Array.new(values.size) { |i| %(WHEN "anomalies"[1] = ? THEN #{i + 1}) }
-    sql << " ELSE #{desc ? 0 : values.size + 1}"
-    sql << " END"
+    sql  = "CASE "
+    sql += Array.new(values.size) { |i| %(WHEN "anomalies"[1] = ? THEN #{i + 1} ) }.join
+    sql += "ELSE #{desc ? 0 : values.size + 1} END"
 
-    sql = sanitize_sql([sql.join(" "), *values])
-
+    sql = sanitize_sql([sql, *values])
     order(Arel.sql(sql) => :asc)
   }
 
