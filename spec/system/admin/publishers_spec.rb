@@ -50,6 +50,27 @@ RSpec.describe "Publishers in admin" do
     expect(page).to have_selector("pre.logs")
   end
 
+  it "searches for publishers with simple string criterion" do
+    visit admin_publishers_path(search: "solutions")
+    expect(page).to have_link("Solutions & Territoire")
+    expect(page).to have_no_link("France Urbaine")
+  end
+
+  it "searches for publishers with hash-like string criteria" do
+    visit admin_publishers_path(search: "siren:301463253 name:(solutions")
+    expect(page).to have_text("Aucun éditeur ne correspont à votre recherche.")
+  end
+
+  it "searches for publishers with hash-like string criteria and simple string criterion" do
+    visit admin_publishers_path(search: "siren:301463253 solutions")
+    expect(page).to have_text("Aucun éditeur ne correspont à votre recherche.")
+  end
+
+  it "searches for publishers with unknown criterion" do
+    visit admin_publishers_path(search: "unknown:solutions")
+    expect(page).to have_text("Aucun éditeur ne correspont à votre recherche.")
+  end
+
   it "creates a publisher from the index page" do
     visit admin_publishers_path
 

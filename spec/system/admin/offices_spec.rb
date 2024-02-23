@@ -53,6 +53,32 @@ RSpec.describe "Offices in admin" do
     expect(page).to have_selector("pre.logs")
   end
 
+  it "searches for offices with simple string criterion" do
+    visit admin_offices_path(search: "pyrenees")
+    expect(page).to have_link("PELP de Bayonne")
+    expect(page).to have_link("PELH de Bayonne")
+    expect(page).to have_link("SIP de Bayonne")
+  end
+
+  it "searches for offices with hash-like string criteria" do
+    visit admin_offices_path(search: "name:SIP ddfip_name:pyrenees")
+    expect(page).to have_link("SIP de Bayonne")
+    expect(page).to have_no_link("PELP de Bayonne")
+    expect(page).to have_no_link("PELH de Bayonne")
+  end
+
+  it "searches for offices with hash-like string criteria and simple string criterion" do
+    visit admin_offices_path(search: "ddfip_name:pyrenees SIP")
+    expect(page).to have_link("SIP de Bayonne")
+    expect(page).to have_no_link("PELP de Bayonne")
+    expect(page).to have_no_link("PELH de Bayonne")
+  end
+
+  it "searches for offices with unknown criterion" do
+    visit admin_offices_path(search: "unknown:SIP")
+    expect(page).to have_text("Aucun guichet ne correspont à votre recherche.")
+  end
+
   it "visits the links on the office page & comes back" do
     visit admin_office_path(pelp_bayonne)
 

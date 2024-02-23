@@ -566,7 +566,7 @@ RSpec.describe Report do
 
       it "searches for reports by matching package reference" do
         expect {
-          described_class.search(package_reference: "Hello").load
+          described_class.search(package: "Hello").load
         }.to perform_sql_query(<<~SQL)
           SELECT "reports".*
           FROM   "reports"
@@ -576,7 +576,7 @@ RSpec.describe Report do
 
       it "searches for reports by matching commune name" do
         expect {
-          described_class.search(commune_name: "Hello").load
+          described_class.search(commune: "Hello").load
         }.to perform_sql_query(<<~SQL)
           SELECT          "reports".*
           FROM            "reports"

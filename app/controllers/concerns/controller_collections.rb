@@ -20,14 +20,17 @@ module ControllerCollections
     end
   end
 
-  def search_collection(relation)
-    relation = relation.search(params[:search]) if params[:search]
+  def search_param = params[:search]
+  def order_param  = params[:order]
+
+  def search_collection(relation, query: search_param)
+    relation = relation.search(query) if query.present?
     relation
   end
 
-  def order_collection(relation)
-    relation = relation.order_by_param(params[:order]) if params[:order].present?
-    relation = relation.order_by_score(params[:search]) if params[:search].present?
+  def order_collection(relation, order: order_param, query: search_param)
+    relation = relation.order_by_param(order) if order.present?
+    relation = relation.order_by_score(query) if query.present?
     relation = relation.order(relation.implicit_order_column) if relation.respond_to?(:implicit_order_column)
     relation
   end
