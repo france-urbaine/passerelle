@@ -7,12 +7,12 @@ RSpec.describe Transmissions::CompleteService do
     described_class.new(transmission)
   end
 
-  let(:ddfip)    { create(:ddfip) }
-  let(:communes) { create_list(:commune, 2, departement: ddfip.departement) }
-  let(:office)   { create(:office, competences: %w[evaluation_local_habitation creation_local_habitation], ddfip: ddfip, communes: communes[0..0]) }
+  let!(:ddfip)    { create(:ddfip) }
+  let!(:office)   { create(:office, competences: %w[evaluation_local_habitation creation_local_habitation], ddfip: ddfip, communes: communes[0..0]) }
+  let!(:communes) { create_list(:commune, 2, departement: ddfip.departement) }
 
-  let(:transmission) { create(:transmission) }
-  let(:reports) do
+  let!(:transmission) { create(:transmission) }
+  let!(:reports) do
     [
       create(:report, :ready, :evaluation_local_habitation, commune: communes[0], transmission: transmission, collectivity: transmission.collectivity),
       create(:report, :ready, :evaluation_local_habitation, commune: communes[1], transmission: transmission, collectivity: transmission.collectivity),
@@ -55,9 +55,9 @@ RSpec.describe Transmissions::CompleteService do
       expect {
         service.complete
         reports.each(&:reload)
-      }.to change(reports[0],       :office).from(nil).to(office)
+      }.to change(reports[0],       :office).to(office)
         .and not_change(reports[1], :office).from(nil)
-        .and change(reports[2],     :office).from(nil).to(office)
+        .and change(reports[2],     :office).to(office)
         .and not_change(reports[3], :office).from(nil)
         .and not_change(reports[4], :office).from(nil)
     end
@@ -66,11 +66,25 @@ RSpec.describe Transmissions::CompleteService do
       expect {
         service.complete
         reports.each(&:reload)
-      }.to change(reports[0],       :ddfip).from(nil).to(ddfip)
-        .and change(reports[1],     :ddfip).from(nil).to(ddfip)
-        .and change(reports[2],     :ddfip).from(nil).to(ddfip)
-        .and change(reports[3],     :ddfip).from(nil).to(ddfip)
+      }.to change(reports[0],       :ddfip).to(ddfip)
+        .and change(reports[1],     :ddfip).to(ddfip)
+        .and change(reports[2],     :ddfip).to(ddfip)
+        .and change(reports[3],     :ddfip).to(ddfip)
         .and not_change(reports[4], :ddfip).from(nil)
+    end
+
+    context "when auto-assignment is activated" do
+      let(:ddfip) { create(:ddfip, auto_assign_reports: true) }
+
+      it "bypasses acceptation and set state to assigned to those reports we can assign an office" do
+        expect {
+          service.complete
+          reports.each(&:reload)
+        }.to   change(reports[0], :state).to("assigned")
+          .and change(reports[1], :state).to("transmitted")
+          .and change(reports[2], :state).to("assigned")
+          .and change(reports[3], :state).to("transmitted")
+      end
     end
 
     context "when transmission is sandbox" do
