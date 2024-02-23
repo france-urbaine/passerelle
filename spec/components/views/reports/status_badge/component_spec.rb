@@ -73,14 +73,14 @@ RSpec.describe Views::Reports::StatusBadge::Component, type: :component do
       report = build_stubbed(:report, :approved)
       render_inline described_class.new(report)
 
-      expect(page).to have_selector(".badge.badge--green", text: "Mise à jour validée")
+      expect(page).to have_selector(".badge.badge--green", text: "Réponse positive")
     end
 
     it "renders a badge for a canceled report" do
       report = build_stubbed(:report, :canceled)
       render_inline described_class.new(report)
 
-      expect(page).to have_selector(".badge.badge--red", text: "Absence d'incohérence")
+      expect(page).to have_selector(".badge.badge--red", text: "Réponse négative")
     end
 
     it "renders a badge for a rejected report" do
@@ -161,14 +161,14 @@ RSpec.describe Views::Reports::StatusBadge::Component, type: :component do
       report = build_stubbed(:report, :approved)
       render_inline described_class.new(report)
 
-      expect(page).to have_selector(".badge.badge--green", text: "Mise à jour validée")
+      expect(page).to have_selector(".badge.badge--green", text: "Réponse positive")
     end
 
     it "renders a badge for a canceled report" do
       report = build_stubbed(:report, :canceled)
       render_inline described_class.new(report)
 
-      expect(page).to have_selector(".badge.badge--red", text: "Absence d'incohérence")
+      expect(page).to have_selector(".badge.badge--red", text: "Réponse négative")
     end
 
     it "renders a badge for a rejected report" do
@@ -214,21 +214,21 @@ RSpec.describe Views::Reports::StatusBadge::Component, type: :component do
       report = build_stubbed(:report, :applicable)
       render_inline described_class.new(report)
 
-      expect(page).to have_selector(".badge.badge--lime", text: "Mise à jour validée")
+      expect(page).to have_selector(".badge.badge--lime", text: "Traitement validé par le guichet")
     end
 
     it "renders a badge for an inapplicable report" do
       report = build_stubbed(:report, :inapplicable)
       render_inline described_class.new(report)
 
-      expect(page).to have_selector(".badge.badge--orange", text: "Absence d’incohérence")
+      expect(page).to have_selector(".badge.badge--orange", text: "Traitement annulé par le guichet")
     end
 
     it "renders a badge for an approved report" do
       report = build_stubbed(:report, :approved)
       render_inline described_class.new(report)
 
-      expect(page).to have_selector(".badge.badge--green", text: "Réponse validée")
+      expect(page).to have_selector(".badge.badge--green", text: "Réponse positive")
     end
 
     it "renders a badge for a canceled report" do
@@ -260,21 +260,21 @@ RSpec.describe Views::Reports::StatusBadge::Component, type: :component do
       report = build_stubbed(:report, :applicable)
       render_inline described_class.new(report)
 
-      expect(page).to have_selector(".badge.badge--lime", text: "Mise à jour validée")
+      expect(page).to have_selector(".badge.badge--lime", text: "Traitement validé")
     end
 
     it "renders a badge for an inapplicable report" do
       report = build_stubbed(:report, :inapplicable)
       render_inline described_class.new(report)
 
-      expect(page).to have_selector(".badge.badge--orange", text: "Absence d’incohérence")
+      expect(page).to have_selector(".badge.badge--orange", text: "Traitement annulé")
     end
 
     it "renders a badge for an approved report" do
       report = build_stubbed(:report, :approved)
       render_inline described_class.new(report)
 
-      expect(page).to have_selector(".badge.badge--green", text: "Réponse validée")
+      expect(page).to have_selector(".badge.badge--green", text: "Réponse positive")
     end
 
     it "renders a badge for a canceled report" do

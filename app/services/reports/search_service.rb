@@ -4,7 +4,7 @@ module Reports
   class SearchService
     def initialize(reports = Report.all, as: nil)
       @reports           = reports
-      @organization_type = as&.to_s&.underscore
+      @organization_type = as
     end
 
     def search(param)
@@ -32,11 +32,14 @@ module Reports
     protected
 
     PARAM_KEY_TRANSLATOR = {
-      "etat" => "state"
+      "etat"       => "state",
+      "adresse"    => "address",
+      "paquet"     => "package",
+      "formulaire" => "form_type"
     }.freeze
 
     def tanslate_param_keys(hash)
-      hash = hash.transform_keys { |k| I18n.transliterate(k) }
+      hash = hash.transform_keys { |k| I18n.transliterate(k).downcase }
 
       PARAM_KEY_TRANSLATOR.each do |from, to|
         hash[to] ||= hash.delete(from) if hash.key?(from)
@@ -45,7 +48,7 @@ module Reports
       hash
     end
 
-    STATE_VALUE_TRANSLATOR = {
+    STATE_VALUE_CONVERSIONS = {
       collectivity: {
         "draft"       => %w[draft],
         "ready"       => %w[ready],
@@ -77,15 +80,34 @@ module Reports
 
     def translate_state_values(values)
       case @organization_type
-      when "collectivity", "publisher" then translations = STATE_VALUE_TRANSLATOR[:collectivity]
-      when "ddfip", "dgip"             then translations = STATE_VALUE_TRANSLATOR[:ddfip]
+      when :collectivity
+        conversions  = STATE_VALUE_CONVERSIONS.fetch(:collectivity)
+        translations = I18n.t(:collectivity, scope: "enum.search_state", raise: true)
+      when :ddfip_admin, :ddfip_user
+        conversions  = STATE_VALUE_CONVERSIONS.fetch(:ddfip)
+        translations = I18n.t(@organization_type, scope: "enum.search_state", raise: true)
       else
         return values
       end
 
-      Array.wrap(values)
-        .flat_map { |state| translations[state] || "unknown" }
-        .compact
+      translations = translations.transform_values { |label| I18n.transliterate(label).downcase }
+      values       = Array.wrap(values)
+
+      # First translate french values into keywords
+      values = values.flat_map { |state|
+        state    = I18n.transliterate(state).downcase.squish
+        keywords = translations
+          .select { |_, label| label.include?(state) }
+          .keys
+
+        state = keywords.map(&:to_s) if keywords.any?
+        state
+      }.uniq.compact
+
+      # Then convert keywords to the one the organization can see
+      values.flat_map { |state|
+        conversions[state] || "unknown"
+      }.uniq.compact
     end
   end
 end
