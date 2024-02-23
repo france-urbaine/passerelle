@@ -32,10 +32,14 @@ module Reports
     protected
 
     PARAM_KEY_TRANSLATOR = {
-      "etat"       => "state",
-      "adresse"    => "address",
-      "paquet"     => "package",
-      "formulaire" => "form_type"
+      "etat"         => "state",
+      "adresse"      => "address",
+      "paquet"       => "package",
+      "type"         => "form_type",
+      "objet"        => "anomalies",
+      "priorite"     => "priority",
+      "collectivite" => "collectivity",
+      "guichet"      => "office"
     }.freeze
 
     def tanslate_param_keys(hash)
@@ -45,6 +49,14 @@ module Reports
         hash[to] ||= hash.delete(from) if hash.key?(from)
       end
 
+      hash
+    end
+
+    def tanslate_param_values(hash)
+      hash["state"]     = translate_state_values(hash["state"]) if hash.key?("state")
+      hash["form_type"] = EnumMatcher.select(hash["form_type"], "enum.report_form_type") if hash.key?("form_type")
+      hash["anomalies"] = EnumMatcher.select(hash["anomalies"], "enum.anomalies")        if hash.key?("anomalies")
+      hash["priority"]  = EnumMatcher.select(hash["priority"], "enum.priority")          if hash.key?("priority")
       hash
     end
 
@@ -73,41 +85,23 @@ module Reports
       }
     }.freeze
 
-    def tanslate_param_values(hash)
-      hash["state"] = translate_state_values(hash["state"]) if hash["state"]
-      hash
-    end
-
     def translate_state_values(values)
       case @organization_type
       when :collectivity
         conversions  = STATE_VALUE_CONVERSIONS.fetch(:collectivity)
-        translations = I18n.t(:collectivity, scope: "enum.search_state", raise: true)
+        i18n_path    = "enum.search_state.collectivity"
       when :ddfip_admin, :ddfip_user
         conversions  = STATE_VALUE_CONVERSIONS.fetch(:ddfip)
-        translations = I18n.t(@organization_type, scope: "enum.search_state", raise: true)
+        i18n_path    = "enum.search_state.#{@organization_type}"
       else
         return values
       end
 
-      translations = translations.transform_values { |label| I18n.transliterate(label).downcase }
-      values       = Array.wrap(values)
-
-      # First translate french values into keywords
-      values = values.flat_map { |state|
-        state    = I18n.transliterate(state).downcase.squish
-        keywords = translations
-          .select { |_, label| label.include?(state) }
-          .keys
-
-        state = keywords.map(&:to_s) if keywords.any?
-        state
-      }.uniq.compact
-
+      # First translate values into keywords if they're are not
       # Then convert keywords to the one the organization can see
-      values.flat_map { |state|
-        conversions[state] || "unknown"
-      }.uniq.compact
+      EnumMatcher.select(values, i18n_path)
+        .flat_map { |state| conversions[state] }
+        .uniq.compact
     end
   end
 end

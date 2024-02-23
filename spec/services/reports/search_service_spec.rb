@@ -10,7 +10,7 @@ RSpec.describe Reports::SearchService do
   describe "#analyze_param" do
     it "converts states based on those a collectivity can see" do
       expect(
-        described_class.new(as: :collectivity).analyze_param("etat:(Signalement accepté) Bayonne")
+        described_class.new(as: :collectivity).analyze_param("état:(Signalement accepté) Bayonne")
       ).to eq(
         "state:(accepted,assigned,applicable,inapplicable) Bayonne"
       )
@@ -18,9 +18,37 @@ RSpec.describe Reports::SearchService do
 
     it "converts states based on those a DDFIP can see" do
       expect(
-        described_class.new(as: :ddfip_admin).analyze_param("etat:accepté Bayonne")
+        described_class.new(as: :ddfip_admin).analyze_param("état:accepté Bayonne")
       ).to eq(
         "state:accepted Bayonne"
+      )
+    end
+
+    it "converts form_types" do
+      expect(
+        service.analyze_param("type:(local pro)")
+      ).to eq(
+        "form_type" => %w[
+          evaluation_local_professionnel
+          creation_local_professionnel
+          occupation_local_professionnel
+        ]
+      )
+    end
+
+    it "converts anomalies" do
+      expect(
+        service.analyze_param("objet:(Omission bâtie,Changement de consistance,Foo)")
+      ).to eq(
+        "anomalies" => %w[omission_batie consistance foo]
+      )
+    end
+
+    it "converts priorities" do
+      expect(
+        service.analyze_param("priorité:haute")
+      ).to eq(
+        "priority" => %w[high]
       )
     end
 
@@ -32,12 +60,12 @@ RSpec.describe Reports::SearchService do
       )
     end
 
-    it "keeps values not handled by the converter" do
+    it "keeps criteria not handled by the converter" do
       expect(
-        service.analyze_param("invariant:1234 formulaire:(local pro)")
+        service.analyze_param("invariant:1234 commune:(Bayonne,Anglet)")
       ).to eq(
         "invariant" => "1234",
-        "form_type" => "local pro"
+        "commune"   => %w[Bayonne Anglet]
       )
     end
   end

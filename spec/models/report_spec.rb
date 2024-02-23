@@ -597,30 +597,65 @@ RSpec.describe Report do
 
       it "searches for reports by matching form_type" do
         expect {
-          described_class.search(form_type: "local pro").load
+          described_class.search(form_type: %w[evaluation_local_professionnel creation_local_professionnel]).load
         }.to perform_sql_query(<<~SQL)
           SELECT "reports".*
           FROM   "reports"
-          WHERE  "reports"."form_type" IN ('evaluation_local_professionnel', 'creation_local_professionnel', 'occupation_local_professionnel')
+          WHERE  "reports"."form_type" IN ('evaluation_local_professionnel', 'creation_local_professionnel')
         SQL
       end
-    end
 
-    describe ".search_by_form_type" do
-      it "searches for reports matching given value" do
+      it "searches for reports by matching anomalies" do
         expect {
-          described_class.search_by_form_type("local pro").load
+          described_class.search(anomalies: "omission_batie").load
         }.to perform_sql_query(<<~SQL)
           SELECT "reports".*
           FROM   "reports"
-          WHERE  "reports"."form_type" IN ('evaluation_local_professionnel', 'creation_local_professionnel', 'occupation_local_professionnel')
+          WHERE  ('omission_batie' = ANY ("reports"."anomalies"))
         SQL
       end
 
-      it "returns a null relation when none of the enum match the given value" do
-        expect(
-          described_class.search_by_form_type("nope")
-        ).to be_a_null_relation
+      it "searches for reports by priority" do
+        expect {
+          described_class.search(priority: "high").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "reports".*
+          FROM   "reports"
+          WHERE  "reports"."priority" = 'high'
+        SQL
+      end
+
+      it "searches for reports by collectivity name" do
+        expect {
+          described_class.search(collectivity: "Pays Basque").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT          "reports".*
+          FROM            "reports"
+          LEFT OUTER JOIN "collectivities" ON "collectivities"."id" = "reports"."collectivity_id"
+          WHERE           (LOWER(UNACCENT("collectivities"."name")) LIKE LOWER(UNACCENT('%Pays Basque%')))
+        SQL
+      end
+
+      it "searches for reports by DDFIP name" do
+        expect {
+          described_class.search(ddfip: "Pyrénées").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT          "reports".*
+          FROM            "reports"
+          LEFT OUTER JOIN "ddfips" ON "ddfips"."id" = "reports"."ddfip_id"
+          WHERE           (LOWER(UNACCENT("ddfips"."name")) LIKE LOWER(UNACCENT('%Pyrénées%')))
+        SQL
+      end
+
+      it "searches for reports by office name" do
+        expect {
+          described_class.search(office: "SDIF").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT          "reports".*
+          FROM            "reports"
+          LEFT OUTER JOIN "offices" ON "offices"."id" = "reports"."office_id"
+          WHERE           (LOWER(UNACCENT("offices"."name")) LIKE LOWER(UNACCENT('%SDIF%')))
+        SQL
       end
     end
 
@@ -654,6 +689,108 @@ RSpec.describe Report do
       it "returns a null relation when none of the enum match all the given values" do
         expect(
           described_class.search_by_state(%w[Foo Bar])
+        ).to be_a_null_relation
+      end
+    end
+
+    describe ".search_by_form_type" do
+      it "searches for reports matching given value" do
+        expect {
+          described_class.search_by_form_type("evaluation_local_professionnel").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "reports".*
+          FROM   "reports"
+          WHERE  "reports"."form_type" = 'evaluation_local_professionnel'
+        SQL
+      end
+
+      it "searches for reports matching multiple values, excluding unknown values" do
+        expect {
+          described_class.search_by_form_type(%w[evaluation_local_professionnel evaluation_local_habitation destruction_local_professionnel]).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "reports".*
+          FROM   "reports"
+          WHERE  "reports"."form_type" IN ('evaluation_local_professionnel', 'evaluation_local_habitation')
+        SQL
+      end
+
+      it "returns a null relation when none of the enum match the given value" do
+        expect(
+          described_class.search_by_form_type("Hello")
+        ).to be_a_null_relation
+      end
+
+      it "returns a null relation when none of the enum match all the given values" do
+        expect(
+          described_class.search_by_form_type(%w[Foo Bar])
+        ).to be_a_null_relation
+      end
+    end
+
+    describe ".search_by_anomalies" do
+      it "searches for reports matching given value" do
+        expect {
+          described_class.search_by_anomalies("omission_batie").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "reports".*
+          FROM   "reports"
+          WHERE  ('omission_batie' = ANY ("reports"."anomalies"))
+        SQL
+      end
+
+      it "searches for reports matching multiple values, excluding unknown values" do
+        expect {
+          described_class.search_by_anomalies(%w[consistance categorie foo]).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "reports".*
+          FROM   "reports"
+          WHERE  (ARRAY['consistance'::anomaly, 'categorie'::anomaly] && "reports"."anomalies")
+        SQL
+      end
+
+      it "returns a null relation when none of the enum match the given value" do
+        expect(
+          described_class.search_by_anomalies("Hello")
+        ).to be_a_null_relation
+      end
+
+      it "returns a null relation when none of the enum match all the given values" do
+        expect(
+          described_class.search_by_anomalies(%w[Foo Bar])
+        ).to be_a_null_relation
+      end
+    end
+
+    describe ".search_by_priority" do
+      it "searches for reports matching given value" do
+        expect {
+          described_class.search_by_priority("high").load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "reports".*
+          FROM   "reports"
+          WHERE  "reports"."priority" = 'high'
+        SQL
+      end
+
+      it "searches for reports matching multiple values, excluding unknown values" do
+        expect {
+          described_class.search_by_priority(%w[low medium]).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "reports".*
+          FROM   "reports"
+          WHERE  "reports"."priority" IN ('low', 'medium')
+        SQL
+      end
+
+      it "returns a null relation when none of the enum match the given value" do
+        expect(
+          described_class.search_by_priority("Hello")
+        ).to be_a_null_relation
+      end
+
+      it "returns a null relation when none of the enum match all the given values" do
+        expect(
+          described_class.search_by_priority(%w[Foo Bar])
         ).to be_a_null_relation
       end
     end
