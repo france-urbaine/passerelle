@@ -30,13 +30,16 @@ end
 log "Loading #{env} environment variables"
 
 [
-  ".env.local",
+  ".env.#{env}.local",
+  (".env.local" unless env == "test"),
   ".env.#{env}",
   ".env"
 ].each do |path|
+  next unless path
+
   path = Pathname.pwd.join(path)
-  if path.exist?
-    log " - load #{path}"
-    Dotenv.load(path)
-  end
+  next unless path.exist?
+
+  log " - load #{path}"
+  Dotenv.load(path)
 end
