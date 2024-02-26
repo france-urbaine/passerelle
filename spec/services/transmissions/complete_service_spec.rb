@@ -73,6 +73,12 @@ RSpec.describe Transmissions::CompleteService do
         .and not_change(reports[4], :ddfip).from(nil)
     end
 
+    it "enqueues a job to send a notification" do
+      expect {
+        service.complete
+      }.to have_enqueued_job(NotifyTransmissionCompletedJob)
+    end
+
     context "when auto-assignment is activated" do
       let(:ddfip) { create(:ddfip, auto_assign_reports: true) }
 
