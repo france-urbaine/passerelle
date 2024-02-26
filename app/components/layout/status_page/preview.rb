@@ -5,7 +5,7 @@ module Layout
     # @display frame false
     #
     class Preview < ApplicationViewComponentPreview
-      DEFAULT_REFERRER = "/rails/view_components/samples/turbo/content"
+      DEFAULT_REFERRER = "/lookbook/preview/samples/turbo/content"
 
       # @label Default
       # @param modal toggle "View the template when requesting a modal"

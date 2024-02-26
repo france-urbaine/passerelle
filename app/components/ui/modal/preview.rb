@@ -5,7 +5,7 @@ module UI
     # @display frame "modal"
     #
     class Preview < ApplicationViewComponentPreview
-      DEFAULT_REFERRER = "/rails/view_components/samples/turbo/content"
+      DEFAULT_REFERRER = "/lookbook/preview/samples/turbo/content"
 
       # @label Default
       #
