@@ -4,33 +4,19 @@
 
   - layout.with_grid(class: "xl:grid-cols-5 md:grid-cols-2") do |grid|
     - grid.with_column do
-      .dashboard-number
-        = current_organization.reports_transmitted_count
-        span.dashboard-number__unit Signalements reçus
-
+      = chart_number_component(current_organization.reports_transmitted_count, "Signalement reçu", "Signalements reçus")
     - grid.with_column do
-      .dashboard-number
-        = current_organization.reports_unassigned_count
-        span.dashboard-number__unit Signalements non-assignés
-
+      = chart_number_component(current_organization.reports_unassigned_count, "Non-assigné", "Non-assignés")
     - grid.with_column do
-      .dashboard-number
-        = current_organization.reports_approved_count
-        span.dashboard-number__unit Mises à jour validées
-
+      = chart_number_component(current_organization.reports_approved_count, "Réponse positive", "Réponses positives")
     - grid.with_column do
-      .dashboard-number
-        = current_organization.reports_canceled_count
-        span.dashboard-number__unit Absences d'incohérence
-
+      = chart_number_component(current_organization.reports_canceled_count, "Réponse négative", "Réponses négatives")
     - grid.with_column do
-      .dashboard-number
-        = current_organization.reports_rejected_count
-        span.dashboard-number__unit Signalements rejetés
+      = chart_number_component(current_organization.reports_rejected_count, "Signalement rejeté", "Signalements rejetés")
 
   - @reports.waiting_for_acceptance.order(transmitted_at: :desc).tap do |reports|
     - layout.with_header icon: "envelope-open" do |header|
-      | Nouveaux signalements
+      | Nouveaux signalements reçus
 
       - reports.unscope(:limit).count.tap do |total_count|
         - if total_count > reports.size
@@ -47,7 +33,7 @@
 
   - @reports.waiting_for_assignment.order(accepted_at: :desc).tap do |reports|
     - layout.with_header icon: "inbox-stack" do |header|
-      | Signalements en attente d'une assignation
+      | Signalements acceptés, en attente d'une assignation
 
       - reports.unscope(:limit).count.tap do |total_count|
         - if total_count > reports.size

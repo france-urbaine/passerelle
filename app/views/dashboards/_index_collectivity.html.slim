@@ -4,24 +4,13 @@
 
   - layout.with_grid(class: "xl:grid-cols-4 md:grid-cols-2") do |grid|
     - grid.with_column do
-      .dashboard-number
-        = current_organization.reports_transmitted_count
-        span.dashboard-number__unit Signalements transmis
-
+      = chart_number_component(current_organization.reports_transmitted_count, "Signalement transmis", "Signalements transmis")
     - grid.with_column do
-      .dashboard-number
-        = current_organization.reports_approved_count
-        span.dashboard-number__unit Mises à jour validées
-
+      = chart_number_component(current_organization.reports_approved_count, "Réponse positive", "Réponses positives")
     - grid.with_column do
-      .dashboard-number
-        = current_organization.reports_canceled_count
-        span.dashboard-number__unit Absences d'incohérence
-
+      = chart_number_component(current_organization.reports_canceled_count, "Réponse négative", "Réponses négatives")
     - grid.with_column do
-      .dashboard-number
-        = current_organization.reports_rejected_count
-        span.dashboard-number__unit Signalements rejetés
+      = chart_number_component(current_organization.reports_rejected_count, "Signalement rejeté", "Signalements rejetés")
 
   - @reports.draft.order(created_at: :desc).tap do |reports|
     - layout.with_header icon: "arrow-down-on-square-stack" do |header|
