@@ -105,10 +105,8 @@ RSpec.describe AdvancedSearch do
 
     it "merges search conditions to existing conditions" do
       expect {
-        Report.where(
-          state: "assigned"
-        ).advanced_search(
-          { state: "transmitted" },
+        Report.where(state: "assigned").advanced_search(
+          "state:transmitted",
           scopes: {
             state: -> { where(state: _1) }
           }
@@ -118,6 +116,38 @@ RSpec.describe AdvancedSearch do
         FROM    "reports"
         WHERE   "reports"."state" = 'assigned'
           AND   "reports"."state" = 'transmitted'
+      SQL
+    end
+
+    it "merges search conditions to a scope using loading" do
+      expect {
+        Report.strict_loading.advanced_search(
+          "state:transmitted",
+          scopes: {
+            state: -> { where(state: _1) }
+          }
+        ).load
+      }.to perform_sql_query(<<~SQL)
+        SELECT "reports".*
+        FROM   "reports"
+        WHERE  "reports"."state" = 'transmitted'
+      SQL
+    end
+
+    it "merges search conditions to a scope using LEFT joins" do
+      expect {
+        Report.left_joins(:package).advanced_search(
+          "state:transmitted",
+          scopes: {
+            state: -> { left_joins(:package, :ddfip).where(state: _1) }
+          }
+        ).load
+      }.to perform_sql_query(<<~SQL)
+        SELECT           "reports".*
+        FROM             "reports"
+        LEFT OUTER JOIN  "packages" ON "packages"."id" = "reports"."package_id"
+        LEFT OUTER JOIN  "ddfips" ON "ddfips"."id" = "reports"."ddfip_id"
+        WHERE            "reports"."state" = 'transmitted'
       SQL
     end
   end

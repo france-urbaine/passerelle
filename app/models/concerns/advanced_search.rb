@@ -98,6 +98,7 @@ module AdvancedSearch
       relations = exclude_advanced_search_null_relations(relations, operator)
       return none if relations.empty?
 
+      strict_loading = false
       joins  = []
       wheres = []
 
@@ -107,11 +108,15 @@ module AdvancedSearch
           relation = relation.unscope(:left_outer_joins)
         end
 
+        strict_loading = true if relation.strict_loading_value
+        relation = relation.strict_loading(false)
+
         wheres << relation
       end
 
       combined = unscoped.merge(wheres.reduce(operator))
       combined = combined.left_joins(*joins) if joins.any?
+      combined.strict_loading(strict_loading)
       combined
     end
 
