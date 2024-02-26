@@ -4,7 +4,11 @@ module AdvancedSearch
   extend ActiveSupport::Concern
 
   # https://rubular.com/r/6BGs42O3MszcPf
-  MULTIPLE_CRITERIA_REGEXP = /(?<key>(?<=^|\s)[a-z0-9\-_]+):(?:\()?(?<value>((?<!\()[^\s]+|(?<=\()[^)]+(?=\))))(?:\))?/i
+  MULTIPLE_CRITERIA_REGEXP = /
+    (?<key>(?<=^|\s)[[:alpha:]0-9\-_]+)
+    :
+    (?:\()?(?<value>((?<!\()[^\s]+|(?<=\()[^)]+(?=\))))(?:\))?
+  /xi
 
   class_methods do
     def advanced_search(input, default: nil, matches: {}, scopes: {})
@@ -28,23 +32,6 @@ module AdvancedSearch
         "LOWER(UNACCENT(#{quoted_column})) LIKE LOWER(UNACCENT(?))",
         "%#{sanitize_sql_like(value)}%"
       )
-    end
-
-    def match_enum(attribute, value, i81n_path:)
-      raise ArgumentError unless column_for_attribute(attribute)
-
-      enum_keys = I18n.t(i81n_path, raise: true)
-      value     = I18n.transliterate(value).downcase.squish
-
-      enum_keys = enum_keys
-        .select { |_, label| I18n.transliterate(label).downcase.include?(value) }
-        .keys
-
-      if enum_keys.any?
-        where(attribute => enum_keys)
-      else
-        none
-      end
     end
 
     def parse_advanced_search_input(input)

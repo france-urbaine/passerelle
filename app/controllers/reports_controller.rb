@@ -137,9 +137,16 @@ class ReportsController < ApplicationController
   end
 
   def search_param
-    @search_param ||= Reports::SearchService
-      .new(as: current_user.organization_type)
-      .analyze_param(super)
+    @search_param ||= begin
+      viewer =
+        case current_user.organization_type
+        when "Collectivity", "Publisher" then :collectivity
+        when "DGFIP"                     then :ddfip_admin
+        when "DDFIP"                     then current_user.organization_admin? ? :ddfip_admin : :ddfip_user
+        end
+
+      Reports::SearchService.new(as: viewer).analyze_param(super)
+    end
   end
 
   def parent_path

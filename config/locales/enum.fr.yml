@@ -265,3 +265,36 @@ fr:
       EPCI:        EPCI
       Departement: Departement
       Region:      Region
+
+    search_state:
+      collectivity:
+        draft:       Formulaire incomplet
+        ready:       Formulaire complété
+        transmitted: Signalement transmis
+        accepted:    Signalement accepté
+        rejected:    Signalement rejeté
+        approved:    Réponse positive
+        canceled:    Réponse négative
+        returned:    Terminé
+
+      ddfip_admin:
+        transmitted:  Nouveau signalement
+        accepted:     Signalement accepté
+        assigned:     Signalement assigné
+        rejected:     Signalement rejeté
+        applicable:   Traitement validé par le guichet
+        inapplicable: Traitement annulé par le guichet
+        resolved:     Traitement effectué par le guichet
+        approved:     Réponse positive
+        canceled:     Réponse négative
+        confirmed:    Réponse transmise
+        returned:     Terminé
+
+      ddfip_user:
+        assigned:     Signalement à traiter
+        applicable:   Traitement validé
+        inapplicable: Traitement annulé
+        resolved:     Traitement effectué
+        approved:     Réponse positive
+        canceled:     Réponse négative
+        confirmed:    Réponse transmise

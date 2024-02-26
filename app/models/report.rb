@@ -410,37 +410,59 @@ class Report < ApplicationRecord
         address
       ],
       scopes: {
-        state:     ->(value) { search_by_state(value) },
-        reference: ->(value) { where(reference: value) },
-        invariant: ->(value) { where(situation_invariant: value) },
-        package:   ->(value) { where(package_id: Package.where(reference: value)) },
-        form_type: ->(value) { search_by_form_type(value) },
-        commune:   ->(value) { search_by_commune(value) },
-        address:   ->(value) { search_by_address(value) }
+        state:        ->(value) { search_by_state(value) },
+        reference:    ->(value) { where(reference: value) },
+        invariant:    ->(value) { where(situation_invariant: value) },
+        package:      ->(value) { where(package_id: Package.where(reference: value)) },
+        form_type:    ->(value) { search_by_form_type(value) },
+        commune:      ->(value) { search_by_commune(value) },
+        address:      ->(value) { search_by_address(value) },
+        anomalies:    ->(value) { search_by_anomalies(value) },
+        priority:     ->(value) { search_by_priority(value) },
+        collectivity: ->(value) { search_by_collectivity(value) },
+        ddfip:        ->(value) { search_by_ddfip(value) },
+        office:       ->(value) { search_by_office(value) }
       }
     )
   }
 
   scope :search_by_state, lambda { |value|
-    values = Array.wrap(value) & States::ReportStates::STATES
-    if values.any?
-      where(state: values)
-    else
-      none
-    end
-  }
-
-  scope :search_by_commune, lambda { |value|
-    left_joins(:commune).merge(Commune.search(name: value))
+    values = Array.wrap(value) & STATES
+    values.empty? ? none : where(state: values)
   }
 
   scope :search_by_form_type, lambda { |value|
-    match_enum(:form_type, value, i81n_path: "enum.report_form_type")
+    values = Array.wrap(value) & FORM_TYPES
+    values.empty? ? none : where(form_type: values)
   }
 
-  scope :search_by_address, lambda { |value|
-    match(:computed_address, value.squish)
+  scope :search_by_anomalies, lambda { |value|
+    values = Array.wrap(value) & ANOMALIES
+
+    if values.empty?
+      none
+    elsif values.size == 1
+      where(%{? = ANY ("reports"."anomalies")}, *values)
+    else
+      sql  = "ARRAY["
+      sql += Array.new(values.size, "?::anomaly").join(", ")
+      sql += %(] && "reports"."anomalies")
+
+      sql = sanitize_sql([sql, *values])
+      where(sql)
+    end
   }
+
+  scope :search_by_priority, lambda { |value|
+    values = Array.wrap(value) & PRIORITIES
+    values.empty? ? none : where(priority: values)
+  }
+
+  scope :search_by_address,      ->(value) { match(:computed_address, value.squish) }
+  scope :search_by_commune,      ->(value) { left_joins(:commune).merge(Commune.search(name: value)) }
+  scope :search_by_collectivity, ->(value) { left_joins(:collectivity).merge(Collectivity.search(name: value)) }
+  scope :search_by_ddfip,        ->(value) { left_joins(:ddfip).merge(DDFIP.search(name: value)) }
+  scope :search_by_office,       ->(value) { left_joins(:office).merge(Office.search(name: value)) }
 
   # Scopes: orders
   # ----------------------------------------------------------------------------
@@ -498,13 +520,11 @@ class Report < ApplicationRecord
     values = SORTED_ANOMALIES_BY_LABEL[I18n.locale]
     values = values.reverse if direction.to_s == "desc"
 
-    sql = %w[CASE]
-    sql += Array.new(values.size) { |i| %(WHEN "anomalies"[1] = ? THEN #{i + 1}) }
-    sql << " ELSE #{desc ? 0 : values.size + 1}"
-    sql << " END"
+    sql  = "CASE "
+    sql += Array.new(values.size) { |i| %(WHEN "anomalies"[1] = ? THEN #{i + 1} ) }.join
+    sql += "ELSE #{desc ? 0 : values.size + 1} END"
 
-    sql = sanitize_sql([sql.join(" "), *values])
-
+    sql = sanitize_sql([sql, *values])
     order(Arel.sql(sql) => :asc)
   }
 

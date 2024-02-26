@@ -4,7 +4,7 @@ module Reports
   class SearchService
     def initialize(reports = Report.all, as: nil)
       @reports           = reports
-      @organization_type = as&.to_s&.underscore
+      @organization_type = as
     end
 
     def search(param)
@@ -32,11 +32,18 @@ module Reports
     protected
 
     PARAM_KEY_TRANSLATOR = {
-      "etat" => "state"
+      "etat"         => "state",
+      "adresse"      => "address",
+      "paquet"       => "package",
+      "type"         => "form_type",
+      "objet"        => "anomalies",
+      "priorite"     => "priority",
+      "collectivite" => "collectivity",
+      "guichet"      => "office"
     }.freeze
 
     def tanslate_param_keys(hash)
-      hash = hash.transform_keys { |k| I18n.transliterate(k) }
+      hash = hash.transform_keys { |k| I18n.transliterate(k).downcase }
 
       PARAM_KEY_TRANSLATOR.each do |from, to|
         hash[to] ||= hash.delete(from) if hash.key?(from)
@@ -45,7 +52,15 @@ module Reports
       hash
     end
 
-    STATE_VALUE_TRANSLATOR = {
+    def tanslate_param_values(hash)
+      hash["state"]     = translate_state_values(hash["state"]) if hash.key?("state")
+      hash["form_type"] = EnumMatcher.select(hash["form_type"], "enum.report_form_type") if hash.key?("form_type")
+      hash["anomalies"] = EnumMatcher.select(hash["anomalies"], "enum.anomalies")        if hash.key?("anomalies")
+      hash["priority"]  = EnumMatcher.select(hash["priority"], "enum.priority")          if hash.key?("priority")
+      hash
+    end
+
+    STATE_VALUE_CONVERSIONS = {
       collectivity: {
         "draft"       => %w[draft],
         "ready"       => %w[ready],
@@ -70,22 +85,23 @@ module Reports
       }
     }.freeze
 
-    def tanslate_param_values(hash)
-      hash["state"] = translate_state_values(hash["state"]) if hash["state"]
-      hash
-    end
-
     def translate_state_values(values)
       case @organization_type
-      when "collectivity", "publisher" then translations = STATE_VALUE_TRANSLATOR[:collectivity]
-      when "ddfip", "dgip"             then translations = STATE_VALUE_TRANSLATOR[:ddfip]
+      when :collectivity
+        conversions  = STATE_VALUE_CONVERSIONS.fetch(:collectivity)
+        i18n_path    = "enum.search_state.collectivity"
+      when :ddfip_admin, :ddfip_user
+        conversions  = STATE_VALUE_CONVERSIONS.fetch(:ddfip)
+        i18n_path    = "enum.search_state.#{@organization_type}"
       else
         return values
       end
 
-      Array.wrap(values)
-        .flat_map { |state| translations[state] || "unknown" }
-        .compact
+      # First translate values into keywords if they're are not
+      # Then convert keywords to the one the organization can see
+      EnumMatcher.select(values, i18n_path)
+        .flat_map { |state| conversions[state] }
+        .uniq.compact
     end
   end
 end
