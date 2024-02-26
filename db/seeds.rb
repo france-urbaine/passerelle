@@ -215,7 +215,7 @@ unless Report.any?
   end
 
   FactoryBot.create(:package, collectivity:, ddfip:).tap do |package|
-    FactoryBot.create_list(:report, 2, :transmitted, collectivity:, package:, ddfip:, commune: communes.sample)
+    FactoryBot.create_list(:report, rand(5..10), :transmitted, collectivity:, package:, ddfip:, commune: communes.sample)
   end
 
   FactoryBot.create(:package, :sandbox, collectivity:, publisher:, ddfip:).tap do |package|

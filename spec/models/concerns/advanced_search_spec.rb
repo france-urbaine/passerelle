@@ -102,6 +102,24 @@ RSpec.describe AdvancedSearch do
           AND  "publishers"."siren" = '123456789'
       SQL
     end
+
+    it "merges search conditions to existing conditions" do
+      expect {
+        Report.where(
+          state: "assigned"
+        ).advanced_search(
+          { state: "transmitted" },
+          scopes: {
+            state: -> { where(state: _1) }
+          }
+        ).load
+      }.to perform_sql_query(<<~SQL)
+        SELECT  "reports".*
+        FROM    "reports"
+        WHERE   "reports"."state" = 'assigned'
+          AND   "reports"."state" = 'transmitted'
+      SQL
+    end
   end
 
   describe ".parse_advanced_search_input" do

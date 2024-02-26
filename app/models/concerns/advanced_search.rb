@@ -16,7 +16,7 @@ module AdvancedSearch
 
       string, hash = parse_advanced_search_input(input)
 
-      relations = []
+      relations = [all]
       relations << advanced_search_relation_from_input_string(string, scopes, matches, default) if string.present?
       relations << advanced_search_relation_from_input_hash(hash, scopes) if hash.present?
 
@@ -110,12 +110,7 @@ module AdvancedSearch
         wheres << relation
       end
 
-      combined =
-        case operator
-        when :and then merge(wheres.reduce(:merge))
-        when :or  then merge(wheres.reduce(:or))
-        end
-
+      combined = unscoped.merge(wheres.reduce(operator))
       combined = combined.left_joins(*joins) if joins.any?
       combined
     end
