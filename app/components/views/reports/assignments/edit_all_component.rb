@@ -14,9 +14,10 @@ module Views
 
         def before_render
           return if @service.errors.any?
+          return if @service.office_id
 
           office_ids = @reports.distinct.pluck(:office_id).compact
-          @service.office_id ||= office_ids[0] if office_ids.size == 1
+          @service.office_id = office_ids[0] if office_ids.size == 1
         end
 
         def reports_count
@@ -46,6 +47,17 @@ module Views
             options[:prompt] = "Sélectionnez un guichet"
             options[:autofocus] = true
           end
+        end
+
+        def autofocus_on_submit_button?
+          # Put the focus on the submit button if all reports get the same office
+          # assigne or pre-assigned, and the option is alread selected
+          #
+          @service.office_id.present?
+        end
+
+        def autofocus_on_select?
+          !autofocus_on_submit_button?
         end
 
         private

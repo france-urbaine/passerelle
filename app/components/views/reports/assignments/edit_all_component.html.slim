@@ -62,7 +62,7 @@
 
         = form.block :office_id do
           = form.label :office_id, "Veuillez sélectionner un guichet :"
-          = form.select :office_id, office_id_choice, office_id_options
+          = form.select :office_id, office_id_choice, office_id_options, autofocus: autofocus_on_select?
 
-      - modal.with_submit_action "Continuer"
+      - modal.with_submit_action "Continuer", autofocus: autofocus_on_submit_button?
       - modal.with_close_action "Annuler"
