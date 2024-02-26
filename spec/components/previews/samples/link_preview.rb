@@ -2,7 +2,7 @@
 
 module Samples
   # @hidden
-  class LinkPreview < ViewComponent::Preview
+  class LinkPreview < ::Lookbook::Preview
     def default; end
     def modal; end
   end

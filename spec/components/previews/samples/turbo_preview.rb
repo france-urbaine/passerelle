@@ -2,7 +2,7 @@
 
 module Samples
   # @hidden
-  class TurboPreview < ViewComponent::Preview
+  class TurboPreview < ::Lookbook::Preview
     def content; end
     def modal; end
   end
