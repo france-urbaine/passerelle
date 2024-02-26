@@ -15,10 +15,29 @@ local_habitation_1020660947:
   situation_libelle_voie:  Rue du 18 mai
   computed_address:        10 Rue du 18 mai
 
-local_pro_1020030272:
+local_habitation_1020660947_bis:
   collectivity:  pays_basque
   package:       package_2024_01_0001
   reference:     2024-01-0001-00002
+  state:         rejected
+  ddfip:         pyrenees_atlantiques
+  form_type:     evaluation_local_habitation
+  anomalies:
+    - consistance
+  code_insee:              64102
+  date_constat:            2023-12-16
+  situation_annee_majic:   2023
+  situation_invariant:     1020660947
+  situation_numero_voie:   10
+  situation_libelle_voie:  Rue du 18 mai
+  computed_address:        10 Rue du 18 mai
+  reponse: >
+    Ce signalement semble être un doublon.
+
+local_pro_1020030272:
+  collectivity:  pays_basque
+  package:       package_2024_01_0002
+  reference:     2024-01-0002-00001
   state:         assigned
   ddfip:         pyrenees_atlantiques
   office:        pelp_bayonne

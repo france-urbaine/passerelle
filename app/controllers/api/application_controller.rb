@@ -4,6 +4,7 @@ module API
   class ApplicationController < ActionController::Base
     self.responder = ApplicationResponder
 
+    include ControllerAdvancedSearch
     include ControllerDiscard
     include ControllerStatuses
     include ControllerCollections
