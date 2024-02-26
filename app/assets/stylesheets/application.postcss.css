@@ -45,6 +45,7 @@
 @import "../../components/ui/logs";
 @import "../../components/ui/notification";
 @import "../../components/ui/tabs";
+@import "../../components/ui/charts/number";
 
 /* Forms */
 @import "./components/autocomplete";
@@ -53,7 +54,6 @@
 
 /* Data display */
 @import "./components/tooltip";
-@import "./components/dashboard_number";
 
 /* Layouts */
 @import "../../components/layout/navbar";

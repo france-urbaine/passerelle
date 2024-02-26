@@ -4,14 +4,9 @@
 
   - layout.with_grid(class: "md:grid-cols-2") do |grid|
     - grid.with_column do
-      .dashboard-number
-        = @reports.assigned.count
-        span.dashboard-number__unit Signalements à traiter
-
+      = chart_number_component(@reports.waiting_for_resolution.count, "Signalement à traiter", "Signalements à traiter")
     - grid.with_column do
-      .dashboard-number
-        = @reports.resolved.count
-        span.dashboard-number__unit Signalements traités
+      = chart_number_component(@reports.resolved.count, "Signalement traité", "Signalements traités")
 
   - @reports.waiting_for_resolution.order(assigned_at: :desc).tap do |reports|
     - layout.with_header icon: "inbox-stack" do |header|

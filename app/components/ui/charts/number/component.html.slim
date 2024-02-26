@@ -1,0 +1,8 @@
+ .chart-number
+  = number_with_delimiter(@number)
+  = " "
+  span.chart-number__unit
+    - if @number <= 1
+      = @singular
+    - else
+      = @plural || @singular.pluralize

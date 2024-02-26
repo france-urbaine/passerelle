@@ -4,19 +4,14 @@
 
   - layout.with_grid(class: "lg:grid-cols-3") do |grid|
     - grid.with_column do
-      .dashboard-number
-        = current_organization.collectivities_count
-        span.dashboard-number__unit Collectivités
-
+      = chart_number_component(current_organization.collectivities_count, "Collectivité", "Collectivités")
     - grid.with_column do
-      .dashboard-number
-        = current_organization.reports_transmitted_count
-        span.dashboard-number__unit Signalements transmis
-
+      = chart_number_component(current_organization.reports_transmitted_count, "Signalement transmis", "Signalements transmis")
     - grid.with_column do
-      .dashboard-number
-        = current_organization.reports_approved_count + current_organization.reports_canceled_count + current_organization.reports_rejected_count
-        span.dashboard-number__unit Signalements retournés
+      - returned_count  = current_organization.reports_approved_count
+      - returned_count += current_organization.reports_canceled_count
+      - returned_count += current_organization.reports_rejected_count
+      = chart_number_component(returned_count, "Signalement retourné", "Signalements retournés")
 
   - @reports.transmitted.order(transmitted_at: :desc).tap do |reports|
     - layout.with_header icon: "clipboard-document" do |header|
