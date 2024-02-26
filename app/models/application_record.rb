@@ -4,6 +4,8 @@ class ApplicationRecord < ActiveRecord::Base
   include AdvancedOrder
   include AdvancedSearch
   include Discardable
+  include QueryRecords::Arrays
+  include QueryRecords::Match
   include ScoredOrder
   include SkipUniquenessValidation
 

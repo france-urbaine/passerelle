@@ -17,10 +17,6 @@ RSpec.describe Report do
 
     it { is_expected.to have_many(:siblings) }
 
-    it { is_expected.to have_many(:potential_office_communes) }
-    it { is_expected.to have_many(:potential_offices) }
-    it { is_expected.to have_many(:offices) }
-
     it { is_expected.to have_many(:exonerations) }
   end
 
@@ -486,25 +482,12 @@ RSpec.describe Report do
         expect {
           described_class.covered_by_office(office).load
         }.to perform_sql_query(<<~SQL)
-          SELECT     DISTINCT "reports".*
-          FROM       "reports"
-          INNER JOIN "office_communes" ON "office_communes"."code_insee" = "reports"."code_insee"
-          WHERE      "office_communes"."office_id" = '#{office.id}'
-            AND      "reports"."form_type" = 'evaluation_local_habitation'
-        SQL
-      end
-
-      it "scopes reports covered by one single office with multiple competences" do
-        office = create(:office, competences: %w[evaluation_local_habitation evaluation_local_professionnel])
-
-        expect {
-          described_class.covered_by_office(office).load
-        }.to perform_sql_query(<<~SQL)
-          SELECT     DISTINCT "reports".*
-          FROM       "reports"
-          INNER JOIN "office_communes" ON "office_communes"."code_insee" = "reports"."code_insee"
-          WHERE      "office_communes"."office_id" = '#{office.id}'
-            AND      "reports"."form_type" IN ('evaluation_local_habitation', 'evaluation_local_professionnel')
+          SELECT      DISTINCT "reports".*
+          FROM        "reports"
+          INNER JOIN  "office_communes" ON "office_communes"."code_insee" = "reports"."code_insee"
+          INNER JOIN  "offices" ON  "offices"."id" = "office_communes"."office_id"
+                                AND "reports"."form_type" = ANY ("offices"."competences")
+          WHERE       "offices"."id" = '#{office.id}'
         SQL
       end
 
@@ -512,12 +495,16 @@ RSpec.describe Report do
         expect {
           described_class.covered_by_office(Office.where(name: "A")).load
         }.to perform_sql_query(<<~SQL)
-          SELECT     DISTINCT "reports".*
-          FROM       "reports"
-          INNER JOIN "office_communes" ON "office_communes"."code_insee" = "reports"."code_insee"
-          INNER JOIN "offices" ON "offices"."id" = "office_communes"."office_id"
-          WHERE      "offices"."name" = 'A'
-            AND      ("reports"."form_type" = ANY ("offices"."competences"))
+          SELECT      DISTINCT "reports".*
+          FROM        "reports"
+          INNER JOIN  "office_communes" ON "office_communes"."code_insee" = "reports"."code_insee"
+          INNER JOIN  "offices" ON  "offices"."id" = "office_communes"."office_id"
+                                AND "reports"."form_type" = ANY ("offices"."competences")
+          WHERE       "offices"."id" IN (
+                        SELECT "offices"."id"
+                        FROM   "offices"
+                        WHERE  "offices"."name" = 'A'
+                      )
         SQL
       end
     end
@@ -744,7 +731,7 @@ RSpec.describe Report do
         }.to perform_sql_query(<<~SQL)
           SELECT "reports".*
           FROM   "reports"
-          WHERE  (ARRAY['consistance'::anomaly, 'categorie'::anomaly] && "reports"."anomalies")
+          WHERE  ("reports"."anomalies" && ARRAY['consistance'::anomaly, 'categorie'::anomaly])
         SQL
       end
 

@@ -71,11 +71,23 @@ class Office < ApplicationRecord
   scope :owned_by, ->(ddfip) { where(ddfip: ddfip) }
 
   scope :covering, lambda { |reports|
-    joins(:communes).merge(Commune.where(code_insee: reports.pluck(:code_insee)))
+    distinct
+      .joins(:office_communes)
+      .joins(<<~SQL.squish)
+        INNER JOIN "reports"
+              ON  "reports"."code_insee" = "office_communes"."code_insee"
+              AND "reports"."form_type" = ANY ("offices"."competences")
+      SQL
+      .merge(Report.where(id: reports))
   }
 
-  scope :with_competence, lambda { |competence|
-    where(%{? = ANY ("offices"."competences")}, competence)
+  scope :with_competence, lambda { |value|
+    if value.is_a?(String) || value.is_a?(Array)
+      value = Array.wrap(value) & COMPETENCES
+      return none if value.empty?
+    end
+
+    search_in_array(:competences, value)
   }
 
   # Scopes: searches

@@ -171,11 +171,6 @@ class Report < ApplicationRecord
 
   has_many :siblings, ->(report) { where.not(id: report.id) }, class_name: "Report", primary_key: :sibling_id, foreign_key: :sibling_id, inverse_of: false, dependent: false
 
-  has_many :potential_office_communes, -> { distinct }, class_name: "OfficeCommune", primary_key: :code_insee, foreign_key: :code_insee, inverse_of: false, dependent: false
-  has_many :potential_offices,         -> { distinct }, through: :potential_office_communes, source: :office
-
-  has_many :offices, ->(report) { distinct.where(competences: report.competence) }, through: :potential_office_communes, source: :office
-
   has_many :exonerations, class_name: "ReportExoneration", dependent: false
 
   # Attachments
@@ -383,17 +378,13 @@ class Report < ApplicationRecord
   }
 
   scope :covered_by_office, lambda { |office|
-    if office.is_a?(ActiveRecord::Relation)
-      distinct
-        .joins(:potential_offices)
-        .merge(office)
-        .where(%{"reports"."form_type" = ANY ("offices"."competences")})
-    else
-      distinct
-        .joins(:potential_office_communes)
-        .merge(OfficeCommune.where(office: office))
-        .where(form_type: office.competences)
-    end
+    distinct
+      .joins(<<~SQL.squish)
+        INNER JOIN "office_communes" ON "office_communes"."code_insee" = "reports"."code_insee"
+        INNER JOIN "offices" ON "offices"."id" = "office_communes"."office_id"
+                            AND "reports"."form_type" = ANY ("offices"."competences")
+      SQL
+      .merge(Office.where(id: office))
   }
 
   # Scopes: searches
@@ -428,34 +419,30 @@ class Report < ApplicationRecord
 
   scope :search_by_state, lambda { |value|
     values = Array.wrap(value) & STATES
-    values.empty? ? none : where(state: values)
+    return none if values.empty?
+
+    where(state: values)
   }
 
   scope :search_by_form_type, lambda { |value|
     values = Array.wrap(value) & FORM_TYPES
-    values.empty? ? none : where(form_type: values)
+    return none if values.empty?
+
+    where(form_type: values)
   }
 
   scope :search_by_anomalies, lambda { |value|
-    values = Array.wrap(value) & ANOMALIES
+    value = Array.wrap(value) & ANOMALIES
+    return none if value.empty?
 
-    if values.empty?
-      none
-    elsif values.size == 1
-      where(%{? = ANY ("reports"."anomalies")}, *values)
-    else
-      sql  = "ARRAY["
-      sql += Array.new(values.size, "?::anomaly").join(", ")
-      sql += %(] && "reports"."anomalies")
-
-      sql = sanitize_sql([sql, *values])
-      where(sql)
-    end
+    search_in_array(:anomalies, value)
   }
 
   scope :search_by_priority, lambda { |value|
     values = Array.wrap(value) & PRIORITIES
-    values.empty? ? none : where(priority: values)
+    return none if values.empty?
+
+    where(priority: values)
   }
 
   scope :search_by_address,      ->(value) { match(:computed_address, value.squish) }

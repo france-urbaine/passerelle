@@ -51,16 +51,30 @@ RSpec.describe DDFIP do
   # ----------------------------------------------------------------------------
   describe "scopes" do
     describe ".covering" do
-      let!(:reports) { create_list(:report, 3) }
+      it "returns DDFIPs covering a reports relation" do
+        reports = Report.where(reference: "2023-12-01")
 
-      it "returns ddfips covering specified reports" do
         expect {
-          described_class.covering(reports)
-        }.to perform_sql_query(<<~SQL.squish)
+          described_class.covering(reports).load
+        }.to perform_sql_query(<<~SQL)
+           SELECT DISTINCT "ddfips".*
+          FROM            "ddfips"
+          INNER JOIN      "communes" ON "communes"."code_departement" = "ddfips"."code_departement"
+          INNER JOIN      "reports" ON "reports"."code_insee" = "communes"."code_insee"
+          WHERE           "reports"."reference" = '2023-12-01'
+        SQL
+      end
+
+      it "returns DDFIPs covering an array of reports" do
+        reports = create_list(:report, 2)
+
+        expect {
+          described_class.covering(reports).load
+        }.to perform_sql_query(<<~SQL)
           SELECT DISTINCT "ddfips".*
-          FROM "ddfips"
-          INNER JOIN "communes" ON "communes"."code_departement" = "ddfips"."code_departement"
-          INNER JOIN "reports" ON "reports"."code_insee" = "communes"."code_insee"
+          FROM            "ddfips"
+          INNER JOIN      "communes" ON "communes"."code_departement" = "ddfips"."code_departement"
+          WHERE           "communes"."code_insee" IN ('#{reports[0].code_insee}', '#{reports[1].code_insee}')
         SQL
       end
     end

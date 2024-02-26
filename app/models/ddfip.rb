@@ -75,7 +75,13 @@ class DDFIP < ApplicationRecord
   # Scopes
   # ----------------------------------------------------------------------------
   scope :covering, lambda { |reports|
-    distinct.joins(communes: :reports).merge(reports)
+    if reports.is_a?(ActiveRecord::Relation)
+      distinct.joins(communes: :reports).merge(reports)
+    else
+      codes    = reports.pluck(:code_insee).uniq
+      communes = Commune.where(code_insee: codes)
+      distinct.joins(:communes).merge(communes)
+    end
   }
 
   # Scopes: searches
