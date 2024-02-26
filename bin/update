@@ -89,17 +89,25 @@ end
 
 def update_yarn
   log "Updating JS dependencies"
-  system! "yarn upgrade-interactive"
+  system! "yarn upgrade-interactive --latest"
   log ""
   log "List outdated JS dependencies"
   system! "yarn outdated", skip_abort: true
 
   return if system!("git diff --quiet yarn.lock", skip_abort: true)
 
-  log ""
-  log "yarn.lock has changed."
-  log "Would you like to commit changes to yarn.lock ? [Yn]"
-  system! "git commit -m \"Update JS dependencies\" -- yarn.lock" if gets == "Y"
+  if system!("git diff --quiet package.json", skip_abort: true)
+    log "yarn.lock has changed."
+    log "Would you like to commit changes on yarn.lock ? [Yn]"
+    system! "git commit -m \"Update JS dependencies\" -- yarn.lock" if gets == "Y"
+  else
+    log "yarn.lock & package.json have changed."
+    log "Would you like to see changes on package.json ? [Yn]"
+    system!("git diff package.json") if gets == "Y"
+
+    log "Would you like to commit changes on yarn.lock & package.json ? [Yn]"
+    system! "git commit -m \"Update JS dependencies\" -- package.json yarn.lock" if gets == "Y"
+  end
 end
 
 def update_icons
