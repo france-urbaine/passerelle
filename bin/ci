@@ -68,6 +68,7 @@ def test_env(scope)
   env["SIMPLE_COV_COMMAND"] += ":parallel" if parallel
   env["SIMPLE_COV_COMMAND"] += ":#{scope}" if scope
   env["PARALLEL_TEST_FIRST_IS_1"] = "true" if parallel
+  env["RSPEC_IGNORE_FOCUS"] = "true"
 
   if ENV["CI"] == "true"
     env["SIMPLE_COV"] = "false"
