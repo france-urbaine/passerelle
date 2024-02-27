@@ -73,30 +73,76 @@ RSpec.describe Office do
   # ----------------------------------------------------------------------------
   describe "scopes" do
     describe ".covering" do
-      let!(:reports) { create_list(:report, 2) }
+      it "returns offices covering a reports relation" do
+        reports = Report.where(reference: "2023-12-01")
 
-      it "returns offices covering specified reports" do
         expect {
           described_class.covering(reports).load
         }.to perform_sql_query(<<~SQL)
-          SELECT   "offices".*
-          FROM     "offices"
-          INNER JOIN "office_communes" ON "office_communes"."office_id" = "offices"."id"
-          INNER JOIN "communes" ON "communes"."code_insee" = "office_communes"."code_insee"
-          WHERE "communes"."code_insee" IN ('#{reports[0].code_insee}', '#{reports[1].code_insee}')
+          SELECT DISTINCT "offices".*
+          FROM            "offices"
+          INNER JOIN      "office_communes" ON "office_communes"."office_id" = "offices"."id"
+          INNER JOIN      "reports"
+                          ON  "reports"."code_insee" = "office_communes"."code_insee"
+                          AND "reports"."form_type" = ANY ("offices"."competences")
+
+          WHERE   "reports"."id" IN (
+                    SELECT  "reports"."id"
+                    FROM    "reports"
+                    WHERE   "reports"."reference" = '2023-12-01'
+                  )
+        SQL
+      end
+
+      it "returns offices covering an array of reports" do
+        reports = create_list(:report, 2)
+
+        expect {
+          described_class.covering(reports).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT DISTINCT "offices".*
+          FROM            "offices"
+          INNER JOIN      "office_communes" ON "office_communes"."office_id" = "offices"."id"
+          INNER JOIN      "reports"
+                          ON  "reports"."code_insee" = "office_communes"."code_insee"
+                          AND "reports"."form_type" = ANY ("offices"."competences")
+
+          WHERE  "reports"."id" IN ('#{reports[0].id}', '#{reports[1].id}')
         SQL
       end
     end
 
     describe ".with_competence" do
-      it "returns offices with specific competence" do
+      it "scopes offices having the given competence" do
         expect {
           described_class.with_competence("evaluation_local_habitation").load
-        }.to perform_sql_query(<<~SQL.squish)
-          SELECT "offices".*
-          FROM "offices"
-          WHERE ('evaluation_local_habitation' = ANY ("offices"."competences"))
+        }.to perform_sql_query(<<~SQL)
+          SELECT  "offices".*
+          FROM    "offices"
+          WHERE   ('evaluation_local_habitation' = ANY ("offices"."competences"))
         SQL
+      end
+
+      it "scopes offices having one the many given competences" do
+        expect {
+          described_class.with_competence(%w[evaluation_local_habitation evaluation_local_professionnel]).load
+        }.to perform_sql_query(<<~SQL)
+          SELECT  "offices".*
+          FROM    "offices"
+          WHERE   ("offices"."competences" && ARRAY['evaluation_local_habitation'::form_type, 'evaluation_local_professionnel'::form_type])
+        SQL
+      end
+
+      it "returns a null relation when none of the enum match the given value" do
+        expect(
+          described_class.with_competence("Hello")
+        ).to be_a_null_relation
+      end
+
+      it "returns a null relation when none of the enum match all the given values" do
+        expect(
+          described_class.with_competence(%w[Foo Bar])
+        ).to be_a_null_relation
       end
     end
   end
