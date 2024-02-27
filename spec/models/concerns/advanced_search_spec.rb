@@ -119,7 +119,7 @@ RSpec.describe AdvancedSearch do
       SQL
     end
 
-    it "merges search conditions to a scope using loading" do
+    it "merges search conditions to a scope using strict loading" do
       expect {
         Report.strict_loading.advanced_search(
           "state:transmitted",
