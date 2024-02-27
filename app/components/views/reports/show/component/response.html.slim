@@ -5,7 +5,7 @@
     - else
       | Observations de la DDFIP
 
-    - if allowed_to?(:update?, @report)
+    - if allowed_to?(:update_transmitted_report?, @report)
       - header.with_action "Compléter", edit_report_path(@report, "reponse"), icon: "pencil-square", modal: true
 
   - layout.with_section do

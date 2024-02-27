@@ -5,7 +5,7 @@
     - else
       | Signalement de l'achèvement de travaux
 
-    - if allowed_to?(:update?, @report) && @report.packing?
+    - if allowed_to?(:update_packing_report?, @report) && @report.packing?
       - header.with_action "Compléter", edit_report_path(@report, "proposition_creation_local"), icon: "pencil-square", modal: true
 
   - layout.with_section do

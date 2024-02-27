@@ -2,7 +2,7 @@
   - layout.with_header icon: "clipboard-document" do |header|
     | Bloc-notes
 
-    - if allowed_to?(:update?, @report)
+    - if allowed_to?(:update_transmitted_report?, @report)
       - header.with_action "Compléter", edit_report_path(@report, "note"), icon: "pencil-square", modal: true
 
   - layout.with_section do

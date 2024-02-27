@@ -35,6 +35,9 @@ class ReportPolicy < ApplicationPolicy
     end
   end
 
+  def update_packing_report?     = update? && collectivity?
+  def update_transmitted_report? = update? && ddfip?
+
   def destroy?
     if record == Report
       collectivity? || publisher?

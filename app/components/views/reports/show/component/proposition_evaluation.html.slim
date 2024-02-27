@@ -11,7 +11,7 @@
     - else
       | Proposition de mise à jour de l'évaluation
 
-    - if allowed_to?(:update?, @report) && @report.packing?
+    - if allowed_to?(:update_packing_report?, @report) && @report.packing?
       - header.with_action "Compléter", edit_report_path(@report, "proposition_evaluation"), icon: "pencil-square", modal: true
 
   - layout.with_section do

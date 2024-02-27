@@ -13,7 +13,7 @@ module Reports
       if record == Report
         collectivity?
       elsif record.is_a?(Report)
-        allowed_to?(:update?, record, with: ::ReportPolicy) && collectivity?
+        allowed_to?(:update_packing_report?, record, with: ::ReportPolicy)
       end
     end
   end
