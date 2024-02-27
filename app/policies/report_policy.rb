@@ -333,7 +333,7 @@ class ReportPolicy < ApplicationPolicy
 
     def report_updatable_by_office_user?(report)
       report_shown_to_office_user?(report) &&
-        !report.resolved?
+        !report.confirmed?
     end
 
     def reports_listed_to_office_users
