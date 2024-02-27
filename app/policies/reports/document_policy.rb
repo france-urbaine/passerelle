@@ -13,12 +13,7 @@ module Reports
       if record == Report
         collectivity?
       elsif record.is_a?(Report)
-        collectivity? &&
-          record.packing? &&
-          record.out_of_sandbox? &&
-          record.made_by_collectivity?(organization) &&
-          record.made_through_web_ui? &&
-          !record.in_active_transmission?
+        allowed_to?(:update?, record, with: ::ReportPolicy) && collectivity?
       end
     end
   end

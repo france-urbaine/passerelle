@@ -2,7 +2,7 @@
   - layout.with_header icon: "paper-clip" do |header|
     | Pièces jointes
 
-    - if allowed_to?(:update?, @report) && @report.packing?
+    - if allowed_to?(:update?, @report, with: Reports::DocumentPolicy)
       - header.with_action "Ajouter des documents", new_report_document_path(@report), icon: "document-plus", modal: true
 
   - layout.with_section do
@@ -16,7 +16,7 @@
         - datatable.with_column(:type) { "Type de fichier" }
 
         - datatable.each_row do |row, document|
-          - if @report.packing? && allowed_to?(:update?, @report)
+          - if @report.packing? && allowed_to?(:update?, @report, with: Reports::DocumentPolicy)
             - row.with_action "Supprimer ce document", remove_report_document_path(@report, document), icon: "trash", icon_only: true, modal: true
 
           - row.with_column(:name) do
