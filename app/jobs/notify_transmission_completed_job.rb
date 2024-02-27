@@ -14,7 +14,7 @@ class NotifyTransmissionCompletedJob < ApplicationJob
                    end
 
     transmission.packages.preload(ddfip: :users).find_each do |package|
-      package.ddfip.users.where(organization_admin: true).where.not(confirmed_at: nil).find_each do |user|
+      package.ddfip.users.select { |u| u.notifiable? && u.organization_admin? }.each do |user|
         Transmissions::Mailer.complete(user, package).deliver_now
       end
     end
