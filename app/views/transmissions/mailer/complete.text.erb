@@ -1,0 +1,7 @@
+Bonjour <%= @user.first_name %>,
+
+Vous avez reçu un nouveau paquet de signalement de la part de <%= @package.collectivity.name %> :
+
+    <%= package_url(@package) %>
+
+Vous pouvez aussi consulter ou traiter les signalements en attente directement sur la plateforme Passerelle

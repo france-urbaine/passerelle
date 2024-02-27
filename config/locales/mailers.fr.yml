@@ -7,3 +7,7 @@ fr:
         subject: "Connexion à Passerelle"
       two_factor_change:
         subject: "Modification de vos paramètres de sécurité sur Passerelle"
+  transmissions:
+    mailer:
+      complete:
+        subject: "Vous avez reçu de nouveaux signalements"

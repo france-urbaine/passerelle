@@ -133,6 +133,8 @@ class User < ApplicationRecord
   # ----------------------------------------------------------------------------
   scope :owned_by, ->(organization) { where(organization: organization) }
 
+  scope :notifiable, -> { kept.where.not(confirmed_at: nil) }
+
   # Scopes: searches
   # ----------------------------------------------------------------------------
   scope :search, lambda { |input|
@@ -393,6 +395,12 @@ class User < ApplicationRecord
     end
 
     errors.empty?
+  end
+
+  # Notifiable
+  # ----------------------------------------------------------------------------
+  def notifiable?
+    confirmed? && !discarded?
   end
 
   # Updates methods

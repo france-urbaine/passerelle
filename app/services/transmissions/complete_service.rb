@@ -30,6 +30,7 @@ module Transmissions
         transmission.update(completed_at: Time.current)
       end
 
+      NotifyTransmissionCompletedJob.perform_later(transmission)
       Result::Success.new(transmission)
     end
 

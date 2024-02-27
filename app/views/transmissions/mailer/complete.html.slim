@@ -1,0 +1,12 @@
+p
+  | Bonjour #{@user.first_name},
+
+
+p
+  | Vous avez reçu un nouveau paquet de signalement de la part de #{@package.collectivity.name} :
+
+p
+  |   #{link_to("Consulter la page du paquet", package_url(@package))}
+
+p
+  | Vous pouvez aussi consulter ou traiter les signalements en attente directement sur la plateforme #{link_to("Passerelle", root_url)}
