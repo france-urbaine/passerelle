@@ -20,6 +20,14 @@ module Views
             I18n.t("enum.resolution_motif_inapplicable").map(&:reverse)
           end
         end
+
+        def resolution_motif_options
+          if resolution_motif_choices.size > 1
+            { prompt: "Sélectionnez un motif" }
+          else
+            {}
+          end
+        end
       end
     end
   end
