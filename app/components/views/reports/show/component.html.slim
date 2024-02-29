@@ -10,11 +10,15 @@
       - layout.with_section do
         = render InformationTransmitted.new(@report)
 
+    - if current_organization.is_a?(DDFIP) || current_organization.is_a?(DGFIP)
+      - layout.with_grid do |grid|
+        - grid.with_column { render Observations.new(@report) }
+        - grid.with_column { render Enjeu.new(@report) }
+
     - if show_response? && show_note?
       - layout.with_grid do |grid|
         - grid.with_column { render Response.new(@report) }
         - grid.with_column { render Note.new(@report) }
-
     - elsif show_response?
       - layout.with_section do
         = render Response.new(@report)
@@ -33,7 +37,6 @@
       - layout.with_grid do |grid|
         - grid.with_column { render SituationEvaluation.new(@report) }
         - grid.with_column { render PropositionEvaluation.new(@report) }
-
     - elsif display_situation_evaluation?
       - layout.with_section do
         = render SituationEvaluation.new(@report)
@@ -45,11 +48,9 @@
       - layout.with_grid do |grid|
         - grid.with_column { render SituationOccupation.new(@report) }
         - grid.with_column { render PropositionOccupation.new(@report) }
-
     - elsif display_situation_occupation?
       - layout.with_section do
         = render SituationOccupation.new(@report)
-
     - elsif display_proposition_occupation?
       - layout.with_section do
         = render PropositionOccupation.new(@report)
@@ -66,9 +67,14 @@
       - layout.with_section do
         = render PropositionAdresse.new(@report)
 
-    - layout.with_grid do |grid|
-      - grid.with_column { render Observations.new(@report) }
-      - grid.with_column { render Enjeu.new(@report) }
+    - if current_organization.is_a?(Collectivity) || current_organization.is_a?(Publisher)
+      - layout.with_grid do |grid|
+        - grid.with_column { render Observations.new(@report) }
+        - grid.with_column { render Enjeu.new(@report) }
 
     - layout.with_section do
       = render Documents.new(@report)
+
+    - if @report.transmitted?
+      - layout.with_section do
+        = render Chronology.new(@report)

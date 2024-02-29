@@ -3,12 +3,12 @@
 require "rails_helper"
 
 RSpec.describe Views::Reports::Show::Component, type: :component do
-  let(:collectivity) { build_stubbed(:collectivity) }
+  let(:collectivity) { create(:collectivity) }
 
   before { sign_in_as(organization: collectivity) }
 
   def render_with_report(*, **)
-    report = build_stubbed(:report, *, collectivity:, **)
+    report = create(:report, *, collectivity:, **)
     render_inline described_class.new(report)
     report
   end

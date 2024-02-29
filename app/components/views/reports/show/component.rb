@@ -17,6 +17,7 @@ module Views
         Response                = Class.new(self)
         Note                    = Class.new(self)
         Documents               = Class.new(self)
+        Chronology              = Class.new(self)
 
         def initialize(report)
           @report = report
@@ -25,6 +26,15 @@ module Views
           @report_completeness.validate unless @report.transmitted?
 
           super()
+        end
+
+        def show_motif?
+          case current_organization
+          when DDFIP, DGFIP
+            @report.resolved?
+          when Collectivity, Publisher
+            @report.returned?
+          end
         end
 
         def show_response?

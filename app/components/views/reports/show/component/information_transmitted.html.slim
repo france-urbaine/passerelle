@@ -30,8 +30,10 @@
             - if allowed_to?(:resolve?, @report)
               - if @report.applicable?
                 - dropdown.with_menu_item "Récuser le signalement", edit_report_resolution_path(@report, state: "inapplicable"), icon: "hand-thumb-down", modal: true
+                - dropdown.with_menu_item "Modifier la résolution", edit_report_resolution_path(@report, state: "applicable"), icon: "pencil-square", modal: true
               - else
                 - dropdown.with_menu_item "Valider le signalement", edit_report_resolution_path(@report, state: "applicable"), icon: "hand-thumb-up", modal: true
+                - dropdown.with_menu_item "Modifier la résolution", edit_report_resolution_path(@report, state: "inapplicable"), icon: "pencil-square", modal: true
 
             - if allowed_to?(:undo_resolution?, @report)
               - dropdown.with_menu_item "Annuler la résolution", remove_report_resolution_path(@report), icon: "arrow-path", modal: true
@@ -87,8 +89,9 @@
         - if @report.package && allowed_to?(:show?, @report.package)
           - attribute.with_action "Voir le paquet", package_path(@report.package), icon: "magnifying-glass"
 
-      - list.with_attribute("Collectivité") do |attribute|
-        = authorized_link_to @report.collectivity
+      - unless current_organization.is_a?(Collectivity)
+        - list.with_attribute("Collectivité") do |attribute|
+          = authorized_link_to @report.collectivity
 
       - list.with_attribute("Guichet") do |attribute|
         - if @report.assigned?
@@ -106,26 +109,6 @@
       - list.with_attribute("Date du constat") do
         = helpers.display_date(@report.date_constat)
 
-      - case current_user.organization_type
-      - when "Collectivity", "Publisher"
-        - list.with_attribute("Date de transmission") do
-          = helpers.display_date(@report.transmitted_at)
-
-        - list.with_attribute("Date de réponse") do
-          = helpers.display_date(@report.returned_at)
-
-      - when "DDFIP", "DGFIP"
-        - list.with_attribute("Date de réception") do
-          = helpers.display_date(@report.transmitted_at)
-
-        - list.with_attribute("Date d'acceptation") do
-          = helpers.display_date(@report.accepted_at)
-
-        - list.with_attribute("Date d'attribution au guichet") do
-          = helpers.display_date(@report.assigned_at)
-
-        - list.with_attribute("Date de réponse guichet") do
-          = helpers.display_date(@report.resolved_at)
-
-        - list.with_attribute("Date de réponse DDFIP") do
-          = helpers.display_date(@report.returned_at)
+      - if show_motif?
+        - list.with_attribute("Motif de la réponse") do
+          = translate_enum(@report.resolution_motif, scope: "enum.resolution_motif")
