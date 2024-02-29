@@ -1,0 +1,15 @@
+= content_layout_component do |layout|
+  - layout.with_header icon: "clipboard-document" do |header|
+    | Bloc-notes
+
+    - if allowed_to?(:update_transmitted_report?, @report)
+      - header.with_action "Compléter", edit_report_path(@report, "note"), icon: "pencil-square", modal: true
+
+  - layout.with_section do
+    - if @report.note.present?
+      = card_component(content_class: "text-lg") do |card|
+        = simple_format h(@report.note)
+
+    - else
+      = card_component(content_class: "card__content--empty h-24 flex-auto flex items-center justify-center") do |card|
+        | Aucune note pour le moment.

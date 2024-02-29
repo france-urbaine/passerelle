@@ -2,7 +2,7 @@
   - layout.with_header icon: "presentation-chart-bar" do |header|
     | Proposition de mise à jour des exonérations
 
-    - if allowed_to?(:update?, @report) && @report.packing?
+    - if allowed_to?(:update_packing_report?, @report) && @report.packing?
       - header.with_action "Compléter", edit_report_path(@report, "proposition_exoneration"), icon: "pencil-square", modal: true
 
   - layout.with_section do

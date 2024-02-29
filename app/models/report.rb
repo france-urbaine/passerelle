@@ -122,8 +122,10 @@
 #  assigned_at                                    :datetime
 #  resolved_at                                    :datetime
 #  returned_at                                    :datetime
+#  note                                           :text
 #  computed_address                               :string
 #  computed_address_sort_key                      :string
+#  resolution_motif                               :enum
 #
 # Indexes
 #

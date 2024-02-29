@@ -13,17 +13,20 @@ module Views
           super()
         end
 
-        def resolution_choices
+        def resolution_motif_choices
           if @state == "applicable"
-            ["Mise à jour du local"]
+            I18n.t("enum.resolution_motif_applicable").map(&:reverse)
           else
-            ["Absence d’incohérence identifiée"]
+            I18n.t("enum.resolution_motif_inapplicable").map(&:reverse)
           end
         end
 
-        def resolution_options
-          # { prompt: "Sélectionnez un motif" }
-          {}
+        def resolution_motif_options
+          if resolution_motif_choices.size > 1
+            { prompt: "Sélectionnez un motif" }
+          else
+            {}
+          end
         end
       end
     end

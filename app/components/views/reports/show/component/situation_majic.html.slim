@@ -2,7 +2,7 @@
   - layout.with_header icon: "document-text" do |header|
     | Identification MAJIC
 
-    - if allowed_to?(:update?, @report) && @report.packing?
+    - if allowed_to?(:update_packing_report?, @report) && @report.packing?
       - header.with_action "Compléter", edit_report_path(@report, "situation_majic"), icon: "pencil-square", modal: true
 
   - layout.with_section do

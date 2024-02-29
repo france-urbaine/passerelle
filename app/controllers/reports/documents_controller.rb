@@ -49,7 +49,7 @@ module Reports
     def find_and_authorize_report(to: :show?)
       report = Report.find(params[:report_id])
 
-      authorize! report, to: to, with: ReportPolicy
+      authorize! report, to: to, with: Reports::DocumentPolicy
       only_kept! report
 
       report

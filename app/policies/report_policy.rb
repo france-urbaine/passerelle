@@ -27,11 +27,16 @@ class ReportPolicy < ApplicationPolicy
 
   def update?
     if record == Report
-      collectivity?
+      collectivity? || ddfip?
     elsif record.is_a?(Report)
-      report_updatable_by_collectivity?(record)
+      report_updatable_by_collectivity?(record) ||
+        report_updatable_by_ddfip_admin?(record) ||
+        report_updatable_by_office_user?(record)
     end
   end
+
+  def update_packing_report?     = update? && collectivity?
+  def update_transmitted_report? = update? && ddfip?
 
   def destroy?
     if record == Report
@@ -134,8 +139,8 @@ class ReportPolicy < ApplicationPolicy
       attributes += Report.column_names.grep(/^(situation|proposition)_/).map(&:to_sym)
 
       params.permit(*attributes)
-    elsif office_user?
-      params.permit(:reponse)
+    elsif ddfip_admin? || office_user?
+      params.permit(:reponse, :note)
     end
   end
 
@@ -297,6 +302,11 @@ class ReportPolicy < ApplicationPolicy
         report.ddfip_id == organization.id
     end
 
+    def report_updatable_by_ddfip_admin?(report)
+      report_shown_to_ddfip_admin?(report) &&
+        !report.returned?
+    end
+
     def reports_listed_to_ddfip_admins
       return Report.none unless ddfip_admin?
 
@@ -319,6 +329,11 @@ class ReportPolicy < ApplicationPolicy
         report.out_of_sandbox? &&
         report.assigned? &&
         report.ddfip_id == organization.id
+    end
+
+    def report_updatable_by_office_user?(report)
+      report_shown_to_office_user?(report) &&
+        !report.confirmed?
     end
 
     def reports_listed_to_office_users

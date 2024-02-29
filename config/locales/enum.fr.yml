@@ -298,3 +298,10 @@ fr:
         approved:     Réponse positive
         canceled:     Réponse négative
         confirmed:    Réponse transmise
+
+    resolution_motif_applicable:
+      maj_local: Mise à jour du local
+
+    resolution_motif_inapplicable:
+      absence_incoherence: Absence d'incohérence identifiée
+      enjeu_insuffisant:   Enjeu Insuffisant

@@ -10,9 +10,17 @@
       - layout.with_section do
         = render InformationTransmitted.new(@report)
 
-    - if show_response?
+    - if show_response? && show_note?
+      - layout.with_grid do |grid|
+        - grid.with_column { render Response.new(@report) }
+        - grid.with_column { render Note.new(@report) }
+
+    - elsif show_response?
       - layout.with_section do
         = render Response.new(@report)
+    - elsif show_note?
+      - layout.with_section do
+        = render Note.new(@report)
 
     - if display_situation_majic?
       - layout.with_section do

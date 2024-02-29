@@ -10,17 +10,12 @@ module Views
           super()
         end
 
-        def resolution_choices
+        def resolution_motif_choices
           if @report.applicable? || @report.approved?
-            ["Mise à jour du local"]
+            I18n.t("enum.resolution_motif_applicable").map(&:reverse)
           else
-            ["Absence d’incohérence identifiée"]
+            I18n.t("enum.resolution_motif_inapplicable").map(&:reverse)
           end
-        end
-
-        def resolution_options
-          # { prompt: "Sélectionnez un motif" }
-          {}
         end
       end
     end

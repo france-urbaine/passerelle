@@ -25,8 +25,8 @@ module Reports
       end
     end
 
-    params_filter do |_params|
-      nil
+    params_filter do |params|
+      params.permit(:reponse, :resolution_motif) if ddfip?
     end
   end
 end
