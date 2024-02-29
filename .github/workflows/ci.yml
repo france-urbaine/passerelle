@@ -22,7 +22,7 @@ concurrency:
 
 jobs:
   cache_dependencies:
-    if: ${{ !contains(github.event.pull_request.labels.*.name, 'CI on pause') }}
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'Skip CI') }}
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
