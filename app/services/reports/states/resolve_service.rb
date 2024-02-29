@@ -21,7 +21,7 @@ module Reports
         #
         @report.errors.add(:resolution_motif, :blank) if @report.resolution_motif.nil?
 
-        # Motif should be one of resolution_motif_applicable or resolution_motif_inapplicable
+        # Motif should be one of resolution_motif.applicable or resolution_motif.inapplicable
         #
         @report.errors.add(:resolution_motif, :inclusion) unless resolution_motif_valid?(state)
 
@@ -41,10 +41,10 @@ module Reports
       def resolution_motif_valid?(state)
         (state.to_s == "applicable" &&
          @report.resolution_motif &&
-           @report.resolution_motif.to_sym.in?(I18n.t("enum.resolution_motif_applicable").keys)) ||
+           @report.resolution_motif.to_sym.in?(I18n.t("enum.resolution_motif.applicable").keys)) ||
           (state.to_s == "inapplicable" &&
             @report.resolution_motif &&
-              @report.resolution_motif.to_sym.in?(I18n.t("enum.resolution_motif_inapplicable").keys))
+              @report.resolution_motif.to_sym.in?(I18n.t("enum.resolution_motif.inapplicable").keys))
       end
 
       def build_result

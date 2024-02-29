@@ -1,7 +1,10 @@
 = content_layout_component do |layout|
   - layout.with_header icon: "chat-bubble-bottom-center-text" do |header|
     - if current_organization.is_a?(DDFIP) || current_organization.is_a?(DGFIP)
-      | Observations
+      - if @report.returned?
+        | Observations transmises à la DDFIP
+      - else
+        | Observations à transmettre à la DDFIP
     - else
       | Observations de la DDFIP
 
@@ -15,4 +18,4 @@
 
     - else
       = card_component(content_class: "card__content--empty h-24 flex-auto flex items-center justify-center") do |card|
-        | Aucune justication transmise.
+        | Aucune observation ajoutée pour ce signalement.

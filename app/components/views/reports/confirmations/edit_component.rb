@@ -12,9 +12,9 @@ module Views
 
         def resolution_motif_choices
           if @report.applicable? || @report.approved?
-            I18n.t("enum.resolution_motif_applicable").map(&:reverse)
+            I18n.t("enum.resolution_motif.applicable").map(&:reverse)
           else
-            I18n.t("enum.resolution_motif_inapplicable").map(&:reverse)
+            I18n.t("enum.resolution_motif.inapplicable").map(&:reverse)
           end
         end
       end
