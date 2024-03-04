@@ -1,0 +1,42 @@
+= content_layout_component do |layout|
+  - layout.with_grid(class: "xl:grid-cols-4 md:grid-cols-2") do |grid|
+    - grid.with_column do
+      = chart_number_component(current_organization.reports_transmitted_count, "Signalement transmis", "Signalements transmis")
+    - grid.with_column do
+      = chart_number_component(current_organization.reports_approved_count, "Réponse positive", "Réponses positives")
+    - grid.with_column do
+      = chart_number_component(current_organization.reports_canceled_count, "Réponse négative", "Réponses négatives")
+    - grid.with_column do
+      = chart_number_component(current_organization.reports_rejected_count, "Signalement rejeté", "Signalements rejetés")
+
+  - layout.with_header icon: "arrow-down-on-square-stack" do |header|
+    | Nouveaux signalements à compléter
+
+    - header.with_action { count_reports(reports_draft) }
+    - header.with_action "Tout voir", report_states_path(:draft, as: :collectivity), icon: "magnifying-glass"
+
+  - layout.with_section do
+    = render Views::Reports::List::Component.new(reports_draft, dashboard: true) do |list|
+      - list.remove_column(:reference)
+
+  - layout.with_header icon: "cloud-arrow-up" do |header|
+    | Signalements prêt à être transmis
+
+    - header.with_action { count_reports(reports_ready) }
+    - header.with_action "Tout voir", report_states_path(:ready, as: :collectivity), icon: "magnifying-glass"
+
+  - layout.with_section do
+    = render Views::Reports::List::Component.new(reports_ready, dashboard: true) do |list|
+      - list.remove_column(:reference)
+
+  - layout.with_header icon: "document-check" do |header|
+    | Derniers signalements traités par la DDFIP
+
+    - header.with_action { count_reports(reports_returned) }
+    - header.with_action "Tout voir", report_states_path(:returned, as: :collectivity), icon: "magnifying-glass"
+
+  - layout.with_section do
+    = render Views::Reports::List::Component.new(reports_returned, dashboard: true) do |list|
+      - list.with_column(:package)
+      - list.with_column(:ddfip)
+      - list.with_column(:office)

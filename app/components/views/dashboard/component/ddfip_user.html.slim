@@ -1,0 +1,18 @@
+= content_layout_component do |layout|
+  - layout.with_grid(class: "md:grid-cols-2") do |grid|
+    - grid.with_column do
+      = chart_number_component(waiting_for_resolution_count, "Signalement à traiter", "Signalements à traiter")
+    - grid.with_column do
+      = chart_number_component(resolved_count, "Signalement traité", "Signalements traités")
+
+  - layout.with_header icon: "inbox-stack" do |header|
+    | Nouveaux signalements à traiter
+
+    - header.with_action { count_reports(reports_waiting_for_resolution) }
+    - header.with_action "Tout voir", report_states_path(:assigned, as: :ddfip_user), icon: "magnifying-glass"
+
+  - layout.with_section do
+    = render Views::Reports::List::Component.new(reports_waiting_for_resolution, dashboard: true) do |list|
+      - list.with_column(:package)
+      - list.with_column(:collectivity)
+      - list.with_column(:assigned_at)
