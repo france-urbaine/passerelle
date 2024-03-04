@@ -3,3 +3,9 @@ package_2024_01_0001:
   collectivity:   pays_basque
   ddfip:          pyrenees_atlantiques
   reports_count:  2
+
+package_2024_01_0002:
+  reference:      2024-01-0002
+  collectivity:   pays_basque
+  ddfip:          pyrenees_atlantiques
+  reports_count:  1

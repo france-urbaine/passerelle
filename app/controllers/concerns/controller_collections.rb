@@ -24,8 +24,7 @@ module ControllerCollections
   def order_param  = params[:order]
 
   def search_collection(relation, query: search_param)
-    relation = relation.search(query) if query.present?
-    relation
+    advanced_search_records(relation, query)
   end
 
   def order_collection(relation, order: order_param, query: search_param)
