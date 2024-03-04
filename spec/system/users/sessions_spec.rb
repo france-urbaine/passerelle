@@ -285,4 +285,33 @@ RSpec.describe "Signing in" do
       .to(marc.email)
       .with_subject("Verrouillage de votre compte Passerelle")
   end
+
+  it "redirects after logged in to the page it request before" do
+    visit reports_path
+
+    expect(page).to have_current_path(new_user_session_path)
+
+    # Fill the login form
+    #
+    fill_in "Adresse mail", with: marc.email
+    fill_in "Mot de passe", with: marc.password
+    click_on "Connexion"
+
+    # The browser should stay on the same page
+    # The form should now require an OTP code
+    #
+    expect(page).to have_current_path(new_user_session_path)
+    expect(page).to have_selector("h1", text: "Authentification en 2 facteurs")
+    expect(page).to have_field("Code de vérification")
+
+    # Fill the 2FA form
+    #
+    fill_in "Code de vérification", with: marc.current_otp
+    click_on "Connexion"
+
+    # The browser should log in & redirect to the dashboard
+    #
+    expect(page).to have_current_path(reports_path)
+    expect(page).to have_selector("h1", text: "Signalements")
+  end
 end

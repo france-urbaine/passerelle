@@ -10,7 +10,14 @@
         ' Veuillez contacter vos administrateurs pour en savoir plus.
 
   - else
-    - card.with_form(model: resource, as: resource_name, url: session_path(resource_name), method: :post) do |form|
+    / FIXME: turbo is disabled on signin forms, otherwise redirection might fails after sucessful signin :
+    / After a sucessful signin :
+    /   * Turbo follows the redirection
+    /   * the GET request accept "Turbo Stream" format.
+    /   * when a component is rendered directly from the controller, no layout is rendered because of turbo-stream format.
+    /   * turbo fails to update the page.
+    /
+    - card.with_form(model: resource, as: resource_name, url: session_path(resource_name), method: :post, data: { turbo: false }) do |form|
       - case resource.otp_method
         - when "2fa"
           p Veuillez saisir le code généré par votre application d'authentification :
