@@ -1,0 +1,20 @@
+= content_layout_component do |layout|
+  - layout.with_grid(class: "lg:grid-cols-3") do |grid|
+    - grid.with_column do
+      = chart_number_component(current_organization.collectivities_count, "Collectivité", "Collectivités")
+    - grid.with_column do
+      = chart_number_component(current_organization.reports_transmitted_count, "Signalement transmis", "Signalements transmis")
+    - grid.with_column do
+      = chart_number_component(reports_returned_count, "Signalement retourné", "Signalements retournés")
+
+  - layout.with_header icon: "cloud-arrow-down" do |header|
+    | Derniers signalements transmis
+
+    - header.with_action { count_reports(reports_transmitted) }
+    - header.with_action "Tout voir", reports_path, icon: "magnifying-glass"
+
+  - layout.with_section do
+    = render Views::Reports::List::Component.new(reports_transmitted, dashboard: true) do |list|
+      - list.with_column(:collectivity)
+      - list.with_column(:ddfip)
+      - list.with_column(:transmitted_at)

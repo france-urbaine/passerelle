@@ -1,0 +1,49 @@
+= content_layout_component do |layout|
+  - layout.with_grid(class: "xl:grid-cols-5 md:grid-cols-2") do |grid|
+    - grid.with_column do
+      = chart_number_component(current_organization.reports_transmitted_count, "Signalement reçu", "Signalements reçus")
+    - grid.with_column do
+      = chart_number_component(current_organization.reports_unassigned_count, "Non-assigné", "Non-assignés")
+    - grid.with_column do
+      = chart_number_component(current_organization.reports_approved_count, "Réponse positive", "Réponses positives")
+    - grid.with_column do
+      = chart_number_component(current_organization.reports_canceled_count, "Réponse négative", "Réponses négatives")
+    - grid.with_column do
+      = chart_number_component(current_organization.reports_rejected_count, "Signalement rejeté", "Signalements rejetés")
+
+  - layout.with_header icon: "envelope-open" do |header|
+    | Nouveaux signalements reçus
+
+    - header.with_action { count_reports(reports_waiting_for_acceptance) }
+    - header.with_action "Tout voir", report_states_path(:transmitted, as: :ddfip_admin), icon: "magnifying-glass"
+
+  - layout.with_section do
+    = render Views::Reports::List::Component.new(reports_waiting_for_acceptance, dashboard: true) do |list|
+      - list.with_column(:package)
+      - list.with_column(:collectivity)
+      - list.with_column(:transmitted_at)
+
+  - layout.with_header icon: "inbox-stack" do |header|
+    | Signalements acceptés, en attente d'une assignation
+
+    - header.with_action { count_reports(reports_waiting_for_assignment) }
+    - header.with_action "Tout voir", report_states_path(:accepted, as: :ddfip_admin), icon: "magnifying-glass"
+
+  - layout.with_section do
+    = render Views::Reports::List::Component.new(reports_waiting_for_assignment, dashboard: true) do |list|
+      - list.with_column(:package)
+      - list.with_column(:collectivity)
+      - list.with_column(:accepted_at)
+
+  - layout.with_header icon: "document-check" do |header|
+    | Derniers signalements traités, à transmettre à la collectivité
+
+    - header.with_action { count_reports(reports_waiting_for_confirmation) }
+    - header.with_action "Tout voir", report_states_path(:resolved, as: :ddfip_admin), icon: "magnifying-glass"
+
+  - layout.with_section do
+    = render Views::Reports::List::Component.new(reports_waiting_for_confirmation, dashboard: true) do |list|
+      - list.with_column(:package)
+      - list.with_column(:collectivity)
+      - list.with_column(:office)
+      - list.with_column(:resolved_at)

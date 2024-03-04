@@ -1,0 +1,20 @@
+= content_frame_component do
+  = content_layout_component do |layout|
+    - layout.with_breadcrumbs do |breadcrumbs|
+      - breadcrumbs.with_h1 "Tableau de bord"
+
+    - case current_user.organization_type
+    - when "Collectivity"
+      = render Collectivity.new(@reports)
+
+    - when "DDFIP"
+      - if current_user.organization_admin?
+        = render DDFIPAdmin.new(@reports)
+      - else
+        = render DDFIPUser.new(@reports)
+
+    - when "DGFIP"
+      = render DGFIP.new(@reports)
+
+    - when "Publisher"
+      = render Publisher.new(@reports)

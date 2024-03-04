@@ -3,6 +3,8 @@
 class DashboardsController < ApplicationController
   def index
     authorize! with: ReportPolicy
-    @reports = authorized(Report.all).strict_loading.limit(10)
+    reports = authorized(Report.all).strict_loading
+
+    render Views::Dashboard::Component.new(reports)
   end
 end
