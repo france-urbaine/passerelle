@@ -2,9 +2,9 @@
   - layout.with_header icon: "chat-bubble-bottom-center-text" do |header|
     - if current_organization.is_a?(DDFIP) || current_organization.is_a?(DGFIP)
       - if @report.returned?
-        | Observations transmises à la DDFIP
+        | Observations transmises à la collectivité
       - else
-        | Observations à transmettre à la DDFIP
+        | Observations à transmettre à la collectivité
     - else
       | Observations de la DDFIP
 
