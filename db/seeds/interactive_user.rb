@@ -63,28 +63,6 @@ else
   log "Your user has been created"
 end
 
-unless user.confirmed?
-  url = Rails.application.routes.url_helpers.user_registration_url(
-    host:  "http://localhost:3000",
-    token: user.confirmation_token
-  )
-
-  log ""
-  log "-------------------------------------------------------------------------------------"
-  log ""
-  log "To complete your registration process:"
-  log ""
-  log "1. Start a server with the command:"
-  log ""
-  log "    bin/dev"
-  log ""
-  log "2. Then, follow the link below:"
-  log ""
-  log "    #{url}"
-  log ""
-  log "-------------------------------------------------------------------------------------"
-end
-
 log ""
 log "You can also configure your rails console by adding the following code to your `~/.irbrc`:"
 log ""
@@ -108,3 +86,25 @@ log "    $ rails c"
 log "    #{RUBY_VERSION} :001 > me"
 log "    => #<User first_name: \"#{first_name}\", last_name: \"#{last_name}\", email: \"#{email}\" [...]>"
 log ""
+
+unless user.confirmed?
+  url = Rails.application.routes.url_helpers.user_registration_url(
+    host:  "http://localhost:3000",
+    token: user.confirmation_token
+  )
+
+  log ""
+  log "-------------------------------------------------------------------------------------"
+  log ""
+  log "To complete your registration process:"
+  log ""
+  log "1. Start a server with the command:"
+  log ""
+  log "    bin/dev"
+  log ""
+  log "2. Then, follow the link below:"
+  log ""
+  log "    #{url}"
+  log ""
+  log "-------------------------------------------------------------------------------------"
+end
