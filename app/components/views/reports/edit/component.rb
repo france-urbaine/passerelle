@@ -17,7 +17,7 @@ module Views
           proposition_occupation
           observations
           enjeu
-          reponse
+          response
           note
         ].freeze
 

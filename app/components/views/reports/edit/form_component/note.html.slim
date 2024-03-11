@@ -3,8 +3,9 @@
     | Bloc-notes
 
   - modal.with_form(model: @report) do |form|
-    = form.block :note do
+    = form.block :note do |block|
       = form.text_area :note, rows: 10
 
-    p
-      ' Le bloc-notes est interne à la DDFIP et n'est pas visible par la collectivité.
+      - block.with_hint do
+        ' Les notes saisies ici sont partagées avec les autres membres de la DDFIP :
+        ' elles ne seront jamais visibles par la collectivité.
