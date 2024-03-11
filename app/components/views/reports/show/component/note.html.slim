@@ -10,6 +10,11 @@
       = card_component(content_class: "text-lg") do |card|
         = simple_format h(@report.note)
 
+        - unless @report.returned?
+          .text-disabled
+            ' (Ces notes sont partagées avec les autres membres de la DDFIP :
+            ' elles ne seront jamais visibles par la collectivité.)
+
     - else
-      = card_component(content_class: "card__content--empty h-24 flex-auto flex items-center justify-center") do |card|
+      = card_component(content_class: "card__content--empty h-24") do |card|
         | Aucune note pour le moment.

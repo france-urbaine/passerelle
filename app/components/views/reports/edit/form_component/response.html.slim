@@ -1,0 +1,11 @@
+= modal_component do |modal|
+  - modal.with_header do
+    | Observations
+
+  - modal.with_form(model: @report) do |form|
+    = form.block :response do |block|
+      = form.text_area :reponse, rows: 10
+
+      - block.with_hint do
+        ' Les observations saisies ici ne seront visibles par la collectivité qu'une fois
+        ' le signalement confirmé et retourné par le référent fiabilisation.

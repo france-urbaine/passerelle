@@ -9,6 +9,12 @@
     @apply p-6;
 
     &--empty {
+      display: flex;
+      flex: 1 1 auto;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+
       @apply italic text-gray-500;
       @apply px-4 py-3;
     }

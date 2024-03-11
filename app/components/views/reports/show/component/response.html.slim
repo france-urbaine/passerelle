@@ -9,13 +9,18 @@
       | Observations de la DDFIP
 
     - if allowed_to?(:update_transmitted_report?, @report)
-      - header.with_action "Compléter", edit_report_path(@report, "reponse"), icon: "pencil-square", modal: true
+      - header.with_action "Compléter", edit_report_path(@report, "response"), icon: "pencil-square", modal: true
 
   - layout.with_section do
     - if @report.reponse.present?
       = card_component(content_class: "text-lg") do |card|
         = simple_format h(@report.reponse)
 
+        - unless @report.returned?
+          .text-disabled
+            ' (Ces observations ne seront visibles par la collectivité qu'une fois
+            ' le signalement confirmé et retourné par le référent fiabilisation.)
+
     - else
-      = card_component(content_class: "card__content--empty h-24 flex-auto flex items-center justify-center") do |card|
+      = card_component(content_class: "card__content--empty h-24") do |card|
         | Aucune observation ajoutée pour ce signalement.

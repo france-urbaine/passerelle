@@ -6,7 +6,7 @@ module Views
       class FormComponent < ApplicationViewComponent
         Enjeu              = Class.new(self)
         Observations       = Class.new(self)
-        Reponse            = Class.new(self)
+        Response           = Class.new(self)
         Note               = Class.new(self)
         PropositionAdresse = Class.new(self)
 
