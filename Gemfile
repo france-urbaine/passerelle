@@ -26,7 +26,8 @@ gem "doorkeeper-i18n"
 # Models
 gem "devise"
 gem "devise_zxcvbn"
-# https://github.com/tinfoil/devise-two-factor/pull/240
+# FIXME: https://github.com/tinfoil/devise-two-factor/pull/240
+# Waiting for this PR to be released
 gem "devise-two-factor", github: "inkstak/devise-two-factor", branch: "bugfix-insert_two_factor_authenticatable_on_top"
 gem "discard"
 gem "zxcvbn"
@@ -75,10 +76,10 @@ gem "audited"
 group :development, :test do
   gem "lookbook", ">= 2.0.0"
 
-  # FIXME: waiting for this PR to be released
-  # The gem can be removed from the Gemfile after release because
-  # its already a dependency of lookbook
-  # https://github.com/threedaymonk/htmlbeautifier/pull/74
+  # FIXME: https://github.com/tinfoil/devise-two-factor/pull/240
+  # Waiting for this PR to be released
+  # The gem could be removed from the Gemfile after release because it's already a dependency of lookbook
+  #
   gem "htmlbeautifier", github: "inkstak/htmlbeautifier", branch: "allow_custom_elements"
 
   gem "awesome_print"
