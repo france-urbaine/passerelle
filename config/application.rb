@@ -9,6 +9,11 @@ require "active_storage/engine"
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
+if defined?(Dotenv)
+  require_relative "../lib/dotenv/custom"
+  require_relative "../lib/dotenv/output"
+end
+
 module Passerelle
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
@@ -17,7 +22,7 @@ module Passerelle
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
     # Common ones are `templates`, `generators`, or `middleware`, for example.
-    config.autoload_lib(ignore: %w[assets tasks guard])
+    config.autoload_lib(ignore: %w[assets dotenv tasks guard])
 
     # Autoload extra classes defined in lib/extras
     config.autoload_paths << "#{root}/lib/extras"
