@@ -15,7 +15,7 @@ AllCops:
   NewCops:           enable
   DisplayCopNames:   true
   DisplayStyleGuide: true
-  TargetRubyVersion: 3.2
+  TargetRubyVersion: 3.3
   Exclude:
     - 'db/schema.rb'
     - 'tmp/**/*'
