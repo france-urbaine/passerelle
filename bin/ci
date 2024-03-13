@@ -124,16 +124,6 @@ def rubocop(paths = [])
   system! command
 end
 
-def erblint(paths = [])
-  log "Lint ERB templates"
-
-  command = "bundle exec erblint"
-  command += " --format compact"
-  command += paths.empty? ? " --lint-all" : " #{paths.join(' ')}"
-
-  system! command
-end
-
 def brakeman
   log "Analyzing code for security vulnerabilities"
   system! "bundle exec brakeman --color -o /dev/stdout -o tmp/brakeman.html"
@@ -161,7 +151,6 @@ def run_all
   test("unit")
   test("system")
   rubocop
-  erblint
   brakeman
   audit
   log ""
@@ -183,7 +172,6 @@ def help
   log "    bin/ci test:unit     # Run non-system tests"
   log "    bin/ci test:system   # Run system tests"
   log "    bin/ci rubocop       # Analyzing code issues with Rubocop"
-  log "    bin/ci erb           # Lint ERB templates"
   log "    bin/ci brakeman      # Analyzing code for security vulnerabilities."
   log "    bin/ci audit         # Analyzing ruby gems for security vulnerabilities"
   log ""
@@ -207,7 +195,6 @@ else
   when "factories"      then lint_factories
   when /test(?::(.*))?/ then test(Regexp.last_match[1], ARGV[1..])
   when "rubocop"        then rubocop(ARGV[1..])
-  when "erb"            then erblint(ARGV[1..])
   when "brakeman"       then brakeman
   when "audit"          then audit
   else help

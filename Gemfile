@@ -106,7 +106,6 @@ group :development do
   gem "web-console"
 
   # Linting
-  gem "erb_lint",            require: false
   gem "rubocop",             require: false
   gem "rubocop-capybara",    require: false
   gem "rubocop-factory_bot", require: false
@@ -118,9 +117,6 @@ group :development do
   # Tests & lint automation
   gem "guard"
   gem "guard-brakeman", require: false
-  # FIXME: waiting for this PR to be released
-  # https://github.com/Driversnote-Dev/guard-erb_lint/pull/2
-  gem "guard-erb_lint", require: false, github: "Driversnote-Dev/guard-erb_lint"
   gem "guard-rspec",    require: false
   gem "guard-rubocop",  require: false
 
