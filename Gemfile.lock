@@ -225,6 +225,11 @@ GEM
       webrick (~> 1.7)
       websocket-driver (>= 0.6, < 0.8)
     ffi (1.16.3)
+    flatware (2.2.1)
+      thor (< 2.0)
+    flatware-rspec (2.2.1)
+      flatware (= 2.2.1)
+      rspec (>= 3.6)
     formatador (1.1.0)
     fuubar (2.5.1)
       rspec-core (~> 3.0)
@@ -607,6 +612,7 @@ DEPENDENCIES
   factory_bot-awesome_linter
   factory_bot_rails
   faker
+  flatware-rspec
   fuubar
   fx
   guard

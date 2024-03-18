@@ -96,6 +96,7 @@ group :development, :test do
   gem "rspec-rails"
 
   # Parallel testing
+  gem "flatware-rspec", require: false
   gem "parallel_tests"
   gem "turbo_tests", github: "inkstak/turbo_tests", branch: "feature-handle_fuubar"
 end

@@ -35,12 +35,11 @@ module CLI
             #{program_name} brakeman      # Analyzing code for security vulnerabilities.
             #{program_name} audit         # Analyzing ruby gems for security vulnerabilities
 
-        To run tests in parallel, you must define the CI_PARALLEL environnment variable.
-        Add it to your `.env.test` or call it with the command
+        To run tests in parallel, define the CI_PARALLEL environnment variable with one of the following values:
 
-            CI_PARALLEL=true
-            or
-            CI_PARALLEL=turbo_tests (better output / experimental)
+            CI_PARALLEL=true              # Use parallel_tests
+            CI_PARALLEL=turbo_tests       # Use turbo_tests (experimental, better output)
+            CI_PARALLEL=flatware          # Use flatware    (experimental, faster, less options)
 
         To run the commands in CI environnement (ex: on Github), use the CI variable:
 
@@ -96,12 +95,13 @@ module CLI
     end
 
     def test_env(scope)
-      parallel = ENV.fetch("CI_PARALLEL", "false") != "false"
+      parallel = ENV.fetch("CI_PARALLEL", "false")
+      parallel = false if parallel == "false"
 
       env = { "SIMPLE_COV_COMMAND" => "bin/ci test" }
       env["SIMPLE_COV_COMMAND"] += ":parallel" if parallel
       env["SIMPLE_COV_COMMAND"] += ":#{scope}" if scope
-      env["PARALLEL_TEST_FIRST_IS_1"] = "true" if parallel
+      env["PARALLEL_TEST_FIRST_IS_1"] = "true" if parallel && parallel != "flatware"
       env["RSPEC_IGNORE_FOCUS"] = "true"
 
       if ENV["CI"] == "true"
@@ -124,21 +124,33 @@ module CLI
       if parallel
         node_total = ENV.fetch("CI_NODE_TOTAL", nil)
         node_index = ENV.fetch("CI_NODE_INDEX", nil)
+      end
 
+      if parallel == "turbo_tests" && ENV["CI"] != "true"
+        command  = "bundle exec turbo_tests"
+        command += " -n #{node_total}"              if node_total
+        command += " --only-group #{node_index}"    if node_index
+        command += " --exclude-pattern spec/system" if scope == "unit"
+        command += " --pattern spec/system"         if scope == "system"
+        command += " -f Fuubar"
+      elsif parallel == "flatware" && ENV["CI"] != "true"
+        command  = "bundle exec flatware rspec"
+        command += " -w #{node_total}"                                                  if node_total
+        warn "CI_NODE_INDEX is ignored when using flatware for parallel testing"        if node_index
+        command += " --exclude-pattern 'system/**/*_spec.rb'"                           if scope == "unit"
+        command += " --pattern 'system/**/*_spec.rb'"                                   if scope == "system"
+      elsif parallel
         command  = "bundle exec parallel_rspec"
-        command  = "bundle exec turbo_tests" if parallel == "turbo_tests" && ENV["CI"] != "true"
-
-        command += " -n #{node_total}"                              if node_total
-        command += " --only-group #{node_index}"                    if node_index
-        command += " --exclude-pattern spec/system"                 if scope == "unit"
-        command += " --pattern spec/system"                         if scope == "system"
-        command += " -f Fuubar"                                     if parallel == "turbo_tests" && ENV["CI"] != "true"
-        command += " -- -f progress -f RSpec::Github::Formatter --" if parallel && ENV["CI"] == "true"
+        command += " -n #{node_total}"                                                  if node_total
+        command += " --only-group #{node_index}"                                        if node_index
+        command += " --exclude-pattern spec/system"                                     if scope == "unit"
+        command += " --pattern spec/system"                                             if scope == "system"
+        command += " -- -f progress -f RSpec::Github::Formatter --"                     if ENV["CI"] == "true"
       else
         command  = "bundle exec rspec"
-        command += " --exclude-pattern 'system/**/*_spec.rb'" if scope == "unit"
-        command += " --pattern 'system/**/*_spec.rb'"         if scope == "system"
-        command += " --no-profile --format RSpec::Github::Formatter --format progress" if ENV["CI"] == "true"
+        command += " --exclude-pattern 'system/**/*_spec.rb'"                           if scope == "unit"
+        command += " --pattern 'system/**/*_spec.rb'"                                   if scope == "system"
+        command += " --no-profile --format RSpec::Github::Formatter --format progress"  if ENV["CI"] == "true"
       end
 
       command += " #{paths.join(' ')}" if paths.any?

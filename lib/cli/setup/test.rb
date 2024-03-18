@@ -6,14 +6,7 @@ module CLI
   class Setup
     class Test < Base
       def call(arguments: ARGV)
-        subjects =
-          if arguments.any?
-            arguments
-          else
-            %w[rspec parallel watch assets].tap do |array|
-              array.delete("watch") if ENV["CI"] == "true"
-            end
-          end
+        subjects = parse_subjects(arguments)
 
         if subjects.include?("rspec")
           say "Setup test database"
@@ -22,7 +15,12 @@ module CLI
 
         if subjects.include?("parallel")
           say "Setup test databases for parallel testing"
-          run "bin/rails parallel:prepare", env: { "PARALLEL_TEST_FIRST_IS_1" => "true" }
+
+          if parallel == "flatware"
+            run "bundle exec flatware fan rake db:test:prepare"
+          else
+            run "bin/rails parallel:prepare", env: { "PARALLEL_TEST_FIRST_IS_1" => "true" }
+          end
         end
 
         if subjects.include?("watch")
@@ -48,6 +46,25 @@ module CLI
         say ""
         say "✓ You're ready to launch the CI !"
         say ""
+      end
+
+      def parse_subjects(subjects)
+        return subjects if subjects.any?
+
+        %w[rspec parallel watch assets].tap do |array|
+          array.delete("watch") if ENV["CI"] == "true"
+        end
+      end
+
+      def parallel
+        @parallel ||= begin
+          require "dotenv"
+          Dotenv.load(".env.test")
+
+          parallel = ENV.fetch("CI_PARALLEL", nil)
+          parallel = nil if parallel == "false"
+          parallel
+        end
       end
     end
   end
