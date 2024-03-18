@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "irb/color"
+require "English"
 
 module CLI
   class Base
@@ -55,6 +56,14 @@ module CLI
         say "#{colorize(command, :RED)} failed"
         abort
       end
+    end
+
+    def run_succeed?
+      $CHILD_STATUS&.success?
+    end
+
+    def run_failed?
+      $CHILD_STATUS && !$CHILD_STATUS.success?
     end
 
     def command_available?(command)

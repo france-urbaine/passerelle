@@ -1,20 +1,18 @@
 #!/usr/bin/env ruby
 
-# This file is a replacement for the `mailcatcher` command provided by the gem.
-# It allows to use environment variables from .env files
+# This file is a replacement for the `mailcatcher` command.
+# It allows to use environment variables from dotenv files
 #
 require "dotenv"
-require "mailcatcher"
 
 env = ENV.fetch("DOTENV", "development")
 Dotenv.load(
-  ".env.#{env}.local",
+  ".env.development.local",
   (".env.local" unless env == "test"),
   ".env.#{env}",
   ".env"
 )
 
-MailCatcher.run!(
-  daemon:    false,
-  smtp_port: ENV.fetch("SMTP_PORT", 1025)
-)
+smtp_port = ENV.fetch("SMTP_PORT", 1025)
+
+system("mailcatcher --foreground --smtp-port #{smtp_port}")

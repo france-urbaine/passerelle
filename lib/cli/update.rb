@@ -58,7 +58,9 @@ module CLI
 
       say ""
       say "List outdated gems"
-      say "No outdated gems" if run("bundle outdated", abort_on_failure: false)
+      run "bundle outdated", abort_on_failure: false
+
+      say "No outdated gems" if run_succeed?
       say ""
       say "Press [Enter] to continue"
       ask
@@ -86,7 +88,9 @@ module CLI
 
       say ""
       say "List outdated JS dependencies"
-      say "No outdated packages" if run("yarn outdated", abort_on_failure: false)
+      run "yarn outdated", abort_on_failure: false
+
+      say "No outdated packages" if run_succeed?
       say ""
       say "Press [Enter] to continue"
       ask
