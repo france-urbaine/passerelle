@@ -58,8 +58,12 @@ module CLI
 
       def parallel
         @parallel ||= begin
-          require "dotenv"
-          Dotenv.load(".env.test")
+          begin
+            require "dotenv"
+            Dotenv.load(".env.test")
+          rescue LoadError
+            # Do nothing
+          end
 
           parallel = ENV.fetch("CI_PARALLEL", nil)
           parallel = nil if parallel == "false"

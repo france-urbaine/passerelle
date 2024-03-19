@@ -85,8 +85,12 @@ module CLI
       say "Running tests"
       clear_coverage unless @coverage_cleared
 
-      require "dotenv"
-      Dotenv.load(".env.test")
+      begin
+        require "dotenv"
+        Dotenv.load(".env.test")
+      rescue LoadError
+        # Do nothing
+      end
 
       env     = test_env(scope)
       command = test_command(scope, paths)
