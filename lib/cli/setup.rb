@@ -4,7 +4,12 @@ require_relative "base"
 
 module CLI
   class Setup < Base
+    # I cannot make it simpler
+    # rubocop:disable Metrics/CyclomaticComplexity
+    #
     def call(arguments: ARGV)
+      raise "Are you crazy ?" if ENV["RAILS_ENV"] == "production" || ENV["DOTENV"] == "production"
+
       case arguments[0]
       when nil           then setup
       when "master_key"  then setup_master_key
@@ -18,6 +23,8 @@ module CLI
       else                    help
       end
     end
+    #
+    # rubocop:enable Metrics/CyclomaticComplexity
 
     def help
       say <<~MESSAGE
