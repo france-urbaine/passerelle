@@ -67,7 +67,7 @@ module CLI
     end
 
     def command_available?(command)
-      system("command -v #{command} &> /dev/null")
+      system("command", "-v", command, out: File::NULL)
     end
 
     def output_prefix
