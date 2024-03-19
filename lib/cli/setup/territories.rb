@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "../base"
+require_relative "../../../config/environment"
 
 module CLI
   class Setup
@@ -9,7 +10,10 @@ module CLI
         say "Import all territories"
         say "This could take a while."
 
-        run "bin/rails db:seed", env: { "SEED_ALL_EPCIS_AND_COMMUNES" => "true" }
+        ::Territories::UpdateService.new(
+          communes_url: ::Passerelle::Application::DEFAULT_COMMUNES_URL,
+          epcis_url:    ::Passerelle::Application::DEFAULT_EPCIS_URL
+        ).perform_now
       end
     end
   end
