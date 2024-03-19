@@ -85,13 +85,6 @@ module CLI
       say "Running tests"
       clear_coverage unless @coverage_cleared
 
-      begin
-        require "dotenv"
-        Dotenv.load(".env.test")
-      rescue LoadError
-        # Do nothing
-      end
-
       env     = test_env(scope)
       command = test_command(scope, paths)
 
@@ -99,9 +92,6 @@ module CLI
     end
 
     def test_env(scope)
-      parallel = ENV.fetch("CI_PARALLEL", "false")
-      parallel = false if parallel == "false"
-
       env = { "SIMPLE_COV_COMMAND" => "bin/ci test" }
       env["SIMPLE_COV_COMMAND"] += ":parallel" if parallel
       env["SIMPLE_COV_COMMAND"] += ":#{scope}" if scope
@@ -122,11 +112,8 @@ module CLI
     # rubocop:disable Metrics/PerceivedComplexity
     #
     def test_command(scope, paths)
-      parallel = ENV.fetch("CI_PARALLEL", "false")
-      parallel = false if parallel == "false"
-
       if parallel
-        node_total = ENV.fetch("CI_NODE_TOTAL", nil)
+        node_total = determine_number_of_parallel_processes(scope)
         node_index = ENV.fetch("CI_NODE_INDEX", nil)
       end
 
@@ -193,6 +180,36 @@ module CLI
       env["SKIP_ALL_ON_START_WARNING"] = "true"
 
       run "bundle exec guard", env: env
+    end
+
+    private
+
+    def parallel
+      @parallel ||= begin
+        load_dotenv
+        parallel = ENV.fetch("CI_PARALLEL", nil)
+        parallel = nil if parallel == "false"
+        parallel
+      end
+    end
+
+    def determine_number_of_parallel_processes(scope)
+      load_dotenv
+
+      total = ENV.fetch("CI_NODE_TOTAL", nil)
+      total = 2 if scope == "system" && (total.nil? || total > 2)
+      total
+    end
+
+    def load_dotenv
+      return if @dotenv_loaded
+
+      require "dotenv"
+      Dotenv.load(".env.test")
+    rescue LoadError
+      # Do nothing
+    ensure
+      @dotenv_loaded = true
     end
   end
 end
