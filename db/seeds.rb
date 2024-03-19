@@ -17,13 +17,6 @@ if ENV["SEED_ALL_EPCIS_AND_COMMUNES"] == "true"
   exit
 end
 
-# Seed one user through interactive command
-# ----------------------------------------------------------------------------
-if ENV["SEED_INTERACTIVE_USER"] == "true"
-  require_relative "seeds/interactive_user"
-  exit
-end
-
 # Import territories
 # ----------------------------------------------------------------------------
 log "Seed regions"
