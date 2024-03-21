@@ -3,8 +3,16 @@
 # This file is a replacement for the `mailcatcher` command provided by the gem.
 # It allows to use environment variables from .env files
 #
+require "dotenv"
 require "mailcatcher"
-require_relative "../config/dotenv"
+
+env = ENV.fetch("DOTENV", "development")
+Dotenv.load(
+  ".env.#{env}.local",
+  (".env.local" unless env == "test"),
+  ".env.#{env}",
+  ".env"
+)
 
 MailCatcher.run!(
   daemon:    false,

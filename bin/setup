@@ -39,8 +39,8 @@ def gets(secret: false)
   result
 end
 
-# Do not output message from config/dotenv.rb
-ENV["DOTENV_QUIET"] = "true"
+# Do not output message from lib/dotenv/output
+ENV["DOTENV_OUTPUT"] = "false"
 
 # Programs
 # ------------------------------------------------------------------------------
