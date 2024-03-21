@@ -110,6 +110,7 @@ GEM
       activesupport (>= 6.0.0)
     addressable (2.8.6)
       public_suffix (>= 2.0.2, < 6.0)
+    amazing_print (1.6.0)
     annotate (3.2.0)
       activerecord (>= 3.2, < 8.0)
       rake (>= 10.4, < 14.0)
@@ -123,7 +124,6 @@ GEM
     audited (5.4.3)
       activerecord (>= 5.0, < 7.2)
       request_store (~> 1.2)
-    awesome_print (1.9.2)
     aws-eventstream (1.3.0)
     aws-partitions (1.896.0)
     aws-sdk-core (3.191.3)
@@ -225,6 +225,11 @@ GEM
       webrick (~> 1.7)
       websocket-driver (>= 0.6, < 0.8)
     ffi (1.16.3)
+    flatware (2.2.1)
+      thor (< 2.0)
+    flatware-rspec (2.2.1)
+      flatware (= 2.2.1)
+      rspec (>= 3.6)
     formatador (1.1.0)
     fuubar (2.5.1)
       rspec-core (~> 3.0)
@@ -578,11 +583,11 @@ PLATFORMS
 DEPENDENCIES
   action_policy
   actual_db_schema
+  amazing_print
   annotate
   apipie-rails
   appsignal
   audited
-  awesome_print
   aws-sdk-s3
   bootsnap
   brakeman
@@ -607,6 +612,7 @@ DEPENDENCIES
   factory_bot-awesome_linter
   factory_bot_rails
   faker
+  flatware-rspec
   fuubar
   fx
   guard

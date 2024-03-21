@@ -1,0 +1,5 @@
+#!/bin/sh
+if [[ $3 == 1 ]]
+then
+  bin/update
+fi

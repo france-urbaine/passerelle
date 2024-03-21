@@ -82,7 +82,7 @@ group :development, :test do
   #
   gem "htmlbeautifier", github: "inkstak/htmlbeautifier", branch: "allow_custom_elements"
 
-  gem "awesome_print"
+  gem "amazing_print"
   gem "byebug"
   gem "dead_end"
   gem "debug", platforms: %i[mri mingw x64_mingw]
@@ -96,6 +96,7 @@ group :development, :test do
   gem "rspec-rails"
 
   # Parallel testing
+  gem "flatware-rspec", require: false
   gem "parallel_tests"
   gem "turbo_tests", github: "inkstak/turbo_tests", branch: "feature-handle_fuubar"
 end

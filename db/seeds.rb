@@ -10,20 +10,6 @@
 
 require_relative "seeds/helpers"
 
-# Import EPCIs and communes from a remote source
-# ----------------------------------------------------------------------------
-if ENV["SEED_ALL_EPCIS_AND_COMMUNES"] == "true"
-  require_relative "seeds/epcis_and_communes"
-  exit
-end
-
-# Seed one user through interactive command
-# ----------------------------------------------------------------------------
-if ENV["SEED_INTERACTIVE_USER"] == "true"
-  require_relative "seeds/interactive_user"
-  exit
-end
-
 # Import territories
 # ----------------------------------------------------------------------------
 log "Seed regions"
