@@ -2,20 +2,18 @@
 
 Rails.application.configure do
   # FYI: We'd better have to use a String instead of a Pathname
-  # otherwise we might be  could lead to being unable to eager load the directory
+  # otherwise it may not be able to eager load the directory
   #
   config.view_component.preview_paths << Rails.root.join("app/components").to_s
-
-  # Keep this directory for legacy previews
   config.view_component.preview_paths << Rails.root.join("spec/components/previews").to_s
 
   config.view_component.default_preview_layout = "component_preview"
   config.view_component.capture_compatibility_patch_enabled = true
 
+  # ViewComponent instrumentation could be very noisy, especially with Lookbook
+  # That's why it isn't active by default.
+  #
   if ENV.fetch("INSTRUMENT_VIEW_COMPONENT", "false") == "true"
-    # ViewComponent instrumentation could be very noisy, especially with Lookbook
-    # That's why it isn't active by default.
-    #
     config.view_component.instrumentation_enabled = true
     config.view_component.use_deprecated_instrumentation_name = false
   end
