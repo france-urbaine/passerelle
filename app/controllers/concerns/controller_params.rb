@@ -3,6 +3,14 @@
 module ControllerParams
   private
 
+  def search_param
+    params[:search]
+  end
+
+  def order_param
+    params[:order]
+  end
+
   def selection_params
     params
       .slice(:search, :order, :page, :ids)
@@ -15,25 +23,5 @@ module ControllerParams
 
   def redirect_path
     url_from(params[:redirect])
-  end
-
-  def redirect_back_path
-    redirect_path || referrer_path
-  end
-
-  def after_destroy_path(default:)
-    path = default
-    path = ::UrlHelper.new(path).base
-
-    path.join(selection_params.except(:ids)).to_s
-  end
-
-  def after_destroy_all_path(default:)
-    path = referrer_path || default
-    path = ::UrlHelper.new(path).base
-
-    return path if params[:ids] == "all"
-
-    path.join(selection_params.except(:ids)).to_s
   end
 end

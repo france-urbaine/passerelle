@@ -2,6 +2,7 @@
 
 module ControllerCollections
   include Pagy::Backend
+  include ControllerParams
 
   NESTED_ITEMS = 10
 
@@ -19,9 +20,6 @@ module ControllerCollections
       paginate_collection(relation, items:)
     end
   end
-
-  def search_param = params[:search]
-  def order_param  = params[:order]
 
   def search_collection(relation, query: search_param)
     advanced_search_records(relation, query)
