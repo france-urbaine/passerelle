@@ -5,18 +5,20 @@ module UI
     class Component < ApplicationViewComponent
       define_component_helper :button_component
 
-      def initialize(*args, **options)
+      def initialize(*args, **kwargs)
         raise ArgumentError, "wrong number of arguments (given #{args.size}, expected 0..2)" if args.size > 2
 
-        @args    = args
-        @options = options
+        @args   = args
+        @kwargs = kwargs
         super()
       end
 
-      def call
+      def before_render
         extract_label_and_href
         extract_options
+      end
 
+      def call
         if @href && (@method || @params)
           button_to { capture_html_content }
         elsif @href
@@ -33,20 +35,21 @@ module UI
           case @args.size
           when 0
             @label = content
+            @href  = nil
           when 1
             @label = content
-            @href  = @args[0] || @options[:href]
+            @href  = @args[0] || @kwargs[:href]
           else
             raise ArgumentError, "Label can be specified as an argument or in a block, not both."
           end
         else
           @label = @args[0]
-          @href  = @args[1] || @options[:href]
+          @href  = @args[1] || @kwargs[:href]
         end
       end
 
       def extract_options
-        options = @options.dup
+        options = @kwargs.dup
         options.delete(:href)
 
         @icon         = options.delete(:icon)
@@ -83,11 +86,11 @@ module UI
         options[:class]  = extract_class_attributes
         options[:data]   = extract_data_attributes
         options[:aria]   = extract_aria_attributes
-        options[:method] = @method
+        options[:method] = @method || "get"
         options[:params] = @params
         options[:form_class] = "#{base_class}-form"
 
-        helpers.button_to href, options, &
+        helpers.button_to @href, options, &
       end
 
       def link(&)
@@ -95,7 +98,7 @@ module UI
         options[:class] = extract_class_attributes
         options[:data]  = extract_data_attributes
         options[:aria]  = extract_aria_attributes
-        options[:href]  = href
+        options[:href]  = @href
 
         tag.a(**options, &)
       end
@@ -108,14 +111,6 @@ module UI
         options[:type] ||= "button"
 
         tag.button(**options, &)
-      end
-
-      def href
-        ::UrlHelper.new(@href).join(href_params).to_s
-      end
-
-      def href_params
-        {}
       end
 
       def icon
