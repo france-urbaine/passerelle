@@ -6,24 +6,15 @@ module CLI
   class CI < Base
     def call(arguments: ARGV)
       case arguments[0]
-      when nil              then run_all
-      when "watch"          then watch
-      when "factories"      then lint_factories
-      when "test"           then test(*arguments[1..])
-      when /test(?::(.*))?/
-        say "This command is deprecated."
-        say ""
-        say "You should try instead:"
-        say "   #{program_name} test #{Regexp.last_match[1]}"
-        say ""
-        say "To get more help, try:"
-        say "   #{program_name} help"
-        abort
-
-      when "rubocop"        then rubocop(arguments[1..])
-      when "brakeman"       then brakeman
-      when "audit"          then audit
-      else                       help
+      when nil          then run_all
+      when "watch"      then watch
+      when "factories"  then lint_factories
+      when "test"       then test(*arguments[1..])
+      when /test:.+/    then legacy_test(*arguments)
+      when "rubocop"    then rubocop(*arguments[1..])
+      when "brakeman"   then brakeman
+      when "audit"      then audit
+      else                   help
       end
     end
 
@@ -31,17 +22,17 @@ module CLI
       say <<~HEREDOC
         CI commands:
 
-            #{program_name}               # Run all tests and checks as CI would
-            #{program_name} watch         # Watch & run CI checks from GuardFile as code change
-            #{program_name} help          # Show this help
+            #{program_name}                     # Run all tests and checks as CI would
+            #{program_name} watch               # Watch & run CI checks from GuardFile as code change
+            #{program_name} help                # Show this help
 
         You can also run only one program from the CI:
 
-            #{program_name} factories     # Lint test factories
-            #{program_name} test          # Run all the test suite
-            #{program_name} rubocop       # Analyzing code issues with Rubocop
-            #{program_name} brakeman      # Analyzing code for security vulnerabilities.
-            #{program_name} audit         # Analyzing ruby gems for security vulnerabilities
+            #{program_name} factories           # Lint test factories
+            #{program_name} test                # Run all the test suite
+            #{program_name} rubocop             # Analyzing code issues with Rubocop
+            #{program_name} brakeman            # Analyzing code for security vulnerabilities.
+            #{program_name} audit               # Analyzing ruby gems for security vulnerabilities
 
         When running tests, you can provide one of the following scope or some paths
 
@@ -51,9 +42,9 @@ module CLI
 
         To run tests in parallel, define the CI_PARALLEL environnment variable with one of the following values:
 
-            CI_PARALLEL=true              # Use parallel_tests
-            CI_PARALLEL=turbo_tests       # Use turbo_tests (experimental, better output)
-            CI_PARALLEL=flatware          # Use flatware    (experimental, faster, less options)
+            CI_PARALLEL=true           # Use parallel_tests
+            CI_PARALLEL=turbo_tests    # Use turbo_tests (experimental, better output)
+            CI_PARALLEL=flatware       # Use flatware    (experimental, faster, less options)
 
         To run the commands in CI environnement (ex: on Github), use the CI variable:
 
@@ -95,7 +86,25 @@ module CLI
       CLI::CI::Test.new(program_name).call(arguments: args)
     end
 
-    def rubocop(paths = [])
+    def legacy_test(*args)
+      new_args = args.join(" ").gsub(/test:(.+)/, "test \\1")
+
+      say <<~MESSAGE
+        This command is deprecated.
+        Instead, you should try:
+
+            #{program_name} #{new_args}
+
+        To learn more about comamnds, try:
+
+            #{program_name} help
+        \x5
+      MESSAGE
+
+      abort
+    end
+
+    def rubocop(*paths)
       say "Analyzing code issues with Rubocop"
 
       command = "bundle exec rubocop"
