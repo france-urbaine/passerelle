@@ -31,9 +31,9 @@
           - if @office.reports_assigned_count.positive?
             = display_count(@office.reports_assigned_count, "assigné")
             = " / "
-            = display_count(@office.reports_approved_count, "approuvé")
+            = display_count(@office.reports_approved_count, "réponse positive", plural: "réponses positives")
             = " / "
-            = display_count(@office.reports_rejected_count, "rejeté")
+            = display_count(@office.reports_canceled_count, "réponse négative", plural: "réponses négatives")
 
     - if allowed_to?(:index?, User, namespace: Organization::Offices)
       - layout.with_header icon: "users" do |header|
