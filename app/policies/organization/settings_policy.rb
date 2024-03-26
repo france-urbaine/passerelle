@@ -15,7 +15,7 @@ module Organization
         :domain_restriction,
         :allow_2fa_via_email,
         :allow_publisher_management,
-        :auto_assign_packages
+        :auto_assign_reports
       )
     end
   end
