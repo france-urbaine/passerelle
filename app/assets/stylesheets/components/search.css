@@ -1,6 +1,9 @@
 @layer components {
   .search {
+    display: flex;
+    flex-direction: row;
     flex: 0 1 400px;
+    gap: 4px;
     max-width: 100%;
   }
 }

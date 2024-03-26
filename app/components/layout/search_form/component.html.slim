@@ -4,5 +4,86 @@
     .form-block__input
       .form-block__input-icon= icon_component("magnifying-glass")
       = tag.input type: "search", name: "search", value: @value || params[:search], placeholder: @label
-
   = hidden_field_component :order, params[:order]
+
+  / - FIXME: The following modal and its associated Stimulus controller are temporary. They should be deleted once the search system has been finalized.
+  - if @url == reports_path || request.path == reports_path
+    div( data-controller="js-modal" )
+      = button_component "Aide à la recherche", icon: "question-mark-circle", icon_only: true, data: { action: "click->js-modal#open" }
+      .modal(
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
+        data-js-modal-target="content"
+        data-transition-enter-from="modal--enter-from"
+        data-transition-enter-to="modal--enter-to"
+        data-transition-leave-from="modal--leave-from"
+        data-transition-leave-to="modal--leave-to"
+        data-action="keydown@document->js-modal#keydown"
+      )
+        .modal__overlay( data-action="click->js-modal#close" )
+        .modal__content
+          .modal__header
+            h1#modal-title.modal__title
+              | Aide à la recherche
+            .modal__header-toolbar
+              = button_component "Fermer la fenêtre de dialogue", @url || request.path, icon: "x-mark", icon_only: true, class: "modal__close-button", aria: { label: "Fermer la fenêtre de dialogue" }, data: { action: "click->js-modal#close" }
+          .modal__body.documentation
+            p La barre de recherche vous permet de faire des recherches avancées sur les propriétés suivantes des signalements :
+            ul.list-disc.list-inside.mb-4
+              li etat
+              li adresse
+              li paquet
+              li type
+              li objet
+              li priorite
+              li collectivite
+              li guichet
+            p Il est par exemple possible de taper code <code>etat:accepté</code> pour rechercher les signalements dont le statut est accepté.
+            p Les critères peuvent ensuite être combinés entre eux ou avec une expression générique :
+            ul.list-disc.list-inside.mb-4
+              li
+                code invariant:123456 commune:Bayonne
+              li
+                code paquet:2023-01-0001 Bayonne
+            p Il est possible de recherche des chaines de caractères avec des espaces ou plusieurs valeurs :
+            ul.list-disc.list-inside.mb-4
+              li
+                code adresse:(rue du 18 mai)
+              li
+                code commune:(Bayonne, Anglet)
+            p Tous les critères de recherche en sont pas encore documentés, une interface de recherche avancée sera prochainement ajoutée au formulaire de recherche.
+            - if current_user.organization_type == "Collectivity" || current_user.organization_type == "DDFIP"
+              p Les différentes valeurs de recherche possibles pour l'état du signalement sont :
+              - if current_user.organization_type == "Collectivity"
+                ul.list-disc.list-inside.mb-4
+                  li Formulaire incomplet
+                  li Formulaire complété
+                  li Signalement transmis
+                  li Signalement accepté
+                  li Signalement rejeté
+                  li Réponse positive
+                  li Réponse négative
+                  li Terminé
+              - elsif current_user.organization_type == "DDFIP" && current_user.organization_admin?
+                ul.list-disc.list-inside.mb-4
+                  li Nouveau signalement
+                  li Signalement accepté
+                  li Signalement assigné
+                  li Signalement rejeté
+                  li Traitement validé par le guichet
+                  li Traitement annulé par le guichet
+                  li Traitement effectué par le guichet
+                  li Réponse positive
+                  li Réponse négative
+                  li Réponse transmise
+                  li Terminé
+              - elsif current_user.organization_type == "DDFIP"
+                ul.list-disc.list-inside.mb-4
+                  li Signalement à traiter
+                  li Traitement validé
+                  li Traitement annulé
+                  li Traitement effectué
+                  li Réponse positive
+                  li Réponse négative
+                  li Réponse transmise
