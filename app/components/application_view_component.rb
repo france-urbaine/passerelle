@@ -22,6 +22,43 @@ class ApplicationViewComponent < ViewComponent::Base
     current_user&.organization
   end
 
+  def merge_attributes(user_attributes, default_attributes)
+    attributes = user_attributes.reverse_merge(default_attributes)
+
+    if default_attributes[:class]
+      attributes[:class] = [
+        default_attributes[:class],
+        user_attributes[:class]
+      ].join(" ").strip
+    end
+
+    if default_attributes[:aria]
+      attributes[:aria] ||= {}
+      attributes[:aria] = user_attributes.fetch(:aria, {}).merge(default_attributes[:aria])
+    end
+
+    if default_attributes[:data]
+      attributes[:data] ||= {}
+      attributes[:data] = user_attributes.fetch(:data, {}).merge(default_attributes[:data])
+    end
+
+    if default_attributes.dig(:data, :controller)
+      attributes[:data][:controller] = [
+        default_attributes.dig(:data, :controller),
+        user_attributes.dig(:data, :controller)
+      ].join(" ").strip
+    end
+
+    if default_attributes.dig(:data, :action)
+      attributes[:data][:action] = [
+        default_attributes.dig(:data, :action),
+        user_attributes.dig(:data, :action)
+      ].join(" ").strip
+    end
+
+    attributes
+  end
+
   class ContentSlot < self
     def initialize(label = nil)
       @label = label

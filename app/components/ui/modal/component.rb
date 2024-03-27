@@ -33,9 +33,30 @@ module UI
       attr_reader :referrer
       attr_accessor :form_options
 
-      def initialize(referrer: nil)
-        @referrer = referrer
+      def initialize(referrer: nil, **html_attributes)
+        @referrer        = referrer
+        @html_attributes = html_attributes
         super()
+      end
+
+      def modal_attributes
+        merge_attributes(
+          @html_attributes,
+          class: "modal",
+          role:  "dialog",
+          aria: {
+            modal:      true,
+            labelledby: "modal-title"
+          },
+          data: {
+            controller:            "modal",
+            action:                "keydown@document->modal#keydown",
+            transition_enter_from: "modal--enter-from",
+            transition_enter_to:   "modal--enter-to",
+            transition_leave_from: "modal--leave-from",
+            transition_leave_to:   "modal--leave-to"
+          }
+        )
       end
 
       protected

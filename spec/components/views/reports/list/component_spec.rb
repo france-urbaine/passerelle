@@ -87,13 +87,13 @@ RSpec.describe Views::Reports::List::Component, type: :component do
     it "renders search form by default" do
       render_inline described_class.new(Report.all, pagy)
 
-      expect(page).to have_selector("form.search")
+      expect(page).to have_selector("form.search-form")
     end
 
     it "allows to not render search form" do
       render_inline described_class.new(Report.all, pagy, dashboard: true)
 
-      expect(page).to have_no_selector("form.search")
+      expect(page).to have_no_selector("form.search-form")
     end
 
     it "renders sort links by default" do

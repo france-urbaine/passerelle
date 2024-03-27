@@ -138,4 +138,24 @@ RSpec.describe UI::Modal::Component do
       expect(form).to have_selector(".modal__body > .form-block > input[name='foo[name]']")
     end
   end
+
+  it "merges custom attributes" do
+    render_inline described_class.new(
+      class: "custom-modal",
+      aria: { hidden: true },
+      data: {
+        controller: "other_controller",
+        action: "modal:close->other_controller#do_something"
+      }
+    ) do
+      tag.p "Hello World"
+    end
+
+    expect(page).to have_selector(".modal") do |modal|
+      expect(modal).to have_html_attribute("class").with_value("modal custom-modal")
+      expect(modal).to have_html_attribute("aria-hidden").boolean
+      expect(modal).to have_html_attribute("data-controller").with_value("modal other_controller")
+      expect(modal).to have_html_attribute("data-action").with_value("keydown@document->modal#keydown modal:close->other_controller#do_something")
+    end
+  end
 end
