@@ -41,6 +41,10 @@ application.register("copy-text", CopyTextController)
 import DirectUploadFieldController from "./direct_upload_field_controller"
 application.register("direct-upload-field", DirectUploadFieldController)
 
+// FIXME: The following controller is temporary. It should be deleted once the search system has been finalized.
+import JsModalController from "./js_modal_controller"
+application.register("js-modal", JsModalController)
+
 import SelectionController from "./selection_controller"
 application.register("selection", SelectionController)
 
