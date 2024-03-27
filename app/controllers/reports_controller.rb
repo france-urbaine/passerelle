@@ -46,13 +46,14 @@ class ReportsController < ApplicationController
 
   def update
     report   = find_and_authorize_report
+    form     = params.require(:form)
     referrer = redirect_path || report_path(report)
     result   = Reports::UpdateService.new(report, report_params).save
 
     if result.success?
       respond_with result, flash: true, location: referrer
     else
-      respond_with result, render: Views::Reports::Acceptances::EditComponent.new(report, referrer:)
+      respond_with result, render: Views::Reports::Edit::Component.new(report, form, referrer:)
     end
   end
 

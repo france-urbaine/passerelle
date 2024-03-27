@@ -130,7 +130,7 @@ RSpec.describe "ReportsController#update" do
 
         it { expect(response).to have_http_status(:unprocessable_entity) }
         it { expect(response).to have_content_type(:html) }
-        it { expect(response).to have_html_body }
+        it { expect(response).to have_html_body.to(have_text("Évaluation actuelle du local")) }
         it { expect { request and report.reload }.not_to change(report, :updated_at) }
       end
 
