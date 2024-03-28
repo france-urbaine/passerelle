@@ -22,7 +22,7 @@ RSpec.describe Reports::States::ResolveService do
 
     context "when resolving an assigned report as inapplicable" do
       it "updates the report as inapplicable" do
-        expect { service.resolve(:inapplicable, resolution_motif: "enjeu_insuffisant") }
+        expect { service.resolve(:inapplicable, resolution_motif: "absence_incoherence") }
           .to  ret(be_a(Result::Success))
           .and change(report, :state).to("inapplicable")
           .and change(report, :resolved_at).to(be_present)
@@ -65,7 +65,7 @@ RSpec.describe Reports::States::ResolveService do
       let(:report) { create(:report, :resolved_as_applicable) }
 
       it "updates the report resolution" do
-        expect { service.resolve(:inapplicable, resolution_motif: "enjeu_insuffisant") }
+        expect { service.resolve(:inapplicable, resolution_motif: "absence_incoherence") }
           .to  ret(be_a(Result::Success))
           .and change(report, :state).to("inapplicable")
           .and change(report, :resolved_at)
@@ -94,7 +94,7 @@ RSpec.describe Reports::States::ResolveService do
       let(:report) { create(:report, :approved) }
 
       it "fails to update the report" do
-        expect { service.resolve(:inapplicable, resolution_motif: "enjeu_insuffisant") }
+        expect { service.resolve(:inapplicable, resolution_motif: "absence_incoherence") }
           .to  ret(be_a(Result::Failure))
           .and not_change(report, :state).from("approved")
           .and not_change(report, :resolved_at)
@@ -102,7 +102,7 @@ RSpec.describe Reports::States::ResolveService do
       end
 
       it "assigns errors about invalid state transition", :aggregate_failures do
-        result = service.resolve(:inapplicable, resolution_motif: "enjeu_insuffisant")
+        result = service.resolve(:inapplicable, resolution_motif: "absence_incoherence")
 
         expect(report.errors).to satisfy  { |errors| errors.of_kind?(:state, :invalid_transition) }
         expect(result.errors).to satisfy  { |errors| errors.of_kind?(:state, :invalid_transition) }

@@ -93,7 +93,7 @@ RSpec.describe "Reports::ResolutionsController#update" do
 
     context "when assigned report is going to be resolved as inapplicable" do
       let(:state) { "inapplicable" }
-      let(:attributes) { { reponse: "Lorem lipsum", resolution_motif: "enjeu_insuffisant" } }
+      let(:attributes) { { reponse: "Lorem lipsum", resolution_motif: "absence_incoherence" } }
 
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/signalements/#{report.id}") }
@@ -106,7 +106,7 @@ RSpec.describe "Reports::ResolutionsController#update" do
           .to  change(report, :updated_at)
           .and change(report, :state).to("inapplicable")
           .and change(report, :reponse).to("Lorem lipsum")
-          .and change(report, :resolution_motif).to("enjeu_insuffisant")
+          .and change(report, :resolution_motif).to("absence_incoherence")
           .and change(report, :resolved_at).to(be_present)
       end
 
@@ -148,7 +148,7 @@ RSpec.describe "Reports::ResolutionsController#update" do
     context "when applicable report is going to be resolved as inapplicable" do
       let!(:report) { create(:report, :resolved_as_applicable) }
       let(:state)   { "inapplicable" }
-      let(:attributes) { { reponse: "Lorem lipsum", resolution_motif: "enjeu_insuffisant" } }
+      let(:attributes) { { reponse: "Lorem lipsum", resolution_motif: "absence_incoherence" } }
 
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/signalements/#{report.id}") }
@@ -160,7 +160,7 @@ RSpec.describe "Reports::ResolutionsController#update" do
         }
           .to  change(report, :updated_at)
           .and change(report, :state).to("inapplicable")
-          .and change(report, :resolution_motif).to("enjeu_insuffisant")
+          .and change(report, :resolution_motif).to("absence_incoherence")
           .and change(report, :reponse).to("Lorem lipsum")
           .and change(report, :resolved_at).to(be_present)
       end
