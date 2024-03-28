@@ -300,13 +300,15 @@ fr:
         confirmed:    Réponse transmise
 
     resolution_motif:
-      maj_local:           Mise à jour du local
-      absence_incoherence: Absence d'incohérence identifiée
-      enjeu_insuffisant:   Enjeu Insuffisant
+      maj_local:           "Descriptif du local mis à jour"
+      maj_exoneration:     "Exonération indue supprimée"
+      absence_incoherence: "Aucune incohérence décelée"
+      doublon:             "Signalement en doublon, déjà pris en charge"
 
       applicable:
-        maj_local: Mise à jour du local
+        maj_local:           "Descriptif du local mis à jour"
+        maj_exoneration:     "Exonération indue supprimée"
+        doublon:             "Signalement en doublon, déjà pris en charge"
 
       inapplicable:
-        absence_incoherence: Absence d'incohérence identifiée
-        enjeu_insuffisant:   Enjeu Insuffisant
+        absence_incoherence: "Aucune incohérence décelée"

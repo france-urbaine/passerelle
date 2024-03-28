@@ -132,12 +132,12 @@ RSpec.describe Reports::ConfirmationPolicy, type: :policy do
         ddfip_id:         "50bd3322-5f43-4785-88cd-b05772c093fa",
         office_id:        "13420f31-3ac6-4b7e-858d-d5df8866f117",
         reponse:          "Lorem lispum",
-        resolution_motif: "enjeu_insuffisant"
+        resolution_motif: "absence_incoherence"
       }
     end
 
-    it_behaves_like("when current user is a DDFIP admin")        { it { is_expected.to eq({ reponse: "Lorem lispum", resolution_motif: "enjeu_insuffisant" }) } }
-    it_behaves_like("when current user is a DDFIP user")         { it { is_expected.to eq({ reponse: "Lorem lispum", resolution_motif: "enjeu_insuffisant" }) } }
+    it_behaves_like("when current user is a DDFIP admin")        { it { is_expected.to eq({ reponse: "Lorem lispum", resolution_motif: "absence_incoherence" }) } }
+    it_behaves_like("when current user is a DDFIP user")         { it { is_expected.to eq({ reponse: "Lorem lispum", resolution_motif: "absence_incoherence" }) } }
     it_behaves_like("when current user is a DGFIP admin")        { it { is_expected.to be_nil } }
     it_behaves_like("when current user is a DGFIP user")         { it { is_expected.to be_nil } }
     it_behaves_like("when current user is a publisher admin")    { it { is_expected.to be_nil } }

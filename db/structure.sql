@@ -183,8 +183,9 @@ CREATE TYPE public.report_state AS ENUM (
 
 CREATE TYPE public.resolution_motif AS ENUM (
     'maj_local',
+    'maj_exoneration',
     'absence_incoherence',
-    'enjeu_insuffisant'
+    'doublon'
 );
 
 
@@ -4376,6 +4377,7 @@ ALTER TABLE ONLY public.oauth_access_tokens
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20240328082737'),
 ('20240326084643'),
 ('20240221092903'),
 ('20240220173415'),
