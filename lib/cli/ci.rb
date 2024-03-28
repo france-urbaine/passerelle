@@ -57,7 +57,7 @@ module CLI
       lint_factories
       clear_coverage
       test("unit")
-      test("system")
+      test("system", "--retry-failures")
       rubocop
       brakeman
       audit
