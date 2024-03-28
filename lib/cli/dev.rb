@@ -8,10 +8,10 @@ module CLI
       case arguments[0]
       when nil            then start
       when "server"       then start_server
-      when "sidekiq"      then start_sidekiq
+      when "background"   then start_background
       when "mailcatcher"  then start_mailcatcher
       when "help"         then help
-      else                     start(arguments[0])
+      else                     start_process(arguments[0])
       end
     end
 
@@ -20,11 +20,20 @@ module CLI
         Development commands:
 
             #{program_name}                   # Start all default process or one specific process
-            #{program_name} server            # Start only required processes to serve the app (rails server & assets)
-            #{program_name} sidekiq           # Start only required processes to process background jobs through Sidekiq
+            #{program_name} server            # Start all required processes to serve the application
+            #{program_name} background        # Start all background processes
             #{program_name} mailcatcher       # Start only mailcatcher in foreground mode
-            #{program_name} [web,css,js,...]  # Start the given process
             #{program_name} help              # Show this help
+
+        Server processes could be start individually:
+
+            #{program_name} web               # Start only rails server
+            #{program_name} js                # Start only dev server to bundle JS
+            #{program_name} css               # Start only dev server to bundle CSS
+
+        Background processes could be start individually:
+
+            #{program_name} sidekiq           # Start only Sidekiq
         \x5
       HEREDOC
     end
@@ -48,8 +57,8 @@ module CLI
       start(:web, :js, :css)
     end
 
-    def start_sidekiq
-      start(:sidekiq, socket: "sidekiq")
+    def start_background
+      start(:sidekiq, socket: "background")
     end
 
     def start_mailcatcher
@@ -59,6 +68,14 @@ module CLI
       end
 
       start(:mailcatcher, socket: "mailcatcher")
+    end
+
+    def start_process(name)
+      if name == "web"
+        start(:web)
+      else
+        start(name, socket: name)
+      end
     end
 
     private

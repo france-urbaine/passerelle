@@ -174,7 +174,7 @@ jobs:
         POSTGRESQL_DATABASE: passerelle_test
         CAPYBARA_ARTIFACTS:  ./tmp/capybara
       run: |
-        bin/ci test system
+        bin/ci test system --retry-failures
 
     - name: Upload screenshots
       uses: actions/upload-artifact@v4

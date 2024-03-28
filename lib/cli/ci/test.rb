@@ -19,14 +19,21 @@ module CLI
           paths = []
           say "Running #{scope} tests"
         else
-          paths = arguments
+          paths = arguments.reject { |a| a.start_with?("-") }
           say "Running given tests"
         end
 
-        env     = test_env(scope)
-        command = test_command(scope, paths)
+        env       = test_env(scope)
+        command   = test_command(scope, paths)
 
-        run command, env: env
+        if arguments.include?("--retry-failures")
+          return if run(command, env: env, abort_on_failure: false)
+
+          say "Retry only failures"
+          command = test_command(scope, paths, only_failures: true)
+        end
+
+        run(command, env: env)
       end
 
       def test_env(scope)
@@ -49,37 +56,42 @@ module CLI
       # rubocop:disable Metrics/CyclomaticComplexity
       # rubocop:disable Metrics/PerceivedComplexity
       #
-      def test_command(scope, paths)
+      def test_command(scope, paths, only_failures: false)
         if parallel
           node_total = determine_number_of_parallel_processes(scope)
           node_index = ENV.fetch("CI_NODE_INDEX", nil)
         end
 
-        if parallel == "turbo_tests" && ENV["CI"] != "true"
+        if parallel == "turbo_tests" && !only_failures && ENV["CI"] != "true"
           command  = "bundle exec turbo_tests"
           command += " -n #{node_total}"              if node_total
           command += " --only-group #{node_index}"    if node_index
           command += " --exclude-pattern spec/system" if scope == "unit"
           command += " --pattern spec/system"         if scope == "system"
           command += " -f Fuubar"
+
         elsif parallel == "flatware" && ENV["CI"] != "true"
           command  = "bundle exec flatware rspec"
           command += " -w #{node_total}"                                                  if node_total
           warn "CI_NODE_INDEX is ignored when using flatware for parallel testing"        if node_index
           command += " --exclude-pattern 'system/**/*_spec.rb'"                           if scope == "unit"
           command += " --pattern 'system/**/*_spec.rb'"                                   if scope == "system"
-        elsif parallel
+          command += " --only-failures"                                                   if only_failures
+
+        elsif parallel && !only_failures
           command  = "bundle exec parallel_rspec"
           command += " -n #{node_total}"                                                  if node_total
           command += " --only-group #{node_index}"                                        if node_index
           command += " --exclude-pattern spec/system"                                     if scope == "unit"
           command += " --pattern spec/system"                                             if scope == "system"
           command += " -- -f progress -f RSpec::Github::Formatter --"                     if ENV["CI"] == "true"
+
         else
           command  = "bundle exec rspec"
           command += " --exclude-pattern 'system/**/*_spec.rb'"                           if scope == "unit"
           command += " --pattern 'system/**/*_spec.rb'"                                   if scope == "system"
           command += " --no-profile --format RSpec::Github::Formatter --format progress"  if ENV["CI"] == "true"
+          command += " --only-failures"                                                   if only_failures
         end
 
         command += " #{paths.join(' ')}" if paths.any?

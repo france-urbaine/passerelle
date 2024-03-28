@@ -52,9 +52,9 @@ module CLI
 
       if result
         result
-      elsif abort_on_failure
+      else
         say "#{colorize(command, :RED)} failed"
-        abort
+        abort if abort_on_failure
       end
     end
 
