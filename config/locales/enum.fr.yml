@@ -301,13 +301,13 @@ fr:
 
     resolution_motif:
       maj_local:           "Descriptif du local mis à jour"
-      maj_exoneration:     "Exonération indue supprimée"
+      maj_exoneration:     "Exonérations mises à jour"
       absence_incoherence: "Aucune incohérence décelée"
       doublon:             "Signalement en doublon, déjà pris en charge"
 
       applicable:
         maj_local:           "Descriptif du local mis à jour"
-        maj_exoneration:     "Exonération indue supprimée"
+        maj_exoneration:     "Exonérations mises à jour"
         doublon:             "Signalement en doublon, déjà pris en charge"
 
       inapplicable:

@@ -49,7 +49,7 @@
               | Vous pouvez néanmoins annuler cette décision :
 
             - if allowed_to?(:undo_assignment?, @report)
-              - dropdown.with_menu_item "Annuler l'asignation", remove_report_assignment_path(@report), icon: "arrow-path", modal: true
+              - dropdown.with_menu_item "Annuler l'assignation", remove_report_assignment_path(@report), icon: "arrow-path", modal: true
 
     - elsif @report.accepted?
       - if allowed_to?(:undo_acceptance?, @report) || allowed_to?(:reject?, @report)

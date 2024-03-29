@@ -19,13 +19,13 @@
         = form.label :resolution_motif, "Motif :"
         = form.select :resolution_motif, resolution_motif_choices, resolution_motif_options, autofocus: true
 
-      = form.block :reponse do
+      = form.block :reponse do |block|
         = form.label :reponse, "Vous pouvez transmettre des observations à la collectivité :"
         = form.text_area :reponse, rows: 10
 
-      p
-        ' Les modifications ne seront visibles par la collectivité qu'une fois validée
-        ' par le référent fiabilisation.
+        - block.with_hint do
+          ' Toutes les informations saisies ici ne seront visibles par la collectivité
+          ' qu'une fois le signalement confirmé et retourné par le référent fiabilisation.
 
     - modal.with_submit_action "Continuer"
     - modal.with_close_action "Annuler"

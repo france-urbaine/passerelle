@@ -18,9 +18,12 @@
 
         - unless @report.returned?
           .text-disabled
-            ' (Ces observations ne seront visibles par la collectivité qu'une fois
-            ' le signalement confirmé et retourné par le référent fiabilisation.)
+            ' Ces observations ne seront visibles par la collectivité qu'une fois
+            ' le signalement confirmé et retourné par le référent fiabilisation.
 
     - else
       = card_component(content_class: "card__content--empty h-24") do |card|
         | Aucune observation ajoutée pour ce signalement.
+        .text-disabled
+          ' Les observations saisies ici ne seront visibles par la collectivité
+          ' qu'une fois le signalement confirmé et retourné par le référent fiabilisation.

@@ -22,5 +22,12 @@
         = form.label :reponse, "Observations :"
         = form.text_area :reponse, rows: 10
 
+      .form-block__hint
+        p
+          ' Toutes les informations saisies ici seront visibles par la collectivité
+          ' une fois le formulaire validé.
+          br
+          ' Cette action est définitive et ne peut être annulée par la suite.
+
     - modal.with_submit_action "Continuer", autofocus: true
     - modal.with_close_action "Annuler"
