@@ -62,9 +62,30 @@
           = form.label :organization_admin
 
           - block.with_hint do
-            | Un administrateur bénéficie de tout les droits sur son organisation.
-            br
-            | Il peut notamment créer, gérer ou supprimer d'autres utilisateurs au sein de cette organisation.
+            .prose
+              - if @namespace == :admin
+                p
+                  ' Cet administrateur bénéficie de tout les droits sur son organisation.
+                  br
+                  ' Il peut notamment créer, gérer ou supprimer d'autres utilisateurs au sein de son organisation.
+                p
+                  ' Lorsque cet utilisateur appartient à une DDFIP, il devient le référent départemental :
+                ul
+                  li il peut créer, gérer ou supprimer des guichets
+                  li il peut accepter, rejeter, assigner ou renvoyer des signalements.
+
+              - elsif @namespace == :organization && current_organization.is_a?(DDFIP)
+                p L'administrateur est le référent départemental de la DDFIP :
+                ul
+                  li il peut créer, gérer ou supprimer des guichets
+                  li il peut créer, gérer ou supprimer d'autres utilisateurs
+                  li il peut accepter, rejeter, assigner ou renvoyer des signalements.
+
+              - else
+                p
+                  ' L'administrateur bénéficie de tout les droits sur cette organisation.
+                  br
+                  ' Il peut notamment créer, gérer ou supprimer d'autres utilisateurs.
 
       - if allowed_to_assign_super_admin?
         = form.block :super_admin do |block|
@@ -72,9 +93,19 @@
           = form.label :super_admin
 
           - block.with_hint do
-            | Un administrateur de Passerelle a accès à toutes les informations de la plateforme, sans restrictions.
-            br
-            | Il peut notamment créer, gérer et supprimer n'importe quelle organisation ou utilisateur.
+            .prose
+              p Cet administrateur bénéficie d'un accés total à toutes les ressources de la plateforme, sans restrictions :
+              ul
+                li il peut créer, gérer et supprimer n'importe quelle organisation ou utilisateur.
+                li il peut changer d'organisation.
+                li il peut attribuer le rôle d'administrateur de l'organisation à tout les utilisateurs.
+                li il peut attribuer le rôle d'dministrateur de la plateforme Passerelle à tout les utilisateurs.
+
+              p
+                ' Lorsque cet utilisateur appartient à une DDFIP, il ne bénéficie d'aucune permission supplémentaires
+                br
+                ' sur les signalements (il est considéré comme un utilisateur d'un guichet).
+
 
     - modal.with_submit_action "Enregistrer"
     - modal.with_close_action "Annuler"
