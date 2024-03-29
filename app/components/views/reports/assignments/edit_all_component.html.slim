@@ -23,7 +23,7 @@
         - modal.with_hidden_field :order,    params[:order]
         - modal.with_hidden_field :page,     params[:page]
 
-        .mb-10
+        .prose
           - if ignored_count.zero?
             - if reports_count == 1
               p Vous êtes sur le point d'assigner <b>1</b> signalement à un guichet.
@@ -33,7 +33,7 @@
           - elsif ignored_count.positive?
             p Vous avez sélectionné <b>#{selected_count}</b> signalements :
 
-            ul.list-disc.ml-6.mb-6
+            ul
               li
                 - if reports_count == 1
                   ' <b>1</b> signalement sera assigné à un guichet.
@@ -47,9 +47,10 @@
                   ' <b>#{ignored_count}</b> signalements déjà traités ou rejetés seront ignorés.
 
           - if assigned_count.positive?
-            p <b>Attention :</b>
+            p
+              strong Attention :
 
-            ul.list-disc.ml-6.mb-6
+            ul
               li
                 - if assigned_count == 1
                   ' <b>1</b> signalement selectionné est déjà assigné à un guichet.

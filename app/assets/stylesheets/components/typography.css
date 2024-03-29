@@ -16,8 +16,12 @@
       @apply text-xl mb-6;
     }
 
+    hr {
+      @apply my-6;
+    }
+
     ul, ol {
-      @apply list-disc list-inside ml-6 mb-6;
+      @apply list-disc ml-6 mb-6;
     }
 
     ol {
