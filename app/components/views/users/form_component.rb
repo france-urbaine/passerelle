@@ -64,7 +64,7 @@ module Views
       end
 
       def allowed_to_assign_super_admin?
-        @namespace == :admin || (@namespace == :organization && current_user.super_admin?)
+        @namespace == :admin
       end
 
       def organization_input_html_attributes

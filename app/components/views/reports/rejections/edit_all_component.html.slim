@@ -23,7 +23,7 @@
         - modal.with_hidden_field :order,    params[:order]
         - modal.with_hidden_field :page,     params[:page]
 
-        .mb-10
+        .prose
           - if ignored_count.zero?
             - if reports_count == 1
               p Vous êtes sur le point de rejeter <b>1</b> signalement.
@@ -33,7 +33,7 @@
           - elsif ignored_count.positive?
             p Vous avez sélectionné <b>#{selected_count}</b> signalements :
 
-            ul.list-disc.ml-6.mb-6
+            ul
               li
                 - if reports_count == 1
                   ' <b>1</b> signalement sera rejeté.
@@ -49,7 +49,7 @@
           - if accepted_count.positive?
             p <b>Attention :</b>
 
-            ul.list-disc.ml-6.mb-6
+            ul
               li
                 - if accepted_count == 1
                   ' <b>1</b> signalement selectionné est actuellement accepté.
@@ -60,10 +60,10 @@
                   br
                   ' Ces signalements seront aussi rejetés.
 
-        p
-          ' Les signalements rejetés seront retournés aux collectivités.
-          br
-          ' Vous pouvez leur transmettre des observations quant au motif de rejet.
+          p
+            ' Les signalements rejetés seront retournés aux collectivités.
+            br
+            ' Vous pouvez leur transmettre des observations quant au motif de rejet.
 
         = form.block :reponse do |block|
           = form.label :reponse, "Observations :"

@@ -6,12 +6,13 @@
     - modal.with_form(url: organization_office_user_path(@office, @user), method: :delete) do
       - modal.with_hidden_field :redirect, @referrer_path
 
-      p Êtes-vous sûrs de vouloir exclure cet utilisateur du guichet ?
-      p L'utilisateur ne sera pas supprimé :
-      ul.list-disc.list-inside
-        li il sera toujours présent dans votre équipe,
-        li il pourra être de nouveau assigné au guichet si nécessaire,
-        li il continuera à accéder aux autres guichets auxquels il est assigné.
+      .prose
+        p Êtes-vous sûrs de vouloir exclure cet utilisateur du guichet ?
+        p L'utilisateur ne sera pas supprimé :
+        ul
+          li il sera toujours présent dans votre équipe,
+          li il pourra être de nouveau assigné au guichet si nécessaire,
+          li il continuera à accéder aux autres guichets auxquels il est assigné.
 
     - modal.with_submit_action "Continuer", autofocus: true
     - modal.with_close_action "Annuler"

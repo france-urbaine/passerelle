@@ -193,13 +193,13 @@ RSpec.describe Views::Users::FormComponent, type: :component do
       end
     end
 
-    it "allows to check super admin role when signed as a super admin" do
+    it "does not renders super admin checkbox even when signed as a super admin" do
       current_user.update(super_admin: true)
       render_inline described_class.new(User.new, namespace: :organization)
 
       expect(page).to have_selector(".modal form") do |form|
         expect(form).to have_field("Administrateur de l'organisation")
-        expect(form).to have_field("Administrateur de la plateforme Passerelle")
+        expect(form).to have_no_field("Administrateur de la plateforme Passerelle")
       end
     end
 
@@ -337,13 +337,13 @@ RSpec.describe Views::Users::FormComponent, type: :component do
       end
     end
 
-    it "allows to check super admin role when signed as a super admin" do
+    it "does not renders super admin checkbox even when signed as a super admin" do
       current_user.update(super_admin: true)
       render_inline described_class.new(User.new, namespace: :organization)
 
       expect(page).to have_selector(".modal form") do |form|
         expect(form).to have_field("Administrateur de l'organisation")
-        expect(form).to have_field("Administrateur de la plateforme Passerelle")
+        expect(form).to have_no_field("Administrateur de la plateforme Passerelle")
       end
     end
   end
@@ -405,13 +405,13 @@ RSpec.describe Views::Users::FormComponent, type: :component do
       end
     end
 
-    it "allows to check super admin role when signed as a super admin" do
+    it "does not renders super admin checkbox even when signed as a super admin" do
       current_user.update(super_admin: true)
       render_inline described_class.new(User.new, namespace: :organization)
 
       expect(page).to have_selector(".modal form") do |form|
         expect(form).to have_field("Administrateur de l'organisation")
-        expect(form).to have_field("Administrateur de la plateforme Passerelle")
+        expect(form).to have_no_field("Administrateur de la plateforme Passerelle")
       end
     end
   end

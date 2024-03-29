@@ -23,7 +23,7 @@
         - modal.with_hidden_field :order,    params[:order]
         - modal.with_hidden_field :page,     params[:page]
 
-        .mb-10
+        .prose
           - if ignored_count.zero?
             - if reports_count == 1
               p Vous êtes sur le point d'accepter <b>1</b> signalement.
@@ -33,7 +33,7 @@
           - elsif ignored_count.positive?
             p Vous avez sélectionné <b>#{selected_count}</b> signalements :
 
-            ul.list-disc.ml-6.mb-6
+            ul
               li
                 - if reports_count == 1
                   ' <b>1</b> signalement sera accepté.
@@ -47,9 +47,10 @@
                   ' <b>#{ignored_count}</b> signalements déjà assignés ou traités seront ignorés.
 
           - if rejected_count.positive?
-            p <b>Attention :</b>
+            p
+              strong Attention :
 
-            ul.list-disc.ml-6.mb-6
+            ul
               li
                 - if rejected_count == 1
                   ' <b>1</b> signalement selectionné est actuellement rejeté.
@@ -60,10 +61,10 @@
                   br
                   ' Ces signalements seront aussi acceptés.
 
-        p
-          ' L'acceptation est une étape préliminaire à l'assignation des signalements à un guichet.
-          br
-          ' Les collectivités pourront voir que leurs signalements ont été acceptés.
+          p
+            ' L'acceptation est une étape préliminaire à l'assignation des signalements à un guichet.
+            br
+            ' Les collectivités pourront voir que leurs signalements ont été acceptés.
 
       - modal.with_submit_action "Continuer", autofocus: true
       - modal.with_close_action "Annuler"

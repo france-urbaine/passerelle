@@ -7,20 +7,14 @@
     }
 
     & .card__content  {
+      @apply prose;
+
       h3 {
         @apply text-xl leading-8 mb-6;
       }
 
       p {
         @apply leading-6 mb-6;
-      }
-
-      ul, ol {
-        @apply list-disc list-inside ml-6 mb-6;
-      }
-
-      ol {
-        @apply list-decimal;
       }
 
       table, .code-example, .tabs, .code-request-example {
@@ -43,10 +37,6 @@
       table {
         th, td {
           vertical-align: top;
-        }
-
-        ul, ol {
-          @apply ml-0;
         }
       }
     }

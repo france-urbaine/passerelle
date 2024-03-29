@@ -13,21 +13,22 @@
       - modal.with_hidden_field :order,  params[:order]
       - modal.with_hidden_field :page,   params[:page]
 
-      - if @users.count > 1
-        p Êtes-vous sûrs de vouloir exclure les <b>#{@users.count}</b> utilisateurs sélectionnés du guichet ?
-        p Les utilisateurs ne seront pas supprimés :
-        ul.list-disc.list-inside
-          li ils seront toujours présents dans la liste des utilisateurs de la DDFIP,
-          li ils pourront être de nouveau assignés au guichet si nécessaire,
-          li ils continueront à accéder aux autres guichets auxquels ils sont assignés.
+      .prose
+        - if @users.count > 1
+          p Êtes-vous sûrs de vouloir exclure les <b>#{@users.count}</b> utilisateurs sélectionnés du guichet ?
+          p Les utilisateurs ne seront pas supprimés :
+          ul
+            li ils seront toujours présents dans la liste des utilisateurs de la DDFIP,
+            li ils pourront être de nouveau assignés au guichet si nécessaire,
+            li ils continueront à accéder aux autres guichets auxquels ils sont assignés.
 
-      - else
-        p Êtes-vous sûrs de vouloir exclure l'utilisateur sélectionné du guichet ?
-        p L'utilisateur ne sera pas supprimé :
-        ul.list-disc.list-inside
-          li il sera toujours présent dans la liste des utilisateurs de la DDFIP,
-          li il pourra être de nouveau assigné au guichet si nécessaire,
-          li il continuera à accéder aux autres guichets auxquels il est assigné.
+        - else
+          p Êtes-vous sûrs de vouloir exclure l'utilisateur sélectionné du guichet ?
+          p L'utilisateur ne sera pas supprimé :
+          ul
+            li il sera toujours présent dans la liste des utilisateurs de la DDFIP,
+            li il pourra être de nouveau assigné au guichet si nécessaire,
+            li il continuera à accéder aux autres guichets auxquels il est assigné.
 
     - modal.with_submit_action "Continuer", autofocus: true
     - modal.with_close_action "Annuler"

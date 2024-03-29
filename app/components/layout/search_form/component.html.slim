@@ -30,34 +30,28 @@
             .modal__header-toolbar
               = button_component "Fermer la fenêtre de dialogue", icon: "x-mark", icon_only: true, class: "modal__close-button", aria: { label: "Fermer la fenêtre de dialogue" }, data: { action: "click->js-modal#close" }
 
-          .modal__body.documentation
-            p Pour effectuer une recherche avancée, vous pouvez utiliser les élements de syntaxe suivants:
+          .modal__body
+            .prose
+              p Pour effectuer une recherche avancée, vous pouvez utiliser les élements de syntaxe suivants :
 
-            ul.list-disc.list-inside.mb-4
-              - if current_user.organization_type == "Collectivity"
-                li
-                  code état:(Signalement transmis)
-              - elsif current_user.organization_type == "DDFIP" && current_user.organization_admin?
-                li
-                  code état:(Signalement assigné)
-              - elsif current_user.organization_type == "DDFIP"
-                li
-                  code état:(Signalement à traiter)
+              ul
+                - if current_user.organization_type == "Collectivity"
+                  li <code>état:(Signalement transmis)</code>
+                - elsif current_user.organization_type == "DDFIP" && current_user.organization_admin?
+                  li <code>état:(Signalement assigné)</code>
+                - elsif current_user.organization_type == "DDFIP"
+                  li <code>état:(Signalement à traiter)</code>
 
-              li
-                code adresse:(rue du 18 mai)
-              li
-                code paquet:2024-03-0004
-              li
-                code type:(Évaluation d'un local d'habitation)
-              li
-                code objet:(Changement de consistance)
-              li
-                code priorité:(basse)
-              li
-                code collectivité:(Ville de Paris)
-              li
-                code guichet:(SIP de Bayonne)
+                li <code>adresse:(rue du 18 mai)</code>
+                li <code>paquet:2024-03-0004</code>
+                li <code>type:(Évaluation d'un local d'habitation)</code>
+                li <code>objet:(Changement de consistance)</code>
+                li <code>priorité:(basse)</code>
+                li <code>collectivité:(Ville de Paris)</code>
+                li <code>commune:(Paris)</code>
+                li <code>guichet:(SIP de Bayonne)</code>
 
-            p Plusieurs critères peuvent être combinés entre eux :
-            code Bayonne type:(Évaluation d'un local d'habitation) paquet:(2023-01-0001,2023-01-0002)
+              p Plusieurs critères peuvent être combinés entre eux ou avec un critère global :
+              ul
+                li <code>commune:(Bayonne) priorité:(basse)</code>
+                li <code>commune:(Bayonne) Rue du 18 mai</code>

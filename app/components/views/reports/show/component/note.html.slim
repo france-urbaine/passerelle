@@ -1,6 +1,6 @@
 = content_layout_component do |layout|
   - layout.with_header icon: "pencil" do |header|
-    | Bloc-notes
+    | Bloc-notes interne à la DDFIP
 
     - if allowed_to?(:update_transmitted_report?, @report)
       - header.with_action "Compléter", edit_report_path(@report, "note"), icon: "pencil-square", modal: true
@@ -12,9 +12,13 @@
 
         - unless @report.returned?
           .text-disabled
-            ' (Ces notes sont partagées avec les autres membres de la DDFIP :
-            ' elles ne seront jamais visibles par la collectivité.)
+            ' Ces notes sont partagées avec les autres membres de la DDFIP :
+            ' elles ne seront jamais visibles par la collectivité.
 
     - else
       = card_component(content_class: "card__content--empty h-24") do |card|
         | Aucune note pour le moment.
+
+        .text-disabled
+          ' Les notes saisies ici sont partagées avec les autres membres de la DDFIP :
+          ' elles ne seront jamais visibles par la collectivité.

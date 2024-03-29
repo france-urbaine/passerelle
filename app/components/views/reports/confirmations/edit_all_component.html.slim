@@ -23,7 +23,7 @@
         - modal.with_hidden_field :order,    params[:order]
         - modal.with_hidden_field :page,     params[:page]
 
-        .mb-10
+        .prose
           - if ignored_count.zero?
             - if reports_count == 1
               p Vous êtes sur le point de transmettre <b>1</b> signalement à sa collectivité.
@@ -33,7 +33,7 @@
           - elsif ignored_count.positive?
             p Vous avez sélectionné <b>#{selected_count}</b> signalements :
 
-            ul.list-disc.ml-6.mb-6
+            ul
               li
                 - if reports_count == 1
                   ' <b>1</b> signalement sera transmis à sa collectivité.
@@ -51,6 +51,7 @@
               br
               ' Cette action est définitive et ne peut être annulée par la suite.
 
+          p Cette action est définitive et ne pourra pas être annulée.
 
       - modal.with_submit_action "Continuer", autofocus: true
       - modal.with_close_action "Annuler"

@@ -44,22 +44,22 @@
         = form.label :allow_2fa_via_email
 
         - block.with_hint do
-          p
-            | L'authentification en 2 facteurs (2FA) est activée pour tous les utilisateurs.
-            br
-            | Par défaut, la méthode proposée est d'utiliser un autre appareil pour générer des codes de vérification.
-            br
-            | Vous pouvez autoriser les utilisateurs de cette organisation à recevoir un code de vérification par email.
-
-          strong Attention :
-
-          ul.list-decimal.ml-6
-            li
-              | Cette méthode ne protégera pas les utilisateurs en cas d'usurpation du compte email.
-            li
-              | Si vous désactivez cette option alors que des utilisateurs ont déjà sélectionné l'envoi d'un email
+          .prose
+            p
+              | L'authentification en 2 facteurs (2FA) est activée pour tous les utilisateurs.
               br
-              | comme méthode d'authentification, ces utilisateurs ne pourront plus accéder à la plateforme.
+              | Par défaut, la méthode proposée est d'utiliser un autre appareil pour générer des codes de vérification.
+              br
+              | Vous pouvez autoriser les utilisateurs de cette organisation à recevoir un code de vérification par email.
+
+            strong Attention :
+            ol
+              li
+                | Cette méthode ne protégera pas les utilisateurs en cas d'usurpation du compte email.
+              li
+                | Si vous désactivez cette option alors que des utilisateurs ont déjà sélectionné l'envoi d'un email
+                br
+                | comme méthode d'authentification, ces utilisateurs ne pourront plus accéder à la plateforme.
 
     - modal.with_submit_action "Enregistrer"
     - modal.with_close_action "Annuler"
