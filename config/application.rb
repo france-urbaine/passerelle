@@ -78,12 +78,9 @@ module Passerelle
     # In development, we encourages you to use `passerelle-fiscale.localhost` to navigate between subdomains
     # out of the box.
     #
-    config.x.domain =
-      if Rails.env.production?
-        ENV.fetch("DOMAIN_APP")
-      else
-        ENV.fetch("DOMAIN_APP", "passerelle-fiscale.localhost")
-      end
+    config.x.domain = ENV.fetch("DOMAIN_APP") do
+      Rails.env.production? ? "passerelle-fiscale.fr" : "passerelle-fiscale.localhost"
+    end
 
     config.hosts << ".#{config.x.domain}"
     config.hosts << ".example.com" if Rails.env.test?

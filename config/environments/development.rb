@@ -97,32 +97,11 @@ Rails.application.configure do
   # Redirect localhost:3000 to appropriate domain set in config.x.domain
   # (DOMAIN_APP or `passerelle-fiscale.localhost` by default)
   #
-  current_domain = Rails.application.config.x.domain
-  former_domains = %w[
-    localhost
-    localhost.local
-    fiscahub.localhost
-  ]
-
-  former_domains.each do |former_domain|
-    config.hosts << ".#{former_domain}"
-  end
-
   config.middleware.insert_before Rack::Runtime, Rack::Rewrite do
-    former_domains.each do |former_domain|
-      next if former_domain == current_domain
-
-      r303(/(.*)/, lambda { |match, rack_env|
-        port = rack_env["SERVER_PORT"]
-        path = match.to_s
-        "http://#{current_domain}:#{port}#{path}"
-      }, host: former_domain)
-
-      r303(/(.*)/, lambda { |match, rack_env|
-        port = rack_env["SERVER_PORT"]
-        path = match.to_s
-        "http://api.#{current_domain}:#{port}#{path}"
-      }, host: "api.#{former_domain}")
-    end
+    r303(/(.*)/, lambda { |match, rack_env|
+      port = rack_env["SERVER_PORT"]
+      path = match.to_s
+      "http://#{Rails.application.config.x.domain}:#{port}#{path}"
+    }, host: "localhost")
   end
 end

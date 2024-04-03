@@ -127,15 +127,10 @@ Rails.application.configure do
     config.action_dispatch.trusted_proxies = ENV["CC_REVERSE_PROXY_IPS"].split(",").map { |proxy| IPAddr.new(proxy) }
   end
 
-  # Allow former domains
+  # Redirect former domains
+  #
   config.hosts << ".fiscahub.fr"
-  config.hosts << ".passerelle-fiscale.fr"
-
   config.middleware.insert_before Rack::Runtime, Rack::Rewrite do
-    r301(/.*/, "//passerelle-fiscale.fr$&", host: "www.passerelle-fiscale.fr")
-
-    # Former domains
-    r301(/.*/, "//passerelle-fiscale.fr$&", host: "fiscahub.fr")
-    r301(/.*/, "//passerelle-fiscale.fr$&", host: "www.fiscahub.fr")
+    r301(/.*/, "//#{Rails.application.config.x.domain}$&", host: "fiscahub.fr")
   end
 end
