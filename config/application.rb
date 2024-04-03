@@ -17,8 +17,7 @@ end
 module Passerelle
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 7.0
-    config.add_autoload_paths_to_load_path = false
+    config.load_defaults 7.1
     config.active_support.cache_format_version = 7.0
 
     # Please, add to the `ignore` list any other `lib` subdirectories that do
@@ -62,6 +61,15 @@ module Passerelle
 
     # Use a real queuing backend for Active Job
     config.active_job.queue_adapter = :sidekiq
+
+    # Active Record Encryption now uses SHA-256 as its hash digest algorithm.
+    # See: https://github.com/rails/rails/issues/50226#issuecomment-1836087190
+    #      https://github.com/rails/rails/issues/50212#issuecomment-1908886252
+    #
+    # Because, we have encrypted data from Rails 7.0, we need to configure these
+    # two behaviors:
+    config.active_record.encryption.hash_digest_class = OpenSSL::Digest::SHA256
+    config.active_record.encryption.support_sha1_for_non_deterministic_encryption = true
 
     # Define default domain.
     # This is used to allowlist hosts and generate some hard links (see config.action_mailer.default_url_options)
