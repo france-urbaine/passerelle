@@ -31,7 +31,12 @@ Rails.application.configure do
     config.action_controller.perform_caching = false
   end
 
-  config.cache_store = :memory_store
+  config.cache_store =
+    if ENV["REDIS_CACHE_URL"]
+      [:redis_cache_store, { url: ENV["REDIS_CACHE_URL"] }]
+    else
+      [:memory_store, { size: 64.megabytes }]
+    end
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = ENV.fetch("RAILS_STORAGE") { ENV["DOTENV"] == "production" ? :cellar : :local }
