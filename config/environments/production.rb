@@ -30,7 +30,7 @@ Rails.application.configure do
   # Compress CSS using a preprocessor.
   # config.assets.css_compressor = :sass
 
-  # Do not fallback to assets pipeline if a precompiled asset is missed.
+  # Do not fall back to assets pipeline if a precompiled asset is missed.
   config.assets.compile = false
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
@@ -65,26 +65,29 @@ Rails.application.configure do
   # config.assume_ssl = true
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  config.force_ssl = ENV["RAILS_FORCE_SSL"].present?
+  config.force_ssl = true
 
   # Log to STDOUT by default
-  if ENV["RAILS_LOG_TO_STDOUT"].present?
-    config.logger = ActiveSupport::Logger.new($stdout)
-      .tap  { |logger| logger.formatter = Logger::Formatter.new }
-      .then { |logger| ActiveSupport::TaggedLogging.new(logger) }
-  end
+  config.logger = ActiveSupport::Logger.new($stdout)
+    .tap  { |logger| logger.formatter = Logger::Formatter.new }
+    .then { |logger| ActiveSupport::TaggedLogging.new(logger) }
 
   # Prepend all log lines with the following tags.
   config.log_tags = %i[request_id remote_ip]
 
-  # Info include generic and useful information about system operation, but avoids logging too much
+  # "info" includes generic and useful information about system operation, but avoids logging too much
   # information to avoid inadvertent exposure of personally identifiable information (PII). If you
   # want to log everything, set the level to "debug".
   config.log_level = ENV.fetch("RAILS_LOG_LEVEL", "info")
 
   # Use a different cache store in production.
   # config.cache_store = :mem_cache_store
-  config.cache_store = :redis_cache_store, { url: ENV.fetch("REDIS_CACHE_URL") } if ENV["REDIS_CACHE_URL"]
+  config.cache_store =
+    if ENV.key?("REDIS_CACHE_URL")
+      [:redis_cache_store, { url: ENV.fetch("REDIS_CACHE_URL") }]
+    else
+      [:memory_store, { size: 64.megabytes }]
+    end
 
   # Use a real queuing backend for Active Job (and separate queues per environment).
   # config.active_job.queue_adapter = :resque
@@ -124,15 +127,10 @@ Rails.application.configure do
     config.action_dispatch.trusted_proxies = ENV["CC_REVERSE_PROXY_IPS"].split(",").map { |proxy| IPAddr.new(proxy) }
   end
 
-  # Allow former domains
+  # Redirect former domains
+  #
   config.hosts << ".fiscahub.fr"
-  config.hosts << ".passerelle-fiscale.fr"
-
   config.middleware.insert_before Rack::Runtime, Rack::Rewrite do
-    r301(/.*/, "//passerelle-fiscale.fr$&", host: "www.passerelle-fiscale.fr")
-
-    # Former domains
-    r301(/.*/, "//passerelle-fiscale.fr$&", host: "fiscahub.fr")
-    r301(/.*/, "//passerelle-fiscale.fr$&", host: "www.fiscahub.fr")
+    r301(/.*/, "//#{Rails.application.config.x.domain}$&", host: "fiscahub.fr")
   end
 end

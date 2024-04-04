@@ -7,4 +7,16 @@
     <AllowedHeader>*</AllowedHeader>
     <MaxAgeSeconds>3600</MaxAgeSeconds>
   </CORSRule>
+  <CORSRule>
+    <AllowedOrigin>https://alpha.passerelle-fiscale.fr</AllowedOrigin>
+    <AllowedMethod>PUT</AllowedMethod>
+    <AllowedHeader>*</AllowedHeader>
+    <MaxAgeSeconds>3600</MaxAgeSeconds>
+  </CORSRule>
+  <CORSRule>
+    <AllowedOrigin>http://passerelle-fiscale.localhost:3000</AllowedOrigin>
+    <AllowedMethod>PUT</AllowedMethod>
+    <AllowedHeader>*</AllowedHeader>
+    <MaxAgeSeconds>3600</MaxAgeSeconds>
+  </CORSRule>
 </CORSConfiguration>
