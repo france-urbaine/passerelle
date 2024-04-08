@@ -74,12 +74,8 @@ gem "tzinfo-data", platforms: %i[mingw mswin x64_mingw jruby]
 gem "audited"
 
 group :development, :test do
-  gem "lookbook", ">= 2.0.0"
-
+  gem "lookbook"
   # FIXME: https://github.com/tinfoil/devise-two-factor/pull/240
-  # Waiting for this PR to be released
-  # The gem could be removed from the Gemfile after release because it's already a dependency of lookbook
-  #
   gem "htmlbeautifier", github: "inkstak/htmlbeautifier", branch: "allow_custom_elements"
 
   gem "amazing_print"
@@ -115,6 +111,7 @@ group :development do
   gem "rubocop-rails",       require: false
   gem "rubocop-rake",        require: false
   gem "rubocop-rspec",       require: false
+  gem "rubocop-rspec_rails", require: false
 
   # Tests & lint automation
   gem "guard"
