@@ -35,7 +35,7 @@
               | Cette adresse est requise pour vous connecter.
 
             p
-              | Vous avez demander à changer d'adresse email pour <strong>#{current_user.unconfirmed_email}</strong>.
+              | Vous avez demandé à changer d'adresse email pour <strong>#{current_user.unconfirmed_email}</strong>.
               br
               | Veuillez suivre les instructions recues par email pour finaliser la modification.
           - card.with_action "Envoyer de nouvelles instructions", user_settings_path, method: :put, params: { send_reconfirmation_instructions: true }
