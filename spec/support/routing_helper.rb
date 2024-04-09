@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module RoutingSpecsMacros
+module RoutingSpecHelpers
   def default_routes_options(**options)
     @default_routes_options = options
   end
@@ -15,7 +15,7 @@ module RoutingSpecsMacros
 end
 
 RSpec.configure do |config|
-  config.include RoutingSpecsMacros, type: :routing
+  config.include RoutingSpecHelpers, type: :routing
 
   # Avoid adding `subdomain: ""` to most of the routing specs
   #

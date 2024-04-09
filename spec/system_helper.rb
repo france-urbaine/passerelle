@@ -4,12 +4,16 @@
 require "rails_helper"
 
 # Load configuration files and helpers
-Dir[Rails.root.join("spec/support/system/**/*.rb")].each do |file|
-  require file
-end
+Dir[Rails.root.join("spec/support/system/**/*.rb")].each { |file| require file }
 
 RSpec.configure do |config|
+  # Helpers & matchers from gems
+  #
   config.include Devise::Test::IntegrationHelpers, type: :system
+
+  # Custom helpers
+  #
+  config.include SystemTestHelpers, type: :system
 
   # System specs use fixtures.
   # Instead of using transactional fixtures, we'll use DataCleaner around each
