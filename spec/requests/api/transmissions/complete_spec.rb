@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "API::TransmissionsController#complete", :api do
+RSpec.describe "API::TransmissionsController#complete" do
   subject(:request) do
     put "/transmissions/#{transmission.id}/finalisation", as:, headers:, params:
   end

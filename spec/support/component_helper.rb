@@ -3,7 +3,7 @@
 require "view_component/test_helpers"
 
 RSpec.configure do |config|
-  # Derive the :component type for specs lying in components directory.
+  # Automatically derive :type metadata from directory
   #
   config.define_derived_metadata(file_path: %r{/spec/components}) do |metadata|
     metadata[:type] = :component

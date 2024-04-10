@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "API::CollectivitiesController#index", :api do
+RSpec.describe "API::CollectivitiesController#index" do
   subject(:request) do
     get "/collectivites", as:, headers:, params:
   end

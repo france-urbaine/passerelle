@@ -1,6 +1,12 @@
 # frozen_string_literal: true
 
 RSpec.configure do |config|
+  # Automatically derive :api_request metadata from directory
+  #
+  config.define_derived_metadata(file_path: %r{/spec/requests/api}) do |metadata|
+    metadata[:api_request] = true
+  end
+
   # Helpers & matchers from gems
   #
   config.include Capybara::RSpecMatchers,          type: :request
@@ -30,7 +36,7 @@ RSpec.configure do |config|
     host! "example.com"
   end
 
-  config.before type: :request, api: true do
+  config.before type: :request, api_request: true do
     host! "api.example.com"
   end
 end

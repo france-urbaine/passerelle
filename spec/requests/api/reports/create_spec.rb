@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "API::ReportsController#create", :api do
+RSpec.describe "API::ReportsController#create" do
   subject(:request) do
     post "/transmissions/#{transmission.id}/signalements", as:, headers:, params:
   end

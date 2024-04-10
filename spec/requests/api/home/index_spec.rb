@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "API::HomeController#index", :api do
+RSpec.describe "API::HomeController#index" do
   subject(:request) do
     get "/", as:, headers:, params:
   end

@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe API::Reports::DocumentsController, :api do
+RSpec.describe API::Reports::DocumentsController do
   let(:report_id) { SecureRandom.uuid }
   let(:id)        { SecureRandom.uuid }
 
