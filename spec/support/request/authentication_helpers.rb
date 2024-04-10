@@ -18,17 +18,19 @@ module RequestTestHelpers
       result = super(user)
 
       if reload_tracked_fields
-        # In order to verify updated attributes on user, we have to fire a request
-        # and reloading the user:
-        # - using `sign_in` setup warden for later request but doesn't touch the user
-        # - the first request will update tracked fields (sign_in_count, ..) and the `updated_at`
-        # - we expect to verify that the subject request update or not the `updated_at`
+        # In order to verify updated attributes on the given user after any request,
+        # we first need to fire a request and reloading the user:
+        #
+        #   * using the `sign_in` method is preparing warden for further request but doesn't touch the user
+        #   * the first request will update all tracked fields (updated_at, sign_in_count, last_sign_in_at ...)
         #
         get("/")
         user.reload
 
-        # Because a first request has been fired, implicit `response` and `flash` won't call the subject
-        # unless we reset those values:
+        # Because a first request has been fired, implicit helpers (see ./implicit_helpers.rb) won't call
+        # the expected subject request.
+        # We also need to reset those values:
+        #
         @request = @response = nil
         @request_count = 0
       end

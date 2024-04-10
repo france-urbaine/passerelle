@@ -19,14 +19,14 @@ module Matchers
         validate_actual_type!(actual)
 
         @actual_attribute = actual[expected]
-        actual_attribute_match? && (other_matcher.blank? || other_matcher.matches?(notice))
+        actual_attribute_match? && (other_matcher.blank? || other_matcher.matches?(@actual_attribute))
       end
 
       match_when_negated do |actual|
         validate_actual_type!(actual)
 
         @actual_attribute = actual[expected]
-        @actual_attribute.nil? && (other_matcher.blank? || other_matcher.matches?(notice))
+        @actual_attribute.nil? && (other_matcher.blank? || other_matcher.matches?(@actual_attribute))
       end
 
       failure_message do
