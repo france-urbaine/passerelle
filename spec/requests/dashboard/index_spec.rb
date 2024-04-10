@@ -56,7 +56,7 @@ RSpec.describe "DashboardsController#index" do
 
       context "when requesting HTML" do
         it { expect(response).to have_http_status(:success) }
-        it { expect(response).to have_content_type(:html) }
+        it { expect(response).to have_media_type(:html) }
         it { expect(response).to have_html_body }
 
         it "returns only accessible reports" do
@@ -83,7 +83,7 @@ RSpec.describe "DashboardsController#index" do
 
       context "when requesting Turbo-Frame", :xhr, headers: { "Turbo-Frame" => "content" } do
         it { expect(response).to have_http_status(:success) }
-        it { expect(response).to have_content_type(:html) }
+        it { expect(response).to have_media_type(:html) }
         it { expect(response).to have_html_body.with_turbo_frame("content") }
       end
     end
@@ -93,7 +93,7 @@ RSpec.describe "DashboardsController#index" do
 
       context "when requesting HTML" do
         it { expect(response).to have_http_status(:success) }
-        it { expect(response).to have_content_type(:html) }
+        it { expect(response).to have_media_type(:html) }
         it { expect(response).to have_html_body }
       end
     end
@@ -103,7 +103,7 @@ RSpec.describe "DashboardsController#index" do
 
       context "when requesting HTML" do
         it { expect(response).to have_http_status(:success) }
-        it { expect(response).to have_content_type(:html) }
+        it { expect(response).to have_media_type(:html) }
         it { expect(response).to have_html_body }
 
         it "returns only unassigned & resolved reports" do
@@ -137,7 +137,7 @@ RSpec.describe "DashboardsController#index" do
 
       context "when requesting HTML" do
         it { expect(response).to have_http_status(:success) }
-        it { expect(response).to have_content_type(:html) }
+        it { expect(response).to have_media_type(:html) }
         it { expect(response).to have_html_body }
 
         it "returns only assigned reports linked to user offices" do
@@ -168,7 +168,7 @@ RSpec.describe "DashboardsController#index" do
 
       context "when requesting HTML" do
         it { expect(response).to have_http_status(:success) }
-        it { expect(response).to have_content_type(:html) }
+        it { expect(response).to have_media_type(:html) }
         it { expect(response).to have_html_body }
 
         it "returns all transmitted reports" do

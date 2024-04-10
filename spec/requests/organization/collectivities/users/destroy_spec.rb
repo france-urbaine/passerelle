@@ -111,7 +111,7 @@ RSpec.describe "Organization::Collectivities::UsersController#destroy" do
       before { user.organization.discard }
 
       it { expect(response).to have_http_status(:gone) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
     end
 
@@ -119,7 +119,7 @@ RSpec.describe "Organization::Collectivities::UsersController#destroy" do
       before { user.destroy }
 
       it { expect(response).to have_http_status(:not_found) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
     end
 

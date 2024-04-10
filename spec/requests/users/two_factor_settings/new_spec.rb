@@ -37,7 +37,7 @@ RSpec.describe "Users::TwoFactorSettingsController#new" do
       end
 
       it { expect(response).to have_http_status(:success) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
     end
   end

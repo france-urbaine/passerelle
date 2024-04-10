@@ -31,7 +31,7 @@ RSpec.describe "Territories::CommunesController#edit" do
 
     context "when the commune is accessible" do
       it { expect(response).to have_http_status(:success) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
     end
 
@@ -39,7 +39,7 @@ RSpec.describe "Territories::CommunesController#edit" do
       before { commune.destroy }
 
       it { expect(response).to have_http_status(:not_found) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
     end
   end

@@ -40,7 +40,7 @@ RSpec.describe "Admin::OfficesController#index" do
 
     context "when requesting HTML" do
       it { expect(response).to have_http_status(:success) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
 
       it "returns only kept offices" do
@@ -54,13 +54,13 @@ RSpec.describe "Admin::OfficesController#index" do
 
     context "when requesting Turbo-Frame", :xhr, headers: { "Turbo-Frame" => "content" } do
       it { expect(response).to have_http_status(:success) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body.with_turbo_frame("content") }
     end
 
     context "when requesting autocompletion", :xhr, headers: { "Accept-Variant" => "autocomplete" } do
       it { expect(response).to have_http_status(:not_implemented) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
     end
   end

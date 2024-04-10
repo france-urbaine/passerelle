@@ -72,7 +72,7 @@ RSpec.describe "Organization::SettingsController#update" do
         it "responds with unprocessable entity" do
           expect(response)
             .to  have_http_status(:unprocessable_entity)
-            .and have_content_type(:html)
+            .and have_media_type(:html)
             .and have_html_body
         end
       end

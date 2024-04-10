@@ -36,7 +36,7 @@ RSpec.describe "Territories::DepartementsController#index" do
 
     context "when requesting HTML" do
       it { expect(response).to have_http_status(:success) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
     end
 
@@ -49,7 +49,7 @@ RSpec.describe "Territories::DepartementsController#index" do
       let(:params) { { q: "Pyre" } }
 
       it { expect(response).to have_http_status(:success) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body.to have_selector("li", text: "Pyrénées-Atlantiques") }
     end
   end

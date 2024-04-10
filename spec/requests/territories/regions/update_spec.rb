@@ -58,7 +58,7 @@ RSpec.describe "Territories::RegionsController#update" do
       let(:updated_attributes) { super().merge(name: "") }
 
       it { expect(response).to have_http_status(:unprocessable_entity) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
       it { expect { request and region.reload }.not_to change(region, :updated_at) }
       it { expect { request and region.reload }.not_to change(region, :name) }
@@ -75,7 +75,7 @@ RSpec.describe "Territories::RegionsController#update" do
       before { region.destroy }
 
       it { expect(response).to have_http_status(:not_found) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
     end
 

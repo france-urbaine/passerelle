@@ -23,19 +23,19 @@ RSpec.describe "Doorkeeper::TokensController#create", :api_request do
   context "when using client_credentials flow" do
     context "with a valid application" do
       it { expect(response).to have_http_status(:success) }
-      it { expect(response).to have_content_type(:json) }
+      it { expect(response).to have_media_type(:json) }
     end
 
     context "with invalid params", params: { "grant_type" => "client_credentials", "client_id" => "invalid_client_id", "client_secret" => "invalid_client_secret" } do
       it { expect(response).to have_http_status(:unauthorized) }
-      it { expect(response).to have_content_type(:json) }
+      it { expect(response).to have_media_type(:json) }
     end
 
     context "with a discarded application" do
       before { test_app.discard! }
 
       it { expect(response).to have_http_status(:unauthorized) }
-      it { expect(response).to have_content_type(:json) }
+      it { expect(response).to have_media_type(:json) }
     end
   end
 end

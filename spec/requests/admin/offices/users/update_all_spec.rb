@@ -69,7 +69,7 @@ RSpec.describe "Admin::Offices::UsersController#update_all" do
       before { office.discard }
 
       it { expect(response).to have_http_status(:gone) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
     end
 
@@ -77,7 +77,7 @@ RSpec.describe "Admin::Offices::UsersController#update_all" do
       before { office.destroy }
 
       it { expect(response).to have_http_status(:not_found) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
     end
 
@@ -85,7 +85,7 @@ RSpec.describe "Admin::Offices::UsersController#update_all" do
       before { office.ddfip.discard }
 
       it { expect(response).to have_http_status(:gone) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
     end
   end

@@ -66,7 +66,7 @@ RSpec.describe "Territories::TerritoriesController#update" do
       let(:attributes) { { communes_url: "", epcis_url: "" } }
 
       it { expect(response).to have_http_status(:unprocessable_entity) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
 
       it "is expected to not enqueue any jobs" do

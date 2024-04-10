@@ -71,7 +71,7 @@ RSpec.describe "Admin::DGFIPs::UsersController#index" do
     context "when requesting Turbo-Frame", :xhr, headers: { "Turbo-Frame" => "datatable-users" } do
       context "when the DGFIP is accesible" do
         it { expect(response).to have_http_status(:success) }
-        it { expect(response).to have_content_type(:html) }
+        it { expect(response).to have_media_type(:html) }
         it { expect(response).to have_html_body.with_turbo_frame("datatable-users") }
 
         it "returns only kept members of the organization" do
@@ -88,7 +88,7 @@ RSpec.describe "Admin::DGFIPs::UsersController#index" do
         before { dgfip.discard }
 
         it { expect(response).to have_http_status(:success) }
-        it { expect(response).to have_content_type(:html) }
+        it { expect(response).to have_media_type(:html) }
         it { expect(response).to have_html_body.with_turbo_frame("datatable-users") }
       end
 
@@ -96,14 +96,14 @@ RSpec.describe "Admin::DGFIPs::UsersController#index" do
         before { dgfip.destroy }
 
         it { expect(response).to have_http_status(:success) }
-        it { expect(response).to have_content_type(:html) }
+        it { expect(response).to have_media_type(:html) }
         it { expect(response).to have_html_body.with_turbo_frame("datatable-users") }
       end
     end
 
     context "when requesting autocompletion", :xhr, headers: { "Accept-Variant" => "autocomplete" } do
       it { expect(response).to have_http_status(:not_implemented) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
     end
   end

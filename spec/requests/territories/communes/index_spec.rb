@@ -32,7 +32,7 @@ RSpec.describe "Territories::CommunesController#index" do
 
     context "when requesting HTML" do
       it { expect(response).to have_http_status(:success) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
     end
 
@@ -46,7 +46,7 @@ RSpec.describe "Territories::CommunesController#index" do
       let(:params) { { q: "Bayo" } }
 
       it { expect(response).to have_http_status(:success) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body.to have_selector("li", text: "Bayonne") }
     end
   end

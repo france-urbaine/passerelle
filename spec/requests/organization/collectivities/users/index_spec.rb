@@ -87,7 +87,7 @@ RSpec.describe "Organization::Collectivities::UsersController#index" do
         before { collectivity.discard }
 
         it { expect(response).to have_http_status(:gone) }
-        it { expect(response).to have_content_type(:html) }
+        it { expect(response).to have_media_type(:html) }
         it { expect(response).to have_html_body.to have_text("Cette collectivité est en cours de suppression.") }
       end
 
@@ -95,7 +95,7 @@ RSpec.describe "Organization::Collectivities::UsersController#index" do
         before { collectivity.destroy }
 
         it { expect(response).to have_http_status(:not_found) }
-        it { expect(response).to have_content_type(:html) }
+        it { expect(response).to have_media_type(:html) }
         it { expect(response).to have_html_body.to have_text("Cette collectivité n'a pas été trouvée ou n'existe plus.") }
       end
     end
@@ -103,7 +103,7 @@ RSpec.describe "Organization::Collectivities::UsersController#index" do
     context "when requesting Turbo-Frame", :xhr, headers: { "Turbo-Frame" => "datatable-users" } do
       context "when the collectivity is accessible" do
         it { expect(response).to have_http_status(:success) }
-        it { expect(response).to have_content_type(:html) }
+        it { expect(response).to have_media_type(:html) }
         it { expect(response).to have_html_body }
 
         it "returns only kept users owned by collectivity" do
@@ -121,7 +121,7 @@ RSpec.describe "Organization::Collectivities::UsersController#index" do
         before { collectivity.discard }
 
         it { expect(response).to have_http_status(:gone) }
-        it { expect(response).to have_content_type(:html) }
+        it { expect(response).to have_media_type(:html) }
         it { expect(response).to have_html_body.to have_text("Cette collectivité est en cours de suppression.") }
       end
 
@@ -129,14 +129,14 @@ RSpec.describe "Organization::Collectivities::UsersController#index" do
         before { collectivity.destroy }
 
         it { expect(response).to have_http_status(:not_found) }
-        it { expect(response).to have_content_type(:html) }
+        it { expect(response).to have_media_type(:html) }
         it { expect(response).to have_html_body.to have_text("Cette collectivité n'a pas été trouvée ou n'existe plus.") }
       end
     end
 
     context "when requesting autocompletion", :xhr, headers: { "Accept-Variant" => "autocomplete" } do
       it { expect(response).to have_http_status(:not_implemented) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
     end
   end

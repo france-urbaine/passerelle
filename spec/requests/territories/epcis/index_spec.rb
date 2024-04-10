@@ -32,7 +32,7 @@ RSpec.describe "Territories::EpcisController#index" do
 
     context "when requesting HTML" do
       it { expect(response).to have_http_status(:success) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
     end
 
@@ -45,7 +45,7 @@ RSpec.describe "Territories::EpcisController#index" do
       let(:params) { { q: "Pays" } }
 
       it { expect(response).to have_http_status(:success) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body.to have_selector("li", text: "CA du Pays Basque") }
     end
   end

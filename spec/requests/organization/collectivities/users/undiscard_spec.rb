@@ -101,7 +101,7 @@ RSpec.describe "Organization::Collectivities::UsersController#undiscard" do
       before { user.destroy }
 
       it { expect(response).to have_http_status(:not_found) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
     end
 

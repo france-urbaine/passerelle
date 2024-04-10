@@ -40,7 +40,7 @@ RSpec.describe "Admin::DGFIPsController#show" do
 
     context "when the DGFIP is accessible" do
       it { expect(response).to have_http_status(:success) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
     end
 
@@ -48,7 +48,7 @@ RSpec.describe "Admin::DGFIPsController#show" do
       before { DGFIP.discard_all }
 
       it { expect(response).to have_http_status(:success) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
 
       it "undiscards the DGFIP" do
@@ -65,7 +65,7 @@ RSpec.describe "Admin::DGFIPsController#show" do
       before { DGFIP.destroy_all }
 
       it { expect(response).to have_http_status(:success) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
 
       it "creates a new default DGFIP" do

@@ -15,6 +15,6 @@ RSpec.describe "Users::EnrollmentsController#new" do
   it_behaves_like "it responds with not acceptable in JSON whithout being signed in"
 
   it { expect(response).to have_http_status(:success) }
-  it { expect(response).to have_content_type(:html) }
+  it { expect(response).to have_media_type(:html) }
   it { expect(response).to have_html_body }
 end

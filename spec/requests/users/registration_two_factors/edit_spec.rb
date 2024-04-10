@@ -19,7 +19,7 @@ RSpec.describe "Users::RegistrationTwoFactorsController#edit" do
 
   context "with a valid token" do
     it { expect(response).to have_http_status(:success) }
-    it { expect(response).to have_content_type(:html) }
+    it { expect(response).to have_media_type(:html) }
     it { expect(response).to have_html_body }
 
     it "keeps user unconfirmed and doesn't update its OTP settings" do

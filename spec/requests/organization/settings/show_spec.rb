@@ -37,7 +37,7 @@ RSpec.describe "Organization::SettingsController#show" do
       it "responds successfully" do
         expect(response)
           .to  have_http_status(:success)
-          .and have_content_type(:html)
+          .and have_media_type(:html)
           .and have_html_body
       end
     end

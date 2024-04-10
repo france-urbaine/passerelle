@@ -59,13 +59,13 @@ RSpec.describe "Admin::Users::OfficesController#index" do
 
     context "without ddfip_id params", params: {} do
       it { expect(response).to have_http_status(:bad_request) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
     end
 
     context "with ddfip_id params" do
       it { expect(response).to have_http_status(:success) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body.with_turbo_frame("user_offices_checkboxes") }
     end
 
@@ -78,7 +78,7 @@ RSpec.describe "Admin::Users::OfficesController#index" do
       end
 
       it { expect(response).to have_http_status(:success) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body.with_turbo_frame("user_offices_checkboxes") }
     end
 
@@ -91,7 +91,7 @@ RSpec.describe "Admin::Users::OfficesController#index" do
       end
 
       it { expect(response).to have_http_status(:success) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body.with_turbo_frame("user_offices_checkboxes") }
     end
   end

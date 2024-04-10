@@ -38,7 +38,7 @@ module RequestTestHelpers
             .to have_http_status(:no_content)
             .or(
               have_http_status(:success)
-                .and(have_content_type(:html))
+                .and(have_media_type(:html))
                 .and(have_html_body)
             )
         end
@@ -55,7 +55,7 @@ module RequestTestHelpers
             .to have_http_status(:no_content)
             .or(
               have_http_status(:success)
-                .and(have_content_type(:json))
+                .and(have_media_type(:json))
                 .and(have_json_body)
             )
         end
@@ -87,7 +87,7 @@ module RequestTestHelpers
 
           expect(response)
             .to  have_http_status(:unauthorized)
-            .and have_content_type(:html)
+            .and have_media_type(:html)
             .and have_html_body
         end
       end
@@ -101,7 +101,7 @@ module RequestTestHelpers
 
           expect(response)
             .to  have_http_status(:unauthorized)
-            .and have_content_type(:json)
+            .and have_media_type(:json)
             .and have_json_body(error: "Vous devez d'abord vous authentifier.")
         end
       end
@@ -117,7 +117,7 @@ module RequestTestHelpers
 
           expect(response)
             .to  have_http_status(:forbidden)
-            .and have_content_type(:html)
+            .and have_media_type(:html)
             .and have_html_body
         end
       end
@@ -131,7 +131,7 @@ module RequestTestHelpers
 
           expect(response)
             .to  have_http_status(:forbidden)
-            .and have_content_type(:json)
+            .and have_media_type(:json)
             .and have_json_body(error: "Vous ne disposez pas des permissions suffisantes pour accéder à cette resource.")
         end
       end
@@ -147,7 +147,7 @@ module RequestTestHelpers
 
           expect(response)
             .to  have_http_status(:not_found)
-            .and have_content_type(:html)
+            .and have_media_type(:html)
             .and have_html_body
         end
       end
@@ -161,7 +161,7 @@ module RequestTestHelpers
 
           expect(response)
             .to  have_http_status(:not_found)
-            .and have_content_type(:json)
+            .and have_media_type(:json)
             .and have_json_body(error: "La resource n'a pas été trouvée ou n'existe plus.")
         end
       end
@@ -177,7 +177,7 @@ module RequestTestHelpers
 
           expect(response)
             .to  have_http_status(:not_acceptable)
-            .and have_content_type(:html)
+            .and have_media_type(:html)
             .and have_html_body
         end
       end
@@ -191,7 +191,7 @@ module RequestTestHelpers
 
           expect(response)
             .to  have_http_status(:not_acceptable)
-            .and have_content_type(:json)
+            .and have_media_type(:json)
             .and have_json_body(error: "La resource ne peut être retournée dans le format demandé.")
         end
       end
@@ -207,7 +207,7 @@ module RequestTestHelpers
 
           expect(response)
             .to  have_http_status(:gone)
-            .and have_content_type(:html)
+            .and have_media_type(:html)
             .and have_html_body
         end
       end
@@ -221,7 +221,7 @@ module RequestTestHelpers
 
           expect(response)
             .to  have_http_status(:gone)
-            .and have_content_type(:json)
+            .and have_media_type(:json)
             .and have_json_body(error: "La resource n'est plus disponible ou est en cours de suppression.")
         end
       end
@@ -237,7 +237,7 @@ module RequestTestHelpers
 
           expect(response)
             .to  have_http_status(:unprocessable_entity)
-            .and have_content_type(:html)
+            .and have_media_type(:html)
             .and have_html_body
         end
       end
@@ -251,7 +251,7 @@ module RequestTestHelpers
 
           expect(response)
             .to  have_http_status(:unprocessable_entity)
-            .and have_content_type(:json)
+            .and have_media_type(:json)
             .and have_json_body(include(:error))
         end
       end
@@ -269,7 +269,7 @@ module RequestTestHelpers
 
           expect(response)
             .to  have_http_status(:success)
-            .and have_content_type(:html)
+            .and have_media_type(:html)
             .and have_html_body.with_turbo_frame(frame)
         end
       end
@@ -285,7 +285,7 @@ module RequestTestHelpers
 
           expect(response)
             .to  have_http_status(:not_implemented)
-            .and have_content_type(:html)
+            .and have_media_type(:html)
             .and have_html_body
         end
       end

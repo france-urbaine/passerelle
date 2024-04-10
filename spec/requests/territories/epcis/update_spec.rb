@@ -58,7 +58,7 @@ RSpec.describe "Territories::EpcisController#update" do
       let(:updated_attributes) { super().merge(name: "") }
 
       it { expect(response).to have_http_status(:unprocessable_entity) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
       it { expect { request and epci.reload }.not_to change(epci, :updated_at) }
       it { expect { request and epci.reload }.not_to change(epci, :name) }
@@ -75,7 +75,7 @@ RSpec.describe "Territories::EpcisController#update" do
       before { epci.destroy }
 
       it { expect(response).to have_http_status(:not_found) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
     end
 

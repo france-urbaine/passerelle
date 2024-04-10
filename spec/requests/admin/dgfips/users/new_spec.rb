@@ -40,7 +40,7 @@ RSpec.describe "Admin::DGFIPs::UsersController#new" do
 
     context "when the DGFIP is accessible" do
       it { expect(response).to have_http_status(:success) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
     end
 
@@ -48,7 +48,7 @@ RSpec.describe "Admin::DGFIPs::UsersController#new" do
       before { dgfip.discard }
 
       it { expect(response).to have_http_status(:success) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
     end
 
@@ -56,7 +56,7 @@ RSpec.describe "Admin::DGFIPs::UsersController#new" do
       before { dgfip.destroy }
 
       it { expect(response).to have_http_status(:success) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
     end
   end

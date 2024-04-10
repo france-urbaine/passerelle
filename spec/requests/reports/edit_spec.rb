@@ -94,7 +94,7 @@ RSpec.describe "ReportsController#edit" do
 
       context "when the report is packing" do
         it { expect(response).to have_http_status(:success) }
-        it { expect(response).to have_content_type(:html) }
+        it { expect(response).to have_media_type(:html) }
         it { expect(response).to have_html_body }
       end
 
@@ -102,7 +102,7 @@ RSpec.describe "ReportsController#edit" do
         let(:report) { create(:report, :transmitted_through_web_ui, collectivity:) }
 
         it { expect(response).to have_http_status(:forbidden) }
-        it { expect(response).to have_content_type(:html) }
+        it { expect(response).to have_media_type(:html) }
         it { expect(response).to have_html_body }
       end
 
@@ -110,7 +110,7 @@ RSpec.describe "ReportsController#edit" do
         let(:report) { create(:report, :made_through_web_ui, :discarded, collectivity:) }
 
         it { expect(response).to have_http_status(:gone) }
-        it { expect(response).to have_content_type(:html) }
+        it { expect(response).to have_media_type(:html) }
         it { expect(response).to have_html_body.to have_text("Ce signalement est en cours de suppression.") }
       end
 
@@ -118,7 +118,7 @@ RSpec.describe "ReportsController#edit" do
         before { report.destroy }
 
         it { expect(response).to have_http_status(:not_found) }
-        it { expect(response).to have_content_type(:html) }
+        it { expect(response).to have_media_type(:html) }
         it { expect(response).to have_html_body.to have_text("Ce signalement n'a pas été trouvé ou n'existe plus.") }
       end
     end

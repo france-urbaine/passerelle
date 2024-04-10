@@ -40,7 +40,7 @@ RSpec.describe "Admin::DDFIPsController#index" do
 
     context "when requesting HTML" do
       it { expect(response).to have_http_status(:success) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
 
       it "returns only kept users" do
@@ -54,7 +54,7 @@ RSpec.describe "Admin::DDFIPsController#index" do
 
     context "when requesting Turbo-Frame", :xhr, headers: { "Turbo-Frame" => "content" } do
       it { expect(response).to have_http_status(:success) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body.with_turbo_frame("content") }
     end
 
@@ -62,7 +62,7 @@ RSpec.describe "Admin::DDFIPsController#index" do
       let(:params) { { q: ddfips.first.name } }
 
       it { expect(response).to have_http_status(:success) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body.to have_selector("li", text: ddfips[0].name) }
     end
   end

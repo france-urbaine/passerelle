@@ -34,7 +34,7 @@ RSpec.describe "Admin::DGFIPsController#remove_all", skip: "Disabled because of 
 
     context "with multiple ids" do
       it { expect(response).to have_http_status(:success) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
     end
 

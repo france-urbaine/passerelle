@@ -89,7 +89,7 @@ RSpec.describe "Organization::OauthApplicationsController#create" do
       let(:attributes) { super().merge(name: "") }
 
       it { expect(response).to have_http_status(:unprocessable_entity) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
       it { expect { request }.not_to change(OauthApplication, :count).from(0) }
     end
@@ -106,7 +106,7 @@ RSpec.describe "Organization::OauthApplicationsController#create" do
 
     context "with empty parameters", params: {} do
       it { expect(response).to have_http_status(:unprocessable_entity) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
       it { expect { request }.not_to change(OauthApplication, :count).from(0) }
     end

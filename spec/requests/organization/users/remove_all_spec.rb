@@ -35,7 +35,7 @@ RSpec.describe "Organization::UsersController#remove_all" do
 
     context "with multiple ids" do
       it { expect(response).to have_http_status(:success) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
     end
 

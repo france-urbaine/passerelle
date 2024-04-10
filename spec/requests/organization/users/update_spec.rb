@@ -96,7 +96,7 @@ RSpec.describe "Organization::UsersController#update" do
       let(:attributes) { super().merge(email: "") }
 
       it { expect(response).to have_http_status(:unprocessable_entity) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
       it { expect { request and user.reload }.not_to change(user, :updated_at) }
       it { expect { request and user.reload }.not_to change(user, :name) }
@@ -113,7 +113,7 @@ RSpec.describe "Organization::UsersController#update" do
       before { user.discard }
 
       it { expect(response).to have_http_status(:gone) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
     end
 
@@ -121,7 +121,7 @@ RSpec.describe "Organization::UsersController#update" do
       before { user.destroy }
 
       it { expect(response).to have_http_status(:not_found) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
     end
 

@@ -129,7 +129,7 @@ RSpec.describe "ReportsController#update" do
         end
 
         it { expect(response).to have_http_status(:unprocessable_entity) }
-        it { expect(response).to have_content_type(:html) }
+        it { expect(response).to have_media_type(:html) }
         it { expect(response).to have_html_body.to(have_text("Évaluation actuelle du local")) }
         it { expect { request and report.reload }.not_to change(report, :updated_at) }
       end
@@ -138,7 +138,7 @@ RSpec.describe "ReportsController#update" do
         let(:report) { create(:report, :transmitted_through_web_ui, collectivity:) }
 
         it { expect(response).to have_http_status(:forbidden) }
-        it { expect(response).to have_content_type(:html) }
+        it { expect(response).to have_media_type(:html) }
         it { expect(response).to have_html_body }
       end
 
@@ -146,7 +146,7 @@ RSpec.describe "ReportsController#update" do
         let(:report) { create(:report, :made_through_web_ui, :discarded, collectivity:) }
 
         it { expect(response).to have_http_status(:gone) }
-        it { expect(response).to have_content_type(:html) }
+        it { expect(response).to have_media_type(:html) }
         it { expect(response).to have_html_body }
       end
 
@@ -154,7 +154,7 @@ RSpec.describe "ReportsController#update" do
         before { report.destroy }
 
         it { expect(response).to have_http_status(:not_found) }
-        it { expect(response).to have_content_type(:html) }
+        it { expect(response).to have_media_type(:html) }
         it { expect(response).to have_html_body }
       end
     end
