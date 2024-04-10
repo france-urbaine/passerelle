@@ -9,7 +9,7 @@ RSpec.describe "API::TransmissionsController#complete" do
 
   let(:as)      { |e| e.metadata.fetch(:as, :json) }
   let(:headers) { |e| e.metadata.fetch(:headers, {}).reverse_merge(authorization_header) }
-  let(:params)  { |e| e.metadata.fetch(:params, {}) }
+  let(:params)  { |e| e.metadata[:params] }
 
   let(:transmission) { create(:transmission, :with_reports, :made_through_api, :made_for_ddfip) }
 

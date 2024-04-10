@@ -14,6 +14,7 @@ RSpec.configure do |config|
 
   # Custom matchers
   #
+  config.include Matchers::Invoke,          type: :request
   config.include Matchers::HaveBody,        type: :request
   config.include Matchers::HaveContentType, type: :request
   config.include Matchers::HaveFlash,       type: :request
@@ -31,6 +32,8 @@ RSpec.configure do |config|
   config.include RequestTestHelpers::SharedResponseExamples,      type: :request
 
   # Set default host for routing & request specs
+  # ActionDispatch::Integration::Sesssion uses www.example.com as default host.
+  #
   #
   config.before type: :request do
     host! "example.com"

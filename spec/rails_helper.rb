@@ -84,7 +84,6 @@ RSpec.configure do |config|
 
   # Custom matchers available to any spec types
   #
-  config.include Matchers::Invoke
   config.include Matchers::HaveSentEmails
   config.include Matchers::PerformSQLQueries
 

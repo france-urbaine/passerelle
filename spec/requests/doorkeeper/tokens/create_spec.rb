@@ -4,9 +4,11 @@ require "rails_helper"
 
 RSpec.describe "Doorkeeper::TokensController#create", :api_request do
   subject(:request) do
-    post "/oauth/token", as: :json, headers:, params:, xhr:
+    post "/oauth/token", as:, headers:, params:
   end
 
+  let(:as)      { |e| e.metadata.fetch(:as, :json) }
+  let(:headers) { |e| e.metadata[:headers] }
   let(:params) do |e|
     e.metadata.fetch(:params, {
       "grant_type"    => "client_credentials",
@@ -14,9 +16,6 @@ RSpec.describe "Doorkeeper::TokensController#create", :api_request do
       "client_secret" => test_app.secret
     })
   end
-
-  let(:headers) { |e| e.metadata[:headers] }
-  let(:xhr)     { |e| e.metadata[:xhr] }
 
   let!(:test_app) { create(:oauth_application) }
 

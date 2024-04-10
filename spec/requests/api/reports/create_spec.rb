@@ -8,7 +8,7 @@ RSpec.describe "API::ReportsController#create" do
   end
 
   let(:as)      { |e| e.metadata.fetch(:as, :json) }
-  let(:headers) { |e| e.metadata.fetch(:headers, {}).merge(authorization_header) }
+  let(:headers) { |e| e.metadata.fetch(:headers, {}).reverse_merge(authorization_header) }
   let(:params)  { |e| e.metadata.fetch(:params, { report: attributes }) }
 
   let!(:transmission) { create(:transmission, :made_through_api) }

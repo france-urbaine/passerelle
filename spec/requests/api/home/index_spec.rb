@@ -7,9 +7,9 @@ RSpec.describe "API::HomeController#index" do
     get "/", as:, headers:, params:
   end
 
-  let(:as)      { |e| e.metadata.fetch(:as) }
-  let(:headers) { |e| e.metadata.fetch(:headers, {}).merge(authorization_header) }
-  let(:params)  { |e| e.metadata.fetch(:params, {}) }
+  let(:as)      { |e| e.metadata.fetch(:as, :json) }
+  let(:headers) { |e| e.metadata.fetch(:headers, {}).reverse_merge(authorization_header) }
+  let(:params)  { |e| e.metadata[:params] }
 
   describe "authorizations" do
     it_behaves_like "it responds successfully in JSON"

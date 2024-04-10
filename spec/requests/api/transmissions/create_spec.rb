@@ -9,7 +9,7 @@ RSpec.describe "API::TransmissionController#create" do
 
   let(:as)      { |e| e.metadata.fetch(:as, :json) }
   let(:headers) { |e| e.metadata.fetch(:headers, {}).reverse_merge(authorization_header) }
-  let(:params)  { |e| e.metadata.fetch(:params, {}) }
+  let(:params)  { |e| e.metadata[:params] }
 
   let!(:collectivity) { create(:collectivity) }
 
