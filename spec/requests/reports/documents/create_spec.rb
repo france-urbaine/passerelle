@@ -106,7 +106,7 @@ RSpec.describe "Reports::DocumentsController#create" do
       before { report.discard }
 
       it { expect(response).to have_http_status(:gone) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
     end
 
@@ -114,7 +114,7 @@ RSpec.describe "Reports::DocumentsController#create" do
       before { report.destroy }
 
       it { expect(response).to have_http_status(:not_found) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
     end
   end

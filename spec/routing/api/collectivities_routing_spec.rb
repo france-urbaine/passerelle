@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe API::CollectivitiesController, :api do
+RSpec.describe API::CollectivitiesController do
   let(:id) { SecureRandom.uuid }
 
   it { expect(get:    "http://api.example.com/collectivites").to route_to("api/collectivities#index") }

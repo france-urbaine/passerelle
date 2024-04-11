@@ -2,14 +2,14 @@
 
 require "rails_helper"
 
-RSpec.describe "API::CollectivitiesController#index", :api do
+RSpec.describe "API::CollectivitiesController#index" do
   subject(:request) do
     get "/collectivites", as:, headers:, params:
   end
 
   let(:as)      { |e| e.metadata.fetch(:as, :json) }
-  let(:headers) { |e| e.metadata.fetch(:headers, {}).merge(authorization_header) }
-  let(:params)  { |e| e.metadata.fetch(:params, {}) }
+  let(:headers) { |e| e.metadata.fetch(:headers, {}).reverse_merge(authorization_header) }
+  let(:params)  { |e| e.metadata[:params] }
 
   describe "authorizations" do
     it_behaves_like "it requires an authentication through OAuth in JSON"

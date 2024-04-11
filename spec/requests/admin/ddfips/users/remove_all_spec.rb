@@ -42,7 +42,7 @@ RSpec.describe "Admin::DDFIPs::UsersController#remove_all" do
 
     context "with multiple ids" do
       it { expect(response).to have_http_status(:success) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
     end
 
@@ -66,7 +66,7 @@ RSpec.describe "Admin::DDFIPs::UsersController#remove_all" do
       before { ddfip.discard }
 
       it { expect(response).to have_http_status(:gone) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
     end
 
@@ -74,7 +74,7 @@ RSpec.describe "Admin::DDFIPs::UsersController#remove_all" do
       before { ddfip.destroy }
 
       it { expect(response).to have_http_status(:not_found) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
     end
   end

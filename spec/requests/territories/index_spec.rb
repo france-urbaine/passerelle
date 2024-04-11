@@ -42,7 +42,7 @@ RSpec.describe "TerritoriesController#index" do
     let(:params) { { q: "" } }
 
     it { expect(response).to have_http_status(:success) }
-    it { expect(response).to have_content_type(:html) }
+    it { expect(response).to have_media_type(:html) }
     it { expect(response).to have_html_body.to have_selector("li") }
   end
 end

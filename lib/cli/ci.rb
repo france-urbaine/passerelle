@@ -44,7 +44,7 @@ module CLI
 
             CI_PARALLEL=true           # Use parallel_tests
             CI_PARALLEL=turbo_tests    # Use turbo_tests (experimental, better output)
-            CI_PARALLEL=flatware       # Use flatware    (experimental, faster, less options)
+            CI_PARALLEL=flatware       # Use flatware    (experimental, may be faster)
 
         To run the commands in CI environnement (ex: on Github), use the CI variable:
 

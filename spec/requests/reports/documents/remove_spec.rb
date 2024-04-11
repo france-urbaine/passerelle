@@ -96,7 +96,7 @@ RSpec.describe "Reports::DocumentsController#remove" do
 
     context "when the report is accessible" do
       it { expect(response).to have_http_status(:success) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
     end
 
@@ -104,7 +104,7 @@ RSpec.describe "Reports::DocumentsController#remove" do
       let(:report) { create(:report, :transmitted_through_web_ui, collectivity:) }
 
       it { expect(response).to have_http_status(:forbidden) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
     end
 
@@ -112,7 +112,7 @@ RSpec.describe "Reports::DocumentsController#remove" do
       let(:report) { create(:report, :made_through_web_ui, :discarded, collectivity:) }
 
       it { expect(response).to have_http_status(:gone) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
     end
 
@@ -120,7 +120,7 @@ RSpec.describe "Reports::DocumentsController#remove" do
       before { report.destroy }
 
       it { expect(response).to have_http_status(:not_found) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
     end
   end

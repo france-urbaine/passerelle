@@ -27,7 +27,7 @@ RSpec.describe "Users::UserSettingsController#show" do
     before { sign_in }
 
     it { expect(response).to have_http_status(:success) }
-    it { expect(response).to have_content_type(:html) }
+    it { expect(response).to have_media_type(:html) }
     it { expect(response).to have_html_body }
   end
 end

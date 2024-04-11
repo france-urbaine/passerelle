@@ -102,7 +102,7 @@ RSpec.describe "Organization::CollectivitiesController#update" do
       let(:attributes) { super().merge(name: "") }
 
       it { expect(response).to have_http_status(:unprocessable_entity) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
       it { expect { request and collectivity.reload }.not_to change(collectivity, :updated_at) }
       it { expect { request and collectivity.reload }.not_to change(collectivity, :name) }
@@ -129,7 +129,7 @@ RSpec.describe "Organization::CollectivitiesController#update" do
       before { collectivity.discard }
 
       it { expect(response).to have_http_status(:gone) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
     end
 
@@ -137,7 +137,7 @@ RSpec.describe "Organization::CollectivitiesController#update" do
       before { collectivity.destroy }
 
       it { expect(response).to have_http_status(:not_found) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
     end
 

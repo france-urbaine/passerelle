@@ -44,7 +44,7 @@ RSpec.describe "Organization::OauthApplicationsController#show" do
 
     context "when the oauth_application is accessible" do
       it { expect(response).to have_http_status(:success) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
     end
 
@@ -52,7 +52,7 @@ RSpec.describe "Organization::OauthApplicationsController#show" do
       before { oauth_application.discard }
 
       it { expect(response).to have_http_status(:gone) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body.to have_text("Cette application est en cours de suppression.") }
     end
 
@@ -60,7 +60,7 @@ RSpec.describe "Organization::OauthApplicationsController#show" do
       before { oauth_application.destroy }
 
       it { expect(response).to have_http_status(:not_found) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body.to have_text("Cette application n'a pas été trouvée ou n'existe plus.") }
     end
   end

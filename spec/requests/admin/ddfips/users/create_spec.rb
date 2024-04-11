@@ -81,7 +81,7 @@ RSpec.describe "Admin::DDFIPs::UsersController#create" do
       let(:attributes) { super().merge(email: "") }
 
       it { expect(response).to have_http_status(:unprocessable_entity) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
       it { expect { request }.not_to change(User, :count).from(1) }
     end
@@ -104,7 +104,7 @@ RSpec.describe "Admin::DDFIPs::UsersController#create" do
 
     context "with empty parameters", params: {} do
       it { expect(response).to have_http_status(:unprocessable_entity) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
       it { expect { request }.not_to change(User, :count).from(1) }
     end
@@ -113,7 +113,7 @@ RSpec.describe "Admin::DDFIPs::UsersController#create" do
       before { ddfip.discard }
 
       it { expect(response).to have_http_status(:gone) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
     end
 
@@ -121,7 +121,7 @@ RSpec.describe "Admin::DDFIPs::UsersController#create" do
       before { ddfip.destroy }
 
       it { expect(response).to have_http_status(:not_found) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
     end
 

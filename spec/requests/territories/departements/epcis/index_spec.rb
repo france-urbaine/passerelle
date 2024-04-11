@@ -47,7 +47,7 @@ RSpec.describe "Territories::Departements::EPCIs#index" do
     context "when requesting Turbo-Frame", :xhr, headers: { "Turbo-Frame" => "datatable-epcis" } do
       context "when the publisher is accessible" do
         it { expect(response).to have_http_status(:success) }
-        it { expect(response).to have_content_type(:html) }
+        it { expect(response).to have_media_type(:html) }
         it { expect(response).to have_html_body.with_turbo_frame("datatable-epcis") }
 
         it "includes kept epcis" do
@@ -61,7 +61,7 @@ RSpec.describe "Territories::Departements::EPCIs#index" do
 
     context "when requesting autocompletion", :xhr, headers: { "Accept-Variant" => "autocomplete" } do
       it { expect(response).to have_http_status(:not_implemented) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
     end
   end

@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe API::ReportsController, :api do
+RSpec.describe API::ReportsController do
   let(:id) { SecureRandom.uuid }
 
   it { expect(get:    "http://api.example.com/signalements").to be_unroutable }

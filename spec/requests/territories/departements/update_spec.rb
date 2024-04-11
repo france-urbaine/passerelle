@@ -58,7 +58,7 @@ RSpec.describe "Territories::DepartementsController#update" do
       let(:updated_attributes) { super().merge(name: "") }
 
       it { expect(response).to have_http_status(:unprocessable_entity) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
       it { expect { request and departement.reload }.not_to change(departement, :updated_at) }
       it { expect { request and departement.reload }.not_to change(departement, :name) }
@@ -75,7 +75,7 @@ RSpec.describe "Territories::DepartementsController#update" do
       before { departement.destroy }
 
       it { expect(response).to have_http_status(:not_found) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
     end
 

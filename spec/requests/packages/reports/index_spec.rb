@@ -68,7 +68,7 @@ RSpec.describe "Packages::Reports" do
         before { package.discard }
 
         it { expect(response).to have_http_status(:gone) }
-        it { expect(response).to have_content_type(:html) }
+        it { expect(response).to have_media_type(:html) }
         it { expect(response).to have_html_body }
       end
 
@@ -76,7 +76,7 @@ RSpec.describe "Packages::Reports" do
         before { package.destroy }
 
         it { expect(response).to have_http_status(:not_found) }
-        it { expect(response).to have_content_type(:html) }
+        it { expect(response).to have_media_type(:html) }
         it { expect(response).to have_html_body }
       end
     end
@@ -84,7 +84,7 @@ RSpec.describe "Packages::Reports" do
     context "when requesting Turbo-Frame", :xhr, headers: { "Turbo-Frame" => "datatable-reports" } do
       context "when the package is accessible" do
         it { expect(response).to have_http_status(:success) }
-        it { expect(response).to have_content_type(:html) }
+        it { expect(response).to have_media_type(:html) }
         it { expect(response).to have_html_body.with_turbo_frame("datatable-reports") }
       end
 
@@ -92,7 +92,7 @@ RSpec.describe "Packages::Reports" do
         before { package.discard }
 
         it { expect(response).to have_http_status(:gone) }
-        it { expect(response).to have_content_type(:html) }
+        it { expect(response).to have_media_type(:html) }
         it { expect(response).to have_html_body }
       end
 
@@ -100,7 +100,7 @@ RSpec.describe "Packages::Reports" do
         before { package.destroy }
 
         it { expect(response).to have_http_status(:not_found) }
-        it { expect(response).to have_content_type(:html) }
+        it { expect(response).to have_media_type(:html) }
         it { expect(response).to have_html_body }
       end
     end

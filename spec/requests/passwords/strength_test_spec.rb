@@ -15,21 +15,21 @@ RSpec.describe "PasswordsController#strengh_test" do
   describe "responses" do
     context "when requesting HTML" do
       it { expect(response).to have_http_status(:not_acceptable) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
     end
 
     context "when requesting turbo frame", :xhr, headers: { "Turbo-Frame" => "content" } do
       context "when the password is present" do
         it { expect(response).to have_http_status(:success) }
-        it { expect(response).to have_content_type(:html) }
+        it { expect(response).to have_media_type(:html) }
         it { expect(response).to have_html_body }
         it { expect(response).to have_html_body.with_turbo_frame("password-strength-test-result") }
       end
 
       context "when the password is empty", params: { password: "" } do
         it { expect(response).to have_http_status(:bad_request) }
-        it { expect(response).to have_content_type(:html) }
+        it { expect(response).to have_media_type(:html) }
         it { expect(response).to have_html_body }
       end
     end

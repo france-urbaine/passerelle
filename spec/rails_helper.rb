@@ -14,9 +14,6 @@ abort("The Rails environment is running in production mode!") if Rails.env.produ
 require "rspec/rails"
 require "webmock/rspec"
 require "database_cleaner/active_record"
-require "view_component/test_helpers"
-require "action_policy/rspec"
-require "action_policy/rspec/dsl"
 require "test_prof/recipes/rspec/before_all"
 require "test_prof/recipes/rspec/let_it_be"
 
@@ -33,6 +30,10 @@ require "test_prof/recipes/rspec/let_it_be"
 # directory. Alternatively, in the individual `*_spec.rb` files, manually
 # require only the support files necessary.
 #
+# Matchers are required first, to avoid call require in _helper.rb files
+# in support.
+#
+Dir[Rails.root.join("spec/support/matchers/*.rb")].each { |file| require file }
 Dir[Rails.root.join("spec/support/**/*.rb")].each do |file|
   # Files in support/system should be required from system_helper.rb
   require file unless file.include?("spec/support/system")
@@ -68,65 +69,32 @@ RSpec.configure do |config|
   #     end
   #
   # The different available types are documented in the features, such as in
-  # https://relishapp.com/rspec/rspec-rails/docs
+  # https://rspec.info/features/rspec-rails/directory-structure/
   config.infer_spec_type_from_file_location!
-
-  config.define_derived_metadata(file_path: %r{/spec/components}) do |metadata|
-    metadata[:type] = :component
-  end
 
   # Filter lines from Rails gems in backtraces.
   config.filter_rails_from_backtrace!
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
 
+  # Helpers from gems
+  #
+  config.include ActiveJob::TestHelper
   config.include FactoryBot::Syntax::Methods
-  config.include Matchers::Invoke
-  config.include Matchers::HaveBody
-  config.include Matchers::HaveContentType
-  config.include Matchers::HaveFlash
+
+  # Custom matchers available to any spec types
+  #
   config.include Matchers::HaveSentEmails
   config.include Matchers::PerformSQLQueries
-  config.include Matchers::HaveHTMLAttribute, type: :component
-  config.include Matchers::HaveHTMLAttribute, type: :helper
-  config.include Matchers::RenderPreviewWithoutException, type: :component
-  config.include Capybara::RSpecMatchers, type: :request
-  config.include Capybara::RSpecMatchers, type: :component
-  config.include ViewComponent::TestHelpers, type: :component
-  config.include ActionView::Helpers::TagHelper, type: :component
-  config.include ActiveJob::TestHelper
 
   # run specs with APIPIE_RECORD=examples to catch examples for api doc
+  #
   config.filter_run show_in_doc: true if ENV["APIPIE_RECORD"]
-
-  # Enable failure aggregation globally on given spec types
-  config.define_derived_metadata do |meta|
-    meta[:aggregate_failures] = true if meta[:type] == :component
-  end
-
-  config.after do
-    ActionMailer::Base.deliveries.clear
-    ActiveJob::Base.queue_adapter.enqueued_jobs.clear
-    ActiveJob::Base.queue_adapter.performed_jobs.clear
-    Faker::UniqueGenerator.clear
-  end
 
   # Forbid any outbound HTTP requests when running tests
   #
   config.before do
     WebMock.disable_net_connect!(allow_localhost: true)
-  end
-
-  config.around :each, type: :component do |example|
-    # Some components might requires a routed path to be set
-    # (for examples, when using `url_for`).
-    #
-    # So we created a route only available in test environnement
-    # to ensure that tests are independant from any behavior linked to URL.
-    #
-    with_request_url("/test/components") do
-      example.run
-    end
   end
 
   # Allow to use a cache store within tests by using metadata:
@@ -146,8 +114,18 @@ RSpec.configure do |config|
   end
 
   # Always make Timecop returns to current time
+  #
   config.after do |example|
     Timecop.return unless example.metadata[:prevent_timecop_to_return]
+  end
+
+  # Clear & reset various stuff after running specs
+  #
+  config.after do
+    ActionMailer::Base.deliveries.clear
+    ActiveJob::Base.queue_adapter.enqueued_jobs.clear
+    ActiveJob::Base.queue_adapter.performed_jobs.clear
+    Faker::UniqueGenerator.clear
   end
 end
 
@@ -168,15 +146,9 @@ RSpec::Matchers.define_negated_matcher :not_be_an,              :be_an
 RSpec::Matchers.define_negated_matcher :not_include,            :include
 RSpec::Matchers.define_negated_matcher :not_change,             :change
 RSpec::Matchers.define_negated_matcher :not_raise_error,        :raise_error
-RSpec::Matchers.define_negated_matcher :not_invoke,             :invoke
 RSpec::Matchers.define_negated_matcher :not_send_message,       :send_message
 RSpec::Matchers.define_negated_matcher :not_have_enqueued_job,  :have_enqueued_job
 RSpec::Matchers.define_negated_matcher :not_redirect_to,        :redirect_to
 RSpec::Matchers.define_negated_matcher :not_have_sent_emails,   :have_sent_emails
 RSpec::Matchers.define_negated_matcher :be_unroutable,          :be_routable
 RSpec::Matchers.define_negated_matcher :have_no_html_attribute, :have_html_attribute
-
-# FIXME: https://github.com/rails/rails/issues/50345
-ActionDispatch::IntegrationTest.register_encoder :html,
-  response_parser: ->(body) { Rails::Dom::Testing.html_document.parse(body) },
-  param_encoder: ->(params) { params }

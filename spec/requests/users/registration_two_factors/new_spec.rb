@@ -33,7 +33,7 @@ RSpec.describe "Users::RegistrationTwoFactorsController#new" do
     before { user.organization.update(allow_2fa_via_email: true) }
 
     it { expect(response).to have_http_status(:success) }
-    it { expect(response).to have_content_type(:html) }
+    it { expect(response).to have_media_type(:html) }
     it { expect(response).to have_html_body }
 
     it "keeps user unconfirmed and doesn't update its OTP settings" do

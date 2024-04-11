@@ -70,7 +70,7 @@ RSpec.describe "Organization::Collectivities::UsersController#show" do
 
     context "when the user is active" do
       it { expect(response).to have_http_status(:success) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
     end
 
@@ -78,7 +78,7 @@ RSpec.describe "Organization::Collectivities::UsersController#show" do
       before { user.discard }
 
       it { expect(response).to have_http_status(:gone) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body.to have_text("Cet utilisateur est en cours de suppression.") }
     end
 
@@ -86,7 +86,7 @@ RSpec.describe "Organization::Collectivities::UsersController#show" do
       before { user.organization.discard }
 
       it { expect(response).to have_http_status(:gone) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body.to have_text("Cette collectivité est en cours de suppression.") }
     end
 
@@ -94,7 +94,7 @@ RSpec.describe "Organization::Collectivities::UsersController#show" do
       before { user.destroy }
 
       it { expect(response).to have_http_status(:not_found) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body.to have_text("Cet utilisateur n'a pas été trouvé ou n'existe plus.") }
     end
   end

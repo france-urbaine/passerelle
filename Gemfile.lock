@@ -18,7 +18,7 @@ GIT
 
 GIT
   remote: https://github.com/inkstak/turbo_tests.git
-  revision: 8a56a0d61183ad72f8ed1bf3c66b0ba592221f8f
+  revision: 56d29b3293d01c4ceb84189e22d3ef725fb10dd7
   branch: feature-handle_fuubar
   specs:
     turbo_tests (2.2.0)

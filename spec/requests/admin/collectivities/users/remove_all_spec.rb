@@ -49,7 +49,7 @@ RSpec.describe "Admin::Collectivities::UsersController#remove_all" do
 
     context "with multiple ids" do
       it { expect(response).to have_http_status(:success) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
     end
 
@@ -73,7 +73,7 @@ RSpec.describe "Admin::Collectivities::UsersController#remove_all" do
       before { collectivity.discard }
 
       it { expect(response).to have_http_status(:gone) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
     end
 
@@ -81,7 +81,7 @@ RSpec.describe "Admin::Collectivities::UsersController#remove_all" do
       before { collectivity.destroy }
 
       it { expect(response).to have_http_status(:not_found) }
-      it { expect(response).to have_content_type(:html) }
+      it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
     end
   end

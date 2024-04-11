@@ -43,7 +43,7 @@ RSpec.describe "Users::RegistrationPasswordsController#new" do
     end
 
     it { expect(response).to have_http_status(:unprocessable_entity) }
-    it { expect(response).to have_content_type(:html) }
+    it { expect(response).to have_media_type(:html) }
     it { expect(response).to have_html_body }
 
     it "doesn't update the curent user" do

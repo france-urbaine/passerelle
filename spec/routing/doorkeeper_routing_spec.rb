@@ -2,8 +2,8 @@
 
 require "rails_helper"
 
-RSpec.describe Doorkeeper::Engine, :api do
-  context "with API subdomain" do
+RSpec.describe Doorkeeper::Engine do
+  context "with API subdomain", subdomain: "api" do
     it { expect(get:    "http://api.example.com/oauth/authorize").to route_to("doorkeeper/authorizations#new") }
     it { expect(post:   "http://api.example.com/oauth/authorize").to route_to("doorkeeper/authorizations#create") }
     it { expect(patch:  "http://api.example.com/oauth/authorize").to be_unroutable }

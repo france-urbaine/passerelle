@@ -60,7 +60,7 @@ RSpec.describe "PackagesController#show" do
 
       context "when the package is active" do
         it { expect(response).to have_http_status(:success) }
-        it { expect(response).to have_content_type(:html) }
+        it { expect(response).to have_media_type(:html) }
         it { expect(response).to have_html_body }
       end
 
@@ -68,7 +68,7 @@ RSpec.describe "PackagesController#show" do
         before { package.discard }
 
         it { expect(response).to have_http_status(:gone) }
-        it { expect(response).to have_content_type(:html) }
+        it { expect(response).to have_media_type(:html) }
         it { expect(response).to have_html_body.to have_text("Ce paquet est en cours de suppression.") }
       end
 
@@ -76,7 +76,7 @@ RSpec.describe "PackagesController#show" do
         before { package.destroy }
 
         it { expect(response).to have_http_status(:not_found) }
-        it { expect(response).to have_content_type(:html) }
+        it { expect(response).to have_media_type(:html) }
         it { expect(response).to have_html_body.to have_text("Ce paquet n'a pas été trouvé ou n'existe plus.") }
       end
     end

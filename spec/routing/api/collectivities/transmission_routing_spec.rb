@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe API::TransmissionsController, :api do
+RSpec.describe API::TransmissionsController do
   let(:collectivity_id) { SecureRandom.uuid }
   let(:id)              { SecureRandom.uuid }
 
