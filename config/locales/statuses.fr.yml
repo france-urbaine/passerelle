@@ -11,4 +11,5 @@ fr:
     gone:                   "La resource n'est plus disponible ou est en cours de suppression."
     unprocessable_entity:   "Les paramètres transmis sont incomplets ou ne permettent pas de finaliser la requète."
     not_implemented:        "La resource ou le format demandé n'ont pas encore été implémenté."
-    internal_server_error:  "Une erreur s'est produite"
+    internal_server_error:  "Une erreur s'est produite."
+    expired_session:        "Votre session a expirée."

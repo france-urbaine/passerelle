@@ -31,4 +31,8 @@ class ExceptionsController < ApplicationController
 
     render html: ""
   end
+
+  def invalid_authenticity_token
+    expired_session
+  end
 end

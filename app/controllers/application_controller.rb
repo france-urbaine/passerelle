@@ -28,12 +28,13 @@ class ApplicationController < ActionController::Base
   rescue_from "ControllerStatuses::InterruptAction", with: -> {}
 
   unless Rails.env.development?
-    rescue_from "ActionController::ParameterMissing", with: :bad_request
-    rescue_from "ActionController::BadRequest",       with: :bad_request
-    rescue_from "AbstractController::ActionNotFound", with: :not_found
-    rescue_from "ActionController::RoutingError",     with: :not_found
-    rescue_from "ActionController::UnknownFormat",    with: :not_acceptable
-    rescue_from "Pagy::VariableError",                with: :bad_request
+    rescue_from "ActionController::InvalidAuthenticityToken", with: :expired_session
+    rescue_from "ActionController::ParameterMissing",         with: :bad_request
+    rescue_from "ActionController::BadRequest",               with: :bad_request
+    rescue_from "AbstractController::ActionNotFound",         with: :not_found
+    rescue_from "ActionController::RoutingError",             with: :not_found
+    rescue_from "ActionController::UnknownFormat",            with: :not_acceptable
+    rescue_from "Pagy::VariableError",                        with: :bad_request
   end
 
   respond_to :html

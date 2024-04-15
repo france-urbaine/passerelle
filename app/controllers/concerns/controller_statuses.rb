@@ -34,6 +34,18 @@ module ControllerStatuses
     render_status(:gone)
   end
 
+  def expired_session
+    respond_to do |format|
+      format.html do
+        stored_location_for(:user)
+        redirect_to new_session_path(:user), notice: I18n.t("status.expired_session")
+      end
+      format.any do
+        render_status(:unauthorized)
+      end
+    end
+  end
+
   def render_status(status, error: nil)
     respond_to do |format|
       format.html do
