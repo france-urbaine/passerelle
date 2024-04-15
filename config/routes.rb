@@ -350,5 +350,8 @@ Rails.application.routes.draw do
   # ----------------------------------------------------------------------------
   mount Lookbook::Engine, at: "/lookbook" if Rails.env.development?
 
-  get "/test/components", to: "exceptions#testing" if Rails.env.test?
+  if Rails.env.local?
+    get "/test/components",                 to: "exceptions#testing"
+    get "/test/invalid_authenticity_token", to: "exceptions#invalid_authenticity_token"
+  end
 end
