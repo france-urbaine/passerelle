@@ -65,7 +65,7 @@ module CLI
         if parallel == "turbo_tests" && !only_failures && ENV["CI"] != "true"
           command  = "bundle exec turbo_tests"
           command += " -n #{node_total}" if node_total
-          command += " -f Fuubar"
+          command += " -r fuubar -f Fuubar"
           command += " --"                            if node_index || scope
           command += " --only-group #{node_index}"    if node_index
           command += " --exclude-pattern spec/system" if scope == "unit"
