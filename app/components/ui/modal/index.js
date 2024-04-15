@@ -1,5 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
-import { useTransition } from 'stimulus-use'
+import { useTransition } from "stimulus-use"
 
 export default class ModalController extends Controller {
   static targets = ["content"]
@@ -17,6 +17,9 @@ export default class ModalController extends Controller {
     if (event) event.preventDefault()
 
     await this.leave()
+    const closeEvent = this.dispatch("close")
+    if (closeEvent.defaultPrevented) return
+
     this.element.remove()
   }
 }

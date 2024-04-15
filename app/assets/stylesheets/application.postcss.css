@@ -27,6 +27,7 @@
 @import "../../components/ui/form/password_field";
 @import "../../components/ui/form/checkboxes";
 @import "../../components/ui/form/radio_buttons";
+@import "../../components/ui/form/search_form";
 
 /* UI components - top components, may depends on basic component */
 @import "../../components/ui/breadcrumbs";
@@ -49,7 +50,6 @@
 
 /* Forms */
 @import "./components/autocomplete";
-@import "./components/search";
 @import "./components/direct_upload";
 
 /* Data display */

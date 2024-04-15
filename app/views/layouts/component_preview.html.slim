@@ -16,7 +16,8 @@ html
       width_class =
         case params.dig(:lookbook, :display, :width)
         when "medium" then "w-[48rem]"
-        when "small"  then "w-96"
+        when "small"  then "w-[24rem]"
+        when /w-.+/   then params.dig(:lookbook, :display, :width)
         end
 
     - case frame

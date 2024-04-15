@@ -28,17 +28,7 @@
       - other_actions.each do |action|
         = action
 
-.modal(
-  role="dialog"
-  aria-modal="true"
-  aria-labelledby="modal-title"
-  data-controller="modal"
-  data-transition-enter-from="modal--enter-from"
-  data-transition-enter-to="modal--enter-to"
-  data-transition-leave-from="modal--leave-from"
-  data-transition-leave-to="modal--leave-to"
-  data-action="keydown@document->modal#keydown"
-)
+= tag.div **modal_attributes  do
   .modal__overlay( data-action="click->modal#close" )
   .modal__content( data-modal-target="content" )
     - if form?

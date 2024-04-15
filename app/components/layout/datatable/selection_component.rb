@@ -53,8 +53,10 @@ module Layout
       end
 
       class Action < UI::Button::Component
-        def href_params
-          super.merge(
+        def before_render
+          super
+
+          @params = (@params || {}).merge(
             params.slice(:ids, :search, :order, :page).permit!
           )
         end
