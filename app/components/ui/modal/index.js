@@ -6,7 +6,8 @@ export default class ModalController extends Controller {
 
   connect () {
     useTransition(this)
-    this.enter()
+
+    if (!this.element.hasAttribute("hidden")) this.enter()
   }
 
   keydown (event) {

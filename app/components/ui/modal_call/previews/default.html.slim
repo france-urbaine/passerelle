@@ -1,0 +1,8 @@
+= modal_call_component(hidden: true) do |call|
+  - call.with_button "Click here to get more help", icon: "question-mark-circle"
+  - call.with_modal do |modal|
+    - modal.with_header do
+      | Help
+
+    - modal.with_body do
+      p This modal should give you some help.
