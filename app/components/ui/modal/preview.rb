@@ -34,6 +34,10 @@ module UI
         record = ::Commune.new
         render_with_template(locals: { record: record })
       end
+
+      # @label With custom attributes
+      #
+      def with_custom_attributes; end
     end
   end
 end

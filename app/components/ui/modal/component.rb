@@ -33,20 +33,20 @@ module UI
       attr_reader :referrer
       attr_accessor :form_options
 
-      def initialize(referrer: nil, **html_attributes)
+      def initialize(referrer: nil, **)
         @referrer        = referrer
-        @html_attributes = html_attributes
-        super()
+        @html_attributes = parse_html_attributes(**)
+        super(**)
       end
 
       def modal_attributes
-        merge_attributes(
-          @html_attributes,
+        reverse_merge_attributes(@html_attributes, {
           class: "modal",
           role:  "dialog",
           aria: {
-            modal:      true,
-            labelledby: "modal-title"
+            modal:       true,
+            labelledby:  (component_dom_id(:title) if header),
+            describedby: component_dom_id(:body)
           },
           data: {
             controller:            "modal",
@@ -56,7 +56,7 @@ module UI
             transition_leave_from: "modal--leave-from",
             transition_leave_to:   "modal--leave-to"
           }
-        )
+        })
       end
 
       protected
