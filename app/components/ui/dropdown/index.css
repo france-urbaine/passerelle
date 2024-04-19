@@ -9,7 +9,7 @@
 
       @apply shadow-lg rounded-sm border;
       @apply bg-white border-gray-200;
-      @apply dark:bg-black dark:border-gray-800;
+      @apply dark:bg-black dark:border-gray-700;
 
       &--below-left {
         right: 0;
@@ -50,6 +50,7 @@
       width: 100%;
 
       @apply bg-gray-300;
+      @apply dark:bg-gray-700;
     }
 
     &__menu-item {
@@ -60,14 +61,17 @@
       text-decoration: none;
       vertical-align: middle;
       align-items: center;
-      cursor: pointer;
-      user-select: none;
       background-color: transparent;
-      white-space: nowrap;
 
       @apply py-3 px-4 bg-transparent border-none rounded;
       @apply bg-white text-gray-900;
       @apply dark:bg-black dark:text-gray-100;
+    }
+
+    &__menu-item.button {
+      cursor: pointer;
+      user-select: none;
+      white-space: nowrap;
 
       &[disabled] {
         cursor: default;
