@@ -23,6 +23,13 @@ RSpec.describe Views::Documentation::ExamplesComponent, type: :component do
     )
   end
 
+  def have_code_in_panel(text, **)
+    tab      = page.find(".tabs__tab", text: text)
+    panel_id = tab["aria-controls"]
+
+    have_selector("##{panel_id} > pre", **)
+  end
+
   it "renders the status code in a badge" do
     render_inline described_class.new("resources", "index")
 
@@ -41,7 +48,7 @@ RSpec.describe Views::Documentation::ExamplesComponent, type: :component do
   it "renders curl example" do
     render_inline described_class.new("resources", "index")
 
-    expect(page).to have_selector(".tabs__panel[aria-labelledby$='-curl'] > pre", text: <<~TEXT.strip)
+    expect(page).to have_code_in_panel("cURL", text: <<~TEXT.strip)
       $ curl -X GET http://api.test.host/articles \\
           -H "Accept: application/json" \\
           -H "Authorization: Bearer $ACCESS_TOKEN" \\
@@ -53,7 +60,7 @@ RSpec.describe Views::Documentation::ExamplesComponent, type: :component do
   it "renders httpie example in a hidden tab panel" do
     render_inline described_class.new("resources", "index")
 
-    expect(page).to have_selector(".tabs__panel[aria-labelledby$='-httpie'] > pre", text: <<~TEXT.strip, visible: :hidden)
+    expect(page).to have_code_in_panel("httpie", visible: :hidden, text: <<~TEXT.strip)
       $ http -jv GET http://api.test.host/articles \\
           Accept:"application/json" \\
           Authorization:"Bearer $ACCESS_TOKEN" \\

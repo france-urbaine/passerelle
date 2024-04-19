@@ -12,14 +12,21 @@ RSpec.describe UI::CodeRequestExample::Component do
     end
   end
 
+  def have_code_in_panel(text, **)
+    tab      = page.find(".tabs__tab", text: text)
+    panel_id = tab["aria-controls"]
+
+    have_selector("##{panel_id} > pre", **)
+  end
+
   context "without optional arguments" do
     before do
       render_inline described_class.new("GET", "http://api.test.host/path")
     end
 
     it "renders the correct cURL command" do
-      expect(page).to have_selector(".tabs > [id$='-curl-panel'] > pre") do |pre|
-        expect(pre).to have_selector("span.code-example__block > span") do |span|
+      expect(page).to have_code_in_panel("cURL") do |code|
+        expect(code).to have_selector("span.code-example__block > span") do |span|
           expect(span).to have_html_attribute("data-highlight-language-value").with_value("shell")
           expect(span).to have_text(<<~TEXT.strip, exact: true)
             $ curl -X GET http://api.test.host/path
@@ -29,8 +36,8 @@ RSpec.describe UI::CodeRequestExample::Component do
     end
 
     it "renders the correct httpie command" do
-      expect(page).to have_selector(".tabs > [id$='-httpie-panel'] > pre", visible: :hidden) do |pre|
-        expect(pre).to have_selector("span.code-example__block > span", visible: :hidden) do |span|
+      expect(page).to have_code_in_panel("httpie", visible: :hidden) do |code|
+        expect(code).to have_selector("span.code-example__block > span", visible: :hidden) do |span|
           expect(span).to have_html_attribute("data-highlight-language-value").with_value("shell")
           expect(span).to have_text(<<~TEXT.strip, exact: true)
             $ http -v GET http://api.test.host/path
@@ -55,8 +62,8 @@ RSpec.describe UI::CodeRequestExample::Component do
     end
 
     it "renders the correct cURL command" do
-      expect(page).to have_selector(".tabs > [id$='-curl-panel'] > pre") do |pre|
-        expect(pre).to have_selector("span.code-example__block > span") do |span|
+      expect(page).to have_code_in_panel("cURL") do |code|
+        expect(code).to have_selector("span.code-example__block > span") do |span|
           expect(span).to have_html_attribute("data-highlight-language-value").with_value("shell")
           expect(span).to have_text(<<~TEXT.strip, exact: true)
             $ curl -X PUT https://storage.passerelle-fiscale.fr/some/path
@@ -66,8 +73,8 @@ RSpec.describe UI::CodeRequestExample::Component do
     end
 
     it "renders the correct httpie command" do
-      expect(page).to have_selector(".tabs > [id$='-httpie-panel'] > pre", visible: :hidden) do |pre|
-        expect(pre).to have_selector("span.code-example__block > span", visible: :hidden) do |span|
+      expect(page).to have_code_in_panel("httpie", visible: :hidden) do |code|
+        expect(code).to have_selector("span.code-example__block > span", visible: :hidden) do |span|
           expect(span).to have_html_attribute("data-highlight-language-value").with_value("shell")
           expect(span).to have_text(<<~TEXT.strip, exact: true)
             $ http -v PUT https://storage.passerelle-fiscale.fr/some/path
@@ -106,7 +113,7 @@ RSpec.describe UI::CodeRequestExample::Component do
     end
 
     it "renders the correct cURL command" do
-      expect(page).to have_selector(".tabs > [id$='-curl-panel'] > pre", visible: :visible, text: <<~TEXT.strip)
+      expect(page).to have_code_in_panel("cURL", visible: :visible, text: <<~TEXT.strip)
         $ curl -X GET http://api.test.host/path \\
             -H "Accept: application/json" \\
             -H "Cache-Control: only-if-cached"
@@ -114,7 +121,7 @@ RSpec.describe UI::CodeRequestExample::Component do
     end
 
     it "renders the correct httpie command" do
-      expect(page).to have_selector(".tabs > [id$='-httpie-panel'] > pre", visible: :hidden, text: <<~TEXT.strip)
+      expect(page).to have_code_in_panel("httpie", visible: :hidden, text: <<~TEXT.strip)
         $ http -v GET http://api.test.host/path \\
             Accept:"application/json" \\
             Cache-Control:"only-if-cached"
@@ -140,14 +147,14 @@ RSpec.describe UI::CodeRequestExample::Component do
     end
 
     it "renders the correct cURL command" do
-      expect(page).to have_selector(".tabs > [id$='-curl-panel'] > pre", visible: :visible, text: <<~TEXT.strip)
+      expect(page).to have_code_in_panel("cURL", visible: :visible, text: <<~TEXT.strip)
         $ curl -X GET http://api.test.host/path \\
             -H "Authorization: Bearer $ACCESS_TOKEN"
       TEXT
     end
 
     it "renders the correct httpie command" do
-      expect(page).to have_selector(".tabs > [id$='-httpie-panel'] > pre", visible: :hidden, text: <<~TEXT.strip)
+      expect(page).to have_code_in_panel("httpie", visible: :hidden, text: <<~TEXT.strip)
         $ http -v GET http://api.test.host/path \\
             Authorization:"Bearer $ACCESS_TOKEN"
       TEXT
@@ -170,14 +177,14 @@ RSpec.describe UI::CodeRequestExample::Component do
     end
 
     it "renders the correct cURL command" do
-      expect(page).to have_selector(".tabs > [id$='-curl-panel'] > pre", visible: :visible, text: <<~TEXT.strip)
+      expect(page).to have_code_in_panel("cURL", visible: :visible, text: <<~TEXT.strip)
         $ curl -X GET http://api.test.host/path \\
             -H "Accept: application/json"
       TEXT
     end
 
     it "renders the correct httpie command" do
-      expect(page).to have_selector(".tabs > [id$='-httpie-panel'] > pre", visible: :hidden, text: <<~TEXT.strip)
+      expect(page).to have_code_in_panel("httpie", visible: :hidden, text: <<~TEXT.strip)
         $ http -jv GET http://api.test.host/path
       TEXT
     end
@@ -217,7 +224,7 @@ RSpec.describe UI::CodeRequestExample::Component do
     end
 
     it "renders the correct cURL command" do
-      expect(page).to have_selector(".tabs > [id$='-curl-panel'] > pre", visible: :visible, text: <<~TEXT.strip)
+      expect(page).to have_code_in_panel("cURL", visible: :visible, text: <<~TEXT.strip)
         $ curl -X GET http://api.test.host/path \\
             -H "Accept: application/json" \\
             -H "Content-Type: application/json" \\
@@ -226,7 +233,7 @@ RSpec.describe UI::CodeRequestExample::Component do
     end
 
     it "renders the correct httpie command" do
-      expect(page).to have_selector(".tabs > [id$='-httpie-panel'] > pre", visible: :hidden, text: <<~TEXT.strip)
+      expect(page).to have_code_in_panel("httpie", visible: :hidden, text: <<~TEXT.strip)
         $ http -jv GET http://api.test.host/path \\
             Accept:"application/json" \\
             --raw='{"report":{"form_type":"creation_local_habitation","code_insee":"64019"}}'
@@ -272,7 +279,7 @@ RSpec.describe UI::CodeRequestExample::Component do
     end
 
     it "renders the correct cURL command" do
-      expect(page).to have_selector(".tabs > [id$='-curl-panel'] > pre", visible: :visible, text: <<~TEXT.strip)
+      expect(page).to have_code_in_panel("cURL", visible: :visible, text: <<~TEXT.strip)
         $ curl -X PUT http://api.test.host/path \\
             -H "Content-Length: 71475" \\
             -H "Content-Type: application/pdf" \\
@@ -281,7 +288,7 @@ RSpec.describe UI::CodeRequestExample::Component do
     end
 
     it "renders the correct httpie command" do
-      expect(page).to have_selector(".tabs > [id$='-httpie-panel'] > pre", visible: :hidden, text: <<~TEXT.strip)
+      expect(page).to have_code_in_panel("httpie", visible: :hidden, text: <<~TEXT.strip)
         $ http -v PUT http://api.test.host/path \\
             @relative/path/to/file.pdf
       TEXT
@@ -314,13 +321,13 @@ RSpec.describe UI::CodeRequestExample::Component do
     end
 
     it "renders the correct cURL command" do
-      expect(page).to have_selector(".tabs > [id$='-curl-panel'] > pre", visible: :visible, text: <<~TEXT.strip)
+      expect(page).to have_code_in_panel("cURL", visible: :visible, text: <<~TEXT.strip)
         $ curl -X GET http://api.test.host/path
       TEXT
     end
 
     it "renders the correct httpie command" do
-      expect(page).to have_selector(".tabs > [id$='-httpie-panel'] > pre", visible: :hidden, text: <<~TEXT.strip)
+      expect(page).to have_code_in_panel("httpie", visible: :hidden, text: <<~TEXT.strip)
         $ http -v GET http://api.test.host/path
       TEXT
     end
@@ -360,7 +367,7 @@ RSpec.describe UI::CodeRequestExample::Component do
     end
 
     it "renders the correct cURL command" do
-      expect(page).to have_selector(".tabs > [id$='-curl-panel'] > pre", visible: :visible, text: <<~TEXT.strip)
+      expect(page).to have_code_in_panel("cURL", visible: :visible, text: <<~TEXT.strip)
         $ curl -X GET http://api.test.host/path/$VARIABLE/path \\
             -H "Authorization: Bearer $ACCESS_TOKEN" \\
             -H "X-Foo: ABC-$FOO"
@@ -368,7 +375,7 @@ RSpec.describe UI::CodeRequestExample::Component do
     end
 
     it "renders the correct httpie command" do
-      expect(page).to have_selector(".tabs > [id$='-httpie-panel'] > pre", visible: :hidden, text: <<~TEXT.strip)
+      expect(page).to have_code_in_panel("httpie", visible: :hidden, text: <<~TEXT.strip)
         $ http -v GET http://api.test.host/path/$VARIABLE/path \\
             Authorization:"Bearer $ACCESS_TOKEN" \\
             X-Foo:"ABC-$FOO"
