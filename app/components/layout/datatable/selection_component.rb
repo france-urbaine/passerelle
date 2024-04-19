@@ -56,7 +56,7 @@ module Layout
         def before_render
           super
 
-          @params = (@params || {}).merge(
+          @options[:params] = @options.fetch(:params, {}).merge(
             params.slice(:ids, :search, :order, :page).permit!
           )
         end

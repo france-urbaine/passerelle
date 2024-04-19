@@ -19,12 +19,12 @@ module UI
       end
 
       def call
-        if @href && (@method || @params)
-          button_to { capture_html_content }
+        if @href && (@options[:method] || @options[:params])
+          render_single_form_button
         elsif @href
-          link { capture_html_content }
+          render_link
         else
-          button { capture_html_content }
+          render_button
         end
       end
 
@@ -52,8 +52,9 @@ module UI
         options = @kwargs.dup
         options.delete(:href)
 
-        @icon         = options.delete(:icon)
-        @icon_options = options.delete(:icon_options)
+        @icon          = options.delete(:icon)
+        @icon_options  = options.delete(:icon_options)
+        @icon_position = options.delete(:icon_position)
 
         if options.key?(:icon_only)
           @icon_only = options.delete(:icon_only)
@@ -61,8 +62,6 @@ module UI
           @icon_only = true
         end
 
-        @method      = options.delete(:method)
-        @params      = options.delete(:params).presence
         @modal       = options.delete(:modal)
         @primary     = options.delete(:primary)
         @accent      = options.delete(:accent)
@@ -71,46 +70,55 @@ module UI
         @options     = options
       end
 
-      def capture_html_content
+      def render_single_form_button
+        options = reverse_merge_attributes(@options, {
+          class:      class_attributes,
+          data:       { turbo_frame: },
+          aria:       { label: aria_label },
+          method:     "get",
+          form_class: "#{base_class}-form"
+        })
+
+        warn_about_turbo_frame_conflict(options)
+
+        helpers.button_to(@href, options) { render_content }
+      end
+
+      def render_link
+        options = reverse_merge_attributes(@options, {
+          href:   @href,
+          class:  class_attributes,
+          data:   { turbo_frame: },
+          aria:   { label: aria_label }
+        })
+
+        warn_about_turbo_frame_conflict(options)
+
+        tag.a(**options) { render_content }
+      end
+
+      def render_button
+        options = reverse_merge_attributes(@options, {
+          type:   "button",
+          class:  class_attributes,
+          aria:   { label: aria_label }
+        })
+
+        tag.button(**options) { render_content }
+      end
+
+      def render_content
         raise "Label is missing" if @label.nil? && @icon.nil?
 
         buffer = ActiveSupport::SafeBuffer.new
-        buffer << icon if @icon
-        buffer << @label if @label && !@icon_only
-        buffer << tooltip if @icon_only && @label
-        buffer
+        buffer << leading_icon
+        buffer << text
+        buffer << trailing_icon
+        buffer << tooltip
       end
 
-      def button_to(&)
-        options = @options.dup
-        options[:class]  = extract_class_attributes
-        options[:data]   = extract_data_attributes
-        options[:aria]   = extract_aria_attributes
-        options[:method] = @method || "get"
-        options[:params] = @params
-        options[:form_class] = "#{base_class}-form"
-
-        helpers.button_to @href, options, &
-      end
-
-      def link(&)
-        options = @options.dup
-        options[:class] = extract_class_attributes
-        options[:data]  = extract_data_attributes
-        options[:aria]  = extract_aria_attributes
-        options[:href]  = @href
-
-        tag.a(**options, &)
-      end
-
-      def button(&)
-        options = @options.dup
-        options[:class] = extract_class_attributes
-        options[:data]  = extract_data_attributes
-        options[:aria]  = extract_aria_attributes
-        options[:type] ||= "button"
-
-        tag.button(**options, &)
+      def text
+        @label if @label && !@icon_only
       end
 
       def icon
@@ -123,10 +131,16 @@ module UI
         end
       end
 
-      def tooltip
-        return unless @label
+      def leading_icon
+        icon if @icon && @icon_position != "end"
+      end
 
-        tag.span(class: "tooltip") { @label }
+      def trailing_icon
+        icon if @icon && @icon_position == "end"
+      end
+
+      def tooltip
+        tag.span(class: "tooltip") { @label } if @icon_only && @label
       end
 
       # Safelisting all classes to let Tailwind knowns what classes are used.
@@ -143,7 +157,15 @@ module UI
         button--primary-discrete
         button--accent-discrete
         button--destructive-discrete
+        button--trailing-icon
       ].freeze
+
+      def class_attributes
+        css_class = base_class
+        css_class += " #{base_class}--#{button_class_modifier}" if button_class_modifier
+        css_class += " #{base_class}--trailing-icon" if @icon && @icon_position == "end"
+        css_class
+      end
 
       def base_class
         if @icon_only
@@ -151,13 +173,6 @@ module UI
         else
           "button"
         end
-      end
-
-      def extract_class_attributes
-        classes = @options.fetch(:class, "")
-        classes += " #{base_class}"
-        classes += " #{base_class}--#{button_class_modifier}" if button_class_modifier
-        classes.strip
       end
 
       def button_class_modifier
@@ -176,16 +191,22 @@ module UI
         end
       end
 
-      def extract_data_attributes
-        data = @options.fetch(:data, {})
-        data[:turbo_frame] = "modal" if @href && @modal
-        data
+      def turbo_frame
+        "modal" if @href && @modal
       end
 
-      def extract_aria_attributes
-        aria = @options.fetch(:aria, {})
-        aria[:label] ||= @label if @icon_only && @label
-        aria
+      def warn_about_turbo_frame_conflict(options)
+        return unless turbo_frame == "modal" && options.dig(:data, :turbo_frame) != "modal"
+
+        Rails.logger.warn(<<~MESSAGE.squish)
+          the button gets the arguments `modal: true`
+          and `turbo_frame: #{options.dig(:data, :turbo_frame).inspect}`:
+          the first one is ignored.
+        MESSAGE
+      end
+
+      def aria_label
+        @label if @icon_only && @label
       end
     end
   end

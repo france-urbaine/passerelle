@@ -23,6 +23,10 @@
       @apply -ml-1 mr-2;
     }
 
+    &--trailing-icon svg {
+      @apply -mr-1 ml-2;
+    }
+
     &[disabled] {
       cursor: default;
       opacity: 0.6;

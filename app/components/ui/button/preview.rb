@@ -36,13 +36,17 @@ module UI
       # --------------------------------------------------------------------------
       # @label With leading icon
       #
-      def with_icon; end
+      def with_leading_icon; end
 
-      # @label With icon only (with accessibility issues)
+      # @label With trailing icon
+      #
+      def with_trailing_icon; end
+
+      # @label With icon only, without accessibility
       #
       def with_icon_only; end
 
-      # @label With icon only, with accessibility cares
+      # @label With icon only, with accessibility
       #
       def with_icon_only_and_label; end
 
