@@ -13,10 +13,10 @@ module UI
         done:      "badge--done"
       }.freeze
 
-      def initialize(label, scheme = :default, **html_attributes)
+      def initialize(label, scheme = :default, **)
         @label           = label
         @scheme          = scheme
-        @html_attributes = html_attributes
+        @html_attributes = parse_html_attributes(**)
 
         validate_arguments!
         super()
@@ -27,12 +27,15 @@ module UI
       end
 
       def call
-        css_class = %w[badge]
-        css_class << SCHEME_CSS_CLASSES[@scheme]
-        css_class << @html_attributes[:class]
-        css_class = css_class.join(" ").squish
+        tag.div(@label, **html_attributes)
+      end
 
-        tag.div(@label, **@html_attributes, class: css_class)
+      def html_attributes
+        attributes = {
+          class: merge_class_attribute("badge", SCHEME_CSS_CLASSES[@scheme])
+        }
+
+        merge_attributes(attributes, @html_attributes)
       end
     end
   end
