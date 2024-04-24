@@ -11,7 +11,7 @@
         - case @user.otp_method
         - when "2fa"
           li.mb-6
-            .mb-4 Scanner le QR code ci-dessous avec une application compatible (Authy, Dashlane, Microsoft Authenticator, etc..).
+            .mb-4 Scannez le QR code ci-dessous avec une application compatible (Authy, Dashlane, Microsoft Authenticator, etc..).
             = otp_qr_code_as_svg_tag(@user)
 
           li.mb-6
