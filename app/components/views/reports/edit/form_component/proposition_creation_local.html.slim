@@ -13,14 +13,19 @@
           = form.label :proposition_nature, "Nature du local"
           = form.select :proposition_nature, nature_habitation_choices, { include_blank: true }, data: { action: "switch#toggle" }
 
-        = dependance_fields do
+        = proposition_nature_dependance_fields do
           = form.block :proposition_nature_dependance do
             = form.label :proposition_nature_dependance, "Nature de dépendance"
             = form.select :proposition_nature_dependance, nature_dependance_choices, { include_blank: true }
 
-        = form.block :proposition_categorie do
-          = form.label :proposition_categorie,"Catégorie du local"
-          = form.select :proposition_categorie, categorie_habitation_choices, { include_blank: true }
+          = form.block :proposition_categorie do
+            = form.label :proposition_categorie,"Catégorie du local"
+            = form.select :proposition_categorie, categorie_dependance_choices, { include_blank: true }
+
+        = proposition_nature_habitation_fields do
+          = form.block :proposition_categorie do
+            = form.label :proposition_categorie,"Catégorie du local"
+            = form.select :proposition_categorie, categorie_habitation_choices, { include_blank: true }
 
     - when "creation_local_professionnel"
       = form.block :proposition_nature do
