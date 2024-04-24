@@ -11,6 +11,8 @@ module Reports
       super()
     end
 
+    BOOLEAN_STATES = [true, false].freeze
+
     validates_presence_of :anomalies
     validates_presence_of :code_insee
     validates_presence_of :date_constat
@@ -82,29 +84,29 @@ module Reports
     # --------------------------------------------------------------------------
     validates_presence_of  :situation_occupation_annee,       if: :require_situation_occupation_annee?
     validates_presence_of  :situation_nature_occupation,      if: :require_situation_nature_occupation?
-    validates_inclusion_of :situation_majoration_rs,          if: :require_situation_majoration_rs?, in: [true, false], message: :blank
+    validates_inclusion_of :situation_majoration_rs,          if: :require_situation_majoration_rs?, in: BOOLEAN_STATES, message: :blank
     validates_presence_of  :situation_annee_cfe,              if: :require_situation_annee_cfe?
-    validates_inclusion_of :situation_vacance_fiscale,        if: :require_situation_vacance_fiscale?, in: [true, false], message: :blank
+    validates_inclusion_of :situation_vacance_fiscale,        if: :require_situation_vacance_fiscale?, in: BOOLEAN_STATES, message: :blank
     validates_presence_of  :situation_nombre_annees_vacance,  if: :require_situation_nombre_annees_vacance?
     validates_presence_of  :situation_siren_dernier_occupant, if: :require_situation_siren_dernier_occupant?
     validates_presence_of  :situation_nom_dernier_occupant,   if: :require_situation_nom_dernier_occupant?
     validates_presence_of  :situation_vlf_cfe,                if: :require_situation_vlf_cfe?
-    validates_inclusion_of :situation_taxation_base_minimum,  if: :require_situation_taxation_base_minimum?, in: [true, false], message: :blank
+    validates_inclusion_of :situation_taxation_base_minimum,  if: :require_situation_taxation_base_minimum?, in: BOOLEAN_STATES, message: :blank
 
     # Proposition occupation
     # --------------------------------------------------------------------------
     validates_presence_of  :proposition_nature_occupation,       if: :require_proposition_nature_occupation?
     validates_presence_of  :proposition_date_occupation,         if: :require_proposition_date_occupation?
-    validates_inclusion_of :proposition_erreur_tlv,              if: :require_proposition_erreur_tlv?,      in: [true, false], message: :blank
-    validates_inclusion_of :proposition_erreur_thlv,             if: :require_proposition_erreur_thlv?,     in: [true, false], message: :blank
-    validates_inclusion_of :proposition_meuble_tourisme,         if: :require_proposition_meuble_tourisme?, in: [true, false], message: :blank
-    validates_inclusion_of :proposition_majoration_rs,           if: :require_proposition_majoration_rs?,   in: [true, false], message: :blank
+    validates_inclusion_of :proposition_erreur_tlv,              if: :require_proposition_erreur_tlv?,      in: BOOLEAN_STATES, message: :blank
+    validates_inclusion_of :proposition_erreur_thlv,             if: :require_proposition_erreur_thlv?,     in: BOOLEAN_STATES, message: :blank
+    validates_inclusion_of :proposition_meuble_tourisme,         if: :require_proposition_meuble_tourisme?, in: BOOLEAN_STATES, message: :blank
+    validates_inclusion_of :proposition_majoration_rs,           if: :require_proposition_majoration_rs?,   in: BOOLEAN_STATES, message: :blank
     validates_presence_of  :proposition_nom_occupant,            if: :require_proposition_nom_occupant?
     validates_presence_of  :proposition_prenom_occupant,         if: :require_proposition_prenom_occupant?
     validates_presence_of  :proposition_numero_siren,            if: :require_proposition_numero_siren?
     validates_presence_of  :proposition_nom_societe,             if: :require_proposition_nom_societe?
-    validates_inclusion_of :proposition_etablissement_principal, if: :require_proposition_etablissement_principal?, in: [true, false], message: :blank
-    validates_inclusion_of :proposition_chantier_longue_duree,   if: :require_proposition_chantier_longue_duree?,   in: [true, false], message: :blank
+    validates_inclusion_of :proposition_etablissement_principal, if: :require_proposition_etablissement_principal?, in: BOOLEAN_STATES, message: :blank
+    validates_inclusion_of :proposition_chantier_longue_duree,   if: :require_proposition_chantier_longue_duree?,   in: BOOLEAN_STATES, message: :blank
     validates_presence_of  :proposition_code_naf,                if: :require_proposition_code_naf?
     validates_presence_of  :proposition_date_debut_activite,     if: :require_proposition_date_debut_activite?
 
