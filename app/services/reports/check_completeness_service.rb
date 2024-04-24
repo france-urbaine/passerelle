@@ -11,6 +11,8 @@ module Reports
       super()
     end
 
+    BOOLEAN_STATES = [true, false].freeze
+
     validates_presence_of :anomalies
     validates_presence_of :code_insee
     validates_presence_of :date_constat
@@ -52,15 +54,8 @@ module Reports
     validates_presence_of :situation_coefficient_localisation, if: :require_situation_coefficient_localisation?
     validates_presence_of :situation_coefficient_entretien,    if: :require_situation_coefficient_entretien?
 
-    with_options if: :require_situation_evaluation_habitation?, allow_blank: true do
-      validates_inclusion_of :situation_nature,    in: :valid_local_habitation_natures
-      validates_inclusion_of :situation_categorie, in: :valid_local_habitation_categories
-    end
-
-    with_options if: :require_situation_evaluation_professionnel?, allow_blank: true do
-      validates_inclusion_of :situation_nature,    in: :valid_local_professionnel_natures
-      validates_inclusion_of :situation_categorie, in: :valid_local_professionnel_categories
-    end
+    validates_inclusion_of :situation_nature,    in: :valid_situation_natures,    allow_blank: true
+    validates_inclusion_of :situation_categorie, in: :valid_situation_categories, allow_blank: true
 
     # Proposition evaluation
     # --------------------------------------------------------------------------
@@ -71,15 +66,8 @@ module Reports
     validates_presence_of :proposition_coefficient_entretien,    if: :require_proposition_coefficient_entretien?
     validates_presence_of :proposition_coefficient_localisation, if: :require_proposition_coefficient_localisation?
 
-    with_options if: :require_proposition_evaluation_habitation?, allow_blank: true do
-      validates_inclusion_of :proposition_nature,    in: :valid_local_habitation_natures
-      validates_inclusion_of :proposition_categorie, in: :valid_local_habitation_categories
-    end
-
-    with_options if: :require_proposition_evaluation_professionnel?, allow_blank: true do
-      validates_inclusion_of :proposition_nature,    in: :valid_local_professionnel_natures
-      validates_inclusion_of :proposition_categorie, in: :valid_local_professionnel_categories
-    end
+    validates_inclusion_of :proposition_nature,    in: :valid_proposition_natures,    allow_blank: true
+    validates_inclusion_of :proposition_categorie, in: :valid_proposition_categories, allow_blank: true
 
     # TODO: creation_local_habitation => limiter les valeures possibles
     validates_presence_of :exonerations,             if: :require_proposition_exoneration?
@@ -96,29 +84,29 @@ module Reports
     # --------------------------------------------------------------------------
     validates_presence_of  :situation_occupation_annee,       if: :require_situation_occupation_annee?
     validates_presence_of  :situation_nature_occupation,      if: :require_situation_nature_occupation?
-    validates_inclusion_of :situation_majoration_rs,          if: :require_situation_majoration_rs?, in: [true, false], message: :blank
+    validates_inclusion_of :situation_majoration_rs,          if: :require_situation_majoration_rs?, in: BOOLEAN_STATES, message: :blank
     validates_presence_of  :situation_annee_cfe,              if: :require_situation_annee_cfe?
-    validates_inclusion_of :situation_vacance_fiscale,        if: :require_situation_vacance_fiscale?, in: [true, false], message: :blank
+    validates_inclusion_of :situation_vacance_fiscale,        if: :require_situation_vacance_fiscale?, in: BOOLEAN_STATES, message: :blank
     validates_presence_of  :situation_nombre_annees_vacance,  if: :require_situation_nombre_annees_vacance?
     validates_presence_of  :situation_siren_dernier_occupant, if: :require_situation_siren_dernier_occupant?
     validates_presence_of  :situation_nom_dernier_occupant,   if: :require_situation_nom_dernier_occupant?
     validates_presence_of  :situation_vlf_cfe,                if: :require_situation_vlf_cfe?
-    validates_inclusion_of :situation_taxation_base_minimum,  if: :require_situation_taxation_base_minimum?, in: [true, false], message: :blank
+    validates_inclusion_of :situation_taxation_base_minimum,  if: :require_situation_taxation_base_minimum?, in: BOOLEAN_STATES, message: :blank
 
     # Proposition occupation
     # --------------------------------------------------------------------------
     validates_presence_of  :proposition_nature_occupation,       if: :require_proposition_nature_occupation?
     validates_presence_of  :proposition_date_occupation,         if: :require_proposition_date_occupation?
-    validates_inclusion_of :proposition_erreur_tlv,              if: :require_proposition_erreur_tlv?,      in: [true, false], message: :blank
-    validates_inclusion_of :proposition_erreur_thlv,             if: :require_proposition_erreur_thlv?,     in: [true, false], message: :blank
-    validates_inclusion_of :proposition_meuble_tourisme,         if: :require_proposition_meuble_tourisme?, in: [true, false], message: :blank
-    validates_inclusion_of :proposition_majoration_rs,           if: :require_proposition_majoration_rs?,   in: [true, false], message: :blank
+    validates_inclusion_of :proposition_erreur_tlv,              if: :require_proposition_erreur_tlv?,      in: BOOLEAN_STATES, message: :blank
+    validates_inclusion_of :proposition_erreur_thlv,             if: :require_proposition_erreur_thlv?,     in: BOOLEAN_STATES, message: :blank
+    validates_inclusion_of :proposition_meuble_tourisme,         if: :require_proposition_meuble_tourisme?, in: BOOLEAN_STATES, message: :blank
+    validates_inclusion_of :proposition_majoration_rs,           if: :require_proposition_majoration_rs?,   in: BOOLEAN_STATES, message: :blank
     validates_presence_of  :proposition_nom_occupant,            if: :require_proposition_nom_occupant?
     validates_presence_of  :proposition_prenom_occupant,         if: :require_proposition_prenom_occupant?
     validates_presence_of  :proposition_numero_siren,            if: :require_proposition_numero_siren?
     validates_presence_of  :proposition_nom_societe,             if: :require_proposition_nom_societe?
-    validates_inclusion_of :proposition_etablissement_principal, if: :require_proposition_etablissement_principal?, in: [true, false], message: :blank
-    validates_inclusion_of :proposition_chantier_longue_duree,   if: :require_proposition_chantier_longue_duree?,   in: [true, false], message: :blank
+    validates_inclusion_of :proposition_etablissement_principal, if: :require_proposition_etablissement_principal?, in: BOOLEAN_STATES, message: :blank
+    validates_inclusion_of :proposition_chantier_longue_duree,   if: :require_proposition_chantier_longue_duree?,   in: BOOLEAN_STATES, message: :blank
     validates_presence_of  :proposition_code_naf,                if: :require_proposition_code_naf?
     validates_presence_of  :proposition_date_debut_activite,     if: :require_proposition_date_debut_activite?
 
@@ -150,15 +138,39 @@ module Reports
       report.class.column_names.include?(::Regexp.last_match(1))
     end
 
-    {
-      valid_local_habitation_natures:       "enum.local_habitation_nature",
-      valid_local_professionnel_natures:    "enum.local_professionnel_nature",
-      valid_local_habitation_categories:    "enum.local_habitation_categorie",
-      valid_local_professionnel_categories: "enum.local_professionnel_categorie",
-      valid_local_habitation_occupations:   "enum.local_habitation_occupation"
-    }.each do |method_name, enum_key|
-      define_method method_name do
-        I18n.t(enum_key).keys.map(&:to_s)
+    def valid_situation_natures
+      if expect_situation_nature_habitation?
+        I18n.t("enum.local_habitation_nature").keys.map(&:to_s)
+      elsif expect_situation_nature_dependance?
+        I18n.t("enum.local_dependance_nature").keys.map(&:to_s)
+      end
+    end
+
+    def valid_situation_categories
+      if expect_situation_categorie_habitation?
+        I18n.t("enum.local_habitation_categorie").keys.map(&:to_s)
+      elsif expect_situation_categorie_professionnel?
+        I18n.t("enum.local_professionnel_categorie").keys.map(&:to_s)
+      end
+    end
+
+    def valid_proposition_natures
+      if expect_proposition_nature_habitation?
+        I18n.t("enum.local_habitation_nature").keys.map(&:to_s)
+      elsif expect_proposition_nature_professionnel?
+        I18n.t("enum.local_professionnel_nature").keys.map(&:to_s)
+      elsif expect_proposition_nature_creation_local_habitation?
+        I18n.t("enum.creation_local_habitation_nature").keys.map(&:to_s)
+      end
+    end
+
+    def valid_proposition_categories
+      if expect_proposition_categorie_habitation?
+        I18n.t("enum.local_habitation_categorie").keys.map(&:to_s)
+      elsif expect_proposition_categorie_dependance?
+        I18n.t("enum.local_dependance_categorie").keys.map(&:to_s)
+      elsif expect_proposition_categorie_professionnel?
+        I18n.t("enum.local_professionnel_categorie").keys.map(&:to_s)
       end
     end
 

@@ -182,6 +182,24 @@ fr:
       6M: 6M - Ordinaire intermédiaire
       7M: 7M - Médiocre intermédiaire
 
+    local_dependance_categorie:
+      A: 	A  - Dépendance ordinaire - Bonne
+      AM: AM - Dépendance ordinaire - Bonne intermédiaire
+      B: 	B  - Dépendance ordinaire - Passable
+      BM: BM - Dépendance ordinaire - Passable intermédiaire
+      C: 	C  - Dépendance ordinaire - Médiocre
+      CM: CM - Dépendance ordinaire - Médiocre intermédiaire
+      D: 	D  - Dépendance ordinaire - Mauvais
+      DM: DM - Dépendance ordinaire - Mauvais intermédiaire
+
+      AA: AA - Dépendance d'agrément - Bonne
+      AS: AS - Dépendance d'agrément - Bonne
+      BA: BA - Dépendance d'agrément - Passable
+      BS: BS - Dépendance d'agrément - Passable
+      CA: CA - Dépendance d'agrément - Médiocre
+      CS: CS - Dépendance d'agrément - Médiocre
+      DA: DA - Dépendance d'agrément - Mauvais
+
     local_professionnel_categorie:
       MAG1: "MAG1 - Boutiques et magasins sur rue (surface principale inférieure à 400 m2)"
       MAG2: "MAG2 - Commerces sans accès direct sur la rue (surface principale inférieure à 400 m2)"

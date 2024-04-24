@@ -5,8 +5,8 @@ module Views
     module Edit
       class FormComponent
         class PropositionCreationLocal < self
-          def dependance_fields(&)
-            hidden = disabled = !require_proposition_nature_dependance?
+          def proposition_nature_dependance_fields(&)
+            hidden = disabled = !proposition_nature_dependance?
             data = {
               switch_target:          "target",
               switch_value:           %w[DA DM].join(","),
@@ -14,6 +14,21 @@ module Views
             }
 
             tag.fieldset(data:, hidden:, disabled:, &)
+          end
+
+          def proposition_nature_habitation_fields(&)
+            hidden = disabled = proposition_nature_dependance?
+            data = {
+              switch_target:          "target",
+              switch_value:           %w[AP MA].join(","),
+              switch_value_separator: ","
+            }
+
+            tag.fieldset(data:, hidden:, disabled:, &)
+          end
+
+          def proposition_nature_dependance?
+            %w[DA DM].include?(@report.proposition_nature)
           end
 
           def nature_habitation_choices
@@ -30,6 +45,10 @@ module Views
 
           def categorie_habitation_choices
             enum_options(:local_habitation_categorie)
+          end
+
+          def categorie_dependance_choices
+            enum_options(:local_dependance_categorie)
           end
 
           def categorie_professionnel_choices

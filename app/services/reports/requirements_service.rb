@@ -12,7 +12,7 @@ module Reports
     end
 
     def respond_to_predicate?(method, *)
-      method.match?(/^(require|display|is)_.*\?$/) && respond_to?(method)
+      method.match?(/^(require|display|expect|is)_.*\?$/) && respond_to?(method)
     end
 
     # Requirements for current MAJIC situation
@@ -185,6 +185,14 @@ module Reports
         display_situation_nature?
       end
 
+      def expect_situation_nature_habitation?
+        display_situation_nature? && require_situation_evaluation_habitation?
+      end
+
+      def expect_situation_nature_professionnel?
+        display_situation_nature? && require_situation_evaluation_professionnel?
+      end
+
       # @attribute situation_categorie
       #
       # This attribute is displayed for:
@@ -200,6 +208,14 @@ module Reports
 
       def require_situation_categorie?
         display_situation_categorie? && !situation_nature_industrial?
+      end
+
+      def expect_situation_categorie_habitation?
+        display_situation_categorie? && require_situation_evaluation_habitation?
+      end
+
+      def expect_situation_categorie_professionnel?
+        display_situation_categorie? && require_situation_evaluation_professionnel?
       end
 
       # @attribute situation_surface_reelle
@@ -348,6 +364,19 @@ module Reports
         display_proposition_nature?
       end
 
+      def expect_proposition_nature_habitation?
+        display_proposition_nature? && require_proposition_evaluation_habitation?
+      end
+
+      def expect_proposition_nature_professionnel?
+        display_proposition_nature? &&
+          (require_proposition_evaluation_professionnel? || form_type == "creation_local_professionnel")
+      end
+
+      def expect_proposition_nature_creation_local_habitation?
+        display_proposition_nature? && form_type == "creation_local_habitation"
+      end
+
       # @attribute proposition_categorie
       #
       # This attribute is displayed for:
@@ -369,6 +398,24 @@ module Reports
           !creation_local_industrial? &&
           !evaluation_local_with_nature_changed_to_industrial? &&
           !evaluation_local_with_nature_remained_to_industrial?
+      end
+
+      def expect_proposition_categorie_habitation?
+        display_proposition_categorie? && (
+          require_proposition_evaluation_habitation? ||
+          (form_type == "creation_local_habitation" && !proposition_nature_dependance?)
+        )
+      end
+
+      def expect_proposition_categorie_dependance?
+        display_proposition_categorie? &&
+          form_type == "creation_local_habitation" &&
+          proposition_nature_dependance?
+      end
+
+      def expect_proposition_categorie_professionnel?
+        display_proposition_categorie? &&
+          (require_proposition_evaluation_professionnel? || form_type == "creation_local_professionnel")
       end
 
       # @attribute proposition_surface_reelle
@@ -496,8 +543,7 @@ module Reports
       # * any 'creation_local_habitation' form with a "dependency" nature
       #
       def display_proposition_nature_dependance?
-        form_type == "creation_local_habitation" &&
-          %w[DA DM].include?(@report.proposition_nature)
+        form_type == "creation_local_habitation" && proposition_nature_dependance?
       end
 
       def require_proposition_nature_dependance?
@@ -991,6 +1037,10 @@ module Reports
 
     def proposition_nature_industrial?
       @report.proposition_nature == "U"
+    end
+
+    def proposition_nature_dependance?
+      %w[DA DM].include?(@report.proposition_nature)
     end
 
     def occupation_local?

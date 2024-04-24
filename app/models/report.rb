@@ -312,7 +312,11 @@ class Report < ApplicationRecord
   end
 
   def valid_categories
-    (I18n.t("enum.local_habitation_categorie").keys + I18n.t("enum.local_professionnel_categorie").keys).map(&:to_s)
+    (
+      I18n.t("enum.local_habitation_categorie").keys +
+      I18n.t("enum.local_dependance_categorie").keys +
+      I18n.t("enum.local_professionnel_categorie").keys
+    ).map(&:to_s)
   end
 
   def valid_occupations
