@@ -8,9 +8,15 @@ RSpec.describe UI::Modal::Component do
       tag.p "Hello World"
     end
 
-    expect(page).to have_selector(".modal[role='dialog'][aria-modal='true']")
-    expect(page).to have_selector(".modal > .modal__content > .modal__body") do |node|
-      expect(node).to have_selector("p", text: "Hello World")
+    expect(page).to have_selector(".modal") do |modal|
+      expect(modal).to have_html_attribute("role").with_value("dialog")
+      expect(modal).to have_html_attribute("aria-modal").boolean
+      expect(modal).to have_html_attribute("aria-describedby")
+
+      expect(modal).to have_selector(".modal__content > .modal__body") do |body|
+        expect(body).to have_selector("p", text: "Hello World")
+        expect(body).to have_html_attribute("id").with_value(modal["aria-describedby"])
+      end
     end
   end
 
@@ -25,12 +31,19 @@ RSpec.describe UI::Modal::Component do
       end
     end
 
-    expect(page).to have_selector(".modal > .modal__content > .modal__header") do |node|
-      expect(node).to have_selector("h1", text: "Dialog title")
-    end
+    expect(page).to have_selector(".modal") do |modal|
+      expect(modal).to have_html_attribute("role").with_value("dialog")
+      expect(modal).to have_html_attribute("aria-modal").boolean
+      expect(modal).to have_html_attribute("aria-labelledby")
 
-    expect(page).to have_selector(".modal > .modal__content > .modal__body") do |node|
-      expect(node).to have_selector("p", text: "Hello World")
+      expect(modal).to have_selector(".modal__content > .modal__header h1") do |h1|
+        expect(h1).to have_text("Dialog title")
+        expect(h1).to have_html_attribute("id").with_value(modal["aria-labelledby"])
+      end
+
+      expect(modal).to have_selector(".modal__content > .modal__body") do |body|
+        expect(body).to have_selector("p", text: "Hello World")
+      end
     end
   end
 
@@ -42,8 +55,11 @@ RSpec.describe UI::Modal::Component do
       end
     end
 
-    expect(page).to have_selector(".modal > .modal__content > .modal__header") do |node|
-      expect(node).to have_selector("h1", text: "Dialog title")
+    expect(page).to have_selector(".modal") do |modal|
+      expect(modal).to have_selector(".modal__content > .modal__header h1") do |h1|
+        expect(h1).to have_text("Dialog title")
+        expect(h1).to have_html_attribute("id").with_value(modal["aria-labelledby"])
+      end
     end
   end
 
@@ -52,8 +68,11 @@ RSpec.describe UI::Modal::Component do
       modal.with_body("Hello World")
     end
 
-    expect(page).to have_selector(".modal > .modal__content > .modal__body") do |node|
-      expect(node).to have_text("Hello World")
+    expect(page).to have_selector(".modal") do |modal|
+      expect(modal).to have_selector(".modal__content > .modal__body") do |body|
+        expect(body).to have_text("Hello World")
+        expect(body).to have_html_attribute("id").with_value(modal["aria-describedby"])
+      end
     end
   end
 
@@ -139,10 +158,11 @@ RSpec.describe UI::Modal::Component do
     end
   end
 
-  it "merges custom attributes" do
+  it "accepts and merges custom attributes" do
     render_inline described_class.new(
-      class: "custom-modal",
-      aria: { hidden: true },
+      id:    "confirmation-modal",
+      class: "confirm",
+      aria: { hidden: true, labelledby: "inner-message" },
       data: {
         controller: "other_controller",
         action: "modal:close->other_controller#do_something"
@@ -152,8 +172,11 @@ RSpec.describe UI::Modal::Component do
     end
 
     expect(page).to have_selector(".modal") do |modal|
-      expect(modal).to have_html_attribute("class").with_value("modal custom-modal")
+      expect(modal).to have_html_attribute("id").with_value("confirmation-modal")
+      expect(modal).to have_html_attribute("class").with_value("modal confirm")
       expect(modal).to have_html_attribute("aria-hidden").boolean
+      expect(modal).to have_html_attribute("aria-describedby").with_value("body_confirmation-modal")
+      expect(modal).to have_html_attribute("aria-labelledby").with_value("inner-message")
       expect(modal).to have_html_attribute("data-controller").with_value("modal other_controller")
       expect(modal).to have_html_attribute("data-action").with_value("keydown@document->modal#keydown modal:close->other_controller#do_something")
     end

@@ -1,10 +1,10 @@
 - captured_content = capture do
   - if header?
     .modal__header
-      h1#modal-title.modal__title= header
+      h1.modal__title( id=component_dom_id(:title) )= header
       .modal__header-toolbar= close_button
 
-  .modal__body
+  .modal__body( id=component_dom_id(:body) )
     = close_button unless header?
 
     - if form?
@@ -28,7 +28,7 @@
       - other_actions.each do |action|
         = action
 
-= tag.div **modal_attributes  do
+div*modal_attributes
   .modal__overlay( data-action="click->modal#close" )
   .modal__content( data-modal-target="content" )
     - if form?

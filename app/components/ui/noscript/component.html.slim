@@ -1,6 +1,6 @@
-noscript( id="#{@id}-noscript" )
+noscript( id=component_dom_id )
   = content
 
-script( id="#{@id}-script" )
-  ' document.getElementById("#{@id}-noscript").remove();
-  ' document.getElementById("#{@id}-script").remove();
+script( id=component_dom_id(:script) )
+  ' document.getElementById("#{component_dom_id}").remove();
+  ' document.getElementById("#{component_dom_id(:script)}").remove();

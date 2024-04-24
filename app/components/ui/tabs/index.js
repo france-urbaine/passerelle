@@ -46,7 +46,7 @@ export default class TabsController extends Controller {
     })
 
     this.panelTargets.forEach((panel) => {
-      if (panel.id == id + "-panel") {
+      if (panel.id == "panel_" + id) {
         panel.hidden = false
       } else {
         panel.hidden = true

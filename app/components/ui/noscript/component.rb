@@ -5,8 +5,8 @@ module UI
     class Component < ApplicationViewComponent
       define_component_helper :noscript_component
 
-      def initialize(id: SecureRandom.alphanumeric)
-        @id = id
+      def initialize(id: nil)
+        parse_html_attributes(id:)
         super()
       end
     end

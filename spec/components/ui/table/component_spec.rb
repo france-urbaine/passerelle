@@ -239,16 +239,12 @@ RSpec.describe UI::Table::Component do
       end
     end
 
-    expect(page).to have_selector(".table__wrapper table") do |table|
-      expect(table).to have_selector("tbody tr td:first-child") do |td|
-        expect(td).to have_unchecked_field do |input|
-          expect(input).to have_html_attribute("aria-label").with_value("Sélectionner la ligne #1")
-          expect(input).to have_html_attribute("aria-describedby")
+    expect(page).to have_selector(".table__wrapper table tbody tr") do |row|
+      expect(row).to have_selector("td:first-child input") do |input|
+        expect(input).to have_html_attribute("aria-label").with_value("Sélectionner la ligne #1")
+        expect(input).to have_html_attribute("aria-describedby")
 
-          expect(page).to have_selector(id: input["aria-describedby"], text: "Cell 1.A")
-        end
-
-        expect(td).to have_selector(".tooltip", text: "Sélectionner la ligne #1")
+        expect(row).to have_selector(id: input["aria-describedby"], text: "Cell 1.A")
       end
     end
   end
@@ -336,6 +332,51 @@ RSpec.describe UI::Table::Component do
       expect(table).to have_selector("tbody tr td:first-child input[type='checkbox']") do |input|
         expect(input).to have_html_attribute("value").with_value(communes[0].id)
       end
+    end
+  end
+
+  it "warns about not being able to set ARIA on checkboxes linked to irregular columns" do
+    allow(Rails.logger).to receive(:warn).and_call_original
+
+    render_inline described_class.new(array_of_data) do |table|
+      table.with_column(:column_a, span: 2)
+
+      table.each_row do |row, datum|
+        row.with_checkbox(value: datum[:id], described_by: :column_a)
+        row.with_column(:column_a) do |column|
+          column.with_span { "##{datum[:id]}" }
+          column.with_span { datum[:column_a] }
+        end
+      end
+    end
+
+    expect(Rails.logger).to have_received(:warn).exactly(3).times.with(<<~MESSAGE.strip)
+      the column :column_a in :described_by cannot be applied because of multiple spans
+    MESSAGE
+
+    expect(page).to have_selector(".table__wrapper tbody td:first-child input") do |input|
+      expect(input).to have_no_html_attribute("aria-describedby")
+    end
+  end
+
+  it "renders ARIA link on checkboxes linked to irregular columns" do
+    render_inline described_class.new(array_of_data) do |table|
+      table.with_column(:column_a, span: 2)
+
+      table.each_row do |row, datum|
+        row.with_checkbox(value: datum[:id], aria: { describedby: "column_a_#{datum[:id]}" })
+        row.with_column(:column_a) do |column|
+          column.with_span { "##{datum[:id]}" }
+          column.with_span(id: "column_a_#{datum[:id]}") do
+            datum[:column_a]
+          end
+        end
+      end
+    end
+
+    expect(page).to have_selector(".table__wrapper table tbody tr") do |row|
+      expect(row).to have_selector("input[aria-describedby=column_a_1]")
+      expect(row).to have_selector("td#column_a_1", text: "Cell 1.A")
     end
   end
 end

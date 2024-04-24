@@ -42,24 +42,14 @@ module UI
       class HeadColumn < ApplicationViewComponent
         attr_reader :key, :span_size
 
-        def initialize(key, sort: false, right: false, compact: false, span: 1, **options)
-          @key       = key
-          @sort      = sort
-          @right     = right
-          @compact   = compact
-          @span_size = span || 1
-          @options   = options
+        def initialize(key, sort: false, right: false, compact: false, span: 1, **)
+          @key             = key
+          @sort            = sort
+          @right           = right
+          @compact         = compact
+          @span_size       = span || 1
+          @html_attributes = parse_html_attributes(**)
           super()
-        end
-
-        %i[sort compact right].each do |method|
-          define_method :"#{method}?" do
-            instance_variable_get :"@#{method}"
-          end
-        end
-
-        def multi_span?
-          @span_size > 1
         end
 
         def call
@@ -70,23 +60,36 @@ module UI
           end
         end
 
-        def html_attributes
-          scope = "col"
-
-          if multi_span?
-            scope   = "colgroup"
-            colspan = @span_size
-          end
-
-          { class: css_class, scope:, colspan: }
+        def sort?
+          @sort
         end
 
-        def css_class
-          css_class = %w[table__cell]
-          css_class << "table__cell--compact" if compact?
-          css_class << "table__cell--right" if right?
-          css_class += Array.wrap(@options[:class])
-          css_class.join(" ").squish
+        def compact?
+          @compact
+        end
+
+        def right?
+          @right
+        end
+
+        def multi_span?
+          @span_size > 1
+        end
+
+        def html_attributes
+          attributes = { class: "table__cell" }
+          attributes[:class] += " table__cell--compact" if compact?
+          attributes[:class] += " table__cell--right" if right?
+
+          attributes = merge_attributes(attributes, @html_attributes)
+          attributes[:scope] = "col"
+
+          if multi_span?
+            attributes[:scope]   = "colgroup"
+            attributes[:colspan] = @span_size
+          end
+
+          attributes
         end
       end
 
@@ -97,61 +100,78 @@ module UI
 
         attr_reader :cells
 
-        def initialize(datatable, datum, **options)
-          @datatable = datatable
-          @datum     = datum
-          @options   = options
-          @cells     = []
+        def initialize(datatable, datum, **)
+          @datatable       = datatable
+          @datum           = datum
+          @html_attributes = parse_html_attributes(**)
+          @cells           = []
           super()
         end
 
         def before_render
           # Create & eager load cells for each column in head
-          @datatable.columns.each do |head_column|
-            row_column = columns.find { |column| column.key == head_column.key }
-
-            if row_column
-              convert_column_to_cells(head_column, row_column)
-            else
-              create_cell(head_column)
-            end
-          end
-
+          convert_columns_to_cells
           @cells.each { |cell| render(cell) }
         end
 
         def call
+          # Render an empty string to allow eager loading without rendering anything
           "".html_safe
         end
 
-        def html_attributes
-          options = @options.dup
-          data    = options.fetch(:data, {})
-
-          if checkbox?
-            data_controller = %w[selection-row]
-            data_controller += Array.wrap(data[:controller])
-
-            data[:controller] = data_controller.join(" ").squish
-            data[:selection_row_selected_class] = "table__row--selected"
-          end
-
-          options.merge(data: data)
+        def head_columns
+          @datatable.columns
         end
 
-        def dom_id
-          @dom_id ||=
-            if @datum.respond_to?(:to_key)
-              helpers.dom_id(@datum)
-            else
-              SecureRandom.alphanumeric(6)
-            end
+        def html_attributes
+          attributes = { class: "table__row" }
+
+          if checkbox?
+            attributes[:controller]                   = "selection-row"
+            attributes[:selection_row_selected_class] = "table__row--selected"
+          end
+
+          merge_attributes(attributes, @html_attributes)
+        end
+
+        def component_dom_id(*)
+          @component_dom_id ||= helpers.dom_id(@datum) if @datum.respond_to?(:to_key)
+
+          super(*)
         end
 
         private
 
-        def create_cell(head_column, row_column = nil, **, &)
-          cell = RowCell.new(self, head_column, row_column, **)
+        def convert_columns_to_cells
+          head_columns.each do |head_column|
+            key        = head_column.key
+            colspan    = head_column.span_size
+            row_column = columns.find { |column| column.key == head_column.key }
+
+            if row_column.nil?
+              create_cell(head_column)
+              next
+            end
+
+            # Eager load column content to load spans
+            content = load_column_content(row_column)
+            spans   = row_column.spans
+
+            if spans.any?
+              raise "Unexpected spans in columns #{head_column.key}" if colspan <= 1
+              raise "Column #{key} is expected #{colspan} spans, got #{spans.size}" if spans.size != colspan
+
+              spans.each_with_index do |span, index|
+                create_cell(head_column, span_index: index, **span.html_attributes) { span.to_s }
+              end
+            else
+              create_cell(head_column, **row_column.html_attributes) { content }
+            end
+          end
+        end
+
+        def create_cell(head_column, **, &)
+          cell = Cell.new(self, head_column, **)
 
           if block_given?
             content = helpers.capture(&)
@@ -162,26 +182,7 @@ module UI
           cell
         end
 
-        def convert_column_to_cells(head_column, row_column)
-          # Eager load column content to load spans
-          key     = head_column.key
-          colspan = head_column.span_size
-          content = column_content(row_column)
-          spans   = row_column.spans
-
-          if spans.any?
-            raise "Unexpected spans in columns #{head_column.key}" if colspan <= 1
-            raise "Column #{key} is expected #{colspan} spans, got #{spans.size}" if spans.size != colspan
-
-            spans.each_with_index do |span, index|
-              create_cell(head_column, nil, span_index: index) { span.to_s }
-            end
-          else
-            create_cell(head_column, row_column) { content }
-          end
-        end
-
-        def column_content(row_column)
+        def load_column_content(row_column)
           return row_column.to_s if row_column.content?
 
           key = row_column.key
@@ -197,13 +198,13 @@ module UI
       end
 
       class RowColumn < ApplicationViewComponent
-        renders_many :spans
+        renders_many :spans, "UI::Table::Component::RowSpan"
 
-        attr_reader :key, :options
+        attr_reader :key, :html_attributes
 
-        def initialize(key, **options)
-          @key     = key
-          @options = options
+        def initialize(key, **)
+          @key = key
+          @html_attributes = parse_html_attributes(**)
           super()
         end
 
@@ -212,19 +213,91 @@ module UI
         end
       end
 
-      class RowCell < ApplicationViewComponent
-        renders_many :spans
+      class RowSpan < ApplicationViewComponent
+        attr_reader :html_attributes
 
-        attr_reader :key
+        def initialize(**)
+          @html_attributes = parse_html_attributes(**)
+          super()
+        end
 
-        delegate :right?, to: :@head_column
+        def call
+          content
+        end
+      end
 
-        def initialize(row, head_column, row_column = nil, span_index: nil, **options)
+      class RowCheckbox < ApplicationViewComponent
+        attr_reader :label, :described_by
+
+        def initialize(row, datum, label = nil, value: nil, described_by: nil, **)
+          @row             = row
+          @datum           = datum
+          @label           = label
+          @value           = value
+          @described_by    = described_by
+          @html_attributes = parse_html_attributes(**)
+          super()
+        end
+
+        def call
+          tag.input(type: "checkbox", value: value, **html_attributes)
+        end
+
+        def value
+          @value ||=
+            if @datum.respond_to?(:id)
+              @datum.id
+            elsif @datum.is_a?(Hash) && @described_by && @datum.key?(@described_by)
+              @datum.fetch(@described_by)
+            else
+              raise ArgumentError, "cannot infer a checkbox value for #{@datum}"
+            end
+        end
+
+        def html_attributes
+          reverse_merge_attributes(@html_attributes, {
+            aria:  {
+              label:       label || t(".check_row"),
+              describedby: aria_describedby
+            },
+            data: {
+              selection_target:     "checkbox",
+              selection_row_target: "checkbox"
+            }
+          })
+        end
+
+        def aria_describedby
+          return unless @described_by
+
+          head_column = @row.head_columns.find { _1.key == @described_by }
+          row_column  = @row.columns.find { _1.key == @described_by }
+
+          if head_column.nil?
+            warning = "the column #{@described_by.inspect} in :described_by cannot be found"
+          elsif row_column.nil?
+            warning = "the column #{@described_by.inspect} in :described_by cannot be found in row"
+          elsif head_column.span_size > 1
+            warning = "the column #{@described_by.inspect} in :described_by cannot be applied because of multiple spans"
+          end
+
+          if warning
+            Rails.logger.warn(warning)
+            nil
+          else
+            @row.component_dom_id(@described_by)
+          end
+        end
+      end
+
+      class Cell < ApplicationViewComponent
+        delegate :key, :right?, to: :@head_column
+
+        def initialize(row, head_column, span_index: nil, **)
           @row         = row
           @head_column = head_column
-          @row_column  = row_column
           @span_index  = span_index
-          @options     = options
+          @html_attributes = parse_html_attributes(**)
           super()
         end
 
@@ -241,75 +314,15 @@ module UI
         end
 
         def html_attributes
-          options = @options.dup
+          attributes = { class: "table__cell" }
+          attributes[:class] += " table__cell--compact" if compact?
+          attributes[:class] += " table__cell--right" if right?
 
-          options[:id]   = dom_id if options[:id] == true
-          options[:id] ||= dom_id if @row.checkbox&.described_by == @head_column.key
+          attributes = merge_attributes(attributes, @html_attributes)
 
-          options[:class]   = css_class
-          options[:colspan] = colspan
-          options
-        end
-
-        def dom_id
-          [@head_column.key, @row.dom_id].compact.join("-")
-        end
-
-        def colspan
-          @head_column.span_size if @head_column.multi_span? && @span_index.nil?
-        end
-
-        def css_class
-          css_class = %w[table__cell]
-          css_class << "table__cell--compact" if compact?
-          css_class << "table__cell--right" if right?
-          css_class += Array.wrap(@options[:class])
-          css_class.join(" ").squish
-        end
-      end
-
-      class RowCheckbox < ApplicationViewComponent
-        attr_reader :label, :described_by
-
-        def initialize(row, datum, label = nil, value: nil, described_by: nil, **options)
-          @row          = row
-          @datum        = datum
-          @label        = label
-          @value        = value
-          @described_by = described_by
-          @options      = options
-          super()
-        end
-
-        def call
-          tag.input(
-            type:  "checkbox",
-            value: value,
-            aria:  {
-              label:       label || t(".check_row"),
-              describedby: describedby_id
-            },
-            data: {
-              selection_target:     "checkbox",
-              selection_row_target: "checkbox"
-            },
-            **@options
-          )
-        end
-
-        def value
-          @value ||=
-            if @datum.respond_to?(:id)
-              @datum.id
-            elsif @datum.is_a?(Hash) && @described_by && @datum.key?(@described_by)
-              @datum.fetch(@described_by)
-            else
-              raise ArgumentError, "cannot infer a checkbox value for #{@datum}"
-            end
-        end
-
-        def describedby_id
-          [@described_by, @row.dom_id].compact.join("-")
+          attributes[:id]      = @row.component_dom_id(key) if @span_index.nil? && key == @row.checkbox&.described_by
+          attributes[:colspan] = @head_column.span_size     if @head_column.multi_span? && @span_index.nil?
+          attributes
         end
       end
     end

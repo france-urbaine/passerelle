@@ -28,7 +28,7 @@
 
     tbody
       - rows.each do |row|
-        tr.table__row*row.html_attributes
+        tr*row.html_attributes
           - if checkboxes?
             td.table__cell.table__checkbox
               = row.checkbox

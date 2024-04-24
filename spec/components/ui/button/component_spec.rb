@@ -60,6 +60,21 @@ RSpec.describe UI::Button::Component do
     end
   end
 
+  it "warns about turbo_frame from argument when modal is true" do
+    allow(Rails.logger).to receive(:warn).and_call_original
+
+    render_inline described_class.new("Click me!", "/communes", modal: true, data: { turbo_frame: "_top" })
+
+    expect(Rails.logger).to have_received(:warn).with(<<~MESSAGE.strip)
+      the button gets the arguments `modal: true` and `turbo_frame: "_top"`: the first one is ignored.
+    MESSAGE
+
+    expect(page).to have_link("Click me!", class: "button") do |button|
+      expect(button).to have_html_attribute("href").with_value("/communes")
+      expect(button).to have_html_attribute("data-turbo-frame").with_value("_top")
+    end
+  end
+
   it "renders a primary button" do
     render_inline described_class.new("Click me!", primary: true)
 
@@ -100,6 +115,17 @@ RSpec.describe UI::Button::Component do
     render_inline described_class.new("Click me!", icon: "plus")
 
     expect(page).to have_button(class: "button") do |button|
+      expect(button).to have_text("Click me!")
+      expect(button).to have_selector("svg") do |svg|
+        expect(svg).to have_html_attribute("data-source").with_value("heroicons/optimized/24/outline/plus.svg")
+      end
+    end
+  end
+
+  it "renders a button with a trailing icon" do
+    render_inline described_class.new("Click me!", icon: "plus", icon_position: "end")
+
+    expect(page).to have_button(class: "button button--trailing-icon") do |button|
       expect(button).to have_text("Click me!")
       expect(button).to have_selector("svg") do |svg|
         expect(svg).to have_html_attribute("data-source").with_value("heroicons/optimized/24/outline/plus.svg")
@@ -149,6 +175,19 @@ RSpec.describe UI::Button::Component do
       expect(form).to have_html_attribute("action").with_value("/communes")
 
       expect(form).to have_selector("input[type='hidden'][name='_method'][value='patch']", visible: :hidden)
+      expect(form).to have_selector("input[type='hidden'][name='ids'][value='all']", visible: :hidden)
+      expect(form).to have_button("Click me!")
+    end
+  end
+
+  it "renders a button with link and params to open in a modal" do
+    render_inline described_class.new("Click me!", "/communes", method: :get, params: { ids: "all" }, modal: true)
+
+    expect(page).to have_selector("form") do |form|
+      expect(form).to have_html_attribute("method").with_value("get")
+      expect(form).to have_html_attribute("action").with_value("/communes")
+
+      expect(form).to have_selector("button[data-turbo-frame=modal]")
       expect(form).to have_selector("input[type='hidden'][name='ids'][value='all']", visible: :hidden)
       expect(form).to have_button("Click me!")
     end

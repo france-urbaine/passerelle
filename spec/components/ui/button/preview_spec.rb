@@ -10,7 +10,8 @@ RSpec.describe UI::Button::Preview do
   it { is_expected.to render_preview_without_exception(:default_with_modal) }
   it { is_expected.to render_preview_without_exception(:default_with_method) }
 
-  it { is_expected.to render_preview_without_exception(:with_icon) }
+  it { is_expected.to render_preview_without_exception(:with_leading_icon) }
+  it { is_expected.to render_preview_without_exception(:with_trailing_icon) }
   it { is_expected.to render_preview_without_exception(:with_icon_only) }
   it { is_expected.to render_preview_without_exception(:with_icon_only_and_label) }
   it { is_expected.to render_preview_without_exception(:with_icon_options) }

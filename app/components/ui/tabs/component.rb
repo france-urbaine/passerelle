@@ -8,33 +8,28 @@ module UI
       renders_many :tabs, "Tab"
 
       def before_render
-        tabs.each { _1.random_id = random_id }
         tabs.first&.selected = true unless tabs.any?(&:selected)
         tabs.each(&:to_s)
       end
 
-      def random_id
-        @random_id ||= SecureRandom.alphanumeric(6)
-      end
-
       class Tab < ApplicationViewComponent
-        attr_accessor :selected, :random_id
+        attr_accessor :selected
 
-        def initialize(title, selected: false, sync_all: nil, **options)
+        def initialize(title, selected: false, sync_all: nil, id: nil)
           @title    = title
           @selected = selected
           @sync_all = sync_all
-          @options  = options
+          parse_html_attributes(id:)
           super()
         end
 
         def call
           tag.div(
-            id:       "#{tab_id}-panel",
+            id:       component_dom_id(:panel),
             class:    "tabs__panel",
             role:     "tabpanel",
             hidden:   !@selected,
-            aria:     { labelledby: tab_id },
+            aria:     { labelledby: component_dom_id },
             data:     { tabs_target: "panel" }
           ) do
             content
@@ -44,26 +39,20 @@ module UI
         def button
           button_component(
             @title,
-            id:    tab_id,
+            id:    component_dom_id,
             class: "tabs__tab #{'tabs__tab--current' if @selected}",
             role:  "tab",
-            aria: {
-              controls: "#{tab_id}-panel",
+            aria:  {
+              controls: component_dom_id(:panel),
               selected: @selected
             },
             data: {
               action:          "click->tabs#select:prevent",
               tabs_target:     "tab",
-              tabs_id_param:   tab_id,
+              tabs_id_param:   component_dom_id,
               tabs_sync_param: @sync_all
             }
           )
-        end
-
-        def tab_id
-          @tab_id ||= @options.fetch(:id) do
-            [random_id, @title.parameterize].join("-")
-          end
         end
       end
     end
