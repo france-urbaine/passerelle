@@ -981,7 +981,10 @@ module Reports
       evaluation_local? &&
         anomalies.any? &&
         anomalies.intersect?(
-          %w[affectation consistance categorie correctif exoneration adresse].without(exclusions.flatten)
+          (
+            Report::FORM_TYPE_ANOMALIES["evaluation_local_habitation"] +
+            Report::FORM_TYPE_ANOMALIES["evaluation_local_professionnel"]
+          ).uniq.without(exclusions.flatten)
         )
     end
 
@@ -989,7 +992,7 @@ module Reports
       form_type == "evaluation_local_habitation" &&
         anomalies.any? &&
         anomalies.intersect?(
-          %w[affectation consistance correctif exoneration adresse].without(exclusions.flatten)
+          Report::FORM_TYPE_ANOMALIES["evaluation_local_habitation"].without(exclusions.flatten)
         )
     end
 
@@ -997,7 +1000,7 @@ module Reports
       form_type == "evaluation_local_professionnel" &&
         anomalies.any? &&
         anomalies.intersect?(
-          %w[affectation consistance categorie exoneration adresse].without(exclusions.flatten)
+          Report::FORM_TYPE_ANOMALIES["evaluation_local_professionnel"].without(exclusions.flatten)
         )
     end
 

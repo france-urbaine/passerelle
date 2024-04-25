@@ -143,6 +143,8 @@ module Reports
         I18n.t("enum.local_habitation_nature").keys.map(&:to_s)
       elsif expect_situation_nature_professionnel?
         I18n.t("enum.local_professionnel_nature").keys.map(&:to_s)
+      else
+        []
       end
     end
 
@@ -151,6 +153,8 @@ module Reports
         I18n.t("enum.local_habitation_categorie").keys.map(&:to_s)
       elsif expect_situation_categorie_professionnel?
         I18n.t("enum.local_professionnel_categorie").keys.map(&:to_s)
+      else
+        []
       end
     end
 
@@ -161,6 +165,8 @@ module Reports
         I18n.t("enum.local_professionnel_nature").keys.map(&:to_s)
       elsif expect_proposition_nature_creation_local_habitation?
         I18n.t("enum.creation_local_habitation_nature").keys.map(&:to_s)
+      else
+        []
       end
     end
 
@@ -171,6 +177,8 @@ module Reports
         I18n.t("enum.local_dependance_categorie").keys.map(&:to_s)
       elsif expect_proposition_categorie_professionnel?
         I18n.t("enum.local_professionnel_categorie").keys.map(&:to_s)
+      else
+        []
       end
     end
 

@@ -9,7 +9,7 @@ RSpec.describe Reports::CheckCompletenessService do
 
   def inspect_errors(report)
     service = described_class.new(report)
-    ap(service.errors.details) unless service.validate
+    ap(service.errors.details) unless service.valid?
   end
 
   # TODO: more test cases are required
@@ -77,6 +77,70 @@ RSpec.describe Reports::CheckCompletenessService do
         situation_coefficient_entretien:      "1.2",
         proposition_affectation:              "B",
         proposition_nature:                   "U"
+      )
+
+      expect(described_class.new(report)).to be_valid
+    end
+
+    it "validates an 'exoneration' anomaly" do
+      report = build_stubbed(
+        :report,
+        form_type:                            "evaluation_local_habitation",
+        anomalies:                            %w[exoneration],
+        date_constat:                         "2024-04-01",
+        code_insee:                           "64102",
+        situation_annee_majic:                2024,
+        situation_invariant:                  "0123456789",
+        situation_parcelle:                   "AB 0001",
+        situation_libelle_voie:               "RUE CLEMENCEAU",
+        situation_code_rivoli:                "0023",
+        situation_numero_batiment:            "A",
+        situation_numero_escalier:            "1",
+        situation_numero_niveau:              "1",
+        situation_numero_porte:               "22",
+        situation_numero_ordre_porte:         "001",
+        situation_proprietaire:               "MARCEL DUCHAMPS",
+        situation_numero_ordre_proprietaire:  "* 02465",
+        situation_date_mutation:              "2014-02",
+        situation_affectation:                "H",
+        situation_nature:                     "MA",
+        situation_categorie:                  "4",
+        situation_surface_reelle:             102.00,
+        situation_coefficient_entretien:      "1.2",
+        exonerations_attributes:              [
+          {
+            status:            "supprimer",
+            code:              "AD",
+            label:             "Droit commun (2 ans) - addition de construction",
+            base:              "imposable",
+            code_collectivite: "GC"
+          }
+        ]
+      )
+
+      expect(described_class.new(report)).to be_valid
+    end
+
+    it "validates an 'adresse' anomaly" do
+      report = build_stubbed(
+        :report,
+        form_type:                            "evaluation_local_habitation",
+        anomalies:                            %w[adresse],
+        date_constat:                         "2024-04-01",
+        code_insee:                           "64102",
+        situation_annee_majic:                2024,
+        situation_invariant:                  "0123456789",
+        situation_parcelle:                   "AB 0001",
+        situation_libelle_voie:               "RUE CLEMENCEAU",
+        situation_code_rivoli:                "0023",
+        situation_numero_batiment:            "A",
+        situation_numero_escalier:            "1",
+        situation_numero_niveau:              "1",
+        situation_numero_porte:               "22",
+        situation_numero_ordre_porte:         "001",
+        situation_proprietaire:               "MARCEL DUCHAMPS",
+        situation_numero_ordre_proprietaire:  "* 02465",
+        proposition_libelle_voie:             "RUE GEORGES CLEMENCEAU"
       )
 
       expect(described_class.new(report)).to be_valid
@@ -149,6 +213,72 @@ RSpec.describe Reports::CheckCompletenessService do
         proposition_categorie:                "5",
         proposition_surface_reelle:           240.00,
         proposition_coefficient_entretien:    1.20
+      )
+
+      expect(described_class.new(report)).to be_valid
+    end
+
+    it "validates an 'exoneration' anomaly" do
+      report = build_stubbed(
+        :report,
+        form_type:                            "evaluation_local_professionnel",
+        anomalies:                            %w[exoneration],
+        date_constat:                         "2024-04-01",
+        code_insee:                           "64102",
+        situation_annee_majic:                2024,
+        situation_invariant:                  "0123456789",
+        situation_parcelle:                   "AB 0001",
+        situation_libelle_voie:               "RUE CLEMENCEAU",
+        situation_code_rivoli:                "0023",
+        situation_numero_batiment:            "A",
+        situation_numero_escalier:            "1",
+        situation_numero_niveau:              "1",
+        situation_numero_porte:               "22",
+        situation_numero_ordre_porte:         "001",
+        situation_proprietaire:               "MARCEL DUCHAMPS",
+        situation_numero_ordre_proprietaire:  "* 02465",
+        situation_date_mutation:              "2014-02",
+        situation_affectation:                "C",
+        situation_nature:                     "CB",
+        situation_categorie:                  "MAG1",
+        situation_surface_reelle:             240.00,
+        situation_coefficient_localisation:   1.15,
+        exonerations_attributes:              [
+          {
+            status:            "supprimer",
+            code:              "AD",
+            label:             "Droit commun (2 ans) - addition de construction",
+            base:              "imposable",
+            code_collectivite: "GC"
+          }
+        ]
+      )
+
+      # inspect_errors(report)
+
+      expect(described_class.new(report)).to be_valid
+    end
+
+    it "validates an 'adresse' anomaly" do
+      report = build_stubbed(
+        :report,
+        form_type:                            "evaluation_local_professionnel",
+        anomalies:                            %w[adresse],
+        date_constat:                         "2024-04-01",
+        code_insee:                           "64102",
+        situation_annee_majic:                2024,
+        situation_invariant:                  "0123456789",
+        situation_parcelle:                   "AB 0001",
+        situation_libelle_voie:               "RUE CLEMENCEAU",
+        situation_code_rivoli:                "0023",
+        situation_numero_batiment:            "A",
+        situation_numero_escalier:            "1",
+        situation_numero_niveau:              "1",
+        situation_numero_porte:               "22",
+        situation_numero_ordre_porte:         "001",
+        situation_proprietaire:               "MARCEL DUCHAMPS",
+        situation_numero_ordre_proprietaire:  "* 02465",
+        proposition_libelle_voie:             "RUE GEORGES CLEMENCEAU"
       )
 
       expect(described_class.new(report)).to be_valid
