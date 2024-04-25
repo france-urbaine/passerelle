@@ -83,6 +83,78 @@ RSpec.describe Reports::CheckCompletenessService do
     end
   end
 
+  context "with an evaluation_local_professionnel" do
+    it "validates an 'affectaction' anomaly after setting proposition_affectation to professionnal" do
+      report = build_stubbed(
+        :report,
+        form_type:                            "evaluation_local_professionnel",
+        anomalies:                            %w[affectation],
+        date_constat:                         "2024-04-01",
+        code_insee:                           "64102",
+        situation_annee_majic:                2024,
+        situation_invariant:                  "0123456789",
+        situation_parcelle:                   "AB 0001",
+        situation_libelle_voie:               "RUE CLEMENCEAU",
+        situation_code_rivoli:                "0023",
+        situation_numero_batiment:            "A",
+        situation_numero_escalier:            "1",
+        situation_numero_niveau:              "1",
+        situation_numero_porte:               "22",
+        situation_numero_ordre_porte:         "001",
+        situation_proprietaire:               "MARCEL DUCHAMPS",
+        situation_numero_ordre_proprietaire:  "* 02465",
+        situation_date_mutation:              "2014-02",
+        situation_affectation:                "C",
+        situation_nature:                     "CB",
+        situation_categorie:                  "MAG1",
+        situation_surface_reelle:             240.00,
+        situation_coefficient_localisation:   1.15,
+        proposition_affectation:              "L",
+        proposition_nature:                   "CB",
+        proposition_categorie:                "HOT2",
+        proposition_surface_reelle:           240.00,
+        proposition_coefficient_localisation: 1.15
+      )
+
+      expect(described_class.new(report)).to be_valid
+    end
+
+    it "validates an 'affectaction' anomaly after setting proposition_affectation to habitation" do
+      report = build_stubbed(
+        :report,
+        form_type:                            "evaluation_local_professionnel",
+        anomalies:                            %w[affectation],
+        date_constat:                         "2024-04-01",
+        code_insee:                           "64102",
+        situation_annee_majic:                2024,
+        situation_invariant:                  "0123456789",
+        situation_parcelle:                   "AB 0001",
+        situation_libelle_voie:               "RUE CLEMENCEAU",
+        situation_code_rivoli:                "0023",
+        situation_numero_batiment:            "A",
+        situation_numero_escalier:            "1",
+        situation_numero_niveau:              "1",
+        situation_numero_porte:               "22",
+        situation_numero_ordre_porte:         "001",
+        situation_proprietaire:               "MARCEL DUCHAMPS",
+        situation_numero_ordre_proprietaire:  "* 02465",
+        situation_date_mutation:              "2014-02",
+        situation_affectation:                "C",
+        situation_nature:                     "CB",
+        situation_categorie:                  "MAG1",
+        situation_surface_reelle:             240.00,
+        situation_coefficient_localisation:   1.15,
+        proposition_affectation:              "H",
+        proposition_nature:                   "MA",
+        proposition_categorie:                "5",
+        proposition_surface_reelle:           240.00,
+        proposition_coefficient_entretien:    1.20
+      )
+
+      expect(described_class.new(report)).to be_valid
+    end
+  end
+
   context "with a creation_local_habitation" do
     it "validates an 'omission_batie' anomaly with nature set to habitation" do
       report = build_stubbed(

@@ -141,8 +141,8 @@ module Reports
     def valid_situation_natures
       if expect_situation_nature_habitation?
         I18n.t("enum.local_habitation_nature").keys.map(&:to_s)
-      elsif expect_situation_nature_dependance?
-        I18n.t("enum.local_dependance_nature").keys.map(&:to_s)
+      elsif expect_situation_nature_professionnel?
+        I18n.t("enum.local_professionnel_nature").keys.map(&:to_s)
       end
     end
 
