@@ -43,8 +43,8 @@ module RequestTestHelpers
     end
 
     def setup_access_token(publisher = nil, oauth_application = nil)
-      @current_publisher = publisher || create(:publisher)
-      @current_application ||= oauth_application || create(:oauth_application, owner: @current_publisher)
+      @current_publisher   = publisher || create(:publisher)
+      @current_application = oauth_application || create(:oauth_application, owner: @current_publisher)
 
       @current_access_token = create(:doorkeeper_access_token,
         application:       @current_application,
