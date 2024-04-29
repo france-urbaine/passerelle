@@ -32,7 +32,7 @@ Doorkeeper.configure do
   # You can use your own model classes if you need to extend (or even override) default
   # Doorkeeper models such as `Application`, `AccessToken` and `AccessGrant.
   #
-  # Be default Doorkeeper ActiveRecord ORM uses it's own classes:
+  # By default Doorkeeper ActiveRecord ORM uses its own classes:
   #
   # access_token_class "Doorkeeper::AccessToken"
   # access_grant_class "Doorkeeper::AccessGrant"
@@ -95,7 +95,10 @@ Doorkeeper.configure do
   # authorization_code_expires_in 10.minutes
 
   # Access token expiration time (default: 2 hours).
-  # If you want to disable expiration, set this to `nil`.
+  # If you set this to `nil` Doorkeeper will not expire the token and omit expires_in in response.
+  # It is RECOMMENDED to set expiration time explicitly.
+  # Prefer access_token_expires_in 100.years or similar,
+  # which would be functionally equivalent and avoid the risk of unexpected behavior by callers.
   #
   # access_token_expires_in 2.hours
 
@@ -167,6 +170,12 @@ Doorkeeper.configure do
   # multiple machines and/or processes).
   #
   # revoke_previous_client_credentials_token
+
+  # Only allow one valid access token obtained via authorization code
+  # per client. If a new access token is obtained before the old one
+  # expired, the old one gets revoked (disabled by default)
+  #
+  # revoke_previous_authorization_code_token
 
   # Hash access and refresh tokens before persisting them.
   # This will disable the possibility to use +reuse_access_token+
@@ -318,6 +327,12 @@ Doorkeeper.configure do
   #   Doorkeeper::Errors::TokenRevoked, Doorkeeper::Errors::TokenUnknown
   #
   # handle_auth_errors :raise
+  #
+  # If you want to redirect back to the client application in accordance with
+  # https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.2.1, you can set
+  # +handle_auth_errors+ to :redirect
+  #
+  # handle_auth_errors :redirect
 
   handle_auth_errors :raise
 
@@ -395,7 +410,7 @@ Doorkeeper.configure do
   # true in case resource owner authorized for the specific application or false in other
   # cases.
   #
-  # Be default all Resource Owners are authorized to any Client (application).
+  # By default all Resource Owners are authorized to any Client (application).
   #
   # authorize_resource_owner_for_client do |client, resource_owner|
   #   resource_owner.admin? || client.owners_allowlist.include?(resource_owner)
