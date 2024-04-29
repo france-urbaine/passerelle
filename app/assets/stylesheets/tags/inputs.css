@@ -41,6 +41,11 @@
         @apply dark:outline-sky-400;
       }
     }
+
+    @media screen and (max-width: 767px) {
+      /* Prevent zooming on input on iOS devices */
+      font-size: 16px;
+    }
   }
 
   textarea {
