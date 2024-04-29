@@ -33,6 +33,14 @@ Rails.application.configure do
   end
 end
 
+# Eager load all components to use component helpers defined by #define_component_helper
+#
+unless Rails.application.config.eager_load
+  Rails.application.config.to_prepare do
+    Rails.autoloaders.main.eager_load_dir(Rails.root.join("app/components"))
+  end
+end
+
 ActiveSupport.on_load(:view_component) do
   # Extend your preview controller to support authentication and other
   # application-specific stuff

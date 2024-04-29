@@ -7,10 +7,6 @@ module ComponentHelpers
     extend DefineMethods if is_a?(Class)
   end
 
-  def self.eager_load
-    Rails.autoloaders.main.eager_load_dir(File.expand_path("..", __dir__))
-  end
-
   def self.add_component_helper(method_name, component_class_name)
     helper_module = Module.new do
       define_method method_name do |*args, **kwargs, &block|
