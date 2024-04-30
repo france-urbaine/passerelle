@@ -78,5 +78,3 @@ class ApplicationViewComponent < ViewComponent::Base
     end
   end
 end
-
-ComponentHelpers.eager_load

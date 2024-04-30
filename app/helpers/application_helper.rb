@@ -6,5 +6,3 @@ module ApplicationHelper
   include FormHelper
   include FormatHelper
 end
-
-ComponentHelpers.eager_load

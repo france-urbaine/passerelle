@@ -19,7 +19,8 @@ RSpec.describe NotifyTransmissionCompletedJob do
       described_class.perform_now(transmission)
       perform_enqueued_jobs
     }
-      .to have_sent_email.to(users[0].email).with_subject("Vous avez reçu de nouveaux signalements")
-      .to have_sent_email.to(users[1].email).with_subject("Vous avez reçu de nouveaux signalements")
+      .to  have_sent_emails.by(2)
+      .and have_sent_email.to(users[1].email).with_subject("Vous avez reçu de nouveaux signalements")
+      .and have_sent_email.to(users[2].email).with_subject("Vous avez reçu de nouveaux signalements")
   end
 end
