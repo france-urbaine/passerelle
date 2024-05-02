@@ -76,6 +76,16 @@ module FormatHelper
     end
   end
 
+  def display_errors(record, attribute)
+    return unless record.respond_to?(:errors)
+
+    tag.div(class: "form-block") do
+      record.errors.messages_for(attribute).each do |error|
+        concat tag.div(error, class: "form-block__errors")
+      end
+    end
+  end
+
   def list(collection, &)
     return if collection.empty?
 
