@@ -36,10 +36,6 @@ module UI
           options
         end
 
-        def display_errors
-          helpers.display_errors(@record, @attribute) if invalid?
-        end
-
         def invalid?
           @record.respond_to?(:errors) && @record.errors.include?(@attribute)
         end

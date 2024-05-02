@@ -6,10 +6,6 @@ module FormHelper
       @template.form_block_component(@object, ...)
     end
 
-    def errors(method)
-      @template.display_errors(@object, method)
-    end
-
     def password_field_component(...)
       @template.password_field_component(@object_name, ...)
     end
