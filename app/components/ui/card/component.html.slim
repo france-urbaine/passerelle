@@ -1,18 +1,22 @@
 - captured_content = capture do
   - if header?
-    .card__header
+    .card__header*header.html_attributes
       h1.card__title= header
 
-  = tag.div class: css_classes(:body_class) do
-    - if form?
+  - if form?
+    .card__body
       = form
-    - elsif body?
+
+  - elsif body?
+    .card__body*body.html_attributes
       = body
-    - else
+
+  - else
+    .card__body
       = content
 
   - if form? || actions?
-    = tag.div class: css_classes(:actions_class) do
+    .card__actions
       = submit_action if form?
 
       - actions.each do |action|
@@ -28,9 +32,10 @@
 
 - if self.is_a?(Multipart)
   = captured_content_wrapped
+
 - else
-  = tag.div class: css_classes(:class) do
-    = tag.div class: css_classes(:content_class) do
+  .card*@html_attributes
+    .card__content
       - if multiparts?
         - multiparts.each_with_index do |part, index|
           - unless index.zero?

@@ -25,8 +25,11 @@ class ApplicationViewComponent < ViewComponent::Base
   end
 
   class ContentSlot < self
-    def initialize(label = nil)
+    attr_reader :html_attributes
+
+    def initialize(label = nil, **)
       @label = label
+      @html_attributes = parse_html_attributes(**)
       super()
     end
 

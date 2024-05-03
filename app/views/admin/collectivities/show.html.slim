@@ -59,7 +59,7 @@
 
       - layout.with_section do
         - if @collectivity.users_count.zero?
-          = card_component(content_class: "card__content--empty")
+          = card_component(class: "card--empty")
             | Aucun utilisateur assigné.
 
         - else

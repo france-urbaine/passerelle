@@ -42,7 +42,7 @@
 
       - layout.with_section do
         - if @region.departements_count.zero?
-          = card_component(content_class: "card__content--empty")
+          = card_component(class: "card--empty")
             | Aucun département dans cette région.
 
         - else
@@ -57,7 +57,7 @@
 
       - layout.with_section do
         - if @region.ddfips_count.zero?
-          = card_component(content_class: "card__content--empty")
+          = card_component(class: "card--empty")
             | Aucune DDFIP enregistrée dans cette région.
 
         - else
@@ -72,7 +72,7 @@
 
       - layout.with_section do
         - if @region.collectivities_count.zero?
-          = card_component(content_class: "card__content--empty")
+          = card_component(class: "card--empty")
             | Aucune collectivité enregistrée dans cette région.
 
         - else

@@ -62,22 +62,24 @@ RSpec.describe UI::Card::Component do
     end
   end
 
-  it "add custom classes on card elements" do
+  it "adds custom HTML attributes" do
     render_inline described_class.new(
-      class:         "card-wrapper",
-      content_class: "card__content--status",
-      body_class:    "card__body--grid",
-      actions_class: "card__actions--center"
+      class:  "custom-card",
+      is:     "turbo-frame",
+      id:     "card-123"
     ) do |card|
-      card.with_header("Card title")
-      card.with_body("Hello World")
+      card.with_header("Card title", class: "text-3xl")
+      card.with_body("Hello World", class: "grid2")
       card.with_action("Action")
     end
 
-    expect(page).to have_selector(".card.card-wrapper") do |node|
-      expect(node).to have_selector(".card__content.card__content--status") do |content|
-        expect(content).to have_selector(".card__body.card__body--grid")
-        expect(content).to have_selector(".card__actions.card__actions--center")
+    expect(page).to have_selector(".card.custom-card") do |node|
+      expect(node).to have_html_attribute("is").with_value("turbo-frame")
+      expect(node).to have_html_attribute("id").with_value("card-123")
+
+      expect(node).to have_selector(".card__content") do |content|
+        expect(content).to have_selector(".card__header.text-3xl")
+        expect(content).to have_selector(".card__body.grid2")
       end
     end
   end

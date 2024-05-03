@@ -1,6 +1,8 @@
-= card_component(class: "card-wrapper") do |card|
+= card_component do |card|
   - card.with_multipart do |card_content|
-    - card_content.with_header("Dialog title #1")
+    - card_content.with_header do
+      | Dialog title #1
+
     - card_content.with_form(model: record, url: "/") do |form|
       = form.block(:name) do
         = form.label(:name)
@@ -9,7 +11,9 @@
     - card_content.with_submit_action "Enregistrer"
 
   - card.with_multipart do |card_content|
-    - card_content.with_header("Dialog title #2")
+    - card_content.with_header do
+      | Dialog title #2
+
     - card_content.with_body do
       | Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.
       br

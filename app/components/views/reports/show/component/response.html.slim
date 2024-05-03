@@ -13,17 +13,23 @@
 
   - layout.with_section do
     - if @report.reponse.present?
-      = card_component(content_class: "text-lg") do |card|
-        = simple_format h(@report.reponse)
+      = card_component do |card|
+        = simple_format h(@report.reponse), class: "text-lg"
 
-        - unless @report.returned?
-          .text-disabled
-            ' Ces observations ne seront visibles par la collectivité qu'une fois
-            ' le signalement confirmé et retourné par le référent fiabilisation.
+        - if current_organization.is_a?(DDFIP) || current_organization.is_a?(DGFIP)
+          .text-disabled.mt-8
+            - if @report.returned?
+              ' Ces observations sont visibles par la collectivité.
+            - else
+              ' Ces observations ne seront visibles par la collectivité qu'une fois
+              ' le signalement confirmé et retourné par le référent fiabilisation.
 
     - else
-      = card_component(content_class: "card__content--empty h-24") do |card|
+      = card_component(class: "card--empty h-24") do
         | Aucune observation ajoutée pour ce signalement.
-        .text-disabled
-          ' Les observations saisies ici ne seront visibles par la collectivité
-          ' qu'une fois le signalement confirmé et retourné par le référent fiabilisation.
+
+        - if current_organization.is_a?(DDFIP) || current_organization.is_a?(DGFIP)
+          - unless @report.returned?
+            .text-disabled
+              ' Les observations saisies ici ne seront visibles par la collectivité
+              ' qu'une fois le signalement confirmé et retourné par le référent fiabilisation.

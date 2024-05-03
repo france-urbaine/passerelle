@@ -55,7 +55,7 @@
 
       - layout.with_section do
         - if @publisher.users_count.zero?
-          = card_component(content_class: "card__content--empty")
+          = card_component(class: "card--empty")
             | Aucun utilisateur assigné.
 
         - else
@@ -73,7 +73,7 @@
 
       - layout.with_section do
         - if @publisher.collectivities_count.zero?
-          = card_component(content_class: "card__content--empty")
+          = card_component(class: "card--empty")
             | Aucune collectivité enregistrée.
 
         - else

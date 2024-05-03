@@ -5,7 +5,7 @@
         = breadcrumbs
 
     - layout.with_section do
-      = card_component(**CARD_OPTIONS) do |card|
+      = card_component(class: "card--status") do |card|
         - if header?
           - card.with_header do
             = header

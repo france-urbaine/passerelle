@@ -21,28 +21,13 @@ module UI
 
       renders_one  :submit_action, "SubmitAction"
       renders_many :actions, "ActionSlot"
-
-      renders_many :multiparts, ->(**options) { Multipart.new(**@options, **options) }
+      renders_many :multiparts, "Multipart"
 
       attr_accessor :form_options
 
-      def initialize(**options)
-        @options = options
+      def initialize(**)
+        @html_attributes = parse_html_attributes(**)
         super()
-      end
-
-      DEFAULT_CSS_CLASSES = {
-        class:         "card",
-        content_class: "card__content",
-        body_class:    "card__body",
-        actions_class: "card__actions"
-      }.freeze
-
-      def css_classes(key)
-        values = @options.fetch(key, [])
-        values = Array.wrap(values)
-        values << DEFAULT_CSS_CLASSES[key]
-        values.compact.join(" ")
       end
 
       # Slots

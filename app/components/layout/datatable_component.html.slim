@@ -1,7 +1,7 @@
 = render Layout::Datatable::WrapperComponent.new(self) do |wrapper|
   .datatable
     - if records.empty?
-      = card_component(content_class: "card__content--empty")
+      = card_component(class: "card--empty")
         = empty_message || "Aucune donnée disponible."
 
     - else

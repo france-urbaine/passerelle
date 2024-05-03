@@ -6,7 +6,7 @@ RSpec.describe UI::Card::Preview do
   it { is_expected.to render_preview_without_exception(:default) }
   it { is_expected.to render_preview_without_exception(:with_header) }
   it { is_expected.to render_preview_without_exception(:with_actions) }
-  it { is_expected.to render_preview_without_exception(:with_css_classes) }
+  it { is_expected.to render_preview_without_exception(:with_html_attributes) }
   it { is_expected.to render_preview_without_exception(:with_form) }
   it { is_expected.to render_preview_without_exception(:with_multipart) }
 end

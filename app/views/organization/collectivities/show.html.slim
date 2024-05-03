@@ -73,7 +73,7 @@
 
       - layout.with_section do
         - if @collectivity.users_count.zero?
-          = card_component(content_class: "card__content--empty")
+          = card_component(class: "card--empty")
             | Aucun utilisateur assigné.
 
         - else
@@ -84,5 +84,5 @@
 
     - elsif current_organization.is_a?(Publisher)
       - layout.with_section do
-        = card_component(content_class: "card__content--empty")
+        = card_component(class: "card--empty")
           | La collectivité ne vous a pas autorisé à gerer son compte et ses utilisateurs.
