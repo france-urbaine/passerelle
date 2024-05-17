@@ -8,7 +8,9 @@ module Matchers
       chain :to, :other_matcher
 
       match do |actual|
-        raise TypeError, "Invalid response type: #{actual}" unless actual.is_a?(ActionDispatch::Flash::FlashHash)
+        raise TypeError, "Expect a FlashHash, got instead: #{actual}" unless actual.is_a?(
+          ActionDispatch::Flash::FlashHash
+        )
 
         notice = actual["notice"]
         notice.present? && (other_matcher.blank? || other_matcher.matches?(notice))
@@ -23,20 +25,16 @@ module Matchers
       chain :to, :other_matcher
 
       match do |actual|
-        actions = extract_actions(actual)
+        raise TypeError, "Expect a FlashHash, got instead: #{actual}" unless actual.is_a?(
+          ActionDispatch::Flash::FlashHash
+        )
+
+        actions = actual["actions"]
         actions.present? && (other_matcher.blank? || other_matcher.matches?(actions))
       end
 
       failure_message do
         "expected to #{description}\n#{other_matcher&.failure_message}"
-      end
-
-      def extract_actions(actual)
-        raise TypeError, "Invalid response type: #{actual}" unless actual.is_a?(ActionDispatch::Flash::FlashHash)
-
-        return actual["actions"] if actual["actions"].blank?
-
-        FlashAction.read_multi(actual["actions"])
       end
     end
   end

@@ -30,26 +30,26 @@ module Layout
       end
 
       def extract_flash_notice
-        data = {
-          scheme:  :default,
-          options: {},
-          actions: []
-        }
-
         case flash[:notice]
         when String
-          data[:header] = flash[:notice]
+          {
+            scheme:  :default,
+            header:  flash[:notice],
+            options: {},
+            actions: []
+          }
         when Hash
-          notice = flash[:notice].symbolize_keys
+          notice  = flash[:notice].symbolize_keys
+          actions = flash[:actions]&.map(&:symbolize_keys) || []
 
-          data[:scheme]  = notice.fetch(:scheme, :default).to_sym
-          data[:options] = notice.slice(:delay, :icon, :icon_options)
-          data[:header]  = notice.fetch(:header, nil)
-          data[:body]    = notice.fetch(:body, nil)
+          {
+            scheme:  notice.fetch(:scheme, :default).to_sym,
+            header:  notice.fetch(:header, nil),
+            body:    notice.fetch(:body, nil),
+            options: notice.slice(:delay, :icon, :icon_options),
+            actions: actions
+          }
         end
-
-        data[:actions] = FlashAction.read_multi(flash[:actions]).map(&:symbolize_keys) if flash[:actions]
-        data
       end
     end
   end

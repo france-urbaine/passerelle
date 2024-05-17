@@ -48,20 +48,20 @@ RSpec.describe Layout::Notifications::Component do
     end
   end
 
-  it "renders a notification with actions stored in cache" do
+  it "renders a notification with actions" do
     vc_test_controller.flash.now.notice = {
       header: "Hello World !",
-      body:   "Lorem lispum dolor sit amet.",
+      body:   "Lorem lispum dolor sit amet."
     }
 
-    vc_test_controller.flash.now[:actions] = FlashAction.write_multi([
+    vc_test_controller.flash.now[:actions] = [
       {
         label:  "Annuler",
         method: "patch",
         url:    "/some/path",
         params: { ids: "all" }
       }
-    ])
+    ]
 
     render_inline described_class.new
 
