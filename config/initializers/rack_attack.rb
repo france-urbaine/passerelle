@@ -112,7 +112,21 @@ class Rack::Attack
   end
 end
 
-Rails.application.config.middleware.insert_after Rails::Rack::Logger, Rack::Attack
-
 # rubocop:enable Style/ClassAndModuleChildren
 # rubocop:enable Style/SymbolProc
+
+Rails.application.configure do
+  config.middleware.insert_after Rails::Rack::Logger, Rack::Attack
+end
+
+ActiveSupport::Notifications.subscribe("rack.attack") do |*args|
+  Rails.logger.info do
+    event  = ActiveSupport::Notifications::Event.new(*args)
+    type   = event.payload[:request].env["rack.attack.matched"]
+    method = event.payload[:request].request_method
+    path   = event.payload[:request].fullpath
+    ip     = event.payload[:request].remote_ip
+
+    "Rack Attack: #{type} after #{method} #{path} from #{ip}"
+  end
+end
