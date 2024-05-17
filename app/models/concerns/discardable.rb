@@ -6,7 +6,7 @@ module Discardable
   included do
     include Discard::Model
 
-    scope :discarded_over, ->(duration) { discarded.where("discarded_at < ?", duration.ago) }
+    scope :discarded_over, ->(duration) { discarded.where(discarded_at: ...duration.ago) }
   end
 
   class_methods do
