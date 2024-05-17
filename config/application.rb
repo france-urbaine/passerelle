@@ -112,7 +112,7 @@ module Passerelle
     #   DOMAIN_APP = alpha.passerelle-fiscale.fr
     #   DOMAIN_COOKIE = passerelle-fiscale.fr
     #
-    config.session_store :cookie_store,
+    config.session_store :active_record_store,
       key:        "_passerelle_session",
       domain:     ENV.fetch("DOMAIN_COOKIE", :all),
       tld_length: 2
