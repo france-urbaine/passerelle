@@ -4,7 +4,9 @@
   - errors.each do |error|
     .form-block__errors= error
 
-  = display_errors
+  - if invalid?
+    - @record.errors.messages_for(@attribute).each do |message|
+      .form-block__errors= message
 
   - if hint?
     .form-block__hint= hint

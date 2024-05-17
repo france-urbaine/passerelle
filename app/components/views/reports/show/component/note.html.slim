@@ -7,16 +7,16 @@
 
   - layout.with_section do
     - if @report.note.present?
-      = card_component(content_class: "text-lg") do |card|
-        = simple_format h(@report.note)
+      = card_component do |card|
+        = simple_format h(@report.note), class: "text-lg"
 
-        - unless @report.returned?
-          .text-disabled
+        - if current_organization.is_a?(DDFIP) || current_organization.is_a?(DGFIP)
+          .text-disabled.mt-8
             ' Ces notes sont partagées avec les autres membres de la DDFIP :
             ' elles ne seront jamais visibles par la collectivité.
 
     - else
-      = card_component(content_class: "card__content--empty h-24") do |card|
+      = card_component(class: "card--empty h-24") do
         | Aucune note pour le moment.
 
         .text-disabled

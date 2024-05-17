@@ -58,3 +58,12 @@ ActiveSupport.on_load(:view_component) do
   # Enable `self.abstract_class = true` to exclude previews from the list
   ViewComponent::Preview.extend ViewComponentContrib::Preview::Abstract
 end
+
+ActiveSupport::Notifications.subscribe("render.view_component") do |*args|
+  Rails.logger.debug do
+    event     = ActiveSupport::Notifications::Event.new(*args)
+    component = event.payload[:name]
+
+    "  \e[1m[ViewComponent]\e[0m Render #{component}"
+  end
+end

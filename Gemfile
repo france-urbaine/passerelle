@@ -15,7 +15,8 @@ gem "fx"
 gem "pg", "~> 1.1"
 gem "redis", "~> 5.0"
 
-# Asynchronous adapater
+# Backend adapters
+gem "activerecord-session_store"
 gem "sidekiq"
 
 # API

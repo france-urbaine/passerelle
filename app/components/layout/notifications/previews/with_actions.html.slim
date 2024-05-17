@@ -1,0 +1,16 @@
+ruby:
+  flash.now.notice = {
+    scheme: "danger",
+    body:   "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt."
+  }
+
+  flash.now[:actions] = [
+    {
+      label:  "Annuler",
+      method: "patch",
+      url:    "/foo",
+      params: { ids: Array.new(50) { SecureRandom.uuid } }
+    }
+  ]
+
+= render Layout::Notifications::Component.new

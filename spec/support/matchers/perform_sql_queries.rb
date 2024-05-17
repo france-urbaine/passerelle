@@ -8,6 +8,12 @@ module Matchers
       perform_sql_queries.including(query)
     end
 
+    def not_perform_sql_query(query)
+      perform_no_sql_queries.or(
+        perform_sql_queries.excluding(query)
+      )
+    end
+
     matcher :perform_no_sql_queries do
       supports_block_expectations
       include CaptureSQLQueries
@@ -25,6 +31,10 @@ module Matchers
       chain :including do |query|
         # https://rubular.com/r/7l4NUpa8HwBbfR
         (@expected_queries ||= []) << query.squish.gsub(/((?<=\()\s+|\s+(?=\)))/, "")
+      end
+
+      chain :excluding do |query|
+        (@unexpected_queries ||= []) << query.squish.gsub(/((?<=\()\s+|\s+(?=\)))/, "")
       end
 
       chain :to_the_number_of do |expected|
@@ -46,13 +56,17 @@ module Matchers
       def expected_queries_match?
         @expected_queries.nil? || @expected_queries.all? { |query| @actual_queries.include?(query) }
       end
+
+      def unexpected_queries_match?
+        @unexpected_queries.nil? || @unexpected_queries.none? { |query| @actual_queries.include?(query) }
+      end
     end
 
     module CaptureSQLQueries
       def capture_sql_queries(&)
         sql_queries = []
         subscriber  = ActiveSupport::Notifications.subscribe("sql.active_record") do |_, _, _, _, payload|
-          next if payload[:sql].match?(/FROM (pg_class|pg_attribute|pg_index)/)
+          next if payload[:sql].match?(/^SELECT a\.attname/)
 
           sql_queries << payload[:sql].squish.gsub(/((?<=\()\s+|\s+(?=\)))/, "")
         end

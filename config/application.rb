@@ -85,13 +85,21 @@ module Passerelle
     config.hosts << ".#{config.x.domain}"
     config.hosts << ".example.com" if Rails.env.test?
 
-    # If your main domain is already a subdomain (such as alpha.passerelle-fiscale.fr),
-    # you should also define TLD length:
+    # When the app domain is already a sub-domain (such as alpha.passerelle-fiscale.fr),
+    # we need to redefine the TLD length to let rails known how to use proper
+    # subdomains constraints in routes.
+    # Exemple:
     #
     #   DOMAIN_APP = alpha.passerelle-fiscale.fr
     #   DOMAIN_TLD_LENGTH = 2
     #
-    config.action_dispatch.tld_length = Integer(ENV["DOMAIN_TLD_LENGTH"] || 1)
+    # The TLD length is already calculated by default in most cases.
+    #
+    config.action_dispatch.tld_length = ENV.fetch("DOMAIN_TLD_LENGTH") {
+      length = config.x.domain.split(".").size
+      length -= 1 if length > 1
+      length
+    }.to_i
 
     # Session are linked to default domain (DOMAIN_APP)
     # To share cookies between two main domains (passerelle-fiscale.fr & alpha.passerelle-fiscale.fr),
@@ -104,7 +112,7 @@ module Passerelle
     #   DOMAIN_APP = alpha.passerelle-fiscale.fr
     #   DOMAIN_COOKIE = passerelle-fiscale.fr
     #
-    config.session_store :cookie_store,
+    config.session_store :active_record_store,
       key:        "_passerelle_session",
       domain:     ENV.fetch("DOMAIN_COOKIE", :all),
       tld_length: 2

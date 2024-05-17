@@ -3,6 +3,5 @@
 module ApplicationHelper
   include ComponentHelpers
   include CurrentOrderParams
-  include FormHelper
   include FormatHelper
 end

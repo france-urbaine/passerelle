@@ -17,9 +17,9 @@ module UI
       #
       def with_actions; end
 
-      # @label With CSS classes
+      # @label With HTML attributes
       #
-      def with_css_classes; end
+      def with_html_attributes; end
 
       # @label With a form
       #

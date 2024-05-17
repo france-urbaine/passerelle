@@ -19,6 +19,6 @@ html( lang="fr" )
     = javascript_include_tag "application", "data-turbo-track": "reload", defer: true
 
   body
+    = render "shared/notifications"
     = render "shared/navbar_documentation"
     = yield
-    = render "shared/notifications"

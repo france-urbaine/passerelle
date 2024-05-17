@@ -1,5 +1,8 @@
 @layer components {
   .card {
+    display: flex;
+    flex-direction: column;
+
     @apply rounded-md ring-1;
     @apply bg-white ring-gray-300;
     @apply dark:bg-black dark:ring-gray-700;
@@ -7,22 +10,6 @@
 
   .card__content {
     @apply p-6;
-
-    &--empty {
-      display: flex;
-      flex: 1 1 auto;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-
-      @apply italic text-gray-500;
-      @apply px-4 py-3;
-    }
-
-    &--status {
-      @apply p-10;
-      text-align: center;
-    }
   }
 
   .card__header {
@@ -57,5 +44,36 @@
 
   .card__title {
     @apply text-xl;
+  }
+
+  .card--empty {
+    & .card__content {
+      display: flex;
+      flex: 1 1 auto;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+
+      @apply italic text-gray-500;
+      @apply px-4 py-3;
+    }
+  }
+
+  .card--status {
+    & .card__content {
+      @apply p-10;
+      text-align: center;
+    }
+  }
+
+  .card--status,
+  .card--actions-center {
+    & .card__actions {
+      justify-content: center;
+
+      & .button {
+        @apply mx-2;
+      }
+    }
   }
 }

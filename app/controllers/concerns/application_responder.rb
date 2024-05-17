@@ -30,6 +30,6 @@ class ApplicationResponder < ActionController::Responder
 
     flash = controller.flash
     flash = flash.now if set_flash_now?
-    flash[:actions] = FlashAction.write_multi(@flash_actions)
+    flash[:actions] = @flash_actions
   end
 end

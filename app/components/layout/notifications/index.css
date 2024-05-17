@@ -1,0 +1,13 @@
+.notifications {
+  position: fixed;
+  z-index: 200;
+  top: 0;
+  right: 0;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+
+  @apply p-4 space-y-4;
+}

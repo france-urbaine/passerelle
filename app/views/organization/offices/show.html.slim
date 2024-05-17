@@ -47,7 +47,7 @@
 
       - layout.with_section do
         - if @office.users_count.zero?
-          = card_component(content_class: "card__content--empty")
+          = card_component(class: "card--empty")
             | Aucun utilisateur assigné à ce guichet.
 
         - else
@@ -65,7 +65,7 @@
 
       - layout.with_section do
         - if @office.communes_count.zero?
-          = card_component(content_class: "card__content--empty")
+          = card_component(class: "card--empty")
             | Aucune commune assignée à ce guichet.
 
         - else

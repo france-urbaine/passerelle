@@ -1,11 +1,8 @@
-= card_component(actions_class: "card__actions--center") do |card|
+= card_component(class: "card--actions-center") do |card|
   - card.with_header do
     | Réinitialisation de votre mot de passe
 
   - card.with_form(model: resource, url: password_path(resource_name), method: :post) do |form|
-    - if resource.errors.include?(:reset_password_token)
-      p= display_errors(resource, :reset_password_token)
-
     p Veuillez saisir votre adresse mail pour que nous puissions vous transmettre les instructions nécessaires.
 
     = form.block(:email) do
