@@ -57,6 +57,7 @@
 
 /* Layouts */
 @import "../../components/layout/navbar";
+@import "../../components/layout/notifications";
 @import "./components/content";
 @import "./components/datatable";
 @import "./components/skeleton_loader";
