@@ -68,4 +68,15 @@ class ApplicationController < ActionController::Base
     super
     payload[:request_id] = request.request_id
   end
+
+  # HACKME: We need a simpler way to render components from controllers.
+  #
+  # Rendering components from controllers requires to properly define content_type:
+  # See https://viewcomponent.org/guide/getting-started.html#rendering-from-controllers
+  #
+  def render(*args, **options)
+    options[:content_type] ||= "text/html" if args.size == 1 && args.first.is_a?(ViewComponent::Base)
+
+    super(*args, **options)
+  end
 end

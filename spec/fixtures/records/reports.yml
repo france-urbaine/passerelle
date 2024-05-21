@@ -49,3 +49,12 @@ local_pro_1020030272:
   situation_annee_majic:   2023
   situation_invariant:     1020030272
   situation_libelle_voie:  Centre commercial BAB
+
+local_habitation_draft:
+  collectivity:  pays_basque
+  state:         draft
+  form_type:     evaluation_local_habitation
+  anomalies:
+    - consistance
+  code_insee:              64102
+  date_constat:            2024-02-11
