@@ -243,7 +243,7 @@ RSpec.describe "Office users in admin" do
     end
 
     # The browser should stay on the office page
-    # The user should not appears anymore
+    # The user should not appear anymore
     expect(page).to have_current_path(organization_office_path(pelp_bayonne))
     expect(page).to have_selector("h1", text: "PELP de Bayonne")
     expect(page).to have_no_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
@@ -294,14 +294,14 @@ RSpec.describe "Office users in admin" do
     end
 
     # The browser should stay on the office page
-    # The selected users should not appears anymore
+    # The selected users should not appear anymore
     # Other users should remain
     #
     expect(page).to have_current_path(organization_office_path(pelp_bayonne))
     expect(page).to have_selector("h1", text: "PELP de Bayonne")
     expect(page).to have_no_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
 
-    # The selection message should not appears anymore
+    # The selection message should not appear anymore
     # The dialog should be closed
     # A notification should be displayed
     #
@@ -466,7 +466,7 @@ RSpec.describe "Office users in admin" do
     end
 
     # The browser should stay on the office page
-    # The user should not appears anymore
+    # The user should not appear anymore
     #
     expect(page).to have_current_path(organization_office_path(pelp_bayonne))
     expect(page).to have_selector("h1", text: "PELP de Bayonne")
@@ -485,7 +485,7 @@ RSpec.describe "Office users in admin" do
     end
 
     # The browser should stay on the office page
-    # The user should not appears anymore
+    # The user should not appear anymore
     # The user should be back again
     #
     expect(page).to have_current_path(organization_office_path(pelp_bayonne))

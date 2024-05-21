@@ -167,7 +167,7 @@ RSpec.describe "DDFIP users in admin" do
     end
 
     # The browser should stay on the DDFIP page
-    # The user should not appears anymore
+    # The user should not appear anymore
     #
     expect(page).to have_current_path(admin_ddfip_path(ddfip64))
     expect(page).to have_selector("h1", text: "DDFIP des Pyrénées-Atlantiques")
@@ -187,7 +187,7 @@ RSpec.describe "DDFIP users in admin" do
     end
 
     # The browser should stay on the DDFIP page
-    # The user should not appears anymore
+    # The user should not appear anymore
     # The user should be back again
     #
     expect(page).to have_current_path(admin_ddfip_path(ddfip64))
@@ -227,7 +227,7 @@ RSpec.describe "DDFIP users in admin" do
     end
 
     # The browser should stay on the DDFIP page
-    # The selected users should not appears anymore
+    # The selected users should not appear anymore
     # Other users should remain
     #
     expect(page).to have_current_path(admin_ddfip_path(ddfip64))
@@ -236,7 +236,7 @@ RSpec.describe "DDFIP users in admin" do
     expect(page).to have_no_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Astride Fabre")
 
-    # The selection message should not appears anymore
+    # The selection message should not appear anymore
     # The dialog should be closed
     # A notification should be displayed
     #
@@ -258,7 +258,7 @@ RSpec.describe "DDFIP users in admin" do
     expect(page).to have_text("2 utilisateurs | Page 1 sur 1")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
 
-    # The selection message should not appears again
+    # The selection message should not appear again
     # The previous notification should be closed
     # A new notification should be displayed
     #
@@ -330,7 +330,7 @@ RSpec.describe "DDFIP users in admin" do
 
     expect(User.discarded.count).to eq(5)
 
-    # The selection message should not appears again
+    # The selection message should not appear again
     # The previous notification should be closed
     # A new notification should be displayed
     #
@@ -407,7 +407,7 @@ RSpec.describe "DDFIP users in admin" do
 
     expect(User.discarded.count).to eq(5)
 
-    # The selection message should not appears again
+    # The selection message should not appear again
     # The previous notification should be closed
     # A new notification should be displayed
     #

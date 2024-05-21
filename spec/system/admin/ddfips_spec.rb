@@ -239,7 +239,7 @@ RSpec.describe "DDFIPs in admin" do
     end
 
     # The browser should stay on the index page
-    # The DDFIP should not appears anymore
+    # The DDFIP should not appear anymore
     #
     expect(page).to have_current_path(admin_ddfips_path)
     expect(page).to have_selector("h1", text: "DDFIP")
@@ -289,7 +289,7 @@ RSpec.describe "DDFIPs in admin" do
     end
 
     # The browser should redirect to the index page
-    # The DDFIP should not appears anymore
+    # The DDFIP should not appear anymore
     #
     expect(page).to have_current_path(admin_ddfips_path)
     expect(page).to have_selector("h1", text: "DDFIP")
@@ -348,7 +348,7 @@ RSpec.describe "DDFIPs in admin" do
     end
 
     # The browser should stay on index page
-    # The selected DDFIPs should not appears anymore
+    # The selected DDFIPs should not appear anymore
     # Other DDFIPs should remain
     #
     expect(page).to have_current_path(admin_ddfips_path)
@@ -358,7 +358,7 @@ RSpec.describe "DDFIPs in admin" do
     expect(page).to have_selector(:table_row, "DDFIP" => "DDFIP du Nord")
     expect(page).to have_selector(:table_row, "DDFIP" => "DDFIP de Paris")
 
-    # The selection message should not appears anymore
+    # The selection message should not appear anymore
     # The dialog should be closed
     # A notification should be displayed
     #
@@ -380,7 +380,7 @@ RSpec.describe "DDFIPs in admin" do
     expect(page).to have_text("3 DDFIPs | Page 1 sur 1")
     expect(page).to have_selector(:table_row, "DDFIP" => "DDFIP des Pyrénées-Atlantiques")
 
-    # The selection message should not appears again
+    # The selection message should not appear again
     # The previous notification should be closed
     # A new notification should be displayed
     #
@@ -461,7 +461,7 @@ RSpec.describe "DDFIPs in admin" do
     expect(page).to have_selector(:table_row, "DDFIP" => "DDFIP du Nord")
     expect(page).to have_selector(:table_row, "DDFIP" => "DDFIP de Paris")
 
-    # The selection message should not appears again
+    # The selection message should not appear again
     # The previous notification should be closed
     # A new notification should be displayed
     #
@@ -543,7 +543,7 @@ RSpec.describe "DDFIPs in admin" do
     expect(page).to have_selector(:table_row, "DDFIP" => "DDFIP du Nord")
     expect(page).to have_selector(:table_row, "DDFIP" => "DDFIP de Paris")
 
-    # The selection message should not appears again
+    # The selection message should not appear again
     # The previous notification should be closed
     # A new notification should be displayed
     #

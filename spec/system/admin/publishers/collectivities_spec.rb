@@ -146,7 +146,7 @@ RSpec.describe "Publisher collectivities in admin" do
     end
 
     # The browser should stay on the publisher page
-    # The collectivity should not appears anymore
+    # The collectivity should not appear anymore
     #
     expect(page).to have_current_path(admin_publisher_path(solutions_territoire))
     expect(page).to have_selector("h1", text: "Solutions & Territoire")
@@ -205,14 +205,14 @@ RSpec.describe "Publisher collectivities in admin" do
     end
 
     # The browser should stay on the publisher page
-    # The selected collectivities should not appears anymore
+    # The selected collectivities should not appear anymore
     #
     expect(page).to have_current_path(admin_publisher_path(solutions_territoire))
     expect(page).to have_selector("h1", text: "Solutions & Territoire")
     expect(page).to have_text("5 collectivités | Page 1 sur 1")
     expect(page).to have_no_selector(:table_row, "Collectivité" => "CA du Pays Basque")
 
-    # The selection message should not appears anymore
+    # The selection message should not appear anymore
     # The dialog should be closed
     # A notification should be displayed
     #
@@ -234,7 +234,7 @@ RSpec.describe "Publisher collectivities in admin" do
     expect(page).to have_text("6 collectivités | Page 1 sur 1")
     expect(page).to have_selector(:table_row, "Collectivité" => "CA du Pays Basque")
 
-    # The selection message should not appears again
+    # The selection message should not appear again
     # The previous notification should be closed
     # A new notification should be displayed
     #
@@ -307,7 +307,7 @@ RSpec.describe "Publisher collectivities in admin" do
 
     expect(Collectivity.discarded.count).to eq(5)
 
-    # The selection message should not appears again
+    # The selection message should not appear again
     # The previous notification should be closed
     # A new notification should be displayed
     #
@@ -384,7 +384,7 @@ RSpec.describe "Publisher collectivities in admin" do
 
     expect(Collectivity.discarded.count).to eq(5)
 
-    # The selection message should not appears again
+    # The selection message should not appear again
     # The previous notification should be closed
     # A new notification should be displayed
     #

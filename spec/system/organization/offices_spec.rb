@@ -170,7 +170,7 @@ RSpec.describe "Offices managed by current organization" do
     end
 
     # The browser should stay on the index page
-    # The office should not appears anymore
+    # The office should not appear anymore
     #
     expect(page).to have_current_path(organization_offices_path)
     expect(page).to have_selector("h1", text: "Guichets")
@@ -220,7 +220,7 @@ RSpec.describe "Offices managed by current organization" do
     end
 
     # The browser should redirect to the index page
-    # The office should not appears anymore
+    # The office should not appear anymore
     #
     expect(page).to have_current_path(organization_offices_path)
     expect(page).to have_selector("h1", text: "Guichets")
@@ -279,7 +279,7 @@ RSpec.describe "Offices managed by current organization" do
     end
 
     # The browser should stay on index page
-    # The selected offices should not appears anymore
+    # The selected offices should not appear anymore
     # Other offices should remain
     #
     expect(page).to have_current_path(organization_offices_path)
@@ -289,7 +289,7 @@ RSpec.describe "Offices managed by current organization" do
     expect(page).to have_selector(:table_row, "Guichet" => "PELH de Bayonne")
     expect(page).to have_selector(:table_row, "Guichet" => "SIP de Bayonne")
 
-    # The selection message should not appears anymore
+    # The selection message should not appear anymore
     # The dialog should be closed
     # A notification should be displayed
     #
@@ -311,7 +311,7 @@ RSpec.describe "Offices managed by current organization" do
     expect(page).to have_text("3 guichets | Page 1 sur 1")
     expect(page).to have_selector(:table_row, "Guichet" => "PELP de Bayonne")
 
-    # The selection message should not appears again
+    # The selection message should not appear again
     # The previous notification should be closed
     # A new notification should be displayed
     #
@@ -392,7 +392,7 @@ RSpec.describe "Offices managed by current organization" do
     expect(page).to have_selector(:table_row, "Guichet" => "PELH de Bayonne")
     expect(page).to have_selector(:table_row, "Guichet" => "SIP de Bayonne")
 
-    # The selection message should not appears again
+    # The selection message should not appear again
     # The previous notification should be closed
     # A new notification should be displayed
     #
@@ -474,7 +474,7 @@ RSpec.describe "Offices managed by current organization" do
     expect(page).to have_selector(:table_row, "Guichet" => "PELH de Bayonne")
     expect(page).to have_selector(:table_row, "Guichet" => "SIP de Bayonne")
 
-    # The selection message should not appears again
+    # The selection message should not appear again
     # The previous notification should be closed
     # A new notification should be displayed
     #
