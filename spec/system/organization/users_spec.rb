@@ -257,7 +257,7 @@ RSpec.describe "Manage users from organization" do
       end
 
       # The browser should stay on the index page
-      # The user should not appears anymore
+      # The user should not appear anymore
       #
       expect(page).to have_current_path(organization_users_path)
       expect(page).to have_selector("h1", text: "Équipe")
@@ -307,7 +307,7 @@ RSpec.describe "Manage users from organization" do
       end
 
       # The browser should redirect to the index page
-      # The user should not appears anymore
+      # The user should not appear anymore
       #
       expect(page).to have_current_path(organization_users_path)
       expect(page).to have_selector("h1", text: "Équipe")
@@ -390,7 +390,7 @@ RSpec.describe "Manage users from organization" do
       end
 
       # The browser should stay on index page
-      # The selected users should not appears anymore
+      # The selected users should not appear anymore
       # Other users should remain
       #
       expect(page).to have_current_path(organization_users_path)
@@ -399,7 +399,7 @@ RSpec.describe "Manage users from organization" do
       expect(page).to have_no_selector(:table_row, "Utilisateur" => "Elise Lacroix")
       expect(page).to have_selector(:table_row, "Utilisateur" => "Marc Debomy")
 
-      # The selection message should not appears anymore
+      # The selection message should not appear anymore
       # The dialog should be closed
       # A notification should be displayed
       #
@@ -421,7 +421,7 @@ RSpec.describe "Manage users from organization" do
       expect(page).to have_text("3 utilisateurs | Page 1 sur 1")
       expect(page).to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 
-      # The selection message should not appears again
+      # The selection message should not appear again
       # The previous notification should be closed
       # A new notification should be displayed
       #
@@ -505,7 +505,7 @@ RSpec.describe "Manage users from organization" do
       expect(page).to have_selector(:table_row, "Utilisateur" => "Marc Debomy")
       expect(page).to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 
-      # The selection message should not appears again
+      # The selection message should not appear again
       # The previous notification should be closed
       # A new notification should be displayed
       #

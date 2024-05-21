@@ -196,7 +196,7 @@ RSpec.describe "Collectivities managed by current organization" do
     end
 
     # The browser should stay on the index page
-    # The collectivity should not appears anymore
+    # The collectivity should not appear anymore
     #
     expect(page).to have_current_path(organization_collectivities_path)
     expect(page).to have_selector("h1", text: "Collectivités")
@@ -246,7 +246,7 @@ RSpec.describe "Collectivities managed by current organization" do
     end
 
     # The browser should redirect to the index page
-    # The collectivity should not appears anymore
+    # The collectivity should not appear anymore
     #
     expect(page).to have_current_path(organization_collectivities_path)
     expect(page).to have_selector("h1", text: "Collectivités")
@@ -305,7 +305,7 @@ RSpec.describe "Collectivities managed by current organization" do
     end
 
     # The browser should stay on index page
-    # The selected collectivities should not appears anymore
+    # The selected collectivities should not appear anymore
     # Other collectivities should remain
     #
     expect(page).to have_current_path(organization_collectivities_path)
@@ -315,7 +315,7 @@ RSpec.describe "Collectivities managed by current organization" do
     expect(page).to have_selector(:table_row, "Collectivité" => "Métropole Européenne de Lille")
     expect(page).to have_selector(:table_row, "Collectivité" => "Commune de Paris")
 
-    # The selection message should not appears anymore
+    # The selection message should not appear anymore
     # The dialog should be closed
     # A notification should be displayed
     #
@@ -337,7 +337,7 @@ RSpec.describe "Collectivities managed by current organization" do
     expect(page).to have_text("6 collectivités | Page 1 sur 1")
     expect(page).to have_selector(:table_row, "Collectivité" => "CA du Pays Basque")
 
-    # The selection message should not appears again
+    # The selection message should not appear again
     # The previous notification should be closed
     # A new notification should be displayed
     #
@@ -419,7 +419,7 @@ RSpec.describe "Collectivities managed by current organization" do
     expect(page).to have_selector(:table_row, "Collectivité" => "Métropole Européenne de Lille")
     expect(page).to have_selector(:table_row, "Collectivité" => "Commune de Paris")
 
-    # The selection message should not appears again
+    # The selection message should not appear again
     # The previous notification should be closed
     # A new notification should be displayed
     #
@@ -501,7 +501,7 @@ RSpec.describe "Collectivities managed by current organization" do
     expect(page).to have_selector(:table_row, "Collectivité" => "Métropole Européenne de Lille")
     expect(page).to have_selector(:table_row, "Collectivité" => "Commune de Paris")
 
-    # The selection message should not appears again
+    # The selection message should not appear again
     # The previous notification should be closed
     # A new notification should be displayed
     #

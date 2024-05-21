@@ -169,7 +169,7 @@ RSpec.describe "OauthApplications managed by current organization" do
     end
 
     # The browser should stay on the index page
-    # The oauth_application should not appears anymore
+    # The oauth_application should not appear anymore
     #
     expect(page).to have_current_path(organization_oauth_applications_path)
     expect(page).to have_selector("h1", text: "API")
@@ -219,7 +219,7 @@ RSpec.describe "OauthApplications managed by current organization" do
     end
 
     # The browser should redirect to the index page
-    # The oauth_application should not appears anymore
+    # The oauth_application should not appear anymore
     #
     expect(page).to have_current_path(organization_oauth_applications_path)
     expect(page).to have_selector("h1", text: "API")
@@ -278,7 +278,7 @@ RSpec.describe "OauthApplications managed by current organization" do
     end
 
     # The browser should stay on index page
-    # The selected oauth_applications should not appears anymore
+    # The selected oauth_applications should not appear anymore
     # Other oauth_applications should remain
     #
     expect(page).to have_current_path(organization_oauth_applications_path)
@@ -287,7 +287,7 @@ RSpec.describe "OauthApplications managed by current organization" do
     expect(page).to have_no_selector(:table_row, "Nom" => "Test Oauth Application")
     expect(page).to have_selector(:table_row, "Nom" => "Oauth Application with URI")
 
-    # The selection message should not appears anymore
+    # The selection message should not appear anymore
     # The dialog should be closed
     # A notification should be displayed
     #
@@ -309,7 +309,7 @@ RSpec.describe "OauthApplications managed by current organization" do
     expect(page).to have_text("2 applications | Page 1 sur 1")
     expect(page).to have_selector(:table_row, "Nom" => "Test Oauth Application")
 
-    # The selection message should not appears again
+    # The selection message should not appear again
     # The previous notification should be closed
     # A new notification should be displayed
     #
@@ -388,7 +388,7 @@ RSpec.describe "OauthApplications managed by current organization" do
     expect(page).to have_selector(:table_row, "Nom" => "Test Oauth Application")
     expect(page).to have_selector(:table_row, "Nom" => "Oauth Application with URI")
 
-    # The selection message should not appears again
+    # The selection message should not appear again
     # The previous notification should be closed
     # A new notification should be displayed
     #
@@ -469,7 +469,7 @@ RSpec.describe "OauthApplications managed by current organization" do
     expect(page).to have_selector(:table_row, "Nom" => "Test Oauth Application")
     expect(page).to have_selector(:table_row, "Nom" => "Oauth Application with URI")
 
-    # The selection message should not appears again
+    # The selection message should not appear again
     # The previous notification should be closed
     # A new notification should be displayed
     #

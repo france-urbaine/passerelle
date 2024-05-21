@@ -191,7 +191,7 @@ RSpec.describe "Publishers in admin" do
     end
 
     # The browser should stay on the index page
-    # The publisher should not appears anymore
+    # The publisher should not appear anymore
     #
     expect(page).to have_current_path(admin_publishers_path)
     expect(page).to have_selector("h1", text: "Éditeurs")
@@ -241,7 +241,7 @@ RSpec.describe "Publishers in admin" do
     end
 
     # The browser should redirect to the index page
-    # The publisher should not appears anymore
+    # The publisher should not appear anymore
     #
     expect(page).to have_current_path(admin_publishers_path)
     expect(page).to have_selector("h1", text: "Éditeurs")
@@ -300,7 +300,7 @@ RSpec.describe "Publishers in admin" do
     end
 
     # The browser should stay on index page
-    # The selected publishers should not appears anymore
+    # The selected publishers should not appear anymore
     # Other publishers should remain
     #
     expect(page).to have_current_path(admin_publishers_path)
@@ -309,7 +309,7 @@ RSpec.describe "Publishers in admin" do
     expect(page).to have_no_selector(:table_row, "Éditeur" => "France Urbaine")
     expect(page).to have_selector(:table_row, "Éditeur" => "Solutions & Territoire")
 
-    # The selection message should not appears anymore
+    # The selection message should not appear anymore
     # The dialog should be closed
     # A notification should be displayed
     #
@@ -331,7 +331,7 @@ RSpec.describe "Publishers in admin" do
     expect(page).to have_text("2 éditeurs | Page 1 sur 1")
     expect(page).to have_selector(:table_row, "Éditeur" => "France Urbaine")
 
-    # The selection message should not appears again
+    # The selection message should not appear again
     # The previous notification should be closed
     # A new notification should be displayed
     #
@@ -411,7 +411,7 @@ RSpec.describe "Publishers in admin" do
     expect(page).to have_selector(:table_row, "Éditeur" => "Solutions & Territoire")
     expect(page).to have_selector(:table_row, "Éditeur" => "France Urbaine")
 
-    # The selection message should not appears again
+    # The selection message should not appear again
     # The previous notification should be closed
     # A new notification should be displayed
     #
@@ -493,7 +493,7 @@ RSpec.describe "Publishers in admin" do
     expect(page).to have_selector(:table_row, "Éditeur" => "Solutions & Territoire")
     expect(page).to have_selector(:table_row, "Éditeur" => "France Urbaine")
 
-    # The selection message should not appears again
+    # The selection message should not appear again
     # The previous notification should be closed
     # A new notification should be displayed
     #

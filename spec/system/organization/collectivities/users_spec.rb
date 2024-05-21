@@ -249,7 +249,7 @@ RSpec.describe "Manage users of collectivities managed by current organization" 
     end
 
     # The browser should stay on the collectivity page
-    # The user should not appears anymore
+    # The user should not appear anymore
     #
     expect(page).to have_current_path(organization_collectivity_path(pays_basque))
     expect(page).to have_selector("h1", text: "CA du Pays Basque")
@@ -299,7 +299,7 @@ RSpec.describe "Manage users of collectivities managed by current organization" 
     end
 
     # The browser should redirect to the collectivity page
-    # The user should not appears anymore
+    # The user should not appear anymore
     #
     expect(page).to have_current_path(organization_collectivity_path(pays_basque))
     expect(page).to have_selector("h1", text: "CA du Pays Basque")
@@ -358,7 +358,7 @@ RSpec.describe "Manage users of collectivities managed by current organization" 
     end
 
     # The browser should stay on collectivity page
-    # The selected users should not appears anymore
+    # The selected users should not appear anymore
     # Other users should remain
     #
     expect(page).to have_current_path(organization_collectivity_path(pays_basque))
@@ -367,7 +367,7 @@ RSpec.describe "Manage users of collectivities managed by current organization" 
     expect(page).to have_no_selector(:table_row, "Utilisateur" => "Pierre Civil")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Christelle Droitier")
 
-    # The selection message should not appears anymore
+    # The selection message should not appear anymore
     # The dialog should be closed
     # A notification should be displayed
     #
@@ -389,7 +389,7 @@ RSpec.describe "Manage users of collectivities managed by current organization" 
     expect(page).to have_text("2 utilisateurs | Page 1 sur 1")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Pierre Civil")
 
-    # The selection message should not appears again
+    # The selection message should not appear again
     # The previous notification should be closed
     # A new notification should be displayed
     #
@@ -459,7 +459,7 @@ RSpec.describe "Manage users of collectivities managed by current organization" 
     expect(page).to have_selector(:table_row, "Utilisateur" => "Pierre Civil")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Christelle Droitier")
 
-    # The selection message should not appears again
+    # The selection message should not appear again
     # The previous notification should be closed
     # A new notification should be displayed
     #
@@ -533,7 +533,7 @@ RSpec.describe "Manage users of collectivities managed by current organization" 
     expect(page).to have_selector(:table_row, "Utilisateur" => "Christelle Droitier")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Pierre Civil")
 
-    # The selection message should not appears again
+    # The selection message should not appear again
     # The previous notification should be closed
     # A new notification should be displayed
     #

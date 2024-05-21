@@ -180,7 +180,7 @@ RSpec.describe "Communes assigned to offices managed bu current organization" do
     end
 
     # The browser should stay on the office page
-    # The user should not appears anymore
+    # The user should not appear anymore
     expect(page).to have_current_path(organization_office_path(pelp_bayonne))
     expect(page).to have_selector("h1", text: "PELP de Bayonne")
     expect(page).to have_no_selector(:table_row, { "Commune" => "64102" }, text: "Bayonne")
@@ -225,14 +225,14 @@ RSpec.describe "Communes assigned to offices managed bu current organization" do
     end
 
     # The browser should stay on the office page
-    # The selected communes should not appears anymore
+    # The selected communes should not appear anymore
     # Other communes should remain
     #
     expect(page).to have_current_path(organization_office_path(pelp_bayonne))
     expect(page).to have_selector("h1", text: "PELP de Bayonne")
     expect(page).to have_no_selector(:table_row, { "Commune" => "64102" }, text: "Bayonne")
 
-    # The selection message should not appears anymore
+    # The selection message should not appear anymore
     # The dialog should be closed
     # A notification should be displayed
     #
