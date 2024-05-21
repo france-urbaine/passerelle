@@ -23,10 +23,10 @@
 #
 # Foreign Keys
 #
-#  fk_rails_...  (collectivity_id => collectivities.id)
-#  fk_rails_...  (oauth_application_id => oauth_applications.id)
-#  fk_rails_...  (publisher_id => publishers.id)
-#  fk_rails_...  (user_id => users.id)
+#  fk_rails_...  (collectivity_id => collectivities.id) ON DELETE => cascade
+#  fk_rails_...  (oauth_application_id => oauth_applications.id) ON DELETE => nullify
+#  fk_rails_...  (publisher_id => publishers.id) ON DELETE => nullify
+#  fk_rails_...  (user_id => users.id) ON DELETE => nullify
 #
 class Transmission < ApplicationRecord
   include States::Sandbox

@@ -274,8 +274,19 @@ RSpec.describe Package do
     end
   end
 
-  # Database constraints and triggers
+  # Database foreign keys, constraints and triggers
   # ----------------------------------------------------------------------------
+  describe "database foreign keys" do
+    it "nullifies transmission_id when transmission is deleted" do
+      package = create(:package)
+
+      transmission = Transmission.find(package.transmission_id)
+      transmission.delete
+
+      expect { package.reload }.to change(package, :transmission_id).to(nil)
+    end
+  end
+
   describe "database constraints" do
     it "asserts the uniqueness of reference" do
       existing_package = create(:package, reference: "2023-05-0003")
