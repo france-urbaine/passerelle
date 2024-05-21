@@ -149,7 +149,7 @@
 #  fk_rails_...  (office_id => offices.id) ON DELETE => nullify
 #  fk_rails_...  (package_id => packages.id) ON DELETE => cascade
 #  fk_rails_...  (publisher_id => publishers.id) ON DELETE => cascade
-#  fk_rails_...  (transmission_id => transmissions.id)
+#  fk_rails_...  (transmission_id => transmissions.id) ON DELETE => nullify
 #  fk_rails_...  (workshop_id => workshops.id) ON DELETE => nullify
 #
 class Report < ApplicationRecord

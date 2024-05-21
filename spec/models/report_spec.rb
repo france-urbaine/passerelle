@@ -1154,8 +1154,19 @@ RSpec.describe Report do
     end
   end
 
-  # Database constraints and triggers
+  # Database foreign keys & constraints
   # ----------------------------------------------------------------------------
+  describe "database foreign keys" do
+    it "nullifies transmission_id when transmission is deleted" do
+      report = create(:report, :transmitted)
+
+      transmission = Transmission.find(report.transmission_id)
+      transmission.delete
+
+      expect { report.reload }.to change(report, :transmission_id).to(nil)
+    end
+  end
+
   describe "database constraints" do
     let(:report) { create(:report) }
 

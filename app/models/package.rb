@@ -34,7 +34,7 @@
 #  fk_rails_...  (collectivity_id => collectivities.id) ON DELETE => cascade
 #  fk_rails_...  (ddfip_id => ddfips.id) ON DELETE => nullify
 #  fk_rails_...  (publisher_id => publishers.id) ON DELETE => cascade
-#  fk_rails_...  (transmission_id => transmissions.id)
+#  fk_rails_...  (transmission_id => transmissions.id) ON DELETE => nullify
 #
 class Package < ApplicationRecord
   include States::Sandbox

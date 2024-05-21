@@ -44,7 +44,10 @@ module Transmissions
 
     def pack_reports
       ddfips.each do |ddfip|
-        reports = transmission.reports.select { |report| report.covered_by_ddfip?(ddfip) }
+        reports = transmission.reports
+          .order(:created_at)
+          .select { |report| report.covered_by_ddfip?(ddfip) }
+
         next if reports.empty?
 
         package = create_package(ddfip)

@@ -4204,7 +4204,7 @@ ALTER TABLE ONLY public.offices
 --
 
 ALTER TABLE ONLY public.transmissions
-    ADD CONSTRAINT fk_rails_19db02e97a FOREIGN KEY (collectivity_id) REFERENCES public.collectivities(id);
+    ADD CONSTRAINT fk_rails_19db02e97a FOREIGN KEY (collectivity_id) REFERENCES public.collectivities(id) ON DELETE CASCADE;
 
 
 --
@@ -4244,7 +4244,7 @@ ALTER TABLE ONLY public.reports
 --
 
 ALTER TABLE ONLY public.reports
-    ADD CONSTRAINT fk_rails_4983720dc4 FOREIGN KEY (transmission_id) REFERENCES public.transmissions(id);
+    ADD CONSTRAINT fk_rails_4983720dc4 FOREIGN KEY (transmission_id) REFERENCES public.transmissions(id) ON DELETE SET NULL;
 
 
 --
@@ -4260,7 +4260,7 @@ ALTER TABLE ONLY public.reports
 --
 
 ALTER TABLE ONLY public.packages
-    ADD CONSTRAINT fk_rails_4d9176af60 FOREIGN KEY (transmission_id) REFERENCES public.transmissions(id);
+    ADD CONSTRAINT fk_rails_4d9176af60 FOREIGN KEY (transmission_id) REFERENCES public.transmissions(id) ON DELETE SET NULL;
 
 
 --
@@ -4292,7 +4292,7 @@ ALTER TABLE ONLY public.epcis
 --
 
 ALTER TABLE ONLY public.transmissions
-    ADD CONSTRAINT fk_rails_65784bea92 FOREIGN KEY (oauth_application_id) REFERENCES public.oauth_applications(id);
+    ADD CONSTRAINT fk_rails_65784bea92 FOREIGN KEY (oauth_application_id) REFERENCES public.oauth_applications(id) ON DELETE SET NULL;
 
 
 --
@@ -4348,7 +4348,7 @@ ALTER TABLE ONLY public.active_storage_variant_records
 --
 
 ALTER TABLE ONLY public.transmissions
-    ADD CONSTRAINT fk_rails_a3319cd57a FOREIGN KEY (user_id) REFERENCES public.users(id);
+    ADD CONSTRAINT fk_rails_a3319cd57a FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE SET NULL;
 
 
 --
@@ -4372,7 +4372,7 @@ ALTER TABLE ONLY public.office_communes
 --
 
 ALTER TABLE ONLY public.transmissions
-    ADD CONSTRAINT fk_rails_b443b039c7 FOREIGN KEY (publisher_id) REFERENCES public.publishers(id);
+    ADD CONSTRAINT fk_rails_b443b039c7 FOREIGN KEY (publisher_id) REFERENCES public.publishers(id) ON DELETE SET NULL;
 
 
 --
@@ -4438,6 +4438,7 @@ ALTER TABLE ONLY public.oauth_access_tokens
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20240517133141'),
 ('20240517080220'),
 ('20240328082737'),
 ('20240326084643'),

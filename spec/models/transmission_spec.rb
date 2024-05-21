@@ -203,4 +203,40 @@ RSpec.describe Transmission do
       it { expect(transmissions[4]).to     be_made_by_publisher(publisher) }
     end
   end
+
+  # Database foreign keys
+  # ----------------------------------------------------------------------------
+  describe "database foreign keys" do
+    it "nullifies user_id when user is deleted" do
+      user         = create(:user)
+      transmission = create(:transmission, user:)
+
+      user.delete
+      expect { transmission.reload }.to change(transmission, :user_id).to(nil)
+    end
+
+    it "nullifies oauth_application_id when application is deleted" do
+      oauth_application = create(:oauth_application)
+      transmission      = create(:transmission, oauth_application:)
+
+      oauth_application.delete
+      expect { transmission.reload }.to change(transmission, :oauth_application_id).to(nil)
+    end
+
+    it "nullifies publisher_id when application is deleted" do
+      publisher    = create(:publisher)
+      transmission = create(:transmission, publisher:)
+
+      publisher.delete
+      expect { transmission.reload }.to change(transmission, :publisher_id).to(nil)
+    end
+
+    it "deletes tranmissions when collectivity is deleted" do
+      collectivity = create(:collectivity)
+      transmission = create(:transmission, collectivity:)
+
+      collectivity.delete
+      expect { transmission.reload }.to raise_exception(ActiveRecord::RecordNotFound)
+    end
+  end
 end
