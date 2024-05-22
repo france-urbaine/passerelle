@@ -1,0 +1,32 @@
+@layer components {
+  .datalist__wrapper {
+    position: relative;
+  }
+
+  .datalist {
+    position: absolute;
+    left: 0;
+    right: 0;
+    overflow-y: scroll;
+
+    @apply top-1 max-h-60 shadow-lg rounded-sm border;
+    @apply bg-white border-gray-200;
+    @apply dark:bg-black dark:border-gray-800;
+  }
+
+  .datalist__option {
+    @apply px-4 py-3 border-none;
+    @apply border-gray-200;
+    @apply dark:border-gray-800;
+
+    &:last-child {
+      @apply border-none;
+    }
+
+    &:hover,
+    &--active {
+      @apply bg-blue-50;
+      @apply dark:bg-blue-900/50;
+    }
+  }
+}

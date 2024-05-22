@@ -1,0 +1,10 @@
+- if request.xhr?
+  - options.each do |option|
+    li.datalist__option( role="option" data-autocomplete-value=option.value_to_attribute )
+      = option
+
+- else
+  ul.datalist( data-autocomplete-target="results" )
+    - options.each do |option|
+      li.datalist__option( role="option" data-autocomplete-value=option.value_to_attribute )
+        = option

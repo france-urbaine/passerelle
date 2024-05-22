@@ -23,6 +23,7 @@
 
 /* UI components - basic component */
 @import "../../components/ui/button";
+@import "../../components/ui/datalist";
 @import "../../components/ui/form/block";
 @import "../../components/ui/form/password_field";
 @import "../../components/ui/form/checkboxes";
