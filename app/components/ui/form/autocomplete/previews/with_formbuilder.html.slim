@@ -1,0 +1,4 @@
+= fields model: Commune.new do |form|
+  = form.autocomplete_component :departement, url: territories_departements_path do |autocomplete|
+    - autocomplete.with_label
+    - autocomplete.with_hidden_field :code_departement

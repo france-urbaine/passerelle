@@ -1,8 +1,4 @@
 @layer components {
-  .datalist__wrapper {
-    position: relative;
-  }
-
   .datalist {
     position: absolute;
     left: 0;

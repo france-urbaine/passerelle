@@ -1,0 +1,6 @@
+@layer components {
+  .autocomplete__results-wrapper {
+    position: relative;
+  }
+}
+

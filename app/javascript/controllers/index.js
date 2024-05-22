@@ -11,6 +11,9 @@ application.register("nested-form", NestedForm)
 
 // Components
 // -----------------------------------------------------------------------------
+import AutocompleteController from "../../components/ui/form/autocomplete"
+application.register("autocomplete", AutocompleteController)
+
 import DropdownController from "../../components/ui/dropdown"
 application.register("dropdown", DropdownController)
 
@@ -35,9 +38,6 @@ application.register("navbar", NavbarController)
 
 // Controllers
 // -----------------------------------------------------------------------------
-import AutocompleteController from "./autocomplete_controller"
-application.register("autocomplete", AutocompleteController)
-
 import CopyTextController from "./copy_text_controller"
 application.register("copy-text", CopyTextController)
 

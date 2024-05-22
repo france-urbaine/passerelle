@@ -3,11 +3,15 @@
 module Admin
   class PublishersController < ApplicationController
     before_action :authorize!
-    before_action :autocompletion_not_implemented!, only: :index
 
     def index
       @publishers = authorize_publishers_scope
       @publishers, @pagy = index_collection(@publishers)
+
+      respond_with @ddfips do |format|
+        format.html.autocomplete { render layout: false }
+        format.html.any
+      end
     end
 
     def show

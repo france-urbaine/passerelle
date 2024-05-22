@@ -1,0 +1,20 @@
+= form_block_component @object_name, @method, **html_attributes do |block|
+  = content
+  = label
+  = search_field
+  = hidden_field
+
+  .autocomplete__results-wrapper
+    ul.datalist( data-autocomplete-target="results" hidden )
+
+  - if errors
+    - errors.each do |error|
+      - block.with_error do
+        = error
+
+  - if hint
+    - block.with_hint do
+      = hint
+
+- noscripts.each do |noscript|
+  = noscript

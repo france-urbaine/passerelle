@@ -5,6 +5,10 @@ class ComponentFormBuilder < ActionView::Helpers::FormBuilder
     @template.form_block_component(@object, ...)
   end
 
+  def autocomplete_component(method, **options, &)
+    @template.autocomplete_component(@object_name, method, **objectify_options(options), &)
+  end
+
   def password_field_component(...)
     @template.password_field_component(@object_name, ...)
   end

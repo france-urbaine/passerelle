@@ -1,0 +1,12 @@
+/ To seed what will happend when Javascript is disabled:
+/   - take a look on HTML tab
+/   or
+/   - click on "Open preview in new window" and disable JS.
+
+= fields model: User.new do |form|
+  = form.autocomplete_component :organization, url: organizations_path do |autocomplete|
+    - autocomplete.with_label "Organisation (JS enabled) :"
+    - autocomplete.with_noscript do
+      = form.block :organization do
+        = form.label      :organization_name, "Nom de l'organisation (JS disabled) :"
+        = form.text_field :organization_name
