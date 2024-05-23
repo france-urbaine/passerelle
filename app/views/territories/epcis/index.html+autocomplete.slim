@@ -1,3 +1,4 @@
-- @epcis.each do |epci|
-  li.autocomplete__list-item( role="option" data-autocomplete-value=epci.siren )
-    = epci.name
+= datalist_component(highlight: params[:q]) do |datalist|
+  - @epcis.each do |epci|
+    - datalist.with_option(value: epci.siren) do
+      = epci.name

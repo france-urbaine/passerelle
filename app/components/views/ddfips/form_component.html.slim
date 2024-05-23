@@ -13,15 +13,14 @@
         = form.label :name
         = form.text_field :name, autofocus: true, required: true
 
-      = form.block :departement, autocomplete: territories_departements_path do
-        = form.label :departement
-        = form.search_field :departement,      data: { autocomplete_target: "input" }, **departement_input_html_attributes
-        = form.hidden_field :code_departement, data: { autocomplete_target: "hidden" }
-
-      = noscript_component do
-        = form.block :code_departement do |block|
-          = form.label :code_departement
-          = form.text_field :code_departement, required: true
+      = form.autocomplete_component :departement, url: territories_departements_path do |autocomplete|
+        - autocomplete.with_label
+        - autocomplete.with_search_field **departement_search_options
+        - autocomplete.with_hidden_field :code_departement
+        - autocomplete.with_noscript do
+          = form.block :code_departement do |block|
+            = form.label :code_departement
+            = form.text_field :code_departement, required: true
 
       = form.block :contact_first_name do
         = form.label :contact_first_name

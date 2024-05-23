@@ -1,3 +1,4 @@
-- @ddfips.each do |ddfip|
-  li.autocomplete__list-item( role="option" data-autocomplete-value=ddfip.id )
-    = ddfip.name
+= datalist_component(highlight: params[:q]) do |datalist|
+  - @ddfips.each do |ddfip|
+    - datalist.with_option(value: ddfip.id) do
+      = ddfip.name

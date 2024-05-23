@@ -1,5 +1,4 @@
-- @organizations.each do |organization|
-  - value = { type: organization.class.name, id: organization.id }.to_json
-
-  li.autocomplete__list-item( role="option" data-autocomplete-value=value )
-    = organization.name
+= datalist_component(highlight: params[:q]) do |datalist|
+  - @organizations.each do |organization|
+    - datalist.with_option(value: { type: organization.class.name, id: organization.id }) do
+      = organization.name

@@ -10,22 +10,21 @@
       - modal.with_hidden_field :redirect, redirection_path
 
       - if allowed_to_assign_organization?
-        = form.block :organization, autocomplete: organizations_path do
-          = form.label :organization
-          = form.search_field :organization,      **organization_input_html_attributes
-          = form.hidden_field :organization_data, **organization_hidden_html_attributes
+        = form.autocomplete_component :organization, url: organizations_path do |autocomplete|
+          - autocomplete.with_label
+          - autocomplete.with_search_field **organization_search_options
+          - autocomplete.with_hidden_field :organization_data, **organization_hidden_options
+          - autocomplete.with_noscript do
+            = form.block :organization_type do
+              = form.label :organization_type
+              = form.select :organization_type, organization_type_choice, autofocus: true, required: true
 
-        = noscript_component do
-          = form.block :organization_type do
-            = form.label :organization_type
-            = form.select :organization_type, organization_type_choice, autofocus: true, required: true
+            = form.block :organization do |block|
+              = form.label :organization_name
+              = form.text_field :organization_name, required: true, value: organization_name
 
-          = form.block :organization do |block|
-            = form.label :organization_name
-            = form.text_field :organization_name, required: true, value: organization_name
-
-            - block.with_hint do
-              p En l'absence de Javascript, vous devez saisir le nom exact de l'organisation.
+              - block.with_hint do
+                p En l'absence de Javascript, vous devez saisir le nom exact de l'organisation.
 
       = form.block :first_name do
         = form.label :first_name

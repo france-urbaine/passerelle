@@ -14,29 +14,28 @@
           = form.label :publisher_id, "Éditeur"
           = form.select :publisher_id, publisher_id_choice, publisher_id_options
 
-      = form.block :territory, autocomplete: territories_path do
-        = form.label :territory
-        = form.search_field :territory,      data: { autocomplete_target: "input" }, **territory_input_html_attributes
-        = form.hidden_field :territory_data, data: { autocomplete_target: "hidden" }, **territory_hidden_html_attributes
+      = form.autocomplete_component :territory, url: territories_path do |autocomplete|
+        - autocomplete.with_label
+        - autocomplete.with_search_field **territory_search_options
+        - autocomplete.with_hidden_field :territory_data, **territory_hidden_options
+        - autocomplete.with_noscript do
+          = form.block :territory_type do
+            = form.label :territory_type
+            = form.select :territory_type, territory_type_choice, autofocus: true, required: true
 
-      = noscript_component do
-        = form.block :territory_type do
-          = form.label :territory_type
-          = form.select :territory_type, territory_type_choice, autofocus: true, required: true
+          = form.block :territory do |block|
+            = form.label :territory_code
+            = form.text_field :territory_code, required: true, value: territory_code
 
-        = form.block :territory do |block|
-          = form.label :territory_code
-          = form.text_field :territory_code, required: true, value: territory_code
-
-          - block.with_hint do
-            .prose
-              p
-                | En l'absence de Javascript, vous devez saisir un code pour identifier la collectivité :
-              ul
-                li Pour une commune, saisissez son code INSEE à 5 chiffres (64102, 2B301, ...)
-                li Pour un EPCI, saisissez son code SIREN
-                li Pour un département, saisissez son code INSEE à 2 ou 3 caractères (75, 2A, 971, ...)
-                li Pour une region, saisissez son code INSEE à 2 chiffres (11, 28, ...)
+            - block.with_hint do
+              .prose
+                p
+                  | En l'absence de Javascript, vous devez saisir un code pour identifier la collectivité :
+                ul
+                  li Pour une commune, saisissez son code INSEE à 5 chiffres (64102, 2B301, ...)
+                  li Pour un EPCI, saisissez son code SIREN
+                  li Pour un département, saisissez son code INSEE à 2 ou 3 caractères (75, 2A, 971, ...)
+                  li Pour une region, saisissez son code INSEE à 2 chiffres (11, 28, ...)
 
       = form.block :name do
         = form.label :name
