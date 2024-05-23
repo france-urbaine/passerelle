@@ -84,12 +84,6 @@ module UI
 
         # --------------------------------------------------------------------------
 
-        # @label Autocompletion
-        #
-        def autocompletion; end
-
-        # --------------------------------------------------------------------------
-
         # @label Content switcher
         #
         def content_switcher; end

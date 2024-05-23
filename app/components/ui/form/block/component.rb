@@ -7,33 +7,20 @@ module UI
         define_component_helper :form_block_component
 
         renders_many :errors
-        renders_one :hint
+        renders_one  :hint
 
-        def initialize(record, attribute, autocomplete: false, **options)
-          @record = record
-          @attribute = attribute
-          @autocomplete = autocomplete
-          @options = options
+        def initialize(record, attribute, **)
+          @record          = record
+          @attribute       = attribute
+          @html_attributes = parse_html_attributes(**)
           super()
         end
 
         def block_html_attributes
-          options = @options.dup
-
-          options[:data] ||= {}
-          options[:class] ||= ""
-
-          options[:class] += " form-block"
-          options[:class] += " form-block--invalid" if invalid? || errors?
-
-          if @autocomplete
-            options[:class] += " hidden autocomplete"
-            options[:data][:controller] = "autocomplete"
-            options[:data][:autocomplete_url_value] = @autocomplete
-            options[:data][:autocomplete_selected_class] = "autocomplete__list-item--active"
-          end
-
-          options
+          attributes = @html_attributes
+          attributes = reverse_merge_attributes(attributes, { class: "form-block" })
+          attributes = reverse_merge_attributes(attributes, { class: "form-block--invalid" }) if invalid? || errors?
+          attributes
         end
 
         def invalid?

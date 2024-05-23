@@ -14,5 +14,4 @@ RSpec.describe UI::Form::Block::Preview do
   it { is_expected.to render_preview_without_exception(:text_field_with_validation_errors) }
   it { is_expected.to render_preview_without_exception(:text_field_with_messages) }
   it { is_expected.to render_preview_without_exception(:check_box_with_hint) }
-  it { is_expected.to render_preview_without_exception(:autocompletion) }
 end
