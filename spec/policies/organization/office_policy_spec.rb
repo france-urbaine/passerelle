@@ -63,7 +63,7 @@ RSpec.describe Organization::OfficePolicy, type: :policy do
   it { expect(:undiscard_all?).to be_an_alias_of(policy, :manage?) }
 
   describe "default relation scope" do
-    subject!(:scope) { apply_relation_scope(Office.all) }
+    subject(:scope) { apply_relation_scope(Office.all) }
 
     it_behaves_like "when current user is a DDFIP admin" do
       it "scopes all kept offices" do
@@ -89,7 +89,7 @@ RSpec.describe Organization::OfficePolicy, type: :policy do
   end
 
   describe "destroyable relation scope" do
-    subject!(:scope) { apply_relation_scope(Office.all, name: :destroyable) }
+    subject(:scope) { apply_relation_scope(Office.all, name: :destroyable) }
 
     it_behaves_like "when current user is a DDFIP admin" do
       it "scopes all kept offices" do
@@ -115,7 +115,7 @@ RSpec.describe Organization::OfficePolicy, type: :policy do
   end
 
   describe "undiscardable relation scope" do
-    subject!(:scope) { apply_relation_scope(Office.all, name: :undiscardable) }
+    subject(:scope) { apply_relation_scope(Office.all, name: :undiscardable) }
 
     it_behaves_like "when current user is a DDFIP admin" do
       it "scopes all discarded offices" do
