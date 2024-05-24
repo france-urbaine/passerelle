@@ -6,8 +6,8 @@ module Layout
       renders_one  :header
       renders_many :sections, "Section"
 
-      def initialize(**options)
-        @options = options
+      def initialize(**)
+        @html_attributes = parse_html_attributes(**)
         super()
       end
 
@@ -19,10 +19,9 @@ module Layout
       end
 
       def navbar_html_attributes
-        options = @options.dup
-        options[:class] = Array.wrap(options[:class])
-        options[:class].unshift("navbar")
-        options
+        reverse_merge_attributes(@html_attributes, {
+          class: "navbar"
+        })
       end
 
       def links_with_icons
