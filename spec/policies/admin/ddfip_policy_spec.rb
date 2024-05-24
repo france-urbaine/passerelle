@@ -51,7 +51,7 @@ RSpec.describe Admin::DDFIPPolicy, type: :policy do
   it { expect(:undiscard_all?).to be_an_alias_of(policy, :manage?) }
 
   describe "default relation scope" do
-    subject!(:scope) { apply_relation_scope(DDFIP.all) }
+    subject(:scope) { apply_relation_scope(DDFIP.all) }
 
     it_behaves_like "when current user is a super admin" do
       it "scopes on kept DDFIPs" do
@@ -74,7 +74,7 @@ RSpec.describe Admin::DDFIPPolicy, type: :policy do
   end
 
   describe "destroyable relation scope" do
-    subject!(:scope) { apply_relation_scope(DDFIP.all, name: :destroyable) }
+    subject(:scope) { apply_relation_scope(DDFIP.all, name: :destroyable) }
 
     it_behaves_like "when current user is a DDFIP super admin" do
       it "scopes all kept DDFIPs" do
@@ -132,7 +132,7 @@ RSpec.describe Admin::DDFIPPolicy, type: :policy do
   end
 
   describe "undiscardable relation scope" do
-    subject!(:scope) { apply_relation_scope(DDFIP.all, name: :undiscardable) }
+    subject(:scope) { apply_relation_scope(DDFIP.all, name: :undiscardable) }
 
     it_behaves_like "when current user is a super admin" do
       it "scopes all discarded DDFIPs" do

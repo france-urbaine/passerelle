@@ -1,0 +1,11 @@
+
+.form-block
+  input( type="search" )
+
+  .datalist__wrapper
+    = datalist_component(highlight: "Cham") do |datalist|
+      - datalist.with_option(value: "200069110") do
+        | CA Chambéry Métropole
+
+      - datalist.with_option("Chambéry", value: "73065")
+      - datalist.with_option("Châmonix", value: "74056")

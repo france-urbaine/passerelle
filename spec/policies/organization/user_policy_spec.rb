@@ -140,7 +140,7 @@ RSpec.describe Organization::UserPolicy, type: :policy do
   it { expect(:undiscard_all?).to be_an_alias_of(policy, :manage?) }
 
   describe "default relation scope" do
-    subject!(:scope) { apply_relation_scope(User.all) }
+    subject(:scope) { apply_relation_scope(User.all) }
 
     it_behaves_like "when current user is a DDFIP admin" do
       it "scopes all kept users from its own organization" do
@@ -193,7 +193,7 @@ RSpec.describe Organization::UserPolicy, type: :policy do
   end
 
   describe "destroyable relation scope" do
-    subject!(:scope) { apply_relation_scope(User.all, name: :destroyable) }
+    subject(:scope) { apply_relation_scope(User.all, name: :destroyable) }
 
     it_behaves_like "when current user is a DDFIP admin" do
       it "scopes all kept users from its own organization excluding himself" do
@@ -285,7 +285,7 @@ RSpec.describe Organization::UserPolicy, type: :policy do
   end
 
   describe "undiscardable relation scope" do
-    subject!(:scope) { apply_relation_scope(User.all, name: :undiscardable) }
+    subject(:scope) { apply_relation_scope(User.all, name: :undiscardable) }
 
     it_behaves_like "when current user is a publisher admin" do
       it "scopes all kept users from its own organization" do

@@ -26,7 +26,7 @@ module Views
         end
       end
 
-      def departement_input_html_attributes
+      def departement_search_options
         {
           value:       @ddfip.departement&.qualified_name,
           placeholder: "Commnencez à taper pour sélectionner un département"

@@ -14,15 +14,14 @@
         = form.label :siren
         = form.text_field :siren, required: true
 
-      = form.block :departement, autocomplete: territories_departements_path do
-        = form.label :departement
-        = form.search_field :departement,      data: { autocomplete_target: "input" }, value: @epci.departement&.name, placeholder: "Commnencez à taper pour sélectionner un département"
-        = form.hidden_field :code_departement, data: { autocomplete_target: "hidden" }
-
-      = noscript_component do
-        = form.block :code_departement do
-          = form.label :code_departement
-          = form.text_field :code_departement
+      = form.autocomplete_component :departement, url: territories_departements_path do |autocomplete|
+        - autocomplete.with_label
+        - autocomplete.with_search_field value: @epci.departement&.name, placeholder: "Commnencez à taper pour sélectionner un département"
+        - autocomplete.with_hidden_field :code_departement
+        - autocomplete.with_noscript do
+          = form.block :code_departement do
+            = form.label :code_departement
+            = form.text_field :code_departement
 
     - modal.with_submit_action "Enregistrer"
     - modal.with_close_action "Annuler"

@@ -1,0 +1,4 @@
+= datalist_component(highlight: params[:q]) do |datalist|
+  - @publishers.each do |publisher|
+    - datalist.with_option(value: publisher.id)
+      = publisher.name

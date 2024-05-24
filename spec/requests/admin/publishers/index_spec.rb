@@ -59,9 +59,11 @@ RSpec.describe "Admin::PublishersController#index" do
     end
 
     context "when requesting autocompletion", :xhr, headers: { "Accept-Variant" => "autocomplete" } do
-      it { expect(response).to have_http_status(:not_implemented) }
+      let(:params) { { q: publishers.first.name } }
+
+      it { expect(response).to have_http_status(:success) }
       it { expect(response).to have_media_type(:html) }
-      it { expect(response).to have_html_body }
+      it { expect(response).to have_html_body.to have_selector("li", text: publishers[0].name) }
     end
   end
 end

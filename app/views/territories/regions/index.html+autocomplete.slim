@@ -1,3 +1,4 @@
-- @regions.each do |region|
-  li.autocomplete__list-item( role="option" data-autocomplete-value=region.code_region )
-    = region.name
+= datalist_component(highlight: params[:q]) do |datalist|
+  - @regions.each do |region|
+    - datalist.with_option(value: region.code_region) do
+      = region.name

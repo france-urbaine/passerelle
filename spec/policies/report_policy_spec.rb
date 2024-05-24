@@ -1070,7 +1070,7 @@ RSpec.describe ReportPolicy, type: :policy do
   end
 
   describe "relation scope" do
-    subject!(:scope) { apply_relation_scope(Report.all) }
+    subject(:scope) { apply_relation_scope(Report.all) }
 
     it_behaves_like("when current user is a collectivity user") do
       it "scopes on reports reported through the web UI or transmitted through API" do

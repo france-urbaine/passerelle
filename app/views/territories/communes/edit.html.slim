@@ -14,25 +14,23 @@
         = form.label :code_insee
         = form.text_field :code_insee, required: true
 
-      = form.block :departement, autocomplete: territories_departements_path do
-        = form.label :departement
-        = form.search_field :departement,      data: { autocomplete_target: "input" }, value: @commune.departement&.name, placeholder: "Commnencez à taper pour sélectionner un département"
-        = form.hidden_field :code_departement, data: { autocomplete_target: "hidden" }
+      = form.autocomplete_component :departement, url: territories_departements_path do |autocomplete|
+        - autocomplete.with_label
+        - autocomplete.with_search_field value: @commune.departement&.name, placeholder: "Commnencez à taper pour sélectionner un département"
+        - autocomplete.with_hidden_field :code_departement
+        - autocomplete.with_noscript do
+          = form.block :code_departement do
+            = form.label :code_departement
+            = form.text_field :code_departement, required: true
 
-      = noscript_component do
-        = form.block :code_departement do
-          = form.label :code_departement
-          = form.text_field :code_departement, required: true
-
-      = form.block :epci, autocomplete: territories_epcis_path do
-        = form.label :epci
-        = form.search_field :epci,       data: { autocomplete_target: "input" }, value: @commune.epci&.name, placeholder: "Commnencez à taper pour sélectionner un EPCI"
-        = form.hidden_field :siren_epci, data: { autocomplete_target: "hidden" }
-
-      = noscript_component do
-        = form.block :siren_epci do
-          = form.label :siren_epci
-          = form.text_field :siren_epci
+      = form.autocomplete_component :epci, url: territories_epcis_path do |autocomplete|
+        - autocomplete.with_label
+        - autocomplete.with_search_field value: @commune.epci&.name, placeholder: "Commnencez à taper pour sélectionner un EPCI"
+        - autocomplete.with_hidden_field :siren_epci
+        - autocomplete.with_noscript do
+          = form.block :siren_epci do
+            = form.label :siren_epci
+            = form.text_field :siren_epci
 
       = form.block :qualified_name do
         = form.label :qualified_name

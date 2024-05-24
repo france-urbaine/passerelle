@@ -1,0 +1,6 @@
+= autocomplete_component :commune, :departement, url: territories_departements_path do |autocomplete|
+  - current = FactoryBot.build_stubbed(:departement)
+
+  - autocomplete.with_label "Sélectionner un département :"
+  - autocomplete.with_search_field value: current.qualified_name, placeholder: "Commnencez à taper pour sélectionner un territoire"
+  - autocomplete.with_hidden_field :code_departement, value: { type: current.class.name, id: current.id }

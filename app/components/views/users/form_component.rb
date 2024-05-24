@@ -67,28 +67,24 @@ module Views
         @namespace == :admin
       end
 
-      def organization_input_html_attributes
+      def organization_search_options
         {
           value:       organization_name,
-          placeholder: "Commnencez à taper pour sélectionner une organisation",
-          data:        { autocomplete_target: "input" }
+          placeholder: "Commnencez à taper pour sélectionner une organisation"
         }
       end
 
-      def organization_hidden_html_attributes
+      def organization_hidden_options
         if @user.organization
           organization_data = {
             type: @user.organization_type,
             id:   @user.organization_id
-          }.to_json
+          }
         end
 
         {
           value: organization_data,
-          data: {
-            autocomplete_target: "hidden",
-            action:              "user-form#updateServices"
-          }
+          data: { action: "user-form#updateServices" }
         }
       end
 

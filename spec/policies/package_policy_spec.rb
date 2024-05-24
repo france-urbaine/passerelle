@@ -98,7 +98,7 @@ RSpec.describe PackagePolicy, type: :policy do
   end
 
   describe "default relation scope" do
-    subject!(:scope) { apply_relation_scope(Package.all) }
+    subject(:scope) { apply_relation_scope(Package.all) }
 
     it_behaves_like "when current user is a collectivity user" do
       it "scopes on packages packed through the web UI or transmitted through API" do

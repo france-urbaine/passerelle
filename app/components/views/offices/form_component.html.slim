@@ -10,18 +10,16 @@
       - modal.with_hidden_field :redirect, redirection_path
 
       - if allowed_to_assign_ddfip?
-        = form.block :ddfip, autocomplete: admin_ddfips_path do
-          = form.label :ddfip
-          = form.search_field :ddfip,    data: { autocomplete_target: "input" }, **ddfip_input_html_attributes
-          = form.hidden_field :ddfip_id, data: { autocomplete_target: "hidden" }
+        = form.autocomplete_component :ddfip, url: admin_ddfips_path do |autocomplete|
+          - autocomplete.with_label
+          - autocomplete.with_search_field **ddfip_search_options
+          - autocomplete.with_noscript do
+            = form.block :ddfip do |block|
+              = form.label :ddfip_name
+              = form.text_field :ddfip_name, required: true, value: ddfip_name
 
-        = noscript_component do
-          = form.block :ddfip do |block|
-            = form.label :ddfip_name
-            = form.text_field :ddfip_name, required: true, value: ddfip_name
-
-            - block.with_hint do
-              p En l'absence de Javascript, vous devez saisir le nom exact de la DDFIP.
+              - block.with_hint do
+                p En l'absence de Javascript, vous devez saisir le nom exact de la DDFIP.
 
       = form.block :name do
         = form.label :name

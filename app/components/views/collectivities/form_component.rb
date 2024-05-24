@@ -51,21 +51,21 @@ module Views
         end
       end
 
-      def territory_input_html_attributes
+      def territory_search_options
         {
           value:       @collectivity.territory&.qualified_name,
           placeholder: "Commnencez à taper pour sélectionner un territoire"
         }
       end
 
-      def territory_hidden_html_attributes
+      def territory_hidden_options
         return {} unless @collectivity.territory
 
         {
           value: {
             type: @collectivity.territory_type,
             id:   @collectivity.territory_id
-          }.to_json
+          }
         }
       end
 

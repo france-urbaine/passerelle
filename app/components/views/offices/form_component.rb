@@ -36,7 +36,7 @@ module Views
         @namespace == :admin && @ddfip.nil?
       end
 
-      def ddfip_input_html_attributes
+      def ddfip_search_options
         {
           value:       ddfip_name,
           placeholder: "Commnencez à taper pour sélectionner une DDFIP"

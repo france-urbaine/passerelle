@@ -1,5 +1,4 @@
-- @territories.each do |territory|
-  - value = { type: territory.class.name, id: territory.id }.to_json
-
-  li.autocomplete__list-item( role="option" data-autocomplete-value=value )
-    = territory.qualified_name
+= datalist_component(highlight: params[:q]) do |datalist|
+  - @territories.each do |territory|
+    - datalist.with_option(value: { type: territory.class.name, id: territory.id }) do
+      = territory.qualified_name

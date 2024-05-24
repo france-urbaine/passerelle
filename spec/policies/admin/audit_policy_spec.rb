@@ -14,7 +14,7 @@ RSpec.describe Admin::AuditPolicy, type: :policy do
   end
 
   describe "default relation scope" do
-    subject!(:scope) { apply_relation_scope(user.audits) }
+    subject(:scope) { apply_relation_scope(user.audits) }
 
     let(:user) do
       u = create(:user)

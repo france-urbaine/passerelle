@@ -49,7 +49,7 @@ RSpec.describe Admin::DGFIPPolicy, type: :policy do
   it { expect(:update?).to        be_an_alias_of(policy, :manage?) }
 
   describe "default relation scope" do
-    subject!(:scope) { apply_relation_scope(DGFIP.all) }
+    subject(:scope) { apply_relation_scope(DGFIP.all) }
 
     it_behaves_like "when current user is a super admin" do
       it "scopes on kept DGFIPs" do

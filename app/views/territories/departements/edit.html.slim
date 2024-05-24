@@ -14,15 +14,14 @@
         = form.label :code_departement
         = form.text_field :code_departement, required: true
 
-      = form.block :region, autocomplete: territories_regions_path do
-        = form.label :region
-        = form.search_field :region,      data: { autocomplete_target: "input" }, value: @departement.region&.name, placeholder: "Commnencez à taper pour sélectionner une région"
-        = form.hidden_field :code_region, data: { autocomplete_target: "hidden" }
-
-      = noscript_component do
-        = form.block :code_region do
-          = form.label :code_region
-          = form.text_field :code_region, required: true
+      = form.autocomplete_component :region, url: territories_regions_path do |autocomplete|
+        - autocomplete.with_label
+        - autocomplete.with_search_field value: @departement.region&.name, placeholder: "Commnencez à taper pour sélectionner une région"
+        - autocomplete.with_hidden_field :code_region
+        - autocomplete.with_noscript do
+          = form.block :code_region do
+            = form.label :code_region
+            = form.text_field :code_region, required: true
 
       = form.block :qualified_name do
         = form.label :qualified_name
