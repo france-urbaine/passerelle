@@ -36,12 +36,12 @@ module UI
       end
 
       def html_attributes
-        css_class = %w[flash]
-        css_class << SCHEME_CSS_CLASSES[@scheme]
-        css_class << @html_attributes[:class]
-        css_class = css_class.join(" ").squish
-
-        @html_attributes.merge(class: css_class)
+        reverse_merge_attributes(@html_attributes, {
+          class: [
+            "flash",
+            SCHEME_CSS_CLASSES[@scheme]
+          ]
+        })
       end
 
       def icon

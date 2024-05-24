@@ -26,10 +26,10 @@ module UI
         renders_many :actions, "ActionSlot"
         renders_one  :reference
 
-        def initialize(record, label, **options)
-          @record  = record
-          @label   = label
-          @options = options
+        def initialize(record, label, **)
+          @record          = record
+          @label           = label
+          @html_attributes = parse_html_attributes(**)
           super()
         end
 
@@ -41,16 +41,14 @@ module UI
           end
         end
 
-        def row_html_attributes
-          options = @options.dup
-
-          css_class = %w[description-list__row]
-          css_class << "description-list__row--with-actions" if actions?
-          css_class << "description-list__row--with-reference" if reference?
-          css_class << options[:class]
-
-          options[:class] = css_class.join(" ").squish
-          options
+        def html_attributes
+          merge_attributes(@html_attributes, {
+            class: [
+              "description-list__row",
+              ("description-list__row--with-actions" if actions?),
+              ("description-list__row--with-reference" if reference?)
+            ]
+          })
         end
 
         def value

@@ -25,8 +25,10 @@ module Layout
         }
       }
 
-      def initialize(**html_attributes)
-        @html_attributes = html_attributes
+      attr_reader :html_attributes
+
+      def initialize(**)
+        @html_attributes = parse_html_attributes(**)
         super()
       end
 
@@ -36,19 +38,11 @@ module Layout
         blocks.each(&:to_s)
       end
 
-      def div(main_class, other_atributes, &)
-        css_class = [main_class]
-        css_class << other_atributes[:class]
-        css_class = css_class.join(" ").squish
-
-        tag.div(**other_atributes, class: css_class, &)
-      end
-
       class Block < ApplicationViewComponent
         attr_reader :html_attributes
 
-        def initialize(**html_attributes)
-          @html_attributes = html_attributes
+        def initialize(**)
+          @html_attributes = parse_html_attributes(**)
           super()
         end
 
@@ -95,12 +89,9 @@ module Layout
         end
 
         def html_attributes
-          css_class = []
-          css_class << "content__header--title" if @title
-          css_class << @html_attributes[:class]
-          css_class = css_class.join(" ").squish
-
-          @html_attributes.merge(class: css_class)
+          merge_attributes(@html_attributes, {
+            class: ("content__header--title" if @title)
+          })
         end
       end
 
@@ -113,7 +104,9 @@ module Layout
         end
 
         def html_attributes
-          css_class = @html_attributes.fetch(:class) do
+          return @html_attributes if @html_attributes.include?(:class)
+
+          css_class =
             case columns.size
             when 0, 1 then nil
             when 2 then "content__grid--cols-2"
@@ -127,9 +120,8 @@ module Layout
                 end
               MESSAGE
             end
-          end
 
-          @html_attributes.merge(class: css_class)
+          merge_attributes(@html_attributes, { class: css_class })
         end
       end
 

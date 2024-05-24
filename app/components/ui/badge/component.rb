@@ -31,11 +31,12 @@ module UI
       end
 
       def html_attributes
-        attributes = {
-          class: merge_class_attribute("badge", SCHEME_CSS_CLASSES[@scheme])
-        }
-
-        merge_attributes(attributes, @html_attributes)
+        reverse_merge_attributes(@html_attributes, {
+          class: [
+            "badge",
+            SCHEME_CSS_CLASSES[@scheme]
+          ]
+        })
       end
     end
   end

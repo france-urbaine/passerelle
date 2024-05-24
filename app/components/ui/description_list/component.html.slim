@@ -1,7 +1,7 @@
 .card
   dl.description-list
     - attributes.each do |attribute|
-      = tag.div **attribute.row_html_attributes do
+      = tag.div **attribute.html_attributes do
         dt
           = attribute.label
 

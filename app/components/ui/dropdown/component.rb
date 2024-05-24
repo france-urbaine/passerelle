@@ -28,12 +28,14 @@ module UI
             item = MenuItem.new(direction: direction)
 
             if args.any? || options.any?
-              options[:role]  = options.fetch(:role, "menuitem")
-              options[:class] = Array.wrap(options[:class]) << "dropdown__menu-item"
-              options[:class] = options[:class].join(" ")
+              options = reverse_merge_attributes(options, {
+                role:   "menuitem",
+                class:  "dropdown__menu-item"
+              })
 
               icon_options = { icon: "chevron-left-small" }
               icon_options = { icon: "chevron-right-small", icon_position: "right" } if direction == "right"
+
               item.with_button(*args, **options)
               item.with_dropdown.with_button(*args, **icon_options, **options)
             end

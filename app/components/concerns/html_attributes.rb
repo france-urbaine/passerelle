@@ -19,8 +19,16 @@ module HTMLAttributes
     attributes
   end
 
+  def merge_attributes!(default, other)
+    default.merge!(merge_attributes(default, other))
+  end
+
   def reverse_merge_attributes(current, other)
     merge_attributes(other, current)
+  end
+
+  def reverse_merge_attributes!(current, other)
+    current.merge!(reverse_merge_attributes(current, other))
   end
 
   protected
@@ -49,6 +57,6 @@ module HTMLAttributes
   private
 
   def merge_string_attribute(default, other)
-    [default, other].join(" ").strip
+    [default, other].flatten.join(" ").squish
   end
 end
