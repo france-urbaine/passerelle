@@ -98,12 +98,13 @@ module UI
 
       class CloseAction < UI::Button::Component
         def initialize(*args, **options)
-          options[:class] ||= ""
-          options[:class] += " modal__close-action"
-
-          options[:data] ||= {}
-          options[:data][:turbo_frame] ||= "content"
-          options[:data][:action]      ||= "click->modal#close"
+          options = merge_attributes(options, {
+            class: "modal__close-action",
+            data:  {
+              turbo_frame:    "content",
+              action:         "click->modal#close"
+            }
+          })
 
           super(*args, **options)
         end
@@ -111,8 +112,9 @@ module UI
 
       class OtherAction < UI::Button::Component
         def initialize(*args, **options)
-          options[:class] ||= ""
-          options[:class] += " modal__secondary-action"
+          options = merge_attributes(options, {
+            class: "modal__secondary-action"
+          })
 
           super(*args, **options)
         end
