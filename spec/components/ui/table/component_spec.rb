@@ -222,9 +222,14 @@ RSpec.describe UI::Table::Component do
         expect(input).to have_html_attribute("aria-label").with_value("Tout sélectionner")
       end
 
-      expect(table).to have_selector("tbody tr td:first-child input[type='checkbox']") do |input|
-        expect(input).to have_html_attribute("aria-label").with_value("Sélectionner cette ligne")
-        expect(input).to have_html_attribute("value").with_value("1")
+      expect(table).to have_selector("tbody tr") do |tr|
+        expect(tr).to have_html_attribute("data-controller").with_value("selection-row")
+        expect(tr).to have_html_attribute("data-selection-row-selected-class").with_value("table__row--selected")
+
+        expect(tr).to have_selector("td:first-child input[type='checkbox']") do |input|
+          expect(input).to have_html_attribute("aria-label").with_value("Sélectionner cette ligne")
+          expect(input).to have_html_attribute("value").with_value("1")
+        end
       end
     end
   end

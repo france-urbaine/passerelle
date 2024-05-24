@@ -77,12 +77,14 @@ module UI
         end
 
         def html_attributes
-          attributes = { class: "table__cell" }
-          attributes[:class] += " table__cell--compact" if compact?
-          attributes[:class] += " table__cell--right" if right?
-
-          attributes = merge_attributes(attributes, @html_attributes)
-          attributes[:scope] = "col"
+          attributes = reverse_merge_attributes(@html_attributes, {
+            scope: "col",
+            class: [
+              "table__cell",
+              ("table__cell--compact" if compact?),
+              ("table__cell--right"   if right?)
+            ]
+          })
 
           if multi_span?
             attributes[:scope]   = "colgroup"
@@ -124,14 +126,20 @@ module UI
         end
 
         def html_attributes
-          attributes = { class: "table__row" }
+          attributes = reverse_merge_attributes(@html_attributes, {
+            class: "table__row"
+          })
 
           if checkbox?
-            attributes[:controller]                   = "selection-row"
-            attributes[:selection_row_selected_class] = "table__row--selected"
+            attributes = reverse_merge_attributes(attributes, {
+              data: {
+                controller: "selection-row",
+                selection_row_selected_class: "table__row--selected"
+              }
+            })
           end
 
-          merge_attributes(attributes, @html_attributes)
+          attributes
         end
 
         def component_dom_id(*)
@@ -314,14 +322,19 @@ module UI
         end
 
         def html_attributes
-          attributes = { class: "table__cell" }
-          attributes[:class] += " table__cell--compact" if compact?
-          attributes[:class] += " table__cell--right" if right?
+          attributes = reverse_merge_attributes(@html_attributes, {
+            class: [
+              "table__cell",
+              ("table__cell--compact" if compact?),
+              ("table__cell--right"   if right?)
+            ]
+          })
 
-          attributes = merge_attributes(attributes, @html_attributes)
+          if @span_index.nil?
+            attributes[:id]      = @row.component_dom_id(key) if key == @row.checkbox&.described_by
+            attributes[:colspan] = @head_column.span_size     if @head_column.multi_span?
+          end
 
-          attributes[:id]      = @row.component_dom_id(key) if @span_index.nil? && key == @row.checkbox&.described_by
-          attributes[:colspan] = @head_column.span_size     if @head_column.multi_span? && @span_index.nil?
           attributes
         end
       end
