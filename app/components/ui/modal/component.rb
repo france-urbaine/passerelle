@@ -21,7 +21,7 @@ module UI
 
       renders_one  :submit_action, "SubmitAction"
       renders_one  :close_action, lambda { |*args, **options|
-        CloseAction.new(*args, **options, href: referrer)
+        CloseAction.new(*args, **options, href: close_href)
       }
 
       renders_many :actions, "ActionSlot"
@@ -61,17 +61,31 @@ module UI
 
       protected
 
+      def close_href
+        # If the modal is open through XHR, we don't need to put an URL in buttons
+        # to close the modal: Javascript handled modal opening without changing
+        # the current URL and would handle closing.
+        #
+        # If the modal has been opened from opening a link to a new window,
+        # the current URL targets the current modal : no XHR involved.
+        # In this case, we need to put an URL in closing buttons to force
+        # redirections on closing.
+        #
+        # NOTE: After upgrading from Turbo 7 to 8, there is an issue
+        # after closing the model and using back button:
+
+        referrer if referrer && !turbo_frame_request?
+      end
+
       def close_button
-        helpers.button_component(
-          icon: "x-mark",
-          href: referrer,
-          class: "modal__close-button",
-          aria: { label: "Fermer la fenêtre de dialogue" },
-          data: {
-            turbo_frame: "content",
-            action:      "click->modal#close"
+        helpers.button_component "Fermer la fenêtre de dialogue", close_href,
+          icon:      "x-mark",
+          icon_only: true,
+          class:     "modal__close-button",
+          data:      {
+            turbo_frame:    "content",
+            action:         "click->modal#close"
           }
-        )
       end
 
       # Slots

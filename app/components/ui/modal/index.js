@@ -15,8 +15,6 @@ export default class ModalController extends Controller {
   }
 
   async close (event) {
-    if (event) event.preventDefault()
-
     await this.leave()
     const closeEvent = this.dispatch("close")
     if (closeEvent.defaultPrevented) return
