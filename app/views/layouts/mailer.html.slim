@@ -1,0 +1,15 @@
+doctype html
+html( lang="fr" )
+  head
+    title Passerelle
+    meta( http-equiv="Content-Type" content="text/html; charset=utf-8" )
+    = stylesheet_link_tag "mailer"
+
+  body
+    .brand
+      = inline_svg_tag("logo.svg", alt: "Logo de Passerelle", aria: true)
+      span.brand__left Passe
+      span.brand__right relle
+
+    .content
+      = yield
