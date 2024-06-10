@@ -199,3 +199,6 @@ Style/HashSyntax:
 Style/StringLiterals:
   EnforcedStyle: double_quotes
   ConsistentQuotesInMultiline: false
+
+Style/SuperArguments:
+  Enabled: false

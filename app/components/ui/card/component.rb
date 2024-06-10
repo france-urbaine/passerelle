@@ -33,8 +33,8 @@ module UI
       # Slots
       # --------------------------------------------------------------------------
       class SubmitAction < UI::Button::Component
-        def initialize(*args, **options)
-          super(*args, **options, primary: true, type: "submit")
+        def initialize(*, **)
+          super(*, **, primary: true, type: "submit")
         end
       end
 

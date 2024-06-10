@@ -5,8 +5,9 @@ module Offices
     # This service class inherits UpdateService setters for territory:
     #   def ddfip_name=
 
-    def initialize(*args, ddfip: nil)
-      super(*args)
+    def initialize(*, ddfip: nil)
+      super(*)
+
       @ddfip = ddfip
     end
 

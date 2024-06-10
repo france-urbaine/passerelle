@@ -7,8 +7,9 @@ module Users
     #   def organization_name=
     #   def office_ids=
 
-    def initialize(*args, invited_by: nil, organization: nil)
-      super(*args)
+    def initialize(*, invited_by: nil, organization: nil)
+      super(*)
+
       @inviter      = invited_by
       @organization = organization
     end

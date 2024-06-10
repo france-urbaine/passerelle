@@ -12,7 +12,7 @@ module ComponentTestHelpers
       raise ArgumentError, "use an user to sign in" unless user.is_a?(User)
 
       @current_user = user
-      super(user)
+      super
     end
 
     def sign_in_as(...)

@@ -4,12 +4,12 @@ module RequestTestHelpers
   module ImplicitHelpers
     def response
       subject unless @response
-      super()
+      super
     end
 
     def flash
       subject unless @response
-      super()
+      super
     end
   end
 end
