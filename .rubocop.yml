@@ -94,6 +94,10 @@ Metrics/ModuleLength:
   Enabled: false
 
 # Rails ------------------------------------------------------------------------
+Rails:
+  Exclude:
+    - 'lib/cli/**/*'
+
 Rails/ActionOrder:
   ExpectedOrder:
     - index
