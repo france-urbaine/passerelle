@@ -64,7 +64,6 @@
 @import "./components/datatable";
 @import "./components/skeleton_loader";
 @import "./components/public";
-@import "./components/public";
 
 /* View specific components */
 @import "./components/priority_icon";
