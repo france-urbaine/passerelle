@@ -9,6 +9,7 @@ module CLI
       def call
         say "Check for some basic environnement variables"
 
+        setup_redis_sidekiq
         setup_smtp_port
         setup_ci_parallel
         setup_production
@@ -18,13 +19,28 @@ module CLI
         say ""
       end
 
+      def setup_redis_sidekiq
+        return if variable_exist?("REDIS_SIDEKIQ_URL", ".env.development")
+
+        say ""
+        say "Would you like to set a dedicated Redis database for Sidekiq ?"
+        say "  [0]    No (default to redis://localhost:6379)"
+        say "  [1-20] Another database (redis://localhost:6379/{database})"
+        say ""
+
+        value = ask("  > ")
+        return unless (1..20).cover?(value.to_i)
+
+        add_variable "REDIS_SIDEKIQ_URL", "redis://localhost:6379/#{value}", ".env.development"
+      end
+
       def setup_smtp_port
         return if variable_exist?("SMTP_PORT", ".env.development")
 
         say ""
         say "Would you like to set an other port to use with MailCacther ? (default is 1025)"
 
-        value = ask
+        value = ask("  > SMTP_PORT = ")
         return if value.empty?
 
         add_variable "SMTP_PORT", value, ".env.development"
@@ -39,6 +55,7 @@ module CLI
         say "  [1] Use parallel_tests"
         say "  [2] Use turbo_tests"
         say "  [3] Use flatware"
+        say ""
 
         case ask
         when "1" then add_variable "CI_PARALLEL", true,          ".env.test"
@@ -61,9 +78,10 @@ module CLI
           POSTGRESQL_USER
           POSTGRESQL_PASSWORD
           REDIS_SIDEKIQ_URL
+          REDIS_CACHE_URL
         ].each_with_object({}) do |variable, hash|
           hash[variable] = ask(
-            "  #{variable} > ",
+            "  > #{variable} = ",
             loop_empty: true,
             end_say:    nil
           )
@@ -95,11 +113,13 @@ module CLI
         output = "#{variable}="
         output <<
           case value
-          when /^[\d\w]+$/, true then value.to_s
-          else %("#{value}").to_s
+          when /^\d+$/, true, false
+            value.to_s
+          else
+            %("#{value}").to_s
           end
 
-        say "=> puts `#{output}` in #{file}"
+        say "  => puts `#{output}` in #{file}"
 
         file(file).open("a+") do |f|
           f.puts output
