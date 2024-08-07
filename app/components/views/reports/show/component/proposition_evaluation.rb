@@ -25,6 +25,10 @@ module Views
             end
           end
 
+          def proposition_motif
+            translate_enum(@report.proposition_motif, scope: "enum.motif")
+          end
+
           def proposition_coefficient_entretien
             translate_enum(@report.proposition_coefficient_entretien, scope: "enum.coefficient_entretien")
           end

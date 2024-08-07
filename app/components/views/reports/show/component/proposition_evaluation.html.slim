@@ -21,6 +21,11 @@
           = render_valid_content(:proposition_affectation) do
             = proposition_affectation
 
+      - if display_proposition_motif?
+        - list.with_attribute(:proposition_motif) do |attribute|
+          = render_valid_content(:proposition_motif) do
+            = proposition_motif
+
       - if display_proposition_nature?
         - list.with_attribute(:proposition_nature) do |attribute|
           = render_valid_content(:proposition_nature) do

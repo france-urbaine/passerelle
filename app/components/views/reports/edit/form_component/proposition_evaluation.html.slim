@@ -18,6 +18,11 @@
           = form.label :proposition_affectation, "Affectation"
           = form.select :proposition_affectation, affectation_choices, { include_blank: true }, data: { action: "switch#toggle" }
 
+        - if display_proposition_motif?
+          = form.block :proposition_motif do
+            = form.label :proposition_motif, "Nature de la mise à jour"
+            = form.select :proposition_motif, motif_choices, { include_blank: true }
+
         = habitation_fields do
           = form.block :proposition_nature do
             = form.label :proposition_nature, "Nature du local"
@@ -85,6 +90,11 @@
             = form.number_field :proposition_coefficient_localisation, step: "any", min: 0
 
     - else
+      - if display_proposition_motif?
+        = form.block :proposition_motif do
+          = form.label :proposition_motif, "Nature de la mise à jour"
+          = form.select :proposition_motif, motif_choices, { include_blank: true }
+
       - if display_proposition_nature?
         = form.block :proposition_nature do
           = form.label :proposition_nature, "Nature du local"

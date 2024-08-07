@@ -53,6 +53,7 @@ fr:
         proposition_affectation:      Affectation du local
         proposition_nature:           Nature du local
         proposition_categorie:        Catégorie du local
+        proposition_motif:            Nature de la mise à jour
 
         proposition_surface_reelle:   Surface réelle
         proposition_surface_p1:       (P1) Surface des parties principales
