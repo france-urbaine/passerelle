@@ -26,6 +26,14 @@
       = render "documentation/api/guides/formulaire_evaluation_local_habitation/affectation"
 
   - layout.with_header icon: "clipboard-document" do
+    a#demolition
+    | Démolition fiscale
+
+  - layout.with_section do
+    = card_component do
+      = render "documentation/api/guides/formulaire_evaluation_local_habitation/demolition"
+
+  - layout.with_header icon: "clipboard-document" do
     a#exoneration
     | Exonération à tort
 

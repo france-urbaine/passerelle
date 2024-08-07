@@ -126,6 +126,7 @@
 #  computed_address                               :string
 #  computed_address_sort_key                      :string
 #  resolution_motif                               :enum
+#  proposition_motif                              :string
 #
 # Indexes
 #
@@ -200,6 +201,7 @@ class Report < ApplicationRecord
     consistance
     affectation
     categorie
+    demolition
     exoneration
     correctif
     omission_batie
@@ -209,8 +211,8 @@ class Report < ApplicationRecord
   ].freeze
 
   FORM_TYPE_ANOMALIES = {
-    "evaluation_local_habitation"    => %w[consistance affectation exoneration correctif adresse],
-    "evaluation_local_professionnel" => %w[consistance affectation categorie exoneration adresse],
+    "evaluation_local_habitation"    => %w[consistance affectation demolition exoneration correctif adresse],
+    "evaluation_local_professionnel" => %w[consistance affectation categorie demolition exoneration adresse],
     "creation_local_habitation"      => %w[omission_batie construction_neuve],
     "creation_local_professionnel"   => %w[omission_batie construction_neuve],
     "occupation_local_habitation"    => %w[occupation],
@@ -262,6 +264,7 @@ class Report < ApplicationRecord
     validates :situation_nature,       inclusion: { in: :valid_natures }
     validates :situation_categorie,    inclusion: { in: :valid_categories }
 
+    validates :proposition_motif,       inclusion: { in: :valid_motifs }
     validates :proposition_affectation, inclusion: { in: :valid_affectations }
     validates :proposition_nature,      inclusion: { in: :valid_natures }
     validates :proposition_categorie,   inclusion: { in: :valid_categories }
@@ -301,6 +304,10 @@ class Report < ApplicationRecord
     validates :proposition_etablissement_principal,    inclusion: [true, false]
     validates :proposition_chantier_longue_duree,      inclusion: [true, false]
     validates :proposition_code_naf,                   format: { with: NAF_REGEXP }
+  end
+
+  def valid_motifs
+    I18n.t("enum.motif").keys.map(&:to_s)
   end
 
   def valid_affectations
