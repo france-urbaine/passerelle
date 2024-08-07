@@ -418,6 +418,19 @@ module Reports
           (require_proposition_evaluation_professionnel? || form_type == "creation_local_professionnel")
       end
 
+      # @attribute proposition_motif
+      #
+      # This attribute is displayed and required for:
+      # * any `evaluation_local_*` form with the anomaly `demolition`
+      #
+      def display_proposition_motif?
+        evaluation_local? && anomalies.include?("demolition")
+      end
+
+      def require_proposition_motif?
+        display_proposition_motif?
+      end
+
       # @attribute proposition_surface_reelle
       #
       # This attribute is displayed for:
