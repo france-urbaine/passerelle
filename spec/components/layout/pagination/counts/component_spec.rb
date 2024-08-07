@@ -5,7 +5,7 @@ require "rails_helper"
 RSpec.describe Layout::Pagination::Counts::Component do
   it "renders counts with only one page" do
     render_inline described_class.new(
-      Pagy.new(count: 10, page: 1, items: 20)
+      Pagy.new(count: 10, page: 1, limit: 20)
     )
 
     expect(page).to have_text("Page 1 sur 1")
@@ -13,7 +13,7 @@ RSpec.describe Layout::Pagination::Counts::Component do
 
   it "renders counts with no resources" do
     render_inline described_class.new(
-      Pagy.new(count: 0, page: 1, items: 20)
+      Pagy.new(count: 0, page: 1, limit: 20)
     )
 
     expect(page).to have_text("Page 1 sur 1")
@@ -21,7 +21,7 @@ RSpec.describe Layout::Pagination::Counts::Component do
 
   it "renders counts with multiple pages" do
     render_inline described_class.new(
-      Pagy.new(count: 125, page: 3, items: 20)
+      Pagy.new(count: 125, page: 3, limit: 20)
     )
 
     expect(page).to have_text("Page 3 sur 7")
@@ -29,7 +29,7 @@ RSpec.describe Layout::Pagination::Counts::Component do
 
   it "renders models count with only one record" do
     render_inline described_class.new(
-      Pagy.new(count: 1, page: 1, items: 20),
+      Pagy.new(count: 1, page: 1, limit: 20),
       Commune
     )
 
@@ -38,7 +38,7 @@ RSpec.describe Layout::Pagination::Counts::Component do
 
   it "renders models count with no resources" do
     render_inline described_class.new(
-      Pagy.new(count: 0, page: 1, items: 20),
+      Pagy.new(count: 0, page: 1, limit: 20),
       Commune
     )
 
@@ -47,7 +47,7 @@ RSpec.describe Layout::Pagination::Counts::Component do
 
   it "renders models count with multiple resources" do
     render_inline described_class.new(
-      Pagy.new(count: 1025, page: 3, items: 20),
+      Pagy.new(count: 1025, page: 3, limit: 20),
       Commune
     )
 
@@ -56,7 +56,7 @@ RSpec.describe Layout::Pagination::Counts::Component do
 
   it "renders resources count when using a word" do
     render_inline described_class.new(
-      Pagy.new(count: 1025, page: 3, items: 20),
+      Pagy.new(count: 1025, page: 3, limit: 20),
       "établissement"
     )
 
@@ -65,7 +65,7 @@ RSpec.describe Layout::Pagination::Counts::Component do
 
   it "renders resources count when using custom inflection" do
     render_inline described_class.new(
-      Pagy.new(count: 1025, page: 3, items: 20),
+      Pagy.new(count: 1025, page: 3, limit: 20),
       singular: "établissement publique",
       plural:   "établissements publiques"
     )

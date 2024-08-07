@@ -20,7 +20,7 @@ module Layout
 
       def rows
         if @nested
-          [@rows, ControllerCollections::NESTED_ITEMS].min
+          [@rows, ControllerCollections::NESTED_PAGE_LIMIT].min
         else
           @rows
         end

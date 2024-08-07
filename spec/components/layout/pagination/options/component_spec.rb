@@ -5,7 +5,7 @@ require "rails_helper"
 RSpec.describe Layout::Pagination::Options::Component do
   it "renders a dropdown" do
     render_inline described_class.new(
-      Pagy.new(count: 10, page: 1, items: 20)
+      Pagy.new(count: 10, page: 1, limit: 20)
     )
 
     expect(page).to have_button("Options d'affichage")
@@ -14,17 +14,17 @@ RSpec.describe Layout::Pagination::Options::Component do
       expect(menu).to have_button("Afficher 20 lignes par page")
       expect(menu).to have_selector(".dropdown__menu") do |sub_menu|
         expect(sub_menu).to have_link(count: 4)
-        expect(sub_menu).to have_link("Afficher 10 lignes", href: "/test/components?items=10")
-        expect(sub_menu).to have_link("Afficher 20 lignes", href: "/test/components?items=20")
-        expect(sub_menu).to have_link("Afficher 50 lignes", href: "/test/components?items=50")
-        expect(sub_menu).to have_link("Afficher 100 lignes", href: "/test/components?items=100")
+        expect(sub_menu).to have_link("Afficher 10 lignes", href: "/test/components?limit=10")
+        expect(sub_menu).to have_link("Afficher 20 lignes", href: "/test/components?limit=20")
+        expect(sub_menu).to have_link("Afficher 50 lignes", href: "/test/components?limit=50")
+        expect(sub_menu).to have_link("Afficher 100 lignes", href: "/test/components?limit=100")
       end
     end
   end
 
   it "renders order options" do
     render_inline described_class.new(
-      Pagy.new(count: 10, page: 1, items: 20),
+      Pagy.new(count: 10, page: 1, limit: 20),
       order: { name: "nom", count: "nombre" }
     )
 
@@ -46,15 +46,15 @@ RSpec.describe Layout::Pagination::Options::Component do
   it "renders links with actual params" do
     with_request_url("/test/components?search=foo&order=-name&page=3") do
       render_inline described_class.new(
-        Pagy.new(count: 125, page: 3, items: 20),
+        Pagy.new(count: 125, page: 3, limit: 20),
         order: { name: "nom", count: "nombre" }
       )
     end
 
-    expect(page).to have_link("Afficher 10 lignes", href: "/test/components?items=10&order=-name&search=foo")
-    expect(page).to have_link("Afficher 20 lignes", href: "/test/components?items=20&order=-name&search=foo")
-    expect(page).to have_link("Afficher 50 lignes", href: "/test/components?items=50&order=-name&search=foo")
-    expect(page).to have_link("Afficher 100 lignes", href: "/test/components?items=100&order=-name&search=foo")
+    expect(page).to have_link("Afficher 10 lignes", href: "/test/components?limit=10&order=-name&search=foo")
+    expect(page).to have_link("Afficher 20 lignes", href: "/test/components?limit=20&order=-name&search=foo")
+    expect(page).to have_link("Afficher 50 lignes", href: "/test/components?limit=50&order=-name&search=foo")
+    expect(page).to have_link("Afficher 100 lignes", href: "/test/components?limit=100&order=-name&search=foo")
 
     expect(page).to have_button("Trier par nom (desc.)")
     expect(page).to have_link("Trier par nom, par ordre croissant",      href: "/test/components?order=name&search=foo")

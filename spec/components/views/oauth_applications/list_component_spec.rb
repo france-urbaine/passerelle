@@ -5,7 +5,7 @@ require "rails_helper"
 RSpec.describe Views::OauthApplications::ListComponent, type: :component do
   describe "rendered component" do
     let!(:oauth_applications) { create_list(:oauth_application, 3) }
-    let(:pagy)                { Pagy.new(count: 56, page: 1, items: 20) }
+    let(:pagy)                { Pagy.new(count: 56, page: 1, limit: 20) }
 
     before { sign_in_as(:publisher) }
 

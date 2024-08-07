@@ -179,7 +179,7 @@ module Layout
       end
 
       def url
-        new_params = params.slice(:items, :search).permit!
+        new_params = params.slice(:limit, :search).permit!
         new_params[:order] = direction == :asc ? key : "-#{key}"
 
         url_for(new_params)

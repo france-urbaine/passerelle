@@ -25,7 +25,7 @@ module Layout
         private
 
         def pagy
-          Pagy.new(count: 125, page: 3, items: 20)
+          Pagy.new(count: 125, page: 3, limit: 20)
         end
       end
     end

@@ -21,7 +21,7 @@
     = search_form_component
 
     - header.with_action do
-      = pagination_buttons_component(Pagy.new(count: 125, page: 3, items: 20))
+      = pagination_buttons_component(Pagy.new(count: 125, page: 3, limit: 20))
 
   - layout.with_section do
     = card_component

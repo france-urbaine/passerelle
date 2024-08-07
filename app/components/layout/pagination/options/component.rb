@@ -23,9 +23,9 @@ module Layout
           url_for(new_params)
         end
 
-        def items_url(items)
+        def page_limit_url(limit)
           new_params = params.slice(:search, :order).permit!
-          new_params[:items] = items
+          new_params[:limit] = limit
 
           url_for(new_params)
         end

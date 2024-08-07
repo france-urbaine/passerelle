@@ -4,20 +4,20 @@ module ControllerCollections
   include Pagy::Backend
   include ControllerParams
 
-  NESTED_ITEMS = 10
+  NESTED_PAGE_LIMIT = 10
 
   private
 
-  def index_collection(relation, nested: false, items: nil)
+  def index_collection(relation, nested: false, limit: nil)
     return autocomplete_collection(relation), nil if autocomplete_request?
 
     relation = search_collection(relation)
     relation = order_collection(relation)
 
     if nested
-      paginate_collection(relation, items: NESTED_ITEMS)
+      paginate_collection(relation, limit: NESTED_PAGE_LIMIT)
     else
-      paginate_collection(relation, items:)
+      paginate_collection(relation, limit:)
     end
   end
 
@@ -32,20 +32,20 @@ module ControllerCollections
     relation
   end
 
-  def paginate_collection(collection, items: nil)
-    # We memoize the numbers of items into session and to use the same settings
+  def paginate_collection(collection, limit: nil)
+    # We memoize the pagination limit into session and to use the same settings
     # on every pagination.
-    # The numer of items per page can be reinitialized from params.
+    # The pagination limit can be reinitialized from params.
     #
-    # We don't memoize the numer of items when it's explicitely defined.
+    # We don't memoize the pagination limit when it's explicitely defined.
     # (in nested turbo frames, for example).
     #
-    if items
-      pagy, relation = pagy(collection, items:)
+    if limit
+      pagy, relation = pagy(collection, limit:)
     else
-      items = session[:items] if session[:items] && !params.key?(:items)
-      pagy, relation = pagy(collection, items:)
-      session[:items] = pagy.items unless pagy.items.zero?
+      limit = session[:limit] if session[:limit] && !params.key?(:limit)
+      pagy, relation = pagy(collection, limit:)
+      session[:limit] = pagy.limit unless pagy.limit.zero?
     end
 
     [relation, pagy]

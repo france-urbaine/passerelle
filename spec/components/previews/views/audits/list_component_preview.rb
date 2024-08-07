@@ -15,7 +15,7 @@ module Views
       # @label With pagination
       #
       def with_pagination
-        render_with_template(locals: { audits: random_audits.first(pagy.items), pagy: pagy })
+        render_with_template(locals: { audits: random_audits.first(pagy.limit), pagy: pagy })
       end
 
       private
@@ -51,7 +51,7 @@ module Views
       end
 
       def pagy
-        Pagy.new(count: 12, page: 1, items: 5)
+        Pagy.new(count: 12, page: 1, limit: 5)
       end
     end
   end
