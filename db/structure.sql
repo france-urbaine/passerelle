@@ -3098,7 +3098,7 @@ CREATE TABLE public.reports (
     discarded_at timestamp(6) without time zone,
     reference character varying,
     form_type public.form_type NOT NULL,
-    anomalies public.anomaly[] NOT NULL,
+    anomalies public.anomaly[] DEFAULT '{}'::public.anomaly[] NOT NULL,
     priority public.priority DEFAULT 'low'::public.priority NOT NULL,
     code_insee character varying,
     date_constat date,
@@ -4438,6 +4438,7 @@ ALTER TABLE ONLY public.oauth_access_tokens
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20240710151815'),
 ('20240517133141'),
 ('20240517080220'),
 ('20240328082737'),
