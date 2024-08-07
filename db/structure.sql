@@ -4438,6 +4438,7 @@ ALTER TABLE ONLY public.oauth_access_tokens
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20240710151815'),
 ('20240517133141'),
 ('20240517080220'),
 ('20240328082737'),

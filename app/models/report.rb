@@ -15,7 +15,7 @@
 #  discarded_at                                   :datetime
 #  reference                                      :string
 #  form_type                                      :enum             not null
-#  anomalies                                      :enum             not null, is an Array
+#  anomalies                                      :enum             default([]), not null, is an Array
 #  priority                                       :enum             default("low"), not null
 #  code_insee                                     :string
 #  date_constat                                   :date
