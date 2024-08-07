@@ -1,0 +1,18 @@
+fr:
+  activerecord:
+    models:
+      audit:             Activité
+      report:            Signalement
+      package:           Paquet
+      dossier:           Dossier
+      publisher:         Éditeur
+      ddfip:             DDFIP
+      dgfip:             DGFIP
+      office:            Guichet
+      collectivity:      Collectivité
+      user:              Utilisateur
+      commune:           Commune
+      epci:              EPCI
+      departement:       Département
+      region:            Région
+      oauth_application: Application
