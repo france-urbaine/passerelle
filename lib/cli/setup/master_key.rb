@@ -26,21 +26,22 @@ module CLI
 
             return if ask != "Y"
           end
+        else
+          say ""
+          say "No master key found."
         end
 
-        say "Setup Rails master key"
+        say "Setting up master key."
         say "The key is shared in Dashlane."
         say ""
-        say "Please enter the master key:"
+        say "Please enter the master key (or press Enter to ignore):"
 
-        master_key = ask(secret: true)
-        raise "Invalid key" if master_key.empty?
+        master_key = ask(secret: true, loop_empty: true)
 
         PATH.open("w") do |f|
           f.puts master_key
         end
 
-        say ""
         say "✓ Master key is saved at `config/master.key` !"
         say ""
       end

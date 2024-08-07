@@ -572,6 +572,7 @@ class Report < ApplicationRecord
   #
   def anomalies=(value)
     value.compact_blank! if value.is_a?(Array)
-    super(value)
+
+    super
   end
 end

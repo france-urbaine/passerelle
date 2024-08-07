@@ -27,9 +27,11 @@ Devise.setup do |config|
   config.mailer_sender = "ne-pas-repondre@passerelle-fiscale.fr"
 
   # Configure the class responsible to send e-mails.
+  # config.mailer = 'Devise::Mailer'
   config.mailer = "Users::Mailer"
 
   # Configure the parent class responsible to send e-mails.
+  # config.parent_mailer = 'ActionMailer::Base'
   config.parent_mailer = "ApplicationMailer"
 
   # ==> ORM configuration
@@ -154,6 +156,7 @@ Devise.setup do |config|
   # their account can't be confirmed with the token any more.
   # Default is nil, meaning there is no restriction on how long a user can take
   # before confirming their account.
+  # config.confirm_within = 3.days
   config.confirm_within = 3.days
 
   # If true, requires any email changes to be confirmed (exactly the same way as
@@ -191,6 +194,7 @@ Devise.setup do |config|
   # ==> Configuration for :timeoutable
   # The time you want to timeout the user session without activity. After this
   # time the user will be asked for credentials again. Default is 30 minutes.
+  # config.timeout_in = 30.minutes
   config.timeout_in = 1.hour
 
   # ==> Configuration for :lockable
@@ -198,9 +202,11 @@ Devise.setup do |config|
   # :failed_attempts = Locks an account after a number of failed attempts to sign in.
   # :none            = No lock strategy. You should handle locking by yourself.
   # config.lock_strategy = :failed_attempts
+  config.lock_strategy = :failed_attempts
 
   # Defines which key will be used when locking and unlocking an account
   # config.unlock_keys = [:email]
+  config.unlock_keys = [:email]
 
   # Defines which strategy will be used to unlock an account.
   # :email = Sends an unlock link to the user email
@@ -212,12 +218,14 @@ Devise.setup do |config|
 
   # Number of authentication tries before locking an account if lock_strategy
   # is failed attempts.
+  # config.maximum_attempts = 20
   config.maximum_attempts = 3
 
   # Time interval to unlock the account if :time is enabled as unlock_strategy.
-  config.unlock_in = 1.hour
+  # config.unlock_in = 1.hour
 
   # Warn on the last attempt before the account is locked.
+  # config.last_attempt_warning = true
   config.last_attempt_warning = true
 
   # ==> Configuration for :recoverable
@@ -233,6 +241,8 @@ Devise.setup do |config|
   # When set to false, does not sign a user in automatically after their password is
   # reset. Defaults to true, so a user is signed in automatically after a reset.
   # config.sign_in_after_reset_password = true
+
+  # Set sign_in_after_reset_password to false to avoid bypassing OTP
   config.sign_in_after_reset_password = false
 
   # ==> Configuration for :encryptable
@@ -261,14 +271,14 @@ Devise.setup do |config|
 
   # ==> Navigation configuration
   # Lists the formats that should be treated as navigational. Formats like
-  # :html, should redirect to the sign in page when the user does not have
+  # :html should redirect to the sign in page when the user does not have
   # access, but formats like :xml or :json, should return 401.
   #
   # If you have any extra navigational formats, like :iphone or :mobile, you
   # should add them to the navigational formats lists.
   #
   # The "*/*" below is required to match Internet Explorer requests.
-  # config.navigational_formats = ['*/*', :html]
+  # config.navigational_formats = ['*/*', :html, :turbo_stream]
 
   # The default HTTP method used to sign out a resource. Default is :delete.
   config.sign_out_via = :delete
@@ -304,19 +314,13 @@ Devise.setup do |config|
   # so you need to do it manually. For the users scope, it would be:
   # config.omniauth_path_prefix = '/my_engine/users/auth'
 
-  # ==> Turbolinks configuration
-  # If your app is using Turbolinks, Turbolinks::Controller needs to be included to make redirection work correctly:
-  #
-  # ActiveSupport.on_load(:devise_failure_app) do
-  #   include Turbolinks::Controller
-  # end
-
+  # ==> Hotwire/Turbo configuration
   # When using Devise with Hotwire/Turbo, the http status for error responses
   # and some redirects must match the following. The default in Devise for existing
-  # apps is `200 OK` and `302 Found respectively`, but new apps are generated with
+  # apps is `200 OK` and `302 Found` respectively, but new apps are generated with
   # these new defaults that match Hotwire/Turbo behavior.
   # Note: These might become the new default in future versions of Devise.
-  config.responder.error_status    = :unprocessable_entity
+  config.responder.error_status = :unprocessable_entity
   config.responder.redirect_status = :see_other
 
   # ==> Configuration for :registerable

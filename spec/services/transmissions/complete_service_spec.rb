@@ -22,6 +22,16 @@ RSpec.describe Transmissions::CompleteService do
     ]
   end
 
+  around do |e|
+    # Wrap the whole example and all `let!` in the same year:
+    # - to check expected year in references
+    # - to ensure reports are created with the expected `situation_annee_majic`
+    #
+    Timecop.travel(2023, 12, 13) do
+      e.run
+    end
+  end
+
   before do
     # Add polution data
     create(:ddfip)
@@ -31,10 +41,8 @@ RSpec.describe Transmissions::CompleteService do
   describe "#complete" do
     it "creates packages, set references and update transmission completed_at" do
       expect {
-        Timecop.travel(2023, 12, 13) do
-          service.complete
-          reports.each(&:reload)
-        end
+        service.complete
+        reports.each(&:reload)
       }
         .to change(Package,         :count).by(1)
         .and change(reports[0],     :reference).to("2023-12-0001-00001")

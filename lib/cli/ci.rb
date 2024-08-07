@@ -23,7 +23,7 @@ module CLI
         CI commands:
 
             #{program_name}                     # Run all tests and checks as CI would
-            #{program_name} watch               # Watch & run CI checks from GuardFile as code change
+            #{program_name} watch               # Watch & run CI programs whenever file are modified
             #{program_name} help                # Show this help
 
         You can also run only one program from the CI:

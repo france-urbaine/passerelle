@@ -94,6 +94,10 @@ Metrics/ModuleLength:
   Enabled: false
 
 # Rails ------------------------------------------------------------------------
+Rails:
+  Exclude:
+    - 'lib/cli/**/*'
+
 Rails/ActionOrder:
   ExpectedOrder:
     - index
@@ -195,3 +199,6 @@ Style/HashSyntax:
 Style/StringLiterals:
   EnforcedStyle: double_quotes
   ConsistentQuotesInMultiline: false
+
+Style/SuperArguments:
+  Enabled: false

@@ -6,8 +6,9 @@ module Collectivities
     #   def territory_data=
     #   def territory_code=
 
-    def initialize(*args, publisher: nil)
-      super(*args)
+    def initialize(*, publisher: nil)
+      super(*)
+
       @publisher = publisher
     end
 

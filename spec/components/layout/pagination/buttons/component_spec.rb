@@ -5,7 +5,7 @@ require "rails_helper"
 RSpec.describe Layout::Pagination::Buttons::Component do
   it "renders two buttons to navigate to previous and next pages" do
     render_inline described_class.new(
-      Pagy.new(count: 125, page: 3, items: 20)
+      Pagy.new(count: 125, page: 3, limit: 20)
     )
 
     expect(page).to have_selector(".icon-button", text: "Page précédente") do |button|
@@ -27,7 +27,7 @@ RSpec.describe Layout::Pagination::Buttons::Component do
 
   it "renders an inactive previous button on first page" do
     render_inline described_class.new(
-      Pagy.new(count: 125, page: 1, items: 20)
+      Pagy.new(count: 125, page: 1, limit: 20)
     )
 
     expect(page).to have_selector(".icon-button", text: "Page précédente") do |button|
@@ -49,7 +49,7 @@ RSpec.describe Layout::Pagination::Buttons::Component do
 
   it "renders an inactive next button on last page" do
     render_inline described_class.new(
-      Pagy.new(count: 125, page: 7, items: 20)
+      Pagy.new(count: 125, page: 7, limit: 20)
     )
 
     expect(page).to have_selector(".icon-button", text: "Page précédente") do |button|
@@ -71,7 +71,7 @@ RSpec.describe Layout::Pagination::Buttons::Component do
 
   it "renders two inactive buttons when there is only one page" do
     render_inline described_class.new(
-      Pagy.new(count: 10, page: 1, items: 20)
+      Pagy.new(count: 10, page: 1, limit: 20)
     )
 
     expect(page).to have_selector(".icon-button", text: "Page précédente") do |button|
@@ -94,7 +94,7 @@ RSpec.describe Layout::Pagination::Buttons::Component do
   it "renders buttons and keep actual params" do
     with_request_url("/test/components?search=foo&order=-name") do
       render_inline described_class.new(
-        Pagy.new(count: 125, page: 3, items: 20)
+        Pagy.new(count: 125, page: 3, limit: 20)
       )
     end
 
@@ -109,7 +109,7 @@ RSpec.describe Layout::Pagination::Buttons::Component do
 
   it "renders buttons targeting _top by default" do
     render_inline described_class.new(
-      Pagy.new(count: 125, page: 3, items: 20)
+      Pagy.new(count: 125, page: 3, limit: 20)
     )
 
     expect(page).to have_selector(".icon-button", text: "Page précédente") do |button|
@@ -123,7 +123,7 @@ RSpec.describe Layout::Pagination::Buttons::Component do
 
   it "renders buttons targeting a turbo-frame" do
     render_inline described_class.new(
-      Pagy.new(count: 125, page: 3, items: 20),
+      Pagy.new(count: 125, page: 3, limit: 20),
       turbo_frame: "content"
     )
 

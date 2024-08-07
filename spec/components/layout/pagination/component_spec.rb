@@ -3,7 +3,7 @@
 require "rails_helper"
 
 RSpec.describe Layout::Pagination::Component do
-  let(:pagy) { Pagy.new(count: 1025, page: 3, items: 20) }
+  let(:pagy) { Pagy.new(count: 1025, page: 3, limit: 20) }
 
   context "with only pagy" do
     subject(:component) { described_class.new(pagy) }

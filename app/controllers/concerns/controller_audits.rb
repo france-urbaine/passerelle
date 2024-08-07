@@ -7,7 +7,7 @@ module ControllerAudits
     if turbo_frame_request_id == "audits"
       index_collection(scope, nested: true)
     else
-      index_collection(scope, items: 100)
+      index_collection(scope, limit: 100)
     end
   end
 end

@@ -19,10 +19,10 @@ module CLI
       say <<~HEREDOC
         Development commands:
 
-            #{program_name}                   # Start all default process or one specific process
-            #{program_name} server            # Start all required processes to serve the application
-            #{program_name} background        # Start all background processes
-            #{program_name} mailcatcher       # Start only mailcatcher in foreground mode
+            #{program_name}                   # Start all default processes
+            #{program_name} server            # Start only processes required to serve the application (web, js & css)
+            #{program_name} background        # Start background processes
+            #{program_name} mailcatcher       # Start mailcatcher in foreground mode
             #{program_name} help              # Show this help
 
         Server processes could be start individually:

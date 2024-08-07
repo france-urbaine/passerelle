@@ -231,7 +231,7 @@ class User < ApplicationRecord
   #   https://github.com/heartcombo/devise/blob/v4.9.3/lib/devise/models/authenticatable.rb#L93
   #
   def active_for_authentication?
-    super() && !discarded?
+    super && !discarded?
   end
 
   # Use either `#update_with_password` or `#update_without_password`

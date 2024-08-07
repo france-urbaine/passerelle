@@ -13,6 +13,7 @@ module CLI
       case arguments[0]
       when nil           then setup
       when "master_key"  then setup_master_key
+      when "env"         then setup_env
       when "dev"         then setup_development
       when "test"        then setup_test(arguments[1])
       when "user"        then setup_user
@@ -32,11 +33,12 @@ module CLI
 
             #{program_name}                                     # Run the default setup process
             #{program_name} master_key                          # Add the Rails master key
+            #{program_name} env                                 # Define usefull environnment variables
             #{program_name} user                                # Create a new user through an interactive command
             #{program_name} territories                         # Import all EPCIs and communes from a remote source
             #{program_name} mailcatcher                         # Install mailcatcher
-            #{program_name} submodules                          # Initialize submodules (not yet used)
-            #{program_name} githooks                            # Setup git hooks to call `bin/update` automatically
+            #{program_name} submodules                          # Initialize submodules
+            #{program_name} githooks                            # Setup git hooks
             #{program_name} help                                # Show this help
 
         The default setup process already include the following steps:
@@ -74,14 +76,15 @@ module CLI
         -------------------------------------------------------------------------------------
         Almost set up, you might find these commands useful to complete your setup:
 
-            bin/setup master_key     # Add the Rails master key
+            bin/setup master_key     # Add the Rails master key (required to use encryption)
+            bin/setup env            # Define the most usefull environnment variables
             bin/setup user           # Create a new user through an interactive command
             bin/setup territories    # Import all EPCIs and communes from a remote source
             bin/setup mailcatcher    # Install mailcatcher
 
         Once you're ready, you can start working with the following commands:
 
-            bin/dev                  # Start all process to run the app
+            bin/dev                  # Start all processes to run the app
             bin/ci                   # Run all tests and checks as CI would
             bin/update               # Update some dependencies
 
@@ -119,6 +122,12 @@ module CLI
       require_relative "setup/master_key"
 
       CLI::Setup::MasterKey.new(program_name).call(**)
+    end
+
+    def setup_env
+      require_relative "setup/env"
+
+      CLI::Setup::Env.new(program_name).call
     end
 
     def setup_development

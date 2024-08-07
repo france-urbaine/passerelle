@@ -24,18 +24,31 @@ module CLI
       end
     end
 
-    def ask(secret: false)
-      $stdout.print "#{output_prefix} > "
+    def ask(message = nil, secret: false, loop_empty: false, end_say: "")
+      require "io/console" if secret
 
-      if secret
-        require "io/console"
-        result = $stdin.getpass
-      else
-        result = $stdin.gets(chomp: true)
+      message = ask_message(message)
+
+      loop do
+        $stdout.print message
+        result = secret ? $stdin.getpass : $stdin.gets(chomp: true)
+
+        next if result.empty? && loop_empty
+
+        say(end_say) if end_say
+
+        return result
       end
+    end
 
-      say ""
-      result
+    def ask_message(message)
+      if message.nil? || message.empty?
+        "#{output_prefix} > "
+      else
+        message.split("\n")
+          .map { |line| "#{output_prefix} #{line}" }
+          .join("\n")
+      end
     end
 
     def run(*args, env: {}, abort_on_failure: true)

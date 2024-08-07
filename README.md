@@ -18,12 +18,24 @@ Download the project, install requirements and run:
 $ bin/setup
 ```
 
+To get more options about setup steps, you can try:
+
+```shell
+$ bin/setup help
+```
+
 ## Running the app
 
-To start the application, run:
+To start the application, just run:
 
 ```shell
 $ bin/dev
+```
+
+To get more options about running processes, you can try:
+
+```shell
+$ bin/dev help
 ```
 
 ## Tests and continuous integration 

@@ -91,13 +91,13 @@ module UI
       # Slots
       # --------------------------------------------------------------------------
       class SubmitAction < UI::Button::Component
-        def initialize(*args, **options)
-          super(*args, **options, primary: true, type: "submit")
+        def initialize(*, **)
+          super(*, **, primary: true, type: "submit")
         end
       end
 
       class CloseAction < UI::Button::Component
-        def initialize(*args, **options)
+        def initialize(*, **options)
           options = merge_attributes(options, {
             class: "modal__close-action",
             data:  {
@@ -106,17 +106,17 @@ module UI
             }
           })
 
-          super(*args, **options)
+          super(*, **options)
         end
       end
 
       class OtherAction < UI::Button::Component
-        def initialize(*args, **options)
+        def initialize(*, **options)
           options = merge_attributes(options, {
             class: "modal__secondary-action"
           })
 
-          super(*args, **options)
+          super(*, **options)
         end
       end
     end
