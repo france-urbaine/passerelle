@@ -26,10 +26,8 @@ gem "doorkeeper-i18n"
 
 # Models
 gem "devise"
+gem "devise-two-factor"
 gem "devise_zxcvbn"
-# FIXME: https://github.com/tinfoil/devise-two-factor/pull/240
-# Waiting for this PR to be released
-gem "devise-two-factor", github: "inkstak/devise-two-factor", branch: "bugfix-insert_two_factor_authenticatable_on_top"
 gem "discard"
 gem "zxcvbn"
 
