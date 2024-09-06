@@ -225,7 +225,7 @@ log ""
 log "✓ All seeds are ready."
 log ""
 log "-------------------------------------------------------------------------------------"
-log "  For performances reasons, only few communes and EPCIs are created."
+log "  For performances reasons, only few communes and EPCIs were created."
 log "  To import all EPCIs and communes from a remote source, use the following command:"
 log ""
 

@@ -3,9 +3,6 @@
 module Views
   module Territories
     class UpdateComponent < ApplicationViewComponent
-      URL_ROOT        = "https://www.insee.fr/"
-      URL_ROOT_REGEXP = /^#{URL_ROOT}/
-
       def initialize(params = {}, result = nil, referrer: nil)
         if params.is_a?(ActionController::Parameters)
           params = params
@@ -30,13 +27,13 @@ module Views
 
       def communes_url
         @communes_url ||= @params.fetch(:communes_url) do
-          Passerelle::Application::DEFAULT_COMMUNES_URL.gsub(URL_ROOT_REGEXP, "")
+          Passerelle::Application::DEFAULT_COMMUNES_URL
         end
       end
 
       def epcis_url
         @epcis_url ||= @params.fetch(:epcis_url) do
-          Passerelle::Application::DEFAULT_EPCIS_URL.gsub(URL_ROOT_REGEXP, "")
+          Passerelle::Application::DEFAULT_EPCIS_URL
         end
       end
     end
