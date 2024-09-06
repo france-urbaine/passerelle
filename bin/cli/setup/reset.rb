@@ -4,7 +4,7 @@ require_relative "../base"
 
 module CLI
   class Setup
-    class Development < Base
+    class Reset < Base
       def call
         say "Dropping & recreating the development & test databases"
         run "bin/rails db:reset", env: { "SETUP_SEED" => "true" }

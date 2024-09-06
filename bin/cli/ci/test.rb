@@ -5,42 +5,73 @@ require_relative "../base"
 module CLI
   class CI
     class Test < Base
-      SCOPES = %w[
-        unit
-        system
-      ].freeze
+      def call(*args)
+        say "Clear previous coverage results"
+        run "rm -rf coverage/.resultset.json"
+        say ""
 
-      def call(arguments: ARGV)
-        if arguments.empty?
-          paths = []
-          say "Running all tests"
-        elsif SCOPES.include?(arguments[0])
-          scope = arguments[0]
-          paths = []
-          say "Running #{scope} tests"
+        if parallel_mode == "flatware"
+          say "Clear flatware processes & sink"
+          run "flatware clear"
+          run "rm -f flatware-sink"
+          say ""
+        end
+
+        if args.empty?
+          run_tests(:unit)
+          run_tests(:system)
         else
-          paths = arguments.reject { |a| a.start_with?("-") }
-          say "Running given tests"
+          run_tests(*args)
         end
-
-        env       = test_env(scope)
-        command   = test_command(scope, paths)
-
-        if arguments.include?("--retry-failures")
-          return if run(command, env: env, abort_on_failure: false)
-
-          say "Retry only failures"
-          command = test_command(scope, paths, only_failures: true)
-        end
-
-        run(command, env: env)
       end
 
-      def test_env(scope)
+      def run_tests(*)
+        scope, paths = parse_arguments(*)
+
+        say "Run #{scope} specs"
+
+        env     = build_env(scope)
+        command = build_command(scope, paths)
+        result  = run(command, env: env, abort_on_failure: false)
+
+        unless result
+          say "Retry only failed specs"
+          command = build_command(scope, paths, only_failures: true)
+          result  = run(command, env: env, abort_on_failure: false)
+        end
+
+        abort unless result
+      end
+
+      SCOPES = {
+        "unit"       => [],
+        "system"     => [],
+        "components" => %w[spec/components],
+        "requests"   => %w[spec/requests]
+      }.freeze
+
+      def parse_arguments(*args)
+        args = args.map(&:to_s)
+
+        if args.empty?
+          scope = "all"
+          paths = []
+        elsif args.size == 1 && SCOPES.include?(args[0])
+          scope = args[0]
+          paths = SCOPES[args[0]]
+        else
+          scope = "given"
+          paths = args
+        end
+
+        [scope, paths]
+      end
+
+      def build_env(scope)
         env = { "SIMPLE_COV_COMMAND" => "bin/ci test" }
-        env["SIMPLE_COV_COMMAND"] += ":parallel" if parallel
+        env["SIMPLE_COV_COMMAND"] += ":parallel" if parallel_mode
         env["SIMPLE_COV_COMMAND"] += ":#{scope}" if scope
-        env["PARALLEL_TEST_FIRST_IS_1"] = "true" if parallel && parallel != "flatware"
+        env["PARALLEL_TEST_FIRST_IS_1"] = "true" if parallel_mode && parallel_mode != "flatware"
         env["RSPEC_IGNORE_FOCUS"] = "true"
 
         if ENV["CI"] == "true"
@@ -56,13 +87,15 @@ module CLI
       # rubocop:disable Metrics/CyclomaticComplexity
       # rubocop:disable Metrics/PerceivedComplexity
       #
-      def test_command(scope, paths, only_failures: false)
-        if parallel
+      def build_command(scope, paths, only_failures: false)
+        if parallel_mode
           node_total = determine_number_of_parallel_processes(scope)
           node_index = ENV.fetch("CI_NODE_INDEX", nil)
         end
 
-        if parallel == "turbo_tests" && !only_failures && ENV["CI"] != "true"
+        @parallel_mode = nil if node_total == 1
+
+        if parallel_mode == "turbo_tests" && !only_failures
           command  = "bundle exec turbo_tests"
           command += " -n #{node_total}" if node_total
           command += " -r fuubar -f Fuubar"
@@ -71,7 +104,7 @@ module CLI
           command += " --exclude-pattern spec/system" if scope == "unit"
           command += " --pattern spec/system"         if scope == "system"
 
-        elsif parallel == "flatware" && ENV["CI"] != "true"
+        elsif parallel_mode == "flatware"
           command  = "bundle exec flatware rspec"
           command += " -w #{node_total}"                                                  if node_total
           warn "CI_NODE_INDEX is ignored when using flatware for parallel testing"        if node_index
@@ -79,7 +112,7 @@ module CLI
           command += " --pattern 'system/**/*_spec.rb'"                                   if scope == "system"
           command += " --only-failures"                                                   if only_failures
 
-        elsif parallel && !only_failures
+        elsif parallel_mode && !only_failures
           command  = "bundle exec parallel_rspec"
           command += " -n #{node_total}"                                                  if node_total
           command += " --only-group #{node_index}"                                        if node_index
@@ -104,13 +137,17 @@ module CLI
 
       private
 
-      def parallel
-        @parallel ||= begin
-          load_dotenv
-          parallel = ENV.fetch("CI_PARALLEL", nil)
-          parallel = nil if parallel == "false"
-          parallel
-        end
+      def parallel_mode
+        return @parallel_mode if defined?(@parallel_mode)
+
+        load_dotenv
+        parallel = ENV.fetch("CI_PARALLEL", nil)
+        parallel = nil  if parallel == "false"
+
+        # Do not use flatware or turbo_tests in CI mode.
+        parallel = true if parallel && ENV["CI"] == "true"
+
+        @parallel_mode = parallel
       end
 
       def determine_number_of_parallel_processes(scope)
@@ -118,7 +155,12 @@ module CLI
 
         total = ENV.fetch("CI_NODE_TOTAL", nil)
         total = 2 if scope == "system" && (total.nil? || total > 2)
+        total = 1 if scope == "system" && system_spec_files.size == 1
         total
+      end
+
+      def system_spec_files
+        Dir[File.join(File.expand_path("../../../spec/system", __dir__), "**/*_spec.rb")]
       end
 
       def load_dotenv

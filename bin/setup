@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-require_relative "../lib/cli/setup"
+require_relative "cli/setup"
 
-CLI::Setup.new("bin/setup").call
+CLI::Setup.run

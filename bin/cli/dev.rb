@@ -4,14 +4,14 @@ require_relative "base"
 
 module CLI
   class Dev < Base
-    def call(arguments: ARGV)
-      case arguments[0]
+    def call(*args)
+      case args[0]
       when nil            then start
       when "server"       then start_server
-      when "background"   then start_background
+      when "jobs"         then start_jobs
       when "mailcatcher"  then start_mailcatcher
       when "help"         then help
-      else                     start_process(arguments[0])
+      else start_process(*args)
       end
     end
 
@@ -19,21 +19,21 @@ module CLI
       say <<~HEREDOC
         Development commands:
 
-            #{program_name}                   # Start all default processes
-            #{program_name} server            # Start only processes required to serve the application (web, js & css)
-            #{program_name} background        # Start background processes
-            #{program_name} mailcatcher       # Start mailcatcher in foreground mode
-            #{program_name} help              # Show this help
+            bin/dev                   # Start all default processes
+            bin/dev server            # Start only processes required to serve the application (web, js & css)
+            bin/dev jobs              # Start backgrounder process(es)
+            bin/dev mailcatcher       # Start mailcatcher in foreground mode
+            bin/dev help              # Show this help
 
         Server processes could be start individually:
 
-            #{program_name} web               # Start only rails server
-            #{program_name} js                # Start only dev server to bundle JS
-            #{program_name} css               # Start only dev server to bundle CSS
+            bin/dev web               # Start only rails server
+            bin/dev js                # Start only dev server to bundle JS
+            bin/dev css               # Start only dev server to bundle CSS
 
         Background processes could be start individually:
 
-            #{program_name} sidekiq           # Start only Sidekiq
+            bin/dev sidekiq           # Start only Sidekiq
         \x5
       HEREDOC
     end
@@ -57,7 +57,7 @@ module CLI
       start(:web, :js, :css)
     end
 
-    def start_background
+    def start_jobs
       start(:sidekiq, socket: "background")
     end
 
@@ -111,7 +111,7 @@ module CLI
     # So we disabled this behavior with -N option.
     #
     # Finally, you can override the port used by Rails with the command `PORT=<port> bin/dev`
-    # or by setting `PORT=<port>` in the `.overmind.env` file.
+    # or by setting `PORT=<port>` in an `.overmind.env` file.
     #
     def overmind_options(processes, socket:)
       options = {}

@@ -1,11 +1,10 @@
 # frozen_string_literal: true
 
 require_relative "../base"
-require "pathname"
 
 module CLI
   class Setup
-    class GitSubmodules < Base
+    class Submodules < Base
       def call
         say "Update vendorized submodules"
         run "git submodule init"

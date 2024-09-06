@@ -12,6 +12,7 @@ module CLI
         setup_redis_sidekiq
         setup_smtp_port
         setup_ci_parallel
+        setup_super_diff
         setup_production
 
         say ""
@@ -24,11 +25,12 @@ module CLI
 
         say ""
         say "Would you like to set a dedicated Redis database for Sidekiq ?"
+        say ""
         say "  [0]    No (default to redis://localhost:6379)"
         say "  [1-20] Another database (redis://localhost:6379/{database})"
         say ""
 
-        value = ask("  > ")
+        value = ask
         return unless (1..20).cover?(value.to_i)
 
         add_variable "REDIS_SIDEKIQ_URL", "redis://localhost:6379/#{value}", ".env.development"
@@ -38,9 +40,13 @@ module CLI
         return if variable_exist?("SMTP_PORT", ".env.development")
 
         say ""
-        say "Would you like to set an other port to use with MailCacther ? (default is 1025)"
+        say "Would you like to set a custom port to use with MailCacther ?"
+        say ""
+        say "  [any integer] Use custom port"
+        say "  [nothing]     Use default port (1025)"
+        say ""
 
-        value = ask("  > SMTP_PORT = ")
+        value = ask
         return if value.empty?
 
         add_variable "SMTP_PORT", value, ".env.development"
@@ -51,10 +57,11 @@ module CLI
 
         say ""
         say "Would you like to run CI in parallel ? (default is no)"
+        say ""
         say "  [0] No (default)"
         say "  [1] Use parallel_tests"
-        say "  [2] Use turbo_tests"
-        say "  [3] Use flatware"
+        say "  [2] Use turbo_tests       (experimental, better output)"
+        say "  [3] Use flatware          (experimental, faster)"
         say ""
 
         case ask
@@ -62,6 +69,15 @@ module CLI
         when "2" then add_variable "CI_PARALLEL", "turbo_tests", ".env.test"
         when "3" then add_variable "CI_PARALLEL", "flatware",    ".env.test"
         end
+      end
+
+      def setup_super_diff
+        return if variable_exist?("SUPER_DIFF", ".env.test")
+
+        say ""
+        say "Would you like to use SuperDiff ? [Yn]"
+
+        add_variable "SUPER_DIFF", (ask == "Y"), ".env.test"
       end
 
       def setup_production
@@ -122,6 +138,9 @@ module CLI
         say "  => puts `#{output}` in #{file}"
 
         file(file).open("a+") do |f|
+          lines = f.readlines
+
+          f.puts if lines.any? && !lines.last.end_with?("\n")
           f.puts output
         end
       end

@@ -2,13 +2,16 @@
 
 require "irb/color"
 require "English"
+require "zeitwerk"
 
 module CLI
   class Base
-    attr_reader :program_name
+    def self.run
+      call(*ARGV)
+    end
 
-    def initialize(program_name)
-      @program_name = program_name
+    def self.call(...)
+      new.call(...)
     end
 
     private
@@ -83,6 +86,10 @@ module CLI
       system("command", "-v", command, out: File::NULL)
     end
 
+    def program_name
+      $PROGRAM_NAME
+    end
+
     def output_prefix
       @output_prefix ||= colorize("[ #{program_name} ]", :BLUE)
     end
@@ -92,3 +99,10 @@ module CLI
     end
   end
 end
+
+# Configure autoloading in this directory
+#
+loader = Zeitwerk::Loader.new
+loader.inflector.inflect("ci" => "CI")
+loader.push_dir(__dir__, namespace: CLI)
+loader.setup

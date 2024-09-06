@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-require_relative "../lib/cli/ci"
+require_relative "cli/ci"
 
-CLI::CI.new("bin/ci").call
+CLI::CI.run

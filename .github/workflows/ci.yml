@@ -96,7 +96,7 @@ jobs:
         POSTGRESQL_PASSWORD: postgres
         POSTGRESQL_DATABASE: passerelle_test
       run: |
-        bin/setup test
+        bundle exec bin/setup test
 
     - name: Run tests
       env:
@@ -111,7 +111,7 @@ jobs:
         POSTGRESQL_PASSWORD: postgres
         POSTGRESQL_DATABASE: passerelle_test
       run: |
-        bin/ci test unit
+        bundle exec bin/ci test unit
 
   test_system:
     name: test:system
@@ -161,7 +161,7 @@ jobs:
         POSTGRESQL_PASSWORD: postgres
         POSTGRESQL_DATABASE: passerelle_test
       run: |
-        bin/setup test
+        bundle exec bin/setup test
 
     - name: Run tests
       env:
@@ -174,7 +174,7 @@ jobs:
         POSTGRESQL_DATABASE: passerelle_test
         CAPYBARA_ARTIFACTS:  ./tmp/capybara
       run: |
-        bin/ci test system --retry-failures
+        bundle exec bin/ci test system
 
     - name: Upload screenshots
       uses: actions/upload-artifact@v4
@@ -197,7 +197,7 @@ jobs:
 
     - name: Run rubocop
       run: |
-        bin/ci rubocop
+        bundle exec bin/ci rubocop
 
   brakeman:
     needs: cache_dependencies
@@ -213,7 +213,7 @@ jobs:
 
     - name: Run brakeman
       run: |
-        bin/ci brakeman
+        bundle exec bin/ci brakeman
 
   audit:
     needs: cache_dependencies
@@ -229,4 +229,4 @@ jobs:
 
     - name: Run audit
       run: |
-        bin/ci audit
+        bundle exec bin/ci audit

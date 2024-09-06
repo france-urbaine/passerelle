@@ -96,7 +96,7 @@ Metrics/ModuleLength:
 # Rails ------------------------------------------------------------------------
 Rails:
   Exclude:
-    - 'lib/cli/**/*'
+    - 'bin/**/*'
 
 Rails/ActionOrder:
   ExpectedOrder:
