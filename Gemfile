@@ -99,6 +99,7 @@ end
 group :development do
   gem "actual_db_schema"
   gem "annotate"
+  gem "bundle_update_interactive"
   gem "rack-mini-profiler"
   gem "web-console"
 
@@ -121,8 +122,6 @@ group :development do
   # Audit dependencies and common vulnerabilities
   gem "brakeman"
   gem "bundler-audit"
-  gem "bundleup"
-  gem "bundle_update_interactive"
 
   # Speed up commands on slow machines / big apps [https://github.com/rails/spring]
   # gem "spring"
