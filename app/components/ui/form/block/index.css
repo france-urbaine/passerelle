@@ -96,6 +96,7 @@
   .form-block__input-prefix {
     display: inline-flex;
     align-items: center;
+    white-space: nowrap;
 
     @apply py-2 px-3 h-10 rounded-l-md border border-r-0;
     @apply bg-gray-50 border-gray-300 text-gray-500;

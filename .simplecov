@@ -12,6 +12,4 @@ SimpleCov.start "rails" do
   add_group "Components", "app/components"
   add_group "Policies", "app/policies"
   add_group "Services", "app/services"
-
-  add_filter %r{^/lib/cli}
 end

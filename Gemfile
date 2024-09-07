@@ -122,6 +122,7 @@ group :development do
   gem "brakeman"
   gem "bundler-audit"
   gem "bundleup"
+  gem "bundle_update_interactive"
 
   # Speed up commands on slow machines / big apps [https://github.com/rails/spring]
   # gem "spring"

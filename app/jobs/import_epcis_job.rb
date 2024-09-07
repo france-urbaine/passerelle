@@ -31,7 +31,7 @@ class ImportEPCIsJob < ApplicationJob
     return unless row["EPCI"].match?(EPCI::SIREN_REGEXP)
 
     nature = row["NATURE_EPCI"]
-    nature = "ME" if nature == "METLYON"
+    nature = "ME" if nature&.start_with?("MET")
 
     queue << {
       siren:  row["EPCI"],

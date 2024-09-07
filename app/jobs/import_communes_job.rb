@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # This job use files provided by INSEE :
-#   https://www.insee.fr/fr/information/2028028
+#   https://www.insee.fr/fr/information/7671844
 #
 # You can launch the job using :
 #   ImportCommunesJob.perform_now(Passerelle::Application::DEFAULT_COMMUNES_URL)

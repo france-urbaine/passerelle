@@ -9,8 +9,8 @@ RSpec.describe Views::Territories::UpdateComponent, type: :component do
     expect(page).to have_selector(".modal form") do |form|
       expect(form).to have_html_attribute("action").with_value("/territoires/mise-a-jour")
 
-      expect(form).to have_field("Fichier de découpage communal", with: "fr/statistiques/fichier/2028028/table-appartenance-geo-communes-23.zip")
-      expect(form).to have_field("Fichier des intercommunalités", with: "fr/statistiques/fichier/2510634/Intercommunalite_Metropole_au_01-01-2023.zip")
+      expect(form).to have_field("Fichier de découpage communal", with: Passerelle::Application::DEFAULT_COMMUNES_URL)
+      expect(form).to have_field("Fichier des intercommunalités", with: Passerelle::Application::DEFAULT_EPCIS_URL)
     end
   end
 

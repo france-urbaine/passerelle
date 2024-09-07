@@ -8,26 +8,17 @@ module CLI
     class MasterKey < Base
       PATH = Pathname.new(__dir__).join("../../../config/master.key")
 
-      def call(on_exist: "ask")
+      def call
         say "Check for Rails master key"
 
         if exist?
-          case on_exist
-          when "skip"
-            say ""
-            say "✓ Rails master is already defined"
-            say ""
+          say "" # rubocop:disable Style/IdenticalConditionalBranches
+          say "Rails master is already defined."
+          say "Would you like to update it ? [Yn]"
 
-            return
-          when "ask"
-            say ""
-            say "Rails master is already defined."
-            say "Would you like to update it ? [Yn]"
-
-            return if ask != "Y"
-          end
+          return if ask != "Y"
         else
-          say ""
+          say "" # rubocop:disable Style/IdenticalConditionalBranches
           say "No master key found."
         end
 
