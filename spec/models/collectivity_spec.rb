@@ -178,10 +178,9 @@ RSpec.describe Collectivity do
           SELECT          "collectivities".*
           FROM            "collectivities"
           LEFT OUTER JOIN "publishers" ON "publishers"."id" = "collectivities"."publisher_id"
-          WHERE           (
-                                LOWER(UNACCENT("collectivities"."name")) LIKE LOWER(UNACCENT('%Hello%'))
+          WHERE           (     (LOWER(UNACCENT("collectivities"."name")) LIKE LOWER(UNACCENT('%Hello%')))
                             OR  "collectivities"."siren" = 'Hello'
-                            OR  LOWER(UNACCENT("publishers"."name")) LIKE LOWER(UNACCENT('%Hello%'))
+                            OR  (LOWER(UNACCENT("publishers"."name")) LIKE LOWER(UNACCENT('%Hello%')))
                           )
         SQL
       end
@@ -223,12 +222,11 @@ RSpec.describe Collectivity do
         expect {
           described_class.autocomplete("Hello").load
         }.to perform_sql_query(<<~SQL)
-          SELECT "collectivities".*
-          FROM   "collectivities"
-          WHERE  (
-                LOWER(UNACCENT("collectivities"."name")) LIKE LOWER(UNACCENT('%Hello%'))
-            OR  "collectivities"."siren" = 'Hello'
-          )
+          SELECT  "collectivities".*
+          FROM    "collectivities"
+          WHERE   (     (LOWER(UNACCENT("collectivities"."name")) LIKE LOWER(UNACCENT('%Hello%')))
+                    OR  "collectivities"."siren" = 'Hello'
+                  )
         SQL
       end
     end

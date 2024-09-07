@@ -40,8 +40,8 @@ RSpec.describe QueryRecords::Match do
       }.to perform_sql_query(<<~SQL)
         SELECT  "publishers".*
         FROM    "publishers"
-        WHERE   (     LOWER(UNACCENT("publishers"."name")) LIKE LOWER(UNACCENT('%Solutions%'))
-                  OR  LOWER(UNACCENT("publishers"."name")) LIKE LOWER(UNACCENT('%Territoire%'))
+        WHERE   (     (LOWER(UNACCENT("publishers"."name")) LIKE LOWER(UNACCENT('%Solutions%')))
+                  OR  (LOWER(UNACCENT("publishers"."name")) LIKE LOWER(UNACCENT('%Territoire%')))
                 )
       SQL
     end
@@ -53,8 +53,8 @@ RSpec.describe QueryRecords::Match do
         SELECT      "collectivities".*
         FROM        "collectivities"
         INNER JOIN  "publishers" ON "publishers"."id" = "collectivities"."publisher_id"
-        WHERE       (     LOWER(UNACCENT("collectivities"."name")) LIKE LOWER(UNACCENT('%Basque%'))
-                      OR  LOWER(UNACCENT("collectivities"."name")) LIKE LOWER(UNACCENT('%Bearn%'))
+        WHERE       (     (LOWER(UNACCENT("collectivities"."name")) LIKE LOWER(UNACCENT('%Basque%')))
+                      OR  (LOWER(UNACCENT("collectivities"."name")) LIKE LOWER(UNACCENT('%Bearn%')))
                     )
       SQL
     end

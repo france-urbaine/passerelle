@@ -368,13 +368,13 @@ RSpec.describe Commune do
           LEFT OUTER JOIN "departements" ON "departements"."code_departement" = "communes"."code_departement"
           LEFT OUTER JOIN "regions" ON "regions"."code_region" = "departements"."code_region"
           WHERE           (
-                                LOWER(UNACCENT("communes"."name")) LIKE LOWER(UNACCENT('%Hello%'))
+                                (LOWER(UNACCENT("communes"."name")) LIKE LOWER(UNACCENT('%Hello%')))
                             OR  "communes"."code_insee" = 'Hello'
                             OR  "communes"."code_departement" = 'Hello'
                             OR  "communes"."siren_epci" = 'Hello'
-                            OR  LOWER(UNACCENT("epcis"."name")) LIKE LOWER(UNACCENT('%Hello%'))
-                            OR  LOWER(UNACCENT("departements"."name")) LIKE LOWER(UNACCENT('%Hello%'))
-                            OR  LOWER(UNACCENT("regions"."name")) LIKE LOWER(UNACCENT('%Hello%'))
+                            OR  (LOWER(UNACCENT("epcis"."name")) LIKE LOWER(UNACCENT('%Hello%')))
+                            OR  (LOWER(UNACCENT("departements"."name")) LIKE LOWER(UNACCENT('%Hello%')))
+                            OR  (LOWER(UNACCENT("regions"."name")) LIKE LOWER(UNACCENT('%Hello%')))
                           )
         SQL
       end
@@ -430,10 +430,9 @@ RSpec.describe Commune do
         }.to perform_sql_query(<<~SQL)
           SELECT "communes".*
           FROM   "communes"
-          WHERE (
-                LOWER(UNACCENT("communes"."qualified_name")) LIKE LOWER(UNACCENT('%Hello%'))
-            OR  "communes"."code_insee" = 'Hello'
-          )
+          WHERE (     (LOWER(UNACCENT("communes"."qualified_name")) LIKE LOWER(UNACCENT('%Hello%')))
+                  OR  "communes"."code_insee" = 'Hello'
+                )
         SQL
       end
     end

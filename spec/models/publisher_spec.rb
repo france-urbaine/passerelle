@@ -70,8 +70,7 @@ RSpec.describe Publisher do
         }.to perform_sql_query(<<~SQL.squish)
           SELECT  "publishers".*
           FROM    "publishers"
-          WHERE   (
-                        LOWER(UNACCENT("publishers"."name")) LIKE LOWER(UNACCENT('%Hello%'))
+          WHERE   (     (LOWER(UNACCENT("publishers"."name")) LIKE LOWER(UNACCENT('%Hello%')))
                     OR  "publishers"."siren" = 'Hello'
                   )
         SQL

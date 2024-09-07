@@ -158,11 +158,10 @@ RSpec.describe Office do
           SELECT          "offices".*
           FROM            "offices"
           LEFT OUTER JOIN "ddfips" ON "ddfips"."id" = "offices"."ddfip_id"
-          WHERE (
-                LOWER(UNACCENT("offices"."name")) LIKE LOWER(UNACCENT('%Hello%'))
-            OR  LOWER(UNACCENT("ddfips"."name")) LIKE LOWER(UNACCENT('%Hello%'))
-            OR  "ddfips"."code_departement" = 'Hello'
-          )
+          WHERE (     (LOWER(UNACCENT("offices"."name")) LIKE LOWER(UNACCENT('%Hello%')))
+                  OR  (LOWER(UNACCENT("ddfips"."name")) LIKE LOWER(UNACCENT('%Hello%')))
+                  OR  "ddfips"."code_departement" = 'Hello'
+                )
         SQL
       end
 

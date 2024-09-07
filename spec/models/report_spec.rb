@@ -525,8 +525,8 @@ RSpec.describe Report do
                       "reports"."reference" = 'Hello'
                   OR  "reports"."situation_invariant" = 'Hello'
                   OR  "reports"."package_id" IN (SELECT "packages"."id" FROM "packages" WHERE "packages"."reference" = 'Hello')
-                  OR  LOWER(UNACCENT("communes"."name")) LIKE LOWER(UNACCENT('%Hello%'))
-                  OR  LOWER(UNACCENT("reports"."computed_address")) LIKE LOWER(UNACCENT('%Hello%'))
+                  OR  (LOWER(UNACCENT("communes"."name")) LIKE LOWER(UNACCENT('%Hello%')))
+                  OR  (LOWER(UNACCENT("reports"."computed_address")) LIKE LOWER(UNACCENT('%Hello%')))
                 )
         SQL
       end
