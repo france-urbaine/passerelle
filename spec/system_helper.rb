@@ -4,7 +4,7 @@
 require "rails_helper"
 
 # Load configuration files and helpers
-Dir[Rails.root.join("spec/support/system/**/*.rb")].each { |file| require file }
+Rails.root.glob("spec/support/system/**/*.rb").each { |file| require file }
 
 RSpec.configure do |config|
   # Helpers & matchers from gems

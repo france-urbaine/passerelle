@@ -33,10 +33,10 @@ require "test_prof/recipes/rspec/let_it_be"
 # Matchers are required first, to avoid call require in _helper.rb files
 # in support.
 #
-Dir[Rails.root.join("spec/support/matchers/*.rb")].each { |file| require file }
-Dir[Rails.root.join("spec/support/**/*.rb")].each do |file|
+Rails.root.glob("spec/support/matchers/*.rb").each { |file| require file }
+Rails.root.glob("spec/support/**/*.rb").each do |file|
   # Files in support/system should be required from system_helper.rb
-  require file unless file.include?("spec/support/system")
+  require file unless file.to_s.include?("spec/support/system")
 end
 
 # Checks for pending migrations and applies them before tests are run.

@@ -143,11 +143,6 @@ RSpec/ExpectActual:
     - 'spec/routing/**/*'  # expect(get: "/path) is a common pattern
     - 'spec/policies/**/*' # expect(:create?) is a common pattern
 
-RSpec/FilePath:
-  Enabled: false
-  # FIXME: This cop would be removed in the future, but is still enabled by default
-  # https://github.com/rubocop/rubocop-rspec/releases/tag/v2.24.1
-
 RSpec/ImplicitSubject:
   EnforcedStyle: require_implicit
 
