@@ -973,7 +973,7 @@ RSpec.describe States::ReportStates do
           }.to perform_sql_query(<<~SQL.squish)
             UPDATE  "reports"
             SET     "state"           = 'transmitted',
-                    "transmitted_at"  = COALESCE("reports"."transmitted_at", '2024-02-08 16:00:00'),
+                    "transmitted_at"  = (COALESCE("reports"."transmitted_at", '2024-02-08 16:00:00')),
                     "updated_at"      = '2024-02-08 16:00:00'
 
             WHERE   "reports"."state" = 'ready'
@@ -1021,8 +1021,8 @@ RSpec.describe States::ReportStates do
           }.to perform_sql_query(<<~SQL.squish)
             UPDATE  "reports"
             SET     "state"           = 'accepted',
-                    "acknowledged_at" = COALESCE("reports"."acknowledged_at", '2024-02-08 16:00:00'),
-                    "accepted_at"     = COALESCE("reports"."accepted_at", '2024-02-08 16:00:00'),
+                    "acknowledged_at" = (COALESCE("reports"."acknowledged_at", '2024-02-08 16:00:00')),
+                    "accepted_at"     = (COALESCE("reports"."accepted_at", '2024-02-08 16:00:00')),
                     "returned_at"     = NULL,
                     "updated_at"      = '2024-02-08 16:00:00'
 
@@ -1041,7 +1041,7 @@ RSpec.describe States::ReportStates do
             SET     "accepted_at"     = '2024-01-15 00:00:00',
                     "priority"        = 'high',
                     "state"           = 'accepted',
-                    "acknowledged_at" = COALESCE("reports"."acknowledged_at", '2024-02-08 16:00:00'),
+                    "acknowledged_at" = (COALESCE("reports"."acknowledged_at", '2024-02-08 16:00:00')),
                     "returned_at"     = NULL,
                     "updated_at"      = '2024-02-08 16:00:00'
 
@@ -1059,7 +1059,7 @@ RSpec.describe States::ReportStates do
             UPDATE  "reports"
             SET     "state"           = 'accepted',
                     "accepted_at"     = '2024-01-15 00:00:00',
-                    "acknowledged_at" = COALESCE("reports"."acknowledged_at", '2024-02-08 16:00:00'),
+                    "acknowledged_at" = (COALESCE("reports"."acknowledged_at", '2024-02-08 16:00:00')),
                     "returned_at"     = NULL,
                     "updated_at"      = '2024-02-08 16:00:00'
 
@@ -1075,7 +1075,7 @@ RSpec.describe States::ReportStates do
           }.to perform_sql_query(<<~SQL.squish)
             UPDATE  "reports"
             SET     "state"       = 'assigned',
-                    "assigned_at" = COALESCE("reports"."assigned_at", '2024-02-08 16:00:00'),
+                    "assigned_at" = (COALESCE("reports"."assigned_at", '2024-02-08 16:00:00')),
                     "updated_at"  = '2024-02-08 16:00:00'
 
             WHERE   "reports"."state" IN ('accepted', 'assigned')
@@ -1123,8 +1123,8 @@ RSpec.describe States::ReportStates do
           }.to perform_sql_query(<<~SQL.squish)
             UPDATE  "reports"
             SET     "state"           = 'rejected',
-                    "acknowledged_at" = COALESCE("reports"."acknowledged_at", '2024-02-08 16:00:00'),
-                    "returned_at"     = COALESCE("reports"."returned_at", '2024-02-08 16:00:00'),
+                    "acknowledged_at" = (COALESCE("reports"."acknowledged_at", '2024-02-08 16:00:00')),
+                    "returned_at"     = (COALESCE("reports"."returned_at", '2024-02-08 16:00:00')),
                     "accepted_at"     = NULL,
                     "updated_at"      = '2024-02-08 16:00:00'
 
@@ -1143,7 +1143,7 @@ RSpec.describe States::ReportStates do
             SET     "returned_at"     = '2024-01-15 00:00:00',
                     "priority"        = 'high',
                     "state"           = 'rejected',
-                    "acknowledged_at" = COALESCE("reports"."acknowledged_at", '2024-02-08 16:00:00'),
+                    "acknowledged_at" = (COALESCE("reports"."acknowledged_at", '2024-02-08 16:00:00')),
                     "accepted_at"     = NULL,
                     "updated_at"      = '2024-02-08 16:00:00'
 
@@ -1161,7 +1161,7 @@ RSpec.describe States::ReportStates do
             UPDATE  "reports"
             SET     "state"           = 'rejected',
                     "returned_at"     = '2024-01-15 00:00:00',
-                    "acknowledged_at" = COALESCE("reports"."acknowledged_at", '2024-02-08 16:00:00'),
+                    "acknowledged_at" = (COALESCE("reports"."acknowledged_at", '2024-02-08 16:00:00')),
                     "accepted_at"     = NULL,
                     "updated_at"      = '2024-02-08 16:00:00'
 
@@ -1177,7 +1177,7 @@ RSpec.describe States::ReportStates do
           }.to perform_sql_query(<<~SQL.squish)
             UPDATE  "reports"
             SET     "state"       = 'applicable',
-                    "resolved_at" = COALESCE("reports"."resolved_at", '2024-02-08 16:00:00'),
+                    "resolved_at" = (COALESCE("reports"."resolved_at", '2024-02-08 16:00:00')),
                     "updated_at"  = '2024-02-08 16:00:00'
 
             WHERE   "reports"."state" IN ('assigned', 'applicable', 'inapplicable')
@@ -1190,7 +1190,7 @@ RSpec.describe States::ReportStates do
           }.to perform_sql_query(<<~SQL.squish)
             UPDATE  "reports"
             SET     "state"       = 'inapplicable',
-                    "resolved_at" = COALESCE("reports"."resolved_at", '2024-02-08 16:00:00'),
+                    "resolved_at" = (COALESCE("reports"."resolved_at", '2024-02-08 16:00:00')),
                     "updated_at"  = '2024-02-08 16:00:00'
 
             WHERE   "reports"."state" IN ('assigned', 'applicable', 'inapplicable')
@@ -1245,13 +1245,14 @@ RSpec.describe States::ReportStates do
             described_class.confirm_all
           }.to perform_sql_query(<<~SQL.squish)
             UPDATE  "reports"
-            SET     "state"       =
+            SET     "state"       = (
                       CASE "reports"."state"
                       WHEN 'applicable'::report_state   THEN 'approved'::report_state
                       WHEN 'inapplicable'::report_state THEN 'canceled'::report_state
                       ELSE "reports"."state"
-                      END,
-                    "returned_at" = COALESCE("reports"."returned_at", '2024-02-08 16:00:00'),
+                      END
+                    ),
+                    "returned_at" = (COALESCE("reports"."returned_at", '2024-02-08 16:00:00')),
                     "updated_at"  = '2024-02-08 16:00:00'
 
             WHERE   "reports"."state" IN ('applicable', 'inapplicable', 'approved', 'canceled')
@@ -1268,12 +1269,13 @@ RSpec.describe States::ReportStates do
             UPDATE  "reports"
             SET     "returned_at" = '2024-01-15 00:00:00',
                     "priority"    = 'high',
-                    "state"       =
+                    "state"       = (
                       CASE "reports"."state"
                       WHEN 'applicable'::report_state   THEN 'approved'::report_state
                       WHEN 'inapplicable'::report_state THEN 'canceled'::report_state
                       ELSE "reports"."state"
-                      END,
+                      END
+                    ),
                     "updated_at"  = '2024-02-08 16:00:00'
 
             WHERE   "reports"."state" IN ('applicable', 'inapplicable', 'approved', 'canceled')
@@ -1288,12 +1290,13 @@ RSpec.describe States::ReportStates do
             )
           }.to perform_sql_query(<<~SQL.squish)
             UPDATE  "reports"
-            SET     "state" =
+            SET     "state" = (
                       CASE "reports"."state"
                       WHEN 'applicable'::report_state   THEN 'approved'::report_state
                       WHEN 'inapplicable'::report_state THEN 'canceled'::report_state
                       ELSE "reports"."state"
-                      END,
+                      END
+                    ),
                     "returned_at" = '2024-01-15 00:00:00',
                     "updated_at"  = '2024-02-08 16:00:00'
 

@@ -39,8 +39,7 @@ RSpec.describe Region do
         }.to perform_sql_query(<<~SQL)
           SELECT  "regions".*
           FROM    "regions"
-          WHERE   (
-                        LOWER(UNACCENT("regions"."name")) LIKE LOWER(UNACCENT('%Hello%'))
+          WHERE   (     (LOWER(UNACCENT("regions"."name")) LIKE LOWER(UNACCENT('%Hello%')))
                     OR  "regions"."code_region" = 'Hello'
                   )
         SQL

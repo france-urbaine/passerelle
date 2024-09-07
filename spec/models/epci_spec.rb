@@ -85,13 +85,12 @@ RSpec.describe EPCI do
           FROM   "epcis"
           LEFT OUTER JOIN "departements" ON "departements"."code_departement" = "epcis"."code_departement"
           LEFT OUTER JOIN "regions" ON "regions"."code_region" = "departements"."code_region"
-          WHERE (
-                LOWER(UNACCENT("epcis"."name")) LIKE LOWER(UNACCENT('%Hello%'))
-            OR  "epcis"."siren" = 'Hello'
-            OR  "epcis"."code_departement" = 'Hello'
-            OR  LOWER(UNACCENT("departements"."name")) LIKE LOWER(UNACCENT('%Hello%'))
-            OR  LOWER(UNACCENT("regions"."name")) LIKE LOWER(UNACCENT('%Hello%'))
-          )
+          WHERE (     (LOWER(UNACCENT("epcis"."name")) LIKE LOWER(UNACCENT('%Hello%')))
+                  OR  "epcis"."siren" = 'Hello'
+                  OR  "epcis"."code_departement" = 'Hello'
+                  OR  (LOWER(UNACCENT("departements"."name")) LIKE LOWER(UNACCENT('%Hello%')))
+                  OR  (LOWER(UNACCENT("regions"."name")) LIKE LOWER(UNACCENT('%Hello%')))
+                )
         SQL
       end
 
@@ -156,10 +155,9 @@ RSpec.describe EPCI do
         }.to perform_sql_query(<<~SQL)
           SELECT "epcis".*
           FROM   "epcis"
-          WHERE (
-                LOWER(UNACCENT("epcis"."name")) LIKE LOWER(UNACCENT('%Hello%'))
-            OR  "epcis"."siren" = 'Hello'
-          )
+          WHERE (     (LOWER(UNACCENT("epcis"."name")) LIKE LOWER(UNACCENT('%Hello%')))
+                  OR  "epcis"."siren" = 'Hello'
+                )
         SQL
       end
     end
