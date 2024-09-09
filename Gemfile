@@ -74,8 +74,6 @@ gem "audited"
 
 group :development, :test do
   gem "lookbook"
-  # FIXME: https://github.com/tinfoil/devise-two-factor/pull/240
-  gem "htmlbeautifier", github: "inkstak/htmlbeautifier", branch: "allow_custom_elements"
 
   gem "amazing_print"
   gem "byebug"

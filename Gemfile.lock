@@ -1,11 +1,4 @@
 GIT
-  remote: https://github.com/inkstak/htmlbeautifier.git
-  revision: 9b2529d86c7674267454e91e67d118096d508cca
-  branch: allow_custom_elements
-  specs:
-    htmlbeautifier (1.4.1)
-
-GIT
   remote: https://github.com/inkstak/turbo_tests.git
   revision: b61bc103023bc32f433c0d69d9bdd824ca87de09
   branch: feature-handle_fuubar
@@ -272,6 +265,7 @@ GEM
       guard (~> 2.0)
       rubocop (< 2.0)
     hashdiff (1.1.1)
+    htmlbeautifier (1.4.1)
     htmlentities (4.3.4)
     i18n (1.14.5)
       concurrent-ruby (~> 1.0)
@@ -651,7 +645,6 @@ DEPENDENCIES
   guard-brakeman
   guard-rspec
   guard-rubocop
-  htmlbeautifier!
   inline_svg
   jbuilder
   jsbundling-rails
