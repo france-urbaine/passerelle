@@ -18,19 +18,7 @@ Rails.application.configure do
     config.view_component.use_deprecated_instrumentation_name = false
   end
 
-  if defined?(Lookbook)
-    config.lookbook.project_name = "Passerelle"
-
-    HtmlBeautifier::HtmlParser.block_elements << "a"
-    HtmlBeautifier::HtmlParser.block_elements << "button"
-    HtmlBeautifier::HtmlParser.block_elements << "svg"
-    HtmlBeautifier::HtmlParser.block_elements << "title"
-    HtmlBeautifier::HtmlParser.block_elements << "label"
-    HtmlBeautifier::HtmlParser.block_elements << "span"
-    HtmlBeautifier::HtmlParser.block_elements << "main"
-    HtmlBeautifier::HtmlParser.block_elements << "turbo-frame"
-    HtmlBeautifier::HtmlParser.block_elements << "colgroup"
-  end
+  config.lookbook.project_name = "Passerelle" if defined?(Lookbook)
 end
 
 # Eager load all components to use component helpers defined by #define_component_helper
