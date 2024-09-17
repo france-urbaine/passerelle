@@ -191,7 +191,7 @@ GEM
       railties (>= 4.1.0)
       responders
       warden (~> 1.2.3)
-    devise-two-factor (5.1.0)
+    devise-two-factor (6.0.0)
       activesupport (~> 7.0)
       devise (~> 4.0)
       railties (~> 7.0)
@@ -267,7 +267,7 @@ GEM
     hashdiff (1.1.1)
     htmlbeautifier (1.4.1)
     htmlentities (4.3.4)
-    i18n (1.14.5)
+    i18n (1.14.6)
       concurrent-ruby (~> 1.0)
     inline_svg (1.10.0)
       activesupport (>= 3.0)
