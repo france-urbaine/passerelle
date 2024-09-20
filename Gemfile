@@ -7,7 +7,7 @@ ruby "3.3.4"
 
 # Core gems
 gem "bootsnap", require: false
-gem "puma", "~> 6.0"
+gem "puma", "~> 6.4"
 gem "rails", "~> 7.2.1"
 
 # Database
