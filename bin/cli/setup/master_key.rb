@@ -22,12 +22,14 @@ module CLI
           say "No master key found."
         end
 
-        say "Setting up master key."
-        say "The key is shared in Dashlane."
+        say ""
+        say "To get the actual master key, please contact us at:"
+        say "   cto@solutions-territoire.fr"
         say ""
         say "Please enter the master key (or press Enter to ignore):"
 
-        master_key = ask(secret: true, loop_empty: true)
+        master_key = ask(secret: true)
+        return if master_key.empty?
 
         PATH.open("w") do |f|
           f.puts master_key
