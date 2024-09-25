@@ -12,8 +12,6 @@ Once you've got a deployable HEAD on main branch:
 
     ```shell
     git push origin --tags
-    git push france_urbaine
-    git push france_urbaine --tags
     ```
 
 3. Draft a release on [Github](https://github.com/france-urbaine/passerelle/releases)
@@ -24,7 +22,7 @@ Once you've got a deployable HEAD on main branch:
     APP_VERSION="v1.0-beta.7"
     ```
 
-4. Push main to CleverCloud:
+4. Push main branch to CleverCloud:
 
     ```shell
     git push production main:master
