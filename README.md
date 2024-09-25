@@ -2,13 +2,10 @@
 
 ## Requirements
 
-* Ruby 3.2.2
+* Ruby 3.3.4
 * PostgreSQL
 * Redis
 * Yarn
-
-System tests require Chrome or Chromium to be installed
-(see [Ferrum](https://github.com/rubycdp/ferrum)).
 
 ## Setup
 
@@ -62,35 +59,14 @@ In production, environnement variables must be defined through the cloud provide
 In development & test, environnement variables may be defined in `.env` files.  
 Learn more about `.env` files at https://github.com/bkeepers/dotenv
 
-
-## Secrets
-
-Secrets and credentials shared by all environnements are stored using Rails credentials feature.  
-
-Learn more about credentials with:
-
-```
-bin/rails credentials:help
-```
-
-## Development
-
-### Subdomains
+## Subdomains
 
 Some part of the application, use subdomains, such as `api.`.
 
 In development, uses the domain [passerelle-fiscale.localhost](http://passerelle-fiscale.localhost:3000) to navigate between subdomains out of the box.
 
-### Previews
+## Previews
 
-Components and UI can be previewed at [http://localhost:3000/lookbook](http://localhost:3000/lookbook)
+UI components can be previewed at [http://localhost:3000/lookbook](http://localhost:3000/lookbook)
 
 Mails can be previewed at [http://localhost:3000/rails/mailers](http://localhost:3000/rails/mailers)
-
-### Mail catching
-
-In development, mails can be catched with `mailcatcher`:
-
-```shell
-$ bin/mailcatcher
-```

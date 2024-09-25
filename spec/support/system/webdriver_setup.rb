@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # If webdriver is replaced by cuprite, ignore this file
-return unless defined?(Webdrivers)
+return if ENV["WEBDRIVER"] == "cuprite"
 
 RSpec.configure do |config|
   config.before type: :system do
@@ -12,7 +12,7 @@ RSpec.configure do |config|
     )
 
     driven_by :selenium,
-      using: ENV.fetch("WEBDRIVER", "headless_firefox").to_sym,
+      using:       ENV.fetch("WEBDRIVER").to_sym,
       screen_size: [1280, 800]
   end
 end

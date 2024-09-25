@@ -12,6 +12,7 @@ module CLI
         setup_redis_sidekiq
         setup_smtp_port
         setup_ci_parallel
+        setup_webdriver
         setup_super_diff
         setup_production
 
@@ -56,7 +57,7 @@ module CLI
         return if variable_exist?("CI_PARALLEL", ".env.test")
 
         say ""
-        say "Would you like to run CI in parallel ? (default is no)"
+        say "Would you like to run CI in parallel ?"
         say ""
         say "  [0] No (default)"
         say "  [1] Use parallel_tests"
@@ -68,6 +69,22 @@ module CLI
         when "1" then add_variable "CI_PARALLEL", true,          ".env.test"
         when "2" then add_variable "CI_PARALLEL", "turbo_tests", ".env.test"
         when "3" then add_variable "CI_PARALLEL", "flatware",    ".env.test"
+        end
+      end
+
+      def setup_webdriver
+        return if variable_exist?("WEBDRIVER", ".env.test")
+
+        say ""
+        say "Would you like to use Chrome (or Chromium) to run system tests ? [Yn]"
+
+        if ask == "Y"
+          add_variable "WEBDRIVER", "cuprite", ".env.test"
+        else
+          say "Please enter your preferred webdriver:"
+          say "example: firefox_headless"
+
+          add_variable "WEBDRIVER", ask, ".env.test"
         end
       end
 

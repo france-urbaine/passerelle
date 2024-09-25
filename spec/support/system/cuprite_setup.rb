@@ -1,12 +1,9 @@
 # frozen_string_literal: true
 
-# First, load Cuprite Capybara integration
 # If cuprite is replaced by webdrivers, ignore this file
-begin
-  require "capybara/cuprite"
-rescue LoadError
-  return
-end
+return if ENV["WEBDRIVER"] != "cuprite"
+
+require "capybara/cuprite"
 
 # Then, we need to register our driver to be able to use it later
 # with #driven_by method.#

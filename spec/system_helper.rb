@@ -3,6 +3,8 @@
 # Load general RSpec Rails configuration
 require "rails_helper"
 
+ENV["WEBDRIVER"] ||= "cuprite"
+
 # Load configuration files and helpers
 Rails.root.glob("spec/support/system/**/*.rb").each { |file| require file }
 
