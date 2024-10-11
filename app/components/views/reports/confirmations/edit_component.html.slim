@@ -6,7 +6,7 @@
     - modal.with_form(model: @report, url: report_confirmation_path(@report)) do |form|
       - modal.with_hidden_field :redirect, @referrer
 
-      p Vous êtes sur le point de transmetre une réponse définitive à la collectivité :
+      p Vous êtes sur le point de transmettre une réponse définitive à la collectivité :
       = render Views::Reports::ShortDetailsComponent.new(@report) do |details|
         - details.with_attribute("Statut") do
           - if @report.applicable? || @report.approved?
