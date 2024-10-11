@@ -1,0 +1,234 @@
+fr:
+  activerecord:
+    attributes:
+      report:
+        reference:    Référence du signalement
+        anomalies:    Objet(s)
+        commune:      Commune
+        date_constat: Date du constat
+        priority:     Priorité
+
+        # Identification MAJIC
+        situation_annee_majic:        Année du fichier MAJIC
+        situation_invariant:          Invariant
+        situation_parcelle:           Parcelle
+
+        situation_adresse:            Adresse du local
+        situation_numero_voie:        Numéro de voie
+        situation_indice_repetition:  Indice de répétition (bis, ter, ...)
+        situation_libelle_voie:       Libellé de voie
+        situation_code_rivoli:        Code RIVOLI
+
+        situation_porte:              Numéro de porte
+        situation_numero_batiment:    Bâtiment
+        situation_numero_escalier:    Escalier
+        situation_numero_niveau:      Etage
+        situation_numero_porte:       Porte
+        situation_numero_ordre_porte: Numéro d'ordre de la porte
+
+        situation_proprietaire:              Propriétaire
+        situation_numero_ordre_proprietaire: Numéro d'ordre du propriétaire
+
+        # Évaluation actuelle
+        situation_date_mutation:    Date de mutation
+        situation_affectation:      Affectation du local
+        situation_nature:           Nature du local
+        situation_categorie:        Catégorie du local
+
+        situation_surface_reelle:   Surface réelle
+        situation_surface_p1:       (P1) Surface des parties principales
+        situation_surface_p2:       (P2) Surface des parties secondaires couvertes
+        situation_surface_p3:       (P3) Surface des parties secondaires non couvertes
+        situation_surface_pk1:      (PK1) Surface des stationnements couverts
+        situation_surface_pk2:      (PK2) Surface des stationnements non couverts
+        situation_surface_ponderee: Surface pondérée
+
+        situation_coefficient_entretien:              Coefficient d'entretien
+        situation_coefficient_localisation:           Coefficient de localisation
+        situation_coefficient_situation_generale:     Coefficient de situation générale
+        situation_coefficient_situation_particuliere: Coefficient de situation particulière
+
+        # Proposition évaluation
+        proposition_date_mutation:    Date de mutation
+        proposition_affectation:      Affectation du local
+        proposition_nature:           Nature du local
+        proposition_categorie:        Catégorie du local
+        proposition_motif:            Nature de la mise à jour
+
+        proposition_surface_reelle:   Surface réelle
+        proposition_surface_p1:       (P1) Surface des parties principales
+        proposition_surface_p2:       (P2) Surface des parties secondaires couvertes
+        proposition_surface_p3:       (P3) Surface des parties secondaires non couvertes
+        proposition_surface_pk1:      (PK1) Surface des stationnements couverts
+        proposition_surface_pk2:      (PK2) Surface des stationnements non couverts
+        proposition_surface_ponderee: Surface pondérée
+
+        proposition_coefficient_entretien:              Coefficient d'entretien
+        proposition_coefficient_localisation:           Coefficient de localisation
+        proposition_coefficient_situation_generale:     Coefficient de situation générale
+        proposition_coefficient_situation_particuliere: Coefficient de situation particulière
+
+        # Proposition adresse
+        proposition_adresse:            Nouvelle adresse
+        proposition_numero_voie:        Numéro de voie
+        proposition_indice_repetition:  Indice de répétition (bis, ter, ...)
+        proposition_libelle_voie:       Libellé de voie
+        proposition_code_rivoli:        Code RIVOLI
+
+        # Occupation actuelle
+        situation_occupation_annee:       Année du fichier d'occupation
+        situation_nature_occupation:      Nature de l'occupation
+        situation_majoration_rs:          Application de la majoration sur les résidences secondaires
+        situation_annee_cfe:              Année du fichier CFE
+        situation_vacance_fiscale:        Vacance fiscale
+        situation_nombre_annees_vacance:  Nombre d'années de vacance
+        situation_siren_dernier_occupant: N° SIREN du dernier occupant
+        situation_nom_dernier_occupant:   Nom du dernier occupant
+        situation_vlf_cfe:                VLF Cotisation foncière des entreprises
+        situation_taxation_base_minimum:  Taxation base minimum
+
+        # Proposition occupation
+        proposition_date_occupation:         Date du changement
+        proposition_nature_occupation:       Nature de l'occupation
+        proposition_erreur_tlv:              TLV appliquée à tort
+        proposition_erreur_thlv:             THLV appliquée à tort
+        proposition_meuble_tourisme:         Meublé de tourisme
+        proposition_majoration_rs:           Application de la majoration sur les résidences secondaires
+
+        proposition_nom_occupant:            Nom de l'occupant
+        proposition_prenom_occupant:         Prénom de l'occupant
+        proposition_adresse_occupant:        Adresse de l'occupant
+        proposition_numero_siren:            N° SIREN
+        proposition_nom_societe:             Nom de l'entreprise
+        proposition_nom_enseigne:            Enseigne
+        proposition_etablissement_principal: Etablissement principal
+        proposition_chantier_longue_duree:   Chantier longue durée
+        proposition_code_naf:                Code NAF
+        proposition_date_debut_activite:     Date de début de l'activité
+
+        # Creation local
+        proposition_date_achevement:    Date d’achèvement
+        proposition_nature_dependance:  Nature de dépendance
+        proposition_nature_travaux:     Nature de travaux
+        proposition_numero_permis:      N° de permis
+
+      package:
+        form_type:            Formulaire type
+        due_on:               Date d'échéance
+
+      publisher:
+        name:                 Nom de l'éditeur
+        siren:                Numéro SIREN de l'éditeur
+        email:                Adresse mail de contact
+        contact_first_name:   Prénom du contact
+        contact_last_name :   Nom du contact
+        contact_email:        Adresse mail de contact
+        contact_phone:        Numéro de téléphone
+        domain_restriction:   Nom de domaine
+        allow_2fa_via_email:  Autoriser l'email comme méthode d'authentification en 2 étapes
+        sandbox:              Mode « Bac à sable »
+
+      ddfip:
+        name:                   Nom de la DDFIP
+        code_departement:       Code INSEE du département
+        departement:            Département
+        contact_first_name:     Prénom du contact
+        contact_last_name :     Nom du contact
+        contact_email:          Adresse mail de contact
+        contact_phone:          Numéro de téléphone
+        domain_restriction:     Nom de domaine
+        allow_2fa_via_email:    Autoriser l'email comme méthode d'authentification en 2 étapes
+        auto_assign_reports:    Assigner automatiquement les nouveaux signalements
+
+      dgfip:
+        name:                   Nom de la DGFIP
+        contact_first_name:     Prénom du contact
+        contact_last_name :     Nom du contact
+        contact_email:          Adresse mail de contact
+        contact_phone:          Numéro de téléphone
+        domain_restriction:     Nom de domaine
+        allow_2fa_via_email:    Autoriser l'email comme méthode d'authentification en 2 étapes
+
+      office:
+        name:             Nom du guichet
+        competences:      Compétences
+        ddfip:            DDFIP
+        ddfip_id:         ID de la DDFIP
+        ddfip_name:       Nom de la DDFIP
+
+      collectivity:
+        territory:                    Territoire de la collectivité
+        territory_type:               Type de territoire
+        territory_id:                 ID du territoire
+        territory_code:               Code du territoire (code INSEE ou SIREN)
+        publisher:                    Éditeur
+        publisher_id:                 ID de l'éditeur
+        publisher_name:               Nom de l'éditeur
+        name:                         Nom de la collectivité
+        siren:                        Numéro SIREN de la collectivité
+        contact_first_name:           Prénom du contact
+        contact_last_name :           Nom du contact
+        contact_email:                Adresse mail de contact
+        contact_phone:                Numéro de téléphone
+        domain_restriction:           Nom de domaine
+        allow_2fa_via_email:          Autoriser l'email comme méthode d'authentification en 2 étapes
+        allow_publisher_management:   Autoriser la gestion du compte par l'éditeur
+
+      user:
+        created_at:             Création du compte
+        confirmed_at:           Confirmation du compte
+        current_sign_in_at:     Dernière connexion
+        last_sign_in_at:        Précédente connexion
+        reset_password_sent_at: Demande de réinitialisation du mot de passe
+        locked_at:              Verrouillage du compte
+        organization:           Organisation
+        organization_type:      Type d'organisation
+        organization_id:        ID de l'organisation
+        organization_name:      Nom de l'organisation
+        first_name:             Prénom
+        last_name :             Nom
+        email:                  Adresse mail
+        password:               Mot de passe
+        password_confirmation:  Confirmation du mot de passe
+        otp_code:               Code unique de vérification
+        organization_admin:     Administrateur de l'organisation
+        super_admin:            Administrateur de la plateforme Passerelle
+        office_ids:             Guichets
+
+      commune:
+        name:             Nom de la commune
+        code_insee:       Code INSEE de la commune
+        code_departement: Code INSEE du département
+        siren_epci:       Numéro SIREN de l'EPCI
+        departement:      Département
+        epci:             EPCI
+        qualified_name:   Nom qualifié (Commune de ?)
+
+      epci:
+        name:             Nom de l'EPCI
+        siren:            Numéro SIREN de l'EPCI
+        code_departement: Code INSEE du département
+        departement:      Département
+
+      departement:
+        name:             Nom du département
+        code_departement: Code INSEE du département
+        code_region:      Code INSEE de la région
+        region:           Région
+        qualified_name:   Nom qualifié (Département de ?)
+
+      region:
+        name:             Nom de la région
+        code_region:      Code INSEE de la région
+        qualified_name:   Nom qualifié (Région de ?)
+
+      oauth_application:
+        name:         Nom de l'application
+        sandbox:      Mode « Bac à sable »
+        redirect_uri: URI de redirection
+        uid:          Client UID
+        secret:       Client Secret
+
+    default_values:
+      dgfip:
+        name:   Direction générale des Finances publiques

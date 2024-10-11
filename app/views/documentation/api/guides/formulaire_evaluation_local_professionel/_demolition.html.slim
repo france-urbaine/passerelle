@@ -1,0 +1,167 @@
+p En cas de démolition fiscale du local, deux blocs sont requis :
+
+ul
+  li l'évaluation actuelle
+  li la nature de la mise à jour
+
+h3 Évaluation actuelle
+
+p
+  ' Ces champs reflètent la situation actuelle du local au fichier MAJIC.
+  br
+  ' En fonction de la nature du local, certains champs seront requis ou non :
+  br
+  ' les champs indiqué par un (*) ne sont pas requis dans le cas d'un local industriel évalué par méthode comptable
+  ' (<code>situation_nature</code> vaut <code>U</code>).
+
+table
+  colgroup
+    col.w-1/5
+    col.w-1/5
+    col.w-1/5
+    col.w-1/5
+    col.w-1/5
+  thead
+    tr
+      th Paramètre
+      th Description
+      th Exemples
+      th Commentaire
+      th
+  tbody
+    tr
+      th <code>situation_date_mutation</code>
+      td Date de mutation du local
+      td <code>2020-12-01</code>, <code>2020-12</code>, <code>2020</code>
+      td Peut être une date, un mois ou une année
+      td.text-right.space-x-4
+        .badge.badge--orange.badge--mono requis
+        .badge.badge--blue.badge--mono String
+
+    tr
+      th <code>situation_affectation</code>
+      td Affectation du local
+      td <code>C</code>, <code>L</code>
+      td
+        = link_to "Consulter toutes les valeurs", "/api/documentation/guides/local_professionnel_affectation.csv"
+        '  - seules les affectations professionnelles sont acceptées.
+
+      td.text-right.space-x-4
+        .badge.badge--orange.badge--mono requis
+        .badge.badge--blue.badge--mono String
+
+    tr
+      th <code>situation_nature</code>
+      td Nature du local
+      td <code>CB</code>, <code>LC</code>, <code>DE</code>
+      td
+        = link_to "Consulter toutes les valeurs", "/api/documentation/guides/local_professionnel_nature.csv"
+        '  - seules les natures professionnelles sont acceptées.
+
+      td.text-right.space-x-4
+        .badge.badge--orange.badge--mono requis
+        .badge.badge--blue.badge--mono String
+
+    tr
+      th <code>situation_categorie</code>
+      td Catégorie du local
+      td <code>MAG1</code>, <code>MAG2</code>, <code>SPE1</code>
+      td
+        = link_to "Consulter toutes les valeurs", "/api/documentation/guides/local_professionnel_categorie.csv"
+        ' - seules des catégories professionelles sont acceptées.
+
+      td.text-right.space-x-4
+        .badge.badge--orange.badge--mono requis (*)
+        .badge.badge--blue.badge--mono String
+
+    tr
+      th <code>situation_surface_reelle</code>
+      td Surface réelle
+      td <code>250.0</code>
+      td
+      td.text-right.space-x-4
+        .badge.badge--orange.badge--mono requis (*)
+        .badge.badge--blue.badge--mono Numeric
+
+    tr
+      th <code>situation_surface_p1</code>
+      td Surface des parties principales (P1)
+      td <code>200.0</code>
+      td
+      td.text-right.space-x-4
+        .badge.badge--blue.badge--mono Numeric
+
+    tr
+      th <code>situation_surface_p2</code>
+      td Surface des parties secondaires couvertes (P2)
+      td <code>200.0</code>
+      td
+      td.text-right.space-x-4
+        .badge.badge--blue.badge--mono Numeric
+
+    tr
+      th <code>situation_surface_p3</code>
+      td Surface des parties secondaires non couvertes (P3)
+      td <code>200.0</code>
+      td
+      td.text-right.space-x-4
+        .badge.badge--blue.badge--mono Numeric
+
+    tr
+      th <code>situation_surface_pk1</code>
+      td Surface des stationnements couverts (PK1)
+      td <code>200.0</code>
+      td
+      td.text-right.space-x-4
+        .badge.badge--blue.badge--mono Numeric
+
+    tr
+      th <code>situation_surface_pk2</code>
+      td Surface des stationnements non couverts (PK2)
+      td <code>200.0</code>
+      td
+      td.text-right.space-x-4
+        .badge.badge--blue.badge--mono Numeric
+
+    tr
+      th <code>situation_surface_ponderee</code>
+      td Surface pondérée
+      td <code>200.0</code>
+      td
+      td.text-right.space-x-4
+        .badge.badge--blue.badge--mono Numeric
+
+    tr
+      th <code>situation_coefficient_localisation</code>
+      td Coefficient de localisation
+      td <code>1.5</code>
+      td
+      td.text-right.space-x-4
+        .badge.badge--orange.badge--mono requis (*)
+        .badge.badge--blue.badge--mono Numeric
+
+h3 Nature de la mise à jour
+
+table
+  colgroup
+    col.w-1/5
+    col.w-1/5
+    col.w-1/5
+    col.w-1/5
+    col.w-1/5
+  thead
+    tr
+      th Paramètre
+      th Description
+      th Exemples
+      th Commentaire
+      th
+  tbody
+    tr
+      th <code>proposition_motif</code>
+      td Nature de la mise à jour
+      td <code>demolition</code>, <code>destination_agricole</code>
+      td= link_to "Consulter toutes les valeurs", "/api/documentation/guides/demolition_motif.csv"
+      td.text-right.space-x-4
+        .badge.badge--orange.badge--mono requis
+        .badge.badge--blue.badge--mono String

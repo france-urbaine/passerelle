@@ -38,6 +38,10 @@ module Views
             end
           end
 
+          def motif_choices
+            enum_options(:motif)
+          end
+
           def nature_choices
             if require_proposition_evaluation_habitation?
               nature_habitation_choices

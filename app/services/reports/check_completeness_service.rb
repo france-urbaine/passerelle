@@ -60,6 +60,7 @@ module Reports
     # Proposition evaluation
     # --------------------------------------------------------------------------
     validates_presence_of :proposition_affectation,              if: :require_proposition_affectation?
+    validates_presence_of :proposition_motif,                    if: :require_proposition_motif?
     validates_presence_of :proposition_nature,                   if: :require_proposition_nature?
     validates_presence_of :proposition_categorie,                if: :require_proposition_categorie?
     validates_presence_of :proposition_surface_reelle,           if: :require_proposition_surface_reelle?

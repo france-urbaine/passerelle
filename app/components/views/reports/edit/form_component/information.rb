@@ -10,6 +10,7 @@ module Views
             "affectation"        => true,
             "categorie"          => true,
             "correctif"          => true,
+            "demolition"         => true,
             "exoneration"        => true,
             "adresse"            => true,
             "omission_batie"     => true,

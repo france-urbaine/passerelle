@@ -37,6 +37,7 @@ fr:
       consistance:          Changement de consistance
       affectation:          Changement d'affectation
       categorie:            Changement d'utilisation
+      demolition:           Démolition fiscale
       exoneration:          Exonération à tort
       correctif:            Anomalie correctif d'ensemble
       adresse:              Changement d'adresse
@@ -47,6 +48,7 @@ fr:
       evaluation_local_habitation:
         consistance:          Changement de consistance
         affectation:          Changement d'affectation
+        demolition:           Démolition fiscale
         exoneration:          Exonération à tort
         correctif:            Anomalie correctif d'ensemble
         adresse:              Changement d'adresse
@@ -55,6 +57,7 @@ fr:
         consistance:          Changement de consistance
         affectation:          Changement d'affectation (nature du local)
         categorie:            Changement d'utilisation (catégorie du local)
+        demolition:           Démolition fiscale
         exoneration:          Exonération à tort
         adresse:              Changement d'adresse
 
@@ -269,6 +272,10 @@ fr:
       GC: Groupement de communes
       TS: Taxe spéciale d'équipement (TSE)
       OM: Taxe sur l'enlèvement des ordures ménagères (TEOM)
+
+    motif:
+      demolition:             Construction physiquement démolie
+      destination_agricole:   Bâti à destination agricole
 
     local_habitation_occupation:
       RP:          Résidence principale
