@@ -11,10 +11,11 @@ RSpec.describe "Reports::ResolutionsController#update" do
   let(:headers) { |e| e.metadata[:headers] }
   let(:params)  { |e| e.metadata.fetch(:params, { state: state, report: attributes }) }
 
-  let!(:report) { create(:report, :assigned_to_office) }
+  let!(:report) { create(:report, :assigned_to_office, competence:) }
 
   let(:state)      { "applicable" }
   let(:attributes) { { reponse: "Lorem lipsum", resolution_motif: "maj_local" } }
+  let(:competence) { "evaluation_local_habitation" }
 
   describe "authorizations" do
     it_behaves_like "it requires to be signed in in HTML"
@@ -29,7 +30,7 @@ RSpec.describe "Reports::ResolutionsController#update" do
     it_behaves_like "it denies access to collectivity admin"
 
     context "when report has been assigned by the current DDFIP" do
-      let(:report) { create(:report, :assigned_to_office, ddfip: current_user.organization) }
+      let(:report) { create(:report, :assigned_to_office, ddfip: current_user.organization, competence:) }
 
       it_behaves_like "it allows access to DDFIP user"
       it_behaves_like "it allows access to DDFIP admin"
@@ -43,21 +44,21 @@ RSpec.describe "Reports::ResolutionsController#update" do
     end
 
     context "when report has already been resolved by the current DDFIP" do
-      let(:report) { create(:report, :resolved_as_applicable, ddfip: current_user.organization) }
+      let(:report) { create(:report, :resolved_as_applicable, ddfip: current_user.organization, competence:) }
 
       it_behaves_like "it allows access to DDFIP user"
       it_behaves_like "it allows access to DDFIP admin"
     end
 
     context "when report has already been approved by the current DDFIP" do
-      let(:report) { create(:report, :approved_by_ddfip, ddfip: current_user.organization) }
+      let(:report) { create(:report, :approved_by_ddfip, ddfip: current_user.organization, competence:) }
 
       it_behaves_like "it denies access to DDFIP user"
       it_behaves_like "it denies access to DDFIP admin"
     end
 
     context "when report has already been canceled by the current DDFIP" do
-      let(:report) { create(:report, :canceled_by_ddfip, ddfip: current_user.organization) }
+      let(:report) { create(:report, :canceled_by_ddfip, ddfip: current_user.organization, competence:) }
 
       it_behaves_like "it denies access to DDFIP user"
       it_behaves_like "it denies access to DDFIP admin"
@@ -120,7 +121,7 @@ RSpec.describe "Reports::ResolutionsController#update" do
     end
 
     context "when inapplicable report is going to be resolved as applicable" do
-      let!(:report) { create(:report, :resolved_as_inapplicable) }
+      let!(:report) { create(:report, :resolved_as_inapplicable, competence:) }
 
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/signalements/#{report.id}") }
@@ -146,8 +147,7 @@ RSpec.describe "Reports::ResolutionsController#update" do
     end
 
     context "when applicable report is going to be resolved as inapplicable" do
-      let!(:report) { create(:report, :resolved_as_applicable) }
-      let(:state)   { "inapplicable" }
+      let(:state)      { "inapplicable" }
       let(:attributes) { { reponse: "Lorem lipsum", resolution_motif: "absence_incoherence" } }
 
       it { expect(response).to have_http_status(:see_other) }

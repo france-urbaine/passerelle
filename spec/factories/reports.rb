@@ -145,14 +145,18 @@ FactoryBot.define do
     trait :resolved do
       assigned
 
+      # Exclude `occupation_local_professionnel` because it cannot be resolved yet,
+      # due to lack of motifs.
+      form_type   { Report::FORM_TYPES.without("occupation_local_professionnel").sample }
+
       state       { %w[applicable inapplicable].sample }
       resolved_at { Time.current }
 
       resolution_motif do
         if applicable? || approved?
-          I18n.t("enum.resolution_motif.applicable").keys.sample
+          I18n.t("enum.resolution_motif.#{form_type}.applicable").keys.sample
         else
-          I18n.t("enum.resolution_motif.inapplicable").keys.sample
+          I18n.t("enum.resolution_motif.#{form_type}.inapplicable").keys.sample
         end
       end
     end
@@ -223,8 +227,12 @@ FactoryBot.define do
     trait :made_for_office do
       made_for_ddfip
 
-      office { association(:office, :with_communes, ddfip:) }
-      commune { office.communes.sample }
+      transient do
+        competence { Office::COMPETENCES.sample }
+      end
+
+      office    { association(:office, :with_communes, ddfip:, competences: [competence]) }
+      commune   { office.communes.sample }
       form_type { office.competences.sample }
     end
 

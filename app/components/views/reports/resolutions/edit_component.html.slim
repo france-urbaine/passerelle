@@ -15,9 +15,13 @@
 
       = render Views::Reports::ShortDetailsComponent.new(@report)
 
-      = form.block :resolution_motif do
+      = form.block :resolution_motif do |block|
         = form.label :resolution_motif, "Motif :"
         = form.select :resolution_motif, resolution_motif_choices, resolution_motif_options, autofocus: true
+
+        - if resolution_motif_choices.empty?
+          - block.with_hint do
+            ' Aucun motif de décision n'a encore été validé par l'administration.
 
       = form.block :reponse do |block|
         = form.label :reponse, "Vous pouvez transmettre des observations à la collectivité :"

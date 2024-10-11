@@ -13,16 +13,22 @@ module Views
           super()
         end
 
+        def applicable?
+          @state == "applicable"
+        end
+
         def resolution_motif_choices
-          if @state == "applicable"
-            I18n.t("enum.resolution_motif.applicable").map(&:reverse)
-          else
-            I18n.t("enum.resolution_motif.inapplicable").map(&:reverse)
-          end
+          enum_path = ["enum.resolution_motif"]
+          enum_path << @report.form_type
+          enum_path << (applicable? ? "applicable" : "inapplicable")
+
+          I18n.t(enum_path.join("."), default: {}).map(&:reverse)
         end
 
         def resolution_motif_options
-          if resolution_motif_choices.size > 1
+          if resolution_motif_choices.empty?
+            { include_blank: "Aucun motif disponible" }
+          elsif resolution_motif_choices.size > 1
             { prompt: "Sélectionnez un motif" }
           else
             {}

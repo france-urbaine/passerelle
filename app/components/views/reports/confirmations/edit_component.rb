@@ -10,12 +10,16 @@ module Views
           super()
         end
 
+        def applicable?
+          @report.applicable? || @report.approved?
+        end
+
         def resolution_motif_choices
-          if @report.applicable? || @report.approved?
-            I18n.t("enum.resolution_motif.applicable").map(&:reverse)
-          else
-            I18n.t("enum.resolution_motif.inapplicable").map(&:reverse)
-          end
+          enum_path = ["enum.resolution_motif"]
+          enum_path << @report.form_type
+          enum_path << (applicable? ? "applicable" : "inapplicable")
+
+          I18n.t(enum_path.join("."), default: {}).map(&:reverse)
         end
       end
     end

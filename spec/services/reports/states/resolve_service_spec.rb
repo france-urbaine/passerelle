@@ -7,7 +7,7 @@ RSpec.describe Reports::States::ResolveService do
     described_class.new(report)
   end
 
-  let(:report) { create(:report, :assigned_to_office) }
+  let(:report) { create(:report, :evaluation_local_habitation, :assigned) }
 
   describe "#resolve" do
     context "when resolving an assigned report as applicable" do
@@ -62,7 +62,7 @@ RSpec.describe Reports::States::ResolveService do
     end
 
     context "when report is already resolved" do
-      let(:report) { create(:report, :resolved_as_applicable) }
+      let(:report) { create(:report, :applicable) }
 
       it "updates the report resolution" do
         expect { service.resolve(:inapplicable, resolution_motif: "absence_incoherence") }
@@ -113,7 +113,7 @@ RSpec.describe Reports::States::ResolveService do
 
   describe "#undo" do
     context "when report is resolved" do
-      let(:report) { create(:report, :assigned, :applicable) }
+      let(:report) { create(:report, :applicable) }
 
       it "updates the report back as assigned" do
         expect { service.undo }

@@ -547,3 +547,11 @@ fr:
           attributes:
             office_id:
               blank: Un guichet est requis
+
+        reports/states/resolve_service:
+          attributes:
+            state:
+              inclusion:  "Le statut n'est pas valide"
+            resolution_motif:
+              blank:      "Un motif est requis"
+              inclusion:  "Le motif sélectionné n'est pas valide"

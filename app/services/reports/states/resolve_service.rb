@@ -3,29 +3,35 @@
 module Reports
   module States
     class ResolveService
-      include ::ActiveModel::Validations
+      include ::ActiveModel::Model
+      include ::ActiveModel::Validations::Callbacks
 
       def initialize(report)
         @report = report
       end
 
+      attr_accessor :state, :resolution_motif, :reponse
+
+      validates :state,            inclusion: %w[applicable inapplicable]
+      validates :resolution_motif, presence: true
+      validates :resolution_motif, inclusion: { in: :valid_resolution_motifs, allow_blank: true }
+      validate  :validate_record
+
+      after_validation :sync_errors
+
       def resolve(state, attributes = {})
-        @report.assign_attributes(attributes) if attributes
-        @report.validate
-
-        # State should be one of applicable or inapplicable
+        # Assign the state and the existing motif if it exists
+        # to perform service validations
         #
-        @report.errors.add(:state, :inclusion) unless %w[applicable inapplicable].include?(state.to_s)
+        self.state            = state.to_s
+        self.resolution_motif = @report.resolution_motif
 
-        # Motif should be filled
+        # Assign an validatte both service & record
         #
-        @report.errors.add(:resolution_motif, :blank) if @report.resolution_motif.nil?
+        assign_attributes(attributes) if attributes
+        validate
 
-        # Motif should be one of resolution_motif.applicable or resolution_motif.inapplicable
-        #
-        @report.errors.add(:resolution_motif, :inclusion) unless resolution_motif_valid?(state)
-
-        @report.resolve!(state) if @report.errors.empty?
+        @report.resolve!(state) if errors.empty?
 
         build_result
       end
@@ -38,16 +44,30 @@ module Reports
 
       private
 
-      def resolution_motif_valid?(state)
-        (state.to_s == "applicable" &&
-         @report.resolution_motif &&
-           @report.resolution_motif.to_sym.in?(I18n.t("enum.resolution_motif.applicable").keys)) ||
-          (state.to_s == "inapplicable" &&
-            @report.resolution_motif &&
-              @report.resolution_motif.to_sym.in?(I18n.t("enum.resolution_motif.inapplicable").keys))
+      def assign_attributes(attributes)
+        @report.assign_attributes(attributes)
+        super(attributes.slice(:resolution_motif))
+      end
+
+      def valid_resolution_motifs
+        enum_path = ["enum.resolution_motif"]
+        enum_path << @report.form_type
+        enum_path << (state == "applicable" ? "applicable" : "inapplicable")
+
+        I18n.t(enum_path.join("."), default: {}).keys.map(&:to_s)
+      end
+
+      def validate_record
+        errors.merge!(@report.errors) unless @report.valid?
+      end
+
+      def sync_errors
+        @report.errors.clear
+        @report.errors.merge!(errors)
       end
 
       def build_result
+        # Merge errors if resolve! or undo_resolution! failed.
         errors.clear
         errors.merge!(@report.errors)
 

@@ -325,12 +325,46 @@ fr:
       doublon:                        "Signalement en doublon, déjà pris en charge"
       absence_incoherence:            "Aucune incohérence décelée"
 
-      applicable:
-        maj_local:                      "Descriptif du local mis à jour"
-        maj_exoneration:                "Exonérations mises à jour"
-        maj_occupation:                 "Occupation du local mise à jour"
-        application_majoration_ths:     "Application de la majoration THS"
-        doublon:                        "Signalement en doublon, déjà pris en charge"
+      evaluation_local_habitation:
+        applicable:
+          maj_local:                    "Descriptif du local mis à jour"
+          maj_exoneration:              "Exonérations mises à jour"
+          doublon:                      "Signalement en doublon, déjà pris en charge"
+        inapplicable:
+          absence_incoherence:          "Aucune incohérence décelée"
 
-      inapplicable:
-        absence_incoherence: "Aucune incohérence décelée"
+      evaluation_local_professionnel:
+        applicable:
+          maj_local:                    "Descriptif du local mis à jour"
+          maj_exoneration:              "Exonérations mises à jour"
+          doublon:                      "Signalement en doublon, déjà pris en charge"
+        inapplicable:
+          absence_incoherence:          "Aucune incohérence décelée"
+
+      creation_local_habitation:
+        applicable:
+          maj_local:                    "Descriptif du local mis à jour"
+          maj_exoneration:              "Exonérations mises à jour"
+          doublon:                      "Signalement en doublon, déjà pris en charge"
+        inapplicable:
+          absence_incoherence:          "Aucune incohérence décelée"
+
+      creation_local_professionnel:
+        applicable:
+          maj_local:                    "Descriptif du local mis à jour"
+          maj_exoneration:              "Exonérations mises à jour"
+          doublon:                      "Signalement en doublon, déjà pris en charge"
+        inapplicable:
+          absence_incoherence:          "Aucune incohérence décelée"
+
+      occupation_local_habitation:
+        applicable:
+          maj_occupation:               "Occupation du local mise à jour"
+          application_majoration_ths:   "Application de la majoration THS"
+        inapplicable:
+          absence_incoherence:          "Aucune incohérence décelée"
+
+      occupation_local_professionnel:
+        applicable:
+        inapplicable:
+          absence_incoherence:          "Aucune incohérence décelée"
