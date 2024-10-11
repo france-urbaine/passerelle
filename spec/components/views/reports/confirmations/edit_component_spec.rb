@@ -10,7 +10,7 @@ RSpec.describe Views::Reports::Confirmations::EditComponent, type: :component do
 
     expect(page).to have_selector(".modal form") do |form|
       expect(form).to have_html_attribute("action").with_value("/signalements/confirm/#{report.id}")
-      expect(form).to have_text("Vous êtes sur le point de transmetre une réponse définitive à la collectivité :")
+      expect(form).to have_text("Vous êtes sur le point de transmettre une réponse définitive à la collectivité :")
       expect(form).to have_field("Motif")
       expect(form).to have_field("Observations")
     end
@@ -23,7 +23,7 @@ RSpec.describe Views::Reports::Confirmations::EditComponent, type: :component do
 
     expect(page).to have_selector(".modal form") do |form|
       expect(form).to have_html_attribute("action").with_value("/signalements/confirm/#{report.id}")
-      expect(form).to have_text("Vous êtes sur le point de transmetre une réponse définitive à la collectivité :")
+      expect(form).to have_text("Vous êtes sur le point de transmettre une réponse définitive à la collectivité :")
       expect(form).to have_field("Motif")
       expect(form).to have_field("Observations")
     end
