@@ -145,14 +145,18 @@ FactoryBot.define do
     trait :resolved do
       assigned
 
+      # Exclude `occupation_local_professionnel` because it cannot be resolved yet,
+      # due to lack of motifs.
+      form_type   { Report::FORM_TYPES.without("occupation_local_professionnel").sample }
+
       state       { %w[applicable inapplicable].sample }
       resolved_at { Time.current }
 
       resolution_motif do
         if applicable? || approved?
-          I18n.t("enum.resolution_motif.applicable").keys.sample
+          I18n.t("enum.resolution_motif.#{form_type}.applicable").keys.sample
         else
-          I18n.t("enum.resolution_motif.inapplicable").keys.sample
+          I18n.t("enum.resolution_motif.#{form_type}.inapplicable").keys.sample
         end
       end
     end
@@ -223,66 +227,73 @@ FactoryBot.define do
     trait :made_for_office do
       made_for_ddfip
 
-      office { association(:office, :with_communes, ddfip:) }
-      commune { office.communes.sample }
+      # Exclude `occupation_local_professionnel` because it cannot be resolved yet,
+      # due to lack of motifs (see :resolved trait)
+      #
+      transient do
+        competence { Office::COMPETENCES.without("occupation_local_professionnel").sample }
+      end
+
+      office    { association(:office, :with_communes, ddfip:, competences: [competence]) }
+      commune   { office.communes.sample }
       form_type { office.competences.sample }
     end
 
     trait :transmitted_to_ddfip do
-      made_for_ddfip
       transmitted
+      made_for_ddfip
     end
 
     # Report workflow by DDFIP & offices
     # --------------------------------------------------------------------------
     trait :acknowledged_by_ddfip do
-      made_for_ddfip
       acknowledged
+      made_for_ddfip
     end
 
     trait :accepted_by_ddfip do
-      made_for_ddfip
       accepted
+      made_for_ddfip
     end
 
     trait :assigned_by_ddfip do
-      made_for_ddfip
       assigned
+      made_for_ddfip
     end
 
     trait :assigned_to_office do
-      made_for_office
       assigned
+      made_for_office
     end
 
     trait :resolved_by_ddfip do
-      assigned_by_ddfip
       resolved
+      made_for_ddfip
     end
 
     trait :resolved_as_applicable do
-      assigned_to_office
       applicable
+      made_for_office
     end
 
     trait :resolved_as_inapplicable do
-      assigned_to_office
       inapplicable
+      made_for_office
     end
 
     trait :approved_by_ddfip do
-      resolved_as_applicable
       approved
+      made_for_office
     end
 
     trait :canceled_by_ddfip do
-      resolved_as_inapplicable
       canceled
+      made_for_office
     end
 
     trait :rejected_by_ddfip do
-      made_for_ddfip
       rejected
+      made_for_office
     end
   end
 end
