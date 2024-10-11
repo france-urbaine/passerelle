@@ -318,15 +318,19 @@ fr:
         confirmed:    Réponse transmise
 
     resolution_motif:
-      maj_local:           "Descriptif du local mis à jour"
-      maj_exoneration:     "Exonérations mises à jour"
-      absence_incoherence: "Aucune incohérence décelée"
-      doublon:             "Signalement en doublon, déjà pris en charge"
+      maj_local:                      "Descriptif du local mis à jour"
+      maj_exoneration:                "Exonérations mises à jour"
+      maj_occupation:                 "Occupation du local mise à jour"
+      application_majoration_ths:     "Application de la majoration THS"
+      doublon:                        "Signalement en doublon, déjà pris en charge"
+      absence_incoherence:            "Aucune incohérence décelée"
 
       applicable:
-        maj_local:           "Descriptif du local mis à jour"
-        maj_exoneration:     "Exonérations mises à jour"
-        doublon:             "Signalement en doublon, déjà pris en charge"
+        maj_local:                      "Descriptif du local mis à jour"
+        maj_exoneration:                "Exonérations mises à jour"
+        maj_occupation:                 "Occupation du local mise à jour"
+        application_majoration_ths:     "Application de la majoration THS"
+        doublon:                        "Signalement en doublon, déjà pris en charge"
 
       inapplicable:
         absence_incoherence: "Aucune incohérence décelée"

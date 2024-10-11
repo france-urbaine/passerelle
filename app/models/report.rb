@@ -217,6 +217,15 @@ class Report < ApplicationRecord
     "occupation_local_professionnel" => %w[occupation]
   }.freeze
 
+  RESOLUTION_MOTIFS = %w[
+    maj_local
+    maj_exoneration
+    maj_occupation
+    application_majoration_ths
+    doublon
+    absence_incoherence
+  ].freeze
+
   validates :reference, uniqueness: { unless: :skip_uniqueness_validation_of_reference?, allow_blank: true }
   validates :form_type, presence: true, inclusion: { in: FORM_TYPES, allow_blank: true }
   validates :anomalies, array: true
@@ -228,6 +237,7 @@ class Report < ApplicationRecord
   }
 
   validates :priority, inclusion: { in: PRIORITIES }
+  validates :resolution_motif, inclusion: { in: RESOLUTION_MOTIFS, allow_blank: true }
 
   with_options allow_blank: true do
     validates :situation_annee_majic, numericality: {
