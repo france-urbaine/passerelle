@@ -20,6 +20,12 @@ module Views
           @service.office_id = office_ids[0] if office_ids.size == 1
         end
 
+        def form_model
+          # `form_with` will raise en error in Rails 8.x if `model` argument is nil.
+          # See https://github.com/rails/rails/pull/49943
+          @service || false
+        end
+
         def reports_count
           @reports_count ||= @reports.count
         end

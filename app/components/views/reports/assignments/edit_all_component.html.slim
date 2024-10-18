@@ -16,7 +16,7 @@
       - modal.with_close_action "Fermer"
 
     - else
-      - modal.with_form(model: @service, scope: :report, url: report_assignments_path, method: "patch") do |form|
+      - modal.with_form(model: form_model, scope: :report, url: report_assignments_path, method: "patch") do |form|
         - modal.with_hidden_field :redirect, @referrer
         - modal.with_hidden_field :ids,      params[:ids]
         - modal.with_hidden_field :search,   params[:search]

@@ -55,10 +55,12 @@ module UI
           return @value if defined?(@value)
 
           @value =
-            if !content? && @record && @record.respond_to?(@label)
-              @record.public_send(@label)
-            else
+            if content?
               content
+            elsif @record.nil?
+              nil
+            elsif @record.respond_to?(@label)
+              @record.public_send(@label)
             end
         end
 
