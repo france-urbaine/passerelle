@@ -36,6 +36,7 @@ module CLI
 
         unless result
           say "Retry only failed specs"
+          env     = build_env(scope, only_failures: true)
           command = build_command(scope, paths, only_failures: true)
           result  = run(command, env: env, abort_on_failure: false)
         end
@@ -67,12 +68,18 @@ module CLI
         [scope, paths]
       end
 
-      def build_env(scope)
-        env = { "SIMPLE_COV_COMMAND" => "bin/ci test" }
-        env["SIMPLE_COV_COMMAND"] += ":parallel" if parallel_mode
-        env["SIMPLE_COV_COMMAND"] += ":#{scope}" if scope
+      def build_env(scope, only_failures: false)
+        env = {}
+
+        unless ENV["CI"] == "true" || ENV["SIMPLE_COV"] == "false" || only_failures
+          env["SIMPLE_COV_COMMAND"] = "bin/ci test"
+          env["SIMPLE_COV_COMMAND"] += ":parallel" if parallel_mode
+          env["SIMPLE_COV_COMMAND"] += ":#{scope}" if scope
+        end
+
         env["PARALLEL_TEST_FIRST_IS_1"] = "true" if parallel_mode && parallel_mode != "flatware"
-        env["RSPEC_IGNORE_FOCUS"] = "true"
+        env["RSPEC_IGNORE_FOCUS"]       = "true"
+        env["CI_LESS_OUTPUT"]           = "true" unless ENV.key?("CI_LESS_OUTPUT")
 
         if ENV["CI"] == "true"
           env["SIMPLE_COV"] = "false"

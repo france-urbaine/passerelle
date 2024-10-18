@@ -9,6 +9,7 @@ redis_options[:timeout] = 3 if Rails.env.production?
 
 Sidekiq.configure_client do |config|
   config.redis = redis_options
+  config.logger = Rails.logger if Rails.env.test? && ENV["CI_LESS_OUTPUT"] == "true"
 end
 
 Sidekiq.configure_server do |config|
