@@ -7,7 +7,7 @@ module AdvancedSearch
   MULTIPLE_CRITERIA_REGEXP = /
     (?<key>(?<=^|\s)[[:alpha:]0-9\-_]+)
     :
-    (?:\()?(?<value>((?<!\()[^\s]+|(?<=\()[^)]+(?=\))))(?:\))?
+    (?:\()?(?<value>(?:(?<!\()[^\s]+|(?<=\()[^)]+(?=\))))(?:\))?
   /xi
 
   class_methods do
