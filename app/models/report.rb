@@ -240,10 +240,7 @@ class Report < ApplicationRecord
   validates :resolution_motif, inclusion: { in: RESOLUTION_MOTIFS, allow_blank: true }
 
   with_options allow_blank: true do
-    validates :situation_annee_majic, numericality: {
-      greater_than_or_equal_to: 2018,
-      less_than_or_equal_to:    ->(_) { Time.current.year }
-    }
+    validates :situation_annee_majic, numericality: { greater_than_or_equal_to: ANNEE_MINIMUM, less_than_or_equal_to: CURRENT_YEAR }
 
     validates :code_insee,                          format: { with: CODE_INSEE_REGEXP }
     validates :situation_invariant,                 format: { with: INVARIANT_REGEXP }
@@ -292,15 +289,16 @@ class Report < ApplicationRecord
     validates :proposition_surface_pk2,      numericality: { greater_than_or_equal_to: 0 }
     validates :proposition_surface_ponderee, numericality: { greater_than: 0 }
 
-    validates :situation_occupation_annee,       numericality: { in: 2018..Time.current.year }
+    validates :situation_occupation_annee,       numericality: { greater_than_or_equal_to: ANNEE_MINIMUM, less_than_or_equal_to: CURRENT_YEAR }
+    validates :situation_annee_cfe,              numericality: { greater_than_or_equal_to: ANNEE_MINIMUM, less_than_or_equal_to: CURRENT_YEAR }
+    validates :situation_nombre_annees_vacance,  numericality: { greater_than_or_equal_to: 0 }
+    validates :situation_vlf_cfe,                numericality: { greater_than_or_equal_to: 0 }
+
     validates :situation_nature_occupation,      inclusion: { in: :valid_occupations }
     validates :situation_majoration_rs,          inclusion: [true, false]
-    validates :situation_annee_cfe,              numericality: { in: 2018..Time.current.year }
     validates :situation_vacance_fiscale,        inclusion: [true, false]
-    validates :situation_nombre_annees_vacance,  numericality: { greater_than_or_equal_to: 0 }
-    validates :situation_siren_dernier_occupant, format: { with: SIREN_REGEXP }
-    validates :situation_vlf_cfe,                numericality: { greater_than_or_equal_to: 0 }
     validates :situation_taxation_base_minimum,  inclusion: [true, false]
+    validates :situation_siren_dernier_occupant, format: { with: SIREN_REGEXP }
 
     validates :proposition_nature_occupation,          inclusion: { in: :valid_occupations }
     validates :proposition_erreur_tlv,                 inclusion: [true, false]

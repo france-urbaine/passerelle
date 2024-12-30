@@ -52,7 +52,7 @@ Layout/LineLength:
     - !ruby/regexp /\A\s*has_one/
     - !ruby/regexp /\A\s*scope/
     - !ruby/regexp /\A\s*resources?/
-    - !ruby/regexp /\A\s*validates_.+/
+    - !ruby/regexp /\A\s*validates(_|\s).+/
     - !ruby/regexp /\A\s*def [a-z_?!]+\s*= .+/
 
 Layout/MultilineMethodCallIndentation:
