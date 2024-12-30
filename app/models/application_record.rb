@@ -20,6 +20,9 @@ class ApplicationRecord < ActiveRecord::Base
   self.abstract_class        = true
   self.implicit_order_column = :created_at
 
+  ANNEE_MINIMUM = 2018
+  CURRENT_YEAR  = ->(_) { Time.current.year }
+
   SIREN_REGEXP  = /\A[0-9]{9}\Z/
   PHONE_REGEXP  = /\A(0|\+(33|590|594|596|262|269))?[0-9]{9}\Z/
   EMAIL_REGEXP  = URI::MailTo::EMAIL_REGEXP
@@ -32,8 +35,8 @@ class ApplicationRecord < ActiveRecord::Base
 
   INVARIANT_REGEXP                 = /\A[0-9]{10}\Z/
   CODE_RIVOLI_REGEXP               = /\A[0-9A-Z]{4}\Z/
-  NUMERO_BATIMENT_REGEXP           = /\A(?:[A-Z]|[0-9]{1,2})\Z/
-  NUMERO_ESCALIER_REGEXP           = /\A[0-9]{1,2}\Z/
+  NUMERO_BATIMENT_REGEXP           = /\A(?:[A-Z0-9]{1,2})\Z/
+  NUMERO_ESCALIER_REGEXP           = /\A(?:[A-Z0-9]{1,2})\Z/
   NUMERO_NIVEAU_REGEXP             = /\A[0-9]{1,2}\Z/
   NUMERO_PORTE_REGEXP              = /\A[0-9]{1,2}\Z/
   NUMERO_ORDRE_PORTE_REGEXP        = /\A[0-9]{1,3}\Z/
