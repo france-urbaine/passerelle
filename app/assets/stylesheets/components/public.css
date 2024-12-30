@@ -2,7 +2,6 @@
   .public {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     height: min-content;
     min-height: 100vh;
     overflow: auto;
@@ -25,6 +24,10 @@
   }
 
   .public__wrapper {
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     margin-left: auto;
     margin-right: auto;
 
@@ -33,13 +36,17 @@
     @media (min-width: 768px) {
       width: 40rem;
     }
+
+    &--full-page {
+      justify-content: start;
+
+      @media (min-width: 768px) {
+        width: 50vw;
+      }
+    }
   }
 
   .public__footer {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
     text-align: center;
 
     @apply p-4 m-0;
