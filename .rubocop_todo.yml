@@ -25,10 +25,3 @@ Metrics/PerceivedComplexity:
 # Configuration parameters: AllowSubject.
 RSpec/MultipleMemoizedHelpers:
   Max: 10
-
-# Offense count: 1
-# This cop supports safe autocorrection (--autocorrect).
-# Configuration parameters: AllowMethodComparison, ComparisonsThreshold.
-Style/MultipleComparison:
-  Exclude:
-    - 'app/models/audit.rb'
