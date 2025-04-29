@@ -21,12 +21,6 @@ Metrics/ParameterLists:
 Metrics/PerceivedComplexity:
   Max: 10
 
-# Offense count: 17
-# This cop supports safe autocorrection (--autocorrect).
-RSpec/IncludeExamples:
-  Exclude:
-    - 'spec/support/request/shared_response_examples.rb'
-
 # Offense count: 1490
 # Configuration parameters: AllowSubject.
 RSpec/MultipleMemoizedHelpers:
