@@ -149,7 +149,7 @@ module CLI
           when /^\d+$/, true, false
             value.to_s
           else
-            %("#{value}").to_s
+            %("#{value}")
           end
 
         say "  => puts `#{output}` in #{file}"
