@@ -3,7 +3,7 @@ inherit_from: .rubocop_todo.yml
 inherit_gem:
   action_policy: config/rubocop-rspec.yml
 
-require:
+plugins:
   - rubocop-capybara
   - rubocop-factory_bot
   - rubocop-performance
