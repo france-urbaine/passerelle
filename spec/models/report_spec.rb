@@ -57,7 +57,7 @@ RSpec.describe Report do
     end
 
     def random_combinaison(values)
-      array = values.map { |v| [v] }
+      array = values.zip
       array += Array.new(values.size) { values.sample(2) }
       array.uniq
     end

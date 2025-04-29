@@ -38,7 +38,7 @@ RSpec.describe Office do
     it "validates that :competences accept only combinaison of valid values" do
       valid_values = Office::COMPETENCES
 
-      allowed_arrays = valid_values.map { |v| [v] }
+      allowed_arrays = valid_values.zip
       allowed_arrays += Array.new(4) { valid_values.sample(2) }
 
       invalid_arrays = []

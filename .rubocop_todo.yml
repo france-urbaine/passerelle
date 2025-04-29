@@ -21,13 +21,6 @@ Metrics/ParameterLists:
 Metrics/PerceivedComplexity:
   Max: 10
 
-# Offense count: 2
-# This cop supports unsafe autocorrection (--autocorrect-all).
-Performance/ZipWithoutBlock:
-  Exclude:
-    - 'spec/models/office_spec.rb'
-    - 'spec/models/report_spec.rb'
-
 # Offense count: 17
 # This cop supports safe autocorrection (--autocorrect).
 RSpec/IncludeExamples:
