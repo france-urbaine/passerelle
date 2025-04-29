@@ -78,6 +78,7 @@ RSpec.describe "Manage users from organization" do
     it "does not display reset button on user self page" do
       visit organization_user_path(marc)
 
+      expect(page).to have_selector("a.button")
       expect(page).to have_no_selector("a.button", text: "Réinitialiser")
     end
 

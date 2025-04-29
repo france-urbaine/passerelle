@@ -70,6 +70,7 @@ RSpec.describe "Manage users of collectivities managed by current organization" 
   it "does not display reset button on user self page" do
     visit organization_collectivity_user_path(pays_basque, users(:marc))
 
+    expect(page).to have_selector("a.button")
     expect(page).to have_no_selector("a.button", text: "Réinitialiser")
   end
 
