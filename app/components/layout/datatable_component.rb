@@ -81,9 +81,7 @@ module Layout
         )
       end
 
-      def count
-        @pagy.count
-      end
+      delegate :count, to: :@pagy
 
       def pages_count
         @pagy.pages

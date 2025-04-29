@@ -29,8 +29,6 @@ class PackagePolicy < ApplicationPolicy
     end
   end
 
-  private
-
   # Authorizations for collectivities
   # ----------------------------------------------------------------------------
   concerning :Collectivities do

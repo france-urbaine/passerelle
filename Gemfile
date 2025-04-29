@@ -17,7 +17,7 @@ gem "redis", "~> 5.0"
 
 # Backend adapters
 gem "activerecord-session_store"
-gem "sidekiq"
+gem "sidekiq", ">= 7.3", "< 8"
 
 # API
 gem "apipie-rails"

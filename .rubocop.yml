@@ -3,7 +3,7 @@ inherit_from: .rubocop_todo.yml
 inherit_gem:
   action_policy: config/rubocop-rspec.yml
 
-require:
+plugins:
   - rubocop-capybara
   - rubocop-factory_bot
   - rubocop-performance
@@ -145,6 +145,12 @@ RSpec/ExpectActual:
 
 RSpec/ImplicitSubject:
   EnforcedStyle: require_implicit
+
+RSpec/IncludeExamples:
+  # `include_examples` might be a better option than `it_behaves_like` when
+  # used in another shared examples
+  Exclude:
+    - 'spec/support/request/shared_response_examples.rb'
 
 RSpec/MultipleExpectations:
   Exclude:

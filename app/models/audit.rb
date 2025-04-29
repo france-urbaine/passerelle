@@ -73,6 +73,6 @@ class Audit < Audited::Audit
     return if resolved_action.nil?
 
     self.action = resolved_action
-    self.user   ||= auditable if action == AuditResolver::ACTION_LOGIN || action == AuditResolver::ACTION_TWO_FACTORS
+    self.user   ||= auditable if [AuditResolver::ACTION_LOGIN, AuditResolver::ACTION_TWO_FACTORS].include?(action)
   end
 end

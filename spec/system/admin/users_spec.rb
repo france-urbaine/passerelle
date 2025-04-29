@@ -375,6 +375,7 @@ RSpec.describe "Users in admin" do
   it "does not display reset button on user self page" do
     visit admin_user_path(marc)
 
+    expect(page).to have_selector("a.button")
     expect(page).to have_no_selector("a.button", text: "Réinitialiser")
   end
 
