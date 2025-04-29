@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 module ControllerStatuses
-  private
-
   InterruptAction = Class.new(StandardError)
+
+  private
 
   %i[
     bad_request

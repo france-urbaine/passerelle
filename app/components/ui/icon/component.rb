@@ -134,6 +134,7 @@ module UI
       # when CSS take time to load.
       #
       DEFAULT_SIZE = 24
+      private_constant :DEFAULT_SIZE
 
       def merge_default_size(options)
         return if options.key?(:height) || options.key?(:width)

@@ -189,6 +189,8 @@ module Reports
       situation_code_rivoli
     ].freeze
 
+    private_constant :SITUATION_ADDRESSE_ATTRIBUTES
+
     def situation_adresse_must_be_complete
       missing_attributes = SITUATION_ADDRESSE_ATTRIBUTES.select { |att| report[att].blank? }
 
@@ -208,6 +210,8 @@ module Reports
       situation_numero_porte
       situation_numero_ordre_porte
     ].freeze
+
+    private_constant :SITUATION_PORTE_ATTRIBUTES
 
     # We must create an accessor to render the error message
     attr_reader :situation_porte

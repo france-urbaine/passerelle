@@ -6,14 +6,6 @@
 # Note that changes in the inspected code, or installation of new
 # versions of RuboCop, may require this file to be generated again.
 
-# Offense count: 5
-Lint/UselessConstantScoping:
-  Exclude:
-    - 'app/components/ui/icon/component.rb'
-    - 'app/controllers/concerns/controller_statuses.rb'
-    - 'app/models/concerns/skip_uniqueness_validation.rb'
-    - 'app/services/reports/check_completeness_service.rb'
-
 # Offense count: 14
 # Configuration parameters: AllowedMethods, AllowedPatterns.
 Metrics/CyclomaticComplexity:

@@ -43,6 +43,7 @@ module SkipUniquenessValidation
   private
 
   METHOD_PATTERN = /^skip_uniqueness_validation_of_(.+)\?$/
+  private_constant :METHOD_PATTERN
 
   def respond_to_skip_uniqueness_validation_method?(method)
     method.match(METHOD_PATTERN) && self.class.column_names.include?($LAST_MATCH_INFO[1]) && $LAST_MATCH_INFO[1]
