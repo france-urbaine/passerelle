@@ -47,13 +47,8 @@ module Matchers
       end
     end
 
-    def failure_message
-      @have_received_matcher.failure_message
-    end
-
-    def failure_message_when_negated
-      @have_received_matcher.failure_message_when_negated
-    end
+    delegate :failure_message,              to: :@have_received_matcher
+    delegate :failure_message_when_negated, to: :@have_received_matcher
 
     def supports_block_expectations?
       true
