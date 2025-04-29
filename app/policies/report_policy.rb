@@ -144,8 +144,6 @@ class ReportPolicy < ApplicationPolicy
     end
   end
 
-  private
-
   # Authorizations for collectivities
   # ----------------------------------------------------------------------------
   concerning :Collectivities do
