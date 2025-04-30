@@ -625,15 +625,17 @@ module Reports
 
       # @attribute situation_nature_occupation
       #
-      # This attribute is displayed and required for:
+      # This attribute is displayed for:
       # * any `occupation_local_habitation` form
+      #
+      # It is not required
       #
       def display_situation_nature_occupation?
         occupation_local_habitation?
       end
 
       def require_situation_nature_occupation?
-        display_situation_nature_occupation?
+        false
       end
 
       # @attribute situation_majoration_rs
