@@ -1276,7 +1276,7 @@ RSpec.describe Reports::RequirementsService do
     it { is_expected.not_to be_display_situation_taxation_base_minimum }
 
     it { is_expected.to     be_require_situation_occupation_annee }
-    it { is_expected.to     be_require_situation_nature_occupation }
+    it { is_expected.not_to be_require_situation_nature_occupation }
     it { is_expected.not_to be_require_situation_majoration_rs }
     it { is_expected.not_to be_require_situation_annee_cfe }
     it { is_expected.not_to be_require_situation_vacance_fiscale }
@@ -1346,7 +1346,7 @@ RSpec.describe Reports::RequirementsService do
       it { is_expected.not_to be_display_situation_taxation_base_minimum }
 
       it { is_expected.to     be_require_situation_occupation_annee }
-      it { is_expected.to     be_require_situation_nature_occupation }
+      it { is_expected.not_to be_require_situation_nature_occupation }
       it { is_expected.not_to be_require_situation_majoration_rs }
       it { is_expected.not_to be_require_situation_annee_cfe }
       it { is_expected.not_to be_require_situation_vacance_fiscale }
@@ -1377,7 +1377,7 @@ RSpec.describe Reports::RequirementsService do
       it { is_expected.not_to be_display_situation_taxation_base_minimum }
 
       it { is_expected.to     be_require_situation_occupation_annee }
-      it { is_expected.to     be_require_situation_nature_occupation }
+      it { is_expected.not_to be_require_situation_nature_occupation }
       it { is_expected.to     be_require_situation_majoration_rs }
       it { is_expected.not_to be_require_situation_annee_cfe }
       it { is_expected.not_to be_require_situation_vacance_fiscale }
@@ -1415,7 +1415,7 @@ RSpec.describe Reports::RequirementsService do
       it { is_expected.not_to be_display_situation_taxation_base_minimum }
 
       it { is_expected.to     be_require_situation_occupation_annee }
-      it { is_expected.to     be_require_situation_nature_occupation }
+      it { is_expected.not_to be_require_situation_nature_occupation }
       it { is_expected.not_to be_require_situation_majoration_rs }
       it { is_expected.not_to be_require_situation_annee_cfe }
       it { is_expected.not_to be_require_situation_vacance_fiscale }
