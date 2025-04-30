@@ -154,9 +154,9 @@ FactoryBot.define do
 
       resolution_motif do
         if applicable? || approved?
-          I18n.t("enum.resolution_motif.#{form_type}.applicable").keys.sample
+          I18n.t("enum.resolution_motif.#{form_type}.applicable", default: {}).keys.sample
         else
-          I18n.t("enum.resolution_motif.#{form_type}.inapplicable").keys.sample
+          I18n.t("enum.resolution_motif.#{form_type}.inapplicable", default: {}).keys.sample
         end
       end
     end
