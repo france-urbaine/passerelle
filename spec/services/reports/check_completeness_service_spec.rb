@@ -15,7 +15,7 @@ RSpec.describe Reports::CheckCompletenessService do
   # TODO: more test cases are required
 
   context "with an evaluation_local_habitation" do
-    it "validates an 'affectaction' anomaly after setting proposition_affectation to professionnal" do
+    it "validates an 'affectation' anomaly after setting proposition_affectation to professionnal" do
       report = build_stubbed(
         :report,
         form_type:                            "evaluation_local_habitation",
@@ -50,7 +50,7 @@ RSpec.describe Reports::CheckCompletenessService do
       expect(described_class.new(report)).to be_valid
     end
 
-    it "validates an 'affectaction' anomaly after setting proposition_affectation to industrial" do
+    it "validates an 'affectation' anomaly after setting proposition_affectation to industrial" do
       report = build_stubbed(
         :report,
         form_type:                            "evaluation_local_habitation",
@@ -148,7 +148,7 @@ RSpec.describe Reports::CheckCompletenessService do
   end
 
   context "with an evaluation_local_professionnel" do
-    it "validates an 'affectaction' anomaly after setting proposition_affectation to professionnal" do
+    it "validates an 'affectation' anomaly after setting proposition_affectation to professionnal" do
       report = build_stubbed(
         :report,
         form_type:                            "evaluation_local_professionnel",
@@ -183,7 +183,7 @@ RSpec.describe Reports::CheckCompletenessService do
       expect(described_class.new(report)).to be_valid
     end
 
-    it "validates an 'affectaction' anomaly after setting proposition_affectation to habitation" do
+    it "validates an 'affectation' anomaly after setting proposition_affectation to habitation" do
       report = build_stubbed(
         :report,
         form_type:                            "evaluation_local_professionnel",
