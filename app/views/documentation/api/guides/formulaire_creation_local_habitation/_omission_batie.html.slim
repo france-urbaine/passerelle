@@ -43,8 +43,10 @@ table
       td Catégorie du local
       td <code>4</code>, <code>4M</code>, <code>5</code>
       td
-        = link_to "Consulter toutes les valeurs", "/api/documentation/guides/local_habitation_categorie.csv"
-        '  - seules les catégories d'habitation sont acceptées.
+        '  Consulter les valeurs dans le cas :
+        = link_to "d'une habitation", "/api/documentation/guides/local_habitation_categorie.csv"
+        ' , 
+        = link_to "d'une dépendance", "/api/documentation/guides/local_dependance_categorie.csv"
       td.text-right.space-x-4
         .badge.badge--orange.badge--mono requis
         .badge.badge--blue.badge--mono String
