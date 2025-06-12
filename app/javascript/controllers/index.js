@@ -56,6 +56,9 @@ application.register("selection-row", SelectionRowController)
 import SwitchController from "./switch_controller"
 application.register("switch", SwitchController)
 
+import SwitchFormController from "./switch_form_controller"
+application.register("switch-form", SwitchFormController)
+
 import ToggleController from "./toggle_controller"
 application.register("toggle", ToggleController)
 
