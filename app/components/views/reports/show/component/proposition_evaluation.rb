@@ -17,10 +17,18 @@ module Views
             end
           end
 
+          def proposition_nature_dependance
+            return unless require_proposition_nature_dependance?
+
+            translate_enum(@report.proposition_nature_dependance, scope: "enum.local_nature_dependance")
+          end
+
           def proposition_categorie
-            if require_proposition_evaluation_habitation?
+            if expect_proposition_categorie_habitation?
               translate_enum(@report.proposition_categorie, scope: "enum.local_habitation_categorie")
-            elsif require_proposition_evaluation_professionnel?
+            elsif expect_proposition_categorie_dependance?
+              translate_enum(@report.proposition_categorie, scope: "enum.local_dependance_categorie")
+            elsif expect_proposition_categorie_professionnel?
               translate_enum(@report.proposition_categorie, scope: "enum.local_professionnel_categorie")
             end
           end
