@@ -153,6 +153,8 @@ module Reports
         I18n.t("enum.local_habitation_categorie").keys.map(&:to_s)
       elsif expect_situation_categorie_professionnel?
         I18n.t("enum.local_professionnel_categorie").keys.map(&:to_s)
+      elsif expect_situation_categorie_dependance?
+        I18n.t("enum.local_dependance_categorie").keys.map(&:to_s)
       else
         []
       end

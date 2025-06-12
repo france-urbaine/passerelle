@@ -3,74 +3,86 @@
     | Évaluation actuelle du local
 
   - modal.with_form(model: @report) do |form|
-    - if display_situation_date_mutation?
-      = form.block :situation_date_mutation do
-        = form.label :situation_date_mutation, "Date de mutation"
-        - if situation_date_mutation.is_a?(String) && situation_date_mutation.present?
-          = form.text_field :situation_date_mutation
-        - else
-          = form.date_field :situation_date_mutation, value: situation_date_mutation
+    div( data-controller="switch" )
+      - if display_situation_date_mutation?
+        = form.block :situation_date_mutation do
+          = form.label :situation_date_mutation, "Date de mutation"
+          - if situation_date_mutation.is_a?(String) && situation_date_mutation.present?
+            = form.text_field :situation_date_mutation
+          - else
+            = form.date_field :situation_date_mutation, value: situation_date_mutation
 
-    - if display_situation_affectation?
-      = form.block :situation_affectation do
-        = form.label :situation_affectation, "Affectation"
-        = form.select :situation_affectation, affectation_choices, prompt: ("" if affectation_choices.size > 1)
+      - if display_situation_affectation?
+        = form.block :situation_affectation do
+          = form.label :situation_affectation, "Affectation"
+          = form.select :situation_affectation, affectation_choices, prompt: ("" if affectation_choices.size > 1)
 
-    - if display_situation_nature?
-      = form.block :situation_nature do
-        = form.label :situation_nature, "Nature du local"
-        = form.select :situation_nature, nature_choices, prompt: ""
+      - if display_situation_nature?
+          = form.block :situation_nature do
+            = form.label :situation_nature, "Nature du local"
+            = form.select :situation_nature, nature_choices, { include_blank: true }, data: { action: "switch#toggle" }
 
-    - if display_situation_categorie?
-      = form.block :situation_categorie do
-        = form.label :situation_categorie,"Catégorie du local"
-        = form.select :situation_categorie, categorie_choices, prompt: ""
+      - if display_situation_categorie?
+        = nature_habitation_fields do
+          = form.block :situation_categorie do
+            = form.label :situation_categorie,"Catégorie du local"
+            = form.select :situation_categorie, categorie_habitation_choices, prompt: ""
 
-    - if display_situation_surface_reelle?
-      = form.block :situation_surface_reelle do
-        = form.label :situation_surface_reelle, "Surface réelle"
-        = form.number_field :situation_surface_reelle, step: "any", min: 0
+        = nature_professionnel_fields do
+          = form.block :situation_categorie do
+            = form.label :situation_categorie,"Catégorie du local"
+            = form.select :situation_categorie, categorie_professionnel_choices, prompt: ""
 
-    - if display_situation_coefficient_entretien?
-      = form.block :situation_coefficient_entretien do
-        = form.label :situation_coefficient_entretien, "Coefficient d'entretien"
-        = form.select :situation_coefficient_entretien, coefficient_entretien_choices, include_blank: true
+        = nature_dependance_fields do
+          = form.block :situation_categorie do
+            = form.label :situation_categorie,"Catégorie du local"
+            = form.select :situation_categorie, categorie_dependance_choices, prompt: ""
 
-    - if display_situation_coefficient_situation?
-      = form.block :situation_coefficient_situation_generale do
-        = form.label :situation_coefficient_situation_generale, "Coefficient de situation générale"
-        = form.select :situation_coefficient_situation_generale, coefficient_situation_choices, include_blank: true
+      - if display_situation_surface_reelle?
+        = form.block :situation_surface_reelle do
+          = form.label :situation_surface_reelle, "Surface réelle"
+          = form.number_field :situation_surface_reelle, step: "any", min: 0
 
-      = form.block :situation_coefficient_situation_particuliere do
-        = form.label :situation_coefficient_situation_particuliere, "Coefficient de situation particuliere"
-        = form.select :situation_coefficient_situation_particuliere, coefficient_situation_choices, include_blank: true
+      - if display_situation_coefficient_entretien?
+        = form.block :situation_coefficient_entretien do
+          = form.label :situation_coefficient_entretien, "Coefficient d'entretien"
+          = form.select :situation_coefficient_entretien, coefficient_entretien_choices, include_blank: true
 
-    - if display_other_situation_surface?
-      = form.block :situation_surface_p1 do
-        = form.label :situation_surface_p1, "(P1)Surface des parties principales"
-        = form.number_field :situation_surface_p1, step: "any", min: 0
+      - if display_situation_coefficient_situation?
+        = form.block :situation_coefficient_situation_generale do
+          = form.label :situation_coefficient_situation_generale, "Coefficient de situation générale"
+          = form.select :situation_coefficient_situation_generale, coefficient_situation_choices, include_blank: true
 
-      = form.block :situation_surface_p2 do
-        = form.label :situation_surface_p2, "(P2)Surface des parties secondaires couvertes"
-        = form.number_field :situation_surface_p2, step: "any", min: 0
+        = form.block :situation_coefficient_situation_particuliere do
+          = form.label :situation_coefficient_situation_particuliere, "Coefficient de situation particuliere"
+          = form.select :situation_coefficient_situation_particuliere, coefficient_situation_choices, include_blank: true
 
-      = form.block :situation_surface_p3 do
-        = form.label :situation_surface_p3, "(P3)Surface des parties secondaires non couvertes"
-        = form.number_field :situation_surface_p3, step: "any", min: 0
+      - if display_other_situation_surface?
+        = form.block :situation_surface_p1 do
+          = form.label :situation_surface_p1, "(P1) Surface des parties principales"
+          = form.number_field :situation_surface_p1, step: "any", min: 0
 
-      = form.block :situation_surface_pk1 do
-        = form.label :situation_surface_pk1, "(Pk1) Surface des stationnements couverts"
-        = form.number_field :situation_surface_pk1, step: "any", min: 0
+        = form.block :situation_surface_p2 do
+          = form.label :situation_surface_p2, "(P2) Surface des parties secondaires couvertes"
+          = form.number_field :situation_surface_p2, step: "any", min: 0
 
-      = form.block :situation_surface_pk2 do
-        = form.label :situation_surface_pk2, "(Pk2) Surface des stationnements non couverts"
-        = form.number_field :situation_surface_pk2, step: "any", min: 0
+        = form.block :situation_surface_p3 do
+          = form.label :situation_surface_p3, "(P3) Surface des parties secondaires non couvertes"
+          = form.number_field :situation_surface_p3, step: "any", min: 0
 
-      = form.block :situation_surface_ponderee do
-        = form.label :situation_surface_ponderee, "Surface pondérée"
-        = form.number_field :situation_surface_ponderee, step: "any", min: 0
+        = form.block :situation_surface_pk1 do
+          = form.label :situation_surface_pk1, "(Pk1) Surface des stationnements couverts"
+          = form.number_field :situation_surface_pk1, step: "any", min: 0
 
-    - if display_situation_coefficient_localisation?
-      = form.block :situation_coefficient_localisation do
-        = form.label :situation_coefficient_localisation, "Coefficient de localisation"
-        = form.number_field :situation_coefficient_localisation, step: "any", min: 0
+        = form.block :situation_surface_pk2 do
+          = form.label :situation_surface_pk2, "(Pk2) Surface des stationnements non couverts"
+          = form.number_field :situation_surface_pk2, step: "any", min: 0
+
+        = form.block :situation_surface_ponderee do
+          = form.label :situation_surface_ponderee, "Surface pondérée"
+          = form.number_field :situation_surface_ponderee, step: "any", min: 0
+
+      - if display_situation_coefficient_localisation?
+        = form.block :situation_coefficient_localisation do
+          = form.label :situation_coefficient_localisation, "Coefficient de localisation"
+          = form.number_field :situation_coefficient_localisation, step: "any", min: 0

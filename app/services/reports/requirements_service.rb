@@ -210,8 +210,12 @@ module Reports
         display_situation_categorie? && !situation_nature_industrial?
       end
 
+      def expect_situation_categorie_dependance?
+        display_situation_categorie? && situation_nature_dependance?
+      end
+
       def expect_situation_categorie_habitation?
-        display_situation_categorie? && require_situation_evaluation_habitation?
+        display_situation_categorie? && require_situation_evaluation_habitation? && !situation_nature_dependance?
       end
 
       def expect_situation_categorie_professionnel?
@@ -377,6 +381,25 @@ module Reports
         display_proposition_nature? && form_type == "creation_local_habitation"
       end
 
+      # @attribute proposition_nature_dependance
+      #
+      # This attribute is displayed and required for:
+      # * any 'creation_local_habitation' form with a "dependency" nature
+      # * any `evaluation_local_habitation` form with the anomalies `affectation`, `consistance` or `categorie`
+      #   and with a "dependency" nature
+      # * any `evaluation_local_professionnel` form with the anomaly `affectation` and with a "dependency" nature
+      #
+      def display_proposition_nature_dependance?
+        (form_type == "creation_local_habitation" ||
+          (form_type == "evaluation_local_habitation" && anomalies.intersect?(%w[affectation consistance categorie])) ||
+          (form_type == "evaluation_local_professionnel" && anomalies.include?("affectation"))
+        ) && proposition_nature_dependance?
+      end
+
+      def require_proposition_nature_dependance?
+        display_proposition_nature_dependance?
+      end
+
       # @attribute proposition_categorie
       #
       # This attribute is displayed for:
@@ -401,16 +424,13 @@ module Reports
       end
 
       def expect_proposition_categorie_habitation?
-        display_proposition_categorie? && (
-          require_proposition_evaluation_habitation? ||
-          (form_type == "creation_local_habitation" && !proposition_nature_dependance?)
-        )
+        display_proposition_categorie? &&
+          (require_proposition_evaluation_habitation? || form_type == "creation_local_habitation") &&
+          !proposition_nature_dependance?
       end
 
       def expect_proposition_categorie_dependance?
-        display_proposition_categorie? &&
-          form_type == "creation_local_habitation" &&
-          proposition_nature_dependance?
+        display_proposition_categorie? && proposition_nature_dependance?
       end
 
       def expect_proposition_categorie_professionnel?
@@ -535,19 +555,6 @@ module Reports
       #
       def display_proposition_creation_local?
         creation_local?
-      end
-
-      # @attribute proposition_nature_dependance
-      #
-      # This attribute is displayed and required for:
-      # * any 'creation_local_habitation' form with a "dependency" nature
-      #
-      def display_proposition_nature_dependance?
-        form_type == "creation_local_habitation" && proposition_nature_dependance?
-      end
-
-      def require_proposition_nature_dependance?
-        display_proposition_nature_dependance?
       end
 
       # @attribute proposition_date_achevement
@@ -1044,8 +1051,22 @@ module Reports
       @report.proposition_nature == "U"
     end
 
+    def situation_nature_dependance?
+      @report.situation_nature&.in?(nature_dependance_values)
+    end
+
     def proposition_nature_dependance?
-      %w[DA DM].include?(@report.proposition_nature)
+      @report.proposition_nature&.in?(nature_dependance_values)
+    end
+
+    def nature_dependance_values
+      if require_proposition_evaluation_habitation? ||
+         require_situation_evaluation_habitation? ||
+         form_type == "creation_local_habitation"
+        %w[DA DM DE LC]
+      else
+        []
+      end
     end
 
     def occupation_local?

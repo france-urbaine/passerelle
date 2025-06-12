@@ -14,9 +14,11 @@ module Views
           end
 
           def situation_categorie
-            if require_situation_evaluation_habitation?
+            if expect_situation_categorie_habitation?
               translate_enum(@report.situation_categorie, scope: "enum.local_habitation_categorie")
-            elsif require_situation_evaluation_professionnel?
+            elsif expect_situation_categorie_dependance?
+              translate_enum(@report.situation_categorie, scope: "enum.local_dependance_categorie")
+            elsif expect_situation_categorie_professionnel?
               translate_enum(@report.situation_categorie, scope: "enum.local_professionnel_categorie")
             end
           end
