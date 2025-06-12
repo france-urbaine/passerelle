@@ -218,6 +218,42 @@ RSpec.describe Reports::CheckCompletenessService do
       expect(described_class.new(report)).to be_valid
     end
 
+    it "validates an 'affectation' anomaly after setting proposition_affectation to habitation and nature to dependance" do
+      report = build_stubbed(
+        :report,
+        form_type:                            "evaluation_local_professionnel",
+        anomalies:                            %w[affectation],
+        date_constat:                         "2024-04-01",
+        code_insee:                           "64102",
+        situation_annee_majic:                2024,
+        situation_invariant:                  "0123456789",
+        situation_parcelle:                   "AB 0001",
+        situation_libelle_voie:               "RUE CLEMENCEAU",
+        situation_code_rivoli:                "0023",
+        situation_numero_batiment:            "A",
+        situation_numero_escalier:            "1",
+        situation_numero_niveau:              "1",
+        situation_numero_porte:               "22",
+        situation_numero_ordre_porte:         "001",
+        situation_proprietaire:               "MARCEL DUCHAMPS",
+        situation_numero_ordre_proprietaire:  "* 02465",
+        situation_date_mutation:              "2014-02",
+        situation_affectation:                "C",
+        situation_nature:                     "CB",
+        situation_categorie:                  "MAG1",
+        situation_surface_reelle:             240.00,
+        situation_coefficient_localisation:   1.15,
+        proposition_affectation:              "H",
+        proposition_nature:                   "DA",
+        proposition_nature_dependance:        "BC",
+        proposition_categorie:                "AM",
+        proposition_surface_reelle:           240.00,
+        proposition_coefficient_entretien:    1.20
+      )
+
+      expect(described_class.new(report)).to be_valid
+    end
+
     it "validates an 'exoneration' anomaly" do
       report = build_stubbed(
         :report,

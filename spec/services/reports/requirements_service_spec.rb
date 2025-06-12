@@ -75,6 +75,7 @@ RSpec.describe Reports::RequirementsService do
       it { is_expected.to     be_display_proposition_evaluation }
       it { is_expected.to     be_display_proposition_affectation }
       it { is_expected.to     be_display_proposition_nature }
+      it { is_expected.not_to be_display_proposition_nature_dependance }
       it { is_expected.to     be_display_proposition_categorie }
       it { is_expected.to     be_display_proposition_surface_reelle }
       it { is_expected.not_to be_display_other_proposition_surface }
@@ -84,6 +85,7 @@ RSpec.describe Reports::RequirementsService do
 
       it { is_expected.to     be_require_proposition_affectation }
       it { is_expected.to     be_require_proposition_nature }
+      it { is_expected.not_to be_require_proposition_nature_dependance }
       it { is_expected.to     be_require_proposition_categorie }
       it { is_expected.to     be_require_proposition_surface_reelle }
       it { is_expected.not_to be_require_proposition_coefficient_localisation }
@@ -118,6 +120,7 @@ RSpec.describe Reports::RequirementsService do
         it { is_expected.to     be_display_proposition_evaluation }
         it { is_expected.to     be_display_proposition_affectation }
         it { is_expected.to     be_display_proposition_nature }
+        it { is_expected.not_to be_display_proposition_nature_dependance }
         it { is_expected.to     be_display_proposition_categorie }
         it { is_expected.to     be_display_proposition_surface_reelle }
         it { is_expected.to     be_display_other_proposition_surface }
@@ -127,6 +130,7 @@ RSpec.describe Reports::RequirementsService do
 
         it { is_expected.to     be_require_proposition_affectation }
         it { is_expected.to     be_require_proposition_nature }
+        it { is_expected.not_to be_require_proposition_nature_dependance }
         it { is_expected.to     be_require_proposition_categorie }
         it { is_expected.to     be_require_proposition_surface_reelle }
         it { is_expected.to     be_require_proposition_coefficient_localisation }
@@ -163,6 +167,7 @@ RSpec.describe Reports::RequirementsService do
         it { is_expected.to     be_display_proposition_evaluation }
         it { is_expected.to     be_display_proposition_affectation }
         it { is_expected.to     be_display_proposition_nature }
+        it { is_expected.not_to be_display_proposition_nature_dependance }
         it { is_expected.to     be_display_proposition_categorie }
         it { is_expected.to     be_display_proposition_surface_reelle }
         it { is_expected.to     be_display_other_proposition_surface }
@@ -172,6 +177,7 @@ RSpec.describe Reports::RequirementsService do
 
         it { is_expected.to     be_require_proposition_affectation }
         it { is_expected.to     be_require_proposition_nature }
+        it { is_expected.not_to be_require_proposition_nature_dependance }
         it { is_expected.not_to be_require_proposition_categorie }
         it { is_expected.not_to be_require_proposition_surface_reelle }
         it { is_expected.not_to be_require_proposition_coefficient_localisation }
@@ -262,6 +268,76 @@ RSpec.describe Reports::RequirementsService do
 
       it { is_expected.not_to be_require_proposition_exoneration }
       it { is_expected.not_to be_require_proposition_adresse }
+
+      context "with a 'consistance' anomaly and a proposition_nature set to dependance" do
+        let(:report) do
+          build_stubbed(:report,
+            form_type: "evaluation_local_habitation",
+            anomalies: %w[consistance],
+            proposition_nature: "DA")
+        end
+
+        # Situation evaluation
+        it { is_expected.to     be_display_situation_evaluation }
+        it { is_expected.to     be_display_situation_date_mutation }
+        it { is_expected.to     be_display_situation_affectation }
+        it { is_expected.to     be_display_situation_nature }
+        it { is_expected.to     be_display_situation_categorie }
+        it { is_expected.to     be_display_situation_surface_reelle }
+        it { is_expected.not_to be_display_other_situation_surface }
+        it { is_expected.not_to be_display_situation_coefficient_localisation }
+        it { is_expected.to     be_display_situation_coefficient_entretien }
+        it { is_expected.to     be_display_situation_coefficient_situation }
+
+        it { is_expected.to     be_require_situation_date_mutation }
+        it { is_expected.to     be_require_situation_affectation }
+        it { is_expected.to     be_require_situation_nature }
+        it { is_expected.to     be_require_situation_categorie }
+        it { is_expected.to     be_require_situation_surface_reelle }
+        it { is_expected.not_to be_require_situation_coefficient_localisation }
+        it { is_expected.to     be_require_situation_coefficient_entretien }
+
+        it { is_expected.to     be_expect_situation_nature_habitation }
+        it { is_expected.not_to be_expect_situation_nature_professionnel }
+        it { is_expected.to     be_expect_situation_categorie_habitation }
+        it { is_expected.not_to be_expect_situation_categorie_professionnel }
+
+        # Proposition evaluation
+        it { is_expected.to     be_display_proposition_evaluation }
+        it { is_expected.not_to be_display_proposition_affectation }
+        it { is_expected.to     be_display_proposition_nature }
+        it { is_expected.to     be_display_proposition_categorie }
+        it { is_expected.to     be_display_proposition_surface_reelle }
+        it { is_expected.not_to be_display_other_proposition_surface }
+        it { is_expected.not_to be_display_proposition_coefficient_localisation }
+        it { is_expected.to     be_display_proposition_coefficient_entretien }
+        it { is_expected.to     be_display_proposition_coefficient_situation }
+
+        it { is_expected.not_to be_require_proposition_affectation }
+        it { is_expected.to     be_require_proposition_nature }
+        it { is_expected.to     be_require_proposition_nature_dependance }
+        it { is_expected.to     be_require_proposition_categorie }
+        it { is_expected.to     be_require_proposition_surface_reelle }
+        it { is_expected.not_to be_require_proposition_coefficient_localisation }
+        it { is_expected.to     be_require_proposition_coefficient_entretien }
+
+        it { is_expected.to     be_expect_proposition_nature_habitation }
+        it { is_expected.not_to be_expect_proposition_nature_professionnel }
+        it { is_expected.not_to be_expect_proposition_nature_creation_local_habitation }
+        it { is_expected.not_to be_expect_proposition_categorie_habitation }
+        it { is_expected.to     be_expect_proposition_categorie_dependance }
+        it { is_expected.not_to be_expect_proposition_categorie_professionnel }
+
+        # Others
+        it { is_expected.not_to be_display_situation_occupation }
+        it { is_expected.not_to be_display_proposition_creation_local }
+        it { is_expected.not_to be_display_proposition_occupation }
+        it { is_expected.not_to be_display_proposition_exoneration }
+        it { is_expected.not_to be_display_proposition_adresse }
+
+        it { is_expected.not_to be_require_proposition_exoneration }
+        it { is_expected.not_to be_require_proposition_adresse }
+      end
     end
 
     context "with a 'correctif' anomaly" do
@@ -499,12 +575,14 @@ RSpec.describe Reports::RequirementsService do
       it { is_expected.not_to be_expect_situation_nature_habitation }
       it { is_expected.to     be_expect_situation_nature_professionnel }
       it { is_expected.not_to be_expect_situation_categorie_habitation }
+      it { is_expected.not_to be_expect_situation_categorie_dependance }
       it { is_expected.to     be_expect_situation_categorie_professionnel }
 
       # Proposition evaluation
       it { is_expected.to     be_display_proposition_evaluation }
       it { is_expected.to     be_display_proposition_affectation }
       it { is_expected.to     be_display_proposition_nature }
+      it { is_expected.not_to be_display_proposition_nature_dependance }
       it { is_expected.to     be_display_proposition_categorie }
       it { is_expected.to     be_display_proposition_surface_reelle }
       it { is_expected.not_to be_display_other_proposition_surface }
@@ -514,6 +592,7 @@ RSpec.describe Reports::RequirementsService do
 
       it { is_expected.to     be_require_proposition_affectation }
       it { is_expected.to     be_require_proposition_nature }
+      it { is_expected.not_to be_require_proposition_nature_dependance }
       it { is_expected.to     be_require_proposition_categorie }
       it { is_expected.to     be_require_proposition_surface_reelle }
       it { is_expected.not_to be_require_proposition_coefficient_localisation }
@@ -548,6 +627,7 @@ RSpec.describe Reports::RequirementsService do
         it { is_expected.to     be_display_proposition_evaluation }
         it { is_expected.to     be_display_proposition_affectation }
         it { is_expected.to     be_display_proposition_nature }
+        it { is_expected.not_to be_display_proposition_nature_dependance }
         it { is_expected.to     be_display_proposition_categorie }
         it { is_expected.to     be_display_proposition_surface_reelle }
         it { is_expected.not_to be_display_other_proposition_surface }
@@ -557,6 +637,7 @@ RSpec.describe Reports::RequirementsService do
 
         it { is_expected.to     be_require_proposition_affectation }
         it { is_expected.to     be_require_proposition_nature }
+        it { is_expected.not_to be_require_proposition_nature_dependance }
         it { is_expected.to     be_require_proposition_categorie }
         it { is_expected.to     be_require_proposition_surface_reelle }
         it { is_expected.not_to be_require_proposition_coefficient_localisation }
@@ -567,6 +648,53 @@ RSpec.describe Reports::RequirementsService do
         it { is_expected.not_to be_expect_proposition_nature_creation_local_habitation }
         it { is_expected.to     be_expect_proposition_categorie_habitation }
         it { is_expected.not_to be_expect_proposition_categorie_dependance }
+        it { is_expected.not_to be_expect_proposition_categorie_professionnel }
+
+        # Others
+        it { is_expected.not_to be_display_situation_occupation }
+        it { is_expected.not_to be_display_proposition_creation_local }
+        it { is_expected.not_to be_display_proposition_occupation }
+        it { is_expected.not_to be_display_proposition_exoneration }
+        it { is_expected.not_to be_display_proposition_adresse }
+
+        it { is_expected.not_to be_require_proposition_exoneration }
+        it { is_expected.not_to be_require_proposition_adresse }
+      end
+
+      context "when setting proposition_affectation to habitation and proposition_nature to dependance" do
+        let(:report) do
+          build_stubbed(:report,
+            form_type: "evaluation_local_professionnel",
+            anomalies: %w[affectation],
+            proposition_affectation: "H",
+            proposition_nature: "DA")
+        end
+
+        # Proposition evaluation
+        it { is_expected.to     be_display_proposition_evaluation }
+        it { is_expected.to     be_display_proposition_affectation }
+        it { is_expected.to     be_display_proposition_nature }
+        it { is_expected.to     be_display_proposition_nature_dependance }
+        it { is_expected.to     be_display_proposition_categorie }
+        it { is_expected.to     be_display_proposition_surface_reelle }
+        it { is_expected.not_to be_display_other_proposition_surface }
+        it { is_expected.not_to be_display_proposition_coefficient_localisation }
+        it { is_expected.to     be_display_proposition_coefficient_entretien }
+        it { is_expected.to     be_display_proposition_coefficient_situation }
+
+        it { is_expected.to     be_require_proposition_affectation }
+        it { is_expected.to     be_require_proposition_nature }
+        it { is_expected.to     be_require_proposition_nature_dependance }
+        it { is_expected.to     be_require_proposition_categorie }
+        it { is_expected.to     be_require_proposition_surface_reelle }
+        it { is_expected.not_to be_require_proposition_coefficient_localisation }
+        it { is_expected.to     be_require_proposition_coefficient_entretien }
+
+        it { is_expected.to     be_expect_proposition_nature_habitation }
+        it { is_expected.not_to be_expect_proposition_nature_professionnel }
+        it { is_expected.not_to be_expect_proposition_nature_creation_local_habitation }
+        it { is_expected.not_to be_expect_proposition_categorie_habitation }
+        it { is_expected.to     be_expect_proposition_categorie_dependance }
         it { is_expected.not_to be_expect_proposition_categorie_professionnel }
 
         # Others
@@ -592,6 +720,7 @@ RSpec.describe Reports::RequirementsService do
         it { is_expected.to     be_display_proposition_evaluation }
         it { is_expected.to     be_display_proposition_affectation }
         it { is_expected.to     be_display_proposition_nature }
+        it { is_expected.not_to be_display_proposition_nature_dependance }
         it { is_expected.to     be_display_proposition_categorie }
         it { is_expected.to     be_display_proposition_surface_reelle }
         it { is_expected.to     be_display_other_proposition_surface }
@@ -601,6 +730,7 @@ RSpec.describe Reports::RequirementsService do
 
         it { is_expected.to     be_require_proposition_affectation }
         it { is_expected.to     be_require_proposition_nature }
+        it { is_expected.not_to be_require_proposition_nature_dependance }
         it { is_expected.to     be_require_proposition_categorie }
         it { is_expected.to     be_require_proposition_surface_reelle }
         it { is_expected.to     be_require_proposition_coefficient_localisation }
@@ -637,6 +767,7 @@ RSpec.describe Reports::RequirementsService do
         it { is_expected.to     be_display_proposition_evaluation }
         it { is_expected.to     be_display_proposition_affectation }
         it { is_expected.to     be_display_proposition_nature }
+        it { is_expected.not_to be_display_proposition_nature_dependance }
         it { is_expected.to     be_display_proposition_categorie }
         it { is_expected.to     be_display_proposition_surface_reelle }
         it { is_expected.to     be_display_other_proposition_surface }
@@ -646,6 +777,7 @@ RSpec.describe Reports::RequirementsService do
 
         it { is_expected.to     be_require_proposition_affectation }
         it { is_expected.to     be_require_proposition_nature }
+        it { is_expected.not_to be_require_proposition_nature_dependance }
         it { is_expected.not_to be_require_proposition_categorie }
         it { is_expected.not_to be_require_proposition_surface_reelle }
         it { is_expected.not_to be_require_proposition_coefficient_localisation }
@@ -706,6 +838,7 @@ RSpec.describe Reports::RequirementsService do
       it { is_expected.to     be_display_proposition_evaluation }
       it { is_expected.not_to be_display_proposition_affectation }
       it { is_expected.not_to be_display_proposition_nature }
+      it { is_expected.not_to be_display_proposition_nature_dependance }
       it { is_expected.to     be_display_proposition_categorie }
       it { is_expected.to     be_display_proposition_surface_reelle }
       it { is_expected.to     be_display_other_proposition_surface }
@@ -715,6 +848,7 @@ RSpec.describe Reports::RequirementsService do
 
       it { is_expected.not_to be_require_proposition_affectation }
       it { is_expected.not_to be_require_proposition_nature }
+      it { is_expected.not_to be_require_proposition_nature_dependance }
       it { is_expected.to     be_require_proposition_categorie }
       it { is_expected.to     be_require_proposition_surface_reelle }
       it { is_expected.to     be_require_proposition_coefficient_localisation }
@@ -774,6 +908,7 @@ RSpec.describe Reports::RequirementsService do
       it { is_expected.not_to be_display_proposition_evaluation }
       it { is_expected.not_to be_display_proposition_affectation }
       it { is_expected.not_to be_display_proposition_nature }
+      it { is_expected.not_to be_display_proposition_nature_dependance }
       it { is_expected.not_to be_display_proposition_categorie }
       it { is_expected.not_to be_display_proposition_surface_reelle }
       it { is_expected.not_to be_display_other_proposition_surface }
@@ -784,6 +919,7 @@ RSpec.describe Reports::RequirementsService do
       it { is_expected.not_to be_require_proposition_affectation }
       it { is_expected.not_to be_require_proposition_nature }
       it { is_expected.not_to be_require_proposition_categorie }
+      it { is_expected.not_to be_require_proposition_nature_dependance }
       it { is_expected.not_to be_require_proposition_surface_reelle }
       it { is_expected.not_to be_require_proposition_coefficient_localisation }
       it { is_expected.not_to be_require_proposition_coefficient_entretien }
@@ -821,6 +957,7 @@ RSpec.describe Reports::RequirementsService do
       it { is_expected.not_to be_require_situation_date_mutation }
       it { is_expected.not_to be_require_situation_affectation }
       it { is_expected.not_to be_require_situation_nature }
+      it { is_expected.not_to be_require_proposition_nature_dependance }
       it { is_expected.not_to be_require_situation_categorie }
       it { is_expected.not_to be_require_situation_surface_reelle }
       it { is_expected.not_to be_require_situation_coefficient_localisation }
