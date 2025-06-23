@@ -39,7 +39,7 @@ module Views
       def ddfip_search_options
         {
           value:       ddfip_name,
-          placeholder: "Commnencez à taper pour sélectionner une DDFIP"
+          placeholder: "Commencez à taper pour sélectionner une DDFIP"
         }
       end
 
