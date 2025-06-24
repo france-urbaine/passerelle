@@ -54,7 +54,7 @@ module Views
       def territory_search_options
         {
           value:       @collectivity.territory&.qualified_name,
-          placeholder: "Commnencez à taper pour sélectionner un territoire"
+          placeholder: "Commencez à taper pour sélectionner un territoire"
         }
       end
 

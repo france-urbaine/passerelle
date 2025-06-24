@@ -16,7 +16,7 @@
 
       = form.autocomplete_component :departement, url: territories_departements_path do |autocomplete|
         - autocomplete.with_label
-        - autocomplete.with_search_field value: @commune.departement&.name, placeholder: "Commnencez à taper pour sélectionner un département"
+        - autocomplete.with_search_field value: @commune.departement&.name, placeholder: "Commencez à taper pour sélectionner un département"
         - autocomplete.with_hidden_field :code_departement
         - autocomplete.with_noscript do
           = form.block :code_departement do
@@ -25,7 +25,7 @@
 
       = form.autocomplete_component :epci, url: territories_epcis_path do |autocomplete|
         - autocomplete.with_label
-        - autocomplete.with_search_field value: @commune.epci&.name, placeholder: "Commnencez à taper pour sélectionner un EPCI"
+        - autocomplete.with_search_field value: @commune.epci&.name, placeholder: "Commencez à taper pour sélectionner un EPCI"
         - autocomplete.with_hidden_field :siren_epci
         - autocomplete.with_noscript do
           = form.block :siren_epci do

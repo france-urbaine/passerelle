@@ -70,7 +70,7 @@ module Views
       def organization_search_options
         {
           value:       organization_name,
-          placeholder: "Commnencez à taper pour sélectionner une organisation"
+          placeholder: "Commencez à taper pour sélectionner une organisation"
         }
       end
 

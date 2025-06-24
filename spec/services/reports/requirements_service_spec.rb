@@ -39,7 +39,7 @@ RSpec.describe Reports::RequirementsService do
       it { is_expected.not_to be_display_proposition_adresse }
     end
 
-    context "with an 'affectaction' anomaly" do
+    context "with an 'affectation' anomaly" do
       let(:report) do
         build_stubbed(:report,
           form_type: "evaluation_local_habitation",
@@ -469,7 +469,7 @@ RSpec.describe Reports::RequirementsService do
       it { is_expected.not_to be_display_proposition_adresse }
     end
 
-    context "with an 'affectaction' anomaly" do
+    context "with an 'affectation' anomaly" do
       let(:report) do
         build_stubbed(:report,
           form_type: "evaluation_local_professionnel",

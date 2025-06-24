@@ -29,7 +29,7 @@ module Views
       def departement_search_options
         {
           value:       @ddfip.departement&.qualified_name,
-          placeholder: "Commnencez à taper pour sélectionner un département"
+          placeholder: "Commencez à taper pour sélectionner un département"
         }
       end
     end

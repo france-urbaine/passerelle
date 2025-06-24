@@ -1,8 +1,8 @@
 = fields model: User.new do |form|
   div( data-controller="switch" )
-    = form.block :affectaction do |block|
-      = form.label :affectaction, "Select a value"
-      = form.select :affectaction, { "Habitation" => "hab", "Professionel" => "pro" }, { include_blank: true }, data: { action: "switch#toggle" }
+    = form.block :affectation do |block|
+      = form.label :affectation, "Select a value"
+      = form.select :affectation, { "Habitation" => "hab", "Professionel" => "pro" }, { include_blank: true }, data: { action: "switch#toggle" }
 
       - block.with_hint do
         ' L'application étant pensée pour fonctionner sans JS, une étape de configuration supplémentaire est nécessaire

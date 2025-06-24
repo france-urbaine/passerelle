@@ -16,7 +16,7 @@
 
       = form.autocomplete_component :region, url: territories_regions_path do |autocomplete|
         - autocomplete.with_label
-        - autocomplete.with_search_field value: @departement.region&.name, placeholder: "Commnencez à taper pour sélectionner une région"
+        - autocomplete.with_search_field value: @departement.region&.name, placeholder: "Commencez à taper pour sélectionner une région"
         - autocomplete.with_hidden_field :code_region
         - autocomplete.with_noscript do
           = form.block :code_region do
