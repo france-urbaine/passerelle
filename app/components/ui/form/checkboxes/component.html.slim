@@ -4,7 +4,7 @@
       input( id=check_all_id type="checkbox" data-selection-target="checkall" )
       label( for=check_all_id ) Tout sélectionner
 
-  = collection_check_boxes(@object_name, @method, @collection, @value_method, @text_method, @options) do |b|
+  = collection_check_boxes(@object_name, @method, @collection, @value_method, @text_method, @options, html_options) do |b|
     .choices-collection__input
       = b.check_box data: { selection_target: "checkbox" }
       = b.label
