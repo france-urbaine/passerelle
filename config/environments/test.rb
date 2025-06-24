@@ -73,4 +73,8 @@ Rails.application.configure do
   # Set an alternative log file
   # Useful for running `bin/ci watch` and `bin/ci` in parallel
   config.logger = ActiveSupport::Logger.new(ENV["LOG_PATH"]) if ENV["LOG_PATH"]
+
+  # Generate random keys for ActiveRecord encryption
+  config.active_record.encryption.primary_key         = SecureRandom.alphanumeric(32)
+  config.active_record.encryption.key_derivation_salt = SecureRandom.alphanumeric(32)
 end
