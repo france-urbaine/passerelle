@@ -1,0 +1,16 @@
+div( data-controller="switch" )
+  .form-block
+    = label_tag :checkboxes, "Sélectionnez une option"
+    = checkboxes_component :object, :checkboxes, %w[A B C], html_options: { data: { action: "switch#toggle" } }
+
+  fieldset( data-switch-target="showWhenEmpty" )
+    .form-block
+      = text_area :text, nil, value: "Ce champ disparaît lorsque n'importe quelle valeur est sélectionnée"
+
+  fieldset( data-switch-target="hide" data-switch-value="A" )
+    .form-block
+      = text_area :text, nil, value: "Ce champ disparaît lorsque 'A' est sélectionnée"
+
+  fieldset( data-switch-target="show" data-switch-values=%w[A B] disabled hidden)
+    .form-block
+      = text_area :text, nil, value: "Ce champ apparaît lorsque 'A' ou 'B' sont sélectionnées"

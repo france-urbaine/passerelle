@@ -1,0 +1,12 @@
+div( data-controller="switch" )
+  .form-block
+    = label_tag :selector, "Sélectionnez une valeur"
+    = select_tag :selector, options_for_select(%w[oui non]), include_blank: true, data: { action: "switch#toggle" }
+
+  p
+    ' Vous avez sélectionné : 
+    b( data-switch-target="show" data-switch-value="oui" hidden )
+      ' 'oui'
+
+    b( data-switch-target="show" data-switch-value="non" hidden )
+      ' 'non'

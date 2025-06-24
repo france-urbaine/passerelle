@@ -1,0 +1,19 @@
+div( data-controller="switch" )
+  .form-block
+    = label_tag :selector, "Sélectionnez une valeur"
+    = select_tag :selector, options_for_select(%w[A B C]), include_blank: true, data: { action: "switch#toggle" }
+
+  fieldset( data-switch-target="show" data-switch-value="A" hidden disabled)
+    .form-block
+      = label_tag :selector_a, "Vous avez sélectionné A"
+      = select_tag :selector_a, options_for_select(%w[X Y]), include_blank: true
+
+  fieldset( data-switch-target="show" data-switch-value="B" hidden disabled)
+    .form-block
+      = label_tag :selector_b, "Vous avez sélectionné B"
+      = select_tag :selector_b, options_for_select(%w[X Y]), include_blank: true
+
+  fieldset( data-switch-target="show" data-switch-value="C" hidden disabled)
+    .form-block
+      = label_tag :selector_c, "Vous avez sélectionné C"
+      = select_tag :selector_c, options_for_select(%w[X Y]), include_blank: true
