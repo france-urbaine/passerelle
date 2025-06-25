@@ -1,0 +1,30 @@
+div( data-controller="switch" )
+  .form-block
+    = label_tag :checkboxes, "1 - Sélectionnez A, B ou C"
+    = checkboxes_component :object, :checkboxes, ('A'..'D'), html_options: { data: { action: "switch#toggle", switch_group_param: "checkboxes" } }
+
+  p
+    ' 1 - Vous avez coché :
+    span( data-switch-target="showWhenEmpty" data-switch-target-group="checkboxes" ) aucune valeur
+    span( data-switch-target="show" data-switch-target-group="checkboxes" data-switch-value="A" hidden ) A
+    span( data-switch-target="show" data-switch-target-group="checkboxes" data-switch-value="B" hidden ) B
+    span( data-switch-target="show" data-switch-target-group="checkboxes" data-switch-value="C" hidden ) C
+    span( data-switch-target="show" data-switch-target-group="checkboxes" data-switch-value="D" hidden ) D
+
+
+  fieldset( data-switch-target="show" data-switch-values=%w[A B C] data-switch-target-group="checkboxes" hidden disabled )
+    .form-block
+      = label_tag :selector, "2 - Ce champ apparaît lorsque vous cochez A, B ou C"
+      = select_tag :selector, options_for_select(%w[X Y Z]), include_blank: true, data: { action: "switch#toggle", switch_group_param: "selector" }
+
+    p
+      ' 2 - Vous avez sélectionné :
+      span( data-switch-target="showWhenEmpty" data-switch-target-group="selector" ) aucune valeur
+      span( data-switch-target="show" data-switch-target-group="selector" data-switch-value="X" hidden ) X
+      span( data-switch-target="show" data-switch-target-group="selector" data-switch-value="Y" hidden ) Y
+      span( data-switch-target="show" data-switch-target-group="selector" data-switch-value="Z" hidden ) Z
+
+  fieldset( data-switch-target="show" data-switch-values=%w[X Y] data-switch-target-group="selector" hidden disabled )
+    .form-block
+      = label_tag :text, "Ce champs apparaît lorsque vous sélectionnez X ou Y"
+      = text_area :text, :object

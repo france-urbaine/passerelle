@@ -75,4 +75,11 @@ RSpec.describe UI::Form::Checkboxes::Component do
       expect(div).to have_no_unchecked_field("Tout sélectionner")
     end
   end
+
+  it "sets html_options" do
+    users = create_list(:user, 4)
+    render_inline described_class.new(:office, :user_ids, users, html_options: { data: { controller: "switch" } })
+
+    expect(page).to have_selector("input[type='checkbox'][data-controller='switch']")
+  end
 end

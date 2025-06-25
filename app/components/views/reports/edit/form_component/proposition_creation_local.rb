@@ -8,7 +8,7 @@ module Views
           def proposition_nature_dependance_fields(&)
             hidden = disabled = !proposition_nature_dependance?
             data = {
-              switch_target:          "target",
+              switch_target:          "show",
               switch_value:           %w[DA DM].join(","),
               switch_value_separator: ","
             }
@@ -19,7 +19,7 @@ module Views
           def proposition_nature_habitation_fields(&)
             hidden = disabled = proposition_nature_dependance?
             data = {
-              switch_target:          "target",
+              switch_target:          "show",
               switch_value:           %w[AP MA].join(","),
               switch_value_separator: ","
             }

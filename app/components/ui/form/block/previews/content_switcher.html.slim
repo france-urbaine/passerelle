@@ -8,14 +8,14 @@
         ' L'application étant pensée pour fonctionner sans JS, une étape de configuration supplémentaire est nécessaire
         ' pour afficher les champs liés à une valeur du select à l'affichage d'un formulaire déjà sauvegardé.
 
-    fieldset( data-switch-target="target" data-switch-value="hab" hidden disabled )
+    fieldset( data-switch-target="show" data-switch-value="hab" hidden disabled )
       p Vous avez sélectionner un local d'habitation :</p>
 
       = form.block :lambda do
         = form.check_box :organization_admin
         = form.label :organization_admin, "Cette checkbox est active"
 
-    fieldset( data-switch-target="target" data-switch-value="hab, pro" data-switch-value-separator=", " hidden disabled )
+    fieldset( data-switch-target="show" data-switch-value="hab, pro" data-switch-value-separator=", " hidden disabled )
       p Vous avez sélectionner une des valeurs
 
       = form.block :lambda do

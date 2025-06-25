@@ -1,0 +1,8 @@
+div( data-controller="switch" )
+  .form-block
+    = label_tag :selector, "Sélectionnez A, B ou C"
+    = select_tag :selector, options_for_select(%w[A B C X Y]), include_blank: true, data: { action: "switch#toggle" }
+  fieldset( data-switch-target="show" data-switch-values=%w[A B C] hidden disabled )
+    .form-block
+      = label_tag :other_selector, "Ce selecteur apparaît lorsque vous sélectionnez A, B ou C"
+      = select_tag :other_selector, options_for_select(%w[oui non]), include_blank: true

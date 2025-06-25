@@ -36,6 +36,12 @@ module UI
         def check_all_id
           "#{@object_name}_#{@method}_check_all"
         end
+
+        def html_options
+          reverse_merge_attributes(@options.fetch(:html_options, {}), {
+            data: { selection_target: "checkbox" }
+          })
+        end
       end
     end
   end
