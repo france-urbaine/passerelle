@@ -10,7 +10,7 @@ module Views
           def habitation_fields(&)
             hidden = disabled = !require_proposition_evaluation_habitation?
             data = {
-              switch_target:          "target",
+              switch_target:          "show",
               switch_value:           I18n.t("enum.local_habitation_affectation").keys.join(SWITCH_SEPARATOR),
               switch_value_separator: SWITCH_SEPARATOR
             }
@@ -21,7 +21,7 @@ module Views
           def professionnel_fields(&)
             hidden = disabled = !require_proposition_evaluation_professionnel?
             data = {
-              switch_target:          "target",
+              switch_target:          "show",
               switch_value:           I18n.t("enum.local_professionnel_affectation").keys.join(SWITCH_SEPARATOR),
               switch_value_separator: SWITCH_SEPARATOR
             }

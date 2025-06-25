@@ -16,7 +16,7 @@ module Views
           def residence_secondaire_fields(&)
             hidden = disabled = (@report.situation_nature_occupation != "RS")
             data = {
-              switch_target: "target",
+              switch_target: "show",
               switch_value:  "RS"
             }
 
@@ -26,7 +26,7 @@ module Views
           def vacance_fiscale_fields(&)
             hidden = disabled = !@report.situation_vacance_fiscale
             data = {
-              switch_target: "target",
+              switch_target: "show",
               switch_value:  "true"
             }
 
