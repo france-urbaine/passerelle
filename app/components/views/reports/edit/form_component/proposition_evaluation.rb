@@ -7,25 +7,63 @@ module Views
         class PropositionEvaluation < self
           SWITCH_SEPARATOR = ","
 
-          def habitation_fields(&)
+          def affectation_habitation_fields(&)
             hidden = disabled = !require_proposition_evaluation_habitation?
-            data = {
-              switch_target:          "show",
-              switch_value:           I18n.t("enum.local_habitation_affectation").keys.join(SWITCH_SEPARATOR),
-              switch_value_separator: SWITCH_SEPARATOR
-            }
 
+            data = {
+              switch_target:        "show",
+              switch_target_group:  "affectation",
+              switch_values:        I18n.t("enum.local_habitation_affectation").keys
+            }
             tag.fieldset(data:, hidden:, disabled:, &)
           end
 
-          def professionnel_fields(&)
+          def affectation_professionnel_fields(&)
             hidden = disabled = !require_proposition_evaluation_professionnel?
-            data = {
-              switch_target:          "show",
-              switch_value:           I18n.t("enum.local_professionnel_affectation").keys.join(SWITCH_SEPARATOR),
-              switch_value_separator: SWITCH_SEPARATOR
-            }
 
+            data = {
+              switch_target:        "show",
+              switch_target_group:  "affectation",
+              switch_values:        I18n.t("enum.local_professionnel_affectation").keys
+            }
+            tag.fieldset(data:, hidden:, disabled:, &)
+          end
+
+          def nature_habitation_fields(&)
+            values = I18n.t("enum.local_habitation_nature").keys - %i[DA DM DE LC]
+            active = @report.proposition_nature.nil? || values.include?(@report.proposition_nature.to_sym)
+            hidden = disabled = !active
+
+            data = {
+              switch_target:        "show",
+              switch_target_group:  "nature_habitation",
+              switch_values:        values
+            }
+            tag.fieldset(data:, hidden:, disabled:, &)
+          end
+
+          def nature_dependance_fields(&)
+            values = %w[DA DM DE LC]
+            hidden = disabled = values.exclude?(@report.proposition_nature)
+
+            data = {
+              switch_target:        "show",
+              switch_target_group:  "nature_habitation",
+              switch_values:        values
+            }
+            tag.fieldset(data:, hidden:, disabled:, &)
+          end
+
+          def nature_professionnel_fields(&)
+            values = I18n.t("enum.local_professionnel_nature").keys
+            active = @report.proposition_nature.nil? || values.include?(@report.proposition_nature.to_sym)
+            hidden = disabled = !active
+
+            data = {
+              switch_target:        "show",
+              switch_target_group:  "nature_professionnel",
+              switch_values:        values
+            }
             tag.fieldset(data:, hidden:, disabled:, &)
           end
 
@@ -38,14 +76,6 @@ module Views
             end
           end
 
-          def nature_choices
-            if require_proposition_evaluation_habitation?
-              nature_habitation_choices
-            else
-              nature_professionnel_choices
-            end
-          end
-
           def nature_habitation_choices
             enum_options(:local_habitation_nature)
           end
@@ -54,12 +84,8 @@ module Views
             enum_options(:local_professionnel_nature)
           end
 
-          def categorie_choices
-            if require_proposition_evaluation_habitation?
-              categorie_habitation_choices
-            else
-              categorie_professionnel_choices
-            end
+          def nature_dependance_choices
+            enum_options(:local_nature_dependance)
           end
 
           def categorie_habitation_choices
@@ -68,6 +94,10 @@ module Views
 
           def categorie_professionnel_choices
             enum_options(:local_professionnel_categorie)
+          end
+
+          def categorie_dependance_choices
+            enum_options(:local_dependance_categorie)
           end
 
           def coefficient_entretien_choices

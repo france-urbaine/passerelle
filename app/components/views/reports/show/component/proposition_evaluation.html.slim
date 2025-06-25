@@ -26,6 +26,11 @@
           = render_valid_content(:proposition_nature) do
             = proposition_nature
 
+      - if display_proposition_nature_dependance?
+        - list.with_attribute(:proposition_nature_dependance) do |attribute|
+          = render_valid_content(:proposition_nature_dependance) do
+            = proposition_nature_dependance
+
       - if display_proposition_categorie?
         - list.with_attribute(:proposition_categorie) do |attribute|
           = render_valid_content(:proposition_categorie) do
