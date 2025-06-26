@@ -172,6 +172,9 @@ fr:
         ddfip_id:         ID de la DDFIP
         ddfip_name:       Nom de la DDFIP
 
+      office_user:
+        supervisor: Superviseur
+
       collectivity:
         territory:                    Territoire de la collectivité
         territory_type:               Type de territoire

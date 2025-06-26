@@ -3063,7 +3063,8 @@ CREATE TABLE public.office_users (
     office_id uuid NOT NULL,
     user_id uuid NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    supervisor boolean DEFAULT false NOT NULL
 );
 
 
@@ -4440,6 +4441,7 @@ ALTER TABLE ONLY public.oauth_access_tokens
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20250626131528'),
 ('20241011075049'),
 ('20240517133141'),
 ('20240517080220'),
