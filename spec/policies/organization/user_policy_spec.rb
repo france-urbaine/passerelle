@@ -342,28 +342,31 @@ RSpec.describe Organization::UserPolicy, type: :policy do
 
     let(:attributes) do
       {
-        organization_type:  "DDFIP",
-        organization_id:    "f4e6854a-00fb-48c4-b669-5f0623e07778",
-        organization_data:  { type: "DDFIP", id: "f4e6854a-00fb-48c4-b669-5f0623e07778" }.to_json,
-        organization_name:  "DDFIP des Pays de la Loire",
-        first_name:         "Juliette",
-        last_name:          "Lemoine",
-        email:              "juliette.lemoine@example.org",
-        organization_admin: "false",
-        super_admin:        "false",
-        office_ids:         ["", "f3fabf04-eef3-4dee-989f-102b5842e18c"],
-        otp_secret:         "123456789"
+        organization_type:       "DDFIP",
+        organization_id:         "f4e6854a-00fb-48c4-b669-5f0623e07778",
+        organization_data:       { type: "DDFIP", id: "f4e6854a-00fb-48c4-b669-5f0623e07778" }.to_json,
+        organization_name:       "DDFIP des Pays de la Loire",
+        first_name:              "Juliette",
+        last_name:               "Lemoine",
+        email:                   "juliette.lemoine@example.org",
+        organization_admin:      "false",
+        super_admin:             "false",
+        otp_secret:              "123456789",
+        office_users_attributes: [
+          { "_destroy" => true, "id" => "f4e6854a-00fb-48c4-b669-5f0623e07778" },
+          { "_destroy" => false, "id" => nil, "supervisor" => true, "office_id" => "f4e6854a-00fb-48c4-b669-5f0623e07778" }
+        ]
       }
     end
 
     it_behaves_like "when current user is a DDFIP admin" do
       it do
         is_expected.to include(
-          first_name:         attributes[:first_name],
-          last_name:          attributes[:last_name],
-          email:              attributes[:email],
-          organization_admin: attributes[:organization_admin],
-          office_ids:         attributes[:office_ids]
+          first_name:              attributes[:first_name],
+          last_name:               attributes[:last_name],
+          email:                   attributes[:email],
+          organization_admin:      attributes[:organization_admin],
+          office_users_attributes: attributes[:office_users_attributes]
         ).and not_include(
           :organization_type,
           :organization_id,
@@ -378,12 +381,12 @@ RSpec.describe Organization::UserPolicy, type: :policy do
         current_user.super_admin = true
 
         is_expected.to include(
-          first_name:         attributes[:first_name],
-          last_name:          attributes[:last_name],
-          email:              attributes[:email],
-          organization_admin: attributes[:organization_admin],
-          super_admin:        attributes[:super_admin],
-          office_ids:         attributes[:office_ids]
+          first_name:              attributes[:first_name],
+          last_name:               attributes[:last_name],
+          email:                   attributes[:email],
+          organization_admin:      attributes[:organization_admin],
+          super_admin:             attributes[:super_admin],
+          office_users_attributes: attributes[:office_users_attributes]
         ).and not_include(
           :organization_type,
           :organization_id,
@@ -407,7 +410,7 @@ RSpec.describe Organization::UserPolicy, type: :policy do
           :organization_data,
           :organization_name,
           :super_admin,
-          :office_ids,
+          :office_users_attributes,
           :otp_secret
         )
       end
@@ -426,7 +429,7 @@ RSpec.describe Organization::UserPolicy, type: :policy do
           :organization_data,
           :organization_name,
           :super_admin,
-          :office_ids,
+          :office_users_attributes,
           :otp_secret
         )
       end

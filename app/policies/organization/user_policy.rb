@@ -52,8 +52,8 @@ module Organization
       return unless organization_admin?
 
       attributes = %i[first_name last_name email organization_admin]
-      attributes << :super_admin        if super_admin?
-      attributes << { office_ids: [] }  if organization.is_a?(DDFIP)
+      attributes << :super_admin if super_admin?
+      attributes << { office_users_attributes: %i[_destroy id office_id supervisor] } if organization.is_a?(DDFIP)
 
       params.permit(*attributes)
     end
