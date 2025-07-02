@@ -85,6 +85,10 @@ class User < ApplicationRecord
   has_many :access_grants, class_name: "Doorkeeper::AccessGrant", foreign_key: :resource_owner_id, dependent: :delete_all, inverse_of: false
   has_many :access_tokens, class_name: "Doorkeeper::AccessToken", foreign_key: :resource_owner_id, dependent: :delete_all, inverse_of: false
 
+  # Attributes
+  # ----------------------------------------------------------------------------
+  accepts_nested_attributes_for :office_users, reject_if: :all_blank, allow_destroy: true
+
   # Validations
   # ----------------------------------------------------------------------------
   validates :first_name, presence: true
