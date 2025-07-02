@@ -23,6 +23,11 @@ module Admin
           @user = User.new(params.slice(:office_ids).permit!)
         end
 
+        @office_users = @user.office_users
+        @office_users += @offices.filter_map do |office|
+          OfficeUser.new(user: @user, office: office) unless office.id.in?(@user.office_ids)
+        end
+
         render layout: false
       end
     end

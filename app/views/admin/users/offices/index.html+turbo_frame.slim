@@ -5,4 +5,19 @@
 
   - else
     = fields_for @user do |form|
-      = form.checkboxes_component :office_ids, @offices
+      .choices-collection
+        = form.fields_for :office_users, @office_users do |fields|
+          - checked = !fields.object.new_record?
+
+          = fields.hidden_field :id
+          = fields.hidden_field :office_id
+
+          div( data-controller="switch" )
+            .choices-collection__input
+              = fields.check_box :_destroy, { value: !checked, checked:, data: { action: "switch#toggle" } }, "false", "true"
+              = fields.label :_destroy, fields.object.office.name
+            fieldset.pl-7( data-switch-target="show" data-switch-value="false" hidden=!checked )
+                = fields.check_box :supervisor
+                = fields.label :supervisor
+                span.text-disabled
+                 |  (gère les utilisateurs au sein du guichet)

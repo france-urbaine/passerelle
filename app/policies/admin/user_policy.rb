@@ -39,7 +39,7 @@ module Admin
         :organization_type, :organization_id, :organization_data, :organization_name,
         :first_name, :last_name, :email,
         :organization_admin, :super_admin,
-        office_ids: []
+        office_users_attributes: %i[_destroy id office_id supervisor]
       )
     end
   end

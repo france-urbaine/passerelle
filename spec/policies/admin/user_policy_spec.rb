@@ -148,26 +148,29 @@ RSpec.describe Admin::UserPolicy, type: :policy do
         email:              "juliette.lemoine@example.org",
         organization_admin: "false",
         super_admin:        "false",
-        office_ids:         %w[f3fabf04-eef3-4dee-989f-102b5842e18c],
-        otp_secret:         "123456789"
+        otp_secret:         "123456789",
+        office_users_attributes: [
+          { "_destroy" => true, "id" => "f4e6854a-00fb-48c4-b669-5f0623e07778" },
+          { "_destroy" => false, "id" => nil, "supervisor" => true, "office_id" => "f4e6854a-00fb-48c4-b669-5f0623e07778" }
+        ]
       }
     end
 
     it_behaves_like "when current user is a super admin" do
       it do
         is_expected.to include(
-          organization_type:  attributes[:organization_type],
-          organization_id:    attributes[:organization_id],
-          organization_data:  attributes[:organization_data],
-          organization_name:  attributes[:organization_name],
-          first_name:         attributes[:first_name],
-          last_name:          attributes[:last_name],
-          email:              attributes[:email],
-          organization_admin: attributes[:organization_admin],
-          super_admin:        attributes[:super_admin],
-          office_ids:         attributes[:office_ids]
+          organization_type:       attributes[:organization_type],
+          organization_id:         attributes[:organization_id],
+          organization_data:       attributes[:organization_data],
+          organization_name:       attributes[:organization_name],
+          first_name:              attributes[:first_name],
+          last_name:               attributes[:last_name],
+          email:                   attributes[:email],
+          organization_admin:      attributes[:organization_admin],
+          super_admin:             attributes[:super_admin],
+          office_users_attributes: attributes[:office_users_attributes]
         ).and not_include(
-          :otp_secret
+          :otp_secret, :office_ids
         )
       end
     end
