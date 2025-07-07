@@ -71,4 +71,20 @@ class ApplicationPolicy < ActionPolicy::Base
   def office_user?
     ddfip? && !organization_admin?
   end
+
+  def supervisor?
+    user? && ddfip? && user.office_users.any?(&:supervisor)
+  end
+
+  def supervised_office_ids
+    return [] unless supervisor?
+
+    if user.office_users.loaded?
+      user.office_users.flat_map do |office_user|
+        office_user.office_id if office_user.supervisor
+      end
+    else
+      user.office_users.where(supervisor: true).pluck(:office_id)
+    end
+  end
 end
