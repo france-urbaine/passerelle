@@ -20,6 +20,7 @@ module PolicyTestHelpers
         "a DDFIP super admin"                => %i[ddfip super_admin],
         "a DDFIP admin"                      => %i[ddfip organization_admin],
         "a DDFIP user"                       => %i[ddfip],
+        "a DDFIP supervisor"                 => %i[ddfip supervisor],
         "a DGFIP admin & super admin"        => %i[dgfip super_admin organization_admin],
         "a DGFIP super admin"                => %i[dgfip super_admin],
         "a DGFIP admin"                      => %i[dgfip organization_admin],
