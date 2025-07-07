@@ -117,7 +117,7 @@ RSpec.describe "DDFIP users in admin" do
       expect(dialog).to have_checked_field("Administrateur de l'organisation")
       expect(dialog).to have_unchecked_field("Administrateur de la plateforme Passerelle")
 
-      within ".form-block", text: "Guichets" do |block|
+      within ".choices-collection" do |block|
         expect(block).to have_checked_field("PELP de Bayonne")
         expect(block).to have_unchecked_field("PELH de Bayonne")
         expect(block).to have_unchecked_field("SIP de Bayonne")
