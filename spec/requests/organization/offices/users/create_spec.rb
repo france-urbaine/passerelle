@@ -16,10 +16,10 @@ RSpec.describe "Organization::Offices::UsersController#create" do
 
   let(:attributes) do
     {
-      first_name: Faker::Name.first_name,
-      last_name:  Faker::Name.last_name,
-      email:      Faker::Internet.email,
-      office_ids: [office.id]
+      first_name:              Faker::Name.first_name,
+      last_name:               Faker::Name.last_name,
+      email:                   Faker::Internet.email,
+      office_users_attributes: [{ office_id: office.id }]
     }
   end
 
@@ -61,7 +61,7 @@ RSpec.describe "Organization::Offices::UsersController#create" do
         request
         expect(User.last).to have_attributes(
           organization: ddfip,
-          office_ids:   attributes[:office_ids],
+          office_ids:   [office.id],
           first_name:   attributes[:first_name],
           last_name:    attributes[:last_name],
           email:        attributes[:email]

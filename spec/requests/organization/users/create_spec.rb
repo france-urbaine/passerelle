@@ -134,11 +134,13 @@ RSpec.describe "Organization::UsersController#create" do
       end
     end
 
-    context "when using office_ids" do
+    context "when using office_users_attributes" do
       let(:ddfip)   { create(:ddfip) }
       let(:offices) { create_list(:office, 3, ddfip: ddfip) }
       let(:attributes) do
-        super().merge(office_ids: offices[0..1].map(&:id))
+        super().merge(office_users_attributes: offices.map do |office|
+          { office_id: office.id }
+        end)
       end
 
       context "when current organization is a DDFIP" do
@@ -146,7 +148,7 @@ RSpec.describe "Organization::UsersController#create" do
 
         it "assigns the offices to the new user" do
           request
-          expect(User.last.offices).to have(2).offices.and include(*offices[0..1])
+          expect(User.last.offices).to have(3).offices.and include(*offices)
         end
       end
 
