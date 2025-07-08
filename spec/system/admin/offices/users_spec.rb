@@ -44,7 +44,7 @@ RSpec.describe "Office users in admin" do
 
     visit admin_office_path(pelp_bayonne)
 
-    expect(page).to have_text("12 utilisateurs | Page 1 sur 2")
+    expect(page).to have_text("13 utilisateurs | Page 1 sur 2")
     expect(page).to have_no_button("Options d'affichage")
   end
 
@@ -270,7 +270,7 @@ RSpec.describe "Office users in admin" do
     #
     expect(page).to have_current_path(admin_ddfip_path(ddfip64))
     expect(page).to have_selector("h1", text: "DDFIP des Pyrénées-Atlantiques")
-    expect(page).to have_text("2 utilisateurs | Page 1 sur 1")
+    expect(page).to have_text("3 utilisateurs | Page 1 sur 1")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
   end
 
@@ -324,7 +324,7 @@ RSpec.describe "Office users in admin" do
     #
     expect(page).to have_current_path(admin_ddfip_path(ddfip64))
     expect(page).to have_selector("h1", text: "DDFIP des Pyrénées-Atlantiques")
-    expect(page).to have_text("2 utilisateurs | Page 1 sur 1")
+    expect(page).to have_text("3 utilisateurs | Page 1 sur 1")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
   end
 
@@ -335,7 +335,7 @@ RSpec.describe "Office users in admin" do
 
     visit admin_office_path(pelp_bayonne)
 
-    expect(page).to have_text("12 utilisateurs | Page 1 sur 2")
+    expect(page).to have_text("13 utilisateurs | Page 1 sur 2")
 
     # Checkboxes should be present to select all users
     #
@@ -361,7 +361,7 @@ RSpec.describe "Office users in admin" do
     #
     expect(page).to have_current_path(admin_office_path(pelp_bayonne))
     expect(page).to have_selector("h1", text: "PELP de Bayonne")
-    expect(page).to have_text("2 utilisateurs | Page 1 sur 1")
+    expect(page).to have_text("3 utilisateurs | Page 1 sur 1")
     expect(page).to have_no_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
 
     # The dialog should be closed
@@ -383,7 +383,7 @@ RSpec.describe "Office users in admin" do
     #
     expect(page).to have_current_path(admin_ddfip_path(ddfip64))
     expect(page).to have_selector("h1", text: "DDFIP des Pyrénées-Atlantiques")
-    expect(page).to have_text("12 utilisateurs | Page 1 sur 2")
+    expect(page).to have_text("13 utilisateurs | Page 1 sur 2")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
   end
 
@@ -394,7 +394,7 @@ RSpec.describe "Office users in admin" do
 
     visit admin_office_path(pelp_bayonne)
 
-    expect(page).to have_text("12 utilisateurs | Page 1 sur 2")
+    expect(page).to have_text("13 utilisateurs | Page 1 sur 2")
 
     # Checkboxes should be present to select all users
     #
@@ -406,16 +406,16 @@ RSpec.describe "Office users in admin" do
     # with a button to remove them
     #
     within ".datatable__selection", text: "10 utilisateurs sélectionnés" do
-      click_on "Sélectionner les 12 utilisateurs des 2 pages"
+      click_on "Sélectionner les 13 utilisateurs des 2 pages"
     end
 
-    within ".datatable__selection", text: "12 utilisateurs sélectionnés" do
+    within ".datatable__selection", text: "13 utilisateurs sélectionnés" do
       click_on "Tout exclure du guichet"
     end
 
     # A confirmation dialog should appear
     #
-    within "[role=dialog]", text: "Êtes-vous sûrs de vouloir exclure les 12 utilisateurs sélectionnés du guichet ?" do
+    within "[role=dialog]", text: "Êtes-vous sûrs de vouloir exclure les 13 utilisateurs sélectionnés du guichet ?" do
       click_on "Continuer"
     end
 
@@ -445,7 +445,7 @@ RSpec.describe "Office users in admin" do
     #
     expect(page).to have_current_path(admin_ddfip_path(ddfip64))
     expect(page).to have_selector("h1", text: "DDFIP des Pyrénées-Atlantiques")
-    expect(page).to have_text("12 utilisateurs | Page 1 sur 2")
+    expect(page).to have_text("13 utilisateurs | Page 1 sur 2")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
   end
 

@@ -24,6 +24,7 @@ module RequestTestHelpers
         "admin"                    => %i[organization_admin],
         "DDFIP super admin"        => %i[ddfip super_admin],
         "DDFIP admin"              => %i[ddfip organization_admin],
+        "DDFIP supervisor"         => %i[ddfip supervisor],
         "DDFIP user"               => %i[ddfip],
         "DGFIP super admin"        => %i[dgfip super_admin],
         "DGFIP admin"              => %i[dgfip organization_admin],

@@ -57,6 +57,25 @@ RSpec.describe "Organization::OfficesController#index" do
       end
     end
 
+    context "when current user is a supervisor" do
+      before { sign_in_as(:supervisor, organization: ddfip) }
+
+      context "when requesting HTML" do
+        it { expect(response).to have_http_status(:success) }
+        it { expect(response).to have_media_type(:html) }
+        it { expect(response).to have_html_body }
+
+        it "returns only user's kept offices" do
+          aggregate_failures do
+            expect(response).to have_html_body.to have_text(offices[0].name)
+            expect(response).to have_html_body.to have_no_text(offices[1].name)
+            expect(response).to have_html_body.to have_no_text(offices[2].name)
+            expect(response).to have_html_body.to have_no_text(offices[3].name)
+          end
+        end
+      end
+    end
+
     context "when requesting Turbo-Frame", :xhr, headers: { "Turbo-Frame" => "content" } do
       it { expect(response).to have_http_status(:success) }
       it { expect(response).to have_media_type(:html) }

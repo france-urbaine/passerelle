@@ -333,6 +333,7 @@ module RequestTestHelpers
         "admin",
         "DDFIP super admin",
         "DDFIP admin",
+        "DDFIP supervisor",
         "DDFIP user",
         "DGFIP super admin",
         "DGFIP admin",

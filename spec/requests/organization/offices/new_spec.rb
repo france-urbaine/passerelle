@@ -17,6 +17,7 @@ RSpec.describe "Organization::OfficesController#new" do
     it_behaves_like "it responds with not acceptable in JSON when signed in"
 
     it_behaves_like "it denies access to DDFIP user"
+    it_behaves_like "it denies access to DDFIP supervisor"
     it_behaves_like "it denies access to DDFIP super admin"
     it_behaves_like "it denies access to publisher user"
     it_behaves_like "it denies access to publisher admin"

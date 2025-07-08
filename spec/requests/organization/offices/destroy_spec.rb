@@ -19,6 +19,7 @@ RSpec.describe "Organization::OfficesController#destroy" do
     it_behaves_like "it responds with not acceptable in JSON when signed in"
 
     it_behaves_like "it denies access to DDFIP user"
+    it_behaves_like "it denies access to DDFIP supervisor"
     it_behaves_like "it denies access to DDFIP super admin"
     it_behaves_like "it denies access to publisher user"
     it_behaves_like "it denies access to publisher admin"
@@ -33,6 +34,7 @@ RSpec.describe "Organization::OfficesController#destroy" do
       let(:office) { create(:office, ddfip: current_user.organization) }
 
       it_behaves_like "it denies access to DDFIP user"
+      it_behaves_like "it denies access to DDFIP supervisor"
       it_behaves_like "it denies access to DDFIP super admin"
 
       it_behaves_like "it allows access to DDFIP admin"
