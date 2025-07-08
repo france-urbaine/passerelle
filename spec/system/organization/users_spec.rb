@@ -623,9 +623,10 @@ RSpec.describe "Manage users from organization" do
       # A table of all users should be present
       #
       expect(page).to have_selector("h1", text: "Équipe")
-      expect(page).to have_text("2 utilisateurs | Page 1 sur 1")
+      expect(page).to have_text("3 utilisateurs | Page 1 sur 1")
       expect(page).to have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
       expect(page).to have_selector(:table_row, "Utilisateur" => "Astride Fabre")
+      expect(page).to have_selector(:table_row, "Utilisateur" => "Charlotte Poulain")
 
       click_on "Maxime Gauthier"
 

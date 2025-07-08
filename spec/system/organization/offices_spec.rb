@@ -482,4 +482,36 @@ RSpec.describe "Offices managed by current organization" do
     expect(page).to have_no_selector("[role=log]", text: "Les guichets sélectionnés ont été supprimés.")
     expect(page).to have_selector("[role=log]", text: "La suppression des guichets sélectionnés a été annulée.")
   end
+
+  context "when user is a supervisor" do
+    before { sign_in(users(:charlotte)) }
+
+    it "visits index & office pages" do
+      visit organization_offices_path
+
+      # A table of owned offices should be present
+      #
+      expect(page).to have_selector("h1", text: "Guichets")
+      expect(page).to have_link("PELP de Bayonne")
+      expect(page).to have_no_link("PELH de Bayonne")
+
+      click_on "PELP de Bayonne"
+
+      # No button should be present to add an office
+      #
+      expect(page).to have_no_button "Ajouter un guichet"
+
+      # The browser should visit the office page
+      #
+      expect(page).to have_current_path(organization_office_path(pelp_bayonne))
+      expect(page).to have_selector("h1", text: "PELP de Bayonne")
+
+      go_back
+
+      # The browser should redirect back to the index page
+      #
+      expect(page).to have_current_path(organization_offices_path)
+      expect(page).to have_selector("h1", text: "Guichets")
+    end
+  end
 end

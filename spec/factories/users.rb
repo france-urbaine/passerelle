@@ -95,8 +95,8 @@ FactoryBot.define do
       end
 
       office_users do
-        Array.new(office_users_size) do
-          association :office_user, supervisor: true, office: instance.organization.offices.sample, user: instance
+        Array.new(office_users_size) do |index|
+          association :office_user, supervisor: true, office: instance.organization.offices[index], user: instance
         end
       end
     end

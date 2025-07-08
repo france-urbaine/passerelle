@@ -28,13 +28,29 @@ RSpec.describe "Organization::OfficesController#show" do
     it_behaves_like "it denies access to collectivity super admin"
 
     it_behaves_like "it responds with not found to DDFIP admin"
+    it_behaves_like "it responds with not found to DDFIP supervisor"
 
     context "when the office is owned by the current organization" do
       let(:office) { create(:office, ddfip: current_user.organization) }
 
       it_behaves_like "it denies access to DDFIP user"
+      it_behaves_like "it denies access to DDFIP supervisor"
       it_behaves_like "it denies access to DDFIP super admin"
 
+      it_behaves_like "it allows access to DDFIP admin"
+    end
+
+    context "when the office is supervised by the current user" do
+      let(:office) { create(:office, ddfip: current_user.organization) }
+
+      before do
+        create(:office_user, office:, user: current_user, supervisor: true)
+        current_user.reload
+      end
+
+      it_behaves_like "it allows access to DDFIP user"
+      it_behaves_like "it allows access to DDFIP supervisor"
+      it_behaves_like "it allows access to DDFIP super admin"
       it_behaves_like "it allows access to DDFIP admin"
     end
   end
