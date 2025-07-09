@@ -13,16 +13,17 @@
         .choices-collection
           = form.fields_for :office_users, office_users, include_id: false do |fields|
             - checked = fields.object.office_id.in?(@user.office_ids)
+            - disabled = !fields.object.office_id.in?(enabled_offices)
 
             = fields.hidden_field :id
             = fields.hidden_field :office_id
 
             div( data-controller="switch" )
               .choices-collection__input
-                = fields.check_box :_destroy, { value: !checked, checked:, data: { action: "switch#toggle" } }, "false", "true"
+                = fields.check_box :_destroy, { value: !checked, checked:, disabled:, data: { action: "switch#toggle" } }, "false", "true"
                 = fields.label :_destroy, fields.object.office.name
               fieldset.pl-7( data-switch-target="show" data-switch-value="false" hidden=!checked )
-                  = fields.check_box :supervisor
+                  = fields.check_box :supervisor, disabled:
                   = fields.label :supervisor
                   span.text-disabled
                    |  (gère les utilisateurs au sein du guichet)

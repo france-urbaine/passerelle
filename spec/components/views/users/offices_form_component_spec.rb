@@ -44,26 +44,22 @@ RSpec.describe Views::Users::OfficesFormComponent, type: :component do
       render_inline described_class.new(office_user.user, namespace: :admin, organization: ddfip)
 
       expect(page).to have_selector(".choices-collection") do |form_block|
-        expect(form_block).to have_selector("input#user_office_users_attributes_0_id[value='#{office_user.id}']", visible: :hidden)
-        expect(form_block).to have_selector("input#user_office_users_attributes_0_office_id[value='#{office_user.office.id}']", visible: :hidden)
+        ddfip.offices.each do |office|
+          office_user = user.office_users.find { |office_user| office_user.office_id == office.id }
+          checked = !office_user.nil?
+          visibility = office_user ? :visible : :hidden
 
-        expect(form_block).to have_selector("#user_office_users_attributes_0_office_id + [data-controller='switch']") do |switch|
-          expect(switch).to have_checked_field(office_user.office.name)
-          expect(switch).to have_selector("fieldset[data-switch-target='show']") do |fieldset|
-            expect(fieldset).to have_checked_field("Superviseur")
+          if office_user
+            expect(form_block).to have_selector("input[id^='user_office_users_attributes_'][value='#{office_user.id}']", visible: :hidden)
+          else
+            expect(form_block).to have_selector("input[id^='user_office_users_attributes_']", visible: :hidden)
           end
-        end
+          expect(form_block).to have_selector("input[id^='user_office_users_attributes_'][value='#{office.id}']", visible: :hidden)
 
-        ddfip.offices.where.not(id: office_user.office_id).order(:name).each_with_index do |office, index|
-          index += 1
-
-          expect(form_block).to have_selector("input#user_office_users_attributes_#{index}_id", visible: :hidden)
-          expect(form_block).to have_selector("input#user_office_users_attributes_#{index}_office_id[value='#{office.id}']", visible: :hidden)
-
-          expect(form_block).to have_selector("#user_office_users_attributes_#{index}_office_id + [data-controller='switch']") do |switch|
-            expect(switch).to have_unchecked_field(office.name)
-            expect(switch).to have_selector("fieldset[data-switch-target='show']", visible: :hidden) do |fieldset|
-              expect(fieldset).to have_unchecked_field("Superviseur", visible: :hidden)
+          expect(form_block).to have_selector("[id$='_office_id'][value='#{office.id}'] + [data-controller='switch']") do |switch|
+            expect(switch).to have_field(office.name, checked:)
+            expect(switch).to have_selector("fieldset[data-switch-target='show']", visible: visibility) do |fieldset|
+              expect(fieldset).to have_field("Superviseur", visible: visibility)
             end
           end
         end
@@ -123,26 +119,72 @@ RSpec.describe Views::Users::OfficesFormComponent, type: :component do
       render_inline described_class.new(office_user.user, namespace: :organization)
 
       expect(page).to have_selector(".choices-collection") do |form_block|
-        expect(form_block).to have_selector("input#user_office_users_attributes_0_id[value='#{office_user.id}']", visible: :hidden)
-        expect(form_block).to have_selector("input#user_office_users_attributes_0_office_id[value='#{office_user.office.id}']", visible: :hidden)
+        ddfip.offices.each do |office|
+          office_user = user.office_users.find { |office_user| office_user.office_id == office.id }
+          checked = !office_user.nil?
+          visibility = office_user ? :visible : :hidden
 
-        expect(form_block).to have_selector("#user_office_users_attributes_0_office_id + [data-controller='switch']") do |switch|
-          expect(switch).to have_checked_field(office_user.office.name)
-          expect(switch).to have_selector("fieldset[data-switch-target='show']") do |fieldset|
-            expect(fieldset).to have_checked_field("Superviseur")
+          if office_user
+            expect(form_block).to have_selector("input[id^='user_office_users_attributes_'][value='#{office_user.id}']", visible: :hidden)
+          else
+            expect(form_block).to have_selector("input[id^='user_office_users_attributes_']", visible: :hidden)
+          end
+          expect(form_block).to have_selector("input[id^='user_office_users_attributes_'][value='#{office.id}']", visible: :hidden)
+
+          expect(form_block).to have_selector("[id$='_office_id'][value='#{office.id}'] + [data-controller='switch']") do |switch|
+            expect(switch).to have_field(office.name, checked:)
+            expect(switch).to have_selector("fieldset[data-switch-target='show']", visible: visibility) do |fieldset|
+              expect(fieldset).to have_field("Superviseur", visible: visibility)
+            end
           end
         end
+      end
+    end
+  end
 
-        ddfip.offices.where.not(id: office_user.office_id).order(:name).each_with_index do |office, index|
-          index += 1
+  context "with organization scope and logged in as a DDFIP supervisor" do
+    before { sign_in_as(:ddfip, :supervisor, organization: ddfip) }
 
-          expect(form_block).to have_selector("input#user_office_users_attributes_#{index}_id", visible: :hidden)
-          expect(form_block).to have_selector("input#user_office_users_attributes_#{index}_office_id[value='#{office.id}']", visible: :hidden)
+    it "renders fields to assign offices to a new user" do
+      render_inline described_class.new(User.new, namespace: :organization)
 
-          expect(form_block).to have_selector("#user_office_users_attributes_#{index}_office_id + [data-controller='switch']") do |switch|
-            expect(switch).to have_unchecked_field(office.name)
+      expect(page).to have_selector(".choices-collection") do |form_block|
+        ddfip.offices.order(:name).each do |office|
+          disabled = !current_user.office_users.find { |office_user| office_user.office_id == office.id && office_user.supervisor }
+
+          expect(form_block).to have_selector("input[id$='_office_id'][value='#{office.id}']", visible: :hidden)
+
+          expect(form_block).to have_selector("[id$='_office_id'][value='#{office.id}'] + [data-controller='switch']") do |switch|
+            expect(switch).to have_unchecked_field(office.name, disabled:)
             expect(switch).to have_selector("fieldset[data-switch-target='show']", visible: :hidden) do |fieldset|
-              expect(fieldset).to have_unchecked_field("Superviseur", visible: :hidden)
+              expect(fieldset).to have_unchecked_field("Superviseur", visible: :hidden, disabled:)
+            end
+          end
+        end
+      end
+    end
+
+    it "renders fields to assign office to an existing user" do
+      render_inline described_class.new(office_user.user, namespace: :organization)
+
+      expect(page).to have_selector(".choices-collection") do |form_block|
+        ddfip.offices.each do |office|
+          office_user = user.office_users.find { |office_user| office_user.office_id == office.id }
+          checked = !office_user.nil?
+          disabled = !current_user.office_users.find { |current_user_office_user| current_user_office_user.office_id == office.id && current_user_office_user.supervisor }
+          visibility = office_user ? :visible : :hidden
+
+          if office_user
+            expect(form_block).to have_selector("input[id^='user_office_users_attributes_'][value='#{office_user.id}']", visible: :hidden)
+          else
+            expect(form_block).to have_selector("input[id^='user_office_users_attributes_']", visible: :hidden)
+          end
+          expect(form_block).to have_selector("input[id^='user_office_users_attributes_'][value='#{office.id}']", visible: :hidden)
+
+          expect(form_block).to have_selector("[id$='_office_id'][value='#{office.id}'] + [data-controller='switch']") do |switch|
+            expect(switch).to have_field(office.name, checked:, disabled:)
+            expect(switch).to have_selector("fieldset[data-switch-target='show']", visible: visibility) do |fieldset|
+              expect(fieldset).to have_field("Superviseur", visible: visibility, disabled:)
             end
           end
         end

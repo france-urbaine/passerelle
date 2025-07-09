@@ -29,10 +29,26 @@ module Views
                      end
       end
 
+      def enabled_offices
+        @enabled_offices ||=
+          if allowed_to_assign_offices? && (current_user.organization_admin || current_user.super_admin)
+            offices.pluck(:id)
+          elsif allowed_to_assign_offices?
+            current_user.office_users.where(supervisor: true).pluck(:office_id)
+          else
+            []
+          end
+      end
+
       def office_users
-        @office_users = @user.office_users
-        @office_users += offices.filter_map do |office|
-          OfficeUser.new(user: @user, office: office) unless office.id.in?(@user.office_ids)
+        @office_users ||= begin
+          office_users = @user.office_users
+          office_users += offices.filter_map do |office|
+            OfficeUser.new(user: @user, office: office) unless office.id.in?(@user.office_ids)
+          end
+          office_users.sort_by do |office_user|
+            [!office_user.office_id.in?(enabled_offices), office_user.office.name].join
+          end
         end
       end
 
