@@ -9,6 +9,7 @@ RSpec.describe Organization::Offices::UserPolicy, type: :policy do
 
       it_behaves_like("when current user is a super admin")        { failed }
       it_behaves_like("when current user is a DDFIP admin")        { succeed }
+      it_behaves_like("when current user is a DDFIP supervisor")   { succeed }
       it_behaves_like("when current user is a DDFIP user")         { failed }
       it_behaves_like("when current user is a publisher admin")    { failed }
       it_behaves_like("when current user is a publisher user")     { failed }
@@ -21,6 +22,7 @@ RSpec.describe Organization::Offices::UserPolicy, type: :policy do
 
       it_behaves_like("when current user is a super admin")        { failed }
       it_behaves_like("when current user is a DDFIP admin")        { failed }
+      it_behaves_like("when current user is a DDFIP supervisor")   { failed }
       it_behaves_like("when current user is a DDFIP user")         { failed }
       it_behaves_like("when current user is a publisher admin")    { failed }
       it_behaves_like("when current user is a publisher user")     { failed }
@@ -33,6 +35,7 @@ RSpec.describe Organization::Offices::UserPolicy, type: :policy do
 
       it_behaves_like("when current user is a super admin")        { failed }
       it_behaves_like("when current user is a DDFIP admin")        { succeed }
+      it_behaves_like("when current user is a DDFIP supervisor")   { succeed }
       it_behaves_like("when current user is a DDFIP user")         { failed }
       it_behaves_like("when current user is a publisher admin")    { failed }
       it_behaves_like("when current user is a publisher user")     { failed }

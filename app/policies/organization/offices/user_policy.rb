@@ -6,13 +6,14 @@ module Organization
       alias_rule :show?, :edit?, :update?, :undiscard?, :undiscard_all?, to: :not_supported?
       alias_rule :index?, :new?, :create?, to: :manage?
       alias_rule :remove_all?, :destroy_all?, to: :manage?
+      alias_rule :remove?, :destroy?, to: :manage?
       alias_rule :edit_all?, :update_all?, to: :manage?
 
       def manage?
         if record == User
-          ddfip_admin?
+          ddfip_admin? || supervisor?
         elsif record.is_a? User
-          ddfip_admin? && organization_match?(record)
+          (ddfip_admin? || supervisor?) && organization_match?(record)
         end
       end
     end

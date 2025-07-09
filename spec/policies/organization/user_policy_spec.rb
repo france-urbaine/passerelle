@@ -9,6 +9,7 @@ RSpec.describe Organization::UserPolicy, type: :policy do
 
       it_behaves_like("when current user is a DDFIP super admin")        { failed }
       it_behaves_like("when current user is a DDFIP admin")              { succeed }
+      it_behaves_like("when current user is a DDFIP supervisor")         { succeed }
       it_behaves_like("when current user is a DDFIP user")               { failed }
       it_behaves_like("when current user is a publisher super admin")    { failed }
       it_behaves_like("when current user is a publisher admin")          { succeed }
@@ -23,6 +24,7 @@ RSpec.describe Organization::UserPolicy, type: :policy do
 
       it_behaves_like("when current user is a DDFIP super admin")        { failed }
       it_behaves_like("when current user is a DDFIP admin")              { failed }
+      it_behaves_like("when current user is a DDFIP supervisor")         { failed }
       it_behaves_like("when current user is a DDFIP user")               { failed }
       it_behaves_like("when current user is a publisher super admin")    { failed }
       it_behaves_like("when current user is a publisher admin")          { failed }
@@ -37,6 +39,7 @@ RSpec.describe Organization::UserPolicy, type: :policy do
 
       it_behaves_like("when current user is a DDFIP super admin")        { failed }
       it_behaves_like("when current user is a DDFIP admin")              { succeed }
+      it_behaves_like("when current user is a DDFIP supervisor")         { failed }
       it_behaves_like("when current user is a DDFIP user")               { failed }
       it_behaves_like("when current user is a publisher super admin")    { failed }
       it_behaves_like("when current user is a publisher admin")          { succeed }
@@ -44,6 +47,16 @@ RSpec.describe Organization::UserPolicy, type: :policy do
       it_behaves_like("when current user is a collectivity super admin") { failed }
       it_behaves_like("when current user is a collectivity admin")       { succeed }
       it_behaves_like("when current user is a collectivity user")        { failed }
+    end
+
+    context "with a member of a supervised office", stub_factories: false do
+      let(:record) { create(:user, organization: current_organization) }
+
+      before { record.office_users << build(:office_user, office: current_user.offices[0]) }
+
+      it_behaves_like("when current user is a DDFIP admin")              { succeed }
+      it_behaves_like("when current user is a DDFIP supervisor")         { succeed }
+      it_behaves_like("when current user is a DDFIP user")               { failed }
     end
 
     context "with a member of a collectivity owned by the current organization" do
@@ -64,6 +77,7 @@ RSpec.describe Organization::UserPolicy, type: :policy do
 
       it_behaves_like("when current user is a DDFIP super admin")        { failed }
       it_behaves_like("when current user is a DDFIP admin")              { succeed }
+      it_behaves_like("when current user is a DDFIP supervisor")         { succeed }
       it_behaves_like("when current user is a DDFIP user")               { failed }
       it_behaves_like("when current user is a publisher super admin")    { failed }
       it_behaves_like("when current user is a publisher admin")          { succeed }
@@ -78,6 +92,7 @@ RSpec.describe Organization::UserPolicy, type: :policy do
 
       it_behaves_like("when current user is a DDFIP super admin")        { failed }
       it_behaves_like("when current user is a DDFIP admin")              { failed }
+      it_behaves_like("when current user is a DDFIP supervisor")         { failed }
       it_behaves_like("when current user is a DDFIP user")               { failed }
       it_behaves_like("when current user is a publisher super admin")    { failed }
       it_behaves_like("when current user is a publisher admin")          { failed }
@@ -92,6 +107,7 @@ RSpec.describe Organization::UserPolicy, type: :policy do
 
       it_behaves_like("when current user is a DDFIP super admin")        { failed }
       it_behaves_like("when current user is a DDFIP admin")              { succeed }
+      it_behaves_like("when current user is a DDFIP supervisor")         { failed }
       it_behaves_like("when current user is a DDFIP user")               { failed }
       it_behaves_like("when current user is a publisher super admin")    { failed }
       it_behaves_like("when current user is a publisher admin")          { succeed }
@@ -106,6 +122,7 @@ RSpec.describe Organization::UserPolicy, type: :policy do
 
       it_behaves_like("when current user is a DDFIP super admin")                { failed }
       it_behaves_like("when current user is a DDFIP admin & super admin")        { succeed }
+      it_behaves_like("when current user is a DDFIP supervisor")                 { failed }
       it_behaves_like("when current user is a DDFIP admin")                      { failed }
       it_behaves_like("when current user is a DDFIP user")                       { failed }
       it_behaves_like("when current user is a publisher admin & super admin")    { succeed }
@@ -116,6 +133,16 @@ RSpec.describe Organization::UserPolicy, type: :policy do
       it_behaves_like("when current user is a collectivity admin & super admin") { succeed }
       it_behaves_like("when current user is a collectivity admin")               { failed }
       it_behaves_like("when current user is a collectivity user")                { failed }
+    end
+
+    context "with a member of a supervised office", stub_factories: false do
+      let(:record) { create(:user, organization: current_organization) }
+
+      before { record.office_users << build(:office_user, office: current_user.offices[0]) }
+
+      it_behaves_like("when current user is a DDFIP admin")              { succeed }
+      it_behaves_like("when current user is a DDFIP supervisor")         { succeed }
+      it_behaves_like("when current user is a DDFIP user")               { failed }
     end
 
     context "with a member of a collectivity owned by the current organization" do
@@ -132,12 +159,109 @@ RSpec.describe Organization::UserPolicy, type: :policy do
   it { expect(:create?).to        be_an_alias_of(policy, :manage?) }
   it { expect(:edit?).to          be_an_alias_of(policy, :manage?) }
   it { expect(:update?).to        be_an_alias_of(policy, :manage?) }
-  it { expect(:remove?).to        be_an_alias_of(policy, :manage?) }
-  it { expect(:destroy?).to       be_an_alias_of(policy, :manage?) }
   it { expect(:undiscard?).to     be_an_alias_of(policy, :manage?) }
   it { expect(:remove_all?).to    be_an_alias_of(policy, :manage?) }
   it { expect(:destroy_all?).to   be_an_alias_of(policy, :manage?) }
   it { expect(:undiscard_all?).to be_an_alias_of(policy, :manage?) }
+
+  describe_rule :destroy? do
+    context "without record" do
+      let(:record) { User }
+
+      it_behaves_like("when current user is a DDFIP super admin")        { failed }
+      it_behaves_like("when current user is a DDFIP admin")              { succeed }
+      it_behaves_like("when current user is a DDFIP supervisor")         { succeed }
+      it_behaves_like("when current user is a DDFIP user")               { failed }
+      it_behaves_like("when current user is a publisher super admin")    { failed }
+      it_behaves_like("when current user is a publisher admin")          { succeed }
+      it_behaves_like("when current user is a publisher user")           { failed }
+      it_behaves_like("when current user is a collectivity super admin") { failed }
+      it_behaves_like("when current user is a collectivity admin")       { succeed }
+      it_behaves_like("when current user is a collectivity user")        { failed }
+    end
+
+    context "with an user" do
+      let(:record) { build_stubbed(:user) }
+
+      it_behaves_like("when current user is a DDFIP super admin")        { failed }
+      it_behaves_like("when current user is a DDFIP admin")              { failed }
+      it_behaves_like("when current user is a DDFIP supervisor")         { failed }
+      it_behaves_like("when current user is a DDFIP user")               { failed }
+      it_behaves_like("when current user is a publisher super admin")    { failed }
+      it_behaves_like("when current user is a publisher admin")          { failed }
+      it_behaves_like("when current user is a publisher user")           { failed }
+      it_behaves_like("when current user is a collectivity super admin") { failed }
+      it_behaves_like("when current user is a collectivity admin")       { failed }
+      it_behaves_like("when current user is a collectivity user")        { failed }
+    end
+
+    context "with a member of the current organization" do
+      let(:record) { build_stubbed(:user, organization: current_organization) }
+
+      it_behaves_like("when current user is a DDFIP super admin")        { failed }
+      it_behaves_like("when current user is a DDFIP admin")              { succeed }
+      it_behaves_like("when current user is a DDFIP supervisor")         { failed }
+      it_behaves_like("when current user is a DDFIP user")               { failed }
+      it_behaves_like("when current user is a publisher super admin")    { failed }
+      it_behaves_like("when current user is a publisher admin")          { succeed }
+      it_behaves_like("when current user is a publisher user")           { failed }
+      it_behaves_like("when current user is a collectivity super admin") { failed }
+      it_behaves_like("when current user is a collectivity admin")       { succeed }
+      it_behaves_like("when current user is a collectivity user")        { failed }
+    end
+
+    context "with a super admin, member of the current organization" do
+      let(:record) { build_stubbed(:user, :super_admin, organization: current_organization) }
+
+      it_behaves_like("when current user is a DDFIP super admin")                { failed }
+      it_behaves_like("when current user is a DDFIP admin & super admin")        { succeed }
+      it_behaves_like("when current user is a DDFIP supervisor")                 { failed }
+      it_behaves_like("when current user is a DDFIP admin")                      { failed }
+      it_behaves_like("when current user is a DDFIP user")                       { failed }
+      it_behaves_like("when current user is a publisher admin & super admin")    { succeed }
+      it_behaves_like("when current user is a publisher super admin")            { failed }
+      it_behaves_like("when current user is a publisher admin")                  { failed }
+      it_behaves_like("when current user is a publisher user")                   { failed }
+      it_behaves_like("when current user is a collectivity super admin")         { failed }
+      it_behaves_like("when current user is a collectivity admin & super admin") { succeed }
+      it_behaves_like("when current user is a collectivity admin")               { failed }
+      it_behaves_like("when current user is a collectivity user")                { failed }
+    end
+
+    context "with a member of a supervised office", stub_factories: false do
+      let(:record) { create(:user, organization: current_organization) }
+
+      before { record.office_users << build(:office_user, office: current_user.offices[0]) }
+
+      it_behaves_like("when current user is a DDFIP admin")              { succeed }
+      it_behaves_like("when current user is a DDFIP supervisor")         { succeed }
+      it_behaves_like("when current user is a DDFIP user")               { failed }
+    end
+
+    context "with a member of a supervised office and an other office", stub_factories: false do
+      let(:record) { create(:user, organization: current_organization) }
+
+      before do
+        record.office_users << build(:office_user, office: current_user.offices[0])
+        record.office_users << build(:office_user)
+      end
+
+      it_behaves_like("when current user is a DDFIP admin")              { succeed }
+      it_behaves_like("when current user is a DDFIP supervisor")         { failed }
+      it_behaves_like("when current user is a DDFIP user")               { failed }
+    end
+
+    context "with a member of a collectivity owned by the current organization" do
+      let(:collectivity) { build_stubbed(:collectivity, publisher: current_organization) }
+      let(:record)       { build_stubbed(:user, organization: collectivity) }
+
+      it_behaves_like("when current user is a publisher super admin")    { failed }
+      it_behaves_like("when current user is a publisher admin")          { failed }
+      it_behaves_like("when current user is a publisher user")           { failed }
+    end
+  end
+
+  it { expect(:remove?).to be_an_alias_of(policy, :destroy?) }
 
   describe "default relation scope" do
     subject(:scope) { apply_relation_scope(User.all) }
@@ -152,6 +276,29 @@ RSpec.describe Organization::UserPolicy, type: :policy do
           WHERE  "users"."discarded_at" IS NULL
             AND  "users"."organization_type" = 'DDFIP'
             AND  "users"."organization_id" = '#{current_organization.id}'
+        SQL
+      end
+    end
+
+    it_behaves_like "when current user is a DDFIP supervisor" do
+      it "scopes all kept users from its own offices" do
+        expect {
+          scope.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "users".*
+          FROM   "users"
+          WHERE  "users"."discarded_at" IS NULL
+            AND  "users"."organization_type" = 'DDFIP'
+            AND  "users"."organization_id" = '#{current_organization.id}'
+            AND  "users"."id" IN (
+              SELECT DISTINCT "users"."id"
+              FROM            "users"
+              INNER JOIN      "office_users"
+              ON              "office_users"."user_id" = "users"."id"
+              WHERE           "users"."organization_type" = 'DDFIP'
+              AND             "users"."organization_id" = '#{current_organization.id}'
+              AND             "office_users"."office_id" = '#{current_organization.offices[0].id}'
+            )
         SQL
       end
     end
@@ -218,6 +365,69 @@ RSpec.describe Organization::UserPolicy, type: :policy do
           WHERE  "users"."discarded_at" IS NULL
             AND  "users"."organization_type" = 'DDFIP'
             AND  "users"."organization_id" = '#{current_organization.id}'
+        SQL
+      end
+    end
+
+    it_behaves_like "when current user is a DDFIP supervisor" do
+      it "scopes all kept users from its own offices excluding himself and those in other offices" do
+        expect {
+          scope.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "users".*
+          FROM   "users"
+          WHERE  "users"."discarded_at" IS NULL
+            AND  "users"."organization_type" = 'DDFIP'
+            AND  "users"."organization_id" = '#{current_organization.id}'
+            AND  "users"."id" IN (
+              SELECT DISTINCT "users"."id"
+              FROM            "users"
+              INNER JOIN      "office_users"
+              ON              "office_users"."user_id" = "users"."id"
+              WHERE           "users"."organization_type" = 'DDFIP'
+              AND             "users"."organization_id" = '#{current_organization.id}'
+              AND             "office_users"."office_id" = '#{current_organization.offices[0].id}'
+            )
+            AND  "users"."id" != '#{current_user.id}'
+            AND  "users"."id" NOT IN (
+              SELECT DISTINCT "users"."id"
+              FROM            "users"
+              INNER JOIN      "office_users"
+              ON              "office_users"."user_id" = "users"."id"
+              WHERE           "users"."organization_type" = 'DDFIP'
+              AND             "users"."organization_id" = '#{current_organization.id}'
+              AND             "office_users"."office_id" != '#{current_organization.offices[0].id}'
+            )
+        SQL
+      end
+
+      it "allows to explicitely include himself", scope_options: { exclude_current: false }, stub_factories: false do
+        expect {
+          scope.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "users".*
+          FROM   "users"
+          WHERE  "users"."discarded_at" IS NULL
+            AND  "users"."organization_type" = 'DDFIP'
+            AND  "users"."organization_id" = '#{current_organization.id}'
+            AND  "users"."id" IN (
+              SELECT DISTINCT "users"."id"
+              FROM            "users"
+              INNER JOIN      "office_users"
+              ON              "office_users"."user_id" = "users"."id"
+              WHERE           "users"."organization_type" = 'DDFIP'
+              AND             "users"."organization_id" = '#{current_organization.id}'
+              AND             "office_users"."office_id" = '#{current_organization.offices[0].id}'
+            )
+            AND  "users"."id" NOT IN (
+              SELECT DISTINCT "users"."id"
+              FROM            "users"
+              INNER JOIN      "office_users"
+              ON              "office_users"."user_id" = "users"."id"
+              WHERE           "users"."organization_type" = 'DDFIP'
+              AND             "users"."organization_id" = '#{current_organization.id}'
+              AND             "office_users"."office_id" != '#{current_organization.offices[0].id}'
+            )
         SQL
       end
     end
@@ -352,10 +562,10 @@ RSpec.describe Organization::UserPolicy, type: :policy do
         organization_admin:      "false",
         super_admin:             "false",
         otp_secret:              "123456789",
-        office_users_attributes: [
-          { "_destroy" => true, "id" => "f4e6854a-00fb-48c4-b669-5f0623e07778" },
-          { "_destroy" => false, "id" => nil, "supervisor" => true, "office_id" => "f4e6854a-00fb-48c4-b669-5f0623e07778" }
-        ]
+        office_users_attributes: {
+          "0" => { "_destroy" => true, "id" => "f4e6854a-00fb-48c4-b669-5f0623e07778" },
+          "1" => { "_destroy" => false, "id" => nil, "supervisor" => true, "office_id" => "f4e6854a-00fb-48c4-b669-5f0623e07778" }
+        }
       }
     end
 
@@ -393,6 +603,23 @@ RSpec.describe Organization::UserPolicy, type: :policy do
           :organization_data,
           :organization_name,
           :otp_secret
+        )
+      end
+    end
+
+    it_behaves_like "when current user is a DDFIP supervisor" do
+      it do
+        current_user.office_users << OfficeUser.new(office_id: "f4e6854a-00fb-48c4-b669-5f0623e07778", supervisor: true)
+
+        is_expected.to include(
+          first_name:              attributes[:first_name],
+          last_name:               attributes[:last_name],
+          email:                   attributes[:email],
+          office_users_attributes: {
+            "1" => { "_destroy" => false, "id" => nil, "supervisor" => true, "office_id" => "f4e6854a-00fb-48c4-b669-5f0623e07778" }
+          }
+        ).and not_include(
+          :otp_secret, :office_ids, :organization_type, :organization_id, :organization_data, :organization_name, :super_admin, :organization_admin
         )
       end
     end
