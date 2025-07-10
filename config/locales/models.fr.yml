@@ -390,6 +390,8 @@ fr:
           not_locked:                  Votre compte n'est plus verrouillé
 
           attributes:
+            office_users:
+                blank:     Au moins un guichet est requis
             organization:
                 required:  Une organisation est requise
 

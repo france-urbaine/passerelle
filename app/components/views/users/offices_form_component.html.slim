@@ -27,3 +27,6 @@
                   = fields.label :supervisor
                   span.text-disabled
                    |  (gère les utilisateurs au sein du guichet)
+
+          - @user&.errors&.messages_for(:office_users)&.each do |message|
+            .form-block__errors= message
