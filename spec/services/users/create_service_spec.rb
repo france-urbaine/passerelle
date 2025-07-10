@@ -145,4 +145,55 @@ RSpec.describe Users::CreateService do
       end
     end
   end
+
+  context "with a supervisor" do
+    let!(:current_user) { create(:user, :ddfip, :supervisor) }
+    let!(:organization) { current_user.organization }
+
+    let(:attributes) do
+      {
+        first_name:              Faker::Name.first_name,
+        last_name:               Faker::Name.last_name,
+        email:                   Faker::Internet.email,
+        office_users_attributes: [
+          { office_id: current_user.offices.first.id }
+        ]
+      }
+    end
+
+    it "returns a successful result" do
+      expect(service.save).to be_successful
+    end
+
+    it "creates the user" do
+      expect { service.save }
+        .to  change(User, :count).by(1)
+        .and change(user, :persisted?).from(false).to(true)
+    end
+
+    it "assigns expected attributes" do
+      service.save
+      user.reload
+
+      aggregate_failures do
+        expect(user.organization).to eq(organization)
+        expect(user.offices).to have(1).offices.and include(current_user.offices.first)
+      end
+    end
+
+    context "with invalid office_users_attributes" do
+      let(:attributes) do
+        {
+          first_name:              Faker::Name.first_name,
+          last_name:               Faker::Name.last_name,
+          email:                   Faker::Internet.email,
+          office_users_attributes: []
+        }
+      end
+
+      it "returns an error result" do
+        expect(service.save).to be_failed
+      end
+    end
+  end
 end
