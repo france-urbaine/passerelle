@@ -40,11 +40,15 @@ module Views
           end
       end
 
+      def checked_offices
+        @checked_offices ||= @user.office_users.map(&:office_id)
+      end
+
       def office_users
         @office_users ||= begin
           office_users = @user.office_users
           office_users += offices.filter_map do |office|
-            OfficeUser.new(user: @user, office: office) unless office.id.in?(@user.office_ids)
+            OfficeUser.new(user: @user, office: office) unless office.id.in?(checked_offices)
           end
           office_users.sort_by do |office_user|
             [!office_user.office_id.in?(enabled_offices), office_user.office.name].join

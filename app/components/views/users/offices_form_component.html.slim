@@ -12,7 +12,7 @@
       = fields_for @user do |form|
         .choices-collection
           = form.fields_for :office_users, office_users, include_id: false do |fields|
-            - checked = fields.object.office_id.in?(@user.office_ids)
+            - checked = fields.object.office_id.in?(checked_offices)
             - disabled = !fields.object.office_id.in?(enabled_offices)
 
             = fields.hidden_field :id
