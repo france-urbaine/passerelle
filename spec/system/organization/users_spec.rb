@@ -9,6 +9,7 @@ RSpec.describe "Manage users from organization" do
   let(:elise)      { users(:elise) }
   let(:christelle) { users(:christelle) }
   let(:maxime)     { users(:maxime) }
+  let(:charlotte)  { users(:charlotte) }
 
   context "when organization is a publisher" do
     before { sign_in(marc) }
@@ -745,6 +746,137 @@ RSpec.describe "Manage users from organization" do
       expect(page).to have_no_link("PELP de Bayonne")
       expect(page).to have_link("PELH de Bayonne")
       expect(page).to have_link("SIP de Bayonne")
+    end
+  end
+
+  context "when organization is a DDFIP and user is a supervisor" do
+    before { sign_in(charlotte) }
+
+    it "visits index & user pages" do
+      visit organization_users_path
+
+      # A table of all users should be present
+      #
+      expect(page).to have_selector("h1", text: "Équipe")
+      expect(page).to have_text("3 utilisateurs | Page 1 sur 1")
+      expect(page).to have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
+      expect(page).to have_selector(:table_row, "Utilisateur" => "Astride Fabre")
+      expect(page).to have_selector(:table_row, "Utilisateur" => "Charlotte Poulain")
+
+      click_on "Maxime Gauthier"
+
+      # The browser should visit the user page
+      #
+      expect(page).to have_current_path(organization_user_path(maxime))
+      expect(page).to have_selector("h1", text: "Maxime Gauthier")
+
+      go_back
+
+      # The browser should redirect back to the index page
+      #
+      expect(page).to have_current_path(organization_users_path)
+      expect(page).to have_selector("h1", text: "Équipe")
+    end
+
+    it "visits the user page to identify links" do
+      visit organization_user_path(maxime)
+
+      # On the user page, we expect only one email link.
+      # It should  have links to offices
+      #
+      expect(page).to have_selector("h1", text: "Maxime Gauthier")
+      expect(page).to have_link("maxime.gauthier@dgfip.finances.gouv.fr")
+      expect(page).to have_link("PELP de Bayonne")
+    end
+
+    it "invites an user from the index page to join some offices" do
+      visit organization_users_path
+
+      # A button should be present to add a new user
+      #
+      click_on "Inviter un utilisateur"
+
+      # A dialog box should appear with a form to fill
+      #
+      within "[role=dialog]", text: "Invitation d'un nouvel utilisateur" do |dialog|
+        expect(dialog).to have_no_field("Organisation")
+        expect(dialog).to have_field("Prénom")
+        expect(dialog).to have_field("Nom")
+        expect(dialog).to have_field("Adresse mail")
+
+        within ".form-block", text: "Guichets" do |block|
+          expect(block).to have_unchecked_field("PELP de Bayonne")
+          expect(block).to have_unchecked_field("PELH de Bayonne", disabled: true)
+          expect(block).to have_unchecked_field("SIP de Bayonne", disabled: true)
+        end
+
+        fill_in "Prénom",       with: "Elliot"
+        fill_in "Nom",          with: "Alderson"
+        fill_in "Adresse mail", with: "robot@solutions-territoire.fr"
+
+        check "PELP de Bayonne"
+
+        click_on "Enregistrer"
+      end
+
+      # The browser should stay on the index page
+      # The new user should appear
+      #
+      expect(page).to have_current_path(organization_users_path)
+      expect(page).to have_selector("h1", text: "Équipe")
+      expect(page).to have_selector(:table_row, "Utilisateur" => "Elliot Alderson")
+
+      # The dialog should be closed
+      # A notification should be displayed
+      #
+      expect(page).to have_no_selector("[role=dialog]")
+      expect(page).to have_selector("[role=log]", text: "Un nouvel utilisateur a été ajouté avec succés.")
+
+      # The new user should belong to checked offices
+      #
+      expect(User.last.offices)
+        .to include(offices(:pelp_bayonne))
+        .and not_include(offices(:pelh_bayonne))
+        .and not_include(offices(:sip_bayonne))
+    end
+
+    it "updates an user offices" do
+      visit organization_user_path(maxime)
+
+      expect(page).to have_link("PELP de Bayonne")
+      expect(page).to have_no_link("PELH de Bayonne")
+      expect(page).to have_no_link("SIP de Bayonne")
+
+      # A button should be present to edit the user
+      #
+      within ".breadcrumbs", text: "Maxime Gauthier" do
+        click_on "Modifier"
+      end
+
+      # A dialog box should appear with a form
+      # The form should be filled with user data
+      #
+      within "[role=dialog]", text: "Modification de l'utilisateur" do
+        within ".form-block", text: "Guichets" do |block|
+          expect(block).to have_checked_field("PELP de Bayonne")
+          expect(block).to have_unchecked_field("Superviseur")
+          expect(block).to have_unchecked_field("PELH de Bayonne", disabled: true)
+          expect(block).to have_unchecked_field("SIP de Bayonne", disabled: true)
+        end
+
+        check "Superviseur"
+
+        click_on "Enregistrer"
+      end
+
+      # The browser should stay on the user page
+      # The user offices should have been updated
+      #
+      expect(page).to have_current_path(organization_user_path(maxime))
+      expect(page).to have_selector("h1", text: "Maxime Gauthier")
+      expect(page).to have_link("PELP de Bayonne")
+      expect(page).to have_no_link("PELH de Bayonne")
+      expect(page).to have_no_link("SIP de Bayonne")
     end
   end
 end
