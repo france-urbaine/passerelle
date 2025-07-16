@@ -19,6 +19,10 @@
         - list.with_attribute(:competences) do |attribute|
           = list(@office.competences) { |value| t(value, scope: "enum.competence") }
 
+        - list.with_attribute("Superviseurs") do |attribute|
+          - short_list(@office.supervisors) do |user|
+            - authorized_link_to(user, namespace: :organization)
+
         - list.with_attribute("Utilisateurs") do |attribute|
           - if @office.users_count.positive?
             = display_count(@office.users_count, "utilisateur")
