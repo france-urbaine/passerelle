@@ -367,6 +367,11 @@ module RequestTestHelpers
           include_context "when signed in as #{user_description}", **options
           include_examples "it responds with not acceptable in HTML"
         end
+
+        shared_examples "it responds with unprocessable entity to #{user_description}" do |**options|
+          include_context "when signed in as #{user_description}", **options
+          include_examples "it responds with unprocessable entity in HTML"
+        end
       end
 
       # JSON API : compound examples with contexts & responses examples
