@@ -36,6 +36,7 @@ RSpec.describe "Organization::UsersController#destroy_all" do
     it_behaves_like "it denies access to collectivity user"
 
     it_behaves_like "it allows access to DDFIP admin"
+    it_behaves_like "it allows access to DDFIP supervisor"
     it_behaves_like "it allows access to publisher admin"
     it_behaves_like "it allows access to collectivity admin"
   end
@@ -159,6 +160,51 @@ RSpec.describe "Organization::UsersController#destroy_all" do
       it { expect(response).to redirect_to("/other/path") }
       it { expect(flash).to have_flash_notice }
       it { expect(flash).to have_flash_actions }
+    end
+  end
+
+  describe "as a supervisor" do
+    before { sign_in(current_user) }
+
+    let(:current_user) { create(:user, :supervisor) }
+    let(:organization) { current_user.organization }
+    let!(:users) do
+      [
+        create(:user, :with_office, office: current_user.offices.first, organization:),
+        create(:user, organization: organization),
+        create(:user, :discarded, organization: organization),
+        create(:user),
+        create(:user),
+        create(:user, organization: organization)
+      ]
+    end
+
+    context "with multiple ids" do
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/organisation/utilisateurs") }
+      it { expect { request }.to change(User.discarded, :count).by(1) }
+
+      it "discards only the users in supervised offices" do
+        expect {
+          request
+          users.each(&:reload)
+        }.to   change(users[0], :discarded_at).to(be_present)
+          .and not_change(users[1], :discarded_at).from(nil)
+          .and not_change(users[2], :discarded_at).from(be_present)
+          .and not_change(users[3], :discarded_at).from(nil)
+          .and not_change(users[4], :discarded_at).from(nil)
+          .and not_change(users[5], :discarded_at).from(nil)
+          .and not_change(current_user, :discarded_at).from(nil)
+      end
+
+      it "sets a flash notice" do
+        expect(flash).to have_flash_notice.to eq(
+          scheme: "success",
+          header: "Les utilisateurs sélectionnés ont été supprimés.",
+          body:   "Toutes les données seront définitivement supprimées dans un délai de 1 jour.",
+          delay:    10_000
+        )
+      end
     end
   end
 end

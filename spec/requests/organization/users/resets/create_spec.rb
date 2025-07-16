@@ -26,6 +26,7 @@ RSpec.describe "Organization::Users::ResetsController#create" do
     it_behaves_like "it denies access to collectivity super admin"
 
     it_behaves_like "it responds with not found to DDFIP admin"
+    it_behaves_like "it responds with not found to DDFIP supervisor"
     it_behaves_like "it responds with not found to publisher admin"
     it_behaves_like "it responds with not found to collectivity admin"
 
@@ -33,6 +34,7 @@ RSpec.describe "Organization::Users::ResetsController#create" do
       let(:user) { create(:user, organization: current_user.organization) }
 
       it_behaves_like "it denies access to DDFIP user"
+      it_behaves_like "it denies access to DDFIP supervisor"
       it_behaves_like "it denies access to publisher user"
       it_behaves_like "it denies access to collectivity user"
 
@@ -48,10 +50,17 @@ RSpec.describe "Organization::Users::ResetsController#create" do
       it_behaves_like "it responds with not found to publisher admin"
     end
 
+    context "when user is member of a supervised office" do
+      let(:user) { create(:user, :with_office, office: current_user.offices.first, organization: current_user.organization) }
+
+      it_behaves_like "it allows access to DDFIP supervisor"
+    end
+
     context "when the user is the current user" do
       let(:user) { current_user }
 
       it_behaves_like "it denies access to DDFIP admin"
+      it_behaves_like "it denies access to DDFIP supervisor"
       it_behaves_like "it denies access to publisher admin"
       it_behaves_like "it denies access to collectivity admin"
     end

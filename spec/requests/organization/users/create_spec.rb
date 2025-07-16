@@ -34,9 +34,11 @@ RSpec.describe "Organization::UsersController#create" do
     it_behaves_like "it allows access to DDFIP admin"
     it_behaves_like "it allows access to publisher admin"
     it_behaves_like "it allows access to collectivity admin"
+
+    it_behaves_like "it responds with unprocessable entity to DDFIP supervisor"
   end
 
-  describe "responses" do
+  describe "responses as an organization admin" do
     before { sign_in_as(:organization_admin, organization: organization) }
 
     let(:organization) do
@@ -190,6 +192,55 @@ RSpec.describe "Organization::UsersController#create" do
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/other/path") }
       it { expect(flash).to have_flash_notice }
+    end
+  end
+
+  describe "responses as a supervisor" do
+    let(:current_user) { create(:user, :supervisor) }
+    let(:attributes) do
+      {
+        first_name: Faker::Name.first_name,
+        last_name:  Faker::Name.last_name,
+        email:      Faker::Internet.email,
+        office_users_attributes: {
+          "1" => { "_destroy" => false, "id" => nil, "supervisor" => true, "office_id" => current_user.offices.first.id }
+        }
+      }
+    end
+
+    before { sign_in(current_user) }
+
+    context "with valid attributes" do
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/organisation/utilisateurs") }
+      it { expect { request }.to change(User, :count).by(1) }
+
+      it "assigns expected attributes to the new record" do
+        request
+        expect(User.last).to have_attributes(
+          organization: current_user.organization,
+          first_name:   attributes[:first_name],
+          last_name:    attributes[:last_name],
+          email:        attributes[:email],
+          office_ids:   [current_user.offices.first.id]
+        )
+      end
+    end
+
+    context "with invalid attributes" do
+      let(:attributes) { super().merge(office_users_attributes: {}) }
+
+      it { expect(response).to have_http_status(:unprocessable_entity) }
+      it { expect(response).to have_media_type(:html) }
+      it { expect(response).to have_html_body }
+      it { expect { request }.not_to change(User, :count).from(1) }
+    end
+
+    context "with empty parameters", params: {} do
+      it { expect(response).to have_http_status(:unprocessable_entity) }
+      it { expect(response).to have_media_type(:html) }
+      it { expect(response).to have_html_body }
+      it { expect { request }.not_to change(User, :count).from(1) }
     end
   end
 end

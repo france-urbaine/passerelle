@@ -35,6 +35,7 @@ RSpec.describe "Organization::UsersController#undiscard_all" do
     it_behaves_like "it denies access to collectivity user"
 
     it_behaves_like "it allows access to DDFIP admin"
+    it_behaves_like "it allows access to DDFIP supervisor"
     it_behaves_like "it allows access to publisher admin"
     it_behaves_like "it allows access to collectivity admin"
   end
@@ -108,6 +109,38 @@ RSpec.describe "Organization::UsersController#undiscard_all" do
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/other/path") }
       it { expect(flash).to have_flash_notice }
+    end
+  end
+
+  describe "as a supervisor" do
+    before { sign_in(current_user) }
+
+    let(:current_user) { create(:user, :supervisor) }
+    let(:organization) { current_user.organization }
+    let!(:users) do
+      [
+        create(:user, :discarded, :with_office, office: current_user.offices.first, organization:),
+        create(:user, :with_office, office: current_user.offices.first, organization:),
+        create(:user, :discarded, organization: organization),
+        create(:user, organization: organization),
+        create(:user, :discarded)
+      ]
+    end
+
+    context "with multiple ids" do
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/organisation/utilisateurs") }
+      it { expect { request }.to change(User.discarded, :count).by(-1) }
+
+      it "undiscards the selected users" do
+        expect {
+          request
+          users.each(&:reload)
+        }.to   change(users[0], :discarded_at).to(nil)
+          .and not_change(users[1], :discarded_at).from(nil)
+          .and not_change(users[2], :discarded_at).from(be_present)
+          .and not_change(users[3], :discarded_at).from(nil)
+      end
     end
   end
 end
