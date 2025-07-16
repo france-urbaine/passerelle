@@ -26,6 +26,7 @@ RSpec.describe "Organization::UsersController#remove_all" do
     it_behaves_like "it denies access to collectivity user"
 
     it_behaves_like "it allows access to DDFIP admin"
+    it_behaves_like "it allows access to DDFIP supervisor"
     it_behaves_like "it allows access to publisher admin"
     it_behaves_like "it allows access to collectivity admin"
   end
