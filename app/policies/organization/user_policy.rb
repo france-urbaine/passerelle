@@ -11,8 +11,7 @@ module Organization
       if record == User
         organization_admin? || supervisor?
       elsif record.is_a? User
-        (organization_admin? && organization_match?(record)) ||
-          (supervisor? && office_match?(record))
+        (organization_admin? && organization_match?(record)) || supervisor_of?(record)
       end
     end
 
@@ -21,7 +20,7 @@ module Organization
         organization_admin? || supervisor?
       elsif record.is_a? User
         organization_match?(record) && !record_as_more_privilege_than_current_user?(record) &&
-          (organization_admin? || (supervisor? && office_match?(record)))
+          (organization_admin? || supervisor_of?(record))
       end
     end
 
@@ -93,10 +92,6 @@ module Organization
     def users_in_unsupervised_offices
       ::User.owned_by(organization).joins(:office_users)
         .where.not("office_users.office_id": supervised_office_ids).distinct.select(:id)
-    end
-
-    def office_match?(user)
-      organization_match?(user) && user.office_ids.any? && user.office_ids.intersect?(supervised_office_ids)
     end
 
     def organization_match?(user)
