@@ -7,8 +7,6 @@ module Organization
 
       alias_rule :show?, :edit?, :update?, :undiscard?, :undiscard_all?, to: :not_supported?
       alias_rule :index?, :new?, :create?, to: :manage?
-      alias_rule :remove_all?, :destroy_all?, to: :manage?
-      alias_rule :remove?, :destroy?, to: :manage?
       alias_rule :edit_all?, :update_all?, to: :manage?
 
       def manage?
@@ -18,6 +16,10 @@ module Organization
           organization_match?(record) &&
             (ddfip_admin? || (supervisor_of_office? && supervisor_of?(record)))
         end
+      end
+
+      def destroy?
+        ddfip? && super
       end
 
       private

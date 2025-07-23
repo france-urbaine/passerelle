@@ -126,9 +126,9 @@ RSpec.describe Organization::Offices::UserPolicy, type: :policy do
 
         it_behaves_like "when using the current user's office" do
           it_behaves_like "when the record is in the office" do
-            it_behaves_like("when current user is a super admin")        { failed }
-            it_behaves_like("when current user is a DDFIP admin")        { succeed }
-            it_behaves_like("when current user is a DDFIP supervisor")   { succeed }
+            it_behaves_like("when current user is a super admin")      { failed }
+            it_behaves_like("when current user is a DDFIP admin")      { succeed }
+            it_behaves_like("when current user is a DDFIP supervisor") { succeed }
           end
         end
       end
@@ -160,12 +160,11 @@ RSpec.describe Organization::Offices::UserPolicy, type: :policy do
   it { expect(:index?).to         be_an_alias_of(policy, :manage?) }
   it { expect(:new?).to           be_an_alias_of(policy, :manage?) }
   it { expect(:create?).to        be_an_alias_of(policy, :manage?) }
-  it { expect(:remove?).to        be_an_alias_of(policy, :manage?) }
-  it { expect(:destroy?).to       be_an_alias_of(policy, :manage?) }
-  it { expect(:remove_all?).to    be_an_alias_of(policy, :manage?) }
-  it { expect(:destroy_all?).to   be_an_alias_of(policy, :manage?) }
   it { expect(:edit_all?).to      be_an_alias_of(policy, :manage?) }
   it { expect(:update_all?).to    be_an_alias_of(policy, :manage?) }
+
+  it { expect(:remove_all?).to    be_an_alias_of(policy, :destroy?) }
+  it { expect(:destroy_all?).to   be_an_alias_of(policy, :destroy?) }
 
   it { expect(:show?).to          be_an_alias_of(policy, :not_supported?) }
   it { expect(:edit?).to          be_an_alias_of(policy, :not_supported?) }

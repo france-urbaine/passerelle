@@ -159,10 +159,6 @@ RSpec.describe Organization::UserPolicy, type: :policy do
   it { expect(:create?).to        be_an_alias_of(policy, :manage?) }
   it { expect(:edit?).to          be_an_alias_of(policy, :manage?) }
   it { expect(:update?).to        be_an_alias_of(policy, :manage?) }
-  it { expect(:undiscard?).to     be_an_alias_of(policy, :manage?) }
-  it { expect(:remove_all?).to    be_an_alias_of(policy, :manage?) }
-  it { expect(:destroy_all?).to   be_an_alias_of(policy, :manage?) }
-  it { expect(:undiscard_all?).to be_an_alias_of(policy, :manage?) }
 
   describe_rule :destroy? do
     context "without record" do
@@ -170,7 +166,7 @@ RSpec.describe Organization::UserPolicy, type: :policy do
 
       it_behaves_like("when current user is a DDFIP super admin")        { failed }
       it_behaves_like("when current user is a DDFIP admin")              { succeed }
-      it_behaves_like("when current user is a DDFIP supervisor")         { succeed }
+      it_behaves_like("when current user is a DDFIP supervisor")         { failed }
       it_behaves_like("when current user is a DDFIP user")               { failed }
       it_behaves_like("when current user is a publisher super admin")    { failed }
       it_behaves_like("when current user is a publisher admin")          { succeed }
@@ -234,7 +230,7 @@ RSpec.describe Organization::UserPolicy, type: :policy do
       before { record.office_users << build(:office_user, office: current_user.offices[0]) }
 
       it_behaves_like("when current user is a DDFIP admin")              { succeed }
-      it_behaves_like("when current user is a DDFIP supervisor")         { succeed }
+      it_behaves_like("when current user is a DDFIP supervisor")         { failed }
       it_behaves_like("when current user is a DDFIP user")               { failed }
     end
 
@@ -261,7 +257,11 @@ RSpec.describe Organization::UserPolicy, type: :policy do
     end
   end
 
-  it { expect(:remove?).to be_an_alias_of(policy, :destroy?) }
+  it { expect(:remove?).to        be_an_alias_of(policy, :destroy?) }
+  it { expect(:undiscard?).to     be_an_alias_of(policy, :destroy?) }
+  it { expect(:remove_all?).to    be_an_alias_of(policy, :destroy?) }
+  it { expect(:destroy_all?).to   be_an_alias_of(policy, :destroy?) }
+  it { expect(:undiscard_all?).to be_an_alias_of(policy, :destroy?) }
 
   describe "default relation scope" do
     subject(:scope) { apply_relation_scope(User.all) }
