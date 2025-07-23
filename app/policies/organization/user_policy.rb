@@ -4,8 +4,8 @@ module Organization
   class UserPolicy < ApplicationPolicy
     alias_rule :index?, to: :show?
     alias_rule :new?, :create?, :edit?, :update?, to: :manage?
-    alias_rule :remove?, to: :destroy?
-    alias_rule :remove_all?, :destroy_all?, :undiscard_all?, to: :manage?
+    alias_rule :remove?, :undiscard?, to: :destroy?
+    alias_rule :remove_all?, :destroy_all?, :undiscard_all?, to: :destroy?
 
     def show?
       if record == User
@@ -25,12 +25,11 @@ module Organization
     end
 
     def destroy?
-      if supervisor? && !organization_admin? && record.is_a?(User)
-        manage? &&
-          record.office_ids.any? &&
-          (record.office_ids - supervised_office_ids).empty?
-      else
-        manage?
+      if record == User
+        organization_admin?
+      elsif record.is_a? User
+        organization_admin? &&
+          organization_match?(record) && !record_as_more_privilege_than_current_user?(record)
       end
     end
 
@@ -75,6 +74,8 @@ module Organization
 
       if supervisor?
         params[:office_users_attributes]&.select! do |_index, office_user_params|
+          next unless office_user_params
+
           office_user_params[:office_id]&.in?(supervised_office_ids)
         end
       end
