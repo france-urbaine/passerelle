@@ -38,18 +38,27 @@ RSpec.describe "Organization::Offices::UsersController#create" do
     it_behaves_like "it denies access to collectivity super admin"
 
     it_behaves_like "it responds with not found to DDFIP admin"
+    it_behaves_like "it responds with not found to DDFIP supervisor"
 
     context "when the office is owned by the current organization" do
       let(:ddfip) { current_user.organization }
 
       it_behaves_like "it denies access to DDFIP user"
+      it_behaves_like "it denies access to DDFIP supervisor"
       it_behaves_like "it denies access to DDFIP super admin"
 
       it_behaves_like "it allows access to DDFIP admin"
     end
+
+    context "when the office is supervised by the current user" do
+      let(:ddfip) { current_user.organization }
+      let(:office) { current_user.offices.first }
+
+      it_behaves_like "it responds with unprocessable entity to DDFIP supervisor"
+    end
   end
 
-  describe "responses" do
+  describe "responses as an organization admin" do
     before { sign_in_as(:organization_admin, organization: ddfip) }
 
     context "with valid attributes" do
@@ -144,6 +153,47 @@ RSpec.describe "Organization::Offices::UsersController#create" do
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/other/path") }
       it { expect(flash).to have_flash_notice }
+    end
+  end
+
+  describe "responses as a supervisor" do
+    let(:current_user) { create(:user, :supervisor) }
+    let(:ddfip)        { current_user.organization }
+    let(:office)       { current_user.offices.first }
+
+    let(:attributes) do
+      super().merge({
+        office_users_attributes: {
+          "1" => { "_destroy" => false, "id" => nil, "supervisor" => true, "office_id" => office.id }
+        }
+      })
+    end
+
+    before { sign_in(current_user) }
+
+    context "with valid attributes" do
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/organisation/guichets/#{office.id}") }
+      it { expect { request }.to change(User, :count).by(1) }
+
+      it "assigns expected attributes to the new record" do
+        request
+        expect(User.last).to have_attributes(
+          organization: ddfip,
+          office_ids:   [office.id],
+          first_name:   attributes[:first_name],
+          last_name:    attributes[:last_name],
+          email:        attributes[:email]
+        )
+      end
+    end
+
+    context "when the office is missing" do
+      before { office.destroy }
+
+      it { expect(response).to have_http_status(:not_found) }
+      it { expect(response).to have_media_type(:html) }
+      it { expect(response).to have_html_body }
     end
   end
 end
