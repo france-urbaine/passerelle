@@ -20,11 +20,11 @@ RSpec.describe "Organization::UsersController#destroy" do
 
     it_behaves_like "it denies access to super admin"
     it_behaves_like "it denies access to DDFIP user"
+    it_behaves_like "it denies access to DDFIP supervisor"
     it_behaves_like "it denies access to publisher user"
     it_behaves_like "it denies access to collectivity user"
 
     it_behaves_like "it responds with not found to DDFIP admin"
-    it_behaves_like "it responds with not found to DDFIP supervisor"
     it_behaves_like "it responds with not found to publisher admin"
     it_behaves_like "it responds with not found to collectivity admin"
 
@@ -52,7 +52,7 @@ RSpec.describe "Organization::UsersController#destroy" do
     context "when user is member of a supervised office" do
       let(:user) { create(:user, :with_office, office: current_user.offices.first, organization: current_user.organization) }
 
-      it_behaves_like "it allows access to DDFIP supervisor"
+      it_behaves_like "it denies access to DDFIP supervisor"
     end
   end
 
