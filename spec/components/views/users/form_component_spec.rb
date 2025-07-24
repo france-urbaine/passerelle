@@ -411,4 +411,49 @@ RSpec.describe Views::Users::FormComponent, type: :component do
       end
     end
   end
+
+  context "with organization scope and logged in as a DDFIP supervisor" do
+    before { sign_in_as(:supervisor) }
+
+    it "renders a form in a modal to create a new user" do
+      render_inline described_class.new(User.new, namespace: :organization)
+
+      expect(page).to have_selector(".modal form") do |form|
+        expect(form).to have_html_attribute("action").with_value("/organisation/utilisateurs")
+
+        expect(form).to have_no_field("Organisation")
+        expect(form).to have_field("Nom")
+        expect(form).to have_field("Prénom")
+
+        expect(form).to have_selector("label", text: "Guichets")
+        expect(form).to have_unchecked_field(current_user.offices[0].name)
+
+        expect(form).to have_no_field("Administrateur de l'organisation")
+        expect(form).to have_no_field("Administrateur de la plateforme Passerelle")
+
+        expect(form).to have_selector(".form-block", text: "Guichets", visible: :visible)
+      end
+    end
+
+    it "renders a form in a modal to update an existing user" do
+      user = create(:user, organization: current_user.organization, offices: [current_user.offices[0]])
+      render_inline described_class.new(user, namespace: :organization)
+
+      expect(page).to have_selector(".modal form") do |form|
+        expect(form).to have_html_attribute("action").with_value("/organisation/utilisateurs/#{user.id}")
+
+        expect(form).to have_no_field("Organisation")
+
+        expect(form).to have_field("Nom",          with: user.last_name,  disabled: true)
+        expect(form).to have_field("Prénom",       with: user.first_name, disabled: true)
+
+        expect(form).to have_no_field("Administrateur de l'organisation")
+        expect(form).to have_no_field("Administrateur de la plateforme Passerelle")
+
+        expect(form).to have_selector("label", text: "Guichets")
+        expect(form).to have_checked_field(current_user.offices[0].name)
+        expect(form).to have_unchecked_field("Superviseur")
+      end
+    end
+  end
 end
