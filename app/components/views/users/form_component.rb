@@ -49,6 +49,15 @@ module Views
         }
       end
 
+      def allowed_to_assign_personnal_info?
+        if @namespace == :organization && current_organization.is_a?(DDFIP) &&
+           !current_user.super_admin? && !current_user.organization_admin?
+          @user.new_record?
+        else
+          true
+        end
+      end
+
       def allowed_to_assign_organization?
         @namespace == :admin && @organization.nil?
       end
