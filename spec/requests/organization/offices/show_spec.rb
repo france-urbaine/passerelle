@@ -48,9 +48,10 @@ RSpec.describe "Organization::OfficesController#show" do
         current_user.reload
       end
 
+      it_behaves_like "it denies access to DDFIP super admin"
+
       it_behaves_like "it allows access to DDFIP user"
       it_behaves_like "it allows access to DDFIP supervisor"
-      it_behaves_like "it allows access to DDFIP super admin"
       it_behaves_like "it allows access to DDFIP admin"
     end
   end
