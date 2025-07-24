@@ -64,6 +64,13 @@ module Organization
       relation.with_discarded.discarded
     end
 
+    params_filter(:update) do |params|
+      params = apply_scope(params, type: :action_controller_params)
+
+      params = params.permit([{ office_users_attributes: %i[_destroy id office_id supervisor] }]) if supervisor?
+      params
+    end
+
     params_filter do |params|
       return unless organization_admin? || supervisor?
 

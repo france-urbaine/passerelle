@@ -587,6 +587,27 @@ RSpec.describe Organization::UserPolicy, type: :policy do
         )
       end
 
+      context "with an update scope" do
+        subject(:params) { apply_params_scope(attributes, name: :update) }
+
+        it do
+          is_expected.to include(
+            first_name:              attributes[:first_name],
+            last_name:               attributes[:last_name],
+            email:                   attributes[:email],
+            organization_admin:      attributes[:organization_admin],
+            office_users_attributes: attributes[:office_users_attributes]
+          ).and not_include(
+            :organization_type,
+            :organization_id,
+            :organization_data,
+            :organization_name,
+            :super_admin,
+            :otp_secret
+          )
+        end
+      end
+
       it "allows super_admin when it's also a super admin" do
         current_user.super_admin = true
 
@@ -608,9 +629,11 @@ RSpec.describe Organization::UserPolicy, type: :policy do
     end
 
     it_behaves_like "when current user is a DDFIP supervisor" do
-      it do
+      before do
         current_user.office_users << OfficeUser.new(office_id: "f4e6854a-00fb-48c4-b669-5f0623e07778", supervisor: true)
+      end
 
+      it do
         is_expected.to include(
           first_name:              attributes[:first_name],
           last_name:               attributes[:last_name],
@@ -621,6 +644,21 @@ RSpec.describe Organization::UserPolicy, type: :policy do
         ).and not_include(
           :otp_secret, :office_ids, :organization_type, :organization_id, :organization_data, :organization_name, :super_admin, :organization_admin
         )
+      end
+
+      context "with an update scope" do
+        subject(:params) { apply_params_scope(attributes, name: :update) }
+
+        it do
+          is_expected.to include(
+            office_users_attributes: {
+              "1" => { "_destroy" => false, "id" => nil, "supervisor" => true, "office_id" => "f4e6854a-00fb-48c4-b669-5f0623e07778" }
+            }
+          ).and not_include(
+            :first_name, :last_name, :email,
+            :otp_secret, :office_ids, :organization_type, :organization_id, :organization_data, :organization_name, :super_admin, :organization_admin
+          )
+        end
       end
     end
 
@@ -641,6 +679,27 @@ RSpec.describe Organization::UserPolicy, type: :policy do
           :otp_secret
         )
       end
+
+      context "with an update scope" do
+        subject(:params) { apply_params_scope(attributes, name: :update) }
+
+        it do
+          is_expected.to include(
+            first_name:         attributes[:first_name],
+            last_name:          attributes[:last_name],
+            email:              attributes[:email],
+            organization_admin: attributes[:organization_admin]
+          ).and not_include(
+            :organization_type,
+            :organization_id,
+            :organization_data,
+            :organization_name,
+            :super_admin,
+            :office_users_attributes,
+            :otp_secret
+          )
+        end
+      end
     end
 
     it_behaves_like "when current user is a collectivity admin" do
@@ -660,6 +719,27 @@ RSpec.describe Organization::UserPolicy, type: :policy do
           :otp_secret
         )
       end
+
+      context "with an update scope" do
+        subject(:params) { apply_params_scope(attributes, name: :update) }
+
+        it do
+          is_expected.to include(
+            first_name:         attributes[:first_name],
+            last_name:          attributes[:last_name],
+            email:              attributes[:email],
+            organization_admin: attributes[:organization_admin]
+          ).and not_include(
+            :organization_type,
+            :organization_id,
+            :organization_data,
+            :organization_name,
+            :super_admin,
+            :office_users_attributes,
+            :otp_secret
+          )
+        end
+      end
     end
 
     it_behaves_like("when current user is a DDFIP super admin")        { it { is_expected.to be_nil } }
@@ -668,5 +748,16 @@ RSpec.describe Organization::UserPolicy, type: :policy do
     it_behaves_like("when current user is a publisher user")           { it { is_expected.to be_nil } }
     it_behaves_like("when current user is a collectivity super admin") { it { is_expected.to be_nil } }
     it_behaves_like("when current user is a collectivity user")        { it { is_expected.to be_nil } }
+
+    context "with an update scope" do
+      subject(:params) { apply_params_scope(attributes, name: :update) }
+
+      it_behaves_like("when current user is a DDFIP super admin")        { it { is_expected.to be_nil } }
+      it_behaves_like("when current user is a DDFIP user")               { it { is_expected.to be_nil } }
+      it_behaves_like("when current user is a publisher super admin")    { it { is_expected.to be_nil } }
+      it_behaves_like("when current user is a publisher user")           { it { is_expected.to be_nil } }
+      it_behaves_like("when current user is a collectivity super admin") { it { is_expected.to be_nil } }
+      it_behaves_like("when current user is a collectivity user")        { it { is_expected.to be_nil } }
+    end
   end
 end
