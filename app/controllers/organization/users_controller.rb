@@ -38,7 +38,7 @@ module Organization
 
     def update
       @user = find_and_authorize_user
-      service = ::Users::UpdateService.new(@user, user_params)
+      service = ::Users::UpdateService.new(@user, user_params(as: :update))
       result  = service.save
 
       respond_with result,
@@ -117,8 +117,8 @@ module Organization
       user
     end
 
-    def user_params
-      authorized(params.fetch(:user, {}))
+    def user_params(as: :default)
+      authorized(params.fetch(:user, {}), as:)
     end
   end
 end
