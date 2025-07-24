@@ -73,7 +73,7 @@ class ApplicationPolicy < ActionPolicy::Base
   end
 
   def supervisor?
-    supervised_office_ids.any?
+    !super_admin? && !organization_admin? && supervised_office_ids.any?
   end
 
   def supervised_office_ids
