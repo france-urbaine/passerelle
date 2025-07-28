@@ -58,6 +58,16 @@ charlotte:
   email:              charlotte.poulain@pelp-bayonne.fr
   confirmed_at:       <%= Time.current %>
 
+yvonne:
+  organization:       pyrenees_atlantiques (DDFIP)
+  first_name:         Yvonne
+  last_name:          Bailly
+  name:               Yvonne Bailly
+  super_admin:        false
+  organization_admin: false
+  email:              yvonne.bailly@dgfip.finances.gouv.fr
+  confirmed_at:       <%= Time.current %>
+
 christelle:
   organization:       pays_basque (Collectivity)
   first_name:         Christelle

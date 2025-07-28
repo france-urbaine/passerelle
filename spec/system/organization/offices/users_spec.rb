@@ -11,6 +11,7 @@ RSpec.describe "Office users in admin" do
   let(:pelp_bayonne) { offices(:pelp_bayonne) }
   let(:sip_bayonne)  { offices(:sip_bayonne) }
   let(:maxime)       { users(:maxime) }
+  let(:yvonne)       { users(:yvonne) }
 
   before { sign_in(users(:maxime)) }
 
@@ -89,6 +90,112 @@ RSpec.describe "Office users in admin" do
     #
     expect(page).to have_no_selector("[role=dialog]")
     expect(page).to have_selector("[role=log]", text: "Un nouvel utilisateur a été ajouté avec succés.")
+  end
+
+  it "tries to invite a user with an already taken email" do
+    visit organization_office_path(pelp_bayonne)
+
+    # A button should be present to add a new user
+    #
+    click_on "Inviter un utilisateur"
+
+    # A dialog box should appear with a form to fill
+    #
+    within "[role=dialog]", text: "Invitation d'un nouvel utilisateur" do |dialog|
+      expect(dialog).to have_no_field("Organisation")
+      expect(dialog).to have_field("Prénom")
+      expect(dialog).to have_field("Nom")
+      expect(dialog).to have_field("Adresse mail")
+
+      within ".form-block", text: "Guichets" do |block|
+        expect(block).to have_checked_field("PELP de Bayonne")
+        expect(block).to have_unchecked_field("PELH de Bayonne")
+        expect(block).to have_unchecked_field("SIP de Bayonne")
+      end
+
+      fill_in "Prénom",       with: "Marc"
+      fill_in "Nom",          with: "Debomy"
+      fill_in "Adresse mail", with: "mdebomy@solutions-territoire.fr"
+
+      click_on "Enregistrer"
+    end
+
+    # A dialog box should appear with a warning
+    #
+    within "[role=dialog]", text: "Un utilisateur existe déjà avec cette addresse email" do |dialog|
+      expect(dialog).to have_text("Vous n'avez pas les droits suffisants pour modifier l'utilisateur concerné.")
+      expect(dialog).to have_link("Annuler")
+
+      click_on "Annuler"
+    end
+
+    # The dialog should show the form again
+    #
+    within "[role=dialog]", text: "Invitation d'un nouvel utilisateur" do |dialog|
+      expect(dialog).to have_no_field("Organisation")
+      expect(dialog).to have_field("Prénom", with: "Marc")
+      expect(dialog).to have_field("Nom", with: "Debomy")
+      expect(dialog).to have_field("Adresse mail", with: "mdebomy@solutions-territoire.fr")
+
+      within ".form-block", text: "Guichets" do |block|
+        expect(block).to have_checked_field("PELP de Bayonne")
+        expect(block).to have_unchecked_field("PELH de Bayonne")
+        expect(block).to have_unchecked_field("SIP de Bayonne")
+      end
+
+      fill_in "Adresse mail", with: "yvonne.bailly@dgfip.finances.gouv.fr"
+
+      click_on "Enregistrer"
+    end
+
+    # A dialog box should appear with a warning
+    #
+    within "[role=dialog]", text: "Un utilisateur existe déjà avec cette addresse email" do |dialog|
+      expect(dialog).to have_text("Vous pouvez cependant modifier l'utilisateur concerné.")
+      expect(dialog).to have_button("Continuer")
+      expect(dialog).to have_link("Annuler")
+
+      click_on "Continuer"
+    end
+
+    # A dialog box to edit the user should appear
+    #
+    within "[role=dialog]", text: "Modification de l'utilisateur" do |dialog|
+      expect(dialog).to have_no_field("Organisation")
+      expect(dialog).to have_field("Prénom", with: "Yvonne")
+      expect(dialog).to have_field("Nom", with: "Bailly")
+      expect(dialog).to have_field("Adresse mail", with: "yvonne.bailly@dgfip.finances.gouv.fr")
+
+      within ".form-block", text: "Guichets" do |block|
+        expect(block).to have_unchecked_field("PELP de Bayonne")
+        expect(block).to have_unchecked_field("PELH de Bayonne")
+        expect(block).to have_unchecked_field("SIP de Bayonne")
+      end
+
+      check "PELP de Bayonne"
+
+      click_on "Enregistrer"
+    end
+
+    # The browser should stay on the index page
+    # The invited user should appear
+    #
+    expect(page).to have_current_path(organization_office_path(pelp_bayonne))
+    expect(page).to have_selector("h1", text: "PELP de Bayonne")
+    expect(page).to have_selector(:table_row, "Utilisateur" => "Yvonne Bailly")
+
+    # The dialog should be closed
+    # A notification should be displayed
+    #
+    expect(page).to have_no_selector("[role=dialog]")
+    expect(page).to have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
+
+    # The invited user should belong to checked offices
+    #
+    expect(yvonne.offices)
+      .to include(offices(:pelp_bayonne))
+      .and not_include(offices(:pelh_bayonne))
+      .and not_include(offices(:sip_bayonne))
   end
 
   it "updates an user from the office page" do
@@ -268,7 +375,7 @@ RSpec.describe "Office users in admin" do
     #
     expect(page).to have_current_path(organization_users_path)
     expect(page).to have_selector("h1", text: "Équipe")
-    expect(page).to have_text("3 utilisateurs | Page 1 sur 1")
+    expect(page).to have_text("4 utilisateurs | Page 1 sur 1")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
   end
 
@@ -323,7 +430,7 @@ RSpec.describe "Office users in admin" do
     #
     expect(page).to have_current_path(organization_users_path)
     expect(page).to have_selector("h1", text: "Équipe")
-    expect(page).to have_text("3 utilisateurs | Page 1 sur 1")
+    expect(page).to have_text("4 utilisateurs | Page 1 sur 1")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
   end
 
@@ -383,7 +490,7 @@ RSpec.describe "Office users in admin" do
     #
     expect(page).to have_current_path(organization_users_path)
     expect(page).to have_selector("h1", text: "Équipe")
-    expect(page).to have_text("3 utilisateurs | Page 1 sur 1")
+    expect(page).to have_text("14 utilisateurs | Page 1 sur 1")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
   end
 
@@ -446,7 +553,7 @@ RSpec.describe "Office users in admin" do
     #
     expect(page).to have_current_path(organization_users_path)
     expect(page).to have_selector("h1", text: "Équipe")
-    expect(page).to have_text("3 utilisateurs | Page 1 sur 1")
+    expect(page).to have_text("4 utilisateurs | Page 1 sur 1")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
   end
 
