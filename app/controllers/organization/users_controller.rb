@@ -15,20 +15,28 @@ module Organization
     end
 
     def new
-      @user = build_user
+      @user = build_user(user_params)
       @referrer_path = referrer_path || organization_users_path
     end
 
     def create
       @user = build_user
-      service = ::Users::CreateService.new(@user, user_params,
+      @user_params = user_params
+      service = ::Users::CreateService.new(@user, @user_params,
         invited_by:   current_user,
         organization: current_organization)
       result = service.save
 
-      respond_with result,
-        flash: true,
-        location: -> { redirect_path || organization_users_path }
+      if result.failure? && result.errors.of_kind?(:email, :taken)
+        @other_user = User.find_by(email: @user.email)
+        @referrer_path = referrer_path || organization_user_path(@user)
+
+        render "email_taken"
+      else
+        respond_with result,
+          flash: true,
+          location: -> { redirect_path || organization_users_path }
+      end
     end
 
     def edit
