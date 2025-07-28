@@ -36,11 +36,11 @@ RSpec.describe "Organization::UsersController#update" do
       let(:user) { create(:user, organization: current_user.organization) }
 
       it_behaves_like "it denies access to DDFIP user"
-      it_behaves_like "it denies access to DDFIP supervisor"
       it_behaves_like "it denies access to publisher user"
       it_behaves_like "it denies access to collectivity user"
 
       it_behaves_like "it allows access to DDFIP admin"
+      it_behaves_like "it allows access to DDFIP supervisor"
       it_behaves_like "it allows access to publisher admin"
       it_behaves_like "it allows access to collectivity admin"
     end

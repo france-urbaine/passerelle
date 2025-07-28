@@ -3,7 +3,8 @@
 module Organization
   class UserPolicy < ApplicationPolicy
     alias_rule :index?, to: :show?
-    alias_rule :new?, :create?, :edit?, :update?, to: :manage?
+    alias_rule :new?, :create?, to: :manage?
+    alias_rule :edit?, to: :update?
     alias_rule :remove?, :undiscard?, to: :destroy?
     alias_rule :remove_all?, :destroy_all?, :undiscard_all?, to: :destroy?
 
@@ -21,6 +22,15 @@ module Organization
       elsif record.is_a? User
         organization_match?(record) && !record_as_more_privilege_than_current_user?(record) &&
           (organization_admin? || supervisor_of?(record))
+      end
+    end
+
+    def update?
+      if record == User
+        organization_admin? || supervisor?
+      elsif record.is_a? User
+        organization_match?(record) && !record_as_more_privilege_than_current_user?(record) &&
+          (organization_admin? || supervisor?)
       end
     end
 
