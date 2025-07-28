@@ -157,8 +157,92 @@ RSpec.describe Organization::UserPolicy, type: :policy do
 
   it { expect(:new?).to           be_an_alias_of(policy, :manage?) }
   it { expect(:create?).to        be_an_alias_of(policy, :manage?) }
-  it { expect(:edit?).to          be_an_alias_of(policy, :manage?) }
-  it { expect(:update?).to        be_an_alias_of(policy, :manage?) }
+
+  describe_rule :edit? do
+    context "without record" do
+      let(:record) { User }
+
+      it_behaves_like("when current user is a DDFIP super admin")        { failed }
+      it_behaves_like("when current user is a DDFIP admin")              { succeed }
+      it_behaves_like("when current user is a DDFIP supervisor")         { succeed }
+      it_behaves_like("when current user is a DDFIP user")               { failed }
+      it_behaves_like("when current user is a publisher super admin")    { failed }
+      it_behaves_like("when current user is a publisher admin")          { succeed }
+      it_behaves_like("when current user is a publisher user")           { failed }
+      it_behaves_like("when current user is a collectivity super admin") { failed }
+      it_behaves_like("when current user is a collectivity admin")       { succeed }
+      it_behaves_like("when current user is a collectivity user")        { failed }
+    end
+
+    context "with an user" do
+      let(:record) { build_stubbed(:user) }
+
+      it_behaves_like("when current user is a DDFIP super admin")        { failed }
+      it_behaves_like("when current user is a DDFIP admin")              { failed }
+      it_behaves_like("when current user is a DDFIP supervisor")         { failed }
+      it_behaves_like("when current user is a DDFIP user")               { failed }
+      it_behaves_like("when current user is a publisher super admin")    { failed }
+      it_behaves_like("when current user is a publisher admin")          { failed }
+      it_behaves_like("when current user is a publisher user")           { failed }
+      it_behaves_like("when current user is a collectivity super admin") { failed }
+      it_behaves_like("when current user is a collectivity admin")       { failed }
+      it_behaves_like("when current user is a collectivity user")        { failed }
+    end
+
+    context "with a member of the current organization" do
+      let(:record) { build_stubbed(:user, organization: current_organization) }
+
+      it_behaves_like("when current user is a DDFIP super admin")        { failed }
+      it_behaves_like("when current user is a DDFIP admin")              { succeed }
+      it_behaves_like("when current user is a DDFIP supervisor")         { succeed }
+      it_behaves_like("when current user is a DDFIP user")               { failed }
+      it_behaves_like("when current user is a publisher super admin")    { failed }
+      it_behaves_like("when current user is a publisher admin")          { succeed }
+      it_behaves_like("when current user is a publisher user")           { failed }
+      it_behaves_like("when current user is a collectivity super admin") { failed }
+      it_behaves_like("when current user is a collectivity admin")       { succeed }
+      it_behaves_like("when current user is a collectivity user")        { failed }
+    end
+
+    context "with a super admin, member of the current organization" do
+      let(:record) { build_stubbed(:user, :super_admin, organization: current_organization) }
+
+      it_behaves_like("when current user is a DDFIP super admin")                { failed }
+      it_behaves_like("when current user is a DDFIP admin & super admin")        { succeed }
+      it_behaves_like("when current user is a DDFIP supervisor")                 { failed }
+      it_behaves_like("when current user is a DDFIP admin")                      { failed }
+      it_behaves_like("when current user is a DDFIP user")                       { failed }
+      it_behaves_like("when current user is a publisher admin & super admin")    { succeed }
+      it_behaves_like("when current user is a publisher super admin")            { failed }
+      it_behaves_like("when current user is a publisher admin")                  { failed }
+      it_behaves_like("when current user is a publisher user")                   { failed }
+      it_behaves_like("when current user is a collectivity super admin")         { failed }
+      it_behaves_like("when current user is a collectivity admin & super admin") { succeed }
+      it_behaves_like("when current user is a collectivity admin")               { failed }
+      it_behaves_like("when current user is a collectivity user")                { failed }
+    end
+
+    context "with a member of a supervised office", stub_factories: false do
+      let(:record) { create(:user, organization: current_organization) }
+
+      before { record.office_users << build(:office_user, office: current_user.offices[0]) }
+
+      it_behaves_like("when current user is a DDFIP admin")              { succeed }
+      it_behaves_like("when current user is a DDFIP supervisor")         { succeed }
+      it_behaves_like("when current user is a DDFIP user")               { failed }
+    end
+
+    context "with a member of a collectivity owned by the current organization" do
+      let(:collectivity) { build_stubbed(:collectivity, publisher: current_organization) }
+      let(:record)       { build_stubbed(:user, organization: collectivity) }
+
+      it_behaves_like("when current user is a publisher super admin")    { failed }
+      it_behaves_like("when current user is a publisher admin")          { failed }
+      it_behaves_like("when current user is a publisher user")           { failed }
+    end
+  end
+
+  it { expect(:edit?).to be_an_alias_of(policy, :update?) }
 
   describe_rule :destroy? do
     context "without record" do
