@@ -22,8 +22,7 @@ RSpec.describe Views::Users::ListComponent, type: :component do
         expect(table).to have_selector("th", text: "Utilisateur")
         expect(table).to have_selector("th", text: "Adresse mail")
         expect(table).to have_selector("th", text: "Organisation")
-        expect(table).to have_selector("th", text: "Admin. de l'organisation")
-        expect(table).to have_selector("th", text: "Admin. de Passerelle")
+        expect(table).to have_selector("th", text: "Rôles")
         expect(table).to have_selector("th", text: "Guichets")
 
         expect(table).to have_selector(:table_row, {
@@ -44,8 +43,7 @@ RSpec.describe Views::Users::ListComponent, type: :component do
         expect(table).to have_selector("th", text: "Utilisateur")
         expect(table).to have_selector("th", text: "Adresse mail")
         expect(table).to have_no_selector("th", text: "Organisation")
-        expect(table).to have_no_selector("th", text: "Admin. de l'organisation")
-        expect(table).to have_no_selector("th", text: "Admin. de Passerelle")
+        expect(table).to have_no_selector("th", text: "Rôles")
         expect(table).to have_no_selector("th", text: "Guichets")
 
         expect(table).to have_selector(:table_row, {
@@ -78,6 +76,7 @@ RSpec.describe Views::Users::ListComponent, type: :component do
         render_inline described_class.new(User.strict_loading, pagy, namespace: :admin) do |list|
           list.with_column(:name)
           list.with_column(:organization)
+          list.with_column(:roles)
           list.with_column(:offices)
         end
       }.not_to raise_error

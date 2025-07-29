@@ -7,8 +7,7 @@ module Views
         name
         email
         organization
-        organization_admin
-        super_admin
+        roles
         offices
       ].freeze
 
@@ -25,7 +24,8 @@ module Views
         @columns = DEFAULT_COLUMNS if columns.empty?
 
         @users = @users.preload(:organization) if columns.include?(:organization)
-        @users = @users.preload(:offices)      if columns.include?(:offices)
+        @users = @users.preload(:office_users) if columns.include?(:roles)
+        @users = @users.preload(:offices)      if columns.intersect?(%i[offices roles])
       end
 
       def with_column(name)

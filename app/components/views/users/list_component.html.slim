@@ -12,8 +12,7 @@
   - datatable.with_column(:name, sort: true)         { "Utilisateur" }              if columns.include?(:name)
   - datatable.with_column(:email)                    { "Adresse mail" }             if columns.include?(:email)
   - datatable.with_column(:organization, sort: true) { "Organisation" }             if columns.include?(:organization)
-  - datatable.with_column(:organization_admin)       { "Admin. de l'organisation" } if columns.include?(:organization_admin)
-  - datatable.with_column(:super_admin)              { "Admin. de Passerelle" }     if columns.include?(:super_admin)
+  - datatable.with_column(:roles)                    { "Rôles" }                    if columns.include?(:roles)
   - datatable.with_column(:otp_method)               { "Authentification" }         if columns.include?(:otp_method)
   - datatable.with_column(:offices)                  { "Guichets" }                 if columns.include?(:offices)
 
@@ -43,6 +42,9 @@
 
     - row.with_column(:organization) do
       = authorized_link_to(user.organization, namespace: @namespace, parent: @parent)
+
+    - row.with_column(:roles) do
+      = render Views::Users::ShowRolesBadgesComponent.new(user)
 
     - row.with_column(:organization_admin) do
       = render Views::Users::ShowCheckBadgeComponent.new(user, :organization_admin)
