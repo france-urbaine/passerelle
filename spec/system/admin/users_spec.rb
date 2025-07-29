@@ -573,12 +573,12 @@ RSpec.describe "Users in admin" do
     # Create a bunch of users to have several pages
     # Create discarded users to verify they are not rollbacked
     #
-    create_list(:user, 9, :using_existing_organizations)
+    create_list(:user, 8, :using_existing_organizations, created_at: 2.days.from_now)
     create_list(:user, 5, :using_existing_organizations, :discarded)
 
     visit admin_users_path
 
-    expect(page).to have_text("20 utilisateurs | Page 1 sur 1")
+    expect(page).to have_text("19 utilisateurs | Page 1 sur 1")
 
     # Paginate users by 10
     # More than one page should exist
@@ -587,7 +587,7 @@ RSpec.describe "Users in admin" do
     click_on "Afficher 50 lignes par page"
     click_on "Afficher 10 lignes"
 
-    expect(page).to have_text("20 utilisateurs | Page 1 sur 2")
+    expect(page).to have_text("19 utilisateurs | Page 1 sur 2")
 
     # Checkboxes should be present to select all users
     #
@@ -614,7 +614,7 @@ RSpec.describe "Users in admin" do
     #
     expect(page).to have_current_path(admin_users_path)
     expect(page).to have_selector("h1", text: "Utilisateurs")
-    expect(page).to have_text("11 utilisateurs | Page 1 sur 2")
+    expect(page).to have_text("10 utilisateurs | Page 1 sur 1")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Marc Debomy")
     expect(page).to have_no_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
     expect(page).to have_no_selector(:table_row, "Utilisateur" => "Christelle Droitier")
@@ -637,7 +637,7 @@ RSpec.describe "Users in admin" do
     #
     expect(page).to have_current_path(admin_users_path)
     expect(page).to have_selector("h1", text: "Utilisateurs")
-    expect(page).to have_text("20 utilisateurs | Page 1 sur 2")
+    expect(page).to have_text("19 utilisateurs | Page 1 sur 2")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Marc Debomy")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Christelle Droitier")
