@@ -51,7 +51,7 @@ RSpec.describe "Organization::Users::InvitationsController#new" do
     end
 
     context "when user is member of a supervised office" do
-      let(:user) { create(:user, :with_office, office: current_user.offices.first, organization: current_user.organization) }
+      let(:user) { create(:user, offices: current_user.offices, organization: current_user.organization) }
 
       it_behaves_like "it allows access to DDFIP supervisor"
     end

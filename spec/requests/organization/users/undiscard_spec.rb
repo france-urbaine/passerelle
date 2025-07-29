@@ -50,7 +50,7 @@ RSpec.describe "Organization::UsersController#undiscard" do
     end
 
     context "when user is member of a supervised office" do
-      let(:user) { create(:user, :discarded, :with_office, office: current_user.offices.first, organization: current_user.organization) }
+      let(:user) { create(:user, :discarded, offices: [current_user.offices.first], organization: current_user.organization) }
 
       it_behaves_like "it denies access to DDFIP supervisor"
     end
