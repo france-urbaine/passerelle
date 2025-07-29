@@ -79,8 +79,8 @@ RSpec.describe "Organization::UsersController#index" do
     let(:organization) { current_user.organization }
     let!(:users) do
       [
-        create(:user, :with_office, office: current_user.offices.first, organization:),
-        create(:user, :discarded, :with_office, office: current_user.offices.first, organization:),
+        create(:user, offices: [current_user.offices.first], organization:),
+        create(:user, :discarded, offices: [current_user.offices.first], organization:),
         create(:user, :discarded, organization: organization),
         create(:user),
         create(:user),

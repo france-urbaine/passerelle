@@ -54,7 +54,7 @@ RSpec.describe "Organization::UsersController#update" do
     end
 
     context "when user is member of a supervised office" do
-      let(:user) { create(:user, :with_office, office: current_user.offices.first, organization: current_user.organization) }
+      let(:user) { create(:user, offices: [current_user.offices.first], organization: current_user.organization) }
 
       it_behaves_like "it allows access to DDFIP supervisor"
     end
@@ -150,7 +150,7 @@ RSpec.describe "Organization::UsersController#update" do
 
   describe "responses as a supervisor" do
     let(:current_user) { create(:user, :supervisor) }
-    let!(:user) { create(:user, :with_office, first_name: "Guillaume", last_name: "Debailly", organization: current_user.organization, office: current_user.offices.first) }
+    let!(:user) { create(:user, first_name: "Guillaume", last_name: "Debailly", organization: current_user.organization, offices: [current_user.offices.first]) }
 
     let(:attributes) do
       { office_users_attributes: {

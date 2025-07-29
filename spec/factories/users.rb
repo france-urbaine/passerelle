@@ -101,16 +101,6 @@ FactoryBot.define do
       end
     end
 
-    trait :with_office do
-      transient do
-        office { association :office }
-      end
-
-      office_users do
-        [association(:office_user, office:, supervisor: false, user: instance)]
-      end
-    end
-
     trait :using_existing_organizations do
       organization do
         [DDFIP, Publisher, Collectivity].sample.order("RANDOM()").first ||

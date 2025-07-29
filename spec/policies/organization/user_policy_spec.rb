@@ -49,10 +49,10 @@ RSpec.describe Organization::UserPolicy, type: :policy do
       it_behaves_like("when current user is a collectivity user")        { failed }
     end
 
-    context "with a member of a supervised office", stub_factories: false do
-      let(:record) { create(:user, organization: current_organization) }
-
-      before { record.office_users << build(:office_user, office: current_user.offices[0]) }
+    context "with a member of a supervised office" do
+      let(:office)      { (current_user.office_users.any? && current_user.office_users.first.office) || build(:office) }
+      let(:office_user) { build_stubbed(:office_user, office:) }
+      let(:record)      { build_stubbed(:user, organization: current_organization, offices: [office], office_users: [office_user]) }
 
       it_behaves_like("when current user is a DDFIP admin")              { succeed }
       it_behaves_like("when current user is a DDFIP supervisor")         { succeed }
@@ -135,10 +135,10 @@ RSpec.describe Organization::UserPolicy, type: :policy do
       it_behaves_like("when current user is a collectivity user")                { failed }
     end
 
-    context "with a member of a supervised office", stub_factories: false do
-      let(:record) { create(:user, organization: current_organization) }
-
-      before { record.office_users << build(:office_user, office: current_user.offices[0]) }
+    context "with a member of a supervised office" do
+      let(:office)      { (current_user.office_users.any? && current_user.office_users.first.office) || build(:office) }
+      let(:office_user) { build_stubbed(:office_user, office:) }
+      let(:record)      { build_stubbed(:user, organization: current_organization, offices: [office], office_users: [office_user]) }
 
       it_behaves_like("when current user is a DDFIP admin")              { succeed }
       it_behaves_like("when current user is a DDFIP supervisor")         { succeed }
@@ -222,10 +222,10 @@ RSpec.describe Organization::UserPolicy, type: :policy do
       it_behaves_like("when current user is a collectivity user")                { failed }
     end
 
-    context "with a member of a supervised office", stub_factories: false do
-      let(:record) { create(:user, organization: current_organization) }
-
-      before { record.office_users << build(:office_user, office: current_user.offices[0]) }
+    context "with a member of a supervised office" do
+      let(:office)      { (current_user.office_users.any? && current_user.office_users.first.office) || build(:office) }
+      let(:office_user) { build_stubbed(:office_user, office:) }
+      let(:record)      { build_stubbed(:user, organization: current_organization, offices: [office], office_users: [office_user]) }
 
       it_behaves_like("when current user is a DDFIP admin")              { succeed }
       it_behaves_like("when current user is a DDFIP supervisor")         { succeed }
@@ -308,23 +308,30 @@ RSpec.describe Organization::UserPolicy, type: :policy do
       it_behaves_like("when current user is a collectivity user")                { failed }
     end
 
-    context "with a member of a supervised office", stub_factories: false do
-      let(:record) { create(:user, organization: current_organization) }
-
-      before { record.office_users << build(:office_user, office: current_user.offices[0]) }
+    context "with a member of a supervised office" do
+      let(:office)      { (current_user.office_users.any? && current_user.office_users.first.office) || build(:office) }
+      let(:office_user) { build_stubbed(:office_user, office:) }
+      let(:record)      { build_stubbed(:user, organization: current_organization, offices: [office], office_users: [office_user]) }
 
       it_behaves_like("when current user is a DDFIP admin")              { succeed }
       it_behaves_like("when current user is a DDFIP supervisor")         { failed }
       it_behaves_like("when current user is a DDFIP user")               { failed }
     end
 
-    context "with a member of a supervised office and an other office", stub_factories: false do
-      let(:record) { create(:user, organization: current_organization) }
-
-      before do
-        record.office_users << build(:office_user, office: current_user.offices[0])
-        record.office_users << build(:office_user)
+    context "with a member of a supervised office and an other office" do
+      let(:offices) do
+        [
+          (current_user.office_users.any? && current_user.office_users.first.office) || build(:office),
+          build_stubbed(:office)
+        ]
       end
+      let(:office_users) do
+        [
+          build_stubbed(:office_user, office: offices[0]),
+          build_stubbed(:office_user, office: offices[1])
+        ]
+      end
+      let(:record) { build_stubbed(:user, organization: current_organization, offices:, office_users:) }
 
       it_behaves_like("when current user is a DDFIP admin")              { succeed }
       it_behaves_like("when current user is a DDFIP supervisor")         { failed }

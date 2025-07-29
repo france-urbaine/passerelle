@@ -13,8 +13,9 @@ RSpec.describe Organization::Offices::UserPolicy, type: :policy do
     end
   end
 
-  shared_context "when the record is in the office", stub_factories: false do
-    let(:record) { create(:user, :with_office, office:, organization: current_organization) }
+  shared_context "when the record is in the office" do
+    let(:record)      { build_stubbed(:user, offices: [office], office_users: [office_user], organization: current_organization) }
+    let(:office_user) { build_stubbed(:office_user, office:) }
   end
 
   describe_rule :manage? do
