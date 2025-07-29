@@ -15,7 +15,7 @@ module Views
           @user.offices.empty?
       end
 
-      def supervised_offices_ids
+      def supervised_office_ids
         @user.office_users.filter_map { _1.office_id if _1.supervisor? }
       end
     end
