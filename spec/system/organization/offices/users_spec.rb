@@ -122,7 +122,7 @@ RSpec.describe "Office users in admin" do
 
     # A dialog box should appear with a warning
     #
-    within "[role=dialog]", text: "Un utilisateur existe déjà avec cette addresse email" do |dialog|
+    within "[role=dialog]", text: "Un utilisateur existe déjà avec cette adresse email" do |dialog|
       expect(dialog).to have_text("Vous n'avez pas les droits suffisants pour modifier l'utilisateur concerné.")
       expect(dialog).to have_link("Annuler")
 
@@ -150,7 +150,7 @@ RSpec.describe "Office users in admin" do
 
     # A dialog box should appear with a warning
     #
-    within "[role=dialog]", text: "Un utilisateur existe déjà avec cette addresse email" do |dialog|
+    within "[role=dialog]", text: "Un utilisateur existe déjà avec cette adresse email" do |dialog|
       expect(dialog).to have_text("Vous pouvez cependant modifier l'utilisateur concerné.")
       expect(dialog).to have_button("Continuer")
       expect(dialog).to have_link("Annuler")
