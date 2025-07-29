@@ -17,6 +17,8 @@
     - layout.with_section do
       = description_list_component(@user) do |list|
         - if current_organization.is_a?(DDFIP)
+          - list.with_attribute("Guichets supervisés") do |attribute|
+            = render Views::Users::ShowSupervisedOfficesListComponent.new(@user, namespace: :organization)
           - list.with_attribute("Guichets") do |attribute|
             = render Views::Users::ShowOfficesListComponent.new(@user, namespace: :organization)
 
