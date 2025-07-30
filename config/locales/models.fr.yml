@@ -249,6 +249,9 @@ fr:
         secret:       Client Secret
 
     errors:
+      messages:
+        invalid_ip: "« %{ip} » n'est pas une adresse IP valide"
+
       models:
         report:
           attributes:

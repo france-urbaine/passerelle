@@ -238,6 +238,7 @@ CREATE TABLE public.collectivities (
     reports_approved_count integer DEFAULT 0 NOT NULL,
     reports_canceled_count integer DEFAULT 0 NOT NULL,
     reports_returned_count integer DEFAULT 0 NOT NULL,
+    ip_ranges text[] DEFAULT '{}'::text[] NOT NULL,
     CONSTRAINT reports_accepted_count_check CHECK ((reports_accepted_count >= 0)),
     CONSTRAINT reports_approved_count_check CHECK ((reports_approved_count >= 0)),
     CONSTRAINT reports_canceled_count_check CHECK ((reports_canceled_count >= 0)),
@@ -537,6 +538,7 @@ CREATE TABLE public.ddfips (
     reports_approved_count integer DEFAULT 0 NOT NULL,
     reports_canceled_count integer DEFAULT 0 NOT NULL,
     reports_returned_count integer DEFAULT 0 NOT NULL,
+    ip_ranges text[] DEFAULT '{}'::text[] NOT NULL,
     CONSTRAINT collectivities_count_check CHECK ((collectivities_count >= 0)),
     CONSTRAINT offices_count_check CHECK ((offices_count >= 0)),
     CONSTRAINT reports_accepted_count_check CHECK ((reports_accepted_count >= 0)),
@@ -940,6 +942,7 @@ CREATE TABLE public.dgfips (
     reports_rejected_count integer DEFAULT 0 NOT NULL,
     reports_approved_count integer DEFAULT 0 NOT NULL,
     reports_canceled_count integer DEFAULT 0 NOT NULL,
+    ip_ranges text[] DEFAULT '{}'::text[] NOT NULL,
     CONSTRAINT reports_accepted_count_check CHECK ((reports_accepted_count >= 0)),
     CONSTRAINT reports_approved_count_check CHECK ((reports_approved_count >= 0)),
     CONSTRAINT reports_canceled_count_check CHECK ((reports_canceled_count >= 0)),
@@ -1472,6 +1475,7 @@ CREATE TABLE public.publishers (
     reports_approved_count integer DEFAULT 0 NOT NULL,
     reports_canceled_count integer DEFAULT 0 NOT NULL,
     reports_returned_count integer DEFAULT 0 NOT NULL,
+    ip_ranges text[] DEFAULT '{}'::text[] NOT NULL,
     CONSTRAINT collectivities_count_check CHECK ((collectivities_count >= 0)),
     CONSTRAINT reports_accepted_count_check CHECK ((reports_accepted_count >= 0)),
     CONSTRAINT reports_approved_count_check CHECK ((reports_approved_count >= 0)),
@@ -4441,6 +4445,7 @@ ALTER TABLE ONLY public.oauth_access_tokens
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20250729140510'),
 ('20250626131528'),
 ('20241011075049'),
 ('20240517133141'),

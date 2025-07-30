@@ -42,6 +42,14 @@ RSpec.describe Collectivity do
     it { is_expected.to     allow_value("Departement").for(:territory_type) }
     it { is_expected.not_to allow_value("DDFIP")      .for(:territory_type) }
 
+    it { is_expected.to     allow_value("").for(:ip_ranges) }
+    it { is_expected.to     allow_value([]).for(:ip_ranges) }
+    it { is_expected.to     allow_value(["127.0.0.0/24"]).for(:ip_ranges) }
+    it { is_expected.to     allow_value(["3ffe:505:2::1"]).for(:ip_ranges) }
+    it { is_expected.to     allow_value(["127.0.0.1", "192.168.2.0/24"]).for(:ip_ranges) }
+    it { is_expected.not_to allow_value(["this_is_not_an_ip_address"]).for(:ip_ranges) }
+    it { is_expected.not_to allow_value(["256.256.256.256"]).for(:ip_ranges) }
+
     it "validates uniqueness of :siren & :name" do
       create(:collectivity)
 
