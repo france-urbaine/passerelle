@@ -14,6 +14,14 @@ RSpec.describe DGFIP do
   describe "validations" do
     it { is_expected.to validate_presence_of(:name) }
 
+    it { is_expected.to     allow_value("").for(:ip_ranges) }
+    it { is_expected.to     allow_value([]).for(:ip_ranges) }
+    it { is_expected.to     allow_value(["127.0.0.0/24"]).for(:ip_ranges) }
+    it { is_expected.to     allow_value(["3ffe:505:2::1"]).for(:ip_ranges) }
+    it { is_expected.to     allow_value(["127.0.0.1", "192.168.2.0/24"]).for(:ip_ranges) }
+    it { is_expected.not_to allow_value(["this_is_not_an_ip_address"]).for(:ip_ranges) }
+    it { is_expected.not_to allow_value(["256.256.256.256"]).for(:ip_ranges) }
+
     it "validates that no other one DGFIP exist on creation" do
       create(:dgfip)
 
