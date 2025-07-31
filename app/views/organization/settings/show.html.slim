@@ -153,3 +153,27 @@
                   ' accéder à la plateforme.
 
           - card_content.with_submit_action "Enregistrer"
+
+        - card.with_multipart do |card_content|
+          - card_content.with_form(model: @organization, scope: :organization, url: organization_settings_path, id: "ip-ranges-settings-form") do |form|
+            p
+              | Vous pouvez restreindre l'accès à Passerelle à certaines adresses IP ou plages d'adresses IP.
+              br
+              | Cette restriction s'applique aux uniquement aux utilisateurs de votre organisation.
+              br
+              - if @organization.ip_ranges.any?
+                br
+                | L' accès à l'application est actuellement restreint.
+              - else
+                br
+                | L' accès à l'application n'est actuellement pas restreint.
+
+            = form.block :ip_ranges do |block|
+              = form.label :ip_ranges
+              = form.array_field_component :ip_ranges, form.object.ip_ranges, class: "font-mono"
+
+              - block.with_hint do
+                p
+                  ' Laissez les champs vides pour autoriser les connexions depuis n'importe quelle adresse IP
+
+          - card_content.with_submit_action "Enregistrer"

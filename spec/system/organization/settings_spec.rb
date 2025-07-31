@@ -429,6 +429,29 @@ RSpec.describe "Settings of current organization" do
       #
       expect(page).to have_field("Nom de domaine", with: "solutions-territoire.fr")
       expect(page).to have_checked_field("Autoriser l'email comme méthode d'authentification en 2 étapes")
+
+      # Fill in Ip ranges
+      #
+      fill_in "Plages d'adresses IP autorisées", with: "127.0.0.1"
+
+      within "#ip-ranges-settings-form" do
+        click_on "Enregistrer"
+      end
+
+      # The browser should stay on the settings page
+      # A notification should be displayed
+      # Errors should be removed
+      #
+      expect(page).to have_current_path("/organisation/parametres")
+      expect(page).to have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
+
+      # Reload the page
+      #
+      visit current_path
+
+      # Security data should match what we filled
+      #
+      expect(page).to have_field("Plages d'adresses IP autorisées", with: "127.0.0.1")
     end
   end
 end
