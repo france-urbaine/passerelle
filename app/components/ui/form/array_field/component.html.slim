@@ -1,0 +1,6 @@
+= tag.div(**wrapper_html_attributes) do
+  - @values.each do |value|
+    = text_field @object_name, @method, value: value, multiple: true, **input_html_attributes
+  = text_field @object_name, @method, value: nil, multiple: true, **input_html_attributes
+  template( data-array-field-target="template" )
+    = text_field @object_name, @method, value: nil, multiple: true, **input_html_attributes

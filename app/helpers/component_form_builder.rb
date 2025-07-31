@@ -9,6 +9,10 @@ class ComponentFormBuilder < ActionView::Helpers::FormBuilder
     @template.autocomplete_component(@object_name, method, **objectify_options(options), &)
   end
 
+  def array_field_component(...)
+    @template.array_field_component(@object_name, ...)
+  end
+
   def password_field_component(...)
     @template.password_field_component(@object_name, ...)
   end
