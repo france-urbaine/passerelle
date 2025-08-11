@@ -8,8 +8,8 @@
 
     & svg {
       position: absolute;
-      top: theme("spacing.6");
-      left: theme("spacing.6");
+
+      @apply top-6 left-6;
     }
 
     &--warning {

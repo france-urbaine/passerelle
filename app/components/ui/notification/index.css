@@ -1,23 +1,22 @@
 @layer components {
   .notification {
+    position: relative;
     display: flex;
     max-width: 500px;
     flex-direction: column;
     justify-content: center;
-    min-height: theme("spacing.8");
     pointer-events: auto;
 
-    @apply p-6 pl-20;
+    @apply p-6 pl-20 min-h-8;
     @apply transition transform duration-500;
 
     @apply border-l-4 rounded-r-md ring-1 shadow-lg;
-    @apply bg-white ring-gray-300 border-blue-500;;
+    @apply bg-white ring-gray-300 border-blue-500;
     @apply dark:bg-black dark:ring-gray-700;
 
     &__icon {
       position: absolute;
-      top: theme("spacing.5");
-      left: theme("spacing.6");
+      @apply top-6 left-6;
       @apply text-blue-500;
 
       & svg {
@@ -27,8 +26,7 @@
 
     &__closing {
       position: absolute;
-      top: theme("spacing.4");
-      right: theme("spacing.4");
+      @apply top-4 right-4;
 
       & svg {
         @apply text-gray-500;
@@ -52,7 +50,7 @@
       flex-grow: 0;
       width: 100%;
 
-      @apply pt-6 space-x-4;
+      @apply pt-6 gap-4;
     }
 
     &--warning {

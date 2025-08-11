@@ -83,7 +83,7 @@ module Views
         end
 
         def completeness_error_message(attribute)
-          tag.span class: "flex space-x-2 text-red-500" do
+          tag.span class: "flex gap-2 text-red-500" do
             concat icon_component("exclamation-circle", "Une erreur est présente")
             concat tag.span(@report_completeness.errors.messages_for(attribute).first)
             ""

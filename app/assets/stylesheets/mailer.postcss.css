@@ -1,3 +1,8 @@
+@layer theme, components, utilities;
+
+@import "tailwindcss/theme.css" layer(theme) source(none);
+@import "tailwindcss/utilities.css" layer(utilities) source(none);
+
 @font-face {
   font-family: 'M PLUS Rounded 1c';
   font-style: normal;
@@ -36,7 +41,7 @@ body {
   line-height:     2.25rem;
   font-weight:     700;
   letter-spacing:  -0.05em;
-  color:           theme("colors.blue.500");
+  color:           var(--colors-blue-500);
   margin-bottom:   1.5rem;
   border:          0 solid none;
 
@@ -52,7 +57,7 @@ body {
   }
 
   &__right {
-    color: theme("colors.violet.600");
+    color: var(--colors-violet-600);
   }
 }
 
@@ -70,7 +75,7 @@ body {
   }
 
   & a {
-    color: theme("colors.blue.700");
+    color: var(--colors-blue-700);
   }
 }
 

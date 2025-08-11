@@ -1,6 +1,6 @@
 @layer components {
   .tabs__nav {
-    @apply mb-4 flex space-x-4;
+    @apply mb-4 flex gap-4;
   }
 
   .tabs__tab {

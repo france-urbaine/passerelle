@@ -32,7 +32,7 @@ table
         = link_to "Consulter toutes les valeurs", "/api/documentation/guides/local_professionnel_affectation.csv"
         '  - seules les affectations professionnelles sont acceptées.
 
-      td.text-right.space-x-4
+      td.text-right.gap-4
         .badge.badge--orange.badge--mono requis
         .badge.badge--blue.badge--mono String
 
@@ -44,7 +44,7 @@ table
         = link_to "Consulter toutes les valeurs", "/api/documentation/guides/local_professionnel_nature.csv"
         '  - seules les natures professionnelles sont acceptées.
 
-      td.text-right.space-x-4
+      td.text-right.gap-4
         .badge.badge--orange.badge--mono requis
         .badge.badge--blue.badge--mono String
 
@@ -56,7 +56,7 @@ table
         = link_to "Consulter toutes les valeurs", "/api/documentation/guides/local_professionnel_categorie.csv"
         ' - seules des catégories professionelles sont acceptées.
 
-      td.text-right.space-x-4
+      td.text-right.gap-4
         .badge.badge--orange.badge--mono requis (1)
         .badge.badge--blue.badge--mono String
 
@@ -65,7 +65,7 @@ table
       td Surface réelle
       td <code>250.0</code>
       td
-      td.text-right.space-x-4
+      td.text-right.gap-4
         .badge.badge--orange.badge--mono requis (1)
         .badge.badge--blue.badge--mono Numeric
 
@@ -97,7 +97,7 @@ table
       td Année du fichier CFE
       td <code>2018</code>, <code>2019</code>, <code>2023</code>
       td
-      td.text-right.space-x-4
+      td.text-right.gap-4
         .badge.badge--orange.badge--mono requis
         .badge.badge--blue.badge--mono String
 
@@ -106,7 +106,7 @@ table
       td Vacance fiscale
       td <code>true</code>, <code>false</code>
       td
-      td.text-right.space-x-4
+      td.text-right.gap-4
         .badge.badge--orange.badge--mono requis
         .badge.badge--blue.badge--mono Boolean
 
@@ -115,7 +115,7 @@ table
       td Nombre d'années de vacance
       td <code>4</code>
       td
-      td.text-right.space-x-4
+      td.text-right.gap-4
         .badge.badge--orange.badge--mono requis (2)
         .badge.badge--blue.badge--mono String
 
@@ -124,7 +124,7 @@ table
       td N° SIREN du dernier occupant
       td <code>362521879</code>
       td Sans espaces - Regexp: <code>/\A[0-9]{9}\Z/</code>
-      td.text-right.space-x-4
+      td.text-right.gap-4
         .badge.badge--orange.badge--mono requis
         .badge.badge--blue.badge--mono String
 
@@ -133,7 +133,7 @@ table
       td Nom du dernier occupant
       td <code>Dupont</code>
       td
-      td.text-right.space-x-4
+      td.text-right.gap-4
         .badge.badge--orange.badge--mono requis
         .badge.badge--blue.badge--mono String
   tr
@@ -141,7 +141,7 @@ table
       td VLF Cotisation foncière des entreprises
       td <code>78</code>
       td
-      td.text-right.space-x-4
+      td.text-right.gap-4
         .badge.badge--orange.badge--mono requis
         .badge.badge--blue.badge--mono String
   tr
@@ -149,7 +149,7 @@ table
       td Taxation base minimum
       td <code>true</code>, <code>false</code>
       td
-      td.text-right.space-x-4
+      td.text-right.gap-4
         .badge.badge--orange.badge--mono requis
         .badge.badge--blue.badge--mono Boolean
 
@@ -175,7 +175,7 @@ table
       td N° SIREN de l'occupant
       td <code>362521879</code>
       td Sans espaces - Regexp: <code>/\A[0-9]{9}\Z/</code>
-      td.text-right.space-x-4
+      td.text-right.gap-4
         .badge.badge--orange.badge--mono requis
         .badge.badge--blue.badge--mono String
     tr
@@ -183,7 +183,7 @@ table
       td Nom de l'entreprise
       td <code>Orange</code>
       td
-      td.text-right.space-x-4
+      td.text-right.gap-4
         .badge.badge--orange.badge--mono requis
         .badge.badge--blue.badge--mono String
     tr
@@ -191,14 +191,14 @@ table
       td Nom de l'enseigne
       td <code>Centre technique</code>
       td
-      td.text-right.space-x-4
+      td.text-right.gap-4
         .badge.badge--blue.badge--mono String
     tr
       th <code>proposition_etablissement_principal</code>
       td Etablissement principal ?
       td <code>true</code>, <code>false</code>
       td
-      td.text-right.space-x-4
+      td.text-right.gap-4
         .badge.badge--orange.badge--mono requis
         .badge.badge--blue.badge--mono Boolean
     tr
@@ -206,7 +206,7 @@ table
       td Chantier longue durée ?
       td <code>true</code>, <code>false</code>
       td
-      td.text-right.space-x-4
+      td.text-right.gap-4
         .badge.badge--orange.badge--mono requis
         .badge.badge--blue.badge--mono Boolean
     tr
@@ -214,7 +214,7 @@ table
       td Code NAF de l'établissement
       td <code>01.11Z</code>, <code>13.93Z</code>
       td Au format <code>00.00A</code> - Regexp: <code>/\A[0-9]{2}\.[0-9]{2}[A-Z]\Z/</code>
-      td.text-right.space-x-4
+      td.text-right.gap-4
         .badge.badge--orange.badge--mono requis
         .badge.badge--blue.badge--mono String
     tr
@@ -222,6 +222,6 @@ table
       td Date de début de l'activité
       td <code>03/04/2022</code>
       td
-      td.text-right.space-x-4
+      td.text-right.gap-4
         .badge.badge--orange.badge--mono requis
         .badge.badge--blue.badge--mono Date

@@ -89,9 +89,9 @@
       @apply dark:bg-fuchsia-950 dark:text-fuchsia-300 dark:ring-fuchsia-700;
     }
 
-    &--pruple {
-      @apply bg-pruple-50 text-pruple-700 ring-pruple-300;
-      @apply dark:bg-pruple-950 dark:text-pruple-300 dark:ring-pruple-700;
+    &--purple {
+      @apply bg-purple-50 text-purple-700 ring-purple-300;
+      @apply dark:bg-purple-950 dark:text-purple-300 dark:ring-purple-700;
     }
 
     &--done,

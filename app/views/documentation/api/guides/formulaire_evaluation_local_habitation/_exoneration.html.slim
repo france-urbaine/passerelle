@@ -6,7 +6,7 @@ ul
 
 h3 Évaluation actuelle
 
-p 
+p
   ' Ces champs reflètent la situation actuelle du local au fichier MAJIC.
   br
   br
@@ -34,7 +34,7 @@ table
       td Date de mutation du local
       td <code>2020-12-01</code>, <code>2020-12</code>, <code>2020</code>
       td Peut être une date, un mois ou une année
-      td.text-right.space-x-4
+      td.text-right.gap-4
         .badge.badge--orange.badge--mono requis
         .badge.badge--blue.badge--mono String
 
@@ -43,7 +43,7 @@ table
       td Affectation du local
       td <code>H</code>
       td Une seule valeur possible : <code>H</code> pour habitation
-      td.text-right.space-x-4
+      td.text-right.gap-4
         .badge.badge--orange.badge--mono requis
         .badge.badge--blue.badge--mono String
 
@@ -55,7 +55,7 @@ table
         = link_to "Consulter toutes les valeurs", "/api/documentation/guides/local_habitation_nature.csv"
         '  - seules les natures d'habitation sont acceptées.
 
-      td.text-right.space-x-4
+      td.text-right.gap-4
         .badge.badge--orange.badge--mono requis
         .badge.badge--blue.badge--mono String
 
@@ -66,9 +66,9 @@ table
       td
         '  Consulter les valeurs dans le cas :
         = link_to "d'une habitation", "/api/documentation/guides/local_habitation_categorie.csv"
-        ' , 
+        ' ,
         = link_to "d'une dépendance", "/api/documentation/guides/local_dependance_categorie.csv"
-      td.text-right.space-x-4
+      td.text-right.gap-4
         .badge.badge--orange.badge--mono requis
         .badge.badge--blue.badge--mono String
 
@@ -77,7 +77,7 @@ table
       td Surface réelle
       td <code>250.0</code>
       td
-      td.text-right.space-x-4
+      td.text-right.gap-4
         .badge.badge--orange.badge--mono requis
         .badge.badge--blue.badge--mono Numeric
 
@@ -86,7 +86,7 @@ table
       td Coefficient d'entretien
       td <code>1,20</code>, <code>1,10</code>
       td= link_to "Consulter toutes les valeurs", "/api/documentation/guides/coefficient_entretien.csv"
-      td.text-right.space-x-4
+      td.text-right.gap-4
         .badge.badge--orange.badge--mono requis
         .badge.badge--blue.badge--mono String
 
@@ -95,7 +95,7 @@ table
       td Coefficient de situation générale
       td <code>+ 0,10</code>, <code>-0,05</code>
       td= link_to "Consulter toutes les valeurs", "/api/documentation/guides/coefficient_situation.csv"
-      td.text-right.space-x-4
+      td.text-right.gap-4
         .badge.badge--blue.badge--mono String
 
     tr
@@ -103,7 +103,7 @@ table
       td Coefficient de situation particuliere
       td <code>+ 0,10</code>, <code>-0,05</code>
       td= link_to "Consulter toutes les valeurs", "/api/documentation/guides/coefficient_situation.csv"
-      td.text-right.space-x-4
+      td.text-right.gap-4
         .badge.badge--blue.badge--mono String
 
 h3 Proposition de mise à jour des exonérations
@@ -129,7 +129,7 @@ table
       td Exonérations
       td
       td Une ou plusieurs exonérations attendues
-      td.text-right.space-x-4
+      td.text-right.gap-4
         .badge.badge--orange.badge--mono requis
         .badge.badge--blue.badge--mono Array[Object]
 
@@ -138,7 +138,7 @@ table
       td Code de l'exonération
       td <code>EP</code>, <code>NI</code>, <code>AU</code>
       td= link_to "Consulter toutes les valeurs", "/api/documentation/guides/exonerations.csv"
-      td.text-right.space-x-4
+      td.text-right.gap-4
         .badge.badge--orange.badge--mono requis
         .badge.badge--blue.badge--mono String
 
@@ -147,7 +147,7 @@ table
       td Libéllé de l'exonération
       td <code>Droit commun (2 ans) pour construction nouvelle</code>
       td
-      td.text-right.space-x-4
+      td.text-right.gap-4
         .badge.badge--orange.badge--mono requis
         .badge.badge--blue.badge--mono String
 
@@ -159,7 +159,7 @@ table
           li <code>imposable</code> : appliquée sur la base imposable
           li <code>impose</code> : appliquée sur la base imposée
       td
-      td.text-right.space-x-4
+      td.text-right.gap-4
         .badge.badge--orange.badge--mono requis
         .badge.badge--blue.badge--mono String
 
@@ -172,7 +172,7 @@ table
           li <code>ajouter</code> : à ajouter
           li <code>supprimer</code> : appliquée à tort
       td
-      td.text-right.space-x-4
+      td.text-right.gap-4
         .badge.badge--orange.badge--mono requis
         .badge.badge--blue.badge--mono String
 
@@ -186,6 +186,6 @@ table
           li <code>TS</code> : Taxe spéciale d'équipement (TSE)
           li <code>OM</code> : Taxe sur l'enlèvement des ordures ménagères (TEOM)
       td
-      td.text-right.space-x-4
+      td.text-right.gap-4
         .badge.badge--orange.badge--mono requis
         .badge.badge--blue.badge--mono String
