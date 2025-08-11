@@ -1,4 +1,8 @@
 @layer components {
+  [type="button"],
+  [type="reset"],
+  [type="submit"],
+  button,
   .button {
     display: inline-flex;
     box-sizing: border-box;
@@ -16,7 +20,9 @@
     @apply py-2 px-4 h-10 leading-6 bg-transparent border rounded-2xl;
     @apply bg-white text-gray-900 border-gray-400;
     @apply dark:bg-black dark:text-gray-100 dark:border-gray-400 dark:border-2;
+  }
 
+  .button {
     & svg {
       display: inline;
 
