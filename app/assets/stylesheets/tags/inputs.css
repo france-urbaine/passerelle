@@ -74,7 +74,7 @@
     background-origin: border-box;
     user-select: none;
 
-    @apply border rounded bg-transparent;
+    @apply border rounded-sm bg-transparent;
     @apply border-gray-600;
     @apply dark:border-gray-300;
 

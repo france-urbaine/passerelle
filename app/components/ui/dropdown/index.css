@@ -7,7 +7,7 @@
       position: absolute;
       z-index: 11;
 
-      @apply shadow-lg rounded-sm border;
+      @apply shadow-lg rounded-xs border;
       @apply bg-white border-gray-200;
       @apply dark:bg-black dark:border-gray-700;
 
@@ -63,7 +63,7 @@
       align-items: center;
       background-color: transparent;
 
-      @apply py-3 px-4 bg-transparent border-none rounded;
+      @apply py-3 px-4 bg-transparent border-none rounded-sm;
       @apply bg-white text-gray-900;
       @apply dark:bg-black dark:text-gray-100;
     }
