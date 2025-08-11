@@ -14,7 +14,7 @@
       display: inline-block;
       line-height: 0.7em;
 
-      @apply w-full rounded;
+      @apply w-full rounded-sm;
       @apply bg-slate-200 dark:bg-slate-800;
     }
   }
