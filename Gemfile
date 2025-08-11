@@ -53,7 +53,11 @@ gem "turbo-rails"
 gem "jbuilder"
 gem "rails-i18n"
 gem "slim"
-gem "view_component"
+
+# FIXME: waiting for view_component-contrib to be compatible with
+# view_component 4
+# See https://github.com/palkan/view_component-contrib/pull/59
+gem "view_component", "~> 3.22"
 gem "view_component-contrib"
 
 # Data tools
