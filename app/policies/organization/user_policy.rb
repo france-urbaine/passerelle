@@ -18,7 +18,7 @@ module Organization
       if record == User
         organization_admin?
       elsif record.is_a? User
-        organization_admin? && organization_match?(record) && !record_as_more_privilege_than_current_user(record)
+        organization_admin? && organization_match?(record) && !record_as_more_privilege_than_current_user?(record)
       end
     end
 
@@ -65,7 +65,7 @@ module Organization
         user.organization_id == organization.id
     end
 
-    def record_as_more_privilege_than_current_user(other)
+    def record_as_more_privilege_than_current_user?(other)
       other.super_admin? && !user.super_admin?
     end
   end

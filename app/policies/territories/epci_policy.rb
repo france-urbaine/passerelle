@@ -2,7 +2,7 @@
 
 module Territories
   class EPCIPolicy < ApplicationPolicy
-    alias_rule :new?, :create?, :remove?, :destroy?, to: :not_supported
+    alias_rule :new?, :create?, :remove?, :destroy?, to: :not_supported?
     alias_rule :index?, :show?, to: :manage?
 
     def manage?

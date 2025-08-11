@@ -21,20 +21,6 @@ Metrics/ParameterLists:
 Metrics/PerceivedComplexity:
   Max: 10
 
-# Offense count: 7
-# Configuration parameters: Mode, AllowedMethods, AllowedPatterns, AllowBangMethods, WaywardPredicates.
-# AllowedMethods: call
-# WaywardPredicates: nonzero?
-Naming/PredicateMethod:
-  Exclude:
-    - 'app/models/user.rb'
-    - 'app/policies/api/application_policy.rb'
-    - 'app/policies/application_policy.rb'
-    - 'app/policies/organization/user_policy.rb'
-    - 'app/policies/territories/commune_policy.rb'
-    - 'lib/extras/form_service.rb'
-
-# Offense count: 1490
 # Configuration parameters: AllowSubject.
 RSpec/MultipleMemoizedHelpers:
   Max: 10
