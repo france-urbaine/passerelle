@@ -13,7 +13,6 @@
     "postcss": "^8.5.3",
     "postcss-cli": "^11.0.1",
     "postcss-nested": "^7.0.2",
-    "postcss-write-svg": "^3.0.1",
     "stimulus-autocomplete": "^3.0.2",
     "stimulus-rails-nested-form": "^4.1.0",
     "stimulus-use": "^0.52.3",
