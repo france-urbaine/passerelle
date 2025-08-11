@@ -34,8 +34,8 @@ RSpec.describe Territories::CommunePolicy, type: :policy do
   it { expect(:edit?).to   be_an_alias_of(policy, :manage?) }
   it { expect(:update?).to be_an_alias_of(policy, :manage?) }
 
-  it { expect(:new?).to     be_an_alias_of(policy, :not_supported) }
-  it { expect(:create?).to  be_an_alias_of(policy, :not_supported) }
-  it { expect(:remove?).to  be_an_alias_of(policy, :not_supported) }
-  it { expect(:destroy?).to be_an_alias_of(policy, :not_supported) }
+  it { expect(:new?).to     be_an_alias_of(policy, :not_supported?) }
+  it { expect(:create?).to  be_an_alias_of(policy, :not_supported?) }
+  it { expect(:remove?).to  be_an_alias_of(policy, :not_supported?) }
+  it { expect(:destroy?).to be_an_alias_of(policy, :not_supported?) }
 end

@@ -278,8 +278,8 @@ module UI
         def aria_describedby
           return unless @described_by
 
-          head_column = @row.head_columns.find { _1.key == @described_by }
-          row_column  = @row.columns.find { _1.key == @described_by }
+          head_column = @row.head_columns.find { it.key == @described_by }
+          row_column  = @row.columns.find { it.key == @described_by }
 
           if head_column.nil?
             warning = "the column #{@described_by.inspect} in :described_by cannot be found"

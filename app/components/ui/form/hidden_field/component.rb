@@ -13,19 +13,15 @@ module UI
           super()
         end
 
-        # FIXME: https://bugs.ruby-lang.org/issues/20090
-        # Anonymous parameters & blocks cannot be forwarded within block in Ruby 3.3.0
-        # May be fixed in Ruby 3.3.1
-        #
-        def each_field_value(name = @name, value = @value, &block)
+        def each_field_value(name = @name, value = @value, &)
           case value
           when Array
             value.each do |item|
-              each_field_value("#{name}[]", item, &block)
+              each_field_value("#{name}[]", item, &)
             end
           when Hash
             value.each do |key, item|
-              each_field_value("#{name}[#{key}]", item, &block)
+              each_field_value("#{name}[#{key}]", item, &)
             end
           else
             yield name, value, @options unless value.nil?

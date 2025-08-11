@@ -15,7 +15,7 @@ RSpec.describe Territories::UpdatesPolicy, type: :policy do
 
   it { expect(:edit?).to be_an_alias_of(policy, :update?) }
 
-  it { expect(:index?).to  be_an_alias_of(policy, :not_supported) }
-  it { expect(:show?).to   be_an_alias_of(policy, :not_supported) }
-  it { expect(:manage?).to be_an_alias_of(policy, :not_supported) }
+  it { expect(:index?).to  be_an_alias_of(policy, :not_supported?) }
+  it { expect(:show?).to   be_an_alias_of(policy, :not_supported?) }
+  it { expect(:manage?).to be_an_alias_of(policy, :not_supported?) }
 end
