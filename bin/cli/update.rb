@@ -4,8 +4,8 @@ require_relative "base"
 
 module CLI
   class Update < Base
-    def call(arg)
-      arg.nil? ? check : help
+    def call(*arg)
+      arg.empty? ? check : help
     end
 
     def help
@@ -17,6 +17,10 @@ module CLI
         To add bin/update to your git hooks, run:
 
             bin/setup githooks
+
+        If you want to upgrade dependencies, you should take look at:
+
+            bin/upgrade help
         \x5
       HEREDOC
     end
@@ -33,7 +37,7 @@ module CLI
       run "git submodule update"
 
       say "Verifying database migration"
-      run "bin/rails db:migrate"
+      run "ANNOTATERB_SKIP_ON_DB_TASKS=1 DUMP_SCHEMA_AFTER_MIGRATION=false bin/rails db:migrate"
     end
   end
 end

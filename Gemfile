@@ -53,7 +53,11 @@ gem "turbo-rails"
 gem "jbuilder"
 gem "rails-i18n"
 gem "slim"
-gem "view_component"
+
+# FIXME: waiting for view_component-contrib to be compatible with
+# view_component 4
+# See https://github.com/palkan/view_component-contrib/pull/59
+gem "view_component", "~> 3.22"
 gem "view_component-contrib"
 
 # Data tools
@@ -97,7 +101,7 @@ end
 
 group :development do
   gem "actual_db_schema"
-  gem "annotate"
+  gem "annotaterb"
   gem "bundle_update_interactive"
   gem "rack-mini-profiler"
   gem "web-console"
@@ -135,8 +139,8 @@ group :test do
 
   # RSpec extensions
   gem "fuubar"
+  gem "moarspec"
   gem "rspec-collection_matchers"
-  gem "saharspec"
   gem "shoulda-matchers"
   gem "super_diff"
 
@@ -147,7 +151,9 @@ group :test do
   # System tests
   gem "capybara"
   gem "cuprite"
-  gem "webdrivers", ">= 5.3.0"
+
+  # Alternative system test browser
+  # gem "webdrivers", ">= 5.3.0"
 
   # Analyse and improve test performances
   gem "test-prof"
