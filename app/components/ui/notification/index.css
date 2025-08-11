@@ -52,7 +52,7 @@
       flex-grow: 0;
       width: 100%;
 
-      @apply pt-6 space-x-4;
+      @apply pt-6 gap-4;
     }
 
     &--warning {

@@ -9,5 +9,5 @@
   align-items: flex-end;
   justify-content: center;
 
-  @apply p-4 space-y-4;
+  @apply p-4 gap-4;
 }

@@ -7,7 +7,7 @@
       -# FIXME: improve responsivity
 
       = form.fields_for :exonerations, ReportExoneration.new, child_index: "NEW_RECORD" do |fields|
-        .nested-form-wrapper.grid.gap-x-4.grid-cols-7( class="min-w-[1000px]" data-new-record="true" )
+        .nested-form-wrapper.grid.gap-4.grid-cols-7( class="min-w-[1000px]" data-new-record="true" )
 
           = fields.block :status do
             = fields.label :status, "Action"
@@ -33,7 +33,7 @@
             = button_component "Supprimer", icon: "trash", data: { action: "nested-form#remove" }
 
     = form.fields_for(:exonerations) do |fields|
-      .nested-form-wrapper.grid.gap-x-4.grid-cols-7( class="min-w-[1000px]" data-new-record="#{fields.object.new_record?}" )
+      .nested-form-wrapper.grid.gap-4.grid-cols-7( class="min-w-[1000px]" data-new-record="#{fields.object.new_record?}" )
         = fields.block :status do
           = fields.label :status, "Action"
           = fields.select :status, status_choices, prompt: false

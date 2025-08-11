@@ -74,7 +74,7 @@
         - row.with_action "Transmettre la réponse", edit_report_confirmation_path(report), icon: "paper-airplane", modal: true
 
     - row.with_column(:state) do
-      .space-x-4
+      .gap-4
         = report_status_badge(report)
 
         - if report.sandbox?
