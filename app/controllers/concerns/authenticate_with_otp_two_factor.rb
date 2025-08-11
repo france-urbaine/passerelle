@@ -79,9 +79,9 @@ module AuthenticateWithOtpTwoFactor
   end
 
   def user_params
-    params
-      .require(:user)
-      .permit(:email, :password, :remember_me, :otp_attempt)
+    params.expect(
+      user: %i[email password remember_me otp_attempt]
+    )
   end
 
   def find_user_for_authentication
