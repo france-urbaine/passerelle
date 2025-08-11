@@ -26,6 +26,15 @@ jobs:
           retain_days: 30
           keep_minimum_runs: 10
 
+      - name: Delete dependabot updates
+        uses: Mattraks/delete-workflow-runs@v2
+        with:
+          token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          delete_workflow_pattern: "Dependabot Updates"
+          retain_days: 30
+          keep_minimum_runs: 0
+
       - name: Delete "Delete old workflow runs"
         uses: Mattraks/delete-workflow-runs@v2
         with:
