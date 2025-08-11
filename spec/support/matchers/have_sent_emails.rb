@@ -6,6 +6,7 @@ module Matchers
 
     matcher :have_sent_emails do
       include DeliveriesHelpers
+
       supports_block_expectations
 
       match do |actual|
@@ -32,6 +33,7 @@ module Matchers
 
     matcher :have_sent_email do
       include DeliveriesHelpers
+
       supports_block_expectations
 
       match do |actual|
