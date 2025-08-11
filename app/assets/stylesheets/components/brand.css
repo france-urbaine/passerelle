@@ -10,7 +10,7 @@
   .brand  {
     display: flex;
     align-items: center;
-    font-family: 'M PLUS Rounded 1c', theme('fontFamily.sans');
+    font-family: 'M PLUS Rounded 1c', var(--font-sans);
 
     @apply text-3xl tracking-tighter font-bold;
     @apply text-blue-500;

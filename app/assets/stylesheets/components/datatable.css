@@ -87,10 +87,8 @@
     flex-wrap: wrap;
     justify-content: space-between;
     min-width: 100%;
-    min-height: theme("height.10");
 
-    @apply rounded-md;
-    @apply p-2 pl-3 -my-2;
+    @apply p-2 pl-3 -my-2 min-h-10 rounded-md;
     @apply bg-blue-100;
     @apply dark:bg-blue-900;
 
