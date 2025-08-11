@@ -24,12 +24,3 @@ Metrics/PerceivedComplexity:
 # Configuration parameters: AllowSubject.
 RSpec/MultipleMemoizedHelpers:
   Max: 10
-
-# Offense count: 17
-# This cop supports safe autocorrection (--autocorrect).
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: allow_single_line, only_numbered_parameters, always, disallow
-Style/ItBlockParameter:
-  Exclude:
-    - 'app/components/ui/table/component.rb'
-    - 'spec/models/concerns/advanced_search_spec.rb'
