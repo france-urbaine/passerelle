@@ -27,12 +27,11 @@
   .modal__content {
     position: absolute;
     z-index: 2;
-    top: theme('spacing.12');
     left: 50%;
     transform: translate(-50%, 0);
     min-width: 500px;
 
-    @apply rounded-sm shadow-lg p-6;
+    @apply top-12 rounded-sm shadow-lg p-6;
     @apply transition duration-200;
     @apply bg-white;
     @apply dark:bg-black dark:border dark:border-gray-700 dark:shadow-gray-500/50;

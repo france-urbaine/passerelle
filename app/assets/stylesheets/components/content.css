@@ -39,9 +39,8 @@
       align-items: center;
       box-sizing: content-box;
       min-width: 0px;
-      min-height: theme("height.10");
 
-      @apply pl-2;
+      @apply pl-2 min-h-10;
       @apply text-xl leading-10;
 
       & svg {

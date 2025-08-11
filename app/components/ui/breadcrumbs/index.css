@@ -2,7 +2,8 @@
   .breadcrumbs {
     display: flex;
     flex-wrap: wrap;
-    min-height: theme("height.10");
+
+    @apply min-h-10;
 
     &__path {
       display: flex;
@@ -21,7 +22,7 @@
     }
 
     &__separator {
-      flex: 0 0 theme("spacing.6");
+      flex: 0 0 calc(var(--spacing) * 6);
       text-align: center;
 
       @apply mx-1;
