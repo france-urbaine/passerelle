@@ -93,6 +93,14 @@ Metrics/MethodLength:
 Metrics/ModuleLength:
   Enabled: false
 
+# Naming -----------------------------------------------------------------------
+
+Naming/PredicateMethod:
+  AllowedMethods:
+    - enable_two_factor
+    - validate_pending_confirmation
+    - save_form
+
 # Rails ------------------------------------------------------------------------
 Rails:
   Exclude:

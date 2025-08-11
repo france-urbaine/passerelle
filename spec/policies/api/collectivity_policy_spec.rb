@@ -21,7 +21,7 @@ RSpec.describe API::CollectivityPolicy, type: :policy do
   end
 
   it { expect(:index?).to be_an_alias_of(policy, :read?) }
-  it { expect(:show?).to  be_an_alias_of(policy, :not_supported) }
+  it { expect(:show?).to  be_an_alias_of(policy, :not_supported?) }
 
   describe "relation scope" do
     subject(:scope) { apply_relation_scope(Collectivity.all) }

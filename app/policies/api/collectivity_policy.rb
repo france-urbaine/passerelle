@@ -3,7 +3,7 @@
 module API
   class CollectivityPolicy < ApplicationPolicy
     alias_rule :index?, to: :read?
-    alias_rule :show?, to: :not_supported
+    alias_rule :show?, to: :not_supported?
 
     def read?
       if record == Collectivity
