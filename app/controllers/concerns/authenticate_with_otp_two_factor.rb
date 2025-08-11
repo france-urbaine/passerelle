@@ -51,7 +51,7 @@ module AuthenticateWithOtpTwoFactor
     session[:otp_user_id] = user.id
     session[:user_password_hash] = Digest::SHA256.hexdigest(user.encrypted_password)
 
-    render "users/sessions/two_factor", status: :unprocessable_entity
+    render "users/sessions/two_factor", status: :unprocessable_content
   end
 
   def authenticate_with_two_factor_via_otp(user)

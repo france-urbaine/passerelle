@@ -343,7 +343,7 @@ Rails.application.routes.draw do
   # ----------------------------------------------------------------------------
   get "404", to: "exceptions#not_found"
   get "406", to: "exceptions#not_acceptable"
-  get "422", to: "exceptions#unprocessable_entity"
+  get "422", to: "exceptions#unprocessable_content"
   get "500", to: "exceptions#internal_server_error"
 
   # Development extensiosn

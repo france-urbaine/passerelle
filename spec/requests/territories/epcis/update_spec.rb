@@ -57,7 +57,7 @@ RSpec.describe "Territories::EpcisController#update" do
     context "with invalid attributes" do
       let(:updated_attributes) { super().merge(name: "") }
 
-      it { expect(response).to have_http_status(:unprocessable_entity) }
+      it { expect(response).to have_http_status(:unprocessable_content) }
       it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
       it { expect { request and epci.reload }.not_to change(epci, :updated_at) }

@@ -83,7 +83,7 @@ RSpec.describe "Organization::CollectivitiesController#create" do
     context "with invalid attributes" do
       let(:attributes) { super().merge(siren: "") }
 
-      it { expect(response).to have_http_status(:unprocessable_entity) }
+      it { expect(response).to have_http_status(:unprocessable_content) }
       it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
       it { expect { request }.not_to change(Collectivity, :count) }
@@ -210,7 +210,7 @@ RSpec.describe "Organization::CollectivitiesController#create" do
         let(:territory_type) { "Commune" }
         let(:territory_code) { "1234" }
 
-        it { expect(response).to have_http_status(:unprocessable_entity) }
+        it { expect(response).to have_http_status(:unprocessable_content) }
         it { expect { request }.not_to change(Collectivity, :count) }
       end
     end
@@ -275,13 +275,13 @@ RSpec.describe "Organization::CollectivitiesController#create" do
         let(:territory_type) { "Commune" }
         let(:territory_id)   { "1234" }
 
-        it { expect(response).to have_http_status(:unprocessable_entity) }
+        it { expect(response).to have_http_status(:unprocessable_content) }
         it { expect { request }.not_to change(Collectivity, :count) }
       end
     end
 
     context "with empty parameters", params: {} do
-      it { expect(response).to have_http_status(:unprocessable_entity) }
+      it { expect(response).to have_http_status(:unprocessable_content) }
       it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
       it { expect { request }.not_to change(Collectivity, :count) }

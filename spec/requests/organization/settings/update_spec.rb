@@ -69,9 +69,9 @@ RSpec.describe "Organization::SettingsController#update" do
       context "with invalid attributes" do
         let(:attributes) { super().merge(name: "") }
 
-        it "responds with unprocessable entity" do
+        it "responds with unprocessable content" do
           expect(response)
-            .to  have_http_status(:unprocessable_entity)
+            .to  have_http_status(:unprocessable_content)
             .and have_media_type(:html)
             .and have_html_body
         end

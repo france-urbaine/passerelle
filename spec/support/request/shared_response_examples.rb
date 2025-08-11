@@ -226,9 +226,9 @@ module RequestTestHelpers
         end
       end
 
-      # 422 - Unprocessable entity
+      # 422 - Unprocessable Content
 
-      shared_examples "it responds with unprocessable entity in HTML" do
+      shared_examples "it responds with unprocessable content in HTML" do
         let(:as) { :html }
 
         it do
@@ -236,13 +236,13 @@ module RequestTestHelpers
             .to invoke(:as).on(self).at_least(:once)
 
           expect(response)
-            .to  have_http_status(:unprocessable_entity)
+            .to  have_http_status(:unprocessable_content)
             .and have_media_type(:html)
             .and have_html_body
         end
       end
 
-      shared_examples "it responds with unprocessable entity in JSON" do
+      shared_examples "it responds with unprocessable content in JSON" do
         let(:as) { :json }
 
         it do
@@ -250,7 +250,7 @@ module RequestTestHelpers
             .to invoke(:as).on(self).at_least(:once)
 
           expect(response)
-            .to  have_http_status(:unprocessable_entity)
+            .to  have_http_status(:unprocessable_content)
             .and have_media_type(:json)
             .and have_json_body(include(:error))
         end
