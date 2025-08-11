@@ -119,25 +119,19 @@
       }
     }
 
-    @svg checked {
-      viewBox: 0 0 16 16;
-      @path {
-        d: M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z;
-        fill: var(--color, black);
-      }
-    }
-
     &:checked {
-      background-size: 100% 100%;
-      background-position: center;
-      background-repeat: no-repeat;
-      background-image: svg(checked param(--color theme('colors.white')));
-
       @apply bg-blue-500 border-blue-500;
       @apply dark:bg-sky-500 dark:border-sky-500;
 
-      @media (prefers-color-scheme: dark) {
-        background-image: svg(checked param(--color theme('colors.black')));
+      &:after {
+        content:  "";
+        display:  block;
+        width:    100%;
+        height:   100%;
+        mask:     url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z' fill='black'/%3E%3C/svg%3E");
+
+        @apply bg-white;
+        @apply dark:bg-black;
       }
 
       &:active {
@@ -152,28 +146,19 @@
   }
 
   [type="checkbox"] {
-    @svg indeterminate {
-      viewBox: 0 0 16 16;
-      @path {
-        d: M4 8h8;
-        stroke: var(--color, black);
-        stroke-linecap: round;
-        stroke-linejoin: round;
-        stroke-width: 2;
-      }
-    }
-
     &:indeterminate {
-      background-size: 100% 100%;
-      background-position: center;
-      background-repeat: no-repeat;
-      background-image: svg(indeterminate param(--color theme('colors.white')));
-
       @apply bg-blue-500 border-blue-500;
       @apply dark:bg-sky-500 dark:border-sky-500;
 
-      @media (prefers-color-scheme: dark) {
-        background-image: svg(indeterminate param(--color theme('colors.black')));
+      &:after {
+        content:  "";
+        display:  block;
+        width:    100%;
+        height:   100%;
+        mask:     url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8h8' stroke='black' stroke-linecap='round' stroke-linejoin='round' stroke-width='2'/%3E%3C/svg%3E");
+
+        @apply bg-white;
+        @apply dark:bg-black;
       }
 
       &:active {
