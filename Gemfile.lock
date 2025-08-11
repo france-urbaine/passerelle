@@ -641,6 +641,7 @@ PLATFORMS
   arm64-darwin-21
   arm64-darwin-22
   arm64-darwin-23
+  arm64-darwin-24
   x86_64-darwin-21
   x86_64-linux
 
@@ -661,6 +662,7 @@ DEPENDENCIES
   byebug
   capybara
   cssbundling-rails
+  csv
   cuprite
   database_cleaner
   database_cleaner-active_record
@@ -737,7 +739,7 @@ DEPENDENCIES
   zxcvbn
 
 RUBY VERSION
-   ruby 3.3.4p94
+   ruby 3.4.4p34
 
 BUNDLED WITH
    2.5.4

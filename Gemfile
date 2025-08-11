@@ -3,7 +3,7 @@
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby "3.3.4"
+ruby "3.4.4"
 
 # Core gems
 gem "bootsnap", require: false
@@ -57,6 +57,7 @@ gem "view_component"
 gem "view_component-contrib"
 
 # Data tools
+gem "csv"
 gem "faker"
 gem "roo"
 gem "rubyzip"

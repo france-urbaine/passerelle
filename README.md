@@ -2,8 +2,8 @@
 
 ## Requirements
 
-* Ruby 3.3.4
-* PostgreSQL
+* Ruby 3.4.4
+* PostgreSQL 14+
 * Redis
 * Yarn
 
