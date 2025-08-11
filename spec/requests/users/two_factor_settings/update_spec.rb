@@ -105,7 +105,7 @@ RSpec.describe "Users::TwoFactorSettingsController#update" do
     context "with wrong OTP code" do
       let(:attributes) { super().merge(otp_code: "6582") }
 
-      it { expect(response).to have_http_status(:unprocessable_entity) }
+      it { expect(response).to have_http_status(:unprocessable_content) }
       it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
       it { expect { request and current_user.reload }.not_to change(current_user, :updated_at) }
@@ -115,7 +115,7 @@ RSpec.describe "Users::TwoFactorSettingsController#update" do
     context "without current password" do
       let(:attributes) { super().merge(current_password: "") }
 
-      it { expect(response).to have_http_status(:unprocessable_entity) }
+      it { expect(response).to have_http_status(:unprocessable_content) }
       it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
       it { expect { request and current_user.reload }.not_to change(current_user, :updated_at) }
@@ -138,7 +138,7 @@ RSpec.describe "Users::TwoFactorSettingsController#update" do
     end
 
     context "with empty parameters", params: {} do
-      it { expect(response).to have_http_status(:unprocessable_entity) }
+      it { expect(response).to have_http_status(:unprocessable_content) }
       it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
       it { expect { request and current_user.reload }.not_to change(current_user, :updated_at) }

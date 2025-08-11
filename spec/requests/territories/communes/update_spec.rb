@@ -57,7 +57,7 @@ RSpec.describe "Territories::CommunesController#update" do
     context "with invalid attributes" do
       let(:updated_attributes) { super().merge(name: "") }
 
-      it { expect(response).to have_http_status(:unprocessable_entity) }
+      it { expect(response).to have_http_status(:unprocessable_content) }
       it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
       it { expect { request and commune.reload }.not_to change(commune, :updated_at) }

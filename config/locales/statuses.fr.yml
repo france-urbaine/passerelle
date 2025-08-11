@@ -9,7 +9,7 @@ fr:
     not_found:              "La resource n'a pas été trouvée ou n'existe plus."
     not_acceptable:         "La resource ne peut être retournée dans le format demandé."
     gone:                   "La resource n'est plus disponible ou est en cours de suppression."
-    unprocessable_entity:   "Les paramètres transmis sont incomplets ou ne permettent pas de finaliser la requète."
+    unprocessable_content:  "Les paramètres transmis sont incomplets ou ne permettent pas de finaliser la requète."
     not_implemented:        "La resource ou le format demandé n'ont pas encore été implémenté."
     internal_server_error:  "Une erreur s'est produite."
     expired_session:        "Votre session a expirée."

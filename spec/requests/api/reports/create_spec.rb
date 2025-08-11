@@ -118,7 +118,7 @@ RSpec.describe "API::ReportsController#create" do
         )
       end
 
-      it { expect(response).to have_http_status(:unprocessable_entity) }
+      it { expect(response).to have_http_status(:unprocessable_content) }
       it { expect { request }.not_to change(Report, :count) }
 
       it "responds with validations errors", :show_in_doc do

@@ -10,7 +10,7 @@ module ControllerStatuses
     unauthorized
     forbidden
     not_acceptable
-    unprocessable_entity
+    unprocessable_content
     not_implemented
     internal_server_error
   ].each do |status|

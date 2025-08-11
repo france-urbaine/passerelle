@@ -89,7 +89,7 @@ RSpec.describe "Users::UserSettingsController#update" do
         { email: "paul.lefebvre@legende.fr" }
       end
 
-      it { expect(response).to have_http_status(:unprocessable_entity) }
+      it { expect(response).to have_http_status(:unprocessable_content) }
       it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
 
@@ -138,7 +138,7 @@ RSpec.describe "Users::UserSettingsController#update" do
         { password: password, password_confirmation: password }
       end
 
-      it { expect(response).to have_http_status(:unprocessable_entity) }
+      it { expect(response).to have_http_status(:unprocessable_content) }
       it { expect(response).to have_media_type(:html) }
       it { expect(response).to have_html_body }
 

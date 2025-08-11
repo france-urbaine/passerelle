@@ -15,7 +15,7 @@ class ExceptionsController < ApplicationController
   %i[
     not_found
     not_acceptable
-    unprocessable_entity
+    unprocessable_content
     internal_server_error
   ].each do |status|
     define_method(status) do

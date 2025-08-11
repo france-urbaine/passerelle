@@ -40,8 +40,11 @@ module API
         @report = find_and_authorize_report
 
         blob_args = params
-          .require(:file)
-          .permit(:filename, :byte_size, :checksum, :content_type, metadata: {})
+          .expect(
+            file: [
+              :filename, :byte_size, :checksum, :content_type, { metadata: {} }
+            ]
+          )
           .to_h
           .symbolize_keys
 
