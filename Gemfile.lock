@@ -662,6 +662,7 @@ DEPENDENCIES
   byebug
   capybara
   cssbundling-rails
+  csv
   cuprite
   database_cleaner
   database_cleaner-active_record

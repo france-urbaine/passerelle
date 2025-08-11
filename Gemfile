@@ -57,6 +57,7 @@ gem "view_component"
 gem "view_component-contrib"
 
 # Data tools
+gem "csv"
 gem "faker"
 gem "roo"
 gem "rubyzip"
