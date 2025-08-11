@@ -2,16 +2,11 @@
 
 module Territories
   class CommunePolicy < ApplicationPolicy
+    alias_rule :new?, :create?, :remove?, :destroy?, to: :not_supported?
     alias_rule :index?, :show?, to: :manage?
 
     def manage?
       super_admin?
-    end
-
-    alias_rule :new?, :create?, :remove?, :destroy?, to: :not_supported
-
-    def not_supported
-      false
     end
 
     relation_scope do |relation|

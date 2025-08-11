@@ -9,8 +9,8 @@ RSpec.describe AdvancedSearch do
         Publisher.advanced_search(
           "Solutions",
           scopes: {
-            name:  -> { where(name: _1) },
-            siren: -> { where(siren: _1) }
+            name:  -> { where(name: it) },
+            siren: -> { where(siren: it) }
           }
         ).load
       }.to perform_sql_query(<<~SQL)
@@ -25,8 +25,8 @@ RSpec.describe AdvancedSearch do
         Publisher.advanced_search(
           { name: "Solutions" },
           scopes: {
-            name:  -> { where(name: _1) },
-            siren: -> { where(siren: _1) }
+            name:  -> { where(name: it) },
+            siren: -> { where(siren: it) }
           }
         ).load
       }.to perform_sql_query(<<~SQL)
@@ -41,8 +41,8 @@ RSpec.describe AdvancedSearch do
         Publisher.advanced_search(
           { "name" => "Solutions" },
           scopes: {
-            name:  -> { where(name: _1) },
-            siren: -> { where(siren: _1) }
+            name:  -> { where(name: it) },
+            siren: -> { where(siren: it) }
           }
         ).load
       }.to perform_sql_query(<<~SQL)
@@ -57,8 +57,8 @@ RSpec.describe AdvancedSearch do
         Publisher.advanced_search(
           ActionController::Parameters.new("name" => "Solutions"),
           scopes: {
-            name:  -> { where(name: _1) },
-            siren: -> { where(siren: _1) }
+            name:  -> { where(name: it) },
+            siren: -> { where(siren: it) }
           }
         ).load
       }.to perform_sql_query(<<~SQL)
@@ -73,8 +73,8 @@ RSpec.describe AdvancedSearch do
         Publisher.advanced_search(
           "name:(Solutions & Territoire) siren:123456789",
           scopes: {
-            name:  -> { where(name: _1) },
-            siren: -> { where(siren: _1) }
+            name:  -> { where(name: it) },
+            siren: -> { where(siren: it) }
           }
         ).load
       }.to perform_sql_query(<<~SQL)
@@ -90,8 +90,8 @@ RSpec.describe AdvancedSearch do
         Publisher.advanced_search(
           "name:(Solutions & Territoire) siren:123456789 Marc",
           scopes: {
-            name:  -> { where(name: _1) },
-            siren: -> { where(siren: _1) }
+            name:  -> { where(name: it) },
+            siren: -> { where(siren: it) }
           }
         ).load
       }.to perform_sql_query(<<~SQL)
@@ -108,7 +108,7 @@ RSpec.describe AdvancedSearch do
         Report.where(state: "assigned").advanced_search(
           "state:transmitted",
           scopes: {
-            state: -> { where(state: _1) }
+            state: -> { where(state: it) }
           }
         ).load
       }.to perform_sql_query(<<~SQL)
@@ -124,7 +124,7 @@ RSpec.describe AdvancedSearch do
         Report.strict_loading.advanced_search(
           "state:transmitted",
           scopes: {
-            state: -> { where(state: _1) }
+            state: -> { where(state: it) }
           }
         ).load
       }.to perform_sql_query(<<~SQL)
@@ -139,7 +139,7 @@ RSpec.describe AdvancedSearch do
         Report.left_joins(:package).advanced_search(
           "state:transmitted",
           scopes: {
-            state: -> { left_joins(:package, :ddfip).where(state: _1) }
+            state: -> { left_joins(:package, :ddfip).where(state: it) }
           }
         ).load
       }.to perform_sql_query(<<~SQL)

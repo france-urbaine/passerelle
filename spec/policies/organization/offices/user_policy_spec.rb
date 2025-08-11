@@ -51,9 +51,9 @@ RSpec.describe Organization::Offices::UserPolicy, type: :policy do
   it { expect(:edit_all?).to      be_an_alias_of(policy, :manage?) }
   it { expect(:update_all?).to    be_an_alias_of(policy, :manage?) }
 
-  it { expect(:show?).to          be_an_alias_of(policy, :not_supported) }
-  it { expect(:edit?).to          be_an_alias_of(policy, :not_supported) }
-  it { expect(:update?).to        be_an_alias_of(policy, :not_supported) }
-  it { expect(:undiscard?).to     be_an_alias_of(policy, :not_supported) }
-  it { expect(:undiscard_all?).to be_an_alias_of(policy, :not_supported) }
+  it { expect(:show?).to          be_an_alias_of(policy, :not_supported?) }
+  it { expect(:edit?).to          be_an_alias_of(policy, :not_supported?) }
+  it { expect(:update?).to        be_an_alias_of(policy, :not_supported?) }
+  it { expect(:undiscard?).to     be_an_alias_of(policy, :not_supported?) }
+  it { expect(:undiscard_all?).to be_an_alias_of(policy, :not_supported?) }
 end

@@ -16,7 +16,7 @@ AllCops:
   NewCops:           enable
   DisplayCopNames:   true
   DisplayStyleGuide: true
-  TargetRubyVersion: 3.3
+  TargetRubyVersion: 3.4
   Exclude:
     - 'db/schema.rb'
     - 'tmp/**/*'
@@ -92,6 +92,14 @@ Metrics/MethodLength:
 
 Metrics/ModuleLength:
   Enabled: false
+
+# Naming -----------------------------------------------------------------------
+
+Naming/PredicateMethod:
+  AllowedMethods:
+    - enable_two_factor
+    - validate_pending_confirmation
+    - save_form
 
 # Rails ------------------------------------------------------------------------
 Rails:
