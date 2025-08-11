@@ -22,7 +22,7 @@ table
       td Affectation du local
       td <code>H</code>
       td Une seule valeur possible : <code>H</code> pour habitation
-      td.text-right.space-x-4
+      td.text-right.gap-4
         .badge.badge--orange.badge--mono requis
         .badge.badge--blue.badge--mono String
 
@@ -33,7 +33,7 @@ table
       td
         = link_to "Consulter toutes les valeurs", "/api/documentation/guides/local_habitation_nature.csv"
         '  - seules les natures d'habitation sont acceptées.
-      td.text-right.space-x-4
+      td.text-right.gap-4
         .badge.badge--orange.badge--mono requis
         .badge.badge--blue.badge--mono String
 
@@ -45,7 +45,7 @@ table
         = link_to "Consulter toutes les valeurs", "/api/documentation/guides/local_habitation_categorie.csv"
         '  - seules les catégories d'habitation sont acceptées.
 
-      td.text-right.space-x-4
+      td.text-right.gap-4
         .badge.badge--orange.badge--mono requis
         .badge.badge--blue.badge--mono String
 
@@ -54,7 +54,7 @@ table
       td Surface réelle
       td <code>250.0</code>
       td
-      td.text-right.space-x-4
+      td.text-right.gap-4
         .badge.badge--orange.badge--mono requis
         .badge.badge--blue.badge--mono Numeric
 
@@ -86,7 +86,7 @@ table
       td Année du fichier d'occupation
       td <code>2018</code>
       td
-      td.text-right.space-x-4
+      td.text-right.gap-4
         .badge.badge--orange.badge--mono requis
         .badge.badge--blue.badge--mono String
 
@@ -95,14 +95,14 @@ table
       td Nature de l'occupation
       td <code>RP</code>, <code>RS</code>, <code>RE</code>
       td = link_to "Consulter toutes les valeurs", "/api/documentation/guides/local_nature_occupation.csv"
-      td.text-right.space-x-4
+      td.text-right.gap-4
         .badge.badge--blue.badge--mono String
     tr
       th <code>situation_majoration_rs</code>
       td Application de la majoration sur les résidences secondaires
       td <code>true</code>, <code>false</code>
       td
-      td.text-right.space-x-4
+      td.text-right.gap-4
         .badge.badge--orange.badge--mono( aria-describedby="reference_1" ) requis (1)
         .badge.badge--blue.badge--mono Boolean
 
@@ -146,7 +146,7 @@ table
       td Nature de l'occupation proposée
       td <code>RP</code>, <code>RS</code>, <code>RE</code>
       td = link_to "Consulter toutes les valeurs", "/api/documentation/guides/local_nature_occupation.csv"
-      td.text-right.space-x-4
+      td.text-right.gap-4
         .badge.badge--orange.badge--mono requis
         .badge.badge--blue.badge--mono String
 
@@ -155,7 +155,7 @@ table
       td Date du changement d'occupation
       td <code>02/11/2018</code>
       td
-      td.text-right.space-x-4
+      td.text-right.gap-4
         .badge.badge--orange.badge--mono requis
         .badge.badge--blue.badge--mono Date
 
@@ -164,7 +164,7 @@ table
       td TLV appliquée à tort
       td <code>true</code>, <code>false</code>
       td
-      td.text-right.space-x-4
+      td.text-right.gap-4
         .badge.badge--orange.badge--mono( aria-describedby="reference_2" ) requis (2)
         .badge.badge--blue.badge--mono Boolean
 
@@ -173,7 +173,7 @@ table
       td THLV appliquée à tort
       td <code>true</code>, <code>false</code>
       td
-      td.text-right.space-x-4
+      td.text-right.gap-4
         .badge.badge--orange.badge--mono( aria-describedby="reference_3" ) requis (3)
         .badge.badge--blue.badge--mono Boolean
 
@@ -182,7 +182,7 @@ table
       td Meublé de tourisme proposée
       td <code>true</code>, <code>false</code>
       td
-      td.text-right.space-x-4
+      td.text-right.gap-4
         .badge.badge--orange.badge--mono( aria-describedby="reference_4" ) requis (4)
         .badge.badge--blue.badge--mono Boolean
 
@@ -191,7 +191,7 @@ table
       td Nom de l'occupant proposée
       td <code>Moulin</code>
       td
-      td.text-right.space-x-4
+      td.text-right.gap-4
         .badge.badge--orange.badge--mono( aria-describedby="reference_4" ) requis (4)
         .badge.badge--blue.badge--mono String
 
@@ -200,7 +200,7 @@ table
       td Prénom de l'occupant proposée
       td <code>Jean</code>
       td
-      td.text-right.space-x-4
+      td.text-right.gap-4
         .badge.badge--orange.badge--mono( aria-describedby="reference_4" ) requis (4)
         .badge.badge--blue.badge--mono String
 
@@ -209,6 +209,6 @@ table
       td Application de la majoration sur les résidences secondaires
       td <code>true</code>, <code>false</code>
       td
-      td.text-right.space-x-4
+      td.text-right.gap-4
         .badge.badge--orange.badge--mono( aria-describedby="reference_5" ) requis (5)
         .badge.badge--blue.badge--mono Boolean
