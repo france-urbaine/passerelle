@@ -152,7 +152,6 @@ RSpec.describe Organization::OfficePolicy, type: :policy do
           FROM   "offices"
           WHERE  "offices"."discarded_at" IS NULL
             AND  "offices"."ddfip_id" = '#{current_organization.id}'
-            AND  "offices"."id" = '#{current_user.office_users.first.office_id}'
         SQL
       end
     end

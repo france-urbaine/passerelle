@@ -69,7 +69,7 @@ RSpec.describe "Organization::OfficesController#index" do
           aggregate_failures do
             expect(response).to have_html_body.to have_text(offices[0].name)
             expect(response).to have_html_body.to have_no_text(offices[1].name)
-            expect(response).to have_html_body.to have_no_text(offices[2].name)
+            expect(response).to have_html_body.to have_text(offices[2].name)
             expect(response).to have_html_body.to have_no_text(offices[3].name)
           end
         end

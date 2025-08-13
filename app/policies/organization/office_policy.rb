@@ -25,10 +25,8 @@ module Organization
     end
 
     relation_scope do |relation|
-      if ddfip_admin?
+      if ddfip_admin? || supervisor?
         relation.kept.owned_by(organization)
-      elsif supervisor?
-        relation.kept.owned_by(organization).where(id: supervised_office_ids)
       else
         relation.none
       end
