@@ -368,9 +368,9 @@ module RequestTestHelpers
           include_examples "it responds with not acceptable in HTML"
         end
 
-        shared_examples "it responds with unprocessable entity to #{user_description}" do |**options|
+        shared_examples "it responds with unprocessable content to #{user_description}" do |**options|
           include_context "when signed in as #{user_description}", **options
-          include_examples "it responds with unprocessable entity in HTML"
+          include_examples "it responds with unprocessable content in HTML"
         end
       end
 
