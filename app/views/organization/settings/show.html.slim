@@ -109,6 +109,7 @@
             - card_content.with_submit_action "Enregistrer"
 
         - card.with_multipart do |card_content|
+          - card_content.with_header "Nom de domaine"
           - card_content.with_form(model: @organization, scope: :organization, url: organization_settings_path, id: "domain-settings-form") do |form|
             p
               ' Vous pouvez contraindre vos utilisateurs à utiliser seulement des adresses email correspondant à un nom de
@@ -131,6 +132,7 @@
           - card_content.with_submit_action "Enregistrer"
 
         - card.with_multipart do |card_content|
+          - card_content.with_header "Authentification en 2 facteurs"
           - card_content.with_form(model: @organization, scope: :organization, url: organization_settings_path, id: "twofa-settings-form") do |form|
             p
               ' L'authentification en 2 facteurs (2FA) est activée pour tous les utilisateurs.
@@ -155,6 +157,7 @@
           - card_content.with_submit_action "Enregistrer"
 
         - card.with_multipart do |card_content|
+          - card_content.with_header "Adresses IP"
           - card_content.with_form(model: @organization, scope: :organization, url: organization_settings_path, id: "ip-ranges-settings-form") do |form|
             p
               | Vous pouvez restreindre l'accès à Passerelle à certaines adresses IP ou plages d'adresses IP.
