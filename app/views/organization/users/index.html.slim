@@ -11,6 +11,5 @@
       = render Views::Users::ListComponent.new(@users, @pagy, namespace: :organization) do |view|
         - view.with_column(:name)
         - view.with_column(:email)
-        - view.with_column(:organization_admin)
-        - view.with_column(:super_admin)
+        - view.with_column(:roles)
         - view.with_column(:offices) if current_organization.is_a?(DDFIP)

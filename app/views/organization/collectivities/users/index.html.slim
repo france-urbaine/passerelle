@@ -10,5 +10,4 @@
       = render Views::Users::ListComponent.new(@users, @pagy, namespace: :organization, parent: @collectivity) do |view|
         - view.with_column(:name)
         - view.with_column(:email)
-        - view.with_column(:organization_admin)
-        - view.with_column(:super_admin)
+        - view.with_column(:roles)

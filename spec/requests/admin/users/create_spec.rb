@@ -229,12 +229,14 @@ RSpec.describe "Admin::UsersController#create" do
       end
     end
 
-    context "when using office_ids" do
+    context "when using office_users_attributes" do
       let(:organization) { create(:ddfip) }
       let(:offices)      { create_list(:office, 2, ddfip: organization) }
 
       let(:attributes) do
-        super().merge(office_ids: offices.map(&:id))
+        super().merge(office_users_attributes: offices.map do |office|
+          { office_id: office.id }
+        end)
       end
 
       it "assigns the offices to the new user" do

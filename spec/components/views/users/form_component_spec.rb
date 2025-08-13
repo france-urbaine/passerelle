@@ -20,10 +20,10 @@ RSpec.describe Views::Users::FormComponent, type: :component do
         expect(form).to have_field("Prénom")
         expect(form).to have_unchecked_field("Administrateur de l'organisation")
         expect(form).to have_unchecked_field("Administrateur de la plateforme Passerelle")
-        expect(form).to have_no_field(name: "user[office_ids][]", type: :hidden)
 
-        expect(form).to have_selector(".form-block", text: "Guichets",       visible: :hidden)
-        expect(form).to have_selector("turbo-frame#user_offices_checkboxes", visible: :hidden)
+        expect(form).to have_selector(".form-block[data-user-form-target='officesFormBlock']", visible: :hidden) do |form_block|
+          expect(form_block).to have_selector("turbo-frame[data-user-form-target='officesCheckboxesFrame']", visible: :hidden)
+        end
       end
     end
 
@@ -77,10 +77,8 @@ RSpec.describe Views::Users::FormComponent, type: :component do
         expect(form).to have_field("Prénom")
         expect(form).to have_unchecked_field("Administrateur de l'organisation")
         expect(form).to have_unchecked_field("Administrateur de la plateforme Passerelle")
-        expect(form).to have_field(name: "user[office_ids][]", type: :hidden)
 
-        expect(form).to have_selector(".form-block", text: "Guichets",          visible: :visible)
-        expect(form).to have_no_selector("turbo-frame#user_offices_checkboxes", visible: :all)
+        expect(form).to have_selector(".text-disabled", text: "Aucun guichet disponible pour cette DDFIP")
       end
     end
 
@@ -96,10 +94,10 @@ RSpec.describe Views::Users::FormComponent, type: :component do
         expect(form).to have_field("Prénom",       with: user.first_name)
         expect(form).to have_unchecked_field("Administrateur de l'organisation")
         expect(form).to have_unchecked_field("Administrateur de la plateforme Passerelle")
-        expect(form).to have_no_field(name: "user[office_ids][]", type: :hidden)
 
-        expect(form).to have_selector(".form-block", text: "Guichets",       visible: :hidden)
-        expect(form).to have_selector("turbo-frame#user_offices_checkboxes", visible: :hidden)
+        expect(form).to have_selector(".form-block[data-user-form-target='officesFormBlock']", visible: :hidden) do |form_block|
+          expect(form_block).to have_selector("turbo-frame[data-user-form-target='officesCheckboxesFrame']", visible: :hidden)
+        end
       end
     end
 
@@ -115,10 +113,10 @@ RSpec.describe Views::Users::FormComponent, type: :component do
         expect(form).to have_field("Prénom",       with: user.first_name)
         expect(form).to have_unchecked_field("Administrateur de l'organisation")
         expect(form).to have_unchecked_field("Administrateur de la plateforme Passerelle")
-        expect(form).to have_no_field(name: "user[office_ids][]", type: :hidden)
 
-        expect(form).to have_selector(".form-block", text: "Guichets",       visible: :visible)
-        expect(form).to have_selector("turbo-frame#user_offices_checkboxes", visible: :visible)
+        expect(form).to have_selector(".form-block[data-user-form-target='officesFormBlock']", visible: :visible) do |form_block|
+          expect(form_block).to have_selector("turbo-frame[data-user-form-target='officesCheckboxesFrame']", visible: :visible)
+        end
       end
     end
 
@@ -362,15 +360,13 @@ RSpec.describe Views::Users::FormComponent, type: :component do
         expect(form).to have_field("Prénom")
         expect(form).to have_field("Administrateur de l'organisation")
         expect(form).to have_no_field("Administrateur de la plateforme Passerelle")
-        expect(form).to have_field(name: "user[office_ids][]", type: :hidden)
 
-        expect(form).to have_selector(".form-block", text: "Guichets",          visible: :visible)
-        expect(form).to have_no_selector("turbo-frame#user_offices_checkboxes", visible: :all)
+        expect(form).to have_selector(".form-block", text: "Guichets", visible: :visible)
       end
     end
 
     it "renders a form in a modal to update an existing user" do
-      user = build_stubbed(:user, organization: ddfip, offices: offices[2..])
+      user = create(:user, organization: ddfip, offices: offices[2..])
       render_inline described_class.new(user, namespace: :organization)
 
       expect(page).to have_selector(".modal form") do |form|
@@ -383,10 +379,10 @@ RSpec.describe Views::Users::FormComponent, type: :component do
         expect(form).to have_no_field("Administrateur de la plateforme Passerelle")
 
         expect(form).to have_selector("label", text: "Guichets")
-        expect(form).to have_field("user[office_ids][]", count: 3)
         expect(form).to have_unchecked_field(offices[0].name)
         expect(form).to have_unchecked_field(offices[1].name)
         expect(form).to have_checked_field(offices[2].name)
+        expect(form).to have_unchecked_field("Superviseur")
       end
     end
 
@@ -412,6 +408,51 @@ RSpec.describe Views::Users::FormComponent, type: :component do
       expect(page).to have_selector(".modal form") do |form|
         expect(form).to have_field("Administrateur de l'organisation")
         expect(form).to have_no_field("Administrateur de la plateforme Passerelle")
+      end
+    end
+  end
+
+  context "with organization scope and logged in as a DDFIP supervisor" do
+    before { sign_in_as(:supervisor) }
+
+    it "renders a form in a modal to create a new user" do
+      render_inline described_class.new(User.new, namespace: :organization)
+
+      expect(page).to have_selector(".modal form") do |form|
+        expect(form).to have_html_attribute("action").with_value("/organisation/utilisateurs")
+
+        expect(form).to have_no_field("Organisation")
+        expect(form).to have_field("Nom")
+        expect(form).to have_field("Prénom")
+
+        expect(form).to have_selector("label", text: "Guichets")
+        expect(form).to have_unchecked_field(current_user.offices[0].name)
+
+        expect(form).to have_no_field("Administrateur de l'organisation")
+        expect(form).to have_no_field("Administrateur de la plateforme Passerelle")
+
+        expect(form).to have_selector(".form-block", text: "Guichets", visible: :visible)
+      end
+    end
+
+    it "renders a form in a modal to update an existing user" do
+      user = create(:user, organization: current_user.organization, offices: [current_user.offices[0]])
+      render_inline described_class.new(user, namespace: :organization)
+
+      expect(page).to have_selector(".modal form") do |form|
+        expect(form).to have_html_attribute("action").with_value("/organisation/utilisateurs/#{user.id}")
+
+        expect(form).to have_no_field("Organisation")
+
+        expect(form).to have_field("Nom",          with: user.last_name,  disabled: true)
+        expect(form).to have_field("Prénom",       with: user.first_name, disabled: true)
+
+        expect(form).to have_no_field("Administrateur de l'organisation")
+        expect(form).to have_no_field("Administrateur de la plateforme Passerelle")
+
+        expect(form).to have_selector("label", text: "Guichets")
+        expect(form).to have_checked_field(current_user.offices[0].name)
+        expect(form).to have_unchecked_field("Superviseur")
       end
     end
   end

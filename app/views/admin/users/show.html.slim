@@ -20,6 +20,8 @@
           = authorized_link_to @user.organization, namespace: :admin
 
         - if @user.organization.is_a?(DDFIP)
+          - list.with_attribute("Guichets supervisés") do |attribute|
+            = render Views::Users::ShowSupervisedOfficesListComponent.new(@user, namespace: :admin)
           - list.with_attribute("Guichets") do |attribute|
             = render Views::Users::ShowOfficesListComponent.new(@user, namespace: :admin)
 

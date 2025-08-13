@@ -32,6 +32,7 @@ RSpec.describe "Organization::UsersController#destroy_all" do
 
     it_behaves_like "it denies access to super admin"
     it_behaves_like "it denies access to DDFIP user"
+    it_behaves_like "it denies access to DDFIP supervisor"
     it_behaves_like "it denies access to publisher user"
     it_behaves_like "it denies access to collectivity user"
 

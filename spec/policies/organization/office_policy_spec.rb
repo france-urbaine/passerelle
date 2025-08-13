@@ -10,6 +10,7 @@ RSpec.describe Organization::OfficePolicy, type: :policy do
       it_behaves_like("when current user is a DDFIP super admin")        { failed }
       it_behaves_like("when current user is a DDFIP admin")              { succeed }
       it_behaves_like("when current user is a DDFIP user")               { failed }
+      it_behaves_like("when current user is a DDFIP supervisor")         { failed }
       it_behaves_like("when current user is a publisher super admin")    { failed }
       it_behaves_like("when current user is a publisher admin")          { failed }
       it_behaves_like("when current user is a publisher user")           { failed }
@@ -24,6 +25,7 @@ RSpec.describe Organization::OfficePolicy, type: :policy do
       it_behaves_like("when current user is a DDFIP super admin")        { failed }
       it_behaves_like("when current user is a DDFIP admin")              { failed }
       it_behaves_like("when current user is a DDFIP user")               { failed }
+      it_behaves_like("when current user is a DDFIP supervisor")         { failed }
       it_behaves_like("when current user is a publisher super admin")    { failed }
       it_behaves_like("when current user is a publisher admin")          { failed }
       it_behaves_like("when current user is a publisher user")           { failed }
@@ -37,6 +39,7 @@ RSpec.describe Organization::OfficePolicy, type: :policy do
 
       it_behaves_like("when current user is a DDFIP super admin") { failed }
       it_behaves_like("when current user is a DDFIP admin")       { succeed }
+      it_behaves_like("when current user is a DDFIP supervisor")  { failed }
       it_behaves_like("when current user is a DDFIP user")        { failed }
     end
 
@@ -45,12 +48,74 @@ RSpec.describe Organization::OfficePolicy, type: :policy do
 
       it_behaves_like("when current user is a DDFIP super admin") { failed }
       it_behaves_like("when current user is a DDFIP admin")       { succeed }
+      it_behaves_like("when current user is a DDFIP supervisor")  { failed }
       it_behaves_like("when current user is a DDFIP user")        { failed }
     end
   end
 
-  it { expect(:index?).to         be_an_alias_of(policy, :manage?) }
-  it { expect(:show?).to          be_an_alias_of(policy, :manage?) }
+  describe_rule :read? do
+    context "without record" do
+      let(:record) { Office }
+
+      it_behaves_like("when current user is a DDFIP super admin")        { failed }
+      it_behaves_like("when current user is a DDFIP admin")              { succeed }
+      it_behaves_like("when current user is a DDFIP user")               { failed }
+      it_behaves_like("when current user is a DDFIP supervisor")         { succeed }
+      it_behaves_like("when current user is a publisher super admin")    { failed }
+      it_behaves_like("when current user is a publisher admin")          { failed }
+      it_behaves_like("when current user is a publisher user")           { failed }
+      it_behaves_like("when current user is a collectivity super admin") { failed }
+      it_behaves_like("when current user is a collectivity admin")       { failed }
+      it_behaves_like("when current user is a collectivity user")        { failed }
+    end
+
+    context "with record" do
+      let(:record) { build_stubbed(:office) }
+
+      it_behaves_like("when current user is a DDFIP super admin")        { failed }
+      it_behaves_like("when current user is a DDFIP admin")              { failed }
+      it_behaves_like("when current user is a DDFIP user")               { failed }
+      it_behaves_like("when current user is a DDFIP supervisor")         { failed }
+      it_behaves_like("when current user is a publisher super admin")    { failed }
+      it_behaves_like("when current user is a publisher admin")          { failed }
+      it_behaves_like("when current user is a publisher user")           { failed }
+      it_behaves_like("when current user is a collectivity super admin") { failed }
+      it_behaves_like("when current user is a collectivity admin")       { failed }
+      it_behaves_like("when current user is a collectivity user")        { failed }
+    end
+
+    context "when record is owned by the current DDFIP" do
+      let(:record) { build_stubbed(:office, ddfip: current_organization) }
+
+      it_behaves_like("when current user is a DDFIP super admin") { failed }
+      it_behaves_like("when current user is a DDFIP admin")       { succeed }
+      it_behaves_like("when current user is a DDFIP supervisor")  { failed }
+      it_behaves_like("when current user is a DDFIP user")        { failed }
+    end
+
+    context "when current user is member of the record" do
+      let(:record) { build_stubbed(:office, ddfip: current_organization, users: [current_user]) }
+
+      it_behaves_like("when current user is a DDFIP super admin") { failed }
+      it_behaves_like("when current user is a DDFIP admin")       { succeed }
+      it_behaves_like("when current user is a DDFIP supervisor")  { failed }
+      it_behaves_like("when current user is a DDFIP user")        { failed }
+    end
+
+    context "when current user is a supervisor of the record", stub_factories: false do
+      let(:record) do
+        current_user.offices[0] || build_stubbed(:office, ddfip: current_organization, users: [current_user])
+      end
+
+      it_behaves_like("when current user is a DDFIP super admin") { failed }
+      it_behaves_like("when current user is a DDFIP admin")       { succeed }
+      it_behaves_like("when current user is a DDFIP supervisor")  { succeed }
+      it_behaves_like("when current user is a DDFIP user")        { failed }
+    end
+  end
+
+  it { expect(:index?).to         be_an_alias_of(policy, :read?) }
+  it { expect(:show?).to          be_an_alias_of(policy, :read?) }
   it { expect(:new?).to           be_an_alias_of(policy, :manage?) }
   it { expect(:create?).to        be_an_alias_of(policy, :manage?) }
   it { expect(:edit?).to          be_an_alias_of(policy, :manage?) }
@@ -66,6 +131,19 @@ RSpec.describe Organization::OfficePolicy, type: :policy do
     subject(:scope) { apply_relation_scope(Office.all) }
 
     it_behaves_like "when current user is a DDFIP admin" do
+      it "scopes all kept offices" do
+        expect {
+          scope.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "offices".*
+          FROM   "offices"
+          WHERE  "offices"."discarded_at" IS NULL
+            AND  "offices"."ddfip_id" = '#{current_organization.id}'
+        SQL
+      end
+    end
+
+    it_behaves_like "when current user is a DDFIP supervisor" do
       it "scopes all kept offices" do
         expect {
           scope.load
@@ -106,6 +184,7 @@ RSpec.describe Organization::OfficePolicy, type: :policy do
 
     it_behaves_like("when current user is a DDFIP super admin")        { it { is_expected.to be_a_null_relation } }
     it_behaves_like("when current user is a DDFIP user")               { it { is_expected.to be_a_null_relation } }
+    it_behaves_like("when current user is a DDFIP supervisor")         { it { is_expected.to be_a_null_relation } }
     it_behaves_like("when current user is a publisher super admin")    { it { is_expected.to be_a_null_relation } }
     it_behaves_like("when current user is a publisher admin")          { it { is_expected.to be_a_null_relation } }
     it_behaves_like("when current user is a publisher user")           { it { is_expected.to be_a_null_relation } }
@@ -132,6 +211,7 @@ RSpec.describe Organization::OfficePolicy, type: :policy do
 
     it_behaves_like("when current user is a DDFIP super admin")        { it { is_expected.to be_a_null_relation } }
     it_behaves_like("when current user is a DDFIP user")               { it { is_expected.to be_a_null_relation } }
+    it_behaves_like("when current user is a DDFIP supervisor")         { it { is_expected.to be_a_null_relation } }
     it_behaves_like("when current user is a publisher super admin")    { it { is_expected.to be_a_null_relation } }
     it_behaves_like("when current user is a publisher admin")          { it { is_expected.to be_a_null_relation } }
     it_behaves_like("when current user is a publisher user")           { it { is_expected.to be_a_null_relation } }
@@ -168,6 +248,7 @@ RSpec.describe Organization::OfficePolicy, type: :policy do
 
     it_behaves_like("when current user is a DDFIP super admin")        { it { is_expected.to be_nil } }
     it_behaves_like("when current user is a DDFIP user")               { it { is_expected.to be_nil } }
+    it_behaves_like("when current user is a DDFIP supervisor")         { it { is_expected.to be_nil } }
     it_behaves_like("when current user is a publisher super admin")    { it { is_expected.to be_nil } }
     it_behaves_like("when current user is a publisher admin")          { it { is_expected.to be_nil } }
     it_behaves_like("when current user is a publisher user")           { it { is_expected.to be_nil } }

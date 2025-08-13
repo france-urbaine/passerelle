@@ -83,6 +83,14 @@ module Organization
 
         authorize! @office, to: :show?
         only_kept! @office
+
+        # A first `authorize!` has been perfomed without office in context
+        # to first know if the current user may access to this controller.
+        #
+        # This second `authorize!` should be performed with the office in context.
+        #
+        authorization_context[:office] = @office
+        authorize!
       end
 
       def better_view_on_office

@@ -172,6 +172,9 @@ fr:
         ddfip_id:         ID de la DDFIP
         ddfip_name:       Nom de la DDFIP
 
+      office_user:
+        supervisor: Superviseur
+
       collectivity:
         territory:                    Territoire de la collectivité
         territory_type:               Type de territoire
@@ -387,6 +390,8 @@ fr:
           not_locked:                  Votre compte n'est plus verrouillé
 
           attributes:
+            office_users:
+                blank:     Au moins un guichet est requis
             organization:
                 required:  Une organisation est requise
 

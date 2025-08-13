@@ -14,6 +14,10 @@ RSpec.describe Office do
     it { is_expected.to have_many(:users).through(:office_users) }
     it { is_expected.to have_many(:communes).through(:office_communes) }
 
+    it { is_expected.to have_many(:supervisor_office_users) }
+
+    it { is_expected.to have_many(:supervisors).through(:supervisor_office_users) }
+
     it { is_expected.to have_one(:departement).through(:ddfip) }
     it { is_expected.to have_many(:departement_communes).through(:departement) }
   end

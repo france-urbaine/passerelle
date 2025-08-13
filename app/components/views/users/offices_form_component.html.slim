@@ -1,0 +1,32 @@
+- if allowed_to_assign_organization?
+  .form-block( *offices_block_html_attributes )
+    = helpers.turbo_frame_tag :user_offices_checkboxes, **offices_frame_html_attributes
+- else
+  .form-block
+    label Guichets
+    - if offices.empty?
+      .text-disabled
+        | Aucun guichet disponible pour cette DDFIP
+
+    - else
+      = fields_for @user do |form|
+        .choices-collection
+          = form.fields_for :office_users, office_users, include_id: false do |fields|
+            - checked = fields.object.office_id.in?(checked_offices)
+            - disabled = !fields.object.office_id.in?(enabled_offices)
+
+            = fields.hidden_field :id
+            = fields.hidden_field :office_id
+
+            div( data-controller="switch" )
+              .choices-collection__input
+                = fields.check_box :_destroy, { value: !checked, checked:, disabled:, data: { action: "switch#toggle" } }, "false", "true"
+                = fields.label :_destroy, fields.object.office.name
+              fieldset.pl-7( data-switch-target="show" data-switch-value="false" hidden=!checked )
+                  = fields.check_box :supervisor, disabled:
+                  = fields.label :supervisor
+                  span.text-disabled
+                   |  (gère les utilisateurs au sein du guichet)
+
+          - @user&.errors&.messages_for(:office_users)&.each do |message|
+            .form-block__errors= message
