@@ -35,7 +35,7 @@ RSpec.describe "Organization::UsersController#create" do
     it_behaves_like "it allows access to publisher admin"
     it_behaves_like "it allows access to collectivity admin"
 
-    it_behaves_like "it responds with unprocessable entity to DDFIP supervisor"
+    it_behaves_like "it responds with unprocessable content to DDFIP supervisor"
   end
 
   describe "responses as an organization admin" do

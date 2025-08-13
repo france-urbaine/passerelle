@@ -54,7 +54,7 @@ RSpec.describe "Organization::Offices::UsersController#create" do
       let(:ddfip) { current_user.organization }
       let(:office) { current_user.offices.first }
 
-      it_behaves_like "it responds with unprocessable entity to DDFIP supervisor"
+      it_behaves_like "it responds with unprocessable content to DDFIP supervisor"
     end
   end
 
