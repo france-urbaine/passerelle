@@ -80,7 +80,7 @@ class ApplicationPolicy < ActionPolicy::Base
     return [] unless user? && ddfip?
 
     if user.office_users.loaded?
-      user.office_users.filter_map { _1.office_id if _1.supervisor? }
+      user.office_users.filter_map { it.office_id if it.supervisor? }
     else
       user.office_users.where(supervisor: true).pluck(:office_id)
     end
