@@ -29,6 +29,14 @@ RSpec.describe DDFIP do
     it { is_expected.not_to allow_value("123").for(:code_departement) }
     it { is_expected.not_to allow_value("3C").for(:code_departement) }
 
+    it { is_expected.to     allow_value("").for(:ip_ranges) }
+    it { is_expected.to     allow_value([]).for(:ip_ranges) }
+    it { is_expected.to     allow_value(["127.0.0.0/24"]).for(:ip_ranges) }
+    it { is_expected.to     allow_value(["3ffe:505:2::1"]).for(:ip_ranges) }
+    it { is_expected.to     allow_value(["127.0.0.1", "192.168.2.0/24"]).for(:ip_ranges) }
+    it { is_expected.not_to allow_value(["this_is_not_an_ip_address"]).for(:ip_ranges) }
+    it { is_expected.not_to allow_value(["256.256.256.256"]).for(:ip_ranges) }
+
     it "validates uniqueness of :name" do
       create(:ddfip)
       is_expected.to validate_uniqueness_of(:name).ignoring_case_sensitivity

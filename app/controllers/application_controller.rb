@@ -11,6 +11,7 @@ class ApplicationController < ActionController::Base
   include ControllerStatuses
   include ControllerVariants
   include ControllerAudits
+  include ControllerVerifyIp
 
   prepend_before_action do
     Rails.logger.debug { "  Turbo-frame: #{turbo_frame_request_id.inspect}" } if turbo_frame_request?
@@ -20,8 +21,10 @@ class ApplicationController < ActionController::Base
   before_action :accept_request_variant
   before_action :authenticate_user!
   before_action :verify_requested_format!
+  before_action :verify_ip,         if: -> { signed_in? && !devise_controller? }
   after_action  :verify_authorized, if: -> { signed_in? && !devise_controller? }
 
+  rescue_from "ControllerVerifyIp::UnauthorizedIp",  with: :forbidden
   rescue_from "ActionPolicy::Unauthorized",          with: :forbidden
   rescue_from "ActiveRecord::RecordNotFound",        with: :not_found
   rescue_from "ControllerDiscard::RecordDiscarded",  with: :gone

@@ -21,6 +21,7 @@
 #  reports_rejected_count    :integer          default(0), not null
 #  reports_approved_count    :integer          default(0), not null
 #  reports_canceled_count    :integer          default(0), not null
+#  ip_ranges                 :text             default([]), not null, is an Array
 #
 # Indexes
 #
@@ -45,8 +46,20 @@ class DGFIP < ApplicationRecord
 
   validate :validate_one_singleton_record, on: :create
 
+  normalizes :ip_ranges, with: ->(ip_ranges) { ip_ranges.reject(&:empty?).uniq }
+  validate :ip_ranges_format
+
   def validate_one_singleton_record
     errors.add :base, :exist if DGFIP.with_discarded.exists?
+  end
+
+  def ip_ranges_format
+    ip_ranges&.each do |ip_range|
+      IPAddr.new(ip_range)
+    rescue IPAddr::InvalidAddressError
+      errors.add(:ip_ranges, :invalid_ip, ip: ip_range)
+      return false
+    end
   end
 
   # Scopes
