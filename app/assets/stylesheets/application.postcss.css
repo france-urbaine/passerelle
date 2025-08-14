@@ -35,6 +35,7 @@
 @import "../../components/ui/description_list";
 @import "../../components/ui/modal";
 @import "../../components/ui/table";
+@import "../../components/ui/timeline";
 
 /* UI components - may depends on top components */
 @import "../../components/ui/badge";
