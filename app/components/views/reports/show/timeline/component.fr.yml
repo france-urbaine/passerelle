@@ -1,0 +1,68 @@
+fr:
+  collectivity:
+    ready:
+      title:        "Formulaire complété"
+      text:         "Le formulaire de signalement a été complété"
+      status:       "done"
+      draft:
+        title:      "Complétion du formulaire"
+        status:     "current"
+        text:       "En attente de la complétion du formulaire"
+
+    transmitted:
+      title:        "Signalement transmis"
+      text:         "Le signalement a été transmis à la DDFIP"
+      status:       "done"
+      draft:
+        title:      "Transmission du signalement"
+        status:     "pending"
+        text:       "Le signalement pourra être transmis à la DDFIP une fois le formulaire complété"
+      ready:
+        title:      "Transmission du signalement"
+        status:     "current"
+        text:       "Le signalement est prêt à être transmis à la DDFIP"
+      in_active_transmission:
+        title:      "Transmission du signalement"
+        status:     "current"
+        text:       "La transmission du signalement est en attente"
+
+    accepted:
+      title:        "Acceptation du signalement"
+      text:         "La DDFIP pourra accepter ou refuser de traiter le signalement lorsqu'il sera transmis"
+      status:       "pending"
+      transmitted:  &current
+        status:     "current"
+        text:       "La DDFIP a reçu le signalement et va le traiter prochainement"
+      acknowledged: *current
+      accepted:     &done
+        title:      "Signalement accepté"
+        status:     "done"
+        text:       "La DDFIP a reçu le signalement et accepté son traitement"
+      assigned:     *done
+      applicable:   *done
+      inapplicable: *done
+      approved:     *done
+      canceled:     *done
+      rejected:
+        status:     "failed"
+        title:      "Signalement rejeté"
+        text:       "La DDFIP a rejeté le traitement du signalement"
+
+    approved:
+      title:        "Réponse de la DDFIP"
+      text:         "La DDFIP n'a pas encore répondu à propos de ce signalement"
+      status:       "pending"
+      accepted:     &current
+        status:     "current"
+      assigned:     *current
+      applicable:   *current
+      inapplicable: *current
+      rejected:
+        status:     "failed"
+        text:       "La DDFIP a rejeté le traitement du signalement"
+      approved:
+        status:     "done"
+        text:       "La DDFIP a donné une réponse positive à ce signalement"
+      canceled:
+        status:     "failed"
+        text:       "La DDFIP a donné une réponse négative à ce signalement"
