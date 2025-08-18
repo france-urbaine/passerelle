@@ -1,0 +1,13 @@
+- if viewer_type == :collectivity
+  = timeline_component(class: "timeline--horizontal") do |timeline|
+    = timeline.with_step step_title("collectivity", "ready"), status: step_status("collectivity", "ready"), date: @report.completed_at do
+      = step_text("collectivity", "ready")
+
+    = timeline.with_step step_title("collectivity", "transmitted"), status: step_status("collectivity", "transmitted"), date: @report.transmitted_at do
+      = step_text("collectivity", "transmitted")
+
+    = timeline.with_step step_title("collectivity", "accepted"), status: step_status("collectivity", "accepted"), date: @report.accepted_at || @report.returned_at do
+      = step_text("collectivity", "accepted")
+
+    = timeline.with_step step_title("collectivity", "approved"), status: step_status("collectivity", "approved"), date: @report.returned_at do
+      = step_text("collectivity", "approved")
