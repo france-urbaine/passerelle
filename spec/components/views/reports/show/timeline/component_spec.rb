@@ -318,4 +318,92 @@ RSpec.describe Views::Reports::Show::Timeline::Component, type: :component do
       end
     end
   end
+
+  context "when current user is a ddfip user" do
+    before { sign_in_as(:ddfip) }
+
+    context "when report is assigned" do
+      let(:report) { create(:report, :assigned, :made_for_office) }
+
+      it do
+        render_inline described_class.new(report)
+        expect(page).to have_selector(".timeline-step--done .timeline-step__title", text: "Reception du signalement")
+        expect(page).to have_selector(".timeline-step__description", text: "Le signalement a été assigné au guichet #{report.office.name}")
+
+        expect(page).to have_selector(".timeline-step--current .timeline-step__title", text: "Résolution du signalement")
+        expect(page).to have_selector(".timeline-step__description", text: "Le signalement est prêt à être traité")
+
+        expect(page).to have_selector(".timeline-step--pending .timeline-step__title", text: "Réponse à la collectivité")
+        expect(page).to have_selector(".timeline-step__description", text: "La collectivité n'a pas reçu de retour concernant ce signalement")
+      end
+    end
+
+    context "when report is applicable" do
+      let(:report) { create(:report, :applicable, :made_for_office) }
+
+      it do
+        render_inline described_class.new(report)
+        expect(page).to have_selector(".timeline-step--done .timeline-step__title", text: "Reception du signalement")
+        expect(page).to have_selector(".timeline-step__description", text: "Le signalement a été assigné au guichet #{report.office.name}")
+
+        expect(page).to have_selector(".timeline-step--done .timeline-step__title", text: "Traitement validé")
+        motif = I18n.t("enum.resolution_motif.#{report.form_type}.applicable.#{report.resolution_motif}")
+        expect(page).to have_selector(".timeline-step__description", text: "Le signalement a été accepté par le guichet avec le motif « #{motif} »")
+
+        expect(page).to have_selector(".timeline-step--current .timeline-step__title", text: "Réponse à la collectivité")
+        expect(page).to have_selector(".timeline-step__description", text: "La réponse du guichet sera transmise à la collectivité une fois confirmée par le référent fiabilisation")
+      end
+    end
+
+    context "when report is inapplicable" do
+      let(:report) { create(:report, :inapplicable, :made_for_office) }
+
+      it do
+        render_inline described_class.new(report)
+        expect(page).to have_selector(".timeline-step--done .timeline-step__title", text: "Reception du signalement")
+        expect(page).to have_selector(".timeline-step__description", text: "Le signalement a été assigné au guichet #{report.office.name}")
+
+        expect(page).to have_selector(".timeline-step--failed .timeline-step__title", text: "Traitement annulé")
+        motif = I18n.t("enum.resolution_motif.#{report.form_type}.inapplicable.#{report.resolution_motif}")
+        expect(page).to have_selector(".timeline-step__description", text: "Le guichet a refusé le signalement pour le motif « #{motif} »")
+
+        expect(page).to have_selector(".timeline-step--current .timeline-step__title", text: "Réponse à la collectivité")
+        expect(page).to have_selector(".timeline-step__description", text: "La réponse du guichet sera transmise à la collectivité une fois confirmée par le référent fiabilisation")
+      end
+    end
+
+    context "when report is approved" do
+      let(:report) { create(:report, :approved, :made_for_office) }
+
+      it do
+        render_inline described_class.new(report)
+        expect(page).to have_selector(".timeline-step--done .timeline-step__title", text: "Reception du signalement")
+        expect(page).to have_selector(".timeline-step__description", text: "Le signalement a été assigné au guichet #{report.office.name}")
+
+        expect(page).to have_selector(".timeline-step--done .timeline-step__title", text: "Traitement validé")
+        motif = I18n.t("enum.resolution_motif.#{report.form_type}.applicable.#{report.resolution_motif}")
+        expect(page).to have_selector(".timeline-step__description", text: "Le signalement a été accepté par le guichet avec le motif « #{motif} »")
+
+        expect(page).to have_selector(".timeline-step--done .timeline-step__title", text: "Réponse à la collectivité")
+        expect(page).to have_selector(".timeline-step__description", text: "La collectivité a reçu un retour positif")
+      end
+    end
+
+    context "when report is canceled" do
+      let(:report) { create(:report, :canceled, :made_for_office) }
+
+      it do
+        render_inline described_class.new(report)
+        expect(page).to have_selector(".timeline-step--done .timeline-step__title", text: "Reception du signalement")
+        expect(page).to have_selector(".timeline-step__description", text: "Le signalement a été assigné au guichet #{report.office.name}")
+
+        expect(page).to have_selector(".timeline-step--failed .timeline-step__title", text: "Traitement annulé")
+        motif = I18n.t("enum.resolution_motif.#{report.form_type}.inapplicable.#{report.resolution_motif}")
+        expect(page).to have_selector(".timeline-step__description", text: "Le guichet a refusé le signalement pour le motif « #{motif} »")
+
+        expect(page).to have_selector(".timeline-step--done .timeline-step__title", text: "Réponse à la collectivité")
+        expect(page).to have_selector(".timeline-step__description", text: "La collectivité a reçu un retour négatif")
+      end
+    end
+  end
 end

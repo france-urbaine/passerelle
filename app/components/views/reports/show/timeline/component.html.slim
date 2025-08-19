@@ -12,7 +12,7 @@
     = timeline.with_step step_title("collectivity", "approved"), status: step_status("collectivity", "approved"), date: @report.returned_at do
       = step_text("collectivity", "approved")
 
-- if viewer_type == :ddfip_admin
+- elsif viewer_type == :ddfip_admin
   = timeline_component(class: "timeline--horizontal") do |timeline|
     = timeline.with_step step_title("ddfip_admin", "accepted"), status: step_status("ddfip_admin", "accepted"), date: @report.accepted_at || @report.returned_at do
       = step_text("ddfip_admin", "accepted")
@@ -26,3 +26,13 @@
     = timeline.with_step step_title("ddfip_admin", "approved"), status: step_status("ddfip_admin", "approved"), date: @report.returned_at do
       = step_text("ddfip_admin", "approved")
 
+- elsif viewer_type == :ddfip_user
+  = timeline_component(class: "timeline--horizontal") do |timeline|
+    = timeline.with_step step_title("ddfip_user", "assigned"), status: step_status("ddfip_user", "assigned"), date: @report.assigned_at do
+      = step_text("ddfip_user", "assigned", office: @report.office&.name)
+
+    = timeline.with_step step_title("ddfip_user", "applicable"), status: step_status("ddfip_user", "applicable"), date: @report.resolved_at do
+      = step_text("ddfip_user", "applicable", motif: translate_enum(@report.resolution_motif, scope: "enum.resolution_motif"))
+
+    = timeline.with_step step_title("ddfip_user", "approved"), status: step_status("ddfip_user", "approved"), date: @report.returned_at do
+      = step_text("ddfip_user", "approved")

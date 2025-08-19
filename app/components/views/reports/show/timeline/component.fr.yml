@@ -140,3 +140,38 @@ fr:
       canceled:
         status:     "done"
         text:       "La collectivité a reçu un retour négatif"
+
+  ddfip_user:
+    assigned:
+      title:        "Reception du signalement"
+      text:         "Le signalement a été assigné au guichet %{office}"
+      status:       "done"
+
+    applicable:
+      title:        "Traitement validé"
+      text:         "Le signalement a été accepté par le guichet avec le motif « %{motif} »"
+      status:       "done"
+      assigned:     &current
+        title:      "Résolution du signalement"
+        status:     "current"
+        text:       "Le signalement est prêt à être traité"
+      inapplicable: &failed
+        status:     "failed"
+        title:      "Traitement annulé"
+        text:       "Le guichet a refusé le signalement pour le motif « %{motif} »"
+      canceled:     *failed
+
+    approved:
+      title:        "Réponse à la collectivité"
+      text:         "La collectivité a reçu un retour positif"
+      status:       "done"
+      assigned:
+        status:     "pending"
+        text:       "La collectivité n'a pas reçu de retour concernant ce signalement"
+      applicable:   &current
+        status:     "current"
+        text:       "La réponse du guichet sera transmise à la collectivité une fois confirmée par le référent fiabilisation"
+      inapplicable: *current
+      canceled:
+        status:     "done"
+        text:       "La collectivité a reçu un retour négatif"
