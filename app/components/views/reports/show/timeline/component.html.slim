@@ -11,3 +11,18 @@
 
     = timeline.with_step step_title("collectivity", "approved"), status: step_status("collectivity", "approved"), date: @report.returned_at do
       = step_text("collectivity", "approved")
+
+- if viewer_type == :ddfip_admin
+  = timeline_component(class: "timeline--horizontal") do |timeline|
+    = timeline.with_step step_title("ddfip_admin", "accepted"), status: step_status("ddfip_admin", "accepted"), date: @report.accepted_at || @report.returned_at do
+      = step_text("ddfip_admin", "accepted")
+
+    = timeline.with_step step_title("ddfip_admin", "assigned"), status: step_status("ddfip_admin", "assigned"), date: @report.assigned_at do
+      = step_text("ddfip_admin", "assigned", office: @report.office&.name)
+
+    = timeline.with_step step_title("ddfip_admin", "applicable"), status: step_status("ddfip_admin", "applicable"), date: @report.resolved_at do
+      = step_text("ddfip_admin", "applicable", motif: translate_enum(@report.resolution_motif, scope: "enum.resolution_motif"))
+
+    = timeline.with_step step_title("ddfip_admin", "approved"), status: step_status("ddfip_admin", "approved"), date: @report.returned_at do
+      = step_text("ddfip_admin", "approved")
+

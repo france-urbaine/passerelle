@@ -66,3 +66,77 @@ fr:
       canceled:
         status:     "failed"
         text:       "La DDFIP a donné une réponse négative à ce signalement"
+
+  ddfip_admin:
+    accepted:
+      title:        "Acceptation du signalement"
+      text:         "Le signalement a été accepté"
+      status:       "done"
+      transmitted:  &current
+        status:     "current"
+        text:       "Le signalement n'a pas encore été accepté ou rejeté"
+      acknowledged: *current
+      rejected:
+        status:     "failed"
+        title:      "Rejet du signalement"
+        text:       "Le signalement a été rejeté. Des observations ont pu être transmises à la collectivité"
+
+    assigned:
+      title:        "Assignation à un guichet"
+      text:         "Le signalement a été assigné au guichet %{office}"
+      status:       "done"
+      transmitted:  &pending
+        status:     "pending"
+        text:       "Le signalement pourra être assigné à un guichet s'il est accepté"
+      acknowledged: *pending
+      accepted:     &current
+        status:     "current"
+        text:       "Le signalement a été accepté et est prêt à être assigné à un guichet"
+      rejected:
+        status:     "failed"
+        text:       "Un signalement rejeté ne peut être assigné à un guichet"
+
+    applicable:
+      title:        "Signalement validé par le guichet"
+      text:         "Le signalement a été accepté par le guichet avec le motif « %{motif} »"
+      status:       "done"
+      transmitted:  &pending
+        title:      "Résolution du signalement"
+        status:     "pending"
+        text:       "Le signalement pourra être accepté lorsqu'il sera traité par le guichet"
+      acknowledged: *pending
+      accepted:     *pending
+      rejected:
+        title:      "Résolution du signalement"
+        status:     "failed"
+        text:       "Aucun guichet n'a pu se prononcer concernant ce signalement"
+      assigned:     &current
+        title:      "Résolution du signalement"
+        status:     "current"
+        text:       "Le guichet n'a pas encore traité ce signalement"
+      inapplicable: &failed
+        status:     "failed"
+        title:      "Signalement rejeté par le guichet"
+        text:       "Le guichet a refusé le signalement pour le motif « %{motif} »"
+      canceled:     *failed
+
+    approved:
+      title:        "Réponse à la collectivité"
+      text:         "La collectivité a reçu un retour positif"
+      status:       "done"
+      transmitted:  &pending
+        status:     "pending"
+        text:       "La collectivité n'a pas reçu de retour concernant ce signalement"
+      acknowledged: *pending
+      accepted:     *pending
+      assigned:     *pending
+      rejected:
+        status:     "failed"
+        text:       "La collectivité a été notifiée du rejet de ce signalement"
+      applicable:   &current
+        status:     "current"
+        text:       "La réponse du guichet sera transmise à la collectivité une fois confirmée par le référent fiabilisation"
+      inapplicable: *current
+      canceled:
+        status:     "done"
+        text:       "La collectivité a reçu un retour négatif"
