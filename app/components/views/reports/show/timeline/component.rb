@@ -18,8 +18,8 @@ module Views
             t(".#{viewer_type}.#{step}.#{report_state}.status", default: t(".#{viewer_type}.#{step}.status"))
           end
 
-          def step_text(viewer_type, step)
-            t(".#{viewer_type}.#{step}.#{report_state}.text", default: t(".#{viewer_type}.#{step}.text"))
+          def step_text(viewer_type, step, options = {})
+            t(".#{viewer_type}.#{step}.#{report_state}.text", default: t(".#{viewer_type}.#{step}.text"), **options)
           end
 
           def viewer_type
@@ -42,6 +42,10 @@ module Views
               else
                 @report.state
               end
+          end
+
+          def translate_enum(value, **)
+            I18n.t(value, **, default: "") if value.present?
           end
         end
       end
