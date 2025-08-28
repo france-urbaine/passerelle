@@ -254,7 +254,7 @@ fr:
 
     errors:
       messages:
-        invalid_ip: "« %{ip} » n'est pas une adresse IP valide"
+        invalid_ip_address: "« %{ip} » n'est pas une adresse IP valide"
 
       models:
         report:
