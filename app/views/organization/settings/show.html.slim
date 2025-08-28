@@ -173,7 +173,7 @@
 
             = form.block :ip_ranges do |block|
               = form.label :ip_ranges
-              = form.array_field_component :ip_ranges, form.object.ip_ranges, class: "font-mono"
+              = form.array_field_component :ip_ranges, form.object.ip_ranges, class: "font-mono", placeholder: "127.0.0.0/24", button_label: "Ajouter une adresse IP"
 
               - block.with_hint do
                 p

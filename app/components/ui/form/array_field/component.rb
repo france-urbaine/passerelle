@@ -14,11 +14,14 @@ module UI
           super()
         end
 
+        def button_label
+          @options[:button_label] || "Ajouter"
+        end
+
         def input_html_attributes
           options = @options.dup
 
           options[:class] = "#{options[:class] || ''} mb-2"
-          options[:data] ||= { action: "change->array-field#removeEmptyInput array-field#addEmptyInput" }
           options
         end
 
