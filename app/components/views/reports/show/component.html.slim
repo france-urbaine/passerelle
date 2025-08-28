@@ -3,15 +3,15 @@
     - layout.with_breadcrumbs do
       = render Views::Reports::Show::Breadcrumbs::Component.new(@report)
 
-    - layout.with_section do
-      = render Views::Reports::Show::Timeline::Component.new(@report)
-
     - if @report.packing?
       - layout.with_section do
         = render InformationPacking.new(@report)
     - else
       - layout.with_section do
         = render InformationTransmitted.new(@report)
+
+    - layout.with_section do
+      = render Views::Reports::Show::Timeline::Component.new(@report)
 
     - if current_organization.is_a?(DDFIP) || current_organization.is_a?(DGFIP)
       - layout.with_grid do |grid|
