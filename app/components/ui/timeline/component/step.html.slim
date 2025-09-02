@@ -1,0 +1,20 @@
+li.timeline-step( *html_attributes )
+  .timeline-step__marker
+    - if icon
+      = icon_component icon, set: :heroicon, variant: :solid
+
+  .timeline-step__content
+    - if date
+      .timeline-step__date
+        - if date.is_a?(String)
+          = date
+        - else
+          = l(date, format: date_format)
+
+    - if title
+      .timeline-step__title
+        = title
+
+    - if content
+      .timeline-step__description
+        = content
