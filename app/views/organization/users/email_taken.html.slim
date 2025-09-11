@@ -1,0 +1,29 @@
+= modal_frame_component(referrer: @referrer_path) do |template|
+  - template.with_modal do |modal|
+    - modal.with_header do
+      | Un utilisateur existe déjà avec cette adresse email
+
+    - if allowed_to?(:edit?, @other_user, namespace: ::Organization)
+      - modal.with_form(url: edit_organization_user_path(@other_user), method: :get) do
+        - modal.with_hidden_field :redirect, @redirect_path
+        p
+          | L'adresse email <b>#{@other_user.email}</b> est déjà prise.
+          br
+          br
+          | Vous pouvez cependant modifier l'utilisateur concerné.
+
+      - modal.with_submit_action "Continuer", autofocus: true
+      - modal.with_action "Annuler", new_organization_user_path(params: { user: @user_params })
+
+    - else
+      - modal.with_form do
+        - modal.with_hidden_field :redirect, @redirect_path
+        p
+          | L'adresse email <b>#{@other_user.email}</b> est déjà prise.
+          br
+          br
+          | Vous n'avez pas les droits suffisants pour modifier l'utilisateur concerné.
+          br
+          | Veuillez utiliser une autre adresse email ou contacter un administrateur.
+
+      - modal.with_action "Annuler", new_organization_user_path(params: { user: @user_params })

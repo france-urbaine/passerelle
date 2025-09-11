@@ -2,7 +2,8 @@
 
 module Organization
   class OfficePolicy < ApplicationPolicy
-    alias_rule :index?, :new?, :create?, to: :manage?
+    alias_rule :new?, :create?, to: :manage?
+    alias_rule :index?, :show?, to: :read?
     alias_rule :remove_all?, :destroy_all?, :undiscard_all?, to: :manage?
 
     def manage?
@@ -13,7 +14,25 @@ module Organization
       end
     end
 
+    def read?
+      if record == Office
+        ddfip_admin? || supervisor?
+      elsif record.is_a?(Office)
+        record.ddfip_id == organization.id && (
+          ddfip_admin? || supervised_office_ids.include?(record.id)
+        )
+      end
+    end
+
     relation_scope do |relation|
+      if ddfip_admin? || supervisor?
+        relation.kept.owned_by(organization)
+      else
+        relation.none
+      end
+    end
+
+    relation_scope :manage do |relation|
       if ddfip_admin?
         relation.kept.owned_by(organization)
       else
@@ -22,11 +41,11 @@ module Organization
     end
 
     relation_scope :destroyable do |relation|
-      authorized(relation, with: self.class)
+      authorized(relation, with: self.class, as: :manage)
     end
 
     relation_scope :undiscardable do |relation|
-      relation = authorized(relation, with: self.class)
+      relation = authorized(relation, with: self.class, as: :manage)
       relation.with_discarded.discarded
     end
 

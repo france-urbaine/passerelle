@@ -43,7 +43,7 @@ RSpec.describe "DDFIP users in admin" do
 
     visit admin_ddfip_path(ddfip64)
 
-    expect(page).to have_text("12 utilisateurs | Page 1 sur 2")
+    expect(page).to have_text("14 utilisateurs | Page 1 sur 2")
     expect(page).to have_no_button("Options d'affichage")
   end
 
@@ -117,7 +117,7 @@ RSpec.describe "DDFIP users in admin" do
       expect(dialog).to have_checked_field("Administrateur de l'organisation")
       expect(dialog).to have_unchecked_field("Administrateur de la plateforme Passerelle")
 
-      within ".form-block", text: "Guichets" do |block|
+      within ".choices-collection" do |block|
         expect(block).to have_checked_field("PELP de Bayonne")
         expect(block).to have_unchecked_field("PELH de Bayonne")
         expect(block).to have_unchecked_field("SIP de Bayonne")
@@ -151,7 +151,7 @@ RSpec.describe "DDFIP users in admin" do
   it "discards an user from the DDFIP page & rollbacks" do
     visit admin_ddfip_path(ddfip64)
 
-    expect(page).to have_text("2 utilisateurs | Page 1 sur 1")
+    expect(page).to have_text("4 utilisateurs | Page 1 sur 1")
 
     # A table of users should be present
     # with a button to remove them
@@ -171,7 +171,7 @@ RSpec.describe "DDFIP users in admin" do
     #
     expect(page).to have_current_path(admin_ddfip_path(ddfip64))
     expect(page).to have_selector("h1", text: "DDFIP des Pyrénées-Atlantiques")
-    expect(page).to have_text("1 utilisateur | Page 1 sur 1")
+    expect(page).to have_text("3 utilisateurs | Page 1 sur 1")
     expect(page).to have_no_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
 
     # The dialog should be closed
@@ -192,7 +192,7 @@ RSpec.describe "DDFIP users in admin" do
     #
     expect(page).to have_current_path(admin_ddfip_path(ddfip64))
     expect(page).to have_selector("h1", text: "DDFIP des Pyrénées-Atlantiques")
-    expect(page).to have_text("2 utilisateurs | Page 1 sur 1")
+    expect(page).to have_text("4 utilisateurs | Page 1 sur 1")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
 
     # The previous notification should be closed
@@ -205,7 +205,7 @@ RSpec.describe "DDFIP users in admin" do
   it "selects and discards one user from the DDFIP page & rollbacks" do
     visit admin_ddfip_path(ddfip64)
 
-    expect(page).to have_text("2 utilisateurs | Page 1 sur 1")
+    expect(page).to have_text("4 utilisateurs | Page 1 sur 1")
 
     # Checkboxes should be present to select users
     #
@@ -232,9 +232,10 @@ RSpec.describe "DDFIP users in admin" do
     #
     expect(page).to have_current_path(admin_ddfip_path(ddfip64))
     expect(page).to have_selector("h1", text: "DDFIP des Pyrénées-Atlantiques")
-    expect(page).to have_text("1 utilisateur | Page 1 sur 1")
+    expect(page).to have_text("3 utilisateurs | Page 1 sur 1")
     expect(page).to have_no_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Astride Fabre")
+    expect(page).to have_selector(:table_row, "Utilisateur" => "Charlotte Poulain")
 
     # The selection message should not appear anymore
     # The dialog should be closed
@@ -255,7 +256,7 @@ RSpec.describe "DDFIP users in admin" do
     #
     expect(page).to have_current_path(admin_ddfip_path(ddfip64))
     expect(page).to have_selector("h1", text: "DDFIP des Pyrénées-Atlantiques")
-    expect(page).to have_text("2 utilisateurs | Page 1 sur 1")
+    expect(page).to have_text("4 utilisateurs | Page 1 sur 1")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
 
     # The selection message should not appear again
@@ -276,7 +277,7 @@ RSpec.describe "DDFIP users in admin" do
 
     visit admin_ddfip_path(ddfip64)
 
-    expect(page).to have_text("12 utilisateurs | Page 1 sur 2")
+    expect(page).to have_text("14 utilisateurs | Page 1 sur 2")
 
     # Checkboxes should be present to select all users
     #
@@ -302,7 +303,7 @@ RSpec.describe "DDFIP users in admin" do
     #
     expect(page).to have_current_path(admin_ddfip_path(ddfip64))
     expect(page).to have_selector("h1", text: "DDFIP des Pyrénées-Atlantiques")
-    expect(page).to have_text("2 utilisateurs | Page 1 sur 1")
+    expect(page).to have_text("4 utilisateurs | Page 1 sur 1")
     expect(page).to have_no_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
     expect(page).to have_no_selector(:table_row, "Utilisateur" => "Astride Fabre")
 
@@ -324,7 +325,7 @@ RSpec.describe "DDFIP users in admin" do
     #
     expect(page).to have_current_path(admin_ddfip_path(ddfip64))
     expect(page).to have_selector("h1", text: "DDFIP des Pyrénées-Atlantiques")
-    expect(page).to have_text("12 utilisateurs | Page 1 sur 2")
+    expect(page).to have_text("14 utilisateurs | Page 1 sur 2")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Astride Fabre")
 
@@ -348,7 +349,7 @@ RSpec.describe "DDFIP users in admin" do
 
     visit admin_ddfip_path(ddfip64)
 
-    expect(page).to have_text("12 utilisateurs | Page 1 sur 2")
+    expect(page).to have_text("14 utilisateurs | Page 1 sur 2")
 
     # Checkboxes should be present to select all users
     #
@@ -360,16 +361,16 @@ RSpec.describe "DDFIP users in admin" do
     # with a button to remove them
     #
     within ".datatable__selection", text: "10 utilisateurs sélectionnés" do
-      click_on "Sélectionner les 12 utilisateurs des 2 pages"
+      click_on "Sélectionner les 14 utilisateurs des 2 pages"
     end
 
-    within ".datatable__selection", text: "12 utilisateurs sélectionnés" do
+    within ".datatable__selection", text: "14 utilisateurs sélectionnés" do
       click_on "Tout supprimer"
     end
 
     # A confirmation dialog should appear
     #
-    within "[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer les 12 utilisateurs sélectionnés ?" do
+    within "[role=dialog]", text: "Êtes-vous sûrs de vouloir supprimer les 14 utilisateurs sélectionnés ?" do
       click_on "Continuer"
     end
 
@@ -381,7 +382,7 @@ RSpec.describe "DDFIP users in admin" do
     expect(page).to have_selector("h1", text: "DDFIP des Pyrénées-Atlantiques")
     expect(page).to have_text("Aucun utilisateur assigné.")
 
-    expect(User.discarded.count).to eq(17)
+    expect(User.discarded.count).to eq(19)
 
     # The dialog should be closed
     # A notification should be displayed
@@ -401,7 +402,7 @@ RSpec.describe "DDFIP users in admin" do
     #
     expect(page).to have_current_path(admin_ddfip_path(ddfip64))
     expect(page).to have_selector("h1", text: "DDFIP des Pyrénées-Atlantiques")
-    expect(page).to have_text("12 utilisateurs | Page 1 sur 2")
+    expect(page).to have_text("14 utilisateurs | Page 1 sur 2")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Astride Fabre")
 

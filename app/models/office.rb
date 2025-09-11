@@ -42,6 +42,9 @@ class Office < ApplicationRecord
   has_many :users,    through: :office_users
   has_many :communes, through: :office_communes
 
+  has_many :supervisor_office_users, -> { where(supervisor: true) }, class_name: "OfficeUser", inverse_of: false, dependent: false
+  has_many :supervisors, through: :supervisor_office_users, source: :user
+
   has_one  :departement, through: :ddfip
   has_many :departement_communes, through: :departement, source: :communes
 

@@ -87,6 +87,20 @@ FactoryBot.define do
       organization { DGFIP.kept.first || build(:dgfip) }
     end
 
+    trait :supervisor do
+      organization { association(:ddfip, :with_offices) }
+
+      transient do
+        office_users_size { 1 }
+      end
+
+      office_users do
+        Array.new(office_users_size) do |index|
+          association :office_user, supervisor: true, office: instance.organization.offices[index], user: instance
+        end
+      end
+    end
+
     trait :using_existing_organizations do
       organization do
         [DDFIP, Publisher, Collectivity].sample.order("RANDOM()").first ||

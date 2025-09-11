@@ -28,6 +28,7 @@ RSpec.describe "Organization::UsersController#update" do
     it_behaves_like "it denies access to collectivity user"
 
     it_behaves_like "it responds with not found to DDFIP admin"
+    it_behaves_like "it responds with not found to DDFIP supervisor"
     it_behaves_like "it responds with not found to publisher admin"
     it_behaves_like "it responds with not found to collectivity admin"
 
@@ -39,6 +40,7 @@ RSpec.describe "Organization::UsersController#update" do
       it_behaves_like "it denies access to collectivity user"
 
       it_behaves_like "it allows access to DDFIP admin"
+      it_behaves_like "it allows access to DDFIP supervisor"
       it_behaves_like "it allows access to publisher admin"
       it_behaves_like "it allows access to collectivity admin"
     end
@@ -50,9 +52,15 @@ RSpec.describe "Organization::UsersController#update" do
       it_behaves_like "it denies access to publisher user"
       it_behaves_like "it responds with not found to publisher admin"
     end
+
+    context "when user is member of a supervised office" do
+      let(:user) { create(:user, offices: [current_user.offices.first], organization: current_user.organization) }
+
+      it_behaves_like "it allows access to DDFIP supervisor"
+    end
   end
 
-  describe "responses" do
+  describe "responses as an organization admin" do
     before { sign_in_as(:organization_admin, organization: user.organization) }
 
     context "with valid attributes" do
@@ -137,6 +145,62 @@ RSpec.describe "Organization::UsersController#update" do
       it { expect(response).to have_http_status(:see_other) }
       it { expect(response).to redirect_to("/other/path") }
       it { expect(flash).to have_flash_notice }
+    end
+  end
+
+  describe "responses as a supervisor" do
+    let(:current_user) { create(:user, :supervisor) }
+    let!(:user) { create(:user, first_name: "Guillaume", last_name: "Debailly", organization: current_user.organization, offices: [current_user.offices.first]) }
+
+    let(:attributes) do
+      { office_users_attributes: {
+        "1" => { "_destroy" => true, "id" => user.office_users.first.id, "office_id" => user.office_users.first.office_id }
+      } }
+    end
+
+    before { sign_in(current_user) }
+
+    context "with valid attributes" do
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/organisation/utilisateurs") }
+
+      it "updates the user" do
+        expect { request and user.reload }
+          .to change(user.office_users, :count).to(0)
+      end
+
+      it "sets a flash notice" do
+        expect(flash).to have_flash_notice.to eq(
+          scheme: "success",
+          header: "Les modifications ont été enregistrées avec succés.",
+          delay:  3000
+        )
+      end
+    end
+
+    context "when assigning unpermitted attributes" do
+      let(:another_organization) { create(:publisher) }
+      let(:office)               { create(:office) }
+      let(:attributes) do
+        super().merge(
+          organization_type: "Publisher",
+          organization_id:   another_organization.id,
+          first_name:        "Jean",
+          office_users_attributes: {
+            "1" => { "office_id" => office.id }
+          }
+        )
+      end
+
+      it { expect(response).to have_http_status(:see_other) }
+      it { expect(response).to redirect_to("/organisation/utilisateurs") }
+
+      it "ignores the attributes" do
+        expect { request }
+          .to  not_change(user, :organization)
+          .and not_change(user, :first_name)
+          .and not_change(user, :office_ids)
+      end
     end
   end
 end

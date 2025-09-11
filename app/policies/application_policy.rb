@@ -71,4 +71,29 @@ class ApplicationPolicy < ActionPolicy::Base
   def office_user?
     ddfip? && !organization_admin?
   end
+
+  def supervisor?
+    !super_admin? && !organization_admin? && supervised_office_ids.any?
+  end
+
+  def supervised_office_ids
+    return [] unless user? && ddfip?
+
+    if user.office_users.loaded?
+      user.office_users.filter_map { it.office_id if it.supervisor? }
+    else
+      user.office_users.where(supervisor: true).pluck(:office_id)
+    end
+  end
+
+  def supervisor_of?(office_or_user)
+    case office_or_user
+    when Office
+      supervised_office_ids.include?(office_or_user.id)
+    when User
+      supervised_office_ids.intersect?(office_or_user.office_ids)
+    else
+      raise TypeError
+    end
+  end
 end

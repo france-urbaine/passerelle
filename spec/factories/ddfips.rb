@@ -37,5 +37,17 @@ FactoryBot.define do
         end
       end
     end
+
+    trait :with_offices do
+      transient do
+        offices_size { 1 }
+      end
+
+      offices do
+        Array.new(offices_size) do
+          association :office, ddfip: instance
+        end
+      end
+    end
   end
 end
