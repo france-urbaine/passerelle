@@ -6,7 +6,7 @@ module CLI
   class Upgrade
     class Icons < Base
       def call
-        say "Updating Heroicons set"
+        say "Upgrading Heroicons set"
         run "git submodule update --remote vendor/submodules/heroicons"
       end
     end
