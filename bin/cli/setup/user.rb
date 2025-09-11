@@ -6,32 +6,38 @@ module CLI
   class Setup
     class User < Base
       def call
-        say "Setup user"
-
         email, first_name, last_name = request_user_data_from_git
         email ||= request_user_email
 
-        say "Verify user existence"
-        say "Loading environment"
-        require_relative "../../../config/environment"
+        user = find_user(email)
 
-        user = ::User.find_by(email: email)
+        if user
+          say ""
+          say "This user already exists."
+          say "Would you like to update its password ? [Yn]"
+
+          if ask == "Y"
+            password = request_user_password
+            user.update(password: password)
+          end
+        end
 
         if user&.confirmed?
           say ""
           say "✓ This user already exists and is ready to log in!"
+          say ""
           return
-        end
-
-        if user
+        elsif user
           say ""
           say "✓ This user already exists but is not yet confirmed."
         else
+          password     = request_user_password
           first_name ||= request_user_first_name
           last_name  ||= request_user_last_name
 
           user = create_user(
             email:      email,
+            password:   password,
             first_name: first_name,
             last_name:  last_name
           )
@@ -46,15 +52,15 @@ module CLI
         )
 
         say <<~MESSAGE
-            To complete your registration process:
+            To complete the registration process:
 
-            1. Start a server with the command:
+              1. Start a server with the command:
 
-                bin/dev
+                  bin/dev
 
-            2. Then, follow the link below:
+              2. Then, follow the link below:
 
-                #{url}
+                  #{url}
           \x5
         MESSAGE
       end
@@ -87,14 +93,27 @@ module CLI
         end
       end
 
+      def request_user_password
+        say "Please enter your new password : (or press enter to generate a random value)"
+        ask(secret: true).presence || Devise.friendly_token
+      end
+
       def request_user_first_name
-        say "Please enter your first name (or press enter to generate a random value):"
+        say "Please enter your first name : (or press enter to generate a random value)"
         ask.presence || Faker::Name.first_name
       end
 
       def request_user_last_name
-        say "Please enter your last name (or press enter to generate a random value):"
+        say "Please enter your last name : (or press enter to generate a random value)"
         ask.presence || Faker::Name.last_name
+      end
+
+      def find_user(email)
+        say "Verify user existence"
+        say "Loading environment"
+        require_relative "../../../config/environment"
+
+        ::User.find_by(email: email)
       end
 
       def create_user(**attributes)
@@ -103,6 +122,7 @@ module CLI
           organization_admin: true,
           super_admin:        true,
           password:           Devise.friendly_token,
+          **attributes,
           &:skip_confirmation_notification!
         )
       end

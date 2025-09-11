@@ -1,5 +1,8 @@
 #!/bin/sh
-if [[ $3 == 1 ]]
-then
-  bin/update
+
+# Check if this is a file checkout or creating a new branch
+if [ "$3" == "0" ] || [ "$1" == "$2" ]; then
+  exit 0
 fi
+
+bin/update

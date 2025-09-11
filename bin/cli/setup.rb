@@ -5,7 +5,9 @@ require_relative "base"
 module CLI
   class Setup < Base
     # rubocop:disable Metrics/CyclomaticComplexity
-    # I cannot make it simpler
+    #
+    # Rubocop found it complex because of one long case/when statement,
+    # but, that's just a case statement!
     #
     def call(*args)
       raise "Are you crazy ?" if ENV["RAILS_ENV"] == "production" || ENV["DOTENV"] == "production"
@@ -75,7 +77,7 @@ module CLI
       say "✓ All dependencies are satisfied."
       say ""
 
-      run "bin/setup master_key"
+      run "bin/setup master_key", env: { "IGNORE_EXISTING_KEY" => "true" }
       run "bin/setup env"
       run "bin/setup reset"
       run "bin/setup test"
@@ -83,11 +85,12 @@ module CLI
 
       say "Removing old logs and tempfiles"
       run "bin/rails log:clear tmp:clear"
-
       say ""
       say <<~MESSAGE
         -------------------------------------------------------------------------------------
-        Almost set up, you might find these commands useful to complete your setup:
+
+        Everything is set up!
+        You might find these commands useful to complete your setup:
 
             bin/setup user            # Create a new user through an interactive command
             bin/setup territories     # Import all EPCIs and communes from a remote source
