@@ -7,11 +7,11 @@ module CLI
     def call(*args)
       case args[0]
       when nil          then run_all
-      when "watch"      then CLI::CI::Watch.call
+      when "watch"      then CLI::CI::Watch.call(*args[1..])
       when "factories"  then CLI::CI::Factories.call
       when "test"       then CLI::CI::Test.call(*args[1..])
       when "rubocop"    then CLI::CI::Rubocop.call(*args[1..])
-      when "brakeman"   then CLI::CI::Brakeman.call
+      when "brakeman"   then CLI::CI::Brakeman.call(*args[1..])
       when "audit"      then CLI::CI::Audit.call
       else help
       end
@@ -64,11 +64,11 @@ module CLI
       run "bin/ci factories"
       run "bin/ci test"
       run "bin/ci rubocop"
-      run "bin/ci brakeman"
       run "bin/ci audit"
+      run "bin/ci brakeman"
 
       say ""
-      say "✓ All done !"
+      say "✓ All good !"
       say ""
     end
   end
