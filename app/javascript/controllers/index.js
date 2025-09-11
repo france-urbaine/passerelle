@@ -29,6 +29,9 @@ application.register("notification", NotificationController)
 import TabsController from "../../components/ui/tabs"
 application.register("tabs", TabsController)
 
+import ArrayFieldController from "../../components/ui/form/array_field/"
+application.register("array-field", ArrayFieldController)
+
 import { PasswordVisibility, StrengthTestController } from "../../components/ui/form/password_field"
 application.register('password-visibility', PasswordVisibility);
 application.register("strength-test", StrengthTestController);

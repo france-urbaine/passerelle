@@ -109,6 +109,7 @@
             - card_content.with_submit_action "Enregistrer"
 
         - card.with_multipart do |card_content|
+          - card_content.with_header "Nom de domaine"
           - card_content.with_form(model: @organization, scope: :organization, url: organization_settings_path, id: "domain-settings-form") do |form|
             p
               ' Vous pouvez contraindre vos utilisateurs à utiliser seulement des adresses email correspondant à un nom de
@@ -131,6 +132,7 @@
           - card_content.with_submit_action "Enregistrer"
 
         - card.with_multipart do |card_content|
+          - card_content.with_header "Authentification en 2 facteurs"
           - card_content.with_form(model: @organization, scope: :organization, url: organization_settings_path, id: "twofa-settings-form") do |form|
             p
               ' L'authentification en 2 facteurs (2FA) est activée pour tous les utilisateurs.
@@ -151,5 +153,32 @@
                   ' <strong>Attention !</strong> Si vous désactivez cette option alors que des utilisateurs ont déjà
                   ' sélectionné l'envoi d'un email comme méthode d'authentification, ces utilisateurs ne pourront plus
                   ' accéder à la plateforme.
+
+          - card_content.with_submit_action "Enregistrer"
+
+        - card.with_multipart do |card_content|
+          - card_content.with_header "Adresses IP"
+          - card_content.with_form(model: @organization, scope: :organization, url: organization_settings_path, id: "ip-ranges-settings-form") do |form|
+            p
+              | Vous pouvez restreindre l'accès à Passerelle à certaines adresses IP ou plages d'adresses IP.
+              br
+              | Cette restriction s'applique uniquement aux utilisateurs de votre organisation.
+              br
+              - if @organization.ip_ranges.any?
+                br
+                | L' accès à l'application est actuellement restreint.
+              - else
+                br
+                | L' accès à l'application n'est actuellement pas restreint.
+
+            = form.block :ip_ranges do |block|
+              = form.label :ip_ranges
+              = form.array_field_component :ip_ranges, form.object.ip_ranges, class: "font-mono", placeholder: "127.0.0.0/24", button_label: "Ajouter une adresse IP"
+
+              - block.with_hint do
+                p
+                  ' <strong>Attention !</strong> Assurez-vous d'inclure votre adresse IP actuelle, vous pourriez ne plus avoir accès à l'application
+                p
+                  ' Laissez les champs vides pour autoriser les connexions depuis n'importe quelle adresse IP
 
           - card_content.with_submit_action "Enregistrer"

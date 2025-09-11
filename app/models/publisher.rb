@@ -25,6 +25,7 @@
 #  reports_approved_count    :integer          default(0), not null
 #  reports_canceled_count    :integer          default(0), not null
 #  reports_returned_count    :integer          default(0), not null
+#  ip_ranges                 :text             default([]), not null, is an Array
 #
 # Indexes
 #
@@ -68,6 +69,9 @@ class Publisher < ApplicationRecord
     conditions: -> { kept },
     unless: :skip_uniqueness_validation_of_siren?
   }
+
+  normalizes :ip_ranges, with: ->(ip_ranges) { ip_ranges.reject(&:empty?).uniq }
+  validates :ip_ranges, ip_address: { allow_blank: true }
 
   # Scopes: searches
   # ----------------------------------------------------------------------------

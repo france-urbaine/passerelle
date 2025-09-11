@@ -21,6 +21,7 @@
 #  reports_rejected_count    :integer          default(0), not null
 #  reports_approved_count    :integer          default(0), not null
 #  reports_canceled_count    :integer          default(0), not null
+#  ip_ranges                 :text             default([]), not null, is an Array
 #
 # Indexes
 #
@@ -44,6 +45,9 @@ class DGFIP < ApplicationRecord
   validates :domain_restriction, format: { allow_blank: true, with: DOMAIN_REGEXP }
 
   validate :validate_one_singleton_record, on: :create
+
+  normalizes :ip_ranges, with: ->(ip_ranges) { ip_ranges.reject(&:empty?).uniq }
+  validates :ip_ranges, ip_address: { allow_blank: true }
 
   def validate_one_singleton_record
     errors.add :base, :exist if DGFIP.with_discarded.exists?

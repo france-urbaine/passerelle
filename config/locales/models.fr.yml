@@ -142,28 +142,31 @@ fr:
         contact_phone:        Numéro de téléphone
         domain_restriction:   Nom de domaine
         allow_2fa_via_email:  Autoriser l'email comme méthode d'authentification en 2 étapes
+        ip_ranges:            Plages d'adresses IP autorisées
         sandbox:              Mode « Bac à sable »
 
       ddfip:
-        name:                   Nom de la DDFIP
-        code_departement:       Code INSEE du département
-        departement:            Département
-        contact_first_name:     Prénom du contact
-        contact_last_name :     Nom du contact
-        contact_email:          Adresse mail de contact
-        contact_phone:          Numéro de téléphone
-        domain_restriction:     Nom de domaine
-        allow_2fa_via_email:    Autoriser l'email comme méthode d'authentification en 2 étapes
-        auto_assign_reports:    Assigner automatiquement les nouveaux signalements
+        name:                Nom de la DDFIP
+        code_departement:    Code INSEE du département
+        departement:         Département
+        contact_first_name:  Prénom du contact
+        contact_last_name:   Nom du contact
+        contact_email:       Adresse mail de contact
+        contact_phone:       Numéro de téléphone
+        domain_restriction:  Nom de domaine
+        allow_2fa_via_email: Autoriser l'email comme méthode d'authentification en 2 étapes
+        auto_assign_reports: Assigner automatiquement les nouveaux signalements
+        ip_ranges:           Plages d'adresses IP autorisées
 
       dgfip:
-        name:                   Nom de la DGFIP
-        contact_first_name:     Prénom du contact
-        contact_last_name :     Nom du contact
-        contact_email:          Adresse mail de contact
-        contact_phone:          Numéro de téléphone
-        domain_restriction:     Nom de domaine
-        allow_2fa_via_email:    Autoriser l'email comme méthode d'authentification en 2 étapes
+        name:                Nom de la DGFIP
+        contact_first_name:  Prénom du contact
+        contact_last_name:   Nom du contact
+        contact_email:       Adresse mail de contact
+        contact_phone:       Numéro de téléphone
+        domain_restriction:  Nom de domaine
+        allow_2fa_via_email: Autoriser l'email comme méthode d'authentification en 2 étapes
+        ip_ranges:           Plages d'adresses IP autorisées
 
       office:
         name:             Nom du guichet
@@ -192,6 +195,7 @@ fr:
         domain_restriction:           Nom de domaine
         allow_2fa_via_email:          Autoriser l'email comme méthode d'authentification en 2 étapes
         allow_publisher_management:   Autoriser la gestion du compte par l'éditeur
+        ip_ranges:                    Plages d'adresses IP autorisées
 
       user:
         created_at:             Création du compte
@@ -249,6 +253,9 @@ fr:
         secret:       Client Secret
 
     errors:
+      messages:
+        invalid_ip_address: "« %{ip} » n'est pas une adresse IP valide"
+
       models:
         report:
           attributes:

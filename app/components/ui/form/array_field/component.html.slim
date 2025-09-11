@@ -1,0 +1,18 @@
+= tag.div(**wrapper_html_attributes) do
+  - if @values.any?
+    - @values.each do |value|
+      .flex
+        = text_field @object_name, @method, value: value, multiple: true, **input_html_attributes
+        = button_component "Supprimer", icon: "x-mark", icon_only: true, data: { action: "array-field#removeInput" }
+    = text_field @object_name, @method, value: nil, multiple: true, hidden: true
+  - else
+    .flex
+      = text_field @object_name, @method, value: nil, multiple: true, **input_html_attributes
+      = button_component "Supprimer", icon: "x-mark", icon_only: true, data: { action: "array-field#removeInput" }
+
+  template( data-array-field-target="template" )
+    .flex
+      = text_field @object_name, @method, value: nil, multiple: true, **input_html_attributes
+      = button_component "Supprimer", icon: "x-mark", icon_only: true, data: { action: "array-field#removeInput" }
+
+  = button_component button_label, icon: "plus", data: { action: "array-field#addEmptyInput" }
