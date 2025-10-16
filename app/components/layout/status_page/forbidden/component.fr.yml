@@ -1,0 +1,14 @@
+fr:
+  forbidden_message:
+    unauthorized_ip: Adresse IP non autorisée.
+    default: L'accès à cette page n'est pas autorisé.
+  forbidden_submessage:
+    unauthorized_ip_html: |
+      Pour des raisons de sécurité l'accès à Passerelle est restreint à une liste d'adresses IP pré-approuvées par votre administrateur.
+      <br>
+      <br>
+      Votre adresse IP actuelle ne fait pas partie cette liste.
+      <br>
+      <br>
+      Contactez votre administrateur pour plus d'informations.
+    default: Vous n'avez pas les droits suffisants pour accéder à la page demandée.

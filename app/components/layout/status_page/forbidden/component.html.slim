@@ -1,0 +1,34 @@
+= status_page_component(**@options) do |template|
+  - if unauthorized_ip?
+    - template.with_header do
+      = t(".forbidden_message.unauthorized_ip")
+
+    - template.with_body do
+      = t(".forbidden_submessage.unauthorized_ip_html")
+
+    - if unauthorized_ip?
+      - template.with_action "Déconnexion", destroy_user_session_path, method: :delete, destructive: true
+
+  - else
+    - if breadcrumbs?
+      - template.with_breadcrumbs do
+        = breadcrumbs
+
+    - template.with_header do
+      - if header?
+        = header
+      - else
+        = t(".forbidden_message.default")
+
+    - template.with_body do
+      - if body?
+        = body
+
+      - else
+        = t(".forbidden_submessage.default")
+
+    - if unauthorized_ip?
+      - template.with_action "Déconnexion", destroy_user_session_path, method: :delete, destructive: true
+    - actions.each do |action|
+      - template.with_action do
+        = action

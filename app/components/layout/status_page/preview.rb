@@ -23,6 +23,27 @@ module Layout
         render_with_template(locals: { modal:, referrer: })
       end
 
+      # @label 403 Forbidden
+      # @param modal toggle "View the template when requesting a modal"
+      # @param referrer text "Referrer URL (rendered in background of a modal)"
+      # @param exception select {
+      #   choices: [
+      #     unauthorized_ip,
+      #     action_policy,
+      #     other
+      #   ] }
+      #
+      def forbidden(modal: false, referrer: DEFAULT_REFERRER, exception: nil)
+        reason = case exception
+                 when "unauthorized_ip"
+                   ControllerVerifyIp::UnauthorizedIp.new("users", "index")
+                 when "action_policy"
+                   ActionPolicy::Unauthorized.new(ReportPolicy, "index", {})
+                 end
+
+        render_with_template(locals: { modal:, referrer:, reason: })
+      end
+
       # @label 404 Not Found
       # @param modal toggle "View the template when requesting a modal"
       # @param referrer text "Referrer URL (rendered in background of a modal)"

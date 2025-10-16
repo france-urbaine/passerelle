@@ -4,6 +4,10 @@ require "rails_helper"
 
 RSpec.describe Layout::StatusPage::Preview do
   it { is_expected.to render_preview_without_exception(:default) }
+  it { is_expected.to render_preview_without_exception(:forbidden) }
+  it { is_expected.to render_preview_without_exception(:forbidden, params: { exception: "unauthorized_ip" }) }
+  it { is_expected.to render_preview_without_exception(:forbidden, params: { exception: "action_policy" }) }
+  it { is_expected.to render_preview_without_exception(:forbidden, params: { exception: "other" }) }
   it { is_expected.to render_preview_without_exception(:not_found) }
   it { is_expected.to render_preview_without_exception(:not_found, params: { model: "user" }) }
   it { is_expected.to render_preview_without_exception(:not_found, params: { model: "other" }) }
