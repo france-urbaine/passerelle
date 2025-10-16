@@ -8,8 +8,10 @@ module ControllerStatuses
   %i[
     bad_request
     unauthorized
-    forbidden
     not_acceptable
+    forbidden
+    not_found
+    gone
     unprocessable_content
     not_implemented
     internal_server_error
@@ -21,6 +23,15 @@ module ControllerStatuses
     define_method :"#{status}!" do |error_message = nil|
       render_status(status, error: error_message)
       raise InterruptAction
+    end
+  end
+
+  def forbidden(exception = nil)
+    @reason = exception
+    if exception.is_a? ControllerVerifyIp::UnauthorizedIp
+      render_status(:forbidden, layout: "public")
+    else
+      render_status(:forbidden)
     end
   end
 
@@ -46,7 +57,7 @@ module ControllerStatuses
     end
   end
 
-  def render_status(status, error: nil)
+  def render_status(status, error: nil, **)
     respond_to do |format|
       format.html do
         if turbo_frame_request_id == "modal"
@@ -54,9 +65,9 @@ module ControllerStatuses
           @referrer_path = referrer_path
         end
 
-        render status:, action: status
+        render(status:, action: status, **)
       rescue ActionView::MissingTemplate
-        render status:, template: "shared/statuses/#{status}"
+        render(status:, template: "shared/statuses/#{status}", **)
       end
 
       format.json do
