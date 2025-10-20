@@ -10,6 +10,8 @@ RSpec.describe User do
     it { is_expected.to belong_to(:inviter).optional }
     it { is_expected.to have_many(:invitees) }
 
+    it { is_expected.to have_many(:user_form_types) }
+
     it { is_expected.to have_many(:transmissions) }
     it { is_expected.to have_many(:assigned_reports) }
     it { is_expected.to have_one(:active_transmission) }

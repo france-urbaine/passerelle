@@ -3278,6 +3278,19 @@ CREATE TABLE public.transmissions (
 
 
 --
+-- Name: user_form_types; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.user_form_types (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    user_id uuid,
+    form_type public.form_type,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
 -- Name: workshops; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -3497,6 +3510,14 @@ ALTER TABLE ONLY public.sessions
 
 ALTER TABLE ONLY public.transmissions
     ADD CONSTRAINT transmissions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: user_form_types user_form_types_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_form_types
+    ADD CONSTRAINT user_form_types_pkey PRIMARY KEY (id);
 
 
 --
@@ -4175,6 +4196,14 @@ ALTER TABLE ONLY public.reports
 
 
 --
+-- Name: user_form_types fk_rails_08297317f3; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_form_types
+    ADD CONSTRAINT fk_rails_08297317f3 FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
+
+
+--
 -- Name: communes fk_rails_12e546a056; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4445,6 +4474,7 @@ ALTER TABLE ONLY public.oauth_access_tokens
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20251020091407'),
 ('20250729140510'),
 ('20250626131528'),
 ('20241011075049'),
