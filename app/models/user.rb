@@ -73,6 +73,8 @@ class User < ApplicationRecord
   belongs_to :inviter, class_name: "User", optional: true, inverse_of: :invitees
   has_many :invitees, class_name: "User", foreign_key: :inviter_id, inverse_of: :inviter, dependent: :nullify
 
+  has_many :user_form_types, inverse_of: :user, dependent: :destroy
+
   has_many :office_users, dependent: false
   has_many :offices, through: :office_users
 
