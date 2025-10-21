@@ -20,6 +20,7 @@ class ReportPolicy < ApplicationPolicy
       report_shown_to_collectivity?(record) ||
         report_shown_to_publisher?(record) ||
         report_shown_to_ddfip_admin?(record) ||
+        report_shown_to_ddfip_form_admin?(record) ||
         report_shown_to_office_user?(record) ||
         report_shown_to_dgfip?(record)
     end
@@ -31,6 +32,7 @@ class ReportPolicy < ApplicationPolicy
     elsif record.is_a?(Report)
       report_updatable_by_collectivity?(record) ||
         report_updatable_by_ddfip_admin?(record) ||
+        report_updatable_by_ddfip_form_admin?(record) ||
         report_updatable_by_office_user?(record)
     end
   end
@@ -102,6 +104,8 @@ class ReportPolicy < ApplicationPolicy
       relation.merge(reports_listed_to_publisher)
     elsif ddfip_admin?
       relation.merge(reports_listed_to_ddfip_admins)
+    elsif form_admin?
+      relation.merge(reports_listed_to_ddfip_form_admin)
     elsif dgfip?
       relation.merge(reports_listed_to_dgfip)
     elsif office_user?
@@ -313,6 +317,36 @@ class ReportPolicy < ApplicationPolicy
         .out_of_sandbox
         .transmitted
         .transmitted_to_ddfip(organization)
+    end
+  end
+
+  # Authorizations for DDFIP Form Admins
+  # ----------------------------------------------------------------------------
+  concerning :DDFIPFormAdmins do
+    def report_shown_to_ddfip_form_admin?(report)
+      # Denied reports are not listed but are still accessible
+      #
+      form_admin? &&
+        report.out_of_sandbox? &&
+        report.transmitted? &&
+        report.ddfip_id == organization.id &&
+        report.form_type.in?(administrated_form_types)
+    end
+
+    def report_updatable_by_ddfip_form_admin?(report)
+      report_shown_to_ddfip_form_admin?(report) &&
+        !report.returned?
+    end
+
+    def reports_listed_to_ddfip_form_admin
+      return Report.none unless form_admin?
+
+      Report
+        .kept
+        .out_of_sandbox
+        .transmitted
+        .transmitted_to_ddfip(organization)
+        .where(form_type: administrated_form_types)
     end
   end
 

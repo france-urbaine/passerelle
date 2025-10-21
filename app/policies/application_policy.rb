@@ -72,6 +72,18 @@ class ApplicationPolicy < ActionPolicy::Base
     ddfip? && !organization_admin?
   end
 
+  def form_admin?
+    !super_admin? && !organization_admin? && administrated_form_types.any?
+  end
+
+  def administrated_form_types
+    if user? && ddfip?
+      user.user_form_types.map(&:form_type)
+    else
+      []
+    end
+  end
+
   def supervisor?
     !super_admin? && !organization_admin? && supervised_office_ids.any?
   end

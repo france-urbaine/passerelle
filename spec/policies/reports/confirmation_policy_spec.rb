@@ -2,6 +2,7 @@
 
 require "rails_helper"
 require_relative "shared_example_for_target_office"
+require_relative "shared_example_for_target_form_type"
 
 RSpec.describe Reports::ConfirmationPolicy, type: :policy do
   describe_rule :manage? do
@@ -9,6 +10,7 @@ RSpec.describe Reports::ConfirmationPolicy, type: :policy do
       let(:record) { Report }
 
       it_behaves_like("when current user is a DDFIP admin")        { succeed }
+      it_behaves_like("when current user is a DDFIP form admin")   { succeed }
       it_behaves_like("when current user is a DDFIP user")         { failed }
       it_behaves_like("when current user is a DGFIP admin")        { failed }
       it_behaves_like("when current user is a DGFIP user")         { failed }
@@ -22,6 +24,7 @@ RSpec.describe Reports::ConfirmationPolicy, type: :policy do
       let(:record) { build_stubbed(:report) }
 
       it_behaves_like("when current user is a DDFIP admin")        { failed }
+      it_behaves_like("when current user is a DDFIP form admin")   { failed }
       it_behaves_like("when current user is a DDFIP user")         { failed }
       it_behaves_like("when current user is a DGFIP admin")        { failed }
       it_behaves_like("when current user is a DGFIP user")         { failed }
@@ -33,57 +36,68 @@ RSpec.describe Reports::ConfirmationPolicy, type: :policy do
       context "when transmitted to the current DDFIP" do
         let(:record) { build_stubbed(:report, :transmitted_to_ddfip, ddfip: current_organization) }
 
-        it_behaves_like("when current user is a DDFIP admin")             { failed }
-        it_behaves_like("when current user is a DDFIP user")              { failed }
-        it_behaves_like("when current user is member of targeted office") { failed }
+        it_behaves_like("when current user is a DDFIP admin")                     { failed }
+        it_behaves_like("when current user administrates the targeted form_type") { failed }
+        it_behaves_like("when current user is a DDFIP user")                      { failed }
+        it_behaves_like("when current user is member of targeted office")         { failed }
       end
 
       context "when accepted by the current DDFIP" do
         let(:record) { build_stubbed(:report, :accepted_by_ddfip, ddfip: current_organization) }
 
-        it_behaves_like("when current user is a DDFIP admin")             { failed }
-        it_behaves_like("when current user is a DDFIP user")              { failed }
-        it_behaves_like("when current user is member of targeted office") { failed }
+        it_behaves_like("when current user is a DDFIP admin")                     { failed }
+        it_behaves_like("when current user administrates the targeted form_type") { failed }
+        it_behaves_like("when current user is a DDFIP user")                      { failed }
+        it_behaves_like("when current user is member of targeted office")         { failed }
       end
 
       context "when assigned by the current DDFIP" do
         let(:record) { build_stubbed(:report, :assigned_by_ddfip, ddfip: current_organization) }
 
-        it_behaves_like("when current user is a DDFIP admin")             { failed }
-        it_behaves_like("when current user is a DDFIP user")              { failed }
-        it_behaves_like("when current user is member of targeted office") { failed }
+        it_behaves_like("when current user is a DDFIP admin")                     { failed }
+        it_behaves_like("when current user administrates the targeted form_type") { failed }
+        it_behaves_like("when current user is a DDFIP user")                      { failed }
+        it_behaves_like("when current user is member of targeted office")         { failed }
       end
 
       context "when resolved as applicable by the current DDFIP" do
         let(:record) { build_stubbed(:report, :assigned_by_ddfip, :applicable, ddfip: current_organization) }
 
-        it_behaves_like("when current user is a DDFIP admin")             { succeed }
-        it_behaves_like("when current user is a DDFIP user")              { failed }
-        it_behaves_like("when current user is member of targeted office") { failed }
+        it_behaves_like("when current user is a DDFIP admin")                     { succeed }
+        it_behaves_like("when current user administrates the targeted form_type") { succeed }
+        it_behaves_like("when current user is a DDFIP user")                      { failed }
+        it_behaves_like("when current user is member of targeted office")         { failed }
+        it_behaves_like("when current user administrates another form_type")      { failed }
       end
 
       context "when resolved as inapplicable by the current DDFIP" do
         let(:record) { build_stubbed(:report, :assigned_by_ddfip, :inapplicable, ddfip: current_organization) }
 
-        it_behaves_like("when current user is a DDFIP admin")             { succeed }
-        it_behaves_like("when current user is a DDFIP user")              { failed }
-        it_behaves_like("when current user is member of targeted office") { failed }
+        it_behaves_like("when current user is a DDFIP admin")                     { succeed }
+        it_behaves_like("when current user administrates the targeted form_type") { succeed }
+        it_behaves_like("when current user is a DDFIP user")                      { failed }
+        it_behaves_like("when current user is member of targeted office")         { failed }
+        it_behaves_like("when current user administrates another form_type")      { failed }
       end
 
       context "when approved by the current DDFIP" do
         let(:record) { build_stubbed(:report, :approved_by_ddfip, ddfip: current_organization) }
 
-        it_behaves_like("when current user is a DDFIP admin")             { succeed }
-        it_behaves_like("when current user is a DDFIP user")              { failed }
-        it_behaves_like("when current user is member of targeted office") { failed }
+        it_behaves_like("when current user is a DDFIP admin")                     { succeed }
+        it_behaves_like("when current user administrates the targeted form_type") { succeed }
+        it_behaves_like("when current user is a DDFIP user")                      { failed }
+        it_behaves_like("when current user is member of targeted office")         { failed }
+        it_behaves_like("when current user administrates another form_type")      { failed }
       end
 
       context "when canceled by the current DDFIP" do
         let(:record) { build_stubbed(:report, :canceled_by_ddfip, ddfip: current_organization) }
 
-        it_behaves_like("when current user is a DDFIP admin")             { succeed }
-        it_behaves_like("when current user is a DDFIP user")              { failed }
-        it_behaves_like("when current user is member of targeted office") { failed }
+        it_behaves_like("when current user is a DDFIP admin")                     { succeed }
+        it_behaves_like("when current user administrates the targeted form_type") { succeed }
+        it_behaves_like("when current user is a DDFIP user")                      { failed }
+        it_behaves_like("when current user is member of targeted office")         { failed }
+        it_behaves_like("when current user administrates another form_type")      { failed }
       end
     end
   end
@@ -114,6 +128,23 @@ RSpec.describe Reports::ConfirmationPolicy, type: :policy do
       end
     end
 
+    it_behaves_like("when current user is a DDFIP form admin for creation_local_professionnel") do
+      it "scopes all acceptable reports transmitted to its organization" do
+        expect {
+          scope.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "reports".*
+          FROM   "reports"
+          WHERE  "reports"."discarded_at" IS NULL
+            AND  "reports"."sandbox" = FALSE
+            AND  "reports"."state" IN ('transmitted', 'acknowledged', 'accepted', 'assigned', 'applicable', 'inapplicable', 'approved', 'canceled', 'rejected')
+            AND  "reports"."ddfip_id" = '#{current_organization.id}'
+            AND  "reports"."form_type" = 'creation_local_professionnel'
+            AND  "reports"."state" IN ('applicable', 'inapplicable', 'approved', 'canceled')
+        SQL
+      end
+    end
+
     it_behaves_like("when current user is a DDFIP user")         { it { is_expected.to be_a_null_relation } }
     it_behaves_like("when current user is a DGFIP admin")        { it { is_expected.to be_a_null_relation } }
     it_behaves_like("when current user is a DGFIP user")         { it { is_expected.to be_a_null_relation } }
@@ -137,7 +168,8 @@ RSpec.describe Reports::ConfirmationPolicy, type: :policy do
     end
 
     it_behaves_like("when current user is a DDFIP admin")        { it { is_expected.to eq({ reponse: "Lorem lispum", resolution_motif: "absence_incoherence" }) } }
-    it_behaves_like("when current user is a DDFIP user")         { it { is_expected.to eq({ reponse: "Lorem lispum", resolution_motif: "absence_incoherence" }) } }
+    it_behaves_like("when current user is a DDFIP form admin")   { it { is_expected.to eq({ reponse: "Lorem lispum", resolution_motif: "absence_incoherence" }) } }
+    it_behaves_like("when current user is a DDFIP user")         { it { is_expected.to be_nil } }
     it_behaves_like("when current user is a DGFIP admin")        { it { is_expected.to be_nil } }
     it_behaves_like("when current user is a DGFIP user")         { it { is_expected.to be_nil } }
     it_behaves_like("when current user is a publisher admin")    { it { is_expected.to be_nil } }
