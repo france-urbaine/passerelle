@@ -27,7 +27,15 @@ module Views
             when "collectivity", "publisher" then :collectivity
             when "dgfip", "ddfip_admin"      then :ddfip_admin
             when "ddfip_user"                then :ddfip_user
-            when "ddfip"                     then current_user.organization_admin? ? :ddfip_admin : :ddfip_user
+            when "ddfip"                     then ddfip_viewer_type
+            end
+          end
+
+          def  ddfip_viewer_type
+            if current_user.organization_admin? || current_user.user_form_types.any?
+              :ddfip_admin
+            else
+              :ddfip_user
             end
           end
 
