@@ -133,6 +133,35 @@ RSpec.describe "ReportsController#index" do
       end
     end
 
+    context "when signed in as a DDFIP form admin" do
+      let(:ddfip) { create(:ddfip, departement: departement) }
+      let(:reports) do
+        [
+          create(:report, :made_for_ddfip, ddfip: ddfip, collectivity: collectivities[0]),
+          create(:report, :transmitted_to_ddfip, ddfip: ddfip, collectivity: collectivities[0], form_type: "evaluation_local_habitation"),
+          create(:report, :transmitted_to_ddfip, ddfip: ddfip, collectivity: collectivities[0], form_type: "creation_local_habitation"),
+          create(:report, :transmitted_to_ddfip, ddfip: ddfip, collectivity: collectivities[0], sandbox: true)
+        ]
+      end
+
+      before { sign_in_as(:form_admin, organization: ddfip, form_types: %w[creation_local_habitation]) }
+
+      context "when requesting HTML" do
+        it { expect(response).to have_http_status(:success) }
+        it { expect(response).to have_media_type(:html) }
+        it { expect(response).to have_html_body }
+
+        it "returns only accessible reports" do
+          aggregate_failures do
+            expect(response).to have_html_body.to have_no_selector(:id, dom_id(reports[0]))
+            expect(response).to have_html_body.to have_no_selector(:id, dom_id(reports[1]))
+            expect(response).to have_html_body.to have_selector(:id, dom_id(reports[2]))
+            expect(response).to have_html_body.to have_no_selector(:id, dom_id(reports[3]))
+          end
+        end
+      end
+    end
+
     context "when signed in as a DDFIP user" do
       let!(:ddfip) { create(:ddfip, departement: departement) }
       let!(:office) { create(:office, :evaluation_local_habitation, ddfip:) }

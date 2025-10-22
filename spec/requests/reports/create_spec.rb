@@ -26,6 +26,7 @@ RSpec.describe "ReportsController#new" do
     it_behaves_like "it denies access to publisher user"
     it_behaves_like "it denies access to publisher admin"
     it_behaves_like "it denies access to DDFIP user"
+    it_behaves_like "it denies access to DDFIP form admin"
     it_behaves_like "it denies access to DDFIP admin"
   end
 

@@ -22,6 +22,7 @@ RSpec.describe "ReportsController#update" do
     it_behaves_like "it denies access to publisher admin"
     it_behaves_like "it denies access to DDFIP user"
     it_behaves_like "it denies access to DDFIP admin"
+    it_behaves_like "it denies access to DDFIP form admin"
     it_behaves_like "it denies access to collectivity user"
     it_behaves_like "it denies access to collectivity admin"
 
@@ -71,6 +72,7 @@ RSpec.describe "ReportsController#update" do
       let(:report) { create(:report, :transmitted_to_ddfip, ddfip: current_user.organization) }
 
       it_behaves_like "it denies access to DDFIP admin"
+      it_behaves_like "it denies access to DDFIP form admin"
       it_behaves_like "it denies access to DDFIP user"
     end
 
@@ -80,6 +82,7 @@ RSpec.describe "ReportsController#update" do
       let(:report) { create(:report, :assigned_to_office, ddfip:, office:) }
 
       it_behaves_like "it denies access to DDFIP admin"
+      it_behaves_like "it denies access to DDFIP form admin"
       it_behaves_like "it denies access to DDFIP user"
     end
   end

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "rails_helper"
+require_relative "../shared_example_for_target_form_type"
 
 RSpec.describe "Reports::AcceptancesController#update" do
   subject(:request) do
@@ -24,12 +25,19 @@ RSpec.describe "Reports::AcceptancesController#update" do
     it_behaves_like "it denies access to publisher admin"
     it_behaves_like "it denies access to DDFIP user"
     it_behaves_like "it denies access to DDFIP admin"
+    it_behaves_like "it denies access to DDFIP form admin"
 
     context "when report has been transmitted to the current DDFIP" do
       let(:report) { create(:report, :transmitted_to_ddfip, ddfip: current_user.organization) }
 
       it_behaves_like "it denies access to DDFIP user"
       it_behaves_like "it allows access to DDFIP admin"
+      it_behaves_like "when current user administrates the form_type" do
+        it_behaves_like "it allows access to DDFIP user"
+      end
+      it_behaves_like "when current user administrates any other form_type" do
+        it_behaves_like "it denies access to DDFIP user"
+      end
     end
 
     context "when report has not yet been transmitted to the current DDFIP" do
@@ -37,6 +45,9 @@ RSpec.describe "Reports::AcceptancesController#update" do
 
       it_behaves_like "it denies access to DDFIP user"
       it_behaves_like "it denies access to DDFIP admin"
+      it_behaves_like "when current user administrates the form_type" do
+        it_behaves_like "it denies access to DDFIP user"
+      end
     end
 
     context "when report has been transmitted in sandbox to the current DDFIP" do
@@ -44,6 +55,9 @@ RSpec.describe "Reports::AcceptancesController#update" do
 
       it_behaves_like "it denies access to DDFIP user"
       it_behaves_like "it denies access to DDFIP admin"
+      it_behaves_like "when current user administrates the form_type" do
+        it_behaves_like "it denies access to DDFIP user"
+      end
     end
 
     context "when report has already been accepted by the current DDFIP" do
@@ -51,6 +65,12 @@ RSpec.describe "Reports::AcceptancesController#update" do
 
       it_behaves_like "it denies access to DDFIP user"
       it_behaves_like "it allows access to DDFIP admin"
+      it_behaves_like "when current user administrates the form_type" do
+        it_behaves_like "it allows access to DDFIP user"
+      end
+      it_behaves_like "when current user administrates any other form_type" do
+        it_behaves_like "it denies access to DDFIP user"
+      end
     end
 
     context "when report has already been assigned by the current DDFIP" do
@@ -58,6 +78,9 @@ RSpec.describe "Reports::AcceptancesController#update" do
 
       it_behaves_like "it denies access to DDFIP user"
       it_behaves_like "it denies access to DDFIP admin"
+      it_behaves_like "when current user administrates the form_type" do
+        it_behaves_like "it denies access to DDFIP user"
+      end
     end
 
     context "when report has already been rejected by the current DDFIP" do
@@ -65,6 +88,12 @@ RSpec.describe "Reports::AcceptancesController#update" do
 
       it_behaves_like "it denies access to DDFIP user"
       it_behaves_like "it allows access to DDFIP admin"
+      it_behaves_like "when current user administrates the form_type" do
+        it_behaves_like "it allows access to DDFIP user"
+      end
+      it_behaves_like "when current user administrates any other form_type" do
+        it_behaves_like "it denies access to DDFIP user"
+      end
     end
   end
 

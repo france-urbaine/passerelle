@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "rails_helper"
+require_relative "../shared_example_for_target_form_type"
 
 RSpec.describe "Reports::DocumentsController#new" do
   subject(:request) do
@@ -22,6 +23,7 @@ RSpec.describe "Reports::DocumentsController#new" do
     it_behaves_like "it denies access to publisher admin"
     it_behaves_like "it denies access to DDFIP user"
     it_behaves_like "it denies access to DDFIP admin"
+    it_behaves_like "it denies access to DDFIP form admin"
     it_behaves_like "it denies access to collectivity user"
     it_behaves_like "it denies access to collectivity admin"
 
