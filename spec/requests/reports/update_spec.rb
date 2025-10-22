@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "rails_helper"
+require_relative "shared_example_for_target_form_type"
 
 RSpec.describe "ReportsController#update" do
   subject(:request) do
@@ -29,6 +30,7 @@ RSpec.describe "ReportsController#update" do
     it_behaves_like "it denies access to publisher admin"
     it_behaves_like "it denies access to DDFIP user"
     it_behaves_like "it denies access to DDFIP admin"
+    it_behaves_like "it denies access to DDFIP form admin"
 
     context "when report has been created by current user collectivity" do
       let(:report) { create(:report, :made_through_web_ui, collectivity: current_user.organization) }
@@ -77,6 +79,12 @@ RSpec.describe "ReportsController#update" do
 
       it_behaves_like "it allows access to DDFIP admin"
       it_behaves_like "it denies access to DDFIP user"
+      it_behaves_like "when current user administrates the form_type" do
+        it_behaves_like "it allows access to DDFIP user"
+      end
+      it_behaves_like "when current user administrates any other form_type" do
+        it_behaves_like "it denies access to DDFIP user"
+      end
     end
 
     context "when report has been assigned to current user office" do
