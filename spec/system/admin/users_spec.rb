@@ -382,7 +382,7 @@ RSpec.describe "Users in admin" do
   it "discards an user from the index page & rollbacks" do
     visit admin_users_path
 
-    expect(page).to have_text("11 utilisateurs | Page 1 sur 1")
+    expect(page).to have_text("12 utilisateurs | Page 1 sur 1")
 
     # A button should be present to remove the user
     #
@@ -401,7 +401,7 @@ RSpec.describe "Users in admin" do
     #
     expect(page).to have_current_path(admin_users_path)
     expect(page).to have_selector("h1", text: "Utilisateurs")
-    expect(page).to have_text("10 utilisateurs | Page 1 sur 1")
+    expect(page).to have_text("11 utilisateurs | Page 1 sur 1")
     expect(page).to have_no_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 
     # The dialog should be closed
@@ -421,7 +421,7 @@ RSpec.describe "Users in admin" do
     #
     expect(page).to have_current_path(admin_users_path)
     expect(page).to have_selector("h1", text: "Utilisateurs")
-    expect(page).to have_text("11 utilisateurs | Page 1 sur 1")
+    expect(page).to have_text("12 utilisateurs | Page 1 sur 1")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 
     # The previous notification should be closed
@@ -451,7 +451,7 @@ RSpec.describe "Users in admin" do
     #
     expect(page).to have_current_path(admin_users_path)
     expect(page).to have_selector("h1", text: "Utilisateurs")
-    expect(page).to have_text("10 utilisateurs | Page 1 sur 1")
+    expect(page).to have_text("11 utilisateurs | Page 1 sur 1")
     expect(page).to have_no_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 
     # The dialog should be closed
@@ -471,7 +471,7 @@ RSpec.describe "Users in admin" do
     #
     expect(page).to have_current_path(admin_users_path)
     expect(page).to have_selector("h1", text: "Utilisateurs")
-    expect(page).to have_text("11 utilisateurs | Page 1 sur 1")
+    expect(page).to have_text("12 utilisateurs | Page 1 sur 1")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 
     # The previous notification should be closed
@@ -484,7 +484,7 @@ RSpec.describe "Users in admin" do
   it "discards himself and been disconnected" do
     visit admin_users_path
 
-    expect(page).to have_text("11 utilisateurs | Page 1 sur 1")
+    expect(page).to have_text("12 utilisateurs | Page 1 sur 1")
 
     # A button should be present to remove the user
     #
@@ -506,7 +506,7 @@ RSpec.describe "Users in admin" do
   it "selects and discards one user from the index page & rollbacks" do
     visit admin_users_path
 
-    expect(page).to have_text("11 utilisateurs | Page 1 sur 1")
+    expect(page).to have_text("12 utilisateurs | Page 1 sur 1")
 
     # Checkboxes should be present to select users
     #
@@ -533,7 +533,7 @@ RSpec.describe "Users in admin" do
     #
     expect(page).to have_current_path(admin_users_path)
     expect(page).to have_selector("h1", text: "Utilisateurs")
-    expect(page).to have_text("10 utilisateurs | Page 1 sur 1")
+    expect(page).to have_text("11 utilisateurs | Page 1 sur 1")
     expect(page).to have_no_selector(:table_row, "Utilisateur" => "Elise Lacroix")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Christelle Droitier")
@@ -557,7 +557,7 @@ RSpec.describe "Users in admin" do
     #
     expect(page).to have_current_path(admin_users_path)
     expect(page).to have_selector("h1", text: "Utilisateurs")
-    expect(page).to have_text("11 utilisateurs | Page 1 sur 1")
+    expect(page).to have_text("12 utilisateurs | Page 1 sur 1")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Elise Lacroix")
 
     # The selection message should not appear again
@@ -573,7 +573,7 @@ RSpec.describe "Users in admin" do
     # Create a bunch of users to have several pages
     # Create discarded users to verify they are not rollbacked
     #
-    create_list(:user, 8, :using_existing_organizations, created_at: 2.days.from_now)
+    create_list(:user, 7, :using_existing_organizations, created_at: 2.days.from_now)
     create_list(:user, 5, :using_existing_organizations, :discarded)
 
     visit admin_users_path
@@ -615,6 +615,7 @@ RSpec.describe "Users in admin" do
     expect(page).to have_current_path(admin_users_path)
     expect(page).to have_selector("h1", text: "Utilisateurs")
     expect(page).to have_text("10 utilisateurs | Page 1 sur 1")
+
     expect(page).to have_selector(:table_row, "Utilisateur" => "Marc Debomy")
     expect(page).to have_no_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
     expect(page).to have_no_selector(:table_row, "Utilisateur" => "Christelle Droitier")
@@ -638,9 +639,8 @@ RSpec.describe "Users in admin" do
     expect(page).to have_current_path(admin_users_path)
     expect(page).to have_selector("h1", text: "Utilisateurs")
     expect(page).to have_text("19 utilisateurs | Page 1 sur 2")
+
     expect(page).to have_selector(:table_row, "Utilisateur" => "Marc Debomy")
-    expect(page).to have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
-    expect(page).to have_selector(:table_row, "Utilisateur" => "Christelle Droitier")
 
     # The selection message should not appear again
     # The previous notification should be closed
@@ -655,7 +655,7 @@ RSpec.describe "Users in admin" do
     # Create a bunch of users to have several pages
     # TODO: Create discarded users to verify they are not rollbacked
     #
-    create_list(:user, 9, :using_existing_organizations)
+    create_list(:user, 8, :using_existing_organizations)
 
     visit admin_users_path
 
@@ -717,16 +717,6 @@ RSpec.describe "Users in admin" do
       click_on "Annuler"
     end
 
-    # The browser should stay on index page
-    # All users should be back again
-    #
-    expect(page).to have_current_path(admin_users_path)
-    expect(page).to have_selector("h1", text: "Utilisateurs")
-    expect(page).to have_text("20 utilisateurs | Page 1 sur 2")
-    expect(page).to have_selector(:table_row, "Utilisateur" => "Marc Debomy")
-    expect(page).to have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
-    expect(page).to have_selector(:table_row, "Utilisateur" => "Christelle Droitier")
-
     # The selection message should not appear again
     # The previous notification should be closed
     # A new notification should be displayed
@@ -734,5 +724,22 @@ RSpec.describe "Users in admin" do
     expect(page).to have_no_selector(".datatable__selection")
     expect(page).to have_no_selector("[role=log]", text: "Les utilisateurs sélectionnés ont été supprimés.")
     expect(page).to have_selector("[role=log]", text: "La suppression des utilisateurs sélectionnés a été annulée.")
+
+    click_on "Masquer cette notification"
+
+    # The browser should stay on index page
+    # All users should be back again
+    #
+    expect(page).to have_current_path(admin_users_path)
+    expect(page).to have_selector("h1", text: "Utilisateurs")
+
+    click_on "Options d'affichage"
+    click_on "Afficher 10 lignes par page"
+    click_on "Afficher 50 lignes"
+
+    expect(page).to have_text("20 utilisateurs | Page 1 sur 1")
+    expect(page).to have_selector(:table_row, "Utilisateur" => "Marc Debomy")
+    expect(page).to have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
+    expect(page).to have_selector(:table_row, "Utilisateur" => "Christelle Droitier")
   end
 end
