@@ -750,8 +750,15 @@ RSpec.describe "Reports" do
 
       # Fill the search form with a simple string criterion
       #
-      fill_in "Rechercher", with: "2024-01-0001-00001"
-      find("input[type=search]").send_keys :enter
+      query = "2024-01-0001-00001"
+      expect(page).to have_field(type: "search") do |field|
+        field.fill_in with: query
+        field.send_keys :enter
+      end
+
+      # Wait for the turbo-frame to reload
+      #
+      expect(page).to have_selector("turbo-frame[src='#{page.current_url}?search=#{query}']")
 
       # Only reports matching the criterion should appear
       #
@@ -761,8 +768,15 @@ RSpec.describe "Reports" do
 
       # Fill the search form with a hash-like string criteria
       #
-      fill_in "Rechercher", with: "paquet:2024-01-0001"
-      find("input[type=search]").send_keys :enter
+      query = "paquet:2024-01-0001"
+      expect(page).to have_field(type: "search") do |field|
+        field.fill_in with: query
+        field.send_keys :enter
+      end
+
+      # Wait for the turbo-frame to reload
+      #
+      expect(page).to have_selector("turbo-frame[src='#{page.current_url}?search=#{CGI.escape(query)}']")
 
       # Only reports matching the criterion should appear
       #
@@ -772,8 +786,15 @@ RSpec.describe "Reports" do
 
       # Fill the search form with multiple hash-like string criteria
       #
-      fill_in "Rechercher", with: "commune:bayonne type:(local habitation)"
-      find("input[type=search]").send_keys :enter
+      query = "commune:bayonne type:(evaluation d'un local d'habitation)"
+      expect(page).to have_field(type: "search") do |field|
+        field.fill_in with: query
+        field.send_keys :enter
+      end
+
+      # Wait for the turbo-frame to reload
+      #
+      expect(page).to have_selector("turbo-frame[src='#{page.current_url}?search=#{CGI.escape(query)}']")
 
       # Only reports matching the criteria should appear
       #
@@ -783,8 +804,15 @@ RSpec.describe "Reports" do
 
       # Fill the search form with a mix of hash-like criteria and simple string criterion
       #
-      fill_in "Rechercher", with: "état:(Signalement rejeté) bayonne"
-      find("input[type=search]").send_keys :enter
+      query = "état:(Signalement rejeté) bayonne"
+      expect(page).to have_field(type: "search") do |field|
+        field.fill_in with: query
+        field.send_keys :enter
+      end
+
+      # Wait for the turbo-frame to reload
+      #
+      expect(page).to have_selector("turbo-frame[src='#{page.current_url}?search=#{CGI.escape(query)}']")
 
       # Only reports matching the criteria should appear
       #
