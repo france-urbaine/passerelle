@@ -23,6 +23,15 @@ RSpec.describe Views::Dashboard::Component do
     expect(page).to have_selector(".datatable", count: 3)
   end
 
+  it "renders the dashboard to a DDFIP form admin" do
+    sign_in_as(:ddfip, :form_admin)
+
+    render_inline described_class.new(Report.strict_loading)
+
+    expect(page).to have_selector(".chart-number", count: 5)
+    expect(page).to have_selector(".datatable", count: 3)
+  end
+
   it "renders the dashboard to a DDFIP user" do
     sign_in_as(:ddfip)
 
