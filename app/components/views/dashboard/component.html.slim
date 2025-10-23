@@ -10,6 +10,8 @@
     - when "DDFIP"
       - if current_user.organization_admin?
         = render DDFIPAdmin.new(@reports)
+      - elsif current_user.user_form_types.any?
+        = render DDFIPFormAdmin.new(@reports)
       - else
         = render DDFIPUser.new(@reports)
 

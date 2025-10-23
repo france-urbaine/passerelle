@@ -18,7 +18,12 @@ module ControllerAdvancedSearch
       case current_user.organization_type
       when "Collectivity", "Publisher" then :collectivity
       when "DGFIP"                     then :ddfip_admin
-      when "DDFIP"                     then current_user.organization_admin? ? :ddfip_admin : :ddfip_user
+      when "DDFIP"
+        if current_user.organization_admin? || current_user.user_form_types.any?
+          :ddfip_admin
+        else
+          :ddfip_user
+        end
       end
 
     Reports::SearchService.new(as: viewer).analyze_param(query)
