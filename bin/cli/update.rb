@@ -36,6 +36,8 @@ module CLI
       run "git submodule init"
       run "git submodule update"
 
+      run "bin/setup env"
+
       say "Verifying database migration"
       run "ANNOTATERB_SKIP_ON_DB_TASKS=1 DUMP_SCHEMA_AFTER_MIGRATION=false bin/rails db:migrate"
     end

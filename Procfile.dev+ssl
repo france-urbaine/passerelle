@@ -1,5 +1,4 @@
-web:            bundle exec bin/rails server -b 0.0.0.0 -p 3000
+web:            bundle exec bin/rails server -b ssl://0.0.0.0:3000
 sidekiq:        bundle exec sidekiq -C ./config/sidekiq.yml
-mailcatcher:    bin/mailcatcher
 js:             yarn watch:js
 css:            yarn watch:css

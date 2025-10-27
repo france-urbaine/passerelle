@@ -8,6 +8,7 @@ module CLI
       case args[0]
       when nil            then start
       when "server"       then start_server
+      when "server:ssl"   then start_server(ssl: true)
       when "jobs"         then start_jobs
       when "mailcatcher"  then start_mailcatcher
       when "help"         then help
@@ -21,7 +22,8 @@ module CLI
 
             bin/dev                   # Start all default processes
             bin/dev server            # Start only processes required to serve the application (web, js & css)
-            bin/dev jobs              # Start backgrounder process(es)
+            bin/dev server:ssl        # Same as server but start puma using SSL
+            bin/dev jobs              # Start backgrounder processes
             bin/dev mailcatcher       # Start mailcatcher in foreground mode
             bin/dev help              # Show this help
 
@@ -33,18 +35,18 @@ module CLI
 
         Background processes could be start individually:
 
-            bin/dev sidekiq           # Start only Sidekiq
+            bin/dev sidekiq           # Start Sidekiq with default queues       (see config/sidekiq.yml)
         \x5
       HEREDOC
     end
 
-    def start(*processes, socket: nil)
+    def start(*processes, socket: nil, ssl: false)
       command = process_manager
       command += " start "
 
       options =
         case process_manager
-        when "overmind" then overmind_options(processes, socket: socket)
+        when "overmind" then overmind_options(processes, socket:, ssl:)
         when "foreman"  then foreman_options(processes)
         end
 
@@ -53,8 +55,8 @@ module CLI
       run command
     end
 
-    def start_server
-      start(:web, :js, :css)
+    def start_server(**)
+      start(:web, :js, :css, **)
     end
 
     def start_jobs
@@ -113,18 +115,27 @@ module CLI
     # Finally, you can override the port used by Rails with the command `PORT=<port> bin/dev`
     # or by setting `PORT=<port>` in an `.overmind.env` file.
     #
-    def overmind_options(processes, socket:)
+    def overmind_options(processes, socket:, ssl:)
+      mailcatcher =
+        (processes.empty? || processes.include?(:mailcatcher)) &&
+        command_available?("mailcatcher")
+
       options = {}
-      options[:f] = "Procfile.dev"
-
-      if (processes.empty? || processes.include?(:mailcatcher)) && command_available?("mailcatcher")
-        options[:f] = "Procfile.dev+mailcatcher"
-      end
-
+      options[:f] = procfile(ssl:, mailcatcher:)
       options[:N] = ""
       options[:l] = processes.join(",") if processes.any?
       options[:s] = "./.overmind_#{socket}.sock" if socket
       options
+    end
+
+    def procfile(ssl:, mailcatcher:)
+      if ssl
+        "Procfile.dev+ssl"
+      elsif mailcatcher
+        "Procfile.dev+mailcatcher"
+      else
+        "Procfile.dev"
+      end
     end
 
     def foreman_options(processes, **)

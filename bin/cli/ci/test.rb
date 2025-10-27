@@ -28,18 +28,19 @@ module CLI
       def run_tests(*)
         scope, paths = parse_arguments(*)
 
-        say "Run #{scope} specs"
+        if scope != "failed"
+          say "Run #{scope} specs"
 
-        env     = build_env(scope)
-        command = build_command(scope, paths)
-        result  = run(command, env: env, abort_on_failure: false)
-
-        unless result
-          say "Retry only failed specs"
-          env     = build_env(scope, only_failures: true)
-          command = build_command(scope, paths, only_failures: true)
-          result  = run(command, env: env, abort_on_failure: false)
+          env     = build_env(scope)
+          command = build_command(scope, paths)
+          return if run(command, env: env, abort_on_failure: false)
         end
+
+        say "Retry only failed specs"
+
+        env     = build_env(scope, only_failures: true)
+        command = build_command(scope, paths, only_failures: true)
+        result  = run(command, env: env, abort_on_failure: false)
 
         abort unless result
       end
@@ -60,6 +61,9 @@ module CLI
         elsif args.size == 1 && SCOPES.include?(args[0])
           scope = args[0]
           paths = SCOPES[args[0]]
+        elsif args.size == 1 && args[0] == "failed"
+          scope = "failed"
+          paths = []
         else
           scope = "given"
           paths = args
@@ -71,12 +75,6 @@ module CLI
       def build_env(scope, only_failures: false)
         env = {}
 
-        unless ENV["CI"] == "true" || ENV["SIMPLE_COV"] == "false" || only_failures
-          env["SIMPLE_COV_COMMAND"] = "bin/ci test"
-          env["SIMPLE_COV_COMMAND"] += ":parallel" if parallel_mode
-          env["SIMPLE_COV_COMMAND"] += ":#{scope}" if scope
-        end
-
         env["PARALLEL_TEST_FIRST_IS_1"] = "true" if parallel_mode && parallel_mode != "flatware"
         env["RSPEC_IGNORE_FOCUS"]       = "true"
         env["CI_LESS_OUTPUT"]           = "true" unless ENV.key?("CI_LESS_OUTPUT")
@@ -85,14 +83,22 @@ module CLI
           env["SIMPLE_COV"] = "false"
           env["SUPER_DIFF"] = "false"
           env["CAPYBARA_MAX_WAIT_TIME"] = "6"
+        elsif ENV.fetch("SIMPLE_COV", "true") == "true" && !only_failures
+          env["SIMPLE_COV"]         = "true"
+          env["SIMPLE_COV_COMMAND"] = "bin/ci test"
+          env["SIMPLE_COV_COMMAND"] += ":parallel" if parallel_mode
+          env["SIMPLE_COV_COMMAND"] += ":#{scope}" if scope
         end
 
         env
       end
 
-      # I cannot make it simpler
       # rubocop:disable Metrics/CyclomaticComplexity
       # rubocop:disable Metrics/PerceivedComplexity
+      #
+      # The high number of if statements makes this method complex for rubocop,
+      # but applying a table layout makes it easier enough to read and understand
+      # than splitting the method into multiple methods.
       #
       def build_command(scope, paths, only_failures: false)
         if parallel_mode
@@ -160,7 +166,7 @@ module CLI
       def determine_number_of_parallel_processes(scope)
         load_dotenv
 
-        total = ENV.fetch("CI_NODE_TOTAL", nil)
+        total = ENV.fetch("CI_NODE_TOTAL", nil)&.to_i
         total = 2 if scope == "system" && (total.nil? || total > 2)
         total = 1 if scope == "system" && system_spec_files.size == 1
         total

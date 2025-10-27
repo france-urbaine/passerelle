@@ -6,7 +6,7 @@ module CLI
   class Upgrade
     class Yarn < Base
       def call
-        say "Updating JS dependencies"
+        say "Upgrading JS dependencies"
         run "yarn upgrade-interactive --latest"
 
         return unless yarn_lock_changed?
@@ -24,9 +24,9 @@ module CLI
 
         say ""
         say "Would you like to run the system specs ? [Yn]"
-        run "bin/ci test system", abort_on_failure: false if ask == "Y"
-
+        run_system_specs_until_passed_or_discarded if ask == "Y"
         say ""
+
         if package_changed?
           say "Would you like to see changes on package.json ? [Yn]"
           run "git diff package.json" if ask == "Y"
@@ -49,6 +49,15 @@ module CLI
 
       def package_changed?
         !run("git diff --quiet package.json", abort_on_failure: false)
+      end
+
+      def run_system_specs_until_passed_or_discarded
+        loop do
+          return true if run("bin/ci test system", abort_on_failure: false)
+
+          say "Would you like to run again the system specs ? [Yn]"
+          return if ask != "Y"
+        end
       end
     end
   end

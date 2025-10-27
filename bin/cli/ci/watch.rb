@@ -5,6 +5,9 @@ require_relative "../base"
 module CLI
   class CI
     class Watch < Base
+      DEFAULT_DATABASE = "passerelle_test_watch"
+      DEFAULT_LOG_PATH = "log/watch.log"
+
       def call(plugin = nil)
         say "Starting Guard"
 
@@ -24,8 +27,8 @@ module CLI
 
       def build_env
         env = {}
-        env["POSTGRESQL_DATABASE"] = ENV.fetch("POSTGRESQL_DATABASE", "passerelle_test_watch")
-        env["LOG_PATH"]            = ENV.fetch("LOG_PATH", "log/watch.log")
+        env["POSTGRESQL_DATABASE"] = ENV.fetch("POSTGRESQL_DATABASE", DEFAULT_DATABASE)
+        env["LOG_PATH"]            = ENV.fetch("LOG_PATH", DEFAULT_LOG_PATH)
         env["SKIP_ALL_ON_START_WARNING"] = "true"
         env
       end

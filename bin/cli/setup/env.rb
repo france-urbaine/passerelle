@@ -2,6 +2,7 @@
 
 require_relative "../base"
 require "pathname"
+require "dotenv"
 
 module CLI
   class Setup
@@ -10,6 +11,7 @@ module CLI
         say "Check for some basic environnement variables"
 
         setup_redis_sidekiq
+        setup_redis_cache
         setup_smtp_port
         setup_ci_parallel
         setup_webdriver
@@ -27,14 +29,30 @@ module CLI
         say ""
         say "Would you like to set a dedicated Redis database for Sidekiq ?"
         say ""
-        say "  [0]    No (default to redis://localhost:6379)"
-        say "  [1-20] Another database (redis://localhost:6379/{database})"
+        say "  [1-20]   Another database (redis://localhost:6379/{n})"
+        say "  [Enter]  Use default URL  (redis://localhost:6379/0)"
         say ""
 
         value = ask
-        return unless (1..20).cover?(value.to_i)
+        value = 0 unless (1..20).cover?(value.to_i)
 
         add_variable "REDIS_SIDEKIQ_URL", "redis://localhost:6379/#{value}", ".env.development"
+      end
+
+      def setup_redis_cache
+        return if variable_exist?("REDIS_CACHE_URL", ".env.development")
+
+        say ""
+        say "Would you like to set a dedicated Redis database for caching ?"
+        say ""
+        say "  [1-20]   Another database (redis://localhost:6379/{n})"
+        say "  [Enter]  Use default URL  (redis://localhost:6379/1)"
+        say ""
+
+        value = ask
+        value = 1 unless (1..20).cover?(value.to_i)
+
+        add_variable "REDIS_CACHE_URL", "redis://localhost:6379/#{value}", ".env.development"
       end
 
       def setup_smtp_port
@@ -48,7 +66,7 @@ module CLI
         say ""
 
         value = ask
-        return if value.empty?
+        value = 1025 if value.empty?
 
         add_variable "SMTP_PORT", value, ".env.development"
       end
@@ -82,9 +100,12 @@ module CLI
           add_variable "WEBDRIVER", "cuprite", ".env.test"
         else
           say "Please enter your preferred webdriver:"
-          say "example: firefox_headless"
+          say "  example: firefox_headless"
 
-          add_variable "WEBDRIVER", ask, ".env.test"
+          webdriver = ask_variable("WEBDRIVER")
+
+          say ""
+          add_variable "WEBDRIVER", webdriver, ".env.test"
         end
       end
 
@@ -102,28 +123,32 @@ module CLI
 
         say ""
         say "Would you like to set up a production environnement ? [Yn]"
-        return unless ask == "Y"
 
-        vars = %w[
-          POSTGRESQL_HOST
-          POSTGRESQL_PORT
-          POSTGRESQL_DATABASE
-          POSTGRESQL_USER
-          POSTGRESQL_PASSWORD
-          REDIS_SIDEKIQ_URL
-          REDIS_CACHE_URL
-        ].each_with_object({}) do |variable, hash|
-          hash[variable] = ask(
-            "  > #{variable} = ",
-            loop_empty: true,
-            end_say:    nil
-          )
+        if ask != "Y"
+          run "touch .env.production"
+          return
         end
+
+        pg_host       = ask_variable("POSTGRESQL_HOST")
+        pg_port       = ask_variable("POSTGRESQL_PORT")
+        pg_database   = ask_variable("POSTGRESQL_DATABASE")
+        pg_user       = ask_variable("POSTGRESQL_USER")
+        pg_password   = ask_variable("POSTGRESQL_PASSWORD", secret: true)
 
         say ""
-        vars.each do |variable, value|
-          add_variable variable, value, ".env.production"
-        end
+        add_variable "POSTGRESQL_HOST",     pg_host,     ".env.production"
+        add_variable "POSTGRESQL_PORT",     pg_port,     ".env.production"
+        add_variable "POSTGRESQL_DATABASE", pg_database, ".env.production"
+        add_variable "POSTGRESQL_USER",     pg_user,     ".env.production"
+        add_variable "POSTGRESQL_PASSWORD", pg_password, ".env.production"
+
+        say ""
+        sidekiq_url = ask_variable("REDIS_SIDEKIQ_URL")
+        cache_url   = ask_variable("REDIS_CACHE_URL")
+
+        say ""
+        add_variable "REDIS_SIDEKIQ_URL", sidekiq_url, ".env.production"
+        add_variable "REDIS_CACHE_URL",   cache_url,   ".env.production"
       end
 
       private
@@ -134,7 +159,10 @@ module CLI
 
       def variable_exist?(variable, file)
         path = file(file)
-        path.exist? && path.read.include?(variable)
+        return false unless path.exist?
+
+        vars = Dotenv.parse(path)
+        vars.include?(variable) && !vars[variable].empty?
       end
 
       def file_exist?(file)
@@ -142,23 +170,34 @@ module CLI
         path.exist?
       end
 
+      def ask_variable(variable, **)
+        ask("  > #{variable} = ", loop_empty: true, end_say: nil, **).strip
+      end
+
       def add_variable(variable, value, file)
         output = "#{variable}="
-        output <<
-          case value
-          when /^\d+$/, true, false
-            value.to_s
-          else
-            %("#{value}")
-          end
+        output << format_variable_value(value)
 
         say "  => puts `#{output}` in #{file}"
 
-        file(file).open("a+") do |f|
-          lines = f.readlines
+        FileUtils.touch(file)
 
-          f.puts if lines.any? && !lines.last.end_with?("\n")
-          f.puts output
+        file(file).open("r+") do |f|
+          lines = f.readlines
+          lines.last << $RS unless lines.last.nil? || lines.last.end_with?($RS)
+          lines << output << $RS
+
+          f.rewind
+          f.write lines.join
+        end
+      end
+
+      def format_variable_value(value)
+        case value
+        when /^\d+$/, true, false
+          value.to_s
+        else
+          %("#{value}")
         end
       end
     end
