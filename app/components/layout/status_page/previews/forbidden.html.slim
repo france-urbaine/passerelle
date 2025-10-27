@@ -1,0 +1,7 @@
+- lookup_context.variants = :modal if modal
+
+= forbidden_status_page_component(reason, referrer:) do |page|
+  - page.with_breadcrumbs do |breadcrumbs|
+      - breadcrumbs.with_path "..."
+
+  - page.with_action "Retour", icon: "arrow-uturn-left"
