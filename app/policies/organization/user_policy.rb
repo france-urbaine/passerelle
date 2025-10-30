@@ -89,6 +89,10 @@ module Organization
       attributes << :organization_admin if organization_admin?
       attributes << { office_users_attributes: %i[_destroy id office_id supervisor] } if organization.is_a?(DDFIP)
 
+      if organization.is_a?(DDFIP) && organization_admin?
+        attributes << { user_form_types_attributes: %i[_destroy id form_type] }
+      end
+
       if supervisor?
         params[:office_users_attributes]&.select! do |_index, office_user_params|
           next unless office_user_params
