@@ -8,5 +8,7 @@
       = badge_component "Admin. de Passerelle", class: "badge--red"
     - if @user.organization_admin?
       = badge_component "Admin. de l'organisation", class: "badge--orange"
+    - if form_admin?
+      = badge_component("Référent", class: "badge--yellow")
     - if supervised_office_ids.any?
       = badge_component("Superviseur de guichet", class: "badge--blue")
