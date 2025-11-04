@@ -217,6 +217,7 @@ fr:
         organization_admin:     Administrateur de l'organisation
         super_admin:            Administrateur de la plateforme Passerelle
         office_ids:             Guichets
+        user_form_types:        Référent des formulaires
 
       commune:
         name:             Nom de la commune

@@ -9,6 +9,7 @@ RSpec.describe "DDFIP users in admin" do
 
   let(:ddfip64) { ddfips(:pyrenees_atlantiques) }
   let(:maxime)  { users(:maxime) }
+  let(:remi)    { users(:remi) }
 
   before { sign_in(users(:marc)) }
 
