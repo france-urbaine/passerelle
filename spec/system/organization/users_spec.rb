@@ -11,6 +11,7 @@ RSpec.describe "Manage users from organization" do
   let(:maxime)     { users(:maxime) }
   let(:charlotte)  { users(:charlotte) }
   let(:yvonne)     { users(:yvonne) }
+  let(:remi)       { users(:remi) }
 
   context "when organization is a publisher" do
     before { sign_in(marc) }
@@ -656,6 +657,16 @@ RSpec.describe "Manage users from organization" do
       expect(page).to have_selector("h1", text: "Maxime Gauthier")
       expect(page).to have_link("maxime.gauthier@dgfip.finances.gouv.fr")
       expect(page).to have_link("PELP de Bayonne")
+    end
+
+    it "visits a form admin page" do
+      visit organization_user_path(remi)
+
+      # It should  have list of administrated forms
+      #
+      expect(page).to have_selector("h1", text: "Rémi Ferrand")
+      expect(page).to have_selector("dt", text: "Référent des formulaires")
+      expect(page).to have_selector("li", text: "Évaluation d'un local d'habitation")
     end
 
     it "invites an user from the index page to join some offices" do
