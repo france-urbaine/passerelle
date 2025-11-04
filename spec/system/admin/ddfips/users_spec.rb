@@ -65,7 +65,7 @@ RSpec.describe "DDFIP users in admin" do
       expect(dialog).to have_unchecked_field("Administrateur de l'organisation")
       expect(dialog).to have_unchecked_field("Administrateur de la plateforme Passerelle")
 
-      within ".form-block", text: "Guichets" do |block|
+      dialog.find("label", text: "Guichets").sibling(".choices-collection") do |block|
         expect(block).to have_unchecked_field("PELP de Bayonne")
         expect(block).to have_unchecked_field("PELH de Bayonne")
         expect(block).to have_unchecked_field("SIP de Bayonne")
@@ -117,15 +117,26 @@ RSpec.describe "DDFIP users in admin" do
       expect(dialog).to have_checked_field("Administrateur de l'organisation")
       expect(dialog).to have_unchecked_field("Administrateur de la plateforme Passerelle")
 
-      within ".choices-collection" do |block|
+      dialog.find("label", text: "Guichets").sibling(".choices-collection") do |block|
         expect(block).to have_checked_field("PELP de Bayonne")
         expect(block).to have_unchecked_field("PELH de Bayonne")
         expect(block).to have_unchecked_field("SIP de Bayonne")
       end
 
+      within(:xpath, '//label[text()="Référent"]/following-sibling::div[1]') do |block|
+        expect(block).to have_checked_field("Évaluation d'un local d'habitation",  disabled: true)
+        expect(block).to have_checked_field("Évaluation d'un local professionnel", disabled: true)
+        expect(block).to have_checked_field("Création d'un local d'habitation",    disabled: true)
+        expect(block).to have_checked_field("Création d'un local professionnel",   disabled: true)
+        expect(block).to have_checked_field("Occupation d'un local d'habitation",  disabled: true)
+        expect(block).to have_checked_field("Occupation d'un local professionnel", disabled: true)
+      end
+
       fill_in "Nom", with: "Gaultier"
       uncheck "PELP de Bayonne"
       check "SIP de Bayonne"
+      uncheck "Administrateur de l'organisation"
+      check "Occupation d'un local professionnel"
 
       click_on "Enregistrer"
     end
