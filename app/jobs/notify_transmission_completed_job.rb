@@ -13,8 +13,13 @@ class NotifyTransmissionCompletedJob < ApplicationJob
                      Transmission.find(transmission_or_id)
                    end
 
-    transmission.packages.preload(ddfip: :users).find_each do |package|
-      package.ddfip.users.select { |u| u.notifiable? && u.organization_admin? }.each do |user|
+    transmission.packages.preload(:reports, ddfip: { users: :user_form_types }).find_each do |package|
+      types = package.reports.map(&:form_type).uniq
+
+      package.ddfip.users.each do |user|
+        next unless user.notifiable?
+        next unless user.organization_admin? || user.user_form_types.any? { |uft| uft.form_type.in?(types) }
+
         Transmissions::Mailer.complete(user, package).deliver_later
       end
     end
