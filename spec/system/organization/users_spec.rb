@@ -680,12 +680,25 @@ RSpec.describe "Manage users from organization" do
           expect(block).to have_unchecked_field("SIP de Bayonne")
         end
 
+        within(:xpath, '//label[text()="Référent"]/following-sibling::div[1]') do |block|
+          expect(block).to have_unchecked_field("Évaluation d'un local d'habitation")
+          expect(block).to have_unchecked_field("Évaluation d'un local professionnel")
+          expect(block).to have_unchecked_field("Création d'un local d'habitation")
+          expect(block).to have_unchecked_field("Création d'un local professionnel")
+          expect(block).to have_unchecked_field("Occupation d'un local d'habitation")
+          expect(block).to have_unchecked_field("Occupation d'un local professionnel")
+        end
+
         fill_in "Prénom",       with: "Elliot"
         fill_in "Nom",          with: "Alderson"
         fill_in "Adresse mail", with: "robot@solutions-territoire.fr"
 
         check "PELP de Bayonne"
         check "PELH de Bayonne"
+
+        check "Évaluation d'un local d'habitation"
+        check "Création d'un local d'habitation"
+        check "Occupation d'un local d'habitation"
 
         click_on "Enregistrer"
       end
@@ -709,6 +722,13 @@ RSpec.describe "Manage users from organization" do
         .to include(offices(:pelp_bayonne))
         .and include(offices(:pelh_bayonne))
         .and not_include(offices(:sip_bayonne))
+
+      # The new user should manages the check form types
+      #
+      expect(User.last.user_form_types.pluck(:form_type))
+        .to include("evaluation_local_habitation")
+        .and include("creation_local_habitation")
+        .and not_include("evaluation_local_professionnel")
     end
 
     it "updates an user offices" do
