@@ -129,7 +129,7 @@ module Passerelle
     COMMUNES_INSEE_INFO_URL = "https://www.insee.fr/fr/information/7671844"
     EPCI_INSEE_INFO_URL     = "https://www.insee.fr/fr/information/2510634"
 
-    DEFAULT_COMMUNES_URL = "https://www.insee.fr/fr/statistiques/fichier/7671844/table-appartenance-geo-communes-2024.zip"
-    DEFAULT_EPCIS_URL    = "https://www.insee.fr/fr/statistiques/fichier/2510634/epci_au_01-01-2024.zip"
+    DEFAULT_COMMUNES_URL = "https://www.insee.fr/fr/statistiques/fichier/7671844/table-appartenance-geo-communes-2025.zip"
+    DEFAULT_EPCIS_URL    = "https://www.insee.fr/fr/statistiques/fichier/2510634/epci_au_01-01-2025.zip"
   end
 end
