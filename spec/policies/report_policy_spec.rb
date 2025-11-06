@@ -1254,6 +1254,57 @@ RSpec.describe ReportPolicy, type: :policy do
       end
     end
 
+    it_behaves_like("when current user is a DDFIP form admin & super admin") do
+      it "scopes on reporst a form admin can see" do
+        expect {
+          scope.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT     "reports".*
+          FROM       "reports"
+          WHERE "reports"."discarded_at" IS NULL
+            AND "reports"."sandbox" = FALSE
+            AND "reports"."state" IN ('transmitted', 'acknowledged', 'accepted', 'assigned', 'applicable', 'inapplicable', 'approved', 'canceled', 'rejected')
+            AND "reports"."ddfip_id" = '#{current_organization.id}'
+            AND "reports"."form_type" IN ('#{current_user.user_form_types.map(&:form_type).join("', '")}')
+        SQL
+      end
+    end
+
+    it_behaves_like("when current user is a DDFIP form admin & admin") do
+      it "scopes on reports transmitted to the DDFIP" do
+        expect {
+          scope.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT     "reports".*
+          FROM       "reports"
+          WHERE "reports"."discarded_at" IS NULL
+            AND "reports"."sandbox" = FALSE
+            AND "reports"."state" IN ('transmitted', 'acknowledged', 'accepted', 'assigned', 'applicable', 'inapplicable', 'approved', 'canceled', 'rejected')
+            AND "reports"."ddfip_id" = '#{current_organization.id}'
+        SQL
+      end
+    end
+
+    it_behaves_like("when current user is a DDFIP super admin") do
+      it "scopes on reports a simple user can see" do
+        expect {
+          scope.load
+        }.to perform_sql_query(<<~SQL)
+          SELECT "reports".*
+          FROM   "reports"
+          WHERE  "reports"."discarded_at" IS NULL
+            AND  "reports"."state" IN ('assigned', 'applicable', 'inapplicable', 'approved', 'canceled')
+            AND  "reports"."sandbox" = FALSE
+            AND  "reports"."office_id" IN (
+              SELECT "offices"."id"
+              FROM "offices"
+              INNER JOIN "office_users" ON "offices"."id" = "office_users"."office_id"
+              WHERE "office_users"."user_id" = '#{current_user.id}'
+            )
+        SQL
+      end
+    end
+
     it_behaves_like("when current user is a DDFIP user") do
       it "scopes on reports forwarded to their office by the DDFIP" do
         expect {
