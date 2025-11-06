@@ -89,6 +89,7 @@ FactoryBot.define do
 
     trait :form_admin do
       organization { association(:ddfip) }
+      form_admin { true }
 
       transient do
         form_types { Report::FORM_TYPES.sample(2) }

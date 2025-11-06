@@ -75,6 +75,7 @@ remi:
   name:               Rémi Ferrand
   super_admin:        false
   organization_admin: false
+  form_admin:         true
   email:              referent.habitation@dgfip.finances.gouv.fr
   confirmed_at:       <%= Time.current %>
 
