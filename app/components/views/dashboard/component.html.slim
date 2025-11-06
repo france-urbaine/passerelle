@@ -3,20 +3,16 @@
     - layout.with_breadcrumbs do |breadcrumbs|
       - breadcrumbs.with_h1 "Tableau de bord"
 
-    - case current_user.organization_type
-    - when "Collectivity"
+    - case user_role
+    - when :collectivity
       = render Collectivity.new(@reports)
-
-    - when "DDFIP"
-      - if current_user.organization_admin?
-        = render DDFIPAdmin.new(@reports)
-      - elsif current_user.user_form_types.any?
-        = render DDFIPFormAdmin.new(@reports)
-      - else
-        = render DDFIPUser.new(@reports)
-
-    - when "DGFIP"
+    - when :dgfip
       = render DGFIP.new(@reports)
-
-    - when "Publisher"
+    - when :publisher
       = render Publisher.new(@reports)
+    - when :ddfip_admin
+      = render DDFIPAdmin.new(@reports)
+    - when :ddfip_form_admin
+      = render DDFIPFormAdmin.new(@reports)
+    - when :ddfip_user
+      = render DDFIPUser.new(@reports)

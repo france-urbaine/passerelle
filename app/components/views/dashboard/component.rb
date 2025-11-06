@@ -8,6 +8,10 @@ module Views
         super()
       end
 
+      def user_role
+        @user_role ||= ::Users::RoleService.new(current_user).user_role
+      end
+
       def count_reports(reports)
         displayed_count = reports.size
         total_count     = reports.unscope(:limit).count
