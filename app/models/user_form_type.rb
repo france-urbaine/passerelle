@@ -5,10 +5,14 @@
 # Table name: user_form_types
 #
 #  id         :uuid             not null, primary key
-#  user_id    :uuid
-#  form_type  :enum
+#  user_id    :uuid             not null
+#  form_type  :enum             not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
+#
+# Indexes
+#
+#  index_user_form_types_on_user_id  (user_id)
 #
 # Foreign Keys
 #

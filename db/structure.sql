@@ -3283,8 +3283,8 @@ CREATE TABLE public.transmissions (
 
 CREATE TABLE public.user_form_types (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
-    user_id uuid,
-    form_type public.form_type,
+    user_id uuid NOT NULL,
+    form_type public.form_type NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
@@ -4045,6 +4045,13 @@ CREATE INDEX index_transmissions_on_publisher_id ON public.transmissions USING b
 --
 
 CREATE INDEX index_transmissions_on_user_id ON public.transmissions USING btree (user_id);
+
+
+--
+-- Name: index_user_form_types_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_user_form_types_on_user_id ON public.user_form_types USING btree (user_id);
 
 
 --
