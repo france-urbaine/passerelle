@@ -8,6 +8,7 @@ RSpec.shared_context "when current user administrates the targeted form_type" do
   end
 
   before do
+    current_user.form_admin = true
     allow(current_user).to receive(:user_form_types).and_return([user_form_types])
   end
 end
@@ -22,6 +23,7 @@ RSpec.shared_context "when current user administrates another form_type" do
   end
 
   before do
+    current_user.form_admin = true
     allow(current_user).to receive(:user_form_types).and_return([user_form_types])
   end
 end

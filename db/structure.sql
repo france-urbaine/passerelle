@@ -1845,7 +1845,9 @@ CREATE TABLE public.users (
     otp_secret character varying,
     otp_method public.otp_method DEFAULT '2fa'::public.otp_method NOT NULL,
     consumed_timestep integer,
-    otp_required_for_login boolean DEFAULT true NOT NULL
+    otp_required_for_login boolean DEFAULT true NOT NULL,
+    form_admin boolean DEFAULT false NOT NULL,
+    office_user boolean DEFAULT false NOT NULL
 );
 
 
@@ -4481,6 +4483,7 @@ ALTER TABLE ONLY public.oauth_access_tokens
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20251106085809'),
 ('20251020091407'),
 ('20250729140510'),
 ('20250626131528'),

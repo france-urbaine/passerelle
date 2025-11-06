@@ -73,11 +73,11 @@ class ApplicationPolicy < ActionPolicy::Base
   end
 
   def form_admin?
-    !super_admin? && !organization_admin? && administrated_form_types.any?
+    !organization_admin? && user.form_admin?
   end
 
   def administrated_form_types
-    if user? && ddfip?
+    if user? && ddfip? && user.form_admin?
       user.user_form_types.map(&:form_type)
     else
       []

@@ -39,6 +39,8 @@
 #  otp_method             :enum             default("2fa"), not null
 #  consumed_timestep      :integer
 #  otp_required_for_login :boolean          default(TRUE), not null
+#  form_admin             :boolean          default(FALSE), not null
+#  office_user            :boolean          default(FALSE), not null
 #
 # Indexes
 #
