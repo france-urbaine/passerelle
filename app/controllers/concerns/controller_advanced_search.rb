@@ -14,18 +14,7 @@ module ControllerAdvancedSearch
   private
 
   def analyze_query_for_reports(query)
-    viewer =
-      case current_user.organization_type
-      when "Collectivity", "Publisher" then :collectivity
-      when "DGFIP"                     then :ddfip_admin
-      when "DDFIP"
-        if current_user.organization_admin? || current_user.user_form_types.any?
-          :ddfip_admin
-        else
-          :ddfip_user
-        end
-      end
-
+    viewer = Users::RoleService.new(current_user).viewer_type
     Reports::SearchService.new(as: viewer).analyze_param(query)
   end
 end

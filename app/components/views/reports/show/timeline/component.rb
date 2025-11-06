@@ -23,20 +23,7 @@ module Views
           end
 
           def viewer_type
-            case current_organization&.model_name&.element
-            when "collectivity", "publisher" then :collectivity
-            when "dgfip", "ddfip_admin"      then :ddfip_admin
-            when "ddfip_user"                then :ddfip_user
-            when "ddfip"                     then ddfip_viewer_type
-            end
-          end
-
-          def  ddfip_viewer_type
-            if current_user.organization_admin? || current_user.user_form_types.any?
-              :ddfip_admin
-            else
-              :ddfip_user
-            end
+            @viewer_type ||= ::Users::RoleService.new(current_user).viewer_type
           end
 
           def report_state
