@@ -709,4 +709,242 @@ RSpec.describe "Reports" do
       end
     end
   end
+
+  context "when user is a DDFIP form admin" do
+    before { sign_in(users(:remi)) }
+
+    it "visits index & report pages" do
+      report = reports(:local_habitation_1020660947) # rubocop:disable Naming/VariableNumber
+
+      visit reports_path
+
+      # A table of all reports should be present
+      #
+      expect(page).to have_selector("h1", text: "Signalements")
+      expect(page).to have_text("2 signalements | Page 1 sur 1")
+      expect(page).to have_link("Évaluation d'un local d'habitation", count: 2)
+
+      click_on "Évaluation d'un local d'habitation", match: :first
+
+      # The browser should visit the report page
+      #
+      expect(page).to have_current_path(report_path(report))
+      expect(page).to have_selector("h1", text: "Évaluation du local d'habitation 1020660947")
+
+      go_back
+
+      # The browser should redirect back to the index page
+      #
+      expect(page).to have_current_path(reports_path)
+      expect(page).to have_selector("h1", text: "Signalements")
+    end
+
+    it "searches for reports using quick search input" do
+      visit reports_path
+
+      # All reports should appear
+      #
+      expect(page).to have_selector(:table_row, { "Référence" => "2024-01-0001-00001" })
+      expect(page).to have_selector(:table_row, { "Référence" => "2024-01-0001-00002" })
+      expect(page).to have_no_selector(:table_row, { "Référence" => "2024-01-0002-00001" })
+
+      # Fill the search form with a simple string criterion
+      #
+      query = "2024-01-0001-00001"
+      expect(page).to have_field(type: "search") do |field|
+        field.fill_in with: query
+        field.send_keys :enter
+      end
+
+      # Wait for the turbo-frame to reload
+      #
+      expect(page).to have_selector("turbo-frame[src='#{page.current_url}?search=#{query}']")
+
+      # Only reports matching the criterion should appear
+      #
+      expect(page).to have_selector(:table_row, { "Référence" => "2024-01-0001-00001" })
+      expect(page).to have_no_selector(:table_row, { "Référence" => "2024-01-0001-00002" })
+      expect(page).to have_no_selector(:table_row, { "Référence" => "2024-01-0002-00001" })
+
+      # Fill the search form with a hash-like string criteria
+      #
+      query = "paquet:2024-01-0001"
+      expect(page).to have_field(type: "search") do |field|
+        field.fill_in with: query
+        field.send_keys :enter
+      end
+
+      # Wait for the turbo-frame to reload
+      #
+      expect(page).to have_selector("turbo-frame[src='#{page.current_url}?search=#{CGI.escape(query)}']")
+
+      # Only reports matching the criterion should appear
+      #
+      expect(page).to have_selector(:table_row, { "Référence" => "2024-01-0001-00001" })
+      expect(page).to have_selector(:table_row, { "Référence" => "2024-01-0001-00002" })
+      expect(page).to have_no_selector(:table_row, { "Référence" => "2024-01-0002-00001" })
+
+      # Fill the search form with multiple hash-like string criteria
+      #
+      query = "commune:bayonne type:(evaluation d'un local d'habitation)"
+      expect(page).to have_field(type: "search") do |field|
+        field.fill_in with: query
+        field.send_keys :enter
+      end
+
+      # Wait for the turbo-frame to reload
+      #
+      expect(page).to have_selector("turbo-frame[src='#{page.current_url}?search=#{CGI.escape(query)}']")
+
+      # Only reports matching the criteria should appear
+      #
+      expect(page).to have_selector(:table_row, { "Référence" => "2024-01-0001-00001" })
+      expect(page).to have_selector(:table_row, { "Référence" => "2024-01-0001-00002" })
+      expect(page).to have_no_selector(:table_row, { "Référence" => "2024-01-0002-00001" })
+
+      # Fill the search form with a mix of hash-like criteria and simple string criterion
+      #
+      query = "état:(Signalement rejeté) bayonne"
+      expect(page).to have_field(type: "search") do |field|
+        field.fill_in with: query
+        field.send_keys :enter
+      end
+
+      # Wait for the turbo-frame to reload
+      #
+      expect(page).to have_selector("turbo-frame[src='#{page.current_url}?search=#{CGI.escape(query)}']")
+
+      # Only reports matching the criteria should appear
+      #
+      expect(page).to have_no_selector(:table_row, { "Référence" => "2024-01-0001-00001" })
+      expect(page).to have_selector(:table_row, { "Référence" => "2024-01-0001-00002" })
+      expect(page).to have_no_selector(:table_row, { "Référence" => "2024-01-0002-00001" })
+    end
+
+    it "updates the state of several reports" do
+      # Create a bunch of reports to have several pages
+      #
+      ddfip        = ddfips(:pyrenees_atlantiques)
+      collectivity = collectivities(:pays_basque)
+      create_list(:report, 10, :transmitted_to_ddfip, collectivity:, ddfip:, form_type: "evaluation_local_habitation")
+      create_list(:report, 5, :approved_by_ddfip, collectivity:, ddfip:, form_type: "evaluation_local_habitation")
+
+      # Create reports that should not appear
+      #
+      create_list(:report, 5, :approved_by_ddfip, collectivity:, ddfip:, form_type: "evaluation_local_professionnel")
+
+      visit reports_path
+
+      expect(page).to have_text("17 signalements | Page 1 sur 1")
+
+      # Paginate reports by 10
+      # More than one page should exist
+      #
+      click_on "Options d'affichage"
+      click_on "Afficher 50 lignes par page"
+      click_on "Afficher 10 lignes"
+
+      expect(page).to have_text("17 signalements | Page 1 sur 2")
+
+      expect(page).to have_selector(:table_row, { "État" => "Nouveau signalement" }, count: 9)
+      expect(page).to have_selector(:table_row, { "État" => "Signalement rejeté"  }, count: 1)
+
+      # Checkboxes should be present to select all reports
+      #
+      within :table do
+        check nil, match: :first
+      end
+
+      # A message should diplay the number of selected users
+      # A button to select all reports from all pages should be present
+      # A button to accept all of them should be present
+      #
+      within ".datatable__selection", text: "10 signalements sélectionnés" do
+        click_on "Sélectionner les 17 signalements des 2 pages"
+      end
+
+      within ".datatable__selection", text: "17 signalements sélectionnés" do
+        click_on "Accepter"
+      end
+
+      # A modal dialog should appear
+      #
+      within "[role=dialog]", text: "Vous avez sélectionné 17 signalements" do |dialog|
+        expect(dialog).to have_text("12 signalements seront acceptés")
+        expect(dialog).to have_text("5 signalements déjà assignés ou traités seront ignorés")
+        click_on "Continuer"
+      end
+
+      # The states of the reports should have changed
+      #
+      expect(page).to have_text("17 signalements | Page 1 sur 2")
+      expect(page).to have_selector(:table_row, { "État" => "Signalement accepté" }, count: 10)
+
+      # Moving on second page
+      #
+      click_on "Page suivante"
+
+      expect(page).to have_text("17 signalements | Page 2 sur 2")
+      expect(page).to have_selector(:table_row, { "État" => "Signalement accepté" }, count: 2)
+      expect(page).to have_selector(:table_row, { "État" => "Réponse positive" }, count: 5)
+    end
+
+    it "updates the state of reports matching search criteria" do
+      # Create a bunch of reports to have several pages
+      #
+      ddfip        = ddfips(:pyrenees_atlantiques)
+      collectivity = collectivities(:pays_basque)
+      packages     = create_list(:package, 3, collectivity:, ddfip:)
+      create_list(:report, 6, :transmitted_to_ddfip, collectivity:, ddfip:, package: packages[0], form_type: "evaluation_local_habitation")
+      create_list(:report, 6, :transmitted_to_ddfip, collectivity:, ddfip:, package: packages[1], form_type: "evaluation_local_habitation")
+      create_list(:report, 6, :approved_by_ddfip,    collectivity:, ddfip:, package: packages[2], form_type: "evaluation_local_habitation")
+
+      visit reports_path
+
+      # Fill the search form
+      #
+      fill_in "Rechercher", with: "paquet:(#{packages[1].reference}, #{packages[2].reference})"
+      find("input[type=search]").send_keys :enter
+
+      expect(page).to have_text("12 signalements | Page 1 sur 1")
+      expect(page).to have_selector(:table_row, { "État" => "Nouveau signalement" }, count: 6)
+      expect(page).to have_selector(:table_row, { "État" => "Réponse positive"    }, count: 6)
+
+      # Paginate reports by 10
+      #
+      click_on "Options d'affichage"
+      click_on "Afficher 50 lignes par page"
+      click_on "Afficher 10 lignes"
+
+      expect(page).to have_text("12 signalements | Page 1 sur 2")
+      expect(page).to have_selector(:table_row, { "État" => "Nouveau signalement" }, count: 6)
+      expect(page).to have_selector(:table_row, { "État" => "Réponse positive"    }, count: 4)
+
+      # Checkboxes should be present to select all reports
+      #
+      within :table do
+        check nil, match: :first
+      end
+
+      # A message should diplay the number of selected users
+      # A button to select all reports from all pages should be present
+      # A button to accept all of them should be present
+      #
+      within ".datatable__selection", text: "10 signalements sélectionnés" do
+        click_on "Sélectionner les 12 signalements des 2 pages"
+      end
+
+      within ".datatable__selection", text: "12 signalements sélectionnés" do
+        click_on "Accepter"
+      end
+
+      # A modal dialog should appear
+      #
+      within "[role=dialog]", text: "Vous avez sélectionné 12 signalements" do |dialog|
+        expect(dialog).to have_text("6 signalements seront acceptés")
+        expect(dialog).to have_text("6 signalements déjà assignés ou traités seront ignorés")
+        click_on "Continuer"
+      end
+    end
+  end
 end

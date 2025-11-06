@@ -7,9 +7,9 @@ module Reports
 
     def manage?
       if record == Report
-        ddfip_admin?
+        ddfip_admin? || form_admin?
       elsif record.is_a?(Report)
-        ddfip_admin? &&
+        administrated_form? &&
           record.kept? &&
           record.out_of_sandbox? &&
           record.ddfip_id == organization.id &&
@@ -18,7 +18,7 @@ module Reports
     end
 
     relation_scope do |relation|
-      if ddfip_admin?
+      if ddfip_admin? || form_admin?
         authorized_scope(relation, with: ::ReportPolicy).confirmable
       else
         relation.none
@@ -26,7 +26,15 @@ module Reports
     end
 
     params_filter do |params|
-      params.permit(:reponse, :resolution_motif) if ddfip?
+      params.permit(:reponse, :resolution_motif) if ddfip_admin? || form_admin?
+    end
+
+    private
+
+    def administrated_form?
+      ddfip_admin? || (
+        form_admin? && administrated_form_types.include?(record.form_type)
+      )
     end
   end
 end

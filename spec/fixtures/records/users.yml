@@ -68,6 +68,17 @@ yvonne:
   email:              yvonne.bailly@dgfip.finances.gouv.fr
   confirmed_at:       <%= Time.current %>
 
+remi:
+  organization:       pyrenees_atlantiques (DDFIP)
+  first_name:         Rémi
+  last_name:          Ferrand
+  name:               Rémi Ferrand
+  super_admin:        false
+  organization_admin: false
+  form_admin:         true
+  email:              referent.habitation@dgfip.finances.gouv.fr
+  confirmed_at:       <%= Time.current %>
+
 christelle:
   organization:       pays_basque (Collectivity)
   first_name:         Christelle

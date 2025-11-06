@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "rails_helper"
+require_relative "shared_example_for_target_form_type"
 
 RSpec.describe "ReportsController#remove" do
   subject(:request) do
@@ -22,6 +23,7 @@ RSpec.describe "ReportsController#remove" do
     it_behaves_like "it denies access to publisher admin"
     it_behaves_like "it denies access to DDFIP user"
     it_behaves_like "it denies access to DDFIP admin"
+    it_behaves_like "it denies access to DDFIP form admin"
     it_behaves_like "it denies access to collectivity user"
     it_behaves_like "it denies access to collectivity admin"
 
@@ -72,6 +74,12 @@ RSpec.describe "ReportsController#remove" do
 
       it_behaves_like "it denies access to DDFIP admin"
       it_behaves_like "it denies access to DDFIP user"
+      it_behaves_like "when current user administrates the form_type" do
+        it_behaves_like "it denies access to DDFIP user"
+      end
+      it_behaves_like "when current user administrates any other form_type" do
+        it_behaves_like "it denies access to DDFIP user"
+      end
     end
 
     context "when report has been assigned to current user office" do

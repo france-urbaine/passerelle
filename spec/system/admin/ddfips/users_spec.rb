@@ -5,7 +5,7 @@ require "system_helper"
 RSpec.describe "DDFIP users in admin" do
   fixtures :regions, :departements, :epcis, :communes
   fixtures :publishers, :collectivities, :ddfips, :offices
-  fixtures :users, :office_users
+  fixtures :users, :office_users, :user_form_types
 
   let(:ddfip64) { ddfips(:pyrenees_atlantiques) }
   let(:maxime)  { users(:maxime) }
@@ -39,7 +39,7 @@ RSpec.describe "DDFIP users in admin" do
   it "paginate users on the DDFIP page" do
     # Create enough users to have several pages
     #
-    create_list(:user, 10, organization: ddfip64)
+    create_list(:user, 9, organization: ddfip64)
 
     visit admin_ddfip_path(ddfip64)
 
@@ -151,7 +151,7 @@ RSpec.describe "DDFIP users in admin" do
   it "discards an user from the DDFIP page & rollbacks" do
     visit admin_ddfip_path(ddfip64)
 
-    expect(page).to have_text("4 utilisateurs | Page 1 sur 1")
+    expect(page).to have_text("5 utilisateurs | Page 1 sur 1")
 
     # A table of users should be present
     # with a button to remove them
@@ -171,7 +171,7 @@ RSpec.describe "DDFIP users in admin" do
     #
     expect(page).to have_current_path(admin_ddfip_path(ddfip64))
     expect(page).to have_selector("h1", text: "DDFIP des Pyrénées-Atlantiques")
-    expect(page).to have_text("3 utilisateurs | Page 1 sur 1")
+    expect(page).to have_text("4 utilisateurs | Page 1 sur 1")
     expect(page).to have_no_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
 
     # The dialog should be closed
@@ -192,7 +192,7 @@ RSpec.describe "DDFIP users in admin" do
     #
     expect(page).to have_current_path(admin_ddfip_path(ddfip64))
     expect(page).to have_selector("h1", text: "DDFIP des Pyrénées-Atlantiques")
-    expect(page).to have_text("4 utilisateurs | Page 1 sur 1")
+    expect(page).to have_text("5 utilisateurs | Page 1 sur 1")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
 
     # The previous notification should be closed
@@ -205,7 +205,7 @@ RSpec.describe "DDFIP users in admin" do
   it "selects and discards one user from the DDFIP page & rollbacks" do
     visit admin_ddfip_path(ddfip64)
 
-    expect(page).to have_text("4 utilisateurs | Page 1 sur 1")
+    expect(page).to have_text("5 utilisateurs | Page 1 sur 1")
 
     # Checkboxes should be present to select users
     #
@@ -232,10 +232,11 @@ RSpec.describe "DDFIP users in admin" do
     #
     expect(page).to have_current_path(admin_ddfip_path(ddfip64))
     expect(page).to have_selector("h1", text: "DDFIP des Pyrénées-Atlantiques")
-    expect(page).to have_text("3 utilisateurs | Page 1 sur 1")
+    expect(page).to have_text("4 utilisateurs | Page 1 sur 1")
     expect(page).to have_no_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Astride Fabre")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Charlotte Poulain")
+    expect(page).to have_selector(:table_row, "Utilisateur" => "Rémi Ferrand")
 
     # The selection message should not appear anymore
     # The dialog should be closed
@@ -256,7 +257,7 @@ RSpec.describe "DDFIP users in admin" do
     #
     expect(page).to have_current_path(admin_ddfip_path(ddfip64))
     expect(page).to have_selector("h1", text: "DDFIP des Pyrénées-Atlantiques")
-    expect(page).to have_text("4 utilisateurs | Page 1 sur 1")
+    expect(page).to have_text("5 utilisateurs | Page 1 sur 1")
     expect(page).to have_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
 
     # The selection message should not appear again
@@ -272,7 +273,7 @@ RSpec.describe "DDFIP users in admin" do
     # Create a bunch of users to have several pages
     # Also create discarded users on other organizations to ensure there are not rollbacked
     #
-    create_list(:user, 10, organization: ddfip64)
+    create_list(:user, 9, organization: ddfip64)
     create_list(:user, 5, :discarded)
 
     visit admin_ddfip_path(ddfip64)
@@ -344,7 +345,7 @@ RSpec.describe "DDFIP users in admin" do
     # Create a bunch of users to have several pages
     # Also create discarded users on other organizations to ensure there are not rollbacked
     #
-    create_list(:user, 10, organization: ddfip64)
+    create_list(:user, 9, organization: ddfip64)
     create_list(:user, 5, :discarded)
 
     visit admin_ddfip_path(ddfip64)
