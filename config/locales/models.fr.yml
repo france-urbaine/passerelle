@@ -218,6 +218,8 @@ fr:
         super_admin:            Administrateur de la plateforme Passerelle
         office_ids:             Guichets
         user_form_types:        Référent des formulaires
+        form_admin:             Référent des formulaires
+        office_user:            Utilisateur de guichet
 
       commune:
         name:             Nom de la commune

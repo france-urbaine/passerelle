@@ -148,6 +148,8 @@ RSpec.describe Admin::UserPolicy, type: :policy do
         email:              "juliette.lemoine@example.org",
         organization_admin: "false",
         super_admin:        "false",
+        office_user:        "false",
+        form_admin:         "false",
         otp_secret:         "123456789",
         user_form_types_attributes: {
           "0" => { "_destroy" => true, "id" => "f4e6854a-00fb-48c4-b669-5f0623e07778" },
@@ -172,6 +174,8 @@ RSpec.describe Admin::UserPolicy, type: :policy do
           email:                      attributes[:email],
           organization_admin:         attributes[:organization_admin],
           super_admin:                attributes[:super_admin],
+          office_user:                attributes[:office_user],
+          form_admin:                 attributes[:form_admin],
           user_form_types_attributes: attributes[:user_form_types_attributes],
           office_users_attributes:    attributes[:office_users_attributes]
         ).and not_include(

@@ -685,20 +685,20 @@ RSpec.describe "Manage users from organization" do
         expect(dialog).to have_field("Adresse mail")
         expect(dialog).to have_unchecked_field("Administrateur de l'organisation")
 
-        within ".form-block", text: "Guichets" do |block|
-          expect(block).to have_unchecked_field("PELP de Bayonne")
-          expect(block).to have_unchecked_field("PELH de Bayonne")
-          expect(block).to have_unchecked_field("SIP de Bayonne")
-        end
+        expect(dialog).to have_checked_field("Utilisateur de guichet")
 
-        within(:xpath, '//label[text()="Référent"]/following-sibling::div[1]') do |block|
-          expect(block).to have_unchecked_field("Évaluation d'un local d'habitation")
-          expect(block).to have_unchecked_field("Évaluation d'un local professionnel")
-          expect(block).to have_unchecked_field("Création d'un local d'habitation")
-          expect(block).to have_unchecked_field("Création d'un local professionnel")
-          expect(block).to have_unchecked_field("Occupation d'un local d'habitation")
-          expect(block).to have_unchecked_field("Occupation d'un local professionnel")
-        end
+        expect(dialog).to have_unchecked_field("PELP de Bayonne")
+        expect(dialog).to have_unchecked_field("PELH de Bayonne")
+        expect(dialog).to have_unchecked_field("SIP de Bayonne")
+
+        expect(dialog).to have_unchecked_field("Référent des formulaires")
+
+        expect(dialog).to have_unchecked_field("Évaluation d'un local d'habitation", visible: :hidden)
+        expect(dialog).to have_unchecked_field("Évaluation d'un local professionnel", visible: :hidden)
+        expect(dialog).to have_unchecked_field("Création d'un local d'habitation", visible: :hidden)
+        expect(dialog).to have_unchecked_field("Création d'un local professionnel", visible: :hidden)
+        expect(dialog).to have_unchecked_field("Occupation d'un local d'habitation", visible: :hidden)
+        expect(dialog).to have_unchecked_field("Occupation d'un local professionnel", visible: :hidden)
 
         fill_in "Prénom",       with: "Elliot"
         fill_in "Nom",          with: "Alderson"
@@ -707,6 +707,7 @@ RSpec.describe "Manage users from organization" do
         check "PELP de Bayonne"
         check "PELH de Bayonne"
 
+        check "Référent des formulaires"
         check "Évaluation d'un local d'habitation"
         check "Création d'un local d'habitation"
         check "Occupation d'un local d'habitation"
@@ -758,12 +759,12 @@ RSpec.describe "Manage users from organization" do
       # A dialog box should appear with a form
       # The form should be filled with user data
       #
-      within "[role=dialog]", text: "Modification de l'utilisateur" do
-        within ".form-block", text: "Guichets" do |block|
-          expect(block).to have_checked_field("PELP de Bayonne")
-          expect(block).to have_unchecked_field("PELH de Bayonne")
-          expect(block).to have_unchecked_field("SIP de Bayonne")
-        end
+      within "[role=dialog]", text: "Modification de l'utilisateur" do |dialog|
+        expect(dialog).to have_checked_field("Utilisateur de guichet")
+
+        expect(dialog).to have_checked_field("PELP de Bayonne")
+        expect(dialog).to have_unchecked_field("PELH de Bayonne")
+        expect(dialog).to have_unchecked_field("SIP de Bayonne")
 
         uncheck "PELP de Bayonne"
         check "PELH de Bayonne"
@@ -839,11 +840,10 @@ RSpec.describe "Manage users from organization" do
         expect(dialog).to have_field("Nom")
         expect(dialog).to have_field("Adresse mail")
 
-        within ".form-block", text: "Guichets" do |block|
-          expect(block).to have_unchecked_field("PELP de Bayonne")
-          expect(block).to have_unchecked_field("PELH de Bayonne", disabled: true)
-          expect(block).to have_unchecked_field("SIP de Bayonne", disabled: true)
-        end
+        expect(dialog).to have_checked_field("Utilisateur de guichet")
+        expect(dialog).to have_unchecked_field("PELP de Bayonne")
+        expect(dialog).to have_unchecked_field("PELH de Bayonne", disabled: true)
+        expect(dialog).to have_unchecked_field("SIP de Bayonne", disabled: true)
 
         fill_in "Prénom",       with: "Elliot"
         fill_in "Nom",          with: "Alderson"
@@ -890,11 +890,10 @@ RSpec.describe "Manage users from organization" do
         expect(dialog).to have_field("Nom")
         expect(dialog).to have_field("Adresse mail")
 
-        within ".form-block", text: "Guichets" do |block|
-          expect(block).to have_unchecked_field("PELP de Bayonne")
-          expect(block).to have_unchecked_field("PELH de Bayonne", disabled: true)
-          expect(block).to have_unchecked_field("SIP de Bayonne", disabled: true)
-        end
+        expect(dialog).to have_checked_field("Utilisateur de guichet")
+        expect(dialog).to have_unchecked_field("PELP de Bayonne")
+        expect(dialog).to have_unchecked_field("PELH de Bayonne", disabled: true)
+        expect(dialog).to have_unchecked_field("SIP de Bayonne", disabled: true)
 
         fill_in "Prénom",       with: "Marc"
         fill_in "Nom",          with: "Debomy"
@@ -922,11 +921,10 @@ RSpec.describe "Manage users from organization" do
         expect(dialog).to have_field("Nom", with: "Debomy")
         expect(dialog).to have_field("Adresse mail", with: "mdebomy@solutions-territoire.fr")
 
-        within ".form-block", text: "Guichets" do |block|
-          expect(block).to have_checked_field("PELP de Bayonne")
-          expect(block).to have_unchecked_field("PELH de Bayonne", disabled: true)
-          expect(block).to have_unchecked_field("SIP de Bayonne", disabled: true)
-        end
+        expect(dialog).to have_checked_field("Utilisateur de guichet")
+        expect(dialog).to have_checked_field("PELP de Bayonne")
+        expect(dialog).to have_unchecked_field("PELH de Bayonne", disabled: true)
+        expect(dialog).to have_unchecked_field("SIP de Bayonne", disabled: true)
 
         fill_in "Adresse mail", with: "yvonne.bailly@dgfip.finances.gouv.fr"
 
@@ -951,12 +949,12 @@ RSpec.describe "Manage users from organization" do
         expect(dialog).to have_field("Nom", disabled: true, with: "Bailly")
         expect(dialog).to have_field("Adresse mail", disabled: true, with: "yvonne.bailly@dgfip.finances.gouv.fr")
 
-        within ".form-block", text: "Guichets" do |block|
-          expect(block).to have_unchecked_field("PELP de Bayonne")
-          expect(block).to have_unchecked_field("PELH de Bayonne", disabled: true)
-          expect(block).to have_unchecked_field("SIP de Bayonne", disabled: true)
-        end
+        expect(dialog).to have_unchecked_field("Utilisateur de guichet")
+        expect(dialog).to have_unchecked_field("PELP de Bayonne", visible: :hidden)
+        expect(dialog).to have_unchecked_field("PELH de Bayonne", disabled: true, visible: :hidden)
+        expect(dialog).to have_unchecked_field("SIP de Bayonne", disabled: true, visible: :hidden)
 
+        check "Utilisateur de guichet"
         check "PELP de Bayonne"
 
         click_on "Enregistrer"
@@ -999,13 +997,12 @@ RSpec.describe "Manage users from organization" do
       # A dialog box should appear with a form
       # The form should be filled with user data
       #
-      within "[role=dialog]", text: "Modification de l'utilisateur" do
-        within ".form-block", text: "Guichets" do |block|
-          expect(block).to have_checked_field("PELP de Bayonne")
-          expect(block).to have_unchecked_field("Superviseur")
-          expect(block).to have_unchecked_field("PELH de Bayonne", disabled: true)
-          expect(block).to have_unchecked_field("SIP de Bayonne", disabled: true)
-        end
+      within "[role=dialog]", text: "Modification de l'utilisateur" do |dialog|
+        expect(dialog).to have_checked_field("Utilisateur de guichet")
+        expect(dialog).to have_checked_field("PELP de Bayonne")
+        expect(dialog).to have_unchecked_field("Superviseur")
+        expect(dialog).to have_unchecked_field("PELH de Bayonne", disabled: true)
+        expect(dialog).to have_unchecked_field("SIP de Bayonne", disabled: true)
 
         check "Superviseur"
 

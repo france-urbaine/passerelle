@@ -247,11 +247,10 @@ RSpec.describe "Users in admin" do
       fill_in "Organisation", with: "DDFIP"
       select_option "DDFIP des Pyrénées-Atlantiques", from: "Organisation"
 
-      within ".form-block", text: "Guichets" do |block|
-        expect(block).to have_unchecked_field("PELP de Bayonne")
-        expect(block).to have_unchecked_field("PELH de Bayonne")
-        expect(block).to have_unchecked_field("SIP de Bayonne")
-      end
+      expect(dialog).to have_checked_field("Utilisateur de guichet")
+      expect(dialog).to have_unchecked_field("PELP de Bayonne")
+      expect(dialog).to have_unchecked_field("PELH de Bayonne")
+      expect(dialog).to have_unchecked_field("SIP de Bayonne")
 
       fill_in "Prénom",       with: "Elliot"
       fill_in "Nom",          with: "Alderson"

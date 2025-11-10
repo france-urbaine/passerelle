@@ -12,7 +12,7 @@ module Views
         @user.organization_type == "DDFIP" &&
           !@user.super_admin? &&
           !@user.organization_admin? &&
-          !form_admin? &&
+          !@user.form_admin? &&
           @user.offices.empty?
       end
 
@@ -23,6 +23,7 @@ module Views
       def form_admin?
         @user.organization_type == "DDFIP" &&
           !@user.organization_admin? &&
+          @user.form_admin? &&
           @user.user_form_types.any?
       end
     end

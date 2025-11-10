@@ -25,6 +25,8 @@ RSpec.describe Views::Users::OfficesFormComponent, type: :component do
     it "renders fields to assign offices when user's organization is a DDFIP" do
       render_inline described_class.new(User.new, namespace: :admin, organization: ddfip)
 
+      expect(page).to have_checked_field("Utilisateur de guichet")
+
       expect(page).to have_selector(".choices-collection") do |form_block|
         ddfip.offices.order(:name).each_with_index do |office, index|
           expect(form_block).to have_selector("input#user_office_users_attributes_#{index}_id", visible: :hidden)
@@ -42,6 +44,8 @@ RSpec.describe Views::Users::OfficesFormComponent, type: :component do
 
     it "renders fields to with assigned offices when user's organization is a DDFIP" do
       render_inline described_class.new(office_user.user, namespace: :admin, organization: ddfip)
+
+      expect(page).to have_checked_field("Utilisateur de guichet")
 
       expect(page).to have_selector(".choices-collection") do |form_block|
         ddfip.offices.each do |office|
