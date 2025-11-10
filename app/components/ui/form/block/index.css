@@ -139,6 +139,7 @@
     @apply mt-4 pl-4 border-l-2;
     @apply text-gray-700 border-gray-200;
     @apply dark:text-gray-400 dark:border-gray-700;
+    margin-left: 5px;
   }
 
   .form-block__errors {
