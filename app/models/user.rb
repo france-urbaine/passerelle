@@ -92,6 +92,7 @@ class User < ApplicationRecord
   # Attributes
   # ----------------------------------------------------------------------------
   accepts_nested_attributes_for :office_users, reject_if: :all_blank, allow_destroy: true
+  accepts_nested_attributes_for :user_form_types, reject_if: :all_blank, allow_destroy: true
 
   # Validations
   # ----------------------------------------------------------------------------

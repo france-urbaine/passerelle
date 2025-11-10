@@ -12,6 +12,20 @@ RSpec.describe Views::Users::ShowRolesBadgesComponent, type: :component do
     expect(page).to have_selector(".badge.badge--blue", text: "Superviseur de guichet")
   end
 
+  it "renders only one badge if user is both organization admin and form admin" do
+    user = build_stubbed(:user, :organization_admin, :form_admin)
+    render_inline described_class.new(user)
+
+    expect(page).to have_selector(".badge.badge--orange", text: "Admin. de l'organisation")
+  end
+
+  it "renders a badge for form admin" do
+    user = build_stubbed(:user, :form_admin)
+    render_inline described_class.new(user)
+
+    expect(page).to have_selector(".badge.badge--yellow", text: "Référent")
+  end
+
   it "renders an empty string when user doesn't have any roles" do
     user = build_stubbed(:user, :collectivity)
     doc  = render_inline described_class.new(user)

@@ -47,6 +47,7 @@ module Views
       def office_users
         @office_users ||= begin
           office_users = @user.office_users
+          office_users = office_users.preload(:office) unless @user.new_record?
           office_users += offices.filter_map do |office|
             OfficeUser.new(user: @user, office: office) unless office.id.in?(checked_offices)
           end
