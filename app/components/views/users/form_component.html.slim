@@ -63,9 +63,48 @@
 
       div( data-controller="switch" )
 
+        - if allowed_to_assign_user_form_types?
+          div( *show_if_ddfip_html_attributes )
+            div( data-switch-target="show" data-switch-value="1" data-switch-target-group="organization_admin" hidden=!@user.organization_admin?)
+              = form.block :form_admin do |block|
+                = form.check_box :form_admin, disabled: true
+                = form.label :form_admin
+
+                - block.with_hint do
+                  .prose
+                    p
+                      | En tant qu'administrateur de l'organisation, cet utilisateur a déjà tous les droits d'un référent.
+
+            div( data-switch-target="showWhenEmpty" data-switch-target-group="organization_admin" hidden=@user.organization_admin?)
+              = form.block :form_admin do |block|
+                = form.check_box :form_admin, { data: { action: "switch#toggle", switch_group_param: "form_admin" } }
+                = form.label :form_admin
+
+                - block.with_hint do
+                  .prose
+                    p
+                      | Le référent gère les signalements de certains types :
+                    ul
+                      li Il peut les accepter, rejeter, assigner ou les renvoyer.
+
+              = form.block :user_form_types do |block|
+                - hidden = !@user.form_admin?
+
+                .choices-collection( data-switch-target="show" data-switch-value=1 data-switch-target-group="form_admin" hidden=hidden )
+                  = form.fields_for :user_form_types, user_form_types, include_id: false do |fields|
+                    - checked = !fields.object.new_record?
+
+                    = fields.hidden_field :id
+                    = fields.hidden_field :form_type
+
+                    .choices-collection__input
+                      = fields.check_box :_destroy, { value: !checked, checked: }, "false", "true"
+                      = fields.label :_destroy, t(fields.object.form_type, scope: "enum.report_form_type")
+
+
         - if allowed_to_assign_organization_admin?
           = form.block :organization_admin do |block|
-            = form.check_box :organization_admin, { data: { action: "switch#toggle", group_param: "organization_admin" } }
+            = form.check_box :organization_admin, { data: { action: "switch#toggle", switch_group_param: "organization_admin" } }
             = form.label :organization_admin
 
             - block.with_hint do
@@ -93,34 +132,6 @@
                     ' L'administrateur bénéficie de tout les droits sur cette organisation.
                     br
                     ' Il peut notamment créer, gérer ou supprimer d'autres utilisateurs.
-
-        - if allowed_to_assign_user_form_types?
-          = form.block :user_form_types, **show_if_ddfip_html_attributes do |block|
-            - hidden = @user.organization_admin?
-
-            label Référent
-
-            .choices-collection
-              = form.fields_for :user_form_types, user_form_types, include_id: false do |fields|
-                - checked = !fields.object.new_record?
-
-                = fields.hidden_field :id
-                = fields.hidden_field :form_type
-
-                .choices-collection__input( data-switch-target="showWhenEmpty" data-switch-target-group="organization_admin" hidden=hidden )
-                  = fields.check_box :_destroy, { value: !checked, checked: }, "false", "true"
-                  = fields.label :_destroy, t(fields.object.form_type, scope: "enum.report_form_type")
-
-                .choices-collection__input( data-switch-target="show" data-switch-value=1 data-switch-target-group="organization_admin" hidden=!hidden )
-                  = fields.check_box :_destroy, { value: false, checked: true, disabled: true }, "false", "true"
-                  = fields.label :_destroy, t(fields.object.form_type, scope: "enum.report_form_type")
-
-            - block.with_hint do
-              .prose
-                p
-                  | Le référent gère les signalements de certains types :
-                ul
-                  li Il peut les accepter, rejeter, assigner ou les renvoyer.
 
 
       - if allowed_to_assign_super_admin?

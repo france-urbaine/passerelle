@@ -66,11 +66,10 @@ RSpec.describe "DDFIP users in admin" do
       expect(dialog).to have_unchecked_field("Administrateur de l'organisation")
       expect(dialog).to have_unchecked_field("Administrateur de la plateforme Passerelle")
 
-      dialog.find("label", text: "Guichets").sibling(".choices-collection") do |block|
-        expect(block).to have_unchecked_field("PELP de Bayonne")
-        expect(block).to have_unchecked_field("PELH de Bayonne")
-        expect(block).to have_unchecked_field("SIP de Bayonne")
-      end
+      expect(dialog).to have_checked_field("Utilisateur de guichet")
+      expect(dialog).to have_unchecked_field("PELP de Bayonne")
+      expect(dialog).to have_unchecked_field("PELH de Bayonne")
+      expect(dialog).to have_unchecked_field("SIP de Bayonne")
 
       fill_in "Prénom",       with: "Elliot"
       fill_in "Nom",          with: "Alderson"
@@ -118,25 +117,24 @@ RSpec.describe "DDFIP users in admin" do
       expect(dialog).to have_checked_field("Administrateur de l'organisation")
       expect(dialog).to have_unchecked_field("Administrateur de la plateforme Passerelle")
 
-      dialog.find("label", text: "Guichets").sibling(".choices-collection") do |block|
-        expect(block).to have_checked_field("PELP de Bayonne")
-        expect(block).to have_unchecked_field("PELH de Bayonne")
-        expect(block).to have_unchecked_field("SIP de Bayonne")
-      end
+      expect(dialog).to have_checked_field("Utilisateur de guichet")
+      expect(dialog).to have_checked_field("PELP de Bayonne")
+      expect(dialog).to have_unchecked_field("PELH de Bayonne")
+      expect(dialog).to have_unchecked_field("SIP de Bayonne")
 
-      within(:xpath, '//label[text()="Référent"]/following-sibling::div[1]') do |block|
-        expect(block).to have_checked_field("Évaluation d'un local d'habitation",  disabled: true)
-        expect(block).to have_checked_field("Évaluation d'un local professionnel", disabled: true)
-        expect(block).to have_checked_field("Création d'un local d'habitation",    disabled: true)
-        expect(block).to have_checked_field("Création d'un local professionnel",   disabled: true)
-        expect(block).to have_checked_field("Occupation d'un local d'habitation",  disabled: true)
-        expect(block).to have_checked_field("Occupation d'un local professionnel", disabled: true)
-      end
+      expect(dialog).to have_unchecked_field("Référent des formulaires", disabled: true)
+      expect(dialog).to have_unchecked_field("Évaluation d'un local d'habitation",  visible: :hidden)
+      expect(dialog).to have_unchecked_field("Évaluation d'un local professionnel", visible: :hidden)
+      expect(dialog).to have_unchecked_field("Création d'un local d'habitation",    visible: :hidden)
+      expect(dialog).to have_unchecked_field("Création d'un local professionnel",   visible: :hidden)
+      expect(dialog).to have_unchecked_field("Occupation d'un local d'habitation",  visible: :hidden)
+      expect(dialog).to have_unchecked_field("Occupation d'un local professionnel", visible: :hidden)
 
       fill_in "Nom", with: "Gaultier"
       uncheck "PELP de Bayonne"
       check "SIP de Bayonne"
       uncheck "Administrateur de l'organisation"
+      check "Référent des formulaires"
       check "Occupation d'un local professionnel"
 
       click_on "Enregistrer"

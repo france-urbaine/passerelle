@@ -83,14 +83,14 @@ RSpec.describe Views::Users::FormComponent, type: :component do
 
         expect(form).to have_selector(".text-disabled", text: "Aucun guichet disponible pour cette DDFIP")
 
-        expect(form).to have_selector("label", text: "Référent")
+        expect(form).to have_unchecked_field("Référent des formulaires")
 
-        expect(form).to have_unchecked_field("Évaluation d'un local d'habitation")
-        expect(form).to have_unchecked_field("Évaluation d'un local professionnel")
-        expect(form).to have_unchecked_field("Création d'un local d'habitation")
-        expect(form).to have_unchecked_field("Création d'un local professionnel")
-        expect(form).to have_unchecked_field("Occupation d'un local d'habitation")
-        expect(form).to have_unchecked_field("Occupation d'un local professionnel")
+        expect(form).to have_unchecked_field("Évaluation d'un local d'habitation",  visible: :hidden)
+        expect(form).to have_unchecked_field("Évaluation d'un local professionnel", visible: :hidden)
+        expect(form).to have_unchecked_field("Création d'un local d'habitation",    visible: :hidden)
+        expect(form).to have_unchecked_field("Création d'un local professionnel",   visible: :hidden)
+        expect(form).to have_unchecked_field("Occupation d'un local d'habitation",  visible: :hidden)
+        expect(form).to have_unchecked_field("Occupation d'un local professionnel", visible: :hidden)
       end
     end
 
@@ -128,14 +128,14 @@ RSpec.describe Views::Users::FormComponent, type: :component do
         expect(form).to have_unchecked_field("Administrateur de l'organisation")
         expect(form).to have_unchecked_field("Administrateur de la plateforme Passerelle")
 
-        expect(form).to have_selector("label", text: "Référent")
+        expect(form).to have_unchecked_field("Référent des formulaires")
 
-        expect(form).to have_unchecked_field("Évaluation d'un local d'habitation")
-        expect(form).to have_unchecked_field("Évaluation d'un local professionnel")
-        expect(form).to have_unchecked_field("Création d'un local d'habitation")
-        expect(form).to have_unchecked_field("Création d'un local professionnel")
-        expect(form).to have_unchecked_field("Occupation d'un local d'habitation")
-        expect(form).to have_unchecked_field("Occupation d'un local professionnel")
+        expect(form).to have_unchecked_field("Évaluation d'un local d'habitation",  visible: :hidden)
+        expect(form).to have_unchecked_field("Évaluation d'un local professionnel", visible: :hidden)
+        expect(form).to have_unchecked_field("Création d'un local d'habitation",    visible: :hidden)
+        expect(form).to have_unchecked_field("Création d'un local professionnel",   visible: :hidden)
+        expect(form).to have_unchecked_field("Occupation d'un local d'habitation",  visible: :hidden)
+        expect(form).to have_unchecked_field("Occupation d'un local professionnel", visible: :hidden)
 
         expect(form).to have_selector(".form-block[data-user-form-target='officesFormBlock']", visible: :visible) do |form_block|
           expect(form_block).to have_selector("turbo-frame[data-user-form-target='officesCheckboxesFrame']", visible: :visible)
@@ -393,10 +393,8 @@ RSpec.describe Views::Users::FormComponent, type: :component do
         expect(form).to have_field("Prénom")
         expect(form).to have_field("Administrateur de l'organisation")
         expect(form).to have_no_field("Administrateur de la plateforme Passerelle")
-
-        expect(form).to have_selector("label", text: "Référent")
-
-        expect(form).to have_selector(".form-block", text: "Guichets", visible: :visible)
+        expect(form).to have_checked_field("Utilisateur de guichet")
+        expect(form).to have_unchecked_field("Référent des formulaires")
       end
     end
 
@@ -413,16 +411,16 @@ RSpec.describe Views::Users::FormComponent, type: :component do
         expect(form).to have_unchecked_field("Administrateur de l'organisation")
         expect(form).to have_no_field("Administrateur de la plateforme Passerelle")
 
-        expect(form).to have_selector("label", text: "Référent", visible: :visible)
+        expect(form).to have_unchecked_field("Référent des formulaires")
 
-        expect(form).to have_unchecked_field("Évaluation d'un local d'habitation")
-        expect(form).to have_unchecked_field("Évaluation d'un local professionnel")
-        expect(form).to have_unchecked_field("Création d'un local d'habitation")
-        expect(form).to have_unchecked_field("Création d'un local professionnel")
-        expect(form).to have_unchecked_field("Occupation d'un local d'habitation")
-        expect(form).to have_unchecked_field("Occupation d'un local professionnel")
+        expect(form).to have_unchecked_field("Évaluation d'un local d'habitation", visible: :hidden)
+        expect(form).to have_unchecked_field("Évaluation d'un local professionnel", visible: :hidden)
+        expect(form).to have_unchecked_field("Création d'un local d'habitation", visible: :hidden)
+        expect(form).to have_unchecked_field("Création d'un local professionnel", visible: :hidden)
+        expect(form).to have_unchecked_field("Occupation d'un local d'habitation", visible: :hidden)
+        expect(form).to have_unchecked_field("Occupation d'un local professionnel", visible: :hidden)
 
-        expect(form).to have_selector("label", text: "Guichets")
+        expect(form).to have_checked_field("Utilisateur de guichet")
         expect(form).to have_unchecked_field(offices[0].name)
         expect(form).to have_unchecked_field(offices[1].name)
         expect(form).to have_checked_field(offices[2].name)
@@ -443,14 +441,14 @@ RSpec.describe Views::Users::FormComponent, type: :component do
         expect(form).to have_checked_field("Administrateur de l'organisation")
         expect(form).to have_no_field("Administrateur de la plateforme Passerelle")
 
-        expect(form).to have_selector("label", text: "Référent", visible: :visible)
+        expect(form).to have_unchecked_field("Référent des formulaires", disabled: true)
 
-        expect(form).to have_checked_field("Évaluation d'un local d'habitation", disabled: true)
-        expect(form).to have_checked_field("Évaluation d'un local professionnel", disabled: true)
-        expect(form).to have_checked_field("Création d'un local d'habitation", disabled: true)
-        expect(form).to have_checked_field("Création d'un local professionnel", disabled: true)
-        expect(form).to have_checked_field("Occupation d'un local d'habitation", disabled: true)
-        expect(form).to have_checked_field("Occupation d'un local professionnel", disabled: true)
+        expect(form).to have_unchecked_field("Évaluation d'un local d'habitation", visible: :hidden)
+        expect(form).to have_unchecked_field("Évaluation d'un local professionnel", visible: :hidden)
+        expect(form).to have_unchecked_field("Création d'un local d'habitation", visible: :hidden)
+        expect(form).to have_unchecked_field("Création d'un local professionnel", visible: :hidden)
+        expect(form).to have_unchecked_field("Occupation d'un local d'habitation", visible: :hidden)
+        expect(form).to have_unchecked_field("Occupation d'un local professionnel", visible: :hidden)
       end
     end
 
@@ -478,15 +476,15 @@ RSpec.describe Views::Users::FormComponent, type: :component do
         expect(form).to have_field("Nom")
         expect(form).to have_field("Prénom")
 
-        expect(form).to have_selector("label", text: "Guichets")
+        expect(form).to have_checked_field("Utilisateur de guichet")
         expect(form).to have_unchecked_field(current_user.offices[0].name)
 
-        expect(form).to have_no_selector("label", text: "Référent")
+        expect(form).to have_no_field("Référent des formulaires")
 
         expect(form).to have_no_field("Administrateur de l'organisation")
         expect(form).to have_no_field("Administrateur de la plateforme Passerelle")
 
-        expect(form).to have_selector(".form-block", text: "Guichets", visible: :visible)
+        expect(form).to have_checked_field("Utilisateur de guichet")
       end
     end
 
@@ -507,7 +505,7 @@ RSpec.describe Views::Users::FormComponent, type: :component do
 
         expect(form).to have_no_selector("label", text: "Référent")
 
-        expect(form).to have_selector("label", text: "Guichets")
+        expect(form).to have_checked_field("Utilisateur de guichet")
         expect(form).to have_checked_field(current_user.offices[0].name)
         expect(form).to have_unchecked_field("Superviseur")
       end
