@@ -31,7 +31,7 @@ module ControllerStatuses
     if exception.is_a? ControllerVerifyIp::UnauthorizedIp
       render_status(:forbidden, layout: "public")
     else
-      render_status(:forbidden)
+      render_status(:forbidden, layout: "application")
     end
   end
 
