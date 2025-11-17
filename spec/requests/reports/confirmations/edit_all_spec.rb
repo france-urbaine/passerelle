@@ -2,9 +2,9 @@
 
 require "rails_helper"
 
-RSpec.describe "Reports::RejectionsController#edit_all" do
+RSpec.describe "Reports::ConfirmationsController#edit_all" do
   subject(:request) do
-    get "/signalements/reject/", as:, headers:, params:
+    get "/signalements/confirm/", as:, headers:, params:
   end
 
   let(:as)      { |e| e.metadata[:as] }
@@ -21,6 +21,7 @@ RSpec.describe "Reports::RejectionsController#edit_all" do
     it_behaves_like "it responds with not acceptable in JSON when signed in"
 
     it_behaves_like "it allows access to DDFIP admin"
+    it_behaves_like "it allows access to DDFIP form admin"
 
     it_behaves_like "it denies access to DDFIP user"
     it_behaves_like "it denies access to publisher user"

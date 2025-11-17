@@ -87,6 +87,21 @@ FactoryBot.define do
       organization { DGFIP.kept.first || build(:dgfip) }
     end
 
+    trait :form_admin do
+      organization { association(:ddfip) }
+      form_admin { true }
+
+      transient do
+        form_types { Report::FORM_TYPES.sample(2) }
+      end
+
+      user_form_types do
+        form_types.map do |form_type|
+          association :user_form_type, user: instance, form_type: form_type
+        end
+      end
+    end
+
     trait :supervisor do
       organization { association(:ddfip, :with_offices) }
 

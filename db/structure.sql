@@ -1845,7 +1845,9 @@ CREATE TABLE public.users (
     otp_secret character varying,
     otp_method public.otp_method DEFAULT '2fa'::public.otp_method NOT NULL,
     consumed_timestep integer,
-    otp_required_for_login boolean DEFAULT true NOT NULL
+    otp_required_for_login boolean DEFAULT true NOT NULL,
+    form_admin boolean DEFAULT false NOT NULL,
+    office_user boolean DEFAULT false NOT NULL
 );
 
 
@@ -3278,6 +3280,19 @@ CREATE TABLE public.transmissions (
 
 
 --
+-- Name: user_form_types; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.user_form_types (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    user_id uuid NOT NULL,
+    form_type public.form_type NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
 -- Name: workshops; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -3497,6 +3512,14 @@ ALTER TABLE ONLY public.sessions
 
 ALTER TABLE ONLY public.transmissions
     ADD CONSTRAINT transmissions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: user_form_types user_form_types_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_form_types
+    ADD CONSTRAINT user_form_types_pkey PRIMARY KEY (id);
 
 
 --
@@ -4027,6 +4050,13 @@ CREATE INDEX index_transmissions_on_user_id ON public.transmissions USING btree 
 
 
 --
+-- Name: index_user_form_types_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_user_form_types_on_user_id ON public.user_form_types USING btree (user_id);
+
+
+--
 -- Name: index_users_on_confirmation_token; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4172,6 +4202,14 @@ CREATE TRIGGER trigger_users_changes AFTER INSERT OR DELETE OR UPDATE ON public.
 
 ALTER TABLE ONLY public.reports
     ADD CONSTRAINT fk_rails_05f6a25318 FOREIGN KEY (workshop_id) REFERENCES public.workshops(id) ON DELETE SET NULL;
+
+
+--
+-- Name: user_form_types fk_rails_08297317f3; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_form_types
+    ADD CONSTRAINT fk_rails_08297317f3 FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
 
 
 --
@@ -4445,6 +4483,8 @@ ALTER TABLE ONLY public.oauth_access_tokens
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20251106085809'),
+('20251020091407'),
 ('20250729140510'),
 ('20250626131528'),
 ('20241011075049'),

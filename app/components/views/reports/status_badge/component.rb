@@ -64,12 +64,7 @@ module Views
         private
 
         def organization_type
-          case @organization_type&.to_s || current_organization&.model_name&.element
-          when "collectivity", "publisher" then :collectivity
-          when "dgfip", "ddfip_admin"      then :ddfip_admin
-          when "ddfip_user"                then :ddfip_user
-          when "ddfip"                     then current_user.organization_admin? ? :ddfip_admin : :ddfip_user
-          end
+          ::Users::RoleService.new(current_user, organization: @organization_type).viewer_type
         end
 
         def state

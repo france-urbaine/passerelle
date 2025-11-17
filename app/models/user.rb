@@ -39,6 +39,8 @@
 #  otp_method             :enum             default("2fa"), not null
 #  consumed_timestep      :integer
 #  otp_required_for_login :boolean          default(TRUE), not null
+#  form_admin             :boolean          default(FALSE), not null
+#  office_user            :boolean          default(FALSE), not null
 #
 # Indexes
 #
@@ -72,6 +74,8 @@ class User < ApplicationRecord
   belongs_to :organization, polymorphic: true, inverse_of: :users
   belongs_to :inviter, class_name: "User", optional: true, inverse_of: :invitees
   has_many :invitees, class_name: "User", foreign_key: :inviter_id, inverse_of: :inviter, dependent: :nullify
+
+  has_many :user_form_types, inverse_of: :user, dependent: :destroy
 
   has_many :office_users, dependent: false
   has_many :offices, through: :office_users

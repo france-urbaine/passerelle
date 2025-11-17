@@ -159,7 +159,7 @@ RSpec.describe Views::Reports::Show::Timeline::Component, type: :component do
     end
   end
 
-  context "when current user is a ddfip admin or dgfip user" do
+  context "when current user is a ddfip admin or dgfip user or a form admin" do
     before { sign_in_as(:organization_admin, :ddfip) }
 
     context "when report is transmitted or acknowledged" do

@@ -18,6 +18,13 @@ module States
       rejected
     ].freeze
 
+    CONFIRMED_STATES    = %w[approved canceled].freeze
+    RESOLVED_STATES     = (%w[applicable inapplicable] + CONFIRMED_STATES).freeze
+    ASSIGNED_STATES     = (%w[assigned] + RESOLVED_STATES).freeze
+    ACCEPTED_STATES     = (%w[accepted] + ASSIGNED_STATES).freeze
+    ACKNOWLEDGED_STATES = (%w[acknowledged] + ACCEPTED_STATES + %w[rejected]).freeze
+    TRANSMITTED_STATES  = (%w[transmitted] + ACKNOWLEDGED_STATES).freeze
+
     included do
       # Validations
       # ----------------------------------------------------------------------------
@@ -29,12 +36,12 @@ module States
       scope :ready,        -> { where(state: "ready") }
       scope :packing,      -> { where(state: %w[draft ready]) }
 
-      scope :transmitted,  -> { where(state: %w[transmitted acknowledged accepted assigned applicable inapplicable approved canceled rejected]) }
-      scope :acknowledged, -> { where(state: %w[acknowledged accepted assigned applicable inapplicable approved canceled rejected]) }
-      scope :accepted,     -> { where(state: %w[accepted assigned applicable inapplicable approved canceled]) }
-      scope :assigned,     -> { where(state: %w[assigned applicable inapplicable approved canceled]) }
-      scope :resolved,     -> { where(state: %w[applicable inapplicable approved canceled]) }
-      scope :confirmed,    -> { where(state: %w[approved canceled]) }
+      scope :transmitted,  -> { where(state: TRANSMITTED_STATES) }
+      scope :acknowledged, -> { where(state: ACKNOWLEDGED_STATES) }
+      scope :accepted,     -> { where(state: ACCEPTED_STATES) }
+      scope :assigned,     -> { where(state: ASSIGNED_STATES) }
+      scope :resolved,     -> { where(state: RESOLVED_STATES) }
+      scope :confirmed,    -> { where(state: CONFIRMED_STATES) }
 
       scope :applicable,   -> { where(state: "applicable") }
       scope :inapplicable, -> { where(state: "inapplicable") }
@@ -61,12 +68,12 @@ module States
       def ready?        = state == "ready"
       def packing?      = %w[draft ready].include?(state)
 
-      def transmitted?  = %w[transmitted acknowledged accepted assigned applicable inapplicable approved canceled rejected].include?(state)
-      def acknowledged? = %w[acknowledged accepted assigned applicable inapplicable approved canceled rejected].include?(state)
-      def accepted?     = %w[accepted assigned applicable inapplicable approved canceled].include?(state)
-      def assigned?     = %w[assigned applicable inapplicable approved canceled].include?(state)
-      def resolved?     = %w[applicable inapplicable approved canceled].include?(state)
-      def confirmed?    = %w[approved canceled].include?(state)
+      def transmitted?  = TRANSMITTED_STATES.include?(state)
+      def acknowledged? = ACKNOWLEDGED_STATES.include?(state)
+      def accepted?     = ACCEPTED_STATES.include?(state)
+      def assigned?     = ASSIGNED_STATES.include?(state)
+      def resolved?     = RESOLVED_STATES.include?(state)
+      def confirmed?    = CONFIRMED_STATES.include?(state)
 
       def applicable?   = state == "applicable"
       def inapplicable? = state == "inapplicable"
