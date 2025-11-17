@@ -77,7 +77,10 @@ module Organization
     params_filter(:update) do |params|
       params = apply_scope(params, type: :action_controller_params)
 
-      params = params.permit([{ office_users_attributes: %i[_destroy id office_id supervisor] }]) if supervisor?
+      if supervisor?
+        params = params.permit([:office_user,
+                                { office_users_attributes: %i[_destroy id office_id supervisor] }])
+      end
       params
     end
 
@@ -87,7 +90,16 @@ module Organization
       attributes = %i[first_name last_name email]
       attributes << :super_admin if super_admin?
       attributes << :organization_admin if organization_admin?
-      attributes << { office_users_attributes: %i[_destroy id office_id supervisor] } if organization.is_a?(DDFIP)
+
+      if organization.is_a?(DDFIP)
+        attributes << :office_user
+        attributes << { office_users_attributes: %i[_destroy id office_id supervisor] }
+      end
+
+      if organization.is_a?(DDFIP) && organization_admin?
+        attributes << :form_admin
+        attributes << { user_form_types_attributes: %i[_destroy id form_type] }
+      end
 
       if supervisor?
         params[:office_users_attributes]&.select! do |_index, office_user_params|

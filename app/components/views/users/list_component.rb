@@ -23,9 +23,9 @@ module Views
         content
         @columns = DEFAULT_COLUMNS if columns.empty?
 
-        @users = @users.preload(:organization) if columns.include?(:organization)
-        @users = @users.preload(:office_users) if columns.include?(:roles)
-        @users = @users.preload(:offices)      if columns.intersect?(%i[offices roles])
+        @users = @users.preload(:organization)                   if columns.include?(:organization)
+        @users = @users.preload(:office_users, :user_form_types) if columns.include?(:roles)
+        @users = @users.preload(:offices)                        if columns.intersect?(%i[offices roles])
       end
 
       def with_column(name)

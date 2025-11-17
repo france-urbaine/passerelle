@@ -5,7 +5,7 @@ require "system_helper"
 RSpec.describe "Users in admin" do
   fixtures :regions, :departements, :epcis, :communes
   fixtures :publishers, :collectivities, :ddfips, :offices
-  fixtures :users, :office_users, :audits
+  fixtures :users, :office_users, :audits, :user_form_types
 
   let(:solutions_territoire) { publishers(:solutions_territoire) }
   let(:pays_basque)          { collectivities(:pays_basque) }
@@ -15,6 +15,7 @@ RSpec.describe "Users in admin" do
   let(:elise)                { users(:elise) }
   let(:christelle)           { users(:christelle) }
   let(:maxime)               { users(:maxime) }
+  let(:remi)                 { users(:remi) }
 
   before { sign_in(users(:marc)) }
 
@@ -169,6 +170,20 @@ RSpec.describe "Users in admin" do
     expect(page).to have_selector("h1", text: "Maxime Gauthier")
   end
 
+  it "visits a ddfip form admin page" do
+    visit admin_user_path(remi)
+
+    # We expect:
+    # - a link to the DDFIP
+    # - a list with administrated forms
+    #
+    expect(page).to have_selector("h1", text: "Rémi Ferrand")
+    expect(page).to have_link("DDFIP des Pyrénées-Atlantiques")
+
+    expect(page).to have_selector("dt", text: "Référent des formulaires")
+    expect(page).to have_selector("li", text: "Évaluation d'un local d'habitation")
+  end
+
   it "invites an user from the index page" do
     visit admin_users_path
 
@@ -232,11 +247,10 @@ RSpec.describe "Users in admin" do
       fill_in "Organisation", with: "DDFIP"
       select_option "DDFIP des Pyrénées-Atlantiques", from: "Organisation"
 
-      within ".form-block", text: "Guichets" do |block|
-        expect(block).to have_unchecked_field("PELP de Bayonne")
-        expect(block).to have_unchecked_field("PELH de Bayonne")
-        expect(block).to have_unchecked_field("SIP de Bayonne")
-      end
+      expect(dialog).to have_checked_field("Utilisateur de guichet")
+      expect(dialog).to have_unchecked_field("PELP de Bayonne")
+      expect(dialog).to have_unchecked_field("PELH de Bayonne")
+      expect(dialog).to have_unchecked_field("SIP de Bayonne")
 
       fill_in "Prénom",       with: "Elliot"
       fill_in "Nom",          with: "Alderson"

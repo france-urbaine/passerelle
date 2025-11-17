@@ -3,9 +3,10 @@
     overflow: auto;
     max-height: 400px;
 
-    @apply py-2 px-3 rounded-md border;
+    @apply py-0 px-3 border-l-2;
+    margin-left: 5px;
 
-    @apply bg-white border-gray-300;
+    @apply bg-white border-gray-200;
     @apply dark:bg-black dark:border-gray-700;
 
     &__input {

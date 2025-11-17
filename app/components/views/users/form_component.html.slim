@@ -61,36 +61,78 @@
       - if allowed_to_assign_offices?
         = render Views::Users::OfficesFormComponent.new(@user, namespace: @namespace, organization: @organization)
 
-      - if allowed_to_assign_organization_admin?
-        = form.block :organization_admin do |block|
-          = form.check_box :organization_admin
-          = form.label :organization_admin
+      div( data-controller="switch" )
 
-          - block.with_hint do
-            .prose
-              - if @namespace == :admin
-                p
-                  ' Cet administrateur bénéficie de tout les droits sur son organisation.
-                  br
-                  ' Il peut notamment créer, gérer ou supprimer d'autres utilisateurs au sein de son organisation.
-                p
-                  ' Lorsque cet utilisateur appartient à une DDFIP, il devient le référent départemental :
-                ul
-                  li il peut créer, gérer ou supprimer des guichets
-                  li il peut accepter, rejeter, assigner ou renvoyer des signalements.
+        - if allowed_to_assign_user_form_types?
+          div( *show_if_ddfip_html_attributes )
+            div( data-switch-target="show" data-switch-value="1" data-switch-target-group="organization_admin" hidden=!@user.organization_admin?)
+              = form.block :form_admin do |block|
+                = form.check_box :form_admin, disabled: true
+                = form.label :form_admin
 
-              - elsif @namespace == :organization && current_organization.is_a?(DDFIP)
-                p L'administrateur est le référent départemental de la DDFIP :
-                ul
-                  li il peut créer, gérer ou supprimer des guichets
-                  li il peut créer, gérer ou supprimer d'autres utilisateurs
-                  li il peut accepter, rejeter, assigner ou renvoyer des signalements.
+                - block.with_hint do
+                  .prose
+                    p
+                      | En tant qu'administrateur de l'organisation, cet utilisateur a déjà tous les droits d'un référent.
 
-              - else
-                p
-                  ' L'administrateur bénéficie de tout les droits sur cette organisation.
-                  br
-                  ' Il peut notamment créer, gérer ou supprimer d'autres utilisateurs.
+            div( data-switch-target="showWhenEmpty" data-switch-target-group="organization_admin" hidden=@user.organization_admin?)
+              = form.block :form_admin do |block|
+                = form.check_box :form_admin, { data: { action: "switch#toggle", switch_group_param: "form_admin" } }
+                = form.label :form_admin
+
+                - block.with_hint do
+                  .prose
+                    p
+                      | Le référent gère les signalements de certains types :
+                    ul
+                      li Il peut les accepter, rejeter, assigner ou les renvoyer.
+
+              = form.block :user_form_types do |block|
+                - hidden = !@user.form_admin?
+
+                .choices-collection( data-switch-target="show" data-switch-value=1 data-switch-target-group="form_admin" hidden=hidden )
+                  = form.fields_for :user_form_types, user_form_types, include_id: false do |fields|
+                    - checked = !fields.object.new_record?
+
+                    = fields.hidden_field :id
+                    = fields.hidden_field :form_type
+
+                    .choices-collection__input
+                      = fields.check_box :_destroy, { value: !checked, checked: }, "false", "true"
+                      = fields.label :_destroy, t(fields.object.form_type, scope: "enum.report_form_type")
+
+
+        - if allowed_to_assign_organization_admin?
+          = form.block :organization_admin do |block|
+            = form.check_box :organization_admin, { data: { action: "switch#toggle", switch_group_param: "organization_admin" } }
+            = form.label :organization_admin
+
+            - block.with_hint do
+              .prose
+                - if @namespace == :admin
+                  p
+                    ' Cet administrateur bénéficie de tout les droits sur son organisation.
+                    br
+                    ' Il peut notamment créer, gérer ou supprimer d'autres utilisateurs au sein de son organisation.
+                  p
+                    ' Lorsque cet utilisateur appartient à une DDFIP, il devient le référent départemental :
+                  ul
+                    li il peut créer, gérer ou supprimer des guichets
+                    li il peut accepter, rejeter, assigner ou renvoyer des signalements.
+
+                - elsif @namespace == :organization && current_organization.is_a?(DDFIP)
+                  p L'administrateur est le référent départemental de la DDFIP :
+                  ul
+                    li il peut créer, gérer ou supprimer des guichets
+                    li il peut créer, gérer ou supprimer d'autres utilisateurs
+                    li il peut accepter, rejeter, assigner ou renvoyer des signalements.
+
+                - else
+                  p
+                    ' L'administrateur bénéficie de tout les droits sur cette organisation.
+                    br
+                    ' Il peut notamment créer, gérer ou supprimer d'autres utilisateurs.
+
 
       - if allowed_to_assign_super_admin?
         = form.block :super_admin do |block|

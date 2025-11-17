@@ -43,6 +43,10 @@
                 icon: "arrow-path"\
               )
 
+        - if @user.organization.is_a?(DDFIP) && !@user.organization_admin?
+          - list.with_attribute(:user_form_types) do |attribute|
+            = render Views::Users::ShowFormTypesListComponent.new(@user, namespace: :admin)
+
         - list.with_attribute(:organization_admin) do |attribute|
           = render Views::Users::ShowCheckBadgeComponent.new(@user, :organization_admin)
 

@@ -11,6 +11,15 @@ module Views
         super()
       end
 
+      def user_form_types
+        @user_form_types ||= begin
+          user_form_types = @user.user_form_types
+          user_form_types + (Report::FORM_TYPES - user_form_types.map(&:form_type)).map do |form_type|
+            UserFormType.new(user: @user, form_type:)
+          end
+        end
+      end
+
       def redirection_path
         if @referrer.nil? && @user.errors.any? && params[:redirect]
           params[:redirect]
@@ -63,9 +72,22 @@ module Views
       end
 
       def allowed_to_assign_offices?
-        (@namespace == :admin && @organization.nil?) ||
+        ddfip? || could_be_ddfip?
+      end
+
+      def allowed_to_assign_user_form_types?
+        (ddfip? || could_be_ddfip?) && (current_user.organization_admin? || current_user.super_admin?)
+      end
+
+      def ddfip?
+        @user.organization.is_a?(DDFIP) || (
           (@namespace == :admin && @organization.is_a?(DDFIP)) ||
           (@namespace == :organization && current_organization.is_a?(DDFIP))
+        )
+      end
+
+      def could_be_ddfip?
+        @namespace == :admin && @organization.nil?
       end
 
       def allowed_to_assign_organization_admin?
@@ -127,6 +149,16 @@ module Views
           attributes[:hidden] = true
         end
 
+        attributes
+      end
+
+      def show_if_ddfip_html_attributes
+        attributes = { data: { user_form_target: "showIfDDFIP" } }
+
+        return attributes if ddfip?
+
+        attributes[:class] = "hidden"
+        attributes[:hidden] = true
         attributes
       end
 

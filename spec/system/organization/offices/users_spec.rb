@@ -65,11 +65,10 @@ RSpec.describe "Office users in admin" do
       expect(dialog).to have_field("Adresse mail")
       expect(dialog).to have_unchecked_field("Administrateur de l'organisation")
 
-      within ".form-block", text: "Guichets" do |block|
-        expect(block).to have_checked_field("PELP de Bayonne")
-        expect(block).to have_unchecked_field("PELH de Bayonne")
-        expect(block).to have_unchecked_field("SIP de Bayonne")
-      end
+      expect(dialog).to have_checked_field("Utilisateur de guichet")
+      expect(dialog).to have_checked_field("PELP de Bayonne")
+      expect(dialog).to have_unchecked_field("PELH de Bayonne")
+      expect(dialog).to have_unchecked_field("SIP de Bayonne")
 
       fill_in "Prénom",       with: "Elliot"
       fill_in "Nom",          with: "Alderson"
@@ -107,11 +106,10 @@ RSpec.describe "Office users in admin" do
       expect(dialog).to have_field("Nom")
       expect(dialog).to have_field("Adresse mail")
 
-      within ".form-block", text: "Guichets" do |block|
-        expect(block).to have_checked_field("PELP de Bayonne")
-        expect(block).to have_unchecked_field("PELH de Bayonne")
-        expect(block).to have_unchecked_field("SIP de Bayonne")
-      end
+      expect(dialog).to have_checked_field("Utilisateur de guichet")
+      expect(dialog).to have_checked_field("PELP de Bayonne")
+      expect(dialog).to have_unchecked_field("PELH de Bayonne")
+      expect(dialog).to have_unchecked_field("SIP de Bayonne")
 
       fill_in "Prénom",       with: "Marc"
       fill_in "Nom",          with: "Debomy"
@@ -137,11 +135,10 @@ RSpec.describe "Office users in admin" do
       expect(dialog).to have_field("Nom", with: "Debomy")
       expect(dialog).to have_field("Adresse mail", with: "mdebomy@solutions-territoire.fr")
 
-      within ".form-block", text: "Guichets" do |block|
-        expect(block).to have_checked_field("PELP de Bayonne")
-        expect(block).to have_unchecked_field("PELH de Bayonne")
-        expect(block).to have_unchecked_field("SIP de Bayonne")
-      end
+      expect(dialog).to have_checked_field("Utilisateur de guichet")
+      expect(dialog).to have_checked_field("PELP de Bayonne")
+      expect(dialog).to have_unchecked_field("PELH de Bayonne")
+      expect(dialog).to have_unchecked_field("SIP de Bayonne")
 
       fill_in "Adresse mail", with: "yvonne.bailly@dgfip.finances.gouv.fr"
 
@@ -166,12 +163,12 @@ RSpec.describe "Office users in admin" do
       expect(dialog).to have_field("Nom", with: "Bailly")
       expect(dialog).to have_field("Adresse mail", with: "yvonne.bailly@dgfip.finances.gouv.fr")
 
-      within ".form-block", text: "Guichets" do |block|
-        expect(block).to have_unchecked_field("PELP de Bayonne")
-        expect(block).to have_unchecked_field("PELH de Bayonne")
-        expect(block).to have_unchecked_field("SIP de Bayonne")
-      end
+      expect(dialog).to have_unchecked_field("Utilisateur de guichet")
+      expect(dialog).to have_unchecked_field("PELP de Bayonne", visible: :hidden)
+      expect(dialog).to have_unchecked_field("PELH de Bayonne", visible: :hidden)
+      expect(dialog).to have_unchecked_field("SIP de Bayonne", visible: :hidden)
 
+      check "Utilisateur de guichet"
       check "PELP de Bayonne"
 
       click_on "Enregistrer"
@@ -218,12 +215,11 @@ RSpec.describe "Office users in admin" do
       expect(dialog).to have_field("Adresse mail", with: "charlotte.poulain@pelp-bayonne.fr")
       expect(dialog).to have_unchecked_field("Administrateur de l'organisation")
 
-      within ".form-block", text: "Guichets" do |block|
-        expect(block).to have_checked_field("PELP de Bayonne")
-        expect(block).to have_checked_field("Superviseur")
-        expect(block).to have_unchecked_field("PELH de Bayonne")
-        expect(block).to have_unchecked_field("SIP de Bayonne")
-      end
+      expect(dialog).to have_checked_field("Utilisateur de guichet")
+      expect(dialog).to have_checked_field("PELP de Bayonne")
+      expect(dialog).to have_checked_field("Superviseur")
+      expect(dialog).to have_unchecked_field("PELH de Bayonne")
+      expect(dialog).to have_unchecked_field("SIP de Bayonne")
 
       fill_in "Nom", with: "Cheval"
 
