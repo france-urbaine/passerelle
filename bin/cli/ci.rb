@@ -40,6 +40,7 @@ module CLI
             bin/ci test requests       # Run requests tests
             bin/ci test components     # Run components tests
             bin/ci test [path]         # ex: `bin/ci test spec/models`
+            bin/ci test failed         # Run only failed test from previous runtime
 
         Watch accepts a plugin as argument:
 

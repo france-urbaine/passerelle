@@ -3,7 +3,7 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 ENV["RAILS_ENV"] ||= "test"
 require "spec_helper"
-require "simplecov" unless ENV["SIMPLE_COV"] == "false"
+require "simplecov" if ENV["SIMPLE_COV"] == "true"
 
 require File.expand_path("../config/environment", __dir__)
 
