@@ -71,8 +71,8 @@ Rails.application.configure do
   # Replace the default in-process memory cache store with a durable alternative.
   # config.cache_store = :mem_cache_store
   config.cache_store =
-    if ENV.key?("REDIS_CACHE_URL")
-      [:redis_cache_store, { url: ENV.fetch("REDIS_CACHE_URL") }]
+    if ENV["REDIS_CACHE_URL"]
+      [:redis_cache_store, { url: ENV["REDIS_CACHE_URL"] }]
     else
       [:memory_store, { size: 64.megabytes }]
     end
