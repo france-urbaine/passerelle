@@ -7,7 +7,7 @@ module CLI
     def call(*args)
       case args[0]
       when nil          then run_all
-      when "watch"      then CLI::CI::Watch.call
+      when "watch"      then CLI::CI::Watch.call(*args[1..])
       when "factories"  then CLI::CI::Factories.call
       when "test"       then CLI::CI::Test.call(*args[1..])
       when "rubocop"    then CLI::CI::Rubocop.call(*args[1..])

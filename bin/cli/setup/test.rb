@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "../base"
+require_relative "../ci/watch"
 
 module CLI
   class Setup
@@ -40,7 +41,7 @@ module CLI
           say "Setup test database for guard testing"
           run "bin/rails db:test:prepare", env: {
             "RAILS_ENV"           => "test",
-            "POSTGRESQL_DATABASE" => "passerelle_test_watch"
+            "POSTGRESQL_DATABASE" => CLI::CI::Watch::DEFAULT_DATABASE
           }
         end
       end
