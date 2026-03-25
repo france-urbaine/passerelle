@@ -26,15 +26,6 @@ Metrics/PerceivedComplexity:
 RSpec/MultipleMemoizedHelpers:
   Max: 10
 
-# Offense count: 2
-# This cop supports safe autocorrection (--autocorrect).
-# Configuration parameters: EnforcedStyle, AllowedParentClasses.
-# SupportedStyles: class_keyword, class_new, class_definition
-Style/EmptyClassDefinition:
-  Exclude:
-    - 'Guardfile'
-    - 'app/controllers/concerns/controller_statuses.rb'
-
 # Offense count: 1
 # This cop supports safe autocorrection (--autocorrect).
 Style/RedundantRegexpEscape:
