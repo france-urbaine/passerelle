@@ -30,7 +30,10 @@ module CLI
         if parallel_mode == "flatware"
           run "bundle exec flatware fan rake db:test:prepare"
         else
-          run "bin/rails parallel:prepare", env: { "PARALLEL_TEST_FIRST_IS_1" => "true" }
+          # FYI: We prefer the task 'parallel:load_schema' over 'parallel:prepare'
+          # to bypass schema dumping
+          #
+          run "bin/rails parallel:load_schema", env: { "PARALLEL_TEST_FIRST_IS_1" => "true" }
         end
       end
 
