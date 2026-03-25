@@ -36,6 +36,8 @@ module CLI
       run "git submodule init"
       run "git submodule update"
 
+      run "bin/setup env"
+
       say "Verifying database migration"
       run "QUICK_MIGRATION_UPDATE=true bin/rails db:migrate"
     end
