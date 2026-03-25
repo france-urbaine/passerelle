@@ -10,15 +10,26 @@ module CLI
 
       def call
         say "Check for Rails master key"
+        exist = exist?
 
-        if exist?
-          say "" # rubocop:disable Style/IdenticalConditionalBranches
-          say "Rails master is already defined."
+        say ""
+
+        if exist && ENV["IGNORE_EXISTING_KEY"]
+          say "✓ Master key already set up !"
+          say ""
+          return
+
+        elsif exist
+          say "Master key is already set up."
           say "Would you like to update it ? [Yn]"
 
-          return if ask != "Y"
+          if ask != "Y"
+            say "✓ Master key already set up !"
+            say ""
+            return
+          end
+
         else
-          say "" # rubocop:disable Style/IdenticalConditionalBranches
           say "No master key found."
         end
 
