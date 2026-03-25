@@ -1,9 +1,12 @@
 # frozen_string_literal: true
 
-source "https://rubygems.org"
-git_source(:github) { |repo| "https://github.com/#{repo}.git" }
-
 ruby "3.4.4"
+source "https://rubygems.org"
+
+git_source(:github) do |repo_name|
+  repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?("/")
+  "https://github.com/#{repo_name}.git"
+end
 
 # Core gems
 gem "bootsnap", require: false
