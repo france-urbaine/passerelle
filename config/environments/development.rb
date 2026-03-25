@@ -64,7 +64,7 @@ Rails.application.configure do
   config.active_record.migration_error = :page_load
 
   # Do not dump schema after migrations (especially when running bin/update)
-  config.active_record.dump_schema_after_migration = ENV.fetch("DUMP_SCHEMA_AFTER_MIGRATION", "true") == "true"
+  config.active_record.dump_schema_after_migration = ENV["QUICK_MIGRATION_UPDATE"] != "true"
 
   # Highlight code that triggered database queries in logs.
   config.active_record.verbose_query_logs = true

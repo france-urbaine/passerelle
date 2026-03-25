@@ -80,6 +80,7 @@ gem "audited"
 group :development, :test do
   gem "lookbook"
 
+  gem "actual_db_schema"
   gem "amazing_print"
   gem "byebug"
   gem "dead_end"
@@ -100,7 +101,6 @@ group :development, :test do
 end
 
 group :development do
-  gem "actual_db_schema"
   gem "annotaterb"
   gem "bundle_update_interactive"
   gem "rack-mini-profiler"
