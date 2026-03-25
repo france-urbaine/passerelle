@@ -11,7 +11,7 @@ module CLI
       when "factories"  then CLI::CI::Factories.call
       when "test"       then CLI::CI::Test.call(*args[1..])
       when "rubocop"    then CLI::CI::Rubocop.call(*args[1..])
-      when "brakeman"   then CLI::CI::Brakeman.call
+      when "brakeman"   then CLI::CI::Brakeman.call(*args[1..])
       when "audit"      then CLI::CI::Audit.call
       else help
       end
