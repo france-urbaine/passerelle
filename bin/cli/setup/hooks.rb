@@ -15,7 +15,7 @@ module CLI
       end
 
       def setup_hook(hook)
-        template = Pathname.new(__dir__).join("git_hooks", hook).read
+        template = Pathname.new(__dir__).join("hooks", hook).read
         path     = Pathname.new(".git/hooks").join(hook)
 
         if path.exist?

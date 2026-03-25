@@ -7,11 +7,11 @@ module CLI
     def call(*args)
       case args[0]
       when nil          then run_all
-      when "watch"      then CLI::CI::Watch.call
+      when "watch"      then CLI::CI::Watch.call(*args[1..])
       when "factories"  then CLI::CI::Factories.call
       when "test"       then CLI::CI::Test.call(*args[1..])
       when "rubocop"    then CLI::CI::Rubocop.call(*args[1..])
-      when "brakeman"   then CLI::CI::Brakeman.call
+      when "brakeman"   then CLI::CI::Brakeman.call(*args[1..])
       when "audit"      then CLI::CI::Audit.call
       else help
       end
@@ -40,6 +40,7 @@ module CLI
             bin/ci test requests       # Run requests tests
             bin/ci test components     # Run components tests
             bin/ci test [path]         # ex: `bin/ci test spec/models`
+            bin/ci test failed         # Run only failed test from previous runtime
 
         Watch accepts a plugin as argument:
 

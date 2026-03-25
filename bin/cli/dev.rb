@@ -6,79 +6,56 @@ module CLI
   class Dev < Base
     def call(*args)
       case args[0]
-      when nil            then start
-      when "server"       then start_server
-      when "jobs"         then start_jobs
-      when "mailcatcher"  then start_mailcatcher
+      when nil            then start(:web, :js, :css, :sidekiq, mailcatcher: true)
+      when "server"       then start(:web, :js, :css, mailcatcher: true)
+      when "server:ssl"   then start(:web, :js, :css, mailcatcher: true, ssl: true)
+      when "web"          then start(:web)
+      when "web:ssl"      then start(:web, ssl: true)
+      when "jobs"         then start(:sidekiq,  socket: "background")
+      when "assets"       then start(:js, :css, socket: "assets")
       when "help"         then help
-      else start_process(*args)
+      else
+        start(args[0], socket: args[0])
       end
     end
 
     def help
       say <<~HEREDOC
-        Development commands:
-
+        Development command
             bin/dev                   # Start all default processes
-            bin/dev server            # Start only processes required to serve the application (web, js & css)
-            bin/dev jobs              # Start backgrounder process(es)
-            bin/dev mailcatcher       # Start mailcatcher in foreground mode
             bin/dev help              # Show this help
 
-        Server processes could be start individually:
+        Processes can be start individually:
 
+            bin/dev server            # Start only processes to serve the web application (Rails, JS & CSS)
             bin/dev web               # Start only rails server
-            bin/dev js                # Start only dev server to bundle JS
-            bin/dev css               # Start only dev server to bundle CSS
+            bin/dev js                # Start only esbuild to watch & bundle JS
+            bin/dev css               # Start only postcss to watch & bundle CSS
+            bin/dev assets            # Start processes to serve assets (JS & CSS)
+            bin/dev jobs              # Start processes to perform asynchronous jobs
+            bin/dev mailcatcher       # Start mailcatcher in foreground mode
 
-        Background processes could be start individually:
+        Some processes can be started with SSL:
 
-            bin/dev sidekiq           # Start only Sidekiq
+            bin/dev server:ssl        # Same as `bin/dev server` but with SSL
+            bin/dev web:ssl           # Same as `bin/dev web`    but with SSL
         \x5
       HEREDOC
     end
 
-    def start(*processes, socket: nil)
+    private
+
+    def start(*processes, socket: nil, ssl: false, mailcatcher: false)
       command = process_manager
       command += " start "
-
-      options =
+      command +=
         case process_manager
-        when "overmind" then overmind_options(processes, socket: socket)
-        when "foreman"  then foreman_options(processes)
+        when "overmind" then overmind_options(processes, ssl:, mailcatcher:, socket:)
+        when "foreman"  then foreman_options(processes, ssl:)
         end
-
-      command += options.map { |(k, v)| "-#{k} #{v}".strip }.join(" ")
 
       run command
     end
-
-    def start_server
-      start(:web, :js, :css)
-    end
-
-    def start_jobs
-      start(:sidekiq, socket: "background")
-    end
-
-    def start_mailcatcher
-      unless command_available?("mailcatcher")
-        say "Mailcatcher is not installed or the command is not available"
-        abort
-      end
-
-      start(:mailcatcher, socket: "mailcatcher")
-    end
-
-    def start_process(name)
-      if name == "web"
-        start(:web)
-      else
-        start(name, socket: name)
-      end
-    end
-
-    private
 
     def process_manager
       @process_manager ||=
@@ -93,7 +70,7 @@ module CLI
         end
     end
 
-    # Overmind & Foreman assigns the port base (5000 by default) to `PORT` for the
+    # Overmind & Foreman assigns a base port (5000 by default) to `PORT` for the
     # first process and increases `PORT` by port step (100 by default) for each
     # subsequent one.
     #
@@ -101,33 +78,43 @@ module CLI
     #   https://github.com/ddollar/foreman/blob/master/lib/foreman/engine.rb#L264
     #   https://github.com/DarthSim/overmind/blob/master/README.md#specifying-the-ports
     #
+    # This port is used as the "public" port used to connect to the process which is
+    # different than the "internal" port used by Puma and other services.
+    # That's why the port 3000 might be harcoded in Procfile.
+    #
     # However:
     #   * the port 3000 is well known to be the default port for Rails server
-    #   * the port 5000 is already used by the OS since MacOS 12.0.1
+    #   * the port 5000 might already been used by the OS since MacOS 12.0.1
     #     See: https://github.com/DarthSim/overmind/issues/119
     #
-    # Overmind suggests to set another OVERMIND_PORT but if we override it by default
-    # here, we cannot then override it on needed.
-    # So we disabled this behavior with -N option.
+    # On overmind:
+    #   Overmind docs suggests to set a custom OVERMIND_PORT but if we override it
+    #   here, we cannot then override it on needed
+    #   (for example if you need 2 Rails server on different ports)
+    #
+    #   So we disabled this behavior with --no-port option.
+    #
+    # On foreman:
+    #   The only way is to override the PORT variable.
     #
     # Finally, you can override the port used by Rails with the command `PORT=<port> bin/dev`
     # or by setting `PORT=<port>` in an `.overmind.env` file.
     #
-    def overmind_options(processes, socket:)
-      options = {}
-      options[:f] = "Procfile.dev"
+    def overmind_options(processes, ssl:, mailcatcher:, socket:)
+      processes << :mailcatcher if mailcatcher && command_available?("mailcatcher") && ENV["DOTENV"].nil?
 
-      if (processes.empty? || processes.include?(:mailcatcher)) && command_available?("mailcatcher")
-        options[:f] = "Procfile.dev+mailcatcher"
-      end
+      processes = add_ssl_processes(processes) if ssl
+      processes = processes.join(",")
 
-      options[:N] = ""
-      options[:l] = processes.join(",") if processes.any?
-      options[:s] = "./.overmind_#{socket}.sock" if socket
-      options
+      options = []
+      options << "--procfile=Procfile.dev"
+      options << "--no-port"
+      options << "--processes=#{processes}"
+      options << "--socket=./.overmind_#{socket}.sock" if socket
+      options.join(" ")
     end
 
-    def foreman_options(processes, **)
+    def foreman_options(processes, ssl:, **)
       if processes.empty? && command_available?("mailcatcher")
         say "Mailcatcher is installed but cannot be run with foreman."
         say "You should consider installing overmind."
@@ -137,11 +124,25 @@ module CLI
         abort
       end
 
-      options = {}
-      options[:f] = "Procfile.dev"
-      options[:p] = ENV.fetch("PORT", 3000) if processes.empty? || processes.include?(:web)
-      options[:m] = processes.map { |s| "#{s}=1" }.join(",") if processes.any?
-      options
+      port      = ENV.fetch("PORT", 3000) if processes.include?(:web)
+      processes = add_ssl_processes(processes) if ssl
+      formation = processes.map { |s| "#{s}=1" }.join(",")
+
+      options = []
+      options << "--procfile=Procfile.dev"
+      options << "--port=#{port}" if port
+      options << "--formation=#{formation}"
+      options.join(" ")
+    end
+
+    def add_ssl_processes(processes)
+      processes.map! do |value|
+        if value == :web
+          :web_ssl
+        else
+          value
+        end
+      end
     end
   end
 end
