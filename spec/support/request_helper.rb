@@ -24,7 +24,7 @@ RSpec.configure do |config|
   config.include RequestTestHelpers::AuthenticationHelpers, type: :request
   config.include RequestTestHelpers::DomHelpers,            type: :request
   config.include RequestTestHelpers::ImplicitHelpers,       type: :request
-  config.include RequestTestHelpers::InspectHTML,           type: :request
+  config.include InspectHTML::RequestTestHelper,            type: :request
 
   # Shared contexts & examples
   #

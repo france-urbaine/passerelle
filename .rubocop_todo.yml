@@ -26,17 +26,6 @@ Metrics/PerceivedComplexity:
 RSpec/MultipleMemoizedHelpers:
   Max: 10
 
-# Offense count: 6
-# This cop supports unsafe autocorrection (--autocorrect-all).
-RSpec/Output:
-  Exclude:
-    - 'spec/rails_helper.rb'
-    - 'spec/services/reports/check_completeness_service_spec.rb'
-    - 'spec/support/component/inspect_html.rb'
-    - 'spec/support/helper_helper.rb'
-    - 'spec/support/request/inspect_html.rb'
-    - 'spec/support/system/system_test_helpers.rb'
-
 # Offense count: 2
 # This cop supports safe autocorrection (--autocorrect).
 # Configuration parameters: EnforcedStyle, AllowedParentClasses.

@@ -6,6 +6,8 @@ require "rails_helper"
 ENV["WEBDRIVER"] ||= "cuprite"
 
 # Load configuration files and helpers
+require "support/inspect_html"
+
 Rails.root.glob("spec/support/system/**/*.rb").each { |file| require file }
 
 RSpec.configure do |config|
@@ -15,7 +17,8 @@ RSpec.configure do |config|
 
   # Custom helpers
   #
-  config.include SystemTestHelpers, type: :system
+  config.include SystemTestHelpers,               type: :system
+  config.include InspectHTML::CapybaraTestHelper, type: :system
 
   # System specs use fixtures.
   # Instead of using transactional fixtures, we'll use DataCleaner around each
