@@ -103,6 +103,7 @@ end
 group :development do
   gem "annotaterb"
   gem "bundle_update_interactive"
+  gem "localhost"
   gem "rack-mini-profiler"
   gem "web-console"
 
