@@ -9,7 +9,7 @@ class AddResolutionMotifToReport < ActiveRecord::Migration[7.1]
     end
 
     up_only do
-      execute <<-SQL.squish
+      execute <<~SQL.squish
         UPDATE reports SET resolution_motif = 'maj_local' WHERE state IN ('applicable', 'approved');
         UPDATE reports SET resolution_motif = 'absence_incoherence' WHERE state IN ('inapplicable', 'canceled');
       SQL

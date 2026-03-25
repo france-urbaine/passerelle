@@ -30,7 +30,7 @@ RSpec.configure do |config|
   # Custom helpers
   #
   config.include ComponentTestHelpers::AuthenticationHelpers, type: :component
-  config.include ComponentTestHelpers::InspectHTML,           type: :component
+  config.include InspectHTML::ViewTestHelper,                 type: :component
 
   # To get access to Devise’s controller helper methods in tests
   # we need to setup a request

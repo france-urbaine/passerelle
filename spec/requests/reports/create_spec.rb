@@ -34,7 +34,7 @@ RSpec.describe "ReportsController#new" do
     before { sign_in_as(:collectivity) }
 
     it { expect(response).to have_http_status(:see_other) }
-    it { expect(response).to redirect_to(%r{/signalements/[0-9a-f\-]{36}$}) }
+    it { expect(response).to redirect_to(%r{/signalements/[0-9a-f-]{36}$}) }
     it { expect { request }.to change(Report, :count).by(1) }
 
     it "assigns expected attributes to the new record" do

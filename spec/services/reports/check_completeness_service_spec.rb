@@ -7,11 +7,6 @@ RSpec.describe Reports::CheckCompletenessService do
     described_class.new(report)
   end
 
-  def inspect_errors(report)
-    service = described_class.new(report)
-    ap(service.errors.details) unless service.valid?
-  end
-
   # TODO: more test cases are required
 
   context "with an evaluation_local_habitation" do
@@ -289,8 +284,6 @@ RSpec.describe Reports::CheckCompletenessService do
           }
         ]
       )
-
-      # inspect_errors(report)
 
       expect(described_class.new(report)).to be_valid
     end

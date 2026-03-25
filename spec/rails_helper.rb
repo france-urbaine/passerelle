@@ -16,6 +16,7 @@ require "webmock/rspec"
 require "database_cleaner/active_record"
 require "test_prof/recipes/rspec/before_all"
 require "test_prof/recipes/rspec/let_it_be"
+require "support/inspect_html"
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
@@ -44,8 +45,7 @@ end
 begin
   ActiveRecord::Migration.maintain_test_schema!
 rescue ActiveRecord::PendingMigrationError => e
-  puts e.to_s.strip
-  exit 1
+  abort e.to_s.strip
 end
 
 RSpec.configure do |config|
