@@ -63,8 +63,7 @@ class User < ApplicationRecord
     :trackable,
     :confirmable,
     :timeoutable,
-    :lockable,
-    :zxcvbnable
+    :lockable
   )
 
   audited
@@ -115,7 +114,8 @@ class User < ApplicationRecord
     validates :password, length: { within: Devise.password_length }
   end
 
-  validate :email_domain_must_be_valid, if: :will_save_change_to_email?
+  validate :email_domain_must_be_valid,     if: :will_save_change_to_email?
+  validate :password_must_be_strong_enough, if: :will_save_change_to_password?
 
   # Checks whether a password is needed or not. For validations only.
   # Passwords are always required if it's a new record, or if the password
@@ -124,8 +124,16 @@ class User < ApplicationRecord
     !persisted? || !password.nil? || !password_confirmation.nil?
   end
 
+  def will_save_change_to_password?
+    !password.nil?
+  end
+
   def email_domain_must_be_valid
     errors.add(:email, :invalid_domain, domain: domain) unless valid_email_domain?
+  end
+
+  def password_must_be_strong_enough
+    errors.add(:password, :weak_password) if password_score["score"] < 3
   end
 
   # Callbacks
@@ -428,5 +436,11 @@ class User < ApplicationRecord
 
   def email_domain_restriction_regexp
     build_email_regexp(organization.domain_restriction) if restrict_email_domain?
+  end
+
+  # Password strength
+  # ----------------------------------------------------------------------------
+  def password_score
+    Zxcvbn.zxcvbn(password.to_s, [email]) if password
   end
 end

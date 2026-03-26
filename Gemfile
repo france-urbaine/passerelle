@@ -30,7 +30,6 @@ gem "doorkeeper-i18n"
 # Models
 gem "devise"
 gem "devise-two-factor"
-gem "devise_zxcvbn"
 gem "discard"
 gem "zxcvbn"
 

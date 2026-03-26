@@ -334,7 +334,4 @@ Devise.setup do |config|
   # Default to 30 seconds.
   # Make it valid for 5 minutes because many users use the email strategy which might be subject to latencies.
   config.otp_allowed_drift = 5.minutes.to_i
-
-  # ==> Configuration for :zxcvbnable
-  config.min_password_score = 3
 end
